@@ -1,0 +1,124 @@
+//apply from: '../RLibrary/key.gradle'
+
+apply plugin: 'com.android.application'
+
+println("key.gradle\n项目根路径:" + rootDir.getAbsolutePath())
+println("脚本路径:" + file(".").getAbsolutePath())
+
+ext.maxDepth = 2
+//查找默认的jks文件路径
+ext.angcyoJksFile = "未找到默认的angcyo.jks文件"
+
+/**枚举文件夹, 拿到`angcyo.jks`的路径*/
+listPath(getRootDir())
+
+/**枚举所有文件夹*/
+def listPath(filePath, depth = 0 /*当前枚举的路径深度, 深度大于maxDepth停止枚举*/, parent = "") {
+    //println filePath.getAbsolutePath() + " " + depth
+    if (depth > maxDepth) {
+        return
+    }
+
+    if (filePath.isDirectory()) {
+
+        filePath.listFiles()?.each {
+            if (it.isDirectory()) {
+                includePath(it, parent)
+
+                listPath(it, depth + 1, ":" + it.getName())
+            }
+        }
+    }
+}
+
+/**查找目标*/
+def includePath(filePath, parent) {
+    if (filePath.isDirectory()) {
+        def targetFile = new File(filePath, "angcyo.jks")
+        if (targetFile.exists()) {
+            angcyoJksFile = targetFile.getAbsolutePath()
+        }
+    }
+}
+
+
+String key_alias = 'app'
+String key_password = 'angcyo'
+String key_file = angcyoJksFile
+String password = 'angcyo'
+
+//读取key文件
+Properties props = new Properties()
+if (rootProject.hasProperty("key_file")) {
+    String keyFileString = rootProject.property("key_file")
+    File keyFile = new File(rootDir, keyFileString)
+    //println("->" + keyFile.exists() + "->" + keyFile2.exists())
+
+    if (!keyFile.exists()) {
+        println("根目录未找到配置文件:" + keyFile.getAbsolutePath())
+
+        keyFile = file(keyFileString)
+
+        println("切换到至:" + keyFile.getAbsolutePath())
+    }
+
+    if (keyFile.exists()) {
+        println("读取的配置文件:" + keyFile.getAbsolutePath())
+
+        props.load(new FileInputStream(keyFile))
+        key_alias = props['key.alias']
+        key_password = props['key.password']
+        key_file = props['key.file']
+        password = props['password']
+
+        //println("key_file:" + key_file)
+        //key_file = keyFile.getParent() + "/" + key_file
+        //println("key_file2:" + key_file)
+    } else {
+        println("指定的配置文件:" + keyFile.getAbsolutePath() + "不存在, 将采用默认签名进行.")
+    }
+} else {
+    println("未声明key_file属性, 将采用默认签名进行.")
+}
+
+File jksFile = new File(key_file)
+if (jksFile.exists()) {
+    key_file = jksFile.getAbsolutePath()
+} else {
+    jksFile = new File(rootDir, key_file)
+
+    if (jksFile.exists()) {
+        key_file = jksFile.getAbsolutePath()
+    } else {
+        println("jks文件不存在, 签名将无法进行.")
+    }
+}
+
+rootProject.ext.signConfig = [
+        "key_alias"   : key_alias,
+        "key_password": key_password,
+        "key_file"    : key_file,
+        "password"    : password
+]
+
+println(
+        "\nkey.alias:" + signConfig.key_alias +
+                "\nkey.password:" + signConfig.key_password +
+                "\nkey.file:" + signConfig.key_file +
+                "\npassword:" + signConfig.password + "\n"
+)
+
+println("...end...\n")
+
+android {
+    signingConfigs {
+        angcyo {
+            keyAlias key_alias
+            keyPassword key_password
+            storeFile file(key_file)
+            storePassword password
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
+}

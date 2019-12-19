@@ -1,0 +1,22 @@
+/*包含 aar 文件的目录名称*/
+def aarFolderName = "aar"
+
+repositories {
+    flatDir {
+        dirs "../${aarFolderName}" // aar目录
+    }
+}
+
+dependencies {
+    def libsFolder = new File(aarFolderName)
+    println("开始查找aar文件在 " + libsFolder.getAbsolutePath() + " 中->")
+    for (aarFile in libsFolder.listFiles()) {
+        def fileName = aarFile.getName()
+        if (fileName.endsWith(".aar")) {
+            fileName = fileName.replaceAll(".aar", "")
+            println("implementation aar:" + fileName)
+            implementation name: "${fileName}", ext: 'aar'
+        }
+    }
+    println("查找结束.")
+}

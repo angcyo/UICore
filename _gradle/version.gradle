@@ -1,0 +1,107 @@
+/*2019-10-16 统一依赖库的版本号*/
+
+/**
+ * 配置格式, 全局配置可以放在脚本 [apply] 之前的任意地方
+ * */
+
+/*
+ext.versionConfig = [
+        "androidx.core:core"                       : "1.0.0",
+        "androidx.annotation:annotation"           : "1.0.0",
+        "androidx.arch.core:core-common"           : "2.0.0",
+        "org.jetbrains.kotlin:kotlin-stdlib"       : "1.3.50",
+        "org.jetbrains.kotlin:kotlin-stdlib-common": "1.3.50",
+]
+*/
+
+//用来保存版本号不一样的依赖库
+ext._allVersion = [:]
+//用来过滤log输出
+ext._logVersion = []
+ext._logConfigError = false
+
+project.configurations.all { defaultConfiguration ->
+
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+
+        def packageName = "${requested.group}:${requested.name}"
+
+        //保存版本号
+        def versionArray = _allVersion[packageName]
+        if (versionArray == null) {
+            versionArray = []
+            _allVersion[packageName] = versionArray
+        }
+
+        def find = versionArray.any {
+            it == requested.version
+        }
+
+        if (!find) {
+            //没有找到相同版本, 则保存起来
+            _allVersion[packageName] += requested.version
+
+            if (versionArray.size > 1) {
+                //同一个库, 具有多个版本信息
+                error "多版本: ${packageName} -> ${versionArray}"
+            }
+        }
+
+        try {
+            checkVersion(versionConfig, requested, details)
+        } catch (Throwable throwable) {
+            //throwable.printStackTrace()
+
+            if (throwable instanceof MissingPropertyException) {
+                if (!_logConfigError) {
+                    error "未找到强制版本配置信息[ext.versionConfig]."
+                }
+                _logConfigError = true
+            } else {
+                throwable.printStackTrace()
+            }
+        }
+
+        try {
+            checkVersion(libVersionConfig, requested, details)
+        } catch (Throwable ignored) {
+            //ignored.printStackTrace()
+        }
+    }
+}
+
+def checkVersion(config, requested, details) {
+    if (config instanceof Map) {
+        def packageName = "${requested.group}:${requested.name}"
+
+        //强制修改指定的版本号
+        config.each { key, value ->
+            if (key == packageName) {
+                def originVersion = requested.toString()
+                //匹配到目标
+                if (value == '') {
+                    //未设置版本号
+                    println originVersion
+                } else if (requested.version != value) {
+
+                    def log = _logVersion.any {
+                        it == packageName
+                    }
+                    if (!log) {
+                        //没有输出过log
+                        println "${originVersion}  ->  ${value}"
+                    }
+
+                    _logVersion += packageName
+
+                    details.useVersion value
+                }
+            }
+        }
+    }
+}
+
+static def error(Object msg) {
+    System.err.println msg
+}

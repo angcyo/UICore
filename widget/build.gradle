@@ -1,0 +1,13 @@
+apply from: allGradle.libBase
+
+android {
+    defaultConfig {
+        minSdkVersion 14
+    }
+}
+
+dependencies {
+    implementation project(allModule.library)
+    api "androidx.appcompat:appcompat:1.1.0"
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+}

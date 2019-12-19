@@ -1,0 +1,60 @@
+ext.maxDepth = 2
+
+/**查找所有有效module*/
+rootProject.ext.allModule = [:]
+/**查找所有gradle文件*/
+rootProject.ext.allGradle = [:]
+
+def rootPath = getRootDir()
+println "findAllModule.gradle\n查找所有Module->" + rootPath.getAbsolutePath()
+listPath(rootPath)
+//allModule.each { key, value ->
+//    println "->找到 " + value + " ::" + key
+//}
+println allModule
+println ""
+
+println "所有Gradle文件->"
+println allGradle
+println "...end...\n"
+
+/**枚举所有文件夹*/
+def listPath(filePath, depth = 0 /*当前枚举的路径深度, 深度大于maxDepth停止枚举*/, parent = "") {
+    //println filePath.getAbsolutePath() + " " + depth
+    if (depth > maxDepth) {
+        return
+    }
+
+    if (filePath.isDirectory()) {
+
+        filePath.listFiles()?.each {
+            def name = it.getName()
+            if (it.isDirectory()) {
+                includePath(it, parent)
+
+                listPath(it, depth + 1, ":" + name)
+            } else if (it.isFile()) {
+                def suffix = ".gradle"
+                if (name.endsWith(suffix)) {
+                    allGradle[name.replace(suffix, "")] = it.getAbsolutePath()
+                }
+            }
+        }
+    }
+}
+
+/**include复合目标的文件夹*/
+def includePath(filePath, parent) {
+    if (filePath.isDirectory()) {
+        def buildFile = new File(filePath, "build.gradle")
+        if (buildFile.exists()) {
+            def name = filePath.getName()
+            def path = parent + ":${name}"
+
+            //println "->include " + path
+            allModule[name] = path
+
+            //include path
+        }
+    }
+}

@@ -1,0 +1,87 @@
+static def getBuildTime() {
+    return new Date().format("yyyy-MM-dd HH:mm:ss.sss")
+}
+
+static def osName() {
+    return System.getProperty("os.name") + "@" + System.getProperty("os.version")
+}
+
+static def userName() {
+    return System.getProperty("user.name")
+}
+
+static def releaseTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+}
+
+static def apkTime() {
+    return new Date().format("yyyy-MM-dd_HH-mm", TimeZone.getTimeZone("UTC"))
+}
+
+def apk_time = apkTime()
+
+def build_time = getBuildTime()
+def release_time = releaseTime()
+
+def schema = project.hasProperty("schema") ? project.ext.schema : 'default'
+
+println "appBase.gradle\n开始编译:schema:" + schema + " time->" + build_time
+
+android {
+
+    defaultConfig {
+        resValue "string", "build_time", build_time
+        resValue "string", "os_name", osName()
+        resValue "string", "user_name", userName()
+        //resValue "bool", "SHOW_DEBUG", "true"
+
+        buildConfigField "String", "USER_NAME", '"' + userName() + '"'
+        buildConfigField "String", "BUILD_TIME", '"' + build_time + '"'
+        buildConfigField "String", "SCHEMA", '"' + schema + '"'
+    }
+
+    packagingOptions {
+        doNotStrip '*/mips/*.so'
+        doNotStrip '*/mips64/*.so'
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/uiview_release.kotlin_module'
+        exclude 'META-INF/proguard/androidx-annotations.pro'
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+    dexOptions {
+        //使用增量模式构建
+        //incremental false
+
+        //预编译
+        preDexLibraries false
+
+        //是否支持大工程模式
+        jumboMode true
+
+        //dex进程内存
+        javaMaxHeapSize "2g"
+
+        maxProcessCount 8
+
+        //线程数
+        threadCount 8
+    }
+
+    aaptOptions {
+        cruncherEnabled false
+    }
+
+    //useLibrary 'org.apache.http.legacy'
+}

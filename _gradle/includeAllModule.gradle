@@ -1,0 +1,63 @@
+ext.maxDepth = 2
+ext.includeConfig = [:]
+ext.ignoreModule = []
+
+def rootPath = getRootDir()
+println "includeAllModule.gradle\n开始包含项目in->" + rootPath.getAbsolutePath()
+def ignoreFile = new File(rootPath, 'ignore')
+if (ignoreFile.exists()) {
+    ignoreModule = ignoreFile.readLines('UTF8')
+}
+println "includeAllModule.gradle忽略以下Module->\n" + ignoreModule
+
+listPath(rootPath)
+//includeConfig.each { key, value ->
+//    println "->include " + value + " ::" + key
+//}
+println includeConfig
+println "...end...\n"
+
+/**枚举所有文件夹*/
+def listPath(filePath, depth = 0 /*当前枚举的路径深度, 深度大于maxDepth停止枚举*/, parent = "") {
+    //println filePath.getAbsolutePath() + " " + depth
+    if (depth > maxDepth) {
+        return
+    }
+
+    if (filePath.isDirectory()) {
+
+        filePath.listFiles()?.each {
+            if (it.isDirectory()) {
+                includePath(it, parent)
+
+                listPath(it, depth + 1, ":" + it.getName())
+            }
+        }
+    }
+}
+
+/**include复合目标的文件夹*/
+def includePath(filePath, parent) {
+    if (filePath.isDirectory()) {
+        def buildFile = new File(filePath, "build.gradle")
+        if (buildFile.exists()) {
+            def name = filePath.getName()
+            def path = parent + ":${name}"
+
+            def ignore = false
+            ignoreModule.each {
+                ignore = ignore || path == it || parent + ':' + it == path
+            }
+
+            if (ignore) {
+                println '忽略->' + parent + ':' + path
+            } else {
+                //println "->include " + path
+                includeConfig[name] = path
+                include path
+                //rootProject.ext.includeConfig = includeConfig
+                //rootProject.extensions.includeConfig = includeConfig
+            }
+        }
+    }
+}

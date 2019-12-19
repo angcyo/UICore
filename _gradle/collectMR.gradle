@@ -1,0 +1,106 @@
+import java.util.regex.Pattern
+
+/**
+ * Email:angcyo@126.com
+ * 收集
+ * app/build/outputs/mapping/release/mapping.txt
+ * app/build/intermediates/symbols/release/R.txt
+ * 文件
+ * @author angcyo* @date 2019/11/06
+ * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
+ */
+
+/**
+ * 文件输出的文件夹(基于项目根目录的相对路径)
+ * */
+ext.output = "apk"
+
+afterEvaluate {
+
+    def targets = []
+
+    def output = ext.output
+
+    project.tasks.each {
+        if (it.name.startsWith("assemble")) {
+            targets.add(it)
+        }
+    }
+
+    targets.each {
+        it.doLast {
+
+            //找到打包任务Task
+            def buildFlavors = pick("assemblePrePretest", '(?<=assemble).*')
+            //分割Task Flavor
+            def buildFlavorsSplit = split(buildFlavors, '([A-Z]{1}[a-z]+)')
+
+            def buildDir = project.buildDir.getAbsolutePath()
+            println buildDir
+            //mapping.txt文件路径
+            def mappingName = "mapping.txt"
+            def mappingPath = "${buildDir}/outputs/mapping/${buildFlavorsSplit[0]}/${buildFlavorsSplit[1]}/${mappingName}"
+            //def mappingFile = new File(mappingPath)
+
+            //R.txt文件路径
+            def rName = "R.txt"
+            def rPath = "${buildDir}/intermediates/symbols/${buildFlavorsSplit[0]}/${buildFlavorsSplit[1]}/${rName}"
+            //def rFile = new File(rPath)
+
+            def outputPath = "${project.rootDir.absolutePath}/${output}/"
+            copyFile(mappingPath, outputPath + mappingName)
+            copyFile(rPath, outputPath + rName)
+        }
+    }
+}
+
+static def pick(String source, String regex) {
+    def matcher = Pattern.compile(regex).matcher(source)
+    if (matcher.find()) {
+        return matcher.group()
+    } else {
+        return ""
+    }
+}
+
+static def split(String source, String regex) {
+    def matcher = Pattern.compile(regex).matcher(source)
+    def array = []
+
+    while (matcher.find()) {
+        array += matcher.group()
+    }
+
+    return array
+}
+
+/**
+ * 复制文件
+ * */
+def copyFile(String from, String toPath) {
+    InputStream input = null
+    OutputStream output = null
+    try {
+        File source = new File(from)
+        if (!source.exists()) {
+            return
+        }
+        File dest = new File(toPath)
+        println '复制文件:' + source.getAbsolutePath() + " -> " + dest.getAbsolutePath()
+
+        input = new FileInputStream(source)
+        output = new FileOutputStream(dest)
+        byte[] buf = new byte[1024]
+        int bytesRead
+        while ((bytesRead = input.read(buf)) != -1) {
+            output.write(buf, 0, bytesRead)
+        }
+    } finally {
+        if (input != null) {
+            input.close()
+        }
+        if (output != null) {
+            output.close()
+        }
+    }
+}

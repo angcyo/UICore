@@ -1,0 +1,7 @@
+apply from: allGradle.libBase
+
+android {
+    defaultConfig {
+        minSdkVersion 14
+    }
+}
