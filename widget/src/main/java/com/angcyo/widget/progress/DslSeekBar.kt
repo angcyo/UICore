@@ -107,7 +107,7 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
                 )
 
             _dslGradientDrawable.gradientSolidColor =
-                typedArray.getDimensionPixelOffset(
+                typedArray.getColor(
                     R.styleable.DslSeekBar_seek_thumb_solid_color,
                     getColor(R.color.colorAccent)
                 )
