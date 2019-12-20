@@ -7,5 +7,6 @@ android {
 }
 
 dependencies {
-    implementation project(allModule.widget)
+    implementation project(allModule.library)
+    implementation "androidx.annotation:annotation:1.1.0"
 }

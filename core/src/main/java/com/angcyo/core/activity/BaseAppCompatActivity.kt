@@ -21,9 +21,7 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         baseDslViewHolder = DslViewHolder(window.decorView)
-        setContentView(getActivityLayoutId())
         onCreateAfter(savedInstanceState)
-        intent?.let { onHandleIntent(it) }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -33,7 +31,9 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
 
     /**布局设置之后触发*/
     open fun onCreateAfter(savedInstanceState: Bundle?) {
-
+        enableLayoutFullScreen()
+        setContentView(getActivityLayoutId())
+        intent?.let { onHandleIntent(it) }
     }
 
     /**

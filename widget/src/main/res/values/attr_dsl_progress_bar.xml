@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DslProgressBar">
+        <attr name="progress_bg_drawable" format="reference|color" />
+        <attr name="progress_track_drawable" format="reference|color" />
+
+        <!--多个色值用,隔开-->
+        <attr name="progress_bg_gradient_colors" format="string|color" />
+        <attr name="progress_track_drawable_gradient_colors" format="string|color" />
+
+        <!--圆角大小-->
+        <attr name="progress_radius" format="dimension" />
+
+        <attr name="progress_max_value" format="integer" />
+        <attr name="progress_value" format="integer" />
+    </declare-styleable>
+</resources>

@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.ViewGroup
+import com.angcyo.drawable.base.DslGradientDrawable
 import java.util.*
 import kotlin.math.absoluteValue
 import kotlin.math.max

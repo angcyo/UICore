@@ -7,6 +7,7 @@ android {
 }
 
 dependencies {
-    implementation project(allModule.library)
-    implementation project(allModule.widget)
+    api project(allModule.library)
+    api project(allModule.widget)
+    api 'androidx.core:core-ktx:1.1.0'
 }

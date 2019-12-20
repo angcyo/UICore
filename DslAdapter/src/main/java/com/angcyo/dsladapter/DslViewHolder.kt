@@ -61,8 +61,16 @@ open class DslViewHolder(itemView: View, initialCapacity: Int = 32) : ViewHolder
         view?.setOnClickListener(listener)
     }
 
+    fun click(@IdRes id: Int, listener: (View) -> Unit) {
+        click(id, View.OnClickListener { listener.invoke(it) })
+    }
+
     fun clickItem(listener: View.OnClickListener?) {
         click(itemView, listener)
+    }
+
+    fun clickItem(listener: (View) -> Unit) {
+        click(itemView, View.OnClickListener { listener.invoke(it) })
     }
 
     fun click(view: View?, listener: View.OnClickListener?) {
@@ -71,6 +79,10 @@ open class DslViewHolder(itemView: View, initialCapacity: Int = 32) : ViewHolder
 
     fun post(runnable: Runnable?) {
         itemView.post(runnable)
+    }
+
+    fun post(runnable: () -> Unit) {
+        itemView.post { runnable.invoke() }
     }
 
     fun postDelay(runnable: Runnable?, delayMillis: Long) {

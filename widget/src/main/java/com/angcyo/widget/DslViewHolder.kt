@@ -69,40 +69,40 @@ open class DslViewHolder(itemView: View, initialCapacity: Int = 32) : ViewHolder
         view?.setOnClickListener(listener)
     }
 
-    fun post(runnable: Runnable?) {
+    fun post(runnable: Runnable) {
         itemView.post(runnable)
     }
 
-    fun postDelay(runnable: Runnable?, delayMillis: Long) {
+    fun postDelay(runnable: Runnable, delayMillis: Long) {
         itemView.postDelayed(runnable, delayMillis)
     }
 
-    fun postDelay(delayMillis: Long, runnable: Runnable?) {
+    fun postDelay(delayMillis: Long, runnable: Runnable) {
         postDelay(runnable, delayMillis)
     }
 
-    fun removeCallbacks(runnable: Runnable?) {
+    fun removeCallbacks(runnable: Runnable) {
         itemView.removeCallbacks(runnable)
     }
 
-    fun tv(@IdRes resId: Int): TextView {
-        return v<View>(resId) as TextView
+    fun tv(@IdRes resId: Int): TextView? {
+        return v<View>(resId) as? TextView
     }
 
-    fun img(@IdRes resId: Int): ImageView {
-        return v<View>(resId) as ImageView
+    fun img(@IdRes resId: Int): ImageView? {
+        return v<View>(resId) as? ImageView
     }
 
-    fun rv(@IdRes resId: Int): RecyclerView {
-        return v<View>(resId) as RecyclerView
+    fun rv(@IdRes resId: Int): RecyclerView? {
+        return v<View>(resId) as? RecyclerView
     }
 
-    fun group(@IdRes resId: Int): ViewGroup {
-        return group(v<View>(resId)!!)
+    fun group(@IdRes resId: Int): ViewGroup? {
+        return group(v<View>(resId))
     }
 
-    fun group(view: View): ViewGroup {
-        return view as ViewGroup
+    fun group(view: View?): ViewGroup? {
+        return view as? ViewGroup
     }
 
     fun <T : View?> focus(@IdRes resId: Int): T? {
@@ -111,17 +111,17 @@ open class DslViewHolder(itemView: View, initialCapacity: Int = 32) : ViewHolder
             v.isFocusable = true
             v.isFocusableInTouchMode = true
             v.requestFocus()
-            return v as T
+            return v as? T
         }
         return null
     }
 
-    fun view(@IdRes resId: Int): View {
-        return v<View>(resId)!!
+    fun view(@IdRes resId: Int): View? {
+        return v<View>(resId)
     }
 
     fun isVisible(@IdRes resId: Int): Boolean {
-        return v<View>(resId)!!.visibility == View.VISIBLE
+        return v<View>(resId)?.visibility == View.VISIBLE
     }
 
     fun visible(@IdRes resId: Int): View? {
@@ -129,7 +129,7 @@ open class DslViewHolder(itemView: View, initialCapacity: Int = 32) : ViewHolder
     }
 
     fun visible(@IdRes resId: Int, visible: Boolean): DslViewHolder {
-        val view = v<View>(resId)!!
+        val view = v<View>(resId)
         if (visible) {
             visible(view)
         } else {

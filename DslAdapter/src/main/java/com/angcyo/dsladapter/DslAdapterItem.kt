@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
+import com.angcyo.library.L
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 

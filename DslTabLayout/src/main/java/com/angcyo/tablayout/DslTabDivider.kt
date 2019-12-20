@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.widget.LinearLayout
+import com.angcyo.drawable.base.DslGradientDrawable
 
 /**
  * 垂直分割线

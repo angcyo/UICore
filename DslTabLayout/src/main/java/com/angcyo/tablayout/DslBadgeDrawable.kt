@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.Gravity
+import com.angcyo.drawable.base.DslGradientDrawable
 
 /**
  * 未读数, 未读小红点, 角标绘制Drawable
