@@ -1,9 +1,9 @@
-package com.angcyo.core.activity
+package com.angcyo.activity
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.angcyo.core.R
+import com.angcyo.fragment.R
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -16,7 +16,7 @@ import com.angcyo.widget.DslViewHolder
 abstract class BaseAppCompatActivity : AppCompatActivity() {
     lateinit var baseDslViewHolder: DslViewHolder
 
-    open fun getActivityLayoutId() = R.layout.activity_main_layout
+    open fun getActivityLayoutId() = R.layout.lib_activity_main_layout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +32,11 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
     /**布局设置之后触发*/
     open fun onCreateAfter(savedInstanceState: Bundle?) {
         enableLayoutFullScreen()
-        setContentView(getActivityLayoutId())
+        with(getActivityLayoutId()) {
+            if (this > 0) {
+                setContentView(this)
+            }
+        }
         intent?.let { onHandleIntent(it) }
     }
 

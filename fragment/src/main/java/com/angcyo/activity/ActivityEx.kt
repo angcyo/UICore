@@ -1,11 +1,10 @@
-package com.angcyo.core.activity
+package com.angcyo.activity
 
 import android.app.Activity
 import android.graphics.Color
 import android.os.Build
 import android.view.View
 import android.view.WindowManager
-import com.angcyo.widget.base.remove
 
 /**
  *
@@ -34,3 +33,5 @@ fun Activity.enableLayoutFullScreen(enable: Boolean = true) {
         }
     }
 }
+
+private fun Int.remove(value: Int): Int = this and value.inv()
