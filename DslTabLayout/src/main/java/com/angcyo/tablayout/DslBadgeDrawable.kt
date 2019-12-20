@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.Gravity
+import com.angcyo.drawable.DslGravity
 import com.angcyo.drawable.base.DslGradientDrawable
 
 /**

@@ -10,8 +10,15 @@
 
         <!--圆角大小-->
         <attr name="progress_radius" format="dimension" />
-
         <attr name="progress_max_value" format="integer" />
         <attr name="progress_value" format="integer" />
+
+        <!--提示文本-->
+        <attr name="progress_show_text" format="boolean" />
+        <attr name="progress_text_size" format="dimension" />
+        <attr name="progress_text_min_width" format="dimension" />
+        <attr name="progress_text_color" format="color" />
+        <attr name="progress_text_format" format="string" />
+
     </declare-styleable>
 </resources>

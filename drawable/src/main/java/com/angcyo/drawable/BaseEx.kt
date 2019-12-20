@@ -1,6 +1,7 @@
 package com.angcyo.drawable
 
 import android.content.res.Resources
+import android.graphics.Paint
 
 /**
  *
@@ -28,4 +29,14 @@ fun Float.toDp(): Float {
 
 fun Float.toDpi(): Int {
     return (this * dpi).toInt()
+}
+
+/**文本的宽度*/
+fun Paint.textWidth(text: String?): Float {
+    return measureText(text ?: "")
+}
+
+/**文本的高度*/
+fun Paint.textHeight(): Float {
+    return descent() - ascent()
 }
