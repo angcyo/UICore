@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.angcyo.fragment.R
+import com.angcyo.library.ex.isDebug
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -38,8 +39,10 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        baseDslViewHolder.postDelay(300) {
-            showDebugInfoView()
+        if (isDebug()) {
+            baseDslViewHolder.postDelay(300) {
+                showDebugInfoView()
+            }
         }
     }
 
