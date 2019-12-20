@@ -5,6 +5,8 @@ import android.content.Context
 import android.graphics.Rect
 import android.view.View
 import android.view.Window
+import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat
 
 /**
  *
@@ -56,4 +58,8 @@ fun Context.navBarHeight(): Int {
         }
     }
     return result
+}
+
+fun Context.getColor(@ColorRes id: Int): Int {
+    return ContextCompat.getColor(this, id)
 }

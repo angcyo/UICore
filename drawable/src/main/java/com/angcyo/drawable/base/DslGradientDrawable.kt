@@ -87,6 +87,14 @@ open class DslGradientDrawable : AbsDslDrawable() {
         }
     }
 
+    fun fillRadii(radius: Float) {
+        Arrays.fill(gradientRadii, radius)
+    }
+
+    fun fillRadii(radius: Int) {
+        _fillRadii(gradientRadii, radius.toFloat())
+    }
+
     fun _fillRadii(array: FloatArray, radius: Float) {
         Arrays.fill(array, radius)
     }
@@ -112,7 +120,7 @@ open class DslGradientDrawable : AbsDslDrawable() {
     }
 
     /**构建或者更新[originDrawable]*/
-    open fun updateOriginDrawable() {
+    open fun updateOriginDrawable(): GradientDrawable? {
         val drawable: GradientDrawable? = when (originDrawable) {
             null -> GradientDrawable()
             is GradientDrawable -> originDrawable as GradientDrawable
@@ -154,6 +162,8 @@ open class DslGradientDrawable : AbsDslDrawable() {
             originDrawable = this
             invalidateSelf()
         }
+
+        return drawable
     }
 
     open fun configDrawable(config: DslGradientDrawable.() -> Unit): DslGradientDrawable {

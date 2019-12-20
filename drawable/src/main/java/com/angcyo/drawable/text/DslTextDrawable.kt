@@ -3,13 +3,14 @@ package com.angcyo.drawable.text
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.text.TextUtils
+import android.graphics.drawable.Drawable
 import android.view.Gravity
 import com.angcyo.drawable.DslGravity
 import com.angcyo.drawable.base.AbsDslDrawable
 import com.angcyo.drawable.dp
 import com.angcyo.drawable.textHeight
 import com.angcyo.drawable.textWidth
+import kotlin.math.max
 
 /**
  *
@@ -40,6 +41,9 @@ open class DslTextDrawable : AbsDslDrawable() {
     /**绘制的文本*/
     var text: String? = null
 
+    /**文本背景*/
+    var textBgDrawable: Drawable? = null
+
     val _dslGravity = DslGravity()
 
     init {
@@ -57,8 +61,13 @@ open class DslTextDrawable : AbsDslDrawable() {
 
     override fun draw(canvas: Canvas) {
 
-        if (TextUtils.isEmpty(text)) {
+        if (text == null) {
             return
+        }
+
+        textBgDrawable?.apply {
+            bounds = this@DslTextDrawable.bounds
+            draw(canvas)
         }
 
         with(_dslGravity) {
@@ -78,5 +87,13 @@ open class DslTextDrawable : AbsDslDrawable() {
                 )
             }
         }
+    }
+
+    override fun getIntrinsicWidth(): Int {
+        return max(textWidth.toInt(), textBgDrawable?.minimumWidth ?: 0)
+    }
+
+    override fun getIntrinsicHeight(): Int {
+        return max(textHeight.toInt(), textBgDrawable?.minimumHeight ?: 0)
     }
 }

@@ -4,5 +4,10 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="white">#FFFFFF</color>
+    <!--全透明-->
     <color name="transparent">#00000000</color>
+    <!--不透明度20%-->
+    <color name="transparent20">#33000000</color>
+    <!--不透明度100%-->
+    <color name="transparent100">#FF000000</color>
 </resources>

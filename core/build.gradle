@@ -9,5 +9,7 @@ android {
 dependencies {
     api project(allModule.library)
     api project(allModule.widget)
+    api project(allModule.DslAdapter)
+    api project(allModule.DslTabLayout)
     api 'androidx.core:core-ktx:1.1.0'
 }

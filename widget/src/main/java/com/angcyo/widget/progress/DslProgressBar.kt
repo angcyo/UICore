@@ -9,12 +9,14 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.math.MathUtils
 import com.angcyo.drawable.base.DslGradientDrawable
 import com.angcyo.drawable.text.DslTextDrawable
 import com.angcyo.drawable.toDp
 import com.angcyo.drawable.toDpi
 import com.angcyo.widget.R
 import com.angcyo.widget.base.anim
+import com.angcyo.widget.base.getColor
 import kotlin.math.max
 
 /**
@@ -39,7 +41,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     /**当前的进度*/
     var progressValue: Int = 0
         set(value) {
-            field = value
+            field = MathUtils.clamp(value, 0, progressMaxValue)
             postInvalidate()
         }
 
@@ -81,6 +83,10 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             R.styleable.DslProgressBar_progress_radius,
             progressRadius
         )
+        progressTextOffset = typedArray.getDimensionPixelOffset(
+            R.styleable.DslProgressBar_progress_text_offset,
+            progressTextOffset
+        )
 
         //检测是否需要渐变, 渐变至少需要2个色值
         if ((progressBgDrawable is ColorDrawable || progressBgDrawable == null) &&
@@ -113,6 +119,8 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             }
 
             setTrackGradientColors(colors)
+        } else if (progressTrackDrawable == null) {
+            setTrackGradientColors("${getColor(R.color.colorPrimaryDark)},${getColor(R.color.colorPrimary)}")
         }
         //----end
 
@@ -133,7 +141,10 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             ?: progressTextFormat
         //---end
 
-        progressValue = typedArray.getInt(R.styleable.DslProgressBar_progress_value, progressValue)
+        progressValue = typedArray.getInt(
+            R.styleable.DslProgressBar_progress_value,
+            if (isInEditMode) 50 else progressValue
+        )
         progressMaxValue =
             typedArray.getInt(R.styleable.DslProgressBar_progress_max_value, progressMaxValue)
 
@@ -179,18 +190,24 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         }
     }
 
+    //0.1 0.8 0.9进度
     val _progressFraction: Float
         get() = progressValue * 1f / progressMaxValue
 
     //绘制进度轨道
     open fun drawTrack(canvas: Canvas) {
-        canvas.save()
-        canvas.scale(_progressFraction, 1f, 0f, 0f)
+        val pBound = _progressBound
         progressTrackDrawable?.apply {
-            bounds = _progressBound
+
+            setBounds(
+                pBound.left,
+                pBound.top,
+                (pBound.left + pBound.width() * _progressFraction).toInt(),
+                pBound.bottom
+            )
+
             draw(canvas)
         }
-        canvas.restore()
     }
 
     open fun drawProgressText(canvas: Canvas) {
@@ -232,16 +249,18 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
      * 设置进度
      * @param doAnim 是否使用动画
      * */
-    fun setProgress(progress: Int, doAnim: Boolean = true) {
+    open fun setProgress(progress: Int, doAnim: Boolean = true) {
         _animtor?.cancel()
+        _animtor = null
+        val p = MathUtils.clamp(progress, 0, progressMaxValue)
         if (doAnim) {
-            _animtor = anim(this.progressValue, progress) {
+            _animtor = anim(this.progressValue, p) {
                 onAnimatorUpdateValue = { value, _ ->
                     this@DslProgressBar.progressValue = value as Int
                 }
             }
         } else {
-            this.progressValue = progress
+            this.progressValue = p
         }
     }
 }

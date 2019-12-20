@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DslSeekBar">
+        <attr name="seek_thumb_drawable" format="reference|color" />
+        <attr name="seek_thumb_solid_color" format="color" />
+        <attr name="seek_thumb_stroke_color" format="color" />
+        <attr name="seek_thumb_stroke_width" format="dimension" />
+        <attr name="progress_height" format="dimension" />
+        <attr name="seek_thumb_over_height" format="dimension" />
+        <attr name="seek_thumb_text_bg_drawable" format="reference" />
+        <attr name="seek_show_thumb_text" format="boolean" />
+    </declare-styleable>
+</resources>

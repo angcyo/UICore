@@ -272,18 +272,11 @@ object L {
         printLine(tag, false)
     }
 
-    fun wrapperContent(
-        tag: String?,
-        vararg objects: Any?
-    ): Array<String?> {
+    fun wrapperContent(tag: String?, vararg objects: Any): Array<String> {
         return wrapperContent(6, tag, *objects)
     }
 
-    fun wrapperContent(
-        level: Int,
-        tag: String?,
-        vararg objects: Any?
-    ): Array<String?> {
+    fun wrapperContent(level: Int, tag: String?, vararg objects: Any): Array<String> {
         var tag = tag
         if (TextUtils.isEmpty(tag)) {
             tag = TAG
@@ -321,32 +314,27 @@ object L {
         val methodNameShort =
             methodName.substring(0, 1).toUpperCase() + methodName.substring(1)
         val msg =
-            objects?.let { getObjectsString(it) } ?: "Log with null object"
+            objects.let { getObjectsString(*it) }
         //        String headString = "[(" + className + ":" + lineNumber + ")#" + methodNameShort + " ] ";
         val headString =
             "[(" + nextFileName + ":" + nextLineNumber + ")#" + nextMethodName +
                     "(" + fileName + ":" + lineNumber + ")#" + Thread.currentThread().name + "#" + methodNameShort + " ] "
-        return arrayOf(tag, msg, headString)
+        return arrayOf(tag!!, msg, headString)
     }
 
     private fun getObjectsString(vararg objects: Any): String {
         return if (objects.size > 1) {
             val stringBuilder = StringBuilder()
             stringBuilder.append("\n")
-            for (i in 0 until objects.size) {
-                val `object` = objects[i]
-                if (`object` == null) {
-                    stringBuilder.append("param").append("[").append(i).append("]").append(" = ")
-                        .append("null").append("\n")
-                } else {
-                    stringBuilder.append("param").append("[").append(i).append("]").append(" = ")
-                        .append(`object`.toString()).append("\n")
-                }
+            for (i in objects.indices) {
+                val obj = objects[i]
+                stringBuilder.append("param").append("[").append(i).append("]").append(" = ")
+                    .append(obj.toString()).append("\n")
             }
             stringBuilder.toString()
         } else {
-            val `object` = objects[0]
-            `object`?.toString() ?: "null"
+            val obj = objects[0]
+            obj.toString()
         }
     }
 
