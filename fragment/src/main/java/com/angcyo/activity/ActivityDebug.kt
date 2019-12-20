@@ -74,12 +74,23 @@ fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug())
                 val y = height.toDouble().pow(2.0)
                 val screenInches = sqrt(x + y)
 
-                textView.text =
-                    "wp:${displayMetrics.widthPixels} hp:${displayMetrics.heightPixels}\n" +
-                            "dw:${decorView.measuredWidth} dh:${decorView.measuredHeight}\n" +
-                            "cw:${rootView.measuredWidth} ch:${rootView.measuredHeight}\n" +
-                            "wDp:$widthDp hDp:$heightDp\n" +
-                            "w:$width h:$height inches:$screenInches"
+                textView.text = buildString {
+                    append("wp:").append(displayMetrics.widthPixels)
+                    append(" hp:").appendln(displayMetrics.heightPixels)
+
+                    append("dw:").append(decorView.measuredWidth)
+                    append(" dh:").appendln(decorView.measuredHeight)
+
+                    append("cw:").append(rootView.measuredWidth)
+                    append(" ch:").appendln(rootView.measuredHeight)
+
+                    append("wDp:").append(widthDp)
+                    append(" hDp:").appendln(heightDp)
+
+                    append("w:").append(width)
+                    append(" h:").append(height)
+                    append(" inches:").appendln(screenInches)
+                }
             }
 
             textView.setOnLongClickListener {
