@@ -10,4 +10,6 @@
     <color name="transparent20">#33000000</color>
     <!--不透明度100%-->
     <color name="transparent100">#FF000000</color>
+
+    <color name="status_bar_color">#60000000</color>
 </resources>

@@ -1,10 +1,13 @@
 package com.angcyo.activity
 
 import android.app.Activity
-import android.graphics.Color
+import android.content.Context
 import android.os.Build
 import android.view.View
 import android.view.WindowManager
+import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat
+import com.angcyo.fragment.R
 
 /**
  *
@@ -19,7 +22,7 @@ fun Activity.enableLayoutFullScreen(enable: Boolean = true) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.statusBarColor = Color.TRANSPARENT
+        setStatusBarColor(ContextCompat.getColor(this, R.color.status_bar_color))
         val decorView = window.decorView
         var systemUiVisibility = decorView.systemUiVisibility
         if (enable) { //https://blog.csdn.net/xiaonaihe/article/details/54929504
@@ -31,6 +34,17 @@ fun Activity.enableLayoutFullScreen(enable: Boolean = true) {
                 systemUiVisibility.remove(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
             decorView.systemUiVisibility = systemUiVisibility
         }
+    }
+}
+
+fun Context.getColor(@ColorRes id: Int): Int {
+    return ContextCompat.getColor(this, id)
+}
+
+/**设置状态栏颜色*/
+fun Activity.setStatusBarColor(color: Int) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        window.statusBarColor = color
     }
 }
 
