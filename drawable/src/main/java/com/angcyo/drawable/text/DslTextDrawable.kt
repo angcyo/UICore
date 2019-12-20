@@ -41,6 +41,10 @@ open class DslTextDrawable : AbsDslDrawable() {
     /**绘制的文本*/
     var text: String? = null
 
+    /**偏移纠正*/
+    var textOffsetX = 0
+    var textOffsetY = 0
+
     /**文本背景*/
     var textBgDrawable: Drawable? = null
 
@@ -81,8 +85,8 @@ open class DslTextDrawable : AbsDslDrawable() {
                 //绘制文本
                 canvas.drawText(
                     text!!,
-                    textDrawX,
-                    textDrawY - textPaint.descent(),
+                    textDrawX + textOffsetX,
+                    textDrawY - textPaint.descent() + textOffsetY,
                     textPaint
                 )
             }

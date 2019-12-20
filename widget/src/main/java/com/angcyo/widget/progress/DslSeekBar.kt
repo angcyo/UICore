@@ -43,6 +43,9 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
 
     /**显示提示文本*/
     var showThumbText = false
+    var seekThumbTextOffsetX = 0
+    var seekThumbTextOffsetY = 0
+
     var thumbTextBgDrawable: Drawable? = null
 
     //如果未强制指定[seekThumbDrawable], 则用属性构建一个
@@ -55,6 +58,8 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
                 textBgDrawable = thumbTextBgDrawable
                 textSize = progressTextSize
                 textColor = progressTextColor
+                textOffsetX = seekThumbTextOffsetX
+                textOffsetY = seekThumbTextOffsetY
                 text = progressTextFormat.format("${(_progressFraction * 100).toInt()}")
             }
             return field
@@ -71,6 +76,14 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
         seekThumbOverHeight = typedArray.getDimensionPixelOffset(
             R.styleable.DslSeekBar_seek_thumb_over_height,
             seekThumbOverHeight
+        )
+        seekThumbTextOffsetX = typedArray.getDimensionPixelOffset(
+            R.styleable.DslSeekBar_seek_thumb_text_offset_x,
+            seekThumbTextOffsetX
+        )
+        seekThumbTextOffsetY = typedArray.getDimensionPixelOffset(
+            R.styleable.DslSeekBar_seek_thumb_text_offset_y,
+            seekThumbTextOffsetY
         )
 
         seekThumbDrawable = typedArray.getDrawable(R.styleable.DslSeekBar_seek_thumb_drawable)
