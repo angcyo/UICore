@@ -1,6 +1,7 @@
 package com.angcyo.activity
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.angcyo.fragment.R
@@ -14,6 +15,7 @@ import com.angcyo.widget.DslViewHolder
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 abstract class BaseAppCompatActivity : AppCompatActivity() {
+
     lateinit var baseDslViewHolder: DslViewHolder
 
     open fun getActivityLayoutId() = R.layout.lib_activity_main_layout
@@ -27,6 +29,18 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         intent?.let { onHandleIntent(it, true) }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        showDebugInfoView(hasFocus)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        baseDslViewHolder.postDelay(300) {
+            showDebugInfoView()
+        }
     }
 
     /**布局设置之后触发*/

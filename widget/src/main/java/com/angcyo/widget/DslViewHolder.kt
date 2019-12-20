@@ -61,15 +61,31 @@ open class DslViewHolder(itemView: View, initialCapacity: Int = 32) : ViewHolder
         view?.setOnClickListener(listener)
     }
 
+    fun click(@IdRes id: Int, listener: (View) -> Unit) {
+        click(id, View.OnClickListener { listener.invoke(it) })
+    }
+
     fun clickItem(listener: View.OnClickListener?) {
         click(itemView, listener)
+    }
+
+    fun clickItem(listener: (View) -> Unit) {
+        click(itemView, View.OnClickListener { listener.invoke(it) })
     }
 
     fun click(view: View?, listener: View.OnClickListener?) {
         view?.setOnClickListener(listener)
     }
 
+    fun click(view: View?, listener: (View) -> Unit) {
+        view?.setOnClickListener { listener.invoke(it) }
+    }
+
     fun post(runnable: Runnable) {
+        itemView.post(runnable)
+    }
+
+    fun post(runnable: () -> Unit) {
         itemView.post(runnable)
     }
 
@@ -81,7 +97,19 @@ open class DslViewHolder(itemView: View, initialCapacity: Int = 32) : ViewHolder
         postDelay(runnable, delayMillis)
     }
 
-    fun removeCallbacks(runnable: Runnable) {
+    fun postDelay(delayMillis: Long, runnable: () -> Unit) {
+        postDelay(Runnable { runnable.invoke() }, delayMillis)
+    }
+
+    var _onceRunnbale: Runnable? = null
+
+    fun postOnce(delayMillis: Long = 0, runnable: () -> Unit) {
+        removeCallbacks(_onceRunnbale)
+        _onceRunnbale = Runnable { runnable.invoke() }
+        postDelay(_onceRunnbale!!, delayMillis)
+    }
+
+    fun removeCallbacks(runnable: Runnable?) {
         itemView.removeCallbacks(runnable)
     }
 
