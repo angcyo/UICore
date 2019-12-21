@@ -62,10 +62,10 @@ android {
 
     dexOptions {
         //使用增量模式构建
-        //incremental false
+        incremental true
 
         //预编译
-        preDexLibraries false
+        preDexLibraries true
 
         //是否支持大工程模式
         jumboMode true
@@ -79,9 +79,9 @@ android {
         threadCount 8
     }
 
-    aaptOptions {
-        cruncherEnabled false
-    }
+//    aaptOptions {
+//        cruncherEnabled false
+//    }
 
     //useLibrary 'org.apache.http.legacy'
 }

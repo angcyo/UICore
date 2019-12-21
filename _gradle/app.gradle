@@ -56,7 +56,7 @@ android {
         versionCode Integer.parseInt(_V_CODE)
         versionName "$_V_NAME"
         multiDexEnabled true
-        resConfigs "zh" //, "en"
+        resConfigs "zh", "xxhdpi" //, "en"
 
         buildConfigField "boolean", "SHOW_DEBUG", "false"
 
@@ -103,31 +103,19 @@ android {
     buildTypes {
         release {
             //applicationIdSuffix ".release"
-            zipAlignEnabled true
-            shrinkResources false
+            initWith debug
             minifyEnabled _minify_enabled
-//            useProguard _use_proguard
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.angcyo
             debuggable false
             jniDebuggable = false
             crunchPngs = true
         }
         pretest {
             //applicationIdSuffix ".release"
-            zipAlignEnabled true
-            shrinkResources false
+            initWith debug
             minifyEnabled _minify_enabled
-//            useProguard _use_proguard
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.angcyo
-            debuggable true
-            jniDebuggable = true
-            crunchPngs = true
         }
         debug {
             //applicationIdSuffix ".debug"
-            debuggable true
             zipAlignEnabled true
             shrinkResources false
             minifyEnabled _minify_enabled_debug
@@ -136,7 +124,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             debuggable true
             jniDebuggable = true
-            crunchPngs = true
+            crunchPngs = false
+
+            ext.enableCrashlytics = false
+            ext.alwaysUpdateBuildId = false
         }
     }
     lintOptions {
