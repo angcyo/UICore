@@ -85,11 +85,14 @@ fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug())
                     append(" ch:").appendln(rootView.measuredHeight)
 
                     append("wDp:").append(widthDp)
-                    append(" hDp:").appendln(heightDp)
+                    append(" hDp:").append(heightDp)
+                    append(" dp:").append(displayMetrics.density)
+                    append(" sp:").append(displayMetrics.scaledDensity)
+                    append(" dpi:").appendln(displayMetrics.densityDpi)
 
-                    append("w:").append(width)
-                    append(" h:").append(height)
-                    append(" inches:").appendln(screenInches)
+                    append("w:").append("%.02f".format(width))
+                    append(" h:").append("%.02f".format(height))
+                    append(" inches:").append("%.02f".format(screenInches))
                 }
             }
 
