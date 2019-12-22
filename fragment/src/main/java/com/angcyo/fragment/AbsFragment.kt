@@ -1,5 +1,6 @@
 package com.angcyo.fragment
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -38,6 +39,7 @@ abstract class AbsFragment : Fragment() {
     //</editor-fold desc="对象变量">
 
     //<editor-fold desc="对象属性">
+
     lateinit var baseViewHolder: DslViewHolder
 
     lateinit var attachContext: Context
@@ -97,6 +99,11 @@ abstract class AbsFragment : Fragment() {
 
     override fun getContext(): Context {
         return super.getContext() ?: attachContext
+    }
+
+    /**当需要操作[Activity]时*/
+    fun withActivity(config: Activity.() -> Unit) {
+        activity?.run { config() } ?: (context as? Activity)?.run { config() }
     }
 
     /**
