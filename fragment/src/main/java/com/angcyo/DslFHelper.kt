@@ -4,6 +4,7 @@ import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
+import com.angcyo.base.getFragmentTag
 import com.angcyo.base.getLastFragmentContainerId
 import com.angcyo.base.log
 import com.angcyo.base.restore
@@ -116,7 +117,7 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
                     else -> add(
                         containerViewId,
                         absLifecycleFragment,
-                        absLifecycleFragment.tag
+                        absLifecycleFragment.getFragmentTag()
                     )
                 }
                 if (showFragmentList.lastIndex == index) {

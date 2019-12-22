@@ -25,7 +25,7 @@ fun FragmentManager.restore(vararg fragment: Fragment): List<Fragment> {
     val list = mutableListOf<Fragment>()
 
     for (f in fragment) {
-        list.add(findFragmentByTag(f.tag) ?: f)
+        list.add(findFragmentByTag(f.getFragmentTag()) ?: f)
     }
 
     return list
@@ -97,7 +97,7 @@ fun FragmentManager.dslFHelper(config: DslFHelper.() -> Unit) {
     }
 }
 
-fun Fragment.getTag(): String? {
+fun Fragment.getFragmentTag(): String? {
     return if (this is IFragment) this.getFragmentTag() else this.javaClass.name
 }
 
