@@ -18,7 +18,14 @@ import java.lang.ref.WeakReference
  * @date 2019/08/09
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-open class DslViewHolder(itemView: View, initialCapacity: Int = 32) : ViewHolder(itemView) {
+open class DslViewHolder(
+    itemView: View,
+    initialCapacity: Int = DEFAULT_INITIAL_CAPACITY
+) : ViewHolder(itemView) {
+
+    companion object {
+        var DEFAULT_INITIAL_CAPACITY = 32
+    }
 
     /**
      * findViewById是循环枚举所有子View的, 多少也是消耗性能的, +一个缓存
