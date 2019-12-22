@@ -21,11 +21,11 @@ import com.angcyo.library.L
 /**
  * 优先根据[TAG]恢复已经存在[Fragment]
  * */
-fun FragmentManager.restore(vararg fragment: AbsLifecycleFragment): List<AbsLifecycleFragment> {
-    val list = mutableListOf<AbsLifecycleFragment>()
+fun FragmentManager.restore(vararg fragment: Fragment): List<Fragment> {
+    val list = mutableListOf<Fragment>()
 
     for (f in fragment) {
-        list.add(findFragmentByTag(f.getFragmentTag()) as? AbsLifecycleFragment ?: f)
+        list.add(findFragmentByTag(f.tag) ?: f)
     }
 
     return list
@@ -95,6 +95,10 @@ fun FragmentManager.dslFHelper(config: DslFHelper.() -> Unit) {
         this.config()
         doIt()
     }
+}
+
+fun Fragment.getTag(): String? {
+    return if (this is IFragment) this.getFragmentTag() else this.javaClass.name
 }
 
 fun FragmentManager.log() {

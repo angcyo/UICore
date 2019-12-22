@@ -202,6 +202,6 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
     //</editor-fold>
 
     override fun getFragmentTag(): String {
-        return this.javaClass.simpleName
+        return this.javaClass.name
     }
 }

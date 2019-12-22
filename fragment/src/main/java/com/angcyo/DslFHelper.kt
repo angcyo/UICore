@@ -17,10 +17,10 @@ import com.angcyo.library.ex.isDebug
  * @author angcyo
  * @date 2019/12/22
  */
-class DslFHelper(val fm: FragmentManager) {
+class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
 
     /**这个列表中的[Fragment]将会被执行[add]操作*/
-    val showFragmentList = mutableListOf<AbsLifecycleFragment>()
+    val showFragmentList = mutableListOf<Fragment>()
 
     /**这个列表中的[Fragment]将会被执行[remove]操作*/
     val removeFragmentList = mutableListOf<Fragment>()
@@ -30,13 +30,13 @@ class DslFHelper(val fm: FragmentManager) {
     var containerViewId: Int = fm.getLastFragmentContainerId(R.id.fragment_container)
 
     init {
-        FragmentManager.enableDebugLogging(isDebug())
+        FragmentManager.enableDebugLogging(debug)
     }
 
     //<editor-fold desc="add 或者 show操作">
 
-    fun show(vararg fClass: Class<out AbsLifecycleFragment>) {
-        val list = mutableListOf<AbsLifecycleFragment>()
+    fun show(vararg fClass: Class<out Fragment>) {
+        val list = mutableListOf<Fragment>()
         for (cls in fClass) {
             list.add(
                 fm.fragmentFactory.instantiate(
@@ -48,11 +48,11 @@ class DslFHelper(val fm: FragmentManager) {
         show(list)
     }
 
-    fun show(vararg fragment: AbsLifecycleFragment) {
+    fun show(vararg fragment: Fragment) {
         show(fragment.toList())
     }
 
-    fun show(fragmentList: List<AbsLifecycleFragment>) {
+    fun show(fragmentList: List<Fragment>) {
         fragmentList.forEach {
             if (!showFragmentList.contains(it)) {
                 showFragmentList.add(it)
@@ -64,7 +64,7 @@ class DslFHelper(val fm: FragmentManager) {
         show(fm.restore(*tag))
     }
 
-    fun restore(vararg fragment: AbsLifecycleFragment) {
+    fun restore(vararg fragment: Fragment) {
         show(fm.restore(*fragment))
     }
 
@@ -116,7 +116,7 @@ class DslFHelper(val fm: FragmentManager) {
                     else -> add(
                         containerViewId,
                         absLifecycleFragment,
-                        absLifecycleFragment.getFragmentTag()
+                        absLifecycleFragment.tag
                     )
                 }
                 if (showFragmentList.lastIndex == index) {
@@ -126,7 +126,7 @@ class DslFHelper(val fm: FragmentManager) {
                 }
             }
 
-            if (isDebug()) {
+            if (debug) {
                 runOnCommit {
                     fm.log()
                 }
