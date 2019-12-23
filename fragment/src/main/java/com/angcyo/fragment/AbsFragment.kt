@@ -11,10 +11,6 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import com.angcyo.base.getColor
-import com.angcyo.library.L.d
-import com.angcyo.library.L.i
-import com.angcyo.library.L.v
-import com.angcyo.library.L.w
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -33,9 +29,6 @@ abstract class AbsFragment : Fragment() {
      */
     var viewHolderInitialCapacity: Int = DslViewHolder.DEFAULT_INITIAL_CAPACITY
 
-    @LayoutRes
-    var fragmentLayoutId: Int = -1
-
     //</editor-fold desc="对象变量">
 
     //<editor-fold desc="对象属性">
@@ -46,12 +39,6 @@ abstract class AbsFragment : Fragment() {
 
     //</editor-fold">
 
-    /**
-     * 保存回调方法之前的状态值
-     */
-    var mUserVisibleHintOld = true
-    var mHiddenOld = false
-
     //<editor-fold desc="生命周期, 系统的方法">
 
     /**
@@ -59,10 +46,6 @@ abstract class AbsFragment : Fragment() {
      */
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        val old = mHiddenOld
-        mHiddenOld = hidden
-        v(this.javaClass.simpleName + " hiddenOld:" + old + " hidden:" + hidden + " isAdded:" + isAdded)
-        onVisibleChanged(old, mUserVisibleHintOld, !hidden)
     }
 
     /**
@@ -70,40 +53,14 @@ abstract class AbsFragment : Fragment() {
      */
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
-        val old = mUserVisibleHintOld
-        mUserVisibleHintOld = isVisibleToUser
-        v(this.javaClass.simpleName + " isVisibleToUserOld:" + old + " isVisibleToUser:" + isVisibleToUser + " isAdded:" + isAdded)
-        onVisibleChanged(mHiddenOld, old, isVisibleToUser)
-    }
-
-    /**
-     * 可见性变化
-     */
-    open fun onVisibleChanged(
-        oldHidden: Boolean,
-        oldUserVisibleHint: Boolean,
-        visible: Boolean /*是否可见*/
-    ) {
-        d(
-            this.javaClass.simpleName + " isAdded:" + isAdded
-                    + " hidden:" + oldHidden + "->" + isHidden + " visible:" + oldUserVisibleHint + "->" + userVisibleHint + " ->" + visible
-        )
     }
 
     override fun onAttachFragment(childFragment: Fragment) {
         super.onAttachFragment(childFragment)
-        val builder = StringBuilder()
-        //FragmentHelper.logFragment(childFragment, builder)
-        d(this.javaClass.simpleName + builder)
     }
 
     override fun getContext(): Context {
         return super.getContext() ?: attachContext
-    }
-
-    /**当需要操作[Activity]时*/
-    fun withActivity(config: Activity.() -> Unit) {
-        activity?.run { config() } ?: (context as? Activity)?.run { config() }
     }
 
     /**
@@ -112,12 +69,10 @@ abstract class AbsFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         attachContext = context
-        d(this.javaClass.simpleName + "\n" + context + " id:" + id + " tag:" + tag + "\nParent:" + parentFragment)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        d(this.javaClass.simpleName + " " + savedInstanceState)
     }
 
     override fun onCreateView(
@@ -125,8 +80,7 @@ abstract class AbsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        d(this.javaClass.simpleName + "\n" + container + " state:" + if (savedInstanceState == null) "×" else "√")
-        val layoutId = fragmentLayoutId
+        val layoutId = getFragmentLayoutId()
         val rootView: View
         rootView = if (layoutId != -1) {
             inflater.inflate(layoutId, container, false)
@@ -143,22 +97,18 @@ abstract class AbsFragment : Fragment() {
      */
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        d(this.javaClass.simpleName + " state:" + if (savedInstanceState == null) "×" else "√")
     }
 
     override fun onStart() {
         super.onStart()
-        d(this.javaClass.simpleName)
     }
 
     override fun onResume() {
         super.onResume()
-        d(this.javaClass.simpleName)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        d(this.javaClass.simpleName + " " + outState)
     }
 
     /**
@@ -166,7 +116,6 @@ abstract class AbsFragment : Fragment() {
      */
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-        d(this.javaClass.simpleName + " state:" + if (savedInstanceState == null) "×" else "√")
     }
 
     /**
@@ -174,28 +123,23 @@ abstract class AbsFragment : Fragment() {
      */
     override fun onPause() {
         super.onPause()
-        d(this.javaClass.simpleName)
     }
 
     override fun onStop() {
         super.onStop()
-        d(this.javaClass.simpleName)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        d(this.javaClass.simpleName)
         baseViewHolder.clear()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        d(this.javaClass.simpleName)
     }
 
     override fun onDetach() {
         super.onDetach()
-        d(this.javaClass.simpleName)
     }
 
     override fun onActivityResult(
@@ -204,14 +148,16 @@ abstract class AbsFragment : Fragment() {
         data: Intent?
     ) {
         super.onActivityResult(requestCode, resultCode, data)
-        i(this.javaClass.simpleName + " request:" + requestCode + " result:" + resultCode + " " + data)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        w("\n" + newConfig.toString())
         onOrientationChanged(newConfig.orientation)
     }
+
+    //</editor-fold>
+
+    //<editor-fold desc="自定义的方法">
 
     open fun onOrientationChanged(orientation: Int) {
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) { //切换到横屏
@@ -225,9 +171,13 @@ abstract class AbsFragment : Fragment() {
 
     open fun onOrientationToPortrait() {}
 
-    //</editor-fold>
+    /**当需要操作[Activity]时*/
+    fun withActivity(config: Activity.() -> Unit) {
+        activity?.run { config() } ?: (context as? Activity)?.run { config() }
+    }
 
-    //<editor-fold desc="自定义, 可以重写 的方法">
+    @LayoutRes
+    open fun getFragmentLayoutId() = -1
 
     /**
      * 不指定布局Id的时候, 可以用代码创建跟视图
@@ -238,7 +188,7 @@ abstract class AbsFragment : Fragment() {
         return view
     }
 
-    /***/
+    /**初始化布局, 此时的[View]还没有[attach]*/
     open fun initBaseView(
         viewHolder: DslViewHolder,
         arguments: Bundle?,

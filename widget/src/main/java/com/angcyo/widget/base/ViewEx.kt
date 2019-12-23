@@ -1,5 +1,6 @@
 package com.angcyo.widget.base
 
+import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
@@ -14,4 +15,15 @@ import androidx.core.content.ContextCompat
 
 fun View.getColor(@ColorRes id: Int): Int {
     return ContextCompat.getColor(context, id)
+}
+
+fun View.getDrawable(id: Int): Drawable? {
+    if (id <= 0) {
+        return null
+    }
+    return ContextCompat.getDrawable(context, id)
+}
+
+fun View.getStatusBarHeight(): Int {
+    return context.getStatusBarHeight()
 }

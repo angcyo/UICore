@@ -43,7 +43,7 @@ abstract class BaseDslStateItem : DslAdapterItem() {
         itemHolder.clear()
 
         val stateLayout = itemStateLayoutMap[itemState]
-        itemHolder.group(R.id.item_wrap_layout).apply {
+        itemHolder.group(R.id.item_wrap_layout)?.apply {
             if (stateLayout == null) {
                 //没有状态对应的布局文件
                 removeAllViews()

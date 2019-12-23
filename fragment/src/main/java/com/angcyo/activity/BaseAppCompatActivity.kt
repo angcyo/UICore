@@ -25,6 +25,7 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         baseDslViewHolder = DslViewHolder(window.decorView)
         onCreateAfter(savedInstanceState)
+        intent?.let { onHandleIntent(it) }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -54,7 +55,6 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
                 setContentView(this)
             }
         }
-        intent?.let { onHandleIntent(it) }
     }
 
     /**

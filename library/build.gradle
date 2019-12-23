@@ -5,3 +5,8 @@ android {
         minSdkVersion 14
     }
 }
+
+dependencies {
+    /*https://github.com/orhanobut/hawk*/
+    api 'com.orhanobut:hawk:2.0.1'
+}

@@ -56,6 +56,22 @@ fun FragmentManager.getAllValidityFragment(): List<Fragment> {
     return result
 }
 
+/**获取[Fragment]上层的所有[Fragment]*/
+fun FragmentManager.getOverlayFragment(anchor: Fragment): List<Fragment> {
+    val result = mutableListOf<Fragment>()
+
+    var findAnchor = false
+    fragments.forEach {
+        if (findAnchor) {
+            result.add(it)
+        } else if (it == anchor) {
+            findAnchor = true
+        }
+    }
+
+    return result
+}
+
 @IdRes
 fun FragmentManager.getLastFragmentContainerId(@IdRes defaultId: Int): Int {
     return getAllValidityFragment().lastOrNull()?.getFragmentContainerId() ?: defaultId
@@ -118,9 +134,16 @@ fun FragmentManager.log() {
     L.w(builder.toString())
 }
 
-fun Fragment.log(builder: StringBuilder) {
+fun Int.toVisibilityString(): String {
+    return when (this) {
+        View.INVISIBLE -> "INVISIBLE"
+        View.GONE -> "GONE"
+        else -> "VISIBLE"
+    }
+}
+
+fun Fragment.log(builder: StringBuilder = StringBuilder()): StringBuilder {
     builder.append(Integer.toHexString(getFragmentContainerId()).toUpperCase())
-    builder.append(" ")
     builder.append(" isAdd:")
     builder.append(if (isAdded) "√" else "×")
     builder.append(" isDetach:")
@@ -137,14 +160,14 @@ fun Fragment.log(builder: StringBuilder) {
     val view = view
     if (view != null) {
         builder.append(" visible:")
-        val visibility = view.visibility
-        val string: String
-        string = when (visibility) {
-            View.INVISIBLE -> "INVISIBLE"
-            View.GONE -> "GONE"
-            else -> "VISIBLE"
+
+        builder.append(view.visibility.toVisibilityString())
+
+        if (view.parent == null) {
+            builder.append(" parent:×")
+        } else {
+            builder.append(" parent:√")
         }
-        builder.append(string)
     } else {
         builder.append(" view:×")
     }
@@ -157,4 +180,5 @@ fun Fragment.log(builder: StringBuilder) {
         builder.append(" view:")
         builder.append(view)
     }
+    return builder
 }

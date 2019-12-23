@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RSoftInputLayout">
+        <attr name="r_default_soft_input_height" format="dimension" />
+        <attr name="r_enable_soft_input_anim" format="boolean" />
+        <attr name="r_enable_soft_input_anim_show" format="boolean" />
+        <attr name="r_enable_soft_input_anim_hide" format="boolean" />
+        <attr name="r_enable_soft_input" format="boolean" />
+        <attr name="r_enable_soft_input_inset" format="boolean" />
+        <attr name="r_enable_emoji_restore" format="boolean" />
+        <attr name="r_switch_check_delay" format="integer" />
+        <attr name="r_anim_duration" format="integer" />
+        <attr name="r_soft_input_anim_padding_top" format="dimension" />
+        <attr name="r_soft_input_anim_padding_min_top" format="dimension" />
+    </declare-styleable>
+
+</resources>
