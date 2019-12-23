@@ -246,8 +246,9 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
         onSeekBarConfig?.apply { onSeekChanged(progress, _progressFraction, true) }
     }
 
-    override fun setProgress(progress: Int, animDuration: Long) {
-        super.setProgress(progress, animDuration)
+
+    override fun setProgress(progress: Int, fromProgress: Int, animDuration: Long) {
+        super.setProgress(progress, fromProgress, animDuration)
         onSeekBarConfig?.apply { onSeekChanged(progress, _progressFraction, false) }
     }
 
