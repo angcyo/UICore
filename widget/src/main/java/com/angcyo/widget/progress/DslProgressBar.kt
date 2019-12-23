@@ -247,14 +247,17 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
     /**
      * 设置进度
-     * @param doAnim 是否使用动画
+     * @param animDuration 动画时长, 小于0, 不开启动画
      * */
-    open fun setProgress(progress: Int, doAnim: Boolean = true) {
+    open fun setProgress(progress: Int, animDuration: Long = 300) {
         _animtor?.cancel()
         _animtor = null
         val p = MathUtils.clamp(progress, 0, progressMaxValue)
-        if (doAnim) {
+        if (animDuration >= 0) {
             _animtor = anim(this.progressValue, p) {
+                onAnimatorConfig = {
+                    it.duration = animDuration
+                }
                 onAnimatorUpdateValue = { value, _ ->
                     this@DslProgressBar.progressValue = value as Int
                 }
