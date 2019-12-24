@@ -17,7 +17,7 @@ public fun TextView.setLeftIco(id: Int) {
 }
 
 public fun TextView.setLeftIco(drawable: Drawable?) {
-    val compoundDrawables: Array<Drawable> = compoundDrawables
+    val compoundDrawables: Array<Drawable?> = compoundDrawables
     setCompoundDrawablesWithIntrinsicBounds(
         drawable,
         compoundDrawables[1],
@@ -31,7 +31,7 @@ public fun TextView.setTopIco(id: Int) {
 }
 
 public fun TextView.setTopIco(drawable: Drawable?) {
-    val compoundDrawables: Array<Drawable> = compoundDrawables
+    val compoundDrawables: Array<Drawable?> = compoundDrawables
     setCompoundDrawablesWithIntrinsicBounds(
         compoundDrawables[0],
         drawable,
@@ -45,7 +45,7 @@ public fun TextView.setRightIco(@DrawableRes id: Int) {
 }
 
 public fun TextView.setRightIco(drawable: Drawable?) {
-    val compoundDrawables: Array<Drawable> = compoundDrawables
+    val compoundDrawables: Array<Drawable?> = compoundDrawables
     setCompoundDrawablesWithIntrinsicBounds(
         compoundDrawables[0],
         compoundDrawables[1],
@@ -59,7 +59,7 @@ public fun TextView.setBottomIco(id: Int) {
 }
 
 public fun TextView.setBottomIco(drawable: Drawable?) {
-    val compoundDrawables: Array<Drawable> = compoundDrawables
+    val compoundDrawables: Array<Drawable?> = compoundDrawables
     setCompoundDrawablesWithIntrinsicBounds(
         compoundDrawables[0],
         compoundDrawables[1],

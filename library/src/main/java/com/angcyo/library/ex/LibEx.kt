@@ -14,3 +14,7 @@ fun isRelease(): Boolean {
 }
 
 fun isDebug() = BuildConfig.DEBUG
+
+fun Any?.hash(): String? {
+    return this?.hashCode()?.run { Integer.toHexString(this) }
+}

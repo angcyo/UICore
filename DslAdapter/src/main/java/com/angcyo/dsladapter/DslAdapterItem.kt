@@ -9,6 +9,7 @@ import android.view.View
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.library.L
+import com.angcyo.widget.DslViewHolder
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -45,7 +46,7 @@ open class DslAdapterItem {
     //<editor-fold desc="标准属性">
 
     /**布局的xml id, 必须设置.*/
-    open var itemLayoutId: Int = -1
+    var itemLayoutId: Int = -1
 
     /**附加的数据*/
     var itemData: Any? = null
@@ -57,7 +58,7 @@ open class DslAdapterItem {
      * 界面绑定入口
      * [DslAdapter.onBindView]
      * */
-    open var itemBind: (itemHolder: DslViewHolder, itemPosition: Int, adapterItem: DslAdapterItem) -> Unit =
+    var itemBind: (itemHolder: DslViewHolder, itemPosition: Int, adapterItem: DslAdapterItem) -> Unit =
         { itemHolder, itemPosition, adapterItem ->
             onItemBind(itemHolder, itemPosition, adapterItem)
             onItemBindOverride(itemHolder, itemPosition, adapterItem)
@@ -99,7 +100,7 @@ open class DslAdapterItem {
     }
 
     /**用于覆盖默认操作*/
-    open var onItemBindOverride: (itemHolder: DslViewHolder, itemPosition: Int, adapterItem: DslAdapterItem) -> Unit =
+    var onItemBindOverride: (itemHolder: DslViewHolder, itemPosition: Int, adapterItem: DslAdapterItem) -> Unit =
         { _, _, _ ->
 
         }
@@ -107,14 +108,14 @@ open class DslAdapterItem {
     /**
      * [DslAdapter.onViewAttachedToWindow]
      * */
-    open var onItemViewAttachedToWindow: (itemHolder: DslViewHolder) -> Unit = {
+    var onItemViewAttachedToWindow: (itemHolder: DslViewHolder) -> Unit = {
 
     }
 
     /**
      * [DslAdapter.onViewDetachedFromWindow]
      * */
-    open var onItemViewDetachedToWindow: (itemHolder: DslViewHolder) -> Unit = {
+    var onItemViewDetachedToWindow: (itemHolder: DslViewHolder) -> Unit = {
 
     }
 
@@ -240,7 +241,7 @@ open class DslAdapterItem {
     /**
      * 绘制不同方向的分割线时, 触发的回调, 可以用来设置不同方向分割线的颜色
      * */
-    open var eachDrawItemDecoration: (left: Int, top: Int, right: Int, bottom: Int) -> Unit =
+    var eachDrawItemDecoration: (left: Int, top: Int, right: Int, bottom: Int) -> Unit =
         { _, _, _, _ ->
 
         }
@@ -458,13 +459,13 @@ open class DslAdapterItem {
      * [RecyclerView.Adapter.notifyItemRemoved]
      * 的执行
      * */
-    open var thisAreItemsTheSame: (fromItem: DslAdapterItem?, newItem: DslAdapterItem) -> Boolean =
+    var thisAreItemsTheSame: (fromItem: DslAdapterItem?, newItem: DslAdapterItem) -> Boolean =
         { _, newItem -> this == newItem }
 
     /**
      * [RecyclerView.Adapter.notifyItemChanged]
      * */
-    open var thisAreContentsTheSame: (fromItem: DslAdapterItem?, newItem: DslAdapterItem) -> Boolean =
+    var thisAreContentsTheSame: (fromItem: DslAdapterItem?, newItem: DslAdapterItem) -> Boolean =
         { fromItem, newItem ->
             when {
                 itemChanging -> false
@@ -479,14 +480,14 @@ open class DslAdapterItem {
      *
      * 返回 true 时, [checkItem]  进行 [hide] 操作
      * */
-    open var isItemInHiddenList: (checkItem: DslAdapterItem, itemIndex: Int) -> Boolean =
+    var isItemInHiddenList: (checkItem: DslAdapterItem, itemIndex: Int) -> Boolean =
         { _, _ -> false }
 
     /**
      * [itemIndex] 最终过滤之后数据列表中的index
      * 返回 true 时, [checkItem] 会收到 来自 [this] 的 [onItemUpdateFromInner] 触发的回调
      * */
-    open var isItemInUpdateList: (checkItem: DslAdapterItem, itemIndex: Int) -> Boolean =
+    var isItemInUpdateList: (checkItem: DslAdapterItem, itemIndex: Int) -> Boolean =
         { _, _ -> false }
 
     /**

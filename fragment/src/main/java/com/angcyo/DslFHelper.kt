@@ -1,14 +1,15 @@
 package com.angcyo
 
+import android.app.Activity
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
 import com.angcyo.base.*
+import com.angcyo.fragment.IFragment
 import com.angcyo.fragment.R
 import com.angcyo.library.L
-import com.angcyo.library.ex.isDebug
 
 /**
  *
@@ -33,6 +34,9 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = false) {
      * >=1 才有效.
      * */
     var hideBeforeIndex = 1
+
+    /**最后一个[Fragment]在执行的[back]时, 是否需要[remove]*/
+    var removeLastFragment: Boolean = false
 
     init {
         //FragmentManager.enableDebugLogging(debug)
@@ -108,7 +112,7 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = false) {
         }
     }
 
-    fun remove(vararg fragment: Fragment) {
+    fun removes(vararg fragment: Fragment) {
         remove(fragment.toList())
     }
 
@@ -129,9 +133,14 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = false) {
 
     //</editor-fold desc="remove操作">
 
+    /**自定义的配置操作, 请勿在此执行[commit]操作*/
+    var onConfigTransaction: (FragmentTransaction) -> Unit = {
+
+    }
+
     /**提交操作*/
     var onCommit: (FragmentTransaction) -> Unit = {
-//        if (debug) {
+        //        if (debug) {
 //            it.runOnCommit {
 //                fm.log()
 //            }
@@ -142,6 +151,42 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = false) {
         } else {
             it.commitNow()
         }
+    }
+
+    /**
+     * 回退操作, 请使用此方法.
+     * 会进行回退检查
+     *
+     * @return 返回true, 表示当前Activity可以被关闭
+     * */
+    fun back(): Boolean {
+        var result = true
+
+        val allValidityFragment = fm.getAllValidityFragment()
+        val lastFragment = allValidityFragment.lastOrNull()
+
+        if (lastFragment != null) {
+            if (lastFragment is IFragment) {
+                if (!lastFragment.onBackPressed()) {
+                    result = false
+                }
+            }
+
+            if (result) {
+                if (showFragmentList.isEmpty() && allValidityFragment.size == 1) {
+                    if (removeLastFragment) {
+                        //只有一个Fragment
+                        remove(lastFragment)
+                        doIt()
+                    }
+                } else {
+                    remove(lastFragment)
+                    doIt()
+                }
+            }
+        }
+
+        return result
     }
 
     /**执行操作*/
@@ -195,6 +240,7 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = false) {
             if (hideBeforeIndex >= 1) {
                 fmFragmentList.forEachIndexed { index, fragment ->
                     if (index < fmFragmentList.size - hideBeforeIndex) {
+                        setMaxLifecycle(fragment, Lifecycle.State.STARTED)
                         hide(fragment)
                     } else {
                         show(fragment)
@@ -204,6 +250,8 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = false) {
 
             //op last
             lastFragment?.let { setMaxLifecycle(it, Lifecycle.State.RESUMED) }
+
+            onConfigTransaction(this)
 
             onCommit(this)
         }

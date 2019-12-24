@@ -6,10 +6,13 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
+import android.graphics.Point
+import android.graphics.Rect
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.angcyo.library.ex.isDebug
+import com.angcyo.widget.base.onDoubleTap
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -25,7 +28,8 @@ import kotlin.math.sqrt
  * */
 fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug()) {
     val decorView = window.decorView
-    val rootView = window.findViewById<View>(Window.ID_ANDROID_CONTENT)
+    val contentView = window.findViewById<View>(Window.ID_ANDROID_CONTENT)
+
     val tag = "debug_info_view"
     val debugTextView = decorView.findViewWithTag<View>(tag)
 
@@ -47,7 +51,7 @@ fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug())
             val layoutParams = FrameLayout.LayoutParams(-2, -2)
             layoutParams.gravity = Gravity.BOTTOM
             if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
-                && decorView.getBottom() > rootView.bottom
+                && decorView.getBottom() > contentView.bottom
             ) { //显示了导航栏
                 val resources = resources
                 val resourceId =
@@ -75,14 +79,16 @@ fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug())
                 val screenInches = sqrt(x + y)
 
                 textView.text = buildString {
+                    appendln(this@showDebugInfoView.javaClass.name)
+
                     append("wp:").append(displayMetrics.widthPixels)
                     append(" hp:").appendln(displayMetrics.heightPixels)
 
                     append("dw:").append(decorView.measuredWidth)
                     append(" dh:").appendln(decorView.measuredHeight)
 
-                    append("cw:").append(rootView.measuredWidth)
-                    append(" ch:").appendln(rootView.measuredHeight)
+                    append("cw:").append(contentView.measuredWidth)
+                    append(" ch:").appendln(contentView.measuredHeight)
 
                     append("wDp:").append(widthDp)
                     append(" hDp:").append(heightDp)
@@ -92,13 +98,30 @@ fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug())
 
                     append("w:").append("%.02f".format(width))
                     append(" h:").append("%.02f".format(height))
-                    append(" inches:").append("%.02f".format(screenInches))
+                    append(" inches:").appendln("%.02f".format(screenInches))
+
+                    val dRect = Rect()
+                    val dPoint = Point()
+                    decorView.getGlobalVisibleRect(dRect, dPoint)
+                    append(" d:").append(dRect)
+                    append(" d:").append(dPoint).appendln()
+
+                    val cRect = Rect()
+                    val cPoint = Point()
+                    contentView.getGlobalVisibleRect(cRect, cPoint)
+                    append(" c:").append(cRect)
+                    append(" c:").append(cPoint)
                 }
             }
 
             textView.setOnLongClickListener {
                 textView.text.copy(textView.context)
                 it.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                false
+            }
+
+            textView.onDoubleTap {
+                showDebugInfoView(false)
                 false
             }
         }

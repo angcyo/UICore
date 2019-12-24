@@ -6,6 +6,8 @@ import androidx.core.view.GestureDetectorCompat
 import androidx.recyclerview.widget.RecyclerView
 import android.view.GestureDetector
 import android.view.MotionEvent
+import com.angcyo.drawable.dp
+import com.angcyo.drawable.dpi
 import kotlin.math.max
 
 /**

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.angcyo.base.dslFHelper
 import com.angcyo.fragment.R
 import com.angcyo.library.ex.isDebug
 import com.angcyo.widget.DslViewHolder
@@ -62,5 +63,14 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
      * */
     open fun onHandleIntent(intent: Intent, fromNew: Boolean = false) {
 
+    }
+
+    /**回退检查*/
+    override fun onBackPressed() {
+        dslFHelper {
+            if (back()) {
+                super.onBackPressed()
+            }
+        }
     }
 }

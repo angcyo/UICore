@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.angcyo.DslFHelper
 import com.angcyo.fragment.AbsLifecycleFragment
-import com.angcyo.fragment.IFragment
 import com.angcyo.library.L
 
 /**
@@ -16,7 +15,6 @@ import com.angcyo.library.L
  * @author angcyo
  * @date 2019/12/22
  */
-
 
 /**
  * 优先根据[TAG]恢复已经存在[Fragment]
@@ -77,35 +75,12 @@ fun FragmentManager.getLastFragmentContainerId(@IdRes defaultId: Int): Int {
     return getAllValidityFragment().lastOrNull()?.getFragmentContainerId() ?: defaultId
 }
 
-/**
- * 通过反射, 获取Fragment所在视图的Id
- */
-fun Fragment.getFragmentContainerId(): Int {
-    var viewId = -1
-    val fragmentView = view
-    if (fragmentView == null) {
-    } else if (fragmentView.parent is View) {
-        viewId = (fragmentView.parent as View).id
-    }
-    if (viewId == View.NO_ID) {
-        try {
-            val field =
-                Fragment::class.java.getDeclaredField("mContainerId")
-            field.isAccessible = true
-            viewId = field[this] as Int
-        } catch (e: NoSuchFieldException) {
-            e.printStackTrace()
-        } catch (e: IllegalAccessException) {
-            e.printStackTrace()
-        }
-    }
-    return viewId
-}
-
+/**[FragmentActivity]中*/
 fun FragmentActivity.dslFHelper(config: DslFHelper.() -> Unit) {
     supportFragmentManager.dslFHelper(config)
 }
 
+/**[FragmentManager]*/
 fun FragmentManager.dslFHelper(config: DslFHelper.() -> Unit) {
     DslFHelper(this).apply {
         this.config()
@@ -113,10 +88,7 @@ fun FragmentManager.dslFHelper(config: DslFHelper.() -> Unit) {
     }
 }
 
-fun Fragment.getFragmentTag(): String? {
-    return if (this is IFragment) this.getFragmentTag() else this.javaClass.name
-}
-
+/**打印[fragments]*/
 fun FragmentManager.log() {
     val builder = StringBuilder()
 
@@ -125,6 +97,10 @@ fun FragmentManager.log() {
         builder.append(index)
         builder.append("->")
         fragment.log(builder)
+        fragment.parentFragment?.run {
+            builder.appendln().append("  └──(parent) ")
+            this.log(builder)
+        }
     }
 
     if (fragments.isEmpty()) {
@@ -140,45 +116,4 @@ fun Int.toVisibilityString(): String {
         View.GONE -> "GONE"
         else -> "VISIBLE"
     }
-}
-
-fun Fragment.log(builder: StringBuilder = StringBuilder()): StringBuilder {
-    builder.append(Integer.toHexString(getFragmentContainerId()).toUpperCase())
-    builder.append(" isAdd:")
-    builder.append(if (isAdded) "√" else "×")
-    builder.append(" isDetach:")
-    builder.append(if (isDetached) "√" else "×")
-    builder.append(" isHidden:")
-    builder.append(if (isHidden) "√" else "×")
-    builder.append(" isVisible:")
-    builder.append(if (isVisible) "√" else "×")
-    builder.append(" isResumed:")
-    builder.append(if (isResumed) "√" else "×")
-    builder.append(" userVisibleHint:")
-    builder.append(if (userVisibleHint) "√" else "×")
-
-    val view = view
-    if (view != null) {
-        builder.append(" visible:")
-
-        builder.append(view.visibility.toVisibilityString())
-
-        if (view.parent == null) {
-            builder.append(" parent:×")
-        } else {
-            builder.append(" parent:√")
-        }
-    } else {
-        builder.append(" view:×")
-    }
-    if (this is IFragment) {
-        //builder.append(" 可视:")
-        //builder.append(if (!(fragment as IFragment).isFragmentHide()) "√" else "×")
-        builder.append(" TAG:").append(getFragmentTag())
-    }
-    if (view != null) {
-        builder.append(" view:")
-        builder.append(view)
-    }
-    return builder
 }

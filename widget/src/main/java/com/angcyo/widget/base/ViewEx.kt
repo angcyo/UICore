@@ -1,9 +1,12 @@
 package com.angcyo.widget.base
 
 import android.graphics.drawable.Drawable
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
+import androidx.core.view.GestureDetectorCompat
 
 /**
  *
@@ -26,4 +29,18 @@ fun View.getDrawable(id: Int): Drawable? {
 
 fun View.getStatusBarHeight(): Int {
     return context.getStatusBarHeight()
+}
+
+/**双击事件*/
+fun View.onDoubleTap(action: (View) -> Boolean) {
+    val view = this
+    val gestureDetector = GestureDetectorCompat(context,
+        object : GestureDetector.SimpleOnGestureListener() {
+            override fun onDoubleTap(e: MotionEvent?): Boolean {
+                return action(view)
+            }
+        })
+    setOnTouchListener { _, event ->
+        gestureDetector.onTouchEvent(event)
+    }
 }

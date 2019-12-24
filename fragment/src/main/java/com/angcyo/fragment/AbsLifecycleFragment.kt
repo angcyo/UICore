@@ -1,12 +1,12 @@
 package com.angcyo.fragment
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.CallSuper
 import com.angcyo.base.toVisibilityString
 import com.angcyo.library.L.i
+import com.angcyo.library.ex.hash
 
 /**
  * Created by angcyo on 2018/12/03 23:17
@@ -17,7 +17,6 @@ import com.angcyo.library.L.i
  * @author angcyo
  */
 abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
-
 
     /**
      * 触发 [.onFragmentShow] 的次数
@@ -63,9 +62,10 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
     //<editor-fold desc="扩展的方法">
 
     @CallSuper
-    override fun onFragmentShow(bundle: Bundle?) {
+    open fun onFragmentShow(bundle: Bundle?) {
         i(buildString {
             append(this@AbsLifecycleFragment.javaClass.simpleName)
+            append("#").append(this@AbsLifecycleFragment.hash())
             append(" view:").append((if (view == null) "×" else "√"))
             append(" visible:").append(view?.visibility?.toVisibilityString() ?: "×")
             append(" bundle:").append((if (bundle == null) "×" else "√"))
@@ -88,18 +88,19 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
 
     open fun onFragmentNotFirstShow(bundle: Bundle?) {}
 
-    override fun onFragmentHide() {
+    open fun onFragmentHide() {
         i(buildString {
             append(this@AbsLifecycleFragment.javaClass.simpleName)
+            append("#").append(this@AbsLifecycleFragment.hash())
             append(" view:").append((if (view == null) "×" else "√"))
             append(" visible:").append(view?.visibility?.toVisibilityString() ?: "×")
         })
     }
 
     /**
-     * 可以关闭当前界面.
+     * 是否可以关闭当前[Fragment]界面.
      */
-    override fun onBackPressed(activity: Activity): Boolean {
+    override fun onBackPressed(): Boolean {
 //        if (lastFragment == null) {
 //            return true
 //        }

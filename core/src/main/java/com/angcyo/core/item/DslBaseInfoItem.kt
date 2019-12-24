@@ -9,10 +9,11 @@ import com.angcyo.core.R
 import com.angcyo.drawable.color
 import com.angcyo.drawable.undefined
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.dsladapter.DslViewHolder
+import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.getDrawable
 import com.angcyo.widget.base.inflate
 import com.angcyo.widget.base.setLeftIco
+import com.angcyo.widget.layout.RLinearLayout
 
 
 /**
@@ -49,13 +50,13 @@ open class DslBaseInfoItem : DslAdapterItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem)
 
-        //(itemHolder.itemView as? RLinearLayout)?.setRBackgroundDrawable(itemBackgroundDrawable)
+        (itemHolder.itemView as? RLinearLayout)?.bDrawable = itemBackgroundDrawable
 
         //文本信息
         itemHolder.tv(R.id.text_view)?.apply {
             text = itemInfoText
 
-            if (itemInfoIconColor == -2) {
+            if (itemInfoIconColor == undefined) {
                 setLeftIco(itemInfoIcon)
             } else {
                 setLeftIco(getDrawable(itemInfoIcon).color(itemInfoIconColor))

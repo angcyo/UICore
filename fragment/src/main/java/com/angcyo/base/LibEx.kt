@@ -1,11 +1,13 @@
 package com.angcyo.base
 
+import android.content.Context
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.annotation.Px
 import androidx.core.content.ContextCompat
 import com.angcyo.fragment.AbsFragment
+import com.angcyo.library.app
 
 /**
  *
@@ -22,4 +24,14 @@ fun AbsFragment.getColor(@ColorRes id: Int): Int {
 @Px
 fun AbsFragment.getDimen(@DimenRes id: Int): Int {
     return context.resources.getDimensionPixelOffset(id)
+}
+
+@ColorInt
+fun Context.getColor(@ColorRes id: Int): Int {
+    return ContextCompat.getColor(this, id)
+}
+
+@Px
+fun Context.getDimen(@DimenRes id: Int): Int {
+    return resources.getDimensionPixelOffset(id)
 }

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical|right">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/sub_text_view"
+        style="@style/LibSubTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|right"
+        android:drawablePadding="4dp"
+        android:paddingRight="@dimen/lib_padding_left"
+        tools:text="发现新版本" />
+
+    <!--    <com.angcyo.uiview.less.draw.view.RDrawNoReadNumView-->
+    <!--        android:id="@+id/read_num_view"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_gravity="center_vertical|right"-->
+    <!--        android:layout_marginRight="@dimen/base_padding_left"-->
+    <!--        app:r_draw_space_horizontal_size="@dimen/base_ldpi"-->
+    <!--        tools:r_draw_read_num_string="9" />-->
+</FrameLayout>

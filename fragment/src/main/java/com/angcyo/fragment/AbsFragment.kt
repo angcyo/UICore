@@ -1,6 +1,5 @@
 package com.angcyo.fragment
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -88,7 +87,7 @@ abstract class AbsFragment : Fragment() {
             createRootView()
         }
         baseViewHolder = DslViewHolder(rootView, viewHolderInitialCapacity)
-        initBaseView(baseViewHolder, arguments, savedInstanceState)
+        initBaseView(savedInstanceState)
         return rootView
     }
 
@@ -171,11 +170,7 @@ abstract class AbsFragment : Fragment() {
 
     open fun onOrientationToPortrait() {}
 
-    /**当需要操作[Activity]时*/
-    fun withActivity(config: Activity.() -> Unit) {
-        activity?.run { config() } ?: (context as? Activity)?.run { config() }
-    }
-
+    /**根布局*/
     @LayoutRes
     open fun getFragmentLayoutId() = -1
 
@@ -189,11 +184,7 @@ abstract class AbsFragment : Fragment() {
     }
 
     /**初始化布局, 此时的[View]还没有[attach]*/
-    open fun initBaseView(
-        viewHolder: DslViewHolder,
-        arguments: Bundle?,
-        savedInstanceState: Bundle?
-    ) {
+    open fun initBaseView(savedInstanceState: Bundle?) {
 
     }
 

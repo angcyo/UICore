@@ -1,7 +1,6 @@
 package com.angcyo.fragment
 
 import android.app.Activity
-import android.os.Bundle
 import android.view.View
 
 /**
@@ -10,22 +9,13 @@ import android.view.View
  * @author angcyo
  */
 interface IFragment {
-    /**
-     * 当Fragment可见时回调
-     */
-    fun onFragmentShow(bundle: Bundle?)
 
     /**
-     * 当Fragment不可见时回调
-     */
-    fun onFragmentHide()
-
-    /**
-     * Activity 的 onBackPressed 回调.
+     * [Activity] 的 [Activity.onBackPressed] 回调.
      *
      * @return true 允许关闭当前的Fragment
      */
-    fun onBackPressed(activity: Activity): Boolean
+    fun onBackPressed(): Boolean
 
     /**
      * 是否可以滑动返回

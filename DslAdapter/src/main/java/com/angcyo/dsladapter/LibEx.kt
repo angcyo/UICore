@@ -2,18 +2,18 @@ package com.angcyo.dsladapter
 
 import android.app.Activity
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.Paint
 import android.graphics.Rect
-import androidx.annotation.LayoutRes
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import androidx.recyclerview.widget.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import androidx.annotation.LayoutRes
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.angcyo.widget.DslViewHolder
 
 /**
  *
@@ -149,25 +149,10 @@ fun Rect.clear() {
 
 public fun nowTime() = System.currentTimeMillis()
 
-public val <T> T.dp: Float by lazy {
-    Resources.getSystem()?.displayMetrics?.density ?: 0f
-}
-
-public val <T> T.dpi: Int by lazy {
-    Resources.getSystem()?.displayMetrics?.density?.toInt() ?: 0
-}
-
 public fun View.setHeight(height: Int) {
     val params = layoutParams
     params.height = height
     layoutParams = params
-}
-
-public fun Int.have(value: Int): Boolean = if (this == 0 || value == 0) false
-else if (this == 0 && value == 0) true
-else {
-    ((this > 0 && value > 0) || (this < 0 && value < 0)) &&
-            this and value == value
 }
 
 public fun ViewGroup.inflate(@LayoutRes layoutId: Int, attachToRoot: Boolean = true): View {

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
+import com.angcyo.DslAHelper
 import com.angcyo.fragment.R
 
 /**
@@ -49,3 +50,10 @@ fun Activity.setStatusBarColor(color: Int) {
 }
 
 private fun Int.remove(value: Int): Int = this and value.inv()
+
+fun Activity.dslAHelper(action: DslAHelper.() -> Unit) {
+    DslAHelper(this).apply {
+        this.action()
+        doIt()
+    }
+}

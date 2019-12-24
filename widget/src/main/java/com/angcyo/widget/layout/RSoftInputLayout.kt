@@ -1115,6 +1115,7 @@ class RSoftInputLayout : FrameLayout {
         const val INTENT_SHOW_EMOJI = 3
         const val INTENT_HIDE_EMOJI = 4
         const val KEY_KEYBOARD_HEIGHT = "key_keyboard_height"
+
         fun hideSoftInput(view: View) {
             val manager =
                 view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

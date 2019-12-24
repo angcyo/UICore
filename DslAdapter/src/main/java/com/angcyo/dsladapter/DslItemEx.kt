@@ -2,6 +2,7 @@ package com.angcyo.dsladapter
 
 import android.graphics.Color
 import androidx.annotation.LayoutRes
+import com.angcyo.drawable.dpi
 
 
 /**
