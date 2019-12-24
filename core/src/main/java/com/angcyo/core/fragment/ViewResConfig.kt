@@ -20,7 +20,8 @@ import com.angcyo.core.getDimen
 data class ViewResConfig(
 
     /**标题栏文本大小*/
-    var titleTextSize: Float = getDimen(R.dimen.text_primary_size).toFloat(),
+    var titleTextSize: Float = getDimen(R.dimen.text_main_size).toFloat(),
+
     /**标题栏文本颜色*/
     var titleTextColor: Int = Color.WHITE,
 

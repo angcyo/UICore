@@ -8,6 +8,8 @@ android {
 
 dependencies {
 
+    implementation project(allModule.library)
+
     //api "org.jetbrains.kotlin:kotlin-reflect:$_kotlin_version"
 
     def coroutine_version = "1.3.3"
