@@ -7,6 +7,7 @@ android {
 }
 
 dependencies {
-    /*https://github.com/orhanobut/hawk*/
+    //https://github.com/orhanobut/hawk
+    //https://jcenter.bintray.com/com/orhanobut/
     api 'com.orhanobut:hawk:2.0.1'
 }

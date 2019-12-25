@@ -12,7 +12,7 @@ import kotlin.coroutines.CoroutineContext
  * @date 2019/12/24
  */
 
-fun test() {
+fun coroutineTest() {
     backTest()
 //    blockTest()
 }
