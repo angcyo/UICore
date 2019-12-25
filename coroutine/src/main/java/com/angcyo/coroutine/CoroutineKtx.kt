@@ -13,8 +13,8 @@ import kotlin.coroutines.CoroutineContext
  */
 
 fun test() {
-    //backTest()
-    blockTest()
+    backTest()
+//    blockTest()
 }
 
 /**串行协程线程调度测试*/
@@ -24,6 +24,7 @@ fun blockTest() {
         val i = onBlock {
             L.i("run....1..1")
             sleep()
+            1 / 0
             L.i("run....1..1end")
             1
         }
@@ -52,13 +53,21 @@ fun blockTest() {
 
 /**并发协程测试*/
 fun backTest() {
-    launch {
+    launch(Dispatchers.Main + CoroutineErrorHandler {
+        L.e("捕捉异常:$it")
+    }) {
 
-        val i = onBack {
-            L.i("run....1..1")
-            sleep()
-            L.i("run....1..1end")
-            1
+        val i = try {
+            onBack {
+                L.i("run....1..1")
+                sleep()
+                1 / 0
+                L.i("run....1..1end")
+                1
+            }
+        } catch (e: Exception) {
+            L.e("1...${e.message}")
+            null
         }
 
         val i1 = onBack {
@@ -75,15 +84,19 @@ fun backTest() {
             3
         }
 
-        val j = i.await()
+        val j = try {
+            i?.await()
+        } catch (e: Exception) {
+            L.e("2...${e.message}")
+        }
         val j1 = i1.await()
         val j2 = i2.await()
 
-        L.i("all end1->${i.await()} ${i1.await()} ${i2.await()}")
+        L.i("all end1->${j} ${i1.await()} ${i2.await()}")
 
         onMain {
             L.i("all end2->$j $j1 $j2")
-            L.i("all end3->${i.await()} ${i1.await()} ${i2.await()}")
+            //L.i("all end3->${i?.await()} ${i1.await()} ${i2.await()}")
         }
     }
 }
@@ -99,7 +112,7 @@ fun <T> launchMain(onBack: CoroutineScope.() -> T, onMain: (T) -> Unit = {}): Jo
 
 /**在全局域中启动协程*/
 fun launch(
-    context: CoroutineContext = Dispatchers.Main,
+    context: CoroutineContext = Dispatchers.Main + CoroutineErrorHandler(),
     action: suspend CoroutineScope.() -> Unit
 ): Job {
     return GlobalScope.launch(context) {
@@ -107,23 +120,32 @@ fun launch(
     }
 }
 
-///**在指定域中启动协程*/
-//fun CoroutineScope.launch(
-//    context: CoroutineContext = Dispatchers.Main,
-//    action: suspend CoroutineScope.() -> Unit
-//): Job {
-//    return this.launch(context) {
-//        this.action()
-//    }
-//}
+/**在指定域中启动协程*/
+fun CoroutineScope.launchSafe(
+    context: CoroutineContext = Dispatchers.Main + CoroutineErrorHandler(),
+    action: suspend CoroutineScope.() -> Unit
+): Job {
+    return this.launch(context) {
+        this.action()
+    }
+}
 
-/**在协程中使用, 用于在[IO]线程中并发*/
+/**
+ * 在协程中使用, 用于在[IO]线程中并发
+ * [action]内发生的异常,可以在[launch]启动协程时用[CoroutineExceptionHandler]捕捉
+ * [try] [await] 方法也能获取到异常, 但无法阻止异常冒泡
+ * */
 fun <T> CoroutineScope.onBack(
     context: CoroutineContext = Dispatchers.IO,
     action: suspend CoroutineScope.() -> T
 ) = async(context) { this.action() }
 
-/**在协程中使用, 用于在[IO]线程中调度*/
+/**
+ * 在协程中使用, 用于在[IO]线程中调度
+ * [action]内发生的异常, 需要在内部try捕捉.
+ * 或者在[launch]启动协程时用[CoroutineExceptionHandler]捕捉
+ * 并且协程会立即中断,后续代码不会被执行
+ * */
 suspend fun <T> onBlock(
     context: CoroutineContext = Dispatchers.IO,
     action: suspend CoroutineScope.() -> T
