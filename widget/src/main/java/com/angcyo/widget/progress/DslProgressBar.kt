@@ -41,7 +41,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     /**当前的进度*/
     var progressValue: Int = 0
         set(value) {
-            field = MathUtils.clamp(value, 0, progressMaxValue)
+            field = validProgress(value)
             postInvalidate()
         }
 
@@ -245,6 +245,11 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
     var _animtor: Animator? = null
 
+    /**限制设置的非法进度值*/
+    fun validProgress(progress: Int): Int {
+        return MathUtils.clamp(progress, 0, progressMaxValue)
+    }
+
     /**
      * 设置进度
      * @param fromProgress 动画开始的进度, 默认是当前进度
@@ -257,7 +262,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     ) {
         _animtor?.cancel()
         _animtor = null
-        val p = MathUtils.clamp(progress, 0, progressMaxValue)
+        val p = validProgress(progress)
         if (animDuration >= 0) {
             _animtor = anim(fromProgress, p) {
                 onAnimatorConfig = {

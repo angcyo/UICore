@@ -241,15 +241,15 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
         val progress: Int =
             floor((x / _progressBound.width() * progressMaxValue).toDouble()).toInt()
 
-        this.progressValue = progress
+        progressValue = validProgress(progress)
 
-        onSeekBarConfig?.apply { onSeekChanged(progress, _progressFraction, true) }
+        onSeekBarConfig?.apply { onSeekChanged(progressValue, _progressFraction, true) }
     }
 
 
     override fun setProgress(progress: Int, fromProgress: Int, animDuration: Long) {
         super.setProgress(progress, fromProgress, animDuration)
-        onSeekBarConfig?.apply { onSeekChanged(progress, _progressFraction, false) }
+        onSeekBarConfig?.apply { onSeekChanged(validProgress(progress), _progressFraction, false) }
     }
 
     //</editor-fold desc="Touch事件">
