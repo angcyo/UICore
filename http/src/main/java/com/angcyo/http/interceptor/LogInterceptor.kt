@@ -92,7 +92,13 @@ open class LogInterceptor : Interceptor {
 
             //返回体
             response.body?.run {
-                appendln().appends("Body:").append(readString())
+                val contentLength: Long = contentLength()
+                val bodySize: String =
+                    if (contentLength != -1L) "$contentLength-byte" else "unknown-length"
+                appendln().append("Body")
+                append("(").append(bodySize).append("):")
+
+                append(readString())
             } ?: append("no response body!")
         }
     }
