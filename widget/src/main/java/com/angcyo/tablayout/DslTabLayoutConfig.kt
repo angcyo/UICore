@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
 import com.angcyo.tablayout.DslTabIndicator.Companion.NO_COLOR
+import com.angcyo.widget.R
 
 /**
  * Email:angcyo@126.com

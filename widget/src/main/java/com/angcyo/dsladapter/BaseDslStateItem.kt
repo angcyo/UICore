@@ -2,6 +2,7 @@ package com.angcyo.dsladapter
 
 import android.view.View
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.R
 
 /**
  *
@@ -12,7 +13,7 @@ import com.angcyo.widget.DslViewHolder
  */
 abstract class BaseDslStateItem : DslAdapterItem() {
     init {
-        itemLayoutId = R.layout.item_base_state
+        itemLayoutId = R.layout.lib_item_base_state
         itemSpanCount = -1
     }
 

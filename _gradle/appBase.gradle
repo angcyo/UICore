@@ -61,8 +61,8 @@ android {
     }
 
     dexOptions {
-        //使用增量模式构建
-        incremental true
+        //使用增量模式构建 is obsolete and will be removed soon.
+        //incremental true
 
         //预编译
         preDexLibraries true

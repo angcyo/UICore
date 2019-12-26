@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.view.ViewCompat
 import com.angcyo.drawable.base.DslGradientDrawable
+import com.angcyo.widget.R
 
 /**
  * 边框

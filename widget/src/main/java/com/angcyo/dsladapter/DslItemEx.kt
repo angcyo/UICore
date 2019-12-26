@@ -3,6 +3,7 @@ package com.angcyo.dsladapter
 import android.graphics.Color
 import androidx.annotation.LayoutRes
 import com.angcyo.drawable.dpi
+import com.angcyo.widget.R
 
 
 /**
@@ -37,7 +38,7 @@ public fun <T : DslAdapterItem> DslAdapter.dslCustomItem(
 /**空的占位item*/
 public fun DslAdapter.renderEmptyItem(height: Int = 120 * dpi, color: Int = Color.TRANSPARENT) {
     val adapterItem = DslAdapterItem()
-    adapterItem.itemLayoutId = R.layout.base_empty_item
+    adapterItem.itemLayoutId = R.layout.lib_empty_item
     adapterItem.onItemBindOverride = { itemHolder, _, _ ->
         itemHolder.itemView.setBackgroundColor(color)
         itemHolder.itemView.setHeight(height)

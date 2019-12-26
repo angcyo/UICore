@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.util.AttributeSet
 import android.view.Gravity
 import androidx.annotation.Px
+import com.angcyo.widget.R
 
 /**
  * 角标

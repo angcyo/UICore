@@ -2,6 +2,7 @@ package com.angcyo.dsladapter
 
 import com.angcyo.library.L
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.R
 
 /**
  * [DslAdapter] 中, 控制情感图显示状态的 [Item]
@@ -13,9 +14,9 @@ import com.angcyo.widget.DslViewHolder
 open class DslAdapterStatusItem : BaseDslStateItem() {
 
     init {
-        itemStateLayoutMap[ADAPTER_STATUS_LOADING] = R.layout.base_loading_layout
-        itemStateLayoutMap[ADAPTER_STATUS_ERROR] = R.layout.base_error_layout
-        itemStateLayoutMap[ADAPTER_STATUS_EMPTY] = R.layout.base_empty_layout
+        itemStateLayoutMap[ADAPTER_STATUS_LOADING] = R.layout.lib_loading_layout
+        itemStateLayoutMap[ADAPTER_STATUS_ERROR] = R.layout.lib_error_layout
+        itemStateLayoutMap[ADAPTER_STATUS_EMPTY] = R.layout.lib_empty_layout
 
         itemState = ADAPTER_STATUS_NONE
     }

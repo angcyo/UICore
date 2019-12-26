@@ -10,7 +10,5 @@ dependencies {
     api project(allModule.fragment)
     api project(allModule.coroutine)
     api project(allModule.http)
-    api project(allModule.DslAdapter)
-    api project(allModule.DslTabLayout)
     api 'androidx.core:core-ktx:1.1.0'
 }

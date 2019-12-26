@@ -2,6 +2,7 @@ package com.angcyo.dsladapter
 
 import com.angcyo.library.L
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.R
 
 /**
  * [RecyclerView.Adapter] 加载更多实现
@@ -13,11 +14,11 @@ import com.angcyo.widget.DslViewHolder
 open class DslLoadMoreItem : BaseDslStateItem() {
 
     init {
-        itemStateLayoutMap[ADAPTER_LOAD_NORMAL] = R.layout.base_loading_layout
-        itemStateLayoutMap[ADAPTER_LOAD_LOADING] = R.layout.base_loading_layout
-        itemStateLayoutMap[ADAPTER_LOAD_NO_MORE] = R.layout.base_no_more_layout
-        itemStateLayoutMap[ADAPTER_LOAD_ERROR] = R.layout.base_error_layout
-        itemStateLayoutMap[ADAPTER_LOAD_RETRY] = R.layout.base_error_layout
+        itemStateLayoutMap[ADAPTER_LOAD_NORMAL] = R.layout.lib_loading_layout
+        itemStateLayoutMap[ADAPTER_LOAD_LOADING] = R.layout.lib_loading_layout
+        itemStateLayoutMap[ADAPTER_LOAD_NO_MORE] = R.layout.lib_no_more_layout
+        itemStateLayoutMap[ADAPTER_LOAD_ERROR] = R.layout.lib_error_layout
+        itemStateLayoutMap[ADAPTER_LOAD_RETRY] = R.layout.lib_error_layout
 
         onItemViewDetachedToWindow = {
             if (itemEnableLoadMore) {
