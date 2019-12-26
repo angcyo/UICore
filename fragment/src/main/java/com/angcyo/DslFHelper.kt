@@ -45,6 +45,13 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = false) {
         }
     }
 
+    /**给Fragment配置参数*/
+    fun configFragment(action: Fragment.() -> Unit) {
+        showFragmentList.forEach {
+            it.action()
+        }
+    }
+
     //<editor-fold desc="add 或者 show操作">
 
     fun show(vararg fClass: Class<out Fragment>) {
@@ -83,8 +90,14 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = false) {
         show(fm.restore(*tag))
     }
 
-    fun restore(vararg fragment: Fragment) {
+    fun restores(vararg fragment: Fragment) {
         show(fm.restore(*fragment))
+    }
+
+    fun <T : Fragment> restore(fragment: T, action: T.() -> Unit = {}) {
+        show(fm.restore(fragment).apply {
+            (this.first() as T).action()
+        })
     }
 
     //</editor-fold desc="add 或者 show操作">

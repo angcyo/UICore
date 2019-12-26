@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/permission_bg">
+
+    <TextView
+        android:id="@+id/permission_title"
+        style="@style/LibMainTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/action_bar_height"
+        android:gravity="center"
+        android:lineSpacingExtra="10dp"
+        android:padding="20dp"
+        tools:text="为了更好的服务体验, \n程序需要以下权限" />
+
+    <com.angcyo.widget.recycler.DslRecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:overScrollMode="never" />
+
+    <com.angcyo.widget.DslButton
+        android:id="@+id/enable_button"
+        style="@style/DefaultButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="@dimen/lib_padding_left"
+        android:layout_marginRight="@dimen/lib_padding_left"
+        android:layout_marginBottom="@dimen/lib_xxhdpi"
+        android:minHeight="45dp"
+        android:text="开启权限"
+        android:textColor="@color/white" />
+
+</FrameLayout>

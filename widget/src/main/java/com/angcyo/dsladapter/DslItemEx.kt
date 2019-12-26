@@ -45,3 +45,18 @@ public fun DslAdapter.renderEmptyItem(height: Int = 120 * dpi, color: Int = Colo
     }
     addLastItem(adapterItem)
 }
+
+public fun DslAdapter.renderItem(count: Int = 1, init: DslAdapterItem.(index: Int) -> Unit) {
+    for (i in 0 until count) {
+        val adapterItem = DslAdapterItem()
+        adapterItem.init(i)
+        addLastItem(adapterItem)
+    }
+}
+
+public fun <T> DslAdapter.renderItem(data: T, init: DslAdapterItem.() -> Unit) {
+    val adapterItem = DslAdapterItem()
+    adapterItem.itemData = data
+    adapterItem.init()
+    addLastItem(adapterItem)
+}

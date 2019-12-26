@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--DslButton按钮样式-->
+    <style name="DefaultButtonStyle" parent="LibMainTextStyle">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="button_enable_ripple">true</item>
+        <item name="button_enable_text_style">true</item>
+        <item name="button_enable_background_style">true</item>
+        <item name="button_ripple_color">@color/lib_bg_press</item>
+        <item name="button_shape">RECTANGLE</item>
+        <item name="button_gradient_start_color">@color/colorPrimaryDark</item>
+        <item name="button_gradient_end_color">@color/colorPrimary</item>
+        <item name="button_radius">@dimen/lib_radius_normal</item>
+    </style>
+
+</resources>

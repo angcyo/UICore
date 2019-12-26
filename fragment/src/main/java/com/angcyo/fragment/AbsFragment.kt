@@ -62,6 +62,10 @@ abstract class AbsFragment : Fragment() {
         return super.getContext() ?: attachContext
     }
 
+    fun fContext(): Context {
+        return context
+    }
+
     /**
      * OnAttach -> OnCreate -> OnCreateView (initBaseView) -> OnActivityCreated -> OnViewStateRestored -> OnStart -> OnResume
      */

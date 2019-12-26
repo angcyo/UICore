@@ -2,11 +2,12 @@ package com.angcyo.activity
 
 import android.app.Activity
 import android.content.Context
-import android.graphics.Color
+import android.content.pm.PackageManager
 import android.os.Build
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.ColorRes
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.angcyo.DslAHelper
 import com.angcyo.fragment.R
@@ -57,4 +58,35 @@ fun Activity.dslAHelper(action: DslAHelper.() -> Unit) {
         this.action()
         doIt()
     }
+}
+
+/**是否具有指定的权限*/
+fun Activity.havePermissions(vararg permissions: String): Boolean {
+    var have = true
+    for (permission in permissions) {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                permission
+            ) == PackageManager.PERMISSION_DENIED
+        ) {
+            have = false
+            break
+        }
+    }
+    return have
+}
+
+fun Activity.havePermission(permissionList: List<String>): Boolean {
+    var have = true
+    for (permission in permissionList) {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                permission
+            ) == PackageManager.PERMISSION_DENIED
+        ) {
+            have = false
+            break
+        }
+    }
+    return have
 }
