@@ -83,7 +83,14 @@ open class LogInterceptor : Interceptor {
                 }
                 appendln().appends("Content-Type:").append(contentType())
                 appendln().appends("Content-Length:").append(contentLength())
-                appendln().appends("Body:").append(readString())
+                appendln().appends("Body:")
+
+                if (request.headers.hasEncoded()) {
+                    //加密了数据
+                    append("(encoded body omitted)")
+                } else {
+                    append(readString())
+                }
             } ?: append("no request body!")
         }
     }
@@ -103,9 +110,24 @@ open class LogInterceptor : Interceptor {
                 appendln().append("Body")
                 append("(").append(bodySize).append("):")
 
-                append(readString())
+                if (response.headers.hasEncoded()) {
+                    //加密了数据
+                    append("(encoded body omitted)")
+                } else {
+                    try {
+                        append(readString())
+                    } catch (e: Exception) {
+                        append(e.message)
+                    }
+                }
             } ?: append("no response body!")
         }
+    }
+
+    /**头, 是否包含加密信息[gzip]*/
+    fun Headers.hasEncoded(): Boolean {
+        val contentEncoding = this["Content-Encoding"]
+        return contentEncoding != null && !contentEncoding.equals("identity", ignoreCase = true)
     }
 
     fun StringBuilder.appends(str: Any?): StringBuilder {

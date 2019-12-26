@@ -1,6 +1,7 @@
 package com.angcyo.http.rx
 
 import com.angcyo.library.L
+import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import io.reactivex.exceptions.CompositeException
@@ -24,7 +25,7 @@ open class BaseObserver<T> : AtomicReference<Disposable>(), Observer<T>, Disposa
     }
 
     var onNext: (T) -> Unit = {
-        L.i("${this.javaClass.name}#onNext")
+        L.d("${this.javaClass.name}#onNext:$it")
     }
 
     var onError: (Throwable) -> Unit = {
@@ -110,4 +111,10 @@ open class BaseObserver<T> : AtomicReference<Disposable>(), Observer<T>, Disposa
     override fun isDisposed(): Boolean {
         return get() === DisposableHelper.DISPOSED
     }
+}
+
+/**返回一个带有[dispose]方法的对象*/
+fun <T> Observable<T>.observer(observer: BaseObserver<T>): Disposable {
+    subscribe(observer)
+    return observer
 }

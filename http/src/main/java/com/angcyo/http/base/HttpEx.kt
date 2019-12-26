@@ -18,6 +18,14 @@ fun ResponseBody?.readString(charsetName: String = "UTF-8"): String {
     if (this == null) {
         return ""
     }
+
+//    return Buffer().use { buffer ->
+//        val source = source()
+//        source.read(buffer, Long.MAX_VALUE)
+//        val charset: Charset = Charset.forName(charsetName)
+//        buffer.clone().readString(source.readBomAsCharset(charset))
+//    }
+
     val source = source()
     source.request(Long.MAX_VALUE)
     val buffer = source.buffer
@@ -31,8 +39,9 @@ fun RequestBody?.readString(charsetName: String = "UTF-8"): String {
     if (this == null) {
         return ""
     }
-    val buffer = Buffer()
-    writeTo(buffer)
-    val charset: Charset = Charset.forName(charsetName)
-    return buffer.clone().readString(charset)
+    return Buffer().use {
+        writeTo(it)
+        val charset: Charset = Charset.forName(charsetName)
+        it.clone().readString(charset)
+    }
 }

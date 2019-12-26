@@ -1,5 +1,6 @@
 package com.angcyo.http
 
+import com.angcyo.http.base.gson
 import com.angcyo.http.interceptor.LogInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -53,7 +54,7 @@ class DslHttpConfig {
         retrofit ?: builder.apply {
             baseUrl(onGetBaseUrl())
             addCallAdapterFactory(RxJava2CallAdapterFactory.createAsync())
-            addConverterFactory(GsonConverterFactory.create())
+            addConverterFactory(GsonConverterFactory.create(gson()))
             client(client)
         }.build()
     }

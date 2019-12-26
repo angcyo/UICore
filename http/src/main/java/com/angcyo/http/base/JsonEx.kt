@@ -192,6 +192,7 @@ fun gson(): Gson {
     val gson = GsonBuilder()
         .setPrettyPrinting()
         .serializeNulls()
+        .setLenient() //支持畸形json解析
         .excludeFieldsWithModifiers(
             Modifier.STATIC,
             Modifier.TRANSIENT,
