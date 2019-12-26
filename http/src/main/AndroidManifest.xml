@@ -1,6 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.angcyo.http" >
+    package="com.angcyo.http">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--安卓9 将不允许直接调用http接口-->
+    <!--CLEARTEXT communication to www.mxnzp.com not permitted by network security policy-->
+    <application android:networkSecurityConfig="@xml/network_security_config" />
 
 </manifest>

@@ -1,5 +1,6 @@
 package com.angcyo.coroutine
 
+import com.angcyo.library.L
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
@@ -20,7 +21,7 @@ import kotlin.coroutines.CoroutineContext
  */
 open class CoroutineErrorHandler(
     val action: (exception: Throwable) -> Unit = {
-        System.err.print("协程内发生异常->")
+        L.e("协程内发生异常->")
         it.printStackTrace()
     }
 ) : AbstractCoroutineContextElement(CoroutineExceptionHandler), CoroutineExceptionHandler {

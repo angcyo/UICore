@@ -14,7 +14,7 @@ import kotlin.coroutines.CoroutineContext
 
 fun coroutineTest() {
     backTest()
-//    blockTest()
+    blockTest()
 }
 
 /**串行协程线程调度测试*/
@@ -54,7 +54,7 @@ fun blockTest() {
 /**并发协程测试*/
 fun backTest() {
     launch(Dispatchers.Main + CoroutineErrorHandler {
-        L.e("捕捉异常:$it")
+        L.e("自定义捕捉异常:$it")
     }) {
 
         val i = try {

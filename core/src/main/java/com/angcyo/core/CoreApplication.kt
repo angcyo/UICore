@@ -20,9 +20,10 @@ open class CoreApplication : Application() {
         val resources = resources
         val appNameId = resources.getIdentifier("app_name", "string", packageName)
         L.init(
+            isDebug(),
             if (appNameId > 0) {
                 resources.getString(appNameId)
-            } else "Log", isDebug()
+            } else "Log"
         )
     }
 }
