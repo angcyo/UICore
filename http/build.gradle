@@ -10,7 +10,6 @@ dependencies {
 
     implementation project(allModule.library)
 
-
     //https://github.com/square/okhttp
     //https://jcenter.bintray.com/com/squareup/okhttp3/
     implementation "com.squareup.okhttp3:okhttp:4.2.2"
@@ -25,7 +24,6 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
     implementation "io.reactivex.rxjava2:rxkotlin:2.4.0"
 
-
     //https://github.com/square/retrofit
     //https://jcenter.bintray.com/com/squareup/retrofit2
     implementation "com.squareup.retrofit2:retrofit:2.7.0"
@@ -34,4 +32,8 @@ dependencies {
 
     //https://github.com/tbruyelle/RxPermissions
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
+
+    //https://github.com/AndroidKnife/RxBus/tree/2.x
+    //https://jcenter.bintray.com/com/hwangjr/rxbus
+    implementation 'com.hwangjr.rxbus:rxbus:2.0.1'
 }
