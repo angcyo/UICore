@@ -28,28 +28,33 @@ open class LogInterceptor : Interceptor {
         val requestBuilder = StringBuilder()
         val responseBuilder = StringBuilder()
 
-        requestBuilder.appendln().append("-->").append(uuid)
+        //request
+        requestBuilder.appendln().append("-->请求:").append(uuid)
         logRequest(chain, request, requestBuilder)
-        L.i(requestBuilder)
+        printRequestLog(requestBuilder)
 
+        //response
         val startTime = System.nanoTime()
-
+        responseBuilder.appendln().append("<--请求:").append(uuid)
         val response: Response
         response = try {
             chain.proceed(request)
         } catch (e: Exception) {
-            L.e("<--$uuid HTTP FAILED: $e")
+            val requestTime = toMillis(System.nanoTime() - startTime)
+            responseBuilder.appendln()
+                .append("HTTP FAILED(").append(requestTime).append("ms):")
+                .append(e)
+
+            printResponseLog(responseBuilder)
             throw e
         }
 
         //请求耗时[毫秒]
-        val requestTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime)
-
-        responseBuilder.appendln().append("<--").append(uuid)
+        val requestTime = toMillis(System.nanoTime() - startTime)
         responseBuilder.append(" (").append(requestTime).append("ms)")
         logResponse(response, responseBuilder)
 
-        L.i(responseBuilder)
+        printResponseLog(responseBuilder)
 
         return response
     }
@@ -105,5 +110,17 @@ open class LogInterceptor : Interceptor {
 
     fun StringBuilder.appends(str: Any?): StringBuilder {
         return append(str).append(' ')
+    }
+
+    fun toMillis(ms: Long): Long {
+        return TimeUnit.NANOSECONDS.toMillis(ms)
+    }
+
+    open fun printRequestLog(builder: StringBuilder) {
+        L.d(builder.toString())
+    }
+
+    open fun printResponseLog(builder: StringBuilder) {
+        L.d(builder.toString())
     }
 }

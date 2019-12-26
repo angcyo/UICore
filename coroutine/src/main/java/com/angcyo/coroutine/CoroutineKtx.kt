@@ -13,8 +13,8 @@ import kotlin.coroutines.CoroutineContext
  */
 
 fun coroutineTest() {
-    backTest()
-    blockTest()
+    //backTest()
+    //blockTest()
 }
 
 /**串行协程线程调度测试*/

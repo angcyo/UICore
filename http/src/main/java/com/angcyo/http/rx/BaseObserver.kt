@@ -18,24 +18,34 @@ import java.util.concurrent.atomic.AtomicReference
  */
 
 open class BaseObserver<T> : AtomicReference<Disposable>(), Observer<T>, Disposable {
-    
-    var onSubscribe: (Disposable) -> Unit = {}
-    var onNext: (T) -> Unit = {}
-    var onError: (Throwable) -> Unit = {}
-    var onComplete: () -> Unit = {}
+
+    var onSubscribe: (Disposable) -> Unit = {
+        L.d("${this.javaClass.name}#onSubscribe")
+    }
+
+    var onNext: (T) -> Unit = {
+        L.i("${this.javaClass.name}#onNext")
+    }
+
+    var onError: (Throwable) -> Unit = {
+        L.e("${this.javaClass.name}#onError")
+    }
+
+    var onComplete: () -> Unit = {
+        L.d("${this.javaClass.name}#onComplete")
+    }
 
     /**不管是成功, 还是失败, 都会触发的回调*/
     var onObserverEnd: (data: T?, error: Throwable?) -> Unit = { data, error ->
-        L.i(buildString {
+        val string = buildString {
             appendln().appendln("订阅结束#onObserverEnd:")
             append("data->").appendln(data)
             append("error->").appendln(error)
-        })
-        error?.printStackTrace()
+        }
+        error?.run { L.e(string);printStackTrace() } ?: L.i(string)
     }
 
     override fun onSubscribe(d: Disposable) {
-        L.d("${this.javaClass.name}#onSubscribe")
         if (DisposableHelper.setOnce(this, d)) {
             try {
                 onSubscribe.invoke(this)
@@ -49,14 +59,13 @@ open class BaseObserver<T> : AtomicReference<Disposable>(), Observer<T>, Disposa
 
     var _lastData: T? = null
     override fun onNext(t: T) {
-        L.i("${this.javaClass.name}#onNext")
         if (!isDisposed) {
             try {
                 _lastData = t
                 onNext.invoke(t)
             } catch (e: Throwable) {
                 Exceptions.throwIfFatal(e)
-                get()!!.dispose()
+                get()?.dispose()
                 onError(e)
             }
         }
@@ -64,7 +73,6 @@ open class BaseObserver<T> : AtomicReference<Disposable>(), Observer<T>, Disposa
 
     var _lastError: Throwable? = null
     override fun onError(t: Throwable) {
-        L.e("${this.javaClass.name}#onError")
         if (!isDisposed) {
             lazySet(DisposableHelper.DISPOSED)
             try {
@@ -82,7 +90,6 @@ open class BaseObserver<T> : AtomicReference<Disposable>(), Observer<T>, Disposa
     }
 
     override fun onComplete() {
-        L.d("${this.javaClass.name}#onComplete")
         if (!isDisposed) {
             lazySet(DisposableHelper.DISPOSED)
             try {
@@ -102,9 +109,5 @@ open class BaseObserver<T> : AtomicReference<Disposable>(), Observer<T>, Disposa
 
     override fun isDisposed(): Boolean {
         return get() === DisposableHelper.DISPOSED
-    }
-
-    companion object {
-        private const val serialVersionUID = -7251123623727029452L
     }
 }

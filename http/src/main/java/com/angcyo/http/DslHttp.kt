@@ -1,6 +1,7 @@
 package com.angcyo.http
 
 import com.angcyo.http.DslHttp.dslHttpConfig
+import com.angcyo.http.rx.observableToMain
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import io.reactivex.Observable
@@ -88,7 +89,7 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
         dslHttp().post(requestConfig.url, requestConfig.body, requestConfig.query)
     } else {
         dslHttp().get(requestConfig.url, requestConfig.query)
-    }
+    }.compose(observableToMain())
 }
 
 /**快速发送一个[get]请求*/
