@@ -61,7 +61,7 @@ fun backTest() {
             onBack {
                 L.i("run....1..1")
                 sleep()
-                1 / 0
+                //1 / 0
                 L.i("run....1..1end")
                 1
             }

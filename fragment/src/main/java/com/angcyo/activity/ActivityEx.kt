@@ -2,6 +2,7 @@ package com.angcyo.activity
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.os.Build
 import android.view.View
 import android.view.WindowManager
@@ -21,7 +22,7 @@ import com.angcyo.fragment.R
 /**激活布局全屏*/
 fun Activity.enableLayoutFullScreen(enable: Boolean = true) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        //window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         setStatusBarColor(ContextCompat.getColor(this, R.color.status_bar_color))
         val decorView = window.decorView

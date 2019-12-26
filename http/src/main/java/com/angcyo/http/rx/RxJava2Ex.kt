@@ -32,6 +32,6 @@ import com.angcyo.http.post
 
 fun rxJavaTest() {
     post {
-        url = "http://www.mxnzp1.com/api/tools/system/time"
+        url = "http://www.mxnzp.com/api/tools/system/time"
     }.subscribe(BaseObserver())
 }

@@ -50,6 +50,9 @@ android {
     compileSdkVersion Integer.parseInt(_C_SDK)
     //buildToolsVersion rootProject.B_TOOLS
     defaultConfig {
+        //vector xml支持 api < 21
+        //vectorDrawables.useSupportLibrary = true
+
         applicationId "$application_id"
         minSdkVersion Integer.parseInt(_M_SDK)
         targetSdkVersion Integer.parseInt(_T_SDK)
