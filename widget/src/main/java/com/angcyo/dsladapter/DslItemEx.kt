@@ -13,6 +13,28 @@ import com.angcyo.widget.R
  * @date 2019/08/09
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
+
+/**
+ * 通过条件, 查找[DslAdapterItem].
+ *
+ * @param useFilterList 是否使用过滤后的数据源. 通常界面上显示的是过滤后的数据, 所有add的数据源在非过滤列表中
+ * */
+public fun DslAdapter.findItem(
+    useFilterList: Boolean = true,
+    predicate: (DslAdapterItem) -> Boolean
+): DslAdapterItem? {
+    return getDataList(true).find(predicate)
+}
+
+public fun DslAdapter.findItemByTag(
+    tag: String,
+    useFilterList: Boolean = true
+): DslAdapterItem? {
+    return findItem(useFilterList) {
+        it.itemTag == tag
+    }
+}
+
 public fun DslAdapter.dslItem(@LayoutRes layoutId: Int, config: DslAdapterItem.() -> Unit = {}) {
     val item = DslAdapterItem()
     item.itemLayoutId = layoutId
