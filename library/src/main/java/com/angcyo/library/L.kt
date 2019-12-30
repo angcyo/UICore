@@ -35,6 +35,16 @@ object L {
     /**Json缩进偏移量*/
     var indentJsonDepth: Int = 2
 
+    var logPrint: (tag: String, level: Int, msg: String) -> Unit = { tag, level, msg ->
+        when (level) {
+            VERBOSE -> Log.v(tag, msg)
+            DEBUG -> Log.d(tag, msg)
+            INFO -> Log.i(tag, msg)
+            WARN -> Log.w(tag, msg)
+            ERROR -> Log.e(tag, msg)
+        }
+    }
+
     //临时tag
     var _tempTag: String? = null
 
@@ -138,13 +148,7 @@ object L {
             msg
         }
 
-        when (_level) {
-            VERBOSE -> Log.v(tag, "$stackContext $logMsg")
-            DEBUG -> Log.d(tag, "$stackContext $logMsg")
-            INFO -> Log.i(tag, "$stackContext $logMsg")
-            WARN -> Log.w(tag, "$stackContext $logMsg")
-            ERROR -> Log.e(tag, "$stackContext $logMsg")
-        }
+        logPrint(tag, _level, "$stackContext $logMsg")
 
         _tempTag = null
     }

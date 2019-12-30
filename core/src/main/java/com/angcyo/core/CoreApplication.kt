@@ -2,9 +2,11 @@ package com.angcyo.core
 
 import android.app.Application
 import com.angcyo.core.component.DslCrashHandler
+import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.library.L
 import com.angcyo.library.Library
 import com.angcyo.library.ex.isDebug
+import com.angcyo.library.getAppString
 
 /**
  *
@@ -16,15 +18,10 @@ import com.angcyo.library.ex.isDebug
 open class CoreApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        DslCrashHandler.init(this)
+        //必须第一个初始化
         Library.init(this, isDebug())
-
-        val resources = resources
-        val appNameId = resources.getIdentifier("app_name", "string", packageName)
-        L.init(
-            if (appNameId > 0) {
-                resources.getString(appNameId)
-            } else "Log", isDebug()
-        )
+        DslFileHelper.init(this)
+        DslCrashHandler.init(this)
+        L.init(getAppString("app_name") ?: "Log", isDebug())
     }
 }

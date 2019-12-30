@@ -33,6 +33,7 @@ android {
         resValue "string", "build_time", build_time
         resValue "string", "os_name", osName()
         resValue "string", "user_name", userName()
+        resValue "string", "schema", schema
         //resValue "bool", "SHOW_DEBUG", "true"
 
         buildConfigField "String", "USER_NAME", '"' + userName() + '"'

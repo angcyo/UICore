@@ -3,6 +3,7 @@ package com.angcyo
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import com.angcyo.library.L
 
 /**
  *
@@ -18,8 +19,7 @@ class DslAHelper(val context: Context) {
 
     //<editor-fold desc="start操作">
 
-    fun start(aClass: Class<*>, action: Intent.() -> Unit = {}) {
-        val intent = Intent(context, aClass)
+    fun start(intent: Intent, action: Intent.() -> Unit = {}) {
         if (context !is Activity) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
@@ -27,11 +27,20 @@ class DslAHelper(val context: Context) {
         startIntent.add(intent)
     }
 
+    fun start(aClass: Class<*>, action: Intent.() -> Unit = {}) {
+        val intent = Intent(context, aClass)
+        start(intent, action)
+    }
+
     //</editor-fold desc="start操作">
 
     fun doIt() {
         startIntent.forEach {
-            context.startActivity(it)
+            try {
+                context.startActivity(it)
+            } catch (e: Exception) {
+                L.e("启动Activity失败:$e")
+            }
         }
     }
 

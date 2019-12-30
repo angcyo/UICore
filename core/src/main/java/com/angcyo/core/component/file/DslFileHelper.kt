@@ -1,60 +1,108 @@
 package com.angcyo.core.component.file
 
 import android.content.Context
-import android.os.Environment
-import com.angcyo.http.base.jsonString
-import com.angcyo.library.L
-import java.io.File
+import com.angcyo.coroutine.CoroutineErrorHandler
+import com.angcyo.coroutine.launch
+import com.angcyo.library.getAppString
+import com.angcyo.library.utils.FileUtils
+import com.angcyo.library.utils.fileName
+import kotlinx.coroutines.Dispatchers
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
- * 文件操作
+ * APP扩展数据扩展目录下的 文件操作
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/12/26
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-class DslFileHelper {
+object DslFileHelper {
+    var appContext: Context? = null
+
+    /**所有文件写入的在此根目录下*/
+    var rootFolder: String = getAppString("schema") ?: ""
+
+    /**常用日志文件夹*/
+    var log = "log"
+    var http = "http"
+    var ui = "ui"
+    var crash = "crash"
+    var down = "down"
+    var camera = "camera"
+    var other = "other"
+    var error = "error"
+
+    /**异步文件写入*/
+    var async = true
+
+    val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss-SSS", Locale.CHINA)
+
     fun init(context: Context) {
+        appContext = context.applicationContext
+    }
 
-        val externalStorageState = Environment.getExternalStorageState()
-        val externalStorageDirectory = Environment.getExternalStorageDirectory()
+    /**返回文件路径*/
+    fun write(
+        folder: String,
+        name: String,
+        data: String
+    ): String? {
+        val f = "$rootFolder/$folder"
+        if (async) {
+            launch(Dispatchers.IO + CoroutineErrorHandler()) {
+                FileUtils.writeExternal(appContext, f, name, data)
+            }
+        } else {
+            FileUtils.writeExternal(appContext, f, name, data)
+        }
+        return FileUtils.appExternalFolder(appContext, folder, name)?.absolutePath
+    }
 
-        val mkdirs = File(externalStorageDirectory, "_test").mkdirs()
+    fun log(name: String = fileName("yyyy-MM-dd"), data: String) {
+        write(log, name, _wrapData(data))
+    }
 
+    fun http(name: String = fileName("yyyy-MM-dd"), data: String) {
+        write(http, name, _wrapData(data))
+    }
 
-        //此目录下的所有文件, 卸载就没了.
+    fun ui(name: String = fileName("yyyy-MM-dd"), data: String) {
+        write(ui, name, _wrapData(data))
+    }
 
-        ///storage/emulated/0/Android/data/com.angcyo.uicore.demo/files
-        val externalFilesDir = context.getExternalFilesDir("")
-        ///storage/emulated/0/Android/data/com.angcyo.uicore.demo/files/folder
-        val externalFilesDir1 = context.getExternalFilesDir("folder")
-        ///storage/emulated/0/Android/data/com.angcyo.uicore.demo/files/Documents
-        val externalFilesDir2 = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+    fun crash(name: String = fileName(), data: String) {
+        write(crash, name, _wrapData(data))
+    }
 
+    fun down(name: String = fileName("yyyy-MM-dd"), data: String) {
+        write(down, name, _wrapData(data))
+    }
 
-        Environment.getExternalStorageState()
+    fun camera(name: String = fileName("yyyy-MM-dd"), data: String) {
+        write(camera, name, _wrapData(data))
+    }
 
-//        try {
-//            File(externalStorageDirectory, "_testfile").writeText("test")
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//        }
+    fun other(name: String = fileName("yyyy-MM-dd"), data: String) {
+        write(other, name, _wrapData(data))
+    }
 
-        val listFiles = externalFilesDir?.listFiles()
+    fun error(name: String = fileName("yyyy-MM-dd"), data: String) {
+        write(error, name, _wrapData(data))
+    }
 
-        File(externalFilesDir, "_testfile").writeText("test1")
-        File(externalFilesDir1, "_testfile").writeText("test2")
-        File(externalFilesDir2, "_testfile").writeText("test3")
+    fun _wrapData(data: String): String {
+        return buildString {
+            appendln(dateFormat.format(Date()))
+            append(data)
+        }
+    }
 
-        L.i("this...$mkdirs")
-
-        L.i(this)
-
-        L.i(jsonString {
-            add("a", 1)
-            add("a2", 1)
-            add("a3", 1)
-            add("a4", 1)
-        })
+    fun test() {
+        //write("f", "f.log", "test")
+        //rootFolder = "demo"
+        //write("f2", "f2.log", "test2")
+        1 / 0
     }
 }

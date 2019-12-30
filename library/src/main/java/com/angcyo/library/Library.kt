@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.os.Build
 import com.angcyo.library.ex.isDebug
 import com.orhanobut.hawk.Hawk
 
@@ -16,7 +18,7 @@ import com.orhanobut.hawk.Hawk
  */
 object Library {
 
-    lateinit var application: Application
+    var application: Application? = null
     var debug: Boolean = isDebug()
 
     fun init(context: Application, debug: Boolean = isDebug()) {
@@ -29,7 +31,7 @@ object Library {
     }
 }
 
-fun app(): Application = Library.application
+fun app(): Application = Library.application!!
 
 /**
  * 获取APP的名字
@@ -94,6 +96,30 @@ fun Context.getAppVersionCode(): Int { // 获取package manager的实例
     }
     // Log.i("版本代码:", version);
     return code
+}
+
+/**根据资源名字, 资源类型, 返回资源id*/
+fun getId(name: String, type: String): Int {
+    return getIdentifier(name, type)
+}
+
+fun getIdentifier(name: String, type: String): Int {
+    //(name, string)
+    return app().resources.getIdentifier(name, type, app().packageName)
+}
+
+fun getAppString(name: String): String? {
+    val id = getId(name, "string")
+    return if (id == 0) null else app().resources.getString(id)
+}
+
+fun getAppColor(name: String): Int {
+    val id = getId(name, "color")
+    return when {
+        id == 0 -> Color.TRANSPARENT
+        Build.VERSION.SDK_INT >= 23 -> app().getColor(id)
+        else -> app().resources.getColor(id)
+    }
 }
 
 fun getAppName(): String {
