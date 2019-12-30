@@ -1,6 +1,7 @@
 package com.angcyo.core
 
 import android.app.Application
+import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.library.L
 import com.angcyo.library.Library
 import com.angcyo.library.ex.isDebug
@@ -15,15 +16,15 @@ import com.angcyo.library.ex.isDebug
 open class CoreApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+        DslCrashHandler.init(this)
         Library.init(this, isDebug())
 
         val resources = resources
         val appNameId = resources.getIdentifier("app_name", "string", packageName)
         L.init(
-            isDebug(),
             if (appNameId > 0) {
                 resources.getString(appNameId)
-            } else "Log"
+            } else "Log", isDebug()
         )
     }
 }

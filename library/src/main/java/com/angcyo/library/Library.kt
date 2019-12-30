@@ -17,9 +17,11 @@ import com.orhanobut.hawk.Hawk
 object Library {
 
     lateinit var application: Application
+    var debug: Boolean = isDebug()
 
     fun init(context: Application, debug: Boolean = isDebug()) {
         application = context
+        Library.debug = debug
 
         /*sp持久化库*/
         Hawk.init(context)
