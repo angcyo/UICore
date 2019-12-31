@@ -10,7 +10,9 @@ import androidx.annotation.ColorRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.math.MathUtils.clamp
 import androidx.core.view.GestureDetectorCompat
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 
 /**
@@ -117,4 +119,45 @@ public fun ViewGroup.LayoutParams.recyclerParams(config: RecyclerView.LayoutPara
         config()
         this
     }
+}
+
+
+public fun View.offsetTop(offset: Int) {
+    ViewCompat.offsetTopAndBottom(this, offset)
+}
+
+/**限制滚动偏移的范围, 返回值表示 需要消耗的 距离*/
+public fun View.offsetTop(offset: Int, minTop: Int, maxTop: Int): Int {
+    val offsetTop = top + offset
+    val newTop = clamp(offsetTop, minTop, maxTop)
+
+    offsetTopTo(newTop)
+
+    return -(offset - (offsetTop - newTop))
+}
+
+public fun View.offsetTopTo(newTop: Int) {
+    offsetTop(newTop - top)
+}
+
+public fun View.offsetTopTo(newTop: Int, minTop: Int, maxTop: Int) {
+    offsetTop(newTop - top, minTop, maxTop)
+}
+
+public fun View.offsetLeft(offset: Int) {
+    ViewCompat.offsetLeftAndRight(this, offset)
+}
+
+/**限制滚动偏移的范围, 返回值表示 需要消耗的 距离*/
+public fun View.offsetLeft(offset: Int, minLeft: Int, maxLeft: Int): Int {
+    val offsetLeft = left + offset
+    val newLeft = clamp(offsetLeft, minLeft, maxLeft)
+
+    offsetTopTo(newLeft)
+
+    return -(offset - (offsetLeft - newLeft))
+}
+
+public fun View.offsetLeftTo(newLeft: Int) {
+    offsetLeft(newLeft - left)
 }

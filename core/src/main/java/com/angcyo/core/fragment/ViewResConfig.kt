@@ -3,6 +3,7 @@ package com.angcyo.core.fragment
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import com.angcyo.core.R
 import com.angcyo.core.getColor
 import com.angcyo.core.getDimen
@@ -35,5 +36,8 @@ data class ViewResConfig(
     var fragmentBackgroundDrawable: Drawable? = ColorDrawable(getColor(R.color.bg_primary_color)),
 
     /**标题栏背景*/
-    var titleBarBackgroundDrawable: Drawable? = ColorDrawable(getColor(R.color.colorPrimary))
+    var titleBarBackgroundDrawable: Drawable? = GradientDrawable(
+        GradientDrawable.Orientation.LEFT_RIGHT,
+        intArrayOf(getColor(R.color.colorPrimary), getColor(R.color.colorPrimaryDark))
+    )
 )

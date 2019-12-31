@@ -27,8 +27,11 @@ abstract class BaseDependsBehavior<T : View>(
     /**是否需要监听[dependsLayout]的改变*/
     var enableDependsOn = true
 
+    lateinit var childView: T
+
     @CallSuper
     override fun layoutDependsOn(parent: CoordinatorLayout, child: T, dependency: View): Boolean {
+        childView = child
         return enableDependsOn && dependsLayout == dependency
     }
 
@@ -103,9 +106,9 @@ abstract class BaseDependsBehavior<T : View>(
         return super.onInterceptTouchEvent(parent, child, ev)
     }
 
-    override fun onLayoutChild(parent: CoordinatorLayout, child: T, layoutDirection: Int): Boolean {
-        return super.onLayoutChild(parent, child, layoutDirection)
-    }
+//    override fun onLayoutChild(parent: CoordinatorLayout, child: T, layoutDirection: Int): Boolean {
+//        return super.onLayoutChild(parent, child, layoutDirection)
+//    }
 
     /**
      * 某一个 [child] 布局结束之后的回调, 可以用来恢复[offset]的值
@@ -122,23 +125,23 @@ abstract class BaseDependsBehavior<T : View>(
 
     }
 
-    override fun onMeasureChild(
-        parent: CoordinatorLayout,
-        child: T,
-        parentWidthMeasureSpec: Int,
-        widthUsed: Int,
-        parentHeightMeasureSpec: Int,
-        heightUsed: Int
-    ): Boolean {
-        return super.onMeasureChild(
-            parent,
-            child,
-            parentWidthMeasureSpec,
-            widthUsed,
-            parentHeightMeasureSpec,
-            heightUsed
-        )
-    }
+//    override fun onMeasureChild(
+//        parent: CoordinatorLayout,
+//        child: T,
+//        parentWidthMeasureSpec: Int,
+//        widthUsed: Int,
+//        parentHeightMeasureSpec: Int,
+//        heightUsed: Int
+//    ): Boolean {
+//        return super.onMeasureChild(
+//            parent,
+//            child,
+//            parentWidthMeasureSpec,
+//            widthUsed,
+//            parentHeightMeasureSpec,
+//            heightUsed
+//        )
+//    }
 
     /**
      * 某一个 [child] 测量结束之后的回调

@@ -6,6 +6,9 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import com.angcyo.behavior.BaseDependsBehavior
+import com.angcyo.behavior.placeholder.ITitleBarPlaceholderBehavior
+import com.angcyo.widget.base.coordinatorParams
+import com.angcyo.widget.base.offsetTopTo
 
 /**
  * 下拉刷新效果的行为
@@ -18,8 +21,28 @@ open class RefreshEffectBehavior(
     context: Context? = null,
     attrs: AttributeSet? = null
 ) : BaseDependsBehavior<View>(context, attrs) {
+
+    /**标题栏的行为*/
+    var titleBarPlaceholderBehavior: ITitleBarPlaceholderBehavior? = null
+
+    /**[child]需要排除多少高度*/
+    val excludeHeight get() = titleBarPlaceholderBehavior?.getTitleBarHeight(this) ?: 0
+
     init {
         showLog = true
+    }
+
+    override fun layoutDependsOn(
+        parent: CoordinatorLayout,
+        child: View,
+        dependency: View
+    ): Boolean {
+        dependency.layoutParams.coordinatorParams()?.behavior?.let {
+            if (it is ITitleBarPlaceholderBehavior) {
+                titleBarPlaceholderBehavior = it
+            }
+        }
+        return super.layoutDependsOn(parent, child, dependency)
     }
 
     override fun onStartNestedScroll(
@@ -39,5 +62,39 @@ open class RefreshEffectBehavior(
             type
         )
         return axes == ViewCompat.SCROLL_AXIS_VERTICAL
+    }
+
+    override fun onLayoutAfter(parent: CoordinatorLayout, child: View, layoutDirection: Int) {
+        super.onLayoutAfter(parent, child, layoutDirection)
+        child.offsetTopTo(excludeHeight)
+    }
+
+    override fun onMeasureChild(
+        parent: CoordinatorLayout,
+        child: View,
+        parentWidthMeasureSpec: Int,
+        widthUsed: Int,
+        parentHeightMeasureSpec: Int,
+        heightUsed: Int
+    ): Boolean {
+
+        super.onMeasureChild(
+            parent,
+            child,
+            parentWidthMeasureSpec,
+            widthUsed,
+            parentHeightMeasureSpec,
+            heightUsed
+        )
+
+        parent.onMeasureChild(
+            child,
+            parentWidthMeasureSpec,
+            widthUsed,
+            parentHeightMeasureSpec,
+            heightUsed + excludeHeight
+        )
+
+        return true
     }
 }

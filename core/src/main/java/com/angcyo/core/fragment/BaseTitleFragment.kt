@@ -29,12 +29,14 @@ abstract class BaseTitleFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //getUiFragment().initFragment(this)
+        BaseUI.onFragmentCreateAfter(this, viewResConfig)
     }
 
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)
         initTitleFragment()
+
+        BaseUI.onFragmentInitBaseViewAfter(this)
     }
 
     //<editor-fold desc="操作方法">
@@ -46,7 +48,7 @@ abstract class BaseTitleFragment : BaseFragment() {
     open fun getContentLayoutId(): Int = -1
 
     /**自定义标题栏布局*/
-    open fun getTitleLayoutId(): Int = -1
+    open fun getTitleLayoutId(): Int = R.layout.lib_title_bar_layout
 
     open fun initTitleFragment() {
         if (getContentLayoutId() > 0) {
