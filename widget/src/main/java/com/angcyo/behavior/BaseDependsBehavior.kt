@@ -140,6 +140,10 @@ abstract class BaseDependsBehavior<T : View>(
         )
     }
 
+    /**
+     * 某一个 [child] 测量结束之后的回调
+     * [RCoordinatorLayout.onMeasureChild]
+     * */
     open fun onMeasureChildAfter(
         parent: CoordinatorLayout,
         child: T,
@@ -148,5 +152,12 @@ abstract class BaseDependsBehavior<T : View>(
         parentHeightMeasureSpec: Int,
         heightUsed: Int
     ) {
+    }
+
+    /**
+     * 所有[child]测量结束之后回调
+     * */
+    open fun onMeasureAfter(parent: CoordinatorLayout, child: T) {
+
     }
 }

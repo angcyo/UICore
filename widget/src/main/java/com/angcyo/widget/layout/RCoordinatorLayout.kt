@@ -11,6 +11,8 @@ import androidx.core.view.ViewCompat
 import com.angcyo.behavior.BaseDependsBehavior
 import com.angcyo.widget.R
 import com.angcyo.widget.base.InvalidateProperty
+import com.angcyo.widget.base.coordinatorParams
+import com.angcyo.widget.base.eachChildsVisibility
 
 /**
  *
@@ -41,6 +43,17 @@ open class RCoordinatorLayout(
         super.draw(canvas)
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+
+        eachChildsVisibility { _, child ->
+            (child.layoutParams.coordinatorParams()?.behavior as? BaseDependsBehavior)?.onMeasureAfter(
+                this,
+                child
+            )
+        }
+    }
+
     override fun onMeasureChild(
         child: View,
         parentWidthMeasureSpec: Int,
@@ -56,8 +69,7 @@ open class RCoordinatorLayout(
             heightUsed
         )
 
-        val lp = child.layoutParams as LayoutParams
-        (lp.behavior as? BaseDependsBehavior)?.onMeasureChildAfter(
+        (child.layoutParams.coordinatorParams()?.behavior as? BaseDependsBehavior)?.onMeasureChildAfter(
             this,
             child,
             parentWidthMeasureSpec,
@@ -72,15 +84,8 @@ open class RCoordinatorLayout(
 
         val layoutDirection = ViewCompat.getLayoutDirection(this)
 
-        for (i in 0 until childCount) {
-            val child = getChildAt(i)
-            if (child.visibility == View.GONE) {
-                // If the child is GONE, skip...
-                continue
-            }
-
-            val lp = child.layoutParams as LayoutParams
-            (lp.behavior as? BaseDependsBehavior)?.onLayoutAfter(
+        eachChildsVisibility { _, child ->
+            (child.layoutParams.coordinatorParams()?.behavior as? BaseDependsBehavior)?.onLayoutAfter(
                 this,
                 child,
                 layoutDirection
@@ -90,7 +95,10 @@ open class RCoordinatorLayout(
 
     override fun onLayoutChild(child: View, layoutDirection: Int) {
         super.onLayoutChild(child, layoutDirection)
-        val lp = child.layoutParams as LayoutParams
-        (lp.behavior as? BaseDependsBehavior)?.onLayoutChildAfter(this, child, layoutDirection)
+        (child.layoutParams.coordinatorParams()?.behavior as? BaseDependsBehavior)?.onLayoutChildAfter(
+            this,
+            child,
+            layoutDirection
+        )
     }
 }
