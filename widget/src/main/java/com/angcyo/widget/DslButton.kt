@@ -168,7 +168,7 @@ open class DslButton : AppCompatTextView {
     var enableBackgroundStyle = false
 
     constructor(context: Context) : super(context) {
-        initAttribute(context, null)
+        initAttribute(context)
     }
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
@@ -180,12 +180,13 @@ open class DslButton : AppCompatTextView {
         attrs,
         defStyleAttr
     ) {
-        initAttribute(context, attrs)
+        initAttribute(context, attrs, defStyleAttr)
     }
 
     /**xml属性读取*/
-    fun initAttribute(context: Context, attributeSet: AttributeSet? = null) {
-        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.DslButton)
+    fun initAttribute(context: Context, attributeSet: AttributeSet? = null, defStyleAttr: Int = 0) {
+        val typedArray =
+            context.obtainStyledAttributes(attributeSet, R.styleable.DslButton, defStyleAttr, 0)
 
         enableRipple =
             typedArray.getBoolean(R.styleable.DslButton_button_enable_ripple, enableRipple)

@@ -218,6 +218,15 @@ public fun ViewGroup.childs(map: (index: Int, child: View) -> Unit) {
     }
 }
 
+public fun ViewGroup.eachChildsVisibility(map: (index: Int, child: View) -> Unit) {
+    for (index in 0 until childCount) {
+        val childAt = getChildAt(index)
+        if (childAt.visibility != View.GONE) {
+            map.invoke(index, childAt)
+        }
+    }
+}
+
 public fun ViewGroup.inflate(@LayoutRes layoutId: Int, attachToRoot: Boolean = true): View {
     if (layoutId == -1) {
         return this
