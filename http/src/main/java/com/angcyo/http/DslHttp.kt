@@ -41,6 +41,12 @@ interface Api {
         @QueryMap queryMap: HashMap<String, Any> = hashMapOf()
     ): Observable<Response<JsonElement>>
 
+    @PUT
+    fun put(
+        @Url url: String,
+        @Body json: JsonElement = JsonObject(),
+        @QueryMap queryMap: HashMap<String, Any> = hashMapOf()
+    ): Observable<Response<JsonElement>>
 }
 
 object DslHttp {
@@ -96,11 +102,18 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
             connectUrl(dslHttpConfig.onGetBaseUrl(), requestConfig.url)
     }
 
-    return if (requestConfig.method == POST) {
-        dslHttp().post(requestConfig.url, requestConfig.body, requestConfig.query)
-    } else {
-        dslHttp().get(requestConfig.url, requestConfig.query)
-    }.compose(observableToMain())
+    return when (requestConfig.method) {
+        POST -> {
+            dslHttp().post(requestConfig.url, requestConfig.body, requestConfig.query)
+        }
+        PUT -> {
+            dslHttp().put(requestConfig.url, requestConfig.body, requestConfig.query)
+        }
+        else -> {
+            dslHttp().get(requestConfig.url, requestConfig.query)
+        }
+    }
+        .compose(observableToMain())
         .doOnSubscribe {
             requestConfig.onStart(it)
         }
@@ -156,6 +169,7 @@ fun <T> Response<JsonElement>.toBean(type: Type): T? {
 
 const val GET = 1
 const val POST = 2
+const val PUT = 3
 
 data class RequestConfig(
     //请求方法
