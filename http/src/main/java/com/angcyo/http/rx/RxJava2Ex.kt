@@ -32,8 +32,8 @@ import com.angcyo.http.post
 
 fun rxJavaTest() {
     post {
-//        url = "https://www.mxnzp.com/api/tools/system/time"
-        url = "https://blog.csdn.net/sinat_31057219/article/details/101304867/"
+        url = "https://www.mxnzp.com/api/tools/system/time"
+//        url = "https://blog.csdn.net/sinat_31057219/article/details/101304867/"
 //        url = "https://www.baidu.com"
     }.observer(BaseObserver())
 }

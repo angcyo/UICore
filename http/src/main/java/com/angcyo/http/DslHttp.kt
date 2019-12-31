@@ -1,10 +1,14 @@
 package com.angcyo.http
 
 import com.angcyo.http.DslHttp.dslHttpConfig
+import com.angcyo.http.base.getInt
+import com.angcyo.http.base.getString
+import com.angcyo.http.exception.HttpDataException
 import com.angcyo.http.rx.observableToMain
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import io.reactivex.Observable
+import io.reactivex.disposables.Disposable
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -59,7 +63,13 @@ fun dslHttp(): Api {
         throw NullPointerException("请先初始化[DslHttp.config{ ... }]")
     }
 
-    val client = dslHttpConfig.onBuildHttpClient(dslHttpConfig.defaultOkHttpClientBuilder)
+    val client = dslHttpConfig.onBuildHttpClient(
+        dslHttpConfig.defaultOkHttpClientBuilder.apply {
+            dslHttpConfig.onConfigOkHttpClient.forEach {
+                it(this)
+            }
+        }
+    )
     dslHttpConfig.okHttpClient = client
 
     val retrofit = dslHttpConfig.onBuildRetrofit(dslHttpConfig.defaultRetrofitBuilder, client)
@@ -76,6 +86,7 @@ fun connectUrl(host: String?, url: String?): String {
     return "$h/$u"
 }
 
+/**根据[RequestConfig]发送网络请求*/
 fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
     val requestConfig = RequestConfig(GET)
     requestConfig.config()
@@ -90,6 +101,29 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
     } else {
         dslHttp().get(requestConfig.url, requestConfig.query)
     }.compose(observableToMain())
+        .doOnSubscribe {
+            requestConfig.onStart(it)
+        }
+        .doOnNext {
+            val body = it.body()
+            when {
+                requestConfig.isSuccessful(it) -> {
+                    requestConfig.onSuccess(it)
+                }
+                body is JsonObject -> {
+                    throw HttpDataException(body.getString(requestConfig.msgKey) ?: "数据异常")
+                }
+                else -> {
+                    requestConfig.onSuccess(it)
+                }
+            }
+        }
+        .doOnComplete {
+            requestConfig.onComplete()
+        }
+        .doOnError {
+            requestConfig.onError(it)
+        }
 }
 
 /**快速发送一个[get]请求*/
@@ -120,9 +154,29 @@ data class RequestConfig(
     //url后面拼接的参数列表
     var query: HashMap<String, Any> = hashMapOf(),
 
-    var onStart: () -> Unit = {},
-    var onSuccess: () -> Unit = {},
-    var onError: () -> Unit = {}
+    //解析请求返回的json数据, 判断code是否是成功的状态, 否则走异常流程.
+    var codeKey: String = "code",
+    var msgKey: String = "msg",
+
+    //判断返回的数据
+    var isSuccessful: (Response<JsonElement>) -> Boolean = {
+        val jsonElement = it.body()
+        var result = false
+        if (it.isSuccessful && jsonElement is JsonObject) {
+            if (jsonElement.getInt(codeKey) in 200..299) {
+                result = true
+            }
+        }
+        result
+    },
+
+    var onStart: (Disposable) -> Unit = {},
+    //http状态请求成功才回调
+    var onSuccess: (Response<JsonElement>) -> Unit = {},
+    //请求结束, 网络状态成功, 但是数据状态不一定成功
+    var onComplete: () -> Unit = {},
+    //异常处理
+    var onError: (Throwable) -> Unit = {}
 )
 
 

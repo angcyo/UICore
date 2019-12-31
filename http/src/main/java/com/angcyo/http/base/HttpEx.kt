@@ -3,6 +3,7 @@ package com.angcyo.http.base
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import okio.Buffer
+import java.net.URLDecoder
 import java.nio.charset.Charset
 
 /**
@@ -14,7 +15,7 @@ import java.nio.charset.Charset
  */
 
 /**读取ResponseBody中的字符串*/
-fun ResponseBody?.readString(charsetName: String = "UTF-8"): String {
+fun ResponseBody?.readString(urlDecode: Boolean = true, charsetName: String = "UTF-8"): String {
     if (this == null) {
         return ""
     }
@@ -30,7 +31,12 @@ fun ResponseBody?.readString(charsetName: String = "UTF-8"): String {
     source.request(Long.MAX_VALUE)
     val buffer = source.buffer
     val charset: Charset = Charset.forName(charsetName)
-    return buffer.clone().readString(charset)
+    val readString = buffer.clone().readString(charset)
+    return if (urlDecode) {
+        URLDecoder.decode(readString, charsetName)
+    } else {
+        readString
+    }
 }
 
 

@@ -7,7 +7,6 @@ import com.angcyo.library.getAppString
 import com.angcyo.library.utils.FileUtils
 import com.angcyo.library.utils.fileName
 import kotlinx.coroutines.Dispatchers
-import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -97,12 +96,5 @@ object DslFileHelper {
             appendln(dateFormat.format(Date()))
             append(data)
         }
-    }
-
-    fun test() {
-        //write("f", "f.log", "test")
-        //rootFolder = "demo"
-        //write("f2", "f2.log", "test2")
-        1 / 0
     }
 }

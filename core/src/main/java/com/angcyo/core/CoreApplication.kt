@@ -3,6 +3,8 @@ package com.angcyo.core
 import android.app.Application
 import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.core.component.file.DslFileHelper
+import com.angcyo.core.component.interceptor.LogFileInterceptor
+import com.angcyo.http.DslHttp
 import com.angcyo.library.L
 import com.angcyo.library.Library
 import com.angcyo.library.ex.isDebug
@@ -23,5 +25,11 @@ open class CoreApplication : Application() {
         DslFileHelper.init(this)
         DslCrashHandler.init(this)
         L.init(getAppString("app_name") ?: "Log", isDebug())
+
+        DslHttp.config {
+            onConfigOkHttpClient.add {
+                it.addInterceptor(LogFileInterceptor())
+            }
+        }
     }
 }

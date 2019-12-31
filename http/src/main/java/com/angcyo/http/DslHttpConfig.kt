@@ -34,6 +34,8 @@ class DslHttpConfig {
         addInterceptor(LogInterceptor())
     }
 
+    val onConfigOkHttpClient = mutableListOf<(OkHttpClient.Builder) -> Unit>()
+
     /**可以使用默认的[okHttpClient], 也可以返回自定义的client*/
     var onBuildHttpClient: (OkHttpClient.Builder) -> OkHttpClient = {
         okHttpClient ?: it.build()

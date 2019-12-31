@@ -8,7 +8,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
- *
+ * 网络请求日志输出
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/12/25
@@ -29,13 +29,13 @@ open class LogInterceptor : Interceptor {
         val responseBuilder = StringBuilder()
 
         //request
-        requestBuilder.appendln().append("-->请求:").append(uuid)
+        requestBuilder.appendln().append("-->ID:").append(uuid)
         logRequest(chain, request, requestBuilder)
         printRequestLog(requestBuilder)
 
         //response
         val startTime = System.nanoTime()
-        responseBuilder.appendln().append("<--请求:").append(uuid)
+        responseBuilder.appendln().append("<--ID:").append(uuid)
         val response: Response
         response = try {
             chain.proceed(request)
@@ -83,15 +83,15 @@ open class LogInterceptor : Interceptor {
                 }
                 appendln().appends("Content-Type:").append(contentType())
                 appendln().appends("Content-Length:").append(contentLength())
-                appendln().appends("Body:")
+                appendln().appendln("Body:")
 
                 if (request.headers.hasEncoded()) {
                     //加密了数据
-                    append("(encoded body omitted)")
+                    appendln("(encoded body omitted)")
                 } else {
-                    append(readString())
+                    appendln(readString())
                 }
-            } ?: append("no request body!")
+            } ?: appendln("no request body!")
         }
     }
 
@@ -108,19 +108,19 @@ open class LogInterceptor : Interceptor {
                 val bodySize: String =
                     if (contentLength != -1L) "$contentLength-byte" else "unknown-length"
                 appendln().append("Body")
-                append("(").append(bodySize).append("):")
+                append("(").append(bodySize).appendln("):")
 
                 if (response.headers.hasEncoded()) {
                     //加密了数据
-                    append("(encoded body omitted)")
+                    appendln("(encoded body omitted)")
                 } else {
                     try {
-                        append(readString())
+                        appendln(readString())
                     } catch (e: Exception) {
-                        append(e.message)
+                        appendln(e.message)
                     }
                 }
-            } ?: append("no response body!")
+            } ?: appendln("no response body!")
         }
     }
 

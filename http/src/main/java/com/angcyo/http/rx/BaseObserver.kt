@@ -82,7 +82,7 @@ open class BaseObserver<T> : AtomicReference<Disposable>(), Observer<T>, Disposa
                 _lastError = t
                 onError.invoke(t)
 
-                onObserverEnd.invoke(_lastData, _lastError)
+                onEnd()
             } catch (e: Throwable) {
                 Exceptions.throwIfFatal(e)
                 RxJavaPlugins.onError(CompositeException(t, e))
@@ -98,12 +98,16 @@ open class BaseObserver<T> : AtomicReference<Disposable>(), Observer<T>, Disposa
             try {
                 onComplete.invoke()
 
-                onObserverEnd.invoke(_lastData, _lastError)
+                onEnd()
             } catch (e: Throwable) {
                 Exceptions.throwIfFatal(e)
                 RxJavaPlugins.onError(e)
             }
         }
+    }
+
+    open fun onEnd() {
+        onObserverEnd.invoke(_lastData, _lastError)
     }
 
     override fun dispose() {
