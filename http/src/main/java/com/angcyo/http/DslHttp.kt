@@ -1,8 +1,7 @@
 package com.angcyo.http
 
 import com.angcyo.http.DslHttp.dslHttpConfig
-import com.angcyo.http.base.getInt
-import com.angcyo.http.base.getString
+import com.angcyo.http.base.*
 import com.angcyo.http.exception.HttpDataException
 import com.angcyo.http.rx.observableToMain
 import com.google.gson.JsonElement
@@ -11,6 +10,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import retrofit2.Response
 import retrofit2.http.*
+import java.lang.reflect.Type
 
 /**
  * 网络请求库
@@ -136,6 +136,21 @@ fun post(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
     return http {
         method = POST
         this.config()
+    }
+}
+
+/**[JsonElement]转换成数据bean*/
+fun <T> Response<JsonElement>.toBean(type: Type): T? {
+    return if (isSuccessful) {
+        when (val bodyJson = body().toJson()) {
+            null -> null
+            else -> bodyJson.fromJson(type)
+        }
+    } else {
+        when (val bodyJson = errorBody()?.readString()) {
+            null -> null
+            else -> bodyJson.fromJson(type)
+        }
     }
 }
 
