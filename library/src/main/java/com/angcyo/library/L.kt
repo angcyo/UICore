@@ -31,6 +31,16 @@ object L {
 
     /**打印多少级的堆栈信息*/
     var stackTraceDepth: Int = 2
+        get() = if (_tempStackTraceDepth > 0) _tempStackTraceDepth else field
+
+    var _tempStackTraceDepth: Int = -1
+
+    /**堆栈跳过前多少个*/
+    var stackTraceFront: Int = 2
+        get() = if (_tempStackTraceFront > 0) _tempStackTraceFront else field
+
+    var _tempStackTraceFront: Int = -1
+
 
     /**Json缩进偏移量*/
     var indentJsonDepth: Int = 2
@@ -116,7 +126,7 @@ object L {
             return
         }
 
-        val stackTrace = getStackTrace(2, stackTraceDepth)
+        val stackTrace = getStackTrace(stackTraceFront, stackTraceDepth)
         val stackContext = buildString {
             append("[")
             stackTrace.forEachIndexed { index, element ->
@@ -151,6 +161,7 @@ object L {
         logPrint(tag, _level, "$stackContext $logMsg")
 
         _tempTag = null
+        _tempStackTraceDepth = -1
     }
 
     fun _wrapJson(msg: String): String {

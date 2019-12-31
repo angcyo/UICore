@@ -9,7 +9,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.widget.base.isTouchDown
 
 /**
- *
+ * 必须有2个参数的构造方法
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/09/10

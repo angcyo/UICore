@@ -30,10 +30,59 @@ open class LogBehavior<T : View>(context: Context? = null, attrs: AttributeSet? 
 //        val array = context.obtainStyledAttributes(attrs, R.styleable.LogBehavior_Layout)
 //        val test =
 //            array.getDimensionPixelOffset(R.styleable.LogBehavior_Layout_layout_behavior_test, -1)
-//        w("this...自定义属性...$test")
+//        w("自定义属性...$test")
 //        array.recycle()
     }
 
+    //<editor-fold desc="内嵌滚动回调">
+
+    /**
+     * 是否要处理此次内嵌滚动
+     *
+     * @param axes 事件的方向:  1:[ViewCompat.SCROLL_AXIS_HORIZONTAL] 2:[ViewCompat.SCROLL_AXIS_VERTICAL]
+     * @param type 滚动事件类型: 0:scroll 1:fling
+     * @return true 接收内嵌滚动事件
+     * */
+    override fun onStartNestedScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: T,
+        directTargetChild: View,
+        target: View,
+        axes: Int,
+        type: Int
+    ): Boolean {
+        i("child:${directTargetChild.simpleHash()} target:${target.simpleHash()} axes:${axes.toAxesString()} type:${type.toTypeString()}")
+        return super.onStartNestedScroll(
+            coordinatorLayout,
+            child,
+            directTargetChild,
+            target,
+            axes,
+            type
+        )
+    }
+
+    /**内嵌滚动开始访问*/
+    override fun onNestedScrollAccepted(
+        coordinatorLayout: CoordinatorLayout,
+        child: T,
+        directTargetChild: View,
+        target: View,
+        axes: Int,
+        type: Int
+    ) {
+        super.onNestedScrollAccepted(
+            coordinatorLayout,
+            child,
+            directTargetChild,
+            target,
+            axes,
+            type
+        )
+        i("${target.simpleHash()}...axes:${axes.toAxesString()} type:${type.toTypeString()}")
+    }
+
+    /**内嵌滚动将要滚动, 可以消耗对应的滚动量*/
     override fun onNestedPreScroll(
         coordinatorLayout: CoordinatorLayout,
         child: T,
@@ -44,9 +93,10 @@ open class LogBehavior<T : View>(context: Context? = null, attrs: AttributeSet? 
         type: Int
     ) {
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type)
-        d("${target.simpleHash()}....dx:$dx dy:$dy type:$type")
+        d("${target.simpleHash()}....dx:$dx dy:$dy consumed:${consumed.toStr()} type:${type.toTypeString()}")
     }
 
+    /**内嵌滚动滚动的量*/
     override fun onNestedScroll(
         coordinatorLayout: CoordinatorLayout,
         child: T,
@@ -69,60 +119,10 @@ open class LogBehavior<T : View>(context: Context? = null, attrs: AttributeSet? 
             type,
             consumed
         )
-        d("${target.simpleHash()}....dxC:$dxConsumed dyC:$dyConsumed dxUC:$dxUnconsumed dyUC:$dyUnconsumed type:$type")
+        i("${target.simpleHash()} dxC:$dxConsumed dyC:$dyConsumed dxUC:$dxUnconsumed dyUC:$dyUnconsumed consumed:${consumed.toStr()} type:${type.toTypeString()}")
     }
 
-    override fun onSaveInstanceState(
-        parent: CoordinatorLayout,
-        child: T
-    ): Parcelable? {
-        w("${child.simpleHash()}....")
-        return super.onSaveInstanceState(parent, child)
-    }
-
-    override fun onNestedScrollAccepted(
-        coordinatorLayout: CoordinatorLayout,
-        child: T,
-        directTargetChild: View,
-        target: View,
-        axes: Int,
-        type: Int
-    ) {
-        super.onNestedScrollAccepted(
-            coordinatorLayout,
-            child,
-            directTargetChild,
-            target,
-            axes,
-            type
-        )
-        i("${target.simpleHash()}...axes:$axes type:$type")
-    }
-
-    /**
-     * @param axes 事件的方向:  1:[ViewCompat.SCROLL_AXIS_HORIZONTAL] 2:[ViewCompat.SCROLL_AXIS_VERTICAL]
-     * @param type 滚动事件类型: 0:scroll 1:fling
-     * @return true 接收内嵌滚动事件
-     * */
-    override fun onStartNestedScroll(
-        coordinatorLayout: CoordinatorLayout,
-        child: T,
-        directTargetChild: View,
-        target: View,
-        axes: Int,
-        type: Int
-    ): Boolean {
-        i("this...${target.simpleHash()} axes:$axes type:$type")
-        return super.onStartNestedScroll(
-            coordinatorLayout,
-            child,
-            directTargetChild,
-            target,
-            axes,
-            type
-        )
-    }
-
+    /**内嵌滚动停止*/
     override fun onStopNestedScroll(
         coordinatorLayout: CoordinatorLayout,
         child: T,
@@ -130,17 +130,22 @@ open class LogBehavior<T : View>(context: Context? = null, attrs: AttributeSet? 
         type: Int
     ) {
         super.onStopNestedScroll(coordinatorLayout, child, target, type)
-        i("${target.simpleHash()}....")
+        i("${target.simpleHash()} type:${type.toTypeString()}")
     }
 
-    override fun getScrimColor(
-        parent: CoordinatorLayout,
-        child: T
-    ): Int {
-        w("this....")
-        return super.getScrimColor(parent, child)
+    /**即将fling操作*/
+    override fun onNestedPreFling(
+        coordinatorLayout: CoordinatorLayout,
+        child: T,
+        target: View,
+        velocityX: Float,
+        velocityY: Float
+    ): Boolean {
+        d("${target.simpleHash()} velocityX:$velocityX velocityY:$velocityY")
+        return super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY)
     }
 
+    /**内嵌滚动开始fling操作*/
     override fun onNestedFling(
         coordinatorLayout: CoordinatorLayout,
         child: T,
@@ -149,140 +154,13 @@ open class LogBehavior<T : View>(context: Context? = null, attrs: AttributeSet? 
         velocityY: Float,
         consumed: Boolean
     ): Boolean {
-        d("${target.simpleHash()}....onNestedFling")
+        i("${target.simpleHash()} velocityX:$velocityX velocityY:$velocityY consumed:$consumed")
         return super.onNestedFling(coordinatorLayout, child, target, velocityX, velocityY, consumed)
     }
 
-    override fun onLayoutChild(
-        parent: CoordinatorLayout,
-        child: T,
-        layoutDirection: Int
-    ): Boolean {
-        w("this...${child.simpleHash()}...ld:$layoutDirection")
-        return super.onLayoutChild(parent, child, layoutDirection)
-    }
+    //</editor-fold desc="内嵌滚动回调">
 
-    override fun onNestedPreFling(
-        coordinatorLayout: CoordinatorLayout,
-        child: T,
-        target: View,
-        velocityX: Float,
-        velocityY: Float
-    ): Boolean {
-        d("${target.simpleHash()}....onNestedPreFling")
-        return super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY)
-    }
-
-    override fun getInsetDodgeRect(
-        parent: CoordinatorLayout,
-        child: T,
-        rect: Rect
-    ): Boolean {
-        w("this....")
-        return super.getInsetDodgeRect(parent, child, rect)
-    }
-
-    override fun onDetachedFromLayoutParams() {
-        super.onDetachedFromLayoutParams()
-        w("this....")
-    }
-
-    override fun onRestoreInstanceState(
-        parent: CoordinatorLayout,
-        child: T,
-        state: Parcelable
-    ) {
-        super.onRestoreInstanceState(parent, child, state)
-        w("this....")
-    }
-
-    override fun layoutDependsOn(
-        parent: CoordinatorLayout,
-        child: T,
-        dependency: View
-    ): Boolean {
-        w("this....${child.simpleHash()}...${dependency.simpleHash()}")
-        return super.layoutDependsOn(parent, child, dependency)
-    }
-
-    /**如果在此方法中, 改变了[child]的size, 需要return true*/
-    override fun onDependentViewChanged(
-        parent: CoordinatorLayout,
-        child: T,
-        dependency: View
-    ): Boolean {
-        w("this....")
-        return super.onDependentViewChanged(parent, child, dependency)
-    }
-
-    override fun onDependentViewRemoved(
-        parent: CoordinatorLayout,
-        child: T,
-        dependency: View
-    ) {
-        super.onDependentViewRemoved(parent, child, dependency)
-        w("this....")
-    }
-
-    override fun onRequestChildRectangleOnScreen(
-        coordinatorLayout: CoordinatorLayout,
-        child: T,
-        rectangle: Rect,
-        immediate: Boolean
-    ): Boolean {
-        w("this....")
-        return super.onRequestChildRectangleOnScreen(coordinatorLayout, child, rectangle, immediate)
-    }
-
-    override fun onApplyWindowInsets(
-        coordinatorLayout: CoordinatorLayout,
-        child: T,
-        insets: WindowInsetsCompat
-    ): WindowInsetsCompat {
-        w("this...$insets")
-        return super.onApplyWindowInsets(coordinatorLayout, child, insets)
-    }
-
-    override fun blocksInteractionBelow(
-        parent: CoordinatorLayout,
-        child: T
-    ): Boolean {
-        i("this....")
-        return super.blocksInteractionBelow(parent, child)
-    }
-
-    /**[blocksInteractionBelow]*/
-    override fun getScrimOpacity(
-        parent: CoordinatorLayout,
-        child: T
-    ): Float {
-        return super.getScrimOpacity(parent, child).apply {
-            d("this....scrimOpacity:$this")
-        }
-    }
-
-    override fun onTouchEvent(
-        parent: CoordinatorLayout,
-        child: T,
-        ev: MotionEvent
-    ): Boolean {
-        i("this...${child.simpleHash()}...${ev.actionToString()}")
-        return super.onTouchEvent(parent, child, ev)
-    }
-
-    override fun onInterceptTouchEvent(
-        parent: CoordinatorLayout,
-        child: T,
-        ev: MotionEvent
-    ): Boolean {
-        i("this...${child.simpleHash()}...${ev.actionToString()}")
-        return super.onInterceptTouchEvent(parent, child, ev)
-    }
-
-    override fun onAttachedToLayoutParams(params: CoordinatorLayout.LayoutParams) {
-        super.onAttachedToLayoutParams(params)
-        w("this...")
-    }
+    //<editor-fold desc="测量相关">
 
     override fun onMeasureChild(
         parent: CoordinatorLayout,
@@ -292,7 +170,7 @@ open class LogBehavior<T : View>(context: Context? = null, attrs: AttributeSet? 
         parentHeightMeasureSpec: Int,
         heightUsed: Int
     ): Boolean {
-        w("this...widthUsed:$widthUsed heightUsed:$heightUsed")
+        w("widthUsed:$widthUsed heightUsed:$heightUsed")
         return super.onMeasureChild(
             parent,
             child,
@@ -303,21 +181,215 @@ open class LogBehavior<T : View>(context: Context? = null, attrs: AttributeSet? 
         )
     }
 
+    override fun onLayoutChild(
+        parent: CoordinatorLayout,
+        child: T,
+        layoutDirection: Int
+    ): Boolean {
+        w("${child.simpleHash()} ld:$layoutDirection")
+        return super.onLayoutChild(parent, child, layoutDirection)
+    }
+
+    override fun onAttachedToLayoutParams(params: CoordinatorLayout.LayoutParams) {
+        super.onAttachedToLayoutParams(params)
+        w("")
+    }
+
+    override fun onDetachedFromLayoutParams() {
+        super.onDetachedFromLayoutParams()
+        w("")
+    }
+
+    //</editor-fold desc="测量相关">
+
+    //<editor-fold desc="依赖其他布局">
+
+    override fun layoutDependsOn(
+        parent: CoordinatorLayout,
+        child: T,
+        dependency: View
+    ): Boolean {
+        w("${child.simpleHash()} ${dependency.simpleHash()}")
+        return super.layoutDependsOn(parent, child, dependency)
+    }
+
+    /**如果在此方法中, 改变了[child]的size, 需要return true*/
+    override fun onDependentViewChanged(
+        parent: CoordinatorLayout,
+        child: T,
+        dependency: View
+    ): Boolean {
+        w("${dependency.simpleHash()}")
+        return super.onDependentViewChanged(parent, child, dependency)
+    }
+
+    override fun onDependentViewRemoved(
+        parent: CoordinatorLayout,
+        child: T,
+        dependency: View
+    ) {
+        super.onDependentViewRemoved(parent, child, dependency)
+        w("${dependency.simpleHash()}")
+    }
+
+    //</editor-fold desc="依赖其他布局">
+
+    //<editor-fold desc="其他不常见">
+
+    override fun onRequestChildRectangleOnScreen(
+        coordinatorLayout: CoordinatorLayout,
+        child: T,
+        rectangle: Rect,
+        immediate: Boolean
+    ): Boolean {
+        w("")
+        return super.onRequestChildRectangleOnScreen(coordinatorLayout, child, rectangle, immediate)
+    }
+
+    override fun onApplyWindowInsets(
+        coordinatorLayout: CoordinatorLayout,
+        child: T,
+        insets: WindowInsetsCompat
+    ): WindowInsetsCompat {
+        w("$insets")
+        return super.onApplyWindowInsets(coordinatorLayout, child, insets)
+    }
+
+    override fun blocksInteractionBelow(
+        parent: CoordinatorLayout,
+        child: T
+    ): Boolean {
+        v("")
+        return super.blocksInteractionBelow(parent, child)
+    }
+
+    override fun getInsetDodgeRect(
+        parent: CoordinatorLayout,
+        child: T,
+        rect: Rect
+    ): Boolean {
+        v("")
+        return super.getInsetDodgeRect(parent, child, rect)
+    }
+
+    override fun getScrimColor(
+        parent: CoordinatorLayout,
+        child: T
+    ): Int {
+        v("")
+        return super.getScrimColor(parent, child)
+    }
+
+    /**[blocksInteractionBelow]*/
+    override fun getScrimOpacity(
+        parent: CoordinatorLayout,
+        child: T
+    ): Float {
+        return super.getScrimOpacity(parent, child).apply {
+            v("scrimOpacity:$this")
+        }
+    }
+
+    override fun onSaveInstanceState(
+        parent: CoordinatorLayout,
+        child: T
+    ): Parcelable? {
+        w("${child.simpleHash()}")
+        return super.onSaveInstanceState(parent, child)
+    }
+
+    override fun onRestoreInstanceState(
+        parent: CoordinatorLayout,
+        child: T,
+        state: Parcelable
+    ) {
+        super.onRestoreInstanceState(parent, child, state)
+        w("")
+    }
+
+    //</editor-fold desc="其他不常见">
+
+    //<editor-fold desc="Touch相关">
+
+    override fun onInterceptTouchEvent(
+        parent: CoordinatorLayout,
+        child: T,
+        ev: MotionEvent
+    ): Boolean {
+        w("child:${child.simpleHash()} ${ev.actionToString()}")
+        return super.onInterceptTouchEvent(parent, child, ev)
+    }
+
+    override fun onTouchEvent(
+        parent: CoordinatorLayout,
+        child: T,
+        ev: MotionEvent
+    ): Boolean {
+        w("child:${child.simpleHash()} ${ev.actionToString()}")
+        return super.onTouchEvent(parent, child, ev)
+    }
+
+    //</editor-fold desc="Touch相关">
+
+    //<editor-fold desc="日志输出">
+
     fun w(msg: String? = null) {
         if (showLog) {
+            L._tempStackTraceFront = 3
             L.w(msg ?: "")
         }
     }
 
     fun i(msg: String? = null) {
         if (showLog) {
+            L._tempStackTraceFront = 3
             L.i(msg ?: "")
         }
     }
 
     fun d(msg: String? = null) {
         if (showLog) {
+            L._tempStackTraceFront = 3
             L.d(msg ?: "")
         }
     }
+
+    fun v(msg: String? = null) {
+        if (showLog) {
+            L._tempStackTraceFront = 3
+            L.v(msg ?: "")
+        }
+    }
+
+    fun Int.toTypeString(): String {
+        return when (this) {
+            ViewCompat.TYPE_TOUCH -> "TYPE_TOUCH"
+            ViewCompat.TYPE_NON_TOUCH -> "TYPE_NON_TOUCH"
+            else -> "TYPE_UNKNOWN"
+        }
+    }
+
+    fun Int.toAxesString(): String {
+        return when (this) {
+            ViewCompat.SCROLL_AXIS_NONE -> "SCROLL_AXIS_NONE"
+            ViewCompat.SCROLL_AXIS_HORIZONTAL -> "SCROLL_AXIS_HORIZONTAL"
+            ViewCompat.SCROLL_AXIS_VERTICAL -> "SCROLL_AXIS_VERTICAL"
+            else -> "SCROLL_AXIS_UNKNOWN"
+        }
+    }
+
+    fun IntArray.toStr(): String {
+        return buildString {
+            append("[")
+            this@toStr.forEachIndexed { index, i ->
+                append(i)
+                if (index != this@toStr.lastIndex) {
+                    append(",")
+                }
+            }
+            append("]")
+        }
+    }
+
+    //</editor-fold desc="日志输出">
 }

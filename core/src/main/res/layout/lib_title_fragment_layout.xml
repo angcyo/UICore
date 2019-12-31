@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.angcyo.widget.layout.RCoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <com.angcyo.widget.layout.TitleWrapLayout
         android:id="@+id/lib_title_wrap_layout"
@@ -37,7 +37,7 @@
     <FrameLayout
         android:id="@+id/lib_content_wrap_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent"
+        app:layout_behavior="com.angcyo.behavior.refresh.RefreshEffectBehavior" />
 
-</LinearLayout>
+</com.angcyo.widget.layout.RCoordinatorLayout>
