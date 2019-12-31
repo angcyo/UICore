@@ -3,8 +3,6 @@ package com.angcyo.core.utils
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
-import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
 import android.graphics.Point
 import android.graphics.Rect
 import android.os.Build
@@ -32,12 +30,12 @@ import kotlin.math.sqrt
  */
 object Device {
 
-    var psuedoID: String? = null
+    var PSUEDO_ID: String? = null
 
     //获得独一无二的Psuedo ID
     fun getUniquePsuedoID(): String? {
-        if (psuedoID != null) {
-            return psuedoID
+        if (PSUEDO_ID != null) {
+            return PSUEDO_ID
         }
         var result: String? = null
         var serial: String? = null
@@ -64,7 +62,7 @@ object Device {
             //使用硬件信息拼凑出来的15位号码
             result = UUID(idShort.hashCode().toLong(), serial.hashCode().toLong()).toString()
         }
-        psuedoID = result
+        PSUEDO_ID = result
         return result
     }
 
@@ -165,9 +163,6 @@ object Device {
     }
 
     fun deviceInfo(context: Context, builder: StringBuilder): StringBuilder {
-        val pm: PackageManager = context.packageManager
-        val pi: PackageInfo =
-            pm.getPackageInfo(context.packageName, PackageManager.GET_ACTIVITIES)
         val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
 
         builder.append("psuedoID: ")
@@ -211,18 +206,9 @@ object Device {
 //        builder.appendln(Formatter.formatFileSize(context, Debug.getNativeHeapFreeSize()));
         builder.appendln()
         builder.append("SD空间大小:")
-        builder.appendln(
-            Formatter.formatFileSize(
-                context, getTotalExternalMemorySize()
-            )
-        )
+        builder.appendln(Formatter.formatFileSize(context, getTotalExternalMemorySize()))
         builder.append("SD可用空间大小:")
-        builder.appendln(
-            Formatter.formatFileSize(
-                context, getAvailableExternalMemorySize()
-            )
-        )
-        //        builder.appendln();
+        builder.appendln(Formatter.formatFileSize(context, getAvailableExternalMemorySize()))
         return builder
     }
 
@@ -240,7 +226,8 @@ object Device {
             // 屏幕尺寸
             val width = displayMetrics.widthPixels / displayMetrics.xdpi
             //displayMetrics.heightPixels / displayMetrics.ydpi
-            val height = (decorView?.measuredHeight ?: 0) / displayMetrics.ydpi
+            val height =
+                (decorView?.measuredHeight ?: displayMetrics.heightPixels) / displayMetrics.ydpi
             val x = width.toDouble().pow(2.0)
             val y = height.toDouble().pow(2.0)
             val screenInches = sqrt(x + y)
@@ -248,11 +235,15 @@ object Device {
             append("wp:").append(displayMetrics.widthPixels)
             append(" hp:").appendln(displayMetrics.heightPixels)
 
-            append("dw:").append(decorView?.measuredWidth)
-            append(" dh:").appendln(decorView?.measuredHeight)
+            if (decorView != null) {
+                append("dw:").append(decorView.measuredWidth)
+                append(" dh:").appendln(decorView.measuredHeight)
+            }
 
-            append("cw:").append(contentView?.measuredWidth)
-            append(" ch:").appendln(contentView?.measuredHeight)
+            if (contentView != null) {
+                append("cw:").append(contentView.measuredWidth)
+                append(" ch:").appendln(contentView.measuredHeight)
+            }
 
             append("wDp:").append(widthDp)
             append(" hDp:").append(heightDp)
@@ -264,17 +255,21 @@ object Device {
             append(" h:").append("%.02f".format(height))
             append(" inches:").appendln("%.02f".format(screenInches))
 
-            val dRect = Rect()
-            val dPoint = Point()
-            decorView?.getGlobalVisibleRect(dRect, dPoint)
-            append(" d:").append(dRect)
-            append(" d:").append(dPoint).appendln()
+            if (decorView != null) {
+                val dRect = Rect()
+                val dPoint = Point()
+                decorView.getGlobalVisibleRect(dRect, dPoint)
+                append(" d:").append(dRect)
+                append(" d:").append(dPoint).appendln()
+            }
 
-            val cRect = Rect()
-            val cPoint = Point()
-            contentView?.getGlobalVisibleRect(cRect, cPoint)
-            append(" c:").append(cRect)
-            append(" c:").append(cPoint)
+            if (contentView != null) {
+                val cRect = Rect()
+                val cPoint = Point()
+                contentView.getGlobalVisibleRect(cRect, cPoint)
+                append(" c:").append(cRect)
+                append(" c:").append(cPoint)
+            }
         }
         return builder
     }

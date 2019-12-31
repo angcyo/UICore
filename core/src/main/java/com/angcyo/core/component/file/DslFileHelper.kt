@@ -37,7 +37,7 @@ object DslFileHelper {
     /**异步文件写入*/
     var async = true
 
-    val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss-SSS", Locale.CHINA)
+    val dateFormat: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss-SSS", Locale.CHINA)
 
     fun init(context: Context) {
         appContext = context.applicationContext
