@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import com.angcyo.drawable.color
-import com.angcyo.drawable.undefined
+import com.angcyo.drawable.undefined_res
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.getDrawable
@@ -33,13 +33,13 @@ open class DslBaseInfoItem : DslAdapterItem() {
     var itemInfoText: CharSequence? = null
 
     @DrawableRes
-    var itemInfoIcon: Int = -1
+    var itemInfoIcon: Int = undefined_res
 
-    var itemInfoIconColor: Int = undefined
+    var itemInfoIconColor: Int = undefined_res
 
     /**扩展布局信息*/
     @LayoutRes
-    var itemExtendLayoutId: Int = undefined
+    var itemExtendLayoutId: Int = undefined_res
 
     override fun onItemBind(
         itemHolder: DslViewHolder,
@@ -54,7 +54,7 @@ open class DslBaseInfoItem : DslAdapterItem() {
         itemHolder.tv(R.id.text_view)?.apply {
             text = itemInfoText
 
-            if (itemInfoIconColor == undefined) {
+            if (itemInfoIconColor == undefined_res) {
                 setLeftIco(itemInfoIcon)
             } else {
                 setLeftIco(getDrawable(itemInfoIcon).color(itemInfoIconColor))
@@ -62,11 +62,11 @@ open class DslBaseInfoItem : DslAdapterItem() {
         }
 
         //扩展布局
-        if (itemExtendLayoutId != undefined) {
-            var inflateLayoutId = undefined //已经inflate的布局id
+        if (itemExtendLayoutId != undefined_res) {
+            var inflateLayoutId = undefined_res //已经inflate的布局id
             itemHolder.group(R.id.wrap_layout)?.apply {
                 if (childCount > 0) {
-                    inflateLayoutId = (getChildAt(0).getTag(R.id.tag) as? Int) ?: undefined
+                    inflateLayoutId = (getChildAt(0).getTag(R.id.tag) as? Int) ?: undefined_res
                 }
 
                 if (itemExtendLayoutId != inflateLayoutId) {

@@ -23,4 +23,9 @@ fun Int.add(value: Int): Int = this or value
 /**
  *第4位的最高字节  0x8000 = 32,768, 未定义的资源
  */
-val undefined = 32_768
+val undefined_res = -32_768
+val undefined_int = -1
+
+fun Int?.orDefault(default: Int) = if (this ?: 0 > 0) this else default
+
+fun Long?.orDefault(default: Long) = if (this ?: 0 > 0) this else default

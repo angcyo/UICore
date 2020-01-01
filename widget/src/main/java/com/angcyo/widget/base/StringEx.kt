@@ -13,6 +13,9 @@ import androidx.annotation.ColorInt
 @ColorInt
 fun String.toColorInt(): Int = Color.parseColor(this)
 
+fun CharSequence?.orDefault(default: CharSequence = "--") =
+    if (this.isNullOrEmpty()) default else this
+
 /**将列表连成字符串*/
 fun List<Any?>.connect(
     divide: CharSequence = "," /*连接符*/,
