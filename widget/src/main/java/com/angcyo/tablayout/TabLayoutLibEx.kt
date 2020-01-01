@@ -50,14 +50,6 @@ internal fun exactlyMeasure(size: Float): Int = exactlyMeasure(size.toInt())
 internal fun atmostMeasure(size: Int): Int =
     View.MeasureSpec.makeMeasureSpec(size, View.MeasureSpec.AT_MOST)
 
-internal fun Int.have(value: Int): Boolean = if (this == 0 || value == 0) {
-    false
-} else if (this == 0 && value == 0) {
-    true
-} else {
-    ((this > 0 && value > 0) || (this < 0 && value < 0)) && this and value == value
-}
-
 internal fun clamp(value: Float, min: Float, max: Float): Float {
     if (value < min) {
         return min

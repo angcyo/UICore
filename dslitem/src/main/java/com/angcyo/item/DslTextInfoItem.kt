@@ -2,8 +2,8 @@ package com.angcyo.item
 
 import androidx.annotation.DrawableRes
 import com.angcyo.drawable.color
-import com.angcyo.drawable.undefined_res
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.getDrawable
 import com.angcyo.widget.base.setRightIco
@@ -27,7 +27,7 @@ open class DslTextInfoItem : DslBaseInfoItem() {
     var itemDarkText: CharSequence? = null
 
     @DrawableRes
-    var itemDarkIcon: Int = -1
+    var itemDarkIcon: Int = undefined_res
     var itemDarkIconColor: Int = undefined_res
 
     /**未读数*/
