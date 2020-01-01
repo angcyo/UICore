@@ -83,7 +83,7 @@ open class RefreshEffectBehavior(
             type
         )
         _overScroller.abortAnimation()
-        return axes == ViewCompat.SCROLL_AXIS_VERTICAL && type == ViewCompat.TYPE_TOUCH
+        return axes == ViewCompat.SCROLL_AXIS_VERTICAL
     }
 
     var _isFirstLayout = true
@@ -139,19 +139,19 @@ open class RefreshEffectBehavior(
 
         if (scrollY > layoutTop && dy > 0) {
             if (target.topCanScroll()) {
-                consumed[1] = consumedDy(dy)
+                consumed[1] = consumedScrollY(dy)
                 onScrollBy(0, -consumed[1])
             }
         } else if (scrollY < layoutTop && dy < 0) {
             if (target.bottomCanScroll()) {
-                consumed[1] = consumedDy(dy)
+                consumed[1] = consumedScrollY(dy)
                 onScrollBy(0, -consumed[1])
             }
         }
     }
 
     /**需要消耗多少内嵌滚动的值*/
-    fun consumedDy(dy: Int): Int {
+    fun consumedScrollY(dy: Int): Int {
 
         //加上这次滚动, child滚动到的top值
         val top = scrollY - dy
@@ -204,7 +204,12 @@ open class RefreshEffectBehavior(
             type,
             consumed
         )
-        onScrollBy(0, -consumed[1])
+        if (dyConsumed == 0 && type == ViewCompat.TYPE_TOUCH) {
+            onScrollBy(
+                0,
+                behaviorInterpolator.getInterpolation(-consumed[1], childView.measuredHeight)
+            )
+        }
     }
 
     override fun onStopNestedScroll(
@@ -220,13 +225,8 @@ open class RefreshEffectBehavior(
         }
     }
 
-    override fun onScrollBy(x: Int, y: Int) {
-        val dy = behaviorInterpolator.getInterpolation(y, childView.measuredHeight)
-        //L.e("y:$y dy:$dy")
-        super.onScrollBy(x, dy)
-    }
-
     override fun onScrollTo(x: Int, y: Int) {
+        //L.e("y:$y")
         super.onScrollTo(0, y)
         childView.offsetTopTo(y)
     }

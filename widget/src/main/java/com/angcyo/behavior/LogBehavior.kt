@@ -20,8 +20,10 @@ import com.angcyo.widget.base.actionToString
  * @date 2019/06/28
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-open class LogBehavior<T : View>(context: Context? = null, attrs: AttributeSet? = null) :
-    CoordinatorLayout.Behavior<T>(context, attrs) {
+open class LogBehavior<T : View>(
+    context: Context? = null,
+    attrs: AttributeSet? = null
+) : CoordinatorLayout.Behavior<T>(context, attrs) {
     var showLog = false
 
     init {

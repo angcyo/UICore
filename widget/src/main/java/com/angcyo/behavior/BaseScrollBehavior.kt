@@ -18,10 +18,9 @@ import com.angcyo.tablayout.clamp
 open class BaseScrollBehavior<T : View>(
     context: Context,
     attributeSet: AttributeSet? = null
-) :
-    BaseDependsBehavior<T>(context, attributeSet) {
+) : BaseDependsBehavior<T>(context, attributeSet) {
 
-    val _overScroller: OverScroller = OverScroller(context)
+    var _overScroller: OverScroller = OverScroller(context)
 
     //fling 速率阈值
     var minFlingVelocity = 0
@@ -40,7 +39,7 @@ open class BaseScrollBehavior<T : View>(
     open fun onComputeScroll(parent: CoordinatorLayout, child: T) {
         if (_overScroller.computeScrollOffset()) {
             onScrollTo(_overScroller.currX, _overScroller.currY)
-            postInvalidate()
+            invalidate()
         }
     }
 

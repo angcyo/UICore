@@ -848,7 +848,7 @@ open class DslTabLayout(
     override fun computeScroll() {
         if (_overScroller.computeScrollOffset()) {
             scrollTo(_overScroller.currX, _overScroller.currY)
-            postInvalidate()
+            invalidate()
             if (_overScroller.currX < minScrollX || _overScroller.currX > maxScrollX) {
                 _overScroller.abortAnimation()
             }

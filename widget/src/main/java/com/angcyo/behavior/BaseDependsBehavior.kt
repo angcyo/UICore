@@ -2,11 +2,9 @@ package com.angcyo.behavior
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.CallSuper
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.angcyo.widget.base.isTouchDown
 
 /**
  * 必须有2个参数的构造方法
@@ -18,8 +16,7 @@ import com.angcyo.widget.base.isTouchDown
 abstract class BaseDependsBehavior<T : View>(
     context: Context? = null,
     attrs: AttributeSet? = null
-) :
-    LogBehavior<T>(context, attrs) {
+) : LogBehavior<T>(context, attrs) {
 
     /**依赖的视图, 用于触发[onDependentViewChanged]*/
     var dependsLayout: View? = null
@@ -49,6 +46,10 @@ abstract class BaseDependsBehavior<T : View>(
 
     fun postInvalidate() {
         parentLayout.postInvalidate()
+    }
+
+    fun invalidate() {
+        parentLayout.invalidate()
     }
 
     /**是否处于内嵌滚动中*/
@@ -85,32 +86,6 @@ abstract class BaseDependsBehavior<T : View>(
         super.onStopNestedScroll(coordinatorLayout, child, target, type)
         _isNestedScrollAccepted = false
         _nestedScrollView = null
-    }
-
-    override fun onNestedPreScroll(
-        coordinatorLayout: CoordinatorLayout,
-        child: T,
-        target: View,
-        dx: Int,
-        dy: Int,
-        consumed: IntArray,
-        type: Int
-    ) {
-        super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type)
-        _nestedScrollView = target
-    }
-
-    override fun onInterceptTouchEvent(
-        parent: CoordinatorLayout,
-        child: T,
-        ev: MotionEvent
-    ): Boolean {
-
-        if (ev.isTouchDown()) {
-            _nestedScrollView = null
-        }
-
-        return super.onInterceptTouchEvent(parent, child, ev)
     }
 
 //    override fun onLayoutChild(parent: CoordinatorLayout, child: T, layoutDirection: Int): Boolean {
