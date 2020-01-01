@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
-import com.angcyo.behavior.BaseDependsBehavior
+import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.behavior.placeholder.ITitleBarPlaceholderBehavior
 import com.angcyo.widget.base.coordinatorParams
 import com.angcyo.widget.base.offsetTopTo
@@ -18,9 +18,9 @@ import com.angcyo.widget.base.offsetTopTo
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 open class RefreshEffectBehavior(
-    context: Context? = null,
+    context: Context,
     attrs: AttributeSet? = null
-) : BaseDependsBehavior<View>(context, attrs) {
+) : BaseScrollBehavior<View>(context, attrs) {
 
     /**标题栏的行为*/
     var titleBarPlaceholderBehavior: ITitleBarPlaceholderBehavior? = null
@@ -61,12 +61,19 @@ open class RefreshEffectBehavior(
             axes,
             type
         )
-        return axes == ViewCompat.SCROLL_AXIS_VERTICAL
+        _overScroller.abortAnimation()
+        return axes == ViewCompat.SCROLL_AXIS_VERTICAL && type == ViewCompat.TYPE_TOUCH
     }
 
+    var _isFirstLayout = true
     override fun onLayoutAfter(parent: CoordinatorLayout, child: View, layoutDirection: Int) {
         super.onLayoutAfter(parent, child, layoutDirection)
-        child.offsetTopTo(excludeHeight)
+        if (_isFirstLayout) {
+            onScrollTo(0, excludeHeight)
+        } else {
+            onScrollTo(0, scrollY)
+        }
+        _isFirstLayout = false
     }
 
     override fun onMeasureChild(
@@ -96,5 +103,48 @@ open class RefreshEffectBehavior(
         )
 
         return true
+    }
+
+    override fun onNestedScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: View,
+        target: View,
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int,
+        type: Int,
+        consumed: IntArray
+    ) {
+        super.onNestedScroll(
+            coordinatorLayout,
+            child,
+            target,
+            dxConsumed,
+            dyConsumed,
+            dxUnconsumed,
+            dyUnconsumed,
+            type,
+            consumed
+        )
+        onScrollBy(0, -consumed[1])
+    }
+
+    override fun onStopNestedScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: View,
+        target: View,
+        type: Int
+    ) {
+        super.onStopNestedScroll(coordinatorLayout, child, target, type)
+
+        if (scrollY != excludeHeight) {
+            startScrollTo(0, excludeHeight)
+        }
+    }
+
+    override fun onScrollTo(x: Int, y: Int) {
+        super.onScrollTo(x, y)
+        childView.offsetTopTo(y)
     }
 }

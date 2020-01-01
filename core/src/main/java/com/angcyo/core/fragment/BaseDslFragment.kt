@@ -26,7 +26,7 @@ open class BaseDslFragment : BaseTitleFragment() {
     }
 
     open fun initDslLayout() {
-        baseViewHolder.rv(R.id.base_recycler_view)?.apply {
+        baseViewHolder.rv(R.id.lib_recycler_view)?.apply {
             baseDslItemDecoration?.let { addItemDecoration(it) }
             hoverItemDecoration?.attachToRecyclerView(this)
             adapter = DslAdapter()
@@ -35,7 +35,7 @@ open class BaseDslFragment : BaseTitleFragment() {
 
     /**调用此方法, 渲染界面*/
     open fun renderDslAdapter(config: DslAdapter.() -> Unit) {
-        baseViewHolder.rv(R.id.base_recycler_view)?.let {
+        baseViewHolder.rv(R.id.lib_recycler_view)?.let {
             if (it.adapter is DslAdapter) {
                 (it.adapter as DslAdapter).config()
             }

@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.ListView
 import androidx.annotation.ColorRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -22,6 +23,9 @@ import androidx.recyclerview.widget.RecyclerView
  * @date 2019/12/20
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
+
+
+//<editor-fold desc="基础扩展">
 
 fun View.getColor(@ColorRes id: Int): Int {
     return ContextCompat.getColor(context, id)
@@ -51,6 +55,11 @@ fun View.onDoubleTap(action: (View) -> Boolean) {
         gestureDetector.onTouchEvent(event)
     }
 }
+
+//</editor-fold desc="基础扩展">
+
+
+//<editor-fold desc="layoutParams扩展">
 
 /**快速操作[LayoutParams]*/
 public fun View.marginParams(config: ViewGroup.MarginLayoutParams.() -> Unit = {}): View {
@@ -122,6 +131,12 @@ public fun ViewGroup.LayoutParams.recyclerParams(config: RecyclerView.LayoutPara
 }
 
 
+//</editor-fold desc="layoutParams扩展">
+
+
+//<editor-fold desc="offset扩展">
+
+
 public fun View.offsetTop(offset: Int) {
     ViewCompat.offsetTopAndBottom(this, offset)
 }
@@ -161,3 +176,46 @@ public fun View.offsetLeft(offset: Int, minLeft: Int, maxLeft: Int): Int {
 public fun View.offsetLeftTo(newLeft: Int) {
     offsetLeft(newLeft - left)
 }
+
+//</editor-fold desc="offset扩展">
+
+
+//<editor-fold desc="scroll扩展">
+
+/** View 顶部是否还有可滚动的距离 */
+fun View?.topCanScroll(): Boolean {
+    return canChildScroll(-1)
+}
+
+/** View 底部是否还有可滚动的距离 */
+fun View?.bottomCanScroll(): Boolean {
+    return canChildScroll(1)
+}
+
+fun View?.canChildScroll(direction: Int, depth: Int = 5): Boolean {
+    if (this == null || depth < 0) {
+        return false
+    }
+    if (this is RecyclerView || this is ListView) {
+        //no op
+    } else if (this is ViewGroup) {
+        val group = this
+        var child: View?
+        var result: Boolean
+        for (i in 0 until group.childCount) {
+            child = group.getChildAt(i)
+            result = when (child) {
+                is RecyclerView -> child.canScrollVertically(direction)
+                is ListView -> child.canScrollVertically(direction)
+                is ViewGroup -> child.canChildScroll(direction, depth - 1)
+                else -> (child?.canScrollVertically(direction) ?: child.canChildScroll(direction))
+            }
+            if (result) {
+                return true
+            }
+        }
+    }
+    return this.canScrollVertically(direction)
+}
+
+//</editor-fold desc="scroll扩展">

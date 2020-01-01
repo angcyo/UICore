@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.angcyo.widget.recycler.DslRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/lib_recycler_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <com.angcyo.widget.recycler.DslRecyclerView
-        android:id="@+id/base_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-</FrameLayout>
+    android:layout_height="match_parent"
+    android:fadeScrollbars="true"
+    android:scrollbarSize="5dp"
+    android:scrollbarThumbVertical="@drawable/lib_scroll_bar_thumb_shape"
+    android:scrollbars="vertical"
+    android:scrollbarStyle="insideOverlay"
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />

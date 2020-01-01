@@ -12,7 +12,9 @@ import android.view.*
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.angcyo.library.ex.isDebug
+import com.angcyo.widget.base.getStatusBarHeight
 import com.angcyo.widget.base.onDoubleTap
+import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -80,6 +82,16 @@ fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug())
 
                 textView.text = buildString {
                     appendln(this@showDebugInfoView.javaClass.name)
+
+                    val statusBarHeight = getStatusBarHeight()
+                    val navBarHeight = max(
+                        decorView.measuredWidth - contentView.measuredWidth,
+                        decorView.measuredHeight - contentView.measuredHeight
+                    )
+                    append("sh:").append(statusBarHeight).append(" ")
+                        .append(statusBarHeight / displayMetrics.density)
+                    append(" nh:").append(navBarHeight).append(" ")
+                        .appendln(navBarHeight / displayMetrics.density)
 
                     append("wp:").append(displayMetrics.widthPixels)
                     append(" hp:").appendln(displayMetrics.heightPixels)

@@ -9,6 +9,7 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import com.angcyo.behavior.BaseDependsBehavior
+import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.widget.R
 import com.angcyo.widget.base.InvalidateProperty
 import com.angcyo.widget.base.coordinatorParams
@@ -41,6 +42,15 @@ open class RCoordinatorLayout(
             draw(canvas)
         }
         super.draw(canvas)
+    }
+
+    override fun computeScroll() {
+        eachChildsVisibility { _, child ->
+            (child.layoutParams.coordinatorParams()?.behavior as? BaseScrollBehavior)?.onComputeScroll(
+                this,
+                child
+            )
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

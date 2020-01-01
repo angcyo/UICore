@@ -27,10 +27,13 @@ abstract class BaseDependsBehavior<T : View>(
     /**是否需要监听[dependsLayout]的改变*/
     var enableDependsOn = true
 
+    //常用对象
     lateinit var childView: T
+    lateinit var parentLayout: CoordinatorLayout
 
     @CallSuper
     override fun layoutDependsOn(parent: CoordinatorLayout, child: T, dependency: View): Boolean {
+        parentLayout = parent
         childView = child
         return enableDependsOn && dependsLayout == dependency
     }
@@ -42,6 +45,10 @@ abstract class BaseDependsBehavior<T : View>(
         dependency: View
     ): Boolean {
         return super.onDependentViewChanged(parent, child, dependency)
+    }
+
+    fun postInvalidate() {
+        parentLayout.postInvalidate()
     }
 
     /**是否处于内嵌滚动中*/

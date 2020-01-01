@@ -5,15 +5,16 @@
     android:layout_height="match_parent">
 
     <FrameLayout
-        android:id="@+id/lib_title_wrap_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="com.angcyo.behavior.placeholder.TitleBarPlaceholderBehavior" />
-
-    <FrameLayout
         android:id="@+id/lib_content_wrap_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="com.angcyo.behavior.refresh.RefreshEffectBehavior" />
+
+    <!--标题栏放在后面, 可以保证显示在内容之上-->
+    <FrameLayout
+        android:id="@+id/lib_title_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="com.angcyo.behavior.placeholder.TitleBarPlaceholderBehavior" />
 
 </com.angcyo.widget.layout.RCoordinatorLayout>
