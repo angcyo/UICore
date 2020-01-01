@@ -15,4 +15,5 @@
     <color name="transparent100">#FF000000</color>
 
     <color name="status_bar_color">#60000000</color>
+    <color name="navigation_bar_color">@color/colorPrimary</color>
 </resources>

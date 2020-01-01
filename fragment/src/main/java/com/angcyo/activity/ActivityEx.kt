@@ -26,6 +26,7 @@ fun Activity.enableLayoutFullScreen(enable: Boolean = true) {
         //window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         setStatusBarColor(ContextCompat.getColor(this, R.color.status_bar_color))
+        setNavigationBarColor(ContextCompat.getColor(this, R.color.navigation_bar_color))
         val decorView = window.decorView
         var systemUiVisibility = decorView.systemUiVisibility
         if (enable) { //https://blog.csdn.net/xiaonaihe/article/details/54929504
@@ -50,6 +51,17 @@ fun Activity.setStatusBarColor(color: Int) {
         window.statusBarColor = color
     }
 }
+
+/**设置导航栏颜色*/
+fun Activity.setNavigationBarColor(color: Int) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        window.navigationBarColor = color
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            window.navigationBarDividerColor = color
+        }
+    }
+}
+
 
 private fun Int.remove(value: Int): Int = this and value.inv()
 

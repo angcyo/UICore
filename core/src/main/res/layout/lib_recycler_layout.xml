@@ -2,12 +2,7 @@
 <com.angcyo.widget.recycler.DslRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/lib_recycler_view"
+    style="@style/LibRecyclerViewStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fadeScrollbars="true"
-    android:overScrollMode="never"
-    android:scrollbarSize="5dp"
-    android:scrollbarStyle="insideOverlay"
-    android:scrollbarThumbVertical="@drawable/lib_scroll_bar_thumb_shape"
-    android:scrollbars="vertical"
     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
