@@ -49,6 +49,29 @@ interface Api {
     ): Observable<Response<JsonElement>>
 }
 
+interface ApiKt {
+
+    @POST
+    suspend fun post(
+        @Url url: String,
+        @Body json: JsonElement = JsonObject(),
+        @QueryMap queryMap: HashMap<String, Any> = hashMapOf()
+    ): Response<JsonElement>
+
+    @GET
+    suspend fun get(
+        @Url url: String,
+        @QueryMap queryMap: HashMap<String, Any> = hashMapOf()
+    ): Response<JsonElement>
+
+    @PUT
+    suspend fun put(
+        @Url url: String,
+        @Body json: JsonElement = JsonObject(),
+        @QueryMap queryMap: HashMap<String, Any> = hashMapOf()
+    ): Response<JsonElement>
+}
+
 object DslHttp {
     val dslHttpConfig = DslHttpConfig()
 
