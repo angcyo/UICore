@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fadeScrollbars="true"
+    android:overScrollMode="never"
     android:scrollbarSize="5dp"
+    android:scrollbarStyle="insideOverlay"
     android:scrollbarThumbVertical="@drawable/lib_scroll_bar_thumb_shape"
     android:scrollbars="vertical"
-    android:scrollbarStyle="insideOverlay"
     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />

@@ -61,7 +61,7 @@ object DslHttp {
 /**
  * 通用接口请求
  * */
-fun dslHttp(): Api {
+fun <T> dslHttp(service: Class<T>): T {
 
     val baseUrl = dslHttpConfig.onGetBaseUrl()
 
@@ -82,7 +82,7 @@ fun dslHttp(): Api {
     dslHttpConfig.retrofit = retrofit
 
     /*如果单例API对象的话, 就需要在动态切换BaseUrl的时候, 重新创建. 否则不会生效*/
-    return retrofit.create(Api::class.java)
+    return retrofit.create(service)
 }
 
 /**拼接 host 和 api接口*/
@@ -104,13 +104,17 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
 
     return when (requestConfig.method) {
         POST -> {
-            dslHttp().post(requestConfig.url, requestConfig.body, requestConfig.query)
+            dslHttp(Api::class.java).post(
+                requestConfig.url,
+                requestConfig.body,
+                requestConfig.query
+            )
         }
         PUT -> {
-            dslHttp().put(requestConfig.url, requestConfig.body, requestConfig.query)
+            dslHttp(Api::class.java).put(requestConfig.url, requestConfig.body, requestConfig.query)
         }
         else -> {
-            dslHttp().get(requestConfig.url, requestConfig.query)
+            dslHttp(Api::class.java).get(requestConfig.url, requestConfig.query)
         }
     }
         .compose(observableToMain())

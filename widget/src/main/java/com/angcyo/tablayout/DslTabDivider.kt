@@ -29,9 +29,9 @@ open class DslTabDivider : DslGradientDrawable() {
      * */
     var dividerShowMode = LinearLayout.SHOW_DIVIDER_MIDDLE
 
-    override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
-        super.initAttribute(context, attributeSet)
-        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.DslTabLayout)
+    override fun initAttribute(context: Context, attributeSet: AttributeSet?, defStyleAttr: Int) {
+        val typedArray =
+            context.obtainStyledAttributes(attributeSet, R.styleable.DslTabLayout, defStyleAttr, 0)
 
         dividerWidth = typedArray.getDimensionPixelOffset(
             R.styleable.DslTabLayout_tab_divider_width,

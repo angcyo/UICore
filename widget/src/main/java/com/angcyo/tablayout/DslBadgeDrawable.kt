@@ -48,8 +48,8 @@ open class DslBadgeDrawable : DslGradientDrawable() {
     var badgePaddingTop = 0
     var badgePaddingBottom = 0
 
-    override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
-        super.initAttribute(context, attributeSet)
+    override fun initAttribute(context: Context, attributeSet: AttributeSet?, defStyleAttr: Int) {
+        super.initAttribute(context, attributeSet, defStyleAttr)
         updateOriginDrawable()
     }
 
