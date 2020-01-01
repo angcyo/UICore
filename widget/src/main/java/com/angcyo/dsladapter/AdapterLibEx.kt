@@ -4,11 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Paint
 import android.graphics.Rect
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.Window
-import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -153,13 +150,6 @@ public fun View.setHeight(height: Int) {
     val params = layoutParams
     params.height = height
     layoutParams = params
-}
-
-public fun ViewGroup.inflate(@LayoutRes layoutId: Int, attachToRoot: Boolean = true): View {
-    if (layoutId == -1) {
-        return this
-    }
-    return LayoutInflater.from(context).inflate(layoutId, this, attachToRoot)
 }
 
 /**

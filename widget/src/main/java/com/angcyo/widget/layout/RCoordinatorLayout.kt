@@ -13,7 +13,7 @@ import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.widget.R
 import com.angcyo.widget.base.InvalidateProperty
 import com.angcyo.widget.base.coordinatorParams
-import com.angcyo.widget.base.eachChildsVisibility
+import com.angcyo.widget.base.eachChildVisibility
 
 /**
  *
@@ -45,7 +45,7 @@ open class RCoordinatorLayout(
     }
 
     override fun computeScroll() {
-        eachChildsVisibility { _, child ->
+        eachChildVisibility { _, child ->
             (child.layoutParams.coordinatorParams()?.behavior as? BaseScrollBehavior)?.onComputeScroll(
                 this,
                 child
@@ -56,7 +56,7 @@ open class RCoordinatorLayout(
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
-        eachChildsVisibility { _, child ->
+        eachChildVisibility { _, child ->
             (child.layoutParams.coordinatorParams()?.behavior as? BaseDependsBehavior)?.onMeasureAfter(
                 this,
                 child
@@ -94,7 +94,7 @@ open class RCoordinatorLayout(
 
         val layoutDirection = ViewCompat.getLayoutDirection(this)
 
-        eachChildsVisibility { _, child ->
+        eachChildVisibility { _, child ->
             (child.layoutParams.coordinatorParams()?.behavior as? BaseDependsBehavior)?.onLayoutAfter(
                 this,
                 child,

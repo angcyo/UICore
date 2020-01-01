@@ -1,11 +1,10 @@
-package com.angcyo.core.item
+package com.angcyo.item
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
-import com.angcyo.core.R
 import com.angcyo.drawable.color
 import com.angcyo.drawable.undefined
 import com.angcyo.dsladapter.DslAdapterItem
@@ -14,7 +13,6 @@ import com.angcyo.widget.base.getDrawable
 import com.angcyo.widget.base.inflate
 import com.angcyo.widget.base.setLeftIco
 import com.angcyo.widget.layout.RLinearLayout
-
 
 /**
  *

@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.annotation.Px
 import androidx.core.view.ViewCompat
 import com.angcyo.drawable.color
-import com.angcyo.widget.base.childs
+import com.angcyo.widget.base.eachChild
 
 /**
  *
@@ -61,7 +61,7 @@ class DslGroupHelper(val parentView: View) : DslViewHolder(parentView) {
                 TypedValue.COMPLEX_UNIT_PX,
                 textSize
             )
-            is ViewGroup -> view.childs { _, child ->
+            is ViewGroup -> view.eachChild { _, child ->
                 setTextSize(child, textSize)
             }
         }
@@ -78,7 +78,7 @@ class DslGroupHelper(val parentView: View) : DslViewHolder(parentView) {
     fun setTextColor(view: View, color: Int) {
         when (view) {
             is TextView -> view.setTextColor(color)
-            is ViewGroup -> view.childs { _, child ->
+            is ViewGroup -> view.eachChild { _, child ->
                 setTextColor(child, color)
             }
         }
@@ -93,7 +93,7 @@ class DslGroupHelper(val parentView: View) : DslViewHolder(parentView) {
     fun setTextColor(view: View, colors: ColorStateList?) {
         when (view) {
             is TextView -> view.setTextColor(colors)
-            is ViewGroup -> view.childs { _, child ->
+            is ViewGroup -> view.eachChild { _, child ->
                 setTextColor(child, colors)
             }
         }
@@ -121,7 +121,7 @@ class DslGroupHelper(val parentView: View) : DslViewHolder(parentView) {
             is ImageView -> view.run {
                 setImageDrawable(drawable?.color(color))
             }
-            is ViewGroup -> view.childs { _, child ->
+            is ViewGroup -> view.eachChild { _, child ->
                 setDrawableColor(child, color)
             }
         }

@@ -211,14 +211,14 @@ public fun ViewGroup.findRecyclerView(
 }
 
 /**枚举所有child view*/
-public fun ViewGroup.childs(map: (index: Int, child: View) -> Unit) {
+public fun ViewGroup.eachChild(map: (index: Int, child: View) -> Unit) {
     for (index in 0 until childCount) {
         val childAt = getChildAt(index)
         map.invoke(index, childAt)
     }
 }
 
-public fun ViewGroup.eachChildsVisibility(map: (index: Int, child: View) -> Unit) {
+public fun ViewGroup.eachChildVisibility(map: (index: Int, child: View) -> Unit) {
     for (index in 0 until childCount) {
         val childAt = getChildAt(index)
         if (childAt.visibility != View.GONE) {

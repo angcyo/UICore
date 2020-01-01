@@ -1,14 +1,12 @@
-package com.angcyo.core.item
+package com.angcyo.item
 
 import androidx.annotation.DrawableRes
-import com.angcyo.core.R
 import com.angcyo.drawable.color
 import com.angcyo.drawable.undefined
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.getDrawable
 import com.angcyo.widget.base.setRightIco
-
 
 /**
  *

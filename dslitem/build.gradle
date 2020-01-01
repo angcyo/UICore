@@ -1,0 +1,11 @@
+apply from: allGradle.libBase
+
+android {
+    defaultConfig {
+        minSdkVersion 21
+    }
+}
+
+dependencies {
+    implementation project(allModule.widget)
+}

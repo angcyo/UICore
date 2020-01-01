@@ -16,6 +16,7 @@
         android:drawablePadding="4dp"
         android:paddingLeft="@dimen/lib_padding_left"
         android:paddingRight="@dimen/lib_padding_left"
+        android:textSize="@dimen/text_body_size"
         tools:text="关于我们" />
 
     <FrameLayout
