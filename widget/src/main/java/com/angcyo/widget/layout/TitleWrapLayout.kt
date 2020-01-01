@@ -1,9 +1,14 @@
 package com.angcyo.widget.layout
 
 import android.content.Context
+import android.graphics.Canvas
 import android.os.Build
 import android.util.AttributeSet
+import android.view.Gravity
+import android.view.View
 import android.widget.FrameLayout
+import com.angcyo.widget.base.exactly
+import com.angcyo.widget.base.getSize
 import com.angcyo.widget.base.getStatusBarHeight
 
 /**
@@ -16,9 +21,7 @@ import com.angcyo.widget.base.getStatusBarHeight
 open class TitleWrapLayout(context: Context, attributeSet: AttributeSet? = null) :
     FrameLayout(context, attributeSet) {
 
-    init {
-        setPadding(0, getStatusBarHeight(), 0, 0)
-    }
+    private val DEFAULT_CHILD_GRAVITY = Gravity.TOP or Gravity.START
 
     override fun generateDefaultLayoutParams(): LayoutParams {
         return initLayoutParams(super.generateDefaultLayoutParams())
@@ -35,4 +38,89 @@ open class TitleWrapLayout(context: Context, attributeSet: AttributeSet? = null)
             }
         }
     }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val size = heightMeasureSpec.getSize()
+        val statusBarHeight = getExcludeTopHeight()
+
+        if (layoutParams.height == -1) {
+            super.onMeasure(widthMeasureSpec, exactly(size - statusBarHeight))
+        } else {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+            setMeasuredDimension(measuredWidth, measuredHeight + statusBarHeight)
+        }
+    }
+
+    override fun dispatchDraw(canvas: Canvas) {
+        super.dispatchDraw(canvas)
+    }
+
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        layoutChildren(left, top, right, bottom, false)
+    }
+
+    //copy from FrameLayout
+    fun layoutChildren(
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int,
+        forceLeftGravity: Boolean
+    ) {
+        val excludeTopHeight = getExcludeTopHeight()
+        val count = childCount
+        val parentLeft: Int = paddingLeft
+        val parentRight: Int = right - left - paddingRight
+        val parentTop: Int = paddingTop + excludeTopHeight
+        val parentBottom: Int = bottom - top - paddingBottom
+        for (i in 0 until count) {
+            val child = getChildAt(i)
+            if (child.visibility != View.GONE) {
+                val lp =
+                    child.layoutParams as LayoutParams
+                val width = child.measuredWidth
+                val height = child.measuredHeight
+                var childLeft: Int
+                var childTop: Int
+                var gravity = lp.gravity
+                if (gravity == -1) {
+                    gravity = DEFAULT_CHILD_GRAVITY
+                }
+                val layoutDirection =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                        layoutDirection
+                    } else {
+                        0
+                    }
+                val absoluteGravity = Gravity.getAbsoluteGravity(gravity, layoutDirection)
+                val verticalGravity = gravity and Gravity.VERTICAL_GRAVITY_MASK
+
+                childLeft = when (absoluteGravity and Gravity.HORIZONTAL_GRAVITY_MASK) {
+                    Gravity.CENTER_HORIZONTAL -> parentLeft + (parentRight - parentLeft - width) / 2 +
+                            lp.leftMargin - lp.rightMargin
+                    Gravity.RIGHT -> {
+                        if (!forceLeftGravity) {
+                            parentRight - width - lp.rightMargin
+                        } else {
+                            parentLeft + lp.leftMargin
+                        }
+                    }
+                    Gravity.LEFT -> parentLeft + lp.leftMargin
+                    else -> parentLeft + lp.leftMargin
+                }
+
+                childTop = when (verticalGravity) {
+                    Gravity.TOP -> parentTop + lp.topMargin
+                    Gravity.CENTER_VERTICAL -> parentTop + (parentBottom - parentTop - height) / 2 +
+                            lp.topMargin - lp.bottomMargin
+                    Gravity.BOTTOM -> parentBottom - height - lp.bottomMargin
+                    else -> parentTop + lp.topMargin
+                }
+                child.layout(childLeft, childTop, childLeft + width, childTop + height)
+            }
+        }
+    }
+
+    fun getExcludeTopHeight() = getStatusBarHeight()
+
 }

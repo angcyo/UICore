@@ -111,12 +111,14 @@ android {
             debuggable false
             jniDebuggable = false
             crunchPngs = true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         pretest {
             //applicationIdSuffix ".release"
             initWith debug
             minifyEnabled _minify_enabled
             crunchPngs = true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
             //applicationIdSuffix ".debug"

@@ -29,3 +29,5 @@ fun Int.isUnspecified(): Boolean {
     return getMode() == MeasureSpec.UNSPECIFIED
 }
 
+fun atMost(size: Int) = MeasureSpec.makeMeasureSpec(size, MeasureSpec.AT_MOST)
+fun exactly(size: Int) = MeasureSpec.makeMeasureSpec(size, MeasureSpec.EXACTLY)
