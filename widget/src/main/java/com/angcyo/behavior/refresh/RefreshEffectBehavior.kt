@@ -6,9 +6,14 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import com.angcyo.behavior.BaseScrollBehavior
+import com.angcyo.behavior.BehaviorInterpolator
 import com.angcyo.behavior.placeholder.ITitleBarPlaceholderBehavior
+import com.angcyo.widget.base.bottomCanScroll
 import com.angcyo.widget.base.coordinatorParams
 import com.angcyo.widget.base.offsetTopTo
+import com.angcyo.widget.base.topCanScroll
+import kotlin.math.absoluteValue
+
 
 /**
  * 下拉刷新效果的行为
@@ -27,6 +32,22 @@ open class RefreshEffectBehavior(
 
     /**[child]需要排除多少高度*/
     val excludeHeight get() = titleBarPlaceholderBehavior?.getTitleBarHeight(this) ?: 0
+    /**至少需要从什么位置开始布局*/
+    val layoutTop get() = titleBarPlaceholderBehavior?.getTitleBarBottom(this) ?: 0
+
+    /**输入dy, 输出修正后的dy*/
+    var behaviorInterpolator: BehaviorInterpolator = object : BehaviorInterpolator {
+        override fun getInterpolation(input: Int, max: Int): Int {
+            val f = (scrollY - layoutTop).absoluteValue * 1f / max
+            return when {
+                f < 0.1f -> input
+                f < 0.2f -> (input * 0.7f).toInt()
+                f < 0.3f -> (input * 0.3f).toInt()
+                f < 0.4f -> (input * 0.1f).toInt()
+                else -> 0
+            }
+        }
+    }
 
     init {
         showLog = true
@@ -69,7 +90,7 @@ open class RefreshEffectBehavior(
     override fun onLayoutAfter(parent: CoordinatorLayout, child: View, layoutDirection: Int) {
         super.onLayoutAfter(parent, child, layoutDirection)
         if (_isFirstLayout) {
-            onScrollTo(0, excludeHeight)
+            onScrollTo(0, layoutTop)
         } else {
             onScrollTo(0, scrollY)
         }
@@ -105,6 +126,62 @@ open class RefreshEffectBehavior(
         return true
     }
 
+    override fun onNestedPreScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: View,
+        target: View,
+        dx: Int,
+        dy: Int,
+        consumed: IntArray,
+        type: Int
+    ) {
+        super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type)
+
+        if (scrollY > layoutTop && dy > 0) {
+            if (target.topCanScroll()) {
+                consumed[1] = consumedDy(dy)
+                onScrollBy(0, -consumed[1])
+            }
+        } else if (scrollY < layoutTop && dy < 0) {
+            if (target.bottomCanScroll()) {
+                consumed[1] = consumedDy(dy)
+                onScrollBy(0, -consumed[1])
+            }
+        }
+    }
+
+    /**需要消耗多少内嵌滚动的值*/
+    fun consumedDy(dy: Int): Int {
+
+        //加上这次滚动, child滚动到的top值
+        val top = scrollY - dy
+
+        val result: Int
+
+        if (dy > 0) {
+            //手指向上滚动
+            result = if (top < layoutTop) {
+                //部分消耗
+                scrollY - layoutTop
+            } else {
+                //全部消耗
+                dy
+            }
+        } else {
+            result = if (top > layoutTop) {
+                //部分消耗
+                scrollY - layoutTop
+            } else {
+                //全部消耗
+                dy
+            }
+        }
+
+        //L.e("dy:$dy result:$result")
+
+        return result
+    }
+
     override fun onNestedScroll(
         coordinatorLayout: CoordinatorLayout,
         child: View,
@@ -138,13 +215,19 @@ open class RefreshEffectBehavior(
     ) {
         super.onStopNestedScroll(coordinatorLayout, child, target, type)
 
-        if (scrollY != excludeHeight) {
-            startScrollTo(0, excludeHeight)
+        if (scrollY != layoutTop) {
+            startScrollTo(0, layoutTop)
         }
     }
 
+    override fun onScrollBy(x: Int, y: Int) {
+        val dy = behaviorInterpolator.getInterpolation(y, childView.measuredHeight)
+        //L.e("y:$y dy:$dy")
+        super.onScrollBy(x, dy)
+    }
+
     override fun onScrollTo(x: Int, y: Int) {
-        super.onScrollTo(x, y)
+        super.onScrollTo(0, y)
         childView.offsetTopTo(y)
     }
 }

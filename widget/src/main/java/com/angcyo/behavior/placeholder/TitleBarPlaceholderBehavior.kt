@@ -3,7 +3,6 @@ package com.angcyo.behavior.placeholder
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.BaseDependsBehavior
 
 /**
@@ -15,29 +14,11 @@ import com.angcyo.behavior.BaseDependsBehavior
 class TitleBarPlaceholderBehavior(context: Context? = null, attributeSet: AttributeSet? = null) :
     BaseDependsBehavior<View>(context, attributeSet), ITitleBarPlaceholderBehavior {
 
-    override fun onMeasureChild(
-        parent: CoordinatorLayout,
-        child: View,
-        parentWidthMeasureSpec: Int,
-        widthUsed: Int,
-        parentHeightMeasureSpec: Int,
-        heightUsed: Int
-    ): Boolean {
-        return super.onMeasureChild(
-            parent,
-            child,
-            parentWidthMeasureSpec,
-            widthUsed,
-            parentHeightMeasureSpec,
-            heightUsed
-        )
-    }
-
-    override fun onMeasureAfter(parent: CoordinatorLayout, child: View) {
-        super.onMeasureAfter(parent, child)
-    }
-
     override fun getTitleBarHeight(behavior: BaseDependsBehavior<*>): Int {
+        return childView.measuredHeight
+    }
+
+    override fun getTitleBarBottom(behavior: BaseDependsBehavior<*>): Int {
         return childView.measuredHeight
     }
 }
@@ -46,4 +27,6 @@ interface ITitleBarPlaceholderBehavior {
 
     /**获取标题栏高度*/
     fun getTitleBarHeight(behavior: BaseDependsBehavior<*>): Int
+
+    fun getTitleBarBottom(behavior: BaseDependsBehavior<*>): Int
 }

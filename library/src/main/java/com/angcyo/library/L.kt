@@ -162,6 +162,7 @@ object L {
 
         _tempTag = null
         _tempStackTraceDepth = -1
+        _tempStackTraceFront = -1
     }
 
     fun _wrapJson(msg: String): String {
