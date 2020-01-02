@@ -8,7 +8,8 @@ import android.util.AttributeSet
 import android.view.View
 import com.angcyo.drawable.loading.ArcLoadingDrawable
 import com.angcyo.widget.R
-import com.angcyo.widget.base.getColor
+import com.angcyo.widget.base.*
+import kotlin.math.min
 
 /**
  *
@@ -24,13 +25,19 @@ class ArcLoadingView(context: Context, attributeSet: AttributeSet? = null) :
 
     var duration: Long = 2000
 
+    var progress: Int
+        set(value) {
+            arcLoadingDrawable.progress = value
+        }
+        get() = arcLoadingDrawable.progress
+
     init {
 
         val array: TypedArray =
             context.obtainStyledAttributes(attributeSet, R.styleable.ArcLoadingView)
 
         if (isInEditMode) {
-            arcLoadingDrawable.progress = 50
+            arcLoadingDrawable.progress = 51
         }
 
         arcLoadingDrawable.arcColor = getColor(R.color.colorAccent)
@@ -62,7 +69,13 @@ class ArcLoadingView(context: Context, attributeSet: AttributeSet? = null) :
         super.onDraw(canvas)
 
         arcLoadingDrawable.apply {
-            setBounds(paddingLeft, paddingTop, right - paddingRight, bottom - paddingBottom)
+            val size = min(drawWidth, drawHeight)
+            setBounds(
+                drawCenterX - size / 2,
+                drawCenterY - size / 2,
+                drawCenterX + size / 2,
+                drawCenterY + size / 2
+            )
             draw(canvas)
         }
     }

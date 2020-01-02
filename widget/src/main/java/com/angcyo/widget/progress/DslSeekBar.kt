@@ -239,7 +239,7 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
     /**手指移动*/
     open fun _onTouchMoveTo(x: Float, y: Float) {
         val progress: Int =
-            floor((x / _progressBound.width() * progressMaxValue).toDouble()).toInt()
+            floor(((x - paddingLeft) / _progressBound.width() * progressMaxValue).toDouble()).toInt()
 
         progressValue = validProgress(progress)
 
@@ -250,6 +250,13 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
     override fun setProgress(progress: Int, fromProgress: Int, animDuration: Long) {
         super.setProgress(progress, fromProgress, animDuration)
         onSeekBarConfig?.apply { onSeekChanged(validProgress(progress), _progressFraction, false) }
+    }
+
+    fun config(action: SeekBarConfig.() -> Unit) {
+        if (onSeekBarConfig == null) {
+            onSeekBarConfig = SeekBarConfig()
+        }
+        onSeekBarConfig?.action()
     }
 
     //</editor-fold desc="Touch事件">

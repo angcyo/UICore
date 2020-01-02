@@ -220,3 +220,16 @@ fun View?.canChildScroll(direction: Int, depth: Int = 5): Boolean {
 }
 
 //</editor-fold desc="scroll扩展">
+
+//<editor-fold desc="draw相关扩展">
+
+val View.drawLeft get() = paddingLeft
+val View.drawTop get() = paddingTop
+val View.drawRight get() = right - paddingRight
+val View.drawBottom get() = bottom - paddingBottom
+val View.drawWidth get() = drawRight - drawLeft
+val View.drawHeight get() = drawBottom - drawTop
+val View.drawCenterX get() = drawLeft + drawWidth / 2
+val View.drawCenterY get() = drawTop + drawHeight / 2
+
+//</editor-fold desc="draw相关扩展">
