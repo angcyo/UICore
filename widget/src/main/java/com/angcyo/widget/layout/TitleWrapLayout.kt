@@ -23,6 +23,8 @@ open class TitleWrapLayout(context: Context, attributeSet: AttributeSet? = null)
 
     private val DEFAULT_CHILD_GRAVITY = Gravity.TOP or Gravity.START
 
+    var forceFitStatusBar = false
+
     override fun generateDefaultLayoutParams(): LayoutParams {
         return initLayoutParams(super.generateDefaultLayoutParams())
     }
@@ -121,11 +123,17 @@ open class TitleWrapLayout(context: Context, attributeSet: AttributeSet? = null)
         }
     }
 
+    val _location = intArrayOf(0, 0)
     open fun getExcludeTopHeight(): Int {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            getStatusBarHeight()
-        else
-            0
-    }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getLocationOnScreen(_location)
+            if (forceFitStatusBar) {
+                return getStatusBarHeight()
+            } else if (_location[1] <= 0) {
+                return getStatusBarHeight()
+            }
+        }
 
+        return 0
+    }
 }
