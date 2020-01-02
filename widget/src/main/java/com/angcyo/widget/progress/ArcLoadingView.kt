@@ -1,11 +1,13 @@
 package com.angcyo.widget.progress
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.view.ViewCompat
 import com.angcyo.drawable.loading.ArcLoadingDrawable
 import com.angcyo.widget.R
 import com.angcyo.widget.base.*
@@ -24,6 +26,8 @@ class ArcLoadingView(context: Context, attributeSet: AttributeSet? = null) :
     var arcLoadingDrawable = ArcLoadingDrawable()
 
     var duration: Long = 2000
+
+    var autoStart = true
 
     var progress: Int
         set(value) {
@@ -56,6 +60,8 @@ class ArcLoadingView(context: Context, attributeSet: AttributeSet? = null) :
         arcLoadingDrawable.progress =
             array.getInt(R.styleable.ArcLoadingView_arc_progress, arcLoadingDrawable.progress)
 
+        autoStart = array.getBoolean(R.styleable.ArcLoadingView_arc_auto_start, autoStart)
+
         array.recycle()
 
         arcLoadingDrawable.callback = this
@@ -78,5 +84,49 @@ class ArcLoadingView(context: Context, attributeSet: AttributeSet? = null) :
             )
             draw(canvas)
         }
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        checkStart()
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        endLoading()
+    }
+
+    override fun onVisibilityChanged(changedView: View, visibility: Int) {
+        super.onVisibilityChanged(changedView, visibility)
+        checkStart()
+    }
+
+    fun checkStart() {
+        if (autoStart) {
+            if (ViewCompat.isAttachedToWindow(this) && isVisible()) {
+                startLoading()
+            } else {
+                endLoading()
+            }
+        }
+    }
+
+    var _animator: ValueAnimator? = null
+    fun startLoading() {
+        endLoading()
+        _animator = anim(0f, 1f) {
+            onAnimatorConfig = {
+                it.duration = duration
+                it.repeatCount = ValueAnimator.INFINITE
+                it.repeatMode = ValueAnimator.RESTART
+            }
+            onAnimatorUpdateValue = { _, fraction ->
+                progress = (fraction * 100).toInt()
+            }
+        }
+    }
+
+    fun endLoading() {
+        _animator?.cancel()
     }
 }

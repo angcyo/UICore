@@ -232,4 +232,7 @@ val View.drawHeight get() = drawBottom - drawTop
 val View.drawCenterX get() = drawLeft + drawWidth / 2
 val View.drawCenterY get() = drawTop + drawHeight / 2
 
+fun View?.isVisible() = this?.visibility == View.VISIBLE
+fun View?.isGone() = this?.visibility == View.GONE
+
 //</editor-fold desc="draw相关扩展">
