@@ -113,6 +113,10 @@ class ArcLoadingView(context: Context, attributeSet: AttributeSet? = null) :
 
     var _animator: ValueAnimator? = null
     fun startLoading() {
+        if (_animator?.isStarted == true) {
+            return
+        }
+
         endLoading()
         _animator = anim(0f, 1f) {
             onAnimatorConfig = {
