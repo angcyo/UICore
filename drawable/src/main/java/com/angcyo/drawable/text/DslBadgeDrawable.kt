@@ -1,4 +1,4 @@
-package com.angcyo.tablayout
+package com.angcyo.drawable.text
 
 import android.content.Context
 import android.graphics.Canvas
@@ -6,7 +6,7 @@ import android.graphics.Color
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.Gravity
-import com.angcyo.drawable.DslGravity
+import com.angcyo.drawable.*
 import com.angcyo.drawable.base.DslGradientDrawable
 
 /**
