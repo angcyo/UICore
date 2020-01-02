@@ -8,6 +8,7 @@ import androidx.core.view.ViewCompat
 import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.behavior.BehaviorInterpolator
 import com.angcyo.behavior.placeholder.ITitleBarPlaceholderBehavior
+import com.angcyo.library.ex.isDebug
 import com.angcyo.widget.base.bottomCanScroll
 import com.angcyo.widget.base.coordinatorParams
 import com.angcyo.widget.base.offsetTopTo
@@ -50,7 +51,7 @@ open class RefreshEffectBehavior(
     }
 
     init {
-        showLog = true
+        showLog = isDebug()
     }
 
     override fun layoutDependsOn(
@@ -204,11 +205,34 @@ open class RefreshEffectBehavior(
             type,
             consumed
         )
+
         if (dyConsumed == 0 && type == ViewCompat.TYPE_TOUCH) {
-            onScrollBy(
-                0,
-                behaviorInterpolator.getInterpolation(-consumed[1], childView.measuredHeight)
-            )
+            //内嵌滚动视图已经不需要消耗滚动值了, 通常是到达了首尾两端
+
+            val dy: Int
+            if (scrollY > layoutTop) {
+                dy = if (dyUnconsumed < 0) {
+                    //继续下拉, 才需要阻尼, 反向不需要
+                    behaviorInterpolator.getInterpolation(
+                        -dyUnconsumed,
+                        childView.measuredHeight
+                    )
+                } else {
+                    -dyUnconsumed
+                }
+            } else {
+                dy = if (dyUnconsumed > 0) {
+                    //继续上拉, 才需要阻尼, 反向不需要
+                    behaviorInterpolator.getInterpolation(
+                        -dyUnconsumed,
+                        childView.measuredHeight
+                    )
+                } else {
+                    -dyUnconsumed
+                }
+            }
+
+            onScrollBy(0, dy)
         }
     }
 
