@@ -98,9 +98,9 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
         callback = tabLayout
     }
 
-    override fun initAttribute(context: Context, attributeSet: AttributeSet?, defStyleAttr: Int) {
+    override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
         val typedArray =
-            context.obtainStyledAttributes(attributeSet, R.styleable.DslTabLayout, defStyleAttr, 0)
+            context.obtainStyledAttributes(attributeSet, R.styleable.DslTabLayout)
 
         indicatorDrawable = typedArray.getDrawable(R.styleable.DslTabLayout_tab_indicator_drawable)
         indicatorColor =

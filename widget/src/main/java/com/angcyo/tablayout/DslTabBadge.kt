@@ -20,9 +20,9 @@ open class DslTabBadge : DslBadgeDrawable() {
     /**角标默认配置项*/
     val defaultBadgeConfig = TabBadgeConfig()
 
-    override fun initAttribute(context: Context, attributeSet: AttributeSet?, defStyleAttr: Int) {
+    override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
         val typedArray =
-            context.obtainStyledAttributes(attributeSet, R.styleable.DslTabLayout, defStyleAttr, 0)
+            context.obtainStyledAttributes(attributeSet, R.styleable.DslTabLayout)
         gradientSolidColor =
             typedArray.getColor(
                 R.styleable.DslTabLayout_tab_badge_solid_color,
@@ -101,7 +101,7 @@ open class DslTabBadge : DslBadgeDrawable() {
         defaultBadgeConfig.badgeTextSize = badgeTextSize
 
         typedArray.recycle()
-        super.initAttribute(context, attributeSet, defStyleAttr)
+        super.initAttribute(context, attributeSet)
     }
 
     /**使用指定配置, 更新[DslBadgeDrawable]*/

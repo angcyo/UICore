@@ -18,7 +18,10 @@ import com.angcyo.drawable.getDimen
  * @date 2019/09/27
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-data class ViewResConfig(
+data class FragmentConfig(
+
+    /**拦截RootView的事件, 防止事件穿透到底下的Fragment*/
+    var interceptRootTouchEvent: Boolean = true,
 
     /**标题栏文本大小*/
     var titleTextSize: Float = getDimen(R.dimen.text_main_size).toFloat(),

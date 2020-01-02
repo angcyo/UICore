@@ -31,8 +31,7 @@ abstract class AbsDslDrawable : Drawable() {
     /**xml属性读取*/
     open fun initAttribute(
         context: Context,
-        attributeSet: AttributeSet? = null,
-        defStyleAttr: Int = 0
+        attributeSet: AttributeSet? = null
     ) {
         //val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.xxx, defStyleAttr, 0)
         //typedArray.recycle()

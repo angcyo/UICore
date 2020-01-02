@@ -7,10 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.LayoutRes
 import androidx.annotation.Px
 import androidx.core.view.ViewCompat
 import com.angcyo.drawable.color
 import com.angcyo.widget.base.eachChild
+import com.angcyo.widget.base.inflate
 
 /**
  *
@@ -126,4 +128,23 @@ class DslGroupHelper(val parentView: View) : DslViewHolder(parentView) {
             }
         }
     }
+
+    //---
+
+    fun append(@LayoutRes id: Int, action: View.() -> Unit = {}) {
+        if (selectorView is ViewGroup) {
+            val view = (selectorView as ViewGroup).inflate(id, false)
+            append(view, action)
+        }
+    }
+
+    fun <T : View> append(view: T, action: T.() -> Unit = {}) {
+        if (selectorView is ViewGroup) {
+            view.action()
+            (selectorView as ViewGroup).addView(view)
+        }
+    }
 }
+
+/**返回[DslGroupHelper]*/
+fun View?.helper(): DslGroupHelper? = this?.run { DslGroupHelper(this) }

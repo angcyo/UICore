@@ -10,7 +10,7 @@ package com.angcyo.core.fragment
 object BaseUI {
 
     /**[BaseTitleFragment.onCreate]中触发*/
-    var onFragmentCreateAfter: (fragment: BaseTitleFragment, viewResConfig: ViewResConfig) -> Unit =
+    var onFragmentCreateAfter: (fragment: BaseTitleFragment, fragmentConfig: FragmentConfig) -> Unit =
         { fragment, viewResConfig ->
 
         }

@@ -16,7 +16,7 @@ abstract class BaseTitleFragment : BaseFragment() {
 
     //<editor-fold desc="操作属性">
 
-    var viewResConfig: ViewResConfig = ViewResConfig()
+    var fragmentConfig: FragmentConfig = FragmentConfig()
 
     /**标题*/
     var fragmentTitle: CharSequence? = null
@@ -29,7 +29,7 @@ abstract class BaseTitleFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        BaseUI.onFragmentCreateAfter(this, viewResConfig)
+        BaseUI.onFragmentCreateAfter(this, fragmentConfig)
     }
 
     override fun initBaseView(savedInstanceState: Bundle?) {
@@ -51,6 +51,8 @@ abstract class BaseTitleFragment : BaseFragment() {
     open fun getTitleLayoutId(): Int = R.layout.lib_title_bar_layout
 
     open fun initTitleFragment() {
+        baseViewHolder.itemView.isClickable = fragmentConfig.interceptRootTouchEvent
+
         if (getContentLayoutId() > 0) {
             baseViewHolder.group(R.id.lib_content_wrap_layout)?.inflate(getContentLayoutId())
         }
@@ -59,23 +61,23 @@ abstract class BaseTitleFragment : BaseFragment() {
         }
 
         titleControl()?.apply {
-            setBackground(viewResConfig.titleBarBackgroundDrawable)
+            setBackground(fragmentConfig.titleBarBackgroundDrawable)
             selector(R.id.lib_title_text_view)
-            setTextSize(viewResConfig.titleTextSize)
-            setTextColor(viewResConfig.titleTextColor)
+            setTextSize(fragmentConfig.titleTextSize)
+            setTextColor(fragmentConfig.titleTextColor)
         }
 
         leftControl()?.apply {
-            setDrawableColor(viewResConfig.titleItemIconColor)
-            setTextColor(viewResConfig.titleItemTextColor)
+            setDrawableColor(fragmentConfig.titleItemIconColor)
+            setTextColor(fragmentConfig.titleItemTextColor)
         }
 
         rightControl()?.apply {
-            setDrawableColor(viewResConfig.titleItemIconColor)
-            setTextColor(viewResConfig.titleItemTextColor)
+            setDrawableColor(fragmentConfig.titleItemIconColor)
+            setTextColor(fragmentConfig.titleItemTextColor)
         }
 
-        rootControl().setBackground(viewResConfig.fragmentBackgroundDrawable)
+        rootControl().setBackground(fragmentConfig.fragmentBackgroundDrawable)
 
         fragmentTitle = this.javaClass.simpleName
     }
