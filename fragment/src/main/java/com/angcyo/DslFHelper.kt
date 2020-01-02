@@ -1,6 +1,8 @@
 package com.angcyo
 
 import android.app.Activity
+import android.os.Handler
+import android.os.Looper
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -10,6 +12,7 @@ import com.angcyo.base.*
 import com.angcyo.fragment.IFragment
 import com.angcyo.fragment.R
 import com.angcyo.library.L
+import com.angcyo.library.ex.isDebug
 
 /**
  *
@@ -17,7 +20,7 @@ import com.angcyo.library.L
  * @author angcyo
  * @date 2019/12/22
  */
-class DslFHelper(val fm: FragmentManager, val debug: Boolean = false) {
+class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
 
     /**这个列表中的[Fragment]将会被执行[add]操作*/
     val showFragmentList = mutableListOf<Fragment>()
@@ -41,7 +44,7 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = false) {
     init {
         //FragmentManager.enableDebugLogging(debug)
         if (debug) {
-            fm.registerFragmentLifecycleCallbacks(LogFragmentLifecycleCallbacks(), true)
+            //fm.registerFragmentLifecycleCallbacks(LogFragmentLifecycleCallbacks(), true)
         }
     }
 
@@ -153,12 +156,6 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = false) {
 
     /**提交操作*/
     var onCommit: (FragmentTransaction) -> Unit = {
-        //        if (debug) {
-//            it.runOnCommit {
-//                fm.log()
-//            }
-//        }
-
         if (fm.isStateSaved) {
             it.commitNowAllowingStateLoss()
         } else {
@@ -201,6 +198,8 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = false) {
 
         return result
     }
+
+    val _handle: Handler by lazy { Handler(Looper.getMainLooper()) }
 
     /**执行操作*/
     fun doIt() {
@@ -267,6 +266,12 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = false) {
             onConfigTransaction(this)
 
             onCommit(this)
+
+            if (debug) {
+                _handle.postDelayed({
+                    fm.log()
+                }, 16)
+            }
         }
     }
 }

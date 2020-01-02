@@ -11,11 +11,18 @@ import kotlin.math.absoluteValue
  * @author angcyo
  * @date 2019/12/14
  */
-class ViewPager2Delegate(val viewPager: ViewPager2, val dslTabLayout: DslTabLayout) :
+open class ViewPager2Delegate(val viewPager: ViewPager2, val dslTabLayout: DslTabLayout?) :
     ViewPager2.OnPageChangeCallback(), ViewPagerDelegate {
+
+    companion object {
+        fun install(viewPager: ViewPager2, dslTabLayout: DslTabLayout?) {
+            ViewPager2Delegate(viewPager, dslTabLayout)
+        }
+    }
 
     init {
         viewPager.registerOnPageChangeCallback(this)
+        dslTabLayout?.setupViewPager(this)
     }
 
     override fun onGetCurrentItem(): Int {
@@ -27,14 +34,14 @@ class ViewPager2Delegate(val viewPager: ViewPager2, val dslTabLayout: DslTabLayo
     }
 
     override fun onPageScrollStateChanged(state: Int) {
-        dslTabLayout.onPageScrollStateChanged(state)
+        dslTabLayout?.onPageScrollStateChanged(state)
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-        dslTabLayout.onPageScrolled(position, positionOffset, positionOffsetPixels)
+        dslTabLayout?.onPageScrolled(position, positionOffset, positionOffsetPixels)
     }
 
     override fun onPageSelected(position: Int) {
-        dslTabLayout.onPageSelected(position)
+        dslTabLayout?.onPageSelected(position)
     }
 }

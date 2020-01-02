@@ -47,8 +47,8 @@ open class TitleWrapLayout(context: Context, attributeSet: AttributeSet? = null)
             super.onMeasure(widthMeasureSpec, exactly(size - statusBarHeight))
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-            setMeasuredDimension(measuredWidth, measuredHeight + statusBarHeight)
         }
+        setMeasuredDimension(measuredWidth, measuredHeight + statusBarHeight)
     }
 
     override fun dispatchDraw(canvas: Canvas) {
@@ -121,6 +121,11 @@ open class TitleWrapLayout(context: Context, attributeSet: AttributeSet? = null)
         }
     }
 
-    fun getExcludeTopHeight() = getStatusBarHeight()
+    open fun getExcludeTopHeight(): Int {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            getStatusBarHeight()
+        else
+            0
+    }
 
 }
