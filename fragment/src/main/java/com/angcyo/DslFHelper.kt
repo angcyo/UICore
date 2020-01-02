@@ -190,6 +190,7 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
                         doIt()
                     }
                 } else {
+                    result = false
                     remove(lastFragment)
                     doIt()
                 }

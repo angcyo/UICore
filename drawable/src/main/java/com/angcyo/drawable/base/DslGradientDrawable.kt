@@ -259,6 +259,15 @@ open class DslGradientDrawable : AbsDslDrawable() {
             originDrawable?.setTintList(tint)
         }
     }
+
+    override fun setState(stateSet: IntArray): Boolean {
+        return originDrawable?.setState(stateSet) ?: super.setState(stateSet)
+    }
+
+    override fun getState(): IntArray {
+        return originDrawable?.state ?: super.getState()
+    }
+
     //</editor-fold desc="传递属性">
 }
 

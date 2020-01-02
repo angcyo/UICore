@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Toast的动画-->
+    <style name="LibToastAnimation">
+        <item name="android:windowEnterAnimation">@anim/lib_tran_top_enter</item>
+        <item name="android:windowExitAnimation">@anim/lib_tran_top_exit</item>
+    </style>
+</resources>

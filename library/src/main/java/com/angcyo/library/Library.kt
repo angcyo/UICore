@@ -133,3 +133,21 @@ fun getAppVersionName(): String {
 fun getAppVersionCode(): Int {
     return app().getAppVersionCode()
 }
+
+fun getScreenWidth() = app().resources.displayMetrics.widthPixels
+
+/**排除了显示的状态栏高度和导航栏高度*/
+fun getScreenHeight() = app().resources.displayMetrics.heightPixels
+
+fun getStatusBarHeight() = app().getStatusBarHeight()
+
+/**获取状态栏高度*/
+private fun Context.getStatusBarHeight(): Int {
+    val resources = resources
+    var result = 0
+    val resourceId: Int = resources.getIdentifier("status_bar_height", "dimen", "android")
+    if (resourceId > 0) {
+        result = resources.getDimensionPixelSize(resourceId)
+    }
+    return result
+}

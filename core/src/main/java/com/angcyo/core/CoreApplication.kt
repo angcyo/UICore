@@ -1,6 +1,7 @@
 package com.angcyo.core
 
 import android.app.Application
+import android.content.Context
 import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.interceptor.LogFileInterceptor
@@ -9,6 +10,7 @@ import com.angcyo.library.L
 import com.angcyo.library.Library
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.getAppString
+import me.weishu.reflection.Reflection
 
 /**
  *
@@ -31,5 +33,10 @@ open class CoreApplication : Application() {
                 it.addInterceptor(LogFileInterceptor())
             }
         }
+    }
+
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(base)
+        Reflection.unseal(base)
     }
 }

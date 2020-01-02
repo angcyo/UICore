@@ -12,4 +12,7 @@ dependencies {
     api project(allModule.coroutine)
     api project(allModule.http)
     api 'androidx.core:core-ktx:1.1.0'
+
+    //https://github.com/tiann/FreeReflection
+    implementation 'me.weishu:free_reflection:2.2.0'
 }

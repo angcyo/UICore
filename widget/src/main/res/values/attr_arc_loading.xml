@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ArcLoadingView">
+        <attr name="arc_color" />
+        <attr name="arc_width" />
+        <attr name="arc_duration" />
+        <attr name="arc_progress" />
+    </declare-styleable>
+
+</resources>
