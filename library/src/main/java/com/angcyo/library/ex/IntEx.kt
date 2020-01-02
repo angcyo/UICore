@@ -25,6 +25,6 @@ val undefined_res = -32_768
 /**未定义的整数*/
 val undefined_int = -1
 
-fun Int?.orDefault(default: Int) = if (this ?: 0 > 0) this else default
+fun Int?.or(default: Int) = if (this ?: 0 > 0) this else default
 
-fun Long?.orDefault(default: Long) = if (this ?: 0 > 0) this else default
+fun Long?.or(default: Long) = if (this ?: 0 > 0) this else default
