@@ -34,6 +34,10 @@ abstract class AbsFragment : Fragment() {
 
     lateinit var baseViewHolder: DslViewHolder
 
+    /**别名*/
+    val _vh: DslViewHolder
+        get() = baseViewHolder
+
     lateinit var attachContext: Context
 
     //</editor-fold">

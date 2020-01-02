@@ -5,6 +5,7 @@ import com.angcyo.core.R
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslItemDecoration
 import com.angcyo.dsladapter.HoverItemDecoration
+import com.angcyo.widget.recycler.resetLayoutManager
 
 /**
  *
@@ -30,6 +31,8 @@ open class BaseDslFragment : BaseTitleFragment() {
             baseDslItemDecoration?.let { addItemDecoration(it) }
             hoverItemDecoration?.attachToRecyclerView(this)
             adapter = DslAdapter()
+
+            resetLayoutManager("V")
         }
     }
 
@@ -40,5 +43,20 @@ open class BaseDslFragment : BaseTitleFragment() {
                 (it.adapter as DslAdapter).config()
             }
         }
+    }
+}
+
+/**[DslAdapter]必备的组件*/
+fun RecyclerView.initDsl() {
+    addItemDecoration(DslItemDecoration())
+    HoverItemDecoration().attachToRecyclerView(this)
+}
+
+/**快速初始化[DslAdapter]*/
+fun RecyclerView.initDslAdapter(action: DslAdapter.() -> Unit) {
+    initDsl()
+    resetLayoutManager("v")
+    adapter = DslAdapter().apply {
+        this.action()
     }
 }

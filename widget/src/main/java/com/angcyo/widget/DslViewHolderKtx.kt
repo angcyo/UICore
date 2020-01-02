@@ -4,6 +4,7 @@ import androidx.annotation.IdRes
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 import com.angcyo.tablayout.DslTabLayout
+import com.angcyo.widget.recycler.DslRecyclerView
 
 /**
  *
@@ -26,5 +27,9 @@ fun DslViewHolder.tab(@IdRes id: Int): DslTabLayout? {
 }
 
 fun DslViewHolder.button(@IdRes id: Int): DslButton? {
+    return v(id)
+}
+
+fun DslViewHolder.drv(@IdRes id: Int): DslRecyclerView? {
     return v(id)
 }

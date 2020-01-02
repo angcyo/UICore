@@ -20,6 +20,10 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
 
     lateinit var baseDslViewHolder: DslViewHolder
 
+    /**别名*/
+    val _vh: DslViewHolder
+        get() = baseDslViewHolder
+
     open fun getActivityLayoutId() = R.layout.lib_activity_main_layout
 
     override fun onCreate(savedInstanceState: Bundle?) {
