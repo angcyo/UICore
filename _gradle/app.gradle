@@ -111,6 +111,7 @@ android {
             debuggable false
             jniDebuggable = false
             crunchPngs = true
+            signingConfig signingConfigs.angcyo
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         pretest {
@@ -118,6 +119,7 @@ android {
             initWith debug
             minifyEnabled _minify_enabled
             crunchPngs = true
+            signingConfig signingConfigs.angcyo
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {

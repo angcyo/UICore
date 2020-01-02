@@ -19,7 +19,7 @@ import com.angcyo.library.ex.undefined_int
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.library.getScreenHeight
 import com.angcyo.library.getScreenWidth
-import com.angcyo.library.getStatusBarHeight
+import java.lang.ref.WeakReference
 
 /**
  *
@@ -29,21 +29,26 @@ import com.angcyo.library.getStatusBarHeight
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 object DslToast {
-    var _toast: Toast? = null
+    var _toastRef: WeakReference<Toast>? = null
 
     fun show(context: Context = app(), action: ToastConfig.() -> Unit) {
         val config = ToastConfig()
         config.action()
 
-        if (_toast == null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            _toast = Toast.makeText(context, "", config.duration)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            _toastRef?.get()?.cancel()
+            _toastRef = null
         }
 
-        if (config.fullScreen) {
-            initFullScreenToast(_toast!!, config.fullMargin * 2)
+        if (_toastRef?.get() == null) {
+            _toastRef = WeakReference(Toast.makeText(context, "", config.duration))
         }
 
-        _toast?.apply {
+        _toastRef?.get()?.apply {
+            if (config.fullScreen) {
+                initFullScreenToast(this, config.fullMargin * 2)
+            }
+
             duration = config.duration
 
             setGravity(config.gravity, config.xOffset, config.yOffset)
@@ -80,9 +85,9 @@ object DslToast {
 
                 view = layout
             }
-        }
 
-        _toast?.show()
+            show()
+        }
     }
 
     fun initFullScreenToast(toast: Toast, usedWidth: Int) {
@@ -112,7 +117,7 @@ data class ToastConfig(
     var layoutId: Int = undefined_int,
     var gravity: Int = Gravity.CENTER_HORIZONTAL or Gravity.TOP,
     var xOffset: Int = 0,
-    var yOffset: Int = getStatusBarHeight() + getDimen(R.dimen.action_bar_height) + 10 * dpi,
+    var yOffset: Int = getDimen(R.dimen.action_bar_height) + 10 * dpi, //从状态栏的底部开始算
     var fullScreen: Boolean = true,//全屏模式
     var fullMargin: Int = 20 * dpi,//全屏模式下, 宽度左右的margin
 
