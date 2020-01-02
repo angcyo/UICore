@@ -5,8 +5,8 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import com.angcyo.core.R
-import com.angcyo.core.getColor
-import com.angcyo.core.getDimen
+import com.angcyo.drawable.getColor
+import com.angcyo.drawable.getDimen
 
 /**
  *

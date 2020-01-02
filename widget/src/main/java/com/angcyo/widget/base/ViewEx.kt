@@ -15,6 +15,7 @@ import androidx.core.math.MathUtils.clamp
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.angcyo.drawable.getStatusBarHeight
 
 /**
  *

@@ -1,12 +1,16 @@
-package com.angcyo.widget.base
+package com.angcyo.drawable
 
 import android.app.Activity
 import android.content.Context
 import android.graphics.Rect
 import android.view.View
 import android.view.Window
+import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
+import androidx.annotation.DimenRes
+import androidx.annotation.Px
 import androidx.core.content.ContextCompat
+import com.angcyo.library.app
 
 /**
  *
@@ -60,6 +64,22 @@ fun Context.navBarHeight(): Int {
     return result
 }
 
+@ColorInt
 fun Context.getColor(@ColorRes id: Int): Int {
     return ContextCompat.getColor(this, id)
+}
+
+@Px
+fun Context.getDimen(@DimenRes id: Int): Int {
+    return resources.getDimensionPixelOffset(id)
+}
+
+@ColorInt
+fun getColor(@ColorRes id: Int): Int {
+    return ContextCompat.getColor(app(), id)
+}
+
+@Px
+fun getDimen(@DimenRes id: Int): Int {
+    return app().getDimen(id)
 }

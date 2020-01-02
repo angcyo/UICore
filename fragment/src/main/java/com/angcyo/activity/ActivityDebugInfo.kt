@@ -11,8 +11,8 @@ import android.graphics.Rect
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.TextView
+import com.angcyo.drawable.getStatusBarHeight
 import com.angcyo.library.ex.isDebug
-import com.angcyo.widget.base.getStatusBarHeight
 import com.angcyo.widget.base.onDoubleTap
 import kotlin.math.max
 import kotlin.math.pow
