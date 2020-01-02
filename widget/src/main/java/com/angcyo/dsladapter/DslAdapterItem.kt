@@ -496,7 +496,7 @@ open class DslAdapterItem {
      * */
     open fun updateItemDepend(
         filterParams: FilterParams = FilterParams(
-            this,
+            fromDslAdapterItem = this,
             updateDependItemWithEmpty = false
         )
     ) {
@@ -633,7 +633,7 @@ class UpdateDependProperty<T>(var value: T) : ReadWriteProperty<DslAdapterItem, 
         val old = this.value
         this.value = value
         if (old != value) {
-            thisRef.updateItemDepend()
+            thisRef.updateItemDepend(FilterParams(thisRef, updateDependItemWithEmpty = true))
         }
     }
 }
