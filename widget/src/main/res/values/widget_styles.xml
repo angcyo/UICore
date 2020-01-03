@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="LibRecyclerViewStyle">
+        <item name="android:fadeScrollbars">true</item>
+        <item name="android:overScrollMode">never</item>
+        <item name="android:scrollbarSize">5dp</item>
+        <item name="android:scrollbarStyle">insideOverlay</item>
+        <item name="android:scrollbarThumbVertical">@drawable/lib_scroll_bar_thumb_shape</item>
+        <item name="android:scrollbars">vertical</item>
+    </style>
+</resources>
