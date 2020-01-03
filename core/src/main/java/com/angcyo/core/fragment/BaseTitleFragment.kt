@@ -1,9 +1,12 @@
 package com.angcyo.core.fragment
 
 import android.os.Bundle
+import com.angcyo.behavior.HideTitleBarBehavior
+import com.angcyo.behavior.refresh.RefreshEffectBehavior
 import com.angcyo.core.R
 import com.angcyo.widget.DslGroupHelper
 import com.angcyo.widget.base.inflate
+import com.angcyo.widget.base.setBehavior
 
 /**
  * Email:angcyo@126.com
@@ -46,12 +49,14 @@ abstract class BaseTitleFragment : BaseFragment() {
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)
         initTitleFragment()
+        initBehavior()
 
         BaseUI.onFragmentInitBaseViewAfter(this)
     }
 
     //<editor-fold desc="操作方法">
 
+    /**初始化样式*/
     open fun initTitleFragment() {
         baseViewHolder.itemView.isClickable = fragmentConfig.interceptRootTouchEvent
 
@@ -82,6 +87,17 @@ abstract class BaseTitleFragment : BaseFragment() {
         rootControl().setBackground(fragmentConfig.fragmentBackgroundDrawable)
 
         fragmentTitle = this.javaClass.simpleName
+    }
+
+    /**初始化[Behavior]*/
+    open fun initBehavior() {
+        rootControl().eachChild { _, child ->
+            if (child.id == R.id.lib_title_wrap_layout) {
+                child.setBehavior(HideTitleBarBehavior(fContext()))
+            } else if (child.id == R.id.lib_content_wrap_layout) {
+                child.setBehavior(RefreshEffectBehavior(fContext()))
+            }
+        }
     }
 
     /**常用控制助手*/

@@ -1,10 +1,7 @@
 package com.angcyo.widget.base
 
 import android.graphics.drawable.Drawable
-import android.view.GestureDetector
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.FrameLayout
 import android.widget.ListView
 import androidx.annotation.ColorRes
@@ -55,6 +52,17 @@ fun View.onDoubleTap(action: (View) -> Boolean) {
     setOnTouchListener { _, event ->
         gestureDetector.onTouchEvent(event)
     }
+}
+
+/**设置[Behavior]*/
+fun View?.setBehavior(behavior: CoordinatorLayout.Behavior<*>?) {
+    this?.layoutParams?.coordinatorParams {
+        this.behavior = behavior
+    }
+}
+
+fun View?.behavior(): CoordinatorLayout.Behavior<*>? {
+    return (this?.layoutParams as? CoordinatorLayout.LayoutParams?)?.run { this.behavior }
 }
 
 //</editor-fold desc="基础扩展">
@@ -234,5 +242,19 @@ val View.drawCenterY get() = drawTop + drawHeight / 2
 
 fun View?.isVisible() = this?.visibility == View.VISIBLE
 fun View?.isGone() = this?.visibility == View.GONE
+
+//</editor-fold desc="draw相关扩展">
+
+//<editor-fold desc="回调扩展">
+
+fun View.doOnPreDraw(action: (View) -> Unit) {
+    viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+        override fun onPreDraw(): Boolean {
+            action(this@doOnPreDraw)
+            viewTreeObserver.removeOnPreDrawListener(this)
+            return false
+        }
+    })
+}
 
 //</editor-fold desc="draw相关扩展">

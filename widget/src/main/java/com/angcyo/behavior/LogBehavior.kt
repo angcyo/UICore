@@ -95,7 +95,7 @@ open class LogBehavior<T : View>(
         type: Int
     ) {
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type)
-        d("${target.simpleHash()}....dx:$dx dy:$dy consumed:${consumed.toStr()} type:${type.toTypeString()}")
+        d("${target.simpleHash()} dx:$dx dy:$dy consumed:${consumed.toStr()} type:${type.toTypeString()}")
     }
 
     /**内嵌滚动滚动的量*/
@@ -378,6 +378,14 @@ open class LogBehavior<T : View>(
             ViewCompat.SCROLL_AXIS_VERTICAL -> "SCROLL_AXIS_VERTICAL"
             else -> "SCROLL_AXIS_UNKNOWN"
         }
+    }
+
+    fun Int.isVertical(): Boolean {
+        return this == ViewCompat.SCROLL_AXIS_VERTICAL
+    }
+
+    fun Int.isTouch(): Boolean {
+        return this == ViewCompat.TYPE_TOUCH
     }
 
     fun IntArray.toStr(): String {

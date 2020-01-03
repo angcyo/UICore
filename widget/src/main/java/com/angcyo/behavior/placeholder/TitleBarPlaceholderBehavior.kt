@@ -14,19 +14,20 @@ import com.angcyo.behavior.BaseDependsBehavior
 class TitleBarPlaceholderBehavior(context: Context? = null, attributeSet: AttributeSet? = null) :
     BaseDependsBehavior<View>(context, attributeSet), ITitleBarPlaceholderBehavior {
 
-    override fun getTitleBarHeight(behavior: BaseDependsBehavior<*>): Int {
+    override fun getContentExcludeHeight(behavior: BaseDependsBehavior<*>): Int {
         return childView.measuredHeight
     }
 
-    override fun getTitleBarBottom(behavior: BaseDependsBehavior<*>): Int {
+    override fun getContentOffsetTop(behavior: BaseDependsBehavior<*>): Int {
         return childView.measuredHeight
     }
 }
 
 interface ITitleBarPlaceholderBehavior {
 
-    /**获取标题栏高度*/
-    fun getTitleBarHeight(behavior: BaseDependsBehavior<*>): Int
+    /**获取内容布局需要排除的高度*/
+    fun getContentExcludeHeight(behavior: BaseDependsBehavior<*>): Int
 
-    fun getTitleBarBottom(behavior: BaseDependsBehavior<*>): Int
+    /**获取内容布局开始布局的位置*/
+    fun getContentOffsetTop(behavior: BaseDependsBehavior<*>): Int
 }

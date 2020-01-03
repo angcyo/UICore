@@ -144,6 +144,12 @@ class DslGroupHelper(val parentView: View) : DslViewHolder(parentView) {
             (selectorView as ViewGroup).addView(view)
         }
     }
+
+    fun eachChild(map: (index: Int, child: View) -> Unit) {
+        if (selectorView is ViewGroup) {
+            (selectorView as ViewGroup).eachChild(map)
+        }
+    }
 }
 
 /**返回[DslGroupHelper]*/

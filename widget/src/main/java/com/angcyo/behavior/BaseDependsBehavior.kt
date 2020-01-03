@@ -5,6 +5,8 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.CallSuper
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.angcyo.widget.base.bottomCanScroll
+import com.angcyo.widget.base.topCanScroll
 
 /**
  * 必须有2个参数的构造方法
@@ -145,4 +147,42 @@ abstract class BaseDependsBehavior<T : View>(
     open fun onMeasureAfter(parent: CoordinatorLayout, child: T) {
 
     }
+
+    //<editor-fold desc="辅助方法">
+
+    /**计算垂直方向,滚动范围内,需要消耗的滚动值*/
+    fun onConsumedVertical(dy: Int, current: Int, min: Int, max: Int): Int {
+        val target = current - dy
+
+        val result: Int
+
+        result = if (dy < 0) {
+            if (target > max) {
+                current - max
+            } else {
+                dy
+            }
+        } else {
+            if (target < min) {
+                current - min
+            } else {
+                dy
+            }
+        }
+
+        return result
+    }
+
+    /**内容在同向上是否可以滚动*/
+    fun isNestedPreContentScrollVertical(target: View, dy: Int): Boolean {
+        if (dy > 0 && target.bottomCanScroll()) {
+            //手指向上滚动
+            return true
+        } else if (dy < 0 && target.topCanScroll()) {
+            return true
+        }
+        return false
+    }
+
+    //</editor-fold desc="辅助方法">
 }

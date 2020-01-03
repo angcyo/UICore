@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.angcyo.widget.layout.RCoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <FrameLayout
         android:id="@+id/lib_content_wrap_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="com.angcyo.behavior.refresh.RefreshEffectBehavior" />
+        android:layout_height="match_parent" />
 
     <!--标题栏放在后面, 可以保证显示在内容之上-->
     <FrameLayout
         android:id="@+id/lib_title_wrap_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="com.angcyo.behavior.placeholder.TitleBarPlaceholderBehavior" />
+        android:layout_height="wrap_content" />
 
 </com.angcyo.widget.layout.RCoordinatorLayout>
