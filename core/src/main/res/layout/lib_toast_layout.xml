@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/action_bar_height"
     android:background="@drawable/lib_toast_bg_shape"
-    android:minHeight="30dp"
+    android:minHeight="40dp"
     android:paddingLeft="@dimen/lib_xhdpi"
     android:paddingTop="6dp"
     android:paddingRight="@dimen/lib_xhdpi"
