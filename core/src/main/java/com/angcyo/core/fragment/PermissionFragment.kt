@@ -19,13 +19,15 @@ import com.angcyo.widget.recycler.dslAdapter
  */
 class PermissionFragment : BaseFragment() {
 
+    init {
+        fragmentLayoutId = R.layout.lib_fragment_permission_layout
+    }
+
     //需要的权限列表
     val permissions = mutableListOf<PermissionBean>()
 
     //触发权限请求
     var onPermissionRequest: (View) -> Unit = {}
-
-    override fun getFragmentLayoutId(): Int = R.layout.lib_fragment_permission_layout
 
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)

@@ -16,10 +16,12 @@ import com.angcyo.widget.recycler.resetLayoutManager
  */
 open class BaseDslFragment : BaseTitleFragment() {
 
+    init {
+        contentLayoutId = R.layout.lib_recycler_layout
+    }
+
     var hoverItemDecoration: HoverItemDecoration? = HoverItemDecoration()
     var baseDslItemDecoration: RecyclerView.ItemDecoration? = DslItemDecoration()
-
-    override fun getContentLayoutId(): Int = R.layout.lib_recycler_layout
 
     override fun initTitleFragment() {
         super.initTitleFragment()

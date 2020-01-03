@@ -14,6 +14,17 @@ import com.angcyo.widget.base.inflate
  */
 abstract class BaseTitleFragment : BaseFragment() {
 
+    init {
+        /**Fragment根布局*/
+        fragmentLayoutId = R.layout.lib_title_fragment_layout
+    }
+
+    /**自定义内容布局*/
+    var contentLayoutId: Int = -1
+
+    /**自定义标题栏布局*/
+    var titleLayoutId: Int = R.layout.lib_title_bar_layout
+
     //<editor-fold desc="操作属性">
 
     var fragmentConfig: FragmentConfig = FragmentConfig()
@@ -41,23 +52,14 @@ abstract class BaseTitleFragment : BaseFragment() {
 
     //<editor-fold desc="操作方法">
 
-    /**Fragment根布局*/
-    override fun getFragmentLayoutId(): Int = R.layout.lib_title_fragment_layout
-
-    /**自定义内容布局*/
-    open fun getContentLayoutId(): Int = -1
-
-    /**自定义标题栏布局*/
-    open fun getTitleLayoutId(): Int = R.layout.lib_title_bar_layout
-
     open fun initTitleFragment() {
         baseViewHolder.itemView.isClickable = fragmentConfig.interceptRootTouchEvent
 
-        if (getContentLayoutId() > 0) {
-            baseViewHolder.group(R.id.lib_content_wrap_layout)?.inflate(getContentLayoutId())
+        if (contentLayoutId > 0) {
+            baseViewHolder.group(R.id.lib_content_wrap_layout)?.inflate(contentLayoutId)
         }
-        if (getTitleLayoutId() > 0) {
-            baseViewHolder.group(R.id.lib_title_wrap_layout)?.inflate(getTitleLayoutId())
+        if (titleLayoutId > 0) {
+            baseViewHolder.group(R.id.lib_title_wrap_layout)?.inflate(titleLayoutId)
         }
 
         titleControl()?.apply {

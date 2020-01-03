@@ -87,7 +87,7 @@ abstract class AbsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val layoutId = getFragmentLayoutId()
+        val layoutId = fragmentLayoutId
         val rootView: View
         rootView = if (layoutId != -1) {
             inflater.inflate(layoutId, container, false)
@@ -180,7 +180,7 @@ abstract class AbsFragment : Fragment() {
 
     /**根布局*/
     @LayoutRes
-    open fun getFragmentLayoutId() = -1
+    var fragmentLayoutId = -1
 
     /**
      * 不指定布局Id的时候, 可以用代码创建跟视图
