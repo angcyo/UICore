@@ -13,7 +13,7 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.ViewCompat
 import com.angcyo.drawable.base.DslGradientDrawable
-import com.angcyo.widget.base.toColorInt
+import com.angcyo.library.ex.toColorInt
 import java.util.*
 
 /**

@@ -29,38 +29,6 @@ fun String?.hawkGetList(maxCount: Int = Int.MAX_VALUE): MutableList<String> {
     return result
 }
 
-/**分割字符串*/
-fun String?.split(
-    separator: String = ",",
-    allowEmpty: Boolean = false,
-    checkExist: Boolean = false,
-    maxCount: Int = Int.MAX_VALUE
-): List<String> {
-    val result = mutableListOf<String>()
-
-    if (this.isNullOrEmpty()) {
-    } else if (this.toLowerCase() == "null") {
-    } else if (separator.isNullOrEmpty()) {
-    } else {
-        for (s in this.split(separator.toRegex(), Int.MAX_VALUE)) {
-            if (s.isNullOrEmpty() && !allowEmpty) {
-                continue
-            }
-            if (result.contains(s) && checkExist) {
-                continue
-            }
-
-            result.add(s)
-
-            if (result.size >= maxCount) {
-                break
-            }
-        }
-    }
-
-    return result
-}
-
 /**
  * 将 value, 追加到 原来的value中
  *

@@ -1,4 +1,4 @@
-package com.angcyo.widget.base
+package com.angcyo.library.ex
 
 import android.graphics.Color
 import androidx.annotation.ColorInt
@@ -34,6 +34,39 @@ fun List<Any?>.connect(
         }
         safe()
     }
+}
+
+
+/**分割字符串*/
+fun String?.split(
+    separator: String = ",",
+    allowEmpty: Boolean = false,
+    checkExist: Boolean = false,
+    maxCount: Int = Int.MAX_VALUE
+): List<String> {
+    val result = mutableListOf<String>()
+
+    if (this.isNullOrEmpty()) {
+    } else if (this.toLowerCase() == "null") {
+    } else if (separator.isNullOrEmpty()) {
+    } else {
+        for (s in this.split(separator.toRegex(), Int.MAX_VALUE)) {
+            if (s.isNullOrEmpty() && !allowEmpty) {
+                continue
+            }
+            if (result.contains(s) && checkExist) {
+                continue
+            }
+
+            result.add(s)
+
+            if (result.size >= maxCount) {
+                break
+            }
+        }
+    }
+
+    return result
 }
 
 /** 安全的去掉字符串的最后一个字符 */
