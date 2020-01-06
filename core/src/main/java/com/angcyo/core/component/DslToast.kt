@@ -50,7 +50,11 @@ object DslToast {
         }
 
         if (_toastRef?.get() == null) {
-            _toastRef = WeakReference(Toast.makeText(context, "", config.duration))
+            _toastRef = WeakReference(Toast.makeText(context, "", config.duration).apply {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    view.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                }
+            })
         }
 
         _toastRef?.get()?.apply {
@@ -61,10 +65,6 @@ object DslToast {
             duration = config.duration
 
             setGravity(config.gravity, config.xOffset, config.yOffset)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                view.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            }
 
             if (config.layoutId == undefined_int) {
                 //没有自定义的布局
@@ -112,10 +112,14 @@ object DslToast {
                         _viewRef = null
                     }
                     0 -> {
-                        val view: View? = viewGroup.findViewWithTag(config.layoutId)
-                        view?.run { viewGroup.removeView(this) }
-                        _lastViewTag.remove(config.layoutId)
-                        _viewRef = null
+                        val lastTag = _lastViewTag.lastOrNull()
+
+                        if (lastTag != null && lastTag != config.layoutId) {
+                            val view: View? = viewGroup.findViewWithTag(lastTag)
+                            view?.run { viewGroup.removeView(this) }
+                            _lastViewTag.remove(lastTag)
+                            _viewRef = null
+                        }
                     }
                     else -> {
                         //no op
@@ -130,12 +134,11 @@ object DslToast {
 
         //已经存在相同布局
         val tag = _viewRef?.get()?.tag
-        if (tag != null && tag != config.layoutId) {
+        if (tag != null && tag == config.layoutId) {
             _viewRef?.get()?.run {
                 _removeRunnable(this)
                 _initLayout(this, config)
                 _hideTagView(this, config.duration)
-                _lastViewTag.add(config.layoutId)
             }
             return
         }
@@ -146,8 +149,6 @@ object DslToast {
                 window.findViewById(Window.ID_ANDROID_CONTENT)
 
             val layout = _inflateLayout(this, config)
-
-            layout.tag = config.layoutId
 
             if (config.fullScreen) {
                 contentLayout?.addView(layout, FrameLayout.LayoutParams(-1, -2).apply {
@@ -165,7 +166,13 @@ object DslToast {
             _viewRef = WeakReference(layout)
 
             _hideTagView(layout, config.duration)
-            _lastViewTag.add(config.layoutId)
+
+            //显示view的动画
+            layout.alpha = 0f
+            layout.animate()
+                .alphaBy(1f)
+                .setDuration(300)
+                .start()
         }
     }
 
@@ -185,13 +192,29 @@ object DslToast {
     fun _hideTagView(view: View, duration: Int) {
         _removeRunnable(view)
         val runnable = Runnable {
-            _removeView(view)
+            //隐藏view的动画
+            view.animate()
+                .alpha(0f)
+                .translationY((-view.measuredHeight).toFloat())
+                .withEndAction {
+                    _removeView(view)
+                    _viewRef = null
+                }
+                .setDuration(300)
+                .start()
         }
-        if (duration == Toast.LENGTH_LONG) {
-            view.postDelayed(runnable, 7000)
-        } else {
-            view.postDelayed(runnable, 4000)
+        when (duration) {
+            Toast.LENGTH_LONG -> {
+                view.postDelayed(runnable, 7000)
+            }
+            Toast.LENGTH_SHORT -> {
+                view.postDelayed(runnable, 4000)
+            }
+            else -> {
+                view.postDelayed(runnable, duration.toLong())
+            }
         }
+        view.setTag(R.id.tag, runnable)
     }
 
     /**移除[view]的自动隐藏[Runnable]*/
@@ -230,14 +253,19 @@ object DslToast {
             }
         }
 
+        layout.tag = config.layoutId
+        if (!_lastViewTag.contains(config.layoutId)) {
+            _lastViewTag.add(config.layoutId)
+        }
+
         config.onBindView(layout)
     }
 }
 
 data class ToastConfig(
     var activity: Activity? = null, //附着在Activity上, 不用toast展示
-    var removeLastView: Int = 0,//1:移除 0:移除相同layoutId -1:不移除
-    var duration: Int = Toast.LENGTH_SHORT,
+    var removeLastView: Int = 0,//1:移除全部 0:移除最后一个不相同的layoutId -1:不移除
+    var duration: Int = Toast.LENGTH_SHORT,//非0和1, 在activity模式下可以指定任意隐藏时长(毫秒)
     var text: CharSequence = "",
     @DrawableRes
     var icon: Int = undefined_res,
