@@ -2,12 +2,15 @@ package com.angcyo.widget.recycler
 
 import android.text.TextUtils
 import android.widget.LinearLayout
+import android.widget.OverScroller
+import androidx.core.widget.ScrollerCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.dslSpanSizeLookup
+import com.angcyo.library.utils.getMember
 
 /**
  *
@@ -104,4 +107,32 @@ fun RecyclerView.resetLayoutManager(match: String) {
     }
 
     this.layoutManager = layoutManager
+}
+
+/**
+ * 获取[RecyclerView] [Fling] 时的速率
+ * */
+public fun RecyclerView?.getLastVelocity(): Float {
+    var currVelocity = 0f
+    try {
+        val mViewFlinger = this.getMember(RecyclerView::class.java, "mViewFlinger")
+        var mScroller = mViewFlinger.getMember("mScroller")
+        if (mScroller == null) {
+            mScroller = mViewFlinger.getMember("mOverScroller")
+        }
+        when (mScroller) {
+            is OverScroller -> {
+                currVelocity = mScroller.currVelocity
+            }
+            is ScrollerCompat -> {
+                currVelocity = mScroller.currVelocity
+            }
+            else -> {
+                //throw new IllegalArgumentException("未兼容的mScroller类型:" + mScroller.getClass().getSimpleName());
+            }
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return currVelocity
 }
