@@ -878,7 +878,7 @@ open class DslTabLayout(
             }
         }
 
-        if (isInEditMode) {
+        if (isInEditMode || !tabIndicator.indicatorAnim) {
             scrollBy(dx, 0)
         } else {
             startScroll(dx)
@@ -913,6 +913,11 @@ open class DslTabLayout(
 
     fun _animateToItem(fromIndex: Int, toIndex: Int) {
         if (toIndex == fromIndex) {
+            return
+        }
+        if (!tabIndicator.indicatorAnim) {
+            //不需要动画
+            _onAnimateEnd()
             return
         }
 
