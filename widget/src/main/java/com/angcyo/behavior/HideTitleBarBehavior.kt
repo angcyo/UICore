@@ -4,14 +4,8 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.angcyo.behavior.placeholder.ITitleBarPlaceholderBehavior
-import com.angcyo.behavior.refresh.RefreshEffectBehavior
-import com.angcyo.library.L
-import com.angcyo.library.ex.isDebug
-import com.angcyo.widget.base.behavior
-import com.angcyo.widget.base.getStatusBarHeight
-import com.angcyo.widget.base.offsetTop
-import com.angcyo.widget.base.offsetTopTo
+import androidx.core.view.ViewCompat
+import com.angcyo.widget.base.*
 
 /**
  *
@@ -21,16 +15,17 @@ import com.angcyo.widget.base.offsetTopTo
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 open class HideTitleBarBehavior(
-    context: Context? = null,
+    context: Context,
     attrs: AttributeSet? = null
-) : BaseDependsBehavior<View>(context, attrs), ITitleBarPlaceholderBehavior {
+) : BaseScrollBehavior<View>(context, attrs), ITitleBarBehavior {
 
-    var _layoutTop = 0
-
-    var refreshEffectBehavior: RefreshEffectBehavior? = null
+    var contentBehavior: IContentBehavior? = null
 
     init {
-        showLog = isDebug()
+        showLog = false
+        onScrollTo = { _, y ->
+            childView.offsetTopTo(y)
+        }
     }
 
     override fun layoutDependsOn(
@@ -38,15 +33,10 @@ open class HideTitleBarBehavior(
         child: View,
         dependency: View
     ): Boolean {
-        if (dependency.behavior() is RefreshEffectBehavior) {
-            refreshEffectBehavior = dependency.behavior() as RefreshEffectBehavior
+        if (dependency.behavior() is IContentBehavior) {
+            contentBehavior = dependency.behavior() as IContentBehavior
         }
         return super.layoutDependsOn(parent, child, dependency)
-    }
-
-    override fun onLayoutChildAfter(parent: CoordinatorLayout, child: View, layoutDirection: Int) {
-        super.onLayoutChildAfter(parent, child, layoutDirection)
-        child.offsetTopTo(_layoutTop)
     }
 
     override fun onStartNestedScroll(
@@ -79,16 +69,25 @@ open class HideTitleBarBehavior(
     ) {
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type)
 
-        if (refreshEffectBehavior?.scrollY ?: 0 == 0) {
-            consumed[1] = onConsumedVertical(
-                dy,
-                _layoutTop,
-                getContentExcludeHeight(this) - child.measuredHeight,
-                0
-            )
+        val contentScrollY = contentBehavior?.getContentScrollY(this) ?: 0
 
-            child.offsetTop(-consumed[1])
-            _layoutTop = child.top
+        var handle = false
+        if (target.topCanScroll() || target.bottomCanScroll()) {
+            if (contentScrollY == 0) {
+                handle = true
+            }
+        } else {
+            handle = scrollY != 0
+        }
+
+        if (handle) {
+            consumedScrollVertical(
+                dy,
+                scrollY,
+                getContentExcludeHeight(this) - child.measuredHeight,
+                0,
+                consumed
+            )
         }
     }
 
@@ -97,6 +96,10 @@ open class HideTitleBarBehavior(
     }
 
     override fun getContentOffsetTop(behavior: BaseDependsBehavior<*>): Int {
-        return childView.measuredHeight + _layoutTop
+        return if (ViewCompat.isLaidOut(childView)) {
+            childView.bottom
+        } else {
+            childView.measuredHeight + scrollY
+        }
     }
 }

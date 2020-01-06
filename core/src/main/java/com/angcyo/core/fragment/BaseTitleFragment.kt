@@ -2,7 +2,7 @@ package com.angcyo.core.fragment
 
 import android.os.Bundle
 import com.angcyo.behavior.HideTitleBarBehavior
-import com.angcyo.behavior.refresh.RefreshEffectBehavior
+import com.angcyo.behavior.refresh.RefreshBehavior
 import com.angcyo.core.R
 import com.angcyo.widget.DslGroupHelper
 import com.angcyo.widget.base.inflate
@@ -95,7 +95,7 @@ abstract class BaseTitleFragment : BaseFragment() {
             if (child.id == R.id.lib_title_wrap_layout) {
                 child.setBehavior(HideTitleBarBehavior(fContext()))
             } else if (child.id == R.id.lib_content_wrap_layout) {
-                child.setBehavior(RefreshEffectBehavior(fContext()))
+                child.setBehavior(RefreshBehavior(fContext()))
             }
         }
     }

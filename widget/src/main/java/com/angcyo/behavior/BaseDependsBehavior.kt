@@ -151,12 +151,24 @@ abstract class BaseDependsBehavior<T : View>(
     //<editor-fold desc="辅助方法">
 
     /**计算垂直方向,滚动范围内,需要消耗的滚动值*/
-    fun onConsumedVertical(dy: Int, current: Int, min: Int, max: Int): Int {
+    open fun consumedScrollVertical(
+        dy: Int,
+        current: Int,
+        min: Int,
+        max: Int,
+        consumed: IntArray? = null
+    ): Int {
+        if (current !in min..max) {
+            //不在范围内
+            return 0
+        }
+
         val target = current - dy
 
         val result: Int
 
         result = if (dy < 0) {
+            //手指向下滑动
             if (target > max) {
                 current - max
             } else {
@@ -168,6 +180,10 @@ abstract class BaseDependsBehavior<T : View>(
             } else {
                 dy
             }
+        }
+
+        consumed?.let {
+            it[1] = result
         }
 
         return result
