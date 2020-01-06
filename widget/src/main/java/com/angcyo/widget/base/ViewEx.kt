@@ -227,6 +227,14 @@ fun View?.canChildScroll(direction: Int, depth: Int = 5): Boolean {
     return this.canScrollVertically(direction)
 }
 
+fun View?.clickIt(action: (View) -> Unit) {
+    this?.setOnClickListener(action)
+}
+
+fun View?.throttleClickIt(action: (View) -> Unit) {
+    this?.setOnClickListener(ThrottleClickListener(action = action))
+}
+
 //</editor-fold desc="scroll扩展">
 
 //<editor-fold desc="draw相关扩展">

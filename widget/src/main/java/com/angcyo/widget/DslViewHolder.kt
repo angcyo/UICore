@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.angcyo.widget.base.ThrottleClickListener
 import java.lang.ref.WeakReference
 
 /**
@@ -72,12 +73,21 @@ open class DslViewHolder(
         click(id, View.OnClickListener { listener.invoke(it) })
     }
 
+    /**节流点击事件*/
+    fun throttleClick(@IdRes id: Int, action: (View) -> Unit) {
+        click(id, ThrottleClickListener(action = action))
+    }
+
     fun clickItem(listener: View.OnClickListener?) {
         click(itemView, listener)
     }
 
     fun clickItem(listener: (View) -> Unit) {
         click(itemView, View.OnClickListener { listener.invoke(it) })
+    }
+
+    fun throttleClickItem(action: (View) -> Unit) {
+        click(itemView, ThrottleClickListener(action = action))
     }
 
     fun click(view: View?, listener: View.OnClickListener?) {
