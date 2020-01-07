@@ -20,7 +20,10 @@ open class HideTitleBarBehavior(
 ) : BaseScrollBehavior<View>(context, attrs), ITitleBarBehavior {
 
     /**忽略状态栏的高度*/
-    var ignoreStatusBar = true
+    var ignoreStatusBar = false
+    /**只在边界的时候, 才开始滚动*/
+    var scrollEdge = false
+
     var contentBehavior: IContentBehavior? = null
 
     init {
@@ -74,12 +77,22 @@ open class HideTitleBarBehavior(
         val contentScrollY = contentBehavior?.getContentScrollY(this) ?: 0
 
         var handle = false
-        if (target.topCanScroll() || target.bottomCanScroll()) {
-            if (contentScrollY == 0) {
-                handle = true
+        if (scrollEdge) {
+            if (!target.topCanScroll() && !target.bottomCanScroll()) {
+                handle = scrollY != 0
+            } else if (!target.topCanScroll()) {
+                if (contentScrollY == 0) {
+                    handle = true
+                }
             }
         } else {
-            handle = scrollY != 0
+            if (target.topCanScroll() || target.bottomCanScroll()) {
+                if (contentScrollY == 0) {
+                    handle = true
+                }
+            } else {
+                handle = scrollY != 0
+            }
         }
 
         if (handle) {
