@@ -11,6 +11,7 @@ import android.view.*
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.OverScroller
+import com.angcyo.drawable.dpi
 import com.angcyo.library.ex.have
 import com.angcyo.widget.R
 import kotlin.math.abs

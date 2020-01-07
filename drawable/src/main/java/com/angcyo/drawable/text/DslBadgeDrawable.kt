@@ -42,6 +42,10 @@ open class DslBadgeDrawable : DslGradientDrawable() {
     var badgeOffsetX: Int = 0
     var badgeOffsetY: Int = 0
 
+    /**文本偏移*/
+    var badgeTextOffsetX: Int = 0
+    var badgeTextOffsetY: Int = 0
+
     /**圆点状态时无效*/
     var badgePaddingLeft = 0
     var badgePaddingRight = 0
@@ -105,8 +109,8 @@ open class DslBadgeDrawable : DslGradientDrawable() {
                     //绘制文本
                     canvas.drawText(
                         badgeText!!,
-                        textDrawX,
-                        textDrawY - textPaint.descent(),
+                        textDrawX + badgeTextOffsetX,
+                        textDrawY - textPaint.descent() + badgeTextOffsetY,
                         textPaint
                     )
                 }

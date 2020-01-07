@@ -8,6 +8,7 @@ import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.ViewGroup
 import com.angcyo.drawable.base.DslGradientDrawable
+import com.angcyo.drawable.dpi
 import com.angcyo.widget.R
 import java.util.*
 import kotlin.math.absoluteValue

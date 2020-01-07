@@ -1,6 +1,5 @@
 package com.angcyo.tablayout
 
-import android.content.res.Resources
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
@@ -19,38 +18,29 @@ import androidx.core.math.MathUtils
  * @author angcyo
  * @date 2019/11/23
  */
-internal val dpi: Int
-    get() = dp.toInt()
-
-internal val dp: Float
-    get() = Resources.getSystem().displayMetrics.density
-
-internal val View.dpi: Int
-    get() = context.resources.displayMetrics.density.toInt()
-
-internal val View.screenWidth: Int
+val View.screenWidth: Int
     get() = context.resources.displayMetrics.widthPixels
 
-internal val View.screenHeight: Int
+val View.screenHeight: Int
     get() = context.resources.displayMetrics.heightPixels
 
-internal val View.viewDrawWidth: Int
+val View.viewDrawWidth: Int
     get() = measuredWidth - paddingLeft - paddingRight
 
-internal val View.viewDrawHeight: Int
+val View.viewDrawHeight: Int
     get() = measuredHeight - paddingTop - paddingBottom
 
 /**Match_Parent*/
-internal fun exactlyMeasure(size: Int): Int =
+fun exactlyMeasure(size: Int): Int =
     View.MeasureSpec.makeMeasureSpec(size, View.MeasureSpec.EXACTLY)
 
-internal fun exactlyMeasure(size: Float): Int = exactlyMeasure(size.toInt())
+fun exactlyMeasure(size: Float): Int = exactlyMeasure(size.toInt())
 
 /**Wrap_Content*/
-internal fun atmostMeasure(size: Int): Int =
+fun atmostMeasure(size: Int): Int =
     View.MeasureSpec.makeMeasureSpec(size, View.MeasureSpec.AT_MOST)
 
-internal fun clamp(value: Float, min: Float, max: Float): Float {
+fun clamp(value: Float, min: Float, max: Float): Float {
     if (value < min) {
         return min
     } else if (value > max) {
@@ -59,7 +49,7 @@ internal fun clamp(value: Float, min: Float, max: Float): Float {
     return value
 }
 
-internal fun clamp(value: Int, min: Int, max: Int): Int {
+fun clamp(value: Int, min: Int, max: Int): Int {
     if (value < min) {
         return min
     } else if (value > max) {
@@ -68,19 +58,19 @@ internal fun clamp(value: Int, min: Int, max: Int): Int {
     return value
 }
 
-internal fun Any.logi() {
+fun Any.logi() {
     Log.i("DslTabLayout", "$this")
 }
 
-internal fun Any.logw() {
+fun Any.logw() {
     Log.w("DslTabLayout", "$this")
 }
 
-internal fun Any.loge() {
+fun Any.loge() {
     Log.e("DslTabLayout", "$this")
 }
 
-internal fun View.calcLayoutWidthHeight(
+fun View.calcLayoutWidthHeight(
     rLayoutWidth: String?, rLayoutHeight: String?,
     parentWidth: Int, parentHeight: Int,
     rLayoutWidthExclude: Int = 0, rLayoutHeightExclude: Int = 0
@@ -118,7 +108,7 @@ internal fun View.calcLayoutWidthHeight(
     return size
 }
 
-internal fun evaluateColor(fraction: Float /*0-1*/, startColor: Int, endColor: Int): Int {
+fun evaluateColor(fraction: Float /*0-1*/, startColor: Int, endColor: Int): Int {
     val fraction = MathUtils.clamp(fraction, 0f, 1f)
     val startA = startColor shr 24 and 0xff
     val startR = startColor shr 16 and 0xff
@@ -134,7 +124,7 @@ internal fun evaluateColor(fraction: Float /*0-1*/, startColor: Int, endColor: I
             startB + (fraction * (endB - startB)).toInt()
 }
 
-internal fun Drawable?.tintDrawableColor(color: Int): Drawable? {
+fun Drawable?.tintDrawableColor(color: Int): Drawable? {
 
     if (this == null) {
         return this
@@ -152,7 +142,7 @@ internal fun Drawable?.tintDrawableColor(color: Int): Drawable? {
     return wrappedDrawable
 }
 
-internal fun View?.tintDrawableColor(color: Int) {
+fun View?.tintDrawableColor(color: Int) {
     when (this) {
         is TextView -> {
             val drawables = arrayOfNulls<Drawable?>(4)
@@ -167,7 +157,7 @@ internal fun View?.tintDrawableColor(color: Int) {
     }
 }
 
-internal fun Paint?.textWidth(text: String?): Float {
+fun Paint?.textWidth(text: String?): Float {
     if (TextUtils.isEmpty(text)) {
         return 0f
     }
@@ -176,4 +166,4 @@ internal fun Paint?.textWidth(text: String?): Float {
     } ?: 0f
 }
 
-internal fun Paint?.textHeight(): Float = this?.run { descent() - ascent() } ?: 0f
+fun Paint?.textHeight(): Float = this?.run { descent() - ascent() } ?: 0f

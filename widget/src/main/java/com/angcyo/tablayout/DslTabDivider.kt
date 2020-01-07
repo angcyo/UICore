@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import com.angcyo.drawable.base.DslGradientDrawable
+import com.angcyo.drawable.dpi
 import com.angcyo.widget.R
 
 /**
