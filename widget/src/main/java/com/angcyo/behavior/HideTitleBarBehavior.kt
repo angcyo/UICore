@@ -19,6 +19,8 @@ open class HideTitleBarBehavior(
     attrs: AttributeSet? = null
 ) : BaseScrollBehavior<View>(context, attrs), ITitleBarBehavior {
 
+    /**忽略状态栏的高度*/
+    var ignoreStatusBar = true
     var contentBehavior: IContentBehavior? = null
 
     init {
@@ -92,7 +94,7 @@ open class HideTitleBarBehavior(
     }
 
     override fun getContentExcludeHeight(behavior: BaseDependsBehavior<*>): Int {
-        return childView.getStatusBarHeight()
+        return if (ignoreStatusBar) 0 else childView.getStatusBarHeight()
     }
 
     override fun getContentOffsetTop(behavior: BaseDependsBehavior<*>): Int {
