@@ -13,6 +13,11 @@ import kotlin.math.absoluteValue
 
 class RefreshEffectConfig : IRefreshBehavior {
 
+    /**顶部over效果*/
+    var enableTopOver: Boolean = true
+    /**底部over效果*/
+    var enableBottomOver: Boolean = true
+
     /**输入dy, 输出修正后的dy*/
     var behaviorInterpolator: BehaviorInterpolator = object : BehaviorInterpolator {
         override fun getInterpolation(behavior: BaseScrollBehavior<*>, input: Int, max: Int): Int {
@@ -28,6 +33,16 @@ class RefreshEffectConfig : IRefreshBehavior {
     }
 
     override fun onContentOverScroll(behavior: RefreshBehavior, dx: Int, dy: Int) {
+        if (dy > 0) {
+            if (!enableBottomOver) {
+                return
+            }
+        } else {
+            if (!enableTopOver) {
+                return
+            }
+        }
+
         val scrollY = behavior.scrollY
         val result: Int
         if (scrollY > 0) {
