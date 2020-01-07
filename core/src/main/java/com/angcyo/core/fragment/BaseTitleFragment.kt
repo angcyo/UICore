@@ -1,6 +1,9 @@
 package com.angcyo.core.fragment
 
 import android.os.Bundle
+import android.view.View
+import androidx.core.view.ViewCompat
+import androidx.core.view.doOnPreDraw
 import com.angcyo.behavior.HideTitleBarBehavior
 import com.angcyo.behavior.refresh.RefreshBehavior
 import com.angcyo.behavior.refresh.RefreshHeaderBehavior
@@ -144,14 +147,27 @@ abstract class BaseTitleFragment : BaseFragment() {
     open fun contentControl(): DslGroupHelper? =
         baseViewHolder.view(R.id.lib_content_wrap_layout)?.run { DslGroupHelper(this) }
 
+    /**在确保布局已经测量过后, 才执行*/
+    fun _laidOut(action: (View) -> Unit) {
+        if (ViewCompat.isLaidOut(baseViewHolder.itemView)) {
+            action(baseViewHolder.itemView)
+        } else {
+            baseViewHolder.itemView.doOnPreDraw(action)
+        }
+    }
+
     /**开始刷新*/
     open fun startRefresh() {
-        refreshBehavior?.refreshStatus = RefreshBehavior.STATUS_REFRESH
+        _laidOut {
+            refreshBehavior?.refreshStatus = RefreshBehavior.STATUS_REFRESH
+        }
     }
 
     /**结束刷新*/
     open fun finishRefresh() {
-        refreshBehavior?.refreshStatus = RefreshBehavior.STATUS_FINISH
+        _laidOut {
+            refreshBehavior?.refreshStatus = RefreshBehavior.STATUS_FINISH
+        }
     }
 
     /**刷新回调*/

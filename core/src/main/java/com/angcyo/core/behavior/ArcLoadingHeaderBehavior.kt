@@ -60,11 +60,15 @@ class ArcLoadingHeaderBehavior(context: Context, attributeSet: AttributeSet? = n
     }
 
     override fun onRefreshStatusChange(behavior: RefreshBehavior, from: Int, to: Int) {
-        if (to == RefreshBehavior.STATUS_FINISH && (parentLayout as? RCoordinatorLayout)?._isTouch != true) {
+        val isTouch = (parentLayout as? RCoordinatorLayout)?._isTouch ?: false
+        if (to == RefreshBehavior.STATUS_FINISH && !isTouch) {
             //状态已完成, 并且手指不在滑动
             behavior.startScrollTo(0, 0)
         } else {
             super.onRefreshStatusChange(behavior, from, to)
+            if (to == RefreshBehavior.STATUS_REFRESH && !isTouch) {
+                behavior.startScrollTo(0, childView.measuredHeight)
+            }
         }
         childView.find<ArcLoadingView>(R.id.lib_arc_loading_view)?.apply {
             if (to == RefreshBehavior.STATUS_REFRESH) {
