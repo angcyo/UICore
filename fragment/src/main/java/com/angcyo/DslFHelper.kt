@@ -147,6 +147,37 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
         remove(fm.getAllValidityFragment())
     }
 
+    /**保留前几个, 移除后面全部*/
+    fun keep(before: Int) {
+        val allValidityFragment = fm.getAllValidityFragment()
+        for (i in before until allValidityFragment.size) {
+            remove(allValidityFragment[i])
+        }
+    }
+
+    fun keep(vararg tags: String?) {
+        val allValidityFragment = fm.getAllValidityFragment()
+        val keepList = mutableListOf<Fragment>()
+        for (tag in tags) {
+            fm.findFragmentByTag(tag)?.let {
+                keepList.add(it)
+            }
+        }
+        for (f in allValidityFragment) {
+            if (!keepList.contains(f)) {
+                remove(f)
+            }
+        }
+    }
+
+    fun keep(vararg fClass: Class<out Fragment>) {
+        val tags = mutableListOf<String?>()
+        for (cls in fClass) {
+            tags.add(cls.name)
+        }
+        keep(*tags.toTypedArray())
+    }
+
     //</editor-fold desc="remove操作">
 
     /**自定义的配置操作, 请勿在此执行[commit]操作*/
