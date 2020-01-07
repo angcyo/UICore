@@ -233,3 +233,10 @@ public fun ViewGroup.inflate(@LayoutRes layoutId: Int, attachToRoot: Boolean = t
     }
     return LayoutInflater.from(context).inflate(layoutId, this, attachToRoot)
 }
+
+public fun ViewGroup.replace(@LayoutRes layoutId: Int, attachToRoot: Boolean = true): View {
+    if (childCount > 0) {
+        removeAllViews()
+    }
+    return inflate(layoutId, attachToRoot)
+}

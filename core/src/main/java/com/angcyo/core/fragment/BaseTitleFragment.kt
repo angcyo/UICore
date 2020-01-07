@@ -3,9 +3,11 @@ package com.angcyo.core.fragment
 import android.os.Bundle
 import com.angcyo.behavior.HideTitleBarBehavior
 import com.angcyo.behavior.refresh.RefreshBehavior
+import com.angcyo.behavior.refresh.RefreshHeaderBehavior
 import com.angcyo.core.R
+import com.angcyo.core.behavior.ArcLoadingHeaderBehavior
 import com.angcyo.widget.DslGroupHelper
-import com.angcyo.widget.base.inflate
+import com.angcyo.widget.base.replace
 import com.angcyo.widget.base.setBehavior
 
 /**
@@ -25,8 +27,16 @@ abstract class BaseTitleFragment : BaseFragment() {
     /**自定义内容布局*/
     var contentLayoutId: Int = -1
 
+    /**自定义的刷新头部*/
+    var refreshLayoutId: Int = -1
+
     /**自定义标题栏布局*/
-    var titleLayoutId: Int = R.layout.lib_title_bar_layout
+    var titleLayoutId: Int = -1
+
+    /**是否激活刷新回调*/
+    var enableRefresh: Boolean = false
+
+    var refreshBehavior: RefreshBehavior? = null
 
     //<editor-fold desc="操作属性">
 
@@ -56,16 +66,25 @@ abstract class BaseTitleFragment : BaseFragment() {
 
     //<editor-fold desc="操作方法">
 
+    fun _inflateTo(wrapId: Int, layoutId: Int) {
+        if (layoutId > 0) {
+            baseViewHolder.visible(wrapId)
+            baseViewHolder.group(wrapId)?.replace(layoutId)
+        } else {
+            baseViewHolder.gone(wrapId, baseViewHolder.group(wrapId)?.childCount ?: 0 <= 0)
+        }
+    }
+
     /**初始化样式*/
     open fun initTitleFragment() {
         baseViewHolder.itemView.isClickable = fragmentConfig.interceptRootTouchEvent
 
-        if (contentLayoutId > 0) {
-            baseViewHolder.group(R.id.lib_content_wrap_layout)?.inflate(contentLayoutId)
-        }
-        if (titleLayoutId > 0) {
-            baseViewHolder.group(R.id.lib_title_wrap_layout)?.inflate(titleLayoutId)
-        }
+        //内容包裹
+        _inflateTo(R.id.lib_content_wrap_layout, contentLayoutId)
+        //刷新头包裹
+        _inflateTo(R.id.lib_refresh_wrap_layout, refreshLayoutId)
+        //标题包裹
+        _inflateTo(R.id.lib_title_wrap_layout, titleLayoutId)
 
         titleControl()?.apply {
             setBackground(fragmentConfig.titleBarBackgroundDrawable)
@@ -91,11 +110,21 @@ abstract class BaseTitleFragment : BaseFragment() {
 
     /**初始化[Behavior]*/
     open fun initBehavior() {
+        val refreshHeaderBehavior = if (enableRefresh) {
+            ArcLoadingHeaderBehavior(fContext())
+        } else {
+            baseViewHolder.gone(R.id.lib_refresh_wrap_layout)
+            RefreshHeaderBehavior(fContext())
+        }
         rootControl().eachChild { _, child ->
-            if (child.id == R.id.lib_title_wrap_layout) {
-                child.setBehavior(HideTitleBarBehavior(fContext()))
-            } else if (child.id == R.id.lib_content_wrap_layout) {
-                child.setBehavior(RefreshBehavior(fContext()))
+            when (child.id) {
+                R.id.lib_title_wrap_layout -> child.setBehavior(HideTitleBarBehavior(fContext()))
+                R.id.lib_content_wrap_layout -> child.setBehavior(RefreshBehavior(fContext()).apply {
+                    refreshBehavior = this
+                    onRefresh = this@BaseTitleFragment::onRefresh
+                    refreshBehaviorConfig = refreshHeaderBehavior
+                })
+                R.id.lib_refresh_wrap_layout -> child.setBehavior(refreshHeaderBehavior)
             }
         }
     }
@@ -114,6 +143,21 @@ abstract class BaseTitleFragment : BaseFragment() {
 
     open fun contentControl(): DslGroupHelper? =
         baseViewHolder.view(R.id.lib_content_wrap_layout)?.run { DslGroupHelper(this) }
+
+    /**开始刷新*/
+    open fun startRefresh() {
+        refreshBehavior?.refreshStatus = RefreshBehavior.STATUS_REFRESH
+    }
+
+    /**结束刷新*/
+    open fun finishRefresh() {
+        refreshBehavior?.refreshStatus = RefreshBehavior.STATUS_FINISH
+    }
+
+    /**刷新回调*/
+    open fun onRefresh(refreshBehavior: RefreshBehavior?) {
+
+    }
 
     //</editor-fold desc="操作方法">
 }

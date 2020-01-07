@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.*
+import com.angcyo.library.L
 import com.angcyo.widget.base.behavior
 
 
@@ -20,6 +21,15 @@ open class RefreshBehavior(
     attrs: AttributeSet? = null
 ) : BaseScrollBehavior<View>(context, attrs), IContentBehavior {
 
+    companion object {
+        //正常状态
+        const val STATUS_NORMAL = 0
+        //刷新状态
+        const val STATUS_REFRESH = 1
+        //刷新完成
+        const val STATUS_FINISH = 2
+    }
+
     /**标题栏的行为, 用于布局在标题栏bottom里面*/
     var titleBarPlaceholderBehavior: ITitleBarBehavior? = null
 
@@ -27,13 +37,27 @@ open class RefreshBehavior(
     val excludeHeight get() = titleBarPlaceholderBehavior?.getContentExcludeHeight(this) ?: 0
 
     /**刷新行为界面处理*/
-    var refreshBehaviorConfig = RefreshBehaviorConfig()
+    var refreshBehaviorConfig: IRefreshBehavior? = RefreshEffectConfig()
+
+    /**刷新触发的回调*/
+    var onRefresh: (RefreshBehavior) -> Unit = {
+    }
+
+    /**刷新状态*/
+    var refreshStatus: Int = STATUS_NORMAL
+        set(value) {
+            val old = field
+            field = value
+            if (old != value) {
+                refreshBehaviorConfig?.onRefreshStatusChange(this, old, value)
+            }
+        }
 
     init {
         showLog = false
 
         onScrollTo = { x, y ->
-            refreshBehaviorConfig.onContentScrollTo(this, x, y)
+            refreshBehaviorConfig?.onContentScrollTo(this, x, y)
         }
     }
 
@@ -160,7 +184,7 @@ open class RefreshBehavior(
 
         if (dyConsumed == 0 && type.isTouch()) {
             //内嵌滚动视图已经不需要消耗滚动值了, 通常是到达了首尾两端
-            refreshBehaviorConfig.onContentOverScroll(this, dxUnconsumed, dyUnconsumed)
+            refreshBehaviorConfig?.onContentOverScroll(this, dxUnconsumed, dyUnconsumed)
         }
     }
 
@@ -171,7 +195,7 @@ open class RefreshBehavior(
         type: Int
     ) {
         super.onStopNestedScroll(coordinatorLayout, child, target, type)
-        refreshBehaviorConfig.onContentStopScroll(this)
+        refreshBehaviorConfig?.onContentStopScroll(this)
     }
 
     override fun getContentScrollY(behavior: BaseDependsBehavior<*>): Int {

@@ -118,6 +118,9 @@ open class BaseScrollBehavior<T : View>(
 
     /**开始滚动到位置*/
     fun startScrollTo(x: Int, y: Int) {
+        if (x == scrollX && y == scrollY) {
+            return
+        }
         startScroll(x - scrollX, y - scrollY)
     }
 

@@ -5,6 +5,7 @@ import android.view.*
 import android.widget.FrameLayout
 import android.widget.ListView
 import androidx.annotation.ColorRes
+import androidx.annotation.IdRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
@@ -63,6 +64,18 @@ fun View?.setBehavior(behavior: CoordinatorLayout.Behavior<*>?) {
 
 fun View?.behavior(): CoordinatorLayout.Behavior<*>? {
     return (this?.layoutParams as? CoordinatorLayout.LayoutParams?)?.run { this.behavior }
+}
+
+fun <T : View> View?.find(@IdRes id: Int): T? {
+    return this?.findViewById(id)
+}
+
+fun View?.parentMeasuredHeight(): Int {
+    return (this?.parent as? View?)?.measuredHeight ?: 0
+}
+
+fun View?.parentMeasuredWidth(): Int {
+    return (this?.parent as? View?)?.measuredWidth ?: 0
 }
 
 //</editor-fold desc="基础扩展">
@@ -241,8 +254,8 @@ fun View?.throttleClickIt(action: (View) -> Unit) {
 
 val View.drawLeft get() = paddingLeft
 val View.drawTop get() = paddingTop
-val View.drawRight get() = right - paddingRight
-val View.drawBottom get() = bottom - paddingBottom
+val View.drawRight get() = measuredWidth - paddingRight
+val View.drawBottom get() = measuredHeight - paddingBottom
 val View.drawWidth get() = drawRight - drawLeft
 val View.drawHeight get() = drawBottom - drawTop
 val View.drawCenterX get() = drawLeft + drawWidth / 2

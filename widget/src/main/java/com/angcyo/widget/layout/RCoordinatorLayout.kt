@@ -5,15 +5,14 @@ import android.content.res.TypedArray
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import com.angcyo.behavior.BaseDependsBehavior
 import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.widget.R
-import com.angcyo.widget.base.InvalidateProperty
-import com.angcyo.widget.base.coordinatorParams
-import com.angcyo.widget.base.eachChildVisibility
+import com.angcyo.widget.base.*
 
 /**
  *
@@ -34,6 +33,21 @@ open class RCoordinatorLayout(
             context.obtainStyledAttributes(attributeSet, R.styleable.RCoordinatorLayout)
         bDrawable = typedArray.getDrawable(R.styleable.RCoordinatorLayout_r_background)
         typedArray.recycle()
+    }
+
+
+    /**是否还在touch中*/
+    var _isTouch = false
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+
+        if (ev.isTouchDown()) {
+            _isTouch = true
+        } else if (ev.isTouchFinish()) {
+            _isTouch = false
+        }
+
+        return super.dispatchTouchEvent(ev)
     }
 
     override fun draw(canvas: Canvas) {

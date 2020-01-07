@@ -22,22 +22,11 @@ open class DslRecyclerView : RecyclerView {
         initAttribute(context, attrs)
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
-        initAttribute(context, attrs, defStyleAttr)
-    }
-
-    fun initAttribute(context: Context, attributeSet: AttributeSet? = null, defStyleAttr: Int = 0) {
-        val typedArray =
-            context.obtainStyledAttributes(
-                attributeSet,
-                R.styleable.DslRecyclerView,
-                defStyleAttr,
-                0
-            )
+    fun initAttribute(context: Context, attributeSet: AttributeSet? = null) {
+        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.DslRecyclerView)
+        typedArray.getString(R.styleable.DslRecyclerView_r_layout_manager)?.let {
+            resetLayoutManager(it)
+        }
         typedArray.recycle()
     }
 }

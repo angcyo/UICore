@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.angcyo.dsladapter.DslAdapter
+import com.angcyo.dsladapter.DslItemDecoration
+import com.angcyo.dsladapter.HoverItemDecoration
 import com.angcyo.dsladapter.dslSpanSizeLookup
 import com.angcyo.library.utils.getMember
 
@@ -19,6 +21,21 @@ import com.angcyo.library.utils.getMember
  * @date 2019/12/26
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
+
+/**[DslAdapter]必备的组件*/
+fun RecyclerView.initDsl() {
+    addItemDecoration(DslItemDecoration())
+    HoverItemDecoration().attachToRecyclerView(this)
+}
+
+/**快速初始化[DslAdapter]*/
+fun RecyclerView.initDslAdapter(action: DslAdapter.() -> Unit) {
+    initDsl()
+    resetLayoutManager("v")
+    adapter = DslAdapter().apply {
+        this.action()
+    }
+}
 
 fun RecyclerView.dslAdapter(
     append: Boolean = false, //当已经是adapter时, 是否追加item. 需要先关闭 new
