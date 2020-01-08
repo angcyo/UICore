@@ -1,6 +1,9 @@
 package com.angcyo.widget.base
 
+import android.graphics.Paint
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.text.TextPaint
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 
@@ -12,11 +15,11 @@ import androidx.annotation.DrawableRes
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
-public fun TextView.setLeftIco(id: Int) {
+fun TextView.setLeftIco(id: Int) {
     setLeftIco(getDrawable(id))
 }
 
-public fun TextView.setLeftIco(drawable: Drawable?) {
+fun TextView.setLeftIco(drawable: Drawable?) {
     val compoundDrawables: Array<Drawable?> = compoundDrawables
     setCompoundDrawablesWithIntrinsicBounds(
         drawable,
@@ -26,11 +29,11 @@ public fun TextView.setLeftIco(drawable: Drawable?) {
     )
 }
 
-public fun TextView.setTopIco(id: Int) {
+fun TextView.setTopIco(id: Int) {
     setTopIco(getDrawable(id))
 }
 
-public fun TextView.setTopIco(drawable: Drawable?) {
+fun TextView.setTopIco(drawable: Drawable?) {
     val compoundDrawables: Array<Drawable?> = compoundDrawables
     setCompoundDrawablesWithIntrinsicBounds(
         compoundDrawables[0],
@@ -40,11 +43,11 @@ public fun TextView.setTopIco(drawable: Drawable?) {
     )
 }
 
-public fun TextView.setRightIco(@DrawableRes id: Int) {
+fun TextView.setRightIco(@DrawableRes id: Int) {
     setRightIco(getDrawable(id))
 }
 
-public fun TextView.setRightIco(drawable: Drawable?) {
+fun TextView.setRightIco(drawable: Drawable?) {
     val compoundDrawables: Array<Drawable?> = compoundDrawables
     setCompoundDrawablesWithIntrinsicBounds(
         compoundDrawables[0],
@@ -54,11 +57,11 @@ public fun TextView.setRightIco(drawable: Drawable?) {
     )
 }
 
-public fun TextView.setBottomIco(id: Int) {
+fun TextView.setBottomIco(id: Int) {
     setBottomIco(getDrawable(id))
 }
 
-public fun TextView.setBottomIco(drawable: Drawable?) {
+fun TextView.setBottomIco(drawable: Drawable?) {
     val compoundDrawables: Array<Drawable?> = compoundDrawables
     setCompoundDrawablesWithIntrinsicBounds(
         compoundDrawables[0],
@@ -68,3 +71,50 @@ public fun TextView.setBottomIco(drawable: Drawable?) {
     )
 }
 
+
+/**
+ * 设置是否显示删除线
+ */
+fun TextView.setDeleteLine(bool: Boolean) {
+    addFlags(bool, Paint.STRIKE_THRU_TEXT_FLAG)
+}
+
+/**
+ * 设置是否显示下划线
+ */
+fun TextView.setUnderLine(bool: Boolean) {
+    addFlags(bool, Paint.UNDERLINE_TEXT_FLAG)
+}
+
+/**
+ * 设置是否加粗文本
+ */
+fun TextView.setBoldText(bool: Boolean) {
+    addFlags(bool, Paint.FAKE_BOLD_TEXT_FLAG)
+}
+
+/**
+ * 设置是否斜体
+ */
+fun TextView.setItalic(bool: Boolean) {
+    if (bool) {
+        setTypeface(typeface, Typeface.ITALIC)
+    } else {
+        setTypeface(typeface, Typeface.NORMAL)
+        //setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL), Typeface.NORMAL);
+    }
+}
+
+fun TextView.addFlags(add: Boolean, flat: Int) {
+    val paint: TextPaint = paint
+    paint.addPaintFlags(add, flat)
+    postInvalidate()
+}
+
+fun Paint.addPaintFlags(add: Boolean, flat: Int) {
+    if (add) {
+        this.flags = this.flags or flat
+    } else {
+        this.flags = this.flags and flat.inv()
+    }
+}

@@ -12,7 +12,10 @@ dependencies {
 
     //https://github.com/square/okhttp
     //https://jcenter.bintray.com/com/squareup/okhttp3/
-    api "com.squareup.okhttp3:okhttp:4.2.2"
+    api "com.squareup.okhttp3:okhttp:4.3.1"
+    //https://github.com/google/conscrypt
+    //https://jcenter.bintray.com/org/conscrypt
+    debugImplementation 'org.conscrypt:conscrypt-android:2.2.1'
 
     //https://github.com/ReactiveX/RxJava
 

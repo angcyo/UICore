@@ -74,6 +74,9 @@ android {
 //        }
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        //https://developer.android.google.cn/studio/build/multidex.html
+        multiDexKeepProguard file('multidex-config.pro')
     }
 //    sourceSets {
 //        main {
