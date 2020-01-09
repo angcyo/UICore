@@ -131,19 +131,23 @@ open class DslViewHolder(
     }
 
     fun tv(@IdRes resId: Int): TextView? {
-        return v<View>(resId) as? TextView
+        return v(resId)
+    }
+
+    fun et(@IdRes resId: Int): EditText? {
+        return v(resId)
     }
 
     fun img(@IdRes resId: Int): ImageView? {
-        return v<View>(resId) as? ImageView
+        return v(resId)
     }
 
     fun rv(@IdRes resId: Int): RecyclerView? {
-        return v<View>(resId) as? RecyclerView
+        return v(resId)
     }
 
     fun group(@IdRes resId: Int): ViewGroup? {
-        return group(v<View>(resId))
+        return v(resId)
     }
 
     fun group(view: View?): ViewGroup? {

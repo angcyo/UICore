@@ -24,6 +24,8 @@ fun Int.add(value: Int): Int = this or value
 val undefined_res = -32_768
 /**未定义的整数*/
 val undefined_int = -1
+/**未定义的颜色*/
+val undefined_color = -32_768
 
 fun Int?.or(default: Int) = if (this ?: 0 > 0) this else default
 

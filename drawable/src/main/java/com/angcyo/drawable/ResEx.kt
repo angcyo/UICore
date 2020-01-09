@@ -3,12 +3,10 @@ package com.angcyo.drawable
 import android.app.Activity
 import android.content.Context
 import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.Window
-import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
-import androidx.annotation.DimenRes
-import androidx.annotation.Px
+import androidx.annotation.*
 import androidx.core.content.ContextCompat
 import com.angcyo.library.app
 
@@ -74,6 +72,12 @@ fun Context.getDimen(@DimenRes id: Int): Int {
     return resources.getDimensionPixelOffset(id)
 }
 
+fun Context.getDrawable(@DrawableRes id: Int): Drawable? {
+    return ContextCompat.getDrawable(this, id)?.apply {
+        setBounds(0, 0, minimumWidth, minimumHeight)
+    }
+}
+
 @ColorInt
 fun getColor(@ColorRes id: Int): Int {
     return ContextCompat.getColor(app(), id)
@@ -82,4 +86,10 @@ fun getColor(@ColorRes id: Int): Int {
 @Px
 fun getDimen(@DimenRes id: Int): Int {
     return app().getDimen(id)
+}
+
+fun getDrawable(@DrawableRes id: Int): Drawable? {
+    return ContextCompat.getDrawable(app(), id)?.apply {
+        setBounds(0, 0, minimumWidth, minimumHeight)
+    }
 }
