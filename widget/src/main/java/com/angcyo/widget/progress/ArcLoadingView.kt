@@ -40,10 +40,6 @@ class ArcLoadingView(context: Context, attributeSet: AttributeSet? = null) :
         val array: TypedArray =
             context.obtainStyledAttributes(attributeSet, R.styleable.ArcLoadingView)
 
-        if (isInEditMode) {
-            arcLoadingDrawable.progress = 51
-        }
-
         arcLoadingDrawable.arcColor = getColor(R.color.colorAccent)
 
         arcLoadingDrawable.arcColor =
@@ -65,6 +61,10 @@ class ArcLoadingView(context: Context, attributeSet: AttributeSet? = null) :
         array.recycle()
 
         arcLoadingDrawable.callback = this
+
+        if (isInEditMode) {
+            progress = 51
+        }
     }
 
     override fun verifyDrawable(who: Drawable): Boolean {
@@ -102,6 +102,9 @@ class ArcLoadingView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     fun checkStart() {
+        if (isInEditMode) {
+            return
+        }
         if (autoStart) {
             if (ViewCompat.isAttachedToWindow(this) && isVisible()) {
                 startLoading()

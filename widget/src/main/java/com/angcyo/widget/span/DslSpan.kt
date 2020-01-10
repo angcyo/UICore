@@ -140,7 +140,7 @@ class DslSpan {
         builder.appendln()
     }
 
-    /**直接指定[span]*/
+    /**追加指定[span]*/
     fun append(text: CharSequence?, vararg spans: Any) {
         _ignore(text) {
             val start = builder.length
@@ -167,9 +167,9 @@ class DslSpan {
         }
     }
 
-    /**插入空隙*/
+    /**追加空隙*/
     fun appendSpace(@Px size: Int, @ColorInt color: Int = Color.TRANSPARENT) {
-        append(" ", SpaceSpan(size, color))
+        append("< >", SpaceSpan(size, color))
     }
 
     fun set(start: Int, end: Int, vararg spans: Any) {
@@ -178,6 +178,7 @@ class DslSpan {
         }
     }
 
+    /**追加图片*/
     fun appendImage(drawable: Drawable?, alignment: Int = DynamicDrawableSpan.ALIGN_BASELINE) {
         if (drawable != null) {
             if (drawable.bounds.isEmpty) {
@@ -185,6 +186,11 @@ class DslSpan {
             }
             append("<img>", ImageSpan(drawable, alignment))
         }
+    }
+
+    /**快速追加[DslTextSpan]*/
+    fun appendText(text: CharSequence?, action: DslTextSpan.() -> Unit = {}) {
+        append(text, DslTextSpan().apply(action))
     }
 }
 

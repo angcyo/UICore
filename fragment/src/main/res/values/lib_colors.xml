@@ -6,6 +6,7 @@
     <color name="white">#FFFFFF</color>
     <!--全透明-->
     <color name="transparent">#00000000</color>
+    <color name="transparent10">#1A000000</color>
     <!--不透明度20%-->
     <color name="transparent20">#33000000</color>
     <color name="transparent40">#66000000</color>
