@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.text.SpannableStringBuilder
 import android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
 import android.text.style.*
+import android.view.Gravity
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import com.angcyo.library.ex.undefined_color
@@ -21,10 +22,10 @@ import kotlin.math.max
 
 class DslSpan {
 
+    val _builder = SpannableStringBuilder()
+
     /**是否忽略null或者empty的text*/
     var ignoreNullOrEmpty = true
-
-    val builder = SpannableStringBuilder()
 
     var flag: Int = SPAN_EXCLUSIVE_EXCLUSIVE
 
@@ -115,17 +116,12 @@ class DslSpan {
     }
 
     fun doIt(): SpannableStringBuilder {
-        return builder
+        return _builder
     }
 
     fun _ignore(text: CharSequence?, action: () -> Unit) {
-        if (ignoreNullOrEmpty) {
-            if (text.isNullOrEmpty()) {
-
-            } else {
-                action()
-                _reset()
-            }
+        if (ignoreNullOrEmpty && text.isNullOrEmpty()) {
+            //ignore
         } else {
             action()
             _reset()
@@ -133,21 +129,22 @@ class DslSpan {
     }
 
     fun _reset() {
+        ignoreNullOrEmpty = true
         flag = SPAN_EXCLUSIVE_EXCLUSIVE
     }
 
     fun appendln() {
-        builder.appendln()
+        _builder.appendln()
     }
 
     /**追加指定[span]*/
     fun append(text: CharSequence?, vararg spans: Any) {
         _ignore(text) {
-            val start = builder.length
-            builder.append(text)
-            val end = builder.length
+            val start = _builder.length
+            _builder.append(text)
+            val end = _builder.length
             for (span in spans) {
-                builder.setSpan(span, start, end, flag)
+                _builder.setSpan(span, start, end, flag)
             }
         }
     }
@@ -155,14 +152,14 @@ class DslSpan {
     /**通过配置指定[span]*/
     fun append(text: CharSequence?, action: DslSpanConfig.() -> Unit) {
         _ignore(text) {
-            val start = builder.length
-            builder.append(text)
-            val end = builder.length
+            val start = _builder.length
+            _builder.append(text)
+            val end = _builder.length
 
             val config = DslSpanConfig()
             config.action()
             for (span in spanFactory(config)) {
-                builder.setSpan(span, start, end, config.flag)
+                _builder.setSpan(span, start, end, config.flag)
             }
         }
     }
@@ -174,7 +171,7 @@ class DslSpan {
 
     fun set(start: Int, end: Int, vararg spans: Any) {
         for (span in spans) {
-            builder.setSpan(span, start, end, flag)
+            _builder.setSpan(span, start, end, flag)
         }
     }
 
@@ -189,8 +186,16 @@ class DslSpan {
     }
 
     /**快速追加[DslTextSpan]*/
-    fun appendText(text: CharSequence?, action: DslTextSpan.() -> Unit = {}) {
-        append(text, DslTextSpan().apply(action))
+    fun text(text: CharSequence? = null, action: DslTextSpan.() -> Unit = {}) {
+        if (text.isNullOrEmpty()) {
+            //智能调整
+            append(" ", DslTextSpan().apply {
+                textGravity = Gravity.CENTER
+                this.action()
+            })
+        } else {
+            append(text, DslTextSpan().apply(action))
+        }
     }
 }
 
