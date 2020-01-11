@@ -166,7 +166,7 @@ class DslSpan {
 
     /**追加空隙*/
     fun appendSpace(@Px size: Int, @ColorInt color: Int = Color.TRANSPARENT) {
-        append("< >", SpaceSpan(size, color))
+        append("<space>", SpaceSpan(size, color))
     }
 
     fun set(start: Int, end: Int, vararg spans: Any) {
@@ -185,17 +185,23 @@ class DslSpan {
         }
     }
 
-    /**快速追加[DslTextSpan]*/
-    fun text(text: CharSequence? = null, action: DslTextSpan.() -> Unit = {}) {
+    /**快速追加[DslDrawableSpan]*/
+    fun drawable(text: CharSequence? = null, action: DslDrawableSpan.() -> Unit = {}) {
         if (text.isNullOrEmpty()) {
             //智能调整
-            append(" ", DslTextSpan().apply {
+            append("<draw>", DslDrawableSpan().apply {
+                showText = ""
                 textGravity = Gravity.CENTER
                 this.action()
             })
         } else {
-            append(text, DslTextSpan().apply(action))
+            append(text, DslDrawableSpan().apply(action))
         }
+    }
+
+    /**快速追加[DslTextSpan]*/
+    fun text(text: CharSequence?, action: DslTextSpan.() -> Unit = {}) {
+        append(text, DslTextSpan().apply(action))
     }
 }
 

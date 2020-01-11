@@ -2,291 +2,203 @@ package com.angcyo.widget.span
 
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.drawable.Drawable
+import android.text.Layout
 import android.text.TextPaint
-import android.text.style.ReplacementSpan
-import android.view.Gravity
+import android.text.style.LeadingMarginSpan
+import android.text.style.MetricAffectingSpan
+import android.view.MotionEvent
+import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import com.angcyo.library.ex.undefined_color
-import com.angcyo.library.ex.undefined_int
+import com.angcyo.library.ex.undefined_float
 
 /**
  *
  * Email:angcyo@126.com
  * @author angcyo
- * @date 2020/01/08
+ * @date 2020/01/11
  */
+open class DslTextSpan : MetricAffectingSpan(), LeadingMarginSpan,
+    LeadingMarginSpan.LeadingMarginSpan2, IWeightSpan, IClickableSpan {
 
-open class DslTextSpan : ReplacementSpan() {
-
-    val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
-
-    @Px
-    var textSize: Float = -1f
-
+    /**文本颜色*/
     @ColorInt
     var textColor: Int = undefined_color
 
-    var textGravity: Int = Gravity.LEFT or Gravity.BOTTOM
+    /**背景颜色*/
+    @ColorInt
+    var bgColor: Int = undefined_color
 
-    /**需要替换显示的文本*/
-    var showText: CharSequence? = null
+    /**字体大小*/
+    @Px
+    var textSize: Float = undefined_float
 
-    /**强制指定宽度*/
-    var spanWidth: Int = undefined_int
-    var spanHeight: Int = undefined_int
+    /**字体缩放*/
+    var relativeSizeScale: Float = undefined_float
 
-    /**背景[Drawable]*/
-    var backgroundDrawable: Drawable? = null
-        set(value) {
-            field = value
-            field?.apply {
-                if (bounds.isEmpty) {
-                    setBounds(0, 0, minimumWidth, minimumHeight)
-                }
-            }
-        }
+    /**删除线*/
+    var deleteLine: Boolean = false
 
-    /**前景[Drawable]*/
-    var foregroundDrawable: Drawable? = null
-        set(value) {
-            field = value
-            field?.apply {
-                if (bounds.isEmpty) {
-                    setBounds(0, 0, minimumWidth, minimumHeight)
-                }
-            }
-        }
+    /**下划线*/
+    var underline: Boolean = false
 
-    //影响宽度, 背景偏移, 文本偏移
-    var marginLeft: Int = 0
-    var marginRight: Int = 0
-    var marginTop: Int = 0
-    var marginBottom: Int = 0
+    /**粗体*/
+    var textBold: Boolean = false
 
-    //影响宽度, 影响文本与背景的距离
-    var paddingLeft: Int = 0
-    var paddingRight: Int = 0
-    var paddingTop: Int = 0
-    var paddingBottom: Int = 0
+    /**斜体*/
+    var textItalic: Boolean = false
 
-    //整体偏移
-    var offsetX: Float = 0f
-    var offsetY: Float = 0f
+    /**x轴缩放*/
+    var scaleX: Float = undefined_float
 
-    //单独文本偏移
-    var textOffsetX: Float = 0f
-    var textOffsetY: Float = 0f
+    /**文本基线偏移*/
+    var textBaselineShift: Int = 0
+    /**上标*/
+    var isSuperscript: Boolean = false
+    /**下标*/
+    var isSubscript: Boolean = false
 
-    fun _initPaint(paint: Paint) {
-        textPaint.set(paint)
-        if (textSize > 0) {
-            textPaint.textSize = textSize
-        }
+    /**首行缩进*/
+    var leadingFirst: Int = 0
+    /**其他行缩进*/
+    var leadingRest: Int = 0
+
+    /**多少行算首行*/
+    var leadingFirstLineCount: Int = 1
+
+    /**需要[DslTextView]支持*/
+    var leadingFirstWeight: Float = undefined_float
+    var leadingRestWeight: Float = undefined_float
+
+    /**单击事件回调, 需要[SpanClickMethod]支持*/
+    var onClickSpan: ((view: View, span: DslTextSpan) -> Unit)? = null
+
+    override fun updateDrawState(textPaint: TextPaint) {
         if (textColor != undefined_color) {
             textPaint.color = textColor
         }
-    }
-
-    fun _targetText(
-        text: CharSequence?,
-        start: Int,
-        end: Int
-    ): CharSequence {
-        return showText?.run { this } ?: text?.subSequence(start, end) ?: ""
-    }
-
-    fun _drawableWidth(drawable: Drawable?): Int {
-        return drawable?.run { if (bounds.isEmpty) if (bounds.left == -1) -1 else minimumWidth else bounds.width() }
-            ?: 0
-    }
-
-    fun _drawableHeight(drawable: Drawable?): Int {
-        return drawable?.run { if (bounds.isEmpty) if (bounds.top == -1) -1 else minimumHeight else bounds.height() }
-            ?: 0
-    }
-
-    /**高度包含 marigin padding , 宽度不包含*/
-    fun _measureSize(
-        paint: Paint,
-        text: CharSequence?,
-        start: Int,
-        end: Int,
-        fm: Paint.FontMetricsInt? = null
-    ): IntArray {
-        _initPaint(paint)
-
-        val targetText = _targetText(text, start, end)
-
-        val textWidth = textPaint.measureText(targetText, 0, targetText.length).toInt()
-
-        val bgWidth = _drawableWidth(backgroundDrawable)
-        val fgWidth = _drawableWidth(foregroundDrawable)
-
-        val bgHeight = _drawableHeight(backgroundDrawable)
-        val fgHeight = _drawableHeight(foregroundDrawable)
-
-        val height: Int
-
-        if (fm != null) {
-            fm.ascent =
-                if (spanHeight > 0) -spanHeight else minOf(
-                    textPaint.ascent().toInt(),
-                    -bgHeight,
-                    -fgHeight
-                ) - paddingTop - paddingBottom - marginTop - marginBottom
-            fm.descent = textPaint.descent().toInt()
-
-            //决定高度
-            fm.top = fm.ascent
-            //基线下距离
-            fm.bottom = fm.descent
-
-            height = fm.descent - fm.ascent
-        } else {
-            height = if (spanHeight > 0) spanHeight else maxOf(
-                (textPaint.descent() - textPaint.ascent()).toInt(),
-                bgHeight,
-                fgHeight
-            ) + paddingTop + paddingBottom + marginTop + marginBottom
+        if (bgColor != undefined_color) {
+            textPaint.bgColor = bgColor
+        }
+        if (textSize != undefined_float) {
+            textPaint.textSize = textSize
+        }
+        if (relativeSizeScale != undefined_float) {
+            textPaint.textSize = relativeSizeScale * textPaint.textSize
         }
 
-        return intArrayOf(
-            if (spanWidth > 0) spanWidth else maxOf(textWidth, bgWidth, fgWidth),
-            height
-        )
+
+        if (deleteLine) {
+            textPaint.isStrikeThruText = true
+        }
+        if (underline) {
+            textPaint.isUnderlineText = true
+        }
+        if (textBold) {
+            textPaint.isFakeBoldText = textBold
+        }
+        if (textItalic) {
+            textPaint.textSkewX = -0.25f
+        }
+        if (scaleX != undefined_float) {
+            textPaint.textScaleX = textPaint.textScaleX * scaleX
+        }
+
+        if (isSuperscript) {
+            textPaint.baselineShift += (textPaint.ascent() / 2).toInt()
+        }
+        if (isSubscript) {
+            textPaint.baselineShift -= (textPaint.ascent() / 2).toInt()
+        }
+        if (textBaselineShift != 0) {
+            textPaint.baselineShift = textBaselineShift
+        }
     }
 
-    override fun getSize(
-        paint: Paint,
-        text: CharSequence?,
-        start: Int,
-        end: Int,
-        fm: Paint.FontMetricsInt?
-    ): Int {
-        val measureSize = _measureSize(paint, text, start, end, fm)
-        return measureSize[0] + marginLeft + marginRight + paddingLeft + paddingRight
+    override fun updateMeasureState(textPaint: TextPaint) {
+        if (textSize != undefined_float) {
+            textPaint.textSize = textSize
+        }
+        if (relativeSizeScale != undefined_float) {
+            textPaint.textSize = relativeSizeScale * textPaint.textSize
+        }
+
+        if (textBold) {
+            textPaint.isFakeBoldText = textBold
+        }
+        if (textItalic) {
+            textPaint.textSkewX = -0.25f
+        }
+        if (scaleX != undefined_float) {
+            textPaint.textScaleX = textPaint.textScaleX * scaleX
+        }
+
+        if (isSuperscript) {
+            textPaint.baselineShift += (textPaint.ascent() / 2).toInt()
+        }
+        if (isSubscript) {
+            textPaint.baselineShift -= (textPaint.ascent() / 2).toInt()
+        }
+        if (textBaselineShift != 0) {
+            textPaint.baselineShift = textBaselineShift
+        }
     }
 
-    override fun draw(
-        canvas: Canvas,
-        text: CharSequence?,
-        start: Int,
-        end: Int,
-        x: Float,
+    override fun getLeadingMarginLineCount(): Int {
+        return leadingFirstLineCount
+    }
+
+    override fun drawLeadingMargin(
+        c: Canvas?,
+        p: Paint?,
+        x: Int,
+        dir: Int,
         top: Int,
-        y: Int,//基线位置
-        bottom: Int,//底部位置
-        paint: Paint
+        baseline: Int,
+        bottom: Int,
+        text: CharSequence?,
+        start: Int,
+        end: Int,
+        first: Boolean,
+        layout: Layout?
     ) {
-        val measureSize = _measureSize(paint, text, start, end)
-        val measureWidth = measureSize[0]
-        val measureHeight = measureSize[1] - marginTop - marginBottom
-        val targetText = _targetText(text, start, end)
-
-        canvas.save()
-
-        //绘制文本
-        val textWidth = textPaint.measureText(targetText, 0, targetText.length).toInt()
-        val textHeight = textPaint.descent() - textPaint.ascent()
-
-        //偏移画布
-        canvas.translate(marginLeft + offsetX, offsetY)
-
-        val layoutDirection = 0
-        val absoluteGravity = Gravity.getAbsoluteGravity(textGravity, layoutDirection)
-        val verticalGravity = textGravity and Gravity.VERTICAL_GRAVITY_MASK
-        val horizontalGravity = absoluteGravity and Gravity.HORIZONTAL_GRAVITY_MASK
-
-        val textX: Float = when (horizontalGravity) {
-            Gravity.CENTER_HORIZONTAL -> x + measureWidth / 2 - textWidth / 2 + paddingLeft
-            Gravity.RIGHT -> x + measureWidth - textWidth - paddingRight
-            else -> x + paddingLeft
-        }
-
-        val textY: Float = when (verticalGravity) {
-            Gravity.CENTER_VERTICAL -> top + measureHeight - (measureHeight - textHeight) / 2 - textPaint.descent() / 2 + marginTop
-            Gravity.BOTTOM -> (y - marginBottom - paddingBottom).toFloat()
-            else -> top - textPaint.ascent() - marginTop
-        }
-
-        fun drawDrawable(drawable: Drawable?) {
-            //空白文本, drawable将采用measure的size当做wrap_content
-            val blankText = targetText.isBlank()
-            drawable?.let {
-                val height = _drawableHeight(it).other(
-                    measureHeight,
-                    if (blankText) measureHeight else textHeight.toInt()
-                )
-
-                val width = _drawableWidth(it).other(
-                    measureWidth,
-                    if (blankText) measureHeight else textWidth
-                )
-
-                val textCenterX = textX + textWidth / 2
-                val textCenterY = textY + textPaint.ascent() / 2
-
-                val l: Int = (textCenterX - width / 2).toInt()
-                val t: Int = (textCenterY - height / 2 + textPaint.descent() / 2).toInt()
-
-                it.setBounds(
-                    l - paddingLeft,
-                    t - paddingTop,
-                    l + width + paddingRight,
-                    t + height + paddingBottom
-                )
-                it.draw(canvas)
-            }
-        }
-
-        //绘制背景
-        drawDrawable(backgroundDrawable)
-
-        canvas.drawText(
-            targetText,
-            0,
-            targetText.length,
-            textX + textOffsetX,
-            textY + textOffsetY,
-            textPaint
-        )
-
-        //绘制前景
-        drawDrawable(foregroundDrawable)
-
-        canvas.restore()
+        //no op
     }
 
-    fun Int.other(max: Int, min: Int): Int {
-        return when {
-            //MATCH_PARENT
-            this == -1 -> max
-            //WRAP_CONTENT
-            this <= 0 -> min
-            //EXACTLY
-            else -> this
+    override fun getLeadingMargin(first: Boolean): Int {
+        return if (first) leadingFirst else leadingRest
+    }
+
+    override fun onMeasure(widthSize: Int, heightSize: Int) {
+        if (leadingFirstWeight != undefined_float) {
+            leadingFirst = (widthSize * leadingFirstWeight).toInt()
+        }
+        if (leadingRestWeight != undefined_float) {
+            leadingRest = (widthSize * leadingRestWeight).toInt()
         }
     }
 
-    fun paddingHorizontal(padding: Int) {
-        paddingLeft = padding
-        paddingRight = padding
+    fun leading(size: Int) {
+        leadingFirst = size
+        leadingRest = size
     }
 
-    fun paddingVertical(padding: Int) {
-        paddingTop = padding
-        paddingBottom = padding
+    fun leadingWeight(weight: Float) {
+        leadingFirstWeight = weight
+        leadingRestWeight = weight
     }
 
-    fun marginHorizontal(margin: Int) {
-        marginLeft = margin
-        marginRight = margin
+    override fun isCanClick(): Boolean {
+        return onClickSpan != null
     }
 
-    fun marginVertical(margin: Int) {
-        marginTop = margin
-        marginBottom = margin
+    override fun onClickSpan(view: View, span: IClickableSpan) {
+        onClickSpan?.run { this(view, this@DslTextSpan) } ?: super.onClickSpan(view, span)
     }
+
+    override fun onTouchEvent(view: View, span: IClickableSpan, event: MotionEvent) {
+        super.onTouchEvent(view, span, event)
+    }
+
 }
