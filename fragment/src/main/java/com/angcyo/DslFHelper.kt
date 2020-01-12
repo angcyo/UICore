@@ -3,6 +3,7 @@ package com.angcyo
 import android.app.Activity
 import android.os.Handler
 import android.os.Looper
+import androidx.annotation.AnimRes
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -13,6 +14,7 @@ import com.angcyo.fragment.IFragment
 import com.angcyo.fragment.R
 import com.angcyo.library.L
 import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.undefined_res
 
 /**
  *
@@ -21,6 +23,21 @@ import com.angcyo.library.ex.isDebug
  * @date 2019/12/22
  */
 class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
+
+    companion object {
+
+        /**[androidx.fragment.app.FragmentTransaction.setCustomAnimations(int, int, int, int)]*/
+
+        @AnimRes
+        var DEFAULT_SHOW_ENTER_ANIM = R.anim.lib_translate_x_enter
+        @AnimRes
+        var DEFAULT_SHOW_EXIT_ANIM = 0
+
+        @AnimRes
+        var DEFAULT_REMOVE_ENTER_ANIM = 0
+        @AnimRes
+        var DEFAULT_REMOVE_EXIT_ANIM = R.anim.lib_translate_x_exit
+    }
 
     /**这个列表中的[Fragment]将会被执行[add]操作*/
     val showFragmentList = mutableListOf<Fragment>()
@@ -36,10 +53,16 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
      * 隐藏[hide], 操作之后最后一个[Fragment]前面第几个开始的所有[Fragment]
      * >=1 才有效.
      * */
-    var hideBeforeIndex = 1
+    var hideBeforeIndex = 2
 
     /**最后一个[Fragment]在执行的[back]时, 是否需要[remove]*/
     var removeLastFragment: Boolean = false
+
+    @AnimRes
+    var enterAnimRes: Int = undefined_res
+
+    @AnimRes
+    var exitAnimRes: Int = undefined_res
 
     init {
         //FragmentManager.enableDebugLogging(debug)
@@ -256,6 +279,29 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
 
             //...end
 
+            //anim 动画需要在op之前设置, 否则不会有效果
+            if (enterAnimRes == undefined_res && exitAnimRes == undefined_res) {
+                if (showFragmentList.isNotEmpty() && fm.getAllValidityFragment().isNotEmpty()) {
+                    //显示F,并且非第一个Fragment
+                    setCustomAnimations(
+                        DEFAULT_SHOW_ENTER_ANIM,
+                        DEFAULT_SHOW_EXIT_ANIM,
+                        DEFAULT_SHOW_ENTER_ANIM,
+                        DEFAULT_SHOW_EXIT_ANIM
+                    )
+                } else if (removeFragmentList.isNotEmpty()) {
+                    //移除F
+                    setCustomAnimations(
+                        DEFAULT_REMOVE_ENTER_ANIM,
+                        DEFAULT_REMOVE_EXIT_ANIM,
+                        DEFAULT_REMOVE_ENTER_ANIM,
+                        DEFAULT_REMOVE_EXIT_ANIM
+                    )
+                }
+            } else {
+                setCustomAnimations(enterAnimRes, exitAnimRes, enterAnimRes, exitAnimRes)
+            }
+
             val lastFragment = fmFragmentList.lastOrNull()
 
             //op remove
@@ -281,14 +327,16 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
             }
 
             //op hide
-            if (hideBeforeIndex >= 1) {
-                fmFragmentList.forEachIndexed { index, fragment ->
-                    if (index < fmFragmentList.size - hideBeforeIndex) {
-                        setMaxLifecycle(fragment, Lifecycle.State.STARTED)
-                        hide(fragment)
-                    } else {
-                        show(fragment)
-                    }
+            fmFragmentList.forEachIndexed { index, fragment ->
+                if (index < fmFragmentList.size - 1) {
+                    //除了顶上一个Fragment, 其他Fragment都要执行不可见生命周期回调
+                    setMaxLifecycle(fragment, Lifecycle.State.STARTED)
+                }
+
+                if (index < fmFragmentList.size - hideBeforeIndex) {
+                    hide(fragment)
+                } else {
+                    show(fragment)
                 }
             }
 
