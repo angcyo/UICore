@@ -1,0 +1,97 @@
+package com.angcyo.widget
+
+import android.content.Context
+import android.util.AttributeSet
+import android.view.View
+import androidx.appcompat.widget.AppCompatTextView
+import com.angcyo.widget.base.spans
+import com.angcyo.widget.span.IDrawableStateSpan
+import com.angcyo.widget.span.IWeightSpan
+
+/**
+ * 自定义Span支持类
+ * Email:angcyo@126.com
+ * @author angcyo
+ * @date 2020/01/08
+ */
+open class DslSpanTextView : AppCompatTextView {
+
+    //drawable 额外的状态
+    val _extraState = mutableListOf<Int>()
+
+    var isInitExtraState: Boolean = false
+
+    constructor(context: Context) : super(context) {
+        initAttribute(context, null)
+    }
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        initAttribute(context, attrs)
+    }
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
+        initAttribute(context, attrs)
+    }
+
+    private fun initAttribute(context: Context, attributeSet: AttributeSet?) {
+
+    }
+
+    override fun onCreateDrawableState(extraSpace: Int): IntArray {
+        if (!isInitExtraState) {
+            return super.onCreateDrawableState(extraSpace)
+        }
+
+        val state = super.onCreateDrawableState(extraSpace + _extraState.size)
+
+        if (_extraState.isNotEmpty()) {
+            View.mergeDrawableStates(state, _extraState.toIntArray())
+        }
+
+        return state
+    }
+
+    override fun drawableStateChanged() {
+        super.drawableStateChanged()
+        val state = onCreateDrawableState(0)
+
+        spans { _, span ->
+            if (span is IDrawableStateSpan) {
+                span.setDrawableState(state)
+            }
+        }
+    }
+
+    /**添加额外的状态*/
+    fun addDrawableState(state: Int) {
+        isInitExtraState = true
+        _extraState.add(state)
+        refreshDrawableState()
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+
+        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
+        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
+
+        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
+        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
+
+        _measureWeightSpan(widthSize, heightSize)
+
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
+    fun _measureWeightSpan(widthSize: Int, heightSize: Int) {
+        spans { _, span ->
+            if (span is IWeightSpan) {
+                span.onMeasure(widthSize, heightSize)
+            }
+        }
+    }
+
+}

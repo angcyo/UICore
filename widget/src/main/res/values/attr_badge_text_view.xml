@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="DslScrollTextView">
+        <attr name="r_text_scroll" format="boolean" />
+        <attr name="r_text_scroll_start" format="boolean" />
+        <attr name="r_text_scroll_step" format="dimension" />
+        <attr name="r_text_scroll_offset" format="dimension|float" />
+        <attr name="r_text_scroll_first_offset" format="dimension|float" />
+
+    </declare-styleable>
+
+    <declare-styleable name="DslTextView">
+
+        <!--角标属性-->
+        <attr name="r_draw_badge" />
+        <attr name="r_badge_solid_color" />
+        <attr name="r_badge_text_color" />
+        <attr name="r_badge_circle_radius" />
+        <attr name="r_badge_radius" />
+        <attr name="r_badge_gravity" />
+        <attr name="r_badge_offset_x" />
+        <attr name="r_badge_offset_y" />
+        <attr name="r_badge_padding_left" />
+        <attr name="r_badge_padding_right" />
+        <attr name="r_badge_padding_top" />
+        <attr name="r_badge_padding_bottom" />
+        <attr name="r_badge_text" />
+        <attr name="r_badge_text_size" />
+        <attr name="r_badge_bg_drawable" />
+        <attr name="r_badge_text_offset_x" />
+        <attr name="r_badge_text_offset_y" />
+        <!--end...-->
+
+    </declare-styleable>
+</resources>

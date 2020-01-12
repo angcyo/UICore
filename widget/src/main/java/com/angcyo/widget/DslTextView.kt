@@ -1,12 +1,9 @@
 package com.angcyo.widget
 
 import android.content.Context
+import android.graphics.Canvas
 import android.util.AttributeSet
-import android.view.View
-import androidx.appcompat.widget.AppCompatTextView
-import com.angcyo.widget.base.spans
-import com.angcyo.widget.span.IDrawableStateSpan
-import com.angcyo.widget.span.IWeightSpan
+import com.angcyo.widget.drawable.DslAttrBadgeDrawable
 
 /**
  *
@@ -14,12 +11,10 @@ import com.angcyo.widget.span.IWeightSpan
  * @author angcyo
  * @date 2020/01/08
  */
-open class DslTextView : AppCompatTextView {
+open class DslTextView : DslScrollTextView {
 
-    //drawable 额外的状态
-    val _extraState = mutableListOf<Int>()
-
-    var isInitExtraState: Boolean = false
+    /**角标绘制*/
+    var dslBadeDrawable = DslAttrBadgeDrawable()
 
     constructor(context: Context) : super(context) {
         initAttribute(context, null)
@@ -37,59 +32,17 @@ open class DslTextView : AppCompatTextView {
         initAttribute(context, attrs)
     }
 
-    fun initAttribute(context: Context, attrs: AttributeSet?) {
-        //context.obtainStyledAttributes(attrs,)
+    private fun initAttribute(context: Context, attributeSet: AttributeSet?) {
+        dslBadeDrawable.initAttribute(context, attributeSet)
+        dslBadeDrawable.callback = this
     }
 
-    override fun onCreateDrawableState(extraSpace: Int): IntArray {
-        if (!isInitExtraState) {
-            return super.onCreateDrawableState(extraSpace)
-        }
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
 
-        val state = super.onCreateDrawableState(extraSpace + _extraState.size)
-
-        if (_extraState.isNotEmpty()) {
-            View.mergeDrawableStates(state, _extraState.toIntArray())
-        }
-
-        return state
-    }
-
-    override fun drawableStateChanged() {
-        super.drawableStateChanged()
-        val state = onCreateDrawableState(0)
-
-        spans { _, span ->
-            if (span is IDrawableStateSpan) {
-                span.setDrawableState(state)
-            }
-        }
-    }
-
-    fun addDrawableState(state: Int) {
-        isInitExtraState = true
-        _extraState.add(state)
-        refreshDrawableState()
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-
-        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
-        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
-
-        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
-        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
-
-        _measureWeightSpan(widthSize, heightSize)
-
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-    }
-
-    fun _measureWeightSpan(widthSize: Int, heightSize: Int) {
-        spans { _, span ->
-            if (span is IWeightSpan) {
-                span.onMeasure(widthSize, heightSize)
-            }
+        dslBadeDrawable.apply {
+            setBounds(0, 0, measuredWidth, measuredHeight)
+            draw(canvas)
         }
     }
 }

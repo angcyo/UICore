@@ -228,7 +228,7 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
         val textHeight = textPaint.descent() - textPaint.ascent()
 
         //偏移画布
-        canvas.translate(marginLeft + offsetX, offsetY)
+        canvas.translate(marginLeft + offsetX, marginTop + offsetY)
 
         val layoutDirection = 0
         val absoluteGravity = Gravity.getAbsoluteGravity(textGravity, layoutDirection)
@@ -242,9 +242,9 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
         }
 
         val textY: Float = when (verticalGravity) {
-            Gravity.CENTER_VERTICAL -> top + drawHeight - (drawHeight - textHeight) / 2 - textPaint.descent() / 2 + marginTop
+            Gravity.CENTER_VERTICAL -> top + (drawHeight - textHeight) / 2 - textPaint.ascent()
             Gravity.BOTTOM -> (y - marginBottom - paddingBottom).toFloat()
-            else -> top - textPaint.ascent() - marginTop
+            else -> top - textPaint.ascent()
         }
 
         fun choiceHeight(): Int {
@@ -289,7 +289,6 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
         drawDrawable(backgroundDrawable)
 
         if (gradientSolidColor != undefined_color || gradientStrokeColor != undefined_color) {
-            val blankText = targetText.isBlank()
             val height = choiceHeight()
             val width = choiceWidth()
             val textCenterX = textX + textWidth / 2
