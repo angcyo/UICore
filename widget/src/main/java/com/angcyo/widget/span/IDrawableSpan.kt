@@ -7,6 +7,7 @@ package com.angcyo.widget.span
  * @date 2020/01/12
  */
 
-interface IDrawableStateSpan {
+interface IDrawableSpan {
     fun setDrawableState(state: IntArray)
+    fun setDrawableColor(color: Int)
 }

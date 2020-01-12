@@ -11,6 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
+import com.angcyo.drawable.colorFilter
 import com.angcyo.drawable.dp
 import com.angcyo.library.ex.undefined_color
 import com.angcyo.library.ex.undefined_float
@@ -24,7 +25,7 @@ import kotlin.math.min
  * @date 2020/01/08
  */
 
-open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDrawableStateSpan {
+open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDrawableSpan {
 
     val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
 
@@ -392,5 +393,10 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
         foregroundDrawable?.let {
             it.setState(state)
         }
+    }
+
+    override fun setDrawableColor(color: Int) {
+        backgroundDrawable = backgroundDrawable?.colorFilter(color)
+        foregroundDrawable = foregroundDrawable?.colorFilter(color)
     }
 }

@@ -3,9 +3,10 @@ package com.angcyo.widget
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
+import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatTextView
 import com.angcyo.widget.base.spans
-import com.angcyo.widget.span.IDrawableStateSpan
+import com.angcyo.widget.span.IDrawableSpan
 import com.angcyo.widget.span.IWeightSpan
 
 /**
@@ -60,8 +61,16 @@ open class DslSpanTextView : AppCompatTextView {
         val state = onCreateDrawableState(0)
 
         spans { _, span ->
-            if (span is IDrawableStateSpan) {
+            if (span is IDrawableSpan) {
                 span.setDrawableState(state)
+            }
+        }
+    }
+
+    fun setDrawableColor(@ColorInt color: Int) {
+        spans { _, span ->
+            if (span is IDrawableSpan) {
+                span.setDrawableColor(color)
             }
         }
     }

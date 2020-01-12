@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
+import com.angcyo.base.getAllValidityFragment
 import com.angcyo.behavior.HideTitleBarBehavior
 import com.angcyo.behavior.refresh.RefreshBehavior
 import com.angcyo.behavior.refresh.RefreshHeaderBehavior
@@ -56,7 +57,7 @@ abstract class BaseTitleFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        BaseUI.onFragmentCreateAfter(this, fragmentConfig)
+        BaseUI.fragmentUI.onFragmentCreateAfter(this, fragmentConfig)
     }
 
     override fun initBaseView(savedInstanceState: Bundle?) {
@@ -64,7 +65,12 @@ abstract class BaseTitleFragment : BaseFragment() {
         initTitleFragment()
         initBehavior()
 
-        BaseUI.onFragmentInitBaseViewAfter(this)
+        BaseUI.fragmentUI.onFragmentInitBaseViewAfter(this)
+    }
+
+    /**是否要显示返回按钮*/
+    open fun enableBackItem(): Boolean {
+        return topFragment() == this && fragmentManager?.getAllValidityFragment()?.size ?: 0 > 0
     }
 
     //<editor-fold desc="操作方法">
