@@ -1,9 +1,11 @@
 package com.angcyo.widget
 
 import android.content.Context
-import android.text.Spanned
 import android.util.AttributeSet
+import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
+import com.angcyo.widget.base.spans
+import com.angcyo.widget.span.IDrawableStateSpan
 import com.angcyo.widget.span.IWeightSpan
 
 /**
@@ -12,11 +14,62 @@ import com.angcyo.widget.span.IWeightSpan
  * @author angcyo
  * @date 2020/01/08
  */
-open class DslTextView(context: Context, attributeSet: AttributeSet? = null) :
-    AppCompatTextView(context, attributeSet) {
+open class DslTextView : AppCompatTextView {
+
+    //drawable 额外的状态
+    val _extraState = mutableListOf<Int>()
+
+    var isInitExtraState: Boolean = false
+
+    constructor(context: Context) : super(context) {
+        initAttribute(context, null)
+    }
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        initAttribute(context, attrs)
+    }
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
+        initAttribute(context, attrs)
+    }
+
+    fun initAttribute(context: Context, attrs: AttributeSet?) {
+        //context.obtainStyledAttributes(attrs,)
+    }
 
     override fun onCreateDrawableState(extraSpace: Int): IntArray {
-        return super.onCreateDrawableState(extraSpace)
+        if (!isInitExtraState) {
+            return super.onCreateDrawableState(extraSpace)
+        }
+
+        val state = super.onCreateDrawableState(extraSpace + _extraState.size)
+
+        if (_extraState.isNotEmpty()) {
+            View.mergeDrawableStates(state, _extraState.toIntArray())
+        }
+
+        return state
+    }
+
+    override fun drawableStateChanged() {
+        super.drawableStateChanged()
+        val state = onCreateDrawableState(0)
+
+        spans { _, span ->
+            if (span is IDrawableStateSpan) {
+                span.setDrawableState(state)
+            }
+        }
+    }
+
+    fun addDrawableState(state: Int) {
+        isInitExtraState = true
+        _extraState.add(state)
+        refreshDrawableState()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -33,13 +86,9 @@ open class DslTextView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     fun _measureWeightSpan(widthSize: Int, heightSize: Int) {
-        val text = text
-        if (text is Spanned) {
-            val spans = text.getSpans(0, text.length, Any::class.java)
-            for (span in spans) {
-                if (span is IWeightSpan) {
-                    span.onMeasure(widthSize, heightSize)
-                }
+        spans { _, span ->
+            if (span is IWeightSpan) {
+                span.onMeasure(widthSize, heightSize)
             }
         }
     }

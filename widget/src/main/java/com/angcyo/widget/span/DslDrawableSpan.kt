@@ -24,7 +24,7 @@ import kotlin.math.min
  * @date 2020/01/08
  */
 
-open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan {
+open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDrawableStateSpan {
 
     val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
 
@@ -384,5 +384,14 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan {
 
     override fun onTouchEvent(view: View, span: IClickableSpan, event: MotionEvent) {
         super.onTouchEvent(view, span, event)
+    }
+
+    override fun setDrawableState(state: IntArray) {
+        backgroundDrawable?.let {
+            it.setState(state)
+        }
+        foregroundDrawable?.let {
+            it.setState(state)
+        }
     }
 }

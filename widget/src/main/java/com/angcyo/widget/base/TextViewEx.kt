@@ -3,6 +3,7 @@ package com.angcyo.widget.base
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.text.Spanned
 import android.text.TextPaint
 import android.widget.TextView
 import androidx.annotation.DrawableRes
@@ -116,5 +117,14 @@ fun Paint.addPaintFlags(add: Boolean, flat: Int) {
         this.flags = this.flags or flat
     } else {
         this.flags = this.flags and flat.inv()
+    }
+}
+
+/**枚举所有[span]*/
+fun TextView.spans(action: (index: Int, span: Any) -> Unit) {
+    val text = text
+    if (text is Spanned) {
+        val spans = text.getSpans(0, text.length, Any::class.java)
+        spans.forEachIndexed(action)
     }
 }
