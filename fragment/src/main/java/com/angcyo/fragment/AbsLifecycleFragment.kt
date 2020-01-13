@@ -4,9 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.CallSuper
+import androidx.fragment.app.Fragment
+import com.angcyo.base.getAllResumedFragment
 import com.angcyo.base.toVisibilityString
 import com.angcyo.library.L.i
 import com.angcyo.library.ex.hash
+import com.angcyo.widget.base.hideSoftInput
 
 /**
  * Created by angcyo on 2018/12/03 23:17
@@ -22,6 +25,9 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
      * 触发 [.onFragmentShow] 的次数
      */
     var fragmentShowCount = 0
+
+    /**[childFragmentManager]中最后一个可见性的[Fragment]*/
+    val lastFragment: Fragment? get() = childFragmentManager.getAllResumedFragment().lastOrNull()
 
     //<editor-fold desc="生命周期, 系统的方法">
 
@@ -46,15 +52,15 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
         data: Intent?
     ) {
         super.onActivityResult(requestCode, resultCode, data)
-//        if (lastFragment != null) {
-//            if (lastFragment is Fragment) {
-//                (lastFragment as Fragment).onActivityResult(
-//                    requestCode,
-//                    resultCode,
-//                    data
-//                )
-//            }
-//        }
+        if (lastFragment != null) {
+            if (lastFragment is Fragment) {
+                (lastFragment as Fragment).onActivityResult(
+                    requestCode,
+                    resultCode,
+                    data
+                )
+            }
+        }
     }
 
     //</editor-fold>
@@ -101,15 +107,9 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
      * 是否可以关闭当前[Fragment]界面.
      */
     override fun onBackPressed(): Boolean {
-//        if (lastFragment == null) {
-//            return true
-//        }
-//        return if (lastFragment is AbsLifecycleFragment) {
-//            lastFragment.onBackPressed(activity)
-//        } else true
-        return true
+        view?.hideSoftInput()
+        return (lastFragment as? AbsLifecycleFragment)?.onBackPressed() ?: true
     }
-
 
     override fun canSwipeBack(): Boolean {
         return view != null

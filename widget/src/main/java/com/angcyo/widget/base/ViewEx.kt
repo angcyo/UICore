@@ -1,7 +1,9 @@
 package com.angcyo.widget.base
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.ListView
 import androidx.annotation.ColorRes
@@ -76,6 +78,14 @@ fun View?.parentMeasuredHeight(): Int {
 
 fun View?.parentMeasuredWidth(): Int {
     return (this?.parent as? View?)?.measuredWidth ?: 0
+}
+
+/**隐藏软键盘*/
+fun View?.hideSoftInput() {
+    this?.run {
+        val manager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        manager.hideSoftInputFromWindow(windowToken, 0)
+    }
 }
 
 //</editor-fold desc="基础扩展">

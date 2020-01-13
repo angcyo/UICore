@@ -4,7 +4,9 @@ import androidx.annotation.IdRes
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 import com.angcyo.tablayout.DslTabLayout
+import com.angcyo.widget.edit.DslEditText
 import com.angcyo.widget.recycler.DslRecyclerView
+import com.angcyo.widget.text.DslTextView
 
 /**
  *

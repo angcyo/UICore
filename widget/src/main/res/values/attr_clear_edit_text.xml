@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ClearEditText">
+        <attr name="r_show_clear" />
+        <attr name="r_clear_drawable" />
+        <attr name="r_is_password_drawable" />
+        <attr name="r_show_password_on_touch" />
+    </declare-styleable>
+
+</resources>

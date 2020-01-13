@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <!--是否显示删除按钮-->
+    <attr name="r_show_clear" format="boolean"/>
+    <attr name="r_clear_drawable" format="reference"/>
+    <attr name="r_is_password_drawable" format="boolean"/>
+    <attr name="r_show_password_on_touch" format="boolean"/>
+    <attr name="r_is_no_edit_mode" format="boolean"/>
+    <attr name="r_request_focus_on_touch" format="boolean"/>
+
+    <attr name="r_auto_hide_soft_input_on_lost_focus" format="boolean"/>
+    <attr name="r_auto_hide_soft_input_on_detached" format="boolean"/>
+    <attr name="r_auto_hide_soft_input_on_invisible" format="boolean"/>
+
+</resources>

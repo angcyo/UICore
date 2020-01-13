@@ -1,4 +1,4 @@
-package com.angcyo.widget
+package com.angcyo.widget.text
 
 import android.content.Context
 import android.graphics.Canvas
@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.view.ViewCompat
 import com.angcyo.drawable.dpi
+import com.angcyo.widget.R
 import com.angcyo.widget.base.atMost
 import com.angcyo.widget.base.isVisible
 import kotlin.math.absoluteValue
@@ -74,7 +75,9 @@ open class DslScrollTextView : DslSpanTextView {
     }
 
     private fun initAttribute(context: Context, attributeSet: AttributeSet?) {
-        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.DslScrollTextView)
+        val typedArray = context.obtainStyledAttributes(attributeSet,
+            R.styleable.DslScrollTextView
+        )
         scrollText = typedArray.getBoolean(R.styleable.DslScrollTextView_r_text_scroll, scrollText)
 
         //偏移

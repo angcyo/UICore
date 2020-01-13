@@ -1,4 +1,4 @@
-package com.angcyo.widget
+package com.angcyo.widget.text
 
 import android.content.Context
 import android.util.AttributeSet

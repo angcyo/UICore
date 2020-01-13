@@ -237,6 +237,7 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
             }
 
             if (result) {
+                //可以remove
                 if (showFragmentList.isEmpty() && allValidityFragment.size == 1) {
                     if (removeLastFragment) {
                         //只有一个Fragment
@@ -255,6 +256,8 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
     }
 
     val _handle: Handler by lazy { Handler(Looper.getMainLooper()) }
+
+    var _logRunnable: Runnable? = null
 
     /**执行操作*/
     fun doIt() {
@@ -348,9 +351,12 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
             onCommit(this)
 
             if (debug) {
-                _handle.postDelayed({
+                _logRunnable?.run { _handle.removeCallbacks(this) }
+                _logRunnable = Runnable {
                     fm.log()
-                }, 16)
+                    _logRunnable = null
+                }
+                _handle.postDelayed(_logRunnable!!, 16)
             }
         }
     }

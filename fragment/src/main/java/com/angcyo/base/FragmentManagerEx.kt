@@ -5,6 +5,7 @@ import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
 import com.angcyo.DslFHelper
 import com.angcyo.fragment.AbsLifecycleFragment
 import com.angcyo.library.L
@@ -53,6 +54,20 @@ fun FragmentManager.getAllValidityFragment(): List<Fragment> {
 
     return result
 }
+
+/**获取所有view!=null并且生命周期是[Lifecycle.State.RESUMED]的[Fragment]*/
+fun FragmentManager.getAllResumedFragment(): List<Fragment> {
+    val result = mutableListOf<Fragment>()
+
+    fragments.forEach {
+        if (it.view != null && it.isResumed) {
+            result.add(it)
+        }
+    }
+
+    return result
+}
+
 
 /**获取[Fragment]上层的所有[Fragment]*/
 fun FragmentManager.getOverlayFragment(anchor: Fragment): List<Fragment> {
