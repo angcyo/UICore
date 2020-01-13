@@ -37,12 +37,12 @@ open class DslScrollTextView : DslSpanTextView {
             field = value
             if (value) {
                 _scrollTextX = scrollFirstOffset.offset()
-                postInvalidate()
             } else {
                 //恢复默认位置
                 _scrollTextX = 0f
                 _scrollNextTextX = 0f
             }
+            postInvalidate()
         }
 
     /**滚动循环开始时偏移的大小, 负数表示[View]宽度的倍数*/
