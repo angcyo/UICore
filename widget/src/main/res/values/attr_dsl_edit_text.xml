@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DslEditText">
+        <attr name="r_is_no_edit_mode" />
+        <attr name="r_request_focus_on_touch" />
+        <attr name="r_hide_soft_input_on_lost_focus" />
+        <attr name="r_hide_soft_input_on_detached" />
+        <attr name="r_hide_soft_input_on_invisible" />
+    </declare-styleable>
+
+    <declare-styleable name="DslCompleteEditText">
+        <attr name="r_is_no_edit_mode" />
+        <attr name="r_request_focus_on_touch" />
+        <attr name="r_hide_soft_input_on_lost_focus" />
+        <attr name="r_hide_soft_input_on_detached" />
+        <attr name="r_hide_soft_input_on_invisible" />
+    </declare-styleable>
+</resources>
