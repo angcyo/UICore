@@ -1,8 +1,12 @@
 package com.angcyo.widget.base
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Context
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.view.*
+import android.view.animation.DecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.ListView
@@ -80,12 +84,24 @@ fun View?.parentMeasuredWidth(): Int {
     return (this?.parent as? View?)?.measuredWidth ?: 0
 }
 
-/**隐藏软键盘*/
-fun View?.hideSoftInput() {
-    this?.run {
-        val manager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        manager.hideSoftInputFromWindow(windowToken, 0)
-    }
+/**
+ * 错误提示
+ */
+fun View.error() {
+    //Anim.band(this)
+
+    val mAnimatorSet = AnimatorSet()
+
+    mAnimatorSet.playTogether(
+        ObjectAnimator.ofFloat(this, "scaleX", 1f, 1.25f, 0.75f, 1.15f, 1f),
+        ObjectAnimator.ofFloat(this, "scaleY", 1f, 0.75f, 1.25f, 0.85f, 1f)
+    )
+
+    mAnimatorSet.interpolator = DecelerateInterpolator()
+    mAnimatorSet.duration = 300
+    mAnimatorSet.start()
+
+    requestFocus()
 }
 
 //</editor-fold desc="基础扩展">
@@ -94,7 +110,7 @@ fun View?.hideSoftInput() {
 //<editor-fold desc="layoutParams扩展">
 
 /**快速操作[LayoutParams]*/
-public fun View.marginParams(config: ViewGroup.MarginLayoutParams.() -> Unit = {}): View {
+fun View.marginParams(config: ViewGroup.MarginLayoutParams.() -> Unit = {}): View {
     (this.layoutParams as? ViewGroup.MarginLayoutParams)?.apply {
         config()
         this@marginParams.layoutParams = layoutParams
@@ -102,7 +118,7 @@ public fun View.marginParams(config: ViewGroup.MarginLayoutParams.() -> Unit = {
     return this
 }
 
-public fun View.frameParams(config: FrameLayout.LayoutParams.() -> Unit = {}): View {
+fun View.frameParams(config: FrameLayout.LayoutParams.() -> Unit = {}): View {
     (this.layoutParams as? FrameLayout.LayoutParams)?.apply {
         config()
         this@frameParams.layoutParams = layoutParams
@@ -110,7 +126,7 @@ public fun View.frameParams(config: FrameLayout.LayoutParams.() -> Unit = {}): V
     return this
 }
 
-public fun View.coordinatorParams(config: CoordinatorLayout.LayoutParams.() -> Unit = {}): View {
+fun View.coordinatorParams(config: CoordinatorLayout.LayoutParams.() -> Unit = {}): View {
     (this.layoutParams as? CoordinatorLayout.LayoutParams)?.apply {
         config()
         this@coordinatorParams.layoutParams = layoutParams
@@ -118,7 +134,7 @@ public fun View.coordinatorParams(config: CoordinatorLayout.LayoutParams.() -> U
     return this
 }
 
-public fun View.constraintParams(config: ConstraintLayout.LayoutParams.() -> Unit = {}): View {
+fun View.constraintParams(config: ConstraintLayout.LayoutParams.() -> Unit = {}): View {
     (this.layoutParams as? ConstraintLayout.LayoutParams)?.apply {
         config()
         this@constraintParams.layoutParams = layoutParams
@@ -127,35 +143,35 @@ public fun View.constraintParams(config: ConstraintLayout.LayoutParams.() -> Uni
 }
 
 /**将[LayoutParams]强转成指定对象*/
-public fun ViewGroup.LayoutParams.marginParams(config: ViewGroup.MarginLayoutParams.() -> Unit = {}): ViewGroup.MarginLayoutParams? {
+fun ViewGroup.LayoutParams.marginParams(config: ViewGroup.MarginLayoutParams.() -> Unit = {}): ViewGroup.MarginLayoutParams? {
     return (this as? ViewGroup.MarginLayoutParams)?.run {
         config()
         this
     }
 }
 
-public fun ViewGroup.LayoutParams.frameParams(config: FrameLayout.LayoutParams.() -> Unit = {}): FrameLayout.LayoutParams? {
+fun ViewGroup.LayoutParams.frameParams(config: FrameLayout.LayoutParams.() -> Unit = {}): FrameLayout.LayoutParams? {
     return (this as? FrameLayout.LayoutParams)?.run {
         config()
         this
     }
 }
 
-public fun ViewGroup.LayoutParams.coordinatorParams(config: CoordinatorLayout.LayoutParams.() -> Unit = {}): CoordinatorLayout.LayoutParams? {
+fun ViewGroup.LayoutParams.coordinatorParams(config: CoordinatorLayout.LayoutParams.() -> Unit = {}): CoordinatorLayout.LayoutParams? {
     return (this as? CoordinatorLayout.LayoutParams)?.run {
         config()
         this
     }
 }
 
-public fun ViewGroup.LayoutParams.constraintParams(config: ConstraintLayout.LayoutParams.() -> Unit = {}): ConstraintLayout.LayoutParams? {
+fun ViewGroup.LayoutParams.constraintParams(config: ConstraintLayout.LayoutParams.() -> Unit = {}): ConstraintLayout.LayoutParams? {
     return (this as? ConstraintLayout.LayoutParams)?.run {
         config()
         this
     }
 }
 
-public fun ViewGroup.LayoutParams.recyclerParams(config: RecyclerView.LayoutParams.() -> Unit = {}): RecyclerView.LayoutParams? {
+fun ViewGroup.LayoutParams.recyclerParams(config: RecyclerView.LayoutParams.() -> Unit = {}): RecyclerView.LayoutParams? {
     return (this as? RecyclerView.LayoutParams)?.run {
         config()
         this
@@ -169,12 +185,12 @@ public fun ViewGroup.LayoutParams.recyclerParams(config: RecyclerView.LayoutPara
 //<editor-fold desc="offset扩展">
 
 
-public fun View.offsetTop(offset: Int) {
+fun View.offsetTop(offset: Int) {
     ViewCompat.offsetTopAndBottom(this, offset)
 }
 
 /**限制滚动偏移的范围, 返回值表示 需要消耗的 距离*/
-public fun View.offsetTop(offset: Int, minTop: Int, maxTop: Int): Int {
+fun View.offsetTop(offset: Int, minTop: Int, maxTop: Int): Int {
     val offsetTop = top + offset
     val newTop = clamp(offsetTop, minTop, maxTop)
 
@@ -183,20 +199,20 @@ public fun View.offsetTop(offset: Int, minTop: Int, maxTop: Int): Int {
     return -(offset - (offsetTop - newTop))
 }
 
-public fun View.offsetTopTo(newTop: Int) {
+fun View.offsetTopTo(newTop: Int) {
     offsetTop(newTop - top)
 }
 
-public fun View.offsetTopTo(newTop: Int, minTop: Int, maxTop: Int) {
+fun View.offsetTopTo(newTop: Int, minTop: Int, maxTop: Int) {
     offsetTop(newTop - top, minTop, maxTop)
 }
 
-public fun View.offsetLeft(offset: Int) {
+fun View.offsetLeft(offset: Int) {
     ViewCompat.offsetLeftAndRight(this, offset)
 }
 
 /**限制滚动偏移的范围, 返回值表示 需要消耗的 距离*/
-public fun View.offsetLeft(offset: Int, minLeft: Int, maxLeft: Int): Int {
+fun View.offsetLeft(offset: Int, minLeft: Int, maxLeft: Int): Int {
     val offsetLeft = left + offset
     val newLeft = clamp(offsetLeft, minLeft, maxLeft)
 
@@ -205,7 +221,7 @@ public fun View.offsetLeft(offset: Int, minLeft: Int, maxLeft: Int): Int {
     return -(offset - (offsetLeft - newLeft))
 }
 
-public fun View.offsetLeftTo(newLeft: Int) {
+fun View.offsetLeftTo(newLeft: Int) {
     offsetLeft(newLeft - left)
 }
 
@@ -289,3 +305,41 @@ fun View.doOnPreDraw(action: (View) -> Unit) {
 }
 
 //</editor-fold desc="draw相关扩展">
+
+//<editor-fold desc="软键盘相关">
+
+/**隐藏软键盘*/
+fun View.hideSoftInput() {
+    val manager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    manager.hideSoftInputFromWindow(windowToken, 0)
+}
+
+val _tempRect = Rect()
+
+/**
+ * 获取键盘的高度
+ */
+fun View.getSoftKeyboardHeight(): Int {
+    val screenHeight = getScreenHeightPixels()
+    getWindowVisibleDisplayFrame(_tempRect)
+    val visibleBottom = _tempRect.bottom
+    return screenHeight - visibleBottom
+}
+
+/**
+ * 屏幕高度(不包含虚拟导航键盘的高度)
+ */
+fun View.getScreenHeightPixels(): Int {
+    return resources.displayMetrics.heightPixels
+}
+
+/**
+ * 判断键盘是否显示
+ */
+fun View.isSoftKeyboardShow(minHeight: Int = 100): Boolean {
+    val screenHeight = getScreenHeightPixels()
+    val keyboardHeight = getSoftKeyboardHeight()
+    return screenHeight != keyboardHeight && keyboardHeight > minHeight
+}
+
+//</editor-fold desc="软键盘相关">

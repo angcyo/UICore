@@ -36,10 +36,18 @@ fun DslViewHolder.drv(@IdRes id: Int): DslRecyclerView? {
     return v(id)
 }
 
+fun DslViewHolder._rv(@IdRes id: Int): DslRecyclerView? {
+    return v(id)
+}
+
 fun DslViewHolder._tv(@IdRes id: Int): DslTextView? {
     return v(id)
 }
 
 fun DslViewHolder._et(@IdRes id: Int): DslEditText? {
+    return v(id)
+}
+
+fun DslViewHolder.spinner(@IdRes id: Int): RSpinner? {
     return v(id)
 }

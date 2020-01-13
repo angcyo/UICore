@@ -8,7 +8,7 @@
         <attr name="r_hide_soft_input_on_invisible" />
     </declare-styleable>
 
-    <declare-styleable name="DslCompleteEditText">
+    <declare-styleable name="CompleteEditText">
         <attr name="r_is_no_edit_mode" />
         <attr name="r_request_focus_on_touch" />
         <attr name="r_hide_soft_input_on_lost_focus" />

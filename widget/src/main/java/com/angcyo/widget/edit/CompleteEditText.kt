@@ -14,7 +14,7 @@ import com.angcyo.widget.R
  * @date 2020/01/08
  */
 
-open class DslCompleteEditText : ClearCompleteEditText {
+open class CompleteEditText : ClearCompleteEditText {
 
     /**
      * 是否是不可编辑模式
@@ -57,24 +57,24 @@ open class DslCompleteEditText : ClearCompleteEditText {
     }
 
     private fun initAttribute(context: Context, attrs: AttributeSet?) {
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.DslCompleteEditText)
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.CompleteEditText)
 
         isNoEditMode =
-            typedArray.getBoolean(R.styleable.DslCompleteEditText_r_is_no_edit_mode, isNoEditMode)
+            typedArray.getBoolean(R.styleable.CompleteEditText_r_is_no_edit_mode, isNoEditMode)
         requestFocusOnTouch = typedArray.getBoolean(
-            R.styleable.DslCompleteEditText_r_request_focus_on_touch,
+            R.styleable.CompleteEditText_r_request_focus_on_touch,
             requestFocusOnTouch
         )
         hideSoftInputOnLostFocus = typedArray.getBoolean(
-            R.styleable.DslCompleteEditText_r_hide_soft_input_on_lost_focus,
+            R.styleable.CompleteEditText_r_hide_soft_input_on_lost_focus,
             hideSoftInputOnLostFocus
         )
         hideSoftInputOnDetached = typedArray.getBoolean(
-            R.styleable.DslCompleteEditText_r_hide_soft_input_on_detached,
+            R.styleable.CompleteEditText_r_hide_soft_input_on_detached,
             hideSoftInputOnDetached
         )
         hideSoftInputOnInvisible = typedArray.getBoolean(
-            R.styleable.DslCompleteEditText_r_hide_soft_input_on_invisible,
+            R.styleable.CompleteEditText_r_hide_soft_input_on_invisible,
             hideSoftInputOnInvisible
         )
 

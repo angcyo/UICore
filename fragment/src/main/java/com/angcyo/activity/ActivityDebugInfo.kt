@@ -112,17 +112,19 @@ fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug())
                     append(" h:").append("%.02f".format(height))
                     append(" inches:").appendln("%.02f".format(screenInches))
 
-                    val dRect = Rect()
-                    val dPoint = Point()
-                    decorView.getGlobalVisibleRect(dRect, dPoint)
-                    append(" d:").append(dRect)
-                    append(" d:").append(dPoint).appendln()
+                    val rect = Rect()
+                    val point = Point()
+                    decorView.getGlobalVisibleRect(rect, point)
+                    append(" d:").append(rect)
+                    append(" d:").append(point).appendln()
 
-                    val cRect = Rect()
-                    val cPoint = Point()
-                    contentView.getGlobalVisibleRect(cRect, cPoint)
-                    append(" c:").append(cRect)
-                    append(" c:").append(cPoint)
+                    contentView.getGlobalVisibleRect(rect, point)
+                    append(" c:").append(rect)
+                    append(" c:").append(point)
+
+                    decorView.getWindowVisibleDisplayFrame(rect)
+                    appendln()
+                    append(" frame:").append(rect)
                 }
             }
 

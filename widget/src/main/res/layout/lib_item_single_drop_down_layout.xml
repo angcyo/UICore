@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/lib_bg_selector"
+    app:r_background="@color/lib_white">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_text_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/lib_item_min_height"
+        android:paddingLeft="@dimen/lib_xhdpi"
+        android:paddingTop="@dimen/lib_hdpi"
+        android:paddingRight="@dimen/lib_xhdpi"
+        android:paddingBottom="@dimen/lib_hdpi"
+        tools:text="文本测试" />
+
+</com.angcyo.widget.layout.RFrameLayout>
