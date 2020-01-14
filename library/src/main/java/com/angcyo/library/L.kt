@@ -22,6 +22,17 @@ object L {
     const val WARN = 5
     const val ERROR = 6
 
+    val DEFAULT_LOG_PRING: (tag: String, level: Int, msg: String) -> Unit =
+        { tag, level, msg ->
+            when (level) {
+                VERBOSE -> Log.v(tag, msg)
+                DEBUG -> Log.d(tag, msg)
+                INFO -> Log.i(tag, msg)
+                WARN -> Log.w(tag, msg)
+                ERROR -> Log.e(tag, msg)
+            }
+        }
+
     var debug = isDebug()
 
     var tag: String = "L"
@@ -45,15 +56,7 @@ object L {
     /**Json缩进偏移量*/
     var indentJsonDepth: Int = 2
 
-    var logPrint: (tag: String, level: Int, msg: String) -> Unit = { tag, level, msg ->
-        when (level) {
-            VERBOSE -> Log.v(tag, msg)
-            DEBUG -> Log.d(tag, msg)
-            INFO -> Log.i(tag, msg)
-            WARN -> Log.w(tag, msg)
-            ERROR -> Log.e(tag, msg)
-        }
-    }
+    var logPrint: (tag: String, level: Int, msg: String) -> Unit = DEFAULT_LOG_PRING
 
     //临时tag
     var _tempTag: String? = null

@@ -3,6 +3,7 @@ package com.angcyo.widget.base
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.text.InputFilter
 import android.text.TextUtils
 import android.view.KeyEvent
 import android.view.View
@@ -13,6 +14,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.angcyo.widget.edit.SingleTextWatcher
 import com.google.android.material.textfield.TextInputLayout
+import kotlin.math.min
 
 /**
  *
@@ -43,6 +45,19 @@ fun EditText.isPasswordType(): Boolean {
     return passwordInputType || webPasswordInputType || numberPasswordInputType
 }
 
+/**
+ * 输入类型是否是数字
+ */
+fun EditText.isNumberType(): Boolean {
+    return inputType and EditorInfo.TYPE_CLASS_NUMBER == EditorInfo.TYPE_CLASS_NUMBER
+}
+
+/**
+ * 输入类型是否是小数
+ */
+fun EditText.isDecimalType(): Boolean {
+    return inputType and EditorInfo.TYPE_NUMBER_FLAG_DECIMAL == EditorInfo.TYPE_NUMBER_FLAG_DECIMAL
+}
 
 /**焦点变化改变监听*/
 fun EditText.onFocusChange(listener: (Boolean) -> Unit) {
@@ -154,4 +169,35 @@ fun EditText.onTextChange(
             }
         }
     })
+}
+
+fun EditText.addFilter(filter: InputFilter) {
+    val oldFilters = filters
+    val newFilters = arrayOfNulls<InputFilter>(oldFilters.size + 1)
+    System.arraycopy(oldFilters, 0, newFilters, 0, oldFilters.size)
+    newFilters[oldFilters.size] = filter
+    filters = newFilters
+}
+
+fun EditText.setFilter(filter: InputFilter, update: Boolean = true) {
+    val newFilters = arrayOfNulls<InputFilter>(1)
+    newFilters[0] = filter
+    filters = newFilters
+
+    if (update) {
+        text = text
+    }
+}
+
+/**
+ * 光标定位在文本的最后面
+ */
+fun EditText.setSelectionLast() {
+    setSelection(if (TextUtils.isEmpty(text)) 0 else text.length)
+}
+
+fun EditText.resetSelectionText(text: CharSequence?, startOffset: Int = 0) {
+    val start: Int = selectionStart
+    setText(text)
+    setSelection(min(start + startOffset, text?.length ?: 0))
 }

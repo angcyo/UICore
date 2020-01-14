@@ -7,6 +7,9 @@ import android.text.Spanned
 import android.text.TextPaint
 import android.widget.TextView
 import androidx.annotation.DrawableRes
+import com.angcyo.library.L
+import com.angcyo.library.utils.getMember
+import java.util.*
 
 /**
  *
@@ -126,5 +129,16 @@ fun TextView.spans(action: (index: Int, span: Any) -> Unit) {
     if (text is Spanned) {
         val spans = text.getSpans(0, text.length, Any::class.java)
         spans.forEachIndexed(action)
+    }
+}
+
+/**清空所有[TextWatcher]*/
+fun TextView.clearListeners() {
+    try {
+        val mListeners: ArrayList<*>? =
+            getMember(TextView::class.java, "mListeners") as? ArrayList<*>
+        mListeners?.clear()
+    } catch (e: Exception) {
+        L.e(e)
     }
 }

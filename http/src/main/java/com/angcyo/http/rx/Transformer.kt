@@ -1,10 +1,15 @@
 package com.angcyo.http.rx
 
 import com.angcyo.http.RequestConfig
+import com.angcyo.http.base.getString
+import com.angcyo.http.exception.HttpDataException
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import io.reactivex.FlowableTransformer
 import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import retrofit2.Response
 
 /**
  * Rx 转换器
@@ -28,13 +33,35 @@ fun <T> flowableToMain(): FlowableTransformer<T, T> {
     }
 }
 
-fun <Upstream> requestConfigTransformer(requestConfig: RequestConfig): ObservableTransformer<Upstream, Upstream> {
+fun requestConfigTransformer(requestConfig: RequestConfig): ObservableTransformer<Response<JsonElement>, Response<JsonElement>> {
     return ObservableTransformer { upstream ->
-        upstream.observeOn(Schedulers.io())
-        upstream.flatMap {
-
-
-            upstream
+        upstream.apply {
+            observeOn(Schedulers.io())
+            doOnSubscribe {
+                requestConfig.onStart(it)
+            }
+            doOnNext {
+                val body = it.body()
+                when {
+                    requestConfig.isSuccessful(it) -> {
+                        requestConfig.onSuccess(it)
+                    }
+                    body is JsonObject -> {
+                        throw HttpDataException(body.getString(requestConfig.msgKey) ?: "数据异常")
+                    }
+                    else -> {
+                        requestConfig.onSuccess(it)
+                    }
+                }
+            }
+            doOnComplete {
+                requestConfig.onComplete()
+            }
+            doOnError {
+                requestConfig.onError(it)
+            }
+            subscribeOn(Schedulers.io())
+            observeOn(AndroidSchedulers.mainThread())
         }
     }
 }
