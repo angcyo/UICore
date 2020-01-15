@@ -81,7 +81,7 @@ open class RefreshBehavior(
             }
         }
         super.layoutDependsOn(parent, child, dependency)
-        return enableDependsOn && dependency.behavior() is HideTitleBarBehavior
+        return enableDependsOn && dependency.behavior() is ITitleBarBehavior
     }
 
     override fun onDependentViewChanged(

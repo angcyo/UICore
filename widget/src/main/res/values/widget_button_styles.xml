@@ -3,6 +3,7 @@
 
     <!--DslButton按钮样式-->
     <style name="LibButtonStyle" parent="LibBodyTextStyle">
+        <item name="android:clickable">true</item>
         <item name="android:textColor">@color/lib_white</item>
         <item name="android:gravity">center</item>
         <item name="button_enable_ripple">true</item>

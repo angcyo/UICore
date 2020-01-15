@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DslSoftInputLayout">
+        <attr name="r_enable_show_animator" format="boolean" />
+        <attr name="r_enable_hide_animator" format="boolean" />
+        <attr name="r_enable_animator" format="boolean" />
+        <attr name="r_animator_duration" format="integer" />
+        <attr name="r_handler_mode" format="enum">
+            <enum name="MODE_HEIGHT" value="1" />
+            <enum name="MODE_OFFSET" value="2" />
+            <enum name="MODE_CONTENT_HEIGHT" value="3" />
+            <enum name="MODE_EMOJI_HEIGHT" value="4" />
+        </attr>
+        <attr name="r_soft_input_padding_top" format="dimension" />
+        <attr name="r_keep_emoji_state" format="boolean" />
+        <attr name="r_hide_emoji_view_on_soft_input" format="boolean" />
+    </declare-styleable>
+</resources>

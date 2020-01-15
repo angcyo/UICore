@@ -1,0 +1,612 @@
+package com.angcyo.widget.layout
+
+import android.animation.ValueAnimator
+import android.content.Context
+import android.os.Build
+import android.util.AttributeSet
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowInsets
+import android.widget.FrameLayout
+import com.angcyo.drawable.dpi
+import com.angcyo.library.L
+import com.angcyo.library.ex.append
+import com.angcyo.widget.R
+import com.angcyo.widget.base.anim
+import com.angcyo.widget.base.hideSoftInput
+import com.angcyo.widget.base.offsetTopTo
+import com.angcyo.widget.layout.DslSoftInputLayout.Companion.ACTION_HIDE_EMOJI
+import com.angcyo.widget.layout.DslSoftInputLayout.Companion.ACTION_HIDE_SOFT_INPUT
+import com.angcyo.widget.layout.DslSoftInputLayout.Companion.ACTION_SHOW_EMOJI
+import com.angcyo.widget.layout.DslSoftInputLayout.Companion.ACTION_SHOW_SOFT_INPUT
+import kotlin.math.min
+
+/**
+ * 只针对API 21以上处理软键盘, 支持在Activity中同时存在多个控件
+ * Email:angcyo@126.com
+ * @author angcyo
+ * @date 2020/01/15
+ */
+
+class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
+    FrameLayout(context, attributeSet) {
+
+    companion object {
+        var DEFAULT_SOFT_INPUT_HEIGHT = 275 * dpi
+        private val DEFAULT_CHILD_GRAVITY = Gravity.BOTTOM or Gravity.START
+
+        const val ACTION_SHOW_SOFT_INPUT = 1
+        const val ACTION_HIDE_SOFT_INPUT = 2
+        const val ACTION_SHOW_EMOJI = 3
+        const val ACTION_HIDE_EMOJI = 4
+
+        /**模式: 同时改变内容和emoji布局的高度*/
+        const val MODE_HEIGHT = 1
+        /**模式: 同时偏移内容和emoji布局*/
+        const val MODE_OFFSET = 2
+        /**只改变内容布局的高度, emoji跟随布局*/
+        const val MODE_CONTENT_HEIGHT = 3
+        /**只改变emoji的高度, 内容顶上去*/
+        const val MODE_EMOJI_HEIGHT = 4
+    }
+
+    /**激活动画*/
+    var enableShowAnimator = true
+
+    var enableHideAnimator = true
+
+    /**动画时长*/
+    var animatorDuration = 160L
+
+    /**键盘弹出时, 布局处理模式*/
+    var handlerMode = MODE_OFFSET
+
+    /**insert过程中, 动画调整的padding大小, [MODE_HEIGHT]模式下生效*/
+    var softInputPaddingTop = 0
+
+    /**监听器*/
+    val softInputListener = mutableListOf<OnSoftInputListener>()
+
+    /**隐藏键盘时, 如果上一次是显示表情, 则恢复表情布局*/
+    var keepEmojiState: Boolean = false
+
+    /**隐藏/显示键盘时, 将emoji视图布局不可见*/
+    var hideEmojiViewOnSoftInput: Boolean = false
+
+    //<editor-fold desc="私有属性辅助计算">
+
+    //需要额外追加的paddingTop, 只影响内容布局的测量
+    var _softInputPaddingTop = 0
+
+    //底部目标的高度
+    var bottomInsertHeight = 0
+
+    //底部需要计算的高度(有可能是emoji布局显示或者键盘显示)
+    var _bottomInsertHeight = 0
+
+    //[MODE_OFFSET]时, top偏移量
+    //var offsetTop = 0
+    var _offsetTop = 0
+
+    //操作列表, 用于在隐藏键盘之后, 判断是否需要再次显示emoji视图
+    val _actionList = mutableListOf<Int>()
+
+    //记录当前操作行为
+    var _action = 0
+
+    //</editor-fold desc="私有属性辅助计算">
+
+    init {
+        val typedArray =
+            context.obtainStyledAttributes(attributeSet, R.styleable.DslSoftInputLayout)
+
+        enableShowAnimator = typedArray.getBoolean(
+            R.styleable.DslSoftInputLayout_r_enable_show_animator,
+            enableShowAnimator
+        )
+        enableHideAnimator = typedArray.getBoolean(
+            R.styleable.DslSoftInputLayout_r_enable_hide_animator,
+            enableHideAnimator
+        )
+
+        if (typedArray.hasValue(R.styleable.DslSoftInputLayout_r_enable_animator)) {
+            val animator =
+                typedArray.getBoolean(R.styleable.DslSoftInputLayout_r_enable_animator, true)
+            enableAnimator(animator)
+        }
+
+        animatorDuration =
+            typedArray.getInt(
+                R.styleable.DslSoftInputLayout_r_animator_duration,
+                animatorDuration.toInt()
+            ).toLong()
+
+        handlerMode = typedArray.getInt(
+            R.styleable.DslSoftInputLayout_r_handler_mode,
+            handlerMode
+        )
+
+        softInputPaddingTop = typedArray.getDimensionPixelOffset(
+            R.styleable.DslSoftInputLayout_r_soft_input_padding_top,
+            softInputPaddingTop
+        )
+
+        _softInputPaddingTop = softInputPaddingTop
+
+        keepEmojiState =
+            typedArray.getBoolean(R.styleable.DslSoftInputLayout_r_keep_emoji_state, keepEmojiState)
+
+        hideEmojiViewOnSoftInput = typedArray.getBoolean(
+            R.styleable.DslSoftInputLayout_r_hide_emoji_view_on_soft_input,
+            hideEmojiViewOnSoftInput
+        )
+
+        typedArray.recycle()
+
+        if (isInEditMode) {
+            enableShowAnimator = false
+            enableHideAnimator = false
+            showEmojiLayout(DEFAULT_SOFT_INPUT_HEIGHT)
+        }
+    }
+
+    //<editor-fold desc="基础方法">
+
+    override fun onViewAdded(child: View?) {
+        super.onViewAdded(child)
+        _initView()
+    }
+
+    override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            if (insets.systemWindowInsetBottom > 0) {
+                //需要显示键盘
+                handleSoftInput(ACTION_SHOW_SOFT_INPUT, insets.systemWindowInsetBottom)
+            } else if (insets.systemWindowInsetBottom == 0) {
+                //可能是隐藏键盘, 也可能是显示表情布局
+                if (_action != ACTION_SHOW_EMOJI) {
+                    handleSoftInput(ACTION_HIDE_SOFT_INPUT, insets.systemWindowInsetBottom)
+                }
+            }
+        }
+
+        return super.onApplyWindowInsets(insets)
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        var widthSize = MeasureSpec.getSize(widthMeasureSpec)
+        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
+
+        var heightSize = MeasureSpec.getSize(heightMeasureSpec)
+        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
+
+        var maxHeight = 0
+        var maxWidth = 0
+
+        for (i in 0 until childCount) {
+            val child = getChildAt(i)
+
+            if (child.visibility != View.GONE) {
+                val lp = child.layoutParams as MarginLayoutParams
+
+                if (child == _contentView) {
+                    //内容布局测量大小
+                    when (handlerMode) {
+                        //需要改变内容布局的高度
+                        MODE_HEIGHT, MODE_CONTENT_HEIGHT -> measureChildWithMargins(
+                            child,
+                            widthMeasureSpec,
+                            0,
+                            MeasureSpec.makeMeasureSpec(
+                                heightSize - _bottomInsertHeight,
+                                heightMode
+                            ),
+                            _softInputPaddingTop
+                        )
+                        else -> measureChildWithMargins(
+                            child,
+                            widthMeasureSpec,
+                            0,
+                            heightMeasureSpec,
+                            _softInputPaddingTop
+                        )
+                    }
+                } else if (child == _emojiView) {
+                    //emoji布局测量大小
+                    when (handlerMode) {
+                        MODE_HEIGHT, MODE_EMOJI_HEIGHT -> {
+                            //需要改变emoji布局的高度
+                            val childWidthMeasureSpec = ViewGroup.getChildMeasureSpec(
+                                widthMeasureSpec,
+                                paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin,
+                                lp.width
+                            )
+                            val childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(
+                                _bottomInsertHeight,
+                                MeasureSpec.EXACTLY
+                            )
+                            child.measure(childWidthMeasureSpec, childHeightMeasureSpec)
+                        }
+                        else -> {
+                            val childWidthMeasureSpec = ViewGroup.getChildMeasureSpec(
+                                widthMeasureSpec,
+                                paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin,
+                                lp.width
+                            )
+                            val childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(
+                                bottomInsertHeight, MeasureSpec.EXACTLY
+                            )
+                            child.measure(childWidthMeasureSpec, childHeightMeasureSpec)
+                        }
+                    }
+                } else {
+                    measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0)
+                }
+
+                maxWidth =
+                    maxWidth.coerceAtLeast(child.measuredWidth + lp.leftMargin + lp.rightMargin)
+
+                if (child != _emojiView) {
+                    //emoji布局的高度, 不参与parent的测量
+                    maxHeight =
+                        maxHeight.coerceAtLeast(child.measuredHeight + lp.topMargin + lp.bottomMargin)
+                }
+            }
+        }
+
+        if (heightMode != MeasureSpec.EXACTLY) {
+            heightSize = maxHeight + _bottomInsertHeight
+//            if (_action == ACTION_SHOW_EMOJI || _action == ACTION_SHOW_SOFT_INPUT) {
+//                heightSize = maxHeight + _bottomInsertHeight
+//            } else {
+//                heightSize = maxHeight
+//            }
+        }
+
+        if (widthMode != MeasureSpec.EXACTLY) {
+            widthSize = maxWidth
+        }
+
+        setMeasuredDimension(widthSize, heightSize)
+    }
+
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        layoutChildren(left, top, right, bottom, false)
+        _offsetContent(_offsetTop)
+    }
+
+    //copy from FrameLayout
+    fun layoutChildren(
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int,
+        forceLeftGravity: Boolean
+    ) {
+        val count = childCount
+        val parentLeft: Int = paddingLeft
+        val parentRight: Int = right - left - paddingRight
+        val parentTop: Int = paddingTop
+        val parentBottom: Int = bottom - top - paddingBottom
+
+        val emojiHeight = _emojiView?.measuredHeight ?: 0
+        val emojiViewTop: Int =
+            if (handlerMode == MODE_HEIGHT || handlerMode == MODE_EMOJI_HEIGHT) {
+                parentBottom - emojiHeight
+            } else if (handlerMode == MODE_OFFSET) {
+                parentBottom
+            } else {
+                parentBottom - _bottomInsertHeight
+            }
+
+        for (i in 0 until count) {
+            val child = getChildAt(i)
+            if (child.visibility != View.GONE) {
+
+                val lp = child.layoutParams as LayoutParams
+                val width = child.measuredWidth
+                val height = child.measuredHeight
+                var childLeft: Int
+                var childTop: Int
+                var gravity = lp.gravity
+                if (gravity == -1) {
+                    gravity = DEFAULT_CHILD_GRAVITY
+                }
+                val layoutDirection =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                        layoutDirection
+                    } else {
+                        0
+                    }
+                val absoluteGravity = Gravity.getAbsoluteGravity(gravity, layoutDirection)
+                val verticalGravity = gravity and Gravity.VERTICAL_GRAVITY_MASK
+
+                childLeft = when (absoluteGravity and Gravity.HORIZONTAL_GRAVITY_MASK) {
+                    Gravity.CENTER_HORIZONTAL -> parentLeft + (parentRight - parentLeft - width) / 2 +
+                            lp.leftMargin - lp.rightMargin
+                    Gravity.RIGHT -> {
+                        if (!forceLeftGravity) {
+                            parentRight - width - lp.rightMargin
+                        } else {
+                            parentLeft + lp.leftMargin
+                        }
+                    }
+                    Gravity.LEFT -> parentLeft + lp.leftMargin
+                    else -> parentLeft + lp.leftMargin
+                }
+
+                if (child == _emojiView) {
+                    //emoji布局的top
+                    childTop = emojiViewTop
+                } else if (child == _contentView) {
+                    //内容布局的top
+                    childTop = when (verticalGravity) {
+                        Gravity.TOP -> min(
+                            parentTop + lp.topMargin + _softInputPaddingTop,
+                            emojiViewTop - lp.bottomMargin - height - lp.topMargin
+                        )
+                        Gravity.CENTER_VERTICAL -> parentTop + (emojiViewTop - parentTop - height) / 2 +
+                                lp.topMargin - lp.bottomMargin
+                        Gravity.BOTTOM -> min(
+                            parentBottom - height - lp.bottomMargin,
+                            emojiViewTop - lp.bottomMargin - height - lp.topMargin
+                        )
+                        else -> emojiViewTop - lp.bottomMargin - height - lp.topMargin
+                    }
+                } else {
+                    //其他布局
+                    childTop = when (verticalGravity) {
+                        Gravity.TOP -> parentTop + lp.topMargin + _softInputPaddingTop
+                        Gravity.CENTER_VERTICAL -> parentTop + (parentBottom - parentTop - height) / 2 +
+                                lp.topMargin - lp.bottomMargin
+                        Gravity.BOTTOM -> parentBottom - height - lp.bottomMargin - _softInputPaddingTop
+                        else -> parentTop + lp.topMargin
+                    }
+                }
+                if (child == _contentView) {
+                    _contentLayoutTop = childTop
+                } else if (child == _emojiView) {
+                    _emojiLayoutTop = childTop
+                }
+
+                if (child == _emojiView &&
+                    hideEmojiViewOnSoftInput &&
+                    (_action == ACTION_HIDE_SOFT_INPUT || _action == ACTION_SHOW_SOFT_INPUT)
+                ) {
+                    //隐藏键盘时, 将emoji视图布局不可见
+                    child.layout(childLeft, parentBottom, childLeft, parentBottom)
+                } else {
+                    child.layout(childLeft, childTop, childLeft + width, childTop + height)
+                }
+            }
+        }
+    }
+
+    //</editor-fold desc="基础方法">
+
+    //<editor-fold desc="辅助方法">
+
+    //内容视图, 强制GRAVITY为BOTTOM
+    var _contentView: View? = null
+
+    //emoji视图
+    var _emojiView: View? = null
+
+    fun _initView() {
+        if (childCount > 0) {
+            _contentView = getChildAt(0)
+        }
+        if (childCount > 1) {
+            _emojiView = getChildAt(1)
+        }
+    }
+
+    //内容布局原本布局的top值
+    var _contentLayoutTop = 0
+    var _emojiLayoutTop = 0
+
+    var _animator: ValueAnimator? = null
+
+    //触发offset的成本, 比触发requestLayout的成本低
+    fun _offsetContent(offset: Int) {
+        _offsetTop = offset
+        _contentView?.offsetTopTo(_contentLayoutTop + offset)
+        _emojiView?.offsetTopTo(_emojiLayoutTop + offset)
+
+        //L.i("offset:$offset top:${_emojiLayoutTop + offset}")
+        //L.i("${_emojiView?.top} ${_emojiView?.bottom} ${_emojiView?.measuredHeight}")
+    }
+
+    fun Int.orHeight(): Int {
+        return if (this <= 0) {
+            DEFAULT_SOFT_INPUT_HEIGHT
+        } else {
+            this
+        }
+    }
+
+    fun Int.isShowAction() = this == ACTION_SHOW_SOFT_INPUT || this == ACTION_SHOW_EMOJI
+    fun Int.isHideAction() = this == ACTION_HIDE_SOFT_INPUT || this == ACTION_HIDE_EMOJI
+
+    //保存最后一次软键盘的高度
+    var _lastSoftInputHeight = 0
+
+    //</editor-fold desc="辅助方法">
+
+    //<editor-fold desc="操作方法">
+
+    /**处理键盘插入*/
+    fun handleSoftInput(action: Int, height: Int) {
+        if (action == ACTION_SHOW_SOFT_INPUT) {
+            _lastSoftInputHeight = height
+        }
+        if (action == ACTION_HIDE_SOFT_INPUT && action == _action) {
+            L.w("no op")
+            return
+        }
+        if (keepEmojiState &&
+            action == ACTION_HIDE_SOFT_INPUT &&
+            _actionList.getOrNull(_actionList.size - 2) == ACTION_SHOW_EMOJI
+        ) {
+            showEmojiLayout()
+        } else {
+            insertBottom(action, height)
+        }
+    }
+
+    fun showEmojiLayout(height: Int = _lastSoftInputHeight) {
+        handleEmojiLayout(ACTION_SHOW_EMOJI, height.orHeight())
+    }
+
+    fun hideEmojiLayout() {
+        if (_action == ACTION_SHOW_SOFT_INPUT) {
+            handleSoftInput(ACTION_HIDE_SOFT_INPUT, 0)
+        } else if (_action == ACTION_SHOW_EMOJI) {
+            handleEmojiLayout(ACTION_HIDE_EMOJI, 0)
+        } else {
+            L.w("no op")
+        }
+    }
+
+    /**处理表情布局展示*/
+    fun handleEmojiLayout(action: Int, height: Int = _lastSoftInputHeight) {
+        if (!isInEditMode) {
+            hideSoftInput()
+        }
+        insertBottom(action, height)
+    }
+
+    fun insertBottom(action: Int, height: Int) {
+        _animator?.cancel()
+        _animator = null
+
+        _action = action
+        _actionList.append(_action)
+
+        val anim = (action.isShowAction() && enableShowAnimator) ||
+                (action.isHideAction() && enableHideAnimator)
+
+        val fromHeight = _bottomInsertHeight
+        val toHeight = height
+
+        val fromPaddingTop = _softInputPaddingTop
+        val toPaddingTop = if (action.isShowAction()) 0 else softInputPaddingTop
+
+        val fromOffset = _offsetTop
+        val toOffset = -height
+
+        if (action.isShowAction()) {
+            bottomInsertHeight = height
+        }
+
+        _notifyListenerStart(action, toHeight, fromHeight)
+
+        val end: (animator: ValueAnimator?) -> Unit = {
+            _bottomInsertHeight = height
+            _notifyListenerEnd(action, height, fromHeight)
+        }
+
+        if (handlerMode == MODE_OFFSET) {
+            if (action.isShowAction()) {
+                _bottomInsertHeight = height
+            }
+            if (anim) {
+                _animator = anim(0f, 1f) {
+                    onAnimatorConfig = { animator ->
+                        animator.duration = animatorDuration
+                    }
+                    onAnimatorUpdateValue = { _, fraction ->
+                        val offset = fromOffset + (toOffset - fromOffset) * fraction
+                        _offsetContent(offset.toInt())
+
+                        _notifyListenerChange(action, _bottomInsertHeight, fromHeight, fraction)
+                    }
+                    onAnimatorEnd = end
+                }
+            } else {
+                _bottomInsertHeight = height
+                _offsetContent(-height)
+                end(null)
+            }
+        } else {
+            //恢复offset
+            _offsetContent(0)
+
+            if (anim) {
+                _animator = anim(0f, 1f) {
+                    onAnimatorConfig = { animator ->
+                        animator.duration = animatorDuration
+                    }
+                    onAnimatorUpdateValue = { _, fraction ->
+                        _softInputPaddingTop =
+                            (fromPaddingTop + (toPaddingTop - fromPaddingTop) * fraction).toInt()
+                        _bottomInsertHeight =
+                            (fromHeight + (toHeight - fromHeight) * fraction).toInt()
+                        requestLayout()
+
+                        _notifyListenerChange(action, _bottomInsertHeight, fromHeight, fraction)
+                    }
+                    onAnimatorEnd = end
+                }
+            } else {
+                _softInputPaddingTop = toPaddingTop
+                _bottomInsertHeight = toHeight
+                end(null)
+            }
+        }
+    }
+
+    fun enableAnimator(animator: Boolean) {
+        enableShowAnimator = animator
+        enableHideAnimator = animator
+    }
+
+    fun _notifyListenerStart(action: Int, height: Int, oldHeight: Int) {
+        softInputListener.forEach {
+            it.onSoftInputChangeStart(action, height, oldHeight)
+        }
+    }
+
+    fun _notifyListenerChange(action: Int, height: Int, oldHeight: Int, fraction: Float) {
+        softInputListener.forEach {
+            it.onSoftInputChange(action, height, oldHeight, fraction)
+        }
+    }
+
+    fun _notifyListenerEnd(action: Int, height: Int, oldHeight: Int) {
+        softInputListener.forEach {
+            it.onSoftInputChangeEnd(action, height, oldHeight)
+        }
+    }
+
+    /**返回true, 表示不需要拦截处理[back]操作*/
+    fun onBackPress(): Boolean {
+        if (_action.isShowAction()) {
+            hideEmojiLayout()
+            return false
+        }
+        return true
+    }
+
+    //</editor-fold desc="操作方法">
+}
+
+fun Int.softAction(): String = when (this) {
+    ACTION_SHOW_SOFT_INPUT -> "SHOW_SOFT_INPUT"
+    ACTION_HIDE_SOFT_INPUT -> "HIDE_SOFT_INPUT"
+    ACTION_SHOW_EMOJI -> "SHOW_EMOJI"
+    ACTION_HIDE_EMOJI -> "HIDE_EMOJI"
+    else -> "Unknown"
+}
+
+interface OnSoftInputListener {
+    /**处理之前*/
+    fun onSoftInputChangeStart(action: Int, height: Int, oldHeight: Int) {}
+
+    /**处理之后*/
+    fun onSoftInputChangeEnd(action: Int, height: Int, oldHeight: Int) {}
+
+    /**动画处理中, 只有开启动画才会回调*/
+    fun onSoftInputChange(action: Int, height: Int, oldHeight: Int, fraction: Float) {}
+}

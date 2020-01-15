@@ -3,6 +3,7 @@ package com.angcyo.widget.edit
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
+import com.angcyo.library.L
 import com.angcyo.library.ex.decimal
 import com.angcyo.widget.base.resetSelectionText
 import com.angcyo.widget.base.setSelectionLast
@@ -64,6 +65,12 @@ class ValueTextWatcher(val editText: EditText? = null) : TextWatcher {
                 editText?.setSelectionLast()
                 return
             }
+            return
+        }
+
+        if (minFilterValue > maxFilterValue) {
+            L.w("minFilterValue > maxFilterValue")
+            //no op
             return
         }
 

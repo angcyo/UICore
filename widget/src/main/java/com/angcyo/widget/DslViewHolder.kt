@@ -3,6 +3,7 @@ package com.angcyo.widget
 import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -262,5 +263,9 @@ open class DslViewHolder(
             }
         }
         return this
+    }
+
+    fun cb(@IdRes resId: Int): CompoundButton? {
+        return v(resId)
     }
 }

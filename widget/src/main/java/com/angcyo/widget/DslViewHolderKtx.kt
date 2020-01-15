@@ -5,6 +5,7 @@ import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 import com.angcyo.tablayout.DslTabLayout
 import com.angcyo.widget.edit.DslEditText
+import com.angcyo.widget.layout.DslSoftInputLayout
 import com.angcyo.widget.recycler.DslRecyclerView
 import com.angcyo.widget.text.DslTextView
 
@@ -49,5 +50,9 @@ fun DslViewHolder._et(@IdRes id: Int): DslEditText? {
 }
 
 fun DslViewHolder.spinner(@IdRes id: Int): RSpinner? {
+    return v(id)
+}
+
+fun DslViewHolder.soft(@IdRes id: Int): DslSoftInputLayout? {
     return v(id)
 }

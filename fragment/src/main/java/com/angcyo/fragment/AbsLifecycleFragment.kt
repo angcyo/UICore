@@ -105,6 +105,7 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
 
     /**
      * 是否可以关闭当前[Fragment]界面.
+     * 返回true, 表示可以关闭
      */
     override fun onBackPressed(): Boolean {
         view?.hideSoftInput()

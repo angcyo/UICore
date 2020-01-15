@@ -30,8 +30,8 @@ fun Long.toFullDate(): String {
 }
 
 /**时间全格式输出*/
-fun Long.fullTime(): String {
-    return toTime("yyyy-MM-dd HH:mm:ss.SSS")
+fun Long.fullTime(pattern: String = "yyyy-MM-dd HH:mm:ss.SSS"): String {
+    return toTime(pattern)
 }
 
 /**格式化时间输出*/

@@ -203,6 +203,8 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
 
     //</editor-fold desc="remove操作">
 
+    //<editor-fold desc="拦截操作">
+
     /**自定义的配置操作, 请勿在此执行[commit]操作*/
     var onConfigTransaction: (FragmentTransaction) -> Unit = {
 
@@ -215,6 +217,16 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
         } else {
             it.commitNow()
         }
+    }
+
+    //</editor-fold desc="拦截操作">
+
+    //<editor-fold desc="其他操作">
+
+    /**去掉默认的动画*/
+    fun noAnim() {
+        enterAnimRes = 0
+        exitAnimRes = 0
     }
 
     /**
@@ -360,4 +372,6 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
             }
         }
     }
+
+    //</editor-fold desc="其他操作">
 }

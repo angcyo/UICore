@@ -62,6 +62,7 @@ open class RArrayAdapter<T> : ArrayAdapter<T> {
         this.thisDropDownResource = resource
     }
 
+    /**根据[layoutId]创建视图*/
     open fun createView(convertView: View?, parent: ViewGroup, layoutId: Int): View {
         return if (convertView == null) {
             val inflate = layoutInflater.inflate(thisResource, parent, false)
@@ -84,6 +85,7 @@ open class RArrayAdapter<T> : ArrayAdapter<T> {
         return super.getItemViewType(position)
     }
 
+    /**用于创建选中后, 在[RSpinner]中显示的视图*/
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         //super.getView(position, convertView, parent)
         val itemView = createView(convertView, parent, thisResource)
@@ -93,6 +95,7 @@ open class RArrayAdapter<T> : ArrayAdapter<T> {
         return itemView
     }
 
+    /**用于创建, 在下拉窗口中显示的视图*/
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
         //return super.getDropDownView(position, convertView, parent)
 

@@ -13,10 +13,16 @@ import com.angcyo.core.behavior.ArcLoadingHeaderBehavior
 import com.angcyo.widget.DslGroupHelper
 import com.angcyo.widget.base.replace
 import com.angcyo.widget.base.setBehavior
+import com.angcyo.widget.layout.DslSoftInputLayout
 
 /**
+ * 统一标题管理的Fragment,
+ *
+ * 界面xml中, 已经有打底的RecycleView.
+ *
+ * 可以直接通过相关id, replace对应的布局结构
+ *
  * Email:angcyo@126.com
- * 统一标题管理的Fragment
  *
  * @author angcyo
  * @date 2018/12/07
@@ -39,6 +45,9 @@ abstract class BaseTitleFragment : BaseFragment() {
 
     /**是否激活刷新回调*/
     var enableRefresh: Boolean = false
+
+    /**激活软键盘输入*/
+    var enableSoftInput: Boolean = false
 
     var refreshBehavior: RefreshBehavior? = null
 
@@ -89,7 +98,15 @@ abstract class BaseTitleFragment : BaseFragment() {
         baseViewHolder.itemView.isClickable = fragmentConfig.interceptRootTouchEvent
 
         //内容包裹
-        _inflateTo(R.id.lib_content_wrap_layout, contentLayoutId)
+        if (enableSoftInput) {
+            baseViewHolder.group(R.id.lib_content_wrap_layout)
+                ?.replace(DslSoftInputLayout(fContext()).apply {
+                    id = R.id.lib_soft_input_layout
+                })
+            _inflateTo(R.id.lib_soft_input_layout, contentLayoutId)
+        } else {
+            _inflateTo(R.id.lib_content_wrap_layout, contentLayoutId)
+        }
         //刷新头包裹
         _inflateTo(R.id.lib_refresh_wrap_layout, refreshLayoutId)
         //标题包裹

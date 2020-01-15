@@ -14,7 +14,7 @@ import com.angcyo.widget.layout.RSoftInputLayout
 /**
  * 计算child在parent中的位置坐标, 请确保child在parent中.
  * */
-public fun ViewGroup.getLocationInParent(child: View, location: Rect) {
+fun ViewGroup.getLocationInParent(child: View, location: Rect) {
     var x = 0
     var y = 0
 
@@ -32,7 +32,7 @@ public fun ViewGroup.getLocationInParent(child: View, location: Rect) {
 }
 
 /**返回当软键盘弹出时, 布局向上偏移了多少距离*/
-public fun View.getLayoutOffsetTopWidthSoftInput(): Int {
+fun View.getLayoutOffsetTopWidthSoftInput(): Int {
     val rect = Rect()
     var offsetTop = 0
 
@@ -60,21 +60,21 @@ public fun View.getLayoutOffsetTopWidthSoftInput(): Int {
 
 
 /**获取touch坐标对应的RecyclerView, 如果没有则null*/
-public fun ViewGroup.getTouchOnRecyclerView(
+fun ViewGroup.getTouchOnRecyclerView(
     touchRawX: Float,
     touchRawY: Float
 ): androidx.recyclerview.widget.RecyclerView? {
     return findRecyclerView(touchRawX, touchRawY)
 }
 
-public fun ViewGroup.getTouchOnRecyclerView(event: MotionEvent): androidx.recyclerview.widget.RecyclerView? {
+fun ViewGroup.getTouchOnRecyclerView(event: MotionEvent): androidx.recyclerview.widget.RecyclerView? {
     return findRecyclerView(event.rawX, event.rawY)
 }
 
 /**
  * 根据touch坐标, 返回touch的View
  */
-public fun ViewGroup.findView(
+fun ViewGroup.findView(
     event: MotionEvent,
     intercept: (View, Rect) -> Boolean = { _, _ -> false },
     jumpTarget: (View, Rect) -> Boolean = { _, _ -> false }
@@ -89,7 +89,7 @@ public fun ViewGroup.findView(
     )
 }
 
-public fun ViewGroup.findView(
+fun ViewGroup.findView(
     touchRawX: Float,
     touchRawY: Float,
     intercept: (View, Rect) -> Boolean = { _, _ -> false },
@@ -105,7 +105,7 @@ public fun ViewGroup.findView(
     )
 }
 
-public fun ViewGroup.findView(
+fun ViewGroup.findView(
     targetView: View /*判断需要结束的View*/,
     touchRawX: Float,
     touchRawY: Float,
@@ -189,7 +189,7 @@ public fun ViewGroup.findView(
     return touchView
 }
 
-public fun ViewGroup.findRecyclerView(
+fun ViewGroup.findRecyclerView(
     touchRawX: Float,
     touchRawY: Float
 ): androidx.recyclerview.widget.RecyclerView? {
@@ -211,14 +211,14 @@ public fun ViewGroup.findRecyclerView(
 }
 
 /**枚举所有child view*/
-public fun ViewGroup.eachChild(map: (index: Int, child: View) -> Unit) {
+fun ViewGroup.eachChild(map: (index: Int, child: View) -> Unit) {
     for (index in 0 until childCount) {
         val childAt = getChildAt(index)
         map.invoke(index, childAt)
     }
 }
 
-public fun ViewGroup.eachChildVisibility(map: (index: Int, child: View) -> Unit) {
+fun ViewGroup.eachChildVisibility(map: (index: Int, child: View) -> Unit) {
     for (index in 0 until childCount) {
         val childAt = getChildAt(index)
         if (childAt.visibility != View.GONE) {
@@ -227,16 +227,35 @@ public fun ViewGroup.eachChildVisibility(map: (index: Int, child: View) -> Unit)
     }
 }
 
-public fun ViewGroup.inflate(@LayoutRes layoutId: Int, attachToRoot: Boolean = true): View {
+fun ViewGroup.inflate(@LayoutRes layoutId: Int, attachToRoot: Boolean = true): View {
     if (layoutId == -1) {
         return this
     }
     return LayoutInflater.from(context).inflate(layoutId, this, attachToRoot)
 }
 
-public fun ViewGroup.replace(@LayoutRes layoutId: Int, attachToRoot: Boolean = true): View {
+fun ViewGroup.replace(@LayoutRes layoutId: Int, attachToRoot: Boolean = true): View {
     if (childCount > 0) {
         removeAllViews()
     }
     return inflate(layoutId, attachToRoot)
+}
+
+fun ViewGroup.replace(viewGroup: ViewGroup): ViewGroup {
+    val childList = mutableListOf<View>()
+
+    for (i in 0 until childCount) {
+        childList.add(getChildAt(i))
+    }
+
+    if (childCount > 0) {
+        removeAllViews()
+    }
+
+    childList.forEach {
+        viewGroup.addView(it)
+    }
+
+    addView(viewGroup, ViewGroup.LayoutParams(-1, -1))
+    return viewGroup
 }
