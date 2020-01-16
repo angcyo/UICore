@@ -157,6 +157,6 @@ suspend fun <T> onMain(
     action: suspend CoroutineScope.() -> T
 ) = withContext(context) { this.action() }
 
-fun sleep(ms: Long = 300) {
+suspend fun sleep(ms: Long = 300) {
     SystemClock.sleep(ms)
 }

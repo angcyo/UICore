@@ -144,7 +144,7 @@ fun Rect.clear() {
     set(0, 0, 0, 0)
 }
 
-public fun nowTime() = System.currentTimeMillis()
+internal fun nowTime() = System.currentTimeMillis()
 
 public fun View.setHeight(height: Int) {
     val params = layoutParams

@@ -29,6 +29,8 @@ open class DslViewHolder(
         var DEFAULT_INITIAL_CAPACITY = 32
     }
 
+    val content get() = itemView.context
+
     /**
      * findViewById是循环枚举所有子View的, 多少也是消耗性能的, +一个缓存
      */
@@ -104,7 +106,7 @@ open class DslViewHolder(
     }
 
     fun post(runnable: () -> Unit) {
-        itemView.post(runnable)
+        postDelay(0, runnable)
     }
 
     fun postDelay(runnable: Runnable, delayMillis: Long) {
@@ -116,7 +118,13 @@ open class DslViewHolder(
     }
 
     fun postDelay(delayMillis: Long, runnable: () -> Unit) {
-        postDelay(Runnable { runnable.invoke() }, delayMillis)
+        postDelay(object : Runnable {
+            override fun run() {
+                runnable.invoke()
+                removeCallbacks(this)
+            }
+
+        }, delayMillis)
     }
 
     var _onceRunnbale: Runnable? = null
@@ -136,6 +144,10 @@ open class DslViewHolder(
     }
 
     fun et(@IdRes resId: Int): EditText? {
+        return v(resId)
+    }
+
+    fun ev(@IdRes resId: Int): EditText? {
         return v(resId)
     }
 

@@ -49,6 +49,10 @@ fun DslViewHolder._et(@IdRes id: Int): DslEditText? {
     return v(id)
 }
 
+fun DslViewHolder._ev(@IdRes id: Int): DslEditText? {
+    return v(id)
+}
+
 fun DslViewHolder.spinner(@IdRes id: Int): RSpinner? {
     return v(id)
 }

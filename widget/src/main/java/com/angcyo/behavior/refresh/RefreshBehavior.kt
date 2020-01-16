@@ -4,13 +4,15 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.angcyo.behavior.*
-import com.angcyo.library.L
+import com.angcyo.behavior.BaseDependsBehavior
+import com.angcyo.behavior.BaseScrollBehavior
+import com.angcyo.behavior.IContentBehavior
+import com.angcyo.behavior.ITitleBarBehavior
 import com.angcyo.widget.base.behavior
 
 
 /**
- * 下拉刷新效果的行为
+ * 下拉刷新行为处理类, UI效果处理代理给[IRefreshBehavior]
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/12/31
@@ -40,8 +42,7 @@ open class RefreshBehavior(
     var refreshBehaviorConfig: IRefreshBehavior? = RefreshEffectConfig()
 
     /**刷新触发的回调*/
-    var onRefresh: (RefreshBehavior) -> Unit = {
-    }
+    var onRefresh: (RefreshBehavior) -> Unit = {}
 
     /**刷新状态*/
     var refreshStatus: Int = STATUS_NORMAL

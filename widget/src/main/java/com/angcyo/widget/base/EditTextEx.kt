@@ -11,9 +11,9 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.angcyo.widget.edit.SingleTextWatcher
-import com.google.android.material.textfield.TextInputLayout
 import kotlin.math.min
 
 /**
@@ -111,7 +111,8 @@ fun EditText.checkEmpty(phoneRegex: String? = null): Boolean {
         requestFocus()
 
         if (!isSoftKeyboardShow()) {
-            if (parent is FrameLayout && parent.parent is TextInputLayout) {
+            if (parent is FrameLayout &&
+                parent.parent is LinearLayout /*TextInputLayout*/) {
                 postDelayed({ showSoftInput() }, 200)
             } else {
                 showSoftInput()

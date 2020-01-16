@@ -19,14 +19,14 @@ import com.angcyo.widget.R
  *
  * @param useFilterList 是否使用过滤后的数据源. 通常界面上显示的是过滤后的数据, 所有add的数据源在非过滤列表中
  * */
-public fun DslAdapter.findItem(
+fun DslAdapter.findItem(
     useFilterList: Boolean = true,
     predicate: (DslAdapterItem) -> Boolean
 ): DslAdapterItem? {
-    return getDataList(true).find(predicate)
+    return getDataList(useFilterList).find(predicate)
 }
 
-public fun DslAdapter.findItemByTag(
+fun DslAdapter.findItemByTag(
     tag: String,
     useFilterList: Boolean = true
 ): DslAdapterItem? {
@@ -35,21 +35,21 @@ public fun DslAdapter.findItemByTag(
     }
 }
 
-public fun DslAdapter.dslItem(@LayoutRes layoutId: Int, config: DslAdapterItem.() -> Unit = {}) {
+fun DslAdapter.dslItem(@LayoutRes layoutId: Int, config: DslAdapterItem.() -> Unit = {}) {
     val item = DslAdapterItem()
     item.itemLayoutId = layoutId
     addLastItem(item)
     item.config()
 }
 
-public fun <T : DslAdapterItem> DslAdapter.dslItem(
+fun <T : DslAdapterItem> DslAdapter.dslItem(
     dslItem: T,
     config: T.() -> Unit = {}
 ) {
     dslCustomItem(dslItem, config)
 }
 
-public fun <T : DslAdapterItem> DslAdapter.dslCustomItem(
+fun <T : DslAdapterItem> DslAdapter.dslCustomItem(
     dslItem: T,
     config: T.() -> Unit = {}
 ) {
@@ -58,7 +58,7 @@ public fun <T : DslAdapterItem> DslAdapter.dslCustomItem(
 }
 
 /**空的占位item*/
-public fun DslAdapter.renderEmptyItem(height: Int = 120 * dpi, color: Int = Color.TRANSPARENT) {
+fun DslAdapter.renderEmptyItem(height: Int = 120 * dpi, color: Int = Color.TRANSPARENT) {
     val adapterItem = DslAdapterItem()
     adapterItem.itemLayoutId = R.layout.lib_empty_item
     adapterItem.onItemBindOverride = { itemHolder, _, _ ->
@@ -68,7 +68,7 @@ public fun DslAdapter.renderEmptyItem(height: Int = 120 * dpi, color: Int = Colo
     addLastItem(adapterItem)
 }
 
-public fun DslAdapter.renderItem(count: Int = 1, init: DslAdapterItem.(index: Int) -> Unit) {
+fun DslAdapter.renderItem(count: Int = 1, init: DslAdapterItem.(index: Int) -> Unit) {
     for (i in 0 until count) {
         val adapterItem = DslAdapterItem()
         adapterItem.init(i)
@@ -76,9 +76,10 @@ public fun DslAdapter.renderItem(count: Int = 1, init: DslAdapterItem.(index: In
     }
 }
 
-public fun <T> DslAdapter.renderItem(data: T, init: DslAdapterItem.() -> Unit) {
+fun <T> DslAdapter.renderItem(data: T, init: DslAdapterItem.() -> Unit) {
     val adapterItem = DslAdapterItem()
     adapterItem.itemData = data
     adapterItem.init()
     addLastItem(adapterItem)
 }
+

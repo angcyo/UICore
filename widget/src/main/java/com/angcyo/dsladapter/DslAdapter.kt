@@ -56,6 +56,11 @@ open class DslAdapter : RecyclerView.Adapter<DslViewHolder>, OnDispatchUpdatesLi
             return onceFilterParams ?: (field ?: _defaultFilterParams())
         }
 
+    /**
+     * [Diff]更新数据后回调, 只会执行一次
+     * */
+    var onDispatchUpdatesAfterOnce: ((dslAdapter: DslAdapter) -> Unit)? = null
+
     constructor() : super()
 
     constructor(dataItems: List<DslAdapterItem>?) {
@@ -150,11 +155,6 @@ open class DslAdapter : RecyclerView.Adapter<DslViewHolder>, OnDispatchUpdatesLi
     //</editor-fold desc="生命周期方法">
 
     //<editor-fold desc="其他方法">
-
-    /**
-     * 只会执行一次
-     * */
-    var onDispatchUpdatesAfterOnce: ((dslAdapter: DslAdapter) -> Unit)? = null
 
     /**
      * [Diff]操作结束之后的通知事件
@@ -437,7 +437,7 @@ open class DslAdapter : RecyclerView.Adapter<DslViewHolder>, OnDispatchUpdatesLi
      *  DslDemoItem()(){}
      * </pre>
      * */
-    operator fun <T : DslAdapterItem> T.invoke(config: T.() -> Unit) {
+    operator fun <T : DslAdapterItem> T.invoke(config: T.() -> Unit = {}) {
         this.config()
         addLastItem(this)
     }
@@ -470,6 +470,27 @@ open class DslAdapter : RecyclerView.Adapter<DslViewHolder>, OnDispatchUpdatesLi
     operator fun <T : DslAdapterItem> minus(list: List<T>): DslAdapter {
         removeItem(list)
         return this
+    }
+
+    /**
+     * ```
+     * this[1]
+     * this[index]
+     * this[index, false]
+     * ```
+     * */
+    operator fun get(index: Int, useFilterList: Boolean = true): DslAdapterItem? {
+        return getDataList(useFilterList).getOrNull(index)
+    }
+
+    /**
+     * ```
+     * this["tag"]
+     * this["tag", false]
+     * ```
+     * */
+    operator fun get(tag: String?, useFilterList: Boolean = true): DslAdapterItem? {
+        return tag?.run { findItemByTag(tag, useFilterList) }
     }
 
     //</editor-fold desc="操作符重载">

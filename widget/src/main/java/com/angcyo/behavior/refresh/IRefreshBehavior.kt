@@ -3,7 +3,7 @@ package com.angcyo.behavior.refresh
 import com.angcyo.widget.base.offsetTopTo
 
 /**
- *
+ * 刷新行为[RefreshBehavior]的UI效果处理类
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/01/07

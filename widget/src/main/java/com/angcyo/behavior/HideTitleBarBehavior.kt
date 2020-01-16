@@ -19,10 +19,20 @@ open class HideTitleBarBehavior(
     attrs: AttributeSet? = null
 ) : BaseScrollBehavior<View>(context, attrs), ITitleBarBehavior {
 
-    /**忽略状态栏的高度*/
+    /**忽略状态栏的高度, 如果为true, 会是沉浸式*/
     var ignoreStatusBar = false
-    /**只在边界的时候, 才开始滚动*/
-    var scrollEdge = false
+
+    /**
+     * 激活[Over]滚动时才监听, 否则只有在内容滚动时才监听,
+     * 通常在内容不够高度时, 是否要监听行为.
+     * */
+    var enableOverScroll = false
+
+    /**
+     * 是否只有在内容滚动到边界时才监听, 否则scrollY!=0时, 就会监听,
+     * 通常在内容很高, 是否到首尾时, 才监听行为.
+     * */
+    var enableEdgeScroll = false
 
     var contentBehavior: IContentBehavior? = null
 
@@ -77,13 +87,17 @@ open class HideTitleBarBehavior(
         val contentScrollY = contentBehavior?.getContentScrollY(this) ?: 0
 
         var handle = false
-        if (scrollEdge) {
-            if (!target.topCanScroll() && !target.bottomCanScroll()) {
-                handle = scrollY != 0
-            } else if (!target.topCanScroll()) {
-                if (contentScrollY == 0) {
-                    handle = true
-                }
+        if (enableOverScroll && !target.topCanScroll() && !target.bottomCanScroll()) {
+            //内容不可滚动, 并且开启了over scroll 监听
+            if (contentScrollY == 0) {
+                handle = true
+            }
+        } else if (enableEdgeScroll) {
+            //内容无法滚动时, 才监听
+            if (dy > 0 && contentScrollY == 0) {
+                handle = true
+            } else if (dy < 0 && contentScrollY == 0 && !target.topCanScroll()) {
+                handle = true
             }
         } else {
             if (target.topCanScroll() || target.bottomCanScroll()) {
