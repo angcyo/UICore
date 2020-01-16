@@ -357,8 +357,8 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
 
             //op last
             lastFragment?.let {
-                setMaxLifecycle(it, Lifecycle.State.RESUMED)
                 setPrimaryNavigationFragment(it)
+                setMaxLifecycle(it, Lifecycle.State.RESUMED)
             }
 
             onConfigTransaction(this)

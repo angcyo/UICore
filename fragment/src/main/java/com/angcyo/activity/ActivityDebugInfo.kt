@@ -11,10 +11,16 @@ import android.graphics.Rect
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
+import com.angcyo.base.getAllResumedFragment
 import com.angcyo.drawable.getStatusBarHeight
 import com.angcyo.library.app
 import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.simpleName
 import com.angcyo.widget.base.onDoubleTap
+import com.angcyo.widget.span.span
 import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -42,6 +48,22 @@ fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug())
 
     if (debug && show) {
         if (decorView is FrameLayout) {
+
+            if (this is FragmentActivity) {
+                if (decorView.tag is FragmentManager.FragmentLifecycleCallbacks) {
+
+                } else {
+                    val callback = object : FragmentManager.FragmentLifecycleCallbacks() {
+                        override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
+                            super.onFragmentResumed(fm, f)
+                            showDebugInfoView(show, debug)
+                        }
+                    }
+                    supportFragmentManager.registerFragmentLifecycleCallbacks(callback, false)
+                    decorView.tag = callback
+                }
+            }
+
             val textView = TextView(this)
             textView.tag = tag
             textView.textSize = 9f
@@ -50,7 +72,18 @@ fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug())
             val padding = dp2.toInt() * 4
             textView.setPadding(padding, padding, padding, padding)
             textView.setShadowLayer(dp2 * 2, dp2, dp2, Color.BLACK)
-            textView.text = javaClass.simpleName
+            textView.text = simpleName()
+
+            val resumeFragment: Fragment? =
+                (this as? FragmentActivity)?.supportFragmentManager?.getAllResumedFragment()
+                    ?.lastOrNull()
+            resumeFragment?.let { fragment ->
+                textView.text = span {
+                    append(textView.text).appendln()
+                    append("\\-").append(fragment.simpleName())
+                }
+            }
+
             val layoutParams = FrameLayout.LayoutParams(-2, -2)
             layoutParams.gravity = Gravity.BOTTOM
             if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
@@ -83,6 +116,9 @@ fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug())
 
                 textView.text = buildString {
                     appendln(this@showDebugInfoView.javaClass.name)
+                    resumeFragment?.let { fragment ->
+                        appendln(fragment.javaClass.name)
+                    }
 
                     val statusBarHeight = getStatusBarHeight()
                     val navBarHeight = max(
