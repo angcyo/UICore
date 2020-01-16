@@ -14,10 +14,12 @@ import android.view.Window
 import com.angcyo.library.getAppString
 import com.angcyo.library.getAppVersionCode
 import com.angcyo.library.getAppVersionName
+import com.angcyo.library.getStatusBarHeight
 import java.io.BufferedReader
 import java.io.FileReader
 import java.io.IOException
 import java.util.*
+import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -37,8 +39,8 @@ object Device {
         if (PSUEDO_ID != null) {
             return PSUEDO_ID
         }
-        var result: String? = null
-        var serial: String? = null
+        var result: String?
+        var serial: String?
         val idShort = "35" +
                 Build.BOARD.length % 10 +
                 Build.BRAND.length % 10 +
@@ -162,7 +164,7 @@ object Device {
         }
     }
 
-    fun deviceInfo(context: Context, builder: StringBuilder): StringBuilder {
+    fun deviceInfo(context: Context, builder: Appendable): Appendable {
         val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
 
         builder.append("psuedoID: ")
@@ -213,7 +215,7 @@ object Device {
     }
 
     /**设备屏幕信息*/
-    fun screenInfo(context: Context, builder: StringBuilder): StringBuilder {
+    fun screenInfo(context: Context, builder: Appendable): Appendable {
         builder.apply {
 
             val decorView = (context as? Activity)?.window?.decorView
@@ -226,62 +228,108 @@ object Device {
             // 屏幕尺寸
             val width = displayMetrics.widthPixels / displayMetrics.xdpi
             //displayMetrics.heightPixels / displayMetrics.ydpi
+
+            val dvHeight = decorView?.measuredHeight ?: 0
+            val dvWidth = decorView?.measuredWidth ?: 0
+
+            val cvHeight = contentView?.measuredHeight ?: 0
+            val cvWidth = contentView?.measuredWidth ?: 0
+
             val height =
                 (decorView?.measuredHeight ?: displayMetrics.heightPixels) / displayMetrics.ydpi
+
             val x = width.toDouble().pow(2.0)
             val y = height.toDouble().pow(2.0)
             val screenInches = sqrt(x + y)
 
-            append("wp:").append(displayMetrics.widthPixels)
-            append(" hp:").appendln(displayMetrics.heightPixels)
+            append("wPx:").append(displayMetrics.widthPixels)
+            append(" hPx:").append(displayMetrics.heightPixels)
 
             if (decorView != null) {
-                append("dw:").append(decorView.measuredWidth)
-                append(" dh:").appendln(decorView.measuredHeight)
+                append(" dw:").append(decorView.measuredWidth)
+                append(" dh:").append(decorView.measuredHeight)
             }
 
             if (contentView != null) {
-                append("cw:").append(contentView.measuredWidth)
-                append(" ch:").appendln(contentView.measuredHeight)
+                append(" cw:").append(contentView.measuredWidth)
+                append(" ch:").append(contentView.measuredHeight)
             }
 
+            //dp值
+            appendln()
             append("wDp:").append(widthDp)
             append(" hDp:").append(heightDp)
             append(" dp:").append(displayMetrics.density)
             append(" sp:").append(displayMetrics.scaledDensity)
             append(" dpi:").appendln(displayMetrics.densityDpi)
 
+            //多少寸
             append("w:").append("%.02f".format(width))
             append(" h:").append("%.02f".format(height))
-            append(" inches:").appendln("%.02f".format(screenInches))
+            append(" inches:").append("%.02f".format(screenInches))
+            //导航栏, 状态栏高度
+            val statusBarHeight = getStatusBarHeight()
+            val navBarHeight = max(dvWidth - cvWidth, dvHeight - cvHeight)
+            append(" sh:").append(statusBarHeight).append(" ")
+                .append(statusBarHeight / displayMetrics.density).append("dp")
+            append(" nh:").append(navBarHeight).append(" ")
+                .append(navBarHeight / displayMetrics.density).append("dp").appendln()
 
+            val rect = Rect()
+            val point = Point()
             if (decorView != null) {
-                val dRect = Rect()
-                val dPoint = Point()
-                decorView.getGlobalVisibleRect(dRect, dPoint)
-                append(" d:").append(dRect)
-                append(" d:").append(dPoint).appendln()
+                decorView.getGlobalVisibleRect(rect, point)
+                append(" d:").append(rect)
+                append(" d:").append(point).appendln()
             }
 
             if (contentView != null) {
-                val cRect = Rect()
-                val cPoint = Point()
-                contentView.getGlobalVisibleRect(cRect, cPoint)
-                append(" c:").append(cRect)
-                append(" c:").append(cPoint)
+                contentView.getGlobalVisibleRect(rect, point)
+                append(" c:").append(rect)
+                append(" c:").append(point)
+
+                appendln()
+                contentView.getWindowVisibleDisplayFrame(rect)
+                append("frame:").append(rect)
             }
         }
         return builder
     }
 
-    fun buildString(builder: StringBuilder): StringBuilder {
+    fun buildString(builder: Appendable): Appendable {
         builder.apply {
             append(getAppVersionName()).append(":").append(getAppVersionCode())
-            appendln()
-            appendln(getAppString("user_name"))
-            appendln(getAppString("build_time"))
+            append(" ")
+            append(getAppString("user_name"))
+            append(" ")
             appendln(getAppString("os_name"))
+
+            appendln(getAppString("build_time"))
         }
         return builder
     }
+}
+
+fun Appendable.append(value: Int): Appendable {
+    return append(value.toString())
+}
+
+fun Appendable.append(value: Float): Appendable {
+    return append(value.toString())
+}
+
+fun Appendable.append(value: Rect): Appendable {
+    return append(value.toString())
+}
+
+fun Appendable.append(value: Point): Appendable {
+    return append(value.toString())
+}
+
+fun Appendable.appendln(value: Int): Appendable {
+    return appendln(value.toString())
+}
+
+fun Appendable.appendln(value: Float): Appendable {
+    return appendln(value.toString())
 }
