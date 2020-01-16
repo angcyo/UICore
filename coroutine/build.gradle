@@ -18,4 +18,9 @@ dependencies {
     //https://github.com/hltj/kotlinx.coroutines-cn/blob/master/ui/coroutines-guide-ui.md
     //https://jcenter.bintray.com/org/jetbrains/kotlinx/kotlinx-coroutines-android/
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
+
+    def lifecycle_version = "2.1.0"
+    //https://mvnrepository.com/artifact/androidx.lifecycle/lifecycle-common
+    implementation "androidx.lifecycle:lifecycle-common:$lifecycle_version"
+
 }
