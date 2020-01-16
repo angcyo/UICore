@@ -12,6 +12,7 @@ import android.view.*
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.angcyo.drawable.getStatusBarHeight
+import com.angcyo.library.app
 import com.angcyo.library.ex.isDebug
 import com.angcyo.widget.base.onDoubleTap
 import kotlin.math.max
@@ -143,7 +144,7 @@ fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug())
 }
 
 /**复制文本*/
-fun CharSequence.copy(context: Context) {
+fun CharSequence.copy(context: Context = app()) {
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     try {
         clipboard.setPrimaryClip(ClipData.newPlainText("text", this))

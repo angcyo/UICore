@@ -9,10 +9,19 @@ android {
 dependencies {
     api project(allModule.library)
     api project(allModule.drawable)
+
+    //https://mvnrepository.com/artifact/androidx.appcompat/appcompat
     api "androidx.appcompat:appcompat:1.1.0"
+
+    //https://mvnrepository.com/artifact/androidx.recyclerview/recyclerview
     api 'androidx.recyclerview:recyclerview:1.1.0'
+
+    //https://mvnrepository.com/artifact/androidx.constraintlayout/constraintlayout
     api 'androidx.constraintlayout:constraintlayout:1.1.3'
+
+    //https://mvnrepository.com/artifact/androidx.coordinatorlayout/coordinatorlayout
     api 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
+
+    //https://mvnrepository.com/artifact/androidx.viewpager2/viewpager2
     api 'androidx.viewpager2:viewpager2:1.0.0'
-    api 'com.google.android.material:material:1.0.0'
 }

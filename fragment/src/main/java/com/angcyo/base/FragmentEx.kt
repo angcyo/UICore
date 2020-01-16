@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity
 import com.angcyo.DslAHelper
 import com.angcyo.DslFHelper
 import com.angcyo.fragment.IFragment
+import com.angcyo.library.L
 
 /**
  *
@@ -114,4 +115,9 @@ fun Fragment.getFragmentContainerId(): Int {
         }
     }
     return viewId
+}
+
+/**返回当前的[Fragment]*/
+fun Fragment.back() {
+    activity?.onBackPressed() ?: L.w("activity is null.")
 }

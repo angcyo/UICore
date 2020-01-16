@@ -1,7 +1,10 @@
 package com.angcyo.core.fragment
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import com.angcyo.base.getAllValidityFragment
@@ -69,12 +72,26 @@ abstract class BaseTitleFragment : BaseFragment() {
         BaseUI.fragmentUI.onFragmentCreateAfter(this, fragmentConfig)
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = super.onCreateView(inflater, container, savedInstanceState)
+        onCreateViewAfter(savedInstanceState)
+        BaseUI.fragmentUI.onFragmentCreateViewAfter(this)
+        return view
+    }
+
+    /**[onCreateView]*/
+    open fun onCreateViewAfter(savedInstanceState: Bundle?) {
+
+    }
+
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)
-        initTitleFragment()
-        initBehavior()
-
-        BaseUI.fragmentUI.onFragmentInitBaseViewAfter(this)
+        onInitFragment()
+        onInitBehavior()
     }
 
     /**是否要显示返回按钮*/
@@ -94,7 +111,7 @@ abstract class BaseTitleFragment : BaseFragment() {
     }
 
     /**初始化样式*/
-    open fun initTitleFragment() {
+    open fun onInitFragment() {
         baseViewHolder.itemView.isClickable = fragmentConfig.interceptRootTouchEvent
 
         //内容包裹
@@ -135,23 +152,36 @@ abstract class BaseTitleFragment : BaseFragment() {
     }
 
     /**初始化[Behavior]*/
-    open fun initBehavior() {
-        val refreshHeaderBehavior = if (enableRefresh) {
-            ArcLoadingHeaderBehavior(fContext())
-        } else {
-            baseViewHolder.gone(R.id.lib_refresh_wrap_layout)
-            RefreshHeaderBehavior(fContext())
-        }
+    open fun onInitBehavior() {
         rootControl().eachChild { _, child ->
-            when (child.id) {
-                R.id.lib_title_wrap_layout -> child.setBehavior(HideTitleBarBehavior(fContext()))
-                R.id.lib_content_wrap_layout -> child.setBehavior(RefreshBehavior(fContext()).apply {
+            onCreateBehavior(child)?.run {
+                if (this is RefreshBehavior) {
                     refreshBehavior = this
+
+                    //刷新监听
                     onRefresh = this@BaseTitleFragment::onRefresh
-                    refreshBehaviorConfig = refreshHeaderBehavior
-                })
-                R.id.lib_refresh_wrap_layout -> child.setBehavior(refreshHeaderBehavior)
+                } else if (this is RefreshHeaderBehavior) {
+                    refreshBehavior?.let {
+                        it.refreshBehaviorConfig = this
+                    }
+                }
+                child.setBehavior(this)
             }
+        }
+    }
+
+    /**根据[child]创建对应的[Behavior]*/
+    open fun onCreateBehavior(child: View): CoordinatorLayout.Behavior<*>? {
+        return when (child.id) {
+            R.id.lib_title_wrap_layout -> HideTitleBarBehavior(fContext())
+            R.id.lib_content_wrap_layout -> RefreshBehavior(fContext())
+            R.id.lib_refresh_wrap_layout -> if (enableRefresh) {
+                ArcLoadingHeaderBehavior(fContext())
+            } else {
+                baseViewHolder.gone(R.id.lib_refresh_wrap_layout)
+                RefreshHeaderBehavior(fContext())
+            }
+            else -> null
         }
     }
 

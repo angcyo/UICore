@@ -70,6 +70,10 @@ abstract class AbsFragment : Fragment() {
         return context
     }
 
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        return super.onGetLayoutInflater(savedInstanceState)
+    }
+
     /**
      * OnAttach -> OnCreate -> OnCreateView (initBaseView) -> OnActivityCreated -> OnViewStateRestored -> OnStart -> OnResume
      */

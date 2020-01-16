@@ -2,6 +2,7 @@ package com.angcyo.core.fragment
 
 import android.view.Gravity
 import android.widget.TextView
+import com.angcyo.base.back
 import com.angcyo.core.R
 import com.angcyo.drawable.colorFilter
 import com.angcyo.drawable.dpi
@@ -25,8 +26,8 @@ open class FragmentUI {
 
     }
 
-    /**[BaseTitleFragment.initBaseView]中触发*/
-    open fun onFragmentInitBaseViewAfter(fragment: BaseTitleFragment) {
+    /**[BaseTitleFragment.onCreateView]中触发*/
+    open fun onFragmentCreateViewAfter(fragment: BaseTitleFragment) {
         if (fragment.enableBackItem()) {
             fragment.leftControl()?.append(R.layout.lib_text_view) {
                 this.find<TextView>(R.id.lib_text_view)?.apply {
@@ -43,7 +44,7 @@ open class FragmentUI {
                         }
                     }
                     clickIt {
-                        fragment.activity?.onBackPressed()
+                        fragment.back()
                     }
                 }
             }

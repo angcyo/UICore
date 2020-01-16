@@ -133,12 +133,13 @@ class DslSpan {
         flag = SPAN_EXCLUSIVE_EXCLUSIVE
     }
 
-    fun appendln() {
+    fun appendln(): DslSpan {
         _builder.appendln()
+        return this
     }
 
     /**追加指定[span]*/
-    fun append(text: CharSequence?, vararg spans: Any) {
+    fun append(text: CharSequence?, vararg spans: Any): DslSpan {
         _ignore(text) {
             val start = _builder.length
             _builder.append(text)
@@ -147,10 +148,11 @@ class DslSpan {
                 _builder.setSpan(span, start, end, flag)
             }
         }
+        return this
     }
 
     /**通过配置指定[span]*/
-    fun append(text: CharSequence?, action: DslSpanConfig.() -> Unit) {
+    fun append(text: CharSequence?, action: DslSpanConfig.() -> Unit): DslSpan {
         _ignore(text) {
             val start = _builder.length
             _builder.append(text)
@@ -162,31 +164,38 @@ class DslSpan {
                 _builder.setSpan(span, start, end, config.flag)
             }
         }
+        return this
     }
 
     /**追加空隙*/
-    fun appendSpace(@Px size: Int, @ColorInt color: Int = Color.TRANSPARENT) {
+    fun appendSpace(@Px size: Int, @ColorInt color: Int = Color.TRANSPARENT): DslSpan {
         append("<space>", SpaceSpan(size, color))
+        return this
     }
 
-    fun set(start: Int, end: Int, vararg spans: Any) {
+    fun set(start: Int, end: Int, vararg spans: Any): DslSpan {
         for (span in spans) {
             _builder.setSpan(span, start, end, flag)
         }
+        return this
     }
 
     /**追加图片*/
-    fun appendImage(drawable: Drawable?, alignment: Int = DynamicDrawableSpan.ALIGN_BASELINE) {
+    fun appendImage(
+        drawable: Drawable?,
+        alignment: Int = DynamicDrawableSpan.ALIGN_BASELINE
+    ): DslSpan {
         if (drawable != null) {
             if (drawable.bounds.isEmpty) {
                 drawable.setBounds(0, 0, drawable.minimumWidth, drawable.minimumHeight)
             }
             append("<img>", ImageSpan(drawable, alignment))
         }
+        return this
     }
 
     /**快速追加[DslDrawableSpan]*/
-    fun drawable(text: CharSequence? = null, action: DslDrawableSpan.() -> Unit = {}) {
+    fun drawable(text: CharSequence? = null, action: DslDrawableSpan.() -> Unit = {}): DslSpan {
         if (text.isNullOrEmpty()) {
             //智能调整
             append("<draw>", DslDrawableSpan().apply {
@@ -197,11 +206,17 @@ class DslSpan {
         } else {
             append(text, DslDrawableSpan().apply(action))
         }
+        return this
     }
 
     /**快速追加[DslTextSpan]*/
-    fun text(text: CharSequence?, action: DslTextSpan.() -> Unit = {}) {
+    fun text(text: CharSequence?, action: DslTextSpan.() -> Unit = {}): DslSpan {
         append(text, DslTextSpan().apply(action))
+        return this
+    }
+
+    override fun toString(): String {
+        return _builder.toString()
     }
 }
 

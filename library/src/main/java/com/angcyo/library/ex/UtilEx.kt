@@ -1,5 +1,12 @@
 package com.angcyo.library.ex
 
+import android.content.Context
+import android.net.wifi.WifiManager
+import com.angcyo.library.app
+import java.net.NetworkInterface
+import java.net.SocketException
+import java.util.*
+
 /**
  *
  * Email:angcyo@126.com
@@ -19,4 +26,49 @@ fun <T> MutableList<T>.append(element: T, maxSize: Int = 10) {
         removeAt(0)
     }
     add(element)
+}
+
+/**
+ * 获取wifi ip地址
+ * android.permission.ACCESS_WIFI_STATE
+ */
+fun getWifiIP(): String? {
+    return try {
+        val wifiManager =
+            app().applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val wifiInfo = wifiManager.connectionInfo
+        val ipAddress = wifiInfo.ipAddress
+        //ipAddress 为0时, 有可能wifi被禁用, 或者未连接. 也有可能是正在连接
+        //<unknown ssid>
+        String.format(
+            Locale.getDefault(), "%d.%d.%d.%d",
+            ipAddress and 0xff, ipAddress shr 8 and 0xff,
+            ipAddress shr 16 and 0xff, ipAddress shr 24 and 0xff
+        )
+    } catch (ex: Exception) {
+        //Log.e(TAG, ex.getMessage());
+        null
+    }
+}
+
+/**
+ * fe80::ccf1:47ff:feee:a89d%dummy0
+ */
+fun getMobileIP(): String? {
+    try {
+        val en = NetworkInterface.getNetworkInterfaces()
+        while (en.hasMoreElements()) {
+            val intf = en.nextElement()
+            val enumIpAddr = intf.inetAddresses
+            while (enumIpAddr.hasMoreElements()) {
+                val inetAddress = enumIpAddr.nextElement()
+                if (!inetAddress.isLoopbackAddress) {
+                    return inetAddress.hostAddress
+                }
+            }
+        }
+    } catch (ex: SocketException) {
+        // Log.e(TAG, "Exception in Get IP Address: " + ex.toString());
+    }
+    return null
 }

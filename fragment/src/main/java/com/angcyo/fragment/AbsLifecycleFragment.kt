@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.CallSuper
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import com.angcyo.base.getAllResumedFragment
 import com.angcyo.base.toVisibilityString
 import com.angcyo.library.L.i
@@ -122,6 +124,19 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
 
     override fun getFragmentTag(): String {
         return this.javaClass.name
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="高级扩展">
+
+    /**快速观察[LiveData]*/
+    fun <T> LiveData<T>.observe(action: (data: T) -> Unit): Observer<T> {
+        val result: Observer<T>
+        observe(this@AbsLifecycleFragment, Observer<T> { action(it) }.apply {
+            result = this
+        })
+        return result
     }
 
     //</editor-fold>
