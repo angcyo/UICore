@@ -8,16 +8,21 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Point
 import android.graphics.Rect
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import com.angcyo.base.getAllResumedFragment
+import com.angcyo.drawable.getColor
 import com.angcyo.drawable.getStatusBarHeight
+import com.angcyo.fragment.R
 import com.angcyo.library.app
 import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.safe
 import com.angcyo.library.ex.simpleName
 import com.angcyo.widget.base.onDoubleTap
 import com.angcyo.widget.span.span
@@ -59,7 +64,7 @@ fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug())
                             showDebugInfoView(show, debug)
                         }
                     }
-                    supportFragmentManager.registerFragmentLifecycleCallbacks(callback, false)
+                    supportFragmentManager.registerFragmentLifecycleCallbacks(callback, true)
                     decorView.tag = callback
                 }
             }
@@ -72,16 +77,15 @@ fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug())
             val padding = dp2.toInt() * 4
             textView.setPadding(padding, padding, padding, padding)
             textView.setShadowLayer(dp2 * 2, dp2, dp2, Color.BLACK)
-            textView.text = simpleName()
 
-            val resumeFragment: Fragment? =
-                (this as? FragmentActivity)?.supportFragmentManager?.getAllResumedFragment()
-                    ?.lastOrNull()
-            resumeFragment?.let { fragment ->
-                textView.text = span {
-                    append(textView.text).appendln()
-                    append("\\-").append(fragment.simpleName())
-                }
+            textView.text = span {
+                append(this@showDebugInfoView.simpleName()).appendln()
+                (this@showDebugInfoView as? FragmentActivity)?.supportFragmentManager?.logAllFragment(
+                    _builder,
+                    false,
+                    "\\-"
+                )
+                _builder.safe()
             }
 
             val layoutParams = FrameLayout.LayoutParams(-2, -2)
@@ -116,9 +120,11 @@ fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug())
 
                 textView.text = buildString {
                     appendln(this@showDebugInfoView.javaClass.name)
-                    resumeFragment?.let { fragment ->
-                        appendln(fragment.javaClass.name)
-                    }
+                    (this@showDebugInfoView as? FragmentActivity)?.supportFragmentManager?.logAllFragment(
+                        this,
+                        true,
+                        "\\-"
+                    )
 
                     val statusBarHeight = getStatusBarHeight()
                     val navBarHeight = max(
@@ -177,6 +183,52 @@ fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug())
             }
         }
     }
+}
+
+/**
+ * 打印[FragmentManager]中所有的[Fragment],
+ * 打印状态[isResumed]的[Fragment]中[childFragmentManager]
+ *  */
+fun FragmentManager.logAllFragment(
+    builder: Appendable,
+    fullName: Boolean = false,
+    pre: String? = null
+): Appendable {
+    fragments.forEachIndexed { index, fragment ->
+
+        val start = (builder as? SpannableStringBuilder)?.length ?: 0
+
+        pre?.run { builder.append(this) }
+        builder.append("$index ")
+
+        var name = if (fullName) {
+            fragment.javaClass.name
+        } else {
+            fragment.javaClass.simpleName
+        }
+
+        if (fragment.isResumed) {
+            name = "$name √"
+        }
+
+        builder.appendln(name)
+        
+        if (fragment.isResumed) {
+            if (builder is SpannableStringBuilder) {
+                val end = (builder as? SpannableStringBuilder)?.length ?: 0
+                builder.setSpan(
+                    ForegroundColorSpan(getColor(R.color.colorAccent)),
+                    start,
+                    end,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+            fragment.childFragmentManager.apply {
+                logAllFragment(builder, fullName, pre?.run { "    $this" })
+            }
+        }
+    }
+    return builder
 }
 
 /**复制文本*/

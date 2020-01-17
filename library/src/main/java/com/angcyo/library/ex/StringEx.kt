@@ -1,6 +1,7 @@
 package com.angcyo.library.ex
 
 import android.graphics.Color
+import android.text.SpannableStringBuilder
 import androidx.annotation.ColorInt
 
 /**
@@ -73,3 +74,12 @@ fun String?.split(
 fun CharSequence.safe(): CharSequence? {
     return subSequence(0, kotlin.math.max(0, length - 1))
 }
+
+fun StringBuilder.safe(): StringBuilder {
+    return delete(kotlin.math.max(0, lastIndex), kotlin.math.max(0, length))
+}
+
+fun SpannableStringBuilder.safe(): SpannableStringBuilder {
+    return delete(kotlin.math.max(0, lastIndex), kotlin.math.max(0, length))
+}
+
