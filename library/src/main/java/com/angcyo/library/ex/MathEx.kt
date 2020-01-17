@@ -19,7 +19,16 @@ fun distance(point1: PointF, point2: PointF): Double {
 fun c(x1: Float, y1: Float, x2: Float, y2: Float): Double {
     val a = (x2 - x1).absoluteValue
     val b = (y2 - y1).absoluteValue
-    return sqrt(a.toDouble().pow(2.0) + b.toDouble().pow(2.0))
+    return c(a, b)
+}
+
+/**勾股定律*/
+fun c(a: Float, b: Float): Double {
+    return hypot(a.toDouble(), b.toDouble())
+}
+
+fun c(a: Double, b: Double): Double {
+    return hypot(a, b)
 }
 
 /**根据半径[radius],原点[pivotX,pivotY]坐标, 计算出角度[degrees]对应的圆上坐标点*/

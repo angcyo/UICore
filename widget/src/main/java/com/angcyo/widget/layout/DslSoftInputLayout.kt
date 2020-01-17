@@ -1,6 +1,7 @@
 package com.angcyo.widget.layout
 
 import android.animation.ValueAnimator
+import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build
 import android.util.AttributeSet
@@ -29,6 +30,7 @@ import kotlin.math.min
  * @date 2020/01/15
  */
 
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
     FrameLayout(context, attributeSet) {
 

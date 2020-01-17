@@ -17,6 +17,10 @@ import com.angcyo.widget.DslViewHolder
  *
  * 一些生命周期日志的输出,和创建跟视图
  *
+ * https://developer.android.com/reference/kotlin/androidx/fragment/app/Fragment.html?hl=zh_cn
+ *
+ * https://developer.android.com/guide/components/fragments?hl=zh_cn
+ *
  * @author angcyo
  */
 abstract class AbsFragment : Fragment() {

@@ -294,10 +294,13 @@ fun View?.isGone() = this?.visibility == View.GONE
 
 //<editor-fold desc="回调扩展">
 
+
+/**[androidx/core/view/View.kt:79]*/
 fun View.doOnPreDraw(action: (View) -> Unit) {
+    val view = this
     viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
         override fun onPreDraw(): Boolean {
-            action(this@doOnPreDraw)
+            action(view)
             viewTreeObserver.removeOnPreDrawListener(this)
             return false
         }

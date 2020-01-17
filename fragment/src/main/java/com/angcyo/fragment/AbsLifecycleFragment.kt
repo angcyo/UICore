@@ -54,15 +54,7 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
         data: Intent?
     ) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (lastFragment != null) {
-            if (lastFragment is Fragment) {
-                (lastFragment as Fragment).onActivityResult(
-                    requestCode,
-                    resultCode,
-                    data
-                )
-            }
-        }
+        lastFragment?.onActivityResult(requestCode, resultCode, data)
     }
 
     //</editor-fold>

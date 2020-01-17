@@ -1,9 +1,14 @@
 package com.angcyo.widget.base
 
+import android.animation.Animator
 import android.animation.ValueAnimator
+import android.annotation.TargetApi
+import android.os.Build
 import android.view.View
+import android.view.ViewAnimationUtils
 import android.view.animation.Interpolator
 import android.view.animation.LinearInterpolator
+import com.angcyo.library.ex.c
 
 /**
  *
@@ -112,3 +117,47 @@ fun View.translationY(
         }
     }
 }
+
+/**
+ * 揭露动画
+ * https://developer.android.com/training/animation/reveal-or-hide-view#Reveal
+ * */
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+fun View.reveal(action: RevealConfig.() -> Unit = {}) {
+    this.doOnPreDraw {
+        val config = RevealConfig()
+        config.centerX = this.measuredWidth / 2
+        config.centerY = this.measuredHeight / 2
+        config.endRadius = c(config.centerX.toDouble(), config.centerY.toDouble()).toFloat()
+
+        //第一次获取基础数据
+        config.action()
+
+        ViewAnimationUtils.createCircularReveal(
+            this,
+            config.centerX,
+            config.centerY,
+            config.startRadius,
+            config.endRadius
+        ).apply {
+            duration = 240
+
+            config.animator = this
+            //第二次获取动画数据
+            config.action()
+            start()
+        }
+    }
+}
+
+data class RevealConfig(
+    var animator: Animator? = null,
+
+    //默认是视图的中心
+    var centerX: Int = 0,
+    var centerY: Int = 0,
+
+    var startRadius: Float = 0f,
+    //默认是视图的对角半径
+    var endRadius: Float = 0f
+)
