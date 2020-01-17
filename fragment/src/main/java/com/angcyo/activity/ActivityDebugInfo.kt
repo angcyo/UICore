@@ -212,7 +212,7 @@ fun FragmentManager.logAllFragment(
         }
 
         builder.appendln(name)
-        
+
         if (fragment.isResumed) {
             if (builder is SpannableStringBuilder) {
                 val end = (builder as? SpannableStringBuilder)?.length ?: 0
