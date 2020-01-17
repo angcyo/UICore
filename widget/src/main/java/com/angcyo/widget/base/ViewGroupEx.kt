@@ -218,6 +218,25 @@ fun ViewGroup.eachChild(map: (index: Int, child: View) -> Unit) {
     }
 }
 
+fun ViewGroup.forEach(map: (index: Int, child: View) -> Unit) {
+    eachChild(map)
+}
+
+fun ViewGroup.each(map: (child: View) -> Unit) {
+    eachChild { _, child ->
+        map.invoke(child)
+    }
+}
+
+/**获取指定位置[index]的[child], 如果有.*/
+fun ViewGroup.getChildOrNull(index: Int): View? {
+    return if (index in 0 until childCount) {
+        getChildAt(index)
+    } else {
+        null
+    }
+}
+
 fun ViewGroup.eachChildVisibility(map: (index: Int, child: View) -> Unit) {
     for (index in 0 until childCount) {
         val childAt = getChildAt(index)

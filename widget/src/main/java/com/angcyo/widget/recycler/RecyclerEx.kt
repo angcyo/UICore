@@ -1,6 +1,7 @@
 package com.angcyo.widget.recycler
 
 import android.text.TextUtils
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.OverScroller
 import androidx.core.widget.ScrollerCompat
@@ -13,6 +14,7 @@ import com.angcyo.dsladapter.DslItemDecoration
 import com.angcyo.dsladapter.HoverItemDecoration
 import com.angcyo.dsladapter.dslSpanSizeLookup
 import com.angcyo.library.utils.getMember
+import com.angcyo.widget.DslViewHolder
 
 /**
  *
@@ -129,7 +131,7 @@ fun RecyclerView.resetLayoutManager(match: String) {
 /**
  * 获取[RecyclerView] [Fling] 时的速率
  * */
-public fun RecyclerView?.getLastVelocity(): Float {
+fun RecyclerView?.getLastVelocity(): Float {
     var currVelocity = 0f
     try {
         val mViewFlinger = this.getMember(RecyclerView::class.java, "mViewFlinger")
@@ -152,4 +154,36 @@ public fun RecyclerView?.getLastVelocity(): Float {
         e.printStackTrace()
     }
     return currVelocity
+}
+
+/**获取[RecyclerView]界面上存在指定位置[index]的[DslViewHolder], 负数表示倒数开始的index*/
+operator fun RecyclerView.get(index: Int): DslViewHolder? {
+    val child: View?
+    child = if (index >= 0) {
+        //正向取child
+        if (index < childCount) {
+            getChildAt(index)
+        } else {
+            null
+        }
+    } else {
+        //反向取child
+        val i = childCount + index
+        if (i in 0 until childCount) {
+            getChildAt(i)
+        } else {
+            null
+        }
+    }
+    return child?.run { getChildViewHolder(this) as? DslViewHolder }
+}
+
+/**获取[RecyclerView]界面上存在的所有[DslViewHolder]*/
+fun RecyclerView.allViewHolder(): List<DslViewHolder> {
+    val result = mutableListOf<DslViewHolder>()
+    for (i in 0 until childCount) {
+        val child = getChildAt(i)
+        (getChildViewHolder(child) as? DslViewHolder)?.run { result.add(this) }
+    }
+    return result
 }
