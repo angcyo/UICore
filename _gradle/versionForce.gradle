@@ -1,0 +1,17 @@
+/**
+ * [versionConfigLib.gradle]
+ * */
+
+//强制版本依赖
+configurations.all {
+    def config = versionConfig
+    resolutionStrategy {
+        if (config instanceof Map) {
+            //强制修改指定的版本号
+            config.each { key, value ->
+                //println "强制-> $key:$value"
+                force "$key:$value"
+            }
+        }
+    }
+}

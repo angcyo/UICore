@@ -23,15 +23,15 @@ dependencies {
     //implementation "io.reactivex.rxjava3:rxjava:3.0.0-RC6"
 
     //https://jcenter.bintray.com/io/reactivex/rxjava2/
-    api "io.reactivex.rxjava2:rxjava:2.2.16"
+    api "io.reactivex.rxjava2:rxjava:2.2.17"
     api "io.reactivex.rxjava2:rxandroid:2.1.1"
     api "io.reactivex.rxjava2:rxkotlin:2.4.0"
 
     //https://github.com/square/retrofit
     //https://jcenter.bintray.com/com/squareup/retrofit2
-    api "com.squareup.retrofit2:retrofit:2.7.0"
-    api "com.squareup.retrofit2:adapter-rxjava2:2.7.0"
-    api "com.squareup.retrofit2:converter-gson:2.7.0"
+    api "com.squareup.retrofit2:retrofit:2.7.1"
+    api "com.squareup.retrofit2:adapter-rxjava2:2.7.1"
+    api "com.squareup.retrofit2:converter-gson:2.7.1"
 
     //https://github.com/tbruyelle/RxPermissions
     api 'com.github.tbruyelle:rxpermissions:0.10.2'

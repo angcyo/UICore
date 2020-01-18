@@ -11,5 +11,5 @@ dependencies {
 
     //https://github.com/orhanobut/hawk
     //https://jcenter.bintray.com/com/orhanobut/
-    api 'com.orhanobut:hawk:2.0.1'
+    implementation 'com.orhanobut:hawk:2.0.1'
 }

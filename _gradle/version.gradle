@@ -2,17 +2,11 @@
 
 /**
  * 配置格式, 全局配置可以放在脚本 [apply] 之前的任意地方
+ *
+ * https://blog.csdn.net/lwj_zeal/article/details/82755182
+ *
+ * [versionConfigLib.gradle]
  * */
-
-/*
-ext.versionConfig = [
-        "androidx.core:core"                       : "1.0.0",
-        "androidx.annotation:annotation"           : "1.0.0",
-        "androidx.arch.core:core-common"           : "2.0.0",
-        "org.jetbrains.kotlin:kotlin-stdlib"       : "1.3.50",
-        "org.jetbrains.kotlin:kotlin-stdlib-common": "1.3.50",
-]
-*/
 
 //用来保存版本号不一样的依赖库
 ext._allVersion = [:]
@@ -90,7 +84,7 @@ def checkVersion(config, requested, details) {
                     }
                     if (!log) {
                         //没有输出过log
-                        println "${originVersion}  ->  ${value}"
+                        error "强制: ${originVersion}  ->  ${value}"
                     }
 
                     _logVersion += packageName

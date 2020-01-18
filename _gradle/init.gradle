@@ -1,3 +1,4 @@
 apply from: 'UICore/_gradle/findAllModule.gradle'
 
+apply from: allGradle.versionConfigLib
 apply from: allGradle.androidx

@@ -95,3 +95,5 @@ dependencies {
     //https://jcenter.bintray.com/org/jetbrains/kotlin/kotlin-stdlib-jdk8/
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$_kotlin_version"
 }
+
+apply from: allGradle.versionForce
