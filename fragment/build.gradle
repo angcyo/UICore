@@ -2,10 +2,13 @@ apply from: allGradle.libBase
 
 android {
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 19
     }
 }
 
 dependencies {
     api project(allModule.widget)
+
+    //需要json的支持
+    implementation project(allModule.http)
 }
