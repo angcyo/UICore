@@ -2,11 +2,11 @@
  * https://developer.android.google.cn/jetpack/androidx/migrate
  * */
 
-ext.libVersionConfig = [
+//ext.libVersionConfig = [
 //        "androidx.annotation:annotation": "1.1.0",
 //        "androidx.recyclerview:recyclerview": "1.0.0",
 //        "androidx.viewpager2:viewpager2"    : "1.0.0-beta05",
-]
+//]
 
 ext.androidx = [
         //com.android.support:support-v4

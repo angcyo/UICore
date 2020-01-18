@@ -1,5 +1,5 @@
 //配置强制版本信息
-ext.versionConfig = [
+ext.libVersionConfig = [
         "org.jetbrains.kotlin:kotlin-stdlib"          : "1.3.61",
         "org.jetbrains.kotlin:kotlin-stdlib-common"   : "1.3.61",
 

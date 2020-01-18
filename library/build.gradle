@@ -7,9 +7,9 @@ android {
 }
 
 dependencies {
-    implementation "androidx.annotation:annotation:1.1.0"
+    api "androidx.annotation:annotation:1.1.0"
 
     //https://github.com/orhanobut/hawk
     //https://jcenter.bintray.com/com/orhanobut/
-    implementation 'com.orhanobut:hawk:2.0.1'
+    api 'com.orhanobut:hawk:2.0.1'
 }
