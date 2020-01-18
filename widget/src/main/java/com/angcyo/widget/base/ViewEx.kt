@@ -104,6 +104,16 @@ fun View.error() {
     requestFocus()
 }
 
+/**将[View]重新添加到新的[ViewGroup]*/
+fun View.addTo(parent: ViewGroup?, action: (View) -> Unit = {}) {
+    val oldParent = getParent()
+    if (oldParent is ViewGroup) {
+        oldParent.removeView(this)
+    }
+    action(this)
+    parent?.addView(this)
+}
+
 //</editor-fold desc="基础扩展">
 
 

@@ -26,6 +26,12 @@ object FileUtils {
         return context.getExternalFilesDir("")
     }
 
+    /**
+     * [folder] 文件夹名字
+     * [name] 文件夹下面的文件名
+     *
+     * 返回对应的文件, 可以直接进行读写, 不需要权限请求
+     * */
     fun appExternalFolder(
         context: Context?,
         folder: String,

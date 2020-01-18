@@ -477,10 +477,21 @@ open class DslAdapter : RecyclerView.Adapter<DslViewHolder>, OnDispatchUpdatesLi
      * this[1]
      * this[index]
      * this[index, false]
+     *
+     * 负数表示倒数
      * ```
      * */
-    operator fun get(index: Int, useFilterList: Boolean = true): DslAdapterItem? {
-        return getDataList(useFilterList).getOrNull(index)
+    operator fun get(
+        index: Int,
+        useFilterList: Boolean = true,
+        reverse: Boolean = true //是否开启反序, 倒数
+    ): DslAdapterItem? {
+        return getDataList(useFilterList).run {
+            if (index >= 0 || !reverse)
+                getOrNull(index)
+            else
+                getOrNull(size + index)
+        }
     }
 
     /**
