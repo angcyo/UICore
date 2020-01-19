@@ -19,7 +19,7 @@ import com.angcyo.widget.DslViewHolder
  * @date 2019/10/16
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-public fun RecyclerView.eachChildRViewHolder(
+fun RecyclerView.eachChildRViewHolder(
     targetView: View? = null,/*指定目标, 则只回调目标前后的ViewHolder*/
     callback: (
         beforeViewHolder: DslViewHolder?,
@@ -62,7 +62,7 @@ public fun RecyclerView.eachChildRViewHolder(
 /**
  * 获取View, 相对于手机屏幕的矩形
  * */
-public fun View.getViewRect(result: Rect = Rect()): Rect {
+fun View.getViewRect(result: Rect = Rect()): Rect {
     var offsetX = 0
     var offsetY = 0
 
@@ -82,7 +82,7 @@ public fun View.getViewRect(result: Rect = Rect()): Rect {
 /**
  * 获取View, 相对于手机屏幕的矩形, 带皮阿尼一
  * */
-public fun View.getViewRect(offsetX: Int, offsetY: Int, result: Rect = Rect()): Rect {
+fun View.getViewRect(offsetX: Int, offsetY: Int, result: Rect = Rect()): Rect {
     //可见位置的坐标, 超出屏幕的距离会被剃掉
     //getGlobalVisibleRect(r)
     val r2 = IntArray(2)
@@ -125,7 +125,7 @@ fun navBarHeight(context: Context): Int {
     return result
 }
 
-public fun notNull(vararg anys: Any?, doIt: (Array<Any>) -> Unit) {
+fun notNull(vararg anys: Any?, doIt: (Array<Any>) -> Unit) {
     var haveNull = false
 
     for (any in anys) {
@@ -146,24 +146,8 @@ fun Rect.clear() {
 
 internal fun nowTime() = System.currentTimeMillis()
 
-public fun View.setHeight(height: Int) {
-    val params = layoutParams
-    params.height = height
-    layoutParams = params
-}
-
-/**
- * 设置视图的宽高
- * */
-public fun View.setWidthHeight(width: Int, height: Int) {
-    val params = layoutParams
-    params.width = width
-    params.height = height
-    layoutParams = params
-}
-
 /**快速创建网格布局*/
-public fun gridLayout(
+fun gridLayout(
     context: Context,
     dslAdapter: DslAdapter,
     spanCount: Int = 4,
@@ -181,7 +165,7 @@ public fun gridLayout(
 }
 
 /**SpanSizeLookup*/
-public fun GridLayoutManager.dslSpanSizeLookup(recyclerView: RecyclerView): GridLayoutManager.SpanSizeLookup {
+fun GridLayoutManager.dslSpanSizeLookup(recyclerView: RecyclerView): GridLayoutManager.SpanSizeLookup {
     //设置span size
     val spanCount = spanCount
     val spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -204,7 +188,7 @@ public fun GridLayoutManager.dslSpanSizeLookup(recyclerView: RecyclerView): Grid
 }
 
 /**SpanSizeLookup*/
-public fun GridLayoutManager.dslSpanSizeLookup(dslAdapter: DslAdapter): GridLayoutManager.SpanSizeLookup {
+fun GridLayoutManager.dslSpanSizeLookup(dslAdapter: DslAdapter): GridLayoutManager.SpanSizeLookup {
     //设置span size
     val spanCount = spanCount
     val spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -225,7 +209,7 @@ public fun GridLayoutManager.dslSpanSizeLookup(dslAdapter: DslAdapter): GridLayo
     return spanSizeLookup
 }
 
-public fun View.fullSpan(full: Boolean = true) {
+fun View.fullSpan(full: Boolean = true) {
     val layoutParams = layoutParams
     if (layoutParams is StaggeredGridLayoutManager.LayoutParams) {
         if (full != layoutParams.isFullSpan) {
@@ -236,18 +220,18 @@ public fun View.fullSpan(full: Boolean = true) {
 }
 
 /**文本的高度*/
-public fun Paint.textHeight(): Float = descent() - ascent()
+fun Paint.textHeight(): Float = descent() - ascent()
 
-public val FLAG_NO_INIT = -1
+val FLAG_NO_INIT = -1
 
-public val FLAG_NONE = 0
+val FLAG_NONE = 0
 
-public val FLAG_ALL = ItemTouchHelper.LEFT or
+val FLAG_ALL = ItemTouchHelper.LEFT or
         ItemTouchHelper.RIGHT or
         ItemTouchHelper.DOWN or
         ItemTouchHelper.UP
 
-public val FLAG_VERTICAL = ItemTouchHelper.DOWN or ItemTouchHelper.UP
+val FLAG_VERTICAL = ItemTouchHelper.DOWN or ItemTouchHelper.UP
 
-public val FLAG_HORIZONTAL = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+val FLAG_HORIZONTAL = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
 

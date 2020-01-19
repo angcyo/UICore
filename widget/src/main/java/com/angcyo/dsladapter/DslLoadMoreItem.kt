@@ -3,6 +3,7 @@ package com.angcyo.dsladapter
 import com.angcyo.library.L
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
+import com.angcyo.widget.base.setWidthHeight
 
 /**
  * [RecyclerView.Adapter] 加载更多实现

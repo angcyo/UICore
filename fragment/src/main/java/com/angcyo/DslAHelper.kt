@@ -211,12 +211,12 @@ class DslAHelper(val context: Context) {
     var enableWindowTransition: Boolean = false
 
     //可以单独设置窗口的过渡动画(非共享元素的动画), 而无需设置共享元素
-    var windowExitTransition: Transition? = Fade()
+    var windowExitTransition: Transition? = Fade(Fade.OUT)
         set(value) {
             field = value
             enableWindowTransition = true
         }
-    var windowEnterTransition: Transition? = Fade()
+    var windowEnterTransition: Transition? = Fade(Fade.IN)
         set(value) {
             field = value
             enableWindowTransition = true

@@ -20,6 +20,7 @@ import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.drawable.getStatusBarHeight
+import com.angcyo.library.ex.undefined_res
 
 /**
  *
@@ -82,6 +83,32 @@ fun View?.parentMeasuredHeight(): Int {
 
 fun View?.parentMeasuredWidth(): Int {
     return (this?.parent as? View?)?.measuredWidth ?: 0
+}
+
+fun View.setWidth(width: Int) {
+    val params = layoutParams
+    params.width = width
+    layoutParams = params
+}
+
+fun View.setHeight(height: Int) {
+    val params = layoutParams
+    params.height = height
+    layoutParams = params
+}
+
+/**
+ * 设置视图的宽高
+ * */
+fun View.setWidthHeight(width: Int = undefined_res, height: Int = undefined_res) {
+    val params = layoutParams
+    if (width != undefined_res) {
+        params.width = width
+    }
+    if (height != undefined_res) {
+        params.height = height
+    }
+    layoutParams = params
 }
 
 /**

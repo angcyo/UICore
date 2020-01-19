@@ -4,6 +4,7 @@ import android.graphics.Color
 import androidx.annotation.LayoutRes
 import com.angcyo.drawable.dpi
 import com.angcyo.widget.R
+import com.angcyo.widget.base.setHeight
 
 
 /**
