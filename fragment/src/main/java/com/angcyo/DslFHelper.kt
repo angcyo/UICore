@@ -83,12 +83,12 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
     fun show(vararg fClass: Class<out Fragment>) {
         val list = mutableListOf<Fragment>()
         for (cls in fClass) {
-            list.add(
-                fm.fragmentFactory.instantiate(
-                    cls.classLoader!!,
-                    cls.name
-                )
-            )
+            instantiateFragment(cls.classLoader!!, cls.name)?.run { list.add(this) }
+
+//            fm.fragmentFactory.instantiate(
+//                cls.classLoader!!,
+//                cls.name
+//            )
         }
         show(list)
     }
@@ -110,6 +110,10 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
                 }
             }
         }
+    }
+
+    fun restore(vararg fClass: Class<out Fragment>) {
+        show(fm.restore(*fClass))
     }
 
     fun restore(vararg tag: String?) {

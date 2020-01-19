@@ -3,15 +3,18 @@ package com.angcyo
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
-import android.transition.Fade
-import android.transition.Transition
+import android.transition.*
 import android.view.View
+import android.view.Window
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import androidx.core.view.ViewCompat
+import com.angcyo.base.RevertWindowTransitionListener
 import com.angcyo.library.L
 
 /**
@@ -29,6 +32,9 @@ class DslAHelper(val context: Context) {
     /**关闭自身*/
     var finishSelf: Boolean = false
 
+    /**是否使用[Finish]方法关闭[Activity], 默认使用[onBackPressed]*/
+    var finishWithFinish: Boolean = false
+
     //<editor-fold desc="start操作">
 
     fun start(intent: Intent, action: IntentConfig.() -> Unit = {}) {
@@ -37,6 +43,9 @@ class DslAHelper(val context: Context) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         config.action()
+        if (context is Activity) {
+            config.configWindow(context.window)
+        }
         startIntentConfig.add(config)
     }
 
@@ -58,10 +67,7 @@ class DslAHelper(val context: Context) {
 
                 //共享元素配置
                 var transitionOptions: Bundle? = null
-                if (windowEnterTransition != null ||
-                    windowExitTransition != null ||
-                    it.sharedElementList.isNotEmpty()
-                ) {
+                if (enableWindowTransition || it.sharedElementList.isNotEmpty()) {
                     _supportTransition {
                         transitionOptions = if (it.sharedElementList.isNotEmpty()) {
                             ActivityOptionsCompat.makeSceneTransitionAnimation(
@@ -109,19 +115,24 @@ class DslAHelper(val context: Context) {
         }
 
         if (finishSelf && context is Activity) {
-            context.onBackPressed()
+            if (finishWithFinish) {
+                context.finish()
+            } else {
+                context.onBackPressed()
+            }
         }
     }
 
     //<editor-fold desc="finish 操作">
 
     /**关闭当前[context]*/
-    open fun finish(withBackPress: Boolean = false, action: IntentConfig.() -> Unit = {}) {
+    fun finish(withBackPress: Boolean = false, action: IntentConfig.() -> Unit = {}) {
         if (context is Activity) {
             val config = IntentConfig(Intent())
             context.setResult(config.resultCode, config.resultData)
 
             config.action()
+            config.configWindow(context.window)
 
             if (withBackPress) {
                 context.onBackPressed()
@@ -158,36 +169,142 @@ class DslAHelper(val context: Context) {
         }
     }
 
+    /**默认的共享元素转场动画*/
+    fun _defaultElementTransition(): TransitionSet {
+        val transitionSet = TransitionSet()
+        transitionSet.addTransition(ChangeBounds())
+        _supportTransition {
+            transitionSet.addTransition(ChangeTransform())
+            transitionSet.addTransition(ChangeClipBounds())
+            transitionSet.addTransition(ChangeImageTransform())
+            //transitionSet.addTransition(ChangeScroll()) //图片过渡效果, 请勿设置此项
+        }
+        return transitionSet
+    }
+
+    /**排除目标*/
+    fun _excludeTarget(transition: Transition, config: IntentConfig, exclude: Boolean = true) {
+        config.sharedElementList.forEach {
+            transition.excludeTarget(it.first, exclude)
+        }
+    }
+
+    fun _excludeDecor(transition: Transition, exclude: Boolean = true) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            transition.excludeTarget(android.R.id.navigationBarBackground, exclude)
+            transition.excludeTarget(android.R.id.statusBarBackground, exclude)
+        }
+    }
+
+    /**添加目标*/
+    fun _addTarget(transition: Transition, config: IntentConfig) {
+        config.sharedElementList.forEach {
+            transition.addTarget(it.first)
+        }
+    }
+
     //</editor-fold desc="转场动画配置">
 
     //<editor-fold desc="启动转场动画配置">
 
-    //可以单独设置窗口的过渡动画, 而无需设置共享元素
+    /**开启转场动画*/
+    var enableWindowTransition: Boolean = false
+
+    //可以单独设置窗口的过渡动画(非共享元素的动画), 而无需设置共享元素
     var windowExitTransition: Transition? = Fade()
+        set(value) {
+            field = value
+            enableWindowTransition = true
+        }
     var windowEnterTransition: Transition? = Fade()
+        set(value) {
+            field = value
+            enableWindowTransition = true
+        }
 
-    var elementEnterTransition: Transition? = null
-    var elementExitTransition: Transition? = null
+    var elementEnterTransition: Transition? = _defaultElementTransition()
+        set(value) {
+            field = value
+            enableWindowTransition = true
+        }
+    var elementExitTransition: Transition? = _defaultElementTransition()
+        set(value) {
+            field = value
+            enableWindowTransition = true
+        }
 
-    /**启动[Activity]后, 调用此方法开始转场动画*/
+    /**启动[Activity]后, 调用此方法开始转场动画, 必须在[Activity]的[onCreate]中调用*/
     fun transition(action: IntentConfig.() -> Unit = {}) {
 
         _supportTransition {
             if (context is Activity) {
                 context.window.apply {
+                    //requestFeature() must be called before adding content
                     //requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
                     //requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
 
-                    enterTransition = windowEnterTransition
-                    exitTransition = windowExitTransition
+                    //https://www.jianshu.com/p/4d23b8a37a5d
+                    //setExitTransition()     //当A start B时，使A中的View退出场景的transition
+                    //setEnterTransition()   //当A start B时，使B中的View进入场景的transition
+                    //setReturnTransition()  //当B 返回 A时，使B中的View退出场景的transition
+                    //setReenterTransition() //当B 返回 A时，使A中的View进入场景的transition
 
-                    sharedElementEnterTransition = elementEnterTransition
-                    sharedElementExitTransition = elementExitTransition
+                    val revertWindowTransitionListener =
+                        RevertWindowTransitionListener(this, this.decorView.background)
+
+                    setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+                    windowEnterTransition?.run {
+                        enterTransition = this
+                        reenterTransition = this
+                        //addListener(revertWindowTransitionListener)
+                    }
+
+                    windowExitTransition?.run {
+                        exitTransition = this
+                        returnTransition = this
+                        //addListener(revertWindowTransitionListener)
+                    }
+
+                    elementEnterTransition?.run {
+                        sharedElementEnterTransition = this
+                        sharedElementReenterTransition = this
+                        addListener(revertWindowTransitionListener)
+                    }
+
+                    elementExitTransition?.run {
+                        sharedElementExitTransition = this
+                        sharedElementReturnTransition = this
+                        addListener(revertWindowTransitionListener)
+                    }
+
+
+                    sharedElementsUseOverlay = true
+
+                    //allowEnterTransitionOverlap = true
+                    //allowReturnTransitionOverlap = true
                 }
             }
         }
 
         val config = IntentConfig(Intent())
+        config.action()
+
+        if (context is Activity) {
+            config.configWindow(context.window)
+
+            _supportTransition {
+                if (config.excludeDecor) {
+                    windowEnterTransition?.run { _excludeDecor(this) }
+                    windowExitTransition?.run { _excludeDecor(this) }
+                }
+
+//                if (config.excludeTarget) {
+//                    elementEnterTransition?.run { _addTarget(this, config) }
+//                    elementExitTransition?.run { _addTarget(this, config) }
+//                }
+            }
+        }
 
         for (pair in config.sharedElementList) {
             pair.first?.run { ViewCompat.setTransitionName(this, pair.second) }
@@ -211,8 +328,16 @@ data class IntentConfig(
     var resultCode: Int = Activity.RESULT_CANCELED,
     var resultData: Intent? = null,
 
+    //转场动画
+
+    //window过得动画, 不需要包括状态栏和导航栏
+    var excludeDecor: Boolean = true,
+
     //共享元素
-    val sharedElementList: MutableList<Pair<View, String>> = mutableListOf()
+    val sharedElementList: MutableList<Pair<View, String>> = mutableListOf(),
+
+    //Window配置
+    var configWindow: (Window) -> Unit = {}
 )
 
 /**去掉系统默认的动画*/
@@ -227,13 +352,15 @@ fun IntentConfig.putData(data: Any?, key: String = BUNDLE_KEY_JSON) {
 }
 
 /**设置共享元素[View], 和对应的[Key]*/
-fun IntentConfig.transition(sharedElement: View, sharedElementName: String? = null) {
-    sharedElementList.add(
-        Pair(
-            sharedElement,
-            sharedElementName
-                ?: ViewCompat.getTransitionName(sharedElement)
-                ?: sharedElement.javaClass.name
+fun IntentConfig.transition(sharedElement: View?, sharedElementName: String? = null) {
+    sharedElement?.run {
+        sharedElementList.add(
+            Pair(
+                this,
+                sharedElementName
+                    ?: ViewCompat.getTransitionName(this)
+                    ?: this.javaClass.name
+            )
         )
-    )
+    }
 }

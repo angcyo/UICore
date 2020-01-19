@@ -28,21 +28,26 @@ fun jsonBundle(data: Any?, key: String = BUNDLE_KEY_JSON): Bundle {
 /**获取[Bundle]中传输的[json]数据*/
 fun Bundle.getJson(key: String = BUNDLE_KEY_JSON) = getString(key)
 
-fun Bundle.putData(data: Any?, key: String = BUNDLE_KEY_JSON) {
-    when (data) {
-        is String -> putString(key, data)
-        is Number -> putString(key, data.toString())
-        else -> putString(key, data.toJson())
-    }
+fun Bundle.putData(data: Any?, key: String = BUNDLE_KEY_JSON): Bundle {
+    putString(key, data?.covertToStr())
+    return this
 }
 
 inline fun <reified DATA> Bundle.getData(key: String = BUNDLE_KEY_JSON): DATA? =
-    getJson(key)?.covert()
+    getJson(key)?.covertFromStr()
 
 //</editor-fold desc="Bundle操作">
 
+fun Any.covertToStr(): String? {
+    return when (this) {
+        is String -> this
+        is Number -> this.toString()
+        else -> this.toJson()
+    }
+}
+
 /**将[json]转换成对应的数据类型*/
-inline fun <reified DATA> String.covert(): DATA? {
+inline fun <reified DATA> String.covertFromStr(): DATA? {
     val cls = DATA::class.java
     return when {
         cls.isAssignableFrom(String::class.java) -> this as? DATA
@@ -69,18 +74,18 @@ fun Fragment.putData(data: Any?, key: String = BUNDLE_KEY_JSON) {
 
 /**快速从[Fragment]获取[putData]设置的数据*/
 inline fun <reified DATA> Fragment.getData(key: String = BUNDLE_KEY_JSON): DATA? =
-    arguments?.getJson(key)?.covert()
+    arguments?.getJson(key)?.covertFromStr()
 
 //</editor-fold desc="Fragment put get">
 
 //<editor-fold desc="Intent put get">
 
 fun Intent.putData(data: Any?, key: String = BUNDLE_KEY_JSON) {
-    extras?.putData(data, key)
+    putExtra(key, data?.covertToStr())
 }
 
 inline fun <reified DATA> Intent.getData(key: String = BUNDLE_KEY_JSON): DATA? =
-    extras?.getData(key)
+    getStringExtra(key)?.covertFromStr()
 
 //</editor-fold desc="Intent put get">
 

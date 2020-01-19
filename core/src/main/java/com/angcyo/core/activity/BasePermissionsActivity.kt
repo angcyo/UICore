@@ -2,8 +2,8 @@ package com.angcyo.core.activity
 
 import android.os.Bundle
 import com.angcyo.activity.BaseAppCompatActivity
-import com.angcyo.activity.havePermission
 import com.angcyo.base.dslFHelper
+import com.angcyo.base.havePermission
 import com.angcyo.core.fragment.PermissionFragment
 import com.angcyo.http.rx.BaseObserver
 import com.angcyo.library.L

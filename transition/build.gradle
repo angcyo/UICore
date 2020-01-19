@@ -1,0 +1,12 @@
+apply from: allGradle.libBase
+
+android {
+    defaultConfig {
+        minSdkVersion 14
+    }
+}
+
+dependencies {
+    //https://mvnrepository.com/artifact/androidx.transition/transition
+    api 'androidx.transition:transition:1.2.0'
+}

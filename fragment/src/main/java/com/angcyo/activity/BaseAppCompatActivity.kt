@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.angcyo.base.dslFHelper
+import com.angcyo.base.enableLayoutFullScreen
 import com.angcyo.fragment.R
 import com.angcyo.library.ex.isDebug
 import com.angcyo.widget.DslViewHolder

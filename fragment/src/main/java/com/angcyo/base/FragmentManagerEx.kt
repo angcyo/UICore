@@ -4,10 +4,10 @@ import android.view.View
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import com.angcyo.DslFHelper
-import com.angcyo.fragment.AbsLifecycleFragment
 import com.angcyo.library.L
 
 /**
@@ -16,6 +16,16 @@ import com.angcyo.library.L
  * @author angcyo
  * @date 2019/12/22
  */
+
+/**实例化一个[Fragment]对象*/
+fun instantiateFragment(classLoader: ClassLoader, className: String): Fragment? {
+    return try {
+        val cls = FragmentFactory.loadFragmentClass(classLoader, className)
+        cls.getConstructor().newInstance()
+    } catch (e: Exception) {
+        null
+    }
+}
 
 /**
  * 优先根据[TAG]恢复已经存在[Fragment]
@@ -30,11 +40,27 @@ fun FragmentManager.restore(vararg fragment: Fragment): List<Fragment> {
     return list
 }
 
-fun FragmentManager.restore(vararg tag: String?): List<AbsLifecycleFragment> {
-    val list = mutableListOf<AbsLifecycleFragment>()
+fun FragmentManager.restore(vararg fClass: Class<out Fragment>): List<Fragment> {
+    val list = mutableListOf<Fragment>()
+
+    for (cls in fClass) {
+        val fragment = findFragmentByTag(cls.name)
+
+        if (fragment == null) {
+            instantiateFragment(cls.classLoader!!, cls.name)?.run { list.add(this) }
+        } else {
+            list.add(fragment)
+        }
+    }
+
+    return list
+}
+
+fun FragmentManager.restore(vararg tag: String?): List<Fragment> {
+    val list = mutableListOf<Fragment>()
 
     for (t in tag) {
-        (findFragmentByTag(t) as? AbsLifecycleFragment)?.let {
+        findFragmentByTag(t)?.let {
             list.add(it)
         }
     }

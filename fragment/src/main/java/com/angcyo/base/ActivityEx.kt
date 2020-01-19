@@ -1,4 +1,4 @@
-package com.angcyo.activity
+package com.angcyo.base
 
 import android.app.Activity
 import android.content.Context
@@ -10,6 +10,7 @@ import androidx.annotation.ColorRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.angcyo.DslAHelper
+import com.angcyo.IntentConfig
 import com.angcyo.fragment.R
 
 /**
@@ -65,6 +66,7 @@ fun Activity.setNavigationBarColor(color: Int) {
 
 private fun Int.remove(value: Int): Int = this and value.inv()
 
+/**开始[Window]转场动画, 请调用[transition]*/
 fun Activity.dslAHelper(action: DslAHelper.() -> Unit) {
     DslAHelper(this).apply {
         this.action()

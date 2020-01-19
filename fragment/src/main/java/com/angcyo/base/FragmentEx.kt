@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.angcyo.DslAHelper
 import com.angcyo.DslFHelper
+import com.angcyo.IntentConfig
 import com.angcyo.fragment.IFragment
 import com.angcyo.library.L
 
@@ -33,6 +34,7 @@ fun Fragment.dslFHelper(config: DslFHelper.() -> Unit) {
     }
 }
 
+/**开始[Window]转场动画, 请调用[transition]*/
 fun Fragment.dslAHelper(action: DslAHelper.() -> Unit) {
     context?.run {
         DslAHelper(this).apply {
