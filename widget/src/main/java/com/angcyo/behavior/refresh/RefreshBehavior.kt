@@ -9,6 +9,7 @@ import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.behavior.IContentBehavior
 import com.angcyo.behavior.ITitleBarBehavior
 import com.angcyo.widget.base.behavior
+import com.angcyo.widget.layout.RCoordinatorLayout
 
 
 /**
@@ -29,7 +30,7 @@ open class RefreshBehavior(
         //刷新状态
         const val STATUS_REFRESH = 1
         //刷新完成
-        const val STATUS_FINISH = 2
+        const val STATUS_FINISH = 10
     }
 
     /**标题栏的行为, 用于布局在标题栏bottom里面*/
@@ -44,13 +45,16 @@ open class RefreshBehavior(
     /**刷新触发的回调*/
     var onRefresh: (RefreshBehavior) -> Unit = {}
 
+    /**未释放[TOUCH_EVENT]*/
+    val _touchHold get() = (parentLayout as? RCoordinatorLayout)?._isTouch == true
+
     /**刷新状态*/
     var refreshStatus: Int = STATUS_NORMAL
         set(value) {
             val old = field
             field = value
             if (old != value) {
-                refreshBehaviorConfig?.onRefreshStatusChange(this, old, value)
+                refreshBehaviorConfig?.onRefreshStatusChange(this, old, value, _touchHold)
             }
         }
 
@@ -196,10 +200,20 @@ open class RefreshBehavior(
         type: Int
     ) {
         super.onStopNestedScroll(coordinatorLayout, child, target, type)
-        refreshBehaviorConfig?.onContentStopScroll(this)
+        refreshBehaviorConfig?.onContentStopScroll(this, _touchHold)
     }
 
     override fun getContentScrollY(behavior: BaseDependsBehavior<*>): Int {
         return scrollY
+    }
+
+    /**开始刷新*/
+    fun startRefresh() {
+        refreshStatus = STATUS_REFRESH
+    }
+
+    /**结束刷新*/
+    fun finishRefresh() {
+        refreshStatus = STATUS_FINISH
     }
 }

@@ -22,18 +22,28 @@ interface IRefreshBehavior {
     }
 
     /**内容停止了滚动, 此时需要恢复界面*/
-    fun onContentStopScroll(behavior: RefreshBehavior) {
-        if (behavior.scrollY != 0) {
+    fun onContentStopScroll(behavior: RefreshBehavior, touchHold: Boolean) {
+        if (behavior.refreshStatus != RefreshBehavior.STATUS_REFRESH
+            && !touchHold
+        ) {
             behavior.startScrollTo(0, 0)
         }
     }
 
-    /**刷新状态改变*/
-    fun onRefreshStatusChange(behavior: RefreshBehavior, from: Int, to: Int) {
-        if (to == RefreshBehavior.STATUS_REFRESH) {
-            behavior.onRefresh(behavior)
-        } else if (to == RefreshBehavior.STATUS_NORMAL) {
-            behavior.startScrollTo(0, 0)
+    /**刷新状态改变,[touchHold]还处于[touch]状态*/
+    fun onRefreshStatusChange(behavior: RefreshBehavior, from: Int, to: Int, touchHold: Boolean) {
+        when (to) {
+            RefreshBehavior.STATUS_REFRESH -> {
+                if (!touchHold) {
+                    behavior.startScrollTo(0, behavior.childView.measuredHeight / 2)
+                }
+                behavior.onRefresh(behavior)
+            }
+            else -> {
+                if (!touchHold) {
+                    behavior.startScrollTo(0, 0)
+                }
+            }
         }
     }
 }

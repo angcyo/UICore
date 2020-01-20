@@ -7,7 +7,6 @@ import com.angcyo.behavior.refresh.RefreshHeaderBehavior
 import com.angcyo.core.R
 import com.angcyo.widget.base.find
 import com.angcyo.widget.base.parentMeasuredHeight
-import com.angcyo.widget.layout.RCoordinatorLayout
 import com.angcyo.widget.progress.ArcLoadingView
 import kotlin.math.min
 
@@ -42,39 +41,59 @@ class ArcLoadingHeaderBehavior(context: Context, attributeSet: AttributeSet? = n
         }
     }
 
-    override fun onContentStopScroll(behavior: RefreshBehavior) {
-        if (behavior.refreshStatus == RefreshBehavior.STATUS_FINISH) {
-            //刷新已完成, 但是touch还没放手
-            behavior.refreshStatus = RefreshBehavior.STATUS_NORMAL
-        } else if (behavior.scrollY > 0) {
-            if (behavior.scrollY >= childView.measuredHeight) {
+    override fun onContentStopScroll(behavior: RefreshBehavior, touchHold: Boolean) {
+        when {
+            behavior.refreshStatus == RefreshBehavior.STATUS_FINISH -> {
+                behavior.refreshStatus = RefreshBehavior.STATUS_NORMAL
+            }
+            behavior.scrollY >= childView.measuredHeight -> {
                 //触发刷新
                 behavior.refreshStatus = RefreshBehavior.STATUS_REFRESH
-                behavior.startScrollTo(0, childView.measuredHeight)
-            } else {
-                super.onContentStopScroll(behavior)
             }
-        } else {
-            super.onContentStopScroll(behavior)
+            behavior.refreshStatus == RefreshBehavior.STATUS_NORMAL -> {
+                behavior.startScrollTo(0, 0)
+            }
+            else -> {
+                behavior.refreshStatus = RefreshBehavior.STATUS_NORMAL
+            }
         }
     }
 
-    override fun onRefreshStatusChange(behavior: RefreshBehavior, from: Int, to: Int) {
-        val isTouch = (parentLayout as? RCoordinatorLayout)?._isTouch ?: false
-        if (to == RefreshBehavior.STATUS_FINISH && !isTouch) {
-            //状态已完成, 并且手指不在滑动
-            behavior.startScrollTo(0, 0)
-        } else {
-            super.onRefreshStatusChange(behavior, from, to)
-            if (to == RefreshBehavior.STATUS_REFRESH && !isTouch) {
-                behavior.startScrollTo(0, childView.measuredHeight)
+    override fun onRefreshStatusChange(
+        behavior: RefreshBehavior,
+        from: Int,
+        to: Int,
+        touchHold: Boolean
+    ) {
+        when (to) {
+            RefreshBehavior.STATUS_REFRESH -> {
+                if (!touchHold) {
+                    behavior.startScrollTo(0, childView.measuredHeight)
+                }
+                behavior.onRefresh(behavior)
+            }
+            RefreshBehavior.STATUS_FINISH -> {
+                //可以提示一些UI, 然后再[Scroll]
+                if (!touchHold) {
+                    behavior.refreshStatus = RefreshBehavior.STATUS_NORMAL
+                }
+            }
+            else -> {
+                if (!touchHold) {
+                    behavior.startScrollTo(0, 0)
+                }
             }
         }
+
+        //ui
         childView.find<ArcLoadingView>(R.id.lib_arc_loading_view)?.apply {
             if (to == RefreshBehavior.STATUS_REFRESH) {
                 startLoading()
             } else {
                 endLoading()
+                if (to >= RefreshBehavior.STATUS_FINISH) {
+                    progress = 50
+                }
             }
         }
     }

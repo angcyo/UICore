@@ -62,7 +62,7 @@ abstract class BaseTitleFragment : BaseFragment() {
     var fragmentTitle: CharSequence? = null
         set(value) {
             field = value
-            baseViewHolder.tv(R.id.lib_title_text_view)?.text = value
+            _vh.tv(R.id.lib_title_text_view)?.text = value
         }
 
     //</editor-fold desc="操作属性">
@@ -103,20 +103,20 @@ abstract class BaseTitleFragment : BaseFragment() {
 
     fun _inflateTo(wrapId: Int, layoutId: Int) {
         if (layoutId > 0) {
-            baseViewHolder.visible(wrapId)
-            baseViewHolder.group(wrapId)?.replace(layoutId)
+            _vh.visible(wrapId)
+            _vh.group(wrapId)?.replace(layoutId)
         } else {
-            baseViewHolder.gone(wrapId, baseViewHolder.group(wrapId)?.childCount ?: 0 <= 0)
+            _vh.gone(wrapId, _vh.group(wrapId)?.childCount ?: 0 <= 0)
         }
     }
 
     /**初始化样式*/
     open fun onInitFragment() {
-        baseViewHolder.itemView.isClickable = fragmentConfig.interceptRootTouchEvent
+        _vh.itemView.isClickable = fragmentConfig.interceptRootTouchEvent
 
         //内容包裹
         if (enableSoftInput) {
-            baseViewHolder.group(R.id.lib_content_wrap_layout)
+            _vh.group(R.id.lib_content_wrap_layout)
                 ?.replace(DslSoftInputLayout(fContext()).apply {
                     id = R.id.lib_soft_input_layout
                 })
@@ -178,7 +178,7 @@ abstract class BaseTitleFragment : BaseFragment() {
             R.id.lib_refresh_wrap_layout -> if (enableRefresh) {
                 ArcLoadingHeaderBehavior(fContext())
             } else {
-                baseViewHolder.gone(R.id.lib_refresh_wrap_layout)
+                _vh.gone(R.id.lib_refresh_wrap_layout)
                 RefreshHeaderBehavior(fContext())
             }
             else -> null
@@ -187,39 +187,39 @@ abstract class BaseTitleFragment : BaseFragment() {
 
     /**常用控制助手*/
     open fun titleControl(): DslGroupHelper? =
-        baseViewHolder.view(R.id.lib_title_wrap_layout)?.run { DslGroupHelper(this) }
+        _vh.view(R.id.lib_title_wrap_layout)?.run { DslGroupHelper(this) }
 
     open fun leftControl(): DslGroupHelper? =
-        baseViewHolder.view(R.id.lib_left_wrap_layout)?.run { DslGroupHelper(this) }
+        _vh.view(R.id.lib_left_wrap_layout)?.run { DslGroupHelper(this) }
 
     open fun rightControl(): DslGroupHelper? =
-        baseViewHolder.view(R.id.lib_right_wrap_layout)?.run { DslGroupHelper(this) }
+        _vh.view(R.id.lib_right_wrap_layout)?.run { DslGroupHelper(this) }
 
-    open fun rootControl(): DslGroupHelper = DslGroupHelper(baseViewHolder.itemView)
+    open fun rootControl(): DslGroupHelper = DslGroupHelper(_vh.itemView)
 
     open fun contentControl(): DslGroupHelper? =
-        baseViewHolder.view(R.id.lib_content_wrap_layout)?.run { DslGroupHelper(this) }
+        _vh.view(R.id.lib_content_wrap_layout)?.run { DslGroupHelper(this) }
 
     /**在确保布局已经测量过后, 才执行*/
     fun _laidOut(action: (View) -> Unit) {
-        if (ViewCompat.isLaidOut(baseViewHolder.itemView)) {
-            action(baseViewHolder.itemView)
+        if (ViewCompat.isLaidOut(_vh.itemView)) {
+            action(_vh.itemView)
         } else {
-            baseViewHolder.itemView.doOnPreDraw(action)
+            _vh.itemView.doOnPreDraw(action)
         }
     }
 
     /**开始刷新*/
     open fun startRefresh() {
         _laidOut {
-            refreshBehavior?.refreshStatus = RefreshBehavior.STATUS_REFRESH
+            refreshBehavior?.startRefresh()
         }
     }
 
     /**结束刷新*/
     open fun finishRefresh() {
         _laidOut {
-            refreshBehavior?.refreshStatus = RefreshBehavior.STATUS_FINISH
+            refreshBehavior?.finishRefresh()
         }
     }
 
