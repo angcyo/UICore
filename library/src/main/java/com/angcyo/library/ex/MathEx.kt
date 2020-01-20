@@ -86,3 +86,4 @@ fun Double.decimal(digit: Int = 2, fadedUp: Boolean = false): Float {
 fun Float.decimal(digit: Int = 2, fadedUp: Boolean = false): Float {
     return this.toDouble().decimal(digit, fadedUp)
 }
+

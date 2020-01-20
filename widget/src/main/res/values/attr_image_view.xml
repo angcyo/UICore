@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ShapeImageView">
+        <attr name="r_image_radius" format="dimension" />
+        <attr name="r_draw_border" format="boolean" />
+        <attr name="r_border_width" format="dimension" />
+        <attr name="r_border_color" format="color" />
+        <attr name="r_mask_drawable" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="DslImageView">
+        <attr name="r_show_touch_mask" format="boolean" />
+        <attr name="r_touch_mask_drawable" format="reference|color" />
+
+        <!--根据gravity自动取负值-->
+        <attr name="r_overlay_drawable_offset_x" format="dimension" />
+        <attr name="r_overlay_drawable_offset_y" format="dimension" />
+        <attr name="r_overlay_drawable_lt" format="reference" />
+        <attr name="r_overlay_drawable_rt" format="reference" />
+        <attr name="r_overlay_drawable_lb" format="reference" />
+        <attr name="r_overlay_drawable_rb" format="reference" />
+        <attr name="r_overlay_drawable_center" format="reference" />
+    </declare-styleable>
+</resources>

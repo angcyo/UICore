@@ -1,0 +1,22 @@
+apply from: allGradle.libBase
+apply plugin: 'kotlin-kapt'
+
+android {
+    defaultConfig {
+        minSdkVersion 17
+    }
+}
+
+dependencies {
+    implementation project(allModule.library)
+    implementation project(allModule.widget)
+
+    def glide_version = "4.11.0"
+    //http://bumptech.github.io/glide/int/okhttp3.html
+    implementation "com.github.bumptech.glide:okhttp3-integration:$glide_version"
+    kapt "com.github.bumptech.glide:compiler:$glide_version"
+
+    //https://github.com/koral--/android-gif-drawable
+    //https://jcenter.bintray.com/pl/droidsonroids/gif/
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
+}

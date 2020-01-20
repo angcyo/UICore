@@ -4,6 +4,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.Rect
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.view.*
 import android.view.animation.DecelerateInterpolator
@@ -139,6 +140,26 @@ fun View.addTo(parent: ViewGroup?, action: (View) -> Unit = {}) {
     }
     action(this)
     parent?.addView(this)
+}
+
+fun View.drawRect(rect: Rect) {
+    rect.set(paddingLeft, paddingTop, measuredWidth - paddingRight, measuredHeight - paddingBottom)
+}
+
+fun View.drawRect(rect: RectF) {
+    rect.set(
+        paddingLeft.toFloat(), paddingTop.toFloat(),
+        (measuredWidth - paddingRight).toFloat(),
+        (measuredHeight - paddingBottom).toFloat()
+    )
+}
+
+fun View.viewRect(rect: Rect) {
+    rect.set(0, 0, measuredWidth, measuredHeight)
+}
+
+fun View.viewRect(rect: RectF) {
+    rect.set(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat())
 }
 
 //</editor-fold desc="基础扩展">

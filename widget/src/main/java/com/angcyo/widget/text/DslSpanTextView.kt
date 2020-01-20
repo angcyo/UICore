@@ -60,6 +60,7 @@ open class DslSpanTextView : AppCompatTextView {
         super.drawableStateChanged()
         val state = onCreateDrawableState(0)
 
+        //设置内置span的状态
         spans { _, span ->
             if (span is IDrawableSpan) {
                 span.setDrawableState(state)
@@ -68,6 +69,7 @@ open class DslSpanTextView : AppCompatTextView {
     }
 
     fun setDrawableColor(@ColorInt color: Int) {
+        //设置内置span的颜色
         spans { _, span ->
             if (span is IDrawableSpan) {
                 span.setDrawableColor(color)
@@ -96,6 +98,7 @@ open class DslSpanTextView : AppCompatTextView {
     }
 
     fun _measureWeightSpan(widthSize: Int, heightSize: Int) {
+        //设置内置span的weight支持
         spans { _, span ->
             if (span is IWeightSpan) {
                 span.onMeasure(widthSize, heightSize)

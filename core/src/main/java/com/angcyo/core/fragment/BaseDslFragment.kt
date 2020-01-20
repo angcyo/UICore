@@ -29,10 +29,10 @@ open class BaseDslFragment : BaseTitleFragment() {
 
     override fun onInitFragment() {
         super.onInitFragment()
-        initDslLayout()
+        onInitDslLayout()
     }
 
-    open fun initDslLayout() {
+    open fun onInitDslLayout() {
         _vh.rv(R.id.lib_recycler_view)?.apply {
             baseDslItemDecoration?.let { addItemDecoration(it) }
             hoverItemDecoration?.attachToRecyclerView(this)

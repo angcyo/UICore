@@ -1,6 +1,5 @@
 package com.angcyo.http
 
-import com.angcyo.http.DslHttp.dslHttpConfig
 import com.angcyo.http.base.*
 import com.angcyo.http.exception.HttpDataException
 import com.angcyo.http.rx.observableToMain
@@ -79,31 +78,34 @@ object DslHttp {
     fun config(action: DslHttpConfig.() -> Unit) {
         dslHttpConfig.action()
     }
+
+    fun init() {
+        val baseUrl = dslHttpConfig.onGetBaseUrl()
+
+        if (baseUrl.isEmpty()) {
+            throw NullPointerException("请先初始化[DslHttp.config{ ... }]")
+        }
+
+        val client = dslHttpConfig.onBuildHttpClient(
+            dslHttpConfig.defaultOkHttpClientBuilder.apply {
+                dslHttpConfig.onConfigOkHttpClient.forEach {
+                    it(this)
+                }
+            }
+        )
+        dslHttpConfig.okHttpClient = client
+
+        val retrofit = dslHttpConfig.onBuildRetrofit(dslHttpConfig.defaultRetrofitBuilder, client)
+        dslHttpConfig.retrofit = retrofit
+    }
 }
 
 /**
  * 通用接口请求
  * */
 fun <T> dslHttp(service: Class<T>): T {
-
-    val baseUrl = dslHttpConfig.onGetBaseUrl()
-
-    if (baseUrl.isEmpty()) {
-        throw NullPointerException("请先初始化[DslHttp.config{ ... }]")
-    }
-
-    val client = dslHttpConfig.onBuildHttpClient(
-        dslHttpConfig.defaultOkHttpClientBuilder.apply {
-            dslHttpConfig.onConfigOkHttpClient.forEach {
-                it(this)
-            }
-        }
-    )
-    dslHttpConfig.okHttpClient = client
-
-    val retrofit = dslHttpConfig.onBuildRetrofit(dslHttpConfig.defaultRetrofitBuilder, client)
-    dslHttpConfig.retrofit = retrofit
-
+    DslHttp.init()
+    val retrofit = DslHttp.dslHttpConfig.retrofit!!
     /*如果单例API对象的话, 就需要在动态切换BaseUrl的时候, 重新创建. 否则不会生效*/
     return retrofit.create(service)
 }
@@ -122,7 +124,7 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
 
     if (requestConfig.autoConnectUrl && !requestConfig.url.startsWith("http")) {
         requestConfig.url =
-            connectUrl(dslHttpConfig.onGetBaseUrl(), requestConfig.url)
+            connectUrl(DslHttp.dslHttpConfig.onGetBaseUrl(), requestConfig.url)
     }
 
     return when (requestConfig.method) {

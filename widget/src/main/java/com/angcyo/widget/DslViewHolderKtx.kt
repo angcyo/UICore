@@ -5,6 +5,7 @@ import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 import com.angcyo.tablayout.DslTabLayout
 import com.angcyo.widget.edit.DslEditText
+import com.angcyo.widget.image.DslImageView
 import com.angcyo.widget.layout.DslSoftInputLayout
 import com.angcyo.widget.recycler.DslRecyclerView
 import com.angcyo.widget.text.DslTextView
@@ -50,6 +51,10 @@ fun DslViewHolder._et(@IdRes id: Int): DslEditText? {
 }
 
 fun DslViewHolder._ev(@IdRes id: Int): DslEditText? {
+    return v(id)
+}
+
+fun DslViewHolder._img(@IdRes id: Int): DslImageView? {
     return v(id)
 }
 

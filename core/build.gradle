@@ -8,7 +8,6 @@ android {
 
 dependencies {
     api project(allModule.fragment)
-    api project(allModule.dslitem)
     api project(allModule.coroutine)
     api project(allModule.http)
     api 'androidx.core:core-ktx:1.1.0'

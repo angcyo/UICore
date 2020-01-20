@@ -150,6 +150,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    // For Kotlin projects https://developer.android.com/studio/write/java8-support.html
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
     /*Gradle3.0 以下的方法*/
 //    getApplicationVariants().all { variant ->
 //        variant.outputs.each { output ->

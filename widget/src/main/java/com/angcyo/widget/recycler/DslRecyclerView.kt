@@ -14,6 +14,14 @@ import com.angcyo.widget.R
  */
 
 open class DslRecyclerView : RecyclerView {
+
+    /** 通过[V] [H] [GV2] [GH3] [SV2] [SV3] 方式, 设置 [LayoutManager] */
+    var layout: String? = null
+        set(value) {
+            field = value
+            value?.run { resetLayoutManager(this) }
+        }
+
     constructor(context: Context) : super(context) {
         initAttribute(context)
     }
@@ -25,7 +33,7 @@ open class DslRecyclerView : RecyclerView {
     fun initAttribute(context: Context, attributeSet: AttributeSet? = null) {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.DslRecyclerView)
         typedArray.getString(R.styleable.DslRecyclerView_r_layout_manager)?.let {
-            resetLayoutManager(it)
+            layout = it
         }
         typedArray.recycle()
     }
@@ -40,6 +48,9 @@ open class DslRecyclerView : RecyclerView {
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        if (layoutManager == null) {
+            layout?.run { layout = this }
+        }
     }
 
     override fun onDetachedFromWindow() {

@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import androidx.annotation.ColorInt
 import androidx.core.graphics.drawable.DrawableCompat
+import com.angcyo.library.ex.undefined_int
 
 /**
  * Created by angcyo on ：2017/12/15 15:01
@@ -16,14 +17,14 @@ import androidx.core.graphics.drawable.DrawableCompat
  */
 
 /**将Drawable放在inRect的指定点centerPoint的位置*/
-public fun Drawable.getBoundsWith(centerPoint: Point, inRect: Rect) = Rect().apply {
+fun Drawable.getBoundsWith(centerPoint: Point, inRect: Rect) = Rect().apply {
     left = inRect.left + centerPoint.x - intrinsicWidth / 2
     top = inRect.top + centerPoint.y - intrinsicHeight / 2
     right = left + centerPoint.x + intrinsicWidth / 2
     bottom = top + centerPoint.y + intrinsicHeight / 2
 }
 
-public fun Drawable?.color(filterColor: Int) = this?.run { filterDrawable(filterColor) }
+fun Drawable?.color(filterColor: Int) = this?.run { filterDrawable(filterColor) }
 
 /**
  * 颜色过滤
@@ -60,7 +61,7 @@ fun Drawable?.filterDrawable(@ColorInt color: Int): Drawable? {
     }
 }
 
-public fun Drawable?.copy(res: Resources? = null) = this?.mutate()?.constantState?.newDrawable(res)
+fun Drawable?.copy(res: Resources? = null) = this?.mutate()?.constantState?.newDrawable(res)
 
 fun Drawable?.tintDrawableColor(color: Int): Drawable? {
 
@@ -78,4 +79,14 @@ fun Drawable?.tintDrawableColor(color: Int): Drawable? {
     }
 
     return wrappedDrawable
+}
+
+/**初始化bounds*/
+fun Drawable.initBounds(width: Int = undefined_int, height: Int = undefined_int): Drawable {
+    if (bounds.isEmpty) {
+        val w = if (width == undefined_int) minimumWidth else width
+        val h = if (height == undefined_int) minimumHeight else height
+        bounds.set(0, 0, w, h)
+    }
+    return this
 }
