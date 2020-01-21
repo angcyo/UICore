@@ -292,7 +292,17 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
             //一顿操作之后, 最终fm中, 应该有的Fragment列表
             val fmFragmentList = mutableListOf<Fragment>()
 
-            fmFragmentList.addAll(fm.fragments)
+            val allValidityFragment = mutableListOf<Fragment>()
+            val allNoViewFragment = mutableListOf<Fragment>()
+            fm.fragments.forEach {
+                if (it.view == null) {
+                    allNoViewFragment.add(it)
+                } else {
+                    allValidityFragment.add(it)
+                }
+            }
+
+            fmFragmentList.addAll(allValidityFragment)
             fmFragmentList.addAll(showFragmentList)
             fmFragmentList.removeAll(removeFragmentList)
 
@@ -300,7 +310,7 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
 
             //anim 动画需要在op之前设置, 否则不会有效果
             if (enterAnimRes == undefined_res && exitAnimRes == undefined_res) {
-                if (showFragmentList.isNotEmpty() && fm.getAllValidityFragment().isNotEmpty()) {
+                if (showFragmentList.isNotEmpty() && allValidityFragment.isNotEmpty()) {
                     //显示F,并且非第一个Fragment
                     setCustomAnimations(
                         DEFAULT_SHOW_ENTER_ANIM,
@@ -321,28 +331,9 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
                 setCustomAnimations(enterAnimRes, exitAnimRes, enterAnimRes, exitAnimRes)
             }
 
-            val lastFragment = fmFragmentList.lastOrNull()
-
             //op remove
             removeFragmentList.forEach {
                 remove(it)
-            }
-
-            //op show
-            showFragmentList.forEach { fragment ->
-                when {
-                    fragment.isDetached -> attach(fragment)
-                    fragment.isAdded -> {
-                    }
-                    else -> add(
-                        containerViewId,
-                        fragment,
-                        fragment.getFragmentTag()
-                    )
-                }
-                if (fragment != lastFragment) {
-                    setMaxLifecycle(fragment, Lifecycle.State.STARTED)
-                }
             }
 
             //op hide
@@ -356,6 +347,29 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
                     hide(fragment)
                 } else {
                     show(fragment)
+                }
+            }
+
+            //no view
+            allNoViewFragment.forEach {
+                setMaxLifecycle(it, Lifecycle.State.STARTED)
+            }
+
+            //op show
+            val lastFragment = fmFragmentList.lastOrNull()
+            showFragmentList.forEach { fragment ->
+                when {
+                    fragment.isDetached -> attach(fragment)
+                    fragment.isAdded -> {
+                    }
+                    else -> add(
+                        containerViewId,
+                        fragment,
+                        fragment.getFragmentTag()
+                    )
+                }
+                if (fragment != lastFragment) {
+                    setMaxLifecycle(fragment, Lifecycle.State.STARTED)
                 }
             }
 

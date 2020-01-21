@@ -1,9 +1,11 @@
 package com.angcyo.http.interceptor
 
+import com.angcyo.http.base.isPlaintext
 import com.angcyo.http.base.readString
 import com.angcyo.library.L
 import com.angcyo.library.ex.isDebug
 import okhttp3.*
+import okio.Buffer
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -89,9 +91,15 @@ open class LogInterceptor : Interceptor {
                     //加密了数据
                     appendln("(encoded body omitted)")
                 } else {
-                    appendln(readString())
+                    val buffer = Buffer()
+                    writeTo(buffer)
+                    if (buffer.isPlaintext()) {
+                        appendln(readString())
+                    } else {
+                        appendln("binary request body")
+                    }
                 }
-            } ?: appendln("no request body!")
+            } ?: appendln(" no request body!")
         }
     }
 
@@ -115,7 +123,11 @@ open class LogInterceptor : Interceptor {
                     appendln("(encoded body omitted)")
                 } else {
                     try {
-                        appendln(readString())
+                        if (source().buffer.isPlaintext()) {
+                            appendln(readString())
+                        } else {
+                            appendln("binary response body.")
+                        }
                     } catch (e: Exception) {
                         appendln(e.message)
                     }

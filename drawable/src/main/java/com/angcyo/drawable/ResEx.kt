@@ -89,7 +89,5 @@ fun getDimen(@DimenRes id: Int): Int {
 }
 
 fun getDrawable(@DrawableRes id: Int): Drawable? {
-    return ContextCompat.getDrawable(app(), id)?.apply {
-        setBounds(0, 0, minimumWidth, minimumHeight)
-    }
+    return ContextCompat.getDrawable(app(), id)?.initBounds()
 }

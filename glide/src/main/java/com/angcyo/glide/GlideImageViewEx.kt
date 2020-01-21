@@ -3,7 +3,9 @@ package com.angcyo.glide
 import android.app.Activity
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
+import androidx.annotation.IdRes
 import com.angcyo.library.L
+import com.angcyo.widget.DslViewHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 
@@ -13,6 +15,10 @@ import com.bumptech.glide.RequestBuilder
  * @author angcyo
  * @date 2020/01/20
  */
+
+fun DslViewHolder.giv(@IdRes id: Int): GlideImageView? {
+    return v(id)
+}
 
 fun ImageView.load(url: String?, configRequest: RequestBuilder<Drawable>.() -> Unit = {}) {
     if (url.isNullOrBlank()) {

@@ -3,6 +3,7 @@ package com.angcyo.http.base
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import okio.Buffer
+import java.io.EOFException
 import java.net.URLDecoder
 import java.nio.charset.Charset
 
@@ -49,5 +50,28 @@ fun RequestBody?.readString(charsetName: String = "UTF-8"): String {
         writeTo(it)
         val charset: Charset = Charset.forName(charsetName)
         it.clone().readString(charset)
+    }
+}
+
+/**是否是明文*/
+fun Buffer.isPlaintext(): Boolean {
+    return try {
+        val prefix = Buffer()
+        val byteCount = if (buffer.size < 64) buffer.size else 64
+        buffer.copyTo(prefix, 0, byteCount)
+        for (i in 0..15) {
+            if (prefix.exhausted()) {
+                break
+            }
+            val codePoint = prefix.readUtf8CodePoint()
+            if (Character.isISOControl(codePoint) &&
+                !Character.isWhitespace(codePoint)
+            ) {
+                return false
+            }
+        }
+        true
+    } catch (e: EOFException) {
+        false // Truncated UTF-8 sequence.
     }
 }

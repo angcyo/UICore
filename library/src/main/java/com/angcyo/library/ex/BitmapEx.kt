@@ -1,0 +1,95 @@
+package com.angcyo.library.ex
+
+import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.provider.MediaStore
+import android.util.Base64
+import com.angcyo.library.utils.fastBlur
+import java.io.ByteArrayOutputStream
+
+/**
+ *
+ * Email:angcyo@126.com
+ * @author angcyo
+ * @date 2020/01/21
+ */
+
+public fun ByteArray.toBitmap(): Bitmap {
+    return BitmapFactory.decodeByteArray(this, 0, this.size)
+}
+
+public fun Bitmap.share(context: Context, shareQQ: Boolean = false, chooser: Boolean = true) {
+    val uri =
+        Uri.parse(MediaStore.Images.Media.insertImage(context.contentResolver, this, null, null))
+    var intent = Intent()
+    intent.action = Intent.ACTION_SEND //设置分享行为
+    intent.type = "image/*" //设置分享内容的类型
+    intent.putExtra(Intent.EXTRA_STREAM, uri)
+    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    //List<ResolveInfo> resolveInfos = context.getPackageManager().queryIntentActivities(intent, PackageManager.GET_RESOLVED_FILTER);
+    if (shareQQ) {
+        configQQIntent(intent)
+        if (chooser) {
+            intent = Intent.createChooser(intent, "分享图片") //QQ WX分享的BUG
+        }
+    } else {
+        intent = Intent.createChooser(intent, "分享图片") //QQ WX分享的BUG
+    }
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    context.startActivity(intent)
+}
+
+
+fun configQQIntent(intent: Intent) {
+//        intent.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");//微信朋友
+//        intent.setClassName("com.tencent.mobileqq", "cooperation.qqfav.widget.QfavJumpActivity");//保存到QQ收藏
+//        intent.setClassName("com.tencent.mobileqq", "cooperation.qlink.QlinkShareJumpActivity");//QQ面对面快传
+//        intent.setClassName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.qfileJumpActivity");//传给我的电脑
+    intent.setClassName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.JumpActivity")
+    //QQ好友或QQ群
+    //        intent.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");//微信朋友圈，仅支持分享图片
+}
+
+/**模糊图片*/
+public fun Bitmap.blur(scale: Float = 1f /*0~1*/, radius: Float = 25f /*1~25*/): Bitmap? {
+    return fastBlur(this, scale, radius)
+}
+
+
+/**将图片转成字节数组*/
+public fun Bitmap.toBytes(
+    format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG,
+    quality: Int = 100
+): ByteArray? {
+    var out: ByteArrayOutputStream? = null
+    var bytes: ByteArray? = null
+    try {
+        out = ByteArrayOutputStream()
+        this.compress(format, quality, out)
+        out.flush()
+
+        bytes = out.toByteArray()
+
+        out.close()
+    } finally {
+        out?.close()
+    }
+    return bytes
+}
+
+/**
+ * 将图片转成base64字符串
+ * */
+public fun Bitmap.toBase64(
+    format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG,
+    quality: Int = 100
+): String {
+    var result = ""
+    toBytes(format, quality)?.let {
+        result = Base64.encodeToString(it, Base64.NO_WRAP /*去掉/n符*/)
+    }
+    return result
+}

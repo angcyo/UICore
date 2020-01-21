@@ -48,10 +48,10 @@ object OkType {
     /**
      * 根据url, 回调对应图片的类型
      */
-    fun type(url: String, listener: OnImageTypeListener?) {
+    fun type(url: String, listener: OnImageTypeListener?): Call? {
         if (TextUtils.isEmpty(url)) {
             listener?.onImageType(url, ImageType.UNKNOWN)
-            return
+            return null
         }
         val type = imageTypeCache[url]
         listener?.onLoadStart()
@@ -84,10 +84,12 @@ object OkType {
                         }
                     })
                 }
+                return call
             }
         } else {
             listener?.onImageType(url, type)
         }
+        return null
     }
 
     private fun typeCheckEnd(

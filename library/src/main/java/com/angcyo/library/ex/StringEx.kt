@@ -1,8 +1,14 @@
 package com.angcyo.library.ex
 
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.net.Uri
 import android.text.SpannableStringBuilder
+import android.text.TextUtils
+import android.util.Base64
+import android.webkit.MimeTypeMap
 import androidx.annotation.ColorInt
+import java.util.regex.Pattern
 
 /**
  *
@@ -83,3 +89,29 @@ fun SpannableStringBuilder.safe(): SpannableStringBuilder {
     return delete(kotlin.math.max(0, lastIndex), kotlin.math.max(0, length))
 }
 
+/**判断字符串是否是纯数字*/
+public fun String.isNumber(): Boolean {
+    if (TextUtils.isEmpty(this)) {
+        return false
+    }
+    val pattern = Pattern.compile("^[-\\+]?[\\d]+$")
+    return pattern.matcher(this).matches()
+}
+
+/**将base64字符串, 转换成图片*/
+public fun String.toBitmap(): Bitmap {
+    val bytes = Base64.decode(this, Base64.NO_WRAP)
+    return bytes.toBitmap()
+}
+
+/**url中的参数获取*/
+public fun String.queryParameter(key: String): String? {
+    val uri = Uri.parse(this)
+    return uri.getQueryParameter(key)
+}
+
+/**获取url或者文件扩展名 对应的mimeType*/
+public fun String.mimeType(): String? {
+    return MimeTypeMap.getSingleton()
+        .getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(this))
+}
