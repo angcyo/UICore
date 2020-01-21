@@ -17,10 +17,16 @@ import java.io.File
 class GifDrawableImageViewTarget(
     val imageView: ImageView,
     val autoPlayGif: Boolean = true,
-    val transition: DrawableCrossFadeTransition? = null
+    transition: Boolean = false
 ) : CustomViewTarget<ImageView, File>(imageView), Transition.ViewAdapter {
 
     var gifDrawable: GifDrawable? = null
+
+    val drawableCrossFadeTransition: DrawableCrossFadeTransition? = if (transition) {
+        DrawableCrossFadeTransition(300, false)
+    } else {
+        null
+    }
 
     override fun onStop() {
         super.onStop()
@@ -39,13 +45,12 @@ class GifDrawableImageViewTarget(
         gifDrawable?.recycle()
     }
 
-    override fun onResourceReady(
-        resource: File,
-        tran: Transition<in File>?
-    ) {
+    override fun onResourceReady(resource: File, transition: Transition<in File>?) {
         gifDrawable = gifOfFile(resource)
         maybeUpdateAnimatable()
-        if (transition == null || !transition.transition(gifDrawable, this)) {
+        if (drawableCrossFadeTransition == null ||
+            !drawableCrossFadeTransition.transition(gifDrawable, this)
+        ) {
             setDrawable(gifDrawable)
         }
     }

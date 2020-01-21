@@ -9,18 +9,23 @@ import android.widget.ImageView
 import android.widget.ImageView.ScaleType
 import com.angcyo.http.OkType
 import com.angcyo.library.L
+import com.angcyo.library.app
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.TransitionOptions
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.Transformation
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.Headers
 import com.bumptech.glide.load.model.LazyHeaders
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.target.DrawableImageViewTarget
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.bumptech.glide.request.transition.DrawableCrossFadeTransition
+import jp.wasabeef.glide.transformations.GrayscaleTransformation
+import jp.wasabeef.glide.transformations.SupportRSBlurTransformation
 import okhttp3.Call
 import pl.droidsonroids.gif.GifDrawable
 import java.io.File
@@ -28,12 +33,26 @@ import java.io.File
 
 /**
  *
+ * https://muyangmin.github.io/glide-docs-cn/
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/01/21
  */
 
 class DslGlide {
+    companion object {
+        //https://muyangmin.github.io/glide-docs-cn/doc/caching.html#%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86
+
+        fun clearDiskCache() {
+            Glide.get(app()).clearDiskCache()
+        }
+
+        fun clearMemory() {
+            Glide.get(app()).clearMemory()
+        }
+
+    }
 
     /**设置目标*/
     var targetView: ImageView? = null
@@ -70,7 +89,13 @@ class DslGlide {
     var overrideHeight: Int = -1
 
     /**开始过渡动画*/
-    var transition = true
+    var transition = false
+
+    /**
+     * 转换
+     * https://github.com/wasabeef/glide-transformations
+     * */
+    val transformations = mutableListOf<Transformation<Bitmap>>()
 
     /**开启[checkGifType]时, 才有效*/
     var onTypeCallback: (OkType.ImageType) -> Unit = {}
@@ -80,6 +105,10 @@ class DslGlide {
 
     /**自定义请求头*/
     var onConfigHeader: (LazyHeaders.Builder) -> Unit = {}
+
+    /**[RequestListener]*/
+    var onLoadFailed: ((model: String?, error: GlideException?) -> Boolean) = { _, _ -> false }
+    var onLoadSucceed: ((model: String?, data: Any?) -> Boolean) = { _, _ -> false }
 
     //<editor-fold desc="方法">
 
@@ -103,17 +132,31 @@ class DslGlide {
         targetView?.clear()
     }
 
-    /**重置属性*/
+    /**重置属性, 回调不清理, Drawable不清理*/
     fun reset() {
         clear()
         checkGifType = false
         autoPlayGif = true
         originalSize = false
-        transition = true
+        transition = false
         overrideWidth = -1
         overrideHeight = -1
-        onTypeCallback = {}
-        onConfigRequest = { _, _ -> }
+        transformations.clear()
+    }
+
+    /**模糊*/
+    fun blur(radius: Int = 25, sampling: Int = 1) {
+        addTransformation(SupportRSBlurTransformation(radius, sampling))
+    }
+
+    /**灰度*/
+    fun grayscale() {
+        addTransformation(GrayscaleTransformation())
+    }
+
+    /**追加一个转换器*/
+    fun addTransformation(transformation: Transformation<Bitmap>) {
+        transformations.add(transformation)
     }
 
     //</editor-fold desc="方法">
@@ -156,19 +199,13 @@ class DslGlide {
                 _glide()
                     .download(GlideUrl(string, _header()))
                     .override(Target.SIZE_ORIGINAL)
-                    .configRequest(File::class.java)
-                    .into(
-                        GifDrawableImageViewTarget(
-                            targetView!!,
-                            autoPlayGif,
-                            if (transition) DrawableCrossFadeTransition(300, false) else null
-                        )
-                    )
+                    .configRequest(string, File::class.java)
+                    .into(GifDrawableImageViewTarget(targetView!!, autoPlayGif, transition))
             } else {
                 _glide()
                     .load(GlideUrl(string, _header()))
-                    .configRequest(Drawable::class.java)
-                    .into(DrawableImageViewTarget(targetView!!).waitForLayout())
+                    .configRequest(string, Drawable::class.java)
+                    .into(GlideDrawableImageViewTarget(targetView!!))
             }
         }
     }
@@ -217,14 +254,14 @@ class DslGlide {
 
     //配置请求
     @SuppressLint("CheckResult")
-    fun <T> RequestBuilder<T>.configRequest(model: Class<*>): RequestBuilder<T> {
+    fun <T> RequestBuilder<T>.configRequest(string: String?, model: Class<*>): RequestBuilder<T> {
 
         //override
         if (originalSize) {
             override(Target.SIZE_ORIGINAL)
         }
-        if (overrideWidth > 0 && overrideHeight > 0) {
-            override(overrideWidth, overrideHeight)
+        if (this@DslGlide.overrideWidth > 0 && this@DslGlide.overrideHeight > 0) {
+            override(this@DslGlide.overrideWidth, this@DslGlide.overrideHeight)
         }
 
         //drawable
@@ -249,6 +286,31 @@ class DslGlide {
         }
 
         //thumbnail https://muyangmin.github.io/glide-docs-cn/doc/options.html#%E7%BC%A9%E7%95%A5%E5%9B%BE-thumbnail-%E8%AF%B7%E6%B1%82
+
+        //https://github.com/wasabeef/glide-transformations
+        transform(*this@DslGlide.transformations.toTypedArray())
+
+        //listener
+        addListener(object : RequestListener<T> {
+            override fun onLoadFailed(
+                e: GlideException?,
+                model: Any?,
+                target: Target<T>?,
+                isFirstResource: Boolean
+            ): Boolean {
+                return this@DslGlide.onLoadFailed(string, e)
+            }
+
+            override fun onResourceReady(
+                resource: T,
+                model: Any?,
+                target: Target<T>?,
+                dataSource: DataSource?,
+                isFirstResource: Boolean
+            ): Boolean {
+                return this@DslGlide.onLoadSucceed(string, resource)
+            }
+        })
 
         //custom
         onConfigRequest(this, model)
@@ -276,3 +338,4 @@ class DslGlide {
     //</editor-fold desc="辅助扩展">
 
 }
+

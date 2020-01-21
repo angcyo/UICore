@@ -1,13 +1,14 @@
 package com.angcyo.drawable
 
 import android.content.res.Resources
-import android.graphics.Point
-import android.graphics.PorterDuff
-import android.graphics.Rect
+import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.TransitionDrawable
 import android.os.Build
 import androidx.annotation.ColorInt
 import androidx.core.graphics.drawable.DrawableCompat
+import com.angcyo.library.app
 import com.angcyo.library.ex.undefined_int
 
 /**
@@ -89,4 +90,34 @@ fun Drawable.initBounds(width: Int = undefined_int, height: Int = undefined_int)
         bounds.set(0, 0, w, h)
     }
     return this
+}
+
+/**复制[Drawable]*/
+fun Drawable.copyDrawable(): Drawable? {
+    var drawable = this
+    var result: Drawable? = null
+    if (drawable is TransitionDrawable) {
+        val transitionDrawable = drawable
+        drawable = transitionDrawable.getDrawable(transitionDrawable.numberOfLayers - 1)
+    }
+    val bounds = drawable.bounds
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+        val width = bounds.width()
+        val height = bounds.height()
+        if (width == 0 || height == 0) {
+            return drawable
+        }
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        drawable.draw(canvas)
+        result = BitmapDrawable(app().resources, bitmap)
+        result.setBounds(bounds)
+    } else {
+        val constantState = drawable.mutate().constantState
+        if (constantState != null) {
+            result = constantState.newDrawable()
+            result.bounds = bounds
+        }
+    }
+    return result
 }

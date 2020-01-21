@@ -1,7 +1,10 @@
 package com.angcyo.glide
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import com.angcyo.library.L
+import com.angcyo.library.ex.simpleHash
 import com.angcyo.widget.image.DslImageView
 
 /**
@@ -39,17 +42,25 @@ open class GlideImageView : DslImageView {
         dslGlide.placeholderDrawable = drawable
     }
 
-    fun load(url: String?, action: DslGlide.() -> Unit = {}) {
+    override fun setImageDrawable(drawable: Drawable?) {
+        super.setImageDrawable(drawable)
+
+        drawable?.apply {
+            L.d("${this@GlideImageView.simpleHash()}:${this.simpleHash()} w:$minimumWidth:$measuredWidth h:$minimumHeight:$minimumHeight")
+        }
+    }
+
+    //<editor-fold desc="操作">
+
+    open fun load(url: String?, reset: Boolean = true, action: DslGlide.() -> Unit = {}) {
         dslGlide.apply {
-            reset()
+            if (reset) {
+                reset()
+            }
             action()
             load(url)
         }
     }
-
-    //</editor-fold desc="Glide操作">
-
-    //<editor-fold desc="操作">
 
     //</editor-fold desc="操作">
 }
