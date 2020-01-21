@@ -17,11 +17,11 @@ import java.io.ByteArrayOutputStream
  * @date 2020/01/21
  */
 
-public fun ByteArray.toBitmap(): Bitmap {
+fun ByteArray.toBitmap(): Bitmap {
     return BitmapFactory.decodeByteArray(this, 0, this.size)
 }
 
-public fun Bitmap.share(context: Context, shareQQ: Boolean = false, chooser: Boolean = true) {
+fun Bitmap.share(context: Context, shareQQ: Boolean = false, chooser: Boolean = true) {
     val uri =
         Uri.parse(MediaStore.Images.Media.insertImage(context.contentResolver, this, null, null))
     var intent = Intent()
@@ -54,13 +54,12 @@ fun configQQIntent(intent: Intent) {
 }
 
 /**模糊图片*/
-public fun Bitmap.blur(scale: Float = 1f /*0~1*/, radius: Float = 25f /*1~25*/): Bitmap? {
+fun Bitmap.blur(scale: Float = 1f /*0~1*/, radius: Float = 25f /*1~25*/): Bitmap? {
     return fastBlur(this, scale, radius)
 }
 
-
 /**将图片转成字节数组*/
-public fun Bitmap.toBytes(
+fun Bitmap.toBytes(
     format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG,
     quality: Int = 100
 ): ByteArray? {
@@ -83,7 +82,7 @@ public fun Bitmap.toBytes(
 /**
  * 将图片转成base64字符串
  * */
-public fun Bitmap.toBase64(
+fun Bitmap.toBase64(
     format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG,
     quality: Int = 100
 ): String {

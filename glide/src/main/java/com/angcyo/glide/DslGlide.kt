@@ -13,16 +13,18 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.TransitionOptions
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.Headers
+import com.bumptech.glide.load.model.LazyHeaders
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.DrawableImageViewTarget
-import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
-import com.bumptech.glide.request.transition.Transition
+import com.bumptech.glide.request.transition.DrawableCrossFadeTransition
 import okhttp3.Call
 import pl.droidsonroids.gif.GifDrawable
 import java.io.File
+
 
 /**
  *
@@ -73,7 +75,11 @@ class DslGlide {
     /**开启[checkGifType]时, 才有效*/
     var onTypeCallback: (OkType.ImageType) -> Unit = {}
 
-    var onConfigRequest: (builder: RequestBuilder<*>) -> Unit = {}
+    /**自定请求选项*/
+    var onConfigRequest: (builder: RequestBuilder<*>, model: Class<*>) -> Unit = { _, _ -> }
+
+    /**自定义请求头*/
+    var onConfigHeader: (LazyHeaders.Builder) -> Unit = {}
 
     //<editor-fold desc="方法">
 
@@ -107,14 +113,14 @@ class DslGlide {
         overrideWidth = -1
         overrideHeight = -1
         onTypeCallback = {}
-        onConfigRequest = {}
+        onConfigRequest = { _, _ -> }
     }
 
     //</editor-fold desc="方法">
 
     //<editor-fold desc="辅助方法">
 
-    fun _checkLoad(action: () -> Unit) {
+    inline fun _checkLoad(action: () -> Unit) {
         when {
             isDestroyed() -> L.w("activity isDestroyed!")
             targetView == null -> L.w("targetView is null!")
@@ -148,74 +154,21 @@ class DslGlide {
         _checkLoad {
             if (asGif) {
                 _glide()
-                    .download(string)
-                    .configRequest()
-                    .into(object : CustomTarget<File>() {
-                        override fun onLoadStarted(placeholder: Drawable?) {
-                            super.onLoadStarted(placeholder)
-                            setDrawable(placeholder)
-                        }
-
-                        override fun onLoadFailed(errorDrawable: Drawable?) {
-                            super.onLoadFailed(errorDrawable)
-                            setDrawable(errorDrawable)
-                        }
-
-                        override fun onLoadCleared(placeholder: Drawable?) {
-                            setDrawable(placeholder)
-                        }
-
-                        override fun onResourceReady(
-                            resource: File,
-                            transition: Transition<in File>?
-                        ) {
-                            setDrawable(gifOfFile(resource)?.apply {
-                                if (autoPlayGif) {
-                                    start()
-                                } else {
-                                    stop()
-                                }
-                            })
-                            //clear()
-                        }
-
-                        fun setDrawable(drawable: Drawable?) {
-                            targetView?.setImageDrawable(drawable)
-                        }
-                    })
+                    .download(GlideUrl(string, _header()))
+                    .override(Target.SIZE_ORIGINAL)
+                    .configRequest(File::class.java)
+                    .into(
+                        GifDrawableImageViewTarget(
+                            targetView!!,
+                            autoPlayGif,
+                            if (transition) DrawableCrossFadeTransition(300, false) else null
+                        )
+                    )
             } else {
                 _glide()
-                    .load(string)
-                    .configRequest()
-                    .into(object : DrawableImageViewTarget(targetView!!) {
-                        override fun getSize(cb: SizeReadyCallback) {
-                            super.getSize(cb)
-                        }
-
-                        override fun onLoadCleared(placeholder: Drawable?) {
-                            super.onLoadCleared(placeholder)
-                        }
-
-                        override fun onLoadStarted(placeholder: Drawable?) {
-                            super.onLoadStarted(placeholder)
-                        }
-
-                        override fun onLoadFailed(errorDrawable: Drawable?) {
-                            super.onLoadFailed(errorDrawable)
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable,
-                            transition: Transition<in Drawable>?
-                        ) {
-                            super.onResourceReady(resource, transition)
-                            //getView().clear()
-                        }
-
-                        override fun setResource(resource: Drawable?) {
-                            super.setResource(resource)
-                        }
-                    }.waitForLayout())
+                    .load(GlideUrl(string, _header()))
+                    .configRequest(Drawable::class.java)
+                    .into(DrawableImageViewTarget(targetView!!).waitForLayout())
             }
         }
     }
@@ -232,6 +185,14 @@ class DslGlide {
             }
         }
         return false
+    }
+
+    fun _header(): Headers {
+        return LazyHeaders.Builder()
+            .apply {
+                onConfigHeader(this)
+            }
+            .build()
     }
 
     //</editor-fold desc="辅助方法">
@@ -256,7 +217,7 @@ class DslGlide {
 
     //配置请求
     @SuppressLint("CheckResult")
-    inline fun <reified T> RequestBuilder<T>.configRequest(): RequestBuilder<T> {
+    fun <T> RequestBuilder<T>.configRequest(model: Class<*>): RequestBuilder<T> {
 
         //override
         if (originalSize) {
@@ -279,18 +240,18 @@ class DslGlide {
 
         //transition https://muyangmin.github.io/glide-docs-cn/doc/options.html#%E8%BF%87%E6%B8%A1%E9%80%89%E9%A1%B9
         if (transition) {
-            val clazz = T::class.java
-            if (Bitmap::class.java == clazz) {
-                transition(BitmapTransitionOptions.withCrossFade() as TransitionOptions<*, T>)
-            } else if (Drawable::class.java.isAssignableFrom(clazz)) {
-                transition(DrawableTransitionOptions.withCrossFade() as TransitionOptions<*, T>)
+            when (model) {
+                Bitmap::class.java -> transition(BitmapTransitionOptions.withCrossFade() as TransitionOptions<*, T>)
+                Drawable::class.java -> transition(DrawableTransitionOptions.withCrossFade() as TransitionOptions<*, T>)
+                File::class.java -> {
+                }
             }
         }
 
         //thumbnail https://muyangmin.github.io/glide-docs-cn/doc/options.html#%E7%BC%A9%E7%95%A5%E5%9B%BE-thumbnail-%E8%AF%B7%E6%B1%82
 
         //custom
-        onConfigRequest(this)
+        onConfigRequest(this, model)
 
         //copy from com.bumptech.glide.RequestBuilder.into(android.widget.ImageView)
         if (!isTransformationSet && isTransformationAllowed && targetView?.scaleType != null) {

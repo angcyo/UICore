@@ -90,7 +90,7 @@ fun SpannableStringBuilder.safe(): SpannableStringBuilder {
 }
 
 /**判断字符串是否是纯数字*/
-public fun String.isNumber(): Boolean {
+fun String.isNumber(): Boolean {
     if (TextUtils.isEmpty(this)) {
         return false
     }
@@ -99,19 +99,96 @@ public fun String.isNumber(): Boolean {
 }
 
 /**将base64字符串, 转换成图片*/
-public fun String.toBitmap(): Bitmap {
+fun String.toBitmap(): Bitmap {
     val bytes = Base64.decode(this, Base64.NO_WRAP)
     return bytes.toBitmap()
 }
 
 /**url中的参数获取*/
-public fun String.queryParameter(key: String): String? {
+fun String.queryParameter(key: String): String? {
     val uri = Uri.parse(this)
     return uri.getQueryParameter(key)
 }
 
 /**获取url或者文件扩展名 对应的mimeType*/
-public fun String.mimeType(): String? {
+fun String.mimeType(): String? {
     return MimeTypeMap.getSingleton()
         .getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(this))
+}
+
+/**获取字符串中所有匹配的数据(部分匹配), 更像是contains的关系*/
+fun CharSequence?.patternList(regex: String?): MutableList<String> {
+    val result = mutableListOf<String>()
+    if (this == null) {
+        return result
+    }
+    regex?.let {
+        val matcher = regex.toPattern().matcher(this)
+        while (matcher.find()) {
+            result.add(matcher.group())
+        }
+    }
+    return result
+}
+
+/**是否匹配成功(完成匹配)*/
+fun CharSequence?.pattern(regex: String?, allowEmpty: Boolean = true): Boolean {
+
+    if (TextUtils.isEmpty(this)) {
+        if (allowEmpty) {
+            return true
+        }
+    }
+
+    if (this == null) {
+        return false
+    }
+    if (regex == null) {
+        if (allowEmpty) {
+            return true
+        }
+        return !TextUtils.isEmpty(this)
+    }
+    val matcher = regex.toPattern().matcher(this)
+    return matcher.matches()
+}
+
+/**列表中的所有正则都匹配*/
+fun CharSequence?.pattern(regexList: Iterable<String>, allowEmpty: Boolean = true): Boolean {
+    if (TextUtils.isEmpty(this)) {
+        if (allowEmpty) {
+            return true
+        }
+    }
+
+    if (this == null) {
+        return false
+    }
+
+    if (!regexList.iterator().hasNext()) {
+        if (allowEmpty) {
+            return true
+        }
+        return !TextUtils.isEmpty(this)
+    }
+
+    var result = false
+
+    // 有BUG的代码, if 条件永远不会为true, 虽然你已经给 result 赋值了true
+    //    regexList.forEach {
+    //        result = this.pattern(it, allowEmpty)
+    //        if (result) {
+    //            return@forEach
+    //        }
+    //    }
+
+    regexList.forEach {
+        //闭包外面声明的变量, 虽然已经修改了, 但是修改后的值, 不影响 if 条件判断
+        if (this.pattern(it, allowEmpty)) {
+            result = true
+            return@forEach
+        }
+    }
+
+    return result
 }

@@ -4,6 +4,7 @@ import androidx.annotation.IdRes
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 import com.angcyo.tablayout.DslTabLayout
+import com.angcyo.widget.edit.AutoCompleteEditText
 import com.angcyo.widget.edit.DslEditText
 import com.angcyo.widget.image.DslImageView
 import com.angcyo.widget.layout.DslSoftInputLayout
@@ -64,4 +65,15 @@ fun DslViewHolder.spinner(@IdRes id: Int): RSpinner? {
 
 fun DslViewHolder.soft(@IdRes id: Int): DslSoftInputLayout? {
     return v(id)
+}
+
+fun DslViewHolder.auto(
+    @IdRes resId: Int,
+    dataList: List<CharSequence>?,
+    showOnFocus: Boolean = true,
+    focusDelay: Long = 0L
+): AutoCompleteEditText? {
+    val auto: AutoCompleteEditText? = v(resId)
+    auto?.setDataList(dataList ?: emptyList(), showOnFocus, focusDelay)
+    return auto
 }

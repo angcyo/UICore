@@ -75,11 +75,15 @@ fun EditText.del() {
     dispatchKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL))
 }
 
-fun TextView.isEmpty(): Boolean {
-    return TextUtils.isEmpty(string())
+fun TextView?.isEmpty(): Boolean {
+    return this == null || TextUtils.isEmpty(string())
 }
 
-fun TextView.string(trim: Boolean = true): String {
+fun TextView?.string(trim: Boolean = true): String {
+    if (this == null) {
+        return ""
+    }
+
     var rawText = if (TextUtils.isEmpty(text)) {
         ""
     } else {
