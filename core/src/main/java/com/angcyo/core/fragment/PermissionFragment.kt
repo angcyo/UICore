@@ -20,7 +20,7 @@ import com.angcyo.widget.recycler.dslAdapter
 class PermissionFragment : BaseFragment() {
 
     init {
-        fragmentLayoutId = R.layout.lib_fragment_permission_layout
+        fragmentLayoutId = R.layout.lib_permission_fragment
     }
 
     //需要的权限列表
@@ -48,7 +48,7 @@ class PermissionFragment : BaseFragment() {
             dslAdapter {
                 for (i in 0 until count) {
                     renderItem {
-                        itemLayoutId = R.layout.dsl_item_permission_layout
+                        itemLayoutId = R.layout.dsl_item_permission
 
                         onItemBindOverride = { itemHolder, itemPosition, _ ->
                             itemHolder.img(R.id.image_view)

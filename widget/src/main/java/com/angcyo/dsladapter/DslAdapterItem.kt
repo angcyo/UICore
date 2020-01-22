@@ -70,11 +70,9 @@ open class DslAdapterItem {
     var onItemClick: ((View) -> Unit)? = null
     var onItemLongClick: ((View) -> Boolean)? = null
 
-    var _clickListener: View.OnClickListener? = object : View.OnClickListener {
-        override fun onClick(view: View?) {
-            notNull(onItemClick, view) {
-                onItemClick?.invoke(view!!)
-            }
+    var _clickListener: View.OnClickListener? = View.OnClickListener { view ->
+        notNull(onItemClick, view) {
+            onItemClick?.invoke(view!!)
         }
     }
 
@@ -190,52 +188,10 @@ open class DslAdapterItem {
     /**可以覆盖设置分割线的边距*/
     var onSetItemOffset: (rect: Rect) -> Unit = {}
 
+    /**分割线入口 [DslItemDecoration]*/
     fun setItemOffsets(rect: Rect) {
         rect.set(itemLeftInsert, itemTopInsert, itemRightInsert, itemBottomInsert)
         onSetItemOffset(rect)
-    }
-
-    fun setTopInsert(insert: Int, leftOffset: Int = 0, rightOffset: Int = 0) {
-        itemTopInsert = insert
-        itemRightOffset = rightOffset
-        itemLeftOffset = leftOffset
-    }
-
-    fun setBottomInsert(insert: Int, leftOffset: Int = 0, rightOffset: Int = 0) {
-        itemBottomInsert = insert
-        itemRightOffset = rightOffset
-        itemLeftOffset = leftOffset
-    }
-
-    fun setLeftInsert(insert: Int, topOffset: Int = 0, bottomOffset: Int = 0) {
-        itemLeftInsert = insert
-        itemBottomOffset = bottomOffset
-        itemTopOffset = topOffset
-    }
-
-    fun setRightInsert(insert: Int, topOffset: Int = 0, bottomOffset: Int = 0) {
-        itemRightInsert = insert
-        itemBottomOffset = bottomOffset
-        itemTopOffset = topOffset
-    }
-
-    fun marginVertical(top: Int, bottom: Int = 0, color: Int = Color.TRANSPARENT) {
-        itemLeftOffset = 0
-        itemRightOffset = 0
-        itemTopInsert = top
-        itemBottomInsert = bottom
-        onlyDrawOffsetArea = false
-        itemDecorationColor = color
-    }
-
-    fun marginHorizontal(left: Int, right: Int = 0, color: Int = Color.TRANSPARENT) {
-        itemTopOffset = 0
-        itemBottomOffset = 0
-
-        itemLeftInsert = left
-        itemRightInsert = right
-        onlyDrawOffsetArea = false
-        itemDecorationColor = color
     }
 
     /**
@@ -550,9 +506,6 @@ open class DslAdapterItem {
         onItemSelectorChange(selectorParams)
     }
 
-    val itemIndexPosition
-        get() = itemDslAdapter?.getValidFilterDataList()?.indexOf(this) ?: RecyclerView.NO_POSITION
-
     //</editor-fold desc="单选, 多选相关">
 
     //<editor-fold desc="群组相关">
@@ -636,57 +589,4 @@ class UpdateDependProperty<T>(var value: T) : ReadWriteProperty<DslAdapterItem, 
             thisRef.updateItemDepend(FilterParams(thisRef, updateDependItemWithEmpty = true))
         }
     }
-}
-
-/**
- * 将list结构体, 打包成dslItem
- * */
-public fun List<Any>.toDslItemList(
-    @LayoutRes layoutId: Int = -1,
-    config: DslAdapterItem.() -> Unit = {}
-): MutableList<DslAdapterItem> {
-    return toDslItemList(DslAdapterItem::class.java, layoutId, config)
-}
-
-public fun List<Any>.toDslItemList(
-    dslItem: Class<out DslAdapterItem>,
-    @LayoutRes layoutId: Int = -1,
-    config: DslAdapterItem.() -> Unit = {}
-): MutableList<DslAdapterItem> {
-    return toDslItemList(itemFactory = { _, item ->
-        dslItem.newInstance().apply {
-            if (layoutId != -1) {
-                itemLayoutId = layoutId
-            }
-            config()
-        }
-    })
-}
-
-public fun List<Any>.toDslItemList(
-    itemBefore: (itemList: MutableList<DslAdapterItem>, index: Int, item: Any) -> Unit = { _, _, _ -> },
-    itemFactory: (index: Int, item: Any) -> DslAdapterItem,
-    itemAfter: (itemList: MutableList<DslAdapterItem>, index: Int, item: Any) -> Unit = { _, _, _ -> }
-): MutableList<DslAdapterItem> {
-    return toAnyList(itemBefore, { index, any ->
-        val item = itemFactory(index, any)
-        item.itemData = any
-        item
-    }, itemAfter)
-}
-
-public fun <T> List<Any>.toAnyList(
-    itemBefore: (itemList: MutableList<T>, index: Int, item: Any) -> Unit = { _, _, _ -> },
-    itemFactory: (index: Int, item: Any) -> T,
-    itemAfter: (itemList: MutableList<T>, index: Int, item: Any) -> Unit = { _, _, _ -> }
-): MutableList<T> {
-    val result = mutableListOf<T>()
-
-    forEachIndexed { index, any ->
-        itemBefore(result, index, any)
-        val item = itemFactory(index, any)
-        result.add(item)
-        itemAfter(result, index, any)
-    }
-    return result
 }

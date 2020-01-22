@@ -3,12 +3,14 @@ package com.angcyo.activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.angcyo.base.dslFHelper
 import com.angcyo.base.enableLayoutFullScreen
 import com.angcyo.fragment.R
 import com.angcyo.library.ex.isDebug
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.isTouchFinish
 
 /**
  * [Activity] 基类
@@ -77,5 +79,22 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
                 super.onBackPressed()
             }
         }
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return super.onTouchEvent(event)
+    }
+
+    /**拦截界面所有Touch事件*/
+    var interceptTouchEvent: Boolean = false
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.isTouchFinish()) {
+            interceptTouchEvent = false
+        }
+        if (interceptTouchEvent) {
+            return true
+        }
+        return super.dispatchTouchEvent(ev)
     }
 }

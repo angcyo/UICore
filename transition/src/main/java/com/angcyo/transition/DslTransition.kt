@@ -3,6 +3,7 @@ package com.angcyo.transition
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
+import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import androidx.transition.*
 import com.angcyo.library.L
@@ -31,6 +32,23 @@ class DslTransition {
         }
     }
 
+    /**动画结束回调*/
+    var onTransitionEnd: (ViewGroup) -> Unit = {
+
+    }
+
+    /**动画监听*/
+    var transitionListener: TransitionListenerAdapter = object : TransitionListenerAdapter() {
+        override fun onTransitionStart(transition: Transition) {
+            super.onTransitionStart(transition)
+        }
+
+        override fun onTransitionEnd(transition: Transition) {
+            transition.removeListener(this)
+            sceneRoot?.run { this@DslTransition.onTransitionEnd(this) }
+        }
+    }
+
     //<editor-fold desc="转场">
 
     /**设置动画开始的值*/
@@ -43,13 +61,24 @@ class DslTransition {
 
     }
 
-    /**开始转场*/
+    /**开始转场动画, 注意开启条件[ViewCompat.isLaidOut(sceneRoot)], sceneRoot必须布局过至少一次*/
     fun transition() {
         sceneRoot?.run {
             onCaptureStartValues(this)
-            doOnPreDraw {
-                TransitionManager.beginDelayedTransition(this, onSetTransition())
-                onCaptureEndValues(this)
+            if (ViewCompat.isLaidOut(this)) {
+                doOnPreDraw {
+                    onCaptureEndValues(this)
+                }
+                TransitionManager.beginDelayedTransition(
+                    this,
+                    onSetTransition().addListener(transitionListener)
+                )
+                //触发绘制,否则可能不会执行, 只要有属性修改就不需要调用
+                postInvalidateOnAnimation()
+            } else {
+                doOnPreDraw {
+                    transition()
+                }
             }
         } ?: L.w("sceneRoot is null.")
     }
@@ -60,18 +89,18 @@ class DslTransition {
 
     var targetScene: Scene? = null
 
-    var sceneExit: (ViewGroup) -> Unit = {}
-    var sceneEnter: (ViewGroup) -> Unit = {}
+    var onSceneExit: (ViewGroup) -> Unit = {}
+    var onSceneEnter: (ViewGroup) -> Unit = {}
 
     /**场景转换*/
     fun scene() {
         sceneRoot?.run {
             targetScene?.let {
                 it.setExitAction {
-                    sceneExit(this@run)
+                    onSceneExit(this@run)
                 }
                 it.setEnterAction {
-                    sceneEnter(this@run)
+                    onSceneEnter(this@run)
                 }
                 TransitionManager.go(it, onSetTransition())
             } ?: L.w("targetScene is null.")

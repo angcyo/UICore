@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import com.angcyo.DslFHelper
+import com.angcyo.base.Factory.factory
 import com.angcyo.library.L
 
 /**
@@ -17,12 +18,17 @@ import com.angcyo.library.L
  * @date 2019/12/22
  */
 
+object Factory {
+    var factory: FragmentFactory = FragmentFactory()
+}
+
 /**实例化一个[Fragment]对象*/
 fun instantiateFragment(classLoader: ClassLoader, className: String): Fragment? {
     return try {
-        val cls = FragmentFactory.loadFragmentClass(classLoader, className)
-        cls.getConstructor().newInstance()
+        factory.instantiate(classLoader, className)
     } catch (e: Exception) {
+        L.e("创建异常: $className")
+        e.printStackTrace()
         null
     }
 }

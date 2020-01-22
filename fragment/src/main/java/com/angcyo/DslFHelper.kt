@@ -165,8 +165,13 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
         }
     }
 
-    fun removeLast() {
-        remove(fm.getAllValidityFragment().lastOrNull())
+    /**移除最后的指定个数的[Fragment]*/
+    fun removeLast(count: Int = 1) {
+        val allValidityFragment = fm.getAllValidityFragment()
+        val size = allValidityFragment.size
+        for (i in size - count until size) {
+            remove(allValidityFragment[i])
+        }
     }
 
     /**移除所有[getView]不为空的[Fragment]*/

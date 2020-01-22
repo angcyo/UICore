@@ -48,9 +48,8 @@ class ColorTransition : Transition() {
                 val colorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), startColor, endColor)
                 colorAnimator.addUpdateListener { animation ->
                     val color = animation.animatedValue as Int//之后就可以得到动画的颜色了.
-                    startValues.view.setBackgroundColor(color)//设置一下, 就可以看到效果..
+                    endValues.view.setBackgroundColor(color)//设置一下, 就可以看到效果..
                 }
-                colorAnimator.duration = duration
                 colorAnimator.interpolator = interpolator
                 return colorAnimator
             }

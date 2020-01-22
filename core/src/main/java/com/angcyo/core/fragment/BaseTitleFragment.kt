@@ -34,7 +34,7 @@ abstract class BaseTitleFragment : BaseFragment() {
 
     init {
         /**Fragment根布局*/
-        fragmentLayoutId = R.layout.lib_title_fragment_layout
+        fragmentLayoutId = R.layout.lib_title_fragment
     }
 
     /**自定义内容布局*/

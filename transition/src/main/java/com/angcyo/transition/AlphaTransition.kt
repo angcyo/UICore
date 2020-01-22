@@ -44,9 +44,8 @@ class AlphaTransition : Transition() {
                 val animator = ValueAnimator.ofFloat(startAlpha, endAlpha)
                 animator.addUpdateListener { animation ->
                     val value = animation.animatedValue as Float
-                    startValues.view.alpha = value
+                    endValues.view.alpha = value
                 }
-                animator.duration = duration
                 animator.interpolator = interpolator
                 return animator
             }
