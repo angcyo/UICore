@@ -52,11 +52,8 @@ open class GlideImageView : DslImageView {
 
     //<editor-fold desc="操作">
 
-    open fun load(url: String?, reset: Boolean = true, action: DslGlide.() -> Unit = {}) {
+    open fun load(url: String?, action: DslGlide.() -> Unit = {}) {
         dslGlide.apply {
-            if (reset) {
-                reset()
-            }
             action()
             load(url)
         }

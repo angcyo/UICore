@@ -290,6 +290,10 @@ class DslGlide {
         //https://github.com/wasabeef/glide-transformations
         transform(*this@DslGlide.transformations.toTypedArray())
 
+        //other
+        //disallowHardwareConfig()
+        //format(DecodeFormat.PREFER_RGB_565)
+
         //listener
         addListener(object : RequestListener<T> {
             override fun onLoadFailed(

@@ -16,12 +16,9 @@ fun DslViewHolder.giv(@IdRes id: Int): GlideImageView? {
 }
 
 /**使用[Glide]加载图片*/
-fun ImageView.loadImage(url: String?, reset: Boolean = true, action: DslGlide.() -> Unit = {}) {
+fun ImageView.loadImage(url: String?, action: DslGlide.() -> Unit = {}) {
     DslGlide().apply {
         targetView = this@loadImage
-        if (reset) {
-            reset()
-        }
         action()
         load(url)
     }

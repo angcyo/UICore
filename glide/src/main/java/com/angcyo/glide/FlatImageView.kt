@@ -263,11 +263,8 @@ class FlatImageView : GlideImageView {
         }
     }
 
-    override fun load(url: String?, reset: Boolean, action: DslGlide.() -> Unit) {
+    override fun load(url: String?, action: DslGlide.() -> Unit) {
         dslGlide.apply {
-            if (reset) {
-                reset()
-            }
             startFlat = false
             scaleType = _oldScaleType
 

@@ -3,8 +3,7 @@ package com.angcyo.widget.base
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.graphics.Rect
-import android.graphics.RectF
+import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.view.*
 import android.view.animation.DecelerateInterpolator
@@ -160,6 +159,23 @@ fun View.viewRect(rect: Rect) {
 
 fun View.viewRect(rect: RectF) {
     rect.set(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat())
+}
+
+
+/**视图View 变灰*/
+fun View.grayscale(enable: Boolean = true) {
+    if (enable) {
+        //变灰, 界面灰度处理
+        val matrix = ColorMatrix()
+        matrix.setSaturation(0f)//饱和度 0灰色 100过度彩色，50正常
+        val filter = ColorMatrixColorFilter(matrix)
+        val paint = Paint()
+        paint.colorFilter = filter
+
+        setLayerType(View.LAYER_TYPE_SOFTWARE, paint)
+    } else {
+        setLayerType(View.LAYER_TYPE_NONE, null)
+    }
 }
 
 //</editor-fold desc="基础扩展">

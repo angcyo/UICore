@@ -81,7 +81,7 @@ class DslTransition {
     //</editor-fold desc="Scene 转场">
 }
 
-/**开始转场*/
+/**开始转场, 通过[onCaptureStartValues] [onCaptureEndValues] 差值执行动画*/
 fun dslTransition(sceneRoot: ViewGroup?, action: DslTransition.() -> Unit) {
     val dslTransition = DslTransition()
     dslTransition.apply {
