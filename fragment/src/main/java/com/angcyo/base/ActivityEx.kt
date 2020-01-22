@@ -10,7 +10,7 @@ import androidx.annotation.ColorRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.angcyo.DslAHelper
-import com.angcyo.IntentConfig
+import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.fragment.R
 
 /**
@@ -44,6 +44,13 @@ fun Activity.enableLayoutFullScreen(enable: Boolean = true) {
 
 fun Context.getColor(@ColorRes id: Int): Int {
     return ContextCompat.getColor(this, id)
+}
+
+/**拦截TouchEvent*/
+fun Context.interceptTouchEvent(intercept: Boolean = true) {
+    if (this is BaseAppCompatActivity) {
+        this.interceptTouchEvent = intercept
+    }
 }
 
 /**设置状态栏颜色*/
