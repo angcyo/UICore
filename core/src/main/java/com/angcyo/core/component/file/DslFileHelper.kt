@@ -38,6 +38,11 @@ object DslFileHelper {
 
     val dateFormat: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss-SSS", Locale.CHINA)
 
+    /**获取文件夹路径*/
+    var onGetFolderPath: (folder: String) -> String = {
+        "$rootFolder/$it"
+    }
+
     fun init(context: Context) {
         appContext = context.applicationContext
     }
@@ -48,7 +53,7 @@ object DslFileHelper {
         name: String,
         data: String
     ): String? {
-        val f = "$rootFolder/$folder"
+        val f = onGetFolderPath(folder)
         if (async) {
             launch(Dispatchers.IO + CoroutineErrorHandler()) {
                 FileUtils.writeExternal(appContext, f, name, data)
