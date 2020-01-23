@@ -13,6 +13,7 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.angcyo.widget.edit.CharLengthFilter
 import com.angcyo.widget.edit.SingleTextWatcher
 import kotlin.math.min
 
@@ -205,4 +206,30 @@ fun EditText.resetSelectionText(text: CharSequence?, startOffset: Int = 0) {
     val start: Int = selectionStart
     setText(text)
     setSelection(min(start + startOffset, text?.length ?: 0))
+}
+
+fun EditText.hasCharLengthFilter(): Boolean {
+    return filters.any { it is CharLengthFilter }
+}
+
+fun EditText.getCharLengthFilter(): CharLengthFilter? {
+    return filters.find { it is CharLengthFilter } as? CharLengthFilter
+}
+
+/**
+ * 一个汉字等于2个英文, 一个emoji表情等于2个汉字
+ */
+fun EditText.getCharLength(): Int {
+    if (TextUtils.isEmpty(string(false))) {
+        return 0
+    }
+    var count = 0
+    for (element in text) {
+        count = if (element <= CharLengthFilter.MAX_CHAR) {
+            count + 1
+        } else {
+            count + 2
+        }
+    }
+    return count
 }

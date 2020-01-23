@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Paint
 import android.graphics.Rect
+import android.graphics.RectF
 import android.view.View
 import android.view.Window
 import androidx.recyclerview.widget.GridLayoutManager
@@ -142,6 +143,11 @@ fun notNull(vararg anys: Any?, doIt: (Array<Any>) -> Unit) {
 
 fun Rect.clear() {
     set(0, 0, 0, 0)
+}
+
+fun Rect.set(rectF: RectF): Rect {
+    set(rectF.left.toInt(), rectF.top.toInt(), rectF.right.toInt(), rectF.bottom.toInt())
+    return this
 }
 
 internal fun nowTime() = System.currentTimeMillis()

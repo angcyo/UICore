@@ -1,5 +1,6 @@
 package com.angcyo.library.ex
 
+import android.animation.ArgbEvaluator
 import android.graphics.Color
 import java.util.*
 import kotlin.random.Random.Default.nextInt
@@ -45,4 +46,10 @@ fun randomColorAlpha(minValue: Int = 120, maxValue: Int = 250): Int {
     val g = nextInt(minValue, maxValue)
     val b = nextInt(minValue, maxValue)
     return Color.argb(a, r, g, b)
+}
+
+private var argbEvaluator: ArgbEvaluator = ArgbEvaluator()
+/**根据比例, 获取评估后的颜色值[fraction][0-1]*/
+fun evaluateColor(fraction: Float, startValue: Int, endValue: Int): Int {
+    return argbEvaluator.evaluate(fraction, startValue, endValue) as Int
 }
