@@ -10,7 +10,6 @@ import com.angcyo.base.enableLayoutFullScreen
 import com.angcyo.fragment.R
 import com.angcyo.library.ex.isDebug
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.isTouchFinish
 
 /**
  * [Activity] 基类
@@ -89,7 +88,7 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
     var interceptTouchEvent: Boolean = false
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        if (ev.isTouchFinish()) {
+        if (ev.actionMasked == MotionEvent.ACTION_CANCEL) {
             interceptTouchEvent = false
         }
         if (interceptTouchEvent) {
