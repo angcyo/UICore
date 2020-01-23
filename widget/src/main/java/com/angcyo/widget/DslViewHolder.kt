@@ -10,6 +10,8 @@ import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.angcyo.widget.base.ThrottleClickListener
 import java.lang.ref.WeakReference
 
@@ -36,35 +38,20 @@ open class DslViewHolder(
      */
     val sparseArray: SparseArray<WeakReference<View?>> = SparseArray(initialCapacity)
 
-    fun <T : View?> v(@IdRes resId: Int): T? {
-        val viewWeakReference =
-            sparseArray[resId]
-        var view: View?
-        if (viewWeakReference == null) {
-            view = itemView.findViewById(resId)
-            sparseArray.put(resId, WeakReference(view))
-        } else {
-            view = viewWeakReference.get()
-            if (view == null) {
-                view = itemView.findViewById(resId)
-                sparseArray.put(resId, WeakReference(view))
-            }
-        }
-        return view as? T
+    /**
+     * 清理缓存
+     */
+    fun clear() {
+        sparseArray.clear()
     }
+
+    //<editor-fold desc="事件处理">
 
     /**
      * 单击某个View
      */
     fun clickView(view: View?) {
         view?.performClick()
-    }
-
-    /**
-     * 清理缓存
-     */
-    fun clear() {
-        sparseArray.clear()
     }
 
     fun click(@IdRes id: Int, listener: View.OnClickListener?) {
@@ -101,6 +88,10 @@ open class DslViewHolder(
         view?.setOnClickListener { listener.invoke(it) }
     }
 
+    //</editor-fold desc="事件处理">
+
+    //<editor-fold desc="post回调">
+
     fun post(runnable: Runnable) {
         itemView.post(runnable)
     }
@@ -117,6 +108,15 @@ open class DslViewHolder(
         postDelay(runnable, delayMillis)
     }
 
+    fun postOnAnimation(runnable: () -> Unit) {
+        itemView.postOnAnimation(object : Runnable {
+            override fun run() {
+                runnable.invoke()
+                removeCallbacks(this)
+            }
+        })
+    }
+
     fun postDelay(delayMillis: Long, runnable: () -> Unit) {
         postDelay(object : Runnable {
             override fun run() {
@@ -131,7 +131,10 @@ open class DslViewHolder(
 
     fun postOnce(delayMillis: Long = 0, runnable: () -> Unit) {
         removeCallbacks(_onceRunnbale)
-        _onceRunnbale = Runnable { runnable.invoke() }
+        _onceRunnbale = Runnable {
+            runnable.invoke()
+            removeCallbacks(_onceRunnbale)
+        }
         postDelay(_onceRunnbale!!, delayMillis)
     }
 
@@ -139,33 +142,9 @@ open class DslViewHolder(
         itemView.removeCallbacks(runnable)
     }
 
-    fun tv(@IdRes resId: Int): TextView? {
-        return v(resId)
-    }
+    //</editor-fold desc="post回调">
 
-    fun et(@IdRes resId: Int): EditText? {
-        return v(resId)
-    }
-
-    fun ev(@IdRes resId: Int): EditText? {
-        return v(resId)
-    }
-
-    fun img(@IdRes resId: Int): ImageView? {
-        return v(resId)
-    }
-
-    fun rv(@IdRes resId: Int): RecyclerView? {
-        return v(resId)
-    }
-
-    fun group(@IdRes resId: Int): ViewGroup? {
-        return v(resId)
-    }
-
-    fun group(view: View?): ViewGroup? {
-        return view as? ViewGroup
-    }
+    //<editor-fold desc="可见性控制">
 
     fun <T : View?> focus(@IdRes resId: Int): T? {
         val v = v<View>(resId)
@@ -178,8 +157,26 @@ open class DslViewHolder(
         return null
     }
 
-    fun view(@IdRes resId: Int): View? {
-        return v<View>(resId)
+    fun enable(@IdRes resId: Int, enable: Boolean): DslViewHolder {
+        val view = v<View>(resId)!!
+        enable(view, enable)
+        return this
+    }
+
+    private fun enable(view: View?, enable: Boolean) {
+        if (view == null) {
+            return
+        }
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                enable(view.getChildAt(i), enable)
+            }
+        } else {
+            if (view.isEnabled != enable) {
+                view.isEnabled = enable
+            }
+            (view as? EditText)?.clearFocus()
+        }
     }
 
     fun isVisible(@IdRes resId: Int): Boolean {
@@ -219,28 +216,6 @@ open class DslViewHolder(
         return view
     }
 
-    fun enable(@IdRes resId: Int, enable: Boolean): DslViewHolder {
-        val view = v<View>(resId)!!
-        enable(view, enable)
-        return this
-    }
-
-    private fun enable(view: View?, enable: Boolean) {
-        if (view == null) {
-            return
-        }
-        if (view is ViewGroup) {
-            for (i in 0 until view.childCount) {
-                enable(view.getChildAt(i), enable)
-            }
-        } else {
-            if (view.isEnabled != enable) {
-                view.isEnabled = enable
-            }
-            (view as? EditText)?.clearFocus()
-        }
-    }
-
     fun invisible(@IdRes resId: Int): View? {
         return invisible(v<View>(resId))
     }
@@ -277,7 +252,63 @@ open class DslViewHolder(
         return this
     }
 
+    //</editor-fold desc="可见性控制">
+
+    //<editor-fold desc="findViewById">
+
+    fun <T : View?> v(@IdRes resId: Int): T? {
+        val viewWeakReference =
+            sparseArray[resId]
+        var view: View?
+        if (viewWeakReference == null) {
+            view = itemView.findViewById(resId)
+            sparseArray.put(resId, WeakReference(view))
+        } else {
+            view = viewWeakReference.get()
+            if (view == null) {
+                view = itemView.findViewById(resId)
+                sparseArray.put(resId, WeakReference(view))
+            }
+        }
+        return view as? T
+    }
+
+    fun tv(@IdRes resId: Int): TextView? {
+        return v(resId)
+    }
+
+    fun et(@IdRes resId: Int): EditText? {
+        return v(resId)
+    }
+
+    fun ev(@IdRes resId: Int): EditText? {
+        return v(resId)
+    }
+
+    fun img(@IdRes resId: Int): ImageView? {
+        return v(resId)
+    }
+
+    fun rv(@IdRes resId: Int): RecyclerView? {
+        return v(resId)
+    }
+
+    fun group(@IdRes resId: Int): ViewGroup? {
+        return v(resId)
+    }
+
+    fun group(view: View?): ViewGroup? {
+        return view as? ViewGroup
+    }
+
+    fun view(@IdRes resId: Int): View? {
+        return v<View>(resId)
+    }
+
     fun cb(@IdRes resId: Int): CompoundButton? {
         return v(resId)
     }
+
+    //</editor-fold desc="findViewById">
+
 }

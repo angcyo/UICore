@@ -11,6 +11,7 @@ import android.view.*
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.OverScroller
+import androidx.core.view.GestureDetectorCompat
 import com.angcyo.drawable.dpi
 import com.angcyo.library.ex.have
 import com.angcyo.widget.R
@@ -689,8 +690,8 @@ open class DslTabLayout(
     }
 
     //手势检测
-    val _gestureDetector: GestureDetector by lazy {
-        GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+    val _gestureDetector: GestureDetectorCompat by lazy {
+        GestureDetectorCompat(context, object : GestureDetector.SimpleOnGestureListener() {
             override fun onFling(
                 e1: MotionEvent?,
                 e2: MotionEvent?,

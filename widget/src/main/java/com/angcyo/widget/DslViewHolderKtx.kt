@@ -8,6 +8,7 @@ import com.angcyo.widget.edit.AutoCompleteEditText
 import com.angcyo.widget.edit.DslEditText
 import com.angcyo.widget.image.DslImageView
 import com.angcyo.widget.layout.DslSoftInputLayout
+import com.angcyo.widget.pager.DslViewPager
 import com.angcyo.widget.recycler.DslRecyclerView
 import com.angcyo.widget.text.DslTextView
 
@@ -76,4 +77,8 @@ fun DslViewHolder.auto(
     val auto: AutoCompleteEditText? = v(resId)
     auto?.setDataList(dataList ?: emptyList(), showOnFocus, focusDelay)
     return auto
+}
+
+fun DslViewHolder._vp(@IdRes id: Int): DslViewPager? {
+    return v(id)
 }

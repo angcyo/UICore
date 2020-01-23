@@ -1,0 +1,14 @@
+apply from: allGradle.libBase
+
+android {
+    defaultConfig {
+        minSdkVersion 14
+    }
+}
+
+dependencies {
+    implementation project(allModule.library)
+
+    //https://mvnrepository.com/artifact/androidx.loader/loader
+    api "androidx.loader:loader:1.1.0"
+}

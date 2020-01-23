@@ -96,4 +96,5 @@ dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$_kotlin_version"
 }
 
+//apply from: allGradle.version
 apply from: allGradle.versionForce

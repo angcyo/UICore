@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
+import androidx.core.view.GestureDetectorCompat
 import com.angcyo.drawable.base.DslGradientDrawable
 import com.angcyo.drawable.dpi
 import com.angcyo.drawable.text.DslTextDrawable
@@ -190,8 +191,8 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
     //<editor-fold desc="Touch事件">
 
     //手势检测
-    val _gestureDetector: GestureDetector by lazy {
-        GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+    val _gestureDetector: GestureDetectorCompat by lazy {
+        GestureDetectorCompat(context, object : GestureDetector.SimpleOnGestureListener() {
 
             override fun onDown(e: MotionEvent): Boolean {
                 _onTouchMoveTo(e.x, e.y)

@@ -3,8 +3,6 @@ package com.angcyo.transition
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
-import androidx.core.view.ViewCompat
-import androidx.core.view.doOnPreDraw
 import androidx.transition.*
 import com.angcyo.library.L
 
@@ -37,10 +35,16 @@ class DslTransition {
 
     }
 
+    /**动画开始回调*/
+    var onTransitionStart: (ViewGroup) -> Unit = {
+
+    }
+
     /**动画监听*/
     var transitionListener: TransitionListenerAdapter = object : TransitionListenerAdapter() {
         override fun onTransitionStart(transition: Transition) {
             super.onTransitionStart(transition)
+            sceneRoot?.run { this@DslTransition.onTransitionStart(this) }
         }
 
         override fun onTransitionEnd(transition: Transition) {
@@ -65,20 +69,14 @@ class DslTransition {
     fun transition() {
         sceneRoot?.run {
             onCaptureStartValues(this)
-            if (ViewCompat.isLaidOut(this)) {
-                doOnPreDraw {
-                    onCaptureEndValues(this)
-                }
+            post {
                 TransitionManager.beginDelayedTransition(
                     this,
                     onSetTransition().addListener(transitionListener)
                 )
-                //触发绘制,否则可能不会执行, 只要有属性修改就不需要调用
-                postInvalidateOnAnimation()
-            } else {
-                doOnPreDraw {
-                    transition()
-                }
+                onCaptureEndValues(this)
+                //在某些时候需要手动触发绘制,否则可能不会执行, 只要有属性修改就不需要调用
+                //postInvalidateOnAnimation()
             }
         } ?: L.w("sceneRoot is null.")
     }
