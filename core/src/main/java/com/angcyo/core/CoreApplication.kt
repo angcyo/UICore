@@ -13,12 +13,34 @@ import com.angcyo.library.getAppString
 import me.weishu.reflection.Reflection
 
 /**
- *
- * Email:angcyo@126.com
- * @author angcyo
- * @date 2019/12/23
- * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
+ * Created by angcyo on 2019/12/23.
+ * Copyright (c) 2016, angcyo@126.com All Rights Reserved.
+ * *                                                   #
+ * #                                                   #
+ * #                       _oo0oo_                     #
+ * #                      o8888888o                    #
+ * #                      88" . "88                    #
+ * #                      (| -_- |)                    #
+ * #                      0\  =  /0                    #
+ * #                    ___/`---'\___                  #
+ * #                  .' \\|     |# '.                 #
+ * #                 / \\|||  :  |||# \                #
+ * #                / _||||| -:- |||||- \              #
+ * #               |   | \\\  -  #/ |   |              #
+ * #               | \_|  ''\---/''  |_/ |             #
+ * #               \  .-\__  '-'  ___/-. /             #
+ * #             ___'. .'  /--.--\  `. .'___           #
+ * #          ."" '<  `.___\_<|>_/___.' >' "".         #
+ * #         | | :  `- \`.;`\ _ /`;.`/ - ` : | |       #
+ * #         \  \ `_.   \_ __\ /__ _/   .-` /  /       #
+ * #     =====`-.____`.___ \_____/___.-`___.-'=====    #
+ * #                       `=---='                     #
+ * #     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   #
+ * #                                                   #
+ * #               佛祖保佑         永无BUG              #
+ * #                                                   #
  */
+
 open class CoreApplication : Application() {
     override fun onCreate() {
         super.onCreate()

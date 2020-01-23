@@ -10,8 +10,6 @@ import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import androidx.viewpager.widget.ViewPager
-import androidx.viewpager2.widget.ViewPager2
 import com.angcyo.widget.base.ThrottleClickListener
 import java.lang.ref.WeakReference
 
@@ -230,8 +228,8 @@ open class DslViewHolder(
         return view
     }
 
-    fun gone(@IdRes resId: Int) {
-        gone(v<View>(resId))
+    fun gone(@IdRes resId: Int): DslViewHolder {
+        return gone(v<View>(resId))
     }
 
     fun gone(@IdRes resId: Int, gone: Boolean) {

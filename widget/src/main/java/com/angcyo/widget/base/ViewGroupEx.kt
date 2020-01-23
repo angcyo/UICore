@@ -5,6 +5,8 @@ import android.graphics.Rect
 import android.view.*
 import android.widget.EditText
 import androidx.annotation.LayoutRes
+import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.layout.RSoftInputLayout
 
 /**
@@ -210,6 +212,8 @@ fun ViewGroup.findRecyclerView(
     return touchView
 }
 
+//<editor-fold desc="child操作">
+
 /**枚举所有child view*/
 fun ViewGroup.eachChild(map: (index: Int, child: View) -> Unit) {
     for (index in 0 until childCount) {
@@ -278,3 +282,23 @@ fun ViewGroup.replace(viewGroup: ViewGroup): ViewGroup {
     addView(viewGroup, ViewGroup.LayoutParams(-1, -1))
     return viewGroup
 }
+
+//</editor-fold desc="child操作">
+
+//</editor-fold desc="DslAdapterItem操作">
+
+fun ViewGroup.addDslItem(dslAdapterItem: DslAdapterItem) {
+    val view = inflate(dslAdapterItem.itemLayoutId, false)
+    val dslViewHolder = DslViewHolder(view)
+    view.tag = dslViewHolder
+    addView(view)
+    dslAdapterItem.itemBind(dslViewHolder, childCount - 1, dslAdapterItem)
+}
+
+fun ViewGroup.resetDslItem(items: List<DslAdapterItem>) {
+    removeAllViews()
+    items.forEach {
+        addDslItem(it)
+    }
+}
+//<editor-fold desc="DslAdapterItem操作">

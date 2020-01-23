@@ -23,7 +23,9 @@ import com.bumptech.glide.load.model.LazyHeaders
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.transition.Transition
 import jp.wasabeef.glide.transformations.GrayscaleTransformation
 import jp.wasabeef.glide.transformations.SupportRSBlurTransformation
 import okhttp3.Call
@@ -108,6 +110,7 @@ class DslGlide {
 
     /**[RequestListener]*/
     var onLoadFailed: ((model: String?, error: GlideException?) -> Boolean) = { _, _ -> false }
+    /**[model]请求的url地址, [data]加载的数据, Drawable File等*/
     var onLoadSucceed: ((model: String?, data: Any?) -> Boolean) = { _, _ -> false }
 
     //<editor-fold desc="方法">
@@ -125,6 +128,25 @@ class DslGlide {
                 _load(string)
             }
         }
+    }
+
+    /**下载文件*/
+    fun download(string: String?, callback: (File) -> Unit = {}) {
+        clear()
+
+        _glide()
+            .download(GlideUrl(string, _header()))
+            .override(Target.SIZE_ORIGINAL)
+            .configRequest(string, File::class.java)
+            .into(object : CustomTarget<File>() {
+                override fun onLoadCleared(placeholder: Drawable?) {
+
+                }
+
+                override fun onResourceReady(resource: File, transition: Transition<in File>?) {
+                    callback(resource)
+                }
+            })
     }
 
     /**清理请求*/
