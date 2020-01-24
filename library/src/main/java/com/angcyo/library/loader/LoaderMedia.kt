@@ -1,7 +1,9 @@
-package com.angcyo.loader
+package com.angcyo.library.loader
 
+import android.os.Parcelable
 import com.angcyo.library.ex.isFileExist
 import com.angcyo.library.ex.mimeType
+import kotlinx.android.parcel.Parcelize
 
 /**
  *
@@ -10,6 +12,7 @@ import com.angcyo.library.ex.mimeType
  * @date 2020/01/22
  */
 
+@Parcelize
 data class LoaderMedia(
 
     //网络路径
@@ -37,7 +40,8 @@ data class LoaderMedia(
 
     /** 文件大小, b->kb */
     var fileSize: Long = 0
-)
+
+) : Parcelable
 
 //媒体类型
 fun LoaderMedia.mimeType(): String {

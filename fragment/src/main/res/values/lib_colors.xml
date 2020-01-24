@@ -9,7 +9,9 @@
     <color name="transparent10">#1A000000</color>
     <!--不透明度20%-->
     <color name="transparent20">#33000000</color>
+    <color name="transparent30">#4D000000</color>
     <color name="transparent40">#66000000</color>
+    <color name="transparent50">#80000000</color>
     <color name="transparent60">#99000000</color>
     <color name="transparent80">#CC000000</color>
     <!--不透明度100%-->

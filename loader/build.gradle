@@ -8,6 +8,7 @@ android {
 
 dependencies {
     implementation project(allModule.library)
+    implementation project(allModule.pager)
 
     //https://mvnrepository.com/artifact/androidx.loader/loader
     api "androidx.loader:loader:1.1.0"

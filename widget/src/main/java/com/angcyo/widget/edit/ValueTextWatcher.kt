@@ -15,7 +15,7 @@ import com.angcyo.widget.base.setSelectionLast
  * @date 2020/01/14
  */
 
-class ValueTextWatcher(val editText: EditText? = null) : TextWatcher {
+class ValueTextWatcher private constructor(val editText: EditText? = null) : TextWatcher {
 
     companion object {
         const val MAX_VALUE = Int.MAX_VALUE.toFloat()
