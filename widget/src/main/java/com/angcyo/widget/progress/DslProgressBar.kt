@@ -99,7 +99,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
                 val startColor = (progressBgDrawable as ColorDrawable).color
                 colors = "$startColor,$colors"
             } else if (colors?.split(",")?.size ?: 0 <= 1) {
-                colors = "0,$colors"
+                colors = "$colors,$colors"
             }
 
             setBgGradientColors(colors)
@@ -115,7 +115,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
                 val startColor = (progressTrackDrawable as ColorDrawable).color
                 colors = "$startColor,$colors"
             } else if (colors?.split(",")?.size ?: 0 <= 1) {
-                colors = "0,$colors"
+                colors = "$colors,$colors"
             }
 
             setTrackGradientColors(colors)

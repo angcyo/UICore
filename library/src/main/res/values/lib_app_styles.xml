@@ -27,8 +27,8 @@
     <color name="border_sub_color">#e7e8ec</color>
 
     <!--app背景色颜色配置-->
-    <color name="bg_primary_color">#f2f6f9</color>
-    <color name="bg_sub_color">#f6f8fc</color>
+    <color name="bg_primary_color">#f4f4f4</color>
+    <color name="bg_sub_color">#dedede</color>
 
     <!--app字号选择-->
     <!--主标题-->

@@ -94,16 +94,53 @@ fun String?.fileSize(): Long {
 /**格式化文件大小, 根据系统版本号选择实现方式*/
 fun formatFileSize(context: Context, size: Long): String {
     return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
-        formatFileSize(size)
+        size.fileSizeString()
     } else Formatter.formatFileSize(context, size)
-}
-
-fun Long.fileSizeString(): String {
-    return formatFileSize(this)
 }
 
 fun String?.fileSizeString(): String {
     return fileSize().fileSizeString()
+}
+
+fun Long.fileSizeString(unit: SizeUnit = SizeUnit.Auto): String {
+    val size = this
+    var _unit = unit
+    if (size < 0) {
+        return ""
+    }
+    val KB = 1024.0
+    val MB = KB * 1024
+    val GB = MB * 1024
+    val TB = GB * 1024
+    val PB = TB * 1024
+    if (_unit == SizeUnit.Auto) {
+        _unit = if (size < KB) {
+            SizeUnit.Byte
+        } else if (size < MB) {
+            SizeUnit.KB
+        } else if (size < GB) {
+            SizeUnit.MB
+        } else if (size < TB) {
+            SizeUnit.GB
+        } else if (size < PB) {
+            SizeUnit.TB
+        } else {
+            SizeUnit.PB
+        }
+    }
+    return when (_unit) {
+        SizeUnit.Byte -> size.toString() + "B"
+        SizeUnit.KB -> String.format(Locale.US, "%.2fKB", size / KB)
+        SizeUnit.MB -> String.format(Locale.US, "%.2fMB", size / MB)
+        SizeUnit.GB -> String.format(Locale.US, "%.2fGB", size / GB)
+        SizeUnit.TB -> String.format(Locale.US, "%.2fTB", size / TB)
+        SizeUnit.PB -> String.format(Locale.US, "%.2fPB", size / PB)
+        else -> size.toString() + "B"
+    }
+}
+
+enum class SizeUnit {
+    Byte, KB, MB, GB, TB, PB, Auto
 }
 
 /**
@@ -130,48 +167,4 @@ fun File.getFileMD5(): ByteArray? {
         dis?.close()
     }
     return null
-}
-
-fun formatFileSize(size: Long): String {
-    return formatFileSize(size, SizeUnit.Auto)
-}
-
-fun formatFileSize(size: Long, unit: SizeUnit): String {
-    var unit = unit
-    if (size < 0) {
-        return ""
-    }
-    val KB = 1024.0
-    val MB = KB * 1024
-    val GB = MB * 1024
-    val TB = GB * 1024
-    val PB = TB * 1024
-    if (unit == SizeUnit.Auto) {
-        unit = if (size < KB) {
-            SizeUnit.Byte
-        } else if (size < MB) {
-            SizeUnit.KB
-        } else if (size < GB) {
-            SizeUnit.MB
-        } else if (size < TB) {
-            SizeUnit.GB
-        } else if (size < PB) {
-            SizeUnit.TB
-        } else {
-            SizeUnit.PB
-        }
-    }
-    return when (unit) {
-        SizeUnit.Byte -> size.toString() + "B"
-        SizeUnit.KB -> String.format(Locale.US, "%.2fKB", size / KB)
-        SizeUnit.MB -> String.format(Locale.US, "%.2fMB", size / MB)
-        SizeUnit.GB -> String.format(Locale.US, "%.2fGB", size / GB)
-        SizeUnit.TB -> String.format(Locale.US, "%.2fTB", size / TB)
-        SizeUnit.PB -> String.format(Locale.US, "%.2fPB", size / PB)
-        else -> size.toString() + "B"
-    }
-}
-
-enum class SizeUnit {
-    Byte, KB, MB, GB, TB, PB, Auto
 }
