@@ -1,0 +1,20 @@
+apply from: allGradle.libBase
+
+android {
+    defaultConfig {
+        minSdkVersion 19
+    }
+}
+
+dependencies {
+    implementation project(allModule.library)
+    implementation project(allModule.http)
+    implementation project(allModule.coroutine)
+
+    def latest_version = "1.0.7"
+    api "com.liulishuo.okdownload:okdownload:$latest_version"
+    implementation "com.liulishuo.okdownload:sqlite:$latest_version"
+    implementation "com.liulishuo.okdownload:okhttp:$latest_version"
+    //api "com.liulishuo.okdownload:filedownloader:$latest_version"
+    api "com.liulishuo.okdownload:ktx:$latest_version"
+}
