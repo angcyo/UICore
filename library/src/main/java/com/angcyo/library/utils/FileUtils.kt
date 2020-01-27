@@ -2,6 +2,8 @@ package com.angcyo.library.utils
 
 import android.content.Context
 import com.angcyo.library.L
+import com.angcyo.library.app
+import com.angcyo.library.getAppString
 import java.io.File
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -21,9 +23,24 @@ import java.util.*
  */
 object FileUtils {
 
+    /**所有文件写入的在此根目录下*/
+    var rootFolder: String = getAppString("schema") ?: ""
+
+    /**获取文件夹路径*/
+    var onGetFolderPath: (folder: String) -> String = {
+        "$rootFolder/$it"
+    }
+
     /**APP扩展根目录*/
-    fun appRootExternalFolder(context: Context): File? {
+    fun appRootExternalFolder(context: Context = app()): File? {
+        // /storage/emulated/0/Android/data/com.angcyo.uicore.demo/files
         return context.getExternalFilesDir("")
+    }
+
+    /**扩展目录下的指定文件夹*/
+    fun appRootExternalFolder(context: Context = app(), folder: String): File? {
+        // /storage/emulated/0/Android/data/com.angcyo.uicore.demo/files/$folder
+        return context.getExternalFilesDir(onGetFolderPath(folder))
     }
 
     /**
@@ -33,14 +50,14 @@ object FileUtils {
      * 返回对应的文件, 可以直接进行读写, 不需要权限请求
      * */
     fun appExternalFolder(
-        context: Context?,
+        context: Context? = app(),
         folder: String,
         name: String
     ): File? {
         if (context == null) {
             return null
         }
-        val externalFilesDir = context.getExternalFilesDir(folder)
+        val externalFilesDir = appRootExternalFolder(context, folder)
         var file: File? = null
         externalFilesDir?.also {
             file = File(it, name)
@@ -50,7 +67,7 @@ object FileUtils {
 
     /** Android Q 写入扩展的程序目录下的文件数据 */
     fun writeExternal(
-        context: Context?,
+        context: Context? = app(),
         folder: String,
         name: String,
         data: String,
@@ -77,7 +94,7 @@ object FileUtils {
 
     /**从APP扩展目录下读取文件数据*/
     fun readExternal(
-        context: Context,
+        context: Context = app(),
         folder: String,
         name: String
     ): String? {

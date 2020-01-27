@@ -69,62 +69,62 @@ object L {
         this.debug = debug
     }
 
-    fun v(msg: Any?) {
+    fun v(vararg msg: Any?) {
         _level = VERBOSE
-        _log(msg)
+        _log(*msg)
     }
 
-    fun d(msg: Any?) {
+    fun d(vararg msg: Any?) {
         _level = DEBUG
-        _log(msg)
+        _log(*msg)
     }
 
-    fun i(msg: Any?) {
+    fun i(vararg msg: Any?) {
         _level = INFO
-        _log(msg)
+        _log(*msg)
     }
 
-    fun w(msg: Any?) {
+    fun w(vararg msg: Any?) {
         _level = WARN
-        _log(msg)
+        _log(*msg)
     }
 
-    fun e(msg: Any?) {
+    fun e(vararg msg: Any?) {
         _level = ERROR
-        _log(msg)
+        _log(*msg)
     }
 
-    fun v(tag: String, msg: Any?) {
+    fun vt(tag: String, vararg msg: Any?) {
         _tempTag = tag
         _level = VERBOSE
-        _log(msg)
+        _log(*msg)
     }
 
-    fun d(tag: String, msg: Any?) {
+    fun dt(tag: String, vararg msg: Any?) {
         _tempTag = tag
         _level = DEBUG
-        _log(msg)
+        _log(*msg)
     }
 
-    fun i(tag: String, msg: Any?) {
+    fun it(tag: String, vararg msg: Any?) {
         _tempTag = tag
         _level = INFO
-        _log(msg)
+        _log(*msg)
     }
 
-    fun w(tag: String, msg: Any?) {
+    fun wt(tag: String, vararg msg: Any?) {
         _tempTag = tag
         _level = WARN
-        _log(msg)
+        _log(*msg)
     }
 
-    fun e(tag: String, msg: Any?) {
+    fun et(tag: String, vararg msg: Any?) {
         _tempTag = tag
         _level = ERROR
-        _log(msg)
+        _log(*msg)
     }
 
-    fun _log(msg: Any?) {
+    fun _log(vararg msg: Any?) {
         if (!debug) {
             return
         }
@@ -154,11 +154,14 @@ object L {
             }
             append("]")
         }
-
-        val logMsg = if (msg is CharSequence) {
-            _wrapJson("$msg")
-        } else {
-            msg
+        val logMsg = buildString {
+            msg.forEach {
+                if (it is CharSequence) {
+                    append(_wrapJson("$it"))
+                } else {
+                    append(it)
+                }
+            }
         }
 
         logPrint(tag, _level, "$stackContext $logMsg")

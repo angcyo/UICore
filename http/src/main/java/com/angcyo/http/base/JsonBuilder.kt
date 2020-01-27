@@ -142,7 +142,7 @@ class JsonBuilder {
                 }
             }
         } else {
-            L.w(TAG, "不合法的操作, 请检查!")
+            L.wt(TAG, "不合法的操作, 请检查!")
         }
         return this
     }
@@ -476,7 +476,7 @@ class JsonBuilder {
                     ignoreNull
                 )
             } else {
-                L.w(
+                L.wt(
                     TAG,
                     " 当前操作已被忽略:$key->$obj"
                 )
@@ -522,7 +522,7 @@ class JsonBuilder {
                     ignoreNull
                 )
             } else {
-                L.w(TAG, " 当前操作已被忽略:$obj")
+                L.wt(TAG, " 当前操作已被忽略:$obj")
             }
         }
 

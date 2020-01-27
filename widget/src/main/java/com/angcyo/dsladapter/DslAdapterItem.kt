@@ -6,7 +6,6 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.view.View
-import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.library.L
 import com.angcyo.widget.DslViewHolder
@@ -114,6 +113,13 @@ open class DslAdapterItem {
      * [DslAdapter.onViewDetachedFromWindow]
      * */
     var onItemViewDetachedToWindow: (itemHolder: DslViewHolder) -> Unit = {
+
+    }
+
+    /**
+     * [DslAdapter.onViewRecycled]
+     * */
+    var onItemViewRecycled: (itemHolder: DslViewHolder) -> Unit = {
 
     }
 

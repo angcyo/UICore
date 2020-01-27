@@ -5,10 +5,7 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.OverScroller
 import androidx.core.widget.ScrollerCompat
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.recyclerview.widget.*
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslItemDecoration
 import com.angcyo.dsladapter.HoverItemDecoration
@@ -23,6 +20,8 @@ import com.angcyo.widget.DslViewHolder
  * @date 2019/12/26
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
+
+//<editor-fold desc="DslAdapter相关">
 
 /**[DslAdapter]必备的组件*/
 fun RecyclerView.initDsl() {
@@ -72,6 +71,10 @@ fun RecyclerView.dslAdapter(
 
     return dslAdapter!!
 }
+
+//</editor-fold desc="DslAdapter相关">
+
+//<editor-fold desc="基础">
 
 /** 通过[V] [H] [GV2] [GH3] [SV2] [SV3] 方式, 设置 [LayoutManager] */
 fun RecyclerView.resetLayoutManager(match: String) {
@@ -156,6 +159,32 @@ fun RecyclerView?.getLastVelocity(): Float {
     return currVelocity
 }
 
+
+/**
+ * 取消RecyclerView的默认动画
+ * */
+public fun RecyclerView.noItemAnim() {
+    itemAnimator = null
+}
+
+/**
+ * 取消默认的change动画
+ * */
+public fun RecyclerView.noItemChangeAnim() {
+    if (itemAnimator == null) {
+        itemAnimator = DefaultItemAnimator().apply {
+            supportsChangeAnimations = false
+        }
+    } else if (itemAnimator is SimpleItemAnimator) {
+        (itemAnimator as SimpleItemAnimator).supportsChangeAnimations =
+            false
+    }
+}
+
+//</editor-fold desc="基础">
+
+//<editor-fold desc="ViewHolder相关">
+
 /**获取[RecyclerView]界面上存在指定位置[index]的[DslViewHolder], 负数表示倒数开始的index*/
 operator fun RecyclerView.get(index: Int): DslViewHolder? {
     val child: View?
@@ -187,3 +216,5 @@ fun RecyclerView.allViewHolder(): List<DslViewHolder> {
     }
     return result
 }
+
+//</editor-fold desc="ViewHolder相关">

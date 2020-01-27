@@ -3,7 +3,6 @@ package com.angcyo.core.component.file
 import android.content.Context
 import com.angcyo.coroutine.CoroutineErrorHandler
 import com.angcyo.coroutine.launch
-import com.angcyo.library.getAppString
 import com.angcyo.library.utils.FileUtils
 import com.angcyo.library.utils.fileName
 import kotlinx.coroutines.Dispatchers
@@ -20,9 +19,6 @@ import java.util.*
 object DslFileHelper {
     var appContext: Context? = null
 
-    /**所有文件写入的在此根目录下*/
-    var rootFolder: String = getAppString("schema") ?: ""
-
     /**常用日志文件夹*/
     var log = "log"
     var http = "http"
@@ -38,11 +34,6 @@ object DslFileHelper {
 
     val dateFormat: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss-SSS", Locale.CHINA)
 
-    /**获取文件夹路径*/
-    var onGetFolderPath: (folder: String) -> String = {
-        "$rootFolder/$it"
-    }
-
     fun init(context: Context) {
         appContext = context.applicationContext
     }
@@ -53,13 +44,12 @@ object DslFileHelper {
         name: String,
         data: String
     ): String? {
-        val f = onGetFolderPath(folder)
         if (async) {
             launch(Dispatchers.IO + CoroutineErrorHandler()) {
-                FileUtils.writeExternal(appContext, f, name, data)
+                FileUtils.writeExternal(appContext, folder, name, data)
             }
         } else {
-            FileUtils.writeExternal(appContext, f, name, data)
+            FileUtils.writeExternal(appContext, folder, name, data)
         }
         return FileUtils.appExternalFolder(appContext, folder, name)?.absolutePath
     }

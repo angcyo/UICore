@@ -52,7 +52,7 @@ open class RCoordinatorLayout(
 
     override fun draw(canvas: Canvas) {
         bDrawable?.run {
-            canvas.getClipBounds(bounds)
+            setBounds(0, 0, measuredWidth, measuredHeight)
             draw(canvas)
         }
         super.draw(canvas)

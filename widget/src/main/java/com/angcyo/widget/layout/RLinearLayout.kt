@@ -30,7 +30,7 @@ open class RLinearLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     override fun draw(canvas: Canvas) {
         bDrawable?.run {
-            canvas.getClipBounds(bounds)
+            setBounds(0, 0, measuredWidth, measuredHeight)
             draw(canvas)
         }
         super.draw(canvas)

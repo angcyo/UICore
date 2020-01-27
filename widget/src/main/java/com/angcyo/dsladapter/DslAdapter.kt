@@ -81,18 +81,6 @@ open class DslAdapter : RecyclerView.Adapter<DslViewHolder>, OnDispatchUpdatesLi
 
     //<editor-fold desc="生命周期方法">
 
-    var _recyclerView: RecyclerView? = null
-
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        _recyclerView = recyclerView
-    }
-
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView)
-        _recyclerView = null
-    }
-
     override fun getItemViewType(position: Int): Int {
         return if (isAdapterStatus()) {
             dslAdapterStatusItem.itemLayoutId
@@ -123,16 +111,21 @@ open class DslAdapter : RecyclerView.Adapter<DslViewHolder>, OnDispatchUpdatesLi
         dslItem?.itemBind?.invoke(viewHolder, position, dslItem)
     }
 
+    var _recyclerView: RecyclerView? = null
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        _recyclerView = recyclerView
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        _recyclerView = null
+    }
+
     override fun onViewAttachedToWindow(holder: DslViewHolder) {
         super.onViewAttachedToWindow(holder)
-
-        val dslAdapterItem = when {
-            isAdapterStatus() -> dslAdapterStatusItem
-            holder.adapterPosition in getValidFilterDataList().indices -> getAdapterItem(holder.adapterPosition)
-            else -> null
-        }
-
-        dslAdapterItem?.apply {
+        holder.getDslAdapterItem()?.apply {
             holder.itemView.fullSpan(itemSpanCount == -1)
             onItemViewAttachedToWindow.invoke(holder)
         }
@@ -140,15 +133,28 @@ open class DslAdapter : RecyclerView.Adapter<DslViewHolder>, OnDispatchUpdatesLi
 
     override fun onViewDetachedFromWindow(holder: DslViewHolder) {
         super.onViewDetachedFromWindow(holder)
-
-        val dslAdapterItem = when {
-            isAdapterStatus() -> dslAdapterStatusItem
-            holder.adapterPosition in getValidFilterDataList().indices -> getAdapterItem(holder.adapterPosition)
-            else -> null
-        }
-
-        dslAdapterItem?.apply {
+        holder.getDslAdapterItem()?.apply {
             onItemViewDetachedToWindow.invoke(holder)
+        }
+    }
+
+    override fun onViewRecycled(holder: DslViewHolder) {
+        super.onViewRecycled(holder)
+        holder.getDslAdapterItem()?.apply {
+            onItemViewRecycled.invoke(holder)
+        }
+    }
+
+    override fun onFailedToRecycleView(holder: DslViewHolder): Boolean {
+        return super.onFailedToRecycleView(holder)
+    }
+
+    /**返回[DslViewHolder]对应的[DslAdapterItem]*/
+    fun DslViewHolder.getDslAdapterItem(): DslAdapterItem? {
+        return when {
+            isAdapterStatus() -> dslAdapterStatusItem
+            adapterPosition in getValidFilterDataList().indices -> getAdapterItem(adapterPosition)
+            else -> null
         }
     }
 
