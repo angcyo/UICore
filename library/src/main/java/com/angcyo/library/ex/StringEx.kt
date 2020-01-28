@@ -43,7 +43,6 @@ fun List<Any?>.connect(
     }
 }
 
-
 /**分割字符串*/
 fun String?.split(
     separator: String = ",",
@@ -102,6 +101,10 @@ fun String.isNumber(): Boolean {
 fun String.toBitmap(): Bitmap {
     val bytes = Base64.decode(this, Base64.NO_WRAP)
     return bytes.toBitmap()
+}
+
+fun String.toBase64(): String {
+    return Base64.encodeToString(toByteArray(), Base64.NO_WRAP).replace("\\+", "%2B")
 }
 
 /**url中的参数获取*/
