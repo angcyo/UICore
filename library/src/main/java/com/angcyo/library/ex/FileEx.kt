@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.text.TextUtils
 import android.text.format.Formatter
+import com.angcyo.library.ex.FileEx.hexDigits
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -21,6 +22,15 @@ import kotlin.experimental.and
  * @author angcyo
  * @date 2020/01/22
  */
+
+object FileEx {
+    val hexDigits =
+        charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
+}
+
+enum class SizeUnit {
+    Byte, KB, MB, GB, TB, PB, Auto
+}
 
 /**文件是否存在*/
 fun String.isFileExist(): Boolean {
@@ -50,9 +60,6 @@ fun String.transferToFile(filePath: String) {
         outputChannel?.close()
     }
 }
-
-private val hexDigits =
-    charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
 
 fun ByteArray.bytes2HexString(): String? {
     val len = this.size
@@ -137,10 +144,6 @@ fun Long.fileSizeString(unit: SizeUnit = SizeUnit.Auto): String {
         SizeUnit.PB -> String.format(Locale.US, "%.2fPB", size / PB)
         else -> size.toString() + "B"
     }
-}
-
-enum class SizeUnit {
-    Byte, KB, MB, GB, TB, PB, Auto
 }
 
 /**
