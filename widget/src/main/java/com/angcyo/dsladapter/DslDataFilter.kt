@@ -4,6 +4,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.recyclerview.widget.DiffUtil
 import com.angcyo.library.L
+import com.angcyo.library.ex.nowTime
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
@@ -306,14 +307,13 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             _params = null
         }
 
-        var _startTime = 0L
         override fun run() {
-            _startTime = nowTime()
-            L.d("开始计算Diff:$_startTime")
+            val startTime = nowTime()
+            L.d("开始计算Diff:$startTime")
             val diffResult = calculateDiff()
             val nowTime = nowTime()
-            val s = (nowTime - _startTime) / 100
-            val ms = ((nowTime - _startTime) % 100) * 1f / 1000
+            val s = (nowTime - startTime) / 100
+            val ms = ((nowTime - startTime) % 100) * 1f / 1000
             L.i("Diff计算耗时:${s + ms}ms")
             _diffResult = diffResult
 

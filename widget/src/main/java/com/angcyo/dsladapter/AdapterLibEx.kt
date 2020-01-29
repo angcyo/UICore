@@ -150,8 +150,6 @@ fun Rect.set(rectF: RectF): Rect {
     return this
 }
 
-internal fun nowTime() = System.currentTimeMillis()
-
 /**快速创建网格布局*/
 fun gridLayout(
     context: Context,

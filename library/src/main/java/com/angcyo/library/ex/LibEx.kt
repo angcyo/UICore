@@ -19,14 +19,14 @@ fun Any?.hash(): String? {
     return this?.hashCode()?.run { Integer.toHexString(this) }
 }
 
-public fun Any.simpleHash(): String {
+fun Any.simpleHash(): String {
     return "${this.javaClass.simpleName}(${this.hash()})"
 }
 
-public fun Any.simpleName(): String {
+fun Any.simpleName(): String {
     return this.javaClass.simpleName
 }
 
-public fun Any.name(): String {
+fun Any.name(): String {
     return this.javaClass.name
 }
