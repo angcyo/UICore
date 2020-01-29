@@ -1,0 +1,27 @@
+apply from: allGradle.libBase
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    defaultConfig {
+        minSdkVersion 14
+    }
+}
+
+dependencies {
+    implementation project(allModule.library)
+    implementation project(allModule.fragment)
+    implementation project(allModule.viewmodel)
+    implementation project(allModule.glide)
+    implementation project(allModule.github)
+    implementation project(allModule.transition)
+
+    //https://mvnrepository.com/artifact/androidx.loader/loader
+    api "androidx.loader:loader:1.1.0"
+
+    //https://github.com/davemorrissey/subsampling-scale-image-view
+    //https://jcenter.bintray.com/com/davemorrissey/labs/
+    api 'com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0'
+
+    //https://github.com/chrisbanes/PhotoView/
+    api 'com.github.chrisbanes:PhotoView:2.3.0'
+}

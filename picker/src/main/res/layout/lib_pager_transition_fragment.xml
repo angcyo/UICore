@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.angcyo.widget.layout.MatrixLayout
+        android:id="@+id/lib_matrix_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.angcyo.widget.pager.DslViewPager
+            android:id="@+id/lib_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </com.angcyo.widget.layout.MatrixLayout>
+
+    <!--指示器-->
+    <com.angcyo.widget.pager.TextIndicator
+        android:id="@+id/lib_text_indicator"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:padding="@dimen/lib_xhdpi"
+        android:textColor="@color/white"
+        tools:background="@color/transparent80" />
+</com.angcyo.widget.layout.RFrameLayout>

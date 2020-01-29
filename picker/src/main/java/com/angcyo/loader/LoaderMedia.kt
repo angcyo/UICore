@@ -1,4 +1,4 @@
-package com.angcyo.library.loader
+package com.angcyo.loader
 
 import android.os.Parcelable
 import com.angcyo.library.ex.isFileExist
