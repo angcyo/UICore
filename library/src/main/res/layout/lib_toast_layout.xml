@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.angcyo.widget.layout.RFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/base_toast_root_layout"
     android:layout_width="match_parent"
@@ -38,4 +38,4 @@
             tools:text="测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容" />
     </LinearLayout>
 
-</com.angcyo.widget.layout.RFrameLayout>
+</FrameLayout>

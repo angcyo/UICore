@@ -7,7 +7,8 @@ import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
-import com.angcyo.drawable.dp
+import com.angcyo.library.ex.dp
+
 
 /**
  * 基础自绘Drawable

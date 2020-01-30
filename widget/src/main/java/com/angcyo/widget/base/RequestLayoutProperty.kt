@@ -11,11 +11,11 @@ import kotlin.reflect.KProperty
  * @date 2019/12/24
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-class InvalidateProperty<T>(var value: T) : ReadWriteProperty<View, T> {
+class RequestLayoutProperty<T>(var value: T) : ReadWriteProperty<View, T> {
     override fun getValue(thisRef: View, property: KProperty<*>): T = value
 
     override fun setValue(thisRef: View, property: KProperty<*>, value: T) {
         this.value = value
-        thisRef.postInvalidateOnAnimation()
+        thisRef.requestLayout()
     }
 }

@@ -2,12 +2,12 @@ apply from: allGradle.libBase
 
 android {
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 1
     }
 }
 
 dependencies {
-    api "androidx.annotation:annotation:1.1.0"
+    api 'androidx.core:core:1.1.0'
 
     //https://github.com/orhanobut/hawk
     //https://jcenter.bintray.com/com/orhanobut/

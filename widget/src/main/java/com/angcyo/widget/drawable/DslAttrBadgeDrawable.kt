@@ -5,7 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.util.AttributeSet
 import android.view.Gravity
-import com.angcyo.drawable.dpi
+import com.angcyo.library.ex.dpi
 import com.angcyo.drawable.text.DslBadgeDrawable
 import com.angcyo.widget.R
 

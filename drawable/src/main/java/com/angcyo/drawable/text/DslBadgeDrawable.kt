@@ -8,6 +8,8 @@ import android.util.AttributeSet
 import android.view.Gravity
 import com.angcyo.drawable.*
 import com.angcyo.drawable.base.DslGradientDrawable
+import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.dpi
 
 /**
  * 未读数, 未读小红点, 角标绘制Drawable

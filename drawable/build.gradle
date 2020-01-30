@@ -8,5 +8,4 @@ android {
 
 dependencies {
     implementation project(allModule.library)
-    api 'androidx.core:core:1.1.0'
 }

@@ -12,7 +12,7 @@ import android.view.MotionEvent
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import androidx.core.content.ContextCompat
-import com.angcyo.drawable.dpi
+import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
 import com.angcyo.widget.base.isPasswordType
 import com.angcyo.widget.edit.ClearEditText.Companion.STATE_NONE

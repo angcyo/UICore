@@ -14,7 +14,7 @@ import android.view.*
 import android.view.animation.DecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
-import com.angcyo.drawable.toDpi
+import com.angcyo.library.ex.toDpi
 import com.angcyo.library.L.w
 import com.angcyo.widget.R
 import com.angcyo.widget.base.getStatusBarHeight

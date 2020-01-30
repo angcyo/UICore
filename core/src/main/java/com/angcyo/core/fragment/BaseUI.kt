@@ -4,8 +4,8 @@ import android.view.Gravity
 import android.widget.TextView
 import com.angcyo.base.back
 import com.angcyo.core.R
-import com.angcyo.drawable.colorFilter
-import com.angcyo.drawable.dpi
+import com.angcyo.library.ex.colorFilter
+import com.angcyo.library.ex.dpi
 import com.angcyo.widget.base.clickIt
 import com.angcyo.widget.base.find
 import com.angcyo.widget.base.getDrawable

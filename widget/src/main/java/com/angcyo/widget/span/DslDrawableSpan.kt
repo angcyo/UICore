@@ -11,11 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
-import com.angcyo.drawable.colorFilter
-import com.angcyo.drawable.dp
-import com.angcyo.library.ex.undefined_color
-import com.angcyo.library.ex.undefined_float
-import com.angcyo.library.ex.undefined_int
+import com.angcyo.library.ex.*
 import kotlin.math.min
 
 /**

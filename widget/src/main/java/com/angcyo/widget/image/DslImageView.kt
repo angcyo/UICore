@@ -8,7 +8,7 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MotionEvent
 import com.angcyo.drawable.DslGravity
-import com.angcyo.drawable.initBounds
+import com.angcyo.library.ex.initBounds
 import com.angcyo.library.ex.toColorInt
 import com.angcyo.widget.R
 import com.angcyo.widget.base.drawRect

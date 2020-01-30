@@ -5,7 +5,7 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.view.ViewCompat
-import com.angcyo.drawable.dpi
+import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
 import com.angcyo.widget.base.atMost
 import com.angcyo.widget.base.isVisible

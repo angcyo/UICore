@@ -10,7 +10,8 @@ import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.annotation.Px
 import androidx.core.view.ViewCompat
-import com.angcyo.drawable.color
+import com.angcyo.library.ex.color
+
 import com.angcyo.widget.base.eachChild
 import com.angcyo.widget.base.inflate
 

@@ -9,8 +9,8 @@ import androidx.annotation.IdRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.*
 import androidx.viewpager.widget.ViewPager
-import com.angcyo.drawable.copyDrawable
 import com.angcyo.dsladapter.getViewRect
+import com.angcyo.library.ex.copyDrawable
 import com.angcyo.loader.LoaderMedia
 import com.angcyo.loader.loadPath
 import com.angcyo.pager.dslitem.IPlaceholderDrawableProvider

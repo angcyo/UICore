@@ -8,11 +8,9 @@ android {
 }
 
 dependencies {
-    implementation project(allModule.library)
-    implementation project(allModule.fragment)
+    implementation project(allModule.core)
     implementation project(allModule.viewmodel)
     implementation project(allModule.glide)
-    implementation project(allModule.github)
     implementation project(allModule.transition)
 
     //https://mvnrepository.com/artifact/androidx.loader/loader

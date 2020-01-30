@@ -5,8 +5,8 @@ import android.graphics.Color
 import android.util.AttributeSet
 import android.view.Gravity
 import androidx.annotation.Px
-import com.angcyo.drawable.dp
-import com.angcyo.drawable.dpi
+import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.dpi
 import com.angcyo.drawable.text.DslBadgeDrawable
 import com.angcyo.widget.R
 

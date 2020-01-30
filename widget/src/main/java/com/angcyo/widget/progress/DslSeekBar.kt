@@ -10,7 +10,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import androidx.core.view.GestureDetectorCompat
 import com.angcyo.drawable.base.DslGradientDrawable
-import com.angcyo.drawable.dpi
+import com.angcyo.library.ex.dpi
 import com.angcyo.drawable.text.DslTextDrawable
 import com.angcyo.widget.R
 import com.angcyo.widget.base.getColor

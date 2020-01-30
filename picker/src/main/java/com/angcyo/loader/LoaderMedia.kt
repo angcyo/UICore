@@ -6,7 +6,7 @@ import com.angcyo.library.ex.mimeType
 import kotlinx.android.parcel.Parcelize
 
 /**
- *
+ * Loader 加载出来的媒体数据
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/01/22
@@ -39,7 +39,22 @@ data class LoaderMedia(
     var addTime: Long = 0,
 
     /** 文件大小, b->kb */
-    var fileSize: Long = 0
+    var fileSize: Long = 0,
+
+    var displayName: String? = null,
+
+    var mimeType: String? = null,
+
+    /**
+     * The orientation for the media item, expressed in degrees. For
+     * example, 0, 90, 180, or 270 degrees.
+     * [android.provider.MediaStore.MediaColumns.ORIENTATION]*/
+    var orientation: Int = 0,
+
+    //纬度
+    var latitude: Double = 0.0,
+    //经度
+    var longitude: Double = 0.0
 
 ) : Parcelable
 

@@ -312,9 +312,9 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             L.d("开始计算Diff:$startTime")
             val diffResult = calculateDiff()
             val nowTime = nowTime()
-            val s = (nowTime - startTime) / 100
-            val ms = ((nowTime - startTime) % 100) * 1f / 1000
-            L.i("Diff计算耗时:${s + ms}ms")
+            val s = (nowTime - startTime) / 1000
+            val ms = ((nowTime - startTime) % 1000) * 1f / 1000
+            L.i("Diff计算耗时:${s + ms}s")
             _diffResult = diffResult
 
             //回调到主线程

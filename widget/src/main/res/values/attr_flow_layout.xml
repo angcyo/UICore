@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DslFlowLayout">
+        <attr name="r_flow_max_line_child_count" format="integer"/>
+        <attr name="r_flow_equ_width" format="boolean"/>
+        <attr name="r_flow_item_vertical_space" format="dimension"/>
+        <attr name="r_flow_item_horizontal_space" format="dimension"/>
+    </declare-styleable>
+</resources>

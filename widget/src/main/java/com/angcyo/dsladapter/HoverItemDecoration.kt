@@ -6,7 +6,7 @@ import android.view.*
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.angcyo.drawable.dp
+import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.nowTime
 import com.angcyo.widget.DslViewHolder
 

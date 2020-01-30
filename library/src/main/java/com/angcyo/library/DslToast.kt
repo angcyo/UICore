@@ -1,4 +1,4 @@
-package com.angcyo.core.component
+package com.angcyo.library
 
 import android.app.Activity
 import android.content.Context
@@ -9,15 +9,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
-import com.angcyo.core.R
-import com.angcyo.drawable.dpi
-import com.angcyo.drawable.getDimen
-import com.angcyo.drawable.getStatusBarHeight
-import com.angcyo.library.app
+import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.getDimen
 import com.angcyo.library.ex.undefined_int
 import com.angcyo.library.ex.undefined_res
-import com.angcyo.library.getScreenHeight
-import com.angcyo.library.getScreenWidth
 import java.lang.ref.WeakReference
 
 /**

@@ -7,7 +7,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.view.ViewCompat
 import com.angcyo.drawable.base.DslGradientDrawable
-import com.angcyo.drawable.dpi
+import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
 
 /**

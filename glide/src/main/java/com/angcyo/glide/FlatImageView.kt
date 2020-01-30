@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.animation.LinearInterpolator
 import android.widget.OverScroller
-import com.angcyo.drawable.dpi
+import com.angcyo.library.ex.dpi
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min

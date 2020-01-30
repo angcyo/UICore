@@ -35,6 +35,6 @@
         android:layout_marginBottom="@dimen/lib_xxhdpi"
         android:minHeight="45dp"
         android:text="开启权限"
-        android:textColor="@color/white" />
+        android:textColor="@color/lib_white" />
 
 </FrameLayout>

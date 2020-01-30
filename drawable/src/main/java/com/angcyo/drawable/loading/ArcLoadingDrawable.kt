@@ -5,7 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import com.angcyo.drawable.base.BaseSectionDrawable
-import com.angcyo.drawable.dp
+import com.angcyo.library.ex.dp
 
 /**
  *

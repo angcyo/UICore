@@ -17,13 +17,13 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import com.angcyo.drawable.getColor
-import com.angcyo.drawable.getStatusBarHeight
 import com.angcyo.fragment.R
 import com.angcyo.library.app
+import com.angcyo.library.ex.getColor
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.safe
 import com.angcyo.library.ex.simpleName
+import com.angcyo.library.getStatusBarHeight
 import com.angcyo.widget.base.onDoubleTap
 import com.angcyo.widget.span.span
 import kotlin.math.max
