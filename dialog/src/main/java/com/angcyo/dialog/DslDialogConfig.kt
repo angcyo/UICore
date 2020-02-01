@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatDialog
 import com.angcyo.library.L
 import com.angcyo.library.ex.getDrawable
 import com.angcyo.library.ex.undefined_float
-import com.angcyo.library.ex.undefined_int
+import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -26,9 +26,15 @@ import com.angcyo.widget.DslViewHolder
  * @author angcyo
  * @date 2020/02/01
  */
-open class DslDialog(val context: Context) {
+open class DslDialogConfig(var context: Context? = null) {
 
     companion object {
+
+        const val DIALOG_TYPE_APPCOMPAT = 1
+        const val DIALOG_TYPE_ALERT_DIALOG = 2
+        /**需要[material]库支持*/
+        const val DIALOG_TYPE_BOTTOM_SHEET_DIALOG = 3
+
         /**
          * 测量 layout 或者 view 的大小
          *
@@ -111,9 +117,9 @@ open class DslDialog(val context: Context) {
     var dialogMessage: CharSequence? = ""
     var onInitListener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit = { _, _ -> }
     var dialogBgDrawable: Drawable? = null
-    var dialogWidth: Int = undefined_int
-    var dialogHeight: Int = undefined_int
-    var dialogGravity: Int = undefined_int
+    var dialogWidth: Int = undefined_res
+    var dialogHeight: Int = undefined_res
+    var dialogGravity: Int = undefined_res
     /**
      * 自动计算宽高
      */
@@ -122,7 +128,7 @@ open class DslDialog(val context: Context) {
      * 对话框变暗指数, [0,1]
      * 0表示, 不变暗
      * 1表示, 全暗
-     * undefined_int, 默认
+     * undefined_res, 默认
      */
     var amount: Float = undefined_float
     /**
@@ -137,12 +143,44 @@ open class DslDialog(val context: Context) {
     var negativeButtonText: CharSequence? = null
     var neutralButtonText: CharSequence? = null
 
-    var positiveButtonListener: ((dialog: Dialog) -> Unit)? = null
-    var negativeButtonListener: ((dialog: Dialog) -> Unit)? = null
-    var neutralButtonListener: ((dialog: Dialog) -> Unit)? = null
+    var positiveButtonListener: ((dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit)? =
+        { dialog, _ ->
+            dialog.dismiss()
+        }
+
+    var negativeButtonListener: ((dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit)? =
+        { dialog, _ ->
+            dialog.cancel()
+        }
+
+    var neutralButtonListener: ((dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit)? = null
 
     var onDismissListener: ((dialog: Dialog) -> Unit)? = null
     var onCancelListener: ((dialog: Dialog) -> Unit)? = null
+
+    open fun neutralButton(
+        text: CharSequence? = neutralButtonText,
+        listener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit
+    ) {
+        neutralButtonText = text
+        neutralButtonListener = listener
+    }
+
+    open fun negativeButton(
+        text: CharSequence? = negativeButtonText,
+        listener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit
+    ) {
+        negativeButtonText = text
+        negativeButtonListener = listener
+    }
+
+    open fun positiveButton(
+        text: CharSequence? = positiveButtonText,
+        listener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit
+    ) {
+        positiveButtonText = text
+        positiveButtonListener = listener
+    }
 
     /**
      * https://developer.android.google.cn/reference/android/view/Window.html
@@ -214,13 +252,17 @@ open class DslDialog(val context: Context) {
             if (amount != undefined_float) {
                 window.setDimAmount(amount)
             }
-            if (animStyleResId != undefined_int) {
+            if (animStyleResId != undefined_res) {
                 window.setWindowAnimations(animStyleResId)
             }
         }
     }
 
     open fun showAndConfigDialog(dialog: Dialog): Dialog {
+        if (context == null) {
+            throw NullPointerException("context is null.")
+        }
+
         dialog.setCancelable(cancelable)
         if (!TextUtils.isEmpty(dialogTitle)) {
             dialog.setTitle(dialogTitle)
@@ -255,60 +297,65 @@ open class DslDialog(val context: Context) {
             val attributes = window.attributes
             if (autoWidthHeight && dialogLayoutId != -1) {
                 //自动测量 布局的宽高
-                val size = measureSize(context, dialogLayoutId, null)
+                val size = measureSize(context!!, dialogLayoutId, null)
                 window.setLayout(size[0], size[1])
             } else { // window的宽高设置
-                if (dialogWidth != undefined_int && dialogHeight != undefined_int) {
+                if (dialogWidth != undefined_res && dialogHeight != undefined_res) {
                     window.setLayout(dialogWidth, dialogHeight)
                 } else {
-                    if (dialogHeight != undefined_int) {
+                    if (dialogHeight != undefined_res) {
                         window.setLayout(attributes.width, dialogHeight)
                     }
-                    if (dialogWidth != undefined_int) {
+                    if (dialogWidth != undefined_res) {
                         window.setLayout(dialogWidth, attributes.height)
                     }
                 }
             }
-            if (dialogGravity != undefined_int) {
+            if (dialogGravity != undefined_res) {
                 attributes.gravity = dialogGravity
                 window.attributes = attributes
             }
             decorView = window.decorView
-            initDialogView(dialog, DslViewHolder(decorView))
+            val viewHolder = DslViewHolder(decorView)
+            initDialogView(dialog, viewHolder)
+            onInitListener(dialog, viewHolder)
         }
 
         return dialog
     }
 
     open fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
-        onInitListener(dialog, dialogViewHolder)
     }
 
     /**
      * AppCompatDialog -> AlertDialog
      */
     fun showAlertDialog(): AlertDialog {
+        if (context == null) {
+            throw NullPointerException("context is null.")
+        }
+
         val builder =
-            AlertDialog.Builder(context)
+            AlertDialog.Builder(context!!)
         if (!TextUtils.isEmpty(dialogMessage)) {
             builder.setMessage(dialogMessage)
         }
         //积极的按钮 DialogInterface.BUTTON_POSITIVE
         if (!TextUtils.isEmpty(positiveButtonText)) {
             builder.setPositiveButton(positiveButtonText) { dialog, _ ->
-                positiveButtonListener?.invoke(dialog as Dialog)
+                positiveButtonListener?.invoke(dialog as Dialog, dialog.dialogViewHolder())
             }
         }
         //消极的按钮 DialogInterface.BUTTON_NEGATIVE
         if (!TextUtils.isEmpty(negativeButtonText)) {
             builder.setNegativeButton(negativeButtonText) { dialog, _ ->
-                negativeButtonListener?.invoke(dialog as Dialog)
+                negativeButtonListener?.invoke(dialog as Dialog, dialog.dialogViewHolder())
             }
         }
         //中立的按钮 DialogInterface.BUTTON_NEUTRAL
         if (!TextUtils.isEmpty(neutralButtonText)) {
             builder.setNeutralButton(neutralButtonText) { dialog, _ ->
-                neutralButtonListener?.invoke(dialog as Dialog)
+                neutralButtonListener?.invoke(dialog as Dialog, dialog.dialogViewHolder())
             }
         }
         if (dialogContentView != null) {
@@ -328,6 +375,9 @@ open class DslDialog(val context: Context) {
      * AppCompatDialog -> BottomSheetDialog
      */
     fun showSheetDialog(): Dialog {
+        if (context == null) {
+            throw NullPointerException("context is null.")
+        }
         return try {
             val cls = Class.forName("com.google.android.material.bottomsheet.BottomSheetDialog")
             val constructor = cls.getConstructor(Context::class.java)
@@ -343,21 +393,26 @@ open class DslDialog(val context: Context) {
      * Dialog -> AppCompatDialog
      */
     fun showCompatDialog(): AppCompatDialog {
+        if (context == null) {
+            throw NullPointerException("context is null.")
+        }
         val dialog = AppCompatDialog(context)
         showAndConfigDialog(dialog)
         return dialog
     }
 }
 
+fun Dialog.dialogViewHolder(): DslViewHolder = DslViewHolder(window!!.decorView)
+
 /**快速显示[AppCompatDialog]配置*/
-fun dslDialog(context: Context, action: DslDialog.() -> Unit): AppCompatDialog {
-    val dslDialog = DslDialog(context)
+fun dslDialog(context: Context, action: DslDialogConfig.() -> Unit): AppCompatDialog {
+    val dslDialog = DslDialogConfig(context)
     dslDialog.action()
     return dslDialog.showCompatDialog()
 }
 
-fun dslDialog(context: Context, dialog: Dialog, action: DslDialog.() -> Unit): Dialog {
-    val dslDialog = DslDialog(context)
+fun dslDialog(context: Context, dialog: Dialog, action: DslDialogConfig.() -> Unit): Dialog {
+    val dslDialog = DslDialogConfig(context)
     dslDialog.action()
     dslDialog.showAndConfigDialog(dialog)
     return dialog

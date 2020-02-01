@@ -1,5 +1,6 @@
 package com.angcyo.dialog
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 
@@ -11,7 +12,7 @@ import android.graphics.drawable.ColorDrawable
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
-open class IosDialogConfig : BaseDialogConfig() {
+open class IosDialogConfig(context: Context? = null) : BaseDialogConfig(context) {
 
     init {
         dialogLayoutId = R.layout.lib_dialog_normal_ios_layout

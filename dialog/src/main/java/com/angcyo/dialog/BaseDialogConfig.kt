@@ -1,11 +1,9 @@
 package com.angcyo.dialog
 
 import android.app.Dialog
-import android.graphics.drawable.Drawable
+import android.content.Context
 import android.view.View
-import android.view.Window
 import com.angcyo.library.L
-import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt
 
@@ -16,91 +14,26 @@ import com.angcyo.widget.base.clickIt
  * @date 2019/05/11
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-abstract class BaseDialogConfig {
+abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(context) {
 
-    companion object {
-        const val DIALOG_TYPE_APPCOMPAT = 1
-        const val DIALOG_TYPE_ALERT_DIALOG = 2
-        /**需要[material]库支持*/
-        const val DIALOG_TYPE_BOTTOM_SHEET_DIALOG = 3
-    }
+    init {
+        positiveButtonText = "确定"
+        negativeButtonText = "取消"
 
-    var dialogLayoutId = R.layout.lib_dialog_normal_layout
-
-    var dialogCancel = true
-        set(value) {
-            field = value
-            if (!value) {
-                dialogCanceledOnTouchOutside = false
-            }
+        onCancelListener = {
+            L.i("$it is Cancel!")
         }
 
-    var dialogCanceledOnTouchOutside = true
-
-    /**
-     * 对话框的标题, 为null时, 标题栏会被 GONE
-     * */
-    var dialogTitle: CharSequence? = null
-
-    /**
-     * 对话框的消息内容, 为null时, 会被 GONE
-     * */
-    var dialogMessage: CharSequence? = null
-
-    /**
-     * 中立按钮文本, 为null时, 会被 GONE
-     * */
-    var neutralButtonText: CharSequence? = null
-    var neutralButtonListener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit =
-        { _, _ -> }
-
-    open fun neutralButton(
-        text: CharSequence? = neutralButtonText,
-        listener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit
-    ) {
-        neutralButtonText = text
-        neutralButtonListener = listener
+        onDismissListener = {
+            L.i("$it is Dismiss!")
+        }
     }
-
-    /**
-     * 取消按钮文本, 为null时, 会被 GONE
-     * */
-    var negativeButtonText: CharSequence? = "取消"
-    var negativeButtonListener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit =
-        { dialog, _ -> dialog.cancel() }
-
-    open fun negativeButton(
-        text: CharSequence? = negativeButtonText,
-        listener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit
-    ) {
-        negativeButtonText = text
-        negativeButtonListener = listener
-    }
-
-    /**
-     * 确定按钮文本, 为null时, 会被 GONE
-     * */
-    var positiveButtonText: CharSequence? = "确定"
-    var positiveButtonListener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit =
-        { dialog, _ -> dialog.dismiss() }
-
-    open fun positiveButton(
-        text: CharSequence? = positiveButtonText,
-        listener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit
-    ) {
-        positiveButtonText = text
-        positiveButtonListener = listener
-    }
-
-    /**
-     * 初始化回调方法
-     * */
-    var dialogInit: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit = { _, _ -> }
 
     /**
      * 对话框初始化方法
      * */
-    open fun onDialogInit(dialog: Dialog, dialogViewHolder: DslViewHolder) {
+    override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
+        super.initDialogView(dialog, dialogViewHolder)
 
         //标题
         dialogViewHolder.tv(R.id.dialog_title_view)?.apply {
@@ -124,7 +57,7 @@ abstract class BaseDialogConfig {
             text = positiveButtonText
 
             clickIt {
-                positiveButtonListener.invoke(dialog, dialogViewHolder)
+                positiveButtonListener?.invoke(dialog, dialogViewHolder)
             }
         }
 
@@ -134,7 +67,7 @@ abstract class BaseDialogConfig {
             text = negativeButtonText
 
             clickIt {
-                negativeButtonListener.invoke(dialog, dialogViewHolder)
+                negativeButtonListener?.invoke(dialog, dialogViewHolder)
             }
         }
 
@@ -144,7 +77,7 @@ abstract class BaseDialogConfig {
             text = neutralButtonText
 
             clickIt {
-                neutralButtonListener.invoke(dialog, dialogViewHolder)
+                neutralButtonListener?.invoke(dialog, dialogViewHolder)
             }
         }
 
@@ -153,29 +86,8 @@ abstract class BaseDialogConfig {
             negativeButtonText == null &&
             neutralButtonText == null
         ) {
-            dialogViewHolder.tv(R.id.dialog_control_layout)?.visibility = View.GONE
+            dialogViewHolder.view(R.id.dialog_control_layout)?.visibility = View.GONE
         }
-    }
-
-
-    /**
-     * 可以设置的监听回调
-     * */
-    var onDialogCancel: (dialog: Dialog) -> Unit = {}
-    var onDialogDismiss: (dialog: Dialog) -> Unit = {}
-
-    /**
-     * 当调用dialog.cancel时, 此方法会回调, 并且 onDialogDismiss 也会回调
-     * */
-    open fun onDialogCancel(dialog: Dialog) {
-        L.d("onDialogCancel")
-    }
-
-    /**
-     * 当调用dialog.dismiss时, 此方法会回调, 并且 onDialogCancel 不会回调
-     * */
-    open fun onDialogDismiss(dialog: Dialog) {
-        L.d("onDialogDismiss")
     }
 
     /**
@@ -184,12 +96,12 @@ abstract class BaseDialogConfig {
      * */
     var dialogType = DIALOG_TYPE_APPCOMPAT
 
-    var dialogWidth = undefined_res
-    var dialogHeight = undefined_res
-    var dialogGravity = undefined_res
-    var dialogBgDrawable: Drawable? = null
-
-    var windowFeature = Window.FEATURE_NO_TITLE
-    /**正数表示addFlags, 负数表示clearFlags*/
-    var windowFlags = intArrayOf()
+    /**根据类型, 自动显示对应[Dialog]*/
+    fun show(): Dialog {
+        return when (dialogType) {
+            DIALOG_TYPE_ALERT_DIALOG -> showAlertDialog()
+            DIALOG_TYPE_BOTTOM_SHEET_DIALOG -> showSheetDialog()
+            else -> showCompatDialog()
+        }
+    }
 }

@@ -22,7 +22,7 @@ import com.angcyo.widget.pager.TextIndicator
  * @date 2020/02/01
  */
 
-open class DslInputDialog(context: Context) : DslDialog(context) {
+open class DslInputDialogConfig(context: Context) : DslDialogConfig(context) {
 
     init {
         dialogLayoutId = R.layout.lib_dialog_input_layout
@@ -139,8 +139,8 @@ open class DslInputDialog(context: Context) : DslDialog(context) {
 }
 
 /**快速显示带有输入框的[AppCompatDialog]*/
-fun dslInputDialog(context: Context, action: DslDialog.() -> Unit) {
-    val dslDialog = DslInputDialog(context)
+fun dslInputDialog(context: Context, action: DslDialogConfig.() -> Unit) {
+    val dslDialog = DslInputDialogConfig(context)
     dslDialog.action()
     dslDialog.showCompatDialog()
 }

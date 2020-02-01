@@ -11,7 +11,6 @@ import android.widget.FrameLayout
 import android.widget.PopupWindow
 import com.angcyo.dsladapter.getViewRect
 import com.angcyo.library.ex.getContentViewHeight
-import com.angcyo.library.ex.undefined_res
 import com.angcyo.library.getScreenHeight
 import com.angcyo.widget.DslViewHolder
 import kotlin.math.max
@@ -24,9 +23,9 @@ import kotlin.math.max
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
-/**快速配置一个显示在底部全屏的[DslDialog]*/
-fun Context.buildBottomDialog(): DslDialog {
-    return DslDialog(this).apply {
+/**快速配置一个显示在底部全屏的[DslDialogConfig]*/
+fun Context.buildBottomDialog(): DslDialogConfig {
+    return DslDialogConfig(this).apply {
         canceledOnTouchOutside = false
         dialogWidth = -1
         dialogHeight = -2
@@ -35,62 +34,22 @@ fun Context.buildBottomDialog(): DslDialog {
     }
 }
 
-fun DslDialog.configDslDialog(dialogConfig: BaseDialogConfig) {
-    cancelable = dialogConfig.dialogCancel
-    canceledOnTouchOutside = dialogConfig.dialogCanceledOnTouchOutside
-    onCancelListener = { dialog ->
-        dialogConfig.onDialogCancel(dialog)
-        dialogConfig.onDialogCancel.invoke(dialog)
-    }
-    onDismissListener = { dialog ->
-        dialogConfig.onDialogDismiss(dialog)
-        dialogConfig.onDialogDismiss.invoke(dialog)
-    }
-    dialogLayoutId = dialogConfig.dialogLayoutId
-    onInitListener = { dialog, dialogViewHolder ->
-        dialogConfig.onDialogInit(dialog, dialogViewHolder)
-        dialogConfig.dialogInit.invoke(dialog, dialogViewHolder)
-    }
-    windowFeature = dialogConfig.windowFeature
-    windowFlags = dialogConfig.windowFlags
-
-    dialogConfig.dialogBgDrawable?.let {
-        dialogBgDrawable = it
-    }
-    if (dialogConfig.dialogWidth != undefined_res) {
-        dialogWidth = dialogConfig.dialogWidth
-    }
-    if (dialogConfig.dialogHeight != undefined_res) {
-        dialogHeight = dialogConfig.dialogHeight
-    }
-}
-
-/**根据类型, 自动显示对应[Dialog]*/
-fun DslDialog.show(dialogConfig: BaseDialogConfig): Dialog {
-    configDslDialog(dialogConfig)
-    return when (dialogConfig.dialogType) {
-        BaseDialogConfig.DIALOG_TYPE_ALERT_DIALOG -> showAlertDialog()
-        BaseDialogConfig.DIALOG_TYPE_BOTTOM_SHEET_DIALOG -> showSheetDialog()
-        else -> showCompatDialog()
-    }
-}
-
 fun Context.normalDialog(config: NormalDialogConfig.() -> Unit): Dialog {
-    val dialogConfig = NormalDialogConfig()
+    val dialogConfig = NormalDialogConfig(this)
     dialogConfig.config()
-    return DslDialog(this).run {
+    return dialogConfig.run {
         dialogWidth = -1
-        show(dialogConfig)
+        show()
     }
 }
 
 fun Context.normalIosDialog(config: IosDialogConfig.() -> Unit): Dialog {
-    val dialogConfig = IosDialogConfig()
+    val dialogConfig = IosDialogConfig(this)
     dialogConfig.config()
 
-    return DslDialog(this).run {
+    return dialogConfig.run {
         dialogWidth = -1
-        show(dialogConfig)
+        show()
     }
 }
 //
