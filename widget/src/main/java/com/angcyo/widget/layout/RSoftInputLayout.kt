@@ -12,12 +12,12 @@ import android.os.Build
 import android.util.AttributeSet
 import android.view.*
 import android.view.animation.DecelerateInterpolator
-import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
-import com.angcyo.library.ex.toDpi
 import com.angcyo.library.L.w
+import com.angcyo.library.ex.toDpi
 import com.angcyo.widget.R
 import com.angcyo.widget.base.getStatusBarHeight
+import com.angcyo.widget.base.hideSoftInput
 import com.orhanobut.hawk.Hawk
 import java.util.*
 
@@ -839,7 +839,7 @@ class RSoftInputLayout : FrameLayout {
                 return false
             }
             intentAction = INTENT_HIDE_KEYBOARD
-            hideSoftInput(this)
+            hideSoftInput()
             return false
         }
         if (isEmojiLayoutShow) {
@@ -867,7 +867,7 @@ class RSoftInputLayout : FrameLayout {
             }
         }
         if (isSoftKeyboardShow) {
-            hideSoftInput(this)
+            hideSoftInput()
         }
 
         intentAction = INTENT_SHOW_EMOJI
@@ -1115,19 +1115,6 @@ class RSoftInputLayout : FrameLayout {
         const val INTENT_SHOW_EMOJI = 3
         const val INTENT_HIDE_EMOJI = 4
         const val KEY_KEYBOARD_HEIGHT = "key_keyboard_height"
-
-        fun hideSoftInput(view: View) {
-            val manager =
-                view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            manager.hideSoftInputFromWindow(view.windowToken, 0)
-        }
-
-        fun showSoftInput(view: View) {
-            view.requestFocus()
-            val manager =
-                view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            manager.showSoftInput(view, 0)
-        }
 
         fun isLayoutFullScreen(context: Context?): Boolean {
             if (context == null) {

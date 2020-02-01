@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="LibDialogAnimation" parent="Animation.AppCompat.Dialog">
+        <!--<item name="android:windowEnterAnimation">@anim/base_tran_to_bottom_enter</item>-->
+        <!--<item name="android:windowExitAnimation">@anim/base_tran_to_bottom_exit</item>-->
+    </style>
+
+    <style name="LibPopupAnimation" parent="Animation.AppCompat.DropDownUp">
+        <!--<item name="android:windowEnterAnimation">@anim/base_tran_to_bottom_enter</item>-->
+        <!--<item name="android:windowExitAnimation">@anim/base_tran_to_bottom_exit</item>-->
+    </style>
+
+</resources>

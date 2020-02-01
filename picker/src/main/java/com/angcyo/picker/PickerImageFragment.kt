@@ -62,6 +62,9 @@ class PickerImageFragment : BaseDslFragment() {
         _vh.click(R.id.close_image_view) {
             back()
         }
+        _vh.click(R.id.folder_layout) {
+            _showFolderDialog()
+        }
     }
 
     /**切换显示的文件夹*/
@@ -77,5 +80,9 @@ class PickerImageFragment : BaseDslFragment() {
             }
         }
         _adapter.autoAdapterStatus()
+    }
+
+    fun _showFolderDialog() {
+
     }
 }

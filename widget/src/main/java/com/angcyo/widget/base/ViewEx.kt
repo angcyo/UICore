@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.view.*
 import android.view.animation.DecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ListView
 import androidx.annotation.ColorRes
@@ -21,6 +22,7 @@ import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.library.ex.getStatusBarHeight
 import com.angcyo.library.ex.undefined_res
+import com.angcyo.widget.base.ViewEx._tempRect
 
 /**
  *
@@ -30,6 +32,9 @@ import com.angcyo.library.ex.undefined_res
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
+object ViewEx {
+    val _tempRect = Rect()
+}
 
 //<editor-fold desc="基础扩展">
 
@@ -391,7 +396,14 @@ fun View.hideSoftInput() {
     manager.hideSoftInputFromWindow(windowToken, 0)
 }
 
-val _tempRect = Rect()
+/**显示软键盘*/
+fun View.showSoftInput() {
+    if (this is EditText) {
+        requestFocus()
+        val manager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        manager.showSoftInput(this, 0)
+    }
+}
 
 /**
  * 获取键盘的高度

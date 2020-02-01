@@ -233,3 +233,14 @@ fun EditText.getCharLength(): Int {
     }
     return count
 }
+
+/**单行输入切换*/
+fun EditText.setSingleLineMode(singleLine: Boolean = true) {
+    if (singleLine) {
+        isSingleLine = true
+        maxLines = 1
+    } else {
+        isSingleLine = false
+        maxLines = Int.MAX_VALUE
+    }
+}

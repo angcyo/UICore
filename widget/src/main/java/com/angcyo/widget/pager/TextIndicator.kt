@@ -91,7 +91,18 @@ class TextIndicator : AppCompatTextView, OnPageChangeListener {
     }
 
     /**安装在[EditText], [maxLength]设置最大上限*/
-    fun setupEditText(editText: EditText, maxLength: Int = -1) {
+    fun setupEditText(editText: EditText?, maxLength: Int = -1) {
+        if (editText == null) {
+            if (autoHide) {
+                visibility = View.INVISIBLE
+            }
+            return
+        }
+
+        if (autoHide) {
+            visibility = View.VISIBLE
+        }
+
         var max = 0
 
         if (maxLength > 0) {

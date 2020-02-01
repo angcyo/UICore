@@ -9,10 +9,10 @@
 
     <!--标题栏-->
     <com.angcyo.widget.layout.TitleWrapLayout
+        android:id="@+id/title_wrap_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/action_bar_height"
-        android:background="@color/picker_title_bar_bg_color"
-        android:clickable="true">
+        android:background="@color/picker_title_bar_bg_color">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -115,6 +115,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:background="@null"
             android:button="@drawable/picker_origin_image_selector"
             android:drawablePadding="@dimen/lib_hdpi"
             android:paddingLeft="@dimen/lib_hdpi"

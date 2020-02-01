@@ -14,6 +14,7 @@
     <dimen name="lib_hdpi">8dp</dimen>
     <dimen name="lib_xhdpi">16dp</dimen>
     <dimen name="lib_xxhdpi">26dp</dimen>
+    <dimen name="lib_xxxhdpi">35dp</dimen>
 
     <!--圆角大小-->
     <dimen name="lib_radius_normal">5dp</dimen>
