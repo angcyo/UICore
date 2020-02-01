@@ -42,16 +42,20 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        showDebugInfoView(hasFocus)
+        onShowDebugInfoView(hasFocus)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         if (isDebug()) {
             baseDslViewHolder.postDelay(300) {
-                showDebugInfoView()
+                onShowDebugInfoView()
             }
         }
+    }
+
+    open fun onShowDebugInfoView(show: Boolean = true) {
+        showDebugInfoView(show)
     }
 
     /**布局设置之后触发*/

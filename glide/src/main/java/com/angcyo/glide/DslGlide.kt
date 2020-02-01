@@ -10,6 +10,7 @@ import android.widget.ImageView.ScaleType
 import com.angcyo.http.OkType
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.ex.fileUri
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.RequestManager
@@ -217,17 +218,21 @@ class DslGlide {
         clear()
 
         _checkLoad {
+            val targetView = targetView!!
             if (asGif) {
                 _glide()
                     .download(GlideUrl(string, _header()))
                     .override(Target.SIZE_ORIGINAL)
                     .configRequest(string, File::class.java)
-                    .into(GifDrawableImageViewTarget(targetView!!, autoPlayGif, transition))
+                    .into(GifDrawableImageViewTarget(targetView, autoPlayGif, transition))
             } else {
-                _glide()
-                    .load(GlideUrl(string, _header()))
-                    .configRequest(string, Drawable::class.java)
-                    .into(GlideDrawableImageViewTarget(targetView!!))
+                val file = File(string!!)
+                if (file.exists() && file.canRead()) {
+                    _glide().load(fileUri(targetView.context, file))
+                } else {
+                    _glide().load(GlideUrl(string, _header()))
+                }.configRequest(string, Drawable::class.java)
+                    .into(GlideDrawableImageViewTarget(targetView))
             }
         }
     }

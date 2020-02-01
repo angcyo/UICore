@@ -1,4 +1,4 @@
-package com.angcyo.core
+package com.angcyo.library.ex
 
 import android.content.Context
 import android.content.Intent
@@ -7,7 +7,6 @@ import android.content.pm.Signature
 import android.net.Uri
 import android.os.Build
 import androidx.core.content.FileProvider
-import com.angcyo.library.ex.mimeType
 import java.io.File
 
 /**
@@ -56,13 +55,17 @@ fun installApk(context: Context, file: File?) {
     } else {
         file.absolutePath.mimeType()
     }
-    val uri: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        FileProvider.getUriForFile(context, context.packageName, file)
-    } else {
-        Uri.fromFile(file)
-    }
+    val uri: Uri = fileUri(context, file)
     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     intent.setDataAndType(uri, type)
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     context.startActivity(intent)
+}
+
+fun fileUri(context: Context, file: File): Uri {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        FileProvider.getUriForFile(context, context.packageName, file)
+    } else {
+        Uri.fromFile(file)
+    }
 }

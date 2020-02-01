@@ -1,9 +1,17 @@
 package com.angcyo.picker
 
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import com.angcyo.base.back
 import com.angcyo.core.fragment.BaseDslFragment
+import com.angcyo.dsladapter.DslAdapterStatusItem
+import com.angcyo.library.L
+import com.angcyo.library.ex.getColor
 import com.angcyo.loader.DslLoader
-import com.angcyo.loader.LoaderConfig
+import com.angcyo.loader.LoaderFolder
+import com.angcyo.picker.dslitem.DslPickerImageItem
+import com.angcyo.picker.dslitem.DslPickerStatusItem
+import com.angcyo.viewmodel.VMAProperty
 
 /**
  *
@@ -14,8 +22,60 @@ import com.angcyo.loader.LoaderConfig
 class PickerImageFragment : BaseDslFragment() {
     val loader = DslLoader()
 
+    val pickerViewModel: PickerViewModel by VMAProperty(PickerViewModel::class.java)
+
+    init {
+        fragmentLayoutId = R.layout.picker_image_fragment
+        fragmentConfig.apply {
+            fragmentBackgroundDrawable = ColorDrawable(getColor(R.color.picker_fragment_bg_color))
+        }
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        loader.startLoader(activity, LoaderConfig())
+
+        /*观察文件夹切换*/
+        pickerViewModel.currentFolder.observe {
+            _switchFolder(it)
+        }
+
+        //样式调整
+        _adapter.dslAdapterStatusItem = DslPickerStatusItem()
+        _adapter.setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_LOADING)
+
+        //加载配置
+        val loaderConfig = pickerViewModel.loaderConfig.value
+        loaderConfig?.apply {
+            loader.onLoaderResult = {
+                if (it.isEmpty()) {
+                    _adapter.setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_EMPTY)
+                } else {
+                    _adapter.setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_NONE)
+                    pickerViewModel.loaderFolderList.value = it
+                    pickerViewModel.currentFolder.value = it.first()
+                }
+            }
+            loader.startLoader(activity, loaderConfig)
+        } ?: L.w("loaderConfig is null.")
+
+        //事件
+        _vh.click(R.id.close_image_view) {
+            back()
+        }
+    }
+
+    /**切换显示的文件夹*/
+    fun _switchFolder(folder: LoaderFolder) {
+        _vh.tv(R.id.folder_text_view)?.text = folder.folderName
+
+        _adapter.clearItems()
+        folder.mediaItemList.forEach {
+            renderDslAdapter {
+                DslPickerImageItem()() {
+                    loaderMedia = it
+                }
+            }
+        }
+        _adapter.autoAdapterStatus()
     }
 }

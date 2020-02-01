@@ -60,7 +60,7 @@ data class LoaderMedia(
 
 //媒体类型
 fun LoaderMedia.mimeType(): String {
-    return loadPath()?.mimeType() ?: "image/*"
+    return mimeType ?: (loadPath()?.mimeType() ?: "image/*")
 }
 
 fun LoaderMedia.isVideo(): Boolean {

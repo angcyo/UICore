@@ -3,6 +3,7 @@ package com.angcyo.base
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.view.View
 import android.view.WindowManager
@@ -54,7 +55,7 @@ fun Context.interceptTouchEvent(intercept: Boolean = true) {
 }
 
 /**设置状态栏颜色*/
-fun Activity.setStatusBarColor(color: Int) {
+fun Activity.setStatusBarColor(color: Int = Color.TRANSPARENT) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         window.statusBarColor = color
     }

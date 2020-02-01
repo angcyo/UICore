@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:background="@color/picker_fragment_bg_color">
+
+    <!--标题栏-->
+    <com.angcyo.widget.layout.TitleWrapLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/action_bar_height"
+        android:background="@color/picker_title_bar_bg_color"
+        android:clickable="true">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/close_image_view"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:background="@drawable/lib_bg2_selector"
+                android:scaleType="center"
+                app:srcCompat="@drawable/ic_picker_close" />
+
+            <LinearLayout
+                android:id="@+id/folder_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:background="@drawable/picker_folder_selector"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="10dp"
+                android:paddingTop="4dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="4dp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/folder_text_view"
+                    style="@style/LibBodyTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/lib_white"
+                    tools:text="图片和视频" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/folder_image_view"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginLeft="4dp"
+                    android:background="@drawable/picker_folder_arrow_shape"
+                    android:scaleType="center"
+                    app:srcCompat="@drawable/ic_picker_folder_down_arrow" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <com.angcyo.widget.DslButton
+            android:id="@+id/send_button"
+            style="@style/DefaultButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="10dp"
+            android:enabled="false"
+            android:paddingLeft="10dp"
+            android:paddingTop="6dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="6dp"
+            android:text="发送"
+            android:textColor="@color/lib_white"
+            app:button_disable_gradient_colors=""
+            app:button_disable_solid_color="@color/picker_button_disable_bg_color"
+            app:button_disable_text_color="@color/picker_button_disable_text_color" />
+
+    </com.angcyo.widget.layout.TitleWrapLayout>
+
+    <!--内容-->
+    <com.angcyo.widget.recycler.DslRecyclerView
+        android:id="@+id/lib_recycler_view"
+        style="@style/LibRecyclerViewStyle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbarThumbVertical="@drawable/picker_scroll_bar_thumb_shape"
+        app:r_layout_manager="GV4" />
+
+    <!--底部栏-->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/picker_bottom_bar_bg_color">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/preview_text_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/lib_bg_selector"
+            android:padding="10dp"
+            android:text="预览"
+            android:textColor="@color/picker_bottom_text_color" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/origin_cb"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:button="@drawable/picker_origin_image_selector"
+            android:drawablePadding="@dimen/lib_hdpi"
+            android:paddingLeft="@dimen/lib_hdpi"
+            android:text="原图"
+            android:textColor="@color/lib_white" />
+
+    </FrameLayout>
+
+</LinearLayout>

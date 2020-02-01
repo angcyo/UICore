@@ -7,6 +7,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
+import com.angcyo.coroutine.launch
+import com.angcyo.coroutine.onBack
 import com.angcyo.library.L
 import com.angcyo.library.LTime
 import com.angcyo.library.ex.isDebug
@@ -61,66 +63,84 @@ class DslLoader {
     var _activity: FragmentActivity? = null
     var _loaderConfig: LoaderConfig? = null
 
+    /**查询语句创建器*/
+    var selectionCreator = SelectionCreator()
+    var folderCreator = FolderCreator()
+
+    var onLoaderStart: () -> Unit = {}
+
     /**加载完成回调*/
-    var onLoaderFinish: (List<LoaderMedia>) -> Unit = {}
+    var onLoaderResult: (List<LoaderFolder>) -> Unit = {}
 
     /**load回调*/
     val _loaderCallback: LoaderManager.LoaderCallbacks<Cursor> =
         object : LoaderManager.LoaderCallbacks<Cursor> {
             override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
+                onLoaderStart()
                 return CursorLoader(
                     _activity!!, ALL_QUERY_URI, ALL_PROJECTION,
-                    _loaderConfig?.getMimeTypeSelectorSelection() + _loaderConfig?.getFileSelectorSelection(),
-                    null, MediaStore.Files.FileColumns.DATE_ADDED + " DESC"
+                    selectionCreator.createSelection(_loaderConfig!!),
+                    null,
+                    MediaStore.Files.FileColumns.DATE_ADDED + " DESC"
                 )
             }
 
             override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
                 val count = data?.count ?: 0
-                val allMedias = mutableListOf<LoaderMedia>()
-                if (data != null && count > 0) {
-                    LTime.tick()
-                    data.moveToFirst()
-                    do {
-                        val mimeType = data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[4]))
+                var allFolder = listOf<LoaderFolder>()
+                launch {
+                    onBack {
+                        val allMedias = mutableListOf<LoaderMedia>()
+                        if (data != null && count > 0) {
+                            LTime.tick()
+                            data.moveToFirst()
+                            do {
+                                val mimeType =
+                                    data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[4]))
 
-                        val path = data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[1]))
-                        val displayName =
-                            data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[2]))
-                        val addTime =
-                            data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[3]))
-                        val size = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[5]))
-                        val width = data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[6]))
-                        val height = data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[7]))
-                        val latitude =
-                            data.getDouble(data.getColumnIndexOrThrow(ALL_PROJECTION[8]))
-                        val longitude =
-                            data.getDouble(data.getColumnIndexOrThrow(ALL_PROJECTION[9]))
-                        val duration =
-                            data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[10]))
-                        val orientation =
-                            data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[11]))
+                                val path =
+                                    data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[1]))
+                                val displayName =
+                                    data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[2]))
+                                val addTime =
+                                    data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[3]))
+                                val size =
+                                    data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[5]))
+                                val width =
+                                    data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[6]))
+                                val height =
+                                    data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[7]))
+                                val latitude =
+                                    data.getDouble(data.getColumnIndexOrThrow(ALL_PROJECTION[8]))
+                                val longitude =
+                                    data.getDouble(data.getColumnIndexOrThrow(ALL_PROJECTION[9]))
+                                val duration =
+                                    data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[10]))
+                                val orientation =
+                                    data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[11]))
 
-                        val loaderMedia = LoaderMedia().apply {
-                            this.localPath = path ?: ""
-                            this.displayName = displayName ?: ""
-                            this.addTime = addTime
-                            this.mimeType = mimeType ?: ""
-                            this.fileSize = size
-                            this.width = width
-                            this.height = height
-                            this.latitude = latitude
-                            this.longitude = longitude
-                            this.duration = duration
-                            this.orientation = orientation
+                                val loaderMedia = LoaderMedia().apply {
+                                    this.localPath = path ?: ""
+                                    this.displayName = displayName ?: ""
+                                    this.addTime = addTime
+                                    this.mimeType = mimeType ?: ""
+                                    this.fileSize = size
+                                    this.width = width
+                                    this.height = height
+                                    this.latitude = latitude
+                                    this.longitude = longitude
+                                    this.duration = duration
+                                    this.orientation = orientation
+                                }
+
+                                allMedias.add(loaderMedia)
+                                //L.i(loaderMedia, " ", path.file().canRead())
+                            } while (data.moveToNext())
+                            L.w("耗时:${LTime.time()} $count")
+                            allFolder = folderCreator.creatorFolder(_loaderConfig!!, allMedias)
                         }
-
-                        allMedias.add(loaderMedia)
-                        L.i(loaderMedia)
-                    } while (data.moveToNext())
-                    L.w("耗时:${LTime.time()} $count")
-
-                    onLoaderFinish.invoke(allMedias)
+                    }.await()
+                    onLoaderResult.invoke(allFolder)
                 }
             }
 

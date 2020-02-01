@@ -96,6 +96,21 @@ fun DslAdapterItem.setRightInsert(insert: Int, topOffset: Int = 0, bottomOffset:
     itemTopOffset = topOffset
 }
 
+fun DslAdapterItem.margin(margin: Int, color: Int = Color.TRANSPARENT) {
+    itemLeftInsert = margin
+    itemRightInsert = margin
+    itemTopInsert = margin
+    itemBottomInsert = margin
+
+    itemLeftOffset = 0
+    itemRightOffset = 0
+    itemTopOffset = 0
+    itemBottomOffset = 0
+
+    onlyDrawOffsetArea = false
+    itemDecorationColor = color
+}
+
 fun DslAdapterItem.marginVertical(top: Int, bottom: Int = 0, color: Int = Color.TRANSPARENT) {
     itemLeftOffset = 0
     itemRightOffset = 0

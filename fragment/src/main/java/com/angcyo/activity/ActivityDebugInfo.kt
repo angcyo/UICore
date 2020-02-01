@@ -40,7 +40,11 @@ import kotlin.math.sqrt
 /**
  * 添加一个TextView,用来提示当前的Activity类
  * */
-fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug()) {
+fun Activity.showDebugInfoView(
+    show: Boolean = true,
+    debug: Boolean = isDebug(),
+    gravity: Int = Gravity.BOTTOM
+) {
     val decorView = window.decorView
     val contentView = window.findViewById<View>(Window.ID_ANDROID_CONTENT)
 
@@ -61,7 +65,7 @@ fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug())
                     val callback = object : FragmentManager.FragmentLifecycleCallbacks() {
                         override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
                             super.onFragmentResumed(fm, f)
-                            showDebugInfoView(show, debug)
+                            showDebugInfoView(show, debug, gravity)
                         }
                     }
                     supportFragmentManager.registerFragmentLifecycleCallbacks(callback, true)
@@ -89,7 +93,7 @@ fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug())
             }
 
             val layoutParams = FrameLayout.LayoutParams(-2, -2)
-            layoutParams.gravity = Gravity.BOTTOM
+            layoutParams.gravity = gravity
             if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
                 && decorView.getBottom() > contentView.bottom
             ) { //显示了导航栏
@@ -178,7 +182,7 @@ fun Activity.showDebugInfoView(show: Boolean = true, debug: Boolean = isDebug())
             }
 
             textView.onDoubleTap {
-                showDebugInfoView(false)
+                showDebugInfoView(false, debug, gravity)
                 false
             }
         }

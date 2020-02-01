@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="picker_title_bar_bg_color">#323334</color>
+    <color name="picker_fragment_bg_color">#000001</color>
+    <color name="picker_bottom_bar_bg_color">#18191A</color>
+    <color name="picker_bottom_text_color">#5C5D5E</color>
+    <color name="picker_button_disable_bg_color">#424344</color>
+    <color name="picker_button_disable_text_color">#363738</color>
+    <color name="picker_button_accent_bg_color">#20BF64</color>
+    <color name="picker_image_placeholder_color">#474849</color>
+    <color name="picker_folder_shape_color">#4B4C4D</color>
+    <color name="picker_folder_shape_press_color">#353636</color>
+    <color name="picker_folder_arrow_bg_color">#B1B2B3</color>
+</resources>

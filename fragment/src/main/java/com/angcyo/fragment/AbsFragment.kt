@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import com.angcyo.base.getColor
+import com.angcyo.library.ex.getColor
 import com.angcyo.widget.DslViewHolder
 
 /**

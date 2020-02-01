@@ -1,6 +1,7 @@
 package com.angcyo.core.fragment
 
 import android.view.Gravity
+import android.view.View
 import android.widget.TextView
 import com.angcyo.base.back
 import com.angcyo.core.R
@@ -28,29 +29,31 @@ open class FragmentUI {
 
     /**[BaseTitleFragment.onCreateView]中触发*/
     open fun onFragmentCreateViewAfter(fragment: BaseTitleFragment) {
-        if (fragment.enableBackItem()) {
-            fragment.leftControl()?.append(R.layout.lib_text_view) {
-                this.find<TextView>(R.id.lib_text_view)?.apply {
-                    setTextColor(fragment.fragmentConfig.titleItemTextColor)
-                    text = span {
-                        drawable {
-                            backgroundDrawable =
-                                getDrawable(R.drawable.lib_back).colorFilter(fragment.fragmentConfig.titleItemIconColor)
-                        }
-                        drawable("返回") {
-                            marginLeft = -8 * dpi
-                            marginTop = 1 * dpi
-                            textGravity = Gravity.CENTER
-                        }
+
+    }
+
+    /**创建返回按钮*/
+    open fun onCreateFragmentBackItem(fragment: BaseTitleFragment): View? {
+        return fragment.leftControl()?.inflate(R.layout.lib_text_view, false) {
+            find<TextView>(R.id.lib_text_view)?.apply {
+                setTextColor(fragment.fragmentConfig.titleItemTextColor)
+                text = span {
+                    drawable {
+                        backgroundDrawable =
+                            getDrawable(R.drawable.lib_back).colorFilter(fragment.fragmentConfig.titleItemIconColor)
                     }
-                    clickIt {
-                        fragment.back()
+                    drawable("返回") {
+                        marginLeft = -8 * dpi
+                        marginTop = 1 * dpi
+                        textGravity = Gravity.CENTER
                     }
+                }
+                clickIt {
+                    fragment.back()
                 }
             }
         }
     }
-
 }
 
 

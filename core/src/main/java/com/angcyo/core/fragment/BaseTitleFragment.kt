@@ -65,11 +65,14 @@ abstract class BaseTitleFragment : BaseFragment() {
             _vh.tv(R.id.lib_title_text_view)?.text = value
         }
 
+    var fragmentUI: FragmentUI? = null
+        get() = field ?: BaseUI.fragmentUI
+
     //</editor-fold desc="操作属性">
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        BaseUI.fragmentUI.onFragmentCreateAfter(this, fragmentConfig)
+        fragmentUI?.onFragmentCreateAfter(this, fragmentConfig)
     }
 
     override fun onCreateView(
@@ -79,13 +82,19 @@ abstract class BaseTitleFragment : BaseFragment() {
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         onCreateViewAfter(savedInstanceState)
-        BaseUI.fragmentUI.onFragmentCreateViewAfter(this)
+        fragmentUI?.onFragmentCreateViewAfter(this)
         return view
     }
 
     /**[onCreateView]*/
     open fun onCreateViewAfter(savedInstanceState: Bundle?) {
+        if (enableBackItem()) {
+            leftControl()?.append(onCreateBackItem())
+        }
+    }
 
+    open fun onCreateBackItem(): View? {
+        return fragmentUI?.onCreateFragmentBackItem(this)
     }
 
     override fun initBaseView(savedInstanceState: Bundle?) {
@@ -148,7 +157,7 @@ abstract class BaseTitleFragment : BaseFragment() {
 
         rootControl().setBackground(fragmentConfig.fragmentBackgroundDrawable)
 
-        fragmentTitle = this.javaClass.simpleName
+        fragmentTitle = fragmentTitle ?: this.javaClass.simpleName
     }
 
     /**初始化[Behavior]*/

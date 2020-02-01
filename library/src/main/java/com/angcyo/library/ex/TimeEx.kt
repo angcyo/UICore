@@ -123,16 +123,16 @@ public fun Long.toTimes(): LongArray {
     //剩余多少毫秒
     val ms = this % 1000
 
-    //多少秒
+    //共多少秒
     val mill = this / 1000
 
-    //多少分
+    //共多少分
     val min = mill / 60
 
-    //多少小时
+    //共多少小时
     val hour = min / 60
 
-    //多少天
+    //共多少天
     val day = hour / 24
 
     val h = hour % 24
@@ -148,34 +148,30 @@ public fun Long.toTimes(): LongArray {
  * @param h24 24小时制
  * */
 fun Long.toElapsedTime(
-    pattern: IntArray = intArrayOf(-1),
-    h24: Boolean = true,
+    pattern: IntArray = intArrayOf(),
+    h24: BooleanArray = booleanArrayOf(true, true, true, true, true),
     units: Array<String> = arrayOf("毫秒", "秒", "分", "时", "天")
 ): String {
     val times = toTimes()
     val builder = StringBuilder()
 
-    fun toH24(value: Long): String {
-        return if (!h24 || value > 10) "$value" else "0${value}"
+    fun toH24(h24: Boolean, value: Long): String {
+        return if (!h24 || value >= 10) "$value" else "0${value}"
     }
 
-    for (i in 4 downTo 0) {
+    for (i in times.lastIndex downTo 0) {
         val value = times[i]
-        val unit = units[i]
+        val h24 = h24.getOrNull(i) ?: false
+        val unit = units.getOrNull(i) ?: ":"
         val need = pattern.getOrNull(i) ?: 0
-        when (need) {
-            1 -> {
-                //强制要
-                builder.append(toH24(value))
-                builder.append(unit)
-            }
-            -1 -> {
+        when {
+            need == -1 -> {
                 //强制不要
             }
-            else -> {
-                //智能
-                if (value > 0) {
-                    builder.append(toH24(value))
+            value > 0 || need == 1 -> {
+                //智能 or 强制要
+                builder.append(toH24(h24, value))
+                if (unit.isNotBlank()) {
                     builder.append(unit)
                 }
             }

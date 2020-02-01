@@ -8,10 +8,11 @@
         <!--图片选择器-->
         <activity
             android:name=".PickerActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|fontScale|smallestScreenSize|density|screenLayout"
             android:enabled="true"
-            android:excludeFromRecents="true"
+            android:excludeFromRecents="false"
             android:exported="false"
-            android:noHistory="true"
+            android:noHistory="false"
             android:windowSoftInputMode="adjustResize" />
     </application>
 </manifest>

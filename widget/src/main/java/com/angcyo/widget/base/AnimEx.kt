@@ -6,8 +6,10 @@ import android.annotation.TargetApi
 import android.os.Build
 import android.view.View
 import android.view.ViewAnimationUtils
+import android.view.animation.Animation
 import android.view.animation.Interpolator
 import android.view.animation.LinearInterpolator
+import android.view.animation.RotateAnimation
 import com.angcyo.library.ex.c
 
 /**
@@ -117,6 +119,36 @@ fun View.translationY(
         }
     }
 }
+
+/**补间动画*/
+fun View.rotateAnimation(
+    fromDegrees: Float = 0f,
+    toDegrees: Float = 360f,
+    duration: Long = 300,
+    interpolator: Interpolator = LinearInterpolator(),
+    config: RotateAnimation.() -> Unit = {},
+    onEnd: (animation: Animation) -> Unit = {}
+): RotateAnimation {
+    return RotateAnimation(
+        fromDegrees,
+        toDegrees,
+        RotateAnimation.RELATIVE_TO_SELF,
+        0.5f,
+        RotateAnimation.RELATIVE_TO_SELF,
+        0.5f
+    ).apply {
+        this.duration = duration
+        this.interpolator = interpolator
+        setAnimationListener(object : RAnimationListener() {
+            override fun onAnimationEnd(animation: Animation) {
+                onEnd(animation)
+            }
+        })
+        config()
+        this@rotateAnimation.startAnimation(this)
+    }
+}
+
 
 /**
  * 揭露动画

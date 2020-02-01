@@ -219,6 +219,20 @@ open class DslAdapter : RecyclerView.Adapter<DslViewHolder>, OnDispatchUpdatesLi
         }
     }
 
+    /**自动设置状态*/
+    fun autoAdapterStatus() {
+        if (isAdapterStatus()) {
+            //no op
+        } else {
+            val emptyCount = if (dslLoadMoreItem.itemEnableLoadMore) 1 else 0
+            if (adapterItems.size <= emptyCount) {
+                setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_EMPTY)
+            } else {
+                setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_NONE)
+            }
+        }
+    }
+
     fun setLoadMoreEnable(enable: Boolean = true) {
         if (dslLoadMoreItem.itemEnableLoadMore == enable) {
             return

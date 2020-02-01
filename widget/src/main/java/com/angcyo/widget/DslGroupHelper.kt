@@ -132,6 +132,19 @@ class DslGroupHelper(val parentView: View) : DslViewHolder(parentView) {
 
     //---
 
+    fun inflate(
+        @LayoutRes layoutId: Int,
+        attachToRoot: Boolean = true,
+        action: View.() -> Unit = {}
+    ): View? {
+        if (selectorView is ViewGroup) {
+            return (selectorView as ViewGroup).inflate(layoutId, attachToRoot).apply {
+                action()
+            }
+        }
+        return null
+    }
+
     fun append(@LayoutRes layoutId: Int, action: View.() -> Unit = {}) {
         if (selectorView is ViewGroup) {
             val view = (selectorView as ViewGroup).inflate(layoutId, false)
@@ -139,8 +152,8 @@ class DslGroupHelper(val parentView: View) : DslViewHolder(parentView) {
         }
     }
 
-    fun <T : View> append(view: T, action: T.() -> Unit = {}) {
-        if (selectorView is ViewGroup) {
+    fun <T : View> append(view: T?, action: T.() -> Unit = {}) {
+        if (view != null && selectorView is ViewGroup) {
             (selectorView as ViewGroup).addView(view)
             view.action()
         }
