@@ -1,5 +1,7 @@
 package com.angcyo.library.ex
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
@@ -206,4 +208,37 @@ fun CharSequence?.pattern(regexList: Iterable<String>, allowEmpty: Boolean = tru
     }
 
     return result
+}
+
+fun String.shareText(
+    context: Context,
+    title: String,
+    shareQQ: Boolean = false /*强制使用QQ分享*/,
+    chooser: Boolean = true
+) {
+    var intent = Intent(Intent.ACTION_SEND)
+    intent.type = "text/plain"
+    if (TextUtils.isEmpty(title)) {
+        intent.putExtra(Intent.EXTRA_SUBJECT, "分享")
+        intent.putExtra(Intent.EXTRA_TEXT, this)
+    } else {
+        intent.putExtra(Intent.EXTRA_SUBJECT, "分享：$title")
+        intent.putExtra(Intent.EXTRA_TEXT, "$title $this")
+    }
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    //List<ResolveInfo> resolveInfos = context.getPackageManager().queryIntentActivities(intent, PackageManager.GET_RESOLVED_FILTER);
+    if (shareQQ) {
+        configQQIntent(intent)
+        if (chooser) {
+            intent = Intent.createChooser(intent, "选择分享")
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(intent)
+    } else {
+        context.startActivity(
+            Intent.createChooser(intent, "选择分享")
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        )
+    }
 }

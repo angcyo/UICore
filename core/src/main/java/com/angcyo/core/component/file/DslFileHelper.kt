@@ -54,37 +54,30 @@ object DslFileHelper {
         return FileUtils.appExternalFolder(appContext, folder, name)?.absolutePath
     }
 
-    fun log(name: String = fileName("yyyy-MM-dd"), data: String) {
+    fun log(name: String = fileName("yyyy-MM-dd"), data: String) =
         write(log, name, _wrapData(data))
-    }
 
-    fun http(name: String = fileName("yyyy-MM-dd"), data: String) {
+    fun http(name: String = fileName("yyyy-MM-dd"), data: String) =
         write(http, name, _wrapData(data))
-    }
 
-    fun ui(name: String = fileName("yyyy-MM-dd"), data: String) {
+    fun ui(name: String = fileName("yyyy-MM-dd"), data: String) =
         write(ui, name, _wrapData(data))
-    }
 
-    fun crash(name: String = fileName(), data: String) {
+    fun crash(name: String = fileName(), data: String) =
         write(crash, name, _wrapData(data))
-    }
 
-    fun down(name: String = fileName("yyyy-MM-dd"), data: String) {
+    fun down(name: String = fileName("yyyy-MM-dd"), data: String) =
         write(down, name, _wrapData(data))
-    }
 
-    fun camera(name: String = fileName("yyyy-MM-dd"), data: String) {
+    fun camera(name: String = fileName("yyyy-MM-dd"), data: String) =
         write(camera, name, _wrapData(data))
-    }
 
-    fun other(name: String = fileName("yyyy-MM-dd"), data: String) {
+    fun other(name: String = fileName("yyyy-MM-dd"), data: String) =
         write(other, name, _wrapData(data))
-    }
 
-    fun error(name: String = fileName("yyyy-MM-dd"), data: String) {
+
+    fun error(name: String = fileName("yyyy-MM-dd"), data: String) =
         write(error, name, _wrapData(data))
-    }
 
     fun _wrapData(data: String): String {
         return buildString {

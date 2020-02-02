@@ -1,7 +1,6 @@
 package com.angcyo.core.activity
 
 import android.os.Bundle
-import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.base.dslFHelper
 import com.angcyo.base.havePermission
 import com.angcyo.core.fragment.PermissionFragment
@@ -18,7 +17,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
-abstract class BasePermissionsActivity : BaseAppCompatActivity() {
+abstract class BasePermissionsActivity : BaseCoreAppCompatActivity() {
 
     lateinit var rxPermissions: RxPermissions
 

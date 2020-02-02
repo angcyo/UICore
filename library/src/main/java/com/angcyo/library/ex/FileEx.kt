@@ -1,6 +1,7 @@
 package com.angcyo.library.ex
 
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.text.TextUtils
 import android.text.format.Formatter
@@ -170,4 +171,85 @@ fun File.getFileMD5(): ByteArray? {
         dis?.close()
     }
     return null
+}
+
+/**打开文件*/
+fun File.open(context: Context) {
+    val intent = Intent()
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    //设置intent的Action属性
+    intent.action = Intent.ACTION_VIEW
+    //获取文件file的MIME类型
+    val type: String = this.absolutePath.mimeType() ?: "text/plain"
+    //设置intent的data和Type属性。
+    intent.setDataAndType(fileUri(context, this), type)
+    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    //跳转
+    try {
+        //这里最好try一下，有可能会报错。
+        // 比如说你的MIME类型是打开邮箱，但是你手机里面没装邮箱客户端，就会报错。
+        context.startActivity(intent)
+    } catch (e: java.lang.Exception) {
+        e.printStackTrace()
+    }
+}
+
+//    public static void shareBitmap(Context context, byte[] data, boolean shareQQ) {
+//        Intent intent = new Intent();
+//        intent.setAction(Intent.ACTION_SEND);//设置分享行为
+//        intent.setType("image/*");//设置分享内容的类型
+//        intent.putExtra(Intent.EXTRA_STREAM, data);
+//        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//
+//        List<ResolveInfo> resolveInfos = context.getPackageManager().queryIntentActivities(intent, PackageManager.GET_RESOLVED_FILTER);
+//
+//        if (shareQQ) {
+//            configQQIntent(intent);
+//        } else {
+//            intent = Intent.createChooser(intent, "分享图片");
+//        }
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        context.startActivity(intent);
+//    }
+/** 分享文件 */
+fun File.shareFile(context: Context) {
+    val share = Intent(Intent.ACTION_SEND)
+    share.putExtra(Intent.EXTRA_STREAM, fileUri(context, this))
+    share.type = "*/*" //此处可发送多种文件
+    share.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    context.startActivity(
+        Intent.createChooser(
+            share,
+            "发送给..."
+        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    )
+}
+
+/**分享图片文件*/
+fun File.shareImage(context: Context, content: String?) {
+    val share = Intent(Intent.ACTION_SEND)
+    share.putExtra(Intent.EXTRA_TEXT, content)
+    share.putExtra(Intent.EXTRA_STREAM, fileUri(context, this))
+    share.type = "image/*"
+    share.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    context.startActivity(
+        Intent.createChooser(share, "发送给...")
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    )
+}
+
+/**分享视频文件*/
+fun File.shareVideo(context: Context, content: String?) {
+    val share = Intent(Intent.ACTION_SEND)
+    share.putExtra(Intent.EXTRA_TEXT, content)
+    share.putExtra(Intent.EXTRA_STREAM, fileUri(context, this))
+    share.type = "video/*"
+    share.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    context.startActivity(
+        Intent.createChooser(share, "发送给...")
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    )
 }

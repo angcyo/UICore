@@ -10,6 +10,7 @@ dependencies {
     api project(allModule.fragment)
     api project(allModule.coroutine)
     api project(allModule.http)
+    api project(allModule.dialog)
     api 'androidx.core:core-ktx:1.1.0'
 
     //https://github.com/tiann/FreeReflection

@@ -91,3 +91,17 @@ fun getDimen(@DimenRes id: Int): Int {
 fun getDrawable(@DrawableRes id: Int): Drawable? {
     return ContextCompat.getDrawable(app(), id)?.initBounds()
 }
+
+@ColorInt
+fun _color(@ColorRes id: Int): Int {
+    return getColor(id)
+}
+
+@Px
+fun _dimen(@DimenRes id: Int): Int {
+    return getDimen(id)
+}
+
+fun _drawable(@DrawableRes id: Int): Drawable? {
+    return getDrawable(id)
+}

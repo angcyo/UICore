@@ -9,10 +9,11 @@ android {
 }
 
 dependencies {
-    implementation project(allModule.core)
-    implementation project(allModule.viewmodel)
-    implementation project(allModule.glide)
-    implementation project(allModule.transition)
+    api project(allModule.core)
+    api project(allModule.viewmodel)
+    api project(allModule.glide)
+    api project(allModule.transition)
+    api project(allModule.download)
 
     //https://mvnrepository.com/artifact/androidx.loader/loader
     api "androidx.loader:loader:1.1.0"

@@ -6,6 +6,9 @@ import com.angcyo.DslAHelper
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.utils.Device
 import com.angcyo.library.L
+import com.angcyo.library.ex.hawkGet
+import com.angcyo.library.ex.hawkPut
+import com.angcyo.library.ex.nowTimeString
 import java.io.BufferedWriter
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -20,8 +23,36 @@ import java.io.StringWriter
 
 class DslCrashHandler : Thread.UncaughtExceptionHandler {
     companion object {
+        const val KEY_IS_CRASH = "is_crash"
+        const val KEY_CRASH_FILE = "crash_file"
+        const val KEY_CRASH_MESSAGE = "crash_message"
+        const val KEY_CRASH_TIME = "crash_time"
+
         fun init(context: Context) {
             DslCrashHandler().install(context)
+        }
+
+        /** 检查最后一次是否有异常未处理 */
+        fun checkCrash(
+            clear: Boolean = false,
+            crashAction: (filePath: String?, message: String?, crashTime: String?) -> Unit = { _, _, _ -> }
+        ): Boolean {
+            val isCrash = KEY_IS_CRASH.hawkGet()
+
+            if (clear) {
+                KEY_IS_CRASH.hawkPut(null)
+            }
+
+            return if (isCrash.isNullOrBlank()) {
+                false
+            } else {
+                crashAction(
+                    KEY_CRASH_FILE.hawkGet(),
+                    KEY_CRASH_MESSAGE.hawkGet(),
+                    KEY_CRASH_TIME.hawkGet()
+                )
+                true
+            }
         }
     }
 
@@ -49,6 +80,11 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
         L.w("全局异常#${t.name}:$e")
         e.printStackTrace()
 
+        //异常退出
+        KEY_IS_CRASH.hawkPut("true")
+        //异常时间
+        KEY_CRASH_TIME.hawkPut(nowTimeString())
+
         DslFileHelper.async = false
         DslFileHelper.crash(data = buildString {
 
@@ -65,8 +101,13 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
 
             appendln()
             append(_getThrowableInfo(e))
+            //异常概述
+            KEY_CRASH_MESSAGE.hawkPut(e.message)
 
-        })
+        })?.apply {
+            //异常文件
+            KEY_CRASH_FILE.hawkPut(this)
+        }
 
         DslFileHelper.async = true
 
