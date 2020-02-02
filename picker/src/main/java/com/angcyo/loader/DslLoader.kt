@@ -1,7 +1,6 @@
 package com.angcyo.loader
 
 import android.database.Cursor
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.exifinterface.media.ExifInterface
@@ -14,6 +13,7 @@ import com.angcyo.coroutine.onBack
 import com.angcyo.library.L
 import com.angcyo.library.LTime
 import com.angcyo.library.ex.isDebug
+import kotlinx.coroutines.async
 
 /**
  * 媒体加载器
@@ -30,16 +30,16 @@ class DslLoader {
 
         const val LOADER_ID = 0x8899
 
-        //查询所有媒体的uri
-        internal val ALL_QUERY_URI = MediaStore.Files.getContentUri("external")
+        val VOLUME_EXTERNAL = "external"
 
-        internal const val WIDTH = "width"
-        internal const val HEIGHT = "height"
-        internal const val LATITUDE = "latitude"    //纬度
-        internal const val LONGITUDE = "longitude"  //经度
+        //查询所有媒体的uri
+        val ALL_QUERY_URI = MediaStore.Files.getContentUri(VOLUME_EXTERNAL)
+
+        const val WIDTH = "width"
+        const val HEIGHT = "height"
         //有些字段 高版本才提供
-        internal const val ORIENTATION = "orientation"
-        internal const val DURATION = "duration"
+        const val ORIENTATION = "orientation"
+        const val DURATION = "duration"
 
         /**
          * 全部媒体数据 - PROJECTION
@@ -54,8 +54,6 @@ class DslLoader {
             MediaStore.MediaColumns.SIZE,
             WIDTH,
             HEIGHT,
-            LATITUDE,
-            LONGITUDE,
             DURATION,
             ORIENTATION
         )
@@ -97,6 +95,9 @@ class DslLoader {
                             LTime.tick()
                             data.moveToFirst()
                             do {
+                                val id = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[0]))
+                                val uri = MediaStore.Files.getContentUri(VOLUME_EXTERNAL, id)
+
                                 val mimeType =
                                     data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[4]))
 
@@ -117,47 +118,14 @@ class DslLoader {
                                 var latitude = 0.0
                                 var longitude = 0.0
                                 var orientation =
-                                    data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[11]))
-                                try {
-                                    val exif = ExifInterface(path)
-                                    exif.latLong?.run {
-                                        latitude = this[0]
-                                        longitude = this[0]
-                                    }
-                                    val orientationAttr: Int = exif.getAttributeInt(
-                                        ExifInterface.TAG_ORIENTATION,
-                                        ExifInterface.ORIENTATION_NORMAL
-                                    )
-                                    if (orientationAttr == ExifInterface.ORIENTATION_NORMAL || orientationAttr == ExifInterface.ORIENTATION_UNDEFINED) {
-                                        orientation = 0
-                                    } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_90) {
-                                        orientation = 90
-                                    } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_180) {
-                                        orientation = 180
-                                    } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_270) {
-                                        orientation = 270
-                                    }
-                                } catch (e: Exception) {
-                                    L.w(e)
-                                }
-
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-
-                                } else {
-                                    if (latitude <= 0.0) {
-                                        latitude =
-                                            data.getDouble(data.getColumnIndexOrThrow(ALL_PROJECTION[8]))
-                                    }
-                                    if (longitude <= 0.0) {
-                                        longitude =
-                                            data.getDouble(data.getColumnIndexOrThrow(ALL_PROJECTION[9]))
-                                    }
-                                }
+                                    data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[9]))
 
                                 val duration =
-                                    data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[10]))
+                                    data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[8]))
 
                                 val loaderMedia = LoaderMedia().apply {
+                                    this.id = id
+                                    this.localUri = uri
                                     this.localPath = path ?: ""
                                     this.displayName = displayName ?: ""
                                     this.addTime = addTime
@@ -169,6 +137,38 @@ class DslLoader {
                                     this.longitude = longitude
                                     this.duration = duration
                                     this.orientation = orientation
+                                }
+
+                                async {
+                                    try {
+                                        val resolver = _activity!!.contentResolver
+                                        val parcelFileDescriptor =
+                                            resolver.openFileDescriptor(uri, "r")
+                                        val exif =
+                                            ExifInterface(parcelFileDescriptor!!.fileDescriptor)
+                                        exif.latLong?.run {
+                                            latitude = this[0]
+                                            longitude = this[0]
+                                        }
+                                        val orientationAttr: Int = exif.getAttributeInt(
+                                            ExifInterface.TAG_ORIENTATION,
+                                            ExifInterface.ORIENTATION_NORMAL
+                                        )
+                                        if (orientationAttr == ExifInterface.ORIENTATION_NORMAL || orientationAttr == ExifInterface.ORIENTATION_UNDEFINED) {
+                                            orientation = 0
+                                        } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_90) {
+                                            orientation = 90
+                                        } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_180) {
+                                            orientation = 180
+                                        } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_270) {
+                                            orientation = 270
+                                        }
+                                        loaderMedia.latitude = latitude
+                                        loaderMedia.longitude = longitude
+                                        loaderMedia.orientation = orientation
+                                    } catch (e: Exception) {
+                                        L.w(path, " ", e)
+                                    }
                                 }
 
                                 allMedias.add(loaderMedia)
@@ -206,5 +206,9 @@ class DslLoader {
 
     fun restartLoader() {
         _loaderManager?.restartLoader(LOADER_ID, null, _loaderCallback)
+    }
+
+    fun destroyLoader() {
+        _loaderManager?.destroyLoader(LOADER_ID)
     }
 }

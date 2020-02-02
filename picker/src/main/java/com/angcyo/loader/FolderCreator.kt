@@ -42,7 +42,7 @@ open class FolderCreator {
             try {
                 val file = File(media.localPath!!)
 
-                if (!file.canRead()) {
+                if (!file.exists()) {
                     continue
                 }
 

@@ -64,7 +64,13 @@ fun installApk(context: Context, file: File?) {
 
 fun fileUri(context: Context, file: File): Uri {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        FileProvider.getUriForFile(context, context.packageName, file)
+        FileProvider.getUriForFile(context, context.packageName, file).run {
+            context.grantUriPermission(
+                context.packageName, this,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
+            this
+        }
     } else {
         Uri.fromFile(file)
     }

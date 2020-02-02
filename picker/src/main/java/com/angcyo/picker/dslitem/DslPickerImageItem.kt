@@ -4,10 +4,7 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.margin
 import com.angcyo.glide.giv
 import com.angcyo.library.ex.*
-import com.angcyo.loader.LoaderMedia
-import com.angcyo.loader.isAudio
-import com.angcyo.loader.isVideo
-import com.angcyo.loader.loadPath
+import com.angcyo.loader.*
 import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt
@@ -55,7 +52,7 @@ open class DslPickerImageItem : DslAdapterItem() {
         //缩略图
         itemHolder.giv(R.id.lib_image_view)?.apply {
             drawBorder = itemIsSelected
-            load(loaderMedia?.loadPath()) {
+            load(loaderMedia?.loadUri()) {
                 checkGifType = true
             }
 

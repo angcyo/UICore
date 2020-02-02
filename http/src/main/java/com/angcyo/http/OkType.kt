@@ -1,9 +1,13 @@
 package com.angcyo.http
 
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
+import com.angcyo.http.rx.runRx
+import com.angcyo.library.app
+import com.angcyo.library.ex.use
 import okhttp3.*
 import java.io.File
 import java.io.FileInputStream
@@ -48,18 +52,43 @@ object OkType {
     /**
      * 根据url, 回调对应图片的类型
      */
-    fun type(url: String, listener: OnImageTypeListener?): Call? {
+    fun type(uri: Uri?, listener: OnImageTypeListener?): Call? {
+        if (uri == null) {
+            listener?.onImageType("", ImageType.UNKNOWN)
+            return null
+        }
+
+        val url: String = uri.toString()
+
+        val type = imageTypeCache[url]
+
+        if (uri.scheme == "content") {
+            runRx({
+                type ?: uri.use(app()) {
+                    ImageType.of(
+                        ImageTypeUtil.getImageType(it)
+                    )
+                }
+                //ImageType.UNKNOWN
+            }) {
+                typeCheckEnd(url, it.toString(), listener)
+            }
+            return null
+        }
+
         if (TextUtils.isEmpty(url)) {
             listener?.onImageType(url, ImageType.UNKNOWN)
             return null
         }
-        val type = imageTypeCache[url]
         listener?.onLoadStart()
-        if (type == null || type == ImageType.UNKNOWN) {
+        if (type == null) {
             val file = File(url)
             if (file.exists()) {
-                val imageType = ImageTypeUtil.getImageType(file)
-                typeCheckEnd(url, imageType, listener)
+                runRx({
+                    ImageTypeUtil.getImageType(file)
+                }) {
+                    typeCheckEnd(url, it, listener)
+                }
             } else {
                 val call = getCall(url, listener)
                 if (call == null) {
@@ -92,11 +121,7 @@ object OkType {
         return null
     }
 
-    private fun typeCheckEnd(
-        url: String,
-        imageType: String?,
-        listener: OnImageTypeListener?
-    ) {
+    private fun typeCheckEnd(url: String, imageType: String?, listener: OnImageTypeListener?) {
         val imageType1 =
             ImageType.of(imageType)
         imageTypeCache[url] = imageType1

@@ -52,7 +52,6 @@ object L {
 
     var _tempStackTraceFront: Int = -1
 
-
     /**Json缩进偏移量*/
     var indentJsonDepth: Int = 2
 
@@ -176,10 +175,10 @@ object L {
             return msg
         }
         try {
-            if (msg.startsWith("{")) {
+            if (msg.startsWith("{") && msg.endsWith("}")) {
                 val jsonObject = JSONObject(msg)
                 return LINE_SEPARATOR + jsonObject.toString(indentJsonDepth)
-            } else if (msg.startsWith("[")) {
+            } else if (msg.startsWith("[") && msg.endsWith("]")) {
                 val jsonArray = JSONArray(msg)
                 return LINE_SEPARATOR + jsonArray.toString(indentJsonDepth)
             }

@@ -2,6 +2,7 @@ package com.angcyo.glide
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.util.AttributeSet
 import com.angcyo.library.L
 import com.angcyo.library.ex.simpleHash
@@ -56,6 +57,13 @@ open class GlideImageView : DslImageView {
         dslGlide.apply {
             action()
             load(url)
+        }
+    }
+
+    open fun load(uri: Uri?, action: DslGlide.() -> Unit = {}) {
+        dslGlide.apply {
+            action()
+            load(uri)
         }
     }
 

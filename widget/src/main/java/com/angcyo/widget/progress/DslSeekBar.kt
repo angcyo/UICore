@@ -10,12 +10,10 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import androidx.core.view.GestureDetectorCompat
 import com.angcyo.drawable.base.DslGradientDrawable
-import com.angcyo.library.ex.dpi
 import com.angcyo.drawable.text.DslTextDrawable
+import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
-import com.angcyo.widget.base.getColor
-import com.angcyo.widget.base.isTouchDown
-import com.angcyo.widget.base.isTouchFinish
+import com.angcyo.widget.base.*
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.min
@@ -63,6 +61,39 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
                 textOffsetY = seekThumbTextOffsetY
                 text = progressTextFormat.format("${(_progressFraction * 100).toInt()}")
             }
+            return field
+        }
+
+    override val _progressBound: Rect
+        get() = super._progressBound.apply {
+            top = bottom - progressHeight
+        }
+
+    //浮子绘制范围
+    val _thumbBound: Rect = Rect()
+        get() {
+            val pBound = _progressBound
+            val centerX = pBound.left + pBound.width() * _progressFraction
+            val centerY = pBound.top + pBound.height() / 2
+
+            val thumbWidth: Int
+            val thumbHeight: Int
+            if (seekThumbDrawable == _dslGradientDrawable) {
+                thumbWidth = min(pBound.width(), pBound.height()) + seekThumbOverHeight * 2
+                thumbHeight = thumbWidth
+            } else {
+                //自定义的seekThumbDrawable, 需要手动指定 width height
+                thumbWidth = seekThumbDrawable?.minimumWidth ?: 0
+                thumbHeight = seekThumbDrawable?.minimumHeight ?: 0
+            }
+
+            field.set(
+                (centerX - thumbWidth / 2).toInt(),
+                centerY - thumbHeight / 2,
+                (centerX + thumbWidth / 2).toInt(),
+                centerY + thumbHeight / 2
+            )
+
             return field
         }
 
@@ -121,43 +152,19 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
 
         typedArray.recycle()
 
-        if (paddingBottom <= 0) {
-            setPadding(paddingLeft, paddingTop, paddingRight, seekThumbOverHeight)
-        }
+        val paddingLeft =
+            if (paddingLeft <= 0) progressHeight / 2 + seekThumbOverHeight else paddingLeft
+        val paddingBottom = if (paddingBottom <= 0) seekThumbOverHeight else paddingBottom
+        setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
     }
 
-    override val _progressBound: Rect
-        get() = super._progressBound.apply {
-            top = bottom - progressHeight
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        if (heightMeasureSpec.getMode() != MeasureSpec.EXACTLY) {
+            super.onMeasure(widthMeasureSpec, atMost(progressHeight + seekThumbOverHeight * 2))
+        } else {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         }
-
-    //浮子绘制范围
-    val _thumbBound: Rect = Rect()
-        get() {
-            val pBound = _progressBound
-            val centerX = pBound.left + pBound.width() * _progressFraction
-            val centerY = pBound.top + pBound.height() / 2
-
-            val thumbWidth: Int
-            val thumbHeight: Int
-            if (seekThumbDrawable == _dslGradientDrawable) {
-                thumbWidth = min(pBound.width(), pBound.height()) + seekThumbOverHeight * 2
-                thumbHeight = thumbWidth
-            } else {
-                //自定义的seekThumbDrawable, 需要手动指定 width height
-                thumbWidth = seekThumbDrawable?.minimumWidth ?: 0
-                thumbHeight = seekThumbDrawable?.minimumHeight ?: 0
-            }
-
-            field.set(
-                (centerX - thumbWidth / 2).toInt(),
-                centerY - thumbHeight / 2,
-                (centerX + thumbWidth / 2).toInt(),
-                centerY + thumbHeight / 2
-            )
-
-            return field
-        }
+    }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)

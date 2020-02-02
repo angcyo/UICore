@@ -5,7 +5,7 @@
     <scale
         android:fromXScale="1"
         android:fromYScale="1"
-        android:interpolator="@android:anim/decelerate_interpolator"
+        android:interpolator="@android:anim/anticipate_interpolator"
         android:pivotX="50%"
         android:pivotY="50%"
         android:toXScale="0"

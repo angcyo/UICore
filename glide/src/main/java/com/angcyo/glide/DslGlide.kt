@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.view.View
 import android.widget.ImageView
 import android.widget.ImageView.ScaleType
@@ -118,15 +119,19 @@ class DslGlide {
 
     /**开始加载, 支持本地, 网络, gif, 视频, 图片*/
     fun load(string: String?) {
+        load(Uri.parse(string))
+    }
+
+    fun load(uri: Uri?) {
         _checkLoad {
             if (checkGifType) {
                 targetView?.setImageDrawable(placeholderDrawable)
-                _checkType(string) {
+                _checkType(uri) {
                     onTypeCallback(it)
-                    _load(string, it == OkType.ImageType.GIF)
+                    _load(uri, it == OkType.ImageType.GIF)
                 }
             } else {
-                _load(string)
+                _load(uri)
             }
         }
     }
@@ -195,44 +200,65 @@ class DslGlide {
     }
 
     //检查图片类型
-    fun _checkType(string: String?, action: (imageType: OkType.ImageType) -> Unit) {
+    fun _checkType(uri: Uri?, action: (imageType: OkType.ImageType) -> Unit) {
         clear()
-        if (string.isNullOrBlank()) {
+        if (uri == null) {
             action(OkType.ImageType.UNKNOWN)
         } else {
-            OkType.type(string, object : OkType.OnImageTypeListener {
+            OkType.type(uri, object : OkType.OnImageTypeListener {
                 override fun onImageType(imageUrl: String, imageType: OkType.ImageType) {
                     L.d("type: $imageUrl ->$imageType")
                     action(imageType)
                 }
 
                 override fun onLoadStart() {
-                    L.v("check $string type.")
+                    L.v("check $uri type.")
                 }
             })?.attach()
         }
     }
 
     //开始加载
-    fun _load(string: String?, asGif: Boolean = false) {
+    fun _load(uri: Uri?, asGif: Boolean = false) {
         clear()
+
+        val url: String? = uri?.toString()
 
         _checkLoad {
             val targetView = targetView!!
-            if (asGif) {
-                _glide()
-                    .download(GlideUrl(string, _header()))
-                    .override(Target.SIZE_ORIGINAL)
-                    .configRequest(string, File::class.java)
-                    .into(GifDrawableImageViewTarget(targetView, autoPlayGif, transition))
-            } else {
-                val file = File(string!!)
-                if (file.exists() && file.canRead()) {
-                    _glide().load(fileUri(targetView.context, file))
+
+            if (uri?.scheme == "content") {
+                if (asGif) {
+                    _glide()
+                        .download(uri)
+                        .override(Target.SIZE_ORIGINAL)
+                        .configRequest(url, File::class.java)
+                        .into(GifDrawableImageViewTarget(targetView, autoPlayGif, transition))
                 } else {
-                    _glide().load(GlideUrl(string, _header()))
-                }.configRequest(string, Drawable::class.java)
-                    .into(GlideDrawableImageViewTarget(targetView))
+                    _glide()
+                        .load(uri)
+                        .configRequest(url, Drawable::class.java)
+                        .into(GlideDrawableImageViewTarget(targetView))
+                }
+            } else {
+                if (asGif) {
+                    _glide()
+                        .download(GlideUrl(url, _header()))
+                        .override(Target.SIZE_ORIGINAL)
+                        .configRequest(url, File::class.java)
+                        .into(GifDrawableImageViewTarget(targetView, autoPlayGif, transition))
+                } else {
+                    val file = File(url!!)
+                    if (file.exists() && file.canRead()) {
+                        _glide()
+                            .load(fileUri(targetView.context, file))
+                    } else {
+                        _glide()
+                            .load(GlideUrl(url, _header()))
+                    }
+                        .configRequest(url, Drawable::class.java)
+                        .into(GlideDrawableImageViewTarget(targetView))
+                }
             }
         }
     }

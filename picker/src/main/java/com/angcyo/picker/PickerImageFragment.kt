@@ -79,4 +79,9 @@ class PickerImageFragment : BaseDslFragment() {
     fun _showFolderDialog() {
 
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        loader.destroyLoader()
+    }
 }

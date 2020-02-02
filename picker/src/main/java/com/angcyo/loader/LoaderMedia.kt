@@ -1,6 +1,8 @@
 package com.angcyo.loader
 
+import android.net.Uri
 import android.os.Parcelable
+import com.angcyo.library.ex.file
 import com.angcyo.library.ex.isFileExist
 import com.angcyo.library.ex.mimeType
 import kotlinx.android.parcel.Parcelize
@@ -14,6 +16,8 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class LoaderMedia(
+    //数据库中的id
+    var id: Long = -1,
 
     //网络路径
     var url: String? = null,
@@ -25,6 +29,9 @@ data class LoaderMedia(
     var cutPath: String? = null,
     //视频 音频媒体时长, 毫秒
     var duration: Long = 0,
+
+    //Android Q文件存储机制修改成了沙盒模式, 不能直接通过路径的方式访问文件
+    var localUri: Uri? = null,
 
     //数据库字段↓
 
@@ -87,4 +94,21 @@ fun LoaderMedia.loadPath(): String? {
         return localPath
     }
     return url
+}
+
+/**加载的[Uri]*/
+fun LoaderMedia.loadUri(): Uri? {
+    if (cutPath?.isFileExist() == true) {
+        return Uri.fromFile(cutPath!!.file())
+    }
+    if (compressPath?.isFileExist() == true) {
+        return Uri.fromFile(compressPath!!.file())
+    }
+    if (localUri != null) {
+        return localUri
+    }
+    if (localPath?.isFileExist() == true) {
+        return Uri.fromFile(localPath!!.file())
+    }
+    return Uri.parse(url)
 }
