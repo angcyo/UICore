@@ -77,11 +77,22 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
 
     /**回退检查*/
     override fun onBackPressed() {
-        dslFHelper {
-            if (back()) {
-                super.onBackPressed()
+        if (onBackPressedDispatcher()) {
+            dslFHelper {
+                if (back()) {
+                    super.onBackPressed()
+                }
             }
         }
+    }
+
+    /**返回true, 表示可以关闭界面*/
+    fun onBackPressedDispatcher(): Boolean {
+        if (onBackPressedDispatcher.hasEnabledCallbacks()) {
+            onBackPressedDispatcher.onBackPressed()
+            return false
+        }
+        return true
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {

@@ -3,19 +3,10 @@ package com.angcyo.dialog
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
-import android.os.Build
 import android.text.InputType
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.PopupWindow
-import com.angcyo.dsladapter.getViewRect
 import com.angcyo.library.ex.dpi
-import com.angcyo.library.ex.getContentViewHeight
-import com.angcyo.library.getScreenHeight
-import com.angcyo.widget.DslViewHolder
-import kotlin.math.max
 
 /**
  *
@@ -163,88 +154,19 @@ fun Context.multiInputDialog(config: InputDialogConfig.() -> Unit): Dialog {
 
 //<editor-fold desc="popupWindow">
 
-/**
- * 展示一个popup window
- * */
-fun Context.popupWindow(anchor: View? = null, config: PopupConfig.() -> Unit): PopupWindow {
+/** 展示一个popup window */
+fun Context.popupWindow(anchor: View? = null, config: PopupConfig.() -> Unit): Any {
     val popupConfig = PopupConfig()
     popupConfig.anchor = anchor
     popupConfig.config()
+    return popupConfig.show(this)
+}
 
-    val window = PopupWindow(this)
-
-    window.apply {
-
-        width = popupConfig.width
-        height = popupConfig.height
-
-        popupConfig.anchor?.let {
-            val viewRect = it.getViewRect()
-            if (popupConfig.exactlyHeight) {
-                height = max(
-                    it.context.getContentViewHeight(),
-                    getScreenHeight()
-                ) - viewRect.bottom
-            }
-
-            if (viewRect.bottom >= getScreenHeight()) {
-                //接近屏幕底部
-                if (popupConfig.gravity == Gravity.NO_GRAVITY) {
-                    //手动控制无效
-                    //popupConfig.gravity = Gravity.TOP
-
-                    if (popupConfig.exactlyHeight) {
-                        height = viewRect.top
-                    }
-                }
-            }
-        }
-
-        isFocusable = popupConfig.focusable
-        isTouchable = popupConfig.touchable
-        isOutsideTouchable = popupConfig.outsideTouchable
-        setBackgroundDrawable(popupConfig.background)
-
-        animationStyle = popupConfig.animationStyle
-
-        setOnDismissListener {
-            popupConfig.onDismiss(window)
-        }
-
-        if (popupConfig.layoutId != -1) {
-            popupConfig.contentView =
-                LayoutInflater.from(this@popupWindow)
-                    .inflate(popupConfig.layoutId, FrameLayout(this@popupWindow), false)
-        }
-        val view = popupConfig.contentView
-
-        popupConfig.popupViewHolder = DslViewHolder(view!!)
-
-        popupConfig.onPopupInit(window, popupConfig.popupViewHolder!!)
-        popupConfig.popupInit(window, popupConfig.popupViewHolder!!)
-
-        contentView = view
-    }
-
-    if (popupConfig.parent != null) {
-        window.showAtLocation(
-            popupConfig.parent,
-            popupConfig.gravity,
-            popupConfig.xoff,
-            popupConfig.yoff
-        )
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-        window.showAsDropDown(
-            popupConfig.anchor,
-            popupConfig.xoff,
-            popupConfig.yoff,
-            popupConfig.gravity
-        )
-    } else {
-        window.showAsDropDown(popupConfig.anchor, popupConfig.xoff, popupConfig.yoff)
-    }
-
-    return window
+fun Context.fullPopupWindow(anchor: View? = null, config: PopupConfig.() -> Unit): Any {
+    val popupConfig = FullPopupConfig()
+    popupConfig.anchor = anchor
+    popupConfig.config()
+    return popupConfig.show(this)
 }
 
 //</editor-fold desc="popupWindow">

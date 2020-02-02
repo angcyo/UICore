@@ -71,6 +71,7 @@ open class InputMultiDialogConfig(context: Context? = null) : BaseDialogConfig(c
                 dialog.dismiss()
             }
         }
+        animStyleResId = R.style.LibDialogInputAnimation
     }
 
     override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {

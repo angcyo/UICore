@@ -2,13 +2,22 @@
 <resources>
 
     <style name="LibDialogAnimation" parent="Animation.AppCompat.Dialog">
-        <!--<item name="android:windowEnterAnimation">@anim/base_tran_to_bottom_enter</item>-->
-        <!--<item name="android:windowExitAnimation">@anim/base_tran_to_bottom_exit</item>-->
+        <item name="android:windowEnterAnimation">@anim/lib_dialog_enter_animation</item>
+        <item name="android:windowExitAnimation">@anim/lib_dialog_exit_animation</item>
+    </style>
+
+    <style name="LibDialogInputAnimation" parent="Animation.AppCompat.Dialog">
+        <item name="android:windowEnterAnimation">@anim/lib_dialog_input_enter_animation</item>
+        <item name="android:windowExitAnimation">@anim/lib_dialog_input_exit_animation</item>
     </style>
 
     <style name="LibPopupAnimation" parent="Animation.AppCompat.DropDownUp">
-        <!--<item name="android:windowEnterAnimation">@anim/base_tran_to_bottom_enter</item>-->
-        <!--<item name="android:windowExitAnimation">@anim/base_tran_to_bottom_exit</item>-->
+        <item name="android:windowEnterAnimation">@anim/lib_popup_enter_animation</item>
+        <item name="android:windowExitAnimation">@anim/lib_popup_exit_animation</item>
+    </style>
+
+    <style name="LibFullPopupAnimation" parent="Animation.AppCompat.DropDownUp">
+        <item name="android:windowExitAnimation">@anim/lib_full_popup_exit_animation</item>
     </style>
 
 </resources>

@@ -74,16 +74,17 @@ class PickerActivity : BaseAppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        //super.onBackPressed()
-        dslFHelper {
-            if (back()) {
-                dslAHelper {
-                    finish {
-                        exitAnim = R.anim.lib_picker_exit_anim
-                        enterAnim = R.anim.lib_picker_other_enter_anim
-                        resultCode = Activity.RESULT_CANCELED
-                        resultData = Intent().apply {
-                            //putParcelableArrayListExtra(KEY_SELECTOR_MEDIA_LIST, mutableListOf<LoaderMedia>())
+        if (onBackPressedDispatcher()) {
+            dslFHelper {
+                if (back()) {
+                    dslAHelper {
+                        finish {
+                            exitAnim = R.anim.lib_picker_exit_anim
+                            enterAnim = R.anim.lib_picker_other_enter_anim
+                            resultCode = Activity.RESULT_CANCELED
+                            resultData = Intent().apply {
+                                //putParcelableArrayListExtra(KEY_SELECTOR_MEDIA_LIST, mutableListOf<LoaderMedia>())
+                            }
                         }
                     }
                 }

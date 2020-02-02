@@ -116,6 +116,10 @@ fun View.setWidthHeight(width: Int = undefined_res, height: Int = undefined_res)
     layoutParams = params
 }
 
+fun View.setBgDrawable(drawable: Drawable?) {
+    ViewCompat.setBackground(this, drawable)
+}
+
 /**
  * 错误提示
  */
