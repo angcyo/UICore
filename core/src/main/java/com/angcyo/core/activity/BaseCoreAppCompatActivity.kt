@@ -26,7 +26,7 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
 
     open fun checkCrash() {
         if (!isRelease()) {
-            DslCrashHandler.checkCrash(false) { filePath, message, crashTime ->
+            DslCrashHandler.checkCrash(true) { filePath, message, crashTime ->
                 filePath?.file()?.readText()?.copy(this)
 
                 normalDialog {
