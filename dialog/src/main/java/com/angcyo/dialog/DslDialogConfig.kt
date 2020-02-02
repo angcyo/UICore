@@ -258,6 +258,7 @@ open class DslDialogConfig(var context: Context? = null) {
         }
     }
 
+    @Throws
     open fun showAndConfigDialog(dialog: Dialog): Dialog {
         if (context == null) {
             throw NullPointerException("context is null.")
@@ -330,6 +331,7 @@ open class DslDialogConfig(var context: Context? = null) {
     /**
      * AppCompatDialog -> AlertDialog
      */
+    @Throws
     fun showAlertDialog(): AlertDialog {
         if (context == null) {
             throw NullPointerException("context is null.")
@@ -392,6 +394,7 @@ open class DslDialogConfig(var context: Context? = null) {
     /**
      * Dialog -> AppCompatDialog
      */
+    @Throws
     fun showCompatDialog(): AppCompatDialog {
         if (context == null) {
             throw NullPointerException("context is null.")

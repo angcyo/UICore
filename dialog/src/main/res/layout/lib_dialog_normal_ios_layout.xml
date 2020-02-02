@@ -9,7 +9,7 @@
     android:background="@drawable/dialog_white_round_bg_shape">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/dialog_title_view"
+        android:id="@+id/title_view"
         style="@style/LibBodyTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
         tools:text="标题标题标题标题标题标题标题标题标题标题标题标题标题标题" />
 
     <com.angcyo.widget.text.DslTextView
-        android:id="@+id/dialog_message_view"
+        android:id="@+id/message_view"
         style="@style/LibBodyTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
         android:paddingBottom="@dimen/lib_xhdpi"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dialog_title_view"
+        app:layout_constraintTop_toBottomOf="@id/title_view"
         tools:text="对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容" />
 
     <View
@@ -47,10 +47,10 @@
         android:background="@color/lib_line"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dialog_message_view" />
+        app:layout_constraintTop_toBottomOf="@id/message_view" />
 
     <com.angcyo.widget.DslButton
-        android:id="@+id/dialog_negative_button"
+        android:id="@+id/negative_button"
         style="@style/DefaultButtonStyleNormal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -59,22 +59,22 @@
         android:minHeight="40dp"
         android:textColor="@color/text_general_color"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/dialog_positive_button"
+        app:layout_constraintRight_toLeftOf="@id/positive_button"
         app:layout_constraintTop_toBottomOf="@id/line_view"
         tools:text="取消" />
 
     <com.angcyo.widget.DslButton
-        android:id="@+id/dialog_positive_button"
+        android:id="@+id/positive_button"
         style="@style/DefaultButtonStyleNormal"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/lib_bg_selector"
         android:gravity="center"
         android:textColor="@color/colorAccent"
-        app:layout_constraintBottom_toBottomOf="@id/dialog_negative_button"
-        app:layout_constraintLeft_toRightOf="@id/dialog_negative_button"
+        app:layout_constraintBottom_toBottomOf="@id/negative_button"
+        app:layout_constraintLeft_toRightOf="@id/negative_button"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/dialog_negative_button"
+        app:layout_constraintTop_toTopOf="@id/negative_button"
         tools:text="确定" />
 
     <View
@@ -85,6 +85,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/dialog_negative_button" />
+        app:layout_constraintTop_toTopOf="@id/negative_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

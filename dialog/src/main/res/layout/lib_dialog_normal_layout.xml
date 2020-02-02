@@ -9,7 +9,7 @@
     tools:layout_margin="@dimen/lib_xhdpi">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/dialog_title_view"
+        android:id="@+id/title_view"
         style="@style/LibTitleTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,7 +22,7 @@
         tools:text="标题" />
 
     <com.angcyo.widget.text.DslTextView
-        android:id="@+id/dialog_message_view"
+        android:id="@+id/message_view"
         style="@style/LibBodyTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dialog_title_view"
+        app:layout_constraintTop_toBottomOf="@id/title_view"
         tools:text="对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容" />
 
     <LinearLayout
@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/lib_hdpi"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dialog_message_view">
+        app:layout_constraintTop_toBottomOf="@id/message_view">
 
         <com.angcyo.widget.DslButton
             android:id="@+id/dialog_neutral_button"
@@ -52,7 +52,7 @@
             tools:text="中立" />
 
         <com.angcyo.widget.DslButton
-            android:id="@+id/dialog_negative_button"
+            android:id="@+id/negative_button"
             style="@style/DefaultButtonStyleNormal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
             tools:text="取消" />
 
         <com.angcyo.widget.DslButton
-            android:id="@+id/dialog_positive_button"
+            android:id="@+id/positive_button"
             style="@style/DefaultButtonStyleNormal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -70,5 +70,10 @@
         <item name="android:textSize">@dimen/text_assist_size</item>
     </style>
 
+    <style name="LibPlaceTextStyle" parent="LibSubTextStyle">
+        <item name="android:textSize">@dimen/text_assist_size</item>
+        <item name="android:textColor">@color/text_place_color</item>
+    </style>
+
 
 </resources>

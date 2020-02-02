@@ -4,12 +4,14 @@ import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
+import android.text.InputType
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.PopupWindow
 import com.angcyo.dsladapter.getViewRect
+import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.getContentViewHeight
 import com.angcyo.library.getScreenHeight
 import com.angcyo.widget.DslViewHolder
@@ -24,8 +26,8 @@ import kotlin.math.max
  */
 
 /**快速配置一个显示在底部全屏的[DslDialogConfig]*/
-fun Context.buildBottomDialog(): DslDialogConfig {
-    return DslDialogConfig(this).apply {
+fun DslDialogConfig.configBottomDialog(): DslDialogConfig {
+    return this.apply {
         canceledOnTouchOutside = false
         dialogWidth = -1
         dialogHeight = -2
@@ -109,41 +111,45 @@ fun Context.normalIosDialog(config: IosDialogConfig.() -> Unit): Dialog {
 //}
 //
 //
-///**
-// * 文本输入对话框, 默认是单行, 无限制
-// * */
-//fun Context.inputDialog(config: InputDialogConfig.() -> Unit): Dialog {
-//    val dialogConfig = InputDialogConfig()
-//    dialogConfig.dialogCanceledOnTouchOutside = false
-//    dialogConfig.config()
-//
-//    return buildBottomDialog().show(dialogConfig)
-//}
-//
-///**多输入框*/
-//fun Context.inputMultiDialog(config: InputMultiDialogConfig.() -> Unit): Dialog {
-//    val dialogConfig = InputMultiDialogConfig()
-//    dialogConfig.dialogCanceledOnTouchOutside = false
-//    dialogConfig.config()
-//
-//    return buildBottomDialog().show(dialogConfig)
-//}
-//
-//
-///**
-// * 多行文本输入框
-// * */
-//fun Context.multiInputDialog(config: InputDialogConfig.() -> Unit): Dialog {
-//    val dialogConfig = InputDialogConfig()
-//    dialogConfig.dialogCanceledOnTouchOutside = false
-//    dialogConfig.maxInputLength = 2000
-//    dialogConfig.inputViewHeight = 100 * dpi
-//    /**多行输入时, 需要 [InputType.TYPE_TEXT_FLAG_MULTI_LINE] 否则输入框, 不能输入 回车 */
-//    dialogConfig.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
-//    dialogConfig.config()
-//
-//    return buildBottomDialog().show(dialogConfig)
-//}
+
+/**
+ * 文本输入对话框, 默认是单行, 无限制
+ * */
+fun Context.inputDialog(config: InputDialogConfig.() -> Unit): Dialog {
+    val dialogConfig = InputDialogConfig(this)
+    dialogConfig.configBottomDialog()
+    dialogConfig.canceledOnTouchOutside = false
+    dialogConfig.config()
+
+    return dialogConfig.show()
+}
+
+/**多输入框*/
+fun Context.inputMultiDialog(config: InputMultiDialogConfig.() -> Unit): Dialog {
+    val dialogConfig = InputMultiDialogConfig(this)
+    dialogConfig.configBottomDialog()
+    dialogConfig.canceledOnTouchOutside = false
+    dialogConfig.config()
+
+    return dialogConfig.show()
+}
+
+
+/**
+ * 多行文本输入框
+ * */
+fun Context.multiInputDialog(config: InputDialogConfig.() -> Unit): Dialog {
+    val dialogConfig = InputDialogConfig(this)
+    dialogConfig.configBottomDialog()
+    dialogConfig.canceledOnTouchOutside = false
+    dialogConfig.maxInputLength = 2000
+    dialogConfig.inputViewHeight = 100 * dpi
+    /**多行输入时, 需要 [InputType.TYPE_TEXT_FLAG_MULTI_LINE] 否则输入框, 不能输入 回车 */
+    dialogConfig.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+    dialogConfig.config()
+
+    return dialogConfig.show()
+}
 //
 ///**
 // * 底部网格对话框

@@ -3,17 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/dialog_white_top_round_bg_shape"
     android:orientation="vertical">
-
-    <include
-        android:id="@+id/title_layout"
-        layout="@layout/lib_dialog_base_title_layout" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="@color/lib_line" />
 
     <com.angcyo.widget.edit.DslEditText
         android:id="@+id/edit_text_view"
@@ -21,11 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/lib_white"
-        android:imeOptions="actionDone"
-        android:maxHeight="200dp"
+        android:imeOptions="actionNext"
         android:minHeight="@dimen/lib_item_min_height"
-        android:padding="@dimen/lib_xhdpi"
-        tools:layout_height="300dp" />
+        android:padding="@dimen/lib_xhdpi" />
 
     <com.angcyo.widget.pager.TextIndicator
         android:id="@+id/single_text_indicator_view"

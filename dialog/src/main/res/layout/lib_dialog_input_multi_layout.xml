@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_white_top_round_bg_shape"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/title_layout"
+        layout="@layout/lib_dialog_base_title_layout" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/lib_line" />
+
+    <LinearLayout
+        android:id="@+id/input_wrapper_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@drawable/lib_shape_line_px"
+        android:dividerPadding="@dimen/lib_xhdpi"
+        android:orientation="vertical"
+        android:showDividers="middle">
+
+        <!--代码中动态添加-->
+        <!--        <include layout="@layout/lib_dialog_input_multi_item" />-->
+
+        <!--        <include layout="@layout/lib_dialog_input_multi_item" />-->
+
+        <!--        <include layout="@layout/lib_dialog_input_multi_item" />-->
+
+        <!--        <include layout="@layout/lib_dialog_input_multi_item" />-->
+
+        <!--        <include layout="@layout/lib_dialog_input_multi_item" />-->
+
+        <!--        <include layout="@layout/lib_dialog_input_multi_item" />-->
+
+    </LinearLayout>
+
+</LinearLayout>

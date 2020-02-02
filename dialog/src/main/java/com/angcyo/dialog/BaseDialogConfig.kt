@@ -16,6 +16,12 @@ import com.angcyo.widget.base.clickIt
  */
 abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(context) {
 
+    /**
+     * 显示dialog的类型
+     * [AppCompatDialog] [AlertDialog] [BottomSheetDialog]
+     * */
+    var dialogType = DIALOG_TYPE_APPCOMPAT
+
     init {
         positiveButtonText = "确定"
         negativeButtonText = "取消"
@@ -36,13 +42,13 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
         super.initDialogView(dialog, dialogViewHolder)
 
         //标题
-        dialogViewHolder.tv(R.id.dialog_title_view)?.apply {
+        dialogViewHolder.tv(R.id.title_view)?.apply {
             visibility = if (dialogTitle == null) View.GONE else View.VISIBLE
             text = dialogTitle
         }
 
         //消息体
-        dialogViewHolder.tv(R.id.dialog_message_view)?.apply {
+        dialogViewHolder.tv(R.id.message_view)?.apply {
             visibility = if (dialogMessage == null) View.GONE else View.VISIBLE
             text = dialogMessage
         }
@@ -52,7 +58,7 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
 
     open fun initControlLayout(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         //确定按钮
-        dialogViewHolder.tv(R.id.dialog_positive_button)?.apply {
+        dialogViewHolder.tv(R.id.positive_button)?.apply {
             visibility = if (positiveButtonText == null) View.GONE else View.VISIBLE
             text = positiveButtonText
 
@@ -62,7 +68,7 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
         }
 
         //取消按钮
-        dialogViewHolder.tv(R.id.dialog_negative_button)?.apply {
+        dialogViewHolder.tv(R.id.negative_button)?.apply {
             visibility = if (negativeButtonText == null) View.GONE else View.VISIBLE
             text = negativeButtonText
 
@@ -89,12 +95,6 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
             dialogViewHolder.view(R.id.dialog_control_layout)?.visibility = View.GONE
         }
     }
-
-    /**
-     * 显示dialog的类型
-     * [AppCompatDialog] [AlertDialog] [BottomSheetDialog]
-     * */
-    var dialogType = DIALOG_TYPE_APPCOMPAT
 
     /**根据类型, 自动显示对应[Dialog]*/
     fun show(): Dialog {

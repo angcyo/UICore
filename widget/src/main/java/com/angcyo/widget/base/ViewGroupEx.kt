@@ -257,6 +257,26 @@ fun ViewGroup.inflate(@LayoutRes layoutId: Int, attachToRoot: Boolean = true): V
     return LayoutInflater.from(context).inflate(layoutId, this, attachToRoot)
 }
 
+fun ViewGroup.append(@LayoutRes layoutId: Int, attachToRoot: Boolean = true): View {
+    if (layoutId == -1) {
+        return this
+    }
+    return LayoutInflater.from(context).inflate(layoutId, this, attachToRoot)
+}
+
+fun ViewGroup.append(@LayoutRes layoutId: Int, action: View.() -> Unit = {}): View {
+    val view = inflate(layoutId, false)
+    return append(view, action)
+}
+
+fun <T : View> ViewGroup.append(view: T?, action: T.() -> Unit = {}): View {
+    if (view != null) {
+        addView(view)
+        view.action()
+    }
+    return view ?: this
+}
+
 fun ViewGroup.replace(@LayoutRes layoutId: Int, attachToRoot: Boolean = true): View {
     if (childCount > 0) {
         removeAllViews()

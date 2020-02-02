@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/dialog_item_height">
+
+    <com.angcyo.widget.DslButton
+        android:id="@+id/negative_button"
+        style="@style/DefaultButtonStyleNormal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/lib_bg_selector"
+        android:minHeight="@dimen/dialog_item_height"
+        android:paddingLeft="@dimen/lib_xhdpi"
+        android:paddingRight="@dimen/lib_xhdpi"
+        android:textColor="@color/text_place_color"
+        tools:text="取消" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/title_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:minHeight="@dimen/dialog_item_height"
+        android:textStyle="bold"
+        tools:text="标题" />
+
+    <com.angcyo.widget.DslButton
+        android:id="@+id/positive_button"
+        style="@style/DefaultButtonStyleNormal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:background="@drawable/lib_bg_selector"
+        android:minHeight="@dimen/dialog_item_height"
+        android:paddingLeft="@dimen/lib_xhdpi"
+        android:paddingRight="@dimen/lib_xhdpi"
+        android:textColor="@color/lib_accent_text_color_selector"
+        tools:text="确定" />
+
+</FrameLayout>
