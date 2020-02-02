@@ -7,10 +7,7 @@ import android.os.Bundle
 import android.view.Gravity
 import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.activity.showDebugInfoView
-import com.angcyo.base.dslAHelper
-import com.angcyo.base.dslFHelper
-import com.angcyo.base.setNavigationBarColor
-import com.angcyo.base.setStatusBarColor
+import com.angcyo.base.*
 import com.angcyo.core.component.dslPermissions
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.toast
@@ -56,12 +53,17 @@ class PickerActivity : BaseAppCompatActivity() {
     }
 
     fun checkPermission() {
-        dslPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) {
-            if (it) {
-                onPermissionGranted()
-            } else {
-                onBackPressed()
-                toast("请允许权限.")
+
+        if (havePermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            onPermissionGranted()
+        } else {
+            dslPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) {
+                if (it) {
+                    onPermissionGranted()
+                } else {
+                    onBackPressed()
+                    toast("请允许权限.")
+                }
             }
         }
     }

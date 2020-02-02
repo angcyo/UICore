@@ -71,15 +71,9 @@ class PickerImageFragment : BaseDslFragment() {
     fun _switchFolder(folder: LoaderFolder) {
         _vh.tv(R.id.folder_text_view)?.text = folder.folderName
 
-        _adapter.clearItems()
-        folder.mediaItemList.forEach {
-            renderDslAdapter {
-                DslPickerImageItem()() {
-                    loaderMedia = it
-                }
-            }
+        _adapter.loadSingleData(folder.mediaItemList, 1, Int.MAX_VALUE) { oldItem, _ ->
+            oldItem ?: DslPickerImageItem()
         }
-        _adapter.autoAdapterStatus()
     }
 
     fun _showFolderDialog() {

@@ -1,9 +1,6 @@
 package com.angcyo.activity
 
 import android.app.Activity
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Point
@@ -18,12 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.angcyo.fragment.R
-import com.angcyo.library.app
-import com.angcyo.library.ex.getColor
-import com.angcyo.library.ex.isDebug
-import com.angcyo.library.ex.safe
-import com.angcyo.library.ex.simpleName
-import com.angcyo.library.getStatusBarHeight
+import com.angcyo.library.ex.*
 import com.angcyo.widget.base.onDoubleTap
 import com.angcyo.widget.span.span
 import kotlin.math.max
@@ -233,20 +225,4 @@ fun FragmentManager.logAllFragment(
         }
     }
     return builder
-}
-
-/**复制文本*/
-fun CharSequence.copy(context: Context = app()) {
-    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    try {
-        clipboard.setPrimaryClip(ClipData.newPlainText("text", this))
-    } catch (e: Exception) {
-        e.printStackTrace()
-        clipboard.setPrimaryClip(
-            ClipData.newPlainText(
-                "text",
-                this.subSequence(0, 100).toString() + "...more"
-            )
-        )
-    }
 }

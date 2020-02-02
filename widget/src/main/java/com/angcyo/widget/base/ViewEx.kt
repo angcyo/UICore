@@ -120,6 +120,11 @@ fun View.setBgDrawable(drawable: Drawable?) {
     ViewCompat.setBackground(this, drawable)
 }
 
+/**长按震动反馈*/
+fun View.longFeedback() {
+    performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+}
+
 /**
  * 错误提示
  */
@@ -349,12 +354,19 @@ fun View?.canChildScroll(direction: Int, depth: Int = 5): Boolean {
     return this.canScrollVertically(direction)
 }
 
+/**点击事件*/
 fun View?.clickIt(action: (View) -> Unit) {
     this?.setOnClickListener(action)
 }
 
+/**点击事件节流处理*/
 fun View?.throttleClickIt(action: (View) -> Unit) {
     this?.setOnClickListener(ThrottleClickListener(action = action))
+}
+
+/**长按事件*/
+fun View?.longClick(action: (View) -> Boolean) {
+    this?.setOnLongClickListener { action(it) }
 }
 
 //</editor-fold desc="scroll扩展">

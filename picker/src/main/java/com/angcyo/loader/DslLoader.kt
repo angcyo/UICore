@@ -1,8 +1,10 @@
 package com.angcyo.loader
 
 import android.database.Cursor
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.FragmentActivity
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
@@ -110,14 +112,50 @@ class DslLoader {
                                     data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[6]))
                                 val height =
                                     data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[7]))
-                                val latitude =
-                                    data.getDouble(data.getColumnIndexOrThrow(ALL_PROJECTION[8]))
-                                val longitude =
-                                    data.getDouble(data.getColumnIndexOrThrow(ALL_PROJECTION[9]))
+
+                                //经纬度Android Q中查询会崩溃, 需要通过Exif查询
+                                var latitude = 0.0
+                                var longitude = 0.0
+                                var orientation =
+                                    data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[11]))
+                                try {
+                                    val exif = ExifInterface(path)
+                                    exif.latLong?.run {
+                                        latitude = this[0]
+                                        longitude = this[0]
+                                    }
+                                    val orientationAttr: Int = exif.getAttributeInt(
+                                        ExifInterface.TAG_ORIENTATION,
+                                        ExifInterface.ORIENTATION_NORMAL
+                                    )
+                                    if (orientationAttr == ExifInterface.ORIENTATION_NORMAL || orientationAttr == ExifInterface.ORIENTATION_UNDEFINED) {
+                                        orientation = 0
+                                    } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_90) {
+                                        orientation = 90
+                                    } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_180) {
+                                        orientation = 180
+                                    } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_270) {
+                                        orientation = 270
+                                    }
+                                } catch (e: Exception) {
+                                    L.w(e)
+                                }
+
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+
+                                } else {
+                                    if (latitude <= 0.0) {
+                                        latitude =
+                                            data.getDouble(data.getColumnIndexOrThrow(ALL_PROJECTION[8]))
+                                    }
+                                    if (longitude <= 0.0) {
+                                        longitude =
+                                            data.getDouble(data.getColumnIndexOrThrow(ALL_PROJECTION[9]))
+                                    }
+                                }
+
                                 val duration =
                                     data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[10]))
-                                val orientation =
-                                    data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[11]))
 
                                 val loaderMedia = LoaderMedia().apply {
                                     this.localPath = path ?: ""

@@ -59,18 +59,12 @@ fun String?.hawkPutList(value: String?, sort: Boolean = true) {
 }
 
 fun String?.hawkPut(value: CharSequence?) {
-    if (TextUtils.isEmpty(value)) {
-        return
-    }
     this?.let {
         Hawk.put(it, value ?: "")
     }
 }
 
 fun String?.hawkAppend(value: CharSequence?) {
-    if (TextUtils.isEmpty(value)) {
-        return
-    }
     this?.let {
         Hawk.put(it, "${hawkGet() ?: ""}${value ?: ""}")
     }

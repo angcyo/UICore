@@ -1,5 +1,7 @@
 package com.angcyo.library.ex
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -10,6 +12,7 @@ import android.text.TextUtils
 import android.util.Base64
 import android.webkit.MimeTypeMap
 import androidx.annotation.ColorInt
+import com.angcyo.library.app
 import java.util.regex.Pattern
 
 /**
@@ -19,6 +22,23 @@ import java.util.regex.Pattern
  * @date 2019/12/20
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
+
+/**复制文本*/
+fun CharSequence.copy(context: Context = app()) {
+    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    try {
+        clipboard.setPrimaryClip(ClipData.newPlainText("text", this))
+    } catch (e: Exception) {
+        e.printStackTrace()
+        clipboard.setPrimaryClip(
+            ClipData.newPlainText(
+                "text",
+                this.subSequence(0, 100).toString() + "...more"
+            )
+        )
+    }
+}
+
 @ColorInt
 fun String.toColorInt(): Int = Color.parseColor(this)
 

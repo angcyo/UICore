@@ -3,10 +3,7 @@ package com.angcyo.picker.dslitem
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.margin
 import com.angcyo.glide.giv
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.dpi
-import com.angcyo.library.ex.getDrawable
-import com.angcyo.library.ex.toElapsedTime
+import com.angcyo.library.ex.*
 import com.angcyo.loader.LoaderMedia
 import com.angcyo.loader.isAudio
 import com.angcyo.loader.isVideo
@@ -14,6 +11,8 @@ import com.angcyo.loader.loadPath
 import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt
+import com.angcyo.widget.base.longClick
+import com.angcyo.widget.base.longFeedback
 import com.angcyo.widget.span.span
 
 /**
@@ -24,6 +23,9 @@ import com.angcyo.widget.span.span
  */
 
 open class DslPickerImageItem : DslAdapterItem() {
+
+    val loaderMedia: LoaderMedia? get() = itemData as? LoaderMedia
+
     init {
         itemLayoutId = R.layout.dsl_picker_image_layout
 
@@ -34,9 +36,14 @@ open class DslPickerImageItem : DslAdapterItem() {
             }
         }
         margin(1 * dpi)
-    }
 
-    var loaderMedia: LoaderMedia? = null
+        //长按赋值媒体信息
+        onItemLongClick = {
+            it.longFeedback()
+            loaderMedia?.toString()?.copy(it.context)
+            true
+        }
+    }
 
     override fun onItemBind(
         itemHolder: DslViewHolder,
@@ -54,6 +61,10 @@ open class DslPickerImageItem : DslAdapterItem() {
 
             clickIt {
                 //大图浏览
+            }
+
+            longClick {
+                onItemLongClick?.invoke(it) ?: false
             }
         }
 

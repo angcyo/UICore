@@ -83,7 +83,7 @@ fun Activity.dslAHelper(action: DslAHelper.() -> Unit) {
 }
 
 /**是否具有指定的权限*/
-fun Activity.havePermissions(vararg permissions: String): Boolean {
+fun Context.havePermissions(vararg permissions: String): Boolean {
     var have = true
     for (permission in permissions) {
         if (ActivityCompat.checkSelfPermission(
@@ -98,7 +98,7 @@ fun Activity.havePermissions(vararg permissions: String): Boolean {
     return have
 }
 
-fun Activity.havePermission(permissionList: List<String>): Boolean {
+fun Context.havePermission(permissionList: List<String>): Boolean {
     var have = true
     for (permission in permissionList) {
         if (ActivityCompat.checkSelfPermission(

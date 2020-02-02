@@ -5,6 +5,7 @@ import androidx.annotation.LayoutRes
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
 import com.angcyo.widget.base.setHeight
+import kotlin.math.min
 
 
 /**
@@ -14,6 +15,8 @@ import com.angcyo.widget.base.setHeight
  * @date 2019/08/09
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
+
+//<editor-fold desc="Item操作">
 
 /**
  * 通过条件, 查找[DslAdapterItem].
@@ -84,3 +87,4 @@ fun <T> DslAdapter.renderItem(data: T, init: DslAdapterItem.() -> Unit) {
     addLastItem(adapterItem)
 }
 
+//</editor-fold desc="Item操作">

@@ -2,7 +2,6 @@ package com.angcyo.core.activity
 
 import android.os.Bundle
 import com.angcyo.activity.BaseAppCompatActivity
-import com.angcyo.activity.copy
 import com.angcyo.core.R
 import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.core.utils.RUtils

@@ -24,4 +24,6 @@ dependencies {
 
     //https://github.com/chrisbanes/PhotoView/
     api 'com.github.chrisbanes:PhotoView:2.3.0'
+
+    //api "androidx.exifinterface:exifinterface:1.1.0"
 }

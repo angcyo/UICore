@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.widget.DslViewHolder
+import kotlin.math.max
 import kotlin.math.min
 
 /**
@@ -263,6 +264,8 @@ open class DslAdapter : RecyclerView.Adapter<DslViewHolder>, OnDispatchUpdatesLi
         }
     }
 
+    //<editor-fold desc="Item操作">
+
     /**
      * 在最后的位置插入数据
      */
@@ -372,6 +375,71 @@ open class DslAdapter : RecyclerView.Adapter<DslViewHolder>, OnDispatchUpdatesLi
             change(footerItems)
         }
     }
+
+    /**用于[Adapter]中单一数据类型的列表*/
+    fun loadSingleData(
+        list: List<Any>,
+        page: Int = 1,
+        pageSize: Int = 20,
+        initOrCreateDslItem: (oldItem: DslAdapterItem?, data: Any) -> DslAdapterItem
+    ) {
+        changeDataItems {
+            //第一页数据检查
+            if (page <= 1) {
+                if (it.size > list.size) {
+                    for (i in max(it.lastIndex, 0) downTo max(list.size, 0)) {
+                        it.removeAt(i)
+                    }
+                }
+                //重新旧数据
+                it.forEachIndexed { index, dslAdapterItem ->
+                    val data = list[index]
+                    dslAdapterItem.itemChanging = dslAdapterItem.itemData != data
+                    dslAdapterItem.itemData = data
+                    initOrCreateDslItem(dslAdapterItem, data)
+                }
+                if (list.size > it.size) {
+                    //需要补充新的DslAdapterItem
+                    for (i in it.size until list.size) {
+                        val data = list[i]
+                        val dslItem = initOrCreateDslItem(null, data)
+                        dslItem.itemData = data
+                        it.add(dslItem)
+                    }
+                }
+                if (it.isEmpty()) {
+                    //空数据
+                    setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_EMPTY)
+                } else {
+                    setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_NONE)
+                    if (dslLoadMoreItem.itemEnableLoadMore) {
+                        if (it.size < pageSize) {
+                            setLoadMore(DslLoadMoreItem.ADAPTER_LOAD_NO_MORE)
+                        } else {
+                            setLoadMore(DslLoadMoreItem.ADAPTER_LOAD_NORMAL)
+                        }
+                    }
+                }
+            } else {
+                //追加数据检查
+                for (data in list) {
+                    val dslItem = initOrCreateDslItem(null, data)
+                    dslItem.itemData = data
+                    it.add(dslItem)
+                }
+                setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_NONE)
+                if (dslLoadMoreItem.itemEnableLoadMore) {
+                    if (list.size < pageSize) {
+                        setLoadMore(DslLoadMoreItem.ADAPTER_LOAD_NO_MORE)
+                    } else {
+                        setLoadMore(DslLoadMoreItem.ADAPTER_LOAD_NORMAL)
+                    }
+                }
+            }
+        }
+    }
+
+    //</editor-fold desc="Item操作">
 
     /**
      * 刷新某一个item
