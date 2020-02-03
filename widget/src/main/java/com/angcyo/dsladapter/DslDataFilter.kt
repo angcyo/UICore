@@ -440,7 +440,7 @@ data class FilterParams(
      * */
     var just: Boolean = false,
     /**
-     * 只过滤列表数据, 不通知界面操作, 开启此属性.[async=true][just=true]
+     * 只过滤列表数据, 不通知界面操作, 开启此属性.[async=true] [just=true]
      * */
     var justFilter: Boolean = false,
     /**

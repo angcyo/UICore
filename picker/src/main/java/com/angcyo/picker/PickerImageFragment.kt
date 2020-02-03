@@ -89,6 +89,9 @@ class PickerImageFragment : BaseDslFragment() {
             onInitLayout = { _, viewHolder ->
                 viewHolder._rv(R.id.lib_recycler_view)?.apply {
                     initDslAdapter {
+                        defaultFilterParams = _defaultFilterParams().apply {
+                            async = false
+                        }
                         pickerViewModel.loaderFolderList.value?.forEachIndexed { index, folder ->
                             DslPickerFolderItem()() {
                                 itemData = folder

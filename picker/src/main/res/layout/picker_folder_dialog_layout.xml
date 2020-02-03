@@ -2,7 +2,7 @@
 <com.angcyo.widget.layout.RCoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/picker_folder_bg_shape"
     app:r_layout_mask_drawable="@drawable/picker_folder_bg_shape"
     app:r_max_height="0.8sh">
@@ -11,7 +11,7 @@
         android:id="@+id/lib_recycler_view"
         style="@style/PickerRecyclerViewStyle"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:r_layout_manager="V" />
 
 </com.angcyo.widget.layout.RCoordinatorLayout>
