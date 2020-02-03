@@ -36,6 +36,16 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:textColor="@color/picker_bottom_text_color" />
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/lib_tip_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/lib_xhdpi"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_picker_folder_check" />
+
     <View
         android:id="@+id/lib_line_view"
         android:layout_width="0dp"

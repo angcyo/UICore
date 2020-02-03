@@ -60,5 +60,9 @@ class DslPickerFolderItem : DslAdapterItem() {
 
         //line
         itemHolder.visible(R.id.lib_line_view, showFolderLine)
+
+        //check
+        itemHolder.visible(R.id.lib_tip_image_view, itemIsSelected)
+
     }
 }

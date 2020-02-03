@@ -115,7 +115,11 @@ class PickerImageFragment : BaseDslFragment() {
                         animate()
                             .rotationBy(180f)
                             .setDuration(300)
-                            .withEndAction { pickerViewModel.currentFolder.value = selectorFolder }
+                            .withEndAction {
+                                selectorFolder?.run {
+                                    pickerViewModel.currentFolder.value = this
+                                }
+                            }
                             .start()
                     }
                 false
