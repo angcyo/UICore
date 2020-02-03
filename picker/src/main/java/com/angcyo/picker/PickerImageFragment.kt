@@ -83,6 +83,7 @@ class PickerImageFragment : BaseDslFragment() {
 
     /**文件夹切换布局*/
     fun _showFolderDialog() {
+        var selectorFolder: LoaderFolder? = null
         fContext().fullPopupWindow(_vh.view(R.id.title_wrap_layout)) {
             showWithActivity = true
             layoutId = R.layout.picker_folder_dialog_layout
@@ -97,7 +98,7 @@ class PickerImageFragment : BaseDslFragment() {
                                 itemData = folder
                                 itemIsSelected = folder == pickerViewModel.currentFolder.value
                                 onItemClick = {
-                                    pickerViewModel.currentFolder.value = folder
+                                    selectorFolder = folder
                                     hide()
                                 }
                                 showFolderLine =
@@ -110,7 +111,13 @@ class PickerImageFragment : BaseDslFragment() {
 
             onDismiss = {
                 _vh.view(R.id.folder_image_view)
-                    ?.run { animate().rotationBy(180f).setDuration(300).start() }
+                    ?.run {
+                        animate()
+                            .rotationBy(180f)
+                            .setDuration(300)
+                            .withEndAction { pickerViewModel.currentFolder.value = selectorFolder }
+                            .start()
+                    }
                 false
             }
 
