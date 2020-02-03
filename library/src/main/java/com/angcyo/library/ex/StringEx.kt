@@ -145,8 +145,12 @@ fun String.isVideoMimeType(): Boolean {
     return this.startsWith("video", true)
 }
 
+/**[android.media.MediaFile#isPlayListMimeType]*/
 fun String.isAudioMimeType(): Boolean {
-    return this.startsWith("audio", true)
+    return this.startsWith(
+        "audio",
+        true
+    ) || this == "application/ogg"
 }
 
 fun String.isImageMimeType(): Boolean {

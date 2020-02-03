@@ -2,9 +2,7 @@ package com.angcyo.loader
 
 import android.net.Uri
 import android.os.Parcelable
-import com.angcyo.library.ex.file
-import com.angcyo.library.ex.isFileExist
-import com.angcyo.library.ex.mimeType
+import com.angcyo.library.ex.*
 import kotlinx.android.parcel.Parcelize
 
 /**
@@ -71,15 +69,15 @@ fun LoaderMedia.mimeType(): String {
 }
 
 fun LoaderMedia.isVideo(): Boolean {
-    return mimeType().startsWith("video")
+    return mimeType().isVideoMimeType()
 }
 
 fun LoaderMedia.isAudio(): Boolean {
-    return mimeType().startsWith("audio")
+    return mimeType().isAudioMimeType()
 }
 
 fun LoaderMedia.isImage(): Boolean {
-    return mimeType().startsWith("image")
+    return mimeType().isImageMimeType()
 }
 
 /**加载路径*/
