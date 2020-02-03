@@ -155,8 +155,8 @@ open class DslViewHolder(
         return null
     }
 
-    fun enable(@IdRes resId: Int, enable: Boolean): DslViewHolder {
-        val view = v<View>(resId)!!
+    fun enable(@IdRes resId: Int, enable: Boolean = true): DslViewHolder {
+        val view = v<View>(resId)
         enable(view, enable)
         return this
     }
@@ -174,6 +174,27 @@ open class DslViewHolder(
                 view.isEnabled = enable
             }
             (view as? EditText)?.clearFocus()
+        }
+    }
+
+    fun selected(@IdRes resId: Int, selected: Boolean = true): DslViewHolder {
+        val view = v<View>(resId)
+        selected(view, selected)
+        return this
+    }
+
+    private fun selected(view: View?, selected: Boolean) {
+        if (view == null) {
+            return
+        }
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                selected(view.getChildAt(i), selected)
+            }
+        } else {
+            if (view.isSelected != selected) {
+                view.isSelected = selected
+            }
         }
     }
 

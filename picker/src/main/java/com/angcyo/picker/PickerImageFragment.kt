@@ -4,14 +4,18 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import com.angcyo.base.back
 import com.angcyo.core.fragment.BaseDslFragment
+import com.angcyo.dialog.fullPopupWindow
 import com.angcyo.dsladapter.DslAdapterStatusItem
 import com.angcyo.library.L
 import com.angcyo.library.ex.getColor
 import com.angcyo.loader.DslLoader
 import com.angcyo.loader.LoaderFolder
+import com.angcyo.picker.dslitem.DslPickerFolderItem
 import com.angcyo.picker.dslitem.DslPickerImageItem
 import com.angcyo.picker.dslitem.DslPickerStatusItem
 import com.angcyo.viewmodel.VMAProperty
+import com.angcyo.widget._rv
+import com.angcyo.widget.recycler.initDslAdapter
 
 /**
  *
@@ -69,6 +73,7 @@ class PickerImageFragment : BaseDslFragment() {
 
     /**切换显示的文件夹*/
     fun _switchFolder(folder: LoaderFolder) {
+        _vh.visible(R.id.folder_layout)
         _vh.tv(R.id.folder_text_view)?.text = folder.folderName
 
         _adapter.loadSingleData(folder.mediaItemList, 1, Int.MAX_VALUE) { oldItem, _ ->
@@ -76,8 +81,39 @@ class PickerImageFragment : BaseDslFragment() {
         }
     }
 
+    /**文件夹切换布局*/
     fun _showFolderDialog() {
+        fContext().fullPopupWindow(_vh.view(R.id.title_wrap_layout)) {
+            showWithActivity = true
+            layoutId = R.layout.picker_folder_dialog_layout
+            onInitLayout = { _, viewHolder ->
+                viewHolder._rv(R.id.lib_recycler_view)?.apply {
+                    initDslAdapter {
+                        pickerViewModel.loaderFolderList.value?.forEachIndexed { index, folder ->
+                            DslPickerFolderItem()() {
+                                itemData = folder
+                                itemIsSelected = folder == pickerViewModel.currentFolder.value
+                                onItemClick = {
+                                    pickerViewModel.currentFolder.value = folder
+                                    hide()
+                                }
+                                showFolderLine =
+                                    index != pickerViewModel.loaderFolderList.value!!.lastIndex
+                            }
+                        }
+                    }
+                }
+            }
 
+            onDismiss = {
+                _vh.view(R.id.folder_image_view)
+                    ?.run { animate().rotationBy(180f).setDuration(300).start() }
+                false
+            }
+
+            _vh.view(R.id.folder_image_view)
+                ?.run { animate().rotationBy(180f).setDuration(300).start() }
+        }
     }
 
     override fun onDestroy() {

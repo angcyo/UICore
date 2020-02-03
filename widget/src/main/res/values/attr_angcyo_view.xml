@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--不影响原来背景的背景-->
+    <attr name="r_background" format="reference|color" />
+    <attr name="r_max_height" format="string|dimension" />
+    <attr name="r_clip_to_outline" format="boolean" />
+    <attr name="r_layout_mask_drawable" format="reference|color" />
+
+    <!--相同[Layout]属性代理读取设置¬-->
+    <declare-styleable name="RLayout">
+        <attr name="r_background" />
+        <attr name="r_max_height" />
+        <attr name="r_clip_to_outline" />
+        <attr name="r_layout_mask_drawable" />
+    </declare-styleable>
+
+    <declare-styleable name="RLinearLayout">
+        <attr name="r_background" />
+        <attr name="r_max_height" />
+        <attr name="r_clip_to_outline" />
+        <attr name="r_layout_mask_drawable" />
+    </declare-styleable>
+
+    <declare-styleable name="RCoordinatorLayout">
+        <attr name="r_background" />
+        <attr name="r_max_height" />
+        <attr name="r_clip_to_outline" />
+        <attr name="r_layout_mask_drawable" />
+    </declare-styleable>
+
+    <declare-styleable name="RConstraintLayout">
+        <attr name="r_background" />
+        <attr name="r_max_height" />
+        <attr name="r_clip_to_outline" />
+        <attr name="r_layout_mask_drawable" />
+    </declare-styleable>
+
+    <declare-styleable name="RFrameLayout">
+        <attr name="r_background" />
+        <attr name="r_max_height" />
+        <attr name="r_clip_to_outline" />
+        <attr name="r_layout_mask_drawable" />
+    </declare-styleable>
+
+</resources>

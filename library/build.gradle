@@ -1,11 +1,5 @@
 apply from: allGradle.libBase
 
-android {
-    defaultConfig {
-        minSdkVersion 14
-    }
-}
-
 dependencies {
     api 'androidx.core:core:1.1.0'
 

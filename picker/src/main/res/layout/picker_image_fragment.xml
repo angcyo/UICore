@@ -39,7 +39,9 @@
                 android:paddingLeft="10dp"
                 android:paddingTop="4dp"
                 android:paddingRight="6dp"
-                android:paddingBottom="4dp">
+                android:paddingBottom="4dp"
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/folder_text_view"
@@ -56,7 +58,8 @@
                     android:layout_marginLeft="4dp"
                     android:background="@drawable/picker_folder_arrow_shape"
                     android:scaleType="center"
-                    app:srcCompat="@drawable/ic_picker_folder_down_arrow" />
+                    app:srcCompat="@drawable/ic_picker_folder_down_arrow"
+                    tools:src="@drawable/ic_picker_folder_down_arrow" />
 
             </LinearLayout>
 
@@ -85,11 +88,10 @@
     <!--内容-->
     <com.angcyo.widget.recycler.DslRecyclerView
         android:id="@+id/lib_recycler_view"
-        style="@style/LibRecyclerViewStyle"
+        style="@style/PickerRecyclerViewStyle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:scrollbarThumbVertical="@drawable/picker_scroll_bar_thumb_shape"
         app:r_layout_manager="GV4" />
 
     <!--底部栏-->

@@ -9,7 +9,6 @@ import android.os.Build
 import androidx.annotation.ColorInt
 import androidx.core.graphics.drawable.DrawableCompat
 import com.angcyo.library.app
-import com.angcyo.library.ex.undefined_int
 
 /**
  * Created by angcyo on ：2017/12/15 15:01
@@ -89,6 +88,13 @@ fun Drawable.initBounds(width: Int = undefined_int, height: Int = undefined_int)
         val h = if (height == undefined_int) minimumHeight else height
         bounds.set(0, 0, w, h)
     }
+    return this
+}
+
+fun Drawable.setBounds(width: Int = undefined_int, height: Int = undefined_int): Drawable {
+    val w = if (width == undefined_int) minimumWidth else width
+    val h = if (height == undefined_int) minimumHeight else height
+    bounds.set(0, 0, w, h)
     return this
 }
 

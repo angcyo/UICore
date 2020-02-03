@@ -165,10 +165,11 @@ open class PopupConfig {
         return contentView
     }
 
+    var _onBackPressedCallback: OnBackPressedCallback? = null
     /**使用[Activity]当做载体*/
     open fun showWidthActivity(activity: Activity): Window {
 
-        val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        _onBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 isEnabled = false
                 onRemoveRootLayout(activity)
@@ -176,7 +177,7 @@ open class PopupConfig {
         }
 
         if (activity is OnBackPressedDispatcherOwner) {
-            activity.onBackPressedDispatcher.addCallback(onBackPressedCallback)
+            activity.onBackPressedDispatcher.addCallback(_onBackPressedCallback!!)
         }
 
         val window = activity.window
@@ -190,7 +191,7 @@ open class PopupConfig {
 
         rootLayout.setOnClickListener {
             if (outsideTouchable) {
-                onBackPressedCallback.handleOnBackPressed()
+                _onBackPressedCallback?.handleOnBackPressed()
             }
         }
 
@@ -240,7 +241,7 @@ open class PopupConfig {
     }
 
     /**透明颜色变暗透明度, [PopupWindow]不支持此属性*/
-    var amount: Float = 0.6f
+    var amount: Float = 0.8f
     var animatorDuration = 300L
 
     open fun onAddRootLayout(activity: Activity, viewHolder: DslViewHolder) {
@@ -270,6 +271,7 @@ open class PopupConfig {
     }
 
     open fun onRemoveRootLayout(activity: Activity) {
+        _onBackPressedCallback?.isEnabled = false
         contentView?.run {
             val window = activity.window
             if (!onDismiss(window)) {
@@ -301,5 +303,10 @@ open class PopupConfig {
                 } ?: windowLayout.removeView(this)
             }
         }
+    }
+
+    /**移除[Activity]模式的界面*/
+    fun hide() {
+        _onBackPressedCallback?.handleOnBackPressed()
     }
 }

@@ -18,6 +18,7 @@
 
     <!--圆角大小-->
     <dimen name="lib_radius_normal">5dp</dimen>
+    <dimen name="lib_radius_common">10dp</dimen>
     <dimen name="lib_radius_big">25dp</dimen>
     <dimen name="lib_radius_max">45dp</dimen>
     <dimen name="lib_elevation">2dp</dimen>

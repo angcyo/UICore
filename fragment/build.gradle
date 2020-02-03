@@ -1,11 +1,5 @@
 apply from: allGradle.libBase
 
-android {
-    defaultConfig {
-        minSdkVersion 19
-    }
-}
-
 dependencies {
     api project(allModule.widget)
 

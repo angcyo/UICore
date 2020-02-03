@@ -9,7 +9,8 @@
     <FrameLayout
         android:id="@+id/lib_content_wrap_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:layout_behavior="com.angcyo.behavior.refresh.RefreshBehavior">
 
         <com.angcyo.widget.recycler.DslRecyclerView
             android:id="@+id/lib_recycler_view"
@@ -24,7 +25,8 @@
     <FrameLayout
         android:id="@+id/lib_refresh_wrap_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        tools:layout_behavior=".behavior.ArcLoadingHeaderBehavior">
 
         <com.angcyo.widget.progress.ArcLoadingView
             android:id="@+id/lib_arc_loading_view"
@@ -40,7 +42,8 @@
     <FrameLayout
         android:id="@+id/lib_title_wrap_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        tools:layout_behavior="com.angcyo.behavior.HideTitleBarBehavior">
 
         <com.angcyo.widget.layout.TitleWrapLayout
             android:layout_width="match_parent"

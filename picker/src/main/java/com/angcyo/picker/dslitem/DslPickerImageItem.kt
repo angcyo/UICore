@@ -4,16 +4,18 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.margin
 import com.angcyo.glide.giv
 import com.angcyo.library.ex.*
-import com.angcyo.loader.*
+import com.angcyo.loader.LoaderMedia
+import com.angcyo.loader.isAudio
+import com.angcyo.loader.isVideo
+import com.angcyo.loader.loadUri
 import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.clickIt
-import com.angcyo.widget.base.longClick
 import com.angcyo.widget.base.longFeedback
 import com.angcyo.widget.span.span
+import kotlin.math.max
 
 /**
- *
+ * 图片选择器, 小图片选择布局
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/02/01
@@ -40,6 +42,11 @@ open class DslPickerImageItem : DslAdapterItem() {
             loaderMedia?.toString()?.copy(it.context)
             true
         }
+
+        //大图预览
+        onItemClick = {
+
+        }
     }
 
     override fun onItemBind(
@@ -55,15 +62,12 @@ open class DslPickerImageItem : DslAdapterItem() {
             load(loaderMedia?.loadUri()) {
                 checkGifType = true
             }
-
-            clickIt {
-                //大图浏览
-            }
-
-            longClick {
-                onItemLongClick?.invoke(it) ?: false
-            }
+            setOnClickListener(_clickListener)
+            setOnLongClickListener(_longClickListener)
         }
+
+        //audio
+        itemHolder.visible(R.id.lib_tip_image_view, loaderMedia?.isAudio() == true)
 
         //文本
         if (loaderMedia?.isVideo() == true || loaderMedia?.isAudio() == true) {
@@ -80,7 +84,8 @@ open class DslPickerImageItem : DslAdapterItem() {
                     }
                 }
                 appendSpace(6 * dpi)
-                val duration = loaderMedia!!.duration
+                //不足1秒的取1秒
+                val duration = max(loaderMedia!!.duration, 1_000)
                 append(
                     duration.toElapsedTime(
                         pattern = intArrayOf(-1, 1, 1),

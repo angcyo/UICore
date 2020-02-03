@@ -11,4 +11,5 @@
     <color name="picker_folder_shape_color">#4B4C4D</color>
     <color name="picker_folder_shape_press_color">#414242</color>
     <color name="picker_folder_arrow_bg_color">#B1B2B3</color>
+    <color name="picker_line_color">#434345</color>
 </resources>

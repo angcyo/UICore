@@ -3,8 +3,8 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     defaultConfig {
-        vectorDrawables.useSupportLibrary = true
-        minSdkVersion 14
+        //21以上不需要此属性,对应的xml属性可以直接使用src而不是srcCompat
+        //vectorDrawables.useSupportLibrary = true
     }
 }
 

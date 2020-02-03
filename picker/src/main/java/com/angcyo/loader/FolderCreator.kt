@@ -10,6 +10,13 @@ import java.io.File
  * @date 2020/02/01
  */
 open class FolderCreator {
+    companion object {
+        const val ALL_IMAGE_AND_VIDEO = "allImageAndVideo"
+        const val ALL_IMAGE = "allImage"
+        const val ALL_VIDEO = "allVideo"
+        const val ALL_AUDIO = "allAudio"
+    }
+
     fun creatorFolder(config: LoaderConfig, allMedia: List<LoaderMedia>): List<LoaderFolder> {
         val result = mutableListOf<LoaderFolder>()
         var allImage: LoaderFolder? = null
@@ -20,21 +27,21 @@ open class FolderCreator {
         val mediaLoaderType = config.mediaLoaderType
         if (mediaLoaderType and Config.LOADER_TYPE_IMAGE == Config.LOADER_TYPE_IMAGE) {
             if (mediaLoaderType and Config.LOADER_TYPE_VIDEO == Config.LOADER_TYPE_VIDEO) {
-                allImageAndVideo = LoaderFolder("图片和视频", "allImageAndVideo")
+                allImageAndVideo = LoaderFolder("图片和视频", ALL_IMAGE_AND_VIDEO)
                 result.add(allImageAndVideo)
             }
 
-            allImage = LoaderFolder("所有图片", "allImage")
+            allImage = LoaderFolder("所有图片", ALL_IMAGE)
             result.add(allImage)
         }
 
         if (mediaLoaderType and Config.LOADER_TYPE_VIDEO == Config.LOADER_TYPE_VIDEO) {
-            allVideo = LoaderFolder("所有视频", "allVideo")
+            allVideo = LoaderFolder("所有视频", ALL_VIDEO)
             result.add(allVideo)
         }
 
         if (mediaLoaderType and Config.LOADER_TYPE_AUDIO == Config.LOADER_TYPE_AUDIO) {
-            allAudio = LoaderFolder("所有音频", "allAudio")
+            allAudio = LoaderFolder("所有音频", ALL_AUDIO)
             result.add(allAudio)
         }
 

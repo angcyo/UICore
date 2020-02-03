@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.view.*
 import android.view.animation.DecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
@@ -384,6 +385,21 @@ val View.drawCenterY get() = drawTop + drawHeight / 2
 
 fun View?.isVisible() = this?.visibility == View.VISIBLE
 fun View?.isGone() = this?.visibility == View.GONE
+
+fun View.save(canvas: Canvas, paint: Paint? = null): Int {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), paint)
+    } else {
+        canvas.saveLayer(
+            0f,
+            0f,
+            width.toFloat(),
+            height.toFloat(),
+            paint,
+            Canvas.ALL_SAVE_FLAG
+        )
+    }
+}
 
 //</editor-fold desc="draw相关扩展">
 

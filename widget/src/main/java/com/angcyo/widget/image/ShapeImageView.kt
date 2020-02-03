@@ -11,6 +11,7 @@ import android.view.ViewOutlineProvider
 import androidx.appcompat.widget.AppCompatImageView
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
+import com.angcyo.widget.base.save
 
 /**
  *
@@ -108,28 +109,10 @@ open class ShapeImageView : AppCompatImageView {
         if (maskDrawable == null) {
             super.onDraw(canvas)
         } else {
-            val save = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
-            } else {
-                canvas.saveLayer(
-                    0f,
-                    0f,
-                    width.toFloat(),
-                    height.toFloat(),
-                    null,
-                    Canvas.ALL_SAVE_FLAG
-                )
-            }
+            val save = save(canvas)
             maskDrawable!!.bounds = _outlineRect
             maskDrawable!!.draw(canvas)
-            canvas.saveLayer(
-                0f,
-                0f,
-                width.toFloat(),
-                height.toFloat(),
-                _maskPaint,
-                Canvas.ALL_SAVE_FLAG
-            )
+            save(canvas, _maskPaint)
             super.onDraw(canvas)
             onDrawInMask(canvas)
             canvas.restoreToCount(save)

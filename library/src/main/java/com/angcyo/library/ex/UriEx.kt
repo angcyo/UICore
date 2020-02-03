@@ -2,6 +2,7 @@ package com.angcyo.library.ex
 
 import android.content.Context
 import android.net.Uri
+import java.io.FileDescriptor
 import java.io.InputStream
 
 /**
@@ -16,4 +17,10 @@ fun Uri.inputStream(context: Context): InputStream? {
 
 fun <R> Uri.use(context: Context, block: (InputStream) -> R): R? {
     return inputStream(context)?.use(block)
+}
+
+fun Uri.fd(context: Context?): FileDescriptor? {
+    val resolver = context?.contentResolver
+    val parcelFileDescriptor = resolver?.openFileDescriptor(this, "r")
+    return parcelFileDescriptor?.fileDescriptor
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RCoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/picker_folder_bg_shape"
+    app:r_layout_mask_drawable="@drawable/picker_folder_bg_shape"
+    app:r_max_height="0.8sh">
+
+    <com.angcyo.widget.recycler.DslRecyclerView
+        android:id="@+id/lib_recycler_view"
+        style="@style/PickerRecyclerViewStyle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:r_layout_manager="V" />
+
+</com.angcyo.widget.layout.RCoordinatorLayout>

@@ -1,11 +1,5 @@
 apply from: allGradle.libBase
 
-android {
-    defaultConfig {
-        minSdkVersion 14
-    }
-}
-
 dependencies {
     implementation project(allModule.library)
 }

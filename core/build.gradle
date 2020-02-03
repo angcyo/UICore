@@ -1,11 +1,5 @@
 apply from: allGradle.libBase
 
-android {
-    defaultConfig {
-        minSdkVersion 21
-    }
-}
-
 dependencies {
     api project(allModule.fragment)
     api project(allModule.coroutine)

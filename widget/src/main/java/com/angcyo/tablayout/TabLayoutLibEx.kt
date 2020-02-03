@@ -11,6 +11,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.math.MathUtils
+import com.angcyo.library.ex.dpi
+import kotlin.math.absoluteValue
 
 /**
  *
@@ -70,6 +72,9 @@ fun Any.loge() {
     Log.e("DslTabLayout", "$this")
 }
 
+/**
+ * 支持格式0.3pw 0.5ph, p表示[parent]的多少倍数, s表示[screen]的多少倍数
+ * */
 fun View.calcLayoutWidthHeight(
     rLayoutWidth: String?, rLayoutHeight: String?,
     parentWidth: Int, parentHeight: Int,
@@ -79,33 +84,64 @@ fun View.calcLayoutWidthHeight(
     if (TextUtils.isEmpty(rLayoutWidth) && TextUtils.isEmpty(rLayoutHeight)) {
         return size
     }
-    if (!TextUtils.isEmpty(rLayoutWidth)) {
-        if (rLayoutWidth!!.contains("sw", true)) {
-            val ratio = rLayoutWidth.replace("sw", "", true).toFloatOrNull()
-            ratio?.let {
-                size[0] = (ratio * (screenWidth - rLayoutWidthExclude)).toInt()
-            }
-        } else if (rLayoutWidth!!.contains("pw", true)) {
-            val ratio = rLayoutWidth.replace("pw", "", true).toFloatOrNull()
-            ratio?.let {
-                size[0] = (ratio * (parentWidth - rLayoutWidthExclude)).toInt()
-            }
-        }
-    }
-    if (!TextUtils.isEmpty(rLayoutHeight)) {
-        if (rLayoutHeight!!.contains("sh", true)) {
-            val ratio = rLayoutHeight.replace("sh", "", true).toFloatOrNull()
-            ratio?.let {
-                size[1] = (ratio * (screenHeight - rLayoutHeightExclude)).toInt()
-            }
-        } else if (rLayoutHeight!!.contains("ph", true)) {
-            val ratio = rLayoutHeight.replace("ph", "", true).toFloatOrNull()
-            ratio?.let {
-                size[1] = (ratio * (parentHeight - rLayoutHeightExclude)).toInt()
-            }
-        }
-    }
+    size[0] = calcSize(rLayoutWidth, parentWidth, rLayoutWidthExclude)
+    size[1] = calcSize(rLayoutHeight, parentHeight, rLayoutHeightExclude)
     return size
+}
+
+fun View.calcLayoutMaxHeight(rMaxHeight: String?, parentHeight: Int, rHeightExclude: Int = 0): Int {
+    return calcSize(rMaxHeight, parentHeight, rHeightExclude)
+}
+
+fun View.calcSize(exp: String?, pHeight: Int, exclude: Int): Int {
+    var result = -1
+    if (!exp.isNullOrBlank()) {
+        fun _get(ut: String, height: Int): Boolean {
+            if (exp.contains(ut, true)) {
+                val ratio = exp.replace(ut, "", true).toFloatOrNull()
+                ratio?.let {
+                    result = if (it >= 0) {
+                        (it * (height - exclude)).toInt()
+                    } else {
+                        (height - it.absoluteValue * height - exclude).toInt()
+                    }
+                }
+                return true
+            }
+            return false
+        }
+
+        fun _getDp(ut: String, density: Int): Boolean {
+            if (exp.contains(ut, true)) {
+                val ratio = exp.replace(ut, "", true).toFloatOrNull()
+                ratio?.let {
+                    result = if (it >= 0) {
+                        ((it * density) - exclude).toInt()
+                    } else {
+                        (pHeight - it.absoluteValue * density - exclude).toInt()
+                    }
+                }
+                return true
+            }
+            return false
+        }
+
+        when {
+            _get("sh", screenHeight) -> {
+
+            }
+            _get("ph", pHeight) -> {
+
+            }
+            _getDp("dip", dpi) -> {
+
+            }
+            _getDp("px", 1) -> {
+
+            }
+        }
+    }
+    return result
 }
 
 fun evaluateColor(fraction: Float /*0-1*/, startColor: Int, endColor: Int): Int {

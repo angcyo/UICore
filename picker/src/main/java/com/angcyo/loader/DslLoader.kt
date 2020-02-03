@@ -12,6 +12,7 @@ import com.angcyo.coroutine.launch
 import com.angcyo.coroutine.onBack
 import com.angcyo.library.L
 import com.angcyo.library.LTime
+import com.angcyo.library.ex.fd
 import com.angcyo.library.ex.isDebug
 import kotlinx.coroutines.async
 
@@ -141,11 +142,7 @@ class DslLoader {
 
                                 async {
                                     try {
-                                        val resolver = _activity!!.contentResolver
-                                        val parcelFileDescriptor =
-                                            resolver.openFileDescriptor(uri, "r")
-                                        val exif =
-                                            ExifInterface(parcelFileDescriptor!!.fileDescriptor)
+                                        val exif = ExifInterface(uri.fd(_activity)!!)
                                         exif.latLong?.run {
                                             latitude = this[0]
                                             longitude = this[0]

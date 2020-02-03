@@ -1,12 +1,6 @@
 apply from: allGradle.libBase
 apply plugin: 'kotlin-kapt'
 
-android {
-    defaultConfig {
-        minSdkVersion 17
-    }
-}
-
 dependencies {
     implementation project(allModule.library)
     implementation project(allModule.widget)

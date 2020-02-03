@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/lib_bg_selector"
+    android:orientation="horizontal"
+    tools:background="@color/picker_title_bar_bg_color">
+
+    <com.angcyo.glide.GlideImageView
+        android:id="@+id/lib_image_view"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:r_draw_border="false"
+        app:r_image_radius="0dp"
+        app:srcCompat="@color/picker_image_placeholder_color" />
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/text_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/lib_hdpi"
+        android:paddingTop="2dp"
+        android:paddingRight="@dimen/lib_hdpi"
+        android:paddingBottom="2dp"
+        android:text="Camera"
+        android:textColor="@color/lib_white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/lib_image_view"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:textColor="@color/picker_bottom_text_color" />
+
+    <View
+        android:id="@+id/lib_line_view"
+        android:layout_width="0dp"
+        android:layout_height="1px"
+        android:layout_marginLeft="@dimen/lib_hdpi"
+        android:background="@color/picker_line_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/lib_image_view"
+        app:layout_constraintRight_toRightOf="parent" />
+
+</com.angcyo.widget.layout.RConstraintLayout>

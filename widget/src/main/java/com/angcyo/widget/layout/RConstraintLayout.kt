@@ -3,11 +3,9 @@ package com.angcyo.widget.layout
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Canvas
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.angcyo.widget.R
-import com.angcyo.widget.base.InvalidateProperty
 
 /**
  *
@@ -19,21 +17,26 @@ open class RConstraintLayout(
     context: Context,
     attributeSet: AttributeSet? = null
 ) : ConstraintLayout(context, attributeSet) {
-    var bDrawable: Drawable? by InvalidateProperty(null)
+    val layoutDelegate = RLayoutDelegate()
 
     init {
         val typedArray: TypedArray =
             context.obtainStyledAttributes(attributeSet, R.styleable.RConstraintLayout)
-        bDrawable = typedArray.getDrawable(R.styleable.RConstraintLayout_r_background)
+        layoutDelegate.initAttribute(this, attributeSet)
+
         typedArray.recycle()
     }
 
     override fun draw(canvas: Canvas) {
-        bDrawable?.run {
-            setBounds(0, 0, measuredWidth, measuredHeight)
-            draw(canvas)
+        layoutDelegate.maskLayout(canvas) {
+            layoutDelegate.draw(canvas)
+            super.draw(canvas)
         }
-        super.draw(canvas)
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+
+        layoutDelegate.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
 }

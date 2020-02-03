@@ -25,14 +25,30 @@ import com.angcyo.widget.DslViewHolder
 
 /**[DslAdapter]必备的组件*/
 fun RecyclerView.initDsl() {
-    addItemDecoration(DslItemDecoration())
-    HoverItemDecoration().attachToRecyclerView(this)
+    var haveItemDecoration = false
+    var haveHoverItemDecoration = false
+    for (i in 0 until itemDecorationCount) {
+        val itemDecoration = getItemDecorationAt(i)
+        if (itemDecoration is DslItemDecoration) {
+            haveItemDecoration = true
+        } else if (itemDecoration is HoverItemDecoration) {
+            haveHoverItemDecoration = true
+        }
+    }
+    if (!haveItemDecoration) {
+        addItemDecoration(DslItemDecoration())
+    }
+    if (!haveHoverItemDecoration) {
+        HoverItemDecoration().attachToRecyclerView(this)
+    }
 }
 
 /**快速初始化[DslAdapter]*/
 fun RecyclerView.initDslAdapter(action: DslAdapter.() -> Unit) {
     initDsl()
-    resetLayoutManager("v")
+    if (layoutManager == null) {
+        resetLayoutManager("v")
+    }
     adapter = DslAdapter().apply {
         this.action()
     }

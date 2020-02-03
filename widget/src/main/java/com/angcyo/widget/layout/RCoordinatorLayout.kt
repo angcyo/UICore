@@ -3,7 +3,6 @@ package com.angcyo.widget.layout
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Canvas
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -12,7 +11,10 @@ import androidx.core.view.ViewCompat
 import com.angcyo.behavior.BaseDependsBehavior
 import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.widget.R
-import com.angcyo.widget.base.*
+import com.angcyo.widget.base.coordinatorParams
+import com.angcyo.widget.base.eachChildVisibility
+import com.angcyo.widget.base.isTouchDown
+import com.angcyo.widget.base.isTouchFinish
 
 /**
  *
@@ -26,15 +28,16 @@ open class RCoordinatorLayout(
     attributeSet: AttributeSet? = null
 ) : CoordinatorLayout(context, attributeSet) {
 
-    var bDrawable: Drawable? by InvalidateProperty(null)
+    val layoutDelegate = RLayoutDelegate()
 
     init {
         val typedArray: TypedArray =
             context.obtainStyledAttributes(attributeSet, R.styleable.RCoordinatorLayout)
-        bDrawable = typedArray.getDrawable(R.styleable.RCoordinatorLayout_r_background)
+
+        layoutDelegate.initAttribute(this, attributeSet)
+
         typedArray.recycle()
     }
-
 
     /**是否还在touch中*/
     var _isTouch = false
@@ -51,11 +54,10 @@ open class RCoordinatorLayout(
     }
 
     override fun draw(canvas: Canvas) {
-        bDrawable?.run {
-            setBounds(0, 0, measuredWidth, measuredHeight)
-            draw(canvas)
+        layoutDelegate.maskLayout(canvas) {
+            layoutDelegate.draw(canvas)
+            super.draw(canvas)
         }
-        super.draw(canvas)
     }
 
     override fun computeScroll() {
@@ -69,6 +71,8 @@ open class RCoordinatorLayout(
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+
+        layoutDelegate.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
         eachChildVisibility { _, child ->
             (child.layoutParams.coordinatorParams()?.behavior as? BaseDependsBehavior)?.onMeasureAfter(
