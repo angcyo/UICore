@@ -30,7 +30,7 @@ open class DslPagerAdapter(val adapterItems: List<DslAdapterItem>) : RPagerAdapt
     override fun onBindViewHolder(holder: DslViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
         getAdapterItem(position)?.run {
-            itemBind(holder, position, this)
+            itemBind(holder, position, this, emptyList())
         }
     }
 }

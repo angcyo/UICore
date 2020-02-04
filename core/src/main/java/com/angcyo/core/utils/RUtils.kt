@@ -1,5 +1,6 @@
 package com.angcyo.core.utils
 
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -73,5 +74,14 @@ fun Context.checkApkExist(packageName: String?): Boolean {
         true
     } catch (e: Exception) {
         false
+    }
+}
+
+fun Int.resultString(): String {
+    return when (this) {
+        Activity.RESULT_OK -> "RESULT_OK"
+        Activity.RESULT_CANCELED -> "RESULT_CANCELED"
+        Activity.RESULT_FIRST_USER -> "RESULT_FIRST_USER"
+        else -> "UNKNOWN"
     }
 }

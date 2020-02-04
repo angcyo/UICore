@@ -5,14 +5,16 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
+import androidx.fragment.app.Fragment
 import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.activity.showDebugInfoView
 import com.angcyo.base.*
 import com.angcyo.core.component.dslPermissions
+import com.angcyo.library.L
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.toast
 import com.angcyo.loader.LoaderConfig
-import com.angcyo.viewmodel.vm
+import com.angcyo.viewmodel.VMProperty
 
 /**
  *
@@ -26,6 +28,16 @@ class PickerActivity : BaseAppCompatActivity() {
         const val KEY_LOADER_CONFIG = "key_loader_config"
         const val KEY_SELECTOR_MEDIA_LIST = "key_selector_media_list"
         const val PICKER_REQUEST_CODE = 0x9089
+
+        /**关闭界面发送数据*/
+        fun send(fragment: Fragment?) {
+            val activity = fragment?.activity
+            if (activity is PickerActivity) {
+                activity.send()
+            } else {
+                L.w("activity is not PickerActivity!")
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +55,8 @@ class PickerActivity : BaseAppCompatActivity() {
             onBackPressed()
         } else {
             //使用[ViewModel]在同一个Activity的多个Fragment共享数据
-            vm<PickerViewModel>().loaderConfig.value = config
+            pickerViewModel.loaderConfig.value = config
+            pickerViewModel.selectorMediaList.value?.addAll(config.selectorMediaList)
             checkPermission()
         }
     }
@@ -83,11 +96,30 @@ class PickerActivity : BaseAppCompatActivity() {
                         finish {
                             exitAnim = R.anim.lib_picker_exit_anim
                             enterAnim = R.anim.lib_picker_other_enter_anim
-                            resultCode = Activity.RESULT_CANCELED
-                            resultData = Intent().apply {
-                                //putParcelableArrayListExtra(KEY_SELECTOR_MEDIA_LIST, mutableListOf<LoaderMedia>())
-                            }
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    val pickerViewModel: PickerViewModel by VMProperty(PickerViewModel::class.java)
+
+    /**发送数据*/
+    fun send() {
+        dslAHelper {
+            finish {
+                exitAnim = R.anim.lib_picker_exit_anim
+                enterAnim = R.anim.lib_picker_other_enter_anim
+
+                //数据
+                pickerViewModel.selectorMediaList.value?.apply {
+                    resultCode = Activity.RESULT_OK
+                    resultData = Intent().run {
+                        putParcelableArrayListExtra(
+                            KEY_SELECTOR_MEDIA_LIST,
+                            ArrayList(this@apply)
+                        )
                     }
                 }
             }

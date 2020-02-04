@@ -312,7 +312,7 @@ fun ViewGroup.addDslItem(dslAdapterItem: DslAdapterItem) {
     val dslViewHolder = DslViewHolder(view)
     view.tag = dslViewHolder
     addView(view)
-    dslAdapterItem.itemBind(dslViewHolder, childCount - 1, dslAdapterItem)
+    dslAdapterItem.itemBind(dslViewHolder, childCount - 1, dslAdapterItem, emptyList())
 }
 
 fun ViewGroup.resetDslItem(items: List<DslAdapterItem>) {

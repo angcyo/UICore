@@ -1,6 +1,7 @@
 package com.angcyo.widget.base
 
 import android.animation.Animator
+import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.annotation.TargetApi
 import android.os.Build
@@ -193,3 +194,28 @@ data class RevealConfig(
     //默认是视图的对角半径
     var endRadius: Float = 0f
 )
+
+fun View.bgColorAnimator(
+    from: Int,
+    to: Int,
+    duration: Long = 300,
+    onEnd: (cancel: Boolean) -> Unit = {},
+    config: ValueAnimator.() -> Unit = {}
+) {
+    //背景动画
+    val colorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), from, to)
+    colorAnimator.addUpdateListener { animation ->
+        val color = animation.animatedValue as Int
+        setBackgroundColor(color)
+    }
+    colorAnimator.addListener(object : RAnimatorListener() {
+        override fun onAnimatorFinish(animator: Animator, fromCancel: Boolean) {
+            super.onAnimatorFinish(animator, fromCancel)
+            onEnd(fromCancel)
+        }
+    })
+    colorAnimator.interpolator = LinearInterpolator()
+    colorAnimator.duration = duration
+    colorAnimator.config()
+    colorAnimator.start()
+}

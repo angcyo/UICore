@@ -21,15 +21,21 @@ import kotlin.reflect.KProperty
  */
 open class DslAdapterItem {
 
+    companion object {
+
+        /**负载部分刷新界面*/
+        const val PAYLOAD_UPDATE_PART = 0x1
+    }
+
     /**适配器*/
     var itemDslAdapter: DslAdapter? = null
 
     /**[notifyItemChanged]*/
-    open fun updateAdapterItem(useFilterList: Boolean = true) {
+    open fun updateAdapterItem(payload: Any? = null, useFilterList: Boolean = true) {
         if (itemDslAdapter == null) {
             L.e("updateAdapterItem需要[itemDslAdapter], 请赋值.")
         }
-        itemDslAdapter?.notifyItemChanged(this, useFilterList)
+        itemDslAdapter?.notifyItemChanged(this, payload, useFilterList)
     }
 
     //<editor-fold desc="Grid相关属性">
@@ -55,12 +61,12 @@ open class DslAdapterItem {
 
     /**
      * 界面绑定入口
-     * [DslAdapter.onBindView]
+     * [DslAdapter.onBindViewHolder(com.angcyo.widget.DslViewHolder, int, java.util.List<? extends java.lang.Object>)]
      * */
-    var itemBind: (itemHolder: DslViewHolder, itemPosition: Int, adapterItem: DslAdapterItem) -> Unit =
-        { itemHolder, itemPosition, adapterItem ->
-            onItemBind(itemHolder, itemPosition, adapterItem)
-            onItemBindOverride(itemHolder, itemPosition, adapterItem)
+    var itemBind: (itemHolder: DslViewHolder, itemPosition: Int, adapterItem: DslAdapterItem, payloads: List<Any>) -> Unit =
+        { itemHolder, itemPosition, adapterItem, payloads ->
+            onItemBind(itemHolder, itemPosition, adapterItem, payloads)
+            onItemBindOverride(itemHolder, itemPosition, adapterItem, payloads)
         }
 
     /**
@@ -81,7 +87,8 @@ open class DslAdapterItem {
     open fun onItemBind(
         itemHolder: DslViewHolder,
         itemPosition: Int,
-        adapterItem: DslAdapterItem
+        adapterItem: DslAdapterItem,
+        payloads: List<Any>
     ) {
         if (onItemClick == null || _clickListener == null) {
             itemHolder.itemView.isClickable = false
@@ -94,11 +101,22 @@ open class DslAdapterItem {
         } else {
             itemHolder.itemView.setOnLongClickListener(_longClickListener)
         }
+
+        onItemBind(itemHolder, itemPosition, adapterItem)
+    }
+
+    @Deprecated("不支持[payloads]")
+    open fun onItemBind(
+        itemHolder: DslViewHolder,
+        itemPosition: Int,
+        adapterItem: DslAdapterItem
+    ) {
+
     }
 
     /**用于覆盖默认操作*/
-    var onItemBindOverride: (itemHolder: DslViewHolder, itemPosition: Int, adapterItem: DslAdapterItem) -> Unit =
-        { _, _, _ ->
+    var onItemBindOverride: (itemHolder: DslViewHolder, itemPosition: Int, adapterItem: DslAdapterItem, payloads: List<Any>) -> Unit =
+        { _, _, _, _ ->
 
         }
 
@@ -436,6 +454,11 @@ open class DslAdapterItem {
             }
         }
 
+    var thisGetChangePayload: (fromItem: DslAdapterItem?, newItem: DslAdapterItem) -> Any? =
+        { _, _ ->
+            null
+        }
+
     /**
      * [checkItem] 是否需要关联到处理列表
      * [itemIndex] 分组折叠之后数据列表中的index
@@ -478,7 +501,7 @@ open class DslAdapterItem {
                 this,
                 select.toSelectOption(),
                 notify = true,
-                notifyItemChange = true,
+                notifyItemSelectorChange = true,
                 updateItemDepend = notifyUpdate
             )
         )

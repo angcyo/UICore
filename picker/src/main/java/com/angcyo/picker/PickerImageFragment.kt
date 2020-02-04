@@ -5,7 +5,7 @@ import android.os.Bundle
 import com.angcyo.base.back
 import com.angcyo.core.fragment.BaseDslFragment
 import com.angcyo.dialog.fullPopupWindow
-import com.angcyo.dsladapter.DslAdapterStatusItem
+import com.angcyo.dsladapter.*
 import com.angcyo.library.L
 import com.angcyo.library.ex.getColor
 import com.angcyo.loader.DslLoader
@@ -16,6 +16,7 @@ import com.angcyo.picker.dslitem.DslPickerStatusItem
 import com.angcyo.viewmodel.VMAProperty
 import com.angcyo.widget._rv
 import com.angcyo.widget.recycler.initDslAdapter
+import com.angcyo.widget.span.span
 
 /**
  *
@@ -35,20 +36,40 @@ class PickerImageFragment : BaseDslFragment() {
         }
     }
 
+    override fun onInitDslLayout() {
+        super.onInitDslLayout()
+        _adapter.multiModel()
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        //加载配置
+        val loaderConfig = pickerViewModel.loaderConfig.value
 
         /*观察文件夹切换*/
         pickerViewModel.currentFolder.observe {
             _switchFolder(it)
         }
 
+        /*选中改变*/
+        pickerViewModel.selectorMediaList.observe {
+            if (it.isNotEmpty()) {
+                _vh.enable(R.id.send_button)
+                _vh.tv(R.id.send_button)?.text = span {
+                    append("发送(${it.size}/${loaderConfig?.maxSelectorLimit ?: -1})")
+                }
+            } else {
+                _vh.enable(R.id.send_button, false)
+                _vh.tv(R.id.send_button)?.text = span {
+                    append("发送")
+                }
+            }
+        }
+
         //样式调整
         _adapter.dslAdapterStatusItem = DslPickerStatusItem()
         _adapter.setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_LOADING)
 
-        //加载配置
-        val loaderConfig = pickerViewModel.loaderConfig.value
         loaderConfig?.apply {
             loader.onLoaderResult = {
                 if (it.isEmpty()) {
@@ -69,6 +90,10 @@ class PickerImageFragment : BaseDslFragment() {
         _vh.click(R.id.folder_layout) {
             _showFolderDialog()
         }
+        _vh.click(R.id.send_button) {
+            //发送选择
+            PickerActivity.send(this)
+        }
     }
 
     /**切换显示的文件夹*/
@@ -76,8 +101,48 @@ class PickerImageFragment : BaseDslFragment() {
         _vh.visible(R.id.folder_layout)
         _vh.tv(R.id.folder_text_view)?.text = folder.folderName
 
-        _adapter.loadSingleData(folder.mediaItemList, 1, Int.MAX_VALUE) { oldItem, _ ->
-            oldItem ?: DslPickerImageItem()
+        _adapter.loadSingleData(folder.mediaItemList, 1, Int.MAX_VALUE) { oldItem, data ->
+            (oldItem ?: DslPickerImageItem().apply {
+                onGetSelectedIndex = {
+                    it?.run {
+                        val index = pickerViewModel.selectorMediaList.value?.indexOf(this) ?: -1
+                        if (index >= 0) {
+                            "${index + 1}"
+                        } else {
+                            null
+                        }
+                    }
+                }
+                onSelectorItem = {
+                    if (it) {
+                        //已经选中, 则取消选择
+                        pickerViewModel.removeSelectedMedia(loaderMedia)
+                    } else {
+                        //未选中, 则选择
+                        pickerViewModel.addSelectedMedia(loaderMedia)
+                    }
+
+                    //之前选中的列表
+                    val oldSelectorList = _adapter.itemSelectorHelper.getSelectorItemList()
+
+                    //当前item选中切换
+                    _adapter.itemSelectorHelper.selector(
+                        SelectorParams(
+                            this,
+                            (!itemIsSelected).toSelectOption(),
+                            payload = listOf(
+                                DslPickerImageItem.PAYLOAD_UPDATE_ANIM,
+                                DslAdapterItem.PAYLOAD_UPDATE_PART
+                            )
+                        )
+                    )
+                    //更新其他item的索引值
+                    _adapter.updateItems(oldSelectorList, DslAdapterItem.PAYLOAD_UPDATE_PART)
+                }
+            }).apply {
+                //选中状态
+                itemIsSelected = pickerViewModel.selectorMediaList.value?.contains(data) ?: false
+            }
         }
     }
 

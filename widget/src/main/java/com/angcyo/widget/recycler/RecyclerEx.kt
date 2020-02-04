@@ -179,21 +179,21 @@ fun RecyclerView?.getLastVelocity(): Float {
 /**
  * 取消RecyclerView的默认动画
  * */
-public fun RecyclerView.noItemAnim() {
-    itemAnimator = null
+fun RecyclerView.noItemAnim(animator: RecyclerView.ItemAnimator? = null) {
+    itemAnimator = animator
 }
 
 /**
  * 取消默认的change动画
  * */
-public fun RecyclerView.noItemChangeAnim() {
+fun RecyclerView.noItemChangeAnim(no: Boolean = true) {
     if (itemAnimator == null) {
         itemAnimator = DefaultItemAnimator().apply {
-            supportsChangeAnimations = false
+            supportsChangeAnimations = !no
         }
     } else if (itemAnimator is SimpleItemAnimator) {
         (itemAnimator as SimpleItemAnimator).supportsChangeAnimations =
-            false
+            !no
     }
 }
 

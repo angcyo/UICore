@@ -129,9 +129,9 @@ class DslAHelper(val context: Context) {
     fun finish(withBackPress: Boolean = false, action: IntentConfig.() -> Unit = {}) {
         if (context is Activity) {
             val config = IntentConfig(Intent())
-            context.setResult(config.resultCode, config.resultData)
-
             config.action()
+            
+            context.setResult(config.resultCode, config.resultData)
             config.configWindow(context.window)
 
             if (withBackPress) {

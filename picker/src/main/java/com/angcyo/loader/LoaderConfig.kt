@@ -1,7 +1,6 @@
 package com.angcyo.loader
 
 import android.os.Parcelable
-import android.provider.MediaStore
 import com.angcyo.library.ex.fileSizeString
 import com.angcyo.library.toast
 import com.angcyo.loader.Config.LOADER_TYPE_AUDIO
@@ -69,7 +68,10 @@ data class LoaderConfig(
 
     /**混合选择模式下, 单独限制选择视频/音频的数量,负数不显示*/
     var maxSelectorVideoLimit: Int = -1,
-    var maxSelectorAudioLimit: Int = -1
+    var maxSelectorAudioLimit: Int = -1,
+
+    /**已经选中的媒体*/
+    var selectorMediaList: MutableList<LoaderMedia> = mutableListOf()
 ) : Parcelable
 
 /**是否是单选模式*/

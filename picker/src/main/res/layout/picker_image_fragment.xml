@@ -72,16 +72,17 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical"
             android:layout_marginRight="10dp"
-            android:enabled="false"
+            android:enabled="true"
             android:paddingLeft="10dp"
             android:paddingTop="6dp"
             android:paddingRight="10dp"
             android:paddingBottom="6dp"
             android:text="发送"
             android:textColor="@color/lib_white"
-            app:button_disable_gradient_colors=""
             app:button_disable_solid_color="@color/picker_button_disable_bg_color"
-            app:button_disable_text_color="@color/picker_button_disable_text_color" />
+            app:button_disable_text_color="@color/picker_button_disable_text_color"
+            app:button_gradient_colors=""
+            app:button_solid_color="@color/picker_button_accent_bg_color" />
 
     </com.angcyo.widget.layout.TitleWrapLayout>
 

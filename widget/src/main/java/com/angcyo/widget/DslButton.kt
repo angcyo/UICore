@@ -594,26 +594,29 @@ open class DslButton : AppCompatTextView {
             }
         }
 
-        val bColors =
-            typedArray.getString(R.styleable.DslButton_button_gradient_colors)
 
-        val bGradientColors = if (bColors.isNullOrEmpty()) {
-            buttonGradientStartColor = typedArray.getColor(
-                R.styleable.DslButton_button_gradient_start_color,
-                buttonGradientStartColor
-            )
-            buttonGradientEndColor = typedArray.getColor(
-                R.styleable.DslButton_button_gradient_end_color,
-                buttonGradientEndColor
-            )
-            if (buttonGradientStartColor != buttonGradientEndColor) {
+        val bGradientColors =
+            if (typedArray.hasValue(R.styleable.DslButton_button_gradient_colors)) {
+                val normalColors =
+                    typedArray.getString(R.styleable.DslButton_button_gradient_colors)
+                _fillColor(normalColors)
+            } else if (typedArray.hasValue(R.styleable.DslButton_button_gradient_start_color) || typedArray.hasValue(
+                    R.styleable.DslButton_button_gradient_end_color
+                )
+            ) {
+                buttonGradientStartColor = typedArray.getColor(
+                    R.styleable.DslButton_button_gradient_start_color,
+                    buttonGradientStartColor
+                )
+                buttonGradientEndColor = typedArray.getColor(
+                    R.styleable.DslButton_button_gradient_end_color,
+                    buttonGradientEndColor
+                )
                 intArrayOf(buttonGradientStartColor, buttonGradientEndColor)
             } else {
-                null
+                normalGradientColors
             }
-        } else {
-            _fillColor(bColors)
-        }
+
         normalGradientColors = bGradientColors
         pressGradientColors =
             bGradientColors?.run { IntArray(bGradientColors.size) { bGradientColors[it] } }

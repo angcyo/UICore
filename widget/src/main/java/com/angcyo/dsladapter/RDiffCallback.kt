@@ -3,20 +3,16 @@ package com.angcyo.dsladapter
 import android.text.TextUtils
 import androidx.recyclerview.widget.DiffUtil
 
-open class RDiffCallback<T : Any> : DiffUtil.Callback {
-    var oldDatas: List<T>? = null
-    var newDatas: List<T>? = null
-    var mDiffCallback: RDiffCallback<T>? = null
+open class RDiffCallback<T : Any>(
+    val oldDatas: List<T>? = null,
+    val newDatas: List<T>? = null,
+    val itemDiffCallback: RItemDiffCallback<T>? = null
+) : DiffUtil.Callback() {
 
-    constructor() {}
-    constructor(
-        oldDatas: List<T>?,
-        newDatas: List<T>?,
-        diffCallback: RDiffCallback<T>?
-    ) {
-        this.oldDatas = oldDatas
-        this.newDatas = newDatas
-        mDiffCallback = diffCallback
+    companion object {
+        fun getListSize(list: List<*>?): Int {
+            return list?.size ?: 0
+        }
     }
 
     override fun getOldListSize(): Int {
@@ -28,17 +24,20 @@ open class RDiffCallback<T : Any> : DiffUtil.Callback {
     }
 
     override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-        return super.getChangePayload(oldItemPosition, newItemPosition)
+        return itemDiffCallback?.getChangePayload(
+            oldDatas!![oldItemPosition],
+            newDatas!![newItemPosition]
+        )
     }
 
     override fun areItemsTheSame(
         oldItemPosition: Int,
         newItemPosition: Int
     ): Boolean {
-        return mDiffCallback!!.areItemsTheSame(
+        return itemDiffCallback?.areItemsTheSame(
             oldDatas!![oldItemPosition],
             newDatas!![newItemPosition]
-        )
+        ) ?: false
     }
 
     /**
@@ -49,17 +48,23 @@ open class RDiffCallback<T : Any> : DiffUtil.Callback {
         oldItemPosition: Int,
         newItemPosition: Int
     ): Boolean {
-        return mDiffCallback!!.areContentsTheSame(
+        return itemDiffCallback?.areContentsTheSame(
             oldDatas!![oldItemPosition],
             newDatas!![newItemPosition]
-        )
+        ) ?: false
+    }
+}
+
+interface RItemDiffCallback<T : Any> {
+    fun getChangePayload(oldData: T, newData: T): Any? {
+        return null
     }
 
     /**
      * 重写此方法, 判断数据是否相等,
      * 如果item不相同, 会先调用 notifyItemRangeRemoved, 再调用 notifyItemRangeInserted
      */
-    open fun areItemsTheSame(oldData: T, newData: T): Boolean {
+    fun areItemsTheSame(oldData: T, newData: T): Boolean {
         val oldClass: Class<*> = oldData.javaClass
         val newClass: Class<*> = newData.javaClass
         return if (oldClass.isAssignableFrom(newClass) || newClass.isAssignableFrom(oldClass)) {
@@ -71,7 +76,7 @@ open class RDiffCallback<T : Any> : DiffUtil.Callback {
      * 重写此方法, 判断内容是否相等,
      * 如果内容不相等, 会调用notifyItemRangeChanged
      */
-    open fun areContentsTheSame(oldData: T, newData: T): Boolean {
+    fun areContentsTheSame(oldData: T, newData: T): Boolean {
         val oldClass: Class<*> = oldData.javaClass
         val newClass: Class<*> = newData.javaClass
         return if (oldClass.isAssignableFrom(newClass) ||
@@ -80,11 +85,5 @@ open class RDiffCallback<T : Any> : DiffUtil.Callback {
         ) {
             oldData == newData
         } else false
-    }
-
-    companion object {
-        fun getListSize(list: List<*>?): Int {
-            return list?.size ?: 0
-        }
     }
 }

@@ -285,7 +285,11 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                     oldSize == newSize
                 ) {
                     //跳过[dispatchUpdatesTo]刷新界面, 但是要更新自己
-                    dslAdapter.notifyItemChanged(_params?.fromDslAdapterItem)
+                    dslAdapter.notifyItemChanged(
+                        _params?.fromDslAdapterItem,
+                        _params?.payload,
+                        true
+                    )
                 } else {
                     _diffResult?.dispatchUpdatesTo(dslAdapter)
                     isDispatchUpdatesTo = true
@@ -341,7 +345,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                     oldList,
                     _newList,
                     object :
-                        RDiffCallback<DslAdapterItem>() {
+                        RItemDiffCallback<DslAdapterItem> {
 
                         override fun areItemsTheSame(
                             oldData: DslAdapterItem,
@@ -361,6 +365,13 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                                 _params?.fromDslAdapterItem,
                                 newData
                             )
+                        }
+
+                        override fun getChangePayload(
+                            oldData: DslAdapterItem,
+                            newData: DslAdapterItem
+                        ): Any? {
+                            return oldData.thisGetChangePayload(oldData, newData)
                         }
                     }
                 )
@@ -448,7 +459,10 @@ data class FilterParams(
      *
      * 当依赖的[DslAdapterItem] [isItemInUpdateList]列表为空时, 是否要调用[dispatchUpdatesTo]更新界面
      * */
-    var updateDependItemWithEmpty: Boolean = true
+    var updateDependItemWithEmpty: Boolean = true,
+
+    /**局部更新标识参数*/
+    var payload: Any? = null
 )
 
 interface OnDispatchUpdatesListener {

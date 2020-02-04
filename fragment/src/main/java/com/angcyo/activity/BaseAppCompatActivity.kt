@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.angcyo.base.dslFHelper
 import com.angcyo.base.enableLayoutFullScreen
+import com.angcyo.base.getAllValidityFragment
 import com.angcyo.fragment.R
 import com.angcyo.library.ex.isDebug
 import com.angcyo.widget.DslViewHolder
@@ -27,6 +28,8 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         get() = baseDslViewHolder
 
     open fun getActivityLayoutId() = R.layout.lib_activity_main_layout
+
+    //<editor-fold desc="基础方法处理">
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +78,31 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
 
     }
 
+    //</editor-fold desc="基础方法处理">
+
+    //<editor-fold desc="Touch事件拦截">
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return super.onTouchEvent(event)
+    }
+
+    /**拦截界面所有Touch事件*/
+    var interceptTouchEvent: Boolean = false
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.actionMasked == MotionEvent.ACTION_CANCEL) {
+            interceptTouchEvent = false
+        }
+        if (interceptTouchEvent) {
+            return true
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
+    //</editor-fold desc="Touch事件拦截">
+
+    //<editor-fold desc="默认回调">
+
     /**回退检查*/
     override fun onBackPressed() {
         if (onBackPressedDispatcher()) {
@@ -95,20 +123,13 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        return super.onTouchEvent(event)
+    /**系统默认的[onActivityResult]触发, 需要在[Fragment]里面调用特用方法启动[Activity]才会触发*/
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        supportFragmentManager.getAllValidityFragment().lastOrNull()?.run {
+            onActivityResult(requestCode, resultCode, data)
+        }
     }
 
-    /**拦截界面所有Touch事件*/
-    var interceptTouchEvent: Boolean = false
-
-    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        if (ev.actionMasked == MotionEvent.ACTION_CANCEL) {
-            interceptTouchEvent = false
-        }
-        if (interceptTouchEvent) {
-            return true
-        }
-        return super.dispatchTouchEvent(ev)
-    }
+    //</editor-fold desc="默认回调">
 }

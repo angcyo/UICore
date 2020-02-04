@@ -6,6 +6,7 @@ import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslItemDecoration
 import com.angcyo.dsladapter.HoverItemDecoration
 import com.angcyo.library.L
+import com.angcyo.widget.recycler.noItemChangeAnim
 
 /**
  *
@@ -34,6 +35,7 @@ open class BaseDslFragment : BaseTitleFragment() {
 
     open fun onInitDslLayout() {
         _vh.rv(R.id.lib_recycler_view)?.apply {
+            noItemChangeAnim()
             baseDslItemDecoration?.let { addItemDecoration(it) }
             hoverItemDecoration?.attachToRecyclerView(this)
             adapter = DslAdapter()

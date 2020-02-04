@@ -1,7 +1,5 @@
 package com.angcyo.dialog
 
-import android.animation.ArgbEvaluator
-import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
 import android.graphics.Color
@@ -18,6 +16,7 @@ import com.angcyo.dsladapter.getViewRect
 import com.angcyo.library.ex.getContentViewHeight
 import com.angcyo.library.getScreenHeight
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.bgColorAnimator
 import com.angcyo.widget.base.getChildOrNull
 import com.angcyo.widget.base.setBgDrawable
 import kotlin.math.max
@@ -249,17 +248,11 @@ open class PopupConfig {
         val contentWrapLayout = (backgroundLayout as? ViewGroup)?.getChildOrNull(0)
 
         //背景动画
-        val colorAnimator = ValueAnimator.ofObject(
-            ArgbEvaluator(),
+        backgroundLayout?.bgColorAnimator(
             Color.parseColor("#00000000"),
-            Color.argb((255 * amount).toInt(), 0, 0, 0)
+            Color.argb((255 * amount).toInt(), 0, 0, 0),
+            duration = animatorDuration
         )
-        colorAnimator.addUpdateListener { animation ->
-            val color = animation.animatedValue as Int
-            backgroundLayout?.setBackgroundColor(color)
-        }
-        colorAnimator.duration = animatorDuration
-        colorAnimator.start()
 
         //内容动画
         contentWrapLayout?.run {
@@ -280,17 +273,11 @@ open class PopupConfig {
                 val contentWrapLayout = (backgroundLayout as? ViewGroup)?.getChildOrNull(0)
 
                 //背景动画
-                val colorAnimator = ValueAnimator.ofObject(
-                    ArgbEvaluator(),
+                backgroundLayout?.bgColorAnimator(
                     Color.argb((255 * amount).toInt(), 0, 0, 0),
-                    Color.parseColor("#00000000")
+                    Color.parseColor("#00000000"),
+                    duration = animatorDuration
                 )
-                colorAnimator.addUpdateListener { animation ->
-                    val color = animation.animatedValue as Int
-                    backgroundLayout?.setBackgroundColor(color)
-                }
-                colorAnimator.duration = animatorDuration
-                colorAnimator.start()
 
                 //内容动画
                 contentWrapLayout?.run {

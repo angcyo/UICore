@@ -61,7 +61,18 @@ data class LoaderMedia(
     //经度
     var longitude: Double = 0.0
 
-) : Parcelable
+) : Parcelable {
+    override fun equals(other: Any?): Boolean {
+        if (other == null) {
+            return false
+        }
+        return if (other is LoaderMedia) {
+            this.loadUri()?.toString() == other.loadUri().toString()
+        } else {
+            false
+        }
+    }
+}
 
 //媒体类型
 fun LoaderMedia.mimeType(): String {

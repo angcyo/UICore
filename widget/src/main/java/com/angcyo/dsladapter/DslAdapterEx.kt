@@ -5,7 +5,6 @@ import androidx.annotation.LayoutRes
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
 import com.angcyo.widget.base.setHeight
-import kotlin.math.min
 
 
 /**
@@ -65,7 +64,7 @@ fun <T : DslAdapterItem> DslAdapter.dslCustomItem(
 fun DslAdapter.renderEmptyItem(height: Int = 120 * dpi, color: Int = Color.TRANSPARENT) {
     val adapterItem = DslAdapterItem()
     adapterItem.itemLayoutId = R.layout.lib_empty_item
-    adapterItem.onItemBindOverride = { itemHolder, _, _ ->
+    adapterItem.onItemBindOverride = { itemHolder, _, _, _ ->
         itemHolder.itemView.setBackgroundColor(color)
         itemHolder.itemView.setHeight(height)
     }
@@ -88,3 +87,21 @@ fun <T> DslAdapter.renderItem(data: T, init: DslAdapterItem.() -> Unit) {
 }
 
 //</editor-fold desc="Item操作">
+
+//<editor-fold desc="payload">
+fun Iterable<*>.containsPayload(any: Any): Boolean {
+    var result = false
+    for (payload in this) {
+        result = if (payload is Iterable<*>) {
+            payload.containsPayload(any)
+        } else {
+            payload == any
+        }
+        if (result) {
+            break
+        }
+    }
+    return result
+}
+//</editor-fold desc="payload">
+
