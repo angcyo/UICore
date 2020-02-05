@@ -12,6 +12,9 @@ import com.angcyo.widget.DslViewHolder
 
 /**
  * 悬停功能实现类
+ *
+ * https://github.com/angcyo/DslAdapter/wiki/%E6%82%AC%E5%81%9C%E6%95%88%E6%9E%9C
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/05/08
@@ -122,6 +125,8 @@ open class HoverItemDecoration : RecyclerView.ItemDecoration() {
         }
     }
 
+    //<editor-fold desc="操作方法">
+
     /**
      * 调用此方法, 安装悬浮分割线
      * */
@@ -156,6 +161,8 @@ open class HoverItemDecoration : RecyclerView.ItemDecoration() {
         windowContent = null
         recyclerView = null
     }
+
+    //</editor-fold desc="操作方法">
 
     private fun setupCallbacks() {
         this.recyclerView?.apply {

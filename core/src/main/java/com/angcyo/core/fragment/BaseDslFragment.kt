@@ -20,7 +20,7 @@ open class BaseDslFragment : BaseTitleFragment() {
     /**为[DslAdapterItem]提供悬停功能*/
     var hoverItemDecoration: HoverItemDecoration? = HoverItemDecoration()
     /**为[DslAdapterItem]提供基础的分割线功能*/
-    var baseDslItemDecoration: RecyclerView.ItemDecoration? = DslItemDecoration()
+    var baseDslItemDecoration: DslItemDecoration? = DslItemDecoration()
 
     /**实时获取[DslAdapter]*/
     val _adapter: DslAdapter
@@ -30,17 +30,21 @@ open class BaseDslFragment : BaseTitleFragment() {
 
     override fun onInitFragment() {
         super.onInitFragment()
-        onInitDslLayout()
-    }
 
-    open fun onInitDslLayout() {
         _vh.rv(R.id.lib_recycler_view)?.apply {
-            noItemChangeAnim()
-            baseDslItemDecoration?.let { addItemDecoration(it) }
-            hoverItemDecoration?.attachToRecyclerView(this)
-            adapter = DslAdapter()
+            val dslAdapter = DslAdapter()
+            onInitDslLayout(this, dslAdapter)
+            adapter = dslAdapter
         }
     }
+
+    /**初始化布局*/
+    open fun onInitDslLayout(recyclerView: RecyclerView, dslAdapter: DslAdapter) {
+        recyclerView.noItemChangeAnim()
+        baseDslItemDecoration?.attachToRecyclerView(recyclerView)
+        hoverItemDecoration?.attachToRecyclerView(recyclerView)
+    }
+
 
     /**调用此方法, 渲染界面*/
     open fun renderDslAdapter(config: DslAdapter.() -> Unit) {

@@ -2,6 +2,7 @@ package com.angcyo.picker
 
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.base.back
 import com.angcyo.core.fragment.BaseDslFragment
 import com.angcyo.dialog.fullPopupWindow
@@ -36,8 +37,8 @@ class PickerImageFragment : BaseDslFragment() {
         }
     }
 
-    override fun onInitDslLayout() {
-        super.onInitDslLayout()
+    override fun onInitDslLayout(recyclerView: RecyclerView, dslAdapter: DslAdapter) {
+        super.onInitDslLayout(recyclerView, dslAdapter)
         _adapter.multiModel()
     }
 

@@ -3,6 +3,7 @@ package com.angcyo.dsladapter
 import android.os.Handler
 import android.os.Looper
 import androidx.recyclerview.widget.DiffUtil
+import com.angcyo.dsladapter.internal.*
 import com.angcyo.library.L
 import com.angcyo.library.ex.nowTime
 import java.util.concurrent.ExecutorService
@@ -34,12 +35,18 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
      * @param newDataList 即将显示的数据源
      * @return 需要显示的数据源
      * */
-    var onFilterDataList: (oldDataList: List<DslAdapterItem>, newDataList: List<DslAdapterItem>) -> List<DslAdapterItem> =
+    var onFilterDataList: (oldDataList: List<DslAdapterItem>, newDataList: MutableList<DslAdapterItem>) -> MutableList<DslAdapterItem> =
         { _, newDataList -> newDataList }
 
-    //抖动控制
-    private
-    val updateDependRunnable = UpdateDependRunnable()
+    /**过滤拦截器*/
+    val filterInterceptorList = mutableListOf(
+        GroupItemFilterInterceptor(),
+        SubItemFilterInterceptor(),
+        HideItemFilterInterceptor()
+    )
+
+    //节流控制
+    private val updateDependRunnable = UpdateDependRunnable()
 
     //异步调度器
     private val asyncExecutor: ExecutorService by lazy {
@@ -83,156 +90,15 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
         }
     }
 
-    /*当前位置, 距离下一个分组头, 还有多少个数据 (startIndex, endIndex)*/
-    private fun groupChildSize(originList: List<DslAdapterItem>, startIndex: Int): Int {
-        var result = 0
-
-        for (i in (startIndex + 1) until originList.size) {
-            val item = originList[i]
-
-            if (item.itemIsGroupHead || dslAdapter.footerItems.indexOf(item) != -1 /*在底部数据列表中*/) {
-                result = i - startIndex - 1
-                break
-            } else if (i == originList.size - 1) {
-                result = i - startIndex
-                break
-            }
-        }
-
-        return result
-    }
-
     /**过滤[originList]数据源*/
     open fun filterItemList(originList: List<DslAdapterItem>): MutableList<DslAdapterItem> {
-        return filterItemHiddenList(//3级过滤
-            filterSubItemList(//2级过滤
-                filterItemGroupList(//1级过滤
-                    originList
-                )
-            )
-        )
-    }
-
-    /**过滤折叠后后的数据列表*/
-    open fun filterItemGroupList(originList: List<DslAdapterItem>): MutableList<DslAdapterItem> {
-        val list = mutableListOf<DslAdapterItem>()
-
-        var index = 0
-
-        while (index < originList.size) {
-            val item = originList[index]
-
-            //第一条数据, 要么是分组头, 要么是 不受分组管理的子项
-            list.add(item)
-
-            if (item.itemIsGroupHead) {
-                val childSize = groupChildSize(originList, index)
-                index += 1
-
-                if (childSize > 0) {
-                    if (item.itemGroupExtend) {
-                        //展开
-                        for (i in index..(index - 1 + childSize)) {
-                            list.add(originList[i])
-                        }
-                    } else {
-                        //折叠
-                    }
-
-                    //跳过...child
-                    index += childSize
-                }
-            } else {
-                index += 1
-            }
+        var requestList = originList
+        var result: MutableList<DslAdapterItem> = mutableListOf()
+        filterInterceptorList.forEach {
+            result = it.intercept(dslAdapter, diffRunnable._params ?: FilterParams(), requestList)
+            requestList = result
         }
-
-        return list
-    }
-
-    /**过滤需要被隐藏后的数据列表*/
-    open fun filterItemHiddenList(originList: List<DslAdapterItem>): MutableList<DslAdapterItem> {
-        val result = mutableListOf<DslAdapterItem>()
-
-        //遍历所有数据, 找出需要隐藏的项
-        val hideChildFormItemList = mutableListOf<DslAdapterItem>()
-
-        originList.forEach { currentItem ->
-
-            originList.forEachIndexed { index, subEachItem ->
-                if (currentItem.isItemInHiddenList(subEachItem, index)) {
-
-                    diffRunnable._params?.let {
-                        //包含需要隐藏的item, 也算updateDependItem
-                        if (it.fromDslAdapterItem == currentItem) {
-                            it.updateDependItemWithEmpty = true
-                        }
-                    }
-
-                    hideChildFormItemList.add(subEachItem)
-                }
-            }
-
-            //表单需要隐藏
-            if (currentItem.itemHidden) {
-                hideChildFormItemList.add(currentItem)
-            }
-        }
-
-        var index = 0
-        originList.forEachIndexed { i, dslAdapterItem ->
-            if (hideChildFormItemList.contains(dslAdapterItem)) {
-                //需要隐藏表单 item
-
-                L.v(
-                    "${index++}. 隐藏表单:" +
-                            "${dslAdapterItem.javaClass.simpleName} " +
-                            "${dslAdapterItem.itemTag ?: ""} " +
-                            "index:$i"
-                )
-            } else {
-                result.add(dslAdapterItem)
-            }
-        }
-
         return result
-    }
-
-    /**过滤需要追加或者隐藏的子项*/
-    open fun filterSubItemList(originList: List<DslAdapterItem>): MutableList<DslAdapterItem> {
-        val result = mutableListOf<DslAdapterItem>()
-
-        originList.forEach { currentItem ->
-            val parentList = mutableListOf<DslAdapterItem>()
-            val subList = mutableListOf<DslAdapterItem>()
-            loadSubItemList(currentItem, parentList, subList)
-            result.addAll(subList)
-        }
-
-        return result
-    }
-
-    /**枚举加载所有子项*/
-    open fun loadSubItemList(
-        currentItem: DslAdapterItem,
-        parentList: MutableList<DslAdapterItem>,
-        subList: MutableList<DslAdapterItem>
-    ) {
-        if (currentItem.itemHidden) {
-            //被隐藏了
-        } else {
-            currentItem.itemParentList = parentList
-            subList.add(currentItem)
-            if (currentItem.itemGroupExtend) {
-                //需要展开
-                currentItem.onItemLoadSubList()
-                currentItem.itemSubList.forEach {
-                    val pList = ArrayList(parentList)
-                    pList.add(currentItem)
-                    loadSubItemList(it, pList, subList)
-                }
-            }
-        }
     }
 
     fun addDispatchUpdatesListener(listener: OnDispatchUpdatesListener) {

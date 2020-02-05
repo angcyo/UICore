@@ -1,4 +1,4 @@
-package com.angcyo.dsladapter
+package com.angcyo.dsladapter.internal
 
 import android.text.TextUtils
 import androidx.recyclerview.widget.DiffUtil
@@ -16,11 +16,15 @@ open class RDiffCallback<T : Any>(
     }
 
     override fun getOldListSize(): Int {
-        return getListSize(oldDatas)
+        return getListSize(
+            oldDatas
+        )
     }
 
     override fun getNewListSize(): Int {
-        return getListSize(newDatas)
+        return getListSize(
+            newDatas
+        )
     }
 
     override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {

@@ -36,7 +36,7 @@ fun RecyclerView.initDsl() {
         }
     }
     if (!haveItemDecoration) {
-        addItemDecoration(DslItemDecoration())
+        DslItemDecoration().attachToRecyclerView(this)
     }
     if (!haveHoverItemDecoration) {
         HoverItemDecoration().attachToRecyclerView(this)
