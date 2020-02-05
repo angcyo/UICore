@@ -2,11 +2,13 @@ package com.angcyo.widget.layout
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.angcyo.widget.R
 import com.angcyo.widget.base.RequestLayoutProperty
+import com.angcyo.widget.base.exactly
 import kotlin.math.max
 
 /**
@@ -51,39 +53,49 @@ class DslFlowLayout(context: Context, attrs: AttributeSet? = null) : LinearLayou
             super.onMeasure(widthMeasureSpec, heightMeasureSpec)
             return
         }
-        val measureWidth = MeasureSpec.getSize(widthMeasureSpec)
-        val modeWidth = MeasureSpec.getMode(widthMeasureSpec)
-        val measureHeight = MeasureSpec.getSize(heightMeasureSpec)
-        val modeHeight = MeasureSpec.getMode(heightMeasureSpec)
+        val measureWidthSize = MeasureSpec.getSize(widthMeasureSpec)
+        val measureWidthMode = MeasureSpec.getMode(widthMeasureSpec)
+        val measureHeightSize = MeasureSpec.getSize(heightMeasureSpec)
+        val measureHeightMode = MeasureSpec.getMode(heightMeasureSpec)
+
         var width = 0
         var height = 0
         var lineWidth = 0
         var lineHeight = 0
         var childWidth = 0
         var childHeight = 0
+
         _allViews.clear()
         _lineHeight.clear()
 
         var lineViews = mutableListOf<View>()
 
         //视图可用空间
-        val viewAvailableWidth = measureWidth - paddingLeft - paddingRight
+        val viewAvailableWidth = measureWidthSize - paddingLeft - paddingRight
         val count = childCount
         for (i in 0 until count) {
             val child = getChildAt(i)
             if (child.visibility == View.GONE) {
                 continue
             }
+            val params = child.layoutParams as LayoutParams
             if (itemEquWidth) {
                 measureChild(
                     child,
-                    MeasureSpec.makeMeasureSpec(measureWidth, MeasureSpec.AT_MOST),
+                    MeasureSpec.makeMeasureSpec(measureWidthSize, MeasureSpec.AT_MOST),
                     heightMeasureSpec
                 )
             } else {
-                measureChild(child, widthMeasureSpec, heightMeasureSpec)
+                if (params.weight > 0) {
+                    //支持[weight]属性
+                    child.measure(
+                        exactly(((measureWidthSize - params.leftMargin - params.rightMargin - paddingLeft - paddingRight) * params.weight).toInt()),
+                        heightMeasureSpec
+                    )
+                } else {
+                    measureChild(child, widthMeasureSpec, heightMeasureSpec)
+                }
             }
-            val params = child.layoutParams as LayoutParams
             childWidth = child.measuredWidth + params.leftMargin + params.rightMargin
             childHeight = child.measuredHeight + params.topMargin + params.bottomMargin
             val lineViewSize = lineViews.size
@@ -93,7 +105,7 @@ class DslFlowLayout(context: Context, attrs: AttributeSet? = null) : LinearLayou
                 if (itemEquWidth) { //margin,padding 消耗的宽度
                     childWidth = measureLineEquWidth(
                         lineViews,
-                        measureWidth,
+                        measureWidthSize,
                         heightMeasureSpec
                     ) + params.leftMargin + params.rightMargin
                     var maxChildHeight = 0
@@ -127,17 +139,17 @@ class DslFlowLayout(context: Context, attrs: AttributeSet? = null) : LinearLayou
         _lineHeight.add(lineHeight)
         _allViews.add(lineViews)
         if (itemEquWidth) {
-            measureLineEquWidth(lineViews, measureWidth, heightMeasureSpec)
+            measureLineEquWidth(lineViews, measureWidthSize, heightMeasureSpec)
         }
         width += paddingLeft + paddingRight
         height += paddingTop + paddingBottom
         setMeasuredDimension(
             max(
-                if (modeWidth == MeasureSpec.AT_MOST || modeWidth == MeasureSpec.UNSPECIFIED) width else measureWidth,
+                if (measureWidthMode == MeasureSpec.AT_MOST || measureWidthMode == MeasureSpec.UNSPECIFIED) width else measureWidthSize,
                 minimumWidth
             ),
             max(
-                if (modeHeight == MeasureSpec.AT_MOST || modeHeight == MeasureSpec.UNSPECIFIED) height else measureHeight,
+                if (measureHeightMode == MeasureSpec.AT_MOST || measureHeightMode == MeasureSpec.UNSPECIFIED) height else measureHeightSize,
                 minimumHeight
             )
         )
@@ -215,16 +227,25 @@ class DslFlowLayout(context: Context, attrs: AttributeSet? = null) : LinearLayou
                 if (child.visibility == View.GONE) {
                     continue
                 }
+                val childWidth = child.measuredWidth
+                val childHeight = child.measuredHeight
+
                 val params = child.layoutParams as LayoutParams
-                val ld = left + params.leftMargin
-                val td = top + params.topMargin
+                val childLeft = left + params.leftMargin
+
+                val childTop = when (params.gravity and Gravity.VERTICAL_GRAVITY_MASK) {
+                    Gravity.CENTER_VERTICAL -> top + lineHeight / 2 - childHeight / 2 + params.topMargin
+                    Gravity.BOTTOM -> top + lineHeight - params.bottomMargin - childHeight
+                    else -> top + params.topMargin
+                }
+
                 //不需要加上 params.rightMargin,
-                val rd = ld + child.measuredWidth
+                val childRight = childLeft + childWidth
                 //不需要加上 params.bottomMargin, 因为在 onMeasure , 中已经加在了 lineHeight 中
-                val bd = td + child.measuredHeight
-                child.layout(ld, td, rd, bd)
+                val childBottom = childTop + childHeight
+                child.layout(childLeft, childTop, childRight, childBottom)
                 //因为在 这里添加了;
-                left += child.measuredWidth + params.leftMargin + params.rightMargin + itemHorizontalSpace
+                left += childWidth + params.leftMargin + params.rightMargin + itemHorizontalSpace
             }
             left = paddingLeft
             top += lineHeight + itemVerticalSpace
