@@ -254,13 +254,19 @@ open class PopupConfig {
             duration = animatorDuration
         )
 
-        //内容动画
-        contentWrapLayout?.run {
-            doOnPreDraw {
-                translationY = (-it.measuredHeight).toFloat()
+        fun View.doAnimate() {
+            if (measuredHeight <= 0) {
+                doOnPreDraw {
+                    doAnimate()
+                }
+            } else {
+                translationY = (-measuredHeight).toFloat()
                 animate().translationY(0f).setDuration(animatorDuration).start()
             }
         }
+
+        //内容动画
+        contentWrapLayout?.doAnimate()
     }
 
     open fun onRemoveRootLayout(activity: Activity) {
