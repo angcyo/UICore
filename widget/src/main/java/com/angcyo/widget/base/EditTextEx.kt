@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.InputFilter
 import android.text.TextUtils
+import android.text.method.PasswordTransformationMethod
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -44,56 +45,6 @@ fun EditText.isPasswordType(): Boolean {
             == EditorInfo.TYPE_CLASS_NUMBER or EditorInfo.TYPE_NUMBER_VARIATION_PASSWORD)
 
     return passwordInputType || webPasswordInputType || numberPasswordInputType
-}
-
-/**
- * 输入类型是否是数字
- */
-fun EditText.isNumberType(): Boolean {
-    return inputType and EditorInfo.TYPE_CLASS_NUMBER == EditorInfo.TYPE_CLASS_NUMBER
-}
-
-/**
- * 输入类型是否是小数
- */
-fun EditText.isDecimalType(): Boolean {
-    return inputType and EditorInfo.TYPE_NUMBER_FLAG_DECIMAL == EditorInfo.TYPE_NUMBER_FLAG_DECIMAL
-}
-
-/**焦点变化改变监听*/
-fun EditText.onFocusChange(listener: (Boolean) -> Unit) {
-    onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus -> listener.invoke(hasFocus) }
-    listener.invoke(this.isFocused)
-}
-
-fun EditText.setInputText(text: CharSequence?) {
-    setText(text)
-    setSelection(text?.length ?: 0)
-}
-
-/**触发删除或回退键*/
-fun EditText.del() {
-    dispatchKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL))
-}
-
-fun TextView?.isEmpty(): Boolean {
-    return this == null || TextUtils.isEmpty(string())
-}
-
-fun TextView?.string(trim: Boolean = true): String {
-    if (this == null) {
-        return ""
-    }
-
-    var rawText = if (TextUtils.isEmpty(text)) {
-        ""
-    } else {
-        text.toString()
-    }
-    if (trim) {
-        rawText = rawText.trim { it <= ' ' }
-    }
-    return rawText
 }
 
 /**
@@ -138,6 +89,32 @@ fun EditText.checkEmpty(phoneRegex: String? = null): Boolean {
     return false
 }
 
+//<editor-fold desc="类型判断">
+
+/**
+ * 输入类型是否是数字
+ */
+fun EditText.isNumberType(): Boolean {
+    return inputType and EditorInfo.TYPE_CLASS_NUMBER == EditorInfo.TYPE_CLASS_NUMBER
+}
+
+/**
+ * 输入类型是否是小数
+ */
+fun EditText.isDecimalType(): Boolean {
+    return inputType and EditorInfo.TYPE_NUMBER_FLAG_DECIMAL == EditorInfo.TYPE_NUMBER_FLAG_DECIMAL
+}
+
+//</editor-fold desc="类型判断">
+
+//<editor-fold desc="事件监听">
+
+/**焦点变化改变监听*/
+fun EditText.onFocusChange(listener: (Boolean) -> Unit) {
+    onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus -> listener.invoke(hasFocus) }
+    listener.invoke(this.isFocused)
+}
+
 /**只要文本改变就通知*/
 fun EditText.onTextChange(
     defaultText: CharSequence? = null,
@@ -175,6 +152,39 @@ fun EditText.onTextChange(
             }
         }
     })
+}
+
+//</editor-fold desc="事件监听">
+
+
+fun EditText.setInputText(text: CharSequence?) {
+    setText(text)
+    setSelection(text?.length ?: 0)
+}
+
+/**触发删除或回退键*/
+fun EditText.del() {
+    dispatchKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL))
+}
+
+fun TextView?.isEmpty(): Boolean {
+    return this == null || TextUtils.isEmpty(string())
+}
+
+fun TextView?.string(trim: Boolean = true): String {
+    if (this == null) {
+        return ""
+    }
+
+    var rawText = if (TextUtils.isEmpty(text)) {
+        ""
+    } else {
+        text.toString()
+    }
+    if (trim) {
+        rawText = rawText.trim { it <= ' ' }
+    }
+    return rawText
 }
 
 fun EditText.addFilter(filter: InputFilter) {
@@ -234,6 +244,8 @@ fun EditText.getCharLength(): Int {
     return count
 }
 
+//<editor-fold desc="方法扩展">
+
 /**单行输入切换*/
 fun EditText.setSingleLineMode(singleLine: Boolean = true) {
     if (singleLine) {
@@ -244,3 +256,44 @@ fun EditText.setSingleLineMode(singleLine: Boolean = true) {
         maxLines = Int.MAX_VALUE
     }
 }
+
+/**密码可见性*/
+fun EditText.showPassword() {
+    val selection = selectionEnd
+    transformationMethod = null
+    setSelection(selection)
+}
+
+/**密码不可见*/
+fun EditText.hidePassword() {
+    val selection = selectionEnd
+    transformationMethod = PasswordTransformationMethod.getInstance()
+    setSelection(selection)
+}
+
+/**密码可见性切换*/
+fun EditText.passwordVisibilityToggleRequested() {
+    val selection = selectionEnd
+
+    if (hasPasswordTransformation()) {
+        transformationMethod = null
+    } else {
+        transformationMethod = PasswordTransformationMethod.getInstance()
+    }
+
+    // And restore the cursor position
+    setSelection(selection)
+}
+
+fun EditText.hasPasswordTransformation(): Boolean {
+    return this.transformationMethod is PasswordTransformationMethod
+}
+
+
+fun EditText.isEditSingleLine(): Boolean {
+    return inputType and EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE != EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE &&
+            maxLines == 1 &&
+            minLines == 1
+}
+
+//</editor-fold desc="方法扩展">
