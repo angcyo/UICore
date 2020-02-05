@@ -62,6 +62,11 @@ data class LoaderMedia(
     var longitude: Double = 0.0
 
 ) : Parcelable {
+
+    override fun hashCode(): Int {
+        return loadUri()?.hashCode() ?: super.hashCode()
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other == null) {
             return false

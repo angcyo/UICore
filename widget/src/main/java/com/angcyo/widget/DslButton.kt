@@ -594,7 +594,6 @@ open class DslButton : AppCompatTextView {
             }
         }
 
-
         val bGradientColors =
             if (typedArray.hasValue(R.styleable.DslButton_button_gradient_colors)) {
                 val normalColors =

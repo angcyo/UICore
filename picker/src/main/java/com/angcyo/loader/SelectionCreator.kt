@@ -11,7 +11,7 @@ import android.provider.MediaStore
 open class SelectionCreator {
 
     /**创建查询语句*/
-    fun createSelection(config: LoaderConfig): String {
+    open fun createSelection(config: LoaderConfig): String {
         val sql = buildString {
             config.getMimeTypeSelectorSelection(this)
             config.getFileSelectorSelection(this)
@@ -23,13 +23,13 @@ open class SelectionCreator {
     fun LoaderConfig.getMimeTypeSelectorSelection(builder: StringBuilder) {
         builder.apply {
             val loadTypes = mutableListOf<Int>()
-            if (mediaLoaderType and Config.LOADER_TYPE_IMAGE == Config.LOADER_TYPE_IMAGE) {
+            if (mediaLoaderType and LoaderConfig.LOADER_TYPE_IMAGE == LoaderConfig.LOADER_TYPE_IMAGE) {
                 loadTypes.add(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE)
             }
-            if (mediaLoaderType and Config.LOADER_TYPE_VIDEO == Config.LOADER_TYPE_VIDEO) {
+            if (mediaLoaderType and LoaderConfig.LOADER_TYPE_VIDEO == LoaderConfig.LOADER_TYPE_VIDEO) {
                 loadTypes.add(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO)
             }
-            if (mediaLoaderType and Config.LOADER_TYPE_AUDIO == Config.LOADER_TYPE_AUDIO) {
+            if (mediaLoaderType and LoaderConfig.LOADER_TYPE_AUDIO == LoaderConfig.LOADER_TYPE_AUDIO) {
                 loadTypes.add(MediaStore.Files.FileColumns.MEDIA_TYPE_AUDIO)
             }
 
@@ -39,10 +39,15 @@ open class SelectionCreator {
                 append(MediaStore.Files.FileColumns.MEDIA_TYPE_NONE)
             } else {
                 loadTypes.forEachIndexed { index, type ->
+                    if (index == 0) {
+                        append("( ")
+                    }
                     append(MediaStore.Files.FileColumns.MEDIA_TYPE)
                     append("=")
                     append(type)
-                    if (loadTypes.lastIndex != index) {
+                    if (loadTypes.lastIndex == index) {
+                        append(" ) ")
+                    } else {
                         append(" OR ")
                     }
                 }
@@ -53,7 +58,7 @@ open class SelectionCreator {
     /**媒体大小选择条件语句*/
     fun LoaderConfig.getFileSelectorSelection(builder: StringBuilder) {
         builder.apply {
-            if (limitFileSizeModel == Config.SIZE_MODEL_MEDIA) {
+            if (limitFileSizeModel == LoaderConfig.SIZE_MODEL_MEDIA) {
                 if (limitFileMinSize > 0f) {
                     append(" AND ")
                     append(MediaStore.Files.FileColumns.SIZE)

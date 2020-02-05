@@ -17,7 +17,7 @@ open class FolderCreator {
         const val ALL_AUDIO = "allAudio"
     }
 
-    fun creatorFolder(config: LoaderConfig, allMedia: List<LoaderMedia>): List<LoaderFolder> {
+    open fun creatorFolder(config: LoaderConfig, allMedia: List<LoaderMedia>): List<LoaderFolder> {
         val result = mutableListOf<LoaderFolder>()
         var allImage: LoaderFolder? = null
         var allVideo: LoaderFolder? = null
@@ -25,8 +25,8 @@ open class FolderCreator {
         var allImageAndVideo: LoaderFolder? = null
 
         val mediaLoaderType = config.mediaLoaderType
-        if (mediaLoaderType and Config.LOADER_TYPE_IMAGE == Config.LOADER_TYPE_IMAGE) {
-            if (mediaLoaderType and Config.LOADER_TYPE_VIDEO == Config.LOADER_TYPE_VIDEO) {
+        if (mediaLoaderType and LoaderConfig.LOADER_TYPE_IMAGE == LoaderConfig.LOADER_TYPE_IMAGE) {
+            if (mediaLoaderType and LoaderConfig.LOADER_TYPE_VIDEO == LoaderConfig.LOADER_TYPE_VIDEO) {
                 allImageAndVideo = LoaderFolder("图片和视频", ALL_IMAGE_AND_VIDEO)
                 result.add(allImageAndVideo)
             }
@@ -35,12 +35,12 @@ open class FolderCreator {
             result.add(allImage)
         }
 
-        if (mediaLoaderType and Config.LOADER_TYPE_VIDEO == Config.LOADER_TYPE_VIDEO) {
+        if (mediaLoaderType and LoaderConfig.LOADER_TYPE_VIDEO == LoaderConfig.LOADER_TYPE_VIDEO) {
             allVideo = LoaderFolder("所有视频", ALL_VIDEO)
             result.add(allVideo)
         }
 
-        if (mediaLoaderType and Config.LOADER_TYPE_AUDIO == Config.LOADER_TYPE_AUDIO) {
+        if (mediaLoaderType and LoaderConfig.LOADER_TYPE_AUDIO == LoaderConfig.LOADER_TYPE_AUDIO) {
             allAudio = LoaderFolder("所有音频", ALL_AUDIO)
             result.add(allAudio)
         }
@@ -88,6 +88,30 @@ open class FolderCreator {
                 folder.mediaItemList.add(media)
             } catch (e: Exception) {
                 L.w(e)
+            }
+        }
+
+        allAudio?.run {
+            if (mediaCount() <= 0) {
+                result.remove(this)
+            }
+        }
+
+        allVideo?.run {
+            if (mediaCount() <= 0) {
+                result.remove(this)
+            }
+        }
+
+        allImage?.run {
+            if (mediaCount() <= 0) {
+                result.remove(this)
+            }
+        }
+
+        allImageAndVideo?.run {
+            if (mediaCount() <= 0) {
+                result.remove(this)
             }
         }
 

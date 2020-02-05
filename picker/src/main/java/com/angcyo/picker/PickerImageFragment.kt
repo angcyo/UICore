@@ -39,7 +39,7 @@ class PickerImageFragment : BaseDslFragment() {
 
     override fun onInitDslLayout(recyclerView: RecyclerView, dslAdapter: DslAdapter) {
         super.onInitDslLayout(recyclerView, dslAdapter)
-        _adapter.multiModel()
+        dslAdapter.multiModel()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -127,7 +127,7 @@ class PickerImageFragment : BaseDslFragment() {
                     val oldSelectorList = _adapter.itemSelectorHelper.getSelectorItemList()
 
                     //当前item选中切换
-                    _adapter.itemSelectorHelper.selector(
+                    _adapter.selector().selector(
                         SelectorParams(
                             this,
                             (!itemIsSelected).toSelectOption(),
