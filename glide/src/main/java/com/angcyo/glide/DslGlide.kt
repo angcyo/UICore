@@ -11,7 +11,9 @@ import android.widget.ImageView.ScaleType
 import com.angcyo.http.OkType
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.ex.file
 import com.angcyo.library.ex.fileUri
+import com.angcyo.library.ex.isFileExist
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.RequestManager
@@ -248,10 +250,12 @@ class DslGlide {
                         .configRequest(url, File::class.java)
                         .into(GifDrawableImageViewTarget(targetView, autoPlayGif, transition))
                 } else {
-                    val file = File(url!!)
-                    if (file.exists() && file.canRead()) {
+                    if (url.isNullOrBlank()) {
                         _glide()
-                            .load(fileUri(targetView.context, file))
+                            .load(url)
+                    } else if (url.isFileExist()) {
+                        _glide()
+                            .load(fileUri(targetView.context, url.file()))
                     } else {
                         _glide()
                             .load(GlideUrl(url, _header()))
