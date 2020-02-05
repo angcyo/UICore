@@ -35,7 +35,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
      * @param newDataList 即将显示的数据源
      * @return 需要显示的数据源
      * */
-    var onFilterDataList: (oldDataList: List<DslAdapterItem>, newDataList: MutableList<DslAdapterItem>) -> MutableList<DslAdapterItem> =
+    var onFilterDataList: (oldDataList: List<DslAdapterItem>, newDataList: List<DslAdapterItem>) -> List<DslAdapterItem> =
         { _, newDataList -> newDataList }
 
     /**过滤拦截器*/
@@ -91,12 +91,24 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
     }
 
     /**过滤[originList]数据源*/
-    open fun filterItemList(originList: List<DslAdapterItem>): MutableList<DslAdapterItem> {
-        var requestList = originList
-        var result: MutableList<DslAdapterItem> = mutableListOf()
-        filterInterceptorList.forEach {
-            result = it.intercept(dslAdapter, diffRunnable._params ?: FilterParams(), requestList)
-            requestList = result
+    open fun filterItemList(originList: List<DslAdapterItem>): List<DslAdapterItem> {
+        var result = listOf<DslAdapterItem>()
+        val chain = FilterChain(
+            dslAdapter,
+            this,
+            diffRunnable._params ?: FilterParams(),
+            originList,
+            originList,
+            false
+        )
+
+        for (filer in filterInterceptorList) {
+            result = filer.intercept(chain)
+            chain.requestList = result
+
+            if (chain.interruptChain) {
+                break
+            }
         }
         return result
     }
@@ -144,9 +156,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                 //仅过滤数据源,不更新界面
             } else {
                 //根据diff, 更新adapter
-                if (dslAdapter.isAdapterStatus()) {
-                    //情感图状态模式, 不刷新界面
-                } else if (updateDependItemList.isEmpty() &&
+                if (updateDependItemList.isEmpty() &&
                     _params?.updateDependItemWithEmpty == false &&
                     oldSize == newSize
                 ) {
@@ -328,7 +338,10 @@ data class FilterParams(
     var updateDependItemWithEmpty: Boolean = true,
 
     /**局部更新标识参数*/
-    var payload: Any? = null
+    var payload: Any? = null,
+
+    /**自定义的扩展数据传递*/
+    var filterData: Any? = null
 )
 
 interface OnDispatchUpdatesListener {

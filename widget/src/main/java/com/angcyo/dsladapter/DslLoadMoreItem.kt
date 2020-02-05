@@ -14,27 +14,6 @@ import com.angcyo.widget.base.setWidthHeight
  */
 open class DslLoadMoreItem : BaseDslStateItem() {
 
-    init {
-        itemStateLayoutMap[ADAPTER_LOAD_NORMAL] = R.layout.lib_loading_layout
-        itemStateLayoutMap[ADAPTER_LOAD_LOADING] = R.layout.lib_loading_layout
-        itemStateLayoutMap[ADAPTER_LOAD_NO_MORE] = R.layout.lib_no_more_layout
-        itemStateLayoutMap[ADAPTER_LOAD_ERROR] = R.layout.lib_error_layout
-        itemStateLayoutMap[ADAPTER_LOAD_RETRY] = R.layout.lib_error_layout
-
-        onItemViewDetachedToWindow = {
-            if (itemEnableLoadMore) {
-                //加载失败时, 下次是否还需要加载更多?
-                if (itemState == ADAPTER_LOAD_ERROR) {
-                    itemState =
-                        ADAPTER_LOAD_RETRY
-                }
-            }
-        }
-        thisAreContentsTheSame = { _, _ ->
-            false
-        }
-    }
-
     companion object {
         /**正常状态, 等待加载更多*/
         const val ADAPTER_LOAD_NORMAL = 0
@@ -45,11 +24,11 @@ open class DslLoadMoreItem : BaseDslStateItem() {
         /**加载失败*/
         const val ADAPTER_LOAD_ERROR = 10
         /**加载失败, 自动重试中*/
-        const val ADAPTER_LOAD_RETRY = 11
+        const val _ADAPTER_LOAD_RETRY = 11
     }
 
     /**是否激活加载更多, 默认关闭*/
-    var itemEnableLoadMore = false
+    override var itemStateEnable: Boolean = false
         set(value) {
             field = value
             itemState = ADAPTER_LOAD_NORMAL
@@ -58,6 +37,30 @@ open class DslLoadMoreItem : BaseDslStateItem() {
     /**加载更多回调*/
     var onLoadMore: (DslViewHolder) -> Unit = {
         L.i("[DslLoadMoreItem] 触发加载更多")
+    }
+
+    //是否已经在加载更多
+    var _isLoadMore = false
+
+    init {
+        itemStateLayoutMap[ADAPTER_LOAD_NORMAL] = R.layout.lib_loading_layout
+        itemStateLayoutMap[ADAPTER_LOAD_LOADING] = R.layout.lib_loading_layout
+        itemStateLayoutMap[ADAPTER_LOAD_NO_MORE] = R.layout.lib_no_more_layout
+        itemStateLayoutMap[ADAPTER_LOAD_ERROR] = R.layout.lib_error_layout
+        itemStateLayoutMap[_ADAPTER_LOAD_RETRY] = itemStateLayoutMap[ADAPTER_LOAD_ERROR]!!
+
+        onItemViewDetachedToWindow = {
+            if (itemStateEnable) {
+                //加载失败时, 下次是否还需要加载更多?
+                if (itemState == ADAPTER_LOAD_ERROR) {
+                    itemState =
+                        _ADAPTER_LOAD_RETRY
+                }
+            }
+        }
+        thisAreContentsTheSame = { _, _ ->
+            false
+        }
     }
 
     override fun onItemBind(
@@ -72,12 +75,12 @@ open class DslLoadMoreItem : BaseDslStateItem() {
     override fun _onBindStateLayout(itemHolder: DslViewHolder, state: Int) {
         super._onBindStateLayout(itemHolder, state)
 
-        if (itemEnableLoadMore) {
+        if (itemStateEnable) {
             if (itemState == ADAPTER_LOAD_NORMAL || itemState == ADAPTER_LOAD_LOADING) {
                 _notifyLoadMore(itemHolder)
             } else if (itemState == ADAPTER_LOAD_ERROR) {
                 itemHolder.clickItem {
-                    if (itemState == ADAPTER_LOAD_ERROR || itemState == ADAPTER_LOAD_RETRY) {
+                    if (itemState == ADAPTER_LOAD_ERROR || itemState == _ADAPTER_LOAD_RETRY) {
                         //失败的情况下, 点击触发重新加载
                         _notifyLoadMore(itemHolder)
                         updateAdapterItem()
@@ -98,9 +101,6 @@ open class DslLoadMoreItem : BaseDslStateItem() {
             itemHolder.post { onLoadMore(itemHolder) }
         }
     }
-
-    //是否已经在加载更多
-    var _isLoadMore = false
 
     override fun _onItemStateChange(old: Int, value: Int) {
         if (old != value && value != ADAPTER_LOAD_LOADING) {

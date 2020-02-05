@@ -14,28 +14,31 @@ import com.angcyo.widget.base.setWidthHeight
  */
 open class DslAdapterStatusItem : BaseDslStateItem() {
 
+    companion object {
+        /**正常状态, 切换到内容*/
+        const val ADAPTER_STATUS_NONE = 0
+        /**空数据*/
+        const val ADAPTER_STATUS_EMPTY = 1
+        /**加载中*/
+        const val ADAPTER_STATUS_LOADING = 2
+        /**错误*/
+        const val ADAPTER_STATUS_ERROR = 3
+    }
+
+    /**刷新回调*/
+    var onRefresh: (DslViewHolder) -> Unit = {
+        L.i("[DslAdapterStatusItem] 触发刷新")
+    }
+
+    //是否已经在刷新, 防止重复触发回调
+    var _isRefresh = false
+
     init {
         itemStateLayoutMap[ADAPTER_STATUS_LOADING] = R.layout.lib_loading_layout
         itemStateLayoutMap[ADAPTER_STATUS_ERROR] = R.layout.lib_error_layout
         itemStateLayoutMap[ADAPTER_STATUS_EMPTY] = R.layout.lib_empty_layout
 
         itemState = ADAPTER_STATUS_NONE
-    }
-
-    companion object {
-        /**正常状态, 切换到内容*/
-        const val ADAPTER_STATUS_NONE = -1
-        /**空数据*/
-        const val ADAPTER_STATUS_EMPTY = 0
-        /**加载中*/
-        const val ADAPTER_STATUS_LOADING = 1
-        /**错误*/
-        const val ADAPTER_STATUS_ERROR = 2
-    }
-
-    /**刷新回调*/
-    var onRefresh: (DslViewHolder) -> Unit = {
-        L.i("[DslAdapterStatusItem] 触发刷新")
     }
 
     override fun onItemBind(
@@ -67,18 +70,12 @@ open class DslAdapterStatusItem : BaseDslStateItem() {
         }
     }
 
-    /**返回[true] 表示不需要显示情感图, 即显示[Adapter]原本的内容*/
-    open fun isInAdapterStatus() = itemState != ADAPTER_STATUS_NONE
-
     open fun _notifyRefresh(itemHolder: DslViewHolder) {
         if (!_isRefresh) {
             _isRefresh = true
             itemHolder.post { onRefresh(itemHolder) }
         }
     }
-
-    //是否已经在刷新
-    var _isRefresh = false
 
     override fun _onItemStateChange(old: Int, value: Int) {
         if (old != value && value != ADAPTER_STATUS_LOADING) {

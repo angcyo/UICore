@@ -13,10 +13,6 @@ import com.angcyo.widget.base.inflate
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 abstract class BaseDslStateItem : DslAdapterItem() {
-    init {
-        itemLayoutId = R.layout.lib_item_base_state
-        itemSpanCount = -1
-    }
 
     /**
      * [key] 是状态
@@ -32,9 +28,17 @@ abstract class BaseDslStateItem : DslAdapterItem() {
             _onItemStateChange(old, value)
         }
 
+    /**是否将激活状态item*/
+    open var itemStateEnable: Boolean = true
+
     var onItemStateChange: (from: Int, to: Int) -> Unit = { _, _ -> }
 
     var onBindStateLayout: (itemHolder: DslViewHolder, state: Int) -> Unit = { _, _ -> }
+
+    init {
+        itemLayoutId = R.layout.lib_item_base_state
+        itemSpanCount = -1
+    }
 
     override fun onItemBind(
         itemHolder: DslViewHolder,
@@ -84,4 +88,7 @@ abstract class BaseDslStateItem : DslAdapterItem() {
             onItemStateChange(old, value)
         }
     }
+
+    /**是否处于状态显示模式*/
+    open fun isInStateLayout() = itemStateEnable && itemState > 0
 }
