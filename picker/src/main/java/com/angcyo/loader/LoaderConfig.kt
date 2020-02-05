@@ -71,7 +71,46 @@ data class LoaderConfig(
 fun LoaderConfig.isSingleModel(): Boolean = maxSelectorLimit == 1
 
 /**是否可以选中文件(b)*/
-fun LoaderConfig.canSelectorFile(fileSize: Long): Boolean {
+fun LoaderConfig.canSelectorMedia(
+    selectorMediaList: List<LoaderMedia>,
+    media: LoaderMedia
+): Boolean {
+
+    //最大限制
+    if (selectorMediaList.size >= maxSelectorLimit) {
+        toast("最多选择${maxSelectorLimit}个媒体!")
+        return false
+    }
+
+    //最大视频数
+    if (mediaLoaderType != LOADER_TYPE_VIDEO) {
+        if (maxSelectorVideoLimit > 0) {
+            //混合选择, 限制最大视频选择数量
+            val videoCount = selectorMediaList.sumBy { if (it.isVideo()) 1 else 0 }
+
+            if (videoCount >= maxSelectorVideoLimit) {
+                toast("最多选择${maxSelectorVideoLimit}个视频!")
+                return false
+            }
+        }
+    }
+
+    //最大音频数
+    if (mediaLoaderType != LOADER_TYPE_AUDIO) {
+        if (maxSelectorAudioLimit > 0) {
+            //混合选择, 限制最大音频选择数量
+            val audioCount = selectorMediaList.sumBy { if (it.isAudio()) 1 else 0 }
+
+            if (audioCount >= maxSelectorAudioLimit) {
+                toast("最多选择${maxSelectorAudioLimit}个视频!")
+                return false
+            }
+        }
+    }
+
+    //最大文件大小限制
+    //b
+    val fileSize: Long = media.fileSize
     if (limitFileSizeModel == LoaderConfig.SIZE_MODEL_SELECTOR) {
         if (limitFileMinSize <= 0 && limitFileMaxSize <= 0) {
             return true

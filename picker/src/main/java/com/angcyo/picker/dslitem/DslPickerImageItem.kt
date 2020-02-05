@@ -2,6 +2,7 @@ package com.angcyo.picker.dslitem
 
 import android.graphics.Color
 import android.graphics.drawable.TransitionDrawable
+import androidx.annotation.DrawableRes
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.containsPayload
 import com.angcyo.dsladapter.margin
@@ -27,6 +28,8 @@ open class DslPickerImageItem : DslAdapterItem() {
     companion object {
         //动画更新
         const val PAYLOAD_UPDATE_ANIM = PAYLOAD_UPDATE_PART shl 1
+        //无法选中的动画更新
+        const val PAYLOAD_UPDATE_CANCEL_ANIM = PAYLOAD_UPDATE_ANIM shl 1
     }
 
     /**要加载的媒体*/
@@ -41,7 +44,15 @@ open class DslPickerImageItem : DslAdapterItem() {
     /**选择模式*/
     var checkModel = true
 
-    var _transitionDuration = 160
+    /**显示文件大小*/
+    var showFileSize: Boolean = false
+
+    @DrawableRes
+    var audioTipDrawable: Int = R.drawable.ic_picker_audio_folder
+    @DrawableRes
+    var videoTipDrawable: Int = -1
+
+    var _transitionDuration = 200
 
     var _selectorMaskColor = Color.parseColor("#80000000")
 
@@ -81,6 +92,7 @@ open class DslPickerImageItem : DslAdapterItem() {
         //局部更新
         val partUpdate = payloads.containsPayload(PAYLOAD_UPDATE_PART)
         val animUpdate = payloads.containsPayload(PAYLOAD_UPDATE_ANIM)
+        val canceAnimUpdate = payloads.containsPayload(PAYLOAD_UPDATE_CANCEL_ANIM)
 
         if (!partUpdate) {
             //model
@@ -95,8 +107,19 @@ open class DslPickerImageItem : DslAdapterItem() {
                 setOnLongClickListener(_longClickListener)
             }
 
-            //audio
-            itemHolder.visible(R.id.lib_tip_image_view, loaderMedia?.isAudio() == true)
+            //audio video tip
+            itemHolder.gone(R.id.lib_tip_image_view)
+            if (loaderMedia?.isAudio() == true) {
+                if (audioTipDrawable > 0) {
+                    itemHolder.visible(R.id.lib_tip_image_view)
+                    itemHolder.img(R.id.lib_tip_image_view)?.setImageResource(audioTipDrawable)
+                }
+            } else if (loaderMedia?.isVideo() == true) {
+                if (videoTipDrawable > 0) {
+                    itemHolder.visible(R.id.lib_tip_image_view)
+                    itemHolder.img(R.id.lib_tip_image_view)?.setImageResource(videoTipDrawable)
+                }
+            }
 
             //文本
             if (loaderMedia?.isVideo() == true || loaderMedia?.isAudio() == true) {
@@ -162,6 +185,11 @@ open class DslPickerImageItem : DslAdapterItem() {
                     append(loaderMedia?.mimeType() ?: "")
                 }
 
+            } else if (showFileSize) {
+                itemHolder.visible(R.id.lib_tip_text_view)
+                itemHolder.tv(R.id.lib_tip_text_view)?.text = span {
+                    append(loaderMedia?.fileSize?.fileSizeString() ?: "")
+                }
             } else {
                 itemHolder.gone(R.id.lib_tip_text_view)
             }
@@ -187,6 +215,22 @@ open class DslPickerImageItem : DslAdapterItem() {
 
                 itemHolder.view(R.id.selector_mask_view)
                     ?.bgColorAnimator(_selectorMaskColor, Color.TRANSPARENT)
+            }
+        } else if (canceAnimUpdate) {
+            //无法选中的动画
+            itemHolder.tv(R.id.index_view)?.run {
+                val duration = _transitionDuration
+                background = TransitionDrawable(
+                    arrayOf(
+                        _drawable(R.drawable.picker_index_checked_shape),
+                        _drawable(R.drawable.lib_white_circle_shape)
+                    )
+                ).apply {
+                    startTransition(duration)
+                }
+                postDelayed({
+                    setBackgroundResource(R.drawable.ic_picker_check_normal)
+                }, duration.toLong())
             }
         }
 

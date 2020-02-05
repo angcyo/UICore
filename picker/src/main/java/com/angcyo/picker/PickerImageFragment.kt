@@ -11,6 +11,7 @@ import com.angcyo.library.L
 import com.angcyo.library.ex.getColor
 import com.angcyo.loader.DslLoader
 import com.angcyo.loader.LoaderFolder
+import com.angcyo.loader.canSelectorMedia
 import com.angcyo.picker.dslitem.DslPickerFolderItem
 import com.angcyo.picker.dslitem.DslPickerImageItem
 import com.angcyo.picker.dslitem.DslPickerStatusItem
@@ -115,34 +116,60 @@ class PickerImageFragment : BaseDslFragment() {
                     }
                 }
                 onSelectorItem = {
+                    var pass = false
                     if (it) {
                         //已经选中, 则取消选择
                         pickerViewModel.removeSelectedMedia(loaderMedia)
                     } else {
                         //未选中, 则选择
-                        pickerViewModel.addSelectedMedia(loaderMedia)
+                        try {
+                            if (pickerViewModel.loaderConfig.value?.canSelectorMedia(
+                                    pickerViewModel.selectorMediaList.value!!,
+                                    loaderMedia!!
+                                ) == true
+                            ) {
+                                pickerViewModel.addSelectedMedia(loaderMedia)
+                            } else {
+                                pass = true
+                            }
+                        } catch (e: Exception) {
+                            L.w(e)
+                        }
                     }
 
-                    //之前选中的列表
-                    val oldSelectorList = _adapter.itemSelectorHelper.getSelectorItemList()
-
-                    //当前item选中切换
-                    _adapter.selector().selector(
-                        SelectorParams(
+                    if (pass) {
+                        //播放无法选中的动画
+                        _adapter.notifyItemChanged(
                             this,
-                            (!itemIsSelected).toSelectOption(),
                             payload = listOf(
-                                DslPickerImageItem.PAYLOAD_UPDATE_ANIM,
+                                DslPickerImageItem.PAYLOAD_UPDATE_CANCEL_ANIM,
                                 DslAdapterItem.PAYLOAD_UPDATE_PART
                             )
                         )
-                    )
-                    //更新其他item的索引值
-                    _adapter.updateItems(oldSelectorList, DslAdapterItem.PAYLOAD_UPDATE_PART)
+                    } else {
+                        //之前选中的列表
+                        val oldSelectorList = _adapter.itemSelectorHelper.getSelectorItemList()
+
+                        //当前item选中切换
+                        _adapter.selector().selector(
+                            SelectorParams(
+                                this,
+                                (!itemIsSelected).toSelectOption(),
+                                payload = listOf(
+                                    DslPickerImageItem.PAYLOAD_UPDATE_ANIM,
+                                    DslAdapterItem.PAYLOAD_UPDATE_PART
+                                )
+                            )
+                        )
+                        //更新其他item的索引值
+                        _adapter.updateItems(oldSelectorList, DslAdapterItem.PAYLOAD_UPDATE_PART)
+                    }
                 }
             }).apply {
                 //选中状态
                 itemIsSelected = pickerViewModel.selectorMediaList.value?.contains(data) ?: false
+                (this as? DslPickerImageItem)?.showFileSize =
+                    pickerViewModel.loaderConfig.value?.showFileSize ?: false
             }
         }
     }
