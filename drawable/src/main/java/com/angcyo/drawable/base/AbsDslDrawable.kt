@@ -99,6 +99,14 @@ abstract class AbsDslDrawable : Drawable() {
         return textPaint.alpha
     }
 
+    override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
+        super.setBounds(left, top, right, bottom)
+    }
+
+    override fun setBounds(bounds: Rect) {
+        super.setBounds(bounds)
+    }
+
     //不透明度
     override fun getOpacity(): Int {
         return if (alpha < 255) PixelFormat.TRANSLUCENT else PixelFormat.OPAQUE

@@ -7,9 +7,9 @@ import android.graphics.drawable.Drawable
 import android.view.Gravity
 import com.angcyo.drawable.DslGravity
 import com.angcyo.drawable.base.AbsDslDrawable
-import com.angcyo.library.ex.dp
 import com.angcyo.drawable.textHeight
 import com.angcyo.drawable.textWidth
+import com.angcyo.library.ex.dp
 import kotlin.math.max
 
 /**
@@ -44,6 +44,12 @@ open class DslTextDrawable : AbsDslDrawable() {
     /**偏移纠正*/
     var textOffsetX = 0
     var textOffsetY = 0
+
+    /**设置给[TextView]时, 并不会影响高度, 宽度会影响*/
+    var textPaddingLeft = 0
+    var textPaddingRight = 0
+    var textPaddingTop = 0
+    var textPaddingBottom = 0
 
     /**文本背景*/
     var textBgDrawable: Drawable? = null
@@ -85,8 +91,8 @@ open class DslTextDrawable : AbsDslDrawable() {
                 //绘制文本
                 canvas.drawText(
                     text!!,
-                    textDrawX + textOffsetX,
-                    textDrawY - textPaint.descent() + textOffsetY,
+                    textDrawX + textOffsetX + textPaddingLeft,
+                    textDrawY - textPaint.descent() + textOffsetY + textPaddingTop,
                     textPaint
                 )
             }
@@ -94,10 +100,16 @@ open class DslTextDrawable : AbsDslDrawable() {
     }
 
     override fun getIntrinsicWidth(): Int {
-        return max(textWidth.toInt(), textBgDrawable?.minimumWidth ?: 0)
+        return max(
+            textWidth.toInt(),
+            textBgDrawable?.minimumWidth ?: 0
+        ) + textPaddingLeft + textPaddingRight
     }
 
     override fun getIntrinsicHeight(): Int {
-        return max(textHeight.toInt(), textBgDrawable?.minimumHeight ?: 0)
+        return max(
+            textHeight.toInt(),
+            textBgDrawable?.minimumHeight ?: 0
+        ) + textPaddingTop + textPaddingBottom
     }
 }
