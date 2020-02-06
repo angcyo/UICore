@@ -4,9 +4,9 @@ import android.os.Bundle
 import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.core.R
 import com.angcyo.core.component.DslCrashHandler
-import com.angcyo.core.utils.RUtils
 import com.angcyo.dialog.normalDialog
 import com.angcyo.library.ex.*
+import com.angcyo.library.utils.RUtils
 import com.angcyo.widget.span.span
 
 /**

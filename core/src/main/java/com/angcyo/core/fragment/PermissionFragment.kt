@@ -51,9 +51,9 @@ class PermissionFragment : BaseFragment() {
                         itemLayoutId = R.layout.dsl_item_permission
 
                         onItemBindOverride = { itemHolder, itemPosition, _, _ ->
-                            itemHolder.img(R.id.image_view)
+                            itemHolder.img(R.id.lib_image_view)
                                 ?.setImageResource(permissions[itemPosition].icon)
-                            itemHolder.tv(R.id.text_view)?.text = permissions[itemPosition].des
+                            itemHolder.tv(R.id.lib_text_view)?.text = permissions[itemPosition].des
                         }
                     }
                 }

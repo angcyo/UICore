@@ -68,6 +68,8 @@ class DslLoader {
     var selectionCreator = SelectionCreator()
     var folderCreator = FolderCreator()
 
+    var loaderExif: Boolean = false
+
     var onLoaderStart: () -> Unit = {}
 
     /**加载完成回调*/
@@ -140,31 +142,33 @@ class DslLoader {
                                     this.orientation = orientation
                                 }
 
-                                async {
-                                    try {
-                                        val exif = ExifInterface(uri.fd(_activity)!!)
-                                        exif.latLong?.run {
-                                            latitude = this[0]
-                                            longitude = this[0]
+                                if (loaderExif) {
+                                    async {
+                                        try {
+                                            val exif = ExifInterface(uri.fd(_activity)!!)
+                                            exif.latLong?.run {
+                                                latitude = this[0]
+                                                longitude = this[0]
+                                            }
+                                            val orientationAttr: Int = exif.getAttributeInt(
+                                                ExifInterface.TAG_ORIENTATION,
+                                                ExifInterface.ORIENTATION_NORMAL
+                                            )
+                                            if (orientationAttr == ExifInterface.ORIENTATION_NORMAL || orientationAttr == ExifInterface.ORIENTATION_UNDEFINED) {
+                                                orientation = 0
+                                            } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_90) {
+                                                orientation = 90
+                                            } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_180) {
+                                                orientation = 180
+                                            } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_270) {
+                                                orientation = 270
+                                            }
+                                            loaderMedia.latitude = latitude
+                                            loaderMedia.longitude = longitude
+                                            loaderMedia.orientation = orientation
+                                        } catch (e: Exception) {
+                                            L.w(path, " ", e)
                                         }
-                                        val orientationAttr: Int = exif.getAttributeInt(
-                                            ExifInterface.TAG_ORIENTATION,
-                                            ExifInterface.ORIENTATION_NORMAL
-                                        )
-                                        if (orientationAttr == ExifInterface.ORIENTATION_NORMAL || orientationAttr == ExifInterface.ORIENTATION_UNDEFINED) {
-                                            orientation = 0
-                                        } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_90) {
-                                            orientation = 90
-                                        } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_180) {
-                                            orientation = 180
-                                        } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_270) {
-                                            orientation = 270
-                                        }
-                                        loaderMedia.latitude = latitude
-                                        loaderMedia.longitude = longitude
-                                        loaderMedia.orientation = orientation
-                                    } catch (e: Exception) {
-                                        L.w(path, " ", e)
                                     }
                                 }
 

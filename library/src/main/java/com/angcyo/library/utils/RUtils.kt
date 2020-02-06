@@ -1,4 +1,4 @@
-package com.angcyo.core.utils
+package com.angcyo.library.utils
 
 import android.app.Activity
 import android.content.ActivityNotFoundException

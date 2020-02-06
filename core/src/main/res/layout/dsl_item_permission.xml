@@ -15,16 +15,16 @@
         android:paddingRight="@dimen/lib_xxhdpi">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image_view"
+            android:id="@+id/lib_image_view"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            app:layout_constraintBottom_toTopOf="@id/text_view"
+            app:layout_constraintBottom_toTopOf="@id/lib_text_view"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_view"
+            android:id="@+id/lib_text_view"
             style="@style/LibSubTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/image_view" />
+            app:layout_constraintTop_toBottomOf="@id/lib_image_view" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

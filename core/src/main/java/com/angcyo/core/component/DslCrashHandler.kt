@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.Intent
 import com.angcyo.DslAHelper
 import com.angcyo.core.component.file.DslFileHelper
-import com.angcyo.core.utils.Device
 import com.angcyo.library.L
 import com.angcyo.library.ex.hawkGet
 import com.angcyo.library.ex.hawkPut
 import com.angcyo.library.ex.nowTimeString
+import com.angcyo.library.utils.Device
 import java.io.BufferedWriter
 import java.io.PrintWriter
 import java.io.StringWriter

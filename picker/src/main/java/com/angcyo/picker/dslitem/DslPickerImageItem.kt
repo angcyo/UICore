@@ -137,7 +137,7 @@ open class DslPickerImageItem : DslAdapterItem() {
                     }
                     appendSpace(6 * dpi)
                     //不足1秒的取1秒
-                    val duration = max(loaderMedia!!.duration, 1_000)
+                    val duration = max(loaderMedia?.duration ?: 0, 1_000)
                     append(
                         duration.toElapsedTime(
                             pattern = intArrayOf(-1, 1, 1),
