@@ -206,6 +206,10 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(allModule.core)
+
+    //https://stackoverflow.com/questions/51957944/android-view-viewonunhandledkeyeventlistener
+    //https://github.com/DonaldDu/FixUnhandledEvent/
+    debugImplementation 'com.github.DonaldDu:FixUnhandledEvent:1.0'
 }
 
 apply from: allGradle.version

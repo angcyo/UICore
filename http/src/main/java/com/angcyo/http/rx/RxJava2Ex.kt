@@ -1,6 +1,5 @@
 package com.angcyo.http.rx
 
-import com.angcyo.http.post
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -33,14 +32,6 @@ import io.reactivex.schedulers.Schedulers
  * @date 2019/12/25
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-
-fun rxJavaTest() {
-    post {
-        url = "https://www.mxnzp.com/api/tools/system/time"
-//        url = "https://blog.csdn.net/sinat_31057219/article/details/101304867/"
-//        url = "https://www.baidu.com"
-    }.observer(BaseObserver())
-}
 
 /**使用Rx调度后台线程, 主线程切换*/
 fun <T> runRx(backAction: () -> T, mainAction: (T) -> Unit = {}): Disposable {
