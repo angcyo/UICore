@@ -1,6 +1,7 @@
 package com.angcyo.core
 
 import android.content.Context
+import androidx.collection.ArrayMap
 import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.interceptor.LogFileInterceptor
@@ -15,6 +16,10 @@ import me.weishu.reflection.Reflection
  */
 
 open class CoreApplication : LibApplication() {
+
+    /**[Application]的单例模式*/
+    val objHold = ArrayMap<Class<*>, Any>()
+
     override fun onCreate() {
         super.onCreate()
         DslFileHelper.init(this)
@@ -30,5 +35,16 @@ open class CoreApplication : LibApplication() {
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         Reflection.unseal(base)
+    }
+
+    /**存储对象*/
+    fun hold(obj: Any) {
+        objHold[obj::class.java] = obj
+    }
+
+    /**获取对象*/
+    @Throws(NullPointerException::class)
+    fun <Obj> holdGet(obj: Class<*>): Obj {
+        return objHold[obj::class.java] as Obj
     }
 }

@@ -1,0 +1,21 @@
+apply from: allGradle.libBase
+//apply plugin: "kotlin-kapt"
+
+dependencies {
+    implementation project(allModule.coroutine)
+
+    //https://mvnrepository.com/artifact/androidx.fragment
+    implementation "androidx.fragment:fragment:1.2.0"
+
+    //https://mvnrepository.com/artifact/androidx.lifecycle
+
+    //https://developer.android.google.cn/jetpack/androidx/releases/lifecycle
+    def lifecycle_version = "2.2.0"
+
+    api "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    api "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+
+    //2.2.0之后, 此库已废弃
+    //api "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    //kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+}

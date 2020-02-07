@@ -47,9 +47,7 @@ fun EditText.isPasswordType(): Boolean {
     return passwordInputType || webPasswordInputType || numberPasswordInputType
 }
 
-/**
- * 判断string是否是手机号码
- */
+/** 判断string是否是手机号码 */
 fun EditText.isPhone(regex: String = "^1[3-9]\\d{9}$"): Boolean {
     val string = string()
     if (TextUtils.isEmpty(string)) {
@@ -58,9 +56,7 @@ fun EditText.isPhone(regex: String = "^1[3-9]\\d{9}$"): Boolean {
     return string.matches(regex.toRegex())
 }
 
-/**
- * 返回结果表示是否为空
- */
+/** 返回结果表示是否为空, true:空 */
 fun EditText.checkEmpty(phoneRegex: String? = null): Boolean {
     if (isEmpty()) {
         error()
@@ -155,7 +151,6 @@ fun EditText.onTextChange(
 }
 
 //</editor-fold desc="事件监听">
-
 
 fun EditText.setInputText(text: CharSequence?) {
     setText(text)

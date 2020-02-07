@@ -8,7 +8,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import com.angcyo.base.getAllValidityFragment
-import com.angcyo.behavior.HideTitleBarBehavior
+import com.angcyo.behavior.placeholder.TitleBarPlaceholderBehavior
 import com.angcyo.behavior.refresh.RefreshBehavior
 import com.angcyo.behavior.refresh.RefreshHeaderBehavior
 import com.angcyo.core.R
@@ -182,7 +182,8 @@ abstract class BaseTitleFragment : BaseFragment() {
     /**根据[child]创建对应的[Behavior]*/
     open fun onCreateBehavior(child: View): CoordinatorLayout.Behavior<*>? {
         return when (child.id) {
-            R.id.lib_title_wrap_layout -> HideTitleBarBehavior(fContext())
+            //HideTitleBarBehavior(fContext())
+            R.id.lib_title_wrap_layout -> TitleBarPlaceholderBehavior(fContext())
             R.id.lib_content_wrap_layout -> RefreshBehavior(fContext())
             R.id.lib_refresh_wrap_layout -> if (enableRefresh) {
                 ArcLoadingHeaderBehavior(fContext())

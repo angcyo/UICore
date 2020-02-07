@@ -294,6 +294,9 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
                 return
             }
 
+            //如果需要显示的Fragment在移除列表中
+            removeFragmentList.removeAll(showFragmentList)
+
             //一顿操作之后, 最终fm中, 应该有的Fragment列表
             val fmFragmentList = mutableListOf<Fragment>()
 
