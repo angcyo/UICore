@@ -136,7 +136,7 @@ fun FragmentManager.dslFHelper(config: DslFHelper.() -> Unit) {
 }
 
 /**打印[fragments]*/
-fun FragmentManager.log() {
+fun FragmentManager.log(): String {
     val builder = StringBuilder()
 
     fragments.forEachIndexed { index, fragment ->
@@ -154,7 +154,9 @@ fun FragmentManager.log() {
         builder.append("no fragment to log.")
     }
 
-    L.w(builder.toString())
+    return builder.toString().apply {
+        L.w(this)
+    }
 }
 
 fun Int.toVisibilityString(): String {
@@ -163,4 +165,30 @@ fun Int.toVisibilityString(): String {
         View.GONE -> "GONE"
         else -> "VISIBLE"
     }
+}
+
+/**查找[RootView]对应的[Fragment]*/
+fun FragmentManager.findFragmentByView(view: View): Fragment? {
+    return fragments.find { it.view == view }
+}
+
+/**
+ * 查找锚点处, 前一个有效的 Fragment
+ * 如果锚点为null, 那么查找最后一个有效的Fragment
+ */
+fun FragmentManager.findBeforeFragment(anchor: Fragment? = null): Fragment? {
+    var isFindAnchor = anchor == null
+    var fragment: Fragment? = null
+    for (i in fragments.indices.reversed()) {
+        val f = fragments[i]
+        if (isFindAnchor) {
+            if (f.isAdded && f.view != null) {
+                fragment = f
+                break
+            }
+        } else {
+            isFindAnchor = anchor === f
+        }
+    }
+    return fragment
 }

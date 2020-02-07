@@ -10,7 +10,7 @@ import java.util.*
  * @date 2020/01/29
  */
 object LTime {
-    val stack = Stack<Long>()
+    private val stack = Stack<Long>()
 
     /**记录时间*/
     fun tick() {

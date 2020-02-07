@@ -4,6 +4,7 @@ import androidx.annotation.IdRes
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 import com.angcyo.tablayout.DslTabLayout
+import com.angcyo.widget.base.checkEmpty
 import com.angcyo.widget.edit.AutoCompleteEditText
 import com.angcyo.widget.edit.DslEditText
 import com.angcyo.widget.image.DslImageView
@@ -54,6 +55,17 @@ fun DslViewHolder._et(@IdRes id: Int): DslEditText? {
 
 fun DslViewHolder._ev(@IdRes id: Int): DslEditText? {
     return v(id)
+}
+
+fun DslViewHolder.checkEmpty(@IdRes vararg ids: Int): Boolean {
+    var empty = false
+    for (id in ids) {
+        if (ev(id)?.checkEmpty() == true) {
+            empty = true
+            break
+        }
+    }
+    return empty
 }
 
 fun DslViewHolder._img(@IdRes id: Int): DslImageView? {

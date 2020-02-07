@@ -7,11 +7,9 @@ import android.annotation.TargetApi
 import android.os.Build
 import android.view.View
 import android.view.ViewAnimationUtils
-import android.view.animation.Animation
-import android.view.animation.Interpolator
-import android.view.animation.LinearInterpolator
-import android.view.animation.RotateAnimation
+import android.view.animation.*
 import com.angcyo.library.ex.c
+import com.angcyo.widget.base.Anim.ANIM_DURATION
 
 /**
  *
@@ -20,6 +18,11 @@ import com.angcyo.library.ex.c
  * @date 2019/12/20
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
+
+object Anim {
+    /**动画默认时长*/
+    const val ANIM_DURATION = 300L
+}
 
 fun anim(from: Int, to: Int, config: AnimatorConfig.() -> Unit = {}): ValueAnimator {
     return _animator(ValueAnimator.ofInt(from, to), config)
@@ -32,7 +35,7 @@ fun anim(from: Float, to: Float, config: AnimatorConfig.() -> Unit = {}): ValueA
 fun _animator(animator: ValueAnimator, config: AnimatorConfig.() -> Unit = {}): ValueAnimator {
     val animatorConfig = AnimatorConfig()
 
-    animator.duration = 300
+    animator.duration = ANIM_DURATION
     animator.interpolator = LinearInterpolator()
     animator.addUpdateListener {
         animatorConfig.onAnimatorUpdateValue(it.animatedValue, it.animatedFraction)
@@ -62,7 +65,7 @@ class AnimatorConfig {
 fun View.scale(
     from: Float,
     to: Float,
-    duration: Long = 300,
+    duration: Long = ANIM_DURATION,
     interpolator: Interpolator = LinearInterpolator(),
     onEnd: () -> Unit = {}
 ): ValueAnimator {
@@ -84,7 +87,7 @@ fun View.scale(
 fun View.translationX(
     from: Float,
     to: Float,
-    duration: Long = 300,
+    duration: Long = ANIM_DURATION,
     interpolator: Interpolator = LinearInterpolator(),
     onEnd: () -> Unit = {}
 ): ValueAnimator {
@@ -104,7 +107,7 @@ fun View.translationX(
 fun View.translationY(
     from: Float,
     to: Float,
-    duration: Long = 300,
+    duration: Long = ANIM_DURATION,
     interpolator: Interpolator = LinearInterpolator(),
     onEnd: () -> Unit = {}
 ): ValueAnimator {
@@ -125,7 +128,7 @@ fun View.translationY(
 fun View.rotateAnimation(
     fromDegrees: Float = 0f,
     toDegrees: Float = 360f,
-    duration: Long = 300,
+    duration: Long = ANIM_DURATION,
     interpolator: Interpolator = LinearInterpolator(),
     config: RotateAnimation.() -> Unit = {},
     onEnd: (animation: Animation) -> Unit = {}
@@ -198,7 +201,7 @@ data class RevealConfig(
 fun View.bgColorAnimator(
     from: Int,
     to: Int,
-    duration: Long = 300,
+    duration: Long = ANIM_DURATION,
     onEnd: (cancel: Boolean) -> Unit = {},
     config: ValueAnimator.() -> Unit = {}
 ) {
@@ -218,4 +221,35 @@ fun View.bgColorAnimator(
     colorAnimator.duration = duration
     colorAnimator.config()
     colorAnimator.start()
+}
+
+/**
+ * 抖动 放大缩小
+ */
+fun View.scaleAnimator(
+    from: Float = 0.5f,
+    to: Float = 1f,
+    interpolator: Interpolator = BounceInterpolator(),
+    onEnd: () -> Unit = {}
+) {
+    scaleAnimator(from, from, to, to, interpolator, onEnd)
+}
+
+fun View.scaleAnimator(
+    fromX: Float = 0.5f,
+    fromY: Float = 0.5f,
+    toX: Float = 1f,
+    toY: Float = 1f,
+    interpolator: Interpolator = BounceInterpolator(),
+    onEnd: () -> Unit = {}
+) {
+    scaleX = fromX
+    scaleY = fromY
+    animate()
+        .scaleX(toX)
+        .scaleY(toY)
+        .setInterpolator(interpolator)
+        .setDuration(ANIM_DURATION)
+        .withEndAction { onEnd() }
+        .start()
 }

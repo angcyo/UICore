@@ -4,5 +4,5 @@ dependencies {
     implementation project(allModule.widget)
 
     //doOnPreDraw
-    implementation 'androidx.core:core-ktx:1.1.0'
+    implementation 'androidx.core:core-ktx:1.2.0'
 }
