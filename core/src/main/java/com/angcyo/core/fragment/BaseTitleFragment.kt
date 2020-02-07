@@ -128,6 +128,7 @@ abstract class BaseTitleFragment : BaseFragment() {
             _vh.group(R.id.lib_content_wrap_layout)
                 ?.replace(DslSoftInputLayout(fContext()).apply {
                     id = R.id.lib_soft_input_layout
+                    handlerMode = DslSoftInputLayout.MODE_CONTENT_HEIGHT
                 })
             _inflateTo(R.id.lib_soft_input_layout, contentLayoutId)
         } else {

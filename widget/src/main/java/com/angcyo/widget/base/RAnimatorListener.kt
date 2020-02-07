@@ -15,7 +15,7 @@ open class RAnimatorListener : Animator.AnimatorListener {
 
     var onAnimatorFinish: (animator: Animator, fromCancel: Boolean) -> Unit =
         { animator, fromCancel ->
-            onAnimatorFinish(animator, fromCancel)
+            _onAnimatorFinish(animator, fromCancel)
         }
 
     override fun onAnimationRepeat(animation: Animator) {
@@ -39,7 +39,7 @@ open class RAnimatorListener : Animator.AnimatorListener {
         isCancel = false
     }
 
-    open fun onAnimatorFinish(animator: Animator, fromCancel: Boolean) {
+    open fun _onAnimatorFinish(animator: Animator, fromCancel: Boolean) {
 
     }
 

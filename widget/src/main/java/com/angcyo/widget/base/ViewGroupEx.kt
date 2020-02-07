@@ -277,6 +277,7 @@ fun <T : View> ViewGroup.append(view: T?, action: T.() -> Unit = {}): View {
     return view ?: this
 }
 
+/**清空之前所有视图, 使用[layoutId]重新渲染*/
 fun ViewGroup.replace(@LayoutRes layoutId: Int, attachToRoot: Boolean = true): View {
     if (childCount > 0) {
         removeAllViews()
@@ -284,6 +285,7 @@ fun ViewGroup.replace(@LayoutRes layoutId: Int, attachToRoot: Boolean = true): V
     return inflate(layoutId, attachToRoot)
 }
 
+/**将之前所有视图, 添加到新的[viewGroup]*/
 fun ViewGroup.replace(viewGroup: ViewGroup): ViewGroup {
     val childList = mutableListOf<View>()
 

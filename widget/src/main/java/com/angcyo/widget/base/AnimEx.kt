@@ -209,8 +209,8 @@ fun View.bgColorAnimator(
         setBackgroundColor(color)
     }
     colorAnimator.addListener(object : RAnimatorListener() {
-        override fun onAnimatorFinish(animator: Animator, fromCancel: Boolean) {
-            super.onAnimatorFinish(animator, fromCancel)
+        override fun _onAnimatorFinish(animator: Animator, fromCancel: Boolean) {
+            super._onAnimatorFinish(animator, fromCancel)
             onEnd(fromCancel)
         }
     })

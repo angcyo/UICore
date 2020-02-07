@@ -10,9 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.FrameLayout
-import com.angcyo.library.ex.dpi
 import com.angcyo.library.L
 import com.angcyo.library.ex.append
+import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
 import com.angcyo.widget.base.anim
 import com.angcyo.widget.base.hideSoftInput
@@ -577,6 +577,7 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     fun _notifyListenerEnd(action: Int, height: Int, oldHeight: Int) {
+        L.d(action.softAction(), " $oldHeight -> ", height)
         softInputListener.forEach {
             it.onSoftInputChangeEnd(action, height, oldHeight)
         }
