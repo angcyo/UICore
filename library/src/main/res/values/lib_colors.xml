@@ -7,6 +7,8 @@
     <!--伪造出来的状态栏颜色-->
     <color name="lib_status_bar_dim">#20000000</color>
 
+    <color name="lib_tran_dark">#80000000</color>
+
     <!--全透明-->
     <color name="transparent">#00000000</color>
     <color name="transparent10">#1A000000</color>

@@ -16,12 +16,6 @@ import com.angcyo.widget.base.clickIt
  */
 abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(context) {
 
-    /**
-     * 显示dialog的类型
-     * [AppCompatDialog] [AlertDialog] [BottomSheetDialog]
-     * */
-    var dialogType = DIALOG_TYPE_APPCOMPAT
-
     init {
         positiveButtonText = "确定"
         negativeButtonText = "取消"
@@ -93,15 +87,6 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
             neutralButtonText == null
         ) {
             dialogViewHolder.view(R.id.dialog_control_layout)?.visibility = View.GONE
-        }
-    }
-
-    /**根据类型, 自动显示对应[Dialog]*/
-    fun show(): Dialog {
-        return when (dialogType) {
-            DIALOG_TYPE_ALERT_DIALOG -> showAlertDialog()
-            DIALOG_TYPE_BOTTOM_SHEET_DIALOG -> showSheetDialog()
-            else -> showCompatDialog()
         }
     }
 }

@@ -60,7 +60,7 @@ open class DslAdapterStatusItem : BaseDslStateItem() {
                     itemDslAdapter?.setAdapterStatus(ADAPTER_STATUS_LOADING)
                 }
             }
-            itemHolder.click(R.id.base_retry_button) {
+            itemHolder.click(R.id.lib_retry_button) {
                 itemHolder.clickView(itemHolder.itemView)
             }
         } else if (itemState == ADAPTER_STATUS_LOADING) {

@@ -30,6 +30,8 @@ open class DslDialogConfig(var context: Context? = null) {
 
     companion object {
 
+        /**最普通的对话框*/
+        const val DIALOG_TYPE_DIALOG = 0
         const val DIALOG_TYPE_APPCOMPAT = 1
         const val DIALOG_TYPE_ALERT_DIALOG = 2
         /**需要[material]库支持*/
@@ -136,6 +138,13 @@ open class DslDialogConfig(var context: Context? = null) {
      */
     @StyleRes
     var animStyleResId: Int = R.style.LibDialogAnimation
+
+    /**
+     * 显示dialog的类型
+     * [AppCompatDialog] [AlertDialog] [BottomSheetDialog]
+     * */
+    var dialogType = DIALOG_TYPE_APPCOMPAT
+
     /**
      * 系统默认3个按钮设置
      */
@@ -328,9 +337,7 @@ open class DslDialogConfig(var context: Context? = null) {
     open fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
     }
 
-    /**
-     * AppCompatDialog -> AlertDialog
-     */
+    /** Dialog -> AppCompatDialog -> AlertDialog */
     @Throws
     fun showAlertDialog(): AlertDialog {
         if (context == null) {
@@ -373,9 +380,7 @@ open class DslDialogConfig(var context: Context? = null) {
         return alertDialog
     }
 
-    /**
-     * AppCompatDialog -> BottomSheetDialog
-     */
+    /** Dialog -> AppCompatDialog -> BottomSheetDialog */
     fun showSheetDialog(): Dialog {
         if (context == null) {
             throw NullPointerException("context is null.")
@@ -391,9 +396,7 @@ open class DslDialogConfig(var context: Context? = null) {
         }
     }
 
-    /**
-     * Dialog -> AppCompatDialog
-     */
+    /** Dialog -> AppCompatDialog */
     @Throws
     fun showCompatDialog(): AppCompatDialog {
         if (context == null) {
@@ -402,6 +405,26 @@ open class DslDialogConfig(var context: Context? = null) {
         val dialog = AppCompatDialog(context)
         showAndConfigDialog(dialog)
         return dialog
+    }
+
+    /** Dialog */
+    fun showDialog(): Dialog {
+        if (context == null) {
+            throw NullPointerException("context is null.")
+        }
+        val dialog = Dialog(context!!)
+        showAndConfigDialog(dialog)
+        return dialog
+    }
+
+    /**根据类型, 自动显示对应[Dialog]*/
+    fun show(): Dialog {
+        return when (dialogType) {
+            DIALOG_TYPE_DIALOG -> showDialog()
+            DIALOG_TYPE_ALERT_DIALOG -> showAlertDialog()
+            DIALOG_TYPE_BOTTOM_SHEET_DIALOG -> showSheetDialog()
+            else -> showCompatDialog()
+        }
     }
 }
 

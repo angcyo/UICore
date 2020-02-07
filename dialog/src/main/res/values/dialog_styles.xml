@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!--缩放动画-->
     <style name="LibDialogAnimation" parent="Animation.AppCompat.Dialog">
         <item name="android:windowEnterAnimation">@anim/lib_dialog_enter_animation</item>
         <item name="android:windowExitAnimation">@anim/lib_dialog_exit_animation</item>
     </style>
 
-    <style name="LibDialogInputAnimation" parent="Animation.AppCompat.Dialog">
+    <!--底部Translate动画-->
+    <style name="LibDialogBottomTranslateAnimation" parent="Animation.AppCompat.Dialog">
         <item name="android:windowEnterAnimation">@anim/lib_dialog_input_enter_animation</item>
         <item name="android:windowExitAnimation">@anim/lib_dialog_input_exit_animation</item>
     </style>
 
+    <style name="LibDialogInputAnimation" parent="LibDialogBottomTranslateAnimation">
+        <item name="android:windowEnterAnimation">@anim/lib_dialog_input_enter_animation</item>
+        <item name="android:windowExitAnimation">@anim/lib_dialog_input_exit_animation</item>
+    </style>
+
+    <!--顶部Translate动画-->
     <style name="LibPopupAnimation" parent="Animation.AppCompat.DropDownUp">
         <item name="android:windowEnterAnimation">@anim/lib_popup_enter_animation</item>
         <item name="android:windowExitAnimation">@anim/lib_popup_exit_animation</item>
@@ -18,6 +26,12 @@
 
     <style name="LibFullPopupAnimation" parent="Animation.AppCompat.DropDownUp">
         <item name="android:windowExitAnimation">@anim/lib_full_popup_exit_animation</item>
+    </style>
+
+    <!--底部Translate动画-->
+    <style name="LibDialogAlphaAnimation" parent="Animation.AppCompat.Dialog">
+        <item name="android:windowEnterAnimation">@anim/lib_dialog_alpha_enter_animation</item>
+        <item name="android:windowExitAnimation">@anim/lib_dialog_alpha_exit_animation</item>
     </style>
 
 </resources>
