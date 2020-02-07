@@ -62,7 +62,9 @@ abstract class BaseTitleFragment : BaseFragment() {
     var fragmentTitle: CharSequence? = null
         set(value) {
             field = value
-            _vh.tv(R.id.lib_title_text_view)?.text = value
+            if (isAdded) {
+                _vh.tv(R.id.lib_title_text_view)?.text = value
+            }
         }
 
     var fragmentUI: FragmentUI? = null
