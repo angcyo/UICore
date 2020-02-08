@@ -1,5 +1,6 @@
 package com.angcyo.library.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
@@ -8,6 +9,7 @@ import android.graphics.Rect
 import android.os.Build
 import android.os.Environment
 import android.os.StatFs
+import android.telephony.TelephonyManager
 import android.text.format.Formatter
 import android.view.View
 import android.view.Window
@@ -307,6 +309,17 @@ object Device {
             appendln(getAppString("build_time"))
         }
         return builder
+    }
+
+    /**
+     * @param context 上下文
+     * @return 返回手机号码 tel number
+     */
+    @SuppressLint("MissingPermission")
+    fun getTelNumber(context: Context): String? {
+        val tm = context
+            .getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        return tm.line1Number
     }
 }
 

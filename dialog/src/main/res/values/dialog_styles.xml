@@ -9,8 +9,8 @@
 
     <!--底部Translate动画-->
     <style name="LibDialogBottomTranslateAnimation" parent="Animation.AppCompat.Dialog">
-        <item name="android:windowEnterAnimation">@anim/lib_dialog_input_enter_animation</item>
-        <item name="android:windowExitAnimation">@anim/lib_dialog_input_exit_animation</item>
+        <item name="android:windowEnterAnimation">@anim/lib_dialog_bottom_enter_animation</item>
+        <item name="android:windowExitAnimation">@anim/lib_dialog_bottom_exit_animation</item>
     </style>
 
     <style name="LibDialogInputAnimation" parent="LibDialogBottomTranslateAnimation">

@@ -254,14 +254,22 @@ fun ViewGroup.inflate(@LayoutRes layoutId: Int, attachToRoot: Boolean = true): V
     if (layoutId == -1) {
         return this
     }
-    return LayoutInflater.from(context).inflate(layoutId, this, attachToRoot)
+    val rootView = LayoutInflater.from(context).inflate(layoutId, this, false)
+    if (attachToRoot) {
+        addView(rootView)
+    }
+    return rootView
 }
 
 fun ViewGroup.append(@LayoutRes layoutId: Int, attachToRoot: Boolean = true): View {
     if (layoutId == -1) {
         return this
     }
-    return LayoutInflater.from(context).inflate(layoutId, this, attachToRoot)
+    val rootView = LayoutInflater.from(context).inflate(layoutId, this, false)
+    if (attachToRoot) {
+        addView(rootView)
+    }
+    return rootView
 }
 
 fun ViewGroup.append(@LayoutRes layoutId: Int, action: View.() -> Unit = {}): View {

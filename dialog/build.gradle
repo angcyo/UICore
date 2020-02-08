@@ -5,4 +5,8 @@ dependencies {
 
     //doOnPreDraw
     implementation 'androidx.core:core-ktx:1.2.0'
+
+    //com.angcyo.dialog.LoadingDialogKt.hideLoading
+    implementation project(allModule.transition)
+
 }

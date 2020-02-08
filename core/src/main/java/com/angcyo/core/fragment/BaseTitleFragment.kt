@@ -1,9 +1,11 @@
 package com.angcyo.core.fragment
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.DrawableRes
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
@@ -12,11 +14,18 @@ import com.angcyo.behavior.placeholder.TitleBarPlaceholderBehavior
 import com.angcyo.behavior.refresh.RefreshBehavior
 import com.angcyo.behavior.refresh.RefreshHeaderBehavior
 import com.angcyo.core.R
+import com.angcyo.core.appendTextItem
 import com.angcyo.core.behavior.ArcLoadingHeaderBehavior
+import com.angcyo.library.ex.colorFilter
+import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslGroupHelper
+import com.angcyo.widget.base.clickIt
+import com.angcyo.widget.base.getDrawable
 import com.angcyo.widget.base.replace
 import com.angcyo.widget.base.setBehavior
 import com.angcyo.widget.layout.DslSoftInputLayout
+import com.angcyo.widget.span.span
+import com.angcyo.widget.text.DslTextView
 
 /**
  * 统一标题管理的Fragment,
@@ -242,4 +251,56 @@ abstract class BaseTitleFragment : BaseFragment() {
     }
 
     //</editor-fold desc="操作方法">
+
+    //<editor-fold desc="扩展方法">
+
+    fun DslGroupHelper.appendItem(
+        text: CharSequence? = null,
+        @DrawableRes ico: Int = undefined_res,
+        action: DslTextView.() -> Unit = {},
+        onClick: (View) -> Unit
+    ) {
+        appendTextItem {
+            setTextColor(fragmentConfig.titleItemTextColor)
+            this.text = span {
+
+                if (ico != undefined_res) {
+                    drawable {
+                        backgroundDrawable =
+                            getDrawable(ico).colorFilter(fragmentConfig.titleItemIconColor)
+                    }
+                }
+
+                if (text != null) {
+                    drawable(text) {
+                        textGravity = Gravity.CENTER
+                    }
+                }
+            }
+            clickIt(onClick)
+            this.action()
+        }
+    }
+
+    fun appendLeftItem(
+        text: CharSequence? = null,
+        @DrawableRes ico: Int = undefined_res,
+        action: DslTextView.() -> Unit = {},
+        onClick: (View) -> Unit
+    ) {
+        leftControl()?.appendItem(text, ico, action, onClick)
+    }
+
+    fun appendRightItem(
+        text: CharSequence? = null,
+        @DrawableRes ico: Int = undefined_res,
+        action: DslTextView.() -> Unit = {},
+        onClick: (View) -> Unit
+    ) {
+        rightControl()?.appendItem(text, ico, action, onClick)
+    }
+
+    //</editor-fold desc="扩展方法">
+
+
 }

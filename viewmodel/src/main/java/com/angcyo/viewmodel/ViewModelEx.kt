@@ -1,6 +1,7 @@
 package com.angcyo.viewmodel
 
 import android.app.Activity
+import android.app.Application
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
@@ -17,8 +18,16 @@ import androidx.lifecycle.ViewModelStoreOwner
 
 //<editor-fold desc="返回ViewModelProvider">
 
-fun ViewModelStoreOwner.of(factory: ViewModelProvider.Factory? = null): ViewModelProvider =
-    ViewModelProvider(this, factory ?: ViewModelProvider.NewInstanceFactory())
+fun ViewModelStoreOwner.of(factory: ViewModelProvider.Factory? = null): ViewModelProvider {
+    return if (this is Application) {
+        ViewModelProvider(
+            this,
+            factory ?: ViewModelProvider.AndroidViewModelFactory.getInstance(this)
+        )
+    } else {
+        ViewModelProvider(this, factory ?: ViewModelProvider.NewInstanceFactory())
+    }
+}
 
 //自定义[ViewModelStore]
 

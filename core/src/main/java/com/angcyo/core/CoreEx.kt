@@ -2,7 +2,13 @@ package com.angcyo.core
 
 import android.app.Activity
 import android.app.Application
+import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.angcyo.widget.DslGroupHelper
+import com.angcyo.widget.base.find
+import com.angcyo.widget.text.DslTextView
 
 /**
  *
@@ -33,4 +39,27 @@ inline fun <reified Obj> Fragment.hold(): Obj {
     return (requireActivity().application as CoreApplication).holdGet(Obj::class.java)
 }
 
+/**[CoreApplication]中的[ViewModel]*/
+inline fun <reified VM : ViewModel> Activity.vmCore(): VM {
+    return ViewModelProvider(
+        core() as CoreApplication,
+        ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+    ).get(VM::class.java)
+}
+
+inline fun <reified VM : ViewModel> Fragment.vmCore(): VM {
+    return requireActivity().vmCore()
+}
+
 //</editor-fold desc="Application级别的单例模式">
+
+fun DslGroupHelper.appendTextItem(
+    attachToRoot: Boolean = true,
+    action: DslTextView.() -> Unit
+): View? {
+    return inflate(R.layout.lib_text_layout, attachToRoot) {
+        find<DslTextView>(R.id.lib_text_view)?.apply {
+            this.action()
+        }
+    }
+}

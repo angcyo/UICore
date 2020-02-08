@@ -5,11 +5,14 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
+import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.angcyo.dialog.LoadingDialog.dialogPool
 import com.angcyo.library.L
+import com.angcyo.transition.dslTransition
+import com.angcyo.widget.DslViewHolder
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -23,12 +26,49 @@ object LoadingDialog {
     val dialogPool = Stack<WeakReference<Dialog>>()
 }
 
+//<editor-fold desc="隐藏对话框">
+
 /**隐藏最后一个dialog*/
-fun hideLoading() {
+fun hideLoading(transition: Boolean = false, action: DslViewHolder.() -> Unit = {}) {
     if (dialogPool.isNotEmpty()) {
-        dialogPool.pop().get()?.dismiss()
+        dialogPool.pop().get()?.run {
+            if (transition) {
+                //执行转换
+                window?.decorView?.run {
+                    val dialogViewHolder = DslViewHolder(this)
+
+                    dslTransition(this as ViewGroup) {
+                        onCaptureEndValues = {
+                            dialogViewHolder.action()
+                        }
+                    }
+
+                    dialogViewHolder.postDelay(888) {
+                        dismiss()
+                    }
+                } ?: dismiss()
+            } else {
+                dismiss()
+            }
+        }
     }
 }
+
+/**将对话框的文本改变, 然后延迟关闭*/
+fun hideLoading(text: CharSequence) {
+    hideLoading(true) {
+        tv(R.id.lib_text_view)?.run {
+            this.text = text
+            translationX = -(view(R.id.lib_loading_view)?.measuredWidth?.toFloat() ?: 0f)
+        }
+        invisible(R.id.lib_loading_view)
+        gone(R.id.lib_close_view)
+    }
+}
+
+//</editor-fold desc="隐藏对话框">
+
+//<editor-fold desc="中间转菊花的对话框">
 
 /**显示在中间转菊花*/
 fun Activity.loading(
@@ -50,6 +90,10 @@ fun Fragment.loading(
     activity?.run { loading(this, text, layoutId, config, onCancel) }
 }
 
+//</editor-fold desc="中间转菊花的对话框">
+
+//<editor-fold desc="底部弹出显示的loading对话框">
+
 /**在底部显示的加载对话框*/
 fun Fragment.loading(text: CharSequence = "加载中...", onCancel: (dialog: Dialog) -> Unit = {}) {
     activity?.loading(text, R.layout.lib_dialog_bottom_loading_layout, config = {
@@ -59,6 +103,8 @@ fun Fragment.loading(text: CharSequence = "加载中...", onCancel: (dialog: Dia
         dialogWidth = -1
     }, onCancel = onCancel)
 }
+
+//</editor-fold desc="底部弹出显示的loading对话框">
 
 /**快速显示[loading]对话框*/
 fun loading(
