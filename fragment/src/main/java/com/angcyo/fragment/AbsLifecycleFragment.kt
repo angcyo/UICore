@@ -123,7 +123,7 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
     //<editor-fold desc="高级扩展">
 
     /**快速观察[LiveData]*/
-    fun <T> LiveData<T>.observe(action: (data: T) -> Unit): Observer<T> {
+    fun <T> LiveData<T>.observe(action: (data: T?) -> Unit): Observer<T> {
         val result: Observer<T>
         observe(this@AbsLifecycleFragment, Observer<T> { action(it) }.apply {
             result = this

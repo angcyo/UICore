@@ -55,7 +55,7 @@ fun hideLoading(transition: Boolean = false, action: DslViewHolder.() -> Unit = 
 }
 
 /**将对话框的文本改变, 然后延迟关闭*/
-fun hideLoading(text: CharSequence) {
+fun hideLoading(text: CharSequence?) {
     hideLoading(true) {
         tv(R.id.lib_text_view)?.run {
             this.text = text

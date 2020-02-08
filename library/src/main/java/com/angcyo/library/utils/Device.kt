@@ -312,6 +312,9 @@ object Device {
     }
 
     /**
+     * 需要权限:
+     * android.permission.READ_PHONE_STATE
+     * android.permission.READ_SMS.
      * @param context 上下文
      * @return 返回手机号码 tel number
      */
