@@ -449,6 +449,7 @@ open class DslAdapterItem {
         { fromItem, newItem ->
             when {
                 itemChanging -> false
+                (newItem.itemData != null && this.itemData != null && newItem.itemData == this.itemData) -> true
                 fromItem == null -> this == newItem
                 else -> this != fromItem && this == newItem
             }

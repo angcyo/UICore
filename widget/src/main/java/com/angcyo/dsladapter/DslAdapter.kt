@@ -56,14 +56,14 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
             }
             field?.apply {
                 removeDispatchUpdatesListener(this@DslAdapter)
-                filterInterceptorList.remove(adapterStatusFilterInterceptor)
-                filterInterceptorList.remove(loadMoreFilterInterceptor)
+                beforeFilterInterceptorList.remove(adapterStatusFilterInterceptor)
+                afterFilterInterceptorList.remove(loadMoreFilterInterceptor)
             }
             field = value
             field?.apply {
                 addDispatchUpdatesListener(this@DslAdapter)
-                filterInterceptorList.add(0, adapterStatusFilterInterceptor)
-                filterInterceptorList.add(loadMoreFilterInterceptor)
+                beforeFilterInterceptorList.add(0, adapterStatusFilterInterceptor)
+                afterFilterInterceptorList.add(loadMoreFilterInterceptor)
             }
             updateItemDepend()
         }
