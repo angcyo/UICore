@@ -28,7 +28,7 @@ import com.angcyo.library.L
 import com.angcyo.library.L.d
 import com.angcyo.library.LTime
 import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.name
+import com.angcyo.library.ex.className
 import com.angcyo.tablayout.exactlyMeasure
 import com.angcyo.tablayout.textHeight
 import com.angcyo.widget.R
@@ -473,14 +473,16 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
     /**
      * 多点按下, 是否处理
      */
-    protected fun handleDebugLayout(ev: MotionEvent): Boolean {
+    private fun handleDebugLayout(ev: MotionEvent): Boolean {
         val actionMasked = ev.actionMasked
         val downTime = ev.downTime
         if (actionMasked == MotionEvent.ACTION_DOWN) {
             firstDownTime = downTime
         }
         if (L.debug &&
-            showDebugLayout && actionMasked == MotionEvent.ACTION_POINTER_DOWN && ev.pointerCount == DEBUG_LAYOUT_POINTER
+            showDebugLayout &&
+            actionMasked == MotionEvent.ACTION_POINTER_DOWN &&
+            ev.pointerCount == DEBUG_LAYOUT_POINTER
         ) {
             if (ev.eventTime - firstDownTime < 500) { //快速三指按下才受理操作
                 //debug模式下, 三指按下
@@ -749,7 +751,7 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
 
                     //单独绘制name, 一行显示不下
                     val name =
-                        (fragmentByView?.name() ?: "null") + " " + (canvas.javaClass.simpleName)
+                        (fragmentByView?.className() ?: "null") + " " + (canvas.javaClass.simpleName)
                     val nameHeight = textHeight
                     canvas.drawText(name, 2 * dp, t + nameHeight, debugPaint!!)
 

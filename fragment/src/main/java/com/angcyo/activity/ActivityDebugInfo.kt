@@ -75,7 +75,7 @@ fun Activity.showDebugInfoView(
             textView.setShadowLayer(dp2 * 2, dp2, dp2, Color.BLACK)
 
             textView.text = span {
-                append(this@showDebugInfoView.simpleName()).appendln()
+                append(this@showDebugInfoView.simpleClassName()).appendln()
                 (this@showDebugInfoView as? FragmentActivity)?.supportFragmentManager?.logAllFragment(
                     _builder,
                     false,

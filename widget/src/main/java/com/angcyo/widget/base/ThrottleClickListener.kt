@@ -10,7 +10,7 @@ import android.view.View
  */
 open class ThrottleClickListener(
     val throttle: (lastTime: Long, nowTime: Long, view: View) -> Boolean = { lastTime, nowTime, _ ->
-        nowTime - lastTime < 300
+        (nowTime - lastTime) < 300
     },
     val action: (View) -> Unit = {
 

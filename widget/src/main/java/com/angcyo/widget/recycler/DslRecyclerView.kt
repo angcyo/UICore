@@ -22,6 +22,8 @@ open class DslRecyclerView : RecyclerView {
             value?.run { resetLayoutManager(this) }
         }
 
+    val scrollHelper = ScrollHelper()
+
     constructor(context: Context) : super(context) {
         initAttribute(context)
     }
@@ -30,12 +32,14 @@ open class DslRecyclerView : RecyclerView {
         initAttribute(context, attrs)
     }
 
-    fun initAttribute(context: Context, attributeSet: AttributeSet? = null) {
+    private fun initAttribute(context: Context, attributeSet: AttributeSet? = null) {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.DslRecyclerView)
         typedArray.getString(R.styleable.DslRecyclerView_r_layout_manager)?.let {
             layout = it
         }
         typedArray.recycle()
+
+        scrollHelper.attach(this)
     }
 
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
@@ -55,5 +59,23 @@ open class DslRecyclerView : RecyclerView {
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+    }
+
+    /**
+     * 锁定滚动到目标位置
+     * [position] 目标位置, 负数表示倒数第几个
+     * [duration] 锁定多少毫秒
+     * [config] 自定义配置
+     * */
+    fun lockScroll(
+        position: Int = NO_POSITION,
+        duration: Long = -1,
+        config: ScrollHelper.LockDrawListener .() -> Unit = {}
+    ) {
+        scrollHelper.lockPositionByDraw {
+            lockPosition = position
+            lockDuration = duration
+            config()
+        }
     }
 }

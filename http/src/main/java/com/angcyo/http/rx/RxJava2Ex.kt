@@ -1,5 +1,6 @@
 package com.angcyo.http.rx
 
+import com.angcyo.library.isMain
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -40,4 +41,22 @@ fun <T> runRx(backAction: () -> T, mainAction: (T) -> Unit = {}): Disposable {
     }.subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(mainAction)
+}
+
+/**在主线程回调*/
+fun doMain(action: () -> Unit) {
+    if (isMain()) {
+        action()
+    } else {
+        runRx({ true }, { action() })
+    }
+}
+
+/**在子线程回调*/
+fun doBack(action: () -> Unit) {
+    if (isMain()) {
+        runRx({ action();true })
+    } else {
+        action()
+    }
 }

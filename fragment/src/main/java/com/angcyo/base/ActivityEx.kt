@@ -43,6 +43,10 @@ fun Activity.enableLayoutFullScreen(enable: Boolean = true) {
     }
 }
 
+fun Activity.moveToBack(nonRoot: Boolean = true): Boolean {
+    return moveTaskToBack(nonRoot)
+}
+
 fun Context.getColor(@ColorRes id: Int): Int {
     return ContextCompat.getColor(this, id)
 }

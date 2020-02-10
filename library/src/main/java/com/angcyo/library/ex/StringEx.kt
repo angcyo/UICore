@@ -46,7 +46,26 @@ fun CharSequence?.or(default: CharSequence = "--") =
     if (this.isNullOrEmpty()) default else this
 
 /**将列表连成字符串*/
-fun List<Any?>.connect(
+fun Iterable<*>.connect(
+    divide: CharSequence = "," /*连接符*/,
+    convert: (Any) -> CharSequence? = { it.toString() }
+): CharSequence {
+    return buildString {
+        this@connect.forEach {
+            it?.apply {
+                val charSequence = convert(it)
+                if (charSequence.isNullOrEmpty()) {
+
+                } else {
+                    append(charSequence).append(divide)
+                }
+            }
+        }
+        safe()
+    }
+}
+
+fun Array<*>.connect(
     divide: CharSequence = "," /*连接符*/,
     convert: (Any) -> CharSequence? = { it.toString() }
 ): CharSequence {

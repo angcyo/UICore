@@ -5,7 +5,11 @@ import android.os.Bundle
 import android.view.animation.Animation
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import com.angcyo.core.lifecycle.CompositeDisposableLifecycle
+import com.angcyo.core.lifecycle.CoroutineScopeLifecycle
 import com.angcyo.fragment.AbsLifecycleFragment
+import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.CoroutineScope
 
 /**
  * Created by angcyo on 2018/12/03 23:17
@@ -57,6 +61,7 @@ abstract class BaseFragment : AbsLifecycleFragment() {
         return true
     }
 
+    /**顶层的[Fragment]*/
     fun topFragment(): Fragment {
         val parentFragment = parentFragment
         return if (parentFragment == null) {
@@ -70,9 +75,38 @@ abstract class BaseFragment : AbsLifecycleFragment() {
         }
     }
 
-    fun parentFragmentManager(): FragmentManager? {
-        return topFragment().fragmentManager
+    /**顶层的[FragmentManager]*/
+    fun topFragmentManager(): FragmentManager? {
+        return topFragment().parentFragmentManager
     }
 
     //</editor-fold desc="操作方法">
+
+    //<editor-fold desc="Rx 协程">
+
+    val compositeDisposableLifecycle: CompositeDisposableLifecycle by lazy {
+        CompositeDisposableLifecycle(this)
+    }
+
+    val coroutineScopeLifecycle: CoroutineScopeLifecycle by lazy {
+        CoroutineScopeLifecycle(this)
+    }
+
+    /**管理[Disposable]*/
+    fun Disposable.attach(): Disposable {
+        compositeDisposableLifecycle.add(this)
+        return this
+    }
+
+    /**取消所有[Disposable]*/
+    fun cancelAllDisposable() {
+        compositeDisposableLifecycle.dispose()
+    }
+
+    /**启动一个具有生命周期的协程域*/
+    fun launchLifecycle(block: suspend CoroutineScope.() -> Unit) {
+        coroutineScopeLifecycle.launch(block)
+    }
+
+    //</editor-fold desc="Rx 协程">
 }

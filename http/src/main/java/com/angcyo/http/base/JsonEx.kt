@@ -237,3 +237,7 @@ fun <T> String?.fromJson(classOfT: Class<T>): T? {
         }
     }
 }
+
+inline fun <reified T> String?.fromJson(): T? {
+    return this?.fromJson(T::class.java)
+}

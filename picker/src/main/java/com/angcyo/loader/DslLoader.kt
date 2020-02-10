@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
-import com.angcyo.coroutine.launch
+import com.angcyo.coroutine.launchGlobal
 import com.angcyo.coroutine.onBack
 import com.angcyo.library.L
 import com.angcyo.library.LTime
@@ -91,7 +91,7 @@ class DslLoader {
             override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
                 val count = data?.count ?: 0
                 var allFolder = listOf<LoaderFolder>()
-                launch {
+                launchGlobal {
                     onBack {
                         val allMedias = mutableListOf<LoaderMedia>()
                         if (data != null && count > 0) {

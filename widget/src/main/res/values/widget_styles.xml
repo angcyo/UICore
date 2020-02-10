@@ -8,5 +8,6 @@
         <item name="android:scrollbarStyle">insideOverlay</item>
         <item name="android:scrollbarThumbVertical">@drawable/lib_scroll_bar_thumb_shape</item>
         <item name="android:scrollbars">vertical</item>
+        <item name="r_layout_manager">v</item>
     </style>
 </resources>

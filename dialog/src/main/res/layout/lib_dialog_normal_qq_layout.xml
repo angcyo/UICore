@@ -17,15 +17,13 @@
         android:paddingLeft="@dimen/lib_xxxhdpi"
         android:paddingTop="@dimen/lib_xhdpi"
         android:paddingRight="@dimen/lib_xxxhdpi"
-        android:textSize="@dimen/text_main_size"
-        android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         tools:text="标题标题标题标题标题标题标题标题标题标题标题标题标题标题" />
 
     <com.angcyo.widget.text.DslTextView
         android:id="@+id/message_view"
-        style="@style/LibBodyTextStyle"
+        style="@style/LibSubTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:lineSpacingExtra="4dp"
@@ -55,7 +53,9 @@
         android:layout_height="wrap_content"
         android:background="@drawable/lib_bg_selector"
         android:gravity="center"
-        android:minHeight="40dp"
+        android:minHeight="35dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
         android:textColor="@color/text_general_color"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/positive_button"
@@ -75,15 +75,5 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/negative_button"
         tools:text="确定" />
-
-    <View
-        android:id="@+id/line_view_v"
-        android:layout_width="1px"
-        android:layout_height="0dp"
-        android:background="@color/lib_line"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/negative_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

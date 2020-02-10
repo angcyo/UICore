@@ -23,10 +23,10 @@ fun Any.simpleHash(): String {
     return "${this.javaClass.simpleName}(${this.hash()})"
 }
 
-fun Any.simpleName(): String {
+fun Any.simpleClassName(): String {
     return this.javaClass.simpleName
 }
 
-fun Any.name(): String {
+fun Any.className(): String {
     return this.javaClass.name
 }

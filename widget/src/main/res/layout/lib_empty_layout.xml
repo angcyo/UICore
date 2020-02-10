@@ -10,11 +10,14 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <TextView
+        <com.angcyo.widget.text.DslTextView
+            android:id="@+id/lib_text_view"
+            style="@style/LibMainTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="暂无数据" />
+            android:text="暂无数据"
+            android:textColor="@color/text_place_color" />
     </LinearLayout>
 
 </FrameLayout>

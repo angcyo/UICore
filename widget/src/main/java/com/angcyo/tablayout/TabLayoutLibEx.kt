@@ -84,16 +84,21 @@ fun View.calcLayoutWidthHeight(
     if (TextUtils.isEmpty(rLayoutWidth) && TextUtils.isEmpty(rLayoutHeight)) {
         return size
     }
-    size[0] = calcSize(rLayoutWidth, parentWidth, rLayoutWidthExclude)
-    size[1] = calcSize(rLayoutHeight, parentHeight, rLayoutHeightExclude)
+    size[0] = calcSize(rLayoutWidth, parentWidth, parentHeight, rLayoutWidthExclude)
+    size[1] = calcSize(rLayoutHeight, parentWidth, parentHeight, rLayoutHeightExclude)
     return size
 }
 
-fun View.calcLayoutMaxHeight(rMaxHeight: String?, parentHeight: Int, rHeightExclude: Int = 0): Int {
-    return calcSize(rMaxHeight, parentHeight, rHeightExclude)
+fun View.calcLayoutMaxHeight(
+    rMaxHeight: String?,
+    parentWidth: Int,
+    parentHeight: Int,
+    exclude: Int = 0
+): Int {
+    return calcSize(rMaxHeight, parentWidth, parentHeight, exclude)
 }
 
-fun View.calcSize(exp: String?, pHeight: Int, exclude: Int): Int {
+fun View.calcSize(exp: String?, pWidth: Int, pHeight: Int, exclude: Int): Int {
     var result = -1
     if (!exp.isNullOrBlank()) {
         fun _get(ut: String, height: Int): Boolean {
@@ -128,13 +133,14 @@ fun View.calcSize(exp: String?, pHeight: Int, exclude: Int): Int {
 
         when {
             _get("sh", screenHeight) -> {
-
             }
             _get("ph", pHeight) -> {
-
+            }
+            _get("sw", screenWidth) -> {
+            }
+            _get("pw", pWidth) -> {
             }
             _getDp("dip", dpi) -> {
-
             }
             _getDp("px", 1) -> {
 

@@ -2,7 +2,7 @@ package com.angcyo.core.component.file
 
 import android.content.Context
 import com.angcyo.coroutine.CoroutineErrorHandler
-import com.angcyo.coroutine.launch
+import com.angcyo.coroutine.launchGlobal
 import com.angcyo.library.utils.FileUtils
 import com.angcyo.library.utils.fileName
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +45,7 @@ object DslFileHelper {
         data: String
     ): String? {
         if (async) {
-            launch(Dispatchers.IO + CoroutineErrorHandler()) {
+            launchGlobal(Dispatchers.IO + CoroutineErrorHandler()) {
                 FileUtils.writeExternal(appContext, folder, name, data)
             }
         } else {

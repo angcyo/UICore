@@ -8,8 +8,9 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.AttributeSet
 import android.view.View
-import com.angcyo.tablayout.calcLayoutMaxHeight
+import com.angcyo.tablayout.calcLayoutWidthHeight
 import com.angcyo.tablayout.screenHeight
+import com.angcyo.tablayout.screenWidth
 import com.angcyo.widget.R
 import com.angcyo.widget.base.exactly
 import com.angcyo.widget.base.save
@@ -38,6 +39,12 @@ class RLayoutDelegate {
             view.requestLayout()
         }
 
+    var rMaxWidth: String? = null
+        set(value) {
+            field = value
+            view.requestLayout()
+        }
+
     /**布局蒙层*/
     var maskDrawable: Drawable? = null
         set(value) {
@@ -60,6 +67,7 @@ class RLayoutDelegate {
 
         bDrawable = typedArray.getDrawable(R.styleable.RLayout_r_background)
         rMaxHeight = typedArray.getString(R.styleable.RLayout_r_max_height)
+        rMaxWidth = typedArray.getString(R.styleable.RLayout_r_max_width)
         maskDrawable = typedArray.getDrawable(R.styleable.RLayout_r_layout_mask_drawable)
 
         if (typedArray.hasValue(R.styleable.RLayout_r_clip_to_outline)) {
@@ -100,19 +108,42 @@ class RLayoutDelegate {
 
     /**[rMaxHeight]属性支持*/
     fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val parentWidth = (view.parent as? View)?.measuredWidth ?: 0
         val parentHeight = (view.parent as? View)?.measuredHeight ?: 0
 
-        val maxHeight = view.calcLayoutMaxHeight(
-            rMaxHeight,
+        val maxWidthHeight = view.calcLayoutWidthHeight(
+            rMaxWidth, rMaxHeight,
+            if (parentWidth > 0) parentWidth else view.screenWidth,
             if (parentHeight > 0) parentHeight else view.screenHeight,
-            0
+            0, 0
         )
 
-        if (maxHeight > -1 && view.measuredHeight > maxHeight) {
+        val maxWidth = maxWidthHeight[0]
+        val maxHeight = maxWidthHeight[1]
+
+        val isWidthOut = maxWidth > -1 && view.measuredWidth > maxWidth
+        val isHeightOut = maxHeight > -1 && view.measuredHeight > maxHeight
+
+        if (isWidthOut || isHeightOut) {
+            //宽高有一些项超标
+
             //替换布局参数, 可以提高性能
-            view.layoutParams.height = maxHeight
+            val wSpec = if (isWidthOut) {
+                view.layoutParams.width = maxWidth
+                exactly(maxWidth)
+            } else {
+                widthMeasureSpec
+            }
+
+            val hSpec = if (isHeightOut) {
+                view.layoutParams.height = maxHeight
+                exactly(maxHeight)
+            } else {
+                heightMeasureSpec
+            }
+
             //如果使用重新测量的方式,布局就会每次都至少测量2次
-            view.measure(widthMeasureSpec, exactly(maxHeight))
+            view.measure(wSpec, hSpec)
         }
     }
 }

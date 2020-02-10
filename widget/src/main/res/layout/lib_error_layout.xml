@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:minHeight="50dp"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:minHeight="50dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -11,11 +11,14 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <TextView
+        <com.angcyo.widget.text.DslTextView
+            android:id="@+id/lib_text_view"
+            style="@style/LibMainTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="加载失败, 点击重试" />
+            android:text="加载失败, 点击重试"
+            android:textColor="@color/text_place_color" />
 
     </LinearLayout>
 

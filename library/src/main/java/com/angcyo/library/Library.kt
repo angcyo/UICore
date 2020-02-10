@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
+import android.os.Looper
 import com.angcyo.library.ex.isDebug
 import com.orhanobut.hawk.Hawk
 
@@ -151,3 +152,6 @@ private fun Context.getStatusBarHeight(): Int {
     }
     return result
 }
+
+/**是否是主线程*/
+fun isMain() = Looper.getMainLooper() == Looper.myLooper()

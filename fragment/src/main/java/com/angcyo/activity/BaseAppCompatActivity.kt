@@ -108,19 +108,24 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         if (onBackPressedDispatcher()) {
             dslFHelper {
                 if (back()) {
-                    super.onBackPressed()
+                    onBackPressedInner()
                 }
             }
         }
     }
 
     /**返回true, 表示可以关闭界面*/
-    fun onBackPressedDispatcher(): Boolean {
+    open fun onBackPressedDispatcher(): Boolean {
         if (onBackPressedDispatcher.hasEnabledCallbacks()) {
             onBackPressedDispatcher.onBackPressed()
             return false
         }
         return true
+    }
+
+    /**整整的关闭界面*/
+    open fun onBackPressedInner() {
+        super.onBackPressed()
     }
 
     /**系统默认的[onActivityResult]触发, 需要在[Fragment]里面调用特用方法启动[Activity]才会触发*/

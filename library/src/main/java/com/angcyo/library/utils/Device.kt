@@ -6,6 +6,8 @@ import android.app.ActivityManager
 import android.content.Context
 import android.graphics.Point
 import android.graphics.Rect
+import android.net.ConnectivityManager
+import android.net.Proxy
 import android.os.Build
 import android.os.Environment
 import android.os.StatFs
@@ -13,13 +15,12 @@ import android.telephony.TelephonyManager
 import android.text.format.Formatter
 import android.view.View
 import android.view.Window
-import com.angcyo.library.getAppString
-import com.angcyo.library.getAppVersionCode
-import com.angcyo.library.getAppVersionName
-import com.angcyo.library.getStatusBarHeight
+import com.angcyo.library.*
+import com.angcyo.library.ex.connect
 import java.io.BufferedReader
 import java.io.FileReader
 import java.io.IOException
+import java.net.NetworkInterface
 import java.util.*
 import kotlin.math.max
 import kotlin.math.pow
@@ -34,7 +35,7 @@ import kotlin.math.sqrt
  */
 object Device {
 
-    var PSUEDO_ID: String? = null
+    private var PSUEDO_ID: String? = null
 
     //获得独一无二的Psuedo ID
     fun getUniquePsuedoID(): String? {
@@ -70,23 +71,46 @@ object Device {
         return result
     }
 
+    /**sd卡已用空间*/
+    fun getSdUsedBytes(): Long {
+        //SD空间信息
+        val statFs =
+            StatFs(app().getExternalFilesDir("")?.absolutePath ?: app().filesDir.absolutePath)
+        val usedBytes = statFs.totalBytes - statFs.availableBytes
+        return usedBytes
+    }
+
+    /**sd卡可用空间*/
+    fun getSdAvailableBytes(): Long {
+        //SD空间信息
+        val statFs =
+            StatFs(app().getExternalFilesDir("")?.absolutePath ?: app().filesDir.absolutePath)
+        return statFs.availableBytes
+    }
+
+    /**sd卡总空间*/
+    fun getSdTotalBytes(): Long {
+        //SD空间信息
+        val statFs =
+            StatFs(app().getExternalFilesDir("")?.absolutePath ?: app().filesDir.absolutePath)
+        return statFs.totalBytes
+    }
+
     /**
      * 获取当前可用内存，返回数据以字节为单位。
      *
      * @param context 可传入应用程序上下文。
      * @return 当前可用内存单位为B。
      */
-    fun getAvailableMemory(context: Context): Long {
+    fun getAvailableMemory(context: Context = app()): Long {
         val memoryInfo = getMemoryInfo(context)
         return memoryInfo.availMem
     }
 
-    fun getMemoryInfo(context: Context): ActivityManager.MemoryInfo {
-        val am =
-            context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        val memoryInfo = ActivityManager.MemoryInfo()
-        am.getMemoryInfo(memoryInfo)
-        return memoryInfo
+    /**获取总内存大小*/
+    fun getTotalMemory(context: Context = app()): Long {
+        val memoryInfo = getMemoryInfo(context)
+        return memoryInfo.totalMem
     }
 
     /**
@@ -108,6 +132,14 @@ object Device {
             e.printStackTrace()
         }
         return 0
+    }
+
+    fun getMemoryInfo(context: Context): ActivityManager.MemoryInfo {
+        val am =
+            context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val memoryInfo = ActivityManager.MemoryInfo()
+        am.getMemoryInfo(memoryInfo)
+        return memoryInfo
     }
 
     /**
@@ -166,6 +198,7 @@ object Device {
         }
     }
 
+    /**设备信息*/
     fun deviceInfo(context: Context, builder: Appendable): Appendable {
         val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
 
@@ -173,11 +206,13 @@ object Device {
         builder.appendln(getUniquePsuedoID())
         builder.appendln()
         // cpu架构
-        builder.append("CPU ABI: ")
-        builder.appendln(Build.CPU_ABI)
-        //        builder.appendln();
-        builder.append("CPU ABI 2: ")
-        builder.appendln(Build.CPU_ABI2)
+        builder.append("CPU : ")
+//        builder.appendln(Build.CPU_ABI)
+//        //        builder.appendln();
+//        builder.append("CPU ABI 2: ")
+//        builder.appendln(Build.CPU_ABI2)
+        builder.append(Build.SUPPORTED_ABIS.connect("/").toString())
+
         builder.appendln()
         builder.append("memoryClass: ")
         builder.appendln(manager.memoryClass)
@@ -298,6 +333,7 @@ object Device {
         return builder
     }
 
+    /**本地APK编译信息*/
     fun buildString(builder: Appendable): Appendable {
         builder.apply {
             append(getAppVersionName()).append(":").append(getAppVersionCode())
@@ -323,6 +359,65 @@ object Device {
         val tm = context
             .getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
         return tm.line1Number
+    }
+
+    /** 是否使用代理(WiFi状态下的,避免被抓包) */
+    fun isWifiProxy(context: Context = app()): Boolean {
+        return !(proxyInfo(context).isNullOrBlank())
+    }
+
+    /**代理信息*/
+    fun proxyInfo(context: Context = app()): String? {
+        val isIcsOrLater = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH
+        val proxyAddress: String?
+        val proxyPort: Int
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
+                val cm: ConnectivityManager? =
+                    context.getSystemService(ConnectivityManager::class.java)
+                proxyAddress = cm?.defaultProxy?.host
+                proxyPort = cm?.defaultProxy?.port ?: -1
+            }
+            isIcsOrLater -> {
+                proxyAddress = System.getProperty("http.proxyHost")
+                proxyPort = System.getProperty("http.proxyPort")?.toIntOrNull() ?: -1
+            }
+            else -> {
+                proxyAddress = Proxy.getHost(context)
+                proxyPort = Proxy.getPort(context)
+            }
+        }
+        return proxyAddress?.run { "$this:$proxyPort" }
+    }
+
+    /** 是否正在使用VPN */
+    fun isVpnUsed(): Boolean {
+        return !(vpnInfo().isNullOrBlank())
+    }
+
+    /**vpn信息*/
+    fun vpnInfo(): String? {
+        var name: String? = null
+        try {
+            val enumerationList: Enumeration<NetworkInterface>? =
+                NetworkInterface.getNetworkInterfaces()
+            enumerationList?.run {
+                while (hasMoreElements()) {
+                    val network = nextElement()
+                    if (!network.isUp || network.interfaceAddresses.size == 0) {
+                        continue
+                    }
+                    //Log.d("-----", "isVpnUsed() NetworkInterface Name: " + intf.getName());
+                    if ("tun0" == network.name || "ppp0" == network.name) {
+                        //RUtils.saveToSDCard("proxy.log", "isVpnUsed:" + intf.name)
+                        name = network.name// The VPN is up
+                    }
+                }
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+        return name
     }
 }
 

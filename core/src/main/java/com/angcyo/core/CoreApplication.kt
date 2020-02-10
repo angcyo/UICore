@@ -19,7 +19,6 @@ import me.weishu.reflection.Reflection
 
 open class CoreApplication : LibApplication(), ViewModelStoreOwner {
 
-
     override fun onCreate() {
         super.onCreate()
         DslFileHelper.init(this)

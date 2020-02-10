@@ -6,6 +6,7 @@ import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslItemDecoration
 import com.angcyo.dsladapter.HoverItemDecoration
 import com.angcyo.library.L
+import com.angcyo.widget.recycler.DslRecyclerView
 import com.angcyo.widget.recycler.noItemChangeAnim
 
 /**
@@ -22,10 +23,17 @@ open class BaseDslFragment : BaseTitleFragment() {
     /**为[DslAdapterItem]提供基础的分割线功能*/
     var baseDslItemDecoration: DslItemDecoration? = DslItemDecoration()
 
+    /**实时获取[DslRecyclerView]*/
+    val _recyclerView: DslRecyclerView
+        get() = (_vh.rv(R.id.lib_recycler_view) as? DslRecyclerView)
+            ?: DslRecyclerView(fContext()).apply {
+                L.e("注意:访问目标[DslRecyclerView]不存在!")
+            }
+
     /**实时获取[DslAdapter]*/
     val _adapter: DslAdapter
-        get() = (_vh.rv(R.id.lib_recycler_view)?.adapter as? DslAdapter) ?: DslAdapter().apply {
-            L.e("注意:访问目标[DslAdapter]不存在")
+        get() = (_recyclerView.adapter as? DslAdapter) ?: DslAdapter().apply {
+            L.e("注意:访问目标[DslAdapter]不存在!")
         }
 
     override fun onInitFragment() {

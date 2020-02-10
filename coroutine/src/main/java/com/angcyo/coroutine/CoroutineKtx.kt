@@ -20,7 +20,7 @@ fun <T> launchMain(onBack: CoroutineScope.() -> T, onMain: (T) -> Unit = {}): Jo
 }
 
 /**在全局域中启动协程*/
-fun launch(
+fun launchGlobal(
     context: CoroutineContext = Dispatchers.Main + CoroutineErrorHandler(),
     action: suspend CoroutineScope.() -> Unit
 ): Job {
@@ -41,7 +41,7 @@ fun CoroutineScope.launchSafe(
 
 /**
  * 在协程中使用, 用于在[IO]线程中并发
- * [action]内发生的异常,可以在[launch]启动协程时用[CoroutineExceptionHandler]捕捉
+ * [action]内发生的异常,可以在[launchGlobal]启动协程时用[CoroutineExceptionHandler]捕捉
  * [try] [await] 方法也能获取到异常, 但无法阻止异常冒泡
  * */
 fun <T> CoroutineScope.onBack(
@@ -52,7 +52,7 @@ fun <T> CoroutineScope.onBack(
 /**
  * 在协程中使用, 用于在[IO]线程中调度
  * [action]内发生的异常, 需要在内部try捕捉.
- * 或者在[launch]启动协程时用[CoroutineExceptionHandler]捕捉
+ * 或者在[launchGlobal]启动协程时用[CoroutineExceptionHandler]捕捉
  * 并且协程会立即中断,后续代码不会被执行
  * */
 suspend fun <T> onBlock(

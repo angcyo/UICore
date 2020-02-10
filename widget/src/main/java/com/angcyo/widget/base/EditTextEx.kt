@@ -152,7 +152,7 @@ fun EditText.onTextChange(
 
 //</editor-fold desc="事件监听">
 
-fun EditText.setInputText(text: CharSequence?) {
+fun EditText.setInputText(text: CharSequence? = null) {
     setText(text)
     setSelection(text?.length ?: 0)
 }
