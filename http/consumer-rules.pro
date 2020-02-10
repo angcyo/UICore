@@ -1,8 +1,11 @@
+# 保持所有Bean类
+-keep class com.angcyo.**.**Bean {*;}
+#end
+
 
 # https://github.com/ReactiveX/RxJava RxJava3
 # R8 and ProGuard settings
 -dontwarn java.util.concurrent.Flow*
-
 
 
 # https://github.com/square/retrofit

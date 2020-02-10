@@ -9,9 +9,10 @@ import com.angcyo.library.BuildConfig
  * @date 2019/12/19
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-fun isRelease(): Boolean {
-    return BuildConfig.BUILD_TYPE == "release"
-}
+
+fun isRelease(): Boolean = "release".equals(BuildConfig.BUILD_TYPE, true)
+
+fun isDebugType() = "debug".equals(BuildConfig.BUILD_TYPE, true)
 
 fun isDebug() = BuildConfig.DEBUG
 
