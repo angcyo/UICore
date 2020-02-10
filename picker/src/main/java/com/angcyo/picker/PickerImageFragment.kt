@@ -55,15 +55,15 @@ class PickerImageFragment : BaseDslFragment() {
 
         /*选中改变*/
         pickerViewModel.selectorMediaList.observe {
-            if (it.isNotEmpty()) {
-                _vh.enable(R.id.send_button)
-                _vh.tv(R.id.send_button)?.text = span {
-                    append("发送(${it.size}/${loaderConfig?.maxSelectorLimit ?: -1})")
-                }
-            } else {
+            if (it.isNullOrEmpty()) {
                 _vh.enable(R.id.send_button, false)
                 _vh.tv(R.id.send_button)?.text = span {
                     append("发送")
+                }
+            } else {
+                _vh.enable(R.id.send_button)
+                _vh.tv(R.id.send_button)?.text = span {
+                    append("发送(${it.size}/${loaderConfig?.maxSelectorLimit ?: -1})")
                 }
             }
         }
@@ -99,11 +99,18 @@ class PickerImageFragment : BaseDslFragment() {
     }
 
     /**切换显示的文件夹*/
-    fun _switchFolder(folder: LoaderFolder) {
+    fun _switchFolder(folder: LoaderFolder?) {
+        if (folder == null) {
+            return
+        }
         _vh.visible(R.id.folder_layout)
         _vh.tv(R.id.folder_text_view)?.text = folder.folderName
 
-        _adapter.loadSingleData(folder.mediaItemList, 1, Int.MAX_VALUE) { oldItem, data ->
+        _adapter.loadSingleData<DslPickerImageItem>(
+            folder.mediaItemList,
+            1,
+            Int.MAX_VALUE
+        ) { oldItem, data ->
             (oldItem ?: DslPickerImageItem().apply {
                 onGetSelectedIndex = {
                     it?.run {
