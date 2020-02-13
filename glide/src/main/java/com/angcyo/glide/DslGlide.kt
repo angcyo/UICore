@@ -11,8 +11,6 @@ import android.widget.ImageView.ScaleType
 import com.angcyo.http.OkType
 import com.angcyo.library.L
 import com.angcyo.library.app
-import com.angcyo.library.ex.file
-import com.angcyo.library.ex.fileUri
 import com.angcyo.library.ex.isFileExist
 import com.angcyo.library.ex.isHttpScheme
 import com.bumptech.glide.Glide
@@ -225,12 +223,11 @@ class DslGlide {
     fun _load(uri: Uri?, asGif: Boolean = false) {
         clear()
 
-        val url: String? = uri?.toString()
-
         _checkLoad {
             val targetView = targetView!!
 
             if (uri.isHttpScheme()) {
+                val url: String? = uri?.toString()
                 if (asGif) {
                     _glide()
                         .download(GlideUrl(url, _header()))
@@ -243,7 +240,7 @@ class DslGlide {
                             .load(url)
                     } else if (url.isFileExist()) {
                         _glide()
-                            .load(fileUri(targetView.context, url.file()))
+                            .load(url)
                     } else {
                         _glide()
                             .load(GlideUrl(url, _header()))
@@ -252,16 +249,24 @@ class DslGlide {
                         .into(GlideDrawableImageViewTarget(targetView))
                 }
             } else {
+                val path = uri?.path
                 if (asGif) {
                     _glide()
                         .download(uri)
                         .override(Target.SIZE_ORIGINAL)
-                        .configRequest(url, File::class.java)
+                        .configRequest(path, File::class.java)
                         .into(GifDrawableImageViewTarget(targetView, autoPlayGif, transition))
                 } else {
-                    _glide()
-                        .load(uri)
-                        .configRequest(url, Drawable::class.java)
+                    if (path.isFileExist()) {
+                        //优先直接加载路径
+                        _glide()
+                            .load(path)
+                    } else {
+                        //其次加载uri
+                        _glide()
+                            .load(uri)
+                    }
+                        .configRequest(path, Drawable::class.java)
                         .into(GlideDrawableImageViewTarget(targetView))
                 }
             }

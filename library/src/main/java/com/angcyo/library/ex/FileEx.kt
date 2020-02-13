@@ -34,15 +34,17 @@ enum class SizeUnit {
 }
 
 /**文件是否存在*/
-fun String.isFileExist(): Boolean {
+fun String?.isFileExist(): Boolean {
     return try {
+        if (this.isNullOrBlank()) {
+            return false
+        }
         val file = File(this)
         file.exists() && file.canRead()
     } catch (e: Exception) {
         false
     }
 }
-
 
 /**将文件内容, 转移到另一个文件*/
 fun String.transferToFile(filePath: String) {
