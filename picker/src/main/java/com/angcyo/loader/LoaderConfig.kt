@@ -31,6 +31,9 @@ data class LoaderConfig(
     /**显示拍照按钮*/
     var enableCamera: Boolean = true,
 
+    /**图片,解析文件的Exif信息, 耗时操作*/
+    var loaderExif: Boolean = false,
+
     /**指定编辑输出图片的宽度/高度*/
     var outputImageWidth: Int = -1,
     var outputImageHeight: Int = -1,

@@ -3,6 +3,7 @@ package com.angcyo.pager
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.view.View
 import android.widget.ImageView
 import androidx.annotation.IdRes
@@ -12,11 +13,12 @@ import androidx.viewpager.widget.ViewPager
 import com.angcyo.dsladapter.getViewRect
 import com.angcyo.library.ex.copyDrawable
 import com.angcyo.loader.LoaderMedia
-import com.angcyo.loader.loadPath
+import com.angcyo.loader.loadUri
 import com.angcyo.pager.dslitem.IPlaceholderDrawableProvider
+import com.angcyo.picker.R
 import com.angcyo.transition.ColorTransition
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.picker.R
+import com.angcyo.widget.recycler.get
 
 /**
  *
@@ -35,7 +37,8 @@ open class PagerTransitionCallback : ViewTransitionCallback(), ViewPager.OnPageC
     var fromRecyclerView: RecyclerView? = null
 
     /**需要显示的媒体数据*/
-    val loaderMedia = mutableListOf<LoaderMedia>()
+    val loaderMediaList = mutableListOf<LoaderMedia>()
+
     /**开始显示的位置*/
     var startPosition: Int = 0
         set(value) {
@@ -43,19 +46,17 @@ open class PagerTransitionCallback : ViewTransitionCallback(), ViewPager.OnPageC
             _primaryPosition = value
         }
 
+    /**界面加载的[position], 可以并没有一一对应在[RecyclerView]的布局中*/
+    var onPositionConvert: (position: Int) -> Int = { it }
+
     /**获取联动目标的[View]*/
     var onGetFromView: (position: Int) -> View? = { position ->
-        if (fromRecyclerView != null) {
-            (fromRecyclerView?.findViewHolderForAdapterPosition(position)
-                    as? DslViewHolder)?.transitionView() ?: fromView
-        } else {
-            fromView
-        }
+        fromRecyclerView?.get(onPositionConvert(position))?.transitionView() ?: fromView
     }
 
     /**页面切换回调*/
     var onPageChanged: (position: Int) -> Unit = { position ->
-        fromRecyclerView?.scrollToPosition(position)
+        fromRecyclerView?.scrollToPosition(onPositionConvert(position))
     }
 
     /**过渡动画id列表*/
@@ -63,10 +64,10 @@ open class PagerTransitionCallback : ViewTransitionCallback(), ViewPager.OnPageC
     var transitionViewIds = mutableListOf(R.id.lib_image_view)
 
     /**根据[loadUrl]获取占位图*/
-    var onGetPlaceholderDrawable: (loadUrl: String?) -> Drawable? = { loadUrl ->
+    var onGetPlaceholderDrawable: (loadUri: Uri?) -> Drawable? = { loadUri ->
         var result: Drawable? = null
-        loaderMedia.forEachIndexed { index, loaderMedia ->
-            if (loaderMedia.loadPath() == loadUrl) {
+        loaderMediaList.forEachIndexed { index, loaderMedia ->
+            if (loaderMedia.loadUri() == loadUri) {
                 onGetFromView(index)?.apply {
                     if (this is ImageView && this.drawable !is ColorDrawable) {
                         result = this.drawable?.copyDrawable()
@@ -81,15 +82,15 @@ open class PagerTransitionCallback : ViewTransitionCallback(), ViewPager.OnPageC
 
     /**追加媒体*/
     fun addMedia(url: String?) {
-        loaderMedia.add(LoaderMedia(url = url))
+        loaderMediaList.add(LoaderMedia(url = url))
     }
 
     //</editor-fold desc="操作方法">
 
     //<editor-fold desc="内部处理方法">
 
-    override fun getPlaceholderDrawable(loadUrl: String?): Drawable? {
-        return onGetPlaceholderDrawable(loadUrl)
+    override fun getPlaceholderDrawable(loadUri: Uri?): Drawable? {
+        return onGetPlaceholderDrawable(loadUri)
     }
 
     override fun transitionTargetView(viewHolder: DslViewHolder): View? {

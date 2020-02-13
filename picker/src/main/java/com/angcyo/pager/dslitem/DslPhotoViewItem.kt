@@ -1,5 +1,6 @@
 package com.angcyo.pager.dslitem
 
+import android.net.Uri
 import android.view.View
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.glide.loadImage
@@ -20,7 +21,7 @@ open class DslPhotoViewItem : DslAdapterItem() {
         itemLayoutId = R.layout.dsl_photo_view_item
     }
 
-    var imageUrl: String? = null
+    var imageUri: Uri? = null
 
     /**占位图获取*/
     var placeholderDrawableProvider: IPlaceholderDrawableProvider? = null
@@ -48,14 +49,14 @@ open class DslPhotoViewItem : DslAdapterItem() {
         super.onItemBind(itemHolder, itemPosition, adapterItem)
 
         itemHolder.img(R.id.lib_image_view)?.apply {
-            loadImage(imageUrl) {
+            loadImage(imageUri) {
                 //检查gif
                 checkGifType = true
                 //使用原始大小
                 originalSize = true
 
                 //占位图
-                placeholderDrawableProvider?.getPlaceholderDrawable(imageUrl)?.run {
+                placeholderDrawableProvider?.getPlaceholderDrawable(imageUri)?.run {
                     placeholderDrawable = this
                 }
 

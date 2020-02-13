@@ -1,4 +1,6 @@
 apply from: allGradle.libBase
+
+//https://github.com/Kotlin/kotlinx.serialization
 apply plugin: 'kotlin-android-extensions'
 
 android {

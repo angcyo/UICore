@@ -6,7 +6,9 @@ import android.view.ViewGroup
 import androidx.transition.TransitionSet
 import com.angcyo.base.dslFHelper
 import com.angcyo.base.interceptTouchEvent
+import com.angcyo.base.setStatusBarColor
 import com.angcyo.fragment.AbsLifecycleFragment
+import com.angcyo.library.ex.undefined_res
 import com.angcyo.transition.DslTransition
 import com.angcyo.widget.DslViewHolder
 
@@ -19,11 +21,47 @@ import com.angcyo.widget.DslViewHolder
 
 abstract class ViewTransitionFragment : AbsLifecycleFragment() {
 
+    var _oldStartBarColor: Int = undefined_res
+
     /**过渡回调*/
     var transitionCallback: ViewTransitionCallback = ViewTransitionCallback()
 
     /**过渡执行协调*/
     val dslTransition = DslTransition()
+
+    //<editor-fold desc="状态栏颜色恢复">
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        _oldStartBarColor = activity?.window?.statusBarColor ?: _oldStartBarColor
+        if (_oldStartBarColor != undefined_res) {
+            activity?.setStatusBarColor(transitionCallback.startBarColor)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (_oldStartBarColor != undefined_res) {
+            activity?.setStatusBarColor(_oldStartBarColor)
+        }
+    }
+
+    //</editor-fold desc="状态栏颜色恢复">
+
+    //<editor-fold desc="回调方法">
+
+    //拦截默认的返回处理
+    override fun onBackPressed(): Boolean {
+        if (super.onBackPressed()) {
+            backTransition()
+        }
+        return false
+    }
+
+    /**转场动画关闭界面*/
+    open fun backTransition() {
+        startTransition(false)
+    }
 
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)
@@ -33,6 +71,10 @@ abstract class ViewTransitionFragment : AbsLifecycleFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
     }
+
+    //</editor-fold desc="回调方法">
+
+    //<editor-fold desc="转场动画方法">
 
     open fun initTransitionLayout() {
         //防止事件穿透
@@ -64,7 +106,7 @@ abstract class ViewTransitionFragment : AbsLifecycleFragment() {
         transitionCallback.transitionHideFromRect = null
         transitionCallback.transitionHideToRect = null
         activity?.interceptTouchEvent(false)
-        
+
         //真正移除界面
         dslFHelper {
             noAnim()
@@ -72,13 +114,6 @@ abstract class ViewTransitionFragment : AbsLifecycleFragment() {
         }
     }
 
-    //拦截默认的返回处理
-    override fun onBackPressed(): Boolean {
-        if (super.onBackPressed()) {
-            backTransition()
-        }
-        return false
-    }
 
     /**转场动画显示界面*/
     open fun startTransition(start: Boolean) {
@@ -92,11 +127,7 @@ abstract class ViewTransitionFragment : AbsLifecycleFragment() {
         }
     }
 
-    /**转场动画关闭界面*/
-    open fun backTransition() {
-        startTransition(false)
-    }
-
+    //转场配置方法
     open fun _configTransition(start: Boolean, vh: DslViewHolder) {
         dslTransition.apply {
 
@@ -159,4 +190,6 @@ abstract class ViewTransitionFragment : AbsLifecycleFragment() {
             }
         }
     }
+
+    //</editor-fold desc="转场动画方法">
 }

@@ -61,14 +61,12 @@ class DslLoader {
     }
 
     var _loaderManager: LoaderManager? = null
-    var _activity: FragmentActivity? = null
-    var _loaderConfig: LoaderConfig? = null
+    lateinit var _activity: FragmentActivity
+    lateinit var _loaderConfig: LoaderConfig
 
     /**查询语句创建器*/
     var selectionCreator = SelectionCreator()
     var folderCreator = FolderCreator()
-
-    var loaderExif: Boolean = false
 
     var onLoaderStart: () -> Unit = {}
 
@@ -81,8 +79,8 @@ class DslLoader {
             override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
                 onLoaderStart()
                 return CursorLoader(
-                    _activity!!, ALL_QUERY_URI, ALL_PROJECTION,
-                    selectionCreator.createSelection(_loaderConfig!!),
+                    _activity, ALL_QUERY_URI, ALL_PROJECTION,
+                    selectionCreator.createSelection(_loaderConfig),
                     null,
                     MediaStore.Files.FileColumns.DATE_ADDED + " DESC"
                 )
@@ -142,7 +140,7 @@ class DslLoader {
                                     this.orientation = orientation
                                 }
 
-                                if (loaderExif) {
+                                if (loaderMedia.isImage() && _loaderConfig.loaderExif) {
                                     async {
                                         try {
                                             val exif = ExifInterface(uri.fd(_activity)!!)
@@ -176,7 +174,7 @@ class DslLoader {
                                 //L.i(loaderMedia, " ", path.file().canRead())
                             } while (data.moveToNext())
                             L.w("耗时:${LTime.time()} $count")
-                            allFolder = folderCreator.creatorFolder(_loaderConfig!!, allMedias)
+                            allFolder = folderCreator.creatorFolder(_loaderConfig, allMedias)
                         }
                     }.await()
                     onLoaderResult.invoke(allFolder)
@@ -196,8 +194,7 @@ class DslLoader {
         _activity = activity
         _loaderConfig = loaderConfig
         if (_loaderManager == null) {
-            _loaderManager = LoaderManager.getInstance(activity)
-            _loaderManager?.run {
+            _loaderManager = LoaderManager.getInstance(activity).apply {
                 initLoader(LOADER_ID, null, _loaderCallback)
             }
         } else {

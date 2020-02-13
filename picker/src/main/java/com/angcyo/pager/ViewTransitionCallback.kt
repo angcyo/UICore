@@ -18,6 +18,9 @@ import com.angcyo.widget.base.setWidthHeight
 
 open class ViewTransitionCallback {
 
+    /**界面状态栏的颜色*/
+    var startBarColor: Int = Color.TRANSPARENT
+
     /**根布局, 通常也是背景动画视图*/
     var sceneRoot: ViewGroup? = null
 

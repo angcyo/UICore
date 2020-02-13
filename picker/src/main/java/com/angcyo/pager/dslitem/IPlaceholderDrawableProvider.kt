@@ -1,6 +1,7 @@
 package com.angcyo.pager.dslitem
 
 import android.graphics.drawable.Drawable
+import android.net.Uri
 
 /**
  * 根据要加载的Url, 获取对应的缩略图
@@ -10,6 +11,6 @@ import android.graphics.drawable.Drawable
  */
 
 interface IPlaceholderDrawableProvider {
-    /**获取[loadUrl]对应的占位图, 如果有*/
-    fun getPlaceholderDrawable(loadUrl: String?): Drawable?
+    /**获取[loadUri]对应的占位图, 如果有*/
+    fun getPlaceholderDrawable(loadUri: Uri?): Drawable?
 }

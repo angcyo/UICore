@@ -27,9 +27,9 @@ open class DslPickerImageItem : DslAdapterItem() {
 
     companion object {
         //动画更新
-        const val PAYLOAD_UPDATE_ANIM = PAYLOAD_UPDATE_PART shl 1
+        const val PAYLOAD_UPDATE_ANIM = PAYLOAD_UPDATE_PART + 1
         //无法选中的动画更新
-        const val PAYLOAD_UPDATE_CANCEL_ANIM = PAYLOAD_UPDATE_ANIM shl 1
+        const val PAYLOAD_UPDATE_CANCEL_ANIM = PAYLOAD_UPDATE_PART + 2
     }
 
     /**要加载的媒体*/
@@ -91,21 +91,23 @@ open class DslPickerImageItem : DslAdapterItem() {
 
         //局部更新
         val partUpdate = payloads.containsPayload(PAYLOAD_UPDATE_PART)
+        //更新媒体
+        val mediaUpdate = payloads.isEmpty() || payloads.containsPayload(PAYLOAD_UPDATE_MEDIA)
         val animUpdate = payloads.containsPayload(PAYLOAD_UPDATE_ANIM)
-        val canceAnimUpdate = payloads.containsPayload(PAYLOAD_UPDATE_CANCEL_ANIM)
+        val cancelAnimUpdate = payloads.containsPayload(PAYLOAD_UPDATE_CANCEL_ANIM)
 
-        if (!partUpdate) {
-            //model
-            itemHolder.visible(R.id.index_layout, checkModel)
-
+        if (mediaUpdate) {
             //缩略图
             itemHolder.giv(R.id.lib_image_view)?.apply {
                 load(loaderMedia?.loadUri()) {
                     checkGifType = true
                 }
-                setOnClickListener(_clickListener)
-                setOnLongClickListener(_longClickListener)
             }
+        }
+
+        if (!partUpdate) {
+            //model
+            itemHolder.visible(R.id.index_layout, checkModel)
 
             //audio video tip
             itemHolder.gone(R.id.lib_tip_image_view)
@@ -136,8 +138,9 @@ open class DslPickerImageItem : DslAdapterItem() {
                         }
                     }
                     appendSpace(6 * dpi)
+                    val _duration = loaderMedia?.duration ?: 0L
                     //不足1秒的取1秒
-                    val duration = max(loaderMedia?.duration ?: 0, 1_000)
+                    val duration = if (_duration != 0L) max(_duration, 1_000) else 0
                     append(
                         duration.toElapsedTime(
                             pattern = intArrayOf(-1, 1, 1),
@@ -153,6 +156,10 @@ open class DslPickerImageItem : DslAdapterItem() {
             //事件
             itemHolder.click(R.id.index_layout) {
                 onSelectorItem(itemIsSelected)
+            }
+            itemHolder.giv(R.id.lib_image_view)?.apply {
+                setOnClickListener(_clickListener)
+                setOnLongClickListener(_longClickListener)
             }
 
             //索引背景
@@ -216,7 +223,7 @@ open class DslPickerImageItem : DslAdapterItem() {
                 itemHolder.view(R.id.selector_mask_view)
                     ?.bgColorAnimator(_selectorMaskColor, Color.TRANSPARENT)
             }
-        } else if (canceAnimUpdate) {
+        } else if (cancelAnimUpdate) {
             //无法选中的动画
             itemHolder.tv(R.id.index_view)?.run {
                 val duration = _transitionDuration

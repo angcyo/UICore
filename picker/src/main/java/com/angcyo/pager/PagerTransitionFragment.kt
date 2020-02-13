@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.set
 import com.angcyo.loader.loadPath
+import com.angcyo.loader.loadUri
 import com.angcyo.pager.dslitem.DslPhotoViewItem
 import com.angcyo.tablayout.evaluateColor
 import com.angcyo.widget._vp
@@ -100,10 +101,10 @@ open class PagerTransitionFragment : ViewTransitionFragment() {
 
             val items = mutableListOf<DslAdapterItem>()
 
-            pagerTransitionCallback.loaderMedia.forEach {
+            pagerTransitionCallback.loaderMediaList.forEach {
                 items.add(DslPhotoViewItem().apply {
                     itemData = it
-                    imageUrl = it.loadPath()
+                    imageUri = it.loadUri()
 
                     //占位图提供
                     placeholderDrawableProvider = pagerTransitionCallback
@@ -134,7 +135,7 @@ open class PagerTransitionFragment : ViewTransitionFragment() {
     }
 
     fun showOtherView() {
-        if (pagerTransitionCallback.loaderMedia.size > 1) {
+        if (pagerTransitionCallback.loaderMediaList.size > 1) {
             _vh.visible(R.id.lib_text_indicator)
         }
     }

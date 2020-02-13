@@ -124,5 +124,5 @@ fun LoaderMedia.loadUri(): Uri? {
     if (localPath?.isFileExist() == true) {
         return Uri.fromFile(localPath!!.file())
     }
-    return Uri.parse(url)
+    return url?.run { Uri.parse(url) }
 }
