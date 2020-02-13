@@ -9,6 +9,7 @@ import com.angcyo.base.dslFHelper
 import com.angcyo.base.enableLayoutFullScreen
 import com.angcyo.base.getAllValidityFragment
 import com.angcyo.fragment.R
+import com.angcyo.library.L
 import com.angcyo.library.ex.isDebug
 import com.angcyo.widget.DslViewHolder
 
@@ -75,7 +76,7 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
      * @param fromNew [onNewIntent]
      * */
     open fun onHandleIntent(intent: Intent, fromNew: Boolean = false) {
-
+        L.i("new:$fromNew $intent")
     }
 
     //</editor-fold desc="基础方法处理">

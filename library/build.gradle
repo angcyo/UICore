@@ -7,4 +7,8 @@ dependencies {
     //https://github.com/orhanobut/hawk
     //https://jcenter.bintray.com/com/orhanobut/
     api 'com.orhanobut:hawk:2.0.1'
+
+    //[androidx.media.app.NotificationCompat.MediaStyle.MediaStyle()]
+    //https://mvnrepository.com/artifact/androidx.media
+    api "androidx.media:media:1.1.0"
 }

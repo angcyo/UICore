@@ -10,6 +10,7 @@ import com.angcyo.library.ex.mimeType
 import com.angcyo.library.ex.uriConfig
 
 /**
+ * https://developer.android.google.cn/training/sharing
  *
  * Email:angcyo@126.com
  * @author angcyo

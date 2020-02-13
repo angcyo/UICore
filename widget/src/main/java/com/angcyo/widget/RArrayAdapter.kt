@@ -24,6 +24,10 @@ open class RArrayAdapter<T> : ArrayAdapter<T> {
     //用于在下拉window中显示的视图
     var thisDropDownResource: Int
 
+    /**数据类型转换*/
+    var onCharSequenceConvert: (data: T?) -> CharSequence? =
+        { if (it is CharSequence) it else it?.toString() }
+
     constructor(context: Context) : this(context, mutableListOf())
 
     constructor(context: Context, datas: List<T>) : this(
@@ -121,9 +125,7 @@ open class RArrayAdapter<T> : ArrayAdapter<T> {
         position: Int,
         itemBean: T? = null
     ) {
-        if (itemBean is CharSequence) {
-            itemViewHolder.tv(R.id.lib_text_view)?.text = itemBean
-        }
+        itemViewHolder.tv(R.id.lib_text_view)?.text = onCharSequenceConvert(itemBean)
     }
 
     /**
