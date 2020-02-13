@@ -39,6 +39,8 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
         var DEFAULT_REMOVE_EXIT_ANIM = R.anim.lib_translate_x_exit
     }
 
+    //<editor-fold desc="属性">
+
     /**这个列表中的[Fragment]将会被执行[add]操作*/
     val showFragmentList = mutableListOf<Fragment>()
 
@@ -63,6 +65,8 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
 
     @AnimRes
     var exitAnimRes: Int = undefined_res
+
+    //</editor-fold desc="属性">
 
     init {
         //FragmentManager.enableDebugLogging(debug)

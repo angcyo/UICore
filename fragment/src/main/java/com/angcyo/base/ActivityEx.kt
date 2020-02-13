@@ -10,9 +10,13 @@ import android.view.WindowManager
 import androidx.annotation.ColorRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import com.angcyo.DslAHelper
 import com.angcyo.activity.BaseAppCompatActivity
+import com.angcyo.fragment.FragmentBridge
+import com.angcyo.fragment.IFragmentBridge
 import com.angcyo.fragment.R
+import com.angcyo.library.ex.havePermissions
 
 /**
  *
@@ -115,4 +119,29 @@ fun Context.havePermission(permissionList: List<String>): Boolean {
         }
     }
     return have
+}
+
+/**检查或者请求权限*/
+fun FragmentActivity.checkAndRequestPermission(
+    permissions: Array<out String>,
+    onPermissionGranted: () -> Unit = {}
+) {
+    if (havePermissions(permissions)) {
+        onPermissionGranted()
+    } else {
+        //请求权限
+        FragmentBridge.install(supportFragmentManager).run {
+            startRequestPermissions(FragmentBridge.generateCode(), permissions, object :
+                IFragmentBridge {
+                override fun onRequestPermissionsResult(
+                    permissions: Array<out String>,
+                    grantResults: IntArray
+                ) {
+                    if (havePermissions(permissions)) {
+                        onPermissionGranted()
+                    }
+                }
+            })
+        }
+    }
 }
