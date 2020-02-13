@@ -63,9 +63,10 @@ android {
 
         buildConfigField "boolean", "SHOW_DEBUG", "false"
 
-        manifestPlaceholders = [
-                PACKAGE_NAME: "$application_id"
-        ]
+        //可以直接使用 ${applicationId}
+//        manifestPlaceholders = [
+//                PACKAGE_NAME: "$application_id"
+//        ]
 
 //        ndk {
 //            // 设置支持的SO库架构
