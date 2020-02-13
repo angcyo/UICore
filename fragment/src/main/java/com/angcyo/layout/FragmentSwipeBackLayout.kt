@@ -1,4 +1,4 @@
-package com.angcyo.fragment
+package com.angcyo.layout
 
 import android.app.Activity
 import android.content.Context
@@ -24,6 +24,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.base.*
+import com.angcyo.fragment.IFragment
 import com.angcyo.library.L
 import com.angcyo.library.L.d
 import com.angcyo.library.LTime
