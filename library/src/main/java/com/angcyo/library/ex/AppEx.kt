@@ -64,6 +64,8 @@ fun installApk(context: Context, file: File?) {
 
 fun fileUri(context: Context, file: File): Uri {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        //content://com.angcyo.uicore.demo/sdcard/Android/data/com.angcyo.uicore.demo/files/demo/camera/2020-02-13_15-02-38-993.jpeg
+        //scheme:content
         FileProvider.getUriForFile(context, context.packageName, file).run {
             context.grantUriPermission(
                 context.packageName, this,
@@ -72,6 +74,14 @@ fun fileUri(context: Context, file: File): Uri {
             this
         }
     } else {
+        //file:///storage/emulated/0/Android/data/com.angcyo.uicore.demo/files/demo/camera/2020-02-13_15-03-59-694.jpeg
+        //scheme:file
         Uri.fromFile(file)
     }
+
+    //https://www.baidu.com
+    //Uri.parse("https://www.baidu.com") scheme:https
+
+    //content://media/external/file/101295
+    //scheme:content
 }

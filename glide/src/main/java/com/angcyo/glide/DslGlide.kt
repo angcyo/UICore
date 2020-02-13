@@ -14,6 +14,7 @@ import com.angcyo.library.app
 import com.angcyo.library.ex.file
 import com.angcyo.library.ex.fileUri
 import com.angcyo.library.ex.isFileExist
+import com.angcyo.library.ex.isHttpScheme
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.RequestManager
@@ -229,20 +230,7 @@ class DslGlide {
         _checkLoad {
             val targetView = targetView!!
 
-            if (uri?.scheme == "content") {
-                if (asGif) {
-                    _glide()
-                        .download(uri)
-                        .override(Target.SIZE_ORIGINAL)
-                        .configRequest(url, File::class.java)
-                        .into(GifDrawableImageViewTarget(targetView, autoPlayGif, transition))
-                } else {
-                    _glide()
-                        .load(uri)
-                        .configRequest(url, Drawable::class.java)
-                        .into(GlideDrawableImageViewTarget(targetView))
-                }
-            } else {
+            if (uri.isHttpScheme()) {
                 if (asGif) {
                     _glide()
                         .download(GlideUrl(url, _header()))
@@ -263,12 +251,37 @@ class DslGlide {
                         .configRequest(url, Drawable::class.java)
                         .into(GlideDrawableImageViewTarget(targetView))
                 }
+            } else {
+                if (asGif) {
+                    _glide()
+                        .download(uri)
+                        .override(Target.SIZE_ORIGINAL)
+                        .configRequest(url, File::class.java)
+                        .into(GifDrawableImageViewTarget(targetView, autoPlayGif, transition))
+                } else {
+                    _glide()
+                        .load(uri)
+                        .configRequest(url, Drawable::class.java)
+                        .into(GlideDrawableImageViewTarget(targetView))
+                }
             }
         }
     }
 
     fun _glide(): RequestManager {
-        return Glide.with(targetView!!)
+        return Glide.with(targetView ?: View(app()).apply {
+            L.w("注意:targetView is null!")
+        })
+    }
+
+    /**停止Glide请求*/
+    fun stop() {
+        _glide().onStop()
+    }
+
+    /**恢复Glide请求*/
+    fun start() {
+        _glide().onStart()
     }
 
     /**[Activity]是否已经销毁*/

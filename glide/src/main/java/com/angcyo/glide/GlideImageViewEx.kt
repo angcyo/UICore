@@ -1,5 +1,6 @@
 package com.angcyo.glide
 
+import android.net.Uri
 import android.widget.ImageView
 import androidx.annotation.IdRes
 import com.angcyo.widget.DslViewHolder
@@ -16,10 +17,10 @@ fun DslViewHolder.giv(@IdRes id: Int): GlideImageView? {
 }
 
 /**使用[Glide]加载图片*/
-fun ImageView.loadImage(url: String?, action: DslGlide.() -> Unit = {}) {
+fun ImageView.loadImage(uri: Uri?, action: DslGlide.() -> Unit = {}) {
     DslGlide().apply {
         targetView = this@loadImage
         action()
-        load(url)
+        load(uri)
     }
 }

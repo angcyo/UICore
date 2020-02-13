@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.PopupWindow
@@ -14,6 +15,7 @@ import androidx.core.view.doOnPreDraw
 import androidx.core.widget.PopupWindowCompat
 import com.angcyo.dsladapter.getViewRect
 import com.angcyo.library.ex.getContentViewHeight
+import com.angcyo.library.ex.undefined_int
 import com.angcyo.library.getScreenHeight
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.bgColorAnimator
@@ -70,6 +72,9 @@ open class PopupConfig {
     /**使用[Activity]当做布局载体, 而不是[PopupWindow]*/
     var showWithActivity: Boolean = false
 
+    /**android.widget.PopupWindow.setWindowLayoutType*/
+    var windowType: Int = undefined_int
+
     /**
      * 回调, 是否要拦截默认操作.[showWithActivity]时有效
      * */
@@ -95,6 +100,12 @@ open class PopupConfig {
 
             width = this@PopupConfig.width
             height = this@PopupConfig.height
+
+            if (windowType != undefined_int) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    windowLayoutType = windowType
+                }
+            }
 
             anchor?.let {
                 val viewRect = it.getViewRect()

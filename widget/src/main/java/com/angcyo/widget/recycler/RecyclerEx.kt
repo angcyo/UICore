@@ -201,26 +201,41 @@ fun RecyclerView.noItemChangeAnim(no: Boolean = true) {
 
 //<editor-fold desc="ViewHolder相关">
 
-/**获取[RecyclerView]界面上存在指定位置[index]的[DslViewHolder], 负数表示倒数开始的index*/
-operator fun RecyclerView.get(index: Int): DslViewHolder? {
-    val child: View?
-    child = if (index >= 0) {
-        //正向取child
-        if (index < childCount) {
-            getChildAt(index)
+/**
+ * 获取[RecyclerView]指定位置[index]的[DslViewHolder], 负数表示倒数开始的index
+ * [isLayoutIndex] 界面上存在, 类似 [LayoutPosition] [AdapterPosition] 的区别
+ * */
+operator fun RecyclerView.get(index: Int, isLayoutIndex: Boolean = false): DslViewHolder? {
+
+    var result: DslViewHolder?
+
+    if (isLayoutIndex) {
+        val layoutIndex = if (index >= 0) {
+            //正向取child
+            index
         } else {
-            null
+            //反向取child
+            childCount + index
+        }
+
+        result = findViewHolderForLayoutPosition(layoutIndex) as? DslViewHolder
+        if (result == null) {
+            val child: View? = getChildAt(layoutIndex)
+            result = child?.run { getChildViewHolder(this) as? DslViewHolder }
         }
     } else {
-        //反向取child
-        val i = childCount + index
-        if (i in 0 until childCount) {
-            getChildAt(i)
+        val adapterIndex = if (index >= 0) {
+            //正向取child
+            index
         } else {
-            null
+            //反向取child
+            adapter?.itemCount ?: 0 + index
         }
+
+        result = findViewHolderForAdapterPosition(adapterIndex) as? DslViewHolder
     }
-    return child?.run { getChildViewHolder(this) as? DslViewHolder }
+
+    return result
 }
 
 /**获取[RecyclerView]界面上存在的所有[DslViewHolder]*/

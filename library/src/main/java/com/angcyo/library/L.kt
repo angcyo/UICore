@@ -155,10 +155,51 @@ object L {
         }
         val logMsg = buildString {
             msg.forEach {
-                if (it is CharSequence) {
-                    append(_wrapJson("$it"))
-                } else {
-                    append(it)
+                when (it) {
+                    is CharSequence -> append(_wrapJson("$it"))
+                    is Iterable<*> -> {
+                        append("[")
+                        for (i in it) {
+                            append(i.toString())
+                        }
+                        append("]")
+                    }
+                    is Array<*> -> {
+                        append("[")
+                        for (i in it) {
+                            append(i.toString())
+                        }
+                        append("]")
+                    }
+                    is IntArray -> {
+                        append("[")
+                        for (i in it) {
+                            append(i.toString())
+                        }
+                        append("]")
+                    }
+                    is LongArray -> {
+                        append("[")
+                        for (i in it) {
+                            append(i.toString())
+                        }
+                        append("]")
+                    }
+                    is FloatArray -> {
+                        append("[")
+                        for (i in it) {
+                            append(i.toString())
+                        }
+                        append("]")
+                    }
+                    is DoubleArray -> {
+                        append("[")
+                        for (i in it) {
+                            append(i.toString())
+                        }
+                        append("]")
+                    }
+                    else -> append(it.toString())
                 }
             }
         }

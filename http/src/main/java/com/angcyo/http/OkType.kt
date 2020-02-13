@@ -7,6 +7,7 @@ import android.os.Looper
 import android.text.TextUtils
 import com.angcyo.http.rx.runRx
 import com.angcyo.library.app
+import com.angcyo.library.ex.isHttpScheme
 import com.angcyo.library.ex.use
 import okhttp3.*
 import java.io.File
@@ -62,7 +63,7 @@ object OkType {
 
         val type = imageTypeCache[url]
 
-        if (uri.scheme == "content") {
+        if (!uri.isHttpScheme()) {
             runRx({
                 type ?: uri.use(app()) {
                     ImageType.of(

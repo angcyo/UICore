@@ -24,3 +24,11 @@ fun Uri.fd(context: Context?): FileDescriptor? {
     val parcelFileDescriptor = resolver?.openFileDescriptor(this, "r")
     return parcelFileDescriptor?.fileDescriptor
 }
+
+/**是否是http的uri资源*/
+fun Uri?.isHttpScheme(): Boolean {
+    if (this == null || scheme == null) {
+        return false
+    }
+    return scheme?.toLowerCase()?.startsWith("http") == true
+}

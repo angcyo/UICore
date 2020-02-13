@@ -86,6 +86,18 @@ fun <T> DslAdapter.renderItem(data: T, init: DslAdapterItem.() -> Unit) {
     addLastItem(adapterItem)
 }
 
+/**获取所有指定类型的数据集合*/
+inline fun <reified ItemData> DslAdapter.getAllItemData(useFilterList: Boolean = true): List<ItemData> {
+    val result = mutableListOf<ItemData>()
+    val itemList = getDataList(useFilterList)
+    for (item in itemList) {
+        if (item.itemData is ItemData) {
+            result.add(item.itemData as ItemData)
+        }
+    }
+    return result
+}
+
 //</editor-fold desc="Item操作">
 
 //<editor-fold desc="payload">

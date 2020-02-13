@@ -116,3 +116,7 @@ fun fileName(pattern: String = "yyyy-MM-dd_HH-mm-ss-SSS", suffix: String = ""): 
     val dateFormat: DateFormat = SimpleDateFormat(pattern, Locale.CHINA)
     return dateFormat.format(Date()) + suffix
 }
+
+fun filePath(folderName: String, fileName: String): String {
+    return "${FileUtils.appRootExternalFolder(folder = folderName)?.absolutePath}${File.separator}${fileName}"
+}
