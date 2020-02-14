@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="tag" type="id"/>
+    <item name="lib_tag_hawk" type="id"/>
     <item name="lib_retry_button" type="id"/>
     <item name="lib_close_view" type="id"/>
     <item name="lib_tag_old_view_visible" type="id"/>

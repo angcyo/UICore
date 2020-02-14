@@ -16,7 +16,9 @@ import com.angcyo.widget.base.getMode
  * @author angcyo
  * @date 2019/01/11
  */
-open class RSpinner : AppCompatSpinner {
+open class RSpinner : AppCompatSpinner, AdapterView.OnItemSelectedListener {
+
+    val itemSelectedListener = mutableListOf<OnItemSelectedListener>()
 
     constructor(context: Context) : super(context)
     constructor(context: Context, mode: Int) : super(context, mode)
@@ -27,6 +29,11 @@ open class RSpinner : AppCompatSpinner {
         defStyleAttr
     )
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        onItemSelectedListener = this
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         if (isInEditMode && heightMeasureSpec.getMode() != MeasureSpec.EXACTLY) {
             super.onMeasure(widthMeasureSpec, exactly(40 * dpi))
@@ -34,6 +41,38 @@ open class RSpinner : AppCompatSpinner {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         }
     }
+
+    //<editor-fold defaultState="collapsed" desc="事件转发">
+
+    override fun onNothingSelected(parent: AdapterView<*>) {
+        itemSelectedListener.forEach { it.onNothingSelected(parent) }
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, rowId: Long) {
+        itemSelectedListener.forEach { it.onItemSelected(parent, view, position, rowId) }
+    }
+
+    override fun setOnItemSelectedListener(listener: OnItemSelectedListener?) {
+        if (listener == this) {
+            super.setOnItemSelectedListener(listener)
+        } else {
+            if (listener != null) {
+                itemSelectedListener.add(listener)
+            }
+        }
+    }
+
+    fun addOnItemSelectedListener(listener: OnItemSelectedListener) {
+        itemSelectedListener.add(listener)
+    }
+
+    fun removeOnItemSelectedListener(listener: OnItemSelectedListener) {
+        itemSelectedListener.remove(listener)
+    }
+
+    //</editor-fold defaultState="collapsed" desc="事件转发">
+
+    //<editor-fold defaultState="collapsed" desc="数据设置">
 
     /**获取选中的数据*/
     fun <Data> getSelectedData(): Data? = selectedItem as? Data
@@ -64,12 +103,15 @@ open class RSpinner : AppCompatSpinner {
                 parent: AdapterView<*>,
                 view: View,
                 position: Int,
-                id: Long
+                rowId: Long
             ) {
                 listener(position)
             }
         }
     }
+
+    //</editor-fold defaultState="collapsed" desc="数据设置">
+
 }
 
 abstract class OnSpinnerItemSelected : AdapterView.OnItemSelectedListener {
@@ -77,7 +119,7 @@ abstract class OnSpinnerItemSelected : AdapterView.OnItemSelectedListener {
 
     }
 
-    override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+    override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, rowId: Long) {
 
     }
 }

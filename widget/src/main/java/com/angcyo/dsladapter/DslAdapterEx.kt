@@ -101,6 +101,8 @@ inline fun <reified ItemData> DslAdapter.getAllItemData(useFilterList: Boolean =
 //</editor-fold desc="Item操作">
 
 //<editor-fold desc="payload">
+
+/**是否包含指定的[payload]*/
 fun Iterable<*>.containsPayload(any: Any): Boolean {
     var result = false
     for (payload in this) {
@@ -115,5 +117,11 @@ fun Iterable<*>.containsPayload(any: Any): Boolean {
     }
     return result
 }
+
+/**是否要更新媒体, 比如:图片*/
+fun Iterable<*>.updateMedia(): Boolean {
+    return count() <= 0 || containsPayload(DslAdapterItem.PAYLOAD_UPDATE_MEDIA)
+}
+
 //</editor-fold desc="payload">
 

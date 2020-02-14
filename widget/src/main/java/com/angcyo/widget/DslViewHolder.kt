@@ -330,4 +330,27 @@ open class DslViewHolder(
 
     //</editor-fold desc="findViewById">
 
+    //<editor-fold desc="属性控制">
+
+    fun tag(@IdRes resId: Int, key: Int, value: Any?): Any? {
+        val view = view(resId)
+        val old = view?.getTag(key)
+        view?.setTag(key, value)
+        return old
+    }
+
+    fun isChecked(@IdRes resId: Int): Boolean {
+        return cb(resId)?.isChecked == true
+    }
+
+    fun isSelected(@IdRes resId: Int): Boolean {
+        return view(resId)?.isSelected == true
+    }
+
+    fun isEnabled(@IdRes resId: Int): Boolean {
+        return view(resId)?.isEnabled == true
+    }
+
+    //</editor-fold desc="属性控制">
+
 }

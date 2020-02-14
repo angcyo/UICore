@@ -94,3 +94,7 @@ fun DslViewHolder.auto(
 fun DslViewHolder._vp(@IdRes id: Int): DslViewPager? {
     return v(id)
 }
+
+fun DslViewHolder.hawkTag(@IdRes id: Int): Any? {
+    return tag(id, R.id.lib_tag_hawk, "$id")
+}

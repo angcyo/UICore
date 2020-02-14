@@ -7,14 +7,19 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.VISIBILITY_PRIVATE
 import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
+import androidx.media.session.MediaButtonReceiver
 import com.angcyo.library.app
+import com.angcyo.library.ex.baseConfig
 import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.undefined_int
+import kotlin.math.min
 
 /**
  * https://developer.android.google.cn/guide/topics/ui/notifiers/notifications.html
@@ -46,6 +51,12 @@ class DslNotify {
             }
         }
 
+        fun cancelNotifyAll(context: Context) {
+            val notificationManager = NotificationManagerCompat.from(context)
+            notificationManager.cancelAll()
+            _notifyIds.clear()
+        }
+
         fun pendingActivity(
             context: Context,
             targetActivity: Class<out Activity>,
@@ -64,6 +75,7 @@ class DslNotify {
             flags: Int = PendingIntent.FLAG_UPDATE_CURRENT,
             options: Bundle? = null
         ): PendingIntent {
+            intent.baseConfig(context)
             return PendingIntent.getActivity(context, requestCode, intent, flags, options)
         }
 
@@ -74,6 +86,16 @@ class DslNotify {
             flags: Int = PendingIntent.FLAG_UPDATE_CURRENT
         ): PendingIntent {
             return PendingIntent.getBroadcast(context, requestCode, intent, flags)
+        }
+
+        fun pendingService(
+            context: Context,
+            serviceClass: Class<out Service>,
+            requestCode: Int = 0x999,
+            flags: Int = PendingIntent.FLAG_UPDATE_CURRENT
+        ): PendingIntent {
+            val intent = Intent(context, serviceClass)
+            return pendingService(context, intent, requestCode, flags)
         }
 
         fun pendingService(
@@ -92,6 +114,8 @@ class DslNotify {
             action: NotificationCompat.Action.Builder.() -> Unit = {}
         ): NotificationCompat.Action {
             val builder = NotificationCompat.Action.Builder(icon, title, pendingIntent)
+            //https://developer.android.google.cn/training/notify-user/build-notification.html#reply-action
+            //builder.addRemoteInput()//添加快速回复action
             builder.action()
             return builder.build()
         }
@@ -214,10 +238,13 @@ class DslNotify {
 
     /**
      * 需要[androidx.media]的支持
-     * https://developer.android.google.cn/training/notify-user/expanded.html#media-style*/
+     * https://developer.android.google.cn/training/notify-user/expanded.html#media-style
+     * https://developer.android.google.cn/guide/topics/media-apps/audio-app/building-a-mediabrowserservice.html#mediastyle-notifications*/
     var styleMediaSessionToken: MediaSessionCompat.Token? = null
+    /**要显示[notifyActions]中的那些action的索引, 最多3个*/
+    var styleMediaShowActions: List<Int>? = null
 
-    fun _createStyle(): NotificationCompat.Style? {
+    fun _createStyle(context: Context): NotificationCompat.Style? {
         var style: NotificationCompat.Style? = null
         if (styleBigText != null) {
             style = NotificationCompat.BigTextStyle().also {
@@ -264,9 +291,17 @@ class DslNotify {
         }
 
         if (style == null) {
-            if (styleMediaSessionToken != null) {
+            if (styleMediaSessionToken != null || styleMediaShowActions != null) {
                 style = androidx.media.app.NotificationCompat.DecoratedMediaCustomViewStyle().also {
-                    it.setMediaSession(styleMediaSessionToken)
+                    it.setShowCancelButton(true)
+                    it.setCancelButtonIntent(
+                        MediaButtonReceiver.buildMediaButtonPendingIntent(
+                            context,
+                            PlaybackStateCompat.ACTION_STOP
+                        )
+                    )
+                    styleMediaSessionToken?.run { it.setMediaSession(this) }
+                    styleMediaShowActions?.run { it.setShowActionsInCompactView(*this.toIntArray()) }
                 }
             }
         }
@@ -295,18 +330,22 @@ class DslNotify {
             }
         }
 
-    /**没发现有啥鸟用*/
+    /**右下角, 时间下面描述[notifyText]的文本信息*/
     var notifyInfo: CharSequence? = null
     /**显示在[notifyTitle]后面的文本, 当一组中有多个通知, 这个就是title*/
     var notifySubText: CharSequence? = null
 
-    /**首次通知时, 立马就要显示的文本*/
+    /**首次通知时, 立马就要显示的文本, 高版本测试没效果.*/
     var notifyTickerText: CharSequence? = null
 
     /**通知的优先级, 通道还有一个重要性*/
     var notifyPriority = NotificationCompat.PRIORITY_HIGH
 
     var notifyDefaults = NotificationCompat.DEFAULT_VIBRATE
+
+    /**[NotificationCompat.CATEGORY_MESSAGE]
+     * https://developer.android.google.cn/training/notify-user/build-notification.html#system-category*/
+    var notifyCategory: String? = null
 
     var notifyContentIntent: PendingIntent? = null
     /**配置[notifyContentIntent]才有效果*/
@@ -318,15 +357,27 @@ class DslNotify {
     /**立即要展示, 而不是发送到状态栏. 横幅通知. 不会消失.*/
     var notifyFullScreenIntent: PendingIntent? = null
 
-    var notifyFullScreenIntentHighPriority = false
+    var notifyFullScreenIntentHighPriority = true
 
+    /**一个通知最多可以提供三个操作按钮
+     * https://developer.android.google.cn/training/notify-user/build-notification.html#Actions*/
     var notifyActions: List<NotificationCompat.Action>? = null
 
     /**通知可见性,
      * [VISIBILITY_PUBLIC]在所有界面上都显示内容,
      * [VISIBILITY_PRIVATE]隐藏隐私信息,
-     * [VISIBILITY_SECRET]锁屏不展示*/
+     * [VISIBILITY_SECRET]锁屏不展示
+     * https://developer.android.google.cn/training/notify-user/build-notification.html#lockscreenNotification*/
     var notifyVisibility = VISIBILITY_PUBLIC
+
+    var notifyNumber: Int = 0
+
+    /**进度
+     * https://developer.android.google.cn/training/notify-user/build-notification.html#progressbar*/
+    var notifyProgress = undefined_int
+    // When done, update the notification one more time to remove the progress bar
+    var notifyProgressMax = 100
+    var notifyProgressIndeterminate = false
 
     /**通知的时间*/
     var notifyWhen = System.currentTimeMillis()
@@ -338,6 +389,22 @@ class DslNotify {
     var notifyOngoing = false
 
     var onConfigNotify: (NotificationCompat.Builder) -> Unit = {}
+
+    var notifyContentView: RemoteViews? = null
+    /**如果设置了,[notifyContentView] 会优先使用这个*/
+    var notifyCustomContentView: RemoteViews? = null
+    /**高度更高的[notifyContentView], 如果设置了, 会优先于[notifyContentView]使用*/
+    var notifyCustomBigContentView: RemoteViews? = null
+    /**如果设置了, 横幅通知, 会优先使用这个*/
+    var notifyCustomHeadsUpContentView: RemoteViews? = null
+
+    /**https://developer.android.google.cn/training/notify-user/build-notification.html#Updating*/
+    var notifyLocalOnly = false
+    var notifyOnlyAlertOnce = false
+
+    /**毫秒
+     * https://developer.android.google.cn/training/notify-user/build-notification.html#Removing*/
+    var notifyTimeout: Long = -1
 
     /**创建通知*/
     fun _createNotify(context: Context): Notification {
@@ -360,12 +427,14 @@ class DslNotify {
             setOngoing(notifyOngoing)
 
             setVisibility(notifyVisibility)
+            setNumber(notifyNumber)
 
             //PRIORITY_HIGH 就会有横幅通知, 并且会自动消失
             priority = notifyPriority
             setDefaults(notifyDefaults)
+            notifyCategory?.run { setCategory(this) }
 
-            _createStyle()?.run {
+            _createStyle(context)?.run {
                 setStyle(this)
             }
 
@@ -384,14 +453,57 @@ class DslNotify {
                 addAction(it)
             }
 
+            //progress
+            if (notifyProgressIndeterminate) {
+                setProgress(notifyProgressMax, notifyProgress, notifyProgressIndeterminate)
+            } else if (notifyProgress >= 0) {
+                setProgress(
+                    notifyProgressMax,
+                    min(notifyProgress, notifyProgressMax),
+                    notifyProgressIndeterminate
+                )
+            }
+
+            //custom
+            /*setContent 设置普通视图，高度限制为 64 dp
+              setCustomContentView设置普通视图，高度限制为 64 dp
+              setCustomBigContentView() 设置扩展视图，高度可以扩展到256dp
+              setCustomHeadsUpContentView() 设置浮动通知视图*/
+            notifyContentView?.run { setContent(this) }
+            notifyCustomContentView?.run { setCustomContentView(this) }
+            notifyCustomBigContentView?.run { setCustomBigContentView(this) }
+            notifyCustomHeadsUpContentView?.run { setCustomHeadsUpContentView(this) }
+
+            setLocalOnly(notifyLocalOnly)
+            setOnlyAlertOnce(notifyOnlyAlertOnce)
+
+            if (notifyTimeout > 0) {
+                setTimeoutAfter(notifyTimeout)
+            }
+
             onConfigNotify(this)
         }
         return builder.build()
     }
 
+    /**
+     * Notification.FLAG_SHOW_LIGHTS              //三色灯提醒，在使用三色灯提醒时候必须加该标志符
+     * Notification.FLAG_ONGOING_EVENT          //发起正在运行事件（活动中）
+     * Notification.FLAG_INSISTENT  //让声音、振动无限循环，直到用户响应 （取消或者打开）
+     * Notification.FLAG_ONLY_ALERT_ONCE  //发起Notification后，铃声和震动均只执行一次
+     * Notification.FLAG_AUTO_CANCEL      //用户单击通知后自动消失
+     * Notification.FLAG_NO_CLEAR          //只有全部清除时，Notification才会清除 ，不清楚该通知(QQ的通知无法清除，就是用的这个)
+     * Notification.FLAG_FOREGROUND_SERVICE    //表示正在运行的服务
+     */
+    var notifyFlags: Int = undefined_int
+
     fun doIt(context: Context): Int {
         _createNotifyChannel(context)
         val notification = _createNotify(context)
+
+        if (notifyFlags != undefined_int) {
+            notification.flags = notifyFlags
+        }
 
         val notificationManager = NotificationManagerCompat.from(context)
 

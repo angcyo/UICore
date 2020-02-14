@@ -4,4 +4,7 @@
     <!--获取网络状态, WIFI ip-->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
+    <!--https://developer.android.google.cn/training/notify-user/build-notification.html#urgent-message-->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
 </manifest>
