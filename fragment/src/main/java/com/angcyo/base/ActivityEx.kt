@@ -90,6 +90,8 @@ fun Activity.dslAHelper(action: DslAHelper.() -> Unit) {
     }
 }
 
+//<editor-fold desc="权限相关">
+
 /**是否具有指定的权限*/
 fun Context.havePermissions(vararg permissions: String): Boolean {
     var have = true
@@ -121,6 +123,27 @@ fun Context.havePermission(permissionList: List<String>): Boolean {
     return have
 }
 
+fun Activity.requestPermission(
+    permissions: List<String>,
+    requestCode: Int = FragmentBridge.generateCode()
+) {
+    requestPermission(permissions.toTypedArray(), requestCode)
+}
+
+fun Activity.requestPermission(
+    permissions: Array<out String>,
+    requestCode: Int = FragmentBridge.generateCode()
+) {
+    ActivityCompat.requestPermissions(this, permissions, requestCode)
+}
+
+fun FragmentActivity.checkAndRequestPermission(
+    permissions: List<String>,
+    onPermissionGranted: () -> Unit = {}
+) {
+    checkAndRequestPermission(permissions.toTypedArray(), onPermissionGranted)
+}
+
 /**检查或者请求权限*/
 fun FragmentActivity.checkAndRequestPermission(
     permissions: Array<out String>,
@@ -145,3 +168,5 @@ fun FragmentActivity.checkAndRequestPermission(
         }
     }
 }
+
+//</editor-fold desc="权限相关">

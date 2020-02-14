@@ -2,6 +2,7 @@ package com.angcyo.library.ex
 
 import android.animation.ArgbEvaluator
 import android.graphics.Color
+import android.os.SystemClock
 import java.util.*
 import kotlin.random.Random.Default.nextInt
 
@@ -12,7 +13,7 @@ import kotlin.random.Random.Default.nextInt
  * @date 2020/01/20
  */
 
-fun randomColor(random: Random): Int {
+fun randomColor(random: Random = Random(SystemClock.elapsedRealtime())): Int {
     return randomColor(random, 120, 250)
 }
 

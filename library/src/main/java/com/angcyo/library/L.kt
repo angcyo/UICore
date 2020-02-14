@@ -15,6 +15,7 @@ import org.json.JSONObject
 
 object L {
     val LINE_SEPARATOR = System.getProperty("line.separator")
+    val ARRAY_SEPARATOR = ","
 
     const val VERBOSE = 2
     const val DEBUG = 3
@@ -159,43 +160,61 @@ object L {
                     is CharSequence -> append(_wrapJson("$it"))
                     is Iterable<*> -> {
                         append("[")
-                        for (i in it) {
-                            append(i.toString())
+                        it.forEachIndexed { index, any ->
+                            append(any.toString())
+                            if (index != it.count() - 1) {
+                                append(ARRAY_SEPARATOR)
+                            }
                         }
                         append("]")
                     }
                     is Array<*> -> {
                         append("[")
-                        for (i in it) {
-                            append(i.toString())
+                        it.forEachIndexed { index, any ->
+                            append(any.toString())
+                            if (index != it.count() - 1) {
+                                append(ARRAY_SEPARATOR)
+                            }
                         }
                         append("]")
                     }
                     is IntArray -> {
                         append("[")
-                        for (i in it) {
-                            append(i.toString())
+                        it.forEachIndexed { index, any ->
+                            append(any.toString())
+                            if (index != it.count() - 1) {
+                                append(ARRAY_SEPARATOR)
+                            }
                         }
                         append("]")
                     }
                     is LongArray -> {
                         append("[")
-                        for (i in it) {
-                            append(i.toString())
+                        it.forEachIndexed { index, any ->
+                            append(any.toString())
+                            if (index != it.count() - 1) {
+                                append(ARRAY_SEPARATOR)
+                            }
                         }
                         append("]")
                     }
                     is FloatArray -> {
                         append("[")
-                        for (i in it) {
-                            append(i.toString())
+                        it.forEachIndexed { index, any ->
+                            append(any.toString())
+                            if (index != it.count() - 1) {
+                                append(ARRAY_SEPARATOR)
+                            }
                         }
                         append("]")
                     }
                     is DoubleArray -> {
                         append("[")
-                        for (i in it) {
-                            append(i.toString())
+                        it.forEachIndexed { index, any ->
+                            append(any.toString())
+                            if (index != it.count() - 1) {
+                                append(ARRAY_SEPARATOR)
+                            }
                         }
                         append("]")
                     }

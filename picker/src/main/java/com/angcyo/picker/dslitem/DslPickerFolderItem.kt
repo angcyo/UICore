@@ -22,7 +22,9 @@ import com.angcyo.widget.span.span
  */
 class DslPickerFolderItem : DslAdapterItem() {
 
-    val loaderFolder: LoaderFolder? get() = itemData as? LoaderFolder
+    var loaderFolder: LoaderFolder? = null
+        get() = field ?: (itemData as? LoaderFolder)
+
     var showFolderLine: Boolean = false
 
     init {

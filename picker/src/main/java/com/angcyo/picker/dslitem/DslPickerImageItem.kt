@@ -33,7 +33,8 @@ open class DslPickerImageItem : DslAdapterItem() {
     }
 
     /**要加载的媒体*/
-    val loaderMedia: LoaderMedia? get() = itemData as? LoaderMedia
+    var loaderMedia: LoaderMedia? = null
+        get() = field ?: (itemData as? LoaderMedia)
 
     /**选中的索引数值*/
     var onGetSelectedIndex: (LoaderMedia?) -> CharSequence? = { null }

@@ -1,6 +1,5 @@
 package com.angcyo.library.ex
 
-import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
@@ -34,10 +33,10 @@ fun Context.getContentViewHeight(): Int {
 fun Context.havePermissions(permissions: Array<out String>): Boolean {
     //所有权限都允许
     var granted = true
-    for (p in permissions) {
+    for (permission in permissions) {
         if (ContextCompat.checkSelfPermission(
                 this,
-                Manifest.permission.CAMERA
+                permission
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             granted = false

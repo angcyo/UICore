@@ -5,9 +5,13 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import com.angcyo.library.app
 import com.angcyo.library.ex.baseConfig
 import com.angcyo.library.ex.mimeType
 import com.angcyo.library.ex.uriConfig
+
 
 /**
  * https://developer.android.google.cn/training/sharing
@@ -83,6 +87,52 @@ class DslIntent {
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
+        }
+
+        /**打开通知设置界面*/
+        fun toNotifySetting(context: Context = app()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                val intent = Intent()
+                intent.action =
+                    "android.settings.APP_NOTIFICATION_SETTINGS"//Settings.ACTION_APP_NOTIFICATION_SETTINGS
+                //intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                intent.data = Uri.fromParts("package", context.packageName, null)
+                intent.putExtra("android.provider.extra.APP_PACKAGE", context.packageName)
+                intent.putExtra("android.provider.extra.CHANNEL_ID", context.applicationInfo.uid)
+                intent.putExtra("app_package", context.packageName)
+                intent.putExtra("app_uid", context.applicationInfo.uid)
+                intent.baseConfig(context)
+                context.startActivity(intent)
+            } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+                val intent = Intent()
+                intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                intent.addCategory(Intent.CATEGORY_DEFAULT)
+                intent.data = Uri.parse("package:" + context.packageName)
+                intent.baseConfig(context)
+                context.startActivity(intent)
+            } else {
+                val intent = Intent(Settings.ACTION_SETTINGS)
+                intent.baseConfig(context)
+                context.startActivity(intent)
+            }
+        }
+
+        /**打开APP详情界面*/
+        fun toAppDetail(context: Context = app()) {
+            val intent = Intent()
+            if (Build.VERSION.SDK_INT >= 9) {
+                intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                intent.data = Uri.fromParts("package", context.packageName, null)
+            } else if (Build.VERSION.SDK_INT <= 8) {
+                intent.action = Intent.ACTION_VIEW
+                intent.setClassName(
+                    "com.android.settings",
+                    "com.android.settings.InstalledAppDetails"
+                )
+                intent.putExtra("com.android.settings.ApplicationPkgName", context.packageName)
+            }
+            intent.baseConfig(context)
+            context.startActivity(intent)
         }
     }
 
