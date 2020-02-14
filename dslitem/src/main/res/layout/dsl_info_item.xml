@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/lib_bg_selector"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/lib_item_height"
+    tools:r_background="@color/transparent20">
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_text_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="4dp"
+        android:paddingLeft="@dimen/lib_padding_left"
+        android:paddingRight="@dimen/lib_padding_left"
+        tools:text="关于我们" />
+
+    <FrameLayout
+        android:id="@+id/wrap_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
+
+</com.angcyo.widget.layout.RLinearLayout>

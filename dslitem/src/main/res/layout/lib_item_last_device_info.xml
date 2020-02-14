@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.recycler.RecyclerBottomLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_text_view"
+        style="@style/LibSubTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:padding="@dimen/lib_hdpi"
+        tools:text="angcyo" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:layout_gravity="bottom">
+
+        <com.angcyo.widget.progress.DslProgressBar
+            android:id="@+id/lib_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:progress_bg_gradient_colors="@color/bg_sub_color" />
+
+        <com.angcyo.widget.text.DslTextView
+            android:id="@+id/lib_tip_view"
+            style="@style/LibSubTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/lib_white"
+            android:textSize="9dp"
+            tools:text="20G/128G" />
+    </FrameLayout>
+
+</com.angcyo.widget.recycler.RecyclerBottomLayout>
