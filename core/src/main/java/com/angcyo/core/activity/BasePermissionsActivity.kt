@@ -2,10 +2,10 @@ package com.angcyo.core.activity
 
 import android.os.Bundle
 import com.angcyo.base.dslFHelper
-import com.angcyo.base.havePermission
 import com.angcyo.core.fragment.PermissionFragment
 import com.angcyo.http.rx.BaseObserver
 import com.angcyo.library.L
+import com.angcyo.library.ex.havePermission
 import com.tbruyelle.rxpermissions2.Permission
 import com.tbruyelle.rxpermissions2.RxPermissions
 

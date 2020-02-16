@@ -1,6 +1,7 @@
 package com.angcyo.loader
 
 import android.database.Cursor
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.exifinterface.media.ExifInterface
@@ -14,7 +15,9 @@ import com.angcyo.library.L
 import com.angcyo.library.LTime
 import com.angcyo.library.ex.fd
 import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.isFileExist
 import kotlinx.coroutines.async
+import java.io.File
 
 /**
  * 媒体加载器
@@ -97,13 +100,19 @@ class DslLoader {
                             data.moveToFirst()
                             do {
                                 val id = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[0]))
-                                val uri = MediaStore.Files.getContentUri(VOLUME_EXTERNAL, id)
 
                                 val mimeType =
                                     data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[4]))
 
                                 val path =
                                     data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[1]))
+
+                                val uri = if (path.isFileExist()) {
+                                    Uri.fromFile(File(path))
+                                } else {
+                                    MediaStore.Files.getContentUri(VOLUME_EXTERNAL, id)
+                                }
+
                                 val displayName =
                                     data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[2]))
                                 val addTime =

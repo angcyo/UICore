@@ -2,5 +2,5 @@
 <paths>
     <external-path
         name="sdcard"
-        path=""/>
+        path="."/>
 </paths>

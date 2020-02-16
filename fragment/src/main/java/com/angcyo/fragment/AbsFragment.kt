@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
-import com.angcyo.base.getColor
 import com.angcyo.library.ex.getColor
 import com.angcyo.widget.DslViewHolder
 
@@ -80,7 +79,7 @@ abstract class AbsFragment : Fragment() {
     }
 
     /**
-     * OnAttach -> OnCreate -> OnCreateView (initBaseView) -> OnActivityCreated -> OnViewStateRestored -> OnStart -> OnResume
+     * OnAttach -> OnCreate -> OnCreateView (initBaseView) -> onViewCreated -> OnActivityCreated -> OnViewStateRestored -> OnStart -> OnResume
      */
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -106,6 +105,10 @@ abstract class AbsFragment : Fragment() {
         baseViewHolder = DslViewHolder(rootView, viewHolderInitialCapacity)
         initBaseView(savedInstanceState)
         return rootView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
     }
 
     /**

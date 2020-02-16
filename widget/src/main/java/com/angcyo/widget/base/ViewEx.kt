@@ -22,6 +22,7 @@ import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.library.ex.getStatusBarHeight
+import com.angcyo.library.ex.remove
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.base.ViewEx._tempRect
 
@@ -193,8 +194,38 @@ fun View.grayscale(enable: Boolean = true) {
     }
 }
 
-//</editor-fold desc="基础扩展">
+/**进入全屏模式, 切换全屏/非全屏, 需要使用同一个[View]对象,否则不生效, 当这个[View]被销毁后, 会自动恢复状态
+ * https://www.jianshu.com/p/e9e443271c98*/
+fun View?.fullscreen(full: Boolean = true) {
+    /*
+     * View.SYSTEM_UI_FLAG_LAYOUT_STABLE：全屏显示时保证尺寸不变。
+     * View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN：Activity全屏显示，状态栏显示在Activity页面上面。
+     * View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION：效果同View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+     * View.SYSTEM_UI_FLAG_HIDE_NAVIGATION：隐藏导航栏
+     * View.SYSTEM_UI_FLAG_FULLSCREEN：Activity全屏显示，且状态栏被隐藏覆盖掉。
+     * View.SYSTEM_UI_FLAG_VISIBLE：Activity非全屏显示，显示状态栏和导航栏。
+     * View.INVISIBLE：Activity伸展全屏显示，隐藏状态栏。
+     * View.SYSTEM_UI_LAYOUT_FLAGS：效果同View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+     * View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY：必须配合View.SYSTEM_UI_FLAG_FULLSCREEN和View.SYSTEM_UI_FLAG_HIDE_NAVIGATION组合使用，达到的效果是拉出状态栏和导航栏后显示一会儿消失。
+     * */
+    this?.run {
+        systemUiVisibility = if (full) {
+            View.SYSTEM_UI_FLAG_FULLSCREEN or
+                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY //拉出状态栏和导航栏后显示一会儿消失。
+        } else {
+            systemUiVisibility.remove(View.SYSTEM_UI_FLAG_FULLSCREEN)
 
+            //以下2中方法都有效
+            //systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+
+            //systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+            //View.SYSTEM_UI_FLAG_IMMERSIVE or
+            //View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        }
+    }
+}
+
+//</editor-fold desc="基础扩展">
 
 //<editor-fold desc="layoutParams扩展">
 
@@ -355,6 +386,10 @@ fun View?.canChildScroll(direction: Int, depth: Int = 5): Boolean {
     return this.canScrollVertically(direction)
 }
 
+//</editor-fold desc="scroll扩展">
+
+//<editor-fold desc="事件扩展">
+
 /**点击事件*/
 fun View?.clickIt(action: (View) -> Unit) {
     this?.setOnClickListener(action)
@@ -370,7 +405,20 @@ fun View?.longClick(action: (View) -> Boolean) {
     this?.setOnLongClickListener { action(it) }
 }
 
-//</editor-fold desc="scroll扩展">
+/**模拟点击事件,和直接[performClick]不同的是有效背景效果*/
+fun View?.simulateClick(delay: Long = Anim.ANIM_DURATION) {
+    this?.run {
+        performClick()
+        isPressed = true
+        invalidate()
+        postDelayed({
+            invalidate()
+            isPressed = false
+        }, delay)
+    }
+}
+
+//</editor-fold desc="事件扩展">
 
 //<editor-fold desc="draw相关扩展">
 

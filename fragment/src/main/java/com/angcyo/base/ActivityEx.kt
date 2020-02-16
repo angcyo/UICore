@@ -2,7 +2,6 @@ package com.angcyo.base
 
 import android.app.Activity
 import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.view.View
@@ -51,10 +50,6 @@ fun Activity.moveToBack(nonRoot: Boolean = true): Boolean {
     return moveTaskToBack(nonRoot)
 }
 
-fun Context.getColor(@ColorRes id: Int): Int {
-    return ContextCompat.getColor(this, id)
-}
-
 /**拦截TouchEvent*/
 fun Context.interceptTouchEvent(intercept: Boolean = true) {
     if (this is BaseAppCompatActivity) {
@@ -92,37 +87,6 @@ fun Activity.dslAHelper(action: DslAHelper.() -> Unit) {
 
 //<editor-fold desc="权限相关">
 
-/**是否具有指定的权限*/
-fun Context.havePermissions(vararg permissions: String): Boolean {
-    var have = true
-    for (permission in permissions) {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                permission
-            ) == PackageManager.PERMISSION_DENIED
-        ) {
-            have = false
-            break
-        }
-    }
-    return have
-}
-
-fun Context.havePermission(permissionList: List<String>): Boolean {
-    var have = true
-    for (permission in permissionList) {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                permission
-            ) == PackageManager.PERMISSION_DENIED
-        ) {
-            have = false
-            break
-        }
-    }
-    return have
-}
-
 fun Activity.requestPermission(
     permissions: List<String>,
     requestCode: Int = FragmentBridge.generateCode()
@@ -149,7 +113,7 @@ fun FragmentActivity.checkAndRequestPermission(
     permissions: Array<out String>,
     onPermissionGranted: () -> Unit = {}
 ) {
-    if (havePermissions(permissions)) {
+    if (havePermissions(*permissions)) {
         onPermissionGranted()
     } else {
         //请求权限
@@ -160,7 +124,7 @@ fun FragmentActivity.checkAndRequestPermission(
                     permissions: Array<out String>,
                     grantResults: IntArray
                 ) {
-                    if (havePermissions(permissions)) {
+                    if (havePermissions(*permissions)) {
                         onPermissionGranted()
                     }
                 }

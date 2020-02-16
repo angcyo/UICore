@@ -8,9 +8,13 @@ import android.view.Gravity
 import androidx.fragment.app.Fragment
 import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.activity.showDebugInfoView
-import com.angcyo.base.*
+import com.angcyo.base.dslAHelper
+import com.angcyo.base.dslFHelper
+import com.angcyo.base.setNavigationBarColor
+import com.angcyo.base.setStatusBarColor
 import com.angcyo.core.component.dslPermissions
 import com.angcyo.library.L
+import com.angcyo.library.ex.havePermissions
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.toast
 import com.angcyo.loader.LoaderConfig

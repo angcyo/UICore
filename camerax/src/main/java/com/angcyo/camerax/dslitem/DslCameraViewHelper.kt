@@ -5,10 +5,11 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.VideoCapture
 import androidx.camera.view.CameraView
-import com.angcyo.base.havePermission
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.library.L
 import com.angcyo.library.component.MainExecutor
+import com.angcyo.library.ex.havePermission
+import com.angcyo.library.ex.scanFile
 import com.angcyo.library.utils.fileName
 import com.angcyo.library.utils.filePath
 import java.io.File
@@ -23,8 +24,12 @@ import java.io.File
  */
 
 class DslCameraViewHelper {
+
     val recordPermissionList = listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
     var cameraView: CameraView? = null
+
+    /**是否要在DCIM中显示*/
+    var saveToDCIM: Boolean = false
 
     /**拍照, 拍照*/
     fun takePicture(file: File? = null, onResult: (File, Exception?) -> Unit) {
@@ -36,6 +41,9 @@ class DslCameraViewHelper {
             takePicture(saveFile, MainExecutor, object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                     L.i(saveFile)
+                    if (saveToDCIM) {
+                        cameraView?.context?.scanFile(saveFile)
+                    }
                     onResult(saveFile, null)
                     //L.i(outputFileResults.savedUri) null
                 }
@@ -60,6 +68,9 @@ class DslCameraViewHelper {
                     override fun onVideoSaved(file: File) {
                         L.i(saveFile)
                         L.i(file)
+                        if (saveToDCIM) {
+                            cameraView?.context?.scanFile(saveFile)
+                        }
                         onResult(saveFile, null)
                     }
 

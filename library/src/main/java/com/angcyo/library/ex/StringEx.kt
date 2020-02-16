@@ -157,25 +157,29 @@ fun String.queryParameter(key: String): String? {
 /**获取url或者文件扩展名 对应的mimeType
  * https://www.iana.org/assignments/media-types/media-types.xhtml
  * */
-fun String.mimeType(): String? {
-    return MimeTypeMap.getSingleton()
-        .getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(this))
+fun String?.mimeType(): String? {
+    return this?.run {
+        MimeTypeMap.getSingleton()
+            .getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(this))
+    }
 }
 
-fun String.isVideoMimeType(): Boolean {
-    return this.startsWith("video", true)
+fun String?.isVideoMimeType(): Boolean {
+    return this?.startsWith("video", true) ?: false
 }
 
 /**[android.media.MediaFile#isPlayListMimeType]*/
-fun String.isAudioMimeType(): Boolean {
-    return this.startsWith(
-        "audio",
-        true
-    ) || this == "application/ogg"
+fun String?.isAudioMimeType(): Boolean {
+    return this?.run {
+        this.startsWith(
+            "audio",
+            true
+        ) || this == "application/ogg"
+    } ?: false
 }
 
-fun String.isImageMimeType(): Boolean {
-    return this.startsWith("image", true)
+fun String?.isImageMimeType(): Boolean {
+    return this?.startsWith("image", true) ?: false
 }
 
 /**获取字符串中所有匹配的数据(部分匹配), 更像是contains的关系*/
