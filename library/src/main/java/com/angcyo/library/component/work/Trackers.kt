@@ -6,7 +6,7 @@ import com.angcyo.library.app
 /**
  * A singleton class to hold an instance of each [ConstraintTracker].
  */
-class Trackers(context: Context, taskExecutor: TaskExecutor) {
+class Trackers(context: Context, val taskExecutor: TaskExecutor) {
 //    private val mBatteryChargingTracker: BatteryChargingTracker
 //    private val mBatteryNotLowTracker: BatteryNotLowTracker
     /**
