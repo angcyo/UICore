@@ -61,12 +61,32 @@ class FragmentBridge : Fragment() {
     /**只有在[Fragment]中调用[startActivityForResult], 才能在当前的[Fragment]收到[onActivityResult]回调*/
     fun startActivityForResult(
         intent: Intent?,
-        requestCode: Int,
-        options: Bundle?,
+        requestCode: Int = generateCode(),
+        options: Bundle? = null,
         observer: IFragmentBridge
     ) {
+        if (intent == null) {
+            return
+        }
         _observer.put(requestCode, observer)
         startActivityForResult(intent, requestCode, options)
+    }
+
+    fun startActivityForResult(
+        intent: Intent?,
+        requestCode: Int = generateCode(),
+        options: Bundle? = null,
+        observer: (resultCode: Int, data: Intent?) -> Unit
+    ) {
+        if (intent == null) {
+            return
+        }
+        startActivityForResult(intent, requestCode, options, object : IFragmentBridge {
+            override fun onActivityResult(resultCode: Int, data: Intent?) {
+                super.onActivityResult(resultCode, data)
+                observer(resultCode, data)
+            }
+        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -80,12 +100,34 @@ class FragmentBridge : Fragment() {
 
     /**同上*/
     fun startRequestPermissions(
-        requestCode: Int,
         permissions: Array<out String>,
+        requestCode: Int = generateCode(),
         observer: IFragmentBridge
     ) {
+        if (permissions.isEmpty()) {
+            return
+        }
         _observer.put(requestCode, observer)
         requestPermissions(permissions, requestCode)
+    }
+
+    fun startRequestPermissions(
+        permissions: Array<out String>,
+        requestCode: Int = generateCode(),
+        observer: (permissions: Array<out String>, grantResults: IntArray) -> Unit
+    ) {
+        if (permissions.isEmpty()) {
+            return
+        }
+        startRequestPermissions(permissions, requestCode, object : IFragmentBridge {
+            override fun onRequestPermissionsResult(
+                permissions: Array<out String>,
+                grantResults: IntArray
+            ) {
+                super.onRequestPermissionsResult(permissions, grantResults)
+                observer(permissions, grantResults)
+            }
+        })
     }
 
     override fun onRequestPermissionsResult(

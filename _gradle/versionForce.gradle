@@ -2,6 +2,8 @@
  * [versionConfigLib.gradle]
  * 关闭自动依赖
  * transitive = false
+ *
+ * 用@aar结尾，以中断依赖传递
  * */
 
 //强制版本依赖
