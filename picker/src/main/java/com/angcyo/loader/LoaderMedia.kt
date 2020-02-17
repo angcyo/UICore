@@ -19,7 +19,7 @@ data class LoaderMedia(
 
     //网络路径
     var url: String? = null,
-    //本地路径
+    //本地路径, 优先使用uri加载
     var localPath: String? = null,
     //压缩后的路径
     var compressPath: String? = null,
@@ -27,6 +27,9 @@ data class LoaderMedia(
     var cutPath: String? = null,
     //视频 音频媒体时长, 毫秒
     var duration: Long = 0,
+
+    //测试属性(暂无用处)
+    var loaderUri: Uri? = null,
 
     //Android Q文件存储机制修改成了沙盒模式, 不能直接通过路径的方式访问文件
     var localUri: Uri? = null,

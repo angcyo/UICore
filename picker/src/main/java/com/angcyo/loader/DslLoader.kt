@@ -1,5 +1,6 @@
 package com.angcyo.loader
 
+import android.content.ContentUris
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
@@ -13,9 +14,7 @@ import com.angcyo.coroutine.launchGlobal
 import com.angcyo.coroutine.onBack
 import com.angcyo.library.L
 import com.angcyo.library.LTime
-import com.angcyo.library.ex.fd
-import com.angcyo.library.ex.isDebug
-import com.angcyo.library.ex.isFileExist
+import com.angcyo.library.ex.*
 import kotlinx.coroutines.async
 import java.io.File
 
@@ -107,10 +106,26 @@ class DslLoader {
                                 val path =
                                     data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[1]))
 
+                                val loaderUri = when {
+                                    mimeType.isImageMimeType() -> ContentUris.withAppendedId(
+                                        MediaStore.Images.Media.getContentUri(VOLUME_EXTERNAL),
+                                        id
+                                    )
+                                    mimeType.isVideoMimeType() -> ContentUris.withAppendedId(
+                                        MediaStore.Video.Media.getContentUri(VOLUME_EXTERNAL),
+                                        id
+                                    )
+                                    mimeType.isAudioMimeType() -> ContentUris.withAppendedId(
+                                        MediaStore.Audio.Media.getContentUri(VOLUME_EXTERNAL),
+                                        id
+                                    )
+                                    else -> MediaStore.Files.getContentUri(VOLUME_EXTERNAL, id)
+                                }
+
                                 val uri = if (path.isFileExist()) {
                                     Uri.fromFile(File(path))
                                 } else {
-                                    MediaStore.Files.getContentUri(VOLUME_EXTERNAL, id)
+                                    loaderUri
                                 }
 
                                 val displayName =
@@ -136,6 +151,7 @@ class DslLoader {
                                 val loaderMedia = LoaderMedia().apply {
                                     this.id = id
                                     this.localUri = uri
+                                    this.loaderUri = loaderUri
                                     this.localPath = path ?: ""
                                     this.displayName = displayName ?: ""
                                     this.addTime = addTime
