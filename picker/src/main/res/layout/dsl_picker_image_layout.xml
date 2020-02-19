@@ -17,13 +17,15 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/lib_tip_image_view"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_picker_audio_folder" />
+        app:layout_constraintWidth_percent="0.6"
+        app:srcCompat="@drawable/lib_audio_cover_tip" />
 
     <!--选中动画遮罩层-->
     <View
@@ -40,7 +42,7 @@
         style="@style/LibBodyTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/picker_duration_bg_shape"
+        android:background="@drawable/lib_duration_bg_shape"
         android:drawablePadding="6dp"
         android:gravity="center_vertical"
         android:paddingLeft="8dp"
@@ -49,8 +51,8 @@
         android:paddingBottom="2dp"
         android:textColor="@color/lib_white"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:drawableLeft="@drawable/ic_picker_video"
-        tools:drawableRight="@drawable/ic_picker_audio"
+        tools:drawableLeft="@drawable/lib_video_tip"
+        tools:drawableRight="@drawable/lib_audio_tip"
         tools:text="1:30" />
 
     <!--包一层, 扩大点击范围-->

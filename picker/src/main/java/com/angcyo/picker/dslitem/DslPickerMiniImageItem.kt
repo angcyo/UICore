@@ -1,0 +1,64 @@
+package com.angcyo.picker.dslitem
+
+import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.margin
+import com.angcyo.item.DslImageItem
+import com.angcyo.library.ex._color
+import com.angcyo.library.ex.dpi
+import com.angcyo.loader.LoaderMedia
+import com.angcyo.loader.loadUri
+import com.angcyo.loader.mimeType
+import com.angcyo.picker.R
+import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.setWidthHeight
+
+/**
+ *
+ * Email:angcyo@126.com
+ * @author angcyo
+ * @date 2020/02/19
+ */
+
+class DslPickerMiniImageItem : DslImageItem() {
+
+    /**要加载的媒体*/
+    var loaderMedia: LoaderMedia? = null
+        get() = field ?: (itemData as? LoaderMedia)
+
+    /**删除标识*/
+    var itemIsDeleted: Boolean = false
+
+    override var itemData: Any? = null
+        set(value) {
+            field = value
+            if (value is LoaderMedia) {
+                //显示不下
+                //itemMediaDuration = value.duration
+                itemLoadUri = value.loadUri()
+                itemMimeType = value.mimeType()
+            }
+        }
+
+    init {
+        itemVideoCoverTipDrawable = -1
+        margin(8 * dpi)
+        onConfigImageView = {
+            it.drawBorder = itemIsSelected
+            it.borderColor = _color(R.color.picker_button_accent_bg_color)
+        }
+        itemLayoutId = R.layout.dsl_picker_mini_image_layout
+    }
+
+    override fun onItemBind(
+        itemHolder: DslViewHolder,
+        itemPosition: Int,
+        adapterItem: DslAdapterItem,
+        payloads: List<Any>
+    ) {
+        super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
+        itemHolder.itemView.setWidthHeight(80 * dpi, -2)
+
+        itemHolder.visible(R.id.picker_delete_mask_view, itemIsDeleted)
+        itemHolder.visible(R.id.picker_selector_mask_view, itemIsSelected)
+    }
+}

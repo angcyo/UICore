@@ -35,14 +35,15 @@ import kotlin.math.sqrt
  */
 object Device {
 
-    private var PSUEDO_ID: String? = null
+    var deviceId: String = ""
+        get() = if (field.isEmpty()) getUniqueDeviceId() else field
 
-    //获得独一无二的Psuedo ID
-    fun getUniquePsuedoID(): String? {
-        if (PSUEDO_ID != null) {
-            return PSUEDO_ID
-        }
-        var result: String?
+    /**
+     * 获得独一无二的Psuedo ID
+     * https://www.jianshu.com/p/130918ed8b2f
+     * */
+    fun getUniqueDeviceId(): String {
+        var result: String
         var serial: String?
         val idShort = "35" +
                 Build.BOARD.length % 10 +
@@ -67,7 +68,7 @@ object Device {
             //使用硬件信息拼凑出来的15位号码
             result = UUID(idShort.hashCode().toLong(), serial.hashCode().toLong()).toString()
         }
-        PSUEDO_ID = result
+        deviceId = result
         return result
     }
 
@@ -203,7 +204,7 @@ object Device {
         val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
 
         builder.append("psuedoID: ")
-        builder.appendln(getUniquePsuedoID())
+        builder.appendln(getUniqueDeviceId())
         builder.appendln()
         // cpu架构
         builder.append("CPU : ")

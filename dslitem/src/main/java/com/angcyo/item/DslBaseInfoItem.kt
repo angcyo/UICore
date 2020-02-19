@@ -15,7 +15,7 @@ import com.angcyo.widget.base.setLeftIco
 import com.angcyo.widget.layout.RLinearLayout
 
 /**
- *
+ * 横条文本信息基类item, 右边布局支持扩展自定义
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/08/09

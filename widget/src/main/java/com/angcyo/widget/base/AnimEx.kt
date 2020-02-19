@@ -201,6 +201,7 @@ data class RevealConfig(
 fun View.bgColorAnimator(
     from: Int,
     to: Int,
+    interpolator: Interpolator = LinearInterpolator(),
     duration: Long = ANIM_DURATION,
     onEnd: (cancel: Boolean) -> Unit = {},
     config: ValueAnimator.() -> Unit = {}
@@ -217,7 +218,7 @@ fun View.bgColorAnimator(
             onEnd(fromCancel)
         }
     })
-    colorAnimator.interpolator = LinearInterpolator()
+    colorAnimator.interpolator = interpolator
     colorAnimator.duration = duration
     colorAnimator.config()
     colorAnimator.start()

@@ -23,15 +23,23 @@ class RPhotoView : PhotoView {
         defStyle
     )
 
-    override fun setImageDrawable(drawable: Drawable?) {
-        super.setImageDrawable(drawable)
-    }
-
     override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
         return super.dispatchTouchEvent(event)
     }
 
     override fun getImageMatrix(): Matrix {
         return super.getImageMatrix()
+    }
+
+    override fun setImageDrawable(drawable: Drawable?) {
+        super.setImageDrawable(drawable)
+    }
+
+    override fun setScale(scale: Float) {
+        super.setScale(scale)
+    }
+
+    override fun setScale(scale: Float, animate: Boolean) {
+        super.setScale(scale, animate)
     }
 }

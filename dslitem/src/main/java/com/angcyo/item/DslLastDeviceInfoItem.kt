@@ -38,7 +38,7 @@ class DslLastDeviceInfoItem : DslAdapterItem() {
         itemHolder.tv(R.id.lib_text_view)?.text = span {
             append(getWifiIP()).append("|").append(getMobileIP())
             appendln()
-            append(Device.getUniquePsuedoID()) {
+            append(Device.getUniqueDeviceId()) {
                 foregroundColor = getColor(R.color.colorPrimaryDark)
             }
             appendln()

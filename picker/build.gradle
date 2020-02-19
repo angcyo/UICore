@@ -13,7 +13,7 @@ android {
 dependencies {
     api project(allModule.core)
     api project(allModule.viewmodel)
-    api project(allModule.glide)
+    api project(allModule.dslitem)
     api project(allModule.transition)
     api project(allModule.download)
 
@@ -28,4 +28,7 @@ dependencies {
     api 'com.github.chrisbanes:PhotoView:2.3.0'
 
     //api "androidx.exifinterface:exifinterface:1.1.0"
+
+    //https://github.com/Yalantis/uCrop
+    implementation 'com.github.yalantis:ucrop:2.2.4'
 }

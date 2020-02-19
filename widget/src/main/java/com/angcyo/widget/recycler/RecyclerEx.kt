@@ -248,4 +248,24 @@ fun RecyclerView.allViewHolder(): List<DslViewHolder> {
     return result
 }
 
+/**本地更新[RecyclerView]界面,
+ * [position] 指定需要更新的位置, 负数表示全部*/
+fun RecyclerView.localUpdateItem(position: Int = -1, payloads: List<Any> = emptyList()) {
+    if (adapter !is DslAdapter) {
+        return
+    }
+    allViewHolder().forEach { viewHolder ->
+        val adapterPosition = viewHolder.adapterPosition
+        val adapterItem = (adapter as DslAdapter).getItemData(adapterPosition)
+        adapterItem?.run {
+            if (position >= 0) {
+                if (position == adapterPosition) {
+                    onItemBind(viewHolder, adapterPosition, adapterItem, payloads)
+                }
+            } else {
+                onItemBind(viewHolder, adapterPosition, adapterItem, payloads)
+            }
+        }
+    }
+}
 //</editor-fold desc="ViewHolder相关">

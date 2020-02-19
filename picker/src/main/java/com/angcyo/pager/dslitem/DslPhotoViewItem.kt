@@ -6,7 +6,6 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.glide.loadImage
 import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.anim
 import com.github.chrisbanes.photoview.OnViewTapListener
 import com.github.chrisbanes.photoview.PhotoView
 
@@ -17,11 +16,12 @@ import com.github.chrisbanes.photoview.PhotoView
  * @date 2020/01/22
  */
 open class DslPhotoViewItem : DslAdapterItem() {
-    init {
-        itemLayoutId = R.layout.dsl_photo_view_item
-    }
 
-    var imageUri: Uri? = null
+    /**媒体uri*/
+    var itemLoadUri: Uri? = null
+
+    /**媒体类型*/
+    var itemMimeType: String? = null
 
     /**占位图获取*/
     var placeholderDrawableProvider: IPlaceholderDrawableProvider? = null
@@ -41,22 +41,27 @@ open class DslPhotoViewItem : DslAdapterItem() {
     /**[PhotoView]长按事件*/
     var onPhotoViewLongClickListener: View.OnLongClickListener = View.OnLongClickListener { false }
 
+    init {
+        itemLayoutId = R.layout.dsl_photo_view_item
+    }
+
     override fun onItemBind(
         itemHolder: DslViewHolder,
         itemPosition: Int,
-        adapterItem: DslAdapterItem
+        adapterItem: DslAdapterItem,
+        payloads: List<Any>
     ) {
-        super.onItemBind(itemHolder, itemPosition, adapterItem)
+        super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
         itemHolder.img(R.id.lib_image_view)?.apply {
-            loadImage(imageUri) {
+            loadImage(itemLoadUri) {
                 //检查gif
                 checkGifType = true
                 //使用原始大小
                 originalSize = true
 
                 //占位图
-                placeholderDrawableProvider?.getPlaceholderDrawable(imageUri)?.run {
+                placeholderDrawableProvider?.getPlaceholderDrawable(itemLoadUri)?.run {
                     placeholderDrawable = this
                 }
 
@@ -75,11 +80,12 @@ open class DslPhotoViewItem : DslAdapterItem() {
                     }
                     if (targetView is PhotoView) {
                         //有一个莫名其妙的BUG, 占位图 喧宾夺主
-                        anim(0f, 1f) {
-                            onAnimatorUpdateValue = { _, _ ->
-                                (targetView as? PhotoView)?.scale = 1f
-                            }
-                        }
+//                        anim(0f, 1f) {
+//                            onAnimatorUpdateValue = { _, _ ->
+//                                (targetView as? PhotoView)?.scale = 1f
+//                            }
+//                        }
+                        (targetView as? PhotoView)?.setScale(1f, true)
                     }
                     false
                 }

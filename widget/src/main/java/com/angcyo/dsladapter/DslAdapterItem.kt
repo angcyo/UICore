@@ -22,9 +22,9 @@ import kotlin.reflect.KProperty
 open class DslAdapterItem {
 
     companion object {
-        /**负载部分刷新界面*/
+        /**负载,请求刷新部分界面*/
         const val PAYLOAD_UPDATE_PART = 0x1_00_00
-        /**强制更新媒体, 比如图片*/
+        /**负载,强制更新媒体, 比如图片*/
         const val PAYLOAD_UPDATE_MEDIA = 0x2_00_00
     }
 
@@ -32,7 +32,7 @@ open class DslAdapterItem {
     var itemDslAdapter: DslAdapter? = null
 
     /**[notifyItemChanged]*/
-    open fun updateAdapterItem(payload: Any? = null, useFilterList: Boolean = true) {
+    open fun updateAdapterItem(payload: Any? = PAYLOAD_UPDATE_PART, useFilterList: Boolean = true) {
         if (itemDslAdapter == null) {
             L.e("updateAdapterItem需要[itemDslAdapter], 请赋值.")
         }
@@ -55,7 +55,7 @@ open class DslAdapterItem {
     var itemLayoutId: Int = -1
 
     /**附加的数据*/
-    var itemData: Any? = null
+    open var itemData: Any? = null
 
     /**唯一标识此item的值*/
     var itemTag: String? = null
@@ -456,9 +456,9 @@ open class DslAdapterItem {
             }
         }
 
-    var thisGetChangePayload: (fromItem: DslAdapterItem?, newItem: DslAdapterItem) -> Any? =
-        { _, _ ->
-            null
+    var thisGetChangePayload: (fromItem: DslAdapterItem?, filterPayload: Any?, newItem: DslAdapterItem) -> Any? =
+        { _, filterPayload, _ ->
+            filterPayload ?: PAYLOAD_UPDATE_PART
         }
 
     /**
@@ -484,7 +484,8 @@ open class DslAdapterItem {
     open fun updateItemDepend(
         filterParams: FilterParams = FilterParams(
             fromDslAdapterItem = this,
-            updateDependItemWithEmpty = false
+            updateDependItemWithEmpty = false,
+            payload = PAYLOAD_UPDATE_PART
         )
     ) {
         if (itemDslAdapter == null) {

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="lib_icon_dark_color">#5C5D5E</color>
+    <color name="lib_image_placeholder_color">#474849</color>
+</resources>

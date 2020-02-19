@@ -14,11 +14,16 @@ object LTime {
 
     /**记录时间*/
     fun tick() {
-        stack.push(nowTime())
+        if (L.debug) {
+            stack.push(nowTime())
+        }
     }
 
     /**获取与最近一次时间匹配的时间间隔(ms)*/
     fun time(): String {
+        if (!L.debug) {
+            return "not debug!"
+        }
         val startTime = if (stack.isEmpty()) nowTime() else stack.pop()
         val nowTime = nowTime()
         val ms = ((nowTime - startTime) % 1000) * 1f / 1000

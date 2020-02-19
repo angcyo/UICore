@@ -24,6 +24,18 @@ import com.angcyo.widget.base.string
 
 open class HawkViewHolderFactory : HawkFactory {
 
+    /**是否启用Id当key, 否则请将key放在[R.id.lib_tag_hawk]的tag中*/
+    var enableIdKey = true
+
+    /**通过View的id生成的key的前缀*/
+    var idKeyPrefix = ""
+
+    /**保存选择状态*/
+    var enableSelectedState = true
+
+    /**保存激活状态*/
+    var enableEnabledState = true
+
     companion object {
         val hawkViewHolderFactory = HawkViewHolderFactory()
     }
@@ -35,10 +47,10 @@ open class HawkViewHolderFactory : HawkFactory {
             if (tag.isNotBlank()) {
                 key = tag
             }
-        } else {
+        } else if (enableIdKey) {
             val viewId = view.id
             if (viewId != View.NO_ID) {
-                key = "$viewId"
+                key = "$idKeyPrefix$viewId"
             }
         }
 
@@ -86,6 +98,14 @@ open class HawkViewHolderFactory : HawkFactory {
                 is EditText -> key.hawkPut(view.string(false))
                 is CompoundButton -> key.hawkPut(if (view.isChecked) "1" else "0")
                 is AdapterView<*> -> key.hawkPut("${view.selectedItemPosition}")
+                else -> {
+                    if (enableSelectedState) {
+                        "${key}_selected".hawkPut(if (view.isSelected) "1" else "0")
+                    }
+                    if (enableEnabledState) {
+                        "${key}_enabled".hawkPut(if (view.isEnabled) "1" else "0")
+                    }
+                }
             }
         }
         if (view is ViewGroup) {
@@ -102,6 +122,14 @@ open class HawkViewHolderFactory : HawkFactory {
                 is EditText -> key.hawkGet()?.run { view.setInputText(this) }
                 is CompoundButton -> key.hawkGet()?.run { view.isChecked = this == "1" }
                 is AdapterView<*> -> key.hawkGet()?.toIntOrNull()?.run { view.setSelection(this) }
+                else -> {
+                    if (enableSelectedState) {
+                        "${key}_selected".hawkGet()?.run { view.isSelected = this == "1" }
+                    }
+                    if (enableEnabledState) {
+                        "${key}_enabled".hawkGet()?.run { view.isEnabled = this == "1" }
+                    }
+                }
             }
         }
         if (view is ViewGroup) {
@@ -126,14 +154,35 @@ interface HawkFactory {
     fun onRestoreView(view: View)
 }
 
-fun DslViewHolder.hawkInstall(factory: HawkFactory = hawkViewHolderFactory) {
+fun DslViewHolder.hawkInstallAndRestore(
+    idKeyPrefix: String = "",
+    factory: HawkFactory = hawkViewHolderFactory
+) {
+    (factory as? HawkViewHolderFactory)?.idKeyPrefix = idKeyPrefix
+    factory.onInstall(itemView)
+    factory.onRestoreView(itemView)
+}
+
+fun DslViewHolder.hawkInstall(
+    idKeyPrefix: String = "",
+    factory: HawkFactory = hawkViewHolderFactory
+) {
+    (factory as? HawkViewHolderFactory)?.idKeyPrefix = idKeyPrefix
     factory.onInstall(itemView)
 }
 
-fun DslViewHolder.hawkSave(factory: HawkFactory = hawkViewHolderFactory) {
+fun DslViewHolder.hawkSave(
+    idKeyPrefix: String = "",
+    factory: HawkFactory = hawkViewHolderFactory
+) {
+    (factory as? HawkViewHolderFactory)?.idKeyPrefix = idKeyPrefix
     factory.onSaveView(itemView)
 }
 
-fun DslViewHolder.hawkRestore(factory: HawkFactory = hawkViewHolderFactory) {
+fun DslViewHolder.hawkRestore(
+    idKeyPrefix: String = "",
+    factory: HawkFactory = hawkViewHolderFactory
+) {
+    (factory as? HawkViewHolderFactory)?.idKeyPrefix = idKeyPrefix
     factory.onRestoreView(itemView)
 }

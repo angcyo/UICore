@@ -179,6 +179,7 @@ open class PopupConfig {
     /**使用[Activity]当做载体*/
     open fun showWidthActivity(activity: Activity): Window {
 
+        //拦截掉[Activity]的[BackPress], 需要[BaseAppCompatActivity]的支持
         _onBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 isEnabled = false
@@ -193,18 +194,22 @@ open class PopupConfig {
         val window = activity.window
 
         val windowLayout = window.findViewById<FrameLayout>(Window.ID_ANDROID_CONTENT)
+        //创建内容布局
         val contentLayout = createContentView(activity)
 
+        //全屏覆盖层
         val rootLayout = FrameLayout(activity)
         rootLayout.layoutParams = FrameLayout.LayoutParams(-1, -1)
         rootLayout.setBgDrawable(background)
 
+        //模拟点击外隐藏
         rootLayout.setOnClickListener {
             if (outsideTouchable) {
                 _onBackPressedCallback?.handleOnBackPressed()
             }
         }
 
+        //进行锚点位置纠正偏移
         val anchorRect = Rect(0, 0, 0, 0)
         anchor?.let {
             val viewRect = it.getViewRect()
@@ -228,6 +233,7 @@ open class PopupConfig {
             }
         }
 
+        //addView
         rootLayout.addView(contentLayout, FrameLayout.LayoutParams(width, height, gravity).apply {
             leftMargin = xoff
 
@@ -242,6 +248,7 @@ open class PopupConfig {
 
         windowLayout.addView(contentView)
 
+        //回调
         val viewHolder = DslViewHolder(rootLayout)
         onAddRootLayout(activity, viewHolder)
 

@@ -1,6 +1,7 @@
 package com.angcyo.library.ex
 
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -8,6 +9,7 @@ import android.hardware.Camera
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
+import android.provider.MediaStore
 import android.view.View
 import android.view.Window
 import android.webkit.MimeTypeMap
@@ -52,6 +54,50 @@ fun Context.havePermission(permissionList: List<String>): Boolean {
             it
         ) == PackageManager.PERMISSION_GRANTED
     }
+}
+
+/**保存到DCIM*/
+fun Context.saveToDCIM(file: File): Boolean {
+    val values = ContentValues()
+    val filename = file.name
+    val mimeType = filename.mimeType()
+
+    values.put(MediaStore.Images.Media.TITLE, filename)
+    values.put(MediaStore.Images.Media.DISPLAY_NAME, filename)
+    values.put(MediaStore.Images.Media.DESCRIPTION, filename)
+    values.put(MediaStore.Images.Media.MIME_TYPE, mimeType)
+
+    //values.put("relative_path", "DCIM/demo")//相对路径, 有限制.
+
+    val uri = when {
+        mimeType.isImageMimeType() -> contentResolver.insert(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            values
+        )
+        mimeType.isVideoMimeType() -> contentResolver.insert(
+            MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+            values
+        )
+        mimeType.isAudioMimeType() -> contentResolver.insert(
+            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+            values
+        )
+        else -> contentResolver.insert(MediaStore.Files.getContentUri("external"), values)
+    }
+
+    return uri?.run {
+        try {
+            file.inputStream().use { input ->
+                contentResolver.openOutputStream(uri)?.use { output ->
+                    input.copyTo(output)
+                }
+            }
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    } ?: false
 }
 
 /**相机拍摄新照片，并将照片的条目添加到媒体存储。*/

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.angcyo.glide.GlideImageView
+        android:id="@+id/lib_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintDimensionRatio="1:1"
+        app:r_draw_border="false"
+        app:r_image_radius="0dp"
+        app:srcCompat="@color/lib_image_placeholder_color"
+        tools:r_draw_border="true" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/lib_tip_image_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.6"
+        app:srcCompat="@drawable/lib_audio_cover_tip" />
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_duration_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/lib_duration_bg_shape"
+        android:drawablePadding="6dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="8dp"
+        android:paddingTop="2dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="2dp"
+        android:textColor="@color/lib_white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:drawableLeft="@drawable/lib_video_tip"
+        tools:drawableRight="@drawable/lib_audio_tip"
+        tools:text="1:30" />
+
+</com.angcyo.widget.layout.RConstraintLayout>

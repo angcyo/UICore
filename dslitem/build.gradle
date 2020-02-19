@@ -2,4 +2,5 @@ apply from: allGradle.libBase
 
 dependencies {
     api project(allModule.widget)
+    api project(allModule.glide)
 }

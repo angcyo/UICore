@@ -22,7 +22,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     RecyclerView.Adapter<DslViewHolder>(), OnDispatchUpdatesListener {
 
     companion object {
-        var DEFALUT_PAGE_SIZE = 20
+        var DEFAULT_PAGE_SIZE = 20
     }
 
     /**
@@ -384,8 +384,13 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     inline fun <reified Item : DslAdapterItem> loadSingleData(
         dataList: List<Any>?,
         page: Int = 1,
-        pageSize: Int = DEFALUT_PAGE_SIZE,
-        filterParams: FilterParams = defaultFilterParams!!,
+        pageSize: Int = DEFAULT_PAGE_SIZE,
+        filterParams: FilterParams = defaultFilterParams!!.apply {
+            payload = listOf(
+                DslAdapterItem.PAYLOAD_UPDATE_PART,
+                DslAdapterItem.PAYLOAD_UPDATE_MEDIA
+            )
+        },
         crossinline initOrCreateDslItem: (oldItem: Item?, data: Any) -> Item
     ) {
         changeDataItems(filterParams) {
@@ -510,7 +515,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     }
 
     /**更新界面上所有[DslAdapterItem]*/
-    fun updateAllItem(payload: Any? = null) {
+    fun updateAllItem(payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART) {
         notifyItemRangeChanged(0, itemCount, payload)
     }
 

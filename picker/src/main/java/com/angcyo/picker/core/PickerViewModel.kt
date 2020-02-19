@@ -1,10 +1,11 @@
-package com.angcyo.picker
+package com.angcyo.picker.core
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.angcyo.loader.LoaderConfig
 import com.angcyo.loader.LoaderFolder
 import com.angcyo.loader.LoaderMedia
+import com.angcyo.loader.canSelectorMedia
 
 /**
  *
@@ -26,6 +27,9 @@ class PickerViewModel : ViewModel() {
     /**当前显示的文件夹*/
     val currentFolder = MutableLiveData<LoaderFolder>()
 
+    /**选择原图*/
+    val selectorOrigin = MutableLiveData<Boolean>(false)
+
     /**添加选中项*/
     fun addSelectedMedia(media: LoaderMedia?) {
         media?.run {
@@ -40,5 +44,19 @@ class PickerViewModel : ViewModel() {
             selectorMediaList.value?.remove(this)
             selectorMediaList.value = selectorMediaList.value
         }
+    }
+
+    /**是否可以选中*/
+    fun canSelectorMedia(media: LoaderMedia?): Boolean {
+        if (media == null) {
+            return false
+        }
+        if (selectorMediaList.value.isNullOrEmpty()) {
+            return true
+        }
+        if (loaderConfig.value?.canSelectorMedia(selectorMediaList.value!!, media) == true) {
+            return true
+        }
+        return false
     }
 }

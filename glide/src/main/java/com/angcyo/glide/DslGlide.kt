@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.ImageView.ScaleType
 import com.angcyo.http.OkType
 import com.angcyo.library.L
+import com.angcyo.library.LTime
 import com.angcyo.library.app
 import com.angcyo.library.ex.isFileExist
 import com.angcyo.library.ex.isHttpScheme
@@ -124,6 +125,7 @@ class DslGlide {
     }
 
     fun load(uri: Uri?) {
+        LTime.tick()
         _checkLoad {
             if (checkGifType) {
                 targetView?.setImageDrawable(placeholderDrawable)
@@ -377,6 +379,7 @@ class DslGlide {
                 target: Target<T>?,
                 isFirstResource: Boolean
             ): Boolean {
+                L.w("$model 加载失败(${LTime.time()}) $e")
                 return this@DslGlide.onLoadFailed(string, e)
             }
 
@@ -387,6 +390,7 @@ class DslGlide {
                 dataSource: DataSource?,
                 isFirstResource: Boolean
             ): Boolean {
+                L.w("$model 加载成功(${LTime.time()}) $dataSource")
                 return this@DslGlide.onLoadSucceed(string, resource)
             }
         })

@@ -10,7 +10,7 @@ import com.angcyo.widget.base.getDrawable
 import com.angcyo.widget.base.setRightIco
 
 /**
- *
+ * 横条左右都是文本控件的item
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/08/09

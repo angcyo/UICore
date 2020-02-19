@@ -23,15 +23,20 @@ import com.angcyo.widget.base.viewRect
 
 open class DslImageView : ShapeImageView {
 
+    /**点击的时候, 是否显示蒙层*/
     var showTouchMask: Boolean = true
+    /**蒙层[Drawable]*/
     var touchMaskDrawable: Drawable? = ColorDrawable("#1A000000".toColorInt())
-    var _isTouchHold = false
 
+    /**覆盖层绘制列表对象*/
     val overlayList = mutableListOf<OverlayDrawable>()
-    val _dslGravity = DslGravity()
 
+    /**默认add覆盖层的偏移距离*/
     var overlayOffsetX: Int = 0
     var overlayOffsetY: Int = 0
+
+    val _dslGravity = DslGravity()
+    var _isTouchHold = false
 
     constructor(context: Context) : super(context) {
         initAttribute(context, null)
@@ -117,24 +122,26 @@ open class DslImageView : ShapeImageView {
         //draw overlay
         viewRect(_dslGravity.gravityBounds)
         overlayList.forEach {
-            if (it.drawable.bounds.isEmpty) {
-                viewRect(it.drawable.bounds)
-            }
-
-            _dslGravity.gravity = it.gravity
-            _dslGravity.gravityOffsetX = it.offsetX
-            _dslGravity.gravityOffsetY = it.offsetY
-            _dslGravity.applyGravity(
-                it.drawable.bounds.width().toFloat(),
-                it.drawable.bounds.height().toFloat()
-            ) { _, _ ->
-                canvas.save()
-                canvas.translate(
-                    _dslGravity._gravityLeft.toFloat(),
-                    _dslGravity._gravityTop.toFloat()
-                )
-                it.drawable.draw(canvas)
-                canvas.restore()
+            val overlayDrawable = it.drawable
+            if (overlayDrawable != null) {
+                if (overlayDrawable.bounds.isEmpty) {
+                    viewRect(overlayDrawable.bounds)
+                }
+                _dslGravity.gravity = it.gravity
+                _dslGravity.gravityOffsetX = it.offsetX
+                _dslGravity.gravityOffsetY = it.offsetY
+                _dslGravity.applyGravity(
+                    overlayDrawable.bounds.width().toFloat(),
+                    overlayDrawable.bounds.height().toFloat()
+                ) { _, _ ->
+                    canvas.save()
+                    canvas.translate(
+                        _dslGravity._gravityLeft.toFloat(),
+                        _dslGravity._gravityTop.toFloat()
+                    )
+                    overlayDrawable.draw(canvas)
+                    canvas.restore()
+                }
             }
         }
 
@@ -182,7 +189,7 @@ open class DslImageView : ShapeImageView {
     }
 
     data class OverlayDrawable(
-        val drawable: Drawable,
+        val drawable: Drawable?,
         val gravity: Int,
         val offsetX: Int,
         val offsetY: Int

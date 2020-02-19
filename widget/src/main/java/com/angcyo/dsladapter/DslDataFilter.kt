@@ -264,7 +264,11 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                             oldData: DslAdapterItem,
                             newData: DslAdapterItem
                         ): Any? {
-                            return oldData.thisGetChangePayload(oldData, newData)
+                            return oldData.thisGetChangePayload(
+                                _params?.fromDslAdapterItem,
+                                _params?.payload,
+                                newData
+                            )
                         }
                     }
                 )

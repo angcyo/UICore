@@ -11,6 +11,7 @@ import android.view.ViewOutlineProvider
 import androidx.appcompat.widget.AppCompatImageView
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
+import com.angcyo.widget.base.InvalidateProperty
 import com.angcyo.widget.base.save
 
 /**
@@ -27,9 +28,11 @@ open class ShapeImageView : AppCompatImageView {
     var imageRadius = 5 * dpi
 
     /**绘制边框*/
-    var drawBorder: Boolean = true
-    var borderWidth: Int = 2 * dpi
-    var borderColor: Int = Color.WHITE
+    var drawBorder: Boolean by InvalidateProperty(true)
+    /**边框的宽度*/
+    var borderWidth: Int by InvalidateProperty(2 * dpi)
+    /**边框的颜色*/
+    var borderColor: Int by InvalidateProperty(Color.WHITE)
 
     var _outlineRect = Rect()
     var _outlineRectF = RectF()

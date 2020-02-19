@@ -58,13 +58,12 @@ class ItemSelectorHelper(val dslAdapter: DslAdapter) {
      * @param selectorParams 参数
      * */
     fun selector(selectorParams: SelectorParams) {
-        if (selectorParams.item == null) {
-            return
-        }
         _checkModel {
-            val item = selectorParams.item!!
+            val item = selectorParams.item
             val isSelectorItem = _isSelectItem(selectorParams)
             when {
+                //空item操作
+                item == null -> _selector(selectorParams)
                 _isInFiexedList(item) -> {
                     //在固定列表中
                     _selector(selectorParams.apply {
@@ -172,28 +171,25 @@ class ItemSelectorHelper(val dslAdapter: DslAdapter) {
     }
 
     fun _selector(selectorParams: SelectorParams) {
-        if (selectorParams.item == null) {
-            return
-        }
         val isSelectorItem = _isSelectItem(selectorParams)
-        val item = selectorParams.item!!
+        val item = selectorParams.item
 
-        if (item.itemIsSelected == isSelectorItem) {
+        if (item != null && item.itemIsSelected == isSelectorItem) {
             //重复操作
             return
         }
 
-        if (_isInFiexedList(item)) {
+        if (item != null && _isInFiexedList(item)) {
             //直接操作, 跳过判断条件
             _selectorInner(selectorParams)
         } else {
             val oldSelectorList = getSelectorItemList(selectorParams._useFilterList)
             if (selectorModel == MODEL_SINGLE) {
-                //单选
+                //单选模式下, 选中一个null item, 允许取消之前的item
                 if (oldSelectorList.isNotEmpty()) {
                     //取消之前选中的项
                     oldSelectorList.forEach {
-                        if (it != item) {
+                        if (item == null || it != item) {
                             if (it.isItemCanSelected(it.itemIsSelected, false)) {
                                 _selectorInner(
                                     SelectorParams(

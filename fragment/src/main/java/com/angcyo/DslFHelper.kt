@@ -362,10 +362,12 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
                 }
             }
 
-            //no view
-            allNoViewFragment.forEach {
-                setMaxLifecycle(it, Lifecycle.State.STARTED)
-            }
+            //no view ,no op
+//            allNoViewFragment.forEach {
+//                if (it.retainInstance) {
+//                    setMaxLifecycle(it, Lifecycle.State.STARTED)
+//                }
+//            }
 
             //op show
             val lastFragment = fmFragmentList.lastOrNull()

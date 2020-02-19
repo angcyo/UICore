@@ -6,6 +6,7 @@ import com.angcyo.library.toast
 import com.angcyo.loader.LoaderConfig.Companion.LOADER_TYPE_AUDIO
 import com.angcyo.loader.LoaderConfig.Companion.LOADER_TYPE_IMAGE
 import com.angcyo.loader.LoaderConfig.Companion.LOADER_TYPE_VIDEO
+import com.angcyo.picker.core.PickerActivity
 import kotlinx.android.parcel.Parcelize
 
 /**
@@ -53,7 +54,10 @@ data class LoaderConfig(
     var maxSelectorAudioLimit: Int = -1,
 
     /**已经选中的媒体*/
-    var selectorMediaList: MutableList<LoaderMedia> = mutableListOf()
+    var selectorMediaList: MutableList<LoaderMedia> = mutableListOf(),
+
+    /**[androidx.core.app.ActivityCompat.startActivityForResult]*/
+    var requestCode: Int = PickerActivity.PICKER_REQUEST_CODE
 ) : Parcelable {
     companion object {
         /**需要加载的mime type 图片,视频,音频*/

@@ -8,7 +8,7 @@
     <application>
         <!--图片选择器-->
         <activity
-            android:name=".PickerActivity"
+            android:name=".core.PickerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|fontScale|smallestScreenSize|density|screenLayout"
             android:enabled="true"
             android:excludeFromRecents="false"

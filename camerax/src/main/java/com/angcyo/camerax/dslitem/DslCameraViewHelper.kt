@@ -9,7 +9,7 @@ import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.library.L
 import com.angcyo.library.component.MainExecutor
 import com.angcyo.library.ex.havePermission
-import com.angcyo.library.ex.scanFile
+import com.angcyo.library.ex.saveToDCIM
 import com.angcyo.library.utils.fileName
 import com.angcyo.library.utils.filePath
 import java.io.File
@@ -42,7 +42,8 @@ class DslCameraViewHelper {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                     L.i(saveFile)
                     if (saveToDCIM) {
-                        cameraView?.context?.scanFile(saveFile)
+                        cameraView?.context?.saveToDCIM(saveFile)
+                        //cameraView?.context?.scanFile(saveFile)
                     }
                     onResult(saveFile, null)
                     //L.i(outputFileResults.savedUri) null
@@ -67,9 +68,9 @@ class DslCameraViewHelper {
                 startRecording(saveFile, MainExecutor, object : VideoCapture.OnVideoSavedCallback {
                     override fun onVideoSaved(file: File) {
                         L.i(saveFile)
-                        L.i(file)
                         if (saveToDCIM) {
-                            cameraView?.context?.scanFile(saveFile)
+                            cameraView?.context?.saveToDCIM(saveFile)
+                            //cameraView?.context?.scanFile(saveFile)
                         }
                         onResult(saveFile, null)
                     }

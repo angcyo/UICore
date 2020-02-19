@@ -21,7 +21,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/close_image_view"
+                android:id="@+id/picker_close_view"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:background="@drawable/lib_bg2_selector"
@@ -108,9 +108,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:background="@drawable/lib_bg_selector"
+            android:enabled="false"
             android:padding="10dp"
             android:text="预览"
-            android:textColor="@color/picker_bottom_text_color" />
+            android:textColor="@color/preview_text_color_selector" />
 
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/origin_cb"

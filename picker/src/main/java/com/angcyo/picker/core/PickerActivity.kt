@@ -1,4 +1,4 @@
-package com.angcyo.picker
+package com.angcyo.picker.core
 
 import android.Manifest
 import android.app.Activity
@@ -18,6 +18,7 @@ import com.angcyo.library.ex.havePermissions
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.toast
 import com.angcyo.loader.LoaderConfig
+import com.angcyo.picker.R
 import com.angcyo.viewmodel.VMProperty
 
 /**
@@ -45,7 +46,9 @@ class PickerActivity : BaseAppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        //setTheme()
         super.onCreate(savedInstanceState)
+        //requestedOrientation
         setStatusBarColor()
         setNavigationBarColor(com.angcyo.library.ex.getColor(R.color.picker_bottom_bar_bg_color))
     }
@@ -98,8 +101,10 @@ class PickerActivity : BaseAppCompatActivity() {
                 if (back()) {
                     dslAHelper {
                         finish {
-                            exitAnim = R.anim.lib_picker_exit_anim
-                            enterAnim = R.anim.lib_picker_other_enter_anim
+                            exitAnim =
+                                R.anim.lib_picker_exit_anim
+                            enterAnim =
+                                R.anim.lib_picker_other_enter_anim
                         }
                     }
                 }
@@ -107,7 +112,9 @@ class PickerActivity : BaseAppCompatActivity() {
         }
     }
 
-    val pickerViewModel: PickerViewModel by VMProperty(PickerViewModel::class.java)
+    /**通过[PickerViewModel]在[Fragment]之间共享数据*/
+    val pickerViewModel: PickerViewModel by VMProperty(
+        PickerViewModel::class.java)
 
     /**发送数据*/
     fun send() {

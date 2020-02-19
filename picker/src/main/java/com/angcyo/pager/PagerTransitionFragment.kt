@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.ViewGroup
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.set
-import com.angcyo.loader.loadPath
 import com.angcyo.loader.loadUri
 import com.angcyo.pager.dslitem.DslPhotoViewItem
 import com.angcyo.tablayout.evaluateColor
@@ -104,7 +103,7 @@ open class PagerTransitionFragment : ViewTransitionFragment() {
             pagerTransitionCallback.loaderMediaList.forEach {
                 items.add(DslPhotoViewItem().apply {
                     itemData = it
-                    imageUri = it.loadUri()
+                    itemLoadUri = it.loadUri()
 
                     //占位图提供
                     placeholderDrawableProvider = pagerTransitionCallback

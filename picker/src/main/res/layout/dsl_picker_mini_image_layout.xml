@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <include layout="@layout/dsl_image_item" />
+
+    <View
+        android:id="@+id/picker_delete_mask_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/picker_deleted_mask_shape"
+        android:visibility="gone"
+        app:layout_constraintDimensionRatio="1:1"
+        tools:visibility="visible" />
+
+    <View
+        android:id="@+id/picker_selector_mask_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/picker_selector_mask_shape"
+        android:visibility="gone"
+        app:layout_constraintDimensionRatio="1:1"
+        tools:visibility="visible" />
+
+</com.angcyo.widget.layout.RConstraintLayout>

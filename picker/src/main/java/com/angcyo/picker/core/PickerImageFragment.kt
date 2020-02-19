@@ -1,41 +1,34 @@
-package com.angcyo.picker
+package com.angcyo.picker.core
 
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.angcyo.base.back
-import com.angcyo.core.fragment.BaseDslFragment
+import com.angcyo.base.dslFHelper
 import com.angcyo.dialog.fullPopupWindow
 import com.angcyo.dsladapter.*
 import com.angcyo.library.L
-import com.angcyo.library.ex.getColor
 import com.angcyo.loader.DslLoader
 import com.angcyo.loader.LoaderFolder
-import com.angcyo.loader.canSelectorMedia
+import com.angcyo.picker.R
 import com.angcyo.picker.dslitem.DslPickerFolderItem
 import com.angcyo.picker.dslitem.DslPickerImageItem
-import com.angcyo.picker.dslitem.DslPickerStatusItem
-import com.angcyo.viewmodel.VMAProperty
+import com.angcyo.putData
 import com.angcyo.widget._rv
+import com.angcyo.widget.base.Anim
 import com.angcyo.widget.recycler.initDslAdapter
-import com.angcyo.widget.span.span
+import com.angcyo.widget.recycler.localUpdateItem
 
 /**
- *
+ * 媒体选择列表界面
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/01/30
  */
-class PickerImageFragment : BaseDslFragment() {
+class PickerImageFragment : BasePickerFragment() {
     val loader = DslLoader()
-
-    val pickerViewModel: PickerViewModel by VMAProperty(PickerViewModel::class.java)
 
     init {
         fragmentLayoutId = R.layout.picker_image_fragment
-        fragmentConfig.apply {
-            fragmentBackgroundDrawable = ColorDrawable(getColor(R.color.picker_fragment_bg_color))
-        }
     }
 
     override fun onInitDslLayout(recyclerView: RecyclerView, dslAdapter: DslAdapter) {
@@ -43,8 +36,9 @@ class PickerImageFragment : BaseDslFragment() {
         dslAdapter.multiModel()
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         //加载配置
         val loaderConfig = pickerViewModel.loaderConfig.value
 
@@ -53,25 +47,6 @@ class PickerImageFragment : BaseDslFragment() {
             _switchFolder(it)
         }
 
-        /*选中改变*/
-        pickerViewModel.selectorMediaList.observe {
-            if (it.isNullOrEmpty()) {
-                _vh.enable(R.id.send_button, false)
-                _vh.tv(R.id.send_button)?.text = span {
-                    append("发送")
-                }
-            } else {
-                _vh.enable(R.id.send_button)
-                _vh.tv(R.id.send_button)?.text = span {
-                    append("发送(${it.size}/${loaderConfig?.maxSelectorLimit ?: -1})")
-                }
-            }
-        }
-
-        //样式调整
-        _adapter.dslAdapterStatusItem = DslPickerStatusItem()
-        _adapter.setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_LOADING)
-
         loaderConfig?.apply {
             loader.onLoaderResult = {
                 if (it.isEmpty()) {
@@ -79,23 +54,28 @@ class PickerImageFragment : BaseDslFragment() {
                 } else {
                     _adapter.setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_NONE)
                     pickerViewModel.loaderFolderList.value = it
-                    pickerViewModel.currentFolder.value = it.first()
+                    pickerViewModel.currentFolder.value =
+                        pickerViewModel.currentFolder.value ?: it.first()
                 }
             }
             loader.startLoader(activity, loaderConfig)
         } ?: L.w("loaderConfig is null.")
 
         //事件
-        _vh.click(R.id.close_image_view) {
-            back()
-        }
         _vh.click(R.id.folder_layout) {
+            //切换文件夹
             _showFolderDialog()
         }
-        _vh.click(R.id.send_button) {
-            //发送选择
-            PickerActivity.send(this)
+        _vh.click(R.id.preview_text_view) {
+            //预览
+            _showPreview(PreviewConfig(true, 0))
         }
+    }
+
+    override fun onFragmentNotFirstShow(bundle: Bundle?) {
+        super.onFragmentNotFirstShow(bundle)
+        //当从preview界面选中item之后, 需要刷新一下界面
+        _recyclerView.localUpdateItem(-1, listOf(DslAdapterItem.PAYLOAD_UPDATE_PART))
     }
 
     /**切换显示的文件夹*/
@@ -112,6 +92,13 @@ class PickerImageFragment : BaseDslFragment() {
             Int.MAX_VALUE
         ) { oldItem, data ->
             (oldItem ?: DslPickerImageItem().apply {
+                //获取选中状态
+                onGetSelectedState = {
+                    it?.run {
+                        pickerViewModel.selectorMediaList.value?.contains(this)
+                    } ?: itemIsSelected
+                }
+                //获取选中索引
                 onGetSelectedIndex = {
                     it?.run {
                         val index = pickerViewModel.selectorMediaList.value?.indexOf(this) ?: -1
@@ -122,6 +109,7 @@ class PickerImageFragment : BaseDslFragment() {
                         }
                     }
                 }
+                //选择回调
                 onSelectorItem = {
                     var pass = false
                     if (it) {
@@ -129,18 +117,10 @@ class PickerImageFragment : BaseDslFragment() {
                         pickerViewModel.removeSelectedMedia(loaderMedia)
                     } else {
                         //未选中, 则选择
-                        try {
-                            if (pickerViewModel.loaderConfig.value?.canSelectorMedia(
-                                    pickerViewModel.selectorMediaList.value!!,
-                                    loaderMedia!!
-                                ) == true
-                            ) {
-                                pickerViewModel.addSelectedMedia(loaderMedia)
-                            } else {
-                                pass = true
-                            }
-                        } catch (e: Exception) {
-                            L.w(e)
+                        if (pickerViewModel.canSelectorMedia(loaderMedia)) {
+                            pickerViewModel.addSelectedMedia(loaderMedia)
+                        } else {
+                            pass = true
                         }
                     }
 
@@ -172,6 +152,14 @@ class PickerImageFragment : BaseDslFragment() {
                         _adapter.updateItems(oldSelectorList, DslAdapterItem.PAYLOAD_UPDATE_PART)
                     }
                 }
+                //点击事件
+                onItemClick = {
+                    //大图预览
+                    val startPosition =
+                        pickerViewModel.currentFolder.value?.mediaItemList?.indexOf(loaderMedia)
+                            ?: 0
+                    _showPreview(PreviewConfig(false, startPosition))
+                }
             }).apply {
                 //选中状态
                 itemIsSelected = pickerViewModel.selectorMediaList.value?.contains(data) ?: false
@@ -181,7 +169,7 @@ class PickerImageFragment : BaseDslFragment() {
         }
     }
 
-    /**文件夹切换布局*/
+    /**显示文件夹切换布局*/
     fun _showFolderDialog() {
         var selectorFolder: LoaderFolder? = null
         fContext().fullPopupWindow(_vh.view(R.id.title_wrap_layout)) {
@@ -210,11 +198,12 @@ class PickerImageFragment : BaseDslFragment() {
             }
 
             onDismiss = {
+                //箭头旋转动画
                 _vh.view(R.id.folder_image_view)
                     ?.run {
                         animate()
                             .rotationBy(180f)
-                            .setDuration(300)
+                            .setDuration(Anim.ANIM_DURATION)
                             .withEndAction {
                                 selectorFolder?.run {
                                     pickerViewModel.currentFolder.value = this
@@ -225,8 +214,19 @@ class PickerImageFragment : BaseDslFragment() {
                 false
             }
 
+            //箭头旋转动画
             _vh.view(R.id.folder_image_view)
-                ?.run { animate().rotationBy(180f).setDuration(300).start() }
+                ?.run { animate().rotationBy(180f).setDuration(Anim.ANIM_DURATION).start() }
+        }
+    }
+
+    fun _showPreview(previewConfig: PreviewConfig) {
+        //大图预览
+        dslFHelper {
+            enterAnimRes = R.anim.lib_picker_preview_enter_anim
+            show(PickerPreviewFragment().apply {
+                putData(previewConfig)
+            })
         }
     }
 

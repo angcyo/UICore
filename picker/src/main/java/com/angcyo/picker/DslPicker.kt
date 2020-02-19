@@ -20,9 +20,10 @@ import com.angcyo.library.utils.filePath
 import com.angcyo.loader.LoaderConfig
 import com.angcyo.loader.LoaderMedia
 import com.angcyo.picker.DslPicker.picker
-import com.angcyo.picker.PickerActivity.Companion.KEY_LOADER_CONFIG
-import com.angcyo.picker.PickerActivity.Companion.KEY_SELECTOR_MEDIA_LIST
-import com.angcyo.picker.PickerActivity.Companion.PICKER_REQUEST_CODE
+import com.angcyo.picker.core.PickerActivity
+import com.angcyo.picker.core.PickerActivity.Companion.KEY_LOADER_CONFIG
+import com.angcyo.picker.core.PickerActivity.Companion.KEY_SELECTOR_MEDIA_LIST
+import com.angcyo.picker.core.PickerActivity.Companion.PICKER_REQUEST_CODE
 import java.io.File
 
 /**
@@ -38,7 +39,7 @@ object DslPicker {
         context?.run {
             DslAHelper(this).apply {
                 start(PickerActivity::class.java) {
-                    requestCode = PICKER_REQUEST_CODE
+                    requestCode = config.requestCode
                     intent.putExtra(KEY_LOADER_CONFIG, config)
                     enterAnim = R.anim.lib_picker_enter_anim
                     exitAnim = R.anim.lib_picker_other_exit_anim
@@ -56,8 +57,13 @@ object DslPicker {
     }
 
     /**获取选择的媒体数据*/
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): List<LoaderMedia>? {
-        if (data == null || resultCode != Activity.RESULT_OK || requestCode != PICKER_REQUEST_CODE) {
+    fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?,
+        requestCodeRaw: Int = PICKER_REQUEST_CODE
+    ): List<LoaderMedia>? {
+        if (data == null || resultCode != Activity.RESULT_OK || requestCode != requestCodeRaw) {
             return null
         }
         return data.getParcelableArrayListExtra(KEY_SELECTOR_MEDIA_LIST)

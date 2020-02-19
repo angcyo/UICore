@@ -17,9 +17,13 @@ class DslTransition {
     /**根布局*/
     var sceneRoot: ViewGroup? = null
 
+    /**过渡时长*/
+    var transitionDuration = -1L
+
     /**设置需要的转场过渡动画*/
     var onSetTransition: () -> TransitionSet = {
         TransitionSet().apply {
+            //addTransition(ColorTransition())
             addTransition(Fade(Fade.OUT))
             addTransition(ChangeBounds())
             addTransition(ChangeTransform())
@@ -27,6 +31,10 @@ class DslTransition {
             addTransition(ChangeImageTransform())
             addTransition(Fade(Fade.IN))
             //addTransition(ChangeScroll()) //图片过渡效果, 请勿设置此项
+
+            if (transitionDuration > 0) {
+                duration = transitionDuration
+            }
         }
     }
 

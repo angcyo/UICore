@@ -51,7 +51,7 @@ class DslPickerFolderItem : DslAdapterItem() {
             //audio
             itemHolder.img(R.id.lib_image_view)?.apply {
                 scaleType = ImageView.ScaleType.CENTER
-                setImageDrawable(_drawable(R.drawable.ic_picker_audio_folder))
+                setImageDrawable(_drawable(R.drawable.lib_audio_cover_tip))
             }
         } else {
             itemHolder.giv(R.id.lib_image_view)?.apply {
