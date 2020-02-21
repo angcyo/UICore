@@ -64,6 +64,7 @@ object OkType {
         val type = imageTypeCache[url]
 
         if (!uri.isHttpScheme()) {
+            listener?.onLoadStart()
             runRx({
                 type ?: uri.use(app()) {
                     ImageType.of(
