@@ -6,6 +6,7 @@ import android.text.TextUtils
 import com.angcyo.library.app
 import com.angcyo.library.ex.fileSizeString
 import com.liulishuo.okdownload.DownloadTask
+import com.liulishuo.okdownload.StatusUtil
 import java.net.URLDecoder
 
 /**
@@ -82,4 +83,20 @@ fun availableBlocksSize(path: String = app().getExternalFilesDir("")?.absolutePa
 fun calcTaskSpeed(task: DownloadTask, increaseBytes: Long): String {
     return (increaseBytes * 1f / task.minIntervalMillisCallbackProcess * 1000).toLong()
         .fileSizeString()
+}
+
+fun DownloadTask?.status(): StatusUtil.Status {
+    return DslDownload.getTaskStatus(this)
+}
+
+fun DownloadTask?.isCompleted(): Boolean {
+    return DslDownload.getTaskStatus(this) == StatusUtil.Status.COMPLETED
+}
+
+fun DownloadTask?.isRunning(): Boolean {
+    return DslDownload.getTaskStatus(this) == StatusUtil.Status.RUNNING
+}
+
+fun DownloadTask?.isStart(): Boolean {
+    return DslDownload.getTaskStatus(this) == StatusUtil.Status.PENDING || isRunning()
 }

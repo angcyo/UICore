@@ -138,10 +138,10 @@ object DslDownload {
     }
 
     fun isCompleted(url: String?): Boolean {
-        return isCompletedOrUnknown(findTask(url)) == StatusUtil.Status.COMPLETED
+        return getTaskStatus(findTask(url)) == StatusUtil.Status.COMPLETED
     }
 
-    fun isCompletedOrUnknown(task: DownloadTask?): StatusUtil.Status {
+    fun getTaskStatus(task: DownloadTask?): StatusUtil.Status {
         if (task == null) {
             return StatusUtil.Status.UNKNOWN
         }
@@ -233,7 +233,10 @@ data class DownloadConfig(
     var onConfigTask: (DownloadTask.Builder) -> Unit = {},
 
     var onTaskStart: (DownloadTask) -> Unit = {},
+
     var onTaskProgress: (DownloadTask, progress: Int) -> Unit = { _, _ -> },
+
+    /**[cause]任务结束的情况.*/
     var onTaskFinish: (DownloadTask, cause: EndCause, Exception?) -> Unit = { _, _, _ -> }
 )
 
