@@ -1,5 +1,6 @@
 apply from: allGradle.libBase
 
 dependencies {
-
+    implementation project(allModule.dslitem)
+    implementation project(allModule.download)
 }

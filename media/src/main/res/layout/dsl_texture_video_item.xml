@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.angcyo.media.video.widget.TextureVideoView
+        android:id="@+id/lib_video_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.angcyo.glide.GlideImageView
+        android:id="@+id/lib_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        app:r_draw_border="false"
+        app:r_image_radius="0dp"
+        app:srcCompat="@color/lib_image_placeholder_color" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/play_view"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:src="@drawable/lib_video_cover_tip" />
+
+    <com.angcyo.widget.progress.HSProgressView
+        android:id="@+id/hs_progress_view"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="@dimen/lib_xxhdpi"
+        android:layout_marginRight="@dimen/lib_xxhdpi"
+        android:layout_marginBottom="@dimen/action_bar_height" />
+</FrameLayout>
