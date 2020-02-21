@@ -34,4 +34,7 @@
         <item name="android:windowExitAnimation">@anim/lib_dialog_alpha_exit_animation</item>
     </style>
 
+    <!--Popup样式-->
+    <style name="LibPopupWindowStyle" parent="android:Widget.Material.ListPopupWindow" />
+
 </resources>

@@ -16,6 +16,7 @@ import androidx.core.widget.PopupWindowCompat
 import com.angcyo.dsladapter.getViewRect
 import com.angcyo.library.ex.getContentViewHeight
 import com.angcyo.library.ex.undefined_int
+import com.angcyo.library.ex.undefined_res
 import com.angcyo.library.getScreenHeight
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.bgColorAnimator
@@ -69,6 +70,21 @@ open class PopupConfig {
      * */
     var animationStyle = R.style.LibPopupAnimation
 
+    /**[androidx.appcompat.R.attr.listPopupWindowStyle]
+     * <style name="Widget.Material.ListPopupWindow">
+     * <item name="dropDownSelector">?attr/listChoiceBackgroundIndicator</item>
+     * <item name="popupBackground">@drawable/popup_background_material</item>
+     * <item name="popupElevation">@dimen/floating_window_z</item>
+     * <item name="popupAnimationStyle">@empty</item>
+     * <item name="popupEnterTransition">@transition/popup_window_enter</item>
+     * <item name="popupExitTransition">@transition/popup_window_exit</item>
+     * <item name="dropDownVerticalOffset">0dip</item>
+     * <item name="dropDownHorizontalOffset">0dip</item>
+     * <item name="dropDownWidth">wrap_content</item>
+     * </style>
+     * */
+    var popupStyleAttr: Int = undefined_res
+
     /**使用[Activity]当做布局载体, 而不是[PopupWindow]*/
     var showWithActivity: Boolean = false
 
@@ -94,9 +110,18 @@ open class PopupConfig {
 
     /**显示[PopupWindow]*/
     open fun showWithPopupWindow(context: Context): PopupWindow {
-        val window = PopupWindow(context)
+        val window = if (popupStyleAttr != undefined_res) {
+            try {
+                PopupWindow(context, null, popupStyleAttr, popupStyleAttr)
+            } catch (e: Exception) {
+                PopupWindow(context, null, popupStyleAttr)
+            }
+        } else {
+            PopupWindow(context)
+        }
 
         window.apply {
+            inputMethodMode = PopupWindow.INPUT_METHOD_NEEDED
 
             width = this@PopupConfig.width
             height = this@PopupConfig.height

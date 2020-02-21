@@ -6,4 +6,7 @@
     <dimen name="dialog_padding">16dp</dimen>
 
     <dimen name="dialog_ios_margin">100dp</dimen>
+
+    <dimen name="floating_window_z">16dp</dimen>
+
 </resources>
