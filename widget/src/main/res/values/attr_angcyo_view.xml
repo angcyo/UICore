@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <attr name="r_progress_color" format="color"/>
+
     <!--不影响原来背景的背景-->
     <attr name="r_background" format="reference|color" />
     <!--支持格式0.3pw 0.5ph, p表示[parent]的多少倍数, s表示[screen]的多少倍数-->

@@ -403,6 +403,8 @@ open class DslButton : AppCompatTextView {
             focusGradientColors
         )
 
+        val selected = typedArray.getBoolean(R.styleable.DslButton_button_is_selected, isSelected)
+
         typedArray.recycle()
 
         if (normalDrawable == null &&
@@ -432,6 +434,8 @@ open class DslButton : AppCompatTextView {
         }
 
         updateButton()
+
+        isSelected = selected
     }
 
     fun _initRadius(typedArray: TypedArray, radiusIndex: Int, radiiIndex: Int, values: FloatArray) {

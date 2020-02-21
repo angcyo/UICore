@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="r_progress_round_size" format="dimension"/>
+
+    <declare-styleable name="HSProgressView">
+        <attr name="r_progress_color"/>
+        <attr name="r_progress_round_size"/>
+    </declare-styleable>
+
+    <declare-styleable name="HSProgressDraw">
+        <attr name="r_progress_color"/>
+        <attr name="r_progress_round_size"/>
+    </declare-styleable>
+</resources>

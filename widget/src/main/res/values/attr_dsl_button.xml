@@ -6,6 +6,7 @@
         <attr name="button_enable_text_style" format="boolean" />
         <attr name="button_enable_background_style" format="boolean" />
         <attr name="button_ripple_color" format="color" />
+        <attr name="button_is_selected" format="boolean" />
 
         <!--向下覆盖所有值-->
         <attr name="button_shape" format="enum">
