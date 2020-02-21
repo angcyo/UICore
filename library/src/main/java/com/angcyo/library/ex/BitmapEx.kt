@@ -7,8 +7,10 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Base64
+import com.angcyo.library.L
 import com.angcyo.library.utils.fastBlur
 import java.io.ByteArrayOutputStream
+import java.io.InputStream
 
 /**
  *
@@ -90,4 +92,39 @@ fun Bitmap.toBase64(
         result = Base64.encodeToString(it, Base64.NO_WRAP /*去掉/n符*/)
     }
     return result
+}
+
+/**从流中获取图片类型*/
+fun InputStream.bitmapSuffix(): String {
+    return try {
+        val options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true
+        BitmapFactory.decodeStream(this, null, options)
+        options.outMimeType.replace("image/", "")
+    } catch (e: Exception) {
+        L.w(e)
+        "jpg"
+    }
+}
+
+/**从流中获取图片宽高*/
+fun InputStream.bitmapSize(): IntArray {
+    val result = intArrayOf(-1, -1)
+    try {
+        use {
+            val options = BitmapFactory.Options()
+            options.inJustDecodeBounds = true
+            options.inSampleSize = 1
+            BitmapFactory.decodeStream(it, null, options)
+            result[0] = options.outWidth
+            result[1] = options.outHeight
+        }
+    } catch (e: Exception) {
+        L.w(e)
+    }
+    return result
+}
+
+fun String.bitmapSize(): IntArray {
+    return file().inputStream().bitmapSize()
 }

@@ -29,6 +29,9 @@ dependencies {
 
     //api "androidx.exifinterface:exifinterface:1.1.0"
 
+    //https://github.com/Curzibn/Luban
+    implementation 'top.zibin:Luban:1.1.8'
+
     //https://github.com/Yalantis/uCrop
     implementation 'com.github.yalantis:ucrop:2.2.4'
 }

@@ -3,7 +3,6 @@ package com.angcyo.drawable.loading
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.RectF
 import com.angcyo.drawable.base.BaseSectionDrawable
 import com.angcyo.library.ex.dp
 
@@ -48,14 +47,13 @@ class ArcLoadingDrawable : BaseSectionDrawable() {
         textPaint.alpha = 255
     }
 
-    val drawRect = RectF()
     override fun onDrawProgressSection(
         canvas: Canvas, index: Int,
         startProgress: Float, endProgress: Float,
         totalProgress: Float, sectionProgress: Float
     ) {
-        drawRect.set(bounds)
-        drawRect.inset((strokeWidth / 2), (strokeWidth / 2))
+        drawRectF.set(bounds)
+        drawRectF.inset((strokeWidth / 2), (strokeWidth / 2))
 
         //两个点, 分散效果
         if (index == 0) {
@@ -63,16 +61,16 @@ class ArcLoadingDrawable : BaseSectionDrawable() {
             textPaint.style = Paint.Style.FILL
             textPaint.strokeWidth = 0f
             textPaint.strokeCap = Paint.Cap.ROUND
-            val offset: Float = drawRect.width() / 2 * sectionProgress
+            val offset: Float = drawRectF.width() / 2 * sectionProgress
             canvas.drawCircle(
-                drawRect.centerX() - offset,
-                drawRect.centerY(),
+                drawRectF.centerX() - offset,
+                drawRectF.centerY(),
                 (strokeWidth / 2),
                 textPaint
             )
             canvas.drawCircle(
-                drawRect.centerX() + offset,
-                drawRect.centerY(),
+                drawRectF.centerX() + offset,
+                drawRectF.centerY(),
                 (strokeWidth / 2),
                 textPaint
             )
@@ -83,17 +81,17 @@ class ArcLoadingDrawable : BaseSectionDrawable() {
             textPaint.strokeCap = Paint.Cap.ROUND
             textPaint.alpha = (255 * (1 - sectionProgress)).toInt()
             val inset: Float = bounds.width() * sectionProgress
-            drawRect.inset(inset, inset)
+            drawRectF.inset(inset, inset)
             animAngle = sectionProgress * 360
             val startDrawAngle = animAngle + 130
             val sweepAngle = 20f
             val ratio = 1 - sectionProgress
             canvas.drawArc(
-                drawRect,
+                drawRectF,
                 startDrawAngle, sweepAngle * ratio, false, textPaint
             )
             canvas.drawArc(
-                drawRect,
+                drawRectF,
                 startDrawAngle + 180, sweepAngle * ratio, false, textPaint
             )
         } else {
@@ -112,11 +110,11 @@ class ArcLoadingDrawable : BaseSectionDrawable() {
                 ratio = 1 - sectionProgress
             }
             canvas.drawArc(
-                drawRect,
+                drawRectF,
                 startDrawAngle, sweepAngle * ratio, false, textPaint
             )
             canvas.drawArc(
-                drawRect,
+                drawRectF,
                 startDrawAngle + spaceAngle + sweepAngle, sweepAngle * ratio, false, textPaint
             )
         }

@@ -9,10 +9,12 @@ import com.angcyo.dsladapter.*
 import com.angcyo.getData
 import com.angcyo.library.ex._drawable
 import com.angcyo.loader.LoaderMedia
+import com.angcyo.loader.isImage
 import com.angcyo.loader.loadUri
 import com.angcyo.pager.dslitem.DslPhotoViewItem
 import com.angcyo.picker.R
 import com.angcyo.picker.dslitem.DslPickerMiniImageItem
+import com.angcyo.ucrop.dslUcrop
 import com.angcyo.widget._rv
 import com.angcyo.widget._vp
 import com.angcyo.widget.base.Anim
@@ -50,6 +52,10 @@ class PickerPreviewFragment : BasePickerFragment() {
     val previewMediaList = mutableListOf<LoaderMedia>()
     /**预览模式下, 保存之前选中的媒体列表*/
     val previewSelectorMediaList = mutableListOf<LoaderMedia>()
+
+    /**当前[ViewPager]对应的[LoaderMedia]*/
+    val pageLoaderMedia: LoaderMedia?
+        get() = previewMediaList.getOrNull(_vh.vp(R.id.lib_view_pager)?.currentItem ?: -1)
 
     init {
         fragmentLayoutId = R.layout.picker_preview_fragment
@@ -117,13 +123,17 @@ class PickerPreviewFragment : BasePickerFragment() {
             }
         }
 
-        //编辑按钮
-        _vh.visible(
-            R.id.edit_text_view,
-            pickerViewModel.loaderConfig.value?.enableImageEdit ?: true
-        )
+        _vh.click(R.id.edit_text_view) {
+            //编辑图片
+            pageLoaderMedia?.apply {
+                dslUcrop(this@PickerPreviewFragment) {
+                    cropUri = loadUri()!!
+                    cropSaveUri = loadUri()!!
+                }
+            }
+        }
 
-        //小图预览
+        //小图预览初始化
         _vh.rv(R.id.mini_recycler_view)?.run {
             initDsl()
             adapter = miniAdapter
@@ -183,6 +193,23 @@ class PickerPreviewFragment : BasePickerFragment() {
             pickerViewModel.selectorMediaList.value?.contains(previewMediaList.getOrNull(position))
                 ?: false
 
+        //可见性控制
+        pageLoaderMedia?.apply {
+            if (isImage()) {
+                //编辑按钮
+                if (pickerViewModel.loaderConfig.value?.enableImageEdit == true) {
+                    _vh.visible(R.id.edit_text_view)
+                }
+                //原图选择按钮
+                if (pickerViewModel.loaderConfig.value?.enableOrigin == true) {
+                    _vh.visible(R.id.origin_cb)
+                }
+            } else {
+                _vh.gone(R.id.edit_text_view)
+                _vh.gone(R.id.origin_cb)
+            }
+        }
+
         _showMiniPreview()
     }
 
@@ -201,9 +228,6 @@ class PickerPreviewFragment : BasePickerFragment() {
             selectorList
         }
 
-        val currentMedia: LoaderMedia? =
-            previewMediaList.getOrNull(_vh.vp(R.id.lib_view_pager)?.currentItem ?: -1)
-
         if (selectorList.isNullOrEmpty()) {
             _vh.gone(R.id.mini_recycler_view)
             _vh.gone(R.id.mini_line_view)
@@ -211,7 +235,7 @@ class PickerPreviewFragment : BasePickerFragment() {
             //滚动到当前位置
             miniAdapter.onDispatchUpdatesAfterOnce = {
                 val currentItem = it.findItem {
-                    it.itemData == currentMedia
+                    it.itemData == pageLoaderMedia
                 }?.apply {
                     _vh._rv(R.id.mini_recycler_view)
                         ?.scrollToPosition(itemIndexPosition(miniAdapter))
@@ -233,12 +257,17 @@ class PickerPreviewFragment : BasePickerFragment() {
                 Int.MAX_VALUE
             ) { oldItem, _ ->
                 (oldItem ?: DslPickerMiniImageItem()).apply {
-                    itemIsDeleted = selectorList.contains(loaderMedia) != true
+                    //只在预览选中列表时, 开启删除标识模式
+                    itemIsDeleted =
+                        previewConfig.previewSelectorList && selectorList.contains(loaderMedia) != true
 
                     //滚动到选中的item
                     onItemClick = {
-                        _vh.vp(R.id.lib_view_pager)
-                            ?.setCurrentItem(previewMediaList.indexOf(loaderMedia), false)
+                        val indexOf = previewMediaList.indexOf(loaderMedia)
+                        if (indexOf != -1) {
+                            _vh.vp(R.id.lib_view_pager)
+                                ?.setCurrentItem(indexOf, false)
+                        }
                     }
                 }
             }

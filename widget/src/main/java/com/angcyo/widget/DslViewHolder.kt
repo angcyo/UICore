@@ -61,6 +61,18 @@ open class DslViewHolder(
         click(id, View.OnClickListener { listener.invoke(it) })
     }
 
+    fun selectorClick(@IdRes id: Int, listener: (selected: Boolean) -> Boolean = { false /*不拦截默认处理*/ }) {
+        click(id) {
+            val old = it.isSelected
+            val new = !old
+            if (listener(new)) {
+                //no op
+            } else {
+                it.isSelected = new
+            }
+        }
+    }
+
     /**节流点击事件*/
     fun throttleClick(@IdRes id: Int, action: (View) -> Unit) {
         click(id, ThrottleClickListener(action = action))

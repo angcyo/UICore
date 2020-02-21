@@ -20,6 +20,15 @@ import com.angcyo.library.ex.dp
 
 abstract class AbsDslDrawable : Drawable() {
 
+    companion object {
+        /**[android.view.View.draw]*/
+        const val DRAW_TYPE_DRAW_AFTER = 0x01
+        const val DRAW_TYPE_DRAW_BEFORE = 0x02
+        /**[android.view.View.onDraw]*/
+        const val DRAW_TYPE_ON_DRAW_AFTER = 0x04
+        const val DRAW_TYPE_ON_DRAW_BEFORE = 0x08
+    }
+
     /**画笔*/
     val textPaint: TextPaint by lazy {
         TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -28,6 +37,12 @@ abstract class AbsDslDrawable : Drawable() {
             textSize = 12 * dp
         }
     }
+
+    val drawRect = Rect()
+    val drawRectF = RectF()
+
+    /**需要在那个方法中触发绘制*/
+    var drawType = DRAW_TYPE_ON_DRAW_AFTER
 
     /**xml属性读取*/
     open fun initAttribute(

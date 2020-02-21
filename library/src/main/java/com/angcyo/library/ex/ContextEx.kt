@@ -16,6 +16,7 @@ import android.webkit.MimeTypeMap
 import androidx.core.app.ActivityCompat
 import com.angcyo.library.L
 import java.io.File
+import java.io.InputStream
 
 /**
  *
@@ -58,8 +59,18 @@ fun Context.havePermission(permissionList: List<String>): Boolean {
 
 /**保存到DCIM*/
 fun Context.saveToDCIM(file: File): Boolean {
-    val values = ContentValues()
     val filename = file.name
+
+    return try {
+        return saveToDCIM(file.inputStream(), filename)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        false
+    }
+}
+
+fun Context.saveToDCIM(input: InputStream, filename: String): Boolean {
+    val values = ContentValues()
     val mimeType = filename.mimeType()
 
     values.put(MediaStore.Images.Media.TITLE, filename)
@@ -87,7 +98,7 @@ fun Context.saveToDCIM(file: File): Boolean {
 
     return uri?.run {
         try {
-            file.inputStream().use { input ->
+            input.use { input ->
                 contentResolver.openOutputStream(uri)?.use { output ->
                     input.copyTo(output)
                 }

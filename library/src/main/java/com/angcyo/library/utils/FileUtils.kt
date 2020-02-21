@@ -27,7 +27,7 @@ object FileUtils {
     var rootFolder: String = getAppString("schema") ?: ""
 
     /**获取文件夹路径*/
-    var onGetFolderPath: (folder: String) -> String = {
+    var onGetFolderPath: (folderName: String) -> String = {
         "$rootFolder/$it"
     }
 
@@ -49,7 +49,7 @@ object FileUtils {
      *
      * 返回对应的文件, 可以直接进行读写, 不需要权限请求
      * */
-    fun appExternalFolder(
+    fun appRootExternalFolderFile(
         context: Context? = app(),
         folder: String,
         name: String
@@ -77,7 +77,7 @@ object FileUtils {
         var filePath: String? = null
 
         try {
-            appExternalFolder(context, folder, name)?.apply {
+            appRootExternalFolderFile(context, folder, name)?.apply {
                 filePath = absolutePath
                 if (append) {
                     appendText(data)
@@ -99,7 +99,7 @@ object FileUtils {
         name: String
     ): String? {
         try {
-            return appExternalFolder(context, folder, name)?.readText()
+            return appRootExternalFolderFile(context, folder, name)?.readText()
         } catch (e: Exception) {
             L.e("读取文件失败:$e")
         }
@@ -112,11 +112,19 @@ fun fileNameUUID(suffix: String = ""): String {
     return UUID.randomUUID().toString() + suffix
 }
 
+/**获取一个时间文件名*/
 fun fileName(pattern: String = "yyyy-MM-dd_HH-mm-ss-SSS", suffix: String = ""): String {
     val dateFormat: DateFormat = SimpleDateFormat(pattern, Locale.CHINA)
     return dateFormat.format(Date()) + suffix
 }
 
+/**获取一个文件路径*/
 fun filePath(folderName: String, fileName: String): String {
     return "${FileUtils.appRootExternalFolder(folder = folderName)?.absolutePath}${File.separator}${fileName}"
+}
+
+/**获取一个文件夹路径*/
+fun folderPath(folderName: String): String {
+    return FileUtils.appRootExternalFolder(folder = folderName)?.absolutePath
+        ?: app().cacheDir.absolutePath
 }

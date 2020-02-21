@@ -3,6 +3,8 @@ package com.angcyo.library.ex
 import android.animation.ArgbEvaluator
 import android.graphics.Color
 import android.os.SystemClock
+import androidx.core.graphics.ColorUtils
+import androidx.core.math.MathUtils
 import java.util.*
 import kotlin.random.Random.Default.nextInt
 
@@ -53,4 +55,17 @@ private var argbEvaluator: ArgbEvaluator = ArgbEvaluator()
 /**根据比例, 获取评估后的颜色值[fraction][0-1]*/
 fun evaluateColor(fraction: Float, startValue: Int, endValue: Int): Int {
     return argbEvaluator.evaluate(fraction, startValue, endValue) as Int
+}
+
+/**
+ * 设置一个颜色的透明值, 并返回这个颜色值.
+ *
+ * @param alpha [0..255] 值越小,越透明
+ */
+public fun Int.alpha(alpha: Int): Int {
+    return ColorUtils.setAlphaComponent(this, MathUtils.clamp(alpha, 0, 255))
+}
+
+public fun Int.alpha(alpha: Float): Int {
+    return alpha(alpha.toInt())
 }

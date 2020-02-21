@@ -101,25 +101,29 @@ fun LoaderMedia.isImage(): Boolean {
 
 /**加载路径*/
 fun LoaderMedia.loadPath(): String? {
-    if (cutPath?.isFileExist() == true) {
-        return cutPath
-    }
+    //压缩后的路径
     if (compressPath?.isFileExist() == true) {
         return compressPath
     }
+    //剪裁后的路径, 剪裁后再压缩
+    if (cutPath?.isFileExist() == true) {
+        return cutPath
+    }
+    //本地原始路径
     if (localPath?.isFileExist() == true) {
         return localPath
     }
+    //网络路径
     return url
 }
 
 /**加载的[Uri]*/
 fun LoaderMedia.loadUri(): Uri? {
-    if (cutPath?.isFileExist() == true) {
-        return Uri.fromFile(cutPath!!.file())
-    }
     if (compressPath?.isFileExist() == true) {
         return Uri.fromFile(compressPath!!.file())
+    }
+    if (cutPath?.isFileExist() == true) {
+        return Uri.fromFile(cutPath!!.file())
     }
     if (localUri != null) {
         return localUri

@@ -9,12 +9,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.angcyo.DslAHelper
 import com.angcyo.base.checkAndRequestPermission
-import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.fragment.FragmentBridge
 import com.angcyo.fragment.IFragmentBridge
 import com.angcyo.library.ex.fileUri
 import com.angcyo.library.ex.takePhotoIntent
 import com.angcyo.library.ex.takeVideoIntent
+import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.fileName
 import com.angcyo.library.utils.filePath
 import com.angcyo.loader.LoaderConfig
@@ -73,7 +73,10 @@ object DslPicker {
     fun takePhoto(activity: FragmentActivity, action: (Uri?) -> Unit) {
         activity.checkAndRequestPermission(arrayOf(Manifest.permission.CAMERA)) {
             val uri =
-                fileUri(activity, File(filePath(DslFileHelper.camera, fileName(suffix = ".jpeg"))))
+                fileUri(
+                    activity,
+                    File(filePath(Constant.cameraFolderName, fileName(suffix = ".jpeg")))
+                )
             takePhotoIntent(activity, uri).run {
                 FragmentBridge.install(activity.supportFragmentManager)
                     .startActivityForResult(this,
@@ -105,7 +108,10 @@ object DslPicker {
     ) {
         activity.checkAndRequestPermission(arrayOf(Manifest.permission.CAMERA)) {
             val uri =
-                fileUri(activity, File(filePath(DslFileHelper.camera, fileName(suffix = ".mp4"))))
+                fileUri(
+                    activity,
+                    File(filePath(Constant.cameraFolderName, fileName(suffix = ".mp4")))
+                )
             takeVideoIntent(activity, uri, videoQuality, maxSize, maxDuration).run {
                 FragmentBridge.install(activity.supportFragmentManager)
                     .startActivityForResult(this,

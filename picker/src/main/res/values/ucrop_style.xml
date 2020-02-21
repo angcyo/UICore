@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--覆盖uCrop库中的属性-->
+    <string name="ucrop_crop">剪切</string>
+    <string name="ucrop_rotate">旋转</string>
+    <string name="ucrop_scale">缩放</string>
+
+    <!--游标卡尺指示颜色, 剪切比例文本选择颜色-->
+    <color name="ucrop_color_blaze_orange">@color/colorAccent</color>
+
+</resources>

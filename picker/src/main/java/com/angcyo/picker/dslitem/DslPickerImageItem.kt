@@ -53,9 +53,19 @@ open class DslPickerImageItem : DslAdapterItem() {
     var showFileSize: Boolean = false
 
     @DrawableRes
-    var audioTipDrawable: Int = R.drawable.lib_audio_cover_tip
+    var itemAudioCoverTipDrawable: Int = com.angcyo.item.R.drawable.lib_audio_cover_tip
+
     @DrawableRes
-    var videoTipDrawable: Int = -1
+    var itemVideoCoverTipDrawable: Int = -1
+
+    @DrawableRes
+    var itemAudioTipDrawable: Int = com.angcyo.item.R.drawable.lib_audio_tip
+
+    @DrawableRes
+    var itemVideoTipDrawable: Int = com.angcyo.item.R.drawable.lib_video_tip
+
+    @DrawableRes
+    var itemImageTipDrawable: Int = com.angcyo.item.R.drawable.lib_image_tip
 
     var _transitionDuration = 160
     var _transitionInterpolator = AccelerateInterpolator()
@@ -117,42 +127,50 @@ open class DslPickerImageItem : DslAdapterItem() {
         //audio video tip
         itemHolder.gone(R.id.lib_tip_image_view)
         if (loaderMedia?.isAudio() == true) {
-            if (audioTipDrawable > 0) {
+            if (itemAudioCoverTipDrawable > 0) {
                 itemHolder.visible(R.id.lib_tip_image_view)
-                itemHolder.img(R.id.lib_tip_image_view)?.setImageResource(audioTipDrawable)
+                itemHolder.img(R.id.lib_tip_image_view)?.setImageResource(itemAudioCoverTipDrawable)
             }
         } else if (loaderMedia?.isVideo() == true) {
-            if (videoTipDrawable > 0) {
+            if (itemVideoCoverTipDrawable > 0) {
                 itemHolder.visible(R.id.lib_tip_image_view)
-                itemHolder.img(R.id.lib_tip_image_view)?.setImageResource(videoTipDrawable)
+                itemHolder.img(R.id.lib_tip_image_view)?.setImageResource(itemVideoCoverTipDrawable)
             }
         }
 
         //文本
-        if (loaderMedia?.isVideo() == true || loaderMedia?.isAudio() == true) {
+        if (loaderMedia?.isVideo() == true ||
+            loaderMedia?.isAudio() == true ||
+            !(loaderMedia?.cutPath.isNullOrBlank())/*如果图片被剪裁过*/) {
             itemHolder.visible(R.id.duration_view)
 
             //时长
             itemHolder.tv(R.id.duration_view)?.text = span {
                 drawable {
-                    backgroundDrawable = if (loaderMedia?.isVideo() == true) {
-                        offsetY = 2 * dp
-                        getDrawable(R.drawable.lib_video_tip)
-                    } else {
-                        getDrawable(R.drawable.lib_audio_tip)
-                    }
+                    backgroundDrawable =
+                        if (loaderMedia?.isVideo() == true && itemVideoTipDrawable > 0) {
+                            getDrawable(itemVideoTipDrawable)
+                        } else if (loaderMedia?.isAudio() == true && itemAudioTipDrawable > 0) {
+                            getDrawable(itemAudioTipDrawable)
+                        } else if (!(loaderMedia?.cutPath.isNullOrBlank()) && itemImageTipDrawable > 0) {
+                            getDrawable(itemImageTipDrawable)
+                        } else {
+                            null
+                        }
                 }
-                appendSpace(6 * dpi)
                 val _duration = loaderMedia?.duration ?: 0L
-                //不足1秒的取1秒
-                val duration = if (_duration != 0L) max(_duration, 1_000) else 0
-                append(
-                    duration.toElapsedTime(
-                        pattern = intArrayOf(-1, 1, 1),
-                        h24 = booleanArrayOf(false, true, false),
-                        units = arrayOf("", "", ":")
+                if (_duration > 0) {
+                    appendSpace(6 * dpi)
+                    //不足1秒的取1秒
+                    val duration = if (_duration != 0L) max(_duration, 1_000) else 0
+                    append(
+                        duration.toElapsedTime(
+                            pattern = intArrayOf(-1, 1, 1),
+                            h24 = booleanArrayOf(false, true, false),
+                            units = arrayOf("", "", ":")
+                        )
                     )
-                )
+                }
             }
         } else {
             itemHolder.gone(R.id.duration_view)
