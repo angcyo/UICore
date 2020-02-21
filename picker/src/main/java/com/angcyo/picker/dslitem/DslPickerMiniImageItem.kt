@@ -28,17 +28,6 @@ class DslPickerMiniImageItem : DslImageItem() {
     /**删除标识*/
     var itemIsDeleted: Boolean = false
 
-    override var itemData: Any? = null
-        set(value) {
-            field = value
-            if (value is LoaderMedia) {
-                //显示不下
-                //itemMediaDuration = value.duration
-                itemLoadUri = value.loadUri()
-                itemMimeType = value.mimeType()
-            }
-        }
-
     init {
         itemVideoCoverTipDrawable = -1
         margin(8 * dpi)
@@ -47,6 +36,16 @@ class DslPickerMiniImageItem : DslImageItem() {
             it.borderColor = _color(R.color.picker_button_accent_bg_color)
         }
         itemLayoutId = R.layout.dsl_picker_mini_image_layout
+    }
+
+    override fun onSetItemData(data: Any?) {
+        super.onSetItemData(data)
+        if (data is LoaderMedia) {
+            //显示不下
+            //itemMediaDuration = value.duration
+            itemLoadUri = data.loadUri()
+            itemMimeType = data.mimeType()
+        }
     }
 
     override fun onItemBind(

@@ -52,6 +52,10 @@ open class DslViewHolder(
         view?.performClick()
     }
 
+    fun clickView(@IdRes id: Int) {
+        view(id)?.performClick()
+    }
+
     fun click(@IdRes id: Int, listener: View.OnClickListener?) {
         val view = v<View>(id)
         view?.setOnClickListener(listener)
@@ -96,6 +100,35 @@ open class DslViewHolder(
 
     fun click(view: View?, listener: (View) -> Unit) {
         view?.setOnClickListener { listener.invoke(it) }
+    }
+
+    fun longClickItem(listener: (View) -> Unit) {
+        itemView.setOnLongClickListener { v ->
+            listener(v)
+            true
+        }
+    }
+
+    fun longClick(@IdRes id: Int, listener: (View) -> Unit) {
+        view(id)?.setOnLongClickListener { v ->
+            listener(v)
+            true
+        }
+    }
+
+    fun longClick(@IdRes id: Int, listener: View.OnLongClickListener?) {
+        view(id)?.setOnLongClickListener(listener)
+    }
+
+    fun longClick(view: View?, listener: View.OnClickListener?) {
+        view?.setOnLongClickListener { v ->
+            listener?.onClick(v)
+            true
+        }
+    }
+
+    fun longClick(view: View?, listener: View.OnLongClickListener?) {
+        view?.setOnLongClickListener(listener)
     }
 
     //</editor-fold desc="事件处理">

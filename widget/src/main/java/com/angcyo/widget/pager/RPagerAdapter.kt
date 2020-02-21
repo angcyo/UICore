@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.collection.ArrayMap
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.angcyo.library.L
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -16,6 +17,9 @@ import com.angcyo.widget.DslViewHolder
  */
 
 abstract class RPagerAdapter : PagerAdapter(), ViewPager.OnPageChangeListener {
+
+    /**是否使用缓存, 有些时候, 缓存会带来黑屏的问题.*/
+    var enableCache = false
 
     //简单的缓存
     val itemCache: ArrayMap<Int, DslViewHolder> = ArrayMap()
@@ -57,7 +61,9 @@ abstract class RPagerAdapter : PagerAdapter(), ViewPager.OnPageChangeListener {
         val viewHolder = item as DslViewHolder
         //移除布局
         container.removeView(viewHolder.itemView)
-        itemCache[getItemViewType(position)] = viewHolder
+        if (enableCache) {
+            itemCache[getItemViewType(position)] = viewHolder
+        }
     }
 
     override fun setPrimaryItem(container: ViewGroup, position: Int, item: Any) {
@@ -124,12 +130,15 @@ abstract class RPagerAdapter : PagerAdapter(), ViewPager.OnPageChangeListener {
     //<editor-fold desc="OnPageChangeListener">
 
     override fun onPageScrollStateChanged(state: Int) {
+        L.v(state)
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+        L.v("$position $positionOffset $positionOffsetPixels")
     }
 
     override fun onPageSelected(position: Int) {
+        L.v(position)
     }
 
     //</editor-fold desc="OnPageChangeListener">

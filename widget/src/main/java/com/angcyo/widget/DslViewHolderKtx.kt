@@ -4,7 +4,9 @@ import androidx.annotation.IdRes
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 import com.angcyo.tablayout.DslTabLayout
+import com.angcyo.widget.base.Anim
 import com.angcyo.widget.base.checkEmpty
+import com.angcyo.widget.base.simulateClick
 import com.angcyo.widget.edit.AutoCompleteEditText
 import com.angcyo.widget.edit.DslEditText
 import com.angcyo.widget.image.DslImageView
@@ -20,6 +22,11 @@ import com.angcyo.widget.text.DslTextView
  * @date 2020/01/02
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
+
+/**模拟点击事件,和直接[performClick]不同的是有效背景效果*/
+fun DslViewHolder.simulateClick(@IdRes id: Int, delay: Long = Anim.ANIM_DURATION) {
+    view(id)?.simulateClick(delay)
+}
 
 fun DslViewHolder.vp(@IdRes id: Int): ViewPager? {
     return v(id)

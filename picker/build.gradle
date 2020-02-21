@@ -16,6 +16,7 @@ dependencies {
     api project(allModule.dslitem)
     api project(allModule.transition)
     api project(allModule.download)
+    api project(allModule.media)
 
     //https://mvnrepository.com/artifact/androidx.loader/loader
     api "androidx.loader:loader:1.1.0"

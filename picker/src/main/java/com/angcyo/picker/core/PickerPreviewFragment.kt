@@ -10,7 +10,9 @@ import com.angcyo.getData
 import com.angcyo.library.ex._drawable
 import com.angcyo.loader.LoaderMedia
 import com.angcyo.loader.isImage
+import com.angcyo.loader.isVideo
 import com.angcyo.loader.loadUri
+import com.angcyo.media.dslitem.DslTextureVideoItem
 import com.angcyo.pager.dslitem.DslPhotoViewItem
 import com.angcyo.picker.R
 import com.angcyo.picker.dslitem.DslPickerMiniImageItem
@@ -85,15 +87,22 @@ class PickerPreviewFragment : BasePickerFragment() {
             val items = mutableListOf<DslAdapterItem>()
 
             previewMediaList.forEach {
-                items.add(DslPhotoViewItem().apply {
-                    itemData = it
-                    itemLoadUri = it.loadUri()
 
-                    //点击图片关闭界面
-                    onItemClick = {
-                        _fullscreen()
-                    }
-                })
+                if (it.isVideo()) {
+                    items.add(DslTextureVideoItem().apply {
+                        itemData = it
+                        itemVideoUri = it.loadUri()
+                    })
+                } else {
+                    items.add(DslPhotoViewItem().apply {
+                        itemData = it
+                        itemLoadUri = it.loadUri()
+
+                        onItemClick = {
+                            _fullscreen()
+                        }
+                    })
+                }
             }
 
             adapter = DslPagerAdapter(items)

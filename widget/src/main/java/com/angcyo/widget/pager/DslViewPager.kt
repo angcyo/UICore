@@ -56,11 +56,11 @@ open class DslViewPager : ViewPager {
                 ) {
                     if (_orientation == LinearLayout.VERTICAL) {
                         if (velocityY < -1000) {
-                            pagerEndListener?.onPagerEnd()
+                            pagerEndListener?.onPagerFlingEnd()
                         }
                     } else {
                         if (velocityX < -1000) {
-                            pagerEndListener?.onPagerEnd()
+                            pagerEndListener?.onPagerFlingEnd()
                         }
                     }
                 }
@@ -156,7 +156,7 @@ open class DslViewPager : ViewPager {
     }
 
     override fun generateLayoutParams(attrs: AttributeSet?): ViewGroup.LayoutParams {
-        return ViewPager.LayoutParams(context, attrs)
+        return LayoutParams(context, attrs)
     }
 
     class LayoutParams : ViewPager.LayoutParams {
@@ -164,6 +164,7 @@ open class DslViewPager : ViewPager {
         var adapterPosition: Int = RecyclerView.NO_POSITION
 
         constructor() : super()
+
         constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     }
 
@@ -171,6 +172,6 @@ open class DslViewPager : ViewPager {
         /**
          * 最后一一页快速滚动
          */
-        fun onPagerEnd()
+        fun onPagerFlingEnd()
     }
 }

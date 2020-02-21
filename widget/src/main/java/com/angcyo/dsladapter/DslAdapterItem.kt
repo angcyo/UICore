@@ -55,7 +55,15 @@ open class DslAdapterItem {
     var itemLayoutId: Int = -1
 
     /**附加的数据*/
-    open var itemData: Any? = null
+    var itemData: Any? = null
+        set(value) {
+            field = value
+            onSetItemData(value)
+        }
+
+    open fun onSetItemData(data: Any?) {
+
+    }
 
     /**唯一标识此item的值*/
     var itemTag: String? = null
