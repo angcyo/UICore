@@ -3,10 +3,12 @@ package com.angcyo.core.component
 import android.content.Context
 import android.content.Intent
 import com.angcyo.DslAHelper
+import com.angcyo.DslFHelper
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.library.L
 import com.angcyo.library.ex.hawkGet
 import com.angcyo.library.ex.hawkPut
+import com.angcyo.library.ex.isRelease
 import com.angcyo.library.ex.nowTimeString
 import com.angcyo.library.utils.Device
 import java.io.BufferedWriter
@@ -59,8 +61,11 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
     /**崩溃之后, 写入文件头部的信息*/
     var crashHeadMsg: String? = null
 
-    /**崩溃之后, 需要启动的Intent*/
+    /**崩溃之后, 需要启动的Intent, 默认是程序启动界面*/
     var crashLaunchIntent: Intent? = null
+
+    /**崩溃之后, 是否启动[crashLaunchIntent]*/
+    var crashLaunch = isRelease()
 
     var _applicationContext: Context? = null
     var _defaultUncaughtExceptionHandler: Thread.UncaughtExceptionHandler? = null
@@ -88,19 +93,28 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
         DslFileHelper.async = false
         DslFileHelper.crash(data = buildString {
 
+            //自定义的头部信息
             crashHeadMsg?.let { appendln(it) }
 
+            //apk编译信息
             Device.buildString(this)
             appendln()
 
+            //fm日志信息
+            appendln(DslFHelper.fragmentManagerLog)
+            appendln()
+
+            //屏幕信息, 设备信息
             _applicationContext?.let {
                 Device.screenInfo(it, this)
                 appendln()
                 Device.deviceInfo(it, this)
             }
 
+            //异常错误信息
             appendln()
             append(_getThrowableInfo(e))
+
             //异常概述
             KEY_CRASH_MESSAGE.hawkPut(e.message)
 
@@ -113,10 +127,12 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
 
         _defaultUncaughtExceptionHandler?.uncaughtException(t, e)
 
-        _applicationContext?.let {
-            DslAHelper(it).apply {
-                crashLaunchIntent?.let { start(it) }
-                //doIt()
+        if (crashLaunch) {
+            _applicationContext?.let {
+                DslAHelper(it).apply {
+                    crashLaunchIntent?.let { start(it) }
+                    doIt()
+                }
             }
         }
     }
