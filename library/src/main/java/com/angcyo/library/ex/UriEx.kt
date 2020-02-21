@@ -16,6 +16,10 @@ import java.io.InputStream
  * @date 2020/02/03
  */
 
+fun fileUri(context: Context, file: String?): Uri {
+    return fileUri(context, File(file))
+}
+
 fun fileUri(context: Context, file: File): Uri {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         //content://com.angcyo.uicore.demo/sdcard/Android/data/com.angcyo.uicore.demo/files/demo/camera/2020-02-13_15-02-38-993.jpeg
