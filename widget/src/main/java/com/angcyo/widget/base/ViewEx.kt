@@ -209,18 +209,40 @@ fun View?.fullscreen(full: Boolean = true) {
      * View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY：必须配合View.SYSTEM_UI_FLAG_FULLSCREEN和View.SYSTEM_UI_FLAG_HIDE_NAVIGATION组合使用，达到的效果是拉出状态栏和导航栏后显示一会儿消失。
      * */
     this?.run {
-        systemUiVisibility = if (full) {
-            View.SYSTEM_UI_FLAG_FULLSCREEN or
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY //拉出状态栏和导航栏后显示一会儿消失。
-        } else {
-            systemUiVisibility.remove(View.SYSTEM_UI_FLAG_FULLSCREEN)
+        systemUiVisibility = when {
+            full -> {
+                View.SYSTEM_UI_FLAG_FULLSCREEN or
+                        //拉出状态栏和导航栏后显示一会儿消失。
+                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            }
+            else -> {
+                systemUiVisibility.remove(View.SYSTEM_UI_FLAG_FULLSCREEN)
 
-            //以下2中方法都有效
-            //systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+                //以下2中方法都有效
+                //systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
 
-            //systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-            //View.SYSTEM_UI_FLAG_IMMERSIVE or
-            //View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                //systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                //View.SYSTEM_UI_FLAG_IMMERSIVE or
+                //View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            }
+        }
+    }
+}
+
+/**低调模式, 状态栏导航栏变暗, 只会显示电量*/
+fun View?.lowProfile(lowProfile: Boolean = true) {
+    this?.run {
+        systemUiVisibility = when {
+            lowProfile -> {
+                //低调模式, 状态栏导航栏变暗, 只会显示电量
+                View.SYSTEM_UI_FLAG_LOW_PROFILE or
+                        //拉出状态栏和导航栏后显示一会儿消失。
+                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            }
+            else -> {
+                systemUiVisibility.remove(View.SYSTEM_UI_FLAG_FULLSCREEN)
+                    .remove(View.SYSTEM_UI_FLAG_LOW_PROFILE)
+            }
         }
     }
 }
