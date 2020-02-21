@@ -21,7 +21,6 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
 
     override fun onCreate() {
         super.onCreate()
-        DslFileHelper.init(this)
         DslCrashHandler.init(this)
 
         DslHttp.config {

@@ -5,11 +5,11 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.VideoCapture
 import androidx.camera.view.CameraView
-import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.library.L
 import com.angcyo.library.component.MainExecutor
 import com.angcyo.library.ex.havePermission
 import com.angcyo.library.ex.saveToDCIM
+import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.fileName
 import com.angcyo.library.utils.filePath
 import java.io.File
@@ -33,7 +33,7 @@ class DslCameraViewHelper {
 
     /**拍照, 拍照*/
     fun takePicture(file: File? = null, onResult: (File, Exception?) -> Unit) {
-        val saveFile = file ?: File(filePath(DslFileHelper.camera, fileName(suffix = ".jpeg")))
+        val saveFile = file ?: File(filePath(Constant.cameraFolderName, fileName(suffix = ".jpeg")))
         cameraView?.run {
             if (captureMode == CameraView.CaptureMode.VIDEO) {
                 captureMode = CameraView.CaptureMode.IMAGE
@@ -59,7 +59,7 @@ class DslCameraViewHelper {
 
     /**录像, 需要录音权限*/
     fun startRecording(file: File? = null, onResult: (File, Exception?) -> Unit) {
-        val saveFile = file ?: File(filePath(DslFileHelper.camera, fileName(suffix = ".mp4")))
+        val saveFile = file ?: File(filePath(Constant.cameraFolderName, fileName(suffix = ".mp4")))
         if (cameraView?.context?.havePermission(recordPermissionList) == true) {
             cameraView?.run {
                 if (captureMode == CameraView.CaptureMode.IMAGE) {
