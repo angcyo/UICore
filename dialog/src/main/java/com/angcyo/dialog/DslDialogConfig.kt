@@ -5,8 +5,10 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.text.TextUtils
 import android.view.*
+import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
@@ -99,13 +101,11 @@ open class DslDialogConfig(var context: Context? = null) {
 
     @LayoutRes
     var dialogLayoutId = -1
-    /**
-     * 优先使用 contentView, 其次再使用 layoutId
-     */
+
+    /** 优先使用 contentView, 其次再使用 layoutId */
     var dialogContentView: View? = null
-    /**
-     * 是否可以cancel
-     */
+
+    /** 是否可以cancel */
     var cancelable = true
         set(value) {
             field = value
@@ -122,10 +122,16 @@ open class DslDialogConfig(var context: Context? = null) {
     var dialogWidth: Int = undefined_res
     var dialogHeight: Int = undefined_res
     var dialogGravity: Int = undefined_res
-    /**
-     * 自动计算宽高
-     */
+
+    //测试好像没效果.
+    var statusBarColor: Int = undefined_res
+    var navigationBarColor: Int = undefined_res
+
+    var onConfigWindow: (Window) -> Unit = {}
+
+    /** 自动计算宽高 */
     var autoWidthHeight = false
+
     /**
      * 对话框变暗指数, [0,1]
      * 0表示, 不变暗
@@ -133,9 +139,8 @@ open class DslDialogConfig(var context: Context? = null) {
      * undefined_res, 默认
      */
     var amount: Float = undefined_float
-    /**
-     * window动画资源
-     */
+
+    /** window动画资源 */
     @StyleRes
     var animStyleResId: Int = R.style.LibDialogAnimation
 
@@ -145,9 +150,7 @@ open class DslDialogConfig(var context: Context? = null) {
      * */
     var dialogType = DIALOG_TYPE_APPCOMPAT
 
-    /**
-     * 系统默认3个按钮设置
-     */
+    /** 系统默认3个按钮设置 */
     var positiveButtonText: CharSequence? = null
     var negativeButtonText: CharSequence? = null
     var neutralButtonText: CharSequence? = null
@@ -210,9 +213,7 @@ open class DslDialogConfig(var context: Context? = null) {
      */
     var windowFlags: IntArray? = null
 
-    /**
-     * 宽度全屏
-     */
+    /** 宽度全屏 */
     fun setWidthFullScreen() {
         setDialogBgColor(Color.TRANSPARENT)
         dialogWidth = -1
@@ -226,9 +227,7 @@ open class DslDialogConfig(var context: Context? = null) {
         dialogBgDrawable = getDrawable(drawable)
     }
 
-    /**
-     * 配置window特性, 需要在setContentView之前调用
-     */
+    /** 配置window特性, 需要在setContentView之前调用 */
     open fun configWindow(dialog: Dialog) {
         val window = dialog.window
         if (dialog is AppCompatDialog) {
@@ -246,14 +245,6 @@ open class DslDialogConfig(var context: Context? = null) {
                     }
                 }
             }
-            if (dialog is AlertDialog) {
-            } else {
-                //window.requestFeature(Window.FEATURE_NO_TITLE);
-                //window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                        window.setNavigationBarColor(SkinHelper.getSkin().getThemeColor());
-//                    }
-            }
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
             if (dialogBgDrawable != null) {
                 window.setBackgroundDrawable(dialogBgDrawable)
@@ -264,6 +255,20 @@ open class DslDialogConfig(var context: Context? = null) {
             if (animStyleResId != undefined_res) {
                 window.setWindowAnimations(animStyleResId)
             }
+
+            //设置了导航栏颜色, 键盘弹出,不会挤上布局.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (statusBarColor != undefined_res) {
+                    window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                    window.statusBarColor = statusBarColor
+                }
+                if (navigationBarColor != undefined_res) {
+                    window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                    window.navigationBarColor = navigationBarColor
+                }
+            }
+
+            onConfigWindow(window)
         }
     }
 
