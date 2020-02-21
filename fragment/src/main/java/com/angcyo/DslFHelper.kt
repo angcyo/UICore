@@ -25,6 +25,7 @@ import com.angcyo.library.ex.undefined_res
 class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
 
     companion object {
+        var fragmentManagerLog: String = ""
 
         /**[androidx.fragment.app.FragmentTransaction.setCustomAnimations(int, int, int, int)]*/
 
@@ -397,11 +398,16 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
 
             onCommit(this)
 
+            fragmentManagerLog = fm.log(false)
+
             if (debug) {
                 _logRunnable?.run { _handle.removeCallbacks(this) }
-                _logRunnable = Runnable {
-                    fm.log()
-                    _logRunnable = null
+                _logRunnable = object : Runnable {
+                    override fun run() {
+                        fm.log()
+                        _handle.removeCallbacks(this)
+                        _logRunnable = null
+                    }
                 }
                 _handle.postDelayed(_logRunnable!!, 16)
             }

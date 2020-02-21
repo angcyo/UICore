@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.angcyo.base.instantiateFragment
 import com.angcyo.library.L
+import com.angcyo.library.utils.resultString
 
 /**
  * [Activity] 启动 [Activity] ,[onActivityResult] [onRequestPermissionsResult] 通信桥梁.
@@ -91,7 +92,7 @@ class FragmentBridge : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        L.i(requestCode, " ", resultCode, " ", data)
+        L.i("$requestCode $resultCode(${resultCode.resultString()}) $data")
         _observer.get(requestCode)?.apply {
             _observer.put(requestCode, null)
             onActivityResult(resultCode, data)

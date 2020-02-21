@@ -136,7 +136,7 @@ fun FragmentManager.dslFHelper(config: DslFHelper.() -> Unit) {
 }
 
 /**打印[fragments]*/
-fun FragmentManager.log(): String {
+fun FragmentManager.log(debug: Boolean = true): String {
     val builder = StringBuilder()
 
     fragments.forEachIndexed { index, fragment ->
@@ -155,7 +155,9 @@ fun FragmentManager.log(): String {
     }
 
     return builder.toString().apply {
-        L.w(this)
+        if (debug) {
+            L.w(this)
+        }
     }
 }
 
