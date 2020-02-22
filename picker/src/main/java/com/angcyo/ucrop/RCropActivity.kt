@@ -1,14 +1,17 @@
 package com.angcyo.ucrop
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import com.angcyo.base.enableLayoutFullScreen
 import com.angcyo.base.setNavigationBarColor
 import com.angcyo.base.setStatusBarColor
+import com.angcyo.library.ex.bitmapSuffix
 import com.angcyo.picker.R
 import com.angcyo.widget.base.getChildOrNull
 import com.yalantis.ucrop.UCropActivity
+import java.io.File
 
 /**
  *
@@ -35,6 +38,52 @@ class RCropActivity : UCropActivity() {
 
     override fun cropAndSaveImage() {
         super.cropAndSaveImage()
+    }
+
+    override fun setResultError(throwable: Throwable?) {
+        super.setResultError(throwable)
+    }
+
+    override fun setResultUri(
+        uri: Uri,
+        resultAspectRatio: Float,
+        offsetX: Int,
+        offsetY: Int,
+        imageWidth: Int,
+        imageHeight: Int
+    ) {
+        try {
+            val path = uri.path
+            val file = File(path)
+            val suffix = path!!.bitmapSuffix()
+            val targetFilePath =
+                "${file.parentFile?.absolutePath}${File.separator}${file.name}_s_${imageWidth}x${imageHeight}.$suffix"
+            val targetFile = File(targetFilePath)
+            if (targetFile.createNewFile()) {
+                file.copyTo(targetFile, true)
+                super.setResultUri(
+                    Uri.fromFile(targetFile),
+                    resultAspectRatio,
+                    offsetX,
+                    offsetY,
+                    imageWidth,
+                    imageHeight
+                )
+                file.delete()
+            } else {
+                super.setResultUri(
+                    Uri.fromFile(file),
+                    resultAspectRatio,
+                    offsetX,
+                    offsetY,
+                    imageWidth,
+                    imageHeight
+                )
+            }
+        } catch (e: Exception) {
+            super.setResultUri(uri, resultAspectRatio, offsetX, offsetY, imageWidth, imageHeight)
+        }
+
     }
 
     override fun finish() {
