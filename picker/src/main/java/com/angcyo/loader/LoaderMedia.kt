@@ -24,7 +24,7 @@ data class LoaderMedia(
     //压缩后的路径
     var compressPath: String? = null,
     //剪切后的路径
-    var cutPath: String? = null,
+    var cropPath: String? = null,
     //视频 音频媒体时长, 毫秒
     var duration: Long = 0,
 
@@ -106,8 +106,8 @@ fun LoaderMedia.loadPath(): String? {
         return compressPath
     }
     //剪裁后的路径, 剪裁后再压缩
-    if (cutPath?.isFileExist() == true) {
-        return cutPath
+    if (cropPath?.isFileExist() == true) {
+        return cropPath
     }
     //本地原始路径
     if (localPath?.isFileExist() == true) {
@@ -122,8 +122,8 @@ fun LoaderMedia.loadUri(): Uri? {
     if (compressPath?.isFileExist() == true) {
         return Uri.fromFile(compressPath!!.file())
     }
-    if (cutPath?.isFileExist() == true) {
-        return Uri.fromFile(cutPath!!.file())
+    if (cropPath?.isFileExist() == true) {
+        return Uri.fromFile(cropPath!!.file())
     }
     if (localUri != null) {
         return localUri

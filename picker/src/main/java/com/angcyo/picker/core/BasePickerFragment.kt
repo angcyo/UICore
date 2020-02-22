@@ -90,6 +90,11 @@ abstract class BasePickerFragment : BaseDslFragment() {
         pickerViewModel.selectorOrigin.value = _vh.isChecked(R.id.origin_cb)
     }
 
+    override fun onFragmentShow(bundle: Bundle?) {
+        super.onFragmentShow(bundle)
+        _showOriginSize()
+    }
+
     open fun onSelectorMediaListChange(mediaList: MutableList<LoaderMedia>?) {
         val loaderConfig = pickerViewModel.loaderConfig.value
 

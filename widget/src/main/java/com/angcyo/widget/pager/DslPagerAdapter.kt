@@ -12,7 +12,8 @@ import com.angcyo.widget.base.each
  * @date 2020/01/22
  */
 
-open class DslPagerAdapter(val adapterItems: List<DslAdapterItem>) : RPagerAdapter() {
+open class DslPagerAdapter(var adapterItems: List<DslAdapterItem> = emptyList()) : RPagerAdapter() {
+
     override fun getCount(): Int {
         return adapterItems.size
     }
@@ -29,10 +30,10 @@ open class DslPagerAdapter(val adapterItems: List<DslAdapterItem>) : RPagerAdapt
         return viewType
     }
 
-    override fun onBindViewHolder(holder: DslViewHolder, position: Int) {
-        super.onBindViewHolder(holder, position)
+    override fun onBindViewHolder(holder: DslViewHolder, position: Int, payload: List<Any>) {
+        super.onBindViewHolder(holder, position, payload)
         getAdapterItem(position)?.run {
-            itemBind(holder, position, this, emptyList())
+            itemBind(holder, position, this, payload)
         }
     }
 
@@ -64,4 +65,53 @@ open class DslPagerAdapter(val adapterItems: List<DslAdapterItem>) : RPagerAdapt
             }
         }
     }
+
+    fun findViewHolder(position: Int): DslViewHolder? {
+        dslViewPager?.run {
+            for (i in 0 until childCount) {
+                val child = getChildAt(i)
+                if (child.tag is DslViewHolder) {
+                    val dslViewHolder = child.tag as DslViewHolder
+                    val adapterPosition =
+                        (child.layoutParams as? DslViewPager.LayoutParams)?.adapterPosition ?: -1
+                    if (adapterPosition != -1 && adapterPosition == position) {
+                        return dslViewHolder
+                    }
+                }
+            }
+        }
+        return null
+    }
+
+    //<editor-fold desc="数据操作">
+
+    fun resetItems(items: List<DslAdapterItem>) {
+        this.adapterItems = items
+        notifyDataSetChanged()
+    }
+
+    fun notifyItemChanged(
+        position: Int = dslViewPager?.currentItem ?: -1,
+        payload: List<Any> = emptyList()
+    ) {
+        if (position in 0 until count) {
+            findViewHolder(position)?.also {
+                onBindViewHolder(it, position, payload)
+            }
+        }
+    }
+
+    fun notifyItemChanged(
+        payload: List<Any> = emptyList(),
+        predicate: (DslAdapterItem) -> Boolean
+    ) {
+        adapterItems.forEachIndexed { index, dslAdapterItem ->
+            if (predicate(dslAdapterItem)) {
+                notifyItemChanged(index, payload)
+            }
+        }
+    }
+
+    //</editor-fold desc="数据操作">
+
 }

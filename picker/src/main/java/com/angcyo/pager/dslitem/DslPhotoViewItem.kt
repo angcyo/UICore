@@ -4,6 +4,8 @@ import android.net.Uri
 import android.view.View
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.glide.loadImage
+import com.angcyo.loader.LoaderMedia
+import com.angcyo.loader.loadUri
 import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
 import com.github.chrisbanes.photoview.OnViewTapListener
@@ -20,8 +22,8 @@ open class DslPhotoViewItem : DslAdapterItem() {
     /**媒体uri*/
     var itemLoadUri: Uri? = null
 
-    /**媒体类型*/
-    var itemMimeType: String? = null
+    var itemLoaderMedia: LoaderMedia? = null
+        get() = field ?: (itemData as? LoaderMedia)
 
     /**占位图获取*/
     var placeholderDrawableProvider: IPlaceholderDrawableProvider? = null
@@ -54,7 +56,7 @@ open class DslPhotoViewItem : DslAdapterItem() {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
         itemHolder.img(R.id.lib_image_view)?.apply {
-            loadImage(itemLoadUri) {
+            loadImage(itemLoaderMedia?.loadUri() ?: itemLoadUri) {
                 //检查gif
                 checkGifType = true
                 //使用原始大小

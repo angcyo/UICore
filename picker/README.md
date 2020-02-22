@@ -8,6 +8,6 @@ https://developer.android.google.cn/guide/topics/providers/content-providers.htm
 
 https://github.com/Curzibn/Luban
 
-https://github.com/Yalantis/uCrop
+https://github.com/Yalantis/uCrop (2020-02-22 不支持Android Q的沙箱文件存储模式)
 
 https://github.com/ArthurHub/Android-Image-Cropper

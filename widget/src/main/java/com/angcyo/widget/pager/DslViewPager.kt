@@ -20,8 +20,12 @@ import androidx.viewpager.widget.ViewPager
 
 open class DslViewPager : ViewPager {
 
+    val dslPagerAdapter: DslPagerAdapter?
+        get() = adapter as? DslPagerAdapter
+
     var _heightMeasureMode = MeasureSpec.EXACTLY
     var _orientation = LinearLayout.HORIZONTAL
+
     lateinit var _gestureDetectorCompat: GestureDetectorCompat
 
     /**最后一页继续滑动时回调*/
@@ -143,10 +147,12 @@ open class DslViewPager : ViewPager {
     override fun setAdapter(adapter: PagerAdapter?) {
         val oldAdapter = getAdapter()
         if (oldAdapter is RPagerAdapter) {
+            oldAdapter.dslViewPager = null
             removeOnPageChangeListener(oldAdapter)
         }
         super.setAdapter(adapter)
         if (adapter is RPagerAdapter) {
+            adapter.dslViewPager = this
             addOnPageChangeListener(adapter)
         }
     }

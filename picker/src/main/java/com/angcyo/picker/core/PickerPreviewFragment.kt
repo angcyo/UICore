@@ -8,15 +8,15 @@ import com.angcyo.base.dslFHelper
 import com.angcyo.dsladapter.*
 import com.angcyo.getData
 import com.angcyo.library.ex._drawable
-import com.angcyo.loader.LoaderMedia
-import com.angcyo.loader.isImage
-import com.angcyo.loader.isVideo
-import com.angcyo.loader.loadUri
+import com.angcyo.library.ex.fileSize
+import com.angcyo.library.ex.isResultOk
+import com.angcyo.loader.*
+import com.angcyo.media.audio.DslPreviewAudioItem
 import com.angcyo.media.dslitem.DslTextureVideoItem
 import com.angcyo.pager.dslitem.DslPhotoViewItem
 import com.angcyo.picker.R
 import com.angcyo.picker.dslitem.DslPickerMiniImageItem
-import com.angcyo.ucrop.dslUcrop
+import com.angcyo.ucrop.dslCrop
 import com.angcyo.widget._rv
 import com.angcyo.widget._vp
 import com.angcyo.widget.base.Anim
@@ -25,6 +25,7 @@ import com.angcyo.widget.pager.DslPagerAdapter
 import com.angcyo.widget.recycler.initDsl
 import com.angcyo.widget.span.span
 import com.angcyo.widget.vp
+import com.yalantis.ucrop.UCrop
 
 /**
  * 媒体预览界面
@@ -49,6 +50,7 @@ class PickerPreviewFragment : BasePickerFragment() {
     val miniAdapter = DslAdapter().apply {
         singleModel()
     }
+
 
     /**媒体列表*/
     val previewMediaList = mutableListOf<LoaderMedia>()
@@ -87,17 +89,20 @@ class PickerPreviewFragment : BasePickerFragment() {
             val items = mutableListOf<DslAdapterItem>()
 
             previewMediaList.forEach {
-
-                if (it.isVideo()) {
-                    items.add(DslTextureVideoItem().apply {
+                when {
+                    it.isVideo() -> items.add(DslTextureVideoItem().apply {
                         itemData = it
                         itemVideoUri = it.loadUri()
                     })
-                } else {
-                    items.add(DslPhotoViewItem().apply {
+                    it.isAudio() -> items.add(DslPreviewAudioItem().apply {
+                        itemData = it
+                        itemAudioUri = it.loadUri()
+                    })
+                    else -> items.add(DslPhotoViewItem().apply {
                         itemData = it
                         itemLoadUri = it.loadUri()
 
+                        //点击图片关闭界面
                         onItemClick = {
                             _fullscreen()
                         }
@@ -134,10 +139,41 @@ class PickerPreviewFragment : BasePickerFragment() {
 
         _vh.click(R.id.edit_text_view) {
             //编辑图片
-            pageLoaderMedia?.apply {
-                dslUcrop(this@PickerPreviewFragment) {
-                    cropUri = loadUri()!!
-                    cropSaveUri = loadUri()!!
+            pageLoaderMedia?.also { loaderMedia ->
+                dslCrop(this@PickerPreviewFragment) {
+                    cropUri = loaderMedia.loadUri()!!
+                    maxResultWidth = pickerViewModel.loaderConfig.value?.outputImageWidth ?: -1
+                    maxResultHeight = pickerViewModel.loaderConfig.value?.outputImageHeight ?: -1
+                    onResult = { resultCode, cropUri, data ->
+                        if (resultCode.isResultOk()) {
+                            loaderMedia.fileSize = cropUri.path.fileSize()
+                            loaderMedia.width = data!!.getIntExtra(
+                                UCrop.EXTRA_OUTPUT_IMAGE_WIDTH,
+                                loaderMedia.width
+                            )
+                            loaderMedia.height = data.getIntExtra(
+                                UCrop.EXTRA_OUTPUT_IMAGE_HEIGHT,
+                                loaderMedia.height
+                            )
+                            loaderMedia.cropPath = cropUri.path
+
+                            _vh._vp(R.id.lib_view_pager)?.dslPagerAdapter?.notifyItemChanged()
+
+                            if (pickerViewModel.selectorMediaList.value?.contains(loaderMedia) == true) {
+                                //已经选中
+                                _showMiniPreview(true)
+                            } else {
+                                //添加选中
+                                if (pickerViewModel.canSelectorMedia(loaderMedia)) {
+                                    pickerViewModel.addSelectedMedia(loaderMedia)
+                                    _vh.cb(R.id.selected_cb)?.isChecked = true
+                                }
+                                //更新模拟预览图
+                                _showMiniPreview()
+                            }
+
+                        }
+                    }
                 }
             }
         }
@@ -151,8 +187,8 @@ class PickerPreviewFragment : BasePickerFragment() {
         _showMiniPreview()
     }
 
-    fun _fullscreen() {
-        val full = !_vh.itemView.isSelected
+    fun _fullscreen(yes: Boolean? = null) {
+        val full = yes ?: !_vh.itemView.isSelected
         _vh.itemView.isSelected = full
         _vh.itemView.fullscreen(full)
 
@@ -161,6 +197,9 @@ class PickerPreviewFragment : BasePickerFragment() {
                 animate()
                     .translationY((-measuredHeight).toFloat())
                     .setDuration(Anim.ANIM_DURATION)
+                    .withEndAction {
+                        _vh.gone(R.id.title_wrap_layout)
+                    }
                     .start()
             }
 
@@ -168,9 +207,14 @@ class PickerPreviewFragment : BasePickerFragment() {
                 animate()
                     .translationY((measuredHeight).toFloat())
                     .setDuration(Anim.ANIM_DURATION)
+                    .withEndAction {
+                        _vh.gone(R.id.bottom_wrap_layout)
+                    }
                     .start()
             }
         } else {
+            _vh.visible(R.id.bottom_wrap_layout)
+            _vh.visible(R.id.title_wrap_layout)
             _vh.view(R.id.title_wrap_layout)?.run {
                 animate()
                     .translationY(0f)
@@ -216,6 +260,9 @@ class PickerPreviewFragment : BasePickerFragment() {
             } else {
                 _vh.gone(R.id.edit_text_view)
                 _vh.gone(R.id.origin_cb)
+
+                //切换到非图片
+                //_fullscreen(false)
             }
         }
 
@@ -223,7 +270,7 @@ class PickerPreviewFragment : BasePickerFragment() {
     }
 
     /**小图预览*/
-    fun _showMiniPreview() {
+    fun _showMiniPreview(updateMedia: Boolean = false) {
 
         //真正选中的列表
         val selectorList = pickerViewModel.selectorMediaList.value
@@ -253,8 +300,14 @@ class PickerPreviewFragment : BasePickerFragment() {
                 //选中一个null item, 会取消之前的选中
                 miniAdapter.selector().selector(currentItem, true)
 
-                if (previewConfig.previewSelectorList) {
-                    currentItem?.updateAdapterItem()
+                if (previewConfig.previewSelectorList || updateMedia) {
+                    //更新删除标识,更新剪裁后的图片
+                    currentItem?.updateAdapterItem(
+                        if (updateMedia) listOf(
+                            DslAdapterItem.PAYLOAD_UPDATE_PART,
+                            DslAdapterItem.PAYLOAD_UPDATE_MEDIA
+                        ) else DslAdapterItem.PAYLOAD_UPDATE_PART
+                    )
                 }
             }
 

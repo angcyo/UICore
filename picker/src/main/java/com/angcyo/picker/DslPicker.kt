@@ -143,3 +143,28 @@ fun Fragment.dslPicker(config: LoaderConfig) {
 fun Fragment.dslPicker(action: LoaderConfig.() -> Unit) {
     picker(context, action)
 }
+
+fun Fragment.dslPicker(config: LoaderConfig, onResult: (List<LoaderMedia>?) -> Unit) {
+    context?.run {
+        DslAHelper(this).apply {
+            start(PickerActivity::class.java) {
+                requestCode = config.requestCode
+                intent.putExtra(KEY_LOADER_CONFIG, config)
+                enterAnim = R.anim.lib_picker_enter_anim
+                exitAnim = R.anim.lib_picker_other_exit_anim
+
+                FragmentBridge.install(parentFragmentManager)
+                    .startActivityForResult(intent, requestCode) { resultCode, data ->
+                        onResult(
+                            DslPicker.onActivityResult(
+                                requestCode,
+                                resultCode,
+                                data,
+                                requestCode
+                            )
+                        )
+                    }
+            }
+        }
+    }
+}

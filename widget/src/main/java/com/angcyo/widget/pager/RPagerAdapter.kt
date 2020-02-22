@@ -18,6 +18,8 @@ import com.angcyo.widget.DslViewHolder
 
 abstract class RPagerAdapter : PagerAdapter(), ViewPager.OnPageChangeListener {
 
+    open var dslViewPager: DslViewPager? = null
+
     /**是否使用缓存, 有些时候, 缓存会带来黑屏的问题.*/
     var enableCache = false
 
@@ -52,7 +54,7 @@ abstract class RPagerAdapter : PagerAdapter(), ViewPager.OnPageChangeListener {
         (viewHolder.itemView.layoutParams as? DslViewPager.LayoutParams)?.adapterPosition = position
 
         //绑定布局
-        onBindViewHolder(viewHolder, position)
+        onBindViewHolder(viewHolder, position, emptyList())
 
         return viewHolder
     }
@@ -121,7 +123,7 @@ abstract class RPagerAdapter : PagerAdapter(), ViewPager.OnPageChangeListener {
     }
 
     /**界面绑定*/
-    open fun onBindViewHolder(holder: DslViewHolder, position: Int) {
+    open fun onBindViewHolder(holder: DslViewHolder, position: Int, payload: List<Any>) {
 
     }
 

@@ -6,10 +6,7 @@ import android.widget.LinearLayout
 import android.widget.OverScroller
 import androidx.core.widget.ScrollerCompat
 import androidx.recyclerview.widget.*
-import com.angcyo.dsladapter.DslAdapter
-import com.angcyo.dsladapter.DslItemDecoration
-import com.angcyo.dsladapter.HoverItemDecoration
-import com.angcyo.dsladapter.dslSpanSizeLookup
+import com.angcyo.dsladapter.*
 import com.angcyo.library.utils.getMember
 import com.angcyo.widget.DslViewHolder
 
@@ -260,10 +257,25 @@ fun RecyclerView.localUpdateItem(position: Int = -1, payloads: List<Any> = empty
         adapterItem?.run {
             if (position >= 0) {
                 if (position == adapterPosition) {
-                    onItemBind(viewHolder, adapterPosition, adapterItem, payloads)
+                    itemBind(viewHolder, adapterPosition, adapterItem, payloads)
                 }
             } else {
-                onItemBind(viewHolder, adapterPosition, adapterItem, payloads)
+                itemBind(viewHolder, adapterPosition, adapterItem, payloads)
+            }
+        }
+    }
+}
+
+fun RecyclerView.localUpdateItem(action: (adapterItem: DslAdapterItem, itemHolder: DslViewHolder, itemPosition: Int) -> Unit) {
+    if (adapter !is DslAdapter) {
+        return
+    }
+    allViewHolder().forEach { viewHolder ->
+        val adapterPosition = viewHolder.adapterPosition
+        val adapterItem = (adapter as DslAdapter).getItemData(adapterPosition)
+        adapterItem?.run {
+            if (adapterPosition >= 0) {
+                action(adapterItem, viewHolder, adapterPosition)
             }
         }
     }

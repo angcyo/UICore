@@ -7,6 +7,7 @@ import androidx.annotation.DrawableRes
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.containsPayload
 import com.angcyo.dsladapter.margin
+import com.angcyo.dsladapter.updateMedia
 import com.angcyo.glide.giv
 import com.angcyo.library.ex.*
 import com.angcyo.loader.*
@@ -105,10 +106,8 @@ open class DslPickerImageItem : DslAdapterItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
-        //局部更新
-        val partUpdate = payloads.containsPayload(PAYLOAD_UPDATE_PART)
         //更新媒体
-        val mediaUpdate = payloads.isEmpty() || payloads.containsPayload(PAYLOAD_UPDATE_MEDIA)
+        val mediaUpdate = payloads.updateMedia()
         val animUpdate = payloads.containsPayload(PAYLOAD_UPDATE_ANIM)
         val cancelAnimUpdate = payloads.containsPayload(PAYLOAD_UPDATE_CANCEL_ANIM)
 
@@ -141,7 +140,7 @@ open class DslPickerImageItem : DslAdapterItem() {
         //文本
         if (loaderMedia?.isVideo() == true ||
             loaderMedia?.isAudio() == true ||
-            !(loaderMedia?.cutPath.isNullOrBlank())/*如果图片被剪裁过*/) {
+            !(loaderMedia?.cropPath.isNullOrBlank())/*如果图片被剪裁过*/) {
             itemHolder.visible(R.id.duration_view)
 
             //时长
@@ -152,7 +151,7 @@ open class DslPickerImageItem : DslAdapterItem() {
                             getDrawable(itemVideoTipDrawable)
                         } else if (loaderMedia?.isAudio() == true && itemAudioTipDrawable > 0) {
                             getDrawable(itemAudioTipDrawable)
-                        } else if (!(loaderMedia?.cutPath.isNullOrBlank()) && itemImageTipDrawable > 0) {
+                        } else if (!(loaderMedia?.cropPath.isNullOrBlank()) && itemImageTipDrawable > 0) {
                             getDrawable(itemImageTipDrawable)
                         } else {
                             null

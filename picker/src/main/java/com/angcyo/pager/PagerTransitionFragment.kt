@@ -5,10 +5,16 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.os.Bundle
 import android.view.ViewGroup
+import androidx.viewpager.widget.PagerAdapter
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.set
+import com.angcyo.loader.isAudio
+import com.angcyo.loader.isVideo
 import com.angcyo.loader.loadUri
+import com.angcyo.media.audio.DslPreviewAudioItem
+import com.angcyo.media.dslitem.DslTextureVideoItem
 import com.angcyo.pager.dslitem.DslPhotoViewItem
+import com.angcyo.picker.R
 import com.angcyo.tablayout.evaluateColor
 import com.angcyo.widget._vp
 import com.angcyo.widget.layout.MatrixLayout
@@ -16,7 +22,6 @@ import com.angcyo.widget.pager.DslPagerAdapter
 import com.angcyo.widget.pager.TextIndicator
 import com.angcyo.widget.pager.getPrimaryViewHolder
 import com.github.chrisbanes.photoview.PhotoView
-import com.angcyo.picker.R
 
 /**
  *
@@ -98,24 +103,7 @@ open class PagerTransitionFragment : ViewTransitionFragment() {
 
         _vh._vp(R.id.lib_view_pager)?.apply {
 
-            val items = mutableListOf<DslAdapterItem>()
-
-            pagerTransitionCallback.loaderMediaList.forEach {
-                items.add(DslPhotoViewItem().apply {
-                    itemData = it
-                    itemLoadUri = it.loadUri()
-
-                    //占位图提供
-                    placeholderDrawableProvider = pagerTransitionCallback
-
-                    //点击图片关闭界面
-                    onItemClick = {
-                        backTransition()
-                    }
-                })
-            }
-
-            adapter = DslPagerAdapter(items)
+            adapter = onCreatePagerAdapter()
 
             setCurrentItem(pagerTransitionCallback.startPosition, false)
 
@@ -168,5 +156,36 @@ open class PagerTransitionFragment : ViewTransitionFragment() {
             val vh = _vh._vp(R.id.lib_view_pager)?.getPrimaryViewHolder() ?: _vh
             _configTransition(start, vh)
         }
+    }
+
+    fun onCreatePagerAdapter(): PagerAdapter? {
+        val items = mutableListOf<DslAdapterItem>()
+
+        pagerTransitionCallback.loaderMediaList.forEach {
+            when {
+                it.isVideo() -> items.add(DslTextureVideoItem().apply {
+                    itemData = it
+                    itemVideoUri = it.loadUri()
+                })
+                it.isAudio() -> items.add(DslPreviewAudioItem().apply {
+                    itemData = it
+                    itemAudioUri = it.loadUri()
+                })
+                else -> items.add(DslPhotoViewItem().apply {
+                    itemData = it
+                    itemLoadUri = it.loadUri()
+
+                    //占位图提供
+                    placeholderDrawableProvider = pagerTransitionCallback
+
+                    //点击图片关闭界面
+                    onItemClick = {
+                        backTransition()
+                    }
+                })
+            }
+        }
+
+        return DslPagerAdapter(items)
     }
 }

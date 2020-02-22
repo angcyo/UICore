@@ -52,7 +52,7 @@ class DslLuban {
 
     private fun _doIt(context: Context, media: LoaderMedia) {
         val path = media.run {
-            cutPath?.run {
+            cropPath?.run {
                 //优先使用剪切后的文件路径
                 this
             } ?: localUri?.run {

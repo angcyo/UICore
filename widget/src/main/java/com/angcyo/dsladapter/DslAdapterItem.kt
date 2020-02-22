@@ -31,6 +31,8 @@ open class DslAdapterItem {
     /**适配器*/
     var itemDslAdapter: DslAdapter? = null
 
+    //<editor-fold desc="update操作">
+
     /**[notifyItemChanged]*/
     open fun updateAdapterItem(payload: Any? = PAYLOAD_UPDATE_PART, useFilterList: Boolean = true) {
         if (itemDslAdapter == null) {
@@ -38,6 +40,41 @@ open class DslAdapterItem {
         }
         itemDslAdapter?.notifyItemChanged(this, payload, useFilterList)
     }
+
+    /**
+     * 通过diff更新
+     * @param notifyUpdate 是否需要触发 [Depend] 关系链.
+     * */
+    open fun updateItemDepend(
+        filterParams: FilterParams = FilterParams(
+            fromDslAdapterItem = this,
+            updateDependItemWithEmpty = false,
+            payload = PAYLOAD_UPDATE_PART
+        )
+    ) {
+        if (itemDslAdapter == null) {
+            L.e("updateItemDepend需要[itemDslAdapter], 请赋值.")
+        }
+        itemDslAdapter?.updateItemDepend(filterParams)
+    }
+
+    /**更新选项*/
+    open fun updateItemSelector(select: Boolean, notifyUpdate: Boolean = false) {
+        if (itemDslAdapter == null) {
+            L.e("updateItemSelector需要[itemDslAdapter], 请赋值.")
+        }
+        itemDslAdapter?.itemSelectorHelper?.selector(
+            SelectorParams(
+                this,
+                select.toSelectOption(),
+                notify = true,
+                notifyItemSelectorChange = true,
+                updateItemDepend = notifyUpdate
+            )
+        )
+    }
+
+    //</editor-fold desc="update操作">
 
     //<editor-fold desc="Grid相关属性">
 
@@ -485,38 +522,6 @@ open class DslAdapterItem {
     var isItemInUpdateList: (checkItem: DslAdapterItem, itemIndex: Int) -> Boolean =
         { _, _ -> false }
 
-    /**
-     * 通过diff更新
-     * @param notifyUpdate 是否需要触发 [Depend] 关系链.
-     * */
-    open fun updateItemDepend(
-        filterParams: FilterParams = FilterParams(
-            fromDslAdapterItem = this,
-            updateDependItemWithEmpty = false,
-            payload = PAYLOAD_UPDATE_PART
-        )
-    ) {
-        if (itemDslAdapter == null) {
-            L.e("updateItemDepend需要[itemDslAdapter], 请赋值.")
-        }
-        itemDslAdapter?.updateItemDepend(filterParams)
-    }
-
-    /**更新选项*/
-    open fun updateItemSelector(select: Boolean, notifyUpdate: Boolean = false) {
-        if (itemDslAdapter == null) {
-            L.e("updateItemSelector需要[itemDslAdapter], 请赋值.")
-        }
-        itemDslAdapter?.itemSelectorHelper?.selector(
-            SelectorParams(
-                this,
-                select.toSelectOption(),
-                notify = true,
-                notifyItemSelectorChange = true,
-                updateItemDepend = notifyUpdate
-            )
-        )
-    }
 
     var onItemUpdateFrom: (fromItem: DslAdapterItem) -> Unit = {}
 
