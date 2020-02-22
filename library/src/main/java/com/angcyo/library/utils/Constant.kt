@@ -15,8 +15,9 @@ object Constant {
     var uiFolderName = "ui"
     var crashFolderName = "crash"
     var downFolderName = "down"
-    var cameraFolderName = "camera"
     var otherFolderName = "other"
     var errorFolderName = "error"
-
+    var cameraFolderName = "camera"
+    var cropFolderName = "crop"
+    var lubanFolderName = "luban"
 }

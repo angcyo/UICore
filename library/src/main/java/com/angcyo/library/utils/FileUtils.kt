@@ -119,7 +119,7 @@ fun fileName(pattern: String = "yyyy-MM-dd_HH-mm-ss-SSS", suffix: String = ""): 
 }
 
 /**获取一个文件路径*/
-fun filePath(folderName: String, fileName: String): String {
+fun filePath(folderName: String, fileName: String = fileNameUUID()): String {
     return "${FileUtils.appRootExternalFolder(folder = folderName)?.absolutePath}${File.separator}${fileName}"
 }
 

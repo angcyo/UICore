@@ -14,6 +14,10 @@ import android.provider.MediaStore
  * @date 2020/02/12
  */
 
+fun Int.isResultOk() = this == Activity.RESULT_OK
+
+fun Int.isResultCanceled() = this == Activity.RESULT_CANCELED
+
 fun Intent.baseConfig(context: Context) {
     if (context !is Activity) {
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

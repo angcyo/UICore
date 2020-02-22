@@ -107,6 +107,10 @@ fun InputStream.bitmapSuffix(): String {
     }
 }
 
+fun String.bitmapSuffix(): String {
+    return file().inputStream().bitmapSuffix()
+}
+
 /**从流中获取图片宽高*/
 fun InputStream.bitmapSize(): IntArray {
     val result = intArrayOf(-1, -1)
