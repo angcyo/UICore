@@ -48,7 +48,7 @@ open class DslGradientDrawable : AbsDslDrawable() {
     /**渐变中心点坐标*/
     var gradientCenterX = 0.5f
     var gradientCenterY = 0.5f
-    /**半径*/
+    /**渐变半径, 非比例值, 是px值. [GradientDrawable.RADIAL_GRADIENT]类型才有效*/
     var gradientRadius = 0.5f
     /** 渐变方向, 默认从左到右 */
     var gradientOrientation = GradientDrawable.Orientation.LEFT_RIGHT
@@ -130,6 +130,8 @@ open class DslGradientDrawable : AbsDslDrawable() {
         }
 
         drawable?.apply {
+            bounds = this@DslGradientDrawable.bounds
+
             shape = gradientShape
             setStroke(
                 gradientStrokeWidth,

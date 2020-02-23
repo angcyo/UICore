@@ -12,11 +12,14 @@ import android.view.View
 import androidx.core.math.MathUtils
 import com.angcyo.drawable.base.DslGradientDrawable
 import com.angcyo.drawable.text.DslTextDrawable
+import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.toDp
 import com.angcyo.library.ex.toDpi
 import com.angcyo.widget.R
 import com.angcyo.widget.base.anim
+import com.angcyo.widget.base.atMost
 import com.angcyo.widget.base.getColor
+import com.angcyo.widget.base.getMode
 import kotlin.math.max
 
 /**
@@ -32,6 +35,8 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
     /**进度条背景*/
     var progressBgDrawable: Drawable? = null
+    /**第二进度*/
+    var progressSecondDrawable: Drawable? = null
     /**进度条*/
     var progressTrackDrawable: Drawable? = null
 
@@ -45,8 +50,14 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             postInvalidate()
         }
 
+    var progressSecondValue: Int = 0
+        set(value) {
+            field = validProgress(value)
+            postInvalidate()
+        }
+
     /**圆角大小, 未强制指定[progressBgDrawable] [progressTrackDrawable]的情况下生效*/
-    var progressRadius: Int = 0
+    var progressRadius: Int = 5 * dpi
 
     /**是否显示进度提示文本, 在右边显示进度文本*/
     var showProgressText = false
@@ -76,6 +87,8 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.DslProgressBar)
 
         progressBgDrawable = typedArray.getDrawable(R.styleable.DslProgressBar_progress_bg_drawable)
+        progressSecondDrawable =
+            typedArray.getDrawable(R.styleable.DslProgressBar_progress_second_drawable)
         progressTrackDrawable =
             typedArray.getDrawable(R.styleable.DslProgressBar_progress_track_drawable)
 
@@ -105,11 +118,31 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             setBgGradientColors(colors)
         }
 
-        if ((progressTrackDrawable is ColorDrawable || progressTrackDrawable == null) &&
-            typedArray.hasValue(R.styleable.DslProgressBar_progress_track_drawable_gradient_colors)
+        //第二进度Drawable
+        if ((progressSecondDrawable is ColorDrawable || progressSecondDrawable == null) &&
+            typedArray.hasValue(R.styleable.DslProgressBar_progress_second_gradient_colors)
         ) {
             var colors =
-                typedArray.getString(R.styleable.DslProgressBar_progress_track_drawable_gradient_colors)
+                typedArray.getString(R.styleable.DslProgressBar_progress_second_gradient_colors)
+
+            if (progressSecondDrawable is ColorDrawable) {
+                val startColor = (progressSecondDrawable as ColorDrawable).color
+                colors = "$startColor,$colors"
+            } else if (colors?.split(",")?.size ?: 0 <= 1) {
+                colors = "$colors,$colors"
+            }
+
+            setSecondGradientColors(colors)
+        } else if (progressSecondDrawable == null) {
+            setSecondGradientColors("${getColor(R.color.colorPrimaryDark)},${getColor(R.color.colorPrimaryDark)}")
+        }
+
+        //进度轨道Drawable
+        if ((progressTrackDrawable is ColorDrawable || progressTrackDrawable == null) &&
+            typedArray.hasValue(R.styleable.DslProgressBar_progress_track_gradient_colors)
+        ) {
+            var colors =
+                typedArray.getString(R.styleable.DslProgressBar_progress_track_gradient_colors)
 
             if (progressTrackDrawable is ColorDrawable) {
                 val startColor = (progressTrackDrawable as ColorDrawable).color
@@ -141,23 +174,33 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             ?: progressTextFormat
         //---end
 
+        progressMaxValue =
+            typedArray.getInt(R.styleable.DslProgressBar_progress_max_value, progressMaxValue)
+
         progressValue = typedArray.getInt(
             R.styleable.DslProgressBar_progress_value,
             if (isInEditMode) 50 else progressValue
         )
-        progressMaxValue =
-            typedArray.getInt(R.styleable.DslProgressBar_progress_max_value, progressMaxValue)
+        progressSecondValue = typedArray.getInt(
+            R.styleable.DslProgressBar_progress_second_value,
+            if (isInEditMode) 70 else progressSecondValue
+        )
 
         typedArray.recycle()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        if (heightMeasureSpec.getMode() != MeasureSpec.EXACTLY) {
+            super.onMeasure(widthMeasureSpec, atMost(8 * dpi + paddingTop + paddingBottom))
+        } else {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        }
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         drawBg(canvas)
+        drawSecondProgress(canvas)
         drawTrack(canvas)
         drawProgressText(canvas)
     }
@@ -193,6 +236,25 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     //0.1 0.8 0.9进度
     val _progressFraction: Float
         get() = progressValue * 1f / progressMaxValue
+
+    val _progressSecondFraction: Float
+        get() = progressSecondValue * 1f / progressMaxValue
+
+    //绘制第二进度
+    open fun drawSecondProgress(canvas: Canvas) {
+        val pBound = _progressBound
+        progressSecondDrawable?.apply {
+
+            setBounds(
+                pBound.left,
+                pBound.top,
+                (pBound.left + pBound.width() * _progressSecondFraction).toInt(),
+                pBound.bottom
+            )
+
+            draw(canvas)
+        }
+    }
 
     //绘制进度轨道
     open fun drawTrack(canvas: Canvas) {
@@ -240,6 +302,15 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             _fillRadii(gradientRadii, progressRadius)
             updateOriginDrawable()
             progressTrackDrawable = originDrawable
+        }
+    }
+
+    fun setSecondGradientColors(color: String?) {
+        DslGradientDrawable().apply {
+            gradientColors = _fillColor(color)
+            _fillRadii(gradientRadii, progressRadius)
+            updateOriginDrawable()
+            progressSecondDrawable = originDrawable
         }
     }
 

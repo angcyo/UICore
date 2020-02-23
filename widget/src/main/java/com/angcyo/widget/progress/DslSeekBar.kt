@@ -5,13 +5,16 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import androidx.core.view.GestureDetectorCompat
 import com.angcyo.drawable.base.DslGradientDrawable
 import com.angcyo.drawable.text.DslTextDrawable
+import com.angcyo.library.ex.alpha
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.setBounds
 import com.angcyo.widget.R
 import com.angcyo.widget.base.*
 import kotlin.math.abs
@@ -31,11 +34,14 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
     /**浮子, 不受padding属性的影响, 根据[progress]的Y轴中点定位*/
     var seekThumbDrawable: Drawable? = null
 
+    /**按下状态时, 光晕效果, [seekThumbDrawable] 后面额外绘制的[Drawable] 用于提示 [TouchDown] 状态, bounds 需要自带宽高属性*/
+    var seekThumbTouchHaloDrawable: Drawable? = null
+
     /**进度条的高度*/
-    var progressHeight = 15 * dpi
+    var progressHeight = 8 * dpi
 
     /**浮子超过进度条的高度*/
-    var seekThumbOverHeight = 6 * dpi
+    var seekThumbOverHeight = 8 * dpi
 
     /**回调监听*/
     var onSeekBarConfig: SeekBarConfig? = null
@@ -119,12 +125,20 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
         )
 
         seekThumbDrawable = typedArray.getDrawable(R.styleable.DslSeekBar_seek_thumb_drawable)
+        seekThumbTouchHaloDrawable =
+            typedArray.getDrawable(R.styleable.DslSeekBar_seek_thumb_touch_halo_drawable)
         thumbTextBgDrawable =
             typedArray.getDrawable(R.styleable.DslSeekBar_seek_thumb_text_bg_drawable)
         showThumbText =
             typedArray.getBoolean(R.styleable.DslSeekBar_seek_show_thumb_text, showThumbText)
 
-        if (seekThumbDrawable == null) {
+        val thumbSolidColor = typedArray.getColor(
+            R.styleable.DslSeekBar_seek_thumb_solid_color,
+            getColor(R.color.colorAccent)
+        )
+
+        //未设置[seekThumbDrawable]时, 使用默认样式
+        if (seekThumbDrawable == null && !typedArray.hasValue(R.styleable.DslSeekBar_seek_thumb_drawable)) {
 
             _dslGradientDrawable.gradientStrokeWidth =
                 typedArray.getDimensionPixelOffset(
@@ -138,29 +152,66 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
                     Color.WHITE
                 )
 
-            _dslGradientDrawable.gradientSolidColor =
-                typedArray.getColor(
-                    R.styleable.DslSeekBar_seek_thumb_solid_color,
-                    getColor(R.color.colorAccent)
-                )
+            _dslGradientDrawable.gradientSolidColor = thumbSolidColor
 
-            _dslGradientDrawable.fillRadii(45 * dpi)
+            val radius = typedArray.getDimensionPixelOffset(
+                R.styleable.DslSeekBar_seek_thumb_radius,
+                45 * dpi
+            )
+
+            _dslGradientDrawable.fillRadii(radius)
 
             _dslGradientDrawable.updateOriginDrawable()
             seekThumbDrawable = _dslGradientDrawable
         }
 
+        //未设置[seekThumbTouchDrawable]时, 使用默认样式
+        val touchThumbSize: Int = (progressHeight + seekThumbOverHeight) * 3
+        if (seekThumbTouchHaloDrawable == null && typedArray.hasValue(R.styleable.DslSeekBar_seek_thumb_touch_halo_gradient_colors)) {
+            var colors =
+                typedArray.getString(R.styleable.DslSeekBar_seek_thumb_touch_halo_gradient_colors)
+
+            if (colors?.split(",")?.size ?: 0 <= 1) {
+                colors = "$colors,$colors"
+            }
+
+            seekThumbTouchHaloDrawable = DslGradientDrawable().run {
+                setBounds(touchThumbSize, touchThumbSize)
+                gradientType = GradientDrawable.RADIAL_GRADIENT
+                gradientRadius = touchThumbSize / 2f
+                gradientColors = _fillColor(colors)
+                updateOriginDrawable()
+            }
+
+        } else if (seekThumbTouchHaloDrawable == null) {
+            seekThumbTouchHaloDrawable = DslGradientDrawable().run {
+                setBounds(touchThumbSize, touchThumbSize)
+                gradientType = GradientDrawable.RADIAL_GRADIENT
+                gradientRadius = touchThumbSize / 2f
+                gradientColors = intArrayOf(thumbSolidColor.alpha(188), thumbSolidColor.alpha(10))
+                updateOriginDrawable()
+            }
+        }
+
         typedArray.recycle()
 
-        val paddingLeft =
-            if (paddingLeft <= 0) progressHeight / 2 + seekThumbOverHeight else paddingLeft
-        val paddingBottom = if (paddingBottom <= 0) seekThumbOverHeight else paddingBottom
+        val w = progressHeight / 2 + seekThumbOverHeight
+        val h = touchThumbSize / 2 + progressHeight / 2
+
+        val paddingLeft = if (paddingLeft <= 0) w else paddingLeft
+        val paddingRight = if (paddingRight <= 0) w else paddingRight
+        val paddingTop = if (paddingTop <= 0) h else paddingTop
+        val paddingBottom = if (paddingBottom <= 0) h - progressHeight / 2 else paddingBottom
+
         setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         if (heightMeasureSpec.getMode() != MeasureSpec.EXACTLY) {
-            super.onMeasure(widthMeasureSpec, atMost(progressHeight + seekThumbOverHeight * 2))
+            super.onMeasure(
+                widthMeasureSpec,
+                atMost(progressHeight + seekThumbOverHeight * 2 + paddingTop + paddingBottom)
+            )
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         }
@@ -174,6 +225,18 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
 
     //绘制浮子
     open fun drawThumb(canvas: Canvas) {
+        if (_drawTouchThumbDrawable || isInEditMode) {
+            seekThumbTouchHaloDrawable?.apply {
+                canvas.save()
+                canvas.translate(
+                    (_thumbBound.centerX() - bounds.width() / 2).toFloat(),
+                    (_thumbBound.centerY() - bounds.height() / 2).toFloat()
+                )
+                draw(canvas)
+                canvas.restore()
+            }
+        }
+
         seekThumbDrawable?.apply {
             bounds = _thumbBound
             draw(canvas)
@@ -228,14 +291,21 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
 
     //是否在浮子处按下
     var _isTouchDownInThumb = false
+    var _drawTouchThumbDrawable: Boolean by InvalidateProperty(false)
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         super.onTouchEvent(event)
 
         if (event.isTouchDown()) {
             _isTouchDownInThumb = _thumbBound.contains(event.x.toInt(), event.y.toInt())
+            _drawTouchThumbDrawable = true
+            if (_isTouchDownInThumb) {
+                seekThumbDrawable?.state = intArrayOf(android.R.attr.state_pressed)
+            }
         } else if (event.isTouchFinish()) {
             _isTouchDownInThumb = false
+            _drawTouchThumbDrawable = false
+            seekThumbDrawable?.state = intArrayOf()
             parent.requestDisallowInterceptTouchEvent(false)
         }
 
