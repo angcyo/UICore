@@ -3,9 +3,6 @@ package com.angcyo.media.dslitem
 import android.media.MediaPlayer
 import android.net.Uri
 import android.view.View
-import com.angcyo.download.DslDownload
-import com.angcyo.download.dslDownload
-import com.angcyo.download.isCompleted
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.glide.giv
 import com.angcyo.library.app
@@ -26,7 +23,7 @@ import com.liulishuo.okdownload.core.cause.EndCause
  * @date 2020/02/21
  */
 
-class DslTextureVideoItem : DslAdapterItem() {
+class DslTextureVideoItem : DslBaseDownloadItem() {
 
     /**视频地址*/
     var itemVideoUri: Uri? = null
@@ -34,15 +31,8 @@ class DslTextureVideoItem : DslAdapterItem() {
     /**播放监听*/
     var onPlayListener: (TextureVideoView) -> Unit = {}
 
-    var _downTask: DownloadTask? = null
-
     init {
         itemLayoutId = R.layout.dsl_texture_video_item
-
-        onItemViewDetachedToWindow = {
-            _downTask?.cancel()
-            it.v<TextureVideoView>(R.id.lib_video_view)?.stop()
-        }
     }
 
     override fun onItemBind(
@@ -86,12 +76,12 @@ class DslTextureVideoItem : DslAdapterItem() {
         }
 
         videoView?.setMediaPlayerCallback(object : TextureVideoView.SimpleMediaPlayerCallback() {
-            override fun onPrepared(mp: MediaPlayer?) {
+            override fun onPrepared(mp: MediaPlayer) {
                 super.onPrepared(mp)
                 onPlayStateChanged(mp, TextureVideoView.STATE_PLAYING)
             }
 
-            override fun onCompletion(mp: MediaPlayer?) {
+            override fun onCompletion(mp: MediaPlayer) {
                 super.onCompletion(mp)
                 onPlayStateChanged(mp, TextureVideoView.STATE_PLAYBACK_COMPLETED)
             }
@@ -112,6 +102,10 @@ class DslTextureVideoItem : DslAdapterItem() {
                 } else {
                     itemHolder.visible(R.id.play_view)
                 }
+            }
+
+            override fun onVideoPlayProgress(mp: MediaPlayer, progress: Int, duration: Int) {
+                super.onVideoPlayProgress(mp, progress, duration)
             }
         })
 
@@ -137,21 +131,9 @@ class DslTextureVideoItem : DslAdapterItem() {
             itemHolder.gone(R.id.play_view)
 
             if (itemVideoUri.isHttpScheme()) {
-                val url = itemVideoUri!!.path
-                val task = DslDownload.findTask(url)
-                if (task.isCompleted()) {
-                    //视频已经下载好了
-                    playVideo(itemHolder, fileUri(app(), task!!.file!!.absolutePath))
-                } else {
-                    //开始下载视频
-                    itemHolder.v<HSProgressView>(R.id.hs_progress_view)?.apply {
-                        visibility = View.VISIBLE
-                        startAnimator()
-                    }
-
-                    downVideo(url!!) {
-                        playVideo(itemHolder, fileUri(app(), it))
-                    }
+                //下载视频
+                download(itemHolder, itemVideoUri?.path) {
+                    playVideo(itemHolder, fileUri(app(), it))
                 }
             } else {
                 //本地视频
@@ -163,15 +145,31 @@ class DslTextureVideoItem : DslAdapterItem() {
         itemHolder.longClick(R.id.lib_video_view, _longClickListener)
     }
 
-    /**下载视频*/
-    open fun downVideo(url: String, callback: (path: String) -> Unit) {
-        _downTask?.cancel()
-        _downTask = dslDownload(url) {
-            onTaskFinish = { downloadTask, cause, exception ->
-                if (cause == EndCause.COMPLETED) {
-                    callback(downloadTask.file!!.absolutePath)
-                }
-            }
+    override fun onItemViewDetachedToWindow(itemHolder: DslViewHolder, itemPosition: Int) {
+        super.onItemViewDetachedToWindow(itemHolder, itemPosition)
+        itemHolder.v<TextureVideoView>(R.id.lib_video_view)?.stop()
+    }
+
+    override fun onDownloadStart(itemHolder: DslViewHolder?, task: DownloadTask) {
+        super.onDownloadStart(itemHolder, task)
+        //开始下载视频
+        itemHolder?.v<HSProgressView>(R.id.hs_progress_view)?.apply {
+            visibility = View.VISIBLE
+            startAnimator()
+        }
+    }
+
+    override fun onDownloadFinish(
+        itemHolder: DslViewHolder?,
+        task: DownloadTask,
+        cause: EndCause,
+        error: Exception?
+    ) {
+        super.onDownloadFinish(itemHolder, task, cause, error)
+        //开始下载视频
+        itemHolder?.v<HSProgressView>(R.id.hs_progress_view)?.apply {
+            visibility = View.GONE
+            stopAnimator()
         }
     }
 

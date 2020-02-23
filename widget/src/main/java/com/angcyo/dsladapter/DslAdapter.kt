@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.dsladapter.internal.AdapterStatusFilterInterceptor
 import com.angcyo.dsladapter.internal.FilterInterceptor
 import com.angcyo.dsladapter.internal.LoadMoreFilterInterceptor
+import com.angcyo.library.L
 import com.angcyo.widget.DslViewHolder
 import kotlin.math.max
 import kotlin.math.min
@@ -148,25 +149,26 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         super.onViewAttachedToWindow(holder)
         holder.getDslAdapterItem()?.apply {
             holder.itemView.fullSpan(itemSpanCount == -1)
-            onItemViewAttachedToWindow.invoke(holder)
+            itemViewAttachedToWindow.invoke(holder, holder.adapterPosition)
         }
     }
 
     override fun onViewDetachedFromWindow(holder: DslViewHolder) {
         super.onViewDetachedFromWindow(holder)
         holder.getDslAdapterItem()?.apply {
-            onItemViewDetachedToWindow.invoke(holder)
+            itemViewDetachedToWindow.invoke(holder, holder.adapterPosition)
         }
     }
 
     override fun onViewRecycled(holder: DslViewHolder) {
         super.onViewRecycled(holder)
         holder.getDslAdapterItem()?.apply {
-            onItemViewRecycled.invoke(holder)
+            itemViewRecycled.invoke(holder, holder.adapterPosition)
         }
     }
 
     override fun onFailedToRecycleView(holder: DslViewHolder): Boolean {
+        L.w("回收失败:$holder")
         return super.onFailedToRecycleView(holder)
     }
 

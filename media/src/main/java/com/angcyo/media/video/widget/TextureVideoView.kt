@@ -9,16 +9,15 @@ import android.media.MediaFormat
 import android.media.MediaPlayer
 import android.media.MediaPlayer.*
 import android.net.Uri
-import android.os.Build
-import android.os.Handler
-import android.os.HandlerThread
-import android.os.Message
+import android.os.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.Surface
 import android.view.TextureView
 import android.view.TextureView.SurfaceTextureListener
 import android.view.View
+import com.angcyo.library.L
+import com.angcyo.library.ex.isDebug
 import java.io.IOException
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -36,7 +35,7 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
         const val STATE_PAUSED = 4
         const val STATE_PLAYBACK_COMPLETED = 5
         private const val TAG = "TextureVideoView"
-        private const val SHOW_LOGS = false
+        private var SHOW_LOGS = isDebug()
         private const val MSG_START = 0x0001
         private const val MSG_PAUSE = 0x0004
         private const val MSG_STOP = 0x0006
@@ -48,7 +47,7 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
         }
     }
 
-    protected var mScalableType = ScalableType.CENTER_CROP
+    var mScalableType = ScalableType.CENTER_CROP
 
     @Volatile
     var mCurrentState = STATE_IDLE
@@ -59,40 +58,45 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
     private var mContext: Context? = null
     private var mSurface: Surface? = null
     var mediaPlayer: MediaPlayer? = null
-        private set
     private val mAudioManager: AudioManager? = null
     private var mMediaPlayerCallback: MediaPlayerCallback? = null
-    private var mHandler: Handler? = null
+    private lateinit var mainHandler: Handler
     private var mVideoHandler: Handler? = null
     var isMute = false
-        private set
     var isHasAudio = false
-        private set
     private var repeatPlay = true
 
-    constructor(context: Context?) : super(context) {
+    constructor(context: Context) : super(context) {
         init()
     }
 
-    constructor(context: Context?, attrs: AttributeSet?) : super(
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        init()
+    }
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
-        attrs
+        attrs,
+        defStyleAttr
     ) {
         init()
     }
 
-    constructor(
-        context: Context?,
-        attrs: AttributeSet?,
-        defStyleAttr: Int
-    ) : super(context, attrs, defStyleAttr) {
-        init()
+    private fun init() {
+        mContext = context
+        mCurrentState = STATE_IDLE
+        targetState = STATE_IDLE
+        mainHandler = Handler(Looper.getMainLooper())
+        if (!isInEditMode) {
+            mVideoHandler = Handler(sThread.looper, this)
+            surfaceTextureListener = this
+        }
     }
 
     fun setMediaPlayerCallback(mediaPlayerCallback: MediaPlayerCallback?) {
         mMediaPlayerCallback = mediaPlayerCallback
         if (mediaPlayerCallback == null) {
-            mHandler!!.removeCallbacksAndMessages(null)
+            mainHandler.removeCallbacksAndMessages(null)
         }
     }
 
@@ -100,87 +104,56 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
         synchronized(TextureVideoView::class.java) {
             when (msg.what) {
                 MSG_START -> {
-                    if (SHOW_LOGS) Log.i(
-                        TAG,
-                        "<< handleMessage init"
-                    )
+                    if (SHOW_LOGS) Log.i(TAG, "<< handleMessage init")
                     openVideo()
-                    if (SHOW_LOGS) Log.i(
-                        TAG,
-                        ">> handleMessage init"
-                    )
+                    if (SHOW_LOGS) Log.i(TAG, ">> handleMessage init")
                 }
                 MSG_PAUSE -> {
-                    if (SHOW_LOGS) Log.i(
-                        TAG,
-                        "<< handleMessage pause"
-                    )
+                    if (SHOW_LOGS) Log.i(TAG, "<< handleMessage pause")
                     if (mediaPlayer != null) {
                         mediaPlayer!!.pause()
                     }
                     mCurrentState = STATE_PAUSED
-                    if (SHOW_LOGS) Log.i(
-                        TAG,
-                        ">> handleMessage pause"
-                    )
+                    if (SHOW_LOGS) Log.i(TAG, ">> handleMessage pause")
                 }
                 MSG_STOP -> {
-                    if (SHOW_LOGS) Log.i(
-                        TAG,
-                        "<< handleMessage stop"
-                    )
+                    if (SHOW_LOGS) Log.i(TAG, "<< handleMessage stop")
                     release(true)
-                    if (SHOW_LOGS) Log.i(
-                        TAG,
-                        ">> handleMessage stop"
-                    )
+                    if (SHOW_LOGS) Log.i(TAG, ">> handleMessage stop")
                 }
                 MSG_VIDEO_PROGRESS ->  //if (SHOW_LOGS) Log.e(TAG, "______________MSG_VIDEO_PROGRESS");
                     if (mMediaPlayerCallback != null && mediaPlayer != null) {
-                        mHandler!!.post(object : Runnable {
-                            override fun run() {
-                                try {
-                                    if (mMediaPlayerCallback != null && mediaPlayer != null) {
-                                        if (mCurrentState == STATE_PLAYBACK_COMPLETED) {
-                                            mMediaPlayerCallback!!.onVideoPlayProgress(
-                                                mediaPlayer,
-                                                mediaPlayer!!.duration,
-                                                mediaPlayer!!.duration
-                                            )
-                                        } else {
-                                            mMediaPlayerCallback!!.onVideoPlayProgress(
-                                                mediaPlayer,
-                                                mediaPlayer!!.currentPosition,
-                                                mediaPlayer!!.duration
-                                            )
-                                            mVideoHandler!!.sendEmptyMessageDelayed(
-                                                MSG_VIDEO_PROGRESS,
-                                                300
-                                            )
-                                        }
+                        mainHandler.post {
+                            try {
+                                if (mMediaPlayerCallback != null && mediaPlayer != null) {
+                                    if (mCurrentState == STATE_PLAYBACK_COMPLETED) {
+                                        mMediaPlayerCallback!!.onVideoPlayProgress(
+                                            mediaPlayer!!,
+                                            mediaPlayer!!.duration,
+                                            mediaPlayer!!.duration
+                                        )
+                                    } else {
+                                        mMediaPlayerCallback!!.onVideoPlayProgress(
+                                            mediaPlayer!!,
+                                            mediaPlayer!!.currentPosition,
+                                            mediaPlayer!!.duration
+                                        )
+                                        mVideoHandler!!.sendEmptyMessageDelayed(
+                                            MSG_VIDEO_PROGRESS,
+                                            300
+                                        )
                                     }
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
                                 }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
                             }
-                        })
+                        }
                     }
                 else -> {
                 }
             }
         }
         return true
-    }
-
-    private fun init() {
-        mContext = context
-        mCurrentState = STATE_IDLE
-        targetState = STATE_IDLE
-        mHandler = Handler()
-        if (!isInEditMode) {
-            mVideoHandler = Handler(sThread.looper, this)
-            surfaceTextureListener = this
-        }
     }
 
     // release the media player in any state
@@ -209,21 +182,22 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
         // called start() previously
         release(false)
         try {
-            mediaPlayer = MediaPlayer()
-            mediaPlayer!!.reset()
-            mediaPlayer!!.setOnPreparedListener(this)
-            mediaPlayer!!.setOnVideoSizeChangedListener(this)
-            mediaPlayer!!.setOnCompletionListener(this)
-            mediaPlayer!!.setOnErrorListener(this)
-            mediaPlayer!!.setOnInfoListener(this)
-            mediaPlayer!!.setOnBufferingUpdateListener(this)
-            mediaPlayer!!.setOnSeekCompleteListener(this)
-            mediaPlayer!!.setDataSource(mContext!!, mUri!!)
-            mediaPlayer!!.setSurface(mSurface)
-            mediaPlayer!!.setAudioStreamType(AudioManager.STREAM_MUSIC)
-            mediaPlayer!!.prepareAsync()
-            if (isMute) {
-                mediaPlayer!!.setVolume(0f, 0f)
+            mediaPlayer = MediaPlayer().apply {
+                reset()
+                setOnPreparedListener(this@TextureVideoView)
+                setOnVideoSizeChangedListener(this@TextureVideoView)
+                setOnCompletionListener(this@TextureVideoView)
+                setOnErrorListener(this@TextureVideoView)
+                setOnInfoListener(this@TextureVideoView)
+                setOnBufferingUpdateListener(this@TextureVideoView)
+                setOnSeekCompleteListener(this@TextureVideoView)
+                setDataSource(mContext!!, mUri!!)
+                setSurface(mSurface)
+                setAudioStreamType(AudioManager.STREAM_MUSIC)
+                prepareAsync()
+                if (isMute) {
+                    setVolume(0f, 0f)
+                }
             }
             // we don't set the target state here either, but preserve the
             // target state that was there before.
@@ -255,15 +229,13 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
             mCurrentState = STATE_ERROR
             targetState = STATE_ERROR
             if (mMediaPlayerCallback != null) {
-                mHandler!!.post(object : Runnable {
+                mainHandler.post(object : Runnable {
                     override fun run() {
-                        if (mMediaPlayerCallback != null) {
-                            mMediaPlayerCallback!!.onError(
-                                mediaPlayer,
-                                MEDIA_ERROR_UNKNOWN,
-                                0
-                            )
-                        }
+                        mMediaPlayerCallback?.onError(
+                            mediaPlayer!!,
+                            MEDIA_ERROR_UNKNOWN,
+                            0
+                        )
                     }
                 })
             }
@@ -276,15 +248,13 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
             mCurrentState = STATE_ERROR
             targetState = STATE_ERROR
             if (mMediaPlayerCallback != null) {
-                mHandler!!.post(object : Runnable {
+                mainHandler.post(object : Runnable {
                     override fun run() {
-                        if (mMediaPlayerCallback != null) {
-                            mMediaPlayerCallback!!.onError(
-                                mediaPlayer,
-                                MEDIA_ERROR_UNKNOWN,
-                                0
-                            )
-                        }
+                        mMediaPlayerCallback?.onError(
+                            mediaPlayer!!,
+                            MEDIA_ERROR_UNKNOWN,
+                            0
+                        )
                     }
                 })
             }
@@ -336,79 +306,41 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
     fun start() {
         targetState = STATE_PLAYING
         if (isInPlaybackState) {
-            mVideoHandler!!.obtainMessage(MSG_STOP).sendToTarget()
+            mVideoHandler?.obtainMessage(MSG_STOP)?.sendToTarget()
         }
         if (mUri != null && mSurface != null) {
-            mVideoHandler!!.obtainMessage(MSG_START).sendToTarget()
+            mVideoHandler?.obtainMessage(MSG_START)?.sendToTarget()
         }
-        if (mMediaPlayerCallback != null) {
-            mHandler!!.post(object : Runnable {
-                override fun run() {
-                    if (mMediaPlayerCallback != null) {
-                        mMediaPlayerCallback!!.onPlayStateChanged(
-                            mediaPlayer,
-                            STATE_PLAYING
-                        )
-                    }
-                }
-            })
-        }
+        mainHandler.post { mMediaPlayerCallback?.onPlayStateChanged(mediaPlayer, STATE_PLAYING) }
     }
 
     fun pause() {
         targetState = STATE_PAUSED
         if (isPlaying) {
-            mVideoHandler!!.obtainMessage(MSG_PAUSE).sendToTarget()
+            mVideoHandler?.obtainMessage(MSG_PAUSE)?.sendToTarget()
         }
-        if (mMediaPlayerCallback != null) {
-            mHandler!!.post(object : Runnable {
-                override fun run() {
-                    if (mMediaPlayerCallback != null) {
-                        mMediaPlayerCallback!!.onPlayStateChanged(
-                            mediaPlayer,
-                            STATE_PAUSED
-                        )
-                    }
-                }
-            })
+        mainHandler.post {
+            mMediaPlayerCallback?.onPlayStateChanged(mediaPlayer, STATE_PAUSED)
         }
     }
 
     fun resume() {
         targetState = STATE_PLAYING
         if (!isPlaying) {
-            mVideoHandler!!.obtainMessage(MSG_START).sendToTarget()
+            mVideoHandler?.obtainMessage(MSG_START)?.sendToTarget()
         }
-        if (mMediaPlayerCallback != null) {
-            mHandler!!.post(object : Runnable {
-                override fun run() {
-                    if (mMediaPlayerCallback != null) {
-                        mMediaPlayerCallback!!.onPlayStateChanged(
-                            mediaPlayer,
-                            STATE_PLAYING
-                        )
-                    }
-                }
-            })
+        mainHandler.post {
+            mMediaPlayerCallback?.onPlayStateChanged(mediaPlayer, STATE_PLAYING)
         }
     }
 
     fun stop() {
         targetState = STATE_PLAYBACK_COMPLETED
         if (isInPlaybackState) {
-            mVideoHandler!!.obtainMessage(MSG_STOP).sendToTarget()
+            mVideoHandler?.obtainMessage(MSG_STOP)?.sendToTarget()
         }
-        if (mMediaPlayerCallback != null) {
-            mHandler!!.post(object : Runnable {
-                override fun run() {
-                    if (mMediaPlayerCallback != null) {
-                        mMediaPlayerCallback!!.onPlayStateChanged(
-                            mediaPlayer,
-                            STATE_PLAYBACK_COMPLETED
-                        )
-                    }
-                }
-            })
+        mainHandler.post {
+            mMediaPlayerCallback?.onPlayStateChanged(mediaPlayer, STATE_PLAYBACK_COMPLETED)
         }
     }
 
@@ -427,20 +359,12 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
         }
 
     fun seekTo(msec: Int) {
-        mVideoHandler!!.postDelayed(object : Runnable {
-            override fun run() {
-                if (mediaPlayer != null) {
-                    mediaPlayer!!.seekTo(msec)
-                }
-            }
-        }, 400)
+        mVideoHandler?.postDelayed({ mediaPlayer?.seekTo(msec) }, 400)
     }
 
     fun mute() {
         isMute = true
-        if (mediaPlayer != null) {
-            mediaPlayer!!.setVolume(0f, 0f)
-        }
+        mediaPlayer?.setVolume(0f, 0f)
     }
 
     fun unMute() {
@@ -451,7 +375,7 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
                 if (max - audioVolume > 0) Math.log(max - audioVolume.toDouble()) else 0.0
             val volume =
                 (1 - numerator / Math.log(max.toDouble())).toFloat()
-            mediaPlayer!!.setVolume(volume, volume)
+            mediaPlayer?.setVolume(volume, volume)
             isMute = false
         }
     }
@@ -474,7 +398,7 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
         mCurrentState = STATE_PLAYBACK_COMPLETED
         targetState = STATE_PLAYBACK_COMPLETED
         if (mediaPlayer != null) {
-            mHandler!!.post(object : Runnable {
+            mainHandler.post(object : Runnable {
                 override fun run() {
                     if (repeatPlay) {
                         if (mediaPlayer != null) {
@@ -490,14 +414,9 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
     }
 
     override fun onSeekComplete(mp: MediaPlayer) {
-        if (SHOW_LOGS) Log.e(
-            TAG,
-            "______________onSeekComplete"
-        )
-        if (mediaPlayer != null) {
-            mediaPlayer!!.start()
-        }
-        mVideoHandler!!.obtainMessage(MSG_VIDEO_PROGRESS).sendToTarget()
+        if (SHOW_LOGS) Log.e(TAG, "______________onSeekComplete")
+        mediaPlayer?.start()
+        mVideoHandler?.obtainMessage(MSG_VIDEO_PROGRESS)?.sendToTarget()
     }
 
     override fun onError(mp: MediaPlayer, what: Int, extra: Int): Boolean {
@@ -508,7 +427,7 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
         mCurrentState = STATE_ERROR
         targetState = STATE_ERROR
         if (mMediaPlayerCallback != null) {
-            mHandler!!.post {
+            mainHandler.post {
                 if (mMediaPlayerCallback != null) {
                     mMediaPlayerCallback!!.onError(mp, what, extra)
                 }
@@ -528,23 +447,20 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
         mCurrentState = STATE_PREPARED
         if (isInPlaybackState) {
             if (mMediaPlayerCallback != null) {
-                val videoStartPlayProgress = mMediaPlayerCallback!!.videoStartPlayProgress
-                if (SHOW_LOGS) Log.i(
-                    TAG,
-                    "视频断点播放进度: $videoStartPlayProgress"
-                )
+                val videoStartPlayProgress = 0
+                if (SHOW_LOGS) Log.i(TAG, "视频断点播放进度: $videoStartPlayProgress")
                 if (videoStartPlayProgress < 0) {
-                    mediaPlayer!!.start()
+                    mediaPlayer?.start()
                 } else {
-                    mediaPlayer!!.seekTo(videoStartPlayProgress)
+                    mediaPlayer?.seekTo(videoStartPlayProgress)
                 }
             } else {
-                mediaPlayer!!.start()
+                mediaPlayer?.start()
             }
             mCurrentState = STATE_PLAYING
             targetState = STATE_PLAYING
         }
-        //        mMediaPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
+//        mMediaPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
 //            @Override
 //            public void onSeekComplete(MediaPlayer mp) {
 //                if(!isPlaying()){
@@ -552,18 +468,14 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
 //                }
 //            }
 //        });
-        if (mMediaPlayerCallback != null) {
-            mHandler!!.post {
-                if (mMediaPlayerCallback != null) {
-                    mMediaPlayerCallback!!.onPrepared(mp)
-                }
-            }
+        mainHandler.post {
+            mMediaPlayerCallback?.onPrepared(mp)
         }
     }
 
     override fun onVideoSizeChanged(mp: MediaPlayer, width: Int, height: Int) {
         if (mMediaPlayerCallback != null) {
-            mHandler!!.post {
+            mainHandler.post {
                 if (mMediaPlayerCallback != null) {
                     mMediaPlayerCallback!!.onVideoSizeChanged(mp, width, height)
                     scaleVideoSize(width, height)
@@ -587,7 +499,7 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
 
     override fun onBufferingUpdate(mp: MediaPlayer, percent: Int) {
         if (mMediaPlayerCallback != null) {
-            mHandler!!.post {
+            mainHandler.post {
                 if (mMediaPlayerCallback != null) {
                     mMediaPlayerCallback!!.onBufferingUpdate(mp, percent)
                 }
@@ -597,7 +509,7 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
 
     override fun onInfo(mp: MediaPlayer, what: Int, extra: Int): Boolean {
         if (mMediaPlayerCallback != null) {
-            mHandler!!.post {
+            mainHandler.post {
                 if (mMediaPlayerCallback != null) {
                     mMediaPlayerCallback!!.onInfo(mp, what, extra)
                 }
@@ -621,12 +533,7 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
         super.onDetachedFromWindow()
         release(true)
         if (isPlaying) {
-            if (mMediaPlayerCallback != null) {
-                mMediaPlayerCallback!!.onPlayStateChanged(
-                    mediaPlayer,
-                    STATE_PLAYBACK_COMPLETED
-                )
-            }
+            mMediaPlayerCallback?.onPlayStateChanged(mediaPlayer, STATE_PLAYBACK_COMPLETED)
         }
     }
 
@@ -635,52 +542,37 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
     }
 
     interface MediaPlayerCallback {
-        fun onPrepared(mp: MediaPlayer?)
-        fun onCompletion(mp: MediaPlayer?)
-        fun onBufferingUpdate(mp: MediaPlayer?, percent: Int)
-        fun onVideoSizeChanged(mp: MediaPlayer?, width: Int, height: Int)
-        fun onInfo(mp: MediaPlayer?, what: Int, extra: Int): Boolean
-        fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean
-        fun onSeekComplete(mp: MediaPlayer?)
-        fun onVideoPlayProgress(
-            mp: MediaPlayer?,
-            progress: Int,
-            duration: Int /*毫秒*/
-        )
-
-        val videoStartPlayProgress: Int
+        fun onPrepared(mp: MediaPlayer)
+        fun onCompletion(mp: MediaPlayer)
+        fun onBufferingUpdate(mp: MediaPlayer, percent: Int)
+        fun onVideoSizeChanged(mp: MediaPlayer, width: Int, height: Int)
+        fun onInfo(mp: MediaPlayer, what: Int, extra: Int): Boolean
+        fun onError(mp: MediaPlayer, what: Int, extra: Int): Boolean
+        fun onSeekComplete(mp: MediaPlayer)
+        fun onVideoPlayProgress(mp: MediaPlayer, progress: Int, duration: Int /*毫秒*/)
         fun onPlayStateChanged(mp: MediaPlayer?, newState: Int)
     }
 
     abstract class SimpleMediaPlayerCallback : MediaPlayerCallback {
-        override fun onPrepared(mp: MediaPlayer?) {}
-        override fun onCompletion(mp: MediaPlayer?) {}
-        override fun onBufferingUpdate(mp: MediaPlayer?, percent: Int) {}
-        override fun onVideoSizeChanged(
-            mp: MediaPlayer?,
-            width: Int,
-            height: Int
-        ) {
+        override fun onPrepared(mp: MediaPlayer) {}
+        override fun onCompletion(mp: MediaPlayer) {}
+        override fun onBufferingUpdate(mp: MediaPlayer, percent: Int) {}
+        override fun onVideoSizeChanged(mp: MediaPlayer, width: Int, height: Int) {
         }
 
-        override fun onInfo(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
+        override fun onInfo(mp: MediaPlayer, what: Int, extra: Int): Boolean {
             return false
         }
 
-        override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
+        override fun onError(mp: MediaPlayer, what: Int, extra: Int): Boolean {
             return false
         }
 
-        override fun onSeekComplete(mp: MediaPlayer?) {}
-        override fun onVideoPlayProgress(
-            mp: MediaPlayer?,
-            progress: Int,
-            duration: Int
-        ) {
-        }
+        override fun onSeekComplete(mp: MediaPlayer) {}
 
-        override val videoStartPlayProgress: Int
-            get() = 0
+        override fun onVideoPlayProgress(mp: MediaPlayer, progress: Int, duration: Int) {
+            L.d("$mp $progress:$duration")
+        }
 
         override fun onPlayStateChanged(mp: MediaPlayer?, newState: Int) {}
     }

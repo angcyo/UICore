@@ -49,7 +49,7 @@ open class DslLoadMoreItem : BaseDslStateItem() {
         itemStateLayoutMap[ADAPTER_LOAD_ERROR] = R.layout.lib_error_layout
         itemStateLayoutMap[_ADAPTER_LOAD_RETRY] = itemStateLayoutMap[ADAPTER_LOAD_ERROR]!!
 
-        onItemViewDetachedToWindow = {
+        itemViewDetachedToWindow = { _, _ ->
             if (itemStateEnable) {
                 //加载失败时, 下次是否还需要加载更多?
                 if (itemState == ADAPTER_LOAD_ERROR) {

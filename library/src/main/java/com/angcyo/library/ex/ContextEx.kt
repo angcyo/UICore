@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.Camera
+import android.media.AudioManager
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
@@ -136,4 +137,24 @@ fun Context.scanFile(file: File) {
         //uri 为空, 表示失败.
         L.i("$path $uri")
     }
+}
+
+/**
+ * 请求拿到音频焦点
+ */
+fun Context.requestAudioFocus() {
+    val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    audioManager.requestAudioFocus(
+        null,
+        AudioManager.STREAM_MUSIC,
+        AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
+    ) //请求焦点
+}
+
+/**
+ * 释放音频焦点
+ */
+fun Context.abandonAudioFocus() {
+    val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    audioManager.abandonAudioFocus(null) //放弃焦点
 }

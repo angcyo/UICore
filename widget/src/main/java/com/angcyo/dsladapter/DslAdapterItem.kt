@@ -112,7 +112,7 @@ open class DslAdapterItem {
     var itemBind: (itemHolder: DslViewHolder, itemPosition: Int, adapterItem: DslAdapterItem, payloads: List<Any>) -> Unit =
         { itemHolder, itemPosition, adapterItem, payloads ->
             onItemBind(itemHolder, itemPosition, adapterItem, payloads)
-            onItemBindOverride(itemHolder, itemPosition, adapterItem, payloads)
+            itemBindOverride(itemHolder, itemPosition, adapterItem, payloads)
         }
 
     /**
@@ -161,7 +161,7 @@ open class DslAdapterItem {
     }
 
     /**用于覆盖默认操作*/
-    var onItemBindOverride: (itemHolder: DslViewHolder, itemPosition: Int, adapterItem: DslAdapterItem, payloads: List<Any>) -> Unit =
+    var itemBindOverride: (itemHolder: DslViewHolder, itemPosition: Int, adapterItem: DslAdapterItem, payloads: List<Any>) -> Unit =
         { _, _, _, _ ->
 
         }
@@ -169,23 +169,26 @@ open class DslAdapterItem {
     /**
      * [DslAdapter.onViewAttachedToWindow]
      * */
-    var onItemViewAttachedToWindow: (itemHolder: DslViewHolder) -> Unit = {
+    var itemViewAttachedToWindow: (itemHolder: DslViewHolder, itemPosition: Int) -> Unit =
+        { _, _ ->
 
-    }
+        }
 
     /**
      * [DslAdapter.onViewDetachedFromWindow]
      * */
-    var onItemViewDetachedToWindow: (itemHolder: DslViewHolder) -> Unit = {
+    var itemViewDetachedToWindow: (itemHolder: DslViewHolder, itemPosition: Int) -> Unit =
+        { _, _ ->
 
-    }
+        }
 
     /**
      * [DslAdapter.onViewRecycled]
      * */
-    var onItemViewRecycled: (itemHolder: DslViewHolder) -> Unit = {
+    var itemViewRecycled: (itemHolder: DslViewHolder, itemPosition: Int) -> Unit =
+        { _, _ ->
 
-    }
+        }
 
     //</editor-fold>
 

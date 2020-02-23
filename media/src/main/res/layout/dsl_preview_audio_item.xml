@@ -16,7 +16,7 @@
         android:layout_height="50dp"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginBottom="150dp"
-        android:src="@drawable/lib_video_cover_tip" />
+        android:src="@drawable/media_play" />
 
     <com.angcyo.widget.progress.HSProgressView
         android:id="@+id/hs_progress_view"

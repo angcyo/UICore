@@ -11,7 +11,7 @@ import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.fileSize
 import com.angcyo.library.ex.isResultOk
 import com.angcyo.loader.*
-import com.angcyo.media.audio.DslPreviewAudioItem
+import com.angcyo.media.dslitem.DslPreviewAudioItem
 import com.angcyo.media.dslitem.DslTextureVideoItem
 import com.angcyo.pager.dslitem.DslPhotoViewItem
 import com.angcyo.picker.R

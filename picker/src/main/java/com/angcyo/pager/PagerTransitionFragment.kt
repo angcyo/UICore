@@ -11,7 +11,7 @@ import com.angcyo.dsladapter.set
 import com.angcyo.loader.isAudio
 import com.angcyo.loader.isVideo
 import com.angcyo.loader.loadUri
-import com.angcyo.media.audio.DslPreviewAudioItem
+import com.angcyo.media.dslitem.DslPreviewAudioItem
 import com.angcyo.media.dslitem.DslTextureVideoItem
 import com.angcyo.pager.dslitem.DslPhotoViewItem
 import com.angcyo.picker.R

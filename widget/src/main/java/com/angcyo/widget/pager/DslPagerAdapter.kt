@@ -40,7 +40,7 @@ open class DslPagerAdapter(var adapterItems: List<DslAdapterItem> = emptyList())
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         return super.instantiateItem(container, position).apply {
             if (this is DslViewHolder) {
-                getAdapterItem(position)?.onItemViewAttachedToWindow?.invoke(this)
+                getAdapterItem(position)?.itemViewAttachedToWindow?.invoke(this, position)
             }
         }
     }
@@ -48,7 +48,7 @@ open class DslPagerAdapter(var adapterItems: List<DslAdapterItem> = emptyList())
     override fun destroyItem(container: ViewGroup, position: Int, item: Any) {
         super.destroyItem(container, position, item)
         if (item is DslViewHolder) {
-            getAdapterItem(position)?.onItemViewRecycled?.invoke(item)
+            getAdapterItem(position)?.itemViewRecycled?.invoke(item, position)
         }
     }
 
@@ -60,7 +60,10 @@ open class DslPagerAdapter(var adapterItems: List<DslAdapterItem> = emptyList())
                 val adapterPosition =
                     (it.layoutParams as? DslViewPager.LayoutParams)?.adapterPosition ?: -1
                 if (adapterPosition != -1 && adapterPosition != position) {
-                    getAdapterItem(position)?.onItemViewDetachedToWindow?.invoke(dslViewHolder)
+                    getAdapterItem(position)?.itemViewDetachedToWindow?.invoke(
+                        dslViewHolder,
+                        position
+                    )
                 }
             }
         }
