@@ -60,7 +60,7 @@ open class DslPagerAdapter(var adapterItems: List<DslAdapterItem> = emptyList())
                 val adapterPosition =
                     (it.layoutParams as? DslViewPager.LayoutParams)?.adapterPosition ?: -1
                 if (adapterPosition != -1 && adapterPosition != position) {
-                    getAdapterItem(position)?.itemViewDetachedToWindow?.invoke(
+                    getAdapterItem(adapterPosition)?.itemViewDetachedToWindow?.invoke(
                         dslViewHolder,
                         position
                     )
