@@ -14,7 +14,8 @@ import com.angcyo.fragment.IFragment
 import com.angcyo.fragment.R
 import com.angcyo.library.L
 import com.angcyo.library.ex.isDebug
-import com.angcyo.library.ex.undefined_res
+import com.angcyo.widget.base.animationOf
+import com.angcyo.widget.base.isVisible
 
 /**
  *
@@ -30,14 +31,14 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
         /**[androidx.fragment.app.FragmentTransaction.setCustomAnimations(int, int, int, int)]*/
 
         @AnimRes
-        var DEFAULT_SHOW_ENTER_ANIM = R.anim.lib_translate_x_enter
+        var DEFAULT_SHOW_ENTER_ANIM = R.anim.lib_translate_x_show_enter
         @AnimRes
-        var DEFAULT_SHOW_EXIT_ANIM = 0
+        var DEFAULT_SHOW_EXIT_ANIM = R.anim.lib_translate_x_show_exit
 
         @AnimRes
-        var DEFAULT_REMOVE_ENTER_ANIM = 0
+        var DEFAULT_REMOVE_ENTER_ANIM = R.anim.lib_translate_x_remove_enter
         @AnimRes
-        var DEFAULT_REMOVE_EXIT_ANIM = R.anim.lib_translate_x_exit
+        var DEFAULT_REMOVE_EXIT_ANIM = R.anim.lib_translate_x_remove_exit
     }
 
     //<editor-fold desc="属性">
@@ -62,10 +63,14 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
     var removeLastFragment: Boolean = false
 
     @AnimRes
-    var enterAnimRes: Int = undefined_res
+    var showEnterAnimRes: Int = DEFAULT_SHOW_ENTER_ANIM
+    @AnimRes
+    var showExitAnimRes: Int = DEFAULT_SHOW_EXIT_ANIM
 
     @AnimRes
-    var exitAnimRes: Int = undefined_res
+    var removeEnterAnimRes: Int = DEFAULT_REMOVE_ENTER_ANIM
+    @AnimRes
+    var removeExitAnimRes: Int = DEFAULT_REMOVE_EXIT_ANIM
 
     //</editor-fold desc="属性">
 
@@ -239,8 +244,18 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
 
     /**去掉默认的动画*/
     fun noAnim() {
-        enterAnimRes = 0
-        exitAnimRes = 0
+        showEnterAnimRes = 0
+        showExitAnimRes = 0
+        removeEnterAnimRes = 0
+        removeExitAnimRes = 0
+    }
+
+    fun anim(@AnimRes enter: Int, @AnimRes exit: Int) {
+        showEnterAnimRes = enter
+        removeEnterAnimRes = enter
+
+        showExitAnimRes = exit
+        removeExitAnimRes = exit
     }
 
     /**
@@ -322,26 +337,30 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
             //...end
 
             //anim 动画需要在op之前设置, 否则不会有效果
-            if (enterAnimRes == undefined_res && exitAnimRes == undefined_res) {
-                if (showFragmentList.isNotEmpty() && allValidityFragment.isNotEmpty()) {
-                    //显示F,并且非第一个Fragment
+            //需要执行显示F的动画
+            val showFAnim = showFragmentList.isNotEmpty() && allValidityFragment.isNotEmpty()
+            //需要执行移除F的动画
+            val removeFAnim = !showFAnim && removeFragmentList.isNotEmpty()
+            if (showFAnim) {
+                //显示F,并且非第一个Fragment
+                if (showEnterAnimRes != 0) {
                     setCustomAnimations(
-                        DEFAULT_SHOW_ENTER_ANIM,
-                        DEFAULT_SHOW_EXIT_ANIM,
-                        DEFAULT_SHOW_ENTER_ANIM,
-                        DEFAULT_SHOW_EXIT_ANIM
-                    )
-                } else if (removeFragmentList.isNotEmpty()) {
-                    //移除F
-                    setCustomAnimations(
-                        DEFAULT_REMOVE_ENTER_ANIM,
-                        DEFAULT_REMOVE_EXIT_ANIM,
-                        DEFAULT_REMOVE_ENTER_ANIM,
-                        DEFAULT_REMOVE_EXIT_ANIM
+                        showEnterAnimRes,
+                        showExitAnimRes,
+                        showEnterAnimRes,
+                        showExitAnimRes
                     )
                 }
-            } else {
-                setCustomAnimations(enterAnimRes, exitAnimRes, enterAnimRes, exitAnimRes)
+            } else if (removeFAnim) {
+                //移除F
+                if (removeExitAnimRes != 0) {
+                    setCustomAnimations(
+                        removeEnterAnimRes,
+                        removeExitAnimRes,
+                        removeEnterAnimRes,
+                        removeExitAnimRes
+                    )
+                }
             }
 
             //op remove
@@ -351,7 +370,7 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
 
             //op hide
             fmFragmentList.forEachIndexed { index, fragment ->
-                if (index < fmFragmentList.size - 1) {
+                if (index < fmFragmentList.lastIndex) {
                     //除了顶上一个Fragment, 其他Fragment都要执行不可见生命周期回调
                     setMaxLifecycle(fragment, Lifecycle.State.STARTED)
                 }
@@ -392,6 +411,21 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
             lastFragment?.let {
                 setPrimaryNavigationFragment(it)
                 setMaxLifecycle(it, Lifecycle.State.RESUMED)
+            }
+
+            //由于setCustomAnimations动画只会在add和remove F的时候才会触发.
+            (when {
+                showFAnim -> fmFragmentList.getOrNull(fmFragmentList.lastIndex - 1)
+                removeFAnim -> lastFragment
+                else -> null
+            })?.run {
+                //removeEnterAnimRes showExitAnimRes 动画触发
+                val animRes = if (showFAnim) showExitAnimRes else removeEnterAnimRes
+                if (isAdded && view != null && animRes != 0) {
+                    if (view.isVisible()) {
+                        view?.startAnimation(animationOf(id = animRes))
+                    }
+                }
             }
 
             onConfigTransaction(this)

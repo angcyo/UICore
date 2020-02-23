@@ -230,7 +230,7 @@ class PickerImageFragment : BasePickerFragment() {
     fun _showPreview(previewConfig: PreviewConfig) {
         //大图预览
         dslFHelper {
-            enterAnimRes = R.anim.lib_picker_preview_enter_anim
+            anim(R.anim.lib_picker_preview_enter_anim, 0)
             show(PickerPreviewFragment().apply {
                 putData(previewConfig)
             })

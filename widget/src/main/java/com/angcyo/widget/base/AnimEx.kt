@@ -4,10 +4,13 @@ import android.animation.Animator
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.annotation.TargetApi
+import android.content.Context
 import android.os.Build
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.animation.*
+import androidx.annotation.AnimRes
+import com.angcyo.library.app
 import com.angcyo.library.ex.c
 import com.angcyo.widget.base.Anim.ANIM_DURATION
 
@@ -22,6 +25,10 @@ import com.angcyo.widget.base.Anim.ANIM_DURATION
 object Anim {
     /**动画默认时长*/
     const val ANIM_DURATION = 300L
+}
+
+fun animationOf(context: Context = app(), @AnimRes id: Int): Animation {
+    return AnimationUtils.loadAnimation(context, id)
 }
 
 fun anim(from: Int, to: Int, config: AnimatorConfig.() -> Unit = {}): ValueAnimator {

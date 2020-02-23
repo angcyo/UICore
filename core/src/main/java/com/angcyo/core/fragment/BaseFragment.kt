@@ -20,7 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 abstract class BaseFragment : AbsLifecycleFragment() {
 
     /**
-     * onCreateAnimation -> onCreateAnimator
+     * onActivityCreated -> onCreateAnimation -> onCreateAnimator
      */
     override fun onCreateAnimation(
         transit: Int,

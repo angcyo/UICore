@@ -343,7 +343,7 @@ class PickerPreviewFragment : BasePickerFragment() {
 
     override fun onBackPressed(): Boolean {
         dslFHelper {
-            exitAnimRes = R.anim.lib_picker_preview_exit_anim
+            anim(0, R.anim.lib_picker_preview_exit_anim)
             remove(this@PickerPreviewFragment)
         }
         return false
