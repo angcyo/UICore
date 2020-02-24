@@ -5,6 +5,7 @@ import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
 import androidx.transition.*
+import com.angcyo.picker.R
 import com.angcyo.transition.ColorTransition
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.setWidthHeight
@@ -39,6 +40,20 @@ open class ViewTransitionCallback {
     var transitionHideFromRect: Rect? = null
     var transitionHideToRect: Rect? = null
 
+    /**过渡动画需要隐藏的视图id列表*/
+    var transitionOverlayViewIds = mutableListOf(
+        R.id.lib_transition_overlay_view,
+        R.id.lib_transition_overlay_view1,
+        R.id.lib_transition_overlay_view2,
+        R.id.lib_transition_overlay_view3,
+        R.id.lib_transition_overlay_view4,
+        R.id.lib_transition_overlay_view5,
+        R.id.lib_transition_overlay_view6,
+        R.id.lib_transition_overlay_view7,
+        R.id.lib_transition_overlay_view8,
+        R.id.lib_transition_overlay_view9
+    )
+
     /**背景过渡视图*/
     open fun backgroundTransitionView(viewHolder: DslViewHolder): View {
         return sceneRoot ?: viewHolder.itemView
@@ -56,6 +71,7 @@ open class ViewTransitionCallback {
         //背景颜色动画
         backgroundTransitionView(viewHolder).setBackgroundColor(backgroundStartColor)
 
+        //转场动画 矩阵坐标设置
         transitionTargetView(viewHolder)?.apply {
             transitionShowFromRect?.let {
                 translationX = it.left.toFloat()
@@ -63,6 +79,11 @@ open class ViewTransitionCallback {
 
                 setWidthHeight(it.width(), it.height())
             }
+        }
+
+        //隐藏干扰元素
+        transitionOverlayViewIds.forEach {
+            viewHolder.gone(it)
         }
     }
 
@@ -79,6 +100,10 @@ open class ViewTransitionCallback {
                 transitionShowToRect?.height() ?: -1
             )
         }
+
+        transitionOverlayViewIds.forEach {
+            viewHolder.visible(it)
+        }
     }
 
     /**开始show的转场动画, 返回true, 拦截过渡*/
@@ -94,12 +119,15 @@ open class ViewTransitionCallback {
         transitionSet: TransitionSet
     ): TransitionSet {
         transitionSet.apply {
-            addTransition(ColorTransition().addTarget(backgroundTransitionView(viewHolder)))
-            addTransition(Fade(Fade.OUT))
+            //.addTarget(backgroundTransitionView(viewHolder))
+            addTransition(ColorTransition())
+
+            //addTransition(Fade(Fade.OUT))
             addTransition(ChangeBounds())
             addTransition(ChangeTransform())
-            addTransition(ChangeClipBounds())
             addTransition(ChangeImageTransform())
+
+            addTransition(ChangeClipBounds())
             addTransition(Fade(Fade.IN))
         }
         return transitionSet
@@ -114,12 +142,22 @@ open class ViewTransitionCallback {
         //backgroundTransitionView(viewHolder).setBackgroundColor(backgroundEndColor)
         //就是用当前设置的背景颜色
         transitionTargetView(viewHolder)?.apply {
+            //关闭Outline, 这个很重要. 否则只能看到[View]的一部分
+            this.clipToOutline = false
+
+            visibility = View.VISIBLE
+
             transitionHideFromRect?.let {
                 translationX = it.left.toFloat()
                 translationY = it.top.toFloat()
 
                 setWidthHeight(it.width(), it.height())
             }
+        }
+
+        //隐藏干扰元素
+        transitionOverlayViewIds.forEach {
+            viewHolder.gone(it)
         }
     }
 
@@ -149,7 +187,19 @@ open class ViewTransitionCallback {
         viewHolder: DslViewHolder,
         transitionSet: TransitionSet
     ): TransitionSet {
-        return onSetShowTransitionSet(viewHolder, transitionSet)
+        transitionSet.apply {
+            //.addTarget(backgroundTransitionView(viewHolder))
+            addTransition(ColorTransition())
+
+            addTransition(ChangeBounds())
+            addTransition(ChangeTransform())
+            addTransition(ChangeImageTransform())
+
+            addTransition(ChangeClipBounds())
+            addTransition(Fade(Fade.OUT))
+            //addTransition(Fade(Fade.IN))
+        }
+        return transitionSet
     }
     //</editor-fold desc="hide过渡">
 

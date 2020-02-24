@@ -167,6 +167,7 @@ abstract class ViewTransitionFragment : AbsLifecycleFragment() {
                 }
             }
 
+            //callback
             onTransitionEnd = {
                 if (start) {
                     onTransitionShowEnd()

@@ -5,6 +5,7 @@ import android.net.Uri
 import android.view.View
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.glide.giv
+import com.angcyo.glide.loadImage
 import com.angcyo.library.app
 import com.angcyo.library.ex.fileUri
 import com.angcyo.library.ex.isHttpScheme
@@ -48,8 +49,11 @@ class DslTextureVideoItem : DslBaseDownloadItem() {
         videoView?.stop()
 
         //加载封面
-        itemHolder.giv(R.id.lib_image_view)?.apply {
-            load(itemVideoUri)
+        itemHolder.img(R.id.lib_image_view)?.apply {
+            loadImage(itemVideoUri) {
+                //使用原始大小
+                originalSize = true
+            }
             alpha = 1f
             visibility = View.VISIBLE
         }

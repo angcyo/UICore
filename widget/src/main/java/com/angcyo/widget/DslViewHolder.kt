@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.angcyo.library.L
 import com.angcyo.widget.base.ThrottleClickListener
 import java.lang.ref.WeakReference
 
@@ -334,7 +335,12 @@ open class DslViewHolder(
                 sparseArray.put(resId, WeakReference(view))
             }
         }
-        return view as? T
+        return try {
+            view as? T
+        } catch (e: Exception) {
+            L.w(e)
+            null
+        }
     }
 
     fun tv(@IdRes resId: Int): TextView? {

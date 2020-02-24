@@ -75,7 +75,7 @@ class PickerImageFragment : BasePickerFragment() {
     override fun onFragmentNotFirstShow(bundle: Bundle?) {
         super.onFragmentNotFirstShow(bundle)
         //当从preview界面选中item之后, 需要刷新一下界面
-        _recyclerView.localUpdateItem { adapterItem, itemHolder, itemPosition ->
+        _recycler.localUpdateItem { adapterItem, itemHolder, itemPosition ->
             val payloads = if (adapterItem.itemIsSelected) {
                 listOf(DslAdapterItem.PAYLOAD_UPDATE_PART, DslAdapterItem.PAYLOAD_UPDATE_MEDIA)
             } else {

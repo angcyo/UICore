@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="lib_transition_overlay_view" type="id" />
+    <item name="lib_transition_overlay_view1" type="id" />
+    <item name="lib_transition_overlay_view2" type="id" />
+    <item name="lib_transition_overlay_view3" type="id" />
+    <item name="lib_transition_overlay_view4" type="id" />
+    <item name="lib_transition_overlay_view5" type="id" />
+    <item name="lib_transition_overlay_view6" type="id" />
+    <item name="lib_transition_overlay_view7" type="id" />
+    <item name="lib_transition_overlay_view8" type="id" />
+    <item name="lib_transition_overlay_view9" type="id" />
+</resources>

@@ -73,6 +73,15 @@ class ScrollHelper {
         return itemCount() - 1
     }
 
+    /**负数表示反序, 倒数第几个*/
+    fun parsePosition(position: Int): Int {
+        return if (position < 0) {
+            itemCount() + position
+        } else {
+            position
+        }
+    }
+
     fun scrollToLast(scrollParams: ScrollParams = _defaultScrollParams()) {
         startScroll(lastItemPosition(), scrollParams)
     }
@@ -90,24 +99,25 @@ class ScrollHelper {
     }
 
     fun startScroll(position: Int, scrollParams: ScrollParams = _defaultScrollParams()) {
-        if (check(position)) {
-            scrollParams.scrollPosition = position
+        val targetPosition = parsePosition(position)
+        if (check(targetPosition)) {
+            scrollParams.scrollPosition = targetPosition
 
             recyclerView?.stopScroll()
 
-            if (isPositionVisible(position)) {
+            if (isPositionVisible(targetPosition)) {
                 scrollWithVisible(scrollParams)
             } else {
                 if (scrollParams.scrollAnim) {
                     if (scrollParams.isFromAddItem) {
                         if (recyclerView?.itemAnimator is SimpleItemAnimator) {
                             //itemAnimator 自带动画
-                            recyclerView?.scrollToPosition(position)
+                            recyclerView?.scrollToPosition(targetPosition)
                         } else {
-                            recyclerView?.smoothScrollToPosition(position)
+                            recyclerView?.smoothScrollToPosition(targetPosition)
                         }
                     } else {
-                        recyclerView?.smoothScrollToPosition(position)
+                        recyclerView?.smoothScrollToPosition(targetPosition)
                     }
                 } else {
                     if (scrollParams.isFromAddItem) {
@@ -118,7 +128,7 @@ class ScrollHelper {
                             OnNoAnimScrollIdleListener(itemAnimator).attach(recyclerView!!)
                         }
                     }
-                    recyclerView?.scrollToPosition(position)
+                    recyclerView?.scrollToPosition(targetPosition)
                 }
                 if (scrollParams.scrollType != SCROLL_TYPE_NORMAL) {
                     //不可见时, 需要现滚动到可见位置, 再进行微调
@@ -276,7 +286,8 @@ class ScrollHelper {
         }
 
         val itemCount = itemCount()
-        if (position < 0 || position >= itemCount) {
+        val p = parsePosition(position)
+        if (p < 0 || p >= itemCount) {
             L.w("忽略, [position] 需要在 [0,$itemCount) 之间.")
             return false
         }
@@ -445,6 +456,8 @@ class ScrollHelper {
         override fun attach(view: View) {
             detach()
             attachView = view
+
+            scroll(lockPosition)
         }
 
         override fun detach() {
@@ -502,8 +515,8 @@ class ScrollHelper {
     inner class LockLayoutListener : LockScrollListener() {
 
         override fun attach(view: View) {
-            super.attach(view)
             view.viewTreeObserver.addOnGlobalLayoutListener(this)
+            super.attach(view)
         }
 
         override fun detach() {
@@ -516,8 +529,8 @@ class ScrollHelper {
     inner class LockDrawListener : LockScrollListener() {
 
         override fun attach(view: View) {
-            super.attach(view)
             view.viewTreeObserver.addOnDrawListener(this)
+            super.attach(view)
         }
 
         override fun detach() {

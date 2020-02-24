@@ -1,6 +1,7 @@
 package com.angcyo.pager.widget
 
 import android.content.Context
+import android.net.Uri
 import android.util.AttributeSet
 import android.view.MotionEvent
 import com.davemorrissey.labs.subscaleview.ImageSource
@@ -25,4 +26,9 @@ class RSubsamplingScaleImageView : SubsamplingScaleImageView {
 /**设置采样图片*/
 fun SubsamplingScaleImageView.setImage(filePath: String) {
     setImage(ImageSource.uri(filePath))
+}
+
+/**不支持http uri ,[com.davemorrissey.labs.subscaleview.decoder.SkiaImageDecoder.decode]*/
+fun SubsamplingScaleImageView.setImage(uri: Uri) {
+    setImage(ImageSource.uri(uri))
 }

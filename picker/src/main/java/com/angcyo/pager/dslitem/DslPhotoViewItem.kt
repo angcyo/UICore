@@ -8,6 +8,7 @@ import com.angcyo.loader.LoaderMedia
 import com.angcyo.loader.loadUri
 import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.anim
 import com.github.chrisbanes.photoview.OnViewTapListener
 import com.github.chrisbanes.photoview.PhotoView
 
@@ -82,12 +83,15 @@ open class DslPhotoViewItem : DslAdapterItem() {
                     }
                     if (targetView is PhotoView) {
                         //有一个莫名其妙的BUG, 占位图 喧宾夺主
-//                        anim(0f, 1f) {
-//                            onAnimatorUpdateValue = { _, _ ->
-//                                (targetView as? PhotoView)?.scale = 1f
-//                            }
-//                        }
-                        (targetView as? PhotoView)?.setScale(1f, true)
+                        anim(0f, 1f) {
+                            onAnimatorUpdateValue = { value, _ ->
+                                (targetView as? PhotoView)?.run {
+                                    //scale = 1f
+                                    setRotationTo(value as Float * 0.01f)
+                                }
+                            }
+                        }
+                        //(targetView as? PhotoView)?.setScale(1f, true)
                     }
                     false
                 }

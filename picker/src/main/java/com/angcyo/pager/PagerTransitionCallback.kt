@@ -6,9 +6,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.View
 import android.widget.ImageView
-import androidx.annotation.IdRes
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.*
 import androidx.viewpager.widget.ViewPager
 import com.angcyo.dsladapter.getViewRect
 import com.angcyo.library.ex.copyDrawable
@@ -16,7 +14,6 @@ import com.angcyo.loader.LoaderMedia
 import com.angcyo.loader.loadUri
 import com.angcyo.pager.dslitem.IPlaceholderDrawableProvider
 import com.angcyo.picker.R
-import com.angcyo.transition.ColorTransition
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.recycler.get
 
@@ -60,7 +57,6 @@ open class PagerTransitionCallback : ViewTransitionCallback(), ViewPager.OnPageC
     }
 
     /**过渡动画id列表*/
-    @IdRes
     var transitionViewIds = mutableListOf(R.id.lib_image_view)
 
     /**根据[loadUrl]获取占位图*/
@@ -82,7 +78,11 @@ open class PagerTransitionCallback : ViewTransitionCallback(), ViewPager.OnPageC
 
     /**追加媒体*/
     fun addMedia(url: String?) {
-        loaderMediaList.add(LoaderMedia(url = url))
+        addMedia(LoaderMedia(url = url))
+    }
+
+    fun addMedia(media: LoaderMedia) {
+        loaderMediaList.add(media)
     }
 
     //</editor-fold desc="操作方法">
@@ -108,31 +108,6 @@ open class PagerTransitionCallback : ViewTransitionCallback(), ViewPager.OnPageC
             }
         }
         return result
-    }
-
-    override fun onSetShowTransitionSet(
-        viewHolder: DslViewHolder,
-        transitionSet: TransitionSet
-    ): TransitionSet {
-        transitionSet.apply {
-            addTransition(ColorTransition().addTarget(backgroundTransitionView(viewHolder)))
-            //改变左上右下坐标
-            addTransition(ChangeBounds())
-            //改变绘制的Matrix
-            addTransition(ChangeTransform())
-            //相当于clip Matrix
-            addTransition(ChangeImageTransform())
-            //有上面3个即可实现图片转场动画
-
-            //改变clip矩形
-            addTransition(ChangeClipBounds())
-            //addTransition(Fade(Fade.OUT))
-            //addTransition(Fade(Fade.IN))
-
-            viewHolder.transitionView()?.run { addTarget(this) }
-            addTarget(backgroundTransitionView(viewHolder))
-        }
-        return transitionSet
     }
 
     //临时对象

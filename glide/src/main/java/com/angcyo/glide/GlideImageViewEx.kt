@@ -20,6 +20,11 @@ fun DslViewHolder.giv(@IdRes id: Int): GlideImageView? {
 fun ImageView.loadImage(uri: Uri?, action: DslGlide.() -> Unit = {}) {
     DslGlide().apply {
         targetView = this@loadImage
+        if (placeholderDrawable == null) {
+            this@loadImage.drawable?.also {
+                placeholderDrawable = it
+            }
+        }
         action()
         load(uri)
     }
