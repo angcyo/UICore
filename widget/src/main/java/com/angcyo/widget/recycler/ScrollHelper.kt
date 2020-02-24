@@ -30,22 +30,6 @@ class ScrollHelper {
 
     internal var recyclerView: RecyclerView? = null
 
-    /**触发滚动是否伴随了adapter的addItem*/
-    var isFromAddItem = false
-
-    /**滚动是否需要动画*/
-    var isScrollAnim = false
-
-    /**滚动类别*/
-    var scrollType = SCROLL_TYPE_NORMAL
-
-    /**额外的偏移距离*/
-    var scrollOffset: Int = 0
-
-    init {
-        resetValue()
-    }
-
     fun attach(recyclerView: RecyclerView) {
         if (this.recyclerView == recyclerView) {
             return
@@ -56,13 +40,6 @@ class ScrollHelper {
 
     fun detach() {
         recyclerView = null
-    }
-
-    fun resetValue() {
-        isFromAddItem = false
-        isScrollAnim = false
-        scrollOffset = 0
-        scrollType = SCROLL_TYPE_NORMAL
     }
 
     fun itemCount(): Int {
@@ -82,20 +59,25 @@ class ScrollHelper {
         }
     }
 
-    fun scrollToLast(scrollParams: ScrollParams = _defaultScrollParams()) {
+    fun scrollToLast(
+        scrollParams: ScrollParams = _defaultScrollParams().apply {
+            scrollType = SCROLL_TYPE_BOTTOM
+        }, action: ScrollParams.() -> Unit = {}
+    ) {
+        scrollParams.action()
         startScroll(lastItemPosition(), scrollParams)
     }
 
     fun _defaultScrollParams(): ScrollParams {
-        return ScrollParams(-1, scrollType, isScrollAnim, scrollOffset, isFromAddItem)
+        return ScrollParams()
     }
 
     fun startScroll(scrollParams: ScrollParams = _defaultScrollParams()) {
         startScroll(scrollParams.scrollPosition, scrollParams)
     }
 
-    fun scroll(position: Int) {
-        startScroll(position, _defaultScrollParams())
+    fun scroll(position: Int, scrollParams: ScrollParams = _defaultScrollParams()) {
+        startScroll(position, scrollParams)
     }
 
     fun startScroll(position: Int, scrollParams: ScrollParams = _defaultScrollParams()) {
@@ -135,7 +117,6 @@ class ScrollHelper {
                     OnScrollIdleListener(scrollParams).attach(recyclerView!!)
                 }
             }
-            resetValue()
         }
     }
 
@@ -144,6 +125,7 @@ class ScrollHelper {
     /**短时间之内, 锁定滚动到0的位置*/
     fun scrollToFirst(config: LockDrawListener.() -> Unit = {}) {
         lockPositionByDraw {
+            scrollType = SCROLL_TYPE_TOP
             lockPosition = 0
             firstScrollAnim = true
             scrollAnim = true
@@ -162,7 +144,6 @@ class ScrollHelper {
     fun lockPosition(config: LockLayoutListener.() -> Unit = {}) {
         if (lockLayoutListener == null && recyclerView != null) {
             lockLayoutListener = LockLayoutListener().apply {
-                scrollAnim = isScrollAnim
                 config()
                 attach(recyclerView!!)
             }
@@ -194,7 +175,7 @@ class ScrollHelper {
 
     /**当需要滚动的目标位置已经在屏幕上可见*/
     internal fun scrollWithVisible(scrollParams: ScrollParams) {
-        when (scrollType) {
+        when (scrollParams.scrollType) {
             SCROLL_TYPE_NORMAL -> {
                 //nothing
             }
@@ -373,8 +354,9 @@ class ScrollHelper {
 
         /**激活滚动动画*/
         var scrollAnim: Boolean = true
+
         /**激活第一个滚动的动画*/
-        var firstScrollAnim: Boolean = false
+        var firstScrollAnim: Boolean = true
 
         /**不检查界面 情况, 强制滚动到最后的位置. 关闭后. 会智能判断*/
         var force: Boolean = false
@@ -387,6 +369,10 @@ class ScrollHelper {
 
         /**锁定需要滚动的position, 负数表示倒数第几个*/
         var lockPosition = RecyclerView.NO_POSITION
+
+        var scrollType = SCROLL_TYPE_NORMAL
+        var scrollOffset = 0
+        var isFromAddItem = true
 
         /**是否激活功能*/
         var enableLock = true
@@ -407,8 +393,7 @@ class ScrollHelper {
                 return
             }
 
-            isScrollAnim = if (firstForce) firstScrollAnim else scrollAnim
-            scrollType = SCROLL_TYPE_BOTTOM
+            val isScrollAnim = if (firstForce) firstScrollAnim else scrollAnim
 
             val position = if (lockPosition < 0) {
                 itemCount + lockPosition
@@ -416,8 +401,11 @@ class ScrollHelper {
                 lockPosition
             }
 
+            val scrollParams =
+                ScrollParams(position, scrollType, isScrollAnim, scrollOffset, isFromAddItem)
+
             if (force || firstForce) {
-                scroll(position)
+                scroll(position, scrollParams)
                 onScrollTrigger()
                 L.i("锁定滚动至->$position $force $firstForce")
             } else {
@@ -430,7 +418,7 @@ class ScrollHelper {
                             recyclerView?.layoutManager.findFirstVisibleItemPosition()
 
                         if (findFirstVisibleItemPosition <= scrollThreshold) {
-                            scroll(position)
+                            scroll(position, scrollParams)
                             onScrollTrigger()
                             L.i("锁定滚动至->$position")
                         }
@@ -440,7 +428,7 @@ class ScrollHelper {
 
                         if (lastItemPosition - findLastVisibleItemPosition <= scrollThreshold) {
                             //最后第一个或者最后第2个可见, 智能判断为可以滚动到尾部
-                            scroll(position)
+                            scroll(position, scrollParams)
                             onScrollTrigger()
                             L.i("锁定滚动至->$position")
                         }
@@ -456,8 +444,6 @@ class ScrollHelper {
         override fun attach(view: View) {
             detach()
             attachView = view
-
-            scroll(lockPosition)
         }
 
         override fun detach() {
@@ -515,8 +501,8 @@ class ScrollHelper {
     inner class LockLayoutListener : LockScrollListener() {
 
         override fun attach(view: View) {
-            view.viewTreeObserver.addOnGlobalLayoutListener(this)
             super.attach(view)
+            view.viewTreeObserver.addOnGlobalLayoutListener(this)
         }
 
         override fun detach() {
@@ -529,8 +515,8 @@ class ScrollHelper {
     inner class LockDrawListener : LockScrollListener() {
 
         override fun attach(view: View) {
-            view.viewTreeObserver.addOnDrawListener(this)
             super.attach(view)
+            view.viewTreeObserver.addOnDrawListener(this)
         }
 
         override fun detach() {
@@ -548,11 +534,16 @@ class ScrollHelper {
 
 //滚动参数
 data class ScrollParams(
+    /**滚动目标, 负数反向取值*/
     var scrollPosition: Int = RecyclerView.NO_POSITION,
+    /**滚动类型, [可见就行] [贴顶显示] [贴底显示] [居中显示]*/
     var scrollType: Int = ScrollHelper.SCROLL_TYPE_NORMAL,
+    /**是否需要动画*/
     var scrollAnim: Boolean = true,
+    /**滚动到当前位置时, 额外的偏移*/
     var scrollOffset: Int = 0,
-    var isFromAddItem: Boolean = false
+    /**是否由AddItem导致的偏移*/
+    var isFromAddItem: Boolean = true
 )
 
 fun RecyclerView?.findFirstVisibleItemPosition(): Int {
