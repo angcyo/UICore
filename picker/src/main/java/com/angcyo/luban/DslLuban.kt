@@ -4,9 +4,13 @@ import android.content.Context
 import android.text.TextUtils
 import com.angcyo.coroutine.launchGlobal
 import com.angcyo.library.L
+import com.angcyo.library.LTime
 import com.angcyo.library.app
 import com.angcyo.library.ex.fileSize
-import com.angcyo.library.utils.*
+import com.angcyo.library.utils.Constant
+import com.angcyo.library.utils.Media
+import com.angcyo.library.utils.fileNameUUID
+import com.angcyo.library.utils.folderPath
 import com.angcyo.loader.LoaderMedia
 import com.angcyo.loader.isImage
 import kotlinx.coroutines.Job
@@ -43,6 +47,7 @@ class DslLuban {
     fun doIt(context: Context): Job {
         cancel()
         _job = launchGlobal {
+            LTime.tick()
             onCompressStart()
             onCompressProgress(0)
             targetMediaList.forEachIndexed { index, loaderMedia ->
@@ -54,6 +59,7 @@ class DslLuban {
                 onCompressProgress((index * 1f / max(1, targetMediaList.size) * 100).toInt())
             }
             onCompressEnd()
+            L.i("压缩耗时:${LTime.time()}")
         }
         return _job!!
     }
