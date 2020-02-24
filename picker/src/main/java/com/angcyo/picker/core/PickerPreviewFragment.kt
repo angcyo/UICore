@@ -252,13 +252,15 @@ class PickerPreviewFragment : BasePickerFragment() {
         pageLoaderMedia?.apply {
             if (isImage()) {
                 //编辑按钮
-                if (pickerViewModel.loaderConfig.value?.enableImageEdit == true) {
-                    _vh.visible(R.id.edit_text_view)
-                }
+                _vh.visible(
+                    R.id.edit_text_view,
+                    pickerViewModel.loaderConfig.value?.enableImageEdit == true
+                )
                 //原图选择按钮
-                if (pickerViewModel.loaderConfig.value?.enableOrigin == true) {
-                    _vh.visible(R.id.origin_cb)
-                }
+                _vh.visible(
+                    R.id.origin_cb,
+                    pickerViewModel.loaderConfig.value?.enableOrigin == true
+                )
             } else {
                 _vh.gone(R.id.edit_text_view)
                 _vh.gone(R.id.origin_cb)
