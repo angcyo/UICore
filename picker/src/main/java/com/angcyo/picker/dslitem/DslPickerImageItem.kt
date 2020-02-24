@@ -191,6 +191,7 @@ open class DslPickerImageItem : DslAdapterItem() {
                 append("${loaderMedia?.width ?: 0}")
                 append("x")
                 append("${loaderMedia?.height ?: 0}")
+                append(" ${loaderMedia?.duration}")
                 appendln()
                 append(loaderMedia?.fileSize?.fileSizeString() ?: "")
                 appendln()

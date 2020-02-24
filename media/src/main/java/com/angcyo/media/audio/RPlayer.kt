@@ -6,6 +6,7 @@ import android.text.TextUtils
 import com.angcyo.library.L
 import com.angcyo.library.component.MainExecutor
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.math.max
 
 /**
  *
@@ -125,9 +126,12 @@ class RPlayer {
                 //L.e("call: startPlay -> onPrepared ${it.duration}")
                 onPlayListener?.onPreparedCompletion(it.duration)
                 if (playState.get() == STATE_NORMAL) {
-                    startPlayInner(it)
-                    playSeekTo(seekToPosition)
+                    //startPlayInner(it)
+                    playSeekTo(max(seekToPosition, 0))
                 }
+            }
+            it.setOnSeekCompleteListener {
+                startPlayInner(it)
             }
             it.setDataSource(url)
             _playingUrl = url
@@ -300,9 +304,14 @@ class RPlayer {
 
     }
 
+    /**[fraction]比例*/
+    fun playSeekToFraction(fraction: Float) {
+        playSeekTo((fraction * (mediaPlay?.duration ?: 1)).toInt())
+    }
+
     fun playSeekTo(msec: Int /*毫秒*/) {
         seekToPosition = msec
-        if (msec >= 0 && playState.get() == STATE_PLAYING) {
+        if (msec >= 0 /*&& playState.get() == STATE_PLAYING*/) {
             mediaPlay?.let {
                 it.seekTo(msec)
                 seekToPosition = -1

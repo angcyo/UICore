@@ -56,6 +56,9 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
     //如果未强制指定[seekThumbDrawable], 则用属性构建一个
     val _dslGradientDrawable = DslGradientDrawable()
 
+    /**是否Touch按下*/
+    var isTouchDown = false
+
     //浮子文本绘制
     val _thumbTextDrawable: DslTextDrawable = DslTextDrawable()
         get() {
@@ -188,7 +191,7 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
                 setBounds(touchThumbSize, touchThumbSize)
                 gradientType = GradientDrawable.RADIAL_GRADIENT
                 gradientRadius = touchThumbSize / 2f
-                gradientColors = intArrayOf(thumbSolidColor.alpha(188), thumbSolidColor.alpha(10))
+                gradientColors = intArrayOf(thumbSolidColor.alpha(188), thumbSolidColor.alpha(0))
                 updateOriginDrawable()
             }
         }
@@ -299,14 +302,18 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
         if (event.isTouchDown()) {
             _isTouchDownInThumb = _thumbBound.contains(event.x.toInt(), event.y.toInt())
             _drawTouchThumbDrawable = true
+            isTouchDown = true
             if (_isTouchDownInThumb) {
                 seekThumbDrawable?.state = intArrayOf(android.R.attr.state_pressed)
             }
         } else if (event.isTouchFinish()) {
             _isTouchDownInThumb = false
+            isTouchDown = false
             _drawTouchThumbDrawable = false
             seekThumbDrawable?.state = intArrayOf()
             parent.requestDisallowInterceptTouchEvent(false)
+
+            onSeekBarConfig?.apply { onSeekTouchEnd(progressValue, _progressFraction) }
         }
 
         _gestureDetector.onTouchEvent(event)
@@ -341,6 +348,12 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
 }
 
 open class SeekBarConfig {
-    /**进度改变回调*/
+    /**进度改变回调,
+     * [value] 进度值
+     * [fraction] 进度比例
+     * [fromUser] 是否是用户触发*/
     var onSeekChanged: (value: Int, fraction: Float, fromUser: Boolean) -> Unit = { _, _, _ -> }
+
+    /**Touch结束后的回调*/
+    var onSeekTouchEnd: (value: Int, fraction: Float) -> Unit = { _, _ -> }
 }

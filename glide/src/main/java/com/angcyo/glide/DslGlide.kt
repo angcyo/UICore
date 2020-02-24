@@ -227,10 +227,11 @@ class DslGlide {
 
         _checkLoad {
             val targetView = targetView!!
+            val path = uri?.path
+            val url: String? = uri?.toString()
 
             if (uri.isHttpScheme()) {
-                val url: String? = uri?.toString()
-                if (asGif) {
+                if (asGif && !url.isNullOrBlank()) {
                     _glide()
                         .download(GlideUrl(url, _header()))
                         .override(Target.SIZE_ORIGINAL)
@@ -251,8 +252,7 @@ class DslGlide {
                         .into(GlideDrawableImageViewTarget(targetView))
                 }
             } else {
-                val path = uri?.path
-                if (asGif) {
+                if (asGif && !path.isNullOrBlank()) {
                     _glide()
                         .download(uri)
                         .override(Target.SIZE_ORIGINAL)

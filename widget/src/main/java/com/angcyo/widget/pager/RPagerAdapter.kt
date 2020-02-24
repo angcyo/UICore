@@ -81,7 +81,7 @@ abstract class RPagerAdapter : PagerAdapter(), ViewPager.OnPageChangeListener {
     }
 
     override fun isViewFromObject(view: View, item: Any): Boolean {
-        return view == (item as DslViewHolder).itemView
+        return view == (item as? DslViewHolder)?.itemView
     }
 
     override fun getItemPosition(item: Any): Int {
@@ -144,4 +144,37 @@ abstract class RPagerAdapter : PagerAdapter(), ViewPager.OnPageChangeListener {
     }
 
     //</editor-fold desc="OnPageChangeListener">
+
+    //<editor-fold desc="数据操作">
+
+    fun findViewHolder(position: Int): DslViewHolder? {
+        dslViewPager?.run {
+            for (i in 0 until childCount) {
+                val child = getChildAt(i)
+                if (child.tag is DslViewHolder) {
+                    val dslViewHolder = child.tag as DslViewHolder
+                    val adapterPosition =
+                        (child.layoutParams as? DslViewPager.LayoutParams)?.adapterPosition ?: -1
+                    if (adapterPosition != -1 && adapterPosition == position) {
+                        return dslViewHolder
+                    }
+                }
+            }
+        }
+        return null
+    }
+
+    fun notifyItemChanged(
+        position: Int = dslViewPager?.currentItem ?: -1,
+        payload: List<Any> = emptyList()
+    ) {
+        if (position in 0 until count) {
+            findViewHolder(position)?.also {
+                onBindViewHolder(it, position, payload)
+            }
+        }
+    }
+
+    //</editor-fold desc="数据操作">
+
 }

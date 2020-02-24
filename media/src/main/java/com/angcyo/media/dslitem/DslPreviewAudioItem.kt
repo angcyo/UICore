@@ -1,11 +1,10 @@
 package com.angcyo.media.dslitem
 
-import android.view.View
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.media.MediaProgressHelper
 import com.angcyo.media.R
 import com.angcyo.media.audio.SimplePlayerListener
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.progress.HSProgressView
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.core.cause.EndCause
 
@@ -28,9 +27,18 @@ class DslPreviewAudioItem : DslBaseAudioItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
+        MediaProgressHelper.resetLayout(itemHolder) { value, fraction ->
+            _player.playSeekToFraction(fraction)
+        }
+
         _player.onPlayListener = object : SimplePlayerListener() {
             override fun onPlayProgress(progress: Int, duration: Int) {
                 super.onPlayProgress(progress, duration)
+                MediaProgressHelper.showMediaProgressView(
+                    itemHolder,
+                    progress.toLong(),
+                    duration.toLong()
+                )
             }
 
             override fun onPlayStateChange(playUrl: String, from: Int, to: Int) {
@@ -57,10 +65,7 @@ class DslPreviewAudioItem : DslBaseAudioItem() {
     override fun onDownloadStart(itemHolder: DslViewHolder?, task: DownloadTask) {
         super.onDownloadStart(itemHolder, task)
         //开始下载视频
-        itemHolder?.v<HSProgressView>(R.id.hs_progress_view)?.apply {
-            visibility = View.VISIBLE
-            startAnimator()
-        }
+        MediaProgressHelper.showMediaLoadingView(itemHolder)
     }
 
     override fun onDownloadFinish(
@@ -70,10 +75,7 @@ class DslPreviewAudioItem : DslBaseAudioItem() {
         error: Exception?
     ) {
         super.onDownloadFinish(itemHolder, task, cause, error)
-        //开始下载视频
-        itemHolder?.v<HSProgressView>(R.id.hs_progress_view)?.apply {
-            visibility = View.GONE
-            stopAnimator()
-        }
+        //下载完成
+        MediaProgressHelper.showMediaLoadingView(itemHolder, false)
     }
 }

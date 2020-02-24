@@ -69,39 +69,11 @@ open class DslPagerAdapter(var adapterItems: List<DslAdapterItem> = emptyList())
         }
     }
 
-    fun findViewHolder(position: Int): DslViewHolder? {
-        dslViewPager?.run {
-            for (i in 0 until childCount) {
-                val child = getChildAt(i)
-                if (child.tag is DslViewHolder) {
-                    val dslViewHolder = child.tag as DslViewHolder
-                    val adapterPosition =
-                        (child.layoutParams as? DslViewPager.LayoutParams)?.adapterPosition ?: -1
-                    if (adapterPosition != -1 && adapterPosition == position) {
-                        return dslViewHolder
-                    }
-                }
-            }
-        }
-        return null
-    }
-
     //<editor-fold desc="数据操作">
 
     fun resetItems(items: List<DslAdapterItem>) {
         this.adapterItems = items
         notifyDataSetChanged()
-    }
-
-    fun notifyItemChanged(
-        position: Int = dslViewPager?.currentItem ?: -1,
-        payload: List<Any> = emptyList()
-    ) {
-        if (position in 0 until count) {
-            findViewHolder(position)?.also {
-                onBindViewHolder(it, position, payload)
-            }
-        }
     }
 
     fun notifyItemChanged(

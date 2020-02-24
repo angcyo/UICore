@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/lib_image_placeholder_color">
@@ -10,20 +11,51 @@
         android:layout_gravity="center"
         android:src="@drawable/lib_audio_cover_tip" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/play_view"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="150dp"
-        android:src="@drawable/media_play" />
-
-    <com.angcyo.widget.progress.HSProgressView
-        android:id="@+id/hs_progress_view"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="3dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="170dp"
+        android:orientation="vertical">
+
+        <com.angcyo.widget.text.DslTextView
+            android:id="@+id/lib_text_view"
+            style="@style/LibPlaceTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/lib_xxhdpi"
+            android:gravity="center"
+            android:padding="@dimen/lib_hdpi"
+            tools:text="angcyo" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/play_view"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="@dimen/lib_xxhdpi"
+            android:src="@drawable/media_play" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/bottom_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_marginLeft="@dimen/lib_xxhdpi"
         android:layout_marginRight="@dimen/lib_xxhdpi"
-        android:layout_marginBottom="@dimen/action_bar_height" />
+        android:layout_marginBottom="@dimen/media_progress_margin_bottom"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <com.angcyo.widget.progress.HSProgressView
+            android:id="@+id/hs_progress_view"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_gravity="center" />
+
+        <include layout="@layout/layout_media_progress" />
+
+    </FrameLayout>
 </FrameLayout>

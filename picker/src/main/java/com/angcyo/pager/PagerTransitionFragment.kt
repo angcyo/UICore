@@ -169,6 +169,8 @@ open class PagerTransitionFragment : ViewTransitionFragment() {
                 })
                 it.isAudio() -> items.add(DslPreviewAudioItem().apply {
                     itemData = it
+                    itemAudioTitle = it.displayName
+                    itemAudioDuration = it.duration
                     itemAudioUri = it.loadUri()
                 })
                 else -> items.add(DslPhotoViewItem().apply {

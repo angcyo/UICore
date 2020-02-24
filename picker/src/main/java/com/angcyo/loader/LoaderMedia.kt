@@ -26,7 +26,7 @@ data class LoaderMedia(
     //剪切后的路径
     var cropPath: String? = null,
     //视频 音频媒体时长, 毫秒
-    var duration: Long = 0,
+    var duration: Long = -1,
 
     //测试属性(暂无用处)
     var loaderUri: Uri? = null,
@@ -37,17 +37,17 @@ data class LoaderMedia(
     //数据库字段↓
 
     //angcyo
-    var width: Int = 0,
-    var height: Int = 0,
+    var width: Int = -1,
+    var height: Int = -1,
 
     /** 1558921509 秒 */
-    var modifyTime: Long = 0,
+    var modifyTime: Long = -1,
 
     /** 1558921509 秒 */
-    var addTime: Long = 0,
+    var addTime: Long = -1,
 
     /** 文件大小, b->kb */
-    var fileSize: Long = 0,
+    var fileSize: Long = -1,
 
     var displayName: String? = null,
 
@@ -87,16 +87,16 @@ fun LoaderMedia.mimeType(): String {
     return mimeType ?: (loadPath()?.mimeType() ?: "image/*")
 }
 
-fun LoaderMedia.isVideo(): Boolean {
-    return mimeType().isVideoMimeType()
+fun LoaderMedia?.isVideo(): Boolean {
+    return this?.mimeType().isVideoMimeType()
 }
 
-fun LoaderMedia.isAudio(): Boolean {
-    return mimeType().isAudioMimeType()
+fun LoaderMedia?.isAudio(): Boolean {
+    return this?.mimeType().isAudioMimeType()
 }
 
-fun LoaderMedia.isImage(): Boolean {
-    return mimeType().isImageMimeType()
+fun LoaderMedia?.isImage(): Boolean {
+    return this?.mimeType().isImageMimeType()
 }
 
 /**加载路径*/

@@ -13,10 +13,12 @@ object LTime {
     private val stack = Stack<Long>()
 
     /**记录时间*/
-    fun tick() {
+    fun tick(): Long {
+        val nowTime = nowTime()
         if (L.debug) {
-            stack.push(nowTime())
+            stack.push(nowTime)
         }
+        return nowTime
     }
 
     /**获取与最近一次时间匹配的时间间隔(ms)*/

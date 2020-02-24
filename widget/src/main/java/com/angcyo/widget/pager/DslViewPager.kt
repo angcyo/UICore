@@ -10,6 +10,7 @@ import androidx.core.view.GestureDetectorCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.angcyo.widget.DslViewHolder
 
 /**
  *
@@ -154,6 +155,30 @@ open class DslViewPager : ViewPager {
         if (adapter is RPagerAdapter) {
             adapter.dslViewPager = this
             addOnPageChangeListener(adapter)
+        }
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        adapter?.run {
+            if (this is RPagerAdapter) {
+                for (i in 0 until childCount) {
+                    val child = getChildAt(i)
+                    if (child != null && child.tag is DslViewHolder) {
+                        val dslViewHolder = child.tag as DslViewHolder
+                        val adapterPosition =
+                            (child.layoutParams as? LayoutParams)?.adapterPosition ?: -1
+
+                        if (adapterPosition != -1) {
+                            destroyItem(this@DslViewPager, adapterPosition, dslViewHolder)
+                        }
+                    }
+                }
+            }
         }
     }
 

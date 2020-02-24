@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -25,12 +26,24 @@
         android:layout_gravity="center"
         android:src="@drawable/lib_video_cover_tip" />
 
-    <com.angcyo.widget.progress.HSProgressView
-        android:id="@+id/hs_progress_view"
+    <FrameLayout
+        android:id="@+id/bottom_wrap_layout"
         android:layout_width="match_parent"
-        android:layout_height="3dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_marginLeft="@dimen/lib_xxhdpi"
         android:layout_marginRight="@dimen/lib_xxhdpi"
-        android:layout_marginBottom="@dimen/action_bar_height" />
+        android:layout_marginBottom="@dimen/media_progress_margin_bottom"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <com.angcyo.widget.progress.HSProgressView
+            android:id="@+id/hs_progress_view"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_gravity="center" />
+
+        <include layout="@layout/layout_media_progress" />
+
+    </FrameLayout>
 </FrameLayout>

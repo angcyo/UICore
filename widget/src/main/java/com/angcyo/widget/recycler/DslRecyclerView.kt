@@ -53,6 +53,7 @@ open class DslRecyclerView : RecyclerView {
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         if (layoutManager == null) {
+            //layout属性的支持
             layout?.run { layout = this }
         }
     }

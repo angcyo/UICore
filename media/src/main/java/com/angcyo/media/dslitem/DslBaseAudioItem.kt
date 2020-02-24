@@ -2,7 +2,11 @@ package com.angcyo.media.dslitem
 
 import android.net.Uri
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.library.L
+import com.angcyo.library.LTime
+import com.angcyo.library.ex.getMediaDuration
 import com.angcyo.library.ex.isHttpScheme
+import com.angcyo.media.R
 import com.angcyo.media.audio.RPlayer
 import com.angcyo.widget.DslViewHolder
 
@@ -17,6 +21,12 @@ abstract class DslBaseAudioItem : DslBaseDownloadItem(), RPlayer.OnPlayerListene
     /**音频地址*/
     var itemAudioUri: Uri? = null
 
+    /**音频显示的标题*/
+    var itemAudioTitle: CharSequence? = null
+
+    /**音频时长, 毫秒. 负数会自动从uri中获取*/
+    var itemAudioDuration: Long = -1
+
     val _player = RPlayer()
 
     init {
@@ -30,6 +40,17 @@ abstract class DslBaseAudioItem : DslBaseDownloadItem(), RPlayer.OnPlayerListene
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
+
+        if (itemAudioDuration < 0) {
+            val path = itemAudioUri?.path
+            if (!path.isNullOrBlank()) {
+                LTime.tick()
+                itemAudioDuration = path.getMediaDuration()
+                L.d("解析时长:${itemAudioDuration} 耗时:${LTime.time()}")
+            }
+        }
+
+        itemHolder.tv(R.id.lib_text_view)?.text = itemAudioTitle
     }
 
     override fun onItemViewDetachedToWindow(itemHolder: DslViewHolder, itemPosition: Int) {

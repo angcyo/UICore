@@ -8,11 +8,11 @@ import com.angcyo.glide.giv
 import com.angcyo.library.app
 import com.angcyo.library.ex.fileUri
 import com.angcyo.library.ex.isHttpScheme
+import com.angcyo.media.MediaProgressHelper
 import com.angcyo.media.R
 import com.angcyo.media.video.widget.TextureVideoView
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.Anim
-import com.angcyo.widget.progress.HSProgressView
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.core.cause.EndCause
 
@@ -54,21 +54,9 @@ class DslTextureVideoItem : DslBaseDownloadItem() {
             visibility = View.VISIBLE
         }
         itemHolder.visible(R.id.play_view)
-
-//        if (videoView?.mCurrentState == TextureVideoView.STATE_IDLE) {
-//            //加载封面
-//            itemHolder.giv(R.id.lib_image_view)?.apply {
-//                load(itemVideoUri)
-//                alpha = 1f
-//                visibility = View.VISIBLE
-//            }
-//            itemHolder.visible(R.id.play_view)
-//        } else {
-//            itemHolder.giv(R.id.lib_image_view)?.apply {
-//                visibility = View.GONE
-//            }
-//            itemHolder.gone(R.id.play_view)
-//        }
+        MediaProgressHelper.resetLayout(itemHolder) { value, fraction ->
+            videoView?.seekToFraction(fraction)
+        }
 
         //视频
         if (itemVideoUri == null) {
@@ -89,16 +77,16 @@ class DslTextureVideoItem : DslBaseDownloadItem() {
             override fun onPlayStateChanged(mp: MediaPlayer?, newState: Int) {
                 super.onPlayStateChanged(mp, newState)
                 if (newState == TextureVideoView.STATE_PLAYING) {
+                    itemHolder.gone(R.id.play_view)
                     itemHolder.gone(R.id.hs_progress_view)
                     itemHolder.view(R.id.lib_image_view)?.run {
-                        animate().alpha(0f)
+                        animate().alpha(0.5f)
                             .setDuration(Anim.ANIM_DURATION)
                             .withEndAction {
                                 itemHolder.gone(R.id.lib_image_view)
                             }
                             .start()
                     }
-                    itemHolder.gone(R.id.play_view)
                 } else {
                     itemHolder.visible(R.id.play_view)
                 }
@@ -106,6 +94,10 @@ class DslTextureVideoItem : DslBaseDownloadItem() {
 
             override fun onVideoPlayProgress(mp: MediaPlayer, progress: Int, duration: Int) {
                 super.onVideoPlayProgress(mp, progress, duration)
+                MediaProgressHelper.showMediaProgressView(
+                    itemHolder, progress.toLong(),
+                    duration.toLong()
+                )
             }
         })
 
@@ -153,10 +145,7 @@ class DslTextureVideoItem : DslBaseDownloadItem() {
     override fun onDownloadStart(itemHolder: DslViewHolder?, task: DownloadTask) {
         super.onDownloadStart(itemHolder, task)
         //开始下载视频
-        itemHolder?.v<HSProgressView>(R.id.hs_progress_view)?.apply {
-            visibility = View.VISIBLE
-            startAnimator()
-        }
+        MediaProgressHelper.showMediaLoadingView(itemHolder)
     }
 
     override fun onDownloadFinish(
@@ -166,11 +155,8 @@ class DslTextureVideoItem : DslBaseDownloadItem() {
         error: Exception?
     ) {
         super.onDownloadFinish(itemHolder, task, cause, error)
-        //开始下载视频
-        itemHolder?.v<HSProgressView>(R.id.hs_progress_view)?.apply {
-            visibility = View.GONE
-            stopAnimator()
-        }
+        //下载完成
+        MediaProgressHelper.showMediaLoadingView(itemHolder, false)
     }
 
     /**播放视频*/

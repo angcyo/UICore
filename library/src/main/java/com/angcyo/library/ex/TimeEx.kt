@@ -143,8 +143,13 @@ public fun Long.toTimes(): LongArray {
 }
 
 /**
- * 将毫秒转成 x天x时x分x秒x毫秒
- * @param pattern 默认为<=0时, 不返回. 如果需要强制返回, 设置1, 强制不返回设置-1
+ * 将毫秒转成 x天x时x分x秒x毫秒.
+ *
+ *<pre>
+ *  toElapsedTime( pattern = intArrayOf(-1, 1, 1), units = arrayOf("", "", ":", ":", ":") )
+ *</pre>
+ *
+ * @param pattern 默认为智能判断值<=0时, 不返回. 如果需要强制返回, 设置1, 强制不返回设置-1
  * @param h24 24小时制
  * */
 fun Long.toElapsedTime(

@@ -16,10 +16,7 @@ import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.toDp
 import com.angcyo.library.ex.toDpi
 import com.angcyo.widget.R
-import com.angcyo.widget.base.anim
-import com.angcyo.widget.base.atMost
-import com.angcyo.widget.base.getColor
-import com.angcyo.widget.base.getMode
+import com.angcyo.widget.base.*
 import kotlin.math.max
 
 /**
@@ -116,6 +113,10 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             }
 
             setBgGradientColors(colors)
+        } else if (progressBgDrawable == null) {
+            if (isInEditMode) {
+                setBgGradientColors("${getColor(R.color.lib_progress_bg_color)},${getColor(R.color.lib_progress_bg_color)}")
+            }
         }
 
         //第二进度Drawable
@@ -134,7 +135,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
             setSecondGradientColors(colors)
         } else if (progressSecondDrawable == null) {
-            setSecondGradientColors("${getColor(R.color.colorPrimaryDark)},${getColor(R.color.colorPrimaryDark)}")
+            setSecondGradientColors("${getColor(R.color.lib_progress_second_bg_color)},${getColor(R.color.lib_progress_second_bg_color)}")
         }
 
         //进度轨道Drawable
@@ -329,12 +330,12 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     open fun setProgress(
         progress: Int,
         fromProgress: Int = progressValue,
-        animDuration: Long = 300
+        animDuration: Long = Anim.ANIM_DURATION
     ) {
         _animtor?.cancel()
         _animtor = null
         val p = validProgress(progress)
-        if (animDuration >= 0) {
+        if (animDuration >= 0 && fromProgress != p) {
             _animtor = anim(fromProgress, p) {
                 onAnimatorConfig = {
                     it.duration = animDuration
