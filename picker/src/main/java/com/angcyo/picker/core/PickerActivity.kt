@@ -16,9 +16,7 @@ import com.angcyo.core.component.dslPermissions
 import com.angcyo.dialog.hideLoading
 import com.angcyo.dialog.loading
 import com.angcyo.library.L
-import com.angcyo.library.ex.fileSizeString
-import com.angcyo.library.ex.havePermissions
-import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.*
 import com.angcyo.library.toast
 import com.angcyo.loader.LoaderConfig
 import com.angcyo.luban.dslLuban
@@ -135,7 +133,13 @@ class PickerActivity : BaseAppCompatActivity() {
                     targetMediaList = pickerViewModel.selectorMediaList.value!!
 
                     onCompressStart = {
-                        loading("正在压缩...") {
+                        loading(layoutId = R.layout.picker_loading_layout, config = {
+                            dialogWidth = 80 * dpi
+                            dialogHeight = 80 * dpi
+
+                            dialogBgDrawable = _drawable(R.drawable.dialog_dark_solid_round_shape)
+
+                        }) {
                             cancel()
                         }
                     }
