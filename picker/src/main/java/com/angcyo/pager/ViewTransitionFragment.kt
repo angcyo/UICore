@@ -80,7 +80,7 @@ abstract class ViewTransitionFragment : AbsLifecycleFragment() {
         //防止事件穿透
         _vh.itemView.isClickable = true
         _vh.itemView.visibility = View.INVISIBLE
-        _vh.post {
+        _vh.postDelay(transitionCallback.transitionShowDelay) {
             startTransition(true)
         }
     }
@@ -180,12 +180,12 @@ abstract class ViewTransitionFragment : AbsLifecycleFragment() {
             if (start) {
                 if (!transitionCallback.onStartShowTransition(this@ViewTransitionFragment, vh)) {
                     //不拦截, 执行默认的过渡动画
-                    transition()
+                    doIt(/*transitionCallback.transitionShowDelay*/)
                 }
             } else {
                 if (!transitionCallback.onStartHideTransition(this@ViewTransitionFragment, vh)) {
                     //不拦截, 执行默认的过渡动画
-                    transition()
+                    doIt(/*transitionCallback.transitionHideDelay*/)
                 }
             }
         }

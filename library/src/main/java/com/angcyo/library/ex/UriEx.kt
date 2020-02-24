@@ -63,7 +63,7 @@ fun Uri?.isHttpScheme(): Boolean {
     if (this == null || scheme == null) {
         return false
     }
-    return scheme.isHttpScheme()
+    return scheme?.startsWith("http") == true
 }
 
 fun String?.isHttpScheme(): Boolean {

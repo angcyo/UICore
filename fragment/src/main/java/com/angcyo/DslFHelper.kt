@@ -90,6 +90,13 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
 
     //<editor-fold desc="add 或者 show操作">
 
+    inline fun <reified F : Fragment> show(fClass: Class<out Fragment>, action: F.() -> Unit) {
+        instantiateFragment(fClass.classLoader!!, fClass.name)?.run {
+            (this as F).action()
+            show(this)
+        }
+    }
+
     fun show(vararg fClass: Class<out Fragment>) {
         val list = mutableListOf<Fragment>()
         for (cls in fClass) {

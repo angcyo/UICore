@@ -18,6 +18,11 @@ import com.angcyo.widget.base.setWidthHeight
 
 open class ViewTransitionCallback {
 
+    /**过渡延迟[postDelayed], 当结束状态加载需要一段加载时间时, 这个延迟就有很重要的作用
+     * [com.angcyo.pager.ViewTransitionFragment.initTransitionLayout] 预先加载[EndValues]需要的资源, 再启动转场.*/
+    var transitionShowDelay: Long = 0L
+    //var transitionHideDelay: Long = 0L
+
     /**界面状态栏的颜色*/
     var startBarColor: Int = Color.TRANSPARENT
 

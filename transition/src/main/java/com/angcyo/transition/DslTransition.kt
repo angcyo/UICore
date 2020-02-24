@@ -73,11 +73,15 @@ class DslTransition {
 
     }
 
+    fun transition(delay: Long = 0) {
+        doIt(delay)
+    }
+
     /**开始转场动画, 注意开启条件[ViewCompat.isLaidOut(sceneRoot)], sceneRoot必须布局过至少一次*/
-    fun transition() {
+    fun doIt(delay: Long = 0) {
         sceneRoot?.run {
             onCaptureStartValues(this)
-            post {
+            postDelayed({
                 TransitionManager.beginDelayedTransition(
                     this,
                     onSetTransition().addListener(transitionListener)
@@ -85,7 +89,7 @@ class DslTransition {
                 onCaptureEndValues(this)
                 //在某些时候需要手动触发绘制,否则可能不会执行, 只要有属性修改就不需要调用
                 //postInvalidateOnAnimation()
-            }
+            }, delay)
         } ?: L.w("sceneRoot is null.")
     }
 
@@ -98,7 +102,7 @@ class DslTransition {
     var onSceneExit: (ViewGroup) -> Unit = {}
     var onSceneEnter: (ViewGroup) -> Unit = {}
 
-    /**场景转换*/
+    /**[scene]的方式进行场景转换*/
     fun scene() {
         sceneRoot?.run {
             targetScene?.let {
@@ -122,7 +126,7 @@ fun dslTransition(sceneRoot: ViewGroup?, action: DslTransition.() -> Unit) {
     dslTransition.apply {
         this.sceneRoot = sceneRoot
         action()
-        transition()
+        doIt()
     }
 }
 

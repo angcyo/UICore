@@ -121,7 +121,7 @@ class DslGlide {
 
     /**开始加载, 支持本地, 网络, gif, 视频, 图片*/
     fun load(string: String?) {
-        load(Uri.parse(string))
+        load(Uri.parse(string ?: "null"))
     }
 
     fun load(uri: Uri?) {

@@ -73,7 +73,9 @@ object OkType {
                 }
                 //ImageType.UNKNOWN
             }) {
-                typeCheckEnd(url, it.toString(), listener)
+                it?.run {
+                    typeCheckEnd(url, this.toString(), listener)
+                } ?: typeCheckEnd(url, "", listener)
             }
             return null
         }

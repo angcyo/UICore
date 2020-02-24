@@ -12,15 +12,18 @@ import com.angcyo.base.interceptTouchEvent
  */
 
 /**[Fragment]中, 快速启动[Pager]大图视频浏览界面*/
-fun Fragment.dslPager(action: PagerTransitionCallback.() -> Unit) {
+fun Fragment.dslPager(
+    fragment: Class<out ViewTransitionFragment> = PagerTransitionFragment::class.java,
+    action: PagerTransitionCallback.() -> Unit
+) {
     //禁止touch事件
     activity?.interceptTouchEvent()
     dslFHelper {
         noAnim()
-        show(PagerTransitionFragment().apply {
+        show<ViewTransitionFragment>(fragment) {
             transitionCallback = PagerTransitionCallback().apply {
                 action()
             }
-        })
+        }
     }
 }

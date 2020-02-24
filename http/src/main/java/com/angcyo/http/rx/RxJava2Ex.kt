@@ -35,12 +35,14 @@ import io.reactivex.schedulers.Schedulers
  */
 
 /**使用Rx调度后台线程, 主线程切换*/
-fun <T> runRx(backAction: () -> T, mainAction: (T) -> Unit = {}): Disposable {
+fun <T> runRx(backAction: () -> T, mainAction: (T?) -> Unit = {}): Disposable {
     return Single.create<T> { emitter ->
         emitter.onSuccess(backAction())
     }.subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(mainAction)
+        .subscribe(mainAction) {
+            mainAction(null)
+        }
 }
 
 /**在主线程回调*/

@@ -6,6 +6,7 @@ import android.graphics.RectF
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.viewpager.widget.PagerAdapter
+import com.angcyo.base.interceptTouchEvent
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.set
 import com.angcyo.loader.isAudio
@@ -149,6 +150,8 @@ open class PagerTransitionFragment : ViewTransitionFragment() {
     //</editor-fold desc="其他元素控制">
 
     override fun startTransition(start: Boolean) {
+        activity?.interceptTouchEvent(true)
+
         dslTransition.apply {
             sceneRoot = _vh.itemView as? ViewGroup
 
