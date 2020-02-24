@@ -9,6 +9,9 @@ package com.angcyo.library.utils
 
 object Constant {
 
+    const val UA =
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.116 Safari/537.36 chrome-extension"
+
     /**常用日志文件夹*/
     var logFolderName = "log"
     var httpFolderName = "http"

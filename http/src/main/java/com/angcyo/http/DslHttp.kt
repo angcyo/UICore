@@ -181,6 +181,31 @@ fun post(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
     }
 }
 
+fun put(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
+    return http {
+        method = PUT
+        this.config()
+    }
+}
+
+suspend fun String.get(queryMap: HashMap<String, Any> = hashMapOf()): Response<JsonElement> {
+    return dslHttp(ApiKt::class.java).get(this, queryMap)
+}
+
+suspend fun String.post(
+    json: JsonElement = JsonObject(),
+    queryMap: HashMap<String, Any> = hashMapOf()
+): Response<JsonElement> {
+    return dslHttp(ApiKt::class.java).post(this, json, queryMap)
+}
+
+suspend fun String.put(
+    json: JsonElement = JsonObject(),
+    queryMap: HashMap<String, Any> = hashMapOf()
+): Response<JsonElement> {
+    return dslHttp(ApiKt::class.java).put(this, json, queryMap)
+}
+
 /**[JsonElement]转换成数据bean*/
 fun <T> Response<JsonElement>.toBean(type: Type): T? {
     return if (isSuccessful) {

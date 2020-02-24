@@ -85,6 +85,10 @@ fun File.md5(): String? {
     return getFileMD5()?.bytes2HexString()
 }
 
+fun File.copyTo(path: String) {
+    copyTo(File(path), true)
+}
+
 fun String.file(): File {
     return File(this)
 }

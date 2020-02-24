@@ -63,7 +63,15 @@ fun Uri?.isHttpScheme(): Boolean {
     if (this == null || scheme == null) {
         return false
     }
-    return scheme?.toLowerCase()?.startsWith("http") == true
+    return scheme.isHttpScheme()
+}
+
+fun String?.isHttpScheme(): Boolean {
+    if (this.isNullOrBlank()) {
+        return false
+    }
+    val case = this.toLowerCase()
+    return case.startsWith("http://") || case.startsWith("https://")
 }
 
 /**是否是可直接读写file的uri资源*/
