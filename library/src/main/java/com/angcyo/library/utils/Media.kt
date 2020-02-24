@@ -8,6 +8,8 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import com.angcyo.library.L
+import com.angcyo.library.ex.bitmapSuffix
+import java.io.File
 
 
 /**
@@ -62,6 +64,39 @@ object Media {
         } catch (e: Exception) {
             L.w(e)
         }
+    }
+
+    fun targetFile(source: File, path: String, width: Int, height: Int): File {
+        val sourcePath = source.absolutePath
+        val suffix = sourcePath.bitmapSuffix()
+
+        val targetFileName = fileNameUUID()
+        val targetFilePath =
+            "${path}${File.separator}${targetFileName}_s_${width}x${height}.$suffix"
+
+        return File(targetFilePath)
+    }
+
+    /**重命名*/
+    fun renameFrom(source: File, path: String, width: Int, height: Int): File {
+        val targetFile = targetFile(source, path, width, height)
+        targetFile.createNewFile()
+        val result = source.renameTo(targetFile)
+        return if (result) {
+            targetFile
+        } else {
+            source
+        }
+    }
+
+    /**复制*/
+    fun copyFrom(source: File, path: String, width: Int, height: Int): File {
+        val targetFile = targetFile(source, path, width, height)
+
+        if (targetFile.createNewFile()) {
+            source.copyTo(targetFile, true)
+        }
+        return targetFile
     }
 
 }

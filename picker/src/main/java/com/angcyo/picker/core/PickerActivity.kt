@@ -13,11 +13,15 @@ import com.angcyo.base.dslFHelper
 import com.angcyo.base.setNavigationBarColor
 import com.angcyo.base.setStatusBarColor
 import com.angcyo.core.component.dslPermissions
+import com.angcyo.dialog.hideLoading
+import com.angcyo.dialog.loading
 import com.angcyo.library.L
+import com.angcyo.library.ex.fileSizeString
 import com.angcyo.library.ex.havePermissions
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.toast
 import com.angcyo.loader.LoaderConfig
+import com.angcyo.luban.dslLuban
 import com.angcyo.picker.R
 import com.angcyo.viewmodel.VMProperty
 
@@ -114,10 +118,38 @@ class PickerActivity : BaseAppCompatActivity() {
 
     /**通过[PickerViewModel]在[Fragment]之间共享数据*/
     val pickerViewModel: PickerViewModel by VMProperty(
-        PickerViewModel::class.java)
+        PickerViewModel::class.java
+    )
 
     /**发送数据*/
     fun send() {
+        if (pickerViewModel.selectorOrigin.value == true) {
+            //原图
+            _sendInner()
+        } else {
+            //压缩
+            if (pickerViewModel.selectorMediaList.value.isNullOrEmpty()) {
+                _sendInner()
+            } else {
+                dslLuban(this) {
+                    targetMediaList = pickerViewModel.selectorMediaList.value!!
+
+                    onCompressStart = {
+                        loading("正在压缩...") {
+                            cancel()
+                        }
+                    }
+
+                    onCompressEnd = {
+                        hideLoading()
+                        _sendInner()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun _sendInner() {
         dslAHelper {
             finish {
                 exitAnim = R.anim.lib_picker_exit_anim
@@ -125,6 +157,26 @@ class PickerActivity : BaseAppCompatActivity() {
 
                 //数据
                 pickerViewModel.selectorMediaList.value?.apply {
+
+                    if (L.debug) {
+                        L.i(buildString {
+                            appendln()
+                            this@apply.forEachIndexed { index, loaderMedia ->
+                                append(index + 1)
+                                append("->")
+                                append(loaderMedia.mimeType)
+                                append(" 本地:${loaderMedia.localPath}(${loaderMedia.localPath.fileSizeString()})")
+                                append(" 本地Uri:${loaderMedia.localUri}")
+                                appendln()
+                                append("先剪裁:${loaderMedia.cropPath}(${loaderMedia.cropPath.fileSizeString()})")
+                                appendln()
+                                append("后压缩:${loaderMedia.compressPath}(${loaderMedia.compressPath.fileSizeString()})")
+                                appendln()
+                                appendln()
+                            }
+                        })
+                    }
+
                     resultCode = Activity.RESULT_OK
                     resultData = Intent().run {
                         putParcelableArrayListExtra(

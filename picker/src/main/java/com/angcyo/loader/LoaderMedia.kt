@@ -31,7 +31,7 @@ data class LoaderMedia(
     //测试属性(暂无用处)
     var loaderUri: Uri? = null,
 
-    //Android Q文件存储机制修改成了沙盒模式, 不能直接通过路径的方式访问文件
+    //Android Q文件存储机制修改成了沙盒模式, 不能直接通过路径的方式访问文件, 优先uri加载
     var localUri: Uri? = null,
 
     //数据库字段↓
@@ -75,7 +75,12 @@ data class LoaderMedia(
             return false
         }
         return if (other is LoaderMedia) {
-            this.loadUri()?.toString() == other.loadUri().toString()
+            (this.compressPath?.equals(other.compressPath) == true ||
+                    this.cropPath?.equals(other.cropPath) == true ||
+                    this.localPath?.equals(other.localPath) == true ||
+                    this.url?.equals(other.url) == true ||
+                    this.localUri?.equals(other.localUri) == true
+                    )
         } else {
             false
         }

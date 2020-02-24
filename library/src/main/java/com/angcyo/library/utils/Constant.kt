@@ -22,5 +22,5 @@ object Constant {
     var errorFolderName = "error"
     var cameraFolderName = "camera"
     var cropFolderName = "crop"
-    var lubanFolderName = "luban"
+    var compressFolderName = "luban"
 }

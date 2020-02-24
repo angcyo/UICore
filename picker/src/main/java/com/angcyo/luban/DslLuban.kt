@@ -5,11 +5,14 @@ import android.text.TextUtils
 import com.angcyo.coroutine.launchGlobal
 import com.angcyo.library.L
 import com.angcyo.library.app
-import com.angcyo.library.utils.fileNameUUID
-import com.angcyo.library.utils.folderPath
+import com.angcyo.library.ex.fileSize
+import com.angcyo.library.utils.*
 import com.angcyo.loader.LoaderMedia
+import com.angcyo.loader.isImage
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import top.zibin.luban.Luban
+import java.util.concurrent.CancellationException
 import kotlin.math.max
 
 /**
@@ -36,18 +39,29 @@ class DslLuban {
     var onCompressEnd: () -> Unit = {}
     var onCompressProgress: (progress: Int) -> Unit = {}
 
-    fun doIt(context: Context) {
-        launchGlobal {
+    var _job: Job? = null
+    fun doIt(context: Context): Job {
+        cancel()
+        _job = launchGlobal {
             onCompressStart()
             onCompressProgress(0)
             targetMediaList.forEachIndexed { index, loaderMedia ->
-                async {
-                    _doIt(context, loaderMedia)
-                }.await()
+                if (loaderMedia.isImage()) {
+                    async {
+                        _doIt(context, loaderMedia)
+                    }.await()
+                }
                 onCompressProgress((index * 1f / max(1, targetMediaList.size) * 100).toInt())
             }
             onCompressEnd()
         }
+        return _job!!
+    }
+
+    /**取消*/
+    fun cancel() {
+        _job?.cancel(CancellationException("用户取消!"))
+        _job = null
     }
 
     private fun _doIt(context: Context, media: LoaderMedia) {
@@ -81,7 +95,12 @@ class DslLuban {
                     .load(listOf(path))
                     .get().apply {
                         firstOrNull()?.let {
-                            media.compressPath = it.absolutePath
+                            val targetFile = Media.copyFrom(
+                                it,
+                                folderPath(Constant.compressFolderName), media.width, media.height
+                            )
+                            media.compressPath = targetFile.absolutePath
+                            media.fileSize = media.compressPath.fileSize()
                         }
                     }
             } catch (e: Exception) {

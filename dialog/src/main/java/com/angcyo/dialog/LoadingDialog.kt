@@ -29,7 +29,11 @@ object LoadingDialog {
 //<editor-fold desc="隐藏对话框">
 
 /**隐藏最后一个dialog*/
-fun hideLoading(transition: Boolean = false, action: DslViewHolder.() -> Unit = {}) {
+fun hideLoading(
+    transition: Boolean = false,
+    delay: Long = 888,
+    action: DslViewHolder.() -> Unit = {}
+) {
     if (dialogPool.isNotEmpty()) {
         dialogPool.pop().get()?.run {
             if (transition) {
@@ -43,8 +47,13 @@ fun hideLoading(transition: Boolean = false, action: DslViewHolder.() -> Unit = 
                         }
                     }
 
-                    dialogViewHolder.postDelay(888) {
-                        dismiss()
+                    dialogViewHolder.postDelay(delay) {
+                        try {
+                            //如果此时的Activity提前结束, 将会崩溃.
+                            dismiss()
+                        } catch (e: Exception) {
+                            L.w(e)
+                        }
                     }
                 } ?: dismiss()
             } else {
