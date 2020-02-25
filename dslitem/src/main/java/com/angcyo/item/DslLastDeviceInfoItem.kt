@@ -19,6 +19,10 @@ import com.angcyo.widget.span.span
 
 class DslLastDeviceInfoItem : DslAdapterItem() {
 
+    companion object {
+        const val SPLIT = "/"
+    }
+
     /**额外的配置信息回调*/
     var onConfigDeviceInfo: (DslSpan) -> Unit = {}
 
@@ -36,7 +40,22 @@ class DslLastDeviceInfoItem : DslAdapterItem() {
 
         //设备信息
         itemHolder.tv(R.id.lib_text_view)?.text = span {
-            append(getWifiIP()).append("|").append(getMobileIP())
+            append(getWifiIP()).append(SPLIT).append(getMobileIP())
+
+            val vpn = Device.vpnInfo()
+            val proxy = Device.proxyInfo()
+            if (!vpn.isNullOrBlank() || !proxy.isNullOrBlank()) {
+                vpn?.run {
+                    append(SPLIT)
+                    append(this)
+
+                }
+                proxy?.run {
+                    append(SPLIT)
+                    append(this)
+                }
+            }
+
             appendln()
             append(Device.deviceId) {
                 foregroundColor = getColor(R.color.colorPrimaryDark)

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -78,8 +79,15 @@ abstract class AbsFragment : Fragment() {
         return super.onGetLayoutInflater(savedInstanceState)
     }
 
+    /**当Fragment在xml中定义时触发.*/
+    override fun onInflate(context: Context, attrs: AttributeSet, savedInstanceState: Bundle?) {
+        super.onInflate(context, attrs, savedInstanceState)
+    }
+
     /**
-     * OnAttach -> OnCreate -> OnCreateView (initBaseView) -> onViewCreated -> OnActivityCreated -> OnViewStateRestored -> OnStart -> OnResume
+     * OnAttach -> OnCreate -> onInflate -> onGetLayoutInflater ->
+     * OnCreateView (initBaseView) -> onViewCreated -> OnActivityCreated ->
+     * OnViewStateRestored -> OnStart -> OnResume
      */
     override fun onAttach(context: Context) {
         super.onAttach(context)

@@ -393,7 +393,12 @@ object Device {
 
     /** 是否正在使用VPN */
     fun isVpnUsed(): Boolean {
-        return !(vpnInfo().isNullOrBlank())
+        return !vpnInfo().isNullOrBlank()
+    }
+
+    /**是否使用了代理Proxy*/
+    fun isProxyUsed(context: Context = app()): Boolean {
+        return !proxyInfo(context).isNullOrBlank()
     }
 
     /**vpn信息*/
