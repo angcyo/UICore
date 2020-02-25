@@ -20,6 +20,15 @@ import java.util.*
 class DragCallbackHelper : ItemTouchHelper.Callback() {
 
     companion object {
+        /**[Drag] 和 [Swipe] Flag*/
+        val FLAG_NO_INIT = -1
+        val FLAG_NONE = 0
+        val FLAG_ALL = ItemTouchHelper.LEFT or
+                ItemTouchHelper.RIGHT or
+                ItemTouchHelper.DOWN or
+                ItemTouchHelper.UP
+        val FLAG_VERTICAL = ItemTouchHelper.DOWN or ItemTouchHelper.UP
+        val FLAG_HORIZONTAL = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
 
         /**安装*/
         fun install(recyclerView: RecyclerView) {
