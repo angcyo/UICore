@@ -42,7 +42,7 @@ object Device {
      * 获得独一无二的Psuedo ID
      * https://www.jianshu.com/p/130918ed8b2f
      * */
-    fun getUniqueDeviceId(): String {
+    private fun getUniqueDeviceId(): String {
         var result: String
         var serial: String?
         val idShort = "35" +
