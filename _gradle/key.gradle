@@ -2,15 +2,15 @@
 
 apply plugin: 'com.android.application'
 
-println("key.gradle↓\n项目根路径:" + rootDir.getAbsolutePath())
-println("脚本路径:" + file(".").getAbsolutePath())
+println("key.gradle↓\n项目根路径:" + rootDir.absolutePath)
+println("脚本的路径:" + file(".").absolutePath)
 
 ext.maxDepth = 2
 //查找默认的jks文件路径
 ext.angcyoJksFile = "未找到默认的angcyo.jks文件"
 
 /**枚举文件夹, 拿到`angcyo.jks`的路径*/
-listPath(getRootDir())
+listPath(rootDir)
 
 /**枚举所有文件夹*/
 def listPath(filePath, depth = 0 /*当前枚举的路径深度, 深度大于maxDepth停止枚举*/, parent = "") {
