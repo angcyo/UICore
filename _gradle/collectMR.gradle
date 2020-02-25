@@ -3,8 +3,18 @@ import java.util.regex.Pattern
 /**
  * Email:angcyo@126.com
  * 收集
+ * //混淆前后类、方法、类成员等的对照
  * app/build/outputs/mapping/release/mapping.txt
+ *
+ * //被移除的代码
+ * app/build/outputs/mapping/release/usage.txt
+ *
+ * //没有被混淆的类和成员
+ * app/build/outputs/mapping/release/seeds.txt
+ *
  * app/build/intermediates/symbols/release/R.txt
+ * //3.6之后R文件路径
+ * app/build/intermediates/runtime_symbol_list/apkRelease/R.txt
  * 文件
  * @author angcyo* @date 2019/11/06
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
@@ -29,27 +39,62 @@ afterEvaluate {
 
     targets.each {
         it.doLast {
+            //gradle 3.6.0 之前 路径是 /apk/release
+            //gradle 3.6.0 之后 路径是 /apkRelease/
+
+            println "${it.name} 任务结束, 开始收集文件."
 
             //找到打包任务Task
-            def buildFlavors = pick("assemblePrePretest", '(?<=assemble).*')
+            def buildFlavors = pick(it.name /*"assemblePrePretest"*/, '(?<=assemble).*')
             //分割Task Flavor
             def buildFlavorsSplit = split(buildFlavors, '([A-Z]{1}[a-z]+)')
 
             def buildDir = project.buildDir.getAbsolutePath()
-            println buildDir
+//            println it.name
+//            println buildFlavors
+//            println buildFlavorsSplit
+//            println buildDir
+//
+//            1 / 0
+//            0 / 1
+
             //mapping.txt文件路径
             def mappingName = "mapping.txt"
             def mappingPath = "${buildDir}/outputs/mapping/${buildFlavorsSplit[0]}/${buildFlavorsSplit[1]}/${mappingName}"
+            def mappingPath36 = "${buildDir}/outputs/mapping/${buildFlavors}/${mappingName}"
             //def mappingFile = new File(mappingPath)
+
+            //mapping.txt文件路径
+            def usageName = "usage.txt"
+            def usagePath = "${buildDir}/outputs/mapping/${buildFlavorsSplit[0]}/${buildFlavorsSplit[1]}/${usageName}"
+            def usagePath36 = "${buildDir}/outputs/mapping/${buildFlavors}/${usageName}"
+
+            //mapping.txt文件路径
+            def seedsName = "seeds.txt"
+            def seedsPath = "${buildDir}/outputs/mapping/${buildFlavorsSplit[0]}/${buildFlavorsSplit[1]}/${seedsName}"
+            def seedsPath36 = "${buildDir}/outputs/mapping/${buildFlavors}/${seedsName}"
 
             //R.txt文件路径
             def rName = "R.txt"
             def rPath = "${buildDir}/intermediates/symbols/${buildFlavorsSplit[0]}/${buildFlavorsSplit[1]}/${rName}"
+            def rPath36 = "${buildDir}/intermediates/runtime_symbol_list/${buildFlavors}/${rName}"
             //def rFile = new File(rPath)
 
             def outputPath = "${project.rootDir.absolutePath}/${output}/"
+
             copyFile(mappingPath, outputPath + mappingName)
+            copyFile(mappingPath36, outputPath + mappingName)
+
+            copyFile(usagePath, outputPath + usageName)
+            copyFile(usagePath36, outputPath + usageName)
+
+            copyFile(seedsPath, outputPath + seedsName)
+            copyFile(seedsPath36, outputPath + seedsName)
+
             copyFile(rPath, outputPath + rName)
+            copyFile(rPath36, outputPath + rName)
+
+            println "收集文件结束."
         }
     }
 }
