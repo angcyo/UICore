@@ -1,16 +1,16 @@
 /*包含 aar 文件的目录名称*/
 def aarFolderName = "aar"
+def aarFolder = new File(rootProject.rootDir.absolutePath, aarFolderName)
 
 repositories {
     flatDir {
-        dirs "../${aarFolderName}" // aar目录
+        dirs "${aarFolder.absolutePath}" // aar目录
     }
 }
 
 dependencies {
-    def libsFolder = new File(aarFolderName)
-    println("开始查找aar文件在 " + libsFolder.getAbsolutePath() + " 中->")
-    for (aarFile in libsFolder.listFiles()) {
+    println("aar.gradle↓\n开始查找aar文件在 " + aarFolder.absolutePath + " 中->")
+    for (aarFile in aarFolder.listFiles()) {
         def fileName = aarFile.getName()
         if (fileName.endsWith(".aar")) {
             fileName = fileName.replaceAll(".aar", "")

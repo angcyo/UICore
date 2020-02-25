@@ -25,7 +25,7 @@ def release_time = releaseTime()
 
 def schema = project.hasProperty("schema") ? project.ext.schema : 'default'
 
-println "appBase.gradle\n开始编译:schema:" + schema + " time->" + build_time
+println "appBase.gradle↓\n开始编译:schema:" + schema + " time->" + build_time
 
 android {
 
