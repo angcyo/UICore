@@ -14,6 +14,7 @@ import com.angcyo.tablayout.screenWidth
 import com.angcyo.widget.R
 import com.angcyo.widget.base.exactly
 import com.angcyo.widget.base.save
+import kotlin.math.absoluteValue
 
 /**
  *
@@ -45,6 +46,13 @@ class RLayoutDelegate {
             view.requestLayout()
         }
 
+    /**宽高的比例[1:1] [1:2.5], 宽高必须有一个要是1f*/
+    var layoutDimensionRatio: String? = null
+        set(value) {
+            field = value
+            view.requestLayout()
+        }
+
     /**布局蒙层*/
     var maskDrawable: Drawable? = null
         set(value) {
@@ -69,6 +77,7 @@ class RLayoutDelegate {
         rMaxHeight = typedArray.getString(R.styleable.RLayout_r_max_height)
         rMaxWidth = typedArray.getString(R.styleable.RLayout_r_max_width)
         maskDrawable = typedArray.getDrawable(R.styleable.RLayout_r_layout_mask_drawable)
+        layoutDimensionRatio = typedArray.getString(R.styleable.RLayout_r_layout_dimension_ratio)
 
         if (typedArray.hasValue(R.styleable.RLayout_r_clip_to_outline)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -144,6 +153,52 @@ class RLayoutDelegate {
 
             //如果使用重新测量的方式,布局就会每次都至少测量2次
             view.measure(wSpec, hSpec)
+        }
+
+        //比例计算
+        layoutDimensionRatio?.run {
+            var ratio: Float = -1f
+
+            var widthFactor = 1f
+            var heightFactor = 1f
+
+            if (contains(":")) {
+                split(":").also {
+                    widthFactor = it[0].toFloatOrNull() ?: -1f
+                    heightFactor = it[1].toFloatOrNull() ?: 0f
+                    ratio = widthFactor / heightFactor
+                }
+            } else {
+                toFloatOrNull()?.run {
+                    heightFactor = 1f
+                    widthFactor = this
+                    ratio = widthFactor / heightFactor
+                }
+            }
+
+            if (ratio > 0f) {
+                val vWidth = view.measuredWidth
+                val vHeight = view.measuredHeight
+                val rawRatio = vWidth * 1f / vHeight
+
+                if ((rawRatio - ratio).absoluteValue > 0.1f) {
+                    //比例需要调整
+
+                    val wSpec: Int
+                    val hSpec: Int
+
+                    if (widthFactor == 1f) {
+                        //以宽度作为基数调整
+                        wSpec = exactly(vWidth)
+                        hSpec = exactly((vWidth * heightFactor).toInt())
+                    } else {
+                        //以高度作为基数调整
+                        wSpec = exactly((vHeight * widthFactor).toInt())
+                        hSpec = exactly(vHeight)
+                    }
+                    view.measure(wSpec, hSpec)
+                }
+            }
         }
     }
 }

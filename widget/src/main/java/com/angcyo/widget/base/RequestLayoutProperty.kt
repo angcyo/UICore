@@ -19,3 +19,12 @@ class RequestLayoutProperty<T>(var value: T) : ReadWriteProperty<View, T> {
         thisRef.requestLayout()
     }
 }
+
+class RequestLayoutAnyProperty<T>(var value: T, val view: View?) : ReadWriteProperty<Any, T> {
+    override fun getValue(thisRef: Any, property: KProperty<*>): T = value
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
+        this.value = value
+        view?.requestLayout()
+    }
+}
