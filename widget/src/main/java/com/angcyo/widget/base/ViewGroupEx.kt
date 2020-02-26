@@ -309,7 +309,7 @@ fun ViewGroup.replace(viewGroup: ViewGroup): ViewGroup {
         viewGroup.addView(it)
     }
 
-    addView(viewGroup, ViewGroup.LayoutParams(-1, -1))
+    addView(viewGroup, viewGroup.layoutParams ?: ViewGroup.LayoutParams(-1, -1))
     return viewGroup
 }
 

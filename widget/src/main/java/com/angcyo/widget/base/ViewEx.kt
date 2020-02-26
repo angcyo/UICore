@@ -66,6 +66,7 @@ fun View.onDoubleTap(action: (View) -> Boolean) {
         })
     setOnTouchListener { _, event ->
         gestureDetector.onTouchEvent(event)
+        true
     }
 }
 

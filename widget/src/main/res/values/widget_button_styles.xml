@@ -15,6 +15,8 @@
         <item name="button_gradient_start_color">@color/colorPrimary</item>
         <item name="button_gradient_end_color">@color/colorPrimaryDark</item>
         <item name="button_radius">@dimen/lib_radius_normal</item>
+        <item name="button_disable_solid_color">@color/lib_disable_bg_color</item>
+        <item name="button_disable_gradient_colors">""</item>
     </style>
 
     <!--小padding的按钮-->
