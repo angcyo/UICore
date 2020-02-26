@@ -25,7 +25,8 @@
             android:id="@+id/lib_progress_bar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:progress_bg_gradient_colors="@color/bg_sub_color" />
+            app:progress_bg_gradient_colors="@color/bg_sub_color"
+            app:progress_radius="0dp" />
 
         <com.angcyo.widget.text.DslTextView
             android:id="@+id/lib_tip_view"
