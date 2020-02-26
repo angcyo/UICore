@@ -8,10 +8,7 @@ import android.view.Gravity
 import androidx.fragment.app.Fragment
 import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.activity.showDebugInfoView
-import com.angcyo.base.dslAHelper
-import com.angcyo.base.dslFHelper
-import com.angcyo.base.setNavigationBarColor
-import com.angcyo.base.setStatusBarColor
+import com.angcyo.base.*
 import com.angcyo.core.component.dslPermissions
 import com.angcyo.dialog.hideLoading
 import com.angcyo.dialog.loading
@@ -98,7 +95,7 @@ class PickerActivity : BaseAppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (onBackPressedDispatcher()) {
+        if (checkBackPressedDispatcher()) {
             dslFHelper {
                 if (back()) {
                     dslAHelper {

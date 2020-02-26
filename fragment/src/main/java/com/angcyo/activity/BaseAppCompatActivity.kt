@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
+import com.angcyo.base.checkBackPressedDispatcher
 import com.angcyo.base.dslFHelper
 import com.angcyo.base.enableLayoutFullScreen
 import com.angcyo.base.getAllValidityFragment
@@ -109,22 +110,13 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
 
     /**回退检查*/
     override fun onBackPressed() {
-        if (onBackPressedDispatcher()) {
+        if (checkBackPressedDispatcher()) {
             dslFHelper {
                 if (back()) {
                     onBackPressedInner()
                 }
             }
         }
-    }
-
-    /**返回true, 表示可以关闭界面*/
-    open fun onBackPressedDispatcher(): Boolean {
-        if (onBackPressedDispatcher.hasEnabledCallbacks()) {
-            onBackPressedDispatcher.onBackPressed()
-            return false
-        }
-        return true
     }
 
     /**整整的关闭界面*/

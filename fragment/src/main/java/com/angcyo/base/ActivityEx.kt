@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Build
 import android.view.View
 import android.view.WindowManager
+import androidx.activity.ComponentActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
@@ -81,6 +82,15 @@ fun Activity.dslAHelper(action: DslAHelper.() -> Unit) {
         this.action()
         doIt()
     }
+}
+
+/**返回true, 表示可以关闭界面*/
+fun ComponentActivity.checkBackPressedDispatcher(): Boolean {
+    if (onBackPressedDispatcher.hasEnabledCallbacks()) {
+        onBackPressedDispatcher.onBackPressed()
+        return false
+    }
+    return true
 }
 
 //<editor-fold desc="权限相关">
