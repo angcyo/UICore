@@ -103,13 +103,7 @@ abstract class AbsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val layoutId = fragmentLayoutId
-        val rootView: View
-        rootView = if (layoutId != -1) {
-            inflater.inflate(layoutId, container, false)
-        } else {
-            createRootView()
-        }
+        val rootView = onCreateRootView(inflater, container, savedInstanceState)
         baseViewHolder = DslViewHolder(rootView, viewHolderInitialCapacity)
         initBaseView(savedInstanceState)
         return rootView
@@ -205,10 +199,21 @@ abstract class AbsFragment : Fragment() {
     /**
      * 不指定布局Id的时候, 可以用代码创建跟视图
      */
-    open fun createRootView(): View {
-        val view = View(context)
-        view.setBackgroundColor(getColor(R.color.status_bar_color))
-        return view
+    open fun onCreateRootView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val layoutId = fragmentLayoutId
+        val rootView: View
+        rootView = if (layoutId != -1) {
+            inflater.inflate(layoutId, container, false)
+        } else {
+            View(context).apply {
+                setBackgroundColor(getColor(R.color.status_bar_color))
+            }
+        }
+        return rootView
     }
 
     /**初始化布局, 此时的[View]还没有[attach]*/

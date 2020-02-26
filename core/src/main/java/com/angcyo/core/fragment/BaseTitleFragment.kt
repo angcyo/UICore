@@ -19,10 +19,7 @@ import com.angcyo.core.behavior.ArcLoadingHeaderBehavior
 import com.angcyo.library.ex.colorFilter
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslGroupHelper
-import com.angcyo.widget.base.clickIt
-import com.angcyo.widget.base.getDrawable
-import com.angcyo.widget.base.replace
-import com.angcyo.widget.base.setBehavior
+import com.angcyo.widget.base.*
 import com.angcyo.widget.layout.DslSoftInputLayout
 import com.angcyo.widget.span.span
 import com.angcyo.widget.text.DslTextView
@@ -86,6 +83,23 @@ abstract class BaseTitleFragment : BaseFragment() {
         fragmentUI?.onFragmentCreateAfter(this, fragmentConfig)
     }
 
+    override fun onCreateRootView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val view = super.onCreateRootView(inflater, container, savedInstanceState)
+        if (enableSoftInput) {
+            val softInputLayout = DslSoftInputLayout(fContext()).apply {
+                id = R.id.lib_soft_input_layout
+                handlerMode = DslSoftInputLayout.MODE_CONTENT_HEIGHT
+            }
+            softInputLayout.addView(view)
+            return softInputLayout
+        }
+        return view
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -135,16 +149,7 @@ abstract class BaseTitleFragment : BaseFragment() {
         _vh.itemView.isClickable = fragmentConfig.interceptRootTouchEvent
 
         //内容包裹
-        if (enableSoftInput) {
-            _vh.group(R.id.lib_content_wrap_layout)
-                ?.replace(DslSoftInputLayout(fContext()).apply {
-                    id = R.id.lib_soft_input_layout
-                    handlerMode = DslSoftInputLayout.MODE_CONTENT_HEIGHT
-                })
-            _inflateTo(R.id.lib_soft_input_layout, contentLayoutId)
-        } else {
-            _inflateTo(R.id.lib_content_wrap_layout, contentLayoutId)
-        }
+        _inflateTo(R.id.lib_content_wrap_layout, contentLayoutId)
         //刷新头包裹
         _inflateTo(R.id.lib_refresh_wrap_layout, refreshLayoutId)
         //标题包裹
@@ -174,7 +179,7 @@ abstract class BaseTitleFragment : BaseFragment() {
 
     /**初始化[Behavior]*/
     open fun onInitBehavior() {
-        rootControl().eachChild { _, child ->
+        rootControl().group(R.id.lib_coordinator_wrap_layout)?.eachChild { _, child ->
             onCreateBehavior(child)?.run {
                 if (this is RefreshBehavior) {
                     refreshBehavior = this
