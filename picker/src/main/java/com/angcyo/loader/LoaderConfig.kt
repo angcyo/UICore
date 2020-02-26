@@ -18,7 +18,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class LoaderConfig(
     /**支持组合[LOADER_TYPE_IMAGE] [LOADER_TYPE_VIDEO] [LOADER_TYPE_AUDIO]*/
-    var mediaLoaderType: Int = LOADER_TYPE_IMAGE or LOADER_TYPE_VIDEO or LOADER_TYPE_AUDIO,
+    var mediaLoaderType: Int = LOADER_TYPE_IMAGE or LOADER_TYPE_VIDEO /*or LOADER_TYPE_AUDIO*/,
 
     /**是否显示原图按钮, 如果支持就打开, 否则关闭*/
     var enableOrigin: Boolean = false,

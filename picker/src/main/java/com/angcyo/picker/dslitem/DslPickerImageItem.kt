@@ -185,26 +185,29 @@ open class DslPickerImageItem : DslAdapterItem() {
         }
 
         //debug
-        if (isDebug()) {
-            itemHolder.visible(R.id.lib_tip_text_view)
-            itemHolder.tv(R.id.lib_tip_text_view)?.text = span {
-                append("${loaderMedia?.width ?: 0}")
-                append("x")
-                append("${loaderMedia?.height ?: 0}")
-                append(" ${loaderMedia?.duration}")
-                appendln()
-                append(loaderMedia?.fileSize?.fileSizeString() ?: "")
-                appendln()
-                append(loaderMedia?.mimeType() ?: "")
+        when {
+            isDebug() -> {
+                itemHolder.visible(R.id.lib_tip_text_view)
+                itemHolder.tv(R.id.lib_tip_text_view)?.text = span {
+                    append("${loaderMedia?.width ?: 0}")
+                    append("x")
+                    append("${loaderMedia?.height ?: 0}")
+                    append(" ${loaderMedia?.duration}")
+                    appendln()
+                    append(loaderMedia?.fileSize?.fileSizeString() ?: "")
+                    appendln()
+                    append(loaderMedia?.mimeType() ?: "")
+                }
             }
-
-        } else if (showFileSize) {
-            itemHolder.visible(R.id.lib_tip_text_view)
-            itemHolder.tv(R.id.lib_tip_text_view)?.text = span {
-                append(loaderMedia?.fileSize?.fileSizeString() ?: "")
+            showFileSize -> {
+                itemHolder.visible(R.id.lib_tip_text_view)
+                itemHolder.tv(R.id.lib_tip_text_view)?.text = span {
+                    append(loaderMedia?.fileSize?.fileSizeString() ?: "")
+                }
             }
-        } else {
-            itemHolder.gone(R.id.lib_tip_text_view)
+            else -> {
+                itemHolder.gone(R.id.lib_tip_text_view)
+            }
         }
 
         if (animUpdate) {
