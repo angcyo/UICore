@@ -251,13 +251,13 @@ fun Activity.logActivityInfo(debug: Boolean = isDebug()) {
         L.v("$className supportParentActivityIntent:$supportParentActivityIntent")
 
         mActivityInfo?.also {
-            L.v(
-                className +
-                        " taskId:" + taskId +
-                        " root:" + isTaskRoot +
-                        " taskAffinity:" + mActivityInfo.taskAffinity
-            )
-
+            L.v(buildString {
+                append(className)
+                append(" taskId:$taskId")
+                append(" root:$isTaskRoot")
+                append(" taskAffinity:${mActivityInfo.taskAffinity}")
+            })
+            
             L.d(buildString {
                 appendln()
                 appendln("ActivityInfo->↓")
