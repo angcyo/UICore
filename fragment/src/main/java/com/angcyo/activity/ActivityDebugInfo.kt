@@ -257,7 +257,7 @@ fun Activity.logActivityInfo(debug: Boolean = isDebug()) {
                 append(" root:$isTaskRoot")
                 append(" taskAffinity:${mActivityInfo.taskAffinity}")
             })
-            
+
             L.d(buildString {
                 appendln()
                 appendln("ActivityInfo->↓")
