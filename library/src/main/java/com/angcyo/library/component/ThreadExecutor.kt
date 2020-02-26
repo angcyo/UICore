@@ -1,6 +1,5 @@
 package com.angcyo.library.component
 
-import androidx.core.util.Preconditions
 import java.util.*
 import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicInteger
@@ -40,11 +39,18 @@ object ThreadExecutor : Executor {
         )
     }
 
-
     override fun execute(command: Runnable) {
         synchronized(executorLock) {
-            Preconditions.checkState(!threadPoolExecutor.isShutdown, "ThreadExecutor is Shutdown")
+            if (threadPoolExecutor.isShutdown) {
+                throw IllegalStateException("ThreadExecutor is Shutdown")
+            }
             threadPoolExecutor.execute(command)
+        }
+    }
+
+    fun onMain(command: Runnable) {
+        synchronized(executorLock) {
+            MainExecutor.execute(command)
         }
     }
 }
