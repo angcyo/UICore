@@ -10,11 +10,18 @@
         android:layout_height="match_parent"
         android:scaleType="fitCenter" />
 
-    <com.angcyo.widget.progress.ArcLoadingView
-        android:id="@+id/lib_loading_view"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center"
-        app:arc_auto_start="true" />
+    <FrameLayout
+        android:id="@+id/lib_transition_overlay_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.angcyo.widget.progress.ArcLoadingView
+            android:id="@+id/lib_loading_view"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            app:arc_auto_start="true" />
+
+    </FrameLayout>
 
 </FrameLayout>
