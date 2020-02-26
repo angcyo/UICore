@@ -132,10 +132,7 @@ fun Any?.setMember(member: String, value: Any?) {
  * @param params     参数值
  * @return 失败返回null
  */
-fun Any?.invokeMethod(
-    methodName: String,
-    vararg params: Any
-): Any? {
+fun Any?.invokeMethod(methodName: String, vararg params: Any): Any? {
     if (this == null || TextUtils.isEmpty(methodName)) {
         return null
     }
@@ -143,11 +140,7 @@ fun Any?.invokeMethod(
     return this.invokeMethod(clazz, methodName, *params)
 }
 
-fun Any?.invokeMethod(
-    methodName: String,
-    paramTypes: Array<Class<*>>,
-    vararg params: Any
-): Any? {
+fun Any?.invokeMethod(methodName: String, paramTypes: Array<Class<*>>, vararg params: Any): Any? {
     if (this == null || TextUtils.isEmpty(methodName)) {
         return null
     }
@@ -160,11 +153,7 @@ fun Any?.invokeMethod(
     )
 }
 
-fun Any?.invokeMethod(
-    cls: Class<*>,
-    methodName: String,
-    vararg params: Any
-): Any? {
+fun Any?.invokeMethod(cls: Class<*>, methodName: String, vararg params: Any): Any? {
     if (this == null || TextUtils.isEmpty(methodName)) {
         return null
     }
@@ -229,10 +218,7 @@ fun Any?.getFieldValue(fieldName: String): Any? {
     return this.getFieldValue(clazz, fieldName)
 }
 
-fun Any?.getFieldValue(
-    cls: Class<*>,
-    fieldName: String
-): Any? {
+fun Any?.getFieldValue(cls: Class<*>, fieldName: String): Any? {
     if (this == null || TextUtils.isEmpty(fieldName)) {
         return null
     }
@@ -253,10 +239,7 @@ fun Any?.getFieldValue(
 /**
  * 设置字段的值
  */
-fun Any?.setFieldValue(
-    fieldName: String,
-    value: Any?
-) {
+fun Any?.setFieldValue(fieldName: String, value: Any?) {
     if (this == null || TextUtils.isEmpty(fieldName)) {
         return
     }
@@ -264,11 +247,7 @@ fun Any?.setFieldValue(
     this.setFieldValue(clazz, fieldName, value)
 }
 
-fun Any?.setFieldValue(
-    clazz: Class<*>,
-    fieldName: String,
-    value: Any?
-) {
+fun Any?.setFieldValue(clazz: Class<*>, fieldName: String, value: Any?) {
     var cls = clazz
     if (this == null || TextUtils.isEmpty(fieldName)) {
         return

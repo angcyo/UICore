@@ -1,6 +1,8 @@
 package com.angcyo.activity
 
 import android.app.Activity
+import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Point
@@ -11,11 +13,15 @@ import android.text.style.ForegroundColorSpan
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.angcyo.fragment.R
+import com.angcyo.http.base.toJson
+import com.angcyo.library.L
 import com.angcyo.library.ex.*
+import com.angcyo.library.utils.getFieldValue
 import com.angcyo.widget.base.onDoubleTap
 import com.angcyo.widget.span.span
 import kotlin.math.max
@@ -225,4 +231,38 @@ fun FragmentManager.logAllFragment(
         }
     }
     return builder
+}
+
+fun Activity.logActivityInfo(debug: Boolean = isDebug()) {
+    if (debug) {
+        //系统Fragment操作日志输出
+        //FragmentManager.enableDebugLogging(BuildConfig.DEBUG);
+        val className = this.javaClass.simpleName
+        val parentActivityIntent = parentActivityIntent
+        val supportParentActivityIntent: Intent? = if (this is AppCompatActivity) {
+            supportParentActivityIntent
+        } else {
+            null
+        }
+
+        val mActivityInfo = getFieldValue(Activity::class.java, "mActivityInfo") as? ActivityInfo
+
+        L.v("$className parentActivityIntent:$parentActivityIntent")
+        L.v("$className supportParentActivityIntent:$supportParentActivityIntent")
+
+        mActivityInfo?.also {
+            L.v(
+                className +
+                        " taskId:" + taskId +
+                        " root:" + isTaskRoot +
+                        " taskAffinity:" + mActivityInfo.taskAffinity
+            )
+
+            L.d(buildString {
+                appendln()
+                appendln("ActivityInfo->↓")
+                appendln(it.toJson())
+            })
+        }
+    }
 }

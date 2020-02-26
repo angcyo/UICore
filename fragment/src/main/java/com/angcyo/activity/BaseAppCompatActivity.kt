@@ -34,6 +34,9 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        logActivityInfo()
+
         baseDslViewHolder = DslViewHolder(window.decorView)
         onCreateAfter(savedInstanceState)
         intent?.let { onHandleIntent(it) }
