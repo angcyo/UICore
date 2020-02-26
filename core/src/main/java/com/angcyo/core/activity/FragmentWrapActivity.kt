@@ -7,7 +7,9 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.angcyo.DslAHelper
 import com.angcyo.base.dslFHelper
+import com.angcyo.core.fragment.BaseTitleFragment
 import com.angcyo.library.L
+import com.angcyo.library.component.RBackground
 
 /**
  * Fragment容器Activity
@@ -67,6 +69,9 @@ open class FragmentWrapActivity : BaseCoreAppCompatActivity() {
                         show(Class.forName(className) as Class<out Fragment>)
                         configFragment {
                             arguments = target.extras
+                            if (this is BaseTitleFragment) {
+                                enableBackItem = RBackground.stack.size() > 1
+                            }
                         }
                     } catch (e: Exception) {
                         L.w(e)

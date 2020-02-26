@@ -58,6 +58,9 @@ abstract class BaseTitleFragment : BaseFragment() {
     /**激活软键盘输入*/
     var enableSoftInput: Boolean = false
 
+    /**是否需要强制显示返回按钮, 否则智能判断*/
+    var enableBackItem: Boolean = false
+
     var refreshBehavior: RefreshBehavior? = null
 
     //<editor-fold desc="操作属性">
@@ -130,7 +133,7 @@ abstract class BaseTitleFragment : BaseFragment() {
 
     /**是否要显示返回按钮*/
     open fun enableBackItem(): Boolean {
-        return topFragment() == this && fragmentManager?.getAllValidityFragment()?.size ?: 0 > 0
+        return enableBackItem || (topFragment() == this && fragmentManager?.getAllValidityFragment()?.size ?: 0 > 0)
     }
 
     //<editor-fold desc="操作方法">

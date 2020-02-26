@@ -5,6 +5,9 @@ import android.app.Application
 import android.content.Context
 import android.os.Process
 import android.text.TextUtils
+import android.util.SparseArray
+import com.angcyo.library.component.OnBackgroundObserver
+import com.angcyo.library.component.RBackground
 import com.angcyo.library.ex.isDebug
 import java.io.BufferedReader
 import java.io.FileInputStream
@@ -46,6 +49,15 @@ open class LibApplication : Application() {
         //必须第一个初始化
         Library.init(this, isDebug())
         L.init(getAppString("app_name") ?: "Log", isDebug())
+
+        RBackground.init(this, object : OnBackgroundObserver {
+            override fun onActivityChanged(stack: SparseArray<String>, background: Boolean) {
+                if (background) {
+                    L.i("程序已在后台运行.")
+                }
+                L.v(stack)
+            }
+        })
     }
 
     override fun attachBaseContext(base: Context) {
