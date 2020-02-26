@@ -21,6 +21,14 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/core_provider_paths" />
         </provider>
+
+        <!--跳板Activity-->
+        <activity
+            android:name=".activity.JumpActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.NoDisplay" />
     </application>
 
 </manifest>
