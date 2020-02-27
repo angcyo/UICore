@@ -20,7 +20,7 @@ import com.angcyo.ucrop.dslCrop
 import com.angcyo.widget._rv
 import com.angcyo.widget._vp
 import com.angcyo.widget.base.Anim
-import com.angcyo.widget.base.fullscreen
+import com.angcyo.widget.base.lowProfile
 import com.angcyo.widget.pager.DslPagerAdapter
 import com.angcyo.widget.recycler.initDsl
 import com.angcyo.widget.span.span
@@ -192,7 +192,8 @@ class PickerPreviewFragment : BasePickerFragment() {
     fun _fullscreen(yes: Boolean? = null) {
         val full = yes ?: !_vh.itemView.isSelected
         _vh.itemView.isSelected = full
-        _vh.itemView.fullscreen(full)
+        //_vh.itemView.fullscreen(full) //全面屏 切换全屏时, 状态栏会跳动.改用体验更好的低调模式.
+        _vh.itemView.lowProfile(full)
 
         if (full) {
             _vh.view(R.id.title_wrap_layout)?.run {
