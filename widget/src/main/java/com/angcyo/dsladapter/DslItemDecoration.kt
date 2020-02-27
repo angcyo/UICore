@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.angcyo.library.ex.dp
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -25,7 +26,10 @@ open class DslItemDecoration(
     val getItemOffsets: (that: DslItemDecoration, outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) -> Unit = { _, _, _, _, _ -> }
 ) : RecyclerView.ItemDecoration() {
 
-    val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+        textSize = 12 * dp
+    }
 
     val _tempDrawRect = Rect()
     val _tempRect = Rect()

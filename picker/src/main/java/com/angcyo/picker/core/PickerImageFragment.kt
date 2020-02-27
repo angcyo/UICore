@@ -1,5 +1,7 @@
 package com.angcyo.picker.core
 
+import android.animation.ValueAnimator
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
@@ -7,6 +9,11 @@ import com.angcyo.base.dslFHelper
 import com.angcyo.dialog.fullPopupWindow
 import com.angcyo.dsladapter.*
 import com.angcyo.library.L
+import com.angcyo.library.component.DslCalendar
+import com.angcyo.library.ex.alpha
+import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.toColorInt
 import com.angcyo.loader.DslLoader
 import com.angcyo.loader.LoaderFolder
 import com.angcyo.picker.R
@@ -15,6 +22,9 @@ import com.angcyo.picker.dslitem.DslPickerImageItem
 import com.angcyo.putData
 import com.angcyo.widget._rv
 import com.angcyo.widget.base.Anim
+import com.angcyo.widget.base.anim
+import com.angcyo.widget.recycler.decoration.DslDrawItemDecoration
+import com.angcyo.widget.recycler.decoration.isLayoutFirst
 import com.angcyo.widget.recycler.initDslAdapter
 import com.angcyo.widget.recycler.localUpdateItem
 
@@ -26,6 +36,10 @@ import com.angcyo.widget.recycler.localUpdateItem
  */
 class PickerImageFragment : BasePickerFragment() {
     val loader = DslLoader()
+    val dslDrawItemDecoration = DslDrawItemDecoration()
+    //通过控制透明度, 达到显示和隐藏的效果
+    var dslDrawItemDecorationAlpha = 0
+    var dslDrawItemDecorationAlphaAnimator: ValueAnimator? = null
 
     init {
         fragmentLayoutId = R.layout.picker_image_fragment
@@ -34,6 +48,80 @@ class PickerImageFragment : BasePickerFragment() {
     override fun onInitDslLayout(recyclerView: RecyclerView, dslAdapter: DslAdapter) {
         super.onInitDslLayout(recyclerView, dslAdapter)
         dslAdapter.multiModel()
+
+        dslDrawItemDecoration.attachToRecyclerView(recyclerView)
+
+        //日期绘制
+        dslDrawItemDecoration.onItemDrawOver = {
+            dslDrawItemDecoration.drawItemDecoration(it) {
+                draw = { canvas, paint, _, drawRect ->
+                    if (it.isLayoutFirst()) {
+                        _getPositionTime(it.viewHolder.adapterPosition)?.run {
+                            drawRect.set(0, 0, it.parent.measuredWidth, 30 * dpi)
+                            paint.color = "#000000".toColorInt()
+                                .alpha(dslDrawItemDecorationAlpha * 1f / 255 * 168)
+                            canvas.drawRect(drawRect, paint)
+                            paint.color = Color.WHITE.alpha(dslDrawItemDecorationAlpha)
+                            canvas.drawText(
+                                this,
+                                10 * dp,
+                                drawRect.height() / 2 + paint.textHeight() / 2 - paint.descent(),
+                                paint
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                //L.i(newState.scrollStateStr())
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    //滚动结束, 隐藏日期提示
+                    dslDrawItemDecorationAlphaAnimator = anim(255, 0) {
+                        onAnimatorConfig = {
+                            it.startDelay = 300
+                        }
+                        onAnimatorUpdateValue = { value, _ ->
+                            dslDrawItemDecorationAlpha = value as Int
+                            recyclerView.postInvalidateOnAnimation()
+                        }
+                    }
+                } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    dslDrawItemDecorationAlphaAnimator?.cancel()
+                    //开始滚动, 显示日期提示
+                    dslDrawItemDecorationAlphaAnimator = anim(dslDrawItemDecorationAlpha, 255) {
+                        onAnimatorUpdateValue = { value, _ ->
+                            dslDrawItemDecorationAlpha = value as Int
+                            recyclerView.postInvalidateOnAnimation()
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    /**获取指定位置, 需要显示的时间*/
+    fun _getPositionTime(position: Int): String? {
+        if (position in 0 until _adapter.itemCount) {
+            _adapter.getItemData(position)?.run {
+                return if (this is DslPickerImageItem) {
+                    this.loaderMedia?.addTime?.run {
+                        val dslCalendar = DslCalendar(this)
+                        when {
+                            dslCalendar.isThisWeek() -> "本周"
+                            dslCalendar.isThisMonth() -> "这个月"
+                            else -> "${dslCalendar.year}/${dslCalendar.month}"
+                        }
+                    }
+                } else {
+                    _getPositionTime(position + 1)
+                }
+            }
+        }
+        return null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

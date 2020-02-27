@@ -6,6 +6,7 @@ import android.widget.LinearLayout
 import android.widget.OverScroller
 import androidx.core.widget.ScrollerCompat
 import androidx.recyclerview.widget.*
+import androidx.recyclerview.widget.RecyclerView.*
 import com.angcyo.dsladapter.*
 import com.angcyo.library.utils.getMember
 import com.angcyo.widget.DslViewHolder
@@ -191,6 +192,15 @@ fun RecyclerView.noItemChangeAnim(no: Boolean = true) {
     } else if (itemAnimator is SimpleItemAnimator) {
         (itemAnimator as SimpleItemAnimator).supportsChangeAnimations =
             !no
+    }
+}
+
+fun Int.scrollStateStr(): String {
+    return when (this) {
+        SCROLL_STATE_SETTLING -> "SCROLL_STATE_SETTLING"
+        SCROLL_STATE_DRAGGING -> "SCROLL_STATE_DRAGGING"
+        SCROLL_STATE_IDLE -> "SCROLL_STATE_IDLE"
+        else -> "Unknown"
     }
 }
 

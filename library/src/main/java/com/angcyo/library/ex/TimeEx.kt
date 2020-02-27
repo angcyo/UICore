@@ -70,7 +70,7 @@ public fun Long.spiltTime(): IntArray {
     val day = cal[Calendar.DAY_OF_MONTH] //1-31天
     val h = cal[Calendar.HOUR_OF_DAY] //24小时制
     val m = cal[Calendar.MINUTE] //0-59分
-    val s = cal[Calendar.SECOND] //0-60秒
+    val s = cal[Calendar.SECOND] //0-59秒
     val sss = cal[Calendar.MILLISECOND] //0-999毫秒
 
     //Gets what the first day of the week is; e.g., SUNDAY in the U.S., MONDAY in France.
@@ -86,10 +86,6 @@ public fun Long.spiltTime(): IntArray {
         }
     }
 
-    //SUNDAY 1
-    //MONDAY = 2
-    //TUESDAY = 3
-    //SATURDAY = 7 星期六
     //SUNDAY 1
     //MONDAY = 2
     //TUESDAY = 3

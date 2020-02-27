@@ -472,6 +472,17 @@ fun View.save(canvas: Canvas, paint: Paint? = null): Int {
     }
 }
 
+fun Canvas.clear(rect: Rect? = null) {
+    if (rect == null) {
+        drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+        //canvas.drawColor(Color.TRANSPARENT, Mode.MULTIPLY)
+    } else {
+        val clearPaint = Paint()
+        clearPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+        drawRect(rect, clearPaint)
+    }
+}
+
 //</editor-fold desc="draw相关扩展">
 
 //<editor-fold desc="回调扩展">

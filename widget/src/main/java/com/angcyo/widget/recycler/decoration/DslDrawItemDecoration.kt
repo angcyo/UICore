@@ -1,6 +1,7 @@
 package com.angcyo.widget.recycler.decoration
 
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.view.Gravity
@@ -26,17 +27,11 @@ import com.angcyo.widget.base.inflate
 
 class DslDrawItemDecoration : DslItemDecoration() {
 
-    var onItemOffsets: (DrawItemDecorationParams, Rect) -> Unit = { _, _ ->
+    var onItemOffsets: ((DrawItemDecorationParams, Rect) -> Unit)? = null
 
-    }
+    var onItemDraw: ((DrawItemDecorationParams) -> Unit)? = null
 
-    var onItemDraw: (DrawItemDecorationParams) -> Unit = {
-
-    }
-
-    var onItemDrawOver: (DrawItemDecorationParams) -> Unit = {
-
-    }
+    var onItemDrawOver: ((DrawItemDecorationParams) -> Unit)? = null
 
     override fun onEachItemDoIt(
         canvas: Canvas?,
@@ -69,9 +64,9 @@ class DslDrawItemDecoration : DslItemDecoration() {
             isOverDraw
         )
         when {
-            outRect != null -> onItemOffsets(params, outRect)
-            isOverDraw -> onItemDrawOver(params)
-            else -> onItemDraw(params)
+            outRect != null -> onItemOffsets?.invoke(params, outRect)
+            isOverDraw -> onItemDrawOver?.invoke(params)
+            else -> onItemDraw?.invoke(params)
         }
     }
 
@@ -87,11 +82,16 @@ class DslDrawItemDecoration : DslItemDecoration() {
         val drawItemDecorationConfig = DrawItemDecorationConfig()
         drawItemDecorationConfig.action()
 
+        if (!drawItemDecorationConfig.haveDraw()) {
+            //L.w("nothing to draw.")
+            return
+        }
+
         val itemView = params.itemView()
 
         //左上右下
         val decorationRect = Rect()
-        onItemOffsets(params, decorationRect)
+        onItemOffsets?.invoke(params, decorationRect)
 
         //over
         val viewRect = Rect(itemView.left, itemView.top, itemView.right, itemView.bottom)
@@ -151,7 +151,7 @@ class DslDrawItemDecoration : DslItemDecoration() {
     private fun _drawItemDecoration(
         params: DrawItemDecorationParams,
         config: DrawItemDecorationConfig,
-        drawRect: Rect
+        rect: Rect
     ) {
 
         if (params.canvas == null) {
@@ -159,10 +159,14 @@ class DslDrawItemDecoration : DslItemDecoration() {
             return
         }
 
-        if (config.drawLayoutId <= 0 && config.drawDrawable == null) {
+        if (!config.haveDraw()) {
             L.w("nothing to draw.")
             return
         }
+
+        //绘制的目标矩形
+        val drawRect = Rect()
+        config.drawRect?.run { drawRect.set(this) } ?: drawRect.set(rect)
 
         var width: Int = config.drawWidth
         var height: Int = config.drawHeight
@@ -246,6 +250,37 @@ class DslDrawItemDecoration : DslItemDecoration() {
                 }
             }
         }
+
+        //自定义绘制
+        config.draw?.run {
+            params.canvas?.also {
+
+                if (config.drawWidth == ViewGroup.LayoutParams.WRAP_CONTENT) {
+                    width = drawRect.width()
+                }
+                if (config.drawHeight == ViewGroup.LayoutParams.WRAP_CONTENT) {
+                    height = drawRect.width()
+                }
+
+                dslGravity(
+                    drawRect,
+                    config.drawGravity,
+                    width.toFloat(),
+                    height.toFloat(),
+                    config.drawOffsetX,
+                    config.drawOffsetY
+                ) { dslGravity, _, _ ->
+                    _tempDrawRect.set(
+                        dslGravity._gravityLeft,
+                        dslGravity._gravityTop,
+                        dslGravity._gravityRight,
+                        dslGravity._gravityBottom
+                    )
+                }
+
+                this(it, paint, drawRect, _tempDrawRect)
+            }
+        }
     }
 }
 
@@ -273,6 +308,12 @@ data class DrawItemDecorationConfig(
     //需要绘制的Drawable
     var drawDrawable: Drawable? = null,
 
+    //自定义绘制
+    var draw: ((canvas: Canvas, paint: Paint, decorationRect: Rect, drawRect: Rect) -> Unit)? = null,
+
+    //强制指定绘制所在的矩形坐标
+    var drawRect: Rect? = null,
+
     //绘制测量的宽高
     var drawWidth: Int = ViewGroup.LayoutParams.WRAP_CONTENT,
     var drawHeight: Int = ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -285,6 +326,9 @@ data class DrawItemDecorationConfig(
     var drawGravity: Int = Gravity.CENTER
 
 )
+
+/**是否有东西需要绘制*/
+fun DrawItemDecorationConfig.haveDraw() = drawLayoutId > 0 || drawDrawable != null || draw != null
 
 /**是否在界面中的第一个位置*/
 fun DrawItemDecorationParams.isLayoutFirst() = beforeViewHolder == null
