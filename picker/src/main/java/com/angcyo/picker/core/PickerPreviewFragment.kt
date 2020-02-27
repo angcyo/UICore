@@ -206,17 +206,18 @@ class PickerPreviewFragment : BasePickerFragment() {
                     .start()
             }
 
-            _vh.view(R.id.bottom_wrap_layout)?.run {
+            _vh.view(R.id.picker_bottom_wrap_layout)?.run {
                 animate()
                     .translationY((measuredHeight).toFloat())
+                    .alpha(0f)
                     .setDuration(Anim.ANIM_DURATION)
                     .withEndAction {
-                        _vh.gone(R.id.bottom_wrap_layout)
+                        _vh.gone(R.id.picker_bottom_wrap_layout)
                     }
                     .start()
             }
         } else {
-            _vh.visible(R.id.bottom_wrap_layout)
+            _vh.visible(R.id.picker_bottom_wrap_layout)
             _vh.visible(R.id.title_wrap_layout)
             _vh.view(R.id.title_wrap_layout)?.run {
                 animate()
@@ -225,9 +226,10 @@ class PickerPreviewFragment : BasePickerFragment() {
                     .start()
             }
 
-            _vh.view(R.id.bottom_wrap_layout)?.run {
+            _vh.view(R.id.picker_bottom_wrap_layout)?.run {
                 animate()
                     .translationY(0f)
+                    .alpha(1f)
                     .setDuration(Anim.ANIM_DURATION)
                     .start()
             }

@@ -60,7 +60,7 @@
 
     <!--底部栏-->
     <LinearLayout
-        android:id="@+id/bottom_wrap_layout"
+        android:id="@+id/picker_bottom_wrap_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
