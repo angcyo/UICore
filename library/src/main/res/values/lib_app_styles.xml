@@ -68,6 +68,7 @@
 
     <style name="LibSubTextStyle" parent="LibBodyTextStyle">
         <item name="android:textSize">@dimen/text_assist_size</item>
+        <item name="android:textColor">@color/text_sub_color</item>
     </style>
 
     <style name="LibPlaceTextStyle" parent="LibSubTextStyle">

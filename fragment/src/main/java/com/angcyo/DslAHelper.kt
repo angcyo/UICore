@@ -61,10 +61,15 @@ class DslAHelper(val context: Context) {
             config.intent = jumpIntent
         }
 
+        if (config.forceSingleTask) {
+            config.intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            config.intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+
         startIntentConfig.add(config)
     }
 
-    fun start(aClass: Class<*>, action: IntentConfig.() -> Unit = {}) {
+    fun start(aClass: Class<out Activity>, action: IntentConfig.() -> Unit = {}) {
         val intent = Intent(context, aClass)
         start(intent, action)
     }
@@ -362,6 +367,9 @@ data class IntentConfig(
 
     //Window配置
     var configWindow: (Window) -> Unit = {},
+
+    //强制使用Single_Task启动
+    var forceSingleTask: Boolean = false,
 
     //是否使用跳板[JumpActivity]
     var useJumpActivity: Boolean = false

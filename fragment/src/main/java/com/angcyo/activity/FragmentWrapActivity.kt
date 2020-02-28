@@ -24,7 +24,7 @@ open class FragmentWrapActivity : BaseAppCompatActivity() {
         fun getIntent(
             context: Context,
             targetFragment: Class<out Fragment>,
-            singTask: Boolean = true
+            singleTask: Boolean = true
         ): Intent {
             return Intent(context, FragmentWrapActivity::class.java).apply {
                 putExtra(KEY_TARGET_FRAGMENT, Intent(context, targetFragment))
@@ -33,22 +33,26 @@ open class FragmentWrapActivity : BaseAppCompatActivity() {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
 
-                if (singTask) {
+                if (singleTask) {
                     addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 }
             }
         }
 
-        fun jump(context: Context, targetFragment: Class<out Fragment>, singTask: Boolean = true) {
+        fun jump(
+            context: Context,
+            targetFragment: Class<out Fragment>,
+            singleTask: Boolean = true
+        ) {
             DslAHelper(context).apply {
-                start(getIntent(context, targetFragment, singTask))
+                start(getIntent(context, targetFragment, singleTask))
                 doIt()
             }
         }
 
         /**[targetIntent] 跳转的真实目标*/
-        fun jump(context: Context, targetIntent: Intent, singTask: Boolean = true) {
+        fun jump(context: Context, targetIntent: Intent, singleTask: Boolean = true) {
 
             if (targetIntent.component == null) {
                 L.w("需要设置启动的组件[component]")
@@ -63,7 +67,7 @@ open class FragmentWrapActivity : BaseAppCompatActivity() {
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     }
 
-                    if (singTask) {
+                    if (singleTask) {
                         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     }
