@@ -7,6 +7,7 @@ import android.net.Uri
 import android.view.View
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.angcyo.dsladapter.getViewRect
 import com.angcyo.library.ex.copyDrawable
@@ -42,6 +43,9 @@ open class PagerTransitionCallback : ViewTransitionCallback(), ViewPager.OnPageC
             field = value
             _primaryPosition = value
         }
+
+    /**创建页面适配器*/
+    var onCreatePagerAdapter: (() -> PagerAdapter?)? = null
 
     /**界面加载的[position], 可以并没有一一对应在[RecyclerView]的布局中*/
     var onPositionConvert: (position: Int) -> Int = { it }

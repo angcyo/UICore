@@ -103,7 +103,7 @@ class DslLuban {
                         firstOrNull()?.let {
                             val targetFile = Media.copyFrom(
                                 it,
-                                folderPath(Constant.compressFolderName), media.width, media.height
+                                folderPath(Constant.LUBAN_FOLDER_NAME), media.width, media.height
                             )
                             media.compressPath = targetFile.absolutePath
                             media.fileSize = media.compressPath.fileSize()

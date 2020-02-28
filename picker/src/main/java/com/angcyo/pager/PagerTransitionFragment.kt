@@ -162,6 +162,12 @@ open class PagerTransitionFragment : ViewTransitionFragment() {
     }
 
     fun onCreatePagerAdapter(): PagerAdapter? {
+        val adapter = pagerTransitionCallback.onCreatePagerAdapter?.invoke()
+
+        if (adapter != null) {
+            return adapter
+        }
+
         val items = mutableListOf<DslAdapterItem>()
 
         pagerTransitionCallback.loaderMediaList.forEach {

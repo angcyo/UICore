@@ -8,8 +8,12 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.Base64
 import com.angcyo.library.L
+import com.angcyo.library.utils.Constant.PICTURE_FOLDER_NAME
 import com.angcyo.library.utils.fastBlur
+import com.angcyo.library.utils.fileNameUUID
+import com.angcyo.library.utils.filePath
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.InputStream
 
 /**
@@ -131,4 +135,17 @@ fun InputStream.bitmapSize(): IntArray {
 
 fun String.bitmapSize(): IntArray {
     return file().inputStream().bitmapSize()
+}
+
+/**保存图片*/
+fun Bitmap.save(
+    path: String = filePath(PICTURE_FOLDER_NAME, fileNameUUID(".jpeg")),
+    format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
+    quality: Int = 90
+): File {
+    return path.file().apply {
+        outputStream().use {
+            compress(format, quality, it)
+        }
+    }
 }

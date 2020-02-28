@@ -43,29 +43,29 @@ object DslFileHelper {
     }
 
     fun log(name: String = fileName("yyyy-MM-dd"), data: String) =
-        write(com.angcyo.library.utils.Constant.logFolderName, name, _wrapData(data))
+        write(com.angcyo.library.utils.Constant.LOG_FOLDER_NAME, name, _wrapData(data))
 
     fun http(name: String = fileName("yyyy-MM-dd"), data: String) =
-        write(com.angcyo.library.utils.Constant.httpFolderName, name, _wrapData(data))
+        write(com.angcyo.library.utils.Constant.HTTP_FOLDER_NAME, name, _wrapData(data))
 
     fun ui(name: String = fileName("yyyy-MM-dd"), data: String) =
-        write(com.angcyo.library.utils.Constant.uiFolderName, name, _wrapData(data))
+        write(com.angcyo.library.utils.Constant.UI_FOLDER_NAME, name, _wrapData(data))
 
     fun crash(name: String = fileName(), data: String) =
-        write(com.angcyo.library.utils.Constant.crashFolderName, name, _wrapData(data))
+        write(com.angcyo.library.utils.Constant.CRASH_FOLDER_NAME, name, _wrapData(data))
 
     fun down(name: String = fileName("yyyy-MM-dd"), data: String) =
-        write(com.angcyo.library.utils.Constant.downFolderName, name, _wrapData(data))
+        write(com.angcyo.library.utils.Constant.DOWN_FOLDER_NAME, name, _wrapData(data))
 
     fun camera(name: String = fileName("yyyy-MM-dd"), data: String) =
-        write(com.angcyo.library.utils.Constant.cameraFolderName, name, _wrapData(data))
+        write(com.angcyo.library.utils.Constant.CAMERA_FOLDER_NAME, name, _wrapData(data))
 
     fun other(name: String = fileName("yyyy-MM-dd"), data: String) =
-        write(com.angcyo.library.utils.Constant.otherFolderName, name, _wrapData(data))
+        write(com.angcyo.library.utils.Constant.OTHER_FOLDER_NAME, name, _wrapData(data))
 
 
     fun error(name: String = fileName("yyyy-MM-dd"), data: String) =
-        write(com.angcyo.library.utils.Constant.errorFolderName, name, _wrapData(data))
+        write(com.angcyo.library.utils.Constant.ERROR_FOLDER_NAME, name, _wrapData(data))
 
     fun _wrapData(data: String): String {
         return buildString {

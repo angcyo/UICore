@@ -75,7 +75,7 @@ object DslPicker {
             val uri =
                 fileUri(
                     activity,
-                    File(filePath(Constant.cameraFolderName, fileName(suffix = ".jpeg")))
+                    File(filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".jpeg")))
                 )
             takePhotoIntent(activity, uri).run {
                 FragmentBridge.install(activity.supportFragmentManager)
@@ -110,7 +110,7 @@ object DslPicker {
             val uri =
                 fileUri(
                     activity,
-                    File(filePath(Constant.cameraFolderName, fileName(suffix = ".mp4")))
+                    File(filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".mp4")))
                 )
             takeVideoIntent(activity, uri, videoQuality, maxSize, maxDuration).run {
                 FragmentBridge.install(activity.supportFragmentManager)

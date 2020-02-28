@@ -58,7 +58,7 @@ class RCropActivity : UCropActivity() {
             val sourcePath = uri.path
             val file = File(sourcePath!!)
             val targetFile =
-                Media.copyFrom(file, folderPath(Constant.cropFolderName), imageWidth, imageHeight)
+                Media.copyFrom(file, folderPath(Constant.CROP_FOLDER_NAME), imageWidth, imageHeight)
             if (targetFile.exists()) {
                 super.setResultUri(
                     Uri.fromFile(targetFile),

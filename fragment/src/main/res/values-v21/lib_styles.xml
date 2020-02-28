@@ -2,7 +2,7 @@
 <resources>
 
     <style name="BaseAppTheme" parent="BaseTheme">
-        <!--开启此属性, 效果等于 SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN -->
+        <!--开启此属性, 效果等于 SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN, 半透明状态栏效果 -->
         <!--<item name="android:windowTranslucentStatus">true</item>-->
 
         <!--转场动画相关-->
@@ -25,13 +25,14 @@
     </style>
 
     <style name="BaseSplashTheme" parent="BaseTranStatusTheme">
-        <item name="android:windowTranslucentStatus">true</item>
         <item name="android:navigationBarColor">@color/transparent</item>
     </style>
 
     <!--透明状态栏主题, 多用于启动页, 透明状态栏会影响 dialog中 EditText弹出键盘-->
     <style name="BaseTranStatusTheme" parent="BaseWhiteAppTheme">
-        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <!--全透明状态栏-->
+        <item name="android:statusBarColor">@color/transparent</item>
     </style>
 
     <style name="BaseTranTheme" parent="BaseAppTheme">

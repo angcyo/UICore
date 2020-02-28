@@ -66,7 +66,7 @@ class DslCrop {
             return
         }
 
-        val saveUri = cropSaveUri ?: Uri.fromFile(File(filePath(Constant.cropFolderName)))
+        val saveUri = cropSaveUri ?: Uri.fromFile(File(filePath(Constant.CROP_FOLDER_NAME)))
 
         val intent = UCrop.of(cropUri!!, saveUri).run {
             //指定剪切框的比例, 这样就看不到其他比例选项了. 0,0可以恢复默认
