@@ -105,6 +105,24 @@ class DslShortcut(val context: Context) {
 
         if (shortcutAction.have(ACTION_TYPE_REMOVE_SHORTCUT)) {
             ShortcutManagerCompat.removeDynamicShortcuts(context, listOf(shortcutId))
+
+            //https://blog.csdn.net/lanfei1027/article/details/48297409
+            val shortcut = Intent("com.android.launcher.action.UNINSTALL_SHORTCUT")
+            //快捷方式的名称
+            shortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, shortcutLabel)
+            /*删除和创建需要对应才能找到快捷方式并成功删除**/
+            val intent = Intent()
+            if (canCreateShortcut) {
+                try {
+                    intent.setClass(context, Class.forName(shortcutIntent!!.component!!.className))
+                } catch (e: Exception) {
+                    L.e(e)
+                }
+            }
+            intent.action = Intent.ACTION_VIEW
+            //intent.addCategory("android.intent.category.LAUNCHER")
+            shortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, intent);
+            context.sendBroadcast(shortcut);
         }
 
         if (context !is Activity) {
@@ -125,6 +143,7 @@ class DslShortcut(val context: Context) {
                     shortcutLabel?.run { setShortLabel(this) }
                     shortcutLongLabel?.run { setLongLabel(this) }
                     shortcutDisabledMessage?.run { setDisabledMessage(this) }
+                    setLongLived(true)
                 }
                 .build()
         } else {
@@ -154,6 +173,10 @@ class DslShortcut(val context: Context) {
             //注意：因为是从Lanucher中启动，所以这里用到了ComponentName
             //其中new ComponentName这里的第二个参数，是Activity的全路径名，也就是包名类名要写全。
             //shortcutIntent.component = ComponentName(this.getPackageName(), "这里是包名.类名")
+
+            //https://blog.csdn.net/c676063769/article/details/25485685
+            //不允许重复创建, 测试没通过
+            resultIntent.putExtra("duplicate", false)
 
             //设置Action 可行, Android R 不可行.
             resultIntent.action = "com.android.launcher.action.INSTALL_SHORTCUT"
