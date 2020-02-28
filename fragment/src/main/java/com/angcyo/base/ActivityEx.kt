@@ -73,6 +73,21 @@ fun Activity.setNavigationBarColor(color: Int) {
     }
 }
 
+/**半透明/全透明 导航栏
+ * https://www.jianshu.com/p/add47d6bde29*/
+fun Activity.translucentNavigationBar(full: Boolean = false) {
+    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+    if (full) {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+        setNavigationBarColor(Color.TRANSPARENT)
+        window.decorView.systemUiVisibility =
+            window.decorView.systemUiVisibility or
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+    } else {
+        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+    }
+}
 
 private fun Int.remove(value: Int): Int = this and value.inv()
 

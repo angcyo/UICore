@@ -365,6 +365,8 @@ data class FilterParams(
     var filterData: Any? = null
 )
 
+typealias DispatchUpdates = (dslAdapter: DslAdapter) -> Unit
+
 interface OnDispatchUpdatesListener {
     /**
      * 当触发了[dispatchUpdatesTo]后回调

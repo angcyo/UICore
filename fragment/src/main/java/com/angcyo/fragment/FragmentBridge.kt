@@ -144,3 +144,16 @@ class FragmentBridge : Fragment() {
         }
     }
 }
+
+/**启动一个Activity和Fragment通信桥梁, 直接回调.
+ * [onActivityResult] [onRequestPermissionsResult]
+ * */
+fun dslBridge(fragmentManager: FragmentManager?, action: FragmentBridge.() -> Unit) {
+    if (fragmentManager == null) {
+        L.w("fragmentManager is null.")
+    } else {
+        FragmentBridge.install(fragmentManager).apply {
+            action()
+        }
+    }
+}

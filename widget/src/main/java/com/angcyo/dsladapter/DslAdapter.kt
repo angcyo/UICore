@@ -19,6 +19,8 @@ import kotlin.math.min
  * @date 2019/08/09
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
+
+
 open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     RecyclerView.Adapter<DslViewHolder>(), OnDispatchUpdatesListener {
 
@@ -86,7 +88,10 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     /**
      * [Diff]更新数据后回调, 只会执行一次
      * */
-    var onDispatchUpdatesAfterOnce: ((dslAdapter: DslAdapter) -> Unit)? = null
+    var onDispatchUpdatesAfterOnce: DispatchUpdates? = null
+
+    val dispatchUpdatesAfterList = mutableListOf<DispatchUpdates>()
+    val dispatchUpdatesAfterOnceList = mutableListOf<DispatchUpdates>()
 
     init {
         dslDataFilter = DslDataFilter(this)
@@ -190,6 +195,24 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     override fun onDispatchUpdatesAfter(dslAdapter: DslAdapter) {
         onDispatchUpdatesAfterOnce?.invoke(dslAdapter)
         onDispatchUpdatesAfterOnce = null
+
+        dispatchUpdatesAfterOnceList.forEach {
+            it.invoke(dslAdapter)
+        }
+
+        dispatchUpdatesAfterOnceList.clear()
+
+        dispatchUpdatesAfterList.forEach {
+            it.invoke(dslAdapter)
+        }
+    }
+
+    fun onDispatchUpdates(action: DispatchUpdates) {
+        dispatchUpdatesAfterList.add(action)
+    }
+
+    fun onDispatchUpdatesOnce(action: DispatchUpdates) {
+        dispatchUpdatesAfterOnceList.add(action)
     }
 
     //</editor-fold>
