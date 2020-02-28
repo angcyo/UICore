@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="qr_code_scan_tip_top">130dp</dimen>
+    <dimen name="qr_code_scan_bottom">80dp</dimen>
+</resources>
