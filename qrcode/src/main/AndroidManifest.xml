@@ -4,7 +4,6 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
-
     <application>
         <!--扫一扫-->
         <activity
@@ -13,6 +12,6 @@
             android:excludeFromRecents="false"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/CodeActivityStyle" />
     </application>
 </manifest>

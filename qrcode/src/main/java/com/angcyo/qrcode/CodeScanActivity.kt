@@ -2,6 +2,7 @@ package com.angcyo.qrcode
 
 import android.os.Bundle
 import com.angcyo.base.translucentNavigationBar
+import com.angcyo.base.translucentStatusBar
 import com.angcyo.rcode.ScanActivity
 import com.angcyo.rcode.ScanFragment
 
@@ -20,6 +21,7 @@ open class CodeScanActivity : ScanActivity() {
 
     override fun initScanLayout(savedInstanceState: Bundle?) {
         super.initScanLayout(savedInstanceState)
+        translucentStatusBar(true)
         translucentNavigationBar(true)
     }
 
