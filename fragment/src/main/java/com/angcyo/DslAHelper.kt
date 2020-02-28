@@ -1,6 +1,7 @@
 package com.angcyo
 
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -14,6 +15,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import androidx.core.view.ViewCompat
+import androidx.fragment.app.Fragment
+import com.angcyo.activity.FragmentWrapActivity
+import com.angcyo.activity.JumpActivity
 import com.angcyo.base.RevertWindowTransitionListener
 import com.angcyo.library.L
 
@@ -46,12 +50,32 @@ class DslAHelper(val context: Context) {
         if (context is Activity) {
             config.configWindow(context.window)
         }
+
+        //跳板Activity
+        if (config.useJumpActivity) {
+            val jumpIntent = Intent(config.intent)
+            jumpIntent.component = ComponentName(context, JumpActivity::class.java)
+            jumpIntent.putExtra(JumpActivity.KEY_JUMP_TARGET, intent)
+            jumpIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            jumpIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            config.intent = jumpIntent
+        }
+
         startIntentConfig.add(config)
     }
 
     fun start(aClass: Class<*>, action: IntentConfig.() -> Unit = {}) {
         val intent = Intent(context, aClass)
         start(intent, action)
+    }
+
+    /**使用[FragmentWrapActivity]包裹启动[Fragment]*/
+    fun start(
+        fragment: Class<out Fragment>,
+        singTask: Boolean = true,
+        action: IntentConfig.() -> Unit = {}
+    ) {
+        start(FragmentWrapActivity.getIntent(context, fragment, singTask), action)
     }
 
     //</editor-fold desc="start操作">
@@ -130,7 +154,7 @@ class DslAHelper(val context: Context) {
         if (context is Activity) {
             val config = IntentConfig(Intent())
             config.action()
-            
+
             context.setResult(config.resultCode, config.resultData)
             config.configWindow(context.window)
 
@@ -337,7 +361,10 @@ data class IntentConfig(
     val sharedElementList: MutableList<Pair<View, String>> = mutableListOf(),
 
     //Window配置
-    var configWindow: (Window) -> Unit = {}
+    var configWindow: (Window) -> Unit = {},
+
+    //是否使用跳板[JumpActivity]
+    var useJumpActivity: Boolean = false
 )
 
 /**去掉系统默认的动画*/

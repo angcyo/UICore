@@ -21,23 +21,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/core_provider_paths" />
         </provider>
-
-        <!--跳板Activity-->
-        <activity
-            android:name=".activity.JumpActivity"
-            android:excludeFromRecents="true"
-            android:launchMode="singleInstance"
-            android:taskAffinity=""
-            android:theme="@android:style/Theme.NoDisplay" />
-
-        <!--Fragment包裹容器-->
-        <activity
-            android:name=".activity.FragmentWrapActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize|fontScale|smallestScreenSize|density|screenLayout"
-            android:launchMode="standard"
-            android:rotationAnimation="seamless"
-            android:screenOrientation="fullSensor"
-            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

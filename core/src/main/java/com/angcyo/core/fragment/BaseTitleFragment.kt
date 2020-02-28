@@ -16,6 +16,7 @@ import com.angcyo.behavior.refresh.RefreshHeaderBehavior
 import com.angcyo.core.R
 import com.angcyo.core.appendTextItem
 import com.angcyo.core.behavior.ArcLoadingHeaderBehavior
+import com.angcyo.library.component.RBackground
 import com.angcyo.library.ex.colorFilter
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslGroupHelper
@@ -133,7 +134,10 @@ abstract class BaseTitleFragment : BaseFragment() {
 
     /**是否要显示返回按钮*/
     open fun enableBackItem(): Boolean {
-        return enableBackItem || (topFragment() == this && fragmentManager?.getAllValidityFragment()?.size ?: 0 > 0)
+        val count = fragmentManager?.getAllValidityFragment()?.size ?: 0
+        return enableBackItem /*强制激活了返回按钮*/ ||
+                (count <= 0 && RBackground.stack.size() > 1) /*存在多个Activity, 没有可见的Fragment*/ ||
+                (topFragment() == this && count > 0) /*可见Fragment数量大于0*/
     }
 
     //<editor-fold desc="操作方法">
