@@ -4,5 +4,5 @@ dependencies {
     implementation project(allModule.fragment)
 
     //https://github.com/angcyo/QrCodeZxingZbar
-    api 'com.github.angcyo:QrCodeZxingZbar:1.0.1'
+    api 'com.github.angcyo:QrCodeZxingZbar:1.0.2'
 }
