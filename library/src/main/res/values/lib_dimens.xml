@@ -26,4 +26,6 @@
     <dimen name="lib_line_px">1px</dimen>
     <dimen name="lib_line">1dp</dimen>
 
+    <dimen name="lib_icon_tip_size">25dp</dimen>
+
 </resources>

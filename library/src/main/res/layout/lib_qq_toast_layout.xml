@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/lib_hdpi"
-        android:background="@drawable/lib_toast_bg_shape"
+        android:background="@drawable/lib_qq_toast_bg_shape"
         android:elevation="@dimen/lib_elevation"
         android:minHeight="40dp"
         android:paddingLeft="@dimen/lib_xhdpi"
@@ -32,7 +32,7 @@
                 android:layout_marginRight="@dimen/lib_xhdpi"
                 android:scaleType="fitXY"
                 android:visibility="gone"
-                tools:src="@drawable/lib_ic_waring"
+                tools:src="@drawable/lib_ic_info"
                 tools:visibility="visible" />
 
             <TextView
@@ -40,7 +40,6 @@
                 style="@style/LibBodyTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/lib_white"
                 tools:text="测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容" />
         </LinearLayout>
 

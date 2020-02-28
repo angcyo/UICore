@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
+import androidx.annotation.LayoutRes
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.getDimen
 import com.angcyo.library.ex.undefined_int
@@ -280,12 +281,12 @@ fun toast(action: ToastConfig.() -> Unit) {
 
 fun toast(
     text: CharSequence?,
-    @DrawableRes
-    icon: Int = undefined_res,
+    @DrawableRes icon: Int = undefined_res,
+    @LayoutRes layoutId: Int = R.layout.lib_toast_layout,
     action: ToastConfig.() -> Unit = {}
 ) {
     DslToast.show {
-        layoutId = R.layout.lib_toast_layout
+        this.layoutId = layoutId
         this.text = text ?: ""
         this.icon = icon
 
