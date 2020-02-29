@@ -68,3 +68,10 @@ fun takeVideoIntent(
 
     return intent
 }
+
+/**打开网页的[Intent]*/
+fun String.urlIntent(): Intent {
+    return Intent(Intent.ACTION_VIEW, Uri.parse(this)).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+}

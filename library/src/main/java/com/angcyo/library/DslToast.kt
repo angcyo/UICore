@@ -293,3 +293,12 @@ fun toast(
         this.action()
     }
 }
+
+fun toastQQ(
+    text: CharSequence?,
+    @DrawableRes icon: Int = undefined_res,
+    @LayoutRes layoutId: Int = R.layout.lib_qq_toast_layout,
+    action: ToastConfig.() -> Unit = {}
+) {
+    toast(text, icon, layoutId, action)
+}

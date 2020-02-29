@@ -28,7 +28,7 @@ import com.angcyo.library.L
  * @date 2019/12/24
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-class DslAHelper(val context: Context) {
+class DslAHelper(private val context: Context) {
 
     /**需要启动的[Intent]*/
     val startIntentConfig = mutableListOf<IntentConfig>()
