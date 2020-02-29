@@ -24,9 +24,9 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     companion object {
         /**当滚动距离大于多少时, 视为滚动了*/
-        const val scrollDistanceSlop = 0
+        var scrollDistanceSlop = 0
         /**当Fling速度大于多少时, 视为Fling*/
-        const val flingVelocitySlop = 0
+        var flingVelocitySlop = 0
 
         const val HANDLE_TOUCH_TYPE_DISPATCH = 1
         const val HANDLE_TOUCH_TYPE_INTERCEPT = 2
@@ -51,6 +51,8 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     /**是否处于长按状态下*/
     var isLongPress = false
+
+    var scaledTouchSlop = 0
 
     //<editor-fold desc="手势处理">
 
@@ -142,6 +144,10 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) :
         }).apply {
             setIsLongpressEnabled(false)
         }
+
+    init {
+        scaledTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
+    }
 
     @CallSuper
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {

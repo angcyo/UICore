@@ -67,10 +67,7 @@ abstract class SwipeBackLayout : TouchLayout {
      * The drag helper callback interface for the Left position
      */
     private val mLeftCallback: ViewDragHelper.Callback = object : ViewDragHelper.Callback() {
-        override fun tryCaptureView(
-            child: View,
-            pointerId: Int
-        ): Boolean {
+        override fun tryCaptureView(child: View, pointerId: Int): Boolean {
             isCaptureAbort = false
             if (!enableSwipeBack) {
                 return false
@@ -85,11 +82,7 @@ abstract class SwipeBackLayout : TouchLayout {
             } else false
         }
 
-        override fun clampViewPositionHorizontal(
-            child: View,
-            left: Int,
-            dx: Int
-        ): Int {
+        override fun clampViewPositionHorizontal(child: View, left: Int, dx: Int): Int {
             return clamp(left, 0, mScreenWidth)
         }
 
@@ -97,11 +90,7 @@ abstract class SwipeBackLayout : TouchLayout {
             return mScreenWidth
         }
 
-        override fun onViewReleased(
-            releasedChild: View,
-            xvel: Float,
-            yvel: Float
-        ) {
+        override fun onViewReleased(releasedChild: View, xvel: Float, yvel: Float) {
             super.onViewReleased(releasedChild, xvel, yvel)
             val left = releasedChild.left
             var settleLeft = 0

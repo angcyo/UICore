@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SliderMenuLayout">
+        <!--这个值 乘以 父控件的宽度,就是菜单布局的宽度-->
+        <attr name="r_menu_max_width" format="float" />
+        <!--菜单view在xml中, 需要在内容上面-->
+        <attr name="r_menu_view_index" format="integer" />
+        <attr name="r_enable_content_linkage" format="boolean" />
+        <attr name="r_enable_content_dim" format="boolean" />
+        <attr name="r_enable_menu_parallax" format="boolean" />
+        <attr name="r_menu_slider_gravity" format="enum">
+            <enum name="SLIDER_GRAVITY_LEFT" value="1" />
+            <enum name="SLIDER_GRAVITY_RIGHT" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>
