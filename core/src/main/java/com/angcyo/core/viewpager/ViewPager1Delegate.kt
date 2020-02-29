@@ -15,8 +15,8 @@ open class ViewPager1Delegate(val viewPager: ViewPager, val dslTabLayout: DslTab
     ViewPager.OnPageChangeListener, ViewPagerDelegate {
 
     companion object {
-        fun install(viewPager: ViewPager, dslTabLayout: DslTabLayout?) {
-            ViewPager1Delegate(viewPager, dslTabLayout)
+        fun install(viewPager: ViewPager, dslTabLayout: DslTabLayout?): ViewPager1Delegate {
+            return ViewPager1Delegate(viewPager, dslTabLayout)
         }
     }
 

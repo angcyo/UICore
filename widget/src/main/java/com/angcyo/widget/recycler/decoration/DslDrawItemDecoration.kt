@@ -324,7 +324,6 @@ data class DrawItemDecorationConfig(
 
     //相对于ItemView的Gravity
     var drawGravity: Int = Gravity.CENTER
-
 )
 
 /**是否有东西需要绘制*/

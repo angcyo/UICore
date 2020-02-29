@@ -313,17 +313,6 @@ class DslGlide {
 
     //<editor-fold desc="辅助扩展">
 
-    fun View.clear() {
-        try {
-            Glide.with(this).clear(this)
-            tag = null
-        } catch (e: Exception) {
-            L.e(e)
-        }
-        (getTag(R.id.tag_ok_type) as? Call)?.cancel()
-        setTag(R.id.tag_ok_type, null)
-    }
-
     //附加请求
     fun Call.attach() {
         targetView?.setTag(R.id.tag_ok_type, this)
@@ -420,6 +409,28 @@ class DslGlide {
     }
 
     //</editor-fold desc="辅助扩展">
-
 }
 
+fun dslGlide(imageView: ImageView, uri: Uri?, action: DslGlide.() -> Unit = {}) {
+    DslGlide().apply {
+        targetView = imageView
+        if (placeholderDrawable == null) {
+            imageView.drawable?.also {
+                placeholderDrawable = it
+            }
+        }
+        action()
+        load(uri)
+    }
+}
+
+fun View.clear() {
+    try {
+        Glide.with(this).clear(this)
+        tag = null
+    } catch (e: Exception) {
+        L.e(e)
+    }
+    (getTag(R.id.tag_ok_type) as? Call)?.cancel()
+    setTag(R.id.tag_ok_type, null)
+}
