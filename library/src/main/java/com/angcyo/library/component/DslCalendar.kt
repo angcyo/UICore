@@ -9,7 +9,7 @@ import java.util.*
  * @date 2020/02/27
  */
 class DslCalendar(time: Long = System.currentTimeMillis()) {
-    var calendar = Calendar.getInstance()
+    val calendar = Calendar.getInstance()
 
     //<editor-fold desc="动态计算的获取属性">
 
