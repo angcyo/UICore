@@ -6,6 +6,7 @@ import com.angcyo.DslAHelper
 import com.angcyo.DslFHelper
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.library.L
+import com.angcyo.library.component.work.Trackers
 import com.angcyo.library.ex.hawkGet
 import com.angcyo.library.ex.hawkPut
 import com.angcyo.library.ex.isRelease
@@ -110,6 +111,9 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
                 appendln()
                 Device.deviceInfo(it, this)
             }
+
+            appendln()
+            append(Trackers.getInstance().networkStateTracker.activeNetworkState.toString())
 
             //异常错误信息
             appendln()

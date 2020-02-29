@@ -2,6 +2,7 @@ package com.angcyo.item
 
 import android.os.StatFs
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.library.component.work.Trackers
 import com.angcyo.library.ex.*
 import com.angcyo.library.toast
 import com.angcyo.library.utils.Device
@@ -63,6 +64,10 @@ class DslLastDeviceInfoItem : DslAdapterItem() {
             appendln()
             Device.buildString(this._builder)
             Device.screenInfo(itemHolder.content, this._builder)
+
+            //网络信息
+            appendln()
+            append(Trackers.getInstance().networkStateTracker.activeNetworkState.toString())
 
             itemData = this
 
