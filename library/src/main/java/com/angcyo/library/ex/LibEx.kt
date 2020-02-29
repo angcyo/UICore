@@ -16,6 +16,10 @@ fun isDebugType() = "debug".equals(BuildConfig.BUILD_TYPE, true)
 
 fun isDebug() = BuildConfig.DEBUG
 
+fun Float.abs() = kotlin.math.abs(this)
+
+fun Int.abs() = kotlin.math.abs(this)
+
 fun Any?.hash(): String? {
     return this?.hashCode()?.run { Integer.toHexString(this) }
 }

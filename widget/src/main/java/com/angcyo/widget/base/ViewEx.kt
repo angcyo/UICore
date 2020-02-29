@@ -248,6 +248,18 @@ fun View?.lowProfile(lowProfile: Boolean = true) {
     }
 }
 
+fun View?.padding(p: Int) {
+    this?.setPadding(p, p, p, p)
+}
+
+fun View?.paddingHorizontal(p: Int) {
+    this?.setPadding(p, paddingTop, p, paddingBottom)
+}
+
+fun View?.paddingVertical(p: Int) {
+    this?.setPadding(paddingLeft, p, paddingRight, p)
+}
+
 //</editor-fold desc="基础扩展">
 
 //<editor-fold desc="layoutParams扩展">

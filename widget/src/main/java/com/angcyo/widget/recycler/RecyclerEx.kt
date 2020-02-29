@@ -42,13 +42,14 @@ fun RecyclerView.initDsl() {
 }
 
 /**快速初始化[DslAdapter]*/
-fun RecyclerView.initDslAdapter(action: DslAdapter.() -> Unit) {
+fun RecyclerView.initDslAdapter(action: DslAdapter.() -> Unit = {}): DslAdapter {
     initDsl()
     if (layoutManager == null) {
         resetLayoutManager("v")
     }
-    adapter = DslAdapter().apply {
+    return DslAdapter().apply {
         this.action()
+        adapter = this
     }
 }
 
