@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import com.angcyo.behavior.BaseDependsBehavior
 import com.angcyo.behavior.ITitleBarBehavior
+import com.angcyo.widget.base.mH
 
 /**
  * 单纯用来标识当前[child]是什么行为
@@ -16,10 +17,10 @@ class TitleBarPlaceholderBehavior(context: Context? = null, attributeSet: Attrib
     BaseDependsBehavior<View>(context, attributeSet), ITitleBarBehavior {
 
     override fun getContentExcludeHeight(behavior: BaseDependsBehavior<*>): Int {
-        return childView.measuredHeight
+        return childView.mH()
     }
 
     override fun getContentOffsetTop(behavior: BaseDependsBehavior<*>): Int {
-        return childView.measuredHeight
+        return childView.mH()
     }
 }

@@ -2,6 +2,7 @@ package com.angcyo.behavior.refresh
 
 import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.behavior.BehaviorInterpolator
+import com.angcyo.widget.base.mH
 import kotlin.math.absoluteValue
 
 /**
@@ -48,22 +49,14 @@ class RefreshEffectConfig : IRefreshBehavior {
         if (scrollY > 0) {
             result = if (dy < 0) {
                 //继续下拉, 才需要阻尼, 反向不需要
-                behaviorInterpolator.getInterpolation(
-                    behavior,
-                    -dy,
-                    behavior.childView.measuredHeight
-                )
+                behaviorInterpolator.getInterpolation(behavior, -dy, behavior.childView.mH())
             } else {
                 -dy
             }
         } else {
             result = if (dy > 0) {
                 //继续上拉, 才需要阻尼, 反向不需要
-                behaviorInterpolator.getInterpolation(
-                    behavior,
-                    -dy,
-                    behavior.childView.measuredHeight
-                )
+                behaviorInterpolator.getInterpolation(behavior, -dy, behavior.childView.mH())
             } else {
                 -dy
             }

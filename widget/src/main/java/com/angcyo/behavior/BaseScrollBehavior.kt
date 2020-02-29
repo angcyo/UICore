@@ -48,8 +48,8 @@ open class BaseScrollBehavior<T : View>(
 
     /**滚动值响应界面的处理*/
     var onScrollTo: (x: Int, y: Int) -> Unit = { x, y ->
-        childView.offsetLeftTo(x + offsetLeft)
-        childView.offsetTopTo(y + offsetTop)
+        childView?.offsetLeftTo(x + offsetLeft)
+        childView?.offsetTopTo(y + offsetTop)
     }
 
     init {

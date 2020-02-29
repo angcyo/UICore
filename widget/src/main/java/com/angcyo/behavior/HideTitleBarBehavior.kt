@@ -39,7 +39,7 @@ open class HideTitleBarBehavior(
     init {
         showLog = false
         onScrollTo = { _, y ->
-            childView.offsetTopTo(y)
+            childView?.offsetTopTo(y)
         }
     }
 
@@ -121,14 +121,14 @@ open class HideTitleBarBehavior(
     }
 
     override fun getContentExcludeHeight(behavior: BaseDependsBehavior<*>): Int {
-        return if (ignoreStatusBar) 0 else childView.getStatusBarHeight()
+        return if (ignoreStatusBar) 0 else childView?.getStatusBarHeight() ?: 0
     }
 
     override fun getContentOffsetTop(behavior: BaseDependsBehavior<*>): Int {
-        return if (ViewCompat.isLaidOut(childView)) {
-            childView.bottom
-        } else {
-            childView.measuredHeight + scrollY
+        return when {
+            childView == null -> 0
+            ViewCompat.isLaidOut(childView!!) -> childView?.bottom ?: 0
+            else -> childView.mH() + scrollY
         }
     }
 }

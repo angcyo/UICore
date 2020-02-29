@@ -1,5 +1,6 @@
 package com.angcyo.behavior.refresh
 
+import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.offsetTopTo
 
 /**
@@ -13,7 +14,7 @@ interface IRefreshBehavior {
 
     /**当内容滚动时, 界面需要处理的回调*/
     fun onContentScrollTo(behavior: RefreshBehavior, x: Int, y: Int) {
-        behavior.childView.offsetTopTo(y + behavior.offsetTop)
+        behavior.childView?.offsetTopTo(y + behavior.offsetTop)
     }
 
     /**当内容over滚动时回调*/
@@ -35,7 +36,7 @@ interface IRefreshBehavior {
         when (to) {
             RefreshBehavior.STATUS_REFRESH -> {
                 if (!touchHold) {
-                    behavior.startScrollTo(0, behavior.childView.measuredHeight / 2)
+                    behavior.startScrollTo(0, behavior.childView.mH() / 2)
                 }
                 behavior.onRefresh(behavior)
             }

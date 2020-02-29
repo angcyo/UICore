@@ -6,6 +6,7 @@ import com.angcyo.behavior.refresh.RefreshBehavior
 import com.angcyo.behavior.refresh.RefreshHeaderBehavior
 import com.angcyo.core.R
 import com.angcyo.widget.base.find
+import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.parentMeasuredHeight
 import com.angcyo.widget.progress.ArcLoadingView
 import kotlin.math.min
@@ -34,7 +35,7 @@ class ArcLoadingHeaderBehavior(context: Context, attributeSet: AttributeSet? = n
                 val bHeight = parentMeasuredHeight() - bottom
                 if (y >= bHeight) {
                     val progress =
-                        (((y - bHeight) * 1f / (childView.measuredHeight)) * 100).toInt()
+                        (((y - bHeight) * 1f / (childView.mH())) * 100).toInt()
                     this.progress = min(progress, 51)
                 }
             }
@@ -46,7 +47,7 @@ class ArcLoadingHeaderBehavior(context: Context, attributeSet: AttributeSet? = n
             behavior.refreshStatus == RefreshBehavior.STATUS_FINISH -> {
                 behavior.refreshStatus = RefreshBehavior.STATUS_NORMAL
             }
-            behavior.scrollY >= childView.measuredHeight -> {
+            behavior.scrollY >= childView.mH() -> {
                 //触发刷新
                 behavior.refreshStatus = RefreshBehavior.STATUS_REFRESH
             }
@@ -68,7 +69,7 @@ class ArcLoadingHeaderBehavior(context: Context, attributeSet: AttributeSet? = n
         when (to) {
             RefreshBehavior.STATUS_REFRESH -> {
                 if (!touchHold) {
-                    behavior.startScrollTo(0, childView.measuredHeight)
+                    behavior.startScrollTo(0, childView.mH())
                 }
                 behavior.onRefresh(behavior)
             }

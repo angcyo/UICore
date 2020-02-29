@@ -27,9 +27,10 @@ abstract class BaseDependsBehavior<T : View>(
     var enableDependsOn = true
 
     //常用对象
-    lateinit var childView: T
-    lateinit var parentLayout: CoordinatorLayout
+    var childView: T? = null
+    var parentLayout: CoordinatorLayout? = null
 
+    /**当[CoordinatorLayout]只有一个child时, 这个方法不会回调*/
     @CallSuper
     override fun layoutDependsOn(parent: CoordinatorLayout, child: T, dependency: View): Boolean {
         parentLayout = parent
@@ -47,11 +48,11 @@ abstract class BaseDependsBehavior<T : View>(
     }
 
     fun postInvalidate() {
-        parentLayout.postInvalidate()
+        parentLayout?.postInvalidate()
     }
 
     fun invalidate() {
-        parentLayout.invalidate()
+        parentLayout?.invalidate()
     }
 
     /**是否处于内嵌滚动中*/
