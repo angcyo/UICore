@@ -260,6 +260,30 @@ fun View?.paddingVertical(p: Int) {
     this?.setPadding(paddingLeft, p, paddingRight, p)
 }
 
+fun View?.mH(def: Int = 0): Int {
+    return this?.measuredHeight ?: def
+}
+
+fun View?.mW(def: Int = 0): Int {
+    return this?.measuredWidth ?: def
+}
+
+fun View?.l(def: Int = 0): Int {
+    return this?.left ?: def
+}
+
+fun View?.t(def: Int = 0): Int {
+    return this?.top ?: def
+}
+
+fun View?.r(def: Int = 0): Int {
+    return this?.right ?: def
+}
+
+fun View?.b(def: Int = 0): Int {
+    return this?.bottom ?: def
+}
+
 //</editor-fold desc="基础扩展">
 
 //<editor-fold desc="layoutParams扩展">
