@@ -39,11 +39,6 @@ import com.angcyo.widget.text.DslTextView
  */
 abstract class BaseTitleFragment : BaseFragment() {
 
-    init {
-        /**Fragment根布局*/
-        fragmentLayoutId = R.layout.lib_title_fragment
-    }
-
     /**自定义内容布局*/
     var contentLayoutId: Int = -1
 
@@ -82,6 +77,13 @@ abstract class BaseTitleFragment : BaseFragment() {
 
     var fragmentUI: FragmentUI? = null
         get() = field ?: BaseUI.fragmentUI
+
+    init {
+        /**Fragment根布局*/
+        fragmentLayoutId = R.layout.lib_title_fragment
+
+        fragmentTitle = this.javaClass.simpleName
+    }
 
     //</editor-fold desc="操作属性">
 
@@ -186,7 +188,7 @@ abstract class BaseTitleFragment : BaseFragment() {
 
         rootControl().setBackground(fragmentConfig.fragmentBackgroundDrawable)
 
-        fragmentTitle = fragmentTitle ?: this.javaClass.simpleName
+        fragmentTitle = fragmentTitle
     }
 
     /**初始化[Behavior]*/
