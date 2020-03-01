@@ -17,12 +17,14 @@
 
     <declare-styleable name="AutoCompleteEditText">
         <!--默认自动输入提示文本-->
-        <attr name="r_auto_complete_text" format="string"/>
+        <attr name="r_auto_complete_text" format="string" />
         <!--分隔符默认是 `|` -->
-        <attr name="r_auto_complete_text_separator" format="string"/>
+        <attr name="r_auto_complete_text_separator" format="string" />
         <!--收到焦点, 就展示-->
-        <attr name="r_auto_complete_show_on_focus" format="boolean"/>
+        <attr name="r_auto_complete_show_on_focus" format="boolean" />
         <!--收到焦点, 展示时的延迟时间-->
-        <attr name="r_auto_complete_focus_delay" format="integer"/>
+        <attr name="r_auto_complete_focus_delay" format="integer" />
+
+        <attr name="r_auto_complete_show_item_delete" format="boolean" />
     </declare-styleable>
 </resources>

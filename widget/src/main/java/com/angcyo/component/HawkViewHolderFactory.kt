@@ -7,13 +7,13 @@ import android.widget.CompoundButton
 import android.widget.EditText
 import androidx.core.view.forEach
 import com.angcyo.component.HawkViewHolderFactory.Companion.hawkViewHolderFactory
-import com.angcyo.library.ex.hawkGet
-import com.angcyo.library.ex.hawkPut
+import com.angcyo.library.ex.*
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
 import com.angcyo.widget.base.onTextChange
 import com.angcyo.widget.base.setInputText
 import com.angcyo.widget.base.string
+import com.angcyo.widget.edit.AutoCompleteEditText
 
 /**
  *
@@ -61,6 +61,26 @@ open class HawkViewHolderFactory : HawkFactory {
         val key = generateKey(view)
         key?.apply {
             when (view) {
+                is AutoCompleteEditText -> {
+                    view.onItemDeleteClick = { adapter, position ->
+                        adapter.remove(position)
+
+                        generateKey(view)?.run {
+                            hawkPutList("${adapter.dataList.connect(",")}")
+                        }
+
+                        view.setDataList(
+                            adapter.dataList,
+                            view.autoCompleteShowOnFocus,
+                            view.autoCompleteFocusDelay
+                        )
+
+                        //view.dismissDropDown()
+                    }
+                    view.onTextChange(shakeDelay = 1000) {
+                        onSaveView(view)
+                    }
+                }
                 is EditText -> view.onTextChange {
                     onSaveView(view)
                 }
@@ -95,6 +115,7 @@ open class HawkViewHolderFactory : HawkFactory {
         val key = generateKey(view)
         key?.run {
             when (view) {
+                is AutoCompleteEditText -> key.hawkPutList(view.string())
                 is EditText -> key.hawkPut(view.string(false))
                 is CompoundButton -> key.hawkPut(if (view.isChecked) "1" else "0")
                 is AdapterView<*> -> key.hawkPut("${view.selectedItemPosition}")
@@ -119,6 +140,10 @@ open class HawkViewHolderFactory : HawkFactory {
         val key = generateKey(view)
         key?.apply {
             when (view) {
+                is AutoCompleteEditText -> key.hawkGetList().run {
+                    view.setDataList(this)
+                    firstOrNull()?.run { view.setInputText(this) }
+                }
                 is EditText -> key.hawkGet()?.run { view.setInputText(this) }
                 is CompoundButton -> key.hawkGet()?.run { view.isChecked = this == "1" }
                 is AdapterView<*> -> key.hawkGet()?.toIntOrNull()?.run { view.setSelection(this) }

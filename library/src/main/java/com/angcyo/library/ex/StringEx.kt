@@ -90,7 +90,7 @@ fun String?.split(
     allowEmpty: Boolean = false,
     checkExist: Boolean = false,
     maxCount: Int = Int.MAX_VALUE
-): List<String> {
+): MutableList<String> {
     val result = mutableListOf<String>()
 
     if (this.isNullOrEmpty()) {

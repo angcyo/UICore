@@ -3,7 +3,13 @@ package com.angcyo.widget.edit
 import android.content.Context
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.widget.AutoCompleteTextView
+import android.widget.ListPopupWindow
+import com.angcyo.library.L
+import com.angcyo.library.ex.hawkPutList
 import com.angcyo.library.ex.split
+import com.angcyo.library.utils.getMember
+import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
 import com.angcyo.widget.RArrayAdapter
 import com.angcyo.widget.base.onFocusChange
@@ -20,7 +26,25 @@ open class AutoCompleteEditText : CompleteEditText {
     var autoCompleteText: String? = null
     var autoCompleteTextSeparator = "\\|"
     var autoCompleteShowOnFocus = false
-    var autoCompleteFocusDelay = 0
+    var autoCompleteFocusDelay = 0L
+
+    /**显示下拉框删除的按钮*/
+    var autoCompleteShowItemDelete = false
+
+    /**长按下拉item事件*/
+    var onItemDeleteClick: (adapter: RArrayAdapter<CharSequence>, position: Int) -> Unit =
+        { adapter, position ->
+            adapter.remove(position)
+            getTag(R.id.lib_tag_hawk)?.run {
+                if (this is String) {
+                    if (this.isNotBlank()) {
+                        hawkPutList("${adapter.dataList.contains(",")}")
+                    }
+                }
+            }
+            setDataList(adapter.dataList, autoCompleteShowOnFocus, autoCompleteFocusDelay)
+            //dismissDropDown()
+        }
 
     constructor(context: Context) : super(context) {
         initAutoEditText(context, null)
@@ -56,12 +80,33 @@ open class AutoCompleteEditText : CompleteEditText {
             R.styleable.AutoCompleteEditText_r_auto_complete_show_on_focus,
             autoCompleteShowOnFocus
         )
+
         autoCompleteFocusDelay = typedArray.getInt(
             R.styleable.AutoCompleteEditText_r_auto_complete_focus_delay,
-            autoCompleteFocusDelay
+            autoCompleteFocusDelay.toInt()
+        ).toLong()
+
+        autoCompleteShowItemDelete = typedArray.getBoolean(
+            R.styleable.AutoCompleteEditText_r_auto_complete_show_item_delete,
+            autoCompleteShowItemDelete
         )
 
         typedArray.recycle()
+
+        try {
+            val mPopup: ListPopupWindow =
+                getMember(AutoCompleteTextView::class.java, "mPopup") as ListPopupWindow
+            mPopup.listView?.setOnItemLongClickListener { parent, view, position, id ->
+                if (adapter is RArrayAdapter<*>) {
+                    onItemDeleteClick(adapter as RArrayAdapter<CharSequence>, position)
+                    true
+                } else {
+                    false
+                }
+            }
+        } catch (e: Exception) {
+            L.w(e)
+        }
 
         resetAutoCompleteTextAdapter()
     }
@@ -92,7 +137,23 @@ open class AutoCompleteEditText : CompleteEditText {
 
     /**设置下拉数据源*/
     fun setDataList(list: List<CharSequence>, showOnFocus: Boolean = true, focusDelay: Long = 0L) {
-        setAdapter(RArrayAdapter(context, list))
+        autoCompleteShowOnFocus = showOnFocus
+        autoCompleteFocusDelay = focusDelay
+
+        val adapter = object : RArrayAdapter<CharSequence>(context, list) {
+            override fun onBindDropDownItemView(
+                itemViewHolder: DslViewHolder,
+                position: Int,
+                itemBean: CharSequence?
+            ) {
+                super.onBindDropDownItemView(itemViewHolder, position, itemBean)
+                itemViewHolder.visible(R.id.lib_delete_view, autoCompleteShowItemDelete)
+                itemViewHolder.click(R.id.lib_delete_view) {
+                    onItemDeleteClick(adapter as RArrayAdapter<CharSequence>, position)
+                }
+            }
+        }
+        setAdapter(adapter)
 
         if (showOnFocus) {
             onFocusChange {

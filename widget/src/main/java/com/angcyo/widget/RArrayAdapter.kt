@@ -16,7 +16,7 @@ import androidx.annotation.LayoutRes
  */
 open class RArrayAdapter<T> : ArrayAdapter<T> {
     var thisContext: Context
-    private var thisDataList: List<T>
+    var dataList: MutableList<T> = mutableListOf()
     var layoutInflater: LayoutInflater
 
     //用于在Spinner中显示的视图
@@ -55,7 +55,8 @@ open class RArrayAdapter<T> : ArrayAdapter<T> {
         datas
     ) {
         this.thisContext = context
-        this.thisDataList = datas
+        this.dataList.clear()
+        this.dataList.addAll(datas)
         this.thisResource = resource
         this.thisDropDownResource = dropResource
         this.layoutInflater = LayoutInflater.from(context)
@@ -69,7 +70,7 @@ open class RArrayAdapter<T> : ArrayAdapter<T> {
     /**根据[layoutId]创建视图*/
     open fun createView(convertView: View?, parent: ViewGroup, layoutId: Int): View {
         return if (convertView == null) {
-            val inflate = layoutInflater.inflate(thisResource, parent, false)
+            val inflate = layoutInflater.inflate(layoutId, parent, false)
             inflate.tag = DslViewHolder(inflate)
             inflate
         } else {
@@ -128,16 +129,24 @@ open class RArrayAdapter<T> : ArrayAdapter<T> {
         itemViewHolder.tv(R.id.lib_text_view)?.text = onCharSequenceConvert(itemBean)
     }
 
-    /**
-     * 重置数据源
-     * */
+    override fun getFilter(): Filter {
+        return super.getFilter()
+    }
+
+    /** 重置数据源 */
     fun resetData(datas: List<T>) {
-        thisDataList = datas
+        dataList.clear()
+        dataList.addAll(datas)
         clear()
         addAll(datas)
     }
 
-    override fun getFilter(): Filter {
-        return super.getFilter()
+    fun remove(position: Int) {
+        remove(dataList.getOrNull(position))
+    }
+
+    override fun remove(obj: T?) {
+        dataList.remove(obj)
+        super.remove(obj)
     }
 }

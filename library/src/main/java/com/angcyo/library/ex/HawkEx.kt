@@ -35,26 +35,33 @@ fun String?.hawkGetList(maxCount: Int = Int.MAX_VALUE): MutableList<String> {
  * @param sort 默认排序, 最后追加的在首位显示
  *
  * */
-fun String?.hawkPutList(value: String?, sort: Boolean = true) {
-    if (TextUtils.isEmpty(value)) {
-        return
+fun String?.hawkPutList(value: String?, sort: Boolean = true, allowEmpty: Boolean = false) {
+    if (value.isNullOrEmpty()) {
+        if (!allowEmpty) {
+            return
+        }
     }
+    val char = ","
     this?.let {
 
         val oldString = Hawk.get(it, "")
+        val oldList = oldString.split(char)
+
+        if (value.isNullOrBlank() && allowEmpty) {
+            Hawk.put(it, "")
+            return
+        }
+
         if (!sort) {
-            if (oldString?.contains("$value") == true) {
+            if (oldList.contains(value)) {
                 return@let
             }
         }
 
-        Hawk.put(
-            it,
-            //最新的在前面
-            "$value," + oldString
-                .replace(",,", ",")
-                .replace(value ?: " ", "")
-        )
+        oldList.remove(value)
+        /*最新的在前面*/
+        oldList.add(0, value!!)
+        Hawk.put(it, "${oldList.connect(char)}")
     }
 }
 

@@ -19,4 +19,15 @@
         android:paddingBottom="@dimen/lib_hdpi"
         tools:text="文本测试" />
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/lib_delete_view"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="right|center_vertical"
+        android:background="@drawable/lib_bg2_selector"
+        android:padding="12dp"
+        android:visibility="gone"
+        app:srcCompat="@drawable/lib_edit_delete_selector"
+        tools:visibility="visible" />
+
 </com.angcyo.widget.layout.RFrameLayout>
