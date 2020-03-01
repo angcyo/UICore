@@ -5,8 +5,8 @@ dependencies {
     api project(allModule.drawable)
 
     //https://mvnrepository.com/artifact/androidx.fragment
-    api "androidx.fragment:fragment:1.2.1"
-    api "androidx.fragment:fragment-ktx:1.2.1"
+    api "androidx.fragment:fragment:1.2.2"
+    api "androidx.fragment:fragment-ktx:1.2.2"
 
     //https://mvnrepository.com/artifact/androidx.appcompat/appcompat
     api "androidx.appcompat:appcompat:1.1.0"

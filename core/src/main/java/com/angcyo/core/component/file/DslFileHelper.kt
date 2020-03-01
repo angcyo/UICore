@@ -4,6 +4,7 @@ import android.content.Context
 import com.angcyo.coroutine.CoroutineErrorHandler
 import com.angcyo.coroutine.launchGlobal
 import com.angcyo.library.app
+import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.FileUtils
 import com.angcyo.library.utils.fileName
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +30,7 @@ object DslFileHelper {
     /**返回文件路径*/
     fun write(
         folder: String,
-        name: String,
+        name: String = fileName("yyyy-MM-dd"),
         data: String
     ): String? {
         if (async) {
@@ -39,6 +40,7 @@ object DslFileHelper {
         } else {
             FileUtils.writeExternal(appContext, folder, name, data)
         }
+        //返回文件路径
         return FileUtils.appRootExternalFolderFile(appContext, folder, name)?.absolutePath
     }
 
@@ -73,4 +75,11 @@ object DslFileHelper {
             append(data)
         }
     }
+}
+
+fun String?.writeTo(
+    folder: String = Constant.LOG_FOLDER_NAME,
+    name: String = fileName("yyyy-MM-dd")
+) {
+    DslFileHelper.write(folder, name, this ?: "null")
 }
