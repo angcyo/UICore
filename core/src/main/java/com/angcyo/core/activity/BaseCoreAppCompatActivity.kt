@@ -6,6 +6,7 @@ import com.angcyo.core.R
 import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.dialog.normalDialog
 import com.angcyo.library.ex.*
+import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.RUtils
 import com.angcyo.widget.span.span
 
@@ -56,4 +57,31 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
             }
         }
     }
+
+    //<editor-fold desc="双击Back回调">
+
+    var doubleBackTime = -1
+
+    var _backPressedTime = 0L
+
+    override fun onBackPressedInner() {
+        if (doubleBackTime > 0) {
+            val nowTime = nowTime()
+            _backPressedTime = if (nowTime - _backPressedTime <= doubleBackTime) {
+                super.onBackPressedInner()
+                0
+            } else {
+                onDoubleBackPressed()
+                nowTime
+            }
+        } else {
+            super.onBackPressedInner()
+        }
+    }
+
+    fun onDoubleBackPressed() {
+        toastQQ("再按一次返回!", R.drawable.lib_ic_info)
+    }
+
+    //</editor-fold desc="双击Back回调">
 }
