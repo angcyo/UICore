@@ -6,6 +6,9 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.view.View
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.library.L
 import com.angcyo.widget.DslViewHolder
@@ -19,7 +22,7 @@ import kotlin.reflect.KProperty
  * @date 2019/05/07
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-open class DslAdapterItem {
+open class DslAdapterItem : LifecycleOwner {
 
     companion object {
         /**负载,请求刷新部分界面*/
@@ -170,24 +173,24 @@ open class DslAdapterItem {
      * [DslAdapter.onViewAttachedToWindow]
      * */
     var itemViewAttachedToWindow: (itemHolder: DslViewHolder, itemPosition: Int) -> Unit =
-        { _, _ ->
-
+        { itemHolder, itemPosition ->
+            onItemViewAttachedToWindow(itemHolder, itemPosition)
         }
 
     /**
      * [DslAdapter.onViewDetachedFromWindow]
      * */
     var itemViewDetachedToWindow: (itemHolder: DslViewHolder, itemPosition: Int) -> Unit =
-        { _, _ ->
-
+        { itemHolder, itemPosition ->
+            onItemViewDetachedToWindow(itemHolder, itemPosition)
         }
 
     /**
      * [DslAdapter.onViewRecycled]
      * */
     var itemViewRecycled: (itemHolder: DslViewHolder, itemPosition: Int) -> Unit =
-        { _, _ ->
-
+        { itemHolder, itemPosition ->
+            onItemViewRecycled(itemHolder, itemPosition)
         }
 
     //</editor-fold>
@@ -625,6 +628,31 @@ open class DslAdapterItem {
     var itemParentList = mutableListOf<DslAdapterItem>()
 
     //</editor-fold>
+
+    //<Lifecycle支持>
+
+    val lifecycleRegistry = LifecycleRegistry(this)
+
+    override fun getLifecycle(): Lifecycle {
+        return lifecycleRegistry
+    }
+
+    /**请勿覆盖[itemViewAttachedToWindow]*/
+    open fun onItemViewAttachedToWindow(itemHolder: DslViewHolder, itemPosition: Int) {
+        lifecycleRegistry.currentState = Lifecycle.State.RESUMED
+    }
+
+    /**请勿覆盖[itemViewDetachedToWindow]*/
+    open fun onItemViewDetachedToWindow(itemHolder: DslViewHolder, itemPosition: Int) {
+        lifecycleRegistry.currentState = Lifecycle.State.STARTED
+    }
+
+    /**请勿覆盖[itemViewRecycled]*/
+    open fun onItemViewRecycled(itemHolder: DslViewHolder, itemPosition: Int) {
+        lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
+    }
+
+    //</Lifecycle支持>
 }
 
 class UpdateDependProperty<T>(var value: T) : ReadWriteProperty<DslAdapterItem, T> {

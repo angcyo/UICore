@@ -18,22 +18,10 @@ abstract class DslBaseDownloadItem : DslAdapterItem() {
 
     var isItemViewDetached = false
 
-    init {
-        itemViewDetachedToWindow = { itemHolder, itemPosition ->
-            onItemViewDetachedToWindow(itemHolder, itemPosition)
-        }
-        itemViewRecycled = { itemHolder, itemPosition ->
-            onItemViewRecycled(itemHolder, itemPosition)
-        }
-    }
-
-    open fun onItemViewDetachedToWindow(itemHolder: DslViewHolder, itemPosition: Int) {
+    override fun onItemViewDetachedToWindow(itemHolder: DslViewHolder, itemPosition: Int) {
+        super.onItemViewDetachedToWindow(itemHolder, itemPosition)
         isItemViewDetached = true
         _downTask?.cancel()
-    }
-
-    open fun onItemViewRecycled(itemHolder: DslViewHolder, itemPosition: Int) {
-
     }
 
     /**下载*/
