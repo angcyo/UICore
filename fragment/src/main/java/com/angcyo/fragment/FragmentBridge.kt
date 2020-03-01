@@ -77,7 +77,7 @@ class FragmentBridge : Fragment() {
         intent: Intent?,
         requestCode: Int = generateCode(),
         options: Bundle? = null,
-        observer: (resultCode: Int, data: Intent?) -> Unit
+        observer: ActivityResult
     ) {
         if (intent == null) {
             return
@@ -144,6 +144,8 @@ class FragmentBridge : Fragment() {
         }
     }
 }
+
+typealias ActivityResult = (resultCode: Int, data: Intent?) -> Unit
 
 /**启动一个Activity和Fragment通信桥梁, 直接回调.
  * [onActivityResult] [onRequestPermissionsResult]

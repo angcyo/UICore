@@ -16,9 +16,13 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import com.angcyo.activity.FragmentWrapActivity
 import com.angcyo.activity.JumpActivity
 import com.angcyo.base.RevertWindowTransitionListener
+import com.angcyo.fragment.ActivityResult
+import com.angcyo.fragment.FragmentBridge
+import com.angcyo.fragment.dslBridge
 import com.angcyo.library.L
 
 /**
@@ -28,7 +32,7 @@ import com.angcyo.library.L
  * @date 2019/12/24
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-class DslAHelper(private val context: Context) {
+class DslAHelper(val context: Context) {
 
     /**需要启动的[Intent]*/
     val startIntentConfig = mutableListOf<IntentConfig>()
@@ -116,15 +120,37 @@ class DslAHelper(private val context: Context) {
                     }
                 }
 
-                //ForResult
-                if (it.requestCode != -1 && context is Activity) {
-                    ActivityCompat.startActivityForResult(
-                        context,
-                        it.intent,
-                        it.requestCode,
-                        transitionOptions
-                    )
-                } else {
+                var noResult = true
+                if (context is Activity) {
+                    //ForResult
+                    if (it.onResult != null && context is FragmentActivity) {
+                        //FragmentBridge
+                        dslBridge(context.supportFragmentManager) {
+                            it.requestCode = if (it.requestCode != -1) {
+                                FragmentBridge.generateCode()
+                            } else it.requestCode
+
+                            startActivityForResult(
+                                it.intent,
+                                it.requestCode,
+                                transitionOptions,
+                                it.onResult!!
+                            )
+                        }
+                        noResult = false
+                    } else if (it.requestCode != -1) {
+                        ActivityCompat.startActivityForResult(
+                            context,
+                            it.intent,
+                            it.requestCode,
+                            transitionOptions
+                        )
+                        noResult = false
+                    }
+                }
+
+                if (noResult) {
+                    //取消ForResult
                     ActivityCompat.startActivity(
                         context,
                         it.intent,
@@ -372,7 +398,10 @@ data class IntentConfig(
     var forceSingleTask: Boolean = false,
 
     //是否使用跳板[JumpActivity]
-    var useJumpActivity: Boolean = false
+    var useJumpActivity: Boolean = false,
+
+    //生死用[FragmentBridge]启动[Activity], 不受[requestCode]的影响
+    var onResult: (ActivityResult)? = null
 )
 
 /**去掉系统默认的动画*/
