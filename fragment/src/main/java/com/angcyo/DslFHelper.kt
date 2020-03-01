@@ -1,6 +1,7 @@
 package com.angcyo
 
 import android.app.Activity
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.AnimRes
@@ -23,7 +24,11 @@ import com.angcyo.widget.base.isVisible
  * @author angcyo
  * @date 2019/12/22
  */
-class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
+class DslFHelper(
+    val fm: FragmentManager,
+    val context: Context? = null,
+    val debug: Boolean = isDebug()
+) {
 
     companion object {
         var fragmentManagerLog: String = ""
@@ -60,7 +65,16 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
     var hideBeforeIndex = 2
 
     /**最后一个[Fragment]在执行的[back]时, 是否需要[remove]*/
-    var removeLastFragment: Boolean = false
+    var removeLastFragmentOnBack: Boolean = false
+        set(value) {
+            field = value
+            if (field) {
+                finishActivityOnLastFragmentRemove = false
+            }
+        }
+
+    /**最后一个[Fragment]在执行的[remove]时, 是否需要关闭[activity]*/
+    var finishActivityOnLastFragmentRemove: Boolean = true
 
     @AnimRes
     var showEnterAnimRes: Int = DEFAULT_SHOW_ENTER_ANIM
@@ -287,15 +301,16 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
             if (result) {
                 //可以remove
                 if (showFragmentList.isEmpty() && allValidityFragment.size == 1) {
-                    if (removeLastFragment) {
+                    if (removeLastFragmentOnBack) {
+                        result = false
                         //只有一个Fragment
                         remove(lastFragment)
-                        doIt()
+                        doIt(true)
                     }
                 } else {
                     result = false
                     remove(lastFragment)
-                    doIt()
+                    doIt(true)
                 }
             }
         }
@@ -307,8 +322,10 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
 
     var _logRunnable: Runnable? = null
 
-    /**执行操作*/
-    fun doIt() {
+    /**执行操作,
+     * [fromBack] 是否是用户back操作触发的
+     * */
+    fun doIt(fromBack: Boolean = false) {
         fm.beginTransaction().apply {
             if (fm.isDestroyed) {
                 //no op
@@ -436,10 +453,16 @@ class DslFHelper(val fm: FragmentManager, val debug: Boolean = isDebug()) {
             }
 
             onConfigTransaction(this)
-
-            onCommit(this)
-
             fragmentManagerLog = fm.log(false)
+
+            if (fmFragmentList.isEmpty() &&
+                finishActivityOnLastFragmentRemove &&
+                context is Activity
+            ) {
+                context.finish()
+            } else {
+                onCommit(this)
+            }
 
             if (debug) {
                 _logRunnable?.run { _handle.removeCallbacks(this) }

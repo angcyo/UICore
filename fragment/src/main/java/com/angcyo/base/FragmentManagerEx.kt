@@ -1,5 +1,6 @@
 package com.angcyo.base
 
+import android.content.Context
 import android.view.View
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
@@ -124,12 +125,12 @@ fun FragmentManager.getLastFragmentContainerId(@IdRes defaultId: Int): Int {
 
 /**[FragmentActivity]中*/
 fun FragmentActivity.dslFHelper(config: DslFHelper.() -> Unit) {
-    supportFragmentManager.dslFHelper(config)
+    supportFragmentManager.dslFHelper(this, config)
 }
 
 /**[FragmentManager]*/
-fun FragmentManager.dslFHelper(config: DslFHelper.() -> Unit) {
-    DslFHelper(this).apply {
+fun FragmentManager.dslFHelper(context: Context? = null, config: DslFHelper.() -> Unit) {
+    DslFHelper(this, context).apply {
         this.config()
         doIt()
     }

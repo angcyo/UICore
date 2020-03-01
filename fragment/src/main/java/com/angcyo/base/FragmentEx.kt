@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.angcyo.DslAHelper
 import com.angcyo.DslFHelper
-import com.angcyo.IntentConfig
 import com.angcyo.fragment.IFragment
 import com.angcyo.library.L
 
@@ -46,7 +45,7 @@ fun Fragment.dslAHelper(action: DslAHelper.() -> Unit) {
 
 /**[Fragment]中的[childFragmentManager]*/
 fun Fragment.dslChildFHelper(config: DslFHelper.() -> Unit) {
-    childFragmentManager.dslFHelper(config)
+    childFragmentManager.dslFHelper(context, config)
 }
 
 fun Fragment.getFragmentTag(): String? {
