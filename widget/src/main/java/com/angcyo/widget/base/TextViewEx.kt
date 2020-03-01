@@ -3,8 +3,10 @@ package com.angcyo.widget.base
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.text.InputFilter
 import android.text.Spanned
 import android.text.TextPaint
+import android.text.TextUtils
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import com.angcyo.library.L
@@ -140,5 +142,40 @@ fun TextView.clearListeners() {
         mListeners?.clear()
     } catch (e: Exception) {
         L.e(e)
+    }
+}
+
+/**单行输入切换*/
+fun TextView?.setSingleLineMode(singleLine: Boolean = true, maxLength: Int = -1) {
+    this?.run {
+        if (singleLine) {
+            isSingleLine = true
+            maxLines = 1
+        } else {
+            isSingleLine = false
+            maxLines = Int.MAX_VALUE
+        }
+        if (maxLength >= 0) {
+            ellipsize = TextUtils.TruncateAt.END
+            setFilter(InputFilter.LengthFilter(maxLength))
+        }
+    }
+}
+
+fun TextView.addFilter(filter: InputFilter) {
+    val oldFilters = filters
+    val newFilters = arrayOfNulls<InputFilter>(oldFilters.size + 1)
+    System.arraycopy(oldFilters, 0, newFilters, 0, oldFilters.size)
+    newFilters[oldFilters.size] = filter
+    filters = newFilters
+}
+
+fun TextView.setFilter(filter: InputFilter, update: Boolean = true) {
+    val newFilters = arrayOfNulls<InputFilter>(1)
+    newFilters[0] = filter
+    filters = newFilters
+
+    if (update) {
+        text = text
     }
 }

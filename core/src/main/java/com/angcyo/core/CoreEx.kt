@@ -3,6 +3,7 @@ package com.angcyo.core
 import android.app.Activity
 import android.app.Application
 import android.view.View
+import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -61,5 +62,16 @@ fun DslGroupHelper.appendTextItem(
         find<DslTextView>(R.id.lib_text_view)?.apply {
             this.action()
         }
+    }
+}
+
+fun DslGroupHelper.appendItem(
+    @LayoutRes
+    layoutId: Int = R.layout.lib_text_layout,
+    attachToRoot: Boolean = true,
+    action: View.() -> Unit
+): View? {
+    return inflate(layoutId, attachToRoot) {
+        this.action()
     }
 }

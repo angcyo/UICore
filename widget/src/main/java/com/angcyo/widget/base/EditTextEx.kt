@@ -182,24 +182,6 @@ fun TextView?.string(trim: Boolean = true): String {
     return rawText
 }
 
-fun EditText.addFilter(filter: InputFilter) {
-    val oldFilters = filters
-    val newFilters = arrayOfNulls<InputFilter>(oldFilters.size + 1)
-    System.arraycopy(oldFilters, 0, newFilters, 0, oldFilters.size)
-    newFilters[oldFilters.size] = filter
-    filters = newFilters
-}
-
-fun EditText.setFilter(filter: InputFilter, update: Boolean = true) {
-    val newFilters = arrayOfNulls<InputFilter>(1)
-    newFilters[0] = filter
-    filters = newFilters
-
-    if (update) {
-        text = text
-    }
-}
-
 /**
  * 光标定位在文本的最后面
  */
@@ -213,18 +195,18 @@ fun EditText.resetSelectionText(text: CharSequence?, startOffset: Int = 0) {
     setSelection(min(start + startOffset, text?.length ?: 0))
 }
 
-fun EditText.hasCharLengthFilter(): Boolean {
+fun TextView.hasCharLengthFilter(): Boolean {
     return filters.any { it is CharLengthFilter }
 }
 
-fun EditText.getCharLengthFilter(): CharLengthFilter? {
+fun TextView.getCharLengthFilter(): CharLengthFilter? {
     return filters.find { it is CharLengthFilter } as? CharLengthFilter
 }
 
 /**
  * 一个汉字等于2个英文, 一个emoji表情等于2个汉字
  */
-fun EditText.getCharLength(): Int {
+fun TextView.getCharLength(): Int {
     if (TextUtils.isEmpty(string(false))) {
         return 0
     }
@@ -240,17 +222,6 @@ fun EditText.getCharLength(): Int {
 }
 
 //<editor-fold desc="方法扩展">
-
-/**单行输入切换*/
-fun EditText.setSingleLineMode(singleLine: Boolean = true) {
-    if (singleLine) {
-        isSingleLine = true
-        maxLines = 1
-    } else {
-        isSingleLine = false
-        maxLines = Int.MAX_VALUE
-    }
-}
 
 /**密码可见性*/
 fun EditText.showPassword() {
@@ -283,7 +254,6 @@ fun EditText.passwordVisibilityToggleRequested() {
 fun EditText.hasPasswordTransformation(): Boolean {
     return this.transformationMethod is PasswordTransformationMethod
 }
-
 
 fun EditText.isEditSingleLine(): Boolean {
     return inputType and EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE != EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE &&
