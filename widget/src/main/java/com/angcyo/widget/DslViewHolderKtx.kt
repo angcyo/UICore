@@ -12,6 +12,8 @@ import com.angcyo.widget.edit.DslEditText
 import com.angcyo.widget.image.DslImageView
 import com.angcyo.widget.layout.DslSoftInputLayout
 import com.angcyo.widget.pager.DslViewPager
+import com.angcyo.widget.progress.DslProgressBar
+import com.angcyo.widget.progress.DslSeekBar
 import com.angcyo.widget.recycler.DslRecyclerView
 import com.angcyo.widget.text.DslTextView
 
@@ -83,10 +85,19 @@ fun DslViewHolder.spinner(@IdRes id: Int): RSpinner? {
     return v(id)
 }
 
+fun DslViewHolder.bar(@IdRes id: Int): DslProgressBar? {
+    return v(id)
+}
+
+fun DslViewHolder.seek(@IdRes id: Int): DslSeekBar? {
+    return v(id)
+}
+
 fun DslViewHolder.soft(@IdRes id: Int): DslSoftInputLayout? {
     return v(id)
 }
 
+/**快速设置[AutoCompleteEditText]下拉输入框数据*/
 fun DslViewHolder.auto(
     @IdRes resId: Int,
     dataList: List<CharSequence>?,
@@ -102,6 +113,7 @@ fun DslViewHolder._vp(@IdRes id: Int): DslViewPager? {
     return v(id)
 }
 
+/**设置hawk指定的key value, 返回旧值*/
 fun DslViewHolder.hawkTag(@IdRes id: Int): Any? {
     return tag(id, R.id.lib_tag_hawk, "$id")
 }

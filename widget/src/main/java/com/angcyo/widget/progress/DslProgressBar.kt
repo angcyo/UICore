@@ -43,7 +43,17 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     /**当前的进度*/
     var progressValue: Int = 0
         set(value) {
+            val old = field
             field = validProgress(value)
+
+            if (enableShowHideProgress) {
+                if (old <= 0 && field > 0) {
+                    animate().translationY(0f).setDuration(Anim.ANIM_DURATION).start()
+                } else if (field >= progressMaxValue) {
+                    animate().translationY((-measuredHeight).toFloat())
+                        .setDuration(Anim.ANIM_DURATION).start()
+                }
+            }
             postInvalidate()
         }
 
@@ -69,6 +79,9 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     var progressTextColor = Color.parseColor("#333333")
     /**文本距离进度偏移的距离*/
     var progressTextOffset = 10.toDpi()
+
+    /**激活有进度和满进度时的动画*/
+    var enableShowHideProgress: Boolean = false
 
     val _progressTextDrawable: DslTextDrawable = DslTextDrawable()
         get() {
@@ -187,6 +200,12 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             if (isInEditMode) 70 else progressSecondValue
         )
 
+        enableShowHideProgress =
+            typedArray.getBoolean(
+                R.styleable.DslProgressBar_progress_enable_show_hide_progress,
+                enableShowHideProgress
+            )
+
         typedArray.recycle()
     }
 
@@ -195,6 +214,15 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             super.onMeasure(widthMeasureSpec, atMost(8 * dpi + paddingTop + paddingBottom))
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        }
+    }
+
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        if (enableShowHideProgress) {
+            if (progressValue <= 0) {
+                translationY = (-measuredHeight).toFloat()
+            }
         }
     }
 

@@ -22,6 +22,15 @@
 
     </FrameLayout>
 
+    <!--覆盖在内容上面的布局包裹, 不跟随内容滑动-->
+    <FrameLayout
+        android:id="@+id/lib_content_overlay_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_anchor="@id/lib_title_wrap_layout"
+        app:layout_anchorGravity="bottom"
+        app:layout_behavior="com.angcyo.behavior.placeholder.ContentOverlayBehavior" />
+
     <!--刷新头布局包裹-->
     <FrameLayout
         android:id="@+id/lib_refresh_wrap_layout"

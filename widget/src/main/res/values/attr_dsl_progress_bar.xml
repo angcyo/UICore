@@ -24,5 +24,6 @@
         <attr name="progress_text_color" format="color" />
         <attr name="progress_text_format" format="string" />
 
+        <attr name="progress_enable_show_hide_progress" format="boolean" />
     </declare-styleable>
 </resources>

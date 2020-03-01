@@ -47,6 +47,9 @@ abstract class BaseTitleFragment : BaseFragment() {
     /**自定义内容布局*/
     var contentLayoutId: Int = -1
 
+    /**自定义内容覆盖布局*/
+    var contentOverlayLayoutId: Int = -1
+
     /**自定义的刷新头部*/
     var refreshLayoutId: Int = -1
 
@@ -157,6 +160,8 @@ abstract class BaseTitleFragment : BaseFragment() {
 
         //内容包裹
         _inflateTo(R.id.lib_content_wrap_layout, contentLayoutId)
+        //内容覆盖层
+        _inflateTo(R.id.lib_content_overlay_wrap_layout, contentOverlayLayoutId)
         //刷新头包裹
         _inflateTo(R.id.lib_refresh_wrap_layout, refreshLayoutId)
         //标题包裹
