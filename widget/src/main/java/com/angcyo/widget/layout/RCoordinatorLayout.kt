@@ -23,7 +23,7 @@ import com.angcyo.widget.base.*
 open class RCoordinatorLayout(
     context: Context,
     attributeSet: AttributeSet? = null
-) : CoordinatorLayout(context, attributeSet) {
+) : CoordinatorLayout(context, attributeSet), ILayoutDelegate {
 
     val layoutDelegate = RLayoutDelegate()
 
@@ -136,5 +136,9 @@ open class RCoordinatorLayout(
             child,
             layoutDirection
         )
+    }
+
+    override fun getRLayoutDelegate(): RLayoutDelegate {
+        return layoutDelegate
     }
 }

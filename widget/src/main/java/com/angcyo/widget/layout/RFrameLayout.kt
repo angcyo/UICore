@@ -17,7 +17,7 @@ import com.angcyo.widget.R
 open class RFrameLayout(
     context: Context,
     attributeSet: AttributeSet? = null
-) : FrameLayout(context, attributeSet) {
+) : FrameLayout(context, attributeSet), ILayoutDelegate {
 
     val layoutDelegate = RLayoutDelegate()
 
@@ -39,5 +39,9 @@ open class RFrameLayout(
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
         layoutDelegate.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
+    override fun getRLayoutDelegate(): RLayoutDelegate {
+        return layoutDelegate
     }
 }

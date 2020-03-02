@@ -77,7 +77,7 @@ class RLayoutDelegate {
         rMaxHeight = typedArray.getString(R.styleable.RLayout_r_max_height)
         rMaxWidth = typedArray.getString(R.styleable.RLayout_r_max_width)
         maskDrawable = typedArray.getDrawable(R.styleable.RLayout_r_layout_mask_drawable)
-        layoutDimensionRatio = typedArray.getString(R.styleable.RLayout_r_layout_dimension_ratio)
+        layoutDimensionRatio = typedArray.getString(R.styleable.RLayout_r_dimension_ratio)
 
         if (typedArray.hasValue(R.styleable.RLayout_r_clip_to_outline)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

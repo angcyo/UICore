@@ -12,6 +12,7 @@ import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.getDrawable
 import com.angcyo.widget.base.inflate
 import com.angcyo.widget.base.setLeftIco
+import com.angcyo.widget.layout.ILayoutDelegate
 import com.angcyo.widget.layout.RLinearLayout
 
 /**
@@ -50,7 +51,7 @@ open class DslBaseInfoItem : DslAdapterItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
-        (itemHolder.itemView as? RLinearLayout)?.layoutDelegate?.bDrawable = itemBackgroundDrawable
+        (itemHolder.itemView as? ILayoutDelegate)?.getRLayoutDelegate()?.bDrawable = itemBackgroundDrawable
 
         //文本信息
         itemHolder.tv(R.id.lib_text_view)?.apply {

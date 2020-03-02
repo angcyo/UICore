@@ -78,6 +78,24 @@ class DslAHelper(val context: Context) {
         start(intent, action)
     }
 
+    /**启动一个包, 通常用来启动第三方APP*/
+    fun start(packageName: String?, action: IntentConfig.() -> Unit = {}) {
+        if (packageName.isNullOrBlank()) {
+            L.w("packageName is null!")
+            return
+        }
+        val intent = context.packageManager.getLaunchIntentForPackage(packageName)
+//            Intent(Intent.ACTION_MAIN)
+//        intent.addCategory(Intent.CATEGORY_LAUNCHER)
+//        intent.setPackage(packageName)
+
+        if (intent == null) {
+            L.w("packageName launch intent is null!")
+            return
+        }
+        start(intent, action)
+    }
+
     /**使用[FragmentWrapActivity]包裹启动[Fragment]*/
     fun start(
         fragment: Class<out Fragment>,

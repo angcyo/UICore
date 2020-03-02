@@ -4,13 +4,16 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.ex.baseConfig
 import com.angcyo.library.ex.mimeType
 import com.angcyo.library.ex.uriConfig
+import com.angcyo.library.model.AppBean
 
 
 /**
@@ -23,6 +26,10 @@ import com.angcyo.library.ex.uriConfig
 class DslIntent {
 
     companion object {
+        const val QUERY_TYPE_ACTIVITY = 1
+        const val QUERY_TYPE_SERVICE = 2
+        const val QUERY_TYPE_PROVIDER = 3
+
         /** 跳至拨号界面 @param phoneNumber 电话号码 */
         fun callTo(context: Context, phoneNumber: String) {
             val intent =
@@ -189,7 +196,11 @@ class DslIntent {
      * 开始分享
      * https://developer.android.google.cn/training/sharing/send.html
      */
-    fun doShare(context: Context) {
+    fun doShare(context: Context?) {
+        if (context == null) {
+            L.w("context is null!")
+            return
+        }
         Intent().apply {
             action = shareAction
 
@@ -248,19 +259,92 @@ class DslIntent {
 
     //</editor-fold desc="分享相关配置">
 
+    //<editor-fold desc="查询Intent相关配置">
+
+    var queryAction: String? = Intent.ACTION_MAIN
+    var queryData: Uri? = null
+    var queryCategory: List<String>? = null
+    var queryFlag: Int = 0
+    var queryPackageName: String? = null
+
+    var queryType: Int = QUERY_TYPE_ACTIVITY
+
+    fun doQuery(context: Context?): List<ResolveInfo> {
+        if (context == null) {
+            L.w("context is null!")
+            return emptyList()
+        }
+
+        val queryIntent = Intent()
+        queryAction?.run { queryIntent.setAction(this) }
+        queryCategory?.forEach { queryIntent.addCategory(it) }
+        queryData?.run { queryIntent.setData(this) }
+        queryPackageName?.run { queryIntent.setPackage(this) }
+
+        val packageManager = context.packageManager
+
+        /*
+        * https://stackoverflow.com/questions/52734920/what-is-the-difference-between-queryintentactivities-and-resolveactivity-whi
+        * queryIntentActivities() returns a list of all activities that can handle the Intent.
+        * resolveActivity() returns the "best" Activity that can handle the Intent
+        * */
+        val resultList: List<ResolveInfo> =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && queryType == QUERY_TYPE_PROVIDER) {
+                packageManager.queryIntentContentProviders(queryIntent, queryFlag)
+            } else if (queryType == QUERY_TYPE_SERVICE) {
+                packageManager.queryIntentServices(queryIntent, queryFlag)
+            } else {
+                packageManager.queryIntentActivities(queryIntent, queryFlag)
+            }
+        return resultList
+    }
+
+    //</editor-fold desc="查询Intent相关配置">
+
     fun doIt() {
 
     }
 }
 
-fun dslIntent(context: Context, action: DslIntent.() -> Unit) {
+fun dslIntent(context: Context? = app(), action: DslIntent.() -> Unit) {
     val dslIntent = DslIntent()
     dslIntent.action()
     dslIntent.doIt()
 }
 
-fun dslIntentShare(context: Context, action: DslIntent.() -> Unit) {
+fun dslIntentShare(context: Context? = app(), action: DslIntent.() -> Unit) {
     val dslIntent = DslIntent()
     dslIntent.action()
     dslIntent.doShare(context)
+}
+
+fun dslIntentQuery(
+    context: Context? = app(),
+    action: DslIntent.() -> Unit = {}
+): List<ResolveInfo> {
+    val dslIntent = DslIntent()
+    dslIntent.action()
+    return dslIntent.doQuery(context)
+}
+
+fun String.appBean(context: Context = app()): AppBean {
+    val packageManager = context.packageManager
+    val packageInfo = packageManager.getPackageInfo(this, 0)
+
+    val code = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        packageInfo.longVersionCode
+    } else {
+        packageInfo.versionCode.toLong()
+    }
+
+    val result = AppBean(
+        packageInfo.packageName,
+        packageInfo.versionName,
+        code,
+        packageInfo.applicationInfo.loadIcon(packageManager),
+        packageInfo.applicationInfo.loadLabel(context.packageManager),
+        packageInfo
+    )
+
+    return result
 }

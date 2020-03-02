@@ -15,7 +15,7 @@ import com.angcyo.widget.R
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 open class RLinearLayout(context: Context, attributeSet: AttributeSet? = null) :
-    LinearLayout(context, attributeSet) {
+    LinearLayout(context, attributeSet), ILayoutDelegate {
 
     val layoutDelegate = RLayoutDelegate()
 
@@ -37,5 +37,9 @@ open class RLinearLayout(context: Context, attributeSet: AttributeSet? = null) :
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
         layoutDelegate.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
+    override fun getRLayoutDelegate(): RLayoutDelegate {
+        return layoutDelegate
     }
 }

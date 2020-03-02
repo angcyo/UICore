@@ -16,14 +16,14 @@ import com.angcyo.widget.R
 open class RConstraintLayout(
     context: Context,
     attributeSet: AttributeSet? = null
-) : ConstraintLayout(context, attributeSet) {
+) : ConstraintLayout(context, attributeSet), ILayoutDelegate {
+
     val layoutDelegate = RLayoutDelegate()
 
     init {
         val typedArray: TypedArray =
             context.obtainStyledAttributes(attributeSet, R.styleable.RConstraintLayout)
         layoutDelegate.initAttribute(this, attributeSet)
-
         typedArray.recycle()
     }
 
@@ -38,5 +38,9 @@ open class RConstraintLayout(
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
         layoutDelegate.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
+    override fun getRLayoutDelegate(): RLayoutDelegate {
+        return layoutDelegate
     }
 }

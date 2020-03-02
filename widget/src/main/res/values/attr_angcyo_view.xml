@@ -11,7 +11,7 @@
     <attr name="r_clip_to_outline" format="boolean" />
     <attr name="r_layout_mask_drawable" format="reference|color" />
     <!--宽高的比例[1:1] [1:2.5], 宽高必须有一个要是1f-->
-    <attr name="r_layout_dimension_ratio" format="string" />
+    <attr name="r_dimension_ratio" format="string" />
 
     <!--相同[Layout]属性代理读取设置¬-->
     <declare-styleable name="RLayout">
@@ -20,7 +20,7 @@
         <attr name="r_max_width" />
         <attr name="r_clip_to_outline" />
         <attr name="r_layout_mask_drawable" />
-        <attr name="r_layout_dimension_ratio" />
+        <attr name="r_dimension_ratio" />
     </declare-styleable>
 
     <declare-styleable name="RLinearLayout">
@@ -29,7 +29,7 @@
         <attr name="r_max_width" />
         <attr name="r_clip_to_outline" />
         <attr name="r_layout_mask_drawable" />
-        <attr name="r_layout_dimension_ratio" />
+        <attr name="r_dimension_ratio" />
     </declare-styleable>
 
     <declare-styleable name="RCoordinatorLayout">
@@ -38,7 +38,7 @@
         <attr name="r_max_width" />
         <attr name="r_clip_to_outline" />
         <attr name="r_layout_mask_drawable" />
-        <attr name="r_layout_dimension_ratio" />
+        <attr name="r_dimension_ratio" />
     </declare-styleable>
 
     <declare-styleable name="RConstraintLayout">
@@ -47,7 +47,7 @@
         <attr name="r_max_width" />
         <attr name="r_clip_to_outline" />
         <attr name="r_layout_mask_drawable" />
-        <attr name="r_layout_dimension_ratio" />
+        <attr name="r_dimension_ratio" />
     </declare-styleable>
 
     <declare-styleable name="RFrameLayout">
@@ -56,7 +56,7 @@
         <attr name="r_max_width" />
         <attr name="r_clip_to_outline" />
         <attr name="r_layout_mask_drawable" />
-        <attr name="r_layout_dimension_ratio" />
+        <attr name="r_dimension_ratio" />
     </declare-styleable>
 
 </resources>

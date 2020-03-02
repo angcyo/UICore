@@ -108,7 +108,7 @@ fun Activity.translucentNavigationBar(full: Boolean = false) {
 private fun Int.remove(value: Int): Int = this and value.inv()
 
 /**开始[Window]转场动画, 请调用[transition]*/
-fun Activity.dslAHelper(action: DslAHelper.() -> Unit) {
+fun Context.dslAHelper(action: DslAHelper.() -> Unit) {
     DslAHelper(this).apply {
         this.action()
         doIt()
