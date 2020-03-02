@@ -251,11 +251,19 @@ class DslFHelper(
     }
 
     /**提交操作*/
-    var onCommit: (FragmentTransaction) -> Unit = {
+    var onCommit: (FragmentTransaction, List<Fragment>) -> Unit = { ft, fl ->
         if (fm.isStateSaved) {
-            it.commitNowAllowingStateLoss()
+            if (fl.isEmpty()) {
+                ft.commitNowAllowingStateLoss()
+            } else {
+                ft.commitAllowingStateLoss()
+            }
         } else {
-            it.commitNow()
+            if (fl.isEmpty()) {
+                ft.commitNow()
+            } else {
+                ft.commit()
+            }
         }
     }
 
@@ -461,7 +469,7 @@ class DslFHelper(
             ) {
                 context.finish()
             } else {
-                onCommit(this)
+                onCommit(this, fmFragmentList)
             }
 
             if (debug) {
