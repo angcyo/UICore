@@ -25,7 +25,7 @@ import java.io.File
 
 class DslCameraViewHelper {
 
-    val recordPermissionList = listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+    var recordPermissionList = listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
     var cameraView: CameraView? = null
 
     /**是否要在DCIM中显示*/
