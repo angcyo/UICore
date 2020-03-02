@@ -4,7 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.provider.MediaStore
 import androidx.core.content.FileProvider
+import com.angcyo.library.L
+import com.angcyo.library.app
+import com.angcyo.library.model.MediaBean
 import java.io.File
 import java.io.FileDescriptor
 import java.io.InputStream
@@ -80,4 +84,44 @@ fun Uri?.isFileScheme(): Boolean {
         return false
     }
     return path.isFileExist()
+}
+
+fun Uri.query(context: Context = app()): MediaBean? {
+    /**
+     * 全部媒体数据 - PROJECTION
+     * 需要返回的数据库字段
+     */
+    val ALL_PROJECTION = arrayOf(
+        MediaStore.Images.Media._ID,
+        MediaStore.MediaColumns.DATA,
+        MediaStore.MediaColumns.DISPLAY_NAME,
+        MediaStore.MediaColumns.DATE_ADDED,
+        MediaStore.MediaColumns.MIME_TYPE,
+        MediaStore.MediaColumns.SIZE
+    )
+
+    return context.contentResolver.query(
+        this,
+        ALL_PROJECTION,
+        null,
+        null,
+        MediaStore.Images.Media._ID
+    )?.use {
+        val count = it.count
+        if (count <= 0) {
+            null
+        } else {
+            it.moveToFirst()
+            val data = it
+            val mediaBean = MediaBean()
+            mediaBean.id = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[0]))
+            mediaBean.localPath = data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[1]))
+            mediaBean.displayName = data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[2]))
+            mediaBean.addTime = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[3]))
+            mediaBean.mimeType = data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[4]))
+            mediaBean.fileSize = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[5]))
+            L.d("$this->$mediaBean")
+            mediaBean
+        }
+    }
 }
