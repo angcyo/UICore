@@ -1,14 +1,17 @@
 package com.angcyo.fragment
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import androidx.collection.SparseArrayCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.angcyo.base.instantiateFragment
 import com.angcyo.library.L
+import com.angcyo.library.ex.havePermissions
 import com.angcyo.library.utils.resultString
 
 /**
@@ -157,5 +160,33 @@ fun dslBridge(fragmentManager: FragmentManager?, action: FragmentBridge.() -> Un
         FragmentBridge.install(fragmentManager).apply {
             action()
         }
+    }
+}
+
+/**请求权限, 并返回*/
+fun Context.requestPermissions(
+    permissions: List<String>,
+    result: (granted: Boolean) -> Unit
+) {
+    requestPermissions(permissions.toTypedArray(), result)
+}
+
+fun Context.requestPermissions(
+    permissions: Array<out String>,
+    result: (granted: Boolean) -> Unit
+) {
+    if (havePermissions(*permissions)) {
+        result(true)
+        return
+    }
+
+    if (this is FragmentActivity) {
+        dslBridge(supportFragmentManager) {
+            startRequestPermissions(permissions) { permissions, grantResults ->
+                result(havePermissions(*permissions))
+            }
+        }
+    } else {
+        L.w("$this is not FragmentActivity!")
     }
 }
