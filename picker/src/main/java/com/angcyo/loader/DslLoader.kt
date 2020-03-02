@@ -48,7 +48,7 @@ class DslLoader {
          * 全部媒体数据 - PROJECTION
          * 需要返回的数据库字段
          */
-        private val ALL_PROJECTION = arrayOf(
+        val ALL_PROJECTION = arrayOf(
             MediaStore.Images.Media._ID,
             MediaStore.MediaColumns.DATA,
             MediaStore.MediaColumns.DISPLAY_NAME,
@@ -58,7 +58,8 @@ class DslLoader {
             WIDTH,
             HEIGHT,
             DURATION,
-            ORIENTATION
+            ORIENTATION,
+            MediaStore.MediaColumns.DATE_MODIFIED
         )
     }
 
@@ -98,103 +99,43 @@ class DslLoader {
                             LTime.tick()
                             data.moveToFirst()
                             do {
-                                val id = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[0]))
-
-                                val mimeType =
-                                    data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[4]))
-
-                                val path =
-                                    data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[1]))
-
-                                val loaderUri = when {
-                                    mimeType.isImageMimeType() -> ContentUris.withAppendedId(
-                                        MediaStore.Images.Media.getContentUri(VOLUME_EXTERNAL),
-                                        id
-                                    )
-                                    mimeType.isVideoMimeType() -> ContentUris.withAppendedId(
-                                        MediaStore.Video.Media.getContentUri(VOLUME_EXTERNAL),
-                                        id
-                                    )
-                                    mimeType.isAudioMimeType() -> ContentUris.withAppendedId(
-                                        MediaStore.Audio.Media.getContentUri(VOLUME_EXTERNAL),
-                                        id
-                                    )
-                                    else -> MediaStore.Files.getContentUri(VOLUME_EXTERNAL, id)
-                                }
-
-                                val uri = if (path.isFileExist()) {
-                                    Uri.fromFile(File(path))
-                                } else {
-                                    loaderUri
-                                }
-
-                                val displayName =
-                                    data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[2]))
-                                val addTime =
-                                    data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[3]))
-                                val size =
-                                    data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[5]))
-                                val width =
-                                    data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[6]))
-                                val height =
-                                    data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[7]))
-
-                                //经纬度Android Q中查询会崩溃, 需要通过Exif查询
+                                val loaderMedia = loadFromCursor(data)
                                 var latitude = 0.0
                                 var longitude = 0.0
-                                var orientation =
-                                    data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[9]))
-
-                                val duration =
-                                    data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[8]))
-
-                                val loaderMedia = LoaderMedia().apply {
-                                    this.id = id
-                                    this.localUri = uri
-                                    this.loaderUri = loaderUri
-                                    this.localPath = path ?: ""
-                                    this.displayName = displayName ?: ""
-                                    this.addTime = addTime
-                                    this.mimeType = mimeType ?: ""
-                                    this.fileSize = size
-                                    this.width = width
-                                    this.height = height
-                                    this.latitude = latitude
-                                    this.longitude = longitude
-                                    this.duration = duration
-                                    this.orientation = orientation
-                                }
+                                var orientation = loaderMedia.orientation
+                                val uri = loaderMedia.localUri
 
                                 if (loaderMedia.isImage() && _loaderConfig.loaderExif) {
                                     async {
                                         try {
-                                            val exif = ExifInterface(uri.fd(_activity)!!)
-                                            exif.latLong?.run {
-                                                latitude = this[0]
-                                                longitude = this[0]
+                                            uri?.fd(_activity)?.run {
+                                                val exif = ExifInterface(this)
+                                                exif.latLong?.run {
+                                                    latitude = this[0]
+                                                    longitude = this[0]
+                                                }
+                                                val orientationAttr: Int = exif.getAttributeInt(
+                                                    ExifInterface.TAG_ORIENTATION,
+                                                    ExifInterface.ORIENTATION_NORMAL
+                                                )
+                                                if (orientationAttr == ExifInterface.ORIENTATION_NORMAL || orientationAttr == ExifInterface.ORIENTATION_UNDEFINED) {
+                                                    orientation = 0
+                                                } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_90) {
+                                                    orientation = 90
+                                                } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_180) {
+                                                    orientation = 180
+                                                } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_270) {
+                                                    orientation = 270
+                                                }
+                                                loaderMedia.latitude = latitude
+                                                loaderMedia.longitude = longitude
+                                                loaderMedia.orientation = orientation
                                             }
-                                            val orientationAttr: Int = exif.getAttributeInt(
-                                                ExifInterface.TAG_ORIENTATION,
-                                                ExifInterface.ORIENTATION_NORMAL
-                                            )
-                                            if (orientationAttr == ExifInterface.ORIENTATION_NORMAL || orientationAttr == ExifInterface.ORIENTATION_UNDEFINED) {
-                                                orientation = 0
-                                            } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_90) {
-                                                orientation = 90
-                                            } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_180) {
-                                                orientation = 180
-                                            } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_270) {
-                                                orientation = 270
-                                            }
-                                            loaderMedia.latitude = latitude
-                                            loaderMedia.longitude = longitude
-                                            loaderMedia.orientation = orientation
                                         } catch (e: Exception) {
-                                            L.w(path, " ", e)
+                                            L.w(loaderMedia.localPath, " ", e)
                                         }
                                     }
                                 }
-
                                 allMedias.add(loaderMedia)
                                 //L.i(loaderMedia, " ", path.file().canRead())
                             } while (data.moveToNext())
@@ -233,5 +174,67 @@ class DslLoader {
 
     fun destroyLoader() {
         _loaderManager?.destroyLoader(LOADER_ID)
+    }
+
+    fun loadFromCursor(data: Cursor): LoaderMedia {
+
+        val id = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[0]))
+        val path = data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[1]))
+        val displayName = data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[2]))
+        val addTime = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[3]))
+        val mimeType = data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[4]))
+
+        val loaderUri = when {
+            mimeType.isImageMimeType() -> ContentUris.withAppendedId(
+                MediaStore.Images.Media.getContentUri(VOLUME_EXTERNAL),
+                id
+            )
+            mimeType.isVideoMimeType() -> ContentUris.withAppendedId(
+                MediaStore.Video.Media.getContentUri(VOLUME_EXTERNAL),
+                id
+            )
+            mimeType.isAudioMimeType() -> ContentUris.withAppendedId(
+                MediaStore.Audio.Media.getContentUri(VOLUME_EXTERNAL),
+                id
+            )
+            else -> MediaStore.Files.getContentUri(VOLUME_EXTERNAL, id)
+        }
+
+        val uri = if (path.isFileExist()) {
+            Uri.fromFile(File(path))
+        } else {
+            loaderUri
+        }
+
+        val size = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[5]))
+        val width = data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[6]))
+        val height = data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[7]))
+        val duration = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[8]))
+        val orientation = data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[9]))
+        val modifyTime = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[10]))
+
+        //经纬度Android Q中查询会崩溃, 需要通过Exif查询
+        val latitude = 0.0
+        val longitude = 0.0
+
+        val loaderMedia = LoaderMedia().apply {
+            this.id = id
+            this.localUri = uri
+            this.loaderUri = loaderUri
+            this.localPath = path ?: ""
+            this.displayName = displayName ?: ""
+            this.addTime = addTime
+            this.modifyTime = modifyTime
+            this.mimeType = mimeType ?: ""
+            this.fileSize = size
+            this.width = width
+            this.height = height
+            this.latitude = latitude
+            this.longitude = longitude
+            this.duration = duration
+            this.orientation = orientation
+        }
+
+        return loaderMedia
     }
 }
