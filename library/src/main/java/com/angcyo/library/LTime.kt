@@ -28,12 +28,12 @@ object LTime {
         }
         val startTime = if (stack.isEmpty()) nowTime() else stack.pop()
         val nowTime = nowTime()
-        val ms = ((nowTime - startTime) % 1000) * 1f / 1000
         val s = (nowTime - startTime) / 1000
+        val ms = ((nowTime - startTime) % 1000) * 1f / 1000
 
         //val m = s / 60
         //val h = m / 24
 
-        return "${s + ms}s"
+        return "${String.format("%.3f", s + ms)}s"
     }
 }
