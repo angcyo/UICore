@@ -4,6 +4,8 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.media.AudioAttributes
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.media.session.MediaSessionCompat
@@ -149,25 +151,34 @@ class DslNotify {
      * 中：不发出声音。
      * 低：不发出声音，也不在状态栏中显示。
      * */
-    var channelImportance: Int = undefined_int
+    var channelImportance: Int = NotificationManagerCompat.IMPORTANCE_HIGH
 
     /**通道id*/
-    var channelId = "DefaultChannel"
+    var channelId: String? = null
+        get() {
+            return field ?: "$channelName"
+        }
 
     /**通道名称*/
     var channelName: CharSequence = "DefaultChannel"
+    /**通道描述文本*/
+    var channelDescription: String? = null
 
     /**通道是否要显示小圆点*/
-    var showBadge = true
+    var channelShowBadge = true
 
     /**允许气泡通知*/
-    var allowBubbles = true
+    var channelAllowBubbles = true
 
     /**激活通知灯*/
-    var enableLights = true
-
+    var channelEnableLights = true
+    /**通知灯颜色*/
+    var channelLightColor = 0
     /**激活震动*/
-    var enableVibration = true
+    var channelEnableVibration = true
+    /**通道的通知声, channelImportance至少是default以上*/
+    var channelSoundUri: Uri? = null
+    var channelAudioAttributes: AudioAttributes? = null
 
     var onConfigChannel: (NotificationChannel) -> Unit = {}
 
@@ -179,23 +190,25 @@ class DslNotify {
             val channel = NotificationChannel(
                 channelId,
                 channelName,
-                if (channelImportance == undefined_int) NotificationManager.IMPORTANCE_HIGH else channelImportance
+                channelImportance
             )
 
             channel.run {
-                setShowBadge(showBadge)
+                setShowBadge(channelShowBadge)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    setAllowBubbles(allowBubbles)
+                    setAllowBubbles(channelAllowBubbles)
                 }
-                enableLights(enableLights)
-                enableVibration(enableVibration)
+                enableLights(channelEnableLights)
+                enableVibration(channelEnableVibration)
+                lightColor = channelLightColor
+                description = channelDescription
 
+                //system属性
                 //setBypassDnd()
 
-//                setSound(
-//                    Settings.System.DEFAULT_NOTIFICATION_URI,
-//                    Notification.AUDIO_ATTRIBUTES_DEFAULT
-//                )
+                channelSoundUri?.run {
+                    setSound(this, channelAudioAttributes ?: Notification.AUDIO_ATTRIBUTES_DEFAULT)
+                }
 
                 onConfigChannel(this)
             }
@@ -391,6 +404,9 @@ class DslNotify {
     /**正在进行的通知, 不允许侧滑删除*/
     var notifyOngoing = false
 
+    /**通知的声音 [channelSoundUri]*/
+    var notifySoundUri: Uri? = null
+
     var onConfigNotify: (NotificationCompat.Builder) -> Unit = {}
 
     /**
@@ -407,9 +423,14 @@ class DslNotify {
     /**如果设置了, 横幅通知, 会优先使用这个*/
     var notifyCustomHeadsUpContentView: RemoteViews? = null
 
-    /**https://developer.android.google.cn/training/notify-user/build-notification.html#Updating*/
+    /**
+     * 是否只通知本地设备, 远程设备不通知. 比如手表
+     * https://developer.android.google.cn/training/notify-user/build-notification.html#Updating
+     * */
     var notifyLocalOnly = false
-    var notifyOnlyAlertOnce = false
+
+    /**是否只在第一次显示通知时, 有声音, 震动提示*/
+    var notifyOnlyAlertOnce = true
 
     /**毫秒
      * https://developer.android.google.cn/training/notify-user/build-notification.html#Removing*/
@@ -417,7 +438,7 @@ class DslNotify {
 
     /**创建通知*/
     fun _createNotify(context: Context): Notification {
-        val builder = NotificationCompat.Builder(context, channelId)
+        val builder = NotificationCompat.Builder(context, channelId!!)
         builder.run {
             setSmallIcon(notifySmallIcon)
             notifyLargeIcon?.run { setLargeIcon(this) }
@@ -442,6 +463,10 @@ class DslNotify {
             priority = notifyPriority
             setDefaults(notifyDefaults)
             notifyCategory?.run { setCategory(this) }
+
+            notifySoundUri?.run {
+                setSound(this)
+            }
 
             _createStyle(context)?.run {
                 setStyle(this)
@@ -519,7 +544,6 @@ class DslNotify {
     }
 
     //</editor-fold desc="通知相关配置">
-
 }
 
 fun dslNotify(context: Context = app(), action: DslNotify.() -> Unit): Int {
