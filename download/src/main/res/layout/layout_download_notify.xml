@@ -30,6 +30,17 @@
             android:textSize="@dimen/text_assist_size"
             tools:text="下载任务名称" />
 
+        <!--
+            <style name="Widget.ProgressBar.Horizontal">
+                <item name="indeterminateOnly">false</item>
+                <item name="progressDrawable">@drawable/progress_horizontal</item>
+                <item name="indeterminateDrawable">@drawable/progress_indeterminate_horizontal</item>
+                <item name="minHeight">20dip</item>
+                <item name="maxHeight">20dip</item>
+                <item name="mirrorForRtl">true</item>
+            </style>
+        -->
+
         <ProgressBar
             android:id="@+id/lib_progress_bar"
             style="?android:attr/progressBarStyleHorizontal"
@@ -39,7 +50,10 @@
             android:layout_marginTop="2dp"
             android:layout_marginBottom="2dp"
             android:indeterminate="true"
-            android:max="100" />
+            android:indeterminateTint="@color/colorAccent"
+            android:max="100"
+            android:progressTint="@color/colorAccent"
+            android:secondaryProgressTint="@color/colorPrimaryDark" />
 
         <TextView
             android:id="@+id/lib_sub_text_view"
