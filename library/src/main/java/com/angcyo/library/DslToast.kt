@@ -29,7 +29,7 @@ object DslToast {
         val config = ToastConfig()
         config.action()
 
-        if (config.activity == null) {
+        if (config.withActivity == null) {
             _showWithToast(context, config)
         } else {
             _showWithActivity(config)
@@ -140,7 +140,7 @@ object DslToast {
         }
 
         //创建新的布局
-        config.activity?.apply {
+        config.withActivity?.apply {
             val contentLayout: FrameLayout? =
                 window.findViewById(Window.ID_ANDROID_CONTENT)
 
@@ -259,7 +259,7 @@ object DslToast {
 }
 
 data class ToastConfig(
-    var activity: Activity? = null, //附着在Activity上, 不用toast展示
+    var withActivity: Activity? = null, //附着在Activity上, 不用toast展示
     var removeLastView: Int = 0,//1:移除全部 0:移除最后一个不相同的layoutId -1:不移除
     var duration: Int = Toast.LENGTH_SHORT,//非0和1, 在activity模式下可以指定任意隐藏时长(毫秒)
     var text: CharSequence = "",
@@ -275,10 +275,12 @@ data class ToastConfig(
     var onBindView: (rootView: View) -> Unit = {}
 )
 
+/**全量配置*/
 fun toast(action: ToastConfig.() -> Unit) {
     DslToast.show(action = action)
 }
 
+/**文本 ico 布局 简化配置*/
 fun toast(
     text: CharSequence?,
     @DrawableRes icon: Int = undefined_res,
@@ -294,6 +296,7 @@ fun toast(
     }
 }
 
+/**文本 ico QQ布局 简化配置*/
 fun toastQQ(
     text: CharSequence?,
     @DrawableRes icon: Int = undefined_res,
