@@ -71,11 +71,12 @@ open class FDownloadListener : DownloadListener {
         L.d("this...")
     }
 
-
+    /**常用回调*/
     override fun taskStart(task: DownloadTask) {
         L.d("下载:${task.id} ${task.url}->${task.file?.absolutePath}")
     }
 
+    /**常用回调*/
     override fun taskEnd(task: DownloadTask, cause: EndCause, realCause: Exception?) {
         val info = StatusUtil.getCurrentInfo(task)
         L.d("this...$cause $realCause ${info?.totalLength?.fileSizeString()}")
@@ -98,6 +99,7 @@ open class FDownloadListener : DownloadListener {
         }
     }
 
+    /**常用回调*/
     open fun taskProgress(
         task: DownloadTask,
         totalLength: Long,

@@ -259,6 +259,21 @@ fun defaultBuilder(url: String?): DownloadTask.Builder? {
     return taskBuilder
 }
 
+/**扩展[String], 开始下载*/
+fun String.download(config: DownloadConfig.() -> Unit = {}): DownloadTask? {
+    return dslDownload(this, config)
+}
+
+/**扩展[String], 监听下载事件*/
+fun String.listener(listener: FDownloadListener) {
+    DslDownload.listener(this, listener)
+}
+
+/**扩展[String], 移除监听下载事件*/
+fun String.removeListener(listener: FDownloadListener) {
+    DslDownload.removeListener(this, listener)
+}
+
 /**下载文件*/
 fun dslDownload(url: String?, config: DownloadConfig.() -> Unit = {}): DownloadTask? {
     var task: DownloadTask? = null

@@ -56,13 +56,13 @@ fun getFileNameFromUrl(url: String?): String {
 }
 
 fun getFileNameFrom(url: String): String {
-    var url = url
+    var _url = url
     var result = ""
     try {
-        url = url.split("\\?").toTypedArray()[0]
-        val indexOf = url.lastIndexOf('/')
+        _url = _url.split("\\?").toTypedArray()[0]
+        val indexOf = _url.lastIndexOf('/')
         if (indexOf != -1) {
-            result = url.substring(indexOf + 1)
+            result = _url.substring(indexOf + 1)
         }
     } catch (e: Exception) {
         e.printStackTrace()
