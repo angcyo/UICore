@@ -11,9 +11,11 @@ import android.provider.Settings
 import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.ex.baseConfig
+import com.angcyo.library.ex.fileUri
 import com.angcyo.library.ex.mimeType
 import com.angcyo.library.ex.uriConfig
 import com.angcyo.library.model.AppBean
+import java.io.File
 
 
 /**
@@ -140,6 +142,38 @@ class DslIntent {
             }
             intent.baseConfig(context)
             context.startActivity(intent)
+        }
+
+        /**
+         * 获取安装App(支持6.0)的意图
+         * 安卓8.0 需要请求安装权限 Manifest.permission.REQUEST_INSTALL_PACKAGES
+         * @param file 文件
+         * @return intent
+         */
+        fun getInstallAppIntent(file: File?): Intent? {
+            if (file == null) return null
+            val intent = Intent(Intent.ACTION_VIEW)
+            val type = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                "application/vnd.android.package-archive"
+            } else {
+                file.name.mimeType()
+            }
+            val uri = fileUri(app(), file)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.setDataAndType(uri, type)
+            return intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+
+        /**
+         * 获取卸载App的意图
+         *
+         * @param packageName 包名
+         * @return intent
+         */
+        fun getUninstallAppIntent(packageName: String): Intent? {
+            val intent = Intent(Intent.ACTION_DELETE)
+            intent.data = Uri.parse("package:$packageName")
+            return intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
     }
 

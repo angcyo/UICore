@@ -340,7 +340,7 @@ class DslNotify {
     /**首次通知时, 立马就要显示的文本, 高版本测试没效果.*/
     var notifyTickerText: CharSequence? = null
 
-    /**通知的优先级, 通道还有一个重要性*/
+    /**通知的优先级, 通道还有一个重要性. 首次横幅通知 需要优先级高 */
     var notifyPriority = NotificationCompat.PRIORITY_HIGH
 
     var notifyDefaults = NotificationCompat.DEFAULT_VIBRATE
@@ -349,6 +349,7 @@ class DslNotify {
      * https://developer.android.google.cn/training/notify-user/build-notification.html#system-category*/
     var notifyCategory: String? = null
 
+    /**通知点击事件[Intent]*/
     var notifyContentIntent: PendingIntent? = null
     /**配置[notifyContentIntent]才有效果*/
     var notifyAutoCancel = true
@@ -392,6 +393,12 @@ class DslNotify {
 
     var onConfigNotify: (NotificationCompat.Builder) -> Unit = {}
 
+    /**
+     * setContent 设置普通视图，高度限制为 64 dp
+     * setCustomContentView设置普通视图，高度限制为 64 dp
+     * setCustomBigContentView() 设置扩展视图，高度可以扩展到256dp
+     * setCustomHeadsUpContentView() 设置浮动通知视图
+     */
     var notifyContentView: RemoteViews? = null
     /**如果设置了,[notifyContentView] 会优先使用这个*/
     var notifyCustomContentView: RemoteViews? = null
@@ -467,10 +474,6 @@ class DslNotify {
             }
 
             //custom
-            /*setContent 设置普通视图，高度限制为 64 dp
-              setCustomContentView设置普通视图，高度限制为 64 dp
-              setCustomBigContentView() 设置扩展视图，高度可以扩展到256dp
-              setCustomHeadsUpContentView() 设置浮动通知视图*/
             notifyContentView?.run { setContent(this) }
             notifyCustomContentView?.run { setCustomContentView(this) }
             notifyCustomBigContentView?.run { setCustomBigContentView(this) }
