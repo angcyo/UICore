@@ -51,18 +51,13 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
     /**后置过滤器*/
     val afterFilterInterceptorList = mutableListOf<FilterInterceptor>()
 
-    //节流控制
-    private val updateDependRunnable = UpdateDependRunnable()
-
     //异步调度器
     private val asyncExecutor: ExecutorService by lazy {
         Executors.newFixedThreadPool(1)
     }
 
     //diff操作
-    private val diffRunnable = DiffRunnable()
-    //diff操作取消
-    private var diffSubmit: Future<*>? = null
+    private var _lastDiffRunnable: DiffRunnable? = null
 
     private val mainHandler: Handler by lazy {
         Handler(Looper.getMainLooper())
@@ -75,7 +70,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
     /**更新过滤后的数据源, 采用的是[DiffUtil]*/
     fun updateFilterItemDepend(params: FilterParams) {
         if (handle.hasCallbacks()) {
-            diffRunnable.notifyUpdateDependItem()
+            _lastDiffRunnable?.notifyUpdateDependItem()
         }
 
         var filterParams = params
@@ -84,15 +79,20 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             filterParams = params.copy(just = true, async = false)
         }
 
+        val diffRunnable = DiffRunnable()
+        val updateDependRunnable = UpdateDependRunnable()
+
         diffRunnable._params = filterParams
-        updateDependRunnable._params = filterParams
+        updateDependRunnable._diffRunnable = diffRunnable
+        _lastDiffRunnable = diffRunnable
 
         if (filterParams.just) {
             handle.clear()
             updateDependRunnable.run()
         } else {
             //确保多次触发, 只有一次被执行
-            handle.once(updateDependRunnable)
+            handle.shakeType = params.shakeType
+            handle.once(params.shakeDelay, updateDependRunnable)
         }
     }
 
@@ -102,7 +102,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
         val chain = FilterChain(
             dslAdapter,
             this,
-            diffRunnable._params ?: FilterParams(),
+            _lastDiffRunnable?._params ?: FilterParams(),
             originList,
             originList,
             false
@@ -171,6 +171,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
 
             if (_params?.justFilter == true) {
                 //仅过滤数据源,不更新界面
+                //跳过 dispatchUpdatesTo
             } else {
                 //根据diff, 更新adapter
                 if (updateDependItemList.isEmpty() &&
@@ -199,7 +200,8 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                 }
             }
 
-            diffSubmit = null
+            //_lastDiffSubmit = null
+            _lastDiffRunnable = null
             _diffResult = null
             _params = null
         }
@@ -211,7 +213,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             val nowTime = nowTime()
             val s = (nowTime - startTime) / 1000
             val ms = ((nowTime - startTime) % 1000) * 1f / 1000
-            L.i("Diff计算耗时:${s + ms}s")
+            L.i("Diff计算耗时:${String.format("%.3f", s + ms)}s")
             _diffResult = diffResult
 
             //回调到主线程
@@ -317,19 +319,23 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
 
     /**抖动过滤处理*/
     internal inner class UpdateDependRunnable : Runnable {
-        var _params: FilterParams? = null
+        var _diffRunnable: DiffRunnable? = null
+        //diff操作取消
+        private var _lastDiffSubmit: Future<*>? = null
+
         override fun run() {
-            if (_params == null) {
+            if (_diffRunnable == null) {
                 return
             }
-            diffSubmit?.cancel(true)
+            _lastDiffSubmit?.cancel(true)
 
-            if (_params!!.async) {
-                diffSubmit = asyncExecutor.submit(diffRunnable)
-            } else {
-                diffRunnable.run()
+            _diffRunnable?.run {
+                if (_params?.async == true) {
+                    _lastDiffSubmit = asyncExecutor.submit(this)
+                } else {
+                    this.run()
+                }
             }
-            _params = null
         }
     }
 }
@@ -362,7 +368,13 @@ data class FilterParams(
     var payload: Any? = null,
 
     /**自定义的扩展数据传递*/
-    var filterData: Any? = null
+    var filterData: Any? = null,
+
+    /**默认是节流模式*/
+    var shakeType: Int = OnceHandler.SHAKE_TYPE_THROTTLE,
+
+    /**抖动检查延迟时长*/
+    var shakeDelay: Long = 16
 )
 
 typealias DispatchUpdates = (dslAdapter: DslAdapter) -> Unit
