@@ -41,6 +41,8 @@
     <dimen name="text_body_size">14dp</dimen>
     <!--辅助文字-->
     <dimen name="text_assist_size">12dp</dimen>
+    <!--最小的文本大小-->
+    <dimen name="text_min_size">9dp</dimen>
 
     <style name="LibPrimaryTextStyle">
         <item name="android:layout_width">wrap_content</item>

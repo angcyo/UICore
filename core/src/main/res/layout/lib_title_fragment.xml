@@ -59,6 +59,15 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/action_bar_height">
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/lib_title_text_view"
+                style="@style/LibMainTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                tools:text="标题栏文本" />
+
             <LinearLayout
                 android:id="@+id/lib_left_wrap_layout"
                 android:layout_width="wrap_content"
@@ -72,14 +81,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|right"
                 android:orientation="horizontal" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/lib_title_text_view"
-                style="@style/LibMainTextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                tools:text="标题栏文本" />
 
         </com.angcyo.widget.layout.TitleWrapLayout>
     </FrameLayout>
