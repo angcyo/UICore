@@ -16,6 +16,8 @@ import com.angcyo.library.ex.dpi
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
+//<editor-fold desc="对话框基础配置">
+
 /**快速配置一个显示在底部全屏的[DslDialogConfig]*/
 fun DslDialogConfig.configBottomDialog(): DslDialogConfig {
     return this.apply {
@@ -23,9 +25,24 @@ fun DslDialogConfig.configBottomDialog(): DslDialogConfig {
         dialogWidth = -1
         dialogHeight = -2
         dialogGravity = Gravity.BOTTOM
+        animStyleResId = R.style.LibDialogBottomTranslateAnimation
         setDialogBgColor(Color.TRANSPARENT)
     }
 }
+
+//</editor-fold desc="对话框基础配置">
+
+//<editor-fold desc="常用对话框">
+
+fun Context.dslDialog(config: DslDialogConfig.() -> Unit): Dialog {
+    val dialogConfig = DslDialogConfig(this)
+    dialogConfig.config()
+    return dialogConfig.run {
+        dialogWidth = -1
+        show()
+    }
+}
+
 
 fun Context.normalDialog(config: NormalDialogConfig.() -> Unit): Dialog {
     val dialogConfig = NormalDialogConfig(this)
@@ -45,6 +62,9 @@ fun Context.normalIosDialog(config: IosDialogConfig.() -> Unit): Dialog {
         show()
     }
 }
+
+//</editor-fold desc="常用对话框">
+
 //
 ///**
 // * 多选项, 选择对话框, 底部带 取消按钮, 标题栏不带取消

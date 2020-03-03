@@ -10,6 +10,7 @@ import androidx.annotation.ColorInt
 import androidx.core.graphics.drawable.DrawableCompat
 import com.angcyo.library.app
 
+
 /**
  * Created by angcyo on ：2017/12/15 15:01
  * 修改备注：
@@ -125,5 +126,46 @@ fun Drawable.copyDrawable(): Drawable? {
             result.bounds = bounds
         }
     }
+    return result
+}
+
+fun Drawable.toBitmap(outWidth: Int = -1, outHeight: Int = -1): Bitmap {
+    // 获取 drawable 长宽
+    val width: Int = minimumWidth
+    val height: Int = minimumHeight
+    setBounds(0, 0, width, height)
+
+    // 获取drawable的颜色格式
+    val config =
+        if (opacity != PixelFormat.OPAQUE) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565
+
+    var result: Bitmap
+
+    // 创建bitmap
+    val bitmap = Bitmap.createBitmap(width, height, config)
+
+    // 创建bitmap画布
+    val canvas = Canvas(bitmap)
+    // 将drawable 内容画到画布中
+    draw(canvas)
+
+    result = if (outWidth > 0 || outHeight > 0) {
+        val width2 = if (outWidth > 0) outWidth else width
+        val height2 = if (outHeight > 0) outWidth else height
+
+        // 创建操作图片用的Matrix对象
+        val matrix = Matrix()
+        // 计算缩放比例
+        val sx = width2 * 1f / width
+        val sy = height2 * 1f / height
+        // 设置缩放比例
+        matrix.postScale(sx, sy)
+
+        val bitmap2 = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true)
+        bitmap2
+    } else {
+        bitmap
+    }
+
     return result
 }

@@ -150,13 +150,13 @@ fun TextView?.setSingleLineMode(singleLine: Boolean = true, maxLength: Int = -1)
     this?.run {
         if (singleLine) {
             isSingleLine = true
+            ellipsize = TextUtils.TruncateAt.END
             maxLines = 1
         } else {
             isSingleLine = false
             maxLines = Int.MAX_VALUE
         }
         if (maxLength >= 0) {
-            ellipsize = TextUtils.TruncateAt.END
             setFilter(InputFilter.LengthFilter(maxLength))
         }
     }

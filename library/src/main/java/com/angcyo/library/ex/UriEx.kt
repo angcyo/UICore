@@ -28,12 +28,12 @@ fun fileUri(context: Context, file: File): Uri {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         //content://com.angcyo.uicore.demo/sdcard/Android/data/com.angcyo.uicore.demo/files/demo/camera/2020-02-13_15-02-38-993.jpeg
         //scheme:content
-        FileProvider.getUriForFile(context, context.packageName, file).run {
+        FileProvider.getUriForFile(context, context.packageName, file).apply {
             context.grantUriPermission(
-                context.packageName, this,
+                context.packageName,
+                this,
                 Intent.FLAG_GRANT_READ_URI_PERMISSION
             )
-            this
         }
     } else {
         //file:///storage/emulated/0/Android/data/com.angcyo.uicore.demo/files/demo/camera/2020-02-13_15-03-59-694.jpeg
