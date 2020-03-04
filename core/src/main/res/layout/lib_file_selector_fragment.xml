@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.TitleWrapLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent20">
+
+    <com.angcyo.widget.layout.touch.TouchBackLayout
+        android:id="@+id/lib_touch_back_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/dialog_white_top_round_bg_shape"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/lib_xhdpi">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingEnd="@dimen/lib_xhdpi">
+
+                <com.angcyo.widget.layout.RHorizontalScrollView
+                    android:id="@+id/current_file_path_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/lib_bg_selector"
+                    android:paddingStart="@dimen/lib_xhdpi"
+                    android:scrollbars="none">
+
+                    <com.angcyo.widget.text.DslTextView
+                        android:id="@+id/current_file_path_view"
+                        style="@style/LibBodyTextStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/lib_item_min_height"
+                        tools:text="/sdcard/" />
+
+                </com.angcyo.widget.layout.RHorizontalScrollView>
+
+                <com.angcyo.widget.DslButton
+                    android:id="@+id/file_selector_button"
+                    style="@style/DefaultButtonMinStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/lib_min_item_height"
+                    android:layout_marginStart="@dimen/lib_xhdpi"
+                    android:enabled="false"
+                    android:paddingStart="@dimen/lib_xhdpi"
+                    android:paddingEnd="@dimen/lib_xhdpi"
+                    android:text="选择" />
+
+            </LinearLayout>
+
+            <com.angcyo.widget.progress.HSProgressView
+                android:id="@+id/lib_progress_view"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                app:r_progress_color="@color/colorPrimary"
+                app:r_progress_round_size="0dp" />
+
+            <com.angcyo.widget.recycler.DslRecyclerView
+                android:id="@+id/lib_recycler_view"
+                style="@style/LibRecyclerViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                tools:padding="@dimen/lib_xhdpi" />
+
+        </LinearLayout>
+    </com.angcyo.widget.layout.touch.TouchBackLayout>
+</com.angcyo.widget.layout.TitleWrapLayout>

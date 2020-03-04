@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/lib_bg_selector"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/lib_xhdpi"
+    android:paddingTop="@dimen/lib_ldpi"
+    android:paddingEnd="@dimen/lib_xhdpi"
+    android:paddingBottom="@dimen/lib_ldpi">
+
+    <com.angcyo.widget.image.DslImageView
+        android:id="@+id/lib_image_view"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:scaleType="fitCenter"
+        app:r_draw_border="false"
+        tools:src="@drawable/lib_ic_folder" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/lib_xhdpi">
+
+        <com.angcyo.widget.text.DslTextView
+            android:id="@+id/lib_text_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="middle"
+            android:maxLines="2"
+            android:textSize="14dp"
+            tools:text="Name" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.angcyo.widget.text.DslTextView
+                android:id="@+id/lib_sub_text_view"
+                style="@style/LibSubTextStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:layout_weight="1"
+                android:textSize="12dp"
+                tools:text="12 MB12 MB12 MB12 MB12 MB12 MB12 MB12 MB12 MB12 MB" />
+
+            <com.angcyo.widget.text.DslTextView
+                android:id="@+id/file_auth_view"
+                style="@style/LibSubTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginRight="@dimen/lib_xxxhdpi"
+                android:textSize="12dp"
+                tools:text="drw" />
+
+            <com.angcyo.widget.text.DslTextView
+                android:id="@+id/lib_time_view"
+                style="@style/LibSubTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:textSize="12dp"
+                tools:text="2017/10/25" />
+
+        </LinearLayout>
+
+        <com.angcyo.widget.text.DslTextView
+            android:id="@+id/file_md5_view"
+            style="@style/LibSubTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12dp"
+            android:visibility="gone"
+            app:r_text_format="MD5:%1$s"
+            tools:text="1923847938751235"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+</com.angcyo.widget.layout.RLinearLayout>
