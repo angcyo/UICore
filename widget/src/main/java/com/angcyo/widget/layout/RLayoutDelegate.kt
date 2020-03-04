@@ -9,6 +9,7 @@ import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import com.angcyo.tablayout.calcLayoutWidthHeight
+import com.angcyo.tablayout.exactlyMeasure
 import com.angcyo.tablayout.screenHeight
 import com.angcyo.tablayout.screenWidth
 import com.angcyo.widget.R
@@ -46,6 +47,18 @@ class RLayoutDelegate {
             view.requestLayout()
         }
 
+    var rLayoutWidth: String? = null
+        set(value) {
+            field = value
+            view.requestLayout()
+        }
+
+    var rLayoutHeight: String? = null
+        set(value) {
+            field = value
+            view.requestLayout()
+        }
+
     /**宽高的比例[1:1] [1:2.5], 宽高必须有一个要是1f*/
     var layoutDimensionRatio: String? = null
         set(value) {
@@ -71,15 +84,17 @@ class RLayoutDelegate {
     fun initAttribute(view: View, attributeSet: AttributeSet?) {
         this.view = view
         val typedArray =
-            view.context.obtainStyledAttributes(attributeSet, R.styleable.RLayout)
+            view.context.obtainStyledAttributes(attributeSet, R.styleable.RLayoutDelegate)
 
-        bDrawable = typedArray.getDrawable(R.styleable.RLayout_r_background)
-        rMaxHeight = typedArray.getString(R.styleable.RLayout_r_max_height)
-        rMaxWidth = typedArray.getString(R.styleable.RLayout_r_max_width)
-        maskDrawable = typedArray.getDrawable(R.styleable.RLayout_r_layout_mask_drawable)
-        layoutDimensionRatio = typedArray.getString(R.styleable.RLayout_r_dimension_ratio)
+        bDrawable = typedArray.getDrawable(R.styleable.RLayoutDelegate_r_background)
+        rMaxHeight = typedArray.getString(R.styleable.RLayoutDelegate_r_max_height)
+        rLayoutHeight = typedArray.getString(R.styleable.RLayoutDelegate_r_layout_height)
+        rMaxWidth = typedArray.getString(R.styleable.RLayoutDelegate_r_max_width)
+        rLayoutWidth = typedArray.getString(R.styleable.RLayoutDelegate_r_layout_width)
+        maskDrawable = typedArray.getDrawable(R.styleable.RLayoutDelegate_r_layout_mask_drawable)
+        layoutDimensionRatio = typedArray.getString(R.styleable.RLayoutDelegate_r_dimension_ratio)
 
-        if (typedArray.hasValue(R.styleable.RLayout_r_clip_to_outline)) {
+        if (typedArray.hasValue(R.styleable.RLayoutDelegate_r_clip_to_outline)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 view.clipToOutline = true
             }
@@ -113,6 +128,42 @@ class RLayoutDelegate {
             setBounds(0, 0, view.width, view.height)
             draw(canvas)
         }
+    }
+
+    /**返回xml中配合的[r_layout_width] [r_layout_height]解析后的宽高*/
+    fun layoutWidthHeight(): IntArray {
+        val parentWidth = (view.parent as? View)?.measuredWidth ?: 0
+        val parentHeight = (view.parent as? View)?.measuredHeight ?: 0
+
+        val layoutWidthHeight = view.calcLayoutWidthHeight(
+            rLayoutWidth, rLayoutHeight,
+            if (parentWidth > 0) parentWidth else view.screenWidth,
+            if (parentHeight > 0) parentHeight else view.screenHeight,
+            0, 0
+        )
+
+        return layoutWidthHeight
+    }
+
+    fun layoutWidthHeightSpec(widthMeasureSpec: Int, heightMeasureSpec: Int): IntArray {
+        var widthSpec: Int = widthMeasureSpec
+        var heightSpec: Int = heightMeasureSpec
+
+        val layoutWidthHeight = layoutWidthHeight()
+        val width = layoutWidthHeight[0]
+        val height = layoutWidthHeight[1]
+
+        if (width != -1 || height != -1) {
+            if (width != -1) {
+                //设置[r_layout_width]
+                widthSpec = exactlyMeasure(width)
+            }
+            if (height != -1) {
+                //设置[r_layout_height]
+                heightSpec = exactlyMeasure(height)
+            }
+        }
+        return intArrayOf(widthSpec, heightSpec)
     }
 
     /**[rMaxHeight]属性支持*/
