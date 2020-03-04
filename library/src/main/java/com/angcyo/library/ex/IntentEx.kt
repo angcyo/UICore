@@ -1,6 +1,7 @@
 package com.angcyo.library.ex
 
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -69,9 +70,14 @@ fun takeVideoIntent(
     return intent
 }
 
-/**打开网页的[Intent]*/
-fun String.urlIntent(): Intent {
+/**
+ * 打开网页的[Intent],
+ * [component] 可以指定打开的应用程序组件. 指定应用.
+ * */
+fun String.urlIntent(component: ComponentName? = null): Intent {
     return Intent(Intent.ACTION_VIEW, Uri.parse(this)).apply {
+        addCategory(Intent.CATEGORY_BROWSABLE)
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        setComponent(component)
     }
 }

@@ -295,7 +295,7 @@ class DslIntent {
 
     //<editor-fold desc="查询Intent相关配置">
 
-    var queryAction: String? = Intent.ACTION_MAIN
+    var queryAction: String? = Intent.ACTION_VIEW //Intent.ACTION_MAIN
     var queryData: Uri? = null
     var queryCategory: List<String>? = null
     var queryFlag: Int = 0
