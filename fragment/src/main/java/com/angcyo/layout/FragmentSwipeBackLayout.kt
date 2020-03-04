@@ -405,7 +405,7 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
                     }
                     if (targetViewGroup != null) {
                         view = targetViewGroup.findView(ev.rawX, ev.rawY)
-                        val builder = StringBuilder("\ntouch on->")
+                        val builder = StringBuilder("\nTouchOn->")
                         if (view == null) {
                             builder.append("null")
                         } else {
