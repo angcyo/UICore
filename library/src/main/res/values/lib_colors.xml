@@ -4,7 +4,7 @@
     <color name="lib_white">#FFFFFF</color>
     <color name="lib_black">#000000</color>
     <color name="lib_line">#D5D5D5</color>
-    <color name="lib_disable_bg_color">#424344</color>
+    <color name="lib_disable_bg_color">#C9CACC</color>
 
     <!--伪造出来的状态栏颜色-->
     <color name="lib_status_bar_dim">#20000000</color>

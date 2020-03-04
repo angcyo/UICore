@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TouchBackLayout">
+        <!--激活下拉返回, 默认false-->
+        <attr name="r_enable_touch_back" format="boolean" />
+        <attr name="r_touch_offset_scroll_top" format="dimension" />
+        <attr name="r_background" />
+        <attr name="r_max_height" />
+        <attr name="r_max_width" />
+        <attr name="r_layout_width" />
+        <attr name="r_layout_height" />
+        <attr name="r_clip_to_outline" />
+        <attr name="r_layout_mask_drawable" />
+        <attr name="r_dimension_ratio" />
+    </declare-styleable>
+</resources>

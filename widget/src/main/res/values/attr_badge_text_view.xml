@@ -32,5 +32,8 @@
         <attr name="r_badge_text_offset_y" />
         <!--end...-->
 
+        <!--文本格式[MD5:%1$s]-->
+        <attr name="r_text_format" format="string" />
+
     </declare-styleable>
 </resources>

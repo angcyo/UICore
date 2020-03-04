@@ -4,8 +4,11 @@
     <dimen name="action_bar_height">50dp</dimen>
     <dimen name="title_bar_height">75dp</dimen>
 
+    <!--最最最小item的高度-->
     <dimen name="lib_min_item_height">35dp</dimen>
+    <!--item最小的高度-->
     <dimen name="lib_item_min_height">45dp</dimen>
+    <!--item常规高度-->
     <dimen name="lib_item_height">50dp</dimen>
 
     <dimen name="lib_padding_left">16dp</dimen>

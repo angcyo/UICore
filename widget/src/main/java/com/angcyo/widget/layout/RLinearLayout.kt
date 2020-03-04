@@ -34,8 +34,9 @@ open class RLinearLayout(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-
+        val layoutWidthHeightSpec =
+            layoutDelegate.layoutWidthHeightSpec(widthMeasureSpec, heightMeasureSpec)
+        super.onMeasure(layoutWidthHeightSpec[0], layoutWidthHeightSpec[1])
         layoutDelegate.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 

@@ -28,8 +28,8 @@ import com.angcyo.fragment.IFragment
 import com.angcyo.library.L
 import com.angcyo.library.L.d
 import com.angcyo.library.LTime
-import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.className
+import com.angcyo.library.ex.dp
 import com.angcyo.tablayout.exactlyMeasure
 import com.angcyo.tablayout.textHeight
 import com.angcyo.widget.R
@@ -752,7 +752,8 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
 
                     //单独绘制name, 一行显示不下
                     val name =
-                        (fragmentByView?.className() ?: "null") + " " + (canvas.javaClass.simpleName)
+                        (fragmentByView?.className()
+                            ?: "null") + " " + (canvas.javaClass.simpleName)
                     val nameHeight = textHeight
                     canvas.drawText(name, 2 * dp, t + nameHeight, debugPaint!!)
 

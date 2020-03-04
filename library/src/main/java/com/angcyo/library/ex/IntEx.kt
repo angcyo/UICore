@@ -1,5 +1,8 @@
 package com.angcyo.library.ex
 
+import kotlin.math.max
+import kotlin.math.min
+
 /**
  *
  * Email:angcyo@126.com
@@ -32,3 +35,15 @@ val undefined_color = -32_768
 fun Int?.or(default: Int) = if (this ?: 0 > 0) this else default
 
 fun Long?.or(default: Long) = if (this ?: 0 > 0) this else default
+
+/**目标值的最小值是自己,  目标值必须超过自己*/
+fun Float.withMinValue(value: Float /*允许的最小值*/) = max(value, this)
+
+fun Float.withMinValue(value: Int) = max(value.toFloat(), this)
+
+fun Int.withMinValue(value: Int) = max(value, this)
+
+/**目标值的最大值是自己,  目标值不能超过自己*/
+fun Float.withMaxValue(value: Float /*允许的最大值*/) = min(value, this)
+
+fun Int.withMaxValue(value: Int) = min(value, this)
