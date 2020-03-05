@@ -9,7 +9,6 @@ import com.angcyo.dsladapter.internal.FilterInterceptor
 import com.angcyo.dsladapter.internal.LoadMoreFilterInterceptor
 import com.angcyo.library.L
 import com.angcyo.widget.DslViewHolder
-import kotlin.math.max
 import kotlin.math.min
 
 /**
@@ -100,7 +99,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
             this.dataItems.clear()
             this.dataItems.addAll(dataItems)
             _updateAdapterItems()
-            updateItemDepend(FilterParams(async = false, just = true))
+            updateItemDepend(FilterParams(asyncDiff = false, justRun = true))
         }
     }
 

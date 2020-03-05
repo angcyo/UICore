@@ -76,7 +76,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
         var filterParams = params
 
         if (params.justFilter) {
-            filterParams = params.copy(just = true, async = false)
+            filterParams = params.copy(justRun = true, asyncDiff = false)
         }
 
         val diffRunnable = DiffRunnable()
@@ -86,7 +86,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
         updateDependRunnable._diffRunnable = diffRunnable
         _lastDiffRunnable = diffRunnable
 
-        if (filterParams.just) {
+        if (filterParams.justRun) {
             handle.clear()
             updateDependRunnable.run()
         } else {
@@ -330,7 +330,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             _lastDiffSubmit?.cancel(true)
 
             _diffRunnable?.run {
-                if (_params?.async == true) {
+                if (_params?.asyncDiff == true) {
                     _lastDiffSubmit = asyncExecutor.submit(this)
                 } else {
                     this.run()
@@ -348,11 +348,11 @@ data class FilterParams(
     /**
      * 异步计算Diff
      * */
-    var async: Boolean = true,
+    var asyncDiff: Boolean = true,
     /**
      * 立即执行, 不检查抖动
      * */
-    var just: Boolean = false,
+    var justRun: Boolean = false,
     /**
      * 只过滤列表数据, 不通知界面操作, 开启此属性.[async=true] [just=true]
      * */
