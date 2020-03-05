@@ -29,6 +29,16 @@ fun DslAdapter.findItem(
     return getDataList(useFilterList).find(predicate)
 }
 
+fun DslAdapter.updateItem(
+    payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART,
+    useFilterList: Boolean = true,
+    predicate: (DslAdapterItem) -> Boolean
+): DslAdapterItem? {
+    return findItem(useFilterList, predicate)?.apply {
+        updateAdapterItem(payload, useFilterList)
+    }
+}
+
 fun DslAdapter.findItemByTag(
     tag: String,
     useFilterList: Boolean = true

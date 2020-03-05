@@ -11,6 +11,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.library.L
+import com.angcyo.library.ex.elseNull
 import com.angcyo.widget.DslViewHolder
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -38,10 +39,9 @@ open class DslAdapterItem : LifecycleOwner {
 
     /**[notifyItemChanged]*/
     open fun updateAdapterItem(payload: Any? = PAYLOAD_UPDATE_PART, useFilterList: Boolean = true) {
-        if (itemDslAdapter == null) {
-            L.e("updateAdapterItem需要[itemDslAdapter], 请赋值.")
+        itemDslAdapter?.notifyItemChanged(this, payload, useFilterList).elseNull {
+            L.w("跳过操作! updateAdapterItem需要[itemDslAdapter],请赋值.")
         }
-        itemDslAdapter?.notifyItemChanged(this, payload, useFilterList)
     }
 
     /**
@@ -55,26 +55,24 @@ open class DslAdapterItem : LifecycleOwner {
             payload = PAYLOAD_UPDATE_PART
         )
     ) {
-        if (itemDslAdapter == null) {
-            L.e("updateItemDepend需要[itemDslAdapter], 请赋值.")
+        itemDslAdapter?.updateItemDepend(filterParams).elseNull {
+            L.w("跳过操作! updateItemDepend需要[itemDslAdapter],请赋值.")
         }
-        itemDslAdapter?.updateItemDepend(filterParams)
     }
 
     /**更新选项*/
     open fun updateItemSelector(select: Boolean, notifyUpdate: Boolean = false) {
-        if (itemDslAdapter == null) {
-            L.e("updateItemSelector需要[itemDslAdapter], 请赋值.")
-        }
         itemDslAdapter?.itemSelectorHelper?.selector(
             SelectorParams(
                 this,
                 select.toSelectOption(),
-                notify = true,
+                notifySelectListener = true,
                 notifyItemSelectorChange = true,
                 updateItemDepend = notifyUpdate
             )
-        )
+        ).elseNull {
+            L.w("跳过操作! updateItemSelector需要[itemDslAdapter],请赋值.")
+        }
     }
 
     //</editor-fold desc="update操作">
