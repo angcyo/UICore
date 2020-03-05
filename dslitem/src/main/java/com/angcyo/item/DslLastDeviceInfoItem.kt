@@ -104,6 +104,7 @@ class DslLastDeviceInfoItem : DslAdapterItem() {
                 copy()
                 toast("信息已复制")
             }
+            _clickListener?.onClick(it)
         }
     }
 }
