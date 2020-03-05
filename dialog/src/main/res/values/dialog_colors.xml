@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="dialog_line">#E0E0E0</color>
+    <color name="dialog_cancel_line">#E7E7ED</color>
+</resources>

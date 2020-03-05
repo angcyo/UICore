@@ -115,9 +115,9 @@ open class DslDialogConfig(var context: Context? = null) {
         }
 
     var canceledOnTouchOutside = true
-    var dialogTitle: CharSequence? = ""
-    var dialogMessage: CharSequence? = ""
-    var onInitListener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit = { _, _ -> }
+    var dialogTitle: CharSequence? = null
+    var dialogMessage: CharSequence? = null
+    var onDialogInitListener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit = { _, _ -> }
     var dialogBgDrawable: Drawable? = null
     var dialogWidth: Int = undefined_res
     var dialogHeight: Int = undefined_res
@@ -227,8 +227,12 @@ open class DslDialogConfig(var context: Context? = null) {
         dialogBgDrawable = getDrawable(drawable)
     }
 
+    //保存[Dialog]对象
+    var _dialog: Dialog? = null
+
     /** 配置window特性, 需要在setContentView之前调用 */
     open fun configWindow(dialog: Dialog) {
+        _dialog = dialog
         val window = dialog.window
         if (dialog is AppCompatDialog) {
             dialog.supportRequestWindowFeature(windowFeature)
@@ -333,7 +337,7 @@ open class DslDialogConfig(var context: Context? = null) {
             decorView = window.decorView
             val viewHolder = DslViewHolder(decorView)
             initDialogView(dialog, viewHolder)
-            onInitListener(dialog, viewHolder)
+            onDialogInitListener(dialog, viewHolder)
         }
 
         return dialog

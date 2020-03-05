@@ -4,9 +4,11 @@ import android.app.Activity
 import android.graphics.Rect
 import android.view.*
 import android.widget.EditText
+import android.widget.LinearLayout
 import androidx.annotation.LayoutRes
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.R
 import com.angcyo.widget.layout.RSoftInputLayout
 
 /**
@@ -317,12 +319,91 @@ fun ViewGroup.replace(viewGroup: ViewGroup): ViewGroup {
 
 //</editor-fold desc="DslAdapterItem操作">
 
+fun View?.tagDslViewHolder(): DslViewHolder? {
+    return this?.run {
+        var _tag = getTag(R.id.lib_tag_dsl_view_holder)
+        if (_tag is DslViewHolder) {
+            _tag
+        } else {
+            _tag = tag
+            if (_tag is DslViewHolder) {
+                _tag
+            } else {
+                null
+            }
+        }
+    }
+}
+
+fun View?.tagDslAdapterItem(): DslAdapterItem? {
+    return this?.run {
+        val tag = getTag(R.id.lib_tag_dsl_adapter_item)
+        if (tag is DslAdapterItem) {
+            tag
+        } else {
+            null
+        }
+    }
+}
+
+fun ViewGroup.appendDslItem(dslAdapterItem: DslAdapterItem) {
+    addDslItem(dslAdapterItem)
+}
+
 fun ViewGroup.addDslItem(dslAdapterItem: DslAdapterItem) {
-    val view = inflate(dslAdapterItem.itemLayoutId, false)
-    val dslViewHolder = DslViewHolder(view)
-    view.tag = dslViewHolder
-    addView(view)
+    setOnHierarchyChangeListener(DslHierarchyChangeListenerWrap())
+    val itemView = inflate(dslAdapterItem.itemLayoutId, false)
+    val dslViewHolder = DslViewHolder(itemView)
+    itemView.tag = dslViewHolder
+    itemView.setTag(R.id.lib_tag_dsl_view_holder, dslViewHolder)
+    itemView.setTag(R.id.lib_tag_dsl_adapter_item, dslAdapterItem)
     dslAdapterItem.itemBind(dslViewHolder, childCount - 1, dslAdapterItem, emptyList())
+
+    //头分割线的支持
+    if (this is LinearLayout) {
+        if (this.orientation == LinearLayout.VERTICAL) {
+            if (dslAdapterItem.itemTopInsert > 0) {
+                addView(
+                    View(context).apply { setBackgroundColor(dslAdapterItem.itemDecorationColor) },
+                    LinearLayout.LayoutParams(-1, dslAdapterItem.itemTopInsert).apply {
+                        leftMargin = dslAdapterItem.itemLeftOffset
+                        rightMargin = dslAdapterItem.itemRightOffset
+                    })
+            }
+        } else {
+            if (dslAdapterItem.itemLeftInsert > 0) {
+                addView(
+                    View(context).apply { setBackgroundColor(dslAdapterItem.itemDecorationColor) },
+                    LinearLayout.LayoutParams(dslAdapterItem.itemTopInsert, -1).apply {
+                        topMargin = dslAdapterItem.itemTopOffset
+                        bottomMargin = dslAdapterItem.itemBottomOffset
+                    })
+            }
+        }
+    }
+    addView(itemView)
+    //尾分割线的支持
+    if (this is LinearLayout) {
+        if (this.orientation == LinearLayout.VERTICAL) {
+            if (dslAdapterItem.itemBottomInsert > 0) {
+                addView(
+                    View(context).apply { setBackgroundColor(dslAdapterItem.itemDecorationColor) },
+                    LinearLayout.LayoutParams(-1, dslAdapterItem.itemBottomInsert).apply {
+                        leftMargin = dslAdapterItem.itemLeftOffset
+                        rightMargin = dslAdapterItem.itemRightOffset
+                    })
+            }
+        } else {
+            if (dslAdapterItem.itemRightInsert > 0) {
+                addView(
+                    View(context).apply { setBackgroundColor(dslAdapterItem.itemDecorationColor) },
+                    LinearLayout.LayoutParams(dslAdapterItem.itemRightInsert, -1).apply {
+                        topMargin = dslAdapterItem.itemTopOffset
+                        bottomMargin = dslAdapterItem.itemBottomOffset
+                    })
+            }
+        }
+    }
 }
 
 fun ViewGroup.resetDslItem(items: List<DslAdapterItem>) {

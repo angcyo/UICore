@@ -65,16 +65,17 @@ fun Context.normalIosDialog(config: IosDialogConfig.() -> Unit): Dialog {
 
 //</editor-fold desc="常用对话框">
 
-//
-///**
-// * 多选项, 选择对话框, 底部带 取消按钮, 标题栏不带取消
-// * */
-//fun Context.itemsDialog(config: ItemDialogConfig.() -> Unit): Dialog {
-//    val dialogConfig = ItemDialogConfig()
-//    dialogConfig.config()
-//
-//    return buildBottomDialog().show(dialogConfig)
-//}
+
+/**
+ * 多选项, 选择对话框, 底部带 取消按钮, 标题栏不带取消
+ * */
+fun Context.itemsDialog(config: DslItemDialogConfig.() -> Unit): Dialog {
+    val dialogConfig = DslItemDialogConfig(this)
+    dialogConfig.configBottomDialog()
+    dialogConfig.config()
+    return dialogConfig.show()
+}
+
 //
 ///**
 // * 多选项, 菜单对话框, 底部不带取消按钮, 标题栏不带取消

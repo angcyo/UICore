@@ -144,7 +144,7 @@ fun loading(
             //动画样式
             animStyleResId = R.style.LibDialogAlphaAnimation
             //初始化布局
-            onInitListener = { dialog, dialogViewHolder ->
+            onDialogInitListener = { dialog, dialogViewHolder ->
                 dialogViewHolder.tv(R.id.lib_text_view)?.text = text
                 dialogViewHolder.click(R.id.lib_close_view) {
                     dialog.cancel()

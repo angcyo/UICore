@@ -2,6 +2,12 @@ package com.angcyo.dsladapter
 
 import androidx.annotation.IntDef
 import androidx.recyclerview.widget.RecyclerView
+import com.angcyo.dsladapter.ItemSelectorHelper.Companion.MODEL_MULTI
+import com.angcyo.dsladapter.ItemSelectorHelper.Companion.MODEL_NORMAL
+import com.angcyo.dsladapter.ItemSelectorHelper.Companion.MODEL_SINGLE
+import com.angcyo.dsladapter.ItemSelectorHelper.Companion.OPTION_DESELECT
+import com.angcyo.dsladapter.ItemSelectorHelper.Companion.OPTION_MUTEX
+import com.angcyo.dsladapter.ItemSelectorHelper.Companion.OPTION_SELECT
 import com.angcyo.library.L
 import com.angcyo.library.ex.elseNull
 import java.util.concurrent.CopyOnWriteArrayList
@@ -19,6 +25,28 @@ import kotlin.math.min
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 class ItemSelectorHelper(val dslAdapter: DslAdapter) {
+
+    companion object {
+
+        /** 正常 状态 */
+        const val MODEL_NORMAL = 0
+
+        /** 单选 状态 */
+        const val MODEL_SINGLE = 1
+
+        /** 多选 状态 */
+        const val MODEL_MULTI = 2
+
+        /**互斥选择*/
+        const val OPTION_MUTEX = 0
+
+        /**选择*/
+        const val OPTION_SELECT = 1
+
+        /**取消*/
+        const val OPTION_DESELECT = 2
+
+    }
 
     /**固定选项, 这里的数据不允许被操作, 切强制选中状态*/
     var fixedSelectorItemList: List<DslAdapterItem>? = null
@@ -300,11 +328,24 @@ class ItemSelectorHelper(val dslAdapter: DslAdapter) {
 
     //<editor-fold desc="其他操作">
 
-    /**获取所有选中的项*/
+    /**获取所有选中项的列表*/
     fun getSelectorItemList(useFilterList: Boolean = true): MutableList<DslAdapterItem> {
         val result = mutableListOf<DslAdapterItem>()
         dslAdapter.getDataList(useFilterList).filterTo(result) {
             it.itemIsSelected
+        }
+        return result
+    }
+
+    /**获取所有选中项的索引列表*/
+    fun getSelectorIndexList(useFilterList: Boolean = true): MutableList<Int> {
+        val result = mutableListOf<Int>()
+        dslAdapter.getDataList(useFilterList).apply {
+            forEachIndexed { index, dslAdapterItem ->
+                if (dslAdapterItem.itemIsSelected) {
+                    result.add(index)
+                }
+            }
         }
         return result
     }
@@ -327,15 +368,6 @@ class ItemSelectorHelper(val dslAdapter: DslAdapter) {
     //</editor-fold desc="其他操作">
 }
 
-/** 正常 状态 */
-const val MODEL_NORMAL = 0
-
-/** 单选 状态 */
-const val MODEL_SINGLE = 1
-
-/** 多选 状态 */
-const val MODEL_MULTI = 2
-
 @IntDef(
     MODEL_NORMAL,
     MODEL_SINGLE,
@@ -344,14 +376,6 @@ const val MODEL_MULTI = 2
 @Retention(AnnotationRetention.SOURCE)
 annotation class MODEL
 
-/**互斥选择*/
-const val OPTION_MUTEX = 0
-
-/**选择*/
-const val OPTION_SELECT = 1
-
-/**取消*/
-const val OPTION_DESELECT = 2
 
 @IntDef(
     OPTION_MUTEX,
@@ -515,4 +539,16 @@ fun DslAdapter.select(
         L.w("未找到需要选择操作的[DslAdapterItem]")
     }
 }
+
+/**快速选择/取消[dslItem]*/
+fun DslAdapter.select(dslItem: DslAdapterItem, selected: Boolean = true) {
+    selector().selector(SelectorParams(dslItem, selected.toSelectOption()))
+}
+
+/**互斥操作*/
+fun DslAdapter.selectMutex(dslItem: DslAdapterItem) {
+    selector().selector(SelectorParams(dslItem, OPTION_MUTEX))
+}
+
+
 

@@ -47,6 +47,10 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
             text = dialogMessage
         }
 
+        //标题栏控制
+        dialogViewHolder.visible(R.id.title_layout, dialogTitle != null)
+        dialogViewHolder.visible(R.id.title_line_view, dialogTitle != null)
+
         initControlLayout(dialog, dialogViewHolder)
     }
 

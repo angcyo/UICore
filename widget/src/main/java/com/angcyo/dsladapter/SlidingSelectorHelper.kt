@@ -2,10 +2,12 @@ package com.angcyo.dsladapter
 
 import android.animation.TimeInterpolator
 import android.content.Context
-import androidx.core.view.GestureDetectorCompat
-import androidx.recyclerview.widget.RecyclerView
 import android.view.GestureDetector
 import android.view.MotionEvent
+import androidx.core.view.GestureDetectorCompat
+import androidx.recyclerview.widget.RecyclerView
+import com.angcyo.dsladapter.ItemSelectorHelper.Companion.OPTION_DESELECT
+import com.angcyo.dsladapter.ItemSelectorHelper.Companion.OPTION_SELECT
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
 import kotlin.math.max

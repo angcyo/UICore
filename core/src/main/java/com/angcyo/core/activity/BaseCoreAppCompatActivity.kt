@@ -48,7 +48,7 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
                     neutralButton("分享文件?") { _, _ ->
                         filePath?.file()?.shareFile(this@BaseCoreAppCompatActivity)
                     }
-                    onInitListener = { _, dialogViewHolder ->
+                    onDialogInitListener = { _, dialogViewHolder ->
                         dialogViewHolder.click(R.id.message_view) {
                             filePath?.file()?.open(this@BaseCoreAppCompatActivity)
                         }
