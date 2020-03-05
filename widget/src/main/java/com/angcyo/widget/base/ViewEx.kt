@@ -20,11 +20,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.math.MathUtils.clamp
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.doOnPreDraw
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.library.ex.getStatusBarHeight
 import com.angcyo.library.ex.remove
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.base.ViewEx._tempRect
+import com.angcyo.widget.layout.ILayoutDelegate
 
 /**
  *
@@ -119,8 +121,16 @@ fun View.setWidthHeight(width: Int = undefined_res, height: Int = undefined_res)
     layoutParams = params
 }
 
+/**设置系统背景*/
 fun View.setBgDrawable(drawable: Drawable?) {
     ViewCompat.setBackground(this, drawable)
+}
+
+/**设置r背景*/
+fun View.setRBgDrawable(drawable: Drawable?) {
+    if (this is ILayoutDelegate) {
+        this.getRLayoutDelegate().bDrawable = drawable
+    }
 }
 
 /**长按震动反馈*/
@@ -523,6 +533,17 @@ fun Canvas.clear(rect: Rect? = null) {
 
 //<editor-fold desc="回调扩展">
 
+/**确保[View]具有可视大小, 用于执行动画*/
+fun View.doAnimate(action: View.() -> Unit) {
+    if (measuredHeight <= 0 || measuredWidth <= 0) {
+        doOnPreDraw {
+            it.action()
+        }
+        postInvalidateOnAnimation()
+    } else {
+        action()
+    }
+}
 
 /**[androidx/core/view/View.kt:79]*/
 fun View.doOnPreDraw(action: (View) -> Unit) {

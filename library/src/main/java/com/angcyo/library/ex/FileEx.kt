@@ -260,3 +260,7 @@ fun File.shareVideo(context: Context, content: String?) {
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     )
 }
+
+fun File?.isFile(): Boolean = this?.isFile == true
+
+fun File?.isFolder(): Boolean = this?.isDirectory == true

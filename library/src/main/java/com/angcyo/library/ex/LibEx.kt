@@ -35,3 +35,12 @@ fun Any.simpleClassName(): String {
 fun Any.className(): String {
     return this.javaClass.name
 }
+
+/**如果为空, 则执行[action].
+ * 原样返回*/
+fun <T> T?.elseNull(action: () -> Unit = {}): T? {
+    if (this == null) {
+        action()
+    }
+    return this
+}
