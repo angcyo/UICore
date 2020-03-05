@@ -32,6 +32,9 @@ class RLayoutDelegate {
         set(value) {
             field = value
             view.postInvalidateOnAnimation()
+            if (value != null) {
+                view.setWillNotDraw(false)
+            }
         }
 
     /**支持最大高度[com.angcyo.tablayout.TabLayoutLibExKt.calcSize]*/
