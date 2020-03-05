@@ -10,18 +10,22 @@ import com.angcyo.base.dslFHelper
 import com.angcyo.core.R
 import com.angcyo.core.component.file.DslFileLoader
 import com.angcyo.core.component.file.FileItem
+import com.angcyo.core.component.file.file
 import com.angcyo.core.dslitem.DslFileSelectorItem
 import com.angcyo.core.fragment.BaseFragment
-import com.angcyo.dsladapter.DslAdapter
+import com.angcyo.dsladapter.*
+import com.angcyo.library.ex.isFile
 import com.angcyo.library.ex.isFileScheme
+import com.angcyo.library.ex.isFolder
 import com.angcyo.library.ex.withMinValue
-import com.angcyo.widget.layout.RLinearLayout
+import com.angcyo.library.toastQQ
+import com.angcyo.widget.base.Anim
+import com.angcyo.widget.base.doAnimate
+import com.angcyo.widget.base.drawWidth
 import com.angcyo.widget.layout.touch.TouchBackLayout
 import com.angcyo.widget.progress.HSProgressView
 import com.angcyo.widget.recycler.initDslAdapter
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 
 /**
  *
@@ -40,10 +44,35 @@ open class FileSelectorFragment : BaseFragment() {
 
     private var scrollView: HorizontalScrollView? = null
 
-    private var selectorItemView: RLinearLayout? = null
+    /**选中的文件item*/
+    private var selectorFileItem: FileItem? = null
 
     init {
         fragmentLayoutId = R.layout.lib_file_selector_fragment
+    }
+
+    override fun canSwipeBack(): Boolean {
+        return false
+    }
+
+    override fun onBackPressed(): Boolean {
+        doHideAnimator {
+            removeFragment()
+        }
+        return false
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //默认选中
+        fileSelectorConfig.selectorFileUri?.run {
+            selectorFileItem = FileItem(this)
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        doShowAnimator()
     }
 
     /**
@@ -72,10 +101,7 @@ open class FileSelectorFragment : BaseFragment() {
                     maxScrollY: Int
                 ) {
                     if (scrollY >= maxScrollY) {
-                        dslFHelper {
-                            noAnim()
-                            remove(this@FileSelectorFragment)
-                        }
+                        removeFragment()
                     }
                 }
             }
@@ -93,29 +119,61 @@ open class FileSelectorFragment : BaseFragment() {
         //选择按钮
         _vh.click(R.id.file_selector_button) {
             //T_.show(selectorFilePath)
-
-            dslFHelper {
-                remove(this@FileSelectorFragment)
+            doHideAnimator {
+                removeFragment()
+                fileSelectorConfig.onFileSelector?.invoke(selectorFileItem)
+                fileSelectorConfig = FileSelectorConfig()
             }
-
-            fileSelectorConfig.onFileSelector?.invoke(fileSelectorConfig.selectorFileUri)
         }
 
         _vh.rv(R.id.lib_recycler_view)?.apply {
             _adapter = initDslAdapter()
-        }
+            _adapter.setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_LOADING)
+            _adapter.singleModel()
 
-        dslFileLoader.onLoaderResult = {
-            _vh.gone(R.id.lib_progress_view)
-            _adapter.loadSingleData<DslFileSelectorItem>(it, 1, Int.MAX_VALUE) { oldItem, data ->
-                (oldItem ?: DslFileSelectorItem()).apply {
-                    itemShowFileMd5 = true
-                    itemFile = data as FileItem
+            _adapter.selector().observer {
+                onItemChange = { selectorItems, selectorIndexList, _, _ ->
+                    selectorFileItem =
+                        (selectorItems.firstOrNull() as? DslFileSelectorItem)?.itemFile
+                    _vh.enable(R.id.file_selector_button, selectorIndexList.isNotEmpty())
                 }
             }
         }
-        dslFileLoader.onFileMd5Result = {
 
+        //文件列表加载返回
+        dslFileLoader.onLoaderResult = {
+            _vh.gone(R.id.lib_progress_view)
+            _adapter.loadSingleData2<DslFileSelectorItem>(it, 1, Int.MAX_VALUE) { data ->
+                itemShowFileMd5 = fileSelectorConfig.showFileMd5
+                itemFile = data as? FileItem
+                itemIsSelected = selectorFileItem == itemFile
+
+                onItemClick = {
+                    itemFile?.apply {
+                        if (file().isFile()) {
+                            _adapter.select {
+                                it == this@loadSingleData2
+                            }
+                        } else if (file().isFolder()) {
+                            resetPath(file()!!.absolutePath)
+                        }
+                    }
+                }
+
+                if (fileSelectorConfig.showFileMenu) {
+                    onItemLongClick = {
+                        toastQQ("菜单")
+                        true
+                    }
+                }
+            }
+        }
+
+        //文件耗时操作返回
+        dslFileLoader.onLoaderDelayResult = { fileItem ->
+            _adapter.updateItem {
+                (it as? DslFileSelectorItem)?.itemFile == fileItem
+            }
         }
     }
 
@@ -145,20 +203,52 @@ open class FileSelectorFragment : BaseFragment() {
 
         scrollView?.let {
             it.post {
-                it.scrollTo((it.getChildAt(0).measuredWidth - it.measuredWidth).withMinValue(0), 0)
+                val x = it.getChildAt(0).measuredWidth - it.drawWidth
+                it.scrollTo(x.withMinValue(0), 0)
             }
         }
 
         loadFileList(fileSelectorConfig.targetPath, delay)
     }
 
+    //文件loader
     val dslFileLoader = DslFileLoader()
+
     private fun loadFileList(path: String, delay: Long = 0L) {
         _vh.v<HSProgressView>(R.id.lib_progress_view)?.apply {
             visibility = View.VISIBLE
             startAnimator()
         }
-        dslFileLoader.load(path)
+        _vh.postDelay(delay) {
+            dslFileLoader.loadHideFile = fileSelectorConfig.showHideFile
+            dslFileLoader.load(path)
+        }
+    }
+
+    private fun doShowAnimator() {
+        _vh.view(R.id.lib_touch_back_layout)?.run {
+            doAnimate {
+                translationY = this.measuredHeight.toFloat()
+                animate().translationY(0f).setDuration(Anim.ANIM_DURATION).start()
+            }
+        }
+    }
+
+    private fun doHideAnimator(onEnd: () -> Unit) {
+        _vh.view(R.id.lib_touch_back_layout)?.run {
+            animate()
+                .translationY(this.measuredHeight.toFloat())
+                .setDuration(Anim.ANIM_DURATION)
+                .withEndAction(onEnd)
+                .start()
+        }
+    }
+
+    private fun removeFragment() {
+        dslFHelper {
+            noAnim()
+            remove(this@FileSelectorFragment)
+        }
     }
 }
 
@@ -197,21 +287,21 @@ open class FileSelectorConfig {
             }
         }
 
-    val simpleFormat by lazy {
-        SimpleDateFormat("yyyy/MM/dd", Locale.CHINA)
-    }
-
-    /*选中的文件*/
+    /*默认选中的文件*/
     var selectorFileUri: Uri? = null
 
-    var onFileSelector: ((Uri?) -> Unit)? = null
+    var onFileSelector: ((FileItem?) -> Unit)? = null
 }
 
 /**文件选择*/
-fun DslFHelper.fileSelector(onResult: (Uri?) -> Unit) {
+fun DslFHelper.fileSelector(
+    config: FileSelectorConfig.() -> Unit = {},
+    onResult: (FileItem?) -> Unit = {}
+) {
     noAnim()
     show(FileSelectorFragment().apply {
         fileSelectorConfig {
+            config()
             onFileSelector = onResult
         }
     })
