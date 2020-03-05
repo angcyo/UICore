@@ -69,48 +69,13 @@ fun Context.normalIosDialog(config: IosDialogConfig.() -> Unit): Dialog {
 /**
  * 多选项, 选择对话框, 底部带 取消按钮, 标题栏不带取消
  * */
-fun Context.itemsDialog(config: DslItemDialogConfig.() -> Unit): Dialog {
-    val dialogConfig = DslItemDialogConfig(this)
+fun Context.itemsDialog(config: ItemDialogConfig.() -> Unit): Dialog {
+    val dialogConfig = ItemDialogConfig(this)
     dialogConfig.configBottomDialog()
     dialogConfig.config()
     return dialogConfig.show()
 }
 
-//
-///**
-// * 多选项, 菜单对话框, 底部不带取消按钮, 标题栏不带取消
-// * */
-//fun Context.menuDialog(config: MenuDialogConfig.() -> Unit): Dialog {
-//    val dialogConfig = MenuDialogConfig()
-//    dialogConfig.config()
-//
-//    return buildBottomDialog().show(dialogConfig)
-//}
-//
-///**
-// * 单选对话框, 底部不带取消按钮, 标题栏带取消和确定
-// * */
-//fun Context.singleChoiceDialog(config: MenuDialogConfig.() -> Unit): Dialog {
-//    val dialogConfig = MenuDialogConfig()
-//    dialogConfig.choiceModel = ChoiceIView.CHOICE_MODE_SINGLE
-//    dialogConfig.dialogCanceledOnTouchOutside = false
-//    dialogConfig.config()
-//
-//    return buildBottomDialog().show(dialogConfig)
-//}
-//
-///**
-// * 多选对话框, 底部不带取消按钮, 标题栏带取消和确定
-// * */
-//fun Context.multiChoiceDialog(config: MenuDialogConfig.() -> Unit): Dialog {
-//    val dialogConfig = MenuDialogConfig()
-//    dialogConfig.choiceModel = ChoiceIView.CHOICE_MODE_MULTI
-//    dialogConfig.dialogCanceledOnTouchOutside = false
-//    dialogConfig.config()
-//
-//    return buildBottomDialog().show(dialogConfig)
-//}
-//
 //
 ///**
 // * 3D滚轮选择对话框, 标题栏带取消和确定
@@ -162,16 +127,18 @@ fun Context.multiInputDialog(config: InputDialogConfig.() -> Unit): Dialog {
 
     return dialogConfig.show()
 }
-//
-///**
-// * 底部网格对话框
-// * */
-//fun Context.gridDialog(config: GridDialogConfig.() -> Unit): Dialog {
-//    val dialogConfig = GridDialogConfig()
-//    dialogConfig.config()
-//
-//    return buildBottomDialog().show(dialogConfig)
-//}
+
+/**
+ * 底部网格对话框
+ * */
+fun Context.gridDialog(config: GridDialogConfig.() -> Unit): Dialog {
+    val dialogConfig = GridDialogConfig(this)
+    dialogConfig.configBottomDialog()
+    dialogConfig.canceledOnTouchOutside = false
+    dialogConfig.config()
+
+    return dialogConfig.show()
+}
 
 //<editor-fold desc="popupWindow">
 

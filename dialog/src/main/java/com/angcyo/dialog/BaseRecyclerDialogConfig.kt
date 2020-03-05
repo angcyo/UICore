@@ -6,7 +6,6 @@ import android.view.View
 import com.angcyo.dialog.dslitem.DslDialogTextItem
 import com.angcyo.dsladapter.*
 import com.angcyo.library.ex._color
-import com.angcyo.library.ex._dimen
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.addDslItem
@@ -33,6 +32,9 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
 
     /**最大的高度*/
     var dialogMaxHeight: String = "0.5sh"
+
+    //包裹取消按钮的布局id
+    var _cancelItemWrapLayoutId = R.id.lib_dialog_root_layout
 
     /**对话框返回, 取消不会触发此回调
      * [dialogItemList] 数据列表
@@ -80,8 +82,8 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
         }
 
         dialogViewHolder.rv(R.id.lib_recycler_view)?.apply {
+            //初始化DslAdapter
             _adapter = initDslAdapter() {
-                defaultFilterParams = FilterParams(null, false)
                 adapterItemList.firstOrNull()?.apply {
                     itemTopInsert = 0
                 }
@@ -89,7 +91,9 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
                     itemBottomInsert = 0
                 }
                 resetItem(adapterItemList)
+                updateItemDepend(FilterParams(justRun = true, asyncDiff = false))
             }
+            //设置选择模式
             _adapter.selector().apply {
                 selectorModel = dialogSelectorModel
                 observer {
@@ -108,7 +112,7 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
             onItemClick = {
                 dialog.cancel()
             }
-            dialogViewHolder.group(R.id.lib_dialog_root_layout)?.also {
+            dialogViewHolder.group(_cancelItemWrapLayoutId)?.also {
                 it.addDslItem(this)
             }
         }
@@ -122,18 +126,6 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
             itemTextBold = true
             itemText = "取消"
         }
-    }
-
-    /**添加Item*/
-    fun addDialogItem(action: DslDialogTextItem.() -> Unit) {
-        adapterItemList.add(DslDialogTextItem().apply {
-            itemTopInsert = _dimen(R.dimen.lib_line_px)
-            itemDecorationColor = _color(R.color.dialog_line)
-            onItemClick = {
-                onDialogItemClick(this, it)
-            }
-            action()
-        })
     }
 
     /**配置取消按钮*/

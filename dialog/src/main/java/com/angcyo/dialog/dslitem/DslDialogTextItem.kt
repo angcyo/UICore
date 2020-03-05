@@ -16,7 +16,7 @@ import com.angcyo.widget.base.setLeftIco
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
-class DslDialogTextItem : DslAdapterItem() {
+open class DslDialogTextItem : DslAdapterItem() {
 
     /**支持span*/
     var itemText: CharSequence? = null
