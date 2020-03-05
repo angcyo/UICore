@@ -21,7 +21,7 @@
         style="@style/LibBodyTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/lib_white"
+        android:background="@drawable/dialog_white_top_round_bg_shape"
         android:imeOptions="actionDone"
         android:maxHeight="200dp"
         android:minHeight="@dimen/lib_item_min_height"

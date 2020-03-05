@@ -18,6 +18,7 @@
         android:id="@+id/input_wrapper_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/dialog_white_top_round_bg_shape"
         android:divider="@drawable/lib_shape_line_px"
         android:dividerPadding="@dimen/lib_xhdpi"
         android:orientation="vertical"
