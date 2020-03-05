@@ -63,7 +63,13 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
         if (dialogSelectorModel == ItemSelectorHelper.MODEL_SINGLE ||
             dialogSelectorModel == ItemSelectorHelper.MODEL_MULTI
         ) {
+            //选择模式
             dialogViewHolder.enable(R.id.positive_button, false)
+        } else {
+            //隐藏多余的按钮
+            dialogViewHolder.gone(R.id.positive_button)
+            dialogViewHolder.gone(R.id.negative_button)
+            dialogViewHolder.gone(R.id.dialog_neutral_button)
         }
 
         dialogViewHolder.rv(R.id.lib_recycler_view)?.apply {
