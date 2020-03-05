@@ -10,6 +10,7 @@ import com.angcyo.library.ex._dimen
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.addDslItem
+import com.angcyo.widget.base.layoutDelegate
 import com.angcyo.widget.recycler.initDslAdapter
 
 /**
@@ -29,6 +30,9 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
 
     /**支持单选多选模式*/
     var dialogSelectorModel: Int = ItemSelectorHelper.MODEL_NORMAL
+
+    /**最大的高度*/
+    var dialogMaxHeight: String = "0.5sh"
 
     /**对话框返回, 取消不会触发此回调
      * [dialogItemList] 数据列表
@@ -59,6 +63,9 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
 
     override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         super.initDialogView(dialog, dialogViewHolder)
+        dialogViewHolder.group(R.id.lib_dialog_root_layout)?.layoutDelegate {
+            rMaxHeight = dialogMaxHeight
+        }
 
         if (dialogSelectorModel == ItemSelectorHelper.MODEL_SINGLE ||
             dialogSelectorModel == ItemSelectorHelper.MODEL_MULTI
@@ -75,6 +82,12 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
         dialogViewHolder.rv(R.id.lib_recycler_view)?.apply {
             _adapter = initDslAdapter() {
                 defaultFilterParams = FilterParams(null, false)
+                adapterItemList.firstOrNull()?.apply {
+                    itemTopInsert = 0
+                }
+                adapterItemList.lastOrNull()?.apply {
+                    itemBottomInsert = 0
+                }
                 resetItem(adapterItemList)
             }
             _adapter.selector().apply {
@@ -104,8 +117,9 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
     //默认的返回按钮
     open fun defaultCancelItem(): DslDialogTextItem {
         return DslDialogTextItem().apply {
-            itemTopInsert = 2 * dpi
+            itemTopInsert = 4 * dpi
             itemDecorationColor = _color(R.color.dialog_cancel_line)
+            itemTextBold = true
             itemText = "取消"
         }
     }

@@ -1,9 +1,11 @@
 package com.angcyo.dialog.dslitem
 
 import android.graphics.drawable.Drawable
+import android.view.Gravity
 import com.angcyo.dialog.R
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.setBoldText
 import com.angcyo.widget.base.setLeftIco
 
 /**
@@ -18,6 +20,10 @@ class DslDialogTextItem : DslAdapterItem() {
 
     /**支持span*/
     var itemText: CharSequence? = null
+    /**是否是粗体*/
+    var itemTextBold: Boolean = false
+    /**重力*/
+    var itemTextGravity: Int = Gravity.CENTER
     /**使用系统的[drawableLeft]属性*/
     var itemLeftDrawable: Drawable? = null
 
@@ -33,8 +39,12 @@ class DslDialogTextItem : DslAdapterItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
+        itemHolder.itemView.isSelected = itemIsSelected
+
         itemHolder.tv(R.id.lib_text_view)?.apply {
             setLeftIco(itemLeftDrawable)
+            gravity = itemTextGravity
+            setBoldText(itemTextBold)
             text = itemText
         }
     }

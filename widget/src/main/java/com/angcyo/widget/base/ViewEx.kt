@@ -27,6 +27,7 @@ import com.angcyo.library.ex.remove
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.base.ViewEx._tempRect
 import com.angcyo.widget.layout.ILayoutDelegate
+import com.angcyo.widget.layout.RLayoutDelegate
 
 /**
  *
@@ -128,8 +129,14 @@ fun View.setBgDrawable(drawable: Drawable?) {
 
 /**设置r背景*/
 fun View.setRBgDrawable(drawable: Drawable?) {
+    layoutDelegate {
+        bDrawable = drawable
+    }
+}
+
+fun View?.layoutDelegate(action: RLayoutDelegate.() -> Unit) {
     if (this is ILayoutDelegate) {
-        this.getRLayoutDelegate().bDrawable = drawable
+        this.getRLayoutDelegate().action()
     }
 }
 
