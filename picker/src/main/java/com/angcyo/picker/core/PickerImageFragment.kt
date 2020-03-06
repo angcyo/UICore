@@ -261,6 +261,13 @@ class PickerImageFragment : BasePickerFragment() {
             (this as? DslPickerImageItem)?.showFileSize =
                 pickerViewModel.loaderConfig.value?.showFileSize ?: false
         }
+
+        _adapter.updateItemDepend(FilterParams(null, true, true, payload = mediaPayload()))
+        _adapter.onDispatchUpdates {
+            _recycler.scrollHelper.scrollToFirst {
+                scrollAnim = false
+            }
+        }
     }
 
     /**显示文件夹切换布局*/

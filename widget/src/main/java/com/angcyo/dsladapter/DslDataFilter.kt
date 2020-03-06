@@ -77,7 +77,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
         OnceHandler()
     }
 
-    val lock = ReentrantLock()
+    private val lock = ReentrantLock()
 
     /**更新过滤后的数据源, 采用的是[DiffUtil]*/
     open fun updateFilterItemDepend(params: FilterParams) {
@@ -88,18 +88,27 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                 //立即触发一次, 子项依赖的更新, 防止部分状态丢失.
                 _updateTaskLit.lastOrNull()?.notifyUpdateDependItem()
             }
+
+            var firstTime = 0L
             _updateTaskLit.forEach {
-                if (params.shakeType == OnceHandler.SHAKE_TYPE_THROTTLE) {
-                    //节流
-                    if (nowTime - it._taskStartTime < params.shakeDelay) {
-                        it.taskCancel = true
-                    }
-                } else {
-                    //抖动
+                if (params.justRun || params.shakeType == OnceHandler.SHAKE_TYPE_DEBOUNCE) {
+                    //立即执行 or 抖动
                     it.taskCancel = true
+                } else if (params.shakeType == OnceHandler.SHAKE_TYPE_THROTTLE) {
+                    //节流
+                    if (firstTime == 0L) {
+                        firstTime = it._taskStartTime
+                    } else {
+                        if (it._taskStartTime - firstTime < params.shakeDelay) {
+                            it.taskCancel = true
+                        }
+                    }
                 }
             }
-            _updateTaskLit.clear()
+
+            if (firstTime == 0L) {
+                _updateTaskLit.clear()
+            }
 
             var filterParams = params
 
@@ -442,7 +451,7 @@ data class FilterParams(
     var filterData: Any? = null,
 
     /**默认是节流模式*/
-    var shakeType: Int = OnceHandler.SHAKE_TYPE_THROTTLE,
+    var shakeType: Int = OnceHandler.SHAKE_TYPE_DEBOUNCE,
 
     /**抖动检查延迟时长*/
     var shakeDelay: Long = 16

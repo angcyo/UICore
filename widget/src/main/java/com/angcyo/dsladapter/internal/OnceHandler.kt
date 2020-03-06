@@ -20,7 +20,7 @@ class OnceHandler(looper: Looper = Looper.getMainLooper()) : Handler(looper) {
         const val SHAKE_TYPE_DEBOUNCE = 2
     }
 
-    var shakeType: Int = SHAKE_TYPE_THROTTLE
+    var shakeType: Int = SHAKE_TYPE_DEBOUNCE
         set(value) {
             val old = field
             field = value
