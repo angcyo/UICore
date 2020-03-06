@@ -25,7 +25,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.6"
-        app:srcCompat="@drawable/lib_audio_cover_tip" />
+        tools:srcCompat="@drawable/lib_audio_cover_tip" />
 
     <!--选中动画遮罩层-->
     <View

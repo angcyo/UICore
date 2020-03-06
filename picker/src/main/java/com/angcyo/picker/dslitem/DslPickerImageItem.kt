@@ -1,13 +1,14 @@
 package com.angcyo.picker.dslitem
 
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.TransitionDrawable
 import android.view.animation.AccelerateInterpolator
 import androidx.annotation.DrawableRes
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.containsPayload
+import com.angcyo.dsladapter.isUpdateMedia
 import com.angcyo.dsladapter.margin
-import com.angcyo.dsladapter.updateMedia
 import com.angcyo.glide.giv
 import com.angcyo.library.ex.*
 import com.angcyo.loader.*
@@ -53,6 +54,9 @@ open class DslPickerImageItem : DslAdapterItem() {
     /**显示文件大小*/
     var showFileSize: Boolean = false
 
+    /**占位图*/
+    var itemPlaceholderDrawable: Drawable? = colorDrawable(R.color.picker_image_placeholder_color)
+
     @DrawableRes
     var itemAudioCoverTipDrawable: Int = com.angcyo.item.R.drawable.lib_audio_cover_tip
 
@@ -83,7 +87,7 @@ open class DslPickerImageItem : DslAdapterItem() {
             }
         }
 
-        margin(1 * dpi)
+        margin(1)
 
         //长按赋值媒体信息
         onItemLongClick = {
@@ -107,15 +111,19 @@ open class DslPickerImageItem : DslAdapterItem() {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
         //更新媒体
-        val mediaUpdate = payloads.updateMedia()
+        val mediaUpdate = payloads.isUpdateMedia()
         val animUpdate = payloads.containsPayload(PAYLOAD_UPDATE_ANIM)
         val cancelAnimUpdate = payloads.containsPayload(PAYLOAD_UPDATE_CANCEL_ANIM)
 
         if (mediaUpdate) {
             //缩略图
             itemHolder.giv(R.id.lib_image_view)?.apply {
-                load(loaderMedia?.loadUri()) {
-                    checkGifType = true
+                setImageDrawable(itemPlaceholderDrawable)
+                if (!loaderMedia.isAudio()) {
+                    load(loaderMedia?.loadUri()) {
+                        placeholderDrawable = itemPlaceholderDrawable
+                        checkGifType = true
+                    }
                 }
             }
         }
@@ -127,13 +135,13 @@ open class DslPickerImageItem : DslAdapterItem() {
         itemHolder.gone(R.id.lib_tip_image_view)
         if (loaderMedia?.isAudio() == true) {
             if (itemAudioCoverTipDrawable > 0) {
-                itemHolder.visible(R.id.lib_tip_image_view)
                 itemHolder.img(R.id.lib_tip_image_view)?.setImageResource(itemAudioCoverTipDrawable)
+                itemHolder.visible(R.id.lib_tip_image_view)
             }
         } else if (loaderMedia?.isVideo() == true) {
             if (itemVideoCoverTipDrawable > 0) {
-                itemHolder.visible(R.id.lib_tip_image_view)
                 itemHolder.img(R.id.lib_tip_image_view)?.setImageResource(itemVideoCoverTipDrawable)
+                itemHolder.visible(R.id.lib_tip_image_view)
             }
         }
 

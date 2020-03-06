@@ -181,92 +181,85 @@ class PickerImageFragment : BasePickerFragment() {
         _vh.visible(R.id.folder_layout)
         _vh.tv(R.id.folder_text_view)?.text = folder.folderName
 
-        _adapter.loadSingleData<DslPickerImageItem>(
+        _adapter.loadSingleData2<DslPickerImageItem>(
             folder.mediaItemList,
             1,
             Int.MAX_VALUE
-        ) { oldItem, data ->
-            (oldItem ?: DslPickerImageItem().apply {
-                //获取选中状态
-                onGetSelectedState = {
-                    it?.run {
-                        pickerViewModel.selectorMediaList.value?.contains(this)
-                    } ?: itemIsSelected
-                }
-                //获取选中索引
-                onGetSelectedIndex = {
-                    it?.run {
-                        val index = pickerViewModel.selectorMediaList.value?.indexOf(this) ?: -1
-                        if (index >= 0) {
-                            "${index + 1}"
-                        } else {
-                            null
-                        }
-                    }
-                }
-                //选择回调
-                onSelectorItem = {
-                    var pass = false
-                    if (it) {
-                        //已经选中, 则取消选择
-                        pickerViewModel.removeSelectedMedia(loaderMedia)
+        ) { data ->
+            //获取选中状态
+            onGetSelectedState = {
+                it?.run {
+                    pickerViewModel.selectorMediaList.value?.contains(this)
+                } ?: itemIsSelected
+            }
+            //获取选中索引
+            onGetSelectedIndex = {
+                it?.run {
+                    val index = pickerViewModel.selectorMediaList.value?.indexOf(this) ?: -1
+                    if (index >= 0) {
+                        "${index + 1}"
                     } else {
-                        //未选中, 则选择
-                        if (pickerViewModel.canSelectorMedia(loaderMedia)) {
-                            pickerViewModel.addSelectedMedia(loaderMedia)
-                        } else {
-                            pass = true
-                        }
+                        null
                     }
+                }
+            }
+            //选择回调
+            onSelectorItem = {
+                var pass = false
+                if (it) {
+                    //已经选中, 则取消选择
+                    pickerViewModel.removeSelectedMedia(loaderMedia)
+                } else {
+                    //未选中, 则选择
+                    if (pickerViewModel.canSelectorMedia(loaderMedia)) {
+                        pickerViewModel.addSelectedMedia(loaderMedia)
+                    } else {
+                        pass = true
+                    }
+                }
 
-                    if (pass) {
-                        //播放无法选中的动画
-                        _adapter.notifyItemChanged(
+                if (pass) {
+                    //播放无法选中的动画
+                    _adapter.notifyItemChanged(
+                        this,
+                        payload = listOf(
+                            DslPickerImageItem.PAYLOAD_UPDATE_CANCEL_ANIM,
+                            DslAdapterItem.PAYLOAD_UPDATE_PART
+                        )
+                    )
+                } else {
+                    //之前选中的列表
+                    val oldSelectorList = _adapter.itemSelectorHelper.getSelectorItemList()
+
+                    //当前item选中切换
+                    _adapter.selector().selector(
+                        SelectorParams(
                             this,
+                            (!itemIsSelected).toSelectOption(),
                             payload = listOf(
-                                DslPickerImageItem.PAYLOAD_UPDATE_CANCEL_ANIM,
+                                DslPickerImageItem.PAYLOAD_UPDATE_ANIM,
                                 DslAdapterItem.PAYLOAD_UPDATE_PART
                             )
                         )
-                    } else {
-                        //之前选中的列表
-                        val oldSelectorList = _adapter.itemSelectorHelper.getSelectorItemList()
+                    )
+                    //更新其他item的索引值
+                    _adapter.updateItems(oldSelectorList, DslAdapterItem.PAYLOAD_UPDATE_PART)
+                }
+            }
+            //点击事件
+            onItemClick = {
+                //大图预览
+                val startPosition =
+                    pickerViewModel.currentFolder.value?.mediaItemList?.indexOf(loaderMedia)
+                        ?: 0
+                _showPreview(PreviewConfig(false, startPosition))
+            }
 
-                        //当前item选中切换
-                        _adapter.selector().selector(
-                            SelectorParams(
-                                this,
-                                (!itemIsSelected).toSelectOption(),
-                                payload = listOf(
-                                    DslPickerImageItem.PAYLOAD_UPDATE_ANIM,
-                                    DslAdapterItem.PAYLOAD_UPDATE_PART
-                                )
-                            )
-                        )
-                        //更新其他item的索引值
-                        _adapter.updateItems(oldSelectorList, DslAdapterItem.PAYLOAD_UPDATE_PART)
-                    }
-                }
-                //点击事件
-                onItemClick = {
-                    //大图预览
-                    val startPosition =
-                        pickerViewModel.currentFolder.value?.mediaItemList?.indexOf(loaderMedia)
-                            ?: 0
-                    _showPreview(PreviewConfig(false, startPosition))
-                }
-            }).apply {
-                //选中状态
-                itemIsSelected = pickerViewModel.selectorMediaList.value?.contains(data) ?: false
-                (this as? DslPickerImageItem)?.showFileSize =
-                    pickerViewModel.loaderConfig.value?.showFileSize ?: false
-            }
-        }
-        _adapter.updateItemDepend(FilterParams(null, true, true))
-        _adapter.onDispatchUpdates {
-            _recycler.scrollHelper.scrollToFirst {
-                scrollAnim = false
-            }
+            //选中状态
+            itemIsSelected =
+                pickerViewModel.selectorMediaList.value?.contains(data) ?: false
+            (this as? DslPickerImageItem)?.showFileSize =
+                pickerViewModel.loaderConfig.value?.showFileSize ?: false
         }
     }
 

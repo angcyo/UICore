@@ -3,7 +3,7 @@ package com.angcyo.item
 import android.net.Uri
 import androidx.annotation.DrawableRes
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.dsladapter.updateMedia
+import com.angcyo.dsladapter.isUpdateMedia
 import com.angcyo.glide.DslGlide
 import com.angcyo.glide.GlideImageView
 import com.angcyo.glide.giv
@@ -68,7 +68,7 @@ open class DslImageItem : DslAdapterItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
         //更新媒体
-        val mediaUpdate = payloads.updateMedia()
+        val mediaUpdate = payloads.isUpdateMedia()
 
         itemHolder.giv(R.id.lib_image_view)?.apply {
             onConfigImageView(this)

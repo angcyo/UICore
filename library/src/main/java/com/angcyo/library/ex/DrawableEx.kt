@@ -3,10 +3,12 @@ package com.angcyo.library.ex
 import android.content.res.Resources
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.TransitionDrawable
 import android.os.Build
 import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
 import androidx.core.graphics.drawable.DrawableCompat
 import com.angcyo.library.app
 
@@ -169,3 +171,5 @@ fun Drawable.toBitmap(outWidth: Int = -1, outHeight: Int = -1): Bitmap {
 
     return result
 }
+
+fun colorDrawable(@ColorRes resId: Int): ColorDrawable = ColorDrawable(_color(resId))
