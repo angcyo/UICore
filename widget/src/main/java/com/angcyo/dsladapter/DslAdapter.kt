@@ -349,8 +349,8 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     }
 
     /**移除数据*/
-    fun removeItem(bean: DslAdapterItem) {
-        if (dataItems.remove(bean)) {
+    fun removeItem(item: DslAdapterItem) {
+        if (dataItems.remove(item)) {
             _updateAdapterItems()
             updateItemDepend()
         }
