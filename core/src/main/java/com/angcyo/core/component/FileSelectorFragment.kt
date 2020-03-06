@@ -75,6 +75,9 @@ open class FileSelectorFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        _vh.click(R.id.lib_touch_back_layout) {
+            onBackPressed()
+        }
         doShowAnimator()
     }
 
@@ -166,6 +169,7 @@ open class FileSelectorFragment : BaseFragment() {
                 if (fileSelectorConfig.showFileMenu) {
                     onItemLongClick = {
                         fContext().itemsDialog {
+                            canceledOnTouchOutside = true
                             dialogBottomCancelItem = null
 
                             addDialogItem {
