@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.View
 import com.angcyo.dialog.dslitem.DslDialogTextItem
 import com.angcyo.dsladapter.*
+import com.angcyo.dsladapter.filter.RemoveItemDecorationFilterAfterInterceptor
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.DslViewHolder
@@ -84,12 +85,9 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
         dialogViewHolder.rv(R.id.lib_recycler_view)?.apply {
             //初始化DslAdapter
             _dialogAdapter = initDslAdapter() {
-                adapterItemList.firstOrNull()?.apply {
-                    itemTopInsert = 0
-                }
-                adapterItemList.lastOrNull()?.apply {
-                    itemBottomInsert = 0
-                }
+                dslDataFilter?.dataAfterInterceptorList?.add(
+                    RemoveItemDecorationFilterAfterInterceptor()
+                )
                 resetItem(adapterItemList)
                 updateItemDepend(FilterParams(justRun = true, asyncDiff = false))
             }

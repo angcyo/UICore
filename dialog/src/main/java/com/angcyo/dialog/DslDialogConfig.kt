@@ -115,9 +115,17 @@ open class DslDialogConfig(var context: Context? = null) {
         }
 
     var canceledOnTouchOutside = true
+        set(value) {
+            field = value
+            if (value) {
+                cancelable = true
+            }
+        }
+
     var dialogTitle: CharSequence? = null
     var dialogMessage: CharSequence? = null
-    var onDialogInitListener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit = { _, _ -> }
+    var onDialogInitListener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit =
+        { _, _ -> }
     var dialogBgDrawable: Drawable? = null
     var dialogWidth: Int = undefined_res
     var dialogHeight: Int = undefined_res
