@@ -134,9 +134,13 @@ fun Iterable<*>.containsPayload(any: Any): Boolean {
 }
 
 /**是否要更新媒体, 比如:图片*/
-fun Iterable<*>.updateMedia(): Boolean {
+fun Iterable<*>.isUpdateMedia(): Boolean {
     return count() <= 0 || containsPayload(DslAdapterItem.PAYLOAD_UPDATE_MEDIA)
 }
+
+/**需要更新媒体的负载*/
+fun mediaPayload(): List<Int> =
+    listOf(DslAdapterItem.PAYLOAD_UPDATE_PART, DslAdapterItem.PAYLOAD_UPDATE_MEDIA)
 
 //</editor-fold desc="payload">
 

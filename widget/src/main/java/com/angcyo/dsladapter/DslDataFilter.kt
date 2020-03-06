@@ -82,12 +82,22 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
     /**更新过滤后的数据源, 采用的是[DiffUtil]*/
     open fun updateFilterItemDepend(params: FilterParams) {
         lock.withLock {
+            val nowTime = System.currentTimeMillis()
+
             if (handle.hasCallbacks()) {
                 //立即触发一次, 子项依赖的更新, 防止部分状态丢失.
                 _updateTaskLit.lastOrNull()?.notifyUpdateDependItem()
             }
             _updateTaskLit.forEach {
-                it.taskCancel = true
+                if (params.shakeType == OnceHandler.SHAKE_TYPE_THROTTLE) {
+                    //节流
+                    if (nowTime - it._taskStartTime < params.shakeDelay) {
+                        it.taskCancel = true
+                    }
+                } else {
+                    //抖动
+                    it.taskCancel = true
+                }
             }
             _updateTaskLit.clear()
 
@@ -99,9 +109,14 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
 
             val taskRunnable = UpdateTaskRunnable()
             taskRunnable._params = filterParams
+            taskRunnable._taskStartTime = nowTime
             _updateTaskLit.add(taskRunnable)
 
-            taskRunnable.run()
+            if (params.justRun) {
+                taskRunnable.run()
+            } else {
+                mainHandler.postDelayed(taskRunnable, params.shakeDelay)
+            }
         }
     }
 
@@ -184,25 +199,15 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
         /**取消任务执行*/
         @Volatile
         var taskCancel: Boolean = false
-            set(value) {
-                field = value
-                if (value) {
-                    L.i("${hash()} 任务取消.")
-                }
-            }
 
         var _taskStartTime = 0L
 
         override fun run() {
-            L.d("执行任务: ${hash()} $taskCancel")
-
             if (taskCancel) {
                 return
             }
 
             _params?.apply {
-                _taskStartTime = System.currentTimeMillis()
-
                 if (asyncDiff) {
                     asyncExecutor.submit {
                         doInner()
@@ -223,12 +228,12 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             val resultList = mutableListOf<DslAdapterItem>()
 
             val startTime = nowTime()
-            L.d("${hash()} 开始计算Diff:$startTime")
+            L.v("${hash()} 开始计算Diff:$startTime")
             val diffResult = calculateDiff(resultList)
             val nowTime = nowTime()
             val s = (nowTime - startTime) / 1000
             val ms = ((nowTime - startTime) % 1000) * 1f / 1000
-            L.i("${hash()} Diff计算耗时:${String.format("%.3f", s + ms)}s")
+            L.v("${hash()} Diff计算耗时:${String.format("%.3f", s + ms)}s")
 
             //回调到主线程
             if (Looper.getMainLooper() == Looper.myLooper()) {
@@ -251,7 +256,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
 
             resultList.addAll(_newList)
 
-            L.d("${this.hash()} 数据列表->原:${oldList.size} 后:${newList.size} 终:${_newList.size}")
+            L.v("${this.hash()} 数据列表->原:${oldList.size} 后:${newList.size} 终:${_newList.size}")
 
             //开始计算diff
             val diffResult = DiffUtil.calculateDiff(
@@ -357,7 +362,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             }
 
             val nowTime = System.currentTimeMillis()
-            L.i("${hash()} 界面更新结束, 总耗时${LTime.time(_taskStartTime, nowTime)}")
+            L.d("${hash()} 界面更新结束, 总耗时${LTime.time(_taskStartTime, nowTime)}")
             _updateTaskLit.remove(this)
         }
 

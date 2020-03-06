@@ -627,7 +627,7 @@ open class DslAdapterItem : LifecycleOwner {
 
     //</editor-fold>
 
-    //<Lifecycle支持>
+    //<editor-fold desc="Lifecycle支持">
 
     val lifecycleRegistry = LifecycleRegistry(this)
 
@@ -651,7 +651,8 @@ open class DslAdapterItem : LifecycleOwner {
         itemHolder.clear()
     }
 
-    //</Lifecycle支持>
+    //</editor-fold desc="Lifecycle支持">
+
 }
 
 class UpdateDependProperty<T>(var value: T) : ReadWriteProperty<DslAdapterItem, T> {
