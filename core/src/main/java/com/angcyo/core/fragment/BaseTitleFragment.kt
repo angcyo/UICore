@@ -9,6 +9,7 @@ import androidx.annotation.DrawableRes
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
+import com.angcyo.DslAHelper
 import com.angcyo.base.getAllValidityFragment
 import com.angcyo.behavior.placeholder.TitleBarPlaceholderBehavior
 import com.angcyo.behavior.refresh.RefreshBehavior
@@ -16,7 +17,6 @@ import com.angcyo.behavior.refresh.RefreshHeaderBehavior
 import com.angcyo.core.R
 import com.angcyo.core.appendTextItem
 import com.angcyo.core.behavior.ArcLoadingHeaderBehavior
-import com.angcyo.library.component.RBackground
 import com.angcyo.library.ex.colorFilter
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslGroupHelper
@@ -139,10 +139,24 @@ abstract class BaseTitleFragment : BaseFragment() {
 
     /**是否要显示返回按钮*/
     open fun enableBackItem(): Boolean {
+        var showBackItem = false
         val count = fragmentManager?.getAllValidityFragment()?.size ?: 0
-        return enableBackItem /*强制激活了返回按钮*/ ||
-                (count <= 0 && RBackground.stack.size() > 1) /*存在多个Activity, 没有可见的Fragment*/ ||
-                (topFragment() == this && count > 0) /*可见Fragment数量大于0*/
+
+        if (enableBackItem) {
+            /*强制激活了返回按钮*/
+            showBackItem = true
+        } else if (count <= 0) {
+            /*Activity中第一个Fragment*/
+            if (!DslAHelper.isMainActivity(activity)) {
+                //当前Fragment所在Activity不是主界面
+                showBackItem = true
+            }
+        } else {
+            /*可见Fragment数量大于0*/
+            showBackItem = topFragment() == this
+        }
+
+        return showBackItem
     }
 
     //<editor-fold desc="操作方法">

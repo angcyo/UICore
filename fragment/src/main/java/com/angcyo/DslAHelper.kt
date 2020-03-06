@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentActivity
 import com.angcyo.activity.FragmentWrapActivity
 import com.angcyo.activity.JumpActivity
 import com.angcyo.base.RevertWindowTransitionListener
+import com.angcyo.base.dslAHelper
 import com.angcyo.fragment.ActivityResult
 import com.angcyo.fragment.FragmentBridge
 import com.angcyo.fragment.dslBridge
@@ -34,6 +35,19 @@ import com.angcyo.library.L
  */
 class DslAHelper(val context: Context) {
 
+    companion object {
+        /**程序主界面, 用于当非主界面支持back时, 返回到主界面*/
+        var mainActivityClass: Class<out Activity>? = null
+
+        /**当前对象是否是设置的[mainActivityClass]类*/
+        fun isMainActivity(any: Any?): Boolean {
+            if (mainActivityClass == null || any == null) {
+                return false
+            }
+            return any.javaClass == mainActivityClass
+        }
+    }
+
     /**需要启动的[Intent]*/
     val startIntentConfig = mutableListOf<IntentConfig>()
 
@@ -42,6 +56,9 @@ class DslAHelper(val context: Context) {
 
     /**是否使用[Finish]方法关闭[Activity], 默认使用[onBackPressed]*/
     var finishWithFinish: Boolean = false
+
+    /**当前[Activity]finish时, 启动此[Activity]*/
+    var finishToActivity: Class<out Activity>? = mainActivityClass
 
     //<editor-fold desc="start操作">
 
@@ -207,11 +224,21 @@ class DslAHelper(val context: Context) {
             context.setResult(config.resultCode, config.resultData)
             config.configWindow(context.window)
 
+            finishToActivity?.also { cls ->
+                if (context::class.java != cls) {
+                    //启动主界面
+                    context.dslAHelper {
+                        start(cls)
+                    }
+                }
+            }
+
             if (withBackPress) {
                 context.onBackPressed()
             } else {
                 context.finish()
             }
+
             if (config.enterAnim != -1 || config.exitAnim != -1) {
                 context.overridePendingTransition(config.enterAnim, config.exitAnim)
             }

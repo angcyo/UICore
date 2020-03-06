@@ -5,10 +5,8 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
-import com.angcyo.base.checkBackPressedDispatcher
-import com.angcyo.base.dslFHelper
-import com.angcyo.base.enableLayoutFullScreen
-import com.angcyo.base.getAllValidityFragment
+import com.angcyo.DslAHelper
+import com.angcyo.base.*
 import com.angcyo.fragment.R
 import com.angcyo.library.L
 import com.angcyo.library.ex.isDebug
@@ -121,7 +119,13 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
 
     /**整整的关闭界面*/
     open fun onBackPressedInner() {
-        super.onBackPressed()
+        if (DslAHelper.isMainActivity(this)) {
+            super.onBackPressed()
+        } else {
+            dslAHelper {
+                finish()
+            }
+        }
     }
 
     /**系统默认的[onActivityResult]触发, 需要在[Fragment]里面调用特用方法启动[Activity]才会触发*/
