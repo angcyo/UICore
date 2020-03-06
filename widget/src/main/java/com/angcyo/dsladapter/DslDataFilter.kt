@@ -3,6 +3,7 @@ package com.angcyo.dsladapter
 import android.os.Handler
 import android.os.Looper
 import androidx.recyclerview.widget.DiffUtil
+import com.angcyo.dsladapter.filter.*
 import com.angcyo.dsladapter.internal.*
 import com.angcyo.library.L
 import com.angcyo.library.ex.nowTime
@@ -35,21 +36,27 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
      * @param newDataList 即将显示的数据源
      * @return 需要显示的数据源
      * */
-    var onFilterDataList: (oldDataList: List<DslAdapterItem>, newDataList: List<DslAdapterItem>) -> List<DslAdapterItem> =
+    var onDataFilterAfter: (oldDataList: List<DslAdapterItem>, newDataList: List<DslAdapterItem>) -> List<DslAdapterItem> =
         { _, newDataList -> newDataList }
 
+    /**Diff计算后的数据拦截处理*/
+    val dataAfterInterceptorList: MutableList<FilterAfterInterceptor> =
+        mutableListOf(AdapterStatusFilterAfterInterceptor())
+
     /**前置过滤器*/
-    val beforeFilterInterceptorList = mutableListOf<FilterInterceptor>()
+    val beforeFilterInterceptorList: MutableList<FilterInterceptor> =
+        mutableListOf()
 
     /**中置过滤拦截器*/
-    val filterInterceptorList = mutableListOf(
+    val filterInterceptorList: MutableList<FilterInterceptor> = mutableListOf(
         GroupItemFilterInterceptor(),
         SubItemFilterInterceptor(),
         HideItemFilterInterceptor()
     )
 
     /**后置过滤器*/
-    val afterFilterInterceptorList = mutableListOf<FilterInterceptor>()
+    val afterFilterInterceptorList: MutableList<FilterInterceptor> =
+        mutableListOf()
 
     //异步调度器
     private val asyncExecutor: ExecutorService by lazy {
@@ -68,7 +75,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
     }
 
     /**更新过滤后的数据源, 采用的是[DiffUtil]*/
-    fun updateFilterItemDepend(params: FilterParams) {
+    open fun updateFilterItemDepend(params: FilterParams) {
         if (handle.hasCallbacks()) {
             _lastDiffRunnable?.notifyUpdateDependItem()
         }
@@ -94,6 +101,35 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             handle.shakeType = params.shakeType
             handle.once(params.shakeDelay, updateDependRunnable)
         }
+    }
+
+    /**Diff之后的数据过滤*/
+    open fun filterAfterItemList(
+        originList: List<DslAdapterItem>,
+        requestList: List<DslAdapterItem>
+    ): List<DslAdapterItem> {
+
+        var result = listOf<DslAdapterItem>()
+        val chain = FilterAfterChain(dslAdapter, this, originList, requestList, false)
+
+        var interruptChain = false
+
+        fun proceed(interceptorList: List<FilterAfterInterceptor>) {
+            if (!interruptChain) {
+                for (filer in interceptorList) {
+                    result = filer.intercept(chain)
+                    chain.requestList = result
+                    if (chain.interruptChain) {
+                        interruptChain = true
+                        break
+                    }
+                }
+            }
+        }
+
+        proceed(dataAfterInterceptorList)
+
+        return onDataFilterAfter(originList, result)
     }
 
     /**过滤[originList]数据源*/
@@ -232,7 +268,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             val newList = filterItemList(dslAdapter.adapterItems)
 
             //异步操作, 先保存数据源
-            _newList = onFilterDataList(oldList, newList)
+            _newList = filterAfterItemList(oldList, newList)
 
             //开始计算diff
             val diffResult = DiffUtil.calculateDiff(

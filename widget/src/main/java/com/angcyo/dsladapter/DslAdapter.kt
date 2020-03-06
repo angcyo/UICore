@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.angcyo.dsladapter.filter.FilterInterceptor
 import com.angcyo.dsladapter.internal.AdapterStatusFilterInterceptor
-import com.angcyo.dsladapter.internal.FilterInterceptor
 import com.angcyo.dsladapter.internal.LoadMoreFilterInterceptor
 import com.angcyo.library.L
 import com.angcyo.widget.DslViewHolder
