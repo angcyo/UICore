@@ -304,6 +304,9 @@ open class FileSelectorFragment : BaseFragment() {
 
     private fun doHideAnimator(onEnd: () -> Unit) {
         _vh.view(R.id.lib_touch_back_layout)?.run {
+            if (hasTransientState()) {
+                return
+            }
             animate()
                 .translationY(this.measuredHeight.toFloat())
                 .setDuration(Anim.ANIM_DURATION)
