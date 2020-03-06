@@ -13,7 +13,7 @@ import com.angcyo.library.ex.isResultOk
 import com.angcyo.loader.*
 import com.angcyo.media.dslitem.DslPreviewAudioItem
 import com.angcyo.media.dslitem.DslTextureVideoItem
-import com.angcyo.pager.dslitem.DslPhotoViewItem
+import com.angcyo.pager.dslitem.DslPagerPhotoViewItem
 import com.angcyo.picker.R
 import com.angcyo.picker.dslitem.DslPickerMiniImageItem
 import com.angcyo.ucrop.dslCrop
@@ -51,11 +51,10 @@ class PickerPreviewFragment : BasePickerFragment() {
         singleModel()
     }
 
-
     /**媒体列表*/
-    val previewMediaList = mutableListOf<LoaderMedia>()
+    val previewMediaList: MutableList<LoaderMedia> = mutableListOf()
     /**预览模式下, 保存之前选中的媒体列表*/
-    val previewSelectorMediaList = mutableListOf<LoaderMedia>()
+    val previewSelectorMediaList: MutableList<LoaderMedia> = mutableListOf()
 
     /**当前[ViewPager]对应的[LoaderMedia]*/
     val pageLoaderMedia: LoaderMedia?
@@ -100,7 +99,7 @@ class PickerPreviewFragment : BasePickerFragment() {
                         itemAudioDuration = it.duration
                         itemAudioUri = it.loadUri()
                     })
-                    else -> items.add(DslPhotoViewItem().apply {
+                    else -> items.add(DslPagerPhotoViewItem().apply {
                         itemData = it
                         itemLoadUri = it.loadUri()
 

@@ -2,6 +2,8 @@ package com.angcyo.dsladapter.internal
 
 import android.os.Handler
 import android.os.Looper
+import com.angcyo.library.L
+import com.angcyo.library.ex.hash
 import kotlin.math.max
 
 /**
@@ -46,8 +48,9 @@ class OnceHandler(looper: Looper = Looper.getMainLooper()) : Handler(looper) {
             val diffTime = nowTime - _lastThrottleTime
             //节流
             if (diffTime >= delayMillis) {
-                InnerRunnable(runnable).apply {
-                    post(this)
+                if (post(InnerRunnable(runnable))) {
+                } else {
+                    L.e("DslDataFilter error")
                 }
                 _lastThrottleTime = nowTime
             } else {
@@ -84,6 +87,7 @@ class OnceHandler(looper: Looper = Looper.getMainLooper()) : Handler(looper) {
         override fun run() {
             _lastThrottleTime = 0
             raw.run()
+            L.d("DslDataFilter 执行:${raw.hash()}")
             clear()
         }
     }

@@ -262,6 +262,12 @@ class PickerImageFragment : BasePickerFragment() {
                     pickerViewModel.loaderConfig.value?.showFileSize ?: false
             }
         }
+        _adapter.updateItemDepend(FilterParams(null, true, true))
+        _adapter.onDispatchUpdates {
+            _recycler.scrollHelper.scrollToFirst {
+                scrollAnim = false
+            }
+        }
     }
 
     /**显示文件夹切换布局*/

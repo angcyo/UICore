@@ -13,7 +13,7 @@ import com.angcyo.dsladapter.DslAdapterStatusItem
 
 class AdapterStatusFilterAfterInterceptor : FilterAfterInterceptor {
     override fun intercept(chain: FilterAfterChain): List<DslAdapterItem> {
-        if (chain.requestList.isEmpty()) {
+        if (chain.requestList.isEmpty() && chain.originList.isNotEmpty()) {
             chain.interruptChain = true
 
             //切换到空布局
