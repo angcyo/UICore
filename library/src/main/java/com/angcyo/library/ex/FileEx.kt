@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.text.TextUtils
 import android.text.format.Formatter
+import com.angcyo.library.app
 import com.angcyo.library.ex.FileEx.hexDigits
 import java.io.File
 import java.io.FileInputStream
@@ -181,7 +182,7 @@ fun File.getFileMD5(): ByteArray? {
 }
 
 /**打开文件*/
-fun File.open(context: Context) {
+fun File.open(context: Context = app()) {
     val intent = Intent()
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     //设置intent的Action属性

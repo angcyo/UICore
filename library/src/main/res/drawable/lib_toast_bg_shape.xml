@@ -4,7 +4,7 @@
     <corners android:radius="@dimen/lib_radius_normal" />
 
     <gradient
-        android:endColor="@color/transparent40"
+        android:endColor="@color/transparent30"
         android:startColor="@color/transparent20" />
 
 </shape>

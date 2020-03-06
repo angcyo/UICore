@@ -4,16 +4,16 @@ import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.view.*
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
-import com.angcyo.library.ex.dpi
-import com.angcyo.library.ex.getDimen
-import com.angcyo.library.ex.undefined_int
-import com.angcyo.library.ex.undefined_res
+import androidx.annotation.StyleRes
+import com.angcyo.library.ex.*
 import java.lang.ref.WeakReference
 
 /**
@@ -24,6 +24,9 @@ import java.lang.ref.WeakReference
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 object DslToast {
+
+    var LENGTH_SHORT_TIME = 2000L
+    var LENGTH_LONG_TIME = 4000L
 
     fun show(context: Context = app(), action: ToastConfig.() -> Unit) {
         val config = ToastConfig()
@@ -55,7 +58,9 @@ object DslToast {
 
         _toastRef?.get()?.apply {
             if (config.fullScreen) {
-                initFullScreenToast(this, config.fullMargin * 2)
+                initFullScreenToast(this, config.fullMargin * 2) {
+                    windowAnimations = config.toastAnimation
+                }
             }
 
             duration = config.duration
@@ -73,7 +78,11 @@ object DslToast {
         }
     }
 
-    fun initFullScreenToast(toast: Toast, usedWidth: Int) {
+    fun initFullScreenToast(
+        toast: Toast,
+        usedWidth: Int,
+        action: WindowManager.LayoutParams.() -> Unit = {}
+    ) {
         try {
             val mTN = toast::class.java.getDeclaredField("mTN")
             mTN.isAccessible = true
@@ -85,7 +94,7 @@ object DslToast {
             params.width = getScreenWidth().coerceAtMost(getScreenHeight()) - usedWidth
             params.height = -2
             //params.gravity = Gravity.TOP//无法生效, 请在Toast对象里面设置
-            params.windowAnimations = R.style.LibToastAnimation
+            params.action()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -164,11 +173,15 @@ object DslToast {
             _hideTagView(layout, config.duration)
 
             //显示view的动画
-            layout.alpha = 0f
-            layout.animate()
-                .alphaBy(1f)
-                .setDuration(300)
-                .start()
+//            layout.alpha = 0f
+//            layout.animate()
+//                .alphaBy(1f)
+//                .setDuration(300)
+//                .start()
+
+            config.windowEnterAnimation()?.run {
+                layout.startAnimation(this)
+            }
         }
     }
 
@@ -189,22 +202,43 @@ object DslToast {
         _removeRunnable(view)
         val runnable = Runnable {
             //隐藏view的动画
-            view.animate()
-                .alpha(0f)
-                .translationY((-view.measuredHeight).toFloat())
-                .withEndAction {
+//            view.animate()
+//                .alpha(0f)
+//                .translationY((-view.measuredHeight).toFloat())
+//                .withEndAction {
+//                    _removeView(view)
+//                    _viewRef = null
+//                }
+//                .setDuration(300)
+//                .start()
+            val tagStyle = view.getTag(R.id.lib_tag_animation_style)
+            if (tagStyle is Int) {
+                tagStyle.windowExitAnimation()?.run {
+                    setAnimationListener(object : Animation.AnimationListener {
+                        override fun onAnimationRepeat(animation: Animation?) {
+                        }
+
+                        override fun onAnimationEnd(animation: Animation?) {
+                            _removeView(view)
+                            _viewRef = null
+                        }
+
+                        override fun onAnimationStart(animation: Animation?) {
+                        }
+                    })
+                    view.startAnimation(this)
+                }.elseNull {
                     _removeView(view)
                     _viewRef = null
                 }
-                .setDuration(300)
-                .start()
+            }
         }
         when (duration) {
             Toast.LENGTH_LONG -> {
-                view.postDelayed(runnable, 7000)
+                view.postDelayed(runnable, LENGTH_LONG_TIME)
             }
             Toast.LENGTH_SHORT -> {
-                view.postDelayed(runnable, 4000)
+                view.postDelayed(runnable, LENGTH_SHORT_TIME)
             }
             else -> {
                 view.postDelayed(runnable, duration.toLong())
@@ -250,6 +284,9 @@ object DslToast {
         }
 
         layout.tag = config.layoutId
+
+        layout.setTag(R.id.lib_tag_animation_style, config.toastAnimation)
+
         if (!_lastViewTag.contains(config.layoutId)) {
             _lastViewTag.add(config.layoutId)
         }
@@ -272,8 +309,40 @@ data class ToastConfig(
     var fullScreen: Boolean = true,//全屏模式
     var fullMargin: Int = 20 * dpi,//全屏模式下, 宽度左右的margin
 
+    @StyleRes
+    var toastAnimation: Int = R.style.LibToastTopAnimation, //动画
     var onBindView: (rootView: View) -> Unit = {}
 )
+
+private fun Int.windowEnterAnimation(context: Context = app()): Animation? {
+    val animTypedArray =
+        context.obtainStyledAttributes(this, intArrayOf(android.R.attr.windowEnterAnimation))
+    val animRes = animTypedArray.getResourceId(0, -1)
+    animTypedArray.recycle()
+
+    return if (animRes > 0) {
+        AnimationUtils.loadAnimation(context, animRes)
+    } else null
+}
+
+private fun Int.windowExitAnimation(context: Context = app()): Animation? {
+    val animTypedArray =
+        context.obtainStyledAttributes(this, intArrayOf(android.R.attr.windowExitAnimation))
+    val animRes = animTypedArray.getResourceId(0, -1)
+    animTypedArray.recycle()
+
+    return if (animRes > 0) {
+        AnimationUtils.loadAnimation(context, animRes)
+    } else null
+}
+
+fun ToastConfig.windowEnterAnimation(context: Context = app()): Animation? {
+    return toastAnimation.windowEnterAnimation(context)
+}
+
+fun ToastConfig.windowExitAnimation(context: Context = app()): Animation? {
+    return toastAnimation.windowExitAnimation(context)
+}
 
 /**全量配置*/
 fun toast(action: ToastConfig.() -> Unit) {
@@ -300,8 +369,24 @@ fun toast(
 fun toastQQ(
     text: CharSequence?,
     @DrawableRes icon: Int = undefined_res,
-    @LayoutRes layoutId: Int = R.layout.lib_qq_toast_layout,
+    @LayoutRes layoutId: Int = R.layout.lib_toast_qq_layout,
     action: ToastConfig.() -> Unit = {}
 ) {
     toast(text, icon, layoutId, action)
+}
+
+/**文本 ico WX布局 简化配置*/
+fun toastWX(
+    text: CharSequence?,
+    @DrawableRes icon: Int = undefined_res,
+    @LayoutRes layoutId: Int = R.layout.lib_toast_wx_layout,
+    action: ToastConfig.() -> Unit = {}
+) {
+    toast(text, icon, layoutId) {
+        gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
+        fullMargin = 0
+        yOffset = 0
+        toastAnimation = R.style.LibToastBottomAnimation
+        action()
+    }
 }

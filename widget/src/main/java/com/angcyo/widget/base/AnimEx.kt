@@ -1,6 +1,7 @@
 package com.angcyo.widget.base
 
 import android.animation.Animator
+import android.animation.AnimatorInflater
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.annotation.TargetApi
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.animation.*
 import androidx.annotation.AnimRes
+import androidx.annotation.AnimatorRes
 import com.angcyo.library.app
 import com.angcyo.library.ex.c
 import com.angcyo.widget.base.Anim.ANIM_DURATION
@@ -27,8 +29,14 @@ object Anim {
     const val ANIM_DURATION = 300L
 }
 
+/**从指定资源id中, 加载动画[Animation]*/
 fun animationOf(context: Context = app(), @AnimRes id: Int): Animation {
     return AnimationUtils.loadAnimation(context, id)
+}
+
+/**从指定资源id中, 加载动画[Animator]*/
+fun animatorOf(context: Context = app(), @AnimatorRes id: Int): Animator {
+    return AnimatorInflater.loadAnimator(context, id)
 }
 
 fun anim(from: Int, to: Int, config: AnimatorConfig.() -> Unit = {}): ValueAnimator {

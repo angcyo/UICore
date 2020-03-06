@@ -648,6 +648,7 @@ open class DslAdapterItem : LifecycleOwner {
     /**请勿覆盖[itemViewRecycled]*/
     open fun onItemViewRecycled(itemHolder: DslViewHolder, itemPosition: Int) {
         lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
+        itemHolder.clear()
     }
 
     //</Lifecycle支持>

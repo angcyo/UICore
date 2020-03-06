@@ -2,6 +2,7 @@
 <resources>
     <color name="lib_bg_press">#20000000</color>
     <color name="lib_white">#FFFFFF</color>
+    <color name="lib_white_dark">#F5F5F5</color>
     <color name="lib_black">#000000</color>
     <color name="lib_line">#D5D5D5</color>
     <color name="lib_disable_bg_color">#C9CACC</color>
@@ -26,4 +27,6 @@
     <color name="transparent80">#CC000000</color>
     <!--不透明度100%-->
     <color name="transparent100">#FF000000</color>
+
+    <color name="lib_toast_wx_bg">#313131</color>
 </resources>
