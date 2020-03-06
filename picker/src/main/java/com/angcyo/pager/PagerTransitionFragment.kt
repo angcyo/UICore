@@ -14,7 +14,7 @@ import com.angcyo.loader.isVideo
 import com.angcyo.loader.loadUri
 import com.angcyo.media.dslitem.DslPreviewAudioItem
 import com.angcyo.media.dslitem.DslTextureVideoItem
-import com.angcyo.pager.dslitem.DslPhotoViewItem
+import com.angcyo.pager.dslitem.DslPagerPhotoViewItem
 import com.angcyo.picker.R
 import com.angcyo.tablayout.evaluateColor
 import com.angcyo.widget._vp
@@ -182,12 +182,12 @@ open class PagerTransitionFragment : ViewTransitionFragment() {
                     itemAudioDuration = it.duration
                     itemAudioUri = it.loadUri()
                 })
-                else -> items.add(DslPhotoViewItem().apply {
+                else -> items.add(DslPagerPhotoViewItem().apply {
                     itemData = it
                     itemLoadUri = it.loadUri()
 
                     //占位图提供
-                    placeholderDrawableProvider = pagerTransitionCallback
+                    drawableProvider = pagerTransitionCallback
 
                     //点击图片关闭界面
                     onItemClick = {

@@ -1,0 +1,12 @@
+apply from: allGradle.libBase
+
+dependencies {
+    implementation project(allModule.dslitem)
+
+    //https://github.com/davemorrissey/subsampling-scale-image-view
+    //https://jcenter.bintray.com/com/davemorrissey/labs/
+    api 'com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0'
+
+    //https://github.com/chrisbanes/PhotoView/
+    api 'com.github.chrisbanes:PhotoView:2.3.0'
+}

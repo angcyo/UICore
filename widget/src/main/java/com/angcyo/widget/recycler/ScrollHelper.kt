@@ -393,7 +393,7 @@ class ScrollHelper {
                 return
             }
 
-            val isScrollAnim = if (firstForce) firstScrollAnim else scrollAnim
+            val isScrollAnim = if (firstForce) firstScrollAnim && scrollAnim else scrollAnim
 
             val position = if (lockPosition < 0) {
                 itemCount + lockPosition

@@ -1,4 +1,4 @@
-package com.angcyo.pager.dslitem
+package com.angcyo.image.dslitem
 
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -10,7 +10,7 @@ import android.net.Uri
  * @date 2020/01/23
  */
 
-interface IPlaceholderDrawableProvider {
+interface IDrawableProvider {
     /**获取[loadUri]对应的占位图, 如果有*/
     fun getPlaceholderDrawable(loadUri: Uri?): Drawable?
 }

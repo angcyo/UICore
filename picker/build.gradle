@@ -17,16 +17,10 @@ dependencies {
     api project(allModule.transition)
     api project(allModule.download)
     api project(allModule.media)
+    api project(allModule.image)
 
     //https://mvnrepository.com/artifact/androidx.loader/loader
     api "androidx.loader:loader:1.1.0"
-
-    //https://github.com/davemorrissey/subsampling-scale-image-view
-    //https://jcenter.bintray.com/com/davemorrissey/labs/
-    api 'com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0'
-
-    //https://github.com/chrisbanes/PhotoView/
-    api 'com.github.chrisbanes:PhotoView:2.3.0'
 
     //api "androidx.exifinterface:exifinterface:1.1.0"
 

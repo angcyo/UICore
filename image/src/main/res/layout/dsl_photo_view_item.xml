@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.angcyo.pager.widget.RPhotoView
+    <com.angcyo.image.widget.RPhotoView
         android:id="@+id/lib_image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

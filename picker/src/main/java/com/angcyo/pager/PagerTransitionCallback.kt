@@ -10,10 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.angcyo.dsladapter.getViewRect
+import com.angcyo.image.dslitem.IDrawableProvider
 import com.angcyo.library.ex.copyDrawable
 import com.angcyo.loader.LoaderMedia
 import com.angcyo.loader.loadUri
-import com.angcyo.pager.dslitem.IPlaceholderDrawableProvider
 import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.recycler.get
@@ -26,7 +26,7 @@ import com.angcyo.widget.recycler.get
  */
 
 open class PagerTransitionCallback : ViewTransitionCallback(), ViewPager.OnPageChangeListener,
-    IPlaceholderDrawableProvider {
+    IDrawableProvider {
 
     /**单个[View]时使用.*/
     var fromView: View? = null

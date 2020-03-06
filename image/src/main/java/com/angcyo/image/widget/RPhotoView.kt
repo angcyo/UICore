@@ -1,4 +1,4 @@
-package com.angcyo.pager.widget
+package com.angcyo.image.widget
 
 import android.content.Context
 import android.graphics.Matrix

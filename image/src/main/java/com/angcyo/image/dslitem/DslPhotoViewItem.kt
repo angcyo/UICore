@@ -1,12 +1,10 @@
-package com.angcyo.pager.dslitem
+package com.angcyo.image.dslitem
 
 import android.net.Uri
 import android.view.View
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.glide.loadImage
-import com.angcyo.loader.LoaderMedia
-import com.angcyo.loader.loadUri
-import com.angcyo.picker.R
+import com.angcyo.image.R
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.anim
 import com.github.chrisbanes.photoview.OnViewTapListener
@@ -21,13 +19,10 @@ import com.github.chrisbanes.photoview.PhotoView
 open class DslPhotoViewItem : DslAdapterItem() {
 
     /**媒体uri*/
-    var itemLoadUri: Uri? = null
-
-    var itemLoaderMedia: LoaderMedia? = null
-        get() = field ?: (itemData as? LoaderMedia)
+    open var itemLoadUri: Uri? = null
 
     /**占位图获取*/
-    var placeholderDrawableProvider: IPlaceholderDrawableProvider? = null
+    var drawableProvider: IDrawableProvider? = null
 
     /**[PhotoView]点击事件*/
     var onPhotoViewTapListener: OnViewTapListener =
@@ -57,14 +52,15 @@ open class DslPhotoViewItem : DslAdapterItem() {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
         itemHolder.img(R.id.lib_image_view)?.apply {
-            loadImage(itemLoaderMedia?.loadUri() ?: itemLoadUri) {
+            val loadUri = itemLoadUri
+            loadImage(loadUri) {
                 //检查gif
                 checkGifType = true
                 //使用原始大小
                 originalSize = true
 
                 //占位图
-                placeholderDrawableProvider?.getPlaceholderDrawable(itemLoadUri)?.run {
+                drawableProvider?.getPlaceholderDrawable(loadUri)?.run {
                     placeholderDrawable = this
                 }
 

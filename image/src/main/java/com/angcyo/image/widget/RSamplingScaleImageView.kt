@@ -1,4 +1,4 @@
-package com.angcyo.pager.widget
+package com.angcyo.image.widget
 
 import android.content.Context
 import android.net.Uri
@@ -13,7 +13,7 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
  * @author angcyo
  * @date 2020/01/23
  */
-class RSubsamplingScaleImageView : SubsamplingScaleImageView {
+class RSamplingScaleImageView : SubsamplingScaleImageView {
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attr: AttributeSet?) : super(context, attr)
