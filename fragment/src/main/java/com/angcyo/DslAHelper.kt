@@ -218,29 +218,30 @@ class DslAHelper(val context: Context) {
     /**关闭当前[context]*/
     fun finish(withBackPress: Boolean = false, action: IntentConfig.() -> Unit = {}) {
         if (context is Activity) {
+            val activity = context
             val config = IntentConfig(Intent())
             config.action()
 
-            context.setResult(config.resultCode, config.resultData)
-            config.configWindow(context.window)
+            activity.setResult(config.resultCode, config.resultData)
+            config.configWindow(activity.window)
+
+            if (withBackPress) {
+                activity.onBackPressed()
+            } else {
+                activity.finish()
+            }
 
             finishToActivity?.also { cls ->
-                if (context::class.java != cls) {
+                if (activity::class.java != cls) {
                     //启动主界面
-                    context.dslAHelper {
+                    activity.dslAHelper {
                         start(cls)
                     }
                 }
             }
 
-            if (withBackPress) {
-                context.onBackPressed()
-            } else {
-                context.finish()
-            }
-
             if (config.enterAnim != -1 || config.exitAnim != -1) {
-                context.overridePendingTransition(config.enterAnim, config.exitAnim)
+                activity.overridePendingTransition(config.enterAnim, config.exitAnim)
             }
         } else {
             L.e("context 必须是 Activity, 才能执行 finish()")
@@ -453,6 +454,28 @@ data class IntentConfig(
 fun IntentConfig.noAnim() {
     enterAnim = 0
     exitAnim = 0
+}
+
+/**重置为系统默认的动画*/
+fun IntentConfig.resetAnim() {
+    enterAnim = -1
+    exitAnim = -1
+}
+
+fun IntentConfig.enterAnim(
+    enter: Int = DslFHelper.DEFAULT_SHOW_ENTER_ANIM,
+    exit: Int = DslFHelper.DEFAULT_SHOW_EXIT_ANIM
+) {
+    enterAnim = enter
+    exitAnim = exit
+}
+
+fun IntentConfig.exitAnim(
+    exit: Int = DslFHelper.DEFAULT_REMOVE_EXIT_ANIM,
+    enter: Int = DslFHelper.DEFAULT_REMOVE_ENTER_ANIM
+) {
+    enterAnim = enter
+    exitAnim = exit
 }
 
 /**传递Json数据*/
