@@ -59,8 +59,14 @@ open class FileSelectorFragment : BaseFragment() {
     }
 
     override fun onBackPressed(): Boolean {
-        doHideAnimator {
-            removeFragment()
+        if (fileSelectorConfig.targetPath == fileSelectorConfig.storageDirectory) {
+            //已经是根目录了, 再次返回就是关闭界面
+            doHideAnimator {
+                removeFragment()
+            }
+        } else {
+            //否则返回上一级
+            resetPath(getPrePath())
         }
         return false
     }
@@ -76,7 +82,9 @@ open class FileSelectorFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _vh.click(R.id.lib_touch_back_layout) {
-            onBackPressed()
+            doHideAnimator {
+                removeFragment()
+            }
         }
         doShowAnimator()
     }
@@ -335,7 +343,7 @@ open class FileSelectorConfig {
     var showFileMenu = false
 
     /**最根的目录*/
-    var storageDirectory = Environment.getExternalStorageDirectory().absolutePath
+    var storageDirectory: String = Environment.getExternalStorageDirectory().absolutePath
         set(value) {
             if (File(value).exists()) {
                 field = value
