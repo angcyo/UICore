@@ -3,6 +3,7 @@ package com.angcyo.core.component
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.view.Gravity
 import android.view.View
 import android.widget.HorizontalScrollView
 import com.angcyo.DslFHelper
@@ -13,18 +14,20 @@ import com.angcyo.core.component.file.FileItem
 import com.angcyo.core.component.file.file
 import com.angcyo.core.dslitem.DslFileSelectorItem
 import com.angcyo.core.fragment.BaseFragment
+import com.angcyo.coroutine.onBack
+import com.angcyo.dialog.dslLoading
+import com.angcyo.dialog.hideLoading
+import com.angcyo.dialog.itemsDialog
 import com.angcyo.dsladapter.*
-import com.angcyo.library.ex.isFile
-import com.angcyo.library.ex.isFileScheme
-import com.angcyo.library.ex.isFolder
-import com.angcyo.library.ex.withMinValue
-import com.angcyo.library.toastQQ
+import com.angcyo.library.ex.*
+import com.angcyo.library.toastWX
 import com.angcyo.widget.base.Anim
 import com.angcyo.widget.base.doAnimate
 import com.angcyo.widget.base.drawWidth
 import com.angcyo.widget.layout.touch.TouchBackLayout
 import com.angcyo.widget.progress.HSProgressView
 import com.angcyo.widget.recycler.initDslAdapter
+import com.angcyo.widget.span.span
 import java.io.File
 
 /**
@@ -162,7 +165,68 @@ open class FileSelectorFragment : BaseFragment() {
 
                 if (fileSelectorConfig.showFileMenu) {
                     onItemLongClick = {
-                        toastQQ("菜单")
+                        fContext().itemsDialog {
+                            dialogBottomCancelItem = null
+
+                            addDialogItem {
+                                itemTextGravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
+                                itemText = span {
+                                    drawable {
+                                        backgroundDrawable = _drawable(R.drawable.ic_file_open)
+                                    }
+                                    append(" 打开")
+                                }
+                                onItemClick = {
+                                    _dialog?.dismiss()
+                                    itemFile?.file()?.open()
+                                }
+                            }
+
+                            addDialogItem {
+                                itemTextGravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
+                                itemText = span {
+                                    drawable {
+                                        backgroundDrawable = _drawable(R.drawable.ic_file_delete)
+                                    }
+                                    append(" 删除")
+                                }
+                                onItemClick = {
+                                    _dialog?.dismiss()
+                                    dslLoading(true) {
+                                        loadingConfig = {
+                                            cancelable = false
+                                        }
+                                        loadingShowCloseView = false
+                                    }
+                                    launchLifecycle {
+                                        onBack {
+                                            itemFile?.file()?.deleteRecursively() == true
+                                        }.await().apply {
+                                            hideLoading()
+                                            if (this) {
+                                                _adapter.removeItem(this@loadSingleData2)
+                                            } else {
+                                                toastWX("删除失败", R.drawable.lib_ic_error)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            addDialogItem {
+                                itemTextGravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
+                                itemText = span {
+                                    drawable {
+                                        backgroundDrawable = _drawable(R.drawable.ic_file_share)
+                                    }
+                                    append(" 分享")
+                                }
+                                onItemClick = {
+                                    _dialog?.dismiss()
+                                    itemFile?.file()?.shareFile()
+                                }
+                            }
+                        }
                         true
                     }
                 }

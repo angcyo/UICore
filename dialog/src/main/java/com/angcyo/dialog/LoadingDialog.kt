@@ -83,47 +83,12 @@ fun hideLoading(text: CharSequence?) {
 fun Activity.loading(
     text: CharSequence? = null,
     @LayoutRes layoutId: Int = R.layout.lib_dialog_flow_loading_layout,
-    config: DslDialogConfig.() -> Unit = {},
-    onCancel: (dialog: Dialog) -> Unit = {}
-) {
-    loading(this, text, layoutId, config, onCancel)
-}
-
-/**显示在中间转菊花*/
-fun Fragment.loading(
-    text: CharSequence? = null,
-    @LayoutRes layoutId: Int = R.layout.lib_dialog_flow_loading_layout,
-    config: DslDialogConfig.() -> Unit = {},
-    onCancel: (dialog: Dialog) -> Unit = {}
-) {
-    activity?.run { loading(this, text, layoutId, config, onCancel) }
-}
-
-//</editor-fold desc="中间转菊花的对话框">
-
-//<editor-fold desc="底部弹出显示的loading对话框">
-
-/**在底部显示的加载对话框*/
-fun Fragment.loading(text: CharSequence = "加载中...", onCancel: (dialog: Dialog) -> Unit = {}) {
-    activity?.loading(text, R.layout.lib_dialog_bottom_loading_layout, config = {
-        dialogGravity = Gravity.BOTTOM
-        animStyleResId = R.style.LibDialogBottomTranslateAnimation
-        amount = 0.2f
-        dialogWidth = -1
-    }, onCancel = onCancel)
-}
-
-//</editor-fold desc="底部弹出显示的loading对话框">
-
-/**快速显示[loading]对话框*/
-fun loading(
-    activity: Activity?,
-    text: CharSequence? = null,
-    @LayoutRes layoutId: Int = R.layout.lib_dialog_flow_loading_layout,
+    showCloseView: Boolean = true,
     config: DslDialogConfig.() -> Unit = {},
     onCancel: (dialog: Dialog) -> Unit = {}
 ): Dialog? {
     return try {
+        val activity = this
         DslDialogConfig(activity).run {
             this.onDismissListener = {
                 val dialog = it
@@ -146,6 +111,7 @@ fun loading(
             //初始化布局
             onDialogInitListener = { dialog, dialogViewHolder ->
                 dialogViewHolder.tv(R.id.lib_text_view)?.text = text
+                dialogViewHolder.visible(R.id.lib_close_view, showCloseView)
                 dialogViewHolder.click(R.id.lib_close_view) {
                     dialog.cancel()
                 }
@@ -163,4 +129,75 @@ fun loading(
         L.w(e)
         return null
     }
+}
+
+/**显示在中间转菊花*/
+fun Fragment.loading(
+    text: CharSequence? = null,
+    @LayoutRes layoutId: Int = R.layout.lib_dialog_flow_loading_layout,
+    showCloseView: Boolean = true,
+    config: DslDialogConfig.() -> Unit = {},
+    onCancel: (dialog: Dialog) -> Unit = {}
+): Dialog? {
+    return activity?.loading(text, layoutId, showCloseView, config, onCancel)
+}
+
+//</editor-fold desc="中间转菊花的对话框">
+
+//<editor-fold desc="底部弹出显示的loading对话框">
+
+/**在底部显示的加载对话框*/
+fun Fragment.loading(
+    text: CharSequence = "加载中...",
+    showCloseView: Boolean = true,
+    onCancel: (dialog: Dialog) -> Unit = {}
+) {
+    activity?.loading(text, R.layout.lib_dialog_bottom_loading_layout, showCloseView, config = {
+        dialogGravity = Gravity.BOTTOM
+        animStyleResId = R.style.LibDialogBottomTranslateAnimation
+        amount = 0.2f
+        dialogWidth = -1
+    }, onCancel = onCancel)
+}
+
+//</editor-fold desc="底部弹出显示的loading对话框">
+
+/**快速显示[loading]对话框*/
+data class LoadingConfig(
+    var loadingText: CharSequence? = null,
+    @LayoutRes
+    var loadingLayoutId: Int = R.layout.lib_dialog_flow_loading_layout,
+    var loadingShowCloseView: Boolean = true,
+    var loadingConfig: DslDialogConfig.() -> Unit = {},
+    var onLoadingCancel: (dialog: Dialog) -> Unit = {}
+)
+
+/**快速显示[loading]对话框*/
+fun Fragment.dslLoading(bottom: Boolean = false, action: LoadingConfig.() -> Unit = {}) =
+    activity?.dslLoading(bottom, action)
+
+/**快速显示[loading]对话框*/
+fun Activity.dslLoading(bottom: Boolean = false, action: LoadingConfig.() -> Unit = {}): Dialog? {
+    val config = LoadingConfig()
+    if (bottom) {
+        config.loadingLayoutId = R.layout.lib_dialog_bottom_loading_layout
+    }
+    config.action()
+    return loading(
+        config.loadingText,
+        config.loadingLayoutId,
+        config.loadingShowCloseView,
+        {
+            if (bottom) {
+                dialogGravity = Gravity.BOTTOM
+                animStyleResId = R.style.LibDialogBottomTranslateAnimation
+                amount = 0.2f
+                dialogWidth = -1
+            }
+            config.loadingConfig(this)
+        },
+        {
+            config.onLoadingCancel(it)
+        }
+    )
 }

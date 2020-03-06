@@ -43,7 +43,7 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
         { _, _ -> }
 
     //适配器
-    lateinit var _adapter: DslAdapter
+    lateinit var _dialogAdapter: DslAdapter
 
     init {
         dialogLayoutId = R.layout.lib_dialog_recycler_layout
@@ -54,8 +54,8 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
                 dialogSelectorModel == ItemSelectorHelper.MODEL_MULTI
             ) {
                 onDialogResult(
-                    _adapter.selector().getSelectorItemList(),
-                    _adapter.selector().getSelectorIndexList()
+                    _dialogAdapter.selector().getSelectorItemList(),
+                    _dialogAdapter.selector().getSelectorIndexList()
                 )
                 //清空回调对象
                 onDialogResult = { _, _ -> }
@@ -83,7 +83,7 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
 
         dialogViewHolder.rv(R.id.lib_recycler_view)?.apply {
             //初始化DslAdapter
-            _adapter = initDslAdapter() {
+            _dialogAdapter = initDslAdapter() {
                 adapterItemList.firstOrNull()?.apply {
                     itemTopInsert = 0
                 }
@@ -94,7 +94,7 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
                 updateItemDepend(FilterParams(justRun = true, asyncDiff = false))
             }
             //设置选择模式
-            _adapter.selector().apply {
+            _dialogAdapter.selector().apply {
                 selectorModel = dialogSelectorModel
                 observer {
                     onItemChange =
@@ -138,9 +138,9 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
     /**Item点击事件*/
     open fun onDialogItemClick(dslItem: DslAdapterItem, view: View) {
         if (dialogSelectorModel == ItemSelectorHelper.MODEL_SINGLE) {
-            _adapter.select(dslItem)
+            _dialogAdapter.select(dslItem)
         } else if (dialogSelectorModel == ItemSelectorHelper.MODEL_MULTI) {
-            _adapter.selectMutex(dslItem)
+            _dialogAdapter.selectMutex(dslItem)
         } else {
             _dialog?.dismiss()
             onDialogResult(listOf(dslItem), listOf(dslItem.itemIndexPosition()))
