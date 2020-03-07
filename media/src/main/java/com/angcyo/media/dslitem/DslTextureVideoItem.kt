@@ -3,6 +3,7 @@ package com.angcyo.media.dslitem
 import android.media.MediaPlayer
 import android.net.Uri
 import android.view.View
+import com.angcyo.download.dslitem.DslBaseDownloadItem
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.glide.loadImage
 import com.angcyo.library.app

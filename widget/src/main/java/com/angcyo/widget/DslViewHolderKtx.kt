@@ -30,41 +30,15 @@ fun DslViewHolder.simulateClick(@IdRes id: Int, delay: Long = Anim.ANIM_DURATION
     view(id)?.simulateClick(delay)
 }
 
-fun DslViewHolder.vp(@IdRes id: Int): ViewPager? {
-    return v(id)
-}
-
-fun DslViewHolder.vp2(@IdRes id: Int): ViewPager2? {
-    return v(id)
-}
-
-fun DslViewHolder.tab(@IdRes id: Int): DslTabLayout? {
-    return v(id)
-}
-
-fun DslViewHolder.button(@IdRes id: Int): DslButton? {
-    return v(id)
-}
-
-fun DslViewHolder.drv(@IdRes id: Int): DslRecyclerView? {
-    return v(id)
-}
-
-fun DslViewHolder._rv(@IdRes id: Int): DslRecyclerView? {
-    return v(id)
-}
-
-fun DslViewHolder._tv(@IdRes id: Int): DslTextView? {
-    return v(id)
-}
-
-fun DslViewHolder._et(@IdRes id: Int): DslEditText? {
-    return v(id)
-}
-
-fun DslViewHolder._ev(@IdRes id: Int): DslEditText? {
-    return v(id)
-}
+fun DslViewHolder.vp(@IdRes id: Int): ViewPager? = v(id)
+fun DslViewHolder.vp2(@IdRes id: Int): ViewPager2? = v(id)
+fun DslViewHolder.tab(@IdRes id: Int): DslTabLayout? = v(id)
+fun DslViewHolder.button(@IdRes id: Int): DslButton? = v(id)
+fun DslViewHolder.drv(@IdRes id: Int): DslRecyclerView? = v(id)
+fun DslViewHolder._rv(@IdRes id: Int): DslRecyclerView? = v(id)
+fun DslViewHolder._tv(@IdRes id: Int): DslTextView? = v(id)
+fun DslViewHolder._et(@IdRes id: Int): DslEditText? = v(id)
+fun DslViewHolder._ev(@IdRes id: Int): DslEditText? = v(id)
 
 fun DslViewHolder.checkEmpty(@IdRes vararg ids: Int): Boolean {
     var empty = false
@@ -77,25 +51,12 @@ fun DslViewHolder.checkEmpty(@IdRes vararg ids: Int): Boolean {
     return empty
 }
 
-fun DslViewHolder._img(@IdRes id: Int): DslImageView? {
-    return v(id)
-}
+fun DslViewHolder._img(@IdRes id: Int): DslImageView? = v(id)
+fun DslViewHolder.spinner(@IdRes id: Int): RSpinner? = v(id)
+fun DslViewHolder.bar(@IdRes id: Int): DslProgressBar? = v(id)
+fun DslViewHolder.seek(@IdRes id: Int): DslSeekBar? = v(id)
 
-fun DslViewHolder.spinner(@IdRes id: Int): RSpinner? {
-    return v(id)
-}
-
-fun DslViewHolder.bar(@IdRes id: Int): DslProgressBar? {
-    return v(id)
-}
-
-fun DslViewHolder.seek(@IdRes id: Int): DslSeekBar? {
-    return v(id)
-}
-
-fun DslViewHolder.soft(@IdRes id: Int): DslSoftInputLayout? {
-    return v(id)
-}
+fun DslViewHolder.soft(@IdRes id: Int): DslSoftInputLayout? = v(id)
 
 /**快速设置[AutoCompleteEditText]下拉输入框数据*/
 fun DslViewHolder.auto(
@@ -109,9 +70,7 @@ fun DslViewHolder.auto(
     return auto
 }
 
-fun DslViewHolder._vp(@IdRes id: Int): DslViewPager? {
-    return v(id)
-}
+fun DslViewHolder._vp(@IdRes id: Int): DslViewPager? = v(id)
 
 /**设置hawk指定的key value, 返回旧值*/
 fun DslViewHolder.hawkTag(@IdRes id: Int): Any? {

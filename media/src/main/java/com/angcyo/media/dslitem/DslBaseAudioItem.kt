@@ -1,6 +1,7 @@
 package com.angcyo.media.dslitem
 
 import android.net.Uri
+import com.angcyo.download.dslitem.DslBaseDownloadItem
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.library.L
 import com.angcyo.library.LTime

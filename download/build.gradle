@@ -4,6 +4,7 @@ dependencies {
     implementation project(allModule.library)
     implementation project(allModule.http)
     implementation project(allModule.coroutine)
+    implementation project(allModule.dslitem)
 
     def latest_version = "1.0.7"
     api "com.liulishuo.okdownload:okdownload:$latest_version"

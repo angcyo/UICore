@@ -13,6 +13,8 @@ import android.util.Base64
 import android.webkit.MimeTypeMap
 import androidx.annotation.ColorInt
 import com.angcyo.library.app
+import java.net.URLDecoder
+import java.net.URLEncoder
 import java.util.regex.Pattern
 
 /**
@@ -38,6 +40,10 @@ fun CharSequence.copy(context: Context = app()) {
         )
     }
 }
+
+fun String.encode(enc: String = "UTF-8"): String = URLEncoder.encode(this, enc)
+
+fun String.decode(enc: String = "UTF-8"): String = URLDecoder.decode(this, enc)
 
 @ColorInt
 fun String.toColorInt(): Int = Color.parseColor(this)
@@ -155,7 +161,7 @@ fun String.queryParameter(key: String): String? {
 }
 
 /**返回文件扩展名*/
-fun String.ext(): String = MimeTypeMap.getFileExtensionFromUrl(this)
+fun String.ext(): String = MimeTypeMap.getFileExtensionFromUrl(this.encode())
 
 /**获取url或者文件扩展名 对应的mimeType
  * https://www.iana.org/assignments/media-types/media-types.xhtml
@@ -163,7 +169,7 @@ fun String.ext(): String = MimeTypeMap.getFileExtensionFromUrl(this)
 fun String?.mimeType(): String? {
     return this?.run {
         MimeTypeMap.getSingleton()
-            .getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(this))
+            .getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(this.encode()))
     }
 }
 

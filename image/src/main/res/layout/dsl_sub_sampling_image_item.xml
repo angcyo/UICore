@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.angcyo.image.widget.RSamplingScaleImageView
+        android:id="@+id/lib_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter" />
+
+    <FrameLayout
+        android:id="@+id/lib_transition_overlay_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.angcyo.widget.progress.ArcLoadingView
+            android:id="@+id/lib_loading_view"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            app:arc_auto_start="true" />
+
+    </FrameLayout>
+
+</FrameLayout>

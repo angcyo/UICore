@@ -7,6 +7,7 @@ import com.angcyo.library.app
 import com.angcyo.library.ex.fileSizeString
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.StatusUtil
+import com.liulishuo.okdownload.core.cause.EndCause
 import java.net.URLDecoder
 
 /**
@@ -103,3 +104,7 @@ fun DownloadTask?.isRunning(): Boolean {
 fun DownloadTask?.isStart(): Boolean {
     return DslDownload.getTaskStatus(this) == StatusUtil.Status.PENDING || isRunning()
 }
+
+fun EndCause.isSucceed() = this == EndCause.COMPLETED
+fun EndCause.isError() = this == EndCause.ERROR
+fun EndCause.isCancel() = this == EndCause.CANCELED

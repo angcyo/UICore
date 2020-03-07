@@ -1,4 +1,4 @@
-package com.angcyo.media.dslitem
+package com.angcyo.download.dslitem
 
 import com.angcyo.download.dslDownload
 import com.angcyo.dsladapter.DslAdapterItem
@@ -28,10 +28,13 @@ abstract class DslBaseDownloadItem : DslAdapterItem() {
 
     }
 
+    /**下载进度*/
     var onItemDownloadProgress: (DownloadTask, progress: Int, speed: Long) -> Unit = { _, _, _ -> }
 
+    //当前任务
     var _downTask: DownloadTask? = null
 
+    //是否被Detached过, 用于下载成功后判断是否需要继续之前的操作
     var _isItemViewDetached = false
 
     override fun onItemViewDetachedToWindow(itemHolder: DslViewHolder, itemPosition: Int) {
@@ -41,7 +44,11 @@ abstract class DslBaseDownloadItem : DslAdapterItem() {
     }
 
     /**下载*/
-    open fun download(itemHolder: DslViewHolder?, url: String?, callback: (path: String) -> Unit) {
+    open fun download(
+        itemHolder: DslViewHolder?,
+        url: String?,
+        callback: (path: String) -> Unit = {}
+    ) {
         _isItemViewDetached = false
         _downTask?.cancel()
         _downTask = dslDownload(url) {

@@ -24,11 +24,11 @@ class RSamplingScaleImageView : SubsamplingScaleImageView {
 }
 
 /**设置采样图片*/
-fun SubsamplingScaleImageView.setImage(filePath: String) {
+fun SubsamplingScaleImageView.loadImage(filePath: String) {
     setImage(ImageSource.uri(filePath))
 }
 
 /**不支持http uri ,[com.davemorrissey.labs.subscaleview.decoder.SkiaImageDecoder.decode]*/
-fun SubsamplingScaleImageView.setImage(uri: Uri) {
+fun SubsamplingScaleImageView.loadImage(uri: Uri) {
     setImage(ImageSource.uri(uri))
 }
