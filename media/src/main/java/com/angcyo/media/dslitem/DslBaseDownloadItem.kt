@@ -14,19 +14,35 @@ import com.liulishuo.okdownload.core.cause.EndCause
  */
 
 abstract class DslBaseDownloadItem : DslAdapterItem() {
+
+    /**下载开始的回调*/
+    var onItemDownloadStart: (itemHolder: DslViewHolder?, task: DownloadTask) -> Unit = { _, _ -> }
+
+    /**下载结束的回调*/
+    var onItemDownloadFinish: (
+        itemHolder: DslViewHolder?,
+        task: DownloadTask,
+        cause: EndCause,
+        error: Exception?
+    ) -> Unit = { _, _, _, _ ->
+
+    }
+
+    var onItemDownloadProgress: (DownloadTask, progress: Int, speed: Long) -> Unit = { _, _, _ -> }
+
     var _downTask: DownloadTask? = null
 
-    var isItemViewDetached = false
+    var _isItemViewDetached = false
 
     override fun onItemViewDetachedToWindow(itemHolder: DslViewHolder, itemPosition: Int) {
         super.onItemViewDetachedToWindow(itemHolder, itemPosition)
-        isItemViewDetached = true
+        _isItemViewDetached = true
         _downTask?.cancel()
     }
 
     /**下载*/
     open fun download(itemHolder: DslViewHolder?, url: String?, callback: (path: String) -> Unit) {
-        isItemViewDetached = false
+        _isItemViewDetached = false
         _downTask?.cancel()
         _downTask = dslDownload(url) {
             onTaskStart = {
@@ -34,15 +50,18 @@ abstract class DslBaseDownloadItem : DslAdapterItem() {
             }
             onTaskFinish = { downloadTask, cause, exception ->
                 onDownloadFinish(itemHolder, downloadTask, cause, exception)
-                if (cause == EndCause.COMPLETED && !isItemViewDetached) {
+                if (cause == EndCause.COMPLETED && !_isItemViewDetached) {
                     callback(downloadTask.file!!.absolutePath)
                 }
+            }
+            onTaskProgress = { downloadTask, progress, speed ->
+                onItemDownloadProgress(downloadTask, progress, speed)
             }
         }
     }
 
     open fun onDownloadStart(itemHolder: DslViewHolder?, task: DownloadTask) {
-
+        onItemDownloadStart(itemHolder, task)
     }
 
     open fun onDownloadFinish(
@@ -51,6 +70,6 @@ abstract class DslBaseDownloadItem : DslAdapterItem() {
         cause: EndCause,
         error: Exception?
     ) {
-
+        onItemDownloadFinish(itemHolder, task, cause, error)
     }
 }

@@ -11,9 +11,9 @@ import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.fileSize
 import com.angcyo.library.ex.isResultOk
 import com.angcyo.loader.*
-import com.angcyo.media.dslitem.DslPreviewAudioItem
-import com.angcyo.media.dslitem.DslTextureVideoItem
 import com.angcyo.pager.dslitem.DslPagerPhotoViewItem
+import com.angcyo.pager.dslitem.DslPickerPreviewAudioItem
+import com.angcyo.pager.dslitem.DslPickerTextureVideoItem
 import com.angcyo.picker.R
 import com.angcyo.picker.dslitem.DslPickerMiniImageItem
 import com.angcyo.ucrop.dslCrop
@@ -21,7 +21,9 @@ import com.angcyo.widget._rv
 import com.angcyo.widget._vp
 import com.angcyo.widget.base.Anim
 import com.angcyo.widget.base.lowProfile
+import com.angcyo.widget.base.tagDslAdapterItem
 import com.angcyo.widget.pager.DslPagerAdapter
+import com.angcyo.widget.pager.getPrimaryViewHolder
 import com.angcyo.widget.recycler.initDsl
 import com.angcyo.widget.span.span
 import com.angcyo.widget.vp
@@ -89,11 +91,11 @@ class PickerPreviewFragment : BasePickerFragment() {
 
             previewMediaList.forEach {
                 when {
-                    it.isVideo() -> items.add(DslTextureVideoItem().apply {
+                    it.isVideo() -> items.add(DslPickerTextureVideoItem().apply {
                         itemData = it
                         itemVideoUri = it.loadUri()
                     })
-                    it.isAudio() -> items.add(DslPreviewAudioItem().apply {
+                    it.isAudio() -> items.add(DslPickerPreviewAudioItem().apply {
                         itemData = it
                         itemAudioTitle = it.displayName
                         itemAudioDuration = it.duration
@@ -353,6 +355,24 @@ class PickerPreviewFragment : BasePickerFragment() {
             remove(this@PickerPreviewFragment)
         }
         return false
+    }
+
+    override fun onFragmentHide() {
+        super.onFragmentHide()
+        _vh._vp(R.id.lib_view_pager)?.getPrimaryViewHolder()?.apply {
+            itemView.tagDslAdapterItem()?.also {
+                it.itemViewDetachedToWindow(this, -1)
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _vh._vp(R.id.lib_view_pager)?.getPrimaryViewHolder()?.apply {
+            itemView.tagDslAdapterItem()?.also {
+                it.itemViewRecycled(this, -1)
+            }
+        }
     }
 
 }

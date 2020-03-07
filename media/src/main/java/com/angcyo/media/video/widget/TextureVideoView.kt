@@ -138,10 +138,12 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
                                             mediaPlayer!!.currentPosition,
                                             mediaPlayer!!.duration
                                         )
-                                        videoThreadHandler!!.sendEmptyMessageDelayed(
-                                            MSG_VIDEO_PROGRESS,
-                                            300
-                                        )
+                                        if (currentState == STATE_PLAYING) {
+                                            videoThreadHandler!!.sendEmptyMessageDelayed(
+                                                MSG_VIDEO_PROGRESS,
+                                                300
+                                            )
+                                        }
                                     }
                                 }
                             } catch (e: Exception) {
@@ -520,6 +522,15 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
 
     fun setScaletype(scalableType: ScalableType) {
         mScalableType = scalableType
+    }
+
+    /**智能播放*/
+    fun play() {
+        when {
+            mediaPlayer == null -> start()
+            targetState == STATE_PAUSED -> resume()
+            else -> start()
+        }
     }
 
     interface MediaPlayerCallback {

@@ -4,11 +4,11 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.view.View
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.glide.giv
 import com.angcyo.glide.loadImage
 import com.angcyo.library.app
 import com.angcyo.library.ex.fileUri
 import com.angcyo.library.ex.isHttpScheme
+import com.angcyo.library.ex.loadUrl
 import com.angcyo.media.MediaProgressHelper
 import com.angcyo.media.R
 import com.angcyo.media.video.widget.TextureVideoView
@@ -24,7 +24,7 @@ import com.liulishuo.okdownload.core.cause.EndCause
  * @date 2020/02/21
  */
 
-class DslTextureVideoItem : DslBaseDownloadItem() {
+open class DslTextureVideoItem : DslBaseDownloadItem() {
 
     /**视频地址*/
     var itemVideoUri: Uri? = null
@@ -110,7 +110,7 @@ class DslTextureVideoItem : DslBaseDownloadItem() {
             if (videoView?.isPlaying == true) {
                 videoView.pause()
             } else {
-                videoView?.resume()
+                videoView?.play()
             }
         }
 
@@ -128,7 +128,7 @@ class DslTextureVideoItem : DslBaseDownloadItem() {
 
             if (itemVideoUri.isHttpScheme()) {
                 //下载视频
-                download(itemHolder, itemVideoUri?.path) {
+                download(itemHolder, itemVideoUri?.loadUrl()) {
                     playVideo(itemHolder, fileUri(app(), it))
                 }
             } else {
@@ -143,6 +143,11 @@ class DslTextureVideoItem : DslBaseDownloadItem() {
 
     override fun onItemViewDetachedToWindow(itemHolder: DslViewHolder, itemPosition: Int) {
         super.onItemViewDetachedToWindow(itemHolder, itemPosition)
+        itemHolder.v<TextureVideoView>(R.id.lib_video_view)?.pause()
+    }
+
+    override fun onItemViewRecycled(itemHolder: DslViewHolder, itemPosition: Int) {
+        super.onItemViewRecycled(itemHolder, itemPosition)
         itemHolder.v<TextureVideoView>(R.id.lib_video_view)?.stop()
     }
 
@@ -170,13 +175,7 @@ class DslTextureVideoItem : DslBaseDownloadItem() {
 
         videoView?.run {
             setVideoURI(uri)
-
-            if (targetState == TextureVideoView.STATE_PAUSED) {
-                resume()
-            } else {
-                start()
-            }
-
+            play()
             onPlayListener(this)
         }
     }

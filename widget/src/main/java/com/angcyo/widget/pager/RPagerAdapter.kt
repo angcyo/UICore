@@ -8,6 +8,7 @@ import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.angcyo.library.L
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.setDslViewHolder
 
 /**
  *
@@ -119,6 +120,7 @@ abstract class RPagerAdapter : PagerAdapter(), ViewPager.OnPageChangeListener {
             LayoutInflater.from(parent.context).inflate(getItemLayoutId(viewType), parent, false)
         val viewHolder = DslViewHolder(itemView)
         itemView.tag = viewHolder
+        itemView.setDslViewHolder(viewHolder)
         return viewHolder
     }
 

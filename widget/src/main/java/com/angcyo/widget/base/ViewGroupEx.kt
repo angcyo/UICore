@@ -317,7 +317,7 @@ fun ViewGroup.replace(viewGroup: ViewGroup): ViewGroup {
 
 //</editor-fold desc="child操作">
 
-//</editor-fold desc="DslAdapterItem操作">
+//<editor-fold desc="Dsl吸附">
 
 fun View?.tagDslViewHolder(): DslViewHolder? {
     return this?.run {
@@ -346,17 +346,31 @@ fun View?.tagDslAdapterItem(): DslAdapterItem? {
     }
 }
 
-fun ViewGroup.appendDslItem(dslAdapterItem: DslAdapterItem) {
-    addDslItem(dslAdapterItem)
+fun View?.setDslViewHolder(dslViewHolder: DslViewHolder?) {
+    this?.setTag(R.id.lib_tag_dsl_view_holder, dslViewHolder)
 }
 
-fun ViewGroup.addDslItem(dslAdapterItem: DslAdapterItem) {
+fun View?.setDslAdapterItem(dslAdapterItem: DslAdapterItem?) {
+    this?.setTag(R.id.lib_tag_dsl_adapter_item, dslAdapterItem)
+}
+
+//</editor-fold desc="Dsl吸附">
+
+//</editor-fold desc="DslAdapterItem操作">
+
+fun ViewGroup.appendDslItem(dslAdapterItem: DslAdapterItem): DslViewHolder {
+    return addDslItem(dslAdapterItem)
+}
+
+fun ViewGroup.addDslItem(dslAdapterItem: DslAdapterItem): DslViewHolder {
     setOnHierarchyChangeListener(DslHierarchyChangeListenerWrap())
     val itemView = inflate(dslAdapterItem.itemLayoutId, false)
     val dslViewHolder = DslViewHolder(itemView)
     itemView.tag = dslViewHolder
-    itemView.setTag(R.id.lib_tag_dsl_view_holder, dslViewHolder)
-    itemView.setTag(R.id.lib_tag_dsl_adapter_item, dslAdapterItem)
+
+    itemView.setDslViewHolder(dslViewHolder)
+    itemView.setDslAdapterItem(dslAdapterItem)
+
     dslAdapterItem.itemBind(dslViewHolder, childCount - 1, dslAdapterItem, emptyList())
 
     //头分割线的支持
@@ -404,6 +418,7 @@ fun ViewGroup.addDslItem(dslAdapterItem: DslAdapterItem) {
             }
         }
     }
+    return dslViewHolder
 }
 
 fun ViewGroup.resetDslItem(items: List<DslAdapterItem>) {

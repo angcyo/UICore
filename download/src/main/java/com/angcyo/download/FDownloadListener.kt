@@ -109,7 +109,7 @@ open class FDownloadListener : DownloadListener {
     ) {
         val percent = (totalOffset * 100 / totalLength).toInt()
         //计算每秒多少
-        val sp: String = calcTaskSpeed(task, increaseBytes) + "/s"
+        val sp: String = "${speed}/s"
         val builder = StringBuilder()
         builder.append("\n下载进度:")
         builder.append(task.url)

@@ -467,7 +467,10 @@ class DslFHelper(
                 finishActivityOnLastFragmentRemove &&
                 context is Activity
             ) {
-                context.finish()
+                val activity = context
+                activity.dslAHelper {
+                    finish()
+                }
             } else {
                 onCommit(this, fmFragmentList)
             }

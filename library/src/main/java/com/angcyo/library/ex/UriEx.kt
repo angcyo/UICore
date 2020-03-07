@@ -125,3 +125,13 @@ fun Uri.query(context: Context = app()): MediaBean? {
         }
     }
 }
+
+/**根据scheme获取, 能加载的url*/
+fun Uri?.loadUrl(): String? {
+    if (this.isHttpScheme()) {
+        return this.toString()
+    } else if (isFileScheme()) {
+        return this?.path
+    }
+    return this.toString()
+}

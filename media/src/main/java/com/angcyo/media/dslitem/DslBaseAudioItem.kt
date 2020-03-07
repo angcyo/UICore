@@ -6,6 +6,7 @@ import com.angcyo.library.L
 import com.angcyo.library.LTime
 import com.angcyo.library.ex.getMediaDuration
 import com.angcyo.library.ex.isHttpScheme
+import com.angcyo.library.ex.loadUrl
 import com.angcyo.media.R
 import com.angcyo.media.audio.RPlayer
 import com.angcyo.widget.DslViewHolder
@@ -67,7 +68,7 @@ abstract class DslBaseAudioItem : DslBaseDownloadItem(), RPlayer.OnPlayerListene
     open fun clickPlay(itemHolder: DslViewHolder?) {
         itemAudioUri?.run {
             if (isHttpScheme()) {
-                download(itemHolder, path) {
+                download(itemHolder, loadUrl()) {
                     _player.click(it)
                 }
             } else {

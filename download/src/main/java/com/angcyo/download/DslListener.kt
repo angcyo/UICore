@@ -12,7 +12,7 @@ import com.liulishuo.okdownload.core.cause.EndCause
 open class DslListener : FDownloadListener() {
 
     var onTaskStart: (DownloadTask) -> Unit = {}
-    var onTaskProgress: (DownloadTask, progress: Int) -> Unit = { _, _ -> }
+    var onTaskProgress: (DownloadTask, progress: Int, speed: Long) -> Unit = { _, _, _ -> }
     var onTaskFinish: (DownloadTask, cause: EndCause, Exception?) -> Unit = { _, _, _ -> }
 
     override fun taskStart(task: DownloadTask) {
@@ -34,6 +34,6 @@ open class DslListener : FDownloadListener() {
     ) {
         super.taskProgress(task, totalLength, totalOffset, increaseBytes, speed)
         val percent = (totalOffset * 100 / totalLength).toInt()
-        onTaskProgress(task, percent)
+        onTaskProgress(task, percent, speed)
     }
 }

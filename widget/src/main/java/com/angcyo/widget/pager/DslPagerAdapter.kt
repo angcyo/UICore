@@ -4,6 +4,8 @@ import android.view.ViewGroup
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.each
+import com.angcyo.widget.base.setDslAdapterItem
+import com.angcyo.widget.base.tagDslViewHolder
 
 /**
  * 支持[DslAdapterItem]部分功能
@@ -33,6 +35,7 @@ open class DslPagerAdapter(var adapterItems: List<DslAdapterItem> = emptyList())
     override fun onBindViewHolder(holder: DslViewHolder, position: Int, payload: List<Any>) {
         super.onBindViewHolder(holder, position, payload)
         getAdapterItem(position)?.run {
+            holder.itemView.setDslAdapterItem(this)
             itemBind(holder, position, this, payload)
         }
     }
@@ -55,8 +58,8 @@ open class DslPagerAdapter(var adapterItems: List<DslAdapterItem> = emptyList())
     override fun setPrimaryItem(container: ViewGroup, position: Int, item: Any) {
         super.setPrimaryItem(container, position, item)
         container.each {
-            if (it.tag is DslViewHolder) {
-                val dslViewHolder = it.tag as DslViewHolder
+            val dslViewHolder = it.tagDslViewHolder()
+            dslViewHolder?.apply {
                 val adapterPosition =
                     (it.layoutParams as? DslViewPager.LayoutParams)?.adapterPosition ?: -1
                 if (adapterPosition != -1 && adapterPosition != position) {

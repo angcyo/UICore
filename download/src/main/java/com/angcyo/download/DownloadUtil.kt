@@ -80,9 +80,12 @@ fun availableBlocksSize(path: String = app().getExternalFilesDir("")?.absolutePa
 /**
  * 计算任务增量 速率
  */
-fun calcTaskSpeed(task: DownloadTask, increaseBytes: Long): String {
+fun calcTaskSpeedString(task: DownloadTask, increaseBytes: Long): String {
+    return calcTaskSpeed(task, increaseBytes).fileSizeString()
+}
+
+fun calcTaskSpeed(task: DownloadTask, increaseBytes: Long): Long {
     return (increaseBytes * 1f / task.minIntervalMillisCallbackProcess * 1000).toLong()
-        .fileSizeString()
 }
 
 fun DownloadTask?.status(): StatusUtil.Status {

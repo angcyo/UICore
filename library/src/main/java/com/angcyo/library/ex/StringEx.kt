@@ -154,6 +154,9 @@ fun String.queryParameter(key: String): String? {
     return uri.getQueryParameter(key)
 }
 
+/**返回文件扩展名*/
+fun String.ext(): String = MimeTypeMap.getFileExtensionFromUrl(this)
+
 /**获取url或者文件扩展名 对应的mimeType
  * https://www.iana.org/assignments/media-types/media-types.xhtml
  * */

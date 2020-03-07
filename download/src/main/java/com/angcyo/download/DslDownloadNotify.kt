@@ -114,14 +114,11 @@ class DslDownloadNotify : DslListener() {
     ) {
         super.taskProgress(task, totalLength, totalOffset, increaseBytes, speed)
         val percent = (totalOffset * 100 / totalLength).toInt()
-        //计算每秒多少
-        val sp: String = calcTaskSpeed(task, increaseBytes) + "/s"
-
         _notify {
             notifyDefaults = NotificationCompat.DEFAULT_LIGHTS
             notifyPriority = NotificationCompat.PRIORITY_LOW
             _remoteView(task.filename, percent) {
-                setTextViewText(R.id.lib_sub_text_view, "速度:$sp")
+                setTextViewText(R.id.lib_sub_text_view, "速度:${speed}/s")
             }
         }
     }

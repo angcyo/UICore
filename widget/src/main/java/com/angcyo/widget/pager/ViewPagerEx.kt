@@ -4,6 +4,7 @@ import android.graphics.Rect
 import android.view.View
 import androidx.viewpager.widget.ViewPager
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.tagDslViewHolder
 
 /**
  *
@@ -42,11 +43,5 @@ fun ViewPager.getPrimaryChild(): View? {
 
 fun ViewPager.getPrimaryViewHolder(): DslViewHolder? {
     val primaryChild = getPrimaryChild()
-    if (primaryChild != null) {
-        if (primaryChild.tag is DslViewHolder) {
-            return primaryChild.tag as DslViewHolder
-        }
-        return DslViewHolder(primaryChild)
-    }
-    return null
+    return primaryChild?.run { tagDslViewHolder() ?: DslViewHolder(this) }
 }
