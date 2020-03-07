@@ -151,8 +151,7 @@ open class DslAdapterItem : LifecycleOwner {
 
         onItemBind(itemHolder, itemPosition, adapterItem)
     }
-
-    @Deprecated("不支持[payloads]")
+    
     open fun onItemBind(
         itemHolder: DslViewHolder,
         itemPosition: Int,
