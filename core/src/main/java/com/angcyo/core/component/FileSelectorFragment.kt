@@ -19,6 +19,7 @@ import com.angcyo.dialog.dslLoading
 import com.angcyo.dialog.hideLoading
 import com.angcyo.dialog.itemsDialog
 import com.angcyo.dsladapter.*
+import com.angcyo.fragment.requestPermissions
 import com.angcyo.library.ex.*
 import com.angcyo.library.toastWX
 import com.angcyo.widget._rv
@@ -62,9 +63,7 @@ open class FileSelectorFragment : BaseFragment() {
     override fun onBackPressed(): Boolean {
         if (fileSelectorConfig.targetPath == fileSelectorConfig.storageDirectory) {
             //已经是根目录了, 再次返回就是关闭界面
-            doHideAnimator {
-                removeFragment()
-            }
+            send(null)
         } else {
             //否则返回上一级
             resetPath(getPrePath())
@@ -83,9 +82,7 @@ open class FileSelectorFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _vh.click(R.id.lib_touch_back_layout) {
-            doHideAnimator {
-                removeFragment()
-            }
+            send(null)
         }
         doShowAnimator()
     }
@@ -134,11 +131,7 @@ open class FileSelectorFragment : BaseFragment() {
         //选择按钮
         _vh.click(R.id.file_selector_button) {
             //T_.show(selectorFilePath)
-            doHideAnimator {
-                removeFragment()
-                fileSelectorConfig.onFileSelector?.invoke(selectorFileItem)
-                fileSelectorConfig = FileSelectorConfig()
-            }
+            send(selectorFileItem)
         }
 
         _vh.rv(R.id.lib_recycler_view)?.apply {
@@ -262,7 +255,15 @@ open class FileSelectorFragment : BaseFragment() {
 
     override fun onFragmentFirstShow(bundle: Bundle?) {
         super.onFragmentFirstShow(bundle)
-        loadPath(fileSelectorConfig.targetPath, 360)
+        _vh.post {
+            fContext().requestPermissions(listOf(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                if (it) {
+                    loadPath(fileSelectorConfig.targetPath, 360)
+                } else {
+                    toastWX("权限被拒!")
+                }
+            }
+        }
     }
 
     private fun setSelectorFilePath(uri: Uri) {
@@ -330,10 +331,20 @@ open class FileSelectorFragment : BaseFragment() {
         }
     }
 
+    /**移除界面*/
     private fun removeFragment() {
         dslFHelper {
             noAnim()
             remove(this@FileSelectorFragment)
+        }
+    }
+
+    /**发送返回结果*/
+    private fun send(fileItem: FileItem? = null) {
+        doHideAnimator {
+            removeFragment()
+            fileSelectorConfig.onFileSelector?.invoke(fileItem)
+            fileSelectorConfig = FileSelectorConfig()
         }
     }
 }
