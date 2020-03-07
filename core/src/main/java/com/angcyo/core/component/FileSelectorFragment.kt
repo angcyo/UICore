@@ -21,6 +21,7 @@ import com.angcyo.dialog.itemsDialog
 import com.angcyo.dsladapter.*
 import com.angcyo.library.ex.*
 import com.angcyo.library.toastWX
+import com.angcyo.widget._rv
 import com.angcyo.widget.base.Anim
 import com.angcyo.widget.base.doAnimate
 import com.angcyo.widget.base.drawWidth
@@ -241,6 +242,12 @@ open class FileSelectorFragment : BaseFragment() {
                         }
                         true
                     }
+                }
+            }
+
+            _adapter.onDispatchUpdates {
+                _vh._rv(R.id.lib_recycler_view)?.scrollHelper?.scrollToFirst {
+                    scrollAnim = false
                 }
             }
         }
