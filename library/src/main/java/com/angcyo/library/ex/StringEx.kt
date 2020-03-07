@@ -85,7 +85,7 @@ fun Array<*>.connect(
 }
 
 /**分割字符串*/
-fun String?.split(
+fun String?.splitList(
     separator: String = ",",
     allowEmpty: Boolean = false,
     checkExist: Boolean = false,
@@ -169,6 +169,10 @@ fun String?.mimeType(): String? {
 
 fun String?.isVideoMimeType(): Boolean {
     return this?.startsWith("video", true) ?: false
+}
+
+fun String?.isHttpMimeType(): Boolean {
+    return this?.split("?")?.getOrNull(0)?.endsWith("html", true) ?: false
 }
 
 /**[android.media.MediaFile#isPlayListMimeType]*/

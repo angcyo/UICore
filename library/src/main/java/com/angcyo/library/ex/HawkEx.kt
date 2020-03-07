@@ -22,7 +22,7 @@ fun String?.hawkGetList(maxCount: Int = Int.MAX_VALUE): MutableList<String> {
         val get = Hawk.get(it, "")
 
         if (!TextUtils.isEmpty(get)) {
-            result.addAll(get.split(",", false, true, maxCount))
+            result.addAll(get.splitList(",", false, true, maxCount))
         }
 
     }
@@ -45,7 +45,7 @@ fun String?.hawkPutList(value: String?, sort: Boolean = true, allowEmpty: Boolea
     this?.let {
 
         val oldString = Hawk.get(it, "")
-        val oldList = oldString.split(char)
+        val oldList = oldString.splitList(char)
 
         if (value.isNullOrBlank() && allowEmpty) {
             Hawk.put(it, "")

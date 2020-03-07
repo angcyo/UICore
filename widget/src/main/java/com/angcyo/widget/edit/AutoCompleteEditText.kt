@@ -7,7 +7,7 @@ import android.widget.AutoCompleteTextView
 import android.widget.ListPopupWindow
 import com.angcyo.library.L
 import com.angcyo.library.ex.hawkPutList
-import com.angcyo.library.ex.split
+import com.angcyo.library.ex.splitList
 import com.angcyo.library.utils.getMember
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
@@ -129,7 +129,7 @@ open class AutoCompleteEditText : CompleteEditText {
     fun resetAutoCompleteTextAdapter() {
         if (!TextUtils.isEmpty(autoCompleteText)) {
             setDataList(
-                autoCompleteText.split(autoCompleteTextSeparator, false),
+                autoCompleteText.splitList(autoCompleteTextSeparator, false),
                 autoCompleteShowOnFocus, autoCompleteFocusDelay.toLong()
             )
         }
