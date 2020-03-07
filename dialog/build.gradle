@@ -9,4 +9,7 @@ dependencies {
     //com.angcyo.dialog.LoadingDialogKt.hideLoading
     implementation project(allModule.transition)
 
+    //DslAHelper
+    implementation project(allModule.fragment)
+
 }

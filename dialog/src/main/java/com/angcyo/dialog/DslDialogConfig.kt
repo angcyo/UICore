@@ -16,11 +16,14 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.StyleRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialog
+import com.angcyo.base.dslAHelper
+import com.angcyo.dialog.activity.DialogActivity
 import com.angcyo.library.L
 import com.angcyo.library.ex.getDrawable
 import com.angcyo.library.ex.undefined_float
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslViewHolder
+import java.io.Serializable
 
 /**
  * 标准对话框
@@ -28,7 +31,7 @@ import com.angcyo.widget.DslViewHolder
  * @author angcyo
  * @date 2020/02/01
  */
-open class DslDialogConfig(var context: Context? = null) {
+open class DslDialogConfig(@Transient var context: Context? = null) : Serializable {
 
     companion object {
 
@@ -38,6 +41,8 @@ open class DslDialogConfig(var context: Context? = null) {
         const val DIALOG_TYPE_ALERT_DIALOG = 2
         /**需要[material]库支持*/
         const val DIALOG_TYPE_BOTTOM_SHEET_DIALOG = 3
+        /**使用Dialog样式的Activity显示, 只能传递显示简单的对话框*/
+        const val DIALOG_TYPE_ACTIVITY = 4
 
         /**
          * 测量 layout 或者 view 的大小
@@ -126,6 +131,8 @@ open class DslDialogConfig(var context: Context? = null) {
     var dialogMessage: CharSequence? = null
     var onDialogInitListener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit =
         { _, _ -> }
+
+    @Transient
     var dialogBgDrawable: Drawable? = null
     var dialogWidth: Int = undefined_res
     var dialogHeight: Int = undefined_res
@@ -238,52 +245,6 @@ open class DslDialogConfig(var context: Context? = null) {
     //保存[Dialog]对象
     var _dialog: Dialog? = null
 
-    /** 配置window特性, 需要在setContentView之前调用 */
-    open fun configWindow(dialog: Dialog) {
-        _dialog = dialog
-        val window = dialog.window
-        if (dialog is AppCompatDialog) {
-            dialog.supportRequestWindowFeature(windowFeature)
-        } else {
-            dialog.requestWindowFeature(windowFeature)
-        }
-        if (window != null) {
-            if (windowFlags != null) {
-                for (flag in windowFlags!!) {
-                    if (flag >= 0) {
-                        window.addFlags(flag)
-                    } else {
-                        window.clearFlags(-flag)
-                    }
-                }
-            }
-            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-            if (dialogBgDrawable != null) {
-                window.setBackgroundDrawable(dialogBgDrawable)
-            }
-            if (amount != undefined_float) {
-                window.setDimAmount(amount)
-            }
-            if (animStyleResId != undefined_res) {
-                window.setWindowAnimations(animStyleResId)
-            }
-
-            //设置了导航栏颜色, 键盘弹出,不会挤上布局.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                if (statusBarColor != undefined_res) {
-                    window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-                    window.statusBarColor = statusBarColor
-                }
-                if (navigationBarColor != undefined_res) {
-                    window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-                    window.navigationBarColor = navigationBarColor
-                }
-            }
-
-            onConfigWindow(window)
-        }
-    }
-
     @Throws
     open fun showAndConfigDialog(dialog: Dialog): Dialog {
         if (context == null) {
@@ -307,7 +268,7 @@ open class DslDialogConfig(var context: Context? = null) {
         dialog.setCanceledOnTouchOutside(canceledOnTouchOutside)
         val window = dialog.window
         val decorView: View
-        configWindow(dialog)
+        configDialog(dialog)
         if (dialog is AlertDialog) {
         } else {
             if (dialogContentView != null) {
@@ -321,27 +282,8 @@ open class DslDialogConfig(var context: Context? = null) {
         dialog.show()
 
         if (window != null) {
-            val attributes = window.attributes
-            if (autoWidthHeight && dialogLayoutId != -1) {
-                //自动测量 布局的宽高
-                val size = measureSize(context!!, dialogLayoutId, null)
-                window.setLayout(size[0], size[1])
-            } else { // window的宽高设置
-                if (dialogWidth != undefined_res && dialogHeight != undefined_res) {
-                    window.setLayout(dialogWidth, dialogHeight)
-                } else {
-                    if (dialogHeight != undefined_res) {
-                        window.setLayout(attributes.width, dialogHeight)
-                    }
-                    if (dialogWidth != undefined_res) {
-                        window.setLayout(dialogWidth, attributes.height)
-                    }
-                }
-            }
-            if (dialogGravity != undefined_res) {
-                attributes.gravity = dialogGravity
-                window.attributes = attributes
-            }
+            configWindowAfter(window)
+
             decorView = window.decorView
             val viewHolder = DslViewHolder(decorView)
             initDialogView(dialog, viewHolder)
@@ -349,6 +291,78 @@ open class DslDialogConfig(var context: Context? = null) {
         }
 
         return dialog
+    }
+
+    /** 配置window特性, 需要在setContentView之前调用 */
+    open fun configDialog(dialog: Dialog) {
+        _dialog = dialog
+        val window = dialog.window
+        if (dialog is AppCompatDialog) {
+            dialog.supportRequestWindowFeature(windowFeature)
+        } else {
+            dialog.requestWindowFeature(windowFeature)
+        }
+
+        window?.run { configWindow(this) }
+    }
+
+    open fun configWindow(window: Window) {
+        if (windowFlags != null) {
+            for (flag in windowFlags!!) {
+                if (flag >= 0) {
+                    window.addFlags(flag)
+                } else {
+                    window.clearFlags(-flag)
+                }
+            }
+        }
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        if (dialogBgDrawable != null) {
+            window.setBackgroundDrawable(dialogBgDrawable)
+        }
+        if (amount != undefined_float) {
+            window.setDimAmount(amount)
+        }
+        if (animStyleResId != undefined_res) {
+            window.setWindowAnimations(animStyleResId)
+        }
+
+        //设置了导航栏颜色, 键盘弹出,不会挤上布局.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (statusBarColor != undefined_res) {
+                window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                window.statusBarColor = statusBarColor
+            }
+            if (navigationBarColor != undefined_res) {
+                window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                window.navigationBarColor = navigationBarColor
+            }
+        }
+        onConfigWindow(window)
+    }
+
+    open fun configWindowAfter(window: Window) {
+        val attributes = window.attributes
+        if (autoWidthHeight && dialogLayoutId != -1) {
+            //自动测量 布局的宽高
+            val size = measureSize(context!!, dialogLayoutId, null)
+            window.setLayout(size[0], size[1])
+        } else { // window的宽高设置
+            if (dialogWidth != undefined_res && dialogHeight != undefined_res) {
+                window.setLayout(dialogWidth, dialogHeight)
+            } else {
+                if (dialogHeight != undefined_res) {
+                    window.setLayout(attributes.width, dialogHeight)
+                }
+                if (dialogWidth != undefined_res) {
+                    window.setLayout(dialogWidth, attributes.height)
+                }
+            }
+        }
+        if (dialogGravity != undefined_res) {
+            attributes.gravity = dialogGravity
+            window.attributes = attributes
+        }
     }
 
     open fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
@@ -434,12 +448,24 @@ open class DslDialogConfig(var context: Context? = null) {
         return dialog
     }
 
+    fun showDialogActivity() {
+        if (context == null) {
+            throw NullPointerException("context is null.")
+        }
+        context?.dslAHelper {
+            start(DialogActivity.getDialogIntent(this@DslDialogConfig))
+        }
+    }
+
     /**根据类型, 自动显示对应[Dialog]*/
-    fun show(): Dialog {
+    fun show(): Dialog? {
         return when (dialogType) {
             DIALOG_TYPE_DIALOG -> showDialog()
             DIALOG_TYPE_ALERT_DIALOG -> showAlertDialog()
             DIALOG_TYPE_BOTTOM_SHEET_DIALOG -> showSheetDialog()
+            DIALOG_TYPE_ACTIVITY -> {
+                showDialogActivity();null
+            }
             else -> showCompatDialog()
         }
     }

@@ -1,2 +1,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.angcyo.dialog" />
+    package="com.angcyo.dialog">
+
+    <application>
+
+        <!--应用清单文件说明-->
+        <!--https://developer.android.google.cn/guide/topics/manifest/activity-element-->
+        <activity
+            android:name=".activity.DialogActivity"
+            android:autoRemoveFromRecents="true"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:theme="@style/LibDialogActivity" />
+    </application>
+
+</manifest>

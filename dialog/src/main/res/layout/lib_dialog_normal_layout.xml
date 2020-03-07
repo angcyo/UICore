@@ -44,7 +44,7 @@
 
         <com.angcyo.widget.DslButton
             android:id="@+id/dialog_neutral_button"
-            style="@style/DefaultButtonStyleNormal"
+            style="@style/DefaultButtonMinStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/lib_bg_selector"
@@ -53,7 +53,7 @@
 
         <com.angcyo.widget.DslButton
             android:id="@+id/negative_button"
-            style="@style/DefaultButtonStyleNormal"
+            style="@style/DefaultButtonMinStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/lib_xhdpi"
@@ -63,7 +63,7 @@
 
         <com.angcyo.widget.DslButton
             android:id="@+id/positive_button"
-            style="@style/DefaultButtonStyleNormal"
+            style="@style/DefaultButtonMinStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/lib_xhdpi"

@@ -111,10 +111,13 @@ class DslFHelper(
         }
     }
 
-    fun show(vararg fClass: Class<out Fragment>) {
+    fun show(vararg fClass: Class<out Fragment>, action: Fragment.() -> Unit = {}) {
         val list = mutableListOf<Fragment>()
         for (cls in fClass) {
-            instantiateFragment(cls.classLoader!!, cls.name)?.run { list.add(this) }
+            instantiateFragment(cls.classLoader!!, cls.name)?.run {
+                action()
+                list.add(this)
+            }
 
 //            fm.fragmentFactory.instantiate(
 //                cls.classLoader!!,
@@ -124,16 +127,17 @@ class DslFHelper(
         show(list)
     }
 
-    fun show(vararg fragment: Fragment) {
-        show(fragment.toList())
+    fun show(vararg fragment: Fragment, action: Fragment.() -> Unit = {}) {
+        show(fragment.toList(), action)
     }
 
     /**
      * 如果显示的[Fragment]已经[add], 那么此[Fragment]上面的其他[Fragment]都将被[remove]
      * 这一点, 有点类似[Activity]的[SINGLE_TASK]启动模式
      * */
-    fun show(fragmentList: List<Fragment>) {
+    fun show(fragmentList: List<Fragment>, action: Fragment.() -> Unit = {}) {
         fragmentList.forEach {
+            it.action()
             if (!showFragmentList.contains(it)) {
                 showFragmentList.add(it)
                 if (it.isAdded) {
@@ -143,16 +147,16 @@ class DslFHelper(
         }
     }
 
-    fun restore(vararg fClass: Class<out Fragment>) {
-        show(fm.restore(*fClass))
+    fun restore(vararg fClass: Class<out Fragment>, action: Fragment.() -> Unit = {}) {
+        show(fm.restore(*fClass), action)
     }
 
-    fun restore(vararg tag: String?) {
-        show(fm.restore(*tag))
+    fun restore(vararg tag: String?, action: Fragment.() -> Unit = {}) {
+        show(fm.restore(*tag), action)
     }
 
-    fun restores(vararg fragment: Fragment) {
-        show(fm.restore(*fragment))
+    fun restores(vararg fragment: Fragment, action: Fragment.() -> Unit = {}) {
+        show(fm.restore(*fragment), action)
     }
 
     fun <T : Fragment> restore(fragment: T, action: T.() -> Unit = {}) {
