@@ -458,13 +458,14 @@ open class DslDialogConfig(@Transient var context: Context? = null) : Serializab
     }
 
     /**根据类型, 自动显示对应[Dialog]*/
-    fun show(): Dialog? {
+    fun show(): Dialog {
         return when (dialogType) {
             DIALOG_TYPE_DIALOG -> showDialog()
             DIALOG_TYPE_ALERT_DIALOG -> showAlertDialog()
             DIALOG_TYPE_BOTTOM_SHEET_DIALOG -> showSheetDialog()
             DIALOG_TYPE_ACTIVITY -> {
-                showDialogActivity();null
+                showDialogActivity()
+                Dialog(context!!)
             }
             else -> showCompatDialog()
         }
