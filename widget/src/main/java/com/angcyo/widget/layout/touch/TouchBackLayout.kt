@@ -70,7 +70,7 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
         layoutDelegate.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
-    override fun getRLayoutDelegate(): RLayoutDelegate {
+    override fun getCustomLayoutDelegate(): RLayoutDelegate {
         return layoutDelegate
     }
 

@@ -23,17 +23,15 @@ import kotlin.math.absoluteValue
  * @author angcyo
  * @date 2020/02/03
  */
-class RLayoutDelegate {
-
-    lateinit var view: View
+class RLayoutDelegate : LayoutDelegate() {
 
     /**额外的底层背景[Drawable]*/
     var bDrawable: Drawable? = null
         set(value) {
             field = value
-            view.postInvalidateOnAnimation()
+            delegateView.postInvalidateOnAnimation()
             if (value != null) {
-                view.setWillNotDraw(false)
+                delegateView.setWillNotDraw(false)
             }
         }
 
@@ -41,32 +39,32 @@ class RLayoutDelegate {
     var rMaxHeight: String? = null
         set(value) {
             field = value
-            view.requestLayout()
+            delegateView.requestLayout()
         }
 
     var rMaxWidth: String? = null
         set(value) {
             field = value
-            view.requestLayout()
+            delegateView.requestLayout()
         }
 
     var rLayoutWidth: String? = null
         set(value) {
             field = value
-            view.requestLayout()
+            delegateView.requestLayout()
         }
 
     var rLayoutHeight: String? = null
         set(value) {
             field = value
-            view.requestLayout()
+            delegateView.requestLayout()
         }
 
     /**宽高的比例[1:1] [1:2.5], 宽高必须有一个要是1f*/
     var layoutDimensionRatio: String? = null
         set(value) {
             field = value
-            view.requestLayout()
+            delegateView.requestLayout()
         }
 
     /**布局蒙层*/
@@ -78,14 +76,14 @@ class RLayoutDelegate {
                     isFilterBitmap = true
                     xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
                 }
-                view.setWillNotDraw(false)
+                delegateView.setWillNotDraw(false)
             }
         }
 
     var _maskPaint: Paint? = null
 
-    fun initAttribute(view: View, attributeSet: AttributeSet?) {
-        this.view = view
+    override fun initAttribute(view: View, attributeSet: AttributeSet?) {
+        this.delegateView = view
         val typedArray =
             view.context.obtainStyledAttributes(attributeSet, R.styleable.RLayoutDelegate)
 
@@ -109,39 +107,39 @@ class RLayoutDelegate {
     /**布局蒙版*/
     fun maskLayout(canvas: Canvas, drawSuper: () -> Unit = {}) {
         maskDrawable?.run {
-            val width: Int = view.width
-            val height: Int = view.height
-            val saveCount = view.save(canvas)
+            val width: Int = delegateView.width
+            val height: Int = delegateView.height
+            val saveCount = delegateView.save(canvas)
             setBounds(
-                view.paddingLeft,
-                view.paddingTop,
-                width - view.paddingRight,
-                height - view.paddingBottom
+                delegateView.paddingLeft,
+                delegateView.paddingTop,
+                width - delegateView.paddingRight,
+                height - delegateView.paddingBottom
             )
             draw(canvas)
-            view.save(canvas, _maskPaint)
+            delegateView.save(canvas, _maskPaint)
             drawSuper()
             canvas.restoreToCount(saveCount)
         } ?: drawSuper()
     }
 
     /**[bDrawable]属性支持*/
-    fun draw(canvas: Canvas) {
+    override fun draw(canvas: Canvas) {
         bDrawable?.run {
-            setBounds(0, 0, view.width, view.height)
+            setBounds(0, 0, delegateView.width, delegateView.height)
             draw(canvas)
         }
     }
 
     /**返回xml中配合的[r_layout_width] [r_layout_height]解析后的宽高*/
     fun layoutWidthHeight(): IntArray {
-        val parentWidth = (view.parent as? View)?.measuredWidth ?: 0
-        val parentHeight = (view.parent as? View)?.measuredHeight ?: 0
+        val parentWidth = (delegateView.parent as? View)?.measuredWidth ?: 0
+        val parentHeight = (delegateView.parent as? View)?.measuredHeight ?: 0
 
-        val layoutWidthHeight = view.calcLayoutWidthHeight(
+        val layoutWidthHeight = delegateView.calcLayoutWidthHeight(
             rLayoutWidth, rLayoutHeight,
-            if (parentWidth > 0) parentWidth else view.screenWidth,
-            if (parentHeight > 0) parentHeight else view.screenHeight,
+            if (parentWidth > 0) parentWidth else delegateView.screenWidth,
+            if (parentHeight > 0) parentHeight else delegateView.screenHeight,
             0, 0
         )
 
@@ -170,43 +168,43 @@ class RLayoutDelegate {
     }
 
     /**[rMaxHeight]属性支持*/
-    fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val parentWidth = (view.parent as? View)?.measuredWidth ?: 0
-        val parentHeight = (view.parent as? View)?.measuredHeight ?: 0
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int): IntArray {
+        val parentWidth = (delegateView.parent as? View)?.measuredWidth ?: 0
+        val parentHeight = (delegateView.parent as? View)?.measuredHeight ?: 0
 
-        val maxWidthHeight = view.calcLayoutWidthHeight(
+        val maxWidthHeight = delegateView.calcLayoutWidthHeight(
             rMaxWidth, rMaxHeight,
-            if (parentWidth > 0) parentWidth else view.screenWidth,
-            if (parentHeight > 0) parentHeight else view.screenHeight,
+            if (parentWidth > 0) parentWidth else delegateView.screenWidth,
+            if (parentHeight > 0) parentHeight else delegateView.screenHeight,
             0, 0
         )
 
         val maxWidth = maxWidthHeight[0]
         val maxHeight = maxWidthHeight[1]
 
-        val isWidthOut = maxWidth > -1 && view.measuredWidth > maxWidth
-        val isHeightOut = maxHeight > -1 && view.measuredHeight > maxHeight
+        val isWidthOut = maxWidth > -1 && delegateView.measuredWidth > maxWidth
+        val isHeightOut = maxHeight > -1 && delegateView.measuredHeight > maxHeight
 
         if (isWidthOut || isHeightOut) {
             //宽高有一些项超标
 
             //替换布局参数, 可以提高性能
             val wSpec = if (isWidthOut) {
-                view.layoutParams.width = maxWidth
+                delegateView.layoutParams.width = maxWidth
                 exactly(maxWidth)
             } else {
                 widthMeasureSpec
             }
 
             val hSpec = if (isHeightOut) {
-                view.layoutParams.height = maxHeight
+                delegateView.layoutParams.height = maxHeight
                 exactly(maxHeight)
             } else {
                 heightMeasureSpec
             }
 
             //如果使用重新测量的方式,布局就会每次都至少测量2次
-            view.measure(wSpec, hSpec)
+            delegateView.measure(wSpec, hSpec)
         }
 
         //比例计算
@@ -231,8 +229,8 @@ class RLayoutDelegate {
             }
 
             if (ratio > 0f) {
-                val vWidth = view.measuredWidth
-                val vHeight = view.measuredHeight
+                val vWidth = delegateView.measuredWidth
+                val vHeight = delegateView.measuredHeight
                 val rawRatio = vWidth * 1f / vHeight
 
                 if ((rawRatio - ratio).absoluteValue > 0.1f) {
@@ -250,9 +248,11 @@ class RLayoutDelegate {
                         wSpec = exactly((vHeight * widthFactor).toInt())
                         hSpec = exactly(vHeight)
                     }
-                    view.measure(wSpec, hSpec)
+                    delegateView.measure(wSpec, hSpec)
                 }
             }
         }
+
+        return super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 }

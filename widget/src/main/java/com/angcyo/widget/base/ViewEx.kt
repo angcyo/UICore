@@ -136,7 +136,7 @@ fun View.setRBgDrawable(drawable: Drawable?) {
 
 fun View?.layoutDelegate(action: RLayoutDelegate.() -> Unit) {
     if (this is ILayoutDelegate) {
-        this.getRLayoutDelegate().action()
+        this.getCustomLayoutDelegate().action()
     }
 }
 

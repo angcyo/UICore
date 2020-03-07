@@ -2,15 +2,17 @@ package com.angcyo.widget.layout
 
 import android.content.Context
 import android.util.AttributeSet
-import android.widget.LinearLayout
+import android.widget.RadioGroup
 
 /**
+ *
  * Email:angcyo@126.com
  * @author angcyo
- * @date 2020/01/30
+ * @date 2020/03/07
  */
-class DslFlowLayout(context: Context, attrs: AttributeSet? = null) : LinearLayout(context, attrs),
-    IFlowLayoutDelegate {
+
+class DslRadioFlowLayout(context: Context, attrs: AttributeSet? = null) :
+    RadioGroup(context, attrs), IFlowLayoutDelegate {
 
     val flowLayoutDelegate = FlowLayoutDelegate()
 

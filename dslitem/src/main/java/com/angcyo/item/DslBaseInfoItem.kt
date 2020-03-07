@@ -13,7 +13,6 @@ import com.angcyo.widget.base.getDrawable
 import com.angcyo.widget.base.inflate
 import com.angcyo.widget.base.setLeftIco
 import com.angcyo.widget.layout.ILayoutDelegate
-import com.angcyo.widget.layout.RLinearLayout
 
 /**
  * 横条文本信息基类item, 右边布局支持扩展自定义
@@ -51,7 +50,7 @@ open class DslBaseInfoItem : DslAdapterItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
-        (itemHolder.itemView as? ILayoutDelegate)?.getRLayoutDelegate()?.bDrawable = itemBackgroundDrawable
+        (itemHolder.itemView as? ILayoutDelegate)?.getCustomLayoutDelegate()?.bDrawable = itemBackgroundDrawable
 
         //文本信息
         itemHolder.tv(R.id.lib_text_view)?.apply {

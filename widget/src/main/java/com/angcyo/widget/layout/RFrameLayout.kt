@@ -42,7 +42,7 @@ open class RFrameLayout(
         layoutDelegate.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
-    override fun getRLayoutDelegate(): RLayoutDelegate {
+    override fun getCustomLayoutDelegate(): RLayoutDelegate {
         return layoutDelegate
     }
 }

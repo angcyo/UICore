@@ -139,7 +139,7 @@ open class RCoordinatorLayout(
         )
     }
 
-    override fun getRLayoutDelegate(): RLayoutDelegate {
+    override fun getCustomLayoutDelegate(): RLayoutDelegate {
         return layoutDelegate
     }
 }

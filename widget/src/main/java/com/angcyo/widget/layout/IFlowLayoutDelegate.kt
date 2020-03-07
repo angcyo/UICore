@@ -7,6 +7,6 @@ package com.angcyo.widget.layout
  * @date 2020/03/02
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-interface ILayoutDelegate {
-    fun getCustomLayoutDelegate(): RLayoutDelegate
+interface IFlowLayoutDelegate {
+    fun getCustomFlowLayoutDelegate(): FlowLayoutDelegate
 }
