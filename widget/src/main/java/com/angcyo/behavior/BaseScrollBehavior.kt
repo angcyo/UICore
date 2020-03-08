@@ -99,8 +99,18 @@ open class BaseScrollBehavior<T : View>(
     open fun onComputeScroll(parent: CoordinatorLayout, child: T) {
         if (_overScroller.computeScrollOffset()) {
             scrollTo(_overScroller.currX, _overScroller.currY)
-            invalidate()
+            postInvalidateOnAnimation()
         }
+    }
+
+    override fun onStopNestedScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: T,
+        target: View,
+        type: Int
+    ) {
+        super.onStopNestedScroll(coordinatorLayout, child, target, type)
+        _overScroller.abortAnimation()
     }
 
     /**滚动到*/
@@ -128,7 +138,8 @@ open class BaseScrollBehavior<T : View>(
     fun startScroll(dx: Int, dy: Int) {
         _overScroller.abortAnimation()
         _overScroller.startScroll(scrollX, scrollY, dx, dy)
-        postInvalidate()
+        postInvalidateOnAnimation()
+        //invalidate()
     }
 
     /**速率限制*/

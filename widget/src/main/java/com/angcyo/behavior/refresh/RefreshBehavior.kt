@@ -27,8 +27,10 @@ open class RefreshBehavior(
     companion object {
         //正常状态
         const val STATUS_NORMAL = 0
+
         //刷新状态
         const val STATUS_REFRESH = 1
+
         //刷新完成
         const val STATUS_FINISH = 10
     }
@@ -72,6 +74,7 @@ open class RefreshBehavior(
         layoutDirection: Int
     ): Boolean {
         offsetTop = titleBarPlaceholderBehavior?.getContentOffsetTop(this) ?: 0
+        refreshBehaviorConfig?.onContentLayout(this, parent, child)
         return super.onLayoutChild(parent, child, layoutDirection)
     }
 

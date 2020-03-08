@@ -1,5 +1,7 @@
 package com.angcyo.behavior.refresh
 
+import android.view.View
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.offsetTopTo
 
@@ -11,6 +13,11 @@ import com.angcyo.widget.base.offsetTopTo
  */
 
 interface IRefreshBehavior {
+
+    /**当内容布局后, 用于保存一些需要初始化的变量*/
+    fun onContentLayout(behavior: RefreshBehavior, parent: CoordinatorLayout, child: View) {
+
+    }
 
     /**当内容滚动时, 界面需要处理的回调*/
     fun onContentScrollTo(behavior: RefreshBehavior, x: Int, y: Int) {

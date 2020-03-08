@@ -24,7 +24,7 @@ class ArcLoadingHeaderBehavior(context: Context, attributeSet: AttributeSet? = n
     init {
         showLog = false
 
-        refreshEffectConfig.enableBottomOver = false
+        _refreshEffectConfig.enableBottomOver = false
     }
 
     override fun onContentScrollTo(behavior: RefreshBehavior, x: Int, y: Int) {

@@ -12,10 +12,11 @@ import kotlin.math.absoluteValue
  * @date 2020/01/07
  */
 
-class RefreshEffectConfig : IRefreshBehavior {
+open class RefreshEffectConfig : IRefreshBehavior {
 
     /**顶部over效果*/
     var enableTopOver: Boolean = true
+
     /**底部over效果*/
     var enableBottomOver: Boolean = true
 
@@ -45,16 +46,15 @@ class RefreshEffectConfig : IRefreshBehavior {
         }
 
         val scrollY = behavior.scrollY
-        val result: Int
-        if (scrollY > 0) {
-            result = if (dy < 0) {
+        val result = if (scrollY > 0) {
+            if (dy < 0) {
                 //继续下拉, 才需要阻尼, 反向不需要
                 behaviorInterpolator.getInterpolation(behavior, -dy, behavior.childView.mH())
             } else {
                 -dy
             }
         } else {
-            result = if (dy > 0) {
+            if (dy > 0) {
                 //继续上拉, 才需要阻尼, 反向不需要
                 behaviorInterpolator.getInterpolation(behavior, -dy, behavior.childView.mH())
             } else {

@@ -34,6 +34,12 @@ class RecyclerBottomLayout(
         //Log.w("angcyo", "layout:" + top + " " + bottom);
         var callSuper = true
         if (parent is RecyclerView) {
+            if (parent.scrollState != RecyclerView.SCROLL_STATE_IDLE) {
+                //滚动过程不处理
+                super.onLayout(changed, left, top, right, bottom)
+                return
+            }
+
             val layoutParams = layoutParams as RecyclerView.LayoutParams
             val parentHeight = parent.measuredHeight
             //只处理第一屏

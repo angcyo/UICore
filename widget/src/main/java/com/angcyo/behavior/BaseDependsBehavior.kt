@@ -51,6 +51,11 @@ abstract class BaseDependsBehavior<T : View>(
         parentLayout?.postInvalidate()
     }
 
+    fun postInvalidateOnAnimation() {
+        parentLayout?.postInvalidateOnAnimation()
+        //ViewCompat.postOnAnimation(view, this)
+    }
+
     fun invalidate() {
         parentLayout?.invalidate()
     }

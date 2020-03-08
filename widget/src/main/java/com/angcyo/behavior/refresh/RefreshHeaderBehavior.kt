@@ -18,8 +18,8 @@ import com.angcyo.widget.base.behavior
 open class RefreshHeaderBehavior(context: Context, attributeSet: AttributeSet? = null) :
     BaseScrollBehavior<View>(context, attributeSet), IRefreshBehavior {
 
-    //阻尼效果
-    var refreshEffectConfig = RefreshEffectConfig()
+    //为了阻尼效果的算法
+    var _refreshEffectConfig = RefreshEffectConfig()
 
     override fun layoutDependsOn(
         parent: CoordinatorLayout,
@@ -40,6 +40,6 @@ open class RefreshHeaderBehavior(context: Context, attributeSet: AttributeSet? =
     }
 
     override fun onContentOverScroll(behavior: RefreshBehavior, dx: Int, dy: Int) {
-        refreshEffectConfig.onContentOverScroll(behavior, dx, dy)
+        _refreshEffectConfig.onContentOverScroll(behavior, dx, dy)
     }
 }
