@@ -3,7 +3,6 @@ package com.angcyo.behavior.refresh
 import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.angcyo.library.L
 import com.angcyo.widget.base.setHeight
 
 /**
@@ -17,6 +16,9 @@ import com.angcyo.widget.base.setHeight
  */
 
 open class ScaleHeaderRefreshEffectConfig : RefreshEffectConfig() {
+
+    /**当 滚动距离/原始target,到达一定比例时, 开始高度开启缩放, 否则只改变高度. 负数表示关闭*/
+    var scaleThreshold: Float = 0.2f
 
     /**目标view, 在content ViewGroup中的index*/
     var targetViewIndexInContent: Int = 0
@@ -52,6 +54,14 @@ open class ScaleHeaderRefreshEffectConfig : RefreshEffectConfig() {
             //当内容需要向下滚动时, 改变目标view的高度
             onGetTargetView(behavior)?.apply {
                 setHeight(_defaultTargetHeight + y)
+                val ratio = y * 1f / _defaultTargetHeight
+                if (scaleThreshold in 0f..ratio) {
+                    scaleX = 1f + ratio - scaleThreshold
+                    scaleY = scaleX
+                } else {
+                    scaleX = 1f
+                    scaleY = scaleX
+                }
             }
         } /*else if (y == 0) {
             onGetTargetView(behavior)?.apply {
