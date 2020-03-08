@@ -75,6 +75,7 @@ class DslFHelper(
 
     /**最后一个[Fragment]在执行的[remove]时, 是否需要关闭[activity]*/
     var finishActivityOnLastFragmentRemove: Boolean = true
+    var finishToActivity: Class<out Activity>? = DslAHelper.mainActivityClass
 
     @AnimRes
     var showEnterAnimRes: Int = DEFAULT_SHOW_ENTER_ANIM
@@ -473,6 +474,7 @@ class DslFHelper(
             ) {
                 val activity = context
                 activity.dslAHelper {
+                    finishToActivity = this@DslFHelper.finishToActivity
                     finish()
                 }
             } else {

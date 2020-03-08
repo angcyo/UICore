@@ -231,6 +231,20 @@ class DslAHelper(val context: Context) {
                 activity.finish()
             }
 
+            onFinish()
+
+            if (config.enterAnim != -1 || config.exitAnim != -1) {
+                activity.overridePendingTransition(config.enterAnim, config.exitAnim)
+            }
+        } else {
+            L.e("context 必须是 Activity, 才能执行 finish()")
+        }
+    }
+
+    /**界面关闭后, 检查是否需要启动主界面*/
+    fun onFinish() {
+        if (context is Activity) {
+            val activity = context
             finishToActivity?.also { cls ->
                 if (activity::class.java != cls) {
                     //启动主界面
@@ -239,12 +253,6 @@ class DslAHelper(val context: Context) {
                     }
                 }
             }
-
-            if (config.enterAnim != -1 || config.exitAnim != -1) {
-                activity.overridePendingTransition(config.enterAnim, config.exitAnim)
-            }
-        } else {
-            L.e("context 必须是 Activity, 才能执行 finish()")
         }
     }
 
