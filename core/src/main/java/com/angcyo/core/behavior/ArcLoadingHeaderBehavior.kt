@@ -43,16 +43,33 @@ class ArcLoadingHeaderBehavior(context: Context, attributeSet: AttributeSet? = n
     }
 
     override fun onContentStopScroll(behavior: RefreshBehavior, touchHold: Boolean) {
-        when {
-            behavior.refreshStatus == RefreshBehavior.STATUS_FINISH -> {
+        //L.i("${behavior.refreshStatus} $touchHold ${behavior.scrollY}")
+        when (behavior.refreshStatus) {
+            RefreshBehavior.STATUS_FINISH -> {
+                //刷新完成状态, 手势放开
                 behavior.refreshStatus = RefreshBehavior.STATUS_NORMAL
             }
-            behavior.scrollY >= childView.mH() -> {
-                //触发刷新
-                behavior.refreshStatus = RefreshBehavior.STATUS_REFRESH
+            RefreshBehavior.STATUS_REFRESH -> {
+                if (!touchHold) {
+                    //刷新状态, 手势放开
+                    if (behavior.scrollY >= childView.mH()) {
+                        behavior.startScrollTo(0, childView.mH())
+                    } else {
+                        behavior.startScrollTo(0, 0)
+                    }
+                }
             }
-            behavior.refreshStatus == RefreshBehavior.STATUS_NORMAL -> {
-                behavior.startScrollTo(0, 0)
+            RefreshBehavior.STATUS_NORMAL -> {
+                if (!touchHold) {
+                    //正常状态, 手势放开
+                    if (behavior.scrollY >= childView.mH()) {
+                        //触发刷新, 切换刷新状态
+                        behavior.refreshStatus = RefreshBehavior.STATUS_REFRESH
+                    } else {
+                        //滚到默认
+                        behavior.startScrollTo(0, 0)
+                    }
+                }
             }
             else -> {
                 behavior.refreshStatus = RefreshBehavior.STATUS_NORMAL
