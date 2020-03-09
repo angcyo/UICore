@@ -85,4 +85,6 @@ android {
 //    }
 
     //useLibrary 'org.apache.http.legacy'
+    //https://jcenter.bintray.com/org/apache/httpcomponents/httpclient/
+    //implementation 'org.apache.httpcomponents:httpclient:4.5.11'
 }
