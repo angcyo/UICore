@@ -89,14 +89,14 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                 _updateTaskLit.lastOrNull()?.notifyUpdateDependItem()
             }
 
-            var firstTime = 0L
+            var firstTime = -1L
             _updateTaskLit.forEach {
                 if (params.justRun || params.shakeType == OnceHandler.SHAKE_TYPE_DEBOUNCE) {
                     //立即执行 or 抖动
                     it.taskCancel = true
                 } else if (params.shakeType == OnceHandler.SHAKE_TYPE_THROTTLE) {
                     //节流
-                    if (firstTime == 0L) {
+                    if (firstTime < 0L) {
                         firstTime = it._taskStartTime
                     } else {
                         if (it._taskStartTime - firstTime < params.shakeDelay) {
@@ -106,7 +106,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                 }
             }
 
-            if (firstTime == 0L) {
+            if (firstTime < 0L) {
                 _updateTaskLit.clear()
             }
 
