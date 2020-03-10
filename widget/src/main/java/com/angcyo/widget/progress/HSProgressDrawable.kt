@@ -33,11 +33,11 @@ class HSProgressDrawable : BaseSectionDrawable() {
     }
 
     override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
-        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.HSProgressDraw)
+        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.HSProgressDrawable)
         progressColor =
-            typedArray.getColor(R.styleable.HSProgressDraw_r_progress_color, progressColor)
+            typedArray.getColor(R.styleable.HSProgressDrawable_r_progress_color, progressColor)
         roundSize = typedArray.getDimensionPixelOffset(
-            R.styleable.HSProgressDraw_r_progress_round_size,
+            R.styleable.HSProgressDrawable_r_progress_round_size,
             roundSize.toInt()
         ).toFloat()
         typedArray.recycle()

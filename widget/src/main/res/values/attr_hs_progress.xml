@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="r_progress_round_size" format="dimension"/>
+    <attr name="r_progress_round_size" format="dimension" />
+    <attr name="r_auto_start_animator" format="boolean" />
+    <attr name="r_progress_bg_line_height" format="dimension" />
 
     <declare-styleable name="HSProgressView">
-        <attr name="r_progress_color"/>
-        <attr name="r_progress_round_size"/>
+        <attr name="r_progress_color" />
+        <attr name="r_progress_round_size" />
+        <attr name="r_auto_start_animator" />
     </declare-styleable>
 
-    <declare-styleable name="HSProgressDraw">
-        <attr name="r_progress_color"/>
-        <attr name="r_progress_round_size"/>
+    <declare-styleable name="HSProgressDrawable">
+        <attr name="r_progress_color" />
+        <attr name="r_progress_round_size" />
+    </declare-styleable>
+
+    <declare-styleable name="DYProgressView">
+        <attr name="r_progress_color" />
+        <attr name="r_progress_round_size" />
+        <attr name="r_auto_start_animator" />
+        <attr name="r_progress_bg_line_height" />
+    </declare-styleable>
+
+    <declare-styleable name="DYProgressDrawable">
+        <attr name="r_progress_color" />
+        <attr name="r_progress_round_size" />
+        <attr name="r_progress_bg_line_height" />
     </declare-styleable>
 </resources>
