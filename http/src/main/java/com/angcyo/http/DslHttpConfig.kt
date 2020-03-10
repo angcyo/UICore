@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit
 class DslHttpConfig {
 
     companion object {
+        //秒
         var TIME_OUT: Long = 5
     }
 
@@ -30,7 +31,8 @@ class DslHttpConfig {
         connectTimeout(TIME_OUT, TimeUnit.SECONDS)
         readTimeout(TIME_OUT, TimeUnit.SECONDS)
         writeTimeout(TIME_OUT, TimeUnit.SECONDS)
-
+        followRedirects(true)
+        followSslRedirects(true)
         addInterceptor(LogInterceptor())
     }
 

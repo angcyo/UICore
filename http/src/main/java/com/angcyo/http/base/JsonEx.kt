@@ -2,6 +2,7 @@ package com.angcyo.http.base
 
 import android.text.TextUtils
 import com.google.gson.*
+import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 
@@ -15,28 +16,28 @@ import java.lang.reflect.Type
 
 //<editor-fold desc="快速构建 jsonObject 和 jsonArray ">
 
-public fun jsonString(config: JsonBuilder.() -> Unit = {}): String {
+fun jsonString(config: JsonBuilder.() -> Unit = {}): String {
     return JsonBuilder().json().run {
         config()
         get()
     }
 }
 
-public fun arrayString(config: JsonBuilder.() -> Unit = {}): String {
+fun arrayString(config: JsonBuilder.() -> Unit = {}): String {
     return JsonBuilder().array().run {
         config()
         get()
     }
 }
 
-public fun jsonObject(config: JsonBuilder.() -> Unit = {}): JsonElement {
+fun jsonObject(config: JsonBuilder.() -> Unit = {}): JsonElement {
     return JsonBuilder().json().run {
         config()
         build()
     }
 }
 
-public fun jsonArray(config: JsonBuilder.() -> Unit = {}): JsonElement {
+fun jsonArray(config: JsonBuilder.() -> Unit = {}): JsonElement {
     return JsonBuilder().array().run {
         config()
         build()
@@ -47,7 +48,7 @@ public fun jsonArray(config: JsonBuilder.() -> Unit = {}): JsonElement {
 
 //<editor-fold desc="JsonObject 扩展">
 
-public fun JsonObject.getInt(key: String, default: Int = -1): Int {
+fun JsonObject.getInt(key: String, default: Int = -1): Int {
     val element = get(key)
     if (element is JsonPrimitive) {
         if (element.isNumber) {
@@ -57,7 +58,7 @@ public fun JsonObject.getInt(key: String, default: Int = -1): Int {
     return default
 }
 
-public fun JsonObject.getString(key: String, default: String? = null): String? {
+fun JsonObject.getString(key: String, default: String? = null): String? {
     val element = get(key)
     if (element is JsonPrimitive) {
         if (element.isString) {
@@ -67,7 +68,7 @@ public fun JsonObject.getString(key: String, default: String? = null): String? {
     return default
 }
 
-public fun JsonObject.getJson(key: String, default: JsonObject? = null): JsonObject? {
+fun JsonObject.getJson(key: String, default: JsonObject? = null): JsonObject? {
     val element = get(key)
     if (element is JsonObject) {
         return element
@@ -75,7 +76,7 @@ public fun JsonObject.getJson(key: String, default: JsonObject? = null): JsonObj
     return default
 }
 
-public fun JsonObject.getArray(key: String, default: JsonArray? = null): JsonArray? {
+fun JsonObject.getArray(key: String, default: JsonArray? = null): JsonArray? {
     val element = get(key)
     if (element is JsonArray) {
         return element
@@ -83,7 +84,7 @@ public fun JsonObject.getArray(key: String, default: JsonArray? = null): JsonArr
     return default
 }
 
-public fun JsonObject.getLong(key: String, default: Long = -1): Long {
+fun JsonObject.getLong(key: String, default: Long = -1): Long {
     val element = get(key)
     if (element is JsonPrimitive) {
         if (element.isNumber) {
@@ -93,7 +94,7 @@ public fun JsonObject.getLong(key: String, default: Long = -1): Long {
     return default
 }
 
-public fun JsonObject.getDouble(key: String, default: Double = -1.0): Double {
+fun JsonObject.getDouble(key: String, default: Double = -1.0): Double {
     val element = get(key)
     if (element is JsonPrimitive) {
         if (element.isNumber) {
@@ -107,49 +108,49 @@ public fun JsonObject.getDouble(key: String, default: Double = -1.0): Double {
 
 //<editor-fold desc="JsonElement 扩展">
 
-public fun JsonElement.getInt(key: String): Int {
+fun JsonElement.getInt(key: String): Int {
     if (this is JsonObject) {
         return this.getInt(key)
     }
     throw IllegalAccessException("不允许使用[JsonArray]操作.")
 }
 
-public fun JsonElement.getString(key: String): String? {
+fun JsonElement.getString(key: String): String? {
     if (this is JsonObject) {
         return this.getString(key)
     }
     throw IllegalAccessException("不允许使用[JsonArray]操作.")
 }
 
-public fun JsonElement.getJson(key: String): JsonObject? {
+fun JsonElement.getJson(key: String): JsonObject? {
     if (this is JsonObject) {
         return this.getJson(key)
     }
     throw IllegalAccessException("不允许使用[JsonArray]操作.")
 }
 
-public fun JsonElement.getArray(key: String): JsonArray? {
+fun JsonElement.getArray(key: String): JsonArray? {
     if (this is JsonObject) {
         return this.getArray(key)
     }
     throw IllegalAccessException("不允许使用[JsonArray]操作.")
 }
 
-public fun JsonElement.getLong(key: String): Long {
+fun JsonElement.getLong(key: String): Long {
     if (this is JsonObject) {
         return this.getLong(key)
     }
     throw IllegalAccessException("不允许使用[JsonArray]操作.")
 }
 
-public fun JsonElement.getDouble(key: String): Double {
+fun JsonElement.getDouble(key: String): Double {
     if (this is JsonObject) {
         return this.getDouble(key)
     }
     throw IllegalAccessException("不允许使用[JsonArray]操作.")
 }
 
-public fun JsonElement.array(index: Int): JsonElement {
+fun JsonElement.array(index: Int): JsonElement {
     if (this is JsonArray) {
         return get(index)
     }
@@ -158,11 +159,11 @@ public fun JsonElement.array(index: Int): JsonElement {
 
 //</editor-fold desc="JsonElement 扩展">
 
-public fun String?.trim(char: Char): String? {
+fun String?.trim(char: Char): String? {
     return this?.trimStart(char)?.trimEnd(char)
 }
 
-public fun String?.json(): JsonObject? {
+fun String?.json(): JsonObject? {
     if (TextUtils.isEmpty(this)) {
         return null
     }
@@ -175,7 +176,7 @@ public fun String?.json(): JsonObject? {
     return fromJson
 }
 
-public fun String?.jsonArray(): JsonArray? {
+fun String?.jsonArray(): JsonArray? {
     if (TextUtils.isEmpty(this)) {
         return null
     }
@@ -187,6 +188,8 @@ public fun String?.jsonArray(): JsonArray? {
     }
     return fromJson
 }
+
+//<editor-fold desc="Json 解析">
 
 fun gson(): Gson {
     val gson = GsonBuilder()
@@ -238,6 +241,9 @@ fun <T> String?.fromJson(classOfT: Class<T>): T? {
     }
 }
 
-inline fun <reified T> String?.fromJson(): T? {
-    return this?.fromJson(T::class.java)
-}
+inline fun <reified T> String?.fromJson(): T? = this?.fromJson(T::class.java)
+
+inline fun <reified T> String?.fromJson2(): T? =
+    gson().fromJson<T>(this, object : TypeToken<T>() {}.type)
+
+//</editor-fold desc="Json 解析">
