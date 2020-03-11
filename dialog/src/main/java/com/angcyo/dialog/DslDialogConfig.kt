@@ -31,7 +31,7 @@ import java.io.Serializable
  * @author angcyo
  * @date 2020/02/01
  */
-open class DslDialogConfig(@Transient var context: Context? = null) : Serializable {
+open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Serializable {
 
     companion object {
 
@@ -39,8 +39,10 @@ open class DslDialogConfig(@Transient var context: Context? = null) : Serializab
         const val DIALOG_TYPE_DIALOG = 0
         const val DIALOG_TYPE_APPCOMPAT = 1
         const val DIALOG_TYPE_ALERT_DIALOG = 2
+
         /**需要[material]库支持*/
         const val DIALOG_TYPE_BOTTOM_SHEET_DIALOG = 3
+
         /**使用Dialog样式的Activity显示, 只能传递显示简单的对话框*/
         const val DIALOG_TYPE_ACTIVITY = 4
 
@@ -215,6 +217,7 @@ open class DslDialogConfig(@Transient var context: Context? = null) : Serializab
      * @see Window.requestFeature
      */
     var windowFeature = Window.FEATURE_NO_TITLE
+
     /**
      * 正数表示addFlags, 负数表示clearFlags
      *
@@ -247,7 +250,7 @@ open class DslDialogConfig(@Transient var context: Context? = null) : Serializab
 
     @Throws
     open fun showAndConfigDialog(dialog: Dialog): Dialog {
-        if (context == null) {
+        if (dialogContext == null) {
             throw NullPointerException("context is null.")
         }
 
@@ -345,7 +348,7 @@ open class DslDialogConfig(@Transient var context: Context? = null) : Serializab
         val attributes = window.attributes
         if (autoWidthHeight && dialogLayoutId != -1) {
             //自动测量 布局的宽高
-            val size = measureSize(context!!, dialogLayoutId, null)
+            val size = measureSize(dialogContext!!, dialogLayoutId, null)
             window.setLayout(size[0], size[1])
         } else { // window的宽高设置
             if (dialogWidth != undefined_res && dialogHeight != undefined_res) {
@@ -371,12 +374,12 @@ open class DslDialogConfig(@Transient var context: Context? = null) : Serializab
     /** Dialog -> AppCompatDialog -> AlertDialog */
     @Throws
     fun showAlertDialog(): AlertDialog {
-        if (context == null) {
+        if (dialogContext == null) {
             throw NullPointerException("context is null.")
         }
 
         val builder =
-            AlertDialog.Builder(context!!)
+            AlertDialog.Builder(dialogContext!!)
         if (!TextUtils.isEmpty(dialogMessage)) {
             builder.setMessage(dialogMessage)
         }
@@ -413,13 +416,13 @@ open class DslDialogConfig(@Transient var context: Context? = null) : Serializab
 
     /** Dialog -> AppCompatDialog -> BottomSheetDialog */
     fun showSheetDialog(): Dialog {
-        if (context == null) {
+        if (dialogContext == null) {
             throw NullPointerException("context is null.")
         }
         return try {
             val cls = Class.forName("com.google.android.material.bottomsheet.BottomSheetDialog")
             val constructor = cls.getConstructor(Context::class.java)
-            val sheetDialog: Dialog = constructor.newInstance(context) as Dialog
+            val sheetDialog: Dialog = constructor.newInstance(dialogContext) as Dialog
             showAndConfigDialog(sheetDialog)
         } catch (e: Exception) {
             L.w(e)
@@ -430,29 +433,29 @@ open class DslDialogConfig(@Transient var context: Context? = null) : Serializab
     /** Dialog -> AppCompatDialog */
     @Throws
     fun showCompatDialog(): AppCompatDialog {
-        if (context == null) {
+        if (dialogContext == null) {
             throw NullPointerException("context is null.")
         }
-        val dialog = AppCompatDialog(context)
+        val dialog = AppCompatDialog(dialogContext)
         showAndConfigDialog(dialog)
         return dialog
     }
 
     /** Dialog */
     fun showDialog(): Dialog {
-        if (context == null) {
+        if (dialogContext == null) {
             throw NullPointerException("context is null.")
         }
-        val dialog = Dialog(context!!)
+        val dialog = Dialog(dialogContext!!)
         showAndConfigDialog(dialog)
         return dialog
     }
 
     fun showDialogActivity() {
-        if (context == null) {
+        if (dialogContext == null) {
             throw NullPointerException("context is null.")
         }
-        context?.dslAHelper {
+        dialogContext?.dslAHelper {
             start(DialogActivity.getDialogIntent(this@DslDialogConfig))
         }
     }
@@ -465,7 +468,7 @@ open class DslDialogConfig(@Transient var context: Context? = null) : Serializab
             DIALOG_TYPE_BOTTOM_SHEET_DIALOG -> showSheetDialog()
             DIALOG_TYPE_ACTIVITY -> {
                 showDialogActivity()
-                Dialog(context!!)
+                Dialog(dialogContext!!)
             }
             else -> showCompatDialog()
         }

@@ -19,14 +19,15 @@ import com.angcyo.library.ex.dpi
 //<editor-fold desc="对话框基础配置">
 
 /**快速配置一个显示在底部全屏的[DslDialogConfig]*/
-fun DslDialogConfig.configBottomDialog(): DslDialogConfig {
+fun DslDialogConfig.configBottomDialog(context: Context? = null): DslDialogConfig {
     return this.apply {
         canceledOnTouchOutside = false
         dialogWidth = -1
         dialogHeight = -2
-        dialogGravity = Gravity.BOTTOM
+        dialogGravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
         animStyleResId = R.style.LibDialogBottomTranslateAnimation
         setDialogBgColor(Color.TRANSPARENT)
+        this.dialogContext = context ?: this.dialogContext
     }
 }
 
@@ -35,109 +36,87 @@ fun DslDialogConfig.configBottomDialog(): DslDialogConfig {
 //<editor-fold desc="常用对话框">
 
 fun Context.dslDialog(config: DslDialogConfig.() -> Unit): Dialog {
-    val dialogConfig = DslDialogConfig(this)
-    dialogConfig.config()
-    return dialogConfig.run {
+    return DslDialogConfig(this).run {
         dialogWidth = -1
+        config()
         show()
     }
 }
 
-
 fun Context.normalDialog(config: NormalDialogConfig.() -> Unit): Dialog {
-    val dialogConfig = NormalDialogConfig(this)
-    dialogConfig.config()
-    return dialogConfig.run {
+    return NormalDialogConfig(this).run {
         dialogWidth = -1
+        config()
         show()
     }
 }
 
 fun Context.normalIosDialog(config: IosDialogConfig.() -> Unit): Dialog {
-    val dialogConfig = IosDialogConfig(this)
-    dialogConfig.config()
-
-    return dialogConfig.run {
+    return IosDialogConfig(this).run {
         dialogWidth = -1
+        config()
         show()
     }
 }
 
 //</editor-fold desc="常用对话框">
 
-
 /**
  * 多选项, 选择对话框, 底部带 取消按钮, 标题栏不带取消
  * */
 fun Context.itemsDialog(config: ItemDialogConfig.() -> Unit): Dialog {
-    val dialogConfig = ItemDialogConfig(this)
-    dialogConfig.configBottomDialog()
-    dialogConfig.config()
-    return dialogConfig.show()
+    return ItemDialogConfig(this).run {
+        configBottomDialog()
+        config()
+        show()
+    }
 }
-
-//
-///**
-// * 3D滚轮选择对话框, 标题栏带取消和确定
-// * */
-//fun Context.wheelDialog(config: WheelDialogConfig.() -> Unit): Dialog {
-//    val dialogConfig = WheelDialogConfig()
-//    dialogConfig.config()
-//
-//    return buildBottomDialog().show(dialogConfig)
-//}
-//
-//
 
 /**
  * 文本输入对话框, 默认是单行, 无限制
  * */
 fun Context.inputDialog(config: InputDialogConfig.() -> Unit): Dialog {
-    val dialogConfig = InputDialogConfig(this)
-    dialogConfig.configBottomDialog()
-    dialogConfig.canceledOnTouchOutside = false
-    dialogConfig.config()
-
-    return dialogConfig.show()
+    return InputDialogConfig(this).run {
+        configBottomDialog()
+        config()
+        show()
+    }
 }
 
 /**多输入框*/
 fun Context.inputMultiDialog(config: InputMultiDialogConfig.() -> Unit): Dialog {
-    val dialogConfig = InputMultiDialogConfig(this)
-    dialogConfig.configBottomDialog()
-    dialogConfig.canceledOnTouchOutside = false
-    dialogConfig.config()
-
-    return dialogConfig.show()
+    return InputMultiDialogConfig(this).run {
+        configBottomDialog()
+        config()
+        show()
+    }
 }
-
 
 /**
  * 多行文本输入框
  * */
 fun Context.multiInputDialog(config: InputDialogConfig.() -> Unit): Dialog {
-    val dialogConfig = InputDialogConfig(this)
-    dialogConfig.configBottomDialog()
-    dialogConfig.canceledOnTouchOutside = false
-    dialogConfig.maxInputLength = 2000
-    dialogConfig.inputViewHeight = 100 * dpi
-    /**多行输入时, 需要 [InputType.TYPE_TEXT_FLAG_MULTI_LINE] 否则输入框, 不能输入 回车 */
-    dialogConfig.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
-    dialogConfig.config()
-
-    return dialogConfig.show()
+    return InputDialogConfig(this).run {
+        configBottomDialog()
+        canceledOnTouchOutside = false
+        maxInputLength = 2000
+        inputViewHeight = 100 * dpi
+        /**多行输入时, 需要 [InputType.TYPE_TEXT_FLAG_MULTI_LINE] 否则输入框, 不能输入 回车 */
+        inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+        config()
+        show()
+    }
 }
 
 /**
  * 底部网格对话框
  * */
 fun Context.gridDialog(config: GridDialogConfig.() -> Unit): Dialog {
-    val dialogConfig = GridDialogConfig(this)
-    dialogConfig.configBottomDialog()
-    dialogConfig.canceledOnTouchOutside = false
-    dialogConfig.config()
-
-    return dialogConfig.show()
+    return GridDialogConfig(this).run {
+        configBottomDialog()
+        config()
+        show()
+    }
 }
 
 //<editor-fold desc="popupWindow">

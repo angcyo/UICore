@@ -77,7 +77,7 @@ open class InputMultiDialogConfig(context: Context? = null) : BaseDialogConfig(c
     override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         super.initDialogView(dialog, dialogViewHolder)
 
-        val inputDialogConfig = InputDialogConfig(context)
+        val inputDialogConfig = InputDialogConfig(dialogContext)
         dialogViewHolder.group(R.id.input_wrapper_layout)?.apply {
             defaultInputString.forEachIndexed { index, _ ->
                 append(R.layout.lib_dialog_input_multi_item) {
