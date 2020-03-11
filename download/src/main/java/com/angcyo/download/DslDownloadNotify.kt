@@ -2,8 +2,10 @@ package com.angcyo.download
 
 import android.graphics.Bitmap
 import androidx.core.app.NotificationCompat
+import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.component.*
+import com.angcyo.library.ex.fileSizeString
 import com.angcyo.library.ex.toBitmap
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.core.cause.EndCause
@@ -27,7 +29,12 @@ class DslDownloadNotify : DslListener() {
 
         onTaskStart = {
             _notify {
-                _remoteView(it.filename)
+                _remoteView(it.filename) {
+                    setTextViewText(
+                        R.id.lib_sub_text_view,
+                        "正在准备下载..."
+                    )
+                }
             }
         }
 
@@ -45,7 +52,10 @@ class DslDownloadNotify : DslListener() {
                                 notifyContentIntent = DslNotify.pendingActivity(app(), this)
                             }
                         } else {
-                            setTextViewText(R.id.lib_sub_text_view, "下载完成!")
+                            setTextViewText(
+                                R.id.lib_sub_text_view,
+                                "下载完成:${downloadTask.file?.absolutePath}"
+                            )
                         }
                     } else {
                         setTextViewText(R.id.lib_sub_text_view, "下载失败:${exception?.message}")
@@ -118,7 +128,7 @@ class DslDownloadNotify : DslListener() {
             notifyDefaults = NotificationCompat.DEFAULT_LIGHTS
             notifyPriority = NotificationCompat.PRIORITY_LOW
             _remoteView(task.filename, percent) {
-                setTextViewText(R.id.lib_sub_text_view, "速度:${speed}/s")
+                setTextViewText(R.id.lib_sub_text_view, "速度:${speed.fileSizeString()}/s")
             }
         }
     }
@@ -128,7 +138,11 @@ fun String.downloadNotify(action: DslDownloadNotify.() -> Unit = {}) {
     dslDownloadNotify(this, action)
 }
 
-fun dslDownloadNotify(url: String, action: DslDownloadNotify.() -> Unit = {}) {
+fun dslDownloadNotify(url: String?, action: DslDownloadNotify.() -> Unit = {}) {
+    if (url.isNullOrBlank()) {
+        L.w("url is null or blank.")
+        return
+    }
     DslDownloadNotify().apply {
         action()
         install(url)
