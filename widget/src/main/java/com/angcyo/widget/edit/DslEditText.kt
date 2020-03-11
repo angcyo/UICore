@@ -36,18 +36,18 @@ open class DslEditText : ClearEditText {
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (rEditDelegate?.isNoEditMode == true || !isEnabled) {
+        if (editDelegate?.isNoEditMode == true || !isEnabled) {
             return false
         }
         return super.onTouchEvent(event)
     }
 
     override fun requestFocus(direction: Int, previouslyFocusedRect: Rect?): Boolean {
-        if (rEditDelegate?.isNoEditMode == true) {
+        if (editDelegate?.isNoEditMode == true) {
             return false
         }
-        if (rEditDelegate?.requestFocusOnTouch == true) {
-            if (System.currentTimeMillis() - (rEditDelegate?._downTime ?: 0) > 160) {
+        if (editDelegate?.requestFocusOnTouch == true) {
+            if (System.currentTimeMillis() - (editDelegate?._downTime ?: 0) > 160) {
                 return false
             }
         }
@@ -61,7 +61,7 @@ open class DslEditText : ClearEditText {
             HideSoftInputRunnable.cancel()
         } else {
 
-            if (rEditDelegate?.hideSoftInputOnLostFocus == true) {
+            if (editDelegate?.hideSoftInputOnLostFocus == true) {
                 HideSoftInputRunnable.doIt(this)
             }
         }
@@ -69,14 +69,14 @@ open class DslEditText : ClearEditText {
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        if (rEditDelegate?.hideSoftInputOnDetached == true) {
+        if (editDelegate?.hideSoftInputOnDetached == true) {
             HideSoftInputRunnable.doIt(this)
         }
     }
 
     override fun onVisibilityChanged(changedView: View, visibility: Int) {
         super.onVisibilityChanged(changedView, visibility)
-        if (visibility != View.VISIBLE && !isInEditMode && rEditDelegate?.hideSoftInputOnInvisible == true) {
+        if (visibility != View.VISIBLE && !isInEditMode && editDelegate?.hideSoftInputOnInvisible == true) {
             HideSoftInputRunnable.doIt(this)
         }
     }

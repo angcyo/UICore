@@ -17,9 +17,9 @@ import com.angcyo.widget.base.isEditSingleLine
  * @date 2019/06/06
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-open class ClearCompleteEditText : AppCompatAutoCompleteTextView {
+open class ClearCompleteEditText : AppCompatAutoCompleteTextView, IEditDelegate {
 
-    var rEditDelegate: REditDelegate? = null
+    var editDelegate: REditDelegate? = null
 
     constructor(context: Context) : super(context) {
         initAttribute(context, null)
@@ -38,8 +38,8 @@ open class ClearCompleteEditText : AppCompatAutoCompleteTextView {
     }
 
     private fun initAttribute(context: Context, attrs: AttributeSet?) {
-        rEditDelegate = REditDelegate(this)
-        rEditDelegate?.initAttribute(context, attrs)
+        editDelegate = REditDelegate(this)
+        editDelegate?.initAttribute(context, attrs)
     }
 
     override fun setText(text: CharSequence?, type: BufferType?) {
@@ -54,12 +54,12 @@ open class ClearCompleteEditText : AppCompatAutoCompleteTextView {
         lengthAfter: Int
     ) {
         super.onTextChanged(text, start, lengthBefore, lengthAfter)
-        rEditDelegate?.checkEdit(isFocused)
+        editDelegate?.checkEdit(isFocused)
     }
 
     override fun onFocusChanged(focused: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
         super.onFocusChanged(focused, direction, previouslyFocusedRect)
-        rEditDelegate?.checkEdit(focused)
+        editDelegate?.checkEdit(focused)
         if (!focused) {
             _lastKeyCode = -1
         }
@@ -67,19 +67,19 @@ open class ClearCompleteEditText : AppCompatAutoCompleteTextView {
 
     override fun drawableStateChanged() {
         super.drawableStateChanged()
-        rEditDelegate?.drawableStateChanged()
+        editDelegate?.drawableStateChanged()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        rEditDelegate?.onSizeChanged(w, h, oldw, oldh)
+        editDelegate?.onSizeChanged(w, h, oldw, oldh)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!isEnabled) {
             return false
         }
-        rEditDelegate?.onTouchEvent(event)
+        editDelegate?.onTouchEvent(event)
         super.onTouchEvent(event)
         return true
     }
@@ -107,4 +107,6 @@ open class ClearCompleteEditText : AppCompatAutoCompleteTextView {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
     }
+
+    override fun getREditDelegate(): REditDelegate = editDelegate!!
 }
