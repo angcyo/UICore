@@ -123,15 +123,21 @@ open class DslTabLayout(
             onStyleItemView = { itemView, index, select ->
                 tabLayoutConfig?.onStyleItemView?.invoke(itemView, index, select)
             }
-            onSelectItemView = { itemView, index, select ->
-                tabLayoutConfig?.onSelectItemView?.invoke(itemView, index, select) ?: false
+            onSelectItemView = { itemView, index, select, fromUser ->
+                tabLayoutConfig?.onSelectItemView?.invoke(itemView, index, select, fromUser)
+                    ?: false
             }
-            onSelectViewChange = { fromView, selectViewList, reselect ->
-                tabLayoutConfig?.onSelectViewChange?.invoke(fromView, selectViewList, reselect)
+            onSelectViewChange = { fromView, selectViewList, reselect, fromUser ->
+                tabLayoutConfig?.onSelectViewChange?.invoke(
+                    fromView,
+                    selectViewList,
+                    reselect,
+                    fromUser
+                )
             }
-            onSelectIndexChange = { fromIndex, selectList, reselect ->
+            onSelectIndexChange = { fromIndex, selectList, reselect, fromUser ->
                 if (tabLayoutConfig == null) {
-                    "选择:[$fromIndex]->${selectList} reselect:$reselect".logi()
+                    "选择:[$fromIndex]->${selectList} reselect:$reselect fromUser:$fromUser".logi()
                 }
 
                 val toIndex = selectList.last()
@@ -140,8 +146,12 @@ open class DslTabLayout(
                 _scrollToCenter(toIndex, tabIndicator.indicatorAnim)
                 postInvalidate()
 
-                tabLayoutConfig?.onSelectIndexChange?.invoke(fromIndex, selectList, reselect)
-                    ?: _viewPagerDelegate?.onSetCurrentItem(fromIndex, toIndex)
+                tabLayoutConfig?.onSelectIndexChange?.invoke(
+                    fromIndex,
+                    selectList,
+                    reselect,
+                    fromUser
+                ) ?: _viewPagerDelegate?.onSetCurrentItem(fromIndex, toIndex)
             }
         }
     }
