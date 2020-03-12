@@ -18,8 +18,6 @@ import kotlin.math.min
  * @date 2019/08/09
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-
-
 open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     RecyclerView.Adapter<DslViewHolder>(), OnDispatchUpdatesListener {
 
