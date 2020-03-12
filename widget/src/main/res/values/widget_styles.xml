@@ -10,4 +10,16 @@
         <item name="android:scrollbars">vertical</item>
         <item name="r_layout_manager">v</item>
     </style>
+
+    <style name="LibMatchParent">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="layout_constraintTop_toTopOf">parent</item>
+        <item name="layout_constraintBottom_toBottomOf">parent</item>
+        <item name="layout_constraintLeft_toLeftOf">parent</item>
+        <item name="layout_constraintRight_toRightOf">parent</item>
+        <item name="layout_constraintHorizontal_weight">1</item>
+        <item name="layout_constraintVertical_weight">1</item>
+        <item name="android:layout_weight">1</item>
+    </style>
 </resources>

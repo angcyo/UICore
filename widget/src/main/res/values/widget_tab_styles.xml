@@ -2,6 +2,23 @@
 <resources>
 
     <style name="LibTabLayoutStyle">
+        <item name="tab_enable_text_color">true</item>
+        <item name="tab_enable_gradient_color">true</item>
+        <item name="tab_select_color">@color/colorAccent</item>
+        <item name="tab_deselect_color">@color/text_general_color</item>
+
+        <item name="tab_enable_text_bold">false</item>
+
+        <item name="tab_enable_gradient_text_size">true</item>
+        <item name="tab_text_min_size">@dimen/text_body_size</item>
+        <item name="tab_text_max_size">@dimen/text_body_size</item>
+
+        <item name="tab_indicator_gradient_start_color">@color/colorPrimary</item>
+        <item name="tab_indicator_gradient_end_color">@color/colorPrimaryDark</item>
+        <item name="tab_indicator_radius">@dimen/lib_radius_normal</item>
+
+        <item name="tab_indicator_height">4dp</item>
+        <item name="tab_indicator_width">MATCH_PARENT</item>
 
     </style>
 </resources>

@@ -44,3 +44,11 @@ fun <T> T?.elseNull(action: () -> Unit = {}): T? {
     }
     return this
 }
+
+fun Any.string(): CharSequence {
+    return if (this is CharSequence) {
+        this
+    } else {
+        this.toString()
+    }
+}

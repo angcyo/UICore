@@ -7,6 +7,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.annotation.LayoutRes
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.library.ex.abs
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
 import com.angcyo.widget.layout.RSoftInputLayout
@@ -313,6 +314,49 @@ fun ViewGroup.replace(viewGroup: ViewGroup): ViewGroup {
 
     addView(viewGroup, viewGroup.layoutParams ?: ViewGroup.LayoutParams(-1, -1))
     return viewGroup
+}
+
+fun ViewGroup.resetChild(
+    size: Int,
+    layoutId: Int,
+    init: (itemView: View, itemIndex: Int) -> Unit = { _, _ -> }
+) {
+    //如果布局id不一样, 说明child不一样, 需要remove
+    for (index in childCount - 1 downTo 0) {
+        val tag = getChildAt(index).getTag(R.id.tag)
+        if (tag is Int) {
+            if (tag != layoutId) {
+                removeViewAt(index)
+            }
+        }
+    }
+
+    resetChildCount(size) {
+        val childView = LayoutInflater.from(context).inflate(layoutId, this, false)
+        childView.setTag(R.id.tag, layoutId)
+        childView
+    }
+
+    for (i in 0 until size) {
+        init(getChildAt(i), i)
+    }
+}
+
+/**将子View的数量, 重置到指定的数量*/
+fun ViewGroup.resetChildCount(newSize: Int, onCreateView: (childIndex: Int) -> View) {
+    val oldSize = childCount
+    val count = newSize - oldSize
+    if (count > 0) {
+        //需要补充子View
+        for (i in 0 until count) {
+            addView(onCreateView.invoke(oldSize + i))
+        }
+    } else if (count < 0) {
+        //需要移除子View
+        for (i in 0 until count.abs()) {
+            removeViewAt(oldSize - 1 - i)
+        }
+    }
 }
 
 //</editor-fold desc="child操作">
