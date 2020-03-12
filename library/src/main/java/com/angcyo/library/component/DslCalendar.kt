@@ -1,5 +1,7 @@
 package com.angcyo.library.component
 
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -59,6 +61,11 @@ class DslCalendar(time: Long = System.currentTimeMillis()) {
         }
     }
 
+    /**设置字段值*/
+    fun set(field: Int = Calendar.YEAR, value: Int) {
+        calendar.set(field, value)
+    }
+
     /**是否是今天*/
     fun isToday(today: DslCalendar = DslCalendar()): Boolean {
         return isThisMonth(today) && day == today.day
@@ -72,5 +79,40 @@ class DslCalendar(time: Long = System.currentTimeMillis()) {
     /**是否是这一周*/
     fun isThisWeek(today: DslCalendar = DslCalendar()): Boolean {
         return isThisMonth(today) && week == today.week
+    }
+}
+
+fun nowCalendar(time: Long = System.currentTimeMillis()): Calendar {
+    return Calendar.getInstance().apply {
+        timeInMillis = if (time.toString().length == 10) {
+            time * 1000
+        } else {
+            time
+        }
+    }
+}
+
+fun String.toTime(pattern: String = "yyyy-MM-dd HH:mm:ss"): Long {
+    val format: SimpleDateFormat = SimpleDateFormat.getDateInstance() as SimpleDateFormat
+    format.applyPattern(pattern)
+    return try {
+        format.parse(this)?.time ?: -1
+    } catch (e: ParseException) {
+        if (pattern.contains(" ")) {
+            toTime(pattern.split(" ")[0])
+        } else {
+            e.printStackTrace()
+            -1
+        }
+    }
+}
+
+fun String.toDate(pattern: String = "yyyy-MM-dd HH:mm:ss"): Date {
+    return Date(toTime(pattern))
+}
+
+fun String.toCalendar(pattern: String = "yyyy-MM-dd HH:mm:ss"): Calendar {
+    return Calendar.getInstance().apply {
+        timeInMillis = toTime(pattern)
     }
 }

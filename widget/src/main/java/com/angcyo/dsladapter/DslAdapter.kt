@@ -298,12 +298,12 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     /**
      * 在最后的位置插入数据
      */
-    fun addLastItem(bean: DslAdapterItem) {
-        insertItem(-1, bean)
+    fun addLastItem(item: DslAdapterItem) {
+        insertItem(-1, item)
     }
 
-    fun addLastItem(bean: List<DslAdapterItem>) {
-        insertItem(-1, bean)
+    fun addLastItem(item: List<DslAdapterItem>) {
+        insertItem(-1, item)
     }
 
     //修正index
@@ -326,8 +326,8 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     }
 
     /**插入数据列表*/
-    fun insertItem(index: Int, bean: DslAdapterItem) {
-        dataItems.add(_validIndex(dataItems, index), bean)
+    fun insertItem(index: Int, item: DslAdapterItem) {
+        dataItems.add(_validIndex(dataItems, index), item)
         _updateAdapterItems()
         updateItemDepend()
     }

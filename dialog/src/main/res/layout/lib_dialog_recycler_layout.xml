@@ -23,6 +23,7 @@
         style="@style/LibRecyclerViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:background="@drawable/dialog_white_top_round_bg_shape" />
 
 </com.angcyo.widget.layout.RLinearLayout>
