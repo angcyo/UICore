@@ -10,7 +10,7 @@
         android:usesCleartextTraffic="true">
         <meta-data
             android:name="android.max_aspect"
-            android:value="2.4" />
+            android:value="2.5" />
         <meta-data
             android:name="android.notch_support"
             android:value="true" />
