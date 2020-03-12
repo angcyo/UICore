@@ -1,4 +1,4 @@
-package com.angcyo.core.component
+package com.angcyo.component
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +7,12 @@ import androidx.annotation.LayoutRes
 import androidx.collection.ArrayMap
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
-import com.angcyo.core.R
+import com.angcyo.component.DslAffect.Companion.AFFECT_EMPTY
+import com.angcyo.component.DslAffect.Companion.AFFECT_ERROR
+import com.angcyo.component.DslAffect.Companion.AFFECT_LOADING
+import com.angcyo.component.DslAffect.Companion.AFFECT_OTHER
+import com.angcyo.component.DslAffect.Companion.CONTENT_AFFECT_INVISIBLE
+import com.angcyo.widget.R
 import java.lang.ref.WeakReference
 
 /**
@@ -29,12 +34,16 @@ class DslAffect {
     companion object {
         /** 情感图 内容, 此变量用来切换显示内容视图. 请勿用来注册 */
         const val AFFECT_CONTENT = 0
+
         /** 情感图 加载中 */
         const val AFFECT_LOADING = 1
+
         /** 情感图 异常 */
         const val AFFECT_ERROR = 2
+
         /** 情感图 其他 */
         const val AFFECT_OTHER = 3
+
         /** 空数据 */
         const val AFFECT_EMPTY = 4
 
@@ -61,6 +70,7 @@ class DslAffect {
 
     /**当前状态*/
     var affectStatus = AFFECT_CONTENT
+
     /**内容视图处理方式*/
     var contentAffect = CONTENT_AFFECT_INVISIBLE
 
@@ -226,5 +236,21 @@ class DslAffect {
                 }
             }
         }
+    }
+}
+
+/**快速获取情感图切换组件*/
+fun dslAffect(viewGroup: View? = null, action: DslAffect.() -> Unit): DslAffect {
+    return DslAffect().apply {
+        //注册布局
+        addAffect(AFFECT_LOADING, R.layout.lib_loading_layout)
+        addAffect(AFFECT_EMPTY, R.layout.lib_empty_layout)
+        addAffect(AFFECT_ERROR, R.layout.lib_error_layout)
+        addAffect(AFFECT_OTHER, R.layout.lib_error_layout)
+        //安装
+        viewGroup?.run { install(this) }
+        //内容处理方式
+        contentAffect = CONTENT_AFFECT_INVISIBLE
+        action()
     }
 }

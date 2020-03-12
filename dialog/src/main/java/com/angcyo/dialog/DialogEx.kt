@@ -119,6 +119,28 @@ fun Context.gridDialog(config: GridDialogConfig.() -> Unit): Dialog {
     }
 }
 
+/**
+ * 万级联动选项对话框
+ * */
+fun Context.optionDialog(config: OptionDialogConfig.() -> Unit): Dialog {
+    return OptionDialogConfig().run {
+        configBottomDialog(this@optionDialog)
+        config()
+        show()
+    }
+}
+
+///**
+// * 日历选择对话框
+// * */
+//fun Context.calendarDialog(config: CalendarDialogConfig.() -> Unit): Dialog {
+//    val dialogConfig = CalendarDialogConfig()
+//    dialogConfig.config()
+//
+//    return buildBottomDialog().show(dialogConfig)
+//}
+//
+
 //<editor-fold desc="popupWindow">
 
 /** 展示一个popup window */
@@ -137,34 +159,3 @@ fun Context.fullPopupWindow(anchor: View? = null, config: PopupConfig.() -> Unit
 }
 
 //</editor-fold desc="popupWindow">
-
-///**
-// * 日期选择
-// * */
-//fun Context.dateDialog(config: DateDialogConfig.() -> Unit): Dialog {
-//    val dialogConfig = DateDialogConfig()
-//    dialogConfig.config()
-//
-//    return buildBottomDialog().show(dialogConfig)
-//}
-//
-///**
-// * 多级选项对话框
-// * */
-//fun Context.optionDialog(config: OptionDialogConfig.() -> Unit): Dialog {
-//    val dialogConfig = OptionDialogConfig()
-//    dialogConfig.config()
-//
-//    return buildBottomDialog().show(dialogConfig)
-//}
-//
-///**
-// * 日历选择对话框
-// * */
-//fun Context.calendarDialog(config: CalendarDialogConfig.() -> Unit): Dialog {
-//    val dialogConfig = CalendarDialogConfig()
-//    dialogConfig.config()
-//
-//    return buildBottomDialog().show(dialogConfig)
-//}
-//

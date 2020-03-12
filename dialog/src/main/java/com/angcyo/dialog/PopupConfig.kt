@@ -52,6 +52,7 @@ open class PopupConfig {
 
     /** 标准属性 */
     var contentView: View? = null
+
     /** 指定布局id */
     var layoutId: Int = -1
 
@@ -83,6 +84,7 @@ open class PopupConfig {
      * <item name="dropDownWidth">wrap_content</item>
      * </style>
      * */
+    //R.style.LibPopupWindowStyle
     var popupStyleAttr: Int = undefined_res
 
     /**使用[Activity]当做布局载体, 而不是[PopupWindow]*/
@@ -201,6 +203,7 @@ open class PopupConfig {
     }
 
     var _onBackPressedCallback: OnBackPressedCallback? = null
+
     /**使用[Activity]当做载体*/
     open fun showWidthActivity(activity: Activity): Window {
 

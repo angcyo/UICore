@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_white_top_round_bg_shape"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/title_layout"
+        layout="@layout/lib_dialog_base_title_layout" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/lib_line" />
+
+    <com.angcyo.widget.layout.RConstraintLayout
+        android:id="@+id/content_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:r_max_height="0.5sh">
+
+        <com.angcyo.tablayout.DslTabLayout
+            android:id="@+id/lib_tab_layout"
+            style="@style/LibTabLayoutStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/dialog_item_height"
+            app:layout_constraintBottom_toTopOf="@id/lib_recycler_view"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:background="@color/transparent20" />
+
+        <com.angcyo.widget.recycler.DslRecyclerView
+            android:id="@+id/lib_recycler_view"
+            style="@style/LibRecyclerViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/lib_tab_layout" />
+
+    </com.angcyo.widget.layout.RConstraintLayout>
+
+</LinearLayout>
