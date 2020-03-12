@@ -126,9 +126,11 @@ open class OptionDialogConfig : BaseDialogConfig() {
         //tab控制
         dialogViewHolder.tab(R.id.lib_tab_layout)?.apply {
             configTabLayoutConfig {
-                onSelectIndexChange = { fromIndex, selectIndexList, reselect ->
-                    val toIndex = selectIndexList.last()
-                    _loadOptionList(toIndex, dialogViewHolder)
+                onSelectIndexChange = { fromIndex, selectIndexList, reselect, fromUser ->
+                    if (fromUser) {
+                        val toIndex = selectIndexList.last()
+                        _loadOptionList(toIndex, dialogViewHolder)
+                    }
                 }
             }
         }
@@ -137,11 +139,7 @@ open class OptionDialogConfig : BaseDialogConfig() {
     }
 
     /**重置tab*/
-    fun _resetTabTo(
-        dialogViewHolder: DslViewHolder,
-        isEnd: Boolean = false,
-        scrollTo: Boolean = false
-    ) {
+    fun _resetTabTo(toIndex: Int, dialogViewHolder: DslViewHolder, isEnd: Boolean = false) {
         val tabs = mutableListOf<Any>()
         tabs.addAll(optionList)
 
@@ -155,10 +153,8 @@ open class OptionDialogConfig : BaseDialogConfig() {
                     itemView.find<TextView>(R.id.lib_text_view)?.text =
                         tabs.getOrNull(itemIndex)?.run(onOptionItemToString)
                 }
-                if (scrollTo) {
-                    post {
-                        setCurrentItem(tabs.lastIndex)
-                    }
+                post {
+                    setCurrentItem(toIndex)
                 }
             }
 
@@ -167,14 +163,14 @@ open class OptionDialogConfig : BaseDialogConfig() {
     }
 
     /**加载选项数据, 并且重置Tab*/
-    fun _loadOptionList(loadLevel: Int, dialogViewHolder: DslViewHolder) {
+    fun _loadOptionList(loadLevel: Int, dialogViewHolder: DslViewHolder, scrollTo: Boolean) {
         L.i("加载level:$loadLevel")
 
         //获取数据后的回调处理
         val onItemListCallback: (MutableList<out Any>?) -> Unit = {
             if (it.isNullOrEmpty()) {
                 if (optionEndOfEmpty) {
-                    _resetTabTo(dialogViewHolder, true)
+                    _resetTabTo(loadLevel, dialogViewHolder, true)
                 } else {
                     _dslAffect.showAffect(DslAffect.AFFECT_EMPTY)
                     _adapter.loadSingleData2<DslOptionItem>(null)
@@ -204,12 +200,12 @@ open class OptionDialogConfig : BaseDialogConfig() {
 
                         if (onCheckOptionEnd(optionList, loadLevel)) {
                             //最后一级
-                            _resetTabTo(dialogViewHolder, true)
+                            _resetTabTo(dialogViewHolder, true, scrollTo)
                             updateItemSelector(true)
                         } else {
-                            _resetTabTo(dialogViewHolder, false)
+                            _resetTabTo(dialogViewHolder, false, scrollTo)
 
-                            _loadOptionList(loadLevel + 1, dialogViewHolder)
+                            _loadOptionList(loadLevel + 1, dialogViewHolder, true)
                         }
                     }
                 }
@@ -247,9 +243,9 @@ open class OptionDialogConfig : BaseDialogConfig() {
 
         if (onCheckOptionEnd(optionList, loadLevel)) {
             //请求的加载已是最后
-            _resetTabTo(dialogViewHolder, true)
+            _resetTabTo(dialogViewHolder, true, scrollTo)
         } else {
-            _resetTabTo(dialogViewHolder, false)
+            _resetTabTo(dialogViewHolder, false, scrollTo)
             val cacheList = _cacheMap[loadLevel]
             if (!optionEnableCache || cacheList.isNullOrEmpty()) {
                 //关闭缓存 或者 无缓存
