@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!--动画时长-->
+    <integer name="LibAnimationDuration">240</integer>
+    <integer name="LibAnimationDurationLong">360</integer>
+
     <!--缩放动画-->
     <style name="LibDialogAnimation" parent="Animation.AppCompat.Dialog">
         <item name="android:windowEnterAnimation">@anim/lib_dialog_enter_animation</item>
