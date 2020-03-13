@@ -20,10 +20,13 @@ class ScrollHelper {
     companion object {
         /**滚动类别: 默认不特殊处理. 滚动到item显示了就完事*/
         const val SCROLL_TYPE_NORMAL = 0
+
         /**滚动类别: 将item滚动到第一个位置*/
         const val SCROLL_TYPE_TOP = 1
+
         /**滚动类别: 将item滚动到最后一个位置*/
         const val SCROLL_TYPE_BOTTOM = 2
+
         /**滚动类别: 将item滚动到居中位置*/
         const val SCROLL_TYPE_CENTER = 3
     }
@@ -144,6 +147,8 @@ class ScrollHelper {
     fun lockPosition(config: LockLayoutListener.() -> Unit = {}) {
         if (lockLayoutListener == null && recyclerView != null) {
             lockLayoutListener = LockLayoutListener().apply {
+                scrollType = SCROLL_TYPE_CENTER
+                autoDetach = true
                 config()
                 attach(recyclerView!!)
             }
@@ -153,6 +158,9 @@ class ScrollHelper {
     fun lockPositionByDraw(config: LockDrawListener.() -> Unit = {}) {
         recyclerView?.let {
             LockDrawListener().apply {
+                //默认将目标滚动到中间位置
+                scrollType = SCROLL_TYPE_CENTER
+                autoDetach = true
                 config()
                 attach(it)
             }
@@ -162,6 +170,8 @@ class ScrollHelper {
     fun lockPositionByLayout(config: LockLayoutListener.() -> Unit = {}) {
         recyclerView?.let {
             LockLayoutListener().apply {
+                scrollType = SCROLL_TYPE_CENTER
+                autoDetach = true
                 config()
                 attach(it)
             }
@@ -354,6 +364,12 @@ class ScrollHelper {
 
         /**激活滚动动画*/
         var scrollAnim: Boolean = true
+            set(value) {
+                field = value
+                if (!value) {
+                    firstScrollAnim = false
+                }
+            }
 
         /**激活第一个滚动的动画*/
         var firstScrollAnim: Boolean = true
@@ -361,7 +377,7 @@ class ScrollHelper {
         /**不检查界面 情况, 强制滚动到最后的位置. 关闭后. 会智能判断*/
         var force: Boolean = false
 
-        /**第一次时, 是否强制滚动*/
+        /**第一次时, 是否强制滚动. 先触发一次滚动, 之后再微调至目标*/
         var firstForce: Boolean = true
 
         /**滚动阈值, 倒数第几个可见时, 就允许滚动*/
@@ -482,6 +498,11 @@ class ScrollHelper {
             if (enableLock) {
                 if (isLockTimeout()) {
                     //锁定超时, 放弃操作
+                    if (autoDetach) {
+                        detach()
+                    } else {
+                        L.w("锁定已超时, 跳过操作.")
+                    }
                 } else {
                     attachView?.post(this)
                 }

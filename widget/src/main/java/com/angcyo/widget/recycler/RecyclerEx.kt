@@ -205,6 +205,14 @@ fun Int.scrollStateStr(): String {
     }
 }
 
+fun RecyclerView.scrollHelper(action: ScrollHelper.() -> Unit = {}): ScrollHelper {
+    return ScrollHelper().apply {
+        attach(this@scrollHelper)
+        action()
+    }
+}
+
+
 //</editor-fold desc="基础">
 
 //<editor-fold desc="ViewHolder相关">
