@@ -227,6 +227,7 @@ open class DslTabLayout(
     /**设置tab的位置*/
     fun setCurrentItem(index: Int, notify: Boolean = true) {
         if (currentItemIndex == index) {
+            _scrollToCenter(index, tabIndicator.indicatorAnim)
             return
         }
         dslSelector.selector(index, true, notify)
@@ -941,7 +942,12 @@ open class DslTabLayout(
             return
         }
 
-        tabIndicator.currentIndex = max(0, fromIndex)
+        if (fromIndex < 0) {
+            //从一个不存在的位置, 到目标位置
+            tabIndicator.currentIndex = toIndex
+        } else {
+            tabIndicator.currentIndex = fromIndex
+        }
         tabIndicator._targetIndex = toIndex
 
         if (isInEditMode) {

@@ -59,7 +59,7 @@ open class DslSelector {
         }
 
         if (!interceptSelector(index, select, true)) {
-            selector(visibleViewList.indexOf(it), select, true)
+            selector(visibleViewList.indexOf(it), select, notify = true, fromUser = true)
         }
     }
 
