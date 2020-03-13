@@ -91,12 +91,6 @@ open class OptionDialogConfig : BaseDialogConfig() {
         }
     }
 
-    /**当前查看的选项级别*/
-    var _selectorLevel = -1
-
-    /**需要加载数据的级别*/
-    var _loadLevel = 0
-
     //_loadLevel 对应的 缓存
     var _cacheMap = ArrayMap<Int, MutableList<out Any>>()
 
