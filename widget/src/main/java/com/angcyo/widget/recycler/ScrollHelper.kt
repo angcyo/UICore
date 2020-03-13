@@ -499,7 +499,9 @@ class ScrollHelper {
                 if (isLockTimeout()) {
                     //锁定超时, 放弃操作
                     if (autoDetach) {
-                        detach()
+                        attachView?.post {
+                            detach()
+                        }
                     } else {
                         L.w("锁定已超时, 跳过操作.")
                     }

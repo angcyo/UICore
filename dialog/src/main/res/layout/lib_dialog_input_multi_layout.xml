@@ -10,8 +10,9 @@
         layout="@layout/lib_dialog_base_title_layout" />
 
     <View
+        android:id="@+id/title_line_view"
         android:layout_width="match_parent"
-        android:layout_height="1px"
+        android:layout_height="@dimen/lib_line_px"
         android:background="@color/lib_line" />
 
     <LinearLayout
