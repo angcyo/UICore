@@ -131,6 +131,8 @@ fun Uri?.loadUrl(): String? {
     if (this.isHttpScheme()) {
         return this.toString()
     } else if (isFileScheme()) {
+        //this?.encodedPath
+        //Uri.decode(this?.encodedPath)
         return this?.path
     }
     return this.toString()

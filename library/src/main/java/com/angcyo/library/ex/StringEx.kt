@@ -41,6 +41,52 @@ fun CharSequence.copy(context: Context = app()) {
     }
 }
 
+/**获取剪切板内容*/
+fun getPrimaryClip(context: Context = app()): CharSequence? {
+    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    try {
+        val primaryClip = clipboard.primaryClip
+        if (primaryClip != null && primaryClip.itemCount > 0) {
+            return primaryClip.getItemAt(0).coerceToText(context)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return null
+}
+
+fun logClipboard(context: Context = app()): String {
+    return buildString {
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        if (clipboard.hasPrimaryClip()) {
+            clipboard.primaryClip?.apply {
+                append("label:")
+                appendln(description.label)
+                for (i in 0 until itemCount) {
+                    append("item:$i->")
+                    append("mimeType:")
+                    append(description.getMimeType(i))
+
+                    val item = getItemAt(i)
+                    append(" uri:")
+                    append(item.uri)
+
+                    append(" intent:")
+                    append(item.intent)
+
+                    append(" text:")
+                    append(item.text)
+
+                    append(" htmlText:")
+                    append(item.htmlText)
+
+                    appendln()
+                }
+            }
+        }
+    }
+}
+
 fun String.encode(enc: String = "UTF-8"): String = URLEncoder.encode(this, enc)
 
 fun String.decode(enc: String = "UTF-8"): String = URLDecoder.decode(this, enc)
