@@ -31,6 +31,7 @@
             android:minHeight="@dimen/dialog_item_height"
             app:layout_constraintBottom_toTopOf="@id/lib_recycler_view"
             app:layout_constraintTop_toTopOf="parent"
+            app:tab_default_index="-1"
             app:tab_enable_gradient_color="false"
             app:tab_enable_text_bold="true"
             app:tab_indicator_width="40dp"
