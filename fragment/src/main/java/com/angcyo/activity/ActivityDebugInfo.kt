@@ -81,7 +81,9 @@ fun Activity.showDebugInfoView(
             textView.setShadowLayer(dp2 * 2, dp2, dp2, Color.BLACK)
 
             textView.text = span {
-                append(this@showDebugInfoView.simpleClassName()).appendln()
+                append(this@showDebugInfoView.simpleClassName())
+                    .append(" $taskId")
+                    .appendln()
                 (this@showDebugInfoView as? FragmentActivity)?.supportFragmentManager?.logAllFragment(
                     _builder,
                     false,
@@ -233,6 +235,9 @@ fun FragmentManager.logAllFragment(
     return builder
 }
 
+fun Activity.activityInfo(): ActivityInfo? =
+    getFieldValue(Activity::class.java, "mActivityInfo") as? ActivityInfo
+
 fun Activity.logActivityInfo(debug: Boolean = isDebug()) {
     if (debug) {
         //系统Fragment操作日志输出
@@ -245,7 +250,7 @@ fun Activity.logActivityInfo(debug: Boolean = isDebug()) {
             null
         }
 
-        val mActivityInfo = getFieldValue(Activity::class.java, "mActivityInfo") as? ActivityInfo
+        val mActivityInfo = activityInfo()
 
         L.v("$className parentActivityIntent:$parentActivityIntent")
         L.v("$className supportParentActivityIntent:$supportParentActivityIntent")
