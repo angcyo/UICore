@@ -10,6 +10,7 @@ import com.angcyo.library.ex.md5
 import com.angcyo.library.ex.mimeType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import java.io.File
 import java.util.*
 
@@ -27,6 +28,7 @@ class DslFileLoader {
 
     /**加载返回*/
     var onLoaderResult: (List<FileItem>) -> Unit = {}
+
     /**异步获取文件md5返回*/
     var onLoaderDelayResult: (FileItem) -> Unit = {}
 
@@ -34,10 +36,13 @@ class DslFileLoader {
 
     var _loadPath: String? = null
 
+    var _job: Job? = null
+
     /**开始加载*/
     fun load(path: String, scope: CoroutineScope = GlobalScope) {
+        _job?.cancel()
         _loadPath = path
-        scope.launchSafe {
+        _job = scope.launchSafe {
             onBack {
                 val file = File(path)
                 val result: List<FileItem> =
@@ -47,9 +52,10 @@ class DslFileLoader {
 
                         list.sortedWith(Comparator<File> { file1, file2 ->
                             when {
-                                (file1.isDirectory && file2.isDirectory) || (file1.isFile && file2.isFile) -> file1.name.toLowerCase().compareTo(
-                                    file2.name.toLowerCase()
-                                )
+                                (file1.isDirectory && file2.isDirectory) || (file1.isFile && file2.isFile) -> file1.name.toLowerCase()
+                                    .compareTo(
+                                        file2.name.toLowerCase()
+                                    )
                                 file2.isDirectory -> 1
                                 file1.isDirectory -> -1
                                 else -> file1.name.toLowerCase().compareTo(file2.name.toLowerCase())
