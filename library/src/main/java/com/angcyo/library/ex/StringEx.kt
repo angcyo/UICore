@@ -66,20 +66,25 @@ fun logClipboard(context: Context = app()): String {
                     append("item:$i->")
                     append("mimeType:")
                     append(description.getMimeType(i))
+                    appendln()
 
                     val item = getItemAt(i)
-                    append(" uri:")
+                    append("uri:")
                     append(item.uri)
+                    appendln()
 
-                    append(" intent:")
+                    append("intent:")
                     append(item.intent)
+                    appendln()
 
-                    append(" text:")
+                    append("text:")
                     append(item.text)
+                    appendln()
 
-                    append(" htmlText:")
+                    append("htmlText:")
                     append(item.htmlText)
 
+                    appendln()
                     appendln()
                 }
             }
