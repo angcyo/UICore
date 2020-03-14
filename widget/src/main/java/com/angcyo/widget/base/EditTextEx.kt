@@ -3,7 +3,6 @@ package com.angcyo.widget.base
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.text.InputFilter
 import android.text.TextUtils
 import android.text.method.PasswordTransformationMethod
 import android.view.KeyEvent
@@ -113,7 +112,7 @@ fun EditText.onFocusChange(listener: (Boolean) -> Unit) {
 
 /**只要文本改变就通知*/
 fun EditText.onTextChange(
-    defaultText: CharSequence? = null,
+    defaultText: CharSequence? = string(),
     shakeDelay: Long = -1L,//去频限制, 负数表示不开启
     listener: (CharSequence) -> Unit
 ) {

@@ -26,6 +26,8 @@ import com.angcyo.library.ex.getStatusBarHeight
 import com.angcyo.library.ex.remove
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.base.ViewEx._tempRect
+import com.angcyo.widget.edit.IEditDelegate
+import com.angcyo.widget.edit.REditDelegate
 import com.angcyo.widget.layout.ILayoutDelegate
 import com.angcyo.widget.layout.RLayoutDelegate
 
@@ -134,9 +136,17 @@ fun View.setRBgDrawable(drawable: Drawable?) {
     }
 }
 
+/**[RLayoutDelegate]*/
 fun View?.layoutDelegate(action: RLayoutDelegate.() -> Unit) {
     if (this is ILayoutDelegate) {
         this.getCustomLayoutDelegate().action()
+    }
+}
+
+/**[REditDelegate]*/
+fun View?.editDelegate(action: REditDelegate.() -> Unit) {
+    if (this is IEditDelegate) {
+        this.getREditDelegate().action()
     }
 }
 
