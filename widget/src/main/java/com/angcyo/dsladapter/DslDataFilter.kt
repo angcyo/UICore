@@ -9,6 +9,7 @@ import com.angcyo.library.L
 import com.angcyo.library.LTime
 import com.angcyo.library.ex.hash
 import com.angcyo.library.ex.nowTime
+import com.angcyo.library.ex.simpleHash
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
@@ -362,6 +363,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
 
             notifyUpdateDependItem(updateDependItemList)
 
+            //DispatchUpdates结束回调通知
             if (isDispatchUpdatesTo && _dispatchUpdatesSet.isNotEmpty()) {
                 val updatesSet = mutableSetOf<OnDispatchUpdatesListener>()
                 updatesSet.addAll(_dispatchUpdatesSet)
@@ -370,6 +372,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                 }
             }
 
+            //任务结束
             val nowTime = System.currentTimeMillis()
             L.d("${hash()} 界面更新结束, 总耗时${LTime.time(_taskStartTime, nowTime)}")
             _updateTaskLit.remove(this)
@@ -396,13 +399,19 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                 return
             }
 
+            val fromItem = _params!!.fromDslAdapterItem!!
+
+            if (itemList.isNotEmpty()) {
+                L.v("来自:${fromItem.simpleHash()} tag:${fromItem.itemTag}的更新↓")
+            }
+
             itemList.forEachIndexed { index, dslAdapterItem ->
                 dslAdapterItem.apply {
-                    onItemUpdateFromInner(_params!!.fromDslAdapterItem!!)
+                    itemUpdateFrom(fromItem)
                     dslAdapterItem.updateAdapterItem(true)
                 }
 
-                L.v("$index. 通知更新:${dslAdapterItem.javaClass.simpleName} ${dslAdapterItem.itemTag}")
+                L.v("$index->通知更新:${dslAdapterItem.simpleHash()} tag:${dslAdapterItem.itemTag}")
             }
         }
 
