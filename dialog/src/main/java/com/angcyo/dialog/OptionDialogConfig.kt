@@ -218,7 +218,9 @@ open class OptionDialogConfig : BaseDialogConfig() {
 
                         updateItemSelector(true)
 
-                        if (onCheckOptionEnd(optionList, loadLevel)) {
+                        if (onCheckOptionEnd(optionList, loadLevel) ||
+                            onCheckOptionEnd(optionList, loadLevel + 1)
+                        ) {
                             //最后一级
                             _resetTab(dialogViewHolder, true)
                         } else {

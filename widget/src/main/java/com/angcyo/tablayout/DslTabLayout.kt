@@ -225,12 +225,12 @@ open class DslTabLayout(
         get() = dslSelector.dslSelectIndex
 
     /**设置tab的位置*/
-    fun setCurrentItem(index: Int, notify: Boolean = true) {
+    fun setCurrentItem(index: Int, notify: Boolean = true, fromUser: Boolean = false) {
         if (currentItemIndex == index) {
             _scrollToCenter(index, tabIndicator.indicatorAnim)
             return
         }
-        dslSelector.selector(index, true, notify)
+        dslSelector.selector(index, true, notify, fromUser)
     }
 
     /**关联[ViewPagerDelegate]*/
@@ -839,6 +839,8 @@ open class DslTabLayout(
     fun startScroll(dx: Int) {
         _overScroller.abortAnimation()
         _overScroller.startScroll(scrollX, scrollY, dx, 0)
+        //api16
+        postInvalidateOnAnimation()
     }
 
     open fun onScrollChange(distance: Float): Boolean {
