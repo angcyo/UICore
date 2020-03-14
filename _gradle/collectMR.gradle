@@ -82,6 +82,8 @@ afterEvaluate {
 
             def outputPath = "${project.rootDir.absolutePath}/${output}/"
 
+            file(outputPath).mkdirs()
+
             copyFile(mappingPath, outputPath + mappingName)
             copyFile(mappingPath36, outputPath + mappingName)
 
