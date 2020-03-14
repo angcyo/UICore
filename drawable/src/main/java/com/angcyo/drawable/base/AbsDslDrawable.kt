@@ -21,9 +21,13 @@ import com.angcyo.library.ex.dp
 abstract class AbsDslDrawable : Drawable() {
 
     companion object {
+        /**不绘制*/
+        const val DRAW_TYPE_DRAW_NONE = 0x00
+
         /**[android.view.View.draw]*/
         const val DRAW_TYPE_DRAW_AFTER = 0x01
         const val DRAW_TYPE_DRAW_BEFORE = 0x02
+
         /**[android.view.View.onDraw]*/
         const val DRAW_TYPE_ON_DRAW_AFTER = 0x04
         const val DRAW_TYPE_ON_DRAW_BEFORE = 0x08

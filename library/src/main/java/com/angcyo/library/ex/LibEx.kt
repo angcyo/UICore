@@ -1,6 +1,9 @@
 package com.angcyo.library.ex
 
 import com.angcyo.library.BuildConfig
+import java.io.BufferedWriter
+import java.io.PrintWriter
+import java.io.StringWriter
 
 /**
  *
@@ -45,10 +48,27 @@ fun <T> T?.elseNull(action: () -> Unit = {}): T? {
     return this
 }
 
-fun Any.string(): CharSequence {
+fun Any?.string(): CharSequence {
     return if (this is CharSequence) {
         this
     } else {
         this.toString()
     }
+}
+
+fun Any?.str(): String {
+    return if (this is String) {
+        this
+    } else {
+        this.toString()
+    }
+}
+
+fun Throwable.string(): String {
+    val stringWriter = StringWriter()
+    val pw = PrintWriter(BufferedWriter(stringWriter))
+    pw.use {
+        printStackTrace(it)
+    }
+    return stringWriter.toString()
 }
