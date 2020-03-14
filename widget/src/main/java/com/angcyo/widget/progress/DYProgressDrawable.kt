@@ -26,6 +26,9 @@ class DYProgressDrawable : AbsDslDrawable() {
             bgLineColor = value.alpha(0x80)
         }
 
+    /**当前进度*/
+    var progress = 0
+
     /**保底进度*/
     var startProgress = 0.1f
 
@@ -43,10 +46,9 @@ class DYProgressDrawable : AbsDslDrawable() {
         RectF()
     }
 
+    //绘制的进度颜色
     val _progressDrawColor: Int
         get() = evaluateColor(progress * 1f / 100, progressColor, bgLineColor /*Color.TRANSPARENT*/)
-
-    var progress = 100
 
     override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
         val typedArray =
@@ -61,6 +63,8 @@ class DYProgressDrawable : AbsDslDrawable() {
             R.styleable.DYProgressDrawable_r_progress_bg_line_height,
             bgLineHeight
         )
+        startProgress =
+            typedArray.getFloat(R.styleable.DYProgressDrawable_r_min_start_progress, startProgress)
         typedArray.recycle()
 
         if (isInEditMode) {

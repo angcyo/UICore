@@ -40,12 +40,20 @@ class DYProgressView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     override fun initDrawables(list: MutableList<AbsDslDrawable>) {
-        list.add(DYProgressDrawable())
+        list.add(DYProgressDrawable().apply {
+            drawType = AbsDslDrawable.DRAW_TYPE_DRAW_NONE
+        })
+    }
+
+    override fun startAnimator() {
+        firstDrawable<DYProgressDrawable>()?.drawType = AbsDslDrawable.DRAW_TYPE_ON_DRAW_AFTER
+        super.startAnimator()
     }
 
     override fun stopAnimator() {
         super.stopAnimator()
         firstDrawable<DYProgressDrawable>()?.apply {
+            drawType = AbsDslDrawable.DRAW_TYPE_DRAW_NONE
             progress = 0
             drawProgressRect.setEmpty()
         }
