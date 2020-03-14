@@ -5,7 +5,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.animation.AccelerateInterpolator
 import com.angcyo.drawable.base.AbsDslDrawable
-import com.angcyo.tablayout.evaluateColor
 import com.angcyo.widget.R
 import com.angcyo.widget.base.BaseAnimatorDrawableView
 
@@ -28,11 +27,6 @@ class DYProgressView(context: Context, attributeSet: AttributeSet? = null) :
 
         onAnimatorUpdate = {
             firstDrawable<DYProgressDrawable>()?.apply {
-                drawProgressColor = evaluateColor(
-                    it,
-                    progressColor,
-                    bgLineColor /*Color.TRANSPARENT*/
-                )
                 progress = (it * 100).toInt()
             }
         }
@@ -52,7 +46,7 @@ class DYProgressView(context: Context, attributeSet: AttributeSet? = null) :
     override fun stopAnimator() {
         super.stopAnimator()
         firstDrawable<DYProgressDrawable>()?.apply {
-            drawProgressColor = progressColor
+            progress = 0
             drawProgressRect.setEmpty()
         }
     }

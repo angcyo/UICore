@@ -9,6 +9,7 @@ import com.angcyo.drawable.base.AbsDslDrawable
 import com.angcyo.library.ex.alpha
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
+import com.angcyo.tablayout.evaluateColor
 import com.angcyo.widget.R
 
 /**
@@ -42,7 +43,8 @@ class DYProgressDrawable : AbsDslDrawable() {
         RectF()
     }
 
-    var drawProgressColor = progressColor
+    val _progressDrawColor: Int
+        get() = evaluateColor(progress * 1f / 100, progressColor, bgLineColor /*Color.TRANSPARENT*/)
 
     var progress = 100
 
@@ -81,7 +83,7 @@ class DYProgressDrawable : AbsDslDrawable() {
         )
         canvas.drawRoundRect(drawBgLineRect, roundSize, roundSize, textPaint)
 
-        textPaint.color = drawProgressColor
+        textPaint.color = _progressDrawColor
         canvas.drawRoundRect(drawProgressRect, roundSize, roundSize, textPaint)
     }
 
