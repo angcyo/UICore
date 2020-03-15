@@ -164,6 +164,7 @@ class ScrollHelper {
                 config()
                 attach(it)
             }
+            it.postInvalidateOnAnimation()
         }
     }
 
@@ -175,6 +176,7 @@ class ScrollHelper {
                 config()
                 attach(it)
             }
+            it.requestLayout()
         }
     }
 
