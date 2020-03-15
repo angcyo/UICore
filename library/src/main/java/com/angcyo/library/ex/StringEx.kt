@@ -12,6 +12,7 @@ import android.text.TextUtils
 import android.util.Base64
 import android.webkit.MimeTypeMap
 import androidx.annotation.ColorInt
+import com.angcyo.library.L
 import com.angcyo.library.app
 import java.net.URLDecoder
 import java.net.URLEncoder
@@ -203,6 +204,19 @@ fun String.toBitmap(): Bitmap {
 
 fun String.toBase64(): String {
     return Base64.encodeToString(toByteArray(), Base64.NO_WRAP).replace("\\+", "%2B")
+}
+
+fun String?.toUri(): Uri? {
+    return try {
+        when {
+            isFileExist() -> Uri.fromFile(this!!.file())
+            isHttpScheme() -> Uri.parse(this)
+            else -> Uri.parse(this)
+        }
+    } catch (e: Exception) {
+        L.w(e)
+        null
+    }
 }
 
 /**url中的参数获取*/
