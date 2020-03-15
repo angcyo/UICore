@@ -25,6 +25,7 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) :
     companion object {
         /**当滚动距离大于多少时, 视为滚动了*/
         var scrollDistanceSlop = 0
+
         /**当Fling速度大于多少时, 视为Fling*/
         var flingVelocitySlop = 0
 
@@ -32,7 +33,7 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) :
         const val HANDLE_TOUCH_TYPE_INTERCEPT = 2
     }
 
-    /**4个方向*/
+    /**手指指向移动的4个方向*/
     enum class ORIENTATION { LEFT, RIGHT, TOP, BOTTOM }
 
     /**采用什么方式, 处理touch事件 */

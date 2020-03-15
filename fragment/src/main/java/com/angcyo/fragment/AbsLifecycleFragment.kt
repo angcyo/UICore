@@ -110,6 +110,10 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
         return view != null
     }
 
+    override fun canFlingBack(): Boolean {
+        return canSwipeBack()
+    }
+
     override fun hideSoftInputOnTouchDown(touchDownView: View?): Boolean {
         return false
     }

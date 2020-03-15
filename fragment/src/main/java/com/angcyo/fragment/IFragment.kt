@@ -24,6 +24,9 @@ interface IFragment {
      */
     fun canSwipeBack(): Boolean
 
+    /**是否可以Fling返回*/
+    fun canFlingBack(): Boolean
+
     /**
      * 当手指在 touchDownView 上点击时, 是否调用隐藏键盘的方法
      */

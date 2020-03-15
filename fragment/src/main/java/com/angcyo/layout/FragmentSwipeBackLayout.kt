@@ -46,16 +46,19 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
 
     companion object {
         private const val TAG = "FragmentSwipeBackLayout"
+
         /**
          * 调试布局 触发手上按下数量
          */
         var DEBUG_LAYOUT_POINTER = 6
+
         /**
          * 多指是否显示debug layout
          */
         var showDebugLayout = true
         var showDebugInfo = false
         var SHOW_DEBUG_TIME: Boolean = L.debug
+
         /**
          * inflate之后, 有时会返回 父布局, 这个时候需要处理一下, 才能拿到真实的RootView.
          */
@@ -110,21 +113,26 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
     var debugPaint: Paint? = null
     var measureLogBuilder: StringBuilder? = null
     var viewVisibleRectTemp = Rect()
+
     /**
      * 已经按下返回键
      */
     private val isBackPress = false
     private val mInsets = IntArray(4)
+
     /**
      * 锁定高度, 当键盘弹出的时候, 可以不改变size
      */
     private var lockHeight = false
+
     /**上一个视图的x偏移距离, 顶层布局通过手指控制偏移*/
     private var translationOffsetX = 0f
+
     /**
      * 如果只剩下最后一个View, 是否激活滑动删除
      */
     private var enableRootSwipe = false
+
     /**
      * 是否正在拖拽返回.
      */
@@ -134,22 +142,27 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
      * 是否需要滑动返回, 如果正在滑动返回,则阻止onLayout的进行
      */
     private var isWantSwipeBack = false
+
     /**
      * 三指首次按下的时间
      */
     private var firstDownTime: Long = 0
+
     /**
      * 拦截所有touch事件
      */
-    private var interceptTouchEvent = false
+    var interceptTouchEvent = false
+
     /**
      * 覆盖在的所有IView上的Drawable
      */
     private var overlayDrawable: Drawable? = null
+
     /**
      * 高度使用DecorView的高度, 否则使用View的高度
      */
     private var isFullOverlayDrawable = false
+
     /**
      * 触发滑动的时候, 是否隐藏键盘
      */
@@ -392,6 +405,10 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
         }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (interceptTouchEvent) {
+            return true
+        }
+
         val actionMasked = ev.actionMasked
         if (actionMasked == MotionEvent.ACTION_DOWN) {
             val lastFragment = findBeforeFragment()
@@ -442,7 +459,7 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        val actionMasked = ev.actionMasked
+        //val actionMasked = ev.actionMasked
         if (handleDebugLayout(ev)) {
             return true
         }
@@ -457,7 +474,7 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
     /**
      * 返回是否需要拦截Touch事件
      */
-    fun needInterceptTouchEvent(): Boolean {
+    open fun needInterceptTouchEvent(): Boolean {
         return false
     }
 
@@ -698,27 +715,39 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
     }
 
     override fun scrollTo(x: Int, y: Int) {
-        var y = y
+        var ty = y
         val maxScrollY = viewMaxHeight - measuredHeight
-        if (y > maxScrollY) {
-            y = maxScrollY
+        if (ty > maxScrollY) {
+            ty = maxScrollY
         }
-        if (y < 0) {
-            y = 0
+        if (ty < 0) {
+            ty = 0
         }
-        super.scrollTo(x, y)
+        super.scrollTo(x, ty)
     }
 
-    override fun onFlingChange(
-        orientation: ORIENTATION,
-        velocity: Float
-    ) {
-        super.onFlingChange(orientation, velocity)
+    override fun onFlingChange(orientation: ORIENTATION, velocityX: Float, velocityY: Float) {
+        super.onFlingChange(orientation, velocityX, velocityY)
         if (isInDebugLayout && isVertical(orientation)) {
-            if (velocity > 1000) { //快速向下滑动
-                startFlingY((-velocity).toInt(), scrollY)
-            } else if (velocity < -1000) { //快速向上滑动
-                startFlingY((-velocity).toInt(), viewMaxHeight)
+            if (velocityY > 1000) { //快速向下滑动
+                startFlingY((-velocityY).toInt(), scrollY)
+            } else if (velocityY < -1000) { //快速向上滑动
+                startFlingY((-velocityY).toInt(), viewMaxHeight)
+            }
+        }
+        //L.i("$orientation $velocityX $touchDownX $isSwipeDrag")
+        if (!isSwipeDrag &&
+            orientation == ORIENTATION.RIGHT &&
+            velocityX > 3000
+        ) {
+            //快速向右滑动, 触发fling关闭功能
+            val lastFragment = findBeforeFragment()
+            if (lastFragment is IFragment) {
+                if (lastFragment.canFlingBack()) {
+                    lastFragment.back()
+                }
+            } else {
+                lastFragment?.back()
             }
         }
     }

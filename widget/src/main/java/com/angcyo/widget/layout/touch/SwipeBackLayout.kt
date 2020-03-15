@@ -19,7 +19,8 @@ import kotlin.math.min
  * 支持滑动退出的父布局
  * Created by angcyo on 2016-12-18.
  */
-abstract class SwipeBackLayout : TouchLayout {
+abstract class SwipeBackLayout(context: Context, attributeSet: AttributeSet? = null) :
+    TouchLayout(context, attributeSet) {
 
     companion object {
         /**
@@ -44,6 +45,7 @@ abstract class SwipeBackLayout : TouchLayout {
     private var mScreenHeight = 0
 
     private var drawDimStatusBar = false
+
     /**
      * 阴影的绘制区域
      */
@@ -58,6 +60,7 @@ abstract class SwipeBackLayout : TouchLayout {
     private var mIsLocked = false
     private var mIsLeftEdge = false
     private var mRawDownX = 0f
+
     /**
      * 侧滑被中断了, 需要恢复到原始状态
      */
@@ -112,7 +115,7 @@ abstract class SwipeBackLayout : TouchLayout {
         }
 
         private val minCloseWidth: Float
-            private get() = measuredWidth * 0.2f
+            get() = measuredWidth * 0.2f
 
         override fun onViewPositionChanged(
             changedView: View,
@@ -166,12 +169,6 @@ abstract class SwipeBackLayout : TouchLayout {
             }
         }
     }
-
-    constructor(context: Context?) : super(context!!, null)
-    constructor(context: Context?, attrs: AttributeSet?) : super(
-        context!!,
-        attrs
-    )
 
     fun restoreCaptureView() {
         if (targetView != null) {
