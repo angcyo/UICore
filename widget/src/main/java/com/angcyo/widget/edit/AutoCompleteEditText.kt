@@ -136,7 +136,12 @@ open class AutoCompleteEditText : CompleteEditText {
     }
 
     /**设置下拉数据源*/
-    fun setDataList(list: List<CharSequence>, showOnFocus: Boolean = true, focusDelay: Long = 0L) {
+    fun setDataList(
+        list: List<CharSequence>,
+        showOnFocus: Boolean = true,
+        focusDelay: Long = 0L,
+        notifyFirst: Boolean = true
+    ) {
         autoCompleteShowOnFocus = showOnFocus
         autoCompleteFocusDelay = focusDelay
 
@@ -156,7 +161,7 @@ open class AutoCompleteEditText : CompleteEditText {
         setAdapter(adapter)
 
         if (showOnFocus) {
-            onFocusChange {
+            onFocusChange(notifyFirst) {
                 if (it) {
                     if (focusDelay > 0) {
                         postDelayed({ showDropDown() }, focusDelay)

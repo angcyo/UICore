@@ -63,10 +63,11 @@ fun DslViewHolder.auto(
     @IdRes resId: Int,
     dataList: List<CharSequence>?,
     showOnFocus: Boolean = true,
-    focusDelay: Long = 0L
+    focusDelay: Long = 0L,
+    notifyFirst: Boolean = true
 ): AutoCompleteEditText? {
     val auto: AutoCompleteEditText? = v(resId)
-    auto?.setDataList(dataList ?: emptyList(), showOnFocus, focusDelay)
+    auto?.setDataList(dataList ?: emptyList(), showOnFocus, focusDelay, notifyFirst)
     return auto
 }
 

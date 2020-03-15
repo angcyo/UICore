@@ -105,9 +105,11 @@ fun EditText.isDecimalType(): Boolean {
 //<editor-fold desc="事件监听">
 
 /**焦点变化改变监听*/
-fun EditText.onFocusChange(listener: (Boolean) -> Unit) {
+fun EditText.onFocusChange(notifyFirst: Boolean = true, listener: (Boolean) -> Unit) {
     onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus -> listener.invoke(hasFocus) }
-    listener.invoke(this.isFocused)
+    if (notifyFirst) {
+        listener.invoke(this.isFocused)
+    }
 }
 
 /**只要文本改变就通知*/
