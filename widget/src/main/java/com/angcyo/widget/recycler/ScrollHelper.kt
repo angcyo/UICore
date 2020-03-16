@@ -10,6 +10,20 @@ import com.angcyo.library.L
 import com.angcyo.library.ex.nowTime
 
 /**
+ * 滚动机制:
+ * 1. 不带动画滚动至位置可见 scrollToPosition
+ * 2. 带动画滚动至位置可见 smoothScrollToPosition
+ *
+ * 上述2个方法, 均无法准确控制position, 只要position出现在界面即完成滚动.
+ *
+ * 1. 不带动画精确滚动 scrollBy
+ * 2. 带动画精确滚动 smoothScrollBy
+ *
+ * 上述2个方法, 可以精确控制position出现在界面上的位置. 比如 置顶, 尾部, 居中等.
+ * 但是, 当position没有出现在界面上时, 很难使用这2个方法精确控制.
+ *
+ * 综上: 要想精确控制position, 应先使用[scrollToPosition or smoothScrollToPosition]保证目标
+ * position可见, 再使用[scrollBy or smoothScrollBy]精确控制目标的位置
  *
  * Email:angcyo@126.com
  * @author angcyo
