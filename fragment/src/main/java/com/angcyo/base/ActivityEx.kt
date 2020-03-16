@@ -8,12 +8,13 @@ import android.view.View
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.angcyo.DslAHelper
 import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.fragment.FragmentBridge
 import com.angcyo.fragment.R
+import com.angcyo.layout.FragmentSwipeBackLayout
+import com.angcyo.library.ex.have
 import com.angcyo.library.ex.havePermissions
 
 /**
@@ -27,10 +28,11 @@ import com.angcyo.library.ex.havePermissions
 /**激活布局全屏*/
 fun Activity.enableLayoutFullScreen(enable: Boolean = true) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        //window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        //去掉半透明状态栏
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        //去掉半透明导航栏
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        setStatusBarColor(ContextCompat.getColor(this, R.color.status_bar_color))
-        setNavigationBarColor(ContextCompat.getColor(this, R.color.navigation_bar_color))
         val decorView = window.decorView
         var systemUiVisibility = decorView.systemUiVisibility
         if (enable) { //https://blog.csdn.net/xiaonaihe/article/details/54929504
@@ -41,6 +43,36 @@ fun Activity.enableLayoutFullScreen(enable: Boolean = true) {
             systemUiVisibility =
                 systemUiVisibility.remove(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
             decorView.systemUiVisibility = systemUiVisibility
+        }
+    }
+}
+
+/** 是否是白色状态栏. 如果是, 那么系统的状态栏字体会是灰色 */
+fun Activity.lightStatusBar(light: Boolean) {
+    //android 6
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val decorView = window.decorView
+        val systemUiVisibility = decorView.systemUiVisibility
+        if (light) {
+            if (systemUiVisibility.have(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)) {
+                return
+            }
+            decorView.systemUiVisibility =
+                systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        } else {
+            if (!systemUiVisibility.have(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)) {
+                return
+            }
+            decorView.systemUiVisibility =
+                systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        }
+    }
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M &&
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+    ) {
+        this.findViewById<FragmentSwipeBackLayout>(R.id.fragment_container)?.apply {
+            setDimStatusBar(light)
         }
     }
 }
@@ -79,7 +111,7 @@ fun Activity.translucentStatusBar(full: Boolean = false) {
     window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
     if (full) {
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        setStatusBarColor(Color.TRANSPARENT)
+        setStatusBarColor(Color.TRANSPARENT)//全透明
         window.decorView.systemUiVisibility =
             window.decorView.systemUiVisibility or
                     View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
@@ -95,7 +127,7 @@ fun Activity.translucentNavigationBar(full: Boolean = false) {
     window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
     if (full) {
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
-        setNavigationBarColor(Color.TRANSPARENT)
+        setNavigationBarColor(Color.TRANSPARENT)//全透明
         window.decorView.systemUiVisibility =
             window.decorView.systemUiVisibility or
                     View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
