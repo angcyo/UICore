@@ -3,6 +3,9 @@ package com.angcyo.widget.text
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
+import android.view.Gravity
+import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
 import com.angcyo.widget.drawable.DslAttrBadgeDrawable
 import java.util.*
@@ -18,6 +21,7 @@ open class DslTextView : DslScrollTextView {
     /**角标绘制*/
     var dslBadeDrawable = DslAttrBadgeDrawable()
 
+    /**支持设置format,[java.lang.String.format]*/
     var textFormat: String? = null
 
     /**未处理过的原始[text]*/
@@ -70,6 +74,19 @@ open class DslTextView : DslScrollTextView {
             } else {
                 String.format(Locale.CHINA, textFormat!!, text)
             }
+        }
+    }
+
+    /**角标的文本, 空字符串会绘制成小圆点*/
+    fun updateBadge(text: String?, action: DslAttrBadgeDrawable.() -> Unit = {}) {
+        dslBadeDrawable.apply {
+            drawBadge = true
+            badgeGravity = Gravity.TOP or Gravity.RIGHT
+            badgeText = text
+            badgeCircleRadius
+            badgeOffsetY = 4 * dpi
+            cornerRadius(25 * dp)
+            action()
         }
     }
 }
