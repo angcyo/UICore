@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!--标准Tab的样式-->
     <style name="LibTabLayoutStyle">
         <item name="tab_enable_text_color">true</item>
         <item name="tab_enable_gradient_color">true</item>
@@ -20,5 +21,11 @@
         <item name="tab_indicator_height">4dp</item>
         <item name="tab_indicator_width">MATCH_PARENT</item>
 
+    </style>
+
+    <!--底部导航Tab的样式-->
+    <style name="LibTabCommonStyle" parent="LibTabLayoutStyle">
+        <item name="tab_indicator_style">STYLE_NONE</item>
+        <item name="tab_item_is_equ_width">true</item>
     </style>
 </resources>

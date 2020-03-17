@@ -29,10 +29,13 @@ open class DslGradientDrawable : AbsDslDrawable() {
 
     /**边框的颜色*/
     var gradientStrokeColor = Color.TRANSPARENT
+
     /**边框的宽度*/
     var gradientStrokeWidth = 0
+
     /**蚂蚁线的宽度*/
     var gradientDashWidth = 0f
+
     /**蚂蚁线之间的间距*/
     var gradientDashGap = 0f
 
@@ -45,13 +48,17 @@ open class DslGradientDrawable : AbsDslDrawable() {
     /**颜色渐变*/
     var gradientColors: IntArray? = null
     var gradientColorsOffsets: FloatArray? = null
+
     /**渐变中心点坐标*/
     var gradientCenterX = 0.5f
     var gradientCenterY = 0.5f
+
     /**渐变半径, 非比例值, 是px值. [GradientDrawable.RADIAL_GRADIENT]类型才有效*/
     var gradientRadius = 0.5f
+
     /** 渐变方向, 默认从左到右 */
     var gradientOrientation = GradientDrawable.Orientation.LEFT_RIGHT
+
     /** 渐变类型 */
     @GradientType
     var gradientType = GradientDrawable.LINEAR_GRADIENT
@@ -289,3 +296,11 @@ annotation class Shape
 )
 @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
 annotation class GradientType
+
+/**快速创建[GradientDrawable]*/
+fun dslGradientDrawable(action: DslGradientDrawable.() -> Unit): GradientDrawable {
+    return DslGradientDrawable().run {
+        action()
+        updateOriginDrawable()!!
+    }
+}

@@ -37,11 +37,13 @@ class DslFHelper(
 
         @AnimRes
         var DEFAULT_SHOW_ENTER_ANIM = R.anim.lib_translate_x_show_enter
+
         @AnimRes
         var DEFAULT_SHOW_EXIT_ANIM = R.anim.lib_translate_x_show_exit
 
         @AnimRes
         var DEFAULT_REMOVE_ENTER_ANIM = R.anim.lib_translate_x_remove_enter
+
         @AnimRes
         var DEFAULT_REMOVE_EXIT_ANIM = R.anim.lib_translate_x_remove_exit
     }
@@ -64,6 +66,9 @@ class DslFHelper(
      * */
     var hideBeforeIndex = 2
 
+    /**当显示一个已经存在的[Fragment]时, 是否要移除覆盖在此[Fragment]上的所有[Fragment]*/
+    var removeOverlayFragmentOnShow = true
+
     /**最后一个[Fragment]在执行的[back]时, 是否需要[remove]*/
     var removeLastFragmentOnBack: Boolean = false
         set(value) {
@@ -75,15 +80,18 @@ class DslFHelper(
 
     /**最后一个[Fragment]在执行的[remove]时, 是否需要关闭[activity]*/
     var finishActivityOnLastFragmentRemove: Boolean = true
+
     var finishToActivity: Class<out Activity>? = DslAHelper.mainActivityClass
 
     @AnimRes
     var showEnterAnimRes: Int = DEFAULT_SHOW_ENTER_ANIM
+
     @AnimRes
     var showExitAnimRes: Int = DEFAULT_SHOW_EXIT_ANIM
 
     @AnimRes
     var removeEnterAnimRes: Int = DEFAULT_REMOVE_ENTER_ANIM
+
     @AnimRes
     var removeExitAnimRes: Int = DEFAULT_REMOVE_EXIT_ANIM
 
@@ -141,13 +149,14 @@ class DslFHelper(
             it.action()
             if (!showFragmentList.contains(it)) {
                 showFragmentList.add(it)
-                if (it.isAdded) {
+                if (it.isAdded && removeOverlayFragmentOnShow) {
                     remove(fm.getOverlayFragment(it))
                 }
             }
         }
     }
 
+    /**优先使用已经存在的[Fragment]*/
     fun restore(vararg fClass: Class<out Fragment>, action: Fragment.() -> Unit = {}) {
         show(fm.restore(*fClass), action)
     }
@@ -360,10 +369,12 @@ class DslFHelper(
             val allValidityFragment = mutableListOf<Fragment>()
             val allNoViewFragment = mutableListOf<Fragment>()
             fm.fragments.forEach {
-                if (it.view == null) {
-                    allNoViewFragment.add(it)
-                } else {
-                    allValidityFragment.add(it)
+                when {
+                    showFragmentList.contains(it) -> {
+                        //需要显示的Fragment, 已经存在于结构中
+                    }
+                    it.view == null -> allNoViewFragment.add(it)
+                    else -> allValidityFragment.add(it)
                 }
             }
 
