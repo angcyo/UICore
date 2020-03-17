@@ -191,7 +191,7 @@ fun String?.jsonArray(): JsonArray? {
 
 //<editor-fold desc="Json 解析">
 
-fun gson(): Gson {
+fun gson(config: GsonBuilder.() -> Unit = {}): Gson {
     val gson = GsonBuilder()
         .setPrettyPrinting()
         .serializeNulls()
@@ -201,15 +201,17 @@ fun gson(): Gson {
             Modifier.TRANSIENT,
             Modifier.VOLATILE
         )
+        //.disableHtmlEscaping() //关闭html转义
+        .apply(config)
         .create()
     return gson
 }
 
 /**任意对象, 转成json字符串*/
-fun Any?.toJson(): String? {
+fun Any?.toJson(config: GsonBuilder.() -> Unit = {}): String? {
     return this?.run {
         try {
-            gson().toJson(this)
+            gson(config).toJson(this)
         } catch (e: Exception) {
             e.printStackTrace()
             null

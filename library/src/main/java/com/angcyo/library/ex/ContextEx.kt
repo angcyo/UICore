@@ -16,6 +16,7 @@ import android.view.Window
 import android.webkit.MimeTypeMap
 import androidx.core.app.ActivityCompat
 import com.angcyo.library.L
+import com.angcyo.library.app
 import java.io.File
 import java.io.InputStream
 
@@ -157,4 +158,14 @@ fun Context.requestAudioFocus() {
 fun Context.abandonAudioFocus() {
     val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
     audioManager.abandonAudioFocus(null) //放弃焦点
+}
+
+/**从[assets]中读取字符串*/
+fun Context.readAssets(fileName: String): String? {
+    return try {
+        app().assets.open(fileName).reader().readText()
+    } catch (e: Exception) {
+        L.w(e)
+        null
+    }
 }

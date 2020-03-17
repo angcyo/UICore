@@ -78,7 +78,7 @@ open class DslTextView : DslScrollTextView {
     }
 
     /**角标的文本, 空字符串会绘制成小圆点*/
-    fun updateBadge(text: String?, action: DslAttrBadgeDrawable.() -> Unit = {}) {
+    fun updateBadge(text: String? = null, action: DslAttrBadgeDrawable.() -> Unit = {}) {
         dslBadeDrawable.apply {
             drawBadge = true
             badgeGravity = Gravity.TOP or Gravity.RIGHT

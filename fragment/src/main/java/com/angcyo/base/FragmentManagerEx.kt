@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import com.angcyo.DslFHelper
 import com.angcyo.base.Factory.factory
 import com.angcyo.library.L
+import com.angcyo.library.utils.setFieldValue
 
 /**
  *
@@ -45,6 +46,15 @@ fun FragmentManager.restore(vararg fragment: Fragment): List<Fragment> {
     }
 
     return list
+}
+
+/**根据[tag], 恢复或者创建[Fragment], 并且设置[tag]*/
+fun FragmentManager.restore(fClass: Class<out Fragment>, tag: String?): Fragment {
+    val targetTag = tag ?: fClass.name
+    val fragment = findFragmentByTag(targetTag)
+    return (fragment ?: instantiateFragment(fClass.classLoader!!, fClass.name)!!).apply {
+        setFieldValue(Fragment::class.java, "mTag", targetTag)
+    }
 }
 
 fun FragmentManager.restore(vararg fClass: Class<out Fragment>): List<Fragment> {

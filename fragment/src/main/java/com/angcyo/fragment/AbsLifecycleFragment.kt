@@ -119,7 +119,7 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
     }
 
     override fun getFragmentTag(): String {
-        return this.javaClass.name
+        return tag ?: this.javaClass.name
     }
 
     //</editor-fold>
