@@ -8,5 +8,5 @@ package com.angcyo.widget.edit
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 interface IEditDelegate {
-    fun getREditDelegate(): REditDelegate
+    fun getCustomEditDelegate(): REditDelegate
 }

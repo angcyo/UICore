@@ -146,7 +146,7 @@ fun View?.layoutDelegate(action: RLayoutDelegate.() -> Unit) {
 /**[REditDelegate]*/
 fun View?.editDelegate(action: REditDelegate.() -> Unit) {
     if (this is IEditDelegate) {
-        this.getREditDelegate().action()
+        this.getCustomEditDelegate().action()
     }
 }
 

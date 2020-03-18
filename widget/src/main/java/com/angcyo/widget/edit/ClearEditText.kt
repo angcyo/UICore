@@ -108,5 +108,5 @@ open class ClearEditText : AppCompatEditText, IEditDelegate {
         super.onDraw(canvas)
     }
 
-    override fun getREditDelegate(): REditDelegate = editDelegate!!
+    override fun getCustomEditDelegate(): REditDelegate = editDelegate!!
 }
