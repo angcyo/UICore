@@ -11,6 +11,13 @@
         <item name="r_layout_manager">v</item>
     </style>
 
+    <style name="LibInnerRecyclerViewStyle" parent="LibRecyclerViewStyle">
+        <item name="android:nestedScrollingEnabled">false</item>
+        <item name="android:scrollbarSize">0dp</item>
+        <item name="android:scrollbarThumbVertical">@null</item>
+        <item name="android:overScrollMode">never</item>
+    </style>
+
     <style name="LibMatchParent">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
