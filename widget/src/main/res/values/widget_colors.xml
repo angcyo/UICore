@@ -2,4 +2,7 @@
 <resources>
     <color name="lib_progress_bg_color">#1AFFFFFF</color>
     <color name="lib_progress_second_bg_color">#aab1bd</color>
+
+    <color name="lib_indicator_normal_color">#4D727272</color>
+    <color name="lib_indicator_focus_color">@color/colorAccent</color>
 </resources>
