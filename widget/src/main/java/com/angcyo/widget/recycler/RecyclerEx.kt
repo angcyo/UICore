@@ -21,6 +21,13 @@ import com.angcyo.widget.DslViewHolder
 
 //<editor-fold desc="DslAdapter相关">
 
+/**清空原有的[ItemDecoration]*/
+fun RecyclerView.clearItemDecoration() {
+    for (i in itemDecorationCount - 1 downTo 0) {
+        removeItemDecorationAt(i)
+    }
+}
+
 /**[DslAdapter]必备的组件*/
 fun RecyclerView.initDsl() {
     var haveItemDecoration = false

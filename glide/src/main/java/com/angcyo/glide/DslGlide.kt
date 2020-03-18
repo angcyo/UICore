@@ -72,6 +72,7 @@ class DslGlide {
 
     /**是否检查gif, 如果为gif, 则使用[GifDrawable]加载gif, 否则使用[glide]默认加载处理*/
     var checkGifType = false
+
     /**当检查到gif时, 是否自动播放*/
     var autoPlayGif = true
 
@@ -82,8 +83,10 @@ class DslGlide {
                 fallbackDrawable = value
             }
         }
+
     //url = null
     var fallbackDrawable: Drawable? = null
+
     //url = ""
     var errorDrawable: Drawable? = null
 
@@ -114,6 +117,7 @@ class DslGlide {
 
     /**[RequestListener]*/
     var onLoadFailed: ((model: String?, error: GlideException?) -> Boolean) = { _, _ -> false }
+
     /**[model]请求的url地址, [data]加载的数据, Drawable File等*/
     var onLoadSucceed: ((model: String?, data: Any?) -> Boolean) = { _, _ -> false }
 
@@ -175,12 +179,12 @@ class DslGlide {
         transformations.clear()
     }
 
-    /**模糊*/
+    /**添加一个模糊[Transformation]*/
     fun blur(radius: Int = 25, sampling: Int = 1) {
         addTransformation(SupportRSBlurTransformation(radius, sampling))
     }
 
-    /**灰度*/
+    /**添加一个灰度[Transformation]*/
     fun grayscale() {
         addTransformation(GrayscaleTransformation())
     }
