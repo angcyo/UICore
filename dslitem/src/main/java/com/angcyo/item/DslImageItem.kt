@@ -107,9 +107,9 @@ open class DslImageItem : DslAdapterItem() {
                 drawable {
                     backgroundDrawable =
                         if (itemMimeType?.isVideoMimeType() == true && itemVideoTipDrawable > 0) {
-                            getDrawable(itemVideoTipDrawable)
+                            _drawable(itemVideoTipDrawable)
                         } else if (itemMimeType?.isAudioMimeType() == true && itemAudioTipDrawable > 0) {
-                            getDrawable(itemAudioTipDrawable)
+                            _drawable(itemAudioTipDrawable)
                         } else {
                             null
                         }

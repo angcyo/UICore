@@ -23,6 +23,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.library.ex.getStatusBarHeight
+import com.angcyo.library.ex.loadDrawable
 import com.angcyo.library.ex.remove
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.base.ViewEx._tempRect
@@ -49,11 +50,8 @@ fun View.getColor(@ColorRes id: Int): Int {
     return ContextCompat.getColor(context, id)
 }
 
-fun View.getDrawable(id: Int): Drawable? {
-    if (id <= 0) {
-        return null
-    }
-    return ContextCompat.getDrawable(context, id)
+fun View.loadDrawable(id: Int): Drawable? {
+    return context?.loadDrawable(id)
 }
 
 fun View.getStatusBarHeight(): Int {

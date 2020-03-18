@@ -6,7 +6,7 @@ import com.angcyo.library.ex.color
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget._tv
-import com.angcyo.widget.base.getDrawable
+import com.angcyo.widget.base.loadDrawable
 import com.angcyo.widget.base.setRightIco
 
 /**
@@ -47,7 +47,7 @@ open class DslTextInfoItem : DslBaseInfoItem() {
             if (itemDarkIconColor == undefined_res) {
                 setRightIco(itemDarkIcon)
             } else {
-                setRightIco(getDrawable(itemDarkIcon).color(itemDarkIconColor))
+                setRightIco(loadDrawable(itemDarkIcon).color(itemDarkIconColor))
             }
 
             dslBadeDrawable.badgeText = itemNoReadNumString

@@ -72,10 +72,8 @@ fun Context.getDimen(@DimenRes id: Int): Int {
     return resources.getDimensionPixelOffset(id)
 }
 
-fun Context.getDrawable(@DrawableRes id: Int): Drawable? {
-    return ContextCompat.getDrawable(this, id)?.apply {
-        setBounds(0, 0, minimumWidth, minimumHeight)
-    }
+fun Context.loadDrawable(@DrawableRes id: Int): Drawable? {
+    return ContextCompat.getDrawable(this, id)?.initBounds()
 }
 
 @ColorInt
@@ -86,10 +84,6 @@ fun getColor(@ColorRes id: Int): Int {
 @Px
 fun getDimen(@DimenRes id: Int): Int {
     return app().getDimen(id)
-}
-
-fun getDrawable(@DrawableRes id: Int): Drawable? {
-    return ContextCompat.getDrawable(app(), id)?.initBounds()
 }
 
 @ColorInt
@@ -103,5 +97,5 @@ fun _dimen(@DimenRes id: Int): Int {
 }
 
 fun _drawable(@DrawableRes id: Int): Drawable? {
-    return getDrawable(id)
+    return app().loadDrawable(id)
 }

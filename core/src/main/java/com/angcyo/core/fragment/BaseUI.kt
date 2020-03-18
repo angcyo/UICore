@@ -9,7 +9,7 @@ import com.angcyo.library.ex.colorFilter
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.base.clickIt
 import com.angcyo.widget.base.find
-import com.angcyo.widget.base.getDrawable
+import com.angcyo.widget.base.loadDrawable
 import com.angcyo.widget.span.span
 
 /**
@@ -40,7 +40,7 @@ open class FragmentUI {
                 text = span {
                     drawable {
                         backgroundDrawable =
-                            getDrawable(R.drawable.lib_back).colorFilter(fragment.fragmentConfig.titleItemIconColor)
+                            loadDrawable(R.drawable.lib_back).colorFilter(fragment.fragmentConfig.titleItemIconColor)
                     }
                     drawable("返回") {
                         marginLeft = -8 * dpi

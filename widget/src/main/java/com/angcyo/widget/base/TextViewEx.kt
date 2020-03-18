@@ -22,7 +22,7 @@ import java.util.*
  */
 
 fun TextView.setLeftIco(id: Int) {
-    setLeftIco(getDrawable(id))
+    setLeftIco(loadDrawable(id))
 }
 
 fun TextView.setLeftIco(drawable: Drawable?) {
@@ -36,7 +36,7 @@ fun TextView.setLeftIco(drawable: Drawable?) {
 }
 
 fun TextView.setTopIco(id: Int) {
-    setTopIco(getDrawable(id))
+    setTopIco(loadDrawable(id))
 }
 
 fun TextView.setTopIco(drawable: Drawable?) {
@@ -50,7 +50,7 @@ fun TextView.setTopIco(drawable: Drawable?) {
 }
 
 fun TextView.setRightIco(@DrawableRes id: Int) {
-    setRightIco(getDrawable(id))
+    setRightIco(loadDrawable(id))
 }
 
 fun TextView.setRightIco(drawable: Drawable?) {
@@ -64,7 +64,7 @@ fun TextView.setRightIco(drawable: Drawable?) {
 }
 
 fun TextView.setBottomIco(id: Int) {
-    setBottomIco(getDrawable(id))
+    setBottomIco(loadDrawable(id))
 }
 
 fun TextView.setBottomIco(drawable: Drawable?) {

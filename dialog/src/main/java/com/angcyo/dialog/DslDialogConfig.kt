@@ -19,7 +19,7 @@ import androidx.appcompat.app.AppCompatDialog
 import com.angcyo.base.dslAHelper
 import com.angcyo.dialog.activity.DialogActivity
 import com.angcyo.library.L
-import com.angcyo.library.ex.getDrawable
+import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.undefined_float
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslViewHolder
@@ -242,7 +242,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
     }
 
     fun setDialogBgResource(@DrawableRes drawable: Int) {
-        dialogBgDrawable = getDrawable(drawable)
+        dialogBgDrawable = _drawable(drawable)
     }
 
     //保存[Dialog]对象

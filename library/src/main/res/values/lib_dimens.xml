@@ -20,6 +20,7 @@
     <dimen name="lib_xxxhdpi">35dp</dimen>
 
     <!--圆角大小-->
+    <dimen name="lib_radius_min">2dp</dimen>
     <dimen name="lib_radius_normal">5dp</dimen>
     <dimen name="lib_radius_common">10dp</dimen>
     <!--25dp就可以实现圆形-->

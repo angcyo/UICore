@@ -9,7 +9,7 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.library.ex.color
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.getDrawable
+import com.angcyo.widget.base.loadDrawable
 import com.angcyo.widget.base.inflate
 import com.angcyo.widget.base.setLeftIco
 import com.angcyo.widget.layout.ILayoutDelegate
@@ -59,7 +59,7 @@ open class DslBaseInfoItem : DslAdapterItem() {
             if (itemInfoIconColor == undefined_res) {
                 setLeftIco(itemInfoIcon)
             } else {
-                setLeftIco(getDrawable(itemInfoIcon).color(itemInfoIconColor))
+                setLeftIco(loadDrawable(itemInfoIcon).color(itemInfoIconColor))
             }
         }
 

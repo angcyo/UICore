@@ -156,11 +156,11 @@ open class DslPickerImageItem : DslAdapterItem() {
                 drawable {
                     backgroundDrawable =
                         if (loaderMedia?.isVideo() == true && itemVideoTipDrawable > 0) {
-                            getDrawable(itemVideoTipDrawable)
+                            _drawable(itemVideoTipDrawable)
                         } else if (loaderMedia?.isAudio() == true && itemAudioTipDrawable > 0) {
-                            getDrawable(itemAudioTipDrawable)
+                            _drawable(itemAudioTipDrawable)
                         } else if (!(loaderMedia?.cropPath.isNullOrBlank()) && itemImageTipDrawable > 0) {
-                            getDrawable(itemImageTipDrawable)
+                            _drawable(itemImageTipDrawable)
                         } else {
                             null
                         }

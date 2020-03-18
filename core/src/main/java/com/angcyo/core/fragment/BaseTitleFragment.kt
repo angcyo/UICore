@@ -300,7 +300,7 @@ abstract class BaseTitleFragment : BaseFragment() {
                 if (ico != undefined_res) {
                     drawable {
                         backgroundDrawable =
-                            getDrawable(ico).colorFilter(fragmentConfig.titleItemIconColor)
+                            loadDrawable(ico).colorFilter(fragmentConfig.titleItemIconColor)
                     }
                 }
 
