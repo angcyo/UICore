@@ -14,5 +14,6 @@
         <attr name="r_soft_input_padding_top" format="dimension" />
         <attr name="r_keep_emoji_state" format="boolean" />
         <attr name="r_hide_emoji_view_on_soft_input" format="boolean" />
+        <attr name="r_fix_status_bar" format="boolean" />
     </declare-styleable>
 </resources>

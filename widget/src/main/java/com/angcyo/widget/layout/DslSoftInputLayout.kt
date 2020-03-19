@@ -13,6 +13,7 @@ import android.widget.FrameLayout
 import com.angcyo.library.L
 import com.angcyo.library.ex.append
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.getStatusBarHeight
 import com.angcyo.widget.R
 import com.angcyo.widget.base.anim
 import com.angcyo.widget.base.hideSoftInput
@@ -78,6 +79,10 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     /**隐藏/显示键盘时, 将emoji视图布局不可见*/
     var hideEmojiViewOnSoftInput: Boolean = false
+
+    /**当键盘/emoji显示时, 内容布局的高度, 是否要排除状态栏的大小,
+     * 此属性最好配合[softInputPaddingTop]一起使用*/
+    var fixStatusBar: Boolean = true
 
     //<editor-fold desc="私有属性辅助计算">
 
@@ -146,6 +151,9 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
             R.styleable.DslSoftInputLayout_r_hide_emoji_view_on_soft_input,
             hideEmojiViewOnSoftInput
         )
+
+        fixStatusBar =
+            typedArray.getBoolean(R.styleable.DslSoftInputLayout_r_fix_status_bar, fixStatusBar)
 
         typedArray.recycle()
 
@@ -500,7 +508,8 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
         val toHeight = height
 
         val fromPaddingTop = _softInputPaddingTop
-        val toPaddingTop = if (action.isShowAction()) 0 else softInputPaddingTop
+        val toPaddingTop =
+            if (action.isShowAction()) if (fixStatusBar) getStatusBarHeight() else 0 else softInputPaddingTop
 
         val fromOffset = _offsetTop
         val toOffset = -height
