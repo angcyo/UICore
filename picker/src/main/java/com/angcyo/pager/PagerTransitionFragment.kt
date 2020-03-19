@@ -190,7 +190,7 @@ open class PagerTransitionFragment : ViewTransitionFragment() {
                     drawableProvider = pagerTransitionCallback
 
                     //点击图片关闭界面
-                    onItemClick = {
+                    itemClick = {
                         backTransition()
                     }
                 })

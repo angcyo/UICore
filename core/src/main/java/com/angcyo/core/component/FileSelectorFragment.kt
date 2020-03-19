@@ -156,7 +156,7 @@ open class FileSelectorFragment : BaseFragment() {
                 itemFile = data as? FileItem
                 itemIsSelected = selectorFileItem == itemFile
 
-                onItemClick = {
+                itemClick = {
                     itemFile?.apply {
                         if (file().isFile()) {
                             _adapter.select {
@@ -169,7 +169,7 @@ open class FileSelectorFragment : BaseFragment() {
                 }
 
                 if (fileSelectorConfig.showFileMenu) {
-                    onItemLongClick = {
+                    itemLongClick = {
                         fContext().itemsDialog {
                             canceledOnTouchOutside = true
                             dialogBottomCancelItem = null
@@ -182,7 +182,7 @@ open class FileSelectorFragment : BaseFragment() {
                                     }
                                     append(" 打开")
                                 }
-                                onItemClick = {
+                                itemClick = {
                                     _dialog?.dismiss()
                                     itemFile?.file()?.open()
                                 }
@@ -196,7 +196,7 @@ open class FileSelectorFragment : BaseFragment() {
                                     }
                                     append(" 删除")
                                 }
-                                onItemClick = {
+                                itemClick = {
                                     _dialog?.dismiss()
                                     dslLoading(true) {
                                         loadingConfig = {
@@ -227,7 +227,7 @@ open class FileSelectorFragment : BaseFragment() {
                                     }
                                     append(" 分享")
                                 }
-                                onItemClick = {
+                                itemClick = {
                                     _dialog?.dismiss()
                                     itemFile?.file()?.shareFile()
                                 }

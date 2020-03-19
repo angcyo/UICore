@@ -44,7 +44,7 @@ open class GridDialogConfig(context: Context? = null) : BaseRecyclerDialogConfig
     /**添加Item*/
     fun addDialogItem(action: DslDialogGridItem.() -> Unit) {
         adapterItemList.add(DslDialogGridItem().apply {
-            onItemClick = {
+            itemClick = {
                 onDialogItemClick(this, it)
             }
             action()

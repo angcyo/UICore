@@ -247,7 +247,7 @@ class PickerImageFragment : BasePickerFragment() {
                 }
             }
             //点击事件
-            onItemClick = {
+            itemClick = {
                 //大图预览
                 val startPosition =
                     pickerViewModel.currentFolder.value?.mediaItemList?.indexOf(loaderMedia)
@@ -286,7 +286,7 @@ class PickerImageFragment : BasePickerFragment() {
                             DslPickerFolderItem()() {
                                 itemData = folder
                                 itemIsSelected = folder == pickerViewModel.currentFolder.value
-                                onItemClick = {
+                                itemClick = {
                                     selectorFolder = folder
                                     hide()
                                 }

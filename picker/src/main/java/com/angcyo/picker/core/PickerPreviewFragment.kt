@@ -106,7 +106,7 @@ class PickerPreviewFragment : BasePickerFragment() {
                         itemLoadUri = it.loadUri()
 
                         //点击图片关闭界面
-                        onItemClick = {
+                        itemClick = {
                             _fullscreen()
                         }
                     })
@@ -332,7 +332,7 @@ class PickerPreviewFragment : BasePickerFragment() {
                         previewConfig.previewSelectorList && selectorList.contains(loaderMedia) != true
 
                     //滚动到选中的item
-                    onItemClick = {
+                    itemClick = {
                         val indexOf = previewMediaList.indexOf(loaderMedia)
                         if (indexOf != -1) {
                             _vh.vp(R.id.lib_view_pager)

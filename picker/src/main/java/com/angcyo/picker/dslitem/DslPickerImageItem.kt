@@ -90,14 +90,14 @@ open class DslPickerImageItem : DslAdapterItem() {
         margin(1)
 
         //长按赋值媒体信息
-        onItemLongClick = {
+        itemLongClick = {
             it.longFeedback()
             loaderMedia?.toString()?.copy(it.context)
             true
         }
 
         //大图预览
-        onItemClick = {
+        itemClick = {
 
         }
     }

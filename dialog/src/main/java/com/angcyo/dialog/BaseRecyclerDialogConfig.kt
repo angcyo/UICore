@@ -107,7 +107,7 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
         }
 
         dialogBottomCancelItem?.apply {
-            onItemClick = {
+            itemClick = {
                 dialog.cancel()
             }
             dialogViewHolder.group(_cancelItemWrapLayoutId)?.also {

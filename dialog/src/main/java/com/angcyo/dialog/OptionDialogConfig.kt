@@ -200,7 +200,7 @@ open class OptionDialogConfig : BaseDialogConfig() {
 
                     itemOptionText = onOptionItemToString(data)
 
-                    onItemClick = {
+                    itemClick = {
                         if (loadLevel == optionList.size) {
                             //当前选择界面数据, 是最后级别的
                             optionList.add(data)

@@ -31,7 +31,7 @@ open class DslPhotoViewItem : DslAdapterItem() {
                 if (scale > 1) {
                     setScale(1f, true)
                 } else {
-                    onItemClick?.invoke(this)
+                    itemClick?.invoke(this)
                 }
             }
         }

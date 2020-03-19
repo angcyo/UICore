@@ -26,7 +26,7 @@ open class ItemDialogConfig(context: Context? = null) : BaseRecyclerDialogConfig
         adapterItemList.add(DslDialogTextItem().apply {
             itemTopInsert = _dimen(R.dimen.lib_line_px)
             itemDecorationColor = _color(R.color.dialog_line)
-            onItemClick = {
+            itemClick = {
                 onDialogItemClick(this, it)
             }
             action()
