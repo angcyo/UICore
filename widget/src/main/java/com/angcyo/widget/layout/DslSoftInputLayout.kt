@@ -45,10 +45,13 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
 
         /**模式: 同时改变内容和emoji布局的高度*/
         const val MODE_HEIGHT = 1
+
         /**模式: 同时偏移内容和emoji布局*/
         const val MODE_OFFSET = 2
+
         /**只改变内容布局的高度, emoji跟随布局*/
         const val MODE_CONTENT_HEIGHT = 3
+
         /**只改变emoji的高度, 内容顶上去*/
         const val MODE_EMOJI_HEIGHT = 4
     }
@@ -149,7 +152,6 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
         if (isInEditMode) {
             enableShowAnimator = false
             enableHideAnimator = false
-            showEmojiLayout(DEFAULT_SOFT_INPUT_HEIGHT)
         }
     }
 
@@ -401,6 +403,11 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
         }
         if (childCount > 1) {
             _emojiView = getChildAt(1)
+        }
+        if (isInEditMode) {
+            if (_emojiView != null) {
+                showEmojiLayout(DEFAULT_SOFT_INPUT_HEIGHT)
+            }
         }
     }
 

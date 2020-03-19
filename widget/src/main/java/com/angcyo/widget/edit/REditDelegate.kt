@@ -85,26 +85,26 @@ class REditDelegate(val editText: EditText) {
     //</editor-fold desc="DslEditText">
 
     fun initAttribute(context: Context, attrs: AttributeSet?) {
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.REdit)
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.REditDelegate)
 
         showClearDrawable =
-            typedArray.getBoolean(R.styleable.REdit_r_show_clear, showClearDrawable)
+            typedArray.getBoolean(R.styleable.REditDelegate_r_show_clear, showClearDrawable)
 
         isPasswordDrawable = typedArray.getBoolean(
-            R.styleable.REdit_r_is_password_drawable,
+            R.styleable.REditDelegate_r_is_password_drawable,
             editText.isPasswordType()
         )
 
         showPasswordOnTouch =
             typedArray.getBoolean(
-                R.styleable.REdit_r_show_password_on_touch,
+                R.styleable.REditDelegate_r_show_password_on_touch,
                 showPasswordOnTouch
             )
 
-        if (typedArray.hasValue(R.styleable.REdit_r_clear_drawable)) {
+        if (typedArray.hasValue(R.styleable.REditDelegate_r_clear_drawable)) {
 
             clearDrawable =
-                typedArray.getDrawable(R.styleable.REdit_r_clear_drawable)
+                typedArray.getDrawable(R.styleable.REditDelegate_r_clear_drawable)
         } else {
 
             if (isPasswordDrawable) {

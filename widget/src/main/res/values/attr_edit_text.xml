@@ -16,7 +16,7 @@
     <attr name="r_hide_soft_input_on_invisible" format="boolean" />
 
     <!--相同[Edit]属性代理读取设置¬-->
-    <declare-styleable name="REdit">
+    <declare-styleable name="REditDelegate">
         <attr name="r_show_clear" />
         <attr name="r_clear_drawable" />
         <attr name="r_is_password_drawable" />
