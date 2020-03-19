@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import com.angcyo.library.L
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.widget.image.DslImageView
+import com.bumptech.glide.load.resource.gif.GifDrawable
 
 /**
  *
@@ -48,6 +49,18 @@ open class GlideImageView : DslImageView {
 
         drawable?.apply {
             L.d("${this@GlideImageView.simpleHash()}:${this.simpleHash()} w:$minimumWidth:$measuredWidth h:$minimumHeight:$minimumHeight")
+        }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        if (drawable is GifDrawable) {
+            (drawable as GifDrawable).recycle()
+            setImageDrawable(null)
+        }
+        if (drawable is pl.droidsonroids.gif.GifDrawable) {
+            (drawable as GifDrawable).recycle()
+            setImageDrawable(null)
         }
     }
 
