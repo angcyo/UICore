@@ -35,7 +35,7 @@ class FragmentBridge : Fragment() {
         fun install(fragmentManager: FragmentManager): FragmentBridge {
             val clsName = FragmentBridge::class.java.name
             var fragmentByTag: FragmentBridge? =
-                fragmentManager.findFragmentByTag(clsName) as? FragmentBridge
+                fragmentManager.findFragmentByTag(TAG) as? FragmentBridge
             if (fragmentByTag == null) {
                 fragmentByTag = instantiateFragment(
                     fragmentManager.javaClass.classLoader!!,
@@ -49,6 +49,8 @@ class FragmentBridge : Fragment() {
                     .beginTransaction()
                     .add(fragmentByTag, TAG)
                     .commitAllowingStateLoss()
+                //androidx.lifecycle.ReportFragment.injectIfNeededIn
+                // Hopefully, we are the first to make a transaction.
                 fragmentManager.executePendingTransactions()
             }
             return fragmentByTag
