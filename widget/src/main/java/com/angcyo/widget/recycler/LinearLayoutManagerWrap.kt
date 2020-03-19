@@ -20,6 +20,11 @@ class LinearLayoutManagerWrap : LinearLayoutManager {
 
     constructor(
         context: Context,
+        orientation: Int = RecyclerView.VERTICAL
+    ) : super(context, orientation, false)
+
+    constructor(
+        context: Context,
         orientation: Int,
         reverseLayout: Boolean
     ) : super(context, orientation, reverseLayout)
