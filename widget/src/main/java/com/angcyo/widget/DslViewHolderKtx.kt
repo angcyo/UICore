@@ -40,6 +40,7 @@ fun DslViewHolder._tv(@IdRes id: Int): DslTextView? = v(id)
 fun DslViewHolder._et(@IdRes id: Int): DslEditText? = v(id)
 fun DslViewHolder._ev(@IdRes id: Int): DslEditText? = v(id)
 
+/**返回true, 表示有空字符串*/
 fun DslViewHolder.checkEmpty(@IdRes vararg ids: Int): Boolean {
     var empty = false
     for (id in ids) {

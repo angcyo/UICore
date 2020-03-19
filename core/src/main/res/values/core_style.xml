@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--账号输入框样式-->
+    <style name="LibUserNameStyle" parent="LibBodyTextStyle">
+        <item name="android:inputType">textEmailAddress</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:minHeight">45dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="r_hide_soft_input_on_detached">true</item>
+        <item name="android:completionThreshold">1</item>
+        <item name="android:drawablePadding">@dimen/lib_xhdpi</item>
+        <item name="android:padding">@dimen/lib_hdpi</item>
+        <item name="android:background">@drawable/lib_bottom_line_selector</item>
+    </style>
+
+    <!--密码输入框样式-->
+    <style name="LibPasswordStyle" parent="LibUserNameStyle">
+        <item name="android:inputType">textWebPassword</item>
+        <item name="r_show_password_on_touch">false</item>
+        <item name="r_clear_drawable">@drawable/lib_password_selector</item>
+        <item name="r_is_password_drawable">true</item>
+    </style>
+
+</resources>

@@ -369,10 +369,10 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
                 } else {
                     //其他布局
                     childTop = when (verticalGravity) {
-                        Gravity.TOP -> parentTop + lp.topMargin + _softInputPaddingTop
+                        Gravity.TOP -> parentTop + lp.topMargin
                         Gravity.CENTER_VERTICAL -> parentTop + (parentBottom - parentTop - height) / 2 +
                                 lp.topMargin - lp.bottomMargin
-                        Gravity.BOTTOM -> parentBottom - height - lp.bottomMargin - _softInputPaddingTop
+                        Gravity.BOTTOM -> parentBottom - height - lp.bottomMargin
                         else -> parentTop + lp.topMargin
                     }
                 }

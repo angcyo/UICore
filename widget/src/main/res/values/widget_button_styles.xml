@@ -35,6 +35,7 @@
         <item name="android:paddingBottom">4dp</item>
     </style>
 
+    <!--具有min height, 大padding的按钮-->
     <style name="DefaultButtonMinStyle" parent="DefaultButtonStyleNormal">
         <item name="android:minHeight">@dimen/lib_min_item_height</item>
         <item name="android:paddingLeft">@dimen/lib_xhdpi</item>

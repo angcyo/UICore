@@ -290,7 +290,7 @@ fun <T : View> ViewGroup.append(view: T?, action: T.() -> Unit = {}): View {
 
 /**清空之前所有视图, 使用[layoutId]重新渲染*/
 fun ViewGroup.replace(@LayoutRes layoutId: Int, attachToRoot: Boolean = true): View {
-    if (childCount > 0) {
+    if (childCount > 0 && layoutId != -1) {
         removeAllViews()
     }
     return inflate(layoutId, attachToRoot)
