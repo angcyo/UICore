@@ -72,7 +72,10 @@ fun Context.getDimen(@DimenRes id: Int): Int {
     return resources.getDimensionPixelOffset(id)
 }
 
-fun Context.loadDrawable(@DrawableRes id: Int): Drawable? {
+fun Context.loadDrawable(id: Int): Drawable? {
+    if (id < 0) {
+        return null
+    }
     return ContextCompat.getDrawable(this, id)?.initBounds()
 }
 

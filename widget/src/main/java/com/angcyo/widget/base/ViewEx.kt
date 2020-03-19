@@ -13,6 +13,7 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ListView
 import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -50,7 +51,7 @@ fun View.getColor(@ColorRes id: Int): Int {
     return ContextCompat.getColor(context, id)
 }
 
-fun View.loadDrawable(id: Int): Drawable? {
+fun View.loadDrawable(@DrawableRes id: Int): Drawable? {
     return context?.loadDrawable(id)
 }
 
