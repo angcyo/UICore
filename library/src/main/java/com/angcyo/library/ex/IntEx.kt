@@ -25,10 +25,16 @@ fun Int.add(value: Int): Int = this or value
 
 /**第4位的最高字节  0x8000 = 32,768, 未定义的资源*/
 val undefined_res = -32_768
+
 /**未定义的整数*/
 val undefined_int = -1
+
+/**未定义的大小*/
+val undefined_size = Int.MIN_VALUE
+
 /**未定义的浮点数*/
 val undefined_float = -1f
+
 /**未定义的颜色*/
 val undefined_color = -32_768
 

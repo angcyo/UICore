@@ -12,7 +12,10 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.library.L
 import com.angcyo.library.ex.elseNull
+import com.angcyo.library.ex.undefined_size
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.setHeight
+import com.angcyo.widget.base.setWidth
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -104,6 +107,10 @@ open class DslAdapterItem : LifecycleOwner {
 
     }
 
+    /**强制指定item的宽高*/
+    var itemWidth: Int = undefined_size
+    var itemHeight: Int = undefined_size
+
     /**唯一标识此item的值*/
     var itemTag: String? = null
 
@@ -120,17 +127,17 @@ open class DslAdapterItem : LifecycleOwner {
     /**
      * 点击事件和长按事件封装
      * */
-    var onItemClick: ((View) -> Unit)? = null
-    var onItemLongClick: ((View) -> Boolean)? = null
+    var itemClick: ((View) -> Unit)? = null
+    var itemLongClick: ((View) -> Boolean)? = null
 
     var _clickListener: View.OnClickListener? = View.OnClickListener { view ->
-        notNull(onItemClick, view) {
-            onItemClick?.invoke(view!!)
+        notNull(itemClick, view) {
+            itemClick?.invoke(view!!)
         }
     }
 
     var _longClickListener: View.OnLongClickListener? =
-        View.OnLongClickListener { view -> onItemLongClick?.invoke(view) ?: false }
+        View.OnLongClickListener { view -> itemLongClick?.invoke(view) ?: false }
 
     open fun onItemBind(
         itemHolder: DslViewHolder,
@@ -138,13 +145,19 @@ open class DslAdapterItem : LifecycleOwner {
         adapterItem: DslAdapterItem,
         payloads: List<Any>
     ) {
-        if (onItemClick == null || _clickListener == null) {
+        if (itemWidth != undefined_size) {
+            itemHolder.itemView.setWidth(itemWidth)
+        }
+        if (itemHeight != undefined_size) {
+            itemHolder.itemView.setHeight(itemHeight)
+        }
+        if (itemClick == null || _clickListener == null) {
             itemHolder.itemView.isClickable = false
         } else {
             itemHolder.clickItem(_clickListener)
         }
 
-        if (onItemLongClick == null || _longClickListener == null) {
+        if (itemLongClick == null || _longClickListener == null) {
             itemHolder.itemView.isLongClickable = false
         } else {
             itemHolder.itemView.setOnLongClickListener(_longClickListener)
