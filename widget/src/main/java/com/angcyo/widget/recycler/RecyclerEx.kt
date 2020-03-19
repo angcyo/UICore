@@ -100,7 +100,7 @@ fun RecyclerView.dslAdapter(
 
 /** 通过[V] [H] [GV2] [GH3] [SV2] [SV3] 方式, 设置 [LayoutManager] */
 fun RecyclerView.resetLayoutManager(match: String) {
-    var layoutManager: RecyclerView.LayoutManager? = null
+    var layoutManager: LayoutManager? = null
     var spanCount = 1
     var orientation = LinearLayout.VERTICAL
 
@@ -154,38 +154,9 @@ fun RecyclerView.resetLayoutManager(match: String) {
 }
 
 /**
- * 获取[RecyclerView] [Fling] 时的速率
- * */
-fun RecyclerView?.getLastVelocity(): Float {
-    var currVelocity = 0f
-    try {
-        val mViewFlinger = this.getMember(RecyclerView::class.java, "mViewFlinger")
-        var mScroller = mViewFlinger.getMember("mScroller")
-        if (mScroller == null) {
-            mScroller = mViewFlinger.getMember("mOverScroller")
-        }
-        when (mScroller) {
-            is OverScroller -> {
-                currVelocity = mScroller.currVelocity
-            }
-            is ScrollerCompat -> {
-                currVelocity = mScroller.currVelocity
-            }
-            else -> {
-                //throw new IllegalArgumentException("未兼容的mScroller类型:" + mScroller.getClass().getSimpleName());
-            }
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
-    return currVelocity
-}
-
-
-/**
  * 取消RecyclerView的默认动画
  * */
-fun RecyclerView.noItemAnim(animator: RecyclerView.ItemAnimator? = null) {
+fun RecyclerView.noItemAnim(animator: ItemAnimator? = null) {
     itemAnimator = animator
 }
 
@@ -202,23 +173,6 @@ fun RecyclerView.noItemChangeAnim(no: Boolean = true) {
             !no
     }
 }
-
-fun Int.scrollStateStr(): String {
-    return when (this) {
-        SCROLL_STATE_SETTLING -> "SCROLL_STATE_SETTLING"
-        SCROLL_STATE_DRAGGING -> "SCROLL_STATE_DRAGGING"
-        SCROLL_STATE_IDLE -> "SCROLL_STATE_IDLE"
-        else -> "Unknown"
-    }
-}
-
-fun RecyclerView.scrollHelper(action: ScrollHelper.() -> Unit = {}): ScrollHelper {
-    return ScrollHelper().apply {
-        attach(this@scrollHelper)
-        action()
-    }
-}
-
 
 //</editor-fold desc="基础">
 
@@ -307,3 +261,86 @@ fun RecyclerView.localUpdateItem(action: (adapterItem: DslAdapterItem, itemHolde
     }
 }
 //</editor-fold desc="ViewHolder相关">
+
+//<editor-fold desc="滚动相关">
+
+/**
+ * 获取[RecyclerView] [Fling] 时的速率
+ * */
+fun RecyclerView?.getLastVelocity(): Float {
+    var currVelocity = 0f
+    try {
+        val mViewFlinger = this.getMember(RecyclerView::class.java, "mViewFlinger")
+        var mScroller = mViewFlinger.getMember("mScroller")
+        if (mScroller == null) {
+            mScroller = mViewFlinger.getMember("mOverScroller")
+        }
+        when (mScroller) {
+            is OverScroller -> {
+                currVelocity = mScroller.currVelocity
+            }
+            is ScrollerCompat -> {
+                currVelocity = mScroller.currVelocity
+            }
+            else -> {
+                //throw new IllegalArgumentException("未兼容的mScroller类型:" + mScroller.getClass().getSimpleName());
+            }
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return currVelocity
+}
+
+fun Int.scrollStateStr(): String {
+    return when (this) {
+        SCROLL_STATE_SETTLING -> "SCROLL_STATE_SETTLING"
+        SCROLL_STATE_DRAGGING -> "SCROLL_STATE_DRAGGING"
+        SCROLL_STATE_IDLE -> "SCROLL_STATE_IDLE"
+        else -> "Unknown"
+    }
+}
+
+fun RecyclerView.scrollHelper(action: ScrollHelper.() -> Unit = {}): ScrollHelper {
+    return ScrollHelper().apply {
+        attach(this@scrollHelper)
+        action()
+    }
+}
+
+/**保存当前的滚动位置*/
+fun RecyclerView.saveScrollPosition(): ScrollPositionConfig {
+    val result = ScrollPositionConfig()
+
+    if (childCount > 0) {
+        val childAt = getChildAt(0)
+        val layoutParams = childAt.layoutParams as LayoutParams
+
+        result.adapterPosition = layoutParams.viewAdapterPosition
+
+        result.left = layoutManager?.getDecoratedLeft(childAt) ?: 0
+        result.top = layoutManager?.getDecoratedTop(childAt) ?: 0
+    }
+
+    return result
+}
+
+/**恢复滚动位置*/
+fun RecyclerView.restoreScrollPosition(config: ScrollPositionConfig) {
+    if (config.adapterPosition >= 0) {
+        val lm = layoutManager
+        when (lm) {
+            is LinearLayoutManager -> lm.scrollToPositionWithOffset(
+                config.adapterPosition,
+                if (lm.orientation == HORIZONTAL) config.left else config.top
+            )
+            is StaggeredGridLayoutManager -> lm.scrollToPositionWithOffset(
+                config.adapterPosition,
+                if (lm.orientation == HORIZONTAL) config.left else config.top
+            )
+            else -> scrollToPosition(config.adapterPosition)
+        }
+    }
+}
+
+//</editor-fold desc="滚动相关">
