@@ -125,7 +125,11 @@ class DslGlide {
 
     /**开始加载, 支持本地, 网络, gif, 视频, 图片*/
     fun load(string: String?) {
-        load(Uri.parse(string ?: "null"))
+        if (string.isNullOrBlank()) {
+            _load(null, false)
+        } else {
+            load(Uri.parse(string))
+        }
     }
 
     fun load(uri: Uri?) {
@@ -229,10 +233,15 @@ class DslGlide {
     fun _load(uri: Uri?, asGif: Boolean = false) {
         clear()
 
+        if (uri == null) {
+            targetView?.setImageDrawable(placeholderDrawable ?: errorDrawable)
+            return
+        }
+
         _checkLoad {
             val targetView = targetView!!
-            val path = uri?.path
-            val url: String? = uri?.toString()
+            val path = uri.path
+            val url: String? = uri.toString()
 
             if (uri.isHttpScheme()) {
                 if (asGif && !url.isNullOrBlank()) {
