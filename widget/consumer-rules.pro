@@ -8,6 +8,10 @@
    android.widget.OverScroller mOverScroller;
    #<fields>;
 }
+-keepclassmembers class androidx.core.widget.NestedScrollView {
+   android.widget.OverScroller mScroller;
+   #<fields>;
+}
 # end...
 
 # com.angcyo.widget.base.TextViewExKt.clearListeners 系统的类, 全部不会被混淆

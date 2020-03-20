@@ -70,7 +70,7 @@ class LinkageHeaderBehavior(
                     consumedScrollVertical(dy, scrollY, minScroll, maxScroll, consumed)
                 }
             }
-        } else if (scrollY != 0) {
+        } else if (scrollY != 0 && target == headerRecyclerView) {
             //内容产生过偏移, 那么此次的内嵌滚动肯定是需要消耗的
             consumedScrollVertical(dy, consumed)
         }

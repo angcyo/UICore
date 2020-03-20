@@ -9,9 +9,7 @@ import android.os.Build
 import android.view.*
 import android.view.animation.DecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.FrameLayout
-import android.widget.ListView
+import android.widget.*
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
@@ -22,17 +20,21 @@ import androidx.core.math.MathUtils.clamp
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
+import androidx.core.widget.NestedScrollView
+import androidx.core.widget.ScrollerCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.angcyo.library.ex.getStatusBarHeight
 import com.angcyo.library.ex.loadDrawable
 import com.angcyo.library.ex.remove
 import com.angcyo.library.ex.undefined_res
+import com.angcyo.library.utils.getMember
 import com.angcyo.widget.base.ViewEx._tempRect
 import com.angcyo.widget.edit.IEditDelegate
 import com.angcyo.widget.edit.REditDelegate
 import com.angcyo.widget.layout.ILayoutDelegate
 import com.angcyo.widget.layout.RLayoutDelegate
+import com.angcyo.widget.recycler.getLastVelocity
 
 /**
  *
@@ -668,6 +670,36 @@ fun View.findView(isIt: (View) -> Boolean): View? {
             result
         }
         else -> null
+    }
+}
+
+fun View?.getLastVelocity(): Float {
+    var currVelocity = 0f
+    try {
+        when (this) {
+            is RecyclerView -> currVelocity = this.getLastVelocity()
+            is NestedScrollView -> {
+                val mScroller = this.getMember(NestedScrollView::class.java, "mScroller")
+                currVelocity = mScroller.getCurrVelocity()
+            }
+            is ScrollView -> {
+                val mScroller = this.getMember(ScrollView::class.java, "mScroller")
+                currVelocity = mScroller.getCurrVelocity()
+            }
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return currVelocity
+}
+
+fun Any?.getCurrVelocity(): Float {
+    return when (this) {
+        is OverScroller -> currVelocity
+        is ScrollerCompat -> currVelocity
+        else -> {
+            0f
+        }
     }
 }
 

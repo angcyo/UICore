@@ -3,13 +3,12 @@ package com.angcyo.widget.recycler
 import android.text.TextUtils
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.OverScroller
-import androidx.core.widget.ScrollerCompat
 import androidx.recyclerview.widget.*
 import androidx.recyclerview.widget.RecyclerView.*
 import com.angcyo.dsladapter.*
 import com.angcyo.library.utils.getMember
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.getCurrVelocity
 
 /**
  *
@@ -275,17 +274,7 @@ fun RecyclerView?.getLastVelocity(): Float {
         if (mScroller == null) {
             mScroller = mViewFlinger.getMember("mOverScroller")
         }
-        when (mScroller) {
-            is OverScroller -> {
-                currVelocity = mScroller.currVelocity
-            }
-            is ScrollerCompat -> {
-                currVelocity = mScroller.currVelocity
-            }
-            else -> {
-                //throw new IllegalArgumentException("未兼容的mScroller类型:" + mScroller.getClass().getSimpleName());
-            }
-        }
+        currVelocity = mScroller.getCurrVelocity()
     } catch (e: Exception) {
         e.printStackTrace()
     }
