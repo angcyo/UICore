@@ -23,6 +23,7 @@ import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 import com.angcyo.library.ex.getStatusBarHeight
 import com.angcyo.library.ex.loadDrawable
 import com.angcyo.library.ex.remove
@@ -204,7 +205,6 @@ fun View.viewRect(rect: RectF) {
     rect.set(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat())
 }
 
-
 /**视图View 变灰*/
 fun View.grayscale(enable: Boolean = true) {
     if (enable) {
@@ -383,12 +383,9 @@ fun ViewGroup.LayoutParams.recyclerParams(config: RecyclerView.LayoutParams.() -
     }
 }
 
-
 //</editor-fold desc="layoutParams扩展">
 
-
 //<editor-fold desc="offset扩展">
-
 
 fun View.offsetTop(offset: Int) {
     ViewCompat.offsetTopAndBottom(this, offset)
@@ -431,7 +428,6 @@ fun View.offsetLeftTo(newLeft: Int) {
 }
 
 //</editor-fold desc="offset扩展">
-
 
 //<editor-fold desc="scroll扩展">
 
@@ -619,3 +615,60 @@ fun View.isSoftKeyboardShow(minHeight: Int = 100): Boolean {
 }
 
 //</editor-fold desc="软键盘相关">
+
+//<editor-fold desc="其他">
+
+/**查找[RecyclerView]*/
+fun View.findRecyclerView(
+    predicate: (View) -> Boolean = {
+        it is RecyclerView &&
+                it.measuredWidth > this.measuredWidth / 2 &&
+                it.measuredHeight > this.measuredHeight / 2
+    }
+): RecyclerView? {
+    return findView(predicate) as? RecyclerView
+}
+
+/**查找指定的[View]*/
+fun View.findView(isIt: (View) -> Boolean): View? {
+    return when {
+        isIt(this) -> this
+        this is ViewPager -> {
+            var result: View? = null
+            for (i in 0 until childCount) {
+                val child = getChildAt(i)
+                if (child.left >= scrollX &&
+                    child.top >= scrollY &&
+                    child.right <= scrollX + measuredWidth &&
+                    child.bottom <= scrollY + measuredHeight
+                ) {
+                    result = child
+                }
+            }
+
+            if (result != null) {
+                result.findView(isIt)
+            } else {
+                if (isIt(this)) {
+                    this
+                } else {
+                    null
+                }
+            }
+        }
+        this is ViewGroup -> {
+            var result: View? = null
+            for (i in 0 until childCount) {
+                val childAt = getChildAt(i)
+                result = childAt.findView(isIt)
+                if (result != null) {
+                    break
+                }
+            }
+            result
+        }
+        else -> null
+    }
+}
+
+//</editor-fold desc="其他">

@@ -21,12 +21,14 @@ abstract class BaseDependsBehavior<T : View>(
 ) : LogBehavior<T>(context, attrs) {
 
     /**依赖的视图, 用于触发[onDependentViewChanged]*/
-    var dependsLayout: View? = null
+    var dependsView: View? = null
 
-    /**是否需要监听[dependsLayout]的改变*/
+    /**是否需要监听[dependsView]的改变*/
     var enableDependsOn = true
 
     //常用对象
+
+    /**[com.angcyo.widget.layout.RCoordinatorLayout.onAttachedToWindow]*/
     var childView: T? = null
     var parentLayout: CoordinatorLayout? = null
 
@@ -35,7 +37,7 @@ abstract class BaseDependsBehavior<T : View>(
     override fun layoutDependsOn(parent: CoordinatorLayout, child: T, dependency: View): Boolean {
         parentLayout = parent
         childView = child
-        return enableDependsOn && dependsLayout == dependency
+        return enableDependsOn && dependsView == dependency
     }
 
     @CallSuper

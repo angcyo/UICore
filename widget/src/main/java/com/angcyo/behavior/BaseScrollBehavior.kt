@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewConfiguration
 import android.widget.OverScroller
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.angcyo.library.L
 import com.angcyo.tablayout.clamp
 import com.angcyo.widget.base.offsetLeftTo
 import com.angcyo.widget.base.offsetTopTo
@@ -42,7 +43,7 @@ open class BaseScrollBehavior<T : View>(
     var minFlingVelocity = 0
     var maxFlingVelocity = 0
 
-    //记录当前滚动量
+    //记录当前滚动量, 只是记录值, ui效果, 还需另行处理.
     var scrollX: Int = 0
     var scrollY: Int = 0
 
@@ -83,12 +84,13 @@ open class BaseScrollBehavior<T : View>(
         max: Int,
         consumed: IntArray?
     ): Int {
-        return super.consumedScrollVertical(dy, current, min, max, consumed).apply {
-            consumed?.let {
-                it[1] = this
-                scrollBy(0, -this)
-            }
+        //计算在范围内,需要消耗的真实dy
+        val consumedDy = super.consumedScrollVertical(dy, current, min, max, consumed)
+        consumed?.let {
+            it[1] = consumedDy
+            scrollBy(0, -consumedDy)
         }
+        return consumedDy
     }
 
     override fun onLayoutChildAfter(parent: CoordinatorLayout, child: T, layoutDirection: Int) {
@@ -118,6 +120,9 @@ open class BaseScrollBehavior<T : View>(
         scrollX = x
         scrollY = y
 
+        if (showLog) {
+            L.i("scrollTo: x:$x y:$y")
+        }
         onScrollTo(x, y)
     }
 
