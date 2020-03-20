@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.angcyo.dialog.LoadingDialog.dialogPool
 import com.angcyo.library.L
+import com.angcyo.library.ex.elseNull
 import com.angcyo.transition.dslTransition
 import com.angcyo.widget.DslViewHolder
 import java.lang.ref.WeakReference
@@ -32,32 +33,42 @@ object LoadingDialog {
 fun hideLoading(
     transition: Boolean = false,
     delay: Long = 888,
+    onEnd: () -> Unit = {},
     action: DslViewHolder.() -> Unit = {}
 ) {
     if (dialogPool.isNotEmpty()) {
         dialogPool.pop().get()?.run {
-            if (transition) {
-                //执行转换
-                window?.decorView?.run {
-                    val dialogViewHolder = DslViewHolder(this)
+            try {
+                if (transition) {
+                    //执行转换
+                    window?.decorView?.run {
+                        val dialogViewHolder = DslViewHolder(this)
 
-                    dslTransition(this as ViewGroup) {
-                        onCaptureEndValues = {
-                            dialogViewHolder.action()
+                        dslTransition(this as ViewGroup) {
+                            onCaptureEndValues = {
+                                dialogViewHolder.action()
+                            }
                         }
-                    }
 
-                    dialogViewHolder.postDelay(delay) {
-                        try {
-                            //如果此时的Activity提前结束, 将会崩溃.
-                            dismiss()
-                        } catch (e: Exception) {
-                            L.w(e)
+                        dialogViewHolder.postDelay(delay) {
+                            try {
+                                //如果此时的Activity提前结束, 将会崩溃.
+                                dismiss()
+                                onEnd()
+                            } catch (e: Exception) {
+                                L.w(e)
+                            }
                         }
+                    }.elseNull {
+                        dismiss()
+                        onEnd()
                     }
-                } ?: dismiss()
-            } else {
-                dismiss()
+                } else {
+                    dismiss()
+                    onEnd()
+                }
+            } catch (e: Exception) {
+                L.w(e)
             }
         }
     }
@@ -147,7 +158,7 @@ fun Fragment.loading(
 //<editor-fold desc="底部弹出显示的loading对话框">
 
 /**在底部显示的加载对话框*/
-fun Fragment.loading(
+fun Fragment.loadingBottom(
     text: CharSequence = "加载中...",
     showCloseView: Boolean = true,
     onCancel: (dialog: Dialog) -> Unit = {}

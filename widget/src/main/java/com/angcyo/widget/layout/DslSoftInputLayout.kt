@@ -13,7 +13,7 @@ import android.widget.FrameLayout
 import com.angcyo.library.L
 import com.angcyo.library.ex.append
 import com.angcyo.library.ex.dpi
-import com.angcyo.library.getStatusBarHeight
+import com.angcyo.library.ex.getStatusBarHeight
 import com.angcyo.widget.R
 import com.angcyo.widget.base.anim
 import com.angcyo.widget.base.hideSoftInput
@@ -508,8 +508,9 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
         val toHeight = height
 
         val fromPaddingTop = _softInputPaddingTop
-        val toPaddingTop =
-            if (action.isShowAction()) if (fixStatusBar) getStatusBarHeight() else 0 else softInputPaddingTop
+        val toPaddingTop = if (action.isShowAction()) {
+            if (fixStatusBar) context.getStatusBarHeight() else 0
+        } else softInputPaddingTop
 
         val fromOffset = _offsetTop
         val toOffset = -height

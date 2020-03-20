@@ -84,12 +84,20 @@ abstract class BaseFragment : AbsLifecycleFragment() {
 
     //<editor-fold desc="Rx 协程">
 
+    //Rx调度管理
     val compositeDisposableLifecycle: CompositeDisposableLifecycle by lazy {
         CompositeDisposableLifecycle(this)
     }
 
+    //协程域管理
     val coroutineScopeLifecycle: CoroutineScopeLifecycle by lazy {
         CoroutineScopeLifecycle(this)
+    }
+
+    /**取消所有异步调度*/
+    fun cancelSchedule(reason: Int = -1) {
+        cancelAllDisposable(reason)
+        cancelCoroutineScope(reason)
     }
 
     /**管理[Disposable]*/
@@ -99,8 +107,13 @@ abstract class BaseFragment : AbsLifecycleFragment() {
     }
 
     /**取消所有[Disposable]*/
-    fun cancelAllDisposable() {
-        compositeDisposableLifecycle.dispose()
+    fun cancelAllDisposable(reason: Int = -1) {
+        compositeDisposableLifecycle.onCancelCallback(reason)
+    }
+
+    /**取消协程域*/
+    fun cancelCoroutineScope(reason: Int = -1) {
+        coroutineScopeLifecycle.onCancelCallback(reason)
     }
 
     /**启动一个具有生命周期的协程域*/
