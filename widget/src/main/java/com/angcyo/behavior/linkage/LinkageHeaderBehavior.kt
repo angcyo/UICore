@@ -2,11 +2,14 @@ package com.angcyo.behavior.linkage
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.math.MathUtils
-import com.angcyo.widget.base.mH
-import com.angcyo.widget.base.offsetTopTo
+import androidx.core.view.NestedScrollingChild
+import com.angcyo.library.L
+import com.angcyo.widget.base.*
+import kotlin.math.abs
 import kotlin.math.min
 
 /**
@@ -37,6 +40,8 @@ class LinkageHeaderBehavior(
             childView?.offsetTopTo(y)
         }
     }
+
+    //<editor-fold desc="内嵌滚动处理">
 
     override fun layoutDependsOn(
         parent: CoordinatorLayout,
@@ -102,29 +107,100 @@ class LinkageHeaderBehavior(
         onHeaderOverScroll(-dyUnconsumed)
     }
 
-    override fun onMeasureChild(
-        parent: CoordinatorLayout,
-        child: View,
-        parentWidthMeasureSpec: Int,
-        widthUsed: Int,
-        parentHeightMeasureSpec: Int,
-        heightUsed: Int
-    ): Boolean {
-        super.onMeasureChild(
-            parent,
-            child,
-            parentWidthMeasureSpec,
-            widthUsed,
-            parentHeightMeasureSpec,
-            heightUsed
-        )
-        //parent.onMeasureChild()
-        return false
-    }
+    //</editor-fold desc="内嵌滚动处理">
 
     /**头部到达边界的滚动处理*/
     fun onHeaderOverScroll(dy: Int) {
         val scroll = MathUtils.clamp(scrollY + dy, minScroll, maxScroll)
         scrollTo(scrollX, scroll)
     }
+
+    //<editor-fold desc="非内嵌滚动处理">
+
+    override fun onFling(
+        e1: MotionEvent?,
+        e2: MotionEvent?,
+        velocityX: Float,
+        velocityY: Float
+    ): Boolean {
+        val absX = abs(velocityX)
+        val absY = abs(velocityY)
+        if (_nestedScrollView == null &&
+            _flingScrollView == null &&
+            absY > absX && absY > minFlingVelocity
+        ) {
+            val delegateScrollView: NestedScrollingChild? = footerScrollView ?: headerScrollView
+            delegateScrollView?.apply {
+                setFlingView(this)
+                val vY = -velocityY.toInt()
+                (footerView ?: headerView)?.behavior()?.apply {
+                    if (this is LinkageFooterBehavior) {
+                        //这一点很重要, 因为是模拟出来的fling操作
+                        this._nestedPreFling = true
+                        this._nestedFlingDirection = vY
+                    }
+                }
+                fling(0, velocity(vY))
+            }
+            //L.i("fling $velocityY")
+            return true
+        }
+        return super.onFling(e1, e2, velocityX, velocityY)
+    }
+
+    val _scrollConsumed = intArrayOf(0, 0)
+
+    override fun onScroll(
+        e1: MotionEvent?,
+        e2: MotionEvent?,
+        distanceX: Float,
+        distanceY: Float
+    ): Boolean {
+        val absX = abs(distanceX)
+        val absY = abs(distanceY)
+
+        if (_nestedScrollView == null) {
+            stopScrollAndFling()
+        }
+
+        if (_nestedScrollView == null && absY > absX && absY > touchSlop && e1 != null && e2 != null) {
+            //L.i("scroll $distanceY")
+
+            //当无内嵌滚动的view访问, 此时发生了滚动的情况下.
+            //优先处理footer滚动, 其次处理header滚动
+            val nestedScrollingChild = footerScrollView
+            val footerView: View? = if (nestedScrollingChild is View) {
+                nestedScrollingChild
+            } else {
+                null
+            }
+
+            if (distanceY > 0) {
+                //手指向上滑动
+                consumedScrollVertical(
+                    distanceY.toInt(),
+                    scrollY,
+                    minScroll,
+                    maxScroll,
+                    _scrollConsumed
+                )
+                if (_scrollConsumed[1] == 0) {
+                    //不需要消耗了
+                    footerView?.scrollBy(0, distanceY.toInt())
+                }
+            } else {
+                //手指向下滚动
+                if (footerView.topCanScroll()) {
+                    footerView?.scrollBy(0, distanceY.toInt())
+                } else {
+                    onHeaderOverScroll(-distanceY.toInt())
+                }
+            }
+            return true
+        }
+        return super.onScroll(e1, e2, distanceX, distanceY)
+    }
+
+    //</editor-fold desc="非内嵌滚动处理">
+
 }

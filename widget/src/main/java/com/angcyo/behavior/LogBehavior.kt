@@ -53,7 +53,7 @@ open class LogBehavior<T : View>(
         axes: Int,
         type: Int
     ): Boolean {
-        i("child:${directTargetChild.simpleHash()} target:${target.simpleHash()} axes:${axes.toAxesString()} type:${type.toTypeString()}")
+        e("child:${directTargetChild.simpleHash()} target:${target.simpleHash()} axes:${axes.toAxesString()} type:${type.toTypeString()}")
         return super.onStartNestedScroll(
             coordinatorLayout,
             child,
@@ -334,6 +334,13 @@ open class LogBehavior<T : View>(
     //</editor-fold desc="Touch相关">
 
     //<editor-fold desc="日志输出">
+
+    fun e(msg: String? = null) {
+        if (showLog) {
+            L._tempStackTraceFront = 3
+            L.e(msg ?: "")
+        }
+    }
 
     fun w(msg: String? = null) {
         if (showLog) {

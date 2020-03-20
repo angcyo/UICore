@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.math.MathUtils.clamp
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.NestedScrollingChild
+import androidx.core.view.NestedScrollingChild2
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import androidx.core.widget.NestedScrollView
@@ -720,6 +721,25 @@ fun Any?.fling(velocityX: Int, velocityY: Int) {
         is RecyclerView -> fling(velocityX, velocityY)
         is NestedScrollView -> fling(velocityY)
         is ScrollView -> fling(velocityY)
+    }
+}
+
+fun Any?.stopScroll() {
+    if (this is NestedScrollingChild2) {
+        this.stopNestedScroll(ViewCompat.TYPE_NON_TOUCH)
+    } else if (this is NestedScrollingChild) {
+        this.stopNestedScroll()
+    }
+
+    if (this is RecyclerView) {
+        this.stopScroll()
+    } else if (this is NestedScrollView) {
+        val mScroller = this.getMember(NestedScrollView::class.java, "mScroller")
+        if (mScroller is OverScroller) {
+            mScroller.abortAnimation()
+        } else if (mScroller is ScrollerCompat) {
+            mScroller.abortAnimation()
+        }
     }
 }
 

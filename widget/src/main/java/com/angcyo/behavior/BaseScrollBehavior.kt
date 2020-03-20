@@ -13,13 +13,13 @@ import com.angcyo.widget.base.offsetTopTo
 import kotlin.math.absoluteValue
 
 /**
- *
+ * 支持[OverScroller]处理
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/01/01
  */
 
-open class BaseScrollBehavior<T : View>(
+abstract class BaseScrollBehavior<T : View>(
     context: Context,
     attributeSet: AttributeSet? = null
 ) : BaseDependsBehavior<T>(context, attributeSet) {

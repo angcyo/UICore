@@ -56,24 +56,4 @@ class LinkageStickyBehavior(
             child.offsetTopTo(bottom)
         }
     }
-
-    override fun onMeasureChild(
-        parent: CoordinatorLayout,
-        child: View,
-        parentWidthMeasureSpec: Int,
-        widthUsed: Int,
-        parentHeightMeasureSpec: Int,
-        heightUsed: Int
-    ): Boolean {
-        super.onMeasureChild(
-            parent,
-            child,
-            parentWidthMeasureSpec,
-            widthUsed,
-            parentHeightMeasureSpec,
-            heightUsed
-        )
-        //parent.onMeasureChild()
-        return false
-    }
 }
