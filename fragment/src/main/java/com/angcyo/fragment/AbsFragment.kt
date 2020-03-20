@@ -3,11 +3,14 @@ package com.angcyo.fragment
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import com.angcyo.library.ex.getColor
@@ -209,7 +212,10 @@ abstract class AbsFragment : Fragment() {
         rootView = if (layoutId != -1) {
             inflater.inflate(layoutId, container, false)
         } else {
-            View(context).apply {
+            TextView(context).apply {
+                gravity = Gravity.CENTER
+                setTextColor(Color.WHITE)
+                text = "重写[onCreateRootView]实现自定义布局!"
                 setBackgroundColor(getColor(R.color.status_bar_color))
             }
         }
