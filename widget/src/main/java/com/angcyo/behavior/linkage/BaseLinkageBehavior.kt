@@ -5,10 +5,10 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.NestedScrollingChild
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.behavior.BaseScrollBehavior
-import com.angcyo.library.L
 import com.angcyo.widget.base.*
 import java.lang.ref.WeakReference
 
@@ -26,7 +26,7 @@ abstract class BaseLinkageBehavior(
 
     companion object {
         //正在快速fling的布局
-        var _flingRecyclerView: WeakReference<RecyclerView>? = null
+        var _flingScrollView: WeakReference<NestedScrollingChild>? = null
     }
 
     //联动相关布局
@@ -35,14 +35,14 @@ abstract class BaseLinkageBehavior(
     var stickyView: View? = null
 
     //behavior 作用在的[RecyclerView], 通常会等于[headerRecyclerView] [footerRecyclerView]其中的一个
-    val childRecyclerView: RecyclerView?
-        get() = childView?.findRecyclerView()
+    val childScrollView: NestedScrollingChild?
+        get() = childView?.findNestedScrollingChild()
 
-    val headerRecyclerView: RecyclerView?
-        get() = headerView?.findRecyclerView()
+    val headerScrollView: NestedScrollingChild?
+        get() = headerView?.findNestedScrollingChild()
 
-    val footerRecyclerView: RecyclerView?
-        get() = footerView?.findRecyclerView()
+    val footerScrollView: NestedScrollingChild?
+        get() = footerView?.findNestedScrollingChild()
 
     /**关联布局依赖*/
     override fun layoutDependsOn(
@@ -126,21 +126,26 @@ abstract class BaseLinkageBehavior(
 //        _topFlingRecyclerView?.stopScroll()
 //        _topFlingRecyclerView = null
 
-        L.i("down $this")
+        //L.i("down $this")
 
-        _flingRecyclerView?.get()?.apply {
-            L.i("down $this")
+        _flingScrollView?.get()?.apply {
+            //L.i("down $this")
             stopNestedScroll()
-            stopScroll()
+            if (this is RecyclerView) {
+                stopScroll()
+            }
         }
-        _flingRecyclerView?.clear()
-        _flingRecyclerView = null
+        _flingScrollView?.clear()
+        _flingScrollView = null
 
         _nestedPreFling = false
     }
 
     //Fling访问标识
     var _nestedPreFling = false
+
+    //Fling的方向, >0 手指向上, <0 手指向下.
+    var _nestedFlingDirection = 0
 
     override fun onNestedPreFling(
         coordinatorLayout: CoordinatorLayout,
@@ -149,8 +154,9 @@ abstract class BaseLinkageBehavior(
         velocityX: Float,
         velocityY: Float
     ): Boolean {
-        if (childRecyclerView == target) {
+        if (childScrollView == target) {
             _nestedPreFling = true
+            _nestedFlingDirection = velocityY.toInt()
         }
         return super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY)
     }
@@ -180,61 +186,53 @@ abstract class BaseLinkageBehavior(
 
         if (dyUnconsumed != 0 /*处于over scroll的情况*/
             && _nestedPreFling /*Fling访问*/
-            && childRecyclerView == target /*只处理自己内部的RecyclerView*/
-            && _flingRecyclerView == null /*防止多次触发*/
+            && childScrollView == target /*只处理自己内部的RecyclerView*/
+            && _flingScrollView == null /*防止多次触发*/
         ) {
 
-            val velocityY = target.getLastVelocity().toInt()
-            if (velocityY <= 0) {
+            //fling速度衰减
+            val velocityY = (target.getLastVelocity() * 0.9).toInt()
+            if (velocityY == 0) {
                 return
             }
 
-            val footerRV = footerRecyclerView
+            val footerRV = footerScrollView
+            val headerRV = headerScrollView
             if (target == footerRV) {
                 //L.i("footer fling $velocityY")
 
                 //来自Footer的Fling, 那么要传给Header
-                headerRecyclerView?.apply {
-                    _flingRecyclerView = WeakReference(this)
-                    fling(0, (-velocityY * 0.9).toInt()) //fling速度衰减
-                }
-            } else {
-                val headerRV = headerRecyclerView
-                if (target == headerRV) {
-                    //L.i("header fling $velocityY")
+                headerRV?.apply {
+                    _flingScrollView = WeakReference(this)
 
-                    //来自Header的Fling, 那么要传给Footer
-                    footerRV?.apply {
-                        _flingRecyclerView = WeakReference(this)
-                        fling(0, (velocityY * 0.9).toInt()) //fling速度衰减
+                    if (this is RecyclerView) {
+                        fling(0, -velocityY)
+                    } else {
+                        //[NestedScrollView]的速度值貌似是和[RecyclerView]反向的
+                        if (_nestedFlingDirection > 0) {
+                            fling(0, velocityY)
+                        } else {
+                            fling(0, -velocityY)
+                        }
+                    }
+                }
+            } else if (target == headerRV) {
+                //L.i("header fling $velocityY")
+
+                //来自Header的Fling, 那么要传给Footer
+                footerRV?.apply {
+                    _flingScrollView = WeakReference(this)
+                    if (this is RecyclerView) {
+                        fling(0, velocityY)
+                    } else {
+                        if (_nestedFlingDirection > 0) {
+                            fling(0, velocityY)
+                        } else {
+                            fling(0, -velocityY)
+                        }
                     }
                 }
             }
         }
-
-//        //fling 传递
-//        if (dyUnconsumed > 0 && _bottomFlingRecyclerView == null && isStickClose()) {
-//            val velocityY = topRecyclerView?.getLastVelocity()?.toInt() ?: 0
-//            //L.e("lastVelocity1:.....${topRecyclerView?.simpleHash()} $velocityY")
-//
-//            if (velocityY != 0) {
-//                bottomRecyclerView?.apply {
-//                    _bottomFlingRecyclerView = this
-//                    fling(0, (velocityY * 0.9).toInt())
-//                }
-//            }
-//        } else if (dyUnconsumed < 0 && _topFlingRecyclerView == null) {
-//            if (target == bottomRecyclerView) {
-//                val velocityY = (target as? RecyclerView)?.getLastVelocity()?.toInt() ?: 0
-//                //L.e("lastVelocity2:.....${target.simpleHash()} $velocityY")
-//
-//                if (velocityY != 0) {
-//                    topRecyclerView?.apply {
-//                        _topFlingRecyclerView = this
-//                        fling(0, (-velocityY * 0.9).toInt())
-//                    }
-//                }
-//            }
-//        }
     }
 }

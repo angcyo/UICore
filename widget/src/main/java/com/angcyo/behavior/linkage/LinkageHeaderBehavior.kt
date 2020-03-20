@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.math.MathUtils
+import com.angcyo.library.L
 import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.offsetTopTo
 import kotlin.math.min
@@ -33,6 +34,7 @@ class LinkageHeaderBehavior(
     init {
         showLog = false
         onScrollTo = { x, y ->
+            //L.w("scrollTo:$y")
             childView?.offsetTopTo(y)
         }
     }
@@ -57,7 +59,7 @@ class LinkageHeaderBehavior(
     ) {
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type)
 
-        if (target == footerRecyclerView) {
+        if (target == footerScrollView) {
             //如果是底部传来的内嵌滚动
             if (priorityHeader || (scrollY != minScroll && scrollY != maxScroll) /*防止头部滚动一半的情况*/) {
                 consumedScrollVertical(dy, scrollY, minScroll, maxScroll, consumed)
@@ -70,7 +72,7 @@ class LinkageHeaderBehavior(
                     consumedScrollVertical(dy, scrollY, minScroll, maxScroll, consumed)
                 }
             }
-        } else if (scrollY != 0 && target == headerRecyclerView) {
+        } else if (scrollY != 0 && target == headerScrollView) {
             //内容产生过偏移, 那么此次的内嵌滚动肯定是需要消耗的
             consumedScrollVertical(dy, consumed)
         }

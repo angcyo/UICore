@@ -18,6 +18,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.math.MathUtils.clamp
 import androidx.core.view.GestureDetectorCompat
+import androidx.core.view.NestedScrollingChild
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import androidx.core.widget.NestedScrollView
@@ -631,6 +632,17 @@ fun View.findRecyclerView(
     return findView(predicate) as? RecyclerView
 }
 
+/**[NestedScrollingChild]*/
+fun View.findNestedScrollingChild(
+    predicate: (View) -> Boolean = {
+        it is NestedScrollingChild &&
+                it.measuredWidth > this.measuredWidth / 2 &&
+                it.measuredHeight > this.measuredHeight / 2
+    }
+): NestedScrollingChild? {
+    return findView(predicate) as? NestedScrollingChild
+}
+
 /**查找指定的[View]*/
 fun View.findView(isIt: (View) -> Boolean): View? {
     return when {
@@ -700,6 +712,14 @@ fun Any?.getCurrVelocity(): Float {
         else -> {
             0f
         }
+    }
+}
+
+fun Any?.fling(velocityX: Int, velocityY: Int) {
+    when (this) {
+        is RecyclerView -> fling(velocityX, velocityY)
+        is NestedScrollView -> fling(velocityY)
+        is ScrollView -> fling(velocityY)
     }
 }
 
