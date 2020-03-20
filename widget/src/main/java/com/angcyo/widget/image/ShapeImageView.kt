@@ -29,10 +29,25 @@ open class ShapeImageView : AppCompatImageView {
 
     /**绘制边框*/
     var drawBorder: Boolean by InvalidateProperty(true)
+
     /**边框的宽度*/
     var borderWidth: Int by InvalidateProperty(2 * dpi)
+
     /**边框的颜色*/
     var borderColor: Int by InvalidateProperty(Color.WHITE)
+
+    /**激活shape绘制功能*/
+    var enableShape: Boolean = true
+        set(value) {
+            field = value
+            if (value) {
+                outlineProvider = ShapeOutline()
+                clipToOutline = true
+            } else {
+                outlineProvider = null
+                clipToOutline = false
+            }
+        }
 
     var _outlineRect = Rect()
     var _outlineRectF = RectF()
@@ -79,6 +94,7 @@ open class ShapeImageView : AppCompatImageView {
             imageRadius
         )
         drawBorder = typedArray.getBoolean(R.styleable.ShapeImageView_r_draw_border, drawBorder)
+        enableShape = typedArray.getBoolean(R.styleable.ShapeImageView_r_enable_shape, enableShape)
         borderWidth = typedArray.getDimensionPixelOffset(
             R.styleable.ShapeImageView_r_border_width,
             borderWidth
@@ -86,19 +102,15 @@ open class ShapeImageView : AppCompatImageView {
         borderColor = typedArray.getColor(R.styleable.ShapeImageView_r_border_color, borderColor)
         maskDrawable = typedArray.getDrawable(R.styleable.ShapeImageView_r_mask_drawable)
         typedArray.recycle()
-
-        outlineProvider = ShapeOutline()
-        clipToOutline = true
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        _outlineRect.set(
-            paddingLeft,
-            paddingTop,
-            measuredWidth - paddingRight,
-            measuredHeight - paddingBottom
-        )
+        if (enableShape) {
+            _outlineRect.set(paddingLeft, paddingTop, w - paddingRight, h - paddingBottom)
+        } else {
+            _outlineRect.set(0, 0, w, h)
+        }
     }
 
     override fun draw(canvas: Canvas) {
@@ -107,7 +119,6 @@ open class ShapeImageView : AppCompatImageView {
 
     override fun onDraw(canvas: Canvas) {
         _outlineRectF.set(_outlineRect)
-
         //mask
         if (maskDrawable == null) {
             super.onDraw(canvas)

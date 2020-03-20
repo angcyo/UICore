@@ -81,11 +81,11 @@ open class DslTextView : DslScrollTextView {
     fun updateBadge(text: String? = null, action: DslAttrBadgeDrawable.() -> Unit = {}) {
         dslBadeDrawable.apply {
             drawBadge = true
-            badgeGravity = Gravity.TOP or Gravity.RIGHT
+            //badgeGravity = Gravity.TOP or Gravity.RIGHT
             badgeText = text
-            badgeCircleRadius
-            badgeOffsetY = 4 * dpi
-            cornerRadius(25 * dp)
+            //badgeCircleRadius
+            //badgeOffsetY = 4 * dpi
+            //cornerRadius(25 * dp)
             action()
         }
     }

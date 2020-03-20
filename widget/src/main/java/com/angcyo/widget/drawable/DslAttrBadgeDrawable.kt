@@ -5,8 +5,8 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.util.AttributeSet
 import android.view.Gravity
-import com.angcyo.library.ex.dpi
 import com.angcyo.drawable.text.DslBadgeDrawable
+import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
 
 /**
@@ -48,7 +48,7 @@ open class DslAttrBadgeDrawable : DslBadgeDrawable() {
         )
         val badgeRadius = typedArray.getDimensionPixelOffset(
             R.styleable.DslAttrBadgeDrawable_r_badge_radius,
-            4 * dpi
+            10 * dpi
         )
         cornerRadius(badgeRadius.toFloat())
         badgeOffsetY = typedArray.getDimensionPixelOffset(

@@ -4,6 +4,7 @@
     <declare-styleable name="ShapeImageView">
         <attr name="r_image_radius" format="dimension" />
         <attr name="r_draw_border" format="boolean" />
+        <attr name="r_enable_shape" format="boolean" />
         <attr name="r_border_width" format="dimension" />
         <attr name="r_border_color" format="color" />
         <attr name="r_mask_drawable" format="reference" />
@@ -21,5 +22,26 @@
         <attr name="r_overlay_drawable_lb" format="reference" />
         <attr name="r_overlay_drawable_rb" format="reference" />
         <attr name="r_overlay_drawable_center" format="reference" />
+
+        <!--角标属性-->
+        <attr name="r_draw_badge" />
+        <attr name="r_badge_solid_color" />
+        <attr name="r_badge_text_color" />
+        <attr name="r_badge_circle_radius" />
+        <attr name="r_badge_radius" />
+        <attr name="r_badge_gravity" />
+        <attr name="r_badge_offset_x" />
+        <attr name="r_badge_offset_y" />
+        <attr name="r_badge_padding_left" />
+        <attr name="r_badge_padding_right" />
+        <attr name="r_badge_padding_top" />
+        <attr name="r_badge_padding_bottom" />
+        <attr name="r_badge_text" />
+        <attr name="r_badge_text_size" />
+        <attr name="r_badge_bg_drawable" />
+        <attr name="r_badge_text_offset_x" />
+        <attr name="r_badge_text_offset_y" />
+        <!--end...-->
+
     </declare-styleable>
 </resources>

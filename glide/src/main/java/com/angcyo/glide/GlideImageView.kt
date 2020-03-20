@@ -41,6 +41,9 @@ open class GlideImageView : DslImageView {
     }
 
     private fun initAttribute(context: Context, attributeSet: AttributeSet?) {
+        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.GlideImageView)
+        drawBorder = typedArray.getBoolean(R.styleable.ShapeImageView_r_draw_border, true)
+        typedArray.recycle()
         dslGlide.placeholderDrawable = drawable
     }
 

@@ -8,11 +8,14 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MotionEvent
 import com.angcyo.drawable.DslGravity
+import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.initBounds
 import com.angcyo.library.ex.toColorInt
 import com.angcyo.widget.R
 import com.angcyo.widget.base.drawRect
 import com.angcyo.widget.base.viewRect
+import com.angcyo.widget.drawable.DslAttrBadgeDrawable
 
 /**
  *
@@ -25,6 +28,7 @@ open class DslImageView : ShapeImageView {
 
     /**点击的时候, 是否显示蒙层*/
     var showTouchMask: Boolean = true
+
     /**蒙层[Drawable]*/
     var touchMaskDrawable: Drawable? = ColorDrawable("#1A000000".toColorInt())
 
@@ -37,6 +41,9 @@ open class DslImageView : ShapeImageView {
 
     val _dslGravity = DslGravity()
     var _isTouchHold = false
+
+    /**角标绘制*/
+    var dslBadeDrawable = DslAttrBadgeDrawable()
 
     constructor(context: Context) : super(context) {
         initAttribute(context, null)
@@ -56,6 +63,9 @@ open class DslImageView : ShapeImageView {
 
     private fun initAttribute(context: Context, attributeSet: AttributeSet?) {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.DslImageView)
+
+        drawBorder = typedArray.getBoolean(R.styleable.ShapeImageView_r_draw_border, false)
+
         showTouchMask =
             typedArray.getBoolean(R.styleable.DslImageView_r_show_touch_mask, showTouchMask)
 
@@ -90,11 +100,15 @@ open class DslImageView : ShapeImageView {
             Gravity.RIGHT or Gravity.BOTTOM
         )
         addOverlayDrawable(
-            typedArray.getDrawable(R.styleable.DslImageView_r_overlay_drawable_center)?.initBounds(),
+            typedArray.getDrawable(R.styleable.DslImageView_r_overlay_drawable_center)
+                ?.initBounds(),
             Gravity.CENTER
         )
 
         typedArray.recycle()
+
+        dslBadeDrawable.initAttribute(context, attributeSet)
+        dslBadeDrawable.callback = this
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -145,6 +159,11 @@ open class DslImageView : ShapeImageView {
             }
         }
 
+        dslBadeDrawable.apply {
+            setBounds(0, 0, measuredWidth, measuredHeight)
+            draw(canvas)
+        }
+
         //draw click drawable
         if (maskDrawable == null) {
             onDrawInMask(canvas)
@@ -186,6 +205,19 @@ open class DslImageView : ShapeImageView {
     fun clearOverlay() {
         overlayList.clear()
         postInvalidateOnAnimation()
+    }
+
+    /**角标的文本, 空字符串会绘制成小圆点*/
+    fun updateBadge(text: String? = null, action: DslAttrBadgeDrawable.() -> Unit = {}) {
+        dslBadeDrawable.apply {
+            drawBadge = true
+            //badgeGravity = Gravity.TOP or Gravity.RIGHT
+            badgeText = text
+            //badgeCircleRadius
+            //badgeOffsetY = 4 * dpi
+            //cornerRadius(25 * dp)
+            action()
+        }
     }
 
     data class OverlayDrawable(
