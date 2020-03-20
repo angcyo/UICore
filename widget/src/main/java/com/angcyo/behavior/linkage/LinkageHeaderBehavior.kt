@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.math.MathUtils
-import com.angcyo.library.L
 import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.offsetTopTo
 import kotlin.math.min
@@ -23,7 +22,7 @@ class LinkageHeaderBehavior(
 ) : BaseLinkageBehavior(context, attributeSet) {
 
     val minScroll: Int
-        get() = -(stickyView.mH() + min(headerView.mH(), footerView.mH()))
+        get() = -min(headerView.mH(), footerView.mH() + stickyView.mH())
 
     val maxScroll: Int
         get() = 0

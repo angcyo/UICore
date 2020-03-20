@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.widget.base.behavior
+import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.offsetTopTo
 
 /**
@@ -67,8 +68,14 @@ class LinkageFooterBehavior(
             parentHeightMeasureSpec,
             heightUsed
         )
-        //parent.onMeasureChild()
-        return false
+        parent.onMeasureChild(
+            child,
+            parentWidthMeasureSpec,
+            widthUsed,
+            parentHeightMeasureSpec,
+            heightUsed + stickyView.mH()
+        )
+        return true
     }
 
     override fun onLayoutChildAfter(parent: CoordinatorLayout, child: View, layoutDirection: Int) {

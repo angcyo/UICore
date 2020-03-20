@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.widget.base.behavior
+import com.angcyo.widget.base.offsetTopTo
 
 /**
  * 头/悬浮/尾 联动滚动, 悬浮的行为
@@ -32,6 +33,27 @@ class LinkageStickyBehavior(
             true
         } else {
             false
+        }
+    }
+
+    override fun onDependentViewChanged(
+        parent: CoordinatorLayout,
+        child: View,
+        dependency: View
+    ): Boolean {
+        val result = super.onDependentViewChanged(parent, child, dependency)
+        child.offsetTopTo(dependency.bottom)
+        return result
+    }
+
+    override fun onDependentViewRemoved(parent: CoordinatorLayout, child: View, dependency: View) {
+        super.onDependentViewRemoved(parent, child, dependency)
+    }
+
+    override fun onLayoutChildAfter(parent: CoordinatorLayout, child: View, layoutDirection: Int) {
+        super.onLayoutChildAfter(parent, child, layoutDirection)
+        dependsView?.apply {
+            child.offsetTopTo(bottom)
         }
     }
 

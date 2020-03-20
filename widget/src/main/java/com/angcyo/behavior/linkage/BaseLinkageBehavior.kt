@@ -78,7 +78,8 @@ abstract class BaseLinkageBehavior(
             axes,
             type
         )
-        return axes == ViewCompat.SCROLL_AXIS_VERTICAL
+        return axes == ViewCompat.SCROLL_AXIS_VERTICAL &&
+                (headerView.mH() + stickyView.mH() + footerView.mH()) > coordinatorLayout.mH()
     }
 
     override fun onInterceptTouchEvent(
