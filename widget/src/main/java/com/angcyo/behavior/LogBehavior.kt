@@ -327,6 +327,7 @@ open class LogBehavior<T : View>(
         child: T,
         ev: MotionEvent
     ): Boolean {
+        /*${parent.requestDisallowInterceptTouchEvent()}*/
         w("child:${child.simpleHash()} ${ev.actionToString()}")
         return super.onTouchEvent(parent, child, ev)
     }

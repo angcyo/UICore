@@ -26,6 +26,12 @@ abstract class BaseScrollBehavior<T : View>(
     attributeSet: AttributeSet? = null
 ) : BaseDependsBehavior<T>(context, attributeSet) {
 
+    companion object {
+        const val DEFAULT_DURATION = 250
+    }
+
+    var scrollDuration = 500
+
     var _overScroller: OverScroller = OverScroller(context)
 
     /**布局top偏移*/
@@ -160,7 +166,7 @@ abstract class BaseScrollBehavior<T : View>(
     /**开始滚动偏移量*/
     fun startScroll(dx: Int, dy: Int) {
         _overScroller.abortAnimation()
-        _overScroller.startScroll(scrollX, scrollY, dx, dy)
+        _overScroller.startScroll(scrollX, scrollY, dx, dy, scrollDuration)
         postInvalidateOnAnimation()
         //invalidate()
     }

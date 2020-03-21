@@ -44,7 +44,15 @@ abstract class BaseGestureBehavior<T : View>(
                 distanceX: Float,
                 distanceY: Float
             ): Boolean {
-                return this@BaseGestureBehavior.onScroll(e1, e2, distanceX, distanceY)
+
+                val result = this@BaseGestureBehavior.onScroll(e1, e2, distanceX, distanceY)
+
+                if (_isFirstScroll) {
+                    _needHandleTouch = result
+                    _isFirstScroll = false
+                }
+
+                return result
             }
         })
     }
@@ -63,17 +71,26 @@ abstract class BaseGestureBehavior<T : View>(
         return super.onTouchEvent(parent, child, ev) || handleTouchEvent(parent, child, ev)
     }
 
+    //是否需要touch event, 当子view调用了[requestDisallowInterceptTouchEvent]后, 还是能收到MOVE事件.
+    //典型的案例就是ViewPager
+    var _needHandleTouch = true
+
+    //首次滚动检查, 如果首次滚动不需要处理事件, 那么之后都收不到.
+    var _isFirstScroll = true
+
     /**统一手势处理*/
     open fun handleTouchEvent(parent: CoordinatorLayout, child: T, ev: MotionEvent): Boolean {
         var result = false
-        if (enableGesture) {
-            result = _gestureDetector.onTouchEvent(ev)
-        }
         if (ev.isTouchFinish()) {
             parent.requestDisallowInterceptTouchEvent(false)
             onTouchFinish(parent, child, ev)
         } else if (ev.isTouchDown()) {
+            _needHandleTouch = true
+            _isFirstScroll = true
             onTouchDown(parent, child, ev)
+        }
+        if (enableGesture && _needHandleTouch) {
+            result = _gestureDetector.onTouchEvent(ev)
         }
         return result
     }

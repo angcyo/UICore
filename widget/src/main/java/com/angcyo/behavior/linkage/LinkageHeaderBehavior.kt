@@ -72,6 +72,9 @@ class LinkageHeaderBehavior(
     /**激活底部Over效果. 当滚动到顶的时候, 可以继续滚动*/
     var enableBottomOverScroll: Boolean = false
 
+    /**Fling触发的Over,dy的倍数*/
+    var overScrollEffectFactor = 2f
+
     /**标题栏*/
     var titleBarBehavior: ITitleBarBehavior? = null
 
@@ -202,6 +205,7 @@ class LinkageHeaderBehavior(
 
     /**其他位置发生的内嵌滚动处理, 比如Sticky*/
     fun onNestedPreScrollOther(target: View?, dy: Int, consumed: IntArray) {
+        //L.e("${target?.simpleHash()} $dy")
         //当无内嵌滚动的view访问, 此时发生了滚动的情况下.
         //优先处理footer滚动, 其次处理header滚动
         val nestedScrollingChild = footerScrollView
@@ -282,7 +286,7 @@ class LinkageHeaderBehavior(
                     0, _overScrollEffect.getContentOverScrollValue(
                         overScrollY,
                         _overScrollEffect.maxEffectHeight,
-                        -dy * 4
+                        (-dy * overScrollEffectFactor).toInt()
                     )
                 )
             }
@@ -300,11 +304,11 @@ class LinkageHeaderBehavior(
 
     /**over归位*/
     fun resetOverScroll() {
-        if ((enableTopOverScroll || enableBottomOverScroll) && !isTouchHold) {
+        if ((enableTopOverScroll || enableBottomOverScroll) && !isTouchHold && childView != null) {
+            //L.e("恢复位置.")
             if (scrollY > maxScroll) {
                 startScrollTo(0, 0)
-                //L.e("恢复位置.")
-            } else if (scrollY < minScroll) {
+            } else if (minScroll in (scrollY + 1) until maxScroll) {
                 startScrollTo(0, minScroll)
             }
         }
@@ -391,12 +395,13 @@ class LinkageHeaderBehavior(
         val absX = abs(distanceX)
         val absY = abs(distanceY)
 
+        //L.i("scroll $distanceY ${_nestedScrollView?.simpleHash()}")
+
         if (_nestedScrollView == null) {
             stopNestedScroll()
         }
 
         if (_nestedScrollView == null && absY > absX && absY > touchSlop && e1 != null && e2 != null) {
-            //L.i("scroll $distanceY")
             onNestedPreScrollOther(childView, distanceY.toInt(), _scrollConsumed)
             return true
         }
