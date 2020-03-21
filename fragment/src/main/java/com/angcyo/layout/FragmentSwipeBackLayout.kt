@@ -738,7 +738,8 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
         //L.i("$orientation $velocityX $touchDownX $isSwipeDrag")
         if (!isSwipeDrag &&
             orientation == ORIENTATION.RIGHT &&
-            velocityX > 3000
+            velocityX > 3000 &&
+            touchDownX <= measuredWidth / 3 /*在左边视图1/3的区域, 激活fling*/
         ) {
             //快速向右滑动, 触发fling关闭功能
             val lastFragment = findBeforeFragment()

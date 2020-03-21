@@ -46,6 +46,9 @@ abstract class BaseLinkageBehavior(
     val footerScrollView: NestedScrollingChild?
         get() = footerView?.findNestedScrollingChild()
 
+    val stickyScrollView: NestedScrollingChild?
+        get() = stickyView?.findNestedScrollingChild()
+
     /**关联布局依赖*/
     override fun layoutDependsOn(
         parent: CoordinatorLayout,

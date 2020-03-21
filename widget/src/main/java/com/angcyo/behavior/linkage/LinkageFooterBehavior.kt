@@ -68,12 +68,21 @@ class LinkageFooterBehavior(
             parentHeightMeasureSpec,
             heightUsed
         )
+
+        val usedHeight = headerView.behavior()?.run {
+            if (this is LinkageHeaderBehavior) {
+                this.usedHeight
+            } else {
+                0
+            }
+        }
+
         parent.onMeasureChild(
             child,
             parentWidthMeasureSpec,
             widthUsed,
             parentHeightMeasureSpec,
-            heightUsed + stickyView.mH()
+            heightUsed + stickyView.mH() + (usedHeight ?: 0)
         )
         return true
     }

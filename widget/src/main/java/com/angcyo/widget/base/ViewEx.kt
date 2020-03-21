@@ -436,16 +436,16 @@ fun View.offsetLeftTo(newLeft: Int) {
 //<editor-fold desc="scroll扩展">
 
 /** View 顶部是否还有可滚动的距离 */
-fun View?.topCanScroll(): Boolean {
+fun Any?.topCanScroll(): Boolean {
     return canChildScroll(-1)
 }
 
 /** View 底部是否还有可滚动的距离 */
-fun View?.bottomCanScroll(): Boolean {
+fun Any?.bottomCanScroll(): Boolean {
     return canChildScroll(1)
 }
 
-fun View?.canChildScroll(direction: Int, depth: Int = 5): Boolean {
+fun Any?.canChildScroll(direction: Int, depth: Int = 5): Boolean {
     if (this == null || depth < 0) {
         return false
     }
@@ -468,7 +468,7 @@ fun View?.canChildScroll(direction: Int, depth: Int = 5): Boolean {
             }
         }
     }
-    return this.canScrollVertically(direction)
+    return this is View && this.canScrollVertically(direction)
 }
 
 //</editor-fold desc="scroll扩展">

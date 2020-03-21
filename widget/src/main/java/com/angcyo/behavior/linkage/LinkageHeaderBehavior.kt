@@ -10,7 +10,7 @@ import androidx.core.view.NestedScrollingChild
 import com.angcyo.behavior.ITitleBarBehavior
 import com.angcyo.behavior.refresh.IRefreshBehavior
 import com.angcyo.behavior.refresh.RefreshEffectConfig
-import com.angcyo.library.L
+import com.angcyo.widget.R
 import com.angcyo.widget.base.*
 import kotlin.math.abs
 import kotlin.math.min
@@ -29,8 +29,18 @@ class LinkageHeaderBehavior(
 
     val minScroll: Int
         get() {
-            var result = -min(headerView.mH(), footerView.mH() + stickyView.mH())
+            val headerHeight = headerView.mH() - usedHeight
+            val otherHeight = footerView.mH() + stickyView.mH()
+            return -min(headerHeight, otherHeight)
+        }
 
+    val maxScroll: Int
+        get() = 0
+
+    /**使用掉的高度, Footer计算高度时, 需要减去此高度*/
+    val usedHeight: Int
+        get() {
+            var result = 0
             if (fixTitleBar && titleBarBehavior != null) {
                 result += titleBarBehavior?.getContentExcludeHeight(this) ?: 0
             } else if (fixStatusBar) {
@@ -39,9 +49,6 @@ class LinkageHeaderBehavior(
             result += fixScrollTopOffset
             return result
         }
-
-    val maxScroll: Int
-        get() = 0
 
     /**不管Footer是否可以滚动, 都优先滚动Header*/
     var priorityHeader = false //优先滚动头部
@@ -63,6 +70,27 @@ class LinkageHeaderBehavior(
 
     init {
         showLog = false
+
+        val array =
+            context.obtainStyledAttributes(attributeSet, R.styleable.LinkageHeaderBehavior_Layout)
+        fixTitleBar = array.getBoolean(
+            R.styleable.LinkageHeaderBehavior_Layout_layout_fix_title_bar,
+            fixTitleBar
+        )
+        fixStatusBar = array.getBoolean(
+            R.styleable.LinkageHeaderBehavior_Layout_layout_fix_status_bar,
+            fixStatusBar
+        )
+        enableTopOverScroll = array.getBoolean(
+            R.styleable.LinkageHeaderBehavior_Layout_layout_enable_top_over_scroll,
+            enableTopOverScroll
+        )
+        fixScrollTopOffset = array.getDimensionPixelOffset(
+            R.styleable.LinkageHeaderBehavior_Layout_layout_scroll_top_offset,
+            fixScrollTopOffset
+        )
+        array.recycle()
+
         onScrollTo = { x, y ->
             //L.w("scrollTo:$y")
             childView?.offsetTopTo(y)
@@ -201,9 +229,9 @@ class LinkageHeaderBehavior(
         if (enableTopOverScroll) {
             isOverScroll = scrollY >= maxScroll
                     && dy > 0
-                    && !headerView.topCanScroll()
-                    && !footerView.topCanScroll()
-                    && !stickyView.topCanScroll()
+                    && !headerScrollView.topCanScroll()
+                    && !footerScrollView.topCanScroll()
+                    && !stickyScrollView.topCanScroll()
         }
 
         if (isOverScroll) {
