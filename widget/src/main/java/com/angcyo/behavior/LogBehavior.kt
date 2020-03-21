@@ -95,7 +95,7 @@ open class LogBehavior<T : View>(
         type: Int
     ) {
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type)
-        d("${target.simpleHash()} dx:$dx dy:$dy consumed:${consumed.toStr()} type:${type.toTypeString()}")
+        i("${target.simpleHash()} dx:$dx dy:$dy consumed:${consumed.toStr()} type:${type.toTypeString()}")
     }
 
     /**内嵌滚动滚动的量*/
@@ -143,7 +143,7 @@ open class LogBehavior<T : View>(
         velocityX: Float,
         velocityY: Float
     ): Boolean {
-        d("${target.simpleHash()} velocityX:$velocityX velocityY:$velocityY")
+        w("${target.simpleHash()} velocityX:$velocityX velocityY:$velocityY")
         return super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY)
     }
 
@@ -156,7 +156,7 @@ open class LogBehavior<T : View>(
         velocityY: Float,
         consumed: Boolean
     ): Boolean {
-        i("${target.simpleHash()} velocityX:$velocityX velocityY:$velocityY consumed:$consumed")
+        w("${target.simpleHash()} velocityX:$velocityX velocityY:$velocityY consumed:$consumed")
         return super.onNestedFling(coordinatorLayout, child, target, velocityX, velocityY, consumed)
     }
 
@@ -338,21 +338,21 @@ open class LogBehavior<T : View>(
     fun e(msg: String? = null) {
         if (showLog) {
             L._tempStackTraceFront = 3
-            L.e(msg ?: "")
+            L.e(this.simpleHash(), msg ?: "")
         }
     }
 
     fun w(msg: String? = null) {
         if (showLog) {
             L._tempStackTraceFront = 3
-            L.w(msg ?: "")
+            L.w(this.simpleHash(), msg ?: "")
         }
     }
 
     fun i(msg: String? = null) {
         if (showLog) {
             L._tempStackTraceFront = 3
-            L.i(msg ?: "")
+            L.i(this.simpleHash(), msg ?: "")
         }
     }
 

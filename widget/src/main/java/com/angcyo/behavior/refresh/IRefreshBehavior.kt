@@ -2,6 +2,7 @@ package com.angcyo.behavior.refresh
 
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.offsetTopTo
 
@@ -25,7 +26,7 @@ interface IRefreshBehavior {
     }
 
     /**当内容over滚动时回调*/
-    fun onContentOverScroll(behavior: RefreshBehavior, dx: Int, dy: Int) {
+    fun onContentOverScroll(behavior: BaseScrollBehavior<*>, dx: Int, dy: Int) {
         behavior.scrollBy(0, -dy)
     }
 

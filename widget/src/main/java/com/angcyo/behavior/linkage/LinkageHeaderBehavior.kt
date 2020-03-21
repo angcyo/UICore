@@ -8,6 +8,9 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.math.MathUtils
 import androidx.core.view.NestedScrollingChild
 import com.angcyo.behavior.ITitleBarBehavior
+import com.angcyo.behavior.refresh.IRefreshBehavior
+import com.angcyo.behavior.refresh.RefreshEffectConfig
+import com.angcyo.library.L
 import com.angcyo.widget.base.*
 import kotlin.math.abs
 import kotlin.math.min
@@ -51,6 +54,9 @@ class LinkageHeaderBehavior(
 
     /**滚动最小值, 额外要考虑的距离*/
     var fixScrollTopOffset: Int = 0
+
+    /**激活顶部Over效果. 当滚动到顶的时候, 可以继续滚动*/
+    var enableTopOverScroll: Boolean = true
 
     /**标题栏*/
     var titleBarBehavior: ITitleBarBehavior? = null
@@ -105,12 +111,16 @@ class LinkageHeaderBehavior(
                     consumedScrollVertical(dy, scrollY, minScroll, maxScroll, consumed)
                 }
             }
-        } else if (scrollY != 0 && target == headerScrollView) {
-            //内容产生过偏移, 那么此次的内嵌滚动肯定是需要消耗的
-            consumedScrollVertical(dy, consumed)
+        } else if (target == headerScrollView) {
+            if (scrollY > maxScroll && enableTopOverScroll) {
+
+            } else if (scrollY != 0) {
+                //内容产生过偏移, 那么此次的内嵌滚动肯定是需要消耗的
+                consumedScrollVertical(dy, consumed)
+            }
         } else {
             //其他位置发生的内嵌滚动, 比如 Sticky
-            onNestedPreScrollOther(dy, consumed)
+            onNestedPreScrollOther(target, dy, consumed)
         }
     }
 
@@ -136,7 +146,7 @@ class LinkageHeaderBehavior(
             type,
             consumed
         )
-        onHeaderOverScroll(-dyUnconsumed)
+        onHeaderOverScroll(target, -dyUnconsumed)
     }
 
     //</editor-fold desc="内嵌滚动处理">
@@ -144,7 +154,7 @@ class LinkageHeaderBehavior(
     //<editor-fold desc="其他滚动处理">
 
     /**其他位置发生的内嵌滚动处理, 比如Sticky*/
-    fun onNestedPreScrollOther(dy: Int, consumed: IntArray) {
+    fun onNestedPreScrollOther(target: View?, dy: Int, consumed: IntArray) {
         //当无内嵌滚动的view访问, 此时发生了滚动的情况下.
         //优先处理footer滚动, 其次处理header滚动
         val nestedScrollingChild = footerScrollView
@@ -175,16 +185,66 @@ class LinkageHeaderBehavior(
             } else {
                 if (_nestedScrollView == null) {
                     //没有内嵌滚动访问, Touch事件导致的滑动, 就偏移Header
-                    onHeaderOverScroll(-dy)
+                    onHeaderOverScroll(target, -dy)
                 }
             }
         }
     }
 
+    //over阻尼效果
+    var _overScrollEffect: IRefreshBehavior = RefreshEffectConfig()
+
     /**头部到达边界的滚动处理*/
-    fun onHeaderOverScroll(dy: Int) {
-        val scroll = MathUtils.clamp(scrollY + dy, minScroll, maxScroll)
-        scrollTo(scrollX, scroll)
+    fun onHeaderOverScroll(target: View?, dy: Int) {
+        var isOverScroll = false
+
+        if (enableTopOverScroll) {
+            isOverScroll = scrollY >= maxScroll
+                    && dy > 0
+                    && !headerView.topCanScroll()
+                    && !footerView.topCanScroll()
+                    && !stickyView.topCanScroll()
+        }
+
+        if (isOverScroll) {
+            if (isTouchHold) {
+                _overScrollEffect.onContentOverScroll(this, 0, -dy)
+            } else {
+                //fling, 数值放大3倍
+                _overScrollEffect.onContentOverScroll(this, 0, -dy * 4)
+            }
+            if (!isTouchHold || !_overScroller.isFinished) {
+                target?.stopScroll()
+            }
+            _nestedFlingView.stopScroll()
+            _nestedFlingView = null
+        } else {
+            val scroll = MathUtils.clamp(scrollY + dy, minScroll, maxScroll)
+            scrollTo(scrollX, scroll)
+        }
+    }
+
+    /**over归位*/
+    fun resetOverScroll() {
+        if (enableTopOverScroll && !isTouchHold) {
+            if (scrollY > maxScroll) {
+                startScrollTo(0, 0)
+                //L.e("恢复位置.")
+            }
+        }
+    }
+
+    override fun onStopNestedScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: View,
+        target: View,
+        type: Int
+    ) {
+        super.onStopNestedScroll(coordinatorLayout, child, target, type)
+
+        if (target == childScrollView || scrollY > maxScroll) {
+            resetOverScroll()
+        }
     }
 
     //</editor-fold desc="其他滚动处理">
@@ -200,7 +260,7 @@ class LinkageHeaderBehavior(
         val absX = abs(velocityX)
         val absY = abs(velocityY)
         if (_nestedScrollView == null &&
-            _flingScrollView == null &&
+            _linkageFlingScrollView == null &&
             absY > absX && absY > minFlingVelocity
         ) {
             val delegateScrollView: NestedScrollingChild? = footerScrollView ?: headerScrollView
@@ -234,12 +294,12 @@ class LinkageHeaderBehavior(
         val absY = abs(distanceY)
 
         if (_nestedScrollView == null) {
-            stopScrollAndFling()
+            stopNestedScroll()
         }
 
         if (_nestedScrollView == null && absY > absX && absY > touchSlop && e1 != null && e2 != null) {
             //L.i("scroll $distanceY")
-            onNestedPreScrollOther(distanceY.toInt(), _scrollConsumed)
+            onNestedPreScrollOther(childView, distanceY.toInt(), _scrollConsumed)
             return true
         }
         return super.onScroll(e1, e2, distanceX, distanceY)

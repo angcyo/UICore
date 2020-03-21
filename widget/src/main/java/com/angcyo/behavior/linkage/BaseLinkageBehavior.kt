@@ -7,8 +7,10 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.NestedScrollingChild
 import androidx.core.view.ViewCompat
-import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.behavior.BaseGestureBehavior
+import com.angcyo.library.L
+import com.angcyo.library.ex.abs
+import com.angcyo.library.ex.simpleHash
 import com.angcyo.widget.base.*
 import java.lang.ref.WeakReference
 
@@ -26,7 +28,7 @@ abstract class BaseLinkageBehavior(
 
     companion object {
         //正在快速fling的视图
-        var _flingScrollView: WeakReference<NestedScrollingChild>? = null
+        var _linkageFlingScrollView: WeakReference<NestedScrollingChild>? = null
     }
 
     //联动相关布局
@@ -84,31 +86,43 @@ abstract class BaseLinkageBehavior(
 
     override fun onTouchDown(parent: CoordinatorLayout, child: View, ev: MotionEvent) {
         super.onTouchDown(parent, child, ev)
-        stopScrollAndFling()
+        stopNestedScroll()
+        stopNestedFling()
     }
 
     /**停止滚动*/
-    open fun stopScrollAndFling() {
+    open fun stopNestedScroll() {
         _overScroller.abortAnimation()
-        _nestedScrollView.stopScroll()
+        _nestedScrollView?.apply {
+            e(" 停止Scroll:${this.simpleHash()}")
+            stopScroll()
+        }
         _nestedScrollView = null
+    }
 
-        _flingScrollView?.get().stopScroll()
-        _flingScrollView?.clear()
-        _flingScrollView = null
+    open fun stopNestedFling() {
+        _linkageFlingScrollView?.get()?.apply {
+            e(" 停止Fling:${this.simpleHash()}")
+            stopScroll()
+        }
+        _linkageFlingScrollView?.clear()
+        _linkageFlingScrollView = null
 
         _nestedPreFling = false
-
-        //L.e("停止fling")
     }
 
     /**设置正在fling的视图*/
     open fun setFlingView(child: NestedScrollingChild) {
-        stopScrollAndFling()
-        _flingScrollView = WeakReference(child)
+        stopNestedScroll()
+        stopNestedFling()
+        _linkageFlingScrollView = WeakReference(child)
+        if (child is View) {
+            _nestedFlingView = child
+        }
+        //L.e("fling $child")
     }
 
-    //Fling访问标识
+    //Fling访问标识, child包裹的view
     var _nestedPreFling = false
 
     //Fling的方向, >0 手指向上, <0 手指向下.
@@ -121,7 +135,7 @@ abstract class BaseLinkageBehavior(
         velocityX: Float,
         velocityY: Float
     ): Boolean {
-        if (childScrollView == target && velocityY > velocityX) {
+        if (childScrollView == target && velocityY.abs() > velocityX.abs()) {
             _nestedPreFling = true
             _nestedFlingDirection = velocityY.toInt()
         }
@@ -156,7 +170,7 @@ abstract class BaseLinkageBehavior(
             && childScrollView == target /*只处理自己内部的RecyclerView*/
         ) {
 
-            //fling速度衰减
+            //fling速度衰减, 获取到的速度永远是正值. 需要根据方向自行调整正负值
             val velocityY = (target.getLastVelocity() * 0.9).toInt()
             if (velocityY < minFlingVelocity) {
                 return
@@ -172,8 +186,8 @@ abstract class BaseLinkageBehavior(
                     //L.i("footer fling $velocityY")
                     //来自Footer的Fling, 那么要传给Header
                     headerRV?.apply {
-                        if (_flingScrollView?.get() == this ||
-                            velocityY > 0 /*footer fling到底后, 不需要传递给header*/) {
+                        if (_linkageFlingScrollView?.get() == this ||
+                            dyUnconsumed > 0 /*footer fling到底后, 不需要传递给header*/) {
                             return
                         }
                         scrollTarget = this
@@ -183,8 +197,8 @@ abstract class BaseLinkageBehavior(
                     //L.i("header fling $velocityY")
                     //来自Header的Fling, 那么要传给Footer
                     footerRV?.apply {
-                        if (_flingScrollView?.get() == this
-                            || velocityY < 0 /*header fling到顶后, 不需要传给footer*/) {
+                        if (_linkageFlingScrollView?.get() == this
+                            || dyUnconsumed < 0 /*header fling到顶后, 不需要传给footer*/) {
                             return
                         }
                         scrollTarget = this
@@ -201,16 +215,13 @@ abstract class BaseLinkageBehavior(
             }
 
             scrollTarget?.apply {
-                if (_flingScrollView?.get() != this) {
+                if (_linkageFlingScrollView?.get() != this) {
                     setFlingView(this)
-                    if (this is RecyclerView) {
+                    //根据方向, 调整fling正负值
+                    if (_nestedFlingDirection > 0) {
                         fling(0, velocityY)
                     } else {
-                        if (_nestedFlingDirection > 0) {
-                            fling(0, velocityY)
-                        } else {
-                            fling(0, -velocityY)
-                        }
+                        fling(0, -velocityY)
                     }
                 }
             }

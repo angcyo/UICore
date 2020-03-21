@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.AttributeSet
 import android.view.View
-import com.angcyo.tablayout.calcLayoutWidthHeight
+import com.angcyo.library.ex.calcLayoutWidthHeight
 import com.angcyo.tablayout.exactlyMeasure
 import com.angcyo.tablayout.screenHeight
 import com.angcyo.tablayout.screenWidth
@@ -136,7 +136,7 @@ class RLayoutDelegate : LayoutDelegate() {
         val parentWidth = (delegateView.parent as? View)?.measuredWidth ?: 0
         val parentHeight = (delegateView.parent as? View)?.measuredHeight ?: 0
 
-        val layoutWidthHeight = delegateView.calcLayoutWidthHeight(
+        val layoutWidthHeight = calcLayoutWidthHeight(
             rLayoutWidth, rLayoutHeight,
             if (parentWidth > 0) parentWidth else delegateView.screenWidth,
             if (parentHeight > 0) parentHeight else delegateView.screenHeight,
@@ -172,7 +172,7 @@ class RLayoutDelegate : LayoutDelegate() {
         val parentWidth = (delegateView.parent as? View)?.measuredWidth ?: 0
         val parentHeight = (delegateView.parent as? View)?.measuredHeight ?: 0
 
-        val maxWidthHeight = delegateView.calcLayoutWidthHeight(
+        val maxWidthHeight = calcLayoutWidthHeight(
             rMaxWidth, rMaxHeight,
             if (parentWidth > 0) parentWidth else delegateView.screenWidth,
             if (parentHeight > 0) parentHeight else delegateView.screenHeight,

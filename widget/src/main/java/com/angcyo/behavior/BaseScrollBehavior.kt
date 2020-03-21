@@ -2,12 +2,14 @@ package com.angcyo.behavior
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.widget.OverScroller
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.library.L
 import com.angcyo.tablayout.clamp
+import com.angcyo.widget.base.isTouchDown
 import com.angcyo.widget.base.offsetLeftTo
 import com.angcyo.widget.base.offsetTopTo
 import kotlin.math.absoluteValue
@@ -101,8 +103,20 @@ abstract class BaseScrollBehavior<T : View>(
     open fun onComputeScroll(parent: CoordinatorLayout, child: T) {
         if (_overScroller.computeScrollOffset()) {
             scrollTo(_overScroller.currX, _overScroller.currY)
+            //L.e("scrollTo: ${_overScroller.currY}")
             postInvalidateOnAnimation()
         }
+    }
+
+    override fun onInterceptTouchEvent(
+        parent: CoordinatorLayout,
+        child: T,
+        ev: MotionEvent
+    ): Boolean {
+        if (ev.isTouchDown()) {
+            _overScroller.abortAnimation()
+        }
+        return super.onInterceptTouchEvent(parent, child, ev)
     }
 
     override fun onStopNestedScroll(
@@ -112,7 +126,7 @@ abstract class BaseScrollBehavior<T : View>(
         type: Int
     ) {
         super.onStopNestedScroll(coordinatorLayout, child, target, type)
-        _overScroller.abortAnimation()
+        //_overScroller.abortAnimation()
     }
 
     /**滚动到*/
@@ -121,9 +135,12 @@ abstract class BaseScrollBehavior<T : View>(
         scrollY = y
 
         if (showLog) {
-            L.i("scrollTo: x:$x y:$y")
+            L.v("scrollTo: x:$x y:$y")
         }
         onScrollTo(x, y)
+        listeners.forEach {
+            it.onBehaviorScrollTo(x, y)
+        }
     }
 
     /**滚动多少*/
@@ -174,7 +191,7 @@ abstract class BaseScrollBehavior<T : View>(
             0
         )
 
-        postInvalidate()
+        postInvalidateOnAnimation()
     }
 
     fun startFlingY(velocityY: Int, maxY: Int) {
@@ -193,6 +210,50 @@ abstract class BaseScrollBehavior<T : View>(
             0
         )
 
-        postInvalidate()
+        postInvalidateOnAnimation()
     }
+
+    override fun onNestedFling(
+        coordinatorLayout: CoordinatorLayout,
+        child: T,
+        target: View,
+        velocityX: Float,
+        velocityY: Float,
+        consumed: Boolean
+    ): Boolean {
+        return super.onNestedFling(coordinatorLayout, child, target, velocityX, velocityY, consumed)
+    }
+
+    override fun onNestedPreFling(
+        coordinatorLayout: CoordinatorLayout,
+        child: T,
+        target: View,
+        velocityX: Float,
+        velocityY: Float
+    ): Boolean {
+        return super.onNestedPreFling(
+            coordinatorLayout,
+            child,
+            target,
+            velocityX,
+            velocityY
+        ) || !_overScroller.isFinished
+    }
+
+    val listeners = mutableListOf<ScrollBehaviorListener>()
+    fun addScrollListener(listener: ScrollBehaviorListener) {
+        if (!listeners.contains(listener)) {
+            listeners.add(listener)
+        }
+    }
+
+    fun removeScrollListener(listener: ScrollBehaviorListener) {
+        if (listeners.contains(listener)) {
+            listeners.remove(listener)
+        }
+    }
+}
+
+interface ScrollBehaviorListener {
+    fun onBehaviorScrollTo(x: Int, y: Int)
 }

@@ -2,11 +2,16 @@ package com.angcyo.behavior
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.CallSuper
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
 import com.angcyo.widget.base.bottomCanScroll
+import com.angcyo.widget.base.isTouchDown
+import com.angcyo.widget.base.stopScroll
 import com.angcyo.widget.base.topCanScroll
+import com.angcyo.widget.layout.RCoordinatorLayout
 
 /**
  * 必须有2个参数的构造方法
@@ -32,6 +37,10 @@ abstract class BaseDependsBehavior<T : View>(
     var childView: T? = null
     var parentLayout: CoordinatorLayout? = null
 
+    /**是否正在Touch, 手指未放开*/
+    val isTouchHold: Boolean
+        get() = (parentLayout as? RCoordinatorLayout)?._isTouch ?: false
+
     /**当[CoordinatorLayout]只有一个child时, 这个方法不会回调*/
     @CallSuper
     override fun layoutDependsOn(parent: CoordinatorLayout, child: T, dependency: View): Boolean {
@@ -54,8 +63,7 @@ abstract class BaseDependsBehavior<T : View>(
     }
 
     fun postInvalidateOnAnimation() {
-        parentLayout?.postInvalidateOnAnimation()
-        //ViewCompat.postOnAnimation(view, this)
+        parentLayout?.apply { ViewCompat.postInvalidateOnAnimation(this) }
     }
 
     fun invalidate() {
@@ -63,9 +71,18 @@ abstract class BaseDependsBehavior<T : View>(
     }
 
     /**是否处于内嵌滚动中*/
-    var _isNestedScrollAccepted = false
+    val isNestedScrollAccepted: Boolean
+        get() = _nestedScrollView != null
 
+    /**是否处于内嵌Fling中*/
+    val isFlingAccepted: Boolean
+        get() = _nestedFlingView != null
+
+    /**内嵌滚动的视图, 不管是否是child包裹的*/
     var _nestedScrollView: View? = null
+
+    //fling访问的view, 不管是否是child包裹的
+    var _nestedFlingView: View? = null
 
     override fun onNestedScrollAccepted(
         coordinatorLayout: CoordinatorLayout,
@@ -83,8 +100,18 @@ abstract class BaseDependsBehavior<T : View>(
             axes,
             type
         )
-        _isNestedScrollAccepted = true
         _nestedScrollView = target
+    }
+
+    override fun onNestedPreFling(
+        coordinatorLayout: CoordinatorLayout,
+        child: T,
+        target: View,
+        velocityX: Float,
+        velocityY: Float
+    ): Boolean {
+        _nestedFlingView = target
+        return super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY)
     }
 
     override fun onStopNestedScroll(
@@ -94,8 +121,21 @@ abstract class BaseDependsBehavior<T : View>(
         type: Int
     ) {
         super.onStopNestedScroll(coordinatorLayout, child, target, type)
-        _isNestedScrollAccepted = false
         _nestedScrollView = null
+        //此方法在手势up的时候就会触发, 但此时fling操作可能并没有结束
+        //_nestedFlingView = null
+    }
+
+    override fun onInterceptTouchEvent(
+        parent: CoordinatorLayout,
+        child: T,
+        ev: MotionEvent
+    ): Boolean {
+        if (ev.isTouchDown()) {
+            _nestedFlingView?.stopScroll()
+            _nestedFlingView = null
+        }
+        return super.onInterceptTouchEvent(parent, child, ev)
     }
 
 //    override fun onLayoutChild(parent: CoordinatorLayout, child: T, layoutDirection: Int): Boolean {

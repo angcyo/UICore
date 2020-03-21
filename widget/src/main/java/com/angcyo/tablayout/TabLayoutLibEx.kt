@@ -1,5 +1,6 @@
 package com.angcyo.tablayout
 
+import android.content.Context
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
@@ -12,6 +13,8 @@ import android.widget.TextView
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.math.MathUtils
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.getScreenHeight
+import com.angcyo.library.getScreenWidth
 import kotlin.math.absoluteValue
 
 /**
@@ -21,10 +24,16 @@ import kotlin.math.absoluteValue
  * @date 2019/11/23
  */
 val View.screenWidth: Int
-    get() = context.resources.displayMetrics.widthPixels
+    get() = context.screenWidth
 
 val View.screenHeight: Int
-    get() = context.resources.displayMetrics.heightPixels
+    get() = context.screenHeight
+
+val Context.screenWidth: Int
+    get() = resources.displayMetrics.widthPixels
+
+val Context.screenHeight: Int
+    get() = resources.displayMetrics.heightPixels
 
 val View.viewDrawWidth: Int
     get() = measuredWidth - paddingLeft - paddingRight
@@ -70,84 +79,6 @@ fun Any.logw() {
 
 fun Any.loge() {
     Log.e("DslTabLayout", "$this")
-}
-
-/**
- * 支持格式0.3pw 0.5ph, p表示[parent]的多少倍数, s表示[screen]的多少倍数
- * */
-fun View.calcLayoutWidthHeight(
-    rLayoutWidth: String?, rLayoutHeight: String?,
-    parentWidth: Int, parentHeight: Int,
-    rLayoutWidthExclude: Int = 0, rLayoutHeightExclude: Int = 0
-): IntArray {
-    val size = intArrayOf(-1, -1)
-    if (TextUtils.isEmpty(rLayoutWidth) && TextUtils.isEmpty(rLayoutHeight)) {
-        return size
-    }
-    size[0] = calcSize(rLayoutWidth, parentWidth, parentHeight, rLayoutWidthExclude)
-    size[1] = calcSize(rLayoutHeight, parentWidth, parentHeight, rLayoutHeightExclude)
-    return size
-}
-
-fun View.calcLayoutMaxHeight(
-    rMaxHeight: String?,
-    parentWidth: Int,
-    parentHeight: Int,
-    exclude: Int = 0
-): Int {
-    return calcSize(rMaxHeight, parentWidth, parentHeight, exclude)
-}
-
-fun View.calcSize(exp: String?, pWidth: Int, pHeight: Int, exclude: Int): Int {
-    var result = -1
-    if (!exp.isNullOrBlank()) {
-        fun _get(ut: String, height: Int): Boolean {
-            if (exp.contains(ut, true)) {
-                val ratio = exp.replace(ut, "", true).toFloatOrNull()
-                ratio?.let {
-                    result = if (it >= 0) {
-                        (it * (height - exclude)).toInt()
-                    } else {
-                        (height - it.absoluteValue * height - exclude).toInt()
-                    }
-                }
-                return true
-            }
-            return false
-        }
-
-        fun _getDp(ut: String, density: Int): Boolean {
-            if (exp.contains(ut, true)) {
-                val ratio = exp.replace(ut, "", true).toFloatOrNull()
-                ratio?.let {
-                    result = if (it >= 0) {
-                        ((it * density) - exclude).toInt()
-                    } else {
-                        (pHeight - it.absoluteValue * density - exclude).toInt()
-                    }
-                }
-                return true
-            }
-            return false
-        }
-
-        when {
-            _get("sh", screenHeight) -> {
-            }
-            _get("ph", pHeight) -> {
-            }
-            _get("sw", screenWidth) -> {
-            }
-            _get("pw", pWidth) -> {
-            }
-            _getDp("dip", dpi) -> {
-            }
-            _getDp("px", 1) -> {
-
-            }
-        }
-    }
-    return result
 }
 
 fun evaluateColor(fraction: Float /*0-1*/, startColor: Int, endColor: Int): Int {

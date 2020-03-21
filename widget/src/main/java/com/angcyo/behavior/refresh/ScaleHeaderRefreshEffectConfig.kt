@@ -3,6 +3,7 @@ package com.angcyo.behavior.refresh
 import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.widget.base.setHeight
 
 /**
@@ -24,7 +25,7 @@ open class ScaleHeaderRefreshEffectConfig : RefreshEffectConfig() {
     var targetViewIndexInContent: Int = 0
 
     /**获取目标View*/
-    var onGetTargetView: (behavior: RefreshBehavior) -> View? = { behavior ->
+    var onGetTargetView: (behavior: BaseScrollBehavior<*>) -> View? = { behavior ->
         if (behavior.childView is ViewGroup) {
             (behavior.childView as ViewGroup).getChildAt(targetViewIndexInContent)
         } else {

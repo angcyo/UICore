@@ -34,7 +34,7 @@ open class RefreshEffectConfig : IRefreshBehavior {
         }
     }
 
-    override fun onContentOverScroll(behavior: RefreshBehavior, dx: Int, dy: Int) {
+    override fun onContentOverScroll(behavior: BaseScrollBehavior<*>, dx: Int, dy: Int) {
         if (dy > 0) {
             if (!enableBottomOver) {
                 return
