@@ -103,6 +103,10 @@ class LinkageHeaderBehavior(
             R.styleable.LinkageHeaderBehavior_Layout_layout_scroll_top_offset,
             fixScrollTopOffset
         )
+        overScrollEffectFactor = array.getFloat(
+            R.styleable.LinkageHeaderBehavior_Layout_layout_over_scroll_effect_factor,
+            overScrollEffectFactor
+        )
         array.recycle()
 
         onScrollTo = { x, y ->

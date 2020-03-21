@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <declare-styleable name="BaseScrollBehavior_Layout">
+        <attr name="layout_scroll_duration" format="integer" />
+    </declare-styleable>
+
     <declare-styleable name="LinkageHeaderBehavior_Layout">
         <attr name="layout_fix_title_bar" format="boolean" />
         <attr name="layout_fix_status_bar" format="boolean" />
         <attr name="layout_scroll_top_offset" format="dimension" />
         <attr name="layout_enable_top_over_scroll" format="boolean" />
         <attr name="layout_enable_bottom_over_scroll" format="boolean" />
+        <attr name="layout_over_scroll_effect_factor" format="float" />
     </declare-styleable>
 </resources>

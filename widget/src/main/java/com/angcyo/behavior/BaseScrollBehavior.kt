@@ -9,6 +9,7 @@ import android.widget.OverScroller
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.library.L
 import com.angcyo.tablayout.clamp
+import com.angcyo.widget.R
 import com.angcyo.widget.base.isTouchDown
 import com.angcyo.widget.base.offsetLeftTo
 import com.angcyo.widget.base.offsetTopTo
@@ -30,7 +31,7 @@ abstract class BaseScrollBehavior<T : View>(
         const val DEFAULT_DURATION = 250
     }
 
-    var scrollDuration = 500
+    var scrollDuration = DEFAULT_DURATION
 
     var _overScroller: OverScroller = OverScroller(context)
 
@@ -65,6 +66,16 @@ abstract class BaseScrollBehavior<T : View>(
         val vc = ViewConfiguration.get(context)
         minFlingVelocity = vc.scaledMinimumFlingVelocity
         maxFlingVelocity = vc.scaledMaximumFlingVelocity
+
+        val array =
+            context.obtainStyledAttributes(attributeSet, R.styleable.BaseScrollBehavior_Layout)
+        scrollDuration =
+            array.getInt(
+                R.styleable.BaseScrollBehavior_Layout_layout_scroll_duration,
+                scrollDuration
+            )
+        array.recycle()
+
     }
 
     fun consumedScrollVertical(dy: Int, consumed: IntArray, constraint: Boolean = true): Int {
