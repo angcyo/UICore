@@ -121,7 +121,7 @@ abstract class BaseLinkageBehavior(
         velocityX: Float,
         velocityY: Float
     ): Boolean {
-        if (childScrollView == target) {
+        if (childScrollView == target && velocityY > velocityX) {
             _nestedPreFling = true
             _nestedFlingDirection = velocityY.toInt()
         }
@@ -158,47 +158,51 @@ abstract class BaseLinkageBehavior(
 
             //fling速度衰减
             val velocityY = (target.getLastVelocity() * 0.9).toInt()
-            if (velocityY == 0) {
+            if (velocityY < minFlingVelocity) {
                 return
             }
 
             val footerRV = footerScrollView
             val headerRV = headerScrollView
-            if (target == footerRV) {
-                //L.i("footer fling $velocityY")
 
-                //来自Footer的Fling, 那么要传给Header
-                headerRV?.apply {
-                    if (_flingScrollView?.get() == this ||
-                        velocityY > 0 /*footer fling到底后, 不需要传递给header*/) {
-                        return
-                    }
+            var scrollTarget: NestedScrollingChild? = null
 
-                    setFlingView(this)
-
-                    if (this is RecyclerView) {
-                        fling(0, -velocityY)
-                    } else {
-                        //[NestedScrollView]的速度值貌似是和[RecyclerView]反向的
-                        if (_nestedFlingDirection > 0) {
-                            fling(0, velocityY)
-                        } else {
-                            fling(0, -velocityY)
+            when (target) {
+                footerRV -> {
+                    //L.i("footer fling $velocityY")
+                    //来自Footer的Fling, 那么要传给Header
+                    headerRV?.apply {
+                        if (_flingScrollView?.get() == this ||
+                            velocityY > 0 /*footer fling到底后, 不需要传递给header*/) {
+                            return
                         }
+                        scrollTarget = this
                     }
                 }
-            } else if (target == headerRV) {
-                //L.i("header fling $velocityY")
-
-                //来自Header的Fling, 那么要传给Footer
-                footerRV?.apply {
-                    if (_flingScrollView?.get() == this
-                        || velocityY < 0 /*header fling到顶后, 不需要传给footer*/) {
-                        return
+                headerRV -> {
+                    //L.i("header fling $velocityY")
+                    //来自Header的Fling, 那么要传给Footer
+                    footerRV?.apply {
+                        if (_flingScrollView?.get() == this
+                            || velocityY < 0 /*header fling到顶后, 不需要传给footer*/) {
+                            return
+                        }
+                        scrollTarget = this
                     }
+                }
+                else -> {
+                    //来自其他位置的Fling, 比如Sticky
+                    val delegateScrollView: NestedScrollingChild? =
+                        footerScrollView ?: headerScrollView
+                    delegateScrollView?.apply {
+                        scrollTarget = this
+                    }
+                }
+            }
 
+            scrollTarget?.apply {
+                if (_flingScrollView?.get() != this) {
                     setFlingView(this)
-
                     if (this is RecyclerView) {
                         fling(0, velocityY)
                     } else {

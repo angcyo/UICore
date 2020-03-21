@@ -7,7 +7,6 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.math.MathUtils
 import androidx.core.view.NestedScrollingChild
-import com.angcyo.library.L
 import com.angcyo.widget.base.*
 import kotlin.math.abs
 import kotlin.math.min
@@ -79,6 +78,9 @@ class LinkageHeaderBehavior(
         } else if (scrollY != 0 && target == headerScrollView) {
             //内容产生过偏移, 那么此次的内嵌滚动肯定是需要消耗的
             consumedScrollVertical(dy, consumed)
+        } else {
+            //其他位置发生的内嵌滚动, 比如 Sticky
+            onNestedPreScrollOther(dy, consumed)
         }
     }
 
@@ -109,11 +111,53 @@ class LinkageHeaderBehavior(
 
     //</editor-fold desc="内嵌滚动处理">
 
+    //<editor-fold desc="其他滚动处理">
+
+    /**其他位置发生的内嵌滚动处理, 比如Sticky*/
+    fun onNestedPreScrollOther(dy: Int, consumed: IntArray) {
+        //当无内嵌滚动的view访问, 此时发生了滚动的情况下.
+        //优先处理footer滚动, 其次处理header滚动
+        val nestedScrollingChild = footerScrollView
+        val footerView: View? = if (nestedScrollingChild is View) {
+            nestedScrollingChild
+        } else {
+            null
+        }
+
+        if (dy > 0) {
+            //手指向上滑动
+            consumedScrollVertical(
+                dy,
+                scrollY,
+                minScroll,
+                maxScroll,
+                consumed
+            )
+            if (consumed[1] == 0) {
+                //不需要消耗了
+                footerView?.scrollBy(0, dy)
+            }
+        } else {
+            //手指向下滚动
+            if (footerView.topCanScroll()) {
+                footerView?.scrollBy(0, dy)
+                consumed[1] = dy
+            } else {
+                if (_nestedScrollView == null) {
+                    //没有内嵌滚动访问, Touch事件导致的滑动, 就偏移Header
+                    onHeaderOverScroll(-dy)
+                }
+            }
+        }
+    }
+
     /**头部到达边界的滚动处理*/
     fun onHeaderOverScroll(dy: Int) {
         val scroll = MathUtils.clamp(scrollY + dy, minScroll, maxScroll)
         scrollTo(scrollX, scroll)
     }
+
+    //</editor-fold desc="其他滚动处理">
 
     //<editor-fold desc="非内嵌滚动处理">
 
@@ -165,37 +209,7 @@ class LinkageHeaderBehavior(
 
         if (_nestedScrollView == null && absY > absX && absY > touchSlop && e1 != null && e2 != null) {
             //L.i("scroll $distanceY")
-
-            //当无内嵌滚动的view访问, 此时发生了滚动的情况下.
-            //优先处理footer滚动, 其次处理header滚动
-            val nestedScrollingChild = footerScrollView
-            val footerView: View? = if (nestedScrollingChild is View) {
-                nestedScrollingChild
-            } else {
-                null
-            }
-
-            if (distanceY > 0) {
-                //手指向上滑动
-                consumedScrollVertical(
-                    distanceY.toInt(),
-                    scrollY,
-                    minScroll,
-                    maxScroll,
-                    _scrollConsumed
-                )
-                if (_scrollConsumed[1] == 0) {
-                    //不需要消耗了
-                    footerView?.scrollBy(0, distanceY.toInt())
-                }
-            } else {
-                //手指向下滚动
-                if (footerView.topCanScroll()) {
-                    footerView?.scrollBy(0, distanceY.toInt())
-                } else {
-                    onHeaderOverScroll(-distanceY.toInt())
-                }
-            }
+            onNestedPreScrollOther(distanceY.toInt(), _scrollConsumed)
             return true
         }
         return super.onScroll(e1, e2, distanceX, distanceY)
