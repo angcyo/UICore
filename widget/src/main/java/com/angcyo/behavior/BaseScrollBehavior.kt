@@ -257,4 +257,9 @@ abstract class BaseScrollBehavior<T : View>(
 
 interface ScrollBehaviorListener {
     fun onBehaviorScrollTo(x: Int, y: Int)
+
+//    //滚动状态, 无法在基类中捕捉. 自行回调
+//    fun onBehaviorScrollStateChanged(state: Int) {
+//
+//    }
 }
