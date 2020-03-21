@@ -7,6 +7,7 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.math.MathUtils
 import androidx.core.view.NestedScrollingChild
+import com.angcyo.behavior.ITitleBarBehavior
 import com.angcyo.widget.base.*
 import kotlin.math.abs
 import kotlin.math.min
@@ -24,13 +25,35 @@ class LinkageHeaderBehavior(
 ) : BaseLinkageBehavior(context, attributeSet) {
 
     val minScroll: Int
-        get() = -min(headerView.mH(), footerView.mH() + stickyView.mH())
+        get() {
+            var result = -min(headerView.mH(), footerView.mH() + stickyView.mH())
+
+            if (fixTitleBar && titleBarBehavior != null) {
+                result += titleBarBehavior?.getContentExcludeHeight(this) ?: 0
+            } else if (fixStatusBar) {
+                result += childView?.getStatusBarHeight() ?: 0
+            }
+            result += fixScrollTopOffset
+            return result
+        }
 
     val maxScroll: Int
         get() = 0
 
     /**不管Footer是否可以滚动, 都优先滚动Header*/
     var priorityHeader = false //优先滚动头部
+
+    /**滚动最小值, 要考虑标题栏的高度*/
+    var fixTitleBar: Boolean = true
+
+    /**滚动最小值, 要考虑状态栏的高度*/
+    var fixStatusBar: Boolean = true
+
+    /**滚动最小值, 额外要考虑的距离*/
+    var fixScrollTopOffset: Int = 0
+
+    /**标题栏*/
+    var titleBarBehavior: ITitleBarBehavior? = null
 
     init {
         showLog = false
@@ -48,6 +71,13 @@ class LinkageHeaderBehavior(
         dependency: View
     ): Boolean {
         headerView = child
+
+        dependency.behavior()?.apply {
+            if (this is ITitleBarBehavior) {
+                titleBarBehavior = this
+            }
+        }
+
         return super.layoutDependsOn(parent, child, dependency)
     }
 
