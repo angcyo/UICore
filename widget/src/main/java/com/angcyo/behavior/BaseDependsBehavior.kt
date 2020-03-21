@@ -12,6 +12,8 @@ import com.angcyo.widget.base.isTouchDown
 import com.angcyo.widget.base.stopScroll
 import com.angcyo.widget.base.topCanScroll
 import com.angcyo.widget.layout.RCoordinatorLayout
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * 必须有2个参数的构造方法
@@ -206,7 +208,20 @@ abstract class BaseDependsBehavior<T : View>(
         max: Int,
         consumed: IntArray? = null
     ): Int {
-        if (current !in min..max) {
+
+        val minValue = if (dy < 0) {
+            min(min, current)
+        } else {
+            min
+        }
+
+        val maxValue = if (dy > 0) {
+            max(max, current)
+        } else {
+            max
+        }
+
+        if (current !in minValue..maxValue) {
             //不在范围内
             return 0
         }
@@ -217,14 +232,14 @@ abstract class BaseDependsBehavior<T : View>(
 
         result = if (dy < 0) {
             //手指向下滑动
-            if (target > max) {
-                current - max
+            if (target > maxValue) {
+                current - maxValue
             } else {
                 dy
             }
         } else {
-            if (target < min) {
-                current - min
+            if (target < minValue) {
+                current - minValue
             } else {
                 dy
             }

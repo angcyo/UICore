@@ -97,6 +97,7 @@ abstract class BaseScrollBehavior<T : View>(
 
     override fun onLayoutChildAfter(parent: CoordinatorLayout, child: T, layoutDirection: Int) {
         super.onLayoutChildAfter(parent, child, layoutDirection)
+        //调用requestLayout之后, 重新恢复布局状态. 如offsetTop
         scrollTo(0, scrollY)
     }
 

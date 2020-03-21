@@ -20,6 +20,9 @@ open class RefreshEffectConfig : IRefreshBehavior {
     /**底部over效果*/
     var enableBottomOver: Boolean = true
 
+    /**最大的分母*/
+    var maxEffectHeight: Int = -1
+
     /**输入dy, 输出修正后的dy*/
     var behaviorInterpolator: BehaviorInterpolator = object : BehaviorInterpolator {
         override fun getInterpolation(behavior: BaseScrollBehavior<*>, input: Int, max: Int): Int {
@@ -46,17 +49,24 @@ open class RefreshEffectConfig : IRefreshBehavior {
         }
 
         val scrollY = behavior.scrollY
+
+        val maxScroll = if (maxEffectHeight > 0) {
+            maxEffectHeight
+        } else {
+            behavior.childView.mH()
+        }
+
         val result = if (scrollY > 0) {
             if (dy < 0) {
                 //继续下拉, 才需要阻尼, 反向不需要
-                behaviorInterpolator.getInterpolation(behavior, -dy, behavior.childView.mH())
+                behaviorInterpolator.getInterpolation(behavior, -dy, maxScroll)
             } else {
                 -dy
             }
         } else {
             if (dy > 0) {
                 //继续上拉, 才需要阻尼, 反向不需要
-                behaviorInterpolator.getInterpolation(behavior, -dy, behavior.childView.mH())
+                behaviorInterpolator.getInterpolation(behavior, -dy, maxScroll)
             } else {
                 -dy
             }
