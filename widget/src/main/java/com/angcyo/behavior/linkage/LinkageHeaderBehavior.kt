@@ -8,7 +8,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.math.MathUtils
 import androidx.core.view.NestedScrollingChild
 import com.angcyo.behavior.ITitleBarBehavior
-import com.angcyo.behavior.refresh.IRefreshBehavior
 import com.angcyo.behavior.refresh.RefreshEffectConfig
 import com.angcyo.widget.R
 import com.angcyo.widget.base.*
@@ -70,6 +69,9 @@ class LinkageHeaderBehavior(
     /**激活顶部Over效果. 当滚动到顶的时候, 可以继续滚动*/
     var enableTopOverScroll: Boolean = true
 
+    /**激活底部Over效果. 当滚动到顶的时候, 可以继续滚动*/
+    var enableBottomOverScroll: Boolean = false
+
     /**标题栏*/
     var titleBarBehavior: ITitleBarBehavior? = null
 
@@ -89,6 +91,10 @@ class LinkageHeaderBehavior(
         enableTopOverScroll = array.getBoolean(
             R.styleable.LinkageHeaderBehavior_Layout_layout_enable_top_over_scroll,
             enableTopOverScroll
+        )
+        enableBottomOverScroll = array.getBoolean(
+            R.styleable.LinkageHeaderBehavior_Layout_layout_enable_bottom_over_scroll,
+            enableBottomOverScroll
         )
         fixScrollTopOffset = array.getDimensionPixelOffset(
             R.styleable.LinkageHeaderBehavior_Layout_layout_scroll_top_offset,
@@ -151,8 +157,10 @@ class LinkageHeaderBehavior(
                 //当手势向下滚动,并且Footer顶部还能滚动
                 consumed[1] = dy
                 (footerSV as? View)?.scrollBy(0, dy)
-            } else if (scrollY > maxScroll && enableTopOverScroll) {
-                consumedScrollVertical(dy, scrollY, minScroll, scrollY, consumed)
+            } else if ((scrollY > maxScroll && enableTopOverScroll) ||
+                (scrollY < minScroll && enableBottomOverScroll)
+            ) {
+                consumedScrollVertical(dy, scrollY, minScroll, maxScroll, consumed)
             } else if (scrollY != 0) {
                 //内容产生过偏移, 那么此次的内嵌滚动肯定是需要消耗的
                 consumedScrollVertical(dy, consumed)
@@ -231,35 +239,54 @@ class LinkageHeaderBehavior(
     }
 
     //over阻尼效果
-    var _overScrollEffect: IRefreshBehavior = RefreshEffectConfig()
+    var _overScrollEffect: RefreshEffectConfig = RefreshEffectConfig()
 
     /**头部到达边界的滚动处理*/
     fun onHeaderOverScroll(target: View?, dy: Int) {
         var isOverScroll = false
 
-        val headerSV = headerScrollView
-        val footerTopCanScroll = footerScrollView.topCanScroll()
-
         if (enableTopOverScroll) {
             isOverScroll = scrollY >= maxScroll
                     && dy > 0
-                    && !headerSV.topCanScroll()
-                    && !footerTopCanScroll
+                    && !headerScrollView.topCanScroll()
+                    && !footerScrollView.topCanScroll()
                     && !stickyScrollView.topCanScroll()
+        }
+
+        if (enableBottomOverScroll && !isOverScroll) {
+            isOverScroll = scrollY <= minScroll
+                    && dy < 0
+                    && !headerScrollView.bottomCanScroll()
+                    && !footerScrollView.bottomCanScroll()
+                    && !stickyScrollView.bottomCanScroll()
         }
 
         if (isOverScroll) {
 
-            if (_overScrollEffect is RefreshEffectConfig) {
-                (_overScrollEffect as RefreshEffectConfig).maxEffectHeight = parentLayout.mH()
-            }
+            _overScrollEffect.maxEffectHeight = parentLayout.mH()
+
+            val overScrollY = if (dy < 0) scrollY - minScroll else scrollY
 
             if (isTouchHold) {
-                _overScrollEffect.onContentOverScroll(this, 0, -dy)
+                scrollBy(
+                    0, _overScrollEffect.getContentOverScrollValue(
+                        overScrollY,
+                        _overScrollEffect.maxEffectHeight,
+                        -dy
+                    )
+                )
             } else {
                 //fling, 数值放大3倍
-                _overScrollEffect.onContentOverScroll(this, 0, -dy * 4)
+                //_overScrollEffect.onContentOverScroll(this, 0, -dy * 4)
+                scrollBy(
+                    0, _overScrollEffect.getContentOverScrollValue(
+                        overScrollY,
+                        _overScrollEffect.maxEffectHeight,
+                        -dy * 4
+                    )
+                )
             }
+
             if (!isTouchHold || !_overScroller.isFinished) {
                 target?.stopScroll()
             }
@@ -273,12 +300,28 @@ class LinkageHeaderBehavior(
 
     /**over归位*/
     fun resetOverScroll() {
-        if (enableTopOverScroll && !isTouchHold) {
+        if ((enableTopOverScroll || enableBottomOverScroll) && !isTouchHold) {
             if (scrollY > maxScroll) {
                 startScrollTo(0, 0)
                 //L.e("恢复位置.")
+            } else if (scrollY < minScroll) {
+                startScrollTo(0, minScroll)
             }
         }
+    }
+
+    /**展开头部*/
+    fun open() {
+        stopNestedScroll()
+        stopNestedFling()
+        startScrollTo(0, 0)
+    }
+
+    /**关闭头部*/
+    fun close() {
+        stopNestedScroll()
+        stopNestedFling()
+        startScrollTo(0, minScroll)
     }
 
     override fun onStopNestedScroll(
@@ -289,7 +332,7 @@ class LinkageHeaderBehavior(
     ) {
         super.onStopNestedScroll(coordinatorLayout, child, target, type)
 
-        if (target == childScrollView || scrollY > maxScroll) {
+        if (target == childScrollView || scrollY != 0) {
             resetOverScroll()
         }
     }

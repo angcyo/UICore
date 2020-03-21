@@ -8,7 +8,7 @@ package com.angcyo.behavior
  */
 
 interface BehaviorInterpolator {
-    fun getInterpolation(behavior: BaseScrollBehavior<*>, input: Int, max: Int): Int {
+    fun getInterpolation(scroll: Int, input: Int, max: Int): Int {
         return input
     }
 }

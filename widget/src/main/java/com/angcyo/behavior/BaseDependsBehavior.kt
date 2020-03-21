@@ -209,6 +209,7 @@ abstract class BaseDependsBehavior<T : View>(
         consumed: IntArray? = null
     ): Int {
 
+        //修正范围, 主要用于兼容 over scroll
         val minValue = if (dy < 0) {
             min(min, current)
         } else {

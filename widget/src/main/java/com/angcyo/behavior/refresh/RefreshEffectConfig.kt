@@ -25,16 +25,39 @@ open class RefreshEffectConfig : IRefreshBehavior {
 
     /**输入dy, 输出修正后的dy*/
     var behaviorInterpolator: BehaviorInterpolator = object : BehaviorInterpolator {
-        override fun getInterpolation(behavior: BaseScrollBehavior<*>, input: Int, max: Int): Int {
-            val f = behavior.scrollY.absoluteValue * 1f / max
-            return when {
-                f < 0.1f -> input
-                f < 0.2f -> (input * 0.7f).toInt()
-                f < 0.3f -> (input * 0.3f).toInt()
-                f < 0.4f -> (input * 0.1f).toInt()
-                else -> 0
+        override fun getInterpolation(scroll: Int, input: Int, max: Int): Int {
+            return getScrollInterpolation(scroll, input, max)
+        }
+    }
+
+    fun getScrollInterpolation(scroll: Int, input: Int, max: Int): Int {
+        val f = scroll.absoluteValue * 1f / max
+        return when {
+            f < 0.1f -> input
+            f < 0.2f -> (input * 0.7f).toInt()
+            f < 0.3f -> (input * 0.3f).toInt()
+            f < 0.4f -> (input * 0.1f).toInt()
+            else -> 0
+        }
+    }
+
+    fun getContentOverScrollValue(scroll: Int, maxScroll: Int, value: Int): Int {
+        val result = if (scroll > 0) {
+            if (value < 0) {
+                //继续下拉, 才需要阻尼, 反向不需要
+                behaviorInterpolator.getInterpolation(scroll, -value, maxScroll)
+            } else {
+                -value
+            }
+        } else {
+            if (value > 0) {
+                //继续上拉, 才需要阻尼, 反向不需要
+                behaviorInterpolator.getInterpolation(scroll, -value, maxScroll)
+            } else {
+                -value
             }
         }
+        return result
     }
 
     override fun onContentOverScroll(behavior: BaseScrollBehavior<*>, dx: Int, dy: Int) {
@@ -59,14 +82,14 @@ open class RefreshEffectConfig : IRefreshBehavior {
         val result = if (scrollY > 0) {
             if (dy < 0) {
                 //继续下拉, 才需要阻尼, 反向不需要
-                behaviorInterpolator.getInterpolation(behavior, -dy, maxScroll)
+                behaviorInterpolator.getInterpolation(scrollY, -dy, maxScroll)
             } else {
                 -dy
             }
         } else {
             if (dy > 0) {
                 //继续上拉, 才需要阻尼, 反向不需要
-                behaviorInterpolator.getInterpolation(behavior, -dy, maxScroll)
+                behaviorInterpolator.getInterpolation(scrollY, -dy, maxScroll)
             } else {
                 -dy
             }
