@@ -48,6 +48,18 @@ class RLayoutDelegate : LayoutDelegate() {
             delegateView.requestLayout()
         }
 
+    var rMinHeight: String? = null
+        set(value) {
+            field = value
+            delegateView.requestLayout()
+        }
+
+    var rMinWidth: String? = null
+        set(value) {
+            field = value
+            delegateView.requestLayout()
+        }
+
     var rLayoutWidth: String? = null
         set(value) {
             field = value
@@ -89,8 +101,10 @@ class RLayoutDelegate : LayoutDelegate() {
 
         bDrawable = typedArray.getDrawable(R.styleable.RLayoutDelegate_r_background)
         rMaxHeight = typedArray.getString(R.styleable.RLayoutDelegate_r_max_height)
+        rMinHeight = typedArray.getString(R.styleable.RLayoutDelegate_r_min_height)
         rLayoutHeight = typedArray.getString(R.styleable.RLayoutDelegate_r_layout_height)
         rMaxWidth = typedArray.getString(R.styleable.RLayoutDelegate_r_max_width)
+        rMinWidth = typedArray.getString(R.styleable.RLayoutDelegate_r_min_width)
         rLayoutWidth = typedArray.getString(R.styleable.RLayoutDelegate_r_layout_width)
         maskDrawable = typedArray.getDrawable(R.styleable.RLayoutDelegate_r_layout_mask_drawable)
         layoutDimensionRatio = typedArray.getString(R.styleable.RLayoutDelegate_r_dimension_ratio)
@@ -146,6 +160,7 @@ class RLayoutDelegate : LayoutDelegate() {
         return layoutWidthHeight
     }
 
+    /**返回替换后的测量宽高Spec*/
     fun layoutWidthHeightSpec(widthMeasureSpec: Int, heightMeasureSpec: Int): IntArray {
         var widthSpec: Int = widthMeasureSpec
         var heightSpec: Int = heightMeasureSpec
@@ -172,12 +187,51 @@ class RLayoutDelegate : LayoutDelegate() {
         val parentWidth = (delegateView.parent as? View)?.measuredWidth ?: 0
         val parentHeight = (delegateView.parent as? View)?.measuredHeight ?: 0
 
+        val minWidthHeight = delegateView.context.calcLayoutWidthHeight(
+            rMinWidth, rMinHeight,
+            if (parentWidth > 0) parentWidth else delegateView.screenWidth,
+            if (parentHeight > 0) parentHeight else delegateView.screenHeight,
+            0, 0
+        )
+
         val maxWidthHeight = delegateView.context.calcLayoutWidthHeight(
             rMaxWidth, rMaxHeight,
             if (parentWidth > 0) parentWidth else delegateView.screenWidth,
             if (parentHeight > 0) parentHeight else delegateView.screenHeight,
             0, 0
         )
+
+        //---------------------最小宽高限制------------------------
+
+        val minWidth = minWidthHeight[0]
+        val minHeight = minWidthHeight[1]
+
+        val isWidthMin = minWidth > -1 && delegateView.measuredWidth < minWidth
+        val isHeightMin = minHeight > -1 && delegateView.measuredHeight < minHeight
+
+        if (isWidthMin || isHeightMin) {
+            //宽高有一项不满足
+
+            //替换布局参数, 可以提高性能
+            val wSpec = if (isWidthMin) {
+                delegateView.layoutParams.width = minWidth
+                exactly(minWidth)
+            } else {
+                widthMeasureSpec
+            }
+
+            val hSpec = if (isHeightMin) {
+                delegateView.layoutParams.height = minHeight
+                exactly(minHeight)
+            } else {
+                heightMeasureSpec
+            }
+
+            //如果使用重新测量的方式,布局就会每次都至少测量2次
+            delegateView.measure(wSpec, hSpec)
+        }
+
+        //---------------------最大宽高限制------------------------
 
         val maxWidth = maxWidthHeight[0]
         val maxHeight = maxWidthHeight[1]
@@ -186,7 +240,7 @@ class RLayoutDelegate : LayoutDelegate() {
         val isHeightOut = maxHeight > -1 && delegateView.measuredHeight > maxHeight
 
         if (isWidthOut || isHeightOut) {
-            //宽高有一些项超标
+            //宽高有一项超标
 
             //替换布局参数, 可以提高性能
             val wSpec = if (isWidthOut) {
@@ -206,6 +260,8 @@ class RLayoutDelegate : LayoutDelegate() {
             //如果使用重新测量的方式,布局就会每次都至少测量2次
             delegateView.measure(wSpec, hSpec)
         }
+
+        //---------------------比例限制------------------------
 
         //比例计算
         layoutDimensionRatio?.run {

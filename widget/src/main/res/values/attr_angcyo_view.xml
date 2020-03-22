@@ -9,6 +9,8 @@
     <!--支持格式0.3pw 0.5ph: p表示[parent]的多少倍数, 0.3sw 0.5sh: s表示[screen]的多少倍数, 支持dp dip sp-->
     <attr name="r_max_height" format="string|dimension" />
     <attr name="r_max_width" format="string|dimension" />
+    <attr name="r_min_height" format="string|dimension" />
+    <attr name="r_min_width" format="string|dimension" />
     <attr name="r_layout_height" format="string|dimension" />
     <attr name="r_layout_width" format="string|dimension" />
 
@@ -22,6 +24,8 @@
         <attr name="r_background" />
         <attr name="r_max_height" />
         <attr name="r_max_width" />
+        <attr name="r_min_height" />
+        <attr name="r_min_width" />
         <attr name="r_layout_width" />
         <attr name="r_layout_height" />
         <attr name="r_clip_to_outline" />
@@ -33,6 +37,8 @@
         <attr name="r_background" />
         <attr name="r_max_height" />
         <attr name="r_max_width" />
+        <attr name="r_min_height" />
+        <attr name="r_min_width" />
         <attr name="r_layout_width" />
         <attr name="r_layout_height" />
         <attr name="r_clip_to_outline" />
@@ -44,6 +50,8 @@
         <attr name="r_background" />
         <attr name="r_max_height" />
         <attr name="r_max_width" />
+        <attr name="r_min_height" />
+        <attr name="r_min_width" />
         <attr name="r_layout_width" />
         <attr name="r_layout_height" />
         <attr name="r_clip_to_outline" />
@@ -55,6 +63,8 @@
         <attr name="r_background" />
         <attr name="r_max_height" />
         <attr name="r_max_width" />
+        <attr name="r_min_height" />
+        <attr name="r_min_width" />
         <attr name="r_layout_width" />
         <attr name="r_layout_height" />
         <attr name="r_clip_to_outline" />
@@ -66,6 +76,8 @@
         <attr name="r_background" />
         <attr name="r_max_height" />
         <attr name="r_max_width" />
+        <attr name="r_min_height" />
+        <attr name="r_min_width" />
         <attr name="r_layout_width" />
         <attr name="r_layout_height" />
         <attr name="r_clip_to_outline" />
