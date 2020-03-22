@@ -13,4 +13,12 @@
         <attr name="layout_enable_bottom_over_scroll" format="boolean" />
         <attr name="layout_over_scroll_effect_factor" format="float" />
     </declare-styleable>
+
+    <declare-styleable name="LinkageScaleBehavior_Layout">
+        <attr name="layout_enable_height_effect" format="boolean" />
+        <attr name="layout_enable_scale_effect" format="boolean" />
+        <attr name="layout_scale_max_height" format="dimension|string" />
+        <attr name="layout_scale_factor" format="float" />
+        <attr name="layout_max_scale" format="float" />
+    </declare-styleable>
 </resources>

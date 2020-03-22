@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.ScrollBehaviorListener
+import com.angcyo.library.ex.calcSize
 import com.angcyo.tablayout.clamp
+import com.angcyo.widget.R
 import com.angcyo.widget.base.behavior
 import com.angcyo.widget.base.mH
 
@@ -31,7 +33,11 @@ open class LinkageScaleBehavior(
     /**激活Scale变化*/
     var enableScaleEffect: Boolean = true
 
+    /**比例计算的分母, -1是child的高度*/
     var scaleMaxHeight: Int = -1
+
+    /**scale计算的额外控制因子*/
+    var scaleFactor: Float = 3f
 
     /**最大放大倍数*/
     var maxScale = 4f
@@ -43,7 +49,7 @@ open class LinkageScaleBehavior(
         get() = scaleTargetView ?: childView
 
     val _scale: Float
-        get() = clamp(1f + scrollY * 1f / _maxHeight, 1f, maxScale)
+        get() = clamp(1f + scrollY * 1f / _maxHeight * scaleFactor, 1f, maxScale)
 
     init {
         showLog = false
@@ -56,6 +62,31 @@ open class LinkageScaleBehavior(
                 }
             }
         }
+
+        val array =
+            context.obtainStyledAttributes(attributeSet, R.styleable.LinkageScaleBehavior_Layout)
+        enableHeightEffect = array.getBoolean(
+            R.styleable.LinkageScaleBehavior_Layout_layout_enable_height_effect,
+            enableHeightEffect
+        )
+        enableScaleEffect = array.getBoolean(
+            R.styleable.LinkageScaleBehavior_Layout_layout_enable_scale_effect,
+            enableScaleEffect
+        )
+        val maxHeight =
+            array.getString(R.styleable.LinkageScaleBehavior_Layout_layout_scale_max_height)
+        maxHeight?.apply {
+            scaleMaxHeight = calcSize(this)
+        }
+        maxScale = array.getFloat(
+            R.styleable.LinkageScaleBehavior_Layout_layout_max_scale,
+            maxScale
+        )
+        scaleFactor = array.getFloat(
+            R.styleable.LinkageScaleBehavior_Layout_layout_scale_factor,
+            scaleFactor
+        )
+        array.recycle()
     }
 
     override fun layoutDependsOn(
