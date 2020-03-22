@@ -63,7 +63,7 @@ open class RefreshBehavior(
     init {
         showLog = false
 
-        onScrollTo = { x, y ->
+        onBehaviorScrollTo = { x, y ->
             refreshBehaviorConfig?.onContentScrollTo(this, x, y)
         }
     }
@@ -73,7 +73,7 @@ open class RefreshBehavior(
         child: View,
         layoutDirection: Int
     ): Boolean {
-        offsetTop = titleBarPlaceholderBehavior?.getContentOffsetTop(this) ?: 0
+        behaviorOffsetTop = titleBarPlaceholderBehavior?.getContentOffsetTop(this) ?: 0
         refreshBehaviorConfig?.onContentLayout(this, parent, child)
         return super.onLayoutChild(parent, child, layoutDirection)
     }
@@ -97,7 +97,7 @@ open class RefreshBehavior(
         child: View,
         dependency: View
     ): Boolean {
-        offsetTop = dependency.bottom
+        behaviorOffsetTop = dependency.bottom
         return super.onDependentViewChanged(parent, child, dependency)
     }
 
@@ -161,7 +161,7 @@ open class RefreshBehavior(
     ) {
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type)
 
-        if (scrollY != 0 && dy != 0) {
+        if (behaviorScrollY != 0 && dy != 0) {
             //内容产生过偏移, 那么此次的内嵌滚动肯定是需要消耗的
             consumedScrollVertical(dy, consumed)
         }
@@ -207,7 +207,7 @@ open class RefreshBehavior(
     }
 
     override fun getContentScrollY(behavior: BaseDependsBehavior<*>): Int {
-        return scrollY
+        return behaviorScrollY
     }
 
     /**开始刷新*/

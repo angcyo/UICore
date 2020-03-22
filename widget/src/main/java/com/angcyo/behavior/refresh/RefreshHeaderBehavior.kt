@@ -35,7 +35,7 @@ open class RefreshHeaderBehavior(context: Context, attributeSet: AttributeSet? =
         child: View,
         dependency: View
     ): Boolean {
-        offsetTop = dependency.top - child.measuredHeight
+        behaviorOffsetTop = dependency.top - child.measuredHeight
         return super.onDependentViewChanged(parent, child, dependency)
     }
 

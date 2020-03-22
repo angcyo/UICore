@@ -109,7 +109,7 @@ class LinkageHeaderBehavior(
         )
         array.recycle()
 
-        onScrollTo = { x, y ->
+        onBehaviorScrollTo = { x, y ->
             //L.w("scrollTo:$y")
             childView?.offsetTopTo(y)
         }
@@ -147,15 +147,15 @@ class LinkageHeaderBehavior(
         val footerSV = footerScrollView
         if (target == footerSV) {
             //如果是底部传来的内嵌滚动
-            if (priorityHeader || (scrollY != minScroll && scrollY != maxScroll) /*防止头部滚动一半的情况*/) {
-                consumedScrollVertical(dy, scrollY, minScroll, maxScroll, consumed)
+            if (priorityHeader || (behaviorScrollY != minScroll && behaviorScrollY != maxScroll) /*防止头部滚动一半的情况*/) {
+                consumedScrollVertical(dy, behaviorScrollY, minScroll, maxScroll, consumed)
             } else {
                 //这里处理Footer不能滚动时, 再滚动
-                if (dy > 0 && scrollY != maxScroll) {
+                if (dy > 0 && behaviorScrollY != maxScroll) {
                     //手指向上滑动
-                    consumedScrollVertical(dy, scrollY, minScroll, maxScroll, consumed)
-                } else if (scrollY != minScroll) {
-                    consumedScrollVertical(dy, scrollY, minScroll, maxScroll, consumed)
+                    consumedScrollVertical(dy, behaviorScrollY, minScroll, maxScroll, consumed)
+                } else if (behaviorScrollY != minScroll) {
+                    consumedScrollVertical(dy, behaviorScrollY, minScroll, maxScroll, consumed)
                 }
             }
         } else if (target == headerScrollView) {
@@ -164,11 +164,11 @@ class LinkageHeaderBehavior(
                 //当手势向下滚动,并且Footer顶部还能滚动
                 consumed[1] = dy
                 (footerSV as? View)?.scrollBy(0, dy)
-            } else if ((scrollY > maxScroll && enableTopOverScroll) ||
-                (scrollY < minScroll && enableBottomOverScroll)
+            } else if ((behaviorScrollY > maxScroll && enableTopOverScroll) ||
+                (behaviorScrollY < minScroll && enableBottomOverScroll)
             ) {
-                consumedScrollVertical(dy, scrollY, minScroll, maxScroll, consumed)
-            } else if (scrollY != 0) {
+                consumedScrollVertical(dy, behaviorScrollY, minScroll, maxScroll, consumed)
+            } else if (behaviorScrollY != 0) {
                 //内容产生过偏移, 那么此次的内嵌滚动肯定是需要消耗的
                 consumedScrollVertical(dy, consumed)
             }
@@ -223,7 +223,7 @@ class LinkageHeaderBehavior(
             //手指向上滑动
             consumedScrollVertical(
                 dy,
-                scrollY,
+                behaviorScrollY,
                 minScroll,
                 maxScroll,
                 consumed
@@ -254,7 +254,7 @@ class LinkageHeaderBehavior(
         var isOverScroll = false
 
         if (enableTopOverScroll) {
-            isOverScroll = scrollY >= maxScroll
+            isOverScroll = behaviorScrollY >= maxScroll
                     && dy > 0
                     && !headerScrollView.topCanScroll()
                     && !footerScrollView.topCanScroll()
@@ -262,7 +262,7 @@ class LinkageHeaderBehavior(
         }
 
         if (enableBottomOverScroll && !isOverScroll) {
-            isOverScroll = scrollY <= minScroll
+            isOverScroll = behaviorScrollY <= minScroll
                     && dy < 0
                     && !headerScrollView.bottomCanScroll()
                     && !footerScrollView.bottomCanScroll()
@@ -273,7 +273,7 @@ class LinkageHeaderBehavior(
 
             _overScrollEffect.maxEffectHeight = parentLayout.mH()
 
-            val overScrollY = if (dy < 0) scrollY - minScroll else scrollY
+            val overScrollY = if (dy < 0) behaviorScrollY - minScroll else behaviorScrollY
 
             if (isTouchHold) {
                 scrollBy(
@@ -301,8 +301,8 @@ class LinkageHeaderBehavior(
             _nestedFlingView.stopScroll()
             _nestedFlingView = null
         } else {
-            val scroll = MathUtils.clamp(scrollY + dy, minScroll, maxScroll)
-            scrollTo(scrollX, scroll)
+            val scroll = MathUtils.clamp(behaviorScrollY + dy, minScroll, maxScroll)
+            scrollTo(behaviorScrollX, scroll)
         }
     }
 
@@ -310,9 +310,9 @@ class LinkageHeaderBehavior(
     fun resetOverScroll() {
         if ((enableTopOverScroll || enableBottomOverScroll) && !isTouchHold && childView != null) {
             //L.e("恢复位置.")
-            if (scrollY > maxScroll) {
+            if (behaviorScrollY > maxScroll) {
                 startScrollTo(0, 0)
-            } else if (minScroll in (scrollY + 1) until maxScroll) {
+            } else if (minScroll in (behaviorScrollY + 1) until maxScroll) {
                 startScrollTo(0, minScroll)
             }
         }
@@ -340,7 +340,7 @@ class LinkageHeaderBehavior(
     ) {
         super.onStopNestedScroll(coordinatorLayout, child, target, type)
 
-        if (target == childScrollView || scrollY != 0) {
+        if (target == childScrollView || behaviorScrollY != 0) {
             resetOverScroll()
         }
     }

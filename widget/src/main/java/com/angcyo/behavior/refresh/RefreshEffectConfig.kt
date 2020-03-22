@@ -71,7 +71,7 @@ open class RefreshEffectConfig : IRefreshBehavior {
             }
         }
 
-        val scrollY = behavior.scrollY
+        val scrollY = behavior.behaviorScrollY
 
         val maxScroll = if (maxEffectHeight > 0) {
             maxEffectHeight

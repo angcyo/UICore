@@ -38,7 +38,7 @@ open class HideTitleBarBehavior(
 
     init {
         showLog = false
-        onScrollTo = { _, y ->
+        onBehaviorScrollTo = { _, y ->
             childView?.offsetTopTo(y)
         }
     }
@@ -105,14 +105,14 @@ open class HideTitleBarBehavior(
                     handle = true
                 }
             } else {
-                handle = scrollY != 0
+                handle = behaviorScrollY != 0
             }
         }
 
         if (handle) {
             consumedScrollVertical(
                 dy,
-                scrollY,
+                behaviorScrollY,
                 getContentExcludeHeight(this) - child.measuredHeight,
                 0,
                 consumed
@@ -128,7 +128,7 @@ open class HideTitleBarBehavior(
         return when {
             childView == null -> 0
             ViewCompat.isLaidOut(childView!!) -> childView?.bottom ?: 0
-            else -> childView.mH() + scrollY
+            else -> childView.mH() + behaviorScrollY
         }
     }
 }

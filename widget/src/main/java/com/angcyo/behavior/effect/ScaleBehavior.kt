@@ -45,11 +45,11 @@ open class ScaleBehavior(
         get() = scaleTargetView ?: childView
 
     val _scale: Float
-        get() = clamp(1f + scrollY * 1f / _maxHeight, 1f, maxScale)
+        get() = clamp(1f + behaviorScrollY * 1f / _maxHeight, 1f, maxScale)
 
     init {
         showLog = false
-        onScrollTo = { x, y ->
+        onBehaviorScrollTo = { x, y ->
             //L.i("->$y $_scale")
             if (enableScaleEffect) {
                 _targetView?.apply {
@@ -152,7 +152,7 @@ open class ScaleBehavior(
             type,
             consumed
         )
-        if (dyUnconsumed != 0 || scrollY != 0) {
+        if (dyUnconsumed != 0 || behaviorScrollY != 0) {
             onTargetOverScroll(target, dyUnconsumed)
         }
     }

@@ -42,7 +42,7 @@ open class ScaleHeaderRefreshEffectConfig : RefreshEffectConfig() {
     ) {
         super.onContentLayout(behavior, parent, child)
         onGetTargetView(behavior)?.apply {
-            if (behavior.scrollY == 0 && _defaultLayoutParams == null) {
+            if (behavior.behaviorScrollY == 0 && _defaultLayoutParams == null) {
                 _defaultLayoutParams = layoutParams
                 _defaultTargetHeight = measuredHeight
             }

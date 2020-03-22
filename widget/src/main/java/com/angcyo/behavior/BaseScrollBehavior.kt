@@ -36,16 +36,16 @@ abstract class BaseScrollBehavior<T : View>(
     var _overScroller: OverScroller = OverScroller(context)
 
     /**布局top偏移*/
-    var offsetTop = 0
+    var behaviorOffsetTop = 0
         set(value) {
             field = value
-            onScrollTo(scrollX, scrollY)
+            onBehaviorScrollTo(behaviorScrollX, behaviorScrollY)
         }
 
-    var offsetLeft = 0
+    var behaviorOffsetLeft = 0
         set(value) {
             field = value
-            onScrollTo(scrollX, scrollY)
+            onBehaviorScrollTo(behaviorScrollX, behaviorScrollY)
         }
 
     //fling 速率阈值
@@ -53,13 +53,13 @@ abstract class BaseScrollBehavior<T : View>(
     var maxFlingVelocity = 0
 
     //记录当前滚动量, 只是记录值, ui效果, 还需另行处理.
-    var scrollX: Int = 0
-    var scrollY: Int = 0
+    var behaviorScrollX: Int = 0
+    var behaviorScrollY: Int = 0
 
     /**滚动值响应界面的处理*/
-    var onScrollTo: (x: Int, y: Int) -> Unit = { x, y ->
-        childView?.offsetLeftTo(x + offsetLeft)
-        childView?.offsetTopTo(y + offsetTop)
+    var onBehaviorScrollTo: (x: Int, y: Int) -> Unit = { x, y ->
+        childView?.offsetLeftTo(x + behaviorOffsetLeft)
+        childView?.offsetTopTo(y + behaviorOffsetTop)
     }
 
     init {
@@ -85,13 +85,13 @@ abstract class BaseScrollBehavior<T : View>(
         return if (constraint) {
             //0值约束
             if (dy > 0) {
-                consumedScrollVertical(dy, scrollY, 0, scrollY, consumed)
+                consumedScrollVertical(dy, behaviorScrollY, 0, behaviorScrollY, consumed)
             } else {
-                consumedScrollVertical(dy, scrollY, scrollY, 0, consumed)
+                consumedScrollVertical(dy, behaviorScrollY, behaviorScrollY, 0, consumed)
             }
         } else {
-            val absScrollY = scrollY.absoluteValue
-            consumedScrollVertical(dy, scrollY, -absScrollY, absScrollY, consumed)
+            val absScrollY = behaviorScrollY.absoluteValue
+            consumedScrollVertical(dy, behaviorScrollY, -absScrollY, absScrollY, consumed)
         }
     }
 
@@ -115,7 +115,7 @@ abstract class BaseScrollBehavior<T : View>(
     override fun onLayoutChildAfter(parent: CoordinatorLayout, child: T, layoutDirection: Int) {
         super.onLayoutChildAfter(parent, child, layoutDirection)
         //调用requestLayout之后, 重新恢复布局状态. 如offsetTop
-        scrollTo(0, scrollY)
+        scrollTo(0, behaviorScrollY)
     }
 
     open fun onComputeScroll(parent: CoordinatorLayout, child: T) {
@@ -149,13 +149,13 @@ abstract class BaseScrollBehavior<T : View>(
 
     /**滚动到*/
     open fun scrollTo(x: Int, y: Int) {
-        scrollX = x
-        scrollY = y
+        behaviorScrollX = x
+        behaviorScrollY = y
 
         if (showLog) {
             L.v("scrollTo: x:$x y:$y")
         }
-        onScrollTo(x, y)
+        onBehaviorScrollTo(x, y)
         listeners.forEach {
             it.onBehaviorScrollTo(x, y)
         }
@@ -163,21 +163,21 @@ abstract class BaseScrollBehavior<T : View>(
 
     /**滚动多少*/
     open fun scrollBy(x: Int, y: Int) {
-        scrollTo(scrollX + x, scrollY + y)
+        scrollTo(behaviorScrollX + x, behaviorScrollY + y)
     }
 
     /**开始滚动到位置*/
     fun startScrollTo(x: Int, y: Int) {
-        if (x == scrollX && y == scrollY) {
+        if (x == behaviorScrollX && y == behaviorScrollY) {
             return
         }
-        startScroll(x - scrollX, y - scrollY)
+        startScroll(x - behaviorScrollX, y - behaviorScrollY)
     }
 
     /**开始滚动偏移量*/
     fun startScroll(dx: Int, dy: Int) {
         _overScroller.abortAnimation()
-        _overScroller.startScroll(scrollX, scrollY, dx, dy, scrollDuration)
+        _overScroller.startScroll(behaviorScrollX, behaviorScrollY, dx, dy, scrollDuration)
         postInvalidateOnAnimation()
         //invalidate()
     }
@@ -197,8 +197,8 @@ abstract class BaseScrollBehavior<T : View>(
 
         _overScroller.abortAnimation()
         _overScroller.fling(
-            scrollX,
-            scrollY,
+            behaviorScrollX,
+            behaviorScrollY,
             vX,
             0,
             0,
@@ -216,8 +216,8 @@ abstract class BaseScrollBehavior<T : View>(
         val vY = velocity(velocityY)
         _overScroller.abortAnimation()
         _overScroller.fling(
-            scrollX,
-            scrollY,
+            behaviorScrollX,
+            behaviorScrollY,
             0,
             vY,
             0,

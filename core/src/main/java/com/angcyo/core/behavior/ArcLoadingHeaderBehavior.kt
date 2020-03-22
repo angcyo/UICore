@@ -52,7 +52,7 @@ class ArcLoadingHeaderBehavior(context: Context, attributeSet: AttributeSet? = n
             RefreshBehavior.STATUS_REFRESH -> {
                 if (!touchHold) {
                     //刷新状态, 手势放开
-                    if (behavior.scrollY >= childView.mH()) {
+                    if (behavior.behaviorScrollY >= childView.mH()) {
                         behavior.startScrollTo(0, childView.mH())
                     } else {
                         behavior.startScrollTo(0, 0)
@@ -62,7 +62,7 @@ class ArcLoadingHeaderBehavior(context: Context, attributeSet: AttributeSet? = n
             RefreshBehavior.STATUS_NORMAL -> {
                 if (!touchHold) {
                     //正常状态, 手势放开
-                    if (behavior.scrollY >= childView.mH()) {
+                    if (behavior.behaviorScrollY >= childView.mH()) {
                         //触发刷新, 切换刷新状态
                         behavior.refreshStatus = RefreshBehavior.STATUS_REFRESH
                     } else {

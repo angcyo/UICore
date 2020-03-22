@@ -49,11 +49,11 @@ open class LinkageScaleBehavior(
         get() = scaleTargetView ?: childView
 
     val _scale: Float
-        get() = clamp(1f + scrollY * 1f / _maxHeight * scaleFactor, 1f, maxScale)
+        get() = clamp(1f + behaviorScrollY * 1f / _maxHeight * scaleFactor, 1f, maxScale)
 
     init {
         showLog = false
-        onScrollTo = { x, y ->
+        onBehaviorScrollTo = { x, y ->
             //L.i("->$y $_scale")
             if (enableScaleEffect) {
                 _targetView?.apply {
@@ -148,7 +148,7 @@ open class LinkageScaleBehavior(
 
     override fun onBehaviorScrollTo(x: Int, y: Int) {
         if (y >= 0) {
-            val oldY = scrollY
+            val oldY = behaviorScrollY
             scrollTo(0, y)
             if (enableHeightEffect && oldY != y) {
                 _targetView?.apply {
