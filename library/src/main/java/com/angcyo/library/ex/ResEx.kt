@@ -8,6 +8,7 @@ import android.view.View
 import android.view.Window
 import androidx.annotation.*
 import androidx.core.content.ContextCompat
+import com.angcyo.library.L
 import com.angcyo.library.app
 
 /**
@@ -73,10 +74,15 @@ fun Context.getDimen(@DimenRes id: Int): Int {
 }
 
 fun Context.loadDrawable(id: Int): Drawable? {
-    if (id < 0) {
+    if (id <= 0) {
         return null
     }
-    return ContextCompat.getDrawable(this, id)?.initBounds()
+    return try {
+        ContextCompat.getDrawable(this, id)?.initBounds()
+    } catch (e: Exception) {
+        L.w(e)
+        null
+    }
 }
 
 @ColorInt
