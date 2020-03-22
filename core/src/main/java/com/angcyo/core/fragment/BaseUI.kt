@@ -22,6 +22,10 @@ import com.angcyo.widget.span.span
 
 open class FragmentUI {
 
+    var showBackText: Boolean = true
+
+    var backIconDrawable: Int = R.drawable.lib_back
+
     /**[BaseTitleFragment.onCreate]中触发*/
     open fun onFragmentCreateAfter(fragment: BaseTitleFragment, fragmentConfig: FragmentConfig) {
 
@@ -40,12 +44,14 @@ open class FragmentUI {
                 text = span {
                     drawable {
                         backgroundDrawable =
-                            loadDrawable(R.drawable.lib_back).colorFilter(fragment.fragmentConfig.titleItemIconColor)
+                            loadDrawable(backIconDrawable).colorFilter(fragment.fragmentConfig.titleItemIconColor)
                     }
-                    drawable("返回") {
-                        marginLeft = -8 * dpi
-                        marginTop = 1 * dpi
-                        textGravity = Gravity.CENTER
+                    if (showBackText) {
+                        drawable("返回") {
+                            marginLeft = -8 * dpi
+                            marginTop = 1 * dpi
+                            textGravity = Gravity.CENTER
+                        }
                     }
                 }
                 clickIt {
