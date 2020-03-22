@@ -1,7 +1,8 @@
 package com.angcyo.item
 
+import android.graphics.Color
 import android.view.ViewGroup
-import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.*
 import com.angcyo.library.ex._drawable
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget._img
@@ -26,6 +27,9 @@ open class DslGridItem : DslAdapterItem() {
 
     var itemBadgeText: String? = null
 
+    /**开启智能分割线, 只有在非边界的item才绘制*/
+    var itemGridInsert = -1
+
     init {
         itemLayoutId = R.layout.dsl_grid_item
     }
@@ -38,14 +42,38 @@ open class DslGridItem : DslAdapterItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
+        //文本
         itemHolder.tv(R.id.lib_text_view)?.text = itemText
 
+        //图标
         itemHolder._img(R.id.lib_image_view)?.apply {
             updateBadge {
                 badgeText = itemBadgeText
             }
             setImageDrawable(_drawable(itemIcon))
             setWidth(itemIconSize)
+        }
+
+        //智能分割线
+        if (itemGridInsert > 0) {
+            itemGroupParams.apply {
+                //itemLeftInsert = itemGridInsert
+                //itemTopInsert = itemGridInsert
+                itemRightInsert = itemGridInsert
+                itemBottomInsert = itemGridInsert
+                if (isEdgeLeft()) {
+                    itemLeftInsert = 0
+                }
+                if (isEdgeTop()) {
+                    itemTopInsert = 0
+                }
+                if (isEdgeRight()) {
+                    itemRightInsert = 0
+                }
+                if (isEdgeBottom()) {
+                    itemBottomInsert = 0
+                }
+            }
         }
     }
 }
