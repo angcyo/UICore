@@ -229,6 +229,9 @@ class DslGlide {
         }
     }
 
+    //正在加载的uri
+    var _loadUri: Uri? = null
+
     //开始加载
     fun _load(uri: Uri?, asGif: Boolean = false) {
         clear()
@@ -239,6 +242,7 @@ class DslGlide {
         }
 
         _checkLoad {
+            _loadUri = uri
             val targetView = targetView!!
             val path = uri.path
             val url: String? = uri.toString()

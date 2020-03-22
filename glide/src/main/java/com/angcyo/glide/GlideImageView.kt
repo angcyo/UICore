@@ -1,9 +1,11 @@
 package com.angcyo.glide
 
 import android.content.Context
+import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
+import com.angcyo.dsladapter.internal.DrawText
 import com.angcyo.library.L
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.widget.image.DslImageView
@@ -18,10 +20,16 @@ import com.bumptech.glide.load.resource.gif.GifDrawable
 
 open class GlideImageView : DslImageView {
 
+    var showDebugInfo: Boolean = false
+
     val dslGlide: DslGlide by lazy {
         DslGlide().apply {
             targetView = this@GlideImageView
         }
+    }
+
+    val debugInfoDraw: DrawText by lazy {
+        DrawText()
     }
 
     constructor(context: Context) : super(context) {
@@ -42,6 +50,8 @@ open class GlideImageView : DslImageView {
 
     private fun initAttribute(context: Context, attributeSet: AttributeSet?) {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.GlideImageView)
+        showDebugInfo =
+            typedArray.getBoolean(R.styleable.GlideImageView_r_show_debug_info, showDebugInfo)
         drawBorder = typedArray.getBoolean(R.styleable.ShapeImageView_r_draw_border, true)
         typedArray.recycle()
         dslGlide.placeholderDrawable = drawable
@@ -64,6 +74,27 @@ open class GlideImageView : DslImageView {
         if (drawable is pl.droidsonroids.gif.GifDrawable) {
             (drawable as GifDrawable).recycle()
             setImageDrawable(null)
+        }
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+
+        if (showDebugInfo) {
+            debugInfoDraw.apply {
+                drawText = buildString {
+                    append(width)
+                    append("x")
+                    append(height)
+                    appendln()
+                    append(dslGlide._loadUri?.toString())
+                }
+                textWidth = measuredWidth
+                makeLayout().apply {
+                    canvas.translate(0f, (this@GlideImageView.height - height).toFloat())
+                    onDraw(canvas)
+                }
+            }
         }
     }
 
