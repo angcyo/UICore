@@ -49,14 +49,14 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:layout_centerVertical">true</item>
-        <item name="android:textSize">@dimen/text_main_size</item>
+        <item name="android:textSize">@dimen/text_primary_size</item>
         <item name="android:textColor">@color/text_primary_color</item>
         <item name="android:textColorHint">@color/text_place_color</item>
         <item name="android:ellipsize">end</item>
     </style>
 
     <style name="LibMainTextStyle" parent="LibPrimaryTextStyle">
-        <item name="android:textSize">@dimen/text_sub_size</item>
+        <item name="android:textSize">@dimen/text_main_size</item>
         <item name="android:textColor">@color/text_general_color</item>
     </style>
 
