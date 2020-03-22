@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.view.Gravity
+import android.view.ViewGroup
 import com.angcyo.drawable.DslGravity
 import com.angcyo.drawable.base.AbsDslDrawable
 import com.angcyo.drawable.textHeight
@@ -54,6 +55,10 @@ open class DslTextDrawable : AbsDslDrawable() {
     /**文本背景*/
     var textBgDrawable: Drawable? = null
 
+    /**默认使用文本的宽高, -1,-1可以用时View的宽高*/
+    var drawableWidth = ViewGroup.LayoutParams.WRAP_CONTENT
+    var drawableHeight = ViewGroup.LayoutParams.WRAP_CONTENT
+
     val _dslGravity = DslGravity()
 
     init {
@@ -70,10 +75,7 @@ open class DslTextDrawable : AbsDslDrawable() {
         get() = textPaint.textHeight()
 
     override fun draw(canvas: Canvas) {
-
-        if (text == null) {
-            return
-        }
+        val drawText = text ?: return
 
         textBgDrawable?.apply {
             bounds = this@DslTextDrawable.bounds
@@ -90,7 +92,7 @@ open class DslTextDrawable : AbsDslDrawable() {
 
                 //绘制文本
                 canvas.drawText(
-                    text!!,
+                    drawText,
                     textDrawX + textOffsetX + textPaddingLeft,
                     textDrawY - textPaint.descent() + textOffsetY + textPaddingTop,
                     textPaint
@@ -99,17 +101,36 @@ open class DslTextDrawable : AbsDslDrawable() {
         }
     }
 
+    override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
+        super.setBounds(left, top, right, bottom)
+    }
+
     override fun getIntrinsicWidth(): Int {
-        return max(
-            textWidth.toInt(),
-            textBgDrawable?.minimumWidth ?: 0
-        ) + textPaddingLeft + textPaddingRight
+        return if (drawableWidth == ViewGroup.LayoutParams.WRAP_CONTENT) {
+            max(
+                textWidth.toInt(),
+                textBgDrawable?.minimumWidth ?: 0
+            ) + textPaddingLeft + textPaddingRight
+        } else {
+            super.getIntrinsicWidth()
+        }
     }
 
     override fun getIntrinsicHeight(): Int {
-        return max(
-            textHeight.toInt(),
-            textBgDrawable?.minimumHeight ?: 0
-        ) + textPaddingTop + textPaddingBottom
+        return if (drawableHeight == ViewGroup.LayoutParams.WRAP_CONTENT) {
+            max(
+                textHeight.toInt(),
+                textBgDrawable?.minimumHeight ?: 0
+            ) + textPaddingTop + textPaddingBottom
+        } else {
+            super.getIntrinsicHeight()
+        }
+    }
+}
+
+fun dslTextDrawable(text: CharSequence?, action: DslTextDrawable.() -> Unit = {}): DslTextDrawable {
+    return DslTextDrawable().apply {
+        this.text = text?.toString()
+        action()
     }
 }
