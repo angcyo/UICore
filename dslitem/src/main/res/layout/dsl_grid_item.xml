@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/lib_hdpi"
+    tools:background="@color/transparent40">
+
+    <com.angcyo.widget.image.DslImageView
+        android:id="@+id/lib_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:padding="@dimen/lib_hdpi"
+        android:scaleType="fitCenter"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:r_badge_text="99+"
+        app:r_draw_badge="true"
+        app:r_enable_shape="false"
+        tools:src="@drawable/lib_video_cover_tip" />
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/lib_hdpi"
+        android:paddingRight="@dimen/lib_hdpi"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lib_image_view"
+        tools:text="angcyo" />
+
+</com.angcyo.widget.layout.RConstraintLayout>
