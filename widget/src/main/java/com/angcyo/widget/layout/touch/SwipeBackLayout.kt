@@ -9,8 +9,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.customview.widget.ViewDragHelper
 import com.angcyo.library.ex.dpi
-import com.angcyo.library.getStatusBarHeight
 import com.angcyo.widget.R
+import com.angcyo.widget.base.getStatusBarHeight
 import com.angcyo.widget.layout.RSoftInputLayout
 import kotlin.math.max
 import kotlin.math.min

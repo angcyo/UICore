@@ -14,10 +14,10 @@ import androidx.activity.OnBackPressedDispatcherOwner
 import androidx.core.view.doOnPreDraw
 import androidx.core.widget.PopupWindowCompat
 import com.angcyo.dsladapter.getViewRect
+import com.angcyo.library._screenHeight
 import com.angcyo.library.ex.getContentViewHeight
 import com.angcyo.library.ex.undefined_int
 import com.angcyo.library.ex.undefined_res
-import com.angcyo.library.getScreenHeight
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.bgColorAnimator
 import com.angcyo.widget.base.getChildOrNull
@@ -139,11 +139,11 @@ open class PopupConfig {
                 if (exactlyHeight) {
                     height = max(
                         it.context.getContentViewHeight(),
-                        getScreenHeight()
+                        _screenHeight
                     ) - viewRect.bottom
                 }
 
-                if (viewRect.bottom >= getScreenHeight()) {
+                if (viewRect.bottom >= _screenHeight) {
                     //接近屏幕底部
                     if (this@PopupConfig.gravity == Gravity.NO_GRAVITY) {
                         //手动控制无效
@@ -245,11 +245,11 @@ open class PopupConfig {
             if (exactlyHeight) {
                 height = max(
                     it.context.getContentViewHeight(),
-                    getScreenHeight()
+                    _screenHeight
                 ) - viewRect.bottom
             }
 
-            if (viewRect.bottom >= getScreenHeight()) {
+            if (viewRect.bottom >= _screenHeight) {
                 //接近屏幕底部
                 if (this@PopupConfig.gravity == Gravity.NO_GRAVITY) {
                     gravity = Gravity.TOP

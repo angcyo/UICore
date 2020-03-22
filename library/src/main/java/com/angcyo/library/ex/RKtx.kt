@@ -1,8 +1,9 @@
 package com.angcyo.library.ex
 
+import android.content.Context
 import android.text.TextUtils
-import com.angcyo.library.getScreenHeight
-import com.angcyo.library.getScreenWidth
+import android.view.View
+import com.angcyo.library.*
 import kotlin.math.absoluteValue
 
 /**
@@ -13,10 +14,25 @@ import kotlin.math.absoluteValue
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
+fun View.calcLayoutWidthHeight(
+    rLayoutWidth: String?, rLayoutHeight: String?,
+    parentWidth: Int, parentHeight: Int,
+    rLayoutWidthExclude: Int = 0, rLayoutHeightExclude: Int = 0
+): IntArray {
+    return context.calcLayoutWidthHeight(
+        rLayoutWidth,
+        rLayoutHeight,
+        parentWidth,
+        parentHeight,
+        rLayoutWidthExclude,
+        rLayoutHeightExclude
+    )
+}
+
 /**
  * 支持格式0.3pw 0.5ph, p表示[parent]的多少倍数, s表示[screen]的多少倍数
  * */
-fun calcLayoutWidthHeight(
+fun Context.calcLayoutWidthHeight(
     rLayoutWidth: String?, rLayoutHeight: String?,
     parentWidth: Int, parentHeight: Int,
     rLayoutWidthExclude: Int = 0, rLayoutHeightExclude: Int = 0
@@ -30,7 +46,7 @@ fun calcLayoutWidthHeight(
     return size
 }
 
-fun calcLayoutMaxHeight(
+fun Context.calcLayoutMaxHeight(
     rMaxHeight: String?,
     parentWidth: Int,
     parentHeight: Int,
@@ -40,7 +56,26 @@ fun calcLayoutMaxHeight(
 }
 
 /**[exp] 计算表达式, 支持 sh ph px dip, 正数是倍数, 负数是减去倍数的值*/
+
 fun calcSize(
+    exp: String?,
+    pWidth: Int = _screenWidth,
+    pHeight: Int = _screenHeight,
+    exclude: Int = 0
+): Int {
+    return app().calcSize(exp, pWidth, pHeight, exclude)
+}
+
+fun View.calcSize(
+    exp: String?,
+    pWidth: Int = getScreenWidth(),
+    pHeight: Int = getScreenHeight(),
+    exclude: Int = 0
+): Int {
+    return context.calcSize(exp, pWidth, pHeight, exclude)
+}
+
+fun Context.calcSize(
     exp: String?,
     pWidth: Int = getScreenWidth(),
     pHeight: Int = getScreenHeight(),

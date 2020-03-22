@@ -91,7 +91,7 @@ object DslToast {
             val mParams = mTNObj.javaClass.getDeclaredField("mParams")
             mParams.isAccessible = true
             val params = mParams.get(mTNObj) as WindowManager.LayoutParams
-            params.width = getScreenWidth().coerceAtMost(getScreenHeight()) - usedWidth
+            params.width = _screenWidth.coerceAtMost(_screenHeight) - usedWidth
             params.height = -2
             //params.gravity = Gravity.TOP//无法生效, 请在Toast对象里面设置
             params.action()

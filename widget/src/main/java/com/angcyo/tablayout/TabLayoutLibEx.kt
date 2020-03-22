@@ -12,10 +12,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.math.MathUtils
-import com.angcyo.library.ex.dpi
-import com.angcyo.library.getScreenHeight
-import com.angcyo.library.getScreenWidth
-import kotlin.math.absoluteValue
 
 /**
  *

@@ -136,7 +136,7 @@ class RLayoutDelegate : LayoutDelegate() {
         val parentWidth = (delegateView.parent as? View)?.measuredWidth ?: 0
         val parentHeight = (delegateView.parent as? View)?.measuredHeight ?: 0
 
-        val layoutWidthHeight = calcLayoutWidthHeight(
+        val layoutWidthHeight = delegateView.context.calcLayoutWidthHeight(
             rLayoutWidth, rLayoutHeight,
             if (parentWidth > 0) parentWidth else delegateView.screenWidth,
             if (parentHeight > 0) parentHeight else delegateView.screenHeight,
@@ -172,7 +172,7 @@ class RLayoutDelegate : LayoutDelegate() {
         val parentWidth = (delegateView.parent as? View)?.measuredWidth ?: 0
         val parentHeight = (delegateView.parent as? View)?.measuredHeight ?: 0
 
-        val maxWidthHeight = calcLayoutWidthHeight(
+        val maxWidthHeight = delegateView.context.calcLayoutWidthHeight(
             rMaxWidth, rMaxHeight,
             if (parentWidth > 0) parentWidth else delegateView.screenWidth,
             if (parentHeight > 0) parentHeight else delegateView.screenHeight,
