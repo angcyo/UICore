@@ -3,9 +3,6 @@ package com.angcyo.widget.text
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
-import android.view.Gravity
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
 import com.angcyo.widget.drawable.DslAttrBadgeDrawable
 import java.util.*
@@ -21,8 +18,12 @@ open class DslTextView : DslScrollTextView {
     /**角标绘制*/
     var dslBadeDrawable = DslAttrBadgeDrawable()
 
-    /**支持设置format,[java.lang.String.format]*/
+    /**支持设置format,[java.lang.String.format] [%1$s]*/
     var textFormat: String? = null
+        set(value) {
+            field = value
+            text = _originText
+        }
 
     /**未处理过的原始[text]*/
     var _originText: CharSequence? = null
@@ -69,10 +70,11 @@ open class DslTextView : DslScrollTextView {
 
     open fun wrapText(text: CharSequence?): CharSequence? {
         return _originText?.run {
-            if (textFormat.isNullOrBlank()) {
+            val format = textFormat
+            if (format.isNullOrBlank()) {
                 this
             } else {
-                String.format(Locale.CHINA, textFormat!!, text)
+                String.format(Locale.CHINA, format, text)
             }
         }
     }
