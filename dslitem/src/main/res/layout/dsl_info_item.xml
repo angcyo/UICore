@@ -17,14 +17,15 @@
         style="@style/LibBodyTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawablePadding="4dp"
+        android:drawablePadding="@dimen/lib_drawable_padding"
         android:paddingLeft="@dimen/lib_padding_left"
-        android:paddingRight="@dimen/lib_padding_left"
+        android:paddingRight="@dimen/lib_padding_right"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/wrap_layout"
         app:layout_constraintTop_toTopOf="parent"
+        tools:drawableLeft="@drawable/lib_image_tip"
         tools:text="关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们" />
 
     <FrameLayout
