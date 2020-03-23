@@ -1,12 +1,12 @@
 package com.angcyo.item
 
-import android.graphics.Color
 import android.view.ViewGroup
 import com.angcyo.dsladapter.*
 import com.angcyo.library.ex._drawable
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget._img
 import com.angcyo.widget.base.setWidth
+import com.angcyo.widget.drawable.DslAttrBadgeDrawable
 
 /**
  * 普通的网格item
@@ -30,6 +30,9 @@ open class DslGridItem : DslAdapterItem() {
     /**开启智能分割线, 只有在非边界的item才绘制*/
     var itemGridInsert = -1
 
+    /**角标配置*/
+    var itemConfigBadge: (DslAttrBadgeDrawable) -> Unit = {}
+
     init {
         itemLayoutId = R.layout.dsl_grid_item
     }
@@ -49,6 +52,7 @@ open class DslGridItem : DslAdapterItem() {
         itemHolder._img(R.id.lib_image_view)?.apply {
             updateBadge {
                 badgeText = itemBadgeText
+                itemConfigBadge(this)
             }
             setImageDrawable(_drawable(itemIcon))
             setWidth(itemIconSize)
