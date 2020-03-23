@@ -26,7 +26,7 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
     var dialogBottomCancelItem: DslDialogTextItem? = defaultCancelItem()
 
     /**选项*/
-    val adapterItemList: MutableList<DslAdapterItem> = mutableListOf()
+    var adapterItemList: MutableList<DslAdapterItem> = mutableListOf()
 
     /**支持单选多选模式*/
     var dialogSelectorModel: Int = ItemSelectorHelper.MODEL_NORMAL
@@ -40,8 +40,8 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
     /**对话框返回, 取消不会触发此回调
      * [dialogItemList] 数据列表
      * [dialogItemIndexList] 索引列表*/
-    var onDialogResult: (itemList: List<DslAdapterItem>, indexList: List<Int>) -> Unit =
-        { _, _ -> }
+    var onDialogResult: (dialog: Dialog, itemList: List<DslAdapterItem>, indexList: List<Int>) -> Boolean =
+        { _, _, _ -> false }
 
     //适配器
     lateinit var _dialogAdapter: DslAdapter
@@ -50,16 +50,26 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
         dialogLayoutId = R.layout.lib_dialog_recycler_layout
 
         positiveButtonListener = { dialog, _ ->
-            dialog.dismiss()
+            var dismiss = true
             if (dialogSelectorModel == ItemSelectorHelper.MODEL_SINGLE ||
                 dialogSelectorModel == ItemSelectorHelper.MODEL_MULTI
             ) {
-                onDialogResult(
-                    _dialogAdapter.selector().getSelectorItemList(),
-                    _dialogAdapter.selector().getSelectorIndexList()
-                )
-                //清空回调对象
-                onDialogResult = { _, _ -> }
+                if (onDialogResult(
+                        dialog,
+                        _dialogAdapter.selector().getSelectorItemList(),
+                        _dialogAdapter.selector().getSelectorIndexList()
+                    )
+
+                ) {
+                    //拦截
+                    dismiss = false
+                } else {
+                    //清空回调对象
+                    onDialogResult = { _, _, _ -> false }
+                }
+            }
+            if (dismiss) {
+                dialog.dismiss()
             }
         }
     }
@@ -140,8 +150,12 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
         } else if (dialogSelectorModel == ItemSelectorHelper.MODEL_MULTI) {
             _dialogAdapter.selectMutex(dslItem)
         } else {
-            _dialog?.dismiss()
-            onDialogResult(listOf(dslItem), listOf(dslItem.itemIndexPosition()))
+            if (onDialogResult(_dialog!!, listOf(dslItem), listOf(dslItem.itemIndexPosition()))
+            ) {
+                //拦截
+            } else {
+                _dialog?.dismiss()
+            }
         }
     }
 }
