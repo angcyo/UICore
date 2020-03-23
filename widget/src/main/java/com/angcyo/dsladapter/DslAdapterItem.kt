@@ -120,6 +120,9 @@ open class DslAdapterItem : LifecycleOwner {
     /**指定item的背景*/
     var itemBackgroundDrawable: Drawable? = UndefinedDrawable()
 
+    /**是否激活item, 目前只能控制click, longClick事件不被回调*/
+    var itemEnable: Boolean = true
+
     /**唯一标识此item的值*/
     var itemTag: String? = null
 
@@ -229,13 +232,13 @@ open class DslAdapterItem : LifecycleOwner {
 
     //初始化事件
     open fun _initItemListener(itemHolder: DslViewHolder) {
-        if (itemClick == null || _clickListener == null) {
+        if (itemClick == null || _clickListener == null || !itemEnable) {
             itemHolder.itemView.isClickable = false
         } else {
             itemHolder.clickItem(_clickListener)
         }
 
-        if (itemLongClick == null || _longClickListener == null) {
+        if (itemLongClick == null || _longClickListener == null || !itemEnable) {
             itemHolder.itemView.isLongClickable = false
         } else {
             itemHolder.itemView.setOnLongClickListener(_longClickListener)
