@@ -1,0 +1,48 @@
+package com.angcyo.item
+
+import android.view.View
+import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.*
+
+/**
+ * 带有label的输入item
+ * Email:angcyo@126.com
+ * @author angcyo
+ * @date 2020/03/23
+ * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
+ */
+open class DslLabelEditItem : DslBaseEditItem() {
+
+    /**左边的Label文本*/
+    var itemEditLabel: CharSequence? = null
+
+    /**编辑提示按钮*/
+    var itemEditTipIcon: Int = R.drawable.lib_icon_edit_tip
+
+    init {
+        itemLayoutId = R.layout.dsl_label_edit_item
+    }
+
+    override fun onItemBind(
+        itemHolder: DslViewHolder,
+        itemPosition: Int,
+        adapterItem: DslAdapterItem,
+        payloads: List<Any>
+    ) {
+        super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
+
+        itemHolder.tv(R.id.lib_label_view)?.text = itemEditLabel
+        itemHolder.img(R.id.lib_right_ico_view)?.apply {
+            if (itemNoEditModel) {
+                gone()
+            } else {
+                visible()
+                clickIt {
+                    itemHolder.focus<View>(R.id.lib_edit_view)?.showSoftInput()
+                }
+            }
+            setImageDrawable(loadDrawable(itemEditTipIcon))
+        }
+    }
+}
