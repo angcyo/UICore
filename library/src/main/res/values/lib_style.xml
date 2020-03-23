@@ -22,4 +22,14 @@
         <item name="android:shadowDy">1.5</item>
         <item name="android:shadowRadius">1.5</item>
     </style>
+
+    <!--标题栏item的样式-->
+    <style name="LibItemStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minWidth">@dimen/lib_item_min_height</item>
+        <item name="android:minHeight">@dimen/lib_item_min_height</item>
+        <item name="android:padding">@dimen/lib_xhdpi</item>
+        <item name="android:background">@drawable/lib_bg2_selector</item>
+    </style>
 </resources>
