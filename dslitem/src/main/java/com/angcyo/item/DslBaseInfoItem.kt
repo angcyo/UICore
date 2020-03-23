@@ -2,17 +2,15 @@ package com.angcyo.item
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.library.ex.color
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.loadDrawable
 import com.angcyo.widget.base.inflate
+import com.angcyo.widget.base.loadDrawable
 import com.angcyo.widget.base.setLeftIco
-import com.angcyo.widget.layout.ILayoutDelegate
 
 /**
  * 横条文本信息基类item, 右边布局支持扩展自定义
@@ -22,9 +20,6 @@ import com.angcyo.widget.layout.ILayoutDelegate
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 open class DslBaseInfoItem : DslAdapterItem() {
-
-    /**背景*/
-    var itemBackgroundDrawable: Drawable? = ColorDrawable(Color.WHITE)
 
     /**条目文本*/
     var itemInfoText: CharSequence? = null
@@ -40,6 +35,7 @@ open class DslBaseInfoItem : DslAdapterItem() {
 
     init {
         itemLayoutId = R.layout.dsl_info_item
+        itemBackgroundDrawable = ColorDrawable(Color.WHITE)
     }
 
     override fun onItemBind(
@@ -49,8 +45,6 @@ open class DslBaseInfoItem : DslAdapterItem() {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
-
-        (itemHolder.itemView as? ILayoutDelegate)?.getCustomLayoutDelegate()?.bDrawable = itemBackgroundDrawable
 
         //文本信息
         itemHolder.tv(R.id.lib_text_view)?.apply {

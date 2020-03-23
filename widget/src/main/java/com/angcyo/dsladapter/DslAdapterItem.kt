@@ -11,11 +11,14 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.library.L
+import com.angcyo.library.UndefinedDrawable
 import com.angcyo.library.ex.elseNull
 import com.angcyo.library.ex.undefined_size
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.setBgDrawable
 import com.angcyo.widget.base.setHeight
 import com.angcyo.widget.base.setWidth
+import com.angcyo.widget.layout.ILayoutDelegate
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -86,6 +89,7 @@ open class DslAdapterItem : LifecycleOwner {
     /**
      * 在 GridLayoutManager 中, 需要占多少个 span. -1表示满屏
      * [itemIsGroupHead]
+     * [com.angcyo.dsladapter.DslAdapter.onViewAttachedToWindow]
      * */
     var itemSpanCount = 1
 
@@ -103,13 +107,18 @@ open class DslAdapterItem : LifecycleOwner {
             onSetItemData(value)
         }
 
+    /**[itemData]*/
     open fun onSetItemData(data: Any?) {
 
     }
 
     /**强制指定item的宽高*/
     var itemWidth: Int = undefined_size
+
     var itemHeight: Int = undefined_size
+
+    /**指定item的背景*/
+    var itemBackgroundDrawable: Drawable? = UndefinedDrawable()
 
     /**唯一标识此item的值*/
     var itemTag: String? = null
@@ -128,6 +137,7 @@ open class DslAdapterItem : LifecycleOwner {
      * 点击事件和长按事件封装
      * */
     var itemClick: ((View) -> Unit)? = null
+
     var itemLongClick: ((View) -> Boolean)? = null
 
     var _clickListener: View.OnClickListener? = View.OnClickListener { view ->
@@ -145,6 +155,7 @@ open class DslAdapterItem : LifecycleOwner {
         adapterItem: DslAdapterItem,
         payloads: List<Any>
     ) {
+        _initItemBackground(itemHolder)
         _initItemSize(itemHolder)
         _initItemListener(itemHolder)
 
@@ -157,29 +168,6 @@ open class DslAdapterItem : LifecycleOwner {
         adapterItem: DslAdapterItem
     ) {
         //no op
-    }
-
-    open fun _initItemSize(itemHolder: DslViewHolder) {
-        if (itemWidth != undefined_size) {
-            itemHolder.itemView.setWidth(itemWidth)
-        }
-        if (itemHeight != undefined_size) {
-            itemHolder.itemView.setHeight(itemHeight)
-        }
-    }
-
-    open fun _initItemListener(itemHolder: DslViewHolder) {
-        if (itemClick == null || _clickListener == null) {
-            itemHolder.itemView.isClickable = false
-        } else {
-            itemHolder.clickItem(_clickListener)
-        }
-
-        if (itemLongClick == null || _longClickListener == null) {
-            itemHolder.itemView.isLongClickable = false
-        } else {
-            itemHolder.itemView.setOnLongClickListener(_longClickListener)
-        }
     }
 
     /**用于覆盖默认操作*/
@@ -212,8 +200,49 @@ open class DslAdapterItem : LifecycleOwner {
             onItemViewRecycled(itemHolder, itemPosition)
         }
 
-    //</editor-fold>
+    //</editor-fold desc="标准属性">
 
+    //<editor-fold desc="内部初始化">
+
+    //初始化背景
+    open fun _initItemBackground(itemHolder: DslViewHolder) {
+        if (itemBackgroundDrawable !is UndefinedDrawable) {
+            itemHolder.itemView.apply {
+                if (this is ILayoutDelegate) {
+                    this.getCustomLayoutDelegate().bDrawable = itemBackgroundDrawable
+                } else {
+                    setBgDrawable(itemBackgroundDrawable)
+                }
+            }
+        }
+    }
+
+    //初始化宽高
+    open fun _initItemSize(itemHolder: DslViewHolder) {
+        if (itemWidth != undefined_size) {
+            itemHolder.itemView.setWidth(itemWidth)
+        }
+        if (itemHeight != undefined_size) {
+            itemHolder.itemView.setHeight(itemHeight)
+        }
+    }
+
+    //初始化事件
+    open fun _initItemListener(itemHolder: DslViewHolder) {
+        if (itemClick == null || _clickListener == null) {
+            itemHolder.itemView.isClickable = false
+        } else {
+            itemHolder.clickItem(_clickListener)
+        }
+
+        if (itemLongClick == null || _longClickListener == null) {
+            itemHolder.itemView.isLongClickable = false
+        } else {
+            itemHolder.itemView.setOnLongClickListener(_longClickListener)
+        }
+    }
+
+    //</editor-fold desc="内部初始化">
 
     //<editor-fold desc="分组相关属性">
 
