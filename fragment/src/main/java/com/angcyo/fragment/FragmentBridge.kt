@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.angcyo.base.instantiateFragment
+import com.angcyo.base.requestPermission
 import com.angcyo.library.L
 import com.angcyo.library.ex.havePermissions
 import com.angcyo.library.utils.resultString
@@ -189,6 +190,11 @@ fun Context.requestPermissions(
             }
         }
     } else {
-        L.w("$this is not FragmentActivity!")
+        if (this is Activity) {
+            this.requestPermission(permissions)
+            L.w("$this is not FragmentActivity, cannot callback result!")
+        } else {
+            L.w("$this is not Activity, cancel request!")
+        }
     }
 }

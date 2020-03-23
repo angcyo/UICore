@@ -24,7 +24,9 @@ import com.angcyo.base.dslAHelper
 import com.angcyo.fragment.ActivityResult
 import com.angcyo.fragment.FragmentBridge
 import com.angcyo.fragment.dslBridge
+import com.angcyo.fragment.requestPermissions
 import com.angcyo.library.L
+import com.angcyo.library.ex.havePermission
 
 /**
  *
@@ -59,6 +61,9 @@ class DslAHelper(val context: Context) {
 
     /**当前[Activity]finish时, 启动此[Activity]*/
     var finishToActivity: Class<out Activity>? = mainActivityClass
+
+    /**执行操作之前, 需要保证的权限. 无权限, 则取消操作*/
+    val permissions = mutableListOf<String>()
 
     //<editor-fold desc="start操作">
 
@@ -124,7 +129,34 @@ class DslAHelper(val context: Context) {
 
     //</editor-fold desc="start操作">
 
+    /**检查权限*/
+    fun _checkPermissions(onPermissionsGranted: () -> Unit) {
+        if (permissions.isEmpty() || context.havePermission(permissions)) {
+            onPermissionsGranted()
+        } else {
+            if (context is FragmentActivity) {
+                dslBridge(context.supportFragmentManager) {
+                    startRequestPermissions(permissions.toTypedArray()) { _, _ ->
+                        if (context?.havePermission(permissions) == true) {
+                            onPermissionsGranted()
+                        }
+                    }
+                }
+            } else {
+                context.requestPermissions(permissions) {
+                    //no op
+                }
+            }
+        }
+    }
+
     fun doIt() {
+        _checkPermissions {
+            _doIt()
+        }
+    }
+
+    private fun _doIt() {
         startIntentConfig.forEach {
             try {
 
@@ -211,6 +243,7 @@ class DslAHelper(val context: Context) {
                 context.onBackPressed()
             }
         }
+
     }
 
     //<editor-fold desc="finish 操作">

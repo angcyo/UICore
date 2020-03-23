@@ -13,7 +13,9 @@ import androidx.lifecycle.Lifecycle
 import com.angcyo.base.*
 import com.angcyo.fragment.IFragment
 import com.angcyo.fragment.R
+import com.angcyo.fragment.dslBridge
 import com.angcyo.library.L
+import com.angcyo.library.ex.havePermission
 import com.angcyo.library.ex.isDebug
 import com.angcyo.widget.base.animationOf
 import com.angcyo.widget.base.isVisible
@@ -94,6 +96,9 @@ class DslFHelper(
 
     @AnimRes
     var removeExitAnimRes: Int = DEFAULT_REMOVE_EXIT_ANIM
+
+    /**执行操作之前, 需要保证的权限. 无权限, 则取消操作*/
+    val permissions = mutableListOf<String>()
 
     //</editor-fold desc="属性">
 
@@ -344,10 +349,31 @@ class DslFHelper(
 
     var _logRunnable: Runnable? = null
 
+    /**检查权限*/
+    fun _checkPermissions(onPermissionsGranted: () -> Unit) {
+        if (permissions.isEmpty() || context?.havePermission(permissions) == true) {
+            onPermissionsGranted()
+        } else {
+            dslBridge(fm) {
+                startRequestPermissions(permissions.toTypedArray()) { _, _ ->
+                    if (context?.havePermission(permissions) == true) {
+                        onPermissionsGranted()
+                    }
+                }
+            }
+        }
+    }
+
     /**执行操作,
      * [fromBack] 是否是用户back操作触发的
      * */
     fun doIt(fromBack: Boolean = false) {
+        _checkPermissions {
+            _doIt(fromBack)
+        }
+    }
+
+    private fun _doIt(fromBack: Boolean = false) {
         fm.beginTransaction().apply {
             if (fm.isDestroyed) {
                 //no op

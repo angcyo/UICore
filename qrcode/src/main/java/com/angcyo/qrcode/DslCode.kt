@@ -9,7 +9,7 @@ import com.angcyo.rcode.ScanActivity
 import com.angcyo.rcode.ScanFragment
 
 /**
- *
+ * 二维码
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/02/28
@@ -19,6 +19,7 @@ class DslCode {
 
     /**承载[codeFragment]的[Activity]*/
     var codeActivity: Class<out ScanActivity>? = CodeScanActivity::class.java
+
     /**扫码[Fragment]*/
     var codeFragment: Class<out ScanFragment>? = CodeScanFragment::class.java
 
@@ -52,6 +53,7 @@ class DslCode {
     }
 }
 
+/**快速启动二维码扫一扫界面, 并且获取返回值*/
 fun dslCode(activity: Activity?, action: DslCode.() -> Unit) {
     DslCode().apply {
         action()
