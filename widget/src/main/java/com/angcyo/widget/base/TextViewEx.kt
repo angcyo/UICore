@@ -145,6 +145,19 @@ fun TextView.clearListeners() {
     }
 }
 
+fun TextView?.setMaxLine(maxLine: Int = 1) {
+    this?.run {
+        if (maxLine <= 1) {
+            isSingleLine = true
+            ellipsize = TextUtils.TruncateAt.END
+            maxLines = 1
+        } else {
+            isSingleLine = false
+            maxLines = maxLine
+        }
+    }
+}
+
 /**单行输入切换*/
 fun TextView?.setSingleLineMode(singleLine: Boolean = true, maxLength: Int = -1) {
     this?.run {

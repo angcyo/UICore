@@ -13,6 +13,7 @@ import androidx.core.view.ViewCompat
 import com.angcyo.library.ex.color
 
 import com.angcyo.widget.base.eachChild
+import com.angcyo.widget.base.getChildOrNull
 import com.angcyo.widget.base.inflate
 
 /**
@@ -32,6 +33,12 @@ class DslGroupHelper(val parentView: View) : DslViewHolder(parentView) {
 
     fun selector(id: Int) {
         selectorView = v(id)
+    }
+
+    fun selectorIndex(index: Int) {
+        if (parentView is ViewGroup) {
+            selectorView = parentView.getChildOrNull(index)
+        }
     }
 
     fun setBackground(color: Int) {

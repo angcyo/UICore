@@ -519,6 +519,18 @@ val View.drawCenterY get() = drawTop + drawHeight / 2
 fun View?.isVisible() = this?.visibility == View.VISIBLE
 fun View?.isGone() = this?.visibility == View.GONE
 
+fun View?.visible() {
+    this?.visibility = View.VISIBLE
+}
+
+fun View?.gone() {
+    this?.visibility = View.GONE
+}
+
+fun View?.invisible() {
+    this?.visibility = View.INVISIBLE
+}
+
 fun View.save(canvas: Canvas, paint: Paint? = null): Int {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), paint)
