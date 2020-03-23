@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_item_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/lib_white">
+
+    <com.angcyo.widget.edit.DslEditText
+        android:id="@+id/lib_edit_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/lib_bottom_line_selector"
+        android:minHeight="@dimen/lib_item_min_height"
+        android:paddingLeft="@dimen/lib_padding_left"
+        android:paddingTop="@dimen/lib_hdpi"
+        android:paddingRight="@dimen/lib_padding_left"
+        android:paddingBottom="@dimen/lib_hdpi"
+        app:r_hide_soft_input_on_lost_focus="true"
+        tools:hint="请输入..." />
+
+</FrameLayout>
