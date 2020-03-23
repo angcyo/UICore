@@ -145,12 +145,30 @@ open class DslAdapterItem : LifecycleOwner {
         adapterItem: DslAdapterItem,
         payloads: List<Any>
     ) {
+        _initItemSize(itemHolder)
+        _initItemListener(itemHolder)
+
+        onItemBind(itemHolder, itemPosition, adapterItem)
+    }
+
+    open fun onItemBind(
+        itemHolder: DslViewHolder,
+        itemPosition: Int,
+        adapterItem: DslAdapterItem
+    ) {
+        //no op
+    }
+
+    open fun _initItemSize(itemHolder: DslViewHolder) {
         if (itemWidth != undefined_size) {
             itemHolder.itemView.setWidth(itemWidth)
         }
         if (itemHeight != undefined_size) {
             itemHolder.itemView.setHeight(itemHeight)
         }
+    }
+
+    open fun _initItemListener(itemHolder: DslViewHolder) {
         if (itemClick == null || _clickListener == null) {
             itemHolder.itemView.isClickable = false
         } else {
@@ -162,16 +180,6 @@ open class DslAdapterItem : LifecycleOwner {
         } else {
             itemHolder.itemView.setOnLongClickListener(_longClickListener)
         }
-
-        onItemBind(itemHolder, itemPosition, adapterItem)
-    }
-
-    open fun onItemBind(
-        itemHolder: DslViewHolder,
-        itemPosition: Int,
-        adapterItem: DslAdapterItem
-    ) {
-
     }
 
     /**用于覆盖默认操作*/
