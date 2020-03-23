@@ -90,6 +90,25 @@ class REditDelegate(val editText: EditText) {
         showClearDrawable =
             typedArray.getBoolean(R.styleable.REditDelegate_r_show_clear, showClearDrawable)
 
+        isNoEditMode =
+            typedArray.getBoolean(R.styleable.REditDelegate_r_is_no_edit_mode, isNoEditMode)
+        requestFocusOnTouch = typedArray.getBoolean(
+            R.styleable.REditDelegate_r_request_focus_on_touch,
+            requestFocusOnTouch
+        )
+        hideSoftInputOnLostFocus = typedArray.getBoolean(
+            R.styleable.REditDelegate_r_hide_soft_input_on_lost_focus,
+            hideSoftInputOnLostFocus
+        )
+        hideSoftInputOnDetached = typedArray.getBoolean(
+            R.styleable.REditDelegate_r_hide_soft_input_on_detached,
+            hideSoftInputOnDetached
+        )
+        hideSoftInputOnInvisible = typedArray.getBoolean(
+            R.styleable.REditDelegate_r_hide_soft_input_on_invisible,
+            hideSoftInputOnInvisible
+        )
+
         isPasswordDrawable = typedArray.getBoolean(
             R.styleable.REditDelegate_r_is_password_drawable,
             editText.isPasswordType()
