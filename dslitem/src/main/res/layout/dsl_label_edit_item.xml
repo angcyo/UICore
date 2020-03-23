@@ -27,10 +27,7 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/lib_right_ico_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/lib_bg2_selector"
-        android:padding="@dimen/lib_padding_right"
+        style="@style/ItemRightIcoStyle"
         android:src="@drawable/lib_icon_edit_tip"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"

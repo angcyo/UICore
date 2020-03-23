@@ -17,7 +17,7 @@ import com.angcyo.widget.edit.IEditDelegate
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
-open class DslBaseEditItem : DslAdapterItem() {
+open class DslBaseEditItem : DslBaseLabelItem() {
 
     companion object {
         /**允许默认输入的字符长度*/

@@ -14,9 +14,6 @@ import com.angcyo.widget.base.*
  */
 open class DslLabelEditItem : DslBaseEditItem() {
 
-    /**左边的Label文本*/
-    var itemEditLabel: CharSequence? = null
-
     /**编辑提示按钮*/
     var itemEditTipIcon: Int = R.drawable.lib_icon_edit_tip
 
@@ -32,7 +29,6 @@ open class DslLabelEditItem : DslBaseEditItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
-        itemHolder.tv(R.id.lib_label_view)?.text = itemEditLabel
         itemHolder.img(R.id.lib_right_ico_view)?.apply {
             if (itemNoEditModel) {
                 gone()
