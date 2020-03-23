@@ -10,6 +10,8 @@ import android.text.TextUtils
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import com.angcyo.library.L
+import com.angcyo.library.ex.add
+import com.angcyo.library.ex.remove
 import com.angcyo.library.utils.getMember
 import java.util.*
 
@@ -118,10 +120,10 @@ fun TextView.addFlags(add: Boolean, flat: Int) {
 }
 
 fun Paint.addPaintFlags(add: Boolean, flat: Int) {
-    if (add) {
-        this.flags = this.flags or flat
+    flags = if (add) {
+        flags.add(flat)
     } else {
-        this.flags = this.flags and flat.inv()
+        flags.remove(flat)
     }
 }
 
