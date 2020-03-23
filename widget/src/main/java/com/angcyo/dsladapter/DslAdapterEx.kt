@@ -113,6 +113,11 @@ inline fun <reified ItemData> DslAdapter.getAllItemData(useFilterList: Boolean =
     return result
 }
 
+/**枚举所有Item*/
+fun DslAdapter.eachItem(useFilterList: Boolean = true, action: (DslAdapterItem) -> Unit) {
+    getDataList(useFilterList).forEach(action)
+}
+
 //</editor-fold desc="Item操作">
 
 //<editor-fold desc="payload">
