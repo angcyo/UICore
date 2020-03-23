@@ -5,7 +5,7 @@ import android.widget.TextView
 import androidx.collection.ArrayMap
 import com.angcyo.component.DslAffect
 import com.angcyo.component.dslAffect
-import com.angcyo.dialog.dslitem.DslOptionItem
+import com.angcyo.dialog.dslitem.DslDialogOptionItem
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.loadSingleData2
 import com.angcyo.dsladapter.singleModel
@@ -189,11 +189,11 @@ open class OptionDialogConfig : BaseDialogConfig() {
                     }
                 } else {
                     _dslAffect.showAffect(DslAffect.AFFECT_EMPTY)
-                    _adapter.loadSingleData2<DslOptionItem>(null)
+                    _adapter.loadSingleData2<DslDialogOptionItem>(null)
                 }
             } else {
                 _dslAffect.showAffect(DslAffect.AFFECT_CONTENT)
-                _adapter.loadSingleData2<DslOptionItem>(itemResultList, 1, Int.MAX_VALUE) { data ->
+                _adapter.loadSingleData2<DslDialogOptionItem>(itemResultList, 1, Int.MAX_VALUE) { data ->
                     itemIsSelected = optionList.getOrNull(loadLevel)?.run {
                         isOptionEquItem(this, data)
                     } ?: false

@@ -5,12 +5,12 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.widget.DslViewHolder
 
 /**
- *
+ * 万级联动dialog中的选择item
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/03/12
  */
-open class DslOptionItem : DslAdapterItem() {
+open class DslDialogOptionItem : DslAdapterItem() {
 
     var itemOptionText: CharSequence? = null
 

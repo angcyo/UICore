@@ -7,7 +7,7 @@ import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.constraintParams
 
 /**
- *
+ * 网格对话框中的item
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/03/05
@@ -18,6 +18,7 @@ class DslDialogGridItem : DslDialogTextItem() {
 
     /**网格图标*/
     var itemGridIcon: Int = undefined_res
+
     /**图标相对于item的宽度的比例*/
     var itemGridWidthPercent: Float = 0.6f
 

@@ -9,7 +9,7 @@ import com.angcyo.widget.base.setBoldText
 import com.angcyo.widget.base.setLeftIco
 
 /**
- *
+ * Dialog中的文本item
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/03/05
@@ -20,10 +20,13 @@ open class DslDialogTextItem : DslAdapterItem() {
 
     /**支持span*/
     var itemText: CharSequence? = null
+
     /**是否是粗体*/
     var itemTextBold: Boolean = false
+
     /**重力*/
     var itemTextGravity: Int = Gravity.CENTER
+
     /**使用系统的[drawableLeft]属性*/
     var itemLeftDrawable: Drawable? = null
 
