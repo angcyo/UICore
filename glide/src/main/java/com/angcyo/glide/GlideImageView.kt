@@ -72,7 +72,7 @@ open class GlideImageView : DslImageView {
             setImageDrawable(null)
         }
         if (drawable is pl.droidsonroids.gif.GifDrawable) {
-            (drawable as GifDrawable).recycle()
+            (drawable as pl.droidsonroids.gif.GifDrawable).recycle()
             setImageDrawable(null)
         }
     }
