@@ -24,9 +24,10 @@ open class FragmentWrapActivity : BaseAppCompatActivity() {
         fun getIntent(
             context: Context,
             targetFragment: Class<out Fragment>,
-            singleTask: Boolean = true
+            singleTask: Boolean = false,
+            wrapActivity: Class<out Activity> = FragmentWrapActivity::class.java
         ): Intent {
-            return Intent(context, FragmentWrapActivity::class.java).apply {
+            return Intent(context, wrapActivity).apply {
                 putExtra(KEY_TARGET_FRAGMENT, Intent(context, targetFragment))
 
                 if (context !is Activity) {
@@ -52,7 +53,12 @@ open class FragmentWrapActivity : BaseAppCompatActivity() {
         }
 
         /**[targetIntent] 跳转的真实目标*/
-        fun jump(context: Context, targetIntent: Intent, singleTask: Boolean = true) {
+        fun jump(
+            context: Context,
+            targetIntent: Intent,
+            singleTask: Boolean = true,
+            wrapActivity: Class<out Activity> = FragmentWrapActivity::class.java
+        ) {
 
             if (targetIntent.component == null) {
                 L.w("需要设置启动的组件[component]")
@@ -60,7 +66,7 @@ open class FragmentWrapActivity : BaseAppCompatActivity() {
             }
 
             DslAHelper(context).apply {
-                start(Intent(context, FragmentWrapActivity::class.java)) {
+                start(Intent(context, wrapActivity)) {
                     intent.putExtra(KEY_TARGET_FRAGMENT, targetIntent)
 
                     if (context !is Activity) {

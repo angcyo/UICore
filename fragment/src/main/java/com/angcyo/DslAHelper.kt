@@ -121,10 +121,11 @@ class DslAHelper(val context: Context) {
     /**使用[FragmentWrapActivity]包裹启动[Fragment]*/
     fun start(
         fragment: Class<out Fragment>,
-        singTask: Boolean = true,
-        action: IntentConfig.() -> Unit = {}
+        singTask: Boolean = false,
+        wrapActivity: Class<out Activity> = FragmentWrapActivity::class.java,
+        action: IntentConfig .() -> Unit = {}
     ) {
-        start(FragmentWrapActivity.getIntent(context, fragment, singTask), action)
+        start(FragmentWrapActivity.getIntent(context, fragment, singTask, wrapActivity), action)
     }
 
     //</editor-fold desc="start操作">
