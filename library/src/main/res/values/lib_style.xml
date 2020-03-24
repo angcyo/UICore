@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <integer name="lib_animation_duration">180</integer>
+    <integer name="lib_animation_delay">212</integer>
+
     <!--Toast的动画-->
     <style name="LibToastTopAnimation" parent="android:Animation">
         <item name="android:windowEnterAnimation">@anim/lib_tran_alpha_top_enter</item>
