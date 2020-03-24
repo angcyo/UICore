@@ -95,6 +95,10 @@ fun getDimen(@DimenRes id: Int): Int {
     return app().getDimen(id)
 }
 
+fun getInteger(@IntegerRes id: Int): Int {
+    return app().resources.getInteger(id)
+}
+
 @ColorInt
 fun _color(@ColorRes id: Int): Int {
     return getColor(id)
@@ -103,6 +107,10 @@ fun _color(@ColorRes id: Int): Int {
 @Px
 fun _dimen(@DimenRes id: Int): Int {
     return getDimen(id)
+}
+
+fun _integer(@IntegerRes id: Int): Int {
+    return getInteger(id)
 }
 
 fun _drawable(@DrawableRes id: Int): Drawable? {

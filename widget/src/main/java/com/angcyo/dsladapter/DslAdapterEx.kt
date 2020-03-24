@@ -149,3 +149,39 @@ fun mediaPayload(): List<Int> =
 
 //</editor-fold desc="payload">
 
+//<editor-fold desc="AdapterStatus">
+
+fun DslAdapter.toLoading(
+    filterParams: FilterParams = defaultFilterParams!!.apply {
+        justRun = true
+    }
+) {
+    setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_LOADING, filterParams)
+}
+
+fun DslAdapter.toEmpty(
+    filterParams: FilterParams = defaultFilterParams!!.apply {
+        justRun = true
+    }
+) {
+    setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_EMPTY, filterParams)
+}
+
+fun DslAdapter.toError(
+    filterParams: FilterParams = defaultFilterParams!!.apply {
+        justRun = true
+    }
+) {
+    setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_ERROR, filterParams)
+}
+
+fun DslAdapter.toNone(
+    filterParams: FilterParams = defaultFilterParams!!.apply {
+        justRun = true
+    }
+) {
+    setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_NONE, filterParams)
+}
+
+//</editor-fold desc="AdapterStatus">
+

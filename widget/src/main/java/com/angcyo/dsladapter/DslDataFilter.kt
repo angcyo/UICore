@@ -7,6 +7,7 @@ import com.angcyo.dsladapter.filter.*
 import com.angcyo.dsladapter.internal.*
 import com.angcyo.library.L
 import com.angcyo.library.LTime
+import com.angcyo.library.ex.elseNull
 import com.angcyo.library.ex.hash
 import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.simpleHash
@@ -96,14 +97,22 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             _updateTaskLit.forEach {
                 if (params.justRun || params.shakeType == OnceHandler.SHAKE_TYPE_DEBOUNCE) {
                     //立即执行 or 抖动
-                    it.taskCancel = true
+                    if (it._params?.justRun == true) {
+                        //此任务需要立即执行, 跳过取消
+                    } else {
+                        it.taskCancel = true
+                    }
                 } else if (params.shakeType == OnceHandler.SHAKE_TYPE_THROTTLE) {
                     //节流
                     if (firstTime < 0L) {
                         firstTime = it._taskStartTime
                     } else {
                         if (it._taskStartTime - firstTime < params.shakeDelay) {
-                            it.taskCancel = true
+                            if (it._params?.justRun == true) {
+                                //此任务需要立即执行, 跳过取消
+                            } else {
+                                it.taskCancel = true
+                            }
                         }
                     }
                 }
@@ -220,15 +229,20 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             }
 
             _params?.apply {
-                if (asyncDiff) {
-                    asyncExecutor.submit {
+                when {
+                    //异步执行diff
+                    asyncDiff -> asyncExecutor.submit {
                         doInner()
                     }
-                } else {
-                    mainHandler.post {
+                    //立即执行
+                    justRun -> doInner()
+                    //post, 抖动过滤
+                    else -> mainHandler.post {
                         doInner()
                     }
                 }
+            }.elseNull {
+                taskCancel = true
             }
         }
 
@@ -248,10 +262,13 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             L.v("${hash()} Diff计算耗时:${String.format("%.3f", s + ms)}s")
 
             //回调到主线程
-            if (Looper.getMainLooper() == Looper.myLooper()) {
-                onDiffResult(diffResult, resultList)
-            } else {
-                mainHandler.post {
+            val notifyDelay = _params?.notifyDiffDelay ?: -1
+            when {
+                notifyDelay >= 0 -> mainHandler.postDelayed({
+                    onDiffResult(diffResult, resultList)
+                }, notifyDelay)
+                Looper.getMainLooper() == Looper.myLooper() -> onDiffResult(diffResult, resultList)
+                else -> mainHandler.post {
                     onDiffResult(diffResult, resultList)
                 }
             }
@@ -378,6 +395,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             val nowTime = System.currentTimeMillis()
             L.d("${hash()} 界面更新结束, 总耗时${LTime.time(_taskStartTime, nowTime)}")
             _updateTaskLit.remove(this)
+            taskCancel = true
         }
 
         private fun getUpdateDependItemList(): List<DslAdapterItem> {
@@ -445,7 +463,7 @@ data class FilterParams(
      * */
     var justRun: Boolean = false,
     /**
-     * 只过滤列表数据, 不通知界面操作, 开启此属性.[async=true] [just=true]
+     * 只过滤列表数据, 不通知界面操作, 但是会通过子项更新. 开启此属性会:[async=true] [just=true]
      * */
     var justFilter: Boolean = false,
     /**
@@ -465,7 +483,10 @@ data class FilterParams(
     var shakeType: Int = OnceHandler.SHAKE_TYPE_DEBOUNCE,
 
     /**抖动检查延迟时长*/
-    var shakeDelay: Long = 16
+    var shakeDelay: Long = 16,
+
+    /**计算完diff之后, 延迟多久通知界面*/
+    var notifyDiffDelay: Long = -1
 )
 
 typealias DispatchUpdates = (dslAdapter: DslAdapter) -> Unit
