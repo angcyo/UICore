@@ -129,18 +129,24 @@ fun Fragment.back() {
     activity?.onBackPressed() ?: L.w("activity is null.")
 }
 
-/**延迟处理*/
-fun Fragment.delay(
-    delayMillis: Long = app().resources.getInteger(R.integer.lib_animation_delay).toLong(),
-    action: () -> Unit
-) {
-    val runnable = Runnable(action)
-    MainExecutor.handler.postDelayed(runnable, delayMillis)
-    lifecycle.addObserver(object : LifecycleEventObserver {
-        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-            if (event == Lifecycle.Event.ON_DESTROY) {
-                MainExecutor.handler.removeCallbacks(runnable)
+fun Fragment.delayMillis(or: Long): Long {
+    return if (parentFragmentManager.getAllValidityFragment().isNotEmpty())
+        app().resources.getInteger(R.integer.lib_animation_delay).toLong() else or
+}
+
+/**智能延迟处理, 如果在单独的Activity中, 则不延迟.*/
+fun Fragment.delay(delayMillis: Long = delayMillis(-1), action: () -> Unit) {
+    if (delayMillis >= 0) {
+        val runnable = Runnable(action)
+        MainExecutor.handler.postDelayed(runnable, delayMillis)
+        lifecycle.addObserver(object : LifecycleEventObserver {
+            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                if (event == Lifecycle.Event.ON_DESTROY) {
+                    MainExecutor.handler.removeCallbacks(runnable)
+                }
             }
-        }
-    })
+        })
+    } else {
+        action()
+    }
 }
