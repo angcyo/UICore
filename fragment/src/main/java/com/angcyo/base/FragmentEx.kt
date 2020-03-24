@@ -4,10 +4,16 @@ import android.app.Activity
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import com.angcyo.DslAHelper
 import com.angcyo.DslFHelper
 import com.angcyo.fragment.IFragment
 import com.angcyo.library.L
+import com.angcyo.library.R
+import com.angcyo.library.app
+import com.angcyo.library.component.MainExecutor
 
 /**
  *
@@ -121,4 +127,20 @@ fun Fragment.getFragmentContainerId(): Int {
 /**返回当前的[Fragment]*/
 fun Fragment.back() {
     activity?.onBackPressed() ?: L.w("activity is null.")
+}
+
+/**延迟处理*/
+fun Fragment.delay(
+    delayMillis: Long = app().resources.getInteger(R.integer.lib_animation_delay).toLong(),
+    action: () -> Unit
+) {
+    val runnable = Runnable(action)
+    MainExecutor.handler.postDelayed(runnable, delayMillis)
+    lifecycle.addObserver(object : LifecycleEventObserver {
+        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+            if (event == Lifecycle.Event.ON_DESTROY) {
+                MainExecutor.handler.removeCallbacks(runnable)
+            }
+        }
+    })
 }
