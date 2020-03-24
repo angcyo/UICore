@@ -121,11 +121,9 @@ class REditDelegate(val editText: EditText) {
             )
 
         if (typedArray.hasValue(R.styleable.REditDelegate_r_clear_drawable)) {
-
             clearDrawable =
                 typedArray.getDrawable(R.styleable.REditDelegate_r_clear_drawable)
         } else {
-
             if (isPasswordDrawable) {
                 clearDrawable =
                     ContextCompat.getDrawable(context, R.drawable.lib_password_selector)
@@ -133,7 +131,6 @@ class REditDelegate(val editText: EditText) {
                 clearDrawable =
                     ContextCompat.getDrawable(context, R.drawable.lib_edit_delete_selector)
             }
-
             if (isPasswordDrawable || showClearDrawable) {
                 if (editText.compoundDrawablePadding == 0) {
                     editText.compoundDrawablePadding = 4 * dpi
