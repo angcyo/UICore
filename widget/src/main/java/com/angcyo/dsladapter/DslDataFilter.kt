@@ -25,6 +25,13 @@ import kotlin.concurrent.withLock
 
 open class DslDataFilter(val dslAdapter: DslAdapter) {
 
+    companion object {
+        //异步调度器
+        private val asyncExecutor: ExecutorService by lazy {
+            Executors.newCachedThreadPool()
+        }
+    }
+
     /**
      * 过滤后的数据源, 缓存过滤后的数据源, 防止每次都计算.
      *
@@ -61,11 +68,6 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
     /**后置过滤器*/
     val afterFilterInterceptorList: MutableList<FilterInterceptor> =
         mutableListOf()
-
-    //异步调度器
-    private val asyncExecutor: ExecutorService by lazy {
-        Executors.newFixedThreadPool(1)
-    }
 
     //更新操作
     private var _updateTaskLit: MutableList<UpdateTaskRunnable> = mutableListOf()
