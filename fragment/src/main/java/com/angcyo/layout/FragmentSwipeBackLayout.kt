@@ -34,6 +34,7 @@ import com.angcyo.tablayout.exactlyMeasure
 import com.angcyo.tablayout.textHeight
 import com.angcyo.widget.R
 import com.angcyo.widget.base.findView
+import com.angcyo.widget.base.getChildOrNull
 import com.angcyo.widget.base.scaleAnimator
 import com.angcyo.widget.layout.touch.SwipeBackLayout
 
@@ -275,10 +276,6 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
         }
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-    }
-
     private val debugWidthSize: Int
         get() = measuredWidth - 2 * hSpace
 
@@ -289,11 +286,9 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
         widthMeasureSpec: Int,
         heightMeasureSpec: Int
     ) { //of java
-        val widthSize =
-            MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight
+        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
         //        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        val heightSize =
-            MeasureSpec.getSize(heightMeasureSpec) - paddingTop - paddingBottom
+        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
         //        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         //of kotlin
         //        var widthSize = MeasureSpec.getSize(widthMeasureSpec)
@@ -312,7 +307,10 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
                     childAt.setTag(R.id.lib_tag_old_view_visible, visibility)
                     childAt.visibility = View.VISIBLE
                 }
-                childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize))
+                childAt.measure(
+                    exactlyMeasure(widthSize - paddingLeft - paddingRight),
+                    exactlyMeasure(heightSize - paddingTop - paddingBottom)
+                )
             }
             setMeasuredDimension(widthSize, heightSize)
         } else {
@@ -320,7 +318,12 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
                 LTime.tick()
                 L.d("\n开始测量, 共:$fragmentsCount")
             }
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+            //super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+            //只测量最后一个View
+            getChildOrNull(childCount - 1)?.apply {
+                measure(widthMeasureSpec, heightMeasureSpec)
+            }
+            setMeasuredDimension(widthSize, heightSize)
             if (showDebugInfo) {
                 L.d("\n测量结束:${LTime.time()}")
             }
@@ -357,19 +360,15 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
         //在滑动返回的过程中, 保持手势不释放. 顶层的View布局控制
         var swipeViewLeft = -1
         if (isSwipeDrag) {
-            if (targetView != null) {
-                swipeViewLeft = targetView!!.getLeft()
-            }
+            swipeViewLeft = targetView?.left ?: swipeViewLeft
         }
-        super.onLayout(changed, left, top, right, bottom)
+        //super.onLayout(changed, left, top, right, bottom)
+        getChildOrNull(childCount - 1)?.apply {
+            layout(0, 0, measuredWidth, measuredHeight)
+        }
         if (isSwipeDrag) {
-            if (targetView != null) {
-                targetView!!.layout(
-                    swipeViewLeft,
-                    targetView!!.top,
-                    swipeViewLeft + targetView!!.getMeasuredWidth(),
-                    targetView!!.getMeasuredHeight()
-                )
+            targetView?.apply {
+                layout(swipeViewLeft, top, swipeViewLeft + measuredWidth, measuredHeight)
             }
         }
     }
