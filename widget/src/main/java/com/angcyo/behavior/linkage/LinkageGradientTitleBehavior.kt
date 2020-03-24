@@ -146,34 +146,22 @@ open class LinkageGradientTitleBehavior(
         }
     }
 
-    override fun onNestedScroll(
+    override fun onNestedPreScroll(
         coordinatorLayout: CoordinatorLayout,
         child: View,
         target: View,
-        dxConsumed: Int,
-        dyConsumed: Int,
-        dxUnconsumed: Int,
-        dyUnconsumed: Int,
-        type: Int,
-        consumed: IntArray
+        dx: Int,
+        dy: Int,
+        consumed: IntArray,
+        type: Int
     ) {
-        super.onNestedScroll(
-            coordinatorLayout,
-            child,
-            target,
-            dxConsumed,
-            dyConsumed,
-            dxUnconsumed,
-            dyUnconsumed,
-            type,
-            consumed
-        )
+        super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type)
         if (target == headerScrollView) {
-            _gestureScrollY -= dyConsumed
+            _gestureScrollY -= dy
             scrollTo(0, _gestureScrollY)
         }
     }
-
+    
     //LinkageHeaderBehavior回调的是OverScroll值.
     var _gestureScrollY = 0
 
