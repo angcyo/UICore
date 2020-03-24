@@ -21,4 +21,21 @@
         <attr name="layout_scale_factor" format="float" />
         <attr name="layout_max_scale" format="float" />
     </declare-styleable>
+
+    <declare-styleable name="LinkageGradientTitleBehavior_Layout">
+        <attr name="layout_title_text_id" format="reference" />
+        <attr name="layout_title_back_id" format="reference" />
+
+        <attr name="layout_background_color_from" format="color" />
+        <attr name="layout_background_color_to" format="color" />
+
+        <attr name="layout_title_text_color_from" format="color" />
+        <attr name="layout_title_text_color_to" format="color" />
+
+        <attr name="layout_back_icon_color_from" format="color" />
+        <attr name="layout_back_icon_color_to" format="color" />
+
+        <attr name="layout_icon_color_from" format="color" />
+        <attr name="layout_icon_color_to" format="color" />
+    </declare-styleable>
 </resources>

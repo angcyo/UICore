@@ -35,7 +35,7 @@ abstract class BaseGestureBehavior<T : View>(
                 velocityX: Float,
                 velocityY: Float
             ): Boolean {
-                return this@BaseGestureBehavior.onFling(e1, e2, velocityX, velocityY)
+                return onGestureFling(e1, e2, velocityX, velocityY)
             }
 
             override fun onScroll(
@@ -44,15 +44,7 @@ abstract class BaseGestureBehavior<T : View>(
                 distanceX: Float,
                 distanceY: Float
             ): Boolean {
-
-                val result = this@BaseGestureBehavior.onScroll(e1, e2, distanceX, distanceY)
-
-                if (_isFirstScroll) {
-                    _needHandleTouch = result
-                    _isFirstScroll = false
-                }
-
-                return result
+                return onGestureScroll(e1, e2, distanceX, distanceY)
             }
         })
     }
@@ -101,6 +93,31 @@ abstract class BaseGestureBehavior<T : View>(
 
     open fun onTouchFinish(parent: CoordinatorLayout, child: T, ev: MotionEvent) {
 
+    }
+
+    open fun onGestureFling(
+        e1: MotionEvent?,
+        e2: MotionEvent?,
+        velocityX: Float,
+        velocityY: Float
+    ): Boolean {
+        return onFling(e1, e2, velocityX, velocityY)
+    }
+
+    open fun onGestureScroll(
+        e1: MotionEvent?,
+        e2: MotionEvent?,
+        distanceX: Float,
+        distanceY: Float
+    ): Boolean {
+        val result = onScroll(e1, e2, distanceX, distanceY)
+
+        if (_isFirstScroll) {
+            _needHandleTouch = result
+            _isFirstScroll = false
+        }
+
+        return result
     }
 
     /**手势Fling处理*/

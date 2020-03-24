@@ -7,7 +7,12 @@
     <item name="lib_tag_dsl_view_holder" type="id" />
     <!--将DslAdapterItem, 放在View的tag中-->
     <item name="lib_tag_dsl_adapter_item" type="id" />
+
     <item name="lib_retry_button" type="id" />
     <item name="lib_close_view" type="id" />
     <item name="lib_tag_old_view_visible" type="id" />
+
+    <!--LinkageGradientTitleBehavior-->
+    <item name="lib_title_text_view" type="id" />
+    <item name="lib_title_back_view" type="id" />
 </resources>

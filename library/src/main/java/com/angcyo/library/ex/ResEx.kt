@@ -68,8 +68,18 @@ fun Context.getColor(@ColorRes id: Int): Int {
     return ContextCompat.getColor(this, id)
 }
 
+@ColorInt
+fun Context.loadColor(@ColorRes id: Int): Int {
+    return ContextCompat.getColor(this, id)
+}
+
 @Px
 fun Context.getDimen(@DimenRes id: Int): Int {
+    return resources.getDimensionPixelOffset(id)
+}
+
+@Px
+fun Context.loadDimen(@DimenRes id: Int): Int {
     return resources.getDimensionPixelOffset(id)
 }
 
