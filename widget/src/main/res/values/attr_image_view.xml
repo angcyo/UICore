@@ -8,6 +8,7 @@
         <attr name="r_border_width" format="dimension" />
         <attr name="r_border_color" format="color" />
         <attr name="r_mask_drawable" format="reference" />
+        <attr name="r_is_circle" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="DslImageView">
