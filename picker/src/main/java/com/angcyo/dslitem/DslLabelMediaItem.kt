@@ -33,7 +33,7 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
     var itemMediaAdapter: DslAdapter = DslAdapter()
 
     /**最大显示媒体数*/
-    var itemShowMaxMedia: Int = 9 //todo
+    var itemShowMaxMedia: Int = 9
 
     /**添加媒体过滤按钮*/
     var addMediaFilterAfterInterceptor = AddMediaFilterAfterInterceptor()
