@@ -19,6 +19,7 @@
     <dimen name="lib_xhdpi">12dp</dimen>
     <dimen name="lib_xxhdpi">22dp</dimen>
     <dimen name="lib_xxxhdpi">35dp</dimen>
+    <dimen name="lib_min_padding">2dp</dimen>
 
     <!--圆角大小-->
     <dimen name="lib_radius_min">2dp</dimen>

@@ -2,6 +2,7 @@ package com.angcyo.item
 
 import android.util.TypedValue
 import android.view.Gravity
+import android.widget.TextView
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.library.ex.undefined_color
 import com.angcyo.library.ex.undefined_float
@@ -20,11 +21,13 @@ open class DslBaseLabelItem : DslAdapterItem() {
 
     /**左边的Label文本*/
     var itemLabelText: CharSequence? = null
-    var itemLabelBold: Boolean = false
-    var itemLabelTextColor: Int = undefined_color
-    var itemLabelTextSize: Float = undefined_float
+        set(value) {
+            field = value
+            itemLabelTextStyle.text = value
+        }
 
-    var itemLabelGravity: Int = Gravity.LEFT or Gravity.CENTER_VERTICAL
+    /**统一样式配置*/
+    var itemLabelTextStyle = TextStyleConfig()
 
     init {
         itemLayoutId = R.layout.dsl_label_item
@@ -41,17 +44,37 @@ open class DslBaseLabelItem : DslAdapterItem() {
         itemHolder.gone(R.id.lib_label_view, itemLabelText.isNullOrBlank())
 
         itemHolder.tv(R.id.lib_label_view)?.apply {
-            text = itemLabelText
-            gravity = itemLabelGravity
+            itemLabelTextStyle.updateStyle(this)
+        }
+    }
 
-            setBoldText(itemLabelBold)
-            if (itemLabelTextColor != undefined_color) {
-                setTextColor(itemLabelTextColor)
-            }
+    open fun configLabelTextStyle(action: TextStyleConfig.() -> Unit) {
+        itemLabelTextStyle.action()
+    }
+}
 
-            if (itemLabelTextSize != undefined_float) {
-                setTextSize(TypedValue.COMPLEX_UNIT_PX, itemLabelTextSize)
-            }
+data class TextStyleConfig(
+    var text: CharSequence? = null,
+    var textBold: Boolean = false,
+    var textColor: Int = undefined_color,
+    var textSize: Float = undefined_float,
+    var textGravity: Int = Gravity.LEFT or Gravity.CENTER_VERTICAL
+)
+
+fun TextStyleConfig.updateStyle(textView: TextView) {
+    with(textView) {
+        text = this@updateStyle.text
+
+        gravity = textGravity
+
+        setBoldText(textBold)
+
+        if (textColor != undefined_color) {
+            setTextColor(textColor)
+        }
+
+        if (textSize != undefined_float) {
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize)
         }
     }
 }

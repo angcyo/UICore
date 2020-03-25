@@ -1,12 +1,7 @@
 package com.angcyo.item
 
-import android.util.TypedValue
-import android.view.Gravity
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.library.ex.undefined_color
-import com.angcyo.library.ex.undefined_float
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.setBoldText
 
 /**
  * 简单的文本显示item
@@ -18,10 +13,13 @@ import com.angcyo.widget.base.setBoldText
 open class DslLabelTextItem : DslBaseLabelItem() {
 
     var itemText: CharSequence? = null
-    var itemBold: Boolean = true
-    var itemTextColor: Int = undefined_color
-    var itemTextSize: Float = undefined_float
-    var itemTextGravity: Int = Gravity.LEFT or Gravity.CENTER_VERTICAL
+        set(value) {
+            field = value
+            itemTextStyle.text = value
+        }
+
+    /**统一样式配置*/
+    var itemTextStyle = TextStyleConfig()
 
     init {
         itemLayoutId = R.layout.dsl_label_text_item
@@ -36,16 +34,11 @@ open class DslLabelTextItem : DslBaseLabelItem() {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
         itemHolder.tv(R.id.lib_text_view)?.apply {
-            text = itemText
-            setBoldText(itemBold)
-            gravity = itemTextGravity
-            if (itemTextColor != undefined_color) {
-                setTextColor(itemTextColor)
-            }
-
-            if (itemTextSize != undefined_float) {
-                setTextSize(TypedValue.COMPLEX_UNIT_PX, itemTextSize)
-            }
+            itemTextStyle.updateStyle(this)
         }
+    }
+
+    open fun configTextStyle(action: TextStyleConfig.() -> Unit) {
+        itemTextStyle.action()
     }
 }
