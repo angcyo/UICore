@@ -114,8 +114,10 @@ open class DslAdapterItem : LifecycleOwner {
 
     /**强制指定item的宽高*/
     var itemWidth: Int = undefined_size
+    var itemMinWidth: Int = undefined_size
 
     var itemHeight: Int = undefined_size
+    var itemMinHeight: Int = undefined_size
 
     /**指定item的背景*/
     var itemBackgroundDrawable: Drawable? = UndefinedDrawable()
@@ -222,6 +224,13 @@ open class DslAdapterItem : LifecycleOwner {
 
     //初始化宽高
     open fun _initItemSize(itemHolder: DslViewHolder) {
+        if (itemMinWidth != undefined_size) {
+            itemHolder.itemView.minimumWidth = itemMinWidth
+        }
+        if (itemMinHeight != undefined_size) {
+            itemHolder.itemView.minimumHeight = itemMinHeight
+        }
+
         if (itemWidth != undefined_size) {
             itemHolder.itemView.setWidth(itemWidth)
         }
