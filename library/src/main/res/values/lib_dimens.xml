@@ -25,6 +25,7 @@
     <dimen name="lib_radius_min">2dp</dimen>
     <dimen name="lib_radius_normal">5dp</dimen>
     <dimen name="lib_radius_common">10dp</dimen>
+    <dimen name="lib_radius_common2">15dp</dimen>
     <!--25dp就可以实现圆形-->
     <dimen name="lib_radius_big">25dp</dimen>
     <!--45dp在有些版本上会出现菱形, 而非圆形-->
