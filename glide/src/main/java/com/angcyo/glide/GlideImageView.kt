@@ -10,6 +10,7 @@ import com.angcyo.library.L
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.widget.image.DslImageView
 import com.bumptech.glide.load.resource.gif.GifDrawable
+import com.bumptech.glide.request.Request
 
 /**
  *
@@ -58,7 +59,11 @@ open class GlideImageView : DslImageView {
     }
 
     override fun setImageDrawable(drawable: Drawable?) {
-        super.setImageDrawable(drawable)
+        try {
+            super.setImageDrawable(drawable)
+        } catch (e: Exception) {
+            L.w(e)
+        }
 
         drawable?.apply {
             L.d("${this@GlideImageView.simpleHash()}:${this.simpleHash()} w:$minimumWidth:$measuredWidth h:$minimumHeight:$minimumHeight")
@@ -67,13 +72,25 @@ open class GlideImageView : DslImageView {
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        if (drawable is GifDrawable) {
-            (drawable as GifDrawable).recycle()
-            setImageDrawable(null)
+        val tag = tag
+
+        var isInGlide = false
+        if (tag != null) {
+            if (tag is Request) {
+                //load is glide.
+                isInGlide = true
+            }
         }
-        if (drawable is pl.droidsonroids.gif.GifDrawable) {
-            (drawable as pl.droidsonroids.gif.GifDrawable).recycle()
-            setImageDrawable(null)
+
+        if (!isInGlide) {
+            if (drawable is GifDrawable) {
+                (drawable as GifDrawable).recycle()
+                setImageDrawable(null)
+            }
+            if (drawable is pl.droidsonroids.gif.GifDrawable) {
+                (drawable as pl.droidsonroids.gif.GifDrawable).recycle()
+                setImageDrawable(null)
+            }
         }
     }
 
