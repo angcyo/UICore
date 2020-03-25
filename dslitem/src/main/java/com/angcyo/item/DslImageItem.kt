@@ -1,6 +1,7 @@
 package com.angcyo.item
 
 import android.net.Uri
+import android.view.View
 import androidx.annotation.DrawableRes
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.isUpdateMedia
@@ -61,6 +62,11 @@ open class DslImageItem : DslAdapterItem() {
 
     @DrawableRes
     var itemVideoTipDrawable: Int = R.drawable.lib_video_tip
+
+    /**是否显示删除按钮*/
+    var itemShowDeleteView: Boolean = false
+
+    var itemDeleteClick: (View) -> Unit = {}
 
     init {
         itemLayoutId = R.layout.dsl_image_item
@@ -145,5 +151,8 @@ open class DslImageItem : DslAdapterItem() {
                 }
             }
         }
+
+        itemHolder.visible(R.id.lib_delete_view, itemShowDeleteView)
+        itemHolder.click(R.id.lib_delete_view, itemDeleteClick)
     }
 }

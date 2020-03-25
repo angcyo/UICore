@@ -13,7 +13,7 @@
         android:scaleType="centerCrop"
         app:layout_constraintDimensionRatio="1:1"
         app:r_draw_border="false"
-        app:r_image_radius="0dp"
+        app:r_image_radius="@dimen/lib_radius_normal"
         app:srcCompat="@color/lib_image_placeholder_color"
         tools:r_draw_border="true" />
 
@@ -26,7 +26,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.6"
+        app:layout_constraintWidth_percent="0.5"
         app:srcCompat="@drawable/lib_audio_cover_tip" />
 
     <com.angcyo.widget.text.DslTextView
@@ -46,5 +46,18 @@
         tools:drawableLeft="@drawable/lib_video_tip"
         tools:drawableRight="@drawable/lib_audio_tip"
         tools:text="1:30" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/lib_delete_view"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@drawable/lib_image_remove_circle_selector"
+        android:padding="1dp"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/lib_image_remove"
+        tools:visibility="visible" />
 
 </com.angcyo.widget.layout.RConstraintLayout>
