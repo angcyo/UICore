@@ -9,6 +9,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewOutlineProvider
 import androidx.appcompat.widget.AppCompatImageView
+import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
 import com.angcyo.widget.base.InvalidateProperty
@@ -155,11 +156,12 @@ open class ShapeImageView : AppCompatImageView {
         }
         //end...
 
+        //绘制边框, 防止图片锯齿
         if (drawBorder) {
             paint.style = Paint.Style.STROKE
-            paint.strokeWidth = borderWidth.toFloat()
+            paint.strokeWidth = borderWidth.toFloat() + 1 * dp
             paint.color = borderColor
-            _outlineRectF.inset(paint.strokeWidth / 2, paint.strokeWidth / 2)
+            _outlineRectF.inset((borderWidth / 2).toFloat(), (borderWidth / 2).toFloat())
             if (isCircle) {
                 canvas.drawCircle(
                     _outlineRectF.centerX(),

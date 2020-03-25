@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_item_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.angcyo.widget.image.DslImageView
+        android:id="@+id/lib_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="#F3F5F9"
+        android:scaleType="centerCrop"
+        app:layout_constraintDimensionRatio="1:1"
+        app:r_draw_border="false"
+        app:r_image_radius="@dimen/lib_radius_normal"
+        tools:r_draw_border="true" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/lib_tip_image_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.3"
+        app:srcCompat="@drawable/lib_add_media" />
+
+</com.angcyo.widget.layout.RConstraintLayout>
