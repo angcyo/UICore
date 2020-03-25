@@ -217,20 +217,24 @@ fun ViewGroup.findRecyclerView(
 
 //<editor-fold desc="child操作">
 
-/**枚举所有child view*/
-fun ViewGroup.eachChild(map: (index: Int, child: View) -> Unit) {
+/**枚举所有child view
+ * [recursively] 递归所有子view*/
+fun ViewGroup.eachChild(recursively: Boolean = false, map: (index: Int, child: View) -> Unit) {
     for (index in 0 until childCount) {
         val childAt = getChildAt(index)
         map.invoke(index, childAt)
+        if (recursively && childAt is ViewGroup) {
+            childAt.eachChild(recursively, map)
+        }
     }
 }
 
-fun ViewGroup.forEach(map: (index: Int, child: View) -> Unit) {
-    eachChild(map)
+fun ViewGroup.forEach(recursively: Boolean = false, map: (index: Int, child: View) -> Unit) {
+    eachChild(recursively, map)
 }
 
-fun ViewGroup.each(map: (child: View) -> Unit) {
-    eachChild { _, child ->
+fun ViewGroup.each(recursively: Boolean = false, map: (child: View) -> Unit) {
+    eachChild(recursively) { _, child ->
         map.invoke(child)
     }
 }

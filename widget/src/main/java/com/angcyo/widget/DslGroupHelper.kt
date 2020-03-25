@@ -166,9 +166,9 @@ class DslGroupHelper(val parentView: View) : DslViewHolder(parentView) {
         }
     }
 
-    fun eachChild(map: (index: Int, child: View) -> Unit) {
+    fun eachChild(recursively: Boolean = false, map: (index: Int, child: View) -> Unit) {
         if (selectorView is ViewGroup) {
-            (selectorView as ViewGroup).eachChild(map)
+            (selectorView as ViewGroup).eachChild(recursively, map)
         }
     }
 }

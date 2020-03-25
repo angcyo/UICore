@@ -161,7 +161,7 @@ open class LinkageGradientTitleBehavior(
             scrollTo(0, _gestureScrollY)
         }
     }
-    
+
     //LinkageHeaderBehavior回调的是OverScroll值.
     var _gestureScrollY = 0
 
@@ -191,7 +191,7 @@ open class LinkageGradientTitleBehavior(
         )
 
         if (childView is ViewGroup) {
-            (childView as ViewGroup).each {
+            (childView as ViewGroup).each(true) {
                 when (it) {
                     //文本
                     is TextView -> if (it.id == titleTextId) {
