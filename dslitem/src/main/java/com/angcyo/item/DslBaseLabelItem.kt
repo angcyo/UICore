@@ -1,5 +1,6 @@
 package com.angcyo.item
 
+import android.content.res.ColorStateList
 import android.util.TypedValue
 import android.view.Gravity
 import android.widget.TextView
@@ -41,7 +42,7 @@ open class DslBaseLabelItem : DslAdapterItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
-        itemHolder.gone(R.id.lib_label_view, itemLabelText.isNullOrBlank())
+        itemHolder.gone(R.id.lib_label_view, itemLabelText == null)
 
         itemHolder.tv(R.id.lib_label_view)?.apply {
             itemLabelTextStyle.updateStyle(this)
@@ -57,6 +58,7 @@ data class TextStyleConfig(
     var text: CharSequence? = null,
     var textBold: Boolean = false,
     var textColor: Int = undefined_color,
+    var textColors: ColorStateList? = null,
     var textSize: Float = undefined_float,
     var textGravity: Int = Gravity.LEFT or Gravity.CENTER_VERTICAL
 )
@@ -69,12 +71,30 @@ fun TextStyleConfig.updateStyle(textView: TextView) {
 
         setBoldText(textBold)
 
-        if (textColor != undefined_color) {
-            setTextColor(textColor)
+        //颜色, 防止复用. 所以在未指定的情况下, 要获取默认的颜色.
+        val colors = when {
+            this@updateStyle.textColors != null -> {
+                this@updateStyle.textColors
+            }
+            textColor != undefined_color -> {
+                ColorStateList.valueOf(textColor)
+            }
+            else -> {
+                textColors
+            }
         }
+        if (colors != this@updateStyle.textColors) {
+            this@updateStyle.textColors = colors
+        }
+        setTextColor(colors)
 
-        if (textSize != undefined_float) {
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize)
+        //字体大小同理.
+        val size = if (this@updateStyle.textSize != undefined_float) {
+            this@updateStyle.textSize
+        } else {
+            textSize
         }
+        this@updateStyle.textSize = size
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, size)
     }
 }
