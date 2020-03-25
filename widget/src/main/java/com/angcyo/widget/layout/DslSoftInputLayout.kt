@@ -600,6 +600,18 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
+    fun addSoftInputListener(listener: OnSoftInputListener) {
+        if (!softInputListener.contains(listener)) {
+            softInputListener.add(listener)
+        }
+    }
+
+    fun removeSoftInputListener(listener: OnSoftInputListener) {
+        if (softInputListener.contains(listener)) {
+            softInputListener.remove(listener)
+        }
+    }
+
     /**返回true, 表示不需要拦截处理[back]操作*/
     fun onBackPress(): Boolean {
         if (_action.isShowAction()) {

@@ -1,6 +1,5 @@
 package com.angcyo.core.fragment
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -23,6 +22,7 @@ import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslGroupHelper
 import com.angcyo.widget.base.*
 import com.angcyo.widget.layout.DslSoftInputLayout
+import com.angcyo.widget.layout.OnSoftInputListener
 import com.angcyo.widget.span.span
 import com.angcyo.widget.text.DslTextView
 
@@ -38,7 +38,7 @@ import com.angcyo.widget.text.DslTextView
  * @author angcyo
  * @date 2018/12/07
  */
-abstract class BaseTitleFragment : BaseFragment() {
+abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
     /**自定义内容布局*/
     var contentLayoutId: Int = -1
@@ -103,6 +103,7 @@ abstract class BaseTitleFragment : BaseFragment() {
             val softInputLayout = DslSoftInputLayout(fContext()).apply {
                 id = R.id.lib_soft_input_layout
                 handlerMode = DslSoftInputLayout.MODE_CONTENT_HEIGHT
+                addSoftInputListener(this@BaseTitleFragment)
             }
             softInputLayout.addView(view)
             return softInputLayout
@@ -337,6 +338,22 @@ abstract class BaseTitleFragment : BaseFragment() {
     }
 
     //</editor-fold desc="扩展方法">
+
+    //<editor-fold desc="软键盘监听">
+
+    override fun onSoftInputChangeStart(action: Int, height: Int, oldHeight: Int) {
+        super.onSoftInputChangeStart(action, height, oldHeight)
+    }
+
+    override fun onSoftInputChangeEnd(action: Int, height: Int, oldHeight: Int) {
+        super.onSoftInputChangeEnd(action, height, oldHeight)
+    }
+
+    override fun onSoftInputChange(action: Int, height: Int, oldHeight: Int, fraction: Float) {
+        super.onSoftInputChange(action, height, oldHeight, fraction)
+    }
+
+    //</editor-fold desc="软键盘监听">
 
 
 }
