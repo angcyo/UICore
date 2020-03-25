@@ -31,6 +31,7 @@ open class DslPickerImageItem : DslAdapterItem() {
     companion object {
         //动画更新
         const val PAYLOAD_UPDATE_ANIM = PAYLOAD_UPDATE_PART + 1
+
         //无法选中的动画更新
         const val PAYLOAD_UPDATE_CANCEL_ANIM = PAYLOAD_UPDATE_PART + 2
     }
@@ -201,8 +202,10 @@ open class DslPickerImageItem : DslAdapterItem() {
                     append("x")
                     append("${loaderMedia?.height ?: 0}")
                     append(" ${loaderMedia?.duration}")
-                    appendln()
-                    append(loaderMedia?.fileSize?.fileSizeString() ?: "")
+                    if (loaderMedia?.fileSize ?: -1 > 0) {
+                        appendln()
+                        append(loaderMedia?.fileSize?.fileSizeString() ?: "")
+                    }
                     appendln()
                     append(loaderMedia?.mimeType() ?: "")
                 }
