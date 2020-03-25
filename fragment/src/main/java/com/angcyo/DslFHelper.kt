@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.AnimRes
+import androidx.annotation.AnimatorRes
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -37,15 +38,19 @@ class DslFHelper(
 
         /**[androidx.fragment.app.FragmentTransaction.setCustomAnimations(int, int, int, int)]*/
 
+        @AnimatorRes
         @AnimRes
         var DEFAULT_SHOW_ENTER_ANIM = R.anim.lib_translate_x_show_enter
 
+        @AnimatorRes
         @AnimRes
         var DEFAULT_SHOW_EXIT_ANIM = R.anim.lib_translate_x_show_exit
 
+        @AnimatorRes
         @AnimRes
         var DEFAULT_REMOVE_ENTER_ANIM = R.anim.lib_translate_x_remove_enter
 
+        @AnimatorRes
         @AnimRes
         var DEFAULT_REMOVE_EXIT_ANIM = R.anim.lib_translate_x_remove_exit
     }
@@ -85,15 +90,19 @@ class DslFHelper(
 
     var finishToActivity: Class<out Activity>? = DslAHelper.mainActivityClass
 
+    @AnimatorRes
     @AnimRes
     var showEnterAnimRes: Int = DEFAULT_SHOW_ENTER_ANIM
 
+    @AnimatorRes
     @AnimRes
     var showExitAnimRes: Int = DEFAULT_SHOW_EXIT_ANIM
 
+    @AnimatorRes
     @AnimRes
     var removeEnterAnimRes: Int = DEFAULT_REMOVE_ENTER_ANIM
 
+    @AnimatorRes
     @AnimRes
     var removeExitAnimRes: Int = DEFAULT_REMOVE_EXIT_ANIM
 
@@ -298,7 +307,7 @@ class DslFHelper(
         removeExitAnimRes = 0
     }
 
-    fun anim(@AnimRes enter: Int, @AnimRes exit: Int) {
+    fun anim(@AnimatorRes @AnimRes enter: Int, @AnimatorRes @AnimRes exit: Int) {
         showEnterAnimRes = enter
         removeEnterAnimRes = enter
 

@@ -142,7 +142,7 @@ fun getAppVersionCode(): Int {
 }
 
 /**排除了显示的状态栏高度和导航栏高度*/
-val _screenWidth: Int get() = app().getScreenHeight()
+val _screenWidth: Int get() = app().getScreenWidth()
 val _screenHeight: Int get() = app().getScreenHeight()
 val _satusBarHeight: Int get() = app().getStatusBarHeight()
 val _navBarHeight: Int get() = app().getNavBarHeight()

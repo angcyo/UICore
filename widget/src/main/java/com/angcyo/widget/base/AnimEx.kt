@@ -30,12 +30,18 @@ object Anim {
 }
 
 /**从指定资源id中, 加载动画[Animation]*/
-fun animationOf(context: Context = app(), @AnimRes id: Int): Animation {
+fun animationOf(context: Context = app(), @AnimRes id: Int): Animation? {
+    if (id == 0 || id == -1) {
+        return null
+    }
     return AnimationUtils.loadAnimation(context, id)
 }
 
 /**从指定资源id中, 加载动画[Animator]*/
-fun animatorOf(context: Context = app(), @AnimatorRes id: Int): Animator {
+fun animatorOf(context: Context = app(), @AnimatorRes id: Int): Animator? {
+    if (id == 0 || id == -1) {
+        return null
+    }
     return AnimatorInflater.loadAnimator(context, id)
 }
 

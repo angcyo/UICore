@@ -3,4 +3,5 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/lib_text_view"
     style="@style/LibItemStyle"
+    android:gravity="center"
     tools:text="angcyo" />

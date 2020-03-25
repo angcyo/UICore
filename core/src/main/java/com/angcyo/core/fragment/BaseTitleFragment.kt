@@ -1,5 +1,6 @@
 package com.angcyo.core.fragment
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -294,6 +295,7 @@ abstract class BaseTitleFragment : BaseFragment() {
         onClick: (View) -> Unit
     ) {
         appendTextItem {
+            gravity = Gravity.CENTER
             setTextColor(fragmentConfig.titleItemTextColor)
             this.text = span {
 
@@ -301,6 +303,7 @@ abstract class BaseTitleFragment : BaseFragment() {
                     drawable {
                         backgroundDrawable =
                             loadDrawable(ico).colorFilter(fragmentConfig.titleItemIconColor)
+                        textGravity = Gravity.CENTER
                     }
                 }
 
