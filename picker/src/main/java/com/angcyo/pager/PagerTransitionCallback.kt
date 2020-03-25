@@ -35,7 +35,7 @@ open class PagerTransitionCallback : ViewTransitionCallback(), ViewPager.OnPageC
     var fromRecyclerView: RecyclerView? = null
 
     /**需要显示的媒体数据*/
-    val loaderMediaList = mutableListOf<LoaderMedia>()
+    var loaderMediaList = mutableListOf<LoaderMedia>()
 
     /**开始显示的位置*/
     var startPosition: Int = 0

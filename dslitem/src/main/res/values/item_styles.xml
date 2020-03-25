@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="lib_item_label_min_width">70dp</dimen>
+    <dimen name="lib_item_label_min_width">75dp</dimen>
 
     <style name="ItemLabelStyle" parent="LibSubTextStyle">
         <item name="android:layout_width">wrap_content</item>
