@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="PickerActivityStyle" parent="BaseWhiteAppTheme">
+        <item name="android:windowBackground">@color/picker_bottom_bar_bg_color</item>
+        <item name="android:navigationBarColor">@color/picker_bottom_bar_bg_color</item>
+    </style>
+
     <style name="PickerRecyclerViewStyle" parent="LibRecyclerViewStyle">
         <item name="android:scrollbarThumbVertical">@drawable/picker_scroll_bar_thumb_shape</item>
     </style>
