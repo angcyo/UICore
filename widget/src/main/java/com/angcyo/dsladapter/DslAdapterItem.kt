@@ -12,6 +12,7 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.library.L
 import com.angcyo.library.UndefinedDrawable
+import com.angcyo.library.ex.className
 import com.angcyo.library.ex.elseNull
 import com.angcyo.library.ex.undefined_size
 import com.angcyo.widget.DslViewHolder
@@ -666,9 +667,9 @@ open class DslAdapterItem : LifecycleOwner {
     var itemGroups = mutableListOf<String>()
 
     /**核心群组判断的方法*/
-    var isItemInGroups: (newItem: DslAdapterItem) -> Boolean = {
-        var result = false
-        for (group in it.itemGroups) {
+    var isItemInGroups: (newItem: DslAdapterItem) -> Boolean = { newItem ->
+        var result = newItem.className() == this.className()
+        for (group in newItem.itemGroups) {
             result = result || itemGroups.contains(group)
 
             if (result) {
