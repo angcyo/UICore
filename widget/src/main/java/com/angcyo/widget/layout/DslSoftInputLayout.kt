@@ -82,7 +82,7 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     /**当键盘/emoji显示时, 内容布局的高度, 是否要排除状态栏的大小,
      * 此属性最好配合[softInputPaddingTop]一起使用*/
-    var fixStatusBar: Boolean = true
+    var fixStatusBar: Boolean = false
 
     //<editor-fold desc="私有属性辅助计算">
 
