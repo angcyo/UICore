@@ -44,11 +44,17 @@ open class DslImageItem : DslAdapterItem() {
     /**视频或者音频时长, 毫秒*/
     open var itemMediaDuration: Long = -1
 
+    /**显示cover*/
+    var itemShowCover: Boolean = true
+
     @DrawableRes
     var itemAudioCoverTipDrawable: Int = R.drawable.lib_audio_cover_tip
 
     @DrawableRes
     var itemVideoCoverTipDrawable: Int = R.drawable.lib_video_cover_tip
+
+    /**显示Tip*/
+    var itemShowTip: Boolean = true
 
     @DrawableRes
     var itemAudioTipDrawable: Int = R.drawable.lib_audio_tip
@@ -72,6 +78,8 @@ open class DslImageItem : DslAdapterItem() {
 
         itemHolder.giv(R.id.lib_image_view)?.apply {
             onConfigImageView(this)
+
+            setOnClickListener(_clickListener)
         }
 
         if (mediaUpdate) {
@@ -87,50 +95,55 @@ open class DslImageItem : DslAdapterItem() {
         //audio video tip
         itemHolder.gone(R.id.lib_tip_image_view)
         itemHolder.gone(R.id.lib_duration_view)
-        if (itemMimeType?.isAudioMimeType() == true) {
-            if (itemAudioCoverTipDrawable > 0) {
-                itemHolder.visible(R.id.lib_tip_image_view)
-                itemHolder.img(R.id.lib_tip_image_view)?.setImageResource(itemAudioCoverTipDrawable)
-            }
-        } else if (itemMimeType?.isVideoMimeType() == true) {
-            if (itemVideoCoverTipDrawable > 0) {
-                itemHolder.visible(R.id.lib_tip_image_view)
-                itemHolder.img(R.id.lib_tip_image_view)?.setImageResource(itemVideoCoverTipDrawable)
+
+        if (itemShowCover) {
+            if (itemMimeType?.isAudioMimeType() == true) {
+                if (itemAudioCoverTipDrawable > 0) {
+                    itemHolder.visible(R.id.lib_tip_image_view)
+                    itemHolder.img(R.id.lib_tip_image_view)
+                        ?.setImageResource(itemAudioCoverTipDrawable)
+                }
+            } else if (itemMimeType?.isVideoMimeType() == true) {
+                if (itemVideoCoverTipDrawable > 0) {
+                    itemHolder.visible(R.id.lib_tip_image_view)
+                    itemHolder.img(R.id.lib_tip_image_view)
+                        ?.setImageResource(itemVideoCoverTipDrawable)
+                }
             }
         }
 
         //时长
-        if (itemMimeType?.isVideoMimeType() == true || itemMimeType?.isAudioMimeType() == true) {
-            itemHolder.visible(R.id.lib_duration_view)
+        if (itemShowTip) {
+            if (itemMimeType?.isVideoMimeType() == true || itemMimeType?.isAudioMimeType() == true) {
+                itemHolder.visible(R.id.lib_duration_view)
 
-            itemHolder.tv(R.id.lib_duration_view)?.text = span {
-                drawable {
-                    backgroundDrawable =
-                        if (itemMimeType?.isVideoMimeType() == true && itemVideoTipDrawable > 0) {
-                            _drawable(itemVideoTipDrawable)
-                        } else if (itemMimeType?.isAudioMimeType() == true && itemAudioTipDrawable > 0) {
-                            _drawable(itemAudioTipDrawable)
-                        } else {
-                            null
-                        }
-                }
+                itemHolder.tv(R.id.lib_duration_view)?.text = span {
+                    drawable {
+                        backgroundDrawable =
+                            if (itemMimeType?.isVideoMimeType() == true && itemVideoTipDrawable > 0) {
+                                _drawable(itemVideoTipDrawable)
+                            } else if (itemMimeType?.isAudioMimeType() == true && itemAudioTipDrawable > 0) {
+                                _drawable(itemAudioTipDrawable)
+                            } else {
+                                null
+                            }
+                    }
 
-                if (itemMediaDuration > 0) {
-                    appendSpace(6 * dpi)
-                    val _duration = itemMediaDuration
-                    //不足1秒的取1秒
-                    val duration = if (_duration != 0L) max(_duration, 1_000) else 0
-                    append(
-                        duration.toElapsedTime(
-                            pattern = intArrayOf(-1, 1, 1),
-                            h24 = booleanArrayOf(false, true, false),
-                            units = arrayOf("", "", ":")
+                    if (itemMediaDuration > 0) {
+                        appendSpace(6 * dpi)
+                        val _duration = itemMediaDuration
+                        //不足1秒的取1秒
+                        val duration = if (_duration != 0L) max(_duration, 1_000) else 0
+                        append(
+                            duration.toElapsedTime(
+                                pattern = intArrayOf(-1, 1, 1),
+                                h24 = booleanArrayOf(false, true, false),
+                                units = arrayOf("", "", ":")
+                            )
                         )
-                    )
+                    }
                 }
             }
-        } else {
-            itemHolder.gone(R.id.lib_duration_view)
         }
     }
 }
