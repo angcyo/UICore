@@ -32,7 +32,7 @@ open class ShapeImageView : AppCompatImageView {
     var imageRadius = 5 * dpi
 
     /**绘制边框*/
-    var drawBorder: Boolean by InvalidateProperty(true)
+    var drawBorder: Boolean by InvalidateProperty(false)
 
     /**边框的宽度*/
     var borderWidth: Int by InvalidateProperty(2 * dpi)

@@ -8,8 +8,6 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MotionEvent
 import com.angcyo.drawable.DslGravity
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.initBounds
 import com.angcyo.library.ex.toColorInt
 import com.angcyo.widget.R
@@ -63,8 +61,6 @@ open class DslImageView : ShapeImageView {
 
     private fun initAttribute(context: Context, attributeSet: AttributeSet?) {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.DslImageView)
-
-        drawBorder = typedArray.getBoolean(R.styleable.ShapeImageView_r_draw_border, false)
 
         showTouchMask =
             typedArray.getBoolean(R.styleable.DslImageView_r_show_touch_mask, showTouchMask)

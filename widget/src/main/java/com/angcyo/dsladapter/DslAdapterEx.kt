@@ -4,6 +4,7 @@ import android.graphics.Color
 import androidx.annotation.LayoutRes
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
+import com.angcyo.widget.base.Anim
 import com.angcyo.widget.base.setHeight
 
 
@@ -184,4 +185,22 @@ fun DslAdapter.toNone(
 }
 
 //</editor-fold desc="AdapterStatus">
+
+//<editor-fold desc="Update">
+
+/**立即更新*/
+fun DslAdapter.updateNow(
+    filterParams: FilterParams = FilterParams(
+        justRun = true,
+        asyncDiff = false
+    )
+) {
+    updateItemDepend(filterParams)
+}
+
+fun DslAdapter.delayNotify(filterParams: FilterParams = FilterParams(notifyDiffDelay = Anim.ANIM_DURATION)) {
+    updateItemDepend(filterParams)
+}
+
+//</editor-fold desc="Update">
 

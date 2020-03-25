@@ -2,13 +2,12 @@ package com.angcyo.dslitem
 
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import com.angcyo.dsladapter.DslAdapter
-import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.*
 import com.angcyo.dsladapter.filter.AddMediaFilterAfterInterceptor
-import com.angcyo.dsladapter.itemIndexPosition
 import com.angcyo.item.DslBaseLabelItem
 import com.angcyo.item.DslImageItem
 import com.angcyo.library.L
+import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.elseNull
 import com.angcyo.loader.LoaderMedia
 import com.angcyo.loader.loadUri
@@ -37,7 +36,9 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
 
     /**添加媒体过滤按钮*/
     var addMediaFilterAfterInterceptor = AddMediaFilterAfterInterceptor()
-    var addMediaItem: DslAddMediaItem? = DslAddMediaItem()
+    var addMediaItem: DslAddMediaItem? = DslAddMediaItem().apply {
+        margin(1 * dpi)
+    }
 
     /**需要显示的媒体列表*/
     var itemMediaList = mutableListOf<LoaderMedia>()
@@ -133,6 +134,8 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
         adapter.clearItems()
         mediaList.forEach { media ->
             adapter + DslImageItem().apply {
+                margin(1 * dpi)
+
                 itemData = media
                 itemLoadUri = media.loadUri()
                 itemMimeType = media.mimeType()
@@ -161,5 +164,7 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
                 }
             }
         }
+
+        adapter.updateNow()
     }
 }
