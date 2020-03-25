@@ -6,7 +6,7 @@ import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.*
 
 /**
- * 带有label的输入item
+ * 带有label的单行输入item
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/03/23
@@ -30,7 +30,7 @@ open class DslLabelEditItem : DslBaseEditItem() {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
         itemHolder.img(R.id.lib_right_ico_view)?.apply {
-            if (itemNoEditModel) {
+            if (itemEditTextStyle.noEditModel) {
                 gone()
             } else {
                 visible()
