@@ -124,6 +124,15 @@ open class DslAdapterItem : LifecycleOwner {
 
     /**是否激活item, 目前只能控制click, longClick事件不被回调*/
     var itemEnable: Boolean = true
+        set(value) {
+            field = value
+            onSetItemEnable(value)
+        }
+
+    /**[itemEnable]*/
+    open fun onSetItemEnable(enable: Boolean) {
+
+    }
 
     /**唯一标识此item的值*/
     var itemTag: String? = null
