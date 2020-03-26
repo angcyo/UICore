@@ -71,7 +71,10 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
             noItemAnim()
             initDsl()
 
-            adapter = itemMediaAdapter
+            //关键地方, 如果每次都赋值[adapter], 系统会重置所有缓存.
+            if (adapter != itemMediaAdapter) {
+                adapter = itemMediaAdapter
+            }
 
             itemMediaAdapter.apply {
                 //+号处理
@@ -130,37 +133,35 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
         adapter: DslAdapter,
         mediaList: List<LoaderMedia>
     ) {
+        adapter.updateSingleData<DslImageItem>(mediaList) { data ->
+            val media = data as LoaderMedia
 
-        adapter.clearItems()
-        mediaList.forEach { media ->
-            adapter + DslImageItem().apply {
-                margin(1 * dpi)
+            margin(2 * dpi)
 
-                itemData = media
-                itemLoadUri = media.loadUri()
-                itemMimeType = media.mimeType()
-                itemMediaDuration = media.duration
-                itemShowTip = false
+            itemData = media
+            itemLoadUri = media.loadUri()
+            itemMimeType = media.mimeType()
+            itemMediaDuration = media.duration
+            itemShowTip = false
 
-                itemShowDeleteView = itemShowAddMediaItem
-                itemDeleteClick = {
-                    itemMediaList.remove(media)
-                    adapter.changeDataItems {
-                        it.remove(this)
-                    }
-                    checkEmpty(itemHolder)
-                    this@DslLabelMediaItem.itemChanging = true
+            itemShowDeleteView = itemShowAddMediaItem
+            itemDeleteClick = {
+                itemMediaList.remove(media)
+                adapter.changeDataItems {
+                    it.remove(this)
                 }
+                checkEmpty(itemHolder)
+                this@DslLabelMediaItem.itemChanging = true
+            }
 
-                //大图预览
-                itemClick = {
-                    itemFragment?.dslPager {
-                        fromRecyclerView = recyclerView
-                        startPosition = itemIndexPosition()
-                        loaderMediaList = itemMediaList
-                    }.elseNull {
-                        L.w("itemFragment is null, cannot show pager.")
-                    }
+            //大图预览
+            itemClick = {
+                itemFragment?.dslPager {
+                    fromRecyclerView = recyclerView
+                    startPosition = itemIndexPosition()
+                    loaderMediaList = itemMediaList
+                }.elseNull {
+                    L.w("itemFragment is null, cannot show pager.")
                 }
             }
         }
