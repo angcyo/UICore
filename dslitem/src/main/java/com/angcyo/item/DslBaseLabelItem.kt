@@ -1,13 +1,16 @@
 package com.angcyo.item
 
 import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.view.Gravity
 import android.widget.TextView
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.library.UndefinedDrawable
 import com.angcyo.library.ex.undefined_color
 import com.angcyo.library.ex.undefined_float
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.setBgDrawable
 import com.angcyo.widget.base.setBoldText
 
 /**
@@ -63,10 +66,16 @@ open class TextStyleConfig {
     var textColors: ColorStateList? = null
     var textSize: Float = undefined_float
     var textGravity: Int = Gravity.LEFT or Gravity.CENTER_VERTICAL
+    var backgroundDrawable: Drawable? = UndefinedDrawable()
 
     /**生效*/
     open fun updateStyle(textView: TextView) {
         with(textView) {
+            if (backgroundDrawable is UndefinedDrawable) {
+                backgroundDrawable = background
+            }
+            setBgDrawable(backgroundDrawable)
+
             text = this@TextStyleConfig.text
             hint = this@TextStyleConfig.hint
 
