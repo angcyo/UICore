@@ -13,6 +13,7 @@ import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.simpleHash
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
@@ -100,7 +101,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                     if (it._params?.justRun == true) {
                         //此任务需要立即执行, 跳过取消
                     } else {
-                        it.taskCancel = true
+                        it.taskCancel.set(true)
                     }
                 } else if (params.shakeType == OnceHandler.SHAKE_TYPE_THROTTLE) {
                     //节流
@@ -111,7 +112,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                             if (it._params?.justRun == true) {
                                 //此任务需要立即执行, 跳过取消
                             } else {
-                                it.taskCancel = true
+                                it.taskCancel.set(true)
                             }
                         }
                     }
@@ -218,13 +219,12 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
         var _params: FilterParams? = null
 
         /**取消任务执行*/
-        @Volatile
-        var taskCancel: Boolean = false
+        val taskCancel: AtomicBoolean = AtomicBoolean(false)
 
         var _taskStartTime = 0L
 
         override fun run() {
-            if (taskCancel) {
+            if (taskCancel.get()) {
                 return
             }
 
@@ -242,12 +242,12 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                     }
                 }
             }.elseNull {
-                taskCancel = true
+                taskCancel.set(true)
             }
         }
 
         private fun doInner() {
-            if (taskCancel) {
+            if (taskCancel.get()) {
                 return
             }
 
@@ -395,7 +395,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             val nowTime = System.currentTimeMillis()
             L.d("${hash()} 界面更新结束, 总耗时${LTime.time(_taskStartTime, nowTime)}")
             _updateTaskLit.remove(this)
-            taskCancel = true
+            taskCancel.set(true)
         }
 
         private fun getUpdateDependItemList(): List<DslAdapterItem> {
@@ -415,7 +415,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
 
         /**通知依赖的子项, 更新界面*/
         private fun notifyUpdateDependItem(itemList: List<DslAdapterItem>) {
-            if (_params?.fromDslAdapterItem == null || taskCancel) {
+            if (_params?.fromDslAdapterItem == null || taskCancel.get()) {
                 return
             }
 
