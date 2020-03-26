@@ -8,7 +8,6 @@ import android.graphics.RectF
 import android.view.View
 import android.view.Window
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.angcyo.widget.DslViewHolder
@@ -126,7 +125,7 @@ fun navBarHeight(context: Context): Int {
     return result
 }
 
-fun notNull(vararg anys: Any?, doIt: (Array<Any>) -> Unit) {
+fun notNull(vararg anys: Any?, doIt: (Array<Any>) -> Unit): Boolean {
     var haveNull = false
 
     for (any in anys) {
@@ -139,6 +138,32 @@ fun notNull(vararg anys: Any?, doIt: (Array<Any>) -> Unit) {
     if (!haveNull) {
         doIt(anys as Array<Any>)
     }
+
+    return haveNull
+}
+
+fun notNullOrEmpty(vararg anys: Any?, doIt: (Array<Any>) -> Unit): Boolean {
+    var haveNull = false
+    var haveEmpty = false
+
+    for (any in anys) {
+        if (any == null) {
+            haveNull = true
+            break
+        }
+        if (any is CharSequence) {
+            haveEmpty = any.isEmpty()
+            if (haveEmpty) {
+                break
+            }
+        }
+    }
+
+    if (!haveNull && !haveEmpty) {
+        doIt(anys as Array<Any>)
+    }
+
+    return haveNull || haveEmpty
 }
 
 fun Rect.clear() {

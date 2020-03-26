@@ -103,6 +103,11 @@ fun String.toColorInt(): Int = Color.parseColor(this)
 fun CharSequence?.or(default: CharSequence = "--") =
     if (this.isNullOrEmpty()) default else this
 
+fun CharSequence?.orString(default: CharSequence = "--"): String =
+    if (this.isNullOrEmpty()) default.toString() else this.toString()
+
+fun CharSequence?.toString(): String = orString("")
+
 /**将列表连成字符串*/
 fun Iterable<*>.connect(
     divide: CharSequence = "," /*连接符*/,
