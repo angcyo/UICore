@@ -20,6 +20,11 @@ import com.angcyo.widget.base.inflate
 
 /**
  * 支持自绘的分割线
+ *
+ * 1.[onItemDraw] [onItemDrawOver] 决定绘制的层级
+ *
+ * 2.[drawItemDecoration]调用此方法, 在想要绘制的地方绘制分割线
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/02/26
@@ -32,6 +37,9 @@ class DslDrawItemDecoration : DslItemDecoration() {
     var onItemDraw: ((DrawItemDecorationParams) -> Unit)? = null
 
     var onItemDrawOver: ((DrawItemDecorationParams) -> Unit)? = null
+
+    //避免重复创建对象
+    var params: DrawItemDecorationParams? = null
 
     override fun onEachItemDoIt(
         canvas: Canvas?,
@@ -53,16 +61,30 @@ class DslDrawItemDecoration : DslItemDecoration() {
             afterViewHolder,
             isOverDraw
         )
-        val params = DrawItemDecorationParams(
-            canvas,
-            parent,
-            state,
-            outRect,
-            beforeViewHolder,
-            viewHolder,
-            afterViewHolder,
-            isOverDraw
-        )
+        if (params == null) {
+            params = DrawItemDecorationParams(
+                canvas,
+                parent,
+                state,
+                outRect,
+                beforeViewHolder,
+                viewHolder,
+                afterViewHolder,
+                isOverDraw
+            )
+        } else {
+            params?.apply {
+                this.canvas = canvas
+                this.parent = parent
+                this.state = state
+                this.outRect = outRect
+                this.beforeViewHolder = beforeViewHolder
+                this.viewHolder = viewHolder
+                this.afterViewHolder = afterViewHolder
+                this.isOverDraw = isOverDraw
+            }
+        }
+        val params = params!!
         when {
             outRect != null -> onItemOffsets?.invoke(params, outRect)
             isOverDraw -> onItemDrawOver?.invoke(params)
@@ -284,6 +306,7 @@ class DslDrawItemDecoration : DslItemDecoration() {
     }
 }
 
+/**绘制时的上下文对象[DrawItemDecorationParams]*/
 data class DrawItemDecorationParams(
     var canvas: Canvas? = null,
     var parent: RecyclerView,
@@ -295,6 +318,7 @@ data class DrawItemDecorationParams(
     var isOverDraw: Boolean = false
 )
 
+/**绘制分割线的配置对象*/
 data class DrawItemDecorationConfig(
 
     //需要绘制的布局
