@@ -19,6 +19,7 @@
         android:paddingRight="@dimen/lib_xxxhdpi"
         android:textSize="@dimen/text_main_size"
         android:textStyle="bold"
+        android:visibility="visible"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         tools:text="标题标题标题标题标题标题标题标题标题标题标题标题标题标题" />
@@ -30,7 +31,7 @@
         android:layout_height="wrap_content"
         android:lineSpacingExtra="4dp"
         android:paddingLeft="@dimen/lib_xxhdpi"
-        android:paddingTop="@dimen/lib_hdpi"
+        android:paddingTop="@dimen/lib_xhdpi"
         android:paddingRight="@dimen/lib_xxhdpi"
         android:paddingBottom="@dimen/lib_hdpi"
         app:layout_constraintLeft_toLeftOf="parent"
