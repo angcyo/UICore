@@ -19,7 +19,6 @@ import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.setBgDrawable
 import com.angcyo.widget.base.setHeight
 import com.angcyo.widget.base.setWidth
-import com.angcyo.widget.layout.ILayoutDelegate
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -223,11 +222,7 @@ open class DslAdapterItem : LifecycleOwner {
     open fun _initItemBackground(itemHolder: DslViewHolder) {
         if (itemBackgroundDrawable !is UndefinedDrawable) {
             itemHolder.itemView.apply {
-                if (this is ILayoutDelegate) {
-                    this.getCustomLayoutDelegate().bDrawable = itemBackgroundDrawable
-                } else {
-                    setBgDrawable(itemBackgroundDrawable)
-                }
+                setBgDrawable(itemBackgroundDrawable)
             }
         }
     }
