@@ -1,6 +1,7 @@
 package com.angcyo.dsladapter.filter
 
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.toNone
 
 /**
  * 当数量不足时, 显示媒体添加item
@@ -11,9 +12,13 @@ import com.angcyo.dsladapter.DslAdapterItem
  */
 open class AddMediaFilterAfterInterceptor : FilterAfterInterceptor {
 
+    /**显示的最大媒体数, 不足时. 追加[addMediaDslAdapterItem]*/
     var maxMediaCount = Int.MAX_VALUE
 
     var addMediaDslAdapterItem: DslAdapterItem? = null
+
+    /**激活[adapter]状态切换*/
+    var enableChangeAdapterState: Boolean = true
 
     override fun intercept(chain: FilterAfterChain): List<DslAdapterItem> {
         if (chain.requestList.size >= maxMediaCount) {
@@ -21,6 +26,11 @@ open class AddMediaFilterAfterInterceptor : FilterAfterInterceptor {
         }
 
         addMediaDslAdapterItem?.apply {
+
+            if (enableChangeAdapterState) {
+                chain.dslAdapter.toNone()
+            }
+
             val result = mutableListOf<DslAdapterItem>()
             result.addAll(chain.requestList)
             result.add(this)
