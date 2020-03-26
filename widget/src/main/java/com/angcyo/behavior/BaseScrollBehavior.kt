@@ -28,7 +28,7 @@ abstract class BaseScrollBehavior<T : View>(
 ) : BaseDependsBehavior<T>(context, attributeSet) {
 
     companion object {
-        const val DEFAULT_DURATION = 250
+        const val DEFAULT_DURATION = 360
     }
 
     var scrollDuration = DEFAULT_DURATION
@@ -122,7 +122,7 @@ abstract class BaseScrollBehavior<T : View>(
         if (_overScroller.computeScrollOffset()) {
             scrollTo(_overScroller.currX, _overScroller.currY)
             //L.e("scrollTo: ${_overScroller.currY}")
-            postInvalidateOnAnimation()
+            invalidate()
         }
     }
 
