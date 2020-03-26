@@ -19,7 +19,7 @@
     <!--密码输入框样式-->
     <style name="LibPasswordStyle" parent="LibUserNameStyle">
         <item name="android:inputType">textWebPassword</item>
-        <item name="r_show_password_on_touch">false</item>
+        <item name="r_show_password_on_touch">true</item>
         <item name="r_clear_drawable">@drawable/lib_password_selector</item>
         <item name="r_is_password_drawable">true</item>
         <item name="android:hint">请输入密码</item>

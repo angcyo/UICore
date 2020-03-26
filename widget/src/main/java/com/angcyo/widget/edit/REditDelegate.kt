@@ -15,6 +15,7 @@ import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
 import com.angcyo.widget.base.hidePassword
 import com.angcyo.widget.base.isPasswordType
+import com.angcyo.widget.base.isTouchFinish
 import com.angcyo.widget.base.showPassword
 import kotlin.math.absoluteValue
 import kotlin.math.min
@@ -46,7 +47,7 @@ class REditDelegate(val editText: EditText) {
     var isPasswordDrawable = false
 
     /** 隐藏显示密码, 在touch down一段时候后 */
-    var showPasswordOnTouch = false
+    var showPasswordOnTouch = true
 
     /**删除ico*/
     var clearDrawable: Drawable? = null
@@ -208,7 +209,7 @@ class REditDelegate(val editText: EditText) {
             }
         }
 
-        if (showPasswordOnTouch) {
+        if (showPasswordOnTouch && editText.isPasswordType()) {
             if (action == MotionEvent.ACTION_DOWN) {
             } else if (action == MotionEvent.ACTION_MOVE) {
                 if (System.currentTimeMillis() - _downTime > 100) {
@@ -222,6 +223,10 @@ class REditDelegate(val editText: EditText) {
                 editText.hidePassword()
             }
         }
+
+        //检查是否需要取消此次事件
+        cancelEvent(event)
+
         return true
     }
 
@@ -302,7 +307,6 @@ class REditDelegate(val editText: EditText) {
         return _clearRect.contains(x.toInt(), y.toInt())
     }
 
-
     fun onClickClearDrawable(): Boolean {
         if (isPasswordDrawable) {
             if (isPasswordShow) {
@@ -320,6 +324,20 @@ class REditDelegate(val editText: EditText) {
             return true
         }
         return false
+    }
+
+    /**是否需要取消事件
+     * 取消事件分发, 禁止弹出系统的 复制, 粘贴功能*/
+    fun cancelEvent(event: MotionEvent): Boolean {
+        val nowTime = System.currentTimeMillis()
+        return if (showPasswordOnTouch && event.isTouchFinish() && (nowTime - _downTime) > 160) {
+            //取消事件分发, 禁止弹出系统的 复制, 粘贴功能
+            event.action = MotionEvent.ACTION_CANCEL
+            editText.requestFocus()
+            true
+        } else {
+            false
+        }
     }
 
     //</editor-fold desc="计算方法">
