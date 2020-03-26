@@ -13,11 +13,93 @@ import kotlin.math.max
  */
 class CharInputFilter : InputFilter {
 
+    companion object {
+        /**
+         * 允许中文输入
+         */
+        const val MODEL_CHINESE = 1
+
+        /**
+         * 允许输入大小写字母
+         */
+        const val MODEL_CHAR_LETTER = 2
+
+        /**
+         * 允许输入数字
+         */
+        const val MODEL_NUMBER = 4
+
+        /**
+         * 允许输入Ascii码表的[33-126]的字符, 不包含空格32, 删除127
+         */
+        const val MODEL_ASCII_CHAR = 8
+
+        /**
+         * callback过滤模式
+         */
+        const val MODEL_CALLBACK = 16
+
+        /**
+         * 身份证号码
+         */
+        const val MODEL_ID_CARD = 32
+
+        /**
+         * 允许输入空格 ASCII 码 32
+         */
+        const val MODEL_SPACE = 64
+
+        /**
+         * 允许非 emoji 字符输入, 即过滤emoji
+         */
+        const val MODEL_NOT_EMOJI = 128
+
+        /**
+         * 是否是中文
+         */
+        fun isChinese(c: Char): Boolean {
+            return c.toInt() in 0x4E00..0x9FA5
+            //        Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
+//        if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
+//                || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+//                || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
+//                || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION
+//                || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION
+//                || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
+//            return true;
+//        }
+//        return false;
+        }
+
+        /**
+         * 是否是大小写字母
+         */
+        fun isCharLetter(c: Char): Boolean { // Allow [a-zA-Z]
+            return if (c in 'a'..'z') {
+                true
+            } else c in 'A'..'Z'
+        }
+
+        fun isNumber(c: Char): Boolean {
+            return c in '0'..'9'
+        }
+
+        fun isAsciiChar(c: Char): Boolean {
+            return c.toInt() in 33..126
+        }
+
+        fun isAsciiSpace(c: Char): Boolean {
+            return 32 == c.toInt()
+        }
+    }
+
     var callbacks: MutableList<OnFilterCallback>? = null
+
     /**
      * 默认允许所有输入
      */
     private var filterModel = 0xFF
+
     /**
      * 限制输入的最大字符数, 小于0不限制
      */
@@ -233,79 +315,6 @@ class CharInputFilter : InputFilter {
                 }
             }
             return buf?.toString() ?: ""
-        }
-    }
-
-    companion object {
-        /**
-         * 允许中文输入
-         */
-        const val MODEL_CHINESE = 1
-        /**
-         * 允许输入大小写字母
-         */
-        const val MODEL_CHAR_LETTER = 2
-        /**
-         * 允许输入数字
-         */
-        const val MODEL_NUMBER = 4
-        /**
-         * 允许输入Ascii码表的[33-126]的字符
-         */
-        const val MODEL_ASCII_CHAR = 8
-        /**
-         * callback过滤模式
-         */
-        const val MODEL_CALLBACK = 16
-        /**
-         * 身份证号码
-         */
-        const val MODEL_ID_CARD = 32
-        /**
-         * 允许输入空格 ASCII 码 32
-         */
-        const val MODEL_SPACE = 64
-        /**
-         * 允许非 emoji 字符输入, 即过滤emoji
-         */
-        const val MODEL_NOT_EMOJI = 128
-
-        /**
-         * 是否是中文
-         */
-        fun isChinese(c: Char): Boolean {
-            return c.toInt() in 0x4E00..0x9FA5
-            //        Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
-//        if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
-//                || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
-//                || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
-//                || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION
-//                || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION
-//                || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
-//            return true;
-//        }
-//        return false;
-        }
-
-        /**
-         * 是否是大小写字母
-         */
-        fun isCharLetter(c: Char): Boolean { // Allow [a-zA-Z]
-            return if (c in 'a'..'z') {
-                true
-            } else c in 'A'..'Z'
-        }
-
-        fun isNumber(c: Char): Boolean {
-            return c in '0'..'9'
-        }
-
-        fun isAsciiChar(c: Char): Boolean {
-            return c.toInt() in 33..126
-        }
-
-        fun isAsciiSpace(c: Char): Boolean {
-            return 32 == c.toInt()
         }
     }
 }

@@ -115,8 +115,11 @@ inline fun <reified ItemData> DslAdapter.getAllItemData(useFilterList: Boolean =
 }
 
 /**枚举所有Item*/
-fun DslAdapter.eachItem(useFilterList: Boolean = true, action: (DslAdapterItem) -> Unit) {
-    getDataList(useFilterList).forEach(action)
+fun DslAdapter.eachItem(
+    useFilterList: Boolean = true,
+    action: (index: Int, dslAdapterItem: DslAdapterItem) -> Unit
+) {
+    getDataList(useFilterList).forEachIndexed(action)
 }
 
 //</editor-fold desc="Item操作">
@@ -198,6 +201,7 @@ fun DslAdapter.updateNow(
     updateItemDepend(filterParams)
 }
 
+/**延迟通知*/
 fun DslAdapter.delayNotify(filterParams: FilterParams = FilterParams(notifyDiffDelay = Anim.ANIM_DURATION)) {
     updateItemDepend(filterParams)
 }
