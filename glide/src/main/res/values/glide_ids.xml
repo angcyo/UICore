@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--com.angcyo.glide.DslGlide.attach 类型检查请求.-->
     <item name="tag_ok_type" type="id" />
+    <!--加载成功的url-->
+    <item name="tag_glide_load_url" type="id" />
 </resources>

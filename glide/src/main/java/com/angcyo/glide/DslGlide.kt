@@ -14,6 +14,7 @@ import com.angcyo.library.LTime
 import com.angcyo.library.app
 import com.angcyo.library.ex.isFileExist
 import com.angcyo.library.ex.isHttpScheme
+import com.angcyo.library.ex.loadUrl
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.RequestManager
@@ -35,6 +36,7 @@ import jp.wasabeef.glide.transformations.SupportRSBlurTransformation
 import okhttp3.Call
 import pl.droidsonroids.gif.GifDrawable
 import java.io.File
+import java.lang.ref.WeakReference
 
 
 /**
@@ -134,7 +136,7 @@ class DslGlide {
 
     fun load(uri: Uri?) {
         LTime.tick()
-        _checkLoad {
+        _checkLoad(uri) {
             if (checkGifType) {
                 targetView?.setImageDrawable(placeholderDrawable)
                 _checkType(uri) {
@@ -181,6 +183,7 @@ class DslGlide {
         overrideWidth = -1
         overrideHeight = -1
         transformations.clear()
+        _loadSucceed(null)
     }
 
     /**添加一个模糊[Transformation]*/
@@ -202,10 +205,11 @@ class DslGlide {
 
     //<editor-fold desc="辅助方法">
 
-    inline fun _checkLoad(action: () -> Unit) {
+    inline fun _checkLoad(uri: Uri?, action: () -> Unit) {
         when {
             isDestroyed() -> L.w("activity isDestroyed!")
             targetView == null -> L.w("targetView is null!")
+            isLoadSucceed(uri.loadUrl()) -> L.i("${uri.loadUrl()} is load succeed.")
             else -> action()
         }
     }
@@ -241,7 +245,7 @@ class DslGlide {
             return
         }
 
-        _checkLoad {
+        _checkLoad(uri) {
             _loadUri = uri
             val targetView = targetView!!
             val path = uri.path
@@ -326,6 +330,29 @@ class DslGlide {
             .build()
     }
 
+    //标记加载成功的url
+    fun _loadSucceed(url: String? = _loadUri?.loadUrl()) {
+        targetView?.setTag(R.id.tag_glide_load_url, url)
+    }
+
+    /**当前url是否已经加载成功*/
+    fun isLoadSucceed(url: String?): Boolean {
+        if (url.isNullOrBlank()) {
+            return false
+        }
+        targetView?.getTag(R.id.tag_glide_load_url).apply {
+            if (this == null) {
+                return false
+            }
+            if (this is String) {
+                if (this == url) {
+                    return true
+                }
+            }
+            return false
+        }
+    }
+
     //</editor-fold desc="辅助方法">
 
     //<editor-fold desc="辅助扩展">
@@ -386,6 +413,7 @@ class DslGlide {
                 isFirstResource: Boolean
             ): Boolean {
                 L.w("$model 加载失败(${LTime.time()}) $e")
+                _loadSucceed(null)
                 return this@DslGlide.onLoadFailed(string, e)
             }
 
@@ -397,6 +425,7 @@ class DslGlide {
                 isFirstResource: Boolean
             ): Boolean {
                 L.w("$model 加载成功(${LTime.time()}) $dataSource")
+                _loadSucceed(_loadUri.loadUrl())
                 //targetView?.invalidate()
                 return this@DslGlide.onLoadSucceed(string, resource)
             }
