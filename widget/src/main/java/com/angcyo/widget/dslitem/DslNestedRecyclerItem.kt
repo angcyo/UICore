@@ -57,7 +57,11 @@ open class DslNestedRecyclerItem : DslAdapterItem() {
             clearItemDecoration()
             initDsl()
             layoutManager = itemNestedLayoutManager
-            adapter = itemNestedAdapter
+
+            //关键地方, 如果每次都赋值[adapter], 系统会重置所有缓存.
+            if (adapter != itemNestedAdapter) {
+                adapter = itemNestedAdapter
+            }
 
             if (itemKeepScrollPosition) {
                 _scrollPositionConfig?.run { restoreScrollPosition(this) }
