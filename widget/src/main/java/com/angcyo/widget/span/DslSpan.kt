@@ -9,8 +9,7 @@ import android.text.style.*
 import android.view.Gravity
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
-import com.angcyo.library.ex.undefined_color
-import com.angcyo.library.ex.undefined_int
+import com.angcyo.library.ex.*
 import kotlin.math.max
 
 /**
@@ -272,6 +271,41 @@ data class DslSpanConfig(
     var leadingMarginFirst: Int = undefined_int,
     var leadingMarginRest: Int = undefined_int
 )
+
+/**快速绘制一个轻提示, 边框*/
+fun DslSpan.drawableTipBorder(
+    text: CharSequence? = null,
+    borderColor: Int = "#0EC300".toColorInt(),
+    action: DslDrawableSpan.() -> Unit = {}
+): DslSpan {
+    return drawable(text) {
+        gradientSolidColor = Color.WHITE
+        gradientRadius = 10 * dp
+        textSize = 9 * dp
+        textGravity = Gravity.CENTER
+        textColor = borderColor
+        gradientStrokeColor = textColor
+        paddingHorizontal(4 * dpi)
+        paddingVertical(2 * dpi)
+        action()
+    }
+}
+
+/**快速绘制一个轻提示, 填充*/
+fun DslSpan.drawableTipFill(
+    text: CharSequence? = null,
+    solidColor: Int = Color.RED,
+    action: DslDrawableSpan.() -> Unit = {}
+): DslSpan {
+    return drawable(text) {
+        gradientSolidColor = solidColor
+        gradientRadius = 10 * dp
+        paddingHorizontal(4 * dpi)
+        paddingVertical(2 * dpi)
+        textColor = Color.WHITE
+        action()
+    }
+}
 
 fun span(action: DslSpan.() -> Unit): SpannableStringBuilder {
     return DslSpan().apply {

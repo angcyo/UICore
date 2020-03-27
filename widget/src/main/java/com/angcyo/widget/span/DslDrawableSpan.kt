@@ -72,10 +72,13 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
 
     /**填充的颜色*/
     var gradientSolidColor = undefined_color
+
     /**边框的颜色*/
     var gradientStrokeColor = undefined_color
+
     /**边框的宽度*/
     var gradientStrokeWidth = 1 * dp
+
     /**圆角大小*/
     var gradientRadius = 25 * dp
 
@@ -309,6 +312,7 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
                 textPaint.style = Paint.Style.STROKE
                 textPaint.strokeWidth = gradientStrokeWidth
                 textPaint.color = gradientStrokeColor
+                _gradientRectF.inset(gradientStrokeWidth / 2, gradientStrokeWidth / 2)
                 canvas.drawRoundRect(_gradientRectF, gradientRadius, gradientRadius, textPaint)
             }
 
@@ -339,6 +343,11 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
             //EXACTLY
             else -> this
         }
+    }
+
+    fun padding(padding: Int) {
+        paddingHorizontal(padding)
+        paddingVertical(padding)
     }
 
     fun paddingHorizontal(padding: Int) {
