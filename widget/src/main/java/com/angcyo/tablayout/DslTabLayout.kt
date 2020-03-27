@@ -407,6 +407,11 @@ open class DslTabLayout(
         val visibleChildList = dslSelector.visibleViewList
         val visibleChildCount = visibleChildList.size
 
+        if (visibleChildCount == 0) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+            return
+        }
+
         //super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         var widthSize = MeasureSpec.getSize(widthMeasureSpec)
         val widthMode = MeasureSpec.getMode(widthMeasureSpec)
