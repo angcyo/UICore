@@ -349,6 +349,8 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
                 measuredHeight - paddingTop - paddingBottom //getDebugHeightSize();
             for (i in 0 until count) {
                 val childAt = getChildAt(i)
+                childAt.translationX = 0f
+                childAt.translationY = 0f
                 childAt.layout(l, t, l + wSize, t + hSize)
                 t += debugHeightSize + vSpace
                 //                t += hSize + vSpace;
