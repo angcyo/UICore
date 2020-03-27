@@ -13,7 +13,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter
  */
 open class RFragmentAdapter(
     fragmentManager: FragmentManager,
-    val fragments: MutableList<out Fragment>
+    val fragments: List<Fragment>
 ) : FragmentStatePagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int): Fragment {
@@ -22,5 +22,9 @@ open class RFragmentAdapter(
 
     override fun getCount(): Int {
         return fragments.size
+    }
+
+    override fun getPageTitle(position: Int): CharSequence? {
+        return super.getPageTitle(position)
     }
 }
