@@ -12,6 +12,7 @@ import com.angcyo.widget.base.find
 import com.angcyo.widget.base.resetChild
 import com.angcyo.widget.tab
 import com.angcyo.widget.vp
+import kotlin.math.min
 
 /**
  * Tab+ViewPager 页面结构
@@ -52,6 +53,9 @@ abstract class BasePagerFragment : BaseTitleFragment() {
                     inflateTabItems(this)
                 }
             })
+
+            //离屏缓存数量
+            offscreenPageLimit = getPageOffscreenLimit()
         }
     }
 
@@ -64,6 +68,8 @@ abstract class BasePagerFragment : BaseTitleFragment() {
                 getPageTitle(itemIndex)
         }
     }
+
+    open fun getPageOffscreenLimit(): Int = min(5, getPageCount())
 
     /**获取对应页面*/
     abstract fun getPageItem(position: Int): Fragment
