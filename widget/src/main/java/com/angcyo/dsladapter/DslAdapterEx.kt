@@ -72,13 +72,18 @@ fun <T : DslAdapterItem> DslAdapter.dslCustomItem(
 }
 
 /**空的占位item*/
-fun DslAdapter.renderEmptyItem(height: Int = 120 * dpi, color: Int = Color.TRANSPARENT) {
+fun DslAdapter.renderEmptyItem(
+    height: Int = 120 * dpi,
+    color: Int = Color.TRANSPARENT,
+    action: DslAdapterItem.() -> Unit = {}
+) {
     val adapterItem = DslAdapterItem()
     adapterItem.itemLayoutId = R.layout.lib_empty_item
     adapterItem.itemBindOverride = { itemHolder, _, _, _ ->
         itemHolder.itemView.setBackgroundColor(color)
         itemHolder.itemView.setHeight(height)
     }
+    adapterItem.action()
     addLastItem(adapterItem)
 }
 

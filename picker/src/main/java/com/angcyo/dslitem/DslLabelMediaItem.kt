@@ -18,6 +18,7 @@ import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.recycler.clearItemDecoration
 import com.angcyo.widget.recycler.initDsl
 import com.angcyo.widget.recycler.noItemAnim
+import com.angcyo.widget.recycler.resetLayoutManager
 
 /**
  * 带label, 媒体列表展示的item
@@ -49,6 +50,9 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
     /**是否要显示加号*/
     var itemShowAddMediaItem: Boolean = false
 
+    /**网格列数*/
+    var itemGridSpanCount = 3
+
     init {
         itemLayoutId = R.layout.dsl_label_media_item
     }
@@ -70,6 +74,8 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
 
             noItemAnim()
             initDsl()
+
+            resetLayoutManager("GV$itemGridSpanCount")
 
             //关键地方, 如果每次都赋值[adapter], 系统会重置所有缓存.
             if (adapter != itemMediaAdapter) {
