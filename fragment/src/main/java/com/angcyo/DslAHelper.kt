@@ -11,20 +11,22 @@ import android.os.Bundle
 import android.transition.*
 import android.view.View
 import android.view.Window
+import androidx.annotation.AnimRes
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.angcyo.DslAHelper.Companion.DEFAULT_REMOVE_ENTER_ANIM
+import com.angcyo.DslAHelper.Companion.DEFAULT_REMOVE_EXIT_ANIM
+import com.angcyo.DslAHelper.Companion.DEFAULT_SHOW_ENTER_ANIM
+import com.angcyo.DslAHelper.Companion.DEFAULT_SHOW_EXIT_ANIM
 import com.angcyo.activity.FragmentWrapActivity
 import com.angcyo.activity.JumpActivity
 import com.angcyo.base.RevertWindowTransitionListener
 import com.angcyo.base.dslAHelper
-import com.angcyo.fragment.ActivityResult
-import com.angcyo.fragment.FragmentBridge
-import com.angcyo.fragment.dslBridge
-import com.angcyo.fragment.requestPermissions
+import com.angcyo.fragment.*
 import com.angcyo.library.L
 import com.angcyo.library.ex.havePermission
 
@@ -48,6 +50,20 @@ class DslAHelper(val context: Context) {
             }
             return any.javaClass == mainActivityClass
         }
+
+        /**[androidx.fragment.app.FragmentTransaction.setCustomAnimations(int, int, int, int)]*/
+
+        @AnimRes
+        var DEFAULT_SHOW_ENTER_ANIM = R.anim.lib_translate_x_show_enter
+
+        @AnimRes
+        var DEFAULT_SHOW_EXIT_ANIM = R.anim.lib_translate_x_show_exit
+
+        @AnimRes
+        var DEFAULT_REMOVE_ENTER_ANIM = R.anim.lib_translate_x_remove_enter
+
+        @AnimRes
+        var DEFAULT_REMOVE_EXIT_ANIM = R.anim.lib_translate_x_remove_exit
     }
 
     /**需要启动的[Intent]*/
@@ -254,6 +270,7 @@ class DslAHelper(val context: Context) {
         if (context is Activity) {
             val activity = context
             val config = IntentConfig(Intent())
+            //config.exitAnim()
             config.action()
 
             activity.setResult(config.resultCode, config.resultData)
@@ -505,16 +522,16 @@ fun IntentConfig.resetAnim() {
 }
 
 fun IntentConfig.enterAnim(
-    enter: Int = DslFHelper.DEFAULT_SHOW_ENTER_ANIM,
-    exit: Int = DslFHelper.DEFAULT_SHOW_EXIT_ANIM
+    enter: Int = DEFAULT_SHOW_ENTER_ANIM,
+    exit: Int = DEFAULT_SHOW_EXIT_ANIM
 ) {
     enterAnim = enter
     exitAnim = exit
 }
 
 fun IntentConfig.exitAnim(
-    exit: Int = DslFHelper.DEFAULT_REMOVE_EXIT_ANIM,
-    enter: Int = DslFHelper.DEFAULT_REMOVE_ENTER_ANIM
+    exit: Int = DEFAULT_REMOVE_EXIT_ANIM,
+    enter: Int = DEFAULT_REMOVE_ENTER_ANIM
 ) {
     enterAnim = enter
     exitAnim = exit

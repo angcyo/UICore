@@ -12,10 +12,12 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
 import com.angcyo.base.*
+import com.angcyo.fragment.FragmentAnimator
 import com.angcyo.fragment.IFragment
 import com.angcyo.fragment.R
 import com.angcyo.fragment.dslBridge
 import com.angcyo.library.L
+import com.angcyo.library.ex.elseNull
 import com.angcyo.library.ex.havePermission
 import com.angcyo.library.ex.isDebug
 import com.angcyo.widget.base.animationOf
@@ -35,24 +37,6 @@ class DslFHelper(
 
     companion object {
         var fragmentManagerLog: String = ""
-
-        /**[androidx.fragment.app.FragmentTransaction.setCustomAnimations(int, int, int, int)]*/
-
-        @AnimatorRes
-        @AnimRes
-        var DEFAULT_SHOW_ENTER_ANIM = R.anim.lib_translate_x_show_enter
-
-        @AnimatorRes
-        @AnimRes
-        var DEFAULT_SHOW_EXIT_ANIM = R.anim.lib_translate_x_show_exit
-
-        @AnimatorRes
-        @AnimRes
-        var DEFAULT_REMOVE_ENTER_ANIM = R.anim.lib_translate_x_remove_enter
-
-        @AnimatorRes
-        @AnimRes
-        var DEFAULT_REMOVE_EXIT_ANIM = R.anim.lib_translate_x_remove_exit
     }
 
     //<editor-fold desc="属性">
@@ -92,19 +76,19 @@ class DslFHelper(
 
     @AnimatorRes
     @AnimRes
-    var showEnterAnimRes: Int = DEFAULT_SHOW_ENTER_ANIM
+    var showEnterAnimRes: Int = FragmentAnimator.DEFAULT_SHOW_ENTER_ANIMATOR
 
     @AnimatorRes
     @AnimRes
-    var showExitAnimRes: Int = DEFAULT_SHOW_EXIT_ANIM
+    var showExitAnimRes: Int = FragmentAnimator.DEFAULT_SHOW_EXIT_ANIMATOR
 
     @AnimatorRes
     @AnimRes
-    var removeEnterAnimRes: Int = DEFAULT_REMOVE_ENTER_ANIM
+    var removeEnterAnimRes: Int = FragmentAnimator.DEFAULT_REMOVE_ENTER_ANIMATOR
 
     @AnimatorRes
     @AnimRes
-    var removeExitAnimRes: Int = DEFAULT_REMOVE_EXIT_ANIM
+    var removeExitAnimRes: Int = FragmentAnimator.DEFAULT_REMOVE_EXIT_ANIMATOR
 
     /**执行操作之前, 需要保证的权限. 无权限, 则取消操作*/
     val permissions = mutableListOf<String>()
@@ -506,7 +490,16 @@ class DslFHelper(
                 val animRes = if (showFAnim) showExitAnimRes else removeEnterAnimRes
                 if (isAdded && view != null && animRes != 0) {
                     if (view.isVisible()) {
-                        view?.startAnimation(animationOf(id = animRes))
+                        view?.apply {
+                            FragmentAnimator.loadAnimator(animRes)?.apply {
+                                setTarget(view)
+                                start()
+                            }.elseNull {
+                                animationOf(id = animRes)?.apply {
+                                    startAnimation(this)
+                                }
+                            }
+                        }
                     }
                 }
             }

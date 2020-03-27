@@ -13,8 +13,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
+import com.angcyo.library._screenHeight
+import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.getColor
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.exactly
 
 /**
  * Created by angcyo on 2018/12/03 23:17
@@ -219,6 +222,7 @@ abstract class AbsFragment : Fragment() {
                 setBackgroundColor(getColor(R.color.status_bar_color))
             }
         }
+        rootView.measure(exactly(_screenWidth), exactly(_screenHeight))
         return rootView
     }
 
