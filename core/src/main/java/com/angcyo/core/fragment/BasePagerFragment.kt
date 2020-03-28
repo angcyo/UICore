@@ -59,6 +59,13 @@ abstract class BasePagerFragment : BaseTitleFragment() {
         }
     }
 
+    /**更新tab*/
+    fun updateTabItems() {
+        _vh.tab(R.id.lib_tab_layout)?.apply {
+            inflateTabItems(this)
+        }
+    }
+
     open fun inflateTabItems(viewGroup: ViewGroup) {
         viewGroup.resetChild(
             getPageCount(),
