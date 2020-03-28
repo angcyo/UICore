@@ -19,6 +19,9 @@ class DslGravity {
     /**束缚重力*/
     var gravity: Int = Gravity.LEFT or Gravity.TOP
 
+    /**使用中心坐标作为定位参考, 否则就是四条边*/
+    var gravityRelativeCenter: Boolean = true
+
     /**额外偏移距离, 会根据[Gravity]自动取负值*/
     var gravityOffsetX: Int = 0
     var gravityOffsetY: Int = 0
@@ -77,14 +80,14 @@ class DslGravity {
 
         val centerX = when (horizontalGravity) {
             Gravity.CENTER_HORIZONTAL -> (gravityBounds.left + gravityBounds.width() / 2 + gravityOffsetX).toInt()
-            Gravity.RIGHT -> (gravityBounds.right - gravityOffsetX).toInt()
-            else -> (gravityBounds.left + gravityOffsetX).toInt()
+            Gravity.RIGHT -> (gravityBounds.right - if (gravityRelativeCenter) 0f else _targetWidth / 2 - gravityOffsetX).toInt()
+            else -> (gravityBounds.left + gravityOffsetX + if (gravityRelativeCenter) 0f else _targetWidth / 2).toInt()
         }
 
         val centerY = when (verticalGravity) {
             Gravity.CENTER_VERTICAL -> (gravityBounds.top + gravityBounds.height() / 2 + gravityOffsetY).toInt()
-            Gravity.BOTTOM -> (gravityBounds.bottom - gravityOffsetY).toInt()
-            else -> (gravityBounds.top + gravityOffsetY).toInt()
+            Gravity.BOTTOM -> (gravityBounds.bottom - gravityOffsetY - if (gravityRelativeCenter) 0f else _targetHeight / 2).toInt()
+            else -> (gravityBounds.top + gravityOffsetY + if (gravityRelativeCenter) 0f else _targetHeight / 2).toInt()
         }
 
         _horizontalGravity = horizontalGravity

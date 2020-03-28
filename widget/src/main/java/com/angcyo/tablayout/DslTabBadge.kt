@@ -22,6 +22,9 @@ open class DslTabBadge : DslBadgeDrawable() {
     /**角标默认配置项*/
     val defaultBadgeConfig = TabBadgeConfig()
 
+    /**预览的角标属性*/
+    var xmlBadgeText: String? = null
+
     override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
         val typedArray =
             context.obtainStyledAttributes(attributeSet, R.styleable.DslTabLayout)
@@ -104,7 +107,7 @@ open class DslTabBadge : DslBadgeDrawable() {
         )
         defaultBadgeConfig.badgePaddingBottom = badgePaddingBottom
 
-        badgeText = typedArray.getString(R.styleable.DslTabLayout_tab_badge_text)
+        xmlBadgeText = typedArray.getString(R.styleable.DslTabLayout_tab_badge_text)
 
         badgeTextSize = typedArray.getDimensionPixelOffset(
             R.styleable.DslTabLayout_tab_badge_text_size,

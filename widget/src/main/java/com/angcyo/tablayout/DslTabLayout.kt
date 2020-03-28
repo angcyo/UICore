@@ -99,7 +99,7 @@ open class DslTabLayout(
     val tabBadgeConfigMap = mutableMapOf<Int, TabBadgeConfig>()
 
     /**角标绘制配置*/
-    var onTabBadgeConfig: (child: View, tabBadge: DslTabBadge, index: Int) -> TabBadgeConfig =
+    var onTabBadgeConfig: (child: View, tabBadge: DslTabBadge, index: Int) -> TabBadgeConfig? =
         { _, tabBadge, index ->
             val badgeConfig = getBadgeConfig(index)
             if (!isInEditMode) {
@@ -331,10 +331,11 @@ open class DslTabLayout(
 
         super.draw(canvas)
 
+        val visibleChildCount = dslSelector.visibleViewList.size
+
         //绘制在child的上面
         if (drawDivider) {
             var left = 0
-            val visibleChildCount = dslSelector.visibleViewList.size
             tabDivider?.apply {
                 val top = paddingTop + dividerMarginTop
                 val bottom = measuredHeight - paddingBottom - dividerMarginBottom
@@ -373,7 +374,7 @@ open class DslTabLayout(
 
                     var anchorView: View = child
 
-                    if (badgeConfig.badgeAnchorChildIndex >= 0) {
+                    if (badgeConfig != null && badgeConfig.badgeAnchorChildIndex >= 0) {
                         anchorView =
                             child.getChildOrNull(badgeConfig.badgeAnchorChildIndex) ?: child
 
@@ -390,7 +391,7 @@ open class DslTabLayout(
                         bottom = anchorView.bottom
                     }
 
-                    if (badgeConfig.badgeIgnoreChildPadding) {
+                    if (badgeConfig != null && badgeConfig.badgeIgnoreChildPadding) {
                         left += anchorView.paddingLeft
                         top += anchorView.paddingTop
                         right -= anchorView.paddingRight
@@ -400,6 +401,16 @@ open class DslTabLayout(
                     setBounds(left, top, right, bottom)
 
                     updateOriginDrawable()
+
+                    if (isInEditMode) {
+                        badgeText = if (index == visibleChildCount - 1) {
+                            //预览中, 强制最后一个角标为圆点类型, 方便查看预览.
+                            ""
+                        } else {
+                            xmlBadgeText
+                        }
+                    }
+
                     draw(canvas)
                 }
             }
