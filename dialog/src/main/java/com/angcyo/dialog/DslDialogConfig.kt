@@ -23,6 +23,7 @@ import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.undefined_float
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.replace
 import java.io.Serializable
 
 /**
@@ -108,6 +109,10 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
 
     @LayoutRes
     var dialogLayoutId = -1
+
+    /**自定义的对话框标题*/
+    @LayoutRes
+    var dialogTitleLayoutId = -1
 
     /** 优先使用 contentView, 其次再使用 layoutId */
     var dialogContentView: View? = null
@@ -369,6 +374,10 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
     }
 
     open fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
+        //替换标题栏
+        if (dialogTitleLayoutId > 0) {
+            dialogViewHolder.group(R.id.title_layout)?.replace(dialogTitleLayoutId)
+        }
     }
 
     /** Dialog -> AppCompatDialog -> AlertDialog */

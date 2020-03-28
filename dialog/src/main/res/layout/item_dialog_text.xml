@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -19,5 +20,15 @@
         android:textColor="@color/lib_body_text_color_selector"
         tools:drawableLeft="@drawable/lib_ic_info"
         tools:text="标题" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/lib_image_tip_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        android:layout_marginRight="@dimen/lib_xhdpi"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_selector"
+        app:tint="@color/colorPrimary" />
 
 </FrameLayout>

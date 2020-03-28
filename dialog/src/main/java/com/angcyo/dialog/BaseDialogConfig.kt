@@ -16,6 +16,9 @@ import com.angcyo.widget.base.clickIt
  */
 abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(context) {
 
+    /**隐藏标题栏下面的线*/
+    var hideDialogTitleLine: Boolean = false
+
     init {
         positiveButtonText = "确定"
         negativeButtonText = "取消"
@@ -49,7 +52,7 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
 
         //标题栏控制
         dialogViewHolder.visible(R.id.title_layout, dialogTitle != null)
-        dialogViewHolder.visible(R.id.title_line_view, dialogTitle != null)
+        dialogViewHolder.visible(R.id.title_line_view, dialogTitle != null && !hideDialogTitleLine)
 
         initControlLayout(dialog, dialogViewHolder)
     }

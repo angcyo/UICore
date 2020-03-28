@@ -44,6 +44,8 @@ open class DslDialogTextItem : DslAdapterItem() {
 
         itemHolder.itemView.isSelected = itemIsSelected
 
+        itemHolder.visible(R.id.lib_image_tip_view, itemIsSelected)
+
         itemHolder.tv(R.id.lib_text_view)?.apply {
             setLeftIco(itemLeftDrawable)
             gravity = itemTextGravity
