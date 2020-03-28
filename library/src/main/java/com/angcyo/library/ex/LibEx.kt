@@ -64,6 +64,14 @@ fun Any?.str(): String {
     }
 }
 
+/**
+ *
+ * https://developer.android.google.cn/reference/java/util/Formatter.html#syntax
+ * */
+fun Any?.format(format: String): String {
+    return String.format(format, this)
+}
+
 fun Throwable.string(): String {
     val stringWriter = StringWriter()
     val pw = PrintWriter(BufferedWriter(stringWriter))

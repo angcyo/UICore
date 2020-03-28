@@ -119,6 +119,12 @@ open class DslAdapterItem : LifecycleOwner {
     var itemHeight: Int = undefined_size
     var itemMinHeight: Int = undefined_size
 
+    /**padding值*/
+    var itemPaddingLeft: Int = undefined_size
+    var itemPaddingRight: Int = undefined_size
+    var itemPaddingTop: Int = undefined_size
+    var itemPaddingBottom: Int = undefined_size
+
     /**指定item的背景*/
     var itemBackgroundDrawable: Drawable? = UndefinedDrawable()
 
@@ -171,6 +177,7 @@ open class DslAdapterItem : LifecycleOwner {
     ) {
         _initItemBackground(itemHolder)
         _initItemSize(itemHolder)
+        _initItemPadding(itemHolder)
         _initItemListener(itemHolder)
 
         onItemBind(itemHolder, itemPosition, adapterItem)
@@ -229,19 +236,25 @@ open class DslAdapterItem : LifecycleOwner {
 
     //初始化宽高
     open fun _initItemSize(itemHolder: DslViewHolder) {
-        if (itemMinWidth != undefined_size) {
-            itemHolder.itemView.minimumWidth = itemMinWidth
+        if (itemMinWidth == undefined_size) {
+            itemMinWidth = itemHolder.itemView.minimumWidth
         }
-        if (itemMinHeight != undefined_size) {
-            itemHolder.itemView.minimumHeight = itemMinHeight
-        }
+        itemHolder.itemView.minimumWidth = itemMinWidth
 
-        if (itemWidth != undefined_size) {
-            itemHolder.itemView.setWidth(itemWidth)
+        if (itemMinHeight == undefined_size) {
+            itemMinHeight = itemHolder.itemView.minimumHeight
         }
-        if (itemHeight != undefined_size) {
-            itemHolder.itemView.setHeight(itemHeight)
+        itemHolder.itemView.minimumHeight = itemMinHeight
+
+        if (itemWidth == undefined_size) {
+            itemWidth = itemHolder.itemView.layoutParams.width
         }
+        itemHolder.itemView.setWidth(itemWidth)
+
+        if (itemHeight == undefined_size) {
+            itemHeight = itemHolder.itemView.layoutParams.height
+        }
+        itemHolder.itemView.setHeight(itemHeight)
     }
 
     //初始化事件
@@ -257,6 +270,28 @@ open class DslAdapterItem : LifecycleOwner {
         } else {
             itemHolder.itemView.setOnLongClickListener(_longClickListener)
         }
+    }
+
+    //初始化padding
+    open fun _initItemPadding(itemHolder: DslViewHolder) {
+        if (itemPaddingLeft == undefined_size) {
+            itemPaddingLeft = itemHolder.itemView.paddingLeft
+        }
+        if (itemPaddingRight == undefined_size) {
+            itemPaddingRight = itemHolder.itemView.paddingRight
+        }
+        if (itemPaddingTop == undefined_size) {
+            itemPaddingTop = itemHolder.itemView.paddingTop
+        }
+        if (itemPaddingBottom == undefined_size) {
+            itemPaddingBottom = itemHolder.itemView.paddingBottom
+        }
+        itemHolder.itemView.setPadding(
+            itemPaddingLeft,
+            itemPaddingTop,
+            itemPaddingRight,
+            itemPaddingBottom
+        )
     }
 
     //</editor-fold desc="内部初始化">

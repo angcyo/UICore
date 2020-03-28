@@ -21,16 +21,19 @@ import com.angcyo.widget.colorState
  */
 open class DslButtonItem : DslAdapterItem() {
 
+    /**按钮显示的文本*/
     var itemButtonText: CharSequence? = null
         set(value) {
             field = value
             itemButtonStyle.text = value
         }
 
+    /**按钮样式配置项*/
     var itemButtonStyle = ButtonStyleConfig().apply {
         textGravity = Gravity.CENTER
     }
 
+    /**按钮配置回调*/
     var itemButtonConfig: (DslButton) -> Unit = {
 
     }
@@ -66,8 +69,8 @@ open class ButtonStyleConfig : TextStyleConfig() {
         //主题渐变样式
         val BUTTON_STYLE_THEME = 1
 
-        //白底样式
-        val BUTTON_STYLE_WHITE = 2
+        //填充颜色的样式
+        val BUTTON_STYLE_SOLID = 2
 
         //边框->主题渐变
         val BUTTON_STYLE_FILL = 3
@@ -85,14 +88,18 @@ open class ButtonStyleConfig : TextStyleConfig() {
     /**样式[BUTTON_STYLE_THEME] [BUTTON_STYLE_FILL]时, 文本的颜色*/
     var styleThemeTextColor = Color.WHITE
 
-    /**样式[BUTTON_STYLE_WHITE]时, solid的颜色*/
-    var styleWhiteSolidColor = Color.WHITE
+    /**样式[BUTTON_STYLE_SOLID]时, solid的颜色*/
+    var styleSolidSolidColor = Color.WHITE
 
     /**样式[BUTTON_STYLE_FILL]时, solid的颜色*/
     var styleFillSolidColor = Color.TRANSPARENT
 
-    /**样式[BUTTON_STYLE_WHITE] [BUTTON_STYLE_FILL]时, 文本的颜色*/
-    var styleWhiteTextColor = _color(R.color.text_general_color)
+    /**样式[BUTTON_STYLE_SOLID] [BUTTON_STYLE_FILL]时, 文本的颜色*/
+    var styleSolidTextColor = _color(R.color.text_general_color)
+        set(value) {
+            field = value
+            textColor = value
+        }
 
     /**[BUTTON_STYLE_FILL]*/
     var styleFillStrokeWidth = 2 * dpi
@@ -124,10 +131,10 @@ open class ButtonStyleConfig : TextStyleConfig() {
                     textView.setButtonTextColor(textColor)
                     textView.setButtonStrokeWidth(0)
                 }
-                BUTTON_STYLE_WHITE -> {
+                BUTTON_STYLE_SOLID -> {
                     textView.enableTextStyle = true
                     textView.setButtonGradientColors(null)
-                    textView.setButtonSolidColor(styleWhiteSolidColor)
+                    textView.setButtonSolidColor(styleSolidSolidColor)
                     textView.setButtonTextColor(textColor)
                     textView.setButtonStrokeWidth(0)
                 }
@@ -147,24 +154,24 @@ open class ButtonStyleConfig : TextStyleConfig() {
         }
     }
 
-    /**使用主题样式*/
+    /**使用主题样式, 颜色渐变*/
     fun themeStyle() {
         style = BUTTON_STYLE_THEME
         textColor = styleThemeTextColor
     }
 
-    /**白色样式*/
-    fun whiteStyle() {
-        style = BUTTON_STYLE_WHITE
-        textColor = styleWhiteTextColor
+    /**填充颜色的样式*/
+    fun solidStyle() {
+        style = BUTTON_STYLE_SOLID
+        textColor = styleSolidTextColor
     }
 
-    /**填充样式*/
+    /**边框 填充样式*/
     fun fillStyle() {
         style = BUTTON_STYLE_FILL
         textColors = colorState(
             DslButton.ATTR_PRESSED to styleThemeTextColor,
-            DslButton.ATTR_NORMAL to styleWhiteTextColor
+            DslButton.ATTR_NORMAL to styleSolidTextColor
         )
     }
 }
