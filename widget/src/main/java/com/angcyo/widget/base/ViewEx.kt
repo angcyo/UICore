@@ -26,6 +26,7 @@ import androidx.core.widget.NestedScrollView
 import androidx.core.widget.ScrollerCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
+import com.angcyo.dsladapter.getViewRect
 import com.angcyo.library.ex.getStatusBarHeight
 import com.angcyo.library.ex.loadDrawable
 import com.angcyo.library.ex.remove
@@ -753,6 +754,42 @@ fun Any?.stopScroll() {
             mScroller.abortAnimation()
         }
     }
+}
+
+fun View.getChildOrNull(index: Int): View? {
+    return if (this is ViewGroup) {
+        this.getChildOrNull(index)
+    } else {
+        this
+    }
+}
+
+/**获取[View]在指定[parent]中的矩形坐标*/
+fun View.getLocationInParent(parentView: View? = null, result: Rect = Rect()): Rect {
+    val parent: View? = parentView ?: (parent as? View)
+
+    if (parent == null) {
+        getViewRect(result)
+    } else {
+        result.set(0, 0, 0, 0)
+        if (this != parent) {
+            fun doIt(view: View, parent: View, rect: Rect) {
+                val viewParent = view.parent
+                if (viewParent is View) {
+                    rect.left += view.left
+                    rect.top += view.top
+                    if (viewParent != parent) {
+                        doIt(viewParent, parent, rect)
+                    }
+                }
+            }
+            doIt(this, parent, result)
+        }
+        result.right = result.left + this.measuredWidth
+        result.bottom = result.top + this.measuredHeight
+    }
+
+    return result
 }
 
 //</editor-fold desc="其他">

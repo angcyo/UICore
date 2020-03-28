@@ -5,9 +5,9 @@ import android.graphics.Color
 import android.util.AttributeSet
 import android.view.Gravity
 import androidx.annotation.Px
+import com.angcyo.drawable.text.DslBadgeDrawable
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
-import com.angcyo.drawable.text.DslBadgeDrawable
 import com.angcyo.widget.R
 
 /**
@@ -50,6 +50,22 @@ open class DslTabBadge : DslBadgeDrawable() {
             defaultBadgeConfig.badgeOffsetX
         )
         defaultBadgeConfig.badgeOffsetX = badgeOffsetX
+        badgeOffsetY = typedArray.getDimensionPixelOffset(
+            R.styleable.DslTabLayout_tab_badge_offset_y,
+            defaultBadgeConfig.badgeOffsetY
+        )
+        defaultBadgeConfig.badgeOffsetY = badgeOffsetY
+
+        badgeCircleOffsetX = typedArray.getDimensionPixelOffset(
+            R.styleable.DslTabLayout_tab_badge_circle_offset_x,
+            defaultBadgeConfig.badgeOffsetX
+        )
+        defaultBadgeConfig.badgeCircleOffsetX = badgeCircleOffsetX
+        badgeCircleOffsetY = typedArray.getDimensionPixelOffset(
+            R.styleable.DslTabLayout_tab_badge_circle_offset_y,
+            defaultBadgeConfig.badgeOffsetY
+        )
+        defaultBadgeConfig.badgeCircleOffsetY = badgeCircleOffsetY
 
         badgeCircleRadius = typedArray.getDimensionPixelOffset(
             R.styleable.DslTabLayout_tab_badge_circle_radius,
@@ -63,12 +79,6 @@ open class DslTabBadge : DslBadgeDrawable() {
         )
         cornerRadius(badgeRadius.toFloat())
         defaultBadgeConfig.badgeRadius = badgeRadius
-
-        badgeOffsetY = typedArray.getDimensionPixelOffset(
-            R.styleable.DslTabLayout_tab_badge_offset_y,
-            defaultBadgeConfig.badgeOffsetY
-        )
-        defaultBadgeConfig.badgeOffsetY = badgeOffsetY
 
         badgePaddingLeft = typedArray.getDimensionPixelOffset(
             R.styleable.DslTabLayout_tab_badge_padding_left,
@@ -102,6 +112,16 @@ open class DslTabBadge : DslBadgeDrawable() {
         ).toFloat()
         defaultBadgeConfig.badgeTextSize = badgeTextSize
 
+        defaultBadgeConfig.badgeAnchorChildIndex =
+            typedArray.getInteger(
+                R.styleable.DslTabLayout_tab_badge_anchor_child_index,
+                defaultBadgeConfig.badgeAnchorChildIndex
+            )
+        defaultBadgeConfig.badgeIgnoreChildPadding = typedArray.getBoolean(
+            R.styleable.DslTabLayout_tab_badge_ignore_child_padding,
+            defaultBadgeConfig.badgeIgnoreChildPadding
+        )
+
         typedArray.recycle()
         super.initAttribute(context, attributeSet)
     }
@@ -113,6 +133,8 @@ open class DslTabBadge : DslBadgeDrawable() {
         badgeGravity = badgeConfig.badgeGravity
         badgeOffsetX = badgeConfig.badgeOffsetX
         badgeOffsetY = badgeConfig.badgeOffsetY
+        badgeCircleOffsetX = badgeConfig.badgeCircleOffsetX
+        badgeCircleOffsetY = badgeConfig.badgeCircleOffsetY
         badgeCircleRadius = badgeConfig.badgeCircleRadius
         badgePaddingLeft = badgeConfig.badgePaddingLeft
         badgePaddingRight = badgeConfig.badgePaddingRight
@@ -145,9 +167,14 @@ data class TabBadgeConfig(
     /**额外偏移距离, 会根据[Gravity]自动取负值*/
     var badgeOffsetX: Int = 0,
     var badgeOffsetY: Int = 0,
+    var badgeCircleOffsetX: Int = 0,
+    var badgeCircleOffsetY: Int = 0,
     /**圆点状态时无效*/
     var badgePaddingLeft: Int = 4 * dpi,
     var badgePaddingRight: Int = 4 * dpi,
     var badgePaddingTop: Int = 0,
-    var badgePaddingBottom: Int = 0
+    var badgePaddingBottom: Int = 0,
+
+    var badgeAnchorChildIndex: Int = -1,
+    var badgeIgnoreChildPadding: Boolean = true
 )

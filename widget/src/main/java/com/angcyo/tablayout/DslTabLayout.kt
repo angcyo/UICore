@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.*
@@ -16,6 +17,8 @@ import com.angcyo.library.ex.calcLayoutWidthHeight
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.have
 import com.angcyo.widget.R
+import com.angcyo.widget.base.getChildOrNull
+import com.angcyo.widget.base.getLocationInParent
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -96,11 +99,13 @@ open class DslTabLayout(
     val tabBadgeConfigMap = mutableMapOf<Int, TabBadgeConfig>()
 
     /**角标绘制配置*/
-    var onTabBadgeConfig: (child: View, tabBadge: DslTabBadge, index: Int) -> Unit =
+    var onTabBadgeConfig: (child: View, tabBadge: DslTabBadge, index: Int) -> TabBadgeConfig =
         { _, tabBadge, index ->
+            val badgeConfig = getBadgeConfig(index)
             if (!isInEditMode) {
-                tabBadge.updateBadgeConfig(getBadgeConfig(index))
+                tabBadge.updateBadgeConfig(badgeConfig)
             }
+            badgeConfig
         }
 
     /**如果使用了高凸模式. 请使用这个属性设置背景色*/
@@ -117,6 +122,9 @@ open class DslTabLayout(
 
     //scroll 阈值
     var _touchSlop = 0
+
+    //临时变量
+    val _tempRect = Rect()
 
     //childView选择器
     val dslSelector: DslSelector by lazy {
@@ -356,8 +364,41 @@ open class DslTabLayout(
         if (drawBadge) {
             tabBadge?.apply {
                 dslSelector.visibleViewList.forEachIndexed { index, child ->
-                    setBounds(child.left, child.top, child.right, child.bottom)
-                    onTabBadgeConfig(child, this, index)
+                    val badgeConfig = onTabBadgeConfig(child, this, index)
+
+                    var left: Int
+                    var top: Int
+                    var right: Int
+                    var bottom: Int
+
+                    var anchorView: View = child
+
+                    if (badgeConfig.badgeAnchorChildIndex >= 0) {
+                        anchorView =
+                            child.getChildOrNull(badgeConfig.badgeAnchorChildIndex) ?: child
+
+                        anchorView.getLocationInParent(this@DslTabLayout, _tempRect)
+
+                        left = _tempRect.left
+                        top = _tempRect.top
+                        right = _tempRect.right
+                        bottom = _tempRect.bottom
+                    } else {
+                        left = anchorView.left
+                        top = anchorView.top
+                        right = anchorView.right
+                        bottom = anchorView.bottom
+                    }
+
+                    if (badgeConfig.badgeIgnoreChildPadding) {
+                        left += anchorView.paddingLeft
+                        top += anchorView.paddingTop
+                        right -= anchorView.paddingRight
+                        bottom -= anchorView.paddingBottom
+                    }
+
+                    setBounds(left, top, right, bottom)
+
                     updateOriginDrawable()
                     draw(canvas)
                 }

@@ -77,14 +77,14 @@ class DslGravity {
 
         val centerX = when (horizontalGravity) {
             Gravity.CENTER_HORIZONTAL -> (gravityBounds.left + gravityBounds.width() / 2 + gravityOffsetX).toInt()
-            Gravity.RIGHT -> (gravityBounds.right - _targetWidth / 2 - gravityOffsetX).toInt()
-            else -> (gravityBounds.left + _targetWidth / 2 + gravityOffsetX).toInt()
+            Gravity.RIGHT -> (gravityBounds.right - gravityOffsetX).toInt()
+            else -> (gravityBounds.left + gravityOffsetX).toInt()
         }
 
         val centerY = when (verticalGravity) {
             Gravity.CENTER_VERTICAL -> (gravityBounds.top + gravityBounds.height() / 2 + gravityOffsetY).toInt()
-            Gravity.BOTTOM -> (gravityBounds.bottom - _targetHeight / 2 - gravityOffsetY).toInt()
-            else -> (gravityBounds.top + _targetHeight / 2 + gravityOffsetY).toInt()
+            Gravity.BOTTOM -> (gravityBounds.bottom - gravityOffsetY).toInt()
+            else -> (gravityBounds.top + gravityOffsetY).toInt()
         }
 
         _horizontalGravity = horizontalGravity
