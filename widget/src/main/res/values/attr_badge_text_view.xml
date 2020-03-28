@@ -30,6 +30,8 @@
         <attr name="r_badge_bg_drawable" />
         <attr name="r_badge_text_offset_x" />
         <attr name="r_badge_text_offset_y" />
+        <attr name="r_badge_circle_offset_x" />
+        <attr name="r_badge_circle_offset_y" />
         <!--end...-->
 
         <!--文本格式[MD5:%1$s]-->
