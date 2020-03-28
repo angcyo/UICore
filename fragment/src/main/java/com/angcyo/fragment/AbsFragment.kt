@@ -34,6 +34,9 @@ abstract class AbsFragment : Fragment() {
 
     //<editor-fold desc="对象变量">
 
+    /**预测量*/
+    var enablePreMeasure: Boolean = true
+
     /**
      * ViewHolder 中 SparseArray 初始化的容量, 防止扩容带来的性能损失
      */
@@ -222,7 +225,9 @@ abstract class AbsFragment : Fragment() {
                 setBackgroundColor(getColor(R.color.status_bar_color))
             }
         }
-        rootView.measure(exactly(_screenWidth), exactly(_screenHeight))
+        if (enablePreMeasure) {
+            rootView.measure(exactly(_screenWidth), exactly(_screenHeight))
+        }
         return rootView
     }
 

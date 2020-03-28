@@ -49,6 +49,7 @@ open class DslButtonItem : DslAdapterItem() {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
+        itemHolder.itemView.isClickable = false
 
         itemHolder.button(R.id.lib_button)?.apply {
             itemButtonStyle.updateStyle(this)

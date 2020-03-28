@@ -15,8 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
  * @date 2018/10/09
  */
 class RecyclerBottomLayout(
-    context: Context,
-    attrs: AttributeSet? = null
+    context: Context, attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
 
     var _layoutMeasureHeight = -1
@@ -70,8 +69,7 @@ class RecyclerBottomLayout(
                         setLayoutParams(layoutParams)
                         post {
                             //Log.e("angcyo", "重置高度:" + layoutParams.height);
-                            val adapter =
-                                parent.adapter
+                            val adapter = parent.adapter
                             if (adapter != null) {
                                 adapter.notifyItemChanged(layoutParams.viewAdapterPosition)
                             } else {
