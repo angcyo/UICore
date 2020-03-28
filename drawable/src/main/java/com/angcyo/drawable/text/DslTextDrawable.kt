@@ -3,13 +3,16 @@ package com.angcyo.drawable.text
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.view.Gravity
 import android.view.ViewGroup
 import com.angcyo.drawable.DslGravity
+import com.angcyo.drawable.R
 import com.angcyo.drawable.base.AbsDslDrawable
 import com.angcyo.drawable.textHeight
 import com.angcyo.drawable.textWidth
+import com.angcyo.library.ex._color
 import com.angcyo.library.ex.dp
 import kotlin.math.max
 
@@ -128,9 +131,27 @@ open class DslTextDrawable : AbsDslDrawable() {
     }
 }
 
+/**快速创建[DslTextDrawable]*/
 fun dslTextDrawable(text: CharSequence?, action: DslTextDrawable.() -> Unit = {}): DslTextDrawable {
     return DslTextDrawable().apply {
         this.text = text?.toString()
+        action()
+    }
+}
+
+/**绘制纯文件, 带背景颜色*/
+fun dslFullTextDrawable(
+    text: CharSequence?,
+    action: DslTextDrawable.() -> Unit = {}
+): DslTextDrawable {
+    return DslTextDrawable().apply {
+        this.text = text?.toString()
+
+        drawableWidth = -1
+        drawableHeight = -1
+        textBgDrawable = ColorDrawable(Color.WHITE)
+        textColor = _color(R.color.text_primary_color)
+
         action()
     }
 }
