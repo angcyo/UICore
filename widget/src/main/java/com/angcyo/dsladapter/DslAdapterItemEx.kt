@@ -3,6 +3,7 @@ package com.angcyo.dsladapter
 import android.graphics.Color
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
+import com.angcyo.library.ex.dpi
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -127,6 +128,22 @@ fun DslAdapterItem.marginHorizontal(left: Int, right: Int = 0, color: Int = Colo
     itemLeftInsert = left
     itemRightInsert = right
     onlyDrawOffsetArea = false
+    itemDecorationColor = color
+}
+
+/**仅绘制左边区域的分割线*/
+fun DslAdapterItem.drawLeft(
+    offsetLeft: Int,
+    insertTop: Int = 1 * dpi,
+    color: Int = Color.WHITE
+) {
+    itemLeftOffset = offsetLeft
+    itemRightOffset = 0
+
+    itemTopInsert = insertTop
+    itemBottomInsert = 0
+
+    onlyDrawOffsetArea = true
     itemDecorationColor = color
 }
 
