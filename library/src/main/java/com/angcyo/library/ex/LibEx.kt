@@ -49,10 +49,10 @@ fun <T> T?.elseNull(action: () -> Unit = {}): T? {
 }
 
 fun Any?.string(): CharSequence {
-    return if (this is CharSequence) {
-        this
-    } else {
-        this.toString()
+    return when {
+        this == null -> return ""
+        this is CharSequence -> this
+        else -> this.toString()
     }
 }
 
