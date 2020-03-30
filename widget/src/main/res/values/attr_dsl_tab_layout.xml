@@ -195,7 +195,9 @@
         <attr name="tab_badge_anchor_child_index" format="integer" />
         <!--是否要忽略锚点view的padding-->
         <attr name="tab_badge_ignore_child_padding" format="boolean" />
+        <!--角标圆形状态下的单独配置的偏移-->
         <attr name="tab_badge_circle_offset_x" format="dimension" />
+        <!--角标圆形状态下的单独配置的偏移-->
         <attr name="tab_badge_circle_offset_y" format="dimension" />
         <!--end...-->
 

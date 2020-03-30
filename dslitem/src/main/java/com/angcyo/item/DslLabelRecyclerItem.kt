@@ -68,7 +68,7 @@ class DslLabelRecyclerItem : DslBaseLabelItem() {
 
                 dialogBottomCancelItem = null
 
-                adapterItemList.addAll(itemRecyclerList)
+                _recyclerConfig.adapterItemList.addAll(itemRecyclerList)
 
                 onDialogResult = { dialog, itemList, indexList ->
                     if (itemRecyclerResult(dialog, itemList, indexList)) {
