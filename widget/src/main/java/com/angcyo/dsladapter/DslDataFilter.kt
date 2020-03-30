@@ -148,7 +148,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
         requestList: List<DslAdapterItem>
     ): List<DslAdapterItem> {
 
-        var result = listOf<DslAdapterItem>()
+        var result: List<DslAdapterItem> = ArrayList(requestList)
         val chain = FilterAfterChain(dslAdapter, this, originList, requestList, false)
 
         var interruptChain = false
@@ -173,7 +173,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
 
     /**过滤[originList]数据源*/
     open fun filterItemList(originList: List<DslAdapterItem>): List<DslAdapterItem> {
-        var result = listOf<DslAdapterItem>()
+        var result: List<DslAdapterItem> = ArrayList(originList)
         val chain = FilterChain(
             dslAdapter,
             this,
