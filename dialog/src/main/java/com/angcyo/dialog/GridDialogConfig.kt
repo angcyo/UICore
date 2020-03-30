@@ -16,7 +16,7 @@ import com.angcyo.widget.recycler.resetLayoutManager
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
-open class GridDialogConfig(context: Context? = null) : BaseRecyclerDialogConfig(context) {
+open class GridDialogConfig(context: Context? = null) : RecyclerDialogConfig(context) {
 
     /**网格列数*/
     var gridSpanCount = 4
@@ -43,10 +43,7 @@ open class GridDialogConfig(context: Context? = null) : BaseRecyclerDialogConfig
 
     /**添加Item*/
     fun addDialogItem(action: DslDialogGridItem.() -> Unit) {
-        adapterItemList.add(DslDialogGridItem().apply {
-            itemClick = {
-                onDialogItemClick(this, it)
-            }
+        _recyclerConfig.addItem(DslDialogGridItem().apply {
             action()
         })
     }

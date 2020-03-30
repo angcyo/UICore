@@ -158,4 +158,12 @@ fun Context.fullPopupWindow(anchor: View? = null, config: PopupConfig.() -> Unit
     return popupConfig.show(this)
 }
 
+/**展示列表*/
+fun Context.recyclerPopupWindow(anchor: View? = null, config: RecyclerPopupConfig.() -> Unit): Any {
+    val popupConfig = RecyclerPopupConfig()
+    popupConfig.anchor = anchor
+    popupConfig.config()
+    return popupConfig.show(this)
+}
+
 //</editor-fold desc="popupWindow">

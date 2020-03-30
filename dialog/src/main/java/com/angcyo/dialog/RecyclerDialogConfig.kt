@@ -2,16 +2,15 @@ package com.angcyo.dialog
 
 import android.app.Dialog
 import android.content.Context
-import android.view.View
 import com.angcyo.dialog.dslitem.DslDialogTextItem
-import com.angcyo.dsladapter.*
-import com.angcyo.dsladapter.filter.RemoveItemDecorationFilterAfterInterceptor
+import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.ItemSelectorHelper
+import com.angcyo.dsladapter.itemIndexPosition
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.addDslItem
 import com.angcyo.widget.base.layoutDelegate
-import com.angcyo.widget.recycler.initDslAdapter
 
 /**
  *
@@ -20,13 +19,10 @@ import com.angcyo.widget.recycler.initDslAdapter
  * @date 2020/03/05
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(context) {
+open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(context) {
 
     /**底部取消按钮, 动态添加*/
     var dialogBottomCancelItem: DslDialogTextItem? = defaultCancelItem()
-
-    /**选项*/
-    var adapterItemList: MutableList<DslAdapterItem> = mutableListOf()
 
     /**支持单选多选模式*/
     var dialogSelectorModel: Int = ItemSelectorHelper.MODEL_NORMAL
@@ -37,14 +33,13 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
     //包裹取消按钮的布局id
     var _cancelItemWrapLayoutId = R.id.lib_dialog_root_layout
 
+    val _recyclerConfig = RecyclerConfig()
+
     /**对话框返回, 取消不会触发此回调
      * [dialogItemList] 数据列表
      * [dialogItemIndexList] 索引列表*/
     var onDialogResult: (dialog: Dialog, itemList: List<DslAdapterItem>, indexList: List<Int>) -> Boolean =
         { _, _, _ -> false }
-
-    //适配器
-    lateinit var _dialogAdapter: DslAdapter
 
     init {
         dialogLayoutId = R.layout.lib_dialog_recycler_layout
@@ -56,10 +51,9 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
             ) {
                 if (onDialogResult(
                         dialog,
-                        _dialogAdapter.selector().getSelectorItemList(),
-                        _dialogAdapter.selector().getSelectorIndexList()
+                        _recyclerConfig.getSelectorItemList(),
+                        _recyclerConfig.getSelectorIndexList()
                     )
-
                 ) {
                     //拦截
                     dismiss = false
@@ -92,27 +86,14 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
             dialogViewHolder.gone(R.id.dialog_neutral_button)
         }
 
-        dialogViewHolder.rv(R.id.lib_recycler_view)?.apply {
-            //初始化DslAdapter
-            _dialogAdapter = initDslAdapter() {
-                dslDataFilter?.dataAfterInterceptorList?.add(
-                    RemoveItemDecorationFilterAfterInterceptor()
-                )
-                resetItem(adapterItemList)
-                updateItemDepend(FilterParams(justRun = true, asyncDiff = false))
-            }
-            //设置选择模式
-            _dialogAdapter.selector().apply {
-                selectorModel = dialogSelectorModel
-                observer {
-                    onItemChange =
-                        { _, selectorIndexList, _, _ ->
-                            dialogViewHolder.enable(
-                                R.id.positive_button,
-                                selectorIndexList.isNotEmpty()
-                            )
-                        }
-                }
+        _recyclerConfig.adapterSelectorModel = dialogSelectorModel
+        _recyclerConfig.initRecycler(dialogViewHolder)
+        _recyclerConfig.adapterItemClick = { dslItem, view ->
+            if (onDialogResult(_dialog!!, listOf(dslItem), listOf(dslItem.itemIndexPosition()))
+            ) {
+                //拦截
+            } else {
+                _dialog?.dismiss()
             }
         }
 
@@ -140,22 +121,6 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
     fun configCancelItem(action: DslDialogTextItem.() -> DslDialogTextItem?) {
         dialogBottomCancelItem = (dialogBottomCancelItem ?: defaultCancelItem()).run {
             action()
-        }
-    }
-
-    /**Item点击事件*/
-    open fun onDialogItemClick(dslItem: DslAdapterItem, view: View) {
-        if (dialogSelectorModel == ItemSelectorHelper.MODEL_SINGLE) {
-            _dialogAdapter.select(dslItem)
-        } else if (dialogSelectorModel == ItemSelectorHelper.MODEL_MULTI) {
-            _dialogAdapter.selectMutex(dslItem)
-        } else {
-            if (onDialogResult(_dialog!!, listOf(dslItem), listOf(dslItem.itemIndexPosition()))
-            ) {
-                //拦截
-            } else {
-                _dialog?.dismiss()
-            }
         }
     }
 }

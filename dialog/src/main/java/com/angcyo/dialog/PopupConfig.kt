@@ -189,6 +189,10 @@ open class PopupConfig {
 
     }
 
+    open fun initPopupActivity(activity: Activity, popupViewHolder: DslViewHolder) {
+
+    }
+
     open fun createContentView(context: Context): View? {
         if (layoutId != -1) {
             contentView = LayoutInflater.from(context)
@@ -279,6 +283,7 @@ open class PopupConfig {
         //回调
         val viewHolder = DslViewHolder(rootLayout)
         onAddRootLayout(activity, viewHolder)
+        initPopupActivity(activity, viewHolder)
 
         onInitLayout(window, viewHolder)
 

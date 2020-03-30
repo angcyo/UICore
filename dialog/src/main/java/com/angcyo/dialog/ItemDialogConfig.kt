@@ -3,8 +3,6 @@ package com.angcyo.dialog
 import android.app.Dialog
 import android.content.Context
 import com.angcyo.dialog.dslitem.DslDialogTextItem
-import com.angcyo.library.ex._color
-import com.angcyo.library.ex._dimen
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -15,7 +13,7 @@ import com.angcyo.widget.DslViewHolder
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
-open class ItemDialogConfig(context: Context? = null) : BaseRecyclerDialogConfig(context) {
+open class ItemDialogConfig(context: Context? = null) : RecyclerDialogConfig(context) {
 
     override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         super.initDialogView(dialog, dialogViewHolder)
@@ -23,13 +21,6 @@ open class ItemDialogConfig(context: Context? = null) : BaseRecyclerDialogConfig
 
     /**添加Item*/
     fun addDialogItem(action: DslDialogTextItem.() -> Unit) {
-        adapterItemList.add(DslDialogTextItem().apply {
-            itemTopInsert = _dimen(R.dimen.lib_line_px)
-            itemDecorationColor = _color(R.color.dialog_line)
-            itemClick = {
-                onDialogItemClick(this, it)
-            }
-            action()
-        })
+        _recyclerConfig.addDialogTextItem(action)
     }
 }
