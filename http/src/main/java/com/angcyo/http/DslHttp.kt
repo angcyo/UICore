@@ -380,6 +380,20 @@ fun <T> Response<JsonElement>.toBean(type: Type): T? {
     }
 }
 
+inline fun <reified Bean> Response<JsonElement>.toBean(): Bean? {
+    return if (isSuccessful) {
+        when (val bodyJson = body().toJson()) {
+            null -> null
+            else -> bodyJson.fromJson(Bean::class.java)
+        }
+    } else {
+        when (val bodyJson = errorBody()?.readString()) {
+            null -> null
+            else -> bodyJson.fromJson(Bean::class.java)
+        }
+    }
+}
+
 //</editor-fold desc="JsonElement to Bean">
 
 

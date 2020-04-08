@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="50dp"
+    tools:background="@color/transparent20">
+
+    <com.angcyo.widget.layout.RConstraintLayout
+        android:id="@+id/content_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lib_xxxhdpi"
+        android:background="@drawable/dialog_white_round_common_bg_shape"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/lib_image_tip_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scaleType="fitXY"
+            app:layout_constraintDimensionRatio="45:32"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/lib_version_update_bg" />
+
+        <TextView
+            android:id="@+id/version_name_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:textColor="#DDE5F3"
+            android:textSize="24dp"
+            android:textStyle="italic"
+            app:layout_constraintBottom_toBottomOf="@+id/lib_image_tip_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/lib_image_tip_view"
+            tools:text="V1.1.2" />
+
+        <TextView
+            android:id="@+id/version_des_tip_view"
+            style="@style/LibMainTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/lib_xhdpi"
+            android:text="更新内容"
+            app:layout_constraintBottom_toTopOf="@id/version_des_view"
+            app:layout_constraintLeft_toLeftOf="parent" />
+
+        <TextView
+            android:id="@+id/version_des_view"
+            style="@style/LibSubTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="4dp"
+            android:padding="@dimen/lib_xhdpi"
+            app:layout_constraintTop_toBottomOf="@id/lib_image_tip_view"
+            tools:text="1、性能修复及性能能优化，改进用户体验，修复已知bug；\n2、增加视频上传功能，强化视觉。\n3、简化初次成为主办方内容。" />
+
+        <com.angcyo.widget.progress.DslProgressBar
+            android:id="@+id/lib_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/version_des_view"
+            app:progress_radius="0dp" />
+
+        <com.angcyo.widget.DslButton
+            android:id="@+id/lib_button"
+            style="@style/DefaultButtonMinStyle"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="@dimen/lib_xxhdpi"
+            android:layout_marginTop="@dimen/lib_xhdpi"
+            android:layout_marginRight="@dimen/lib_xxhdpi"
+            android:layout_marginBottom="@dimen/lib_xxhdpi"
+            android:text="立即升级"
+            android:textColor="@color/lib_white"
+            app:button_radius="@dimen/lib_radius_max"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lib_progress_bar" />
+
+    </com.angcyo.widget.layout.RConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/lib_cancel_view"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/lib_bg2_selector"
+        android:padding="4dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/lib_icon_delete_white"
+        app:layout_constraintEnd_toEndOf="@+id/content_wrap_layout"
+        app:layout_constraintStart_toStartOf="@+id/content_wrap_layout"
+        app:layout_constraintTop_toBottomOf="@+id/content_wrap_layout" />
+
+</com.angcyo.widget.layout.RConstraintLayout>

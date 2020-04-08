@@ -15,13 +15,17 @@ open class DslListener : FDownloadListener() {
     var onTaskProgress: (DownloadTask, progress: Int, speed: Long) -> Unit = { _, _, _ -> }
     var onTaskFinish: (DownloadTask, cause: EndCause, Exception?) -> Unit = { _, _, _ -> }
 
-    override fun taskStart(task: DownloadTask) {
-        super.taskStart(task)
+    override fun fetchStart(task: DownloadTask, blockIndex: Int, contentLength: Long) {
+        super.fetchStart(task, blockIndex, contentLength)
         onTaskStart(task)
     }
 
     override fun taskEnd(task: DownloadTask, cause: EndCause, realCause: Exception?) {
         super.taskEnd(task, cause, realCause)
+        if (cause == EndCause.COMPLETED) {
+            //任务完成, 发送一个100进度的回调
+            onTaskProgress(task, 100, 0)
+        }
         onTaskFinish(task, cause, realCause)
     }
 

@@ -27,7 +27,8 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
     val _vh: DslViewHolder
         get() = baseDslViewHolder
 
-    open fun getActivityLayoutId() = R.layout.lib_activity_main_layout
+    /**布局*/
+    var activityLayoutId = R.layout.lib_activity_main_layout
 
     //<editor-fold desc="基础方法处理">
 
@@ -67,7 +68,7 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
     /**布局设置之后触发*/
     open fun onCreateAfter(savedInstanceState: Bundle?) {
         enableLayoutFullScreen()
-        with(getActivityLayoutId()) {
+        with(activityLayoutId) {
             if (this > 0) {
                 setContentView(this)
             }
