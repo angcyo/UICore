@@ -92,6 +92,7 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
     }
 }
 
+/**版本更新界面配置*/
 fun Context.dslVersionUpdate(action: VersionUpdateBean.() -> Unit) {
     val updateBean = VersionUpdateBean().apply(action)
     dslAHelper {
