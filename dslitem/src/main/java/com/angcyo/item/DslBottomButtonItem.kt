@@ -1,7 +1,5 @@
 package com.angcyo.item
 
-import com.angcyo.widget.DslViewHolder
-
 /**
  * 显示的[RecyclerView]底部的item
  * Email:angcyo@126.com
@@ -13,10 +11,5 @@ open class DslBottomButtonItem : DslButtonItem() {
     init {
         itemLayoutId = R.layout.dsl_bottom_button_item
         itemButtonStyle.themeStyle()
-    }
-
-    override fun _initItemSize(itemHolder: DslViewHolder) {
-        //super._initItemSize(itemHolder)
-        //RecyclerBottomLayout不支持调整item height
     }
 }

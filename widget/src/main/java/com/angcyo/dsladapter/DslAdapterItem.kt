@@ -19,6 +19,7 @@ import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.setBgDrawable
 import com.angcyo.widget.base.setHeight
 import com.angcyo.widget.base.setWidth
+import com.angcyo.widget.recycler.RecyclerBottomLayout
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -236,6 +237,11 @@ open class DslAdapterItem : LifecycleOwner {
 
     //初始化宽高
     open fun _initItemSize(itemHolder: DslViewHolder) {
+        if (itemHolder.itemView is RecyclerBottomLayout) {
+            //RecyclerBottomLayout不支持调整item height
+            return
+        }
+
         if (itemMinWidth == undefined_size) {
             itemMinWidth = itemHolder.itemView.minimumWidth
         }
