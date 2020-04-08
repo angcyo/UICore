@@ -340,6 +340,12 @@ class DslIntent {
     }
 }
 
+/**查询对应的信息*/
+fun Intent.queryActivities(context: Context = app(), queryFlag: Int = 0): List<ResolveInfo> {
+    val packageManager = context.packageManager
+    return packageManager.queryIntentActivities(this, queryFlag)
+}
+
 fun dslIntent(context: Context? = app(), action: DslIntent.() -> Unit) {
     val dslIntent = DslIntent()
     dslIntent.action()
