@@ -114,7 +114,7 @@ fun Int.resultString(): String {
  */
 @SuppressLint("MissingPermission", "HardwareIds")
 fun Context.getIMEI(): String? {
-    var imei = "Unknown"
+    var imei: String? = null
     try {
         val telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
         if (telephonyManager != null) {
