@@ -1,10 +1,14 @@
 package com.angcyo.item
 
+import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import com.angcyo.dsladapter.*
 import com.angcyo.library.ex._drawable
+import com.angcyo.library.ex.dpi
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget._img
+import com.angcyo.widget.base.padding
+import com.angcyo.widget.base.setBgDrawable
 import com.angcyo.widget.base.setWidth
 import com.angcyo.widget.drawable.DslAttrBadgeDrawable
 
@@ -21,6 +25,11 @@ open class DslGridItem : DslAdapterItem() {
 
     /**图标*/
     var itemIcon: Int = -1
+
+    /**图标背景*/
+    var itemImageBg: Drawable? = null
+    var itemImagePadding: Int = 12 * dpi
+    var itemTextPadding: Int = 8 * dpi
 
     /**图标是1:1的大小*/
     var itemIconSize: Int = ViewGroup.LayoutParams.WRAP_CONTENT
@@ -46,16 +55,23 @@ open class DslGridItem : DslAdapterItem() {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
         //文本
-        itemHolder.tv(R.id.lib_text_view)?.text = itemText
+        itemHolder.tv(R.id.lib_text_view)?.apply {
+            text = itemText
+            padding(itemTextPadding)
+        }
 
         //图标
         itemHolder._img(R.id.lib_image_view)?.apply {
+            padding(itemImagePadding)
+
             updateBadge {
                 badgeText = itemBadgeText
                 itemConfigBadge(this)
             }
             setImageDrawable(_drawable(itemIcon))
             setWidth(itemIconSize)
+
+            setBgDrawable(itemImageBg)
         }
 
         //智能分割线
