@@ -19,6 +19,11 @@ import com.liulishuo.okdownload.core.cause.EndCause
  */
 class DslDownloadNotify : DslListener() {
 
+    companion object {
+        /**已经安装过的notify*/
+        val _notifyList = mutableListOf<String>()
+    }
+
     var _downloadUrl: String? = null
     var _notifyId: Int = 0
 
@@ -39,6 +44,8 @@ class DslDownloadNotify : DslListener() {
         }
 
         onTaskFinish = { downloadTask, cause, exception ->
+            _notifyList.remove(_downloadUrl)
+
             val filename = downloadTask.filename
             _notify {
                 notifyOngoing = false
@@ -102,17 +109,26 @@ class DslDownloadNotify : DslListener() {
 
     /**安装*/
     fun install(url: String) {
+        if (_notifyList.contains(url)) {
+            L.w("已经监听了:$url")
+            return
+        }
         uninstall()
+        _notifyList.add(url)
+
         _downloadUrl = url
         _notifyId = System.currentTimeMillis().toInt()
         url.listener(this)
     }
 
     fun uninstall() {
+        _notifyList.remove(_downloadUrl)
+
         if (_notifyId > 0) {
             DslNotify.cancelNotify(app(), _notifyId)
         }
-        _downloadUrl?.listener(this)
+
+        _downloadUrl?.removeListener(this)
     }
 
     override fun taskProgress(
