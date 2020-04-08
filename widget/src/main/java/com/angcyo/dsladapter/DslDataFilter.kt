@@ -53,22 +53,22 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
         { _, newDataList -> newDataList }
 
     /**Diff计算后的数据拦截处理*/
-    val dataAfterInterceptorList: MutableList<FilterAfterInterceptor> =
+    val dataAfterInterceptorList: MutableList<IFilterAfterInterceptor> =
         mutableListOf(AdapterStatusFilterAfterInterceptor())
 
     /**前置过滤器*/
-    val beforeFilterInterceptorList: MutableList<FilterInterceptor> =
+    val beforeFilterInterceptorList: MutableList<IFilterInterceptor> =
         mutableListOf()
 
     /**中置过滤拦截器*/
-    val filterInterceptorList: MutableList<FilterInterceptor> = mutableListOf(
+    val filterInterceptorList: MutableList<IFilterInterceptor> = mutableListOf(
         GroupItemFilterInterceptor(),
         SubItemFilterInterceptor(),
         HideItemFilterInterceptor()
     )
 
     /**后置过滤器*/
-    val afterFilterInterceptorList: MutableList<FilterInterceptor> =
+    val afterFilterInterceptorList: MutableList<IFilterInterceptor> =
         mutableListOf()
 
     //更新操作
@@ -153,14 +153,16 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
 
         var interruptChain = false
 
-        fun proceed(interceptorList: List<FilterAfterInterceptor>) {
+        fun proceed(interceptorList: List<IFilterAfterInterceptor>) {
             if (!interruptChain) {
-                for (filer in interceptorList) {
-                    result = filer.intercept(chain)
-                    chain.requestList = result
-                    if (chain.interruptChain) {
-                        interruptChain = true
-                        break
+                for (filter in interceptorList) {
+                    if (filter.isEnable) {
+                        result = filter.intercept(chain)
+                        chain.requestList = result
+                        if (chain.interruptChain) {
+                            interruptChain = true
+                            break
+                        }
                     }
                 }
             }
@@ -185,14 +187,16 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
 
         var interruptChain = false
 
-        fun proceed(interceptorList: List<FilterInterceptor>) {
+        fun proceed(interceptorList: List<IFilterInterceptor>) {
             if (!interruptChain) {
-                for (filer in interceptorList) {
-                    result = filer.intercept(chain)
-                    chain.requestList = result
-                    if (chain.interruptChain) {
-                        interruptChain = true
-                        break
+                for (filter in interceptorList) {
+                    if (filter.isEnable) {
+                        result = filter.intercept(chain)
+                        chain.requestList = result
+                        if (chain.interruptChain) {
+                            interruptChain = true
+                            break
+                        }
                     }
                 }
             }
