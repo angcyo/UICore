@@ -1,11 +1,13 @@
 package com.angcyo.library.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.telephony.TelephonyManager
 import com.angcyo.library.L
 import com.angcyo.library.toast
 
@@ -105,4 +107,28 @@ fun Int.resultString(): String {
         Activity.RESULT_FIRST_USER -> "RESULT_FIRST_USER"
         else -> "UNKNOWN"
     }
+}
+
+/**
+ * 获取设备唯一标识码, 需要权限 android.permission.READ_PHONE_STATE
+ */
+@SuppressLint("MissingPermission", "HardwareIds")
+fun Context.getIMEI(): String? {
+    var imei = "Unknown"
+    try {
+        val telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
+        if (telephonyManager != null) {
+            imei = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                telephonyManager.imei
+            } else {
+                telephonyManager.deviceId
+            }
+        }
+        //L.w("call: getIMEI([])-> " + imei);
+    } catch (e: java.lang.Exception) {
+        L.e("IMEI获取失败, 请检查权限:" + e.message)
+        //e.printStackTrace();
+        //L.e("call: getIMEI([])-> " + imei + " " + e.getMessage());
+    }
+    return imei
 }
