@@ -161,6 +161,7 @@ class DslNotify {
 
     /**通道名称*/
     var channelName: CharSequence = "DefaultChannel"
+
     /**通道描述文本*/
     var channelDescription: String? = null
 
@@ -172,10 +173,13 @@ class DslNotify {
 
     /**激活通知灯*/
     var channelEnableLights = true
+
     /**通知灯颜色*/
     var channelLightColor = 0
+
     /**激活震动*/
     var channelEnableVibration = true
+
     /**通道的通知声, channelImportance至少是default以上*/
     var channelSoundUri: Uri? = null
     var channelAudioAttributes: AudioAttributes? = null
@@ -228,6 +232,7 @@ class DslNotify {
      * [NotificationCompat.InboxStyle]
      * 通用*/
     var styleBigContentTitle: CharSequence? = null
+
     /**没啥鸟用?*/
     var styleBigSummaryText: CharSequence? = null
 
@@ -254,6 +259,7 @@ class DslNotify {
      * https://developer.android.google.cn/training/notify-user/expanded.html#media-style
      * https://developer.android.google.cn/guide/topics/media-apps/audio-app/building-a-mediabrowserservice.html#mediastyle-notifications*/
     var styleMediaSessionToken: MediaSessionCompat.Token? = null
+
     /**要显示[notifyActions]中的那些action的索引, 最多3个*/
     var styleMediaShowActions: List<Int>? = null
 
@@ -331,11 +337,13 @@ class DslNotify {
      * Android 5.0 SVG显示有系统背景
      * */
     var notifySmallIcon = DEFAULT_NOTIFY_ICON
+
     /**通知栏, 右边的大图, 不支持SVG?*/
     var notifyLargeIcon: Bitmap? = null
 
     /**通知标题*/
     var notifyTitle: CharSequence? = null
+
     /**通知正文文本, 默认情况下，通知的文字内容会被截断以放在一行。使用[setStyle]*/
     var notifyText: CharSequence? = null
         set(value) {
@@ -347,23 +355,31 @@ class DslNotify {
 
     /**右下角, 时间下面描述[notifyText]的文本信息*/
     var notifyInfo: CharSequence? = null
+
     /**显示在[notifyTitle]后面的文本, 当一组中有多个通知, 这个就是title*/
     var notifySubText: CharSequence? = null
 
     /**首次通知时, 立马就要显示的文本, 高版本测试没效果.*/
     var notifyTickerText: CharSequence? = null
 
-    /**通知的优先级, 通道还有一个重要性. 首次横幅通知 需要优先级高 */
+    /**
+     * 通知的优先级, 通道还有一个重要性.
+     * 首次横幅通知,需要优先级高.
+     * 低优先级, 将不会显示首次的横幅通知
+     * */
     var notifyPriority = NotificationCompat.PRIORITY_HIGH
 
+    /**设置通知时的效果, 比如 震动, 声音, 灯光等*/
     var notifyDefaults = NotificationCompat.DEFAULT_VIBRATE
 
     /**[NotificationCompat.CATEGORY_MESSAGE]
      * https://developer.android.google.cn/training/notify-user/build-notification.html#system-category*/
     var notifyCategory: String? = null
 
-    /**通知点击事件[Intent]*/
+    /**通知点击事件[Intent]
+     * [com.angcyo.library.component.DslNotify.Companion.pendingActivity]*/
     var notifyContentIntent: PendingIntent? = null
+
     /**配置[notifyContentIntent]才有效果*/
     var notifyAutoCancel = true
 
@@ -391,6 +407,7 @@ class DslNotify {
     /**进度
      * https://developer.android.google.cn/training/notify-user/build-notification.html#progressbar*/
     var notifyProgress = undefined_int
+
     // When done, update the notification one more time to remove the progress bar
     var notifyProgressMax = 100
     var notifyProgressIndeterminate = false
@@ -416,10 +433,13 @@ class DslNotify {
      * setCustomHeadsUpContentView() 设置浮动通知视图
      */
     var notifyContentView: RemoteViews? = null
+
     /**如果设置了,[notifyContentView] 会优先使用这个*/
     var notifyCustomContentView: RemoteViews? = null
+
     /**高度更高的[notifyContentView], 如果设置了, 会优先于[notifyContentView]使用*/
     var notifyCustomBigContentView: RemoteViews? = null
+
     /**如果设置了, 横幅通知, 会优先使用这个*/
     var notifyCustomHeadsUpContentView: RemoteViews? = null
 
@@ -511,19 +531,25 @@ class DslNotify {
                 setTimeoutAfter(notifyTimeout)
             }
 
+            notifyFlags
+
             onConfigNotify(this)
         }
-        return builder.build()
+        return builder.build().apply {
+            if (notifyFlags != undefined_int) {
+                flags = notifyFlags
+            }
+        }
     }
 
     /**
-     * Notification.FLAG_SHOW_LIGHTS              //三色灯提醒，在使用三色灯提醒时候必须加该标志符
-     * Notification.FLAG_ONGOING_EVENT          //发起正在运行事件（活动中）
-     * Notification.FLAG_INSISTENT  //让声音、振动无限循环，直到用户响应 （取消或者打开）
-     * Notification.FLAG_ONLY_ALERT_ONCE  //发起Notification后，铃声和震动均只执行一次
-     * Notification.FLAG_AUTO_CANCEL      //用户单击通知后自动消失
-     * Notification.FLAG_NO_CLEAR          //只有全部清除时，Notification才会清除 ，不清楚该通知(QQ的通知无法清除，就是用的这个)
-     * Notification.FLAG_FOREGROUND_SERVICE    //表示正在运行的服务
+     * Notification.FLAG_SHOW_LIGHTS         //三色灯提醒，在使用三色灯提醒时候必须加该标志符
+     * Notification.FLAG_ONGOING_EVENT       //发起正在运行事件（活动中）
+     * Notification.FLAG_INSISTENT           //让声音、振动无限循环，直到用户响应 （取消或者打开）
+     * Notification.FLAG_ONLY_ALERT_ONCE     //发起Notification后，铃声和震动均只执行一次
+     * Notification.FLAG_AUTO_CANCEL         //用户单击通知后自动消失
+     * Notification.FLAG_NO_CLEAR            //只有全部清除时，Notification才会清除 ，不清楚该通知(QQ的通知无法清除，就是用的这个)
+     * Notification.FLAG_FOREGROUND_SERVICE  //表示正在运行的服务
      */
     var notifyFlags: Int = undefined_int
 
@@ -531,12 +557,7 @@ class DslNotify {
         _createNotifyChannel(context)
         val notification = _createNotify(context)
 
-        if (notifyFlags != undefined_int) {
-            notification.flags = notifyFlags
-        }
-
         val notificationManager = NotificationManagerCompat.from(context)
-
         notificationManager.notify(notifyId, notification)
 
         _notifyIds.add(notifyId)
@@ -546,6 +567,16 @@ class DslNotify {
     //</editor-fold desc="通知相关配置">
 }
 
+/**快速创建配置通知*/
+fun dslBuildNotify(context: Context = app(), action: DslNotify.() -> Unit): Notification {
+    return DslNotify().run {
+        action()
+        _createNotifyChannel(context)
+        _createNotify(context)
+    }
+}
+
+/**快速创建配置通知, 并显示*/
 fun dslNotify(context: Context = app(), action: DslNotify.() -> Unit): Int {
     return DslNotify().run {
         action()
