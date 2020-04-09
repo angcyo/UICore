@@ -47,7 +47,7 @@ open class DslViewHolder(
     //<editor-fold desc="事件处理">
 
     /**
-     * 单击某个View
+     * 单击某个View, 有音效
      */
     fun clickView(view: View?) {
         view?.performClick()
@@ -55,6 +55,17 @@ open class DslViewHolder(
 
     fun clickView(@IdRes id: Int) {
         view(id)?.performClick()
+    }
+
+    /**
+     * 单击某个View, 无音效
+     */
+    fun clickCallView(view: View?) {
+        view?.callOnClick()
+    }
+
+    fun clickCallView(@IdRes id: Int) {
+        view(id)?.callOnClick()
     }
 
     fun click(@IdRes id: Int, listener: View.OnClickListener?) {
@@ -66,7 +77,10 @@ open class DslViewHolder(
         click(id, View.OnClickListener { listener.invoke(it) })
     }
 
-    fun selectorClick(@IdRes id: Int, listener: (selected: Boolean) -> Boolean = { false /*不拦截默认处理*/ }) {
+    fun selectorClick(
+        @IdRes id: Int,
+        listener: (selected: Boolean) -> Boolean = { false /*不拦截默认处理*/ }
+    ) {
         click(id) {
             val old = it.isSelected
             val new = !old

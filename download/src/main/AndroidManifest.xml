@@ -5,6 +5,7 @@
         <activity
             android:name=".version.VersionUpdateActivity"
             android:exported="false"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/LibDialogActivity" />
     </application>
