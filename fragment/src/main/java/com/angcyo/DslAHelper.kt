@@ -28,6 +28,7 @@ import com.angcyo.base.RevertWindowTransitionListener
 import com.angcyo.base.dslAHelper
 import com.angcyo.fragment.*
 import com.angcyo.library.L
+import com.angcyo.library.component.queryActivities
 import com.angcyo.library.ex.havePermission
 
 /**
@@ -116,14 +117,31 @@ class DslAHelper(val context: Context) {
         start(intent, action)
     }
 
-    /**启动一个包, 通常用来启动第三方APP*/
-    fun start(packageName: String?, action: IntentConfig.() -> Unit = {}): Intent? {
+    /**启动一个包, 通常用来启动第三方APP
+     * [className] 可以指定启动的组件名. 不指定, 则启动main*/
+    fun start(
+        packageName: String?,
+        className: String? = null,
+        action: IntentConfig.() -> Unit = {}
+    ): Intent? {
         if (packageName.isNullOrBlank()) {
             L.w("packageName is null!")
             return null
         }
-        val intent = context.packageManager.getLaunchIntentForPackage(packageName)
-//            Intent(Intent.ACTION_MAIN)
+        val intent = if (className.isNullOrEmpty()) {
+            context.packageManager.getLaunchIntentForPackage(packageName)
+        } else {
+            Intent().run {
+                setClassName(packageName, className)
+                if (queryActivities().isEmpty()) {
+                    null
+                } else {
+                    this
+                }
+            }
+        }
+
+//        Intent(Intent.ACTION_MAIN)
 //        intent.addCategory(Intent.CATEGORY_LAUNCHER)
 //        intent.setPackage(packageName)
 
