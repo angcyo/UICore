@@ -111,7 +111,10 @@ class DslFHelper(
 
     //<editor-fold desc="add 或者 show操作">
 
-    inline fun <reified F : Fragment> show(fClass: Class<out Fragment>, action: F.() -> Unit) {
+    inline fun <reified F : Fragment> show(
+        fClass: Class<out Fragment>,
+        crossinline action: F.() -> Unit
+    ) {
         instantiateFragment(fClass.classLoader!!, fClass.name)?.run {
             (this as F).action()
             show(this)
@@ -437,15 +440,17 @@ class DslFHelper(
 
             //op hide
             fmFragmentList.forEachIndexed { index, fragment ->
-                if (index < fmFragmentList.lastIndex) {
-                    //除了顶上一个Fragment, 其他Fragment都要执行不可见生命周期回调
-                    setMaxLifecycle(fragment, Lifecycle.State.STARTED)
-                }
+                if (fragment.isAdded) {
+                    if (index < fmFragmentList.lastIndex) {
+                        //除了顶上一个Fragment, 其他Fragment都要执行不可见生命周期回调
+                        setMaxLifecycle(fragment, Lifecycle.State.STARTED)
+                    }
 
-                if (index < fmFragmentList.size - hideBeforeIndex) {
-                    hide(fragment)
-                } else {
-                    show(fragment)
+                    if (index < fmFragmentList.size - hideBeforeIndex) {
+                        hide(fragment)
+                    } else {
+                        show(fragment)
+                    }
                 }
             }
 
