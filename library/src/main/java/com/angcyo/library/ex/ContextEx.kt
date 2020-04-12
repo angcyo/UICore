@@ -16,7 +16,6 @@ import android.view.Window
 import android.webkit.MimeTypeMap
 import androidx.core.app.ActivityCompat
 import com.angcyo.library.L
-import com.angcyo.library.app
 import java.io.File
 import java.io.InputStream
 
@@ -142,28 +141,35 @@ fun Context.scanFile(file: File) {
 
 /**
  * 请求拿到音频焦点
+ * [AudioManager.AUDIOFOCUS_REQUEST_FAILED]
+ * [AudioManager.AUDIOFOCUS_REQUEST_GRANTED]
+ * [AudioManager.AUDIOFOCUS_REQUEST_DELAYED]
  */
-fun Context.requestAudioFocus() {
+fun Context.requestAudioFocus(
+    streamType: Int = AudioManager.STREAM_MUSIC,//请求流的类型
+    durationHint: Int = AudioManager.AUDIOFOCUS_GAIN,//请求焦点大概要多长时间
+    onAudioFocusChange: (focusChange: Int) -> Unit = {}//监听其他焦点请求的改变
+): Int {
     val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-    audioManager.requestAudioFocus(
-        null,
-        AudioManager.STREAM_MUSIC,
-        AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
+    return audioManager.requestAudioFocus(
+        onAudioFocusChange,
+        streamType,
+        durationHint
     ) //请求焦点
 }
 
 /**
  * 释放音频焦点
  */
-fun Context.abandonAudioFocus() {
+fun Context.abandonAudioFocus(): Int {
     val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-    audioManager.abandonAudioFocus(null) //放弃焦点
+    return audioManager.abandonAudioFocus(null) //放弃焦点
 }
 
 /**从[assets]中读取字符串*/
 fun Context.readAssets(fileName: String): String? {
     return try {
-        app().assets.open(fileName).reader().readText()
+        assets.open(fileName).reader().readText()
     } catch (e: Exception) {
         L.w(e)
         null
