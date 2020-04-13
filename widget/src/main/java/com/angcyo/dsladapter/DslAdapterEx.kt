@@ -52,6 +52,37 @@ fun DslAdapter.findItemByTag(
     }
 }
 
+fun DslAdapter.findItemByGroup(
+    groups: List<String>,
+    useFilterList: Boolean = true
+): List<DslAdapterItem> {
+    return getDataList(useFilterList).findItemByGroup(groups)
+}
+
+/**通过Tag查找item*/
+fun List<DslAdapterItem>.findItemByTag(tag: String?): DslAdapterItem? {
+    if (tag == null) {
+        return null
+    }
+    return find {
+        it.itemTag == tag
+    }
+}
+
+/**通过group查找item*/
+fun List<DslAdapterItem>.findItemByGroup(groups: List<String>): List<DslAdapterItem> {
+    val result = mutableListOf<DslAdapterItem>()
+
+    groups.forEach { group ->
+        forEach {
+            if (it.itemGroups.contains(group)) {
+                result.add(it)
+            }
+        }
+    }
+    return result
+}
+
 fun DslAdapter.dslItem(@LayoutRes layoutId: Int, config: DslAdapterItem.() -> Unit = {}) {
     val item = DslAdapterItem()
     item.itemLayoutId = layoutId
