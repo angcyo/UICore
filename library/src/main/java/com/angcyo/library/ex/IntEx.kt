@@ -1,5 +1,6 @@
 package com.angcyo.library.ex
 
+import java.text.DecimalFormat
 import kotlin.math.max
 import kotlin.math.min
 
@@ -53,3 +54,19 @@ fun Int.withMinValue(value: Int) = max(value, this)
 fun Float.withMaxValue(value: Float /*允许的最大值*/) = min(value, this)
 
 fun Int.withMaxValue(value: Int) = min(value, this)
+
+/**左右对齐指定个数的0*/
+fun Int.toZero(leftCount: Int = 2, rightCount: Int = 0): String {
+    val b = StringBuffer()
+    for (i in 0 until leftCount) {
+        b.append("0")
+    }
+    if (rightCount > 0) {
+        b.append(".")
+        for (i in 0 until rightCount) {
+            b.append("0")
+        }
+    }
+    val df = DecimalFormat("$b")
+    return df.format(this)
+}
