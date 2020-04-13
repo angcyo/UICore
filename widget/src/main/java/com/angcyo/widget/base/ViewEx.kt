@@ -4,8 +4,11 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.util.LruCache
+import android.util.TypedValue
 import android.view.*
 import android.view.animation.DecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
@@ -13,6 +16,7 @@ import android.widget.*
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
+import androidx.annotation.LayoutRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
@@ -793,3 +797,138 @@ fun View.getLocationInParent(parentView: View? = null, result: Rect = Rect()): R
 }
 
 //</editor-fold desc="其他">
+
+//<editor-fold desc="截图">
+
+/**
+ * 保存View的截图
+ */
+fun View.saveView(): Bitmap? {
+    isDrawingCacheEnabled = true
+    buildDrawingCache()
+    val drawingCache = drawingCache
+    val bitmap = drawingCache.copy(drawingCache.config, false)
+    destroyDrawingCache()
+    isDrawingCacheEnabled = false
+    return bitmap
+}
+
+/**
+ * 保存xml对应的截图
+ */
+fun Context.saveView(@LayoutRes layoutId: Int, init: (View) -> Unit): Bitmap? {
+    val view = LayoutInflater.from(this).inflate(layoutId, FrameLayout(this), false)
+    init(view)
+    val measureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+    view.measure(measureSpec, measureSpec)
+    view.layout(0, 0, view.measuredWidth, view.measuredHeight)
+    view.isDrawingCacheEnabled = true
+    view.buildDrawingCache()
+    var cache = view.drawingCache
+    cache = cache.copy(cache.config, false)
+    view.destroyDrawingCache()
+    view.isDrawingCacheEnabled = false
+    return cache
+}
+
+fun RecyclerView.saveRecyclerViewBitmap(bgColor: Int): Bitmap? {
+    return saveRecyclerViewBitmap(bgColor, Int.MAX_VALUE)
+}
+
+fun RecyclerView.saveRecyclerViewBitmap(bgColor: Int, itemCount: Int/*需要截取的前几个item*/): Bitmap? {
+    //        ImageUtils.save(bitmap, path, Bitmap.CompressFormat.PNG);
+    return shotRecyclerView(bgColor, itemCount)
+}
+
+/**
+ * RecyclerView截图
+ */
+fun RecyclerView.shotRecyclerView(bgColor: Int, count: Int): Bitmap? {
+    val adapter = adapter
+    var bigBitmap: Bitmap? = null
+    if (adapter != null) {
+        val size = Math.min(count, adapter.itemCount)
+        var height = 0
+        val paint = Paint()
+        var iHeight = 0
+        val maxMemory = (Runtime.getRuntime().maxMemory() / 1024).toInt()
+
+        // Use 1/8th of the available memory for this memory cache.
+        val cacheSize = maxMemory / 8
+        val bitmapCache =
+            LruCache<String, Bitmap>(cacheSize)
+        for (i in 0 until size) {
+            val holder =
+                adapter.createViewHolder(this, adapter.getItemViewType(i))
+            adapter.onBindViewHolder(holder, i)
+            holder.itemView.measure(
+                View.MeasureSpec.makeMeasureSpec(
+                    width,
+                    View.MeasureSpec.EXACTLY
+                ), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            )
+            holder.itemView.layout(
+                0, 0, holder.itemView.measuredWidth,
+                holder.itemView.measuredHeight
+            )
+            holder.itemView.isDrawingCacheEnabled = true
+            holder.itemView.buildDrawingCache()
+            val drawingCache = holder.itemView.drawingCache
+            if (drawingCache != null) {
+                bitmapCache.put(i.toString(), drawingCache)
+            }
+            height += holder.itemView.measuredHeight
+        }
+        bigBitmap = Bitmap.createBitmap(measuredWidth, height, Bitmap.Config.ARGB_8888)
+        val bigCanvas = Canvas(bigBitmap)
+        bigCanvas.drawColor(bgColor)
+        val lBackground = background
+        if (lBackground is ColorDrawable) {
+            val lColor = lBackground.color
+            bigCanvas.drawColor(lColor)
+        }
+        for (i in 0 until size) {
+            val bitmap = bitmapCache[i.toString()]
+            bigCanvas.drawBitmap(bitmap, 0f, iHeight.toFloat(), paint)
+            iHeight += bitmap.height
+            bitmap.recycle()
+        }
+    }
+    return bigBitmap
+}
+
+/**
+ * 将文本转成图片
+ */
+fun String.textToBitmap(context: Context): Bitmap? {
+    val metrics = context.resources.displayMetrics
+    val padding = (metrics.density * 4).toInt()
+    val frameLayout = FrameLayout(context)
+    frameLayout.setBackgroundColor(Color.WHITE)
+    val textView = TextView(context)
+    textView.text = this
+    textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 8f)
+    frameLayout.setPadding(padding, padding, padding, padding)
+    frameLayout.addView(textView, ViewGroup.LayoutParams(-2, -2))
+    frameLayout.measure(
+        View.MeasureSpec.makeMeasureSpec(
+            metrics.widthPixels,
+            View.MeasureSpec.AT_MOST
+        ),
+        View.MeasureSpec.makeMeasureSpec(
+            metrics.heightPixels,
+            View.MeasureSpec.AT_MOST
+        )
+    )
+    frameLayout.layout(0, 0, frameLayout.measuredWidth, frameLayout.measuredHeight)
+    val bitmap = Bitmap.createBitmap(
+        frameLayout.measuredWidth,
+        frameLayout.measuredHeight,
+        Bitmap.Config.ARGB_8888
+    )
+    val canvas = Canvas(bitmap)
+    frameLayout.draw(canvas)
+    return bitmap
+}
+
+//</editor-fold desc="截图">
