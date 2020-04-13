@@ -2,7 +2,9 @@ package com.angcyo.activity
 
 import android.content.Intent
 import android.content.res.Configuration
+import android.os.Binder
 import android.os.Bundle
+import android.os.Process
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.angcyo.DslAHelper
@@ -10,6 +12,7 @@ import com.angcyo.base.*
 import com.angcyo.fragment.R
 import com.angcyo.library.L
 import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.simpleHash
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -79,7 +82,11 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
      * @param fromNew [onNewIntent]
      * */
     open fun onHandleIntent(intent: Intent, fromNew: Boolean = false) {
-        L.i("new:$fromNew $intent")
+        L.i(
+            "${this.simpleHash()} new:$fromNew $intent pid:${Process.myPid()} uid:${Process.myUid()} call:${packageManager.getNameForUid(
+                Binder.getCallingUid()
+            )}"
+        )
     }
 
     //</editor-fold desc="基础方法处理">

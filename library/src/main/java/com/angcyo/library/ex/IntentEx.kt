@@ -81,3 +81,25 @@ fun String.urlIntent(component: ComponentName? = null): Intent {
         setComponent(component)
     }
 }
+
+/**
+ * Intent.FILL_IN_ACTION or
+ * Intent.FILL_IN_CATEGORIES or
+ * Intent.FILL_IN_CLIP_DATA or
+ * Intent.FILL_IN_COMPONENT or
+ * Intent.FILL_IN_DATA or
+ * Intent.FILL_IN_IDENTIFIER or
+ * Intent.FILL_IN_PACKAGE or
+ * Intent.FILL_IN_SELECTOR or
+ * Intent.FILL_IN_SOURCE_BOUNDS
+ *
+ * 默认填充所有类型的数据.
+ *
+ * 使用0, 可以只填充[mExtras]的数据
+ *
+ * */
+fun Intent.fillFrom(other: Intent?, flag: Int = 255) {
+    if (other != null) {
+        fillIn(other, flag)
+    }
+}

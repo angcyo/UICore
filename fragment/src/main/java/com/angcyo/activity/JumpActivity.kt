@@ -4,8 +4,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import com.angcyo.DslAHelper
 import com.angcyo.base.dslAHelper
+import com.angcyo.library.ex.fillFrom
 import com.angcyo.noAnim
 
 /**
@@ -18,6 +20,8 @@ import com.angcyo.noAnim
 class JumpActivity : Activity() {
 
     companion object {
+
+        /**需要跳转的目标[Intent]*/
         const val KEY_JUMP_TARGET = "key_jump_target"
 
         /**[targetIntent] 跳转的真实目标*/
@@ -41,14 +45,21 @@ class JumpActivity : Activity() {
 
         intent?.run {
             val targetIntent: Intent? = getParcelableExtra(KEY_JUMP_TARGET)
+            //清空Extra数据, 防止在[fillFrom]时, 死循环.
+            putExtra(KEY_JUMP_TARGET, null as Parcelable?)
+
             targetIntent?.also { tIntent ->
 
-                if (tIntent.extras?.isEmpty == true) {
-                    if (extras?.isEmpty == true) {
-                    } else {
-                        extras?.run { tIntent.putExtras(this) }
-                    }
-                }
+//                if (tIntent.extras?.isEmpty == true) {
+//                    if (extras?.isEmpty == true) {
+//                    } else {
+//                        extras?.run { tIntent.putExtras(this) }
+//                    }
+//                }
+
+                //只需要填充[mExtras]即可
+                tIntent.fillFrom(this, 0)
+
                 //跳转到真正目标
                 dslAHelper {
                     start(tIntent)

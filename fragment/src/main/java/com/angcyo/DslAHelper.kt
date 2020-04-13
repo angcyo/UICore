@@ -521,7 +521,7 @@ data class IntentConfig(
     //强制使用Single_Task启动
     var forceSingleTask: Boolean = false,
 
-    //是否使用跳板[JumpActivity]
+    /**是否使用跳板[JumpActivity]*/
     var useJumpActivity: Boolean = false,
 
     //生死用[FragmentBridge]启动[Activity], 不受[requestCode]的影响
