@@ -2,6 +2,7 @@ package com.angcyo.library.ex
 
 import com.angcyo.library.BuildConfig
 import java.io.BufferedWriter
+import java.io.FileWriter
 import java.io.PrintWriter
 import java.io.StringWriter
 
@@ -79,4 +80,11 @@ fun Throwable.string(): String {
         printStackTrace(it)
     }
     return stringWriter.toString()
+}
+
+/**堆栈信息保存到文件*/
+fun Throwable.saveTo(filePath: String, append: Boolean = true) {
+    val pw = PrintWriter(BufferedWriter(FileWriter(filePath, append)))
+    printStackTrace(pw)
+    pw.close()
 }
