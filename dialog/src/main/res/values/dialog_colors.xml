@@ -2,4 +2,6 @@
 <resources>
     <color name="dialog_line">#E0E0E0</color>
     <color name="dialog_cancel_line">#E7E7ED</color>
+    <color name="dialog_ios_bg">#D2F4F5F6</color>
+
 </resources>

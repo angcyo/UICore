@@ -4,8 +4,9 @@
     <dimen name="dialog_item_height">50dp</dimen>
 
     <dimen name="dialog_padding">16dp</dimen>
+    <dimen name="dialog_margin">32dp</dimen>
 
-    <dimen name="dialog_ios_margin">100dp</dimen>
+    <dimen name="dialog_ios_margin">60dp</dimen>
 
     <dimen name="floating_window_z">16dp</dimen>
 

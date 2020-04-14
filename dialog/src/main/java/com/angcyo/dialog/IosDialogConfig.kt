@@ -17,5 +17,7 @@ open class IosDialogConfig(context: Context? = null) : BaseDialogConfig(context)
     init {
         dialogLayoutId = R.layout.lib_dialog_normal_ios_layout
         dialogBgDrawable = ColorDrawable(Color.TRANSPARENT)
+
+        animStyleResId = R.style.LibIosDialogAnimation
     }
 }
