@@ -9,8 +9,8 @@ import android.widget.LinearLayout
  * @author angcyo
  * @date 2020/01/30
  */
-class DslFlowLayout(context: Context, attrs: AttributeSet? = null) : LinearLayout(context, attrs),
-    IFlowLayoutDelegate {
+class DslFlowLayout(context: Context, attrs: AttributeSet? = null) :
+    LinearLayout(context, attrs), IFlowLayoutDelegate {
 
     val flowLayoutDelegate = FlowLayoutDelegate()
 
