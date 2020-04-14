@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RealtimeBlurView">
+        <attr name="realtimeBlurRadius" format="dimension" />
+        <attr name="realtimeDownSampleFactor" format="float" />
+        <attr name="realtimeOverlayColor" format="color" />
+        <attr name="xRadius" format="dimension" />
+        <attr name="yRadius" format="dimension" />
+    </declare-styleable>
+</resources>
