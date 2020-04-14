@@ -42,11 +42,6 @@ android {
     }
 
     packagingOptions {
-        doNotStrip '*/mips/*.so'
-        doNotStrip '*/mips64/*.so'
-    }
-
-    packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE'
@@ -54,6 +49,14 @@ android {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/uiview_release.kotlin_module'
         exclude 'META-INF/proguard/androidx-annotations.pro'
+
+        doNotStrip '*/mips/*.so'
+        doNotStrip '*/mips64/*.so'
+
+//        //renderscript
+//        pickFirst 'lib/armeabi-v7a/libRSSupport.so'
+//        pickFirst 'lib/arm64-v8a/libRSSupport.so'
+//        pickFirst 'lib/arm64-v8a/librsjni.so'
     }
 
     lintOptions {
