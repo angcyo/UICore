@@ -5,7 +5,7 @@ dependencies {
     implementation project(allModule.coroutine)
 
     //https://mvnrepository.com/artifact/androidx.fragment
-    implementation "androidx.fragment:fragment:1.2.1"
+    implementation "androidx.fragment:fragment:1.2.4"
 
     def lifecycle_version = "2.2.0"
     //https://mvnrepository.com/artifact/androidx.lifecycle

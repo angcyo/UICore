@@ -1,12 +1,21 @@
 apply from: allGradle.libBase
 
+//直接使用系统库, 不兼容低版本.
+//android {
+//    defaultConfig {
+//        //启用renderscript, BlurView 模糊支持.
+//        renderscriptTargetApi = 17
+//        renderscriptSupportModeEnabled = true
+//    }
+//}
+
 dependencies {
     api project(allModule.library)
     api project(allModule.drawable)
 
     //https://mvnrepository.com/artifact/androidx.fragment
-    api "androidx.fragment:fragment:1.2.2"
-    api "androidx.fragment:fragment-ktx:1.2.2"
+    api "androidx.fragment:fragment:1.2.4"
+    api "androidx.fragment:fragment-ktx:1.2.4"
 
     //https://mvnrepository.com/artifact/androidx.appcompat/appcompat
     api "androidx.appcompat:appcompat:1.1.0"
