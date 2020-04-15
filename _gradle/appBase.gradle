@@ -41,22 +41,27 @@ android {
         buildConfigField "String", "SCHEMA", '"' + schema + '"'
     }
 
+    //https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.PackagingOptions.html
+    //[merge] [exclude] [pickFirst] [doNotStrip]
     packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/uiview_release.kotlin_module'
-        exclude 'META-INF/proguard/androidx-annotations.pro'
+        merge 'META-INF/DEPENDENCIES'
+        merge 'META-INF/NOTICE'
+        merge 'META-INF/LICENSE'
+        merge 'META-INF/LICENSE.txt'
+        merge 'META-INF/NOTICE.txt'
+        merge 'META-INF/uiview_release.kotlin_module'
+        merge 'META-INF/kotlin_release.kotlin_module'
+        merge 'META-INF/proguard/androidx-annotations.pro'
 
         doNotStrip '*/mips/*.so'
         doNotStrip '*/mips64/*.so'
 
-//        //renderscript
-//        pickFirst 'lib/armeabi-v7a/libRSSupport.so'
-//        pickFirst 'lib/arm64-v8a/libRSSupport.so'
-//        pickFirst 'lib/arm64-v8a/librsjni.so'
+        //exclude 'META-INF/uiview_release.kotlin_module'
+
+        //renderscript
+        //pickFirst 'lib/armeabi-v7a/libRSSupport.so'
+        //pickFirst 'lib/arm64-v8a/libRSSupport.so'
+        //pickFirst 'lib/arm64-v8a/librsjni.so'
     }
 
     lintOptions {
