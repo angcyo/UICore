@@ -1,5 +1,6 @@
 package com.angcyo.download.dslitem
 
+import com.angcyo.download.DslDownload
 import com.angcyo.download.dslDownload
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.widget.DslViewHolder
@@ -16,20 +17,24 @@ import com.liulishuo.okdownload.core.cause.EndCause
 abstract class DslBaseDownloadItem : DslAdapterItem() {
 
     /**下载开始的回调*/
-    var onItemDownloadStart: (itemHolder: DslViewHolder?, task: DownloadTask) -> Unit = { _, _ -> }
+    var itemDownloadStart: (itemHolder: DslViewHolder?, task: DownloadTask) -> Unit =
+        { itemHolder, task ->
+            onDownloadStart(itemHolder, task)
+        }
 
     /**下载结束的回调*/
-    var onItemDownloadFinish: (
+    var itemDownloadFinish: (
         itemHolder: DslViewHolder?,
         task: DownloadTask,
         cause: EndCause,
         error: Exception?
-    ) -> Unit = { _, _, _, _ ->
-
+    ) -> Unit = { itemHolder, task, cause, error ->
+        onDownloadFinish(itemHolder, task, cause, error)
     }
 
     /**下载进度*/
-    var onItemDownloadProgress: (DownloadTask, progress: Int, speed: Long) -> Unit = { _, _, _ -> }
+    var itemDownloadProgress: (DownloadTask, progress: Int, speed: Long) -> Unit =
+        { downloadTask, progress, speed -> onDownloadProgress(downloadTask, progress, speed) }
 
     //当前任务
     var _downTask: DownloadTask? = null
@@ -53,22 +58,23 @@ abstract class DslBaseDownloadItem : DslAdapterItem() {
         _downTask?.cancel()
         _downTask = dslDownload(url) {
             onTaskStart = {
-                onDownloadStart(itemHolder, it)
+                itemDownloadStart(itemHolder, it)
             }
             onTaskFinish = { downloadTask, cause, exception ->
-                onDownloadFinish(itemHolder, downloadTask, cause, exception)
+                itemDownloadFinish(itemHolder, downloadTask, cause, exception)
                 if (cause == EndCause.COMPLETED && !_isItemViewDetached) {
                     callback(downloadTask.file!!.absolutePath)
                 }
             }
             onTaskProgress = { downloadTask, progress, speed ->
-                onItemDownloadProgress(downloadTask, progress, speed)
+                itemDownloadProgress(downloadTask, progress, speed)
             }
         }
     }
 
+    //<editor-fold desc="任务回调">
+
     open fun onDownloadStart(itemHolder: DslViewHolder?, task: DownloadTask) {
-        onItemDownloadStart(itemHolder, task)
     }
 
     open fun onDownloadFinish(
@@ -77,6 +83,17 @@ abstract class DslBaseDownloadItem : DslAdapterItem() {
         cause: EndCause,
         error: Exception?
     ) {
-        onItemDownloadFinish(itemHolder, task, cause, error)
     }
+
+    open fun onDownloadProgress(task: DownloadTask, progress: Int, speed: Long) {
+    }
+
+    //</editor-fold desc="任务回调">
+
+    //<editor-fold desc="获取任务信息">
+
+    fun DownloadTask.taskStatus() = DslDownload.getStatus(this)
+    fun DownloadTask.taskProgress() = DslDownload.getTaskProgress(this)
+
+    //</editor-fold desc="获取任务信息">
 }

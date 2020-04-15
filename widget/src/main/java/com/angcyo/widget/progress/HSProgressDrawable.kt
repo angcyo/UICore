@@ -12,7 +12,8 @@ import com.angcyo.widget.R
 import kotlin.math.min
 
 /**
- *
+ * 第一阶段: 从左开始, 拉长透明, 并高度减少
+ * 第二阶段: 从右开始, 拉长透明, 并高度减少
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/06/11
@@ -33,7 +34,8 @@ class HSProgressDrawable : BaseSectionDrawable() {
     }
 
     override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
-        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.HSProgressDrawable)
+        val typedArray =
+            context.obtainStyledAttributes(attributeSet, R.styleable.HSProgressDrawable)
         progressColor =
             typedArray.getColor(R.styleable.HSProgressDrawable_r_progress_color, progressColor)
         roundSize = typedArray.getDimensionPixelOffset(

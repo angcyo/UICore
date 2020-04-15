@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="VoiceView">
+        <attr name="r_voice_color" format="color" />
+        <attr name="r_voice_line_width" format="dimension" />
+        <attr name="r_voice_line_space" format="dimension" />
+        <attr name="r_voice_step_angle" format="integer" />
+        <attr name="r_voice_step_height" format="dimension" />
+        <attr name="r_voice_start_angle" format="integer" />
+        <attr name="r_voice_line_count" format="integer" />
+    </declare-styleable>
+</resources>

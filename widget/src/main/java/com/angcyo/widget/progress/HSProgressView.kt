@@ -36,6 +36,10 @@ class HSProgressView(context: Context, attributeSet: AttributeSet? = null) :
             autoStartAnimator
         )
         typedArray.recycle()
+
+        if (isInEditMode) {
+            firstDrawable<HSProgressDrawable>()?.progress = 50
+        }
     }
 
     override fun initDrawables(list: MutableList<AbsDslDrawable>) {

@@ -161,9 +161,9 @@ fun Context.requestAudioFocus(
 /**
  * 释放音频焦点
  */
-fun Context.abandonAudioFocus(): Int {
+fun Context.abandonAudioFocus(change: ((focusChange: Int) -> Unit)? = null): Int {
     val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-    return audioManager.abandonAudioFocus(null) //放弃焦点
+    return audioManager.abandonAudioFocus(change) //放弃焦点
 }
 
 /**从[assets]中读取字符串*/

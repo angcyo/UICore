@@ -4,7 +4,10 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.text.TextUtils
 import com.angcyo.library.L
+import com.angcyo.library.app
 import com.angcyo.library.component.MainExecutor
+import com.angcyo.library.ex.abandonAudioFocus
+import com.angcyo.library.ex.requestAudioFocus
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 
@@ -33,18 +36,45 @@ class RPlayer {
     /**播放的url, 正常播放过的url*/
     var playUrl = ""
 
+    var onAudioFocusChange: (focusChange: Int) -> Unit = {
+        when (it) {
+            AudioManager.AUDIOFOCUS_LOSS -> {
+                // Permanent loss of audio focus
+                // Pause playback immediately
+                //焦点丢失,停止播放
+                stopPlay()
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                // Pause playback
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                // Lower the volume, keep playing
+                //保持播放, 减少音量
+            }
+            AudioManager.AUDIOFOCUS_GAIN -> {
+                // Your app has been granted audio focus again
+                // Raise volume to normal, restart playback if necessary
+                //重新获得焦点
+            }
+        }
+    }
+
     /**当前播放的状态*/
     private var playState: AtomicInteger = AtomicInteger(STATE_INIT)
 
     companion object {
         //初始化状态
         const val STATE_INIT = 0
+
         /**正常情况*/
         const val STATE_NORMAL = 1
+
         /**播放中*/
         const val STATE_PLAYING = 2
+
         /**停止播放*/
         const val STATE_STOP = 3
+
         /**资源释放*/
         const val STATE_RELEASE = 4
 
@@ -80,9 +110,10 @@ class RPlayer {
 
     //开始播放
     private fun startPlayInner(mediaPlay: MediaPlayer) {
-        setPlayState(STATE_PLAYING)
-        startProgress()
-        mediaPlay.start()
+        mediaPlay.checkStart {
+            setPlayState(STATE_PLAYING)
+            startProgress()
+        }
     }
 
     /**@param url 可以有效的网络, 和有效的本地地址*/
@@ -173,14 +204,24 @@ class RPlayer {
      * 恢复播放
      * */
     fun resumePlay() {
-
         mediaPlay?.let {
             if (isPause()) {
-                it.start()
+                it.checkStart {
+                    setPlayState(STATE_PLAYING)
+                }
             }
         }
+    }
 
-        setPlayState(STATE_PLAYING)
+    /**获取音频焦点*/
+    fun MediaPlayer.checkStart(action: () -> Unit = {}) {
+        app().requestAudioFocus(audioStreamType, onAudioFocusChange = onAudioFocusChange).apply {
+            if (this == AudioManager.AUDIOFOCUS_GAIN) {
+                //获取焦点
+                start()
+                action()
+            }
+        }
     }
 
     /**
@@ -242,7 +283,10 @@ class RPlayer {
         playState.set(state)
 
         when (state) {
-            STATE_STOP, STATE_RELEASE, STATE_ERROR, STATE_COMPLETION -> _playingUrl = ""
+            STATE_STOP, STATE_RELEASE, STATE_ERROR, STATE_COMPLETION -> {
+                _playingUrl = ""
+                app().abandonAudioFocus(onAudioFocusChange)
+            }
         }
 
         L.i("RPlayer: onPlayStateChange -> ${stateString(oldState)}->${stateString(state)}")

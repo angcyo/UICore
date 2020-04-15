@@ -29,7 +29,7 @@ fun String?.getMediaDuration(): Long {
         }
         duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
     } catch (e: Exception) {
-        L.w(e)
+        L.w("$e")
         return -1
     } finally {
         retriever.release()

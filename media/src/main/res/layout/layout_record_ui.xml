@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true">
+
+    <FrameLayout
+        android:id="@+id/record_wrap_layout"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_gravity="center"
+        android:background="@drawable/media_record_ui_bg"
+        android:padding="10dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/record_tip_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/record_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/media_record_voice"
+                app:layout_constraintBottom_toTopOf="@id/record_time_view"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/record_anim_view"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.angcyo.media.audio.widget.RecordAnimView
+                android:id="@+id/record_anim_view"
+                android:layout_width="60dp"
+                android:layout_height="70dp"
+                android:paddingLeft="10dp"
+                app:layout_constraintBottom_toBottomOf="@id/record_icon"
+                app:layout_constraintLeft_toRightOf="@id/record_icon"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/record_icon"
+                tools:background="@color/lib_white" />
+
+            <TextView
+                android:id="@+id/record_time_view"
+                style="@style/LibBodyTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="00:00"
+                android:textColor="@color/lib_white"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/record_icon" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
+            android:id="@+id/record_cancel_tip_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/media_record_undo"
+            tools:visibility="gone" />
+
+        <TextView
+            android:id="@+id/record_cancel_tip_view"
+            style="@style/LibSubTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:paddingLeft="10dp"
+            android:paddingTop="6dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="6dp"
+            android:textColor="@color/lib_white"
+            tools:background="@drawable/media_cancel_record_tip_shape"
+            tools:text="上滑取消" />
+
+    </FrameLayout>
+</FrameLayout>

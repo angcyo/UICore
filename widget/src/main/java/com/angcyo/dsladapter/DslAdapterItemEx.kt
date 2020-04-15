@@ -2,6 +2,7 @@ package com.angcyo.dsladapter
 
 import android.graphics.Color
 import androidx.annotation.LayoutRes
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.library.L
 import com.angcyo.library.ex.dpi
@@ -163,6 +164,10 @@ fun DslAdapterItem.itemViewHolder(recyclerView: RecyclerView?): DslViewHolder? {
     } else {
         null
     }
+}
+
+fun DslAdapterItem.isItemAttached(): Boolean {
+    return lifecycle.currentState == Lifecycle.State.RESUMED
 }
 
 //</editor-fold desc="操作扩展">

@@ -13,7 +13,7 @@ import com.angcyo.tablayout.evaluateColor
 import com.angcyo.widget.R
 
 /**
- *
+ * 从中间开始, 像两端拉长
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/03/10
