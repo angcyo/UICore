@@ -26,6 +26,12 @@ open class DslNestedRecyclerItem : DslAdapterItem() {
     /**自动恢复滚动位置*/
     var itemKeepScrollPosition = true
 
+    /**渲染内部[DslAdapter]数据*/
+    var itemRenderNestedAdapter: DslAdapter.() -> Unit = {}
+
+    /**内部[RecyclerView]配置回调*/
+    var itemNestedRecyclerViewConfig: RecyclerView.() -> Unit = {}
+
     init {
         itemLayoutId = R.layout.dsl_nested_recycler_item
     }
@@ -37,7 +43,10 @@ open class DslNestedRecyclerItem : DslAdapterItem() {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
-        onBindRecyclerView(itemHolder, itemPosition, adapterItem, payloads)
+
+        itemHolder.rv(R.id.lib_nested_recycler_view)?.apply {
+            onBindRecyclerView(this, itemHolder, itemPosition, adapterItem, payloads)
+        }
     }
 
     var _onScrollListener: RecyclerView.OnScrollListener? = null
@@ -45,13 +54,14 @@ open class DslNestedRecyclerItem : DslAdapterItem() {
     var _scrollPositionConfig: ScrollPositionConfig? = null
 
     open fun onBindRecyclerView(
+        recyclerView: RecyclerView,
         itemHolder: DslViewHolder,
         itemPosition: Int,
         adapterItem: DslAdapterItem,
         payloads: List<Any>
     ) {
         //列表
-        itemHolder.rv(R.id.lib_nested_recycler_view)?.apply {
+        recyclerView.apply {
             //优先清空[OnScrollListener]
             clearOnScrollListeners()
             clearItemDecoration()
@@ -61,6 +71,11 @@ open class DslNestedRecyclerItem : DslAdapterItem() {
             //关键地方, 如果每次都赋值[adapter], 系统会重置所有缓存.
             if (adapter != itemNestedAdapter) {
                 adapter = itemNestedAdapter
+            }
+
+            //渲染数据
+            if (adapter is DslAdapter) {
+                (adapter as DslAdapter).itemRenderNestedAdapter()
             }
 
             if (itemKeepScrollPosition) {
@@ -76,6 +91,9 @@ open class DslNestedRecyclerItem : DslAdapterItem() {
                 _onScrollListener = this
                 addOnScrollListener(this)
             }
+
+            //配置
+            itemNestedRecyclerViewConfig()
         }
     }
 }
