@@ -78,6 +78,12 @@ android {
 
         //https://developer.android.google.cn/studio/build/multidex.html
         multiDexKeepProguard file('multidex-config.pro')
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["objectbox.incremental": "true"]
+            }
+        }
     }
 //    sourceSets {
 //        main {
