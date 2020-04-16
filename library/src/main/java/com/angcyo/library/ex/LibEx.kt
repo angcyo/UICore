@@ -1,6 +1,9 @@
 package com.angcyo.library.ex
 
+import android.content.Context
+import android.view.inputmethod.InputMethodManager
 import com.angcyo.library.BuildConfig
+import com.angcyo.library.app
 import java.io.BufferedWriter
 import java.io.FileWriter
 import java.io.PrintWriter

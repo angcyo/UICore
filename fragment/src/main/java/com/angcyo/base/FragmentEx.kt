@@ -14,6 +14,7 @@ import com.angcyo.library.L
 import com.angcyo.library.R
 import com.angcyo.library.app
 import com.angcyo.library.component.MainExecutor
+import com.angcyo.widget.base.hideSoftInput
 
 /**
  *
@@ -149,4 +150,9 @@ fun Fragment.delay(delayMillis: Long = delayMillis(-1), action: () -> Unit) {
     } else {
         action()
     }
+}
+
+/**隐藏软键盘*/
+fun Fragment.hideSoftInput() {
+    view?.hideSoftInput()
 }

@@ -14,7 +14,7 @@ package com.angcyo.library.utils
  * */
 
 /**手机号码简单*/
-const val PATTERN_MOBILE_SIMPLE = "^[1]\\d{10}$"
+const val PATTERN_MOBILE_SIMPLE = "^[1]\\d{10}$" //"^1[3-9]\\d{9}$"
 /**手机号码精准*/
 const val PATTERN_MOBILE_EXACT =
     "^((13[0-9])|(14[5,7])|(15[0-3,5-9])|(17[0,3,5-8])|(18[0-9])|(147))\\d{8}$"

@@ -14,6 +14,7 @@ import android.webkit.MimeTypeMap
 import androidx.annotation.ColorInt
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.utils.PATTERN_MOBILE_SIMPLE
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.util.regex.Pattern
@@ -199,6 +200,14 @@ fun String.isNumber(): Boolean {
     }
     val pattern = Pattern.compile("^[-\\+]?[\\d]+$")
     return pattern.matcher(this).matches()
+}
+
+/**判断字符串是否是手机号码*/
+fun String?.isPhone(regex: String = PATTERN_MOBILE_SIMPLE): Boolean {
+    if (this.isNullOrEmpty()) {
+        return false
+    }
+    return matches(regex.toRegex())
 }
 
 /**将base64字符串, 转换成图片*/

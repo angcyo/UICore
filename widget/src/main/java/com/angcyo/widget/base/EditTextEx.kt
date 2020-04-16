@@ -13,6 +13,8 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.angcyo.library.ex.isPhone
+import com.angcyo.library.utils.PATTERN_MOBILE_SIMPLE
 import com.angcyo.widget.edit.CharLengthFilter
 import com.angcyo.widget.edit.SingleTextWatcher
 import kotlin.math.min
@@ -47,13 +49,7 @@ fun EditText.isPasswordType(): Boolean {
 }
 
 /** 判断string是否是手机号码 */
-fun EditText.isPhone(regex: String = "^1[3-9]\\d{9}$"): Boolean {
-    val string = string()
-    if (TextUtils.isEmpty(string)) {
-        return false
-    }
-    return string.matches(regex.toRegex())
-}
+fun EditText.isPhone(regex: String = PATTERN_MOBILE_SIMPLE) = string().isPhone(regex)
 
 /** 返回结果表示是否为空, true:空 */
 fun EditText.checkEmpty(phoneRegex: String? = null): Boolean {
