@@ -2,6 +2,7 @@ package com.angcyo.dsladapter.filter
 
 import android.os.Handler
 import android.os.Looper
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
@@ -25,7 +26,7 @@ open class BatchLoadFilterInterceptor : BaseFilterInterceptor(), Runnable {
     var loadStepCount = 1
 
     /**每次加载延迟*/
-    var loadDelay: Long = 60
+    var loadDelay: Long = 16
 
     var _lastAdapter: DslAdapter? = null
 
@@ -33,7 +34,8 @@ open class BatchLoadFilterInterceptor : BaseFilterInterceptor(), Runnable {
     var _lastLoadPosition = RecyclerView.NO_POSITION
 
     /**加载数量的差值器.[TimeInterpolator]*/
-    var loadInterpolator: (loadPosition: Int) -> Int = { loadStepCount }
+    var loadInterpolator: (loadPosition: Int, requestList: List<DslAdapterItem>) -> Int =
+        { _, _ -> loadStepCount }
 
     override fun intercept(chain: FilterChain): List<DslAdapterItem> {
         val dslAdapter = chain.dslAdapter
@@ -54,9 +56,9 @@ open class BatchLoadFilterInterceptor : BaseFilterInterceptor(), Runnable {
         }
 
         val count = if (_lastLoadPosition < 0) {
-            loadInterpolator(_lastLoadPosition)
+            loadInterpolator(_lastLoadPosition, requestList)
         } else {
-            (_lastLoadPosition + 1) + loadInterpolator(_lastLoadPosition)
+            (_lastLoadPosition + 1) + loadInterpolator(_lastLoadPosition, requestList)
         }
 
         val result = ArrayList<DslAdapterItem>(count + count * 1 / 4)
@@ -77,6 +79,23 @@ open class BatchLoadFilterInterceptor : BaseFilterInterceptor(), Runnable {
 
     override fun run() {
         //触发更新
-        _lastAdapter?.updateItemDepend()
+        _lastAdapter?.apply {
+            val rv = _recyclerView
+            if (rv != null && ViewCompat.isAttachedToWindow(rv)) {
+                updateItemDepend()
+            }
+        }
+    }
+}
+
+/**快速配置[BatchLoadFilterInterceptor]*/
+fun DslAdapter.batchLoad(
+    delay: Long = 16,
+    action: BatchLoadFilterInterceptor.() -> Unit = {}
+): BatchLoadFilterInterceptor {
+    return BatchLoadFilterInterceptor().apply {
+        dslDataFilter?.afterFilterInterceptorList?.add(this)
+        loadDelay = delay
+        action()
     }
 }
