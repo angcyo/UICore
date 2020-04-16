@@ -262,4 +262,22 @@ fun EditText.isEditSingleLine(): Boolean {
             minLines == 1
 }
 
+/**输入法[OnEditorActionListener]*/
+fun TextView.onImeAction(
+    option: Int = EditorInfo.IME_ACTION_DONE,
+    label: CharSequence? = null,
+    action: () -> Unit
+) {
+    setImeActionLabel(label, option)
+    imeOptions = option
+
+    setOnEditorActionListener { _, actionId, _ ->
+        if (actionId == option) {
+            action()
+            true
+        }
+        false
+    }
+}
+
 //</editor-fold desc="方法扩展">
