@@ -39,6 +39,19 @@ fun Context.getContentViewHeight(): Int {
     return 0
 }
 
+/**如果有权限, 则直接返回. 否则请求权限, 但是权限回调无法拿到
+ * [com.angcyo.base.ActivityEx.checkAndRequestPermission)]
+ * */
+fun Context.checkPermissions(vararg permissions: String): Boolean =
+    if (havePermissions(*permissions)) {
+        true
+    } else {
+        if (this is Activity) {
+            ActivityCompat.requestPermissions(this, permissions, 999)
+        }
+        false
+    }
+
 /**是否具有指定的权限*/
 fun Context.havePermissions(vararg permissions: String): Boolean {
     return permissions.all {

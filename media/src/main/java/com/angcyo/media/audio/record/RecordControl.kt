@@ -1,9 +1,13 @@
 package com.angcyo.media.audio.record
 
+import android.Manifest
 import android.app.Activity
 import android.view.MotionEvent
 import android.view.View
+import com.angcyo.base.requestPermission
+import com.angcyo.library.ex.checkPermissions
 import com.angcyo.library.ex.ext
+import com.angcyo.library.ex.havePermissions
 import com.angcyo.library.ex.noExtName
 import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.fileName
@@ -32,7 +36,8 @@ open class RecordControl {
      * 监听那个view的事件, 触发录制
      * */
     open fun wrap(
-        view: View, activity: Activity,
+        view: View,
+        activity: Activity,
         onRecordStart: () -> Boolean = { true } /*返回true, 表示可以开始录制*/,
         onRecordEnd: (voiceFile: File) -> Unit = {}
     ) {
@@ -57,19 +62,21 @@ open class RecordControl {
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
                     if (onRecordStart()) {
-                        view.isSelected = true
-                        recordUI.onGetMeterCount = {
-                            var result = 1
+                        if (activity.checkPermissions(Manifest.permission.RECORD_AUDIO)) {
+                            view.isSelected = true
+                            recordUI.onGetMeterCount = {
+                                var result = 1
 
-                            record?.let {
-                                result = 7 * it.maxAmplitude / 32768
+                                record?.let {
+                                    result = 7 * it.maxAmplitude / 32768
+                                }
+
+                                max(1, result)
                             }
-
-                            max(1, result)
+                            recordUI.show(activity, v, event.rawY)
+                            record?.stopPlayback()
+                            record?.startRecord(fileName())
                         }
-                        recordUI.show(activity, v, event.rawY)
-                        record?.stopPlayback()
-                        record?.startRecord(fileName())
                     } else {
                         view.isSelected = false
                     }
