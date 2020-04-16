@@ -147,6 +147,8 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
         if (enableBackItem) {
             /*强制激活了返回按钮*/
             showBackItem = true
+        } else if (topFragment() != this) {
+            showBackItem = false
         } else if (count <= 0) {
             /*Activity中第一个Fragment*/
             if (!DslAHelper.isMainActivity(activity)) {
