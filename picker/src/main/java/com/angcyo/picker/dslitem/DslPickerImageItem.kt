@@ -11,7 +11,8 @@ import com.angcyo.dsladapter.isUpdateMedia
 import com.angcyo.dsladapter.margin
 import com.angcyo.glide.giv
 import com.angcyo.library.ex.*
-import com.angcyo.loader.*
+import com.angcyo.library.ex.mimeType
+import com.angcyo.library.model.*
 import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.bgColorAnimator

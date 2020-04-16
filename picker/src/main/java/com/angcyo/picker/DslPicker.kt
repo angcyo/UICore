@@ -18,7 +18,7 @@ import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.fileName
 import com.angcyo.library.utils.filePath
 import com.angcyo.loader.LoaderConfig
-import com.angcyo.loader.LoaderMedia
+import com.angcyo.library.model.LoaderMedia
 import com.angcyo.picker.DslPicker.picker
 import com.angcyo.picker.core.PickerActivity
 import com.angcyo.picker.core.PickerActivity.Companion.KEY_LOADER_CONFIG

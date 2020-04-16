@@ -8,7 +8,7 @@ import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.elseNull
 import com.angcyo.library.ex.loadUrl
 import com.angcyo.media.R
-import com.angcyo.media.audio.RecordUI
+import com.angcyo.media.audio.record.RecordUI
 import com.angcyo.media.audio.widget.VoiceView
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt

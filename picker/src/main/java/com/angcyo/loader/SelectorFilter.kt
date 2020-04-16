@@ -1,5 +1,7 @@
 package com.angcyo.loader
 
+import com.angcyo.library.model.LoaderMedia
+
 /**
  *
  * Email:angcyo@126.com

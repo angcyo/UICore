@@ -9,9 +9,9 @@ import androidx.viewpager.widget.PagerAdapter
 import com.angcyo.base.interceptTouchEvent
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.set
-import com.angcyo.loader.isAudio
-import com.angcyo.loader.isVideo
-import com.angcyo.loader.loadUri
+import com.angcyo.library.model.isAudio
+import com.angcyo.library.model.isVideo
+import com.angcyo.library.model.loadUri
 import com.angcyo.media.dslitem.DslPreviewAudioItem
 import com.angcyo.media.dslitem.DslTextureVideoItem
 import com.angcyo.pager.dslitem.DslPagerPhotoViewItem

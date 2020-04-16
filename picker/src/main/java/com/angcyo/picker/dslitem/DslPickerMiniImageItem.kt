@@ -5,9 +5,9 @@ import com.angcyo.dsladapter.margin
 import com.angcyo.item.DslImageItem
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.dpi
-import com.angcyo.loader.LoaderMedia
-import com.angcyo.loader.loadUri
-import com.angcyo.loader.mimeType
+import com.angcyo.library.model.LoaderMedia
+import com.angcyo.library.model.loadUri
+import com.angcyo.library.model.mimeType
 import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.setWidthHeight

@@ -1,5 +1,7 @@
 package com.angcyo.loader
 
+import com.angcyo.library.model.LoaderMedia
+
 /**
  * 加载后的媒体信息, 都分组在相同的文件夹中
  * Email:angcyo@126.com

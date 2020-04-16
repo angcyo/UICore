@@ -8,8 +8,8 @@ import android.os.SystemClock
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.LinearInterpolator
-import com.angcyo.library.ex.getColor
 import com.angcyo.media.R
+import com.angcyo.widget.base.getColor
 import java.util.*
 
 /**
@@ -21,6 +21,7 @@ import java.util.*
  */
 class RecordAnimView(context: Context, attributeSet: AttributeSet? = null) :
     View(context, attributeSet) {
+
     val paint: Paint by lazy {
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.WHITE
@@ -29,6 +30,7 @@ class RecordAnimView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     var meterColor = Color.WHITE
+
     var meterDarkColor = getColor(R.color.text_sub_color)
 
     val dp: Float by lazy {

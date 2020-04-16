@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.angcyo.loader.LoaderConfig
 import com.angcyo.loader.LoaderFolder
-import com.angcyo.loader.LoaderMedia
+import com.angcyo.library.model.LoaderMedia
 import com.angcyo.loader.canSelectorMedia
 
 /**

@@ -12,8 +12,8 @@ import androidx.viewpager.widget.ViewPager
 import com.angcyo.dsladapter.getViewRect
 import com.angcyo.image.dslitem.IDrawableProvider
 import com.angcyo.library.ex.copyDrawable
-import com.angcyo.loader.LoaderMedia
-import com.angcyo.loader.loadUri
+import com.angcyo.library.model.LoaderMedia
+import com.angcyo.library.model.loadUri
 import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.recycler.get

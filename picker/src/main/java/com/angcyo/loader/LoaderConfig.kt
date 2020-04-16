@@ -2,6 +2,9 @@ package com.angcyo.loader
 
 import android.os.Parcelable
 import com.angcyo.library.ex.fileSizeString
+import com.angcyo.library.model.LoaderMedia
+import com.angcyo.library.model.isAudio
+import com.angcyo.library.model.isVideo
 import com.angcyo.library.toast
 import com.angcyo.loader.LoaderConfig.Companion.LOADER_TYPE_AUDIO
 import com.angcyo.loader.LoaderConfig.Companion.LOADER_TYPE_IMAGE

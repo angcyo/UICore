@@ -1,4 +1,5 @@
 apply from: allGradle.libBase
+apply plugin: 'kotlin-android-extensions'
 
 android {
     defaultConfig {

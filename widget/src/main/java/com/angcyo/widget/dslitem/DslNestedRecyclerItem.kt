@@ -3,6 +3,7 @@ package com.angcyo.widget.dslitem
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.library.app
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
 import com.angcyo.widget.recycler.*
@@ -21,7 +22,10 @@ open class DslNestedRecyclerItem : DslAdapterItem() {
 
     /**布局管理,
      * 请注意使用:recycleChildrenOnDetach*/
-    var itemNestedLayoutManager: RecyclerView.LayoutManager? = null
+    var itemNestedLayoutManager: RecyclerView.LayoutManager? =
+        LinearLayoutManagerWrap(app()).apply {
+            recycleChildrenOnDetach = true
+        }
 
     /**自动恢复滚动位置*/
     var itemKeepScrollPosition = true

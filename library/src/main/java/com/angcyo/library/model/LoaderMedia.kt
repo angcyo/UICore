@@ -1,4 +1,4 @@
-package com.angcyo.loader
+package com.angcyo.library.model
 
 import android.net.Uri
 import android.os.Parcelable

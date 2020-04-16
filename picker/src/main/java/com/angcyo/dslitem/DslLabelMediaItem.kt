@@ -9,9 +9,9 @@ import com.angcyo.item.DslImageItem
 import com.angcyo.library.L
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.elseNull
-import com.angcyo.loader.LoaderMedia
-import com.angcyo.loader.loadUri
-import com.angcyo.loader.mimeType
+import com.angcyo.library.model.LoaderMedia
+import com.angcyo.library.model.loadUri
+import com.angcyo.library.model.mimeType
 import com.angcyo.pager.dslPager
 import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder

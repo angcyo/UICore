@@ -2,8 +2,8 @@ package com.angcyo.pager.dslitem
 
 import android.net.Uri
 import com.angcyo.image.dslitem.DslPhotoViewItem
-import com.angcyo.loader.LoaderMedia
-import com.angcyo.loader.loadUri
+import com.angcyo.library.model.LoaderMedia
+import com.angcyo.library.model.loadUri
 
 /**
  *

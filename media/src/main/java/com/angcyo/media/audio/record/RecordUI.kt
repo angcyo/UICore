@@ -1,4 +1,4 @@
-package com.angcyo.media.audio
+package com.angcyo.media.audio.record
 
 import android.app.Activity
 import android.graphics.Rect
@@ -117,7 +117,7 @@ class RecordUI {
             if (maxRecordTime > 0 && millis >= maxRecordTime * 1000) {
                 //到达最大值
                 touchView?.postDelayed({
-                    onMaxRecordTime?.run()
+                    onMaxRecordTimeAction?.run()
                 }, 60)
             } else {
                 touchView?.postDelayed(checkTimeRunnable, 160)
@@ -128,7 +128,7 @@ class RecordUI {
     /**
      * 达到最大时间的回调
      * */
-    var onMaxRecordTime: Runnable? = null
+    var onMaxRecordTimeAction: Runnable? = null
 
     private var touchDownY = -1f
 
@@ -240,7 +240,7 @@ class RecordUI {
     var isCancel = false
 
     /**是否是最小录制时间内*/
-    val isMinRecordTime = false
+    val isMinRecordTime: Boolean = false
         get() {
             val millis = recordTimeLast - recordStartTime
 
@@ -288,9 +288,16 @@ class RecordUI {
             val timeView: TextView = it.findViewById(R.id.record_time_view)
 
             if (maxRecordTime > 0) {
-                timeView.text = "${formatTime(millis)}/${formatTime(maxRecordTime * 1000)}"
+                timeView.text = "${formatTime(
+                    millis
+                )}/${formatTime(
+                    maxRecordTime * 1000
+                )}"
             } else {
-                timeView.text = formatTime(millis)
+                timeView.text =
+                    formatTime(
+                        millis
+                    )
             }
         }
     }

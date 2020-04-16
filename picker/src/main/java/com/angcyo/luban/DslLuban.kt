@@ -11,8 +11,8 @@ import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.Media
 import com.angcyo.library.utils.fileNameUUID
 import com.angcyo.library.utils.folderPath
-import com.angcyo.loader.LoaderMedia
-import com.angcyo.loader.isImage
+import com.angcyo.library.model.LoaderMedia
+import com.angcyo.library.model.isImage
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import top.zibin.luban.Luban

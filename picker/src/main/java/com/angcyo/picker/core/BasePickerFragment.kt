@@ -8,8 +8,8 @@ import com.angcyo.core.fragment.BaseDslFragment
 import com.angcyo.dsladapter.DslAdapterStatusItem
 import com.angcyo.library.ex.fileSizeString
 import com.angcyo.library.ex.getColor
-import com.angcyo.loader.LoaderMedia
-import com.angcyo.loader.isImage
+import com.angcyo.library.model.LoaderMedia
+import com.angcyo.library.model.isImage
 import com.angcyo.picker.R
 import com.angcyo.picker.dslitem.DslPickerStatusItem
 import com.angcyo.transition.dslTransition

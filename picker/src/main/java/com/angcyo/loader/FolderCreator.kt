@@ -1,6 +1,10 @@
 package com.angcyo.loader
 
 import com.angcyo.library.L
+import com.angcyo.library.model.LoaderMedia
+import com.angcyo.library.model.isAudio
+import com.angcyo.library.model.isImage
+import com.angcyo.library.model.isVideo
 import java.io.File
 
 /**

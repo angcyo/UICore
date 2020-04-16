@@ -4,8 +4,8 @@ import androidx.fragment.app.Fragment
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.library.L
 import com.angcyo.library.ex.elseNull
+import com.angcyo.library.model.LoaderMedia
 import com.angcyo.loader.LoaderConfig
-import com.angcyo.loader.LoaderMedia
 import com.angcyo.picker.R
 import com.angcyo.picker.dslPicker
 import com.angcyo.widget.DslViewHolder

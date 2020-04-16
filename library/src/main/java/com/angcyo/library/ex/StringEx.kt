@@ -232,6 +232,18 @@ fun String.queryParameter(key: String): String? {
 
 /**返回文件扩展名*/
 fun String.ext(): String = MimeTypeMap.getFileExtensionFromUrl(this.encode())
+fun String.extName(): String = ext()
+
+/**获取不带扩展名的文件名*/
+fun String.noExtName(): String {
+    if (this.isNotEmpty()) {
+        val dot = lastIndexOf('.')
+        if (dot > -1 && dot < length) {
+            return substring(0, dot)
+        }
+    }
+    return this
+}
 
 /**获取url或者文件扩展名 对应的mimeType
  * https://www.iana.org/assignments/media-types/media-types.xhtml

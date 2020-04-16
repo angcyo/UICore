@@ -6,9 +6,9 @@ import com.angcyo.glide.giv
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.or
+import com.angcyo.library.model.isAudio
+import com.angcyo.library.model.loadUri
 import com.angcyo.loader.LoaderFolder
-import com.angcyo.loader.isAudio
-import com.angcyo.loader.loadUri
 import com.angcyo.loader.mediaCount
 import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
