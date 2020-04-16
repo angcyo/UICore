@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_item_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.angcyo.widget.recycler.DslRecyclerView
+        android:id="@+id/lib_nested_recycler_view"
+        style="@style/LibInnerRecyclerViewStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_record_text_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="@dimen/lib_padding_left"
+        android:layout_marginTop="@dimen/lib_ldpi"
+        android:layout_marginRight="@dimen/lib_padding_left"
+        android:layout_marginBottom="@dimen/lib_ldpi"
+        android:background="@drawable/media_record_audio_selector"
+        android:clickable="true"
+        android:drawablePadding="4dp"
+        android:gravity="center"
+        android:minWidth="180dp"
+        android:minHeight="34dp"
+        android:paddingLeft="18dp"
+        android:paddingRight="18dp"
+        app:drawableTint="@color/media_audio_tip_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/form_recycler_view"
+        tools:drawableLeft="@drawable/media_record_voice"
+        tools:text="长按输入语音" />
+
+</LinearLayout>
