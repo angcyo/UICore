@@ -10,7 +10,10 @@ import com.angcyo.widget.base.isTouchDown
 import com.angcyo.widget.base.isTouchFinish
 
 /**
- * 支持[GestureDetector]的处理
+ * 支持[GestureDetector]的处理.
+ *
+ * 使用时, 请注意[CoordinatorLayout]具有消耗事件的能力, 否则[TOUCH_DOWN]之后, 就无法收到其他事件了.
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/03/20

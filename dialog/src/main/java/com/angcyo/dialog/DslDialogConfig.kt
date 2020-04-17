@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.text.TextUtils
 import android.view.*
-import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
+import android.view.WindowManager.LayoutParams.*
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
@@ -165,6 +165,10 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
     /** window动画资源 */
     @StyleRes
     var animStyleResId: Int = R.style.LibDialogAnimation
+
+    /**创建对话框时的主题*/
+    @StyleRes
+    var dialogThemeResId: Int = R.style.LibDialogStyle
 
     /**
      * 显示dialog的类型
@@ -324,7 +328,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
                 }
             }
         }
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        window.setSoftInputMode(SOFT_INPUT_ADJUST_RESIZE)
         if (dialogBgDrawable != null) {
             window.setBackgroundDrawable(dialogBgDrawable)
         }
@@ -338,10 +342,12 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
         //设置了导航栏颜色, 键盘弹出,不会挤上布局.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (statusBarColor != undefined_res) {
+                window.clearFlags(FLAG_TRANSLUCENT_STATUS)
                 window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 window.statusBarColor = statusBarColor
             }
             if (navigationBarColor != undefined_res) {
+                window.clearFlags(FLAG_TRANSLUCENT_NAVIGATION)
                 window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 window.navigationBarColor = navigationBarColor
             }
@@ -388,7 +394,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
         }
 
         val builder =
-            AlertDialog.Builder(dialogContext!!)
+            AlertDialog.Builder(dialogContext!!, dialogThemeResId)
         if (!TextUtils.isEmpty(dialogMessage)) {
             builder.setMessage(dialogMessage)
         }
@@ -430,8 +436,9 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
         }
         return try {
             val cls = Class.forName("com.google.android.material.bottomsheet.BottomSheetDialog")
-            val constructor = cls.getConstructor(Context::class.java)
-            val sheetDialog: Dialog = constructor.newInstance(dialogContext) as Dialog
+            val constructor = cls.getConstructor(Context::class.java, Int::class.java)
+            val sheetDialog: Dialog =
+                constructor.newInstance(dialogContext, dialogThemeResId) as Dialog
             showAndConfigDialog(sheetDialog)
         } catch (e: Exception) {
             L.w(e)
@@ -445,7 +452,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
         if (dialogContext == null) {
             throw NullPointerException("context is null.")
         }
-        val dialog = AppCompatDialog(dialogContext)
+        val dialog = AppCompatDialog(dialogContext, dialogThemeResId)
         showAndConfigDialog(dialog)
         return dialog
     }
@@ -455,7 +462,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
         if (dialogContext == null) {
             throw NullPointerException("context is null.")
         }
-        val dialog = Dialog(dialogContext!!)
+        val dialog = Dialog(dialogContext!!, dialogThemeResId)
         showAndConfigDialog(dialog)
         return dialog
     }
@@ -477,7 +484,9 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
             DIALOG_TYPE_BOTTOM_SHEET_DIALOG -> showSheetDialog()
             DIALOG_TYPE_ACTIVITY -> {
                 showDialogActivity()
-                Dialog(dialogContext!!)
+                Dialog(dialogContext!!).apply {
+                    L.w("[DIALOG_TYPE_ACTIVITY] 类型, 无法返回[Dialog]对象")
+                }
             }
             else -> showCompatDialog()
         }

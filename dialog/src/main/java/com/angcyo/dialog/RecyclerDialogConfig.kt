@@ -38,7 +38,7 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
     /**对话框返回, 取消不会触发此回调
      * [dialogItemList] 数据列表
      * [dialogItemIndexList] 索引列表*/
-    var onDialogResult: (dialog: Dialog, itemList: List<DslAdapterItem>, indexList: List<Int>) -> Boolean =
+    var dialogResult: (dialog: Dialog, itemList: List<DslAdapterItem>, indexList: List<Int>) -> Boolean =
         { _, _, _ -> false }
 
     init {
@@ -49,7 +49,7 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
             if (dialogSelectorModel == ItemSelectorHelper.MODEL_SINGLE ||
                 dialogSelectorModel == ItemSelectorHelper.MODEL_MULTI
             ) {
-                if (onDialogResult(
+                if (dialogResult(
                         dialog,
                         _recyclerConfig.getSelectorItemList(),
                         _recyclerConfig.getSelectorIndexList()
@@ -59,7 +59,7 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
                     dismiss = false
                 } else {
                     //清空回调对象
-                    onDialogResult = { _, _, _ -> false }
+                    dialogResult = { _, _, _ -> false }
                 }
             }
             if (dismiss) {
@@ -89,7 +89,7 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
         _recyclerConfig.adapterSelectorModel = dialogSelectorModel
         _recyclerConfig.initRecycler(dialogViewHolder)
         _recyclerConfig.adapterItemClick = { dslItem, view ->
-            if (onDialogResult(_dialog!!, listOf(dslItem), listOf(dslItem.itemIndexPosition()))
+            if (dialogResult(_dialog!!, listOf(dslItem), listOf(dslItem.itemIndexPosition()))
             ) {
                 //拦截
             } else {

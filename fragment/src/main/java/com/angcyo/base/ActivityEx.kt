@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.view.View
+import android.view.Window
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.core.app.ActivityCompat
@@ -108,32 +109,40 @@ fun Activity.setNavigationBarColor(color: Int) {
 /**半透明/全透明 状态栏
  * https://www.jianshu.com/p/add47d6bde29*/
 fun Activity.translucentStatusBar(full: Boolean = false) {
-    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+    window.translucentStatusBar(full)
+}
+
+fun Window.translucentStatusBar(full: Boolean = false) {
+    addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
     if (full) {
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        setStatusBarColor(Color.TRANSPARENT)//全透明
-        window.decorView.systemUiVisibility =
-            window.decorView.systemUiVisibility or
+        clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        statusBarColor = Color.TRANSPARENT//全透明
+        decorView.systemUiVisibility =
+            decorView.systemUiVisibility or
                     View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
     } else {
-        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
     }
 }
 
 /**半透明/全透明 导航栏
  * https://www.jianshu.com/p/add47d6bde29*/
 fun Activity.translucentNavigationBar(full: Boolean = false) {
-    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+    window.translucentNavigationBar(full)
+}
+
+fun Window.translucentNavigationBar(full: Boolean = false) {
+    addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
     if (full) {
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
-        setNavigationBarColor(Color.TRANSPARENT)//全透明
-        window.decorView.systemUiVisibility =
-            window.decorView.systemUiVisibility or
+        clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+        navigationBarColor = Color.TRANSPARENT//全透明
+        decorView.systemUiVisibility =
+            decorView.systemUiVisibility or
                     View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                     View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     } else {
-        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+        addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
     }
 }
 

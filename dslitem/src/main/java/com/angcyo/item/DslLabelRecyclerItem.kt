@@ -70,7 +70,7 @@ class DslLabelRecyclerItem : DslBaseLabelItem() {
 
                 _recyclerConfig.adapterItemList.addAll(itemRecyclerList)
 
-                onDialogResult = { dialog, itemList, indexList ->
+                dialogResult = { dialog, itemList, indexList ->
                     if (itemRecyclerResult(dialog, itemList, indexList)) {
                         //拦截了
                         true

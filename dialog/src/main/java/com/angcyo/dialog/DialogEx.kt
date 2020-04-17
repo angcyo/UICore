@@ -7,6 +7,7 @@ import android.text.InputType
 import android.view.Gravity
 import android.view.View
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.getRootHeight
 
 /**
  *
@@ -27,7 +28,7 @@ fun DslDialogConfig.configBottomDialog(context: Context? = null): DslDialogConfi
         dialogGravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
         animStyleResId = R.style.LibDialogBottomTranslateAnimation
         setDialogBgColor(Color.TRANSPARENT)
-        this.dialogContext = context ?: this.dialogContext
+        dialogContext = context ?: dialogContext
     }
 }
 
@@ -60,6 +61,8 @@ fun Context.normalIosDialog(config: IosDialogConfig.() -> Unit): Dialog {
 }
 
 //</editor-fold desc="常用对话框">
+
+//<editor-fold desc="高级对话框">
 
 /**
  * 多选项, 选择对话框, 底部带 取消按钮, 标题栏不带取消

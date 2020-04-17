@@ -8,10 +8,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Looper
 import android.view.View
-import com.angcyo.library.ex.getNavBarHeight
-import com.angcyo.library.ex.getStatusBarHeight
-import com.angcyo.library.ex.isDebug
-import com.angcyo.library.ex.navBarHeight
+import com.angcyo.library.ex.*
 import com.orhanobut.hawk.Hawk
 
 /**
@@ -147,9 +144,6 @@ val _screenHeight: Int get() = app().getScreenHeight()
 val _satusBarHeight: Int get() = app().getStatusBarHeight()
 val _navBarHeight: Int get() = app().getNavBarHeight()
 
-/**导航栏正在显示的高度*/
-val _navBarHeightShow: Int get() = app().navBarHeight()
-
 fun View.getScreenWidth() = resources.displayMetrics.widthPixels
 
 /**排除了显示的状态栏高度和导航栏高度*/
@@ -159,6 +153,9 @@ fun Context.getScreenWidth() = resources.displayMetrics.widthPixels
 
 /**排除了显示的状态栏高度和导航栏高度*/
 fun Context.getScreenHeight() = resources.displayMetrics.heightPixels
+
+/**导航栏正在显示的高度*/
+fun Context?.getNavBarHeightShow() = activityContent()?.navBarHeight() ?: 0
 
 /**是否是主线程*/
 fun isMain() = Looper.getMainLooper() == Looper.myLooper()

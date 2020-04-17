@@ -3,14 +3,18 @@ package com.angcyo.library.ex
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Point
 import android.hardware.Camera
 import android.media.AudioManager
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.DisplayMetrics
+import android.view.Display
 import android.view.View
 import android.view.Window
 import android.webkit.MimeTypeMap
@@ -37,6 +41,39 @@ fun Context.getContentViewHeight(): Int {
             .measuredHeight
     }
     return 0
+}
+
+/**获取根的宽度*/
+fun Context.getRootWidth(): Int {
+    var displayWidth = 0
+    val display: Display =
+        activityContent()?.windowManager?.defaultDisplay ?: return displayWidth
+    val point = Point()
+    displayWidth = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        display.getRealSize(point)
+        point.x
+    } else {
+        val dm = DisplayMetrics()
+        activityContent()?.windowManager?.defaultDisplay?.getMetrics(dm)
+        dm.widthPixels
+    }
+    return displayWidth
+}
+
+/**获取根的高度*/
+fun Context.getRootHeight(): Int {
+    var displayHeight = 0
+    val display: Display = activityContent()?.windowManager?.defaultDisplay ?: return displayHeight
+    val point = Point()
+    displayHeight = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        display.getRealSize(point)
+        point.y
+    } else {
+        val dm = DisplayMetrics()
+        activityContent()?.windowManager?.defaultDisplay?.getMetrics(dm)
+        dm.heightPixels
+    }
+    return displayHeight
 }
 
 /**如果有权限, 则直接返回. 否则请求权限, 但是权限回调无法拿到
@@ -185,6 +222,21 @@ fun Context.readAssets(fileName: String): String? {
         assets.open(fileName).reader().readText()
     } catch (e: Exception) {
         L.w(e)
+        null
+    }
+}
+
+/**获取[Context]包含的[Activity]*/
+fun Context?.activityContent(): Activity? {
+    var ctx = this
+    var i = 0
+    while (i < 4 && ctx !is Activity && ctx is ContextWrapper) {
+        ctx = ctx.baseContext
+        i++
+    }
+    return if (ctx is Activity) {
+        ctx
+    } else {
         null
     }
 }
