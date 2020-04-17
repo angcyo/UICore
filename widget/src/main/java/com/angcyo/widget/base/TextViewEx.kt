@@ -13,6 +13,7 @@ import com.angcyo.library.L
 import com.angcyo.library.ex.add
 import com.angcyo.library.ex.remove
 import com.angcyo.library.utils.getMember
+import com.angcyo.widget.span.span
 import java.util.*
 
 /**
@@ -134,6 +135,17 @@ fun TextView.spans(action: (index: Int, span: Any) -> Unit) {
         val spans = text.getSpans(0, text.length, Any::class.java)
         spans.forEachIndexed(action)
     }
+}
+
+/**枚举所有[span]*/
+fun TextView.allSpans(): List<Any> {
+    val text = text
+    val result = mutableListOf<Any>()
+    if (text is Spanned) {
+        val spans = text.getSpans(0, text.length, Any::class.java)
+        result.addAll(spans)
+    }
+    return result
 }
 
 /**清空所有[TextWatcher]*/
