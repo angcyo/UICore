@@ -14,6 +14,7 @@ import com.angcyo.library.ex.undefined_color
 import com.angcyo.library.ex.undefined_float
 
 /**
+ * 系统文本Span样式集合体.
  *
  * Email:angcyo@126.com
  * @author angcyo
@@ -54,13 +55,16 @@ open class DslTextSpan : MetricAffectingSpan(), LeadingMarginSpan,
 
     /**文本基线偏移*/
     var textBaselineShift: Int = 0
+
     /**上标*/
     var isSuperscript: Boolean = false
+
     /**下标*/
     var isSubscript: Boolean = false
 
     /**首行缩进*/
     var leadingFirst: Int = 0
+
     /**其他行缩进*/
     var leadingRest: Int = 0
 

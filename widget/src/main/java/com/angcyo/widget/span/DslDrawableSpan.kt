@@ -15,6 +15,10 @@ import com.angcyo.library.ex.*
 import kotlin.math.min
 
 /**
+ * 强大的自绘文本, Drawable的span. 超多属性支持.
+ *
+ * 支持 weight 属性, 需要[DslSpanTextView]的支持.
+ *
  * 不支持span内自动换行
  * Email:angcyo@126.com
  * @author angcyo
@@ -105,7 +109,7 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
     val _gradientRectF = RectF()
 
     /**单击事件回调, 需要[SpanClickMethod]支持*/
-    var onClickSpan: ((view: View, span: DslDrawableSpan) -> Unit)? = null
+    var spanClickAction: ((view: View, span: DslDrawableSpan) -> Unit)? = null
 
     fun _initPaint(paint: Paint) {
         textPaint.set(paint)
@@ -380,11 +384,11 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
     }
 
     override fun isCanClick(): Boolean {
-        return onClickSpan != null
+        return spanClickAction != null
     }
 
     override fun onClickSpan(view: View, span: IClickableSpan) {
-        onClickSpan?.run { this(view, this@DslDrawableSpan) } ?: super.onClickSpan(view, span)
+        spanClickAction?.run { this(view, this@DslDrawableSpan) } ?: super.onClickSpan(view, span)
     }
 
     override fun onTouchEvent(view: View, span: IClickableSpan, event: MotionEvent) {

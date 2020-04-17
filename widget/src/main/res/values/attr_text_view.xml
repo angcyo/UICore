@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="DslSpanTextView">
+        <!--自定义的限制行数-->
+        <attr name="r_max_line" format="integer" />
+        <attr name="r_more_text" format="string" />
+        <attr name="r_more_text_color" format="color" />
+        <attr name="r_fold_text" format="string" />
+        <attr name="r_fold_text_color" format="color" />
+        <attr name="r_install_span_click_method" format="boolean" />
+    </declare-styleable>
+</resources>
