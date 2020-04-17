@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-
     <!--是否显示删除按钮-->
     <attr name="r_show_clear" format="boolean" />
     <attr name="r_clear_drawable" format="reference" />
@@ -27,6 +26,70 @@
         <attr name="r_hide_soft_input_on_lost_focus" />
         <attr name="r_hide_soft_input_on_detached" />
         <attr name="r_hide_soft_input_on_invisible" />
+    </declare-styleable>
+
+    <!--焦点动画配置-->
+    <attr name="r_focus_drawable" format="reference|color" />
+    <attr name="r_no_focus_drawable" format="reference|color" />
+    <attr name="r_drawable_height" format="string|dimension" />
+    <attr name="r_drawable_margin_left" format="string|dimension" />
+    <attr name="r_drawable_margin_right" format="string|dimension" />
+    <attr name="r_drawable_margin_bottom" format="string|dimension" />
+    <attr name="r_focus_animator_duration" format="integer" />
+
+    <declare-styleable name="FocusEditDelegate">
+        <attr name="r_focus_drawable" />
+        <attr name="r_no_focus_drawable" />
+        <attr name="r_drawable_height" />
+        <attr name="r_drawable_margin_left" />
+        <attr name="r_drawable_margin_right" />
+        <attr name="r_drawable_margin_bottom" />
+        <attr name="r_focus_animator_duration" />
+    </declare-styleable>
+
+    <!--\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\-->
+
+    <declare-styleable name="ClearEditText">
+        <attr name="r_show_clear" />
+        <attr name="r_clear_drawable" />
+        <attr name="r_is_password_drawable" />
+        <attr name="r_show_password_on_touch" />
+
+        <attr name="r_focus_drawable" />
+        <attr name="r_no_focus_drawable" />
+        <attr name="r_drawable_height" />
+        <attr name="r_drawable_margin_left" />
+        <attr name="r_drawable_margin_right" />
+        <attr name="r_drawable_margin_bottom" />
+        <attr name="r_focus_animator_duration" />
+    </declare-styleable>
+
+    <declare-styleable name="ClearCompleteEditText">
+        <attr name="r_show_clear" />
+        <attr name="r_clear_drawable" />
+        <attr name="r_is_password_drawable" />
+        <attr name="r_show_password_on_touch" />
+
+        <attr name="r_focus_drawable" />
+        <attr name="r_no_focus_drawable" />
+        <attr name="r_drawable_height" />
+        <attr name="r_drawable_margin_left" />
+        <attr name="r_drawable_margin_right" />
+        <attr name="r_drawable_margin_bottom" />
+        <attr name="r_focus_animator_duration" />
+    </declare-styleable>
+
+    <declare-styleable name="AutoCompleteEditText">
+        <!--默认自动输入提示文本-->
+        <attr name="r_auto_complete_text" format="string" />
+        <!--分隔符默认是 `|` -->
+        <attr name="r_auto_complete_text_separator" format="string" />
+        <!--收到焦点, 就展示-->
+        <attr name="r_auto_complete_show_on_focus" format="boolean" />
+        <!--收到焦点, 展示时的延迟时间-->
+        <attr name="r_auto_complete_focus_delay" format="integer" />
+
+        <attr name="r_auto_complete_show_item_delete" format="boolean" />
     </declare-styleable>
 
 </resources>

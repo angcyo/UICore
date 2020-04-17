@@ -59,7 +59,7 @@ open class ClearEditText : AppCompatEditText, IEditDelegate {
 
     override fun onFocusChanged(focused: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
         super.onFocusChanged(focused, direction, previouslyFocusedRect)
-        editDelegate?.checkEdit(focused)
+        editDelegate?.onFocusChanged(focused)
         if (!focused) {
             _lastKeyCode = -1
         }
@@ -106,6 +106,7 @@ open class ClearEditText : AppCompatEditText, IEditDelegate {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        editDelegate?.onDraw(canvas)
     }
 
     override fun getCustomEditDelegate(): REditDelegate = editDelegate!!

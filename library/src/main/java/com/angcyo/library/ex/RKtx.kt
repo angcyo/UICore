@@ -50,9 +50,10 @@ fun Context.calcLayoutMaxHeight(
     rMaxHeight: String?,
     parentWidth: Int,
     parentHeight: Int,
-    exclude: Int = 0
+    exclude: Int = 0,
+    def: Int = -1
 ): Int {
-    return calcSize(rMaxHeight, parentWidth, parentHeight, exclude)
+    return calcSize(rMaxHeight, parentWidth, parentHeight, exclude, def)
 }
 
 /**[exp] 计算表达式, 支持 sh ph px dip, 正数是倍数, 负数是减去倍数的值*/
@@ -61,27 +62,38 @@ fun calcSize(
     exp: String?,
     pWidth: Int = _screenWidth,
     pHeight: Int = _screenHeight,
-    exclude: Int = 0
+    exclude: Int = 0,
+    def: Int = -1
 ): Int {
-    return app().calcSize(exp, pWidth, pHeight, exclude)
+    return app().calcSize(exp, pWidth, pHeight, exclude, def)
 }
+
+/**计算表达式, 支持 sh ph px dip, 正数是倍数, 负数是减去倍数的值*/
+fun String?.toRSize(
+    pWidth: Int = _screenWidth,
+    pHeight: Int = _screenHeight,
+    exclude: Int = 0,
+    def: Int = -1
+): Int = app().calcSize(this, pWidth, pHeight, exclude, def)
 
 fun View.calcSize(
     exp: String?,
     pWidth: Int = getScreenWidth(),
     pHeight: Int = getScreenHeight(),
-    exclude: Int = 0
+    exclude: Int = 0,
+    def: Int = -1
 ): Int {
-    return context.calcSize(exp, pWidth, pHeight, exclude)
+    return context.calcSize(exp, pWidth, pHeight, exclude, def)
 }
 
 fun Context.calcSize(
     exp: String?,
     pWidth: Int = getScreenWidth(),
     pHeight: Int = getScreenHeight(),
-    exclude: Int = 0
+    exclude: Int = 0,
+    def: Int = -1
 ): Int {
-    var result = -1
+    var result = def
     if (!exp.isNullOrBlank()) {
         fun _get(ut: String, height: Int): Boolean {
             if (exp.contains(ut, true)) {
@@ -123,6 +135,8 @@ fun Context.calcSize(
             _get("pw", pWidth) -> {
             }
             _getDp("dip", dpi) -> {
+            }
+            _getDp("dp", dpi) -> {
             }
             _getDp("px", 1) -> {
 

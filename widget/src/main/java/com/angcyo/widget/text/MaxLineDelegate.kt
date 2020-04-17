@@ -36,6 +36,7 @@ class MaxLineDelegate {
     var foldTextColor = undefined_color
 
     val moreSpan = MaxLinePlaceholderSpan()
+
     val foldSpan = MaxLinePlaceholderSpan().apply {
         spanClickAction = { view, span ->
             if (view is TextView) {

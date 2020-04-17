@@ -26,7 +26,7 @@ import kotlin.math.min
  * @author angcyo
  * @date 2020/02/05
  */
-class REditDelegate(val editText: EditText) {
+class REditDelegate(editText: EditText) : FocusEditDelegate(editText) {
     companion object {
         val STATE_NONE = StateSet.WILD_CARD
         val STATE_PRESSED = intArrayOf(android.R.attr.state_pressed)
@@ -85,7 +85,9 @@ class REditDelegate(val editText: EditText) {
 
     //</editor-fold desc="DslEditText">
 
-    fun initAttribute(context: Context, attrs: AttributeSet?) {
+    override fun initAttribute(context: Context, attrs: AttributeSet?) {
+        super.initAttribute(context, attrs)
+
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.REditDelegate)
 
         showClearDrawable =
@@ -265,6 +267,11 @@ class REditDelegate(val editText: EditText) {
         if (isPasswordDrawable) {
             updateState(false, true)
         }
+    }
+
+    override fun onFocusChanged(focused: Boolean) {
+        super.onFocusChanged(focused)
+        checkEdit(focused)
     }
 
     fun checkEdit(focused: Boolean) {
