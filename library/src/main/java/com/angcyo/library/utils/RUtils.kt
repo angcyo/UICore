@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.AudioManager
 import android.net.Uri
 import android.os.Build
 import android.telephony.TelephonyManager
@@ -105,6 +106,15 @@ fun Int.resultString(): String {
         Activity.RESULT_OK -> "RESULT_OK"
         Activity.RESULT_CANCELED -> "RESULT_CANCELED"
         Activity.RESULT_FIRST_USER -> "RESULT_FIRST_USER"
+        else -> "UNKNOWN"
+    }
+}
+
+fun Int.audioFocusString(): String {
+    return when (this) {
+        AudioManager.AUDIOFOCUS_GAIN -> "AudioManager.AUDIOFOCUS_GAIN"
+        AudioManager.AUDIOFOCUS_LOSS -> "AudioManager.AUDIOFOCUS_LOSS"
+        AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> "AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK"
         else -> "UNKNOWN"
     }
 }

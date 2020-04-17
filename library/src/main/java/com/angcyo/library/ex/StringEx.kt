@@ -7,11 +7,13 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
+import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.util.Base64
 import android.webkit.MimeTypeMap
 import androidx.annotation.ColorInt
+import androidx.core.text.getSpans
 import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.utils.PATTERN_MOBILE_SIMPLE
@@ -395,3 +397,14 @@ fun String.shareText(
         )
     }
 }
+
+/**从指定位置开始, 移除Span*/
+fun Spannable.clearSpans(start: Int = -1) {
+    getSpans<Any>().forEach {
+        val startPosition = getSpanStart(it)
+        if (startPosition >= start) {
+            removeSpan(it)
+        }
+    }
+}
+
