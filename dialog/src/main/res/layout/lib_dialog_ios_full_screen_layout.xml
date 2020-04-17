@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RCoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/lib_dialog_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lib_black"
+    android:clickable="true">
+
+    <com.angcyo.widget.ActivityScreenshotImageView
+        android:id="@+id/activity_screenshot_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <View
+        android:id="@+id/color_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#33000000" />
+
+    <FrameLayout
+        android:id="@+id/touch_back_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="com.angcyo.behavior.effect.TouchBackBehavior">
+
+        <com.angcyo.widget.layout.RLinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/dialog_white_top_round_bg_shape"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/title_layout"
+                layout="@layout/lib_dialog_base_title_layout" />
+
+            <View
+                android:id="@+id/title_line_view"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/lib_line_px"
+                android:background="@color/lib_line" />
+
+            <com.angcyo.widget.recycler.DslRecyclerView
+                android:id="@+id/lib_recycler_view"
+                style="@style/LibRecyclerViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/dialog_white_top_round_bg_shape" />
+
+        </com.angcyo.widget.layout.RLinearLayout>
+    </FrameLayout>
+
+</com.angcyo.widget.layout.RCoordinatorLayout>

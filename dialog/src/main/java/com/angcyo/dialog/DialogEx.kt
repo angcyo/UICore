@@ -133,16 +133,16 @@ fun Context.optionDialog(config: OptionDialogConfig.() -> Unit): Dialog {
     }
 }
 
-///**
-// * 日历选择对话框
-// * */
-//fun Context.calendarDialog(config: CalendarDialogConfig.() -> Unit): Dialog {
-//    val dialogConfig = CalendarDialogConfig()
-//    dialogConfig.config()
-//
-//    return buildBottomDialog().show(dialogConfig)
-//}
-//
+/**模拟IOS的全屏对话框*/
+fun Context.iosFullScreenDialog(config: IosFullScreenDialogConfig.() -> Unit): Dialog {
+    return IosFullScreenDialogConfig().run {
+        dialogContext = this@iosFullScreenDialog
+        config()
+        show()
+    }
+}
+
+//</editor-fold desc="高级对话框">
 
 //<editor-fold desc="popupWindow">
 
