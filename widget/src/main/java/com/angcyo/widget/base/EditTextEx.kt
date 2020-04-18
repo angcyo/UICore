@@ -260,8 +260,8 @@ fun EditText.isEditSingleLine(): Boolean {
 
 /**输入法[OnEditorActionListener]*/
 fun TextView.onImeAction(
-    option: Int = EditorInfo.IME_ACTION_DONE,
-    label: CharSequence? = null,
+    option: Int = EditorInfo.IME_ACTION_GO,
+    label: CharSequence? = "Go",
     action: () -> Unit
 ) {
     setImeActionLabel(label, option)

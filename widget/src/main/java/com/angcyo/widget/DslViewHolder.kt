@@ -204,6 +204,10 @@ open class DslViewHolder(
 
     //<editor-fold desc="可见性控制">
 
+    fun focusView(@IdRes resId: Int) {
+        focus<View>(resId)
+    }
+
     fun <T : View?> focus(@IdRes resId: Int): T? {
         val v = v<View>(resId)
         if (v != null) {
