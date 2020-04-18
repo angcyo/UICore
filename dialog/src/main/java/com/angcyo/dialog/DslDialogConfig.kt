@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatDialog
 import com.angcyo.base.dslAHelper
 import com.angcyo.dialog.activity.DialogActivity
 import com.angcyo.library.L
+import com.angcyo.library.UndefinedDrawable
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.undefined_float
 import com.angcyo.library.ex.undefined_res
@@ -140,7 +141,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
         { _, _ -> }
 
     @Transient
-    var dialogBgDrawable: Drawable? = null
+    var dialogBgDrawable: Drawable? = UndefinedDrawable()
     var dialogWidth: Int = undefined_res
     var dialogHeight: Int = undefined_res
     var dialogGravity: Int = undefined_res
@@ -329,7 +330,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
             }
         }
         window.setSoftInputMode(SOFT_INPUT_ADJUST_RESIZE)
-        if (dialogBgDrawable != null) {
+        if (dialogBgDrawable !is UndefinedDrawable) {
             window.setBackgroundDrawable(dialogBgDrawable)
         }
         if (amount != undefined_float) {
