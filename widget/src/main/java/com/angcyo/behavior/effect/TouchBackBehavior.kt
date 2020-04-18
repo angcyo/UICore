@@ -4,11 +4,16 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.math.MathUtils
 import androidx.core.view.ViewCompat
 import com.angcyo.behavior.BaseGestureBehavior
+import com.angcyo.library.ex.abs
+import com.angcyo.library.ex.toRSize
+import com.angcyo.widget.R
 import com.angcyo.widget.base.mH
+import com.angcyo.widget.base.mW
 import com.angcyo.widget.base.offsetTopTo
 
 /**
@@ -23,9 +28,51 @@ open class TouchBackBehavior(
     attributeSet: AttributeSet? = null
 ) : BaseGestureBehavior<View>(context, attributeSet) {
 
+    /**关闭阈值, 滚动大于这个值时, 判定是需要关闭*/
+    var touchBackSlop: String = "0.1ph"
+
+    /**首次布局时, 需要滚动的偏移距离. 实现半屏效果*/
+    var defaultScrollOffsetY: String = "0dp"
+
+    //实际的滚动偏移, 参与计算
+    var _scrollOffsetY = 0
+
+    var _scaledTouchSlop: Int = 0
+
     init {
 
+        val array =
+            context.obtainStyledAttributes(attributeSet, R.styleable.TouchBackBehavior_Layout)
+
+        touchBackSlop = array.getString(R.styleable.TouchBackBehavior_Layout_layout_touch_back_slop)
+            ?: touchBackSlop
+
+        defaultScrollOffsetY =
+            array.getString(R.styleable.TouchBackBehavior_Layout_layout_default_scroll_offset_y)
+                ?: defaultScrollOffsetY
+
+        array.recycle()
+
+        _scaledTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
     }
+
+    override fun onMeasureAfter(parent: CoordinatorLayout, child: View) {
+        super.onMeasureAfter(parent, child)
+        _scrollOffsetY = defaultScrollOffsetY.toRSize(childView.mW(), childView.mH(), def = 0)
+    }
+
+    override fun onLayoutChild(
+        parent: CoordinatorLayout,
+        child: View,
+        layoutDirection: Int
+    ): Boolean {
+        if (!child.isLaidOut) {
+            //首次布局
+            scrollTo(0, _scrollOffsetY)
+        }
+        return super.onLayoutChild(parent, child, layoutDirection)
+    }
+
 
     override fun scrollTo(x: Int, y: Int) {
         val min = 0
@@ -127,7 +174,7 @@ open class TouchBackBehavior(
 
     override fun onTouchFinish(parent: CoordinatorLayout, child: View, ev: MotionEvent) {
         super.onTouchFinish(parent, child, ev)
-        if (!isTouchHold && _nestedScrollView == null) {
+        if (!isTouchHold && _nestedScrollView == null && ViewCompat.isLaidOut(child)) {
             //在非nested scroll 视图上滚动过
             resetScroll()
         }
@@ -135,18 +182,41 @@ open class TouchBackBehavior(
 
     /**重置滚动状态*/
     fun resetScroll() {
-        if (behaviorScrollY > childView.mH() / 5) {
+        //滚动距离大于这个值时, 就要关闭界面
+        val minSlop =
+            touchBackSlop.toRSize(childView.mW(), childView.mH(), def = childView.mH() / 5)
+        val scrollDy = behaviorScrollY - _scrollOffsetY
+        val offsetY =
+            defaultScrollOffsetY.toRSize(childView.mW(), childView.mH(), def = 0)
+
+        if (scrollDy > minSlop) {
             //滑动大于child的5分之一
             scrollToClose()
         } else {
+            _scrollOffsetY = if (_scrollOffsetY <= 0) {
+                0
+            } else if (scrollDy > 0) {
+                //手指向下拖拽, 但是未达到阈值
+                offsetY
+            } else {
+                //手指向上拖拽
+                if (_scrollOffsetY > 0 && scrollDy.abs() > _scaledTouchSlop) {
+                    //大于阈值
+                    0
+                } else {
+                    offsetY
+                }
+            }
             scrollToNormal()
         }
     }
 
+    /**滚动至正常*/
     fun scrollToNormal() {
-        startScrollTo(0, 0)
+        startScrollTo(0, _scrollOffsetY)
     }
 
+    /**滚动至关闭*/
     fun scrollToClose() {
         startScrollTo(0, childView.mH())
     }
