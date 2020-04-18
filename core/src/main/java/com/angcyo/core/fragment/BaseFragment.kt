@@ -19,6 +19,15 @@ import kotlinx.coroutines.CoroutineScope
  */
 abstract class BaseFragment : AbsLifecycleFragment() {
 
+    //<editor-fold desc="Fragment样式配置">
+
+    var fragmentUI: FragmentUI? = null
+        get() = field ?: BaseUI.fragmentUI
+
+    var fragmentConfig: FragmentConfig = FragmentConfig()
+
+    //</editor-fold desc="Fragment样式配置">
+
     /**
      * onActivityCreated -> onCreateAnimation -> onCreateAnimator
      */

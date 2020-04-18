@@ -3,6 +3,8 @@ package com.angcyo.core.fragment
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.DrawableRes
+import androidx.core.view.setPadding
 import com.angcyo.base.back
 import com.angcyo.core.R
 import com.angcyo.library.ex.colorFilter
@@ -19,32 +21,58 @@ import com.angcyo.widget.span.span
  * @date 2019/12/31
  */
 
+object BaseUI {
+    var fragmentUI = FragmentUI()
+}
 
 open class FragmentUI {
 
+    //<editor-fold desc="成员区">
+
+    /**是否显示返回按钮的文本*/
     var showBackText: Boolean = true
 
-    var backIconDrawable: Int = R.drawable.lib_back
+    /**返回按钮的[Drawable]资源*/
+    @DrawableRes
+    var backIconDrawableId: Int = R.drawable.lib_back
 
     /**[BaseTitleFragment.onCreate]中触发*/
+    var fragmentCreateAfter: (fragment: BaseTitleFragment, fragmentConfig: FragmentConfig) -> Unit =
+        { fragment, fragmentConfig ->
+            onFragmentCreateAfter(fragment, fragmentConfig)
+        }
+
+    /**[BaseTitleFragment.onCreateView]中触发*/
+    var fragmentCreateViewAfter: (fragment: BaseTitleFragment) -> Unit = {
+        onFragmentCreateViewAfter(it)
+    }
+
+    /**创建返回按钮
+     * [com.angcyo.core.fragment.BaseTitleFragment.onCreateBackItem]*/
+    var fragmentCreateBackItem: (fragment: BaseTitleFragment) -> View? = {
+        onFragmentCreateBackItem(it)
+    }
+
+    //</editor-fold desc="成员区">
+
+    //<editor-fold desc="方法区">
+
     open fun onFragmentCreateAfter(fragment: BaseTitleFragment, fragmentConfig: FragmentConfig) {
 
     }
 
-    /**[BaseTitleFragment.onCreateView]中触发*/
     open fun onFragmentCreateViewAfter(fragment: BaseTitleFragment) {
 
     }
 
-    /**创建返回按钮*/
-    open fun onCreateFragmentBackItem(fragment: BaseTitleFragment): View? {
+    open fun onFragmentCreateBackItem(fragment: BaseTitleFragment): View? {
         return fragment.leftControl()?.inflate(R.layout.lib_text_layout, false) {
             find<TextView>(R.id.lib_text_view)?.apply {
                 setTextColor(fragment.fragmentConfig.titleItemTextColor)
                 text = span {
                     drawable {
                         backgroundDrawable =
-                            loadDrawable(backIconDrawable).colorFilter(fragment.fragmentConfig.titleItemIconColor)
+                            loadDrawable(backIconDrawableId).colorFilter(fragment.fragmentConfig.titleItemIconColor)
                     }
                     if (showBackText) {
                         drawable("返回") {
@@ -60,9 +88,6 @@ open class FragmentUI {
             }
         }
     }
-}
 
-
-object BaseUI {
-    var fragmentUI = FragmentUI()
+    //</editor-fold desc="方法区">
 }

@@ -65,8 +65,6 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
     //<editor-fold desc="操作属性">
 
-    var fragmentConfig: FragmentConfig = FragmentConfig()
-
     /**标题*/
     var fragmentTitle: CharSequence? = null
         set(value) {
@@ -75,9 +73,6 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
                 _vh.tv(R.id.lib_title_text_view)?.text = value
             }
         }
-
-    var fragmentUI: FragmentUI? = null
-        get() = field ?: BaseUI.fragmentUI
 
     init {
         /**Fragment根布局*/
@@ -90,7 +85,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fragmentUI?.onFragmentCreateAfter(this, fragmentConfig)
+        fragmentUI?.fragmentCreateAfter?.invoke(this, fragmentConfig)
     }
 
     override fun onCreateRootView(
@@ -118,7 +113,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         onCreateViewAfter(savedInstanceState)
-        fragmentUI?.onFragmentCreateViewAfter(this)
+        fragmentUI?.fragmentCreateViewAfter?.invoke(this)
         return view
     }
 
@@ -130,7 +125,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     }
 
     open fun onCreateBackItem(): View? {
-        return fragmentUI?.onCreateFragmentBackItem(this)
+        return fragmentUI?.fragmentCreateBackItem?.invoke(this)
     }
 
     override fun initBaseView(savedInstanceState: Bundle?) {
