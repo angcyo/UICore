@@ -13,13 +13,15 @@ ext.angcyoJksFile = "未找到默认的angcyo.jks文件"
 listPath(rootDir)
 
 /**枚举所有文件夹*/
-def listPath(filePath, depth = 0 /*当前枚举的路径深度, 深度大于maxDepth停止枚举*/, parent = "") {
+def listPath(File filePath, depth = 0 /*当前枚举的路径深度, 深度大于maxDepth停止枚举*/, String parent = "") {
     //println filePath.getAbsolutePath() + " " + depth
     if (depth > maxDepth) {
         return
     }
 
     if (filePath.isDirectory()) {
+
+        includePath(filePath, parent)
 
         filePath.listFiles()?.each {
             if (it.isDirectory()) {
@@ -32,11 +34,39 @@ def listPath(filePath, depth = 0 /*当前枚举的路径深度, 深度大于maxD
 }
 
 /**查找目标*/
-def includePath(filePath, parent) {
+def includePath(File filePath, String parent) {
     if (filePath.isDirectory()) {
         def targetFile = new File(filePath, "angcyo.jks")
         if (targetFile.exists()) {
             angcyoJksFile = targetFile.getAbsolutePath()
+        }
+    }
+}
+
+ext.keyFileName = "key_file.properties"
+ext.keyFilePropertiesPath = rootDir.absolutePath + "/" + keyFileName
+
+findKeyFileProperties(rootDir)
+
+/**查找签名配置文件[key_file.properties]*/
+def findKeyFileProperties(File filePath, depth = 0 /*当前枚举的路径深度, 深度大于maxDepth停止枚举*/) {
+    //println filePath.getAbsolutePath() + " " + depth
+    if (depth > maxDepth) {
+        return
+    }
+
+    if (filePath.isDirectory()) {
+        filePath.listFiles()?.each {
+            if (it.isDirectory()) {
+
+                def targetFile = new File(it, keyFileName)
+
+                if (targetFile.exists()) {
+                    keyFilePropertiesPath = targetFile.getAbsolutePath()
+                }
+
+                findKeyFileProperties(it, depth + 1)
+            }
         }
     }
 }
@@ -50,35 +80,50 @@ String password = 'angcyo'
 //读取key文件
 Properties props = new Properties()
 if (rootProject.hasProperty("key_file")) {
-    String keyFileString = rootProject.property("key_file")
-    File keyFile = new File(rootDir, keyFileString)
-    //println("->" + keyFile.exists() + "->" + keyFile2.exists())
+    String keyFileConfigString = rootProject.property("key_file")
+    File keyConfigFile = new File(rootDir, keyFileConfigString)
+    //println("->" + keyConfigFile.exists() + "->" + keyFile2.exists())
 
-    if (!keyFile.exists()) {
-        println("根目录未找到配置文件:" + keyFile.getAbsolutePath())
+    if (!keyConfigFile.exists()) {
+        println("根目录未找到配置文件:" + keyConfigFile.getAbsolutePath())
 
-        keyFile = file(keyFileString)
+        keyConfigFile = file(keyFileConfigString)
 
-        println("切换到至:" + keyFile.getAbsolutePath())
+        println("切换到至:" + keyConfigFile.getAbsolutePath())
     }
 
-    if (keyFile.exists()) {
-        println("读取的配置文件:" + keyFile.getAbsolutePath())
+    if (keyConfigFile.exists()) {
+        println("读取的配置文件:" + keyConfigFile.getAbsolutePath())
 
-        props.load(new FileInputStream(keyFile))
+        props.load(new FileInputStream(keyConfigFile))
         key_alias = props['key.alias']
         key_password = props['key.password']
         key_file = props['key.file']
         password = props['password']
 
         //println("key_file:" + key_file)
-        //key_file = keyFile.getParent() + "/" + key_file
+        //key_file = keyConfigFile.getParent() + "/" + key_file
         //println("key_file2:" + key_file)
     } else {
-        println("指定的配置文件:" + keyFile.getAbsolutePath() + "不存在, 将采用默认签名进行.")
+        println("指定的配置文件:" + keyConfigFile.getAbsolutePath() + "不存在, 将采用默认签名进行.")
     }
 } else {
-    println("未声明key_file属性, 将采用默认签名进行.")
+    File keyFilePropertiesFile = new File(keyFilePropertiesPath)
+    if (keyFilePropertiesFile.exists()) {
+        println("读取的配置文件:" + keyFilePropertiesFile.getAbsolutePath())
+
+        props.load(new FileInputStream(keyFilePropertiesFile))
+        key_alias = props['key.alias']
+        key_password = props['key.password']
+        key_file = props['key.file']
+        password = props['password']
+
+        //println("key_file:" + key_file)
+        //key_file = keyConfigFile.getParent() + "/" + key_file
+        //println("key_file2:" + key_file)
+    } else {
+        println("未声明key_file属性, 将采用默认签名进行.")
+    }
 }
 
 File jksFile = new File(key_file)
@@ -93,6 +138,7 @@ if (jksFile.exists()) {
         println("jks文件不存在, 签名将无法进行.")
     }
 }
+
 
 rootProject.ext.signConfig = [
         "key_alias"   : key_alias,
