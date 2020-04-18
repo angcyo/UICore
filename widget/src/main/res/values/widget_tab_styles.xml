@@ -21,6 +21,9 @@
         <item name="tab_indicator_height">4dp</item>
         <item name="tab_indicator_width">MATCH_PARENT</item>
 
+        <item name="tab_enable_gradient_scale">false</item>
+        <item name="tab_min_scale">0.8</item>
+        <item name="tab_max_scale">1</item>
     </style>
 
     <!--底部导航Tab的样式-->
