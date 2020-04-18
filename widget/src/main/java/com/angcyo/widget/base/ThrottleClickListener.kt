@@ -16,6 +16,11 @@ open class ThrottleClickListener(
 
     }
 ) : View.OnClickListener {
+
+    companion object {
+        var _lastThrottleClickTime = 0L
+    }
+
     var _lastClickTime = 0L
     override fun onClick(v: View) {
         val nowTime = System.currentTimeMillis()
@@ -24,5 +29,14 @@ open class ThrottleClickListener(
             action(v)
             _lastClickTime = nowTime
         }
+    }
+}
+
+/**全局节流事件处理*/
+fun throttleClick(interval: Long = 300, action: () -> Unit) {
+    val nowTime = System.currentTimeMillis()
+    if (nowTime - ThrottleClickListener._lastThrottleClickTime > interval) {
+        ThrottleClickListener._lastThrottleClickTime = nowTime
+        action()
     }
 }
