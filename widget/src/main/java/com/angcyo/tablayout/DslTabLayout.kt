@@ -979,6 +979,7 @@ open class DslTabLayout(
             }
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationCancel(animation: Animator?) {
+                    _onAnimateValue(1f)
                     onAnimationEnd(animation)
                 }
 
@@ -996,6 +997,10 @@ open class DslTabLayout(
         if (toIndex == fromIndex) {
             return
         }
+
+        //取消之前的动画
+        _scrollAnimator.cancel()
+
         if (!tabIndicator.indicatorAnim) {
             //不需要动画
             _onAnimateEnd()
