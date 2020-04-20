@@ -12,6 +12,7 @@ import com.angcyo.library.ex.elseNull
 import com.angcyo.library.model.LoaderMedia
 import com.angcyo.library.model.loadUri
 import com.angcyo.library.model.mimeType
+import com.angcyo.loader.LoaderConfig
 import com.angcyo.pager.dslPager
 import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
@@ -33,13 +34,16 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
     var itemMediaAdapter: DslAdapter = DslAdapter()
 
     /**最大显示媒体数*/
-    var itemShowMaxMedia: Int = 9
+    var itemShowMaxMediaCount: Int = 9
 
     /**添加媒体过滤按钮*/
     var addMediaFilterAfterInterceptor = AddMediaFilterAfterInterceptor()
     var addMediaItem: DslAddMediaItem? = DslAddMediaItem().apply {
         margin(1 * dpi)
     }
+
+    /**媒体Loader配置*/
+    var itemUpdateLoaderConfig: (LoaderConfig) -> Unit = {}
 
     /**需要显示的媒体列表*/
     var itemMediaList = mutableListOf<LoaderMedia>()
@@ -85,14 +89,16 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
             itemMediaAdapter.apply {
                 //+号处理
                 dslDataFilter?.dataAfterInterceptorList?.apply {
-                    addMediaFilterAfterInterceptor.maxMediaCount = itemShowMaxMedia
+                    addMediaFilterAfterInterceptor.maxMediaCount = itemShowMaxMediaCount
 
                     addMediaFilterAfterInterceptor.addMediaDslAdapterItem =
                         if (itemShowAddMediaItem && itemEnable) {
                             addMediaItem?.apply {
                                 itemFragment = this@DslLabelMediaItem.itemFragment
-                                itemLoaderConfig.maxSelectorLimit = itemShowMaxMedia
+                                itemLoaderConfig.maxSelectorLimit = itemShowMaxMediaCount
                                 itemLoaderConfig.selectorMediaList = itemMediaList
+                                itemUpdateLoaderConfig =
+                                    this@DslLabelMediaItem.itemUpdateLoaderConfig
                                 itemResult = {
                                     //媒体列表
                                     it?.apply {
