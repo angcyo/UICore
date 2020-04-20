@@ -6,8 +6,8 @@ import android.widget.TextView
 import androidx.annotation.DrawableRes
 import com.angcyo.base.back
 import com.angcyo.core.R
+import com.angcyo.library.ex._dimen
 import com.angcyo.library.ex.colorFilter
-import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.base.clickIt
 import com.angcyo.widget.base.find
@@ -35,6 +35,7 @@ open class FragmentUI {
     /**返回按钮的[Drawable]资源*/
     @DrawableRes
     var backIconDrawableId: Int = R.drawable.lib_back
+    var backTextSize: Float = _dimen(R.dimen.text_body_size).toFloat()
 
     /**[BaseTitleFragment.onCreate]中触发*/
     var fragmentCreateAfter: (fragment: BaseTitleFragment, fragmentConfig: FragmentConfig) -> Unit =
@@ -76,7 +77,7 @@ open class FragmentUI {
                     }
                     if (showBackText) {
                         drawable("返回") {
-                            textSize = 14 * dp
+                            textSize = backTextSize
                             marginLeft = -8 * dpi
                             marginTop = 1 * dpi
                             textGravity = Gravity.CENTER
