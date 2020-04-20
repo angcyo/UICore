@@ -6,7 +6,17 @@
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
+    <uses-permission android:name="android.permission.CAMERA"/>
+
     <application>
+
+        <!--录像-->
+        <activity
+            android:name=".video.record.RecordVideoActivity"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!--录音服务-->
         <service
             android:name=".audio.record.RecorderService"
             android:enabled="true"

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ExpandRecordLayout">
+        <!--圆圈最小状态时, 偏移的距离-->
+        <attr name="r_expand_record_circle_min_offset" format="dimension"/>
+        <!--圆圈最大状态时, 偏移的距离-->
+        <attr name="r_expand_record_circle_max_offset" format="dimension"/>
+
+        <!--内圆的大小(最大状态和最小状态)半径-->
+        <attr name="r_expand_record_circle_max_radius" format="dimension"/>
+        <attr name="r_expand_record_circle_min_radius" format="dimension"/>
+
+        <!--外圆的大小半径-->
+        <attr name="r_expand_record_out_circle_max_radius" format="dimension"/>
+        <attr name="r_expand_record_out_circle_min_radius" format="dimension"/>
+
+        <attr name="r_expand_record_default_state" format="enum">
+            <enum name="STATE_CLOSE" value="0"/>
+            <enum name="STATE_EXPAND" value="3"/>
+        </attr>
+    </declare-styleable>
+</resources>

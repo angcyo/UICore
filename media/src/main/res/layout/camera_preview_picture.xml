@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/camera_confirm_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000"
+    android:clickable="true"
+    android:visibility="gone"
+    tools:visibility="visible">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/camera_display_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/camera_cancel_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom|left"
+        android:layout_marginLeft="60dp"
+        android:layout_marginBottom="60dp"
+        android:background="@drawable/media_white_circle_selector"
+        android:padding="12dp"
+        app:srcCompat="@drawable/media_take_photo_cancel" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/camera_confirm_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="60dp"
+        android:layout_marginBottom="60dp"
+        android:background="@drawable/media_white_circle_selector"
+        android:padding="12dp"
+        app:srcCompat="@drawable/media_take_photo_confirm"
+        app:tint="@color/colorPrimary" />
+</FrameLayout>
