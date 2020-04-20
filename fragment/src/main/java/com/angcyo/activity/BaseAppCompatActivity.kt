@@ -15,6 +15,7 @@ import com.angcyo.fragment.R
 import com.angcyo.library.L
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.simpleHash
+import com.angcyo.library.utils.resultString
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -156,6 +157,12 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
     /**系统默认的[onActivityResult]触发, 需要在[Fragment]里面调用特用方法启动[Activity]才会触发*/
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        L.d(
+            this.simpleHash(),
+            " requestCode:$requestCode",
+            " resultCode:${resultCode.resultString()}",
+            " data$data"
+        )
         supportFragmentManager.getAllValidityFragment().lastOrNull()?.run {
             onActivityResult(requestCode, resultCode, data)
         }

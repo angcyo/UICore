@@ -67,7 +67,7 @@ fun String?.hawkPutList(value: String?, sort: Boolean = true, allowEmpty: Boolea
 
 fun String?.hawkPut(value: CharSequence?) {
     this?.let {
-        Hawk.put(it, value ?: "")
+        Hawk.put(it, value)
     }
 }
 

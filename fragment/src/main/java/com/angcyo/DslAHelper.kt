@@ -234,10 +234,10 @@ class DslAHelper(val context: Context) {
                 var noResult = true
                 if (context is Activity) {
                     //ForResult
-                    if (it.onResult != null && context is FragmentActivity) {
+                    if (it.onActivityResult != null && context is FragmentActivity) {
                         //FragmentBridge
                         dslBridge(context.supportFragmentManager) {
-                            it.requestCode = if (it.requestCode != -1) {
+                            it.requestCode = if (it.requestCode == -1) {
                                 FragmentBridge.generateCode()
                             } else it.requestCode
 
@@ -245,11 +245,12 @@ class DslAHelper(val context: Context) {
                                 it.intent,
                                 it.requestCode,
                                 transitionOptions,
-                                it.onResult!!
+                                it.onActivityResult!!
                             )
                         }
                         noResult = false
                     } else if (it.requestCode != -1) {
+                        //default result
                         ActivityCompat.startActivityForResult(
                             context,
                             it.intent,
@@ -541,8 +542,8 @@ data class IntentConfig(
     /**是否使用跳板[JumpActivity]*/
     var useJumpActivity: Boolean = false,
 
-    //生死用[FragmentBridge]启动[Activity], 不受[requestCode]的影响
-    var onResult: (ActivityResult)? = null
+    //指定使用[FragmentBridge]启动[Activity], 不受[requestCode]的影响
+    var onActivityResult: (ActivityResult)? = null
 )
 
 /**去掉系统默认的动画*/

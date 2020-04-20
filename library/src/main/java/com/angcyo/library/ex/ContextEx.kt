@@ -109,7 +109,7 @@ fun Context.havePermission(permissionList: List<String>): Boolean {
     }
 }
 
-/**保存到DCIM*/
+/**保存到相册[DCIM]*/
 fun Context.saveToDCIM(file: File): Boolean {
     val filename = file.name
 

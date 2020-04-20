@@ -21,7 +21,7 @@ abstract class BasePermissionsActivity : BaseCoreAppCompatActivity() {
 
     lateinit var rxPermissions: RxPermissions
 
-    //需要的权限列表
+    /**需要的权限列表*/
     val permissions = mutableListOf<PermissionBean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
