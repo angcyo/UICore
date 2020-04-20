@@ -9,7 +9,6 @@ import android.graphics.Matrix
 import android.os.Bundle
 import android.view.View
 import androidx.core.app.ActivityCompat
-import com.angcyo.base.dslFHelper
 import com.angcyo.core.fragment.BaseFragment
 import com.angcyo.library.L.i
 import com.angcyo.library.ex.file
@@ -30,7 +29,7 @@ import com.angcyo.widget.layout.ExpandRecordLayout
 import java.io.File
 
 /**
- * 使用[MediaRecorder]实现的视频录制
+ * 使用[MediaRecorder]实现的视频录制, 手动控制移除[RecordVideoFragment]
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/12/26
@@ -38,16 +37,18 @@ import java.io.File
  */
 class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
     var callback: RecordVideoCallback? = null
-    var previewPictureLayoutControl: PreviewPictureLayoutControl? = null
-    var previewVideoLayoutControl: PreviewVideoLayoutControl? = null
+
+    /**预览控制*/
+    var _previewPictureLayoutControl: PreviewPictureLayoutControl? = null
+    var _previewVideoLayoutControl: PreviewVideoLayoutControl? = null
 
     /**
      * 总录制时长, 秒
      */
-    var recordTime = 0
-    var recordView: SizeSurfaceView? = null
+    var _recordTime = 0
+    var _recordView: SizeSurfaceView? = null
 
-    var recordControl: RecordVideoControl? = null
+    var _recordControl: RecordVideoControl? = null
 
     init {
         fragmentLayoutId = R.layout.camera_fragment_record_video
@@ -65,19 +66,19 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
     }
 
     private fun onDelayInitView() {
-        recordView = _vh.v(R.id.recorder_view)
-        previewPictureLayoutControl =
+        _recordView = _vh.v(R.id.recorder_view)
+        _previewPictureLayoutControl =
             PreviewPictureLayoutControl(_vh.view(R.id.camera_confirm_layout)!!)
-        previewVideoLayoutControl =
+        _previewVideoLayoutControl =
             PreviewVideoLayoutControl(_vh.view(R.id.video_confirm_layout)!!)
-        recordControl =
-            RecordVideoControl(requireActivity(), recordView!!, this@RecordVideoFragment)
+        _recordControl =
+            RecordVideoControl(requireActivity(), _recordView!!, this@RecordVideoFragment)
         if (isResumed) {
-            recordControl!!.surfaceChanged(
-                recordView!!.holder,
+            _recordControl!!.surfaceChanged(
+                _recordView!!.holder,
                 0,
-                recordView!!.width,
-                recordView!!.height
+                _recordView!!.width,
+                _recordView!!.height
             )
         }
         val recordLayout: ExpandRecordLayout? = _vh.v(R.id.record_control_layout)
@@ -99,15 +100,15 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
                 override fun onTick(layout: ExpandRecordLayout) {
                     if (callback!!.takeModel.have(RecordVideoCallback.TAKE_MODEL_PHOTO)) {
                         //拍照
-                        recordControl!!.takePhoto()
+                        _recordControl!!.takePhoto()
                     }
                 }
 
                 override fun onRecordStart() {
                     super.onRecordStart()
-                    if (!recordControl!!.isRecording) {
-                        recordTime = 0
-                        recordControl!!.startRecording(
+                    if (!_recordControl!!.isRecording) {
+                        _recordTime = 0
+                        _recordControl!!.startRecording(
                             filePath(
                                 Constant.CAMERA_FOLDER_NAME,
                                 fileNameUUID(".mp4")
@@ -122,8 +123,8 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
 
                 override fun onRecordEnd(progress: Int) {
                     super.onRecordEnd(progress)
-                    recordTime = progress
-                    recordControl!!.stopRecording(progress >= callback!!.minRecordTime)
+                    _recordTime = progress
+                    _recordControl!!.stopRecording(progress >= callback!!.minRecordTime)
                 }
 
                 override fun onExpandStateChange(fromState: Int, toState: Int) {
@@ -154,35 +155,35 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
         super.onConfigurationChanged(newConfig)
         _vh.gone(R.id.camera_confirm_layout)
         _vh.gone(R.id.video_confirm_layout)
-        if (previewVideoLayoutControl != null) {
-            previewVideoLayoutControl!!.stop()
+        if (_previewVideoLayoutControl != null) {
+            _previewVideoLayoutControl!!.stop()
         }
     }
 
     override fun onRecordFinish(videoPath: String) {
         val targetFile = File(callback!!.onTakeVideoAfter(videoPath))
 
-        val newFileName: String = fileNameUUID("_t_$recordTime.mp4")
+        val newFileName: String = fileNameUUID("_t_$_recordTime.mp4")
         val newFilePath = targetFile.parent!! + File.separator + newFileName
 
         targetFile.renameTo(newFilePath.file())
 
         //L.i("文件:" + new File(videoPath).exists());
-        previewVideoLayoutControl!!.showPreview(newFilePath, Runnable {
+        _previewVideoLayoutControl!!.showPreview(newFilePath, Runnable {
             if (isResumed) {
-                recordControl!!.surfaceChanged(
-                    recordView!!.holder,
+                _recordControl!!.surfaceChanged(
+                    _recordView!!.holder,
                     0,
-                    recordView!!.width,
-                    recordView!!.height
+                    _recordView!!.width,
+                    _recordView!!.height
                 )
             }
         })
         _vh.click(R.id.video_confirm_button, View.OnClickListener {
-            dslFHelper {
-                finishActivityOnLastFragmentRemove = false
-                remove(this@RecordVideoFragment)
-            }
+//            dslFHelper {
+//                finishActivityOnLastFragmentRemove = false
+//                remove(this@RecordVideoFragment)
+//            }
             callback!!.onTakeVideo(newFilePath)
         })
     }
@@ -190,11 +191,11 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
     override fun onRecordError() {
         toastQQ("至少需要录制 " + callback!!.minRecordTime + " 秒")
         if (isResumed) {
-            recordControl!!.surfaceChanged(
-                recordView!!.holder,
+            _recordControl!!.surfaceChanged(
+                _recordView!!.holder,
                 0,
-                recordView!!.width,
-                recordView!!.height
+                _recordView!!.width,
+                _recordView!!.height
             )
         }
     }
@@ -205,7 +206,7 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
             val options = BitmapFactory.Options()
             options.inPreferredConfig = Bitmap.Config.RGB_565
             var bitmap = BitmapFactory.decodeByteArray(data, 0, data.size, options)
-            val displayOrientation = recordControl!!.displayOrientation
+            val displayOrientation = _recordControl!!.displayOrientation
             if (displayOrientation != 0) {
                 val matrix = Matrix()
                 matrix.postRotate(displayOrientation.toFloat())
@@ -227,9 +228,17 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
             builder.append(height)
             builder.append(".jpg")
             val outputFile = filePath(Constant.CAMERA_FOLDER_NAME, builder.toString()).file()
+            var oldBitmap = bitmap
             bitmap = callback!!.onTakePhotoBefore(bitmap, width, height)
+            if (oldBitmap != bitmap && !oldBitmap.isRecycled) {
+                oldBitmap.recycle()
+            }
             showPhotoPreview(bitmap, outputFile)
+            oldBitmap = bitmap
             bitmap = callback!!.onTakePhotoAfter(bitmap, width, height)
+            if (oldBitmap != bitmap && !oldBitmap.isRecycled) {
+                oldBitmap.recycle()
+            }
 
             bitmap.save(outputFile.absolutePath, Bitmap.CompressFormat.JPEG, 70)
 //            Intent mediaScannerIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -242,14 +251,14 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
     }
 
     private fun showPhotoPreview(bitmap: Bitmap, outputFile: File) {
-        previewPictureLayoutControl!!.showPreview(bitmap)
+        _previewPictureLayoutControl!!.showPreview(bitmap)
         _vh.click(
             R.id.camera_confirm_button,
             View.OnClickListener {
-                dslFHelper {
-                    finishActivityOnLastFragmentRemove = false
-                    remove(this@RecordVideoFragment)
-                }
+//                dslFHelper {
+//                    finishActivityOnLastFragmentRemove = false
+//                    remove(this@RecordVideoFragment)
+//                }
                 callback!!.onTakePhoto(bitmap, outputFile)
             })
     }
