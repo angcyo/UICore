@@ -21,6 +21,7 @@ open class FragmentWrapActivity : BaseAppCompatActivity() {
     companion object {
         const val KEY_TARGET_FRAGMENT = "key_target_fragment"
 
+        /**创建一个[FragmentWrapActivity], 包含目标[targetFragment]的[Intent]*/
         fun getIntent(
             context: Context,
             targetFragment: Class<out Fragment>,

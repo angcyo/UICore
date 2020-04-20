@@ -98,8 +98,9 @@ fun String.urlIntent(component: ComponentName? = null): Intent {
  * 使用0, 可以只填充[mExtras]的数据
  *
  * */
-fun Intent.fillFrom(other: Intent?, flag: Int = 255) {
+fun Intent.fillFrom(other: Intent?, flag: Int = 255): Intent {
     if (other != null) {
         fillIn(other, flag)
     }
+    return this
 }

@@ -1,5 +1,6 @@
 package com.angcyo.activity
 
+import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Binder
@@ -9,6 +10,7 @@ import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.angcyo.DslAHelper
 import com.angcyo.base.*
+import com.angcyo.dslTargetIntentHandle
 import com.angcyo.fragment.R
 import com.angcyo.library.L
 import com.angcyo.library.ex.isDebug
@@ -82,11 +84,25 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
      * @param fromNew [onNewIntent]
      * */
     open fun onHandleIntent(intent: Intent, fromNew: Boolean = false) {
-        L.i(
-            "${this.simpleHash()} new:$fromNew $intent pid:${Process.myPid()} uid:${Process.myUid()} call:${packageManager.getNameForUid(
-                Binder.getCallingUid()
-            )}"
-        )
+        handleTargetIntent(intent)
+        if (L.debug) {
+//            val am: ActivityManager =
+//                getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+//
+//            val appTasks = am.appTasks
+//            val runningTasks = am.getRunningTasks(Int.MAX_VALUE)
+
+            L.i(
+                "${this.simpleHash()} new:$fromNew $intent pid:${Process.myPid()} uid:${Process.myUid()} call:${packageManager.getNameForUid(
+                    Binder.getCallingUid()
+                )}"
+            )
+        }
+    }
+
+    /**检查是否有目标[Intent]需要启动*/
+    open fun handleTargetIntent(intent: Intent) {
+        dslTargetIntentHandle(intent)
     }
 
     //</editor-fold desc="基础方法处理">

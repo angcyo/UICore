@@ -30,6 +30,7 @@ import com.angcyo.fragment.*
 import com.angcyo.library.L
 import com.angcyo.library.component.queryActivities
 import com.angcyo.library.ex.havePermission
+import com.angcyo.library.ex.runningTasks
 
 /**
  *
@@ -41,13 +42,20 @@ import com.angcyo.library.ex.havePermission
 class DslAHelper(val context: Context) {
 
     companion object {
-        /**程序主界面, 用于当非主界面支持back时, 返回到主界面*/
+        /**程序主界面, 用于当非主界面支持back时, 返回到主界面. 且当前的任务根[Activity]不是[mainActivityClass]*/
         var mainActivityClass: Class<out Activity>? = null
 
         /**当前对象是否是设置的[mainActivityClass]类*/
         fun isMainActivity(any: Any?): Boolean {
             if (mainActivityClass == null || any == null) {
                 return false
+            }
+            if (any is CharSequence) {
+                if (any.isEmpty()) {
+                    return false
+                }
+                val mainClassName: String? = mainActivityClass?.name
+                return any.toString() == mainClassName
             }
             return any.javaClass == mainActivityClass
         }
@@ -98,7 +106,7 @@ class DslAHelper(val context: Context) {
         if (config.useJumpActivity) {
             val jumpIntent = Intent(config.intent)
             jumpIntent.component = ComponentName(context, JumpActivity::class.java)
-            jumpIntent.putExtra(JumpActivity.KEY_JUMP_TARGET, intent)
+            jumpIntent.setTargetIntent(intent)
             jumpIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             jumpIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             config.intent = jumpIntent
@@ -316,10 +324,19 @@ class DslAHelper(val context: Context) {
         if (context is Activity) {
             val activity = context
             finishToActivity?.also { cls ->
+
                 if (activity::class.java != cls) {
-                    //启动主界面
-                    activity.dslAHelper {
-                        start(cls)
+
+                    activity.runningTasks(1).firstOrNull()?.apply {
+                        if (isMainActivity(baseActivity?.className)) {
+                            L.w("baseActivity is ${baseActivity?.className}, pass to start [finishToActivity]!")
+                            return
+                        }
+
+                        //启动主界面
+                        activity.dslAHelper {
+                            start(cls)
+                        }
                     }
                 }
             }

@@ -1,6 +1,7 @@
 package com.angcyo.library.ex
 
 import android.app.Activity
+import android.app.ActivityManager
 import android.content.ContentValues
 import android.content.Context
 import android.content.ContextWrapper
@@ -239,4 +240,12 @@ fun Context?.activityContent(): Activity? {
     } else {
         null
     }
+}
+
+/**获取应用程序正在运行的[RunningTaskInfo], 5.0之后获取不到其他应用程序的信息了*/
+fun Context?.runningTasks(maxNum: Int = Int.MAX_VALUE): List<ActivityManager.RunningTaskInfo> {
+    val activityManager: ActivityManager? =
+        this?.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
+    val runningTaskInfoList = activityManager?.getRunningTasks(maxNum)
+    return runningTaskInfoList ?: emptyList()
 }

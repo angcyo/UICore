@@ -265,7 +265,7 @@ fun Activity.logActivityInfo(debug: Boolean = isDebug()) {
 
             L.d(buildString {
                 appendln()
-                appendln("ActivityInfo->↓")
+                appendln("${this@logActivityInfo.simpleHash()} ActivityInfo->↓")
                 appendln(it.toJson())
             })
         }
