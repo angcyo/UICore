@@ -4,10 +4,10 @@ import android.view.Gravity
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.DrawableRes
-import androidx.core.view.setPadding
 import com.angcyo.base.back
 import com.angcyo.core.R
 import com.angcyo.library.ex.colorFilter
+import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.base.clickIt
 import com.angcyo.widget.base.find
@@ -76,6 +76,7 @@ open class FragmentUI {
                     }
                     if (showBackText) {
                         drawable("返回") {
+                            textSize = 14 * dp
                             marginLeft = -8 * dpi
                             marginTop = 1 * dpi
                             textGravity = Gravity.CENTER

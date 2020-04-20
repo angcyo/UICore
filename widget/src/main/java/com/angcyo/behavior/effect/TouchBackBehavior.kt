@@ -66,7 +66,7 @@ open class TouchBackBehavior(
         child: View,
         layoutDirection: Int
     ): Boolean {
-        if (!child.isLaidOut) {
+        if (!ViewCompat.isLaidOut(child)) {
             //首次布局
             scrollTo(0, _scrollOffsetY)
         }
