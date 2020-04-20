@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.View
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.getRootHeight
+import com.angcyo.library.ex.getRootWidth
 
 /**
  *
@@ -137,6 +138,8 @@ fun Context.optionDialog(config: OptionDialogConfig.() -> Unit): Dialog {
 fun Context.iosFullScreenDialog(config: IosFullScreenDialogConfig.() -> Unit): Dialog {
     return IosFullScreenDialogConfig().run {
         dialogContext = this@iosFullScreenDialog
+        //dialogWidth = getRootWidth()
+        //dialogHeight = getRootHeight()
         config()
         show()
     }

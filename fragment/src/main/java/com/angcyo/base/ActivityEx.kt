@@ -28,13 +28,17 @@ import com.angcyo.library.ex.havePermissions
 
 /**激活布局全屏*/
 fun Activity.enableLayoutFullScreen(enable: Boolean = true) {
+    window.enableLayoutFullScreen(enable)
+}
+
+fun Window.enableLayoutFullScreen(enable: Boolean = true) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         //去掉半透明状态栏
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         //去掉半透明导航栏
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        val decorView = window.decorView
+        clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+        addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        val decorView = decorView
         var systemUiVisibility = decorView.systemUiVisibility
         if (enable) { //https://blog.csdn.net/xiaonaihe/article/details/54929504
             decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -45,14 +49,37 @@ fun Activity.enableLayoutFullScreen(enable: Boolean = true) {
                 systemUiVisibility.remove(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
             decorView.systemUiVisibility = systemUiVisibility
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            //https://www.jianshu.com/p/2f7ac7a05c30
+            //支持刘海屏
+            //https://developer.android.google.cn/guide/topics/display-cutout
+
+            //val windowInsets = getDecorView().rootView.rootWindowInsets
+
+            val lp: WindowManager.LayoutParams = attributes
+            if (enable) {
+                //https://developer.android.google.cn/guide/topics/display-cutout#choose_how_your_app_handles_cutout_areas
+                lp.layoutInDisplayCutoutMode =
+                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+            } else {
+                lp.layoutInDisplayCutoutMode =
+                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
+            }
+            attributes = lp
+        }
     }
 }
 
 /** 是否是白色状态栏. 如果是, 那么系统的状态栏字体会是灰色 */
-fun Activity.lightStatusBar(light: Boolean) {
+fun Activity.lightStatusBar(light: Boolean = true) {
+    window.lightStatusBar(light)
+}
+
+fun Window.lightStatusBar(light: Boolean = true) {
     //android 6
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        val decorView = window.decorView
+        val decorView = decorView
         val systemUiVisibility = decorView.systemUiVisibility
         if (light) {
             if (systemUiVisibility.have(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)) {

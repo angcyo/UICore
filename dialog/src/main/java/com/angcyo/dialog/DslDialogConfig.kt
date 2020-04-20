@@ -149,6 +149,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
     //测试好像没效果.
     var statusBarColor: Int = undefined_res
     var navigationBarColor: Int = undefined_res
+    var navigationBarDividerColor: Int = undefined_res
 
     var onConfigWindow: (Window) -> Unit = {}
 
@@ -351,6 +352,13 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
                 window.clearFlags(FLAG_TRANSLUCENT_NAVIGATION)
                 window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 window.navigationBarColor = navigationBarColor
+            }
+            if (navigationBarDividerColor != undefined_res &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+            ) {
+                window.clearFlags(FLAG_TRANSLUCENT_NAVIGATION)
+                window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                window.navigationBarDividerColor = navigationBarDividerColor
             }
         }
         onConfigWindow(window)

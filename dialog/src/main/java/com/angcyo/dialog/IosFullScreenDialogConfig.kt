@@ -4,12 +4,12 @@ import android.app.Dialog
 import android.graphics.Color
 import android.view.KeyEvent.KEYCODE_BACK
 import android.view.Window
+import com.angcyo.base.enableLayoutFullScreen
 import com.angcyo.base.translucentStatusBar
 import com.angcyo.behavior.ScrollBehaviorListener
 import com.angcyo.behavior.effect.TouchBackBehavior
 import com.angcyo.dialog.dslitem.DslDialogTextItem
 import com.angcyo.dsladapter.filter.batchLoad
-import com.angcyo.library.L
 import com.angcyo.library._screenHeight
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.evaluateColor
@@ -39,6 +39,7 @@ class IosFullScreenDialogConfig : BaseDialogConfig() {
         dialogLayoutId = R.layout.lib_dialog_ios_full_screen_layout
 
         //navigationBarColor = Color.TRANSPARENT
+        //navigationBarDividerColor = Color.TRANSPARENT
         //statusBarColor = Color.TRANSPARENT
 
         //dialogGravity = Gravity.TOP
@@ -49,13 +50,14 @@ class IosFullScreenDialogConfig : BaseDialogConfig() {
         //全屏的三金刚属性
         dialogWidth = -1
         //很关键的一点, 高度一定要撑满全屏. 撑满之后, 如果导航栏显示了, 内部View布局会有点BUG, 顶部偏移有问题.
-        dialogHeight = -1
+        dialogHeight = -1 //getRootHeight()
         setDialogBgColor(Color.TRANSPARENT)
     }
 
     override fun configWindow(window: Window) {
         super.configWindow(window)
         //开启布局全屏, 体验更佳
+        window.enableLayoutFullScreen(true)
         window.translucentStatusBar(true)
 //        window.translucentNavigationBar(true)
     }
@@ -70,7 +72,7 @@ class IosFullScreenDialogConfig : BaseDialogConfig() {
                 touchBackBehavior = this
                 this.addScrollListener(object : ScrollBehaviorListener {
                     override fun onBehaviorScrollTo(x: Int, y: Int) {
-                        L.i("-> x:$x y:$y")
+                        //L.i("-> x:$x y:$y")
                         onTouchBackTo(dialogViewHolder, y)
 
                         //关闭对话框
