@@ -143,11 +143,11 @@ fun Activity.showDebugInfoView(
                     append("wp:").append(displayMetrics.widthPixels)
                     append(" hp:").appendln(displayMetrics.heightPixels)
 
-                    append("dw:").append(decorView.measuredWidth)
-                    append(" dh:").appendln(decorView.measuredHeight)
+                    append("decorW:").append(decorView.measuredWidth)
+                    append(" decorH:").appendln(decorView.measuredHeight)
 
-                    append("cw:").append(contentView.measuredWidth)
-                    append(" ch:").appendln(contentView.measuredHeight)
+                    append("contentW:").append(contentView.measuredWidth)
+                    append(" contentH:").appendln(contentView.measuredHeight)
 
                     append("wDp:").append(widthDp)
                     append(" hDp:").append(heightDp)
