@@ -325,19 +325,15 @@ class DslAHelper(val context: Context) {
         if (context is Activity) {
             val activity = context
             finishToActivity?.also { cls ->
-
                 if (activity::class.java != cls) {
+                    if (activity.baseActivityIsMainActivity()) {
+                        L.w("baseActivity is ${mainActivityClass?.name}, pass to start [finishToActivity]!")
+                        return
+                    }
 
-                    activity.runningTasks(1).firstOrNull()?.apply {
-                        if (isMainActivity(baseActivity?.className)) {
-                            L.w("baseActivity is ${baseActivity?.className}, pass to start [finishToActivity]!")
-                            return
-                        }
-
-                        //启动主界面
-                        activity.dslAHelper {
-                            start(cls)
-                        }
+                    //启动主界面
+                    activity.dslAHelper {
+                        start(cls)
                     }
                 }
             }
@@ -592,3 +588,8 @@ fun IntentConfig.transition(sharedElement: View?, sharedElementName: String? = n
         )
     }
 }
+
+/**是否在主界面所在的task中*/
+fun Context?.baseActivityIsMainActivity(): Boolean = runningTasks(1).firstOrNull()?.run {
+    DslAHelper.isMainActivity(baseActivity?.className)
+} ?: false
