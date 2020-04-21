@@ -126,9 +126,8 @@ abstract class BaseFragment : AbsLifecycleFragment() {
     }
 
     /**启动一个具有生命周期的协程域*/
-    fun launchLifecycle(block: suspend CoroutineScope.() -> Unit) {
+    fun launchLifecycle(block: suspend CoroutineScope.() -> Unit) =
         coroutineScopeLifecycle.launch(block)
-    }
 
     //</editor-fold desc="Rx 协程">
 }

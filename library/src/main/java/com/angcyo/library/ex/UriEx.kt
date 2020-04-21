@@ -20,7 +20,7 @@ import java.io.InputStream
  * @date 2020/02/03
  */
 
-fun fileUri(context: Context, file: String?): Uri {
+fun fileUri(context: Context, file: String): Uri {
     return fileUri(context, File(file))
 }
 

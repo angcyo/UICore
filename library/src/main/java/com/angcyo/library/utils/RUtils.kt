@@ -5,10 +5,12 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.media.AudioManager
 import android.net.Uri
 import android.os.Build
 import android.telephony.TelephonyManager
+import android.view.Surface
 import com.angcyo.library.L
 import com.angcyo.library.toast
 
@@ -101,6 +103,7 @@ fun Context.checkApkExist(packageName: String?): Boolean {
     }
 }
 
+/**[Activity]返回状态*/
 fun Int.resultString(): String {
     return when (this) {
         Activity.RESULT_OK -> "RESULT_OK"
@@ -110,11 +113,34 @@ fun Int.resultString(): String {
     }
 }
 
+/**音频焦点*/
 fun Int.audioFocusString(): String {
     return when (this) {
         AudioManager.AUDIOFOCUS_GAIN -> "AudioManager.AUDIOFOCUS_GAIN"
         AudioManager.AUDIOFOCUS_LOSS -> "AudioManager.AUDIOFOCUS_LOSS"
         AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> "AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK"
+        else -> "UNKNOWN"
+    }
+}
+
+/**屏幕方向, 横屏 or 竖屏*/
+fun Int.orientationString(): String {
+    return when (this) {
+        Configuration.ORIENTATION_LANDSCAPE -> "LANDSCAPE"
+        Configuration.ORIENTATION_PORTRAIT -> "PORTRAIT"
+        Configuration.ORIENTATION_UNDEFINED -> "UNDEFINED"
+        Configuration.ORIENTATION_SQUARE -> "SQUARE"
+        else -> "UNKNOWN"
+    }
+}
+
+/**屏幕旋转角度*/
+fun Int.rotationString(): String {
+    return when (this) {
+        Surface.ROTATION_0 -> "ROTATION_0"
+        Surface.ROTATION_90 -> "ROTATION_90"
+        Surface.ROTATION_180 -> "ROTATION_180"
+        Surface.ROTATION_270 -> "ROTATION_270"
         else -> "UNKNOWN"
     }
 }

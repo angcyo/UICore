@@ -64,7 +64,5 @@ class CoroutineScopeLifecycle(lifecycleOwner: LifecycleOwner) : LifecycleEventOb
     }
 
     /**启动协程域*/
-    fun launch(block: suspend CoroutineScope.() -> Unit) {
-        coroutineScope.launch(block = block)
-    }
+    fun launch(block: suspend CoroutineScope.() -> Unit): Job = coroutineScope.launch(block = block)
 }
