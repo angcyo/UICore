@@ -201,6 +201,7 @@ data class ItemGroupParams(
 
     /**仅在使用了[GridLayoutManager]时有效*/
     var edgeInGrid: Int = EDGE_NONE,
+    /**更细粒度的分组边界信息*/
     var edgeInGroup: Int = EDGE_NONE,
     var edgeGridParams: EdgeGridParams = EdgeGridParams()
 )
@@ -281,40 +282,60 @@ fun ItemGroupParams.isFirstPosition(): Boolean = indexInGroup == 0 && currentAda
 fun ItemGroupParams.isLastPosition(): Boolean =
     currentAdapterItem != null && indexInGroup == groupItems.lastIndex
 
+//<editor-fold desc="网格布局中的边界扩展方法">
 
 /**网格布局, 边界扩展方法*/
 //是否在4条边上
+
+/**在网格的左边*/
 fun ItemGroupParams.isEdgeLeft(): Boolean = edgeInGrid.have(EDGE_LEFT)
 
+/**在网格的右边*/
 fun ItemGroupParams.isEdgeRight(): Boolean = edgeInGrid.have(EDGE_RIGHT)
+
+/**在网格的上边*/
 fun ItemGroupParams.isEdgeTop(): Boolean = edgeInGrid.have(EDGE_TOP)
+
+/**在网格的下边*/
 fun ItemGroupParams.isEdgeBottom(): Boolean = edgeInGrid.have(EDGE_BOTTOM)
 
-//全屏占满整个一行
+/**全屏占满网格整个一行*/
 fun ItemGroupParams.isEdgeHorizontal(): Boolean = isEdgeLeft() && isEdgeRight()
 
-//全屏占满整个一列
+/**全屏占满网格整个一列*/
 fun ItemGroupParams.isEdgeVertical(): Boolean = isEdgeTop() && isEdgeBottom()
 
-//是否在4个角
+//</editor-fold desc="网格布局中的边界扩展方法">
+
+//<editor-fold desc="细粒度 分组边界扩展">
+
+//是否在分组4个角上
+
+/**是否在分组左上角*/
 fun ItemGroupParams.isEdgeGroupLeftTop(): Boolean = edgeInGroup.have(EDGE_LEFT_TOP)
 
+/**是否在分组右上角*/
 fun ItemGroupParams.isEdgeGroupRightTop(): Boolean = edgeInGroup.have(EDGE_RIGHT_TOP)
+
+/**是否在分组左下角*/
 fun ItemGroupParams.isEdgeGroupLeftBottom(): Boolean = edgeInGroup.have(EDGE_LEFT_BOTTOM)
+
+/**是否在分组右下角*/
 fun ItemGroupParams.isEdgeGroupRightBottom(): Boolean = edgeInGroup.have(EDGE_RIGHT_BOTTOM)
 
-//在一组中的第一行
+/**在一组中的第一行*/
 fun ItemGroupParams.isEdgeGroupTop(): Boolean = edgeInGroup.have(EDGE_GROUP_TOP)
 
-//在一组中的最后一行
+/**在一组中的最后一行*/
 fun ItemGroupParams.isEdgeGroupBottom(): Boolean = edgeInGroup.have(EDGE_GROUP_BOTTOM)
 
-//占满整个一行(允许非全屏)
+/**占满整个一行(允许非全屏)*/
 fun ItemGroupParams.isEdgeGroupHorizontal(): Boolean =
     (isEdgeGroupLeftTop() && isEdgeGroupRightTop()) || (isEdgeGroupLeftBottom() && isEdgeGroupRightBottom())
 
-//占满整个一列(允许非全屏)
+/**占满整个一列(允许非全屏)*/
 fun ItemGroupParams.isEdgeGroupVertical(): Boolean =
     (isEdgeGroupLeftTop() && isEdgeGroupLeftBottom()) || (isEdgeGroupRightTop() && isEdgeGroupRightBottom())
 
+//</editor-fold desc="细粒度 分组边界扩展">
 
