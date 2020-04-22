@@ -20,13 +20,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:r_badge_offset_x="12dp"
         app:r_badge_offset_y="12dp"
-        app:r_badge_text="9"
         app:r_draw_badge="true"
         app:r_enable_shape="false"
+        tools:r_badge_text="9"
         tools:src="@drawable/lib_video_cover_tip" />
 
     <com.angcyo.widget.text.DslTextView
         android:id="@+id/lib_text_view"
+        style="@style/LibBodyTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/lib_hdpi"
