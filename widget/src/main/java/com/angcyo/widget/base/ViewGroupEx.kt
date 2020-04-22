@@ -406,6 +406,12 @@ fun View?.setDslAdapterItem(dslAdapterItem: DslAdapterItem?) {
 
 //</editor-fold desc="DslAdapterItem操作">
 
+fun ViewGroup.appendDslItem(items: List<DslAdapterItem>) {
+    items.forEach {
+        appendDslItem(it)
+    }
+}
+
 fun ViewGroup.appendDslItem(dslAdapterItem: DslAdapterItem): DslViewHolder {
     return addDslItem(dslAdapterItem)
 }

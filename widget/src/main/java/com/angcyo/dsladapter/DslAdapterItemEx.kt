@@ -170,6 +170,14 @@ fun DslAdapterItem.isItemAttached(): Boolean {
     return lifecycle.currentState == Lifecycle.State.RESUMED
 }
 
+/**提供和[DslAdapter]相同的使用方式, 快速创建[DslAdapterItem]集合*/
+fun renderItemList(render: DslAdapter.() -> Unit): List<DslAdapterItem> {
+    return DslAdapter().run {
+        render()
+        adapterItems
+    }
+}
+
 //</editor-fold desc="操作扩展">
 
 //<editor-fold desc="更新指定的Item">

@@ -13,10 +13,7 @@ import android.view.*
 import android.view.animation.DecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
-import androidx.annotation.IdRes
-import androidx.annotation.LayoutRes
+import androidx.annotation.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
@@ -524,16 +521,16 @@ val View.drawCenterY get() = drawTop + drawHeight / 2
 fun View?.isVisible() = this?.visibility == View.VISIBLE
 fun View?.isGone() = this?.visibility == View.GONE
 
-fun View?.visible() {
-    this?.visibility = View.VISIBLE
+fun View?.visible(value: Boolean = true) {
+    this?.visibility = if (value) View.VISIBLE else View.GONE
 }
 
-fun View?.gone() {
-    this?.visibility = View.GONE
+fun View?.gone(value: Boolean = true) {
+    this?.visibility = if (value) View.GONE else View.VISIBLE
 }
 
-fun View?.invisible() {
-    this?.visibility = View.INVISIBLE
+fun View?.invisible(value: Boolean = true) {
+    this?.visibility = if (value) View.INVISIBLE else View.GONE
 }
 
 fun View.save(canvas: Canvas, paint: Paint? = null): Int {
@@ -794,6 +791,31 @@ fun View.getLocationInParent(parentView: View? = null, result: Rect = Rect()): R
     }
 
     return result
+}
+
+/**
+ * Pad this view with the insets provided by the device cutout (i.e. notch)
+ * 用缺口的大小, 填充视图
+ *  */
+@RequiresApi(Build.VERSION_CODES.P)
+fun View.padWithDisplayCutout() {
+
+    /** Helper method that applies padding from cutout's safe insets */
+    fun doPadding(cutout: DisplayCutout) = setPadding(
+        cutout.safeInsetLeft,
+        cutout.safeInsetTop,
+        cutout.safeInsetRight,
+        cutout.safeInsetBottom
+    )
+
+    // Apply padding using the display cutout designated "safe area"
+    rootWindowInsets?.displayCutout?.let { doPadding(it) }
+
+    // Set a listener for window insets since view.rootWindowInsets may not be ready yet
+    setOnApplyWindowInsetsListener { _, insets ->
+        insets.displayCutout?.let { doPadding(it) }
+        insets
+    }
 }
 
 //</editor-fold desc="其他">
