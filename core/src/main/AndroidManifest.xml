@@ -12,11 +12,15 @@
             android:name="android.max_aspect"
             android:value="2.5" />
         <meta-data
+            android:name="notch.config"
+            android:value="portrait|landscape" />
+        <!-- Declare notch support -->
+        <meta-data
             android:name="android.notch_support"
             android:value="true" />
         <meta-data
-            android:name="notch.config"
-            android:value="portrait|landscape" />
+            android:name="android.vendor.full_screen"
+            android:value="true" />
     </application>
 
 </manifest>
