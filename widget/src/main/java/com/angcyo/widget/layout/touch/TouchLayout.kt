@@ -113,8 +113,8 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) :
                 firstMotionEvent = e1
                 secondMotionEvent = e2
 
-                val absX = Math.abs(distanceX)
-                val absY = Math.abs(distanceY)
+                val absX = abs(distanceX)
+                val absY = abs(distanceY)
 
                 if (absX > scrollDistanceSlop || absY > scrollDistanceSlop) {
                     if (absY > absX) {
