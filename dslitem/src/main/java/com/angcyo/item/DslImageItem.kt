@@ -39,7 +39,7 @@ open class DslImageItem : DslAdapterItem() {
     /**加载的媒体*/
     open var itemLoadUri: Uri? = null
 
-    /**媒体类型*/
+    /**媒体类型, 为空会在[itemLoadUri]解析*/
     open var itemMimeType: String? = null
 
     /**视频或者音频时长, 毫秒*/
@@ -102,14 +102,17 @@ open class DslImageItem : DslAdapterItem() {
         itemHolder.gone(R.id.lib_tip_image_view)
         itemHolder.gone(R.id.lib_duration_view)
 
+        //mimeType
+        val mimeType = itemMimeType ?: itemLoadUri?.loadUrl()?.mimeType()
+
         if (itemShowCover) {
-            if (itemMimeType?.isAudioMimeType() == true) {
+            if (mimeType?.isAudioMimeType() == true) {
                 if (itemAudioCoverTipDrawable > 0) {
                     itemHolder.visible(R.id.lib_tip_image_view)
                     itemHolder.img(R.id.lib_tip_image_view)
                         ?.setImageResource(itemAudioCoverTipDrawable)
                 }
-            } else if (itemMimeType?.isVideoMimeType() == true) {
+            } else if (mimeType?.isVideoMimeType() == true) {
                 if (itemVideoCoverTipDrawable > 0) {
                     itemHolder.visible(R.id.lib_tip_image_view)
                     itemHolder.img(R.id.lib_tip_image_view)
@@ -120,15 +123,15 @@ open class DslImageItem : DslAdapterItem() {
 
         //时长
         if (itemShowTip) {
-            if (itemMimeType?.isVideoMimeType() == true || itemMimeType?.isAudioMimeType() == true) {
+            if (mimeType?.isVideoMimeType() == true || mimeType?.isAudioMimeType() == true) {
                 itemHolder.visible(R.id.lib_duration_view)
 
                 itemHolder.tv(R.id.lib_duration_view)?.text = span {
                     drawable {
                         backgroundDrawable =
-                            if (itemMimeType?.isVideoMimeType() == true && itemVideoTipDrawable > 0) {
+                            if (mimeType?.isVideoMimeType() == true && itemVideoTipDrawable > 0) {
                                 _drawable(itemVideoTipDrawable)
-                            } else if (itemMimeType?.isAudioMimeType() == true && itemAudioTipDrawable > 0) {
+                            } else if (mimeType?.isAudioMimeType() == true && itemAudioTipDrawable > 0) {
                                 _drawable(itemAudioTipDrawable)
                             } else {
                                 null

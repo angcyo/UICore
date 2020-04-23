@@ -25,7 +25,10 @@ import java.io.File
 
 class DslCameraViewHelper {
 
+    /**需要的权限*/
     var recordPermissionList = listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+
+    /**核心[CameraView]*/
     var cameraView: CameraView? = null
 
     /**是否要在DCIM中显示*/
@@ -33,7 +36,8 @@ class DslCameraViewHelper {
 
     /**拍照, 拍照*/
     fun takePicture(file: File? = null, onResult: (File, Exception?) -> Unit) {
-        val saveFile = file ?: File(filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".jpeg")))
+        val saveFile =
+            file ?: File(filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".jpeg")))
         cameraView?.run {
             if (captureMode == CameraView.CaptureMode.VIDEO) {
                 captureMode = CameraView.CaptureMode.IMAGE
@@ -58,8 +62,9 @@ class DslCameraViewHelper {
     }
 
     /**录像, 需要录音权限*/
-    fun startRecording(file: File? = null, onResult: (File, Exception?) -> Unit) {
-        val saveFile = file ?: File(filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".mp4")))
+    fun startRecording(file: File? = null, onResult: (File, Exception?) -> Unit): Boolean {
+        val saveFile =
+            file ?: File(filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".mp4")))
         if (cameraView?.context?.havePermission(recordPermissionList) == true) {
             cameraView?.run {
                 if (captureMode == CameraView.CaptureMode.IMAGE) {
@@ -85,9 +90,11 @@ class DslCameraViewHelper {
                     }
                 })
             }
+            return true
         } else {
             L.w("请检查权限:", recordPermissionList)
             onResult(saveFile, Exception("无权限"))
+            return false
         }
     }
 

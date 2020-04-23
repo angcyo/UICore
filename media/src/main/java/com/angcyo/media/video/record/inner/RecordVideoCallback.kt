@@ -37,7 +37,7 @@ open class RecordVideoCallback {
     open fun initConfig() {}
 
     /**
-     * 拍照回调
+     * 拍照回调, 此时的[outputFile]文件还没有写入[bitmap]数据
      */
     open fun onTakePhoto(bitmap: Bitmap, outputFile: File) {}
 

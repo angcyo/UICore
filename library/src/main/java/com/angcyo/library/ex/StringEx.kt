@@ -213,7 +213,7 @@ fun String?.isPhone(regex: String = PATTERN_MOBILE_SIMPLE): Boolean {
 }
 
 /**将base64字符串, 转换成图片*/
-fun String.toBitmap(): Bitmap {
+fun String.toBitmapOfBase64(): Bitmap {
     val bytes = Base64.decode(this, Base64.NO_WRAP)
     return bytes.toBitmap()
 }

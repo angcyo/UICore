@@ -8,7 +8,7 @@ import com.angcyo.library.L
 import com.angcyo.widget.DslViewHolder
 
 /**
- *
+ * 预览摄像头使用CameraX, 使用拍照和录像模式
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/02/14

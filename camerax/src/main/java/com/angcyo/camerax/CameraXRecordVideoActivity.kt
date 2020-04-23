@@ -1,6 +1,5 @@
-package com.angcyo.media.video.record
+package com.angcyo.camerax
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -9,48 +8,24 @@ import com.angcyo.base.dslAHelper
 import com.angcyo.base.dslFHelper
 import com.angcyo.base.translucentStatusBar
 import com.angcyo.core.activity.BasePermissionsActivity
+import com.angcyo.media.video.record.RecordVideoActivity.Companion.KEY_DATA_PATH
+import com.angcyo.media.video.record.RecordVideoActivity.Companion.KEY_DATA_TYPE
+import com.angcyo.media.video.record.RecordVideoActivity.Companion.KEY_MAX_TIME
+import com.angcyo.media.video.record.RecordVideoActivity.Companion.KEY_MIN_TIME
+import com.angcyo.media.video.record.RecordVideoActivity.Companion.REQUEST_CODE
+import com.angcyo.media.video.record.RecordVideoActivity.Companion.getResultPath
+import com.angcyo.media.video.record.RecordVideoActivity.Companion.recordVideoCallback
 import com.angcyo.media.video.record.inner.RecordVideoCallback
 import java.io.File
 
 /**
- * 使用[MediaRecorder]实现的视频录制
+ * 使用[CameraX]实现的视频录制
  * Email:angcyo@126.com
  * @author angcyo
- * @date 2019/12/26
+ * @date 2020-4-23
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-open class RecordVideoActivity : BasePermissionsActivity() {
-
-    companion object {
-        const val REQUEST_CODE = 200
-        const val KEY_DATA_PATH = "KEY_DATA_PATH"
-        const val KEY_DATA_TYPE = "KEY_DATA_TYPE"
-        const val KEY_MAX_TIME = "KEY_MAX_TIME"
-        const val KEY_MIN_TIME = "KEY_MIN_TIME"
-
-        /**静态全局回调变量, 在界面销毁时置空*/
-        var recordVideoCallback: RecordVideoCallback? = null
-
-        /**限制录制界面*/
-        fun show(activity: Activity, maxRecordTime: Int = 15, minRecordTime: Int = 3) {
-            activity.dslAHelper {
-                start(RecordVideoActivity::class.java) {
-                    intent.putExtra(KEY_MIN_TIME, minRecordTime)
-                    intent.putExtra(KEY_MAX_TIME, maxRecordTime)
-                    resultCode = REQUEST_CODE
-                }
-            }
-        }
-
-        /**获取录制的媒体路径*/
-        fun getResultPath(requestCode: Int, resultCode: Int, data: Intent?): String? {
-            return if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
-                data?.getStringExtra(KEY_DATA_PATH)
-            } else {
-                null
-            }
-        }
-    }
+open class CameraXRecordVideoActivity : BasePermissionsActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,8 +41,8 @@ open class RecordVideoActivity : BasePermissionsActivity() {
         super.onPermissionGranted()
 
         dslFHelper {
-            show(RecordVideoFragment::class.java) {
-                (this as? RecordVideoFragment)?.callback = object : RecordVideoCallback() {
+            show(CameraXRecordVideoFragment::class.java) {
+                (this as? CameraXRecordVideoFragment)?.callback = object : RecordVideoCallback() {
 
                     init {
                         intent.extras?.apply {
@@ -87,10 +62,7 @@ open class RecordVideoActivity : BasePermissionsActivity() {
                     }
 
                     override fun onTakePhoto(bitmap: Bitmap, outputFile: File) {
-                        recordVideoCallback?.onTakePhoto(bitmap, outputFile) ?: super.onTakePhoto(
-                            bitmap,
-                            outputFile
-                        )
+                        super.onTakePhoto(bitmap, outputFile)
                         result(outputFile.absolutePath, "image/png")
                     }
 
@@ -100,7 +72,7 @@ open class RecordVideoActivity : BasePermissionsActivity() {
                     }
 
                     private fun result(path: String, mimeType: String) {
-                        this@RecordVideoActivity.dslAHelper {
+                        this@CameraXRecordVideoActivity.dslAHelper {
                             finish {
                                 resultCode = RESULT_OK
                                 resultData = Intent().apply {
@@ -117,17 +89,17 @@ open class RecordVideoActivity : BasePermissionsActivity() {
 }
 
 /**快速启动录制视频界面, 并拿到返回数据*/
-fun DslAHelper.recordVideo(
+fun DslAHelper.recordVideoCameraX(
     maxRecordTime: Int = 15,
     minRecordTime: Int = 3,
     result: (String?) -> Unit
 ) {
-    start(RecordVideoActivity::class.java) {
-        intent.putExtra(RecordVideoActivity.KEY_MIN_TIME, minRecordTime)
-        intent.putExtra(RecordVideoActivity.KEY_MAX_TIME, maxRecordTime)
-        requestCode = RecordVideoActivity.REQUEST_CODE
+    start(CameraXRecordVideoActivity::class.java) {
+        intent.putExtra(KEY_MIN_TIME, minRecordTime)
+        intent.putExtra(KEY_MAX_TIME, maxRecordTime)
+        requestCode = REQUEST_CODE
         onActivityResult = { resultCode, data ->
-            result(RecordVideoActivity.getResultPath(requestCode, resultCode, data))
+            result(getResultPath(requestCode, resultCode, data))
         }
     }
 }

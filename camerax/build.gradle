@@ -8,14 +8,16 @@ android {
 
 dependencies {
     //https://mvnrepository.com/artifact/androidx.camera
-    def camerax_version = '1.0.0-beta02'
-    def camerax_ex = '1.0.0-alpha09'
+    def camerax_version = '1.0.0-beta03'
     api "androidx.camera:camera-core:${camerax_version}"
     api "androidx.camera:camera-camera2:${camerax_version}"
     api "androidx.camera:camera-lifecycle:${camerax_version}"
+
+    def camerax_ex = '1.0.0-alpha10'
     api "androidx.camera:camera-view:${camerax_ex}"
     api "androidx.camera:camera-extensions:${camerax_ex}"
 
     implementation project(allModule.dslitem)
     implementation project(allModule.core)
+    implementation project(allModule.media)
 }

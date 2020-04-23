@@ -1,56 +1,47 @@
-package com.angcyo.media.video.record
+package com.angcyo.camerax
 
 import android.Manifest
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.os.Bundle
 import android.view.View
 import androidx.core.app.ActivityCompat
+import com.angcyo.camerax.dslitem.DslCameraViewHelper
 import com.angcyo.core.fragment.BaseFragment
-import com.angcyo.library.L.i
 import com.angcyo.library.ex.file
 import com.angcyo.library.ex.have
-import com.angcyo.library.ex.save
+import com.angcyo.library.ex.toBitmap
 import com.angcyo.library.toastQQ
-import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.fileNameUUID
-import com.angcyo.library.utils.filePath
-import com.angcyo.media.R
 import com.angcyo.media.video.record.control.PreviewPictureLayoutControl
 import com.angcyo.media.video.record.control.PreviewVideoLayoutControl
 import com.angcyo.media.video.record.inner.RecordVideoCallback
-import com.angcyo.media.video.record.inner.RecordVideoControl
-import com.angcyo.media.video.record.inner.RecordVideoInterface
-import com.angcyo.media.video.record.inner.SizeSurfaceView
 import com.angcyo.widget.layout.ExpandRecordLayout
 import java.io.File
 
 /**
- * 使用[MediaRecorder]实现的视频录制, 手动控制移除[RecordVideoFragment]
+ * 使用[CameraX]实现的视频录制, 手动控制移除[CameraXRecordVideoFragment]
  * Email:angcyo@126.com
  * @author angcyo
- * @date 2019/12/26
+ * @date 2020-4-23
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
+class CameraXRecordVideoFragment : BaseFragment() {
     var callback: RecordVideoCallback? = null
 
     /**预览控制*/
     var _previewPictureLayoutControl: PreviewPictureLayoutControl? = null
     var _previewVideoLayoutControl: PreviewVideoLayoutControl? = null
 
-    /** 记录总录制时长, 秒 */
+    /**记录总录制时长, 秒 */
     var _recordTime = 0
 
-    var _recordView: SizeSurfaceView? = null
-
-    var _recordControl: RecordVideoControl? = null
+    /**拍照, 录像助手*/
+    val dslCameraViewHelper = DslCameraViewHelper()
 
     init {
-        fragmentLayoutId = R.layout.camera_fragment_record_video
+        fragmentLayoutId = R.layout.camerax_fragment_record_video
     }
 
     override fun initBaseView(savedInstanceState: Bundle?) {
@@ -65,21 +56,14 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
     }
 
     private fun onDelayInitView() {
-        _recordView = _vh.v(R.id.recorder_view)
+        dslCameraViewHelper.cameraView = _vh.v(R.id.lib_camera_view)
+        dslCameraViewHelper.cameraView?.bindToLifecycle(this)
+
         _previewPictureLayoutControl =
             PreviewPictureLayoutControl(_vh.view(R.id.camera_confirm_layout)!!)
         _previewVideoLayoutControl =
             PreviewVideoLayoutControl(_vh.view(R.id.video_confirm_layout)!!)
-        _recordControl =
-            RecordVideoControl(requireActivity(), _recordView!!, this@RecordVideoFragment)
-        if (isResumed) {
-            _recordControl!!.surfaceChanged(
-                _recordView!!.holder,
-                0,
-                _recordView!!.width,
-                _recordView!!.height
-            )
-        }
+
         val recordLayout: ExpandRecordLayout? = _vh.v(R.id.record_control_layout)
         callback?.initConfig() ?: return
 
@@ -99,20 +83,21 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
                 override fun onTick(layout: ExpandRecordLayout) {
                     if (callback!!.takeModel.have(RecordVideoCallback.TAKE_MODEL_PHOTO)) {
                         //拍照
-                        _recordControl!!.takePhoto()
+                        dslCameraViewHelper.takePicture { file, exception ->
+                            if (exception == null && isResumed) {
+                                showPhotoPreview(file.toBitmap(), file)
+                            }
+                        }
                     }
                 }
 
                 override fun onRecordStart() {
                     super.onRecordStart()
-                    if (!_recordControl!!.isRecording) {
-                        _recordTime = 0
-                        _recordControl!!.startRecording(
-                            filePath(
-                                Constant.CAMERA_FOLDER_NAME,
-                                fileNameUUID(".mp4")
-                            )
-                        )
+
+                    dslCameraViewHelper.startRecording { file, exception ->
+                        if (exception == null && isResumed) {
+                            onRecordFinish(file.absolutePath)
+                        }
                     }
                 }
 
@@ -123,7 +108,7 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
                 override fun onRecordEnd(progress: Int) {
                     super.onRecordEnd(progress)
                     _recordTime = progress
-                    _recordControl!!.stopRecording(progress >= callback!!.minRecordTime)
+                    dslCameraViewHelper.stopRecording()
                 }
 
                 override fun onExpandStateChange(fromState: Int, toState: Int) {
@@ -132,6 +117,7 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
             }
             recordLayout.enableLongPress =
                 callback!!.takeModel.have(RecordVideoCallback.TAKE_MODEL_VIDEO)
+
             when (callback!!.takeModel) {
                 RecordVideoCallback.TAKE_MODEL_PHOTO -> {
                     recordLayout.drawTipString = callback!!.modelPhotoText
@@ -146,10 +132,6 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
         }
     }
 
-    override fun startRecord() {}
-
-    override fun onRecording(recordTime: Long) {}
-
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         _vh.gone(R.id.camera_confirm_layout)
@@ -159,7 +141,12 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
         }
     }
 
-    override fun onRecordFinish(videoPath: String) {
+    fun onRecordFinish(videoPath: String) {
+        if (_recordTime < callback!!.minRecordTime) {
+            toastQQ("至少需要录制 " + callback!!.minRecordTime + " 秒")
+            return
+        }
+
         val targetFile = File(callback!!.onTakeVideoAfter(videoPath))
 
         val newFileName: String = fileNameUUID("_t_$_recordTime.mp4")
@@ -169,14 +156,7 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
 
         //L.i("文件:" + new File(videoPath).exists());
         _previewVideoLayoutControl!!.showPreview(newFilePath, Runnable {
-            if (isResumed) {
-                _recordControl!!.surfaceChanged(
-                    _recordView!!.holder,
-                    0,
-                    _recordView!!.width,
-                    _recordView!!.height
-                )
-            }
+
         })
         _vh.click(R.id.video_confirm_button, View.OnClickListener {
 //            dslFHelper {
@@ -187,67 +167,55 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
         })
     }
 
-    override fun onRecordError() {
-        toastQQ("至少需要录制 " + callback!!.minRecordTime + " 秒")
-        if (isResumed) {
-            _recordControl!!.surfaceChanged(
-                _recordView!!.holder,
-                0,
-                _recordView!!.width,
-                _recordView!!.height
-            )
-        }
-    }
-
-    override fun onTakePhoto(data: ByteArray) {
-        i("onTakePhoto")
-        try {
-            val options = BitmapFactory.Options()
-            options.inPreferredConfig = Bitmap.Config.RGB_565
-            var bitmap = BitmapFactory.decodeByteArray(data, 0, data.size, options)
-            val displayOrientation = _recordControl!!.displayOrientation
-            if (displayOrientation != 0) {
-                val matrix = Matrix()
-                matrix.postRotate(displayOrientation.toFloat())
-                val rotatedBitmap = Bitmap.createBitmap(
-                    bitmap, 0, 0, bitmap.width, bitmap.height, matrix, false
-                )
-                if (bitmap != rotatedBitmap) {
-                    // 有时候 createBitmap会复用对象
-                    bitmap.recycle()
-                }
-                bitmap = rotatedBitmap
-            }
-            val width = bitmap.width
-            val height = bitmap.height
-            val builder = StringBuilder()
-            builder.append("_s_")
-            builder.append(width)
-            builder.append("x")
-            builder.append(height)
-            builder.append(".jpg")
-            val outputFile = filePath(Constant.CAMERA_FOLDER_NAME, builder.toString()).file()
-            var oldBitmap = bitmap
-            bitmap = callback!!.onTakePhotoBefore(bitmap, width, height)
-            if (oldBitmap != bitmap && !oldBitmap.isRecycled) {
-                oldBitmap.recycle()
-            }
-            showPhotoPreview(bitmap, outputFile)
-            oldBitmap = bitmap
-            bitmap = callback!!.onTakePhotoAfter(bitmap, width, height)
-            if (oldBitmap != bitmap && !oldBitmap.isRecycled) {
-                oldBitmap.recycle()
-            }
-
-            bitmap.save(outputFile.absolutePath, Bitmap.CompressFormat.JPEG, 70)
-//            Intent mediaScannerIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-//            Uri fileContentUri = Uri.fromFile(mediaFile);
-//            mediaScannerIntent.setData(fileContentUri);
-//            getActivity().sendBroadcast(mediaScannerIntent);
-        } catch (exception: Exception) {
-            exception.printStackTrace()
-        }
-    }
+//    override fun onTakePhoto(data: ByteArray) {
+//        i("onTakePhoto")
+//        try {
+//            val options = BitmapFactory.Options()
+//            options.inPreferredConfig = Bitmap.Config.RGB_565
+//            var bitmap = BitmapFactory.decodeByteArray(data, 0, data.size, options)
+//            val displayOrientation = _recordControl!!.displayOrientation
+//            if (displayOrientation != 0) {
+//                val matrix = Matrix()
+//                matrix.postRotate(displayOrientation.toFloat())
+//                val rotatedBitmap = Bitmap.createBitmap(
+//                    bitmap, 0, 0, bitmap.width, bitmap.height, matrix, false
+//                )
+//                if (bitmap != rotatedBitmap) {
+//                    // 有时候 createBitmap会复用对象
+//                    bitmap.recycle()
+//                }
+//                bitmap = rotatedBitmap
+//            }
+//            val width = bitmap.width
+//            val height = bitmap.height
+//            val builder = StringBuilder()
+//            builder.append("_s_")
+//            builder.append(width)
+//            builder.append("x")
+//            builder.append(height)
+//            builder.append(".jpg")
+//            val outputFile = filePath(Constant.CAMERA_FOLDER_NAME, builder.toString()).file()
+//            var oldBitmap = bitmap
+//            bitmap = callback!!.onTakePhotoBefore(bitmap, width, height)
+//            if (oldBitmap != bitmap && !oldBitmap.isRecycled) {
+//                oldBitmap.recycle()
+//            }
+//            showPhotoPreview(bitmap, outputFile)
+//            oldBitmap = bitmap
+//            bitmap = callback!!.onTakePhotoAfter(bitmap, width, height)
+//            if (oldBitmap != bitmap && !oldBitmap.isRecycled) {
+//                oldBitmap.recycle()
+//            }
+//
+//            bitmap.save(outputFile.absolutePath, Bitmap.CompressFormat.JPEG, 70)
+////            Intent mediaScannerIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+////            Uri fileContentUri = Uri.fromFile(mediaFile);
+////            mediaScannerIntent.setData(fileContentUri);
+////            getActivity().sendBroadcast(mediaScannerIntent);
+//        } catch (exception: Exception) {
+//            exception.printStackTrace()
+//        }
+//    }
 
     private fun showPhotoPreview(bitmap: Bitmap, outputFile: File) {
         _previewPictureLayoutControl!!.showPreview(bitmap)

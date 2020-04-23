@@ -273,6 +273,7 @@ inline fun <reified Item : DslAdapterItem> DslAdapter._updateOrInsertItem(
 
     //回调处理
     val newItem = updateOrCreateItem(oldItem)
+    newItem?.itemTag = itemTag
 
     if (findItem == null && newItem == null) {
         return

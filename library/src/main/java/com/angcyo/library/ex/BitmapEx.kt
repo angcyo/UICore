@@ -111,6 +111,7 @@ fun InputStream.bitmapSuffix(): String {
     }
 }
 
+/**从流中获取图片类型*/
 fun String.bitmapSuffix(): String {
     return file().inputStream().bitmapSuffix()
 }
@@ -149,3 +150,6 @@ fun Bitmap.save(
         }
     }
 }
+
+fun File.toBitmap() = BitmapFactory.decodeFile(this.absolutePath)
+fun String.toBitmap() = BitmapFactory.decodeFile(this)
