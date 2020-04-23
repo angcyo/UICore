@@ -70,10 +70,28 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application>
+
+        <!--免入侵获取Content-->
+        <provider
+            android:name=".LibInitProvider"
+            android:authorities="${applicationId}.init"
+            android:exported="false" />
+
         <!--Android7.0 文件权限-->
+        <!--请不要出现相同authorities的provider, 否则[FileProvider]解析可能报错-->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/lib_provider_paths" />
+        </provider>
+        <!--安全起见, 再声明一个-->
+        <provider
+            android:name=".LibFileProvider"
+            android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
