@@ -86,6 +86,9 @@ open class HideTitleBarBehavior(
 
         val contentScrollY = contentBehavior?.getContentScrollY(this) ?: 0
 
+        val minScrollY = getContentExcludeHeight(this) - child.measuredHeight
+        val maxScrollY = 0
+
         var handle = false
         if (enableOverScroll && !target.topCanScroll() && !target.bottomCanScroll()) {
             //内容不可滚动, 并且开启了over scroll 监听
@@ -100,12 +103,14 @@ open class HideTitleBarBehavior(
                 handle = true
             }
         } else {
-            if (target.topCanScroll() || target.bottomCanScroll()) {
+            handle = if (target.topCanScroll() || target.bottomCanScroll()) {
                 if (contentScrollY == 0) {
-                    handle = true
+                    true
+                } else {
+                    behaviorScrollY in (minScrollY + 1) until maxScrollY
                 }
             } else {
-                handle = behaviorScrollY != 0
+                behaviorScrollY != 0
             }
         }
 
@@ -113,8 +118,8 @@ open class HideTitleBarBehavior(
             consumedScrollVertical(
                 dy,
                 behaviorScrollY,
-                getContentExcludeHeight(this) - child.measuredHeight,
-                0,
+                minScrollY,
+                maxScrollY,
                 consumed
             )
         }

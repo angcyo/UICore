@@ -288,6 +288,10 @@ fun String?.isImageMimeType(): Boolean {
     return this?.startsWith("image", true) ?: false
 }
 
+fun String?.isTextMimeType(): Boolean {
+    return this?.startsWith("text", true) ?: false
+}
+
 /**获取字符串中所有匹配的数据(部分匹配), 更像是contains的关系*/
 fun CharSequence?.patternList(regex: String?): MutableList<String> {
     val result = mutableListOf<String>()

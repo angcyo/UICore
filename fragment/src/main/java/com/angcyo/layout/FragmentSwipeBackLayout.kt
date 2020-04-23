@@ -752,6 +752,8 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
             } else {
                 lastFragment?.back()
             }
+
+            L.i("fling to back touchDownX:$touchDownX velocityX:$velocityX")
         }
     }
 

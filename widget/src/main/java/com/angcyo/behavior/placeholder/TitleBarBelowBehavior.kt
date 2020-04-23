@@ -7,15 +7,16 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.BaseDependsBehavior
 import com.angcyo.behavior.ITitleBarBehavior
 import com.angcyo.widget.base.behavior
+import com.angcyo.widget.base.offsetTopTo
 
 /**
- * 覆盖在内容上, 布局在标题栏下的行为
+ * 布局在标题栏下的行为, 可以覆盖在内容上, 也可以被内容覆盖
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/03/01
  */
 
-open class ContentOverlayBehavior(
+open class TitleBarBelowBehavior(
     context: Context? = null,
     attrs: AttributeSet? = null
 ) : BaseDependsBehavior<View>(context, attrs) {
@@ -25,6 +26,8 @@ open class ContentOverlayBehavior(
 
     /**[child]需要排除多少高度*/
     val excludeHeight get() = titleBarPlaceholderBehavior?.getContentExcludeHeight(this) ?: 0
+
+    var _titleBarView: View? = null
 
     override fun layoutDependsOn(
         parent: CoordinatorLayout,
@@ -40,6 +43,11 @@ open class ContentOverlayBehavior(
         }
 
         super.layoutDependsOn(parent, child, dependency)
+
+        if (behavior is ITitleBarBehavior) {
+            _titleBarView = dependency
+        }
+
         return behavior is ITitleBarBehavior
     }
 
@@ -83,11 +91,8 @@ open class ContentOverlayBehavior(
         return true
     }
 
-    override fun onLayoutChild(
-        parent: CoordinatorLayout,
-        child: View,
-        layoutDirection: Int
-    ): Boolean {
-        return super.onLayoutChild(parent, child, layoutDirection)
+    override fun onLayoutChildAfter(parent: CoordinatorLayout, child: View, layoutDirection: Int) {
+        super.onLayoutChildAfter(parent, child, layoutDirection)
+        child.offsetTopTo(_titleBarView?.bottom ?: 0)
     }
 }

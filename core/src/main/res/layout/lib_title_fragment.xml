@@ -29,7 +29,7 @@
         android:layout_height="match_parent"
         app:layout_anchor="@id/lib_title_wrap_layout"
         app:layout_anchorGravity="bottom"
-        app:layout_behavior="com.angcyo.behavior.placeholder.ContentOverlayBehavior" />
+        app:layout_behavior="com.angcyo.behavior.placeholder.TitleBarBelowBehavior" />
 
     <!--刷新头布局包裹-->
     <FrameLayout
