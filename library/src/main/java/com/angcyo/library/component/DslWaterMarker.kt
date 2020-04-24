@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import com.angcyo.library.R
+import com.angcyo.library._screenWidth
+import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.toBitmap
 import com.angcyo.library.ex.undefined_res
 
@@ -27,7 +29,6 @@ open class DslWaterMarker {
     /**从图片路径中获取Bitmap对象*/
     var targetBitmapPath: String? = null
 
-
     //</editor-fold desc="需要加水印的目标">
 
     //<editor-fold desc="布局的方式添加水印">
@@ -41,6 +42,9 @@ open class DslWaterMarker {
     //</editor-fold desc="布局的方式添加水印">
 
     //<editor-fold desc="输出参数配置">
+
+    /**自动适配水印的大小*/
+    var outputAdapter: Boolean = true
 
     /**指定输出图片的宽高, 支持wrap_content*/
     var outputWidth = -2
@@ -61,7 +65,20 @@ open class DslWaterMarker {
 
         bitmap?.run {
 
+            val dslDensityAdapter = if (outputAdapter) {
+                DslDensityAdapter().apply {
+                    originWidth = width
+                    originDensity = 1f
+                    adapterWidth = _screenWidth
+                    adapterDensity = dp
+                }
+            } else {
+                null
+            }
+
             if (waterLayoutId != undefined_res) {
+                dslDensityAdapter?.adapter(context)
+
                 //布局的方式加水印
                 val rootView = LayoutInflater.from(context).inflate(waterLayoutId, null)
                 rootView.findViewById<ImageView>(R.id.lib_image_view)?.setImageBitmap(this)
@@ -96,9 +113,13 @@ open class DslWaterMarker {
                     this.recycle()
                 }
 
+                dslDensityAdapter?.restore()
+
                 //返回
                 return result
             }
+
+            dslDensityAdapter?.restore()
         }
 
         return bitmap!!
