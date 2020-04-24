@@ -8,7 +8,9 @@ import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.View
+import androidx.core.graphics.withSave
 import androidx.core.math.MathUtils
 import com.angcyo.drawable.base.DslGradientDrawable
 import com.angcyo.drawable.text.DslTextDrawable
@@ -32,8 +34,10 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
     /**进度条背景*/
     var progressBgDrawable: Drawable? = null
+
     /**第二进度*/
     var progressSecondDrawable: Drawable? = null
+
     /**进度条*/
     var progressTrackDrawable: Drawable? = null
 
@@ -66,19 +70,41 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     /**圆角大小, 未强制指定[progressBgDrawable] [progressTrackDrawable]的情况下生效*/
     var progressRadius: Int = 5 * dpi
 
+    /**绘制进度Drawable时, 是否使用clip模式. 这样可以实现左右是圆角, 中间不是圆角的情况*/
+    var progressClipMode = false
+
+    //<editor-fold desc="最右边文本配置">
+
     /**是否显示进度提示文本, 在右边显示进度文本*/
     var showProgressText = false
 
     /**进度文本格式*/
     var progressTextFormat = "%s%%"
+
     /**文本大小*/
     var progressTextSize = 14.toDp()
     var progressTextMinWidth = 40.toDp()
 
     /**文本颜色*/
     var progressTextColor = Color.parseColor("#333333")
+
     /**文本距离进度偏移的距离*/
     var progressTextOffset = 10.toDpi()
+
+    //</editor-fold desc="最右边文本配置">
+
+    //<editor-fold desc="居中文本配置">
+
+    var showProgressCenterText = false
+    var progressCenterTextFormat = "%s%%"
+    var progressCenterTextSize = 14.toDp()
+    var progressCenterTextColor = Color.parseColor("#333333")
+
+    //在进度上clip时的文本颜色
+    var progressCenterTextClipColor = Color.WHITE
+
+    //</editor-fold desc="居中文本配置">
+
 
     /**激活有进度和满进度时的动画*/
     var enableShowHideProgress: Boolean = false
@@ -89,6 +115,16 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
                 textSize = progressTextSize
                 textColor = progressTextColor
                 text = progressTextFormat.format("${(_progressFraction * 100).toInt()}")
+            }
+            return field
+        }
+
+    val _progressCenterTextDrawable: DslTextDrawable = DslTextDrawable()
+        get() {
+            with(field) {
+                textGravity = Gravity.CENTER
+                textSize = progressCenterTextSize
+                text = progressCenterTextFormat.format("${(_progressFraction * 100).toInt()}")
             }
             return field
         }
@@ -206,6 +242,29 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
                 enableShowHideProgress
             )
 
+        progressClipMode =
+            typedArray.getBoolean(R.styleable.DslProgressBar_progress_clip_mode, progressClipMode)
+
+        //居中提示文本
+        showProgressCenterText =
+            typedArray.getBoolean(
+                R.styleable.DslProgressBar_progress_show_center_text,
+                showProgressCenterText
+            )
+        progressCenterTextSize = typedArray.getDimensionPixelOffset(
+            R.styleable.DslProgressBar_progress_center_text_size,
+            progressCenterTextSize.toInt()
+        ).toFloat()
+        progressCenterTextColor =
+            typedArray.getColor(
+                R.styleable.DslProgressBar_progress_center_text_color,
+                progressCenterTextColor
+            )
+        progressCenterTextFormat =
+            typedArray.getString(R.styleable.DslProgressBar_progress_center_text_format)
+                ?: progressCenterTextFormat
+        //---end
+
         typedArray.recycle()
     }
 
@@ -232,6 +291,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         drawSecondProgress(canvas)
         drawTrack(canvas)
         drawProgressText(canvas)
+        drawCenterProgressText(canvas)
     }
 
     override fun onAttachedToWindow() {
@@ -290,14 +350,34 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         val pBound = _progressBound
         progressTrackDrawable?.apply {
 
+            val progressRight = (pBound.left + pBound.width() * _progressFraction).toInt()
+
+            val right = if (progressClipMode) {
+                pBound.right
+            } else {
+                progressRight
+            }
+
             setBounds(
                 pBound.left,
                 pBound.top,
-                (pBound.left + pBound.width() * _progressFraction).toInt(),
+                right,
                 pBound.bottom
             )
 
-            draw(canvas)
+            if (progressClipMode) {
+                canvas.withSave {
+                    clipRect(
+                        pBound.left,
+                        pBound.top,
+                        progressRight,
+                        pBound.bottom
+                    )
+                    draw(canvas)
+                }
+            } else {
+                draw(canvas)
+            }
         }
     }
 
@@ -312,6 +392,39 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
                     pBound.bottom
                 )
                 draw(canvas)
+            }
+        }
+    }
+
+    open fun drawCenterProgressText(canvas: Canvas) {
+        if (showProgressCenterText) {
+            val pBound = _progressBound
+            val progressRight = (pBound.left + pBound.width() * _progressFraction).toInt()
+
+            with(_progressCenterTextDrawable) {
+                bounds = pBound
+                //绘制左半边进度文本
+                canvas.withSave {
+                    textColor = progressCenterTextClipColor
+                    clipRect(
+                        pBound.left,
+                        pBound.top,
+                        progressRight,
+                        pBound.bottom
+                    )
+                    draw(canvas)
+                }
+                //绘制右半边进度文本
+                canvas.withSave {
+                    textColor = progressCenterTextColor
+                    clipRect(
+                        progressRight,
+                        pBound.top,
+                        pBound.right,
+                        pBound.bottom
+                    )
+                    draw(canvas)
+                }
             }
         }
     }

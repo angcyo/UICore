@@ -17,7 +17,7 @@ import com.angcyo.library.ex.dp
 import kotlin.math.max
 
 /**
- *
+ * 根据[textGravity], 在指定的[Bound]中, 绘制指定的文本信息, 不支持span和换行
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/12/20
