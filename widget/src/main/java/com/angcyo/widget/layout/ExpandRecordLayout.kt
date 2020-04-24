@@ -16,6 +16,7 @@ import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.MotionEventCompat
 import com.angcyo.library.L
 import com.angcyo.library.ex._color
+import com.angcyo.library.ex.alpha
 import com.angcyo.library.ex.dp
 import com.angcyo.widget.R
 
@@ -179,6 +180,9 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
+    var _downX: Float = 0f
+    var _downY: Float = 0f
+
     /**控制手势事件*/
     private val gestureCompat: GestureDetectorCompat by lazy {
         GestureDetectorCompat(context, object : GestureDetector.SimpleOnGestureListener() {
@@ -206,6 +210,9 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
                 val eventX = event.x
                 val eventY = event.y + scrollY
 
+                _downX = eventX
+                _downY = eventY
+
                 var intercept = false
                 if (outCircleRect.contains(eventX, eventY)) {
                     intercept = true
@@ -217,6 +224,7 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
                 } else if (state == STATE_EXPAND) {
                     intercept = true
                 }
+                invalidate()
                 L.e("call: onDown -> $intercept")
                 return intercept
             }
@@ -289,7 +297,12 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
                 (cx + cr).toInt(),
                 (cy + cr).toInt()
             )
-            paint.color = circleColor
+            if (outCircleRect.contains(_downX, _downY) && !isLongPress) {
+                //按下时的变色效果
+                paint.color = circleColor.alpha(120)
+            } else {
+                paint.color = circleColor
+            }
             canvas.drawCircle(cx.toFloat(), cy, cr * circleScale, paint)
 
             //绘制进度
@@ -334,7 +347,7 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
-    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         return super.onInterceptTouchEvent(ev)
     }
 
@@ -345,11 +358,14 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
             super.onTouchEvent(event)
             when (MotionEventCompat.getActionMasked(event)) {
                 ACTION_CANCEL, ACTION_UP -> {
+                    _downX = -1f
+                    _downY = -1f
                     removeCallbacks(longPressRunnable)
                     if (isLongPress) {
                         isLongPress = false
                         stopProgress((progressAnimator.currentPlayTime / 1000.0).toInt())
                     }
+                    invalidate()
                 }
                 ACTION_MOVE -> {
                     val eventX = event.x

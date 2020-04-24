@@ -367,6 +367,24 @@ fun ViewGroup.resetChildCount(newSize: Int, onCreateView: (childIndex: Int) -> V
 
 //<editor-fold desc="Dsl吸附">
 
+fun View.dslViewHolder(): DslViewHolder {
+    return this.run {
+        var _tag = getTag(R.id.lib_tag_dsl_view_holder)
+        if (_tag is DslViewHolder) {
+            _tag
+        } else {
+            _tag = tag
+            if (_tag is DslViewHolder) {
+                _tag
+            } else {
+                DslViewHolder(this).apply {
+                    setDslViewHolder(this)
+                }
+            }
+        }
+    }
+}
+
 fun View?.tagDslViewHolder(): DslViewHolder? {
     return this?.run {
         var _tag = getTag(R.id.lib_tag_dsl_view_holder)
