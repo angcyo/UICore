@@ -9,11 +9,16 @@ import android.view.View
 import androidx.core.app.ActivityCompat
 import com.angcyo.camerax.dslitem.DslCameraViewHelper
 import com.angcyo.core.fragment.BaseFragment
+import com.angcyo.dialog.hideLoading
+import com.angcyo.dialog.loadingDialog
 import com.angcyo.library.ex.file
 import com.angcyo.library.ex.have
+import com.angcyo.library.ex.save
 import com.angcyo.library.ex.toBitmap
 import com.angcyo.library.toastQQ
+import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.fileNameUUID
+import com.angcyo.library.utils.filePath
 import com.angcyo.media.video.record.control.PreviewPictureLayoutControl
 import com.angcyo.media.video.record.control.PreviewVideoLayoutControl
 import com.angcyo.media.video.record.inner.RecordVideoCallback
@@ -82,10 +87,14 @@ class CameraXRecordVideoFragment : BaseFragment() {
 
                 override fun onTick(layout: ExpandRecordLayout) {
                     if (callback!!.takeModel.have(RecordVideoCallback.TAKE_MODEL_PHOTO)) {
+                        fContext().loadingDialog(R.layout.camerax_loading_layout) {
+                            loadingText = "处理中..."
+                        }
                         //拍照
                         dslCameraViewHelper.takePicture { file, exception ->
+                            hideLoading()
                             if (exception == null && isResumed) {
-                                showPhotoPreview(file.toBitmap(), file)
+                                onTakePhoto(file.toBitmap())
                             }
                         }
                     }
@@ -141,6 +150,7 @@ class CameraXRecordVideoFragment : BaseFragment() {
         }
     }
 
+    /**录像之后的处理流程*/
     fun onRecordFinish(videoPath: String) {
         if (_recordTime < callback!!.minRecordTime) {
             toastQQ("至少需要录制 " + callback!!.minRecordTime + " 秒")
@@ -167,55 +177,43 @@ class CameraXRecordVideoFragment : BaseFragment() {
         })
     }
 
-//    override fun onTakePhoto(data: ByteArray) {
-//        i("onTakePhoto")
-//        try {
-//            val options = BitmapFactory.Options()
-//            options.inPreferredConfig = Bitmap.Config.RGB_565
-//            var bitmap = BitmapFactory.decodeByteArray(data, 0, data.size, options)
-//            val displayOrientation = _recordControl!!.displayOrientation
-//            if (displayOrientation != 0) {
-//                val matrix = Matrix()
-//                matrix.postRotate(displayOrientation.toFloat())
-//                val rotatedBitmap = Bitmap.createBitmap(
-//                    bitmap, 0, 0, bitmap.width, bitmap.height, matrix, false
-//                )
-//                if (bitmap != rotatedBitmap) {
-//                    // 有时候 createBitmap会复用对象
-//                    bitmap.recycle()
-//                }
-//                bitmap = rotatedBitmap
-//            }
-//            val width = bitmap.width
-//            val height = bitmap.height
-//            val builder = StringBuilder()
-//            builder.append("_s_")
-//            builder.append(width)
-//            builder.append("x")
-//            builder.append(height)
-//            builder.append(".jpg")
-//            val outputFile = filePath(Constant.CAMERA_FOLDER_NAME, builder.toString()).file()
-//            var oldBitmap = bitmap
-//            bitmap = callback!!.onTakePhotoBefore(bitmap, width, height)
-//            if (oldBitmap != bitmap && !oldBitmap.isRecycled) {
-//                oldBitmap.recycle()
-//            }
-//            showPhotoPreview(bitmap, outputFile)
-//            oldBitmap = bitmap
-//            bitmap = callback!!.onTakePhotoAfter(bitmap, width, height)
-//            if (oldBitmap != bitmap && !oldBitmap.isRecycled) {
-//                oldBitmap.recycle()
-//            }
-//
-//            bitmap.save(outputFile.absolutePath, Bitmap.CompressFormat.JPEG, 70)
-////            Intent mediaScannerIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-////            Uri fileContentUri = Uri.fromFile(mediaFile);
-////            mediaScannerIntent.setData(fileContentUri);
-////            getActivity().sendBroadcast(mediaScannerIntent);
-//        } catch (exception: Exception) {
-//            exception.printStackTrace()
-//        }
-//    }
+    /**拍摄图片之后的处理流程*/
+    fun onTakePhoto(bitmap: Bitmap) {
+        try {
+            var result: Bitmap = bitmap
+            val width = bitmap.width
+            val height = bitmap.height
+            val builder = StringBuilder()
+            builder.append("_s_")
+            builder.append(width)
+            builder.append("x")
+            builder.append(height)
+            builder.append(".jpg")
+            val outputFile =
+                filePath(Constant.CAMERA_FOLDER_NAME, fileNameUUID(builder.toString())).file()
+            var oldBitmap = bitmap
+            //水印处理
+            result = callback!!.onTakePhotoBefore(bitmap, width, height)
+            if (oldBitmap != result && !oldBitmap.isRecycled) {
+                oldBitmap.recycle()
+            }
+            //显示图片预览
+            showPhotoPreview(result, outputFile)
+            oldBitmap = result
+            result = callback!!.onTakePhotoAfter(result, width, height)
+            if (oldBitmap != result && !oldBitmap.isRecycled) {
+                oldBitmap.recycle()
+            }
+
+            result.save(outputFile.absolutePath, Bitmap.CompressFormat.JPEG, 70)
+//            Intent mediaScannerIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+//            Uri fileContentUri = Uri.fromFile(mediaFile);
+//            mediaScannerIntent.setData(fileContentUri);
+//            getActivity().sendBroadcast(mediaScannerIntent);
+        } catch (exception: Exception) {
+            exception.printStackTrace()
+        }
+    }
 
     private fun showPhotoPreview(bitmap: Bitmap, outputFile: File) {
         _previewPictureLayoutControl!!.showPreview(bitmap)

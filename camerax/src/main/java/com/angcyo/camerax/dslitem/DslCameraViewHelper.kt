@@ -37,7 +37,7 @@ class DslCameraViewHelper {
     /**拍照, 拍照*/
     fun takePicture(file: File? = null, onResult: (File, Exception?) -> Unit) {
         val saveFile =
-            file ?: File(filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".jpeg")))
+            file ?: File(filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".jpg")))
         cameraView?.run {
             if (captureMode == CameraView.CaptureMode.VIDEO) {
                 captureMode = CameraView.CaptureMode.IMAGE

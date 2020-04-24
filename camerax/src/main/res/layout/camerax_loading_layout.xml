@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="100dp"
+    android:layout_height="100dp"
+    android:background="@drawable/dialog_dark_solid_round_shape">
+
+    <com.angcyo.widget.image.ImageLoadingView
+        android:id="@+id/lib_image_view"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="-15dp"
+        app:srcCompat="@drawable/camerax_ic_loading" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_text_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="-25dp"
+        android:textColor="@color/lib_white"
+        android:textSize="@dimen/text_assist_size"
+        tools:text="处理中..." />
+</FrameLayout>
