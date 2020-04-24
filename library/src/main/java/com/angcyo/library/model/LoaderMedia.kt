@@ -118,8 +118,7 @@ fun LoaderMedia.loadPath(): String? {
     if (localPath?.isFileExist() == true) {
         return localPath
     }
-    //网络路径
-    return url
+    return localUri?.loadUrl() ?: url //网络路径
 }
 
 /**加载的[Uri]*/

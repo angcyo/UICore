@@ -128,12 +128,12 @@ fun Uri.query(context: Context = app()): MediaBean? {
 
 /**根据scheme获取, 能加载的url*/
 fun Uri?.loadUrl(): String? {
-    if (this.isHttpScheme()) {
-        return this.toString()
-    } else if (isFileScheme()) {
+    return when {
+        this == null -> null
+        this.isHttpScheme() -> toString()
+        isFileScheme() -> this.path
         //this?.encodedPath
         //Uri.decode(this?.encodedPath)
-        return this?.path
+        else -> toString()
     }
-    return this.toString()
 }
