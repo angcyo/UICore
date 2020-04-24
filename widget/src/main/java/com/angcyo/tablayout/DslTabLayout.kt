@@ -897,8 +897,7 @@ open class DslTabLayout(
     fun startScroll(dx: Int) {
         _overScroller.abortAnimation()
         _overScroller.startScroll(scrollX, scrollY, dx, 0)
-        //api16
-        postInvalidateOnAnimation()
+        ViewCompat.postInvalidateOnAnimation(this)
     }
 
     open fun onScrollChange(distance: Float): Boolean {
@@ -1069,6 +1068,7 @@ open class DslTabLayout(
         _viewPagerScrollState = state
         if (state == ViewPagerDelegate.SCROLL_STATE_IDLE) {
             _onAnimateEnd()
+            dslSelector.updateStyle()
         }
     }
 
