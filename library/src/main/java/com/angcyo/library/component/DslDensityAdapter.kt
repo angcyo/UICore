@@ -16,7 +16,7 @@ import com.angcyo.library.L
 class DslDensityAdapter {
 
     companion object {
-        
+
         //<editor-fold desc="内部属性用于恢复">
         var _oldSysDp: Float = -1f
         var _oldSysDpi: Int = -1
