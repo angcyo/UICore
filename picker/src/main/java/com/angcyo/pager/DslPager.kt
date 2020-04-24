@@ -27,3 +27,24 @@ fun Fragment.dslPager(
         }
     }
 }
+
+/**
+ * 单图预览:
+ * ```
+ *  dslPager {
+ *      fromView = it
+ *      addMedia(codeSavePath)
+ *  }
+ * ```
+ * */
+
+/**
+ * 结合RecyclerView预览:
+ * ```
+ *  dslPager {
+ *      fromRecyclerView = recyclerView
+ *      startPosition = itemIndexPosition()
+ *      loaderMediaList = itemMediaList
+ *  }
+ * ```
+ * */

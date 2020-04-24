@@ -161,7 +161,7 @@ open class PagerTransitionFragment : ViewTransitionFragment() {
         }
     }
 
-    fun onCreatePagerAdapter(): PagerAdapter? {
+    open fun onCreatePagerAdapter(): PagerAdapter? {
         val adapter = pagerTransitionCallback.onCreatePagerAdapter?.invoke()
 
         if (adapter != null) {

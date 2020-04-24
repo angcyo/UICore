@@ -85,6 +85,10 @@ open class PagerTransitionCallback : ViewTransitionCallback(), ViewPager.OnPageC
         addMedia(LoaderMedia(url = url))
     }
 
+    fun addMedia(uri: Uri?) {
+        addMedia(LoaderMedia(localUri = uri))
+    }
+
     fun addMedia(media: LoaderMedia) {
         loaderMediaList.add(media)
     }
@@ -132,6 +136,10 @@ open class PagerTransitionCallback : ViewTransitionCallback(), ViewPager.OnPageC
             //图片控件赋值
             if (this is ImageView && fromView is ImageView) {
                 scaleType = fromView.scaleType
+            } else if (fromView == null) {
+                //未指定fromView时, 使用 scale 动画
+                scaleX = 0f
+                scaleY = 0f
             }
         }
 
@@ -142,6 +150,8 @@ open class PagerTransitionCallback : ViewTransitionCallback(), ViewPager.OnPageC
         super.onCaptureShowEndValues(viewHolder)
 
         transitionTargetView(viewHolder)?.apply {
+            scaleX = 1f
+            scaleY = 1f
             if (this is ImageView) {
                 scaleType = ImageView.ScaleType.FIT_CENTER
             }
@@ -166,6 +176,10 @@ open class PagerTransitionCallback : ViewTransitionCallback(), ViewPager.OnPageC
             //图片控件赋值
             if (this is ImageView && toView is ImageView) {
                 scaleType = toView.scaleType
+            } else if (toView == null) {
+                //目标不存在时, 使用 scale 动画
+                scaleX = 0f
+                scaleY = 0f
             }
         }
 
