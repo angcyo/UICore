@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Base64
@@ -151,5 +153,52 @@ fun Bitmap.save(
     }
 }
 
-fun File.toBitmap() = BitmapFactory.decodeFile(this.absolutePath)
-fun String.toBitmap() = BitmapFactory.decodeFile(this)
+/**将图片旋转指定角度
+ * [degrees] 需要旋转的角度[0-360]
+ * */
+fun Bitmap.rotate(degrees: Float = 0f): Bitmap = if (degrees > 0) {
+    val matrix = Matrix()
+    matrix.postRotate(degrees)
+    val rotatedBitmap = Bitmap.createBitmap(
+        this,
+        0, 0,
+        width, height,
+        matrix,
+        false
+    )
+    if (rotatedBitmap != rotatedBitmap) {
+        // 有时候 createBitmap会复用对象
+        recycle()
+    }
+    rotatedBitmap
+} else {
+    this
+}
+
+/**[rotate]纠正旋转角度*/
+fun File.toBitmap(rotate: Boolean = true) = absolutePath.toBitmap(rotate)
+
+fun String.toBitmap(rotate: Boolean = true): Bitmap {
+    val file = File(this)
+    return BitmapFactory.decodeFile(this).run {
+        if (rotate) {
+            rotate(file.exifOrientation().toFloat())
+        } else {
+            this
+        }
+    }
+}
+
+/**获取图片的旋转角度*/
+fun File.exifOrientation() = try {
+    val orientation =
+        ExifInterface(this.absolutePath).getAttributeInt(ExifInterface.TAG_ORIENTATION, -1)
+    when (orientation) {
+        ExifInterface.ORIENTATION_ROTATE_90 -> 90
+        ExifInterface.ORIENTATION_ROTATE_180 -> 180
+        ExifInterface.ORIENTATION_ROTATE_270 -> 270
+        else -> 0
+    }
+} catch (e: Exception) {
+    0
+}
