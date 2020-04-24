@@ -15,6 +15,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StyleRes
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDialog
 import com.angcyo.base.dslAHelper
 import com.angcyo.dialog.activity.DialogActivity
@@ -24,6 +25,7 @@ import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.undefined_float
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.dslViewHolder
 import com.angcyo.widget.base.replace
 import java.io.Serializable
 
@@ -299,7 +301,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
             configWindowAfter(window)
 
             decorView = window.decorView
-            val viewHolder = DslViewHolder(decorView)
+            val viewHolder = decorView.dslViewHolder()
             initDialogView(dialog, viewHolder)
             onDialogInitListener(dialog, viewHolder)
         }
@@ -451,7 +453,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
             showAndConfigDialog(sheetDialog)
         } catch (e: Exception) {
             L.w(e)
-            showCompatDialog()
+            show(DIALOG_TYPE_APPCOMPAT)
         }
     }
 
@@ -486,10 +488,23 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
     }
 
     /**根据类型, 自动显示对应[Dialog]*/
-    fun show(): Dialog {
-        return when (dialogType) {
+    open fun show(type: Int = dialogType): Dialog {
+        return when (type) {
             DIALOG_TYPE_DIALOG -> showDialog()
-            DIALOG_TYPE_ALERT_DIALOG -> showAlertDialog()
+            DIALOG_TYPE_APPCOMPAT -> {
+                if (dialogContext is AppCompatActivity) {
+                    showCompatDialog()
+                } else {
+                    showDialog()
+                }
+            }
+            DIALOG_TYPE_ALERT_DIALOG -> {
+                if (dialogContext is AppCompatActivity) {
+                    showAlertDialog()
+                } else {
+                    showDialog()
+                }
+            }
             DIALOG_TYPE_BOTTOM_SHEET_DIALOG -> showSheetDialog()
             DIALOG_TYPE_ACTIVITY -> {
                 showDialogActivity()
@@ -497,7 +512,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
                     L.w("[DIALOG_TYPE_ACTIVITY] 类型, 无法返回[Dialog]对象")
                 }
             }
-            else -> showCompatDialog()
+            else -> showDialog()
         }
     }
 }

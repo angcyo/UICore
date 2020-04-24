@@ -14,6 +14,8 @@ import com.angcyo.library.L
 import com.angcyo.library.ex.elseNull
 import com.angcyo.transition.dslTransition
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.dslViewHolder
+import com.angcyo.widget.base.tagDslViewHolder
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -42,7 +44,7 @@ fun hideLoading(
                 if (transition) {
                     //执行转换
                     window?.decorView?.run {
-                        val dialogViewHolder = DslViewHolder(this)
+                        val dialogViewHolder = dslViewHolder()
 
                         dslTransition(this as ViewGroup) {
                             onCaptureEndValues = {
