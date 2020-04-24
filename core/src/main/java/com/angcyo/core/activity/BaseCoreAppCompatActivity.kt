@@ -19,6 +19,11 @@ import com.angcyo.widget.span.span
 
 abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
 
+    companion object {
+        /**上一次是否发生过崩溃*/
+        var haveLastCrash = false
+    }
+
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         checkCrash()
@@ -26,7 +31,7 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
 
     open fun checkCrash() {
         if (!isRelease()) {
-            DslCrashHandler.checkCrash(true) { filePath, message, crashTime ->
+            haveLastCrash = DslCrashHandler.checkCrash(true) { filePath, message, crashTime ->
                 filePath?.file()?.readText()?.copy(this)
 
                 normalDialog {

@@ -10,9 +10,9 @@ import android.content.res.Resources
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
-val density: Float = Resources.getSystem()?.displayMetrics?.density ?: 0f
-val dp: Float = Resources.getSystem()?.displayMetrics?.density ?: 0f
-val dpi: Int = Resources.getSystem()?.displayMetrics?.density?.toInt() ?: 0
+val density: Float get() = Resources.getSystem()?.displayMetrics?.density ?: 0f
+val dp: Float get() = Resources.getSystem()?.displayMetrics?.density ?: 0f
+val dpi: Int get() = Resources.getSystem()?.displayMetrics?.density?.toInt() ?: 0
 
 fun Int.toDp(): Float {
     return this * dp
