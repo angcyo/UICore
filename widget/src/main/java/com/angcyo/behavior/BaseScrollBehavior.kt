@@ -258,25 +258,17 @@ abstract class BaseScrollBehavior<T : View>(
         ) || !_overScroller.isFinished
     }
 
-    val listeners = mutableListOf<ScrollBehaviorListener>()
-    fun addScrollListener(listener: ScrollBehaviorListener) {
+    val listeners = mutableListOf<IScrollBehaviorListener>()
+    fun addScrollListener(listener: IScrollBehaviorListener) {
         if (!listeners.contains(listener)) {
             listeners.add(listener)
         }
     }
 
-    fun removeScrollListener(listener: ScrollBehaviorListener) {
+    fun removeScrollListener(listener: IScrollBehaviorListener) {
         if (listeners.contains(listener)) {
             listeners.remove(listener)
         }
     }
 }
 
-interface ScrollBehaviorListener {
-    fun onBehaviorScrollTo(x: Int, y: Int)
-
-//    //滚动状态, 无法在基类中捕捉. 自行回调
-//    fun onBehaviorScrollStateChanged(state: Int) {
-//
-//    }
-}

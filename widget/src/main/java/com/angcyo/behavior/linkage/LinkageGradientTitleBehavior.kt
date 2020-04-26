@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.BaseDependsBehavior
 import com.angcyo.behavior.ITitleBarBehavior
-import com.angcyo.behavior.ScrollBehaviorListener
+import com.angcyo.behavior.IScrollBehaviorListener
 import com.angcyo.library.ex.color
 import com.angcyo.library.ex.loadColor
 import com.angcyo.tablayout.clamp
@@ -31,7 +31,7 @@ import kotlin.math.min
 open class LinkageGradientTitleBehavior(
     context: Context,
     attributeSet: AttributeSet? = null
-) : BaseLinkageBehavior(context, attributeSet), ScrollBehaviorListener, ITitleBarBehavior {
+) : BaseLinkageBehavior(context, attributeSet), IScrollBehaviorListener, ITitleBarBehavior {
 
     /**标题控件的id, 用于单独操作控制标题控件*/
     var titleTextId: Int = R.id.lib_title_text_view

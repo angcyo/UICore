@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.angcyo.behavior.ScrollBehaviorListener
+import com.angcyo.behavior.IScrollBehaviorListener
 import com.angcyo.library.ex.calcSize
 import com.angcyo.tablayout.clamp
 import com.angcyo.widget.R
@@ -22,7 +22,7 @@ import com.angcyo.widget.base.mH
 open class LinkageScaleBehavior(
     context: Context,
     attributeSet: AttributeSet? = null
-) : BaseLinkageBehavior(context, attributeSet), ScrollBehaviorListener {
+) : BaseLinkageBehavior(context, attributeSet), IScrollBehaviorListener {
 
     /**效果作用的目标, 不设置就是 child*/
     var scaleTargetView: View? = null
