@@ -10,12 +10,18 @@ import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
+import androidx.core.graphics.withSave
 import androidx.core.math.MathUtils
 import androidx.core.view.GestureDetectorCompat
 import kotlin.math.abs
 import kotlin.math.max
 
 /**
+ *
+ * 向下拖拽缩放子视图, 可以用于实现拖拽图片返回界面的效果.
+ *
+ * 默认限制了向上移动.(即临界值时, 不能再往上移动了)可以通过变量解开限制.
+ *
  * Email:angcyo@126.com
  *
  * @author angcyo
@@ -25,22 +31,27 @@ import kotlin.math.max
 class MatrixLayout(context: Context, attrs: AttributeSet? = null) :
     FrameLayout(context, attrs) {
     val _matrix = Matrix()
+
     /**
      * 视图轮廓对应的矩形
      */
     var viewRectF = RectF()
+
     /**
      * 拖拽后, 绘制的矩形
      */
     var drawRectF = RectF()
+
     /**
      * 允许最大放大到多少倍
      */
     var maxScale = 1f
+
     /**
      * 允许最小缩放到多少倍
      */
     var minScale = 0.4f
+
     /**
      * 最小y轴移动多少, 控制手指向上滑动时, 是否可以y轴移动
      */
@@ -85,10 +96,10 @@ class MatrixLayout(context: Context, attrs: AttributeSet? = null) :
     }
 
     override fun dispatchDraw(canvas: Canvas) {
-        canvas.save()
-        canvas.concat(_matrix)
-        super.dispatchDraw(canvas)
-        canvas.restore()
+        canvas.withSave {
+            canvas.concat(_matrix)
+            super.dispatchDraw(canvas)
+        }
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
