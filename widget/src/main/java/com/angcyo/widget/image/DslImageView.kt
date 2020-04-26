@@ -137,6 +137,7 @@ open class DslImageView : ShapeImageView {
                 if (overlayDrawable.bounds.isEmpty) {
                     viewRect(overlayDrawable.bounds)
                 }
+                _dslGravity.gravityRelativeCenter = false
                 _dslGravity.gravity = it.gravity
                 _dslGravity.gravityOffsetX = it.offsetX
                 _dslGravity.gravityOffsetY = it.offsetY
