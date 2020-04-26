@@ -33,15 +33,22 @@ open class LinkageGradientTitleBehavior(
     attributeSet: AttributeSet? = null
 ) : BaseLinkageBehavior(context, attributeSet), ScrollBehaviorListener, ITitleBarBehavior {
 
+    /**标题控件的id, 用于单独操作控制标题控件*/
     var titleTextId: Int = R.id.lib_title_text_view
-    var backViewId: Int = R.id.lib_title_back_view
 
-    var backgroundColorFrom: Int = Color.TRANSPARENT
-    var backgroundColorTo: Int = Color.WHITE
-
+    /**标题文本渐变开始的颜色*/
     var titleTextColorFrom: Int = Color.TRANSPARENT
+
+    /**标题文本渐变结束的颜色*/
     var titleTextColorTo: Int = context.loadColor(R.color.text_general_color)
 
+    /**[titleTextId]*/
+    var backViewId: Int = R.id.lib_title_back_view
+
+    var backIconColorFrom: Int = Color.WHITE
+    var backIconColorTo: Int = context.loadColor(R.color.lib_icon_dark_color)
+
+    /**其他[ImageView]控件图标颜色*/
     var iconColorFrom: Int = Color.WHITE
         set(value) {
             field = value
@@ -53,8 +60,9 @@ open class LinkageGradientTitleBehavior(
             backIconColorTo = value
         }
 
-    var backIconColorFrom: Int = Color.WHITE
-    var backIconColorTo: Int = context.loadColor(R.color.lib_icon_dark_color)
+    /**整个标题栏背景颜色渐变*/
+    var backgroundColorFrom: Int = Color.TRANSPARENT
+    var backgroundColorTo: Int = Color.WHITE
 
     init {
         onBehaviorScrollTo = { _, y ->
