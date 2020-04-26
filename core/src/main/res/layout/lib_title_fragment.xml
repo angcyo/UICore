@@ -11,7 +11,7 @@
         android:id="@+id/lib_content_wrap_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_behavior="com.angcyo.behavior.refresh.RefreshBehavior">
+        tools:layout_behavior="com.angcyo.behavior.refresh.RefreshContentBehavior">
 
         <com.angcyo.widget.recycler.DslRecyclerView
             android:id="@+id/lib_recycler_view"

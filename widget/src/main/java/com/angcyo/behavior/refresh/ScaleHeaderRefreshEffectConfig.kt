@@ -36,24 +36,24 @@ open class ScaleHeaderRefreshEffectConfig : RefreshEffectConfig() {
     var _defaultLayoutParams: ViewGroup.LayoutParams? = null
     var _defaultTargetHeight: Int = -1
     override fun onContentLayout(
-        behavior: RefreshBehavior,
+        contentBehavior: BaseScrollBehavior<*>,
         parent: CoordinatorLayout,
         child: View
     ) {
-        super.onContentLayout(behavior, parent, child)
-        onGetTargetView(behavior)?.apply {
-            if (behavior.behaviorScrollY == 0 && _defaultLayoutParams == null) {
+        super.onContentLayout(contentBehavior, parent, child)
+        onGetTargetView(contentBehavior)?.apply {
+            if (contentBehavior.behaviorScrollY == 0 && _defaultLayoutParams == null) {
                 _defaultLayoutParams = layoutParams
                 _defaultTargetHeight = measuredHeight
             }
         }
     }
 
-    override fun onContentScrollTo(behavior: RefreshBehavior, x: Int, y: Int) {
+    override fun onContentScrollTo(contentBehavior: BaseScrollBehavior<*>, x: Int, y: Int) {
         if (y > 0) {
             //L.i("$_defaultTargetHeight $y")
             //当内容需要向下滚动时, 改变目标view的高度
-            onGetTargetView(behavior)?.apply {
+            onGetTargetView(contentBehavior)?.apply {
                 setHeight(_defaultTargetHeight + y)
                 val ratio = y * 1f / _defaultTargetHeight
                 if (scaleThreshold in 0f..ratio) {
@@ -72,7 +72,7 @@ open class ScaleHeaderRefreshEffectConfig : RefreshEffectConfig() {
                 _defaultLayoutParams = null
             }
         } */ else {
-            super.onContentScrollTo(behavior, x, y)
+            super.onContentScrollTo(contentBehavior, x, y)
         }
     }
 }

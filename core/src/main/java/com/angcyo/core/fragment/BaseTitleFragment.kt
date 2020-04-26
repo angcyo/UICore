@@ -11,8 +11,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import com.angcyo.DslAHelper
 import com.angcyo.base.getAllValidityFragment
+import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.behavior.placeholder.TitleBarPlaceholderBehavior
-import com.angcyo.behavior.refresh.RefreshBehavior
+import com.angcyo.behavior.refresh.RefreshContentBehavior
+import com.angcyo.behavior.refresh.RefreshEffectBehavior
 import com.angcyo.behavior.refresh.RefreshHeaderBehavior
 import com.angcyo.core.R
 import com.angcyo.core.appendTextItem
@@ -61,7 +63,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     /**是否需要强制显示返回按钮, 否则智能判断*/
     var enableBackItem: Boolean = false
 
-    var refreshBehavior: RefreshBehavior? = null
+    var refreshContentBehavior: RefreshContentBehavior? = null
 
     //<editor-fold desc="操作属性">
 
@@ -208,13 +210,13 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     open fun onInitBehavior() {
         rootControl().group(R.id.lib_coordinator_wrap_layout)?.eachChild { _, child ->
             onCreateBehavior(child)?.run {
-                if (this is RefreshBehavior) {
-                    refreshBehavior = this
+                if (this is RefreshContentBehavior) {
+                    refreshContentBehavior = this
 
                     //刷新监听
                     onRefresh = this@BaseTitleFragment::onRefresh
                 } else if (this is RefreshHeaderBehavior) {
-                    refreshBehavior?.let {
+                    refreshContentBehavior?.let {
                         it.refreshBehaviorConfig = this
                     }
                 }
@@ -228,12 +230,12 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
         return when (child.id) {
             //HideTitleBarBehavior(fContext())
             R.id.lib_title_wrap_layout -> TitleBarPlaceholderBehavior(fContext())
-            R.id.lib_content_wrap_layout -> RefreshBehavior(fContext())
+            R.id.lib_content_wrap_layout -> RefreshContentBehavior(fContext())
             R.id.lib_refresh_wrap_layout -> if (enableRefresh) {
                 ArcLoadingHeaderBehavior(fContext())
             } else {
                 _vh.gone(R.id.lib_refresh_wrap_layout)
-                RefreshHeaderBehavior(fContext())
+                RefreshEffectBehavior(fContext())
             }
             else -> null
         }
@@ -266,19 +268,19 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     /**开始刷新*/
     open fun startRefresh() {
         _laidOut {
-            refreshBehavior?.startRefresh()
+            refreshContentBehavior?.startRefresh()
         }
     }
 
     /**结束刷新*/
     open fun finishRefresh() {
         _laidOut {
-            refreshBehavior?.finishRefresh()
+            refreshContentBehavior?.finishRefresh()
         }
     }
 
     /**刷新回调*/
-    open fun onRefresh(refreshBehavior: RefreshBehavior?) {
+    open fun onRefresh(refreshContentBehavior: BaseScrollBehavior<*>?) {
 
     }
 

@@ -14,14 +14,13 @@ import kotlin.math.absoluteValue
 
 open class RefreshEffectConfig : IRefreshBehavior {
 
+    override var _refreshBehaviorStatus: Int = IRefreshBehavior.STATUS_NORMAL
+
     /**顶部over效果*/
     var enableTopOver: Boolean = true
 
     /**底部over效果*/
     var enableBottomOver: Boolean = true
-
-    /**最大的分母*/
-    var maxEffectHeight: Int = -1
 
     /**输入dy, 输出修正后的dy*/
     var behaviorInterpolator: BehaviorInterpolator = object : BehaviorInterpolator {
@@ -41,6 +40,9 @@ open class RefreshEffectConfig : IRefreshBehavior {
         }
     }
 
+    /**[scroll] 已经滚动的量
+     * [maxScroll] 最大允许滚动的量
+     * [value] 本次滚动的量*/
     fun getContentOverScrollValue(scroll: Int, maxScroll: Int, value: Int): Int {
         val result = if (scroll > 0) {
             if (value < 0) {
@@ -60,7 +62,7 @@ open class RefreshEffectConfig : IRefreshBehavior {
         return result
     }
 
-    override fun onContentOverScroll(behavior: BaseScrollBehavior<*>, dx: Int, dy: Int) {
+    override fun onContentOverScroll(contentBehavior: BaseScrollBehavior<*>, dx: Int, dy: Int) {
         if (dy > 0) {
             if (!enableBottomOver) {
                 return
@@ -71,30 +73,34 @@ open class RefreshEffectConfig : IRefreshBehavior {
             }
         }
 
-        val scrollY = behavior.behaviorScrollY
-
-        val maxScroll = if (maxEffectHeight > 0) {
-            maxEffectHeight
+        val currentScrollY = if (contentBehavior is IRefreshContentBehavior) {
+            contentBehavior.getRefreshCurrentScrollY(dy)
         } else {
-            behavior.childView.mH()
+            contentBehavior.behaviorScrollY
         }
 
-        val result = if (scrollY > 0) {
+        val maxScroll = if (contentBehavior is IRefreshContentBehavior) {
+            contentBehavior.getRefreshMaxScrollY(dy)
+        } else {
+            contentBehavior.childView.mH()
+        }
+
+        val result = if (currentScrollY > 0) {
             if (dy < 0) {
                 //继续下拉, 才需要阻尼, 反向不需要
-                behaviorInterpolator.getInterpolation(scrollY, -dy, maxScroll)
+                behaviorInterpolator.getInterpolation(currentScrollY, -dy, maxScroll)
             } else {
                 -dy
             }
         } else {
             if (dy > 0) {
                 //继续上拉, 才需要阻尼, 反向不需要
-                behaviorInterpolator.getInterpolation(scrollY, -dy, maxScroll)
+                behaviorInterpolator.getInterpolation(currentScrollY, -dy, maxScroll)
             } else {
                 -dy
             }
         }
 
-        behavior.scrollBy(0, result)
+        contentBehavior.scrollBy(0, result)
     }
 }

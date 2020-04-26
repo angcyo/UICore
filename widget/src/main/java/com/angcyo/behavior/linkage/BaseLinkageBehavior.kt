@@ -8,7 +8,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.NestedScrollingChild
 import androidx.core.view.ViewCompat
 import com.angcyo.behavior.BaseGestureBehavior
-import com.angcyo.library.L
 import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.widget.base.*
@@ -32,9 +31,9 @@ abstract class BaseLinkageBehavior(
     }
 
     //联动相关布局
-    var headerView: View? = null
-    var footerView: View? = null
-    var stickyView: View? = null
+    var headerView: View? = null //头部布局
+    var footerView: View? = null //底部布局
+    var stickyView: View? = null //悬停布局
 
     //behavior 作用在的[RecyclerView], 通常会等于[headerRecyclerView] [footerRecyclerView]其中的一个
     val childScrollView: NestedScrollingChild?

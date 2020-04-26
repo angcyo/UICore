@@ -39,7 +39,7 @@ abstract class BaseDependsBehavior<T : View>(
     var childView: T? = null
     var parentLayout: CoordinatorLayout? = null
 
-    /**是否正在Touch, 手指未放开*/
+    /**是否正在Touch, 手指未放开. 需要[RCoordinatorLayout]的支持*/
     val isTouchHold: Boolean
         get() = (parentLayout as? RCoordinatorLayout)?._isTouch ?: false
 

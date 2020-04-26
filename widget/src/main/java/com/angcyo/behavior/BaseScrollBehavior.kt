@@ -178,8 +178,8 @@ abstract class BaseScrollBehavior<T : View>(
     fun startScroll(dx: Int, dy: Int) {
         _overScroller.abortAnimation()
         _overScroller.startScroll(behaviorScrollX, behaviorScrollY, dx, dy, scrollDuration)
-        postInvalidateOnAnimation()
-        //invalidate()
+        //postInvalidateOnAnimation()
+        invalidate()
     }
 
     /**速率限制*/

@@ -3,11 +3,11 @@ package com.angcyo.behavior.refresh
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.BaseScrollBehavior
-import com.angcyo.widget.base.mH
+import com.angcyo.behavior.linkage.LinkageHeaderBehavior
 import com.angcyo.widget.base.offsetTopTo
 
 /**
- * 刷新行为[RefreshBehavior]的UI效果处理类
+ * 刷新行为[RefreshContentBehavior]的UI效果处理类
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/01/07
@@ -15,44 +15,68 @@ import com.angcyo.widget.base.offsetTopTo
 
 interface IRefreshBehavior {
 
+    companion object {
+        //正常状态
+        const val STATUS_NORMAL = 0
+
+        //刷新状态
+        const val STATUS_REFRESH = 1
+
+        //刷新完成
+        const val STATUS_FINISH = 10
+    }
+
+    /**刷新状态*/
+    var _refreshBehaviorStatus: Int
+
+    /**请调用此方法设置[_refreshBehaviorStatus]状态*/
+    fun onSetRefreshBehaviorStatus(contentBehavior: BaseScrollBehavior<*>, newStatus: Int) {
+        val old = _refreshBehaviorStatus
+        if (old != newStatus) {
+            _refreshBehaviorStatus = newStatus
+            onRefreshStatusChange(contentBehavior, old, newStatus)
+        }
+    }
+
     /**当内容布局后, 用于保存一些需要初始化的变量*/
-    fun onContentLayout(behavior: RefreshBehavior, parent: CoordinatorLayout, child: View) {
+    fun onContentLayout(
+        contentBehavior: BaseScrollBehavior<*>,
+        parent: CoordinatorLayout,
+        child: View
+    ) {
 
     }
 
     /**当内容滚动时, 界面需要处理的回调*/
-    fun onContentScrollTo(behavior: RefreshBehavior, x: Int, y: Int) {
-        behavior.childView?.offsetTopTo(y + behavior.behaviorOffsetTop)
+    fun onContentScrollTo(contentBehavior: BaseScrollBehavior<*>, x: Int, y: Int) {
+        contentBehavior.childView?.offsetTopTo(y + contentBehavior.behaviorOffsetTop)
     }
 
-    /**当内容over滚动时回调*/
-    fun onContentOverScroll(behavior: BaseScrollBehavior<*>, dx: Int, dy: Int) {
-        behavior.scrollBy(0, -dy)
+    /**当内容over滚动时回调, 同样会触发[onContentScrollTo]*/
+    fun onContentOverScroll(contentBehavior: BaseScrollBehavior<*>, dx: Int, dy: Int) {
+        contentBehavior.scrollBy(0, -dy)
     }
 
     /**内容停止了滚动, 此时需要恢复界面*/
-    fun onContentStopScroll(behavior: RefreshBehavior, touchHold: Boolean) {
-        if (behavior.refreshStatus != RefreshBehavior.STATUS_REFRESH
-            && !touchHold
-        ) {
-            behavior.startScrollTo(0, 0)
+    fun onContentStopScroll(contentBehavior: BaseScrollBehavior<*>) {
+        if (_refreshBehaviorStatus != STATUS_REFRESH && !contentBehavior.isTouchHold) {
+            contentBehavior.startScrollTo(0, 0)
         }
     }
 
     /**刷新状态改变,[touchHold]还处于[touch]状态*/
-    fun onRefreshStatusChange(behavior: RefreshBehavior, from: Int, to: Int, touchHold: Boolean) {
-        when (to) {
-            RefreshBehavior.STATUS_REFRESH -> {
-                if (!touchHold) {
-                    behavior.startScrollTo(0, behavior.childView.mH() / 2)
-                }
-                behavior.onRefresh(behavior)
-            }
-            else -> {
-                if (!touchHold) {
-                    behavior.startScrollTo(0, 0)
-                }
-            }
+    fun onRefreshStatusChange(contentBehavior: BaseScrollBehavior<*>, from: Int, to: Int) {
+        if (!contentBehavior.isTouchHold) {
+            contentBehavior.startScrollTo(0, 0)
+        }
+    }
+
+    /**需要触发刷新回调*/
+    fun onRefreshAction(contentBehavior: BaseScrollBehavior<*>) {
+        if (contentBehavior is RefreshContentBehavior) {
+            contentBehavior.onRefresh(contentBehavior)
+        } else if (contentBehavior is LinkageHeaderBehavior) {
+            contentBehavior.onRefresh(contentBehavior)
         }
     }
 }

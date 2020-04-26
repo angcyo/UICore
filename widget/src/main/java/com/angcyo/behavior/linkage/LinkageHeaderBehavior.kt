@@ -7,8 +7,15 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.math.MathUtils
 import androidx.core.view.NestedScrollingChild
+import com.angcyo.behavior.BaseDependsBehavior
+import com.angcyo.behavior.IContentBehavior
 import com.angcyo.behavior.ITitleBarBehavior
+import com.angcyo.behavior.refresh.IRefreshBehavior
+import com.angcyo.behavior.refresh.IRefreshBehavior.Companion.STATUS_NORMAL
+import com.angcyo.behavior.refresh.IRefreshContentBehavior
 import com.angcyo.behavior.refresh.RefreshEffectConfig
+import com.angcyo.library.L
+import com.angcyo.library.ex.simpleHash
 import com.angcyo.widget.R
 import com.angcyo.widget.base.*
 import kotlin.math.abs
@@ -24,8 +31,9 @@ import kotlin.math.min
 class LinkageHeaderBehavior(
     context: Context,
     attributeSet: AttributeSet? = null
-) : BaseLinkageBehavior(context, attributeSet) {
+) : BaseLinkageBehavior(context, attributeSet), IContentBehavior, IRefreshContentBehavior {
 
+    //允许滚动的最小距离
     val minScroll: Int
         get() {
             val parentHeight = parentLayout.mH()
@@ -38,10 +46,11 @@ class LinkageHeaderBehavior(
             )
         }
 
+    //允许滚动的最大距离.
     val maxScroll: Int
         get() = 0
 
-    /**使用掉的高度, Footer计算高度时, 需要减去此高度*/
+    //使用掉的高度, Footer计算高度时, 需要减去此高度
     val usedHeight: Int
         get() {
             var result = 0
@@ -75,8 +84,28 @@ class LinkageHeaderBehavior(
     /**Fling触发的Over,dy的倍数*/
     var overScrollEffectFactor = 2f
 
-    /**标题栏*/
+    /**标题栏, 用于计算滚动距离和, 让footer能够跟随在title bar下面*/
     var titleBarBehavior: ITitleBarBehavior? = null
+
+    //<editor-fold desc="下拉刷新属性">
+
+    /**刷新行为的支持*/
+    var refreshBehaviorConfig: IRefreshBehavior? = null
+
+    //是否激活了刷新功能
+    val enableRefresh: Boolean get() = refreshBehaviorConfig != null
+
+    /**刷新触发的回调*/
+    var onRefresh: (LinkageHeaderBehavior) -> Unit = { L.i("触发刷新:${it.simpleHash()}") }
+
+    /**刷新状态*/
+    var refreshStatus: Int
+        get() = refreshBehaviorConfig?._refreshBehaviorStatus ?: STATUS_NORMAL
+        set(value) {
+            refreshBehaviorConfig?.onSetRefreshBehaviorStatus(this, value)
+        }
+
+    //</editor-fold desc="下拉刷新属性">
 
     init {
         showLog = false
@@ -111,7 +140,14 @@ class LinkageHeaderBehavior(
 
         onBehaviorScrollTo = { x, y ->
             //L.w("scrollTo:$y")
-            childView?.offsetTopTo(y)
+            if (enableRefresh) {
+                //激活了下拉刷新
+                refreshBehaviorConfig?.apply {
+                    onContentScrollTo(this@LinkageHeaderBehavior, x, y)
+                }
+            } else {
+                childView?.offsetTopTo(y)
+            }
         }
     }
 
@@ -127,6 +163,9 @@ class LinkageHeaderBehavior(
         dependency.behavior()?.apply {
             if (this is ITitleBarBehavior) {
                 titleBarBehavior = this
+            }
+            if (this is IRefreshBehavior) {
+                refreshBehaviorConfig = this
             }
         }
 
@@ -253,7 +292,7 @@ class LinkageHeaderBehavior(
     fun onHeaderOverScroll(target: View?, dy: Int) {
         var isOverScroll = false
 
-        if (enableTopOverScroll) {
+        if (enableTopOverScroll || enableRefresh) {
             isOverScroll = behaviorScrollY >= maxScroll
                     && dy > 0
                     && !headerScrollView.topCanScroll()
@@ -261,38 +300,44 @@ class LinkageHeaderBehavior(
                     && !stickyScrollView.topCanScroll()
         }
 
-        if (enableBottomOverScroll && !isOverScroll) {
-            isOverScroll = behaviorScrollY <= minScroll
-                    && dy < 0
-                    && !headerScrollView.bottomCanScroll()
-                    && !footerScrollView.bottomCanScroll()
-                    && !stickyScrollView.bottomCanScroll()
+        if (!isOverScroll) {
+            //不是Top的over scroll
+            if (enableBottomOverScroll || enableRefresh) {
+                isOverScroll = behaviorScrollY <= minScroll
+                        && dy < 0
+                        && !headerScrollView.bottomCanScroll()
+                        && !footerScrollView.bottomCanScroll()
+                        && !stickyScrollView.bottomCanScroll()
+            }
         }
 
         if (isOverScroll) {
-
-            _overScrollEffect.maxEffectHeight = parentLayout.mH()
-
-            val overScrollY = if (dy < 0) behaviorScrollY - minScroll else behaviorScrollY
-
-            if (isTouchHold) {
-                scrollBy(
-                    0, _overScrollEffect.getContentOverScrollValue(
-                        overScrollY,
-                        _overScrollEffect.maxEffectHeight,
-                        -dy
-                    )
-                )
+            if (enableRefresh) {
+                //激活了下拉刷新
+                refreshBehaviorConfig?.apply {
+                    onContentOverScroll(this@LinkageHeaderBehavior, 0, -dy)
+                }
             } else {
-                //fling, 数值放大3倍
-                //_overScrollEffect.onContentOverScroll(this, 0, -dy * 4)
-                scrollBy(
-                    0, _overScrollEffect.getContentOverScrollValue(
-                        overScrollY,
-                        _overScrollEffect.maxEffectHeight,
-                        (-dy * overScrollEffectFactor).toInt()
+                val overScrollY = if (dy < 0) behaviorScrollY - minScroll else behaviorScrollY
+                if (isTouchHold) {
+                    scrollBy(
+                        0, _overScrollEffect.getContentOverScrollValue(
+                            overScrollY,
+                            getRefreshMaxScrollY(-dy),
+                            -dy
+                        )
                     )
-                )
+                } else {
+                    //fling, 数值放大3倍
+                    //_overScrollEffect.onContentOverScroll(this, 0, -dy * 4)
+                    scrollBy(
+                        0, _overScrollEffect.getContentOverScrollValue(
+                            overScrollY,
+                            getRefreshMaxScrollY(-dy),
+                            (-dy * overScrollEffectFactor).toInt()
+                        )
+                    )
+                }
             }
 
             if (!isTouchHold || !_overScroller.isFinished) {
@@ -315,6 +360,8 @@ class LinkageHeaderBehavior(
             } else if (minScroll in (behaviorScrollY + 1) until maxScroll) {
                 startScrollTo(0, minScroll)
             }
+
+            refreshBehaviorConfig?.onContentStopScroll(this)
         }
     }
 
@@ -339,7 +386,6 @@ class LinkageHeaderBehavior(
         type: Int
     ) {
         super.onStopNestedScroll(coordinatorLayout, child, target, type)
-
         if (target == childScrollView || behaviorScrollY != 0) {
             resetOverScroll()
         }
@@ -413,5 +459,61 @@ class LinkageHeaderBehavior(
     }
 
     //</editor-fold desc="非内嵌滚动处理">
+
+    //<editor-fold desc="刷新控制">
+
+    override fun onDependentViewRemoved(parent: CoordinatorLayout, child: View, dependency: View) {
+        super.onDependentViewRemoved(parent, child, dependency)
+        refreshBehaviorConfig = null
+    }
+
+    override fun onLayoutChild(
+        parent: CoordinatorLayout,
+        child: View,
+        layoutDirection: Int
+    ): Boolean {
+        refreshBehaviorConfig?.onContentLayout(this, parent, child)
+        return super.onLayoutChild(parent, child, layoutDirection)
+    }
+
+    override fun getRefreshCurrentScrollY(dy: Int): Int {
+        return if (enableRefresh && dy > 0) {
+            behaviorScrollY - minScroll
+        } else {
+            behaviorScrollY
+        }
+    }
+
+    override fun getRefreshMaxScrollY(dy: Int): Int {
+        return if (enableRefresh) {
+            min(headerView.mH() + footerView.mH() + stickyView.mH(), parentLayout.mH())
+        } else {
+            parentLayout.mH()
+        }
+    }
+
+    override fun getRefreshResetScrollY(): Int {
+        return when {
+            behaviorScrollY >= 0 -> 0
+            behaviorScrollY < minScroll -> minScroll
+            else -> behaviorScrollY
+        }
+    }
+
+    /**开始刷新*/
+    fun startRefresh() {
+        refreshStatus = IRefreshBehavior.STATUS_REFRESH
+    }
+
+    /**结束刷新*/
+    fun finishRefresh() {
+        refreshStatus = IRefreshBehavior.STATUS_FINISH
+    }
+
+    override fun getContentScrollY(behavior: BaseDependsBehavior<*>): Int {
+        return behaviorScrollY
+    }
+
+    //<editor-fold desc="刷新控制">
 
 }

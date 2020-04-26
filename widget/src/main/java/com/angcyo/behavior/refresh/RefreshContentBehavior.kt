@@ -8,8 +8,13 @@ import com.angcyo.behavior.BaseDependsBehavior
 import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.behavior.IContentBehavior
 import com.angcyo.behavior.ITitleBarBehavior
+import com.angcyo.behavior.refresh.IRefreshBehavior.Companion.STATUS_FINISH
+import com.angcyo.behavior.refresh.IRefreshBehavior.Companion.STATUS_NORMAL
+import com.angcyo.behavior.refresh.IRefreshBehavior.Companion.STATUS_REFRESH
+import com.angcyo.library.L
+import com.angcyo.library.ex.simpleHash
 import com.angcyo.widget.base.behavior
-import com.angcyo.widget.layout.RCoordinatorLayout
+import com.angcyo.widget.base.mH
 
 
 /**
@@ -19,21 +24,10 @@ import com.angcyo.widget.layout.RCoordinatorLayout
  * @date 2019/12/31
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-open class RefreshBehavior(
+open class RefreshContentBehavior(
     context: Context,
     attrs: AttributeSet? = null
-) : BaseScrollBehavior<View>(context, attrs), IContentBehavior {
-
-    companion object {
-        //正常状态
-        const val STATUS_NORMAL = 0
-
-        //刷新状态
-        const val STATUS_REFRESH = 1
-
-        //刷新完成
-        const val STATUS_FINISH = 10
-    }
+) : BaseScrollBehavior<View>(context, attrs), IContentBehavior, IRefreshContentBehavior {
 
     /**标题栏的行为, 用于布局在标题栏bottom里面*/
     var titleBarPlaceholderBehavior: ITitleBarBehavior? = null
@@ -45,19 +39,13 @@ open class RefreshBehavior(
     var refreshBehaviorConfig: IRefreshBehavior? = RefreshEffectConfig()
 
     /**刷新触发的回调*/
-    var onRefresh: (RefreshBehavior) -> Unit = {}
-
-    /**未释放[TOUCH_EVENT]*/
-    val _touchHold get() = (parentLayout as? RCoordinatorLayout)?._isTouch == true
+    var onRefresh: (RefreshContentBehavior) -> Unit = { L.i("触发刷新:${it.simpleHash()}") }
 
     /**刷新状态*/
-    var refreshStatus: Int = STATUS_NORMAL
+    var refreshStatus: Int
+        get() = refreshBehaviorConfig?._refreshBehaviorStatus ?: STATUS_NORMAL
         set(value) {
-            val old = field
-            field = value
-            if (old != value) {
-                refreshBehaviorConfig?.onRefreshStatusChange(this, old, value, _touchHold)
-            }
+            refreshBehaviorConfig?.onSetRefreshBehaviorStatus(this, value)
         }
 
     init {
@@ -203,12 +191,22 @@ open class RefreshBehavior(
         type: Int
     ) {
         super.onStopNestedScroll(coordinatorLayout, child, target, type)
-        refreshBehaviorConfig?.onContentStopScroll(this, _touchHold)
+        refreshBehaviorConfig?.onContentStopScroll(this)
     }
 
     override fun getContentScrollY(behavior: BaseDependsBehavior<*>): Int {
         return behaviorScrollY
     }
+
+    override fun getRefreshCurrentScrollY(dy: Int): Int {
+        return behaviorScrollY
+    }
+
+    override fun getRefreshMaxScrollY(dy: Int): Int {
+        return childView.mH()
+    }
+
+    override fun getRefreshResetScrollY() = 0
 
     /**开始刷新*/
     fun startRefresh() {
