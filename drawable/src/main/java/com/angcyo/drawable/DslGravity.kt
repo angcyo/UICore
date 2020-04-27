@@ -3,6 +3,7 @@ package com.angcyo.drawable
 import android.graphics.Rect
 import android.graphics.RectF
 import android.view.Gravity
+import androidx.core.view.GravityCompat
 
 /**
  * [android.view.Gravity] 辅助计算类
@@ -74,7 +75,7 @@ class DslGravity {
         _targetHeight = height
 
         val layoutDirection = 0
-        val absoluteGravity = Gravity.getAbsoluteGravity(gravity, layoutDirection)
+        val absoluteGravity = GravityCompat.getAbsoluteGravity(gravity, layoutDirection)
         val verticalGravity = gravity and Gravity.VERTICAL_GRAVITY_MASK
         val horizontalGravity = absoluteGravity and Gravity.HORIZONTAL_GRAVITY_MASK
 

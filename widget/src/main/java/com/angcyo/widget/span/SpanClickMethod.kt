@@ -7,8 +7,8 @@ import android.text.method.Touch
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.widget.TextView
-import com.angcyo.library.ex.abs
 import java.lang.ref.WeakReference
+import kotlin.math.absoluteValue
 
 /**
  * [IClickableSpan]点击事件的支持.
@@ -54,8 +54,8 @@ class SpanClickMethod : LinkMovementMethod() {
             val moveY = event.y
 
             val scaledTouchSlop = ViewConfiguration.get(widget.context).scaledTouchSlop
-            if ((moveX - _downX).abs() > scaledTouchSlop ||
-                (moveY - _downY).abs() > scaledTouchSlop
+            if ((moveX - _downX).absoluteValue > scaledTouchSlop ||
+                (moveY - _downY).absoluteValue > scaledTouchSlop
             ) {
                 cancel = true
             }
@@ -95,7 +95,7 @@ class SpanClickMethod : LinkMovementMethod() {
                 }
                 return false
             } else {
-                Selection.removeSelection(buffer);
+                Selection.removeSelection(buffer)
             }
         }
 

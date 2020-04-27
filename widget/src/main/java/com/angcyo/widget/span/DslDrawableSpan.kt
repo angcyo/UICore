@@ -11,6 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
+import androidx.core.view.GravityCompat
 import com.angcyo.library.ex.*
 import kotlin.math.min
 
@@ -45,14 +46,25 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
     var spanHeight: Int = undefined_int
     var spanMaxWidth: Int = undefined_int
 
-    /**需要[DslTextView]支持*/
+    /**span相对于[TextView]的比例, 不支持平分. 需要[DslSpanTextView]支持*/
     var spanWeight: Float = undefined_float
     var spanMaxWeight: Float = undefined_float
 
     /**宽度等于高度*/
     var widthSameHeight = false
 
-    /**背景[Drawable]*/
+    /**填充背景[Drawable], 在最下面绘制*/
+    var fillBackgroundDrawable: Drawable? = null
+        set(value) {
+            field = value
+            field?.apply {
+                if (bounds.isEmpty) {
+                    setBounds(0, 0, minimumWidth, minimumHeight)
+                }
+            }
+        }
+
+    /**背景[Drawable], 在文本下面绘制*/
     var backgroundDrawable: Drawable? = null
         set(value) {
             field = value
@@ -63,7 +75,7 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
             }
         }
 
-    /**前景[Drawable]*/
+    /**前景[Drawable], 在文本上面绘制*/
     var foregroundDrawable: Drawable? = null
         set(value) {
             field = value
@@ -225,6 +237,16 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
         val drawHeight = bottom - top
         val targetText = _targetText(text, start, end)
 
+        fillBackgroundDrawable?.apply {
+            setBounds(
+                (x + marginLeft).toInt(),
+                top + marginTop,
+                (x + measureWidth - marginRight).toInt(),
+                y - marginBottom
+            )
+            draw(canvas)
+        }
+
         canvas.save()
 
         //绘制文本
@@ -235,7 +257,7 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
         canvas.translate(marginLeft + offsetX, marginTop + offsetY)
 
         val layoutDirection = 0
-        val absoluteGravity = Gravity.getAbsoluteGravity(textGravity, layoutDirection)
+        val absoluteGravity = GravityCompat.getAbsoluteGravity(textGravity, layoutDirection)
         val verticalGravity = textGravity and Gravity.VERTICAL_GRAVITY_MASK
         val horizontalGravity = absoluteGravity and Gravity.HORIZONTAL_GRAVITY_MASK
 

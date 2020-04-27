@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.FrameLayout
+import androidx.core.view.GravityCompat
 import com.angcyo.library.L
 import com.angcyo.library.ex.append
 import com.angcyo.library.ex.dpi
@@ -331,7 +332,7 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
                     } else {
                         0
                     }
-                val absoluteGravity = Gravity.getAbsoluteGravity(gravity, layoutDirection)
+                val absoluteGravity = GravityCompat.getAbsoluteGravity(gravity, layoutDirection)
                 val verticalGravity = gravity and Gravity.VERTICAL_GRAVITY_MASK
 
                 childLeft = when (absoluteGravity and Gravity.HORIZONTAL_GRAVITY_MASK) {

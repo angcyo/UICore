@@ -13,6 +13,7 @@ import android.util.AttributeSet
 import android.view.*
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
+import androidx.core.view.GravityCompat
 import com.angcyo.library.L.w
 import com.angcyo.library.ex.toDpi
 import com.angcyo.widget.R
@@ -462,7 +463,7 @@ class RSoftInputLayout : FrameLayout {
                         0
                     }
 
-                val absoluteGravity = Gravity.getAbsoluteGravity(gravity, layoutDirection)
+                val absoluteGravity = GravityCompat.getAbsoluteGravity(gravity, layoutDirection)
                 val verticalGravity = gravity and Gravity.VERTICAL_GRAVITY_MASK
                 when (absoluteGravity and Gravity.HORIZONTAL_GRAVITY_MASK) {
                     Gravity.CENTER_HORIZONTAL -> childLeft =
