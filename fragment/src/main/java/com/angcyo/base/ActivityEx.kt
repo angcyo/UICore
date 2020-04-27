@@ -140,16 +140,24 @@ fun Activity.translucentStatusBar(full: Boolean = false) {
 }
 
 fun Window.translucentStatusBar(full: Boolean = false) {
-    addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+    }
     if (full) {
-        clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        statusBarColor = Color.TRANSPARENT//全透明
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            statusBarColor = Color.TRANSPARENT//全透明
+        }
         decorView.systemUiVisibility =
             decorView.systemUiVisibility or
                     View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
     } else {
-        addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        }
     }
 }
 
@@ -160,16 +168,24 @@ fun Activity.translucentNavigationBar(full: Boolean = false) {
 }
 
 fun Window.translucentNavigationBar(full: Boolean = false) {
-    addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+    }
     if (full) {
-        clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
-        navigationBarColor = Color.TRANSPARENT//全透明
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            navigationBarColor = Color.TRANSPARENT
+        }//全透明
         decorView.systemUiVisibility =
             decorView.systemUiVisibility or
                     View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                     View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     } else {
-        addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+        }
     }
 }
 

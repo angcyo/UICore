@@ -35,7 +35,7 @@ abstract class AbsFragment : Fragment() {
     //<editor-fold desc="对象变量">
 
     /**预测量*/
-    var enablePreMeasure: Boolean = true
+    var enablePreMeasure: Boolean = false
 
     /**
      * ViewHolder 中 SparseArray 初始化的容量, 防止扩容带来的性能损失
