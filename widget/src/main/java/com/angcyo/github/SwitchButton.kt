@@ -303,8 +303,8 @@ class SwitchButton : View, Checkable {
             pendingDragState()
         }
     }
-    private val animatorUpdateListener: AnimatorUpdateListener = object : AnimatorUpdateListener {
-        override fun onAnimationUpdate(animation: ValueAnimator) {
+    private val animatorUpdateListener: AnimatorUpdateListener =
+        AnimatorUpdateListener { animation ->
             val value = animation.animatedValue as Float
             when (animateState) {
                 ANIMATE_STATE_PENDING_SETTLE -> {
@@ -382,7 +382,6 @@ class SwitchButton : View, Checkable {
             }
             postInvalidate()
         }
-    }
     private val animatorListener: Animator.AnimatorListener =
         object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator) {}
