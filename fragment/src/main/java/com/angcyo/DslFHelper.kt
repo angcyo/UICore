@@ -233,6 +233,7 @@ class DslFHelper(
         }
     }
 
+    /**只保留需要keep的Fragment, 其余remove*/
     fun keep(vararg tags: String?) {
         val allValidityFragment = fm.getAllValidityFragment()
         val keepList = mutableListOf<Fragment>()
@@ -248,6 +249,7 @@ class DslFHelper(
         }
     }
 
+    /**只保留需要keep的Fragment, 其余remove*/
     fun keep(vararg fClass: Class<out Fragment>) {
         val tags = mutableListOf<String?>()
         for (cls in fClass) {
