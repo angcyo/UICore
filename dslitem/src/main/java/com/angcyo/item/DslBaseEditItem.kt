@@ -40,6 +40,10 @@ open class DslBaseEditItem : DslBaseLabelItem() {
         onItemTextChange(it)
     }
 
+    //用于恢复光标的位置
+    var _lastEditSelectionStart = -1
+    var _lastEditSelectionEnd = -1
+
     init {
         itemLayoutId = R.layout.dsl_edit_item
     }
@@ -47,20 +51,24 @@ open class DslBaseEditItem : DslBaseLabelItem() {
     override fun onItemBind(
         itemHolder: DslViewHolder,
         itemPosition: Int,
-        adapterItem: DslAdapterItem,
-        payloads: List<Any>
+        adapterItem: DslAdapterItem
     ) {
-        super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
+        super.onItemBind(itemHolder, itemPosition, adapterItem)
 
         itemHolder.ev(R.id.lib_edit_view)?.apply {
             itemEditTextStyle.updateStyle(this)
 
             //放在最后监听, 防止首次setInputText, 就触发事件.
             onTextChange {
+                _lastEditSelectionStart = selectionStart
+                _lastEditSelectionEnd = selectionEnd
+
                 itemEditText = it
                 itemChanging = true
                 itemTextChange(it)
             }
+
+            restoreSelection(_lastEditSelectionStart, _lastEditSelectionEnd)
         }
     }
 

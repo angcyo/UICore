@@ -17,6 +17,7 @@ import com.angcyo.library.ex.isPhone
 import com.angcyo.library.utils.PATTERN_MOBILE_SIMPLE
 import com.angcyo.widget.edit.CharLengthFilter
 import com.angcyo.widget.edit.SingleTextWatcher
+import kotlin.math.max
 import kotlin.math.min
 
 /**
@@ -149,9 +150,34 @@ fun EditText.onTextChange(
 
 //</editor-fold desc="事件监听">
 
+/**设置文本, 并且将光标至于文本最后面*/
 fun EditText.setInputText(text: CharSequence? = null) {
     setText(text)
     setSelection(text?.length ?: 0)
+}
+
+/**恢复选中范围*/
+fun EditText.restoreSelection(start: Int, stop: Int) {
+    val length = text.length
+    val _start = if (start in 0..length) {
+        start
+    } else {
+        -1
+    }
+
+    val _stop = if (stop in 0..length) {
+        stop
+    } else {
+        -1
+    }
+
+    if (_stop >= 0) {
+        val min = min(max(0, _start), _stop)
+        val max = max(max(0, _start), _stop)
+        setSelection(min, max)
+    } else if (_start >= 0) {
+        setSelection(_start)
+    }
 }
 
 /**触发删除或回退键*/

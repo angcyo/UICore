@@ -40,10 +40,9 @@ open class DslBaseLabelItem : DslAdapterItem() {
     override fun onItemBind(
         itemHolder: DslViewHolder,
         itemPosition: Int,
-        adapterItem: DslAdapterItem,
-        payloads: List<Any>
+        adapterItem: DslAdapterItem
     ) {
-        super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
+        super.onItemBind(itemHolder, itemPosition, adapterItem)
 
         itemHolder.gone(R.id.lib_label_view, itemLabelText == null)
 
