@@ -2,7 +2,6 @@ package com.angcyo.widget.recycler
 
 import android.text.TextUtils
 import android.view.View
-import android.widget.LinearLayout
 import androidx.recyclerview.widget.*
 import androidx.recyclerview.widget.RecyclerView.*
 import com.angcyo.dsladapter.*
@@ -101,7 +100,7 @@ fun RecyclerView.dslAdapter(
 fun RecyclerView.resetLayoutManager(match: String) {
     var layoutManager: LayoutManager? = null
     var spanCount = 1
-    var orientation = LinearLayout.VERTICAL
+    var orientation = VERTICAL
 
     if (TextUtils.isEmpty(match) || "V".equals(match, ignoreCase = true)) {
         layoutManager = LinearLayoutManagerWrap(context, LinearLayoutManager.VERTICAL, false)
