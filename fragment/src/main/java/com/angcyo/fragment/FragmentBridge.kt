@@ -30,7 +30,7 @@ class FragmentBridge : Fragment() {
         private const val TAG: String = "com.angcyo.fragment.FragmentBridge"
 
         /**构建一个16位的请求码*/
-        fun generateCode(): Int = SystemClock.elapsedRealtimeNanos().toInt() and 0xFFFF
+        fun generateCode(): Int = SystemClock.uptimeMillis().toInt() and 0xFFFF
 
         /**安装*/
         fun install(fragmentManager: FragmentManager): FragmentBridge {
