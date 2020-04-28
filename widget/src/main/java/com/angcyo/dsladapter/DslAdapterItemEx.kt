@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.library.L
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.layout.touch.SwipeBackLayout.Companion.clamp
 
 /**
  *
@@ -288,7 +289,7 @@ inline fun <reified Item : DslAdapterItem> DslAdapter._updateOrInsertItem(
         } else {
             if (findItem == null) {
                 //需要insert处理
-                it.add(insertIndex, newItem)
+                it.add(clamp(insertIndex, 0, it.size), newItem)
             } else {
                 //需要更新处理
                 findItem.itemChanging = true
