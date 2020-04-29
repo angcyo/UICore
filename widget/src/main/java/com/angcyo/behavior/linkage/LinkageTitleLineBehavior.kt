@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.ITitleBarBehavior
+import com.angcyo.widget.R
 import com.angcyo.widget.base.behavior
 import com.angcyo.widget.base.invisible
 import com.angcyo.widget.base.mH
@@ -25,6 +26,19 @@ open class LinkageTitleLineBehavior(
     var titleLineShowThreshold: Float = 1f
 
     var _titleBarView: View? = null
+
+    init {
+        val array =
+            context.obtainStyledAttributes(
+                attributeSet,
+                R.styleable.LinkageTitleLineBehavior_Layout
+            )
+        titleLineShowThreshold = array.getFloat(
+            R.styleable.LinkageTitleLineBehavior_Layout_layout_title_line_show_threshold,
+            titleLineShowThreshold
+        )
+        array.recycle()
+    }
 
     override fun layoutDependsOn(
         parent: CoordinatorLayout,
