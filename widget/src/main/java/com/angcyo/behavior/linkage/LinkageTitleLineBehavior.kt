@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.ITitleBarBehavior
-import com.angcyo.library.L
 import com.angcyo.widget.base.behavior
 import com.angcyo.widget.base.invisible
 import com.angcyo.widget.base.mH
@@ -65,7 +64,7 @@ open class LinkageTitleLineBehavior(
 
     /**开始渐变*/
     override fun onGradient(percent: Float) {
-        L.i(percent)
+        //L.i(percent)
         //GONE后的view, 收不到内嵌滚动事件.所以这里使用INVISIBLE
         if (childView?.isInEditMode == false) {
             childView?.invisible(percent < titleLineShowThreshold)
