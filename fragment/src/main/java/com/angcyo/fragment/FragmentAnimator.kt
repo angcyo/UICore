@@ -16,11 +16,11 @@ import com.angcyo.widget.base.animatorOf
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 object FragmentAnimator {
-    val DEFAULT_SHOW_ENTER_ANIMATOR = R.anim.lib_x_show_enter_holder
-    val DEFAULT_SHOW_EXIT_ANIMATOR = R.anim.lib_x_show_exit_holder
+    var DEFAULT_SHOW_ENTER_ANIMATOR = R.anim.lib_x_show_enter_holder
+    var DEFAULT_SHOW_EXIT_ANIMATOR = R.anim.lib_x_show_exit_holder
 
-    val DEFAULT_REMOVE_ENTER_ANIMATOR = R.anim.lib_x_remove_enter_holder
-    val DEFAULT_REMOVE_EXIT_ANIMATOR = R.anim.lib_x_remove_exit_holder
+    var DEFAULT_REMOVE_ENTER_ANIMATOR = R.anim.lib_x_remove_enter_holder
+    var DEFAULT_REMOVE_EXIT_ANIMATOR = R.anim.lib_x_remove_exit_holder
 
     fun loadAnimator(anim: Int): Animator? {
         val sw = _screenWidth.toFloat()
