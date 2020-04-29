@@ -96,7 +96,8 @@ class LinkageHeaderBehavior(
     val enableRefresh: Boolean get() = refreshBehaviorConfig != null
 
     /**刷新触发的回调*/
-    var onRefresh: (LinkageHeaderBehavior) -> Unit = { L.i("触发刷新:${it.simpleHash()}") }
+    override var onRefreshAction: (IRefreshContentBehavior) -> Unit =
+        { L.i("触发刷新:${it.simpleHash()}") }
 
     /**刷新状态*/
     var refreshStatus: Int
@@ -508,6 +509,10 @@ class LinkageHeaderBehavior(
     /**结束刷新*/
     fun finishRefresh() {
         refreshStatus = IRefreshBehavior.STATUS_FINISH
+    }
+
+    override fun setRefreshContentStatus(status: Int) {
+        refreshStatus = status
     }
 
     override fun getContentScrollY(behavior: BaseDependsBehavior<*>): Int {

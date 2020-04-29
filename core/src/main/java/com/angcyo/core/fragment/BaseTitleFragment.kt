@@ -11,11 +11,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import com.angcyo.DslAHelper
 import com.angcyo.base.getAllValidityFragment
-import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.behavior.placeholder.TitleBarPlaceholderBehavior
+import com.angcyo.behavior.refresh.IRefreshBehavior
+import com.angcyo.behavior.refresh.IRefreshContentBehavior
 import com.angcyo.behavior.refresh.RefreshContentBehavior
 import com.angcyo.behavior.refresh.RefreshEffectBehavior
-import com.angcyo.behavior.refresh.RefreshHeaderBehavior
 import com.angcyo.core.R
 import com.angcyo.core.appendTextItem
 import com.angcyo.core.behavior.ArcLoadingHeaderBehavior
@@ -63,7 +63,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     /**是否需要强制显示返回按钮, 否则智能判断*/
     var enableBackItem: Boolean = false
 
-    var refreshContentBehavior: RefreshContentBehavior? = null
+    var refreshContentBehavior: IRefreshContentBehavior? = null
 
     //<editor-fold desc="操作属性">
 
@@ -214,11 +214,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
                     refreshContentBehavior = this
 
                     //刷新监听
-                    onRefresh = this@BaseTitleFragment::onRefresh
-                } else if (this is RefreshHeaderBehavior) {
-                    refreshContentBehavior?.let {
-                        it.refreshBehaviorConfig = this
-                    }
+                    onRefreshAction = this@BaseTitleFragment::onRefresh
                 }
                 child.setBehavior(this)
             }
@@ -268,19 +264,19 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     /**开始刷新*/
     open fun startRefresh() {
         _laidOut {
-            refreshContentBehavior?.startRefresh()
+            refreshContentBehavior?.setRefreshContentStatus(IRefreshBehavior.STATUS_REFRESH)
         }
     }
 
     /**结束刷新*/
     open fun finishRefresh() {
         _laidOut {
-            refreshContentBehavior?.finishRefresh()
+            refreshContentBehavior?.setRefreshContentStatus(IRefreshBehavior.STATUS_FINISH)
         }
     }
 
     /**刷新回调*/
-    open fun onRefresh(refreshContentBehavior: BaseScrollBehavior<*>?) {
+    open fun onRefresh(refreshContentBehavior: IRefreshContentBehavior?) {
 
     }
 

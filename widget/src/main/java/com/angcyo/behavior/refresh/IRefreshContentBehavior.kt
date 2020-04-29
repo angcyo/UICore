@@ -9,6 +9,9 @@ package com.angcyo.behavior.refresh
 
 interface IRefreshContentBehavior {
 
+    /**触发了刷新回调*/
+    var onRefreshAction: (IRefreshContentBehavior) -> Unit
+
     /**刷新完成后, 需要重置滚动到的y轴距离*/
     fun getRefreshResetScrollY(): Int
 
@@ -17,4 +20,7 @@ interface IRefreshContentBehavior {
 
     /**OverScroll时, 最大滚动距离*/
     fun getRefreshMaxScrollY(dy: Int): Int
+
+    /**设置刷新状态*/
+    fun setRefreshContentStatus(status: Int)
 }

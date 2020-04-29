@@ -48,7 +48,8 @@ open class RefreshContentBehavior(
     var refreshBehaviorConfig: IRefreshBehavior? = RefreshEffectConfig()
 
     /**刷新触发的回调*/
-    var onRefresh: (RefreshContentBehavior) -> Unit = { L.i("触发刷新:${it.simpleHash()}") }
+    override var onRefreshAction: (IRefreshContentBehavior) -> Unit =
+        { L.i("触发刷新:${it.simpleHash()}") }
 
     /**刷新状态*/
     var refreshStatus: Int
@@ -127,6 +128,9 @@ open class RefreshContentBehavior(
         dependency.behavior()?.let {
             if (it is ITitleBarBehavior) {
                 titleBarPlaceholderBehavior = it
+            }
+            if (it is IRefreshBehavior) {
+                refreshBehaviorConfig = it
             }
         }
         super.layoutDependsOn(parent, child, dependency)
@@ -240,5 +244,9 @@ open class RefreshContentBehavior(
     /**结束刷新*/
     fun finishRefresh() {
         refreshStatus = STATUS_FINISH
+    }
+
+    override fun setRefreshContentStatus(status: Int) {
+        refreshStatus = status
     }
 }

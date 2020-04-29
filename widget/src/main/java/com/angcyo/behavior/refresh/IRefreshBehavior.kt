@@ -3,7 +3,6 @@ package com.angcyo.behavior.refresh
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.BaseScrollBehavior
-import com.angcyo.behavior.linkage.LinkageHeaderBehavior
 import com.angcyo.widget.base.offsetTopTo
 
 /**
@@ -73,10 +72,8 @@ interface IRefreshBehavior {
 
     /**需要触发刷新回调*/
     fun onRefreshAction(contentBehavior: BaseScrollBehavior<*>) {
-        if (contentBehavior is RefreshContentBehavior) {
-            contentBehavior.onRefresh(contentBehavior)
-        } else if (contentBehavior is LinkageHeaderBehavior) {
-            contentBehavior.onRefresh(contentBehavior)
+        if (contentBehavior is IRefreshContentBehavior) {
+            contentBehavior.onRefreshAction(contentBehavior)
         }
     }
 }
