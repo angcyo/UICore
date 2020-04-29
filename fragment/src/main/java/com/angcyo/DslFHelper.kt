@@ -498,11 +498,11 @@ class DslFHelper(
                 if (isAdded && view != null && animRes != 0) {
                     if (view.isVisible()) {
                         view?.apply {
-                            FragmentAnimator.loadAnimator(animRes)?.apply {
+                            FragmentAnimator.loadAnimator(context, animRes)?.apply {
                                 setTarget(view)
                                 start()
                             }.elseNull {
-                                animationOf(id = animRes)?.apply {
+                                animationOf(context, animRes)?.apply {
                                     startAnimation(this)
                                 }
                             }

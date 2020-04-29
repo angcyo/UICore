@@ -2,6 +2,7 @@ package com.angcyo.fragment
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
+import android.content.Context
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator
 import com.angcyo.library._screenWidth
@@ -22,7 +23,7 @@ object FragmentAnimator {
     var DEFAULT_REMOVE_ENTER_ANIMATOR = R.anim.lib_x_remove_enter_holder
     var DEFAULT_REMOVE_EXIT_ANIMATOR = R.anim.lib_x_remove_exit_holder
 
-    fun loadAnimator(anim: Int): Animator? {
+    var loadAnimator: (context: Context, anim: Int) -> Animator? = { context, anim ->
         val sw = _screenWidth.toFloat()
         val duration = _integer(R.integer.lib_animation_duration).toLong()
 
@@ -30,7 +31,7 @@ object FragmentAnimator {
         objectAnimator.duration = duration
         objectAnimator.interpolator = AccelerateDecelerateInterpolator()
 
-        return when (anim) {
+        when (anim) {
             R.anim.lib_x_show_enter_holder -> {
                 objectAnimator.setPropertyName("translationX")
                 objectAnimator.setFloatValues(sw, 0f)
@@ -52,7 +53,7 @@ object FragmentAnimator {
                 objectAnimator.setFloatValues(0f, sw)
                 objectAnimator
             }
-            else -> animatorOf(id = anim)
+            else -> animatorOf(context, anim)
         }
     }
 }
