@@ -38,4 +38,9 @@
         <attr name="layout_icon_color_from" format="color" />
         <attr name="layout_icon_color_to" format="color" />
     </declare-styleable>
+
+    <declare-styleable name="RefreshContentBehavior_Layout">
+        <attr name="layout_exclude_title_bar_height" format="boolean" />
+        <attr name="layout_offset_title_bar_height" format="boolean" />
+    </declare-styleable>
 </resources>

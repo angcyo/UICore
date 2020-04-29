@@ -495,7 +495,7 @@ class LinkageHeaderBehavior(
     override fun getRefreshResetScrollY(): Int {
         return when {
             behaviorScrollY >= 0 -> 0
-            behaviorScrollY < minScroll -> minScroll
+            behaviorScrollY <= minScroll -> minScroll
             else -> behaviorScrollY
         }
     }

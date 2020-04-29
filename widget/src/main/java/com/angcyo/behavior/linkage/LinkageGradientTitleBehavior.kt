@@ -2,25 +2,19 @@ package com.angcyo.behavior.linkage
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
-import android.view.MotionEvent
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.BaseDependsBehavior
 import com.angcyo.behavior.ITitleBarBehavior
-import com.angcyo.behavior.IScrollBehaviorListener
 import com.angcyo.library.ex.color
 import com.angcyo.library.ex.loadColor
-import com.angcyo.tablayout.clamp
 import com.angcyo.tablayout.evaluateColor
 import com.angcyo.widget.R
-import com.angcyo.widget.base.behavior
 import com.angcyo.widget.base.each
 import com.angcyo.widget.base.mH
-import kotlin.math.min
 
 /**
  * 渐变标题栏颜色的行为. 配合[LinkageHeaderBehavior]使用
@@ -31,7 +25,7 @@ import kotlin.math.min
 open class LinkageGradientTitleBehavior(
     context: Context,
     attributeSet: AttributeSet? = null
-) : BaseLinkageBehavior(context, attributeSet), IScrollBehaviorListener, ITitleBarBehavior {
+) : BaseLinkageGradientBehavior(context, attributeSet), ITitleBarBehavior {
 
     /**标题控件的id, 用于单独操作控制标题控件*/
     var titleTextId: Int = R.id.lib_title_text_view
@@ -60,16 +54,11 @@ open class LinkageGradientTitleBehavior(
             backIconColorTo = value
         }
 
-    /**整个标题栏背景颜色渐变*/
+    /**整个标题栏背景颜色渐变, 如果背景不是ColorDrawable,则使用alpha*/
     var backgroundColorFrom: Int = Color.TRANSPARENT
     var backgroundColorTo: Int = Color.WHITE
 
     init {
-        onBehaviorScrollTo = { _, y ->
-            val percent = -y * 1f / childView.mH()
-            onGradient(clamp(percent, 0f, 1f))
-        }
-
         val array =
             context.obtainStyledAttributes(
                 attributeSet,
@@ -129,74 +118,25 @@ open class LinkageGradientTitleBehavior(
         return childView.mH()
     }
 
-    override fun layoutDependsOn(
-        parent: CoordinatorLayout,
-        child: View,
-        dependency: View
-    ): Boolean {
-        super.layoutDependsOn(parent, child, dependency)
-        headerView.behavior().apply {
-            if (this is LinkageHeaderBehavior) {
-                this.addScrollListener(this@LinkageGradientTitleBehavior)
-            }
-        }
-        return false
-    }
-
-    override fun onBehaviorScrollTo(x: Int, y: Int) {
-        //转发给自己处理
-        if (y > 0) {
-            _gestureScrollY = 0
-            scrollTo(x, y)
-        } else {
-            //L.w("$_ovserScrollY $_nestedScrollY $_gestureScrollY")
-            scrollTo(0, min(y, _gestureScrollY))
-        }
-    }
-
-    override fun onNestedPreScroll(
-        coordinatorLayout: CoordinatorLayout,
-        child: View,
-        target: View,
-        dx: Int,
-        dy: Int,
-        consumed: IntArray,
-        type: Int
-    ) {
-        super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type)
-        if (target == headerScrollView) {
-            _gestureScrollY -= dy
-            scrollTo(0, _gestureScrollY)
-        }
-    }
-
-    //LinkageHeaderBehavior回调的是OverScroll值.
-    var _gestureScrollY = 0
-
-    override fun onGestureScroll(
-        e1: MotionEvent?,
-        e2: MotionEvent?,
-        distanceX: Float,
-        distanceY: Float
-    ): Boolean {
-        if (_nestedScrollView != headerScrollView) {
-            _gestureScrollY -= distanceY.toInt()
-            scrollTo(0, _gestureScrollY)
-        }
-        //L.e("...$distanceX $distanceY $_gestureScrollY")
-        return false
-    }
 
     /**开始渐变*/
-    open fun onGradient(percent: Float) {
+    override fun onGradient(percent: Float) {
         //背景
-        childView?.setBackgroundColor(
-            evaluateColor(
-                percent,
-                backgroundColorFrom,
-                backgroundColorTo
-            )
-        )
+        childView?.apply {
+            if (background == null || background is ColorDrawable) {
+                setBackgroundColor(
+                    evaluateColor(
+                        percent,
+                        backgroundColorFrom,
+                        backgroundColorTo
+                    )
+                )
+            } else {
+                background?.apply {
+                    alpha = (255 * percent).toInt()
+                }
+            }
+        }
 
         if (childView is ViewGroup) {
             (childView as ViewGroup).each(true) {

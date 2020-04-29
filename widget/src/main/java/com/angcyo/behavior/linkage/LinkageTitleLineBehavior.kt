@@ -1,31 +1,29 @@
-package com.angcyo.behavior.placeholder
+package com.angcyo.behavior.linkage
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.angcyo.behavior.BaseDependsBehavior
 import com.angcyo.behavior.ITitleBarBehavior
+import com.angcyo.library.L
 import com.angcyo.widget.base.behavior
+import com.angcyo.widget.base.invisible
+import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.offsetTopTo
 
 /**
- * 布局在标题栏下的行为, 可以覆盖在内容上, 也可以被内容覆盖
+ * 布局在ITitleBarBehavior下面, 根据内容滚动距离决定是否隐藏或者显示child
  * Email:angcyo@126.com
  * @author angcyo
- * @date 2020/03/01
+ * @date 2020-4-29
  */
+open class LinkageTitleLineBehavior(
+    context: Context,
+    attributeSet: AttributeSet? = null
+) : BaseLinkageGradientBehavior(context, attributeSet) {
 
-open class TitleBarBelowBehavior(
-    context: Context? = null,
-    attrs: AttributeSet? = null
-) : BaseDependsBehavior<View>(context, attrs) {
-
-    /**标题栏的行为, 用于布局在标题栏bottom里面*/
-    var titleBarPlaceholderBehavior: ITitleBarBehavior? = null
-
-    /**[child]需要排除多少高度*/
-    val excludeHeight get() = titleBarPlaceholderBehavior?.getContentExcludeHeight(this) ?: 0
+    /**当内容滚动了大于等于多少比例(标题栏的高度/滚动距离)时, 显示child*/
+    var titleLineShowThreshold: Float = 1f
 
     var _titleBarView: View? = null
 
@@ -38,7 +36,6 @@ open class TitleBarBelowBehavior(
         val behavior = dependency.behavior()
         behavior?.let {
             if (it is ITitleBarBehavior) {
-                titleBarPlaceholderBehavior = it
                 _titleBarView = dependency
             }
         }
@@ -59,37 +56,19 @@ open class TitleBarBelowBehavior(
         return false
     }
 
-    override fun onMeasureChild(
-        parent: CoordinatorLayout,
-        child: View,
-        parentWidthMeasureSpec: Int,
-        widthUsed: Int,
-        parentHeightMeasureSpec: Int,
-        heightUsed: Int
-    ): Boolean {
-
-        super.onMeasureChild(
-            parent,
-            child,
-            parentWidthMeasureSpec,
-            widthUsed,
-            parentHeightMeasureSpec,
-            heightUsed
-        )
-
-        parent.onMeasureChild(
-            child,
-            parentWidthMeasureSpec,
-            widthUsed,
-            parentHeightMeasureSpec,
-            heightUsed + excludeHeight
-        )
-
-        return true
-    }
-
     override fun onLayoutChildAfter(parent: CoordinatorLayout, child: View, layoutDirection: Int) {
         super.onLayoutChildAfter(parent, child, layoutDirection)
         child.offsetTopTo(_titleBarView?.bottom ?: 0)
+    }
+
+    override fun getMaxGradientHeight() = (_titleBarView ?: childView).mH()
+
+    /**开始渐变*/
+    override fun onGradient(percent: Float) {
+        L.i(percent)
+        //GONE后的view, 收不到内嵌滚动事件.所以这里使用INVISIBLE
+        if (childView?.isInEditMode == false) {
+            childView?.invisible(percent < titleLineShowThreshold)
+        }
     }
 }

@@ -530,7 +530,7 @@ fun View?.gone(value: Boolean = true) {
 }
 
 fun View?.invisible(value: Boolean = true) {
-    this?.visibility = if (value) View.INVISIBLE else View.GONE
+    this?.visibility = if (value) View.INVISIBLE else View.VISIBLE
 }
 
 fun View.save(canvas: Canvas, paint: Paint? = null): Int {

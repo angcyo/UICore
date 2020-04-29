@@ -13,6 +13,7 @@ import com.angcyo.behavior.refresh.IRefreshBehavior.Companion.STATUS_NORMAL
 import com.angcyo.behavior.refresh.IRefreshBehavior.Companion.STATUS_REFRESH
 import com.angcyo.library.L
 import com.angcyo.library.ex.simpleHash
+import com.angcyo.widget.R
 import com.angcyo.widget.base.behavior
 import com.angcyo.widget.base.mH
 
@@ -33,7 +34,15 @@ open class RefreshContentBehavior(
     var titleBarPlaceholderBehavior: ITitleBarBehavior? = null
 
     /**[child]需要排除多少高度*/
-    val excludeHeight get() = titleBarPlaceholderBehavior?.getContentExcludeHeight(this) ?: 0
+    val excludeHeight
+        get() = if (excludeTitleBarHeight)
+            titleBarPlaceholderBehavior?.getContentExcludeHeight(this) ?: 0 else 0
+
+    /**child是否要排除标题栏的高度*/
+    var excludeTitleBarHeight: Boolean = true
+
+    /**child布局是否要考虑标题栏*/
+    var offsetTitleBarHeight: Boolean = true
 
     /**刷新行为界面处理*/
     var refreshBehaviorConfig: IRefreshBehavior? = RefreshEffectConfig()
@@ -54,6 +63,46 @@ open class RefreshContentBehavior(
         onBehaviorScrollTo = { x, y ->
             refreshBehaviorConfig?.onContentScrollTo(this, x, y)
         }
+
+        val array = context.obtainStyledAttributes(attrs, R.styleable.RefreshContentBehavior_Layout)
+        excludeTitleBarHeight = array.getBoolean(
+            R.styleable.RefreshContentBehavior_Layout_layout_exclude_title_bar_height,
+            excludeTitleBarHeight
+        )
+        offsetTitleBarHeight = array.getBoolean(
+            R.styleable.RefreshContentBehavior_Layout_layout_offset_title_bar_height,
+            excludeTitleBarHeight
+        )
+        array.recycle()
+    }
+
+    override fun onMeasureChild(
+        parent: CoordinatorLayout,
+        child: View,
+        parentWidthMeasureSpec: Int,
+        widthUsed: Int,
+        parentHeightMeasureSpec: Int,
+        heightUsed: Int
+    ): Boolean {
+
+        super.onMeasureChild(
+            parent,
+            child,
+            parentWidthMeasureSpec,
+            widthUsed,
+            parentHeightMeasureSpec,
+            heightUsed
+        )
+
+        parent.onMeasureChild(
+            child,
+            parentWidthMeasureSpec,
+            widthUsed,
+            parentHeightMeasureSpec,
+            heightUsed + excludeHeight
+        )
+
+        return true
     }
 
     override fun onLayoutChild(
@@ -61,7 +110,11 @@ open class RefreshContentBehavior(
         child: View,
         layoutDirection: Int
     ): Boolean {
-        behaviorOffsetTop = titleBarPlaceholderBehavior?.getContentOffsetTop(this) ?: 0
+        behaviorOffsetTop = if (offsetTitleBarHeight) {
+            titleBarPlaceholderBehavior?.getContentOffsetTop(this) ?: 0
+        } else {
+            0
+        }
         refreshBehaviorConfig?.onContentLayout(this, parent, child)
         return super.onLayoutChild(parent, child, layoutDirection)
     }
@@ -107,35 +160,6 @@ open class RefreshContentBehavior(
         )
         _overScroller.abortAnimation()
         return axes.isVertical()
-    }
-
-    override fun onMeasureChild(
-        parent: CoordinatorLayout,
-        child: View,
-        parentWidthMeasureSpec: Int,
-        widthUsed: Int,
-        parentHeightMeasureSpec: Int,
-        heightUsed: Int
-    ): Boolean {
-
-        super.onMeasureChild(
-            parent,
-            child,
-            parentWidthMeasureSpec,
-            widthUsed,
-            parentHeightMeasureSpec,
-            heightUsed
-        )
-
-        parent.onMeasureChild(
-            child,
-            parentWidthMeasureSpec,
-            widthUsed,
-            parentHeightMeasureSpec,
-            heightUsed + excludeHeight
-        )
-
-        return true
     }
 
     override fun onNestedPreScroll(

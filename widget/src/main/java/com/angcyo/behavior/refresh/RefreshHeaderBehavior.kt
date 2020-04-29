@@ -99,6 +99,13 @@ open class RefreshHeaderBehavior(context: Context, attributeSet: AttributeSet? =
     }
 
     override fun onRefreshStatusChange(contentBehavior: BaseScrollBehavior<*>, from: Int, to: Int) {
+        val resetScrollX = 0
+        val resetScrollY = if (contentBehavior is IRefreshContentBehavior) {
+            contentBehavior.getRefreshResetScrollY()
+        } else {
+            0
+        }
+
         when (to) {
             STATUS_REFRESH -> {
                 if (!contentBehavior.isTouchHold) {
@@ -109,12 +116,12 @@ open class RefreshHeaderBehavior(context: Context, attributeSet: AttributeSet? =
             STATUS_FINISH -> {
                 //可以提示一些UI, 然后再[Scroll]
                 if (!contentBehavior.isTouchHold) {
-                    contentBehavior.startScrollTo(0, 0)
+                    contentBehavior.startScrollTo(resetScrollX, resetScrollY)
                 }
             }
             else -> {
                 if (!contentBehavior.isTouchHold) {
-                    contentBehavior.startScrollTo(0, 0)
+                    contentBehavior.startScrollTo(resetScrollX, resetScrollY)
                 }
             }
         }

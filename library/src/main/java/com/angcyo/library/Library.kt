@@ -33,9 +33,10 @@ object Library {
     }
 }
 
-fun app(): Application = Library.application ?: Application().apply {
-    L.e("application 为初始化")
-}
+fun app(): Application =
+    Library.application ?: LibInitProvider.contentProvider as? Application ?: Application().apply {
+        L.e("application 为初始化")
+    }
 
 /**
  * 获取APP的名字
