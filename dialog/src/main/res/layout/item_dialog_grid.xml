@@ -12,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/lib_ic_error"
+        app:srcCompat="@drawable/lib_ic_error"
         app:layout_constraintBottom_toTopOf="@id/lib_text_view"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toLeftOf="parent"

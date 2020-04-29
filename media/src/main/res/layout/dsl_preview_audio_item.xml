@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -21,7 +22,7 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_gravity="center"
-            android:src="@drawable/lib_audio_cover_tip" />
+            app:srcCompat="@drawable/lib_audio_cover_tip" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -47,7 +48,7 @@
                 android:layout_height="50dp"
                 android:layout_gravity="bottom|center_horizontal"
                 android:layout_marginBottom="@dimen/lib_xxhdpi"
-                android:src="@drawable/media_play" />
+                app:srcCompat="@drawable/media_play" />
         </LinearLayout>
 
         <FrameLayout

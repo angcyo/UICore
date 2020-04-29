@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitCenter"
-        android:src="@color/lib_image_placeholder_color"
+        app:srcCompat="@color/lib_image_placeholder_color"
         app:r_draw_border="false"
         app:r_image_radius="0dp" />
 
@@ -37,7 +37,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
-            android:src="@drawable/lib_video_cover_tip" />
+            app:srcCompat="@drawable/lib_video_cover_tip" />
 
         <FrameLayout
             android:id="@+id/bottom_wrap_layout"

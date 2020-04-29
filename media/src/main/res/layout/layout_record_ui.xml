@@ -26,11 +26,11 @@
                 android:layout_width="60dp"
                 android:layout_height="70dp"
                 android:scaleType="fitXY"
-                android:src="@drawable/media_record_voice"
                 app:layout_constraintBottom_toTopOf="@id/record_time_view"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/record_anim_view"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/media_record_voice" />
 
             <com.angcyo.media.audio.widget.RecordAnimView
                 android:id="@+id/record_anim_view"
@@ -61,7 +61,7 @@
             android:layout_height="80dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"
-            android:src="@drawable/media_record_undo"
+            app:srcCompat="@drawable/media_record_undo"
             tools:visibility="gone" />
 
         <TextView

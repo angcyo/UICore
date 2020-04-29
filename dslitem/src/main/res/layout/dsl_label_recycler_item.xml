@@ -30,7 +30,7 @@
         android:id="@+id/lib_right_ico_view"
         style="@style/ItemRightIcoStyle"
         android:background="@null"
-        android:src="@drawable/lib_next"
+        app:srcCompat="@drawable/lib_next"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/lib_text_view"

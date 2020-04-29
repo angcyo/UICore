@@ -28,7 +28,7 @@
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/lib_right_ico_view"
         style="@style/ItemRightIcoStyle"
-        android:src="@drawable/lib_icon_edit_tip"
+        app:srcCompat="@drawable/lib_icon_edit_tip"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/lib_edit_view"
