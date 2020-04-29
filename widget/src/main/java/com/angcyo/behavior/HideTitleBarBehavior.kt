@@ -23,7 +23,7 @@ open class HideTitleBarBehavior(
     var ignoreStatusBar = false
 
     /**
-     * 激活[Over]滚动时才监听, 否则只有在内容滚动时才监听,
+     * 激活[Over]滚动时才监听, 否则内容滚动时就监听,
      * 通常在内容不够高度时, 是否要监听行为.
      * */
     var enableOverScroll = false
