@@ -11,6 +11,7 @@ import com.angcyo.behavior.BaseDependsBehavior
 import com.angcyo.behavior.ITitleBarBehavior
 import com.angcyo.library.ex.color
 import com.angcyo.library.ex.loadColor
+import com.angcyo.tablayout.clamp
 import com.angcyo.tablayout.evaluateColor
 import com.angcyo.widget.R
 import com.angcyo.widget.base.each
@@ -121,19 +122,21 @@ open class LinkageGradientTitleBehavior(
 
     /**开始渐变*/
     override fun onGradient(percent: Float) {
+        val fraction = if (percent > 0) 0f else clamp(-percent, 0f, 1f)
+
         //背景
         childView?.apply {
             if (background == null || background is ColorDrawable) {
                 setBackgroundColor(
                     evaluateColor(
-                        percent,
+                        fraction,
                         backgroundColorFrom,
                         backgroundColorTo
                     )
                 )
             } else {
                 background?.apply {
-                    alpha = (255 * percent).toInt()
+                    alpha = (255 * fraction).toInt()
                 }
             }
         }
@@ -145,7 +148,7 @@ open class LinkageGradientTitleBehavior(
                     is TextView -> if (it.id == titleTextId) {
                         it.setTextColor(
                             evaluateColor(
-                                percent,
+                                fraction,
                                 titleTextColorFrom,
                                 titleTextColorTo
                             )
@@ -156,7 +159,7 @@ open class LinkageGradientTitleBehavior(
                         it.setImageDrawable(
                             it.drawable?.color(
                                 evaluateColor(
-                                    percent,
+                                    fraction,
                                     backIconColorFrom,
                                     backIconColorTo
                                 )
@@ -166,7 +169,7 @@ open class LinkageGradientTitleBehavior(
                         it.setImageDrawable(
                             it.drawable?.color(
                                 evaluateColor(
-                                    percent,
+                                    fraction,
                                     iconColorFrom,
                                     iconColorTo
                                 )
