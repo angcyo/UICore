@@ -214,7 +214,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
                     refreshContentBehavior = this
 
                     //刷新监听
-                    onRefreshAction = this@BaseTitleFragment::onRefresh
+                    refreshAction = this@BaseTitleFragment::onRefresh
                 }
                 child.setBehavior(this)
             }

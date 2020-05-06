@@ -158,7 +158,7 @@ abstract class BaseScrollBehavior<T : View>(
         behaviorScrollTo(x, y)
         onScrollTo(x, y)
         listeners.forEach {
-            it.onBehaviorScrollTo(x, y)
+            it.onBehaviorScrollTo(this, x, y)
         }
     }
 

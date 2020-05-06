@@ -73,7 +73,7 @@ interface IRefreshBehavior {
     /**需要触发刷新回调*/
     fun onRefreshAction(contentBehavior: BaseScrollBehavior<*>) {
         if (contentBehavior is IRefreshContentBehavior) {
-            contentBehavior.onRefreshAction(contentBehavior)
+            contentBehavior.refreshAction(contentBehavior)
         }
     }
 }

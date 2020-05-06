@@ -96,7 +96,7 @@ class LinkageHeaderBehavior(
     val enableRefresh: Boolean get() = refreshBehaviorConfig != null
 
     /**刷新触发的回调*/
-    override var onRefreshAction: (IRefreshContentBehavior) -> Unit =
+    override var refreshAction: (IRefreshContentBehavior) -> Unit =
         { L.i("触发刷新:${it.simpleHash()}") }
 
     /**刷新状态*/
