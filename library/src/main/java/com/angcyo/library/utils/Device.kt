@@ -77,7 +77,11 @@ object Device {
         //SD空间信息
         val statFs =
             StatFs(app().getExternalFilesDir("")?.absolutePath ?: app().filesDir.absolutePath)
-        val usedBytes = statFs.totalBytes - statFs.availableBytes
+        val usedBytes = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            statFs.totalBytes - statFs.availableBytes
+        } else {
+            0L
+        }
         return usedBytes
     }
 
@@ -86,7 +90,11 @@ object Device {
         //SD空间信息
         val statFs =
             StatFs(app().getExternalFilesDir("")?.absolutePath ?: app().filesDir.absolutePath)
-        return statFs.availableBytes
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            statFs.availableBytes
+        } else {
+            0L
+        }
     }
 
     /**sd卡总空间*/
@@ -94,7 +102,11 @@ object Device {
         //SD空间信息
         val statFs =
             StatFs(app().getExternalFilesDir("")?.absolutePath ?: app().filesDir.absolutePath)
-        return statFs.totalBytes
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            statFs.totalBytes
+        } else {
+            0L
+        }
     }
 
     /**
@@ -212,7 +224,9 @@ object Device {
 //        //        builder.appendln();
 //        builder.append("CPU ABI 2: ")
 //        builder.appendln(Build.CPU_ABI2)
-        builder.append(Build.SUPPORTED_ABIS.connect("/").toString())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.append(Build.SUPPORTED_ABIS.connect("/").toString())
+        }
 
         builder.appendln()
         builder.append("memoryClass: ")
