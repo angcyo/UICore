@@ -39,14 +39,14 @@ open class LinkageScaleBehavior(
     /**比例计算的分母, -1是child的高度*/
     var scaleMaxHeight: Int = -1
 
-    /**scale计算的额外控制因子*/
-    var scaleFactor: Float = 3f
+    /**scale计算的额外控制因子, 控制下拉距离与高度变化的比例因子*/
+    var scaleFactor: Float = 0.7f
 
     /**最大放大倍数*/
     var maxScale = 4f
 
     val _maxHeight: Int
-        get() = if (scaleMaxHeight > 0) scaleMaxHeight else _targetView.mH()
+        get() = if (scaleMaxHeight > 0) scaleMaxHeight else getMaxGradientHeight()
 
     val _targetView: View?
         get() = scaleTargetView ?: childView
@@ -176,7 +176,7 @@ open class LinkageScaleBehavior(
     }
 
     override fun getMaxGradientHeight(): Int {
-        return _targetView.mH()
+        return if (_targetDefaultHeight > 0) _targetDefaultHeight else _targetView.mH()
     }
 
     override fun onGradient(percent: Float) {
