@@ -586,7 +586,7 @@ open class DslAdapterItem : LifecycleOwner {
      * 的执行
      * */
     var thisAreItemsTheSame: (fromItem: DslAdapterItem?, newItem: DslAdapterItem) -> Boolean =
-        { _, newItem -> this == newItem }
+        { _, newItem -> this == newItem || this.className() == newItem.className() }
 
     /**
      * [RecyclerView.Adapter.notifyItemChanged]
