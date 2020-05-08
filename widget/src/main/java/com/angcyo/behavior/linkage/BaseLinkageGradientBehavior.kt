@@ -12,6 +12,7 @@ import com.angcyo.behavior.refresh.IRefreshContentBehavior
 import com.angcyo.widget.base.behavior
 import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.topCanScroll
+import kotlin.math.absoluteValue
 import kotlin.math.min
 
 /**
@@ -189,7 +190,9 @@ abstract class BaseLinkageGradientBehavior(
         distanceX: Float,
         distanceY: Float
     ): Boolean {
-        if (linkageHeaderBehavior?.isStickyHoldScroll == true) {
+        if (linkageHeaderBehavior?.isStickyHoldScroll == true ||
+            distanceX.absoluteValue > distanceY.absoluteValue
+        ) {
             //no op
         } else {
             if (headerScrollView == null) {
