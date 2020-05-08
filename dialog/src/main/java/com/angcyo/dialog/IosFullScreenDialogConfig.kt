@@ -6,6 +6,7 @@ import android.view.KeyEvent.KEYCODE_BACK
 import android.view.Window
 import com.angcyo.base.enableLayoutFullScreen
 import com.angcyo.base.translucentStatusBar
+import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.behavior.IScrollBehaviorListener
 import com.angcyo.behavior.effect.TouchBackBehavior
 import com.angcyo.dialog.dslitem.DslDialogTextItem
@@ -71,7 +72,10 @@ class IosFullScreenDialogConfig : BaseDialogConfig() {
             if (this is TouchBackBehavior) {
                 touchBackBehavior = this
                 this.addScrollListener(object : IScrollBehaviorListener {
-                    override fun onBehaviorScrollTo(x: Int, y: Int) {
+                    override fun onBehaviorScrollTo(
+                        scrollBehavior: BaseScrollBehavior<*>,
+                        x: Int, y: Int
+                    ) {
                         //L.i("-> x:$x y:$y")
                         onTouchBackTo(dialogViewHolder, y)
 
