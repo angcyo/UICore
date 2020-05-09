@@ -50,11 +50,11 @@ open class RCoordinatorLayout(
         return super.dispatchTouchEvent(ev)
     }
 
-    override fun draw(canvas: Canvas) {
-        layoutDelegate.maskLayout(canvas) {
-            layoutDelegate.draw(canvas)
-            super.draw(canvas)
-        }
+    var _disallowIntercept: Boolean = false
+
+    override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+        super.requestDisallowInterceptTouchEvent(disallowIntercept)
+        _disallowIntercept = disallowIntercept
     }
 
     override fun computeScroll() {
