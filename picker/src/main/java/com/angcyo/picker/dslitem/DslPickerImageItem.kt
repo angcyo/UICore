@@ -11,7 +11,6 @@ import com.angcyo.dsladapter.isUpdateMedia
 import com.angcyo.dsladapter.margin
 import com.angcyo.glide.giv
 import com.angcyo.library.ex.*
-import com.angcyo.library.ex.mimeType
 import com.angcyo.library.model.*
 import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
@@ -82,7 +81,7 @@ open class DslPickerImageItem : DslAdapterItem() {
     init {
         itemLayoutId = R.layout.dsl_picker_image_layout
 
-        thisAreContentsTheSame = { _, newItem ->
+        thisAreContentsTheSame = { _, newItem, _, _ ->
             when {
                 itemChanging -> false
                 else -> (newItem as? DslPickerImageItem)?.loaderMedia == this.loaderMedia
