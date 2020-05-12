@@ -251,3 +251,4 @@ fun View.fullSpan(full: Boolean = true) {
 /**文本的高度*/
 fun Paint.textHeight(): Float = descent() - ascent()
 
+val RecyclerView.dslAdapter: DslAdapter? get() = adapter as? DslAdapter?

@@ -6,6 +6,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import androidx.core.view.GestureDetectorCompat
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import com.angcyo.dsladapter.ItemSelectorHelper.Companion.OPTION_DESELECT
 import com.angcyo.dsladapter.ItemSelectorHelper.Companion.OPTION_SELECT
 import com.angcyo.library.ex.dp
@@ -24,6 +25,24 @@ import kotlin.math.max
  */
 class SlidingSelectorHelper(val context: Context, val dslAdapter: DslAdapter) :
     RecyclerView.SimpleOnItemTouchListener() {
+
+    companion object {
+
+        /**安装*/
+        fun install(recyclerView: RecyclerView, dslAdapter: DslAdapter): SlidingSelectorHelper {
+            val slidingSelectorHelper = SlidingSelectorHelper(
+                recyclerView.context.applicationContext,
+                dslAdapter
+            )
+            recyclerView.addOnItemTouchListener(slidingSelectorHelper)
+            return slidingSelectorHelper
+        }
+
+        /**卸载*/
+        fun uninstall(recyclerView: RecyclerView, helper: OnItemTouchListener) {
+            recyclerView.removeOnItemTouchListener(helper)
+        }
+    }
 
     /**功能控制开关*/
     var enableSliding = true
@@ -152,6 +171,7 @@ class SlidingSelectorHelper(val context: Context, val dslAdapter: DslAdapter) :
 
     //第一次批量操作的位置
     var _firstSelectorItemAdapterPosition = RecyclerView.NO_POSITION
+
     //最后一次选中的位置, 用来标志滑动时候的批量操作
     var _lastSelectorItemAdapterPosition = RecyclerView.NO_POSITION
 

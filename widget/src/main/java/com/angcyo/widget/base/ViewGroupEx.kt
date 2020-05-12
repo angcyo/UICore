@@ -11,6 +11,7 @@ import com.angcyo.library.ex.abs
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
 import com.angcyo.widget.layout.RSoftInputLayout
+import kotlin.math.min
 
 /**
  * Kotlin ViewGroup的扩展
@@ -434,7 +435,7 @@ fun ViewGroup.appendDslItem(dslAdapterItem: DslAdapterItem): DslViewHolder {
     return addDslItem(dslAdapterItem)
 }
 
-fun ViewGroup.addDslItem(dslAdapterItem: DslAdapterItem): DslViewHolder {
+fun ViewGroup.addDslItem(dslAdapterItem: DslAdapterItem, index: Int = -1): DslViewHolder {
     setOnHierarchyChangeListener(DslHierarchyChangeListenerWrap())
     val itemView = inflate(dslAdapterItem.itemLayoutId, false)
     val dslViewHolder = DslViewHolder(itemView)
@@ -467,7 +468,7 @@ fun ViewGroup.addDslItem(dslAdapterItem: DslAdapterItem): DslViewHolder {
             }
         }
     }
-    addView(itemView)
+    addView(itemView, index)
     //尾分割线的支持
     if (this is LinearLayout) {
         if (this.orientation == LinearLayout.VERTICAL) {
@@ -494,9 +495,45 @@ fun ViewGroup.addDslItem(dslAdapterItem: DslAdapterItem): DslViewHolder {
 }
 
 fun ViewGroup.resetDslItem(items: List<DslAdapterItem>) {
-    removeAllViews()
-    items.forEach {
-        addDslItem(it)
+    val childSize = childCount
+    val itemSize = items.size
+
+    //需要替换的child索引
+    val replaceIndexList = mutableListOf<Int>()
+
+    //更新已存在的Item
+    for (i in 0 until min(childSize, itemSize)) {
+        val childView = getChildAt(i)
+        val dslItem = items[i]
+
+        val tag = childView.getTag(R.id.tag)
+        if (tag is Int && tag == dslItem.itemLayoutId) {
+            //相同布局, 则使用缓存
+            val dslViewHolder = childView.dslViewHolder()
+            dslItem.itemBind(dslViewHolder, i, dslItem, emptyList())
+        } else {
+            //不同布局, 删除原先的view, 替换成新的
+            replaceIndexList.add(i)
+        }
+    }
+
+    //替换不相同的Item
+    replaceIndexList.forEach { i ->
+        val dslItem = items[i]
+
+        removeViewAt(i)
+        addDslItem(dslItem, i)
+    }
+
+    //移除多余的item
+    for (i in itemSize until childSize) {
+        removeViewAt(i)
+    }
+
+    //追加新的Item
+    for (i in childSize until itemSize) {
+        val dslItem = items[i]
+        addDslItem(dslItem)
     }
 }
 //<editor-fold desc="DslAdapterItem操作">
