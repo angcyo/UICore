@@ -341,10 +341,10 @@ class SwipeMenuHelper(var swipeMenuCallback: SwipeMenuCallback) : ItemDecoration
                     _scrollY = clamp(_scrollY, -swipeMaxHeight, swipeMaxHeight)
 
                     if (_swipeFlags == DragCallbackHelper.FLAG_HORIZONTAL) {
-                        _scrollY = 0f
                         if (swipeFlag.have(ItemTouchHelper.LEFT) ||
                             swipeFlag.have(ItemTouchHelper.RIGHT)
                         ) {
+                            _scrollY = 0f
                             if (_scrollX < 0 && swipeFlag and ItemTouchHelper.LEFT == 0) {
                                 //不具备向左滑动
                                 _scrollX = 0f
@@ -358,10 +358,18 @@ class SwipeMenuHelper(var swipeMenuCallback: SwipeMenuCallback) : ItemDecoration
                             _swipeFlags = 0
                             _needHandleTouch = false
                             _scrollX = 0f
+                            if (_swipeMenuViewHolder == _downViewHolder) {
+                                //已经打开了按下的菜单, 但是菜单缺没有此方向的滑动flag
+                                //则关闭菜单
+                                closeSwipeMenu(_swipeMenuViewHolder)
+                                return _needHandleTouch
+                            } else {
+                                _scrollY = 0f
+                            }
                         }
                     } else {
-                        _scrollX = 0f
                         if (swipeFlag.have(ItemTouchHelper.UP) || swipeFlag.have(ItemTouchHelper.DOWN)) {
+                            _scrollX = 0f
                             if (_scrollY < 0 && swipeFlag and ItemTouchHelper.DOWN == 0) {
                                 //不具备向下滑动
                                 _scrollY = 0f
@@ -375,6 +383,14 @@ class SwipeMenuHelper(var swipeMenuCallback: SwipeMenuCallback) : ItemDecoration
                             _swipeFlags = 0
                             _needHandleTouch = false
                             _scrollY = 0f
+                            if (_swipeMenuViewHolder == _downViewHolder) {
+                                //已经打开了按下的菜单, 但是菜单缺没有此方向的滑动flag
+                                //则关闭菜单
+                                closeSwipeMenu(_swipeMenuViewHolder)
+                                return _needHandleTouch
+                            } else {
+                                _scrollX = 0f
+                            }
                         }
                     }
 
@@ -548,6 +564,11 @@ class SwipeMenuHelper(var swipeMenuCallback: SwipeMenuCallback) : ItemDecoration
         _recyclerView?.apply {
             val startX = _scrollX
             val startY = _scrollY
+
+            if (x != 0f || y == 0f) {
+                //将要打开的菜单
+                _swipeMenuViewHolder = viewHolder
+            }
 
             val valueAnimator = ValueAnimator.ofFloat(0f, 1f)
             valueAnimator.addUpdateListener {
