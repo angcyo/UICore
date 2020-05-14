@@ -175,8 +175,9 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     }
 
     override fun onFailedToRecycleView(holder: DslViewHolder): Boolean {
-        L.w("回收失败:$holder")
-        return super.onFailedToRecycleView(holder)
+        return super.onFailedToRecycleView(holder).apply {
+            L.w("是否回收失败:$holder $this")
+        }
     }
 
     /**返回[DslViewHolder]对应的[DslAdapterItem]*/

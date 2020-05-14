@@ -1,9 +1,18 @@
 package com.angcyo.widget.recycler
 
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Rect
 import android.util.AttributeSet
+import android.view.KeyEvent
+import android.view.MotionEvent
+import android.view.View
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.angcyo.library.L
 import com.angcyo.widget.R
+import com.angcyo.widget.base.isTouchFinish
+import java.lang.ref.WeakReference
 
 /**
  *
@@ -13,7 +22,45 @@ import com.angcyo.widget.R
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
+typealias FocusTransitionChanged = (from: View?, to: View?) -> Unit
+
 open class DslRecyclerView : RecyclerView {
+
+    companion object {
+        //用于在多个RV之间共享之前的焦点View
+        var _lastFocusViewRef: WeakReference<View>? = null
+
+        /**焦点过渡改变回调, 如果在此回调中处理了视图的属性, 要注意RecyclerView中的复用问题*/
+        var _focusTransitionChangedList: MutableList<FocusTransitionChanged> = mutableListOf()
+
+        fun addFocusTransitionChangeListener(listener: FocusTransitionChanged) {
+            if (!_focusTransitionChangedList.contains(listener)) {
+                _focusTransitionChangedList.add(listener)
+            }
+        }
+
+        fun removeFocusTransitionChangeListener(listener: FocusTransitionChanged) {
+            if (_focusTransitionChangedList.contains(listener)) {
+                _focusTransitionChangedList.remove(listener)
+            }
+        }
+
+        /**全局统一设置焦点视图*/
+        fun setFocusView(parent: View, view: View?) {
+            val old = _lastFocusViewRef?.get()
+            if (old != view) {
+                _lastFocusViewRef?.clear()
+                _lastFocusViewRef = null
+                if (view != null) {
+                    _lastFocusViewRef = WeakReference(view)
+                }
+                _focusTransitionChangedList.forEach {
+                    it.invoke(old, view)
+                }
+                ViewCompat.postInvalidateOnAnimation(parent)
+            }
+        }
+    }
 
     /** 通过[V] [H] [GV2] [GH3] [SV2] [SV3] 方式, 设置 [LayoutManager] */
     var layout: String? = null
@@ -23,6 +70,18 @@ open class DslRecyclerView : RecyclerView {
         }
 
     val scrollHelper = ScrollHelper()
+
+    /**是否激活焦点过渡监听*/
+    var enableFocusTransition = false
+        set(value) {
+            field = value
+            if (value) {
+                //激活绘图顺序
+                isFocusable = true
+                isFocusableInTouchMode = true
+                isChildrenDrawingOrderEnabled = true
+            }
+        }
 
     constructor(context: Context) : super(context) {
         initAttribute(context)
@@ -37,6 +96,10 @@ open class DslRecyclerView : RecyclerView {
         typedArray.getString(R.styleable.DslRecyclerView_r_layout_manager)?.let {
             layout = it
         }
+        typedArray.getBoolean(
+            R.styleable.DslRecyclerView_r_enable_focus_transition,
+            enableFocusTransition
+        )
         typedArray.recycle()
 
         scrollHelper.attach(this)
@@ -79,4 +142,118 @@ open class DslRecyclerView : RecyclerView {
             config()
         }
     }
+
+    //<editor-fold desc="焦点相关处理, TV开发使用居多">
+
+    override fun onChildDetachedFromWindow(child: View) {
+        super.onChildDetachedFromWindow(child)
+        if (child == _lastFocusViewRef?.get()) {
+            //清理焦点
+            setFocusView(this, null)
+            clearChildFocus(child)
+        }
+    }
+
+    override fun draw(canvas: Canvas?) {
+        if (enableFocusTransition) {
+            findFocus()
+        }
+        super.draw(canvas)
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        val result = super.dispatchTouchEvent(ev)
+        if (enableFocusTransition && ev.isTouchFinish()) {
+            //如果是通过TouchEvent改变的focus, 则需要手动触发一次[findFocus]
+            findFocus()
+        }
+        return result
+    }
+
+    /**这个方法可以改变child绘制的顺序.
+     * [childCount] 表示当前界面需要绘制的child数量
+     * [drawingPosition] 表示当前需要绘制的child位置
+     * @return 返回值表示, [drawingPosition]位置真正应该绘制的[drawingPosition].
+     * * */
+    override fun getChildDrawingOrder(childCount: Int, drawingPosition: Int): Int {
+        _lastFocusViewRef?.get()?.let { focusView ->
+            val focusIndex = indexOfChild(focusView)
+            if (focusIndex == -1) {
+                return drawingPosition
+            }
+            return when {
+                drawingPosition == childCount - 1 -> focusIndex
+                drawingPosition < focusIndex -> drawingPosition
+                else -> drawingPosition + 1
+            }
+        }
+        return super.getChildDrawingOrder(childCount, drawingPosition)
+    }
+
+    /**在层级结构中, 查找当前具有焦点的[View]*/
+    override fun findFocus(): View? {
+        return super.findFocus()?.apply {
+            if (enableFocusTransition) {
+                setFocusView(this@DslRecyclerView, this)
+            }
+        }
+    }
+
+    /**通过当前具有焦点[focused]的[View], 按照[direction]方向查找焦点*/
+    override fun focusSearch(focused: View, direction: Int): View? {
+        return super.focusSearch(focused, direction)?.apply {
+            if (enableFocusTransition) {
+                ViewCompat.postInvalidateOnAnimation(this@DslRecyclerView)
+            }
+        }
+    }
+
+    override fun focusSearch(direction: Int): View? {
+        return super.focusSearch(direction)?.apply {
+            L.v(this)
+        }
+    }
+
+    override fun dispatchUnhandledMove(focused: View?, direction: Int): Boolean {
+        L.v("$focused $direction")
+        return super.dispatchUnhandledMove(focused, direction)
+    }
+
+    override fun restoreDefaultFocus(): Boolean {
+        L.v("...")
+        return super.restoreDefaultFocus()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        L.d("keyCode:$keyCode")
+        return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
+        L.d("keyCode:$keyCode")
+        return super.onKeyLongPress(keyCode, event)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        L.d("keyCode:$keyCode")
+        return super.onKeyUp(keyCode, event)
+    }
+
+    override fun onFocusChanged(gainFocus: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
+        super.onFocusChanged(gainFocus, direction, previouslyFocusedRect)
+        L.d("gainFocus:$gainFocus $direction $previouslyFocusedRect")
+    }
+
+    override fun clearChildFocus(child: View?) {
+        super.clearChildFocus(child)
+        L.d()
+    }
+
+    override fun clearFocus() {
+        super.clearFocus()
+        L.d()
+    }
+
+    //</editor-fold desc="焦点相关处理, TV开发使用居多">
+
 }
