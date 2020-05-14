@@ -33,4 +33,7 @@ dependencies {
     //https://github.com/AndroidKnife/RxBus/tree/2.x
     //https://jcenter.bintray.com/com/hwangjr/rxbus
     api 'com.hwangjr.rxbus:rxbus:2.0.1'
+
+    //https://github.com/ikidou/TypeBuilder/
+    api 'com.github.ikidou:TypeBuilder:1.0'
 }

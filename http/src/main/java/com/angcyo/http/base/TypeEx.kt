@@ -1,6 +1,6 @@
 package com.angcyo.http.base
 
-import com.angcyo.http.type.TypeBuilder
+import ikidou.reflect.TypeBuilder
 import java.lang.reflect.Type
 
 /**
