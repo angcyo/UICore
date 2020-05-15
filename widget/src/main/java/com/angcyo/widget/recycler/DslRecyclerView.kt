@@ -13,6 +13,7 @@ import com.angcyo.library.L
 import com.angcyo.widget.R
 import com.angcyo.widget.base.isTouchFinish
 import java.lang.ref.WeakReference
+import java.util.*
 
 /**
  *
@@ -224,6 +225,16 @@ open class DslRecyclerView : RecyclerView {
         return super.restoreDefaultFocus()
     }
 
+    override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
+        L.v(event)
+        return super.dispatchKeyEvent(event)
+    }
+
+    override fun dispatchKeyEventPreIme(event: KeyEvent?): Boolean {
+        L.v(event)
+        return super.dispatchKeyEventPreIme(event)
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         L.d("keyCode:$keyCode")
         return super.onKeyDown(keyCode, event)
@@ -237,6 +248,33 @@ open class DslRecyclerView : RecyclerView {
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         L.d("keyCode:$keyCode")
         return super.onKeyUp(keyCode, event)
+    }
+
+    override fun requestChildFocus(child: View?, focused: View?) {
+        super.requestChildFocus(child, focused)
+        L.v("$child $focused")
+    }
+
+    override fun requestChildRectangleOnScreen(
+        child: View?,
+        rect: Rect?,
+        immediate: Boolean
+    ): Boolean {
+        L.v()
+        return super.requestChildRectangleOnScreen(child, rect, immediate)
+    }
+
+    override fun addFocusables(views: ArrayList<View>?, direction: Int, focusableMode: Int) {
+        L.v(views)
+        super.addFocusables(views, direction, focusableMode)
+
+//        val old = _lastFocusViewRef?.get()
+//        if (this.hasFocus() || old == null) {
+//            super.addFocusables(views, direction, focusableMode)
+//        } else {
+//            //将当前的view放到Focusable views列表中，再次移入焦点时会取到该view,实现焦点记忆功能
+//            views?.add(old)
+//        }
     }
 
     override fun onFocusChanged(gainFocus: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
