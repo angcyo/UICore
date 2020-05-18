@@ -223,7 +223,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
     /**根据[child]创建对应的[Behavior]*/
     open fun onCreateBehavior(child: View): CoordinatorLayout.Behavior<*>? {
-        return when (child.id) {
+        return child.behavior() ?: when (child.id) {
             //HideTitleBarBehavior(fContext())
             R.id.lib_title_wrap_layout -> TitleBarPlaceholderBehavior(fContext())
             R.id.lib_content_wrap_layout -> RefreshContentBehavior(fContext())
