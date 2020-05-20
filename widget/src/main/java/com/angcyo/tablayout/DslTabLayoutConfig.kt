@@ -71,7 +71,7 @@ open class DslTabLayoutConfig(val tabLayout: DslTabLayout) : DslSelectorConfig()
     /**最小缩放的比例*/
     var tabMinScale = 0.8f
 
-    /**大嘴缩放的比例*/
+    /**最大缩放的比例*/
     var tabMaxScale = 1.2f
 
     /**是否开启字体大小渐变效果*/
