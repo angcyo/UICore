@@ -161,5 +161,17 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
         return result
     }
 
+    /**快速观察[LiveData]一次*/
+    fun <T> LiveData<T>.observeOnce(action: (data: T?) -> Unit): Observer<T> {
+        var result: Observer<T>? = null
+        observe(this@AbsLifecycleFragment, Observer<T> {
+            removeObserver(result!!)
+            action(it)
+        }.apply {
+            result = this
+        })
+        return result!!
+    }
+
     //</editor-fold>
 }

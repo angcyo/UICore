@@ -15,7 +15,6 @@ import com.angcyo.library.ex.elseNull
 import com.angcyo.transition.dslTransition
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.dslViewHolder
-import com.angcyo.widget.base.tagDslViewHolder
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -78,13 +77,17 @@ fun hideLoading(
 
 /**将对话框的文本改变, 然后延迟关闭*/
 fun hideLoading(text: CharSequence?) {
-    hideLoading(true) {
-        tv(R.id.lib_text_view)?.run {
-            this.text = text
-            translationX = -(view(R.id.lib_loading_view)?.measuredWidth?.toFloat() ?: 0f)
+    if (text.isNullOrEmpty()) {
+        hideLoading()
+    } else {
+        hideLoading(true) {
+            tv(R.id.lib_text_view)?.run {
+                this.text = text
+                translationX = -(view(R.id.lib_loading_view)?.measuredWidth?.toFloat() ?: 0f)
+            }
+            invisible(R.id.lib_loading_view)
+            gone(R.id.lib_close_view)
         }
-        invisible(R.id.lib_loading_view)
-        gone(R.id.lib_close_view)
     }
 }
 

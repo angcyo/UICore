@@ -276,6 +276,18 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
         }
 }
 
+/**判断http状态码为成功, 并且接口返回状态也为成功*/
+fun Response<JsonElement>?.isSucceed(codeKey: String = "code"): Boolean {
+    val bodyData = this?.body() ?: return false
+    var result = false
+    if (isSuccessful && bodyData is JsonObject) {
+        if (bodyData.getInt(codeKey) in 200..299) {
+            result = true
+        }
+    }
+    return result
+}
+
 //</editor-fold desc="基础">
 
 //<editor-fold desc="RxJava异步网络请求">
@@ -443,14 +455,7 @@ open class BaseRequestConfig {
 open class RequestConfig : BaseRequestConfig() {
     //判断返回的数据
     var isSuccessful: (Response<JsonElement>) -> Boolean = {
-        val bodyData = it.body()
-        var result = false
-        if (it.isSuccessful && bodyData is JsonObject) {
-            if (bodyData.getInt(codeKey) in 200..299) {
-                result = true
-            }
-        }
-        result
+        it.isSucceed(codeKey)
     }
 
     //http状态请求成功才回调
