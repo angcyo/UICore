@@ -1,8 +1,13 @@
 package com.angcyo.glide
 
+import android.graphics.Color
 import android.net.Uri
 import android.widget.ImageView
 import androidx.annotation.IdRes
+import com.angcyo.drawable.base.dslGradientDrawable
+import com.angcyo.drawable.text.dslTextDrawable
+import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.getColor
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -27,5 +32,31 @@ fun ImageView.loadImage(uri: Uri?, action: DslGlide.() -> Unit = {}) {
         }
         action()
         load(uri)
+    }
+}
+
+/**core 头像设置*/
+fun GlideImageView.loadAvatar(
+    url: String?,
+    fullName: CharSequence,
+    textColor: Int = Color.WHITE,
+    fontSizeDp: Float = 14 * dp
+) {
+    val textDrawable = dslTextDrawable(fullName) {
+        textSize = fontSizeDp
+        this.textColor = textColor
+        drawableWidth = -1
+        drawableHeight = -1
+        textBgDrawable = dslGradientDrawable {
+            gradientSolidColor = getColor(R.color.colorPrimaryDark)
+        }
+    }
+    if (url.isNullOrEmpty()) {
+        setImageDrawable(textDrawable)
+    } else {
+        load(url) {
+            placeholderDrawable = textDrawable
+            errorDrawable = textDrawable
+        }
     }
 }
