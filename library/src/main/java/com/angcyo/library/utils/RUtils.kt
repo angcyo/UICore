@@ -78,6 +78,14 @@ object RUtils {
         }
         return false
     }
+
+
+    /**
+     * 判断是否是主线程
+     */
+    fun isMainThread(): Boolean {
+        return Looper.myLooper() == Looper.getMainLooper()
+    }
 }
 
 /** 检查APK是否安装 */
