@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/info"
+    android:layout_height="match_parent">
+
+    <com.angcyo.widget.recycler.DslRecyclerView
+        android:id="@+id/left_recycler_view"
+        style="@style/LibInnerRecyclerViewStyle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.3"
+        android:background="@color/lib_dark" />
+
+    <com.angcyo.widget.recycler.DslRecyclerView
+        android:id="@+id/lib_recycler_view"
+        style="@style/LibRecyclerViewStyle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.7"
+        android:background="@color/lib_white" />
+
+</LinearLayout>

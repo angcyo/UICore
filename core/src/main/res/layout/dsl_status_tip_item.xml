@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/lib_status_tip_bg_selector"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/lib_item_min_height"
+    android:orientation="horizontal">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_view"
+        style="@style/LibMainTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:minHeight="@dimen/lib_item_min_height"
+        android:paddingLeft="@dimen/lib_hdpi"
+        android:paddingRight="@dimen/lib_hdpi"
+        android:textColor="@color/lib_main_to_theme_colors"
+        android:textSize="@dimen/text_body_size"
+        tools:ignore="SpUsage"
+        tools:text="坝基坝基坝基坝基坝基坝基坝基坝基坝基坝基坝基坝基坝基坝基坝基坝基坝基坝基坝基坝基坝基坝基坝基坝基" />
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/count_view"
+        style="@style/LibSubTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:background="@drawable/lib_tip_bg_shape"
+        android:gravity="center"
+        android:minWidth="12dp"
+        android:minHeight="12dp"
+        android:padding="1dp"
+        android:textColor="@color/lib_white"
+        android:textSize="@dimen/text_min_size"
+        app:r_is_aeq_width="true"
+        tools:ignore="SpUsage"
+        tools:text="99+" />
+
+</LinearLayout>
