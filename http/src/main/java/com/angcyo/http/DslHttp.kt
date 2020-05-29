@@ -1,5 +1,6 @@
 package com.angcyo.http
 
+import com.angcyo.http.DslHttp.DEFAULT_CODE_KEY
 import com.angcyo.http.base.*
 import com.angcyo.http.exception.HttpDataException
 import com.angcyo.http.rx.observableToMain
@@ -123,6 +124,8 @@ interface ApiKt {
 //<editor-fold desc="基础">
 
 object DslHttp {
+    var DEFAULT_CODE_KEY = "code"
+
     val dslHttpConfig = DslHttpConfig()
 
     /**自定义配置, 否则使用库中默认配置*/
@@ -277,7 +280,7 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
 }
 
 /**判断http状态码为成功, 并且接口返回状态也为成功*/
-fun Response<JsonElement>?.isSucceed(codeKey: String = "code"): Boolean {
+fun Response<JsonElement>?.isSucceed(codeKey: String = DEFAULT_CODE_KEY): Boolean {
     val bodyData = this?.body() ?: return false
     var result = false
     if (isSuccessful && bodyData is JsonObject) {
@@ -440,7 +443,7 @@ open class BaseRequestConfig {
     var query: HashMap<String, Any> = hashMapOf()
 
     //解析请求返回的json数据, 判断code是否是成功的状态, 否则走异常流程.
-    var codeKey: String = "code"
+    var codeKey: String = DEFAULT_CODE_KEY
     var msgKey: String = "msg"
 
     var onStart: (Disposable) -> Unit = {}

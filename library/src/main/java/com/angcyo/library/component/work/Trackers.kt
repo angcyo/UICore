@@ -50,6 +50,7 @@ class Trackers(context: Context, val taskExecutor: TaskExecutor) {
 
     companion object {
         private var sInstance: Trackers? = null
+
         /**
          * Gets the singleton instance of [Trackers].
          *
@@ -68,3 +69,9 @@ class Trackers(context: Context, val taskExecutor: TaskExecutor) {
         }
     }
 }
+
+/**网络是否连接*/
+fun isNetworkConnect() = Trackers.getInstance().networkStateTracker.activeNetworkState.isConnected
+
+/**是否是移动网络*/
+fun isMobileConnect() = Trackers.getInstance().networkStateTracker.activeNetworkState.isMetered
