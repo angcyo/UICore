@@ -173,39 +173,58 @@ android {
 //        }
 //    }
 
-//    /*Gradle3.0 以上的方法*/
-//    applicationVariants.all { variant ->
-//        if (variant.buildType.name != "debug") {
-//            variant.getPackageApplication().outputDirectory = new File(project.rootDir.absolutePath + "/apk")
-//        }
-//
-//        variant.getPackageApplication().outputScope.apkDatas.forEach { apkData ->
-//            apkData.outputFileName = _app_name + "-" +
-//                    variant.versionName + "_" +
-//                    apk_time + "_" +
-//                    variant.flavorName + "_" +
-//                    variant.buildType.name + "_" +
+    if (gradle.gradleVersion.startsWith("6")) {
+        /*Gradle4.0 以上的方法*/
+        applicationVariants.all { variant ->
+            if (variant.buildType.name != "debug") {
+                variant.packageApplicationProvider.get().outputDirectory = rootProject.file("/apk")
+            }
+            variant.outputs.forEach {
+                it.apkData.outputFileName = _app_name + "-" +
+                        variant.versionName + "_" +
+                        apk_time + "_" +
+                        variant.flavorName + "_" +
+                        variant.buildType.name + "_" +
 //                    variant.signingConfig.name + "_" +
-//                    signConfig.key_alias +
-//                    ".apk"
-//        }
-//    }
-
-    /*Gradle3.3 以上的方法*/
-    applicationVariants.all { variant ->
-        if (variant.buildType.name != "debug") {
-            variant.getPackageApplicationProvider().get().outputDirectory = new File(project.rootDir.absolutePath + "/apk")
+                        signConfig.key_alias +
+                        ".apk"
+            }
         }
+    } else if (gradle.gradleVersion.startsWith("5")) {
+        /*Gradle3.3 以上的方法*/
+        applicationVariants.all { variant ->
+            if (variant.buildType.name != "debug") {
+                variant.packageApplicationProvider.get()?.outputDirectory = rootProject.file("/apk")
+            }
 
-        variant.getPackageApplicationProvider().get().outputScope.apkDatas.forEach { apkData ->
-            apkData.outputFileName = _app_name + "-" +
-                    variant.versionName + "_" +
-                    apk_time + "_" +
-                    variant.flavorName + "_" +
-                    variant.buildType.name + "_" +
+            variant.packageApplicationProvider.get()?.outputScope?.apkDatas?.forEach { apkData ->
+                apkData.outputFileName = _app_name + "-" +
+                        variant.versionName + "_" +
+                        apk_time + "_" +
+                        variant.flavorName + "_" +
+                        variant.buildType.name + "_" +
 //                    variant.signingConfig.name + "_" +
-                    signConfig.key_alias +
-                    ".apk"
+                        signConfig.key_alias +
+                        ".apk"
+            }
+        }
+    } else {
+        /*Gradle3.0 以上的方法*/
+        applicationVariants.all { variant ->
+            if (variant.buildType.name != "debug") {
+                variant.getPackageApplication().outputDirectory = new File(project.rootDir.absolutePath + "/apk")
+            }
+
+            variant.getPackageApplication().outputScope.apkDatas.forEach { apkData ->
+                apkData.outputFileName = _app_name + "-" +
+                        variant.versionName + "_" +
+                        apk_time + "_" +
+                        variant.flavorName + "_" +
+                        variant.buildType.name + "_" +
+                        variant.signingConfig.name + "_" +
+                        signConfig.key_alias +
+                        ".apk"
+            }
         }
     }
 }
