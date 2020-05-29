@@ -7,6 +7,7 @@ import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.angcyo.library.app
 import com.angcyo.widget.DslGroupHelper
 import com.angcyo.widget.base.find
 import com.angcyo.widget.text.DslTextView
@@ -48,8 +49,17 @@ inline fun <reified VM : ViewModel> Activity.vmCore(): VM {
     ).get(VM::class.java)
 }
 
+/**返回CoreApplication级别的[ViewModel]*/
 inline fun <reified VM : ViewModel> Fragment.vmCore(): VM {
     return requireActivity().vmCore()
+}
+
+/**返回CoreApplication级别的[ViewModel]*/
+inline fun <reified VM : ViewModel> vmCore(): VM {
+    return ViewModelProvider(
+        app() as CoreApplication,
+        ViewModelProvider.AndroidViewModelFactory.getInstance(app())
+    ).get(VM::class.java)
 }
 
 //</editor-fold desc="Application级别的单例模式">

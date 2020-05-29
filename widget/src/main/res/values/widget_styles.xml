@@ -40,4 +40,14 @@
         <item name="layout_constraintVertical_weight">1</item>
         <item name="android:layout_weight">1</item>
     </style>
+
+    <!--圆形图片-->
+    <style name="LibCircleImageStyle">
+        <item name="android:scaleType">centerCrop</item>
+        <item name="android:layout_width">35dp</item>
+        <item name="android:layout_height">35dp</item>
+        <item name="r_is_circle">true</item>
+        <item name="r_draw_border">false</item>
+        <item name="r_enable_shape">true</item>
+    </style>
 </resources>

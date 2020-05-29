@@ -366,31 +366,39 @@ suspend fun String.put2Body(
 //<editor-fold desc="JsonElement to Bean">
 
 /**[JsonElement]转换成数据bean*/
-fun <T> Response<JsonElement>.toBean(type: Type): T? {
-    return if (isSuccessful) {
-        when (val bodyJson = body().toJson()) {
-            null -> null
-            else -> bodyJson.fromJson(type)
+fun <T> Response<JsonElement>.toBean(type: Type, parseError: Boolean = false): T? {
+    return when {
+        isSuccessful -> {
+            when (val bodyJson = body().toJson()) {
+                null -> null
+                else -> bodyJson.fromJson(type)
+            }
         }
-    } else {
-        when (val bodyJson = errorBody()?.readString()) {
-            null -> null
-            else -> bodyJson.fromJson(type)
+        parseError -> {
+            when (val bodyJson = errorBody()?.readString()) {
+                null -> null
+                else -> bodyJson.fromJson(type)
+            }
         }
+        else -> null
     }
 }
 
-inline fun <reified Bean> Response<JsonElement>.toBean(): Bean? {
-    return if (isSuccessful) {
-        when (val bodyJson = body().toJson()) {
-            null -> null
-            else -> bodyJson.fromJson(Bean::class.java)
+inline fun <reified Bean> Response<JsonElement>.toBean(parseError: Boolean = false): Bean? {
+    return when {
+        isSuccessful -> {
+            when (val bodyJson = body().toJson()) {
+                null -> null
+                else -> bodyJson.fromJson(Bean::class.java)
+            }
         }
-    } else {
-        when (val bodyJson = errorBody()?.readString()) {
-            null -> null
-            else -> bodyJson.fromJson(Bean::class.java)
+        parseError -> {
+            when (val bodyJson = errorBody()?.readString()) {
+                null -> null
+                else -> bodyJson.fromJson(Bean::class.java)
+            }
         }
+        else -> null
     }
 }
 

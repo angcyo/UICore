@@ -75,3 +75,21 @@ fun Buffer.isPlaintext(): Boolean {
         false // Truncated UTF-8 sequence.
     }
 }
+
+/**[String]组装数据成[HashMap]*/
+fun mapOf(vararg args: String, split: String = ":"): HashMap<String, Any> {
+    val result = hashMapOf<String, Any>()
+
+    args.forEach {
+        if (it.isNotEmpty()) {
+            val splitArray = it.split(split)
+            if (splitArray.size == 2) {
+                val key = splitArray[0]
+                val value = splitArray[1]
+                result[key] = value
+            }
+        }
+    }
+
+    return result
+}

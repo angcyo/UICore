@@ -60,12 +60,12 @@ open class BaseObserver<T> : AtomicReference<Disposable>(), Observer<T>, Disposa
 
     var _lastData: T? = null
     val observerDataList = mutableListOf<T>()
-    override fun onNext(t: T) {
+    override fun onNext(data: T) {
         if (!isDisposed) {
             try {
-                _lastData = t
-                observerDataList.add(t)
-                onNext.invoke(t)
+                _lastData = data
+                observerDataList.add(data)
+                onNext.invoke(data)
             } catch (e: Throwable) {
                 Exceptions.throwIfFatal(e)
                 get()?.dispose()
