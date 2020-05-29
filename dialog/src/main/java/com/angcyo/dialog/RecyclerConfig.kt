@@ -53,9 +53,13 @@ open class RecyclerConfig {
 
     /**添加item*/
     open fun addItem(item: DslAdapterItem) {
+        val oldItemClick = item.itemClick
         adapterItemList.add(item.apply {
             itemClick = {
                 onItemClick(this, it)
+                if (oldItemClick != itemClick) {
+                    oldItemClick?.invoke(it)
+                }
             }
         })
     }

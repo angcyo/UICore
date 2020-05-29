@@ -44,30 +44,29 @@ object DslFileHelper {
         return FileUtils.appRootExternalFolderFile(appContext, folder, name)?.absolutePath
     }
 
-    fun log(name: String = fileName("yyyy-MM-dd"), data: String) =
-        write(com.angcyo.library.utils.Constant.LOG_FOLDER_NAME, name, _wrapData(data))
+    fun log(name: String = logFileName(), data: String) =
+        write(Constant.LOG_FOLDER_NAME, name, _wrapData(data))
 
-    fun http(name: String = fileName("yyyy-MM-dd"), data: String) =
-        write(com.angcyo.library.utils.Constant.HTTP_FOLDER_NAME, name, _wrapData(data))
+    fun http(name: String = logFileName(), data: String) =
+        write(Constant.HTTP_FOLDER_NAME, name, _wrapData(data))
 
-    fun ui(name: String = fileName("yyyy-MM-dd"), data: String) =
-        write(com.angcyo.library.utils.Constant.UI_FOLDER_NAME, name, _wrapData(data))
+    fun ui(name: String = logFileName(), data: String) =
+        write(Constant.UI_FOLDER_NAME, name, _wrapData(data))
 
     fun crash(name: String = fileName(), data: String) =
-        write(com.angcyo.library.utils.Constant.CRASH_FOLDER_NAME, name, _wrapData(data))
+        write(Constant.CRASH_FOLDER_NAME, name, _wrapData(data))
 
-    fun down(name: String = fileName("yyyy-MM-dd"), data: String) =
-        write(com.angcyo.library.utils.Constant.DOWN_FOLDER_NAME, name, _wrapData(data))
+    fun down(name: String = logFileName(), data: String) =
+        write(Constant.DOWN_FOLDER_NAME, name, _wrapData(data))
 
-    fun camera(name: String = fileName("yyyy-MM-dd"), data: String) =
-        write(com.angcyo.library.utils.Constant.CAMERA_FOLDER_NAME, name, _wrapData(data))
+    fun camera(name: String = logFileName(), data: String) =
+        write(Constant.CAMERA_FOLDER_NAME, name, _wrapData(data))
 
-    fun other(name: String = fileName("yyyy-MM-dd"), data: String) =
-        write(com.angcyo.library.utils.Constant.OTHER_FOLDER_NAME, name, _wrapData(data))
+    fun other(name: String = logFileName(), data: String) =
+        write(Constant.OTHER_FOLDER_NAME, name, _wrapData(data))
 
-
-    fun error(name: String = fileName("yyyy-MM-dd"), data: String) =
-        write(com.angcyo.library.utils.Constant.ERROR_FOLDER_NAME, name, _wrapData(data))
+    fun error(name: String = logFileName(), data: String) =
+        write(Constant.ERROR_FOLDER_NAME, name, _wrapData(data))
 
     fun _wrapData(data: String): String {
         return buildString {
@@ -77,9 +76,11 @@ object DslFileHelper {
     }
 }
 
+fun logFileName() = fileName("yyyy-MM-dd", ".log")
+
 fun String?.writeTo(
     folder: String = Constant.LOG_FOLDER_NAME,
-    name: String = fileName("yyyy-MM-dd")
+    name: String = logFileName()
 ) {
     DslFileHelper.write(folder, name, this ?: "null")
 }
