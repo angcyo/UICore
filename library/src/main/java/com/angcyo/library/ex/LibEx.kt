@@ -1,13 +1,11 @@
 package com.angcyo.library.ex
 
-import android.content.Context
-import android.view.inputmethod.InputMethodManager
 import com.angcyo.library.BuildConfig
-import com.angcyo.library.app
 import java.io.BufferedWriter
 import java.io.FileWriter
 import java.io.PrintWriter
 import java.io.StringWriter
+import kotlin.math.min
 
 /**
  *
@@ -90,4 +88,14 @@ fun Throwable.saveTo(filePath: String, append: Boolean = true) {
     val pw = PrintWriter(BufferedWriter(FileWriter(filePath, append)))
     printStackTrace(pw)
     pw.close()
+}
+
+/**等数量each两个list*/
+fun <L1, L2> each(list1: List<L1>?, list2: List<L2>?, run: (item1: L1, item2: L2) -> Unit) {
+    val size1 = list1?.size ?: 0
+    val size2 = list2?.size ?: 0
+
+    for (i in 0 until min(size1, size2)) {
+        run(list1!![i], list2!![i])
+    }
 }

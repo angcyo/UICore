@@ -19,6 +19,9 @@
     <!--宽高的比例[1:1] [1:2.5], 宽高必须有一个要是1f-->
     <attr name="r_dimension_ratio" format="string" />
 
+    <!--宽高是否相等-->
+    <attr name="r_is_aeq_width" format="boolean"/>
+
     <!--相同[Layout]属性代理读取设置¬-->
     <declare-styleable name="RLayoutDelegate">
         <attr name="r_background" />

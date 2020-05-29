@@ -36,6 +36,7 @@
 
         <!--文本格式[MD5:%1$s]-->
         <attr name="r_text_format" format="string" />
+        <attr name="r_is_aeq_width" />
 
     </declare-styleable>
 </resources>

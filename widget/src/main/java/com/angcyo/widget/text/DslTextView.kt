@@ -3,7 +3,10 @@ package com.angcyo.widget.text
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
+import android.view.Gravity
+import com.angcyo.library.ex.have
 import com.angcyo.widget.R
+import com.angcyo.widget.base.exactly
 import com.angcyo.widget.drawable.DslAttrBadgeDrawable
 import java.util.*
 
@@ -24,6 +27,9 @@ open class DslTextView : DslScrollTextView {
             field = value
             text = _originText
         }
+
+    /** 宽高是否相等, 取其中最大值计算 */
+    var aeqWidth = false
 
     /**未处理过的原始[text]*/
     var _originText: CharSequence? = null
@@ -51,6 +57,8 @@ open class DslTextView : DslScrollTextView {
         val typedArray =
             context.obtainStyledAttributes(attributeSet, R.styleable.DslTextView)
         textFormat = typedArray.getString(R.styleable.DslTextView_r_text_format)
+        aeqWidth = typedArray.getBoolean(R.styleable.DslTextView_r_is_aeq_width, aeqWidth)
+
         typedArray.recycle()
     }
 
@@ -60,6 +68,21 @@ open class DslTextView : DslScrollTextView {
         dslBadeDrawable.apply {
             setBounds(0, 0, measuredWidth, measuredHeight)
             draw(canvas)
+        }
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        if (aeqWidth) {
+            val size = measuredWidth.coerceAtLeast(measuredHeight)
+            if (gravity.have(Gravity.CENTER) ||
+                gravity.have(Gravity.CENTER_HORIZONTAL) ||
+                gravity.have(Gravity.CENTER_VERTICAL)
+            ) {
+                super.onMeasure(exactly(size), exactly(size))
+            } else {
+                setMeasuredDimension(size, size)
+            }
         }
     }
 
