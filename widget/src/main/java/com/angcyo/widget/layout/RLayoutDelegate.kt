@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.AttributeSet
 import android.view.View
+import com.angcyo.drawable.DrawLineDrawable
 import com.angcyo.library.ex.calcLayoutWidthHeight
 import com.angcyo.tablayout.exactlyMeasure
 import com.angcyo.tablayout.screenHeight
@@ -94,6 +95,9 @@ class RLayoutDelegate : LayoutDelegate() {
 
     var _maskPaint: Paint? = null
 
+    /**横线绘制*/
+    var drawLineDrawable = DrawLineDrawable()
+
     override fun initAttribute(view: View, attributeSet: AttributeSet?) {
         this.delegateView = view
         val typedArray =
@@ -116,6 +120,9 @@ class RLayoutDelegate : LayoutDelegate() {
         }
 
         typedArray.recycle()
+
+        drawLineDrawable.callback = view
+        drawLineDrawable.initAttribute(view.context, attributeSet)
     }
 
     /**布局蒙版*/
@@ -135,6 +142,9 @@ class RLayoutDelegate : LayoutDelegate() {
             drawSuper()
             canvas.restoreToCount(saveCount)
         } ?: drawSuper()
+
+        drawLineDrawable.setBounds(0, 0, delegateView.measuredWidth, delegateView.measuredHeight)
+        drawLineDrawable.draw(canvas)
     }
 
     /**[bDrawable]属性支持*/

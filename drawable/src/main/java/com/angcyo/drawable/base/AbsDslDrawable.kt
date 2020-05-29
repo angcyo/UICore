@@ -53,7 +53,7 @@ abstract class AbsDslDrawable : Drawable() {
         context: Context,
         attributeSet: AttributeSet? = null
     ) {
-        //val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.xxx, defStyleAttr, 0)
+        //val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.xxx)
         //typedArray.recycle()
     }
 

@@ -44,6 +44,19 @@
         <attr name="r_clip_to_outline" />
         <attr name="r_layout_mask_drawable" />
         <attr name="r_dimension_ratio" />
+
+        <attr name="r_draw_line" />
+        <attr name="r_draw_dash_line" />
+        <attr name="r_draw_line_color" />
+        <attr name="r_draw_line_width" />
+        <attr name="r_draw_line_offset_left" />
+        <attr name="r_draw_line_offset_right" />
+        <attr name="r_draw_line_offset_top" />
+        <attr name="r_draw_line_offset_bottom" />
+        <attr name="r_draw_line_offset_x" />
+        <attr name="r_draw_line_offset_y" />
+        <attr name="r_draw_line_drawable" />
+        <attr name="r_draw_line_front" />
     </declare-styleable>
 
     <declare-styleable name="RCoordinatorLayout">
@@ -57,6 +70,19 @@
         <attr name="r_clip_to_outline" />
         <attr name="r_layout_mask_drawable" />
         <attr name="r_dimension_ratio" />
+
+        <attr name="r_draw_line" />
+        <attr name="r_draw_dash_line" />
+        <attr name="r_draw_line_color" />
+        <attr name="r_draw_line_width" />
+        <attr name="r_draw_line_offset_left" />
+        <attr name="r_draw_line_offset_right" />
+        <attr name="r_draw_line_offset_top" />
+        <attr name="r_draw_line_offset_bottom" />
+        <attr name="r_draw_line_offset_x" />
+        <attr name="r_draw_line_offset_y" />
+        <attr name="r_draw_line_drawable" />
+        <attr name="r_draw_line_front" />
     </declare-styleable>
 
     <declare-styleable name="RConstraintLayout">
@@ -70,6 +96,19 @@
         <attr name="r_clip_to_outline" />
         <attr name="r_layout_mask_drawable" />
         <attr name="r_dimension_ratio" />
+
+        <attr name="r_draw_line" />
+        <attr name="r_draw_dash_line" />
+        <attr name="r_draw_line_color" />
+        <attr name="r_draw_line_width" />
+        <attr name="r_draw_line_offset_left" />
+        <attr name="r_draw_line_offset_right" />
+        <attr name="r_draw_line_offset_top" />
+        <attr name="r_draw_line_offset_bottom" />
+        <attr name="r_draw_line_offset_x" />
+        <attr name="r_draw_line_offset_y" />
+        <attr name="r_draw_line_drawable" />
+        <attr name="r_draw_line_front" />
     </declare-styleable>
 
     <declare-styleable name="RFrameLayout">
@@ -83,6 +122,19 @@
         <attr name="r_clip_to_outline" />
         <attr name="r_layout_mask_drawable" />
         <attr name="r_dimension_ratio" />
+
+        <attr name="r_draw_line" />
+        <attr name="r_draw_dash_line" />
+        <attr name="r_draw_line_color" />
+        <attr name="r_draw_line_width" />
+        <attr name="r_draw_line_offset_left" />
+        <attr name="r_draw_line_offset_right" />
+        <attr name="r_draw_line_offset_top" />
+        <attr name="r_draw_line_offset_bottom" />
+        <attr name="r_draw_line_offset_x" />
+        <attr name="r_draw_line_offset_y" />
+        <attr name="r_draw_line_drawable" />
+        <attr name="r_draw_line_front" />
     </declare-styleable>
 
 </resources>

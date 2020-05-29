@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="r_draw_line" format="enum">
+        <enum name="NONE" value="0" />
+        <enum name="LEFT" value="1" />
+        <enum name="RIGHT" value="3" />
+        <enum name="TOP" value="2" />
+        <enum name="BOTTOM" value="4" />
+        <enum name="BOTTOM_TOP" value="5" />
+    </attr>
+
+    <attr name="r_draw_line_offset_left" format="dimension" />
+    <attr name="r_draw_line_offset_right" format="dimension" />
+    <attr name="r_draw_line_offset_top" format="dimension" />
+    <attr name="r_draw_line_offset_bottom" format="dimension" />
+    <attr name="r_draw_line_color" format="color" />
+    <attr name="r_draw_line_width" format="dimension" />
+    <attr name="r_draw_line_drawable" format="reference" />
+    <!--绘制虚线-->
+    <attr name="r_draw_dash_line" format="boolean" />
+
+    <!--横竖方向, 整体偏移的大小-->
+    <attr name="r_draw_line_offset_x" format="dimension" />
+    <attr name="r_draw_line_offset_y" format="dimension" />
+
+    <!--请求绘制在最前面, 默认true-->
+    <attr name="r_draw_line_front" format="boolean" />
+
+    <!--统一属性获取-->
+    <declare-styleable name="DrawLineDrawable">
+        <attr name="r_draw_line" />
+        <attr name="r_draw_dash_line" />
+        <attr name="r_draw_line_color" />
+        <attr name="r_draw_line_width" />
+        <attr name="r_draw_line_offset_left" />
+        <attr name="r_draw_line_offset_right" />
+        <attr name="r_draw_line_offset_top" />
+        <attr name="r_draw_line_offset_bottom" />
+        <attr name="r_draw_line_offset_x" />
+        <attr name="r_draw_line_offset_y" />
+        <attr name="r_draw_line_drawable" />
+        <attr name="r_draw_line_front" />
+    </declare-styleable>
+</resources>
