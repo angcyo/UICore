@@ -119,7 +119,6 @@ open class DslPickerImageItem : DslAdapterItem() {
         if (mediaUpdate) {
             //缩略图
             itemHolder.giv(R.id.lib_image_view)?.apply {
-                setImageDrawable(itemPlaceholderDrawable)
                 if (!loaderMedia.isAudio()) {
                     load(loaderMedia?.loadUri()) {
                         placeholderDrawable = itemPlaceholderDrawable

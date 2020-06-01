@@ -2,6 +2,7 @@ package com.angcyo.picker.dslitem
 
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.margin
+import com.angcyo.glide.giv
 import com.angcyo.item.DslImageItem
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.dpi
@@ -54,6 +55,7 @@ class DslPickerMiniImageItem : DslImageItem() {
         adapterItem: DslAdapterItem,
         payloads: List<Any>
     ) {
+        itemHolder.giv(R.id.lib_image_view)?.imageRadius = 0
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
         itemHolder.itemView.setWidthHeight(80 * dpi, -2)
 

@@ -110,17 +110,32 @@ fun RecyclerView.dslAdapter(
 
 /** 通过[V] [H] [GV2] [GH3] [SV2] [SV3] 方式, 设置 [LayoutManager] */
 fun RecyclerView.resetLayoutManager(match: String) {
+    val oldLayoutManager = layoutManager
     var layoutManager: LayoutManager? = null
     var spanCount = 1
     var orientation = VERTICAL
 
     if (TextUtils.isEmpty(match) || "V".equals(match, ignoreCase = true)) {
-        layoutManager = LinearLayoutManagerWrap(context, LinearLayoutManager.VERTICAL, false)
+        if (oldLayoutManager is LinearLayoutManagerWrap) {
+            if (oldLayoutManager.orientation != LinearLayoutManager.VERTICAL) {
+                layoutManager =
+                    LinearLayoutManagerWrap(context, LinearLayoutManager.VERTICAL, false)
+            }
+        } else {
+            layoutManager = LinearLayoutManagerWrap(context, LinearLayoutManager.VERTICAL, false)
+        }
     } else {
         //线性布局管理器
         if ("H".equals(match, ignoreCase = true)) {
-            layoutManager =
-                LinearLayoutManagerWrap(context, LinearLayoutManager.HORIZONTAL, false)
+            if (oldLayoutManager is LinearLayoutManagerWrap) {
+                if (oldLayoutManager.orientation != LinearLayoutManager.HORIZONTAL) {
+                    layoutManager =
+                        LinearLayoutManagerWrap(context, LinearLayoutManager.HORIZONTAL, false)
+                }
+            } else {
+                layoutManager =
+                    LinearLayoutManagerWrap(context, LinearLayoutManager.HORIZONTAL, false)
+            }
         } else { //读取其他配置信息(数量和方向)
             val type = match.substring(0, 1)
             if (match.length >= 3) {
@@ -136,19 +151,41 @@ fun RecyclerView.resetLayoutManager(match: String) {
             }
             //交错布局管理器
             if ("S".equals(type, ignoreCase = true)) {
-                layoutManager =
-                    StaggeredGridLayoutManagerWrap(
-                        spanCount,
-                        orientation
-                    )
+                if (oldLayoutManager is StaggeredGridLayoutManagerWrap) {
+                    if (oldLayoutManager.spanCount != spanCount || oldLayoutManager.orientation != orientation) {
+                        layoutManager =
+                            StaggeredGridLayoutManagerWrap(
+                                spanCount,
+                                orientation
+                            )
+                    }
+                } else {
+                    layoutManager =
+                        StaggeredGridLayoutManagerWrap(
+                            spanCount,
+                            orientation
+                        )
+                }
             } else if ("G".equals(type, ignoreCase = true)) {
-                layoutManager =
-                    GridLayoutManagerWrap(
-                        context,
-                        spanCount,
-                        orientation,
-                        false
-                    )
+                if (oldLayoutManager is GridLayoutManagerWrap) {
+                    if (oldLayoutManager.spanCount != spanCount || oldLayoutManager.orientation != orientation) {
+                        layoutManager =
+                            GridLayoutManagerWrap(
+                                context,
+                                spanCount,
+                                orientation,
+                                false
+                            )
+                    }
+                } else {
+                    layoutManager =
+                        GridLayoutManagerWrap(
+                            context,
+                            spanCount,
+                            orientation,
+                            false
+                        )
+                }
             }
         }
     }
@@ -160,7 +197,9 @@ fun RecyclerView.resetLayoutManager(match: String) {
         layoutManager.recycleChildrenOnDetach = true
     }
 
-    this.layoutManager = layoutManager
+    if (layoutManager != null) {
+        this.layoutManager = layoutManager
+    }
 }
 
 /**

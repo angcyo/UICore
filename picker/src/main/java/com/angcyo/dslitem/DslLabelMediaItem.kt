@@ -18,7 +18,7 @@ import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.recycler.clearItemDecoration
 import com.angcyo.widget.recycler.initDsl
-import com.angcyo.widget.recycler.noItemAnim
+import com.angcyo.widget.recycler.noItemChangeAnim
 import com.angcyo.widget.recycler.resetLayoutManager
 
 /**
@@ -71,12 +71,16 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
 
         checkEmpty(itemHolder)
 
+        itemHolder.click(R.id.lib_label_view) {
+            itemChanging = true
+        }
+
         itemHolder.rv(R.id.lib_recycler_view)?.apply {
             val recyclerView = this
             clearOnScrollListeners()
             clearItemDecoration()
 
-            noItemAnim()
+            noItemChangeAnim()
             initDsl()
 
             resetLayoutManager("GV$itemGridSpanCount")
@@ -87,6 +91,9 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
             }
 
             itemMediaAdapter.apply {
+                //关闭默认的状态切换
+                dslAdapterStatusItem.itemEnable = !itemShowAddMediaItem
+
                 //+号处理
                 dslDataFilter?.dataAfterInterceptorList?.apply {
                     addMediaFilterAfterInterceptor.maxMediaCount = itemShowMaxMediaCount
