@@ -17,6 +17,9 @@ open class DslLabelEditItem : DslBaseEditItem() {
     /**编辑提示按钮*/
     var itemEditTipIcon: Int = R.drawable.lib_icon_edit_tip
 
+    /**右边图标点击事件, 如果设置回调. 会影响默认的事件处理*/
+    var itemRightIcoClick: ((DslViewHolder, View) -> Unit)? = null
+
     init {
         itemLayoutId = R.layout.dsl_label_edit_item
     }
@@ -30,12 +33,18 @@ open class DslLabelEditItem : DslBaseEditItem() {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
         itemHolder.img(R.id.lib_right_ico_view)?.apply {
-            if (itemEditTextStyle.noEditModel) {
-                gone()
+            if (itemRightIcoClick == null) {
+                if (itemEditTextStyle.noEditModel) {
+                    gone()
+                } else {
+                    visible()
+                    clickIt {
+                        itemHolder.focus<View>(R.id.lib_edit_view)?.showSoftInput()
+                    }
+                }
             } else {
-                visible()
                 clickIt {
-                    itemHolder.focus<View>(R.id.lib_edit_view)?.showSoftInput()
+                    itemRightIcoClick?.invoke(itemHolder, it)
                 }
             }
             setImageDrawable(loadDrawable(itemEditTipIcon))
