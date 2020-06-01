@@ -34,6 +34,9 @@ open class HideTitleBarBehavior(
      * */
     var enableEdgeScroll = false
 
+    /**不管内容top/bottom是否可以滚动, 都处理行为.需要关闭[enableOverScroll]和[enableEdgeScroll]*/
+    var alwaysScroll = true
+
     var contentBehavior: IContentBehavior? = null
 
     init {
@@ -103,7 +106,7 @@ open class HideTitleBarBehavior(
                 handle = true
             }
         } else {
-            handle = if (target.topCanScroll() || target.bottomCanScroll()) {
+            handle = if (target.topCanScroll() || target.bottomCanScroll() || alwaysScroll) {
                 if (contentScrollY == 0) {
                     true
                 } else {

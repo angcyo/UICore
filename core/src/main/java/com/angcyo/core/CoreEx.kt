@@ -20,6 +20,9 @@ import com.angcyo.widget.text.DslTextView
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
+
+fun coreApp() = app() as CoreApplication
+
 //<editor-fold desc="Application级别的单例模式">
 
 fun Activity.core(action: CoreApplication.() -> Unit = {}): Application {
@@ -44,7 +47,7 @@ inline fun <reified Obj> Fragment.hold(): Obj {
 /**[CoreApplication]中的[ViewModel]*/
 inline fun <reified VM : ViewModel> Activity.vmCore(): VM {
     return ViewModelProvider(
-        core() as CoreApplication,
+        coreApp(),
         ViewModelProvider.AndroidViewModelFactory.getInstance(application)
     ).get(VM::class.java)
 }
@@ -57,7 +60,7 @@ inline fun <reified VM : ViewModel> Fragment.vmCore(): VM {
 /**返回CoreApplication级别的[ViewModel]*/
 inline fun <reified VM : ViewModel> vmCore(): VM {
     return ViewModelProvider(
-        app() as CoreApplication,
+        coreApp(),
         ViewModelProvider.AndroidViewModelFactory.getInstance(app())
     ).get(VM::class.java)
 }

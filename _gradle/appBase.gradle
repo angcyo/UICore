@@ -52,6 +52,7 @@ android {
         merge 'META-INF/uiview_release.kotlin_module'
         merge 'META-INF/kotlin_release.kotlin_module'
         merge 'META-INF/proguard/androidx-annotations.pro'
+        merge 'META-INF/LGPL2.1'
 
         doNotStrip '*/mips/*.so'
         doNotStrip '*/mips64/*.so'
@@ -95,4 +96,13 @@ android {
     //useLibrary 'org.apache.http.legacy'
     //https://jcenter.bintray.com/org/apache/httpcomponents/httpclient/
     //implementation 'org.apache.httpcomponents:httpclient:4.5.11'
+
+    /*在manifest文件中加入(推荐):
+    <application>
+    <!-- Apache HTTP client 的相关类打包进 APK 中  -->
+    <uses-library
+        android:name="org.apache.http.legacy"
+        android:required="false" />
+    </application>
+    * */
 }
