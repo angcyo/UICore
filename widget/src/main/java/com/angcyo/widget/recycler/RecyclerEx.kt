@@ -26,6 +26,18 @@ fun RecyclerView.clearItemDecoration() {
     }
 }
 
+/**判断[RecyclerView]是否已经存在指定的[ItemDecoration]*/
+fun RecyclerView.haveItemDecoration(predicate: (ItemDecoration) -> Boolean): Boolean {
+    var result = false
+    for (i in 0 until itemDecorationCount) {
+        val itemDecoration = getItemDecorationAt(i)
+        if (predicate(itemDecoration)) {
+            result = true
+        }
+    }
+    return result
+}
+
 /**[DslAdapter]必备的组件*/
 fun RecyclerView.initDsl() {
     var haveItemDecoration = false
