@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="100dp"
-        app:r_max_height="0.5sh">
+        app:r_max_height="0.7sh">
 
         <com.angcyo.tablayout.DslTabLayout
             android:id="@+id/lib_tab_layout"
@@ -45,6 +45,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="100dp"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/lib_tab_layout" />
 
     </com.angcyo.widget.layout.RConstraintLayout>

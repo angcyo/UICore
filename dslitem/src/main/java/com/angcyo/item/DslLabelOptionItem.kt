@@ -14,7 +14,7 @@ import com.angcyo.widget.DslViewHolder
  * @date 2020/03/23
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-class DslLabelOptionItem : DslBaseLabelItem() {
+open class DslLabelOptionItem : DslLabelTextItem() {
 
     /**默认选中项*/
     var itemOptionList = mutableListOf<Any>()
@@ -79,7 +79,7 @@ class DslLabelOptionItem : DslBaseLabelItem() {
         adapterItem: DslAdapterItem,
         payloads: List<Any>
     ) {
+        itemText = itemOptionListToText(itemOptionList)
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
-        itemHolder.tv(R.id.lib_text_view)?.text = itemOptionListToText(itemOptionList)
     }
 }
