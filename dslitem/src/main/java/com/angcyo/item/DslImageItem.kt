@@ -105,14 +105,16 @@ open class DslImageItem : DslAdapterItem() {
         //mimeType
         val mimeType = itemMimeType ?: itemLoadUri?.loadUrl()?.mimeType()
 
+        val isVideo = mimeType?.isVideoMimeType() == true
+        val isAudio = mimeType?.isAudioMimeType() == true
         if (itemShowCover) {
-            if (mimeType?.isAudioMimeType() == true) {
+            if (isAudio) {
                 if (itemAudioCoverTipDrawable > 0) {
                     itemHolder.visible(R.id.lib_tip_image_view)
                     itemHolder.img(R.id.lib_tip_image_view)
                         ?.setImageResource(itemAudioCoverTipDrawable)
                 }
-            } else if (mimeType?.isVideoMimeType() == true) {
+            } else if (isVideo) {
                 if (itemVideoCoverTipDrawable > 0) {
                     itemHolder.visible(R.id.lib_tip_image_view)
                     itemHolder.img(R.id.lib_tip_image_view)
@@ -123,15 +125,16 @@ open class DslImageItem : DslAdapterItem() {
 
         //时长
         if (itemShowTip) {
-            if (mimeType?.isVideoMimeType() == true || mimeType?.isAudioMimeType() == true) {
+
+            if (isVideo || isAudio) {
                 itemHolder.visible(R.id.lib_duration_view)
 
                 itemHolder.tv(R.id.lib_duration_view)?.text = span {
                     drawable {
                         backgroundDrawable =
-                            if (mimeType?.isVideoMimeType() == true && itemVideoTipDrawable > 0) {
+                            if (isVideo && itemVideoTipDrawable > 0) {
                                 _drawable(itemVideoTipDrawable)
-                            } else if (mimeType?.isAudioMimeType() == true && itemAudioTipDrawable > 0) {
+                            } else if (isAudio && itemAudioTipDrawable > 0) {
                                 _drawable(itemAudioTipDrawable)
                             } else {
                                 null

@@ -36,7 +36,6 @@ import jp.wasabeef.glide.transformations.SupportRSBlurTransformation
 import okhttp3.Call
 import pl.droidsonroids.gif.GifDrawable
 import java.io.File
-import java.lang.ref.WeakReference
 
 
 /**
@@ -138,7 +137,10 @@ class DslGlide {
         LTime.tick()
         _checkLoad(uri) {
             if (checkGifType) {
-                targetView?.setImageDrawable(placeholderDrawable)
+                if (_loadSucceedUrl() == null) {
+                    //首次加载
+                    targetView?.setImageDrawable(placeholderDrawable)
+                }
                 _checkType(uri) {
                     onTypeCallback(it)
                     _load(uri, it == OkType.ImageType.GIF)
@@ -335,12 +337,15 @@ class DslGlide {
         targetView?.setTag(R.id.tag_glide_load_url, url)
     }
 
+    //加载成功过的url
+    fun _loadSucceedUrl() = targetView?.getTag(R.id.tag_glide_load_url)
+
     /**当前url是否已经加载成功*/
     fun isLoadSucceed(url: String?): Boolean {
         if (url.isNullOrBlank()) {
             return false
         }
-        targetView?.getTag(R.id.tag_glide_load_url).apply {
+        _loadSucceedUrl().apply {
             if (this == null) {
                 return false
             }
@@ -444,10 +449,8 @@ class DslGlide {
                 ScaleType.CENTER_INSIDE -> optionalCenterInside()
                 ScaleType.FIT_CENTER, ScaleType.FIT_START, ScaleType.FIT_END -> optionalFitCenter()
                 ScaleType.FIT_XY -> optionalCenterInside()
-                ScaleType.CENTER, ScaleType.MATRIX -> {
-                }
-                else -> {
-                }
+                ScaleType.CENTER, ScaleType.MATRIX -> Unit
+                else -> Unit
             }
         }
 
