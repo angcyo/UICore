@@ -122,6 +122,7 @@ open class LinkageScaleBehavior(
 
             val childHeight = max(_scale - 1f, 0f) * _targetDefaultHeight + _targetDefaultHeight
             child.layoutParams.height = childHeight.toInt()
+            //L.e("height:$childHeight")
 
             parent.onMeasureChild(
                 child,
@@ -177,12 +178,22 @@ open class LinkageScaleBehavior(
         }
     }
 
+    fun _refreshTargetHeight() {
+        _targetView?.apply {
+            if (measuredHeight != _targetDefaultHeight) {
+                post {
+                    requestLayout()
+                }
+            }
+        }
+    }
+
     override fun getMaxGradientHeight(): Int {
         return if (_targetDefaultHeight > 0) _targetDefaultHeight else _targetView.mH()
     }
 
     override fun onGradient(percent: Float) {
-        //Log.i("angcyo", "" + percent)
+        //L.e("percent:$percent")
         if (enableScaleEffect) {
             if (percent >= scaleThreshold) {
                 _targetView?.apply {
@@ -195,6 +206,9 @@ open class LinkageScaleBehavior(
                     scaleY = 1f
                 }
             }
+        }
+        if (enableHeightEffect) {
+            _refreshTargetHeight()
         }
     }
 }

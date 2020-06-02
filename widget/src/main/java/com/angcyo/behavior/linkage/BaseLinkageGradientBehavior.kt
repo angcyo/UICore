@@ -169,11 +169,11 @@ abstract class BaseLinkageGradientBehavior(
             } else {
                 if (headerScrollView == null) {
                     if (!target.topCanScroll()) {
-                        scrollTo(0, 0)
+                        startScrollTo(0, 0)
                     }
                 } else {
                     if (_contentScrollBehavior?.behaviorScrollY == 0 && !headerScrollView.topCanScroll()) {
-                        scrollTo(0, 0)
+                        startScrollTo(0, 0)
                     }
                 }
             }
