@@ -71,7 +71,7 @@ abstract class BasePagerFragment : BaseTitleFragment() {
             getPageCount(),
             R.layout.lib_tab_item_layout
         ) { itemView, itemIndex ->
-            itemView.find<TextView>(com.angcyo.dialog.R.id.lib_text_view)?.text =
+            itemView.find<TextView>(R.id.lib_text_view)?.text =
                 getPageTitle(itemIndex)
         }
     }
