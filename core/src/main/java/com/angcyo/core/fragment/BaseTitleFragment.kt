@@ -68,7 +68,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     //<editor-fold desc="操作属性">
 
     /**标题*/
-    var fragmentTitle: CharSequence? = null
+    open var fragmentTitle: CharSequence? = null
         set(value) {
             field = value
             if (isAdded) {
