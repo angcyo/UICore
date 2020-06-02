@@ -365,6 +365,26 @@ fun toast(
     }
 }
 
+/**居中正方形提示toast*/
+fun tip(
+    text: CharSequence?,
+    @DrawableRes icon: Int = R.drawable.lib_ic_succeed,
+    @LayoutRes layoutId: Int = R.layout.lib_toast_tip_layout,
+    action: ToastConfig.() -> Unit = {}
+) {
+    DslToast.show {
+        this.layoutId = layoutId
+        this.text = text ?: ""
+        this.icon = icon
+        this.fullScreen = false
+        this.xOffset = 0
+        this.yOffset = 0
+        this.gravity = Gravity.CENTER
+
+        this.action()
+    }
+}
+
 /**文本 ico QQ布局 简化配置*/
 fun toastQQ(
     text: CharSequence?,
