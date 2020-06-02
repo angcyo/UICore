@@ -29,6 +29,10 @@ abstract class BasePagerFragment : BaseTitleFragment() {
         contentLayoutId = R.layout.lib_pager_fragment
     }
 
+    override fun canFlingBack(): Boolean {
+        return false
+    }
+
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)
 
