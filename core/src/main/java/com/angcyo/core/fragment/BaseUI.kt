@@ -69,6 +69,7 @@ open class FragmentUI {
     open fun onFragmentCreateBackItem(fragment: BaseTitleFragment): View? {
         return fragment.leftControl()?.inflate(R.layout.lib_text_layout, false) {
             find<TextView>(R.id.lib_text_view)?.apply {
+                id = R.id.lib_title_back_view
                 setTextColor(fragment.fragmentConfig.titleItemTextColor)
                 text = span {
                     drawable {

@@ -138,6 +138,7 @@ open class DslSpanTextView : AppCompatTextView {
                 span.setDrawableColor(color)
             }
         }
+        invalidate()
     }
 
     /**添加额外的状态*/

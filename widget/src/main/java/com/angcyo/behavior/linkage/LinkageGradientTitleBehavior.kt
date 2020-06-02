@@ -16,6 +16,7 @@ import com.angcyo.tablayout.evaluateColor
 import com.angcyo.widget.R
 import com.angcyo.widget.base.each
 import com.angcyo.widget.base.mH
+import com.angcyo.widget.text.DslSpanTextView
 
 /**
  * 渐变标题栏颜色的行为. 配合[LinkageHeaderBehavior]使用
@@ -142,37 +143,54 @@ open class LinkageGradientTitleBehavior(
         }
 
         if (childView is ViewGroup) {
+
+            val titleTextColor = evaluateColor(
+                fraction,
+                titleTextColorFrom,
+                titleTextColorTo
+            )
+
+            val backIconColor = evaluateColor(
+                fraction,
+                backIconColorFrom,
+                backIconColorTo
+            )
+
+            val iconColor = evaluateColor(
+                fraction,
+                iconColorFrom,
+                iconColorTo
+            )
+
             (childView as ViewGroup).each(true) {
                 when (it) {
                     //文本
-                    is TextView -> if (it.id == titleTextId) {
-                        it.setTextColor(
-                            evaluateColor(
-                                fraction,
-                                titleTextColorFrom,
-                                titleTextColorTo
+                    is TextView -> {
+                        if (it.id == titleTextId) {
+                            it.setTextColor(
+                                titleTextColor
                             )
-                        )
+                        }
+
+                        if (it is DslSpanTextView) {
+                            if (it.id == backViewId) {
+                                it.setDrawableColor(backIconColor)
+                            } else {
+                                it.setDrawableColor(iconColor)
+                            }
+                        }
                     }
                     //图片icon
                     is ImageView -> if (it.id == backViewId) {
                         it.setImageDrawable(
                             it.drawable?.color(
-                                evaluateColor(
-                                    fraction,
-                                    backIconColorFrom,
-                                    backIconColorTo
-                                )
+                                backIconColor
                             )
                         )
                     } else {
                         it.setImageDrawable(
                             it.drawable?.color(
-                                evaluateColor(
-                                    fraction,
-                                    iconColorFrom,
-                                    iconColorTo
-                                )
+                                iconColor
                             )
                         )
                     }
