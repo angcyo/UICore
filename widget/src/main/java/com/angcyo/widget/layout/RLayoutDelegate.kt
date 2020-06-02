@@ -36,7 +36,7 @@ class RLayoutDelegate : LayoutDelegate() {
             }
         }
 
-    /**支持最大高度[com.angcyo.tablayout.TabLayoutLibExKt.calcSize]*/
+    /**支持最大高度[com.angcyo.library.ex.RKtxKt.calcSize]*/
     var rMaxHeight: String? = null
         set(value) {
             field = value

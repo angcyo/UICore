@@ -3,5 +3,17 @@
     <declare-styleable name="DslRecyclerView">
         <attr name="r_layout_manager" format="string" />
         <attr name="r_enable_focus_transition" format="boolean" />
+
+        <attr name="r_background" />
+        <attr name="r_max_height" />
+        <attr name="r_max_width" />
+        <attr name="r_min_height" />
+        <attr name="r_min_width" />
+        <attr name="r_layout_width" />
+        <attr name="r_layout_height" />
+        <attr name="r_clip_to_outline" />
+        <attr name="r_layout_mask_drawable" />
+        <attr name="r_dimension_ratio" />
+
     </declare-styleable>
 </resources>

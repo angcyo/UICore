@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.library.L
 import com.angcyo.widget.R
 import com.angcyo.widget.base.isTouchFinish
+import com.angcyo.widget.layout.ILayoutDelegate
+import com.angcyo.widget.layout.RLayoutDelegate
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -25,7 +27,7 @@ import java.util.*
 
 typealias FocusTransitionChanged = (from: View?, to: View?) -> Unit
 
-open class DslRecyclerView : RecyclerView {
+open class DslRecyclerView : RecyclerView, ILayoutDelegate {
 
     companion object {
         //用于在多个RV之间共享之前的焦点View
@@ -62,6 +64,8 @@ open class DslRecyclerView : RecyclerView {
             }
         }
     }
+
+    val layoutDelegate = RLayoutDelegate()
 
     /** 通过[V] [H] [GV2] [GH3] [SV2] [SV3] 方式, 设置 [LayoutManager] */
     var layout: String? = null
@@ -103,11 +107,31 @@ open class DslRecyclerView : RecyclerView {
         )
         typedArray.recycle()
 
+        layoutDelegate.initAttribute(this, attributeSet)
+
         scrollHelper.attach(this)
     }
 
-    override fun onMeasure(widthSpec: Int, heightSpec: Int) {
-        super.onMeasure(widthSpec, heightSpec)
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val layoutWidthHeightSpec =
+            layoutDelegate.layoutWidthHeightSpec(widthMeasureSpec, heightMeasureSpec)
+        super.onMeasure(layoutWidthHeightSpec[0], layoutWidthHeightSpec[1])
+        layoutDelegate.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
+    override fun draw(canvas: Canvas) {
+        layoutDelegate.maskLayout(canvas) {
+            layoutDelegate.draw(canvas)
+
+            if (enableFocusTransition) {
+                findFocus()
+            }
+            super.draw(canvas)
+        }
+    }
+
+    override fun getCustomLayoutDelegate(): RLayoutDelegate {
+        return layoutDelegate
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
@@ -153,13 +177,6 @@ open class DslRecyclerView : RecyclerView {
             setFocusView(this, null)
             clearChildFocus(child)
         }
-    }
-
-    override fun draw(canvas: Canvas?) {
-        if (enableFocusTransition) {
-            findFocus()
-        }
-        super.draw(canvas)
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
