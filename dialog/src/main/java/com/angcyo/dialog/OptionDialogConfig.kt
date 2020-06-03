@@ -10,12 +10,14 @@ import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.loadSingleData2
 import com.angcyo.dsladapter.singleModel
 import com.angcyo.library.L
+import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.string
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget._rv
 import com.angcyo.widget.base.clickIt
 import com.angcyo.widget.base.find
 import com.angcyo.widget.base.resetChild
+import com.angcyo.widget.base.setHeight
 import com.angcyo.widget.recycler.initDslAdapter
 import com.angcyo.widget.recycler.noItemAnim
 import com.angcyo.widget.tab
@@ -41,6 +43,8 @@ open class OptionDialogConfig : BaseDialogConfig() {
 
     /**当加载返回空数据时, 是否自动结束无限操作, 否则会提示空数据*/
     var optionEndOfEmpty = true
+
+    var optionTabText = "请选择"
 
     /**
      * 根据级别, 加载级别对应的选项列表
@@ -124,6 +128,9 @@ open class OptionDialogConfig : BaseDialogConfig() {
                         toView.clickIt {
                             _loadOptionList(optionList.size, dialogViewHolder, true)
                         }
+                    } else if (to == DslAffect.AFFECT_EMPTY) {
+                        //空布局会把界面撑得很高, 这里限制一下
+                        setHeight(150 * dpi)
                     }
                 }
             }
@@ -158,14 +165,20 @@ open class OptionDialogConfig : BaseDialogConfig() {
         tabs.addAll(optionList)
 
         if (!isEnd) {
-            tabs.add("请选择")
+            tabs.add(optionTabText)
         }
 
         dialogViewHolder.tab(R.id.lib_tab_layout)
             ?.apply {
                 resetChild(tabs.size, R.layout.lib_tab_option_item_layout) { itemView, itemIndex ->
                     itemView.find<TextView>(R.id.lib_text_view)?.text =
-                        tabs.getOrNull(itemIndex)?.run(onOptionItemToString)
+                        if (!isEnd && itemIndex == tabs.lastIndex) {
+                            //未结束的最后一项, 不需要转换
+                            optionTabText
+                        } else {
+                            //其他项, 需要转换
+                            tabs.getOrNull(itemIndex)?.run(onOptionItemToString)
+                        }
                 }
                 post {
                     setCurrentItem(tabs.lastIndex)
@@ -173,7 +186,10 @@ open class OptionDialogConfig : BaseDialogConfig() {
             }
 
         //确定按钮状态
-        dialogViewHolder.enable(R.id.positive_button, optionAnySelector || isEnd)
+        dialogViewHolder.enable(
+            R.id.positive_button,
+            optionAnySelector || (isEnd && optionList.isNotEmpty())
+        )
     }
 
     /**
@@ -192,6 +208,11 @@ open class OptionDialogConfig : BaseDialogConfig() {
                         _dslAffect.showAffect(DslAffect.AFFECT_EMPTY)
                     } else {
                         _dslAffect.showAffect(DslAffect.AFFECT_CONTENT)
+                        if (_adapter.adapterItems.isEmpty() && loadLevel > 0) {
+                            //防止从默认状态打开
+                            val level = loadLevel - 1
+                            _loadOptionList(level, dialogViewHolder, resetTab)
+                        }
                     }
                     if (resetTab) {
                         _resetTab(dialogViewHolder, true)
@@ -202,62 +223,7 @@ open class OptionDialogConfig : BaseDialogConfig() {
                 }
             } else {
                 _dslAffect.showAffect(DslAffect.AFFECT_CONTENT)
-                _adapter.loadSingleData2<DslDialogOptionItem>(
-                    itemResultList,
-                    1,
-                    Int.MAX_VALUE
-                ) { data ->
-                    itemIsSelected = optionList.getOrNull(loadLevel)?.run {
-                        isOptionEquItem(this, data)
-                    } ?: false
-
-                    itemOptionText = onOptionItemToString(data)
-
-                    itemClick = {
-                        if (loadLevel == optionList.size) {
-                            //当前选择界面数据, 是最后级别的
-                            optionList.add(data)
-                        } else {
-                            //清除之后的选项
-                            for (i in optionList.size - 1 downTo loadLevel) {
-                                if (i != loadLevel) {
-                                    //移除后面位置的缓存, 但是当前位置的缓存不清除
-                                    _cacheMap.remove(i)
-                                }
-                                optionList.removeAt(i)
-                            }
-                            optionList.add(data)
-                        }
-
-                        updateItemSelector(true)
-
-                        if (onCheckOptionEnd(optionList, loadLevel) ||
-                            onCheckOptionEnd(optionList, loadLevel + 1)
-                        ) {
-                            //最后一级
-                            _resetTab(dialogViewHolder, true)
-                        } else {
-                            _resetTab(dialogViewHolder, false)
-                            _loadOptionList(loadLevel + 1, dialogViewHolder, true)
-                        }
-                    }
-                }
-
-                _adapter.onDispatchUpdatesOnce {
-                    var scrollPosition = 0
-                    //滚动到目标位置
-                    optionList.getOrNull(loadLevel)?.apply {
-                        //已经选中的item
-                        itemResultList.forEachIndexed { index, any ->
-                            if (isOptionEquItem(any, this)) {
-                                scrollPosition = index
-                            }
-                        }
-                    }
-                    dialogViewHolder._rv(R.id.lib_recycler_view)?.lockScroll(scrollPosition, 60) {
-                        scrollAnim = false
-                    }
-                }
+                showAdapterItems(dialogViewHolder, itemResultList, loadLevel)
             }
 
             itemResultList?.let {
@@ -289,6 +255,69 @@ open class OptionDialogConfig : BaseDialogConfig() {
             } else {
                 //有缓存
                 onItemListCallback(cacheList)
+            }
+        }
+    }
+
+    fun showAdapterItems(
+        dialogViewHolder: DslViewHolder,
+        itemList: MutableList<out Any>,
+        loadLevel: Int
+    ) {
+        _adapter.loadSingleData2<DslDialogOptionItem>(
+            itemList,
+            1,
+            Int.MAX_VALUE
+        ) { data ->
+            itemIsSelected = optionList.getOrNull(loadLevel)?.run {
+                isOptionEquItem(this, data)
+            } ?: false
+
+            itemOptionText = onOptionItemToString(data)
+
+            itemClick = {
+                if (loadLevel == optionList.size) {
+                    //当前选择界面数据, 是最后级别的
+                    optionList.add(data)
+                } else {
+                    //清除之后的选项
+                    for (i in optionList.size - 1 downTo loadLevel) {
+                        if (i != loadLevel) {
+                            //移除后面位置的缓存, 但是当前位置的缓存不清除
+                            _cacheMap.remove(i)
+                        }
+                        optionList.removeAt(i)
+                    }
+                    optionList.add(data)
+                }
+
+                updateItemSelector(true)
+
+                if (onCheckOptionEnd(optionList, loadLevel) ||
+                    onCheckOptionEnd(optionList, loadLevel + 1)
+                ) {
+                    //最后一级
+                    _resetTab(dialogViewHolder, true)
+                } else {
+                    _resetTab(dialogViewHolder, false)
+                    _loadOptionList(loadLevel + 1, dialogViewHolder, true)
+                }
+            }
+        }
+
+        _adapter.onDispatchUpdatesOnce {
+            var scrollPosition = 0
+            //滚动到目标位置
+            optionList.getOrNull(loadLevel)?.apply {
+                //已经选中的item
+                itemList.forEachIndexed { index, any ->
+                    if (isOptionEquItem(any, this)) {
+                        scrollPosition = index
+                    }
+                }
+            }
+            dialogViewHolder._rv(R.id.lib_recycler_view)?.lockScroll(scrollPosition, 60) {
+                scrollAnim = false
             }
         }
     }
