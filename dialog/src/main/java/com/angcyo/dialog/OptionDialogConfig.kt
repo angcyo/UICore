@@ -13,6 +13,7 @@ import com.angcyo.library.L
 import com.angcyo.library.ex.string
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget._rv
+import com.angcyo.widget.base.clickIt
 import com.angcyo.widget.base.find
 import com.angcyo.widget.base.resetChild
 import com.angcyo.widget.recycler.initDslAdapter
@@ -116,6 +117,14 @@ open class OptionDialogConfig : BaseDialogConfig() {
                 contentAffect = DslAffect.CONTENT_AFFECT_NONE
                 affectChanged = { dslAffect, from, to, fromView, toView, data ->
                     toView.isClickable = to == DslAffect.AFFECT_LOADING
+                    if (to == DslAffect.AFFECT_ERROR) {
+                        if (data != null) {
+                            toView.find<TextView>(R.id.lib_text_view)?.text = data.string()
+                        }
+                        toView.clickIt {
+                            _loadOptionList(optionList.size, dialogViewHolder, true)
+                        }
+                    }
                 }
             }
         }
@@ -193,7 +202,11 @@ open class OptionDialogConfig : BaseDialogConfig() {
                 }
             } else {
                 _dslAffect.showAffect(DslAffect.AFFECT_CONTENT)
-                _adapter.loadSingleData2<DslDialogOptionItem>(itemResultList, 1, Int.MAX_VALUE) { data ->
+                _adapter.loadSingleData2<DslDialogOptionItem>(
+                    itemResultList,
+                    1,
+                    Int.MAX_VALUE
+                ) { data ->
                     itemIsSelected = optionList.getOrNull(loadLevel)?.run {
                         isOptionEquItem(this, data)
                     } ?: false
@@ -256,7 +269,7 @@ open class OptionDialogConfig : BaseDialogConfig() {
         //错误回调的处理
         val onErrorCallback: (Throwable?) -> Unit = {
             if (optionNeedAsyncLoad) {
-                _dslAffect.showAffect(DslAffect.AFFECT_ERROR, it)
+                _dslAffect.showAffect(DslAffect.AFFECT_ERROR, it?.message)
             }
         }
         val isEnd = onCheckOptionEnd(optionList, loadLevel)

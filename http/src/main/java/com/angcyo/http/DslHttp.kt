@@ -399,6 +399,24 @@ fun <T> Response<JsonElement>.toBean(type: Type, parseError: Boolean = false): T
     }
 }
 
+fun <T> Response<JsonElement>.toBean(bean: Class<T>, parseError: Boolean = false): T? {
+    return when {
+        isSuccessful -> {
+            when (val bodyJson = body().toJson()) {
+                null -> null
+                else -> bodyJson.fromJson(bean)
+            }
+        }
+        parseError -> {
+            when (val bodyJson = errorBody()?.readString()) {
+                null -> null
+                else -> bodyJson.fromJson(bean)
+            }
+        }
+        else -> null
+    }
+}
+
 inline fun <reified Bean> Response<JsonElement>.toBean(parseError: Boolean = false): Bean? {
     return when {
         isSuccessful -> {
