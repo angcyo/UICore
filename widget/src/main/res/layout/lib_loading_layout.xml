@@ -10,17 +10,21 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <ProgressBar
-            style="?android:attr/progressBarStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <!--        <ProgressBar-->
+        <!--            style="?android:attr/progressBarStyleSmall"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content" />-->
+
+        <com.angcyo.widget.progress.ArcLoadingView
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
 
         <com.angcyo.widget.text.DslTextView
             android:id="@+id/lib_text_view"
-            style="@style/LibMainTextStyle"
+            style="@style/LibBodyTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
+            android:layout_marginLeft="4dp"
             android:text="加载中..." />
     </LinearLayout>
 

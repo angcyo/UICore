@@ -16,6 +16,8 @@ import com.angcyo.behavior.refresh.IRefreshBehavior
 import com.angcyo.behavior.refresh.IRefreshContentBehavior
 import com.angcyo.behavior.refresh.RefreshContentBehavior
 import com.angcyo.behavior.refresh.RefreshEffectBehavior
+import com.angcyo.component.DslAffect
+import com.angcyo.component.dslAffect
 import com.angcyo.core.R
 import com.angcyo.core.appendTextItem
 import com.angcyo.core.behavior.ArcLoadingHeaderBehavior
@@ -42,6 +44,8 @@ import com.angcyo.widget.text.DslTextView
  */
 abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
+    //<editor-fold desc="成员配置">
+
     /**自定义内容布局*/
     var contentLayoutId: Int = -1
 
@@ -63,7 +67,13 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     /**是否需要强制显示返回按钮, 否则智能判断*/
     var enableBackItem: Boolean = false
 
+    /**用于控制刷新状态, 开始刷新/结束刷新*/
     var refreshContentBehavior: IRefreshContentBehavior? = null
+
+    /**情感图状态切换, 按需初始化.*/
+    var affectUI: DslAffect? = null
+
+    //</editor-fold desc="成员配置">
 
     //<editor-fold desc="操作属性">
 
@@ -350,5 +360,45 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
     //</editor-fold desc="软键盘监听">
 
+    //<editor-fold desc="情感图切换">
 
+    fun installAffect(viewGroup: ViewGroup?) {
+        affectUI = dslAffect(viewGroup) {
+            affectChangeBefore = this@BaseTitleFragment::onAffectChangeBefore
+            affectChanged = this@BaseTitleFragment::onAffectChanged
+        }
+        viewGroup?.visible()
+    }
+
+    fun onAffectChangeBefore(dslAffect: DslAffect, from: Int, to: Int, data: Any?): Boolean {
+        return false
+    }
+
+    fun onAffectChanged(
+        dslAffect: DslAffect,
+        from: Int,
+        to: Int,
+        fromView: View?,
+        toView: View,
+        data: Any?
+    ) {
+        if (to == DslAffect.AFFECT_LOADING) {
+            //触发刷新
+            onRefresh(null)
+        }
+    }
+
+    /**显示加载中*/
+    fun affectLoading() {
+        affectUI ?: installAffect(_vh.v(R.id.lib_content_overlay_wrap_layout))
+        affectUI?.showAffect(DslAffect.AFFECT_LOADING)
+    }
+
+    /**显示内容*/
+    fun affectContent() {
+        affectUI ?: installAffect(_vh.v(R.id.lib_content_overlay_wrap_layout))
+        affectUI?.showAffect(DslAffect.AFFECT_CONTENT)
+    }
+
+    // </editor-fold desc="情感图切换">
 }

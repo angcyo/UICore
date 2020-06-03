@@ -114,7 +114,7 @@ open class OptionDialogConfig : BaseDialogConfig() {
         dialogViewHolder.group(R.id.content_wrap_layout)?.apply {
             _dslAffect = dslAffect(this) {
                 contentAffect = DslAffect.CONTENT_AFFECT_NONE
-                onAffectChange = { dslAffect, from, to, fromView, toView, data ->
+                affectChanged = { dslAffect, from, to, fromView, toView, data ->
                     toView.isClickable = to == DslAffect.AFFECT_LOADING
                 }
             }

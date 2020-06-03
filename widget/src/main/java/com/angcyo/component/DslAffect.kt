@@ -12,6 +12,7 @@ import com.angcyo.component.DslAffect.Companion.AFFECT_ERROR
 import com.angcyo.component.DslAffect.Companion.AFFECT_LOADING
 import com.angcyo.component.DslAffect.Companion.AFFECT_OTHER
 import com.angcyo.component.DslAffect.Companion.CONTENT_AFFECT_INVISIBLE
+import com.angcyo.library.L
 import com.angcyo.widget.R
 import java.lang.ref.WeakReference
 
@@ -75,13 +76,13 @@ class DslAffect {
     var contentAffect = CONTENT_AFFECT_INVISIBLE
 
     /**状态改变之前回调, 返回true表示拦截处理*/
-    var onAffectChangeBefore: (dslAffect: DslAffect, from: Int, to: Int, data: Any?) -> Boolean =
+    var affectChangeBefore: (dslAffect: DslAffect, from: Int, to: Int, data: Any?) -> Boolean =
         { dslAffect, from, to, data ->
             false
         }
 
     /**情感图状态改变, 如果是切换到[AFFECT_CONTENT], 那么[fromView] [toView] 会是[parent]*/
-    var onAffectChange: (dslAffect: DslAffect, from: Int, to: Int, fromView: View?, toView: View, data: Any?) -> Unit =
+    var affectChanged: (dslAffect: DslAffect, from: Int, to: Int, fromView: View?, toView: View, data: Any?) -> Unit =
         { dslAffect, from, to, fromView, toView, data ->
 
         }
@@ -134,18 +135,20 @@ class DslAffect {
     fun showAffect(affectState: Int, data: Any? = null) {
 
         if (_parent == null) {
-            throw IllegalArgumentException("请先调用[install]方法")
+            L.w("请先调用[install]方法")
+            return
         }
 
         if (affectState != AFFECT_CONTENT && !affectMap.containsKey(affectState)) {
-            throw IllegalArgumentException("请先调用[addAffect]方法")
+            L.w("请先调用[addAffect]方法")
+            return
         }
 
         _delay {
             if (affectStatus != affectState) {
                 val old = affectStatus
 
-                if (!onAffectChangeBefore(this, old, affectState, data)) {
+                if (!affectChangeBefore(this, old, affectState, data)) {
                     //未拦截
                     affectStatus = affectState
 
@@ -187,13 +190,13 @@ class DslAffect {
 
                     }
 
-                    onAffectChange(this, affectStatus, affectState, fromView, toView, data)
+                    affectChanged(this, affectStatus, affectState, fromView, toView, data)
                 }
             } else {
                 val fromView: View? =
                     if (affectStatus == AFFECT_CONTENT) _parent else _affectCache[affectState]?.get()
 
-                onAffectChange(this, affectState, affectState, fromView, fromView!!, data)
+                affectChanged(this, affectState, affectState, fromView, fromView!!, data)
             }
         }
     }
