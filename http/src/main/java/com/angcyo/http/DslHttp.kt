@@ -386,13 +386,13 @@ fun <T> Response<JsonElement>.toBean(type: Type, parseError: Boolean = false): T
         isSuccessful -> {
             when (val bodyJson = body().toJson()) {
                 null -> null
-                else -> bodyJson.fromJson(type)
+                else -> bodyJson.fromJson<T>(type)
             }
         }
         parseError -> {
             when (val bodyJson = errorBody()?.readString()) {
                 null -> null
-                else -> bodyJson.fromJson(type)
+                else -> bodyJson.fromJson<T>(type)
             }
         }
         else -> null
