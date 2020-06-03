@@ -134,6 +134,23 @@ fun DslAdapterItem.marginHorizontal(left: Int, right: Int = 0, color: Int = Colo
     itemDecorationColor = color
 }
 
+fun DslAdapterItem.padding(padding: Int) {
+    itemPaddingLeft = padding
+    itemPaddingTop = padding
+    itemPaddingRight = padding
+    itemPaddingBottom = padding
+}
+
+fun DslAdapterItem.paddingVertical(top: Int, bottom: Int = 0) {
+    itemPaddingTop = top
+    itemPaddingBottom = bottom
+}
+
+fun DslAdapterItem.paddingHorizontal(left: Int, right: Int = 0) {
+    itemPaddingLeft = left
+    itemPaddingRight = right
+}
+
 /**仅绘制左边区域的分割线*/
 fun DslAdapterItem.drawLeft(
     offsetLeft: Int,
