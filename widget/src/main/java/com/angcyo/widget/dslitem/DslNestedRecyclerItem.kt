@@ -3,6 +3,7 @@ package com.angcyo.widget.dslitem
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.updateNow
 import com.angcyo.library.app
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
@@ -18,7 +19,10 @@ import com.angcyo.widget.recycler.*
 open class DslNestedRecyclerItem : DslAdapterItem() {
 
     /**内嵌适配器*/
-    var itemNestedAdapter: DslAdapter = DslAdapter()
+    var itemNestedAdapter: DslAdapter = DslAdapter().apply {
+        //关闭内部情感图状态
+        dslAdapterStatusItem.itemEnable = false
+    }
 
     /**布局管理,
      * 请注意使用:recycleChildrenOnDetach*/
@@ -70,7 +74,10 @@ open class DslNestedRecyclerItem : DslAdapterItem() {
             clearOnScrollListeners()
             clearItemDecoration()
             initDsl()
-            layoutManager = itemNestedLayoutManager
+
+            if (layoutManager != itemNestedLayoutManager) {
+                layoutManager = itemNestedLayoutManager
+            }
 
             //关键地方, 如果每次都赋值[adapter], 系统会重置所有缓存.
             if (adapter != itemNestedAdapter) {
@@ -79,7 +86,11 @@ open class DslNestedRecyclerItem : DslAdapterItem() {
 
             //渲染数据
             if (adapter is DslAdapter) {
-                (adapter as DslAdapter).itemRenderNestedAdapter()
+                (adapter as DslAdapter).apply {
+                    clearItems()
+                    itemRenderNestedAdapter()
+                    updateNow()
+                }
             }
 
             if (itemKeepScrollPosition) {
