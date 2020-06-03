@@ -2,10 +2,13 @@ package com.angcyo.tablayout
 
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
 
 /**
  * 用来操作[ViewGroup]中的[child], 支持单选, 多选, 拦截.
  * 操作的都是可见性为[VISIBLE]的[View]
+ *
+ * 注意:如此child是[CompoundButton], 那么[fromIndex]计算会有问题,[toIndex]不受影响
  *
  * Email:angcyo@126.com
  * @author angcyo
@@ -27,7 +30,7 @@ open class DslSelector {
         get() {
             field.clear()
             visibleViewList.forEachIndexed { index, view ->
-                if (view.isSelected) {
+                if (view.isSe() || index == dslSelectIndex) {
                     field.add(index)
                 }
             }
@@ -42,7 +45,7 @@ open class DslSelector {
         get() {
             field.clear()
             visibleViewList.forEachIndexed { index, view ->
-                if (view.isSelected || index == dslSelectIndex) {
+                if (view.isSe() || index == dslSelectIndex) {
                     field.add(view)
                 }
             }
@@ -53,13 +56,23 @@ open class DslSelector {
     val _onChildClickListener = View.OnClickListener {
         val index = visibleViewList.indexOf(it)
         val select = if (dslSelectorConfig.dslMultiMode) {
-            !it.isSelected
+            if (it is CompoundButton) {
+                it.isChecked
+            } else {
+                !it.isSe()
+            }
         } else {
             true
         }
 
         if (!interceptSelector(index, select, true)) {
-            selector(visibleViewList.indexOf(it), select, notify = true, fromUser = true)
+            selector(
+                visibleViewList.indexOf(it),
+                select,
+                notify = true,
+                fromUser = true,
+                forceNotify = it is CompoundButton && dslSelectorConfig.dslMultiMode
+            )
         }
     }
 
@@ -86,7 +99,7 @@ open class DslSelector {
     /**更新样式*/
     fun updateStyle() {
         visibleViewList.forEachIndexed { index, view ->
-            val selector = dslSelectIndex == index || view.isSelected
+            val selector = dslSelectIndex == index || view.isSe()
             dslSelectorConfig.onStyleItemView(view, index, selector)
         }
     }
@@ -122,12 +135,14 @@ open class DslSelector {
      * @param index 操作目标的索引值
      * @param select 选中 or 取消选中
      * @param notify 是否需要通知事件
+     * @param forceNotify 是否强制通知事件.child使用[CompoundButton]时, 推荐使用
      * */
     fun selector(
         index: Int,
         select: Boolean = true,
         notify: Boolean = true,
-        fromUser: Boolean = false
+        fromUser: Boolean = false,
+        forceNotify: Boolean = false
     ) {
         val selectorIndexList = selectorIndexList
         val lastSelectorIndex: Int? = selectorIndexList.lastOrNull()
@@ -135,7 +150,7 @@ open class DslSelector {
                 selectorIndexList.isNotEmpty() &&
                 selectorIndexList.contains(index)
 
-        if (_selector(index, select, fromUser)) {
+        if (_selector(index, select, fromUser) || forceNotify) {
             dslSelectIndex = this.selectorIndexList.lastOrNull() ?: -1
             if (notify) {
                 notifySelectChange(lastSelectorIndex ?: -1, reselect, fromUser)
@@ -221,6 +236,14 @@ open class DslSelector {
                     }
                 } else {
                     //单选模式
+
+                    //取消之前选中
+                    selectorIndexList.forEach {
+                        if (it != index) {
+                            selectorViewList[it].setSe(false)
+                        }
+                    }
+
                     if (selectorIndexList.contains(index)) {
                         //已经选中
                         return true
@@ -255,7 +278,7 @@ open class DslSelector {
         val selectorView = visibleViewList[index]
 
         //更新选中样式
-        selectorView.isSelected = select
+        selectorView.setSe(select)
 
         if (dslSelectorConfig.dslMultiMode) {
             //多选
@@ -267,7 +290,7 @@ open class DslSelector {
                 //更新样式
                 val indexOf = visibleViewList.indexOf(view)
                 if (!dslSelectorConfig.onSelectItemView(view, indexOf, false, fromUser)) {
-                    view.isSelected = false
+                    view.setSe(false)
                     dslSelectorConfig.onStyleItemView(view, indexOf, false)
                 }
             }
@@ -277,6 +300,16 @@ open class DslSelector {
 
         return true
     }
+
+    /**是否选中状态*/
+    fun View.isSe(): Boolean {
+        return isSelected || if (this is CompoundButton) isChecked else false
+    }
+
+    fun View.setSe(se: Boolean) {
+        isSelected = se
+        if (this is CompoundButton) isChecked = se
+    }
 }
 
 /**
@@ -284,10 +317,10 @@ open class DslSelector {
  * */
 open class DslSelectorConfig {
 
-    /**取消选择时, 最小需要保持多个选中*/
+    /**取消选择时, 最小需要保持多个选中. 可以决定单选时, 是否允许取消所有选中*/
     var dslMinSelectLimit = 1
 
-    /**选择时, 最大允许多个选中*/
+    /**多选时, 最大允许多个选中*/
     var dslMaxSelectLimit = Int.MAX_VALUE
 
     /**是否是多选模式*/

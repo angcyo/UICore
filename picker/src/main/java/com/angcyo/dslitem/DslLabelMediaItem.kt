@@ -71,10 +71,6 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
 
         checkEmpty(itemHolder)
 
-        itemHolder.click(R.id.lib_label_view) {
-            itemChanging = true
-        }
-
         itemHolder.rv(R.id.lib_recycler_view)?.apply {
             val recyclerView = this
             clearOnScrollListeners()
