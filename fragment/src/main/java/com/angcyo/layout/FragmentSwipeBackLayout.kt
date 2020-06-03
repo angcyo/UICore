@@ -283,21 +283,22 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
     private val debugHeightSize: Int
         get() = measuredHeight - 4 * vSpace
 
-    override fun onMeasure(
-        widthMeasureSpec: Int,
-        heightMeasureSpec: Int
-    ) { //of java
-        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
-        //        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
-        //        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        //of java
+        //int widthSize = MeasureSpec.getSize(widthMeasureSpec)
+        //int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        //int heightSize = MeasureSpec.getSize(heightMeasureSpec)
+        //int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+
         //of kotlin
-        //        var widthSize = MeasureSpec.getSize(widthMeasureSpec)
-        //        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
-        //        var heightSize = MeasureSpec.getSize(heightMeasureSpec)
-        //        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
+        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
+        //val widthMode = MeasureSpec.getMode(widthMeasureSpec)
+        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
+        //val heightMode = MeasureSpec.getMode(heightMeasureSpec)
+
         val count = childCount
-        if (isInDebugLayout) { //int hCount = count > 9 ? 4 : (count > 6 ? 3 : 2);//横向放3个
+        if (isInDebugLayout) {
+            //int hCount = count > 9 ? 4 : (count > 6 ? 3 : 2);//横向放3个
             //int vCount = (int) Math.max(2, Math.ceil(count * 1f / hCount));//竖向至少2行
             //int wSize = (getMeasuredWidth() - (hCount + 1) * hSpace) / hCount;
             //int hSize = (getMeasuredHeight() - (vCount + 1) * vSpace) / vCount;
@@ -320,9 +321,11 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
                 L.v("↓开始测量,Child共:$fragmentsCount")
             }
             //super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-            //只测量最后一个View
-            getChildOrNull(childCount - 1)?.apply {
-                measure(widthMeasureSpec, heightMeasureSpec)
+            //只测量最后2个View
+            for (i in childCount - 2 until childCount) {
+                getChildOrNull(i)?.apply {
+                    measure(widthMeasureSpec, heightMeasureSpec)
+                }
             }
             setMeasuredDimension(widthSize, heightSize)
             if (showDebugInfo) {
@@ -331,17 +334,12 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
         }
     }
 
-    override fun onLayout(
-        changed: Boolean,
-        left: Int,
-        top: Int,
-        right: Int,
-        bottom: Int
-    ) { //L.e("debug layout 1 " + isInDebugLayout + " " + getScrollX() + " " + getScrollY());
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        //L.e("debug layout 1 " + isInDebugLayout + " " + getScrollX() + " " + getScrollY());
         if (isInDebugLayout) {
             val count = childCount
-            //            int l = hSpace;
-//            int t = vSpace;
+            //int l = hSpace;
+            //int t = vSpace;
             val l = paddingLeft
             var t = -vSpace + paddingTop
             val wSize =
@@ -366,9 +364,12 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
             swipeViewLeft = targetView?.left ?: swipeViewLeft
         }
         //super.onLayout(changed, left, top, right, bottom)
-        getChildOrNull(childCount - 1)?.apply {
-            layout(0, 0, measuredWidth, measuredHeight)
+        for (i in childCount - 2 until childCount) {
+            getChildOrNull(i)?.apply {
+                layout(0, 0, measuredWidth, measuredHeight)
+            }
         }
+
         if (isSwipeDrag) {
             targetView?.apply {
                 layout(swipeViewLeft, top, swipeViewLeft + measuredWidth, measuredHeight)
