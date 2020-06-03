@@ -30,7 +30,7 @@ open class DslSelector {
         get() {
             field.clear()
             visibleViewList.forEachIndexed { index, view ->
-                if (view.isSe() || index == dslSelectIndex) {
+                if (view.isSe()) {
                     field.add(index)
                 }
             }
@@ -240,7 +240,7 @@ open class DslSelector {
                     //取消之前选中
                     selectorIndexList.forEach {
                         if (it != index) {
-                            selectorViewList[it].setSe(false)
+                            visibleViewList[it].setSe(false)
                         }
                     }
 
@@ -289,7 +289,9 @@ open class DslSelector {
             selectorViewList.forEach { view ->
                 //更新样式
                 val indexOf = visibleViewList.indexOf(view)
-                if (!dslSelectorConfig.onSelectItemView(view, indexOf, false, fromUser)) {
+                if (indexOf != index &&
+                    !dslSelectorConfig.onSelectItemView(view, indexOf, false, fromUser)
+                ) {
                     view.setSe(false)
                     dslSelectorConfig.onStyleItemView(view, indexOf, false)
                 }
