@@ -18,7 +18,7 @@ import java.math.BigDecimal
  * @date 2019/8/23.
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-object AttachJsonPathParser {
+object JsonPathParser {
 
     /**
      * 遍历读取json数据
