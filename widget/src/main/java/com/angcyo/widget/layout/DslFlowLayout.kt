@@ -36,6 +36,12 @@ class DslFlowLayout(context: Context, attrs: AttributeSet? = null) :
         flowLayoutDelegate.onLayout(changed, l, t, r, b)
     }
 
+    override fun setGravity(gravity: Int) {
+        //在父类初始化的时候, 就会执行此方法. 此时flowLayoutDelegate还未初始化
+        flowLayoutDelegate?.lineGravity = gravity
+        super.setGravity(gravity)
+    }
+
     override fun getCustomFlowLayoutDelegate(): FlowLayoutDelegate {
         return flowLayoutDelegate
     }

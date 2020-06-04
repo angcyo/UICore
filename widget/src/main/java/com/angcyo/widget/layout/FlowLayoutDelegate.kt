@@ -5,6 +5,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.core.view.GravityCompat
 import com.angcyo.widget.R
 import com.angcyo.widget.base.exactly
 import kotlin.math.max
@@ -32,6 +33,9 @@ class FlowLayoutDelegate : LayoutDelegate() {
 
     var itemVerticalSpace: Int by RequestLayoutDelegateProperty(0)
 
+    /**布局方式, 相对于一行中*/
+    var lineGravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
+
     override fun initAttribute(view: View, attributeSet: AttributeSet?) {
         this.delegateView = view
 
@@ -53,6 +57,14 @@ class FlowLayoutDelegate : LayoutDelegate() {
             itemVerticalSpace
         )
         array.recycle()
+
+        //获取系统属性值
+        for (i in 0 until (attributeSet?.attributeCount ?: 0)) {
+            val name = attributeSet!!.getAttributeName(i)
+            if ("gravity" == name) {
+                lineGravity = attributeSet.getAttributeIntValue(i, lineGravity)
+            }
+        }
 
         if (delegateView is LinearLayout) {
             (delegateView as LinearLayout).orientation = LinearLayout.HORIZONTAL
@@ -219,13 +231,14 @@ class FlowLayoutDelegate : LayoutDelegate() {
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         var top = paddingTop //开始布局子view的 top距离
-        var left = paddingLeft //开始布局子view的 left距离
+        var left = _lineLeft(0) //开始布局子view的 left距离
         val lineNum = _allViews.size //行数
         var lineView: List<View>
         var lineHeight: Int
         for (i in 0 until lineNum) {
             lineView = _allViews[i]
             lineHeight = _lineHeight[i]
+
             for (j in lineView.indices) {
                 val child = lineView[j]
                 if (child.visibility == View.GONE) {
@@ -235,6 +248,9 @@ class FlowLayoutDelegate : LayoutDelegate() {
                 val childHeight = child.measuredHeight
 
                 val params = child.layoutParams as LinearLayout.LayoutParams
+                if (params.gravity == -1) {
+                    params.gravity = lineGravity
+                }
                 val childLeft = left + params.leftMargin
 
                 val childTop = when (params.gravity and Gravity.VERTICAL_GRAVITY_MASK) {
@@ -251,8 +267,27 @@ class FlowLayoutDelegate : LayoutDelegate() {
                 //因为在 这里添加了;
                 left += childWidth + params.leftMargin + params.rightMargin + itemHorizontalSpace
             }
-            left = paddingLeft
+            left = _lineLeft(i + 1)
             top += lineHeight + itemVerticalSpace
+        }
+    }
+
+    fun _lineLeft(line: Int): Int {
+        val layoutDirection = 0
+        val absoluteGravity = GravityCompat.getAbsoluteGravity(lineGravity, layoutDirection)
+
+        //这一行 总共多少个view
+        val lineView = _allViews.getOrNull(line)
+
+        //这一行view + space 的宽度
+        val lineViewWidth =
+            lineView?.let { it.sumBy { it.measuredWidth } + (it.size - 1) * itemHorizontalSpace }
+                ?: 0
+
+        return when (absoluteGravity and Gravity.HORIZONTAL_GRAVITY_MASK) {
+            Gravity.CENTER_HORIZONTAL -> delegateView.measuredWidth / 2 - lineViewWidth / 2 + paddingLeft - paddingRight
+            Gravity.RIGHT -> delegateView.measuredWidth - paddingRight - lineViewWidth
+            else -> paddingLeft
         }
     }
 }
