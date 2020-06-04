@@ -1,6 +1,8 @@
 package com.angcyo.item
 
 import android.app.Dialog
+import android.content.Context
+import android.view.View
 import com.angcyo.dialog.OptionDialogConfig
 import com.angcyo.dialog.optionDialog
 import com.angcyo.dsladapter.DslAdapterItem
@@ -47,28 +49,15 @@ open class DslLabelOptionItem : DslLabelTextItem() {
 
     }
 
+    /**点击item之前拦截处理, 返回true拦截默认处理*/
+    var itemClickBefore: (clickView: View) -> Boolean = { false }
+
     init {
         itemLayoutId = R.layout.dsl_label_option_item
 
         itemClick = {
-            it.context.optionDialog {
-                dialogTitle = itemLabelText
-
-                optionList = itemOptionList
-
-                onOptionItemToString = itemOptionItemToText
-
-                onOptionResult = { dialog, options ->
-                    if (itemOptionResult(dialog, options)) {
-                        //拦截了
-                        true
-                    } else {
-                        itemChanging = true
-                        false
-                    }
-                }
-
-                itemConfigDialog(this)
+            if (!itemClickBefore(it)) {
+                showOptionDialog(it.context)
             }
         }
     }
@@ -81,5 +70,28 @@ open class DslLabelOptionItem : DslLabelTextItem() {
     ) {
         itemText = itemOptionListToText(itemOptionList)
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
+    }
+
+    /**显示dialog*/
+    open fun showOptionDialog(context: Context) {
+        context.optionDialog {
+            dialogTitle = itemLabelText
+
+            optionList = itemOptionList
+
+            onOptionItemToString = itemOptionItemToText
+
+            onOptionResult = { dialog, options ->
+                if (itemOptionResult(dialog, options)) {
+                    //拦截了
+                    true
+                } else {
+                    itemChanging = true
+                    false
+                }
+            }
+
+            itemConfigDialog(this)
+        }
     }
 }
