@@ -30,7 +30,7 @@ open class DslViewHolder(
         var DEFAULT_INITIAL_CAPACITY = 32
     }
 
-    val content get() = itemView.context
+    val context get() = itemView.context
 
     /**
      * findViewById是循环枚举所有子View的, 多少也是消耗性能的, +一个缓存

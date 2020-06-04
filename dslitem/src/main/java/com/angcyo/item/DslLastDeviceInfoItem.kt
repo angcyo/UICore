@@ -63,7 +63,7 @@ class DslLastDeviceInfoItem : DslAdapterItem() {
             }
             appendln()
             Device.buildString(this._builder)
-            Device.screenInfo(itemHolder.content, this._builder)
+            Device.screenInfo(itemHolder.context, this._builder)
 
             //网络信息
             appendln()
@@ -76,8 +76,8 @@ class DslLastDeviceInfoItem : DslAdapterItem() {
 
         //SD空间信息
         val statFs = StatFs(
-            itemHolder.content.getExternalFilesDir("")?.absolutePath
-                ?: itemHolder.content.filesDir.absolutePath
+            itemHolder.context.getExternalFilesDir("")?.absolutePath
+                ?: itemHolder.context.filesDir.absolutePath
         )
         val usedBytes = statFs.totalBytes - statFs.availableBytes
         val progress = (usedBytes * 1f / statFs.totalBytes * 100).toInt()
