@@ -33,7 +33,13 @@ fun <T> LiveData<T>.observe(owner: LifecycleOwner, action: (data: T?) -> Unit): 
 fun <T> LiveData<T>.observeOnce(owner: LifecycleOwner, action: (data: T?) -> Unit): Observer<T> {
     var result: Observer<T>? = null
     observe(owner, Observer<T> {
-        removeObserver(result!!)
+        if (it is List<*>) {
+            if (it.isNotEmpty()) {
+                removeObserver(result!!)
+            }
+        } else if (it != null) {
+            removeObserver(result!!)
+        }
         action(it)
     }.apply {
         result = this

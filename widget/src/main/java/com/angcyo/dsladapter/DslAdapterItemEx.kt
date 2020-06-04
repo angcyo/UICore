@@ -73,7 +73,6 @@ fun <T> List<Any>.toAnyList(
 
 //</editor-fold desc="DslAdapterItem结构转换">
 
-
 //<editor-fold desc="分割线操作扩展">
 
 fun DslAdapterItem.setTopInsert(insert: Int, leftOffset: Int = 0, rightOffset: Int = 0) {
@@ -194,6 +193,19 @@ fun renderItemList(render: DslAdapter.() -> Unit): List<DslAdapterItem> {
         render()
         adapterItems
     }
+}
+
+/**当前的item, 是否包含指定的分组信息*/
+fun DslAdapterItem.haveGroup(vararg group: String): Boolean {
+    return group.find { itemGroups.contains(it) } != null
+}
+
+/**指定的item, 是否在当前item的分组中*/
+fun DslAdapterItem.isInGroupItem(targetItem: DslAdapterItem?): Boolean {
+    if (targetItem == null) {
+        return false
+    }
+    return itemGroups.find { targetItem.itemGroups.contains(it) } != null
 }
 
 //</editor-fold desc="操作扩展">
