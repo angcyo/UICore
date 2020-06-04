@@ -16,6 +16,10 @@ import java.lang.reflect.Type
 
 //<editor-fold desc="快速构建 jsonObject 和 jsonArray ">
 
+fun jsonBuilder() = JsonBuilder().json()
+
+fun jsonArrayBuilder() = JsonBuilder().array()
+
 fun jsonString(config: JsonBuilder.() -> Unit = {}): String {
     return JsonBuilder().json().run {
         config()

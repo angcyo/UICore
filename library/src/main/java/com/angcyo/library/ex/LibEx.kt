@@ -5,6 +5,7 @@ import java.io.BufferedWriter
 import java.io.FileWriter
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.util.*
 import kotlin.math.min
 
 /**
@@ -99,3 +100,5 @@ fun <L1, L2> each(list1: List<L1>?, list2: List<L2>?, run: (item1: L1, item2: L2
         run(list1!![i], list2!![i])
     }
 }
+
+fun uuid(): String = UUID.randomUUID().toString()
