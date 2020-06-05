@@ -118,8 +118,8 @@ open class RecordVideoActivity : BasePermissionsActivity() {
 
 /**快速启动录制视频界面, 并拿到返回数据*/
 fun DslAHelper.recordVideo(
-    maxRecordTime: Int = 15,
-    minRecordTime: Int = 3,
+    maxRecordTime: Int = 15, //秒
+    minRecordTime: Int = 3, //秒
     result: (String?) -> Unit
 ) {
     start(RecordVideoActivity::class.java) {

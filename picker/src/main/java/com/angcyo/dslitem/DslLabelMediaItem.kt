@@ -38,6 +38,8 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
 
     /**添加媒体过滤按钮*/
     var addMediaFilterAfterInterceptor = AddMediaFilterAfterInterceptor()
+
+    /**添加媒体, 加号逻辑*/
     var addMediaItem: DslAddMediaItem? = DslAddMediaItem().apply {
         margin(1 * dpi)
     }
@@ -102,6 +104,20 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
                                 itemLoaderConfig.selectorMediaList = itemMediaList
                                 itemUpdateLoaderConfig =
                                     this@DslLabelMediaItem.itemUpdateLoaderConfig
+
+                                itemTakeResult = {
+                                    it?.apply {
+                                        itemMediaList.add(this)
+                                        loadMediaList(
+                                            itemHolder,
+                                            recyclerView,
+                                            itemMediaAdapter,
+                                            itemMediaList
+                                        )
+                                        this@DslLabelMediaItem.itemChanging = true
+                                    }
+                                }
+
                                 itemResult = {
                                     //媒体列表
                                     it?.apply {
