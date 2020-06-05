@@ -161,6 +161,64 @@ fun JsonElement.array(index: Int): JsonElement {
     throw IllegalAccessException("不允许使用[JsonObject]操作.")
 }
 
+fun String?.isJsonEmpty(): Boolean {
+    return TextUtils.isEmpty(this) || this == "{}"
+}
+
+fun CharSequence?.jsonOrEmpty(): String {
+    return if (TextUtils.isEmpty(this)) {
+        "{}"
+    } else {
+        this.toString()
+    }
+}
+
+fun CharSequence?.isJson(): Boolean {
+    if (TextUtils.isEmpty(this)) {
+        return false
+    }
+
+    val char = this!!
+
+    if (char.startsWith("{") && char.endsWith("}")) {
+        return true
+    }
+
+    if (char.startsWith("[") && char.endsWith("]")) {
+        return true
+    }
+
+    return false
+}
+
+fun CharSequence?.isJsonObject(): Boolean {
+    if (TextUtils.isEmpty(this)) {
+        return false
+    }
+
+    val char = this!!
+
+    if (char.startsWith("{") && char.endsWith("}")) {
+        return true
+    }
+
+    return false
+}
+
+fun CharSequence?.isJsonArray(): Boolean {
+    if (TextUtils.isEmpty(this)) {
+        return false
+    }
+
+    val char = this!!
+
+    if (char.startsWith("[") && char.endsWith("]")) {
+        return true
+    }
+
+    return false
+}
+
 //</editor-fold desc="JsonElement 扩展">
 
 fun String?.trim(char: Char): String? {

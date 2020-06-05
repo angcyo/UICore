@@ -115,7 +115,7 @@ fun CharSequence?.toString(): String = orString("")
 fun Iterable<*>.connect(
     divide: CharSequence = "," /*连接符*/,
     convert: (Any) -> CharSequence? = { it.toString() }
-): CharSequence {
+): String {
     return buildString {
         this@connect.forEach {
             it?.apply {
@@ -134,7 +134,7 @@ fun Iterable<*>.connect(
 fun Array<*>.connect(
     divide: CharSequence = "," /*连接符*/,
     convert: (Any) -> CharSequence? = { it.toString() }
-): CharSequence {
+): String {
     return buildString {
         this@connect.forEach {
             it?.apply {

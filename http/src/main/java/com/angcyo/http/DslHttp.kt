@@ -1,6 +1,7 @@
 package com.angcyo.http
 
 import com.angcyo.http.DslHttp.DEFAULT_CODE_KEY
+import com.angcyo.http.DslHttp.retrofit
 import com.angcyo.http.base.*
 import com.angcyo.http.exception.HttpDataException
 import com.angcyo.http.rx.observableToMain
@@ -8,8 +9,10 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
+import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import retrofit2.Response
+import retrofit2.Retrofit
 import retrofit2.http.*
 import java.lang.reflect.Type
 
@@ -152,14 +155,31 @@ object DslHttp {
         val retrofit = dslHttpConfig.onBuildRetrofit(dslHttpConfig.defaultRetrofitBuilder, client)
         dslHttpConfig.retrofit = retrofit
     }
+
+    /**获取[OkHttpClient]对象*/
+    fun httpClient(rebuild: Boolean = false): OkHttpClient {
+        if (rebuild) {
+            dslHttpConfig.okHttpClient = null
+        }
+        init()
+        return dslHttpConfig.okHttpClient!!
+    }
+
+    /**获取[Retrofit]对象*/
+    fun retrofit(rebuild: Boolean = false): Retrofit {
+        if (rebuild) {
+            dslHttpConfig.retrofit = null
+        }
+        init()
+        return dslHttpConfig.retrofit!!
+    }
 }
 
 /**
  * 通用接口请求
  * */
 fun <T> dslHttp(service: Class<T>): T {
-    DslHttp.init()
-    val retrofit = DslHttp.dslHttpConfig.retrofit!!
+    val retrofit = retrofit(false)
     /*如果单例API对象的话, 就需要在动态切换BaseUrl的时候, 重新创建. 否则不会生效*/
     return retrofit.create(service)
 }
