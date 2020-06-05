@@ -1,6 +1,8 @@
 package com.angcyo.http.base
 
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import okio.Buffer
 import java.io.EOFException
@@ -93,3 +95,7 @@ fun mapOf(vararg args: String, split: String = ":"): HashMap<String, Any> {
 
     return result
 }
+
+/**application/json*/
+fun String.toJsonBody(): RequestBody =
+    toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())

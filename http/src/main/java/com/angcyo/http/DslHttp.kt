@@ -1,6 +1,7 @@
 package com.angcyo.http
 
 import com.angcyo.http.DslHttp.DEFAULT_CODE_KEY
+import com.angcyo.http.DslHttp.DEFAULT_MSG_KEY
 import com.angcyo.http.DslHttp.retrofit
 import com.angcyo.http.base.*
 import com.angcyo.http.exception.HttpDataException
@@ -128,6 +129,7 @@ interface ApiKt {
 
 object DslHttp {
     var DEFAULT_CODE_KEY = "code"
+    var DEFAULT_MSG_KEY = "msg"
 
     val dslHttpConfig = DslHttpConfig()
 
@@ -482,7 +484,7 @@ open class BaseRequestConfig {
 
     //解析请求返回的json数据, 判断code是否是成功的状态, 否则走异常流程.
     var codeKey: String = DEFAULT_CODE_KEY
-    var msgKey: String = "msg"
+    var msgKey: String = DEFAULT_MSG_KEY
 
     var onStart: (Disposable) -> Unit = {}
 
