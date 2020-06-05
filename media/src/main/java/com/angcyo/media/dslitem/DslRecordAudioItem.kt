@@ -2,7 +2,7 @@ package com.angcyo.media.dslitem
 
 import android.app.Activity
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
+import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.updateSingleData
 import com.angcyo.library.L
@@ -112,15 +112,7 @@ open class DslRecordAudioItem : DslNestedRecyclerItem() {
         }
     }
 
-    override fun onBindRecyclerView(
-        recyclerView: RecyclerView,
-        itemHolder: DslViewHolder,
-        itemPosition: Int,
-        adapterItem: DslAdapterItem,
-        payloads: List<Any>
-    ) {
-        super.onBindRecyclerView(recyclerView, itemHolder, itemPosition, adapterItem, payloads)
-
+    override fun onRenderNestedAdapter(dslAdapter: DslAdapter) {
         itemNestedAdapter.updateSingleData<DslPlayAudioItem>(itemLoaderMedias) { data ->
             configDslRecordVoiceItem(this, data as LoaderMedia?)
         }

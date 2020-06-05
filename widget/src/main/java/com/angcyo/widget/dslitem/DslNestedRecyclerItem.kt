@@ -86,11 +86,7 @@ open class DslNestedRecyclerItem : DslAdapterItem() {
 
             //渲染数据
             if (adapter is DslAdapter) {
-                (adapter as DslAdapter).apply {
-                    clearItems()
-                    itemRenderNestedAdapter()
-                    updateNow()
-                }
+                onRenderNestedAdapter(adapter as DslAdapter)
             }
 
             if (itemKeepScrollPosition) {
@@ -109,6 +105,14 @@ open class DslNestedRecyclerItem : DslAdapterItem() {
 
             //配置
             itemNestedRecyclerViewConfig()
+        }
+    }
+
+    open fun onRenderNestedAdapter(dslAdapter: DslAdapter) {
+        dslAdapter.apply {
+            clearItems()
+            itemRenderNestedAdapter()
+            updateNow()
         }
     }
 }
