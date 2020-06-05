@@ -164,7 +164,7 @@ fun Fragment.loading(
 
 /**在底部显示的加载对话框*/
 fun Fragment.loadingBottom(
-    text: CharSequence = "加载中...",
+    text: CharSequence? = "加载中...",
     showCloseView: Boolean = true,
     onCancel: (dialog: Dialog) -> Unit = {}
 ) {
