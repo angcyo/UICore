@@ -171,6 +171,12 @@ class DslGroupHelper(val parentView: View) : DslViewHolder(parentView) {
             (selectorView as ViewGroup).eachChild(recursively, map)
         }
     }
+
+    fun removeAllChild() {
+        if (selectorView is ViewGroup) {
+            (selectorView as ViewGroup).removeAllViews()
+        }
+    }
 }
 
 /**返回[DslGroupHelper]*/
