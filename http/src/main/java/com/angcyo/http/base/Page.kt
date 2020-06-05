@@ -10,17 +10,20 @@ package com.angcyo.http.base
 class Page {
     companion object {
         /**默认一页请求的数量*/
-        var PAGE_SIZE: Long = 20
+        var PAGE_SIZE: Int = 20
 
         /**默认第一页的索引*/
-        var FIRST_PAGE_INDEX: Long = 1
+        var FIRST_PAGE_INDEX: Int = 1
     }
 
     /** 当前请求完成的页 */
-    var _currentPageIndex: Long = FIRST_PAGE_INDEX
+    var _currentPageIndex: Int = FIRST_PAGE_INDEX
 
     /** 正在请求的页 */
-    var requestPageIndex: Long = FIRST_PAGE_INDEX
+    var requestPageIndex: Int = FIRST_PAGE_INDEX
+
+    /** 每页请求的数量 */
+    var requestPageSize: Int = PAGE_SIZE
 
     /**页面刷新, 重置page index*/
     fun pageRefresh() {

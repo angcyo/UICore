@@ -17,16 +17,19 @@ open class DslAdapterStatusItem : BaseDslStateItem() {
     companion object {
         /**正常状态, 切换到内容*/
         const val ADAPTER_STATUS_NONE = 0
+
         /**空数据*/
         const val ADAPTER_STATUS_EMPTY = 1
+
         /**加载中*/
         const val ADAPTER_STATUS_LOADING = 2
+
         /**错误*/
         const val ADAPTER_STATUS_ERROR = 3
     }
 
     /**刷新回调*/
-    var onRefresh: (DslViewHolder) -> Unit = {
+    var onRefresh: (itemHolder: DslViewHolder) -> Unit = {
         L.i("[DslAdapterStatusItem] 触发刷新")
     }
 

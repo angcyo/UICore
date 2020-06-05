@@ -3,6 +3,7 @@ package com.angcyo.dsladapter
 import android.graphics.Color
 import androidx.annotation.LayoutRes
 import com.angcyo.library.ex.dpi
+import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
 import com.angcyo.widget.base.Anim
 import com.angcyo.widget.base.setHeight
@@ -194,51 +195,58 @@ fun mediaPayload(): List<Int> =
 
 //<editor-fold desc="AdapterStatus">
 
-fun DslAdapter.toLoading(
-    filterParams: FilterParams = defaultFilterParams!!.apply {
-        justRun = true
-    }
-) {
+fun DslAdapter.justRunFilterParams() = defaultFilterParams!!.apply {
+    justRun = true
+    asyncDiff = false
+}
+
+fun DslAdapter.toLoading(filterParams: FilterParams = justRunFilterParams()) {
     setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_LOADING, filterParams)
 }
 
-fun DslAdapter.toEmpty(
-    filterParams: FilterParams = defaultFilterParams!!.apply {
-        justRun = true
-    }
-) {
+fun DslAdapter.toEmpty(filterParams: FilterParams = justRunFilterParams()) {
     setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_EMPTY, filterParams)
 }
 
-fun DslAdapter.toError(
-    filterParams: FilterParams = defaultFilterParams!!.apply {
-        justRun = true
-    }
-) {
+fun DslAdapter.toError(filterParams: FilterParams = justRunFilterParams()) {
     setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_ERROR, filterParams)
 }
 
-fun DslAdapter.toNone(
-    filterParams: FilterParams = defaultFilterParams!!.apply {
-        justRun = true
-    }
-) {
+fun DslAdapter.toNone(filterParams: FilterParams = justRunFilterParams()) {
     setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_NONE, filterParams)
 }
+
+fun DslAdapter.toLoadMoreError() {
+    setLoadMore(DslLoadMoreItem.LOAD_MORE_ERROR)
+}
+
+/**加载更多技术*/
+fun DslAdapter.toLoadMoreEnd() {
+    setLoadMore(DslLoadMoreItem.LOAD_MORE_NORMAL)
+}
+
+/**无更多*/
+fun DslAdapter.toLoadNoMore() {
+    setLoadMore(DslLoadMoreItem.LOAD_MORE_NO_MORE)
+}
+
+fun DslAdapter.onRefreshOrLoadMore(action: (itemHolder: DslViewHolder, loadMore: Boolean) -> Unit) {
+    dslAdapterStatusItem.onRefresh = {
+        action(it, false)
+    }
+    dslLoadMoreItem.onLoadMore = {
+        action(it, true)
+    }
+}
+
 
 //</editor-fold desc="AdapterStatus">
 
 //<editor-fold desc="Update">
 
 /**立即更新*/
-fun DslAdapter.updateNow(
-    filterParams: FilterParams = FilterParams(
-        justRun = true,
-        asyncDiff = false
-    )
-) {
+fun DslAdapter.updateNow(filterParams: FilterParams = justRunFilterParams()) =
     updateItemDepend(filterParams)
-}
 
 /**延迟通知*/
 fun DslAdapter.delayNotify(filterParams: FilterParams = FilterParams(notifyDiffDelay = Anim.ANIM_DURATION)) {

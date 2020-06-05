@@ -66,9 +66,9 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.loadSingleData(
                 setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_NONE)
                 if (dslLoadMoreItem.itemStateEnable) {
                     if (it.size < pageSize) {
-                        setLoadMore(DslLoadMoreItem.ADAPTER_LOAD_NO_MORE)
+                        setLoadMore(DslLoadMoreItem.LOAD_MORE_NO_MORE)
                     } else {
-                        setLoadMore(DslLoadMoreItem.ADAPTER_LOAD_NORMAL)
+                        setLoadMore(DslLoadMoreItem.LOAD_MORE_NORMAL)
                     }
                 }
             }
@@ -82,9 +82,9 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.loadSingleData(
             setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_NONE)
             if (dslLoadMoreItem.itemStateEnable) {
                 if (list.size < pageSize) {
-                    setLoadMore(DslLoadMoreItem.ADAPTER_LOAD_NO_MORE)
+                    setLoadMore(DslLoadMoreItem.LOAD_MORE_NO_MORE)
                 } else {
-                    setLoadMore(DslLoadMoreItem.ADAPTER_LOAD_NORMAL)
+                    setLoadMore(DslLoadMoreItem.LOAD_MORE_NORMAL)
                 }
             }
         }
@@ -183,22 +183,22 @@ fun DslAdapter.updateLoadMore(
             //数据不够, 关闭加载更多
             if (alwaysEnable) {
                 setLoadMoreEnable(true)
-                setLoadMore(DslLoadMoreItem.ADAPTER_LOAD_NO_MORE)
+                setLoadMore(DslLoadMoreItem.LOAD_MORE_NO_MORE)
             } else {
                 setLoadMoreEnable(false)
             }
         } else {
             //激活加载更多, 初始化默认状态
             setLoadMoreEnable(true)
-            setLoadMore(DslLoadMoreItem.ADAPTER_LOAD_NORMAL)
+            setLoadMore(DslLoadMoreItem.LOAD_MORE_NORMAL)
         }
     } else {
         //更新其他页数据
         if (dslLoadMoreItem.itemStateEnable) {
             if (updateSize < pageSize) {
-                setLoadMore(DslLoadMoreItem.ADAPTER_LOAD_NO_MORE)
+                setLoadMore(DslLoadMoreItem.LOAD_MORE_NO_MORE)
             } else {
-                setLoadMore(DslLoadMoreItem.ADAPTER_LOAD_NORMAL)
+                setLoadMore(DslLoadMoreItem.LOAD_MORE_NORMAL, notify = false)
             }
         }
     }

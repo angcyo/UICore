@@ -284,9 +284,9 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     }
 
     /**
-     * [DslLoadMoreItem.ADAPTER_LOAD_NORMAL]
-     * [DslLoadMoreItem.ADAPTER_LOAD_NO_MORE]
-     * [DslLoadMoreItem.ADAPTER_LOAD_ERROR]
+     * [DslLoadMoreItem.LOAD_MORE_NORMAL]
+     * [DslLoadMoreItem.LOAD_MORE_NO_MORE]
+     * [DslLoadMoreItem.LOAD_MORE_ERROR]
      * */
     fun setLoadMore(status: Int, payload: Any? = null, notify: Boolean = true) {
         if (dslLoadMoreItem.itemStateEnable && dslLoadMoreItem.itemState == status) {
