@@ -1,15 +1,20 @@
 package com.angcyo.core.fragment
 
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.core.R
 import com.angcyo.core.viewpager.ViewPager1Delegate
 import com.angcyo.library.ex.simpleClassName
+import com.angcyo.widget.base.eachChild
 import com.angcyo.widget.base.find
+import com.angcyo.widget.base.onDoubleTap
 import com.angcyo.widget.base.resetChild
+import com.angcyo.widget.recycler.scrollHelper
 import com.angcyo.widget.tab
 import com.angcyo.widget.vp
 import kotlin.math.min
@@ -63,6 +68,8 @@ abstract class BasePagerFragment : BaseTitleFragment() {
         }
     }
 
+    //<editor-fold desc="TabLayout相关">
+
     /**更新tab*/
     fun updateTabItems() {
         _vh.tab(R.id.lib_tab_layout)?.apply {
@@ -77,8 +84,31 @@ abstract class BasePagerFragment : BaseTitleFragment() {
         ) { itemView, itemIndex ->
             itemView.find<TextView>(R.id.lib_text_view)?.text =
                 getPageTitle(itemIndex)
+
+            itemView.onDoubleTap {
+                //双击tab item 滚动至顶部
+                getPageItem(itemIndex).view?.find<RecyclerView>(R.id.lib_recycler_view)
+                    ?.scrollHelper {
+                        scrollToFirst {
+                            firstScrollAnim = false
+                            scrollAnim = false
+                        }
+                    }
+                false
+            }
         }
     }
+
+    /**遍历[TabLayout]*/
+    fun eachTabLayout(action: (itemView: View, itemIndex: Int) -> Unit) {
+        _vh.tab(R.id.lib_tab_layout)?.eachChild { index, child ->
+            action(child, index)
+        }
+    }
+
+    //</editor-fold desc="TabLayout相关">
+
+    //<editor-fold desc="ViewPager相关">
 
     open fun getPageOffscreenLimit(): Int = min(5, getPageCount())
 
@@ -91,4 +121,6 @@ abstract class BasePagerFragment : BaseTitleFragment() {
     open fun getPageTitle(position: Int): CharSequence? {
         return getPageItem(position).simpleClassName()
     }
+
+    //</editor-fold desc="ViewPager相关">
 }

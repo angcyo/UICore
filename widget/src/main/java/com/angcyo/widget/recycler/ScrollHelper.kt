@@ -79,6 +79,7 @@ class ScrollHelper {
     fun scrollToLast(
         scrollParams: ScrollParams = _defaultScrollParams().apply {
             scrollType = SCROLL_TYPE_BOTTOM
+            isFromAddItem
         }, action: ScrollParams.() -> Unit = {}
     ) {
         scrollParams.action()
@@ -150,6 +151,7 @@ class ScrollHelper {
             firstForce = true
             lockDuration = 60
             autoDetach = true
+            isFromAddItem = false
             config()
         }
     }
