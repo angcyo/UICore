@@ -2,6 +2,7 @@ package com.angcyo.qrcode
 
 import android.app.Activity
 import android.content.Intent
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.angcyo.fragment.dslBridge
 import com.angcyo.library.L
@@ -60,3 +61,9 @@ fun dslCode(activity: Activity?, action: DslCode.() -> Unit) {
         doIt(activity)
     }
 }
+
+/**扩展*/
+fun Fragment?.dslCode(action: DslCode.() -> Unit) {
+    dslCode(this?.activity, action)
+}
+
