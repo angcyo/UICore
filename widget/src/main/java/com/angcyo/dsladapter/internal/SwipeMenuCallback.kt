@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.dsladapter.DragCallbackHelper
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.dsladapter.dslAdapter
+import com.angcyo.dsladapter._dslAdapter
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -23,7 +23,7 @@ open class SwipeMenuCallback {
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
     ): DslAdapterItem? {
-        return recyclerView.dslAdapter?.get(viewHolder.adapterPosition, true, false)
+        return recyclerView._dslAdapter?.get(viewHolder.adapterPosition, true, false)
     }
 
     open fun getMovementFlags(
