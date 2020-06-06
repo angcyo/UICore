@@ -3,6 +3,7 @@ package com.angcyo.dsladapter
 import android.graphics.Color
 import androidx.annotation.LayoutRes
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.model.Page
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
 import com.angcyo.widget.base.Anim
@@ -230,6 +231,7 @@ fun DslAdapter.toLoadNoMore() {
     setLoadMore(DslLoadMoreItem.LOAD_MORE_NO_MORE)
 }
 
+/**快速同时监听刷新/加载更多的回调*/
 fun DslAdapter.onRefreshOrLoadMore(action: (itemHolder: DslViewHolder, loadMore: Boolean) -> Unit) {
     dslAdapterStatusItem.onRefresh = {
         action(it, false)
@@ -239,6 +241,51 @@ fun DslAdapter.onRefreshOrLoadMore(action: (itemHolder: DslViewHolder, loadMore:
     }
 }
 
+/**
+ * 单一数据类型加载完成后, 调用此方法.
+ * 自动处理, 情感图切换, 加载更多切换.
+ * */
+fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEnd(
+    itemClass: Class<Item>,
+    dataList: List<Bean>?,
+    error: Throwable?,
+    page: Page,
+    initItem: Item.(data: Bean) -> Unit = {}
+) {
+    if (error != null) {
+        //加载失败
+        if (adapterItems.isEmpty()) {
+            dslAdapterStatusItem.onBindStateLayout = { itemHolder, state ->
+                if (state == DslAdapterStatusItem.ADAPTER_STATUS_ERROR) {
+                    itemHolder.tv(R.id.lib_text_view)?.text = error.message
+                }
+            }
+            toError()
+        } else {
+            toLoadMoreError()
+        }
+        return
+    } else {
+        //加载成功
+        page.pageLoadEnd()
+    }
+
+    //更新数据源
+    updateData {
+        updatePage = page.requestPageIndex
+        pageSize = page.requestPageSize
+        updateDataList = dataList as List<Any>?
+        this.updateOrCreateItem = { oldItem, data, _ ->
+            var newItem = oldItem
+            if (oldItem == null) {
+                newItem = itemClass.newInstance()
+            }
+            (newItem as Item?)?.apply {
+                this.initItem(data as Bean)
+            }
+        }
+    }
+}
 
 //</editor-fold desc="AdapterStatus">
 

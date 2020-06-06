@@ -1,4 +1,4 @@
-package com.angcyo.http.base
+package com.angcyo.library.model
 
 /**
  * 网络请求, 页面操作参数

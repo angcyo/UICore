@@ -8,8 +8,8 @@ import com.angcyo.core.dslitem.DslStatusTipItem
 import com.angcyo.dsladapter.*
 import com.angcyo.dsladapter.ItemSelectorHelper.Companion.MODEL_SINGLE
 import com.angcyo.getData
-import com.angcyo.http.base.Page
 import com.angcyo.library.ex.each
+import com.angcyo.library.model.Page
 import com.angcyo.widget.recycler.initDsl
 
 /**

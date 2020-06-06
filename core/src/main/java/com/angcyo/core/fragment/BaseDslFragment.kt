@@ -6,8 +6,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.behavior.refresh.IRefreshContentBehavior
 import com.angcyo.core.R
 import com.angcyo.dsladapter.*
-import com.angcyo.http.base.Page
 import com.angcyo.library.L
+import com.angcyo.library.model.Page
 import com.angcyo.widget.recycler.DslRecyclerView
 import com.angcyo.widget.recycler.noItemChangeAnim
 
@@ -107,40 +107,7 @@ open class BaseDslFragment : BaseTitleFragment() {
         initItem: Item.(data: Bean) -> Unit = {}
     ) {
         finishRefresh()
-
-        if (error != null) {
-            //加载失败
-            if (_adapter.adapterItems.isEmpty()) {
-                _adapter.dslAdapterStatusItem.onBindStateLayout = { itemHolder, state ->
-                    if (state == DslAdapterStatusItem.ADAPTER_STATUS_ERROR) {
-                        itemHolder.tv(R.id.lib_text_view)?.text = error.message
-                    }
-                }
-                _adapter.toError()
-            } else {
-                _adapter.toLoadMoreError()
-            }
-            return
-        } else {
-            //加载成功
-            page.pageLoadEnd()
-        }
-
-        //更新数据源
-        _adapter.updateData {
-            updatePage = page.requestPageIndex
-            pageSize = page.requestPageSize
-            updateDataList = dataList as List<Any>?
-            this.updateOrCreateItem = { oldItem, data, _ ->
-                var newItem = oldItem
-                if (oldItem == null) {
-                    newItem = itemClass.newInstance()
-                }
-                (newItem as Item?)?.apply {
-                    this.initItem(data as Bean)
-                }
-            }
-        }
+        _adapter.loadDataEnd(itemClass, dataList, error, page, initItem)
     }
 
     //</editor-fold desc="数据加载">
