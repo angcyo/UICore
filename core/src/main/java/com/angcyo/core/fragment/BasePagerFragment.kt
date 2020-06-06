@@ -40,7 +40,11 @@ abstract class BasePagerFragment : BaseTitleFragment() {
 
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)
+        onInitPager()
+    }
 
+    /**界面核心初始化*/
+    open fun onInitPager() {
         //adapter
         fragmentAdapter = object :
             FragmentStatePagerAdapter(
@@ -77,6 +81,7 @@ abstract class BasePagerFragment : BaseTitleFragment() {
         }
     }
 
+    /**填充Tab Item*/
     open fun inflateTabItems(viewGroup: ViewGroup) {
         viewGroup.resetChild(
             getPageCount(),

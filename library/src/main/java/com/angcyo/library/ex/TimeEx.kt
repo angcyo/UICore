@@ -1,5 +1,6 @@
 package com.angcyo.library.ex
 
+import com.angcyo.library.L
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -61,7 +62,7 @@ fun String.toMillis(pattern: String = "yyyyMMdd"): Long {
 }
 
 /**获取当前时间对应的 y m d h s*/
-public fun Long.spiltTime(): IntArray {
+fun Long.spiltTime(): IntArray {
     val cal = Calendar.getInstance()
     cal.timeInMillis = this
 
@@ -102,7 +103,7 @@ public fun Long.spiltTime(): IntArray {
     )
 }
 
-public fun String.parseTime(pattern: String = "yyyy-MM-dd"): Long {
+fun String.parseTime(pattern: String = "yyyy-MM-dd"): Long {
     val format: SimpleDateFormat = SimpleDateFormat.getDateInstance() as SimpleDateFormat
     format.applyPattern(pattern)
     return try {
@@ -114,7 +115,7 @@ public fun String.parseTime(pattern: String = "yyyy-MM-dd"): Long {
 }
 
 /**将毫秒, 拆成 d h m s sss数组*/
-public fun Long.toTimes(): LongArray {
+fun Long.toTimes(): LongArray {
 
     //剩余多少毫秒
     val ms = this % 1000
@@ -180,4 +181,19 @@ fun Long.toElapsedTime(
     }
 
     return builder.toString()
+}
+
+/**计算2个时间之间相差多少毫秒
+ * [2020-6-6 02:20] [2020-7-7 02:20]
+ * */
+fun timeDifference(start: String, end: String, pattern: String = "yyyy-MM-dd HH:mm"): Long {
+    val s = start.toMillis(pattern)
+    val e = end.toMillis(pattern)
+
+    return if (s == 0L || e == 0L) {
+        L.w("解析失败")
+        0L
+    } else {
+        e - s
+    }
 }
