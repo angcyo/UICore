@@ -883,6 +883,14 @@ class SwitchButton : View, Checkable {
         toggle(isEnableEffect, false)
     }
 
+    fun setChecked(checked: Boolean, broadcast: Boolean) {
+        if (checked == isChecked()) {
+            postInvalidate()
+            return
+        }
+        toggle(isEnableEffect, broadcast)
+    }
+
     override fun toggle() {
         toggle(true)
     }

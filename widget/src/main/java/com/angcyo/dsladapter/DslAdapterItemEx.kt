@@ -166,6 +166,22 @@ fun DslAdapterItem.drawLeft(
     itemDecorationColor = color
 }
 
+/**清空分割线绘制参数*/
+fun DslAdapterItem.noDraw() {
+    itemLeftOffset = 0
+    itemTopOffset = 0
+    itemRightOffset = 0
+    itemBottomOffset = 0
+
+    itemLeftInsert = 0
+    itemTopInsert = 0
+    itemRightInsert = 0
+    itemBottomInsert = 0
+
+    onlyDrawOffsetArea = false
+    itemDecorationColor = Color.TRANSPARENT
+}
+
 //</editor-fold desc="分割线操作扩展">
 
 //<editor-fold desc="操作扩展">
