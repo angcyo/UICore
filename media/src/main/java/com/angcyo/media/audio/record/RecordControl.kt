@@ -4,14 +4,13 @@ import android.Manifest
 import android.app.Activity
 import android.view.MotionEvent
 import android.view.View
-import com.angcyo.base.requestPermission
 import com.angcyo.library.ex.checkPermissions
 import com.angcyo.library.ex.ext
-import com.angcyo.library.ex.havePermissions
 import com.angcyo.library.ex.noExtName
 import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.fileName
 import com.angcyo.library.utils.folderPath
+import com.angcyo.widget.base.hideSoftInput
 import java.io.File
 import kotlin.math.max
 
@@ -31,6 +30,9 @@ open class RecordControl {
 
     var recordUI = RecordUI()
     var record: RRecord? = null
+
+    /**touch down时, 是否自动隐藏软键盘*/
+    var autoHideSoft = false
 
     /**
      * 监听那个view的事件, 触发录制
@@ -61,6 +63,10 @@ open class RecordControl {
         view.setOnTouchListener { v, event ->
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
+                    if (autoHideSoft) {
+                        //隐藏软键盘
+                        v.hideSoftInput()
+                    }
                     if (onRecordStart()) {
                         if (activity.checkPermissions(Manifest.permission.RECORD_AUDIO)) {
                             view.isSelected = true
@@ -83,7 +89,9 @@ open class RecordControl {
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     if (view.isSelected) {
-                        if (recordUI.isMinRecordTime) {
+                        if (recordUI.isCancel) {
+                            onEnd(true)
+                        } else if (recordUI.isMinRecordTime) {
                             toastQQ("至少需要录制 " + recordUI.minRecordTime + " 秒")
                             onEnd(true)
                         } else {
