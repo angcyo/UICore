@@ -40,4 +40,11 @@ class Page {
     fun pageLoadEnd() {
         _currentPageIndex = requestPageIndex
     }
+
+    /**重新赋值*/
+    fun set(page: Page) {
+        _currentPageIndex = page._currentPageIndex
+        requestPageIndex = page.requestPageIndex
+        requestPageSize = page.requestPageSize
+    }
 }

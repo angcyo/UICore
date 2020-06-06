@@ -8,6 +8,7 @@ import com.angcyo.core.dslitem.DslStatusTipItem
 import com.angcyo.dsladapter.*
 import com.angcyo.dsladapter.ItemSelectorHelper.Companion.MODEL_SINGLE
 import com.angcyo.getData
+import com.angcyo.http.base.Page
 import com.angcyo.library.ex.each
 import com.angcyo.widget.recycler.initDsl
 
@@ -18,14 +19,14 @@ import com.angcyo.widget.recycler.initDsl
  * @date 2019/11/11
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-open class BaseStatusFragment : BaseTitleFragment() {
+open class BaseStatusFragment : BaseDslFragment() {
 
     companion object {
-        const val SELECT_INDEX = "select_index"
+        const val LEFT_SELECT_INDEX = "left_select_index"
     }
 
-    /**默认选中第几项*/
-    var defaultSelectIndex = 0
+    /**左边默认选中第几项*/
+    var leftDefaultSelectIndex = 0
 
     /**状态映射*/
     val statusList = mutableListOf<StatusItem>()
@@ -34,10 +35,8 @@ open class BaseStatusFragment : BaseTitleFragment() {
     var currentStatus: StatusItem? = null
 
     val leftDslAdapter = DslAdapter()
-    val rightDslAdapter: DslAdapter? get() = rightRecyclerView?.adapter as DslAdapter?
 
     var leftRecyclerView: RecyclerView? = null
-    var rightRecyclerView: RecyclerView? = null
 
     init {
         contentLayoutId = R.layout.lib_status_content_fragment
@@ -49,21 +48,17 @@ open class BaseStatusFragment : BaseTitleFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        defaultSelectIndex = getData(SELECT_INDEX) ?: 0
+        leftDefaultSelectIndex = getData(LEFT_SELECT_INDEX) ?: leftDefaultSelectIndex
     }
 
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)
         leftRecyclerView = _vh.rv(R.id.left_recycler_view)
-        rightRecyclerView = _vh.rv(R.id.lib_recycler_view)
 
         leftRecyclerView?.initDsl()
-        rightRecyclerView?.initDsl()
 
         if (needLoadLeftNetData()) {
-            onLoadLeftNetData {
-                _initLeftRecyclerView()
-            }
+            //延迟请求左边的网络数据
         } else {
             _initLeftRecyclerView()
         }
@@ -109,21 +104,12 @@ open class BaseStatusFragment : BaseTitleFragment() {
 
         //默认选中
         leftDslAdapter.onDispatchUpdatesAfterOnce = {
-            if (defaultSelectIndex < statusList.size) {
-                it.itemSelectorHelper.selector(defaultSelectIndex)
+            if (leftDefaultSelectIndex < statusList.size) {
+                it.itemSelectorHelper.selector(leftDefaultSelectIndex)
             } else {
                 it.itemSelectorHelper.selector(0)
             }
         }
-    }
-
-    override fun onRefresh(refreshContentBehavior: IRefreshContentBehavior?) {
-        //super.onRefresh(refreshContentBehavior)
-
-    }
-
-    fun onAdapterRefresh(dslAdapter: DslAdapter) {
-
     }
 
     /**注册状态*/
@@ -167,29 +153,65 @@ open class BaseStatusFragment : BaseTitleFragment() {
 
         currentStatus = statusItem
 
-//        //取消之前的请求
-//        onCancelSubscriptions()
-//        onCancelCoroutine()
-//
-//        requestPageIndex = statusItem.requestPageIndex
-//        currentPageIndex = statusItem.currentPageIndex
-//
-//        dslAdapter =
-//        baseAdapter = dslAdapter
-//        baseDslAdapter = dslAdapter
+        page = statusItem.page
 
         val dslAdapter = statusItem.dslAdapter
-        rightRecyclerView?.adapter = dslAdapter
+        _recycler.adapter = dslAdapter
 
-        if (dslAdapter.getValidFilterDataList().isEmpty()) {
-            //onBaseRefresh(null)
+        //刷新 or 加载监听
+        dslAdapter.onRefreshOrLoadMore { _, loadMore ->
+            if (loadMore) {
+                onLoadMore()
+            } else {
+                onRefresh(null)
+            }
+        }
+
+        if (dslAdapter.getValidFilterDataList().isEmpty() || dslAdapter.isAdapterStatus()) {
             dslAdapter.setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_LOADING)
         }
     }
 
-    open fun onLoadLeftNetData(loadCallback: (status: MutableList<StatusItem>) -> Unit = {}) {
+    //<editor-fold desc="数据请求处理">
 
+    override fun onRefresh(refreshContentBehavior: IRefreshContentBehavior?) {
+        if (needLoadLeftNetData() && leftDslAdapter.itemCount <= 0) {
+            //左边的数据 还未初始化好.
+            onLoadLeftNetData {
+                statusList.clear()
+                statusList.addAll(it)
+                _initLeftRecyclerView()
+            }
+        } else {
+            super.onRefresh(refreshContentBehavior)
+        }
     }
+
+    /**左边数据加载完成之后回调此方法*/
+    fun <Bean> loadLeftDataEnd(
+        dataList: List<Bean>?,
+        error: Throwable? = null,
+        action: (statusList: MutableList<StatusItem>, bean: Bean) -> Unit
+    ) {
+        if (dataList?.size ?: 0 > 0) {
+            finishRefresh()
+            statusList.clear()
+            dataList?.forEach {
+                action(statusList, it)
+            }
+            _initLeftRecyclerView()
+        } else {
+            //右边的adapter, 显示情感图状态
+            loadDataEnd(DslAdapterItem::class.java, dataList, error)
+        }
+    }
+
+    /**重写此方法, 加载左边的数据集合*/
+    open fun onLoadLeftNetData(loadCallback: (status: MutableList<StatusItem>) -> Unit = {}) {
+        //no op
+    }
+
+    //</editor-fold desc="数据请求处理">
 }
 
 data class StatusItem(
@@ -204,6 +226,9 @@ data class StatusItem(
     var dslAdapter: DslAdapter = DslAdapter(),
 
     //分页参数
-    var currentPageIndex: Int = 1,
-    var requestPageIndex: Int = 1
+    var page: Page = Page()
 )
+
+/**快速获取[StatusItem]*/
+fun Any.ofStatusItem(statusText: CharSequence, statusCount: Int = -1): StatusItem =
+    StatusItem(statusText, statusCount, this)

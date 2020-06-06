@@ -1,6 +1,7 @@
 package com.angcyo.core.fragment
 
 import android.os.Bundle
+import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.behavior.refresh.IRefreshContentBehavior
 import com.angcyo.core.R
@@ -71,7 +72,7 @@ open class BaseDslFragment : BaseTitleFragment() {
     //<editor-fold desc="数据加载">
 
     /**页面请求相关辅助操作参数*/
-    val page = Page()
+    var page = Page()
 
     override fun onFragmentFirstShow(bundle: Bundle?) {
         super.onFragmentFirstShow(bundle)
@@ -92,6 +93,7 @@ open class BaseDslFragment : BaseTitleFragment() {
     }
 
     /**重写此方法, 拉取数据*/
+    @CallSuper
     open fun onLoadData() {
         //因为使用的behavior实现的刷新, 所以fling操作之后, scroll并不一定就会停止
         _recycler.stopScroll()
