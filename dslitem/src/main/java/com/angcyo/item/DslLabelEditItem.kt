@@ -1,5 +1,6 @@
 package com.angcyo.item
 
+import android.graphics.drawable.Drawable
 import android.view.View
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.widget.DslViewHolder
@@ -14,8 +15,11 @@ import com.angcyo.widget.base.*
  */
 open class DslLabelEditItem : DslBaseEditItem() {
 
-    /**编辑提示按钮*/
+    /**编辑提示按钮, 负数会返回null对象*/
     var itemEditTipIcon: Int = R.drawable.lib_icon_edit_tip
+
+    /**优先于属性[itemEditTipIcon]*/
+    var itemEditTipDrawable: Drawable? = null
 
     /**右边图标点击事件, 如果设置回调. 会影响默认的事件处理*/
     var itemRightIcoClick: ((DslViewHolder, View) -> Unit)? = null
@@ -47,7 +51,7 @@ open class DslLabelEditItem : DslBaseEditItem() {
                     itemRightIcoClick?.invoke(itemHolder, it)
                 }
             }
-            setImageDrawable(loadDrawable(itemEditTipIcon))
+            setImageDrawable(itemEditTipDrawable ?: loadDrawable(itemEditTipIcon))
         }
     }
 }

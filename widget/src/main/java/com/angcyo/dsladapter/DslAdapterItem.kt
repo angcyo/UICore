@@ -647,7 +647,11 @@ open class DslAdapterItem : LifecycleOwner {
             }
         }
 
-    /**提供一个可以完全被覆盖的方法*/
+    /**
+     * 当[itemChanged]为true之后, 触发的回调.
+     * 如果拦截了默认操作, 需要注意[updateItemDepend]方法的触发时机
+     *
+     * 提供一个可以完全被覆盖的方法*/
     var itemChangeListener: (DslAdapterItem) -> Unit = {
         onItemChangeListener(it)
     }
