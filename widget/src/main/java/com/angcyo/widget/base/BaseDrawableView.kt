@@ -76,10 +76,11 @@ abstract class BaseDrawableView(context: Context, attributeSet: AttributeSet? = 
 
     //方法
     operator fun <T> get(index: Int): T? {
-        return drawables.getOrNull(index) as? T
+        return drawables?.getOrNull(index) as? T?
     }
 
+    /**在初始化方法中, 调用此方法. 会出现[drawables]为null的情况*/
     fun <T> firstDrawable(): T? {
-        return drawables.firstOrNull() as? T
+        return drawables?.firstOrNull() as? T?
     }
 }
