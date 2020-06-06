@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
@@ -41,6 +42,18 @@ class ArcLoadingView(context: Context, attributeSet: AttributeSet? = null) :
             context.obtainStyledAttributes(attributeSet, R.styleable.ArcLoadingView)
 
         arcLoadingDrawable.arcColor = getColor(R.color.colorAccent)
+
+        //色调（H） 0°～360° 从红色开始按逆时针方向计算，红色为0°，绿色为120°,蓝色为240°。它们的补色是：黄色为60°，青色为180°,紫色为300°
+        //饱和度（S） 0%～100%，值越大，颜色越饱和
+        //明度（V） 0%（黑）到100%（白）。
+        val hsv = floatArrayOf(0f, 0f, 0f)
+        Color.colorToHSV(arcLoadingDrawable.arcColor, hsv)
+
+        //调高饱和度
+        hsv[1] = 1f
+        //调高亮度
+        hsv[2] = 1f
+        arcLoadingDrawable.arcColor = Color.HSVToColor(hsv)
 
         arcLoadingDrawable.arcColor =
             array.getColor(R.styleable.ArcLoadingView_arc_color, arcLoadingDrawable.arcColor)
