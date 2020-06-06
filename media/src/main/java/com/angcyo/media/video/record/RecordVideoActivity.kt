@@ -57,11 +57,6 @@ open class RecordVideoActivity : BasePermissionsActivity() {
         translucentStatusBar(true)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        recordVideoCallback = null
-    }
-
     override fun onPermissionGranted() {
         super.onPermissionGranted()
 
