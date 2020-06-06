@@ -75,7 +75,11 @@
         <provider
             android:name=".LibInitProvider"
             android:authorities="${applicationId}.init"
-            android:exported="false" />
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/lib_provider_paths" />
+        </provider>
 
         <!--Android7.0 文件权限-->
         <!--请不要出现相同authorities的provider, 否则[FileProvider]解析可能报错-->
