@@ -4,6 +4,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.angcyo.library.ICancelCallback
+import com.angcyo.library.L
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.internal.disposables.DisposableContainer
@@ -34,6 +35,7 @@ class CompositeDisposableLifecycle(lifecycleOwner: LifecycleOwner) : Disposable,
     override fun isDisposed(): Boolean = compositeDisposable.isDisposed
 
     override fun dispose() {
+        L.w("取消Rx调度!")
         compositeDisposable.dispose()
     }
 

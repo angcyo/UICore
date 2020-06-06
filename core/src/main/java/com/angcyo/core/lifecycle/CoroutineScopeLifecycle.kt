@@ -56,6 +56,7 @@ class CoroutineScopeLifecycle(lifecycleOwner: LifecycleOwner) : LifecycleEventOb
 
     /**需要取消协程*/
     fun cancel() {
+        L.w("取消协程域!")
         coroutineScope.cancel()
     }
 
