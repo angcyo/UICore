@@ -130,7 +130,7 @@ open class OptionDialogConfig : BaseDialogConfig() {
                         }
                     } else if (to == DslAffect.AFFECT_EMPTY) {
                         //空布局会把界面撑得很高, 这里限制一下
-                        setHeight(150 * dpi)
+                        setHeight(200 * dpi)
                     }
                 }
             }

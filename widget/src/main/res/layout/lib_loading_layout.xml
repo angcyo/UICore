@@ -8,7 +8,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="@dimen/lib_xhdpi">
 
         <!--        <ProgressBar-->
         <!--            style="?android:attr/progressBarStyleSmall"-->

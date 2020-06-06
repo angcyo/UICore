@@ -10,7 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="@dimen/lib_xhdpi">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/lib_image_view"

@@ -21,7 +21,7 @@
         android:id="@+id/content_wrap_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="100dp"
+        android:minHeight="150dp"
         app:r_max_height="0.7sh">
 
         <com.angcyo.tablayout.DslTabLayout
@@ -37,7 +37,8 @@
             app:tab_enable_text_bold="true"
             app:tab_indicator_width="40dp"
             app:tab_select_color="@color/text_general_color"
-            tools:background="@color/transparent20" />
+            tools:background="@color/transparent20"
+            tools:layout_height="@dimen/dialog_item_height" />
 
         <com.angcyo.widget.recycler.DslRecyclerView
             android:id="@+id/lib_recycler_view"
