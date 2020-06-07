@@ -10,10 +10,12 @@
         <item name="android:completionThreshold">1</item>
         <item name="android:drawablePadding">@dimen/lib_xhdpi</item>
         <item name="android:padding">@dimen/lib_hdpi</item>
-        <item name="android:background">@drawable/lib_bottom_line_selector</item>
+        <item name="android:background">@null</item>
         <item name="android:hint">请输入账号</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="r_focus_drawable">@drawable/lib_bottom_focus_shape</item>
+        <item name="r_no_focus_drawable">@drawable/lib_bottom_no_focus_shape</item>
     </style>
 
     <!--密码输入框样式-->
