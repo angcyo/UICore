@@ -55,6 +55,7 @@ class PickerPreviewFragment : BasePickerFragment() {
 
     /**媒体列表*/
     val previewMediaList: MutableList<LoaderMedia> = mutableListOf()
+
     /**预览模式下, 保存之前选中的媒体列表*/
     val previewSelectorMediaList: MutableList<LoaderMedia> = mutableListOf()
 
@@ -127,15 +128,29 @@ class PickerPreviewFragment : BasePickerFragment() {
             //切换选中状态
             val media = previewMediaList.getOrNull(_vh.vp(R.id.lib_view_pager)?.currentItem ?: 0)
             media?.run {
-                if (_vh.isChecked(R.id.selected_cb)) {
-                    //点击完之后, 是checked的状态
-                    if (pickerViewModel.canSelectorMedia(this)) {
-                        pickerViewModel.addSelectedMedia(this)
+                if (pickerViewModel.isSingleModel()) {
+                    //单选模式
+                    if (!_vh.isChecked(R.id.selected_cb)) {
+                        //单选模式下, 不允许取消选择
+                        _vh.cb(R.id.selected_cb)?.isChecked = true
                     } else {
-                        _vh.cb(R.id.selected_cb)?.isChecked = false
+                        //取消之前, 选中
+                        pickerViewModel.selectorMediaList.value?.clear()
+
+                        //选中, 当前
+                        pickerViewModel.addSelectedMedia(this)
                     }
                 } else {
-                    pickerViewModel.removeSelectedMedia(this)
+                    if (_vh.isChecked(R.id.selected_cb)) {
+                        //点击完之后, 是checked的状态
+                        if (pickerViewModel.canSelectorMedia(this)) {
+                            pickerViewModel.addSelectedMedia(this)
+                        } else {
+                            _vh.cb(R.id.selected_cb)?.isChecked = false
+                        }
+                    } else {
+                        pickerViewModel.removeSelectedMedia(this)
+                    }
                 }
             }
         }

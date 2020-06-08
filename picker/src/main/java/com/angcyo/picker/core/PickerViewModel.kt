@@ -2,10 +2,11 @@ package com.angcyo.picker.core
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.angcyo.library.model.LoaderMedia
 import com.angcyo.loader.LoaderConfig
 import com.angcyo.loader.LoaderFolder
-import com.angcyo.library.model.LoaderMedia
 import com.angcyo.loader.canSelectorMedia
+import com.angcyo.loader.isSingleModel
 
 /**
  *
@@ -38,6 +39,12 @@ class PickerViewModel : ViewModel() {
         }
     }
 
+    /**移除所有选中*/
+    fun removeSelectedAll() {
+        selectorMediaList.value?.clear()
+        selectorMediaList.value = selectorMediaList.value
+    }
+
     /**移除选中项*/
     fun removeSelectedMedia(media: LoaderMedia?) {
         media?.run {
@@ -59,4 +66,7 @@ class PickerViewModel : ViewModel() {
         }
         return false
     }
+
+    /**是否是单选模式*/
+    fun isSingleModel() = loaderConfig.value?.isSingleModel() == true
 }

@@ -26,7 +26,7 @@ data class LoaderConfig(
     /**是否显示原图按钮, 如果支持就打开, 否则关闭*/
     var enableOrigin: Boolean = false,
 
-    /**最大选择数量*/
+    /**最大选择数量, 当最大选择数量为1时, 自动进入单选模式*/
     var maxSelectorLimit: Int = 9,
 
     /**是否显示编辑按钮, 目前只支持图片编辑*/
@@ -70,8 +70,10 @@ data class LoaderConfig(
 
         //不限制文件大小
         const val SIZE_MODEL_NONE = 0
+
         //扫描媒体的时候 加上大小限制条件.
         const val SIZE_MODEL_MEDIA = 1
+
         //选择媒体的时候, 判断大小是否合适
         const val SIZE_MODEL_SELECTOR = 2
     }
