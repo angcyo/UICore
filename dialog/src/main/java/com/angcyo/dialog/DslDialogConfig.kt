@@ -38,13 +38,18 @@ import java.io.Serializable
 open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Serializable {
 
     companion object {
+        /** Dialog -> AppCompatDialog -> AlertDialog */
 
-        /**最普通的对话框*/
+        /**最普通的对话框, [Dialog]]*/
         const val DIALOG_TYPE_DIALOG = 0
+
+        /**[AppCompatDialog], 如果不是[AppCompatActivity], 会自动降级成 [Dialog]*/
         const val DIALOG_TYPE_APPCOMPAT = 1
+
+        /**[AlertDialog], 如果不是[AppCompatActivity], 会自动降级成 [Dialog]*/
         const val DIALOG_TYPE_ALERT_DIALOG = 2
 
-        /**需要[material]库支持*/
+        /**[BottomSheetDialog], 需要[material]库支持*/
         const val DIALOG_TYPE_BOTTOM_SHEET_DIALOG = 3
 
         /**使用Dialog样式的Activity显示, 只能传递显示简单的对话框*/
@@ -520,10 +525,10 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
 fun Dialog.dialogViewHolder(): DslViewHolder = DslViewHolder(window!!.decorView)
 
 /**快速显示[AppCompatDialog]配置*/
-fun dslDialog(context: Context, action: DslDialogConfig.() -> Unit): AppCompatDialog {
+fun dslDialog(context: Context, action: DslDialogConfig.() -> Unit): Dialog {
     val dslDialog = DslDialogConfig(context)
     dslDialog.action()
-    return dslDialog.showCompatDialog()
+    return dslDialog.show()
 }
 
 fun dslDialog(context: Context, dialog: Dialog, action: DslDialogConfig.() -> Unit): Dialog {

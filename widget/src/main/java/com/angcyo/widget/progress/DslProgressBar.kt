@@ -465,6 +465,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
     /**
      * 设置进度
+     * @param progress [0-100]]
      * @param fromProgress 动画开始的进度, 默认是当前进度
      * @param animDuration 动画时长, 小于0, 不开启动画
      * */
