@@ -70,6 +70,7 @@ open class DslLabelOptionItem : DslLabelTextItem() {
     ) {
         itemText = itemOptionListToText(itemOptionList)
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
+        itemHolder.visible(R.id.lib_right_ico_view, itemEnable)
     }
 
     /**显示dialog*/
