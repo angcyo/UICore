@@ -11,10 +11,7 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.Px
 import androidx.core.view.ViewCompat
 import com.angcyo.library.ex.color
-
-import com.angcyo.widget.base.eachChild
-import com.angcyo.widget.base.getChildOrNull
-import com.angcyo.widget.base.inflate
+import com.angcyo.widget.base.*
 
 /**
  *
@@ -178,6 +175,14 @@ class DslGroupHelper(val parentView: View) : DslViewHolder(parentView) {
         if (selectorView is ViewGroup) {
             (selectorView as ViewGroup).removeAllViews()
         }
+    }
+
+    fun setVisible(value: Boolean = true) {
+        selectorView?.visible(value)
+    }
+
+    fun setGone(value: Boolean = true) {
+        selectorView?.gone(value)
     }
 }
 
