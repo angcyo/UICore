@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import com.angcyo.dialog.LoadingDialog.dialogPool
 import com.angcyo.library.L
 import com.angcyo.library.ex.elseNull
+import com.angcyo.library.toastQQ
 import com.angcyo.transition.dslTransition
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.dslViewHolder
@@ -174,6 +175,30 @@ fun Fragment.loadingBottom(
         amount = 0.2f
         dialogWidth = -1
     }, onCancel = onCancel)
+}
+
+/**快速在[Fragment]显示底部loading, 通常用于包裹一个网络请求*/
+fun Fragment.loadLoadingBottom(
+    tip: CharSequence? = "处理中...",
+    success: CharSequence? = "处理完成!",
+    action: (cancel: Boolean, loadEnd: (data: Any?, error: Throwable?) -> Unit) -> Unit
+) {
+    loadingBottom(tip) {
+        action(true) { _, _ ->
+            //no op
+        }
+    }
+
+    action(false) { data, error ->
+        error?.apply {
+            toastQQ(message)
+        }
+        data?.apply {
+            hideLoading(success)
+        }.elseNull {
+            hideLoading()
+        }
+    }
 }
 
 //</editor-fold desc="底部弹出显示的loading对话框">

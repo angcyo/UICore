@@ -1,6 +1,7 @@
 package com.angcyo.base
 
 import android.app.Activity
+import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -155,4 +156,21 @@ fun Fragment.delay(delayMillis: Long = delayMillis(-1), action: () -> Unit) {
 /**隐藏软键盘*/
 fun Fragment.hideSoftInput() {
     view?.hideSoftInput()
+}
+
+/**监听[Fragment]返回*/
+fun Fragment.onFragmentResult(result: (resultCode: Int, data: Any?) -> Unit) {
+    if (arguments == null) {
+        arguments = Bundle()
+    }
+    arguments?.putFragmentResult(object : IFragmentResult {
+        override fun onFragmentResult(resultCode: Int, data: Any?) {
+            result(resultCode, data)
+        }
+    })
+}
+
+/**设置[Fragment]返回数据*/
+fun Fragment.setFragmentResult(data: Any?, resultCode: Int = Activity.RESULT_OK) {
+    arguments?.doFragmentResult(data, resultCode)
 }

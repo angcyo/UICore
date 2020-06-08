@@ -122,6 +122,9 @@ fun Int.resultString(): String {
     }
 }
 
+/**[Activity]返回状态*/
+fun Int.isResultOk(): Boolean = this == Activity.RESULT_OK
+
 /**音频焦点*/
 fun Int.audioFocusString(): String {
     return when (this) {
