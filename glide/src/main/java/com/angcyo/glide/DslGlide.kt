@@ -59,6 +59,14 @@ class DslGlide {
             Glide.get(app()).clearMemory()
         }
 
+        /**全局配置glide头*/
+        val glideHeaderMap = hashMapOf<String, String>()
+
+        var glideHeaderConfig: (LazyHeaders.Builder) -> Unit = { builder ->
+            glideHeaderMap.forEach {
+                builder.addHeader(it.key, it.value)
+            }
+        }
     }
 
     /**设置目标*/
@@ -327,6 +335,7 @@ class DslGlide {
     fun _header(): Headers {
         return LazyHeaders.Builder()
             .apply {
+                glideHeaderConfig(this)
                 onConfigHeader(this)
             }
             .build()
