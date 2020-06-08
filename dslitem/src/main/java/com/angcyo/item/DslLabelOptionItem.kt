@@ -56,7 +56,7 @@ open class DslLabelOptionItem : DslLabelTextItem() {
         itemLayoutId = R.layout.dsl_label_option_item
 
         itemClick = {
-            if (!itemClickBefore(it)) {
+            if (itemEnable && !itemClickBefore(it)) {
                 showOptionDialog(it.context)
             }
         }
