@@ -3,6 +3,7 @@ package com.angcyo.item.style
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.View
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.angcyo.library.UndefinedDrawable
 import com.angcyo.library.ex.undefined_size
 import com.angcyo.widget.base.setBgDrawable
@@ -43,27 +44,36 @@ open class ViewStyleConfig {
             }
             setBgDrawable(backgroundDrawable)
 
+            //初始化默认值
             if (viewMinWidth == undefined_size && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 viewMinWidth = minimumWidth
             }
             if (viewMinHeight == undefined_size && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 viewMinHeight = minimumHeight
             }
+            //设置
             if (viewMinWidth != undefined_size) {
                 minimumWidth = viewMinWidth
+                when (view) {
+                    is ConstraintLayout -> view.minWidth = viewMinWidth
+                }
             }
             if (viewMinHeight != undefined_size) {
                 minimumHeight = viewMinHeight
+                when (view) {
+                    is ConstraintLayout -> view.minHeight = viewMinHeight
+                }
             }
 
+            //初始化默认值
             if (viewWidth == undefined_size) {
                 viewWidth = layoutParams.width
             }
-            setWidth(width)
-
             if (viewHeight == undefined_size) {
                 viewHeight = layoutParams.height
             }
+            //设置
+            setWidth(width)
             setHeight(viewHeight)
 
         }

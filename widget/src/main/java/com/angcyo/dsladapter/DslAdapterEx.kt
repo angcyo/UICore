@@ -7,7 +7,7 @@ import com.angcyo.library.model.Page
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
 import com.angcyo.widget.base.Anim
-import com.angcyo.widget.base.setHeight
+import com.angcyo.widget.base.setWidthHeight
 
 
 /**
@@ -117,7 +117,7 @@ fun DslAdapter.renderEmptyItem(
     adapterItem.itemLayoutId = R.layout.lib_empty_item
     adapterItem.itemBindOverride = { itemHolder, _, _, _ ->
         itemHolder.itemView.setBackgroundColor(color)
-        itemHolder.itemView.setHeight(height)
+        itemHolder.itemView.setWidthHeight(-1, height)
     }
     adapterItem.action()
     addLastItem(adapterItem)

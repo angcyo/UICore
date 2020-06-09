@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
@@ -241,33 +242,43 @@ open class DslAdapterItem : LifecycleOwner {
 
     //初始化宽高
     open fun _initItemSize(itemHolder: DslViewHolder) {
-        if (itemHolder.itemView is RecyclerBottomLayout) {
+        val itemView = itemHolder.itemView
+        if (itemView is RecyclerBottomLayout) {
             //RecyclerBottomLayout不支持调整item height
             return
         }
 
+        //初始化默认值
         if (itemMinWidth == undefined_size && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            itemMinWidth = itemHolder.itemView.minimumWidth
+            itemMinWidth = itemView.minimumWidth
         }
         if (itemMinHeight == undefined_size && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            itemMinHeight = itemHolder.itemView.minimumHeight
+            itemMinHeight = itemView.minimumHeight
         }
+        //设置
         if (itemMinWidth != undefined_size) {
-            itemHolder.itemView.minimumWidth = itemMinWidth
+            itemView.minimumWidth = itemMinWidth
+            when (itemView) {
+                is ConstraintLayout -> itemView.minWidth = itemMinWidth
+            }
         }
         if (itemMinHeight != undefined_size) {
-            itemHolder.itemView.minimumHeight = itemMinHeight
+            itemView.minimumHeight = itemMinHeight
+            when (itemView) {
+                is ConstraintLayout -> itemView.minHeight = itemMinHeight
+            }
         }
 
+        //初始化默认值
         if (itemWidth == undefined_size) {
-            itemWidth = itemHolder.itemView.layoutParams.width
+            itemWidth = itemView.layoutParams.width
         }
-        itemHolder.itemView.setWidth(itemWidth)
-
         if (itemHeight == undefined_size) {
-            itemHeight = itemHolder.itemView.layoutParams.height
+            itemHeight = itemView.layoutParams.height
         }
-        itemHolder.itemView.setHeight(itemHeight)
+        //设置
+        itemView.setWidth(itemWidth)
+        itemView.setHeight(itemHeight)
     }
 
     //初始化事件
@@ -449,9 +460,9 @@ open class DslAdapterItem : LifecycleOwner {
                 }
             } else {
                 drawRect.set(
-                    itemView.left,
+                    itemView.left + itemLeftOffset,
                     itemView.top - offsetRect.top,
-                    itemView.right,
+                    itemView.right - itemRightOffset,
                     itemView.top
                 )
                 canvas.drawRect(drawRect, paint)
@@ -487,9 +498,9 @@ open class DslAdapterItem : LifecycleOwner {
                 }
             } else {
                 drawRect.set(
-                    itemView.left,
+                    itemView.left + itemLeftOffset,
                     itemView.bottom,
-                    itemView.right,
+                    itemView.right - itemRightOffset,
                     itemView.bottom + offsetRect.bottom
                 )
                 canvas.drawRect(drawRect, paint)
@@ -526,9 +537,9 @@ open class DslAdapterItem : LifecycleOwner {
             } else {
                 drawRect.set(
                     itemView.left - offsetRect.left,
-                    itemView.top,
+                    itemView.top + itemTopOffset,
                     itemView.left,
-                    itemView.bottom
+                    itemView.bottom - itemBottomOffset
                 )
                 canvas.drawRect(drawRect, paint)
                 onDrawItemDecorationDrawable(canvas, drawRect)
@@ -564,9 +575,9 @@ open class DslAdapterItem : LifecycleOwner {
             } else {
                 drawRect.set(
                     itemView.right,
-                    itemView.top,
+                    itemView.top + itemTopOffset,
                     itemView.right + offsetRect.right,
-                    itemView.bottom
+                    itemView.bottom - itemBottomOffset
                 )
                 canvas.drawRect(drawRect, paint)
                 onDrawItemDecorationDrawable(canvas, drawRect)
