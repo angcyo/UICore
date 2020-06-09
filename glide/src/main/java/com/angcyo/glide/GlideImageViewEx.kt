@@ -40,7 +40,8 @@ fun GlideImageView.loadAvatar(
     url: String?,
     fullName: CharSequence,
     textColor: Int = Color.WHITE,
-    fontSizeDp: Float = 14 * dp
+    fontSizeDp: Float = 14 * dp,
+    solidColor: Int = getColor(R.color.colorPrimaryDark)
 ) {
     val textDrawable = dslTextDrawable(fullName) {
         textSize = fontSizeDp
@@ -48,7 +49,7 @@ fun GlideImageView.loadAvatar(
         drawableWidth = -1
         drawableHeight = -1
         textBgDrawable = dslGradientDrawable {
-            gradientSolidColor = getColor(R.color.colorPrimaryDark)
+            gradientSolidColor = solidColor
         }
     }
     if (url.isNullOrEmpty()) {
