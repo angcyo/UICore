@@ -201,6 +201,26 @@ fun Fragment.loadLoadingBottom(
     }
 }
 
+/**快速在[Fragment]显示loading, 通常用于包裹一个网络请求*/
+fun Fragment.loadLoading(
+    tip: CharSequence? = null,
+    action: (cancel: Boolean, loadEnd: (data: Any?, error: Throwable?) -> Unit) -> Unit
+) {
+
+    loading(tip) {
+        action(true) { _, _ ->
+            //no op
+        }
+    }
+
+    action(false) { _, error ->
+        hideLoading()
+        error?.apply {
+            toastQQ(message)
+        }
+    }
+}
+
 //</editor-fold desc="底部弹出显示的loading对话框">
 
 /**快速显示[loading]对话框*/
