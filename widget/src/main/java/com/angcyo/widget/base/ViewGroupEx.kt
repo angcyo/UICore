@@ -444,7 +444,9 @@ fun ViewGroup.addDslItem(dslAdapterItem: DslAdapterItem, index: Int = -1): DslVi
     itemView.setDslViewHolder(dslViewHolder)
     itemView.setDslAdapterItem(dslAdapterItem)
 
-    dslAdapterItem.itemBind(dslViewHolder, childCount - 1, dslAdapterItem, emptyList())
+    val itemIndex = if (index < 0) childCount else index
+
+    dslAdapterItem.itemBind(dslViewHolder, itemIndex, dslAdapterItem, emptyList())
 
     //头分割线的支持
     if (this is LinearLayout) {
@@ -468,7 +470,7 @@ fun ViewGroup.addDslItem(dslAdapterItem: DslAdapterItem, index: Int = -1): DslVi
             }
         }
     }
-    addView(itemView, index)
+    addView(itemView, itemIndex)
     //尾分割线的支持
     if (this is LinearLayout) {
         if (this.orientation == LinearLayout.VERTICAL) {
