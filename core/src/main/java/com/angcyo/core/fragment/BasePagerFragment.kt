@@ -75,6 +75,14 @@ abstract class BasePagerFragment : BaseTitleFragment() {
         _vh.vp(R.id.lib_view_pager)?.apply {
             adapter = fragmentAdapter
             ViewPager1Delegate.install(this, _vh.tab(R.id.lib_tab_layout)?.apply {
+                configTabLayoutConfig {
+                    onGetTextStyleView = { itemView, _ ->
+                        itemView.find(R.id.lib_text_view)
+                    }
+                    onGetIcoStyleView = { itemView, _ ->
+                        itemView.find(R.id.lib_image_view)
+                    }
+                }
                 if (childCount <= 0) {
                     inflateTabItems(this)
                 }
