@@ -7,8 +7,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.angcyo.library.UndefinedDrawable
 import com.angcyo.library.ex.undefined_size
 import com.angcyo.widget.base.setBgDrawable
-import com.angcyo.widget.base.setHeight
-import com.angcyo.widget.base.setWidth
+import com.angcyo.widget.base.setWidthHeight
 
 /**
  * View基础样式配置
@@ -73,9 +72,7 @@ open class ViewStyleConfig {
                 viewHeight = layoutParams.height
             }
             //设置
-            setWidth(width)
-            setHeight(viewHeight)
-
+            setWidthHeight(viewWidth, viewHeight)
         }
     }
 }

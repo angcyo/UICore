@@ -277,8 +277,7 @@ open class DslAdapterItem : LifecycleOwner {
             itemHeight = itemView.layoutParams.height
         }
         //设置
-        itemView.setWidth(itemWidth)
-        itemView.setHeight(itemHeight)
+        itemView.setWidthHeight(itemWidth, itemHeight)
     }
 
     //初始化事件
