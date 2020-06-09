@@ -114,7 +114,7 @@ fun DslAdapterItem.margin(margin: Int, color: Int = Color.TRANSPARENT) {
     itemDecorationColor = color
 }
 
-fun DslAdapterItem.marginVertical(top: Int, bottom: Int = 0, color: Int = Color.TRANSPARENT) {
+fun DslAdapterItem.marginVertical(top: Int, bottom: Int = top, color: Int = Color.TRANSPARENT) {
     itemLeftOffset = 0
     itemRightOffset = 0
     itemTopInsert = top
@@ -123,7 +123,7 @@ fun DslAdapterItem.marginVertical(top: Int, bottom: Int = 0, color: Int = Color.
     itemDecorationColor = color
 }
 
-fun DslAdapterItem.marginHorizontal(left: Int, right: Int = 0, color: Int = Color.TRANSPARENT) {
+fun DslAdapterItem.marginHorizontal(left: Int, right: Int = left, color: Int = Color.TRANSPARENT) {
     itemTopOffset = 0
     itemBottomOffset = 0
 
