@@ -9,6 +9,8 @@ import com.angcyo.library.ex.calcSize
 import com.angcyo.tablayout.clamp
 import com.angcyo.widget.R
 import com.angcyo.widget.base.mH
+import com.angcyo.widget.base.postAndRemove
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -162,13 +164,16 @@ open class LinkageScaleBehavior(
         }
     }
 
+    //最小差距量, 用于控制[requestLayout]
+    val _minGap = 1
+
     override fun onBehaviorScrollTo(scrollBehavior: BaseScrollBehavior<*>, x: Int, y: Int) {
         if (y >= 0) {
             val oldY = behaviorScrollY
             super.onBehaviorScrollTo(scrollBehavior, x, y)
-            if (enableHeightEffect && oldY != y) {
+            if (enableHeightEffect && abs(oldY - y) > _minGap) {
                 _targetView?.apply {
-                    post {
+                    postAndRemove {
                         requestLayout()
                     }
                 }
@@ -180,8 +185,8 @@ open class LinkageScaleBehavior(
 
     fun _refreshTargetHeight() {
         _targetView?.apply {
-            if (measuredHeight != _targetDefaultHeight) {
-                post {
+            if (abs(measuredHeight - _targetDefaultHeight) > _minGap) {
+                postAndRemove {
                     requestLayout()
                 }
             }

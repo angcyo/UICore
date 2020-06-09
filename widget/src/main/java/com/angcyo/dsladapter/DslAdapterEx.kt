@@ -213,7 +213,7 @@ fun DslAdapter.toError(filterParams: FilterParams = justRunFilterParams()) {
     setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_ERROR, filterParams)
 }
 
-fun DslAdapter.toNone(filterParams: FilterParams = justRunFilterParams()) {
+fun DslAdapter.toNone(filterParams: FilterParams = defaultFilterParams!!) {
     setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_NONE, filterParams)
 }
 

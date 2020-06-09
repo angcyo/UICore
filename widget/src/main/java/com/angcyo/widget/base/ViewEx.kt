@@ -316,6 +316,16 @@ fun View?.b(def: Int = 0): Int {
     return this?.bottom ?: def
 }
 
+/**执行后移除runnable*/
+fun View?.postAndRemove(action: () -> Unit) {
+    this?.post(object : Runnable {
+        override fun run() {
+            removeCallbacks(this)
+            action()
+        }
+    })
+}
+
 //</editor-fold desc="基础扩展">
 
 //<editor-fold desc="layoutParams扩展">
