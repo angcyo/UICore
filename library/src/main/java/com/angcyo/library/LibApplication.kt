@@ -65,6 +65,8 @@ open class LibApplication : Application() {
     }
 }
 
+fun Context?.isMainProgress() = isMainProcess(this)
+
 /**是否是主进程*/
 fun isMainProcess(context: Context?): Boolean {
     if (context == null) {

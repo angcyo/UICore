@@ -5,10 +5,12 @@ import androidx.collection.ArrayMap
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import com.angcyo.core.component.DslCrashHandler
-import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.interceptor.LogFileInterceptor
 import com.angcyo.http.DslHttp
+import com.angcyo.library.L
 import com.angcyo.library.LibApplication
+import com.angcyo.library.ex.getAppSignatureMD5
+import com.angcyo.library.ex.getAppSignatureSHA1
 import me.weishu.reflection.Reflection
 
 /**
@@ -28,6 +30,9 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
                 it.addInterceptor(LogFileInterceptor())
             }
         }
+
+        L.d("MD5->", getAppSignatureMD5())
+        L.d("SHA1->", getAppSignatureSHA1())
     }
 
     override fun attachBaseContext(base: Context) {

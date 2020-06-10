@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.content.pm.Signature
 import android.net.Uri
 import android.os.Build
-import androidx.core.content.FileProvider
 import java.io.File
 
 /**
@@ -16,6 +15,16 @@ import java.io.File
  * @date 2020/01/02
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
+
+/**获取应用md5签名*/
+fun Context.getAppSignatureMD5() =
+    getAppSignature(this, this.packageName)?.getOrNull(0)?.toByteArray()?.encrypt("MD5")
+        ?.toHexString()?.beautifyHex()
+
+/**获取应用sha1签名*/
+fun Context.getAppSignatureSHA1() =
+    getAppSignature(this, this.packageName)?.getOrNull(0)?.toByteArray()?.encrypt("SHA1")
+        ?.toHexString()?.beautifyHex()
 
 /**获取应用签名*/
 fun getAppSignature(
