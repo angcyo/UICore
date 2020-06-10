@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="MoveBehavior_Layout">
+        <attr name="layout_default_offset_y" format="string|dimension" />
+    </declare-styleable>
+</resources>

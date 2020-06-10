@@ -16,7 +16,11 @@ import com.angcyo.widget.base.offsetTopTo
 import kotlin.math.absoluteValue
 
 /**
- * 支持[OverScroller]处理
+ * 支持[OverScroller]处理.
+ *
+ * behaviorScrollY>0 表示手指向下滚动的距离
+ * behaviorScrollY<0 表示手指向上滚动的距离
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/01/01
