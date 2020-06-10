@@ -209,7 +209,7 @@ open class OptionDialogConfig : BaseDialogConfig() {
                     } else {
                         _dslAffect.showAffect(DslAffect.AFFECT_CONTENT)
                         if (_adapter.adapterItems.isEmpty() && loadLevel > 0) {
-                            //防止从默认状态打开
+                            //加载上一级, 防止从默认状态打开
                             val level = loadLevel - 1
                             _loadOptionList(level, dialogViewHolder, resetTab)
                         }
