@@ -1,13 +1,16 @@
 package com.angcyo.item.style
 
 import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
+import com.angcyo.library.UndefinedDrawable
 import com.angcyo.library.ex.undefined_color
 import com.angcyo.library.ex.undefined_float
-import com.angcyo.widget.base.setBoldText
+import com.angcyo.library.ex.undefined_size
+import com.angcyo.widget.base.*
 
 /**
  * 文本样式配置
@@ -25,6 +28,13 @@ open class TextStyleConfig : ViewStyleConfig() {
     var textColors: ColorStateList? = null
     var textSize: Float = undefined_float
     var textGravity: Int = Gravity.LEFT or Gravity.CENTER_VERTICAL
+
+    /**四向图标, 需要指定bounds*/
+    var leftDrawable: Drawable? = UndefinedDrawable()
+    var topDrawable: Drawable? = UndefinedDrawable()
+    var rightDrawable: Drawable? = UndefinedDrawable()
+    var bottomDrawable: Drawable? = UndefinedDrawable()
+    var drawablePadding = undefined_size
 
     /**生效*/
     override fun updateStyle(view: View) {
@@ -64,6 +74,32 @@ open class TextStyleConfig : ViewStyleConfig() {
                 }
                 this@TextStyleConfig.textSize = size
                 setTextSize(TypedValue.COMPLEX_UNIT_PX, size)
+
+                //padding
+                if (drawablePadding == undefined_size) {
+                    drawablePadding = compoundDrawablePadding
+                }
+                compoundDrawablePadding = drawablePadding
+
+                //四向图标修改
+                if (leftDrawable is UndefinedDrawable) {
+                    leftDrawable = leftIco()
+                }
+                if (topDrawable is UndefinedDrawable) {
+                    topDrawable = topIco()
+                }
+                if (rightDrawable is UndefinedDrawable) {
+                    rightDrawable = rightIco()
+                }
+                if (bottomDrawable is UndefinedDrawable) {
+                    bottomDrawable = bottomIco()
+                }
+                setCompoundDrawablesRelative(
+                    leftDrawable,
+                    topDrawable,
+                    rightDrawable,
+                    bottomDrawable
+                )
             }
         }
     }

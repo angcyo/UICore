@@ -15,4 +15,7 @@
     <!--LinkageGradientTitleBehavior-->
     <item name="lib_title_text_view" type="id" />
     <item name="lib_title_back_view" type="id" />
+
+    <!--将IView放置在View中-->
+    <item name="lib_tag_iview" type="id" />
 </resources>

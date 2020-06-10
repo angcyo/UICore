@@ -368,6 +368,7 @@ fun ViewGroup.resetChildCount(newSize: Int, onCreateView: (childIndex: Int) -> V
 
 //<editor-fold desc="Dsl吸附">
 
+/**从[View]中, 获取挂载的[DslViewHolder].如果没有, 则使用本身创建一个*/
 fun View.dslViewHolder(): DslViewHolder {
     return this.run {
         var _tag = getTag(R.id.lib_tag_dsl_view_holder)
@@ -386,6 +387,7 @@ fun View.dslViewHolder(): DslViewHolder {
     }
 }
 
+/**获取挂载的[DslViewHolder]*/
 fun View?.tagDslViewHolder(): DslViewHolder? {
     return this?.run {
         var _tag = getTag(R.id.lib_tag_dsl_view_holder)
@@ -402,6 +404,7 @@ fun View?.tagDslViewHolder(): DslViewHolder? {
     }
 }
 
+/**获取挂载的[DslAdapterItem]*/
 fun View?.tagDslAdapterItem(): DslAdapterItem? {
     return this?.run {
         val tag = getTag(R.id.lib_tag_dsl_adapter_item)
@@ -413,10 +416,12 @@ fun View?.tagDslAdapterItem(): DslAdapterItem? {
     }
 }
 
+/**设置挂载[DslViewHolder]*/
 fun View?.setDslViewHolder(dslViewHolder: DslViewHolder?) {
     this?.setTag(R.id.lib_tag_dsl_view_holder, dslViewHolder)
 }
 
+/**设置挂载[DslAdapterItem]*/
 fun View?.setDslAdapterItem(dslAdapterItem: DslAdapterItem?) {
     this?.setTag(R.id.lib_tag_dsl_adapter_item, dslAdapterItem)
 }
@@ -538,4 +543,23 @@ fun ViewGroup.resetDslItem(items: List<DslAdapterItem>) {
         addDslItem(dslItem)
     }
 }
+
+/**查找[ViewGroup]中, 包含的[DslAdapterItem]集合*/
+fun ViewGroup.findDslItemList(onlyVisible: Boolean = true): List<DslAdapterItem> {
+    val result = mutableListOf<DslAdapterItem>()
+    forEach { _, child ->
+        val dslItem = child.tagDslAdapterItem()
+        dslItem?.apply {
+            if (onlyVisible) {
+                if (child.isVisible()) {
+                    result.add(this)
+                }
+            } else {
+                result.add(this)
+            }
+        }
+    }
+    return result
+}
+
 //<editor-fold desc="DslAdapterItem操作">

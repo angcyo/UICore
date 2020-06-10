@@ -28,6 +28,11 @@ fun TextView.setLeftIco(id: Int) {
     setLeftIco(loadDrawable(id))
 }
 
+fun TextView.leftIco() = compoundDrawables[0]
+fun TextView.topIco() = compoundDrawables[1]
+fun TextView.rightIco() = compoundDrawables[2]
+fun TextView.bottomIco() = compoundDrawables[3]
+
 fun TextView.setLeftIco(drawable: Drawable?) {
     val compoundDrawables: Array<Drawable?> = compoundDrawables
     setCompoundDrawablesWithIntrinsicBounds(
@@ -79,7 +84,6 @@ fun TextView.setBottomIco(drawable: Drawable?) {
         drawable
     )
 }
-
 
 /**
  * 设置是否显示删除线

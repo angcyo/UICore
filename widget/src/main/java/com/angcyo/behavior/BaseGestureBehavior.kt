@@ -29,15 +29,24 @@ abstract class BaseGestureBehavior<T : View>(
     /**是否开启touch捕捉*/
     var enableGesture = true
 
+    /**手指松开时的横向速率, 小于0 手指向左fling*/
+    var lastVelocityX = 0f
+
+    /**手指松开时的纵向速率, 小于0 手指向上fling */
+    var lastVelocityY = 0f
+
     //手势检测
     val _gestureDetector: GestureDetector by lazy {
         GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+
             override fun onFling(
                 e1: MotionEvent?,
                 e2: MotionEvent?,
                 velocityX: Float,
                 velocityY: Float
             ): Boolean {
+                lastVelocityX = velocityX
+                lastVelocityY = velocityY
                 return onGestureFling(e1, e2, velocityX, velocityY)
             }
 
@@ -82,6 +91,8 @@ abstract class BaseGestureBehavior<T : View>(
         } else if (ev.isTouchDown()) {
             _needHandleTouch = true
             _isFirstScroll = true
+            lastVelocityX = 0f
+            lastVelocityY = 0f
             onTouchDown(parent, child, ev)
         }
         if (enableGesture && _needHandleTouch) {

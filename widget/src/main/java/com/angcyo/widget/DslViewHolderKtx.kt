@@ -10,6 +10,7 @@ import com.angcyo.widget.base.simulateClick
 import com.angcyo.widget.edit.AutoCompleteEditText
 import com.angcyo.widget.edit.DslEditText
 import com.angcyo.widget.image.DslImageView
+import com.angcyo.widget.layout.DslFlowLayout
 import com.angcyo.widget.layout.DslSoftInputLayout
 import com.angcyo.widget.pager.DslViewPager
 import com.angcyo.widget.progress.DslProgressBar
@@ -39,6 +40,7 @@ fun DslViewHolder._rv(@IdRes id: Int): DslRecyclerView? = v(id)
 fun DslViewHolder._tv(@IdRes id: Int): DslTextView? = v(id)
 fun DslViewHolder._et(@IdRes id: Int): DslEditText? = v(id)
 fun DslViewHolder._ev(@IdRes id: Int): DslEditText? = v(id)
+fun DslViewHolder.flow(@IdRes id: Int): DslFlowLayout? = v(id)
 
 /**返回true, 表示有空字符串*/
 fun DslViewHolder.checkEmpty(@IdRes vararg ids: Int): Boolean {

@@ -28,6 +28,9 @@ class FlowLayoutDelegate : LayoutDelegate() {
     /** 每一行的Item等宽 */
     var itemEquWidth: Boolean by RequestLayoutDelegateProperty(false)
 
+    /**配合[itemEquWidth]使用, 开启仅支持单行样式*/
+    var singleLine: Boolean by RequestLayoutDelegateProperty(false)
+
     /** item之间, 横竖向间隔. */
     var itemHorizontalSpace: Int by RequestLayoutDelegateProperty(0)
 
@@ -48,6 +51,8 @@ class FlowLayoutDelegate : LayoutDelegate() {
             array.getInt(R.styleable.FlowLayoutDelegate_r_flow_max_line_child_count, maxCountLine)
         itemEquWidth =
             array.getBoolean(R.styleable.FlowLayoutDelegate_r_flow_equ_width, itemEquWidth)
+        singleLine =
+            array.getBoolean(R.styleable.FlowLayoutDelegate_r_flow_single_line, singleLine)
         itemHorizontalSpace = array.getDimensionPixelOffset(
             R.styleable.FlowLayoutDelegate_r_flow_item_horizontal_space,
             itemHorizontalSpace
@@ -92,6 +97,31 @@ class FlowLayoutDelegate : LayoutDelegate() {
         //视图可用空间
         val viewAvailableWidth = measureWidthSize - paddingLeft - paddingRight
         val count = childCount
+
+        var singleLineChildWidthMeasureSpec = 0
+        if (itemEquWidth && singleLine) {
+            //单行模式下, 等宽测量模式
+
+            var useWidth = paddingLeft + paddingRight
+            var visibleCount = 0
+            for (i in 0 until count) {
+                val child = getChildAt(i)
+                if (child == null || child.visibility == View.GONE) {
+                    continue
+                }
+                visibleCount++
+                val lp: ViewGroup.MarginLayoutParams =
+                    child.layoutParams as ViewGroup.MarginLayoutParams
+                useWidth += lp.leftMargin + lp.rightMargin
+            }
+
+            if (visibleCount > 0) {
+                useWidth += itemHorizontalSpace * (visibleCount - 1)
+            }
+
+            singleLineChildWidthMeasureSpec = exactly((measureWidthSize - useWidth) / visibleCount)
+        }
+
         for (i in 0 until count) {
             val child = getChildAt(i)
             if (child == null || child.visibility == View.GONE) {
@@ -99,11 +129,25 @@ class FlowLayoutDelegate : LayoutDelegate() {
             }
             val params = child.layoutParams as LinearLayout.LayoutParams
             if (itemEquWidth) {
-                measureChild(
-                    child,
-                    View.MeasureSpec.makeMeasureSpec(measureWidthSize, View.MeasureSpec.AT_MOST),
-                    heightMeasureSpec
-                )
+                if (singleLine) {
+                    val lp = child.layoutParams
+                    val childWidthMeasureSpec = singleLineChildWidthMeasureSpec
+                    val childHeightMeasureSpec = ViewGroup.getChildMeasureSpec(
+                        heightMeasureSpec,
+                        paddingTop + paddingBottom,
+                        lp.height
+                    )
+                    child.measure(childWidthMeasureSpec, childHeightMeasureSpec)
+                } else {
+                    measureChild(
+                        child,
+                        View.MeasureSpec.makeMeasureSpec(
+                            measureWidthSize,
+                            View.MeasureSpec.AT_MOST
+                        ),
+                        heightMeasureSpec
+                    )
+                }
             } else {
                 if (params.weight > 0) {
                     //支持[weight]属性
@@ -119,7 +163,7 @@ class FlowLayoutDelegate : LayoutDelegate() {
             childHeight = child.measuredHeight + params.topMargin + params.bottomMargin
             val lineViewSize = lineViews.size
             //本次追加 child后 , 需要的宽度
-            val needWidth = lineWidth + childWidth + itemHorizontalSpace
+            val needWidth = lineWidth + childWidth
             if (needWidth > viewAvailableWidth || maxCountLine > 0 && lineViewSize == maxCountLine) { //需要换新行
                 if (itemEquWidth) { //margin,padding 消耗的宽度
                     childWidth = measureLineEquWidth(
