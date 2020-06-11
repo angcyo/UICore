@@ -102,3 +102,13 @@ fun <L1, L2> each(list1: List<L1>?, list2: List<L2>?, run: (item1: L1, item2: L2
 }
 
 fun uuid(): String = UUID.randomUUID().toString()
+
+/**判断列表是否为空, 包括内部的数据也是非空*/
+fun List<Any?>?.isListEmpty(): Boolean {
+    if (this?.size ?: -1 > 0) {
+        return false
+    }
+    return this?.run {
+        find { it != null } == null
+    } ?: true
+}

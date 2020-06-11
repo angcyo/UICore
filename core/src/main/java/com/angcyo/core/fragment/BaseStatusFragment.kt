@@ -9,6 +9,7 @@ import com.angcyo.dsladapter.*
 import com.angcyo.dsladapter.ItemSelectorHelper.Companion.MODEL_SINGLE
 import com.angcyo.getData
 import com.angcyo.library.ex.each
+import com.angcyo.library.ex.isListEmpty
 import com.angcyo.library.model.Page
 import com.angcyo.widget.recycler.initDsl
 
@@ -193,16 +194,17 @@ open class BaseStatusFragment : BaseDslFragment() {
         error: Throwable? = null,
         action: (statusList: MutableList<StatusItem>, bean: Bean) -> Unit
     ) {
-        if (dataList?.size ?: 0 > 0) {
+        if (dataList.isListEmpty()) {
+            //如果左边数据为空, 则使用右边的adapter, 显示情感图状态 (空状态/错误状态)
+            loadDataEnd(DslAdapterItem::class.java, listOf<String>(), error)
+        } else {
+            //否则左边有数据
             finishRefresh()
             statusList.clear()
             dataList?.forEach {
                 action(statusList, it)
             }
             _initLeftRecyclerView()
-        } else {
-            //右边的adapter, 显示情感图状态
-            loadDataEnd(DslAdapterItem::class.java, dataList, error)
         }
     }
 

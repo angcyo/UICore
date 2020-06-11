@@ -1,5 +1,6 @@
 package com.angcyo.dsladapter
 
+import com.angcyo.library.ex.isListEmpty
 import kotlin.math.max
 import kotlin.math.min
 
@@ -158,7 +159,7 @@ class UpdateDataConfig {
     var adapterCheckLoadMore: (dslAdapter: DslAdapter) -> Unit = { dslAdapter ->
         dslAdapter.updateLoadMore(
             updatePage,
-            updateDataList?.size ?: 0,
+            if (updateDataList.isListEmpty()) 0 else (updateDataList?.size ?: 0),
             pageSize,
             alwaysEnableLoadMore
         )
