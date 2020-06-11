@@ -2,6 +2,7 @@ package com.angcyo.item
 
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.TextStyleConfig
+import com.angcyo.library.ex.dpi
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -38,6 +39,13 @@ open class DslLabelTextItem : DslBaseLabelItem() {
         itemHolder.tv(R.id.lib_text_view)?.apply {
             itemTextStyle.updateStyle(this)
         }
+    }
+
+    /**配置最小高度样式*/
+    fun minHeightStyle(padding: Int = 3 * dpi) {
+        //itemMinHeight = _dimen(R.dimen.lib_min_item_height)
+        itemPaddingTop = padding
+        itemPaddingBottom = padding
     }
 
     open fun configTextStyle(action: TextStyleConfig.() -> Unit) {

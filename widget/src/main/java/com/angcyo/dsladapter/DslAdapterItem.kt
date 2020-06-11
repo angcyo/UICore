@@ -166,11 +166,12 @@ open class DslAdapterItem : LifecycleOwner {
 
     var itemLongClick: ((View) -> Boolean)? = null
 
-    var _clickListener: View.OnClickListener? = View.OnClickListener { view ->
+    //使用节流方式处理点击事件
+    var _clickListener: View.OnClickListener? = ThrottleClickListener(action = { view ->
         notNull(itemClick, view) {
-            itemClick?.invoke(view!!)
+            itemClick?.invoke(view)
         }
-    }
+    })
 
     var _longClickListener: View.OnLongClickListener? =
         View.OnLongClickListener { view -> itemLongClick?.invoke(view) ?: false }
