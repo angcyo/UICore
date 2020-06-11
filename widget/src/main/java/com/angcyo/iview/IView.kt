@@ -62,9 +62,9 @@ abstract class IView {
     /**
      * 将[IView]从到[_parentView]中移除
      * */
-    fun hide() {
+    fun hide(end: (() -> Unit)? = null) {
         removeInner(_parentView) {
-
+            end?.invoke()
         }
     }
 

@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.provider.Settings
 
 /**
  *
@@ -103,4 +104,15 @@ fun Intent.fillFrom(other: Intent?, flag: Int = 255): Intent {
         fillIn(other, flag)
     }
     return this
+}
+
+/**跳转应用详情页面*/
+fun Context.toApplicationDetailsSettings(packageName: String = getPackageName()) {
+    try {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        intent.data = Uri.parse("package:$packageName")
+        startActivity(intent)
+    } catch (e: Throwable) {
+        e.printStackTrace()
+    }
 }
