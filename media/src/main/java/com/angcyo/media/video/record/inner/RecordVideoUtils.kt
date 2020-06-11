@@ -22,14 +22,13 @@ import java.util.concurrent.TimeUnit
 class RecordVideoUtils {
 
     companion object {
-        @JvmStatic
+
         fun getResolutionList(camera: Camera): List<Camera.Size> {
             val parameters = camera.parameters
             return parameters.supportedPreviewSizes
         }
 
-        val isSdcardExist: Boolean
-            get() = Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
+        val isSdcardExist: Boolean get() = Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
 
         fun getDurationString(durationMs: Long): String {
             return String.format(
@@ -46,12 +45,12 @@ class RecordVideoUtils {
 
         @ColorInt
         fun darkenColor(@ColorInt color: Int): Int {
-            var color = color
+            var result = color
             val hsv = FloatArray(3)
-            Color.colorToHSV(color, hsv)
+            Color.colorToHSV(result, hsv)
             hsv[2] *= 0.8f // value component
-            color = Color.HSVToColor(hsv)
-            return color
+            result = Color.HSVToColor(hsv)
+            return result
         }
 
         /**
@@ -60,7 +59,7 @@ class RecordVideoUtils {
          * @param path
          * @return
          */
-        fun getVideoFristImage(path: String?): Bitmap {
+        fun getVideoFirstImage(path: String?): Bitmap {
             val media = MediaMetadataRetriever()
             media.setDataSource(path)
             return media.frameAtTime
@@ -77,31 +76,29 @@ class RecordVideoUtils {
          * 不同的CamcorderProfile.QUALITY_ 代表每帧画面的清晰度,
          * 变换 profile.videoBitRate 可减少每秒钟帧数
          *
-         * @param cameraID 前摄 Camera.CameraInfo.CAMERA_FACING_FRONT /后摄 Camera.CameraInfo.CAMERA_FACING_BACK
+         * @param cameraId 前摄 Camera.CameraInfo.CAMERA_FACING_FRONT /后摄 Camera.CameraInfo.CAMERA_FACING_BACK
          * @return
          */
-        @JvmStatic
-        fun getBestCamcorderProfile(cameraID: Int): CamcorderProfile {
-            var profile =
-                CamcorderProfile.get(cameraID, CamcorderProfile.QUALITY_LOW)
-            if (CamcorderProfile.hasProfile(cameraID, CamcorderProfile.QUALITY_720P)) {
+        fun getBestCamcorderProfile(cameraId: Int): CamcorderProfile {
+            var profile = CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_LOW)
+            if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_720P)) {
                 //对比上面480 这个选择 动作大时马赛克!!
-                profile = CamcorderProfile.get(cameraID, CamcorderProfile.QUALITY_720P)
+                profile = CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_720P)
                 profile.videoBitRate = profile.videoBitRate / 10
                 return profile
             }
-            if (CamcorderProfile.hasProfile(cameraID, CamcorderProfile.QUALITY_480P)) {
+            if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_480P)) {
                 //对比下面720 这个选择 每帧不是很清晰
-                profile = CamcorderProfile.get(cameraID, CamcorderProfile.QUALITY_480P)
+                profile = CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_480P)
                 profile.videoBitRate = profile.videoBitRate / 5
                 return profile
             }
-            if (CamcorderProfile.hasProfile(cameraID, CamcorderProfile.QUALITY_CIF)) {
-                profile = CamcorderProfile.get(cameraID, CamcorderProfile.QUALITY_CIF)
+            if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_CIF)) {
+                profile = CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_CIF)
                 return profile
             }
-            if (CamcorderProfile.hasProfile(cameraID, CamcorderProfile.QUALITY_QVGA)) {
-                profile = CamcorderProfile.get(cameraID, CamcorderProfile.QUALITY_QVGA)
+            if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_QVGA)) {
+                profile = CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_QVGA)
                 return profile
             }
             return profile
@@ -132,16 +129,15 @@ class RecordVideoUtils {
             return degree
         }
 
-        /*
-     * 旋转图片
-     *
-     * @param angle
-     *
-     * @param bitmap
-     *
-     * @return Bitmap
-     */
-        fun rotaingImageView(angle: Int, bitmap: Bitmap): Bitmap {
+        /**
+         * 旋转图片
+         *
+         * @param angle
+         * @param bitmap
+         *
+         * @return Bitmap
+         */
+        fun rotateImageView(angle: Int, bitmap: Bitmap): Bitmap {
             // 旋转图片 动作
             val matrix = Matrix()
             matrix.postRotate(angle.toFloat())

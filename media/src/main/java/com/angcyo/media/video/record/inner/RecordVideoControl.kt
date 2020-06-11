@@ -42,41 +42,25 @@ class RecordVideoControl(
 
     /**
      * 设置录制保存路径
-     *
-     * @param videoPath
      */
     var videoPath: String? = null
     var previewWidth = 720 //预览宽
     var previewHeight = 1280 //预览高
-    /**
-     * 获取最大录制时间
-     *
-     * @return
-     */
+
     /**
      * 设置录制时间
-     *
-     * @param maxTime
      */
     var maxTime = 100000 //最大录制时间
-    /**
-     * 获取最大录制大小
-     *
-     * @return
-     */
+
     /**
      * 设置录制大小
-     *
-     * @param maxSize
      */
-    var maxSize = 300 * 1024 * 1024 //最大录制大小 默认300m
-        .toLong()
-    var mSurfaceHolder: SurfaceHolder
+    var maxSize = 300 * 1024 * 1024.toLong()/*最大录制大小 默认300m*/
+
+    var surfaceHolder: SurfaceHolder
 
     /**
      * 摄像头方向
-     *
-     * @return
      */
     var cameraFacing: Int
 
@@ -86,27 +70,28 @@ class RecordVideoControl(
      * @return
      */
     var isRecording = false
-    var mCamera: Camera? = null
+    var camera: Camera? = null
 
     //是否预览
-    var mIsPreviewing = false
+    var isPreviewing = false
     var mediaRecorder: MediaRecorder? = null
     var defaultVideoFrameRate = 24 //默认的视频帧率
 
     init {
         mSizeSurfaceView.isUserSize = true
-        mSurfaceHolder = mSizeSurfaceView.holder
-        mSurfaceHolder.addCallback(this)
+        surfaceHolder = mSizeSurfaceView.holder
+        surfaceHolder.addCallback(this)
 
         //这里设置当摄像头数量大于1的时候就直接设置后摄像头  否则就是前摄像头
-//        if (Build.VERSION.SDK_INT > 8) {
-//            if (Camera.getNumberOfCameras() > 1) {
-//                mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
-//            } else {
-//                mCameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
-//            }
-//        }
-        cameraFacing = Camera.CameraInfo.CAMERA_FACING_BACK
+        cameraFacing = if (Build.VERSION.SDK_INT > 8) {
+            if (Camera.getNumberOfCameras() > 1) {
+                Camera.CameraInfo.CAMERA_FACING_BACK
+            } else {
+                Camera.CameraInfo.CAMERA_FACING_FRONT
+            }
+        } else {
+            Camera.CameraInfo.CAMERA_FACING_BACK
+        }
     }
 
 
@@ -116,17 +101,17 @@ class RecordVideoControl(
      * @param holder
      */
     fun startCameraPreview(holder: SurfaceHolder) {
-        mIsPreviewing = false
+        isPreviewing = false
         setCameraParameter()
-        mCamera!!.setDisplayOrientation(displayOrientation)
+        camera!!.setDisplayOrientation(displayOrientation)
         try {
-            mCamera!!.setPreviewDisplay(holder)
+            camera!!.setPreviewDisplay(holder)
         } catch (e: IOException) {
             destroyCamera()
             return
         }
-        mCamera!!.startPreview()
-        mIsPreviewing = true
+        camera!!.startPreview()
+        isPreviewing = true
         mSizeSurfaceView.setVideoDimension(previewHeight, previewWidth)
         mSizeSurfaceView.requestLayout()
     }
@@ -135,15 +120,15 @@ class RecordVideoControl(
      * 释放 Camera
      */
     fun destroyCamera() {
-        if (mCamera != null) {
-            if (mIsPreviewing) {
-                mCamera!!.stopPreview()
-                mIsPreviewing = false
-                mCamera!!.setPreviewCallback(null)
-                mCamera!!.setPreviewCallbackWithBuffer(null)
+        if (camera != null) {
+            if (isPreviewing) {
+                camera!!.stopPreview()
+                isPreviewing = false
+                camera!!.setPreviewCallback(null)
+                camera!!.setPreviewCallbackWithBuffer(null)
             }
-            mCamera!!.release()
-            mCamera = null
+            camera!!.release()
+            camera = null
         }
     }
 
@@ -186,9 +171,9 @@ class RecordVideoControl(
         }
         destroyCamera()
         try {
-            mCamera = Camera.open(cameraFacing)
-            if (mCamera != null) {
-                startCameraPreview(mSurfaceHolder)
+            camera = Camera.open(cameraFacing)
+            if (camera != null) {
+                startCameraPreview(surfaceHolder)
             }
         } catch (e: Exception) {
             destroyCamera()
@@ -199,13 +184,12 @@ class RecordVideoControl(
      * 设置camera 的 Parameters
      */
     fun setCameraParameter() {
-        val parameters = mCamera!!.parameters
+        val parameters = camera!!.parameters
         parameters.setPreviewSize(previewWidth, previewHeight)
         if (Build.VERSION.SDK_INT < 9) {
             return
         }
-        val supportedFocus =
-            parameters.supportedFocusModes
+        val supportedFocus = parameters.supportedFocusModes
         val isHave =
             if (supportedFocus == null) false else supportedFocus.indexOf(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) >= 0
         if (isHave) {
@@ -213,7 +197,7 @@ class RecordVideoControl(
         }
         parameters.flashMode =
             if (flashType == FLASH_MODE_ON) Camera.Parameters.FLASH_MODE_TORCH else Camera.Parameters.FLASH_MODE_OFF
-        mCamera!!.parameters = parameters
+        camera!!.parameters = parameters
     }
 
     override fun surfaceCreated(surfaceHolder: SurfaceHolder) {}
@@ -225,21 +209,21 @@ class RecordVideoControl(
         height: Int
     ) {
         try {
-            mSurfaceHolder = holder
+            surfaceHolder = holder
             if (holder.surface == null) {
                 return
             }
-            if (mCamera == null) {
-                mCamera = if (Build.VERSION.SDK_INT < 9) {
+            if (camera == null) {
+                camera = if (Build.VERSION.SDK_INT < 9) {
                     Camera.open()
                 } else {
                     Camera.open(cameraFacing)
                 }
             }
-            if (mCamera != null) mCamera!!.stopPreview()
-            mIsPreviewing = false
-            handleSurfaceChanged(mCamera)
-            startCameraPreview(mSurfaceHolder)
+            if (camera != null) camera!!.stopPreview()
+            isPreviewing = false
+            handleSurfaceChanged(camera)
+            startCameraPreview(surfaceHolder)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -263,7 +247,7 @@ class RecordVideoControl(
             if (supportedPreviewFrameRates != null
                 && supportedPreviewFrameRates.size > 0
             ) {
-                Collections.sort(supportedPreviewFrameRates)
+                supportedPreviewFrameRates.sort()
                 for (i in supportedPreviewFrameRates.indices) {
                     val supportRate = supportedPreviewFrameRates[i]
                     if (supportRate == defaultVideoFrameRate) {
@@ -352,9 +336,9 @@ class RecordVideoControl(
         isRecording = true
         releaseRecorder()
         //mCamera.stopPreview();
-        mCamera!!.unlock()
+        camera!!.unlock()
         mediaRecorder = MediaRecorder()
-        mediaRecorder!!.setCamera(mCamera)
+        mediaRecorder!!.setCamera(camera)
         mediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.DEFAULT)
         mediaRecorder!!.setVideoSource(MediaRecorder.VideoSource.CAMERA)
         mediaRecorder!!.setOrientationHint(displayOrientation)
@@ -374,7 +358,7 @@ class RecordVideoControl(
         // 设置最大录制时间
         mediaRecorder!!.setMaxFileSize(maxSize)
         mediaRecorder!!.setMaxDuration(maxTime)
-        mediaRecorder!!.setPreviewDisplay(mSurfaceHolder.surface)
+        mediaRecorder!!.setPreviewDisplay(surfaceHolder.surface)
         mediaRecorder!!.setOutputFile(videoPath)
         try {
             mediaRecorder!!.prepare()
@@ -417,8 +401,8 @@ class RecordVideoControl(
                 mediaRecorder!!.stop()
                 mediaRecorder!!.release()
                 mediaRecorder = null
-                if (mCamera != null) {
-                    mCamera!!.stopPreview()
+                if (camera != null) {
+                    camera!!.stopPreview()
                 }
                 if (isSucessed) {
                     if (mRecordVideoInterface != null) {
@@ -454,9 +438,9 @@ class RecordVideoControl(
             }
         }
         if (flashMode != null) {
-            val parameters = mCamera!!.parameters
+            val parameters = camera!!.parameters
             parameters.flashMode = flashMode
-            mCamera!!.parameters = parameters
+            camera!!.parameters = parameters
         }
     }
 
@@ -464,9 +448,9 @@ class RecordVideoControl(
      * 拍照
      */
     fun takePhoto() {
-        mCamera!!.setPreviewCallback(Camera.PreviewCallback { data, camera ->
+        camera!!.setPreviewCallback(Camera.PreviewCallback { data, camera ->
             camera.setPreviewCallback(null)
-            if (mCamera == null) return@PreviewCallback
+            if (this.camera == null) return@PreviewCallback
             val parameters = camera.parameters
             val width = parameters.previewSize.width
             val height = parameters.previewSize.height
