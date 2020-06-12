@@ -82,11 +82,11 @@ open class GlideImageView : DslImageView {
         }
 
         if (!isInGlide) {
+            //Glide自行管理回收, 不需要手动处理.否则Glide回收时会崩溃
             if (drawable is GifDrawable) {
-                (drawable as GifDrawable).recycle()
+                //(drawable as GifDrawable).recycle()
                 setImageDrawable(null)
-            }
-            if (drawable is pl.droidsonroids.gif.GifDrawable) {
+            } else if (drawable is pl.droidsonroids.gif.GifDrawable) {
                 (drawable as pl.droidsonroids.gif.GifDrawable).recycle()
                 setImageDrawable(null)
             }

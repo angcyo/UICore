@@ -438,7 +438,7 @@ class DslGlide {
                 dataSource: DataSource?,
                 isFirstResource: Boolean
             ): Boolean {
-                L.w("$model 加载成功(${LTime.time()}) $dataSource")
+                L.w("$model 加载成功(${LTime.time()}) $dataSource $resource")
                 _loadSucceed(_loadUri.loadUrl())
                 //targetView?.invalidate()
                 return this@DslGlide.onLoadSucceed(string, resource)
