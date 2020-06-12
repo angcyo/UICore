@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:minWidth="40dp"
                 android:minHeight="40dp"
-                android:scaleType="fitXY"
+                android:scaleType="fitCenter"
                 android:visibility="gone"
                 tools:src="@drawable/lib_ic_succeed"
                 tools:visibility="visible" />
