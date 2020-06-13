@@ -79,5 +79,16 @@
         <item name="android:textColor">@color/text_place_color</item>
     </style>
 
+    <!--搜索框的样式-->
+    <style name="LibEditSearchStyle" parent="LibBodyTextStyle">
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:imeOptions">actionSearch</item>
+        <item name="android:imeActionLabel">搜索</item>
+        <item name="android:hint">搜索</item>
+        <item name="android:drawablePadding">@dimen/lib_hdpi</item>
+        <item name="android:paddingLeft">@dimen/lib_xhdpi</item>
+        <item name="android:paddingRight">@dimen/lib_xhdpi</item>
+    </style>
 
 </resources>
