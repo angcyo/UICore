@@ -16,19 +16,26 @@ class Page {
         var FIRST_PAGE_INDEX: Int = 1
     }
 
+    /**默认的第一页*/
+    var firstPageIndex: Int = FIRST_PAGE_INDEX
+        set(value) {
+            field = value
+            pageRefresh()
+        }
+
     /** 当前请求完成的页 */
-    var _currentPageIndex: Int = FIRST_PAGE_INDEX
+    var _currentPageIndex: Int = firstPageIndex
 
     /** 正在请求的页 */
-    var requestPageIndex: Int = FIRST_PAGE_INDEX
+    var requestPageIndex: Int = firstPageIndex
 
     /** 每页请求的数量 */
     var requestPageSize: Int = PAGE_SIZE
 
     /**页面刷新, 重置page index*/
     fun pageRefresh() {
-        _currentPageIndex = FIRST_PAGE_INDEX
-        requestPageIndex = FIRST_PAGE_INDEX
+        _currentPageIndex = firstPageIndex
+        requestPageIndex = firstPageIndex
     }
 
     /**页面加载更多*/
@@ -43,6 +50,7 @@ class Page {
 
     /**重新赋值*/
     fun set(page: Page) {
+        firstPageIndex = page.firstPageIndex
         _currentPageIndex = page._currentPageIndex
         requestPageIndex = page.requestPageIndex
         requestPageSize = page.requestPageSize
