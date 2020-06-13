@@ -1,6 +1,7 @@
 package com.angcyo.fragment
 
 import android.animation.Animator
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -11,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.angcyo.base.getAllResumedFragment
-import com.angcyo.base.putFragmentResult
+import com.angcyo.base.setFragmentResult
 import com.angcyo.base.toVisibilityString
 import com.angcyo.library.L.i
 import com.angcyo.library.ex.hash
@@ -82,6 +83,7 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
 
     override fun onDestroy() {
         super.onDestroy()
+        onFragmentSetResult()
     }
 
     override fun onActivityResult(
@@ -95,8 +97,12 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
 
     override fun onDetach() {
         super.onDetach()
-        //清空对象引用
-        arguments?.putFragmentResult(null)
+    }
+
+    /**重写此方法, 回调[Fragment]的返回值.
+     * [com.angcyo.base.IFragmentResultKt.onFragmentResult]*/
+    open fun onFragmentSetResult() {
+        setFragmentResult(null, Activity.RESULT_CANCELED)
     }
 
     //</editor-fold desc="生命周期, 系统的方法">
