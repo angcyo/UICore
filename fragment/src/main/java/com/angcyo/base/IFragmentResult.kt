@@ -8,8 +8,6 @@ import androidx.fragment.app.Fragment
 import com.angcyo.base.IFragmentResult.Companion.KEY_RESULT
 import com.angcyo.base.IFragmentResult.Companion._doResult
 import com.angcyo.base.IFragmentResult.Companion._setRef
-import java.lang.ref.SoftReference
-import java.lang.ref.WeakReference
 
 /**
  *
@@ -24,23 +22,20 @@ interface IFragmentResult {
         val KEY_RESULT = "key_fragment_result"
 
         //弱引用保存回调实例
-        val sparseArray = SparseArray<SoftReference<IFragmentResult?>?>()
+        val sparseArray = SparseArray<IFragmentResult?>()
 
         fun _clearRef(key: Int) {
-            sparseArray.get(key)?.apply {
-                clear()
-                sparseArray[key] = null
-            }
+            sparseArray[key] = null
         }
 
         fun _setRef(key: Int, result: IFragmentResult) {
             _clearRef(key)
-            sparseArray[key] = SoftReference(result)
+            sparseArray[key] = result
         }
 
         fun _doResult(key: Int, resultCode: Int, data: Any?) {
             try {
-                sparseArray.get(key)?.get()?.onFragmentResult(resultCode, data)
+                sparseArray.get(key)?.onFragmentResult(resultCode, data)
             } finally {
                 _clearRef(key)
             }
@@ -77,7 +72,10 @@ fun Fragment.onFragmentResult(result: (resultCode: Int, data: Any?) -> Unit) {
 }
 
 /**设置[Fragment]返回数据*/
-fun Fragment.setFragmentResult(data: Any?, resultCode: Int = Activity.RESULT_OK) {
+fun Fragment.setFragmentResult(
+    data: Any?,
+    resultCode: Int = if (data == null) Activity.RESULT_CANCELED else Activity.RESULT_OK
+) {
     arguments?.getFragmentResultKey()?.apply {
         if (this != -1) {
             _doResult(this, resultCode, data)

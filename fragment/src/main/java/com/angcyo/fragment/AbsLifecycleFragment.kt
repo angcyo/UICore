@@ -1,7 +1,6 @@
 package com.angcyo.fragment
 
 import android.animation.Animator
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -102,7 +101,7 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
     /**重写此方法, 回调[Fragment]的返回值.
      * [com.angcyo.base.IFragmentResultKt.onFragmentResult]*/
     open fun onFragmentSetResult() {
-        setFragmentResult(null, Activity.RESULT_CANCELED)
+        setFragmentResult(null)
     }
 
     //</editor-fold desc="生命周期, 系统的方法">
