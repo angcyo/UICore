@@ -196,6 +196,11 @@ fun mediaPayload(): List<Int> =
 
 //<editor-fold desc="AdapterStatus">
 
+fun DslAdapter.adapterStatus() = dslAdapterStatusItem.itemState
+
+fun DslAdapter.isAdapterStatusLoading() =
+    dslAdapterStatusItem.itemState == DslAdapterStatusItem.ADAPTER_STATUS_LOADING
+
 fun DslAdapter.justRunFilterParams() = defaultFilterParams!!.apply {
     justRun = true
     asyncDiff = false
@@ -252,6 +257,18 @@ fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEnd(
     page: Page,
     initItem: Item.(data: Bean) -> Unit = {}
 ) {
+    loadDataEndIndex(itemClass, dataList, error, page) { data, _ ->
+        initItem(data)
+    }
+}
+
+fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEndIndex(
+    itemClass: Class<Item>,
+    dataList: List<Bean>?,
+    error: Throwable?,
+    page: Page,
+    initItem: Item.(data: Bean, index: Int) -> Unit = { _, _ -> }
+) {
     if (error != null) {
         //加载失败
         if (adapterItems.isEmpty()) {
@@ -275,13 +292,13 @@ fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEnd(
         updatePage = page.requestPageIndex
         pageSize = page.requestPageSize
         updateDataList = dataList as List<Any>?
-        this.updateOrCreateItem = { oldItem, data, _ ->
+        this.updateOrCreateItem = { oldItem, data, index ->
             var newItem = oldItem
             if (oldItem == null) {
                 newItem = itemClass.newInstance()
             }
             (newItem as Item?)?.apply {
-                this.initItem(data as Bean)
+                this.initItem(data as Bean, index)
             }
         }
     }

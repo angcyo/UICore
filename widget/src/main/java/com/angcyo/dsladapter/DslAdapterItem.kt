@@ -234,6 +234,8 @@ open class DslAdapterItem : LifecycleOwner {
 
     //初始化背景
     open fun _initItemBackground(itemHolder: DslViewHolder) {
+        itemHolder.itemView.isSelected = itemIsSelected
+
         if (itemBackgroundDrawable !is UndefinedDrawable) {
             itemHolder.itemView.apply {
                 setBgDrawable(itemBackgroundDrawable)

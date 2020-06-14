@@ -55,4 +55,7 @@ class Page {
         requestPageIndex = page.requestPageIndex
         requestPageSize = page.requestPageSize
     }
+
+    /**是否是第一页请求*/
+    fun isFirstPage() = requestPageIndex == firstPageIndex
 }
