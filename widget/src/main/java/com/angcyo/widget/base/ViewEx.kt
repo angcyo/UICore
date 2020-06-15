@@ -326,6 +326,15 @@ fun View?.postAndRemove(action: () -> Unit) {
     })
 }
 
+fun View?.postDelay(delayMillis: Long = 160, action: () -> Unit) {
+    this?.postDelayed(object : Runnable {
+        override fun run() {
+            removeCallbacks(this)
+            action()
+        }
+    }, delayMillis)
+}
+
 //</editor-fold desc="基础扩展">
 
 //<editor-fold desc="layoutParams扩展">
