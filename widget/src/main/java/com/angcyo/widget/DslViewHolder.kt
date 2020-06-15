@@ -146,6 +146,19 @@ open class DslViewHolder(
         view?.setOnLongClickListener(listener)
     }
 
+    fun check(
+        @IdRes resId: Int,
+        checked: Boolean,
+        listener: (buttonView: CompoundButton, isChecked: Boolean) -> Unit
+    ): CompoundButton? {
+        val compoundButton: CompoundButton? = v(resId)
+        if (compoundButton != null) {
+            compoundButton.setOnCheckedChangeListener(listener)
+            compoundButton.isChecked = checked
+        }
+        return compoundButton
+    }
+
     //</editor-fold desc="事件处理">
 
     //<editor-fold desc="post回调">

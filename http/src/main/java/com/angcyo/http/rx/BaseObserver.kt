@@ -29,7 +29,7 @@ open class BaseObserver<T> : AtomicReference<Disposable>(), Observer<T>, Disposa
     }
 
     var onError: (Throwable) -> Unit = {
-        L.e("${this.javaClass.name}#onError")
+        L.e("${this.javaClass.name}#onError:$it")
     }
 
     var onComplete: () -> Unit = {

@@ -97,6 +97,9 @@ open class FocusEditDelegate(val editText: EditText) {
         val viewWidth = editText.mW()
         val viewHeight = editText.mH()
 
+        val scrollX = editText.scrollX
+        val scrollY = editText.scrollY
+
         val mLeft = editText.calcSize(drawableMarginLeft, viewWidth, viewHeight, 0, 0)
         val mRight = editText.calcSize(drawableMarginRight, viewWidth, viewHeight, 0, 0)
         val mBottom = editText.calcSize(drawableMarginBottom, viewWidth, viewHeight, 0, 0)
@@ -104,22 +107,22 @@ open class FocusEditDelegate(val editText: EditText) {
 
         noFocusDrawable?.apply {
             setBounds(
-                mLeft,
-                viewHeight - dHeight - mBottom,
-                editText.measuredWidth - mRight,
-                viewHeight - mBottom
+                scrollX + mLeft,
+                scrollY + viewHeight - dHeight - mBottom,
+                scrollX + editText.measuredWidth - mRight,
+                scrollY + viewHeight - mBottom
             )
             draw(canvas)
         }
         focusDrawable?.apply {
             val viewDrawWidth = viewWidth - mLeft - mRight
             val width = viewDrawWidth * _progress
-            val center = viewDrawWidth / 2 + mLeft
+            val center = scrollX + viewDrawWidth / 2 + mLeft
             setBounds(
                 (center - width / 2).toInt(),
-                viewHeight - dHeight - mBottom,
+                scrollY + viewHeight - dHeight - mBottom,
                 (center + width / 2).toInt(),
-                viewHeight - mBottom
+                scrollY + viewHeight - mBottom
             )
             draw(canvas)
         }

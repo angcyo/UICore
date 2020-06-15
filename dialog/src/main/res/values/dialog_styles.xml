@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="LibDialogStyle" parent="Theme.AppCompat.Light.Dialog">
+    <style name="LibDialogStyle" parent="ThemeOverlay.AppCompat.Dialog">
         <item name="android:windowNoTitle">true</item>
 
         <!--会影响dialog上的布局...奇怪-->

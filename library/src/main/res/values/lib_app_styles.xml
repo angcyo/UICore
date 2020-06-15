@@ -91,4 +91,13 @@
         <item name="android:paddingRight">@dimen/lib_xhdpi</item>
     </style>
 
+    <!--单行输入文本-->
+    <style name="LibSingleEditStyle" parent="LibEditSearchStyle">
+        <item name="android:imeOptions">actionDone</item>
+        <item name="android:imeActionLabel">完成</item>
+        <item name="android:hint">""</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+    </style>
+
 </resources>

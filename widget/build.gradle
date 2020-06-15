@@ -14,8 +14,8 @@ dependencies {
     api project(allModule.drawable)
 
     //https://mvnrepository.com/artifact/androidx.fragment
-    api "androidx.fragment:fragment:1.2.4"
-    api "androidx.fragment:fragment-ktx:1.2.4"
+    api "androidx.fragment:fragment:1.2.5"
+    api "androidx.fragment:fragment-ktx:1.2.5"
 
     //https://mvnrepository.com/artifact/androidx.appcompat/appcompat
     api "androidx.appcompat:appcompat:1.1.0"
@@ -31,4 +31,9 @@ dependencies {
 
     //https://mvnrepository.com/artifact/androidx.viewpager2/viewpager2
     api 'androidx.viewpager2:viewpager2:1.0.0'
+
+    //https://github.com/bufferapp/BufferTextInputLayout
+    //https://mvnrepository.com/artifact/com.wajahatkarim3.BufferTextInputLayout/buffertextinputlayout
+    api 'com.wajahatkarim3.BufferTextInputLayout:buffertextinputlayout:1.2.0'
+
 }

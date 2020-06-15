@@ -302,10 +302,13 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
 }
 
 /**判断http状态码为成功, 并且接口返回状态也为成功*/
-fun Response<JsonElement>?.isSucceed(codeKey: String = DEFAULT_CODE_KEY): Boolean {
+fun Response<JsonElement>?.isSucceed(codeKey: String? = DEFAULT_CODE_KEY): Boolean {
     val bodyData = this?.body() ?: return false
     var result = false
-    if (isSuccessful && bodyData is JsonObject) {
+
+    if (codeKey.isNullOrEmpty()) {
+        result = isSuccessful
+    } else if (isSuccessful && bodyData is JsonObject) {
         if (bodyData.getInt(codeKey) in 200..299) {
             result = true
         }

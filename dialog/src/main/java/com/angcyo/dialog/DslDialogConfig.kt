@@ -175,13 +175,15 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
     @StyleRes
     var animStyleResId: Int = R.style.LibDialogAnimation
 
-    /**创建对话框时的主题*/
+    /**创建对话框时的主题, 默认主题请使用0*/
     @StyleRes
     var dialogThemeResId: Int = R.style.LibDialogStyle
 
     /**
      * 显示dialog的类型
      * [AppCompatDialog] [AlertDialog] [BottomSheetDialog]
+     *
+     * [AlertDialog]通过系统自带的[Builder]构建
      * */
     var dialogType = DIALOG_TYPE_APPCOMPAT
 
@@ -291,6 +293,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
         val decorView: View
         configDialog(dialog)
         if (dialog is AlertDialog) {
+            //从showAlertDialog传过来的dialog
         } else {
             if (dialogContentView != null) {
                 dialog.setContentView(dialogContentView!!)
@@ -409,8 +412,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
             throw NullPointerException("context is null.")
         }
 
-        val builder =
-            AlertDialog.Builder(dialogContext!!, dialogThemeResId)
+        val builder = AlertDialog.Builder(dialogContext!!, dialogThemeResId)
         if (!TextUtils.isEmpty(dialogMessage)) {
             builder.setMessage(dialogMessage)
         }
