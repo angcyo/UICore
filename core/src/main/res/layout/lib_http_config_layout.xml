@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/lib_xhdpi">
+
+    <org.buffer.android.buffertextinputlayout.BufferTextInputLayout
+        android:id="@+id/input_wrapper_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.angcyo.widget.edit.DslEditText
+            android:id="@+id/host_edit"
+            style="@style/LibSingleEditStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:hint="服务器Base地址"
+            android:inputType="textWebEmailAddress"
+            android:minHeight="@dimen/lib_min_item_height"
+            app:r_focus_drawable="@drawable/lib_bottom_focus_shape"
+            app:r_no_focus_drawable="@drawable/lib_bottom_no_focus_shape" />
+
+    </org.buffer.android.buffertextinputlayout.BufferTextInputLayout>
+
+    <com.angcyo.widget.RSpinner
+        android:id="@+id/url_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lib_ldpi"
+        android:background="@drawable/lib_press_color_border_fill_selector"
+        android:minHeight="@dimen/lib_min_item_height"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/input_wrapper_layout" />
+
+    <CheckBox
+        android:id="@+id/map_box"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lib_ldpi"
+        android:text="打开数据映射"
+        app:layout_constraintTop_toBottomOf="@id/url_spinner" />
+
+    <com.angcyo.widget.DslButton
+        android:id="@+id/get_list"
+        style="@style/DefaultButtonMinStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="@dimen/lib_hdpi"
+        android:enabled="false"
+        android:minHeight="30dp"
+        android:paddingLeft="@dimen/lib_hdpi"
+        android:paddingRight="@dimen/lib_hdpi"
+        android:text="获取在线映射列表"
+        app:layout_constraintBottom_toBottomOf="@id/map_box"
+        app:layout_constraintLeft_toRightOf="@id/map_box"
+        app:layout_constraintTop_toTopOf="@id/map_box" />
+
+    <com.angcyo.widget.DslButton
+        android:id="@+id/lib_save_button"
+        style="@style/DefaultButtonMinStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lib_hdpi"
+        android:minWidth="80dp"
+        android:minHeight="32dp"
+        android:text="保存"
+        app:layout_constraintTop_toBottomOf="@id/get_list" />
+</com.angcyo.widget.layout.RConstraintLayout>
