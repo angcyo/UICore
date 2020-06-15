@@ -1,5 +1,6 @@
 package com.angcyo.library.ex
 
+import android.app.Application
 import com.angcyo.library.BuildConfig
 import java.io.BufferedWriter
 import java.io.FileWriter
@@ -15,6 +16,17 @@ import kotlin.math.min
  * @date 2019/12/19
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
+
+/**反射获取[Application]对象*/
+fun currentApplication(): Application? {
+    return try {
+        val activityThreadClass = Class.forName("android.app.ActivityThread")
+        val method = activityThreadClass.getMethod("currentApplication")
+        method.invoke(null) as Application?
+    } catch (e: Exception) {
+        null
+    }
+}
 
 fun isRelease(): Boolean = "release".equals(BuildConfig.BUILD_TYPE, true)
 
