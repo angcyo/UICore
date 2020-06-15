@@ -11,6 +11,7 @@ import android.net.Proxy
 import android.os.Build
 import android.os.Environment
 import android.os.StatFs
+import android.provider.Settings
 import android.telephony.TelephonyManager
 import android.text.format.Formatter
 import android.view.View
@@ -34,6 +35,12 @@ import kotlin.math.sqrt
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 object Device {
+
+    var androidId: String = ""
+        get() = if (field.isEmpty()) Settings.Secure.getString(
+            app().contentResolver,
+            Settings.Secure.ANDROID_ID
+        ) else field
 
     var deviceId: String = ""
         get() = if (field.isEmpty()) getUniqueDeviceId() else field
