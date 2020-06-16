@@ -153,7 +153,7 @@ fun EditText.onTextChange(
 /**设置文本, 并且将光标至于文本最后面*/
 fun EditText.setInputText(text: CharSequence? = null) {
     setText(text)
-    setSelection(text?.length ?: 0)
+    setSelection(min(text?.length ?: 0, getText().length))
 }
 
 /**恢复选中范围*/
