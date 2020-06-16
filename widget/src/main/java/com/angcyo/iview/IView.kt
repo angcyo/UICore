@@ -6,6 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import com.angcyo.library.L
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
@@ -17,7 +20,7 @@ import com.angcyo.widget.R
  * @date 2020/06/10
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-abstract class IView {
+abstract class IView : LifecycleOwner {
 
     /**布局id*/
     var iViewLayoutId: Int = -1
@@ -73,17 +76,18 @@ abstract class IView {
     //<editor-fold desc="生命周期方法">
 
     open fun onIViewCreate() {
-
+        lifecycleRegistry.currentState = Lifecycle.State.STARTED
     }
 
     @CallSuper
     open fun onIViewShow() {
         showCount++
+        lifecycleRegistry.currentState = Lifecycle.State.RESUMED
     }
 
     @Deprecated("此方法触发时机待定")
     open fun onIViewHide() {
-
+        lifecycleRegistry.currentState = Lifecycle.State.STARTED
     }
 
     @CallSuper
@@ -92,6 +96,7 @@ abstract class IView {
         iViewHolder?.clear()
         iViewHolder = null
         _parentView = null
+        lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
     }
 
     //</editor-fold desc="生命周期方法">
@@ -139,4 +144,15 @@ abstract class IView {
     }
 
     //</editor-fold desc="内部方法">
+
+    //<editor-fold desc="Lifecycle支持">
+
+    val lifecycleRegistry = LifecycleRegistry(this)
+
+    override fun getLifecycle(): Lifecycle {
+        return lifecycleRegistry
+    }
+
+    //</editor-fold desc="Lifecycle支持">
+
 }
