@@ -36,6 +36,7 @@ import kotlin.math.sqrt
  */
 object Device {
 
+    //https://developer.android.google.cn/training/articles/user-data-ids
     var androidId: String = ""
         get() = if (field.isEmpty()) Settings.Secure.getString(
             app().contentResolver,
