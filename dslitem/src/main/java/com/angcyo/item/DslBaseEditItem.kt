@@ -75,3 +75,12 @@ open class DslBaseEditItem : DslBaseLabelItem() {
         itemEditTextStyle.action()
     }
 }
+
+/**快速获取对应Item的值*/
+fun DslAdapterItem.itemEditText(): CharSequence? {
+    return if (this is DslBaseEditItem) {
+        this.itemEditText
+    } else {
+        null
+    }
+}
