@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Looper
 import android.view.View
@@ -52,6 +53,21 @@ fun Context.getAppName(): String {
         e.printStackTrace()
     }
     return appName
+}
+
+/**
+ * 获取APP的图标
+ */
+fun Context.getAppIcon(): Drawable? {
+    val appName = packageName
+    val packageManager = packageManager
+    try {
+        val packInfo = packageManager.getPackageInfo(appName, 0)
+        return packInfo.applicationInfo.loadIcon(packageManager)
+    } catch (e: PackageManager.NameNotFoundException) {
+        e.printStackTrace()
+    }
+    return null
 }
 
 /**

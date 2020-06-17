@@ -3,6 +3,7 @@ package com.angcyo
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import androidx.fragment.app.Fragment
 import com.angcyo.http.base.fromJson
 import com.angcyo.http.base.toJson
@@ -81,8 +82,15 @@ inline fun <reified DATA> Fragment.getData(key: String = BUNDLE_KEY_JSON): DATA?
 //<editor-fold desc="Intent put get">
 
 fun Intent.putData(data: Any?, key: String = BUNDLE_KEY_JSON) {
-    putExtra(key, data?.covertToStr())
+    if (data is Parcelable) {
+        putExtra(key, data)
+    } else {
+        putExtra(key, data?.covertToStr())
+    }
 }
+
+inline fun <reified DATA : Parcelable> Intent.getDataOrParcelable(key: String = BUNDLE_KEY_JSON): DATA? =
+    getParcelableExtra(key) ?: getStringExtra(key)?.covertFromStr()
 
 inline fun <reified DATA> Intent.getData(key: String = BUNDLE_KEY_JSON): DATA? =
     getStringExtra(key)?.covertFromStr()
@@ -97,6 +105,9 @@ fun Activity.putData(data: Any?, key: String = BUNDLE_KEY_JSON) {
 
 inline fun <reified DATA> Activity.getData(key: String = BUNDLE_KEY_JSON): DATA? =
     intent.getData(key)
+
+inline fun <reified DATA : Parcelable> Activity.getDataOrParcelable(key: String = BUNDLE_KEY_JSON): DATA? =
+    intent.getDataOrParcelable(key)
 
 //</editor-fold desc="Activity put get">
 

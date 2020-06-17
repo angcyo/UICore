@@ -71,6 +71,29 @@ fun Window.enableLayoutFullScreen(enable: Boolean = true) {
     }
 }
 
+/**全屏模式*/
+fun Activity.fullscreen(enable: Boolean = true) {
+    window.fullscreen(enable)
+}
+
+fun Window.fullscreen(enable: Boolean = true) {
+    decorView.fullscreen(enable)
+}
+
+fun View.fullscreen(enable: Boolean = true) {
+    systemUiVisibility = if (enable) {
+        View.SYSTEM_UI_FLAG_LOW_PROFILE or
+                View.SYSTEM_UI_FLAG_FULLSCREEN or
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+    } else {
+        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+    }
+}
+
 /** 是否是白色状态栏. 如果是, 那么系统的状态栏字体会是灰色 */
 fun Activity.lightStatusBar(light: Boolean = true) {
     window.lightStatusBar(light)
