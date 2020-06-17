@@ -33,7 +33,7 @@ open class FocusEditDelegate(val editText: EditText) {
     var focusDrawable: Drawable? = null
 
     /**指定[Drawable]的高度*/
-    var drawableHeight: String? = "2dp"
+    var drawableHeight: String? = "1dp"
 
     var drawableMarginLeft: String? = null
     var drawableMarginRight: String? = null
