@@ -341,10 +341,10 @@ class DslNotify {
     /**通知栏, 右边的大图, 不支持SVG?*/
     var notifyLargeIcon: Bitmap? = null
 
-    /**通知标题*/
+    /**通知标题.(标准配置项1)*/
     var notifyTitle: CharSequence? = null
 
-    /**通知正文文本, 默认情况下，通知的文字内容会被截断以放在一行。使用[setStyle]*/
+    /**通知正文文本, 默认情况下，通知的文字内容会被截断以放在一行。使用[setStyle].(标准配置项2)*/
     var notifyText: CharSequence? = null
         set(value) {
             field = value
@@ -380,7 +380,7 @@ class DslNotify {
      * [com.angcyo.library.component.DslNotify.Companion.pendingActivity]*/
     var notifyContentIntent: PendingIntent? = null
 
-    /**配置[notifyContentIntent]才有效果*/
+    /**当点击通知时, 是否自动关闭通知. 配置[notifyContentIntent]才有效果*/
     var notifyAutoCancel = true
 
     /**用户一键清除通知时, 触发的意图.[NotificationManager.cancel]不会触发*/
@@ -420,6 +420,12 @@ class DslNotify {
 
     /**正在进行的通知, 不允许侧滑删除*/
     var notifyOngoing = false
+        set(value) {
+            field = value
+            if (value) {
+                notifyAutoCancel = false
+            }
+        }
 
     /**通知的声音 [channelSoundUri]*/
     var notifySoundUri: Uri? = null
@@ -579,6 +585,21 @@ fun dslBuildNotify(context: Context = app(), action: DslNotify.() -> Unit): Noti
 /**快速创建配置通知, 并显示*/
 fun dslNotify(context: Context = app(), action: DslNotify.() -> Unit): Int {
     return DslNotify().run {
+        action()
+        doIt(context)
+    }
+}
+
+/**快速显示一个通知*/
+fun dslNotify(
+    context: Context = app(),
+    title: CharSequence?,
+    content: CharSequence?,
+    action: DslNotify.() -> Unit
+): Int {
+    return DslNotify().run {
+        notifyTitle = title
+        notifyText = content
         action()
         doIt(context)
     }
