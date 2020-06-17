@@ -180,6 +180,11 @@ fun EditText.restoreSelection(start: Int, stop: Int) {
     }
 }
 
+/**发送删除键*/
+fun EditText.sendDelKey() {
+    del()
+}
+
 /**触发删除或回退键*/
 fun EditText.del() {
     dispatchKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL))
