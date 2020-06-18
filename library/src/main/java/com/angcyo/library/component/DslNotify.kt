@@ -331,7 +331,7 @@ class DslNotify {
 
     //<editor-fold desc="通知相关配置">
 
-    var notifyId = System.currentTimeMillis().toInt()
+    var notifyId: Int = (System.currentTimeMillis() and 0xFFFFFFF).toInt()
 
     /**必须的最小成员变量,一般建议在24×24, 支持svg, 但是色彩会丢失. png 可以支持彩色
      * Android 5.0 SVG显示有系统背景

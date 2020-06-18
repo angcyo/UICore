@@ -54,6 +54,12 @@ open class LockNotifyActivity : BaseLockNotifyActivity() {
 
         _vh.throttleClick(R.id.notify_wrap_layout) {
 
+            //取消通知
+            if (lockNotifyParams.notifyId > 0) {
+                DslNotify.cancelNotify(this, lockNotifyParams.notifyId)
+            }
+
+            //intent
             lockNotifyParams.notifyActivityIntent?.apply {
                 startActivity(this)
             }
@@ -62,6 +68,7 @@ open class LockNotifyActivity : BaseLockNotifyActivity() {
                 sendBroadcast(this)
             }
 
+            //解锁, 关闭界面
             disableKeyguard()
             finish()
         }
@@ -87,7 +94,10 @@ data class LockNotifyParams(
     var notifyActivityIntent: Intent? = null,
 
     //点击之后, 触发的Broadcast Intent
-    var notifyBroadcastIntent: Intent? = null
+    var notifyBroadcastIntent: Intent? = null,
+
+    //通知的id, 点击之后, 会取消通知. 大于0才有效, 小于0会自动赋值
+    var notifyId: Int = -1
 ) : Parcelable
 
 /**
@@ -97,7 +107,11 @@ fun DslAHelper.lockNotify(action: LockNotifyParams.() -> Unit) {
     params.action()
 
     //不管怎样, 通知都要显示
-    dslNotify {
+    val id = dslNotify {
+        if (params.notifyId > 0) {
+            notifyId = params.notifyId
+        }
+
         notifyTitle = params.notifyTitle
         notifyText = params.notifyContent
 
@@ -111,6 +125,10 @@ fun DslAHelper.lockNotify(action: LockNotifyParams.() -> Unit) {
             notifyContentIntent =
                 DslNotify.pendingBroadcast(context, params.notifyBroadcastIntent!!)
         }
+    }
+
+    if (params.notifyId != id) {
+        params.notifyId = id
     }
 
     if (context.isKeyguardLocked()) {
