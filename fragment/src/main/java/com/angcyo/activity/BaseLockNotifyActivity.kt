@@ -52,12 +52,12 @@ abstract class BaseLockNotifyActivity : BaseAppCompatActivity() {
         fullscreen()
 
         val window = window
-//        win.addFlags(
-//            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED //锁屏状态下显示
-//                    or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD //解锁
-//                    or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON //保持屏幕长亮
-//                    or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON//打开屏幕
-//        )
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED //锁屏状态下显示
+                    or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD //解锁
+                    or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON //保持屏幕长亮
+                    or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON//打开屏幕
+        )
 
         //解锁
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -73,9 +73,13 @@ abstract class BaseLockNotifyActivity : BaseAppCompatActivity() {
         } else {
             window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
         }
-        //使用手机的背景
-        val wallPaper = WallpaperManager.getInstance(this).drawable
-        window.setBackgroundDrawable(wallPaper)
+        try {
+            //使用手机的背景, 需要 [android.Manifest.permission.READ_EXTERNAL_STORAGE] 权限
+            val wallPaper = WallpaperManager.getInstance(this).drawable
+            window.setBackgroundDrawable(wallPaper)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     /**解锁*/
@@ -85,6 +89,11 @@ abstract class BaseLockNotifyActivity : BaseAppCompatActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    override fun onBackPressed() {
+        //不允许按返回键
+        //super.onBackPressed()
     }
 }
 
