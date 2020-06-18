@@ -5,9 +5,10 @@ import android.os.Bundle
 import android.os.Parcelable
 import androidx.annotation.DrawableRes
 import com.angcyo.DslAHelper
-import com.angcyo.base.dslAHelper
 import com.angcyo.fragment.R
 import com.angcyo.getDataOrParcelable
+import com.angcyo.library.component.DslNotify
+import com.angcyo.library.component.dslNotify
 import com.angcyo.library.ex.nowTimeString
 import com.angcyo.putData
 import kotlinx.android.parcel.Parcelize
@@ -42,12 +43,14 @@ open class LockNotifyActivity : BaseLockNotifyActivity() {
             _vh.img(R.id.notify_logo)?.setImageDrawable(appLogo)
         } else {
             _vh.img(R.id.notify_logo)?.setImageDrawable(getDrawable(lockNotifyParams.notifyLogo))
-
         }
         _vh.tv(R.id.notify_name)?.text = lockNotifyParams.notifyName ?: appName
 
         _vh.tv(R.id.notify_title)?.text = lockNotifyParams.notifyTitle
+        _vh.visible(R.id.notify_title, lockNotifyParams.notifyTitle != null)
+
         _vh.tv(R.id.notify_content)?.text = lockNotifyParams.notifyContent
+        _vh.visible(R.id.notify_content, lockNotifyParams.notifyContent != null)
 
         _vh.throttleClick(R.id.notify_wrap_layout) {
 
@@ -87,15 +90,34 @@ data class LockNotifyParams(
     var notifyBroadcastIntent: Intent? = null
 ) : Parcelable
 
-/**如果锁屏了, 才会启动[LockNotifyActivity], 否则直接触发对应的[Intent]*/
+/**
+ * 显示通知. 如果锁屏了, 才会启动[LockNotifyActivity]*/
 fun DslAHelper.lockNotify(action: LockNotifyParams.() -> Unit) {
     val params = LockNotifyParams()
     params.action()
+
+    //不管怎样, 通知都要显示
+    dslNotify {
+        notifyTitle = params.notifyTitle
+        notifyText = params.notifyContent
+
+        if (params.notifyLogo > 0) {
+            notifySmallIcon = params.notifyLogo
+        }
+
+        if (params.notifyActivityIntent != null) {
+            notifyContentIntent = DslNotify.pendingActivity(context, params.notifyActivityIntent!!)
+        } else if (params.notifyBroadcastIntent != null) {
+            notifyContentIntent =
+                DslNotify.pendingBroadcast(context, params.notifyBroadcastIntent!!)
+        }
+    }
+
     if (context.isKeyguardLocked()) {
         start(LockNotifyActivity::class.java) {
             putData(params)
         }
-    } else {
+    } /*else {
         params.notifyActivityIntent?.let {
             context.dslAHelper {
                 start(it)
@@ -105,5 +127,5 @@ fun DslAHelper.lockNotify(action: LockNotifyParams.() -> Unit) {
         params.notifyBroadcastIntent?.apply {
             context.sendBroadcast(this)
         }
-    }
+    }*/
 }

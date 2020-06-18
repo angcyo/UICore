@@ -386,7 +386,7 @@ class DslNotify {
     /**用户一键清除通知时, 触发的意图.[NotificationManager.cancel]不会触发*/
     var notifyDeleteIntent: PendingIntent? = null
 
-    /**立即要展示, 而不是发送到状态栏. 横幅通知. 不会消失.*/
+    /**立即要展示, 而不是发送到状态栏. 横幅通知. 不会消失. 通常用来实现电话通知*/
     var notifyFullScreenIntent: PendingIntent? = null
 
     var notifyFullScreenIntentHighPriority = true
