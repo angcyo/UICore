@@ -35,8 +35,7 @@ open class DslBaseLabelItem : DslAdapterItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem)
 
-        itemHolder.gone(R.id.lib_label_view, itemLabelText == null)
-
+        itemHolder.gone(R.id.lib_label_view, itemLabelTextStyle.text == null)
         itemHolder.tv(R.id.lib_label_view)?.apply {
             itemLabelTextStyle.updateStyle(this)
         }

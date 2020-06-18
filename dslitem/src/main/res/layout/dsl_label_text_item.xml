@@ -29,17 +29,42 @@
         android:paddingBottom="@dimen/lib_min_padding"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/lib_label_view"
-        app:layout_constraintRight_toLeftOf="@id/lib_right_ico_view"
+        app:layout_constraintRight_toLeftOf="@id/lib_right_wrap_layout"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0"
         tools:text="详情详情详情详情详情详情详情详情详情详情详情详情详情详情详情详情详情详情详情详情详情详情详情详情详情详情" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/lib_right_ico_view"
-        style="@style/ItemRightIcoStyle"
-        android:visibility="gone"
+    <FrameLayout
+        android:id="@+id/lib_right_wrap_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/lib_icon_edit_tip" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/lib_right_ico_view"
+            style="@style/ItemRightIcoStyle"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:srcCompat="@drawable/lib_icon_edit_tip"
+            tools:visibility="gone" />
+
+        <com.angcyo.widget.text.DslTextView
+            android:id="@+id/lib_right_text_view"
+            style="@style/ItemLabelStyle"
+            android:layout_gravity="center"
+            android:background="@drawable/lib_bg2_selector"
+            android:clickable="false"
+            android:minWidth="0dp"
+            android:paddingLeft="0dp"
+            android:paddingTop="0dp"
+            android:paddingRight="@dimen/lib_padding_right"
+            android:paddingBottom="0dp"
+            android:visibility="gone"
+            tools:text="m"
+            tools:visibility="visible" />
+
+    </FrameLayout>
+
 </com.angcyo.widget.layout.RConstraintLayout>

@@ -39,6 +39,16 @@ open class DslLabelTextItem : DslBaseLabelItem() {
     /**右边图标点击事件*/
     var itemRightIcoClick: ((DslViewHolder, View) -> Unit)? = null
 
+    /**右边的文本*/
+    var itemRightText: CharSequence? = null
+        set(value) {
+            field = value
+            itemRightTextStyle.text = value
+        }
+
+    /**统一样式配置*/
+    var itemRightTextStyle = TextStyleConfig()
+
     init {
         itemLayoutId = R.layout.dsl_label_text_item
     }
@@ -71,6 +81,11 @@ open class DslLabelTextItem : DslBaseLabelItem() {
                 visible()
                 setImageDrawable(drawable)
             }
+        }
+
+        itemHolder.gone(R.id.lib_right_text_view, itemRightTextStyle.text == null)
+        itemHolder.tv(R.id.lib_right_text_view)?.apply {
+            itemRightTextStyle.updateStyle(this)
         }
     }
 

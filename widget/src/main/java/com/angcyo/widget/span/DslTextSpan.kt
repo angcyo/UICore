@@ -53,7 +53,7 @@ open class DslTextSpan : MetricAffectingSpan(), LeadingMarginSpan,
     /**x轴缩放*/
     var scaleX: Float = undefined_float
 
-    /**文本基线偏移*/
+    /**文本基线偏移, 可以实现[isSuperscript] [isSubscript] 上下标的效果*/
     var textBaselineShift: Int = 0
 
     /**上标*/

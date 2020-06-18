@@ -3,6 +3,7 @@ package com.angcyo.item
 import android.graphics.drawable.Drawable
 import android.view.View
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.item.style.TextStyleConfig
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.*
 
@@ -23,6 +24,16 @@ open class DslLabelEditItem : DslBaseEditItem() {
 
     /**右边图标点击事件, 如果设置回调. 会影响默认的事件处理*/
     var itemRightIcoClick: ((DslViewHolder, View) -> Unit)? = null
+
+    /**右边的文本*/
+    var itemRightText: CharSequence? = null
+        set(value) {
+            field = value
+            itemRightTextStyle.text = value
+        }
+
+    /**统一样式配置*/
+    var itemRightTextStyle = TextStyleConfig()
 
     init {
         itemLayoutId = R.layout.dsl_label_edit_item
@@ -52,6 +63,11 @@ open class DslLabelEditItem : DslBaseEditItem() {
                 }
             }
             setImageDrawable(itemEditTipDrawable ?: loadDrawable(itemEditTipIcon))
+        }
+
+        itemHolder.gone(R.id.lib_right_text_view, itemRightTextStyle.text == null)
+        itemHolder.tv(R.id.lib_right_text_view)?.apply {
+            itemRightTextStyle.updateStyle(this)
         }
     }
 }
