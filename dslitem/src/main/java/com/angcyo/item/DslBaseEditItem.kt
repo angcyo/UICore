@@ -19,6 +19,9 @@ open class DslBaseEditItem : DslBaseLabelItem() {
     companion object {
         /**允许默认输入的字符长度*/
         var DEFAULT_MAX_INPUT_LENGTH = 30
+
+        /**输入框文本改变节流时长, 毫秒*/
+        var DEFAULT_INPUT_SHAKE_DELAY = 300L
     }
 
     var itemEditText: CharSequence? = null
@@ -34,6 +37,9 @@ open class DslBaseEditItem : DslBaseLabelItem() {
     var itemTextChange: (CharSequence) -> Unit = {
         onItemTextChange(it)
     }
+
+    /**文本改变去频限制, 负数表示不开启*/
+    var itemTextChangeShakeDelay = DEFAULT_INPUT_SHAKE_DELAY
 
     //用于恢复光标的位置
     var _lastEditSelectionStart = -1
@@ -54,7 +60,7 @@ open class DslBaseEditItem : DslBaseLabelItem() {
             itemEditTextStyle.updateStyle(this)
 
             //放在最后监听, 防止首次setInputText, 就触发事件.
-            onTextChange {
+            onTextChange(shakeDelay = itemTextChangeShakeDelay) {
                 _lastEditSelectionStart = selectionStart
                 _lastEditSelectionEnd = selectionEnd
 
