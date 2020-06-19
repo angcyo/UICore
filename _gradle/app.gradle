@@ -173,11 +173,15 @@ android {
 //        }
 //    }
 
+    def apkFolder = new File(project.rootDir.absolutePath + "/apk")//rootProject.file("/apk")
+    apkFolder.mkdirs()
+    println "\napp.gradle→APK输出目录:${apkFolder.absolutePath}"
+
     if (gradle.gradleVersion.startsWith("6")) {
         /*Gradle4.0 以上的方法*/
         applicationVariants.all { variant ->
             if (variant.buildType.name != "debug") {
-                variant.packageApplicationProvider.get().outputDirectory = rootProject.file("/apk")
+                variant.packageApplicationProvider.get().outputDirectory = apkFolder
             }
             variant.outputs.forEach {
                 it.apkData.outputFileName = _app_name + "-" +
@@ -194,7 +198,7 @@ android {
         /*Gradle3.3 以上的方法*/
         applicationVariants.all { variant ->
             if (variant.buildType.name != "debug") {
-                variant.packageApplicationProvider.get()?.outputDirectory = rootProject.file("/apk")
+                variant.packageApplicationProvider.get()?.outputDirectory = apkFolder
             }
 
             variant.packageApplicationProvider.get()?.outputScope?.apkDatas?.forEach { apkData ->
@@ -212,7 +216,8 @@ android {
         /*Gradle3.0 以上的方法*/
         applicationVariants.all { variant ->
             if (variant.buildType.name != "debug") {
-                variant.getPackageApplication().outputDirectory = new File(project.rootDir.absolutePath + "/apk")
+                //new File(project.rootDir.absolutePath + "/apk")
+                variant.getPackageApplication().outputDirectory = apkFolder
             }
 
             variant.getPackageApplication().outputScope.apkDatas.forEach { apkData ->
@@ -231,7 +236,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(allModule.core)
+    implementation project(allModule.wtcore)
 
     //https://stackoverflow.com/questions/51957944/android-view-viewonunhandledkeyeventlistener
     //https://github.com/DonaldDu/FixUnhandledEvent/
