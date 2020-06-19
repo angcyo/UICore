@@ -573,6 +573,8 @@ class DslNotify {
     //</editor-fold desc="通知相关配置">
 }
 
+//<editor-fold desc="快速构建">
+
 /**快速创建配置通知*/
 fun dslBuildNotify(context: Context = app(), action: DslNotify.() -> Unit): Notification {
     return DslNotify().run {
@@ -604,3 +606,25 @@ fun dslNotify(
         doIt(context)
     }
 }
+
+//</editor-fold desc="快速构建">
+
+//<editor-fold desc="通知扩展">
+
+/**通知的基础简单配置*/
+fun DslNotify.single(
+    title: CharSequence? = null,
+    content: CharSequence? = null
+) {
+    notifyTitle = title
+    notifyText = content
+}
+
+/**轻提示, 显示在次要通知栏里面, 没有声音/震动/横幅提醒*/
+fun DslNotify.low() {
+    channelImportance = NotificationManagerCompat.IMPORTANCE_LOW
+    notifyPriority = NotificationCompat.PRIORITY_LOW
+    notifyDefaults = NotificationCompat.DEFAULT_LIGHTS
+}
+
+//</editor-fold desc="通知扩展">
