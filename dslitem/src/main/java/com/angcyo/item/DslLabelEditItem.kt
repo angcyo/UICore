@@ -48,21 +48,29 @@ open class DslLabelEditItem : DslBaseEditItem() {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
         itemHolder.img(R.id.lib_right_ico_view)?.apply {
+            val drawable = itemEditTipDrawable ?: loadDrawable(itemEditTipIcon)
+            if (drawable == null) {
+                gone()
+            } else {
+                visible()
+                setImageDrawable(drawable)
+            }
+
+            //处理默认弹出软键盘
             if (itemRightIcoClick == null) {
                 if (itemEditTextStyle.noEditModel) {
                     gone()
                 } else {
-                    visible()
-                    clickIt {
+                    throttleClickIt {
                         itemHolder.focus<View>(R.id.lib_edit_view)?.showSoftInput()
                     }
                 }
             } else {
-                clickIt {
+                throttleClickIt {
                     itemRightIcoClick?.invoke(itemHolder, it)
                 }
             }
-            setImageDrawable(itemEditTipDrawable ?: loadDrawable(itemEditTipIcon))
+
         }
 
         itemHolder.gone(R.id.lib_right_text_view, itemRightTextStyle.text == null)
