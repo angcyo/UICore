@@ -83,6 +83,10 @@ class REditDelegate(editText: EditText) : FocusEditDelegate(editText) {
     /** 当视图不可见时, 是否隐藏键盘 */
     var hideSoftInputOnInvisible = false
 
+    val _showPasswordRunnable = Runnable {
+        editText.showPassword()
+    }
+
     //</editor-fold desc="DslEditText">
 
     override fun initAttribute(context: Context, attrs: AttributeSet?) {
@@ -213,15 +217,14 @@ class REditDelegate(editText: EditText) : FocusEditDelegate(editText) {
 
         if (showPasswordOnTouch && editText.isPasswordType()) {
             if (action == MotionEvent.ACTION_DOWN) {
+                editText.postDelayed(_showPasswordRunnable, 100)
             } else if (action == MotionEvent.ACTION_MOVE) {
-                if (System.currentTimeMillis() - _downTime > 100) {
-                    if (isDownInClear) {
-                        editText.hidePassword()
-                    } else {
-                        editText.showPassword()
-                    }
+                if (isDownInClear) {
+                    editText.removeCallbacks(_showPasswordRunnable)
+                    editText.hidePassword()
                 }
             } else if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
+                editText.removeCallbacks(_showPasswordRunnable)
                 editText.hidePassword()
             }
         }
