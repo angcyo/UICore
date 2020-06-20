@@ -3,6 +3,7 @@ package com.angcyo.item
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.EditStyleConfig
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.clearListeners
 import com.angcyo.widget.base.onTextChange
 import com.angcyo.widget.base.restoreSelection
 
@@ -59,12 +60,17 @@ open class DslBaseEditItem : DslBaseLabelItem() {
         itemHolder.ev(R.id.lib_edit_view)?.apply {
             itemEditTextStyle.updateStyle(this)
 
-            //放在最后监听, 防止首次setInputText, 就触发事件.
-            onTextChange(shakeDelay = itemTextChangeShakeDelay) {
+            clearListeners()
+
+            onTextChange {
                 _lastEditSelectionStart = selectionStart
                 _lastEditSelectionEnd = selectionEnd
 
                 itemEditText = it
+            }
+
+            //放在最后监听, 防止首次setInputText, 就触发事件.
+            onTextChange(shakeDelay = itemTextChangeShakeDelay) {
                 itemChanging = true
                 itemTextChange(it)
             }
