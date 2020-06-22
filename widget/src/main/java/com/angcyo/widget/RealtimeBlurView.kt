@@ -14,11 +14,12 @@ import com.angcyo.library.ex.dp
 import kotlin.math.max
 
 /**
- * 实时模糊
- *
- *
+ * 实时模糊, 来自:
  * https://github.com/kongzue/DialogV3
  *
+ *
+ * 实时模糊库:
+ * https://github.com/mmin18/RealtimeBlurView
  *
  * Email:angcyo@126.com
  *
