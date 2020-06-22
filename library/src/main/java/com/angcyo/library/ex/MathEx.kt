@@ -83,6 +83,7 @@ fun Double.decimal(digit: Int = 2, fadedUp: Boolean = false): Float {
     } / f
 }
 
+/**保留小数点后几位*/
 fun Float.decimal(digit: Int = 2, fadedUp: Boolean = false): Float {
     return this.toDouble().decimal(digit, fadedUp)
 }
