@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lib_accessibility_label">UICore无障碍</string>
+    <string name="lib_accessibility_summary">无障碍辅助工具</string>
+    <string name="lib_accessibility_description">无障碍辅助工具 ^_^ \n2020-6-23</string>
+</resources>
