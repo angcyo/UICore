@@ -77,8 +77,8 @@ object DslFileHelper {
 
     fun _wrapData2(data: String): String {
         return buildString {
-            appendln()
             append(dateFormat.format(Date()))
+            appendln()
             append(data)
             appendln()
         }
