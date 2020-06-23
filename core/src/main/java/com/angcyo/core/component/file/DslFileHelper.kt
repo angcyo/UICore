@@ -29,9 +29,9 @@ object DslFileHelper {
 
     /**返回文件路径*/
     fun write(
-        folder: String,
-        name: String = fileName("yyyy-MM-dd"),
-        data: String
+        folder: String /*文件夹名, 相对于应用目录下的/files/文件夹*/,
+        name: String = logFileName() /*文件名, 默认当天日期*/,
+        data: String /*需要写入的数据*/
     ): String? {
         if (async) {
             launchGlobal(Dispatchers.IO + CoroutineErrorHandler()) {
@@ -74,9 +74,20 @@ object DslFileHelper {
             append(data)
         }
     }
+
+    fun _wrapData2(data: String): String {
+        return buildString {
+            appendln()
+            append(dateFormat.format(Date()))
+            append(data)
+            appendln()
+        }
+    }
 }
 
 fun logFileName() = fileName("yyyy-MM-dd", ".log")
+
+fun String.wrapData() = DslFileHelper._wrapData2(this)
 
 fun String?.writeTo(
     folder: String = Constant.LOG_FOLDER_NAME,
