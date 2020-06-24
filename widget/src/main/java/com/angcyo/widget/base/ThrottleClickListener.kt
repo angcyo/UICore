@@ -21,7 +21,7 @@ open class ThrottleClickListener(
     companion object {
 
         //节流间隔时长
-        const val DEFAULT_THROTTLE_INTERVAL = 400L
+        var DEFAULT_THROTTLE_INTERVAL = 400L
 
         var _lastThrottleClickTime = 0L
     }

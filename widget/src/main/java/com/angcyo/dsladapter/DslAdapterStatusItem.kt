@@ -26,6 +26,9 @@ open class DslAdapterStatusItem : BaseDslStateItem() {
 
         /**错误*/
         const val ADAPTER_STATUS_ERROR = 3
+
+        /**预加载状态, 不会触发加载中回调*/
+        const val ADAPTER_STATUS_PRE_LOADING = 4
     }
 
     /**刷新回调*/
@@ -37,6 +40,7 @@ open class DslAdapterStatusItem : BaseDslStateItem() {
     var _isRefresh = false
 
     init {
+        itemStateLayoutMap[ADAPTER_STATUS_PRE_LOADING] = R.layout.lib_loading_layout
         itemStateLayoutMap[ADAPTER_STATUS_LOADING] = R.layout.lib_loading_layout
         itemStateLayoutMap[ADAPTER_STATUS_ERROR] = R.layout.lib_error_layout
         itemStateLayoutMap[ADAPTER_STATUS_EMPTY] = R.layout.lib_empty_layout

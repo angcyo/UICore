@@ -109,8 +109,7 @@ open class DslLoadMoreItem : BaseDslStateItem() {
         if (itemStateEnable) {
             //加载失败时, 下次是否还需要加载更多?
             if (itemState == LOAD_MORE_ERROR) {
-                itemState =
-                    _LOAD_MORE_RETRY
+                itemState = _LOAD_MORE_RETRY
             }
         }
     }
