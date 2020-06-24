@@ -1,6 +1,8 @@
 package com.angcyo.dsladapter
 
+import com.angcyo.library.ex.className
 import com.angcyo.library.ex.isListEmpty
+import com.angcyo.library.model.Page
 import kotlin.math.max
 import kotlin.math.min
 
@@ -15,8 +17,8 @@ import kotlin.math.min
 /**用于[Adapter]中单一数据类型的列表*/
 inline fun <reified Item : DslAdapterItem> DslAdapter.loadSingleData(
     dataList: List<Any>?,
-    page: Int = 1,
-    pageSize: Int = DslAdapter.DEFAULT_PAGE_SIZE,
+    page: Int = Page.FIRST_PAGE_INDEX,
+    pageSize: Int = Page.PAGE_SIZE,
     filterParams: FilterParams = defaultFilterParams!!.apply {
         payload = listOf(
             DslAdapterItem.PAYLOAD_UPDATE_PART,
@@ -38,7 +40,7 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.loadSingleData(
         //加载数据
         val list = dataList ?: emptyList()
         //第一页 数据检查
-        if (page <= 1) {
+        if (page <= Page.FIRST_PAGE_INDEX) {
             if (it.size > list.size) {
                 for (i in max(it.lastIndex, 0) downTo max(list.size, 0)) {
                     it.removeAt(i)
@@ -94,8 +96,8 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.loadSingleData(
 
 inline fun <reified Item : DslAdapterItem> DslAdapter.loadSingleData2(
     dataList: List<Any>?,
-    page: Int = 1,
-    pageSize: Int = DslAdapter.DEFAULT_PAGE_SIZE,
+    page: Int = Page.FIRST_PAGE_INDEX,
+    pageSize: Int = Page.PAGE_SIZE,
     filterParams: FilterParams = defaultFilterParams!!.apply {
         payload = listOf(
             DslAdapterItem.PAYLOAD_UPDATE_PART,
@@ -114,10 +116,10 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.loadSingleData2(
 /**数据更新Dsl配置项*/
 class UpdateDataConfig {
     /**需要加载的页码, 会偏移到指定位置*/
-    var updatePage: Int = 1
+    var updatePage: Int = Page.FIRST_PAGE_INDEX
 
     /**页面数量*/
-    var pageSize: Int = DslAdapter.DEFAULT_PAGE_SIZE
+    var pageSize: Int = Page.PAGE_SIZE
 
     /**需要加载的数据*/
     var updateDataList: List<Any>? = null
@@ -166,6 +168,22 @@ class UpdateDataConfig {
     }
 }
 
+/**简单的判断是否需要替换/更新[oldItem]*/
+fun <Item : DslAdapterItem> updateOrCreateItemByClass(
+    itemClass: Class<Item>,
+    oldItem: DslAdapterItem?,
+    initItem: Item.() -> Unit = { }
+): DslAdapterItem? {
+    var newItem = oldItem
+    if (oldItem == null || oldItem.className() != itemClass.className()) {
+        newItem = itemClass.newInstance()
+    }
+    (newItem as? Item?)?.apply {
+        this.initItem()
+    }
+    return newItem
+}
+
 /**根据[adapterItems]的数量, 智能切换[AdapterState]*/
 fun DslAdapter.updateAdapterState() {
     autoAdapterStatus()
@@ -175,10 +193,10 @@ fun DslAdapter.updateAdapterState() {
 fun DslAdapter.updateLoadMore(
     updatePage: Int /*当前数据页*/,
     updateSize: Int /*数据页数据更新量*/,
-    pageSize: Int = DslAdapter.DEFAULT_PAGE_SIZE /*数据页数据最大量*/,
+    pageSize: Int = Page.PAGE_SIZE /*数据页数据最大量*/,
     alwaysEnable: Boolean = false /*是否一直激活加载更多, 不管第一页数据不够*/
 ) {
-    if (updatePage <= 1) {
+    if (updatePage <= Page.FIRST_PAGE_INDEX) {
         //更新第一页的数据
         if (updateSize < pageSize) {
             //数据不够, 关闭加载更多
@@ -232,6 +250,7 @@ fun UpdateDataConfig.updateData(originList: List<DslAdapterItem>): List<DslAdapt
             val newItem = updateOrCreateItem(oldItem, data, index)
 
             if (newItem != null) {
+                newItem.itemChanging = true
                 newItem.itemData = data
             }
 
@@ -244,7 +263,6 @@ fun UpdateDataConfig.updateData(originList: List<DslAdapterItem>): List<DslAdapt
                 }
                 //replace old item
                 oldItem != null && oldItem != newItem -> {
-                    oldItem.itemChanging = true
                     oldList[i] = newItem
                 }
                 //update old item
@@ -273,7 +291,7 @@ fun UpdateDataConfig.updateData(originList: List<DslAdapterItem>): List<DslAdapt
 /**支持相同类型之间的轻量差异更新*/
 fun DslAdapter.updateHeaderData(action: UpdateDataConfig.() -> Unit) {
     val config = UpdateDataConfig()
-    config.updatePage = 0
+    config.updatePage = Page.FIRST_PAGE_INDEX
     config.pageSize = Int.MAX_VALUE
     config.action()
 
@@ -286,7 +304,7 @@ fun DslAdapter.updateHeaderData(action: UpdateDataConfig.() -> Unit) {
 
 fun DslAdapter.updateFooterData(action: UpdateDataConfig.() -> Unit) {
     val config = UpdateDataConfig()
-    config.updatePage = 0
+    config.updatePage = Page.FIRST_PAGE_INDEX
     config.pageSize = Int.MAX_VALUE
     config.action()
 
@@ -313,7 +331,7 @@ fun DslAdapter.updateData(action: UpdateDataConfig.() -> Unit) {
 /**更新单页数据*/
 inline fun <reified Item : DslAdapterItem> DslAdapter.updateSingleData(
     dataList: List<Any>?,
-    requestPage: Int = 1,
+    requestPage: Int = Page.FIRST_PAGE_INDEX,
     requestPageSize: Int = Int.MAX_VALUE,
     crossinline action: UpdateDataConfig.() -> Unit = {},
     crossinline initItem: Item.(data: Any?) -> Unit = {}
@@ -322,13 +340,9 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.updateSingleData(
         updatePage = requestPage
         pageSize = requestPageSize
         updateDataList = dataList
-        this.updateOrCreateItem = { oldItem, data, _ ->
-            var newItem = oldItem
-            if (oldItem == null) {
-                newItem = Item::class.java.newInstance()
-            }
-            (newItem as? Item)?.apply {
-                this.initItem(data)
+        updateOrCreateItem = { oldItem, data, _ ->
+            updateOrCreateItemByClass(Item::class.java, oldItem) {
+                initItem(data)
             }
         }
         action()

@@ -249,8 +249,6 @@ fun DslAdapter.onRefreshOrLoadMore(action: (itemHolder: DslViewHolder, loadMore:
 /**
  * 单一数据类型加载完成后, 调用此方法.
  * 自动处理, 情感图切换, 加载更多切换.
- * 注意: 在刷新第一页数据时, [DslAdapterItem]可能不会更新界面, 通过属性[itemChanging]设为true可以解决.
- * 这是因为库中的默认[Diff]计算, 无法检测[DslAdapterItem]显示的数据有变化
  * */
 fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEnd(
     itemClass: Class<Item>,
@@ -294,13 +292,9 @@ fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEndIndex(
         updatePage = page.requestPageIndex
         pageSize = page.requestPageSize
         updateDataList = dataList as List<Any>?
-        this.updateOrCreateItem = { oldItem, data, index ->
-            var newItem = oldItem
-            if (oldItem == null) {
-                newItem = itemClass.newInstance()
-            }
-            (newItem as Item?)?.apply {
-                this.initItem(data as Bean, index)
+        updateOrCreateItem = { oldItem, data, index ->
+            updateOrCreateItemByClass(itemClass, oldItem) {
+                initItem(data as Bean, index)
             }
         }
     }

@@ -194,18 +194,22 @@ public fun getSpanParams(
     return spanParams
 }
 
+/**[DslAdapterItem]分组信息. 分组依据[DslAdapterItem.isItemInGroups]*/
 data class ItemGroupParams(
+    /**当前[item]在一组中的索引值[index]*/
     var indexInGroup: Int = RecyclerView.NO_POSITION,
     var currentAdapterItem: DslAdapterItem? = null,
+    /**一组中的所有[item]*/
     var groupItems: MutableList<DslAdapterItem> = mutableListOf(),
 
-    /**仅在使用了[GridLayoutManager]时有效*/
+    /**以下参数,仅在使用了[GridLayoutManager]时有效*/
     var edgeInGrid: Int = EDGE_NONE,
     /**更细粒度的分组边界信息*/
     var edgeInGroup: Int = EDGE_NONE,
     var edgeGridParams: EdgeGridParams = EdgeGridParams()
 )
 
+/**网格分组边界[Edge]信息*/
 data class EdgeGridParams(
 
     /**相对于整个网格系统的边界*/
@@ -225,6 +229,7 @@ data class EdgeGridParams(
     var lastSpanParams: SpanParams = SpanParams()
 )
 
+/**网格分组中[Span]的信息*/
 data class SpanParams(
     //androidx.recyclerview.widget.GridLayoutManager.getSpanCount
     var spanCount: Int = 1,
@@ -272,15 +277,19 @@ const val EDGE_GROUP_TOP = 0x100
 //在一组中的底部
 const val EDGE_GROUP_BOTTOM = 0x200
 
-/**仅有一个*/
+//<editor-fold desc="线性布局中的分组信息扩展方法">
+
+/**一组中,仅有一个*/
 fun ItemGroupParams.isOnlyOne(): Boolean = groupItems.size == 1
 
-/**是否是第一个位置*/
+/**是否是一组中的第一个位置*/
 fun ItemGroupParams.isFirstPosition(): Boolean = indexInGroup == 0 && currentAdapterItem != null
 
-/**是否是最后一个位置*/
+/**是否是一组中的最后一个位置*/
 fun ItemGroupParams.isLastPosition(): Boolean =
     currentAdapterItem != null && indexInGroup == groupItems.lastIndex
+
+//</editor-fold desc="线性布局中的分组信息扩展方法">
 
 //<editor-fold desc="网格布局中的边界扩展方法">
 

@@ -45,7 +45,7 @@ open class DslAdapterItem : LifecycleOwner {
         const val PAYLOAD_UPDATE_MEDIA = 0x2_00_00
     }
 
-    /**适配器*/
+    /**适配器, 自动赋值[com.angcyo.dsladapter.DslAdapter.onBindViewHolder]*/
     var itemDslAdapter: DslAdapter? = null
 
     //<editor-fold desc="update操作">
@@ -355,7 +355,7 @@ open class DslAdapterItem : LifecycleOwner {
      * 是否需要悬停, 在使用了 [HoverItemDecoration] 时, 有效.
      * [itemIsGroupHead]
      * */
-    var itemIsHover = itemIsGroupHead
+    var itemIsHover: Boolean = itemIsGroupHead
 
     //</editor-fold>
 
@@ -736,11 +736,16 @@ open class DslAdapterItem : LifecycleOwner {
             )
 
     /**所在的分组名, 只用来做快捷变量存储*/
-    var itemGroups = mutableListOf<String>()
+    var itemGroups: List<String> = listOf()
 
     /**核心群组判断的方法*/
     var isItemInGroups: (newItem: DslAdapterItem) -> Boolean = { newItem ->
-        var result = newItem.className() == this.className()
+        var result = if (itemGroups.isEmpty()) {
+            //如果自身没有配置分组信息, 那么取相同类名, 布局id一样的item, 当做一组
+            className() == newItem.className() && itemLayoutId == newItem.itemLayoutId
+        } else {
+            false
+        }
         for (group in newItem.itemGroups) {
             result = result || itemGroups.contains(group)
 
@@ -862,16 +867,16 @@ open class DslAdapterItem : LifecycleOwner {
      *
      * 子项列表
      * */
-    var itemSubList = mutableListOf<DslAdapterItem>()
+    var itemSubList: MutableList<DslAdapterItem> = mutableListOf()
 
     /**
      * 在控制[itemSubList]之前, 都会回调此方法.
      * 相当于hook了[itemSubList], 可以在[itemSubList]为空时, 展示[加载中Item]等
      * */
-    var onItemLoadSubList: () -> Unit = {}
+    var itemLoadSubList: () -> Unit = {}
 
     /**父级列表, 会自动赋值*/
-    var itemParentList = mutableListOf<DslAdapterItem>()
+    var itemParentList: MutableList<DslAdapterItem> = mutableListOf()
 
     //</editor-fold>
 

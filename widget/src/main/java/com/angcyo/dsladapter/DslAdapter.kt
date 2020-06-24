@@ -21,10 +21,6 @@ import kotlin.math.min
 open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     RecyclerView.Adapter<DslViewHolder>(), OnDispatchUpdatesListener {
 
-    companion object {
-        var DEFAULT_PAGE_SIZE = 20
-    }
-
     /**
      * 为了简单起见, 这里写死套路, 理论上应该用状态器管理的.
      * 2.0.0 版本更新之后, [dslAdapterStatusItem] [dslLoadMoreItem] 将在过滤数据源后加载追加,

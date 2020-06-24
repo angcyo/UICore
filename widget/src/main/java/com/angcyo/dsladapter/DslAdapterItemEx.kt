@@ -6,6 +6,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.library.L
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.model.Page
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.layout.touch.SwipeBackLayout.Companion.clamp
 
@@ -345,6 +346,27 @@ inline fun <reified Item : DslAdapterItem> DslAdapter._updateOrInsertItem(
             }
         }
     }
+}
+
+/**[itemSubList]*/
+fun DslAdapterItem.updateSubItem(action: UpdateDataConfig.() -> Unit) {
+    val config = UpdateDataConfig()
+    config.updatePage = Page.FIRST_PAGE_INDEX
+    config.pageSize = Int.MAX_VALUE
+    config.adapterUpdateResult = {
+        //no op
+    }
+    config.adapterCheckLoadMore = {
+        //no op
+    }
+    config.action()
+
+    val subItemList = itemSubList
+    val result = config.updateData(subItemList)
+    itemSubList.clear()
+    itemSubList.addAll(result)
+
+    updateItemDepend(config.filterParams)
 }
 
 //</editor-fold desc="更新指定的Item">
