@@ -126,3 +126,7 @@ fun _integer(@IntegerRes id: Int): Int {
 fun _drawable(@DrawableRes id: Int): Drawable? {
     return app().loadDrawable(id)
 }
+
+fun _string(@StringRes id: Int): String {
+    return app().resources.getString(id)
+}

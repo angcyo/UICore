@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="end"
+    android:background="@drawable/lib_left_round_tran60_shape"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/lib_image_view"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:padding="@dimen/lib_ldpi"
+        android:scaleType="fitXY"
+        tools:src="@drawable/lib_ic_info" />
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_text_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/lib_white"
+        android:textSize="12dp"
+        tools:text="测试内容" />
+</LinearLayout>

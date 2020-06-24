@@ -8,6 +8,8 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.provider.Settings
+import com.angcyo.library.L
+import com.angcyo.library.component.queryActivities
 
 /**
  *
@@ -116,3 +118,34 @@ fun Context.toApplicationDetailsSettings(packageName: String = getPackageName())
         e.printStackTrace()
     }
 }
+
+/**打开程序, 启动应用*/
+fun Context.openApp(packageName: String?, className: String? = null): Intent? {
+    if (packageName.isNullOrBlank()) {
+        L.w("packageName is null!")
+        return null
+    }
+    val intent = if (className.isNullOrEmpty()) {
+        packageManager.getLaunchIntentForPackage(packageName)
+    } else {
+        Intent().run {
+            setClassName(packageName, className)
+            if (queryActivities().isEmpty()) {
+                null
+            } else {
+                this
+            }
+        }
+    }
+
+    intent?.baseConfig(this)
+
+    if (intent == null) {
+        L.w("packageName launch intent is null!")
+        return intent
+    }
+
+    startActivity(intent)
+    return intent
+}
+
