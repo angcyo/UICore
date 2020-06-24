@@ -4,7 +4,7 @@ import android.app.Activity
 import androidx.fragment.app.Fragment
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.dsladapter.updateSingleData
+import com.angcyo.dsladapter.data.updateSingleData
 import com.angcyo.library.L
 import com.angcyo.library.ex.*
 import com.angcyo.library.model.LoaderMedia

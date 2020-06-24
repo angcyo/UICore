@@ -4,6 +4,8 @@ import android.graphics.Color
 import androidx.annotation.LayoutRes
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
+import com.angcyo.dsladapter.data.UpdateDataConfig
+import com.angcyo.dsladapter.data.updateData
 import com.angcyo.library.L
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.model.Page

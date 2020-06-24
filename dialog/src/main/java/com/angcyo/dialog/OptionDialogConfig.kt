@@ -7,7 +7,7 @@ import com.angcyo.component.DslAffect
 import com.angcyo.component.dslAffect
 import com.angcyo.dialog.dslitem.DslDialogOptionItem
 import com.angcyo.dsladapter.DslAdapter
-import com.angcyo.dsladapter.loadSingleData2
+import com.angcyo.dsladapter.data.loadSingleData2
 import com.angcyo.dsladapter.singleModel
 import com.angcyo.library.L
 import com.angcyo.library.ex.dpi

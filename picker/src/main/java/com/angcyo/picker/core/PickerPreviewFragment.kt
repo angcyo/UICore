@@ -6,6 +6,7 @@ import android.view.View
 import androidx.viewpager.widget.ViewPager
 import com.angcyo.base.dslFHelper
 import com.angcyo.dsladapter.*
+import com.angcyo.dsladapter.data.loadSingleData
 import com.angcyo.getData
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.fileSize

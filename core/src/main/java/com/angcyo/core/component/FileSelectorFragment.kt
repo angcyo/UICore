@@ -19,6 +19,7 @@ import com.angcyo.dialog.dslLoading
 import com.angcyo.dialog.hideLoading
 import com.angcyo.dialog.itemsDialog
 import com.angcyo.dsladapter.*
+import com.angcyo.dsladapter.data.loadSingleData2
 import com.angcyo.fragment.requestPermissions
 import com.angcyo.library.ex.*
 import com.angcyo.library.toastWX

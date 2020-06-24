@@ -246,60 +246,6 @@ fun DslAdapter.onRefreshOrLoadMore(action: (itemHolder: DslViewHolder, loadMore:
     }
 }
 
-/**
- * 单一数据类型加载完成后, 调用此方法.
- * 自动处理, 情感图切换, 加载更多切换.
- * */
-fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEnd(
-    itemClass: Class<Item>,
-    dataList: List<Bean>?,
-    error: Throwable?,
-    page: Page,
-    initItem: Item.(data: Bean) -> Unit = {}
-) {
-    loadDataEndIndex(itemClass, dataList, error, page) { data, _ ->
-        initItem(data)
-    }
-}
-
-fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEndIndex(
-    itemClass: Class<Item>,
-    dataList: List<Bean>?,
-    error: Throwable?,
-    page: Page,
-    initItem: Item.(data: Bean, index: Int) -> Unit = { _, _ -> }
-) {
-    if (error != null) {
-        //加载失败
-        if (adapterItems.isEmpty()) {
-            dslAdapterStatusItem.onBindStateLayout = { itemHolder, state ->
-                if (state == DslAdapterStatusItem.ADAPTER_STATUS_ERROR) {
-                    itemHolder.tv(R.id.lib_text_view)?.text = error.message
-                }
-            }
-            toError()
-        } else {
-            toLoadMoreError()
-        }
-        return
-    } else {
-        //加载成功
-        page.pageLoadEnd()
-    }
-
-    //更新数据源
-    updateData {
-        updatePage = page.requestPageIndex
-        pageSize = page.requestPageSize
-        updateDataList = dataList as List<Any>?
-        updateOrCreateItem = { oldItem, data, index ->
-            updateOrCreateItemByClass(itemClass, oldItem) {
-                initItem(data as Bean, index)
-            }
-        }
-    }
-}
-
 //</editor-fold desc="AdapterStatus">
 
 //<editor-fold desc="Update">

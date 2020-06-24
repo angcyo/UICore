@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.behavior.refresh.IRefreshContentBehavior
 import com.angcyo.core.R
 import com.angcyo.dsladapter.*
+import com.angcyo.dsladapter.data.loadDataEnd
 import com.angcyo.library.L
 import com.angcyo.library.model.Page
 import com.angcyo.widget.recycler.DslRecyclerView
