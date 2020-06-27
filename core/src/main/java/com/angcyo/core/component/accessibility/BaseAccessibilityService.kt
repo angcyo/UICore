@@ -7,7 +7,6 @@ import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityWindowInfo
-import com.angcyo.library.L
 
 /**
  * 无障碍服务分发.
@@ -41,6 +40,7 @@ import com.angcyo.library.L
  *   </service>
  * ```
  *
+ * //api 24 android 7 后无障碍服务可以执行手势操作
  *
  * Email:angcyo@126.com
  * @author angcyo
@@ -63,6 +63,8 @@ abstract class BaseAccessibilityService : AccessibilityService() {
             flags = flags or AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
             //服务需要所有视图
             flags = flags or AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS
+            //服务需要视图id
+            flags = flags or AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS
             serviceInfo = this
         }
     }
@@ -73,7 +75,6 @@ abstract class BaseAccessibilityService : AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         event?.let {
             AccessibilityHelper.log(it.toString())
-            L.d(it)
         }
     }
 
@@ -93,16 +94,18 @@ abstract class BaseAccessibilityService : AccessibilityService() {
         isServiceConnected = false
     }
 
+    /**当[TYPE_WINDOW_STATE_CHANGED]时, 获取当前用户活动的窗口*/
+    override fun getRootInActiveWindow(): AccessibilityNodeInfo? {
+        return super.getRootInActiveWindow()
+    }
+
+    /**获取用户可以交互的所有窗口*/
     override fun getWindows(): MutableList<AccessibilityWindowInfo> {
         return super.getWindows()
     }
 
     override fun onKeyEvent(event: KeyEvent?): Boolean {
         return super.onKeyEvent(event)
-    }
-
-    override fun getRootInActiveWindow(): AccessibilityNodeInfo? {
-        return super.getRootInActiveWindow()
     }
 
     override fun findFocus(focus: Int): AccessibilityNodeInfo? {

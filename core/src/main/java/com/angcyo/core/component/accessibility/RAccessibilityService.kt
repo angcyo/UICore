@@ -44,6 +44,11 @@ class RAccessibilityService : BaseAccessibilityService() {
         }
     }
 
+    init {
+        //记录所有窗口变化, 以及窗口上所有节点信息
+        LogWindowAccessibilityInterceptor().install()
+    }
+
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         super.onAccessibilityEvent(event)
         event?.let {
@@ -113,7 +118,7 @@ class RAccessibilityService : BaseAccessibilityService() {
                 }
             }
 
-            rootInActiveWindow?.packageName?.let { packageName ->
+            event.packageName?.let { packageName ->
                 for (i in accessibilityInterceptorList.size - 1 downTo 0) {
                     //反向调用, 防止调用者在内部执行了Remove操作, 导致后续的拦截器无法执行
                     if (accessibilityInterceptorList.size > i) {
@@ -209,6 +214,9 @@ class RAccessibilityService : BaseAccessibilityService() {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
+        accessibilityInterceptorList.forEach {
+            it.onServiceConnected(this)
+        }
     }
 
     /**服务断开 优于 onDestroy 执行*/
@@ -217,7 +225,7 @@ class RAccessibilityService : BaseAccessibilityService() {
         L.e("onUnbind -> $intent")
         isServiceConnected = false
         lastPackageName = ""
-        clearInterceptor()
+        //clearInterceptor()
         return super.onUnbind(intent)
     }
 

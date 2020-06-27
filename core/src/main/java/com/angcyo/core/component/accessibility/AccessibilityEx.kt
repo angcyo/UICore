@@ -1,10 +1,14 @@
 package com.angcyo.core.component.accessibility
 
 import android.accessibilityservice.AccessibilityService
+import android.accessibilityservice.GestureDescription
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ActivityManager
 import android.content.Context
 import android.graphics.Path
 import android.graphics.Point
+import android.graphics.PointF
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
@@ -14,11 +18,12 @@ import android.view.Window
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
+import com.angcyo.covertToStr
 import com.angcyo.http.RIo
 import com.angcyo.library.L
-import com.angcyo.library.R
+import com.angcyo.library.ex.className
 import com.angcyo.library.ex.copy
-import com.angcyo.library.tip
 
 /**
  *
@@ -27,6 +32,20 @@ import com.angcyo.library.tip
  * @date 2020/06/23
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
+
+
+@SuppressLint("MissingPermission")
+fun Context.kill(packageName: String) {
+    val am: ActivityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    am.killBackgroundProcesses(packageName)
+
+//    val infos = am.runningAppProcesses
+//    for (info in infos) {
+//        if (info.processName == packageName) {
+//            android.os.Process.killProcess(info.pid)
+//        }
+//    }
+}
 
 fun sleep(delay: Long, action: () -> Unit) {
     Thread.sleep(delay)
@@ -95,18 +114,19 @@ fun Activity.navigatorBarHeight(): Int {
 
 //<editor-fold desc="AccessibilityService扩展">
 
-fun AccessibilityService.rootNodeInfo(event: AccessibilityEvent?): AccessibilityNodeInfo? {
-    return if (rootInActiveWindow == null) {
-        event?.source
-    } else {
-        rootInActiveWindow
+fun AccessibilityService.rootNodeInfo(event: AccessibilityEvent? = null): AccessibilityNodeInfo? {
+    val activeWindow = windows.find { it.isActive && it.isFocused }
+    return when {
+        activeWindow?.root != null -> activeWindow.root
+        rootInActiveWindow == null -> event?.source
+        else -> rootInActiveWindow
     }
 }
 
 /**通过给定的文本, 查找匹配的所有[AccessibilityNodeInfo]*/
 fun AccessibilityService.findNodeByText(
     text: String?,
-    event: AccessibilityEvent?
+    event: AccessibilityEvent? = null
 ): List<AccessibilityNodeInfo> {
     val rootNodeInfo = rootNodeInfo(event)
     val nodes = mutableListOf<AccessibilityNodeInfo>()
@@ -123,7 +143,7 @@ fun AccessibilityService.findNodeByText(
  * */
 fun AccessibilityService.findNodeById(
     id: String,
-    event: AccessibilityEvent?
+    event: AccessibilityEvent? = null
 ): List<AccessibilityNodeInfo> {
     val rootNodeInfo = rootNodeInfo(event)
     val idString = event?.id(id)
@@ -138,7 +158,7 @@ fun AccessibilityService.findNodeById(
 /**返回 文本 node 在屏幕中的 矩形坐标*/
 fun AccessibilityService.findRectByText(
     text: String,
-    event: AccessibilityEvent?
+    event: AccessibilityEvent? = null
 ): Array<Rect> {
     val rootNodeInfo = rootNodeInfo(event)
 
@@ -156,7 +176,7 @@ fun AccessibilityService.findRectByText(
  * id 全路径 "com.xunmeng.pinduoduo:id/ll_tab"
  * 但是 只需要传 ll_tab 就行
  * */
-fun AccessibilityService.findRectById(id: String, event: AccessibilityEvent?): Array<Rect> {
+fun AccessibilityService.findRectById(id: String, event: AccessibilityEvent? = null): Array<Rect> {
     val rootNodeInfo = rootNodeInfo(event)
 
     val idString = event?.id(id)
@@ -175,7 +195,7 @@ fun AccessibilityService.findRectById(id: String, event: AccessibilityEvent?): A
 /**返回中心点坐标*/
 fun AccessibilityService.findPathByText(
     text: String,
-    event: AccessibilityEvent?
+    event: AccessibilityEvent? = null
 ): Array<Path> {
     val rectList = findRectByText(text, event)
     val pathList = mutableListOf<Path>()
@@ -218,6 +238,258 @@ fun Context.findTopRect(rects: Array<Rect>): Rect {
     return targetRect
 }
 
+/**点击文本指定的[AccessibilityNodeInfo]*/
+fun AccessibilityService.clickByText(
+    text: String?,
+    event: AccessibilityEvent? = null
+): Boolean {
+    val allNodeList = findNodeByText(text, event)
+    val allClickNodeList = mutableListOf<AccessibilityNodeInfo>()
+
+    allNodeList.forEach {
+        if (it.isClickable) {
+            allClickNodeList.add(it)
+        }
+    }
+
+    return allClickNodeList.firstOrNull()?.run {
+        click()
+    } ?: false
+}
+
+/**
+ * 相当于按返回键
+ * */
+fun AccessibilityService.back() {
+    //api 16
+    performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
+}
+
+fun AccessibilityService.home() {
+    //api 16
+    performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
+}
+
+fun AccessibilityService.recents() {
+    //api 16
+    performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS)
+}
+
+/**锁屏*/
+fun AccessibilityService.lockScreen() {
+    //api 28
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        this.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN)
+    }
+}
+
+/**屏幕截图*/
+fun AccessibilityService.takeScreenShot() {
+    //api 28
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        performGlobalAction(AccessibilityService.GLOBAL_ACTION_TAKE_SCREENSHOT)
+    }
+}
+
+/**执行[fling]操作*/
+fun AccessibilityService.fling(path: Path, result: GestureResult = { _, _ -> }) {
+    val pathsList = mutableListOf<Path>()
+    pathsList.add(path)
+
+    val paths = pathsList.toTypedArray()
+    val startTImeList = mutableListOf<Long>()
+    val durationList = mutableListOf<Long>()
+
+    val DEFAULT_START_TIME = 20L
+    val DEFAULT_DURATION = 1000L
+    paths.mapIndexed { index, _ ->
+        startTImeList.add((index + 1) * DEFAULT_START_TIME + index * DEFAULT_DURATION)
+        durationList.add(DEFAULT_DURATION)
+    }
+
+    touch(paths, startTImeList.toLongArray(), durationList.toLongArray(), result)
+}
+
+fun AccessibilityService.move(
+    fromX: Int, fromY: Int,
+    toX: Int, toY: Int,
+    result: GestureResult = { _, _ -> }
+) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        //api 24 android 7
+        move(
+            fromX.toFloat(), fromY.toFloat(),
+            toX.toFloat(), toY.toFloat(),
+            result
+        )
+    }
+}
+
+fun AccessibilityService.move(
+    fromX: Float, fromY: Float,
+    toX: Float, toY: Float,
+    result: GestureResult = { _, _ -> }
+) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        //api 24 android 7
+        move(PointF(fromX, fromY), PointF(toX, toY), result)
+    }
+}
+
+fun AccessibilityService.move(from: PointF, to: PointF, result: GestureResult = { _, _ -> }) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        //api 24 android 7
+        move(Path().apply { moveTo(from.x, from.y);lineTo(to.x, to.y) }, result)
+    }
+}
+
+/**执行[move]操作*/
+fun AccessibilityService.move(path: Path, result: GestureResult = { _, _ -> }) {
+    val pathsList = mutableListOf<Path>()
+    pathsList.add(path)
+
+    val paths = pathsList.toTypedArray()
+    val startTImeList = mutableListOf<Long>()
+    val durationList = mutableListOf<Long>()
+
+    val DEFAULT_START_TIME = 20L
+    val DEFAULT_DURATION = 300L
+    paths.mapIndexed { index, _ ->
+        startTImeList.add((index + 1) * DEFAULT_START_TIME + index * DEFAULT_DURATION)
+        durationList.add(DEFAULT_DURATION)
+    }
+
+    touch(paths, startTImeList.toLongArray(), durationList.toLongArray(), result)
+}
+
+/**
+ * 通过 touch 坐标, 触发点击事件
+ * */
+fun AccessibilityService.touch(vararg path: Path) {
+    touch(40, 160, *path)
+}
+
+/**双击*/
+fun AccessibilityService.double(path: Path) {
+    touch(40, 200, path, Path(path))
+}
+
+fun AccessibilityService.touch(startTime: Int, duration: Int, vararg path: Path) {
+    val pathsList = mutableListOf<Path>()
+    pathsList.addAll(path)
+
+    val paths = pathsList.toTypedArray()
+    val startTImeList = mutableListOf<Long>()
+    val durationList = mutableListOf<Long>()
+
+    paths.mapIndexed { index, _ ->
+        startTImeList.add(((index + 1) * startTime + index * duration).toLong())
+        durationList.add(duration.toLong())
+    }
+
+    //L.i("touch: $startTImeList $durationList")
+    touch(paths, startTImeList.toLongArray(), durationList.toLongArray())
+}
+
+fun AccessibilityService.touch(point: Point) {
+    touch(PointF(point))
+}
+
+fun AccessibilityService.touch(point: PointF) {
+    touch(Path().apply {
+        moveTo(point.x, point.y)
+    })
+}
+
+fun AccessibilityService.touch(vararg path: Path, result: GestureResult = { _, _ -> }) {
+    val pathsList = mutableListOf<Path>()
+    pathsList.addAll(path)
+
+    val paths = pathsList.toTypedArray()
+    val startTImeList = mutableListOf<Long>()
+    val durationList = mutableListOf<Long>()
+
+    val DEFAULT_START_TIME = 700L
+    val DEFAULT_DURATION = 300L
+    paths.mapIndexed { index, _ ->
+        startTImeList.add((index + 1) * DEFAULT_START_TIME + index * DEFAULT_DURATION)
+        durationList.add(DEFAULT_DURATION)
+    }
+
+    touch(paths, startTImeList.toLongArray(), durationList.toLongArray(), result)
+}
+
+/**
+ * @param paths 需要点击的位置
+ * @param touchInterval 每次点击 间隔时长
+ * @param touchDuration 每次点击持续时长
+ *
+ * */
+fun AccessibilityService.touch(
+    paths: Array<Path>,
+    touchInterval: Long,
+    touchDuration: Long
+) {
+    if (paths.isEmpty()) {
+        return
+    }
+
+    val intervalList = mutableListOf<Long>()
+    val durationList = mutableListOf<Long>()
+    paths.mapIndexed { index, path ->
+        intervalList.add(touchInterval * (index + 1) + touchDuration * index)
+        durationList.add(touchDuration)
+    }
+
+    touch(paths, intervalList.toLongArray(), durationList.toLongArray())
+}
+
+/**
+ * 执行手势
+ * */
+fun AccessibilityService.touch(
+    paths: Array<Path>,
+    startTime: LongArray,
+    duration: LongArray,
+    result: GestureResult = { _, _ -> }
+) {
+    if (paths.isEmpty()) {
+        return
+    }
+
+    //api 24 android 7
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        GestureDescription.Builder().apply {
+            paths.mapIndexed { index, path ->
+                this.addStroke(
+                    GestureDescription.StrokeDescription(
+                        path,
+                        startTime[index],
+                        duration[index]
+                    )
+                )
+            }
+            this@touch.dispatchGesture(
+                this.build(),
+                object : AccessibilityService.GestureResultCallback() {
+                    override fun onCompleted(gestureDescription: GestureDescription?) {
+                        super.onCompleted(gestureDescription)
+                        L.e("$gestureDescription strokeCount:${gestureDescription?.strokeCount}")
+                        result(gestureDescription, false)
+                    }
+
+                    override fun onCancelled(gestureDescription: GestureDescription?) {
+                        super.onCancelled(gestureDescription)
+                        L.e("$gestureDescription strokeCount:${gestureDescription?.strokeCount}")
+                        result(gestureDescription, true)
+                    }
+                },
+                null
+            )
+        }
+    }
+}
+
 //</editor-fold desc="AccessibilityService扩展">
 
 //<editor-fold desc="AccessibilityEvent扩展">
@@ -242,6 +514,46 @@ fun AccessibilityEvent.id(id: String): String {
     }
 }
 
+/**[AccessibilityEvent]是否来自自定义的类名*/
+fun AccessibilityEvent.isFromClass(cls: Class<*>): Boolean = className == cls.className()
+
+fun AccessibilityEvent.isClassNameContains(other: CharSequence): Boolean =
+    className?.covertToStr()?.contains(other, true) ?: false
+
+fun AccessibilityEvent.isFromClass(claName: CharSequence): Boolean = className == claName
+
+fun AccessibilityEvent.isFromPackage(packageName: String): Boolean =
+    getPackageName().toString() == packageName
+
+/**[AccessibilityEvent]事件是否包含指定的文本信息¬*/
+fun AccessibilityEvent.haveText(text: CharSequence, ignoreCase: Boolean = true): Boolean =
+    getText().any { it.contains(text, ignoreCase) }
+
+fun AccessibilityEvent.getLikeText(
+    text: CharSequence,
+    ignoreCase: Boolean = true
+): List<CharSequence> {
+    val result = mutableListOf<CharSequence>()
+    getText().filterTo(result) {
+        it.contains(text, ignoreCase)
+    }
+    return result
+}
+
+fun AccessibilityEvent.eventTypeStr(): String = AccessibilityEvent.eventTypeToString(eventType)
+
+fun AccessibilityEvent.contentChangeTypesStr(): String = when (contentChangeTypes) {
+    AccessibilityEvent.CONTENT_CHANGE_TYPE_CONTENT_DESCRIPTION -> "CONTENT_CHANGE_TYPE_CONTENT_DESCRIPTION"
+    AccessibilityEvent.CONTENT_CHANGE_TYPE_SUBTREE -> "CONTENT_CHANGE_TYPE_SUBTREE"
+    AccessibilityEvent.CONTENT_CHANGE_TYPE_TEXT -> "CONTENT_CHANGE_TYPE_TEXT"
+    AccessibilityEvent.CONTENT_CHANGE_TYPE_PANE_TITLE -> "CONTENT_CHANGE_TYPE_PANE_TITLE"
+    AccessibilityEvent.CONTENT_CHANGE_TYPE_UNDEFINED -> "CONTENT_CHANGE_TYPE_UNDEFINED"
+    AccessibilityEvent.CONTENT_CHANGE_TYPE_PANE_APPEARED -> "CONTENT_CHANGE_TYPE_PANE_APPEARED"
+    AccessibilityEvent.CONTENT_CHANGE_TYPE_PANE_DISAPPEARED -> "CONTENT_CHANGE_TYPE_PANE_DISAPPEARED"
+    else -> Integer.toHexString(contentChangeTypes)
+}
+
+
 //</editor-fold desc="AccessibilityEvent扩展">
 
 //<editor-fold desc="AccessibilityNodeInfo扩展">
@@ -253,11 +565,9 @@ fun AccessibilityNodeInfo.toRect(): Rect {
 }
 
 /**调用node的点击事件*/
-fun AccessibilityNodeInfo.click() {
-    performAction(AccessibilityNodeInfo.ACTION_CLICK)
-}
+fun AccessibilityNodeInfo.click() = performAction(AccessibilityNodeInfo.ACTION_CLICK)
 
-fun AccessibilityNodeInfo.setText(text: CharSequence?) {
+fun AccessibilityNodeInfo.setNodeText(text: CharSequence?) {
     //AccessibilityNodeInfoCompat.wrap(this).text = text
     val arguments = Bundle()
     when {
@@ -273,7 +583,8 @@ fun AccessibilityNodeInfo.setText(text: CharSequence?) {
             performAction(AccessibilityNodeInfo.ACTION_PASTE)
         }
         else -> {
-            tip("设备不支持\n设置文本", R.drawable.lib_ic_error)
+            AccessibilityNodeInfoCompat.wrap(this).text = text
+            //tip("设备不支持\n设置文本", R.drawable.lib_ic_error)
         }
     }
 }
@@ -342,25 +653,49 @@ fun AccessibilityNodeInfo.getRootNodeInfo(): AccessibilityNodeInfo {
     return parent.getRootNodeInfo()
 }
 
-fun AccessibilityNodeInfo.logNodeInfo(logFilePath: String? = null) {
+fun AccessibilityNodeInfo.logNodeInfo(
+    logFilePath: String? = null,
+    outBuilder: StringBuilder? = null
+): String {
 
-    if (logFilePath == null) {
-        L.v("╔═══════════════════════════════════════════════════════════════════════════════════════")
-    } else {
-        RIo.appendToFile(logFilePath, "╔═══════════════════════════\n")
+    outBuilder?.appendln(wrap().toString())
+
+    val t =
+        "╔═══════════════════════════════════════════════════════════════════════════════════════"
+
+    val b =
+        "╚═══════════════════════════════════════════════════════════════════════════════════════"
+
+    outBuilder?.appendln(t)
+
+    if (logFilePath != null) {
+        RIo.appendToFile(logFilePath, "$t\n")
     }
-    debugNodeInfo(0, "", logFilePath)
-    if (logFilePath == null) {
-        L.v("╚═══════════════════════════════════════════════════════════════════════════════════════")
-    } else {
-        RIo.appendToFile(logFilePath, "╚═══════════════════════════\n")
+
+    if (logFilePath == null && outBuilder == null) {
+        L.v(t)
     }
+
+    debugNodeInfo(0, "", logFilePath, outBuilder)
+
+    if (logFilePath != null) {
+        RIo.appendToFile(logFilePath, "$b\n")
+    }
+
+    if (logFilePath == null && outBuilder == null) {
+        L.v(b)
+    }
+
+    outBuilder?.appendln(b)
+
+    return outBuilder?.toString() ?: "null"
 }
 
 fun AccessibilityNodeInfo.debugNodeInfo(
     index: Int = 0 /*缩进控制*/,
     preIndex: String = "" /*child路径*/,
-    logFilePath: String? = null
+    logFilePath: String? = null,
+    outBuilder: StringBuilder? = null
 ) {
     fun newLine(i: Int): String {
         val sb = StringBuilder()
@@ -370,15 +705,15 @@ fun AccessibilityNodeInfo.debugNodeInfo(
         return sb.toString()
     }
 
+    val wrap = AccessibilityNodeInfoCompat.wrap(this)
+
     val stringBuilder = StringBuilder("|")
     stringBuilder.append(newLine(index))
-    stringBuilder.append(" ${className}")
+    stringBuilder.append(" ${wrap.className}(${wrap.viewIdResourceName})")
     stringBuilder.append(" c:${isClickable}")
     stringBuilder.append(" s:${isSelected}")
     stringBuilder.append(" ck:${isChecked}")
-//            stringBuilder.append(" idName:")
-//            stringBuilder.append(viewIdResourceName)
-    stringBuilder.append(" [${text}]")
+    stringBuilder.append(" [${wrap.text}]")
     stringBuilder.append(" $childCount")
 
     val rect = Rect()
@@ -386,21 +721,33 @@ fun AccessibilityNodeInfo.debugNodeInfo(
     stringBuilder.append(" $rect")
     stringBuilder.append(" $preIndex")
 
-    if (logFilePath == null) {
-        L.v("$stringBuilder")
-    } else {
+    if (logFilePath != null) {
         RIo.appendToFile(logFilePath, "$stringBuilder\n")
     }
+
+    if (logFilePath == null && outBuilder == null) {
+        L.v("$stringBuilder")
+    }
+
+    outBuilder?.appendln("$stringBuilder")
 
     for (i in 0 until childCount) {
         getChild(i)?.let {
             it.debugNodeInfo(
                 index + 1,
                 "${if (preIndex.isEmpty()) preIndex else "${preIndex}_"}$i",
-                logFilePath
+                logFilePath,
+                outBuilder
             )
         }
     }
+}
+
+fun AccessibilityNodeInfo.wrap() = AccessibilityNodeInfoCompat.wrap(this)
+
+fun AccessibilityNodeInfo.log() {
+    val wrap = AccessibilityNodeInfoCompat.wrap(this)
+    L.v(wrap.toString())
 }
 
 //</editor-fold desc="AccessibilityNodeInfo扩展">

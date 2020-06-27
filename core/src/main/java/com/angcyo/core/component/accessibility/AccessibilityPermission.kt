@@ -58,7 +58,7 @@ object AccessibilityPermission {
 
                         try {
                             SettingsCompat.manageDrawOverlays(context)
-                            AccessibilityTip.show("显示悬浮窗")
+                            AccessibilityTip.tip("请打开悬浮窗权限")
                         } catch (e: Exception) {
                             //Tip.tip("没有找到对应的程序.")
                             context.toApplicationDetailsSettings()

@@ -2,7 +2,7 @@
 <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
     android:accessibilityEventTypes="typeAllMask"
     android:accessibilityFeedbackType="feedbackAllMask"
-    android:accessibilityFlags="flagDefault"
+    android:accessibilityFlags="flagDefault|flagRetrieveInteractiveWindows|flagIncludeNotImportantViews|flagReportViewIds|flagEnableAccessibilityVolume|flagRequestAccessibilityButton|flagRequestEnhancedWebAccessibility|flagRequestFilterKeyEvents|flagRequestFilterKeyEvents|flagRequestShortcutWarningDialogSpokenFeedback"
     android:canControlMagnification="true"
     android:canPerformGestures="true"
     android:canRequestEnhancedWebAccessibility="true"
@@ -28,6 +28,8 @@
 
     <!--accessibilityFlags:标志-->
     <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_accessibilityFlags-->
+    <!--flagRequestTouchExplorationMode 会拦截手机屏幕所有Touch事件, 造成假死现象.-->
+
 
     <!--animatedImageDrawable:可访问性服务目的或行为的动画图像-->
     <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_animatedImageDrawable-->
