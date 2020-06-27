@@ -6,6 +6,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.Point
 import android.hardware.Camera
@@ -248,4 +249,14 @@ fun Context?.runningTasks(maxNum: Int = Int.MAX_VALUE): List<ActivityManager.Run
         this?.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
     val runningTaskInfoList = activityManager?.getRunningTasks(maxNum)
     return runningTaskInfoList ?: emptyList()
+}
+
+/**根据包名[packageName],获取[PackageInfo]*/
+fun Context.getPackageInfo(packageName: String): PackageInfo? {
+    return try {
+        val pm = packageManager
+        pm.getPackageInfo(packageName, 0)
+    } catch (e: Exception) {
+        null
+    }
 }

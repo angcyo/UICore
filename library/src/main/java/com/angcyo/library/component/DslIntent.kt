@@ -367,24 +367,26 @@ fun dslIntentQuery(
     return dslIntent.doQuery(context)
 }
 
-fun String.appBean(context: Context = app()): AppBean {
-    val packageManager = context.packageManager
-    val packageInfo = packageManager.getPackageInfo(this, 0)
+fun String.appBean(context: Context = app()): AppBean? {
+    return try {
+        val packageManager = context.packageManager
+        val packageInfo = packageManager.getPackageInfo(this, 0)
 
-    val code = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-        packageInfo.longVersionCode
-    } else {
-        packageInfo.versionCode.toLong()
+        val code = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            packageInfo.longVersionCode
+        } else {
+            packageInfo.versionCode.toLong()
+        }
+
+        AppBean(
+            packageInfo.packageName,
+            packageInfo.versionName,
+            code,
+            packageInfo.applicationInfo.loadIcon(packageManager),
+            packageInfo.applicationInfo.loadLabel(context.packageManager),
+            packageInfo
+        )
+    } catch (e: Exception) {
+        null
     }
-
-    val result = AppBean(
-        packageInfo.packageName,
-        packageInfo.versionName,
-        code,
-        packageInfo.applicationInfo.loadIcon(packageManager),
-        packageInfo.applicationInfo.loadLabel(context.packageManager),
-        packageInfo
-    )
-
-    return result
 }

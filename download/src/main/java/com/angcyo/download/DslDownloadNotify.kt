@@ -30,7 +30,7 @@ class DslDownloadNotify : DslListener() {
     var logo: Bitmap? = null
 
     init {
-        logo = app().packageName.appBean().appIcon.toBitmap()
+        logo = app().packageName.appBean()!!.appIcon.toBitmap()
 
         onTaskStart = {
             _notify {

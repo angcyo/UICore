@@ -65,8 +65,12 @@ open class BaseDslFragment : BaseTitleFragment() {
         }
     }
 
-    /**调用此方法, 渲染界面*/
-    open fun renderDslAdapter(config: DslAdapter.() -> Unit) {
+    /**调用此方法, 渲染界面
+     * [reset] 是否需要重置界面*/
+    open fun renderDslAdapter(reset: Boolean = false, config: DslAdapter.() -> Unit) {
+        if (reset) {
+            _adapter.dataItems.clear()
+        }
         _adapter.config()
     }
 

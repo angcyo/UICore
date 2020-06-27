@@ -63,9 +63,9 @@ fun <T> T?.elseNull(action: () -> Unit = {}): T? {
     return this
 }
 
-fun Any?.string(): CharSequence {
+fun Any?.string(nil: CharSequence = ""): CharSequence {
     return when {
-        this == null -> return ""
+        this == null -> return nil
         this is CharSequence -> this
         else -> this.toString()
     }
