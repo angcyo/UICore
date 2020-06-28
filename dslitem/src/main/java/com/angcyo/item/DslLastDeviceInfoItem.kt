@@ -69,6 +69,10 @@ class DslLastDeviceInfoItem : DslAdapterItem() {
             Device.buildString(this._builder)
             Device.screenInfo(itemHolder.context, this._builder)
 
+            //机型信息
+            appendln()
+            Device.deviceInfoLess(this._builder)
+
             //网络信息
             appendln()
             append(Trackers.getInstance().networkStateTracker.activeNetworkState.toString())

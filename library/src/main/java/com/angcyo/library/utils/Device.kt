@@ -223,20 +223,13 @@ object Device {
     fun deviceInfo(context: Context, builder: Appendable): Appendable {
         val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
 
-        builder.append("psuedoID: ")
-        builder.appendln(getUniqueDeviceId())
-        builder.appendln()
-        // cpu架构
-        builder.append("CPU : ")
-//        builder.appendln(Build.CPU_ABI)
-//        //        builder.appendln();
-//        builder.append("CPU ABI 2: ")
-//        builder.appendln(Build.CPU_ABI2)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.append(Build.SUPPORTED_ABIS.connect("/").toString())
-        }
+        builder.appendln("deviceId/psuedoID: $deviceId")
+        builder.appendln("androidId: $androidId")
 
         builder.appendln()
+        deviceInfoLess(builder)
+        builder.appendln()
+
         builder.append("memoryClass: ")
         builder.appendln(manager.memoryClass)
         builder.append("largeMemoryClass: ")
@@ -272,6 +265,15 @@ object Device {
         builder.append("SD可用空间大小:")
         builder.appendln(Formatter.formatFileSize(context, getAvailableExternalMemorySize()))
         return builder
+    }
+
+    fun deviceInfoLess(builder: Appendable) {
+        // 硬件制造商/品牌名称/型号/产品名称
+        builder.append("api ${Build.VERSION.SDK_INT}/${Build.MANUFACTURER}/${Build.BRAND}/${Build.MODEL}/${Build.PRODUCT}")
+        builder.appendln()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.append(Build.SUPPORTED_ABIS.connect("/"))
+        }
     }
 
     /**设备屏幕信息*/
