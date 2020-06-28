@@ -136,6 +136,14 @@ fun AccessibilityService.findNodeByText(
     return nodes
 }
 
+/**是否有指定的文本对应的[AccessibilityNodeInfo]*/
+fun AccessibilityService.haveNode(
+    text: String?,
+    event: AccessibilityEvent? = null
+): Boolean {
+    return findNodeByText(text, event).isNotEmpty()
+}
+
 /**
  * [id] id/button1
  *
@@ -322,6 +330,8 @@ fun AccessibilityService.move(
             toX.toFloat(), toY.toFloat(),
             result
         )
+    } else {
+        result(null, true)
     }
 }
 
@@ -333,6 +343,8 @@ fun AccessibilityService.move(
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         //api 24 android 7
         move(PointF(fromX, fromY), PointF(toX, toY), result)
+    } else {
+        result(null, true)
     }
 }
 
@@ -340,6 +352,8 @@ fun AccessibilityService.move(from: PointF, to: PointF, result: GestureResult = 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         //api 24 android 7
         move(Path().apply { moveTo(from.x, from.y);lineTo(to.x, to.y) }, result)
+    } else {
+        result(null, true)
     }
 }
 
@@ -454,6 +468,7 @@ fun AccessibilityService.touch(
     result: GestureResult = { _, _ -> }
 ) {
     if (paths.isEmpty()) {
+        result(null, true)
         return
     }
 
@@ -487,6 +502,8 @@ fun AccessibilityService.touch(
                 null
             )
         }
+    } else {
+        result(null, true)
     }
 }
 
@@ -590,21 +607,23 @@ fun AccessibilityNodeInfo.setNodeText(text: CharSequence?) {
 }
 
 /**向前滚动列表*/
-fun AccessibilityNodeInfo.scrollForward() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_DOWN)
-    } else {
-        performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-    }
+fun AccessibilityNodeInfo.scrollForward(): Boolean {
+    return performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+//    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//        addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_DOWN)
+//    } else {
+//        performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+//    }
 }
 
 /**向后滚动列表*/
-fun AccessibilityNodeInfo.scrollBackward() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_UP)
-    } else {
-        performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
-    }
+fun AccessibilityNodeInfo.scrollBackward(): Boolean {
+    return performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
+//    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//        addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_UP)
+//    } else {
+//        performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
+//    }
 }
 
 /**返回ListNode*/
