@@ -1,30 +1,33 @@
 package com.angcyo.http.rx
 
 import com.angcyo.library.L
-import io.reactivex.Observable
-import io.reactivex.Observer
+import io.reactivex.Flowable
+import io.reactivex.FlowableSubscriber
 import io.reactivex.disposables.Disposable
 import io.reactivex.exceptions.CompositeException
 import io.reactivex.exceptions.Exceptions
-import io.reactivex.internal.disposables.DisposableHelper
+import io.reactivex.internal.subscriptions.SubscriptionHelper
 import io.reactivex.plugins.RxJavaPlugins
+import org.reactivestreams.Subscription
 import java.util.concurrent.atomic.AtomicReference
 
 /**
- * 观察者 [io.reactivex.internal.observers.LambdaObserver]
+ * [io.reactivex.internal.subscribers.LambdaSubscriber]
  * Email:angcyo@126.com
  * @author angcyo
- * @date 2019/12/25
- * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
+ * @date 2020/06/29
+ * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 
-open class BaseObserver<T> : AtomicReference<Disposable>(),
-    Observer<T>, Disposable {
+open class BaseFlowableSubscriber<T> : AtomicReference<Subscription>(),
+    FlowableSubscriber<T>, Subscription, Disposable {
 
     //<editor-fold desc="Dsl">
 
-    var onSubscribe: (Disposable) -> Unit = {
+    var onSubscribe: (Subscription) -> Unit = {
         L.d("${this.javaClass.name}#onSubscribe")
+        //设置下游数据消费的能力, 不设置将收不到[onNext]回调
+        it.request(Long.MAX_VALUE)
     }
 
     var onNext: (T) -> Unit = {
@@ -51,15 +54,15 @@ open class BaseObserver<T> : AtomicReference<Disposable>(),
 
     //</editor-fold desc="Dsl">
 
-    //<editor-fold desc="Observer 回调">
+    //<editor-fold desc="Subscriber 回调">
 
-    override fun onSubscribe(d: Disposable) {
-        if (DisposableHelper.setOnce(this, d)) {
+    override fun onSubscribe(s: Subscription) {
+        if (SubscriptionHelper.setOnce(this, s)) {
             try {
                 onSubscribe.invoke(this)
             } catch (ex: Throwable) {
                 Exceptions.throwIfFatal(ex)
-                d.dispose()
+                s.cancel()
                 onError(ex)
             }
         }
@@ -67,14 +70,14 @@ open class BaseObserver<T> : AtomicReference<Disposable>(),
 
     val _lastData: T? get() = observerDataList.lastOrNull()
     val observerDataList = mutableListOf<T>()
-    override fun onNext(data: T) {
+    override fun onNext(t: T) {
         if (!isDisposed) {
             try {
-                observerDataList.add(data)
-                onNext.invoke(data)
+                observerDataList.add(t)
+                onNext.invoke(t)
             } catch (e: Throwable) {
                 Exceptions.throwIfFatal(e)
-                get()?.dispose()
+                get().cancel()
                 onError(e)
             }
         }
@@ -82,8 +85,8 @@ open class BaseObserver<T> : AtomicReference<Disposable>(),
 
     var _lastError: Throwable? = null
     override fun onError(t: Throwable) {
-        if (!isDisposed) {
-            lazySet(DisposableHelper.DISPOSED)
+        if (get() !== SubscriptionHelper.CANCELLED) {
+            lazySet(SubscriptionHelper.CANCELLED)
             try {
                 _lastError = t
                 onError.invoke(t)
@@ -99,8 +102,8 @@ open class BaseObserver<T> : AtomicReference<Disposable>(),
     }
 
     override fun onComplete() {
-        if (!isDisposed) {
-            lazySet(DisposableHelper.DISPOSED)
+        if (get() !== SubscriptionHelper.CANCELLED) {
+            lazySet(SubscriptionHelper.CANCELLED)
             try {
                 onComplete.invoke()
 
@@ -112,27 +115,35 @@ open class BaseObserver<T> : AtomicReference<Disposable>(),
         }
     }
 
-    //</editor-fold desc="Observer 回调">
-
     open fun onEnd() {
         onObserverEnd.invoke(_lastData, _lastError)
     }
 
-    //<editor-fold desc="支持 Disposable">
+    //</editor-fold desc="Subscriber 回调">
+
+    //<editor-fold desc="支持 Subscription">
 
     override fun dispose() {
-        DisposableHelper.dispose(this)
+        cancel()
     }
 
     override fun isDisposed(): Boolean {
-        return get() === DisposableHelper.DISPOSED
+        return get() === SubscriptionHelper.CANCELLED
     }
 
-    //</editor-fold desc="支持 Disposable">
+    override fun request(n: Long) {
+        get().request(n)
+    }
+
+    override fun cancel() {
+        SubscriptionHelper.cancel(this)
+    }
+
+    //</editor-fold desc="支持 Subscription">
 }
 
 /**返回一个带有[dispose]方法的对象*/
-fun <T> Observable<T>.observer(observer: BaseObserver<T>): Disposable {
+fun <T> Flowable<T>.observer(observer: BaseFlowableSubscriber<T>): Disposable {
     subscribe(observer)
     return observer
 }
