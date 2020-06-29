@@ -47,6 +47,8 @@ abstract class BaseAccessibilityInterceptor {
             field = value
             if (value) {
                 startInterval()
+            } else {
+                stopInterval()
             }
         }
 
@@ -54,7 +56,7 @@ abstract class BaseAccessibilityInterceptor {
     var intervalDelay: Long = 2_000
         set(value) {
             field = value
-            intervalSubscriber?.dispose()
+            stopInterval()
             if (enableInterval) {
                 startInterval()
             }
@@ -96,10 +98,10 @@ abstract class BaseAccessibilityInterceptor {
 
 
     open fun onDestroy() {
+        intervalDelay = -1
         lastService = null
         lastEvent = null
-        intervalSubscriber?.dispose()
-        intervalSubscriber = null
+        stopInterval()
     }
 
     /**切换到了非过滤包名的程序*/
@@ -133,6 +135,11 @@ abstract class BaseAccessibilityInterceptor {
             .onBackpressureLatest()
             .compose(flowableToMain())
             .subscribe(intervalSubscriber)
+    }
+
+    open fun stopInterval() {
+        intervalSubscriber?.dispose()
+        intervalSubscriber = null
     }
 
     //</editor-fold desc="周期回调">
