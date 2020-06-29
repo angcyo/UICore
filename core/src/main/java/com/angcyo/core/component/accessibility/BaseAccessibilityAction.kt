@@ -16,12 +16,12 @@ abstract class BaseAccessibilityAction {
     var actionFinish: ((error: Boolean) -> Unit)? = null
 
     /**是否需要事件[event],返回true表示需要处理*/
-    open fun checkEvent(service: BaseAccessibilityService, event: AccessibilityEvent): Boolean {
+    open fun checkEvent(service: BaseAccessibilityService, event: AccessibilityEvent?): Boolean {
         return false
     }
 
     /**执行action*/
-    open fun doAction(service: BaseAccessibilityService, event: AccessibilityEvent) {
+    open fun doAction(service: BaseAccessibilityService, event: AccessibilityEvent?) {
 
     }
 
@@ -29,7 +29,7 @@ abstract class BaseAccessibilityAction {
     open fun doActionWidth(
         action: BaseAccessibilityAction,
         service: BaseAccessibilityService,
-        event: AccessibilityEvent
+        event: AccessibilityEvent?
     ): Boolean {
         return false
     }

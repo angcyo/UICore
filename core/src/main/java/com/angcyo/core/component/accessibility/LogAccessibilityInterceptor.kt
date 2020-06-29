@@ -17,7 +17,7 @@ class LogAccessibilityInterceptor : BaseAccessibilityInterceptor() {
 
     override fun onAccessibilityEvent(
         service: BaseAccessibilityService,
-        event: AccessibilityEvent
+        event: AccessibilityEvent?
     ) {
         super.onAccessibilityEvent(service, event)
         if (enable) {

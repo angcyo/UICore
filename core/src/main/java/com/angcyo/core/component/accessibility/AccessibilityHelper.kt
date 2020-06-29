@@ -3,6 +3,7 @@ package com.angcyo.core.component.accessibility
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
 import android.content.Intent
+import android.graphics.Rect
 import android.provider.Settings
 import android.view.accessibility.AccessibilityManager
 import com.angcyo.core.component.file.DslFileHelper
@@ -21,6 +22,13 @@ import com.angcyo.library.utils.FileUtils
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 object AccessibilityHelper {
+
+    //临时变量
+    val tempRect = Rect()
+
+    val DEFAULT_GESTURE_START_TIME = 160L
+    val DEFAULT_GESTURE_MOVE_DURATION = 800L
+    val DEFAULT_GESTURE_FLING_DURATION = 100L
 
     /**指定log文件的文件名, 不指定则按当天日期存储*/
     var logFileName: String? = null

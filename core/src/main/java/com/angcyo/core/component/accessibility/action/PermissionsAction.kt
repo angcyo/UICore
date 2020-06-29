@@ -14,7 +14,7 @@ open class PermissionsAction : BaseAccessibilityAction() {
     override fun doActionWidth(
         action: BaseAccessibilityAction,
         service: BaseAccessibilityService,
-        event: AccessibilityEvent
+        event: AccessibilityEvent?
     ): Boolean {
         if (isPermissionsUI(service, event)) {
             return handlePermissionsAction(action, service, event)
@@ -24,17 +24,25 @@ open class PermissionsAction : BaseAccessibilityAction() {
 
     open fun isPermissionsUI(
         service: BaseAccessibilityService,
-        event: AccessibilityEvent
+        event: AccessibilityEvent?
     ): Boolean {
-        return event.isClassNameContains("permission") ||
-                event.isClassNameContains("packageinstaller") ||
-                event.haveText("要允许抖音短视频")
+        val haveNode = service.haveNode("要允许抖音短视频", event)
+
+        val haveEvent = if (event != null) {
+            event.isClassNameContains("permission") ||
+                    event.isClassNameContains("packageinstaller") ||
+                    event.haveText("要允许抖音短视频")
+        } else {
+            false
+        }
+
+        return haveNode || haveEvent
     }
 
     open fun handlePermissionsAction(
         action: BaseAccessibilityAction,
         service: BaseAccessibilityService,
-        event: AccessibilityEvent
+        event: AccessibilityEvent?
     ): Boolean {
         return service.clickByText("允许", event)
     }

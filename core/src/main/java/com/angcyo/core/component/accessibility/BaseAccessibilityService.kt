@@ -99,7 +99,10 @@ abstract class BaseAccessibilityService : AccessibilityService() {
         return super.getRootInActiveWindow()
     }
 
-    /**获取用户可以交互的所有窗口*/
+    /**
+     * 获取用户可以交互的所有窗口
+     * 一个是状态栏的, 一个是导航栏的, 一个是应用程序的.
+     */
     override fun getWindows(): MutableList<AccessibilityWindowInfo> {
         return super.getWindows()
     }

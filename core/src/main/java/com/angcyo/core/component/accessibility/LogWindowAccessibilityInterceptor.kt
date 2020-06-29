@@ -20,37 +20,45 @@ class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
         if (BuildConfig.DEBUG) {
             filterPackageNameList.add("com.ss.android.ugc.aweme")
         }
+        enableInterval = true
     }
 
     override fun onAccessibilityEvent(
         service: BaseAccessibilityService,
-        event: AccessibilityEvent
+        event: AccessibilityEvent?
     ) {
         super.onAccessibilityEvent(service, event)
         if (enable) {
-
-            val windowStateChanged = event.isWindowStateChanged()
-            val windowContentChanged = event.isWindowContentChanged()
-
             val builder = StringBuilder()
-            builder.appendln(event.toString())
+
+            val logFileName = if (event != null) {
+
+                val windowStateChanged = event.isWindowStateChanged()
+                val windowContentChanged = event.isWindowContentChanged()
+
+                builder.appendln(event.toString())
+
+                if (windowStateChanged || windowContentChanged) {
+                    if (windowStateChanged) "window.log" else "content.log"
+                } else {
+                    "other.log"
+                }
+            } else {
+                //间隔回调
+                "interval.log"
+            }
 
             service.windows.forEach {
                 builder.appendln(it.toString())
                 it.root?.apply {
-                    builder.appendln(wrap().toString())
+                    //builder.appendln(wrap().toString())
+                    logNodeInfo(outBuilder = builder)
                 }
             }
 
             service.rootNodeInfo(event)?.logNodeInfo(outBuilder = builder)
 
             val log = builder.toString()
-
-            val logFileName: String = if (windowStateChanged || windowContentChanged) {
-                if (windowStateChanged) "window.log" else "content.log"
-            } else {
-                "other.log"
-            }
 
             DslFileHelper.write("accessibility", logFileName, log.wrapData())
         }
