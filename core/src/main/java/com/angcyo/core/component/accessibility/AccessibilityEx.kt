@@ -1,14 +1,12 @@
 package com.angcyo.core.component.accessibility
 
 import android.accessibilityservice.AccessibilityService
-import android.accessibilityservice.GestureDescription
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.graphics.Path
 import android.graphics.Point
-import android.graphics.PointF
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
@@ -20,9 +18,6 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityWindowInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
-import com.angcyo.core.component.accessibility.AccessibilityHelper.DEFAULT_GESTURE_FLING_DURATION
-import com.angcyo.core.component.accessibility.AccessibilityHelper.DEFAULT_GESTURE_MOVE_DURATION
-import com.angcyo.core.component.accessibility.AccessibilityHelper.DEFAULT_GESTURE_START_TIME
 import com.angcyo.core.component.accessibility.AccessibilityHelper.tempRect
 import com.angcyo.covertToStr
 import com.angcyo.http.RIo
@@ -586,25 +581,31 @@ fun AccessibilityNodeInfo.debugNodeInfo(
     val stringBuilder = StringBuilder("|")
     stringBuilder.append(newLine(index))
     stringBuilder.append(" ${wrap.className}(${wrap.viewIdResourceName})")
+    stringBuilder.append(" e:${isEnabled}")
     stringBuilder.append(" c:${isClickable}")
     stringBuilder.append(" s:${isSelected}")
     stringBuilder.append(" ck:${isChecked}")
-    stringBuilder.append(" [${wrap.text}]")
+    stringBuilder.append(" sc:${isScrollable}")
+    stringBuilder.append(" [${wrap.text}] [${wrap.contentDescription}]")
     stringBuilder.append(" $childCount")
 
     //在父布局中的位置
     getBoundsInParent(tempRect)
-    stringBuilder.append(" p:$tempRect")
+    stringBuilder.append(" pr:$tempRect")
 
     //在屏幕中的位置
     getBoundsInScreen(tempRect)
-    stringBuilder.append(" s:$tempRect")
+    stringBuilder.append(" sr:$tempRect")
 
     //宽高
     stringBuilder.append("[${tempRect.width()}x${tempRect.height()}]")
 
     //节点路径 path
     stringBuilder.append(" $preIndex")
+
+    //可执行的action
+    stringBuilder.append(" ")
+    wrap.actionStr(stringBuilder)
 
     if (logFilePath != null) {
         RIo.appendToFile(logFilePath, "$stringBuilder\n")
@@ -636,254 +637,3 @@ fun AccessibilityNodeInfo.log() {
 }
 
 //</editor-fold desc="AccessibilityNodeInfo扩展">
-
-//<editor-fold desc="手势操作">
-
-
-fun AccessibilityService.move(
-    fromX: Int, fromY: Int,
-    toX: Int, toY: Int,
-    result: GestureResult = { _, _ -> }
-) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        //api 24 android 7
-        move(
-            fromX.toFloat(), fromY.toFloat(),
-            toX.toFloat(), toY.toFloat(),
-            result
-        )
-    } else {
-        result(null, true)
-    }
-}
-
-fun AccessibilityService.move(
-    fromX: Float, fromY: Float,
-    toX: Float, toY: Float,
-    result: GestureResult = { _, _ -> }
-) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        //api 24 android 7
-        move(PointF(fromX, fromY), PointF(toX, toY), result)
-    } else {
-        result(null, true)
-    }
-}
-
-fun AccessibilityService.move(from: PointF, to: PointF, result: GestureResult = { _, _ -> }) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        //api 24 android 7
-        move(Path().apply { moveTo(from.x, from.y);lineTo(to.x, to.y) }, result)
-    } else {
-        result(null, true)
-    }
-}
-
-/**执行[move]操作*/
-fun AccessibilityService.move(path: Path, result: GestureResult = { _, _ -> }) {
-    val pathsList = mutableListOf<Path>()
-    pathsList.add(path)
-
-    val paths = pathsList.toTypedArray()
-    val startTImeList = mutableListOf<Long>()
-    val durationList = mutableListOf<Long>()
-
-    paths.mapIndexed { index, _ ->
-        startTImeList.add((index + 1) * DEFAULT_GESTURE_START_TIME + index * DEFAULT_GESTURE_MOVE_DURATION)
-        durationList.add(DEFAULT_GESTURE_MOVE_DURATION)
-    }
-
-    touch(paths, startTImeList.toLongArray(), durationList.toLongArray(), result)
-}
-
-fun AccessibilityService.fling(
-    fromX: Int, fromY: Int,
-    toX: Int, toY: Int,
-    result: GestureResult = { _, _ -> }
-) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        //api 24 android 7
-        fling(
-            fromX.toFloat(), fromY.toFloat(),
-            toX.toFloat(), toY.toFloat(),
-            result
-        )
-    } else {
-        result(null, true)
-    }
-}
-
-fun AccessibilityService.fling(
-    fromX: Float, fromY: Float,
-    toX: Float, toY: Float,
-    result: GestureResult = { _, _ -> }
-) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        //api 24 android 7
-        fling(PointF(fromX, fromY), PointF(toX, toY), result)
-    } else {
-        result(null, true)
-    }
-}
-
-fun AccessibilityService.fling(from: PointF, to: PointF, result: GestureResult = { _, _ -> }) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        //api 24 android 7
-        fling(Path().apply { moveTo(from.x, from.y);lineTo(to.x, to.y) }, result)
-    } else {
-        result(null, true)
-    }
-}
-
-/**执行[fling]操作*/
-fun AccessibilityService.fling(path: Path, result: GestureResult = { _, _ -> }) {
-    val pathsList = mutableListOf<Path>()
-    pathsList.add(path)
-
-    val paths = pathsList.toTypedArray()
-    val startTImeList = mutableListOf<Long>()
-    val durationList = mutableListOf<Long>()
-
-    paths.mapIndexed { index, _ ->
-        startTImeList.add((index + 1) * DEFAULT_GESTURE_START_TIME + index * DEFAULT_GESTURE_FLING_DURATION)
-        durationList.add(DEFAULT_GESTURE_FLING_DURATION)
-    }
-
-    touch(paths, startTImeList.toLongArray(), durationList.toLongArray(), result)
-}
-
-/**
- * 通过 touch 坐标, 触发点击事件
- * */
-fun AccessibilityService.touch(vararg path: Path) {
-    touch(40, 160, *path)
-}
-
-/**双击*/
-fun AccessibilityService.double(path: Path) {
-    touch(40, 200, path, Path(path))
-}
-
-fun AccessibilityService.touch(startTime: Int, duration: Int, vararg path: Path) {
-    val pathsList = mutableListOf<Path>()
-    pathsList.addAll(path)
-
-    val paths = pathsList.toTypedArray()
-    val startTImeList = mutableListOf<Long>()
-    val durationList = mutableListOf<Long>()
-
-    paths.mapIndexed { index, _ ->
-        startTImeList.add(((index + 1) * startTime + index * duration).toLong())
-        durationList.add(duration.toLong())
-    }
-
-    //L.i("touch: $startTImeList $durationList")
-    touch(paths, startTImeList.toLongArray(), durationList.toLongArray())
-}
-
-fun AccessibilityService.touch(point: Point) {
-    touch(PointF(point))
-}
-
-fun AccessibilityService.touch(point: PointF) {
-    touch(Path().apply {
-        moveTo(point.x, point.y)
-    })
-}
-
-fun AccessibilityService.touch(
-    vararg path: Path,
-    startTime: Long,
-    duration: Long,
-    result: GestureResult = { _, _ -> }
-) {
-    val pathsList = mutableListOf<Path>()
-    pathsList.addAll(path)
-
-    val paths = pathsList.toTypedArray()
-    val startTImeList = mutableListOf<Long>()
-    val durationList = mutableListOf<Long>()
-
-    paths.mapIndexed { index, _ ->
-        startTImeList.add((index + 1) * startTime + index * duration)
-        durationList.add(duration)
-    }
-
-    touch(paths, startTImeList.toLongArray(), durationList.toLongArray(), result)
-}
-
-/**
- * @param paths 需要点击的位置
- * @param touchInterval 每次点击 间隔时长
- * @param touchDuration 每次点击持续时长
- *
- * */
-fun AccessibilityService.touch(
-    paths: Array<Path>,
-    touchInterval: Long,
-    touchDuration: Long
-) {
-    if (paths.isEmpty()) {
-        return
-    }
-
-    val intervalList = mutableListOf<Long>()
-    val durationList = mutableListOf<Long>()
-    paths.mapIndexed { index, path ->
-        intervalList.add(touchInterval * (index + 1) + touchDuration * index)
-        durationList.add(touchDuration)
-    }
-
-    touch(paths, intervalList.toLongArray(), durationList.toLongArray())
-}
-
-/**
- * 执行手势
- * */
-fun AccessibilityService.touch(
-    paths: Array<Path>,
-    startTime: LongArray,
-    duration: LongArray,
-    result: GestureResult = { _, _ -> }
-) {
-    if (paths.isEmpty()) {
-        result(null, true)
-        return
-    }
-
-    //api 24 android 7
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        GestureDescription.Builder().apply {
-            paths.mapIndexed { index, path ->
-                this.addStroke(
-                    GestureDescription.StrokeDescription(
-                        path,
-                        startTime[index],
-                        duration[index]
-                    )
-                )
-            }
-            this@touch.dispatchGesture(
-                this.build(),
-                object : AccessibilityService.GestureResultCallback() {
-                    override fun onCompleted(gestureDescription: GestureDescription?) {
-                        super.onCompleted(gestureDescription)
-                        L.e("$gestureDescription strokeCount:${gestureDescription?.strokeCount}")
-                        result(gestureDescription, false)
-                    }
-
-                    override fun onCancelled(gestureDescription: GestureDescription?) {
-                        super.onCancelled(gestureDescription)
-                        L.e("$gestureDescription strokeCount:${gestureDescription?.strokeCount}")
-                        result(gestureDescription, true)
-                    }
-                },
-                null
-            )
-        }
-    } else {
-        result(null, true)
-    }
-}
-
-//</editor-fold desc="手势操作">

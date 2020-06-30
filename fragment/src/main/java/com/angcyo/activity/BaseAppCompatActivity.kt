@@ -124,6 +124,7 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         if (interceptTouchEvent) {
             return true
         }
+        //L.d("${ev.actionIndex} ${ev.action.actionToString()} ${ev.rawX},${ev.rawY} ${ev.eventTime}")
         return super.dispatchTouchEvent(ev)
     }
 

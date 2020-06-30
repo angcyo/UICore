@@ -1,5 +1,6 @@
 package com.angcyo.core.component.accessibility
 
+import android.view.accessibility.AccessibilityEvent
 import com.angcyo.library.ex.openApp
 
 /**
@@ -16,5 +17,9 @@ class StartAppAccessibilityInterceptor : BaseAccessibilityInterceptor() {
     override fun onServiceConnected(service: BaseAccessibilityService) {
         super.onServiceConnected(service)
         service.openApp(startAppPackageName ?: service.packageName)
+    }
+
+    override fun checkDoAction(service: BaseAccessibilityService, event: AccessibilityEvent?) {
+        //super.checkDoAction(service, event)
     }
 }

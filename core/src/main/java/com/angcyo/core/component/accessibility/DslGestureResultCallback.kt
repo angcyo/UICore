@@ -16,13 +16,12 @@ class DslGestureResultCallback(val result: GestureResult) :
     AccessibilityService.GestureResultCallback() {
     override fun onCancelled(gestureDescription: GestureDescription?) {
         super.onCancelled(gestureDescription)
-        result(gestureDescription, true)
+        result(gestureDescription, true, true)
     }
 
     override fun onCompleted(gestureDescription: GestureDescription?) {
         super.onCompleted(gestureDescription)
-        result(gestureDescription, false)
+        result(gestureDescription, false, false)
     }
 }
 
-typealias GestureResult = (gestureDescription: GestureDescription?, cancel: Boolean) -> Unit

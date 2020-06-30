@@ -26,10 +26,6 @@ object AccessibilityHelper {
     //临时变量
     val tempRect = Rect()
 
-    val DEFAULT_GESTURE_START_TIME = 160L
-    val DEFAULT_GESTURE_MOVE_DURATION = 800L
-    val DEFAULT_GESTURE_FLING_DURATION = 100L
-
     /**指定log文件的文件名, 不指定则按当天日期存储*/
     var logFileName: String? = null
         get() = field ?: logFileName()

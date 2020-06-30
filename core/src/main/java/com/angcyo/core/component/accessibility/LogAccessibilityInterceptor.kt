@@ -15,6 +15,10 @@ class LogAccessibilityInterceptor : BaseAccessibilityInterceptor() {
 
     var enable: Boolean = BuildConfig.DEBUG
 
+    override fun checkDoAction(service: BaseAccessibilityService, event: AccessibilityEvent?) {
+        //super.checkDoAction(service, event)
+    }
+
     override fun onAccessibilityEvent(
         service: BaseAccessibilityService,
         event: AccessibilityEvent?

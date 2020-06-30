@@ -1,7 +1,10 @@
 package com.angcyo.core.component.accessibility.action
 
 import android.view.accessibility.AccessibilityEvent
-import com.angcyo.core.component.accessibility.*
+import com.angcyo.core.component.accessibility.BaseAccessibilityAction
+import com.angcyo.core.component.accessibility.BaseAccessibilityService
+import com.angcyo.core.component.accessibility.clickByText
+import com.angcyo.core.component.accessibility.isClassNameContains
 
 /**
  * 关闭系统权限对话框, 其他rom未适配
@@ -26,17 +29,12 @@ open class PermissionsAction : BaseAccessibilityAction() {
         service: BaseAccessibilityService,
         event: AccessibilityEvent?
     ): Boolean {
-        val haveNode = service.haveNode("要允许抖音短视频", event)
-
-        val haveEvent = if (event != null) {
+        return if (event != null) {
             event.isClassNameContains("permission") ||
-                    event.isClassNameContains("packageinstaller") ||
-                    event.haveText("要允许抖音短视频")
+                    event.isClassNameContains("packageinstaller")
         } else {
             false
         }
-
-        return haveNode || haveEvent
     }
 
     open fun handlePermissionsAction(

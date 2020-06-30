@@ -54,6 +54,13 @@ abstract class BaseAccessibilityService : AccessibilityService() {
         var isServiceConnected = false
     }
 
+    /**手势处理*/
+    var gesture: DslAccessibilityGesture = DslAccessibilityGesture().apply {
+        service = this@BaseAccessibilityService
+        async = true
+        awaitResult = false
+    }
+
     override fun onServiceConnected() {
         super.onServiceConnected()
         AccessibilityHelper.log("onServiceConnected")

@@ -18,8 +18,10 @@ fun MotionEvent.isTouchFinish(): Boolean {
     return actionMasked == MotionEvent.ACTION_UP || actionMasked == MotionEvent.ACTION_CANCEL
 }
 
-fun MotionEvent.actionToString(): String {
-    val action = this.actionMasked
+fun MotionEvent.actionToString(): String = this.actionMasked.actionToString()
+
+fun Int.actionToString(): String {
+    val action = this
     when (action) {
         MotionEvent.ACTION_DOWN -> return "ACTION_DOWN"
         MotionEvent.ACTION_UP -> return "ACTION_UP"

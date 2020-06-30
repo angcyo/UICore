@@ -23,6 +23,10 @@ class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
         enableInterval = true
     }
 
+    override fun checkDoAction(service: BaseAccessibilityService, event: AccessibilityEvent?) {
+        //super.checkDoAction(service, event)
+    }
+
     override fun onAccessibilityEvent(
         service: BaseAccessibilityService,
         event: AccessibilityEvent?
