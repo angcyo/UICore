@@ -85,7 +85,7 @@ class DslAccessibilityGesture :
             _gestureResultCallback = object : AccessibilityService.GestureResultCallback() {
                 override fun onCancelled(gestureDescription: GestureDescription?) {
                     super.onCancelled(gestureDescription)
-                    L.i("手势取消:$gestureDescription ${gestureDescription?.strokeCount ?: 0}")
+                    L.d("手势取消:$gestureDescription ${gestureDescription?.strokeCount ?: 0}")
                     _isCompleted = true
                     gestureResult?.invoke(gestureDescription, true, true)
                     _countDownLatch?.countDown()
@@ -94,7 +94,7 @@ class DslAccessibilityGesture :
 
                 override fun onCompleted(gestureDescription: GestureDescription?) {
                     super.onCompleted(gestureDescription)
-                    L.i("手势完成:$gestureDescription ${gestureDescription?.strokeCount ?: 0}")
+                    L.d("手势完成:$gestureDescription ${gestureDescription?.strokeCount ?: 0}")
                     _isCompleted = false
                     gestureResult?.invoke(gestureDescription, true, false)
                     _countDownLatch?.countDown()
@@ -277,7 +277,7 @@ fun DslAccessibilityGesture.move(
     fromY: Int,
     toX: Int,
     toY: Int,
-    result: GestureResult
+    result: GestureResult? = null
 ) {
     touch(fromX.toFloat(), fromY.toFloat(), toX.toFloat(), toY.toFloat(), result)
 }
@@ -287,7 +287,7 @@ fun DslAccessibilityGesture.move(
     fromY: Float,
     toX: Float,
     toY: Float,
-    result: GestureResult
+    result: GestureResult? = null
 ) {
     moveDuration()
     touch(fromX, fromY, toX, toY, result)
@@ -298,7 +298,7 @@ fun DslAccessibilityGesture.fling(
     fromY: Float,
     toX: Float,
     toY: Float,
-    result: GestureResult
+    result: GestureResult? = null
 ) {
     flingDuration()
     touch(fromX, fromY, toX, toY, result)
@@ -309,7 +309,7 @@ fun DslAccessibilityGesture.touch(
     fromY: Float,
     toX: Float,
     toY: Float,
-    result: GestureResult
+    result: GestureResult? = null
 ) {
     gestureResult = result
     touch(fromX, fromY, toX, toY)
@@ -318,7 +318,7 @@ fun DslAccessibilityGesture.touch(
 
 fun DslAccessibilityGesture.click(
     x: Float, y: Float,
-    result: GestureResult
+    result: GestureResult? = null
 ) {
     gestureResult = result
     touch(x, y)
@@ -327,7 +327,7 @@ fun DslAccessibilityGesture.click(
 
 fun DslAccessibilityGesture.double(
     x: Float, y: Float,
-    result: GestureResult
+    result: GestureResult? = null
 ) {
     gestureResult = result
     double(x, y)

@@ -20,8 +20,8 @@ class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
     init {
         if (BuildConfig.DEBUG) {
             filterPackageNameList.add("com.ss.android.ugc.aweme")
+            enableInterval = true
         }
-        enableInterval = true
     }
 
     override fun checkDoAction(service: BaseAccessibilityService, event: AccessibilityEvent?) {

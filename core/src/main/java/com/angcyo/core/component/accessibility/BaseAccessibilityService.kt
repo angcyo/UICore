@@ -7,6 +7,7 @@ import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityWindowInfo
+import java.lang.ref.WeakReference
 
 /**
  * 无障碍服务分发.
@@ -52,6 +53,8 @@ abstract class BaseAccessibilityService : AccessibilityService() {
 
     companion object {
         var isServiceConnected = false
+
+        var weakService: WeakReference<BaseAccessibilityService>? = null
     }
 
     /**手势处理*/
@@ -74,6 +77,7 @@ abstract class BaseAccessibilityService : AccessibilityService() {
             flags = flags or AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS
             serviceInfo = this
         }
+        weakService = WeakReference(this)
     }
 
     /**
@@ -99,6 +103,8 @@ abstract class BaseAccessibilityService : AccessibilityService() {
         super.onDestroy()
         AccessibilityHelper.log("onDestroy")
         isServiceConnected = false
+        weakService?.clear()
+        weakService = null
     }
 
     /**当[TYPE_WINDOW_STATE_CHANGED]时, 获取当前用户活动的窗口*/

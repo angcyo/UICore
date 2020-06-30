@@ -37,6 +37,9 @@ abstract class BaseAccessibilityInterceptor {
     /**需要收到那个程序的事件, 匹配方式为 `包含`, 匹配方式为 `全等`*/
     val filterPackageNameList = ArrayList<String>()
 
+    /**忽略[RAccessibilityService]事件处理*/
+    var ignoreInterceptor: Boolean = false
+
     val handler = Handler(Looper.getMainLooper())
 
     /**等待延迟的任务*/
@@ -126,16 +129,13 @@ abstract class BaseAccessibilityInterceptor {
 
     /**开始间隔回调*/
     open fun startInterval() {
-//        Flowable.create(intervalSubscriber, BackpressureStrategy.MISSING)
-//            .compose(flowableToMain())
-//            .subscribe()
-
         if (intervalSubscriber != null || lastService == null) {
             return
         }
 
         intervalSubscriber = BaseFlowableSubscriber<Long>().apply {
             onNext = {
+                L.v(this@BaseAccessibilityInterceptor.simpleHash(), " $it")
                 lastService?.let {
                     onAccessibilityEvent(it, null)
                 }
@@ -156,6 +156,12 @@ abstract class BaseAccessibilityInterceptor {
     //</editor-fold desc="周期回调">
 
     //<editor-fold desc="action">
+
+    /**重新开始*/
+    open fun restart() {
+        actionIndex = -1
+        actionStatus = ACTION_STATUS_INIT
+    }
 
     /**所有Action执行完成*/
     open fun onActionFinish() {
@@ -259,6 +265,8 @@ abstract class BaseAccessibilityInterceptor {
 
 fun Int.isActionCanStart() =
     this == BaseAccessibilityInterceptor.ACTION_STATUS_INIT || this == BaseAccessibilityInterceptor.ACTION_STATUS_ING
+
+fun Int.isActionStart() = this == BaseAccessibilityInterceptor.ACTION_STATUS_ING
 
 /**安装拦截器*/
 fun BaseAccessibilityInterceptor.install() {

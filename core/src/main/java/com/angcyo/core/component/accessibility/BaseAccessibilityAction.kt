@@ -1,6 +1,7 @@
 package com.angcyo.core.component.accessibility
 
 import android.view.accessibility.AccessibilityEvent
+import com.angcyo.library.ex.simpleHash
 
 /**
  * 每个无障碍拦截后需要执行的动作
@@ -34,7 +35,13 @@ abstract class BaseAccessibilityAction {
         return false
     }
 
+    /**[Action]执行完成*/
     open fun onActionFinish(error: Boolean) {
         actionFinish?.invoke(error)
+    }
+
+    /**一个名字*/
+    open fun getActionTitle(): String {
+        return this.simpleHash()
     }
 }
