@@ -1,6 +1,7 @@
 package com.angcyo.core.component.accessibility
 
 import android.view.accessibility.AccessibilityEvent
+import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.library.ex.simpleHash
 
 /**
@@ -14,7 +15,7 @@ import com.angcyo.library.ex.simpleHash
 abstract class BaseAccessibilityAction {
 
     /**当完成了[Action], 需要调用此方法, 触发下一个[Action]*/
-    var actionFinish: ((error: Boolean) -> Unit)? = null
+    var actionFinish: ((error: ActionException?) -> Unit)? = null
 
     /**是否需要事件[event],返回true表示需要处理*/
     open fun checkEvent(service: BaseAccessibilityService, event: AccessibilityEvent?): Boolean {
@@ -36,7 +37,7 @@ abstract class BaseAccessibilityAction {
     }
 
     /**[Action]执行完成*/
-    open fun onActionFinish(error: Boolean) {
+    open fun onActionFinish(error: ActionException? = null) {
         actionFinish?.invoke(error)
     }
 

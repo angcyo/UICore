@@ -78,6 +78,9 @@ class DslAccessibilityGesture :
 
     var _countDownLatch: CountDownLatch? = null
 
+    //是否已经有手势在执行
+    var _isDo: Boolean = false
+
     init {
         start()
 
@@ -115,6 +118,7 @@ class DslAccessibilityGesture :
     }
 
     fun clear() {
+        _isDo = false
         _isDispatched = false
         _isCompleted = false
         _gestureBuilder = null
@@ -123,11 +127,15 @@ class DslAccessibilityGesture :
 
     /**开始执行手势*/
     fun doIt() {
+        if (_isDo) {
+            return
+        }
         _isDispatched = false
         _isCompleted = false
         val service = service
         val builder = _gestureBuilder
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && service != null && builder != null) {
+            _isDo = true
             _isDispatched = service.dispatchGesture(
                 builder.build(),
                 _gestureResultCallback,
@@ -234,24 +242,32 @@ class DslAccessibilityGesture :
         duration: Long = this.duration,
         willContinue: Boolean = this.willContinue
     ) {
+        if (_isDo) {
+            L.w("ignore touch stroke.")
+            return
+        }
         ensureBuilder {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                addStroke(
-                    GestureDescription.StrokeDescription(
-                        path,
-                        startTime,
-                        duration,
-                        willContinue
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    addStroke(
+                        GestureDescription.StrokeDescription(
+                            path,
+                            startTime,
+                            duration,
+                            willContinue
+                        )
                     )
-                )
-            } else {
-                addStroke(
-                    GestureDescription.StrokeDescription(
-                        path,
-                        startTime,
-                        duration
+                } else {
+                    addStroke(
+                        GestureDescription.StrokeDescription(
+                            path,
+                            startTime,
+                            duration
+                        )
                     )
-                )
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }

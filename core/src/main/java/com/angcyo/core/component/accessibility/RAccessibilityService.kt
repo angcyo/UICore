@@ -27,6 +27,7 @@ class RAccessibilityService : BaseAccessibilityService() {
                 accessibilityInterceptorList.add(interceptor)
 
                 if (interceptor.lastService == null) {
+                    interceptor.restart()
                     weakService?.get()?.apply {
                         interceptor.onServiceConnected(this)
                     }
@@ -38,6 +39,7 @@ class RAccessibilityService : BaseAccessibilityService() {
         fun removeInterceptor(interceptor: BaseAccessibilityInterceptor) {
             if (accessibilityInterceptorList.contains(interceptor)) {
                 accessibilityInterceptorList.remove(interceptor)
+                interceptor.onDestroy()
             }
         }
 
@@ -112,7 +114,9 @@ class RAccessibilityService : BaseAccessibilityService() {
         lastPackageNameList.add(packageName to className)
 
         if (last?.first != packageName) {
-            L.i("\n切换:${last?.second}[${last?.first}]->$className[$packageName]")
+            L.i("切换:${last?.second}[${last?.first}]->$className[$packageName]".apply {
+                AccessibilityHelper.log(this)
+            })
         }
     }
 

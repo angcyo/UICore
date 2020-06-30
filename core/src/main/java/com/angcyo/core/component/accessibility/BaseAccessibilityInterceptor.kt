@@ -3,6 +3,7 @@ package com.angcyo.core.component.accessibility
 import android.os.Handler
 import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
+import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.http.rx.BaseFlowableSubscriber
 import com.angcyo.http.rx.flowableToMain
 import com.angcyo.library.L
@@ -32,6 +33,9 @@ abstract class BaseAccessibilityInterceptor {
 
         //错误
         const val ACTION_STATUS_ERROR = 10
+
+        //销毁
+        const val ACTION_STATUS_DESTROY = 11
     }
 
     /**需要收到那个程序的事件, 匹配方式为 `包含`, 匹配方式为 `全等`*/
@@ -113,6 +117,7 @@ abstract class BaseAccessibilityInterceptor {
 
     open fun onDestroy() {
         intervalDelay = -1
+        actionStatus = ACTION_STATUS_DESTROY
         lastService = null
         lastEvent = null
         stopInterval()
@@ -135,7 +140,7 @@ abstract class BaseAccessibilityInterceptor {
 
         intervalSubscriber = BaseFlowableSubscriber<Long>().apply {
             onNext = {
-                L.v(this@BaseAccessibilityInterceptor.simpleHash(), " $it")
+                //L.v(this@BaseAccessibilityInterceptor.simpleHash(), " $it")
                 lastService?.let {
                     onAccessibilityEvent(it, null)
                 }
@@ -164,7 +169,7 @@ abstract class BaseAccessibilityInterceptor {
     }
 
     /**所有Action执行完成*/
-    open fun onActionFinish() {
+    open fun onActionFinish(error: ActionException?) {
         if (actionStatus == ACTION_STATUS_ERROR) {
             //出现异常
         } else if (actionStatus == ACTION_STATUS_FINISH) {
@@ -179,14 +184,15 @@ abstract class BaseAccessibilityInterceptor {
         } else if (actionStatus.isActionCanStart()) {
             if (actionIndex >= actionList.size) {
                 actionStatus = ACTION_STATUS_FINISH
-                actionIndex = -1
-                onActionFinish()
+                onActionFinish(null)
             } else {
                 actionStatus = ACTION_STATUS_ING
                 if (actionIndex < 0) {
                     actionIndex = 0
                 }
-                onDoAction(actionList[actionIndex], service, event)
+                actionList.getOrNull(actionIndex)?.let {
+                    onDoAction(it, service, event)
+                }
             }
         } else {
             //no op
@@ -203,13 +209,18 @@ abstract class BaseAccessibilityInterceptor {
                 //需要事件处理
                 action.actionFinish = {
                     //action执行完成
-                    if (it) {
+                    if (it != null) {
                         actionStatus = ACTION_STATUS_ERROR
-                        onActionFinish()
+                        onActionFinish(it)
                     } else {
                         actionIndex++
-                        handler.post {
-                            checkDoAction(service, event)
+
+                        if (enableInterval) {
+                            //no op
+                        } else {
+                            handler.post {
+                                checkDoAction(service, event)
+                            }
                         }
                     }
                 }
@@ -267,6 +278,8 @@ fun Int.isActionCanStart() =
     this == BaseAccessibilityInterceptor.ACTION_STATUS_INIT || this == BaseAccessibilityInterceptor.ACTION_STATUS_ING
 
 fun Int.isActionStart() = this == BaseAccessibilityInterceptor.ACTION_STATUS_ING
+
+fun Int.isActionFinish() = this == BaseAccessibilityInterceptor.ACTION_STATUS_FINISH
 
 /**安装拦截器*/
 fun BaseAccessibilityInterceptor.install() {

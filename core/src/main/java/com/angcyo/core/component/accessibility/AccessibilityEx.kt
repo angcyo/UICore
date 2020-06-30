@@ -314,34 +314,40 @@ fun AccessibilityService.clickById(
 /**
  * 相当于按返回键
  * */
-fun AccessibilityService.back() {
+fun AccessibilityService.back(): Boolean {
     //api 16
-    performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
+    return performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
 }
 
-fun AccessibilityService.home() {
+/**回到桌面*/
+fun AccessibilityService.home(): Boolean {
     //api 16
-    performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
+    return performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
 }
 
-fun AccessibilityService.recents() {
+/**最近*/
+fun AccessibilityService.recents(): Boolean {
     //api 16
-    performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS)
+    return performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS)
 }
 
 /**锁屏*/
-fun AccessibilityService.lockScreen() {
+fun AccessibilityService.lockScreen(): Boolean {
     //api 28
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-        this.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN)
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN)
+    } else {
+        false
     }
 }
 
 /**屏幕截图*/
-fun AccessibilityService.takeScreenShot() {
+fun AccessibilityService.takeScreenShot(): Boolean {
     //api 28
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
         performGlobalAction(AccessibilityService.GLOBAL_ACTION_TAKE_SCREENSHOT)
+    } else {
+        false
     }
 }
 
@@ -433,25 +439,30 @@ fun AccessibilityNodeInfo.toRect(): Rect {
 /**调用node的点击事件*/
 fun AccessibilityNodeInfo.click() = performAction(AccessibilityNodeInfo.ACTION_CLICK)
 
-fun AccessibilityNodeInfo.setNodeText(text: CharSequence?) {
-    //AccessibilityNodeInfoCompat.wrap(this).text = text
-    val arguments = Bundle()
-    when {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> {
-            arguments.putCharSequence(
-                AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,
-                text
-            )
-            performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
+fun AccessibilityNodeInfo.setNodeText(text: CharSequence?): Boolean {
+    return try {//AccessibilityNodeInfoCompat.wrap(this).text = text
+        val arguments = Bundle()
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> {
+                arguments.putCharSequence(
+                    AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,
+                    text
+                )
+                performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
+            }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 -> {
+                text?.copy()
+                performAction(AccessibilityNodeInfo.ACTION_PASTE)
+            }
+            else -> {
+                AccessibilityNodeInfoCompat.wrap(this).text = text
+                //tip("设备不支持\n设置文本", R.drawable.lib_ic_error)
+                true
+            }
         }
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 -> {
-            text?.copy()
-            performAction(AccessibilityNodeInfo.ACTION_PASTE)
-        }
-        else -> {
-            AccessibilityNodeInfoCompat.wrap(this).text = text
-            //tip("设备不支持\n设置文本", R.drawable.lib_ic_error)
-        }
+    } catch (e: Exception) {
+        L.e(e)
+        false
     }
 }
 
@@ -529,10 +540,10 @@ fun AccessibilityNodeInfo.logNodeInfo(
     outBuilder?.appendln(wrap().toString())
 
     val t =
-        "╔═══════════════════════════════════════════════════════════════════════════════════════"
+        "╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════"
 
     val b =
-        "╚═══════════════════════════════════════════════════════════════════════════════════════"
+        "╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════"
 
     outBuilder?.appendln(t)
 
@@ -675,7 +686,7 @@ fun AccessibilityNodeInfo.findNode(
 
                 child.findNode(result, predicate)
             } catch (e: Exception) {
-                L.e(e)
+                e.printStackTrace()
             }
         }
     }
@@ -696,13 +707,25 @@ fun AccessibilityNodeInfo.findNodeByText(text: CharSequence): List<Accessibility
 
 fun AccessibilityNodeInfoCompat.haveText(text: CharSequence, ignoreCase: Boolean = true): Boolean {
 
-    val tc: Boolean = this.text?.contains(text, ignoreCase) == true
+    val thisText = this.text
+    val contentDescription = contentDescription
+    val paneTitle = paneTitle
+    val hintText = hintText
+    val tooltipText = tooltipText
+
+    val tc: Boolean = thisText?.contains(text, ignoreCase) == true
     val cdc: Boolean = contentDescription?.contains(text, ignoreCase) == true
     val ptc: Boolean = paneTitle?.contains(text, ignoreCase) == true
     val htc: Boolean = hintText?.contains(text, ignoreCase) == true
     val ttc: Boolean = tooltipText?.contains(text, ignoreCase) == true
 
     return tc || cdc || ptc || htc || ttc
+}
+
+/**返回[Node]在屏幕中的位置坐标*/
+fun AccessibilityNodeInfoCompat.bounds(): Rect {
+    getBoundsInScreen(tempRect)
+    return tempRect
 }
 
 fun AccessibilityNodeInfoCompat.isClass(claName: CharSequence) =
