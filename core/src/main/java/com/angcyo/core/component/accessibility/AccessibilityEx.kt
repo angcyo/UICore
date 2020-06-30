@@ -115,24 +115,20 @@ fun Activity.navigatorBarHeight(): Int {
 //<editor-fold desc="AccessibilityService扩展">
 
 fun AccessibilityService.rootNodeInfo(event: AccessibilityEvent? = null): AccessibilityNodeInfo? {
-    return if (rootInActiveWindow != null) {
-        rootInActiveWindow
-    } else {
-        var maxHeightWindow: AccessibilityWindowInfo? = null
-        var maxHeight = 0
+    var maxHeightWindow: AccessibilityWindowInfo? = null
+    var maxHeight = 0
 
-        windows.forEach {
-            it.getBoundsInScreen(tempRect)
-            val height = tempRect.height()
-            if (height > maxHeight) {
-                maxHeightWindow = it
-                maxHeight = height
-            }
+    windows.forEach {
+        it.getBoundsInScreen(tempRect)
+        val height = tempRect.height()
+        if (height > maxHeight) {
+            maxHeightWindow = it
+            maxHeight = height
         }
-
-        val activeWindow = windows.find { it.isActive && it.isFocused }
-        return maxHeightWindow?.root ?: (activeWindow?.root ?: event?.source)
     }
+
+    val activeWindow = windows.find { it.isActive && it.isFocused }
+    return maxHeightWindow?.root ?: (activeWindow?.root ?: event?.source)
 }
 
 /**通过给定的文本, 查找匹配的所有[AccessibilityNodeInfo]*/
@@ -389,7 +385,8 @@ fun AccessibilityEvent.isFromClass(cls: Class<*>): Boolean = className == cls.cl
 fun AccessibilityEvent.isClassNameContains(other: CharSequence): Boolean =
     className?.covertToStr()?.contains(other, true) ?: false
 
-fun AccessibilityEvent.isFromClass(claName: CharSequence): Boolean = className == claName
+fun AccessibilityEvent.isFromClass(claName: CharSequence): Boolean =
+    className?.covertToStr() == claName.covertToStr()
 
 fun AccessibilityEvent.isFromPackage(packageName: String): Boolean =
     getPackageName().toString() == packageName
@@ -576,18 +573,31 @@ fun AccessibilityNodeInfo.debugNodeInfo(
         return sb.toString()
     }
 
-    val wrap = AccessibilityNodeInfoCompat.wrap(this)
+    val wrap: AccessibilityNodeInfoCompat = AccessibilityNodeInfoCompat.wrap(this)
 
     val stringBuilder = StringBuilder("|")
-    stringBuilder.append(newLine(index))
-    stringBuilder.append(" ${wrap.className}(${wrap.viewIdResourceName})")
-    stringBuilder.append(" e:${isEnabled}")
-    stringBuilder.append(" c:${isClickable}")
-    stringBuilder.append(" s:${isSelected}")
-    stringBuilder.append(" ck:${isChecked}")
-    stringBuilder.append(" sc:${isScrollable}")
-    stringBuilder.append(" [${wrap.text}] [${wrap.contentDescription}]")
-    stringBuilder.append(" $childCount")
+
+    stringBuilder.apply {
+        append(newLine(index))
+        append(" ${wrap.className}(${wrap.viewIdResourceName})")
+        append(" e:${isEnabled}")
+        append(" c:${isClickable}")
+        append(" s:${isSelected}")
+        append(" ck:${isChecked}")
+        append(" sc:${isScrollable}")
+        append(" [${wrap.text}] [${wrap.contentDescription}]")
+        wrap.hintText?.apply {
+            append(" hintText:[${this}]")
+        }
+        wrap.paneTitle?.apply {
+            append(" paneTitle:[${this}]")
+        }
+        wrap.tooltipText?.apply {
+            append(" tooltipText:[${this}]")
+        }
+        append(" $childCount")
+    }
+
 
     //在父布局中的位置
     getBoundsInParent(tempRect)
@@ -629,11 +639,80 @@ fun AccessibilityNodeInfo.debugNodeInfo(
     }
 }
 
+/**获取[AccessibilityNodeInfo]对应的id名,
+ * 通常会是这样的: com.ss.android.ugc.aweme:id/afy*/
+fun AccessibilityNodeInfo.viewIdName() = wrap().viewIdName()
+
+fun AccessibilityNodeInfoCompat.viewIdName() = viewIdResourceName
+
 fun AccessibilityNodeInfo.wrap() = AccessibilityNodeInfoCompat.wrap(this)
 
 fun AccessibilityNodeInfo.log() {
-    val wrap = AccessibilityNodeInfoCompat.wrap(this)
-    L.v(wrap.toString())
+    L.v(wrap().toString())
 }
+
+/**枚举查找[AccessibilityNodeInfo]
+ * [predicate] 返回1, 表示添加并继续查找; 返回0, 添加并返回; 返回-1, 不添加并继续查找
+ * */
+fun AccessibilityNodeInfo.findNode(
+    result: MutableList<AccessibilityNodeInfoCompat> = mutableListOf(),
+    predicate: (node: AccessibilityNodeInfoCompat) -> Int
+): List<AccessibilityNodeInfoCompat> {
+
+    for (i in 0 until childCount) {
+        val child: AccessibilityNodeInfo? = getChild(i)
+        if (child != null) {
+            try {
+                val wrap: AccessibilityNodeInfoCompat = child.wrap()
+                val check: Int = predicate(wrap)
+
+                if (check >= 0) {
+                    result.add(wrap)
+                    if (check == 0) {
+                        return result
+                    }
+                }
+
+                child.findNode(result, predicate)
+            } catch (e: Exception) {
+                L.e(e)
+            }
+        }
+    }
+
+    return result
+}
+
+/**根据[AccessibilityNodeInfo]出现过的文本信息查找*/
+fun AccessibilityNodeInfo.findNodeByText(text: CharSequence): List<AccessibilityNodeInfoCompat> {
+    return findNode {
+        if (it.haveText(text)) {
+            1
+        } else {
+            -1
+        }
+    }
+}
+
+fun AccessibilityNodeInfoCompat.haveText(text: CharSequence, ignoreCase: Boolean = true): Boolean {
+
+    val tc: Boolean = this.text?.contains(text, ignoreCase) == true
+    val cdc: Boolean = contentDescription?.contains(text, ignoreCase) == true
+    val ptc: Boolean = paneTitle?.contains(text, ignoreCase) == true
+    val htc: Boolean = hintText?.contains(text, ignoreCase) == true
+    val ttc: Boolean = tooltipText?.contains(text, ignoreCase) == true
+
+    return tc || cdc || ptc || htc || ttc
+}
+
+fun AccessibilityNodeInfoCompat.isClass(claName: CharSequence) =
+    className?.covertToStr() == claName.covertToStr()
+
+fun AccessibilityNodeInfoCompat.isEditText() = isClass("android.widget.EditText")
+
+fun AccessibilityNodeInfoCompat.isImageView() = isClass("android.widget.ImageView")
+
+fun AccessibilityNodeInfoCompat.isLayout() =
+    className?.covertToStr()?.contains("Layout", true) ?: false
 
 //</editor-fold desc="AccessibilityNodeInfo扩展">

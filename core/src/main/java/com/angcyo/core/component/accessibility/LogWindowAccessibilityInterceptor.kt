@@ -2,6 +2,7 @@ package com.angcyo.core.component.accessibility
 
 import android.view.accessibility.AccessibilityEvent
 import com.angcyo.core.BuildConfig
+import com.angcyo.core.component.accessibility.AccessibilityHelper.logFolderName
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.file.wrapData
 
@@ -52,19 +53,23 @@ class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                 "interval.log"
             }
 
+            val rootNodeInfo = service.rootNodeInfo(event)
+
             service.windows.forEach {
                 builder.appendln(it.toString())
                 it.root?.apply {
-                    //builder.appendln(wrap().toString())
+                    if (rootNodeInfo != null && this == rootNodeInfo) {
+                        builder.append("[root]")
+                    }
                     logNodeInfo(outBuilder = builder)
                 }
             }
 
-            service.rootNodeInfo(event)?.logNodeInfo(outBuilder = builder)
+            rootNodeInfo?.logNodeInfo(outBuilder = builder)
 
             val log = builder.toString()
 
-            DslFileHelper.write("accessibility", logFileName, log.wrapData())
+            DslFileHelper.write(logFolderName, logFileName, log.wrapData())
         }
     }
 }

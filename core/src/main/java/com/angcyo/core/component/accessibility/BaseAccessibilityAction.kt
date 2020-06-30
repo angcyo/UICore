@@ -33,4 +33,8 @@ abstract class BaseAccessibilityAction {
     ): Boolean {
         return false
     }
+
+    open fun onActionFinish(error: Boolean) {
+        actionFinish?.invoke(error)
+    }
 }

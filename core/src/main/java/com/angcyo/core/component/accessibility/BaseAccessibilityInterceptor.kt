@@ -3,7 +3,6 @@ package com.angcyo.core.component.accessibility
 import android.os.Handler
 import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
-import androidx.annotation.CallSuper
 import com.angcyo.http.rx.BaseFlowableSubscriber
 import com.angcyo.http.rx.flowableToMain
 import com.angcyo.library.L
@@ -71,7 +70,7 @@ abstract class BaseAccessibilityInterceptor {
         }
 
     /**间隔回调周期*/
-    var intervalDelay: Long = 2_000
+    var intervalDelay: Long = 4_000
         set(value) {
             field = value
             stopInterval()
@@ -159,9 +158,12 @@ abstract class BaseAccessibilityInterceptor {
     //<editor-fold desc="action">
 
     /**所有Action执行完成*/
-    @CallSuper
     open fun onActionFinish() {
-
+        if (actionStatus == ACTION_STATUS_ERROR) {
+            //出现异常
+        } else if (actionStatus == ACTION_STATUS_FINISH) {
+            //流程结束
+        }
     }
 
     open fun checkDoAction(service: BaseAccessibilityService, event: AccessibilityEvent?) {
@@ -197,10 +199,12 @@ abstract class BaseAccessibilityInterceptor {
                     //action执行完成
                     if (it) {
                         actionStatus = ACTION_STATUS_ERROR
-                    }
-                    actionIndex++
-                    handler.post {
-                        checkDoAction(service, event)
+                        onActionFinish()
+                    } else {
+                        actionIndex++
+                        handler.post {
+                            checkDoAction(service, event)
+                        }
                     }
                 }
                 action.doAction(service, event)

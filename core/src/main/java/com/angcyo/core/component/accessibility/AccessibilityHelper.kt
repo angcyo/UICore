@@ -26,6 +26,8 @@ object AccessibilityHelper {
     //临时变量
     val tempRect = Rect()
 
+    var logFolderName = "accessibility"
+
     /**指定log文件的文件名, 不指定则按当天日期存储*/
     var logFileName: String? = null
         get() = field ?: logFileName()
@@ -34,13 +36,13 @@ object AccessibilityHelper {
     val logFilePath: String
         get() = FileUtils.appRootExternalFolderFile(
             app(),
-            "accessibility",
+            logFolderName,
             logFileName!!
         )?.absolutePath!!
 
     /**写入日志*/
     fun log(data: String) {
-        DslFileHelper.write("accessibility", logFileName!!, data.wrapData())
+        DslFileHelper.write(logFolderName, logFileName!!, data.wrapData())
     }
 
     /**打开辅助工具界面*/
