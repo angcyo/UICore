@@ -13,6 +13,7 @@ import com.angcyo.library.component.dslNotify
 import com.angcyo.library.component.low
 import com.angcyo.library.component.single
 import com.angcyo.library.ex.className
+import com.angcyo.library.ex.openApp
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.library.utils.Device
 import io.reactivex.Flowable
@@ -154,7 +155,6 @@ abstract class BaseAccessibilityInterceptor {
     }
 
     open fun onDestroy() {
-        intervalDelay = -1
         actionStatus = ACTION_STATUS_DESTROY
         lastService = null
         lastEvent = null
@@ -235,6 +235,7 @@ abstract class BaseAccessibilityInterceptor {
         }
         onInterceptorFinish?.invoke(error)
         if (autoUninstall) {
+            //请注意执行顺序
             uninstall()
         }
     }
@@ -391,4 +392,9 @@ fun BaseAccessibilityInterceptor.interceptorMode(vararg filterPackage: String) {
     filterPackage.forEach {
         filterPackageNameList.add(it)
     }
+}
+
+/**打开指定app*/
+fun BaseAccessibilityInterceptor.openApp(packageName: String? = lastService?.packageName) {
+    lastService?.openApp(packageName)
 }

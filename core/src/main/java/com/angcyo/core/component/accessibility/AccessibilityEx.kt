@@ -24,6 +24,7 @@ import com.angcyo.http.RIo
 import com.angcyo.library.L
 import com.angcyo.library.ex.className
 import com.angcyo.library.ex.copy
+import com.angcyo.library.ex.string
 
 /**
  *
@@ -729,13 +730,15 @@ fun AccessibilityNodeInfoCompat.bounds(): Rect {
 }
 
 fun AccessibilityNodeInfoCompat.isClass(claName: CharSequence) =
-    className?.covertToStr() == claName.covertToStr()
+    className?.toString() == claName.toString()
+
+fun AccessibilityNodeInfoCompat.isTextView() = isClass("android.widget.TextView")
 
 fun AccessibilityNodeInfoCompat.isEditText() = isClass("android.widget.EditText")
 
 fun AccessibilityNodeInfoCompat.isImageView() = isClass("android.widget.ImageView")
 
 fun AccessibilityNodeInfoCompat.isLayout() =
-    className?.covertToStr()?.contains("Layout", true) ?: false
+    className?.toString()?.contains("Layout", true) ?: false
 
 //</editor-fold desc="AccessibilityNodeInfo扩展">
