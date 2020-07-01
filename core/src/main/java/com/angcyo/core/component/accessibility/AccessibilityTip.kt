@@ -5,6 +5,7 @@ import android.os.Build
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -55,19 +56,28 @@ object AccessibilityTip {
     }
 
     private fun show(context: Context, tipText: CharSequence, tipImageResId: Int) {
-        val layout: View
-        if (toast == null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            toast = Toast.makeText(context, "", Toast.LENGTH_LONG)
-            layout =
-                LayoutInflater.from(context).inflate(R.layout.lib_accessibility_toast_tip, null)
-            (layout.findViewById<View>(R.id.lib_text_view) as TextView).text = tipText
-            toast!!.view = layout
-            toast!!.setGravity(Gravity.END, 0, 0)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                toast!!.view.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            toast?.cancel()
+            toast = null
+        }
+
+        val layout = if (toast == null) {
+            Toast.makeText(context, "", Toast.LENGTH_LONG).run {
+                toast = this
+                val layout =
+                    LayoutInflater.from(context)
+                        .inflate(R.layout.lib_accessibility_toast_tip, FrameLayout(context), false)
+                (layout.findViewById<View>(R.id.lib_text_view) as TextView).text = tipText
+                view = layout
+                setGravity(Gravity.END, 0, 0)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    view.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                }
+                layout
             }
         } else {
-            layout = toast!!.view
+            toast!!.view
         }
 
         val titleView = find<TextView>(layout, R.id.lib_text_view)
@@ -77,10 +87,10 @@ object AccessibilityTip {
             titleView.text = tipText
         }
         imageView?.setImageResource(tipImageResId)
-        toast!!.show()
+        toast?.show()
     }
 
     private fun <T> find(view: View, id: Int): T? {
-        return view.findViewById<View>(id) as T
+        return view.findViewById<View>(id) as? T?
     }
 }
