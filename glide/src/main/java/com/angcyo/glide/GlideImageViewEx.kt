@@ -53,6 +53,8 @@ fun GlideImageView.loadAvatar(
         }
     }
     if (url.isNullOrEmpty()) {
+        //清理之前的异步请求, 防止同步调用过快, 异步结果后返回
+        clear()
         setImageDrawable(textDrawable)
     } else {
         load(url) {

@@ -2,6 +2,7 @@ package com.angcyo.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 
 /**
@@ -20,19 +21,30 @@ fun <T> LiveData<T>.observeForever(action: (data: T?) -> Unit): Observer<T> {
     return result
 }
 
-/**快速观察[LiveData]*/
-fun <T> LiveData<T>.observe(owner: LifecycleOwner, action: (data: T?) -> Unit): Observer<T> {
-    val result: Observer<T>
-    observe(owner, Observer<T> { action(it) }.apply {
+/**快速观察[LiveData]
+ * [autoClear] 收到数据后, 是否要情况数据
+ * */
+fun <T> LiveData<T>.observe(
+    owner: LifecycleOwner,
+    autoClear: Boolean = false,
+    action: (data: T?) -> Unit
+): Observer<T?> {
+    val result: Observer<T?>
+    observe(owner, Observer<T?> {
+        action(it)
+        if (it != null && autoClear && this is MutableLiveData) {
+            postValue(null)
+        }
+    }.apply {
         result = this
     })
     return result
 }
 
 /**快速观察[LiveData]一次*/
-fun <T> LiveData<T>.observeOnce(owner: LifecycleOwner, action: (data: T?) -> Unit): Observer<T> {
-    var result: Observer<T>? = null
-    observe(owner, Observer<T> {
+fun <T> LiveData<T>.observeOnce(owner: LifecycleOwner, action: (data: T?) -> Unit): Observer<T?> {
+    var result: Observer<T?>? = null
+    observe(owner, Observer<T?> {
         if (it is List<*>) {
             if (it.isNotEmpty()) {
                 removeObserver(result!!)

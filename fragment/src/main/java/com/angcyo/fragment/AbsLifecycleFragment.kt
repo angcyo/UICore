@@ -9,6 +9,7 @@ import android.view.animation.Animation
 import androidx.annotation.CallSuper
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.angcyo.base.getAllResumedFragment
 import com.angcyo.base.setFragmentResult
@@ -174,9 +175,17 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
     //<editor-fold desc="高级扩展">
 
     /**快速观察[LiveData]*/
-    fun <T> LiveData<T>.observe(action: (data: T?) -> Unit): Observer<T> {
+    fun <T> LiveData<T>.observe(
+        autoClear: Boolean = false,
+        action: (data: T?) -> Unit
+    ): Observer<T> {
         val result: Observer<T>
-        observe(this@AbsLifecycleFragment, Observer<T> { action(it) }.apply {
+        observe(this@AbsLifecycleFragment, Observer<T> {
+            action(it)
+            if (it != null && autoClear && this is MutableLiveData) {
+                postValue(null)
+            }
+        }.apply {
             result = this
         })
         return result
