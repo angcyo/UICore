@@ -27,8 +27,7 @@ class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
     var logAllWindow: Boolean = BuildConfig.DEBUG
 
     init {
-        if (BuildConfig.DEBUG) {
-            filterPackageNameList.add("com.ss.android.ugc.aweme")
+        if (logInterval) {
             enableInterval = true
         }
     }

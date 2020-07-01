@@ -2,7 +2,6 @@ package com.angcyo.core.component.accessibility
 
 import android.view.accessibility.AccessibilityEvent
 import com.angcyo.core.BuildConfig
-import com.angcyo.library.L
 
 /**
  * 提供日志输出
@@ -24,8 +23,11 @@ class LogAccessibilityInterceptor : BaseAccessibilityInterceptor() {
         event: AccessibilityEvent?
     ) {
         super.onAccessibilityEvent(service, event)
+
         if (enable) {
-            L.d(event)
+            event?.let {
+                AccessibilityHelper.log(it.toString())
+            }
         }
     }
 }

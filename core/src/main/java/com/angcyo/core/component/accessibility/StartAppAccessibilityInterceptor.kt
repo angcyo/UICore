@@ -1,6 +1,7 @@
 package com.angcyo.core.component.accessibility
 
 import android.view.accessibility.AccessibilityEvent
+import com.angcyo.library.L
 import com.angcyo.library.ex.openApp
 
 /**
@@ -16,10 +17,19 @@ class StartAppAccessibilityInterceptor : BaseAccessibilityInterceptor() {
 
     override fun onServiceConnected(service: BaseAccessibilityService) {
         super.onServiceConnected(service)
-        service.openApp(startAppPackageName ?: service.packageName)
+        startApp()
     }
 
     override fun checkDoAction(service: BaseAccessibilityService, event: AccessibilityEvent?) {
         //super.checkDoAction(service, event)
+    }
+
+    fun startApp() {
+        val service = lastService
+        if (service == null) {
+            L.e("service is not connected!")
+        } else {
+            service.openApp(startAppPackageName ?: service.packageName)
+        }
     }
 }

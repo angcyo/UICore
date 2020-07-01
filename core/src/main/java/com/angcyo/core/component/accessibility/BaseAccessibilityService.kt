@@ -84,9 +84,7 @@ abstract class BaseAccessibilityService : AccessibilityService() {
      * 当收到应用发过来的[AccessibilityEvent]无障碍事件
      * */
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        event?.let {
-            AccessibilityHelper.log(it.toString())
-        }
+        //no op
     }
 
     /**中断了反馈*/

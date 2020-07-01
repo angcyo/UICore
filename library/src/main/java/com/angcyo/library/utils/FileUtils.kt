@@ -23,6 +23,9 @@ import java.util.*
  */
 object FileUtils {
 
+    /**允许写入单个文件的最大大小100mb, 之后会重写*/
+    var fileMaxSize: Long = 100 * 1024 * 1024
+
     /**所有文件写入的在此根目录下*/
     var rootFolder: String = getAppString("schema") ?: ""
 
@@ -79,10 +82,10 @@ object FileUtils {
         try {
             appRootExternalFolderFile(context, folder, name)?.apply {
                 filePath = absolutePath
-                if (append) {
-                    appendText(data)
-                } else {
-                    writeText(data)
+
+                when {
+                    length() >= fileMaxSize || !append -> writeText(data)
+                    else -> appendText(data)
                 }
             }
         } catch (e: Exception) {

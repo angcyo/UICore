@@ -46,6 +46,11 @@ object Device {
     var deviceId: String = ""
         get() = if (field.isEmpty()) getUniqueDeviceId() else field
 
+    const val PERFORMANCE_HIGH = 10
+    const val PERFORMANCE_MEDIUM = 5
+    const val PERFORMANCE_LOW = 3
+    const val PERFORMANCE_MIN = 1
+
     /**
      * 获得独一无二的Psuedo ID
      * https://www.jianshu.com/p/130918ed8b2f
@@ -273,7 +278,23 @@ object Device {
         builder.appendln()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.append(Build.SUPPORTED_ABIS.connect("/"))
+        } else {
+            builder.append(Build.CPU_ABI)
+            builder.append("/")
+            builder.append(Build.CPU_ABI2)
         }
+        if (CpuUtils.isCpu64) {
+            builder.append("[64]")
+        }
+
+        //CPU信息
+        //CpuUtils.getCpuCurFreq().forEach {
+        //    appendln()
+        //    append(it)
+        //}
+
+        builder.appendln()
+        builder.append("${CpuUtils.cpuCoreNum}/${CpuUtils.numCpuCores} ${CpuUtils.cpuMinFreq}Hz/${CpuUtils.cpuMaxFreq}Hz")
     }
 
     /**设备屏幕信息*/
@@ -448,6 +469,16 @@ object Device {
             e.printStackTrace()
         }
         return name
+    }
+
+    /**手机设备性能登录, 越大性能越好*/
+    fun performanceLevel(): Int {
+        return when {
+            CpuUtils.cpuMaxFreq >= 2_800_000L -> PERFORMANCE_HIGH
+            CpuUtils.cpuMaxFreq >= 2_000_000L -> PERFORMANCE_MEDIUM
+            CpuUtils.cpuMaxFreq >= 1_800_000L -> PERFORMANCE_LOW
+            else -> PERFORMANCE_MIN
+        }
     }
 }
 

@@ -41,20 +41,22 @@ class DslNotify {
         /**默认的通知图标*/
         var DEFAULT_NOTIFY_ICON = android.R.mipmap.sym_def_app_icon
 
-        fun cancelNotify(context: Context, id: Int) {
-            val notificationManager = NotificationManagerCompat.from(context)
+        fun cancelNotify(context: Context?, id: Int) {
+            val notificationManager: NotificationManagerCompat =
+                NotificationManagerCompat.from(context ?: app())
             notificationManager.cancel(id)
             _notifyIds.remove(id)
         }
 
-        fun cancelNotifyLast(context: Context) {
+        fun cancelNotifyLast(context: Context?) {
             _notifyIds.lastOrNull()?.run {
                 cancelNotify(context, this)
             }
         }
 
-        fun cancelNotifyAll(context: Context) {
-            val notificationManager = NotificationManagerCompat.from(context)
+        fun cancelNotifyAll(context: Context?) {
+            val notificationManager: NotificationManagerCompat =
+                NotificationManagerCompat.from(context ?: app())
             notificationManager.cancelAll()
             _notifyIds.clear()
         }
@@ -566,7 +568,9 @@ class DslNotify {
         val notificationManager = NotificationManagerCompat.from(context)
         notificationManager.notify(notifyId, notification)
 
-        _notifyIds.add(notifyId)
+        if (!_notifyIds.contains(notifyId)) {
+            _notifyIds.add(notifyId)
+        }
         return notifyId
     }
 

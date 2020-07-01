@@ -77,17 +77,7 @@ class RAccessibilityService : BaseAccessibilityService() {
                             if (interceptor.ignoreInterceptor) {
                                 //no op
                             } else {
-                                if (interceptor.filterPackageNameList.isEmpty() ||
-                                    interceptor.filterPackageNameList.contains(packageName)
-                                ) {
-                                    interceptor.onAccessibilityEvent(this, event)
-                                } else {
-                                    interceptor.onLeavePackageName(
-                                        this,
-                                        event,
-                                        "${event.packageName}"
-                                    )
-                                }
+                                interceptor.interceptorPackage(this, event, event.packageName)
                             }
                         } catch (e: Exception) {
                             L.e(e)
@@ -114,9 +104,10 @@ class RAccessibilityService : BaseAccessibilityService() {
         lastPackageNameList.add(packageName to className)
 
         if (last?.first != packageName) {
-            L.i("切换:${last?.second}[${last?.first}]->$className[$packageName]".apply {
+            "切换:${last?.second}[${last?.first}]->$className[$packageName]".apply {
                 AccessibilityHelper.log(this)
-            })
+                //L.i(this)
+            }
         }
     }
 

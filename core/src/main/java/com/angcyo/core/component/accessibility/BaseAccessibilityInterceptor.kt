@@ -3,12 +3,18 @@ package com.angcyo.core.component.accessibility
 import android.os.Handler
 import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
+import androidx.annotation.CallSuper
 import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.http.rx.BaseFlowableSubscriber
 import com.angcyo.http.rx.flowableToMain
+import com.angcyo.http.rx.observer
 import com.angcyo.library.L
+import com.angcyo.library.component.dslNotify
+import com.angcyo.library.component.low
+import com.angcyo.library.component.single
 import com.angcyo.library.ex.className
 import com.angcyo.library.ex.simpleHash
+import com.angcyo.library.utils.Device
 import io.reactivex.Flowable
 import java.util.concurrent.TimeUnit
 
@@ -58,10 +64,16 @@ abstract class BaseAccessibilityInterceptor {
     /**当当前的[BaseAccessibilityAction]不需要处理[Event]时, 才会执行的[BaseAccessibilityAction]*/
     val actionOtherList: MutableList<BaseAccessibilityAction> = mutableListOf()
 
+    /**当所有的[Action]处理结束后回调*/
+    var onInterceptorFinish: ((error: ActionException?) -> Unit)? = null
+
     /**当前执行到动作的索引*/
     var actionIndex: Int = -1
 
     var actionStatus: Int = ACTION_STATUS_INIT
+
+    /***当所有的[Action]处理结束后(成功和失败), 是否自动卸载拦截器.*/
+    var autoUninstall: Boolean = true
 
     //<editor-fold desc="间隔">
 
@@ -76,8 +88,8 @@ abstract class BaseAccessibilityInterceptor {
             }
         }
 
-    /**间隔回调周期*/
-    var intervalDelay: Long = 4_000
+    /**间隔回调周期, 根据手机性能自动调整*/
+    var intervalDelay: Long = -1
         set(value) {
             field = value
             stopInterval()
@@ -89,6 +101,15 @@ abstract class BaseAccessibilityInterceptor {
     //观察者
     var intervalSubscriber: BaseFlowableSubscriber<Long>? = null
 
+    init {
+        intervalDelay = when (Device.performanceLevel()) {
+            Device.PERFORMANCE_HIGH -> 800
+            Device.PERFORMANCE_MEDIUM -> 1_200
+            Device.PERFORMANCE_LOW -> 4_000
+            else -> 8_000
+        }
+    }
+
     //</editor-fold desc="间隔">
 
     //<editor-fold desc="周期回调">
@@ -99,6 +120,23 @@ abstract class BaseAccessibilityInterceptor {
 
         if (enableInterval) {
             startInterval()
+        }
+    }
+
+    /**是否需要拦截指定包名的数据*/
+    open fun interceptorPackage(
+        service: BaseAccessibilityService,
+        event: AccessibilityEvent?,
+        packageName: CharSequence?
+    ) {
+        if (packageName.isNullOrEmpty()) {
+            //no op
+        } else {
+            if (filterPackageNameList.isEmpty() || filterPackageNameList.contains(packageName)) {
+                onAccessibilityEvent(service, event)
+            } else {
+                onLeavePackageName(service, event, event?.packageName)
+            }
         }
     }
 
@@ -125,32 +163,51 @@ abstract class BaseAccessibilityInterceptor {
 
     /**切换到了非过滤包名的程序*/
     open fun onLeavePackageName(
-        accService: BaseAccessibilityService,
-        event: AccessibilityEvent,
-        toPackageName: String
+        service: BaseAccessibilityService,
+        event: AccessibilityEvent?,
+        toPackageName: CharSequence?
     ) {
         //L.i("离开 $filterPackageName -> $toPackageName")
     }
 
     /**开始间隔回调*/
     open fun startInterval() {
-        if (intervalSubscriber != null || lastService == null) {
+
+        if (intervalSubscriber != null) {
+            //已经开启了回调
             return
+        }
+
+        if (intervalDelay <= 0) {
+            //不合法
+            return
+        }
+
+        if (lastService == null) {
+            //未连接到服务
         }
 
         intervalSubscriber = BaseFlowableSubscriber<Long>().apply {
             onNext = {
-                //L.v(this@BaseAccessibilityInterceptor.simpleHash(), " $it")
-                lastService?.let {
-                    onAccessibilityEvent(it, null)
-                }
+                onInterval()
             }
         }
 
         Flowable.interval(intervalDelay, intervalDelay, TimeUnit.MILLISECONDS)
             .onBackpressureLatest()
             .compose(flowableToMain())
-            .subscribe(intervalSubscriber)
+            .retry(10)
+            .observer(intervalSubscriber!!)
+    }
+
+    /**间隔周期回调*/
+    open fun onInterval() {
+        //L.v(this@BaseAccessibilityInterceptor.simpleHash(), " $it")
+        lastService?.let {
+            it.rootNodeInfo(null)?.let { node ->
+                interceptorPackage(it, null, node.packageName)
+            }
+        }
     }
 
     open fun stopInterval() {
@@ -169,22 +226,28 @@ abstract class BaseAccessibilityInterceptor {
     }
 
     /**所有Action执行完成*/
-    open fun onActionFinish(error: ActionException?) {
+    @CallSuper
+    open fun onActionFinish(error: ActionException? = null) {
         if (actionStatus == ACTION_STATUS_ERROR) {
             //出现异常
         } else if (actionStatus == ACTION_STATUS_FINISH) {
             //流程结束
+        }
+        onInterceptorFinish?.invoke(error)
+        if (autoUninstall) {
+            uninstall()
         }
     }
 
     open fun checkDoAction(service: BaseAccessibilityService, event: AccessibilityEvent?) {
         if (actionList.isEmpty() && actionIndex < 0) {
             //no op
-            L.w("${this.className()} no action need do.")
+            L.w("${this.className()} no action need do. status to [ACTION_STATUS_FINISH].")
+            actionStatus = ACTION_STATUS_FINISH
         } else if (actionStatus.isActionCanStart()) {
             if (actionIndex >= actionList.size) {
                 actionStatus = ACTION_STATUS_FINISH
-                onActionFinish(null)
+                onActionFinish()
             } else {
                 actionStatus = ACTION_STATUS_ING
                 if (actionIndex < 0) {
@@ -234,14 +297,18 @@ abstract class BaseAccessibilityInterceptor {
                 }
                 if (!handle) {
                     //未被处理
-                    onNoOtherActionHandle(service, event)
+                    onNoOtherActionHandle(action, service, event)
                 }
             }
         }
     }
 
     /**未被[actionOtherList]处理*/
-    open fun onNoOtherActionHandle(service: BaseAccessibilityService, event: AccessibilityEvent?) {
+    open fun onNoOtherActionHandle(
+        action: BaseAccessibilityAction,
+        service: BaseAccessibilityService,
+        event: AccessibilityEvent?
+    ) {
         if (event != null) {
             L.i("\n${this.simpleHash()} [$actionIndex] 无Action能处理! 包名:${event.packageName} 类名:${event.className} type:${event.eventTypeStr()} type2:${event.contentChangeTypesStr()}")
         } else {
@@ -255,6 +322,8 @@ abstract class BaseAccessibilityInterceptor {
     }
 
     //</editor-fold desc="action">
+
+    //<editor-fold desc="其他">
 
     /**每次延迟, 取消之前的任务*/
     open fun delay(delay: Long = 300, skipExist: Boolean = true, action: () -> Unit) {
@@ -272,6 +341,22 @@ abstract class BaseAccessibilityInterceptor {
         }
         handler.postDelayed(delayRunnable!!, delay)
     }
+
+    var notifyId = 0
+
+    /**发送通知*/
+    fun sendNotify(title: CharSequence? = null, content: CharSequence? = null) {
+        notifyId = dslNotify {
+            if (this@BaseAccessibilityInterceptor.notifyId > 0) {
+                notifyId = this@BaseAccessibilityInterceptor.notifyId
+            }
+            notifyOngoing = actionStatus.isActionStart()
+            low()
+            single(title, content)
+        }
+    }
+
+    //</editor-fold desc="其他">
 }
 
 fun Int.isActionCanStart() =
@@ -286,6 +371,24 @@ fun BaseAccessibilityInterceptor.install() {
     RAccessibilityService.addInterceptor(this)
 }
 
+/**卸载拦截器*/
 fun BaseAccessibilityInterceptor.uninstall() {
     RAccessibilityService.removeInterceptor(this)
+}
+
+/**进入周期回调模式, 每隔[intervalDelay]时间回调一次*/
+fun BaseAccessibilityInterceptor.intervalMode(delay: Long = intervalDelay) {
+    ignoreInterceptor = true
+    enableInterval = true
+    intervalDelay = delay
+}
+
+/**进入普通的事件拦截模式, 当收到[AccessibilityEvent]事件时, 回调*/
+fun BaseAccessibilityInterceptor.interceptorMode(vararg filterPackage: String) {
+    ignoreInterceptor = false
+    enableInterval = false
+
+    filterPackage.forEach {
+        filterPackageNameList.add(it)
+    }
 }

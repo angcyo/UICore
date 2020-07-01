@@ -5,6 +5,7 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.library.component.work.Trackers
 import com.angcyo.library.ex.*
 import com.angcyo.library.toast
+import com.angcyo.library.utils.CpuUtils
 import com.angcyo.library.utils.Device
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.progress.DslProgressBar
