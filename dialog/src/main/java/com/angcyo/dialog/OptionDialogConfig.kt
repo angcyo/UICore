@@ -226,9 +226,11 @@ open class OptionDialogConfig : BaseDialogConfig() {
                 showAdapterItems(dialogViewHolder, itemResultList, loadLevel)
             }
 
-            itemResultList?.let {
-                //缓存
-                _cacheMap[loadLevel] = it
+            //缓存
+            if (itemResultList.isNullOrEmpty()) {
+                _cacheMap.remove(loadLevel)
+            } else {
+                _cacheMap[loadLevel] = itemResultList
             }
         }
 
@@ -281,12 +283,15 @@ open class OptionDialogConfig : BaseDialogConfig() {
                     optionList.add(data)
                 } else {
                     //清除之后的选项
-                    for (i in optionList.size - 1 downTo loadLevel) {
+                    for (i in optionList.size downTo loadLevel) {
                         if (i != loadLevel) {
                             //移除后面位置的缓存, 但是当前位置的缓存不清除
                             _cacheMap.remove(i)
                         }
-                        optionList.removeAt(i)
+
+                        if (i in optionList.indices) {
+                            optionList.removeAt(i)
+                        }
                     }
                     optionList.add(data)
                 }
