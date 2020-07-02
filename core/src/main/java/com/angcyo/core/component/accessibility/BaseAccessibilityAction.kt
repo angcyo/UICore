@@ -14,6 +14,9 @@ import com.angcyo.library.ex.simpleHash
 
 abstract class BaseAccessibilityAction {
 
+    //关联的拦截器, 只在[doAction]中使用有效
+    var _interceptor: BaseAccessibilityInterceptor? = null
+
     /**当完成了[Action], 需要调用此方法, 触发下一个[Action]*/
     var actionFinish: ((error: ActionException?) -> Unit)? = null
 

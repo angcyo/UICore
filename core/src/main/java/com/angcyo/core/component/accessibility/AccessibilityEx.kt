@@ -114,6 +114,13 @@ fun Activity.navigatorBarHeight(): Int {
 
 //<editor-fold desc="AccessibilityService扩展">
 
+fun AccessibilityService.findNode(predicate: (node: AccessibilityNodeInfoCompat) -> Unit) {
+    rootNodeInfo()?.findNode(predicate = {
+        predicate(it)
+        -1
+    })
+}
+
 fun AccessibilityService.rootNodeInfo(event: AccessibilityEvent? = null): AccessibilityNodeInfo? {
     var maxHeightWindow: AccessibilityWindowInfo? = null
     var maxHeight = 0
@@ -439,6 +446,11 @@ fun AccessibilityNodeInfo.toRect(): Rect {
 /**调用node的点击事件*/
 fun AccessibilityNodeInfo.click() = performAction(AccessibilityNodeInfo.ACTION_CLICK)
 
+/**获取焦点*/
+fun AccessibilityNodeInfo.focus() = performAction(AccessibilityNodeInfo.ACTION_FOCUS)
+
+fun AccessibilityNodeInfo.longClick() = performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)
+
 fun AccessibilityNodeInfo.setNodeText(text: CharSequence?): Boolean {
     return try {//AccessibilityNodeInfoCompat.wrap(this).text = text
         val arguments = Bundle()
@@ -591,11 +603,21 @@ fun AccessibilityNodeInfo.debugNodeInfo(
     stringBuilder.apply {
         append(newLine(index))
         append(" ${wrap.className}(${wrap.viewIdResourceName})")
-        append(" e:${isEnabled}")
-        append(" c:${isClickable}")
-        append(" s:${isSelected}")
-        append(" ck:${isChecked}")
-        append(" sc:${isScrollable}")
+
+        append(" ck:${isCheckable}") //是否可以check
+        append(" ckd:${isChecked}") //是否check
+
+        append(" f:${isFocusable}") //是否可以获取焦点
+        append(" fd:${isFocused}") //是否焦点
+
+        append(" c:${isClickable}") //是否可以点击
+        append(" lc:${isLongClickable}") //是否可以长按
+        append(" sc:${isScrollable}") //是否可以滚动
+
+        append(" ed:${isEnabled}") //是否激活
+        append(" sd:${isSelected}") //是否选中
+        append(" pd:${isPassword}") //是否是密码
+
         append(" [${wrap.text}] [${wrap.contentDescription}]")
         wrap.hintText?.apply {
             append(" hintText:[${this}]")
@@ -732,12 +754,17 @@ fun AccessibilityNodeInfoCompat.isClass(claName: CharSequence) =
     className?.toString() == claName.toString()
 
 fun AccessibilityNodeInfoCompat.isTextView() = isClass("android.widget.TextView")
-
 fun AccessibilityNodeInfoCompat.isEditText() = isClass("android.widget.EditText")
-
 fun AccessibilityNodeInfoCompat.isImageView() = isClass("android.widget.ImageView")
-
 fun AccessibilityNodeInfoCompat.isButton() = isClass("android.widget.Button")
+fun AccessibilityNodeInfoCompat.isCheckBox() = isClass("android.widget.CheckBox")
+
+fun AccessibilityNodeInfoCompat.click() = unwrap().click()
+fun AccessibilityNodeInfoCompat.focus() = unwrap().focus()
+fun AccessibilityNodeInfoCompat.longClick() = unwrap().longClick()
+fun AccessibilityNodeInfoCompat.scrollForward() = unwrap().scrollForward()
+fun AccessibilityNodeInfoCompat.scrollBackward() = unwrap().scrollBackward()
+fun AccessibilityNodeInfoCompat.setNodeText(text: CharSequence?) = unwrap().setNodeText(text)
 
 /**是一个有效的Node*/
 fun AccessibilityNodeInfoCompat.isValid(): Boolean {
@@ -755,5 +782,13 @@ fun AccessibilityNodeInfoCompat.isValid(): Boolean {
 
 fun AccessibilityNodeInfoCompat.isLayout() =
     className?.toString()?.contains("Layout", true) ?: false
+
+fun AccessibilityNodeInfoCompat.getChildOrNull(index: Int): AccessibilityNodeInfoCompat? {
+    return if (index in 0 until childCount) {
+        getChild(index)
+    } else {
+        null
+    }
+}
 
 //</editor-fold desc="AccessibilityNodeInfo扩展">

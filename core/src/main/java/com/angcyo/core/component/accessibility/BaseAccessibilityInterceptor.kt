@@ -271,6 +271,7 @@ abstract class BaseAccessibilityInterceptor {
         if (service != null) {
             if (action.checkEvent(service, event)) {
                 //需要事件处理
+                action._interceptor = this
                 action.actionFinish = {
                     //action执行完成
                     if (it != null) {
@@ -290,6 +291,7 @@ abstract class BaseAccessibilityInterceptor {
                 }
                 action.doAction(service, event)
                 action.actionFinish = null
+                action._interceptor = null
             } else {
                 //不需要事件处理
                 var handle = false
