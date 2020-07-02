@@ -65,10 +65,19 @@ fun evaluateColor(fraction: Float, startValue: Int, endValue: Int): Int {
  *
  * @param alpha [0..255] 值越小,越透明
  */
-public fun Int.alpha(alpha: Int): Int {
+fun Int.alpha(alpha: Int): Int {
     return ColorUtils.setAlphaComponent(this, MathUtils.clamp(alpha, 0, 255))
 }
 
-public fun Int.alpha(alpha: Float): Int {
+fun Int.alpha(alpha: Float): Int {
     return alpha(alpha.toInt())
+}
+
+/**0xFFFF8000*/
+fun Int.toHexColorString(): String {
+    val a = Color.alpha(this)
+    val r = Color.red(this)
+    val g = Color.green(this)
+    val b = Color.blue(this)
+    return String.format(Locale.getDefault(), "0x%02X%02X%02X%02X", a, r, g, b)
 }

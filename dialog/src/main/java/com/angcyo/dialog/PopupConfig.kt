@@ -48,7 +48,7 @@ open class PopupConfig {
     var yoff: Int = 0
 
     //此属性 似乎只在 showAtLocation 有效, 在showAsDropDown中, anchor完全在屏幕底部, 系统会控制在TOP显示, 手动控制无效
-    var gravity = Gravity.NO_GRAVITY//Gravity.TOP or Gravity.START or Gravity.LEFT
+    var gravity: Int = Gravity.NO_GRAVITY//Gravity.TOP or Gravity.START or Gravity.LEFT
 
     /** 标准属性 */
     var contentView: View? = null
@@ -56,8 +56,8 @@ open class PopupConfig {
     /** 指定布局id */
     var layoutId: Int = -1
 
-    var height = WindowManager.LayoutParams.WRAP_CONTENT
-    var width = WindowManager.LayoutParams.WRAP_CONTENT
+    var height: Int = WindowManager.LayoutParams.WRAP_CONTENT
+    var width: Int = WindowManager.LayoutParams.WRAP_CONTENT
     var focusable = true
     var touchable = true
     var outsideTouchable = true

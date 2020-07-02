@@ -2,12 +2,14 @@ package com.angcyo.library.component
 
 import android.app.*
 import android.content.Context
+import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.graphics.Bitmap
 import android.media.AudioAttributes
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.widget.RemoteViews
@@ -36,10 +38,10 @@ class DslNotify {
 
     companion object {
 
-        val _notifyIds = mutableListOf<Int>()
+        val _notifyIds: MutableList<Int> = mutableListOf()
 
         /**默认的通知图标*/
-        var DEFAULT_NOTIFY_ICON = android.R.mipmap.sym_def_app_icon
+        var DEFAULT_NOTIFY_ICON: Int = android.R.mipmap.sym_def_app_icon
 
         fun cancelNotify(context: Context?, id: Int) {
             val notificationManager: NotificationManagerCompat =
@@ -59,6 +61,49 @@ class DslNotify {
                 NotificationManagerCompat.from(context ?: app())
             notificationManager.cancelAll()
             _notifyIds.clear()
+        }
+
+        /**获取[channelId]对应的通道信息, 可以检测通道通知是否被关闭*/
+        fun getNotificationChannel(context: Context?, channelId: String): NotificationChannel? {
+            val manager: NotificationManager? =
+                (context ?: app()).getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && manager != null) {
+                try {
+                    val channel: NotificationChannel = manager.getNotificationChannel(channelId)
+                    //channel.importance == NotificationManager.IMPORTANCE_NONE
+                    channel
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    null
+                }
+            } else {
+                null
+            }
+        }
+
+        /**打开通道设置页*/
+        fun openNotificationChannelSetting(context: Context, channelId: String) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
+
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName);
+                intent.putExtra(Settings.EXTRA_CHANNEL_ID, channelId)
+                context.startActivity(intent)
+            }
+        }
+
+        /**删除通道*/
+        fun deleteNotificationChannel(context: Context?, channelId: String) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val manager: NotificationManager? =
+                    (context
+                        ?: app()).getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
+                try {
+                    manager?.deleteNotificationChannel(channelId)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
         }
 
         fun pendingActivity(
@@ -335,10 +380,13 @@ class DslNotify {
 
     var notifyId: Int = (System.currentTimeMillis() and 0xFFFFFFF).toInt()
 
-    /**必须的最小成员变量,一般建议在24×24, 支持svg, 但是色彩会丢失. png 可以支持彩色
+    /**必须的最小成员变量,一般建议在24dp×24dp, 支持svg, 但是色彩会丢失. png 可以支持彩色
      * Android 5.0 SVG显示有系统背景
      * */
-    var notifySmallIcon = DEFAULT_NOTIFY_ICON
+    var notifySmallIcon: Int = DEFAULT_NOTIFY_ICON
+
+    /**通知栏图标的强调色, 在下拉后的图标和默认label会使用此颜色*/
+    var notifyColor: Int = NotificationCompat.COLOR_DEFAULT
 
     /**通知栏, 右边的大图, 不支持SVG?*/
     var notifyLargeIcon: Bitmap? = null
@@ -404,7 +452,8 @@ class DslNotify {
      * https://developer.android.google.cn/training/notify-user/build-notification.html#lockscreenNotification*/
     var notifyVisibility = VISIBILITY_PUBLIC
 
-    var notifyNumber: Int = 0
+    /**需要开启[channelShowBadge]后, 长按应用桌面图标, 弹出的菜单会提示消息未读数*/
+    var notifyNumber: Int = 1
 
     /**进度
      * https://developer.android.google.cn/training/notify-user/build-notification.html#progressbar*/
@@ -415,7 +464,7 @@ class DslNotify {
     var notifyProgressIndeterminate = false
 
     /**通知的时间*/
-    var notifyWhen = System.currentTimeMillis()
+    var notifyWhen: Long = System.currentTimeMillis()
 
     /**是否需要显示通知的时间*/
     var notifyShowWhen = true
@@ -486,6 +535,7 @@ class DslNotify {
 
             setVisibility(notifyVisibility)
             setNumber(notifyNumber)
+            color = notifyColor
 
             //PRIORITY_HIGH 就会有横幅通知, 并且会自动消失
             priority = notifyPriority
