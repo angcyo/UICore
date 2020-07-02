@@ -10,8 +10,11 @@ import android.os.Handler
 import android.os.HandlerThread
 import com.angcyo.fragment.FragmentBridge
 import com.angcyo.library.L
+import com.angcyo.library._screenHeight
+import com.angcyo.library._screenWidth
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import kotlin.random.Random.Default.nextInt
 
 /**
  * 无障碍手势执行dsl
@@ -230,9 +233,19 @@ class DslAccessibilityGesture :
     fun double(point: PointF) {
         //双击, 需要伴随MOVE事件, 才能生效
         duration = clickDuration
-        touch(point.x, point.y, point.x, point.y + 5)
+        touch(
+            point.x,
+            point.y,
+            point.x - nextInt(5, 10),
+            point.y + nextInt(5, 10)
+        )
         startTime += duration + doubleDuration
-        touch(point.x, point.y, point.x, point.y + 5)
+        touch(
+            point.x,
+            point.y,
+            point.x + nextInt(5, 10),
+            point.y - nextInt(5, 10)
+        )
     }
 
     /**手势操作核心*/
@@ -326,26 +339,29 @@ fun DslAccessibilityGesture.touch(
     toX: Float,
     toY: Float,
     result: GestureResult? = null
-) {
+): Boolean {
     gestureResult = result
     touch(fromX, fromY, toX, toY)
     doIt()
+    return _isDispatched
 }
 
 fun DslAccessibilityGesture.click(
     x: Float, y: Float,
     result: GestureResult? = null
-) {
+): Boolean {
     gestureResult = result
     touch(x, y)
     doIt()
+    return _isDispatched
 }
 
 fun DslAccessibilityGesture.double(
-    x: Float, y: Float,
+    x: Float = _screenWidth / 2f, y: Float = _screenHeight / 2f,
     result: GestureResult? = null
-) {
+): Boolean {
     gestureResult = result
     double(x, y)
     doIt()
+    return _isDispatched
 }

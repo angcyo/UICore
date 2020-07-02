@@ -24,7 +24,6 @@ import com.angcyo.http.RIo
 import com.angcyo.library.L
 import com.angcyo.library.ex.className
 import com.angcyo.library.ex.copy
-import com.angcyo.library.ex.string
 
 /**
  *
@@ -737,6 +736,22 @@ fun AccessibilityNodeInfoCompat.isTextView() = isClass("android.widget.TextView"
 fun AccessibilityNodeInfoCompat.isEditText() = isClass("android.widget.EditText")
 
 fun AccessibilityNodeInfoCompat.isImageView() = isClass("android.widget.ImageView")
+
+fun AccessibilityNodeInfoCompat.isButton() = isClass("android.widget.Button")
+
+/**是一个有效的Node*/
+fun AccessibilityNodeInfoCompat.isValid(): Boolean {
+    var result = false
+    val bound = bounds()
+
+    if (bound.width() > 0 &&
+        bound.height() > 0
+    ) {
+        result = true
+    }
+
+    return result
+}
 
 fun AccessibilityNodeInfoCompat.isLayout() =
     className?.toString()?.contains("Layout", true) ?: false
