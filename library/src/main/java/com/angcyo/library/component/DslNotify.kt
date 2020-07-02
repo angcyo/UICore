@@ -380,7 +380,8 @@ class DslNotify {
 
     var notifyId: Int = (System.currentTimeMillis() and 0xFFFFFFF).toInt()
 
-    /**必须的最小成员变量,一般建议在24dp×24dp, 支持svg, 但是色彩会丢失. png 可以支持彩色
+    /**必须的最小成员变量,一般建议在24dp×24dp, 支持svg, 但是色彩会丢失, 系统会自动使用colorFilter
+     * png 可以支持彩色(需要高版本支持api29单色效果测试通过)
      * Android 5.0 SVG显示有系统背景
      * */
     var notifySmallIcon: Int = DEFAULT_NOTIFY_ICON
