@@ -42,22 +42,25 @@ class DslCameraViewHelper {
             if (captureMode == CameraView.CaptureMode.VIDEO) {
                 captureMode = CameraView.CaptureMode.IMAGE
             }
-            takePicture(saveFile, MainExecutor, object : ImageCapture.OnImageSavedCallback {
-                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    L.i(saveFile)
-                    if (saveToDCIM) {
-                        cameraView?.context?.saveToDCIM(saveFile)
-                        //cameraView?.context?.scanFile(saveFile)
+            takePicture(
+                ImageCapture.OutputFileOptions.Builder(saveFile).build(),
+                MainExecutor,
+                object : ImageCapture.OnImageSavedCallback {
+                    override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                        L.i(saveFile)
+                        if (saveToDCIM) {
+                            cameraView?.context?.saveToDCIM(saveFile)
+                            //cameraView?.context?.scanFile(saveFile)
+                        }
+                        onResult(saveFile, null)
+                        //L.i(outputFileResults.savedUri) null
                     }
-                    onResult(saveFile, null)
-                    //L.i(outputFileResults.savedUri) null
-                }
 
-                override fun onError(exception: ImageCaptureException) {
-                    L.w(exception)
-                    onResult(saveFile, exception)
-                }
-            })
+                    override fun onError(exception: ImageCaptureException) {
+                        L.w(exception)
+                        onResult(saveFile, exception)
+                    }
+                })
         }
     }
 
