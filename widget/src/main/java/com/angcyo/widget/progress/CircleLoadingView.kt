@@ -11,6 +11,7 @@ import com.angcyo.widget.base.Anim
 import com.angcyo.widget.base.InvalidateProperty
 import com.angcyo.widget.base.anim
 import com.angcyo.widget.layout.touch.SwipeBackLayout.Companion.clamp
+import kotlin.math.min
 
 /**
  * 王者荣耀loading动画控件
@@ -170,7 +171,7 @@ class CircleLoadingView(context: Context, attributeSet: AttributeSet? = null) :
         tempRectF.set(drawRectF)
         tempRectF.inset(width / 2, width / 2)
 
-        val size = Math.min(tempRectF.width(), tempRectF.height())
+        val size = min(tempRectF.width(), tempRectF.height())
         drawTempRectF.set(
             -size / 2, -size / 2,
             size / 2, size / 2
@@ -186,9 +187,12 @@ class CircleLoadingView(context: Context, attributeSet: AttributeSet? = null) :
         //圆形背景
         if (drawLoadingBackground) {
             paint.shader = null
-            paint.style = Paint.Style.FILL
+            paint.style = Paint.Style.FILL_AND_STROKE
             paint.color = loadingBackgroundColor
-            canvas.drawCircle(0f, 0f, drawTempRectF.width() / 2 + width / 2 + 1, paint)
+
+            val size: Float = min(drawTempRectF.width(), drawTempRectF.height())
+
+            canvas.drawCircle(0f, 0f, size / 2, paint)
         }
 
         paint.style = Paint.Style.STROKE

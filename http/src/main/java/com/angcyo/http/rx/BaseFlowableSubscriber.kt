@@ -30,6 +30,11 @@ open class BaseFlowableSubscriber<T> : AtomicReference<Subscription>(),
         it.request(Long.MAX_VALUE)
     }
 
+    /**订阅开始, 等同于[onSubscribe]*/
+    var onStart: (Subscription) -> Unit = {
+
+    }
+
     var onNext: (T) -> Unit = {
         L.d("${this.javaClass.name}#onNext:$it")
     }
@@ -60,6 +65,7 @@ open class BaseFlowableSubscriber<T> : AtomicReference<Subscription>(),
         if (SubscriptionHelper.setOnce(this, s)) {
             try {
                 onSubscribe.invoke(this)
+                onStart.invoke(this)
             } catch (ex: Throwable) {
                 Exceptions.throwIfFatal(ex)
                 s.cancel()

@@ -353,8 +353,7 @@ open class DslViewHolder(
     //<editor-fold desc="findViewById">
 
     fun <T : View?> v(@IdRes resId: Int): T? {
-        val viewWeakReference =
-            sparseArray[resId]
+        val viewWeakReference = sparseArray[resId]
         var view: View?
         if (viewWeakReference == null) {
             view = itemView.findViewById(resId)
@@ -367,7 +366,7 @@ open class DslViewHolder(
             }
         }
         return try {
-            view as? T
+            view as? T?
         } catch (e: Exception) {
             L.w(e)
             null

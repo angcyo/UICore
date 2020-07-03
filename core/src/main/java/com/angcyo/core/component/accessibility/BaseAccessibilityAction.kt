@@ -84,3 +84,6 @@ fun BaseAccessibilityAction.randomIntervalDelay() {
     actionIntervalDelay =
         (accessibilityInterceptor?.initialIntervalDelay ?: -1) * Random.nextInt(1, 10)
 }
+
+fun BaseAccessibilityAction.intervalDelay(): Long =
+    accessibilityInterceptor?.initialIntervalDelay ?: -1

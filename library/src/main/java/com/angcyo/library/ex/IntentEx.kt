@@ -120,7 +120,7 @@ fun Context.toApplicationDetailsSettings(packageName: String = getPackageName())
 }
 
 /**打开程序, 启动应用*/
-fun Context.openApp(packageName: String?, className: String? = null): Intent? {
+fun Context.openApp(packageName: String? = this.packageName, className: String? = null): Intent? {
     if (packageName.isNullOrBlank()) {
         L.w("packageName is null!")
         return null

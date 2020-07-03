@@ -13,6 +13,7 @@ import com.angcyo.library.component.dslNotify
 import com.angcyo.library.component.low
 import com.angcyo.library.component.single
 import com.angcyo.library.ex.className
+import com.angcyo.library.ex.nowTimeString
 import com.angcyo.library.ex.openApp
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.library.utils.Device
@@ -199,8 +200,19 @@ abstract class BaseAccessibilityInterceptor {
         }
 
         intervalSubscriber = BaseFlowableSubscriber<Long>().apply {
+
+            onStart = {
+                onIntervalStart()
+                L.i("onStart:${this@BaseAccessibilityInterceptor.simpleHash()} ${nowTimeString()} $intervalDelay")
+            }
+
             onNext = {
                 onInterval()
+                L.i("onNext:${this@BaseAccessibilityInterceptor.simpleHash()} ${nowTimeString()} $intervalDelay")
+            }
+
+            onObserverEnd = { data, error ->
+                onIntervalEnd(data, error)
             }
         }
 
@@ -209,6 +221,16 @@ abstract class BaseAccessibilityInterceptor {
             .compose(flowableToMain())
             .retry(10)
             .observer(intervalSubscriber!!)
+    }
+
+    /**周期回调开始*/
+    open fun onIntervalStart() {
+
+    }
+
+    /**周期回调结束*/
+    open fun onIntervalEnd(data: Long?, error: Throwable?) {
+
     }
 
     /**间隔周期回调*/
@@ -392,9 +414,10 @@ abstract class BaseAccessibilityInterceptor {
 fun Int.isActionCanStart() =
     this == BaseAccessibilityInterceptor.ACTION_STATUS_INIT || this == BaseAccessibilityInterceptor.ACTION_STATUS_ING
 
+fun Int.isActionInit() = this == BaseAccessibilityInterceptor.ACTION_STATUS_INIT
 fun Int.isActionStart() = this == BaseAccessibilityInterceptor.ACTION_STATUS_ING
-
 fun Int.isActionFinish() = this == BaseAccessibilityInterceptor.ACTION_STATUS_FINISH
+fun Int.isActionError() = this == BaseAccessibilityInterceptor.ACTION_STATUS_ERROR
 
 /**安装拦截器*/
 fun BaseAccessibilityInterceptor.install() {
