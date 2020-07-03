@@ -83,19 +83,28 @@ abstract class BaseAccessibilityInterceptor {
         set(value) {
             field = value
             if (value) {
-                startInterval()
+                startInterval(intervalDelay)
             } else {
                 stopInterval()
             }
         }
 
+    //初始化的时间间隔, 用于恢复[intervalDelay]
+    var initialIntervalDelay: Long = -1
+        set(value) {
+            field = value
+            intervalDelay = value
+        }
+
     /**间隔回调周期, 根据手机性能自动调整*/
     var intervalDelay: Long = -1
         set(value) {
-            field = value
-            stopInterval()
-            if (enableInterval) {
-                startInterval()
+            if (field != value) {
+                field = value
+                stopInterval()
+                if (enableInterval) {
+                    startInterval(value)
+                }
             }
         }
 
@@ -103,7 +112,7 @@ abstract class BaseAccessibilityInterceptor {
     var intervalSubscriber: BaseFlowableSubscriber<Long>? = null
 
     init {
-        intervalDelay = when (Device.performanceLevel()) {
+        initialIntervalDelay = when (Device.performanceLevel()) {
             Device.PERFORMANCE_HIGH -> 800
             Device.PERFORMANCE_MEDIUM -> 1_200
             Device.PERFORMANCE_LOW -> 4_000
@@ -120,7 +129,7 @@ abstract class BaseAccessibilityInterceptor {
         lastService = service
 
         if (enableInterval) {
-            startInterval()
+            startInterval(intervalDelay)
         }
     }
 
@@ -171,20 +180,22 @@ abstract class BaseAccessibilityInterceptor {
     }
 
     /**开始间隔回调*/
-    open fun startInterval() {
+    open fun startInterval(delay: Long) {
 
         if (intervalSubscriber != null) {
             //已经开启了回调
             return
         }
 
-        if (intervalDelay <= 0) {
+        if (delay <= 0) {
             //不合法
+            L.w("间隔时长不合法!")
             return
         }
 
         if (lastService == null) {
             //未连接到服务
+            L.w("请注意, 未连接到无障碍服务!")
         }
 
         intervalSubscriber = BaseFlowableSubscriber<Long>().apply {
@@ -193,7 +204,7 @@ abstract class BaseAccessibilityInterceptor {
             }
         }
 
-        Flowable.interval(intervalDelay, intervalDelay, TimeUnit.MILLISECONDS)
+        Flowable.interval(delay, delay, TimeUnit.MILLISECONDS)
             .onBackpressureLatest()
             .compose(flowableToMain())
             .retry(10)
@@ -225,7 +236,9 @@ abstract class BaseAccessibilityInterceptor {
         actionStatus = ACTION_STATUS_INIT
     }
 
-    /**所有Action执行完成*/
+    /**所有Action执行完成
+     * [error] 异常, 会中断调用链
+     * */
     @CallSuper
     open fun onActionFinish(error: ActionException? = null) {
         if (actionStatus == ACTION_STATUS_ERROR) {
@@ -271,27 +284,28 @@ abstract class BaseAccessibilityInterceptor {
         if (service != null) {
             if (action.checkEvent(service, event)) {
                 //需要事件处理
-                action._interceptor = this
                 action.actionFinish = {
                     //action执行完成
                     if (it != null) {
                         actionStatus = ACTION_STATUS_ERROR
                         onActionFinish(it)
                     } else {
-                        actionIndex++
-
-                        if (enableInterval) {
-                            //no op
-                        } else {
-                            handler.post {
-                                checkDoAction(service, event)
-                            }
-                        }
+                        actionNext(service, event)
                     }
                 }
+                if (action.actionDoCount == 0) {
+                    action.onActionStart(this)
+                }
                 action.doAction(service, event)
+                action.actionDoCount++
                 action.actionFinish = null
-                action._interceptor = null
+
+                //切换间隔时长
+                intervalDelay = if (action.actionIntervalDelay > 0) {
+                    action.actionIntervalDelay
+                } else {
+                    initialIntervalDelay
+                }
             } else {
                 //不需要事件处理
                 var handle = false
@@ -302,6 +316,19 @@ abstract class BaseAccessibilityInterceptor {
                     //未被处理
                     onNoOtherActionHandle(action, service, event)
                 }
+            }
+        }
+    }
+
+    /**下一个[Action]*/
+    fun actionNext(service: BaseAccessibilityService, event: AccessibilityEvent?) {
+        actionIndex++
+
+        if (enableInterval) {
+            //no op, 等待下一个周期回调
+        } else {
+            handler.post {
+                checkDoAction(service, event)
             }
         }
     }

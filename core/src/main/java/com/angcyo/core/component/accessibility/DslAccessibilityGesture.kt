@@ -9,9 +9,8 @@ import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
 import com.angcyo.fragment.FragmentBridge
-import com.angcyo.library.L
-import com.angcyo.library._screenHeight
-import com.angcyo.library._screenWidth
+import com.angcyo.library.*
+import com.angcyo.library.ex.dpi
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random.Default.nextInt
@@ -301,14 +300,16 @@ fun AccessibilityService.dslGesture(action: DslAccessibilityGesture.() -> Unit):
     return gesture._isCompleted
 }
 
+//<editor-fold desc="move">
+
 fun DslAccessibilityGesture.move(
     fromX: Int,
     fromY: Int,
     toX: Int,
     toY: Int,
     result: GestureResult? = null
-) {
-    touch(fromX.toFloat(), fromY.toFloat(), toX.toFloat(), toY.toFloat(), result)
+): Boolean {
+    return touch(fromX.toFloat(), fromY.toFloat(), toX.toFloat(), toY.toFloat(), result)
 }
 
 fun DslAccessibilityGesture.move(
@@ -317,10 +318,58 @@ fun DslAccessibilityGesture.move(
     toX: Float,
     toY: Float,
     result: GestureResult? = null
-) {
+): Boolean {
     moveDuration()
-    touch(fromX, fromY, toX, toY, result)
+    return touch(fromX, fromY, toX, toY, result)
 }
+
+fun DslAccessibilityGesture.moveUp(result: GestureResult? = null): Boolean {
+    val screenWidth = _screenWidth
+    val screenHeight = _screenHeight
+
+    val fX = screenWidth / 2 * 1f + nextInt(5, 10)
+    val fY = screenHeight * 3 / 5 * 1f - nextInt(5, 10)
+    val tY = screenHeight * 2 / 5 * 1f + nextInt(5, 10)
+
+    return move(fX, fY, fX, tY, result)
+}
+
+fun DslAccessibilityGesture.moveDown(result: GestureResult? = null): Boolean {
+    val screenWidth = _screenWidth
+    val screenHeight = _screenHeight
+
+    val fX = screenWidth / 2 * 1f + nextInt(5, 10)
+    val fY = screenHeight * 3 / 5 * 1f - nextInt(5, 10)
+    val tY = screenHeight * 2 / 5 * 1f + nextInt(5, 10)
+
+    return move(fX, tY, fX, fY, result)
+}
+
+fun DslAccessibilityGesture.moveLeft(result: GestureResult? = null): Boolean {
+    val screenWidth = _screenWidth
+    val screenHeight = _screenHeight
+
+    val fY = screenHeight / 2 * 1f + nextInt(5, 10)
+    val fX = screenWidth * 3 / 5 * 1f + nextInt(5, 10)
+    val tX = screenWidth * 2 / 5 * 1f - nextInt(5, 10)
+
+    return move(fX, fY, tX, fY, result)
+}
+
+fun DslAccessibilityGesture.moveRight(result: GestureResult? = null): Boolean {
+    val screenWidth = _screenWidth
+    val screenHeight = _screenHeight
+
+    val fY = screenHeight / 2 * 1f + nextInt(5, 10)
+    val fX = screenWidth * 3 / 5 * 1f + nextInt(5, 10)
+    val tX = screenWidth * 2 / 5 * 1f - nextInt(5, 10)
+
+    return move(tX, fY, fX, fY, result)
+}
+
+//</editor-fold desc="move">
+
+//<editor-fold desc="fling">
 
 fun DslAccessibilityGesture.fling(
     fromX: Float,
@@ -328,10 +377,60 @@ fun DslAccessibilityGesture.fling(
     toX: Float,
     toY: Float,
     result: GestureResult? = null
-) {
+): Boolean {
     flingDuration()
-    touch(fromX, fromY, toX, toY, result)
+    return touch(fromX, fromY, toX, toY, result)
 }
+
+/**手指往上[fling] ↑*/
+fun DslAccessibilityGesture.flingUp(result: GestureResult? = null): Boolean {
+    val screenWidth = _screenWidth
+    val screenHeight = _screenHeight
+
+    val fX = screenWidth / 2 * 1f + nextInt(5, 10)
+    val fY = screenHeight * 3 / 5 * 1f - nextInt(5, 10)
+    val tY = screenHeight * 2 / 5 * 1f + nextInt(5, 10)
+
+    return fling(fX, fY, fX, tY, result)
+}
+
+/**手指往下[fling] ↓*/
+fun DslAccessibilityGesture.flingDown(result: GestureResult? = null): Boolean {
+    val screenWidth = _screenWidth
+    val screenHeight = _screenHeight
+
+    val fX = screenWidth / 2 * 1f + nextInt(5, 10)
+    val fY = screenHeight * 3 / 5 * 1f - nextInt(5, 10)
+    val tY = screenHeight * 2 / 5 * 1f + nextInt(5, 10)
+
+    return fling(fX, tY, fX, fY, result)
+}
+
+fun DslAccessibilityGesture.flingLeft(result: GestureResult? = null): Boolean {
+    val screenWidth = _screenWidth
+    val screenHeight = _screenHeight
+
+    val fY = screenHeight / 2 * 1f + nextInt(5, 10)
+    val fX = screenWidth * 3 / 5 * 1f + nextInt(5, 10)
+    val tX = screenWidth * 2 / 5 * 1f - nextInt(5, 10)
+
+    return fling(fX, fY, tX, fY, result)
+}
+
+fun DslAccessibilityGesture.flingRight(result: GestureResult? = null): Boolean {
+    val screenWidth = _screenWidth
+    val screenHeight = _screenHeight
+
+    val fY = screenHeight / 2 * 1f + nextInt(5, 10)
+    val fX = screenWidth * 3 / 5 * 1f + nextInt(5, 10)
+    val tX = screenWidth * 2 / 5 * 1f - nextInt(5, 10)
+
+    return fling(tX, fY, fX, fY, result)
+}
+
+//</editor-fold desc="fling">
+
+//<editor-fold desc="other">
 
 fun DslAccessibilityGesture.touch(
     fromX: Float,
@@ -364,4 +463,49 @@ fun DslAccessibilityGesture.double(
     double(x, y)
     doIt()
     return _isDispatched
+}
+
+/**随机在屏幕中产生一个点位信息*/
+fun randomPoint(
+    offsetLeft: Int = 10 * dpi,
+    offsetTop: Int = _satusBarHeight,
+    offsetRight: Int = 10 * dpi,
+    offsetBottom: Int = _navBarHeight
+): Point {
+    val screenWidth = _screenWidth
+    val screenHeight = _screenHeight
+
+    val x: Int = nextInt(offsetLeft, screenWidth - offsetRight)
+    val y: Int = nextInt(offsetTop, screenHeight - offsetBottom)
+
+    return Point(x, y)
+}
+
+//</editor-fold desc="other">
+
+/**随机操作, 返回随机操作名称*/
+fun DslAccessibilityGesture.randomization(): String {
+    val p1 = PointF(randomPoint())
+    val p2 = PointF(randomPoint())
+    return when (nextInt(5)) {
+        0 -> {
+            fling(p1.x, p1.y, p2.x, p2.y)
+            "fling ${p1}->${p2}"
+        }
+        1 -> {
+            move(p1.x, p1.y, p2.x, p2.y)
+            "move ${p1}->${p2}"
+        }
+        2 -> {
+            click(p1.x, p1.y)
+            "click $p1"
+        }
+        3 -> {
+            double(p1.x, p1.y)
+            "double $p1"
+        }
+        else -> {
+            "pass"
+        }
+    }
 }

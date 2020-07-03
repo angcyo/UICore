@@ -602,21 +602,57 @@ fun AccessibilityNodeInfo.debugNodeInfo(
 
     stringBuilder.apply {
         append(newLine(index))
-        append(" ${wrap.className}(${wrap.viewIdResourceName})")
+        append(" ${wrap.className}")
+        wrap.viewIdName()?.let {
+            append("(${it})")
+        }
 
-        append(" ck:${isCheckable}") //是否可以check
-        append(" ckd:${isChecked}") //是否check
+        this.apply {
+            append(" [")
+            if (isEnabled) {
+                //append("enabled ")
+            } else {
+                append("disable ")
+            }
+            if (isClickable) {
+                append("clickable ")
+            }
+            if (isLongClickable) {
+                append("longClickable ")
+            }
+            if (isScrollable) {
+                append("scrollable ")
+            }
+            if (isSelected) {
+                append("selected ")
+            }
+            if (isPassword) {
+                append("password ")
+            }
 
-        append(" f:${isFocusable}") //是否可以获取焦点
-        append(" fd:${isFocused}") //是否焦点
+            if (isCheckable) {
+                append("checkable:$isChecked ")
+            }
+            if (isFocusable) {
+                append("focusable:$isFocused ")
+            }
 
-        append(" c:${isClickable}") //是否可以点击
-        append(" lc:${isLongClickable}") //是否可以长按
-        append(" sc:${isScrollable}") //是否可以滚动
+            append("]")
+        }
 
-        append(" ed:${isEnabled}") //是否激活
-        append(" sd:${isSelected}") //是否选中
-        append(" pd:${isPassword}") //是否是密码
+//        append(" ck:${isCheckable}") //是否可以check
+//        append(" ckd:${isChecked}") //是否check
+//
+//        append(" f:${isFocusable}") //是否可以获取焦点
+//        append(" fd:${isFocused}") //是否焦点
+//
+//        append(" c:${isClickable}") //是否可以点击
+//        append(" lc:${isLongClickable}") //是否可以长按
+//        append(" sc:${isScrollable}") //是否可以滚动
+//
+//        append(" ed:${isEnabled}") //是否激活
+//        append(" sd:${isSelected}") //是否选中
+//        append(" pd:${isPassword}") //是否是密码
 
         append(" [${wrap.text}] [${wrap.contentDescription}]")
         wrap.hintText?.apply {
@@ -628,9 +664,11 @@ fun AccessibilityNodeInfo.debugNodeInfo(
         wrap.tooltipText?.apply {
             append(" tooltipText:[${this}]")
         }
-        append(" $childCount")
-    }
 
+        if (childCount > 0) {
+            append(" $childCount")
+        }
+    }
 
     //在父布局中的位置
     getBoundsInParent(tempRect)
@@ -788,6 +826,15 @@ fun AccessibilityNodeInfoCompat.getChildOrNull(index: Int): AccessibilityNodeInf
         getChild(index)
     } else {
         null
+    }
+}
+
+/**获取当前[Node], 可以点击的[父Node]*/
+fun AccessibilityNodeInfoCompat.getClickParent(): AccessibilityNodeInfoCompat? {
+    return if (isClickable) {
+        this
+    } else {
+        parent?.getClickParent()
     }
 }
 
