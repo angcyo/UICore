@@ -5,6 +5,7 @@ import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
 import androidx.annotation.CallSuper
 import com.angcyo.core.component.accessibility.action.ActionException
+import com.angcyo.core.component.accessibility.action.PermissionsAction
 import com.angcyo.http.rx.BaseFlowableSubscriber
 import com.angcyo.http.rx.flowableToMain
 import com.angcyo.http.rx.observer
@@ -145,7 +146,11 @@ abstract class BaseAccessibilityInterceptor {
             if (filterPackageNameList.isEmpty() || filterPackageNameList.contains(packageName)) {
                 onAccessibilityEvent(service, event)
             } else {
-                onLeavePackageName(service, event, event?.packageName)
+                onLeavePackageName(
+                    service,
+                    event,
+                    event?.packageName ?: service.rootNodeInfo()?.packageName
+                )
             }
         }
     }
@@ -177,20 +182,21 @@ abstract class BaseAccessibilityInterceptor {
         toPackageName: CharSequence?
     ) {
         //L.i("离开 $filterPackageName -> $toPackageName")
+        PermissionsAction().checkEvent(service, event)
     }
 
     /**开始间隔回调*/
-    open fun startInterval(delay: Long) {
+    open fun startInterval(delay: Long): Boolean {
 
         if (intervalSubscriber != null) {
             //已经开启了回调
-            return
+            return false
         }
 
         if (delay <= 0) {
             //不合法
             L.w("间隔时长不合法!")
-            return
+            return false
         }
 
         if (lastService == null) {
@@ -220,6 +226,8 @@ abstract class BaseAccessibilityInterceptor {
             .compose(flowableToMain())
             .retry(10)
             .observer(intervalSubscriber!!)
+
+        return true
     }
 
     /**周期回调开始*/
@@ -235,13 +243,17 @@ abstract class BaseAccessibilityInterceptor {
     /**间隔周期回调*/
     open fun onInterval() {
         //L.v(this@BaseAccessibilityInterceptor.simpleHash(), " $it")
-        lastService?.let {
-            it.rootNodeInfo(null)?.let { node ->
-                interceptorPackage(it, null, node.packageName)
+        val service = lastService
+        if (service == null) {
+            L.w("${this.simpleHash()} service is null.")
+        } else {
+            service.rootNodeInfo(null)?.let { node ->
+                interceptorPackage(service, null, node.packageName)
             }
         }
     }
 
+    /**停止间隔回调*/
     open fun stopInterval() {
         intervalSubscriber?.dispose()
         intervalSubscriber = null

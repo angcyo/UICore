@@ -1,10 +1,7 @@
 package com.angcyo.core.component.accessibility.action
 
 import android.view.accessibility.AccessibilityEvent
-import com.angcyo.core.component.accessibility.BaseAccessibilityAction
-import com.angcyo.core.component.accessibility.BaseAccessibilityService
-import com.angcyo.core.component.accessibility.clickByText
-import com.angcyo.core.component.accessibility.isClassNameContains
+import com.angcyo.core.component.accessibility.*
 
 /**
  * 关闭系统权限对话框, 其他rom未适配
@@ -29,12 +26,18 @@ open class PermissionsAction : BaseAccessibilityAction() {
         service: BaseAccessibilityService,
         event: AccessibilityEvent?
     ): Boolean {
-        return if (event != null) {
-            event.isClassNameContains("permission") ||
-                    event.isClassNameContains("packageinstaller")
-        } else {
-            false
+        var result = false
+
+        service.findNode {
+            if (it.haveText("要允许")) {
+                result = true
+            }
         }
+
+        //event.isClassNameContains("permission") ||
+        //event.isClassNameContains("packageinstaller")
+
+        return result
     }
 
     open fun handlePermissionsAction(

@@ -25,12 +25,12 @@ class RAccessibilityService : BaseAccessibilityService() {
         fun addInterceptor(interceptor: BaseAccessibilityInterceptor) {
             if (!accessibilityInterceptorList.contains(interceptor)) {
                 accessibilityInterceptorList.add(interceptor)
+            }
 
-                if (interceptor.lastService == null) {
-                    interceptor.restart()
-                    weakService?.get()?.apply {
-                        interceptor.onServiceConnected(this)
-                    }
+            if (interceptor.lastService == null) {
+                interceptor.restart()
+                weakService?.get()?.apply {
+                    interceptor.onServiceConnected(this)
                 }
             }
         }

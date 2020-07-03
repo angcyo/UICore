@@ -691,8 +691,8 @@ fun AccessibilityNodeInfo.debugNodeInfo(
     //宽高
     stringBuilder.append("[${tempRect.width()}x${tempRect.height()}]")
 
-    //节点路径 path
-    stringBuilder.append(" $preIndex")
+    //节点路径 path (2020-07-03 已经不需要了)
+    //stringBuilder.append(" $preIndex")
 
     //可执行的action
     stringBuilder.append(" ")

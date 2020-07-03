@@ -60,12 +60,36 @@ object CpuUtils {
             return result
         }
 
+    //大核 CPU频率
+    val cpuMaxFreq: Long
+        get() {
+            var max = 0L
+            getAllCpuFreqList().forEach {
+                if (it > max) {
+                    max = it
+                }
+            }
+            return max
+        }
+
+    //小核 CPU频率
+    val cpuMinFreq: Long
+        get() {
+            var min = Long.MAX_VALUE
+            getAllCpuFreqList().forEach {
+                if (it in 1 until min) {
+                    min = it
+                }
+            }
+            return min
+        }
+
     /**
-     * CPU 最大频率
+     * CPU 最大频率, 能够达到的最小频率
      *
      * @return
      */
-    val cpuMaxFreq: Long
+    val cpuMaxFreqInfo: Long
         get() {
             var result = 0L
             try {
@@ -83,11 +107,11 @@ object CpuUtils {
         }
 
     /**
-     * CPU 最小频率
+     * CPU 最小频率, 能够达到的最小频率
      *
      * @return
      */
-    val cpuMinFreq: Long
+    val cpuMinFreqInfo: Long
         get() {
             var result = 0L
             try {
@@ -326,7 +350,7 @@ object CpuUtils {
     }
 
     /**返回每个CPU核心, 对应的CPU频率. [1, 960000], [2, 2803200], 频率-1表示 未工作*/
-    fun getAllCpuFreqList(): List<Pair<Int, Long>> {
+    fun getAllCpuFreqPairList(): List<Pair<Int, Long>> {
         val result: MutableList<Pair<Int, Long>> = mutableListOf()
         val cpuCoreNumber = numCpuCores
         var br: BufferedReader? = null
@@ -359,6 +383,41 @@ object CpuUtils {
         }
         return result
     }
+
+    fun getAllCpuFreqList(): List<Long> {
+        val result = mutableListOf<Long>()
+        val cpuCoreNumber = numCpuCores
+        var br: BufferedReader? = null
+        try {
+            for (i in 0 until cpuCoreNumber) {
+                val path = "/sys/devices/system/cpu/cpu$i/cpufreq/scaling_cur_freq"
+                val file = File(path)
+                if (file.exists()) {
+                    br = BufferedReader(FileReader(path))
+                    val line = br.readLine()
+                    if (line != null) {
+                        //CPU %1$d : Freq %2$s Hz
+                        result.add(line.toLongOrNull() ?: 0L)
+                    }
+                } else {
+                    result.add(-1L)
+                }
+                br?.close()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            if (br != null) {
+                try {
+                    br.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+        return result
+    }
+
 
     /**
      * Get cpu's current frequency

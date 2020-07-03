@@ -288,13 +288,13 @@ object Device {
         }
 
         //CPU信息
-        //CpuUtils.getCpuCurFreq().forEach {
-        //    appendln()
-        //    append(it)
-        //}
+        // CpuUtils.getCpuCurFreq().forEach {
+        //     builder.appendln()
+        //     builder.append(it)
+        // }
 
         builder.appendln()
-        builder.append("${CpuUtils.cpuCoreNum}/${CpuUtils.numCpuCores} ${CpuUtils.cpuMinFreq}Hz/${CpuUtils.cpuMaxFreq}Hz")
+        builder.append("${CpuUtils.cpuCoreNum}/${CpuUtils.numCpuCores} ${CpuUtils.cpuMinFreqInfo}Hz/${CpuUtils.cpuMinFreq}Hz/${CpuUtils.cpuMaxFreq}Hz")
     }
 
     /**设备屏幕信息*/
