@@ -13,7 +13,6 @@ import com.angcyo.library.component.dslNotify
 import com.angcyo.library.component.low
 import com.angcyo.library.component.single
 import com.angcyo.library.ex.className
-import com.angcyo.library.ex.nowTimeString
 import com.angcyo.library.ex.openApp
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.library.utils.Device
@@ -203,12 +202,12 @@ abstract class BaseAccessibilityInterceptor {
 
             onStart = {
                 onIntervalStart()
-                L.i("onStart:${this@BaseAccessibilityInterceptor.simpleHash()} ${nowTimeString()} $intervalDelay")
+                //L.i("onStart:${this@BaseAccessibilityInterceptor.simpleHash()} ${nowTimeString()} $intervalDelay")
             }
 
             onNext = {
                 onInterval()
-                L.i("onNext:${this@BaseAccessibilityInterceptor.simpleHash()} ${nowTimeString()} $intervalDelay")
+                //L.i("onNext:${this@BaseAccessibilityInterceptor.simpleHash()} ${nowTimeString()} $intervalDelay")
             }
 
             onObserverEnd = { data, error ->
@@ -362,13 +361,13 @@ abstract class BaseAccessibilityInterceptor {
         event: AccessibilityEvent?
     ) {
         if (event != null) {
-            L.i("\n${this.simpleHash()} [$actionIndex] 无Action能处理! 包名:${event.packageName} 类名:${event.className} type:${event.eventTypeStr()} type2:${event.contentChangeTypesStr()}")
+            L.d("\n${this.simpleHash()} [$actionIndex] 无Action能处理! 包名:${event.packageName} 类名:${event.className} type:${event.eventTypeStr()} type2:${event.contentChangeTypesStr()}")
         } else {
             val node = service.rootNodeInfo()
             if (node != null) {
-                L.i("\n${this.simpleHash()} [$actionIndex] 无Action能处理! 包名:${node.packageName} 类名:${node.className} childCount:${node.childCount} windowId:${node.windowId}")
+                L.d("\n${this.simpleHash()} [$actionIndex] 无Action能处理! 包名:${node.packageName} 类名:${node.className} childCount:${node.childCount} windowId:${node.windowId}")
             } else {
-                L.i("${this.simpleHash()} [$actionIndex] 无Action能处理!")
+                L.d("${this.simpleHash()} [$actionIndex] 无Action能处理!")
             }
         }
     }
@@ -431,9 +430,11 @@ fun BaseAccessibilityInterceptor.uninstall() {
 
 /**进入周期回调模式, 每隔[intervalDelay]时间回调一次*/
 fun BaseAccessibilityInterceptor.intervalMode(delay: Long = intervalDelay) {
+    enableInterval = false
+
     ignoreInterceptor = true
+    initialIntervalDelay = delay
     enableInterval = true
-    intervalDelay = delay
 }
 
 /**进入普通的事件拦截模式, 当收到[AccessibilityEvent]事件时, 回调*/

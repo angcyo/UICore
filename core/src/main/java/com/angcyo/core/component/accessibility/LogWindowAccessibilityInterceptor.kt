@@ -29,6 +29,8 @@ class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
     init {
         if (logInterval) {
             enableInterval = true
+            //避免log输出, 限制5秒一次
+            intervalDelay = 5_000
         }
     }
 

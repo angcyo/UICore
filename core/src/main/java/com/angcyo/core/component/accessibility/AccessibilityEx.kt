@@ -607,8 +607,7 @@ fun AccessibilityNodeInfo.debugNodeInfo(
             append("(${it})")
         }
 
-        this.apply {
-            append(" [")
+        buildString {
             if (isEnabled) {
                 //append("enabled ")
             } else {
@@ -636,8 +635,12 @@ fun AccessibilityNodeInfo.debugNodeInfo(
             if (isFocusable) {
                 append("focusable:$isFocused ")
             }
-
-            append("]")
+        }.apply {
+            if (this.trim().isNotEmpty()) {
+                append(" [")
+                append(this)
+                append("]")
+            }
         }
 
 //        append(" ck:${isCheckable}") //是否可以check
@@ -654,7 +657,14 @@ fun AccessibilityNodeInfo.debugNodeInfo(
 //        append(" sd:${isSelected}") //是否选中
 //        append(" pd:${isPassword}") //是否是密码
 
-        append(" [${wrap.text}] [${wrap.contentDescription}]")
+        val text = wrap.text
+        val des = wrap.contentDescription
+
+        if (text == null && des == null) {
+            //2个都是空, 节省log数据
+        } else {
+            append(" [${wrap.text}] [${wrap.contentDescription}]")
+        }
         wrap.hintText?.apply {
             append(" hintText:[${this}]")
         }
@@ -821,6 +831,12 @@ fun AccessibilityNodeInfoCompat.isValid(): Boolean {
 fun AccessibilityNodeInfoCompat.isLayout() =
     className?.toString()?.contains("Layout", true) ?: false
 
+inline fun AccessibilityNodeInfoCompat.eachChild(action: (index: Int, child: AccessibilityNodeInfoCompat) -> Unit) {
+    for (index in 0 until childCount) {
+        action(index, getChild(index))
+    }
+}
+
 fun AccessibilityNodeInfoCompat.getChildOrNull(index: Int): AccessibilityNodeInfoCompat? {
     return if (index in 0 until childCount) {
         getChild(index)
@@ -835,6 +851,34 @@ fun AccessibilityNodeInfoCompat.getClickParent(): AccessibilityNodeInfoCompat? {
         this
     } else {
         parent?.getClickParent()
+    }
+}
+
+/**获取自身的兄弟节点
+ * [index] >0 表示获取自身下面的第几个兄弟; <0 表示获取自身上面的第几个兄弟
+ * */
+fun AccessibilityNodeInfoCompat.getBrotherNode(index: Int): AccessibilityNodeInfoCompat? {
+    val beforeList = mutableListOf<AccessibilityNodeInfoCompat>()
+    val afterList = mutableListOf<AccessibilityNodeInfoCompat>()
+
+    var findAnchor = false
+
+    parent?.eachChild { _, child ->
+        if (child == this) {
+            findAnchor = true
+        } else {
+            if (findAnchor) {
+                afterList.add(child)
+            } else {
+                beforeList.add(child)
+            }
+        }
+    }
+
+    return when {
+        index > 0 -> afterList.getOrNull(index - 1)
+        index < 0 -> beforeList.getOrNull(beforeList.size - index)
+        else -> this
     }
 }
 
