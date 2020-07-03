@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CircleLoadingView">
+        <attr name="r_circle_load_width" format="dimension" />
+        <attr name="r_circle_load_rotate_step" format="integer" />
+        <attr name="r_circle_load_color" format="color" />
+        <attr name="r_circle_load_start_color" format="color" />
+        <attr name="r_circle_load_is_multi_mode" format="boolean" />
+        <attr name="r_circle_load_draw_bg" format="boolean" />
+        <attr name="r_circle_load_draw_bg_color" format="color" />
+        <attr name="r_circle_load_is_indeterminate" format="boolean" />
+        <attr name="r_circle_load_progress" format="integer" />
+        <attr name="r_circle_load_start_angle" format="float" />
+    </declare-styleable>
+</resources>
