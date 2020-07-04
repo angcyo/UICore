@@ -3,7 +3,6 @@ package com.angcyo.dsladapter
 import android.graphics.Color
 import androidx.annotation.LayoutRes
 import com.angcyo.library.ex.dpi
-import com.angcyo.library.model.Page
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
 import com.angcyo.widget.base.Anim
@@ -206,18 +205,22 @@ fun DslAdapter.justRunFilterParams() = defaultFilterParams!!.apply {
     asyncDiff = false
 }
 
+/**显示情感图[加载中]*/
 fun DslAdapter.toLoading(filterParams: FilterParams = justRunFilterParams()) {
     setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_LOADING, filterParams)
 }
 
+/**显示情感图[空数据]*/
 fun DslAdapter.toEmpty(filterParams: FilterParams = justRunFilterParams()) {
     setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_EMPTY, filterParams)
 }
 
+/**显示情感图[错误]*/
 fun DslAdapter.toError(filterParams: FilterParams = justRunFilterParams()) {
     setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_ERROR, filterParams)
 }
 
+/**显示情感图[正常]*/
 fun DslAdapter.toNone(filterParams: FilterParams = defaultFilterParams!!) {
     setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_NONE, filterParams)
 }
