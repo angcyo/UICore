@@ -220,6 +220,15 @@ class DslFHelper(
         }
     }
 
+    /**根据表达式[predicate], 返回所有想要remove的[Fragment]*/
+    fun remove(predicate: (Fragment) -> Boolean) {
+        fm.fragments.forEach {
+            if (predicate(it)) {
+                remove(it)
+            }
+        }
+    }
+
     /**移除所有[getView]不为空的[Fragment]*/
     fun removeAll() {
         remove(fm.getAllValidityFragment())

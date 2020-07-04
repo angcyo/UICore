@@ -1,5 +1,6 @@
 package com.angcyo.core.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -21,6 +22,8 @@ import com.angcyo.component.dslAffect
 import com.angcyo.core.R
 import com.angcyo.core.appendTextItem
 import com.angcyo.core.behavior.ArcLoadingHeaderBehavior
+import com.angcyo.library.component.dslIntent
+import com.angcyo.library.ex.className
 import com.angcyo.library.ex.colorFilter
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslGroupHelper
@@ -157,10 +160,25 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
         } else if (topFragment() != this) {
             showBackItem = false
         } else if (count <= 0) {
-            /*Activity中第一个Fragment*/
-            if (!DslAHelper.isMainActivity(activity)) {
-                //当前Fragment所在Activity不是主界面
-                showBackItem = true
+            val activity = activity
+            if (activity != null) {
+
+                /*Activity中第一个Fragment*/
+                if (!DslAHelper.isMainActivity(activity)) {
+                    //当前Fragment所在Activity不是主界面
+                    showBackItem = true
+                }
+
+                dslIntent {
+                    queryAction = Intent.ACTION_MAIN
+                    queryCategory = listOf(Intent.CATEGORY_LAUNCHER)
+                    queryClassName = activity.className()
+
+                    if (doQuery(activity).isNotEmpty()) {
+                        //当前的[Activity]在xml中声明了主页标识
+                        showBackItem = false
+                    }
+                }
             }
         } else {
             /*可见Fragment数量大于0*/

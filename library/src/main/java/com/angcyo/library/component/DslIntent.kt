@@ -297,9 +297,12 @@ class DslIntent {
 
     var queryAction: String? = Intent.ACTION_VIEW //Intent.ACTION_MAIN
     var queryData: Uri? = null
-    var queryCategory: List<String>? = null
+    var queryCategory: List<String>? = null //android.content.Intent.CATEGORY_LAUNCHER
     var queryFlag: Int = 0
     var queryPackageName: String? = null
+
+    //查询指定类名的信息
+    var queryClassName: String? = null
 
     var queryType: Int = QUERY_TYPE_ACTIVITY
 
@@ -314,6 +317,12 @@ class DslIntent {
         queryCategory?.forEach { queryIntent.addCategory(it) }
         queryData?.run { queryIntent.setData(this) }
         queryPackageName?.run { queryIntent.setPackage(this) }
+        queryClassName?.run {
+            queryIntent.setClassName(
+                queryPackageName ?: context.packageName,
+                this
+            )
+        }
 
         val packageManager = context.packageManager
 
