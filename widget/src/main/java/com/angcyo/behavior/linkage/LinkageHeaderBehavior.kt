@@ -371,7 +371,13 @@ class LinkageHeaderBehavior(
             )
             if (consumed[1] == 0) {
                 //不需要消耗了
-                footerView?.scrollBy(0, dy)
+                if (footerView != null) {
+                    footerView.scrollBy(0, dy)
+                } else {
+                    if (enableBottomOverScroll) {
+                        onHeaderOverScroll(target, -dy)
+                    }
+                }
             }
         } else {
             //手指向下滚动
@@ -478,10 +484,13 @@ class LinkageHeaderBehavior(
                 refreshBehaviorConfig?.onContentStopScroll(this)
             } else if ((enableTopOverScroll || enableBottomOverScroll)) {
                 //L.e("恢复位置.")
-                if (behaviorScrollY > maxScroll) {
-                    startScrollTo(0, 0)
-                } else if (minScroll in (behaviorScrollY + 1) until maxScroll) {
-                    startScrollTo(0, minScroll)
+                when {
+                    behaviorScrollY > maxScroll -> startScrollTo(0, 0)
+                    minScroll in (behaviorScrollY + 1) until maxScroll -> startScrollTo(
+                        0,
+                        minScroll
+                    )
+                    minScroll == maxScroll && minScroll == 0 -> startScrollTo(0, 0)
                 }
             }
             resetScrollStickyHold()
