@@ -103,6 +103,9 @@ fun String.decode(enc: String = "UTF-8"): String = URLDecoder.decode(this, enc)
 @ColorInt
 fun String.toColorInt(): Int = Color.parseColor(this)
 
+@ColorInt
+fun String.toColor(): Int = Color.parseColor(this)
+
 fun CharSequence?.or(default: CharSequence = "--") =
     if (this.isNullOrEmpty()) default else this
 
@@ -412,3 +415,11 @@ fun Spannable.clearSpans(start: Int = -1) {
     }
 }
 
+/**将类名转换成Class*/
+fun String.toClass(): Class<*>? {
+    return try {
+        Class.forName(this)
+    } catch (e: Exception) {
+        null
+    }
+}

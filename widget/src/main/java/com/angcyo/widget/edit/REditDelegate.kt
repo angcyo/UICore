@@ -11,6 +11,7 @@ import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.widget.EditText
 import androidx.core.content.ContextCompat
+import androidx.core.widget.TextViewCompat
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
 import com.angcyo.widget.base.hidePassword
@@ -243,11 +244,10 @@ class REditDelegate(editText: EditText) : FocusEditDelegate(editText) {
         /*是否要显示删除按钮*/
         val clearDrawable = clearDrawable
 
-        val compoundDrawables = editText.compoundDrawables
-        if (compoundDrawables[2] === clearDrawable) {
-
-        } else {
-            editText.setCompoundDrawablesWithIntrinsicBounds(
+        val compoundDrawables = TextViewCompat.getCompoundDrawablesRelative(editText)
+        if (compoundDrawables[2] != clearDrawable) {
+            TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                editText,
                 compoundDrawables[0],
                 compoundDrawables[1],
                 clearDrawable,
@@ -258,9 +258,10 @@ class REditDelegate(editText: EditText) : FocusEditDelegate(editText) {
 
     fun removeClearDrawable() {
         /*移除显示的删除按钮*/
-        val compoundDrawables = editText.compoundDrawables
+        val compoundDrawables = TextViewCompat.getCompoundDrawablesRelative(editText)
         editText.error = null
-        editText.setCompoundDrawablesWithIntrinsicBounds(
+        TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            editText,
             compoundDrawables[0],
             compoundDrawables[1],
             null,

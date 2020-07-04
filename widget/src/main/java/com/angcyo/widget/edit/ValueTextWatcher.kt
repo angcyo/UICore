@@ -15,23 +15,31 @@ import com.angcyo.widget.base.setSelectionLast
  * @date 2020/01/14
  */
 
-class ValueTextWatcher private constructor(val editText: EditText? = null) : TextWatcher {
+class ValueTextWatcher(val editText: EditText? = null) : TextWatcher {
 
     companion object {
         const val MAX_VALUE = Int.MAX_VALUE.toFloat()
         const val MIN_VALUE = -9_999_999f
 
+        /**[editText]需要限制输入的输入框对象
+         * [update]是否立即更新限制
+         * [action]DSL配置器*/
         fun install(
             editText: EditText? = null,
             update: Boolean = true,
             action: ValueTextWatcher.() -> Unit = {}
-        ) {
-            editText?.addTextChangedListener(ValueTextWatcher(editText).apply {
+        ): ValueTextWatcher {
+            val watcher = ValueTextWatcher(editText).apply {
                 this.action()
-            })
+            }
+
+            editText?.addTextChangedListener(watcher)
+
             if (update) {
                 editText?.text = editText?.text
             }
+
+            return watcher
         }
     }
 
