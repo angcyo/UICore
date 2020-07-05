@@ -35,58 +35,62 @@ fun String?.hawkGetList(maxCount: Int = Int.MAX_VALUE): MutableList<String> {
  * @param sort 默认排序, 最后追加的在首位显示
  *
  * */
-fun String?.hawkPutList(value: String?, sort: Boolean = true, allowEmpty: Boolean = false) {
+fun String?.hawkPutList(
+    value: String?,
+    sort: Boolean = true,
+    allowEmpty: Boolean = false
+): Boolean {
     if (value.isNullOrEmpty()) {
         if (!allowEmpty) {
-            return
+            return false
         }
     }
     val char = ","
-    this?.let {
+    return this?.run {
 
-        val oldString = Hawk.get(it, "")
+        val oldString = Hawk.get(this, "")
         val oldList = oldString.splitList(char)
 
         if (value.isNullOrBlank() && allowEmpty) {
-            Hawk.put(it, "")
-            return
+            return Hawk.put(this, "")
         }
 
         if (!sort) {
             if (oldList.contains(value)) {
-                return@let
+                //已存在
+                return true
             }
         }
 
         oldList.remove(value)
         /*最新的在前面*/
         oldList.add(0, value!!)
-        Hawk.put(it, "${oldList.connect(char)}")
-    }
+        Hawk.put(this, "${oldList.connect(char)}")
+    } ?: false
 }
 
-fun String?.hawkPut(value: CharSequence?) {
-    this?.let {
-        Hawk.put(it, value)
-    }
+fun String?.hawkPut(value: CharSequence?): Boolean {
+    return this?.run {
+        Hawk.put(this, value)
+    } ?: false
 }
 
-fun String?.hawkAppend(value: CharSequence?) {
-    this?.let {
-        Hawk.put(it, "${hawkGet() ?: ""}${value ?: ""}")
-    }
+fun String?.hawkAppend(value: CharSequence?): Boolean {
+    return this?.run {
+        Hawk.put(this, "${hawkGet() ?: ""}${value ?: ""}")
+    } ?: false
 }
 
-fun String?.hawkGet(): String? {
+fun String?.hawkGet(def: String? = null): String? {
     var result: String? = null
     this?.let {
-        result = Hawk.get<String>(it, null)
+        result = Hawk.get<String>(it, def)
     }
     return result
 }
 
-fun String?.hawkDelete() {
-    this?.let {
-        Hawk.delete(it)
-    }
+fun String?.hawkDelete(): Boolean {
+    return this?.run {
+        Hawk.delete(this)
+    } ?: false
 }

@@ -113,7 +113,7 @@ open class HawkViewHolderFactory : HawkFactory {
 
     override fun onSaveView(view: View) {
         val key = generateKey(view)
-        key?.run {
+        key?.apply {
             when (view) {
                 is AutoCompleteEditText -> key.hawkPutList(view.string())
                 is EditText -> key.hawkPut(view.string(false))
