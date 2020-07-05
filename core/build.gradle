@@ -5,6 +5,7 @@ dependencies {
     api project(allModule.coroutine)
     api project(allModule.http)
     api project(allModule.dialog)
+    api project(allModule.viewmodel)
 
     //https://github.com/tiann/FreeReflection
     implementation 'me.weishu:free_reflection:2.2.0'
