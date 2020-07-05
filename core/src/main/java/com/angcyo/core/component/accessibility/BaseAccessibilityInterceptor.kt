@@ -4,6 +4,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
 import androidx.annotation.CallSuper
+import com.angcyo.core.component.accessibility.BaseAccessibilityInterceptor.Companion.defaultIntervalDelay
 import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.core.component.accessibility.action.PermissionsAction
 import com.angcyo.http.rx.BaseFlowableSubscriber
@@ -44,6 +45,17 @@ abstract class BaseAccessibilityInterceptor {
 
         //销毁
         const val ACTION_STATUS_DESTROY = 11
+
+        var defaultIntervalDelay: Long = -1
+
+        init {
+            defaultIntervalDelay = when (Device.performanceLevel()) {
+                Device.PERFORMANCE_HIGH -> 800
+                Device.PERFORMANCE_MEDIUM -> 1_200
+                Device.PERFORMANCE_LOW -> 4_000
+                else -> 8_000
+            }
+        }
     }
 
     /**需要收到那个程序的事件, 匹配方式为 `包含`, 匹配方式为 `全等`*/
@@ -67,7 +79,8 @@ abstract class BaseAccessibilityInterceptor {
     val actionOtherList: MutableList<BaseAccessibilityAction> = mutableListOf()
 
     /**当所有的[Action]处理结束后回调*/
-    var onInterceptorFinish: ((error: ActionException?) -> Unit)? = null
+    var onInterceptorFinish: ((action: BaseAccessibilityAction?, error: ActionException?) -> Unit)? =
+        null
 
     /**当前执行到动作的索引*/
     var actionIndex: Int = -1
@@ -83,9 +96,7 @@ abstract class BaseAccessibilityInterceptor {
     var enableInterval: Boolean = false
         set(value) {
             field = value
-            if (value) {
-                startInterval(intervalDelay)
-            } else {
+            if (!value) {
                 stopInterval()
             }
         }
@@ -113,12 +124,7 @@ abstract class BaseAccessibilityInterceptor {
     var intervalSubscriber: BaseFlowableSubscriber<Long>? = null
 
     init {
-        initialIntervalDelay = when (Device.performanceLevel()) {
-            Device.PERFORMANCE_HIGH -> 800
-            Device.PERFORMANCE_MEDIUM -> 1_200
-            Device.PERFORMANCE_LOW -> 4_000
-            else -> 8_000
-        }
+        initialIntervalDelay = defaultIntervalDelay
     }
 
     //</editor-fold desc="间隔">
@@ -168,7 +174,9 @@ abstract class BaseAccessibilityInterceptor {
         checkDoAction(service, event)
     }
 
+    /**销毁, 释放对象*/
     open fun onDestroy() {
+        actionIndex = -1
         actionStatus = ACTION_STATUS_DESTROY
         lastService = null
         lastEvent = null
@@ -196,6 +204,13 @@ abstract class BaseAccessibilityInterceptor {
         if (delay <= 0) {
             //不合法
             L.w("间隔时长不合法!")
+            return false
+        }
+
+        if (enableInterval && actionStatus == ACTION_STATUS_ING) {
+
+        } else {
+            L.w("请手动调用[startAction]")
             return false
         }
 
@@ -269,19 +284,41 @@ abstract class BaseAccessibilityInterceptor {
         actionStatus = ACTION_STATUS_INIT
     }
 
-    /**所有Action执行完成
+    /**在周期回调模式下, 需要手动调用此方法.开始回调*/
+    open fun startAction(restart: Boolean = true) {
+        if (restart) {
+            restart()
+        }
+
+        if (actionStatus != ACTION_STATUS_ING) {
+            actionStatus = ACTION_STATUS_ING
+            startInterval(intervalDelay)
+            onActionStart()
+        }
+    }
+
+    /**开始执行[Action]*/
+    open fun onActionStart() {
+
+    }
+
+    /**所有[Action]执行完成
+     * [action] 执行的[Action]
      * [error] 异常, 会中断调用链
      * */
     @CallSuper
-    open fun onActionFinish(error: ActionException? = null) {
+    open fun onActionFinish(
+        action: BaseAccessibilityAction? = null,
+        error: ActionException? = null
+    ) {
         if (actionStatus == ACTION_STATUS_ERROR) {
             //出现异常
         } else if (actionStatus == ACTION_STATUS_FINISH) {
             //流程结束
         }
-        onInterceptorFinish?.invoke(error)
+        onInterceptorFinish?.invoke(action, error)
         if (autoUninstall) {
-            //请注意执行顺序
+            //注意调用顺序
             uninstall()
         }
     }
@@ -296,10 +333,13 @@ abstract class BaseAccessibilityInterceptor {
                 actionStatus = ACTION_STATUS_FINISH
                 onActionFinish()
             } else {
-                actionStatus = ACTION_STATUS_ING
                 if (actionIndex < 0) {
                     actionIndex = 0
                 }
+                if (actionStatus == ACTION_STATUS_INIT) {
+                    onActionStart()
+                }
+                actionStatus = ACTION_STATUS_ING
                 actionList.getOrNull(actionIndex)?.let {
                     onDoAction(it, service, event)
                 }
@@ -321,16 +361,17 @@ abstract class BaseAccessibilityInterceptor {
                     //action执行完成
                     if (it != null) {
                         actionStatus = ACTION_STATUS_ERROR
-                        onActionFinish(it)
+                        onActionFinish(action, it)
                     } else {
                         actionNext(service, event)
                     }
                 }
-                if (action.actionDoCount == 0) {
+                if (!action.isActionStart()) {
                     action.onActionStart(this)
+                    //action.actionDoCount = 0
                 }
-                action.doAction(service, event)
                 action.actionDoCount++
+                action.doAction(service, event)
                 action.actionFinish = null
 
                 //切换间隔时长
@@ -429,10 +470,25 @@ fun Int.isActionInit() = this == BaseAccessibilityInterceptor.ACTION_STATUS_INIT
 fun Int.isActionStart() = this == BaseAccessibilityInterceptor.ACTION_STATUS_ING
 fun Int.isActionFinish() = this == BaseAccessibilityInterceptor.ACTION_STATUS_FINISH
 fun Int.isActionError() = this == BaseAccessibilityInterceptor.ACTION_STATUS_ERROR
+fun Int.isActionDestroy() = this == BaseAccessibilityInterceptor.ACTION_STATUS_DESTROY
+
+fun BaseAccessibilityInterceptor.isActionInterceptorStart() = actionStatus.isActionStart()
 
 /**安装拦截器*/
-fun BaseAccessibilityInterceptor.install() {
+fun BaseAccessibilityInterceptor.install(start: Boolean = false, restart: Boolean = false) {
     RAccessibilityService.addInterceptor(this)
+    if (start) {
+        startAction(restart)
+    }
+}
+
+fun BaseAccessibilityInterceptor.run(
+    delay: Long,
+    start: Boolean = true,
+    restart: Boolean = true
+) {
+    initialIntervalDelay = if (delay > 0) delay else defaultIntervalDelay
+    install(start, restart)
 }
 
 /**卸载拦截器*/

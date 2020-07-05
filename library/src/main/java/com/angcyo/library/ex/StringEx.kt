@@ -423,3 +423,8 @@ fun String.toClass(): Class<*>? {
         null
     }
 }
+
+/**打开应用程序*/
+fun String.openApp() {
+    app().openApp(this)
+}

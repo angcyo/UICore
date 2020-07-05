@@ -22,7 +22,7 @@ abstract class BaseAccessibilityAction {
     /**当完成了[Action], 需要调用此方法, 触发下一个[Action]*/
     var actionFinish: ((error: ActionException?) -> Unit)? = null
 
-    /**[doAction]执行后的次数统计*/
+    /**[doAction]执行时的次数统计*/
     var actionDoCount = 0
 
     /**用于控制下一次[Action]检查执行的延迟时长, 毫秒. 负数表示使用[Interceptor]的默认值*/
@@ -48,6 +48,11 @@ abstract class BaseAccessibilityAction {
         event: AccessibilityEvent?
     ): Boolean {
         return false
+    }
+
+    /**当前[Action]是否开始了*/
+    open fun isActionStart(): Boolean {
+        return accessibilityInterceptor != null && actionDoCount > 0
     }
 
     /**[Action]首次执行开始*/

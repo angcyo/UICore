@@ -16,6 +16,13 @@ import com.angcyo.http.rx.doBack
  */
 class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
 
+    companion object {
+        const val LOG_WINDOW_NAME = "window.log"
+        const val LOG_CONTENT_NAME = "content.log"
+        const val LOG_OTHER_NAME = "other.log"
+        const val LOG_INTERVAL_NAME = "interval.log"
+    }
+
     var enable: Boolean = true
 
     var logWindow: Boolean = false
@@ -32,6 +39,11 @@ class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
             //避免log输出, 限制5秒一次
             intervalDelay = 5_000
         }
+    }
+
+    override fun onServiceConnected(service: BaseAccessibilityService) {
+        startAction()
+        super.onServiceConnected(service)
     }
 
     override fun checkDoAction(service: BaseAccessibilityService, event: AccessibilityEvent?) {
@@ -56,18 +68,18 @@ class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                     builder.appendln(event.toString())
 
                     if (windowStateChanged && logWindow) {
-                        "window.log"
+                        LOG_WINDOW_NAME
                     } else if (windowContentChanged && logContent) {
-                        "content.log"
+                        LOG_CONTENT_NAME
                     } else if (logOther) {
-                        "other.log"
+                        LOG_OTHER_NAME
                     } else {
                         null
                     }
                 } else {
                     //间隔回调
                     if (logInterval) {
-                        "interval.log"
+                        LOG_INTERVAL_NAME
                     } else {
                         null
                     }
