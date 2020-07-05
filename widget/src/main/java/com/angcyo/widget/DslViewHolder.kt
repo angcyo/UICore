@@ -221,6 +221,10 @@ open class DslViewHolder(
         focus<View>(resId)
     }
 
+    fun focused(@IdRes resId: Int) {
+        focusView(resId)
+    }
+
     fun <T : View?> focus(@IdRes resId: Int): T? {
         val v = v<View>(resId)
         if (v != null) {

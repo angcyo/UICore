@@ -45,6 +45,9 @@ class RAccessibilityService : BaseAccessibilityService() {
 
         /**清空拦截器*/
         fun clearInterceptor() {
+            accessibilityInterceptorList.forEach {
+                it.onDestroy()
+            }
             accessibilityInterceptorList.clear()
         }
     }
