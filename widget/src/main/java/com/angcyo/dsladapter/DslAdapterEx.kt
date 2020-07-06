@@ -84,6 +84,48 @@ fun List<DslAdapterItem>.findItemByGroup(groups: List<String>): List<DslAdapterI
     return result
 }
 
+/**返回[position]对应的item集合.[dataItems] [headerItems] [footerItems]*/
+fun DslAdapter.getItemListByPosition(position: Int): List<DslAdapterItem>? {
+    return when {
+        position in headerItems.indices -> headerItems
+        position - headerItems.size in dataItems.indices -> dataItems
+        position - headerItems.size - dataItems.size in footerItems.indices -> footerItems
+        else -> null
+    }
+}
+
+fun DslAdapter.getItemListByItem(item: DslAdapterItem?): List<DslAdapterItem>? {
+    return when {
+        item == null -> null
+        headerItems.contains(item) -> headerItems
+        dataItems.contains(item) -> dataItems
+        footerItems.contains(item) -> footerItems
+        else -> null
+    }
+}
+
+/**返回对应的集合, 和在集合中的索引*/
+fun DslAdapter.getItemListPairByPosition(position: Int): Pair<MutableList<DslAdapterItem>?, Int> {
+    val hSize = headerItems.size
+    val dSize = dataItems.size
+    return when {
+        position in headerItems.indices -> headerItems to position
+        position - hSize in dataItems.indices -> dataItems to (position - hSize)
+        position - hSize - dSize in footerItems.indices -> footerItems to (position - hSize - dSize)
+        else -> null to -1
+    }
+}
+
+fun DslAdapter.getItemListPairByItem(item: DslAdapterItem?): Pair<MutableList<DslAdapterItem>?, Int> {
+    return when {
+        item == null -> null to -1
+        headerItems.contains(item) -> headerItems to headerItems.indexOf(item)
+        dataItems.contains(item) -> dataItems to dataItems.indexOf(item)
+        footerItems.contains(item) -> footerItems to footerItems.indexOf(item)
+        else -> null to -1
+    }
+}
+
 fun DslAdapter.dslItem(@LayoutRes layoutId: Int, config: DslAdapterItem.() -> Unit = {}) {
     val item = DslAdapterItem()
     item.itemLayoutId = layoutId
