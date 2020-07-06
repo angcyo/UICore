@@ -33,6 +33,12 @@ class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
     //是否要打印所有window的日志, 否则只打印root
     var logAllWindow: Boolean = BuildConfig.DEBUG
 
+    //日志打印之前
+    var logBeforeBuild: StringBuilder.() -> Unit = {}
+
+    //日志打印之后
+    var logAfterBuild: StringBuilder.() -> Unit = {}
+
     init {
         if (logInterval) {
             enableInterval = true
@@ -59,6 +65,8 @@ class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
 
             doBack {
                 val builder = StringBuilder()
+
+                logBeforeBuild(builder)
 
                 val logFileName = if (event != null) {
 
@@ -100,6 +108,9 @@ class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                             }
                         }
                     }
+
+                    logAfterBuild(builder)
+
                     val log = builder.toString()
 
                     DslFileHelper.write(logFolderName, logFileName, log.wrapData())

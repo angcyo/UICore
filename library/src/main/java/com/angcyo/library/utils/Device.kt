@@ -272,29 +272,33 @@ object Device {
         return builder
     }
 
-    fun deviceInfoLess(builder: Appendable) {
+    fun deviceInfoLess(builder: Appendable, abi: Boolean = true, cpu: Boolean = true) {
         // 硬件制造商/品牌名称/型号/产品名称
         builder.append("api ${Build.VERSION.SDK_INT}/${Build.MANUFACTURER}/${Build.BRAND}/${Build.MODEL}/${Build.PRODUCT}")
-        builder.appendln()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.append(Build.SUPPORTED_ABIS.connect("/"))
-        } else {
-            builder.append(Build.CPU_ABI)
-            builder.append("/")
-            builder.append(Build.CPU_ABI2)
-        }
-        if (CpuUtils.isCpu64) {
-            builder.append("[64]")
+        if (abi) {
+            builder.appendln()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder.append(Build.SUPPORTED_ABIS.connect("/"))
+            } else {
+                builder.append(Build.CPU_ABI)
+                builder.append("/")
+                builder.append(Build.CPU_ABI2)
+            }
+            if (CpuUtils.isCpu64) {
+                builder.append("[64]")
+            }
         }
 
-        //CPU信息
-        // CpuUtils.getCpuCurFreq().forEach {
-        //     builder.appendln()
-        //     builder.append(it)
-        // }
+        if (cpu) {
+            //CPU信息
+            // CpuUtils.getCpuCurFreq().forEach {
+            //     builder.appendln()
+            //     builder.append(it)
+            // }
 
-        builder.appendln()
-        builder.append("${CpuUtils.cpuCoreNum}/${CpuUtils.numCpuCores} ${CpuUtils.cpuMinFreqInfo}Hz/${CpuUtils.cpuMinFreq}Hz/${CpuUtils.cpuMaxFreq}Hz")
+            builder.appendln()
+            builder.append("${CpuUtils.cpuCoreNum}/${CpuUtils.numCpuCores} ${CpuUtils.cpuMinFreqInfo}Hz/${CpuUtils.cpuMinFreq}Hz/${CpuUtils.cpuMaxFreq}Hz")
+        }
     }
 
     /**设备屏幕信息*/
@@ -391,6 +395,15 @@ object Device {
             appendln(getAppString("build_time"))
         }
         return builder
+    }
+
+    /**常用想要的设备基础信息*/
+    fun beautifyDeviceLog(builder: Appendable = StringBuilder()): String {
+        deviceInfoLess(builder)
+        builder.appendln()
+        builder.append("${getAppVersionName()} ${getAppString("build_time")}")
+        builder.appendln()
+        return builder.toString()
     }
 
     /**
