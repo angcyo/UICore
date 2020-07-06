@@ -1,0 +1,150 @@
+/**
+ * 七牛云 文件存储 上传脚本
+ * 请无视IDEA的爆红, 并不影响运行.
+ * 请不要随意导入其他包.
+ *
+ * 脚本`apply`之后, 会在gradle窗口中的: 工程->Tasks->other 中出现 `_qiniuUpload` 任务. 双击即可运行.
+ *
+ * https://github.com/angcyo/gradle
+ *
+ * https://developer.qiniu.com/kodo/sdk/1239/java
+ *
+ * Email:angcyo@126.com
+ * @author angcyo* @date 2019/08/09
+ * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
+ */
+
+buildscript {
+    repositories {
+        maven() { url 'http://maven.aliyun.com/nexus/content/groups/public/' } //alliyun镜像
+    }
+    dependencies {
+        //https://jcenter.bintray.com/com/qiniu/qiniu-java-sdk/
+        classpath 'com.qiniu:qiniu-java-sdk:7.2.29'
+        //https://jcenter.bintray.com/com/google/code/gson/gson/
+        classpath "com.google.code.gson:gson:2.8.6"
+    }
+}
+
+/**
+ * 为了保证`Key`的安全:
+ * 可以在
+ * win: 'C:\Users\用户名\.gradle\gradle.properties"'
+ * mac: '/Users/用户名/.gradle/gradle.properties"'
+ * 文件中加入配置:
+ * ```
+ * AccessKey=xxx
+ * SecretKey=xxx
+ * Bucket=xxx
+ * ```
+ * 也可以在以下配置.(优先读取`gradle.properties`文件中的配置)
+ * */
+ext.qiniuConfig = [
+        //需要上传的APK路径(必须指定)
+        "apkPath"     : "",
+
+        //是否要先执行删除文件
+        "deleteBefore": "true",
+
+        //用来保存上传成功后, APK的下载地址
+        "downloadUrl" : "",
+
+        //下载域名前缀, 需要'/'结尾(在七牛云上配置的外链域名)
+        "baseUrl"     : "http://file.angcyo.com/",
+
+        "AccessKey"   : "gqfhS_TN3rPi7PnUNYB03tLwGiLR0xBCXlSAM4cG",
+        "SecretKey"   : "DbPHevxM0tSjA_4FT2AIMllPUVHTRtw-GOtX3_mU",
+        "Bucket"      : "angcyo-apk",
+
+        //如果需要将url转成二维码, 参考以下链接, 注册app_id和app_secret
+        //https://github.com/MZCretin/RollToolsApi#%E8%A7%A3%E9%94%81%E6%96%B0%E6%96%B9%E5%BC%8F
+        "app_id"      : "rhqkxdsnjnrpp3xr",
+        "app_secret"  : "Rlh4c1duMDZ4YnZrRks4dU55c1NEQT09"
+]
+
+/**
+ * 上传本地文件->七牛云->返回文件下载地址
+ * 拿到下载url->生成url二维码地址
+ * */
+
+task _qiniuUpload() {
+    doFirst {
+        def ak = project.hasProperty("AccessKey") ? project.ext.AccessKey : qiniuConfig.AccessKey
+        def sk = project.hasProperty("SecretKey") ? project.ext.SecretKey : qiniuConfig.SecretKey
+        def bk = project.hasProperty("Bucket") ? project.ext.Bucket : qiniuConfig.Bucket
+        def baseUrl = project.hasProperty("baseUrl") ? project.ext.baseUrl : qiniuConfig.baseUrl
+
+        def app_id = project.hasProperty("app_id") ? project.ext.app_id : qiniuConfig.app_id
+        def app_secret = project.hasProperty("app_id") ? project.ext.app_secret : qiniuConfig.app_secret
+
+        def deleteBefore = qiniuConfig.deleteBefore != null && qiniuConfig.deleteBefore == "true"
+
+        if (qiniuConfig.apkPath == null || qiniuConfig.apkPath.isEmpty()) {
+            throw new IllegalStateException("请指定上传的文件路径[qiniuConfig.apkPath]")
+        }
+
+        def apkFile = file(qiniuConfig.apkPath)
+
+        if (!apkFile.exists()) {
+            throw new IllegalStateException("需要上传的文件不存在:" + apkFile.getAbsolutePath())
+        }
+
+        //创建上传凭证, 这是必须的.
+        def auth = com.qiniu.util.Auth.create(ak, sk)
+
+        def key = apkFile.name
+
+        def putPolicy = new com.qiniu.util.StringMap()
+        putPolicy.put("returnBody", "{\"key\":\"" + key + "\", \"hash\":\"" + System.currentTimeMillis() + "\"}")
+        def expireSeconds = 3600L
+        String upToken = auth.uploadToken(bk, null, expireSeconds, putPolicy)
+
+        println "七牛云上传凭证:" + upToken
+
+        //UploadManager uploadManager = new UploadManager()
+        //Auth auth = Auth.create(accessKey, secretKey)
+        //String token = auth.uploadToken(bucketName)
+        //Response r = upManager.put("hello world".getBytes(), "yourkey", token)
+
+        def downloadUrl = baseUrl + key
+        System.err.println "开始上传->" + apkFile.getAbsolutePath() + "->" + downloadUrl
+
+        //上传配置参考 https://developer.qiniu.com/kodo/sdk/1239/java#upload-config
+
+        def cfg = new com.qiniu.storage.Configuration(com.qiniu.storage.Region.huanan()) //华南地区
+
+        if (deleteBefore) {
+            //删除文件
+            try {
+                def bucketManager = new com.qiniu.storage.BucketManager(auth, cfg)
+                println "删除文件:${bucketManager.delete(bk, key)}"
+            } catch (Exception ignored) {
+                //忽略异常
+            }
+        }
+
+        //上传本地文件
+        def uploadManager = new com.qiniu.storage.UploadManager(cfg)
+        def response = uploadManager.put(apkFile, key, upToken)
+        def putRet = new com.google.gson.Gson().fromJson(response.bodyString(),
+                com.qiniu.storage.model.DefaultPutRet.class)
+
+        println "上传完成->hash:${putRet.hash} key:${putRet.key}"
+
+        qiniuConfig.downloadUrl = downloadUrl
+        System.err.println "七牛云上传成功->" + qiniuConfig.downloadUrl
+
+        //生成url对应的二维码
+        //https://github.com/MZCretin/RollToolsApi#%E5%85%AB%E7%94%9F%E6%88%90%E4%BA%8C%E7%BB%B4%E7%A0%81
+        def client = new okhttp3.OkHttpClient()
+        def request = new okhttp3.Request.Builder()
+                .header("app_id", app_id)
+                .header("app_secret", app_secret)
+                .url("http://www.mxnzp.com/api/qrcode/create/single?content=${downloadUrl}&size=400&type=0")
+                .build()
+        def json = client.newCall(request).execute().body().string()
+        def map = new com.google.gson.Gson().fromJson(json, Map.class)
+        println "创建二维码:${json}"
+        System.err.println "二维码地址->" + map["data"]["qrCodeUrl"]
+    }
+}
