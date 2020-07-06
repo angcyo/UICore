@@ -39,6 +39,7 @@ import com.angcyo.widget.edit.REditDelegate
 import com.angcyo.widget.layout.ILayoutDelegate
 import com.angcyo.widget.layout.RLayoutDelegate
 import com.angcyo.widget.recycler.getLastVelocity
+import kotlin.math.min
 
 /**
  *
@@ -888,7 +889,7 @@ fun RecyclerView.shotRecyclerView(bgColor: Int, count: Int): Bitmap? {
     val adapter = adapter
     var bigBitmap: Bitmap? = null
     if (adapter != null) {
-        val size = Math.min(count, adapter.itemCount)
+        val size = min(count, adapter.itemCount)
         var height = 0
         val paint = Paint()
         var iHeight = 0
@@ -899,17 +900,15 @@ fun RecyclerView.shotRecyclerView(bgColor: Int, count: Int): Bitmap? {
         val bitmapCache =
             LruCache<String, Bitmap>(cacheSize)
         for (i in 0 until size) {
-            val holder =
-                adapter.createViewHolder(this, adapter.getItemViewType(i))
-            adapter.onBindViewHolder(holder, i)
+            val holder = adapter.createViewHolder(this, adapter.getItemViewType(i))
+            adapter.onBindViewHolder(holder, i, listOf<Any>())
             holder.itemView.measure(
-                View.MeasureSpec.makeMeasureSpec(
-                    width,
-                    View.MeasureSpec.EXACTLY
-                ), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+                View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
             )
             holder.itemView.layout(
-                0, 0, holder.itemView.measuredWidth,
+                0, 0,
+                holder.itemView.measuredWidth,
                 holder.itemView.measuredHeight
             )
             holder.itemView.isDrawingCacheEnabled = true
