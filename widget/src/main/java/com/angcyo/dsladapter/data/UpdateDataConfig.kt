@@ -236,6 +236,12 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.updateSingleDataIndex(
 /**
  * 单一数据类型加载完成后, 调用此方法.
  * 自动处理, 情感图切换, 加载更多切换.
+ *
+ * [itemClass] 渲染界面的`DslAdapterItem`
+ * [dataList] 数据列表, 数据bean, 会被自动赋值给`dslAdapter.itemData`成员
+ * [error] 是否有错误, 如果有错误, 将会根据已有数据量智能切换到错误情感图, 或者加载更多失败的情况
+ * [page] 当前Page参数 包含请求页码, 每页请求数据量
+ * [initItem] 根据`Item`的类型, 为自定义的数据结构赋值
  * */
 fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEnd(
     itemClass: Class<Item>,
