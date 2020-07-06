@@ -1,0 +1,130 @@
+/**
+ * 蒲公英 上传脚本
+ *
+ * 脚本`apply`之后, 会在gradle窗口中的: 工程->Tasks->other 中出现 `_pgyerUpload` 任务. 双击即可运行.
+ *
+ * https://github.com/angcyo/gradle
+ *
+ * https://www.pgyer.com/doc/view/app_upload
+ * https://www.pgyer.com/doc/view/api#uploadApp
+ *
+ * Email:angcyo@126.com
+ * @author angcyo* @date 2019/08/09
+ * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
+ */
+
+/**
+ * 为了保证`Key`的安全:
+ * 可以在
+ * win: 'C:\Users\用户名\.gradle\gradle.properties"'
+ * mac: '/Users/用户名/.gradle/gradle.properties"'
+ * 文件中加入配置:
+ * ```
+ * api_key=xxx
+ * user_key=xxx
+ * ```
+ * 也可以在以下配置.(优先读取`gradle.properties`文件中的配置)
+ * */
+ext.pgyerConfig = [
+        //需要上传的APK,相对路径/绝对路径 (必填)
+        "apkPath" : "",
+
+        //请求的api地址
+        "pgyerUrl": "https://www.pgyer.com/apiv2/app/upload",
+
+        //官网, 用于拼接短地址 必须/结尾.
+        "pgyer"   : "https://www.pgyer.com/",
+
+        "api_key" : "6e3a8d2537e595a4d5ea95f4bc7b52cc",
+        "user_key": "7290604c20949f99279677efcaface0b"
+]
+
+//其他参数配置
+def paramsConfig = [
+        //(必填)应用安装方式，值为(2,3)。2：密码安装，3：邀请安装
+        "buildInstallType"      : "2",
+        //(必填) 设置App安装密码
+        "buildPassword"         : "0000",
+        //(选填) 版本更新描述，请传空字符串，或不传。
+        "buildUpdateDescription": "安装密码:0000",
+        //(选填) 应用名称
+        "buildName"             : "",
+]
+
+buildscript {
+    repositories {
+        //alliyun 镜像
+        maven() { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        jcenter()
+    }
+    dependencies {
+        //https://jcenter.bintray.com/com/squareup/okhttp3/
+        classpath "com.squareup.okhttp3:okhttp:4.3.1"
+        //https://jcenter.bintray.com/com/google/code/gson/gson/
+        classpath "com.google.code.gson:gson:2.8.6"
+    }
+}
+
+task _pgyerUpload() {
+    //upload("123.apk")
+}
+
+_pgyerUpload.doFirst {
+
+    def api_key = project.hasProperty("api_key") ? project.ext.api_key : pgyerConfig.api_key
+    def user_key = project.hasProperty("user_key") ? project.ext.user_key : pgyerConfig.user_key
+
+    def apkPath = project.hasProperty("apkPath") ? project.ext.apkPath : pgyerConfig.apkPath
+    if (apkPath == null || apkPath.isEmpty()) {
+        throw new IllegalStateException("请在[gradle.properties]文件中指定需要上传的文件路径[apkPath=xxx]")
+    }
+
+    def apkFile = new File(apkPath)
+    if (!apkFile.exists()) {
+        throw new IllegalStateException("需要上传的文件不存在:" + apkFile.getAbsolutePath())
+    }
+
+    def clientBuilder = new okhttp3.OkHttpClient.Builder()
+    clientBuilder.connectTimeout(10, java.util.concurrent.TimeUnit.SECONDS)
+    clientBuilder.readTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+
+    okhttp3.OkHttpClient client = clientBuilder.build()
+
+    def bodyBuilder = new okhttp3.MultipartBody.Builder()
+    bodyBuilder.setType(okhttp3.MultipartBody.FORM)
+
+    bodyBuilder.addFormDataPart("_api_key", new String(api_key))
+    bodyBuilder.addFormDataPart("uKey", new String(user_key))
+    bodyBuilder.addFormDataPart("file",
+            apkFile.name,
+            okhttp3.RequestBody.create(
+                    okhttp3.MediaType.parse("application/vnd.android.package-archive"),
+                    apkFile)
+    )
+
+    HashMap<String, String> params = paramsConfig
+    for (String key : params.keySet()) {
+        //println("add part key: " + key + " value: " + params.get(key))
+        bodyBuilder.addFormDataPart(key, params.get(key))
+    }
+
+    def request = new okhttp3.Request.Builder()
+            .url(pgyerConfig.pgyerUrl)
+            .post(bodyBuilder.build())
+            .build()
+
+    println "上传至蒲公英: ${apkPath} -> ${pgyerConfig.pgyer}"
+
+    def response = client.newCall(request).execute()
+
+    if (response == null || response.body() == null) {
+        System.err.println "蒲公英上传结果失败"
+        return null
+    }
+    def json = response.body().string()
+    response.close()
+
+    println "蒲公英上传结果:" + json
+    System.err.println "蒲公英安装地址-> " + pgyerConfig.pgyer + new com.google.gson.Gson().fromJson(json, Map.class).data.buildShortcutUrl
+}
+

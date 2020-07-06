@@ -14,18 +14,6 @@
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
-buildscript {
-    repositories {
-        maven() { url 'http://maven.aliyun.com/nexus/content/groups/public/' } //alliyun镜像
-    }
-    dependencies {
-        //https://jcenter.bintray.com/com/qiniu/qiniu-java-sdk/
-        classpath 'com.qiniu:qiniu-java-sdk:7.2.29'
-        //https://jcenter.bintray.com/com/google/code/gson/gson/
-        classpath "com.google.code.gson:gson:2.8.6"
-    }
-}
-
 /**
  * 为了保证`Key`的安全:
  * 可以在
@@ -62,6 +50,20 @@ ext.qiniuConfig = [
         "app_secret"  : "Rlh4c1duMDZ4YnZrRks4dU55c1NEQT09"
 ]
 
+buildscript {
+    repositories {
+        //alliyun 镜像
+        maven() { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        jcenter()
+    }
+    dependencies {
+        //https://jcenter.bintray.com/com/qiniu/qiniu-java-sdk/
+        classpath 'com.qiniu:qiniu-java-sdk:7.2.29'
+        //https://jcenter.bintray.com/com/google/code/gson/gson/
+        classpath "com.google.code.gson:gson:2.8.6"
+    }
+}
+
 /**
  * 上传本地文件->七牛云->返回文件下载地址
  * 拿到下载url->生成url二维码地址
@@ -79,11 +81,12 @@ task _qiniuUpload() {
 
         def deleteBefore = qiniuConfig.deleteBefore != null && qiniuConfig.deleteBefore == "true"
 
-        if (qiniuConfig.apkPath == null || qiniuConfig.apkPath.isEmpty()) {
-            throw new IllegalStateException("请指定上传的文件路径[qiniuConfig.apkPath]")
+        def apkPath = project.hasProperty("apkPath") ? project.ext.apkPath : qiniuConfig.apkPath
+        if (apkPath == null || apkPath.isEmpty()) {
+            throw new IllegalStateException("请在[gradle.properties]文件中指定需要上传的文件路径[apkPath=xxx]")
         }
 
-        def apkFile = file(qiniuConfig.apkPath)
+        def apkFile = file(apkPath)
 
         if (!apkFile.exists()) {
             throw new IllegalStateException("需要上传的文件不存在:" + apkFile.getAbsolutePath())
@@ -134,17 +137,19 @@ task _qiniuUpload() {
         qiniuConfig.downloadUrl = downloadUrl
         System.err.println "七牛云上传成功->" + qiniuConfig.downloadUrl
 
-        //生成url对应的二维码
-        //https://github.com/MZCretin/RollToolsApi#%E5%85%AB%E7%94%9F%E6%88%90%E4%BA%8C%E7%BB%B4%E7%A0%81
-        def client = new okhttp3.OkHttpClient()
-        def request = new okhttp3.Request.Builder()
-                .header("app_id", app_id)
-                .header("app_secret", app_secret)
-                .url("http://www.mxnzp.com/api/qrcode/create/single?content=${downloadUrl}&size=400&type=0")
-                .build()
-        def json = client.newCall(request).execute().body().string()
-        def map = new com.google.gson.Gson().fromJson(json, Map.class)
-        println "创建二维码:${json}"
-        System.err.println "二维码地址->" + map["data"]["qrCodeUrl"]
+        if (!app_id.isEmpty() && !app_secret.isEmpty()) {
+            //生成url对应的二维码
+            //https://github.com/MZCretin/RollToolsApi#%E5%85%AB%E7%94%9F%E6%88%90%E4%BA%8C%E7%BB%B4%E7%A0%81
+            def client = new okhttp3.OkHttpClient()
+            def request = new okhttp3.Request.Builder()
+                    .header("app_id", app_id)
+                    .header("app_secret", app_secret)
+                    .url("http://www.mxnzp.com/api/qrcode/create/single?content=${downloadUrl}&size=400&type=0")
+                    .build()
+            def json = client.newCall(request).execute().body().string()
+            def map = new com.google.gson.Gson().fromJson(json, Map.class)
+            println "创建二维码:${json}"
+            System.err.println "二维码地址->" + map["data"]["qrCodeUrl"]
+        }
     }
 }
