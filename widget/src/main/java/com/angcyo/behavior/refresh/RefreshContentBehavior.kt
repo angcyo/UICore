@@ -2,6 +2,7 @@ package com.angcyo.behavior.refresh
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.BaseDependsBehavior
@@ -15,6 +16,7 @@ import com.angcyo.library.L
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.widget.R
 import com.angcyo.widget.base.behavior
+import com.angcyo.widget.base.isTouchFinish
 import com.angcyo.widget.base.mH
 
 
@@ -225,6 +227,16 @@ open class RefreshContentBehavior(
     ) {
         super.onStopNestedScroll(coordinatorLayout, child, target, type)
         refreshBehaviorConfig?.onContentStopScroll(this)
+    }
+
+    override fun onTouchEvent(parent: CoordinatorLayout, child: View, ev: MotionEvent): Boolean {
+        return super.onTouchEvent(parent, child, ev).apply {
+            if (ev.isTouchFinish()) {
+                if (_nestedScrollView == null) {
+                    refreshBehaviorConfig?.onContentStopScroll(this@RefreshContentBehavior)
+                }
+            }
+        }
     }
 
     override fun getContentScrollY(behavior: BaseDependsBehavior<*>): Int {
