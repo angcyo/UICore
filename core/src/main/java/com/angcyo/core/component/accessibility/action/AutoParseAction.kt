@@ -5,6 +5,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
 import com.angcyo.core.component.accessibility.parse.ParseParams
+import com.angcyo.core.component.accessibility.parse.dslParseParams
 import com.angcyo.core.component.accessibility.parse.isEmpty
 import com.angcyo.library.ex.isListEmpty
 
@@ -247,5 +248,18 @@ fun List<Pair<AccessibilityNodeInfoCompat, CharSequence?>>.logText(builder: Stri
         }
     }
     return builder.toString()
+}
+
+fun dslAutoParseAction(action: AutoParseAction.() -> Unit): AutoParseAction {
+    return AutoParseAction().apply(action)
+}
+
+fun au() {
+
+    dslAutoParseAction {
+        backParams = dslParseParams {
+
+        }
+    }
 }
 

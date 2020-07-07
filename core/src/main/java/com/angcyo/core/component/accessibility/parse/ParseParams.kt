@@ -25,3 +25,65 @@ class ParseParams {
 
 /**是否是空数据*/
 fun ParseParams?.isEmpty() = this != null && ids.isListEmpty() && texts.isListEmpty()
+
+fun dslParseParams(action: ParseParams.() -> Unit): ParseParams {
+    return ParseParams().apply(action)
+}
+
+/**添加id过滤约束, 多个id使用[or]的关系*/
+fun ParseParams.idOr(vararg id: String) {
+    if (ids == null) {
+        ids = mutableListOf()
+    }
+    if (ids is MutableList<ParamConstraint>) {
+        (ids as MutableList<ParamConstraint>).apply {
+            id.forEach { subId ->
+                add(ParamConstraint().apply {
+                    text = mutableListOf(subId)
+                })
+            }
+        }
+    }
+}
+
+fun ParseParams.textOr(vararg text: String) {
+    if (texts == null) {
+        texts = mutableListOf()
+    }
+    if (texts is MutableList<ParamConstraint>) {
+        (texts as MutableList<ParamConstraint>).apply {
+            text.forEach { subId ->
+                add(ParamConstraint().apply {
+                    this.text = mutableListOf(subId)
+                })
+            }
+        }
+    }
+}
+
+/**添加id过滤约束, 同时满足多个id , id使用[and]的关系*/
+fun ParseParams.idAnd(vararg id: String) {
+    if (ids == null) {
+        ids = mutableListOf()
+    }
+    if (ids is MutableList<ParamConstraint>) {
+        (ids as MutableList<ParamConstraint>).apply {
+            add(ParamConstraint().apply {
+                text = id.toList()
+            })
+        }
+    }
+}
+
+fun ParseParams.textAnd(vararg text: String) {
+    if (texts == null) {
+        texts = mutableListOf()
+    }
+    if (texts is MutableList<ParamConstraint>) {
+        (texts as MutableList<ParamConstraint>).apply {
+            add(ParamConstraint().apply {
+                this.text = text.toList()
+            })
+        }
+    }
+}
