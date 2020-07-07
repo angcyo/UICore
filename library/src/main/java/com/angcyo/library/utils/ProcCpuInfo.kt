@@ -16,7 +16,9 @@ import java.util.regex.Pattern
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 object ProcCpuInfo {
+
     private val TAG = ProcCpuInfo::class.java.simpleName
+
     val cpuInfo: List<String>
         get() {
             val result: MutableList<String> =
@@ -95,7 +97,7 @@ object ProcCpuInfo {
             }
             if (mProcessor != null) {
                 // D/CpuUtils: isCPU64 mProcessor = AArch64 Processor rev 4 (aarch64)
-                Log.d(TAG, "isCPU64 mProcessor = $mProcessor")
+                //Log.d(TAG, "isCPU64 mProcessor = $mProcessor")
                 if (mProcessor.contains("aarch64")) {
                     result = true
                 }
