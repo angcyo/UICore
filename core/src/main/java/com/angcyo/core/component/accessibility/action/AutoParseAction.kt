@@ -1,13 +1,12 @@
 package com.angcyo.core.component.accessibility.action
 
 import android.view.accessibility.AccessibilityEvent
-import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
-import com.angcyo.core.component.accessibility.parse.ParseParams
+import com.angcyo.core.component.accessibility.parse.ParseBean
 import com.angcyo.core.component.accessibility.parse.dslParseParams
+import com.angcyo.core.component.accessibility.parse.findConstraintNode
 import com.angcyo.core.component.accessibility.parse.isEmpty
-import com.angcyo.library.ex.isListEmpty
 
 /**
  * 智能识别的[Action], 通过配置一些关键字, 快速创建对应的[Action]
@@ -19,13 +18,13 @@ import com.angcyo.library.ex.isListEmpty
 open class AutoParseAction : BaseAccessibilityAction() {
 
     /**是否需要当前事件[checkEvent]解析时的关键数据*/
-    var eventParams: ParseParams? = null
+    var eventBean: ParseBean? = null
 
     /**目中目标界面后[doAction]解析时的关键数据*/
-    var clickParams: ParseParams? = null
+    var handleBean: ParseBean? = null
 
     /**当[Action]被作为回退处理时[doActionWidth]解析时的关键数据*/
-    var backParams: ParseParams? = null
+    var backBean: ParseBean? = null
 
     /**日志输出*/
     var onLog: ((CharSequence) -> Unit)? = null
@@ -34,7 +33,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         service: BaseAccessibilityService,
         event: AccessibilityEvent?
     ): Boolean {
-        val params = eventParams
+        val params = eventBean
         if (params.isEmpty()) {
             doActionFinish(ActionException("eventParams is null."))
         }
@@ -45,7 +44,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
     override fun doAction(service: BaseAccessibilityService, event: AccessibilityEvent?) {
         super.doAction(service, event)
-        val params = clickParams
+        val params = handleBean
         if (params.isEmpty()) {
             doActionFinish(ActionException("clickParams is null."))
         } else {
@@ -73,14 +72,14 @@ open class AutoParseAction : BaseAccessibilityAction() {
         service: BaseAccessibilityService,
         event: AccessibilityEvent?
     ): Boolean {
-        val params = backParams
+        val params = backBean
         if (params.isEmpty()) {
             var result = false
-            if (eventParams == null) {
+            if (eventBean == null) {
                 //无界面约束匹配, 则不检查. 直接处理
             } else {
                 //匹配当前界面, 匹配成功后, 再处理
-                if (service.parse(eventParams!!)) {
+                if (service.parse(eventBean!!)) {
                     //匹配成功
                     service.parse(params!!) {
                         result = it.clickAll {
@@ -103,61 +102,17 @@ open class AutoParseAction : BaseAccessibilityAction() {
     }
 }
 
-/**返回当前界面, 是否包好[params]指定的标识信息
+/**返回当前界面, 是否包好[bean]指定的标识信息
  * [onTargetResult] 当找到目标时, 通过此方法回调目标给调用者*/
 fun BaseAccessibilityService.parse(
-    params: ParseParams,
+    bean: ParseBean,
     onTargetResult: (List<AccessibilityNodeInfoCompat>) -> Unit = {}
 ): Boolean {
-    val rootNodeInfo: AccessibilityNodeInfo = rootNodeInfo() ?: return false
-
-    val packageName: String = packageName
     val targetList: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
 
-    val tempList: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
-
-    var haveNode = false
-
     //优先判断 id
-    params.ids?.forEach { paramConstraint ->
-        try {
-            haveNode = false
-            tempList.clear()
-            if (!paramConstraint.text.isListEmpty()) {
-                for (i: Int in paramConstraint.text!!.indices) {
-                    val subId: String = packageName.id(paramConstraint.text!![i]) //完整id 是需要包含包名的
-                    val result: List<AccessibilityNodeInfoCompat> = rootNodeInfo.findNode {
-                        val idName = it.viewIdName()
-                        if (subId == idName) {
-                            val cls = paramConstraint.cls?.getOrNull(i)
-
-                            if (cls != null && !cls.contains(it.className)) {
-                                //id相同, 但是类名不同
-                                -1
-                            } else {
-                                //命中
-                                1
-                            }
-                        } else {
-                            -1
-                        }
-                    }
-
-                    if (result.isEmpty()) {
-                        haveNode = false
-                        break
-                    } else {
-                        tempList.addAll(result)
-                        haveNode = true
-                    }
-                }
-                if (haveNode) {
-                    targetList.addAll(tempList)
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+    bean.ids?.forEach { paramConstraint ->
+        paramConstraint.findConstraintNode(targetList, true, this)
     }
 
     if (targetList.isNotEmpty()) {
@@ -168,46 +123,8 @@ fun BaseAccessibilityService.parse(
     }
 
     //其次判断 text
-    params.texts?.forEach { paramConstraint ->
-        try {
-            haveNode = false
-            tempList.clear()
-
-            if (!paramConstraint.text.isListEmpty()) {
-
-                for (i: Int in paramConstraint.text!!.indices) {
-                    val subText: String = paramConstraint.text!![i]
-                    val result: List<AccessibilityNodeInfoCompat> = rootNodeInfo.findNode {
-                        if (it.haveText(subText)) {
-                            val cls = paramConstraint.cls?.getOrNull(i)
-
-                            if (cls != null && !cls.contains(it.className)) {
-                                //包含文本相同, 但是类名不同
-                                -1
-                            } else {
-                                //命中
-                                1
-                            }
-                        } else {
-                            -1
-                        }
-                    }
-
-                    if (result.isEmpty()) {
-                        haveNode = false
-                        break
-                    } else {
-                        tempList.addAll(result)
-                        haveNode = true
-                    }
-                }
-                if (haveNode) {
-                    targetList.addAll(tempList)
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+    bean.texts?.forEach { paramConstraint ->
+        paramConstraint.findConstraintNode(targetList, false, this)
     }
 
     if (targetList.isNotEmpty()) {
@@ -257,7 +174,7 @@ fun dslAutoParseAction(action: AutoParseAction.() -> Unit): AutoParseAction {
 fun au() {
 
     dslAutoParseAction {
-        backParams = dslParseParams {
+        backBean = dslParseParams {
 
         }
     }

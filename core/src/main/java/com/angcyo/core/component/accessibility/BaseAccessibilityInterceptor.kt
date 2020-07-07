@@ -489,6 +489,15 @@ fun Int.isActionFinish() = this == BaseAccessibilityInterceptor.ACTION_STATUS_FI
 fun Int.isActionError() = this == BaseAccessibilityInterceptor.ACTION_STATUS_ERROR
 fun Int.isActionDestroy() = this == BaseAccessibilityInterceptor.ACTION_STATUS_DESTROY
 
+fun Int.toActionStatusStr() = when (this) {
+    BaseAccessibilityInterceptor.ACTION_STATUS_INIT -> "ACTION_STATUS_INIT"
+    BaseAccessibilityInterceptor.ACTION_STATUS_ING -> "ACTION_STATUS_ING"
+    BaseAccessibilityInterceptor.ACTION_STATUS_FINISH -> "ACTION_STATUS_FINISH"
+    BaseAccessibilityInterceptor.ACTION_STATUS_ERROR -> "ACTION_STATUS_ERROR"
+    BaseAccessibilityInterceptor.ACTION_STATUS_DESTROY -> "ACTION_STATUS_DESTROY"
+    else -> "Unknown:$this"
+}
+
 fun BaseAccessibilityInterceptor.isActionInterceptorStart() = actionStatus.isActionStart()
 
 /**安装拦截器*/
