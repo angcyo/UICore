@@ -28,8 +28,13 @@ abstract class BaseAccessibilityAction {
     /**用于控制下一次[Action]检查执行的延迟时长, 毫秒. 负数表示使用[Interceptor]的默认值*/
     var actionIntervalDelay: Long = -1
 
-    /**自动在每个[onActionFinish]结束之后, 随机调整[actionIntervalDelay]的时间*/
+    /**自动在每个[doActionFinish]结束之后, 随机调整[actionIntervalDelay]的时间*/
     var autoIntervalDelay: Boolean = true
+
+    /**一个名字, 用于日志输出, 或者通知栏提示*/
+    var actionTitle: String = this.simpleHash()
+
+    //<editor-fold desc="核心回调">
 
     /**是否需要事件[event],返回true表示需要处理*/
     open fun checkEvent(service: BaseAccessibilityService, event: AccessibilityEvent?): Boolean {
@@ -50,20 +55,22 @@ abstract class BaseAccessibilityAction {
         return false
     }
 
-    /**当前[Action]是否开始了*/
-    open fun isActionStart(): Boolean {
-        return accessibilityInterceptor != null && actionDoCount > 0
-    }
-
     /**[Action]首次执行开始*/
     @CallSuper
     open fun onActionStart(interceptor: BaseAccessibilityInterceptor) {
         accessibilityInterceptor = interceptor
     }
 
+    /**当前[Action]是否开始了*/
+    open fun isActionStart(): Boolean {
+        return accessibilityInterceptor != null && actionDoCount > 0
+    }
+
+    //</editor-fold desc="核心回调">
+
     /**[Action]执行完成, 可以用于释放一些数据*/
     @CallSuper
-    open fun onActionFinish(error: ActionException? = null) {
+    open fun doActionFinish(error: ActionException? = null) {
         if (autoIntervalDelay) {
             onRandomIntervalDelay()
         }
@@ -71,11 +78,6 @@ abstract class BaseAccessibilityAction {
         actionFinish = null
         accessibilityInterceptor = null
         actionDoCount = 0
-    }
-
-    /**一个名字*/
-    open fun getActionTitle(): String {
-        return this.simpleHash()
     }
 
     /**随机产生一个间隔时间*/

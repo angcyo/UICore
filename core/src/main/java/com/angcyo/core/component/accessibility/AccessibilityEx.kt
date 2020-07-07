@@ -385,7 +385,7 @@ fun AccessibilityNodeInfo.id(id: String): String {
 }
 
 fun CharSequence.id(id: String): String {
-    return if (id.contains(this)) {
+    return if (id.startsWith(this)) {
         id
     } else {
         "${this}:id/$id"
@@ -727,6 +727,10 @@ fun AccessibilityNodeInfo.viewIdName() = wrap().viewIdName()
 fun AccessibilityNodeInfoCompat.viewIdName() = viewIdResourceName
 
 fun AccessibilityNodeInfo.wrap() = AccessibilityNodeInfoCompat.wrap(this)
+
+/**获取有文本的文本*/
+fun AccessibilityNodeInfoCompat.text() =
+    text ?: (contentDescription ?: (hintText ?: (paneTitle ?: (tooltipText ?: null))))
 
 fun AccessibilityNodeInfo.log() {
     L.v(wrap().toString())

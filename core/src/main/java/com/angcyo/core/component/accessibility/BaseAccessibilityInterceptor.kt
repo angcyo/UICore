@@ -460,6 +460,23 @@ abstract class BaseAccessibilityInterceptor {
         }
     }
 
+    /**操作符重载*/
+    operator fun <T : BaseAccessibilityAction> T.invoke(
+        inOther: Boolean = false,
+        config: T.() -> Unit = {}
+    ) {
+        this.config()
+        if (inOther) {
+            actionOtherList.add(this)
+        } else {
+            actionList.add(this)
+        }
+    }
+
+    operator fun <T : BaseAccessibilityAction> plus(item: T) {
+        actionList.add(item)
+    }
+
     //</editor-fold desc="其他">
 }
 
