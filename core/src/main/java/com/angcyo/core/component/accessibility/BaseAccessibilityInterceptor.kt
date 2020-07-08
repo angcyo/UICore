@@ -190,7 +190,9 @@ abstract class BaseAccessibilityInterceptor {
         toPackageName: CharSequence?
     ) {
         //L.i("离开 $filterPackageName -> $toPackageName")
-        PermissionsAction().checkEvent(service, event)
+        PermissionsAction().apply {
+            doActionWidth(this, service, event)
+        }
     }
 
     /**开始间隔回调*/

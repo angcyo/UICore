@@ -43,8 +43,12 @@ data class ConstraintBean(
      * */
     var action: List<String>? = null,
 
+    /**忽略此次action操作的返回值.*/
+    var ignore: Boolean = false,
+
     /**
-     * 坐标矩形约束. 格式10,10-100,100 小于1的数, 表示比例否则就是dp
+     * 坐标矩形约束. 格式10,10-100,100 小于1的数, 表示比例否则就是dp.
+     * 空字符只要宽高大于0, 就命中
      * */
     var rect: List<String>? = null
 ) {

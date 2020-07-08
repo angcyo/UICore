@@ -1,6 +1,7 @@
 package com.angcyo.core.component.accessibility.action
 
 import android.accessibilityservice.AccessibilityService
+import androidx.collection.ArrayMap
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
@@ -83,15 +84,20 @@ open class AutoParse {
 
         val rootNodeWrap: AccessibilityNodeInfoCompat = rootNodeInfo.wrap()
 
+        var tempList: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
+
+        //列表中的所有文本是否都匹配通过
+        val matchMap = ArrayMap<Int, List<AccessibilityNodeInfoCompat>>()
         for (index: Int in text!!.indices) {
+            tempList = mutableListOf()
             try {
                 val subText: String = if (isIdText) packageName.id(text[index]) else text[index]
                 if (!isIdText && subText.isEmpty()) {
-                    if (!result.contains(rootNodeWrap)) {
-                        result.add(rootNodeWrap)
-                    }
+                    //text匹配模式下, 空字符串处理
+                    tempList.add(rootNodeWrap)
+                    matchMap[index] = tempList
                 } else {
-                    rootNodeWrap.unwrap().findNode(result) {
+                    rootNodeWrap.unwrap().findNode(tempList) {
                         if (isIdText) {
                             //id 全等匹配
                             val idName = it.viewIdName()
@@ -117,12 +123,36 @@ open class AutoParse {
                             }
                         }
                     }
-                }
 
+                    if (tempList.isNotEmpty()) {
+                        matchMap[index] = tempList
+                    }
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
+
+        //是否所有文本都匹配到了
+        var allTextMatch = true
+        for (index: Int in text.indices) {
+            if (matchMap[index].isNullOrEmpty()) {
+                allTextMatch = false
+                break
+            }
+        }
+
+        //全部匹配到, 将匹配到的node返回
+        if (allTextMatch) {
+            for (index: Int in text.indices) {
+                matchMap[index]?.forEach {
+                    if (!result.contains(it)) {
+                        result.add(it)
+                    }
+                }
+            }
+        }
+
         return result
     }
 
@@ -149,7 +179,11 @@ open class AutoParse {
                 if (node.isValid()) {
                     //如果设置了矩形匹配规则, 那么这个node的rect一定要是有效的
                     constraintBean.rect?.forEach {
-                        if (it.isNotEmpty()) {
+                        if (it.isEmpty()) {
+                            //空字符只要宽高大于0, 就命中
+                            matchRect = node.isValid()
+                        } else {
+
                             it.split("-").apply {
                                 val p1 = getOrNull(0)?.toPointF()
                                 val p2 = getOrNull(1)?.toPointF()

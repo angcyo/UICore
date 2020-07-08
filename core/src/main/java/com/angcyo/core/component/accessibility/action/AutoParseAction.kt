@@ -52,6 +52,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         val params = eventBean
         if (params.isEmpty()) {
             doActionFinish(ActionException("eventParams is null."))
+            return false
         }
         return params?.run {
             autoParse.parse(service, this)
@@ -93,7 +94,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         event: AccessibilityEvent?
     ): Boolean {
         val params = backBean
-        if (params.isEmpty()) {
+        if (!params.isEmpty()) {
             var result = false
             if (eventBean == null) {
                 //无界面约束匹配, 则不检查. 直接处理
@@ -257,7 +258,11 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 onGetTextResult(textList)
             }
 
-            result
+            if (constraintBean.ignore) {
+                false
+            } else {
+                result
+            }
         } ?: nodeList.clickAll {
             log(buildString {
                 append("点击[")

@@ -11,6 +11,7 @@ import com.angcyo.core.component.accessibility.*
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
 open class PermissionsAction : BaseAccessibilityAction() {
+
     override fun doActionWidth(
         action: BaseAccessibilityAction,
         service: BaseAccessibilityService,
@@ -45,6 +46,12 @@ open class PermissionsAction : BaseAccessibilityAction() {
         service: BaseAccessibilityService,
         event: AccessibilityEvent?
     ): Boolean {
-        return service.clickByText("允许", event)
+        return service.rootNodeInfo()?.findNode {
+            if (it.haveText("允许")) {
+                1
+            } else {
+                -1
+            }
+        }?.clickAll() ?: false
     }
 }
