@@ -379,8 +379,9 @@ abstract class BaseAccessibilityInterceptor {
                 action.actionFinish = null
 
                 //切换间隔时长
-                intervalDelay = if (action.actionIntervalDelay > 0) {
-                    action.actionIntervalDelay
+                val interceptorIntervalDelay = action.getInterceptorIntervalDelay()
+                intervalDelay = if (interceptorIntervalDelay > 0) {
+                    interceptorIntervalDelay
                 } else {
                     initialIntervalDelay
                 }

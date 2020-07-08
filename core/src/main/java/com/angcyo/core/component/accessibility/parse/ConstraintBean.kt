@@ -43,7 +43,7 @@ data class ConstraintBean(
      * */
     var action: List<String>? = null,
 
-    /**忽略此次action操作的返回值.*/
+    /**忽略此次[Action]操作的返回值, 不忽略的话, 如果action返回true, 则可能会执行[doActionFinish]*/
     var ignore: Boolean = false,
 
     /**

@@ -3,9 +3,8 @@ package com.angcyo.core.component.accessibility
 import android.view.accessibility.AccessibilityEvent
 import androidx.annotation.CallSuper
 import com.angcyo.core.component.accessibility.action.ActionException
-import com.angcyo.library.ex.isDebugType
 import com.angcyo.library.ex.simpleHash
-import kotlin.random.Random
+import kotlin.random.Random.Default.nextInt
 
 /**
  * 每个无障碍拦截后需要执行的动作
@@ -92,12 +91,6 @@ abstract class BaseAccessibilityAction {
     /**[Action]执行完成, 可以用于释放一些数据*/
     @CallSuper
     open fun doActionFinish(error: ActionException? = null) {
-        if (autoIntervalDelay) {
-            //debug模式下关闭随机延迟, 快速测试代码
-            if (!isDebugType()) {
-                onRandomIntervalDelay()
-            }
-        }
         actionFinish?.invoke(error)
         actionFinish = null
         accessibilityInterceptor = null
@@ -105,17 +98,18 @@ abstract class BaseAccessibilityAction {
         actionCheckOutCount = 0
     }
 
-    /**随机产生一个间隔时间*/
-    open fun onRandomIntervalDelay() {
-        randomIntervalDelay()
+    /**获取拦截器下一次间隔回调的时长*/
+    open fun getInterceptorIntervalDelay(): Long {
+        val delay: Long = if (actionIntervalDelay > 0) {
+            actionIntervalDelay
+        } else {
+            (accessibilityInterceptor?.initialIntervalDelay ?: -1)
+        } * if (autoIntervalDelay) {
+            //随机产生一个间隔时间
+            nextInt(1, 10)
+        } else {
+            1
+        }
+        return delay
     }
 }
-
-/**随机间隔延迟时长*/
-fun BaseAccessibilityAction.randomIntervalDelay() {
-    actionIntervalDelay =
-        (accessibilityInterceptor?.initialIntervalDelay ?: -1) * Random.nextInt(1, 10)
-}
-
-fun BaseAccessibilityAction.intervalDelay(): Long =
-    accessibilityInterceptor?.initialIntervalDelay ?: -1
