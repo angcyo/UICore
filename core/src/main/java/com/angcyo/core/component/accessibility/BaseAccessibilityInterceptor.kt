@@ -262,7 +262,9 @@ abstract class BaseAccessibilityInterceptor {
         //L.v(this@BaseAccessibilityInterceptor.simpleHash(), " $it")
         val service = lastService
         if (service == null) {
-            L.w("${this.simpleHash()} service is null.")
+            if (isActionInterceptorStart()) {
+                L.w("${this.simpleHash()} service is null.")
+            }
         } else {
             service.rootNodeInfo(null)?.let { node ->
                 interceptorPackage(service, null, node.packageName)
@@ -357,6 +359,9 @@ abstract class BaseAccessibilityInterceptor {
         event: AccessibilityEvent?
     ) {
         if (service != null) {
+            if (!action.isActionStart()) {
+                action.onActionStart(this)
+            }
             if (action.checkEvent(service, event)) {
                 //需要事件处理
                 action.actionFinish = {
@@ -368,11 +373,6 @@ abstract class BaseAccessibilityInterceptor {
                         actionNext(service, event)
                     }
                 }
-                if (!action.isActionStart()) {
-                    action.onActionStart(this)
-                    //action.actionDoCount = 0
-                }
-                action.actionDoCount++
                 action.doAction(service, event)
                 action.actionFinish = null
 
@@ -388,6 +388,7 @@ abstract class BaseAccessibilityInterceptor {
                 actionOtherList.forEach {
                     handle = handle || it.doActionWidth(action, service, event)
                 }
+                action.onCheckEventOut(service, event)
                 if (!handle) {
                     //未被处理
                     onNoOtherActionHandle(action, service, event)

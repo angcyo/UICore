@@ -25,6 +25,12 @@ abstract class BaseAccessibilityAction {
     /**[doAction]执行时的次数统计*/
     var actionDoCount = 0
 
+    /**[checkEvent]执行时的次数统计, 如果check的次数过多, 可以将action提到上一个级别*/
+    var actionCheckOutCount = 0
+
+    /**当[actionCheckOutCount]大于一定值时, 回滚到上一步*/
+    var rollbackCount = -1
+
     /**用于控制下一次[Action]检查执行的延迟时长, 毫秒. 负数表示使用[Interceptor]的默认值*/
     var actionIntervalDelay: Long = -1
 
@@ -41,9 +47,23 @@ abstract class BaseAccessibilityAction {
         return false
     }
 
-    /**执行action*/
-    open fun doAction(service: BaseAccessibilityService, event: AccessibilityEvent?) {
+    /**未处理[checkEvent]事件*/
+    @CallSuper
+    open fun onCheckEventOut(service: BaseAccessibilityService, event: AccessibilityEvent?) {
+        actionCheckOutCount++
 
+        if (rollbackCount in 1 until actionCheckOutCount) {
+            accessibilityInterceptor?.apply {
+                actionIndex -= 1
+            }
+            actionCheckOutCount = 0
+        }
+    }
+
+    /**执行action*/
+    @CallSuper
+    open fun doAction(service: BaseAccessibilityService, event: AccessibilityEvent?) {
+        actionDoCount++
     }
 
     /**执行action来自其他action不需要处理, 返回true表示处理了事件*/
@@ -78,6 +98,7 @@ abstract class BaseAccessibilityAction {
         actionFinish = null
         accessibilityInterceptor = null
         actionDoCount = 0
+        actionCheckOutCount = 0
     }
 
     /**随机产生一个间隔时间*/
