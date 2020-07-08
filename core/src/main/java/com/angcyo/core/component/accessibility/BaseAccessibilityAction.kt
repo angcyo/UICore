@@ -3,6 +3,7 @@ package com.angcyo.core.component.accessibility
 import android.view.accessibility.AccessibilityEvent
 import androidx.annotation.CallSuper
 import com.angcyo.core.component.accessibility.action.ActionException
+import com.angcyo.library.ex.isDebugType
 import com.angcyo.library.ex.simpleHash
 import kotlin.random.Random
 
@@ -92,7 +93,10 @@ abstract class BaseAccessibilityAction {
     @CallSuper
     open fun doActionFinish(error: ActionException? = null) {
         if (autoIntervalDelay) {
-            onRandomIntervalDelay()
+            //debug模式下关闭随机延迟, 快速测试代码
+            if (!isDebugType()) {
+                onRandomIntervalDelay()
+            }
         }
         actionFinish?.invoke(error)
         actionFinish = null

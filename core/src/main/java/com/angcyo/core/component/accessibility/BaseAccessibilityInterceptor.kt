@@ -340,7 +340,9 @@ abstract class BaseAccessibilityInterceptor {
                 if (actionIndex < 0) {
                     actionIndex = 0
                 }
-                if (actionStatus == ACTION_STATUS_INIT) {
+                if (actionIndex == 0 ||
+                    actionStatus == ACTION_STATUS_INIT
+                ) {
                     onActionStart()
                 }
                 actionStatus = ACTION_STATUS_ING
