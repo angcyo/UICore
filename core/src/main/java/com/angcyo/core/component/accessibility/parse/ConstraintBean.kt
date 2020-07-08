@@ -43,26 +43,54 @@ data class ConstraintBean(
      * */
     var action: List<String>? = null,
 
+    /** 点赞任务, 评论的数据集合, 随机从里面取一个.
+     * 如果为null, 则从代码中随机产生
+     * */
+    var comments: List<String>? = null,
+
     /**忽略此次[Action]操作的返回值, 不忽略的话, 如果action返回true, 则可能会执行[doActionFinish]*/
     var ignore: Boolean = false,
 
-    /**
+    /**和[text]为一一对应的关系.
      * 坐标矩形约束. 格式10,10-100,100 小于1的数, 表示比例否则就是dp.
-     * 空字符只要宽高大于0, 就命中
+     * 空字符只要宽高大于0, 就命中.
+     * 只要满足一组矩形约束, 就算命中
      * */
-    var rect: List<String>? = null
+    var rect: List<String>? = null,
+
+    /**状态约束,只有全部满足状态才能命中
+     * [clickable] 具备可点击
+     * [unclickable] 具备不可点击
+     * [focusable] 具备可获取交点
+     * [selected] 具备选中状态
+     * [unselected] 具备选未中状态
+     * [focused] 具备焦点状态
+     * [unfocused] 具备无焦点状态
+     * */
+    var state: List<String>? = null
 ) {
     companion object {
-        const val ACTION_CLICK = "click"
-        const val ACTION_CLICK2 = "click2"
-        const val ACTION_LONG_CLICK = "longClick"
-        const val ACTION_DOUBLE = "double"
-        const val ACTION_TOUCH = "touch"
-        const val ACTION_MOVE = "move"
-        const val ACTION_FLING = "fling"
-        const val ACTION_BACK = "back"
-        const val ACTION_GET_TEXT = "getText"
-        const val ACTION_SET_TEXT = "setText"
-        const val ACTION_RANDOM = "random"
+
+        //可以执行的操作 [action]
+        const val ACTION_CLICK = "click" //触发当前节点的点击事件, null 默认是click操作
+        const val ACTION_CLICK2 = "click2" //在当前节点区域双击
+        const val ACTION_LONG_CLICK = "longClick" //触发当前节点的长按事件
+        const val ACTION_DOUBLE = "double" //[double:20,30] 在屏幕坐标x=20dp y=30dp的地方双击
+        const val ACTION_TOUCH = "touch" //[touch:10,10] 在屏幕坐标x=10dp y=10dp的地方点击
+        const val ACTION_MOVE = "move" //[move:10,10-100,100] 从屏幕坐标x=10dp y=10dp的地方移动到100dp 100dp的地方
+        const val ACTION_FLING = "fling" //[fling:10,10-100,100]
+        const val ACTION_BACK = "back" //执行返回操作
+        const val ACTION_GET_TEXT = "getText" //获取文本内容
+        const val ACTION_SET_TEXT = "setText" //设置文本内容
+        const val ACTION_RANDOM = "random" //随机执行, 空字符会进行随机操作.
+
+        //需要指定的状态 [state]
+        const val STATE_CLICKABLE = "clickable" //具备可点击
+        const val STATE_UNCLICKABLE = "unclickable" //具备不可点击
+        const val STATE_FOCUSABLE = "focusable" //具备可获取交点
+        const val STATE_FOCUSED = "focused" //具备焦点状态
+        const val STATE_UNFOCUSED = "unfocused" //具备选未中状态
+        const val STATE_SELECTED = "selected" //具备选中状态
+        const val STATE_UNSELECTED = "unselected" //具备选未中状态
     }
 }

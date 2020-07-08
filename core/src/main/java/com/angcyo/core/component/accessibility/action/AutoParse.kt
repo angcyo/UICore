@@ -163,25 +163,28 @@ open class AutoParse {
         index: Int
     ): Boolean {
         val cls = constraintBean.cls?.getOrNull(index)
-        return if (!cls.isNullOrEmpty() && !cls.contains(node.className)) {
+        val rect = constraintBean.rect?.getOrNull(index)
+
+        //是否匹配成功
+        var result = false
+
+        if (!cls.isNullOrEmpty() && !cls.contains(node.className)) {
             //但是类名不同
-            false
+            result = false
         } else {
             //类名命中
-            if (!constraintBean.rect.isListEmpty()) {
-                //坐标约束
 
-                //是否匹配通过
-                var matchRect = false
+            if (rect != null) {
+                //坐标约束
 
                 val bound = node.bounds()
 
                 if (node.isValid()) {
                     //如果设置了矩形匹配规则, 那么这个node的rect一定要是有效的
-                    constraintBean.rect?.forEach {
+                    rect.let {
                         if (it.isEmpty()) {
                             //空字符只要宽高大于0, 就命中
-                            matchRect = node.isValid()
+                            result = node.isValid()
                         } else {
 
                             it.split("-").apply {
@@ -193,7 +196,7 @@ open class AutoParse {
                                     if (p2 == null) {
                                         //只设置了单个点
                                         if (bound.contains(p1!!.x.toInt(), p1.y.toInt())) {
-                                            matchRect = true
+                                            result = true
                                         }
                                     } else {
                                         //设置了多个点
@@ -204,7 +207,7 @@ open class AutoParse {
                                                 p2.y.toInt()
                                             )
                                         ) {
-                                            matchRect = true
+                                            result = true
                                         }
                                     }
                                 }
@@ -212,12 +215,71 @@ open class AutoParse {
                         }
                     }
                 }
-
-                matchRect
             } else {
                 //other
-                true
+                result = true
             }
         }
+
+        //状态约束
+        if (result) {
+            val state = constraintBean.state
+            if (!state.isListEmpty()) {
+                var match = true
+                state!!.forEach {
+                    when (it) {
+                        ConstraintBean.STATE_CLICKABLE -> {
+                            //需要具备可以点击的状态
+                            if (!node.isClickable) {
+                                match = false
+                            }
+                        }
+                        ConstraintBean.STATE_UNCLICKABLE -> {
+                            //需要具备不可以点击的状态
+                            if (node.isClickable) {
+                                match = false
+                            }
+                        }
+                        ConstraintBean.STATE_FOCUSABLE -> {
+                            //需要具备可以获取焦点状态
+                            if (!node.isFocusable) {
+                                match = false
+                            }
+                        }
+                        ConstraintBean.STATE_FOCUSED -> {
+                            //需要具备焦点状态
+                            if (!node.isFocused) {
+                                match = false
+                            }
+                        }
+                        ConstraintBean.STATE_UNFOCUSED -> {
+                            //需要具备无焦点状态
+                            if (node.isFocused) {
+                                match = false
+                            }
+                        }
+                        ConstraintBean.STATE_SELECTED -> {
+                            //需要具备选中状态
+                            if (!node.isSelected) {
+                                match = false
+                            }
+                        }
+                        ConstraintBean.STATE_UNSELECTED -> {
+                            //需要具备不选中状态
+                            if (node.isSelected) {
+                                match = false
+                            }
+                        }
+                    }
+                }
+
+                if (!match) {
+                    //匹配状态失败
+                    result = false
+                }
+            }
+        }
+
+        return result
     }
 }

@@ -8,6 +8,7 @@ import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.*
 import kotlin.math.min
+import kotlin.random.Random.Default.nextInt
 
 /**
  *
@@ -123,4 +124,17 @@ fun List<Any?>?.isListEmpty(): Boolean {
     return this?.run {
         find { it != null } == null
     } ?: true
+}
+
+/**随机汉字*/
+fun randomString(count: Int = nextInt(1, 20)): String {
+    val charArray = CharArray(count)
+    for (i in 0 until count) {
+        charArray[i] = getRandomChar()
+    }
+    return String(charArray)
+}
+
+fun getRandomChar(): Char {
+    return (0x4e00 + (Math.random() * (0x9fa5 - 0x4e00 + 1)).toInt()).toChar()
 }

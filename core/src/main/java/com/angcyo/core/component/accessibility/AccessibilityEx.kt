@@ -793,6 +793,14 @@ fun AccessibilityNodeInfoCompat.haveText(text: CharSequence, ignoreCase: Boolean
     val htc: Boolean = hintText?.contains(text, ignoreCase) == true
     val ttc: Boolean = tooltipText?.contains(text, ignoreCase) == true
 
+//    val regex = text.toString().toRegex()
+//
+//    val tc: Boolean = thisText?.contains(regex) == true
+//    val cdc: Boolean = contentDescription?.contains(regex) == true
+//    val ptc: Boolean = paneTitle?.contains(regex) == true
+//    val htc: Boolean = hintText?.contains(regex) == true
+//    val ttc: Boolean = tooltipText?.contains(regex) == true
+
     return tc || cdc || ptc || htc || ttc
 }
 

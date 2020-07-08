@@ -10,7 +10,10 @@ import com.angcyo.core.component.accessibility.parse.isEmpty
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.isListEmpty
+import com.angcyo.library.ex.randomString
 import kotlin.random.Random
+import kotlin.random.Random.Default.nextInt
 
 /**
  * 智能识别的[Action], 通过配置一些关键字, 快速创建对应的[Action]
@@ -39,6 +42,9 @@ open class AutoParseAction : BaseAccessibilityAction() {
     /**解析核心*/
     var autoParse: AutoParse = AutoParse()
 
+    /**当action执行次数大于此值时, 强制完成*/
+    var actionMaxCount: Int = -1
+
     override fun doActionFinish(error: ActionException?) {
         onLog = null
         onGetTextResult = null
@@ -65,7 +71,6 @@ open class AutoParseAction : BaseAccessibilityAction() {
         if (params.isEmpty()) {
             doActionFinish(ActionException("clickParams is null."))
         } else {
-
             //解析拿到对应的node
             autoParse.parse(service, params!!) {
 
@@ -83,6 +88,11 @@ open class AutoParseAction : BaseAccessibilityAction() {
                     doActionFinish()
                 } else {
                     //未完成
+                    if (actionMaxCount > 0) {
+                        if (actionDoCount >= actionMaxCount) {
+                            doActionFinish()
+                        }
+                    }
                 }
             }
         }
@@ -125,8 +135,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
         return constraintBean.action?.run {
             var result = false
-            this.forEach {
-                if (it.isEmpty()) {
+            this.forEach { act ->
+                if (act.isEmpty()) {
                     //随机操作
                     service.gesture.randomization().apply {
                         result = result || first
@@ -145,14 +155,13 @@ open class AutoParseAction : BaseAccessibilityAction() {
                     val p2 = PointF(tX, tY)
 
                     var action: String? = null
-                    //执行set text时的文本
-                    var text: String? = null
+                    var point: String? = null
                     try {
                         //解析2个点的坐标
-                        it.split(":").apply {
+                        act.split(":").apply {
                             action = getOrNull(0)
-                            text = getOrNull(1)
-                            text?.apply {
+                            point = getOrNull(1)
+                            point?.apply {
                                 this.split("-").apply {
                                     getOrNull(0)?.toPointF()?.apply {
                                         p1.set(this)
@@ -234,6 +243,16 @@ open class AutoParseAction : BaseAccessibilityAction() {
                         }
                         ConstraintBean.ACTION_SET_TEXT -> {
                             var value = false
+
+                            //执行set text时的文本
+                            val comments = constraintBean.comments
+                            val text = if (comments.isListEmpty()) {
+                                //随机产生文本
+                                randomString()
+                            } else {
+                                comments!!.getOrNull(nextInt(0, comments.lastIndex))
+                            }
+
                             nodeList.forEach {
                                 value = value || it.setNodeText(text)
                             }
