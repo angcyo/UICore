@@ -332,6 +332,7 @@ abstract class BaseAccessibilityInterceptor {
             //no op
             L.w("${this.className()} no action need do. status to [ACTION_STATUS_FINISH].")
             actionStatus = ACTION_STATUS_FINISH
+            onActionFinish()
         } else if (actionStatus.isActionCanStart()) {
             if (actionIndex >= actionList.size) {
                 actionStatus = ACTION_STATUS_FINISH

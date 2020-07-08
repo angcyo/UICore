@@ -902,4 +902,24 @@ fun AccessibilityNodeInfoCompat.getBrotherNode(index: Int): AccessibilityNodeInf
     }
 }
 
+/**获取自身的child/parent节点
+ * [index] >0 表示获取自身下面的第几个child; <0 表示获取自身上面的第几个parent
+ * */
+fun AccessibilityNodeInfoCompat.getParentOrChildNode(index: Int): AccessibilityNodeInfoCompat? {
+
+    if (index > 0) {
+        return getChildOrNull(index)
+    }
+
+    if (index == 0) {
+        return this
+    }
+
+    var target: AccessibilityNodeInfoCompat? = this
+    for (i in 1..index) {
+        target = target?.parent
+    }
+    return target
+}
+
 //</editor-fold desc="AccessibilityNodeInfo扩展">

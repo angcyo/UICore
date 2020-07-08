@@ -5,7 +5,6 @@ import androidx.collection.ArrayMap
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
-import com.angcyo.core.component.accessibility.parse.ParseBean
 import com.angcyo.library.ex.isListEmpty
 
 /**
@@ -17,12 +16,12 @@ import com.angcyo.library.ex.isListEmpty
  */
 open class AutoParse {
 
-    /**返回当前界面, 是否包好[bean]指定的标识信息
+    /**返回当前界面, 是否包含[constraintList]约束的Node信息
      * [onTargetResult] 当找到目标时, 通过此方法回调目标给调用者. first:对应的约束, second:约束对应的node集合
      * */
     open fun parse(
         service: AccessibilityService,
-        bean: ParseBean,
+        constraintList: List<ConstraintBean>,
         onTargetResult: (List<Pair<ConstraintBean, List<AccessibilityNodeInfoCompat>>>) -> Unit = {}
     ): Boolean {
 
@@ -31,27 +30,10 @@ open class AutoParse {
 
         var targetList: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
 
-        //优先判断 id
-        bean.ids?.forEach { paramConstraint ->
-            findConstraintNode(paramConstraint, targetList, true, service)
+        constraintList.forEach { constraint ->
+            findConstraintNode(constraint, targetList, service)
             if (targetList.isNotEmpty()) {
-                result.add(paramConstraint to targetList)
-                targetList = mutableListOf()
-            }
-        }
-
-        if (result.isNotEmpty()) {
-            //通过id, 已经找到了目标
-
-            onTargetResult(result)
-            return true
-        }
-
-        //其次判断 text
-        bean.texts?.forEach { paramConstraint ->
-            findConstraintNode(paramConstraint, targetList, false, service)
-            if (targetList.isNotEmpty()) {
-                result.add(paramConstraint to targetList)
+                result.add(constraint to targetList)
                 targetList = mutableListOf()
             }
         }
@@ -70,12 +52,11 @@ open class AutoParse {
     open fun findConstraintNode(
         constraintBean: ConstraintBean,
         result: MutableList<AccessibilityNodeInfoCompat> = mutableListOf(),
-        isIdText: Boolean = false, //完整id 是需要包含包名的
         service: AccessibilityService
     ): List<AccessibilityNodeInfoCompat> {
         val rootNodeInfo = service.rootNodeInfo() ?: return result
 
-        val text = constraintBean.text
+        val text = constraintBean.textList
 
         if (text.isListEmpty()) {
             return result
@@ -84,44 +65,62 @@ open class AutoParse {
 
         val rootNodeWrap: AccessibilityNodeInfoCompat = rootNodeInfo.wrap()
 
-        var tempList: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
+        var tempList: MutableList<AccessibilityNodeInfoCompat>
 
         //列表中的所有文本是否都匹配通过
         val matchMap = ArrayMap<Int, List<AccessibilityNodeInfoCompat>>()
         for (index: Int in text!!.indices) {
             tempList = mutableListOf()
             try {
+
+                //完整id 是需要包含包名的
+                val isIdText = constraintBean.idList?.getOrNull(index) == 1
                 val subText: String = if (isIdText) packageName.id(text[index]) else text[index]
+
                 if (!isIdText && subText.isEmpty()) {
                     //text匹配模式下, 空字符串处理
                     tempList.add(rootNodeWrap)
                     matchMap[index] = tempList
                 } else {
-                    rootNodeWrap.unwrap().findNode(tempList) {
+                    rootNodeWrap.unwrap().findNode(tempList) { nodeInfoCompat ->
+                        var findNode = -1
                         if (isIdText) {
                             //id 全等匹配
-                            val idName = it.viewIdName()
-                            if (subText == idName) {
-                                if (match(constraintBean, it, index)) {
-                                    1
-                                } else {
-                                    -1
-                                }
+                            val idName = nodeInfoCompat.viewIdName()
+                            findNode = if (subText == idName) {
+                                1
                             } else {
                                 -1
                             }
                         } else {
                             //文本包含匹配
-                            if (it.haveText(subText)) {
-                                if (match(constraintBean, it, index)) {
-                                    1
-                                } else {
+                            findNode = if (nodeInfoCompat.haveText(subText)) {
+                                1
+                            } else {
+                                -1
+                            }
+                        }
+
+                        if (findNode == 1) {
+                            findNode = if (match(constraintBean, nodeInfoCompat, index)) {
+                                //其他约束匹配成功
+                                if (!constraintBean.pathList.isNullOrEmpty()) {
+                                    parseConstraintPath(
+                                        constraintBean,
+                                        constraintBean.pathList?.getOrNull(index),
+                                        nodeInfoCompat,
+                                        tempList
+                                    )
                                     -1
+                                } else {
+                                    1
                                 }
                             } else {
                                 -1
                             }
                         }
+
+                        findNode
                     }
 
                     if (tempList.isNotEmpty()) {
@@ -162,8 +161,8 @@ open class AutoParse {
         node: AccessibilityNodeInfoCompat,
         index: Int
     ): Boolean {
-        val cls = constraintBean.cls?.getOrNull(index)
-        val rect = constraintBean.rect?.getOrNull(index)
+        val cls = constraintBean.clsList?.getOrNull(index)
+        val rect = constraintBean.rectList?.getOrNull(index)
 
         //是否匹配成功
         var result = false
@@ -223,7 +222,7 @@ open class AutoParse {
 
         //状态约束
         if (result) {
-            val state = constraintBean.state
+            val state = constraintBean.stateList
             if (!state.isListEmpty()) {
                 var match = true
                 state!!.forEach {
@@ -281,5 +280,55 @@ open class AutoParse {
         }
 
         return result
+    }
+
+    /**根据约束的路径, 找出对应的node*/
+    open fun parseConstraintPath(
+        constraintBean: ConstraintBean,
+        path: String?,
+        node: AccessibilityNodeInfoCompat,
+        result: MutableList<AccessibilityNodeInfoCompat>
+    ) {
+        if (path.isNullOrEmpty()) {
+            result.add(node)
+        } else {
+            var target: AccessibilityNodeInfoCompat? = node
+            //格式: +1 -2 >3 <4
+            val paths = path.split(" ").toList()
+            for (p in paths) {
+                target = parsePath(p, target)
+
+                if (target == null) {
+                    break
+                }
+            }
+            if (target != null) {
+                result.add(target)
+            }
+        }
+    }
+
+    open fun parsePath(
+        path: String,
+        node: AccessibilityNodeInfoCompat?
+    ): AccessibilityNodeInfoCompat? {
+        return if (node == null || path.isEmpty()) {
+            node
+        } else {
+            //[+1] 兄弟下1个的节点
+            //[-2] 兄弟上2个的节点
+            //[>3] child第3个节点
+            //[<4] 第4个parent
+
+            val num = path.substring(1, path.length).toIntOrNull() ?: 0
+
+            when {
+                path.startsWith("+") -> node.getBrotherNode(num)
+                path.startsWith("-") -> node.getBrotherNode(-num)
+                path.startsWith(">") -> node.getParentOrChildNode(num)
+                path.startsWith("<") -> node.getParentOrChildNode(-num)
+                else -> null
+            }
+        }
     }
 }

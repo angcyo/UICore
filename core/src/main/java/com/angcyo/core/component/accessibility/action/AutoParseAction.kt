@@ -5,8 +5,6 @@ import android.view.accessibility.AccessibilityEvent
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
-import com.angcyo.core.component.accessibility.parse.ParseBean
-import com.angcyo.core.component.accessibility.parse.isEmpty
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.dp
@@ -25,16 +23,16 @@ import kotlin.random.Random.Default.nextInt
 open class AutoParseAction : BaseAccessibilityAction() {
 
     /**是否需要当前事件[checkEvent]解析时的关键数据*/
-    var eventBean: ParseBean? = null
+    var eventConstraint: List<ConstraintBean>? = null
 
     /**目中目标界面后[doAction]解析时的关键数据*/
-    var handleBean: ParseBean? = null
+    var handleConstraint: List<ConstraintBean>? = null
 
     /**当[Action]被作为回退处理时[doActionWidth]解析时的关键数据*/
-    var backBean: ParseBean? = null
+    var backConstraint: List<ConstraintBean>? = null
 
     /**日志输出*/
-    var onLog: ((CharSequence) -> Unit)? = null
+    var onLogPrint: ((CharSequence) -> Unit)? = null
 
     /**如果是获取文本的任务, 那么多获取到文本时, 触发的回调*/
     var onGetTextResult: ((List<CharSequence>) -> Unit)? = null
@@ -46,7 +44,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
     var actionMaxCount: Int = -1
 
     override fun doActionFinish(error: ActionException?) {
-        onLog = null
+        onLogPrint = null
         onGetTextResult = null
         super.doActionFinish(error)
     }
@@ -55,24 +53,24 @@ open class AutoParseAction : BaseAccessibilityAction() {
         service: BaseAccessibilityService,
         event: AccessibilityEvent?
     ): Boolean {
-        val params = eventBean
-        if (params.isEmpty()) {
-            doActionFinish(ActionException("eventParams is null."))
+        val constraint = eventConstraint
+        if (constraint == null) {
+            doActionFinish(ActionException("eventConstraint is null."))
             return false
         }
-        return params?.run {
+        return constraint.run {
             autoParse.parse(service, this)
         } ?: super.checkEvent(service, event)
     }
 
     override fun doAction(service: BaseAccessibilityService, event: AccessibilityEvent?) {
         super.doAction(service, event)
-        val params = handleBean
-        if (params.isEmpty()) {
-            doActionFinish(ActionException("clickParams is null."))
+        val constraint = handleConstraint
+        if (constraint == null) {
+            doActionFinish(ActionException("handleConstraint is null."))
         } else {
             //解析拿到对应的node
-            autoParse.parse(service, params!!) {
+            autoParse.parse(service, constraint) {
 
                 //执行对应的action操作
                 var result = false
@@ -103,20 +101,31 @@ open class AutoParseAction : BaseAccessibilityAction() {
         service: BaseAccessibilityService,
         event: AccessibilityEvent?
     ): Boolean {
-        val params = backBean
-        if (!params.isEmpty()) {
+        val constraint = backConstraint
+        if (constraint != null) {
+
+            //执行操作
+            fun handle(): Boolean {
+                var result = false
+                autoParse.parse(service, constraint) {
+                    it.forEach {
+                        result = result || handleAction(service, it.first, it.second)
+                    }
+                }
+                return result
+            }
+
             var result = false
-            if (eventBean == null) {
+
+            val eventConstraint = eventConstraint
+            if (eventConstraint == null) {
                 //无界面约束匹配, 则不检查. 直接处理
+                result = handle()
             } else {
                 //匹配当前界面, 匹配成功后, 再处理
-                if (autoParse.parse(service, eventBean!!)) {
+                if (autoParse.parse(service, eventConstraint)) {
                     //匹配成功
-                    autoParse.parse(service, params!!) {
-                        it.forEach {
-                            result = result || handleAction(service, it.first, it.second)
-                        }
-                    }
+                    result = handle()
                 }
             }
             return result
@@ -133,7 +142,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
         val textList = mutableListOf<CharSequence>()
 
-        return constraintBean.action?.run {
+        return constraintBean.actionList?.run {
             var result = false
             this.forEach { act ->
                 if (act.isEmpty()) {
@@ -245,7 +254,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             var value = false
 
                             //执行set text时的文本
-                            val comments = constraintBean.comments
+                            val comments = constraintBean.commentList
                             val text = if (comments.isListEmpty()) {
                                 //随机产生文本
                                 randomString()
@@ -292,7 +301,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
     }
 
     open fun log(charSequence: CharSequence) {
-        onLog?.invoke(charSequence)
+        onLogPrint?.invoke(charSequence)
     }
 }
 

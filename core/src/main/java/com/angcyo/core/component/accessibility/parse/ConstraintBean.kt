@@ -2,7 +2,6 @@ package com.angcyo.core.component.accessibility.parse
 
 import com.angcyo.core.component.accessibility.back
 import com.angcyo.core.component.accessibility.rootNodeInfo
-import com.angcyo.core.component.accessibility.text
 
 /**
  * 参数严格的约束
@@ -17,13 +16,22 @@ data class ConstraintBean(
      * 文本需要全部命中.
      * 空字符会匹配[rootNodeInfo]
      * */
-    var text: List<String>? = null,
+    var textList: List<String>? = null,
 
-    /**类名约束, 和[text]为一一对应的关系.为空, 表示不约束类名
+    /**
+     * 上述[textList]字段, 对应的是否是id, 否则就是文本.一一对应的关系.
+     * 可以是 完整的id, 也可以是 gj4.
+     * 完整的id应该是: com.ss.android.ugc.aweme:id/gj4
+     *
+     * ids 列表中, 只要满足任意一个约束条件, 即视为发现目标
+     * */
+    var idList: List<Int>? = null,
+
+    /**类名约束, 和[textList]为一一对应的关系.为空, 表示不约束类名
      * 匹配规则时包含, 只要当前设置的cls包含视图中的cls就算命中.
      * 空字符会命中所有
      * */
-    var cls: List<String>? = null,
+    var clsList: List<String>? = null,
 
     /**此约束需要执行的动作, 不指定坐标. 将随机产生. 小于1的数, 表示比例
      * [click] 触发当前节点的点击事件
@@ -41,22 +49,22 @@ data class ConstraintBean(
      * 空字符会进行随机操作.
      * null 默认是click操作
      * */
-    var action: List<String>? = null,
+    var actionList: List<String>? = null,
 
     /** 点赞任务, 评论的数据集合, 随机从里面取一个.
      * 如果为null, 则从代码中随机产生
      * */
-    var comments: List<String>? = null,
+    var commentList: List<String>? = null,
 
     /**忽略此次[Action]操作的返回值, 不忽略的话, 如果action返回true, 则可能会执行[doActionFinish]*/
     var ignore: Boolean = false,
 
-    /**和[text]为一一对应的关系.
+    /**和[textList]为一一对应的关系.
      * 坐标矩形约束. 格式10,10-100,100 小于1的数, 表示比例否则就是dp.
      * 空字符只要宽高大于0, 就命中.
      * 只要满足一组矩形约束, 就算命中
      * */
-    var rect: List<String>? = null,
+    var rectList: List<String>? = null,
 
     /**状态约束,只有全部满足状态才能命中
      * [clickable] 具备可点击
@@ -67,7 +75,17 @@ data class ConstraintBean(
      * [focused] 具备焦点状态
      * [unfocused] 具备无焦点状态
      * */
-    var state: List<String>? = null
+    var stateList: List<String>? = null,
+
+    /**和[textList]为一一对应的关系. null和空字符表示匹配自己
+     * 约束路径, 通过上述条件找到node之后, 再使用路径查找到真正的目标
+     * 格式: +1 -2 >3 <4
+     * [+1] 兄弟下1个的节点
+     * [-2] 兄弟上2个的节点
+     * [>3] child第3个节点
+     * [<4] 第4个parent
+     * */
+    var pathList: List<String>? = null
 ) {
     companion object {
 
