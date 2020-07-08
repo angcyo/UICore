@@ -1,12 +1,16 @@
 package com.angcyo.core.component.accessibility.action
 
+import android.graphics.PointF
 import android.view.accessibility.AccessibilityEvent
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
+import com.angcyo.core.component.accessibility.parse.ConstraintBean
 import com.angcyo.core.component.accessibility.parse.ParseBean
-import com.angcyo.core.component.accessibility.parse.dslParseParams
-import com.angcyo.core.component.accessibility.parse.findConstraintNode
 import com.angcyo.core.component.accessibility.parse.isEmpty
+import com.angcyo.library._screenHeight
+import com.angcyo.library._screenWidth
+import com.angcyo.library.ex.dp
+import kotlin.random.Random
 
 /**
  * 智能识别的[Action], 通过配置一些关键字, 快速创建对应的[Action]
@@ -29,6 +33,18 @@ open class AutoParseAction : BaseAccessibilityAction() {
     /**日志输出*/
     var onLog: ((CharSequence) -> Unit)? = null
 
+    /**如果是获取文本的任务, 那么多获取到文本时, 触发的回调*/
+    var onGetTextResult: ((List<CharSequence>) -> Unit)? = null
+
+    /**解析核心*/
+    var autoParse: AutoParse = AutoParse()
+
+    override fun doActionFinish(error: ActionException?) {
+        onLog = null
+        onGetTextResult = null
+        super.doActionFinish(error)
+    }
+
     override fun checkEvent(
         service: BaseAccessibilityService,
         event: AccessibilityEvent?
@@ -38,7 +54,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             doActionFinish(ActionException("eventParams is null."))
         }
         return params?.run {
-            service.parse(this)
+            autoParse.parse(service, this)
         } ?: super.checkEvent(service, event)
     }
 
@@ -48,16 +64,20 @@ open class AutoParseAction : BaseAccessibilityAction() {
         if (params.isEmpty()) {
             doActionFinish(ActionException("clickParams is null."))
         } else {
-            service.parse(params!!) {
-                it.clickAll {
-                    log(buildString {
-                        append("点击[")
-                        it.logText(this)
-                        append("]")
-                    })
+
+            //解析拿到对应的node
+            autoParse.parse(service, params!!) {
+
+                //执行对应的action操作
+                var result = false
+                it.forEach {
+                    result = result || handleAction(service, it.first, it.second) {
+                        onGetTextResult?.invoke(it)
+                    }
                 }
-            }.also {
-                if (it) {
+
+                //判断是否执行成功
+                if (result) {
                     //完成
                     doActionFinish()
                 } else {
@@ -79,15 +99,11 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 //无界面约束匹配, 则不检查. 直接处理
             } else {
                 //匹配当前界面, 匹配成功后, 再处理
-                if (service.parse(eventBean!!)) {
+                if (autoParse.parse(service, eventBean!!)) {
                     //匹配成功
-                    service.parse(params!!) {
-                        result = it.clickAll {
-                            log(buildString {
-                                append("关闭页面, 点击[")
-                                it.logText(this)
-                                append("]")
-                            })
+                    autoParse.parse(service, params!!) {
+                        it.forEach {
+                            result = result || handleAction(service, it.first, it.second)
                         }
                     }
                 }
@@ -97,44 +113,163 @@ open class AutoParseAction : BaseAccessibilityAction() {
         return super.doActionWidth(action, service, event)
     }
 
+    open fun handleAction(
+        service: BaseAccessibilityService,
+        constraintBean: ConstraintBean,
+        nodeList: List<AccessibilityNodeInfoCompat>,
+        onGetTextResult: (List<CharSequence>) -> Unit = {}
+    ): Boolean {
+
+        val textList = mutableListOf<CharSequence>()
+
+        return constraintBean.action?.run {
+            var result = false
+            this.forEach {
+                if (it.isEmpty()) {
+                    //随机操作
+                    service.gesture.randomization().apply {
+                        result = result || first
+                        log("随机操作[$this]:$result")
+                    }
+                } else {
+                    val screenWidth = _screenWidth
+                    val screenHeight = _screenHeight
+
+                    val fX = screenWidth * 1 / 3f + Random.nextInt(5, 10)
+                    val tX = screenWidth * 2 / 3f + Random.nextInt(5, 10)
+                    val fY = screenHeight * 3 / 5f - Random.nextInt(5, 10)
+                    val tY = screenHeight * 2 / 5f + Random.nextInt(5, 10)
+
+                    val p1 = PointF(fX, fY)
+                    val p2 = PointF(tX, tY)
+
+                    var action: String? = null
+                    //执行set text时的文本
+                    var text: String? = null
+                    try {
+                        //解析2个点的坐标
+                        it.split(":").apply {
+                            action = getOrNull(0)
+                            text = getOrNull(1)
+                            text?.apply {
+                                this.split("-").apply {
+                                    getOrNull(0)?.toPointF()?.apply {
+                                        p1.set(this)
+                                    }
+                                    getOrNull(1)?.toPointF()?.apply {
+                                        p2.set(this)
+                                    }
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+
+                    //执行对应操作
+                    result = result || when (action) {
+                        ConstraintBean.ACTION_CLICK -> {
+                            var value = false
+                            nodeList.forEach {
+                                value = value || it.getClickParent()?.click() ?: false
+                            }
+                            log("点击节点[${nodeList.firstOrNull()?.text()}]:$value")
+                            value
+                        }
+                        ConstraintBean.ACTION_CLICK2 -> {
+                            var value = false
+                            nodeList.forEach {
+                                val bound = it.bounds()
+                                value = value || service.gesture.double(
+                                    bound.centerX().toFloat(),
+                                    bound.centerY().toFloat(),
+                                    null
+                                )
+                            }
+                            log("双击节点区域[${nodeList.firstOrNull()?.bounds()}]:$value")
+                            value
+                        }
+                        ConstraintBean.ACTION_LONG_CLICK -> {
+                            var value = false
+                            nodeList.forEach {
+                                value = value || it.getLongClickParent()?.longClick() ?: false
+                            }
+                            log("长按节点[${nodeList.firstOrNull()}]:$value")
+                            value
+                        }
+                        ConstraintBean.ACTION_DOUBLE -> service.gesture.double(p1.x, p1.y, null)
+                            .apply {
+                                log("双击[$p1]:$this")
+                            }
+                        ConstraintBean.ACTION_MOVE -> service.gesture.move(
+                            p1.x,
+                            p1.y,
+                            p2.x,
+                            p2.y,
+                            null
+                        ).apply {
+                            log("move[$p1 $p2]:$this")
+                        }
+                        ConstraintBean.ACTION_FLING -> service.gesture.fling(
+                            p1.x,
+                            p1.y,
+                            p2.x,
+                            p2.y,
+                            null
+                        ).apply {
+                            log("fling[$p1 $p2]:$this")
+                        }
+                        ConstraintBean.ACTION_BACK -> service.back().apply {
+                            log("返回:$this")
+                        }
+                        ConstraintBean.ACTION_GET_TEXT -> {
+                            nodeList.forEach {
+                                it.text()?.apply {
+                                    textList.add(this)
+                                }
+                            }
+                            log("获取文本[$textList]:${textList.isNotEmpty()}")
+                            textList.isNotEmpty()
+                        }
+                        ConstraintBean.ACTION_SET_TEXT -> {
+                            var value = false
+                            nodeList.forEach {
+                                value = value || it.setNodeText(text)
+                            }
+                            log("设置文本[$text]:$value")
+                            value
+                        }
+                        ConstraintBean.ACTION_TOUCH -> service.gesture.click(p1.x, p1.y).apply {
+                            log("touch[$p1]:$this")
+                        }
+                        ConstraintBean.ACTION_RANDOM -> service.gesture.randomization().run {
+                            log("随机操作[$this]:$this")
+                            first
+                        }
+                        else -> service.gesture.click().apply {
+                            log("默认点击:$this")
+                        }
+                    }
+                }
+            }
+
+            if (textList.isNotEmpty()) {
+                onGetTextResult(textList)
+            }
+
+            result
+        } ?: nodeList.clickAll {
+            log(buildString {
+                append("点击[")
+                it.logText(this)
+                append("]")
+            })
+        }
+    }
+
     open fun log(charSequence: CharSequence) {
         onLog?.invoke(charSequence)
     }
-}
-
-/**返回当前界面, 是否包好[bean]指定的标识信息
- * [onTargetResult] 当找到目标时, 通过此方法回调目标给调用者*/
-fun BaseAccessibilityService.parse(
-    bean: ParseBean,
-    onTargetResult: (List<AccessibilityNodeInfoCompat>) -> Unit = {}
-): Boolean {
-    val targetList: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
-
-    //优先判断 id
-    bean.ids?.forEach { paramConstraint ->
-        paramConstraint.findConstraintNode(targetList, true, this)
-    }
-
-    if (targetList.isNotEmpty()) {
-        //通过id, 已经找到了目标
-
-        onTargetResult(targetList)
-        return true
-    }
-
-    //其次判断 text
-    bean.texts?.forEach { paramConstraint ->
-        paramConstraint.findConstraintNode(targetList, false, this)
-    }
-
-    if (targetList.isNotEmpty()) {
-        //通过id, 已经找到了目标
-
-        onTargetResult(targetList)
-        return true
-    }
-
-    return false
 }
 
 /**点击一组节点中的所有可点击的节点, 并返回是否点击成功.
@@ -167,16 +302,43 @@ fun List<Pair<AccessibilityNodeInfoCompat, CharSequence?>>.logText(builder: Stri
     return builder.toString()
 }
 
+fun String.toPointF(): PointF {
+    val p = PointF()
+    var x = 0f
+    var y = 0f
+
+    split(",").apply {
+        x = getOrNull(0)?.toFloatOrNull() ?: x
+        y = getOrNull(1)?.toFloatOrNull() ?: y
+    }
+
+    val screenWidth = _screenWidth
+    val screenHeight = _screenHeight
+
+    if (x <= 1f) {
+        p.x = screenWidth * x
+    } else {
+        p.x = x * dp
+    }
+
+    if (y <= 1f) {
+        p.y = screenHeight * y
+    } else {
+        p.y = y * dp
+    }
+    return p
+}
+
 fun dslAutoParseAction(action: AutoParseAction.() -> Unit): AutoParseAction {
     return AutoParseAction().apply(action)
 }
 
-fun au() {
-
-    dslAutoParseAction {
-        backBean = dslParseParams {
-
-        }
-    }
-}
+//fun au() {
+//
+//    dslAutoParseAction {
+//        backBean = dslParseParams {
+//
+//        }
+//    }
+//}
 

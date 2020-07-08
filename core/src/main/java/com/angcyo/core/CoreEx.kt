@@ -65,6 +65,8 @@ inline fun <reified VM : ViewModel> vmCore(): VM {
     ).get(VM::class.java)
 }
 
+inline fun <reified VM : ViewModel> vmApp(): VM = vmCore()
+
 //</editor-fold desc="Application级别的单例模式">
 
 fun DslGroupHelper.appendTextItem(

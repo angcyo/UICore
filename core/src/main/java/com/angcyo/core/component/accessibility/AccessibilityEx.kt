@@ -858,6 +858,14 @@ fun AccessibilityNodeInfoCompat.getClickParent(): AccessibilityNodeInfoCompat? {
     }
 }
 
+fun AccessibilityNodeInfoCompat.getLongClickParent(): AccessibilityNodeInfoCompat? {
+    return if (isLongClickable) {
+        this
+    } else {
+        parent?.getLongClickParent()
+    }
+}
+
 /**获取自身的兄弟节点
  * [index] >0 表示获取自身下面的第几个兄弟; <0 表示获取自身上面的第几个兄弟
  * */

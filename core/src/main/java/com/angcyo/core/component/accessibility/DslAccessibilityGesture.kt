@@ -446,7 +446,7 @@ fun DslAccessibilityGesture.touch(
 }
 
 fun DslAccessibilityGesture.click(
-    x: Float, y: Float,
+    x: Float = _screenWidth / 2f, y: Float = _screenHeight / 2f,
     result: GestureResult? = null
 ): Boolean {
     gestureResult = result
@@ -484,28 +484,17 @@ fun randomPoint(
 //</editor-fold desc="other">
 
 /**随机操作, 返回随机操作名称*/
-fun DslAccessibilityGesture.randomization(): String {
+fun DslAccessibilityGesture.randomization(): Pair<Boolean, String> {
     val p1 = PointF(randomPoint())
     val p2 = PointF(randomPoint())
     return when (nextInt(5)) {
-        0 -> {
-            fling(p1.x, p1.y, p2.x, p2.y)
-            "fling ${p1}->${p2}"
-        }
-        1 -> {
-            move(p1.x, p1.y, p2.x, p2.y)
-            "move ${p1}->${p2}"
-        }
-        2 -> {
-            click(p1.x, p1.y)
-            "click $p1"
-        }
+        0 -> fling(p1.x, p1.y, p2.x, p2.y) to "fling ${p1}->${p2}"
+        1 -> move(p1.x, p1.y, p2.x, p2.y) to "move ${p1}->${p2}"
+        2 -> click(p1.x, p1.y) to "click $p1"
         3 -> {
             double(p1.x, p1.y)
-            "double $p1"
+            _isDispatched to "double $p1"
         }
-        else -> {
-            "pass"
-        }
+        else -> true to "pass"
     }
 }

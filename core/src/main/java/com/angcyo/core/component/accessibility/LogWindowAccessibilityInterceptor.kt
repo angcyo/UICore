@@ -33,6 +33,9 @@ class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
     //是否要打印所有window的日志, 否则只打印root
     var logAllWindow: Boolean = BuildConfig.DEBUG
 
+    /**如果不为空, 表示强制指定log输出文件, 否则智能设置*/
+    var logFileName: String? = null
+
     //日志打印之前
     var logBeforeBuild: StringBuilder.() -> Unit = {}
 
@@ -68,7 +71,7 @@ class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
 
                 logBeforeBuild(builder)
 
-                val logFileName = if (event != null) {
+                val logFileName = logFileName ?: if (event != null) {
 
                     val windowStateChanged = event.isWindowStateChanged()
                     val windowContentChanged = event.isWindowContentChanged()
