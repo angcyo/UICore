@@ -79,7 +79,9 @@ _pgyerUpload.doFirst {
         throw new IllegalStateException("请在[gradle.properties]文件中指定需要上传的文件路径[apkPath=xxx]")
     }
 
-    def apkFile = new File(apkPath)
+    def allPath = apkPath.split(";")
+
+    def apkFile = new File(allPath[0])
     if (!apkFile.exists()) {
         throw new IllegalStateException("需要上传的文件不存在:" + apkFile.getAbsolutePath())
     }
