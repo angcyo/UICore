@@ -68,10 +68,10 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 constraintList
             }
 
-            autoParse.parse(service, handleConstraintList) {
+            //执行对应的action操作
+            var result = false
 
-                //执行对应的action操作
-                var result = false
+            autoParse.parse(service, handleConstraintList) {
 
                 for (pair in it) {
 
@@ -94,13 +94,15 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 if (result) {
                     //完成
                     doActionFinish()
-                } else {
-                    //未完成
-                    val actionMaxCount: Int = actionBean?.actionMaxCount ?: -1
-                    if (actionMaxCount > 0) {
-                        if (actionDoCount >= actionMaxCount) {
-                            doActionFinish()
-                        }
+                }
+            }
+
+            if (!result) {
+                //未完成
+                val actionMaxCount: Int = actionBean?.actionMaxCount ?: -1
+                if (actionMaxCount > 0) {
+                    if (actionDoCount >= actionMaxCount) {
+                        doActionFinish()
                     }
                 }
             }
