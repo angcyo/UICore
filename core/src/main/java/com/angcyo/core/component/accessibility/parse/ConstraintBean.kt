@@ -59,6 +59,11 @@ data class ConstraintBean(
     /**忽略此次[Action]操作的返回值, 不忽略的话, 如果action返回true, 则可能会执行[doActionFinish]*/
     var ignore: Boolean = false,
 
+    /**此次[Action]操作之后, 是否跳过之后的[handle]约束处理.
+     * [stateList] 中的[finish]操作, 拥有相同效果
+     * */
+    var jump: Boolean = false,
+
     /**和[textList]为一一对应的关系.
      * 坐标矩形约束. 格式10,10-100,100 小于1的数, 表示比例否则就是dp.
      * 空字符只要宽高大于0, 就命中.
@@ -74,6 +79,7 @@ data class ConstraintBean(
      * [unselected] 具备选未中状态
      * [focused] 具备焦点状态
      * [unfocused] 具备无焦点状态
+     * [finish] 直接完成操作
      * */
     var stateList: List<String>? = null,
 
@@ -101,6 +107,7 @@ data class ConstraintBean(
         const val ACTION_GET_TEXT = "getText" //获取文本内容
         const val ACTION_SET_TEXT = "setText" //设置文本内容
         const val ACTION_RANDOM = "random" //随机执行, 空字符会进行随机操作.
+        const val ACTION_FINISH = "finish" //直接完成操作
 
         //需要指定的状态 [state]
         const val STATE_CLICKABLE = "clickable" //具备可点击

@@ -25,11 +25,17 @@ abstract class BaseAccessibilityAction {
     /**[doAction]执行时的次数统计*/
     var actionDoCount = 0
 
-    /**[checkEvent]执行时的次数统计, 如果check的次数过多, 可以将action提到上一个级别*/
-    var actionCheckOutCount = 0
+    //[checkEvent]执行时的次数统计, 如果check的次数过多, 可以将action提到上一个级别
+    var _actionCheckOutCount = 0
 
-    /**当[actionCheckOutCount]大于一定值时, 回滚到上一步*/
+    /**当[_actionCheckOutCount]大于一定值时, 回滚到上一步*/
     var rollbackCount = -1
+
+    //记录当前回滚的刺激
+    var _rollbackCount = 0
+
+    /**回滚x次后, 还是不通过, 则报错*/
+    var rollbackMaxCount: Int = -1
 
     /**用于控制下一次[Action]检查执行的延迟时长, 毫秒. 负数表示使用[Interceptor]的默认值*/
     var actionIntervalDelay: Long = -1
@@ -50,13 +56,18 @@ abstract class BaseAccessibilityAction {
     /**未处理[checkEvent]事件*/
     @CallSuper
     open fun onCheckEventOut(service: BaseAccessibilityService, event: AccessibilityEvent?) {
-        actionCheckOutCount++
+        _actionCheckOutCount++
 
-        if (rollbackCount in 1 until actionCheckOutCount) {
+        if (rollbackCount in 1 until _actionCheckOutCount) {
             accessibilityInterceptor?.apply {
                 actionIndex -= 1
+                _rollbackCount++
             }
-            actionCheckOutCount = 0
+            _actionCheckOutCount = 0
+
+            if (rollbackMaxCount in 1 until _rollbackCount) {
+                doActionFinish(ActionException("回滚次数[$_rollbackCount]超限[max:$rollbackMaxCount]"))
+            }
         }
     }
 
@@ -95,7 +106,8 @@ abstract class BaseAccessibilityAction {
         actionFinish = null
         accessibilityInterceptor = null
         actionDoCount = 0
-        actionCheckOutCount = 0
+        _actionCheckOutCount = 0
+        _rollbackCount = 0
     }
 
     /**获取拦截器下一次间隔回调的时长*/

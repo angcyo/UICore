@@ -364,9 +364,6 @@ abstract class BaseAccessibilityInterceptor {
         if (service != null) {
             if (!action.isActionStart()) {
                 action.onActionStart(this)
-            }
-            if (action.checkEvent(service, event)) {
-                //需要事件处理
                 action.actionFinish = {
                     //action执行完成
                     if (it != null) {
@@ -376,9 +373,10 @@ abstract class BaseAccessibilityInterceptor {
                         actionNext(service, event)
                     }
                 }
+            }
+            if (action.checkEvent(service, event)) {
+                //需要事件处理
                 action.doAction(service, event)
-                action.actionFinish = null
-
                 //切换间隔时长
                 val interceptorIntervalDelay = action.getInterceptorIntervalDelay()
                 intervalDelay = if (interceptorIntervalDelay > 0) {

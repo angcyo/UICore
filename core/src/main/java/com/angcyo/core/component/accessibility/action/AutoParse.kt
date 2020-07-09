@@ -56,7 +56,7 @@ open class AutoParse {
     ): List<AccessibilityNodeInfoCompat> {
         val rootNodeInfo = service.rootNodeInfo() ?: return result
 
-        val text = constraintBean.textList
+        val text: List<String>? = constraintBean.textList
 
         if (text.isListEmpty()) {
             return result
@@ -74,7 +74,7 @@ open class AutoParse {
             try {
 
                 //完整id 是需要包含包名的
-                val isIdText = constraintBean.idList?.getOrNull(index) == 1
+                val isIdText: Boolean = constraintBean.idList?.getOrNull(index) == 1
                 val subText: String = if (isIdText) packageName.id(text[index]) else text[index]
 
                 if (!isIdText && subText.isEmpty()) {

@@ -126,6 +126,17 @@ fun List<Any?>?.isListEmpty(): Boolean {
     } ?: true
 }
 
+/**随机从列表中获取一组数据*/
+fun <T> List<T?>?.randomGet(count: Int = nextInt(0, this?.size ?: 1)): List<T> {
+    val result = mutableListOf<T>()
+    for (i in 0 until count) {
+        this?.getOrNull(nextInt(0, size))?.apply {
+            result.add(this)
+        }
+    }
+    return result
+}
+
 /**随机汉字*/
 fun randomString(count: Int = nextInt(1, 20)): String {
     val charArray = CharArray(count)
