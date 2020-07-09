@@ -45,7 +45,7 @@
     </style>
 
     <!--透明主题, 透明主题 在overridePendingTransition 执行动画的时候, exitAnim 不会执行.-->
-    <style name="BaseTranTheme" parent="BaseAppTheme">
+    <style name="BaseTranAppTheme" parent="BaseAppTheme">
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -54,7 +54,7 @@
     </style>
 
     <!--透明无动画-->
-    <style name="BaseTranNoAnimTheme" parent="BaseTranTheme">
+    <style name="BaseTranNoAnimTheme" parent="BaseTranAppTheme">
         <item name="android:windowAnimationStyle">@null</item>
     </style>
 
