@@ -120,7 +120,11 @@ fun Context.toApplicationDetailsSettings(packageName: String = getPackageName())
 }
 
 /**打开程序, 启动应用*/
-fun Context.openApp(packageName: String? = this.packageName, className: String? = null): Intent? {
+fun Context.openApp(
+    packageName: String? = this.packageName,
+    className: String? = null,
+    flags: Int = Intent.FLAG_ACTIVITY_SINGLE_TOP
+): Intent? {
     if (packageName.isNullOrBlank()) {
         L.w("packageName is null!")
         return null
@@ -139,6 +143,7 @@ fun Context.openApp(packageName: String? = this.packageName, className: String? 
     }
 
     intent?.baseConfig(this)
+    intent?.addFlags(flags)
 
     if (intent == null) {
         L.w("packageName launch intent is null!")

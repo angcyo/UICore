@@ -98,7 +98,7 @@ fun Activity.showDebugInfoView(
         fun showSingleText(textView: TextView) {
             showNormal(textView, false)
             textView.text = span {
-                append(this@showDebugInfoView.simpleClassName())
+                append(this@showDebugInfoView.simpleHash())
                     .append(" $taskId")
                     .appendln()
                 (this@showDebugInfoView as? FragmentActivity)?.supportFragmentManager?.logAllFragment(
