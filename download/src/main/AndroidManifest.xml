@@ -4,8 +4,10 @@
     <application>
         <activity
             android:name=".version.VersionUpdateActivity"
-            android:exported="false"
+            android:excludeFromRecents="true"
+            android:exported="true"
             android:launchMode="singleTask"
+            android:noHistory="false"
             android:screenOrientation="portrait"
             android:theme="@style/LibDialogActivity" />
     </application>

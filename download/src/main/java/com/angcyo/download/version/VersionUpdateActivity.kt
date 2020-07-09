@@ -8,8 +8,10 @@ import com.angcyo.base.dslAHelper
 import com.angcyo.download.R
 import com.angcyo.download.download
 import com.angcyo.getData
+import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.ex.installApk
+import com.angcyo.library.getAppVersionCode
 import com.angcyo.putData
 import com.angcyo.widget.bar
 import com.liulishuo.okdownload.core.cause.EndCause
@@ -93,11 +95,23 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
 }
 
 /**版本更新界面配置*/
+fun Context.versionUpdate(updateBean: VersionUpdateBean?) {
+    if (updateBean == null) {
+        return
+    }
+    val appVersionCode = getAppVersionCode()
+    if (updateBean.versionCode > appVersionCode) {
+        dslAHelper {
+            start(VersionUpdateActivity::class.java) {
+                putData(updateBean)
+            }
+        }
+    } else {
+        L.i("不需要版本更新,当前:${appVersionCode} 最新:${updateBean.versionCode}")
+    }
+}
+
 fun Context.dslVersionUpdate(action: VersionUpdateBean.() -> Unit) {
     val updateBean = VersionUpdateBean().apply(action)
-    dslAHelper {
-        start(VersionUpdateActivity::class.java) {
-            putData(updateBean)
-        }
-    }
+    versionUpdate(updateBean)
 }

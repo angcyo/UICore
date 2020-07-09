@@ -86,70 +86,79 @@ task _qiniuUpload() {
             throw new IllegalStateException("请在[gradle.properties]文件中指定需要上传的文件路径[apkPath=xxx]")
         }
 
-        def apkFile = file(apkPath)
-
-        if (!apkFile.exists()) {
-            throw new IllegalStateException("需要上传的文件不存在:" + apkFile.getAbsolutePath())
-        }
+        def allPath = apkPath.split(";")
 
         //创建上传凭证, 这是必须的.
         def auth = com.qiniu.util.Auth.create(ak, sk)
 
-        def key = apkFile.name
+        allPath.each { path ->
+            def apkFile = file(path)
 
-        def putPolicy = new com.qiniu.util.StringMap()
-        putPolicy.put("returnBody", "{\"key\":\"" + key + "\", \"hash\":\"" + System.currentTimeMillis() + "\"}")
-        def expireSeconds = 3600L
-        String upToken = auth.uploadToken(bk, null, expireSeconds, putPolicy)
+            if (!apkFile.exists()) {
+                if (allPath.size() > 1) {
+                    System.err.println "跳过不存在的文件:" + apkFile.getAbsolutePath()
+                } else {
+                    throw new IllegalStateException("需要上传的文件不存在:" + apkFile.getAbsolutePath())
+                }
+            } else {
+                def key = apkFile.name
 
-        println "七牛云上传凭证:" + upToken
+                def putPolicy = new com.qiniu.util.StringMap()
+                putPolicy.put("returnBody", "{\"key\":\"" + key + "\", \"hash\":\"" + System.currentTimeMillis() + "\"}")
+                def expireSeconds = 3600L
+                String upToken = auth.uploadToken(bk, null, expireSeconds, putPolicy)
 
-        //UploadManager uploadManager = new UploadManager()
-        //Auth auth = Auth.create(accessKey, secretKey)
-        //String token = auth.uploadToken(bucketName)
-        //Response r = upManager.put("hello world".getBytes(), "yourkey", token)
+                println "七牛云上传凭证:" + upToken
 
-        def downloadUrl = baseUrl + key
-        System.err.println "开始上传->" + apkFile.getAbsolutePath() + "->" + downloadUrl
+                //UploadManager uploadManager = new UploadManager()
+                //Auth auth = Auth.create(accessKey, secretKey)
+                //String token = auth.uploadToken(bucketName)
+                //Response r = upManager.put("hello world".getBytes(), "yourkey", token)
 
-        //上传配置参考 https://developer.qiniu.com/kodo/sdk/1239/java#upload-config
+                def downloadUrl = baseUrl + key
+                System.err.println "\n开始上传->" + apkFile.getAbsolutePath() + "->" + downloadUrl
 
-        def cfg = new com.qiniu.storage.Configuration(com.qiniu.storage.Region.huanan()) //华南地区
+                //上传配置参考 https://developer.qiniu.com/kodo/sdk/1239/java#upload-config
 
-        if (deleteBefore) {
-            //删除文件
-            try {
-                def bucketManager = new com.qiniu.storage.BucketManager(auth, cfg)
-                println "删除文件:${bucketManager.delete(bk, key)}"
-            } catch (Exception ignored) {
-                //忽略异常
+                def cfg = new com.qiniu.storage.Configuration(com.qiniu.storage.Region.huanan())
+                //华南地区
+
+                if (deleteBefore) {
+                    //删除文件
+                    try {
+                        def bucketManager = new com.qiniu.storage.BucketManager(auth, cfg)
+                        println "删除文件:${bucketManager.delete(bk, key)}"
+                    } catch (Exception ignored) {
+                        //忽略异常
+                    }
+                }
+
+                //上传本地文件
+                def uploadManager = new com.qiniu.storage.UploadManager(cfg)
+                def response = uploadManager.put(apkFile, key, upToken)
+                def putRet = new com.google.gson.Gson().fromJson(response.bodyString(),
+                        com.qiniu.storage.model.DefaultPutRet.class)
+
+                println "上传完成->hash:${putRet.hash} key:${putRet.key}"
+
+                qiniuConfig.downloadUrl = downloadUrl
+                System.err.println "七牛云上传成功->" + qiniuConfig.downloadUrl
+
+                if (!app_id.isEmpty() && !app_secret.isEmpty()) {
+                    //生成url对应的二维码
+                    //https://github.com/MZCretin/RollToolsApi#%E5%85%AB%E7%94%9F%E6%88%90%E4%BA%8C%E7%BB%B4%E7%A0%81
+                    def client = new okhttp3.OkHttpClient()
+                    def request = new okhttp3.Request.Builder()
+                            .header("app_id", app_id)
+                            .header("app_secret", app_secret)
+                            .url("http://www.mxnzp.com/api/qrcode/create/single?content=${downloadUrl}&size=400&type=0")
+                            .build()
+                    def json = client.newCall(request).execute().body().string()
+                    def map = new com.google.gson.Gson().fromJson(json, Map.class)
+                    println "创建二维码:${json}"
+                    System.err.println "二维码地址->" + map["data"]["qrCodeUrl"]
+                }
             }
-        }
-
-        //上传本地文件
-        def uploadManager = new com.qiniu.storage.UploadManager(cfg)
-        def response = uploadManager.put(apkFile, key, upToken)
-        def putRet = new com.google.gson.Gson().fromJson(response.bodyString(),
-                com.qiniu.storage.model.DefaultPutRet.class)
-
-        println "上传完成->hash:${putRet.hash} key:${putRet.key}"
-
-        qiniuConfig.downloadUrl = downloadUrl
-        System.err.println "七牛云上传成功->" + qiniuConfig.downloadUrl
-
-        if (!app_id.isEmpty() && !app_secret.isEmpty()) {
-            //生成url对应的二维码
-            //https://github.com/MZCretin/RollToolsApi#%E5%85%AB%E7%94%9F%E6%88%90%E4%BA%8C%E7%BB%B4%E7%A0%81
-            def client = new okhttp3.OkHttpClient()
-            def request = new okhttp3.Request.Builder()
-                    .header("app_id", app_id)
-                    .header("app_secret", app_secret)
-                    .url("http://www.mxnzp.com/api/qrcode/create/single?content=${downloadUrl}&size=400&type=0")
-                    .build()
-            def json = client.newCall(request).execute().body().string()
-            def map = new com.google.gson.Gson().fromJson(json, Map.class)
-            println "创建二维码:${json}"
-            System.err.println "二维码地址->" + map["data"]["qrCodeUrl"]
         }
     }
 }

@@ -136,3 +136,10 @@ fun <T> Observable<T>.observer(observer: BaseObserver<T>): Disposable {
     subscribe(observer)
     return observer
 }
+
+fun <T> Observable<T>.observer(action: BaseObserver<T>.() -> Unit): Disposable {
+    val observer = BaseObserver<T>()
+    observer.action()
+    subscribe(observer)
+    return observer
+}

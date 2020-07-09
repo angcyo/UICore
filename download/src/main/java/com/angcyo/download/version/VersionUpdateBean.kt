@@ -9,9 +9,11 @@ package com.angcyo.download.version
  */
 data class VersionUpdateBean(
     /**需要更新的版本名称*/
-    var versionName: String? = "",
+    var versionName: String? = null,
+    /**需要更新的版本号*/
+    var versionCode: Long = 0,
     /**更新描述*/
-    var versionDes: String? = "",
+    var versionDes: String? = null,
     /**强制更新*/
     var versionForce: Boolean = false,
     /**下载地址*/
