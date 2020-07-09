@@ -12,6 +12,7 @@ import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.isListEmpty
 import com.angcyo.library.ex.randomGet
 import com.angcyo.library.ex.randomString
+import kotlin.math.roundToInt
 import kotlin.random.Random.Default.nextInt
 
 /**
@@ -61,7 +62,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
         } else {
             //解析拿到对应的node
 
-            val handleConstraintList: List<ConstraintBean> = if (actionBean?.randomHandle == true) {
+            val randomHandle = actionBean?.randomHandle == true
+            val handleConstraintList: List<ConstraintBean> = if (randomHandle) {
                 //随机获取处理约束
                 constraintList.randomGet(1)
             } else {
@@ -99,8 +101,14 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
             if (!result) {
                 //未完成
-                val actionMaxCount: Int = actionBean?.actionMaxCount ?: -1
+                var actionMaxCount: Int = actionBean?.actionMaxCount ?: -1
                 if (actionMaxCount > 0) {
+
+                    if (randomHandle) {
+                        actionMaxCount =
+                            (actionMaxCount + actionMaxCount * nextInt(0, 100) / 100f).roundToInt()
+                    }
+
                     if (actionDoCount >= actionMaxCount) {
                         doActionFinish()
                     }

@@ -28,7 +28,8 @@ data class ActionBean(
      * 当[Action]被作为回退处理时[doActionWidth]解析时的关键数据*/
     var back: List<ConstraintBean>? = null,
 
-    /**随机从[handle]列表中, 取出一个约束进行处理操作*/
+    /**随机从[handle]列表中, 取出一个约束进行处理操作
+     * [actionMaxCount] 也会进行随机变化*/
     var randomHandle: Boolean = false,
 
     /**默认当前页面检测x次, 都还不通过. 回退到上一步*/
