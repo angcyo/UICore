@@ -45,7 +45,7 @@ data class ActionBean(
 )
 
 /**转成可以用于执行的[AutoParseAction]*/
-fun ActionBean.toAction(): AutoParseAction {
+fun ActionBean.toAction(packageName: String): AutoParseAction {
     return AutoParseAction().apply {
         title?.let { actionTitle = it }
         rollbackCount = this@toAction.rollbackCount
@@ -62,6 +62,8 @@ fun ActionBean.toAction(): AutoParseAction {
                 autoIntervalDelay = false
             }
         }
+
+        autoParse.idPackageName = packageName
 
         //日志输出
         onLogPrint

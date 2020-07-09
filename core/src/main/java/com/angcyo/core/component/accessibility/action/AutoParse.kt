@@ -16,6 +16,9 @@ import com.angcyo.library.ex.isListEmpty
  */
 open class AutoParse {
 
+    /**解析id时, 需要补全的id全路径包名*/
+    var idPackageName: String? = null
+
     /**返回当前界面, 是否包含[constraintList]约束的Node信息
      * [onTargetResult] 当找到目标时, 通过此方法回调目标给调用者. first:对应的约束, second:约束对应的node集合
      * */
@@ -61,7 +64,7 @@ open class AutoParse {
         if (text.isListEmpty()) {
             return result
         }
-        val packageName: String = service.packageName
+        val packageName: String = idPackageName ?: service.packageName
 
         val rootNodeWrap: AccessibilityNodeInfoCompat = rootNodeInfo.wrap()
 

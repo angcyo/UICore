@@ -385,7 +385,7 @@ fun AccessibilityNodeInfo.id(id: String): String {
 }
 
 fun CharSequence.id(id: String): String {
-    return if (id.startsWith(this)) {
+    return if (id.startsWith(this) || id.contains(":")) {
         id
     } else {
         "${this}:id/$id"

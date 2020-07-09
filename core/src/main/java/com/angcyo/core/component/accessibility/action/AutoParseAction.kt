@@ -161,7 +161,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         //此次执行, 返回结果的结果
         var result = false
 
-        //此次执行后, 是否要跳过后面的执行
+        //此次执行成功后, 是否要跳过后面的执行
         var jump: Boolean = constraintBean.jump
 
         if (actionList.isListEmpty()) {
@@ -321,7 +321,14 @@ open class AutoParseAction : BaseAccessibilityAction() {
         }
 
         if (constraintBean.ignore) {
+            //如果忽略了约束, 则不进行jump操作
             result = false
+            jump = false
+        } else {
+            if (!result) {
+                //执行失败, 不进行jump操作
+                jump = false
+            }
         }
 
         return result to jump
