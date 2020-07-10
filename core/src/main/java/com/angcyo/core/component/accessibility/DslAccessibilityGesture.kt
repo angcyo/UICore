@@ -487,14 +487,17 @@ fun randomPoint(
 fun DslAccessibilityGesture.randomization(): Pair<Boolean, String> {
     val p1 = PointF(randomPoint())
     val p2 = PointF(randomPoint())
-    return when (nextInt(5)) {
+    return when (nextInt(10)) {
         0 -> fling(p1.x, p1.y, p2.x, p2.y) to "fling ${p1}->${p2}"
         1 -> move(p1.x, p1.y, p2.x, p2.y) to "move ${p1}->${p2}"
         2 -> click(p1.x, p1.y) to "click $p1"
-        3 -> {
-            double(p1.x, p1.y)
-            _isDispatched to "double $p1"
-        }
+        3 -> double(p1.x, p1.y, null) to "double $p1"
+        4 -> fling(p1.x, p1.y, p2.x, p2.y) to "fling ${p1}->${p2}"
+        5 -> fling(p1.x, p1.y, p2.x, p2.y) to "fling ${p1}->${p2}"
+        6 -> fling(p1.x, p1.y, p2.x, p2.y) to "fling ${p1}->${p2}"
+        7 -> fling(p1.x, p1.y, p2.x, p2.y) to "fling ${p1}->${p2}"
+        8 -> click(p1.x, p1.y) to "click $p1"
+        9 -> double(p1.x, p1.y, null) to "double $p1"
         else -> true to "pass"
     }
 }

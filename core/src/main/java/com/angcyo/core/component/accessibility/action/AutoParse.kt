@@ -217,8 +217,8 @@ open class AutoParse() {
                                             result = true
                                         }
                                     } else {
-                                        //设置了多个点
-                                        if (bound.contains(
+                                        //设置了多个点, 那么只要2个矩形相交, 就算命中
+                                        if (bound.intersects(
                                                 p1!!.x.toInt(),
                                                 p1.y.toInt(),
                                                 p2.x.toInt(),

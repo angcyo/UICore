@@ -45,9 +45,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
 
         init {
             defaultIntervalDelay = when (Device.performanceLevel()) {
-                Device.PERFORMANCE_HIGH -> 800
-                Device.PERFORMANCE_MEDIUM -> 1_200
-                Device.PERFORMANCE_LOW -> 4_000
+                Device.PERFORMANCE_HIGH -> 1_500
+                Device.PERFORMANCE_MEDIUM -> 2_500
+                Device.PERFORMANCE_LOW -> 5_000
                 else -> 8_000
             }
         }
