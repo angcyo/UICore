@@ -81,6 +81,7 @@ open class ClearEditText : AppCompatEditText, IEditDelegate {
         }
         editDelegate?.onTouchEvent(event)
         super.onTouchEvent(event)
+
         return true
     }
 
@@ -107,6 +108,22 @@ open class ClearEditText : AppCompatEditText, IEditDelegate {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         editDelegate?.onDraw(canvas)
+    }
+
+    /**是否要启用建议功能(无效)*/
+    override fun isSuggestionsEnabled(): Boolean {
+        if (editDelegate?.disableEditPaste == true) {
+            return false
+        }
+        return super.isSuggestionsEnabled()
+    }
+
+    /**长按弹出的菜单点击事件(无效)*/
+    override fun onTextContextMenuItem(id: Int): Boolean {
+        if (editDelegate?.disableEditPaste == true) {
+            return true
+        }
+        return super.onTextContextMenuItem(id)
     }
 
     override fun getCustomEditDelegate(): REditDelegate = editDelegate!!

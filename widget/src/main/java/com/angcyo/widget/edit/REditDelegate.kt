@@ -7,16 +7,15 @@ import android.text.TextUtils
 import android.text.method.PasswordTransformationMethod
 import android.util.AttributeSet
 import android.util.StateSet
-import android.view.MotionEvent
-import android.view.ViewConfiguration
+import android.view.*
 import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
+import com.angcyo.library.L
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
 import com.angcyo.widget.base.hidePassword
 import com.angcyo.widget.base.isPasswordType
-import com.angcyo.widget.base.isTouchFinish
 import com.angcyo.widget.base.showPassword
 import kotlin.math.absoluteValue
 import kotlin.math.min
@@ -47,8 +46,11 @@ class REditDelegate(editText: EditText) : FocusEditDelegate(editText) {
     /** clear 按钮功能切换成, 显示/隐藏 密码. */
     var isPasswordDrawable = false
 
-    /** 隐藏显示密码, 在touch down一段时候后 */
-    var showPasswordOnTouch = true
+    /** 隐藏显示密码, 在touch down一段时候后. 如果是密码类型, 默认开启 */
+    var showPasswordOnTouch = false
+
+    /**禁止弹出粘贴系统弹窗.默认等于[showPasswordOnTouch]*/
+    var disableEditPaste = showPasswordOnTouch
 
     /**删除ico*/
     var clearDrawable: Drawable? = null
@@ -122,9 +124,17 @@ class REditDelegate(editText: EditText) : FocusEditDelegate(editText) {
             editText.isPasswordType()
         )
 
+        showPasswordOnTouch = editText.isPasswordType()
+
         showPasswordOnTouch =
             typedArray.getBoolean(
                 R.styleable.REditDelegate_r_show_password_on_touch,
+                showPasswordOnTouch
+            )
+
+        disableEditPaste =
+            typedArray.getBoolean(
+                R.styleable.REditDelegate_r_disable_edit_paste,
                 showPasswordOnTouch
             )
 
@@ -150,6 +160,35 @@ class REditDelegate(editText: EditText) : FocusEditDelegate(editText) {
         typedArray.recycle()
 
         _touchSlop = ViewConfiguration.get(editText.context).scaledTouchSlop
+
+        if (disableEditPaste) {
+            //(无效) 能阻止长按弹出粘贴, 但是阻止不了点击手柄弹出的粘贴
+            editText.isLongClickable = false
+            editText.setTextIsSelectable(false)
+            TextViewCompat.setCustomSelectionActionModeCallback(
+                editText,
+                object : ActionMode.Callback2() {
+
+                    override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                        L.i("$mode : $menu")
+                        return false
+                    }
+
+                    override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                        L.i("$mode : $menu")
+                        return false
+                    }
+
+                    override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+                        L.i("$mode : $item")
+                        return false
+                    }
+
+                    override fun onDestroyActionMode(mode: ActionMode?) {
+                        L.i("$mode ")
+                    }
+                })
+        }
     }
 
     //<editor-fold desc="代理View的方法">
@@ -230,8 +269,10 @@ class REditDelegate(editText: EditText) : FocusEditDelegate(editText) {
             }
         }
 
-        //检查是否需要取消此次事件
-        cancelEvent(event)
+        if (disableEditPaste) {
+            //检查是否需要取消此次事件
+            cancelEvent(event)
+        }
 
         return true
     }
@@ -337,16 +378,18 @@ class REditDelegate(editText: EditText) : FocusEditDelegate(editText) {
         return false
     }
 
-    /**是否需要取消事件
+    /**是否需要取消事件. 可以用于禁止密码输入框的粘贴功能
      * 取消事件分发, 禁止弹出系统的 复制, 粘贴功能*/
     fun cancelEvent(event: MotionEvent): Boolean {
         val nowTime = System.currentTimeMillis()
-        return if (showPasswordOnTouch && event.isTouchFinish() && (nowTime - _downTime) > 160) {
-            //取消事件分发, 禁止弹出系统的 复制, 粘贴功能
+        return if (event.actionMasked == MotionEvent.ACTION_UP && (nowTime - _downTime) > 160) {
+            //取消事件分发, 禁止弹出系统的 复制, 粘贴功能.
             event.action = MotionEvent.ACTION_CANCEL
             editText.requestFocus()
             true
         } else {
+            //在获取到焦点的情况, 快速点击输入框.还是会弹出粘贴菜单.
+            //如果完全禁止, 输入法就会无法弹出...两难
             false
         }
     }

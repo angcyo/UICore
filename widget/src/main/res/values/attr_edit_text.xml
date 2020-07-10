@@ -6,6 +6,7 @@
     <attr name="r_clear_drawable" format="reference" />
     <attr name="r_is_password_drawable" format="boolean" />
     <attr name="r_show_password_on_touch" format="boolean" />
+    <attr name="r_disable_edit_paste" format="boolean" />
 
     <attr name="r_is_no_edit_mode" format="boolean" />
     <attr name="r_request_focus_on_touch" format="boolean" />
@@ -20,6 +21,7 @@
         <attr name="r_clear_drawable" />
         <attr name="r_is_password_drawable" />
         <attr name="r_show_password_on_touch" />
+        <attr name="r_disable_edit_paste" />
 
         <attr name="r_is_no_edit_mode" />
         <attr name="r_request_focus_on_touch" />
@@ -54,6 +56,7 @@
         <attr name="r_clear_drawable" />
         <attr name="r_is_password_drawable" />
         <attr name="r_show_password_on_touch" />
+        <attr name="r_disable_edit_paste" />
 
         <attr name="r_focus_drawable" />
         <attr name="r_no_focus_drawable" />
@@ -69,6 +72,7 @@
         <attr name="r_clear_drawable" />
         <attr name="r_is_password_drawable" />
         <attr name="r_show_password_on_touch" />
+        <attr name="r_disable_edit_paste" />
 
         <attr name="r_focus_drawable" />
         <attr name="r_no_focus_drawable" />
