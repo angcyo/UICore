@@ -1,6 +1,7 @@
 package com.angcyo.http.rx
 
 import com.angcyo.library.L
+import com.angcyo.library.ex.simpleHash
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
@@ -24,19 +25,19 @@ open class BaseObserver<T> : AtomicReference<Disposable>(),
     //<editor-fold desc="Dsl">
 
     var onSubscribe: (Disposable) -> Unit = {
-        L.d("${this.javaClass.name}#onSubscribe")
+        L.d("${this.simpleHash()}#onSubscribe")
     }
 
     var onNext: (T) -> Unit = {
-        L.d("${this.javaClass.name}#onNext:$it")
+        L.d("${this.simpleHash()}#onNext:$it")
     }
 
     var onError: (Throwable) -> Unit = {
-        L.e("${this.javaClass.name}#onError:$it")
+        L.e("${this.simpleHash()}#onError:$it")
     }
 
     var onComplete: () -> Unit = {
-        L.d("${this.javaClass.name}#onComplete")
+        L.d("${this.simpleHash()}#onComplete")
     }
 
     /**不管是成功, 还是失败, 都会触发的回调*/

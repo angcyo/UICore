@@ -1,6 +1,7 @@
 package com.angcyo.http.rx
 
 import com.angcyo.library.L
+import com.angcyo.library.ex.simpleHash
 import io.reactivex.Flowable
 import io.reactivex.FlowableSubscriber
 import io.reactivex.disposables.Disposable
@@ -36,15 +37,15 @@ open class BaseFlowableSubscriber<T> : AtomicReference<Subscription>(),
     }
 
     var onNext: (T) -> Unit = {
-        L.d("${this.javaClass.name}#onNext:$it")
+        L.d("${this.simpleHash()}#onNext:$it")
     }
 
     var onError: (Throwable) -> Unit = {
-        L.e("${this.javaClass.name}#onError:$it")
+        L.e("${this.simpleHash()}#onError:$it")
     }
 
     var onComplete: () -> Unit = {
-        L.d("${this.javaClass.name}#onComplete")
+        L.d("${this.simpleHash()}#onComplete")
     }
 
     /**不管是成功, 还是失败, 都会触发的回调*/
