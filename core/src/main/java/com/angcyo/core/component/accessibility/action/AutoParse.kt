@@ -2,6 +2,7 @@ package com.angcyo.core.component.accessibility.action
 
 import android.accessibilityservice.AccessibilityService
 import android.graphics.Rect
+import android.view.accessibility.AccessibilityNodeInfo
 import androidx.collection.ArrayMap
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
@@ -15,7 +16,7 @@ import com.angcyo.library.ex.isListEmpty
  * @date 2020/07/08
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-open class AutoParse {
+open class AutoParse() {
 
     /**解析id时, 需要补全的id全路径包名*/
     var idPackageName: String? = null
@@ -28,6 +29,7 @@ open class AutoParse {
      * */
     open fun parse(
         service: AccessibilityService,
+        filterPackage: List<String>?,
         constraintList: List<ConstraintBean>,
         onTargetResult: (List<Pair<ConstraintBean, List<AccessibilityNodeInfoCompat>>>) -> Unit = {}
     ): Boolean {
@@ -38,7 +40,7 @@ open class AutoParse {
         var targetList: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
 
         constraintList.forEach { constraint ->
-            findConstraintNode(constraint, targetList, service)
+            findConstraintNode(constraint, targetList, service, filterPackage)
             if (targetList.isNotEmpty()) {
                 result.add(constraint to targetList)
                 targetList = mutableListOf()
@@ -59,9 +61,11 @@ open class AutoParse {
     open fun findConstraintNode(
         constraintBean: ConstraintBean,
         result: MutableList<AccessibilityNodeInfoCompat> = mutableListOf(),
-        service: AccessibilityService
+        service: AccessibilityService,
+        filterPackage: List<String>?
     ): List<AccessibilityNodeInfoCompat> {
-        val rootNodeInfo = service.rootNodeInfo() ?: return result
+        val rootNodeInfo: AccessibilityNodeInfo =
+            service.findNodeInfo(filterPackage).firstOrNull() ?: return result
 
         rootNodeInfo.getBoundsInScreen(_rootNodeRect)
 

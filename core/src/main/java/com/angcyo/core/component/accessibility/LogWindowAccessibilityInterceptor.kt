@@ -1,6 +1,7 @@
 package com.angcyo.core.component.accessibility
 
 import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
 import com.angcyo.core.BuildConfig
 import com.angcyo.core.component.accessibility.AccessibilityHelper.logFolderName
 import com.angcyo.core.component.file.DslFileHelper
@@ -99,7 +100,8 @@ class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
 
                 logFileName?.let {
                     //需要输出对应的log
-                    val rootNodeInfo = service.rootNodeInfo(event)
+                    val rootNodeInfo: AccessibilityNodeInfo? =
+                        service.findNodeInfo(filterPackageNameList).firstOrNull()
 
                     service.windows.forEach {
                         builder.appendln(it.toString())

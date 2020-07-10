@@ -138,6 +138,46 @@ fun AccessibilityService.rootNodeInfo(event: AccessibilityEvent? = null): Access
     return maxHeightWindow?.root ?: (activeWindow?.root ?: event?.source)
 }
 
+/**根据给定包名, 获取对应的根节点
+ * [packageName] 只需要指定的包名, 空表示所有
+ * */
+fun AccessibilityService.findNodeInfo(packageName: List<String>?): List<AccessibilityNodeInfo> {
+    val allNode: MutableList<AccessibilityNodeInfo> = mutableListOf()
+
+    windows.forEach { windowInfo ->
+        windowInfo.root?.let { root ->
+            if (!allNode.contains(root)) {
+                if (packageName.isNullOrEmpty() || packageName.contains(root.packageName)) {
+                    allNode.add(root)
+                }
+            }
+        }
+    }
+
+    rootInActiveWindow?.let { node ->
+        if (!allNode.contains(node)) {
+            if (packageName.isNullOrEmpty() || packageName.contains(node.packageName)) {
+                allNode.add(node)
+            }
+        }
+    }
+
+    allNode.sortWith(Comparator { nodeInfo1, nodeInfo2 ->
+        nodeInfo1.getBoundsInScreen(tempRect)
+        val height1 = tempRect.height()
+        nodeInfo2.getBoundsInScreen(tempRect)
+        val height2 = tempRect.height()
+
+        when {
+            height1 < height2 -> 1  //节点高度越小, 放在列表的后面. 使得列表的头部是高度很高的node
+            height1 == height2 -> 0
+            else -> -1
+        }
+    })
+
+    return allNode
+}
+
 /**通过给定的文本, 查找匹配的所有[AccessibilityNodeInfo]*/
 fun AccessibilityService.findNodeByText(
     text: String?,

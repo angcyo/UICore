@@ -36,6 +36,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
     /**解析核心*/
     var autoParse: AutoParse = AutoParse()
 
+    val filterPackageNameList: List<String>? get() = accessibilityInterceptor?.filterPackageNameList
+
     override fun doActionFinish(error: ActionException?) {
         onLogPrint = null
         onGetTextResult = null
@@ -51,7 +53,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             doActionFinish(ActionException("eventConstraint is null."))
             return false
         }
-        return autoParse.parse(service, constraintList)
+        return autoParse.parse(service, filterPackageNameList, constraintList)
     }
 
     override fun doAction(service: BaseAccessibilityService, event: AccessibilityEvent?) {
@@ -73,7 +75,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             //执行对应的action操作
             var result = false
 
-            autoParse.parse(service, handleConstraintList) {
+            autoParse.parse(service, filterPackageNameList, handleConstraintList) {
 
                 for (pair in it) {
 
@@ -129,7 +131,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             //执行操作
             fun handle(): Boolean {
                 var result = false
-                autoParse.parse(service, constraintList) {
+                autoParse.parse(service, filterPackageNameList, constraintList) {
                     it.forEach { pair ->
                         result = result || handleAction(service, pair.first, pair.second).first
                     }
@@ -145,7 +147,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 result = handle()
             } else {
                 //匹配当前界面, 匹配成功后, 再处理
-                if (autoParse.parse(service, eventConstraintList)) {
+                if (autoParse.parse(service, filterPackageNameList, eventConstraintList)) {
                     //匹配成功
                     result = handle()
                 }

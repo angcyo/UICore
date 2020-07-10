@@ -7,9 +7,6 @@ import androidx.annotation.CallSuper
 import com.angcyo.core.component.accessibility.BaseAccessibilityInterceptor.Companion.defaultIntervalDelay
 import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.core.component.accessibility.action.PermissionsAction
-import com.angcyo.http.rx.BaseFlowableSubscriber
-import com.angcyo.http.rx.flowableToMain
-import com.angcyo.http.rx.observer
 import com.angcyo.library.L
 import com.angcyo.library.component.dslNotify
 import com.angcyo.library.component.low
@@ -18,8 +15,6 @@ import com.angcyo.library.ex.className
 import com.angcyo.library.ex.openApp
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.library.utils.Device
-import io.reactivex.Flowable
-import java.util.concurrent.TimeUnit
 
 /**
  *
@@ -28,7 +23,7 @@ import java.util.concurrent.TimeUnit
  * @date 2018/01/26 08:57
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-abstract class BaseAccessibilityInterceptor {
+abstract class BaseAccessibilityInterceptor : Runnable {
 
     companion object {
         //初始化
@@ -94,12 +89,6 @@ abstract class BaseAccessibilityInterceptor {
 
     /**是否激活间隔回调*/
     var enableInterval: Boolean = false
-        set(value) {
-            field = value
-            if (!value) {
-                stopInterval()
-            }
-        }
 
     //初始化的时间间隔, 用于恢复[intervalDelay]
     var initialIntervalDelay: Long = -1
@@ -110,18 +99,6 @@ abstract class BaseAccessibilityInterceptor {
 
     /**间隔回调周期, 根据手机性能自动调整*/
     var intervalDelay: Long = -1
-        set(value) {
-            if (field != value) {
-                field = value
-                stopInterval()
-                if (enableInterval) {
-                    startInterval(value)
-                }
-            }
-        }
-
-    //观察者
-    var intervalSubscriber: BaseFlowableSubscriber<Long>? = null
 
     init {
         initialIntervalDelay = defaultIntervalDelay
@@ -131,16 +108,14 @@ abstract class BaseAccessibilityInterceptor {
 
     //<editor-fold desc="周期回调">
 
-    /**无障碍服务连接后*/
+    /**无障碍服务连接后
+     * [com.angcyo.core.component.accessibility.RAccessibilityService.onServiceConnected]*/
     open fun onServiceConnected(service: BaseAccessibilityService) {
         lastService = service
-
-        if (enableInterval) {
-            startInterval(intervalDelay)
-        }
     }
 
-    /**是否需要拦截指定包名的数据*/
+    /**是否需要拦截指定包名的数据
+     * [com.angcyo.core.component.accessibility.RAccessibilityService.onAccessibilityEvent]*/
     open fun interceptorPackage(
         service: BaseAccessibilityService,
         event: AccessibilityEvent?,
@@ -174,7 +149,8 @@ abstract class BaseAccessibilityInterceptor {
         checkDoAction(service, event)
     }
 
-    /**销毁, 释放对象*/
+    /**销毁, 释放对象
+     * [com.angcyo.core.component.accessibility.RAccessibilityService.onDestroy]*/
     open fun onDestroy() {
         actionIndex = -1
         actionStatus = ACTION_STATUS_DESTROY
@@ -197,67 +173,49 @@ abstract class BaseAccessibilityInterceptor {
 
     /**开始间隔回调*/
     open fun startInterval(delay: Long): Boolean {
-
-        if (intervalSubscriber != null) {
-            //已经开启了回调
-            return false
-        }
-
         if (delay <= 0) {
             //不合法
             L.w("间隔时长不合法!")
             return false
         }
-
-        if (enableInterval && actionStatus == ACTION_STATUS_ING) {
-
-        } else {
-            L.w("${this.simpleHash()} 请手动调用[startAction]")
-            return false
-        }
-
-        if (lastService == null) {
-            //未连接到服务
-            L.w("${this.simpleHash()} 请注意, 未连接到无障碍服务!")
-        }
-
-        intervalSubscriber = BaseFlowableSubscriber<Long>().apply {
-
-            onStart = {
-                onIntervalStart()
-                //L.i("onStart:${this@BaseAccessibilityInterceptor.simpleHash()} ${nowTimeString()} $intervalDelay")
-            }
-
-            onNext = {
-                onInterval()
-                //L.i("onNext:${this@BaseAccessibilityInterceptor.simpleHash()} ${nowTimeString()} $intervalDelay")
-            }
-
-            onObserverEnd = { data, error ->
-                onIntervalEnd(data, error)
-            }
-        }
-
-        Flowable.interval(delay, delay, TimeUnit.MILLISECONDS)
-            .onBackpressureLatest()
-            .compose(flowableToMain())
-            .retry(10)
-            .observer(intervalSubscriber!!)
-
+        handler.removeCallbacks(this)
+        onIntervalStart(delay)
         return true
     }
 
     /**周期回调开始*/
-    open fun onIntervalStart() {
-
+    open fun onIntervalStart(delay: Long) {
+        //延迟[delay] 执行下一次.
+        handler.postDelayed(this, delay)
     }
 
     /**周期回调结束*/
-    open fun onIntervalEnd(data: Long?, error: Throwable?) {
+    open fun onIntervalEnd() {
 
     }
 
-    /**间隔周期回调*/
+    override fun run() {
+        try {
+            onInterval()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        if (enableInterval && actionStatus == ACTION_STATUS_ING) {
+            startInterval(intervalDelay)
+        } else {
+            onIntervalEnd()
+        }
+    }
+
+    /**间隔周期回调
+     * [onIntervalStart]->[onInterval]->[interceptorPackage]->[onAccessibilityEvent]->[checkDoAction]->[onDoAction]
+     *
+     * [onActionStart]
+     * [onDoAction]
+     * [onActionFinish]
+     * [actionNext]
+     * */
     open fun onInterval() {
         //L.v(this@BaseAccessibilityInterceptor.simpleHash(), " $it")
         val service = lastService
@@ -274,8 +232,7 @@ abstract class BaseAccessibilityInterceptor {
 
     /**停止间隔回调*/
     open fun stopInterval() {
-        intervalSubscriber?.dispose()
-        intervalSubscriber = null
+        handler.removeCallbacks(this)
     }
 
     //</editor-fold desc="周期回调">
