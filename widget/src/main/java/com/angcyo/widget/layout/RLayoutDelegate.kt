@@ -299,7 +299,7 @@ class RLayoutDelegate : LayoutDelegate() {
                 val vHeight = delegateView.measuredHeight
                 val rawRatio = vWidth * 1f / vHeight
 
-                if ((rawRatio - ratio).absoluteValue > 0.1f) {
+                if ((rawRatio - ratio).absoluteValue > 0.00000001f) {
                     //比例需要调整
 
                     val wSpec: Int
