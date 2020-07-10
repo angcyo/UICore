@@ -61,7 +61,7 @@ class MaxLineDelegate {
         if (maxShowLine > 0 && layout != null) {
             val lines = layout.lineCount
             if (lines > 0) {
-                if (lines >= maxShowLine) {
+                if (lines > maxShowLine) {
                     //需要折叠
 
                     val originText: CharSequence? = textView.text
