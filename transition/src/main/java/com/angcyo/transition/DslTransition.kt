@@ -63,16 +63,17 @@ class DslTransition {
 
     //<editor-fold desc="转场">
 
-    /**设置动画开始的值*/
+    /**核心1: 设置动画开始的值*/
     var onCaptureStartValues: (ViewGroup) -> Unit = {
 
     }
 
-    /**设置动画结束的值*/
+    /**核心2: 设置动画结束的值*/
     var onCaptureEndValues: (ViewGroup) -> Unit = {
 
     }
 
+    /**开始过渡动画*/
     fun transition(delay: Long = 0) {
         doIt(delay)
     }
