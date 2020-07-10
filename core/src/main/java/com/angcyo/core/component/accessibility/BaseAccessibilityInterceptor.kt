@@ -212,13 +212,13 @@ abstract class BaseAccessibilityInterceptor {
         if (enableInterval && actionStatus == ACTION_STATUS_ING) {
 
         } else {
-            L.w("请手动调用[startAction]")
+            L.w("${this.simpleHash()} 请手动调用[startAction]")
             return false
         }
 
         if (lastService == null) {
             //未连接到服务
-            L.w("请注意, 未连接到无障碍服务!")
+            L.w("${this.simpleHash()} 请注意, 未连接到无障碍服务!")
         }
 
         intervalSubscriber = BaseFlowableSubscriber<Long>().apply {

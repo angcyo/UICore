@@ -215,10 +215,16 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             point = getOrNull(1)
                             point?.apply {
                                 this.split("-").apply {
-                                    getOrNull(0)?.toPointF()?.apply {
+                                    getOrNull(0)?.toPointF(
+                                        autoParse._rootNodeRect.width(),
+                                        autoParse._rootNodeRect.height()
+                                    )?.apply {
                                         p1.set(this)
                                     }
-                                    getOrNull(1)?.toPointF()?.apply {
+                                    getOrNull(1)?.toPointF(
+                                        autoParse._rootNodeRect.width(),
+                                        autoParse._rootNodeRect.height()
+                                    )?.apply {
                                         p2.set(this)
                                     }
                                 }
@@ -379,7 +385,7 @@ fun List<Pair<AccessibilityNodeInfoCompat, CharSequence?>>.logText(builder: Stri
     return builder.toString()
 }
 
-fun String.toPointF(): PointF {
+fun String.toPointF(width: Int = _screenWidth, height: Int = _screenHeight): PointF {
     val p = PointF()
     var x = 0f
     var y = 0f
@@ -389,17 +395,14 @@ fun String.toPointF(): PointF {
         y = getOrNull(1)?.toFloatOrNull() ?: y
     }
 
-    val screenWidth = _screenWidth
-    val screenHeight = _screenHeight
-
     if (x <= 1f) {
-        p.x = screenWidth * x
+        p.x = width * x
     } else {
         p.x = x * dp
     }
 
     if (y <= 1f) {
-        p.y = screenHeight * y
+        p.y = height * y
     } else {
         p.y = y * dp
     }

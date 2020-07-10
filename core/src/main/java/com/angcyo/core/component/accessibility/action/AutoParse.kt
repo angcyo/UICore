@@ -1,6 +1,7 @@
 package com.angcyo.core.component.accessibility.action
 
 import android.accessibilityservice.AccessibilityService
+import android.graphics.Rect
 import androidx.collection.ArrayMap
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
@@ -18,6 +19,9 @@ open class AutoParse {
 
     /**解析id时, 需要补全的id全路径包名*/
     var idPackageName: String? = null
+
+    /**根节点在屏幕中的坐标*/
+    var _rootNodeRect = Rect()
 
     /**返回当前界面, 是否包含[constraintList]约束的Node信息
      * [onTargetResult] 当找到目标时, 通过此方法回调目标给调用者. first:对应的约束, second:约束对应的node集合
@@ -58,6 +62,8 @@ open class AutoParse {
         service: AccessibilityService
     ): List<AccessibilityNodeInfoCompat> {
         val rootNodeInfo = service.rootNodeInfo() ?: return result
+
+        rootNodeInfo.getBoundsInScreen(_rootNodeRect)
 
         val text: List<String>? = constraintBean.textList
 
@@ -190,8 +196,14 @@ open class AutoParse {
                         } else {
 
                             it.split("-").apply {
-                                val p1 = getOrNull(0)?.toPointF()
-                                val p2 = getOrNull(1)?.toPointF()
+                                val p1 = getOrNull(0)?.toPointF(
+                                    _rootNodeRect.width(),
+                                    _rootNodeRect.height()
+                                )
+                                val p2 = getOrNull(1)?.toPointF(
+                                    _rootNodeRect.width(),
+                                    _rootNodeRect.height()
+                                )
 
                                 if (p1 == null && p2 == null) {
                                 } else {
