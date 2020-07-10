@@ -19,8 +19,9 @@ import kotlin.math.max
 
 class FlowLayoutDelegate : LayoutDelegate() {
 
-    var _allViews = mutableListOf<List<View>>() //保存所有行的所有View
-    var _lineHeight = mutableListOf<Int>() //保存每一行的行高
+    val _allViews = mutableListOf<List<View>>() //保存所有行的所有View
+    val _lineHeight = mutableListOf<Int>() //保存每一行的行高
+    val _allVisibleViews = mutableListOf<View>() //保存所有可见的view
 
     /** 每一行最多多少个, 强制限制. -1, 不限制. 大于0生效 */
     var maxCountLine: Int by RequestLayoutDelegateProperty(-1)
@@ -91,25 +92,34 @@ class FlowLayoutDelegate : LayoutDelegate() {
 
         _allViews.clear()
         _lineHeight.clear()
+        _allVisibleViews.clear()
 
         var lineViews = mutableListOf<View>()
 
         //视图可用空间
         val viewAvailableWidth = measureWidthSize - paddingLeft - paddingRight
+
+        //child总数
         val count = childCount
+
+        //可见child总数
+        var visibleCount = 0
+        for (i in 0 until count) {
+            val child = getChildAt(i)
+            if (child == null || child.visibility == View.GONE) {
+                continue
+            }
+            _allVisibleViews.add(child)
+            visibleCount++
+        }
 
         var singleLineChildWidthMeasureSpec = 0
         if (itemEquWidth && singleLine) {
             //单行模式下, 等宽测量模式
 
             var useWidth = paddingLeft + paddingRight
-            var visibleCount = 0
-            for (i in 0 until count) {
-                val child = getChildAt(i)
-                if (child == null || child.visibility == View.GONE) {
-                    continue
-                }
-                visibleCount++
+            for (i in 0 until visibleCount) {
+                val child = _allVisibleViews[i]
                 val lp: ViewGroup.MarginLayoutParams =
                     child.layoutParams as ViewGroup.MarginLayoutParams
                 useWidth += lp.leftMargin + lp.rightMargin
@@ -122,11 +132,8 @@ class FlowLayoutDelegate : LayoutDelegate() {
             singleLineChildWidthMeasureSpec = exactly((measureWidthSize - useWidth) / visibleCount)
         }
 
-        for (i in 0 until count) {
-            val child = getChildAt(i)
-            if (child == null || child.visibility == View.GONE) {
-                continue
-            }
+        for (i in 0 until visibleCount) {
+            val child = _allVisibleViews[i]
             val params = child.layoutParams as LinearLayout.LayoutParams
             if (itemEquWidth) {
                 if (singleLine) {
@@ -163,7 +170,8 @@ class FlowLayoutDelegate : LayoutDelegate() {
             childHeight = child.measuredHeight + params.topMargin + params.bottomMargin
             val lineViewSize = lineViews.size
             //本次追加 child后 , 需要的宽度
-            val needWidth = lineWidth + childWidth + itemHorizontalSpace
+            val needWidth =
+                lineWidth + childWidth + if (i != visibleCount - 1) itemHorizontalSpace else 0
             if (needWidth > viewAvailableWidth || maxCountLine > 0 && lineViewSize == maxCountLine) { //需要换新行
                 if (itemEquWidth) { //margin,padding 消耗的宽度
                     childWidth = measureLineEquWidth(
@@ -206,6 +214,8 @@ class FlowLayoutDelegate : LayoutDelegate() {
         }
         width += paddingLeft + paddingRight
         height += paddingTop + paddingBottom
+
+        _allVisibleViews.clear()
 
         return intArrayOf(
             max(
