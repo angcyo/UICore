@@ -44,6 +44,7 @@ class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
 
     init {
         if (logInterval) {
+            ignoreInterceptor = true
             enableInterval = true
             //避免log输出, 限制5秒一次
             intervalDelay = 5_000
@@ -108,6 +109,8 @@ class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                                 logNodeInfo(outBuilder = builder)
                             } else if (logAllWindow) {
                                 logNodeInfo(outBuilder = builder)
+                            } else {
+                                builder.appendln(wrap().toString())
                             }
                         }
                     }
