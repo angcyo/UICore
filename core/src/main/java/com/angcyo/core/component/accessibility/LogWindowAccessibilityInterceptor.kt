@@ -61,6 +61,33 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
         //super.checkDoAction(service, event)
     }
 
+    override fun onInterval() {
+        super.onInterval()
+
+        doBack {
+            lastService?.let { service ->
+                //确定日志输出文件
+                val logFileName = logFileName()
+
+                logFileName?.let {
+                    val windowBuilder = StringBuilder()
+
+                    service.windows.forEach {
+                        windowBuilder.appendln(it.toString())
+                        it.root?.apply {
+                            windowBuilder.appendln(wrap().toString())
+                        }
+                    }
+
+                    val log = windowBuilder.toString()
+                    DslFileHelper.write(logFolderName, logFileName, log.wrapData())
+
+                    allWindowLog(log)
+                }
+            }
+        }
+    }
+
     override fun onAccessibilityEvent(
         service: BaseAccessibilityService,
         event: AccessibilityEvent?
@@ -76,30 +103,9 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                 logBeforeBuild(windowBuilder)
 
                 //确定日志输出文件
-                val logFileName = logFileName ?: if (event != null) {
+                val logFileName = logFileName(event)
 
-                    val windowStateChanged = event.isWindowStateChanged()
-                    val windowContentChanged = event.isWindowContentChanged()
-
-                    builder.appendln(event.toString())
-
-                    if (windowStateChanged && logWindow) {
-                        LOG_WINDOW_NAME
-                    } else if (windowContentChanged && logContent) {
-                        LOG_CONTENT_NAME
-                    } else if (logOther) {
-                        LOG_OTHER_NAME
-                    } else {
-                        null
-                    }
-                } else {
-                    //间隔回调
-                    if (logInterval) {
-                        LOG_INTERVAL_NAME
-                    } else {
-                        null
-                    }
-                }
+                event?.apply { builder.appendln(this.toString()) }
 
                 logFileName?.let {
                     //需要输出对应的log
@@ -139,6 +145,31 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
 
                     DslFileHelper.write(logFolderName, logFileName, log.wrapData())
                 }
+            }
+        }
+    }
+
+    fun logFileName(event: AccessibilityEvent? = null): String? {
+        return logFileName ?: if (event != null) {
+
+            val windowStateChanged = event.isWindowStateChanged()
+            val windowContentChanged = event.isWindowContentChanged()
+
+            if (windowStateChanged && logWindow) {
+                LOG_WINDOW_NAME
+            } else if (windowContentChanged && logContent) {
+                LOG_CONTENT_NAME
+            } else if (logOther) {
+                LOG_OTHER_NAME
+            } else {
+                null
+            }
+        } else {
+            //间隔回调
+            if (logInterval) {
+                LOG_INTERVAL_NAME
+            } else {
+                null
             }
         }
     }

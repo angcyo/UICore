@@ -225,7 +225,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                 L.w("${this.simpleHash()} service is null.")
             }
         } else {
-            service.rootNodeInfo(null)?.let { node ->
+            service.findNodeInfo(null).forEach { node ->
                 interceptorPackage(service, null, node.packageName)
             }
         }

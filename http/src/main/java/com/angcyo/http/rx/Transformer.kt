@@ -19,6 +19,13 @@ import retrofit2.Response
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
+fun <T> observableToBack(): ObservableTransformer<T, T> {
+    return ObservableTransformer { upstream ->
+        upstream.subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+    }
+}
+
 fun <T> observableToMain(): ObservableTransformer<T, T> {
     return ObservableTransformer { upstream ->
         upstream.subscribeOn(Schedulers.io())
@@ -30,6 +37,13 @@ fun <T> flowableToMain(): FlowableTransformer<T, T> {
     return FlowableTransformer { upstream ->
         upstream.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+    }
+}
+
+fun <T> flowableToBack(): FlowableTransformer<T, T> {
+    return FlowableTransformer { upstream ->
+        upstream.subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
     }
 }
 

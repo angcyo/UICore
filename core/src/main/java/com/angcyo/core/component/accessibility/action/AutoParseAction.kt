@@ -127,6 +127,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         val constraintList: List<ConstraintBean>? = actionBean?.back
 
         if (constraintList != null) {
+            val filterPackageNameList = action.accessibilityInterceptor?.filterPackageNameList
 
             //执行操作
             fun handle(): Boolean {

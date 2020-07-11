@@ -16,7 +16,7 @@ import com.angcyo.library.ex.isListEmpty
  * @date 2020/07/08
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-open class AutoParse() {
+open class AutoParse {
 
     /**解析id时, 需要补全的id全路径包名*/
     var idPackageName: String? = null

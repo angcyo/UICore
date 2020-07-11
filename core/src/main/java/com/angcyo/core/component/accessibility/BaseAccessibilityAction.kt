@@ -5,7 +5,6 @@ import androidx.annotation.CallSuper
 import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.library.ex.isDebugType
 import com.angcyo.library.ex.simpleHash
-import java.lang.Long.max
 import kotlin.random.Random.Default.nextInt
 
 /**
@@ -128,7 +127,6 @@ abstract class BaseAccessibilityAction {
         }
 
         val delay: Long = time * factor
-        //限制最小时长500
-        return max(delay, 500L)
+        return delay
     }
 }
