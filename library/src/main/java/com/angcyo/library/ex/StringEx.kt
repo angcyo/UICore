@@ -425,6 +425,6 @@ fun String.toClass(): Class<*>? {
 }
 
 /**打开应用程序*/
-fun String.openApp() {
-    app().openApp(this)
+fun String.openApp(flags: Int = Intent.FLAG_ACTIVITY_SINGLE_TOP) {
+    app().openApp(this, flags = flags)
 }

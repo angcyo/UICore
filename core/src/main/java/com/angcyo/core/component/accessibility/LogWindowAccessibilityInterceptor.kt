@@ -15,7 +15,7 @@ import com.angcyo.http.rx.doBack
  * @date 2020/06/25
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
+open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
 
     companion object {
         const val LOG_WINDOW_NAME = "window.log"
@@ -70,9 +70,12 @@ class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
 
             doBack {
                 val builder = StringBuilder()
+                val windowBuilder = StringBuilder()
 
                 logBeforeBuild(builder)
+                logBeforeBuild(windowBuilder)
 
+                //确定日志输出文件
                 val logFileName = logFileName ?: if (event != null) {
 
                     val windowStateChanged = event.isWindowStateChanged()
@@ -105,19 +108,32 @@ class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
 
                     service.windows.forEach {
                         builder.appendln(it.toString())
+                        windowBuilder.appendln(it.toString())
                         it.root?.apply {
                             if (rootNodeInfo != null && this == rootNodeInfo) {
                                 builder.append("[root]")
                                 logNodeInfo(outBuilder = builder)
-                            } else if (logAllWindow) {
-                                logNodeInfo(outBuilder = builder)
+
+                                windowBuilder.append("[root]")
+                                windowBuilder.appendln(wrap().toString())
+
+                                rootNodeLog(builder.toString())
                             } else {
-                                builder.appendln(wrap().toString())
+                                windowBuilder.appendln(wrap().toString())
+                                if (logAllWindow) {
+                                    logNodeInfo(outBuilder = builder)
+                                } else {
+                                    builder.appendln(wrap().toString())
+                                }
                             }
+
                         }
                     }
 
                     logAfterBuild(builder)
+                    logAfterBuild(windowBuilder)
+
+                    allWindowLog(windowBuilder.toString())
 
                     val log = builder.toString()
 
@@ -125,5 +141,15 @@ class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                 }
             }
         }
+    }
+
+    /**拦截处理*/
+    open fun allWindowLog(log: String) {
+
+    }
+
+    /**拦截处理*/
+    open fun rootNodeLog(log: String) {
+
     }
 }

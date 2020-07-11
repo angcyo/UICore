@@ -16,5 +16,6 @@ data class AppBean(
     var versionCode: Long,
     var appIcon: Drawable,
     var appName: CharSequence,
-    var packageInfo: PackageInfo
+    var packageInfo: PackageInfo,
+    var des: String? = null
 )

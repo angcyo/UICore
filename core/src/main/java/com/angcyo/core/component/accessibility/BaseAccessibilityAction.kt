@@ -3,7 +3,9 @@ package com.angcyo.core.component.accessibility
 import android.view.accessibility.AccessibilityEvent
 import androidx.annotation.CallSuper
 import com.angcyo.core.component.accessibility.action.ActionException
+import com.angcyo.library.ex.isDebugType
 import com.angcyo.library.ex.simpleHash
+import java.lang.Long.max
 import kotlin.random.Random.Default.nextInt
 
 /**
@@ -112,16 +114,21 @@ abstract class BaseAccessibilityAction {
 
     /**获取拦截器下一次间隔回调的时长*/
     open fun getInterceptorIntervalDelay(): Long {
-        val delay: Long = if (actionIntervalDelay > 0) {
+        val time = if (actionIntervalDelay > 0) {
             actionIntervalDelay
         } else {
-            (accessibilityInterceptor?.initialIntervalDelay ?: -1)
-        } * if (autoIntervalDelay) {
+            (accessibilityInterceptor?.initialIntervalDelay ?: -1L)
+        }
+
+        val factor = if (!isDebugType() && autoIntervalDelay) {
             //随机产生一个间隔时间
             nextInt(1, 10)
         } else {
             1
         }
-        return delay
+
+        val delay: Long = time * factor
+        //限制最小时长500
+        return max(delay, 500L)
     }
 }

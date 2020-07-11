@@ -11,6 +11,8 @@ import com.angcyo.core.component.file.logFileName
 import com.angcyo.core.component.file.wrapData
 import com.angcyo.library.R
 import com.angcyo.library.app
+import com.angcyo.library.component.appBean
+import com.angcyo.library.model.AppBean
 import com.angcyo.library.tip
 import com.angcyo.library.utils.FileUtils
 
@@ -67,5 +69,26 @@ object AccessibilityHelper {
         val accessibilityServices =
             accessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
         return accessibilityServices.any { it.id.contains(context.packageName) }
+    }
+
+    /**获取无障碍应用列表信息*/
+    fun accessibilityServicesAppList(context: Context, enableList: Boolean = false): List<AppBean> {
+        val result = mutableListOf<AppBean>()
+
+        val accessibilityManager: AccessibilityManager =
+            context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+
+        val accessibilityServices =
+            if (enableList) accessibilityManager.getEnabledAccessibilityServiceList(
+                AccessibilityServiceInfo.FEEDBACK_ALL_MASK
+            ) else accessibilityManager.installedAccessibilityServiceList
+
+        accessibilityServices.forEach {
+            it.id.split("/").getOrNull(0)?.appBean(context)?.apply {
+                des = it.loadDescription(context.packageManager)
+                result.add(this)
+            }
+        }
+        return result
     }
 }

@@ -80,7 +80,7 @@ class RAccessibilityService : BaseAccessibilityService() {
                             if (interceptor.ignoreInterceptor) {
                                 //no op
                             } else {
-                                interceptor.interceptorPackage(this, event, event.packageName)
+                                interceptor.interceptorPackage(this, event, packageName)
                             }
                         } catch (e: Exception) {
                             L.e(e)

@@ -1,5 +1,6 @@
 package com.angcyo.core.component.accessibility
 
+import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
@@ -504,6 +505,9 @@ fun BaseAccessibilityInterceptor.interceptorMode(vararg filterPackage: String) {
 }
 
 /**打开指定app*/
-fun BaseAccessibilityInterceptor.openApp(packageName: String? = lastService?.packageName) {
-    lastService?.openApp(packageName)
+fun BaseAccessibilityInterceptor.openApp(
+    packageName: String? = lastService?.packageName,
+    flags: Int = Intent.FLAG_ACTIVITY_SINGLE_TOP
+) {
+    lastService?.openApp(packageName, flags = flags)
 }
