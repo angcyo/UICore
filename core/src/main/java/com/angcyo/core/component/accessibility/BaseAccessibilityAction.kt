@@ -4,9 +4,8 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.CallSuper
 import com.angcyo.core.component.accessibility.action.ActionException
-import com.angcyo.library.ex.isDebugType
 import com.angcyo.library.ex.simpleHash
-import kotlin.random.Random.Default.nextInt
+import kotlin.random.Random.Default.nextLong
 
 /**
  * 每个无障碍拦截后需要执行的动作
@@ -39,11 +38,10 @@ abstract class BaseAccessibilityAction {
     /**回滚x次后, 还是不通过, 则报错*/
     var rollbackMaxCount: Int = -1
 
-    /**用于控制下一次[Action]检查执行的延迟时长, 毫秒. 负数表示使用[Interceptor]的默认值*/
-    var actionIntervalDelay: Long = -1
-
-    /**自动在每个[doActionFinish]结束之后, 随机调整[actionIntervalDelay]的时间*/
-    var autoIntervalDelay: Boolean = true
+    /**用于控制下一次[Action]检查执行的延迟时长, 毫秒. 负数表示使用[Interceptor]的默认值
+     * 格式[5000,500,5] :5000+500*[1-5)
+     * */
+    var actionInterval: String? = null
 
     /**一个名字, 用于日志输出, 或者通知栏提示*/
     var actionTitle: String = this.simpleHash()
@@ -127,20 +125,17 @@ abstract class BaseAccessibilityAction {
 
     /**获取拦截器下一次间隔回调的时长*/
     open fun getInterceptorIntervalDelay(): Long {
-        val time = if (actionIntervalDelay > 0) {
-            actionIntervalDelay
-        } else {
+        val interval = actionInterval
+        val time = if (interval.isNullOrEmpty()) {
             (accessibilityInterceptor?.initialIntervalDelay ?: -1L)
-        }
-
-        val factor = if (!isDebugType() && autoIntervalDelay) {
-            //随机产生一个间隔时间
-            nextInt(1, 10)
         } else {
-            1
-        }
+            val split = interval.split(",")
+            val start = split.getOrNull(0)?.toLongOrNull() ?: 1000L
+            val base = split.getOrNull(1)?.toLongOrNull() ?: 500L
+            val factor = split.getOrNull(2)?.toLongOrNull() ?: 5
 
-        val delay: Long = time * factor
-        return delay
+            start + base * nextLong(1, factor)
+        }
+        return time
     }
 }

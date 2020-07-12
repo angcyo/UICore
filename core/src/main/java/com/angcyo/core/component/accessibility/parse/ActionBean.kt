@@ -38,8 +38,9 @@ data class ActionBean(
     /**回滚x次后, 还是不通过, 则报错*/
     var rollbackMaxCount: Int = 3,
 
-    /**当前action执行完成后, 间隔多久执行下一个[Action]. 毫秒*/
-    var intervalDelay: Long = -1,
+    /**当前action执行完成后, 间隔多久执行下一个[Action]. 毫秒
+     * 格式[5000,500,5] 解释:5000+500*[1-5) */
+    var interval: String? = null,
 
     /**当action执行次数大于此值时, 强制完成*/
     var actionMaxCount: Int = -1
@@ -55,13 +56,7 @@ fun ActionBean.toAction(packageName: String): AutoParseAction {
         actionBean = this@toAction
 
         if (!isDebugType()) {
-            if (intervalDelay > 0) {
-                actionIntervalDelay = intervalDelay
-                autoIntervalDelay = true
-            } else {
-                //关闭自动随机时长
-                autoIntervalDelay = false
-            }
+            actionInterval = interval
         }
 
         autoParse.idPackageName = packageName
