@@ -29,7 +29,7 @@ open class AutoParse {
      * */
     open fun parse(
         service: AccessibilityService,
-        filterPackage: List<String>?,
+        nodeList: List<AccessibilityNodeInfo>,
         constraintList: List<ConstraintBean>,
         onTargetResult: (List<Pair<ConstraintBean, List<AccessibilityNodeInfoCompat>>>) -> Unit = {}
     ): Boolean {
@@ -40,7 +40,7 @@ open class AutoParse {
         var targetList: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
 
         constraintList.forEach { constraint ->
-            findConstraintNode(constraint, targetList, service, filterPackage)
+            findConstraintNode(constraint, targetList, service, nodeList)
             if (targetList.isNotEmpty()) {
                 result.add(constraint to targetList)
                 targetList = mutableListOf()
@@ -62,10 +62,9 @@ open class AutoParse {
         constraintBean: ConstraintBean,
         result: MutableList<AccessibilityNodeInfoCompat> = mutableListOf(),
         service: AccessibilityService,
-        filterPackage: List<String>?
+        nodeList: List<AccessibilityNodeInfo>
     ): List<AccessibilityNodeInfoCompat> {
-        val rootNodeInfo: AccessibilityNodeInfo =
-            service.findNodeInfo(filterPackage).firstOrNull() ?: return result
+        val rootNodeInfo: AccessibilityNodeInfo = nodeList.mainNode() ?: return result
 
         rootNodeInfo.getBoundsInScreen(_rootNodeRect)
 

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.CallSuper
 import com.angcyo.core.component.accessibility.BaseAccessibilityInterceptor.Companion.defaultIntervalDelay
 import com.angcyo.core.component.accessibility.action.ActionException
@@ -12,9 +13,10 @@ import com.angcyo.library.L
 import com.angcyo.library.component.dslNotify
 import com.angcyo.library.component.low
 import com.angcyo.library.component.single
-import com.angcyo.library.ex.className
+import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.openApp
 import com.angcyo.library.ex.simpleHash
+import com.angcyo.library.ex.toElapsedTime
 import com.angcyo.library.utils.Device
 
 /**
@@ -62,9 +64,6 @@ abstract class BaseAccessibilityInterceptor : Runnable {
 
     val handler = Handler(Looper.getMainLooper())
 
-    /**等待延迟的任务*/
-    var delayRunnable: Runnable? = null
-
     var lastService: BaseAccessibilityService? = null
     var lastEvent: AccessibilityEvent? = null
 
@@ -107,7 +106,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
 
     //</editor-fold desc="间隔">
 
-    //<editor-fold desc="周期回调">
+    //<editor-fold desc="AccessibilityService 回调">
 
     /**无障碍服务连接后
      * [com.angcyo.core.component.accessibility.RAccessibilityService.onServiceConnected]*/
@@ -115,44 +114,116 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         lastService = service
     }
 
-    /**是否需要拦截指定包名的数据
-     * [com.angcyo.core.component.accessibility.RAccessibilityService.onAccessibilityEvent]*/
-    open fun interceptorPackage(
-        service: BaseAccessibilityService,
-        event: AccessibilityEvent?,
-        packageName: CharSequence?
-    ) {
-        if (packageName.isNullOrEmpty()) {
-            //no op
+    /** [com.angcyo.core.component.accessibility.RAccessibilityService.onAccessibilityEvent]*/
+    open fun onAccessibilityEvent(service: BaseAccessibilityService, event: AccessibilityEvent) {
+        //防止服务已经开启后, 再追加的拦截器
+        lastService = service
+        lastEvent = event //AccessibilityEvent.obtain(event)
+
+        if (ignoreInterceptor) {
+            if (event.isWindowStateChanged()) {
+                //处理窗口切换事件
+                handleAccessibility(service, ignoreInterceptor)
+            }
         } else {
-            if (filterPackageNameList.isEmpty() || filterPackageNameList.contains(packageName)) {
-                onAccessibilityEvent(service, event)
+            handleAccessibility(service, ignoreInterceptor)
+        }
+    }
+
+    //</editor-fold desc="AccessibilityService 回调">
+
+    //<editor-fold desc="周期回调">
+
+    /**[ignore] 是否要忽略此次处理. 忽略处理之后, 仅会检查是否离开了当前界面
+     * [onAccessibilityEvent] | [onInterval] ->[handleAccessibility]->[handleFilterNode]->[onDoActionStart]->[onDoAction]->[onDoActionFinish]
+     * */
+    open fun handleAccessibility(service: BaseAccessibilityService, ignore: Boolean) {
+        val findNodeInfoList = service.findNodeInfoList()
+
+        //当前页面主要的程序
+        val mainPackageName = findNodeInfoList.mainNode()?.packageName
+        //L.e("main:$mainPackageName")
+
+        if (filterPackageNameList.isEmpty()) {
+            //所有包名都需要
+            handleFilterNode(service, findNodeInfoList)
+        } else {
+            //需要处理的报名列表
+            val needNodeList = findNodeInfoList.filter(filterPackageNameList)
+            val needMainPackageName = needNodeList.mainNode()?.packageName
+
+            if (needNodeList.isEmpty()) {
+                //当前主界面, 不在处理的列表中
+                checkLeave(service, mainPackageName, needNodeList)
             } else {
-                onLeavePackageName(
-                    service,
-                    event,
-                    event?.packageName ?: service.rootNodeInfo()?.packageName
-                )
+                if (ignore) {
+                    //忽略事件
+                    checkLeave(service, needMainPackageName, needNodeList)
+                } else {
+                    //需要的所有节点
+                    _lastLeavePackageName = needMainPackageName //todo 是否需要直接赋值?
+                    handleFilterNode(service, needNodeList)
+                }
             }
         }
     }
 
-    /**过滤包名后的事件
-     * [event] 如果是程序主动发送过来的无障碍通知, 那么就会有值. 如果是定时器触发的回调, 就没有值.
-     * */
-    open fun onAccessibilityEvent(service: BaseAccessibilityService, event: AccessibilityEvent?) {
-        lastService = service
+    //最后一次离开前的程序
+    var _lastLeavePackageName: CharSequence? = null
 
-        if (event != null) {
-            lastEvent = AccessibilityEvent.obtain(event)
+    /**检查是否离开了界面*/
+    open fun checkLeave(
+        service: BaseAccessibilityService,
+        mainPackageName: CharSequence?,
+        nodeList: List<AccessibilityNodeInfo>
+    ): Boolean {
+        return if (_lastLeavePackageName != mainPackageName) {
+            val old = _lastLeavePackageName
+            _lastLeavePackageName = mainPackageName
+            onLeavePackageName(service, old, mainPackageName, nodeList)
+            true
+        } else {
+            false
         }
+    }
 
-        checkDoAction(service, event)
+    /**处理需要的节点[AccessibilityNodeInfo]列表*/
+    open fun handleFilterNode(
+        service: BaseAccessibilityService,
+        nodeList: List<AccessibilityNodeInfo>
+    ) {
+        if (actionList.isEmpty() && actionIndex < 0) {
+            //no op
+            L.w("${this.simpleHash()} no action need do. status to [ACTION_STATUS_FINISH].")
+            actionStatus = ACTION_STATUS_FINISH
+            onDoActionFinish()
+        } else if (actionStatus.isActionCanStart()) {
+            if (actionIndex >= actionList.size) {
+                actionStatus = ACTION_STATUS_FINISH
+                onDoActionFinish()
+            } else {
+                if (actionIndex < 0) {
+                    //开始执行第一步
+                    actionIndex = 0
+                } else {
+                    if (actionIndex == 0 || actionStatus == ACTION_STATUS_INIT) {
+                        onDoActionStart()
+                    }
+                    actionStatus = ACTION_STATUS_ING
+                    actionList.getOrNull(actionIndex)?.let {
+                        onDoAction(it, service, nodeList)
+                    }
+                }
+            }
+        } else {
+            //no op
+        }
     }
 
     /**销毁, 释放对象
      * [com.angcyo.core.component.accessibility.RAccessibilityService.onDestroy]*/
     open fun onDestroy() {
+        L.w("销毁:[$actionIndex/${actionList.size}] 耗时:${(nowTime() - _actionStartTime).toElapsedTime()}")
         actionIndex = -1
         actionStatus = ACTION_STATUS_DESTROY
         lastService = null
@@ -163,12 +234,14 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     /**切换到了非过滤包名的程序*/
     open fun onLeavePackageName(
         service: BaseAccessibilityService,
-        event: AccessibilityEvent?,
-        toPackageName: CharSequence?
+        fromPackageName: CharSequence?,
+        toPackageName: CharSequence?,
+        nodeList: List<AccessibilityNodeInfo>
     ) {
+        L.e("${this.simpleHash()} 离开从:${fromPackageName}->$toPackageName")
         //L.i("离开 $filterPackageName -> $toPackageName")
         PermissionsAction().apply {
-            doActionWidth(this, service, event)
+            doActionWidth(this, service, lastEvent, nodeList)
         }
     }
 
@@ -179,20 +252,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             L.w("间隔时长不合法!")
             return false
         }
-        handler.removeCallbacks(this)
+        stopInterval()
         onIntervalStart(delay)
         return true
-    }
-
-    /**周期回调开始*/
-    open fun onIntervalStart(delay: Long) {
-        //延迟[delay] 执行下一次.
-        handler.postDelayed(this, delay)
-    }
-
-    /**周期回调结束*/
-    open fun onIntervalEnd() {
-
     }
 
     override fun run() {
@@ -209,14 +271,18 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         }
     }
 
-    /**间隔周期回调
-     * [onIntervalStart]->[onInterval]->[interceptorPackage]->[onAccessibilityEvent]->[checkDoAction]->[onDoAction]
-     *
-     * [onActionStart]
-     * [onDoAction]
-     * [onActionFinish]
-     * [actionNext]
-     * */
+    /**周期回调开始*/
+    open fun onIntervalStart(delay: Long) {
+        //延迟[delay] 执行下一次.
+        handler.postDelayed(this, delay)
+    }
+
+    /**周期回调结束*/
+    open fun onIntervalEnd() {
+
+    }
+
+    /**间隔周期回调 */
     open fun onInterval() {
         //L.v(this@BaseAccessibilityInterceptor.simpleHash(), " $it")
         val service = lastService
@@ -225,9 +291,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                 L.w("${this.simpleHash()} service is null.")
             }
         } else {
-            service.findNodeInfo(null).forEach { node ->
-                interceptorPackage(service, null, node.packageName)
-            }
+            handleAccessibility(service, false)
         }
     }
 
@@ -255,13 +319,16 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         if (actionStatus != ACTION_STATUS_ING) {
             actionStatus = ACTION_STATUS_ING
             startInterval(intervalDelay)
-            onActionStart()
+            onDoActionStart()
         }
     }
 
-    /**开始执行[Action]*/
-    open fun onActionStart() {
+    /**记录开始的时间*/
+    var _actionStartTime = -1L
 
+    /**开始执行[Action]*/
+    open fun onDoActionStart() {
+        _actionStartTime = nowTime()
     }
 
     /**所有[Action]执行完成
@@ -269,103 +336,77 @@ abstract class BaseAccessibilityInterceptor : Runnable {
      * [error] 异常, 会中断调用链
      * */
     @CallSuper
-    open fun onActionFinish(
+    open fun onDoActionFinish(
         action: BaseAccessibilityAction? = null,
         error: ActionException? = null
     ) {
+        L.w("${action?.simpleHash()} [${action?.actionTitle}] 执行结束:${actionStatus.toActionStatusStr()} ${error ?: ""} 耗时:${(nowTime() - _actionStartTime).toElapsedTime()}")
         if (actionStatus == ACTION_STATUS_ERROR) {
             //出现异常
         } else if (actionStatus == ACTION_STATUS_FINISH) {
             //流程结束
         }
         onInterceptorFinish?.invoke(action, error)
+        onInterceptorFinish = null
         if (autoUninstall) {
             //注意调用顺序
             uninstall()
         }
     }
 
-    open fun checkDoAction(service: BaseAccessibilityService, event: AccessibilityEvent?) {
-        if (actionList.isEmpty() && actionIndex < 0) {
-            //no op
-            L.w("${this.className()} no action need do. status to [ACTION_STATUS_FINISH].")
-            actionStatus = ACTION_STATUS_FINISH
-            onActionFinish()
-        } else if (actionStatus.isActionCanStart()) {
-            if (actionIndex >= actionList.size) {
-                actionStatus = ACTION_STATUS_FINISH
-                onActionFinish()
-            } else {
-                if (actionIndex < 0) {
-                    actionIndex = 0
-                }
-                if (actionIndex == 0 ||
-                    actionStatus == ACTION_STATUS_INIT
-                ) {
-                    onActionStart()
-                }
-                actionStatus = ACTION_STATUS_ING
-                actionList.getOrNull(actionIndex)?.let {
-                    onDoAction(it, service, event)
-                }
-            }
-        } else {
-            //no op
-        }
-    }
-
+    //执行当前的[action]
     open fun onDoAction(
         action: BaseAccessibilityAction,
-        service: BaseAccessibilityService?,
-        event: AccessibilityEvent?
+        service: BaseAccessibilityService,
+        nodeList: List<AccessibilityNodeInfo>
     ) {
-        if (service != null) {
-            if (!action.isActionStart()) {
-                action.onActionStart(this)
-                action.actionFinish = {
-                    //action执行完成
-                    if (it != null) {
-                        actionStatus = ACTION_STATUS_ERROR
-                        onActionFinish(action, it)
-                    } else {
-                        actionNext(service, event)
-                    }
+        if (!action.isActionStart()) {
+            L.v("${action.simpleHash()} [${action.actionTitle}] 开始.")
+            action.onActionStart(this)
+            action.actionFinish = {
+                //action执行完成
+                L.v("${action.simpleHash()} [${action.actionTitle}] ${if (it == null) "完成" else it.message}:${actionIndex}/${actionList.size}")
+                if (it != null) {
+                    actionStatus = ACTION_STATUS_ERROR
+                    onDoActionFinish(action, it)
+                } else {
+                    actionNext(service)
                 }
             }
-            if (action.checkEvent(service, event)) {
-                //需要事件处理
-                action.doAction(service, event)
-                //切换间隔时长
-                val interceptorIntervalDelay = action.getInterceptorIntervalDelay()
-                intervalDelay = if (interceptorIntervalDelay > 0) {
-                    interceptorIntervalDelay
-                } else {
-                    initialIntervalDelay
-                }
+        }
+        if (action.checkEvent(service, lastEvent, nodeList)) {
+            //需要事件处理
+            action.doAction(service, lastEvent, nodeList)
+            //切换间隔时长
+            val interceptorIntervalDelay = action.getInterceptorIntervalDelay()
+            intervalDelay = if (interceptorIntervalDelay > 0) {
+                interceptorIntervalDelay
             } else {
-                //不需要事件处理
-                var handle = false
-                actionOtherList.forEach {
-                    handle = handle || it.doActionWidth(action, service, event)
-                }
-                action.onCheckEventOut(service, event)
-                if (!handle) {
-                    //未被处理
-                    onNoOtherActionHandle(action, service, event)
-                }
+                initialIntervalDelay
+            }
+        } else {
+            //不需要事件处理
+            var handle = false
+            actionOtherList.forEach {
+                handle = handle || it.doActionWidth(action, service, lastEvent, nodeList)
+            }
+            if (!handle) {
+                //未被处理
+                action.onCheckEventOut(service, lastEvent, nodeList)
+                onNoOtherActionHandle(action, service, lastEvent, nodeList)
             }
         }
     }
 
     /**下一个[Action]*/
-    fun actionNext(service: BaseAccessibilityService, event: AccessibilityEvent?) {
+    fun actionNext(service: BaseAccessibilityService) {
         actionIndex++
 
         if (enableInterval) {
             //no op, 等待下一个周期回调
         } else {
             handler.post {
-                checkDoAction(service, event)
+                handleAccessibility(service, false)
             }
         }
     }
@@ -374,7 +415,8 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     open fun onNoOtherActionHandle(
         action: BaseAccessibilityAction,
         service: BaseAccessibilityService,
-        event: AccessibilityEvent?
+        event: AccessibilityEvent?,
+        nodeList: List<AccessibilityNodeInfo>
     ) {
         if (event != null) {
             L.d("\n${this.simpleHash()} [$actionIndex] 无Action能处理! 包名:${event.packageName} 类名:${event.className} type:${event.eventTypeStr()} type2:${event.contentChangeTypesStr()}")
@@ -391,23 +433,6 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     //</editor-fold desc="action">
 
     //<editor-fold desc="其他">
-
-    /**每次延迟, 取消之前的任务*/
-    open fun delay(delay: Long = 300, skipExist: Boolean = true, action: () -> Unit) {
-        if (skipExist) {
-            if (delayRunnable != null) {
-                return
-            }
-        }
-
-        delayRunnable?.let {
-            handler.removeCallbacks(it)
-        }
-        delayRunnable = Runnable {
-            action.invoke()
-        }
-        handler.postDelayed(delayRunnable!!, delay)
-    }
 
     var notifyId = 0
 

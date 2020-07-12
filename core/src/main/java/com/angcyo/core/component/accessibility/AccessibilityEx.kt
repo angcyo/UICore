@@ -140,8 +140,11 @@ fun AccessibilityService.rootNodeInfo(event: AccessibilityEvent? = null): Access
 
 /**根据给定包名, 获取对应的根节点
  * [packageName] 只需要指定的包名, 空表示所有
+ *
+ * 此方法会带来以下警告:[android.view.accessibility.AccessibilityWindowInfo.getRoot]
+ * AccessibilityInteractionClient: old interaction Id is: -1,current interaction Id is:0
  * */
-fun AccessibilityService.findNodeInfo(packageName: List<String>?): List<AccessibilityNodeInfo> {
+fun AccessibilityService.findNodeInfoList(packageName: List<String>? = null): List<AccessibilityNodeInfo> {
     val allNode: MutableList<AccessibilityNodeInfo> = mutableListOf()
 
     windows.forEach { windowInfo ->
@@ -162,20 +165,51 @@ fun AccessibilityService.findNodeInfo(packageName: List<String>?): List<Accessib
         }
     }
 
-    allNode.sortWith(Comparator { nodeInfo1, nodeInfo2 ->
-        nodeInfo1.getBoundsInScreen(tempRect)
-        val height1 = tempRect.height()
-        nodeInfo2.getBoundsInScreen(tempRect)
-        val height2 = tempRect.height()
-
-        when {
-            height1 < height2 -> 1  //节点高度越小, 放在列表的后面. 使得列表的头部是高度很高的node
-            height1 == height2 -> 0
-            else -> -1
-        }
-    })
+//    allNode.sortWith(Comparator { nodeInfo1, nodeInfo2 ->
+//        nodeInfo1.getBoundsInScreen(tempRect)
+//        val height1 = tempRect.height()
+//        nodeInfo2.getBoundsInScreen(tempRect)
+//        val height2 = tempRect.height()
+//
+//        when {
+//            height1 < height2 -> 1  //节点高度越小, 放在列表的后面. 使得列表的头部是高度很高的node
+//            height1 == height2 -> 0
+//            else -> -1
+//        }
+//    })
 
     return allNode
+}
+
+/**在节点列表中, 过滤指定包名的节点*/
+fun List<AccessibilityNodeInfo>.filter(packageName: List<String>): List<AccessibilityNodeInfo> {
+    val result: MutableList<AccessibilityNodeInfo> = mutableListOf()
+
+    forEach {
+        if (packageName.contains(it.packageName)) {
+            result.add(it)
+        }
+    }
+
+    return result
+}
+
+/**拿到高度最高的节点*/
+fun List<AccessibilityNodeInfo>.mainNode(): AccessibilityNodeInfo? {
+    var result: AccessibilityNodeInfo? = null
+    var maxHeight = 0
+    var maxWidth = 0
+    forEach {
+        it.getBoundsInScreen(tempRect)
+        val height = tempRect.height()
+        val width = tempRect.width()
+        if (height >= maxHeight && width >= maxWidth) {
+            result = it
+            maxHeight = height
+            maxWidth = width
+        }
+    }
+    return result
 }
 
 /**通过给定的文本, 查找匹配的所有[AccessibilityNodeInfo]*/

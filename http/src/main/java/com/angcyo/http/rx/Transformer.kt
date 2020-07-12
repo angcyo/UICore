@@ -13,6 +13,8 @@ import retrofit2.Response
 
 /**
  * Rx 转换器
+ * [observeOn] 指定下面的调度, 在那个调度器
+ * [subscribeOn] 指定订阅在那个调度器
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/12/25

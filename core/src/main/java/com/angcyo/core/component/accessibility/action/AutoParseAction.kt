@@ -2,6 +2,7 @@ package com.angcyo.core.component.accessibility.action
 
 import android.graphics.PointF
 import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
 import com.angcyo.core.component.accessibility.parse.ActionBean
@@ -36,8 +37,6 @@ open class AutoParseAction : BaseAccessibilityAction() {
     /**解析核心*/
     var autoParse: AutoParse = AutoParse()
 
-    val filterPackageNameList: List<String>? get() = accessibilityInterceptor?.filterPackageNameList
-
     override fun doActionFinish(error: ActionException?) {
         onLogPrint = null
         onGetTextResult = null
@@ -46,18 +45,23 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
     override fun checkEvent(
         service: BaseAccessibilityService,
-        event: AccessibilityEvent?
+        event: AccessibilityEvent?,
+        nodeList: List<AccessibilityNodeInfo>
     ): Boolean {
         val constraintList: List<ConstraintBean>? = actionBean?.event
         if (constraintList == null) {
             doActionFinish(ActionException("eventConstraint is null."))
             return false
         }
-        return autoParse.parse(service, filterPackageNameList, constraintList)
+        return autoParse.parse(service, nodeList, constraintList)
     }
 
-    override fun doAction(service: BaseAccessibilityService, event: AccessibilityEvent?) {
-        super.doAction(service, event)
+    override fun doAction(
+        service: BaseAccessibilityService,
+        event: AccessibilityEvent?,
+        nodeList: List<AccessibilityNodeInfo>
+    ) {
+        super.doAction(service, event, nodeList)
         val constraintList: List<ConstraintBean>? = actionBean?.handle
         if (constraintList == null) {
             doActionFinish(ActionException("handleConstraint is null."))
@@ -75,7 +79,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             //执行对应的action操作
             var result = false
 
-            autoParse.parse(service, filterPackageNameList, handleConstraintList) {
+            autoParse.parse(service, nodeList, handleConstraintList) {
 
                 for (pair in it) {
 
@@ -122,7 +126,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
     override fun doActionWidth(
         action: BaseAccessibilityAction,
         service: BaseAccessibilityService,
-        event: AccessibilityEvent?
+        event: AccessibilityEvent?,
+        nodeList: List<AccessibilityNodeInfo>
     ): Boolean {
         val constraintList: List<ConstraintBean>? = actionBean?.back
 
@@ -132,7 +137,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             //执行操作
             fun handle(): Boolean {
                 var result = false
-                autoParse.parse(service, filterPackageNameList, constraintList) {
+                autoParse.parse(service, nodeList, constraintList) {
                     it.forEach { pair ->
                         result = result || handleAction(service, pair.first, pair.second).first
                     }
@@ -148,14 +153,14 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 result = handle()
             } else {
                 //匹配当前界面, 匹配成功后, 再处理
-                if (autoParse.parse(service, filterPackageNameList, eventConstraintList)) {
+                if (autoParse.parse(service, nodeList, eventConstraintList)) {
                     //匹配成功
                     result = handle()
                 }
             }
             return result
         }
-        return super.doActionWidth(action, service, event)
+        return super.doActionWidth(action, service, event, nodeList)
     }
 
     open fun handleAction(

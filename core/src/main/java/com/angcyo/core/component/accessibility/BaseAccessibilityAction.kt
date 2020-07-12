@@ -1,6 +1,7 @@
 package com.angcyo.core.component.accessibility
 
 import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.CallSuper
 import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.library.ex.isDebugType
@@ -50,13 +51,21 @@ abstract class BaseAccessibilityAction {
     //<editor-fold desc="核心回调">
 
     /**是否需要事件[event],返回true表示需要处理*/
-    open fun checkEvent(service: BaseAccessibilityService, event: AccessibilityEvent?): Boolean {
+    open fun checkEvent(
+        service: BaseAccessibilityService,
+        event: AccessibilityEvent?,
+        nodeList: List<AccessibilityNodeInfo>
+    ): Boolean {
         return false
     }
 
     /**未处理[checkEvent]事件*/
     @CallSuper
-    open fun onCheckEventOut(service: BaseAccessibilityService, event: AccessibilityEvent?) {
+    open fun onCheckEventOut(
+        service: BaseAccessibilityService,
+        event: AccessibilityEvent?,
+        nodeList: List<AccessibilityNodeInfo>
+    ) {
         _actionCheckOutCount++
 
         if (rollbackCount in 1 until _actionCheckOutCount) {
@@ -74,7 +83,11 @@ abstract class BaseAccessibilityAction {
 
     /**执行action*/
     @CallSuper
-    open fun doAction(service: BaseAccessibilityService, event: AccessibilityEvent?) {
+    open fun doAction(
+        service: BaseAccessibilityService,
+        event: AccessibilityEvent?,
+        nodeList: List<AccessibilityNodeInfo>
+    ) {
         actionDoCount++
     }
 
@@ -82,7 +95,8 @@ abstract class BaseAccessibilityAction {
     open fun doActionWidth(
         action: BaseAccessibilityAction,
         service: BaseAccessibilityService,
-        event: AccessibilityEvent?
+        event: AccessibilityEvent?,
+        nodeList: List<AccessibilityNodeInfo>
     ): Boolean {
         return false
     }

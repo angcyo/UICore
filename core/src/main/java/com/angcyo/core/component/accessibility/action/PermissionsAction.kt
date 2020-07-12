@@ -1,6 +1,7 @@
 package com.angcyo.core.component.accessibility.action
 
 import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
 import com.angcyo.core.component.accessibility.*
 
 /**
@@ -15,12 +16,13 @@ open class PermissionsAction : BaseAccessibilityAction() {
     override fun doActionWidth(
         action: BaseAccessibilityAction,
         service: BaseAccessibilityService,
-        event: AccessibilityEvent?
+        event: AccessibilityEvent?,
+        nodeList: List<AccessibilityNodeInfo>
     ): Boolean {
         if (isPermissionsUI(service, event)) {
             return handlePermissionsAction(action, service, event)
         }
-        return super.doActionWidth(action, service, event)
+        return super.doActionWidth(action, service, event, nodeList)
     }
 
     open fun isPermissionsUI(

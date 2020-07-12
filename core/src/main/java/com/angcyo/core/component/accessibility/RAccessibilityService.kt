@@ -67,25 +67,15 @@ class RAccessibilityService : BaseAccessibilityService() {
                 }
             }
 
-            event.packageName?.let { packageName ->
-                for (i in accessibilityInterceptorList.size - 1 downTo 0) {
-                    //反向调用, 防止调用者在内部执行了Remove操作, 导致后续的拦截器无法执行
-                    if (accessibilityInterceptorList.size > i) {
-                        try {
-                            val interceptor = accessibilityInterceptorList[i]
-
-                            //防止服务已经开启后, 再追加的拦截器
-                            interceptor.lastService = this
-
-                            if (interceptor.ignoreInterceptor) {
-                                //no op
-                            } else {
-                                interceptor.interceptorPackage(this, event, packageName)
-                            }
-                        } catch (e: Exception) {
-                            L.e(e)
-                            AccessibilityHelper.log(e.toString())
-                        }
+            for (i in accessibilityInterceptorList.lastIndex downTo 0) {
+                //反向调用, 防止调用者在内部执行了Remove操作, 导致后续的拦截器无法执行
+                if (accessibilityInterceptorList.size > i) {
+                    try {
+                        val interceptor = accessibilityInterceptorList[i]
+                        interceptor.onAccessibilityEvent(this, event)
+                    } catch (e: Exception) {
+                        L.e(e)
+                        AccessibilityHelper.log(e.toString())
                     }
                 }
             }

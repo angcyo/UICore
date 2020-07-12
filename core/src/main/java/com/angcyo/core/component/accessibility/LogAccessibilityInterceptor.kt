@@ -1,6 +1,6 @@
 package com.angcyo.core.component.accessibility
 
-import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
 import com.angcyo.core.BuildConfig
 
 /**
@@ -14,18 +14,17 @@ class LogAccessibilityInterceptor : BaseAccessibilityInterceptor() {
 
     var enable: Boolean = BuildConfig.DEBUG
 
-    override fun checkDoAction(service: BaseAccessibilityService, event: AccessibilityEvent?) {
-        //super.checkDoAction(service, event)
+    override fun handleAccessibility(service: BaseAccessibilityService, ignore: Boolean) {
+        super.handleAccessibility(service, ignore)
     }
 
-    override fun onAccessibilityEvent(
+    override fun handleFilterNode(
         service: BaseAccessibilityService,
-        event: AccessibilityEvent?
+        nodeList: List<AccessibilityNodeInfo>
     ) {
-        super.onAccessibilityEvent(service, event)
-
+        //super.handleFilterNode(service, nodeList)
         if (enable) {
-            event?.let {
+            nodeList.mainNode()?.let {
                 AccessibilityHelper.log(it.toString())
             }
         }

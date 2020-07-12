@@ -57,10 +57,6 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
         super.onServiceConnected(service)
     }
 
-    override fun checkDoAction(service: BaseAccessibilityService, event: AccessibilityEvent?) {
-        //super.checkDoAction(service, event)
-    }
-
     override fun onInterval() {
         super.onInterval()
 
@@ -88,11 +84,11 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
         }
     }
 
-    override fun onAccessibilityEvent(
+    override fun handleFilterNode(
         service: BaseAccessibilityService,
-        event: AccessibilityEvent?
+        nodeList: List<AccessibilityNodeInfo>
     ) {
-        super.onAccessibilityEvent(service, event)
+        //super.handleFilterNode(service, nodeList)
         if (enable) {
 
             doBack {
@@ -103,14 +99,14 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                 logBeforeBuild(windowBuilder)
 
                 //确定日志输出文件
-                val logFileName = logFileName(event)
+                val logFileName = logFileName(lastEvent)
 
-                event?.apply { builder.appendln(this.toString()) }
+                lastEvent?.apply { builder.appendln(this.toString()) }
 
                 logFileName?.let {
                     //需要输出对应的log
                     val rootNodeInfo: AccessibilityNodeInfo? =
-                        service.findNodeInfo(filterPackageNameList).firstOrNull()
+                        service.findNodeInfoList(filterPackageNameList).firstOrNull()
 
                     service.windows.forEach {
                         builder.appendln(it.toString())
