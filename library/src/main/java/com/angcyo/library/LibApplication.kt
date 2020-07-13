@@ -50,6 +50,13 @@ open class LibApplication : Application() {
         Library.init(this, isDebug())
         L.init(getAppString("app_name") ?: "Log", isDebug())
 
+        if (isMainProgress()) {
+            onCreateMain()
+        }
+    }
+
+    /**主进程初始化*/
+    open fun onCreateMain() {
         RBackground.init(this, object : OnBackgroundObserver {
             override fun onActivityChanged(stack: SparseArray<String>, background: Boolean) {
                 if (background) {

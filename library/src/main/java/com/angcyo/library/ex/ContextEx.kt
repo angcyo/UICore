@@ -14,6 +14,7 @@ import android.media.AudioManager
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
+import android.os.Process
 import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.view.Display
@@ -259,4 +260,20 @@ fun Context.getPackageInfo(packageName: String): PackageInfo? {
     } catch (e: Exception) {
         null
     }
+}
+
+/**获取当前进程名*/
+fun Context.processName(): String? {
+    val pid = Process.myPid()
+    val am = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
+
+    if (am != null) {
+        for (process in am.runningAppProcesses) {
+            if (process.pid == pid) {
+                return process.processName
+            }
+        }
+    }
+
+    return null
 }

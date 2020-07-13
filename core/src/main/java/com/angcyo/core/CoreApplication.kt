@@ -23,13 +23,17 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
 
     override fun onCreate() {
         super.onCreate()
-        DslCrashHandler.init(this)
 
         DslHttp.config {
             onConfigOkHttpClient.add {
                 it.addInterceptor(LogFileInterceptor())
             }
         }
+    }
+
+    override fun onCreateMain() {
+        super.onCreateMain()
+        DslCrashHandler.init(this)
 
         L.d("MD5->", getAppSignatureMD5())
         L.d("SHA1->", getAppSignatureSHA1())
