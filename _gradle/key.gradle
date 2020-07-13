@@ -71,6 +71,8 @@ def findKeyFileProperties(File filePath, depth = 0 /*当前枚举的路径深度
     }
 }
 
+//MD5->1D:5C:1F:1F:55:8A:BF:39:EB:42:49:DD:0B:B2:1B:87
+//SHA1->12:E2:23:40:29:A5:91:D4:67:5D:B8:6E:25:2F:C3:E7:78:74:AC:1D
 
 String key_alias = 'app'
 String key_password = 'angcyo'
