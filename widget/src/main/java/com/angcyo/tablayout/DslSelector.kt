@@ -127,6 +127,14 @@ open class DslSelector {
                 }
             }
         }
+        if (dslSelectIndex in visibleViewList.indices) {
+            if (!visibleViewList[dslSelectIndex].isSe()) {
+                visibleViewList[dslSelectIndex].setSe(true)
+            }
+        } else {
+            //如果当前选中的索引, 不在可见视图列表中
+            dslSelectIndex = -1
+        }
         return visibleViewList
     }
 
