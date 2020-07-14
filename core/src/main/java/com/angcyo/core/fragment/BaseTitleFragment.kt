@@ -172,9 +172,9 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
                 dslIntent {
                     queryAction = Intent.ACTION_MAIN
                     queryCategory = listOf(Intent.CATEGORY_LAUNCHER)
-                    queryClassName = activity.className()
+                    queryPackageName = activity.packageName
 
-                    if (doQuery(activity).isNotEmpty()) {
+                    if (doQuery(activity).any { it.activityInfo.name == activity.className() }) {
                         //当前的[Activity]在xml中声明了主页标识
                         showBackItem = false
                     }
