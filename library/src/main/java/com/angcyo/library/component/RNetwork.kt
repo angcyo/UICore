@@ -10,7 +10,9 @@ import android.net.*
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import androidx.annotation.RequiresPermission
 import com.angcyo.library.L
+import com.angcyo.library.app
 import com.angcyo.library.component.RNetwork.getNetWorkState
 import com.angcyo.library.component.RNetwork.notifyObservers
 import com.angcyo.library.utils.RUtils
@@ -288,4 +290,28 @@ enum class NetworkType {
     NETWORK_AVAILABLE,
     NETWORK_UNKNOWN,
     NETWORK_NO
+}
+
+/**网络是否有效*/
+@SuppressLint("MissingPermission")
+fun isNetworkAvailable(context: Context = app()): Boolean {
+    try {
+        val cm =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                ?: return false
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val network = cm.activeNetwork
+            val networkCapabilities = cm.getNetworkCapabilities(network)
+            return networkCapabilities != null &&
+                    networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        }
+        val info = cm.activeNetworkInfo
+        if (null != info && info.isConnected && info.isAvailable) {
+            return true
+        }
+    } catch (e: Exception) {
+        L.e("current network is not available")
+        return false
+    }
+    return false
 }
