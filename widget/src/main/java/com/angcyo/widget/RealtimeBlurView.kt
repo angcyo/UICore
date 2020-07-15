@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.core.view.ViewCompat
+import com.angcyo.library.ex.activityContent
 import com.angcyo.library.ex.dp
 import kotlin.math.max
 
@@ -178,12 +179,7 @@ class RealtimeBlurView(context: Context, attrs: AttributeSet? = null) : View(con
 
     val _activityDecorView: View?
         get() {
-            var ctx = context
-            var i = 0
-            while (i < 4 && ctx != null && ctx !is Activity && ctx is ContextWrapper) {
-                ctx = ctx.baseContext
-                i++
-            }
+            val ctx = context.activityContent()
             return if (ctx is Activity) {
                 ctx.window.decorView
             } else {

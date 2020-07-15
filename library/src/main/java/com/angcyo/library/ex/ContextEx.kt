@@ -230,10 +230,10 @@ fun Context.readAssets(fileName: String): String? {
 }
 
 /**获取[Context]包含的[Activity]*/
-fun Context?.activityContent(): Activity? {
+fun Context?.activityContent(max: Int = 10): Activity? {
     var ctx = this
     var i = 0
-    while (i < 4 && ctx !is Activity && ctx is ContextWrapper) {
+    while (i < max && ctx !is Activity && ctx is ContextWrapper) {
         ctx = ctx.baseContext
         i++
     }

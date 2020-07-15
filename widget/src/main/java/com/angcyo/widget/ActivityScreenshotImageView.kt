@@ -32,12 +32,7 @@ class ActivityScreenshotImageView(context: Context, attributeSet: AttributeSet? 
     //Activity中的[decorView], 跟布局
     val _activityDecorView: View?
         get() {
-            var ctx = context
-            var i = 0
-            while (i < 4 && ctx != null && ctx !is Activity && ctx is ContextWrapper) {
-                ctx = ctx.baseContext
-                i++
-            }
+            val ctx = context.activityContent()
             return if (ctx is Activity) {
                 ctx.window.decorView
             } else {
