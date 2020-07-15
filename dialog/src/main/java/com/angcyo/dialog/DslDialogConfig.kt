@@ -17,6 +17,9 @@ import androidx.annotation.StyleRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDialog
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import com.angcyo.base.dslAHelper
 import com.angcyo.dialog.activity.DialogActivity
 import com.angcyo.library.L
@@ -24,6 +27,7 @@ import com.angcyo.library.UndefinedDrawable
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.undefined_float
 import com.angcyo.library.ex.undefined_res
+import com.angcyo.lifecycle.on
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.dslViewHolder
 import com.angcyo.widget.base.replace
@@ -496,7 +500,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
 
     /**根据类型, 自动显示对应[Dialog]*/
     open fun show(type: Int = dialogType): Dialog {
-        return when (type) {
+        val dialog = when (type) {
             DIALOG_TYPE_DIALOG -> showDialog()
             DIALOG_TYPE_APPCOMPAT -> {
                 if (dialogContext is AppCompatActivity) {
@@ -521,6 +525,24 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
             }
             else -> showDialog()
         }
+
+        //防止activity销毁时, dialog泄漏
+        if (dialogContext is LifecycleOwner) {
+            val oldCancelListener = onCancelListener
+
+            val observer: LifecycleEventObserver =
+                (dialogContext as LifecycleOwner).on(Lifecycle.Event.ON_DESTROY) {
+                    dialog.cancel()
+                }
+
+            onCancelListener = {
+                (dialogContext as LifecycleOwner).lifecycle.removeObserver(observer)
+
+                oldCancelListener?.invoke(it)
+            }
+        }
+
+        return dialog
     }
 }
 
