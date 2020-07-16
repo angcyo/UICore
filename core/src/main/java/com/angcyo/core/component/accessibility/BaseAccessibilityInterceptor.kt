@@ -223,7 +223,11 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     /**销毁, 释放对象
      * [com.angcyo.core.component.accessibility.RAccessibilityService.onDestroy]*/
     open fun onDestroy() {
-        L.w("销毁:[$actionIndex/${actionList.size}] 耗时:${(nowTime() - _actionStartTime).toElapsedTime()}")
+        if (actionStatus != ACTION_STATUS_ING) {
+            L.w("销毁${this.simpleHash()}")
+        } else {
+            L.w("销毁${this.simpleHash()}:[$actionIndex/${actionList.size}] 耗时:${(nowTime() - _actionStartTime).toElapsedTime()}")
+        }
         actionIndex = -1
         actionStatus = ACTION_STATUS_DESTROY
         lastService = null
