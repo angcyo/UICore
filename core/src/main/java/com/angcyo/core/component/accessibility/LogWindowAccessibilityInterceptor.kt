@@ -106,7 +106,7 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                 logFileName?.let {
                     //需要输出对应的log
                     val rootNodeInfo: AccessibilityNodeInfo? =
-                        service.findNodeInfoList(filterPackageNameList).firstOrNull()
+                        service.findNodeInfoList(filterPackageNameList).mainNode()
 
                     service.windows.forEach {
                         builder.appendln(it.toString())
@@ -146,8 +146,9 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
     }
 
     fun logFileName(event: AccessibilityEvent? = null): String? {
-        return logFileName ?: if (event != null) {
-
+        return logFileName ?: if (logInterval) {
+            LOG_INTERVAL_NAME
+        } else if (event != null) {
             val windowStateChanged = event.isWindowStateChanged()
             val windowContentChanged = event.isWindowContentChanged()
 
@@ -161,12 +162,7 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                 null
             }
         } else {
-            //间隔回调
-            if (logInterval) {
-                LOG_INTERVAL_NAME
-            } else {
-                null
-            }
+            null
         }
     }
 
