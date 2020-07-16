@@ -179,3 +179,29 @@ fun Int.isCenter(): Boolean {
 
     return verticalGravity == Gravity.CENTER_VERTICAL && horizontalGravity == Gravity.CENTER_HORIZONTAL
 }
+
+fun Int.isLeft(): Boolean {
+    val layoutDirection = 0
+    val absoluteGravity = Gravity.getAbsoluteGravity(this, layoutDirection)
+    val horizontalGravity = absoluteGravity and Gravity.HORIZONTAL_GRAVITY_MASK
+
+    return horizontalGravity == Gravity.LEFT
+}
+
+fun Int.isRight(): Boolean {
+    val layoutDirection = 0
+    val absoluteGravity = Gravity.getAbsoluteGravity(this, layoutDirection)
+    val horizontalGravity = absoluteGravity and Gravity.HORIZONTAL_GRAVITY_MASK
+
+    return horizontalGravity == Gravity.RIGHT
+}
+
+fun Int.isTop(): Boolean {
+    val verticalGravity = this and Gravity.VERTICAL_GRAVITY_MASK
+    return verticalGravity == Gravity.TOP
+}
+
+fun Int.isBottom(): Boolean {
+    val verticalGravity = this and Gravity.VERTICAL_GRAVITY_MASK
+    return verticalGravity == Gravity.BOTTOM
+}
