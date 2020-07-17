@@ -368,7 +368,7 @@ fun ViewGroup.resetChildCount(newSize: Int, onCreateView: (childIndex: Int) -> V
 
 //<editor-fold desc="Dsl吸附">
 
-/**从[View]中, 获取挂载的[DslViewHolder].如果没有, 则使用本身创建一个*/
+/**从[View]中, 获取挂载的[DslViewHolder].如果没有, 则使用本身创建一个, 并设置给tag*/
 fun View.dslViewHolder(): DslViewHolder {
     return this.run {
         var _tag = getTag(R.id.lib_tag_dsl_view_holder)

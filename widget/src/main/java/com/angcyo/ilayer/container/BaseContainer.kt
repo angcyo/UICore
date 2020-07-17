@@ -2,10 +2,7 @@ package com.angcyo.ilayer.container
 
 import android.content.Context
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import com.angcyo.ilayer.DragFrameLayout
 import com.angcyo.ilayer.ILayer
 import com.angcyo.ilayer.LayerParams
 import com.angcyo.library.L
@@ -24,50 +21,31 @@ import com.angcyo.widget.base.setDslViewHolder
  */
 abstract class BaseContainer(val context: Context) : IContainer {
 
-    /**是否要激活拖拽*/
-    var enableDrag = false
-
-    /**是否长按才激活拖拽*/
-    var enableLongPressDrag = false
-        set(value) {
-            field = value
-            if (value) {
-                enableDrag = true
-            }
-        }
-
     override fun add(layer: ILayer) {
         if (layer.iLayerLayoutId == -1) {
             L.e("请配置[iLayerLayoutId]")
         } else {
-            var rootView: View? = getRootView(layer)
-            if (rootView == null) {
+            val rootView: View = layer.onCreateView(context, this)
+            if (rootView.parent == null) {
                 //不存在旧的, 重新创建
 
-                //1:创建根视图
-                val view = onCreateRootView(layer)
-
                 //请勿覆盖tag
-                view.tag = layer.iLayerLayoutId
+                rootView.tag = layer.iLayerLayoutId
 
-                rootView = view
-
-                val viewHolder = DslViewHolder(view)
-                view.setDslViewHolder(viewHolder)
-
-                layer.onCreate(this, viewHolder)
+                val viewHolder: DslViewHolder = rootView.dslViewHolder()
+                layer.onCreate(viewHolder)
 
                 //2:添加根视图
-                onAddRootView(layer, view)
+                onAddRootView(layer, rootView)
             } else {
                 //已经存在, 重新初始化
             }
-            layer.onInitLayer(this, rootView.dslViewHolder(), LayerParams())
+            layer.onInitLayer(rootView.dslViewHolder(), LayerParams())
         }
     }
 
     override fun remove(layer: ILayer) {
-        val rootView: View? = getRootView(layer)
+        val rootView: View? = layer._rootView
         if (rootView == null) {
             L.w("[layer]已不在已移除.")
         } else {
@@ -76,27 +54,6 @@ abstract class BaseContainer(val context: Context) : IContainer {
             dslViewHolder.clear()
             rootView.setDslViewHolder(null)
             onRemoveRootView(layer, rootView)
-        }
-    }
-
-    /**创建根视图*/
-    open fun onCreateRootView(layer: ILayer): View {
-        val dragFrameLayout = DragFrameLayout(context)
-
-        return if (enableDrag) {
-
-            dragFrameLayout.layoutParams = ViewGroup.LayoutParams(-2, -2)
-            dragFrameLayout.enableLongPressDrag = enableLongPressDrag
-
-            dragFrameLayout.dragAction = { distanceX, distanceY, end ->
-                onDragBy(layer, distanceX, distanceY, end)
-            }
-
-            LayoutInflater.from(context)
-                .inflate(layer.iLayerLayoutId, dragFrameLayout, true)
-        } else {
-            LayoutInflater.from(context)
-                .inflate(layer.iLayerLayoutId, dragFrameLayout, false)
         }
     }
 
@@ -127,7 +84,7 @@ abstract class BaseContainer(val context: Context) : IContainer {
             offsetX = left * 1f / maxWidth
         } else {
             hGravity = Gravity.RIGHT
-            offsetX = (maxWidth - left - getRootView(layer).mW()) * 1f / maxWidth
+            offsetX = (maxWidth - left - layer._rootView.mW()) * 1f / maxWidth
         }
 
         val vGravity: Int
@@ -138,7 +95,7 @@ abstract class BaseContainer(val context: Context) : IContainer {
             offsetY = top * 1f / maxHeight
         } else {
             vGravity = Gravity.BOTTOM
-            offsetY = (maxHeight - top - getRootView(layer).mH()) * 1f / maxHeight
+            offsetY = (maxHeight - top - layer._rootView.mH()) * 1f / maxHeight
         }
 
         val gravity = hGravity or vGravity

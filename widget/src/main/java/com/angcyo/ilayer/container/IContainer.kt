@@ -1,6 +1,5 @@
 package com.angcyo.ilayer.container
 
-import android.view.View
 import com.angcyo.ilayer.ILayer
 
 /**
@@ -12,9 +11,6 @@ import com.angcyo.ilayer.ILayer
  */
 
 interface IContainer {
-
-    /**根据[layer]返回对应的根视图*/
-    fun getRootView(layer: ILayer): View?
 
     /**添加一个[ILayer]到容器*/
     fun add(layer: ILayer)

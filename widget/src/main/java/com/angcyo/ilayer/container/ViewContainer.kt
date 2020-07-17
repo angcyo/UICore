@@ -22,9 +22,6 @@ import com.angcyo.widget.base.mW
  */
 open class ViewContainer(val parent: ViewGroup) : BaseContainer(parent.context) {
 
-    /**拖拽约束*/
-    var dragContainer: IDragConstraint? = null
-
     override fun onAddRootView(layer: ILayer, rootView: View) {
         parent.addView(rootView)
     }
@@ -33,10 +30,8 @@ open class ViewContainer(val parent: ViewGroup) : BaseContainer(parent.context) 
         parent.removeView(rootView)
     }
 
-    override fun getRootView(layer: ILayer): View? = parent.findViewWithTag(layer.iLayerLayoutId)
-
     override fun onDragBy(layer: ILayer, dx: Float, dy: Float, end: Boolean) {
-        val rootView = getRootView(layer)!!
+        val rootView = layer._rootView ?: return
 
         if (end) {
             //保存位置
@@ -47,7 +42,10 @@ open class ViewContainer(val parent: ViewGroup) : BaseContainer(parent.context) 
                 rootView.left - dx,
                 rootView.top - dy
             )
-            dragContainer?.onDragEnd(this, layer, offsetPosition) ?: update(layer, offsetPosition)
+            layer.dragContainer?.onDragEnd(this, layer, offsetPosition) ?: update(
+                layer,
+                offsetPosition
+            )
         } else {
             val left = (rootView.left - dx).toInt()
             val top = (rootView.top - dy).toInt()
@@ -59,37 +57,36 @@ open class ViewContainer(val parent: ViewGroup) : BaseContainer(parent.context) 
                 Gravity.LEFT or Gravity.TOP
             }
 
-            dragContainer?.onDragMoveTo(this, layer, gravity, left, top)
+            layer.dragContainer?.onDragMoveTo(this, layer, gravity, left, top)
         }
     }
 
     override fun update(layer: ILayer, position: OffsetPosition) {
-        val rootView: View? = getRootView(layer)
-        if (rootView != null) {
-            if (parent is FrameLayout) {
-                rootView.frameParams {
-                    this.gravity = position.gravity
-                    if (gravity.isLeft()) {
-                        leftMargin = (position.offsetX * parent.mW()).toInt()
-                        rootView.left = (position.offsetX * parent.mW()).toInt()
-                        rightMargin = 0
-                    } else {
-                        rightMargin = (position.offsetX * parent.mW()).toInt()
-                        leftMargin = 0
-                    }
+        val rootView = layer._rootView ?: return
 
-                    if (gravity.isTop()) {
-                        topMargin = (position.offsetY * parent.mH()).toInt()
-                        rootView.top = (position.offsetY * parent.mH()).toInt()
-                        bottomMargin = 0
-                    } else {
-                        bottomMargin = (position.offsetY * parent.mH()).toInt()
-                        topMargin = 0
-                    }
+        if (parent is FrameLayout) {
+            rootView.frameParams {
+                this.gravity = position.gravity
+                if (gravity.isLeft()) {
+                    leftMargin = (position.offsetX * parent.mW()).toInt()
+                    rootView.left = (position.offsetX * parent.mW()).toInt()
+                    rightMargin = 0
+                } else {
+                    rightMargin = (position.offsetX * parent.mW()).toInt()
+                    leftMargin = 0
                 }
-            } else {
-                L.w("不支持的容器[${parent.className()}]")
+
+                if (gravity.isTop()) {
+                    topMargin = (position.offsetY * parent.mH()).toInt()
+                    rootView.top = (position.offsetY * parent.mH()).toInt()
+                    bottomMargin = 0
+                } else {
+                    bottomMargin = (position.offsetY * parent.mH()).toInt()
+                    topMargin = 0
+                }
             }
+        } else {
+            L.w("不支持的容器[${parent.className()}]")
         }
     }
 }

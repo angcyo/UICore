@@ -25,13 +25,6 @@ import com.angcyo.widget.base.mW
  */
 class WindowContainer(context: Context) : BaseContainer(context) {
 
-    /**拖拽约束*/
-    var dragContainer: IDragConstraint? = null
-
-    init {
-        enableDrag = true
-    }
-
     val wm: WindowManager get() = context.getSystemService(WINDOW_SERVICE) as WindowManager
 
     val wmLayoutParams: WindowManager.LayoutParams = WindowManager.LayoutParams().apply {
@@ -59,26 +52,25 @@ class WindowContainer(context: Context) : BaseContainer(context) {
         }
     }
 
-    var _rootView: View? = null
-
     override fun onAddRootView(layer: ILayer, rootView: View) {
         try {
             wm.addView(rootView, wmLayoutParams)
-            _rootView = rootView
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
     override fun onRemoveRootView(layer: ILayer, rootView: View) {
-        wm.removeView(rootView)
-        _rootView = null
+        try {
+            wm.removeView(rootView)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
-    override fun getRootView(layer: ILayer): View? = _rootView
-
     override fun onDragBy(layer: ILayer, dx: Float, dy: Float, end: Boolean) {
-        val rootView = getRootView(layer)!!
+        val rootView = layer._rootView ?: return
+
         val gravity = wmLayoutParams.gravity
 
         if (gravity.isLeft()) {
@@ -115,10 +107,13 @@ class WindowContainer(context: Context) : BaseContainer(context) {
                 top.toFloat()
             )
 
-            dragContainer?.onDragEnd(this, layer, offsetPosition) ?: update(layer, offsetPosition)
+            layer.dragContainer?.onDragEnd(this, layer, offsetPosition) ?: update(
+                layer,
+                offsetPosition
+            )
         } else {
             wm.updateViewLayout(rootView, wmLayoutParams)
-            dragContainer?.onDragMoveTo(
+            layer.dragContainer?.onDragMoveTo(
                 this,
                 layer,
                 wmLayoutParams.gravity,
@@ -129,7 +124,7 @@ class WindowContainer(context: Context) : BaseContainer(context) {
     }
 
     override fun update(layer: ILayer, position: OffsetPosition) {
-        _rootView?.let {
+        layer._rootView?.let {
             wmLayoutParams.gravity = position.gravity
             wmLayoutParams.x = (_screenWidth * position.offsetX).toInt()
             wmLayoutParams.y = (_screenHeight * position.offsetY).toInt()
