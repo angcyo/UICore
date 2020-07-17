@@ -78,7 +78,7 @@ open class DslLabelOptionItem : DslLabelTextItem() {
         context.optionDialog {
             dialogTitle = itemLabelText
 
-            optionList = itemOptionList
+            optionList.addAll(itemOptionList)
 
             onOptionItemToString = itemOptionItemToText
 
@@ -87,6 +87,8 @@ open class DslLabelOptionItem : DslLabelTextItem() {
                     //拦截了
                     true
                 } else {
+                    itemOptionList.clear()
+                    itemOptionList.addAll(options)
                     itemChanging = true
                     false
                 }
