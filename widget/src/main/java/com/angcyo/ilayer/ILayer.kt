@@ -99,11 +99,11 @@ open class ILayer {
     //<editor-fold desc="操作方法">
 
     /**在指定的[container]中显示[ILayer]*/
-    fun show(container: IContainer) {
+    fun show(container: IContainer? = null) {
         if (_container != null && _container != container) {
             hide(_container!!)
         }
-        container.add(this)
+        container?.add(this)
     }
 
     fun hide(container: IContainer) {

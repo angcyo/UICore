@@ -85,7 +85,7 @@ abstract class BaseContainer(val context: Context) : IContainer {
     /**移除[rootView]*/
     abstract fun onRemoveRootView(layer: ILayer, rootView: View)
 
-    /**位置拖动*/
+    /**[ILayer]位置拖动处理*/
     open fun onDragBy(layer: ILayer, dx: Float, dy: Float, end: Boolean) {
 
     }

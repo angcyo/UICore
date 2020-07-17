@@ -33,6 +33,7 @@ import com.angcyo.library.ex.loadDrawable
 import com.angcyo.library.ex.remove
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.library.utils.getMember
+import com.angcyo.widget.base.ViewEx._tempArray
 import com.angcyo.widget.base.ViewEx._tempRect
 import com.angcyo.widget.edit.IEditDelegate
 import com.angcyo.widget.edit.REditDelegate
@@ -51,6 +52,8 @@ import kotlin.math.min
 
 object ViewEx {
     val _tempRect = Rect()
+
+    val _tempArray = intArrayOf(-1, -1)
 }
 
 //<editor-fold desc="基础扩展">
@@ -972,3 +975,31 @@ fun String.textToBitmap(context: Context): Bitmap? {
 }
 
 //</editor-fold desc="截图">
+
+//<editor-fold desc="坐标">
+
+private fun View.getVisibleRect() {
+    //获取全局可见状态矩形坐标, 在浮窗中, 则以根视图大小为参考
+    //浮窗中, 根视图获取到的矩形就是自身的[0,0 自身的宽高]
+    getGlobalVisibleRect(_tempRect)
+
+    //去掉不可见位置时的矩形
+    getLocalVisibleRect(_tempRect)
+
+    //视图左上角坐标, 相对于window的坐标
+    getLocationInWindow(_tempArray)
+
+    //视图左上角坐标, 相对于屏幕的坐标. (包含了状态的高度)
+    getLocationOnScreen(_tempArray)
+}
+
+/**获取[View]在屏幕中的矩形坐标*/
+fun View.screenRect(): Rect {
+    getLocationOnScreen(_tempArray)
+    val left = _tempArray[0]
+    val top = _tempArray[1]
+    _tempRect.set(left, top, left + mW(), top + mH())
+    return _tempRect
+}
+
+//</editor-fold desc="坐标">

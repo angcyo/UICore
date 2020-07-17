@@ -107,7 +107,7 @@ class DragFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
 
                 if ((_downX - eventX).abs() > touchSlop || (_downY - eventY).abs() > touchSlop) {
                     handle = true
-                    parent.requestDisallowInterceptTouchEvent(true)
+                    parent?.requestDisallowInterceptTouchEvent(true)
                     removeLongPressRunnable()
                 }
 
@@ -118,7 +118,7 @@ class DragFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 removeLongPressRunnable()
                 _isLongPress = false
-                parent.requestDisallowInterceptTouchEvent(false)
+                parent?.requestDisallowInterceptTouchEvent(false)
             }
         }
 

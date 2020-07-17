@@ -9,11 +9,13 @@ import android.view.View
 import android.view.WindowManager
 import com.angcyo.drawable.isLeft
 import com.angcyo.drawable.isTop
+import com.angcyo.ilayer.CancelLayer
 import com.angcyo.ilayer.ILayer
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.mW
+import com.angcyo.widget.base.screenRect
 
 
 /**
@@ -25,8 +27,13 @@ import com.angcyo.widget.base.mW
  */
 class WindowContainer(context: Context) : BaseContainer(context) {
 
+    /**是否要在拖拽时, 显示销毁窗口*/
+    var showCancelLayer: Boolean = false
+
     val wm: WindowManager get() = context.getSystemService(WINDOW_SERVICE) as WindowManager
 
+    //permission denied for window type 2001
+    //type 至少从2002开始
     val wmLayoutParams: WindowManager.LayoutParams = WindowManager.LayoutParams().apply {
         width = WindowManager.LayoutParams.WRAP_CONTENT
         height = WindowManager.LayoutParams.WRAP_CONTENT
@@ -49,8 +56,10 @@ class WindowContainer(context: Context) : BaseContainer(context) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
             WindowManager.LayoutParams.TYPE_PHONE
-        }
+        } + 1
     }
+
+    var _cancelLayer: CancelLayer? = null
 
     override fun onAddRootView(layer: ILayer, rootView: View) {
         try {
@@ -120,6 +129,12 @@ class WindowContainer(context: Context) : BaseContainer(context) {
                 layer,
                 offsetPosition
             )
+
+            //隐藏销毁提示layer
+            if (showCancelLayer && _cancelLayer?.cancelFlag == true) {
+                layer.hide(this)
+            }
+            _cancelLayer?.hide()
         } else {
             updateLayout(layer)
             layer.dragContainer?.onDragMoveTo(
@@ -129,6 +144,17 @@ class WindowContainer(context: Context) : BaseContainer(context) {
                 wmLayoutParams.x,
                 wmLayoutParams.y
             )
+
+            //显示销毁提示layer
+            if (showCancelLayer) {
+                if (_cancelLayer == null) {
+                    _cancelLayer = CancelLayer()
+                }
+                _cancelLayer?.targetMoveTo(
+                    rootView.screenRect().centerX(),
+                    rootView.screenRect().centerY()
+                )
+            }
         }
     }
 
