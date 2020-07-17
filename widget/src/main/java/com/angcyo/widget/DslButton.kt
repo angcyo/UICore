@@ -14,6 +14,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.ViewCompat
 import com.angcyo.drawable.base.DslGradientDrawable
 import com.angcyo.library.ex.toColorInt
+import com.angcyo.tablayout.DslTabIndicator.Companion.NO_COLOR
 import java.util.*
 
 /**
@@ -820,6 +821,7 @@ open class DslButton : AppCompatTextView {
         //nothing
     }
 
+    /**更新配置的后的[Drawable]并更新给[DslButton]*/
     open fun updateDrawable() {
         updateNormalDrawable()
         updateDisableDrawable()
@@ -830,6 +832,7 @@ open class DslButton : AppCompatTextView {
         updateButton()
     }
 
+    /**仅更新按钮的[backgroundDrawable], 和文本的[color]*/
     open fun updateButton() {
         if (enableTextStyle) {
             //文本状态颜色
@@ -897,4 +900,57 @@ fun colorState(vararg pair: Pair<IntArray, Int>): ColorStateList {
     }
 
     return ColorStateList(statesList.toTypedArray(), colorsList.toIntArray())
+}
+
+/**更新按钮填充颜色, 会去除渐变颜色效果*/
+fun DslButton.updateSolidColor(solidColor: Int, update: Boolean = true) {
+    enableBackgroundStyle = true
+    setButtonSolidColor(solidColor)
+    setButtonGradientColors(null)
+    if (update) {
+        updateDrawable()
+    }
+}
+
+/**更新按钮渐变颜色, 去除填充颜色*/
+fun DslButton.updateGradientColors(gradientColors: IntArray?, update: Boolean = true) {
+    enableBackgroundStyle = true
+    setButtonSolidColor(Color.TRANSPARENT)
+    setButtonGradientColors(gradientColors)
+    if (update) {
+        updateDrawable()
+    }
+}
+
+/**更新按钮边框样式, */
+fun DslButton.updateStrokeColor(
+    strokeColor: Int,
+    strokeWidth: Int = -1,
+    solidColor: Int = NO_COLOR,
+    gradientColors: IntArray? = null,
+    update: Boolean = true
+) {
+    enableBackgroundStyle = true
+    setButtonStrokeColor(strokeColor)
+    if (strokeWidth >= 0) {
+        setButtonStrokeWidth(strokeWidth)
+    }
+    if (solidColor != NO_COLOR) {
+        setButtonSolidColor(solidColor)
+    }
+    if (gradientColors != null) {
+        setButtonGradientColors(gradientColors)
+    }
+    if (update) {
+        updateDrawable()
+    }
+}
+
+/**更新按钮圆角大小*/
+fun DslButton.updateRadius(radius: Float, update: Boolean = true) {
+    enableBackgroundStyle = true
+    setButtonRadius(radius)
+    if (update) {
+        updateDrawable()
+    }
 }
