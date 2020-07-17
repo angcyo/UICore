@@ -27,9 +27,6 @@ import com.angcyo.widget.base.screenRect
  */
 class WindowContainer(context: Context) : BaseContainer(context) {
 
-    /**是否要在拖拽时, 显示销毁窗口*/
-    var showCancelLayer: Boolean = false
-
     val wm: WindowManager get() = context.getSystemService(WINDOW_SERVICE) as WindowManager
 
     //permission denied for window type 2001
@@ -62,7 +59,7 @@ class WindowContainer(context: Context) : BaseContainer(context) {
     var _cancelLayer: CancelLayer? = null
 
     override fun add(layer: ILayer) {
-        if (showCancelLayer) {
+        if (layer.showCancelLayer) {
             if (_cancelLayer == null) {
                 _cancelLayer = CancelLayer()
                 _cancelLayer?.show()
@@ -142,7 +139,7 @@ class WindowContainer(context: Context) : BaseContainer(context) {
             )
 
             //隐藏销毁提示layer
-            if (showCancelLayer && _cancelLayer?.cancelFlag == true) {
+            if (layer.showCancelLayer && _cancelLayer?.cancelFlag == true) {
                 layer.hide(this)
                 _cancelLayer?.hide(true)
             } else {
@@ -160,7 +157,7 @@ class WindowContainer(context: Context) : BaseContainer(context) {
             )
 
             //显示销毁提示layer
-            if (showCancelLayer) {
+            if (layer.showCancelLayer) {
                 _cancelLayer?.targetMoveTo(
                     rootView.screenRect().centerX(),
                     rootView.screenRect().centerY()

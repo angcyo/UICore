@@ -39,6 +39,13 @@ open class ILayer {
     /**是否自动保存和恢复位置*/
     var autoRestorePosition: Boolean = true
 
+    /**是否要在拖拽时, 显示销毁窗口
+     * [WindowContainer] 支持*/
+    var showCancelLayer: Boolean = false
+
+    /**渲染界面*/
+    var renderLayer: (DslViewHolder.() -> Unit)? = null
+
     //<editor-fold desc="生命周期方法">
 
     var _rootView: View? = null
@@ -84,6 +91,7 @@ open class ILayer {
     /**生命周期2*/
     open fun onInitLayer(viewHolder: DslViewHolder, params: LayerParams) {
         L.i(this.simpleHash())
+        renderLayer?.invoke(viewHolder)
     }
 
     /**生命周期3
