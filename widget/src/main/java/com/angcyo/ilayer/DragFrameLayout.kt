@@ -111,8 +111,10 @@ class DragFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
                     removeLongPressRunnable()
                 }
 
-                if (!enableLongPressDrag || (enableLongPressDrag && _isLongPress)) {
-                    dragAction?.invoke(dx, dy, false)
+                if (handle) {
+                    if (!enableLongPressDrag || (enableLongPressDrag && _isLongPress)) {
+                        dragAction?.invoke(dx, dy, false)
+                    }
                 }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {

@@ -1,5 +1,6 @@
 package com.angcyo.core.component.accessibility
 
+import android.accessibilityservice.AccessibilityService
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import com.angcyo.core.BuildConfig
@@ -22,6 +23,27 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
         const val LOG_CONTENT_NAME = "content.log"
         const val LOG_OTHER_NAME = "other.log"
         const val LOG_INTERVAL_NAME = "interval.log"
+
+        /**获取所有[AccessibilityWindowInfo]的信息*/
+        fun logWindow(
+            service: AccessibilityService? = BaseAccessibilityService.weakService?.get(),
+            builder: StringBuilder = StringBuilder()
+        ): String {
+            if (service == null) {
+                return builder.toString()
+            }
+            val rootNodeInfo: AccessibilityNodeInfo? = service.findNodeInfoList().mainNode()
+            service.windows.forEachIndexed { index, accessibilityWindowInfo ->
+                builder.appendln("$index->$accessibilityWindowInfo")
+                accessibilityWindowInfo.root?.apply {
+                    if (rootNodeInfo != null && this == rootNodeInfo) {
+                        builder.append("[root]")
+                    }
+                    logNodeInfo(outBuilder = builder)
+                }
+            }
+            return builder.toString()
+        }
     }
 
     var enable: Boolean = true
@@ -108,10 +130,10 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                     val rootNodeInfo: AccessibilityNodeInfo? =
                         service.findNodeInfoList(filterPackageNameList).mainNode()
 
-                    service.windows.forEach {
-                        builder.appendln(it.toString())
-                        windowBuilder.appendln(it.toString())
-                        it.root?.apply {
+                    service.windows.forEachIndexed { index, accessibilityWindowInfo ->
+                        builder.appendln("$index->$accessibilityWindowInfo")
+                        windowBuilder.appendln(accessibilityWindowInfo.toString())
+                        accessibilityWindowInfo.root?.apply {
                             if (rootNodeInfo != null && this == rootNodeInfo) {
                                 builder.append("[root]")
                                 logNodeInfo(outBuilder = builder)
