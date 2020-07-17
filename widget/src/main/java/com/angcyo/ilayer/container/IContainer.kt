@@ -12,7 +12,7 @@ import com.angcyo.ilayer.ILayer
 
 interface IContainer {
 
-    /**添加一个[ILayer]到容器*/
+    /**添加一个[ILayer]到容器, 如果已经add了, 则会触发init方法*/
     fun add(layer: ILayer)
 
     /**从容器中移除一个[ILayer]*/
