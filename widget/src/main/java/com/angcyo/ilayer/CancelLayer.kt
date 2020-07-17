@@ -9,9 +9,7 @@ import com.angcyo.library.app
 import com.angcyo.library.ex._color
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
-import com.angcyo.widget.base.longFeedback
-import com.angcyo.widget.base.screenRect
-import com.angcyo.widget.base.tagDslViewHolder
+import com.angcyo.widget.base.*
 
 /**
  * 用于提示滑动至此, 删除浮窗
@@ -36,15 +34,19 @@ class CancelLayer : ILayer() {
         wmLayoutParams.height = -2
         wmLayoutParams.x = 0
         wmLayoutParams.y = 0
-        wmLayoutParams.type = wmLayoutParams.type - 1
     }
 
     fun show() {
         show(_windowContainer)
+        _rootView?.visible()
     }
 
-    fun hide() {
-        hide(_windowContainer)
+    fun hide(remove: Boolean = false) {
+        if (remove) {
+            hide(_windowContainer)
+        } else {
+            _rootView?.gone()
+        }
     }
 
     override fun onDestroy(fromContainer: IContainer, viewHolder: DslViewHolder) {

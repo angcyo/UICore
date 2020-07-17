@@ -56,10 +56,21 @@ class WindowContainer(context: Context) : BaseContainer(context) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
             WindowManager.LayoutParams.TYPE_PHONE
-        } + 1
+        }
     }
 
     var _cancelLayer: CancelLayer? = null
+
+    override fun add(layer: ILayer) {
+        if (showCancelLayer) {
+            if (_cancelLayer == null) {
+                _cancelLayer = CancelLayer()
+                _cancelLayer?.show()
+            }
+            _cancelLayer?.hide()
+        }
+        super.add(layer)
+    }
 
     override fun onAddRootView(layer: ILayer, rootView: View) {
         try {
@@ -133,8 +144,11 @@ class WindowContainer(context: Context) : BaseContainer(context) {
             //隐藏销毁提示layer
             if (showCancelLayer && _cancelLayer?.cancelFlag == true) {
                 layer.hide(this)
+                _cancelLayer?.hide(true)
+            } else {
+                _cancelLayer?.hide(false)
             }
-            _cancelLayer?.hide()
+
         } else {
             updateLayout(layer)
             layer.dragContainer?.onDragMoveTo(
@@ -147,9 +161,6 @@ class WindowContainer(context: Context) : BaseContainer(context) {
 
             //显示销毁提示layer
             if (showCancelLayer) {
-                if (_cancelLayer == null) {
-                    _cancelLayer = CancelLayer()
-                }
                 _cancelLayer?.targetMoveTo(
                     rootView.screenRect().centerX(),
                     rootView.screenRect().centerY()
