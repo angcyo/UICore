@@ -68,6 +68,15 @@ class WindowContainer(context: Context) : BaseContainer(context) {
         }
     }
 
+    fun updateLayout(layer: ILayer) {
+        try {
+            val rootView = layer._rootView ?: return
+            wm.updateViewLayout(rootView, wmLayoutParams)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     override fun onDragBy(layer: ILayer, dx: Float, dy: Float, end: Boolean) {
         val rootView = layer._rootView ?: return
 
@@ -112,7 +121,7 @@ class WindowContainer(context: Context) : BaseContainer(context) {
                 offsetPosition
             )
         } else {
-            wm.updateViewLayout(rootView, wmLayoutParams)
+            updateLayout(layer)
             layer.dragContainer?.onDragMoveTo(
                 this,
                 layer,
@@ -124,12 +133,13 @@ class WindowContainer(context: Context) : BaseContainer(context) {
     }
 
     override fun update(layer: ILayer, position: OffsetPosition) {
+        super.update(layer, position)
         layer._rootView?.let {
             wmLayoutParams.gravity = position.gravity
             wmLayoutParams.x = (_screenWidth * position.offsetX).toInt()
             wmLayoutParams.y = (_screenHeight * position.offsetY).toInt()
 
-            wm.updateViewLayout(it, wmLayoutParams)
+            updateLayout(layer)
         }
     }
 }

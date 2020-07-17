@@ -23,8 +23,10 @@ class DragFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
     /**是否只在长按下激活拖拽*/
     var enableLongPressDrag = false
 
+    /**拖拽回调, 本身不处理布局, 只负责回调*/
     var dragAction: ((distanceX: Float, distanceY: Float, end: Boolean) -> Unit)? = null
 
+    /**检查是否滚动的阈值*/
     var touchSlop = 0
 
     init {
@@ -35,6 +37,7 @@ class DragFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
     /**是否长按*/
     var _isLongPress = false
 
+    /**长按检测*/
     var longPressRunnable = Runnable {
         _isLongPress = true
         if (!performLongClick()) {
@@ -58,9 +61,9 @@ class DragFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        super.onTouchEvent(event)
-        //gestureDetector.onTouchEvent(event)
-        handleTouchEvent(event)
+        if (!handleTouchEvent(event)) {
+            super.onTouchEvent(event)
+        }
         return true
     }
 
@@ -74,14 +77,16 @@ class DragFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
     var _lastX = 0f
     var _lastY = 0f
 
+    var handle = false
+
     fun handleTouchEvent(event: MotionEvent): Boolean {
-        var result = false
 
         val eventX = event.rawX
         val eventY = event.rawY
 
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
+                handle = false
                 _downX = eventX
                 _downY = eventY
 
@@ -101,7 +106,7 @@ class DragFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
                 _lastY = eventY
 
                 if ((_downX - eventX).abs() > touchSlop || (_downY - eventY).abs() > touchSlop) {
-                    result = true
+                    handle = true
                     parent.requestDisallowInterceptTouchEvent(true)
                     removeLongPressRunnable()
                 }
@@ -117,6 +122,6 @@ class DragFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
             }
         }
 
-        return result
+        return handle
     }
 }

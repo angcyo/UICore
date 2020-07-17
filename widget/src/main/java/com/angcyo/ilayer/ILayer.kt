@@ -36,6 +36,9 @@ open class ILayer {
             }
         }
 
+    /**是否自动保存和恢复位置*/
+    var autoRestorePosition: Boolean = true
+
     //<editor-fold desc="生命周期方法">
 
     var _rootView: View? = null

@@ -62,6 +62,8 @@ open class ViewContainer(val parent: ViewGroup) : BaseContainer(parent.context) 
     }
 
     override fun update(layer: ILayer, position: OffsetPosition) {
+        super.update(layer, position)
+
         val rootView = layer._rootView ?: return
 
         if (parent is FrameLayout) {
