@@ -26,6 +26,7 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
 
         /**获取所有[AccessibilityWindowInfo]的信息*/
         fun logWindow(
+            allWindow: Boolean = true,
             service: AccessibilityService? = BaseAccessibilityService.weakService?.get(),
             builder: StringBuilder = StringBuilder()
         ): String {
@@ -38,8 +39,10 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                 accessibilityWindowInfo.root?.apply {
                     if (rootNodeInfo != null && this == rootNodeInfo) {
                         builder.append("[root]")
+                        logNodeInfo(outBuilder = builder)
+                    } else if (allWindow) {
+                        logNodeInfo(outBuilder = builder)
                     }
-                    logNodeInfo(outBuilder = builder)
                 }
             }
             return builder.toString()
