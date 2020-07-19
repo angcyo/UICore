@@ -30,18 +30,25 @@ import java.util.regex.Pattern
  */
 
 /**复制文本*/
-fun CharSequence.copy(context: Context = app()) {
+fun CharSequence.copy(context: Context = app()): Boolean {
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     try {
-        clipboard.setPrimaryClip(ClipData.newPlainText("text", this))
+        return try {
+            clipboard.setPrimaryClip(ClipData.newPlainText("text", this))
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            clipboard.setPrimaryClip(
+                ClipData.newPlainText(
+                    "text",
+                    this/*.subSequence(0, 100).toString() + "...more"*/
+                )
+            )
+            true
+        }
     } catch (e: Exception) {
         e.printStackTrace()
-        clipboard.setPrimaryClip(
-            ClipData.newPlainText(
-                "text",
-                this.subSequence(0, 100).toString() + "...more"
-            )
-        )
+        return false
     }
 }
 
@@ -425,6 +432,5 @@ fun String.toClass(): Class<*>? {
 }
 
 /**打开应用程序*/
-fun String.openApp(flags: Int = Intent.FLAG_ACTIVITY_SINGLE_TOP) {
+fun String.openApp(flags: Int = Intent.FLAG_ACTIVITY_SINGLE_TOP) =
     app().openApp(this, flags = flags)
-}

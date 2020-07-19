@@ -93,8 +93,12 @@ open class DslViewHolder(
     }
 
     /**节流点击事件*/
-    fun throttleClick(@IdRes id: Int, action: (View) -> Unit) {
-        click(id, ThrottleClickListener(action = action))
+    fun throttleClick(
+        @IdRes id: Int,
+        throttleInterval: Long = ThrottleClickListener.DEFAULT_THROTTLE_INTERVAL,
+        action: (View) -> Unit
+    ) {
+        click(id, ThrottleClickListener(throttleInterval = throttleInterval, action = action))
     }
 
     fun clickItem(listener: View.OnClickListener?) {

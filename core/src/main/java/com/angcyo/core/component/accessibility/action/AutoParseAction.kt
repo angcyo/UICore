@@ -9,10 +9,7 @@ import com.angcyo.core.component.accessibility.parse.ActionBean
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.isListEmpty
-import com.angcyo.library.ex.randomGet
-import com.angcyo.library.ex.randomString
+import com.angcyo.library.ex.*
 import kotlin.math.roundToInt
 import kotlin.random.Random.Default.nextInt
 
@@ -48,12 +45,47 @@ open class AutoParseAction : BaseAccessibilityAction() {
         event: AccessibilityEvent?,
         nodeList: List<AccessibilityNodeInfo>
     ): Boolean {
-        val constraintList: List<ConstraintBean>? = actionBean?.event
+        val constraintList: List<ConstraintBean>? = actionBean?.check?.event
         if (constraintList == null) {
             doActionFinish(ActionException("eventConstraint is null."))
             return false
         }
         return autoParse.parse(service, nodeList, constraintList)
+    }
+
+    override fun checkOtherEvent(
+        service: BaseAccessibilityService,
+        event: AccessibilityEvent?,
+        nodeList: List<AccessibilityNodeInfo>
+    ): Boolean {
+        super.checkOtherEvent(service, event, nodeList)
+        val constraintList: List<ConstraintBean> = actionBean?.check?.other ?: return false
+
+        if (checkOtherEventCount.isMaxLimit()) {
+            return false
+        }
+
+        //执行对应的action操作
+        var result = false
+
+        autoParse.parse(service, nodeList, constraintList) {
+            for (pair in it) {
+
+                //执行action
+                val handleResult: Pair<Boolean, Boolean> =
+                    handleAction(service, pair.first, pair.second)
+
+                //执行结果
+                result = result || handleResult.first
+
+                //是否跳过后续action
+                if (handleResult.second) {
+                    break
+                }
+            }
+        }
+
+        return result
     }
 
     override fun doAction(
@@ -62,18 +94,25 @@ open class AutoParseAction : BaseAccessibilityAction() {
         nodeList: List<AccessibilityNodeInfo>
     ) {
         super.doAction(service, event, nodeList)
-        val constraintList: List<ConstraintBean>? = actionBean?.handle
+        val constraintList: List<ConstraintBean>? = actionBean?.check?.handle
         if (constraintList == null) {
             doActionFinish(ActionException("handleConstraint is null."))
         } else {
             //解析拿到对应的node
+            val handleType = actionBean?.handleType
+            val handleConstraintList: List<ConstraintBean> = when (handleType) {
+                ActionBean.HANDLE_TYPE_RANDOM -> constraintList.randomGet(1) //随机获取处理约束
+                ActionBean.HANDLE_TYPE_ORDER -> {
+                    val nextIndex: Int = ((doActionCount.count - 1) % constraintList.size).toInt()
+                    val next = constraintList.getOrNull(nextIndex)
 
-            val randomHandle = actionBean?.randomHandle == true
-            val handleConstraintList: List<ConstraintBean> = if (randomHandle) {
-                //随机获取处理约束
-                constraintList.randomGet(1)
-            } else {
-                constraintList
+                    if (next == null) {
+                        constraintList
+                    } else {
+                        listOf(next)
+                    }
+                } //顺序获取处理约束
+                else -> constraintList //默认
             }
 
             //执行对应的action操作
@@ -84,16 +123,16 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 for (pair in it) {
 
                     //执行action
-                    val handleAction: Pair<Boolean, Boolean> =
+                    val handleResult: Pair<Boolean, Boolean> =
                         handleAction(service, pair.first, pair.second) {
-                            onGetTextResult?.invoke(it)
+                            handleGetTextResult(it)
                         }
 
                     //执行结果
-                    result = result || handleAction.first
+                    result = result || handleResult.first
 
                     //是否跳过后续action
-                    if (handleAction.second) {
+                    if (handleResult.second) {
                         break
                     }
                 }
@@ -105,22 +144,26 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 }
             }
 
-            if (!result) {
-                //未完成
-                var actionMaxCount: Int = actionBean?.actionMaxCount ?: -1
-                if (actionMaxCount > 0) {
+            //是否需要强制执行完成
+            var actionMaxCount: Int = actionBean?.actionMaxCount ?: -1
+            if (actionMaxCount > 0) {
 
-                    if (randomHandle) {
-                        actionMaxCount =
-                            (actionMaxCount + actionMaxCount * nextInt(0, 100) / 100f).roundToInt()
-                    }
+                if (handleType == ActionBean.HANDLE_TYPE_RANDOM) {
+                    //随机[actionMaxCount]
+                    actionMaxCount =
+                        (actionMaxCount + actionMaxCount * nextInt(0, 100) / 100f).roundToInt()
+                }
 
-                    if (actionDoCount >= actionMaxCount) {
-                        doActionFinish()
-                    }
+                if (doActionCount.count >= actionMaxCount) {
+                    doActionFinish()
                 }
             }
         }
+    }
+
+    /**[getText]动作获取到的文本列表*/
+    fun handleGetTextResult(textList: List<CharSequence>) {
+        onGetTextResult?.invoke(textList)
     }
 
     override fun doActionWidth(
@@ -129,10 +172,9 @@ open class AutoParseAction : BaseAccessibilityAction() {
         event: AccessibilityEvent?,
         nodeList: List<AccessibilityNodeInfo>
     ): Boolean {
-        val constraintList: List<ConstraintBean>? = actionBean?.back
+        val constraintList: List<ConstraintBean>? = actionBean?.check?.back
 
         if (constraintList != null) {
-            val filterPackageNameList = action.accessibilityInterceptor?.filterPackageNameList
 
             //执行操作
             fun handle(): Boolean {
@@ -147,7 +189,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
             var result = false
 
-            val eventConstraintList: List<ConstraintBean>? = actionBean?.event
+            val eventConstraintList: List<ConstraintBean>? = actionBean?.check?.back
             if (eventConstraintList == null) {
                 //无界面约束匹配, 则不检查. 直接处理
                 result = handle()
@@ -163,6 +205,9 @@ open class AutoParseAction : BaseAccessibilityAction() {
         return super.doActionWidth(action, service, event, nodeList)
     }
 
+    /**
+     * [Pair] 第一个值, 表示执行是否成功, 第二个值表示是否需要跳过后续的[handle]
+     * */
     open fun handleAction(
         service: BaseAccessibilityService,
         constraintBean: ConstraintBean,
@@ -174,17 +219,17 @@ open class AutoParseAction : BaseAccessibilityAction() {
         val actionList: List<String>? = constraintBean.actionList
 
         //获取到的文件列表
-        val getTextList: MutableList<CharSequence> = mutableListOf()
+        val getTextResultList: MutableList<CharSequence> = mutableListOf()
 
         //此次执行, 返回结果的结果
         var result = false
 
         //此次执行成功后, 是否要跳过后面的执行
-        var jump: Boolean = constraintBean.jump
+        var jumpNextHandleAction: Boolean = constraintBean.jump
 
         if (actionList.isListEmpty()) {
             result = nodeList.clickAll {
-                log(buildString {
+                handleActionLog(buildString {
                     append("点击[")
                     it.logText(this)
                     append("]")
@@ -196,46 +241,36 @@ open class AutoParseAction : BaseAccessibilityAction() {
                     //随机操作
                     service.gesture.randomization().apply {
                         result = result || first
-                        log("随机操作[${this.second}]:$result")
+                        handleActionLog("随机操作[${this.second}]:$result")
                     }
                 } else if (act == ConstraintBean.ACTION_FINISH) {
                     //直接完成操作
                     result = true
-                    jump = true
+                    jumpNextHandleAction = true
                 } else {
-                    val screenWidth: Int = _screenWidth
-                    val screenHeight: Int = _screenHeight
-
-                    val fX: Float = screenWidth * 1 / 3f + nextInt(5, 10)
-                    val tX: Float = screenWidth * 2 / 3f + nextInt(5, 10)
-                    val fY: Float = screenHeight * 3 / 5f - nextInt(5, 10)
-                    val tY: Float = screenHeight * 2 / 5f + nextInt(5, 10)
-
-                    val p1 = PointF(fX, fY)
-                    val p2 = PointF(tX, tY)
-
+                    //需要执行的动作
                     var action: String? = null
-                    var point: String? = null
+                    //动作携带的参数
+                    var arg: String? = null
+
+                    //点位
+                    val p1 = PointF()
+                    val p2 = PointF()
                     try {
                         //解析2个点的坐标
-                        act.split(":").apply {
-                            action = getOrNull(0)
-                            point = getOrNull(1)
-                            point?.apply {
-                                this.split("-").apply {
-                                    getOrNull(0)?.toPointF(
-                                        autoParse._rootNodeRect.width(),
-                                        autoParse._rootNodeRect.height()
-                                    )?.apply {
-                                        p1.set(this)
-                                    }
-                                    getOrNull(1)?.toPointF(
-                                        autoParse._rootNodeRect.width(),
-                                        autoParse._rootNodeRect.height()
-                                    )?.apply {
-                                        p2.set(this)
-                                    }
-                                }
+                        val indexOf = act.indexOf(":", 0, true)
+
+                        if (indexOf == -1) {
+                            //未找到
+                            action = act
+                        } else {
+                            //找到
+                            action = act.substring(0, indexOf)
+                            arg = act.substring(indexOf + 1, act.length)
+
+                            parsePoint(arg).let {
+                                p1.set(it[0])
+                                p2.set(it[1])
                             }
                         }
                     } catch (e: Exception) {
@@ -249,7 +284,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             nodeList.forEach {
                                 value = value || it.getClickParent()?.click() ?: false
                             }
-                            log("点击节点[${nodeList.firstOrNull()?.text()}]:$value")
+                            handleActionLog("点击节点[${nodeList.firstOrNull()?.text()}]:$value")
                             value
                         }
                         ConstraintBean.ACTION_CLICK2 -> {
@@ -262,7 +297,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                     null
                                 )
                             }
-                            log("双击节点区域[${nodeList.firstOrNull()?.bounds()}]:$value")
+                            handleActionLog("双击节点区域[${nodeList.firstOrNull()?.bounds()}]:$value")
                             value
                         }
                         ConstraintBean.ACTION_LONG_CLICK -> {
@@ -270,12 +305,12 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             nodeList.forEach {
                                 value = value || it.getLongClickParent()?.longClick() ?: false
                             }
-                            log("长按节点[${nodeList.firstOrNull()}]:$value")
+                            handleActionLog("长按节点[${nodeList.firstOrNull()}]:$value")
                             value
                         }
                         ConstraintBean.ACTION_DOUBLE -> service.gesture.double(p1.x, p1.y, null)
                             .apply {
-                                log("双击[$p1]:$this")
+                                handleActionLog("双击[$p1]:$this")
                             }
                         ConstraintBean.ACTION_MOVE -> service.gesture.move(
                             p1.x,
@@ -284,7 +319,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             p2.y,
                             null
                         ).apply {
-                            log("move[$p1 $p2]:$this")
+                            handleActionLog("move[$p1 $p2]:$this")
                         }
                         ConstraintBean.ACTION_FLING -> service.gesture.fling(
                             p1.x,
@@ -293,72 +328,153 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             p2.y,
                             null
                         ).apply {
-                            log("fling[$p1 $p2]:$this")
+                            handleActionLog("fling[$p1 $p2]:$this")
                         }
                         ConstraintBean.ACTION_BACK -> service.back().apply {
-                            log("返回:$this")
+                            handleActionLog("返回:$this")
+                        }
+                        ConstraintBean.ACTION_HOME -> service.home().apply {
+                            handleActionLog("回到桌面:$this")
                         }
                         ConstraintBean.ACTION_GET_TEXT -> {
                             nodeList.forEach {
                                 it.text()?.apply {
-                                    getTextList.add(this)
+                                    getTextResultList.add(this)
                                 }
                             }
-                            log("获取文本[$getTextList]:${getTextList.isNotEmpty()}")
-                            getTextList.isNotEmpty()
+                            handleActionLog("获取文本[$getTextResultList]:${getTextResultList.isNotEmpty()}")
+                            getTextResultList.isNotEmpty()
                         }
                         ConstraintBean.ACTION_SET_TEXT -> {
                             var value = false
 
                             //执行set text时的文本
-                            val comments = constraintBean.commentList
-                            val text = if (comments.isListEmpty()) {
-                                //随机产生文本
-                                randomString()
-                            } else {
-                                comments!!.getOrNull(nextInt(0, comments.lastIndex))
-                            }
+                            val text = getInputText(constraintBean)
 
                             nodeList.forEach {
                                 value = value || it.setNodeText(text)
                             }
-                            log("设置文本[$text]:$value")
+
+                            handleActionLog("设置文本[$text]:$value")
                             value
                         }
                         ConstraintBean.ACTION_TOUCH -> service.gesture.click(p1.x, p1.y).apply {
-                            log("touch[$p1]:$this")
+                            handleActionLog("touch[$p1]:$this")
                         }
                         ConstraintBean.ACTION_RANDOM -> service.gesture.randomization().run {
-                            log("随机操作[$this]:$this")
+                            handleActionLog("随机操作[$this]:$this")
                             first
                         }
+                        ConstraintBean.ACTION_START -> {
+                            //启动应用程序
+
+                            //包名
+                            val targetPackageName = if (arg.isNullOrEmpty() || arg == "target") {
+                                actionBean?.check?.packageName
+                                    ?: accessibilityInterceptor?.filterPackageNameList?.firstOrNull()
+                            } else if (arg == "main") {
+                                service.packageName
+                            } else {
+                                arg
+                            }
+                            targetPackageName?.openApp() != null
+                        }
+                        ConstraintBean.ACTION_COPY -> {
+                            val text = getInputText(constraintBean)
+                            val value = text?.copy() == true
+
+                            handleActionLog("复制文本[$text]:$value")
+                            value
+                        }
                         else -> service.gesture.click().apply {
-                            log("默认点击:$this")
+                            handleActionLog("默认点击:$this")
                         }
                     }
+
+                    //...end
                 }
             }
         }
 
-        if (getTextList.isNotEmpty()) {
-            onGetTextResult(getTextList)
+        if (getTextResultList.isNotEmpty()) {
+            onGetTextResult(getTextResultList)
         }
 
         if (constraintBean.ignore) {
             //如果忽略了约束, 则不进行jump操作
             result = false
-            jump = false
+            jumpNextHandleAction = false
         } else {
             if (!result) {
                 //执行失败, 不进行jump操作
-                jump = false
+                jumpNextHandleAction = false
             }
         }
 
-        return result to jump
+        return result to jumpNextHandleAction
     }
 
-    open fun log(charSequence: CharSequence) {
+    /** 从参数中, 解析设置的点位信息
+     * [move:10,10-100,100]
+     * [fling:10,10-100,100]
+     * */
+    fun parsePoint(arg: String?): List<PointF> {
+        val screenWidth: Int = _screenWidth
+        val screenHeight: Int = _screenHeight
+
+        val fX: Float = screenWidth * 1 / 3f + nextInt(5, 10)
+        val tX: Float = screenWidth * 2 / 3f + nextInt(5, 10)
+        val fY: Float = screenHeight * 3 / 5f - nextInt(5, 10)
+        val tY: Float = screenHeight * 2 / 5f + nextInt(5, 10)
+
+        val p1 = PointF(fX, fY)
+        val p2 = PointF(tX, tY)
+
+        try {
+            arg?.apply {
+                val refWidth = autoParse._rootNodeRect.width()
+                val refHeight = autoParse._rootNodeRect.height()
+
+                split("-").apply {
+
+                    //p1
+                    getOrNull(0)?.toPointF(
+                        refWidth,
+                        refHeight
+                    )?.apply {
+                        p1.set(this)
+                    }
+
+                    //p2
+                    getOrNull(1)?.toPointF(
+                        refWidth,
+                        refHeight
+                    )?.apply {
+                        p2.set(this)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return listOf(p1, p2)
+    }
+
+    /**获取需要输入的文本,需要复制的文本*/
+    fun getInputText(constraintBean: ConstraintBean): String? {
+        val inputList = constraintBean.inputList
+        val text = if (inputList.isListEmpty()) {
+            //随机产生文本
+            randomString()
+        } else {
+            inputList!!.getOrNull(nextInt(0, inputList.size))
+        }
+        return text
+    }
+
+    /**一些处理日志*/
+    open fun handleActionLog(charSequence: CharSequence) {
         onLogPrint?.invoke(charSequence)
     }
 }

@@ -85,12 +85,12 @@ open class ILayer {
 
     /**生命周期1*/
     open fun onCreate(viewHolder: DslViewHolder) {
-        L.i(this.simpleHash())
+        L.d(this.simpleHash())
     }
 
     /**生命周期2*/
     open fun onInitLayer(viewHolder: DslViewHolder, params: LayerParams) {
-        L.i(this.simpleHash())
+        L.d(this.simpleHash())
         renderLayer?.invoke(viewHolder)
     }
 
@@ -98,7 +98,7 @@ open class ILayer {
      * [fromContainer] 从什么容器中移除
      * */
     open fun onDestroy(fromContainer: IContainer, viewHolder: DslViewHolder) {
-        L.i("${this.simpleHash()}")
+        L.d("${this.simpleHash()}")
         _container = null
     }
 

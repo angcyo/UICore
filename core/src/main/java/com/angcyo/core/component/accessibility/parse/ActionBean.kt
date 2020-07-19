@@ -1,6 +1,7 @@
 package com.angcyo.core.component.accessibility.parse
 
 import com.angcyo.core.component.accessibility.action.AutoParseAction
+import com.angcyo.core.component.accessibility.parse.ActionBean.Companion.HANDLE_TYPE_NONE
 import com.angcyo.library.ex.isDebugType
 
 /**
@@ -15,22 +16,15 @@ data class ActionBean(
     /**每个action对应的描述title*/
     var title: String? = null,
 
-    /**界面识别所需要解析数据bean
-     * 是否需要当前事件[checkEvent]解析时的关键数据
-     * */
-    var event: List<ConstraintBean>? = null,
+    /**元素解析*/
+    var check: CheckBean? = null,
 
-    /**识别到界面到, 触发事件的解析数据结构
-     * 目中目标界面后[doAction]解析时的关键数据*/
-    var handle: List<ConstraintBean>? = null,
+    /**未指定[check]时, 可以通过[checkId]在[check]库中根据id查找对应的[CheckBean]*/
+    var checkId: Long = -1,
 
-    /**当这个界面需要被返回时, 点击关闭的数据解析结构. 如果这个值不为空, 那么次Action会被添加到拦截器的otherList
-     * 当[Action]被作为回退处理时[doActionWidth]解析时的关键数据*/
-    var back: List<ConstraintBean>? = null,
-
-    /**随机从[handle]列表中, 取出一个约束进行处理操作
-     * [actionMaxCount] 也会进行随机变化*/
-    var randomHandle: Boolean = false,
+    /**[handle]处理项的处理方式
+     * 默认: [HANDLE_TYPE_NONE] 匹配执行, 匹配到谁, 谁执行.*/
+    var handleType: Int = HANDLE_TYPE_NONE,
 
     /**默认当前页面检测x次, 都还不通过. 回退到上一步*/
     var rollbackCount: Int = 3,
@@ -39,19 +33,31 @@ data class ActionBean(
     var rollbackMaxCount: Int = 3,
 
     /**当前action执行完成后, 间隔多久执行下一个[Action]. 毫秒
-     * 格式[5000,500,5] 解释:5000+500*[1-5) */
+     * 格式[5000,500,5] 解释:5000+500*[1-5),
+     * null 表示设备性能对应的默认值*/
     var interval: String? = null,
 
-    /**当action执行次数大于此值时, 强制完成*/
+    /**允许[doAction]执行的最大次数, 超过后抛出异常*/
+    var actionMaxRunCount: Int = 50,
+
+    /**当action识别到并处理执行后的次数大于此值时, 强制完成*/
     var actionMaxCount: Int = -1
-)
+) {
+    companion object {
+        const val HANDLE_TYPE_NONE = 0 //匹配执行, 匹配到谁, 谁就执行
+        const val HANDLE_TYPE_RANDOM = 1 //随机执行
+        const val HANDLE_TYPE_ORDER = 2 //随机执行
+    }
+}
 
 /**转成可以用于执行的[AutoParseAction]*/
 fun ActionBean.toAction(packageName: String): AutoParseAction {
     return AutoParseAction().apply {
         title?.let { actionTitle = it }
-        rollbackCount = this@toAction.rollbackCount
-        rollbackMaxCount = this@toAction.rollbackMaxCount
+
+        doActionCount.maxCountLimit = this@toAction.actionMaxRunCount
+        checkEventOutCount.maxCountLimit = this@toAction.rollbackCount
+        rollbackCount.maxCountLimit = this@toAction.rollbackMaxCount
 
         actionBean = this@toAction
 

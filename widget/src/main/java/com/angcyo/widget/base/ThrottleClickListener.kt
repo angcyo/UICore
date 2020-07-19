@@ -10,12 +10,11 @@ import com.angcyo.widget.base.ThrottleClickListener.Companion.DEFAULT_THROTTLE_I
  * @date 2020/01/06
  */
 open class ThrottleClickListener(
+    val throttleInterval: Long = DEFAULT_THROTTLE_INTERVAL,
     val throttle: (lastTime: Long, nowTime: Long, view: View) -> Boolean = { lastTime, nowTime, _ ->
-        (nowTime - lastTime) < DEFAULT_THROTTLE_INTERVAL
+        (nowTime - lastTime) < throttleInterval
     },
-    val action: (View) -> Unit = {
-
-    }
+    val action: (View) -> Unit
 ) : View.OnClickListener {
 
     companion object {

@@ -3,6 +3,7 @@ package com.angcyo.core.component.accessibility
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.CallSuper
+import com.angcyo.core.component.accessibility.action.ActionCount
 import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.library.ex.simpleHash
 import kotlin.random.Random.Default.nextLong
@@ -24,19 +25,25 @@ abstract class BaseAccessibilityAction {
     var actionFinish: ((error: ActionException?) -> Unit)? = null
 
     /**[doAction]执行时的次数统计*/
-    var actionDoCount = 0
+    val doActionCount = ActionCount().apply {
+        maxCountLimit = 50
+    }
 
-    //[checkEvent]执行时的次数统计, 如果check的次数过多, 可以将action提到上一个级别
-    var _actionCheckOutCount = 0
+    /**[checkOtherEvent]执行次数统计*/
+    val checkOtherEventCount = ActionCount().apply {
+        maxCountLimit = 10
+    }
 
-    /**当[_actionCheckOutCount]大于一定值时, 回滚到上一步*/
-    var rollbackCount = -1
+    /**[onCheckEventOut]执行统计,无法识别到界面,同时又无法back处理
+     * 次数过多, 可以将[action]提到上一个级别*/
+    val checkEventOutCount = ActionCount().apply {
+        maxCountLimit = 3
+    }
 
-    //记录当前回滚的刺激
-    var _rollbackCount = 0
-
-    /**回滚x次后, 还是不通过, 则报错*/
-    var rollbackMaxCount: Int = -1
+    /**回滚次数统计*/
+    val rollbackCount = ActionCount().apply {
+        maxCountLimit = 3
+    }
 
     /**用于控制下一次[Action]检查执行的延迟时长, 毫秒. 负数表示使用[Interceptor]的默认值
      * 格式[5000,500,5] :5000+500*[1-5)
@@ -48,12 +55,23 @@ abstract class BaseAccessibilityAction {
 
     //<editor-fold desc="核心回调">
 
-    /**是否需要事件[event],返回true表示需要处理*/
+    /**是否需要事件[event],返回[true]表示需要处理*/
     open fun checkEvent(
         service: BaseAccessibilityService,
         event: AccessibilityEvent?,
         nodeList: List<AccessibilityNodeInfo>
     ): Boolean {
+        return false
+    }
+
+    /**当[checkEvent]没有处理时, 回调此方法进行一些处理.返回[true]表示处理了*/
+    @CallSuper
+    open fun checkOtherEvent(
+        service: BaseAccessibilityService,
+        event: AccessibilityEvent?,
+        nodeList: List<AccessibilityNodeInfo>
+    ): Boolean {
+        checkOtherEventCount.doCount()
         return false
     }
 
@@ -64,17 +82,23 @@ abstract class BaseAccessibilityAction {
         event: AccessibilityEvent?,
         nodeList: List<AccessibilityNodeInfo>
     ) {
-        _actionCheckOutCount++
 
-        if (rollbackCount in 1 until _actionCheckOutCount) {
-            accessibilityInterceptor?.apply {
-                actionIndex -= 1
-                _rollbackCount++
-            }
-            _actionCheckOutCount = 0
+        checkEventOutCount.doCount()
 
-            if (rollbackMaxCount in 1 until _rollbackCount) {
-                doActionFinish(ActionException("回滚次数[$_rollbackCount]超限[max:$rollbackMaxCount]"))
+        if (checkEventOutCount.isMaxLimit()) {
+            //界面检查超限, 开始回滚
+
+            if (rollbackCount.isMaxLimit()) {
+                //回滚超限
+                doActionFinish(ActionException("回滚次数[${rollbackCount.count}]超限[max:${rollbackCount.maxCountLimit}]"))
+            } else {
+                checkEventOutCount.clear()
+                rollbackCount.doCount()
+
+                //执行回滚
+                accessibilityInterceptor?.apply {
+                    actionIndex -= 1
+                }
             }
         }
     }
@@ -86,7 +110,12 @@ abstract class BaseAccessibilityAction {
         event: AccessibilityEvent?,
         nodeList: List<AccessibilityNodeInfo>
     ) {
-        actionDoCount++
+        checkOtherEventCount.clear()
+        doActionCount.doCount()
+
+        if (doActionCount.isMaxLimit()) {
+            doActionFinish(ActionException("[doAction]执行次数, 已达到最大限制:${doActionCount.maxCountLimit}"))
+        }
     }
 
     /**执行action来自其他action不需要处理, 返回true表示处理了事件*/
@@ -107,7 +136,7 @@ abstract class BaseAccessibilityAction {
 
     /**当前[Action]是否开始了*/
     open fun isActionStart(): Boolean {
-        return accessibilityInterceptor != null && actionDoCount > 0
+        return accessibilityInterceptor != null && doActionCount.count > 0
     }
 
     //</editor-fold desc="核心回调">
@@ -118,9 +147,11 @@ abstract class BaseAccessibilityAction {
         actionFinish?.invoke(error)
         actionFinish = null
         accessibilityInterceptor = null
-        actionDoCount = 0
-        _actionCheckOutCount = 0
-        _rollbackCount = 0
+
+        doActionCount.clear()
+        checkOtherEventCount.clear()
+        checkEventOutCount.clear()
+        rollbackCount.clear()
     }
 
     /**获取拦截器下一次间隔回调的时长*/
@@ -130,9 +161,11 @@ abstract class BaseAccessibilityAction {
             (accessibilityInterceptor?.initialIntervalDelay ?: -1L)
         } else {
             val split = interval.split(",")
-            val start = split.getOrNull(0)?.toLongOrNull() ?: 1000L
+            val start = split.getOrNull(0)?.toLongOrNull()
+                ?: (accessibilityInterceptor?.initialIntervalDelay
+                    ?: BaseAccessibilityInterceptor.defaultIntervalDelay)
             val base = split.getOrNull(1)?.toLongOrNull() ?: 500L
-            val factor = split.getOrNull(2)?.toLongOrNull() ?: 5
+            val factor = split.getOrNull(2)?.toLongOrNull() ?: 1
 
             start + base * nextLong(1, factor)
         }

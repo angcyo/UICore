@@ -7,6 +7,8 @@ import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityWindowInfo
+import com.angcyo.library.L
+import com.angcyo.library.ex.simpleHash
 import java.lang.ref.WeakReference
 
 /**
@@ -119,6 +121,7 @@ abstract class BaseAccessibilityService : AccessibilityService() {
     }
 
     override fun onKeyEvent(event: KeyEvent?): Boolean {
+        L.v("${this.simpleHash()} $event")
         return super.onKeyEvent(event)
     }
 

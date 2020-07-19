@@ -45,16 +45,18 @@ data class ConstraintBean(
      * [getText] 获取文本内容
      * [setText] 设置文本内容
      * [random] 随机执行
+     * ...参考下面的静态声明
      *
      * 空字符会进行随机操作.
      * null 默认是click操作
      * */
     var actionList: List<String>? = null,
 
-    /** 点赞任务, 评论的数据集合, 随机从里面取一个.
+    /**
+     * [setText]时的输入数据集合, 随机从里面取一个.
      * 如果为null, 则从代码中随机产生
      * */
-    var commentList: List<String>? = null,
+    var inputList: List<String>? = null,
 
     /**忽略此次[Action]操作的返回值, 不忽略的话, 如果action返回true, 则可能会执行[doActionFinish].
      * 忽略之后, 将不会判断[jump]
@@ -87,6 +89,7 @@ data class ConstraintBean(
      * [focused] 具备焦点状态
      * [unfocused] 具备无焦点状态
      * [finish] 直接完成操作
+     * ...参考下面的静态声明
      * */
     var stateList: List<String>? = null,
 
@@ -111,10 +114,13 @@ data class ConstraintBean(
         const val ACTION_MOVE = "move" //[move:10,10-100,100] 从屏幕坐标x=10dp y=10dp的地方移动到100dp 100dp的地方
         const val ACTION_FLING = "fling" //[fling:10,10-100,100]
         const val ACTION_BACK = "back" //执行返回操作
+        const val ACTION_HOME = "home" //回到桌面
         const val ACTION_GET_TEXT = "getText" //获取文本内容
-        const val ACTION_SET_TEXT = "setText" //设置文本内容
+        const val ACTION_SET_TEXT = "setText" //设置文本内容 [inputList]
         const val ACTION_RANDOM = "random" //随机执行, 空字符会进行随机操作.
         const val ACTION_FINISH = "finish" //直接完成操作
+        const val ACTION_START = "start" //[start:main]启动本机应用程序 [start:target]启动目标应用程序(空或null) [start:com.xxx.xxx]启动指定应用程序
+        const val ACTION_COPY = "copy" //复制文本 [inputList]
 
         //需要指定的状态 [state]
         const val STATE_CLICKABLE = "clickable" //具备可点击

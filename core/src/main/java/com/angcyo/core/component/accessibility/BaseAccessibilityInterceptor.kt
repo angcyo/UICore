@@ -8,15 +8,13 @@ import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.CallSuper
 import com.angcyo.core.component.accessibility.BaseAccessibilityInterceptor.Companion.defaultIntervalDelay
 import com.angcyo.core.component.accessibility.action.ActionException
+import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.action.PermissionsAction
 import com.angcyo.library.L
 import com.angcyo.library.component.dslNotify
 import com.angcyo.library.component.low
 import com.angcyo.library.component.single
-import com.angcyo.library.ex.nowTime
-import com.angcyo.library.ex.openApp
-import com.angcyo.library.ex.simpleHash
-import com.angcyo.library.ex.toElapsedTime
+import com.angcyo.library.ex.*
 import com.angcyo.library.utils.Device
 
 /**
@@ -47,11 +45,20 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         var defaultIntervalDelay: Long = -1
 
         init {
-            defaultIntervalDelay = when (Device.performanceLevel()) {
-                Device.PERFORMANCE_HIGH -> 1_500
-                Device.PERFORMANCE_MEDIUM -> 2_500
-                Device.PERFORMANCE_LOW -> 5_000
-                else -> 8_000
+            defaultIntervalDelay = if (isDebug()) {
+                when (Device.performanceLevel()) {
+                    Device.PERFORMANCE_HIGH -> 500
+                    Device.PERFORMANCE_MEDIUM -> 800
+                    Device.PERFORMANCE_LOW -> 1_500
+                    else -> 3_000
+                }
+            } else {
+                when (Device.performanceLevel()) {
+                    Device.PERFORMANCE_HIGH -> 1_500
+                    Device.PERFORMANCE_MEDIUM -> 2_500
+                    Device.PERFORMANCE_LOW -> 5_000
+                    else -> 8_000
+                }
             }
         }
     }
@@ -148,8 +155,8 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             //所有包名都需要
             handleFilterNode(service, findNodeInfoList)
         } else {
-            //需要处理的报名列表
-            val needNodeList = findNodeInfoList.filter(filterPackageNameList)
+            //需要处理包名对应节点的列表
+            val needNodeList = findNodeInfoList.filter(filterPackageNameList)//过滤后的应用程序节点列表
             val needMainPackageName = needNodeList.mainNode()?.packageName
 
             if (needNodeList.isEmpty()) {
@@ -172,11 +179,23 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     var _lastLeavePackageName: CharSequence? = null
 
     /**检查是否离开了界面*/
+    @CallSuper
     open fun checkLeave(
         service: BaseAccessibilityService,
         mainPackageName: CharSequence?,
         nodeList: List<AccessibilityNodeInfo>
     ): Boolean {
+
+        //检查当前的action,是否需要突破当前[interceptor]的包名限制
+        actionList.getOrNull(actionIndex)?.let {
+            if (it is AutoParseAction) {
+                val specifyPackageName = it.actionBean?.check?.packageName
+                if (specifyPackageName?.isEmpty() == true) {
+                    onDoAction(it, service, service.findNodeInfoList())
+                }
+            }
+        }
+
         return if (_lastLeavePackageName != mainPackageName) {
             val old = _lastLeavePackageName
             _lastLeavePackageName = mainPackageName
@@ -211,7 +230,24 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                     }
                     actionStatus = ACTION_STATUS_ING
                     actionList.getOrNull(actionIndex)?.let {
-                        onDoAction(it, service, nodeList)
+                        if (it is AutoParseAction) {
+                            val specifyPackageName = it.actionBean?.check?.packageName
+                            if (specifyPackageName.isNullOrEmpty()) {
+                                onDoAction(it, service, nodeList)
+                            } else {
+                                val findNodeInfoList = service.findNodeInfoList()
+                                val currentPackageName = findNodeInfoList.mainNode()?.packageName
+
+                                if (specifyPackageName == currentPackageName) {
+                                    //强制指定了要处理的包名
+                                    onDoAction(it, service, findNodeInfoList)
+                                } else {
+                                    L.w("指定处理的包名:$specifyPackageName 当前包名:$currentPackageName")
+                                }
+                            }
+                        } else {
+                            onDoAction(it, service, nodeList)
+                        }
                     }
                 }
             }
@@ -321,9 +357,10 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         }
 
         if (actionStatus != ACTION_STATUS_ING) {
+            actionIndex = 0
             actionStatus = ACTION_STATUS_ING
-            startInterval(intervalDelay)
             onDoActionStart()
+            startInterval(intervalDelay)
         }
     }
 
@@ -358,7 +395,10 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         }
     }
 
-    //执行当前的[action]
+    /**
+     * 执行当前的[action]
+     * [checkEvent]->[doAction]->[checkOtherEvent]->[doActionWidth]->[onCheckEventOut]
+     * */
     open fun onDoAction(
         action: BaseAccessibilityAction,
         service: BaseAccessibilityService,
@@ -378,6 +418,8 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                 }
             }
         }
+
+        //事件处理[checkEvent]->[checkOtherEvent]->[doActionWidth]->[onCheckEventOut]
         if (action.checkEvent(service, lastEvent, nodeList)) {
             //需要事件处理
             action.doAction(service, lastEvent, nodeList)
@@ -388,8 +430,10 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             } else {
                 initialIntervalDelay
             }
+        } else if (action.checkOtherEvent(service, lastEvent, nodeList)) {
+            //被other处理
         } else {
-            //不需要事件处理
+            //还是未处理的事件
             var handle = false
             actionOtherList.forEach {
                 handle = handle || it.doActionWidth(action, service, lastEvent, nodeList)

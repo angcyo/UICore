@@ -861,21 +861,33 @@ fun AccessibilityNodeInfoCompat.haveText(text: CharSequence, ignoreCase: Boolean
     val hintText = hintText
     val tooltipText = tooltipText
 
-    val tc: Boolean = thisText?.contains(text, ignoreCase) == true
-    val cdc: Boolean = contentDescription?.contains(text, ignoreCase) == true
-    val ptc: Boolean = paneTitle?.contains(text, ignoreCase) == true
-    val htc: Boolean = hintText?.contains(text, ignoreCase) == true
-    val ttc: Boolean = tooltipText?.contains(text, ignoreCase) == true
+//    val tc: Boolean = thisText?.contains(text, ignoreCase) == true
+//    val cdc: Boolean = contentDescription?.contains(text, ignoreCase) == true
+//    val ptc: Boolean = paneTitle?.contains(text, ignoreCase) == true
+//    val htc: Boolean = hintText?.contains(text, ignoreCase) == true
+//    val ttc: Boolean = tooltipText?.contains(text, ignoreCase) == true
 
-//    val regex = text.toString().toRegex()
-//
+//    return thisText?.contains(text, ignoreCase) == true ||
+//            contentDescription?.contains(text, ignoreCase) == true ||
+//            paneTitle?.contains(text, ignoreCase) == true ||
+//            hintText?.contains(text, ignoreCase) == true ||
+//            tooltipText?.contains(text, ignoreCase) == true
+
+    val regex = text.toString().toRegex()
+
 //    val tc: Boolean = thisText?.contains(regex) == true
 //    val cdc: Boolean = contentDescription?.contains(regex) == true
 //    val ptc: Boolean = paneTitle?.contains(regex) == true
 //    val htc: Boolean = hintText?.contains(regex) == true
 //    val ttc: Boolean = tooltipText?.contains(regex) == true
+//
+//    return tc || cdc || ptc || htc || ttc
 
-    return tc || cdc || ptc || htc || ttc
+    return thisText?.contains(regex) == true ||
+            contentDescription?.contains(regex) == true ||
+            paneTitle?.contains(regex) == true ||
+            hintText?.contains(regex) == true ||
+            tooltipText?.contains(regex) == true
 }
 
 /**返回[Node]在屏幕中的位置坐标*/

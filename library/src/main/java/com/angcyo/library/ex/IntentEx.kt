@@ -147,10 +147,15 @@ fun Context.openApp(
 
     if (intent == null) {
         L.w("packageName launch intent is null!")
-        return intent
+        return null
     }
 
-    startActivity(intent)
+    try {
+        startActivity(intent)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return null
+    }
     return intent
 }
 
