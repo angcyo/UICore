@@ -623,7 +623,7 @@ open class DslAdapterItem : LifecycleOwner {
     ) -> Boolean =
         { fromItem, newItem, _, _ ->
             when {
-                itemChanging -> false
+                itemChanging || newItem.itemChanging -> false
                 (newItem.itemData != null && this.itemData != null && newItem.itemData == this.itemData) -> true
                 fromItem == null -> this == newItem
                 else -> this != fromItem && this == newItem
