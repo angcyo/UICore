@@ -1,7 +1,6 @@
 package com.angcyo.core.component.accessibility.parse
 
 import com.angcyo.core.component.accessibility.back
-import com.angcyo.core.component.accessibility.rootNodeInfo
 
 /**
  * 参数严格的约束
@@ -14,7 +13,8 @@ data class ConstraintBean(
 
     /**约束的文本, 这个文本可以是对应的id, 或者node上的文本内容
      * 文本需要全部命中.
-     * 空字符会匹配[rootNodeInfo]
+     * null会匹配除[textList]约束的其他约束规则的node
+     * 空字符会匹配所有包含文本的node
      * */
     var textList: List<String>? = null,
 
@@ -101,7 +101,12 @@ data class ConstraintBean(
      * [>3] child第3个节点
      * [<4] 第4个parent
      * */
-    var pathList: List<String>? = null
+    var pathList: List<String>? = null,
+
+    /**当以上规则匹配到很多节点时, 挑出指定索引的节点执行[actionList]. 不指定默认所有节点
+     * index>=0, 正向取索引
+     * index<0, 倒数第几个*/
+    var handleNodeList: List<Int>? = null
 ) {
     companion object {
 
@@ -119,8 +124,12 @@ data class ConstraintBean(
         const val ACTION_SET_TEXT = "setText" //设置文本内容 [inputList]
         const val ACTION_RANDOM = "random" //随机执行, 空字符会进行随机操作.
         const val ACTION_FINISH = "finish" //直接完成操作
-        const val ACTION_START = "start" //[start:main]启动本机应用程序 [start:target]启动目标应用程序(空或null) [start:com.xxx.xxx]启动指定应用程序
+        const val ACTION_START = "start" //[start:com.xxx.xxx]启动应用程序 [:main]本机 [:target]目标(空或null)
         const val ACTION_COPY = "copy" //复制文本 [inputList]
+        const val ACTION_KEY = "key" //发送按键事件[key:66] KEYCODE_ENTER=66 发送回车按键. (test)
+        const val ACTION_FOCUS = "focus" //请求焦点
+        const val ACTION_SCROLL_FORWARD = "scrollForward" //向前滚动
+        const val ACTION_SCROLL_BACKWARD = "scrollBackward" //向后滚动
 
         //需要指定的状态 [state]
         const val STATE_CLICKABLE = "clickable" //具备可点击
@@ -130,5 +139,6 @@ data class ConstraintBean(
         const val STATE_UNFOCUSED = "unfocused" //具备选未中状态
         const val STATE_SELECTED = "selected" //具备选中状态
         const val STATE_UNSELECTED = "unselected" //具备选未中状态
+        const val STATE_SCROLLABLE = "scrollable" //具备可滚动状态
     }
 }

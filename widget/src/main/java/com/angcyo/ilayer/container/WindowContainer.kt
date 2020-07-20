@@ -79,7 +79,9 @@ class WindowContainer(context: Context) : BaseContainer(context) {
 
     override fun onRemoveRootView(layer: ILayer, rootView: View) {
         try {
-            wm.removeView(rootView)
+            if (rootView.parent != null) {
+                wm.removeView(rootView)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -88,7 +90,9 @@ class WindowContainer(context: Context) : BaseContainer(context) {
     fun updateLayout(layer: ILayer) {
         try {
             val rootView = layer._rootView ?: return
-            wm.updateViewLayout(rootView, wmLayoutParams)
+            if (rootView.parent != null) {
+                wm.updateViewLayout(rootView, wmLayoutParams)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }

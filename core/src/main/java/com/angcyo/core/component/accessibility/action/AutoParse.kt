@@ -66,30 +66,53 @@ open class AutoParse {
     ): List<AccessibilityNodeInfoCompat> {
         val rootNodeInfo: AccessibilityNodeInfo = nodeList.mainNode() ?: return result
 
+        //存储一下跟node的矩形, 方便用于坐标比例计算
         rootNodeInfo.getBoundsInScreen(_rootNodeRect)
 
+        //需要匹配的文本
         val text: List<String>? = constraintBean.textList
 
-        if (text.isListEmpty()) {
-            return result
-        }
-        val packageName: String = idPackageName ?: service.packageName
-
+        //根节点
         val rootNodeWrap: AccessibilityNodeInfoCompat = rootNodeInfo.wrap()
 
+        if (text == null) {
+            //不约束文本, 单纯约束其他规则
+            rootNodeWrap.unwrap().findNode(result) { nodeInfoCompat ->
+                if (match(constraintBean, nodeInfoCompat, 0)) {
+                    if (!constraintBean.pathList.isNullOrEmpty()) {
+                        parseConstraintPath(
+                            constraintBean,
+                            constraintBean.pathList?.getOrNull(0),
+                            nodeInfoCompat,
+                            result
+                        )
+                        -1
+                    } else {
+                        1
+                    }
+                } else {
+                    -1
+                }
+            }
+            return result
+        }
+
+        val packageName: String = idPackageName ?: service.packageName
+
+        //临时存储node
         var tempList: MutableList<AccessibilityNodeInfoCompat>
 
         //列表中的所有文本是否都匹配通过
         val matchMap = ArrayMap<Int, List<AccessibilityNodeInfoCompat>>()
-        for (index: Int in text!!.indices) {
+        for (index: Int in text.indices) {
             tempList = mutableListOf()
             try {
 
                 //完整id 是需要包含包名的
                 val isIdText: Boolean = constraintBean.idList?.getOrNull(index) == 1
-                val subText: String = if (isIdText) packageName.id(text[index]) else text[index]
+                val subText: String? = if (isIdText) packageName.id(text[index]) else text[index]
 
-                if (!isIdText && subText.isEmpty()) {
+                if (!isIdText && subText == null) {
                     //text匹配模式下, 空字符串处理
                     tempList.add(rootNodeWrap)
                     matchMap[index] = tempList
@@ -106,7 +129,7 @@ open class AutoParse {
                             }
                         } else {
                             //文本包含匹配
-                            findNode = if (nodeInfoCompat.haveText(subText)) {
+                            findNode = if (nodeInfoCompat.haveText(subText ?: "")) {
                                 1
                             } else {
                                 -1
@@ -171,7 +194,7 @@ open class AutoParse {
     open fun match(
         constraintBean: ConstraintBean,
         node: AccessibilityNodeInfoCompat,
-        index: Int
+        index: Int /*对应text中的索引*/
     ): Boolean {
         val cls = constraintBean.clsList?.getOrNull(index)
         val rect = constraintBean.rectList?.getOrNull(index)
@@ -179,7 +202,9 @@ open class AutoParse {
         //是否匹配成功
         var result = false
 
-        if (!cls.isNullOrEmpty() && !cls.contains(node.className)) {
+        if (!cls.isNullOrEmpty() /*指定了匹配类名*/ &&
+            node.className?.contains(cls.toString().toRegex()) != true /*类名匹配未命中*/
+        ) {
             //但是类名不同
             result = false
         } else {
@@ -241,9 +266,9 @@ open class AutoParse {
         //状态约束
         if (result) {
             val state = constraintBean.stateList
-            if (!state.isListEmpty()) {
+            if (state != null && !state.isListEmpty()) {
                 var match = true
-                state!!.forEach {
+                state.forEach {
                     when (it) {
                         ConstraintBean.STATE_CLICKABLE -> {
                             //需要具备可以点击的状态
@@ -284,6 +309,12 @@ open class AutoParse {
                         ConstraintBean.STATE_UNSELECTED -> {
                             //需要具备不选中状态
                             if (node.isSelected) {
+                                match = false
+                            }
+                        }
+                        ConstraintBean.STATE_SCROLLABLE -> {
+                            //需要具备可滚动状态
+                            if (!node.isScrollable) {
                                 match = false
                             }
                         }

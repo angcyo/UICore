@@ -1,12 +1,16 @@
 package com.angcyo.core.component.accessibility.action
 
+import android.app.Instrumentation
 import android.graphics.PointF
+import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
 import com.angcyo.core.component.accessibility.parse.ActionBean
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
+import com.angcyo.http.rx.doBack
+import com.angcyo.library.L
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.*
@@ -227,8 +231,26 @@ open class AutoParseAction : BaseAccessibilityAction() {
         //此次执行成功后, 是否要跳过后面的执行
         var jumpNextHandleAction: Boolean = constraintBean.jump
 
+        //过滤需要处理的节点列表
+        val handleNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
+        if (constraintBean.handleNodeList.isListEmpty()) {
+            handleNodeList.addAll(nodeList)
+        } else {
+            constraintBean.handleNodeList?.forEach {
+                if (it >= 0) {
+                    nodeList.getOrNull(it)?.let { node ->
+                        handleNodeList.add(node)
+                    }
+                } else {
+                    nodeList.getOrNull(nodeList.size + it)?.let { node ->
+                        handleNodeList.add(node)
+                    }
+                }
+            }
+        }
+
         if (actionList.isListEmpty()) {
-            result = nodeList.clickAll {
+            result = handleNodeList.clickAll {
                 handleActionLog(buildString {
                     append("点击[")
                     it.logText(this)
@@ -277,19 +299,21 @@ open class AutoParseAction : BaseAccessibilityAction() {
                         e.printStackTrace()
                     }
 
+                    handleActionLog("即将执行[${action}](${arg})")
+
                     //执行对应操作
                     result = result || when (action) {
                         ConstraintBean.ACTION_CLICK -> {
                             var value = false
-                            nodeList.forEach {
+                            handleNodeList.forEach {
                                 value = value || it.getClickParent()?.click() ?: false
                             }
-                            handleActionLog("点击节点[${nodeList.firstOrNull()?.text()}]:$value")
+                            handleActionLog("点击节点[${handleNodeList.firstOrNull()?.text()}]:$value")
                             value
                         }
                         ConstraintBean.ACTION_CLICK2 -> {
                             var value = false
-                            nodeList.forEach {
+                            handleNodeList.forEach {
                                 val bound = it.bounds()
                                 value = value || service.gesture.double(
                                     bound.centerX().toFloat(),
@@ -297,15 +321,17 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                     null
                                 )
                             }
-                            handleActionLog("双击节点区域[${nodeList.firstOrNull()?.bounds()}]:$value")
+                            handleActionLog(
+                                "双击节点区域[${handleNodeList.firstOrNull()?.bounds()}]:$value"
+                            )
                             value
                         }
                         ConstraintBean.ACTION_LONG_CLICK -> {
                             var value = false
-                            nodeList.forEach {
+                            handleNodeList.forEach {
                                 value = value || it.getLongClickParent()?.longClick() ?: false
                             }
-                            handleActionLog("长按节点[${nodeList.firstOrNull()}]:$value")
+                            handleActionLog("长按节点[${handleNodeList.firstOrNull()}]:$value")
                             value
                         }
                         ConstraintBean.ACTION_DOUBLE -> service.gesture.double(p1.x, p1.y, null)
@@ -336,8 +362,26 @@ open class AutoParseAction : BaseAccessibilityAction() {
                         ConstraintBean.ACTION_HOME -> service.home().apply {
                             handleActionLog("回到桌面:$this")
                         }
+                        ConstraintBean.ACTION_SCROLL_BACKWARD -> {
+                            //如果滚动到头部了, 会滚动失败
+                            var value = false
+                            handleNodeList.forEach {
+                                value = value || it.scrollBackward()
+                            }
+                            handleActionLog("向后滚动:$value")
+                            value
+                        }
+                        ConstraintBean.ACTION_SCROLL_FORWARD -> {
+                            //如果滚动到底了, 会滚动失败
+                            var value = false
+                            handleNodeList.forEach {
+                                value = value || it.scrollForward()
+                            }
+                            handleActionLog("向前滚动:$value")
+                            value
+                        }
                         ConstraintBean.ACTION_GET_TEXT -> {
-                            nodeList.forEach {
+                            handleNodeList.forEach {
                                 it.text()?.apply {
                                     getTextResultList.add(this)
                                 }
@@ -351,7 +395,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             //执行set text时的文本
                             val text = getInputText(constraintBean)
 
-                            nodeList.forEach {
+                            handleNodeList.forEach {
                                 value = value || it.setNodeText(text)
                             }
 
@@ -386,6 +430,35 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             handleActionLog("复制文本[$text]:$value")
                             value
                         }
+                        ConstraintBean.ACTION_KEY -> {
+                            var value = false
+
+                            val keyCode = arg?.toIntOrNull() ?: -1
+                            val keyCodeStr = KeyEvent.keyCodeToString(keyCode)
+
+                            if (keyCode > 0) {
+                                doBack {
+                                    try {
+                                        val inst = Instrumentation()
+                                        inst.sendKeyDownUpSync(keyCode)
+                                    } catch (e: Exception) {
+                                        AccessibilityHelper.log("Exception when sendKeyDownUpSync $keyCodeStr :$e")
+                                        e.printStackTrace()
+                                    }
+                                }
+                                value = true
+                            }
+
+                            handleActionLog("发送按键[$keyCodeStr]:$value")
+                            value
+                        }
+                        ConstraintBean.ACTION_FOCUS -> {
+                            var value = false
+                            handleNodeList.forEach {
+                                value = value || it.focus()
+                            }
+                            value
+                        }
                         else -> service.gesture.click().apply {
                             handleActionLog("默认点击:$this")
                         }
@@ -412,6 +485,12 @@ open class AutoParseAction : BaseAccessibilityAction() {
         }
 
         return result to jumpNextHandleAction
+    }
+
+    /**一些处理日志*/
+    open fun handleActionLog(charSequence: CharSequence) {
+        L.d(charSequence)
+        onLogPrint?.invoke(charSequence)
     }
 
     /** 从参数中, 解析设置的点位信息
@@ -471,11 +550,6 @@ open class AutoParseAction : BaseAccessibilityAction() {
             inputList!!.getOrNull(nextInt(0, inputList.size))
         }
         return text
-    }
-
-    /**一些处理日志*/
-    open fun handleActionLog(charSequence: CharSequence) {
-        onLogPrint?.invoke(charSequence)
     }
 }
 

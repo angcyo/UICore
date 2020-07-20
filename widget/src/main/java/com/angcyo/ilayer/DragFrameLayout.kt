@@ -7,7 +7,11 @@ import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.widget.FrameLayout
 import androidx.annotation.CallSuper
+import com.angcyo.library.L
+import com.angcyo.library._screenHeight
+import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.abs
+import com.angcyo.library.ex.simpleHash
 import com.angcyo.widget.base.isTouchFinish
 
 /**
@@ -116,6 +120,8 @@ class DragFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
                         dragAction?.invoke(dx, dy, false)
                     }
                 }
+
+                L.v("${simpleHash()} ${parent.simpleHash()} [$eventX,$eventY](${eventX * 1f / _screenWidth},${eventY * 1f / _screenHeight}) [${event.x},${event.y}]")
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 removeLongPressRunnable()

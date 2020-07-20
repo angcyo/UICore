@@ -22,6 +22,7 @@ import com.angcyo.core.component.accessibility.AccessibilityHelper.tempRect
 import com.angcyo.covertToStr
 import com.angcyo.http.RIo
 import com.angcyo.library.L
+import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.className
 import com.angcyo.library.ex.copy
 
@@ -523,6 +524,10 @@ fun AccessibilityNodeInfo.click() = performAction(AccessibilityNodeInfo.ACTION_C
 /**获取焦点*/
 fun AccessibilityNodeInfo.focus() = performAction(AccessibilityNodeInfo.ACTION_FOCUS)
 
+/**[ACTION_ACCESSIBILITY_FOCUS]*/
+fun AccessibilityNodeInfo.accessibilityFocus() =
+    performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)
+
 fun AccessibilityNodeInfo.longClick() = performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)
 
 fun AccessibilityNodeInfo.setNodeText(text: CharSequence?): Boolean {
@@ -1002,7 +1007,7 @@ fun AccessibilityNodeInfoCompat.getParentOrChildNode(index: Int): AccessibilityN
     }
 
     var target: AccessibilityNodeInfoCompat? = this
-    for (i in 1..index) {
+    for (i in 1..index.abs()) {
         target = target?.parent
     }
     return target
