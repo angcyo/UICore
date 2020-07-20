@@ -3,6 +3,7 @@ package com.angcyo.widget.edit
 import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.text.TextUtils
 import android.text.method.PasswordTransformationMethod
 import android.util.AttributeSet
@@ -165,29 +166,34 @@ class REditDelegate(editText: EditText) : FocusEditDelegate(editText) {
             //(无效) 能阻止长按弹出粘贴, 但是阻止不了点击手柄弹出的粘贴
             editText.isLongClickable = false
             editText.setTextIsSelectable(false)
-            TextViewCompat.setCustomSelectionActionModeCallback(
-                editText,
-                object : ActionMode.Callback2() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                TextViewCompat.setCustomSelectionActionModeCallback(
+                    editText,
+                    object : ActionMode.Callback2() {
 
-                    override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                        L.i("$mode : $menu")
-                        return false
-                    }
+                        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                            L.i("$mode : $menu")
+                            return false
+                        }
 
-                    override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                        L.i("$mode : $menu")
-                        return false
-                    }
+                        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                            L.i("$mode : $menu")
+                            return false
+                        }
 
-                    override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-                        L.i("$mode : $item")
-                        return false
-                    }
+                        override fun onActionItemClicked(
+                            mode: ActionMode?,
+                            item: MenuItem?
+                        ): Boolean {
+                            L.i("$mode : $item")
+                            return false
+                        }
 
-                    override fun onDestroyActionMode(mode: ActionMode?) {
-                        L.i("$mode ")
-                    }
-                })
+                        override fun onDestroyActionMode(mode: ActionMode?) {
+                            L.i("$mode ")
+                        }
+                    })
+            }
         }
     }
 
