@@ -19,6 +19,7 @@ import java.lang.reflect.Type
 
 /**
  * 网络请求库
+ * https://www.jianshu.com/p/865e9ae667a0
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/12/25
@@ -47,6 +48,15 @@ interface Api {
         @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Observable<Response<ResponseBody>>
+
+    /**application/x-www-form-urlencoded MIME类型*/
+    @POST
+    @FormUrlEncoded
+    fun postForm(
+        @Url url: String,
+        @FieldMap formMap: HashMap<String, Any> = hashMapOf(),
+        @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
+    ): Observable<Response<JsonElement>>
 
     /*------------以下是[GET]请求-----------------*/
 
@@ -222,6 +232,13 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
                 requestConfig.url,
                 requestConfig.body,
                 requestConfig.query,
+                requestConfig.header
+            )
+        }
+        POST_FORM -> {
+            dslHttp(Api::class.java).postForm(
+                requestConfig.url,
+                requestConfig.formMap,
                 requestConfig.header
             )
         }
@@ -502,6 +519,7 @@ inline fun <reified Bean> Response<JsonElement>.toBean(parseError: Boolean = fal
 const val GET = 1
 const val POST = 2
 const val PUT = 3
+const val POST_FORM = 22
 
 open class BaseRequestConfig {
     //请求方法
@@ -518,6 +536,9 @@ open class BaseRequestConfig {
 
     //url后面拼接的参数列表
     var query: HashMap<String, Any> = hashMapOf()
+
+    //表单格式请求数据 method使用[POST_FORM]
+    var formMap: HashMap<String, Any> = hashMapOf()
 
     //请求头
     var header: HashMap<String, String> = hashMapOf()
