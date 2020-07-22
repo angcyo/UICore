@@ -6,6 +6,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.Proxy
 import java.util.concurrent.TimeUnit
 
 /**
@@ -31,6 +32,7 @@ class DslHttpConfig {
         connectTimeout(TIME_OUT, TimeUnit.SECONDS)
         readTimeout(TIME_OUT, TimeUnit.SECONDS)
         writeTimeout(TIME_OUT, TimeUnit.SECONDS)
+        proxy(Proxy.NO_PROXY)
         followRedirects(true)
         followSslRedirects(true)
         addInterceptor(LogInterceptor())
