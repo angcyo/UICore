@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/lib_tran_round_common_shape"
+    android:padding="@dimen/lib_sdpi">
+
+    <FrameLayout
+        android:id="@+id/wrap_layout"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <com.angcyo.widget.progress.CircleLoadingView
+            android:id="@+id/progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:r_circle_load_draw_bg="true"
+            app:r_circle_load_draw_bg_color="@color/transparent40"
+            app:r_circle_load_is_indeterminate="false"
+            app:r_circle_load_start_angle="-90"
+            tools:r_circle_load_progress="50" />
+
+        <TextView
+            android:id="@+id/text_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="2dp"
+            android:textColor="@color/lib_white"
+            android:textSize="11dp"
+            tools:text="99/99" />
+
+    </FrameLayout>
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/summary_text_view"
+        style="@style/LibPlaceTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lib_ldpi"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/wrap_layout"
+        tools:text="提示提示提示"
+        tools:visibility="visible" />
+
+    <com.angcyo.widget.DslButton
+        android:id="@+id/catch_button"
+        style="@style/DefaultButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lib_hdpi"
+        android:text="捕捉"
+        app:button_press_gradient_colors=""
+        app:button_press_stroke_color="@color/colorAccent"
+        app:button_press_stroke_width="@dimen/lib_line"
+        app:button_press_text_color="@color/colorAccent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/summary_text_view"
+        tools:visibility="visible" />
+
+    <com.angcyo.widget.DslButton
+        android:id="@+id/test_button"
+        style="@style/DefaultButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lib_hdpi"
+        android:text="Test"
+        android:visibility="gone"
+        app:button_press_gradient_colors=""
+        app:button_press_stroke_color="@color/colorAccent"
+        app:button_press_stroke_width="@dimen/lib_line"
+        app:button_press_text_color="@color/colorAccent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/catch_button"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,6 +16,9 @@ data class ActionBean(
     /**每个action对应的描述title*/
     var title: String? = null,
 
+    /**每个action对应的描述概要, 多用于浮窗提示*/
+    var summary: String? = null,
+
     /**元素解析*/
     var check: CheckBean? = null,
 

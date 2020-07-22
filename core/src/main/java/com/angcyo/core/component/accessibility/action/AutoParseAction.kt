@@ -32,11 +32,17 @@ open class AutoParseAction : BaseAccessibilityAction() {
     /**如果是获取文本的任务, 那么多获取到文本时, 触发的回调*/
     var onGetTextResult: ((List<CharSequence>) -> Unit)? = null
 
+    /**根据给定的[wordInputIndexList] [wordTextIndexList]返回对应的文本信息*/
+    var onGetWordTextListAction: ((List<Int>) -> List<String>?)? = null
+
     /**需要执行的[Action]描述*/
     var actionBean: ActionBean? = null
 
     /**解析核心*/
     var autoParse: AutoParse = AutoParse()
+
+    /**获取到的文本, 临时存储*/
+    var getTextList: MutableList<CharSequence>? = null
 
     override fun doActionFinish(error: ActionException?) {
         onLogPrint = null
@@ -54,7 +60,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             doActionFinish(ActionException("eventConstraint is null."))
             return false
         }
-        return autoParse.parse(service, nodeList, constraintList)
+        return autoParse.parse(service, this, nodeList, constraintList)
     }
 
     override fun checkOtherEvent(
@@ -72,7 +78,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         //执行对应的action操作
         var result = false
 
-        autoParse.parse(service, nodeList, constraintList) {
+        autoParse.parse(service, this, nodeList, constraintList) {
             for (pair in it) {
 
                 //执行action
@@ -122,7 +128,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             //执行对应的action操作
             var result = false
 
-            autoParse.parse(service, nodeList, handleConstraintList) {
+            autoParse.parse(service, this, nodeList, handleConstraintList) {
 
                 for (pair in it) {
 
@@ -167,6 +173,13 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
     /**[getText]动作获取到的文本列表*/
     fun handleGetTextResult(textList: List<CharSequence>) {
+        if (getTextList == null) {
+            getTextList = mutableListOf()
+        }
+
+        getTextList?.clear()
+        getTextList?.addAll(textList)
+
         onGetTextResult?.invoke(textList)
     }
 
@@ -183,7 +196,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             //执行操作
             fun handle(): Boolean {
                 var result = false
-                autoParse.parse(service, nodeList, constraintList) {
+                autoParse.parse(service, this, nodeList, constraintList) {
                     it.forEach { pair ->
                         result = result || handleAction(service, pair.first, pair.second).first
                     }
@@ -199,7 +212,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 result = handle()
             } else {
                 //匹配当前界面, 匹配成功后, 再处理
-                if (autoParse.parse(service, nodeList, eventConstraintList)) {
+                if (autoParse.parse(service, this, nodeList, eventConstraintList)) {
                     //匹配成功
                     result = handle()
                 }
@@ -299,7 +312,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
                         e.printStackTrace()
                     }
 
-                    handleActionLog("即将执行[${action}](${arg})")
+                    //操作执行提示
+                    handleActionLog("即将执行[${action}${if (arg == null) "" else ":${arg}"}]")
 
                     //执行对应操作
                     result = result || when (action) {
@@ -542,7 +556,12 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
     /**获取需要输入的文本,需要复制的文本*/
     fun getInputText(constraintBean: ConstraintBean): String? {
-        val inputList = constraintBean.inputList
+        val inputList: List<String>? = if (constraintBean.wordInputIndexList != null) {
+            onGetWordTextListAction?.invoke(constraintBean.wordInputIndexList!!)
+        } else {
+            constraintBean.inputList
+        }
+
         val text = if (inputList.isListEmpty()) {
             //随机产生文本
             randomString()
@@ -550,6 +569,16 @@ open class AutoParseAction : BaseAccessibilityAction() {
             inputList!!.getOrNull(nextInt(0, inputList.size))
         }
         return text
+    }
+
+    /**获取[textList]*/
+    fun getTextList(constraintBean: ConstraintBean): List<String>? {
+        val inputList: List<String>? = if (constraintBean.wordTextIndexList != null) {
+            onGetWordTextListAction?.invoke(constraintBean.wordTextIndexList!!)
+        } else {
+            constraintBean.textList
+        }
+        return inputList
     }
 }
 

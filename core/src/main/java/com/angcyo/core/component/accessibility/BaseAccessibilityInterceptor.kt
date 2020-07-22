@@ -10,6 +10,7 @@ import com.angcyo.core.component.accessibility.BaseAccessibilityInterceptor.Comp
 import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.action.PermissionsAction
+import com.angcyo.core.component.accessibility.parse.ActionBean
 import com.angcyo.library.L
 import com.angcyo.library.component.dslNotify
 import com.angcyo.library.component.low
@@ -27,20 +28,12 @@ import com.angcyo.library.utils.Device
 abstract class BaseAccessibilityInterceptor : Runnable {
 
     companion object {
-        //初始化
-        const val ACTION_STATUS_INIT = 1
 
-        //进行中
-        const val ACTION_STATUS_ING = 2
-
-        //完成
-        const val ACTION_STATUS_FINISH = 3
-
-        //错误
-        const val ACTION_STATUS_ERROR = 10
-
-        //销毁
-        const val ACTION_STATUS_DESTROY = 11
+        const val ACTION_STATUS_INIT = 1     //初始化
+        const val ACTION_STATUS_ING = 2      //进行中
+        const val ACTION_STATUS_FINISH = 3   //完成
+        const val ACTION_STATUS_ERROR = 10   //错误
+        const val ACTION_STATUS_DESTROY = 11 //销毁
 
         var defaultIntervalDelay: Long = -1
 
@@ -106,6 +99,10 @@ abstract class BaseAccessibilityInterceptor : Runnable {
 
     /**间隔回调周期, 根据手机性能自动调整*/
     var intervalDelay: Long = -1
+
+    /**当无法处理[AccessibilityEvent]时*/
+    var onNoOtherEventHandleAction: ((service: BaseAccessibilityService, mainNode: AccessibilityNodeInfo) -> Unit)? =
+        null
 
     init {
         initialIntervalDelay = defaultIntervalDelay
@@ -178,6 +175,12 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     //最后一次离开前的程序
     var _lastLeavePackageName: CharSequence? = null
 
+    /**当前正在执行的[ActionBean]*/
+    val currentAccessibilityAction: BaseAccessibilityAction?
+        get() = actionList.getOrNull(
+            actionIndex
+        )
+
     /**检查是否离开了界面*/
     @CallSuper
     open fun checkLeave(
@@ -187,7 +190,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     ): Boolean {
 
         //检查当前的action,是否需要突破当前[interceptor]的包名限制
-        actionList.getOrNull(actionIndex)?.let {
+        currentAccessibilityAction?.let {
             if (it is AutoParseAction) {
                 val specifyPackageName = it.actionBean?.check?.packageName
                 if (specifyPackageName?.isEmpty() == true) {
@@ -229,7 +232,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                         onDoActionStart()
                     }
                     actionStatus = ACTION_STATUS_ING
-                    actionList.getOrNull(actionIndex)?.let {
+                    currentAccessibilityAction?.let {
                         if (it is AutoParseAction) {
                             val specifyPackageName = it.actionBean?.check?.packageName
                             if (specifyPackageName.isNullOrEmpty()) {
@@ -444,6 +447,14 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                 onNoOtherActionHandle(action, service, lastEvent, nodeList)
             }
         }
+
+        nodeList.forEach {
+            try {
+                it.recycle()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     /**下一个[Action]*/
@@ -466,6 +477,16 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         event: AccessibilityEvent?,
         nodeList: List<AccessibilityNodeInfo>
     ) {
+
+        if (onNoOtherEventHandleAction != null) {
+            val mainNode = nodeList.mainNode()
+            L.e("无法识别的界面:$mainNode")
+
+            mainNode?.let {
+                onNoOtherEventHandleAction?.invoke(service, mainNode)
+            }
+        }
+
         if (event != null) {
             L.d("\n${this.simpleHash()} [$actionIndex] 无Action能处理! 包名:${event.packageName} 类名:${event.className} type:${event.eventTypeStr()} type2:${event.contentChangeTypesStr()}")
         } else {

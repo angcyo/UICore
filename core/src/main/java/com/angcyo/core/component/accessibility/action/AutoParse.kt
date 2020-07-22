@@ -29,6 +29,7 @@ open class AutoParse {
      * */
     open fun parse(
         service: AccessibilityService,
+        autoParseAction: AutoParseAction,
         nodeList: List<AccessibilityNodeInfo>,
         constraintList: List<ConstraintBean>,
         onTargetResult: (List<Pair<ConstraintBean, List<AccessibilityNodeInfoCompat>>>) -> Unit = {}
@@ -40,7 +41,7 @@ open class AutoParse {
         var targetList: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
 
         constraintList.forEach { constraint ->
-            findConstraintNode(constraint, targetList, service, nodeList)
+            findConstraintNode(autoParseAction, constraint, targetList, service, nodeList)
             if (targetList.isNotEmpty()) {
                 result.add(constraint to targetList)
                 targetList = mutableListOf()
@@ -59,6 +60,7 @@ open class AutoParse {
 
     /**查找满足约束的Node*/
     open fun findConstraintNode(
+        autoParseAction: AutoParseAction,
         constraintBean: ConstraintBean,
         result: MutableList<AccessibilityNodeInfoCompat> = mutableListOf(),
         service: AccessibilityService,
@@ -70,7 +72,7 @@ open class AutoParse {
         rootNodeInfo.getBoundsInScreen(_rootNodeRect)
 
         //需要匹配的文本
-        val text: List<String>? = constraintBean.textList
+        val text: List<String>? = autoParseAction.getTextList(constraintBean)
 
         //根节点
         val rootNodeWrap: AccessibilityNodeInfoCompat = rootNodeInfo.wrap()

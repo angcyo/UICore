@@ -19,6 +19,11 @@ data class ConstraintBean(
     var textList: List<String>? = null,
 
     /**
+     * [textList]优先从[wordList]集合中取值.
+     * */
+    var wordTextIndexList: List<Int>? = null,
+
+    /**
      * 上述[textList]字段, 对应的是否是id, 否则就是文本.一一对应的关系.
      * 可以是 完整的id, 也可以是 gj4.
      * 完整的id应该是: com.ss.android.ugc.aweme:id/gj4
@@ -57,6 +62,12 @@ data class ConstraintBean(
      * 如果为null, 则从代码中随机产生
      * */
     var inputList: List<String>? = null,
+
+    /**
+     * [setText]时的输入数据在[wordList]集合的索引集合, 随机从里面取一个.
+     * 如果为null, 则从[inputList]读取. 如果[inputList]也为null, 则从代码中随机产生
+     * */
+    var wordInputIndexList: List<Int>? = null,
 
     /**忽略此次[Action]操作的返回值, 不忽略的话, 如果action返回true, 则可能会执行[doActionFinish].
      * 忽略之后, 将不会判断[jump]
