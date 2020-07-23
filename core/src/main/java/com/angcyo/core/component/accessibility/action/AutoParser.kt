@@ -8,6 +8,8 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
 import com.angcyo.library.ex.isListEmpty
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * 解析处理
@@ -16,7 +18,79 @@ import com.angcyo.library.ex.isListEmpty
  * @date 2020/07/08
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-open class AutoParse {
+open class AutoParser {
+
+    companion object {
+
+        /**
+         * [textList]优先从[wordList]集合中取值.
+         * 支持表达式:
+         * $N $0将会替换为[wordList]索引为0的值.最大支持10000
+         * 1-4 取索引为[1-4]的值
+         * 0--1 取索引为[0-倒数第1个]的值
+         * -1 取倒数第1个的值
+         * */
+        fun parseWordTextList(originList: List<String>?, indexList: List<String>): List<String>? {
+            if (originList.isListEmpty()) {
+                return null
+            }
+
+            val originList = originList!!
+
+            val result = mutableListOf<String>()
+            indexList.forEach { indexStr ->
+                if (indexStr.contains("$")) {
+                    //匹配 $表达式
+
+                    var target: String? = null
+                    for (i in 0..1_00_00) {
+                        val pattern = "$$i"
+                        if (indexStr.contains(pattern)) {
+                            target =
+                                (target ?: indexStr)
+                                    .replace(pattern, originList.getOrNull(i) ?: "")
+                        }
+                    }
+                    target?.let { result.add(it) }
+                } else {
+                    val num = indexStr.toIntOrNull()
+
+                    if (num == null) {
+                        //匹配 [1-4] 范围
+
+                        val indexOf = indexStr.indexOf("-")
+                        if (indexOf != -1) {
+                            val startIndex = indexStr.substring(0, indexOf).toIntOrNull() ?: 0
+                            val endIndex =
+                                indexStr.substring(indexOf + 1, indexStr.length).toIntOrNull() ?: 0
+
+                            val fist =
+                                if (startIndex < 0) startIndex + originList.size else startIndex
+                            val second =
+                                if (endIndex < 0) endIndex + originList.size else endIndex
+
+                            for (i in min(fist, second)..max(fist, second)) {
+                                originList.getOrNull(i)?.let {
+                                    result.add(indexStr)
+                                }
+                            }
+                        }
+                    } else {
+                        // 匹配 1, -1 索引
+                        originList.getOrNull(if (num < 0) num + originList.size else num)?.let {
+                            result.add(indexStr)
+                        }
+                    }
+                }
+            }
+            //返回
+            return if (result.isEmpty()) {
+                null
+            } else {
+                result
+            }
+        }
+    }
 
     /**解析id时, 需要补全的id全路径包名*/
     var idPackageName: String? = null

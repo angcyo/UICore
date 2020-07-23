@@ -20,8 +20,13 @@ data class ConstraintBean(
 
     /**
      * [textList]优先从[wordList]集合中取值.
+     * 支持表达式:
+     * $N $0将会替换为[wordList]索引为0的值.最大支持10000
+     * 1-4 取索引为[1-4]的值
+     * 0--1 取索引为[0-倒数第1个]的值
+     * -1 取倒数第1个的值
      * */
-    var wordTextIndexList: List<Int>? = null,
+    var wordTextIndexList: List<String>? = null,
 
     /**
      * 上述[textList]字段, 对应的是否是id, 否则就是文本.一一对应的关系.
@@ -67,7 +72,7 @@ data class ConstraintBean(
      * [setText]时的输入数据在[wordList]集合的索引集合, 随机从里面取一个.
      * 如果为null, 则从[inputList]读取. 如果[inputList]也为null, 则从代码中随机产生
      * */
-    var wordInputIndexList: List<Int>? = null,
+    var wordInputIndexList: List<String>? = null,
 
     /**忽略此次[Action]操作的返回值, 不忽略的话, 如果action返回true, 则可能会执行[doActionFinish].
      * 忽略之后, 将不会判断[jump]

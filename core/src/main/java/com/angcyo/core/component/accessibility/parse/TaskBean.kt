@@ -2,8 +2,8 @@ package com.angcyo.core.component.accessibility.parse
 
 import com.angcyo.core.component.accessibility.AutoParseInterceptor
 import com.angcyo.core.component.accessibility.action.AutoParseAction
+import com.angcyo.core.component.accessibility.action.AutoParser
 import com.angcyo.core.component.accessibility.intervalMode
-import com.angcyo.library.ex.isListEmpty
 
 /**
  * 每个任务的数据结构, action约束
@@ -62,15 +62,7 @@ fun TaskBean.toInterceptor(
 
             //根据给定的[wordInputIndexList]返回对应的文本信息
             action.onGetWordTextListAction = {
-                if (wordList.isListEmpty()) {
-                    null
-                } else {
-                    val result = mutableListOf<String>()
-                    it.forEach { index ->
-                        wordList?.getOrNull(index)?.let { word -> result.add(word) }
-                    }
-                    result
-                }
+                AutoParser.parseWordTextList(wordList, it)
             }
 
             //判断是否是back check

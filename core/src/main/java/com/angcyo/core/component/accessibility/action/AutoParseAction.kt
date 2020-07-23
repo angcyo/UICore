@@ -33,13 +33,13 @@ open class AutoParseAction : BaseAccessibilityAction() {
     var onGetTextResult: ((List<CharSequence>) -> Unit)? = null
 
     /**根据给定的[wordInputIndexList] [wordTextIndexList]返回对应的文本信息*/
-    var onGetWordTextListAction: ((List<Int>) -> List<String>?)? = null
+    var onGetWordTextListAction: ((List<String>) -> List<String>?)? = null
 
     /**需要执行的[Action]描述*/
     var actionBean: ActionBean? = null
 
     /**解析核心*/
-    var autoParse: AutoParse = AutoParse()
+    var autoParser: AutoParser = AutoParser()
 
     /**获取到的文本, 临时存储*/
     var getTextList: MutableList<CharSequence>? = null
@@ -60,7 +60,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             doActionFinish(ActionException("eventConstraint is null."))
             return false
         }
-        return autoParse.parse(service, this, nodeList, constraintList)
+        return autoParser.parse(service, this, nodeList, constraintList)
     }
 
     override fun checkOtherEvent(
@@ -78,7 +78,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         //执行对应的action操作
         var result = false
 
-        autoParse.parse(service, this, nodeList, constraintList) {
+        autoParser.parse(service, this, nodeList, constraintList) {
             for (pair in it) {
 
                 //执行action
@@ -128,7 +128,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             //执行对应的action操作
             var result = false
 
-            autoParse.parse(service, this, nodeList, handleConstraintList) {
+            autoParser.parse(service, this, nodeList, handleConstraintList) {
 
                 for (pair in it) {
 
@@ -196,7 +196,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             //执行操作
             fun handle(): Boolean {
                 var result = false
-                autoParse.parse(service, this, nodeList, constraintList) {
+                autoParser.parse(service, this, nodeList, constraintList) {
                     it.forEach { pair ->
                         result = result || handleAction(service, pair.first, pair.second).first
                     }
@@ -212,7 +212,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 result = handle()
             } else {
                 //匹配当前界面, 匹配成功后, 再处理
-                if (autoParse.parse(service, this, nodeList, eventConstraintList)) {
+                if (autoParser.parse(service, this, nodeList, eventConstraintList)) {
                     //匹配成功
                     result = handle()
                 }
@@ -525,8 +525,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
         try {
             arg?.apply {
-                val refWidth = autoParse._rootNodeRect.width()
-                val refHeight = autoParse._rootNodeRect.height()
+                val refWidth = autoParser._rootNodeRect.width()
+                val refHeight = autoParser._rootNodeRect.height()
 
                 split("-").apply {
 

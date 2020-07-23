@@ -68,7 +68,7 @@ fun ActionBean.toAction(packageName: String): AutoParseAction {
             actionInterval = interval
         }
 
-        autoParse.idPackageName = packageName
+        autoParser.idPackageName = packageName
 
         //日志输出
         onLogPrint
