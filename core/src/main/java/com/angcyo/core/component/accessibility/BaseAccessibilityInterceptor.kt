@@ -192,8 +192,8 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         //检查当前的action,是否需要突破当前[interceptor]的包名限制
         currentAccessibilityAction?.let {
             if (it is AutoParseAction) {
-                val specifyPackageName = it.actionBean?.check?.packageName
-                if (specifyPackageName?.isEmpty() == true) {
+                val specifyPackageNameList = it.actionBean?.check?.packageName?.split(";")
+                if (specifyPackageNameList != null && specifyPackageNameList.isListEmpty()) {
                     onDoAction(it, service, service.findNodeInfoList())
                 }
             }
@@ -234,18 +234,21 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                     actionStatus = ACTION_STATUS_ING
                     currentAccessibilityAction?.let {
                         if (it is AutoParseAction) {
-                            val specifyPackageName = it.actionBean?.check?.packageName
-                            if (specifyPackageName.isNullOrEmpty()) {
+                            val packageName = it.actionBean?.check?.packageName
+                            val specifyPackageNameList = packageName?.split(";")
+                            if (packageName.isNullOrEmpty() || specifyPackageNameList.isListEmpty()) {
+                                //没有指定需要强制过滤的包名, 则执行对应的action
                                 onDoAction(it, service, nodeList)
                             } else {
                                 val findNodeInfoList = service.findNodeInfoList()
                                 val currentPackageName = findNodeInfoList.mainNode()?.packageName
 
-                                if (specifyPackageName == currentPackageName) {
+                                if (specifyPackageNameList!!.contains(currentPackageName)) {
                                     //强制指定了要处理的包名
                                     onDoAction(it, service, findNodeInfoList)
                                 } else {
-                                    L.w("指定处理的包名:$specifyPackageName 当前包名:$currentPackageName")
+                                    //指定了需要强制过滤的包名, 但是当前界面不是此应用
+                                    L.w("指定处理的包名:$specifyPackageNameList 当前包名:$currentPackageName")
                                 }
                             }
                         } else {

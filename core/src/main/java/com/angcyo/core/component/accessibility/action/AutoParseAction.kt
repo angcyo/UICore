@@ -428,7 +428,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
                             //包名
                             val targetPackageName = if (arg.isNullOrEmpty() || arg == "target") {
-                                actionBean?.check?.packageName
+                                actionBean?.check?.packageName?.split(";")?.firstOrNull()
                                     ?: accessibilityInterceptor?.filterPackageNameList?.firstOrNull()
                             } else if (arg == "main") {
                                 service.packageName

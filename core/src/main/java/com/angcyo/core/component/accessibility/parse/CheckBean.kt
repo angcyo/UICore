@@ -15,7 +15,7 @@ data class CheckBean(
     /**check的描述, 不参与识别逻辑*/
     var checkDes: String? = null,
 
-    /**对应的程序包名.
+    /**对应的程序包名.`;`分割多个包名
      * 强制指定[CheckBean]需要处理的应用包名,
      * 如果为空字符,表示需要处理任意应用程序, 这样可以突破[AutoParseInterceptor]拦截器限制的应用包名
      * 如果为null,表示跟随[AutoParseInterceptor]拦截器限制的应用包名
