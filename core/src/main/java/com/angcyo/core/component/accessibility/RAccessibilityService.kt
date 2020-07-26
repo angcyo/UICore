@@ -12,7 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList
  * @date 2020/06/23
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class RAccessibilityService : BaseAccessibilityService() {
+open class RAccessibilityService : BaseAccessibilityService() {
     companion object {
 
         val accessibilityInterceptorList =

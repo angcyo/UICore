@@ -2,17 +2,14 @@ package com.angcyo.core.component.accessibility
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
+import android.annotation.TargetApi
 import android.graphics.Path
 import android.graphics.Point
 import android.graphics.PointF
 import android.os.Build
-import android.os.Handler
-import android.os.HandlerThread
-import com.angcyo.fragment.FragmentBridge
 import com.angcyo.library.*
 import com.angcyo.library.ex.dpi
 import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 import kotlin.random.Random.Default.nextInt
 
 /**
@@ -29,8 +26,8 @@ import kotlin.random.Random.Default.nextInt
 
 typealias GestureResult = (gestureDescription: GestureDescription? /*执行的手势*/, dispatched: Boolean /*是否发送*/, canceled: Boolean /*是否被取消*/) -> Unit
 
-class DslAccessibilityGesture :
-    HandlerThread("DslAccessibilityGesture-${FragmentBridge.generateCode()}") {
+@TargetApi(Build.VERSION_CODES.N)
+class DslAccessibilityGesture {
 
     companion object {
         const val DEFAULT_GESTURE_START_TIME = 60L
@@ -48,12 +45,6 @@ class DslAccessibilityGesture :
 
     /**执行回调*/
     var gestureResult: GestureResult? = null
-
-    /**是否需要异步执行*/
-    var async: Boolean = true
-
-    /**是否需要等待异步结果返回, 如果在主线程中开启会anr*/
-    var awaitResult: Boolean = false
 
     var startTime: Long = DEFAULT_GESTURE_START_TIME
     var duration: Long = DEFAULT_GESTURE_MOVE_DURATION
@@ -84,8 +75,6 @@ class DslAccessibilityGesture :
     var _isDo: Boolean = false
 
     init {
-        start()
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             _gestureResultCallback = object : AccessibilityService.GestureResultCallback() {
                 override fun onCancelled(gestureDescription: GestureDescription?) {
@@ -107,16 +96,6 @@ class DslAccessibilityGesture :
                 }
             }
         }
-    }
-
-    override fun onLooperPrepared() {
-        super.onLooperPrepared()
-    }
-
-    override fun quit(): Boolean {
-        clear()
-        service = null
-        return super.quit()
     }
 
     fun clear() {
@@ -141,18 +120,8 @@ class DslAccessibilityGesture :
             _isDispatched = service.dispatchGesture(
                 builder.build(),
                 _gestureResultCallback,
-                if (async) Handler(looper) else null
+                null
             )
-            if (awaitResult) {
-                try {
-                    _countDownLatch = CountDownLatch(1)
-                    _countDownLatch?.await(10, TimeUnit.SECONDS)
-                } catch (e: Exception) {
-                    L.e(e)
-                } finally {
-                    _countDownLatch = null
-                }
-            }
         } else {
             gestureResult?.invoke(null, false, true)
         }
@@ -288,17 +257,23 @@ class DslAccessibilityGesture :
 }
 
 /**DSL*/
-fun AccessibilityService.dslGesture(action: DslAccessibilityGesture.() -> Unit): Boolean {
+fun AccessibilityService.dslGesture(action: DslAccessibilityGesture.() -> Unit = {}): Boolean {
     val gesture = DslAccessibilityGesture().apply {
         service = this@dslGesture
-        async = true
-        awaitResult = false
         action()
         doIt()
     }
-    gesture.quit()
-    return gesture._isCompleted
+    return gesture._isDispatched
 }
+
+fun AccessibilityService.gesture(): DslAccessibilityGesture? =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        DslAccessibilityGesture().apply {
+            service = this@gesture
+        }
+    } else {
+        null
+    }
 
 //<editor-fold desc="move">
 
@@ -501,3 +476,4 @@ fun DslAccessibilityGesture.randomization(): Pair<Boolean, String> {
         else -> true to "pass"
     }
 }
+

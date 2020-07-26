@@ -13,6 +13,10 @@ import com.angcyo.core.component.accessibility.intervalMode
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
 data class TaskBean(
+
+    /**任务id, 不参与逻辑*/
+    var taskId: Long = 0,
+
     /**任务对应的包名, 比如(抖音的包名, 快手的包名)*/
     var packageName: String? = null,
 
