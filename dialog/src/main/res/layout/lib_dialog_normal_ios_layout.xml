@@ -10,12 +10,12 @@
 
     <com.angcyo.widget.RealtimeBlurView
         android:layout_width="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:realtimeOverlayColor="@color/dialog_ios_bg"
-        android:layout_height="0dp" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:realtimeOverlayColor="@color/dialog_ios_bg" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/title_view"
@@ -70,20 +70,21 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/positive_button"
         app:layout_constraintTop_toBottomOf="@id/line_view"
-        tools:text="取消" />
+        tools:text="取消"
+        tools:visibility="gone" />
 
     <com.angcyo.widget.DslButton
         android:id="@+id/positive_button"
         style="@style/DefaultButtonStyleNormal"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/lib_bg_selector"
         android:gravity="center"
+        android:minHeight="40dp"
         android:textColor="@color/colorAccent"
-        app:layout_constraintBottom_toBottomOf="@id/negative_button"
         app:layout_constraintLeft_toRightOf="@id/negative_button"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/negative_button"
+        app:layout_constraintTop_toBottomOf="@id/line_view"
         tools:text="确定" />
 
     <View

@@ -226,6 +226,11 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
             connectUrl(DslHttp.dslHttpConfig.onGetBaseUrl(), requestConfig.url)
     }
 
+    //智能调整请求方式
+    if (requestConfig.formMap.isNotEmpty()) {
+        requestConfig.method = POST_FORM
+    }
+
     return when (requestConfig.method) {
         POST -> {
             dslHttp(Api::class.java).post(
@@ -343,17 +348,30 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
 }
 
 /**判断http状态码为成功, 并且接口返回状态也为成功*/
-fun Response<JsonElement>?.isSucceed(codeKey: String? = DEFAULT_CODE_KEY): Boolean {
-    val bodyData = this?.body() ?: return false
+fun Response<JsonElement>?.isSucceed(
+    codeKey: String? = DEFAULT_CODE_KEY,
+    onResult: (succeed: Boolean, codeErrorJson: JsonObject?) -> Unit = { _, _ -> } /*code码异常时codeErrorJson才有值*/
+): Boolean {
+    val bodyData = this?.body()
+
+    if (this == null || bodyData == null) {
+        onResult(false, null)
+        return false
+    }
+
     var result = false
+    var errorJson: JsonObject? = null
 
     if (codeKey.isNullOrEmpty()) {
         result = isSuccessful
     } else if (isSuccessful && bodyData is JsonObject) {
         if (bodyData.getInt(codeKey) in 200..299) {
             result = true
+        } else {
+            errorJson = bodyData
         }
     }
+    onResult(result, errorJson)
     return result
 }
 
@@ -519,6 +537,8 @@ inline fun <reified Bean> Response<JsonElement>.toBean(parseError: Boolean = fal
 const val GET = 1
 const val POST = 2
 const val PUT = 3
+
+//如果[formMap]有数据, 则会优先使用[POST_FORM]
 const val POST_FORM = 22
 
 open class BaseRequestConfig {

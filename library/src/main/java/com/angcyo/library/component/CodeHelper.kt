@@ -44,16 +44,24 @@ class CodeHelper : Runnable {
         run()
     }
 
+    fun finish() {
+        _view?.apply {
+            isClickable = true
+            isEnabled = true
+            text = _text
+            _isSend = false
+            codeTimeEnd()
+        }
+    }
+
     override fun run() {
         _time -= 1
         _view?.apply {
             if (_time < 0) {
-                isClickable = true
-                text = _text
-                _isSend = false
-                codeTimeEnd()
+                finish()
             } else {
                 isClickable = false
+                isEnabled = false
                 text = "${_time}s"
                 if (ViewCompat.isAttachedToWindow(this)) {
                     postDelayed(this@CodeHelper, 1_000)

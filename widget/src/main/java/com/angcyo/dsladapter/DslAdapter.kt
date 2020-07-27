@@ -267,6 +267,19 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         }
     }
 
+    fun setAdapterStatusEnable(
+        enable: Boolean = true,
+        filterParams: FilterParams = defaultFilterParams!!
+    ) {
+        val old = dslAdapterStatusItem.itemStateEnable
+        if (old == enable) {
+            return
+        }
+        dslAdapterStatusItem.itemStateEnable = enable
+
+        updateItemDepend(filterParams)
+    }
+
     fun setLoadMoreEnable(
         enable: Boolean = true,
         filterParams: FilterParams = defaultFilterParams!!

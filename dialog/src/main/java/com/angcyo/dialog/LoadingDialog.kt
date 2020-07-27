@@ -180,7 +180,8 @@ fun Fragment.loadingBottom(
 /**快速在[Fragment]显示底部loading, 通常用于包裹一个网络请求*/
 fun Fragment.loadLoadingBottom(
     tip: CharSequence? = "处理中...",
-    success: CharSequence? = "处理完成!",
+    successTip: CharSequence? = "处理完成!",
+    showErrorToast: Boolean = false,
     action: (cancel: Boolean, loadEnd: (data: Any?, error: Throwable?) -> Unit) -> Unit
 ) {
     loadingBottom(tip) {
@@ -191,12 +192,14 @@ fun Fragment.loadLoadingBottom(
 
     action(false) { data, error ->
         error?.apply {
-            toastQQ(message)
+            if (showErrorToast) {
+                toastQQ(message)
+            }
         }
         data?.apply {
-            hideLoading(success)
+            hideLoading(successTip)
         }.elseNull {
-            hideLoading()
+            hideLoading(error?.message)
         }
     }
 }
