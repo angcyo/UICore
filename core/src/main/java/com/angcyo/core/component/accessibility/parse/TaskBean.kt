@@ -14,8 +14,13 @@ import com.angcyo.core.component.accessibility.intervalMode
  */
 data class TaskBean(
 
-    /**任务id, 不参与逻辑*/
+    /**任务id, 不参与auto parse*/
     var taskId: Long = 0,
+    /**任务描述, 不参与auto parse*/
+    var taskDes: String? = null,
+    /**2个服务器返回的json解析的数据, 对应[wordList] [actions]*/
+    var wordsJson: String? = null,
+    var actionsJson: String? = null,
 
     /**任务对应的包名, 比如(抖音的包名, 快手的包名)*/
     var packageName: String? = null,
@@ -29,7 +34,10 @@ data class TaskBean(
     /**
      * 组成任务的所有Action
      * */
-    var actions: List<ActionBean>? = null
+    var actions: List<ActionBean>? = null,
+
+    /**getText获取到的文本, 都将保存在此, 通过key-value的形式*/
+    var getTextResultMap: Map<String, List<CharSequence>>? = null
 )
 
 /**转成拦截器*/
@@ -38,15 +46,19 @@ fun TaskBean.toInterceptor(
     onGetTextResult: (action: AutoParseAction, List<CharSequence>) -> Unit = { _, _ -> } //[getText]动作, 返回的文本信息
 ): AutoParseInterceptor {
     return AutoParseInterceptor(this).apply {
-        if (!packageName.isNullOrEmpty()) {
-            filterPackageNameList.add(packageName!!)
+        val taskPackageName: String? = packageName
+        //如果任务中包含了指定的包名
+        if (!taskPackageName.isNullOrEmpty()) {
+            taskPackageName.split(";").forEach {
+                filterPackageNameList.add(it)
+            }
         }
         intervalMode()
 
         actions?.forEach {
-            val action = it.toAction(packageName ?: "")
+            val action = it.toAction(filterPackageNameList.firstOrNull() ?: "")
 
-            //根据[checkId]查找对应的[CheckBean]
+            //如果未指定[check]对象, 则根据[checkId]查找对应的[CheckBean]
             if (action.actionBean?.check == null) {
                 val checkId = action.actionBean?.checkId ?: -1
                 if (checkId > 0L) {
@@ -60,8 +72,22 @@ fun TaskBean.toInterceptor(
             }
 
             //获取到的文本回调
-            action.onGetTextResult = {
-                onGetTextResult(action, it)
+            action.onGetTextResult = { textList ->
+                try {
+                    if (getTextResultMap == null) {
+                        getTextResultMap = hashMapOf()
+                    }
+                    val map = getTextResultMap
+                    if (map !is HashMap) {
+                        getTextResultMap = hashMapOf()
+                    }
+                    val formKey = action.actionBean?.formKey ?: action.hashCode().toString()
+                    (map as HashMap)[formKey] = textList
+
+                    onGetTextResult(action, textList)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
 
             //根据给定的[wordInputIndexList]返回对应的文本信息

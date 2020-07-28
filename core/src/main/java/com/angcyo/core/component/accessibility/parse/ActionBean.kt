@@ -44,7 +44,10 @@ data class ActionBean(
     var actionMaxRunCount: Int = 50,
 
     /**当action识别到并处理执行后的次数大于此值时, 强制完成*/
-    var actionMaxCount: Int = -1
+    var actionMaxCount: Int = -1,
+
+    /**getText获取到的文本, 需要放在表单的那个key中*/
+    var formKey: String? = null
 ) {
     companion object {
         const val HANDLE_TYPE_NONE = 0 //匹配执行, 匹配到谁, 谁就执行

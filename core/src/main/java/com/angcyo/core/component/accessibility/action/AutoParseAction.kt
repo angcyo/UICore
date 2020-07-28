@@ -438,9 +438,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             targetPackageName?.openApp() != null
                         }
                         ConstraintBean.ACTION_COPY -> {
-                            val text = getInputText(constraintBean)
+                            val text = arg ?: getInputText(constraintBean)
                             val value = text?.copy() == true
-
                             handleActionLog("复制文本[$text]:$value")
                             value
                         }

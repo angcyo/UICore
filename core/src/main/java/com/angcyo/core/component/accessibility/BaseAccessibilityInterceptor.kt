@@ -394,6 +394,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             //流程结束
         }
         onInterceptorFinish?.invoke(action, error)
+        //清空
         onInterceptorFinish = null
         if (autoUninstall) {
             //注意调用顺序
