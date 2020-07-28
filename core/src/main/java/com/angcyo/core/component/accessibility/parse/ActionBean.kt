@@ -82,10 +82,12 @@ fun ActionBean.toAction(packageName: String): AutoParseAction {
 
         actionBean = this@toAction
 
+        //时间间隔
         if (!isDebugType()) {
             actionInterval = interval
         }
 
+        //使用 id时, 的包名前缀
         autoParser.idPackageName = packageName
 
         //日志输出

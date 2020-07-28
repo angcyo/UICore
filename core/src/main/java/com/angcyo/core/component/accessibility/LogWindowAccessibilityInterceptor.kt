@@ -8,6 +8,8 @@ import com.angcyo.core.component.accessibility.AccessibilityHelper.logFolderName
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.file.wrapData
 import com.angcyo.http.rx.doBack
+import com.angcyo.library.L
+import com.angcyo.library.ex.fileSizeString
 
 /**
  * 窗口改变日志输出
@@ -30,22 +32,23 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
             service: AccessibilityService? = BaseAccessibilityService.weakService?.get(),
             builder: StringBuilder = StringBuilder()
         ): String {
-            if (service == null) {
-                return builder.toString()
-            }
-            val rootNodeInfo: AccessibilityNodeInfo? = service.findNodeInfoList().mainNode()
-            service.windows.forEachIndexed { index, accessibilityWindowInfo ->
-                builder.appendln("$index->$accessibilityWindowInfo")
-                accessibilityWindowInfo.root?.apply {
-                    if (rootNodeInfo != null && this == rootNodeInfo) {
-                        builder.append("[root]")
-                        logNodeInfo(outBuilder = builder)
-                    } else if (allWindow) {
-                        logNodeInfo(outBuilder = builder)
+            if (service != null) {
+                val rootNodeInfo: AccessibilityNodeInfo? = service.findNodeInfoList().mainNode()
+                service.windows.forEachIndexed { index, accessibilityWindowInfo ->
+                    builder.appendln("$index->$accessibilityWindowInfo")
+                    accessibilityWindowInfo.root?.apply {
+                        if (rootNodeInfo != null && this == rootNodeInfo) {
+                            builder.append("[root]")
+                            logNodeInfo(outBuilder = builder)
+                        } else if (allWindow) {
+                            logNodeInfo(outBuilder = builder)
+                        }
                     }
                 }
             }
-            return builder.toString()
+            return builder.toString().apply {
+                L.w("log size:${this.toByteArray().size.toLong().fileSizeString()}")
+            }
         }
     }
 
