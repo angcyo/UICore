@@ -434,3 +434,14 @@ fun String.toClass(): Class<*>? {
 /**打开应用程序*/
 fun String.openApp(flags: Int = if (this == app().packageName) Intent.FLAG_ACTIVITY_SINGLE_TOP else 0) =
     app().openApp(this, flags = flags)
+
+/**host/url*/
+fun String?.connectUrl(url: String?): String {
+    val h = this?.trimEnd('/') ?: ""
+    val u = url?.trimStart('/') ?: ""
+    return "$h/$u"
+}
+
+fun String?.md5(): String? {
+    return this?.toByteArray(Charsets.UTF_8)?.encrypt()?.toHexString()
+}

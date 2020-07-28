@@ -6,6 +6,7 @@ import com.angcyo.http.DslHttp.retrofit
 import com.angcyo.http.base.*
 import com.angcyo.http.exception.HttpDataException
 import com.angcyo.http.rx.observableToMain
+import com.angcyo.library.ex.connectUrl
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import io.reactivex.Observable
@@ -210,9 +211,10 @@ fun <T> dslHttp(service: Class<T>): T {
 
 /**拼接 host 和 api接口*/
 fun connectUrl(host: String?, url: String?): String {
-    val h = host?.trimEnd('/') ?: ""
-    val u = url?.trimStart('/') ?: ""
-    return "$h/$u"
+//    val h = host?.trimEnd('/') ?: ""
+//    val u = url?.trimStart('/') ?: ""
+//    return "$h/$u"
+    return host.connectUrl(url)
 }
 
 /**根据[RequestConfig]发送网络请求*/

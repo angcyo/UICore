@@ -6,7 +6,6 @@ import android.os.Build
 import android.text.TextUtils
 import android.text.format.Formatter
 import com.angcyo.library.app
-import com.angcyo.library.ex.FileEx.hexDigits
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -16,7 +15,6 @@ import java.security.DigestInputStream
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.*
-import kotlin.experimental.and
 
 /**
  * /kotlin/io/FileReadWrite.kt
@@ -24,11 +22,6 @@ import kotlin.experimental.and
  * @author angcyo
  * @date 2020/01/22
  */
-
-object FileEx {
-    val hexDigits =
-        charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
-}
 
 enum class SizeUnit {
     Byte, KB, MB, GB, TB, PB, Auto
@@ -65,25 +58,9 @@ fun String.transferToFile(filePath: String) {
     }
 }
 
-fun ByteArray.bytes2HexString(): String? {
-    val len = this.size
-    if (len <= 0) return null
-    val ret = CharArray(len shl 1)
-    var i = 0
-    var j = 0
-    while (i < len) {
-        ret[j++] =
-            hexDigits[((this[i].toInt() ushr 4) and 0x0f)]
-        ret[j++] =
-            hexDigits[(this[i] and 0x0f.toByte()).toInt()]
-        i++
-    }
-    return String(ret)
-}
-
 /**获取文件md5值*/
 fun File.md5(): String? {
-    return getFileMD5()?.bytes2HexString()
+    return getFileMD5()?.toHexString()
 }
 
 fun File.copyTo(path: String) {
