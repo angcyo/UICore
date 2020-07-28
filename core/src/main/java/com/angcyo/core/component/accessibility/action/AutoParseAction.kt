@@ -206,7 +206,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
             var result = false
 
-            val eventConstraintList: List<ConstraintBean>? = actionBean?.check?.back
+            val eventConstraintList: List<ConstraintBean>? = actionBean?.check?.event
             if (eventConstraintList == null) {
                 //无界面约束匹配, 则不检查. 直接处理
                 result = handle()

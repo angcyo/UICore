@@ -193,8 +193,14 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         currentAccessibilityAction?.let {
             if (it is AutoParseAction) {
                 val specifyPackageNameList = it.actionBean?.check?.packageName?.split(";")
-                if (specifyPackageNameList != null && specifyPackageNameList.isListEmpty()) {
-                    onDoAction(it, service, service.findNodeInfoList())
+                if (specifyPackageNameList != null) {
+
+                    if (specifyPackageNameList.isListEmpty() ||
+                        (specifyPackageNameList.size == 1 &&
+                                specifyPackageNameList.firstOrNull().isNullOrEmpty())
+                    ) {
+                        onDoAction(it, service, service.findNodeInfoList())
+                    }
                 }
             }
         }

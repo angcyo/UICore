@@ -65,7 +65,7 @@ object AccessibilityWindowLayer : ILayer() {
             tv(R.id.text_view)?.text = text
 
             visible(R.id.catch_button, isDebug())
-            visible(R.id.test_button, isDebugType())
+            //visible(R.id.test_button, isDebugType())
             visible(R.id.summary_text_view, summary != null)
             tv(R.id.summary_text_view)?.text = summary
 

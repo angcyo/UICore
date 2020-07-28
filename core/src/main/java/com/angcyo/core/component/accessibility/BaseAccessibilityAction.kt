@@ -18,6 +18,20 @@ import kotlin.random.Random.Default.nextLong
 
 abstract class BaseAccessibilityAction {
 
+    companion object {
+        /**当前的[BaseAccessibilityAction], 允许执行[doAction]的最大次数, 超过后异常*/
+        const val DEFAULT_ACTION_MAX_COUNT = 10
+
+        /**当前的[BaseAccessibilityAction], 允许执行[checkOtherEvent]的最大次数, 超过[actionOtherList]才有机会执行*/
+        const val DEFAULT_ACTION_OTHER_MAX_COUNT = 3
+
+        /**[checkOtherEvent]未识别, [actionOtherList]未处理, 超过此最大次数, 会回滚到上一个[BaseAccessibilityAction]*/
+        const val DEFAULT_ACTION_CHECK_OUT_MAX_COUNT = 3
+
+        /**允许回滚的最大次数*/
+        const val DEFAULT_ROLLBACK_MAX_COUNT = 3
+    }
+
     /**关联的拦截器*/
     var accessibilityInterceptor: BaseAccessibilityInterceptor? = null
 
@@ -26,23 +40,23 @@ abstract class BaseAccessibilityAction {
 
     /**[doAction]执行时的次数统计*/
     val doActionCount = ActionCount().apply {
-        maxCountLimit = 50
+        maxCountLimit = DEFAULT_ACTION_MAX_COUNT
     }
 
     /**[checkOtherEvent]执行次数统计*/
     val checkOtherEventCount = ActionCount().apply {
-        maxCountLimit = 10
+        maxCountLimit = DEFAULT_ACTION_OTHER_MAX_COUNT
     }
 
     /**[onCheckEventOut]执行统计,无法识别到界面,同时又无法back处理
      * 次数过多, 可以将[action]提到上一个级别*/
     val checkEventOutCount = ActionCount().apply {
-        maxCountLimit = 3
+        maxCountLimit = DEFAULT_ACTION_CHECK_OUT_MAX_COUNT
     }
 
     /**回滚次数统计*/
     val rollbackCount = ActionCount().apply {
-        maxCountLimit = 3
+        maxCountLimit = DEFAULT_ROLLBACK_MAX_COUNT
     }
 
     /**用于控制下一次[Action]检查执行的延迟时长, 毫秒. 负数表示使用[Interceptor]的默认值
