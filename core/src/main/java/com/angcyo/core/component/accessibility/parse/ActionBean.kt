@@ -1,6 +1,7 @@
 package com.angcyo.core.component.accessibility.parse
 
 import com.angcyo.core.component.accessibility.BaseAccessibilityAction.Companion.DEFAULT_ACTION_CHECK_OUT_MAX_COUNT
+import com.angcyo.core.component.accessibility.BaseAccessibilityAction.Companion.DEFAULT_ACTION_FINISH_MAX_COUNT
 import com.angcyo.core.component.accessibility.BaseAccessibilityAction.Companion.DEFAULT_ACTION_MAX_COUNT
 import com.angcyo.core.component.accessibility.BaseAccessibilityAction.Companion.DEFAULT_ACTION_OTHER_MAX_COUNT
 import com.angcyo.core.component.accessibility.BaseAccessibilityAction.Companion.DEFAULT_ROLLBACK_MAX_COUNT
@@ -44,14 +45,14 @@ data class ActionBean(
 
     /**当前action执行完成后, 间隔多久执行下一个[Action]. 毫秒
      * 格式[5000,500,5] 解释:5000+500*[1-5),
-     * null 表示设备性能对应的默认值*/
+     * null/空字符:表示设备性能对应的默认值*/
     var interval: String? = null,
 
     /**允许[doAction]执行的最大次数, 超过后抛出异常*/
     var actionMaxRunCount: Int = DEFAULT_ACTION_MAX_COUNT,
 
     /**当action识别到并处理执行后的次数大于此值时, 强制完成*/
-    var actionMaxCount: Int = -1,
+    var actionMaxCount: Int = DEFAULT_ACTION_FINISH_MAX_COUNT,
 
     /**getText获取到的文本, 需要放在表单的那个key中*/
     var formKey: String? = null

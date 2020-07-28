@@ -22,6 +22,9 @@ abstract class BaseAccessibilityAction {
         /**当前的[BaseAccessibilityAction], 允许执行[doAction]的最大次数, 超过后异常*/
         const val DEFAULT_ACTION_MAX_COUNT = 10
 
+        /**当前的[BaseAccessibilityAction], 执行[doAction]的次数超过此值后,强制完成*/
+        const val DEFAULT_ACTION_FINISH_MAX_COUNT = -1
+
         /**当前的[BaseAccessibilityAction], 允许执行[checkOtherEvent]的最大次数, 超过[actionOtherList]才有机会执行*/
         const val DEFAULT_ACTION_OTHER_MAX_COUNT = 3
 
