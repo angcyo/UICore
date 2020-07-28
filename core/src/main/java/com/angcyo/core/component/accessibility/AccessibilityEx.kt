@@ -988,7 +988,7 @@ fun AccessibilityNodeInfoCompat.getBrotherNode(index: Int): AccessibilityNodeInf
 
     return when {
         index > 0 -> afterList.getOrNull(index - 1)
-        index < 0 -> beforeList.getOrNull(beforeList.size - index)
+        index < 0 -> beforeList.getOrNull(beforeList.size + index)
         else -> this
     }
 }
