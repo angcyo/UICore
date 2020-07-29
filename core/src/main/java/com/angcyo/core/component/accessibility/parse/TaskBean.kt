@@ -19,19 +19,30 @@ data class TaskBean(
     /**任务描述, 不参与auto parse*/
     var taskDes: String? = null,
 
-    /**任务对应的包名, 比如(抖音的包名, 快手的包名)*/
-    var packageName: String? = null,
-
     /**当前任务名称 */
     var name: String? = null,
 
+    //--------------------------------------------------------------
+
+    /**任务对应的包名, 比如(抖音的包名, 快手的包名)*/
+    var packageName: String? = null,
+
     /**为[ActionBean]的[ConstraintBean]中的[wordInputIndexList]提供数据*/
     var wordList: List<String>? = null,
+
+    /**为[ActionBean]的[interval]提供配置
+     * 格式:[actionId:xxx.xx.x] 比如:[100000:5000,500,5] 表示指定[ActionBean]id等于100000对象的[interval]=5000,500,5
+     * [actionId-actionId:xxx.xx.x] 范围内id对应的[ActionBean]都赋值.
+     * 如果[ActionBean]的[interval]已经有值, 则不会覆盖
+     * */
+    var actionIntervalList: List<String>? = null,
 
     /**
      * 组成任务的所有Action
      * */
     var actions: List<ActionBean>? = null,
+
+    //--------------------------------------------------------------
 
     /**getText获取到的文本, 都将保存在此, 通过key-value的形式*/
     var getTextResultMap: Map<String, List<CharSequence>>? = null,
@@ -55,24 +66,33 @@ fun TaskBean.toInterceptor(
         }
         intervalMode()
 
+        //[actionIntervalList]
+        val actionIntervalMap = parseActionInterval()
+
         actions?.forEach {
-            val action = it.toAction(filterPackageNameList.firstOrNull() ?: "")
+            if (it.interval.isNullOrEmpty() && it.actionId > 0) {
+                //重置interval
+                it.interval = actionIntervalMap.getOrDefault(it.actionId, null)
+            }
+
+            //to [AutoParseAction]
+            val autoParseAction = it.toAction(filterPackageNameList.firstOrNull() ?: "")
 
             //如果未指定[check]对象, 则根据[checkId]查找对应的[CheckBean]
-            if (action.actionBean?.check == null) {
-                val checkId = action.actionBean?.checkId ?: -1
+            if (autoParseAction.actionBean?.check == null) {
+                val checkId = autoParseAction.actionBean?.checkId ?: -1
                 if (checkId > 0L) {
-                    action.actionBean?.check = onConvertCheckById.invoke(checkId)
+                    autoParseAction.actionBean?.check = onConvertCheckById.invoke(checkId)
                 }
             }
 
             //action动作执行的日志输出
-            action.onLogPrint = {
-                AutoParseInterceptor.log("$name($actionIndex/${actionList.size}) ${action.actionTitle} $it")
+            autoParseAction.onLogPrint = {
+                AutoParseInterceptor.log("$name($actionIndex/${actionList.size}) ${autoParseAction.actionTitle} $it")
             }
 
             //获取到的文本回调
-            action.onGetTextResult = { textList ->
+            autoParseAction.onGetTextResult = { textList ->
                 try {
                     if (getTextResultMap == null) {
                         getTextResultMap = hashMapOf()
@@ -81,26 +101,61 @@ fun TaskBean.toInterceptor(
                     if (map !is HashMap) {
                         getTextResultMap = hashMapOf()
                     }
-                    val formKey = action.actionBean?.formKey ?: action.hashCode().toString()
+                    val formKey =
+                        autoParseAction.actionBean?.formKey ?: autoParseAction.hashCode().toString()
                     (map as HashMap)[formKey] = textList
 
-                    onGetTextResult(action, textList)
+                    onGetTextResult(autoParseAction, textList)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
 
             //根据给定的[wordInputIndexList]返回对应的文本信息
-            action.onGetWordTextListAction = {
+            autoParseAction.onGetWordTextListAction = {
                 AutoParser.parseWordTextList(wordList, it)
             }
 
             //判断是否是back check
             if (it.check?.back == null) {
-                actionList.add(action)
+                actionList.add(autoParseAction)
             } else {
-                actionOtherList.add(action)
+                actionOtherList.add(autoParseAction)
             }
         }
     }
+}
+
+/**解析[actionId-actionId:xxx.xx.x]格式, 将[actionId]和[interval]解析成map格式*/
+fun TaskBean.parseActionInterval(): Map<Long, String?> {
+    val result = HashMap<Long, String?>()
+    actionIntervalList?.forEach { format ->
+        try {
+            val indexOf = format.indexOf(":", 0, true)
+
+            if (indexOf != -1) {
+                //找到
+                val ids = format.substring(0, indexOf)
+                val interval = format.substring(indexOf + 1, format.length)
+
+                val idIndexOf = ids.indexOf("-")
+                if (idIndexOf == -1) {
+                    //指定了一个id
+                    ids.toLongOrNull()?.let {
+                        result[it] = interval
+                    }
+                } else {
+                    //指定的是一个id范围
+                    val startId = ids.substring(0, idIndexOf).toLongOrNull() ?: -1
+                    val endId = ids.substring(idIndexOf + 1, ids.length).toLongOrNull() ?: -1
+                    for (i in startId..endId) {
+                        result[i] = interval
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    return result
 }

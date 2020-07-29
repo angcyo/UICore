@@ -18,6 +18,9 @@ import com.angcyo.library.ex.isDebugType
  */
 data class ActionBean(
 
+    /**标识[ActionBean]*/
+    var actionId: Long = -1,
+
     /**每个action对应的描述title*/
     var title: String? = null,
 
