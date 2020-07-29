@@ -34,7 +34,10 @@ data class TaskBean(
     var actions: List<ActionBean>? = null,
 
     /**getText获取到的文本, 都将保存在此, 通过key-value的形式*/
-    var getTextResultMap: Map<String, List<CharSequence>>? = null
+    var getTextResultMap: Map<String, List<CharSequence>>? = null,
+
+    /**[Task]完成后, 需要执行的网络请求*/
+    var form: FormBean? = null
 )
 
 /**转成拦截器*/

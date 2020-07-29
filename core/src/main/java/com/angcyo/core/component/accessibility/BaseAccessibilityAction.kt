@@ -16,6 +16,8 @@ import kotlin.random.Random.Default.nextLong
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
 
+typealias ActionFinishObserve = (error: ActionException?) -> Unit
+
 abstract class BaseAccessibilityAction {
 
     companion object {
@@ -39,7 +41,10 @@ abstract class BaseAccessibilityAction {
     var accessibilityInterceptor: BaseAccessibilityInterceptor? = null
 
     /**当完成了[Action], 需要调用此方法, 触发下一个[Action]*/
-    var actionFinish: ((error: ActionException?) -> Unit)? = null
+    var _actionFinish: ((error: ActionException?) -> Unit)? = null
+
+    /**外部使用的监听器*/
+    val actionFinishObserve: MutableList<ActionFinishObserve> = mutableListOf()
 
     /**[doAction]执行时的次数统计*/
     val doActionCount = ActionCount().apply {
@@ -161,8 +166,21 @@ abstract class BaseAccessibilityAction {
     /**[Action]执行完成, 可以用于释放一些数据*/
     @CallSuper
     open fun doActionFinish(error: ActionException? = null) {
-        actionFinish?.invoke(error)
-        actionFinish = null
+        //完成回调
+        _actionFinish?.invoke(error)
+        _actionFinish = null
+
+        //完成外部回调
+        if (actionFinishObserve.isNotEmpty()) {
+            val list = ArrayList(actionFinishObserve)
+            actionFinishObserve.clear()
+
+            list.forEach {
+                it.invoke(error)
+            }
+        }
+
+        //清空
         accessibilityInterceptor = null
 
         doActionCount.clear()

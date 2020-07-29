@@ -54,6 +54,9 @@ data class ActionBean(
     /**当action识别到并处理执行后的次数大于此值时, 强制完成*/
     var actionMaxCount: Int = DEFAULT_ACTION_FINISH_MAX_COUNT,
 
+    /**[Action]完成后, 需要执行的网络请求*/
+    var form: FormBean? = null,
+
     /**getText获取到的文本, 需要放在表单的那个key中*/
     var formKey: String? = null
 ) {

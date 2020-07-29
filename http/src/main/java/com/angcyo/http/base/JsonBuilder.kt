@@ -157,6 +157,7 @@ class JsonBuilder {
         return this
     }
 
+    //Char
     fun add(key: String, character: Char?): JsonBuilder {
         operateElement(
             operateElement,
@@ -167,6 +168,7 @@ class JsonBuilder {
         return this
     }
 
+    //Number
     fun add(key: String, number: Number?): JsonBuilder {
         operateElement(
             operateElement,
@@ -177,6 +179,7 @@ class JsonBuilder {
         return this
     }
 
+    //String
     fun add(key: String, string: String?): JsonBuilder {
         operateElement(
             operateElement,
@@ -187,6 +190,7 @@ class JsonBuilder {
         return this
     }
 
+    //JsonElement
     fun add(
         key: String,
         element: JsonElement?
@@ -197,6 +201,22 @@ class JsonBuilder {
             element,
             ignoreNull
         )
+        return this
+    }
+
+    //Any
+    fun add(
+        key: String,
+        any: Any?
+    ): JsonBuilder {
+        when (any) {
+            is Boolean -> add(key, any)
+            is Number -> add(key, any)
+            is String -> add(key, any)
+            is Char -> add(key, any)
+            is JsonElement -> add(key, any)
+            else -> L.e("不支持的数据类型!")
+        }
         return this
     }
 
@@ -429,6 +449,7 @@ class JsonBuilder {
 
     companion object {
         const val TAG = "JsonBuilder"
+
         /**
          * 操作[JsonObject]
          */

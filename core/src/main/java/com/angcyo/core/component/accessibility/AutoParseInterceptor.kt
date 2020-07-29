@@ -5,7 +5,9 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.core.component.accessibility.action.PermissionsAction
 import com.angcyo.core.component.accessibility.base.BaseFloatInterceptor
+import com.angcyo.core.component.accessibility.parse.FormBean
 import com.angcyo.core.component.accessibility.parse.TaskBean
+import com.angcyo.core.component.accessibility.parse.request
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.file.wrapData
 import com.angcyo.library.ex.nowTime
@@ -34,6 +36,9 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
         }
     }
 
+    /**请求表单时, 配置表单数据的回调*/
+    var onConfigParams: ((params: HashMap<String, Any>) -> Unit)? = null
+
     init {
         //固定通知id
         notifyId = 999
@@ -47,8 +52,15 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
         sendNotify(title, content)
     }
 
+    override fun startAction(restart: Boolean) {
+        super.startAction(restart)
+    }
+
     override fun onDoActionStart() {
         super.onDoActionStart()
+
+        //清空缓存
+        taskBean.getTextResultMap = null
 
         notify("就绪")
 
@@ -73,6 +85,8 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
     }
 
     override fun onDoActionFinish(action: BaseAccessibilityAction?, error: ActionException?) {
+        handleFormRequest(error)
+
         log("[${taskBean.name}]执行结束:${actionStatus.toActionStatusStr()} ${error ?: ""} 耗时:${(nowTime() - _actionStartTime).toElapsedTime()}")
         if (actionStatus == ACTION_STATUS_ERROR) {
             //出现异常
@@ -123,6 +137,30 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
         super.onDestroy()
         if (isInterrupt) {
             notify("中止")
+        }
+    }
+
+    /**表单请求*/
+    fun handleFormRequest(error: ActionException?) {
+        taskBean.form?.let {
+            //指定了表单处理
+            it.request { map ->
+
+                //action执行结果, 执行成功发送 200
+                if (error == null) {
+                    map[FormBean.KEY_CODE] = 200
+                    map[FormBean.KEY_MSG] =
+                        "${taskBean.name} 执行完成,耗时${nowTime() - _actionStartTime}"
+                } else {
+                    map[FormBean.KEY_CODE] = 500
+                    map[FormBean.KEY_MSG] = "${taskBean.name} 执行失败,${error.message}"
+                }
+
+                //额外配置
+                onConfigParams?.apply {
+                    invoke(map)
+                }
+            }
         }
     }
 }

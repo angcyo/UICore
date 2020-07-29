@@ -553,7 +553,7 @@ open class BaseRequestConfig {
     //自动根据url不是http开头,拼接上baseUrl
     var autoConnectUrl: Boolean = true
 
-    //body数据, 仅用于post请求
+    //body数据, 仅用于post请求. @Body
     var body: JsonElement = JsonObject()
 
     //url后面拼接的参数列表

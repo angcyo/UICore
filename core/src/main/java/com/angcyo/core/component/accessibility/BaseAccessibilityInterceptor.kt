@@ -420,7 +420,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         if (!action.isActionStart()) {
             L.v("${action.simpleHash()} [${action.actionTitle}] 开始.")
             action.onActionStart(this)
-            action.actionFinish = {
+            action._actionFinish = {
                 //action执行完成
                 L.v("${action.simpleHash()} [${action.actionTitle}] ${if (it == null) "完成" else it.message}:${actionIndex}/${actionList.size}")
                 if (it != null) {

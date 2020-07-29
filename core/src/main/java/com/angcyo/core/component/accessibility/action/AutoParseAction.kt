@@ -9,6 +9,8 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
 import com.angcyo.core.component.accessibility.parse.ActionBean
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
+import com.angcyo.core.component.accessibility.parse.FormBean
+import com.angcyo.core.component.accessibility.parse.request
 import com.angcyo.http.rx.doBack
 import com.angcyo.library.L
 import com.angcyo.library._screenHeight
@@ -35,6 +37,9 @@ open class AutoParseAction : BaseAccessibilityAction() {
     /**根据给定的[wordInputIndexList] [wordTextIndexList]返回对应的文本信息*/
     var onGetWordTextListAction: ((List<String>) -> List<String>?)? = null
 
+    /**请求表单时, 配置表单数据的回调*/
+    var onConfigParams: ((params: HashMap<String, Any>) -> Unit)? = null
+
     /**需要执行的[Action]描述*/
     var actionBean: ActionBean? = null
 
@@ -45,6 +50,9 @@ open class AutoParseAction : BaseAccessibilityAction() {
     var getTextList: MutableList<CharSequence>? = null
 
     override fun doActionFinish(error: ActionException?) {
+        //表单处理
+        handleFormRequest(error)
+
         onLogPrint = null
         onGetTextResult = null
         super.doActionFinish(error)
@@ -395,9 +403,32 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             value
                         }
                         ConstraintBean.ACTION_GET_TEXT -> {
+                            val textRegexList = constraintBean.getTextRegexList
                             handleNodeList.forEach {
-                                it.text()?.apply {
-                                    getTextResultList.add(this)
+                                it.text()?.also { text ->
+                                    val resultTextList = mutableListOf<String>()
+
+                                    if (textRegexList == null) {
+                                        //未指定正则匹配规则
+                                        resultTextList.add(text.toString())
+                                    } else {
+                                        textRegexList.forEach {
+                                            text.patternList(it).let { list ->
+                                                //正则匹配过滤后的文本列表
+                                                if (list.isNotEmpty()) {
+                                                    resultTextList.addAll(list)
+                                                }
+                                            }
+                                        }
+
+                                        //未匹配到正则时, 使用默认
+                                        if (resultTextList.isEmpty()) {
+                                            resultTextList.add(text.toString())
+                                        }
+                                    }
+
+                                    //汇总所有文本
+                                    getTextResultList.addAll(resultTextList)
                                 }
                             }
                             handleActionLog("获取文本[$getTextResultList]:${getTextResultList.isNotEmpty()}")
@@ -579,6 +610,33 @@ open class AutoParseAction : BaseAccessibilityAction() {
         }
         return inputList
     }
+
+    /**表单请求*/
+    fun handleFormRequest(error: ActionException?) {
+        actionBean?.form?.let {
+            //指定了表单处理
+            it.request { map ->
+
+                //如果配置了[getText]的[formKey]
+                actionBean?.formKey?.let { map[it] = getTextList?.firstOrNull() ?: "" }
+
+                //action执行结果, 执行成功发送 200
+                if (error == null) {
+                    map[FormBean.KEY_CODE] = 200
+                    map[FormBean.KEY_MSG] = "${actionBean?.title} 执行完成."
+                    map[FormBean.KEY_DATA] = "${getTextList?.firstOrNull()}"
+                } else {
+                    map[FormBean.KEY_CODE] = 500
+                    map[FormBean.KEY_MSG] = "${actionBean?.title} 执行失败,${error.message}"
+                }
+
+                //额外配置
+                onConfigParams?.apply {
+                    invoke(map)
+                }
+            }
+        }
+    }
 }
 
 /**点击一组节点中的所有可点击的节点, 并返回是否点击成功.
@@ -634,17 +692,3 @@ fun String.toPointF(width: Int = _screenWidth, height: Int = _screenHeight): Poi
     }
     return p
 }
-
-fun dslAutoParseAction(action: AutoParseAction.() -> Unit): AutoParseAction {
-    return AutoParseAction().apply(action)
-}
-
-//fun au() {
-//
-//    dslAutoParseAction {
-//        backBean = dslParseParams {
-//
-//        }
-//    }
-//}
-

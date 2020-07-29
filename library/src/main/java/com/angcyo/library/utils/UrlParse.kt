@@ -30,42 +30,52 @@ object UrlParse {
                 queryMap["url"] = URLDecoder.decode(urlValue, "UTF-8")
                 query = query.substring(0, index)
             }
-            //除url之外的参数进行解析
-            if (query.isNotEmpty()) {
-                val pairs = query.split("&".toRegex()).toTypedArray()
-                for (pair in pairs) {
-                    val idx = pair.indexOf("=")
-                    //如果等号存在且不在字符串两端，取出key、value
-                    if (idx > 0 && idx < pair.length - 1) {
-                        val key = URLDecoder.decode(pair.substring(0, idx), "UTF-8")
-                        val value = URLDecoder.decode(pair.substring(idx + 1), "UTF-8")
-
-                        val longValue = value.toLongOrNull()
-                        if (longValue == null) {
-                            val doubleValue = value.toDoubleOrNull()
-                            if (doubleValue == null) {
-                                if (value == "true") {
-                                    queryMap[key] = true
-                                } else if (value == "false") {
-                                    queryMap[key] = false
-                                } else {
-                                    //字符串数据
-                                    queryMap[key] = value
-                                }
-                            } else {
-                                //浮点型数据
-                                queryMap[key] = doubleValue
-                            }
-                        } else {
-                            //整型数据
-                            queryMap[key] = longValue
-                        }
-                    }
-                }
-            }
+            getUrlQueryParams(query, queryMap)
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
+        return queryMap
+    }
+
+    /**除url之外的参数进行解析*/
+    fun getUrlQueryParams(
+        query: String?,
+        queryMap: MutableMap<String, Any> = LinkedHashMap()
+    ): Map<String, Any> {
+
+        if (!query.isNullOrEmpty()) {
+            val pairs = query.split("&".toRegex()).toTypedArray()
+            for (pair in pairs) {
+                val idx = pair.indexOf("=")
+                //如果等号存在且不在字符串两端，取出key、value
+                if (idx > 0 && idx < pair.length - 1) {
+                    val key = URLDecoder.decode(pair.substring(0, idx), "UTF-8")
+                    val value = URLDecoder.decode(pair.substring(idx + 1), "UTF-8")
+
+                    val longValue = value.toLongOrNull()
+                    if (longValue == null) {
+                        val doubleValue = value.toDoubleOrNull()
+                        if (doubleValue == null) {
+                            if (value == "true") {
+                                queryMap[key] = true
+                            } else if (value == "false") {
+                                queryMap[key] = false
+                            } else {
+                                //字符串数据
+                                queryMap[key] = value
+                            }
+                        } else {
+                            //浮点型数据
+                            queryMap[key] = doubleValue
+                        }
+                    } else {
+                        //整型数据
+                        queryMap[key] = longValue
+                    }
+                }
+            }
+        }
+
         return queryMap
     }
 

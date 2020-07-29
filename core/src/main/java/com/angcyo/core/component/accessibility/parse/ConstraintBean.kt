@@ -1,6 +1,7 @@
 package com.angcyo.core.component.accessibility.parse
 
 import com.angcyo.core.component.accessibility.back
+import com.angcyo.core.component.accessibility.parse.ConstraintBean.Companion.ACTION_GET_TEXT
 
 /**
  * 参数严格的约束
@@ -122,7 +123,11 @@ data class ConstraintBean(
     /**当以上规则匹配到很多节点时, 挑出指定索引的节点执行[actionList]. 不指定默认所有节点
      * index>=0, 正向取索引
      * index<0, 倒数第几个*/
-    var handleNodeList: List<Int>? = null
+    var handleNodeList: List<Int>? = null,
+
+    /**[ACTION_GET_TEXT]获取文本时, 需要过滤的文本正则, 非一一对应,
+     * 如果匹配到, 则中断后续的匹配规则. 如果全部未匹配到, 则直接使用本身 */
+    var getTextRegexList: List<String>? = null
 ) {
     companion object {
 

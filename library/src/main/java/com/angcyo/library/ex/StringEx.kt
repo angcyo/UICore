@@ -303,15 +303,23 @@ fun String?.isTextMimeType(): Boolean {
 }
 
 /**获取字符串中所有匹配的数据(部分匹配), 更像是contains的关系*/
-fun CharSequence?.patternList(regex: String?): MutableList<String> {
+fun CharSequence?.patternList(
+    regex: String?,
+    orNoFind: String? = null /*未找到时, 默认*/
+): MutableList<String> {
     val result = mutableListOf<String>()
     if (this == null) {
         return result
     }
     regex?.let {
         val matcher = regex.toPattern().matcher(this)
+        var isFind = false
         while (matcher.find()) {
+            isFind = true
             result.add(matcher.group())
+        }
+        if (!isFind && orNoFind != null) {
+            result.add(orNoFind)
         }
     }
     return result
