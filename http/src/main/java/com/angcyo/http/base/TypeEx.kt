@@ -19,6 +19,8 @@ fun type(rootClass: Class<*>, typeClass: Class<*>): Type {
     return TypeBuilder.newInstance(rootClass).addTypeParam(typeClass).build()
 }
 
+fun listType(typeClass: Class<*>): Type = type(List::class.java, typeClass)
+
 /**List<? super String>*/
 fun typeSuper(rootClass: Class<*>, typeClass: Class<*>): Type {
     return TypeBuilder.newInstance(rootClass).addTypeParamSuper(typeClass).build()
@@ -41,6 +43,8 @@ fun type(rootClass: Class<*>, typeClass1: Class<*>, typeClass2: Class<*>): Type 
         .addTypeParam(typeClass2)
         .build()
 }
+
+fun mapType(key: Class<*>, value: Class<*>) = type(Map::class.java, key, value)
 
 /**Map<String, List<String>*/
 fun type(

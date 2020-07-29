@@ -1,6 +1,7 @@
 package com.angcyo.library.utils
 
 import android.text.TextUtils
+import com.angcyo.library.L
 import com.angcyo.library.L.e
 import com.angcyo.library.L.i
 import java.util.*
@@ -288,4 +289,43 @@ fun Any.toMap(): Map<String, String> {
         }
     }
     return map
+}
+
+/**
+ * 将一个对象的成员属性, 赋值给另一个对象, 按照key type 相同的原则匹配
+ * @param ignoreNull 如果是null, 是否需要忽略
+ */
+fun Any?.fillTo(to: Any?, ignoreNull: Boolean = false) {
+    val from = this
+    if (from == null || to == null) {
+        return
+    }
+    val fromFields = from.javaClass.declaredFields
+    val toFields = to.javaClass.declaredFields
+    for (f in fromFields) {
+        val name = f.name
+        for (t in toFields) {
+            val tName = t.name
+            if (name.equals(tName, ignoreCase = true)) {
+                try {
+                    f.isAccessible = true
+                    t.isAccessible = true
+                    val fromValue = f[from]
+                    if (ignoreNull && fromValue == null) {
+                    } else {
+                        val fGenericType = f.genericType
+                        val tGenericType = t.genericType
+                        if (fGenericType === tGenericType) {
+                            t[to] = fromValue
+                        } else {
+                            L.w("操作字段名:$tName 类型不匹配, From:$fGenericType To:$tGenericType")
+                        }
+                    }
+                } catch (e: java.lang.Exception) {
+                    e.printStackTrace()
+                }
+                break
+            }
+        }
+    }
 }
