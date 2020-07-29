@@ -18,9 +18,6 @@ data class TaskBean(
     var taskId: Long = 0,
     /**任务描述, 不参与auto parse*/
     var taskDes: String? = null,
-    /**2个服务器返回的json解析的数据, 对应[wordList] [actions]*/
-    var wordsJson: String? = null,
-    var actionsJson: String? = null,
 
     /**任务对应的包名, 比如(抖音的包名, 快手的包名)*/
     var packageName: String? = null,
