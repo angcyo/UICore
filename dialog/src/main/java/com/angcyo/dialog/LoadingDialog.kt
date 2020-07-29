@@ -168,13 +168,19 @@ fun Fragment.loadingBottom(
     text: CharSequence? = "加载中...",
     showCloseView: Boolean = true,
     onCancel: (dialog: Dialog) -> Unit = {}
-) {
-    activity?.loading(text, R.layout.lib_dialog_bottom_loading_layout, showCloseView, config = {
-        dialogGravity = Gravity.BOTTOM
-        animStyleResId = R.style.LibDialogBottomTranslateAnimation
-        amount = 0.2f
-        dialogWidth = -1
-    }, onCancel = onCancel)
+): Dialog? {
+    return activity?.loading(
+        text,
+        R.layout.lib_dialog_bottom_loading_layout,
+        showCloseView,
+        config = {
+            dialogGravity = Gravity.BOTTOM
+            animStyleResId = R.style.LibDialogBottomTranslateAnimation
+            amount = 0.2f
+            dialogWidth = -1
+        },
+        onCancel = onCancel
+    )
 }
 
 /**快速在[Fragment]显示底部loading, 通常用于包裹一个网络请求*/
@@ -182,9 +188,10 @@ fun Fragment.loadLoadingBottom(
     tip: CharSequence? = "处理中...",
     successTip: CharSequence? = "处理完成!",
     showErrorToast: Boolean = false,
+    showCloseView: Boolean = true,
     action: (cancel: Boolean, loadEnd: (data: Any?, error: Throwable?) -> Unit) -> Unit
-) {
-    loadingBottom(tip) {
+): Dialog? {
+    val dialog = loadingBottom(tip, showCloseView) {
         action(true) { _, _ ->
             //no op
         }
@@ -202,6 +209,8 @@ fun Fragment.loadLoadingBottom(
             hideLoading(error?.message)
         }
     }
+
+    return dialog
 }
 
 /**快速在[Fragment]显示loading, 通常用于包裹一个网络请求*/
