@@ -22,6 +22,7 @@ import com.angcyo.core.component.accessibility.AccessibilityHelper.tempRect
 import com.angcyo.covertToStr
 import com.angcyo.http.RIo
 import com.angcyo.library.L
+import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.className
 import com.angcyo.library.ex.copy
@@ -204,7 +205,9 @@ fun List<AccessibilityNodeInfo>.mainNode(): AccessibilityNodeInfo? {
         it.getBoundsInScreen(tempRect)
         val height = tempRect.height()
         val width = tempRect.width()
-        if (height >= maxHeight && width >= maxWidth) {
+        if (height >= maxHeight /*高度最高的*/ &&
+            (width >= maxWidth || width >= _screenWidth / 2 /*宽度最大的, 或者宽度大于屏幕的一半*/)
+        ) {
             result = it
             maxHeight = height
             maxWidth = width

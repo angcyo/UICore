@@ -104,7 +104,7 @@ abstract class BaseAccessibilityAction {
         event: AccessibilityEvent?,
         nodeList: List<AccessibilityNodeInfo>
     ) {
-
+        //全未处理event计数
         checkEventOutCount.doCount()
 
         if (checkEventOutCount.isMaxLimit()) {
@@ -114,7 +114,13 @@ abstract class BaseAccessibilityAction {
                 //回滚超限
                 doActionFinish(ActionException("回滚次数[${rollbackCount.count}]超限[max:${rollbackCount.maxCountLimit}]"))
             } else {
+                //other event 处理统计清除
+                checkOtherEventCount.clear()
+
+                //全未处理event计数
                 checkEventOutCount.clear()
+
+                //回滚计数统计
                 rollbackCount.doCount()
 
                 //执行回滚
