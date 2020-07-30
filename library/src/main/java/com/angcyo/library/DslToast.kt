@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StyleRes
+import com.angcyo.library.component.ThreadExecutor
 import com.angcyo.library.ex.*
 import java.lang.ref.WeakReference
 
@@ -29,6 +30,12 @@ object DslToast {
     var LENGTH_LONG_TIME = 4000L
 
     fun show(context: Context = app(), action: ToastConfig.() -> Unit) {
+        if (!isMain()) {
+            //回到主线程调用
+            ThreadExecutor.onMain(Runnable { show(context, action) })
+            return
+        }
+
         val config = ToastConfig()
         config.action()
 

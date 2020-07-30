@@ -3,13 +3,17 @@ package com.angcyo.core.component.accessibility
 import android.accessibilityservice.AccessibilityService
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import android.widget.Toast
 import com.angcyo.core.BuildConfig
 import com.angcyo.core.component.accessibility.AccessibilityHelper.logFolderName
+import com.angcyo.core.component.accessibility.AccessibilityHelper.tempRect
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.file.wrapData
 import com.angcyo.http.rx.doBack
 import com.angcyo.library.L
 import com.angcyo.library.ex.fileSizeString
+import com.angcyo.library.ex.isDebug
+import com.angcyo.library.toastQQ
 
 /**
  * 窗口改变日志输出
@@ -30,19 +34,35 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
         fun logWindow(
             allWindow: Boolean = true,
             service: AccessibilityService? = BaseAccessibilityService.weakService?.get(),
-            builder: StringBuilder = StringBuilder()
+            builder: StringBuilder = StringBuilder(),
+            showToast: Boolean = isDebug()
         ): String {
             if (service != null) {
+                val toastStringBuilder = StringBuilder()
                 val rootNodeInfo: AccessibilityNodeInfo? = service.findNodeInfoList().mainNode()
                 service.windows.forEachIndexed { index, accessibilityWindowInfo ->
                     builder.appendln("$index->$accessibilityWindowInfo")
+
+                    toastStringBuilder.append("$index->title=${accessibilityWindowInfo.title}\n")
+
                     accessibilityWindowInfo.root?.apply {
+                        getBoundsInScreen(tempRect)
                         if (rootNodeInfo != null && this == rootNodeInfo) {
                             builder.append("[root]")
                             logNodeInfo(outBuilder = builder)
+
+                            toastStringBuilder.append("[root] ")
                         } else if (allWindow) {
                             logNodeInfo(outBuilder = builder)
                         }
+                        toastStringBuilder.append("${this.packageName} $tempRect\n\n")
+                    }
+                }
+
+                if (showToast) {
+                    toastQQ(toastStringBuilder) {
+                        toastAnimation = 0
+                        duration = Toast.LENGTH_LONG
                     }
                 }
             }
