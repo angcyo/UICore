@@ -21,6 +21,9 @@ data class ActionBean(
     /**标识[ActionBean]*/
     var actionId: Long = -1,
 
+    /**是否激活[Action], 不激活不会被添加到[actionList]中*/
+    var enable: Boolean = true,
+
     /**每个action对应的描述title*/
     var title: String? = null,
 
@@ -40,22 +43,22 @@ data class ActionBean(
     /**默认当前页面检测x次, 都还不通过. 回退到上一步*/
     var rollbackCount: Int = DEFAULT_ACTION_CHECK_OUT_MAX_COUNT,
 
-    /**[checkOtherEvent]允许执行的最大次数*/
-    var checkOtherCount: Int = DEFAULT_ACTION_OTHER_MAX_COUNT,
-
     /**回滚x次后, 还是不通过, 则报错*/
     var rollbackMaxCount: Int = DEFAULT_ROLLBACK_MAX_COUNT,
 
-    /**当前action执行完成后, 间隔多久执行下一个[Action]. 毫秒
-     * 格式[5000,500,5] 解释:5000+500*[1-5),
-     * null/空字符:表示设备性能对应的默认值*/
-    var interval: String? = null,
+    /**[checkOtherEvent]允许执行的最大次数*/
+    var checkOtherCount: Int = DEFAULT_ACTION_OTHER_MAX_COUNT,
 
     /**允许[doAction]执行的最大次数, 超过后抛出异常*/
     var actionMaxRunCount: Int = DEFAULT_ACTION_MAX_COUNT,
 
     /**当action识别到并处理执行后的次数大于此值时, 强制完成*/
     var actionMaxCount: Int = DEFAULT_ACTION_FINISH_MAX_COUNT,
+
+    /**当前action执行完成后, 间隔多久执行下一个[Action]. 毫秒
+     * 格式[5000,500,5] 解释:5000+500*[1-5),
+     * null/空字符:表示设备性能对应的默认值*/
+    var interval: String? = null,
 
     /**[Action]完成后, 需要执行的网络请求*/
     var form: FormBean? = null,

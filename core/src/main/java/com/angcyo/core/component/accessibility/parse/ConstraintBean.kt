@@ -151,6 +151,7 @@ data class ConstraintBean(
         const val ACTION_SET_TEXT = "setText" //设置文本内容 [inputList]
         const val ACTION_RANDOM = "random" //随机执行, 空字符会进行随机操作.
         const val ACTION_FINISH = "finish" //直接完成操作
+        const val ACTION_ERROR = "error" //直接失败操作, [:xxx]失败信息
         const val ACTION_START = "start" //[start:com.xxx.xxx]启动应用程序 [:main]本机 [:target]目标(空或null)
         const val ACTION_COPY = "copy" //复制文本 [inputList], [:xxx]复制指定的文本'xxx'
         const val ACTION_KEY = "key" //发送按键事件[key:66] KEYCODE_ENTER=66 发送回车按键. (test)

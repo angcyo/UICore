@@ -71,7 +71,7 @@ open class AutoParser {
 
                             for (i in min(fist, second)..max(fist, second)) {
                                 originList.getOrNull(i)?.let {
-                                    result.add(indexStr)
+                                    result.add(it)
                                 }
                             }
                         }

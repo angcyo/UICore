@@ -49,15 +49,9 @@ open class AutoParseAction : BaseAccessibilityAction() {
     /**获取到的文本, 临时存储*/
     var getTextList: MutableList<CharSequence>? = null
 
-    override fun doActionFinish(error: ActionException?) {
-        //表单处理
-        handleFormRequest(error)
+    //<editor-fold desc="周期回调方法">
 
-        onLogPrint = null
-        onGetTextResult = null
-        super.doActionFinish(error)
-    }
-
+    /**检查是否是匹配的界面*/
     override fun checkEvent(
         service: BaseAccessibilityService,
         event: AccessibilityEvent?,
@@ -71,6 +65,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         return autoParser.parse(service, this, nodeList, constraintList)
     }
 
+    /**当[checkEvent]无法通过时, 需要怎么处理*/
     override fun checkOtherEvent(
         service: BaseAccessibilityService,
         event: AccessibilityEvent?,
@@ -106,6 +101,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         return result
     }
 
+    /**当[checkEvent]通过时, 需要怎么处理*/
     override fun doAction(
         service: BaseAccessibilityService,
         event: AccessibilityEvent?,
@@ -179,18 +175,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         }
     }
 
-    /**[getText]动作获取到的文本列表*/
-    fun handleGetTextResult(textList: List<CharSequence>) {
-        if (getTextList == null) {
-            getTextList = mutableListOf()
-        }
-
-        getTextList?.clear()
-        getTextList?.addAll(textList)
-
-        onGetTextResult?.invoke(textList)
-    }
-
+    /**当前执行的[action]无法处理时, 进入[Back]流程的处理*/
     override fun doActionWidth(
         action: BaseAccessibilityAction,
         service: BaseAccessibilityService,
@@ -228,6 +213,30 @@ open class AutoParseAction : BaseAccessibilityAction() {
             return result
         }
         return super.doActionWidth(action, service, event, nodeList)
+    }
+
+    /**[Action]处理完成*/
+    override fun doActionFinish(error: ActionException?) {
+        //表单处理
+        handleFormRequest(error)
+
+        onLogPrint = null
+        onGetTextResult = null
+        super.doActionFinish(error)
+    }
+
+    //</editor-fold desc="周期回调方法">
+
+    /**[getText]动作获取到的文本列表*/
+    fun handleGetTextResult(textList: List<CharSequence>) {
+        if (getTextList == null) {
+            getTextList = mutableListOf()
+        }
+
+        getTextList?.clear()
+        getTextList?.addAll(textList)
+
+        onGetTextResult?.invoke(textList)
     }
 
     /**
@@ -310,11 +319,10 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             //找到
                             action = act.substring(0, indexOf)
                             arg = act.substring(indexOf + 1, act.length)
-
-                            parsePoint(arg).let {
-                                p1.set(it[0])
-                                p2.set(it[1])
-                            }
+                        }
+                        parsePoint(arg).let {
+                            p1.set(it[0])
+                            p2.set(it[1])
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -502,6 +510,15 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                 value = value || it.focus()
                             }
                             value
+                        }
+                        ConstraintBean.ACTION_ERROR -> {
+                            //直接失败操作
+                            result = false
+                            jumpNextHandleAction = true
+
+                            //异常退出
+                            doActionFinish(ActionException(arg ?: "ACTION_ERROR"))
+                            result
                         }
                         else -> service.gesture.click().apply {
                             handleActionLog("默认点击:$this")

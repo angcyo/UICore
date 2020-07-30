@@ -71,63 +71,71 @@ fun TaskBean.toInterceptor(
         val actionIntervalMap = parseActionInterval()
 
         actions?.forEach {
-            if (it.interval.isNullOrEmpty() && it.actionId > 0) {
-                //重置interval
-                it.interval = actionIntervalMap.getOrDefault(it.actionId, null)
-            }
-
-            //to [AutoParseAction]
-            val autoParseAction = it.toAction(filterPackageNameList.firstOrNull() ?: "")
-
-            //如果未指定[check]对象, 则根据[checkId]查找对应的[CheckBean]
-            if (autoParseAction.actionBean?.check == null) {
-                val checkId = autoParseAction.actionBean?.checkId ?: -1
-                if (checkId > 0L) {
-                    autoParseAction.actionBean?.check = onConvertCheckById.invoke(checkId)
+            if (it.enable) {
+                if (it.interval.isNullOrEmpty() && it.actionId > 0) {
+                    //重置interval
+                    it.interval = actionIntervalMap.getOrDefault(it.actionId, null)
                 }
-            }
 
-            //action动作执行的日志输出
-            autoParseAction.onLogPrint = {
-                AutoParseInterceptor.log("$name($actionIndex/${actionList.size}) ${autoParseAction.actionTitle} $it")
-            }
+                //to [AutoParseAction]
+                val autoParseAction = it.toAction(filterPackageNameList.firstOrNull() ?: "")
 
-            //获取到的文本回调
-            autoParseAction.onGetTextResult = { textList ->
-                try {
-                    if (getTextResultMap == null) {
-                        getTextResultMap = hashMapOf()
+                //如果未指定[check]对象, 则根据[checkId]查找对应的[CheckBean]
+                if (autoParseAction.actionBean?.check == null) {
+                    val checkId = autoParseAction.actionBean?.checkId ?: -1
+                    if (checkId > 0L) {
+                        autoParseAction.actionBean?.check = onConvertCheckById.invoke(checkId)
                     }
-                    val map = getTextResultMap
-                    if (map !is HashMap) {
-                        getTextResultMap = hashMapOf()
-                    }
-
-                    //如果action指定了[formKey]
-                    val formKey =
-                        autoParseAction.actionBean?.formKey /* ?: autoParseAction.hashCode().toString()*/
-
-                    formKey?.let {
-                        (map as HashMap)[formKey] = textList
-                    }
-
-                    onGetTextResult(autoParseAction, textList)
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
-            }
 
-            //根据给定的[wordInputIndexList]返回对应的文本信息
-            autoParseAction.onGetWordTextListAction = {
-                AutoParser.parseWordTextList(wordList, it)
-            }
+                //action动作执行的日志输出
+                autoParseAction.onLogPrint = {
+                    AutoParseInterceptor.log("$name($actionIndex/${actionList.size}) ${autoParseAction.actionTitle} $it")
+                }
 
-            //判断是否是back check
-            if (it.check?.back == null) {
-                actionList.add(autoParseAction)
-            } else {
-                actionOtherList.add(autoParseAction)
-            }
+                //获取到的文本回调
+                autoParseAction.onGetTextResult = { textList ->
+                    try {
+                        if (getTextResultMap == null) {
+                            getTextResultMap = hashMapOf()
+                        }
+                        val map = getTextResultMap
+                        if (map !is HashMap) {
+                            getTextResultMap = hashMapOf()
+                        }
+
+                        //如果action指定了[formKey]
+                        val formKey =
+                            autoParseAction.actionBean?.formKey /* ?: autoParseAction.hashCode().toString()*/
+
+                        formKey?.let {
+                            (map as HashMap)[formKey] = textList
+                        }
+
+                        onGetTextResult(autoParseAction, textList)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }// end onGetTextResult
+
+                //根据给定的[wordInputIndexList]返回对应的文本信息
+                autoParseAction.onGetWordTextListAction = {
+                    AutoParser.parseWordTextList(wordList, it)
+                }
+
+                //action表单提交时的参数配置
+                autoParseAction.onConfigParams = {
+                    //直接使用[AutoParseInterceptor]的配置信息
+                    this.onConfigParams?.invoke(it)
+                }
+
+                //判断是否是back check
+                if (it.check?.back == null) {
+                    actionList.add(autoParseAction)
+                } else {
+                    actionOtherList.add(autoParseAction)
+                }
+            }//...end enable
         }
     }
 }

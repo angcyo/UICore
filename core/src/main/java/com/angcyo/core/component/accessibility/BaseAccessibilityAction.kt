@@ -47,23 +47,23 @@ abstract class BaseAccessibilityAction {
     val actionFinishObserve: MutableList<ActionFinishObserve> = mutableListOf()
 
     /**[doAction]执行时的次数统计*/
-    val doActionCount = ActionCount().apply {
+    val doActionCount: ActionCount = ActionCount().apply {
         maxCountLimit = DEFAULT_ACTION_MAX_COUNT
     }
 
     /**[checkOtherEvent]执行次数统计*/
-    val checkOtherEventCount = ActionCount().apply {
+    val checkOtherEventCount: ActionCount = ActionCount().apply {
         maxCountLimit = DEFAULT_ACTION_OTHER_MAX_COUNT
     }
 
     /**[onCheckEventOut]执行统计,无法识别到界面,同时又无法back处理
      * 次数过多, 可以将[action]提到上一个级别*/
-    val checkEventOutCount = ActionCount().apply {
+    val checkEventOutCount: ActionCount = ActionCount().apply {
         maxCountLimit = DEFAULT_ACTION_CHECK_OUT_MAX_COUNT
     }
 
     /**回滚次数统计*/
-    val rollbackCount = ActionCount().apply {
+    val rollbackCount: ActionCount = ActionCount().apply {
         maxCountLimit = DEFAULT_ROLLBACK_MAX_COUNT
     }
 
