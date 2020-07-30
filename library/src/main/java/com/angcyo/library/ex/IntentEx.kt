@@ -1,13 +1,16 @@
 package com.angcyo.library.ex
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.provider.Settings
+import android.text.TextUtils
 import com.angcyo.library.L
 import com.angcyo.library.component.queryActivities
 
@@ -129,7 +132,7 @@ fun Context.openApp(
         L.w("packageName is null!")
         return null
     }
-    val intent = if (className.isNullOrEmpty()) {
+    val intent = getAppOpenIntentByPackageName(packageName) ?: if (className.isNullOrEmpty()) {
         packageManager.getLaunchIntentForPackage(packageName)
     } else {
         Intent().run {
@@ -159,3 +162,24 @@ fun Context.openApp(
     return intent
 }
 
+@SuppressLint("WrongConstant")
+fun Context.getAppOpenIntentByPackageName(packageName: String): Intent? {
+    var mainActivityClass: String? = null
+    val pm = packageManager
+    val intent = Intent(Intent.ACTION_MAIN)
+    intent.addCategory(Intent.CATEGORY_LAUNCHER)
+    intent.flags = Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED or Intent.FLAG_ACTIVITY_NEW_TASK
+    val list = pm.queryIntentActivities(intent, PackageManager.GET_ACTIVITIES)
+    for (i in list.indices) {
+        val info = list[i]
+        if (info.activityInfo.packageName == packageName) {
+            mainActivityClass = info.activityInfo.name
+            break
+        }
+    }
+    if (TextUtils.isEmpty(mainActivityClass)) {
+        return null
+    }
+    intent.component = ComponentName(packageName, mainActivityClass!!)
+    return intent
+}

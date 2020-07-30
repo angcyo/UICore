@@ -43,6 +43,9 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                 service.windows.forEachIndexed { index, accessibilityWindowInfo ->
                     builder.appendln("$index->$accessibilityWindowInfo")
 
+                    if (index > 0) {
+                        toastStringBuilder.appendln()
+                    }
                     toastStringBuilder.append("$index->title=${accessibilityWindowInfo.title}\n")
 
                     accessibilityWindowInfo.root?.apply {
@@ -55,7 +58,8 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                         } else if (allWindow) {
                             logNodeInfo(outBuilder = builder)
                         }
-                        toastStringBuilder.append("${this.packageName} $tempRect\n\n")
+                        toastStringBuilder.append("${this.packageName}\n")
+                        toastStringBuilder.append("$tempRect\n")
                     }
                 }
 
