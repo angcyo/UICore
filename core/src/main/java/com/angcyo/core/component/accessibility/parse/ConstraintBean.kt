@@ -14,6 +14,7 @@ data class ConstraintBean(
 
     /**约束的文本, 这个文本可以是对应的id, 或者node上的文本内容
      * 文本需要全部命中.
+     * 优先匹配[wordTextIndexList]对应的数据.
      * null会匹配除[textList]约束的其他约束规则的node
      * 空字符会匹配所有包含文本的node
      * */
@@ -72,6 +73,11 @@ data class ConstraintBean(
     /**
      * [setText]时的输入数据在[wordList]集合的索引集合, 随机从里面取一个.
      * 如果为null, 则从[inputList]读取. 如果[inputList]也为null, 则从代码中随机产生
+     * 支持表达式:
+     * $N $0将会替换为[wordList]索引为0的值.最大支持10000
+     * 1-4 取索引为[1-4]的值
+     * 0--1 取索引为[0-倒数第1个]的值
+     * -1 取倒数第1个的值
      * */
     var wordInputIndexList: List<String>? = null,
 

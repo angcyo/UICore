@@ -44,7 +44,8 @@ data class TaskBean(
 
     //--------------------------------------------------------------
 
-    /**getText获取到的文本, 都将保存在此, 通过key-value的形式*/
+    /**收集所有action getText获取到的文本, 都将保存在此, 通过key-value的形式
+     * 需要指定action的[formKey], 才会保存*/
     var getTextResultMap: Map<String, List<CharSequence>>? = null,
 
     /**[Task]完成后, 需要执行的网络请求*/
@@ -101,9 +102,14 @@ fun TaskBean.toInterceptor(
                     if (map !is HashMap) {
                         getTextResultMap = hashMapOf()
                     }
+
+                    //如果action指定了[formKey]
                     val formKey =
-                        autoParseAction.actionBean?.formKey ?: autoParseAction.hashCode().toString()
-                    (map as HashMap)[formKey] = textList
+                        autoParseAction.actionBean?.formKey /* ?: autoParseAction.hashCode().toString()*/
+
+                    formKey?.let {
+                        (map as HashMap)[formKey] = textList
+                    }
 
                     onGetTextResult(autoParseAction, textList)
                 } catch (e: Exception) {
