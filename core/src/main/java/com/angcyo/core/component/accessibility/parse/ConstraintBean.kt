@@ -16,7 +16,8 @@ data class ConstraintBean(
      * 文本需要全部命中.
      * 优先匹配[wordTextIndexList]对应的数据.
      * null会匹配除[textList]约束的其他约束规则的node
-     * 空字符会匹配所有包含文本的node
+     * 空字符会匹配所有包含文本的node,
+     * 如果所有匹配规则都是null, 则会返回[rootNode]
      * */
     var textList: List<String>? = null,
 
@@ -169,4 +170,14 @@ data class ConstraintBean(
         const val STATE_UNSELECTED = "unselected" //具备选未中状态
         const val STATE_SCROLLABLE = "scrollable" //具备可滚动状态
     }
+}
+
+/**是否是空约束*/
+fun ConstraintBean.isConstraintEmpty(): Boolean {
+    return textList == null &&
+            wordTextIndexList == null &&
+            clsList == null &&
+            rectList == null &&
+            stateList == null &&
+            pathList == null
 }

@@ -7,6 +7,7 @@ import androidx.collection.ArrayMap
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
+import com.angcyo.core.component.accessibility.parse.isConstraintEmpty
 import com.angcyo.library.ex.isListEmpty
 import kotlin.math.max
 import kotlin.math.min
@@ -141,6 +142,12 @@ open class AutoParser {
         nodeList: List<AccessibilityNodeInfo>
     ): List<AccessibilityNodeInfoCompat> {
         val rootNodeInfo: AccessibilityNodeInfo = nodeList.mainNode() ?: return result
+
+        if (constraintBean.isConstraintEmpty()) {
+            //空约束返回[rootNodeInfo]
+            result.add(rootNodeInfo.wrap())
+            return result
+        }
 
         //存储一下跟node的矩形, 方便用于坐标比例计算
         rootNodeInfo.getBoundsInScreen(_rootNodeRect)
