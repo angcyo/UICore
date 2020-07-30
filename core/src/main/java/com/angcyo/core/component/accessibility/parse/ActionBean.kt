@@ -7,7 +7,6 @@ import com.angcyo.core.component.accessibility.BaseAccessibilityAction.Companion
 import com.angcyo.core.component.accessibility.BaseAccessibilityAction.Companion.DEFAULT_ROLLBACK_MAX_COUNT
 import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.parse.ActionBean.Companion.HANDLE_TYPE_NONE
-import com.angcyo.library.ex.isDebugType
 
 /**
  * 每个任务由多个action构建, 每个action由actionBean构建
@@ -93,7 +92,7 @@ fun ActionBean.toAction(packageName: String): AutoParseAction {
         actionBean = this@toAction
 
         //时间间隔
-        if (!isDebugType()) {
+        if (!interval.isNullOrEmpty()) {
             actionInterval = interval
         }
 
