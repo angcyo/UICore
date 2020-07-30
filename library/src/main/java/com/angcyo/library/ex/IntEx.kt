@@ -70,3 +70,69 @@ fun Int.toZero(leftCount: Int = 2, rightCount: Int = 0): String {
     val df = DecimalFormat("$b")
     return df.format(this)
 }
+
+/**
+ * 很大的数, 折叠展示成 xx.xxw xx.xxk xx
+ * 转换成短数字
+ * */
+fun Int.toShortString() = this.toLong().toShortString()
+
+fun Long.toShortString(
+    bases: Array<Long> = arrayOf(10000, 1000), //设定的基数
+    units: Array<String> = arrayOf("w", "kw"), //基数对应的单位
+    digits: Array<Int> = arrayOf(2, 2) //每个单位, 需要保留的小数点位数
+): String {
+    val builder = StringBuilder()
+
+    //基数, 对应的单位
+    val levelNumList = mutableListOf<Long>()
+    var num: Long = this
+    var level = 0
+
+    while (true) {
+        if (num > 0) {
+
+            //基数
+            val base: Long = bases.getOrNull(level) ?: Long.MAX_VALUE //最后一级结束控制
+
+            //基数计算后的余数
+            val levelNum = num % base
+
+            levelNumList.add(levelNum)
+
+            level++
+            //下一个参与计算的数
+            num /= base
+        } else if (num == 0L && levelNumList.isEmpty()) {
+            levelNumList.add(num)
+            break
+        } else {
+            break
+        }
+    }
+
+    levelNumList.lastOrNull()?.apply {
+        builder.append(this)
+
+        val lastIndex = levelNumList.lastIndex - 1
+        val dec = digits.getOrNull(lastIndex) ?: -1
+        if (dec > 0) {
+            //需要小数
+
+            levelNumList.getOrNull(lastIndex)?.apply {
+                //有小数
+                val numString = this.toString()
+
+                builder.append(('.'))
+                builder.append(numString.subSequence(0, min(dec, numString.length)))
+            }
+        }
+
+        //单位
+        units.getOrNull(lastIndex)?.apply {
+            builder.append(this)
+        }
+    }
+
+    return builder.toString()
+}
