@@ -3,6 +3,7 @@ package com.angcyo.ilayer.container
 import android.content.Context
 import android.content.Context.WINDOW_SERVICE
 import android.graphics.PixelFormat
+import android.graphics.Rect
 import android.os.Build
 import android.view.Gravity
 import android.view.View
@@ -98,6 +99,8 @@ class WindowContainer(context: Context) : BaseContainer(context) {
         }
     }
 
+
+    val _rootRect = Rect()
     override fun onDragBy(layer: ILayer, dx: Float, dy: Float, end: Boolean) {
         val rootView = layer._rootView ?: return
 
@@ -162,10 +165,7 @@ class WindowContainer(context: Context) : BaseContainer(context) {
 
             //显示销毁提示layer
             if (layer.showCancelLayer) {
-                _cancelLayer?.targetMoveTo(
-                    rootView.screenRect().centerX(),
-                    rootView.screenRect().centerY()
-                )
+                _cancelLayer?.targetMoveTo(rootView.screenRect(_rootRect))
             }
         }
     }

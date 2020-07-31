@@ -2,6 +2,7 @@ package com.angcyo.ilayer
 
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.Rect
 import android.view.Gravity
 import com.angcyo.ilayer.container.IContainer
 import com.angcyo.ilayer.container.WindowContainer
@@ -55,10 +56,12 @@ class CancelLayer : ILayer() {
     }
 
     /**调用此方法, 刷新界面*/
-    fun targetMoveTo(x: Int, y: Int) {
+    fun targetMoveTo(targetRect: Rect) {
         show()
         _rootView?.tagDslViewHolder()?.img(R.id.lib_image_view)?.apply {
-            if (y > rootView!!.screenRect().top) {
+            val screenRect = screenRect()
+            if (targetRect.intersect(screenRect)) {
+                //相交
                 val old = cancelFlag
                 cancelFlag = true
                 imageTintList = ColorStateList.valueOf(_color(R.color.error))

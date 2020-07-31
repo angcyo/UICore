@@ -994,12 +994,12 @@ private fun View.getVisibleRect() {
 }
 
 /**获取[View]在屏幕中的矩形坐标*/
-fun View.screenRect(): Rect {
+fun View.screenRect(rect: Rect = _tempRect): Rect {
     getLocationOnScreen(_tempArray)
     val left = _tempArray[0]
     val top = _tempArray[1]
-    _tempRect.set(left, top, left + mW(), top + mH())
-    return _tempRect
+    rect.set(left, top, left + mW(), top + mH())
+    return rect
 }
 
 //</editor-fold desc="坐标">
