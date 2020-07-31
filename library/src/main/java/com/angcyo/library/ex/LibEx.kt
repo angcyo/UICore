@@ -52,6 +52,9 @@ fun Any.simpleClassName(): String {
 }
 
 fun Any.className(): String {
+    if (this is Class<*>) {
+        return this.name
+    }
     return this.javaClass.name
 }
 
