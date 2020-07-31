@@ -32,7 +32,11 @@ class SpanClickMethod : LinkMovementMethod() {
         /**安装在[TextView]中
          * [LinkMovementMethod.getInstance()]*/
         fun install(textView: TextView?) {
-            textView?.movementMethod = instance
+            textView?.apply {
+                if (movementMethod != instance) {
+                    movementMethod = instance
+                }
+            }
         }
     }
 

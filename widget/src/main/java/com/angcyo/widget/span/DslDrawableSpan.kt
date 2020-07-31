@@ -129,7 +129,8 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
 
     val _gradientRectF = RectF()
 
-    /**单击事件回调, 需要[SpanClickMethod]支持*/
+    /**单击事件回调, 需要[SpanClickMethod]支持
+     * [com.angcyo.widget.span.SpanClickMethod.Companion.install]*/
     var spanClickAction: ((view: View, span: DslDrawableSpan) -> Unit)? = null
 
     fun _initPaint(paint: Paint) {

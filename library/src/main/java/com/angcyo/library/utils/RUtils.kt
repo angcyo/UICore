@@ -36,7 +36,9 @@ object RUtils {
         }
     }
 
-    /** qq咨询 */
+    /** qq咨询
+     * 网页版: http://wpa.qq.com/msgrd?v=3&uin=664738095&site=qq&menu=yes
+     * */
     fun chatQQ(context: Context, qq: String = "664738095"): Boolean {
         try {
             chatQQIntent(context, qq)?.run {
