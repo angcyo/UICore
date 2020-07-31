@@ -37,6 +37,11 @@ open class ThrottleClickListener(
 }
 
 /**全局节流事件处理*/
+fun View.throttleClick(interval: Long = DEFAULT_THROTTLE_INTERVAL, action: (View) -> Unit) {
+    setOnClickListener(ThrottleClickListener(interval, action = action))
+}
+
+/**全局节流事件处理*/
 fun throttleClick(interval: Long = DEFAULT_THROTTLE_INTERVAL, action: () -> Unit) {
     val nowTime = System.currentTimeMillis()
     if (nowTime - ThrottleClickListener._lastThrottleClickTime > interval) {

@@ -75,7 +75,7 @@ object DslFileHelper {
         }
     }
 
-    fun _wrapData2(data: String): String {
+    fun _wrapData2(data: CharSequence): String {
         return buildString {
             append(dateFormat.format(Date()))
             appendln()
@@ -87,7 +87,7 @@ object DslFileHelper {
 
 fun logFileName() = fileName("yyyy-MM-dd", ".log")
 
-fun String.wrapData() = DslFileHelper._wrapData2(this)
+fun CharSequence.wrapData() = DslFileHelper._wrapData2(this)
 
 fun String?.writeTo(
     folder: String = Constant.LOG_FOLDER_NAME,

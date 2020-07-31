@@ -104,6 +104,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     var onNoOtherEventHandleAction: ((service: BaseAccessibilityService, mainNode: AccessibilityNodeInfo) -> Unit)? =
         null
 
+    /**日志输出*/
+    var interceptorLog: ILogPrint? = ILogPrint()
+
     init {
         initialIntervalDelay = defaultIntervalDelay
     }
@@ -336,7 +339,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
 
     /**间隔周期回调 */
     open fun onInterval() {
-        //L.v(this@BaseAccessibilityInterceptor.simpleHash(), " $it")
+        //interceptorLog?.log(this@BaseAccessibilityInterceptor.simpleHash(), " $it")
         val service = lastService
         if (service == null) {
             if (isActionInterceptorStart()) {
@@ -418,11 +421,11 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         nodeList: List<AccessibilityNodeInfo>
     ) {
         if (!action.isActionStart()) {
-            L.v("${action.simpleHash()} [${action.actionTitle}] 开始.")
+            interceptorLog?.log("${action.simpleHash()} [${action.actionTitle}] 开始.")
             action.onActionStart(this)
             action._actionFinish = {
                 //action执行完成
-                L.v("${action.simpleHash()} [${action.actionTitle}] ${if (it == null) "完成" else it.message}:${actionIndex}/${actionList.size}")
+                interceptorLog?.log("${action.simpleHash()} [${action.actionTitle}] ${if (it == null) "完成" else it.message}:${actionIndex}/${actionList.size}")
                 if (it != null) {
                     actionStatus = ACTION_STATUS_ERROR
                     onDoActionFinish(action, it)

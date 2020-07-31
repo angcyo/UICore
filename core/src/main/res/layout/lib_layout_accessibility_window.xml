@@ -56,7 +56,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/lib_hdpi"
-        android:text="捕捉"
+        android:text="抓取"
         app:button_press_gradient_colors=""
         app:button_press_stroke_color="@color/colorAccent"
         app:button_press_stroke_width="@dimen/lib_line"

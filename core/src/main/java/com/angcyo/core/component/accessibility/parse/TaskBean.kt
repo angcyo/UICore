@@ -1,6 +1,7 @@
 package com.angcyo.core.component.accessibility.parse
 
 import com.angcyo.core.component.accessibility.AutoParseInterceptor
+import com.angcyo.core.component.accessibility.ILogPrint
 import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.action.AutoParser
 import com.angcyo.core.component.accessibility.intervalMode
@@ -70,6 +71,14 @@ fun TaskBean.toInterceptor(
         //[actionIntervalList]
         val actionIntervalMap = parseActionInterval()
 
+        //action动作执行的日志输出
+        interceptorLog = object : ILogPrint() {
+            override fun log(msg: CharSequence?) {
+                super.log(msg)
+                AutoParseInterceptor.log(msg)
+            }
+        }
+
         actions?.forEach {
             if (it.enable) {
                 if (it.interval.isNullOrEmpty() && it.actionId > 0) {
@@ -89,8 +98,11 @@ fun TaskBean.toInterceptor(
                 }
 
                 //action动作执行的日志输出
-                autoParseAction.onLogPrint = {
-                    AutoParseInterceptor.log("$name($actionIndex/${actionList.size}) ${autoParseAction.actionTitle} $it")
+                autoParseAction.actionLog = object : ILogPrint() {
+                    override fun log(msg: CharSequence?) {
+                        super.log(msg)
+                        AutoParseInterceptor.log("$name($actionIndex/${actionList.size}) ${autoParseAction.actionTitle} $msg")
+                    }
                 }
 
                 //获取到的文本回调

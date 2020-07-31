@@ -12,7 +12,6 @@ import com.angcyo.core.component.accessibility.parse.ConstraintBean
 import com.angcyo.core.component.accessibility.parse.FormBean
 import com.angcyo.core.component.accessibility.parse.request
 import com.angcyo.http.rx.doBack
-import com.angcyo.library.L
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.*
@@ -29,7 +28,7 @@ import kotlin.random.Random.Default.nextInt
 open class AutoParseAction : BaseAccessibilityAction() {
 
     /**日志输出*/
-    var onLogPrint: ((CharSequence) -> Unit)? = null
+    var actionLog: ILogPrint? = ILogPrint()
 
     /**如果是获取文本的任务, 那么多获取到文本时, 触发的回调*/
     var onGetTextResult: ((List<CharSequence>) -> Unit)? = null
@@ -220,7 +219,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         //表单处理
         handleFormRequest(error)
 
-        onLogPrint = null
+        actionLog = null
         onGetTextResult = null
         super.doActionFinish(error)
     }
@@ -550,8 +549,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
     /**一些处理日志*/
     open fun handleActionLog(charSequence: CharSequence) {
-        L.d(charSequence)
-        onLogPrint?.invoke(charSequence)
+        actionLog?.log(charSequence)
     }
 
     /** 从参数中, 解析设置的点位信息

@@ -10,8 +10,10 @@ import com.angcyo.core.component.accessibility.parse.TaskBean
 import com.angcyo.core.component.accessibility.parse.request
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.file.wrapData
+import com.angcyo.library.ex.file
 import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.toElapsedTime
+import com.angcyo.library.utils.FileUtils
 import kotlin.math.max
 
 /**
@@ -27,12 +29,24 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
         const val LOG_TASK_FILE_NAME = "task.log"
 
         /**执行任务时的日志输出*/
-        fun log(data: String) {
-            DslFileHelper.write(
-                AccessibilityHelper.logFolderName,
-                LOG_TASK_FILE_NAME,
-                data.wrapData()
-            )
+        fun log(data: CharSequence?) {
+            if (!data.isNullOrEmpty()) {
+                DslFileHelper.write(
+                    AccessibilityHelper.logFolderName,
+                    LOG_TASK_FILE_NAME,
+                    data.wrapData()
+                )
+            }
+        }
+
+        fun logPath() = FileUtils.appRootExternalFolderFile(
+            folder = AccessibilityHelper.logFolderName,
+            name = LOG_TASK_FILE_NAME
+        )?.absolutePath
+
+        /**读取日志文本*/
+        fun readLog(): String? {
+            return logPath()?.file()?.readText()
         }
     }
 

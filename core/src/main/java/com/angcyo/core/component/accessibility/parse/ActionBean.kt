@@ -100,6 +100,6 @@ fun ActionBean.toAction(packageName: String): AutoParseAction {
         autoParser.idPackageName = packageName
 
         //日志输出
-        onLogPrint
+        actionLog
     }
 }
