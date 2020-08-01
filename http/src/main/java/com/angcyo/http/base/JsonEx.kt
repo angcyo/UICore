@@ -162,7 +162,7 @@ fun JsonElement.array(index: Int): JsonElement {
 }
 
 fun String?.isJsonEmpty(): Boolean {
-    return TextUtils.isEmpty(this) || this == "{}"
+    return TextUtils.isEmpty(this) || this == "{}" || this == "[]"
 }
 
 fun CharSequence?.jsonOrEmpty(): String {
