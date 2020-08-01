@@ -16,7 +16,6 @@ import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
-import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 import kotlin.random.Random.Default.nextInt
 
@@ -344,6 +343,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                     //执行对应操作
                     handleResult.result = handleResult.result || when (action) {
                         ConstraintBean.ACTION_CLICK -> {
+                            //触发节点自带的click
                             var value = false
                             handleNodeList.forEach {
                                 value = value || it.getClickParent()?.click() ?: false
@@ -352,6 +352,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             value
                         }
                         ConstraintBean.ACTION_CLICK2 -> {
+                            //触发节点区域的手势双击
                             var value = false
                             handleNodeList.forEach {
                                 val bound = it.bounds()
@@ -361,9 +362,23 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                     null
                                 )
                             }
-                            handleActionLog(
-                                "双击节点区域[${handleNodeList.firstOrNull()?.bounds()}]:$value"
-                            )
+                            val b = handleNodeList.firstOrNull()?.bounds()
+                            handleActionLog("双击节点区域[${b?.centerX()},${b?.centerY()}]:$value")
+                            value
+                        }
+                        ConstraintBean.ACTION_CLICK3 -> {
+                            //触发节点区域的手势点击
+                            var value = false
+                            handleNodeList.forEach {
+                                val bound = it.bounds()
+                                value = value || service.gesture.click(
+                                    bound.centerX().toFloat(),
+                                    bound.centerY().toFloat(),
+                                    null
+                                )
+                            }
+                            val b = handleNodeList.firstOrNull()?.bounds()
+                            handleActionLog("点击节点区域[${b?.centerX()},${b?.centerY()}]:$value")
                             value
                         }
                         ConstraintBean.ACTION_LONG_CLICK -> {

@@ -99,6 +99,9 @@ open class AutoParser {
     /**根节点在屏幕中的坐标*/
     var _rootNodeRect = Rect()
 
+    //临时存放
+    var _tempNodeRect = Rect()
+
     /**返回当前界面, 是否包含[constraintList]约束的Node信息
      * [onTargetResult] 当找到目标时, 通过此方法回调目标给调用者. first:对应的约束, second:约束对应的node集合
      * */
@@ -324,14 +327,14 @@ open class AutoParser {
                                             result = true
                                         }
                                     } else {
+                                        _tempNodeRect.set(
+                                            p1!!.x.toInt(),
+                                            p1.y.toInt(),
+                                            p2.x.toInt(),
+                                            p2.y.toInt()
+                                        )
                                         //设置了多个点, 那么只要2个矩形相交, 就算命中
-                                        if (bound.intersects(
-                                                p1!!.x.toInt(),
-                                                p1.y.toInt(),
-                                                p2.x.toInt(),
-                                                p2.y.toInt()
-                                            )
-                                        ) {
+                                        if (bound.intersect(_tempNodeRect)) {
                                             result = true
                                         }
                                     }
