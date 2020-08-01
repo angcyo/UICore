@@ -7,6 +7,6 @@ package com.angcyo.core.component.accessibility.action
  * @date 2020/07/01
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class ActionException(msg: String) : Exception(msg) {
+open class ActionException(msg: String) : Exception(msg)
 
-}
+open class ActionInterruptedException(msg: String) : ActionException(msg)

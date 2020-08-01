@@ -7,10 +7,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
-import com.angcyo.core.component.accessibility.parse.ActionBean
-import com.angcyo.core.component.accessibility.parse.ConstraintBean
-import com.angcyo.core.component.accessibility.parse.FormBean
-import com.angcyo.core.component.accessibility.parse.request
+import com.angcyo.core.component.accessibility.parse.*
 import com.angcyo.http.rx.doBack
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
@@ -751,13 +748,14 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
                 //action执行结果, 执行成功发送 200
                 if (error == null) {
-                    map[FormBean.KEY_CODE] = 200
                     map[FormBean.KEY_MSG] = "${actionBean?.title} 执行完成."
                     map[FormBean.KEY_DATA] = "${getTextList?.firstOrNull()}"
                 } else {
-                    map[FormBean.KEY_CODE] = 500
                     map[FormBean.KEY_MSG] = "${actionBean?.title} 执行失败,${error.message}"
                 }
+
+                //错误码绑定
+                map.bindErrorCode(error)
 
                 //额外配置
                 onConfigParams?.apply {

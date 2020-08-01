@@ -1,5 +1,7 @@
 package com.angcyo.core.component.accessibility.parse
 
+import com.angcyo.core.component.accessibility.action.ActionException
+import com.angcyo.core.component.accessibility.action.ActionInterruptedException
 import com.angcyo.http.POST
 import com.angcyo.http.base.jsonObject
 import com.angcyo.http.post
@@ -69,5 +71,14 @@ fun FormBean.request(configParams: (params: HashMap<String, Any>) -> Unit = {}):
                 }
             }
         }.observer()
+    }
+}
+
+/**错误信息的赋值等*/
+fun HashMap<String, Any>.bindErrorCode(error: ActionException?) {
+    this[FormBean.KEY_CODE] = when (error) {
+        null -> 200
+        is ActionInterruptedException -> 300
+        else -> 500
     }
 }

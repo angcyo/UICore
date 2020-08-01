@@ -3,13 +3,16 @@ package com.angcyo.core.component.accessibility
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import com.angcyo.core.component.accessibility.action.ActionException
+import com.angcyo.core.component.accessibility.action.ActionInterruptedException
 import com.angcyo.core.component.accessibility.action.PermissionsAction
 import com.angcyo.core.component.accessibility.base.BaseFloatInterceptor
 import com.angcyo.core.component.accessibility.parse.FormBean
 import com.angcyo.core.component.accessibility.parse.TaskBean
+import com.angcyo.core.component.accessibility.parse.bindErrorCode
 import com.angcyo.core.component.accessibility.parse.request
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.file.wrapData
+import com.angcyo.library.ex.elseNull
 import com.angcyo.library.ex.file
 import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.toElapsedTime
@@ -148,6 +151,14 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
 
     override fun onDestroy() {
         val isInterrupt = actionStatus.isActionStart()
+        if (isInterrupt) {
+            val actionInterruptedException = ActionInterruptedException("拦截器被中断!")
+            currentAccessibilityAction?.let {
+                it.doActionFinish(actionInterruptedException)
+            }.elseNull {
+                onDoActionFinish(null, actionInterruptedException)
+            }
+        }
         super.onDestroy()
         if (isInterrupt) {
             notify("中止")
@@ -162,13 +173,14 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
 
                 //action执行结果, 执行成功发送 200
                 if (error == null) {
-                    map[FormBean.KEY_CODE] = 200
                     map[FormBean.KEY_MSG] =
                         "${taskBean.name} 执行完成,耗时${nowTime() - _actionStartTime}"
                 } else {
-                    map[FormBean.KEY_CODE] = 500
                     map[FormBean.KEY_MSG] = "${taskBean.name} 执行失败,${error.message}"
                 }
+
+                //错误码绑定
+                map.bindErrorCode(error)
 
                 //额外配置
                 onConfigParams?.apply {
