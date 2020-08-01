@@ -18,7 +18,7 @@ class ActionCount {
     var startTime: Long = -1
 
     /**最大计数限制*/
-    var maxCountLimit = -1
+    var maxCountLimit: Long = -1
 
     var limitOut: (() -> Unit)? = null
 

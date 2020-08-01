@@ -106,7 +106,7 @@ data class ConstraintBean(
 
     /**状态约束,只有全部满足状态才能命中
      * [clickable] 具备可点击
-     * [unclickable] 具备不可点击
+     * [not_clickable] 具备不可点击
      * [focusable] 具备可获取交点
      * [selected] 具备选中状态
      * [unselected] 具备选未中状态
@@ -160,9 +160,19 @@ data class ConstraintBean(
         const val ACTION_SCROLL_FORWARD = "scrollForward" //向前滚动
         const val ACTION_SCROLL_BACKWARD = "scrollBackward" //向后滚动
 
+        /**
+         * 跳转指令, 配合[ignore]一起使用, 防止index不准确
+         * [:1:3] 跳转到第1个action,共跳转3次
+         * [:-1] 跳转到倒数第1个action,默认10次
+         * [:<2] 跳转到前2个action
+         * [:>3] 跳转到后3个action
+         * [:actionId] 跳转到指定的actionId,未找到直接完成当前的action
+         * */
+        const val ACTION_JUMP = "jump"
+
         //需要指定的状态 [state]
         const val STATE_CLICKABLE = "clickable" //具备可点击
-        const val STATE_UNCLICKABLE = "unclickable" //具备不可点击
+        const val STATE_NOT_CLICKABLE = "not_clickable" //具备不可点击
         const val STATE_FOCUSABLE = "focusable" //具备可获取交点
         const val STATE_FOCUSED = "focused" //具备焦点状态
         const val STATE_UNFOCUSED = "unfocused" //具备选未中状态

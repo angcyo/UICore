@@ -15,7 +15,9 @@ import com.angcyo.http.rx.doBack
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.*
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 import kotlin.random.Random.Default.nextInt
 
 /**
@@ -61,6 +63,10 @@ open class AutoParseAction : BaseAccessibilityAction() {
             doActionFinish(ActionException("eventConstraint is null."))
             return false
         }
+        if (constraintList.isEmpty()) {
+            //如果是空约束, 则直接返回true
+            return true
+        }
         return autoParser.parse(service, this, nodeList, constraintList)
     }
 
@@ -84,14 +90,13 @@ open class AutoParseAction : BaseAccessibilityAction() {
             for (pair in it) {
 
                 //执行action
-                val handleResult: Pair<Boolean, Boolean> =
-                    handleAction(service, pair.first, pair.second)
+                val handleResult = handleAction(service, pair.first, pair.second)
 
                 //执行结果
-                result = result || handleResult.first
+                result = result || handleResult.result
 
                 //是否跳过后续action
-                if (handleResult.second) {
+                if (handleResult.jumpNextHandle) {
                     break
                 }
             }
@@ -136,16 +141,22 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 for (pair in it) {
 
                     //执行action
-                    val handleResult: Pair<Boolean, Boolean> =
-                        handleAction(service, pair.first, pair.second) {
-                            handleGetTextResult(it)
-                        }
+                    val handleResult = handleAction(service, pair.first, pair.second) {
+                        handleGetTextResult(it)
+                    }
 
                     //执行结果
-                    result = result || handleResult.first
+                    result = result || handleResult.result
+
+                    if (handleResult.finish) {
+                        //直接完成
+                        result = false
+                        doActionFinish()
+                        break
+                    }
 
                     //是否跳过后续action
-                    if (handleResult.second) {
+                    if (handleResult.jumpNextHandle) {
                         break
                     }
                 }
@@ -158,13 +169,13 @@ open class AutoParseAction : BaseAccessibilityAction() {
             }
 
             //是否需要强制执行完成
-            var actionMaxCount: Int = actionBean?.actionMaxCount ?: -1
-            if (actionMaxCount > 0) {
+            var actionMaxCount: Long = actionBean?.actionMaxCount ?: -1L
+            if (accessibilityInterceptor != null && actionMaxCount > 0) {
 
                 if (handleType == ActionBean.HANDLE_TYPE_RANDOM) {
                     //随机[actionMaxCount]
                     actionMaxCount =
-                        (actionMaxCount + actionMaxCount * nextInt(0, 100) / 100f).roundToInt()
+                        (actionMaxCount + actionMaxCount * nextInt(0, 100) / 100f).roundToLong()
                 }
 
                 if (doActionCount.count >= actionMaxCount) {
@@ -190,7 +201,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 var result = false
                 autoParser.parse(service, this, nodeList, constraintList) {
                     it.forEach { pair ->
-                        result = result || handleAction(service, pair.first, pair.second).first
+                        result = result || handleAction(service, pair.first, pair.second).result
                     }
                 }
                 return result
@@ -246,7 +257,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         constraintBean: ConstraintBean,
         nodeList: List<AccessibilityNodeInfoCompat>,
         onGetTextResult: (List<CharSequence>) -> Unit = {}
-    ): Pair<Boolean, Boolean> {
+    ): HandleResult {
 
         //需要执行的动作
         val actionList: List<String>? = constraintBean.actionList
@@ -254,11 +265,10 @@ open class AutoParseAction : BaseAccessibilityAction() {
         //获取到的文件列表
         val getTextResultList: MutableList<CharSequence> = mutableListOf()
 
-        //此次执行, 返回结果的结果
-        var result = false
-
-        //此次执行成功后, 是否要跳过后面的执行
-        var jumpNextHandleAction: Boolean = constraintBean.jump
+        //需要返回的处理结果
+        val handleResult = HandleResult()
+        //此次执行完成后, 是否要跳过后面的执行
+        handleResult.jumpNextHandle = constraintBean.jump
 
         //过滤需要处理的节点列表
         val handleNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
@@ -279,7 +289,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         }
 
         if (actionList.isListEmpty()) {
-            result = handleNodeList.clickAll {
+            handleResult.result = handleNodeList.clickAll {
                 handleActionLog(buildString {
                     append("点击[")
                     it.logText(this)
@@ -291,13 +301,14 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 if (act.isEmpty()) {
                     //随机操作
                     service.gesture.randomization().apply {
-                        result = result || first
-                        handleActionLog("随机操作[${this.second}]:$result")
+                        handleResult.result = handleResult.result || first
+                        handleActionLog("随机操作[${this.second}]:${handleResult.result}")
                     }
                 } else if (act == ConstraintBean.ACTION_FINISH) {
                     //直接完成操作
-                    result = true
-                    jumpNextHandleAction = true
+                    handleResult.result = true
+                    handleResult.jumpNextHandle = true
+                    handleResult.finish = true
                 } else {
                     //需要执行的动作
                     var action: String? = null
@@ -331,7 +342,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                     handleActionLog("即将执行[${action}${if (arg == null) "" else ":${arg}"}]")
 
                     //执行对应操作
-                    result = result || when (action) {
+                    handleResult.result = handleResult.result || when (action) {
                         ConstraintBean.ACTION_CLICK -> {
                             var value = false
                             handleNodeList.forEach {
@@ -508,16 +519,93 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             handleNodeList.forEach {
                                 value = value || it.focus()
                             }
+                            handleActionLog("设置焦点:$value")
                             value
                         }
                         ConstraintBean.ACTION_ERROR -> {
                             //直接失败操作
-                            result = false
-                            jumpNextHandleAction = true
+                            val value = false
+                            handleResult.jumpNextHandle = true
 
                             //异常退出
-                            doActionFinish(ActionException(arg ?: "ACTION_ERROR"))
-                            result
+                            val error = arg ?: "ACTION_ERROR"
+                            doActionFinish(ActionException(error))
+
+                            handleActionLog("强制异常退出[$error]:${handleResult.result}")
+                            value
+                        }
+                        ConstraintBean.ACTION_JUMP -> {
+                            //执行跳转指令
+                            var value = false
+                            val interceptor = accessibilityInterceptor
+
+                            if (arg.isNullOrEmpty() || interceptor == null) {
+                                //没有跳转参数,直接完成action
+                                value = true
+                                handleResult.finish = true
+                            } else {
+                                //[:1:3] [:-1] [:<2]前 [:>3]后 [:actionId]
+                                val indexOf = arg.indexOf(":", 0, true)
+                                val arg1: String?
+                                val arg2: String?
+                                if (indexOf == -1) {
+                                    //未找到
+                                    arg1 = arg
+                                    arg2 = "$DEFAULT_JUMP_MAX_COUNT"
+                                } else {
+                                    //找到
+                                    arg1 = arg.substring(0, indexOf)
+                                    arg2 = arg.substring(indexOf + 1, arg.length)
+                                }
+
+                                val maxCount = arg2.toLongOrNull() ?: DEFAULT_JUMP_MAX_COUNT
+
+                                jumpCount.maxCountLimit = maxCount
+
+                                if (jumpCount.isMaxLimit()) {
+                                    //超限后, 不跳转, 直接完成
+                                    value = true
+                                    handleResult.finish = true
+                                } else {
+                                    value = true
+                                    arg1.toLongOrNull()?.let { targetIndex ->
+                                        val size = interceptor.actionList.size
+                                        if (targetIndex.absoluteValue in 0 until size) {
+                                            //处理[:1] [:-1]的情况
+                                            if (targetIndex > 0) {
+                                                interceptor.actionIndex =
+                                                    targetIndex.toInt()
+                                            } else {
+                                                interceptor.actionIndex =
+                                                    (size + targetIndex).toInt()
+                                            }
+                                        } else {
+                                            //寻找指定actionId
+                                            interceptor.actionList.forEachIndexed { index, baseAccessibilityAction ->
+                                                if (baseAccessibilityAction is AutoParseAction) {
+                                                    if (baseAccessibilityAction.actionBean?.actionId == targetIndex) {
+                                                        interceptor.actionIndex = index
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }.elseNull {
+                                        val num = arg1.substring(1, arg1.length).toIntOrNull() ?: 0
+                                        if (arg1.startsWith("<")) {
+                                            interceptor.actionIndex -= num
+                                        } else if (arg1.startsWith(">")) {
+                                            interceptor.actionIndex += num
+                                        } else {
+                                            value = false
+                                            handleResult.finish = true
+                                        }
+                                    }
+                                    jumpCount.doCount()
+                                }
+                            }
+
+                            handleActionLog("跳转[$arg]:$value")
+                            value
                         }
                         else -> service.gesture.click().apply {
                             handleActionLog("默认点击:$this")
@@ -534,17 +622,17 @@ open class AutoParseAction : BaseAccessibilityAction() {
         }
 
         if (constraintBean.ignore) {
-            //如果忽略了约束, 则不进行jump操作
-            result = false
-            jumpNextHandleAction = false
+            //如果忽略了约束, 则不进行jumpNext操作
+            handleResult.result = false
+            handleResult.jumpNextHandle = false
         } else {
-            if (!result) {
-                //执行失败, 不进行jump操作
-                jumpNextHandleAction = false
+            if (!handleResult.result) {
+                //执行失败, 不进行jumpNext操作
+                handleResult.jumpNextHandle = false
             }
         }
 
-        return result to jumpNextHandleAction
+        return handleResult
     }
 
     /**一些处理日志*/

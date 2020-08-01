@@ -22,19 +22,22 @@ abstract class BaseAccessibilityAction {
 
     companion object {
         /**当前的[BaseAccessibilityAction], 允许执行[doAction]的最大次数, 超过后异常*/
-        const val DEFAULT_ACTION_MAX_COUNT = 10
+        const val DEFAULT_ACTION_MAX_COUNT = 10L
 
         /**当前的[BaseAccessibilityAction], 执行[doAction]的次数超过此值后,强制完成*/
-        const val DEFAULT_ACTION_FINISH_MAX_COUNT = -1
+        const val DEFAULT_ACTION_FINISH_MAX_COUNT = -1L
 
         /**当前的[BaseAccessibilityAction], 允许执行[checkOtherEvent]的最大次数, 超过[actionOtherList]才有机会执行*/
-        const val DEFAULT_ACTION_OTHER_MAX_COUNT = 3
+        const val DEFAULT_ACTION_OTHER_MAX_COUNT = 3L
 
         /**[checkOtherEvent]未识别, [actionOtherList]未处理, 超过此最大次数, 会回滚到上一个[BaseAccessibilityAction]*/
-        const val DEFAULT_ACTION_CHECK_OUT_MAX_COUNT = 3
+        const val DEFAULT_ACTION_CHECK_OUT_MAX_COUNT = 3L
 
         /**允许回滚的最大次数*/
-        const val DEFAULT_ROLLBACK_MAX_COUNT = 3
+        const val DEFAULT_ROLLBACK_MAX_COUNT = 3L
+
+        /**[ACTION_JUMP]指令, 默认允许执行的次数*/
+        const val DEFAULT_JUMP_MAX_COUNT = 10L
     }
 
     /**关联的拦截器*/
@@ -66,6 +69,9 @@ abstract class BaseAccessibilityAction {
     val rollbackCount: ActionCount = ActionCount().apply {
         maxCountLimit = DEFAULT_ROLLBACK_MAX_COUNT
     }
+
+    /**指令[ACTION_JUMP]执行次数统计*/
+    val jumpCount: ActionCount = ActionCount()
 
     /**用于控制下一次[Action]检查执行的延迟时长, 毫秒. 负数表示使用[Interceptor]的默认值
      * 格式[5000,500,5] :5000+500*[1-5)

@@ -359,7 +359,7 @@ open class AutoParser {
                                 match = false
                             }
                         }
-                        ConstraintBean.STATE_UNCLICKABLE -> {
+                        ConstraintBean.STATE_NOT_CLICKABLE -> {
                             //需要具备不可以点击的状态
                             if (node.isClickable) {
                                 match = false
