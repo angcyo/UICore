@@ -351,34 +351,43 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             handleActionLog("点击节点[${handleNodeList.firstOrNull()?.text()}]:$value")
                             value
                         }
-                        ConstraintBean.ACTION_CLICK2 -> {
+                        ConstraintBean.ACTION_CLICK2, ConstraintBean.ACTION_CLICK3 -> {
                             //触发节点区域的手势双击
                             var value = false
+                            val click = action == ConstraintBean.ACTION_CLICK3
+
+                            var x = 0f
+                            var y = 0f
+
                             handleNodeList.forEach {
                                 val bound = it.bounds()
-                                value = value || service.gesture.double(
-                                    bound.centerX().toFloat(),
-                                    bound.centerY().toFloat(),
-                                    null
-                                )
+
+                                var specifyPoint: PointF? = null
+                                if (!arg.isNullOrEmpty()) {
+                                    parsePoint(arg).let {
+                                        specifyPoint = it[0]
+                                    }
+                                }
+
+                                if (specifyPoint == null) {
+                                    x = bound.centerX().toFloat()
+                                    y = bound.centerY().toFloat()
+                                } else {
+                                    x = specifyPoint!!.x + bound.left
+                                    y = specifyPoint!!.y + bound.top
+                                }
+
+                                value = value || if (click) {
+                                    service.gesture.click(x, y, null)
+                                } else {
+                                    service.gesture.double(x, y, null)
+                                }
                             }
-                            val b = handleNodeList.firstOrNull()?.bounds()
-                            handleActionLog("双击节点区域[${b?.centerX()},${b?.centerY()}]:$value")
-                            value
-                        }
-                        ConstraintBean.ACTION_CLICK3 -> {
-                            //触发节点区域的手势点击
-                            var value = false
-                            handleNodeList.forEach {
-                                val bound = it.bounds()
-                                value = value || service.gesture.click(
-                                    bound.centerX().toFloat(),
-                                    bound.centerY().toFloat(),
-                                    null
-                                )
+                            if (click) {
+                                handleActionLog("点击节点区域[${x},${y}]:$value")
+                            } else {
+                                handleActionLog("双击节点区域[${x},${y}]:$value")
                             }
-                            val b = handleNodeList.firstOrNull()?.bounds()
-                            handleActionLog("点击节点区域[${b?.centerX()},${b?.centerY()}]:$value")
                             value
                         }
                         ConstraintBean.ACTION_LONG_CLICK -> {
@@ -659,7 +668,11 @@ open class AutoParseAction : BaseAccessibilityAction() {
      * [move:10,10-100,100]
      * [fling:10,10-100,100]
      * */
-    fun parsePoint(arg: String?): List<PointF> {
+    fun parsePoint(
+        arg: String?,
+        refWidth: Int = autoParser._rootNodeRect.width(),
+        refHeight: Int = autoParser._rootNodeRect.height()
+    ): List<PointF> {
         val screenWidth: Int = _screenWidth
         val screenHeight: Int = _screenHeight
 
@@ -673,8 +686,6 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
         try {
             arg?.apply {
-                val refWidth = autoParser._rootNodeRect.width()
-                val refHeight = autoParser._rootNodeRect.height()
 
                 split("-").apply {
 
