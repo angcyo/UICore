@@ -1,7 +1,6 @@
 package com.angcyo.core.component.accessibility.action
 
 import android.app.Instrumentation
-import android.content.Intent
 import android.graphics.PointF
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
@@ -507,9 +506,17 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                 arg
                             }
 
-                            (targetPackageName?.openApp(Intent.FLAG_ACTIVITY_SINGLE_TOP) != null).apply {
-                                handleActionLog("启动程序:[$targetPackageName]:$this")
+                            var value = false
+                            targetPackageName?.let {
+                                value = service.openApp(
+                                    it,
+                                    flags = 0/*Intent.FLAG_ACTIVITY_SINGLE_TOP*/
+                                ) != null
+
+                                handleActionLog("启动程序:[$targetPackageName]:$value")
                             }
+
+                            value
                         }
                         ConstraintBean.ACTION_COPY -> {
                             val text = arg ?: getInputText(constraintBean)
