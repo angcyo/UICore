@@ -361,7 +361,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
                                 var specifyPoint: PointF? = null
                                 if (!arg.isNullOrEmpty()) {
-                                    parsePoint(arg).let {
+                                    parsePoint(arg, bound.width(), bound.height()).let {
                                         specifyPoint = it[0]
                                     }
                                 }
