@@ -6,6 +6,7 @@ import androidx.annotation.CallSuper
 import com.angcyo.core.component.accessibility.action.ActionCount
 import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.library.ex.simpleHash
+import kotlin.math.max
 import kotlin.random.Random.Default.nextLong
 
 /**
@@ -218,7 +219,7 @@ abstract class BaseAccessibilityAction {
 
             val factor = split.getOrNull(2)?.toLongOrNull() ?: nextLong(2, 5)
 
-            start + base * nextLong(1, factor)
+            start + base * nextLong(1, max(2L, factor))
         }
         return time
     }

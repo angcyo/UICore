@@ -81,9 +81,9 @@ fun TaskBean.toInterceptor(
 
         actions?.forEach {
             if (it.enable) {
-                if (it.interval.isNullOrEmpty() && it.actionId > 0) {
+                if (it.actionId > 0) {
                     //重置interval
-                    it.interval = actionIntervalMap.getOrDefault(it.actionId, null)
+                    it.interval = actionIntervalMap.getOrDefault(it.actionId, it.interval)
                 }
 
                 //to [AutoParseAction]
