@@ -146,14 +146,14 @@ open class AutoParser {
     ): List<AccessibilityNodeInfoCompat> {
         val rootNodeInfo: AccessibilityNodeInfo = nodeList.mainNode() ?: return result
 
+        //存储一下跟node的矩形, 方便用于坐标比例计算
+        rootNodeInfo.getBoundsInScreen(_rootNodeRect)
+
         if (constraintBean.isConstraintEmpty()) {
             //空约束返回[rootNodeInfo]
             result.add(rootNodeInfo.wrap())
             return result
         }
-
-        //存储一下跟node的矩形, 方便用于坐标比例计算
-        rootNodeInfo.getBoundsInScreen(_rootNodeRect)
 
         //需要匹配的文本
         val text: List<String>? = autoParseAction.getTextList(constraintBean)
