@@ -208,11 +208,15 @@ abstract class BaseAccessibilityAction {
             (accessibilityInterceptor?.initialIntervalDelay ?: -1L)
         } else {
             val split = interval.split(",")
+
             val start = split.getOrNull(0)?.toLongOrNull()
                 ?: (accessibilityInterceptor?.initialIntervalDelay
                     ?: BaseAccessibilityInterceptor.defaultIntervalDelay)
-            val base = split.getOrNull(1)?.toLongOrNull() ?: 0L
-            val factor = split.getOrNull(2)?.toLongOrNull() ?: 2
+
+            val base = split.getOrNull(1)?.toLongOrNull()
+                ?: BaseAccessibilityInterceptor.defaultIntervalDelay
+
+            val factor = split.getOrNull(2)?.toLongOrNull() ?: nextLong(2, 5)
 
             start + base * nextLong(1, factor)
         }

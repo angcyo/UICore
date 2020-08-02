@@ -35,6 +35,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         const val ACTION_STATUS_ERROR = 10   //错误
         const val ACTION_STATUS_DESTROY = 11 //销毁
 
+        /**根据设备性能, 算出来的时间间隔*/
         var defaultIntervalDelay: Long = -1
 
         init {
