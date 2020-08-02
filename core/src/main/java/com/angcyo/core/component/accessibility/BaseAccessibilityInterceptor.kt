@@ -129,8 +129,8 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         lastEvent = event //AccessibilityEvent.obtain(event)
 
         if (ignoreInterceptor) {
-            if (event.isWindowStateChanged()) {
-                //处理窗口切换事件
+            if (event.isWindowStateChanged() && !enableInterval) {
+                //在未开启周期循环的情况下, 处理窗口切换事件, 否则周期回调中会触发[handleAccessibility]
                 handleAccessibility(service, ignoreInterceptor)
             }
         } else {
@@ -203,7 +203,12 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                         (specifyPackageNameList.size == 1 &&
                                 specifyPackageNameList.firstOrNull().isNullOrEmpty())
                     ) {
+                        stopInterval()
                         onDoAction(it, service, service.findNodeInfoList())
+                        if (enableInterval && actionStatus == ACTION_STATUS_ING) {
+                            interceptorLog?.log("拦截器恢复,下一个周期在 ${intervalDelay}ms!")
+                            startInterval(intervalDelay)
+                        }
                     }
                 }
             }
@@ -321,8 +326,10 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         }
 
         if (enableInterval && actionStatus == ACTION_STATUS_ING) {
+            interceptorLog?.log("拦截器,下一个周期在 ${intervalDelay}ms!")
             startInterval(intervalDelay)
         } else {
+            interceptorLog?.log("拦截器,周期回调结束!")
             onIntervalEnd()
         }
     }

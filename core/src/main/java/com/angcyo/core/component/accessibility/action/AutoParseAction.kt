@@ -1,6 +1,7 @@
 package com.angcyo.core.component.accessibility.action
 
 import android.app.Instrumentation
+import android.content.Intent
 import android.graphics.PointF
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
@@ -11,6 +12,7 @@ import com.angcyo.core.component.accessibility.parse.*
 import com.angcyo.http.rx.doBack
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
+import com.angcyo.library.app
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
 import kotlin.math.roundToLong
@@ -496,6 +498,9 @@ open class AutoParseAction : BaseAccessibilityAction() {
                         ConstraintBean.ACTION_START -> {
                             //启动应用程序
 
+                            //剪切板内容
+                            val primaryClip = getPrimaryClip()
+
                             //包名
                             val targetPackageName = if (arg.isNullOrEmpty() || arg == "target") {
                                 actionBean?.check?.packageName?.split(";")?.firstOrNull()
@@ -508,12 +513,32 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
                             var value = false
                             targetPackageName?.let {
-                                value = service.openApp(
-                                    it,
-                                    flags = 0/*Intent.FLAG_ACTIVITY_SINGLE_TOP*/
-                                ) != null
+//                                val actionIndex = accessibilityInterceptor?.actionIndex ?: -1
+//                                value = if (actionIndex <= 1) {
+//                                    service.openApp(
+//                                        it,
+//                                        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+//                                    )
+//                                } else {
+//                                    app().openApp(
+//                                        it,
+//                                        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+//                                    )
+//                                } != null
 
-                                handleActionLog("启动程序:[$targetPackageName]:$value")
+                                value = if (it == "com.smile.gifmaker") {
+                                    app().openApp(
+                                        it,
+                                        flags = 0
+                                    )
+                                } else {
+                                    service.openApp(
+                                        it,
+                                        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                                    )
+                                } != null
+
+                                handleActionLog("启动程序:[$targetPackageName]剪切板内容:$primaryClip:$value")
                             }
 
                             value
@@ -576,10 +601,12 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                 value = true
                                 handleResult.finish = true
                             } else {
-                                //[:1:3] [:-1] [:<2]前 [:>3]后 [:actionId]
+                                //[:1:3] [:-1] [:<2]前 [:>3]后 [:actionId;actionId;:4]
                                 val indexOf = arg.indexOf(":", 0, true)
                                 val arg1: String?
                                 val arg2: String?
+
+                                val actionIdList = mutableListOf<Long>()
                                 if (indexOf == -1) {
                                     //未找到
                                     arg1 = arg
@@ -588,6 +615,11 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                     //找到
                                     arg1 = arg.substring(0, indexOf)
                                     arg2 = arg.substring(indexOf + 1, arg.length)
+                                }
+
+                                arg1.split(";").forEach {
+                                    it.toLongOrNull()
+                                        ?.let { actionId -> actionIdList.add(actionId) }
                                 }
 
                                 val maxCount = arg2.toLongOrNull() ?: DEFAULT_JUMP_MAX_COUNT
@@ -600,28 +632,9 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                     handleResult.finish = true
                                 } else {
                                     value = true
-                                    arg1.toLongOrNull()?.let { targetIndex ->
-                                        val size = interceptor.actionList.size
-                                        if (targetIndex.absoluteValue in 0 until size) {
-                                            //处理[:1] [:-1]的情况
-                                            if (targetIndex > 0) {
-                                                interceptor.actionIndex =
-                                                    targetIndex.toInt()
-                                            } else {
-                                                interceptor.actionIndex =
-                                                    (size + targetIndex).toInt()
-                                            }
-                                        } else {
-                                            //寻找指定actionId
-                                            interceptor.actionList.forEachIndexed { index, baseAccessibilityAction ->
-                                                if (baseAccessibilityAction is AutoParseAction) {
-                                                    if (baseAccessibilityAction.actionBean?.actionId == targetIndex) {
-                                                        interceptor.actionIndex = index
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }.elseNull {
+
+                                    if (actionIdList.isEmpty()) {
+                                        // [:<2]前 [:>3]后
                                         val num = arg1.substring(1, arg1.length).toIntOrNull() ?: 0
                                         if (arg1.startsWith("<")) {
                                             interceptor.actionIndex -= num
@@ -631,7 +644,39 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                             value = false
                                             handleResult.finish = true
                                         }
+                                    } else {
+                                        var findAction = false
+                                        for (i in 0 until actionIdList.size) {
+                                            if (findAction) {
+                                                break
+                                            }
+                                            val targetIndex = actionIdList[i]
+
+                                            val size = interceptor.actionList.size
+                                            if (targetIndex.absoluteValue in 0 until size) {
+                                                //处理[:1] [:-1]的情况
+                                                if (targetIndex > 0) {
+                                                    interceptor.actionIndex =
+                                                        targetIndex.toInt()
+                                                } else {
+                                                    interceptor.actionIndex =
+                                                        (size + targetIndex).toInt()
+                                                }
+                                                findAction = true
+                                            } else {
+                                                //寻找指定[actionId;actionId;]
+                                                interceptor.actionList.forEachIndexed { index, baseAccessibilityAction ->
+                                                    if (baseAccessibilityAction is AutoParseAction) {
+                                                        if (baseAccessibilityAction.actionBean?.actionId == targetIndex) {
+                                                            interceptor.actionIndex = index
+                                                            findAction = true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
+
                                     jumpCount.doCount()
                                 }
                             }

@@ -167,7 +167,7 @@ data class ConstraintBean(
          * [:-1] 跳转到倒数第1个action,默认10次
          * [:<2] 跳转到前2个action
          * [:>3] 跳转到后3个action
-         * [:actionId] 跳转到指定的actionId,未找到直接完成当前的action
+         * [:actionId;actionId;:5] id支持指定多个,依次匹配寻找,找到则终止后续. 跳转到指定的actionId,未找到直接完成当前的action
          * */
         const val ACTION_JUMP = "jump"
 
