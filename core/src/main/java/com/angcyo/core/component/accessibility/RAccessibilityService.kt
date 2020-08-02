@@ -29,7 +29,7 @@ open class RAccessibilityService : BaseAccessibilityService() {
 
             if (interceptor.lastService == null) {
                 interceptor.restart()
-                weakService?.get()?.apply {
+                lastService?.apply {
                     interceptor.onServiceConnected(this)
                 }
             }

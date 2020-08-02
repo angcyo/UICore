@@ -34,7 +34,7 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
         /**获取所有[AccessibilityWindowInfo]的信息*/
         fun logWindow(
             allWindow: Boolean = true,
-            service: AccessibilityService? = BaseAccessibilityService.weakService?.get(),
+            service: AccessibilityService? = BaseAccessibilityService.lastService,
             builder: StringBuilder = StringBuilder(),
             showToast: Boolean = isDebug()
         ): String {

@@ -1,20 +1,19 @@
 package com.angcyo.core.component.accessibility.base
 
-import android.content.Context
+import android.graphics.PointF
 import android.graphics.RectF
-import android.view.inputmethod.InputMethodManager
 import com.angcyo.core.R
 import com.angcyo.core.component.accessibility.AccessibilityHelper
+import com.angcyo.core.component.accessibility.BaseAccessibilityService
 import com.angcyo.core.component.accessibility.LogWindowAccessibilityInterceptor
+import com.angcyo.core.component.accessibility.click
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.file.wrapData
 import com.angcyo.http.rx.doBack
 import com.angcyo.ilayer.ILayer
 import com.angcyo.ilayer.container.DragRectFConstraint
 import com.angcyo.ilayer.container.WindowContainer
-import com.angcyo.library._satusBarHeight
-import com.angcyo.library._screenHeight
-import com.angcyo.library.app
+import com.angcyo.library.*
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.isDebugType
 import com.angcyo.library.ex.openApp
@@ -65,7 +64,6 @@ object AccessibilityWindowLayer : ILayer() {
             tv(R.id.text_view)?.text = text
 
             visible(R.id.catch_button, isDebug())
-            //visible(R.id.test_button, isDebugType())
             visible(R.id.summary_text_view, summary != null)
             tv(R.id.summary_text_view)?.text = summary
 
@@ -91,10 +89,16 @@ object AccessibilityWindowLayer : ILayer() {
             }
 
             //测试按钮
+            visible(R.id.test_button, isDebugType())
             throttleClick(R.id.test_button) {
-                val imm = context.getSystemService(
-                    Context.INPUT_METHOD_SERVICE
-                ) as InputMethodManager
+                //"touch:0.9192,0.9642"
+                val p1 = PointF(_screenWidth * 0.9192f, _screenHeight * 0.9642f)
+                BaseAccessibilityService.lastService?.gesture?.click(p1.x, p1.y)
+                L.w(p1)
+
+//                val imm = context.getSystemService(
+//                    Context.INPUT_METHOD_SERVICE
+//                ) as InputMethodManager
 
 //                doBack {
 //                    LTime.tick()

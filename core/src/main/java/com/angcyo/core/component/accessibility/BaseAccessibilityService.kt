@@ -57,6 +57,8 @@ abstract class BaseAccessibilityService : AccessibilityService() {
         var isServiceConnected = false
 
         var weakService: WeakReference<BaseAccessibilityService>? = null
+
+        val lastService: BaseAccessibilityService? get() = weakService?.get()
     }
 
     /**手势处理*/
