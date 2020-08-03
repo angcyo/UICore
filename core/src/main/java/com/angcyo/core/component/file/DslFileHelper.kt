@@ -89,9 +89,15 @@ fun logFileName() = fileName("yyyy-MM-dd", ".log")
 
 fun CharSequence.wrapData() = DslFileHelper._wrapData2(this)
 
+/**将数据写入到指定文件*/
 fun String?.writeTo(
     folder: String = Constant.LOG_FOLDER_NAME,
     name: String = logFileName()
 ) {
     DslFileHelper.write(folder, name, this ?: "null")
+}
+
+/**获取文件夹全路径*/
+fun String.logFilePath(name: String = logFileName()): String? {
+    return FileUtils.appRootExternalFolderFile(app(), this, name)?.absolutePath
 }
