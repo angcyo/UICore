@@ -171,6 +171,11 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
             //指定了表单处理
             it.request { map ->
 
+                //将action获取到的所有文本, 打包进参数
+                taskBean.getTextResultMap?.forEach { entry ->
+                    map[entry.key] = entry.value.firstOrNull() ?: ""
+                }
+
                 //action执行结果, 执行成功发送 200
                 if (error == null) {
                     map[FormBean.KEY_MSG] =
