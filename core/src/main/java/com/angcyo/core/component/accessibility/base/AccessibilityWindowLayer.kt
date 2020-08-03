@@ -77,13 +77,15 @@ object AccessibilityWindowLayer : ILayer() {
                 doBack {
                     val logWindow = LogWindowAccessibilityInterceptor.logWindow()
                     if (!logWindow.isNullOrEmpty()) {
+
+                        val log = logWindow.wrapData()
                         DslFileHelper.write(
                             AccessibilityHelper.logFolderName,
                             "catch.log",
-                            logWindow.wrapData()
+                            log
                         )
 
-                        onSaveWindowLog?.invoke(logWindow)
+                        onSaveWindowLog?.invoke(log)
                     }
                 }
             }

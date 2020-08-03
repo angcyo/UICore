@@ -14,7 +14,6 @@ import com.angcyo.library.L
 import com.angcyo.library.ex.fileSizeString
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.toastQQ
-import com.angcyo.library.utils.Device
 
 /**
  * 窗口改变日志输出
@@ -44,11 +43,10 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                 service.windows.forEachIndexed { index, accessibilityWindowInfo ->
                     builder.appendln("$index->$accessibilityWindowInfo")
 
-                    if (index == 0) {
-                        Device.deviceInfoLess(builder)
-                    } else if (index > 0) {
+                    if (index > 0) {
                         toastStringBuilder.appendln()
                     }
+
                     toastStringBuilder.append("$index->title=${accessibilityWindowInfo.title}\n")
 
                     accessibilityWindowInfo.root?.apply {

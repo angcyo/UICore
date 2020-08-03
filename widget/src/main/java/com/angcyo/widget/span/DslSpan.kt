@@ -19,7 +19,7 @@ import kotlin.math.max
  * @date 2020/01/08
  */
 
-class DslSpan {
+class DslSpan : Appendable {
 
     val _builder = SpannableStringBuilder()
 
@@ -211,6 +211,21 @@ class DslSpan {
     /**快速追加[DslTextSpan]*/
     fun text(text: CharSequence?, action: DslTextSpan.() -> Unit = {}): DslSpan {
         append(text, DslTextSpan().apply(action))
+        return this
+    }
+
+    override fun append(csq: CharSequence?): Appendable {
+        append(text = csq)
+        return this
+    }
+
+    override fun append(csq: CharSequence?, start: Int, end: Int): Appendable {
+        append(text = csq?.subSequence(start, end))
+        return this
+    }
+
+    override fun append(c: Char): Appendable {
+        append(text = c.toString())
         return this
     }
 
