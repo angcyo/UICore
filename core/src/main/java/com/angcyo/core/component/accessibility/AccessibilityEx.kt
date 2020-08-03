@@ -1002,7 +1002,7 @@ fun AccessibilityNodeInfoCompat.getBrotherNode(index: Int): AccessibilityNodeInf
 fun AccessibilityNodeInfoCompat.getParentOrChildNode(index: Int): AccessibilityNodeInfoCompat? {
 
     if (index > 0) {
-        return getChildOrNull(index)
+        return getChildOrNull(index - 1)
     }
 
     if (index == 0) {
