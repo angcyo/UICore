@@ -27,7 +27,7 @@ import kotlin.math.min
  * @author angcyo
  * @date 2020/02/05
  */
-class REditDelegate(editText: EditText) : FocusEditDelegate(editText) {
+class REditDelegate(editText: EditText) : InputTipEditDelegate(editText) {
     companion object {
         val STATE_NONE = StateSet.WILD_CARD
         val STATE_PRESSED = intArrayOf(android.R.attr.state_pressed)
@@ -200,13 +200,13 @@ class REditDelegate(editText: EditText) : FocusEditDelegate(editText) {
     //<editor-fold desc="代理View的方法">
 
     //代理
-    fun drawableStateChanged() {
+    override fun drawableStateChanged() {
         //L.i("this...$isDownInClear")
         updateState(false, isDownInClear)
     }
 
     //代理
-    fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         if (showClearDrawable) {
             val offset = editText.compoundDrawablePadding
             _clearRect.set(
@@ -218,7 +218,7 @@ class REditDelegate(editText: EditText) : FocusEditDelegate(editText) {
         }
     }
 
-    fun onTouchEvent(event: MotionEvent): Boolean {
+    override fun onTouchEvent(event: MotionEvent): Boolean {
         val action = event.action
 
         if (action == MotionEvent.ACTION_DOWN) {
@@ -323,6 +323,16 @@ class REditDelegate(editText: EditText) : FocusEditDelegate(editText) {
     override fun onFocusChanged(focused: Boolean) {
         super.onFocusChanged(focused)
         checkEdit(focused)
+    }
+
+    override fun onTextChanged(
+        text: CharSequence?,
+        start: Int,
+        lengthBefore: Int,
+        lengthAfter: Int
+    ) {
+        super.onTextChanged(text, start, lengthBefore, lengthAfter)
+        checkEdit(editText.isFocused)
     }
 
     fun checkEdit(focused: Boolean) {

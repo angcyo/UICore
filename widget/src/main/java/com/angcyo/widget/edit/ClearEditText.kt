@@ -54,7 +54,7 @@ open class ClearEditText : AppCompatEditText, IEditDelegate {
         lengthAfter: Int
     ) {
         super.onTextChanged(text, start, lengthBefore, lengthAfter)
-        editDelegate?.checkEdit(isFocused)
+        editDelegate?.onTextChanged(text, start, lengthBefore, lengthAfter)
     }
 
     override fun onFocusChanged(focused: Boolean, direction: Int, previouslyFocusedRect: Rect?) {

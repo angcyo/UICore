@@ -26,7 +26,7 @@ import com.angcyo.widget.base.mW
  * @date 2020/04/17
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-open class FocusEditDelegate(val editText: EditText) {
+open class FocusEditDelegate(editText: EditText) : BaseEditDelegate(editText) {
 
     /**无焦点时, 绘制的Drawable*/
     var noFocusDrawable: Drawable? = null
@@ -45,7 +45,7 @@ open class FocusEditDelegate(val editText: EditText) {
     var _progress: Float = 0f
     var _valueAnimator: ValueAnimator? = null
 
-    open fun initAttribute(context: Context, attrs: AttributeSet?) {
+    override fun initAttribute(context: Context, attrs: AttributeSet?) {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.FocusEditDelegate)
         noFocusDrawable = typedArray.getDrawable(R.styleable.FocusEditDelegate_r_no_focus_drawable)
         focusDrawable = typedArray.getDrawable(R.styleable.FocusEditDelegate_r_focus_drawable)
@@ -68,7 +68,7 @@ open class FocusEditDelegate(val editText: EditText) {
     }
 
     /**焦点改变通知*/
-    open fun onFocusChanged(focused: Boolean) {
+    override fun onFocusChanged(focused: Boolean) {
         stopAnimator()
 
         if (focusDrawable == null) {
@@ -93,13 +93,14 @@ open class FocusEditDelegate(val editText: EditText) {
         }
     }
 
-    open fun onDraw(canvas: Canvas) {
+    override fun onDraw(canvas: Canvas) {
         val viewWidth = editText.mW()
         val viewHeight = editText.mH()
 
         val scrollX = editText.scrollX
         val scrollY = editText.scrollY
 
+        //focusDrawable/noFocusDrawable 定位
         val mLeft = editText.calcSize(drawableMarginLeft, viewWidth, viewHeight, 0, 0)
         val mRight = editText.calcSize(drawableMarginRight, viewWidth, viewHeight, 0, 0)
         val mBottom = editText.calcSize(drawableMarginBottom, viewWidth, viewHeight, 0, 0)
