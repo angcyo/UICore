@@ -15,8 +15,13 @@ import com.angcyo.core.component.accessibility.intervalMode
  */
 data class TaskBean(
 
+    var id: Long = -1,
+    var rwid: Long = -1,
+
+    //----------------------------------------------------------
+
     /**任务id, 不参与auto parse*/
-    var taskId: Long = 0,
+    var taskId: Long = -1,
     /**任务描述, 不参与auto parse*/
     var taskDes: String? = null,
 
