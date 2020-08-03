@@ -4,12 +4,10 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.core.component.accessibility.action.ActionInterruptedException
+import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.action.PermissionsAction
 import com.angcyo.core.component.accessibility.base.BaseFloatInterceptor
-import com.angcyo.core.component.accessibility.parse.FormBean
-import com.angcyo.core.component.accessibility.parse.TaskBean
-import com.angcyo.core.component.accessibility.parse.bindErrorCode
-import com.angcyo.core.component.accessibility.parse.request
+import com.angcyo.core.component.accessibility.parse.*
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.file.wrapData
 import com.angcyo.library.ex.elseNull
@@ -30,6 +28,9 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
 
     companion object {
         const val LOG_TASK_FILE_NAME = "task.log"
+
+        /**当前运行的[ActionBean]*/
+        var currentActionBean: ActionBean? = null
 
         /**执行任务时的日志输出*/
         fun log(data: CharSequence?) {
@@ -97,6 +98,10 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
         service: BaseAccessibilityService,
         nodeList: List<AccessibilityNodeInfo>
     ) {
+        //save
+        if (action is AutoParseAction) {
+            currentActionBean = action.actionBean
+        }
         notify(action.actionTitle)
         super.onDoAction(action, service, nodeList)
     }
@@ -150,6 +155,9 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
     }
 
     override fun onDestroy() {
+        //clear
+        currentActionBean = null
+
         val isInterrupt = actionStatus.isActionStart()
         if (isInterrupt) {
             val actionInterruptedException = ActionInterruptedException("拦截器被中断!")
@@ -159,6 +167,8 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
                 onDoActionFinish(null, actionInterruptedException)
             }
         }
+
+        //super
         super.onDestroy()
         if (isInterrupt) {
             notify("中止")

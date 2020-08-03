@@ -181,9 +181,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
 
     /**当前正在执行的[ActionBean]*/
     val currentAccessibilityAction: BaseAccessibilityAction?
-        get() = actionList.getOrNull(
-            actionIndex
-        )
+        get() = actionList.getOrNull(actionIndex)
 
     /**检查是否离开了界面*/
     @CallSuper
@@ -289,6 +287,8 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         actionStatus = ACTION_STATUS_DESTROY
         lastService = null
         lastEvent = null
+        interceptorLog = null
+        onNoOtherEventHandleAction = null
         stopInterval()
     }
 
