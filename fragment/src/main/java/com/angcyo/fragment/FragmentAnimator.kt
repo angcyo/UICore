@@ -17,11 +17,17 @@ import com.angcyo.widget.base.animatorOf
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 object FragmentAnimator {
-    var DEFAULT_SHOW_ENTER_ANIMATOR = R.anim.lib_x_show_enter_holder
-    var DEFAULT_SHOW_EXIT_ANIMATOR = R.anim.lib_x_show_exit_holder
+    var DEFAULT_SHOW_ENTER_ANIMATOR =
+        R.anim.lib_translate_x_show_enter //R.anim.lib_x_show_enter_holder
 
-    var DEFAULT_REMOVE_ENTER_ANIMATOR = R.anim.lib_x_remove_enter_holder
-    var DEFAULT_REMOVE_EXIT_ANIMATOR = R.anim.lib_x_remove_exit_holder
+    var DEFAULT_SHOW_EXIT_ANIMATOR =
+        R.anim.lib_translate_x_show_exit //R.anim.lib_x_show_exit_holder
+
+    var DEFAULT_REMOVE_ENTER_ANIMATOR =
+        R.anim.lib_translate_x_remove_enter //R.anim.lib_x_remove_enter_holder
+
+    var DEFAULT_REMOVE_EXIT_ANIMATOR =
+        R.anim.lib_translate_x_remove_exit //R.anim.lib_x_remove_exit_holder
 
     var loadAnimator: (context: Context, anim: Int) -> Animator? = { context, anim ->
         val sw = _screenWidth.toFloat()
@@ -31,6 +37,7 @@ object FragmentAnimator {
         objectAnimator.duration = duration
         objectAnimator.interpolator = AccelerateDecelerateInterpolator()
 
+        /*将占位的动画, 翻译成属性动画*/
         when (anim) {
             R.anim.lib_x_show_enter_holder -> {
                 objectAnimator.setPropertyName("translationX")
