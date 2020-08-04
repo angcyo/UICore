@@ -17,17 +17,20 @@ import com.angcyo.widget.base.animatorOf
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 object FragmentAnimator {
-    var DEFAULT_SHOW_ENTER_ANIMATOR =
-        R.anim.lib_translate_x_show_enter //R.anim.lib_x_show_enter_holder
 
-    var DEFAULT_SHOW_EXIT_ANIMATOR =
-        R.anim.lib_translate_x_show_exit //R.anim.lib_x_show_exit_holder
+    /**显示进入动画*/
+    var DEFAULT_SHOW_ENTER_ANIMATOR = R.anim.lib_x_show_enter_holder
+    //R.anim.lib_translate_x_show_enter //R.anim.lib_x_show_enter_holder
 
-    var DEFAULT_REMOVE_ENTER_ANIMATOR =
-        R.anim.lib_translate_x_remove_enter //R.anim.lib_x_remove_enter_holder
+    var DEFAULT_SHOW_EXIT_ANIMATOR = 0
+    //R.anim.lib_translate_x_show_exit //R.anim.lib_x_show_exit_holder
 
-    var DEFAULT_REMOVE_EXIT_ANIMATOR =
-        R.anim.lib_translate_x_remove_exit //R.anim.lib_x_remove_exit_holder
+    var DEFAULT_REMOVE_ENTER_ANIMATOR = 0
+    //R.anim.lib_translate_x_remove_enter //R.anim.lib_x_remove_enter_holder
+
+    /**隐藏时退出动画*/
+    var DEFAULT_REMOVE_EXIT_ANIMATOR = R.anim.lib_x_remove_exit_holder
+    //R.anim.lib_translate_x_remove_exit //R.anim.lib_x_remove_exit_holder
 
     var loadAnimator: (context: Context, anim: Int) -> Animator? = { context, anim ->
         val sw = _screenWidth.toFloat()
