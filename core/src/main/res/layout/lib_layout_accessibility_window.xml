@@ -45,6 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/lib_ldpi"
         android:textColor="@color/lib_white_dark"
+        android:textSize="@dimen/text_min_size"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/wrap_layout"
