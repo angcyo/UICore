@@ -11,6 +11,7 @@ import com.angcyo.getData
 import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.ex.installApk
+import com.angcyo.library.ex.isDebug
 import com.angcyo.library.getAppVersionCode
 import com.angcyo.putData
 import com.angcyo.widget.bar
@@ -101,9 +102,15 @@ fun Context.versionUpdate(updateBean: VersionUpdateBean?) {
     }
     val appVersionCode = getAppVersionCode()
     if (updateBean.versionCode > appVersionCode) {
-        dslAHelper {
-            start(VersionUpdateActivity::class.java) {
-                putData(updateBean)
+        //需要更新
+        if (updateBean.versionType >= 0 ||
+            (updateBean.versionType < 0 && isDebug())
+        ) {
+            //type匹配
+            dslAHelper {
+                start(VersionUpdateActivity::class.java) {
+                    putData(updateBean)
+                }
             }
         }
     } else {

@@ -17,5 +17,10 @@ data class VersionUpdateBean(
     /**强制更新*/
     var versionForce: Boolean = false,
     /**下载地址*/
-    var versionUrl: String? = null
+    var versionUrl: String? = null,
+    /**版本更新类型
+     * >=0 普通用户版本更新
+     * <0 Debug用户版本更新
+     * */
+    var versionType: Int = 1
 )
