@@ -85,6 +85,19 @@ fun FragmentManager.restore(vararg tag: String?): List<Fragment> {
     return list
 }
 
+fun FragmentManager.have(cls: Class<*>): Boolean {
+    return have(cls.name)
+}
+
+/**查找是否有指定Tag的[Fragment]*/
+fun FragmentManager.have(tag: String?): Boolean {
+    var result = false
+    findFragmentByTag(tag)?.let {
+        result = true
+    }
+    return result
+}
+
 /**获取所有view!=null的[Fragment]*/
 fun FragmentManager.getAllValidityFragment(): List<Fragment> {
     val result = mutableListOf<Fragment>()
