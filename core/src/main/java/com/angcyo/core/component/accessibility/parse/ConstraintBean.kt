@@ -104,7 +104,7 @@ data class ConstraintBean(
      * */
     var rectList: List<String>? = null,
 
-    /**状态约束,只有全部满足状态才能命中
+    /**状态约束,只有全部满足状态才能命中. 和[textList]非一一对应的关系
      * [clickable] 具备可点击
      * [not_clickable] 具备不可点击
      * [focusable] 具备可获取交点
@@ -180,6 +180,8 @@ data class ConstraintBean(
         const val STATE_SELECTED = "selected" //具备选中状态
         const val STATE_UNSELECTED = "unselected" //具备选未中状态
         const val STATE_SCROLLABLE = "scrollable" //具备可滚动状态
+        const val STATE_LONG_CLICKABLE = "longClickable" //具备长按状态
+        const val STATE_NOT_LONG_CLICKABLE = "not_longClickable" //具备不可长按状态
     }
 }
 

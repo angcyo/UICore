@@ -351,7 +351,7 @@ open class AutoParser {
 
         //状态约束
         if (result) {
-            val state = constraintBean.stateList
+            val state: List<String>? = constraintBean.stateList
             if (state != null && !state.isListEmpty()) {
                 var match = true
                 state.forEach {
@@ -401,6 +401,18 @@ open class AutoParser {
                         ConstraintBean.STATE_SCROLLABLE -> {
                             //需要具备可滚动状态
                             if (!node.isScrollable) {
+                                match = false
+                            }
+                        }
+                        ConstraintBean.STATE_LONG_CLICKABLE -> {
+                            //需要具备可以长按的状态
+                            if (!node.isLongClickable) {
+                                match = false
+                            }
+                        }
+                        ConstraintBean.STATE_NOT_LONG_CLICKABLE -> {
+                            //需要具备不可以长按的状态
+                            if (node.isLongClickable) {
                                 match = false
                             }
                         }
