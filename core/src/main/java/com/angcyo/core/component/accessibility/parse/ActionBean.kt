@@ -1,5 +1,6 @@
 package com.angcyo.core.component.accessibility.parse
 
+import com.angcyo.core.component.accessibility.BaseAccessibilityAction
 import com.angcyo.core.component.accessibility.BaseAccessibilityAction.Companion.DEFAULT_ACTION_CHECK_OUT_MAX_COUNT
 import com.angcyo.core.component.accessibility.BaseAccessibilityAction.Companion.DEFAULT_ACTION_FINISH_MAX_COUNT
 import com.angcyo.core.component.accessibility.BaseAccessibilityAction.Companion.DEFAULT_ACTION_MAX_COUNT
@@ -63,12 +64,18 @@ data class ActionBean(
     var form: FormBean? = null,
 
     /**getText获取到的文本, 需要放在表单的那个key中*/
-    var formKey: String? = null
+    var formKey: String? = null,
+
+    /**当[BaseAccessibilityAction]执行异常时, 处理的方式*/
+    var errorHandleType: Int = ERROR_HANDLE_TYPE_STOP
 ) {
     companion object {
         const val HANDLE_TYPE_NONE = 0 //匹配执行, 匹配到谁, 谁就执行
         const val HANDLE_TYPE_RANDOM = 1 //随机执行
         const val HANDLE_TYPE_ORDER = 2 //顺序执行
+
+        const val ERROR_HANDLE_TYPE_NEXT = 1 //异常后, 继续流程
+        const val ERROR_HANDLE_TYPE_STOP = -1 //异常后, 停止处理
     }
 }
 

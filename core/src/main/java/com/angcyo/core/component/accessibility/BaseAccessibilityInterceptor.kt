@@ -8,6 +8,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.CallSuper
 import com.angcyo.core.component.accessibility.BaseAccessibilityInterceptor.Companion.defaultIntervalDelay
 import com.angcyo.core.component.accessibility.action.ActionException
+import com.angcyo.core.component.accessibility.action.ActionInterruptedNextException
 import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.action.PermissionsAction
 import com.angcyo.core.component.accessibility.parse.ActionBean
@@ -434,11 +435,13 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             action._actionFinish = {
                 //action执行完成
                 interceptorLog?.log("${action.simpleHash()} [${action.actionTitle}] ${if (it == null) "完成" else it.message}:${actionIndex}/${actionList.size}")
-                if (it != null) {
+
+                if (it == null || it is ActionInterruptedNextException) {
+                    //[BaseAccessibilityAction] 被中断时, 允许继续玩下执行
+                    actionNext(service)
+                } else {
                     actionStatus = ACTION_STATUS_ERROR
                     onDoActionFinish(action, it)
-                } else {
-                    actionNext(service)
                 }
             }
         }

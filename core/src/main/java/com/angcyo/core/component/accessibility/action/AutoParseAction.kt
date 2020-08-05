@@ -225,12 +225,22 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
     /**[Action]处理完成*/
     override fun doActionFinish(error: ActionException?) {
+        var handleError = error
+        if (actionBean?.errorHandleType == ActionBean.ERROR_HANDLE_TYPE_NEXT) {
+            //中断后, 需要继续
+            if (error is ActionInterruptedNextException) {
+
+            } else {
+                handleError = ActionInterruptedNextException(error?.message)
+            }
+        }
+
         //表单处理
-        handleFormRequest(error)
+        handleFormRequest(handleError)
 
         actionLog = null
         onGetTextResult = null
-        super.doActionFinish(error)
+        super.doActionFinish(handleError)
     }
 
     //</editor-fold desc="周期回调方法">

@@ -37,7 +37,8 @@ class ActionCount {
     }
 
     /**是否超出最大限制的值*/
-    fun isMaxLimit() = maxCountLimit in 1 until count
+    fun isMaxLimit() = maxCountLimit == 0L ||
+            maxCountLimit in 1 until count
 
     /**清空计数*/
     fun clear() {

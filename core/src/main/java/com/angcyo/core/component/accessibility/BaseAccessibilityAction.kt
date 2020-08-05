@@ -61,7 +61,10 @@ abstract class BaseAccessibilityAction {
     }
 
     /**[onCheckEventOut]执行统计,无法识别到界面,同时又无法back处理
-     * 次数过多, 可以将[action]提到上一个级别*/
+     * 次数过多, 可以将[action]提到上一个级别
+     * -1 关闭回滚
+     * 0 可以立即出发滚动上限
+     * */
     val checkEventOutCount: ActionCount = ActionCount().apply {
         maxCountLimit = DEFAULT_ACTION_CHECK_OUT_MAX_COUNT
     }
