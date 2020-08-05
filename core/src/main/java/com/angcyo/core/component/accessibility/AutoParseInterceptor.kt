@@ -10,6 +10,7 @@ import com.angcyo.core.component.accessibility.base.BaseFloatInterceptor
 import com.angcyo.core.component.accessibility.parse.*
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.file.wrapData
+import com.angcyo.library.LTime
 import com.angcyo.library.ex.elseNull
 import com.angcyo.library.ex.file
 import com.angcyo.library.ex.nowTime
@@ -128,7 +129,18 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
         nodeList: List<AccessibilityNodeInfo>
     ): Boolean {
         //actionList.getOrNull(actionIndex)
-        return super.checkLeave(service, mainPackageName, nodeList)
+        return super.checkLeave(service, mainPackageName, nodeList).apply {
+            if (filterPackageNameList.isNotEmpty()) {
+                log("离开目标:$filterPackageNameList ${LTime.time(_lastLeaveTime)} 停留在:$_lastLeavePackageName")
+
+                if (nowTime() - _lastLeaveTime > 10 * 60 * 1000) {
+                    //离开停留在同一个界面时间超过10分钟,强制重新开始
+                    log("超过10分钟,即将重新开始!")
+                    _lastLeaveTime = 0
+                    restart()
+                }
+            }
+        }
     }
 
     override fun onLeavePackageName(

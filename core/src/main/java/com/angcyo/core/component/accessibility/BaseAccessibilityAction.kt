@@ -5,6 +5,8 @@ import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.CallSuper
 import com.angcyo.core.component.accessibility.action.ActionCount
 import com.angcyo.core.component.accessibility.action.ActionException
+import com.angcyo.core.component.accessibility.action.AutoParseAction
+import com.angcyo.core.component.accessibility.parse.ConstraintBean
 import com.angcyo.library.ex.simpleHash
 import kotlin.math.max
 import kotlin.random.Random.Default.nextLong
@@ -134,8 +136,36 @@ abstract class BaseAccessibilityAction {
                 rollbackCount.doCount()
 
                 //执行回滚
-                accessibilityInterceptor?.apply {
-                    actionIndex -= 1
+                var rollbackPrev = true
+                if (this is AutoParseAction) {
+                    //回滚拦截处理
+                    val constraintList: List<ConstraintBean>? = actionBean?.check?.rollback
+
+                    if (constraintList == null) {
+                        rollbackPrev = true
+                    } else {
+                        autoParser.parse(service, this, nodeList, constraintList) {
+                            for (pair in it) {
+                                //执行action
+                                val handleResult = handleAction(service, pair.first, pair.second)
+
+                                //执行结果
+                                if (handleResult.result) {
+                                    rollbackPrev = false
+                                }
+
+                                //是否跳过后续action
+                                if (handleResult.jumpNextHandle) {
+                                    break
+                                }
+                            }
+                        }
+                    }
+                }
+                if (rollbackPrev) {
+                    accessibilityInterceptor?.apply {
+                        actionIndex -= 1
+                    }
                 }
             }
         }

@@ -356,6 +356,12 @@ open class DslViewHolder(
         return this
     }
 
+    fun check(@IdRes resId: Int, check: Boolean = true): CompoundButton? {
+        return v<CompoundButton>(resId)?.apply {
+            isChecked = check
+        }
+    }
+
     //</editor-fold desc="可见性控制">
 
     //<editor-fold desc="findViewById">

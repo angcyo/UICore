@@ -190,6 +190,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     //最后一次离开前的程序
     var _lastLeavePackageName: CharSequence? = null
 
+    //离开的时间
+    var _lastLeaveTime: Long = 0
+
     /**当前正在执行的[ActionBean]*/
     val currentAccessibilityAction: BaseAccessibilityAction?
         get() = actionList.getOrNull(actionIndex)
@@ -224,6 +227,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         }
 
         return if (_lastLeavePackageName != mainPackageName) {
+            _lastLeaveTime = nowTime()
             val old = _lastLeavePackageName
             _lastLeavePackageName = mainPackageName
             onLeavePackageName(service, old, mainPackageName, nodeList)
@@ -463,7 +467,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             //切换间隔时长
             intervalDelay = onHandleIntervalDelay(action)
         } else if (action.checkOtherEvent(service, lastEvent, nodeList)) {
-            //被other处理
+            //内部消化, 被other处理
         } else {
             //还是未处理的事件
             var handle = false

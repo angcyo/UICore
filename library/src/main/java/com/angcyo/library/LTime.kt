@@ -31,7 +31,7 @@ object LTime {
         return time(startTime, nowTime)
     }
 
-    fun time(startTime: Long, endTIme: Long): String {
+    fun time(startTime: Long, endTIme: Long = nowTime()): String {
         val s = (endTIme - startTime) / 1000
         val ms = ((endTIme - startTime) % 1000) * 1f / 1000
 

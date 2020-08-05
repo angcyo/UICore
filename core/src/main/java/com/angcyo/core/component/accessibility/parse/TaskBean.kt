@@ -60,6 +60,7 @@ data class TaskBean(
 
 /**转成拦截器*/
 fun TaskBean.toInterceptor(
+    onEnableAction: (action: ActionBean) -> Boolean = { it.enable },
     onConvertCheckById: (checkId: Long) -> CheckBean? = { null }, //将[checkId]转换成[checkBean]
     onGetTextResult: (action: AutoParseAction, List<CharSequence>) -> Unit = { _, _ -> } //[getText]动作, 返回的文本信息
 ): AutoParseInterceptor {
@@ -85,7 +86,7 @@ fun TaskBean.toInterceptor(
         }
 
         actions?.forEach {
-            if (it.enable) {
+            if (onEnableAction(it)) {
                 if (it.actionId > 0) {
                     //重置interval
                     it.interval = actionIntervalMap.getOrDefault(it.actionId, it.interval)

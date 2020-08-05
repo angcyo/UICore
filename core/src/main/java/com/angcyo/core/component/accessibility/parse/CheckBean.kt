@@ -42,5 +42,8 @@ data class CheckBean(
     /**当这个界面需要被返回时, 点击关闭的数据解析结构.
      * 如果这个值不为空, 那么次Action会被添加到拦截器的[com.angcyo.core.component.accessibility.BaseAccessibilityInterceptor.getActionOtherList]
      * 当[Action]被作为回退处理时[doActionWidth]解析时的关键数据*/
-    var back: List<ConstraintBean>? = null
+    var back: List<ConstraintBean>? = null,
+
+    /**回滚时触发*/
+    var rollback: List<ConstraintBean>? = null
 )

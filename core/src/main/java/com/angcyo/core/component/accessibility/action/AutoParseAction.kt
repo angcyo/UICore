@@ -198,8 +198,17 @@ open class AutoParseAction : BaseAccessibilityAction() {
             fun handle(): Boolean {
                 var result = false
                 autoParser.parse(service, this, nodeList, constraintList) {
-                    it.forEach { pair ->
-                        result = result || handleAction(service, pair.first, pair.second).result
+                    for (pair in it) {
+                        //执行action
+                        val handleResult = handleAction(service, pair.first, pair.second)
+
+                        //执行结果
+                        result = result || handleResult.result
+
+                        //是否跳过后续action
+                        if (handleResult.jumpNextHandle) {
+                            break
+                        }
                     }
                 }
                 return result
