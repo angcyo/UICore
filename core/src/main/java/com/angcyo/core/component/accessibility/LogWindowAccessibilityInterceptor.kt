@@ -35,7 +35,7 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
             allWindow: Boolean = true,
             service: AccessibilityService? = BaseAccessibilityService.lastService,
             builder: StringBuilder = StringBuilder(),
-            showToast: Boolean = isDebug()
+            showToast: Boolean = false
         ): String {
             if (service != null) {
                 val toastStringBuilder = StringBuilder()

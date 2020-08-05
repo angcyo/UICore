@@ -75,7 +75,8 @@ object AccessibilityWindowLayer : ILayer() {
             //捕捉界面信息
             throttleClick(R.id.catch_button) {
                 doBack {
-                    val logWindow = LogWindowAccessibilityInterceptor.logWindow()
+                    val logWindow =
+                        LogWindowAccessibilityInterceptor.logWindow(showToast = true)
                     if (!logWindow.isNullOrEmpty()) {
 
                         val log = logWindow.wrapData()

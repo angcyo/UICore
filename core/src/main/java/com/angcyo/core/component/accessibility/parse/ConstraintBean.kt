@@ -134,7 +134,12 @@ data class ConstraintBean(
 
     /**[ACTION_GET_TEXT]获取文本时, 需要过滤的文本正则, 非一一对应,
      * 如果匹配到, 则中断后续的匹配规则. 如果全部未匹配到, 则直接使用本身 */
-    var getTextRegexList: List<String>? = null
+    var getTextRegexList: List<String>? = null,
+
+    /**上述匹配规则, 匹配之后, 获取到的节点列表当做根节点, 再一次匹配.
+     * 只有匹配规则会生效, 非控制匹配规则的属性不会生效
+     * */
+    var after: ConstraintBean? = null
 ) {
     companion object {
 

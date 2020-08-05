@@ -36,7 +36,7 @@ open class AutoParser {
                 return null
             }
 
-            val originList = originList!!
+            val originList: List<String> = originList!!
 
             val result = mutableListOf<String>()
             indexList.forEach { indexStr ->
@@ -155,6 +155,30 @@ open class AutoParser {
             return result
         }
 
+        result.addAll(
+            //查找所有
+            findConstraintNodeByRootNode(
+                autoParseAction,
+                constraintBean,
+                rootNodeInfo,
+                service
+            )
+        )
+
+        return result
+    }
+
+    /**在指定的根节点[rootNodeInfo]下, 匹配节点*/
+    open fun findConstraintNodeByRootNode(
+        autoParseAction: AutoParseAction,
+        constraintBean: ConstraintBean,
+        rootNodeInfo: AccessibilityNodeInfo,
+        service: AccessibilityService
+    ): List<AccessibilityNodeInfoCompat> {
+
+        //返回值
+        val result: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
+
         //需要匹配的文本
         val text: List<String>? = autoParseAction.getTextList(constraintBean)
 
@@ -163,7 +187,7 @@ open class AutoParser {
 
         if (text == null) {
             //不约束文本, 单纯约束其他规则
-            rootNodeWrap.unwrap().findNode(result) { nodeInfoCompat ->
+            rootNodeInfo.findNode(result) { nodeInfoCompat ->
                 if (match(constraintBean, nodeInfoCompat, 0)) {
                     if (!constraintBean.pathList.isNullOrEmpty()) {
                         parseConstraintPath(
@@ -180,100 +204,120 @@ open class AutoParser {
                     -1
                 }
             }
-            return result
-        }
+        } else {
+            val packageName: String = idPackageName ?: service.packageName
 
-        val packageName: String = idPackageName ?: service.packageName
+            //临时存储node
+            var tempList: MutableList<AccessibilityNodeInfoCompat>
 
-        //临时存储node
-        var tempList: MutableList<AccessibilityNodeInfoCompat>
+            //列表中的所有文本是否都匹配通过
+            val matchMap = ArrayMap<Int, List<AccessibilityNodeInfoCompat>>()
+            for (index: Int in text.indices) {
+                tempList = mutableListOf()
+                try {
 
-        //列表中的所有文本是否都匹配通过
-        val matchMap = ArrayMap<Int, List<AccessibilityNodeInfoCompat>>()
-        for (index: Int in text.indices) {
-            tempList = mutableListOf()
-            try {
+                    //完整id 是需要包含包名的
+                    val isIdText: Boolean = constraintBean.idList?.getOrNull(index) == 1
+                    val subText: String? =
+                        if (isIdText) packageName.id(text[index]) else text[index]
 
-                //完整id 是需要包含包名的
-                val isIdText: Boolean = constraintBean.idList?.getOrNull(index) == 1
-                val subText: String? = if (isIdText) packageName.id(text[index]) else text[index]
-
-                if (!isIdText && subText == null) {
-                    //text匹配模式下, 空字符串处理
-                    tempList.add(rootNodeWrap)
-                    matchMap[index] = tempList
-                } else {
-                    rootNodeWrap.unwrap().findNode(tempList) { nodeInfoCompat ->
-                        var findNode = -1
-                        if (isIdText) {
-                            //id 全等匹配
-                            val idName = nodeInfoCompat.viewIdName()
-                            findNode = if (subText == idName) {
-                                1
-                            } else {
-                                -1
-                            }
-                        } else {
-                            //文本包含匹配
-                            findNode = if (nodeInfoCompat.haveText(subText ?: "")) {
-                                1
-                            } else {
-                                -1
-                            }
-                        }
-
-                        if (findNode == 1) {
-                            findNode = if (match(constraintBean, nodeInfoCompat, index)) {
-                                //其他约束匹配成功
-                                if (!constraintBean.pathList.isNullOrEmpty()) {
-                                    parseConstraintPath(
-                                        constraintBean,
-                                        constraintBean.pathList?.getOrNull(index),
-                                        nodeInfoCompat,
-                                        tempList
-                                    )
-                                    -1
-                                } else {
+                    if (!isIdText && subText == null) {
+                        //text匹配模式下, 空字符串处理
+                        tempList.add(rootNodeWrap)
+                        matchMap[index] = tempList
+                    } else {
+                        rootNodeInfo.findNode(tempList) { nodeInfoCompat ->
+                            var findNode = -1
+                            if (isIdText) {
+                                //id 全等匹配
+                                val idName = nodeInfoCompat.viewIdName()
+                                findNode = if (subText == idName) {
                                     1
+                                } else {
+                                    -1
                                 }
                             } else {
-                                -1
+                                //文本包含匹配
+                                findNode = if (nodeInfoCompat.haveText(subText ?: "")) {
+                                    1
+                                } else {
+                                    -1
+                                }
                             }
+
+                            if (findNode == 1) {
+                                findNode = if (match(constraintBean, nodeInfoCompat, index)) {
+                                    //其他约束匹配成功
+                                    if (!constraintBean.pathList.isNullOrEmpty()) {
+                                        parseConstraintPath(
+                                            constraintBean,
+                                            constraintBean.pathList?.getOrNull(index),
+                                            nodeInfoCompat,
+                                            tempList
+                                        )
+                                        -1
+                                    } else {
+                                        1
+                                    }
+                                } else {
+                                    -1
+                                }
+                            }
+
+                            findNode
                         }
 
-                        findNode
+                        if (tempList.isNotEmpty()) {
+                            matchMap[index] = tempList
+                        }
                     }
-
-                    if (tempList.isNotEmpty()) {
-                        matchMap[index] = tempList
-                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
-        }
 
-        //是否所有文本都匹配到了
-        var allTextMatch = true
-        for (index: Int in text.indices) {
-            if (matchMap[index].isNullOrEmpty()) {
-                allTextMatch = false
-                break
-            }
-        }
-
-        //全部匹配到, 将匹配到的node返回
-        if (allTextMatch) {
+            //是否所有文本都匹配到了
+            var allTextMatch = true
             for (index: Int in text.indices) {
-                matchMap[index]?.forEach {
-                    if (!result.contains(it)) {
-                        result.add(it)
+                if (matchMap[index].isNullOrEmpty()) {
+                    allTextMatch = false
+                    break
+                }
+            }
+
+            //全部匹配到, 将匹配到的node返回
+            if (allTextMatch) {
+                for (index: Int in text.indices) {
+                    matchMap[index]?.forEach {
+                        if (!result.contains(it)) {
+                            result.add(it)
+                        }
                     }
                 }
             }
         }
 
-        return result
+        if (constraintBean.after == null ||
+            constraintBean.after?.isConstraintEmpty() == true ||
+            result.isEmpty()
+        ) {
+            return result
+        } else {
+            //还有[after]约束
+            val resultAfter: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
+            result.forEach {
+                //继续查找
+                resultAfter.addAll(
+                    findConstraintNodeByRootNode(
+                        autoParseAction,
+                        constraintBean.after!!,
+                        it.unwrap(),
+                        service
+                    )
+                )
+            }
+            return resultAfter
+        }
     }
 
     /**其他规则匹配*/
