@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.media.AudioManager
@@ -13,7 +14,13 @@ import android.os.Looper
 import android.telephony.TelephonyManager
 import android.view.Surface
 import com.angcyo.library.L
+import com.angcyo.library.app
 import com.angcyo.library.toast
+import java.io.BufferedReader
+import java.io.File
+import java.io.IOException
+import java.io.InputStreamReader
+
 
 /**
  *
@@ -89,6 +96,128 @@ object RUtils {
     fun isMainThread(): Boolean {
         return Looper.myLooper() == Looper.getMainLooper()
     }
+
+    /**判断手机是否root
+     * https://www.cnblogs.com/waylife/p/3846440.html*/
+    fun isRoot(): Boolean {
+        val paths = arrayOf(
+            "/sbin/su",
+            "/system/bin/su",
+            "/system/xbin/su",
+            "/data/local/xbin/su",
+            "/data/local/bin/su",
+            "/system/sd/xbin/su",
+            "/system/bin/failsafe/su",
+            "/data/local/su"
+        )
+
+        var result = false
+
+        for (path in paths) {
+            result = result || isSUExist(path)
+            if (result) {
+                break
+            }
+        }
+
+        return try {
+            result ||
+                    (File("/system/app/Superuser.apk").exists()) ||
+                    Build.TAGS?.contains("test-keys") == true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    fun isSUExist(path: String): Boolean {
+        return File(path).exists() && isExecutable(path)
+    }
+
+    /**是否有可执行权限*/
+    fun isExecutable(filePath: String): Boolean {
+        var p: Process? = null
+        try {
+            p = Runtime.getRuntime().exec("ls -l $filePath")
+            // 获取返回内容
+            val `in` = BufferedReader(InputStreamReader(p.inputStream))
+            val str: String? = `in`.readLine()
+            L.i("isExecutable ", str)
+            if (str != null && str.length >= 4) {
+                val flag = str[3]
+                if (flag == 's' || flag == 'x') return true
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } finally {
+            p?.destroy()
+        }
+        return false
+    }
+
+    /**判断是否root, 会弹窗*/
+    fun isRootUI(): Boolean {
+        return try {
+            Runtime.getRuntime().exec("su").outputStream != null
+        } catch (e: IOException) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    /**判断应用程序是否可以被debug*/
+    fun isAppDebug(context: Context = app(), packageName: String = app().packageName): Boolean {
+        try {
+            val packageInfo = context.packageManager.getPackageInfo(packageName, 1)
+            if (packageInfo != null) {
+                val info = packageInfo.applicationInfo
+                return info.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
+            }
+        } catch (e: Exception) {
+        }
+        return false
+    }
+
+    /**
+     * 通过主动抛出异常，检查堆栈信息来判断是否存在XP框架
+     *
+     * @return
+     */
+    fun isXposedExistByThrow(): Boolean {
+        return try {
+            throw Exception("gg")
+        } catch (e: Exception) {
+            for (stackTraceElement in e.stackTrace) {
+                if (stackTraceElement.className.contains("de.robv.android.xposed.XposedBridge")) return true
+            }
+            false
+        }
+    }
+
+    /**
+     * 判断应用是否多开
+     * 检测原始的包名，多开应用会hook处理getPackageName方法
+     * 顺着这个思路，如果在应用列表里出现了同样的包，那么认为该应用被多开了
+     *
+     * @param context
+     * @param callback
+     * @return
+     */
+    fun checkByOriginApkPackageName(context: Context = app(), packageName: String): Boolean {
+        try {
+            var count = 0
+            val pm = context.packageManager
+            val pkgs = pm.getInstalledPackages(0)
+            for (info in pkgs) {
+                if (packageName == info.packageName) {
+                    count++
+                }
+            }
+            return count > 1
+        } catch (ignore: Exception) {
+        }
+        return false
+    }
+
 }
 
 /** 检查APK是否安装 */

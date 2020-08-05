@@ -2,6 +2,9 @@ package com.angcyo.library.ex
 
 import android.app.Application
 import com.angcyo.library.BuildConfig
+import com.angcyo.library.utils.Device
+import com.angcyo.library.utils.RUtils
+import com.angcyo.library.utils.protector.EmulatorCheckUtil
 import java.io.BufferedWriter
 import java.io.FileWriter
 import java.io.PrintWriter
@@ -34,6 +37,17 @@ fun isRelease(): Boolean = "release".equals(BuildConfig.BUILD_TYPE, true)
 fun isDebugType() = "debug".equals(BuildConfig.BUILD_TYPE, true)
 
 fun isDebug() = BuildConfig.DEBUG
+fun isAppDebug() = RUtils.isAppDebug()
+
+fun isRoot() = RUtils.isRoot()
+fun isXposedExistByThrow() = RUtils.isXposedExistByThrow()
+fun isMultiApp(packageName: String) = RUtils.checkByOriginApkPackageName(packageName = packageName)
+fun isRootUI() = RUtils.isRootUI()
+fun isProxyUsed() = Device.isProxyUsed()
+fun isVpnUsed() = Device.isVpnUsed()
+
+//运行在模拟器中
+fun isRunningInEmulator() = EmulatorCheckUtil.singleInstance.readSysProperty()
 
 fun Float.abs() = kotlin.math.abs(this)
 
