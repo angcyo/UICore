@@ -109,6 +109,16 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     /**日志输出*/
     var interceptorLog: ILogPrint? = ILogPrint()
 
+    /**下一个周期延迟时间的获取*/
+    var onHandleIntervalDelay: (action: BaseAccessibilityAction) -> Long = { action ->
+        val interceptorIntervalDelay = action.getInterceptorIntervalDelay()
+        if (interceptorIntervalDelay > 0) {
+            interceptorIntervalDelay
+        } else {
+            initialIntervalDelay
+        }
+    }
+
     init {
         initialIntervalDelay = defaultIntervalDelay
     }
@@ -451,12 +461,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             //需要事件处理
             action.doAction(service, lastEvent, nodeList)
             //切换间隔时长
-            val interceptorIntervalDelay = action.getInterceptorIntervalDelay()
-            intervalDelay = if (interceptorIntervalDelay > 0) {
-                interceptorIntervalDelay
-            } else {
-                initialIntervalDelay
-            }
+            intervalDelay = onHandleIntervalDelay(action)
         } else if (action.checkOtherEvent(service, lastEvent, nodeList)) {
             //被other处理
         } else {
