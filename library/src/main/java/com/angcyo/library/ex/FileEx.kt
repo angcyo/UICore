@@ -1,5 +1,6 @@
 package com.angcyo.library.ex
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -197,18 +198,30 @@ fun File.open(context: Context = app()) {
 //        context.startActivity(intent);
 //    }
 /** 分享文件 */
-fun File.shareFile(context: Context = app(), permission: Boolean = true) {
-    val share = Intent(Intent.ACTION_SEND)
-    share.putExtra(Intent.EXTRA_STREAM, fileUri(context, this, permission))
-    share.type = name.mimeType() ?: "*/*" //此处可发送多种文件
-    share.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    context.startActivity(
-        Intent.createChooser(
-            share,
-            "发送给..."
-        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    )
+fun File.shareFile(context: Context = app(), fileProvider: Boolean = true) {
+    if (context.checkPermissions(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+    ) {
+        val share = Intent(Intent.ACTION_SEND)
+        share.putExtra(Intent.EXTRA_STREAM, fileUri(context, this, fileProvider))
+        share.type = name.mimeType() ?: "*/*" //此处可发送多种文件
+        share.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        if (fileProvider) {
+            share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        try {
+            context.startActivity(
+                Intent.createChooser(
+                    share,
+                    "发送给..."
+                ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }
 
 /**分享图片文件*/

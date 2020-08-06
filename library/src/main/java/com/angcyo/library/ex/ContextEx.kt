@@ -79,7 +79,7 @@ fun Context.getRootHeight(): Int {
     return displayHeight
 }
 
-/**如果有权限, 则直接返回. 否则请求权限, 但是权限回调无法拿到
+/**如果有权限, 则直接返回true. 否则返回false, 并请求权限, 但是权限回调无法拿到
  * [com.angcyo.base.ActivityEx.checkAndRequestPermission)]
  * */
 fun Context.checkPermissions(vararg permissions: String): Boolean =
@@ -88,6 +88,8 @@ fun Context.checkPermissions(vararg permissions: String): Boolean =
     } else {
         if (this is Activity) {
             ActivityCompat.requestPermissions(this, permissions, 999)
+        } else {
+            L.w("context is not activity.")
         }
         false
     }

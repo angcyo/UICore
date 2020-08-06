@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
+
     <external-path
         name="sdcard"
-        path="."/>
+        path="." />
+
+    <!--https://www.jianshu.com/p/121bbb07cb07-->
+
+    <root-path
+        name="root"
+        path="" />
 </paths>
