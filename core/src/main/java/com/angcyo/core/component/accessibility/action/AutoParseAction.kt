@@ -12,7 +12,6 @@ import com.angcyo.core.component.accessibility.parse.*
 import com.angcyo.http.rx.doBack
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
-import com.angcyo.library.app
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
 import kotlin.math.roundToLong
@@ -517,17 +516,22 @@ open class AutoParseAction : BaseAccessibilityAction() {
 //                                    )
 //                                } != null
 
-                                value = if (it == "com.smile.gifmaker") {
-                                    app().openApp(
-                                        it,
-                                        flags = 0
-                                    )
-                                } else {
-                                    service.openApp(
-                                        it,
-                                        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-                                    )
-                                } != null
+//                                value = if (it == "com.smile.gifmaker") {
+//                                    app().openApp(
+//                                        it,
+//                                        flags = 0
+//                                    )
+//                                } else {
+//                                    service.openApp(
+//                                        it,
+//                                        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+//                                    )
+//                                } != null
+
+                                value = service.openApp(
+                                    it,
+                                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                                ) != null
 
                                 handleActionLog("启动程序:[$targetPackageName]剪切板内容:$primaryClip:$value")
                             }
@@ -675,8 +679,12 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             handleActionLog("跳转[$arg]:$value")
                             value
                         }
-                        else -> service.gesture.click().apply {
-                            handleActionLog("默认点击:$this")
+                        else -> {
+                            handleActionLog("未识别的指令[$action:$arg]:true")
+                            /*service.gesture.click().apply {
+                                handleActionLog("默认点击:$this")
+                            }*/
+                            true
                         }
                     }
 
