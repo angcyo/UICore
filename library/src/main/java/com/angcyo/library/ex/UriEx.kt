@@ -24,8 +24,9 @@ fun fileUri(context: Context, file: String): Uri {
     return fileUri(context, File(file))
 }
 
-fun fileUri(context: Context, file: File): Uri {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+/**非本应用的文件, 请勿使用[permission]*/
+fun fileUri(context: Context, file: File, permission: Boolean = true): Uri {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && permission) {
         //content://com.angcyo.uicore.demo/sdcard/Android/data/com.angcyo.uicore.demo/files/demo/camera/2020-02-13_15-02-38-993.jpeg
         //scheme:content
         FileProvider.getUriForFile(context, context.packageName, file).apply {

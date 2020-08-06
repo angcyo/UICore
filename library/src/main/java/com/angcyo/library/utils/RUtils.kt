@@ -218,6 +218,29 @@ object RUtils {
         return false
     }
 
+    /**根据包名, 获取对应的[base.apk]文件对象.
+     * 请使用[android.content.pm.ApplicationInfo.sourceDir]
+     * 获取到的路径一样
+     * 关闭 FileProvider
+     * */
+    fun getApkFileByPackageName(packageName: String): File? {
+        var path = ""
+        var file: File? = null
+        for (i in 0..10) {
+            path = if (i == 0) {
+                "/data/app/${packageName}/base.apk"
+            } else {
+                "/data/app/${packageName}-${i}/base.apk"
+            }
+            val temp = File(path)
+
+            if (temp.exists()) {
+                file = temp
+                break
+            }
+        }
+        return file
+    }
 }
 
 /** 检查APK是否安装 */
