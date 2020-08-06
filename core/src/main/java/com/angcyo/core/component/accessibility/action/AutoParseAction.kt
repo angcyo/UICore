@@ -103,7 +103,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                         handleAction(service, pair.first, pair.second, onGetTextResult)
 
                     //执行结果
-                    result = result || handleResult.result
+                    result = handleResult.result || result
 
                     if (handleResult.finish) {
                         //直接完成
@@ -293,7 +293,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 if (act.isEmpty()) {
                     //随机操作
                     service.gesture.randomization().apply {
-                        handleResult.result = handleResult.result || first
+                        handleResult.result = first || handleResult.result
                         handleActionLog("随机操作[${this.second}]:${handleResult.result}")
                     }
                 } else if (act == ConstraintBean.ACTION_FINISH) {
@@ -334,12 +334,12 @@ open class AutoParseAction : BaseAccessibilityAction() {
                     handleActionLog("即将执行[${action}${if (arg == null) "" else ":${arg}"}]")
 
                     //执行对应操作
-                    handleResult.result = handleResult.result || when (action) {
+                    handleResult.result = when (action) {
                         ConstraintBean.ACTION_CLICK -> {
                             //触发节点自带的click
                             var value = false
                             handleNodeList.forEach {
-                                value = value || it.getClickParent()?.click() ?: false
+                                value = it.getClickParent()?.click() ?: false || value
                             }
                             handleActionLog("点击节点[${handleNodeList.firstOrNull()?.text()}]:$value")
                             value
@@ -370,11 +370,11 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                     y = specifyPoint!!.y + bound.top
                                 }
 
-                                value = value || if (click) {
+                                value = if (click) {
                                     service.gesture.click(x, y, null)
                                 } else {
                                     service.gesture.double(x, y, null)
-                                }
+                                } || value
                             }
                             if (click) {
                                 handleActionLog("点击节点区域[${x},${y}]:$value")
@@ -386,7 +386,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                         ConstraintBean.ACTION_LONG_CLICK -> {
                             var value = false
                             handleNodeList.forEach {
-                                value = value || it.getLongClickParent()?.longClick() ?: false
+                                value = it.getLongClickParent()?.longClick() ?: false || value
                             }
                             handleActionLog("长按节点[${handleNodeList.firstOrNull()}]:$value")
                             value
@@ -423,7 +423,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             //如果滚动到头部了, 会滚动失败
                             var value = false
                             handleNodeList.forEach {
-                                value = value || it.scrollBackward()
+                                value = it.scrollBackward() || value
                             }
                             handleActionLog("向后滚动:$value")
                             value
@@ -432,7 +432,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             //如果滚动到底了, 会滚动失败
                             var value = false
                             handleNodeList.forEach {
-                                value = value || it.scrollForward()
+                                value = it.scrollForward() || value
                             }
                             handleActionLog("向前滚动:$value")
                             value
@@ -476,7 +476,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             val text = getInputText(constraintBean)
 
                             handleNodeList.forEach {
-                                value = value || it.setNodeText(text)
+                                value = it.setNodeText(text) || value
                             }
 
                             handleActionLog("设置文本[$text]:$value")
@@ -573,7 +573,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                         ConstraintBean.ACTION_FOCUS -> {
                             var value = false
                             handleNodeList.forEach {
-                                value = value || it.focus()
+                                value = it.focus() || value
                             }
                             handleActionLog("设置焦点:$value")
                             value
@@ -690,7 +690,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             }*/
                             true
                         }
-                    }
+                    } || handleResult.result
 
                     //...end
                 }
