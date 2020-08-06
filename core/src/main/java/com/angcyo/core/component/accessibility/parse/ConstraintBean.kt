@@ -46,7 +46,7 @@ data class ConstraintBean(
      * */
     var clsList: List<String>? = null,
 
-    /**此约束需要执行的动作, 不指定坐标. 将随机产生. 小于1的数, 表示比例
+    /**此约束需要执行的指令, 不指定坐标. 将随机产生. 小于1的数, 表示比例
      * [click] 触发当前节点的点击事件
      * [click2] 在当前节点区域双击
      * [longClick] 触发当前节点的长按事件
@@ -62,6 +62,8 @@ data class ConstraintBean(
      *
      * 空字符会进行随机操作.
      * null 默认是click操作
+     *
+     * 未知指令, 直接完成处理
      * */
     var actionList: List<String>? = null,
 
