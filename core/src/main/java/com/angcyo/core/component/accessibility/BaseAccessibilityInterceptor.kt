@@ -206,20 +206,37 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     ): Boolean {
 
         //检查当前的action,是否需要突破当前[interceptor]的包名限制
-        currentAccessibilityAction?.let {
-            if (it is AutoParseAction) {
-                val specifyPackageNameList = it.actionBean?.check?.packageName?.split(";")
+        currentAccessibilityAction?.let { action ->
+
+            var handle = false
+
+            if (action is AutoParseAction) {
+                val specifyPackageNameList = action.actionBean?.check?.packageName?.split(";")
                 if (specifyPackageNameList != null) {
 
                     if (specifyPackageNameList.isListEmpty() ||
                         (specifyPackageNameList.size == 1 &&
                                 specifyPackageNameList.firstOrNull().isNullOrEmpty())
                     ) {
+                        handle = true
                         stopInterval()
-                        onDoAction(it, service, service.findNodeInfoList())
+                        onDoAction(action, service, service.findNodeInfoList())
                         if (enableInterval && actionStatus == ACTION_STATUS_ING) {
                             interceptorLog?.log("拦截器恢复,下一个周期在 ${intervalDelay}ms!")
                             startInterval(intervalDelay)
+                        }
+                    }
+                }
+
+                if (!handle) {
+                    //离开主程序后, 未被处理的事件
+                    actionOtherList.forEach {
+                        if (it is AutoParseAction) {
+                            if (it.actionBean?.check?.packageName?.isEmpty() == true) {
+                                //空字符的包名, 才允许处理
+                                handle =
+                                    handle || it.doActionWidth(action, service, lastEvent, nodeList)
+                            }
                         }
                     }
                 }
