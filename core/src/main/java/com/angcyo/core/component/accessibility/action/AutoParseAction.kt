@@ -88,7 +88,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
     fun parseHandleAction(
         service: BaseAccessibilityService,
         nodeList: List<AccessibilityNodeInfo>,
-        constraintList: List<ConstraintBean>?
+        constraintList: List<ConstraintBean>?,
+        onGetTextResult: (List<CharSequence>) -> Unit = {}
     ): Boolean {
         //执行对应的action操作
         var result = false
@@ -98,7 +99,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 for (pair in it) {
 
                     //执行action
-                    val handleResult: HandleResult = handleAction(service, pair.first, pair.second)
+                    val handleResult: HandleResult =
+                        handleAction(service, pair.first, pair.second, onGetTextResult)
 
                     //执行结果
                     result = result || handleResult.result
@@ -137,7 +139,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 ActionBean.HANDLE_TYPE_RANDOM -> constraintList.randomGet(1) //随机获取处理约束
                 ActionBean.HANDLE_TYPE_ORDER -> {
                     val nextIndex: Int = ((doActionCount.count - 1) % constraintList.size).toInt()
-                    val next = constraintList.getOrNull(nextIndex)
+                    val next: ConstraintBean? = constraintList.getOrNull(nextIndex)
 
                     if (next == null) {
                         constraintList
@@ -149,7 +151,9 @@ open class AutoParseAction : BaseAccessibilityAction() {
             }
 
             //执行对应的action操作
-            val result: Boolean = parseHandleAction(service, nodeList, handleConstraintList)
+            val result: Boolean = parseHandleAction(service, nodeList, handleConstraintList) {
+                handleGetTextResult(it)
+            }
 
             //判断是否执行成功
             if (result) {
@@ -244,7 +248,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         service: BaseAccessibilityService,
         constraintBean: ConstraintBean,
         nodeList: List<AccessibilityNodeInfoCompat>,
-        onGetTextResult: (List<CharSequence>) -> Unit = {}
+        onGetTextResult: (List<CharSequence>) -> Unit
     ): HandleResult {
 
         //需要执行的动作
