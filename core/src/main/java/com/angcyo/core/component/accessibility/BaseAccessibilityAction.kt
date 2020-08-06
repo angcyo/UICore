@@ -144,21 +144,8 @@ abstract class BaseAccessibilityAction {
                     if (constraintList == null) {
                         rollbackPrev = true
                     } else {
-                        autoParser.parse(service, this, nodeList, constraintList) {
-                            for (pair in it) {
-                                //执行action
-                                val handleResult = handleAction(service, pair.first, pair.second)
-
-                                //执行结果
-                                if (handleResult.result) {
-                                    rollbackPrev = false
-                                }
-
-                                //是否跳过后续action
-                                if (handleResult.jumpNextHandle) {
-                                    break
-                                }
-                            }
+                        if (parseHandleAction(service, nodeList, constraintList)) {
+                            rollbackPrev = false
                         }
                     }
                 }

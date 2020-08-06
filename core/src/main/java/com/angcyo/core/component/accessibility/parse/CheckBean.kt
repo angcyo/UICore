@@ -44,6 +44,9 @@ data class CheckBean(
      * 当[Action]被作为回退处理时[doActionWidth]解析时的关键数据*/
     var back: List<ConstraintBean>? = null,
 
-    /**回滚时触发*/
-    var rollback: List<ConstraintBean>? = null
+    /**回滚时需要指定触发的指令*/
+    var rollback: List<ConstraintBean>? = null,
+
+    /**[event]无法识别, 并且[checkOtherCount]超出了阈值时, 需要触发的指令*/
+    var otherOut: List<ConstraintBean>? = null
 )

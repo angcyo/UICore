@@ -75,31 +75,49 @@ open class AutoParseAction : BaseAccessibilityAction() {
         nodeList: List<AccessibilityNodeInfo>
     ): Boolean {
         super.checkOtherEvent(service, event, nodeList)
-        val constraintList: List<ConstraintBean> = actionBean?.check?.other ?: return false
 
         if (checkOtherEventCount.isMaxLimit()) {
-            return false
+            return parseHandleAction(service, nodeList, actionBean?.check?.otherOut)
         }
 
+        return parseHandleAction(service, nodeList, actionBean?.check?.other)
+    }
+
+    /**解析[List<ConstraintBean>]约束对应的Node, 并且执行对应的指令.
+     * 返回值表示 指令是否执行成功
+     * */
+    fun parseHandleAction(
+        service: BaseAccessibilityService,
+        nodeList: List<AccessibilityNodeInfo>,
+        constraintList: List<ConstraintBean>?
+    ): Boolean {
         //执行对应的action操作
         var result = false
 
-        autoParser.parse(service, this, nodeList, constraintList) {
-            for (pair in it) {
+        if (constraintList != null) {
+            autoParser.parse(service, this, nodeList, constraintList) {
+                for (pair in it) {
 
-                //执行action
-                val handleResult = handleAction(service, pair.first, pair.second)
+                    //执行action
+                    val handleResult: HandleResult = handleAction(service, pair.first, pair.second)
 
-                //执行结果
-                result = result || handleResult.result
+                    //执行结果
+                    result = result || handleResult.result
 
-                //是否跳过后续action
-                if (handleResult.jumpNextHandle) {
-                    break
+                    if (handleResult.finish) {
+                        //直接完成
+                        result = false
+                        doActionFinish()
+                        break
+                    }
+
+                    //是否跳过后续action
+                    if (handleResult.jumpNextHandle) {
+                        break
+                    }
                 }
             }
         }
-
         return result
     }
 
@@ -132,38 +150,12 @@ open class AutoParseAction : BaseAccessibilityAction() {
             }
 
             //执行对应的action操作
-            var result = false
+            val result: Boolean = parseHandleAction(service, nodeList, handleConstraintList)
 
-            autoParser.parse(service, this, nodeList, handleConstraintList) {
-
-                for (pair in it) {
-
-                    //执行action
-                    val handleResult = handleAction(service, pair.first, pair.second) {
-                        handleGetTextResult(it)
-                    }
-
-                    //执行结果
-                    result = result || handleResult.result
-
-                    if (handleResult.finish) {
-                        //直接完成
-                        result = false
-                        doActionFinish()
-                        break
-                    }
-
-                    //是否跳过后续action
-                    if (handleResult.jumpNextHandle) {
-                        break
-                    }
-                }
-
-                //判断是否执行成功
-                if (result) {
-                    //完成
-                    doActionFinish()
-                }
+            //判断是否执行成功
+            if (result) {
+                //完成
+                doActionFinish()
             }
 
             //是否需要强制执行完成
@@ -194,37 +186,17 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
         if (constraintList != null) {
 
-            //执行操作
-            fun handle(): Boolean {
-                var result = false
-                autoParser.parse(service, this, nodeList, constraintList) {
-                    for (pair in it) {
-                        //执行action
-                        val handleResult = handleAction(service, pair.first, pair.second)
-
-                        //执行结果
-                        result = result || handleResult.result
-
-                        //是否跳过后续action
-                        if (handleResult.jumpNextHandle) {
-                            break
-                        }
-                    }
-                }
-                return result
-            }
-
             var result = false
 
             val eventConstraintList: List<ConstraintBean>? = actionBean?.check?.event
             if (eventConstraintList == null) {
                 //无界面约束匹配, 则不检查. 直接处理
-                result = handle()
+                result = parseHandleAction(service, nodeList, constraintList)
             } else {
                 //匹配当前界面, 匹配成功后, 再处理
                 if (autoParser.parse(service, this, nodeList, eventConstraintList)) {
                     //匹配成功
-                    result = handle()
+                    result = parseHandleAction(service, nodeList, constraintList)
                 }
             }
             return result
@@ -234,13 +206,13 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
     /**[Action]处理完成*/
     override fun doActionFinish(error: ActionException?) {
-        var handleError = error
-        if (actionBean?.errorHandleType == ActionBean.ERROR_HANDLE_TYPE_NEXT) {
-            //中断后, 需要继续
+        var handleError: ActionException? = error
+        if (error != null && actionBean?.errorHandleType == ActionBean.ERROR_HANDLE_TYPE_NEXT) {
+            //异常后, 需要继续
             if (error is ActionInterruptedNextException) {
 
             } else {
-                handleError = ActionInterruptedNextException(error?.message)
+                handleError = ActionInterruptedNextException(error.message)
             }
         }
 
