@@ -223,8 +223,7 @@ abstract class BaseAccessibilityAction {
     }
 
     /**获取拦截器下一次间隔回调的时长*/
-    open fun getInterceptorIntervalDelay(): Long {
-        val interval = actionInterval
+    open fun getInterceptorIntervalDelay(interval: String? = actionInterval): Long {
         return if (interval.isNullOrEmpty()) {
             (accessibilityInterceptor?.initialIntervalDelay ?: -1L)
         } else {

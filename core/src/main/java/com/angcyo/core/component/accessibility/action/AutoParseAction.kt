@@ -683,6 +683,19 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             handleActionLog("跳转[$arg]:$value")
                             value
                         }
+                        ConstraintBean.ACTION_SLEEP -> {
+                            //指定下一次周期循环的间隔
+                            var value = false
+                            arg?.let { interval ->
+                                if (interval.isNotEmpty()) {
+                                    accessibilityInterceptor?.let {
+                                        it.intervalDelay = getInterceptorIntervalDelay(interval)
+                                        value = true
+                                    }
+                                }
+                            }
+                            value
+                        }
                         else -> {
                             handleActionLog("未识别的指令[$action:$arg]:true")
                             /*service.gesture.click().apply {

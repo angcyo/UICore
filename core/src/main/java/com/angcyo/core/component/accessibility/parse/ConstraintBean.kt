@@ -178,6 +178,13 @@ data class ConstraintBean(
          * */
         const val ACTION_JUMP = "jump"
 
+        /**
+         * 指定下一个[action]执行的时间间隔, 当[checkEvent]通过时, 此指令无效
+         * 格式[:5000,500,5]
+         * [com/angcyo/core/component/accessibility/parse/ActionBean.kt:61]
+         * */
+        const val ACTION_SLEEP = "sleep"
+
         //需要指定的状态 [state]
         const val STATE_CLICKABLE = "clickable" //具备可点击
         const val STATE_NOT_CLICKABLE = "not_clickable" //具备不可点击
