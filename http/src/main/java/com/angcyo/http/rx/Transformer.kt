@@ -1,6 +1,7 @@
 package com.angcyo.http.rx
 
 import com.angcyo.http.RequestConfig
+import com.angcyo.http.base.getInt
 import com.angcyo.http.base.getString
 import com.angcyo.http.exception.HttpDataException
 import com.google.gson.JsonElement
@@ -63,7 +64,10 @@ fun requestConfigTransformer(requestConfig: RequestConfig): ObservableTransforme
                         requestConfig.onSuccess(it)
                     }
                     body is JsonObject -> {
-                        throw HttpDataException(body.getString(requestConfig.msgKey) ?: "数据异常")
+                        throw HttpDataException(
+                            body.getString(requestConfig.msgKey) ?: "数据异常",
+                            body.getInt(requestConfig.codeKey, -1)
+                        )
                     }
                     else -> {
                         requestConfig.onSuccess(it)

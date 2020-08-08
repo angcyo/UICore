@@ -276,7 +276,10 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
                     requestConfig.onSuccess(it)
                 }
                 body is JsonObject -> {
-                    throw HttpDataException(body.getString(requestConfig.msgKey) ?: "数据异常")
+                    throw HttpDataException(
+                        body.getString(requestConfig.msgKey) ?: "数据异常",
+                        body.getInt(requestConfig.codeKey, -1)
+                    )
                 }
                 else -> {
                     requestConfig.onSuccess(it)

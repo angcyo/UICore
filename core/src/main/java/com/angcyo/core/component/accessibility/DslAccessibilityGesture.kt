@@ -116,6 +116,7 @@ class DslAccessibilityGesture {
         val service = service
         val builder = _gestureBuilder
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && service != null && builder != null) {
+            //设备支持手势
             _isDo = true
             _isDispatched = service.dispatchGesture(
                 builder.build(),
@@ -123,6 +124,7 @@ class DslAccessibilityGesture {
                 null
             )
         } else {
+            //设备不支持手势
             gestureResult?.invoke(null, false, true)
         }
     }

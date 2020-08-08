@@ -7,4 +7,4 @@ package com.angcyo.http.exception
  * @date 2019/12/31
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-open class HttpDataException(msg: String) : RuntimeException(msg)
+open class HttpDataException(msg: String, val code: Int = -1) : RuntimeException(msg)
