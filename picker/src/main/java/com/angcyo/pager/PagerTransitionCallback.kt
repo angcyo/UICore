@@ -82,7 +82,15 @@ open class PagerTransitionCallback : ViewTransitionCallback(), ViewPager.OnPageC
 
     /**追加媒体*/
     fun addMedia(url: String?) {
-        addMedia(LoaderMedia(url = url))
+        if (!url.isNullOrEmpty()) {
+            addMedia(LoaderMedia(url = url))
+        }
+    }
+
+    fun addMedia(list: List<String>?) {
+        list?.forEach {
+            addMedia(it)
+        }
     }
 
     fun addMedia(uri: Uri?) {
