@@ -230,7 +230,7 @@ open class FileSelectorFragment : BaseFragment() {
                                 }
                                 itemClick = {
                                     _dialog?.dismiss()
-                                    itemFile?.file()?.shareFile()
+                                    itemFile?.file()?.shareFile(it.context)
                                 }
                             }
                         }
