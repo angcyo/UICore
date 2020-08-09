@@ -4,12 +4,14 @@ import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.core.component.accessibility.action.ActionInterruptedException
 import com.angcyo.http.POST
 import com.angcyo.http.base.jsonObject
-import com.angcyo.http.get
 import com.angcyo.http.post
 import com.angcyo.http.rx.observer
 import com.angcyo.library.L
 import com.angcyo.library.utils.UrlParse
+import com.google.gson.JsonElement
 import io.reactivex.disposables.Disposable
+import retrofit2.Response
+import kotlin.collections.set
 
 /**
  * [AutoParseAction]完成后, 或者[AutoParseInterceptor]流程结束后, 要提交的表单数据
@@ -44,7 +46,13 @@ data class FormBean(
 }
 
 /**发送表单请求*/
-fun FormBean.request(configParams: (params: HashMap<String, Any>) -> Unit = {}): Disposable? {
+fun FormBean.request(
+    result: (
+        data: Response<JsonElement>?,
+        error: Throwable?
+    ) -> Unit = { _, _ -> },
+    configParams: (params: HashMap<String, Any>) -> Unit = {}
+): Disposable? {
     return if (url.isNullOrEmpty()) {
         L.w("form url is null/empty.")
         null
@@ -61,6 +69,19 @@ fun FormBean.request(configParams: (params: HashMap<String, Any>) -> Unit = {}):
                 configParams(this)
             }
 
+//            var first = true
+//            url = "$url?" + buildString {
+//                requestParams.forEach { entry ->
+//                    if (!first) {
+//                        append("&")
+//                    }
+//                    first = false
+//                    append(entry.key)
+//                    append("=")
+//                    append(entry.value)
+//                }
+//            }
+
             //请求体
             if (contentType == FormBean.CONTENT_TYPE_FORM) {
                 formMap = requestParams
@@ -73,6 +94,7 @@ fun FormBean.request(configParams: (params: HashMap<String, Any>) -> Unit = {}):
             }
         }.observer {
             onObserverEnd = { data, error ->
+                result(data, error)
                 L.d(data, error)
             }
         }

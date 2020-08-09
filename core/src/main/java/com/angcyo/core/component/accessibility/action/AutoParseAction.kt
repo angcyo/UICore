@@ -812,8 +812,15 @@ open class AutoParseAction : BaseAccessibilityAction() {
     /**表单请求*/
     fun handleFormRequest(error: ActionException?) {
         actionBean?.form?.let {
+            var interceptor = accessibilityInterceptor
             //指定了表单处理
-            it.request { map ->
+            it.request(result = { data, error ->
+                if (error != null) {
+                    //接口请求失败,中断流程
+                    interceptor?.actionError(this, ActionException(error.message))
+                    interceptor = null
+                }
+            }) { map ->
 
                 //如果配置了[getText]的[formKey]
                 actionBean?.formKey?.let { map[it] = getTextList?.firstOrNull() ?: "" }

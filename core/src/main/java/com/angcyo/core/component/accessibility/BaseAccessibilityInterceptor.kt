@@ -471,8 +471,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                     //[BaseAccessibilityAction] 被中断时, 允许继续玩下执行
                     actionNext(service)
                 } else {
-                    actionStatus = ACTION_STATUS_ERROR
-                    onDoActionFinish(action, it)
+                    actionError(action, it)
                 }
             }
         }
@@ -518,6 +517,12 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                 handleAccessibility(service, false)
             }
         }
+    }
+
+    /**执行异常*/
+    fun actionError(action: BaseAccessibilityAction?, error: ActionException?) {
+        actionStatus = ACTION_STATUS_ERROR
+        onDoActionFinish(action, error)
     }
 
     /**未被[actionOtherList]处理*/
