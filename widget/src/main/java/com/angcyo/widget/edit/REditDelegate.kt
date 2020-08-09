@@ -261,7 +261,7 @@ class REditDelegate(editText: EditText) : InputTipEditDelegate(editText) {
             }
         }
 
-        if (showPasswordOnTouch && editText.isPasswordType()) {
+        if (!isDownInClear && showPasswordOnTouch && editText.isPasswordType()) {
             if (action == MotionEvent.ACTION_DOWN) {
                 editText.postDelayed(_showPasswordRunnable, 100)
             } else if (action == MotionEvent.ACTION_MOVE) {
