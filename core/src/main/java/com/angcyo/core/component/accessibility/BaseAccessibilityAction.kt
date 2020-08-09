@@ -238,7 +238,7 @@ abstract class BaseAccessibilityAction {
 
             val factor = split.getOrNull(2)?.toLongOrNull() ?: nextLong(2, 5)
 
-            start + base * nextLong(1, max(2L, factor))
+            start + base * nextLong(1, max(2L, factor + 1))
         }
     }
 }

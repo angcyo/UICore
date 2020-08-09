@@ -62,6 +62,7 @@ data class TaskBean(
 fun TaskBean.toInterceptor(
     onEnableAction: (action: ActionBean) -> Boolean = { it.enable },
     onConvertCheckById: (checkId: Long) -> CheckBean? = { null }, //将[checkId]转换成[checkBean]
+    onConfigAction: (AutoParseAction) -> Unit = {},
     onGetTextResult: (action: AutoParseAction, List<CharSequence>) -> Unit = { _, _ -> } //[getText]动作, 返回的文本信息
 ): AutoParseInterceptor {
     return AutoParseInterceptor(this).apply {
@@ -146,6 +147,8 @@ fun TaskBean.toInterceptor(
                     //直接使用[AutoParseInterceptor]的配置信息
                     this.onConfigParams?.invoke(it)
                 }
+
+                onConfigAction(autoParseAction)
 
                 //判断是否是back check
                 if (it.check?.back == null) {
