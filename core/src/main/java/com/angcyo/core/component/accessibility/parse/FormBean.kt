@@ -4,6 +4,7 @@ import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.core.component.accessibility.action.ActionInterruptedException
 import com.angcyo.http.POST
 import com.angcyo.http.base.jsonObject
+import com.angcyo.http.get
 import com.angcyo.http.post
 import com.angcyo.http.rx.observer
 import com.angcyo.library.L
@@ -70,7 +71,11 @@ fun FormBean.request(configParams: (params: HashMap<String, Any>) -> Unit = {}):
                     }
                 }
             }
-        }.observer()
+        }.observer {
+            onObserverEnd = { data, error ->
+                L.d(data, error)
+            }
+        }
     }
 }
 
