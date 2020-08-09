@@ -6,6 +6,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.angcyo.tablayout.DslTabLayout
 import com.angcyo.widget.base.Anim
 import com.angcyo.widget.base.checkEmpty
+import com.angcyo.widget.base.error
 import com.angcyo.widget.base.simulateClick
 import com.angcyo.widget.edit.AutoCompleteEditText
 import com.angcyo.widget.edit.DslEditText
@@ -79,4 +80,12 @@ fun DslViewHolder._vp(@IdRes id: Int): DslViewPager? = v(id)
 /**设置hawk指定的key value, 返回旧值*/
 fun DslViewHolder.hawkTag(@IdRes id: Int): Any? {
     return tag(id, R.id.lib_tag_hawk, "$id")
+}
+
+/**错误提示*/
+fun DslViewHolder.error(@IdRes vararg ids: Int): DslViewHolder {
+    for (id in ids) {
+        view(id)?.error()
+    }
+    return this
 }
