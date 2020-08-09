@@ -95,10 +95,11 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
     }
 }
 
-/**版本更新界面配置*/
-fun Context.versionUpdate(updateBean: VersionUpdateBean?) {
+/**版本更新界面配置
+ * 返回值表示是否有新版本*/
+fun Context.versionUpdate(updateBean: VersionUpdateBean?): Boolean {
     if (updateBean == null) {
-        return
+        return false
     }
     val appVersionCode = getAppVersionCode()
     if (updateBean.versionCode > appVersionCode) {
@@ -112,10 +113,13 @@ fun Context.versionUpdate(updateBean: VersionUpdateBean?) {
                     putData(updateBean)
                 }
             }
+
+            return true
         }
     } else {
         L.i("不需要版本更新,当前:${appVersionCode} 最新:${updateBean.versionCode}")
     }
+    return false
 }
 
 fun Context.dslVersionUpdate(action: VersionUpdateBean.() -> Unit) {
