@@ -444,9 +444,6 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
-    fun Int.isShowAction() = this == ACTION_SHOW_SOFT_INPUT || this == ACTION_SHOW_EMOJI
-    fun Int.isHideAction() = this == ACTION_HIDE_SOFT_INPUT || this == ACTION_HIDE_EMOJI
-
     //保存最后一次软键盘的高度
     var _lastSoftInputHeight = 0
 
@@ -624,6 +621,9 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     //</editor-fold desc="操作方法">
 }
+
+fun Int.isShowAction() = this == ACTION_SHOW_SOFT_INPUT || this == ACTION_SHOW_EMOJI
+fun Int.isHideAction() = this == ACTION_HIDE_SOFT_INPUT || this == ACTION_HIDE_EMOJI
 
 fun Int.softAction(): String = when (this) {
     ACTION_SHOW_SOFT_INPUT -> "SHOW_SOFT_INPUT"
