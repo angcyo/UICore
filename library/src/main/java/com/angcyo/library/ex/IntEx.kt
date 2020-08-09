@@ -90,7 +90,7 @@ fun Long.toShortString(
     var level = 0
 
     while (true) {
-        if (num > 0) {
+        if (num != 0L) {
 
             //基数
             val base: Long = bases.getOrNull(level) ?: Long.MAX_VALUE //最后一级结束控制

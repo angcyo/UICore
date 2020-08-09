@@ -46,6 +46,7 @@ class CodeHelper : Runnable {
 
     fun finish() {
         _view?.apply {
+            removeCallbacks(this@CodeHelper)
             isClickable = true
             isEnabled = true
             text = _text
