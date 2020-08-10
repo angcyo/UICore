@@ -13,6 +13,7 @@ import com.angcyo.http.rx.doBack
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.*
+import com.angcyo.library.toastQQ
 import kotlin.math.absoluteValue
 import kotlin.math.roundToLong
 import kotlin.random.Random.Default.nextInt
@@ -817,6 +818,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             it.request(result = { data, error ->
                 if (error != null) {
                     //接口请求失败,中断流程
+                    toastQQ(error.message)
                     interceptor?.actionError(this, ActionException(error.message))
                     interceptor = null
                 }
