@@ -104,17 +104,27 @@ fun Context.versionUpdate(updateBean: VersionUpdateBean?): Boolean {
     val appVersionCode = getAppVersionCode()
     if (updateBean.versionCode > appVersionCode) {
         //需要更新
-        if (updateBean.versionType >= 0 ||
-            (updateBean.versionType < 0 && isDebug())
-        ) {
-            //type匹配
-            dslAHelper {
-                start(VersionUpdateActivity::class.java) {
-                    putData(updateBean)
-                }
-            }
 
-            return true
+        val update: Boolean = if (updateBean.packageList.isNullOrEmpty()) {
+            true
+        } else {
+            updateBean.packageList?.contains(packageName) == true
+        }
+
+        if (update) {
+            //匹配
+            if (updateBean.versionType >= 0 ||
+                (updateBean.versionType < 0 && isDebug())
+            ) {
+                //type匹配
+                dslAHelper {
+                    start(VersionUpdateActivity::class.java) {
+                        putData(updateBean)
+                    }
+                }
+
+                return true
+            }
         }
     } else {
         L.i("不需要版本更新,当前:${appVersionCode} 最新:${updateBean.versionCode}")
