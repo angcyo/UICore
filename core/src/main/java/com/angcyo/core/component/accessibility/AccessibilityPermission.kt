@@ -27,12 +27,22 @@ object AccessibilityPermission {
 
     /**是否有无障碍权限*/
     fun haveAccessibilityService(context: Context): Boolean {
-        return AccessibilityHelper.isServiceEnabled(context)
+        return try {
+            AccessibilityHelper.isServiceEnabled(context)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
     }
 
     /**是否有浮窗权限*/
     fun haveDrawOverlays(context: Context): Boolean {
-        return SettingsCompat.canDrawOverlays(context)
+        return try {
+            SettingsCompat.canDrawOverlays(context)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
     }
 
     /**打开无障碍设置页面*/
