@@ -78,6 +78,7 @@ object AccessibilityTouchLayer : ILayer() {
 
             updateTip()
 
+            //touch
             throttleClick(R.id.touch_button) {
                 if (!checkEmpty(R.id.x_point_view, R.id.y_point_view)) {
                     //"touch:0.9192,0.9842"
@@ -89,6 +90,11 @@ object AccessibilityTouchLayer : ILayer() {
                         L.w("touch:", x, ",", y)
                     }
                 }
+            }
+
+            //close
+            throttleClick(R.id.lib_close_view) {
+                hide()
             }
         }
         show(_windowContainer)

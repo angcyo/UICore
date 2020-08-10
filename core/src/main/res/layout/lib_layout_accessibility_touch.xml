@@ -68,7 +68,7 @@
     <com.angcyo.widget.DslButton
         android:id="@+id/touch_button"
         style="@style/DefaultButtonStyle"
-        android:layout_width="wrap_content"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/lib_hdpi"
         android:text="触发"
@@ -77,8 +77,22 @@
         app:button_press_stroke_width="@dimen/lib_line"
         app:button_press_text_color="@color/colorAccent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/lib_close_view"
         app:layout_constraintTop_toBottomOf="@id/y_seek_bar"
         tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/lib_close_view"
+        style="@style/LibMainTextStyle"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="fill"
+        android:background="@drawable/lib_bg2_selector"
+        android:scaleType="center"
+        app:layout_constraintBottom_toBottomOf="@id/touch_button"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/touch_button"
+        app:srcCompat="@drawable/lib_edit_delete"
+        app:tint="@color/lib_white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
