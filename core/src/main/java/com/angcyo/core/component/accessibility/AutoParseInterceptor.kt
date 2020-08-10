@@ -2,10 +2,7 @@ package com.angcyo.core.component.accessibility
 
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
-import com.angcyo.core.component.accessibility.action.ActionException
-import com.angcyo.core.component.accessibility.action.ActionInterruptedException
-import com.angcyo.core.component.accessibility.action.AutoParseAction
-import com.angcyo.core.component.accessibility.action.PermissionsAction
+import com.angcyo.core.component.accessibility.action.*
 import com.angcyo.core.component.accessibility.base.BaseFloatInterceptor
 import com.angcyo.core.component.accessibility.parse.*
 import com.angcyo.core.component.file.DslFileHelper
@@ -15,6 +12,7 @@ import com.angcyo.library.ex.elseNull
 import com.angcyo.library.ex.file
 import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.toElapsedTime
+import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.FileUtils
 import kotlin.math.max
 
@@ -191,7 +189,12 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
     fun handleFormRequest(error: ActionException?) {
         taskBean.form?.let {
             //指定了表单处理
-            it.request { map ->
+            it.request(result = { data, error ->
+                if (error != null) {
+                    //拦截器,接口请求失败
+                    toastQQ(error.message)
+                }
+            }) { map ->
 
                 //将action获取到的所有文本, 打包进参数
                 taskBean.getTextResultMap?.forEach { entry ->
@@ -203,7 +206,11 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
                     map[FormBean.KEY_MSG] =
                         "${taskBean.name} 执行完成,耗时${nowTime() - _actionStartTime}"
                 } else {
-                    map[FormBean.KEY_MSG] = "${taskBean.name} 执行失败,${error.message}"
+                    if (error is ErrorActionException) {
+                        map[FormBean.KEY_MSG] = error.message ?: "${taskBean.name} 执行失败!"
+                    } else {
+                        map[FormBean.KEY_MSG] = "${taskBean.name} 执行失败,${error.message}"
+                    }
                 }
 
                 //错误码绑定

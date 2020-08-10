@@ -586,7 +586,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
                             //异常退出
                             val error = arg ?: "ACTION_ERROR"
-                            doActionFinish(ActionException(error))
+                            doActionFinish(ErrorActionException(error))
 
                             handleActionLog("强制异常退出[$error]:${handleResult.result}")
                             value
@@ -832,7 +832,11 @@ open class AutoParseAction : BaseAccessibilityAction() {
                     map[FormBean.KEY_MSG] = "${actionBean?.title} 执行完成."
                     map[FormBean.KEY_DATA] = "${getTextList?.firstOrNull()}"
                 } else {
-                    map[FormBean.KEY_MSG] = "${actionBean?.title} 执行失败,${error.message}"
+                    if (error is ErrorActionException) {
+                        map[FormBean.KEY_MSG] = error.message ?: "${actionBean?.title} 执行失败!"
+                    } else {
+                        map[FormBean.KEY_MSG] = "${actionBean?.title} 执行失败,${error.message}"
+                    }
                 }
 
                 //错误码绑定

@@ -11,6 +11,10 @@ package com.angcyo.core.component.accessibility.action
 //异常
 open class ActionException(msg: String?) : Exception(msg)
 
+/**指定的错误信息
+ * [com.angcyo.core.component.accessibility.parse.ConstraintBean.ACTION_ERROR]*/
+open class ErrorActionException(msg: String?) : ActionException(msg)
+
 //中断异常
 open class ActionInterruptedException(msg: String?) : ActionException(msg)
 
