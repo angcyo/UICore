@@ -157,6 +157,8 @@ task _qiniuUpload() {
                     def map = new com.google.gson.Gson().fromJson(json, Map.class)
                     println "创建二维码:${json}"
                     System.err.println "二维码地址->" + map["data"]["qrCodeUrl"]
+
+                    System.err.println "备用二维码地址->http://qr.topscan.com/api.php?text=${downloadUrl}"
                 }
             }
         }
