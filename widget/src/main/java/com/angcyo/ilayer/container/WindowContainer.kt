@@ -5,7 +5,6 @@ import android.content.Context.WINDOW_SERVICE
 import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.os.Build
-import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import com.angcyo.drawable.isLeft
@@ -44,9 +43,9 @@ class WindowContainer(context: Context) : BaseContainer(context) {
 
         windowAnimations = 0
 
-        gravity = Gravity.LEFT or Gravity.TOP
-        x = 0
-        y = _screenHeight / 3
+        gravity = defaultOffsetPosition.gravity
+        x = (_screenWidth * defaultOffsetPosition.offsetX).toInt()
+        y = (_screenHeight * defaultOffsetPosition.offsetY).toInt()
         format = PixelFormat.RGBA_8888
 
         //大于8.0

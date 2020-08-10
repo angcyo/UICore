@@ -11,6 +11,8 @@ import android.view.Gravity
  */
 data class OffsetPosition(
     var gravity: Int = Gravity.LEFT or Gravity.TOP,
+
+    /**偏移的比例*/
     var offsetX: Float = 0f,
     var offsetY: Float = 0.3f
 )
