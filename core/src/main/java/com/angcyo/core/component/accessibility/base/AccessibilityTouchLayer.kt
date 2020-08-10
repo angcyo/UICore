@@ -80,7 +80,7 @@ object AccessibilityTouchLayer : ILayer() {
 
             throttleClick(R.id.touch_button) {
                 if (!checkEmpty(R.id.x_point_view, R.id.y_point_view)) {
-                    //"touch:0.9192,0.9642"
+                    //"touch:0.9192,0.9842"
                     val x = x()
                     val y = y()
 

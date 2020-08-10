@@ -94,8 +94,8 @@ object AccessibilityWindowLayer : ILayer() {
             //测试按钮
             visible(R.id.test_button, isDebugType())
             throttleClick(R.id.test_button) {
-                //"touch:0.9192,0.9642"
-                val p1 = PointF(_screenWidth * 0.9192f, _screenHeight * 0.9642f)
+                //"touch:0.9192,0.9842"
+                val p1 = PointF(_screenWidth * 0.9192f, _screenHeight * 0.9842f)
                 BaseAccessibilityService.lastService?.gesture?.click(p1.x, p1.y)
                 L.w(p1)
 
