@@ -50,6 +50,14 @@ class DragFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
+    /**不希望控件拦截Touch事件*/
+    var _disallowIntercept = false
+
+    override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+        super.requestDisallowInterceptTouchEvent(disallowIntercept)
+        _disallowIntercept = disallowIntercept
+    }
+
     @CallSuper
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         handleTouchEvent(ev)
@@ -84,6 +92,10 @@ class DragFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
     var handle = false
 
     fun handleTouchEvent(event: MotionEvent): Boolean {
+
+        if (_disallowIntercept) {
+            return false
+        }
 
         val eventX = event.rawX
         val eventY = event.rawY

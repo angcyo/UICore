@@ -25,6 +25,9 @@ import com.angcyo.widget.base.setDslViewHolder
  */
 abstract class BaseContainer(val context: Context) : IContainer {
 
+    /**默认位置*/
+    var defaultOffsetPosition: OffsetPosition = OffsetPosition()
+
     override fun add(layer: ILayer) {
         if (layer.iLayerLayoutId == -1) {
             L.e("请配置[iLayerLayoutId]")
@@ -42,6 +45,8 @@ abstract class BaseContainer(val context: Context) : IContainer {
                 //2:添加根视图
                 onAddRootView(layer, rootView)
 
+                var firstPosition: OffsetPosition = defaultOffsetPosition.copy()
+
                 //自动恢复位置
                 if (layer.autoRestorePosition) {
                     "${this.className()}_${layer.className()}_${layer.iLayerLayoutId}".hawkGet(null)
@@ -55,10 +60,12 @@ abstract class BaseContainer(val context: Context) : IContainer {
                                     split.getOrNull(2)?.toFloatOrNull() ?: 0.3f
                                 )
 
-                                update(layer, position)
+                                firstPosition = position
                             }
                         }
                 }
+
+                update(layer, firstPosition)
             } else {
                 //已经存在, 重新初始化
             }

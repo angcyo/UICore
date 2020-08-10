@@ -60,6 +60,17 @@ fun DslViewHolder.spinner(@IdRes id: Int): RSpinner? = v(id)
 fun DslViewHolder.bar(@IdRes id: Int): DslProgressBar? = v(id)
 fun DslViewHolder.seek(@IdRes id: Int): DslSeekBar? = v(id)
 
+fun DslViewHolder.seek(
+    @IdRes id: Int,
+    changed: (value: Int, fraction: Float, fromUser: Boolean) -> Unit
+): DslSeekBar? {
+    val view = v<DslSeekBar>(id)
+    view?.config {
+        onSeekChanged = changed
+    }
+    return view
+}
+
 fun DslViewHolder.soft(@IdRes id: Int): DslSoftInputLayout? = v(id)
 
 /**快速设置[AutoCompleteEditText]下拉输入框数据*/

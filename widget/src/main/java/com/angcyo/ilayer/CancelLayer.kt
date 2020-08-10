@@ -30,11 +30,12 @@ class CancelLayer : ILayer() {
     }
 
     val _windowContainer = WindowContainer(app()).apply {
-        wmLayoutParams.gravity = Gravity.BOTTOM
         wmLayoutParams.width = -1
         wmLayoutParams.height = -2
-        wmLayoutParams.x = 0
-        wmLayoutParams.y = 0
+
+        defaultOffsetPosition.gravity = Gravity.BOTTOM
+        defaultOffsetPosition.offsetX = 0f
+        defaultOffsetPosition.offsetY = 0f
     }
 
     fun show() {

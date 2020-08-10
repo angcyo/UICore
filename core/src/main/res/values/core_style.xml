@@ -29,4 +29,11 @@
         <item name="android:hint">请输入密码</item>
     </style>
 
+    <!--具有[focus_drawable]样式的输入框-->
+    <style name="LibFocusSingleEditStyle" parent="LibSingleEditStyle">
+        <item name="android:background">@null</item>
+        <item name="r_focus_drawable">@drawable/lib_bottom_focus_shape</item>
+        <item name="r_no_focus_drawable">@drawable/lib_bottom_no_focus_shape</item>
+    </style>
+
 </resources>

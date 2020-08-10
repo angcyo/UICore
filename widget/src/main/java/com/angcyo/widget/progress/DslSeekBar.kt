@@ -75,7 +75,11 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
 
     override val _progressBound: Rect
         get() = super._progressBound.apply {
-            top = bottom - progressHeight
+
+            val drawHeight = measuredHeight - paddingTop - paddingBottom
+            val pTop = paddingTop + (drawHeight - progressHeight) / 2
+            top = pTop
+            bottom = top + progressHeight
         }
 
     //浮子绘制范围

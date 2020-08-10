@@ -887,16 +887,16 @@ fun String.toPointF(width: Int = _screenWidth, height: Int = _screenHeight): Poi
         y = getOrNull(1)?.toFloatOrNull() ?: y
     }
 
-    if (x <= 1f) {
-        p.x = width * x
-    } else {
-        p.x = x * dp
-    }
+    p.x = x.toPointF(width)
+    p.y = y.toPointF(height)
 
-    if (y <= 1f) {
-        p.y = height * y
-    } else {
-        p.y = y * dp
-    }
     return p
+}
+
+fun Float.toPointF(ref: Int): Float {
+    return if (this <= 1f) {
+        ref * this
+    } else {
+        this * dp
+    }
 }
