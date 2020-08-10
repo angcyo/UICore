@@ -740,8 +740,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
      * */
     fun parsePoint(
         arg: String?,
-        refWidth: Int = autoParser._rootNodeRect.width(),
-        refHeight: Int = autoParser._rootNodeRect.height()
+        refWidth: Int = _screenWidth,
+        refHeight: Int = _screenHeight
     ): List<PointF> {
         val screenWidth: Int = _screenWidth
         val screenHeight: Int = _screenHeight
