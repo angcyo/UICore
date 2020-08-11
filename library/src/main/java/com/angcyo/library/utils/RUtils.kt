@@ -89,6 +89,23 @@ object RUtils {
         return false
     }
 
+    /**跳转到抖音用户个人信息页*/
+    fun toDyUserProfile(context: Context, userId: String = "58661599176"): Boolean {
+        return if (context.checkApkExist("com.ss.android.ugc.aweme")) {
+            val url = "snssdk1128://user/profile/${userId}"
+            //snssdk1128://aweme/detail/作品id号
+
+            //kwai://profile/123456 //快手
+            Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(this)
+            }
+            true
+        } else {
+            toast("您没有安装抖音")
+            false
+        }
+    }
 
     /**
      * 判断是否是主线程
