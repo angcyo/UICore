@@ -42,15 +42,15 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         init {
             defaultIntervalDelay = if (isDebugType()) {
                 when (Device.performanceLevel()) {
-                    Device.PERFORMANCE_HIGH -> 500
-                    Device.PERFORMANCE_MEDIUM -> 800
+                    Device.PERFORMANCE_HIGH -> 800
+                    Device.PERFORMANCE_MEDIUM -> 1200
                     Device.PERFORMANCE_LOW -> 1_500
                     else -> 2_000
                 }
             } else {
                 when (Device.performanceLevel()) {
-                    Device.PERFORMANCE_HIGH -> 1_500
-                    Device.PERFORMANCE_MEDIUM -> 2_500
+                    Device.PERFORMANCE_HIGH -> 1_200
+                    Device.PERFORMANCE_MEDIUM -> 2_300
                     Device.PERFORMANCE_LOW -> 3_500
                     else -> 5_000
                 }

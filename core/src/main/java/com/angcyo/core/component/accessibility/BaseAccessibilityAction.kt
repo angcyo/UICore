@@ -236,7 +236,7 @@ abstract class BaseAccessibilityAction {
             val base = split.getOrNull(1)?.toLongOrNull()
                 ?: BaseAccessibilityInterceptor.defaultIntervalDelay
 
-            val factor = split.getOrNull(2)?.toLongOrNull() ?: nextLong(2, 5)
+            val factor = split.getOrNull(2)?.toLongOrNull() ?: 1 //nextLong(2, 5)
 
             start + base * nextLong(1, max(2L, factor + 1))
         }
