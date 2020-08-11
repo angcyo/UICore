@@ -45,6 +45,13 @@ println "........app.gradle........end"
 //println project
 //println rootProject
 
+
+//APK输出文件名配置:
+//可用参数: #an:app名字; #vn:版本名; #t:当天日期; #fn:风味名; #bn:编译类型名;
+//         #sn:使用的签名名称; #ka:使用的签名别名;
+
+def apkFormatName = project.hasProperty("apkName") ? project.ext.apkName : "#an-#vn_#t_#fn_#bn_#ka.apk"
+
 android {
 
     compileSdkVersion Integer.parseInt(_C_SDK)
@@ -184,14 +191,15 @@ android {
                 variant.packageApplicationProvider.get().outputDirectory = apkFolder
             }
             variant.outputs.forEach {
-                it.apkData.outputFileName = _app_name + "-" +
-                        variant.versionName + "_" +
-                        apk_time + "_" +
-                        variant.flavorName + "_" +
-                        variant.buildType.name + "_" +
-//                    variant.signingConfig.name + "_" +
-                        signConfig.key_alias +
-                        ".apk"
+                it.apkData.outputFileName = formatApkName(apkFormatName,
+                        _app_name,
+                        variant.versionName,
+                        apk_time,
+                        variant.flavorName,
+                        variant.buildType.name,
+                        variant.signingConfig.name,
+                        signConfig.key_alias
+                )
             }
         }
     } else if (gradle.gradleVersion.startsWith("5")) {
@@ -202,14 +210,15 @@ android {
             }
 
             variant.packageApplicationProvider.get()?.outputScope?.apkDatas?.forEach { apkData ->
-                apkData.outputFileName = _app_name + "-" +
-                        variant.versionName + "_" +
-                        apk_time + "_" +
-                        variant.flavorName + "_" +
-                        variant.buildType.name + "_" +
-//                    variant.signingConfig.name + "_" +
-                        signConfig.key_alias +
-                        ".apk"
+                apkData.outputFileName = formatApkName(apkFormatName,
+                        _app_name,
+                        variant.versionName,
+                        apk_time,
+                        variant.flavorName,
+                        variant.buildType.name,
+                        variant.signingConfig.name,
+                        signConfig.key_alias
+                )
             }
         }
     } else {
@@ -221,17 +230,28 @@ android {
             }
 
             variant.getPackageApplication().outputScope.apkDatas.forEach { apkData ->
-                apkData.outputFileName = _app_name + "-" +
-                        variant.versionName + "_" +
-                        apk_time + "_" +
-                        variant.flavorName + "_" +
-                        variant.buildType.name + "_" +
-                        variant.signingConfig.name + "_" +
-                        signConfig.key_alias +
-                        ".apk"
+                apkData.outputFileName = _formatApkName(apkFormatName,
+                        _app_name,
+                        variant.versionName,
+                        apk_time,
+                        variant.flavorName,
+                        variant.buildType.name,
+                        variant.signingConfig.name,
+                        signConfig.key_alias
+                )
             }
         }
     }
+}
+
+static def formatApkName(format, an, vn, t, fn, bn, sn, ka) {
+    return format.replace("#an", an)
+            .replace("#vn", vn)
+            .replace("#t", t)
+            .replace("#fn", fn)
+            .replace("#bn", bn)
+            .replace("#sn", sn)
+            .replace("#ka", ka)
 }
 
 dependencies {
