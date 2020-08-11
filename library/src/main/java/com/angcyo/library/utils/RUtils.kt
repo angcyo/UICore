@@ -2,6 +2,7 @@ package com.angcyo.library.utils
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AppOpsManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
@@ -11,6 +12,7 @@ import android.media.AudioManager
 import android.net.Uri
 import android.os.Build
 import android.os.Looper
+import android.os.Process.myUid
 import android.telephony.TelephonyManager
 import android.view.Surface
 import com.angcyo.library.L
@@ -20,6 +22,8 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
 import java.io.InputStreamReader
+import java.lang.reflect.Field
+import java.lang.reflect.Method
 
 
 /**
@@ -257,6 +261,35 @@ object RUtils {
             }
         }
         return file
+    }
+
+    /**
+     * 小米手机"后台弹出界面(允许应用在后台弹出界面)"权限问题解决方案
+     * https://blog.csdn.net/shenshibaoma/article/details/103909618
+     * */
+    fun isMIUIBackgroundAllowed(context: Context = app()): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            return try {
+                val ops = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+
+                val field: Field =
+                    AppOpsManager::class.java.getField("OP_BACKGROUND_START_ACTIVITY")
+                field.isAccessible = true
+                val opValue = field.get(ops) as Int
+
+                val op = opValue
+                val method: Method = ops::class.java.getMethod(
+                    "checkOpNoThrow",
+                    Int::class.java, Int::class.java, String::class.java
+                )
+                val result = method.invoke(ops, op, myUid(), context.packageName) as Int
+                result == AppOpsManager.MODE_ALLOWED
+            } catch (e: Exception) {
+                L.e("not support")
+                false
+            }
+        }
+        return true
     }
 }
 
