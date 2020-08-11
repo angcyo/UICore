@@ -1,5 +1,6 @@
 package com.angcyo.core.component.accessibility.base
 
+import android.graphics.Color
 import android.graphics.PointF
 import android.graphics.RectF
 import com.angcyo.core.R
@@ -51,7 +52,12 @@ object AccessibilityWindowLayer : ILayer() {
     /**[text] 需要提示的文本
      * [summary] 描述文本
      * [duration] 转圈时长, 毫秒*/
-    fun show(text: CharSequence?, summary: CharSequence? = null, duration: Long = -1) {
+    fun show(
+        text: CharSequence?,
+        summary: CharSequence? = null,
+        duration: Long = -1,
+        textColor: Int = Color.WHITE
+    ) {
         renderLayer = {
             //常亮
             itemView.keepScreenOn = true
@@ -61,7 +67,10 @@ object AccessibilityWindowLayer : ILayer() {
             } else if (duration == 0L) {
                 v<CircleLoadingView>(R.id.progress_bar)?.setProgress(0)
             }
-            tv(R.id.text_view)?.text = text
+            tv(R.id.text_view)?.apply {
+                this.text = text
+                setTextColor(textColor)
+            }
 
             visible(R.id.catch_button, isDebug())
             visible(R.id.summary_text_view, summary != null)

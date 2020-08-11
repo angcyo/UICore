@@ -119,6 +119,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         }
     }
 
+    /**当前是否在目标的程序界面内*/
+    var _isInFilterPackageNameApp = false
+
     init {
         initialIntervalDelay = defaultIntervalDelay
     }
@@ -164,9 +167,12 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         //L.e("main:$mainPackageName")
 
         if (filterPackageNameList.isEmpty()) {
+            _isInFilterPackageNameApp = true
             //所有包名都需要
             handleFilterNode(service, findNodeInfoList)
         } else {
+            _isInFilterPackageNameApp = filterPackageNameList.contains(mainPackageName)
+
             //需要处理包名对应节点的列表
             val needNodeList = findNodeInfoList.filter(filterPackageNameList)//过滤后的应用程序节点列表
             val needMainPackageName = needNodeList.mainNode()?.packageName

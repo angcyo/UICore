@@ -1,11 +1,14 @@
 package com.angcyo.core.component.accessibility.base
 
+import android.graphics.Color
+import com.angcyo.core.R
 import com.angcyo.core.component.accessibility.BaseAccessibilityAction
 import com.angcyo.core.component.accessibility.BaseAccessibilityInterceptor
 import com.angcyo.core.component.accessibility.BaseAccessibilityService
 import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.isActionStart
+import com.angcyo.library.ex._color
 
 /**
  * 自动显示浮窗的拦截器
@@ -28,7 +31,10 @@ abstract class BaseFloatInterceptor : BaseAccessibilityInterceptor() {
     /**浮窗日志输出*/
     var onWindowLog: ((text: CharSequence?, summary: CharSequence?, duration: Long) -> Unit)? =
         { text, summary, duration ->
-            AccessibilityWindowLayer.show(text, summary, duration)
+            AccessibilityWindowLayer.show(
+                text, summary, duration,
+                if (_isInFilterPackageNameApp) Color.WHITE else _color(R.color.warning)
+            )
         }
 
     /**描述概要*/
