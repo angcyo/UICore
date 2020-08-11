@@ -82,6 +82,17 @@ data class LoaderConfig(
 /**是否是单选模式*/
 fun LoaderConfig.isSingleModel(): Boolean = maxSelectorLimit == 1
 
+/**单选图片配置*/
+fun LoaderConfig.singleImage() {
+    mediaLoaderType = LOADER_TYPE_IMAGE
+    maxSelectorLimit = 1
+}
+
+fun LoaderConfig.singleVideo() {
+    mediaLoaderType = LOADER_TYPE_VIDEO
+    maxSelectorLimit = 1
+}
+
 /**是否可以选中文件(b)*/
 fun LoaderConfig.canSelectorMedia(
     selectorMediaList: List<LoaderMedia>,

@@ -14,11 +14,11 @@ import com.angcyo.fragment.IFragmentBridge
 import com.angcyo.library.ex.fileUri
 import com.angcyo.library.ex.takePhotoIntent
 import com.angcyo.library.ex.takeVideoIntent
+import com.angcyo.library.model.LoaderMedia
 import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.fileName
 import com.angcyo.library.utils.filePath
 import com.angcyo.loader.LoaderConfig
-import com.angcyo.library.model.LoaderMedia
 import com.angcyo.picker.DslPicker.picker
 import com.angcyo.picker.core.PickerActivity
 import com.angcyo.picker.core.PickerActivity.Companion.KEY_LOADER_CONFIG
@@ -142,6 +142,13 @@ fun Fragment.dslPicker(config: LoaderConfig) {
 /**配置启动媒体选择器*/
 fun Fragment.dslPicker(action: LoaderConfig.() -> Unit) {
     picker(context, action)
+}
+
+fun Fragment.dslPicker(
+    config: LoaderConfig.() -> Unit = {},
+    onResult: (List<LoaderMedia>?) -> Unit
+) {
+    dslPicker(LoaderConfig().apply(config), onResult)
 }
 
 fun Fragment.dslPicker(config: LoaderConfig, onResult: (List<LoaderMedia>?) -> Unit) {
