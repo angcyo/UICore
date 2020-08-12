@@ -481,6 +481,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                 if (it == null || it is ActionInterruptedNextException) {
                     //[BaseAccessibilityAction] 被中断时, 允许继续玩下执行
                     actionNext(service)
+
+                    //切换间隔时长
+                    intervalDelay = onHandleIntervalDelay(action)
                 } else {
                     actionError(action, it)
                 }
@@ -491,8 +494,6 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         if (action.checkEvent(service, lastEvent, nodeList)) {
             //需要事件处理
             action.doAction(service, lastEvent, nodeList)
-            //切换间隔时长
-            intervalDelay = onHandleIntervalDelay(action)
         } else if (action.checkOtherEvent(service, lastEvent, nodeList)) {
             //内部消化, 被other处理
         } else {
