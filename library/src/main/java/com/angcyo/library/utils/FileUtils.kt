@@ -23,8 +23,8 @@ import java.util.*
  */
 object FileUtils {
 
-    /**允许写入单个文件的最大大小100mb, 之后会重写*/
-    var fileMaxSize: Long = 100 * 1024 * 1024
+    /**允许写入单个文件的最大大小10mb, 之后会重写*/
+    var fileMaxSize: Long = 10 * 1024 * 1024
 
     /**所有文件写入的在此根目录下*/
     var rootFolder: String = getAppString("schema") ?: ""
