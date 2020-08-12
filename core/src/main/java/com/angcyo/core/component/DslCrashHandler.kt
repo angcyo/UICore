@@ -35,6 +35,11 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
             DslCrashHandler().install(context)
         }
 
+        /**清空崩溃标识*/
+        fun clear() {
+            KEY_IS_CRASH.hawkPut(null)
+        }
+
         /** 检查最后一次是否有异常未处理 */
         fun checkCrash(
             clear: Boolean = false,
