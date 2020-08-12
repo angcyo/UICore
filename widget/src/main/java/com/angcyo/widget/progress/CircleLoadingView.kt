@@ -6,6 +6,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.getColor
 import com.angcyo.widget.R
 import com.angcyo.widget.base.Anim
 import com.angcyo.widget.base.InvalidateProperty
@@ -46,7 +47,7 @@ class CircleLoadingView(context: Context, attributeSet: AttributeSet? = null) :
     var rotateStep = 4
 
     /** 颜色, 透明到此颜色的渐变 */
-    var loadingColor: Int = Color.parseColor("#3965D6")
+    var loadingColor: Int = -1 //Color.parseColor("#3965D6")
         set(value) {
             field = value
             singleShader = createSingleShader(loadingStartColor, value)
@@ -110,7 +111,10 @@ class CircleLoadingView(context: Context, attributeSet: AttributeSet? = null) :
         rotateStep =
             typedArray.getInt(R.styleable.CircleLoadingView_r_circle_load_rotate_step, rotateStep)
         loadingColor =
-            typedArray.getColor(R.styleable.CircleLoadingView_r_circle_load_color, loadingColor)
+            typedArray.getColor(
+                R.styleable.CircleLoadingView_r_circle_load_color,
+                getColor(R.color.colorAccent)
+            )
         loadingStartColor =
             typedArray.getColor(
                 R.styleable.CircleLoadingView_r_circle_load_start_color,

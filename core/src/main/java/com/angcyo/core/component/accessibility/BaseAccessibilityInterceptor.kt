@@ -321,7 +321,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         } else {
             L.w("销毁${this.simpleHash()}:[$actionIndex/${actionList.size}] 耗时:${(nowTime() - _actionStartTime).toElapsedTime()}")
         }
-        actionIndex = -1
+        //actionIndex = -1 //不重置index, 这样可以支持回复
         actionStatus = ACTION_STATUS_DESTROY
         lastService = null
         lastEvent = null
@@ -418,7 +418,12 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         }
 
         if (actionStatus != ACTION_STATUS_ING) {
-            actionIndex = 0
+            if (restart) {
+                //重启
+                actionIndex = 0
+            } else {
+                //恢复
+            }
             actionStatus = ACTION_STATUS_ING
             onDoActionStart()
             startInterval(intervalDelay)
