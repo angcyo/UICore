@@ -45,7 +45,7 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
             clear: Boolean = false,
             crashAction: (filePath: String?, message: String?, crashTime: String?) -> Unit = { _, _, _ -> }
         ): Boolean {
-            val isCrash = KEY_IS_CRASH.hawkGet()
+            val isCrash: String? = KEY_IS_CRASH.hawkGet()
 
             if (clear) {
                 KEY_IS_CRASH.hawkPut(null)
