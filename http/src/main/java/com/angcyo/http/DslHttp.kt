@@ -359,12 +359,14 @@ fun Response<JsonElement>?.isSucceed(
 ): Boolean {
     val bodyData = this?.body()
 
+    var result = false
     if (this == null || bodyData == null) {
-        onResult(false, null)
-        return false
+        //空数据
+        result = this?.isSuccessful == true
+        onResult(result, null)
+        return result
     }
 
-    var result = false
     var errorJson: JsonObject? = null
 
     if (codeKey.isNullOrEmpty()) {
