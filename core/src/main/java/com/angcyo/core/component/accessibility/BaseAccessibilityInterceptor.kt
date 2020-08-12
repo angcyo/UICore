@@ -18,6 +18,7 @@ import com.angcyo.library.component.low
 import com.angcyo.library.component.single
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.Device
+import kotlin.math.max
 
 /**
  *
@@ -42,17 +43,17 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         init {
             defaultIntervalDelay = if (isDebugType()) {
                 when (Device.performanceLevel()) {
+                    Device.PERFORMANCE_HIGH -> 600
+                    Device.PERFORMANCE_MEDIUM -> 800
+                    Device.PERFORMANCE_LOW -> 1_200
+                    else -> 1_500
+                }
+            } else {
+                when (Device.performanceLevel()) {
                     Device.PERFORMANCE_HIGH -> 800
                     Device.PERFORMANCE_MEDIUM -> 1200
                     Device.PERFORMANCE_LOW -> 1_500
                     else -> 2_000
-                }
-            } else {
-                when (Device.performanceLevel()) {
-                    Device.PERFORMANCE_HIGH -> 1_200
-                    Device.PERFORMANCE_MEDIUM -> 2_300
-                    Device.PERFORMANCE_LOW -> 3_500
-                    else -> 5_000
                 }
             }
         }
@@ -346,13 +347,8 @@ abstract class BaseAccessibilityInterceptor : Runnable {
 
     /**开始间隔回调*/
     open fun startInterval(delay: Long): Boolean {
-        if (delay <= 0) {
-            //不合法
-            L.w("间隔时长不合法!")
-            return false
-        }
         stopInterval()
-        onIntervalStart(delay)
+        onIntervalStart(max(delay, 0))
         return true
     }
 
@@ -426,7 +422,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             }
             actionStatus = ACTION_STATUS_ING
             onDoActionStart()
-            startInterval(intervalDelay)
+            startInterval(0)
         }
     }
 
