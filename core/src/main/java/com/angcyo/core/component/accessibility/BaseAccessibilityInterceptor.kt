@@ -360,10 +360,14 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         }
 
         if (enableInterval && actionStatus == ACTION_STATUS_ING) {
-            interceptorLog?.log("拦截器,下一个周期在 ${intervalDelay}ms!")
+            interceptorLog?.log(buildString {
+                append(this@BaseAccessibilityInterceptor.hashCode())
+                append("[$actionIndex/${actionList.size}]")
+                append(" 拦截器,下一个周期在 ${intervalDelay}ms!")
+            })
             startInterval(intervalDelay)
         } else {
-            interceptorLog?.log("拦截器,周期回调结束!")
+            interceptorLog?.log("${this.simpleHash()} 拦截器,周期回调结束!")
             onIntervalEnd()
         }
     }
