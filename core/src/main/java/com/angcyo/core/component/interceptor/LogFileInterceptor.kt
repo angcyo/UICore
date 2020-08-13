@@ -17,13 +17,13 @@ open class LogFileInterceptor : LogInterceptor() {
 
     override fun printRequestLog(builder: StringBuilder) {
         //super.printRequestLog(builder)
-        builder.appendln()
+        //builder.appendln()
         DslFileHelper.http(data = builder.toString())
     }
 
     override fun printResponseLog(builder: StringBuilder) {
         //super.printResponseLog(builder)
-        builder.appendln()
+        //builder.appendln()
         DslFileHelper.http(data = builder.toString())
     }
 }
