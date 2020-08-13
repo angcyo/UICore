@@ -68,7 +68,7 @@ object AccessibilityHelper {
             context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
         val accessibilityServices =
             accessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
-        return accessibilityServices.any { it.id.contains(context.packageName) }
+        return accessibilityServices.any { it.id.startsWith(context.packageName) }
     }
 
     /**获取无障碍应用列表信息*/
