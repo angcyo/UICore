@@ -60,6 +60,11 @@ data class ActionBean(
      * null/空字符:表示设备性能对应的默认值*/
     var interval: String? = null,
 
+    /**等同于[interval]
+     * 不同在于[start]用来控制自身执行的延迟
+     * */
+    var start: String? = null,
+
     /**[Action]完成后, 需要执行的网络请求*/
     var form: FormBean? = null,
 

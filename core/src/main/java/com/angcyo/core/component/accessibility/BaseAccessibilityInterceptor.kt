@@ -111,13 +111,8 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     var interceptorLog: ILogPrint? = ILogPrint()
 
     /**下一个周期延迟时间的获取*/
-    var onHandleIntervalDelay: (action: BaseAccessibilityAction) -> Long = { action ->
-        val interceptorIntervalDelay = action.getInterceptorIntervalDelay()
-        if (interceptorIntervalDelay > 0) {
-            interceptorIntervalDelay
-        } else {
-            initialIntervalDelay
-        }
+    var onHandleIntervalDelay: (actionIndex: Int) -> Long = { actionIndex ->
+        computeIntervalDelay(actionIndex)
     }
 
     /**当前是否在目标的程序界面内*/
@@ -360,11 +355,6 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         }
 
         if (enableInterval && actionStatus == ACTION_STATUS_ING) {
-            interceptorLog?.log(buildString {
-                append(this@BaseAccessibilityInterceptor.hashCode())
-                append("[$actionIndex/${actionList.size}]")
-                append(" 拦截器,下一个周期在 ${intervalDelay}ms!")
-            })
             startInterval(intervalDelay)
         } else {
             interceptorLog?.log("${this.simpleHash()} 拦截器,周期回调结束!")
@@ -376,6 +366,12 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     open fun onIntervalStart(delay: Long) {
         //延迟[delay] 执行下一次.
         handler.postDelayed(this, delay)
+
+        interceptorLog?.log(buildString {
+            append(this@BaseAccessibilityInterceptor.hashCode())
+            append("[$actionIndex/${actionList.size}]")
+            append(" 拦截器,下一个周期在 ${intervalDelay}ms!")
+        })
     }
 
     /**周期回调结束*/
@@ -389,7 +385,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         val service = lastService
         if (service == null) {
             if (isActionInterceptorStart()) {
-                L.w("${this.simpleHash()} service is null.")
+                L.w("${this.simpleHash()} service is null.".apply {
+                    interceptorLog?.log(this)
+                })
             }
         } else {
             handleAccessibility(service, false)
@@ -426,7 +424,8 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             }
             actionStatus = ACTION_STATUS_ING
             onDoActionStart()
-            startInterval(0)
+            intervalDelay = onHandleIntervalDelay(actionIndex)
+            startInterval(intervalDelay)
         }
     }
 
@@ -483,7 +482,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                     actionNext(service)
 
                     //切换间隔时长
-                    intervalDelay = onHandleIntervalDelay(action)
+                    intervalDelay = onHandleIntervalDelay(actionIndex)
                 } else {
                     actionError(action, it)
                 }
@@ -599,6 +598,39 @@ abstract class BaseAccessibilityInterceptor : Runnable {
 
     operator fun <T : BaseAccessibilityAction> plus(item: T) {
         actionList.add(item)
+    }
+
+    /**计算出, 下一次延时的时间*/
+    fun computeIntervalDelay(actionIndex: Int): Long {
+        var delay = -1L
+        val action = actionList.getOrNull(actionIndex)
+        if (action == null) {
+            delay = initialIntervalDelay
+        } else {
+
+            if (action is AutoParseAction) {
+                val start = action.actionBean?.start
+                if (start.isNullOrEmpty()) {
+                    //no op
+                } else {
+                    //当前的action, 指定了自身的启动延迟
+                    delay = action.getInterceptorIntervalDelay(start)
+                }
+            }
+
+            if (delay < 0) {
+                //无效的数据
+
+                //使用上一个action的间隔时长
+                val prevAction = actionList.getOrNull(actionIndex - 1)
+                delay = prevAction?.getInterceptorIntervalDelay() ?: -1
+                if (delay < 0) {
+                    initialIntervalDelay
+                }
+            }
+
+        }
+        return delay
     }
 
     //</editor-fold desc="其他">
