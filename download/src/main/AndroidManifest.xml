@@ -2,13 +2,15 @@
     package="com.angcyo.download">
 
     <application>
+
+        <!--Only fullscreen activities can request orientation-->
         <activity
             android:name=".version.VersionUpdateActivity"
             android:excludeFromRecents="true"
             android:exported="true"
             android:launchMode="singleTask"
             android:noHistory="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="unspecified"
             android:theme="@style/LibDialogActivity" />
     </application>
 
