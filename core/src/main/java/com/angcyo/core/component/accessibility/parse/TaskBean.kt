@@ -55,7 +55,10 @@ data class TaskBean(
     var getTextResultMap: Map<String, List<CharSequence>>? = null,
 
     /**[Task]完成后, 需要执行的网络请求*/
-    var form: FormBean? = null
+    var form: FormBean? = null,
+
+    /**任务完成后, 是否启动主程序.(不管失败或者成功)*/
+    var finishToApp: Boolean = true
 )
 
 /**转成拦截器*/

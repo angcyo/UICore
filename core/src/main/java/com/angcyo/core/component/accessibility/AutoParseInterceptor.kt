@@ -117,7 +117,11 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
             notify("执行完成!")
             //lastService?.home()
         }
-        openApp()
+
+        if (taskBean.finishToApp) {
+            openApp()
+        }
+
         super.onDoActionFinish(action, error)
     }
 
