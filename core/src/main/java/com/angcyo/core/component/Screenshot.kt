@@ -65,8 +65,7 @@ class Screenshot private constructor(val application: Context) {
          */
         fun isScreenOn(context: Context): Boolean {
             // 获取电源管理器对象
-            val pm =
-                context.getSystemService(Context.POWER_SERVICE) as PowerManager
+            val pm: PowerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
             val screenOn: Boolean
             screenOn = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
                 pm.isInteractive
