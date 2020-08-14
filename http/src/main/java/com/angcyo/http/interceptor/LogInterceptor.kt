@@ -4,6 +4,7 @@ import com.angcyo.http.base.isPlaintext
 import com.angcyo.http.base.readString
 import com.angcyo.library.L
 import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.nowTime
 import okhttp3.*
 import okio.Buffer
 import java.util.*
@@ -18,11 +19,80 @@ import java.util.concurrent.TimeUnit
  */
 open class LogInterceptor : Interceptor {
 
-    var debug = isDebug()
+    companion object {
+
+        /**log策略
+         * 取值:
+         * false 关闭log
+         * interval:1000 间隔1秒以上再输出日志
+         * */
+        const val HEADER_LOG = "header_log"
+
+        /**用于指定当前url需要对应的key, 默认就是url?号之前的字符串*/
+        const val HEADER_LOG_KEY = "header_key"
+
+        private const val INTERVAL = "interval"
+        private val lastLogUrlTimeMap = hashMapOf<String, Long>()
+
+        /**关闭日志*/
+        fun closeLog(close: Boolean = true) = HEADER_LOG to "${!close}"
+
+        /**间隔多长时间, 才输出日志. 默认1小时输出一次*/
+        fun intervalLog(mill: Long = 1 * 60 * 60 * 1000L /*毫秒*/) = HEADER_LOG to "${INTERVAL}:$mill"
+    }
+
+    var enable: Boolean = isDebug()
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
-        if (!debug) {
+
+        val header = request.header(HEADER_LOG)
+
+        var pass = !enable
+        if (header.isNullOrEmpty()) {
+            //no op
+        } else {
+            if (header == true.toString()) {
+                //强制打开日志
+                pass = false
+            } else if (header == false.toString()) {
+                //强制关闭日志
+                pass = true
+            } else if (header.startsWith(INTERVAL)) {
+                try {
+                    val mill =
+                        header.subSequence(INTERVAL.length + 1, header.length).toString()
+                            .toLongOrNull()
+                    if (mill != null) {
+                        //规定了间隔多长时间, 才输出日志
+                        val url = request.url.toString()//默认的url可能会带?号
+                        val index = url.indexOf("?")
+
+                        //key
+                        val key = request.header(HEADER_LOG_KEY) ?: url.substring(
+                            0,
+                            if (index != -1) index else url.length
+                        )
+
+                        //time
+                        val lastTime = lastLogUrlTimeMap[key] ?: -1
+                        val nowTime = nowTime()
+
+                        if (nowTime - lastTime >= mill) {
+                            pass = false
+                            lastLogUrlTimeMap[key] = nowTime
+                        } else {
+                            pass = true
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    pass = true
+                }
+            }
+        }
+
+        if (pass) {
             return chain.proceed(request)
         }
 

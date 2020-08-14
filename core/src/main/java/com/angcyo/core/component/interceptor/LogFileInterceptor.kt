@@ -12,7 +12,7 @@ import com.angcyo.http.interceptor.LogInterceptor
  */
 open class LogFileInterceptor : LogInterceptor() {
     init {
-        debug = true
+        enable = true
     }
 
     override fun printRequestLog(builder: StringBuilder) {
