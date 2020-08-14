@@ -51,7 +51,7 @@ object AccessibilityWindowLayer : ILayer() {
 
     /**[text] 需要提示的文本
      * [summary] 描述文本
-     * [duration] 转圈时长, 毫秒*/
+     * [duration] 转圈时长, 毫秒. -1 保持原来的进度; 0 清空进度; 其他 进度动画时长*/
     fun show(
         text: CharSequence?,
         summary: CharSequence? = null,
