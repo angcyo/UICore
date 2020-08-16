@@ -634,10 +634,11 @@ fun Int.softAction(): String = when (this) {
 }
 
 interface OnSoftInputListener {
-    /**处理之前*/
+
+    /**处理之前, 通过[action]判断是隐藏/还是显示键盘*/
     fun onSoftInputChangeStart(action: Int, height: Int, oldHeight: Int) {}
 
-    /**处理之后*/
+    /**处理之后, 通过[action]判断是隐藏/还是显示键盘*/
     fun onSoftInputChangeEnd(action: Int, height: Int, oldHeight: Int) {}
 
     /**动画处理中, 只有开启动画才会回调*/

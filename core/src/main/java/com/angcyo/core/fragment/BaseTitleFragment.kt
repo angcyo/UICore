@@ -30,6 +30,8 @@ import com.angcyo.widget.DslGroupHelper
 import com.angcyo.widget.base.*
 import com.angcyo.widget.layout.DslSoftInputLayout
 import com.angcyo.widget.layout.OnSoftInputListener
+import com.angcyo.widget.layout.isHideAction
+import com.angcyo.widget.layout.isShowAction
 import com.angcyo.widget.span.span
 import com.angcyo.widget.text.DslTextView
 
@@ -366,10 +368,16 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
     override fun onSoftInputChangeStart(action: Int, height: Int, oldHeight: Int) {
         super.onSoftInputChangeStart(action, height, oldHeight)
+        if (action.isHideAction()) {
+            //是隐藏动作
+        }
     }
 
     override fun onSoftInputChangeEnd(action: Int, height: Int, oldHeight: Int) {
         super.onSoftInputChangeEnd(action, height, oldHeight)
+        if (action.isShowAction()) {
+            //是显示动作
+        }
     }
 
     override fun onSoftInputChange(action: Int, height: Int, oldHeight: Int, fraction: Float) {
