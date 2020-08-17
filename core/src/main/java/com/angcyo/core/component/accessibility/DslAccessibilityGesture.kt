@@ -38,7 +38,7 @@ class DslAccessibilityGesture {
         const val DEFAULT_GESTURE_CLICK_DURATION = 16L
 
         //双击间隔时长
-        const val DEFAULT_GESTURE_DOUBLE_DURATION = 16L
+        const val DEFAULT_GESTURE_DOUBLE_DURATION = 60L
 
         //如果Duration时间太短, 将会产生fling
         const val DEFAULT_GESTURE_MOVE_DURATION = 600L
