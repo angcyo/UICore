@@ -69,6 +69,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     /**需要收到那个程序的事件, 匹配方式为 `包含`, 匹配方式为 `全等`*/
     val filterPackageNameList = ArrayList<String>()
 
+    /**只获取同一个包名程序的最上层window的node信息*/
+    var onlyFilterTopWindow: Boolean = true
+
     /**忽略[RAccessibilityService]事件处理*/
     var ignoreInterceptor: Boolean = false
 
@@ -163,7 +166,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
      * [onAccessibilityEvent] | [onInterval] ->[handleAccessibility]->[handleFilterNode]->[onDoActionStart]->[onDoAction]->[onDoActionFinish]
      * */
     open fun handleAccessibility(service: BaseAccessibilityService, ignore: Boolean) {
-        val findNodeInfoList = service.findNodeInfoList()
+        val findNodeInfoList = service.findNodeInfoList(onlyTopWindow = onlyFilterTopWindow)
 
         //当前页面主要的程序
         val mainPackageName = findNodeInfoList.mainNode()?.packageName
@@ -229,7 +232,11 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                     ) {
                         handle = true
                         stopInterval()
-                        onDoAction(action, service, service.findNodeInfoList())
+                        onDoAction(
+                            action,
+                            service,
+                            service.findNodeInfoList(onlyTopWindow = onlyFilterTopWindow)
+                        )
                         if (enableInterval && actionStatus == ACTION_STATUS_ING) {
                             interceptorLog?.log("拦截器恢复,下一个周期在 ${intervalDelay}ms!")
                             startInterval(intervalDelay)
@@ -294,7 +301,8 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                                 //没有指定需要强制过滤的包名, 则执行对应的action
                                 onDoAction(it, service, nodeList)
                             } else {
-                                val findNodeInfoList = service.findNodeInfoList()
+                                val findNodeInfoList =
+                                    service.findNodeInfoList(onlyTopWindow = onlyFilterTopWindow)
                                 val currentPackageName = findNodeInfoList.mainNode()?.packageName
 
                                 if (specifyPackageNameList!!.contains(currentPackageName)) {
