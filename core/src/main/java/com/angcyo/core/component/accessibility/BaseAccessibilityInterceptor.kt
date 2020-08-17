@@ -70,7 +70,14 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     val filterPackageNameList = ArrayList<String>()
 
     /**只获取同一个包名程序的最上层window的node信息*/
-    var onlyFilterTopWindow: Boolean = true
+    var onlyFilterTopWindow: Boolean = false
+        get() {
+            val action = currentAccessibilityAction
+            if (action is AutoParseAction) {
+                return action.actionBean?.onlyTopWindow ?: field
+            }
+            return field
+        }
 
     /**忽略[RAccessibilityService]事件处理*/
     var ignoreInterceptor: Boolean = false

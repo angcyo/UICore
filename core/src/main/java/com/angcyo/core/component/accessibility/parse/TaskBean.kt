@@ -58,10 +58,7 @@ data class TaskBean(
     var form: FormBean? = null,
 
     /**任务完成后, 是否启动主程序.(不管失败或者成功)*/
-    var finishToApp: Boolean = true,
-
-    /**[com.angcyo.core.component.accessibility.BaseAccessibilityInterceptor.getOnlyFilterTopWindow]*/
-    var onlyTopWindow: Boolean = true
+    var finishToApp: Boolean = true
 )
 
 /**转成拦截器*/
@@ -80,9 +77,6 @@ fun TaskBean.toInterceptor(
             }
         }
         intervalMode()
-
-        //window layer
-        onlyFilterTopWindow = onlyTopWindow
 
         //[actionIntervalList]
         val actionIntervalMap = parseActionInterval()

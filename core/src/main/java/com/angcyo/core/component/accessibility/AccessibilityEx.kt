@@ -150,7 +150,7 @@ fun AccessibilityService.rootNodeInfo(event: AccessibilityEvent? = null): Access
  * */
 fun AccessibilityService.findNodeInfoList(
     packageName: List<String>? = null,
-    onlyTopWindow: Boolean = true
+    onlyTopWindow: Boolean = false
 ): List<AccessibilityNodeInfo> {
     //需要返回的根节点信息
     val allNode: MutableList<AccessibilityNodeInfo> = mutableListOf()

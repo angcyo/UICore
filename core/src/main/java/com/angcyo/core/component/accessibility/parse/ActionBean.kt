@@ -72,7 +72,10 @@ data class ActionBean(
     var formKey: String? = null,
 
     /**当[BaseAccessibilityAction]执行异常时, 处理的方式*/
-    var errorHandleType: Int = ERROR_HANDLE_TYPE_STOP
+    var errorHandleType: Int = ERROR_HANDLE_TYPE_STOP,
+
+    /**[com.angcyo.core.component.accessibility.BaseAccessibilityInterceptor.getOnlyFilterTopWindow]*/
+    var onlyTopWindow: Boolean? = null
 ) {
     companion object {
         const val HANDLE_TYPE_NONE = 0 //匹配执行, 匹配到谁, 谁就执行
