@@ -22,23 +22,28 @@ class ActionCount {
 
     var limitOut: (() -> Unit)? = null
 
-    /**统计计数*/
-    fun doCount() {
+    /**开始计时*/
+    fun start() {
         if (count == -1L) {
             startTime = nowTime()
 
             count = 0
         }
+    }
+
+    /**统计计数*/
+    fun doCount() {
+        start()
 
         if (isMaxLimit()) {
             limitOut?.invoke()
         }
+
         count++
     }
 
     /**是否超出最大限制的值*/
-    fun isMaxLimit() = maxCountLimit == 0L ||
-            maxCountLimit in 1 until count
+    fun isMaxLimit() = maxCountLimit == 0L || maxCountLimit in 1..count
 
     /**清空计数*/
     fun clear() {
