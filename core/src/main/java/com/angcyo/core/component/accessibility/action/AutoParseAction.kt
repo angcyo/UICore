@@ -632,6 +632,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                 val maxCount = arg2.toLongOrNull() ?: DEFAULT_JUMP_MAX_COUNT
 
                                 jumpCount.maxCountLimit = maxCount
+                                jumpCount.start()
 
                                 if (jumpCount.isMaxLimit()) {
                                     //超限后, 不跳转, 直接完成
@@ -675,7 +676,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                                 interceptor.actionList.forEachIndexed { index, baseAccessibilityAction ->
                                                     if (baseAccessibilityAction is AutoParseAction) {
                                                         if (baseAccessibilityAction.actionBean?.actionId == targetIndex) {
-                                                            interceptor.actionIndex = index
+                                                            interceptor.actionIndex = index - 1
                                                             findAction = true
                                                         }
                                                     }
