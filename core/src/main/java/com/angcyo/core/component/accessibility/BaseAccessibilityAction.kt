@@ -24,22 +24,28 @@ typealias ActionFinishObserve = (error: ActionException?) -> Unit
 abstract class BaseAccessibilityAction {
 
     companion object {
-        /**当前的[BaseAccessibilityAction], 允许执行[doAction]的最大次数, 超过后异常*/
+        /**当前的[BaseAccessibilityAction], 允许执行[doAction]的最大次数, 超过后异常
+         * [actionMaxRunCount]*/
         const val DEFAULT_ACTION_MAX_COUNT = 10L
 
-        /**当前的[BaseAccessibilityAction], 执行[doAction]的次数超过此值后,强制完成*/
+        /**当前的[BaseAccessibilityAction], 执行[doAction]的次数超过此值后,强制完成
+         * [actionMaxCount]*/
         const val DEFAULT_ACTION_FINISH_MAX_COUNT = -1L
 
-        /**当前的[BaseAccessibilityAction], 允许执行[checkOtherEvent]的最大次数, 超过[actionOtherList]才有机会执行*/
+        /**当前的[BaseAccessibilityAction], 允许执行[checkOtherEvent]的最大次数, 超过[actionOtherList]才有机会执行
+         * [checkOtherCount]*/
         const val DEFAULT_ACTION_OTHER_MAX_COUNT = 3L
 
-        /**[checkOtherEvent]未识别, [actionOtherList]未处理, 超过此最大次数, 会回滚到上一个[BaseAccessibilityAction]*/
+        /**[checkOtherEvent]未识别, [actionOtherList]未处理, 超过此最大次数, 会回滚到上一个[BaseAccessibilityAction]
+         * [rollbackCount]*/
         const val DEFAULT_ACTION_CHECK_OUT_MAX_COUNT = 3L
 
-        /**允许回滚的最大次数*/
+        /**允许回滚的最大次数
+         * [rollbackMaxCount]*/
         const val DEFAULT_ROLLBACK_MAX_COUNT = 3L
 
-        /**[ACTION_JUMP]指令, 默认允许执行的次数*/
+        /**[ACTION_JUMP]指令, 默认允许执行的次数
+         * [jump:xxx]*/
         const val DEFAULT_JUMP_MAX_COUNT = 10L
     }
 
