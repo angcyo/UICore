@@ -30,13 +30,15 @@ typealias GestureResult = (gestureDescription: GestureDescription? /*执行的�
 class DslAccessibilityGesture {
 
     companion object {
-        const val DEFAULT_GESTURE_START_TIME = 60L
+
+        //开始时间
+        const val DEFAULT_GESTURE_START_TIME = 16L
 
         //点击时长
-        const val DEFAULT_GESTURE_CLICK_DURATION = 60L
+        const val DEFAULT_GESTURE_CLICK_DURATION = 16L
 
         //双击间隔时长
-        const val DEFAULT_GESTURE_DOUBLE_DURATION = 60L
+        const val DEFAULT_GESTURE_DOUBLE_DURATION = 16L
 
         //如果Duration时间太短, 将会产生fling
         const val DEFAULT_GESTURE_MOVE_DURATION = 600L
@@ -156,6 +158,16 @@ class DslAccessibilityGesture {
         this.duration = duration
     }
 
+    fun doubleDuration(
+        startTime: Long = DEFAULT_GESTURE_START_TIME,
+        duration: Long = DEFAULT_GESTURE_CLICK_DURATION,
+        doubleDuration: Long = DEFAULT_GESTURE_DOUBLE_DURATION
+    ) {
+        this.startTime = startTime
+        this.duration = duration
+        this.doubleDuration = doubleDuration
+    }
+
     /**点击*/
     fun touch(fromX: Float, fromY: Float) {
         touch(PointF(fromX, fromY))
@@ -202,7 +214,6 @@ class DslAccessibilityGesture {
     /**双击*/
     fun double(point: PointF) {
         //双击, 需要伴随MOVE事件, 才能生效
-        duration = clickDuration
         touch(
             point.x,
             point.y,
@@ -437,6 +448,7 @@ fun DslAccessibilityGesture.double(
     result: GestureResult? = null
 ): Boolean {
     gestureResult = result
+    doubleDuration()
     double(x, y)
     doIt()
     return _isDispatched
@@ -457,6 +469,8 @@ fun randomPoint(
 
     return Point(x, y)
 }
+
+fun nextDp(from: Int, until: Int) = nextInt(from * dpi, until * dpi)
 
 //</editor-fold desc="other">
 
