@@ -145,15 +145,30 @@ fun AccessibilityService.rootNodeInfo(event: AccessibilityEvent? = null): Access
  *
  * 此方法会带来以下警告:[android.view.accessibility.AccessibilityWindowInfo.getRoot]
  * AccessibilityInteractionClient: old interaction Id is: -1,current interaction Id is:0
+ *
+ * [onlyTopWindow] 是否只对应包名的顶层window中的节点信息, 否则会获取所有window中的节点信息
  * */
-fun AccessibilityService.findNodeInfoList(packageName: List<String>? = null): List<AccessibilityNodeInfo> {
+fun AccessibilityService.findNodeInfoList(
+    packageName: List<String>? = null,
+    onlyTopWindow: Boolean = true
+): List<AccessibilityNodeInfo> {
+    //需要返回的根节点信息
     val allNode: MutableList<AccessibilityNodeInfo> = mutableListOf()
+
+    //保存顶层window
+    val windowLayerList = mutableListOf<CharSequence>()
 
     windows.forEach { windowInfo ->
         windowInfo.root?.let { root ->
-            if (!allNode.contains(root)) {
+            if (onlyTopWindow && windowLayerList.contains(root.packageName)) {
+                //只需要获取顶层window的节点信息 //已经获取了
+            } else if (!allNode.contains(root)) {
                 if (packageName.isNullOrEmpty() || packageName.contains(root.packageName)) {
                     allNode.add(root)
+                }
+                if (onlyTopWindow) {
+                    //保存
+                    windowLayerList.add(root.packageName)
                 }
             }
         }
@@ -198,6 +213,10 @@ fun List<AccessibilityNodeInfo>.filter(packageName: List<String>): List<Accessib
 
 /**拿到高度最高的节点*/
 fun List<AccessibilityNodeInfo>.mainNode(): AccessibilityNodeInfo? {
+    if (size == 1) {
+        return firstOrNull()
+    }
+
     var result: AccessibilityNodeInfo? = null
     var maxHeight = 0
     var maxWidth = 0
