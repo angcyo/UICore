@@ -75,16 +75,16 @@ open class AutoParseAction : BaseAccessibilityAction() {
         nodeList: List<AccessibilityNodeInfo>
     ): Boolean {
 
-        if (checkOtherEventCount.isMaxLimit()) {
-            //超限制
-            return parseHandleAction(service, nodeList, actionBean?.check?.otherOut)
-        }
-
-        val handleResult: Boolean = parseHandleAction(service, nodeList, actionBean?.check?.other)
+        var handleResult: Boolean = parseHandleAction(service, nodeList, actionBean?.check?.other)
 
         if (!handleResult) {
             //处理没有成功, 再进行计数统计
-            super.checkOtherEvent(service, event, nodeList)
+            handleResult = super.checkOtherEvent(service, event, nodeList)
+        }
+
+        if (checkOtherEventCount.isMaxLimit()) {
+            //超限制
+            handleResult = parseHandleAction(service, nodeList, actionBean?.check?.otherOut)
         }
 
         return handleResult
