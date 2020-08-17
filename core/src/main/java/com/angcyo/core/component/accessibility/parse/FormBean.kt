@@ -1,5 +1,6 @@
 package com.angcyo.core.component.accessibility.parse
 
+import com.angcyo.core.component.accessibility.AutoParseInterceptor
 import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.core.component.accessibility.action.ActionInterruptedException
 import com.angcyo.http.POST
@@ -7,6 +8,7 @@ import com.angcyo.http.base.jsonObject
 import com.angcyo.http.post
 import com.angcyo.http.rx.observer
 import com.angcyo.library.L
+import com.angcyo.library.ex.string
 import com.angcyo.library.utils.UrlParse
 import com.google.gson.JsonElement
 import io.reactivex.disposables.Disposable
@@ -94,6 +96,9 @@ fun FormBean.request(
             }
         }.observer {
             onObserverEnd = { data, error ->
+                error?.let {
+                    AutoParseInterceptor.log(it.string())
+                }
                 result(data, error)
                 L.d(data, error)
             }
