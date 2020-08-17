@@ -41,20 +41,27 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         var defaultIntervalDelay: Long = -1
 
         init {
-            defaultIntervalDelay = if (isDebugType()) {
-                when (Device.performanceLevel()) {
-                    Device.PERFORMANCE_HIGH -> 600
-                    Device.PERFORMANCE_MEDIUM -> 800
-                    Device.PERFORMANCE_LOW -> 1_200
-                    else -> 1_500
-                }
-            } else {
-                when (Device.performanceLevel()) {
-                    Device.PERFORMANCE_HIGH -> 800
-                    Device.PERFORMANCE_MEDIUM -> 1200
-                    Device.PERFORMANCE_LOW -> 1_500
-                    else -> 2_000
-                }
+//            defaultIntervalDelay = if (isDebugType()) {
+//                when (Device.performanceLevel()) {
+//                    Device.PERFORMANCE_HIGH -> 600
+//                    Device.PERFORMANCE_MEDIUM -> 800
+//                    Device.PERFORMANCE_LOW -> 1_200
+//                    else -> 1_500
+//                }
+//            } else {
+//                when (Device.performanceLevel()) {
+//                    Device.PERFORMANCE_HIGH -> 800
+//                    Device.PERFORMANCE_MEDIUM -> 1200
+//                    Device.PERFORMANCE_LOW -> 1_500
+//                    else -> 2_000
+//                }
+//            }
+
+            defaultIntervalDelay = when (Device.performanceLevel()) {
+                Device.PERFORMANCE_HIGH -> 800
+                Device.PERFORMANCE_MEDIUM -> 1200
+                Device.PERFORMANCE_LOW -> 1_500
+                else -> 2_000
             }
         }
     }
