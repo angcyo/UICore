@@ -133,11 +133,11 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
         //actionList.getOrNull(actionIndex)
         return super.checkLeave(service, mainPackageName, nodeList).apply {
             if (filterPackageNameList.isNotEmpty()) {
-                log("离开目标:$filterPackageNameList ${LTime.time(_lastLeaveTime)} 停留在:$_lastLeavePackageName")
+                interceptorLog?.log("离开目标:$filterPackageNameList ${LTime.time(_lastLeaveTime)} 停留在:$_lastLeavePackageName")
 
                 if (nowTime() - _lastLeaveTime > 10 * 60 * 1000) {
                     //离开停留在同一个界面时间超过10分钟,强制重新开始
-                    log("超过10分钟,即将重新开始!")
+                    interceptorLog?.log("超过10分钟,即将重新开始!")
                     _lastLeaveTime = 0
                     restart()
                 }

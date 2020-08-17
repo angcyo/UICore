@@ -377,7 +377,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         interceptorLog?.log(buildString {
             append(this@BaseAccessibilityInterceptor.hashCode())
             append("[$actionIndex/${actionList.size}]")
-            append(" 拦截器,下一个周期在 ${intervalDelay}ms!")
+            append(" 拦截器,下一个周期在 ${delay}ms! $intervalDelay")
         })
     }
 
