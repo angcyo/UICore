@@ -67,16 +67,21 @@ fun File.copyTo(path: String) {
     copyTo(File(path), true)
 }
 
-fun String.file(): File {
-    return File(this)
+fun String.file(): File? {
+    return try {
+        File(this)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 }
 
 fun String?.fileSize(): Long {
     if (TextUtils.isEmpty(this)) {
         return 0L
     }
-    val file = this!!.file()
-    return if (file.exists()) {
+    val file = this?.file()
+    return if (file?.exists() == true) {
         file.length()
     } else {
         0L
@@ -248,3 +253,10 @@ fun File.shareVideo(context: Context = app(), content: String?) {
 fun File?.isFile(): Boolean = this?.isFile == true
 
 fun File?.isFolder(): Boolean = this?.isDirectory == true
+
+fun File?.readText() = try {
+    this?.readText(Charsets.UTF_8)
+} catch (e: Exception) {
+    e.printStackTrace()
+    e.message ?: ""
+}

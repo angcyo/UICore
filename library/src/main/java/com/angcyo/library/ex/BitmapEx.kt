@@ -115,7 +115,7 @@ fun InputStream.bitmapSuffix(): String {
 
 /**从流中获取图片类型*/
 fun String.bitmapSuffix(): String {
-    return file().inputStream().bitmapSuffix()
+    return file()?.inputStream()?.bitmapSuffix() ?: "jpg"
 }
 
 /**从流中获取图片宽高*/
@@ -137,7 +137,7 @@ fun InputStream.bitmapSize(): IntArray {
 }
 
 fun String.bitmapSize(): IntArray {
-    return file().inputStream().bitmapSize()
+    return file()?.inputStream()?.bitmapSize() ?: intArrayOf(-1, -1)
 }
 
 /**保存图片*/
@@ -146,7 +146,7 @@ fun Bitmap.save(
     format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
     quality: Int = 90
 ): File {
-    return path.file().apply {
+    return path.file()!!.apply {
         outputStream().use {
             compress(format, quality, it)
         }

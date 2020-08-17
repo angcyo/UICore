@@ -227,7 +227,7 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
             builder.append(height)
             builder.append(".jpg")
             val outputFile =
-                filePath(Constant.CAMERA_FOLDER_NAME, fileNameUUID(builder.toString())).file()
+                filePath(Constant.CAMERA_FOLDER_NAME, fileNameUUID(builder.toString())).file()!!
             var oldBitmap = bitmap
             //水印处理
             bitmap = callback!!.onTakePhotoBefore(bitmap, width, height)
