@@ -127,18 +127,18 @@ class DslIntent {
         }
 
         /**打开APP详情界面*/
-        fun toAppDetail(context: Context = app()) {
+        fun toAppDetail(context: Context = app(), packageName: String = app().packageName) {
             val intent = Intent()
             if (Build.VERSION.SDK_INT >= 9) {
                 intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                intent.data = Uri.fromParts("package", context.packageName, null)
+                intent.data = Uri.fromParts("package", packageName, null)
             } else if (Build.VERSION.SDK_INT <= 8) {
                 intent.action = Intent.ACTION_VIEW
                 intent.setClassName(
                     "com.android.settings",
                     "com.android.settings.InstalledAppDetails"
                 )
-                intent.putExtra("com.android.settings.ApplicationPkgName", context.packageName)
+                intent.putExtra("com.android.settings.ApplicationPkgName", packageName)
             }
             intent.baseConfig(context)
             context.startActivity(intent)
@@ -399,3 +399,6 @@ fun String.appBean(context: Context = app()): AppBean? {
         null
     }
 }
+
+/**跳转应用详情页面*/
+fun String.toAppDetail(context: Context = app()) = DslIntent.toAppDetail(context, this)

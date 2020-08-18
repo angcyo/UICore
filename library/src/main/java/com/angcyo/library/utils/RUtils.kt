@@ -17,6 +17,7 @@ import android.telephony.TelephonyManager
 import android.view.Surface
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.ex.patternList
 import com.angcyo.library.toast
 import java.io.BufferedReader
 import java.io.File
@@ -291,6 +292,41 @@ object RUtils {
         }
         return true
     }
+
+    /**通过命令获取系统属性
+     * https://www.jianshu.com/p/7a8eb5cc35b0
+     * */
+    fun getSystemProperty(propName: String): String? {
+        val line: String
+        var input: BufferedReader? = null
+        try {
+            val p = Runtime.getRuntime().exec("getprop $propName")
+            input = BufferedReader(InputStreamReader(p.inputStream), 1024)
+            line = input.readLine()
+            input.close()
+        } catch (ex: IOException) {
+            L.i("Unable to read sysprop $propName", ex)
+            return null
+        } finally {
+            if (input != null) {
+                try {
+                    input.close()
+                } catch (e: IOException) {
+                    L.i("Exception while closing InputStream", e)
+                }
+            }
+        }
+        return line
+    }
+
+    /**获取miui系统版本号
+     * V5 V7 V12*/
+    fun getMIUIVersion(): Long? {
+        return getLongNumFromStr("ro.miui.ui.version.name".getSystemProperty())
+    }
+
+    fun getLongNumFromStr(str: String?): Long? =
+        str?.patternList("\\d+")?.firstOrNull()?.toLongOrNull()
 }
 
 /** 检查APK是否安装 */
@@ -384,3 +420,5 @@ fun Context.getIMEI(): String? {
     }
     return imei
 }
+
+fun String.getSystemProperty() = RUtils.getSystemProperty(this)
