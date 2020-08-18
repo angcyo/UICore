@@ -64,11 +64,11 @@ open class DslSpanTextView : AppCompatTextView {
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
+        maxLineDelegate.checkMaxShowLine(this)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        maxLineDelegate.checkMaxShowLine(this)
     }
 
     /**设置最大显示行数*/

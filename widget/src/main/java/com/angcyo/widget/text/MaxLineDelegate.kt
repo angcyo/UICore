@@ -165,7 +165,7 @@ class MaxLineDelegate {
                     }
                     //setMeasuredDimension(getMeasuredWidth(), (int) (getMeasuredHeight() + density() * 140));
 
-                    L.i("")
+                    //L.i("")
 
                     textView.text = targetText
                 }
