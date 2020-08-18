@@ -151,6 +151,9 @@ abstract class BaseAccessibilityAction {
                         rollbackPrev = true
                     } else {
                         if (parseHandleAction(service, nodeList, constraintList)) {
+                            //处理了回滚操作, 清空计数
+                            checkEventOutCount.clear()
+                            rollbackCount.clear()
                             rollbackPrev = false
                         }
                     }

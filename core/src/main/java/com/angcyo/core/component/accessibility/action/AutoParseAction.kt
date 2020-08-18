@@ -85,6 +85,10 @@ open class AutoParseAction : BaseAccessibilityAction() {
         if (checkOtherEventCount.isMaxLimit()) {
             //超限制
             handleResult = parseHandleAction(service, nodeList, actionBean?.check?.otherOut)
+            if (handleResult) {
+                //处理了otherEvent, 清空计数
+                checkOtherEventCount.clear()
+            }
         }
 
         return handleResult
