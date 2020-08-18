@@ -24,7 +24,7 @@ object QueueManager {
     }
 
     @Synchronized
-    fun add(run: (next: QueueNext) -> Unit) {
+    fun add(run: QueueRun) {
         val doNext: QueueNext = {
             _runNext(it)
         }
@@ -54,9 +54,18 @@ object QueueManager {
     }
 }
 
+/**触发队列下一个回调声明*/
 typealias QueueNext = (Throwable?) -> Unit
+
+/**队列运行回调声明*/
+typealias QueueRun = (next: QueueNext) -> Unit
 
 class QueueTask(
     var result: QueueNext /*执行完毕后的通知回调*/,
     val onRun: () -> Unit /*执行*/
 )
+
+/**入队, 顺序执行*/
+fun queue(run: QueueRun) {
+    QueueManager.add(run)
+}
