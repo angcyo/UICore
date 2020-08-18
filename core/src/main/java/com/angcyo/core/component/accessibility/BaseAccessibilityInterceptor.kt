@@ -184,7 +184,8 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             //所有包名都需要
             handleFilterNode(service, findNodeInfoList)
         } else {
-            _isInFilterPackageNameApp = filterPackageNameList.contains(mainPackageName)
+            _isInFilterPackageNameApp = filterPackageNameList.contains(mainPackageName) ||
+                    findNodeInfoList.find { filterPackageNameList.contains(it.packageName) } != null
 
             //需要处理包名对应节点的列表
             val needNodeList = findNodeInfoList.filter(filterPackageNameList)//过滤后的应用程序节点列表
@@ -647,7 +648,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                 val prevAction = actionList.getOrNull(actionIndex - 1)
                 delay = prevAction?.getInterceptorIntervalDelay() ?: -1
                 if (delay < 0) {
-                    initialIntervalDelay
+                    delay = initialIntervalDelay
                 }
             }
 
