@@ -15,7 +15,8 @@ data class ConditionBean(
      * [2] 数量等于2
      * [=2] 数量等于2
      * [<3] 数量小于3
-     * null/空字符 忽略此条件
+     * 空字符 表示直接过
+     * null 忽略此条件
      * */
     var childCount: String? = null,
 

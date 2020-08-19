@@ -567,33 +567,37 @@ open class AutoParser {
 
         //child 数量条件
         val childCount = condition.childCount
-        if (!childCount.isNullOrEmpty()) {
-            val num = childCount.getLongNum()?.toInt()
-            num?.let {
-                if (childCount.startsWith(">=")) {
-                    if (node.childCount >= num) {
-                        isGet = true
-                    }
-                } else if (childCount.startsWith(">")) {
-                    if (node.childCount > num) {
-                        isGet = true
-                    }
-                } else if (childCount.startsWith("<=")) {
-                    if (node.childCount <= num) {
-                        isGet = true
-                    }
-                } else if (childCount.startsWith("<")) {
-                    if (node.childCount < num) {
-                        isGet = true
-                    }
-                } else {
-                    if (node.childCount == num) {
-                        isGet = true
+        if (childCount != null) {
+            if (childCount.isEmpty()) {
+                isGet = true
+            } else {
+                val num = childCount.getLongNum()?.toInt()
+                num?.let {
+                    if (childCount.startsWith(">=")) {
+                        if (node.childCount >= num) {
+                            isGet = true
+                        }
+                    } else if (childCount.startsWith(">")) {
+                        if (node.childCount > num) {
+                            isGet = true
+                        }
+                    } else if (childCount.startsWith("<=")) {
+                        if (node.childCount <= num) {
+                            isGet = true
+                        }
+                    } else if (childCount.startsWith("<")) {
+                        if (node.childCount < num) {
+                            isGet = true
+                        }
+                    } else {
+                        if (node.childCount == num) {
+                            isGet = true
+                        }
                     }
                 }
-            }
-            if (!isGet) {
-                return false
+                if (!isGet) {
+                    return false
+                }
             }
         }
 

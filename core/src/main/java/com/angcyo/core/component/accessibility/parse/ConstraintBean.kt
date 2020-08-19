@@ -35,8 +35,8 @@ data class ConstraintBean(
      * 上述[textList]字段, 对应的是否是id, 否则就是文本.一一对应的关系.
      * 可以是 完整的id, 也可以是 gj4.
      * 完整的id应该是: com.ss.android.ugc.aweme:id/gj4
-     *
      * ids 列表中, 只要满足任意一个约束条件, 即视为发现目标
+     * [1] 表示[textList]对应索引位置的文本是id
      * */
     var idList: List<Int>? = null,
 
