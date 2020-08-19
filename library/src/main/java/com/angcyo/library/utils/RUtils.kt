@@ -422,3 +422,5 @@ fun Context.getIMEI(): String? {
 }
 
 fun String.getSystemProperty() = RUtils.getSystemProperty(this)
+
+fun String?.getLongNum() = RUtils.getLongNumFromStr(this)

@@ -138,6 +138,16 @@ data class ConstraintBean(
      * 如果匹配到, 则中断后续的匹配规则. 如果全部未匹配到, 则直接使用本身 */
     var getTextRegexList: List<String>? = null,
 
+    /**筛选条件, 满足任意一条即可通过
+     * 通过上述约束条件, 获取到的节点集合, 再次通过此条件约束,筛选出符合条件的节点
+     * 在[after]之前过滤, [after]会使用筛选后的节点集合
+     * */
+    var conditionList: List<ConditionBean>? = null,
+
+    /**当节点集合不为空, 但是通过条件约束后变为空集合后, 触发的动作集合.
+     * [actionList]*/
+    var noActionList: List<String>? = null,
+
     /**上述匹配规则, 匹配之后, 获取到的节点列表当做根节点, 再一次匹配.
      * 只有匹配规则会生效, 非控制匹配规则的属性不会生效
      * */
@@ -207,4 +217,14 @@ fun ConstraintBean.isConstraintEmpty(): Boolean {
             rectList == null &&
             stateList == null &&
             pathList == null
+}
+
+/**仅是path约束, 那么直接取RootNode进行判断*/
+fun ConstraintBean.isOnlyPathConstraint(): Boolean {
+    return textList == null &&
+            wordTextIndexList == null &&
+            clsList == null &&
+            rectList == null &&
+            stateList == null &&
+            pathList != null
 }

@@ -6,9 +6,12 @@ import android.view.accessibility.AccessibilityNodeInfo
 import androidx.collection.ArrayMap
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
+import com.angcyo.core.component.accessibility.parse.ConditionBean
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
 import com.angcyo.core.component.accessibility.parse.isConstraintEmpty
+import com.angcyo.core.component.accessibility.parse.isOnlyPathConstraint
 import com.angcyo.library.ex.isListEmpty
+import com.angcyo.library.utils.getLongNum
 import kotlin.math.max
 import kotlin.math.min
 
@@ -110,24 +113,21 @@ open class AutoParser {
         autoParseAction: AutoParseAction,
         nodeList: List<AccessibilityNodeInfo>,
         constraintList: List<ConstraintBean>,
-        onTargetResult: (List<Pair<ConstraintBean, List<AccessibilityNodeInfoCompat>>>) -> Unit = {}
+        onTargetResult: (List<ParseResult>) -> Unit = {}
     ): Boolean {
 
-        val result: MutableList<Pair<ConstraintBean, List<AccessibilityNodeInfoCompat>>> =
-            mutableListOf()
-
-        var targetList: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
+        val result: MutableList<ParseResult> = mutableListOf()
 
         constraintList.forEach { constraint ->
-            findConstraintNode(autoParseAction, constraint, targetList, service, nodeList)
-            if (targetList.isNotEmpty()) {
-                result.add(constraint to targetList)
-                targetList = mutableListOf()
+            val itemResult = ParseResult(constraint)
+            findConstraintNode(service, autoParseAction, nodeList, itemResult)
+            if (itemResult.nodeList.isNotEmpty()) {
+                result.add(itemResult)
             }
         }
 
         if (result.isNotEmpty()) {
-            //通过id, 已经找到了目标
+            //通过约束, 找到了目标
 
             onTargetResult(result)
             return true
@@ -138,43 +138,41 @@ open class AutoParser {
 
     /**查找满足约束的Node*/
     open fun findConstraintNode(
-        autoParseAction: AutoParseAction,
-        constraintBean: ConstraintBean,
-        result: MutableList<AccessibilityNodeInfoCompat> = mutableListOf(),
         service: AccessibilityService,
-        nodeList: List<AccessibilityNodeInfo>
-    ): List<AccessibilityNodeInfoCompat> {
-        val rootNodeInfo: AccessibilityNodeInfo = nodeList.mainNode() ?: return result
+        autoParseAction: AutoParseAction,
+        nodeList: List<AccessibilityNodeInfo>,
+        parseResult: ParseResult
+    ) {
+        val rootNodeInfo: AccessibilityNodeInfo = nodeList.mainNode() ?: return
 
         //存储一下跟node的矩形, 方便用于坐标比例计算
         rootNodeInfo.getBoundsInScreen(_rootNodeRect)
 
-        if (constraintBean.isConstraintEmpty()) {
+        if (parseResult.constraint.isConstraintEmpty()) {
             //空约束返回[rootNodeInfo]
-            result.add(rootNodeInfo.wrap())
-            return result
+            parseResult.nodeList.add(rootNodeInfo.wrap())
+            return
         }
 
-        result.addAll(
-            //查找所有
-            findConstraintNodeByRootNode(
-                autoParseAction,
-                constraintBean,
-                rootNodeInfo,
-                service
-            )
+        //查找所有
+        findConstraintNodeByRootNode(
+            service,
+            autoParseAction,
+            rootNodeInfo,
+            parseResult
         )
-
-        return result
     }
 
     /**在指定的根节点[rootNodeInfo]下, 匹配节点*/
     open fun findConstraintNodeByRootNode(
+        service: AccessibilityService,
         autoParseAction: AutoParseAction,
-        constraintBean: ConstraintBean,
         rootNodeInfo: AccessibilityNodeInfo,
-        service: AccessibilityService
-    ): List<AccessibilityNodeInfoCompat> {
+        parseResult: ParseResult
+    ) {
+
+        //约束条件
+        val constraintBean: ConstraintBean = parseResult.constraint
 
         //返回值
         val result: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
@@ -187,21 +185,32 @@ open class AutoParser {
 
         if (text == null) {
             //不约束文本, 单纯约束其他规则
-            rootNodeInfo.findNode(result) { nodeInfoCompat ->
-                if (match(constraintBean, nodeInfoCompat, 0)) {
-                    if (!constraintBean.pathList.isNullOrEmpty()) {
-                        parseConstraintPath(
-                            constraintBean,
-                            constraintBean.pathList?.getOrNull(0),
-                            nodeInfoCompat,
-                            result
-                        )
-                        -1
+            if (constraintBean.isOnlyPathConstraint()) {
+                //单纯的path约束
+                parseConstraintPath(
+                    constraintBean,
+                    constraintBean.pathList?.getOrNull(0),
+                    rootNodeWrap,
+                    result
+                )
+            } else {
+                //其他约束组合
+                rootNodeInfo.findNode(result) { nodeInfoCompat ->
+                    if (match(constraintBean, nodeInfoCompat, 0)) {
+                        if (!constraintBean.pathList.isNullOrEmpty()) {
+                            parseConstraintPath(
+                                constraintBean,
+                                constraintBean.pathList?.getOrNull(0),
+                                nodeInfoCompat,
+                                result
+                            )
+                            -1
+                        } else {
+                            1
+                        }
                     } else {
-                        1
+                        -1
                     }
-                } else {
-                    -1
                 }
             }
         } else {
@@ -297,26 +306,55 @@ open class AutoParser {
             }
         }
 
+        //条件过滤筛选
+        if (!constraintBean.conditionList.isNullOrEmpty()) {
+            //需要条件筛选
+            val conditionNodeList: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
+            result.forEach { node ->
+                for (condition in constraintBean.conditionList!!) {
+                    val isGet = parseCondition(node, condition)
+                    if (isGet) {
+                        //筛选通过
+                        conditionNodeList.add(node)
+                        break
+                    }
+                }
+            }
+            parseResult.conditionNodeList = conditionNodeList
+        }
+
         if (constraintBean.after == null ||
             constraintBean.after?.isConstraintEmpty() == true ||
             result.isEmpty()
         ) {
-            return result
+            if (result.isNotEmpty()) {
+                parseResult.nodeList.addAll(result)
+            }
         } else {
             //还有[after]约束
-            val resultAfter: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
-            result.forEach {
+            val afterNodeList =
+                if (parseResult.conditionNodeList == null) result else parseResult.conditionNodeList!!
+
+            afterNodeList.forEach { node ->
                 //继续查找
-                resultAfter.addAll(
-                    findConstraintNodeByRootNode(
-                        autoParseAction,
-                        constraintBean.after!!,
-                        it.unwrap(),
-                        service
-                    )
+                val nextParseResult = ParseResult(constraintBean.after!!)
+                findConstraintNodeByRootNode(
+                    service,
+                    autoParseAction,
+                    node.unwrap(),
+                    nextParseResult
                 )
+                parseResult.nodeList.addAll(nextParseResult.nodeList)
+
+                //条件约束筛选后的节点集合
+                if (parseResult.conditionNodeList == null) {
+                    parseResult.conditionNodeList = nextParseResult.conditionNodeList
+                } else {
+                    parseResult.conditionNodeList?.addAll(
+                        nextParseResult.conditionNodeList ?: emptyList()
+                    )
+                }
             }
-            return resultAfter
         }
     }
 
@@ -521,5 +559,78 @@ open class AutoParser {
                 else -> null
             }
         }
+    }
+
+    /**条件过滤, 返回值表示过滤成功*/
+    open fun parseCondition(node: AccessibilityNodeInfoCompat, condition: ConditionBean): Boolean {
+        var isGet = false
+
+        //child 数量条件
+        val childCount = condition.childCount
+        if (!childCount.isNullOrEmpty()) {
+            val num = childCount.getLongNum()?.toInt()
+            num?.let {
+                if (childCount.startsWith(">=")) {
+                    if (node.childCount >= num) {
+                        isGet = true
+                    }
+                } else if (childCount.startsWith(">")) {
+                    if (node.childCount > num) {
+                        isGet = true
+                    }
+                } else if (childCount.startsWith("<=")) {
+                    if (node.childCount <= num) {
+                        isGet = true
+                    }
+                } else if (childCount.startsWith("<")) {
+                    if (node.childCount < num) {
+                        isGet = true
+                    }
+                } else {
+                    if (node.childCount == num) {
+                        isGet = true
+                    }
+                }
+            }
+            if (!isGet) {
+                return false
+            }
+        }
+
+        //包含文本
+        if (condition.containsText != null) {
+            var isHave = true
+            condition.containsText?.forEach {
+                if (!node.haveText(it)) {
+                    isHave = false
+                }
+            }
+            if (isHave) {
+                isGet = true
+            }
+
+            if (!isGet) {
+                return false
+            }
+        }
+
+        //不包含文本
+        if (condition.notContainsText != null) {
+            var isHave = false
+            condition.notContainsText?.forEach {
+                if (node.haveText(it)) {
+                    isHave = true
+                }
+            }
+            if (isHave) {
+                isGet = false
+            }
+
+            if (!isGet) {
+                return false
+            }
+        }
+
+        return isGet
     }
 }

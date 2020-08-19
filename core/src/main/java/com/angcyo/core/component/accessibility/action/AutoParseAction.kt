@@ -108,11 +108,11 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
         if (constraintList != null) {
             autoParser.parse(service, this, nodeList, constraintList) {
-                for (pair in it) {
+                for (parseResult in it) {
 
                     //执行action
                     val handleResult: HandleResult =
-                        handleAction(service, pair.first, pair.second, onGetTextResult)
+                        handleAction(service, parseResult, onGetTextResult)
 
                     //执行结果
                     result = handleResult.result || result
@@ -258,13 +258,25 @@ open class AutoParseAction : BaseAccessibilityAction() {
      * */
     open fun handleAction(
         service: BaseAccessibilityService,
-        constraintBean: ConstraintBean,
-        nodeList: List<AccessibilityNodeInfoCompat>,
+        parseResult: ParseResult,
         onGetTextResult: (List<CharSequence>) -> Unit
     ): HandleResult {
 
+        val constraintBean: ConstraintBean = parseResult.constraint
+        val nodeList = parseResult.nodeList
+
         //需要执行的动作
-        val actionList: List<String>? = constraintBean.actionList
+        val actionList: List<String>? = if (parseResult.conditionNodeList == null) {
+            /*未开启筛选条件*/
+            constraintBean.actionList
+        } else {
+            if (parseResult.conditionNodeList?.isEmpty() == true) {
+                //筛选后, 节点为空
+                constraintBean.noActionList
+            } else {
+                constraintBean.actionList
+            }
+        }
 
         //获取到的文件列表
         val getTextResultList: MutableList<CharSequence> = mutableListOf()
@@ -293,13 +305,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
         }
 
         if (actionList.isListEmpty()) {
-            handleResult.result = handleNodeList.clickAll {
-                handleActionLog(buildString {
-                    append("点击[")
-                    it.logText(this)
-                    append("]")
-                })
-            }
+            handleActionLog("未指定需要指定的指令")
+            handleResult.result = true
         } else {
             actionList?.forEach { act ->
                 if (act.isEmpty()) {
@@ -353,7 +360,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             handleNodeList.forEach {
                                 value = it.getClickParent()?.click() ?: false || value
                             }
-                            handleActionLog("点击节点[${handleNodeList.firstOrNull()?.text()}]:$value")
+                            val first = handleNodeList.firstOrNull()
+                            handleActionLog("点击节点[${first?.text() ?: first?.bounds()}]:$value")
                             value
                         }
                         ConstraintBean.ACTION_CLICK2, ConstraintBean.ACTION_CLICK3 -> {
