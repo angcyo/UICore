@@ -119,7 +119,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
                     if (handleResult.finish) {
                         //直接完成
-                        result = false
+                        result = true
                         doActionFinish()
                         break
                     }
@@ -141,6 +141,10 @@ open class AutoParseAction : BaseAccessibilityAction() {
         nodeList: List<AccessibilityNodeInfo>
     ) {
         super.doAction(service, event, nodeList)
+        if (doActionCount.isMaxLimit()) {
+            return
+        }
+
         val constraintList: List<ConstraintBean>? = actionBean?.check?.handle
         if (constraintList == null) {
             doActionFinish(ActionException("handleConstraint is null."))

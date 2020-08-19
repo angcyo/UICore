@@ -494,11 +494,11 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         nodeList: List<AccessibilityNodeInfo>
     ) {
         if (!action.isActionStart()) {
-            interceptorLog?.log("${action.simpleHash()} [${action.actionTitle}] 开始.")
+            interceptorLog?.log("start[${actionIndex}/${actionList.size}]->${action.simpleHash()} [${action.actionTitle}]")
             action.onActionStart(this)
             action._actionFinish = {
                 //action执行完成
-                interceptorLog?.log("${action.simpleHash()} [${action.actionTitle}] ${if (it == null) "完成" else it.message}:${actionIndex}/${actionList.size}")
+                interceptorLog?.log("finish[${actionIndex}/${actionList.size}]->${action.simpleHash()} [${action.actionTitle}] ${if (it == null) "完成" else it.message}")
 
                 if (it == null || it is ActionInterruptedNextException) {
                     //[BaseAccessibilityAction] 被中断时, 允许继续玩下执行

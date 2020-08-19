@@ -178,7 +178,24 @@ abstract class BaseAccessibilityAction {
         doActionCount.doCount()
 
         if (doActionCount.isMaxLimit()) {
-            doActionFinish(ActionException("[doAction]执行次数, 已达到最大限制:${doActionCount.maxCountLimit}"))
+
+            //默认直接异常处理
+            fun default() {
+                doActionFinish(ActionException("[doAction]执行次数, 已达到最大限制:${doActionCount.maxCountLimit}"))
+            }
+
+            if (this is AutoParseAction && this.actionBean?.check?.doAction?.isNotEmpty() == true) {
+                val handleResult = parseHandleAction(service, nodeList, actionBean?.check?.doAction)
+                if (handleResult) {
+                    //处理了otherEvent, 清空计数
+                    doActionCount.clear()
+                    doActionFinish()
+                } else {
+                    default()
+                }
+            } else {
+                default()
+            }
         }
     }
 
