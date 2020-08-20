@@ -13,8 +13,8 @@ import kotlin.math.max
 
 /**
  * 约束4个边距离边界的比例. 那么当拖拽结束后, 就会被限制在这个边界上.
- * 取值小于等于0, 表示强制约束比例到此值. (距离边界的距离)
- * 取值大于0, 表示最小约束比例到此值. 也就是 到达对应边界距离的比例至少是此值
+ * 取值小于等于0(表示像素值), 表示强制约束比例到此值. (距离边界的距离)
+ * 取值大于0(表示比例值), 表示最小约束比例到此值. 也就是 到达对应边界距离的比例至少是此值
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/07/16
@@ -36,13 +36,13 @@ class DragRectFConstraint(val rectF: RectF) : IDragConstraint {
 
         val endX: Float = if (position.gravity.isLeft()) {
             if (rectF.left <= 0) {
-                rectF.left.abs()
+                rectF.left.abs() * 1f / container.getContainerRect().width()
             } else {
                 max(rectF.left, position.offsetX)
             }
         } else {
             if (rectF.right <= 0) {
-                rectF.right.abs()
+                rectF.right.abs() * 1f / container.getContainerRect().width()
             } else {
                 max(rectF.right, position.offsetX)
             }
@@ -50,13 +50,13 @@ class DragRectFConstraint(val rectF: RectF) : IDragConstraint {
 
         val endY: Float = if (position.gravity.isTop()) {
             if (rectF.top <= 0) {
-                rectF.top.abs()
+                rectF.top.abs() * 1f / container.getContainerRect().height()
             } else {
                 max(rectF.top, position.offsetY)
             }
         } else {
             if (rectF.bottom <= 0) {
-                rectF.bottom.abs()
+                rectF.bottom.abs() * 1f / container.getContainerRect().height()
             } else {
                 max(rectF.bottom, position.offsetY)
             }

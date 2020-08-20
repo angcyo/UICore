@@ -27,6 +27,8 @@ import com.angcyo.widget.base.screenRect
  */
 class WindowContainer(context: Context) : BaseContainer(context) {
 
+    val _containerRect: Rect = Rect()
+
     val wm: WindowManager get() = context.getSystemService(WINDOW_SERVICE) as WindowManager
 
     //permission denied for window type 2001
@@ -178,5 +180,10 @@ class WindowContainer(context: Context) : BaseContainer(context) {
 
             updateLayout(layer)
         }
+    }
+
+    override fun getContainerRect(): Rect {
+        _containerRect.set(0, 0, _screenWidth, _screenHeight)
+        return _containerRect
     }
 }

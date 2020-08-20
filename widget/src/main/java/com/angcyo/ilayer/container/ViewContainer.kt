@@ -1,5 +1,6 @@
 package com.angcyo.ilayer.container
 
+import android.graphics.Rect
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,8 @@ import com.angcyo.widget.base.mW
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 open class ViewContainer(val parent: ViewGroup) : BaseContainer(parent.context) {
+
+    val _containerRect: Rect = Rect()
 
     override fun onAddRootView(layer: ILayer, rootView: View) {
         parent.addView(rootView)
@@ -90,5 +93,10 @@ open class ViewContainer(val parent: ViewGroup) : BaseContainer(parent.context) 
         } else {
             L.w("不支持的容器[${parent.className()}]")
         }
+    }
+
+    override fun getContainerRect(): Rect {
+        _containerRect.set(0, 0, parent.mW(), parent.mH())
+        return _containerRect
     }
 }
