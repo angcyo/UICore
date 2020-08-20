@@ -717,6 +717,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                     accessibilityInterceptor?.let {
                                         it.intervalDelay = getInterceptorIntervalDelay(interval)
                                         value = true
+                                        handleActionLog("指定下一个周期在[${it.intervalDelay}ms]:$value")
                                     }
                                 }
                             }
@@ -728,9 +729,13 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                 val actionSize = accessibilityInterceptor?.actionList?.size ?: 0
                                 if (this in 1..actionSize.toLong()) {
                                     AccessibilityWindowLayer.hideToCount = this
+
+                                    handleActionLog("隐藏浮窗Count[${this}]:true")
                                 } else {
                                     //指定需要隐藏的时长, 毫秒
                                     AccessibilityWindowLayer.hideToTime = this + nowTime()
+
+                                    handleActionLog("隐藏浮窗Time[${AccessibilityWindowLayer.hideToTime}]:true")
                                 }
                             }
                             true
