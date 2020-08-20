@@ -11,6 +11,7 @@ import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.core.component.accessibility.action.ActionInterruptedNextException
 import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.action.PermissionsAction
+import com.angcyo.core.component.accessibility.base.AccessibilityWindowLayer
 import com.angcyo.core.component.accessibility.parse.ActionBean
 import com.angcyo.library.L
 import com.angcyo.library.component.dslNotify
@@ -543,6 +544,8 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     /**下一个[Action]*/
     fun actionNext(service: BaseAccessibilityService) {
         actionIndex++
+
+        AccessibilityWindowLayer.hideToCount--
 
         if (enableInterval) {
             //no op, 等待下一个周期回调

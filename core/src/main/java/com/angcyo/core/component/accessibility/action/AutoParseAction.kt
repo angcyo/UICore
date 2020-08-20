@@ -8,6 +8,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
+import com.angcyo.core.component.accessibility.base.AccessibilityWindowLayer
 import com.angcyo.core.component.accessibility.parse.*
 import com.angcyo.http.rx.doBack
 import com.angcyo.library._screenHeight
@@ -720,6 +721,19 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                 }
                             }
                             value
+                        }
+                        ConstraintBean.ACTION_HIDE_WINDOW -> {
+                            AccessibilityWindowLayer.hide()
+                            arg?.toLongOrNull()?.apply {
+                                val actionSize = accessibilityInterceptor?.actionList?.size ?: 0
+                                if (this in 1..actionSize.toLong()) {
+                                    AccessibilityWindowLayer.hideToCount = this
+                                } else {
+                                    //指定需要隐藏的时长, 毫秒
+                                    AccessibilityWindowLayer.hideToTime = this + nowTime()
+                                }
+                            }
+                            true
                         }
                         else -> {
                             handleActionLog("未识别的指令[$action:$arg]:true")

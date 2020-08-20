@@ -17,6 +17,7 @@ import com.angcyo.ilayer.container.WindowContainer
 import com.angcyo.library.*
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.isDebugType
+import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.openApp
 import com.angcyo.widget.progress.CircleLoadingView
 
@@ -34,6 +35,12 @@ object AccessibilityWindowLayer : ILayer() {
     var onSaveWindowLog: ((log: String) -> Unit)? = null
 
     val _windowContainer = WindowContainer(app())
+
+    /**浮窗需要隐藏到什么时间, 13位时间戳*/
+    var hideToTime: Long = -1
+
+    /**还需要隐藏的次数, >0生效*/
+    var hideToCount: Long = -1
 
     init {
         iLayerLayoutId = R.layout.lib_layout_accessibility_window
@@ -58,6 +65,21 @@ object AccessibilityWindowLayer : ILayer() {
         duration: Long = -1,
         textColor: Int = Color.WHITE
     ) {
+
+        if (hideToCount > 0) {
+            //仍然需要隐藏浮窗
+            hide()
+            return
+        }
+
+        val nowTime = nowTime()
+
+        if (nowTime <= hideToTime) {
+            //仍然需要隐藏浮窗
+            hide()
+            return
+        }
+
         renderLayer = {
             //常亮
             itemView.keepScreenOn = true

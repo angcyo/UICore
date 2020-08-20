@@ -195,6 +195,13 @@ data class ConstraintBean(
          * */
         const val ACTION_SLEEP = "sleep"
 
+        /**
+         * 隐藏浮窗, 可以指定需要隐藏多久, 如果不指定隐藏时长, 则下次触发显示时立马会显示
+         * [:1] 表示隐藏浮窗到下一个action. 超过actionList数量时, 就会变成了毫秒时间
+         * [:5000] 表示隐藏浮窗5秒
+         * */
+        const val ACTION_HIDE_WINDOW = "hideWindow"
+
         //需要指定的状态 [state]
         const val STATE_CLICKABLE = "clickable" //具备可点击
         const val STATE_NOT_CLICKABLE = "not_clickable" //具备不可点击
