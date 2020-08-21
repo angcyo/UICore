@@ -15,6 +15,7 @@ import com.angcyo.ilayer.ILayer
 import com.angcyo.ilayer.container.DragRectFConstraint
 import com.angcyo.ilayer.container.WindowContainer
 import com.angcyo.library.*
+import com.angcyo.library.component.MainExecutor
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.isDebugType
 import com.angcyo.library.ex.nowTime
@@ -37,10 +38,18 @@ object AccessibilityWindowLayer : ILayer() {
     val _windowContainer = WindowContainer(app())
 
     /**浮窗需要隐藏到什么时间, 13位时间戳*/
-    var hideToTime: Long = -1
+    var _hideToTime: Long = -1
+
+    //隐藏时长
+    var _hideTime: Long = -1
 
     /**还需要隐藏的次数, >0生效*/
-    var hideToCount: Long = -1
+    var _hideToCount: Long = -1
+
+    //显示浮窗
+    val _showRunnable: Runnable? = Runnable {
+        _show()
+    }
 
     init {
         iLayerLayoutId = R.layout.lib_layout_accessibility_window
@@ -66,18 +75,18 @@ object AccessibilityWindowLayer : ILayer() {
         textColor: Int = Color.WHITE
     ) {
 
-        if (hideToCount > 0) {
+        var hide = false
+
+        if (_hideToCount > 0) {
             //仍然需要隐藏浮窗
-            hide()
-            return
+            hide = true
         }
 
-        val nowTime = nowTime()
+        val nowTime: Long = nowTime()
 
-        if (nowTime <= hideToTime) {
+        if (nowTime <= _hideToTime) {
             //仍然需要隐藏浮窗
-            hide()
-            return
+            hide = true
         }
 
         renderLayer = {
@@ -85,10 +94,25 @@ object AccessibilityWindowLayer : ILayer() {
             itemView.keepScreenOn = true
 
             if (duration > 0) {
-                v<CircleLoadingView>(R.id.progress_bar)?.setProgress(100, 0, duration)
+                var animDuration = duration
+                var fromProgress = 0
+
+                if (_hideTime in 1 until duration) {
+                    fromProgress = (_hideTime * 1f / duration * 100).toInt()
+                    animDuration = duration - _hideTime
+                }
+                v<CircleLoadingView>(R.id.progress_bar)?.setProgress(
+                    100,
+                    fromProgress,
+                    animDuration
+                )
             } else if (duration == 0L) {
                 v<CircleLoadingView>(R.id.progress_bar)?.setProgress(0)
             }
+
+            //clear
+            _hideTime = 0
+
             tv(R.id.text_view)?.apply {
                 this.text = text
                 setTextColor(textColor)
@@ -170,10 +194,48 @@ object AccessibilityWindowLayer : ILayer() {
             }
         }
 
-        show(_windowContainer)
+        if (hide) {
+            hide()
+        } else {
+            show(_windowContainer)
+        }
     }
 
     fun hide() {
         hide(_windowContainer)
+    }
+
+    /**异常多少次的显示请求*/
+    fun hideCount(count: Long) {
+        hideTime(-1)
+        _hideToCount = count
+    }
+
+    /**浮窗隐藏多长时间*/
+    fun hideTime(time: Long) {
+        _hideToCount = -1
+
+        _showRunnable?.let {
+            MainExecutor.handler.removeCallbacks(it)
+        }
+
+        if (time > 0) {
+            _hideTime = time
+            _hideToTime = time + nowTime()
+
+            _showRunnable?.let {
+                MainExecutor.handler.postDelayed(it, time)
+            }
+        } else {
+            _hideTime = -1
+            _hideToTime = -1
+        }
+    }
+
+    //仅显示浮窗
+    fun _show() {
+        if (_rootView != null && _rootView?.parent == null) {
+            show(_windowContainer)
+        }
     }
 }

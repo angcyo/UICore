@@ -741,14 +741,14 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             arg?.toLongOrNull()?.apply {
                                 val actionSize = accessibilityInterceptor?.actionList?.size ?: 0
                                 if (this in 1..actionSize.toLong()) {
-                                    AccessibilityWindowLayer.hideToCount = this
+                                    AccessibilityWindowLayer.hideCount(this)
 
                                     handleActionLog("隐藏浮窗Count[${this}]:true")
                                 } else {
                                     //指定需要隐藏的时长, 毫秒
-                                    AccessibilityWindowLayer.hideToTime = this + nowTime()
+                                    AccessibilityWindowLayer.hideTime(this)
 
-                                    handleActionLog("隐藏浮窗Time[${AccessibilityWindowLayer.hideToTime}]:true")
+                                    handleActionLog("隐藏浮窗Time[${AccessibilityWindowLayer._hideToTime.fullTime()}]:true")
                                 }
                             }
                             true
@@ -811,6 +811,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 handleResult.jumpNextHandle = false
             }
         }
+
+        //handleActionLog("ignore:${constraintBean.ignore} result:${handleResult.result} jump:${handleResult.jumpNextHandle} finish:${handleResult.finish}")
 
         return handleResult
     }
