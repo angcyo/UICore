@@ -3,6 +3,7 @@ package com.angcyo.core.component.accessibility.parse
 import com.angcyo.core.component.accessibility.AutoParseInterceptor
 import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.core.component.accessibility.action.ActionInterruptedException
+import com.angcyo.core.component.accessibility.action.ActionInterruptedNextException
 import com.angcyo.http.POST
 import com.angcyo.http.base.jsonObject
 import com.angcyo.http.post
@@ -109,8 +110,9 @@ fun FormBean.request(
 /**错误信息的赋值等*/
 fun HashMap<String, Any>.bindErrorCode(error: ActionException?) {
     this[FormBean.KEY_CODE] = when (error) {
-        null -> 200
-        is ActionInterruptedException -> 300
-        else -> 500
+        null -> 200 //本地执行成功
+        is ActionInterruptedNextException -> 301 //本地执行中断, 但是需要继续任务
+        is ActionInterruptedException -> 300 //本地执行中断, 任务终止.
+        else -> 500 //本地执行错误, 任务终止.
     }
 }
