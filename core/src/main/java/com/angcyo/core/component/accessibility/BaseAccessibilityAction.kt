@@ -25,7 +25,7 @@ abstract class BaseAccessibilityAction {
 
     companion object {
         /**当前的[BaseAccessibilityAction], 允许执行[doAction]的最大次数, 超过后异常
-         * [actionMaxRunCount]*/
+         * [actionMaxRunCount], 超限后会执行[doAction]*/
         const val DEFAULT_ACTION_MAX_COUNT = 10L
 
         /**当前的[BaseAccessibilityAction], 执行[doAction]的次数超过此值后,强制完成
@@ -33,11 +33,11 @@ abstract class BaseAccessibilityAction {
         const val DEFAULT_ACTION_FINISH_MAX_COUNT = -1L
 
         /**当前的[BaseAccessibilityAction], 允许执行[checkOtherEvent]的最大次数, 超过[actionOtherList]才有机会执行
-         * [checkOtherCount]*/
+         * [checkOtherCount], 超限后会执行[otherOut]*/
         const val DEFAULT_ACTION_OTHER_MAX_COUNT = 3L
 
-        /**[checkOtherEvent]未识别, [actionOtherList]未处理, 超过此最大次数, 会回滚到上一个[BaseAccessibilityAction]
-         * [rollbackCount]*/
+        /**[checkOtherEvent]未识别, [actionOtherList]未处理, [onCheckEventOut]超过此最大次数, 会回滚到上一个[BaseAccessibilityAction]
+         * [rollbackCount], 超限后会执行[rollback]*/
         const val DEFAULT_ACTION_CHECK_OUT_MAX_COUNT = 3L
 
         /**允许回滚的最大次数
