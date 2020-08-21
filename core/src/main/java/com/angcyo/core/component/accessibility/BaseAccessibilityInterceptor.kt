@@ -101,6 +101,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     /**当前执行到动作的索引*/
     var actionIndex: Int = -1
 
+    /**指定了下一个需要执行的的[BaseAccessibilityAction]*/
+    var _targetAction: BaseAccessibilityAction? = null
+
     var actionStatus: Int = ACTION_STATUS_INIT
 
     /***当所有的[Action]处理结束后(成功和失败), 是否自动卸载拦截器.*/
@@ -378,6 +381,26 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             e.printStackTrace()
         }
 
+        //处理[com.angcyo.core.component.accessibility.parse.ConstraintBean.ACTION_JUMP]指令
+        val action = _targetAction
+        if (action != null) {
+            //指定了下一个需要执行的[BaseAccessibilityAction]
+            val indexOf = actionList.indexOf(action)
+            if (indexOf != -1) {
+                actionIndex = indexOf
+
+                intervalDelay = onHandleIntervalDelay(actionIndex)
+            } else {
+                L.w("${this.simpleHash()} 指定需要运行的action:${action.simpleHash()} 不存在.".apply {
+                    interceptorLog?.log(this)
+                })
+            }
+
+            //清空
+            _targetAction = null
+        }
+
+        //下一个周期
         if (enableInterval && actionStatus == ACTION_STATUS_ING) {
             startInterval(intervalDelay)
         } else {

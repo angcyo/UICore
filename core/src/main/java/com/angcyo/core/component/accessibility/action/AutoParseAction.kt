@@ -669,12 +669,14 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                     value = true
 
                                     if (actionIdList.isEmpty()) {
-                                        // [:<2]前 [:>3]后
+                                        // [:<2]前2个 [:>3]后3个
                                         val num = arg1.substring(1, arg1.length).toIntOrNull() ?: 0
                                         if (arg1.startsWith("<")) {
-                                            interceptor.actionIndex -= num
+                                            interceptor._targetAction =
+                                                interceptor.actionList.getOrNull(interceptor.actionIndex - num)
                                         } else if (arg1.startsWith(">")) {
-                                            interceptor.actionIndex += num
+                                            interceptor._targetAction =
+                                                interceptor.actionList.getOrNull(interceptor.actionIndex + num)
                                         } else {
                                             value = false
                                             handleResult.finish = true
@@ -689,21 +691,22 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
                                             val size = interceptor.actionList.size
                                             if (targetIndex.absoluteValue in 0 until size) {
-                                                //处理[:1] [:-1]的情况
+                                                //处理[:1] [:-1]的情况, 第多少个
                                                 if (targetIndex > 0) {
-                                                    interceptor.actionIndex =
-                                                        targetIndex.toInt()
+                                                    interceptor._targetAction =
+                                                        interceptor.actionList.getOrNull(targetIndex.toInt())
                                                 } else {
-                                                    interceptor.actionIndex =
-                                                        (size + targetIndex).toInt()
+                                                    interceptor._targetAction =
+                                                        interceptor.actionList.getOrNull((size + targetIndex).toInt())
                                                 }
                                                 findAction = true
                                             } else {
                                                 //寻找指定[actionId;actionId;]
-                                                interceptor.actionList.forEachIndexed { index, baseAccessibilityAction ->
+                                                interceptor.actionList.forEachIndexed { _, baseAccessibilityAction ->
                                                     if (baseAccessibilityAction is AutoParseAction) {
                                                         if (baseAccessibilityAction.actionBean?.actionId == targetIndex) {
-                                                            interceptor.actionIndex = index - 1
+                                                            interceptor._targetAction =
+                                                                baseAccessibilityAction
                                                             findAction = true
                                                         }
                                                     }

@@ -187,9 +187,8 @@ abstract class BaseAccessibilityAction {
             if (this is AutoParseAction && this.actionBean?.check?.doAction?.isNotEmpty() == true) {
                 val handleResult = parseHandleAction(service, nodeList, actionBean?.check?.doAction)
                 if (handleResult) {
-                    //处理了otherEvent, 清空计数
+                    //处理了doAction, 清空计数
                     doActionCount.clear()
-                    doActionFinish()
                 } else {
                     default()
                 }
