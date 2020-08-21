@@ -16,6 +16,9 @@ data class ParseResult(
     /**当前解析使用的约束条件*/
     var constraint: ConstraintBean,
 
+    /**所有的[constraint], 用于激活/禁用*/
+    var constraintList: List<ConstraintBean>,
+
     /**匹配到的节点集合*/
     var nodeList: MutableList<AccessibilityNodeInfoCompat> = mutableListOf(),
 

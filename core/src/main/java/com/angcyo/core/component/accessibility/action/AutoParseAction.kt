@@ -141,10 +141,14 @@ open class AutoParseAction : BaseAccessibilityAction() {
         event: AccessibilityEvent?,
         nodeList: List<AccessibilityNodeInfo>
     ) {
-        super.doAction(service, event, nodeList)
+        checkOtherEventCount.clear()
+
         if (doActionCount.isMaxLimit()) {
             return
         }
+
+        //是否执行成功了
+        var isFinish = false
 
         val constraintList: List<ConstraintBean>? = actionBean?.check?.handle
         if (constraintList == null) {
@@ -174,6 +178,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
             //判断是否执行成功
             if (result) {
+                isFinish = true
                 //完成
                 doActionFinish()
             }
@@ -189,9 +194,14 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 }
 
                 if (doActionCount.count >= actionMaxCount) {
+                    isFinish = true
                     doActionFinish()
                 }
             }
+        }
+
+        if (!isFinish) {
+            super.doAction(service, event, nodeList)
         }
     }
 
@@ -740,6 +750,32 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             }
                             true
                         }
+                        ConstraintBean.ACTION_DISABLE -> {
+                            constraintBean.enable = false
+                            arg?.split(",")?.apply {
+                                forEach {
+                                    it.toLongOrNull()?.also { constraintId ->
+                                        parseResult.constraintList.find { it.constraintId == constraintId }?.enable =
+                                            false
+                                    }
+                                }
+                            }
+                            handleActionLog("禁用ConstraintBean[${arg ?: "this"}]:true")
+                            true
+                        }
+                        ConstraintBean.ACTION_ENABLE -> {
+                            constraintBean.enable = true
+                            arg?.split(",")?.apply {
+                                forEach {
+                                    it.toLongOrNull()?.also { constraintId ->
+                                        parseResult.constraintList.find { it.constraintId == constraintId }?.enable =
+                                            true
+                                    }
+                                }
+                            }
+                            handleActionLog("激活ConstraintBean[${arg ?: "this"}]:true")
+                            true
+                        }
                         else -> {
                             handleActionLog("未识别的指令[$action:$arg]:true")
                             /*service.gesture.click().apply {
@@ -759,9 +795,13 @@ open class AutoParseAction : BaseAccessibilityAction() {
         }
 
         if (constraintBean.ignore) {
-            //如果忽略了约束, 则不进行jumpNext操作
+            //如果忽略了约束
             handleResult.result = false
-            handleResult.jumpNextHandle = false
+
+            if (constraintBean.enable) {
+                //不进行jumpNext操作
+                handleResult.jumpNextHandle = false
+            }
         } else {
             if (!handleResult.result) {
                 //执行失败, 不进行jumpNext操作

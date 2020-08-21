@@ -119,10 +119,13 @@ open class AutoParser {
         val result: MutableList<ParseResult> = mutableListOf()
 
         constraintList.forEach { constraint ->
-            val itemResult = ParseResult(constraint)
-            findConstraintNode(service, autoParseAction, nodeList, itemResult)
-            if (itemResult.nodeList.isNotEmpty()) {
-                result.add(itemResult)
+            if (constraint.enable || constraint.actionList?.contains(ConstraintBean.ACTION_ENABLE) == true) {
+                //如果当前的[constraint]处于激活状态, 或者拥有激活自身的能力
+                val itemResult = ParseResult(constraint, constraintList)
+                findConstraintNode(service, autoParseAction, nodeList, itemResult)
+                if (itemResult.nodeList.isNotEmpty()) {
+                    result.add(itemResult)
+                }
             }
         }
 
@@ -337,7 +340,8 @@ open class AutoParser {
 
             afterNodeList.forEach { node ->
                 //继续查找
-                val nextParseResult = ParseResult(constraintBean.after!!)
+                val nextParseResult =
+                    ParseResult(constraintBean.after!!, parseResult.constraintList)
                 findConstraintNodeByRootNode(
                     service,
                     autoParseAction,

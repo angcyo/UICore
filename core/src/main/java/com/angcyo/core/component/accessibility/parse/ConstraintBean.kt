@@ -151,7 +151,13 @@ data class ConstraintBean(
     /**上述匹配规则, 匹配之后, 获取到的节点列表当做根节点, 再一次匹配.
      * 只有匹配规则会生效, 非控制匹配规则的属性不会生效
      * */
-    var after: ConstraintBean? = null
+    var after: ConstraintBean? = null,
+
+    /**id标识, 用于[enable]参数*/
+    var constraintId: Long = -1,
+
+    /**是否激活此约束*/
+    var enable: Boolean = true
 ) {
     companion object {
 
@@ -201,6 +207,13 @@ data class ConstraintBean(
          * [:5000] 表示隐藏浮窗5秒
          * */
         const val ACTION_HIDE_WINDOW = "hideWindow"
+
+        /**禁止当前的[ConstraintBean]
+         * [:3,4,5] 禁用[ConstraintBean]id为3,4,5的对象*/
+        const val ACTION_DISABLE = "disable"
+
+        /**[ACTION_DISABLE]*/
+        const val ACTION_ENABLE = "enable"
 
         //需要指定的状态 [state]
         const val STATE_CLICKABLE = "clickable" //具备可点击
