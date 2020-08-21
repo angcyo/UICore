@@ -79,7 +79,7 @@ data class ActionBean(
 ) {
     companion object {
         const val HANDLE_TYPE_NONE = 0 //匹配执行, 匹配到谁, 谁就执行
-        const val HANDLE_TYPE_RANDOM = 1 //随机执行
+        const val HANDLE_TYPE_RANDOM = 1 //随机执行, 如果设置了[actionMaxCount],这个值也会随机设置
         const val HANDLE_TYPE_ORDER = 2 //顺序执行
 
         const val ERROR_HANDLE_TYPE_NEXT = 1 //异常后, 继续流程
