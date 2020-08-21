@@ -101,13 +101,13 @@ open class LogInterceptor : Interceptor {
         val responseBuilder = StringBuilder()
 
         //request
-        requestBuilder.appendln().append("->").append(uuid)
+        requestBuilder.append("->").append(uuid)
         logRequest(chain, request, requestBuilder)
         printRequestLog(requestBuilder)
 
         //response
         val startTime = System.nanoTime()
-        responseBuilder.appendln().append("<-").append(uuid)
+        responseBuilder.append("<-").append(uuid)
         val response: Response
         response = try {
             chain.proceed(request)
