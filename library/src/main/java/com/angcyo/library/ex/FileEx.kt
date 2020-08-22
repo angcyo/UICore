@@ -258,5 +258,5 @@ fun File?.readText() = try {
     this?.readText(Charsets.UTF_8)
 } catch (e: Exception) {
     e.printStackTrace()
-    e.message ?: ""
+    null
 }
