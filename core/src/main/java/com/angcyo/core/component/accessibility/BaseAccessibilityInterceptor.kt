@@ -118,7 +118,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     var initialIntervalDelay: Long = -1
         set(value) {
             field = value
-            intervalDelay = value
+            if (intervalDelay == -1L) {
+                intervalDelay = value
+            }
         }
 
     /**间隔回调周期, 根据手机性能自动调整*/
