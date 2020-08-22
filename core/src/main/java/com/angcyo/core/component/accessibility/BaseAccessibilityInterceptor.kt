@@ -213,6 +213,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         }
     }
 
+    //记录所有切换过的包名
+    val _packageTrackList = mutableListOf<CharSequence?>()
+
     //最后一次离开前的程序
     var _lastLeavePackageName: CharSequence? = null
 
@@ -277,6 +280,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             _lastLeaveTime = nowTime()
             val old = _lastLeavePackageName
             _lastLeavePackageName = mainPackageName
+            _packageTrackList.add(mainPackageName)
             onLeavePackageName(service, old, mainPackageName, nodeList)
             true
         } else {
