@@ -47,6 +47,13 @@ abstract class BaseAccessibilityAction {
         /**[ACTION_JUMP]指令, 默认允许执行的次数
          * [jump:xxx]*/
         const val DEFAULT_JUMP_MAX_COUNT = 10L
+
+        /**当拦截器离开主程序界面多少次后
+         * [com.angcyo.core.component.accessibility.BaseAccessibilityInterceptor.checkLeave]*/
+        const val DEFAULT_INTERCEPTOR_LEAVE_COUNT = 20L
+
+        /**同上*/
+        const val DEFAULT_ACTION_LEAVE_COUNT = 3L
     }
 
     /**关联的拦截器*/

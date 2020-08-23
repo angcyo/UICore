@@ -1,6 +1,7 @@
 package com.angcyo.core.component.accessibility.parse
 
 import com.angcyo.core.component.accessibility.AutoParseInterceptor
+import com.angcyo.core.component.accessibility.BaseAccessibilityAction
 import com.angcyo.core.component.accessibility.ILogPrint
 import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.action.AutoParser
@@ -57,8 +58,16 @@ data class TaskBean(
     /**[Task]完成后, 需要执行的网络请求*/
     var form: FormBean? = null,
 
+    //--------------------------------------------------------------
+
     /**任务完成后, 是否启动主程序.(不管失败或者成功)*/
-    var finishToApp: Boolean = true
+    var finishToApp: Boolean = true,
+
+    /**当任务需要统一处理[leave] */
+    var leaveCount: Long = BaseAccessibilityAction.DEFAULT_INTERCEPTOR_LEAVE_COUNT,
+
+    /**当拦截器离开主程序界面多少次后, 触发的指令.任务需要统一处理离开界面的处理*/
+    var leave: List<ConstraintBean>? = null
 )
 
 /**转成拦截器*/
@@ -69,6 +78,9 @@ fun TaskBean.toInterceptor(
     onGetTextResult: (action: AutoParseAction, List<CharSequence>) -> Unit = { _, _ -> } //[getText]动作, 返回的文本信息
 ): AutoParseInterceptor {
     return AutoParseInterceptor(this).apply {
+        //2020-08-23
+        interceptorLeaveCount.maxCountLimit = leaveCount
+
         val taskPackageName: String? = packageName
         //如果任务中包含了指定的包名
         if (!taskPackageName.isNullOrEmpty()) {

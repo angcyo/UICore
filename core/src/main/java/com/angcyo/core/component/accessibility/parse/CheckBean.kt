@@ -51,5 +51,8 @@ data class CheckBean(
     var otherOut: List<ConstraintBean>? = null,
 
     /**[doAction]超限时, 需要触发的指令*/
-    var doAction: List<ConstraintBean>? = null
+    var doAction: List<ConstraintBean>? = null,
+
+    /**当拦截器离开主程序界面多少次后, 触发的指令*/
+    var leave: List<ConstraintBean>? = null
 )

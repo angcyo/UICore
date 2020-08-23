@@ -3,6 +3,7 @@ package com.angcyo.core.component.accessibility.parse
 import com.angcyo.core.component.accessibility.BaseAccessibilityAction
 import com.angcyo.core.component.accessibility.BaseAccessibilityAction.Companion.DEFAULT_ACTION_CHECK_OUT_MAX_COUNT
 import com.angcyo.core.component.accessibility.BaseAccessibilityAction.Companion.DEFAULT_ACTION_FINISH_MAX_COUNT
+import com.angcyo.core.component.accessibility.BaseAccessibilityAction.Companion.DEFAULT_ACTION_LEAVE_COUNT
 import com.angcyo.core.component.accessibility.BaseAccessibilityAction.Companion.DEFAULT_ACTION_MAX_COUNT
 import com.angcyo.core.component.accessibility.BaseAccessibilityAction.Companion.DEFAULT_ACTION_OTHER_MAX_COUNT
 import com.angcyo.core.component.accessibility.BaseAccessibilityAction.Companion.DEFAULT_ROLLBACK_MAX_COUNT
@@ -40,20 +41,28 @@ data class ActionBean(
      * 默认: [HANDLE_TYPE_NONE] 匹配执行, 匹配到谁, 谁执行.*/
     var handleType: Int = HANDLE_TYPE_NONE,
 
-    /**默认当前页面检测x次, 都还不通过. 回退到上一步*/
+    /**默认当前页面检测x次, 都还不通过. 回退到上一步, 触发指令[rollback]
+     * [com/angcyo/core/component/accessibility/parse/CheckBean.kt:48]*/
     var rollbackCount: Long = DEFAULT_ACTION_CHECK_OUT_MAX_COUNT,
 
     /**回滚x次后, 还是不通过, 则报错*/
     var rollbackMaxCount: Long = DEFAULT_ROLLBACK_MAX_COUNT,
 
-    /**[checkOtherEvent]允许执行的最大次数*/
+    /**[checkOtherEvent]允许执行的最大次数, 触发指令[otherOut]
+     * [com/angcyo/core/component/accessibility/parse/CheckBean.kt:51]*/
     var checkOtherCount: Long = DEFAULT_ACTION_OTHER_MAX_COUNT,
 
-    /**允许[doAction]执行的最大次数, 超过后抛出异常*/
+    /**允许[doAction]执行的最大次数, 超过后抛出异常, 触发指令[doAction]
+     * [com/angcyo/core/component/accessibility/parse/CheckBean.kt:54]*/
     var actionMaxRunCount: Long = DEFAULT_ACTION_MAX_COUNT,
 
     /**当action识别到并处理执行后的次数大于此值时, 强制完成*/
     var actionMaxCount: Long = DEFAULT_ACTION_FINISH_MAX_COUNT,
+
+    /**当拦截器离开主程序界面多少次后,触发指令[leave]
+     * [com/angcyo/core/component/accessibility/parse/CheckBean.kt:57]
+     * */
+    var leaveCount: Long = DEFAULT_ACTION_LEAVE_COUNT,
 
     /**当前action执行完成后, 间隔多久执行下一个[Action]. 毫秒
      * 格式[5000,500,5] 解释:5000+500*[1-5),

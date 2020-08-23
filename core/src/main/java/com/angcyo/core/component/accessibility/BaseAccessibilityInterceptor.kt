@@ -7,10 +7,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.CallSuper
 import com.angcyo.core.component.accessibility.BaseAccessibilityInterceptor.Companion.defaultIntervalDelay
-import com.angcyo.core.component.accessibility.action.ActionException
-import com.angcyo.core.component.accessibility.action.ActionInterruptedNextException
-import com.angcyo.core.component.accessibility.action.AutoParseAction
-import com.angcyo.core.component.accessibility.action.PermissionsAction
+import com.angcyo.core.component.accessibility.action.*
 import com.angcyo.core.component.accessibility.base.AccessibilityWindowLayer
 import com.angcyo.core.component.accessibility.parse.ActionBean
 import com.angcyo.library.L
@@ -141,6 +138,11 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     /**当前是否在目标的程序界面内*/
     var _isInFilterPackageNameApp = false
 
+    /**拦截器离开过滤界面的计数统计*/
+    var interceptorLeaveCount: ActionCount = ActionCount().apply {
+        maxCountLimit = BaseAccessibilityAction.DEFAULT_INTERCEPTOR_LEAVE_COUNT
+    }
+
     init {
         initialIntervalDelay = defaultIntervalDelay
     }
@@ -199,7 +201,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
 
             if (needNodeList.isEmpty()) {
                 //当前主界面, 不在处理的列表中
-                checkLeave(service, mainPackageName, needNodeList)
+                checkLeave(service, mainPackageName, findNodeInfoList)
             } else {
                 if (ignore) {
                     //忽略事件
@@ -214,7 +216,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     }
 
     //记录所有切换过的包名
-    val _packageTrackList = mutableListOf<CharSequence?>()
+    val _packageTrackList: MutableList<CharSequence?> = mutableListOf()
 
     //最后一次离开前的程序
     var _lastLeavePackageName: CharSequence? = null
@@ -233,12 +235,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         mainPackageName: CharSequence?,
         nodeList: List<AccessibilityNodeInfo>
     ): Boolean {
-
+        var handle = false
         //检查当前的action,是否需要突破当前[interceptor]的包名限制
         currentAccessibilityAction?.let { action ->
-
-            var handle = false
-
             if (action is AutoParseAction) {
                 val specifyPackageNameList = action.actionBean?.check?.packageName?.split(";")
                 if (specifyPackageNameList != null) {
@@ -268,12 +267,35 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                             if (it.actionBean?.check?.packageName?.isEmpty() == true) {
                                 //空字符的包名, 才允许处理
                                 handle =
-                                    handle || it.doActionWidth(action, service, lastEvent, nodeList)
+                                    it.doActionWidth(action, service, lastEvent, nodeList) || handle
                             }
                         }
                     }
                 }
+
+                if (!handle) {
+                    interceptorLeaveCount.start()
+                    val leaveCount = action.actionBean?.leaveCount ?: -1
+                    if (action.actionBean?.check?.leave != null &&
+                        interceptorLeaveCount.count + 1 >= leaveCount
+                    ) {
+                        //到达阈值
+                        handle = action.parseHandleAction(
+                            service,
+                            nodeList,
+                            action.actionBean?.check?.leave
+                        )
+                        if (handle) {
+                            //处理了leave, 清空计数
+                            interceptorLeaveCount.clear()
+                        }
+                    }
+                }
             }
+        }
+
+        if (!handle) {
+            interceptorLeaveCount.doCount()
         }
 
         return if (_lastLeavePackageName != mainPackageName) {
@@ -293,6 +315,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         service: BaseAccessibilityService,
         nodeList: List<AccessibilityNodeInfo>
     ) {
+        //清空计数
+        interceptorLeaveCount.clear()
+
         if (actionList.isEmpty() && actionIndex < 0) {
             //no op
             L.w("${this.simpleHash()} no action need do. status to [ACTION_STATUS_FINISH].")
@@ -514,6 +539,25 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         }
     }
 
+    fun _actionFinish(
+        action: BaseAccessibilityAction,
+        service: BaseAccessibilityService,
+        error: ActionException?
+    ) {
+        //action执行完成
+        interceptorLog?.log("finish[${actionIndex}/${actionList.size}]->${action.simpleHash()} [${action.actionTitle}] ${if (error == null) "完成" else error.message}")
+
+        if (error == null || error is ActionInterruptedNextException) {
+            //[BaseAccessibilityAction] 被中断时, 允许继续玩下执行
+            actionNext(service)
+
+            //切换间隔时长
+            intervalDelay = onHandleIntervalDelay(actionIndex)
+        } else {
+            actionError(action, error)
+        }
+    }
+
     /**
      * 执行当前的[action]
      * [checkEvent]->[doAction]->[checkOtherEvent]->[doActionWidth]->[onCheckEventOut]
@@ -527,18 +571,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             interceptorLog?.log("start[${actionIndex}/${actionList.size}]->${action.simpleHash()} [${action.actionTitle}]")
             action.onActionStart(this)
             action._actionFinish = {
-                //action执行完成
-                interceptorLog?.log("finish[${actionIndex}/${actionList.size}]->${action.simpleHash()} [${action.actionTitle}] ${if (it == null) "完成" else it.message}")
-
-                if (it == null || it is ActionInterruptedNextException) {
-                    //[BaseAccessibilityAction] 被中断时, 允许继续玩下执行
-                    actionNext(service)
-
-                    //切换间隔时长
-                    intervalDelay = onHandleIntervalDelay(actionIndex)
-                } else {
-                    actionError(action, it)
-                }
+                _actionFinish(action, service, it)
             }
         }
 
