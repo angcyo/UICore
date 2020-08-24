@@ -17,6 +17,7 @@ import com.liulishuo.okdownload.core.cause.ResumeFailedCause
  */
 open class FDownloadListener : DownloadListener {
 
+    /**任务完成, 是否移除监听. 任务失败不会移除!*/
     var removeOnCompleted = true
 
     override fun connectTrialEnd(

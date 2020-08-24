@@ -108,3 +108,7 @@ fun DownloadTask?.isStart(): Boolean {
 fun EndCause.isSucceed() = this == EndCause.COMPLETED
 fun EndCause.isError() = this == EndCause.ERROR
 fun EndCause.isCancel() = this == EndCause.CANCELED
+
+fun String?.findDownloadTask() = DslDownload.findTask(this)
+fun DownloadTask.taskStatus() = DslDownload.getStatus(this)
+fun DownloadTask.taskProgress() = DslDownload.getTaskProgress(this)

@@ -1,6 +1,5 @@
 package com.angcyo.download.dslitem
 
-import com.angcyo.download.DslDownload
 import com.angcyo.download.dslDownload
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.widget.DslViewHolder
@@ -91,9 +90,6 @@ abstract class DslBaseDownloadItem : DslAdapterItem() {
     //</editor-fold desc="任务回调">
 
     //<editor-fold desc="获取任务信息">
-
-    fun DownloadTask.taskStatus() = DslDownload.getStatus(this)
-    fun DownloadTask.taskProgress() = DslDownload.getTaskProgress(this)
 
     //</editor-fold desc="获取任务信息">
 }

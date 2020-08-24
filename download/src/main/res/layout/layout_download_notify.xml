@@ -64,4 +64,13 @@
             tools:text="下载任务名称" />
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/lib_delete_view"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/lib_bg2_selector"
+        android:padding="@dimen/lib_ldpi"
+        android:scaleType="fitCenter"
+        android:src="@drawable/lib_edit_delete" />
 </LinearLayout>

@@ -5,6 +5,7 @@ import android.util.ArrayMap
 import com.angcyo.download.DslDownload._taskIdMap
 import com.angcyo.download.DslDownload.defaultDownloadFolder
 import com.angcyo.library.L
+import com.angcyo.library.ex.isDebugType
 import com.angcyo.library.utils.FileUtils
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.OkDownload
@@ -16,7 +17,6 @@ import com.liulishuo.okdownload.core.connection.DownloadOkHttp3Connection
 import com.liulishuo.okdownload.core.dispatcher.DownloadDispatcher
 import com.liulishuo.okdownload.core.dispatcher.RCallbackDispatcher
 import com.liulishuo.okdownload.core.dispatcher.UnifiedTransmitListener
-import java.io.File
 import java.util.concurrent.CopyOnWriteArrayList
 
 
@@ -145,36 +145,7 @@ object DslDownload {
         if (task == null) {
             return StatusUtil.Status.UNKNOWN
         }
-        val store = OkDownload.with().breakpointStore()
-        val info = store[task.id]
-        var filename = task.filename
-        val parentFile = task.parentFile
-        val targetFile = task.file
-        if (info != null) {
-            if (!info.isChunked && info.totalLength <= 0) {
-                return StatusUtil.Status.UNKNOWN
-            } else if (targetFile != null && targetFile == info.file
-                && targetFile.exists()
-                && info.totalOffset == info.totalLength
-            ) {
-                return StatusUtil.Status.COMPLETED
-            } else if (filename == null && info.file != null && info.file!!.exists()
-            ) {
-                return StatusUtil.Status.IDLE
-            } else if (targetFile != null && targetFile == info.file && targetFile.exists()) {
-                return StatusUtil.Status.IDLE
-            }
-        } else if (store.isOnlyMemoryCache || store.isFileDirty(task.id)) {
-            return StatusUtil.Status.UNKNOWN
-        } else if (targetFile != null && targetFile.exists()) {
-            return StatusUtil.Status.COMPLETED
-        } else {
-            filename = store.getResponseFilename(task.url)
-            if (filename != null && File(parentFile, filename).exists()) {
-                return StatusUtil.Status.COMPLETED
-            }
-        }
-        return StatusUtil.Status.UNKNOWN
+        return getStatus(task)
     }
 
     /**监听下载地址*/
@@ -230,6 +201,14 @@ object DslDownload {
 }
 
 data class DownloadConfig(
+
+    /**如果已经完成, 是否需要跳过下载*/
+    var passIfAlreadyCompleted: Boolean = !isDebugType(),
+
+    /**只在wifi下载*/
+    var isWifiRequired: Boolean = false,
+
+    /**全部配置[DownloadTask.Builder]*/
     var onConfigTask: (DownloadTask.Builder) -> Unit = {},
 
     var onTaskStart: (DownloadTask) -> Unit = {},
@@ -285,8 +264,8 @@ fun dslDownload(url: String?, config: DownloadConfig.() -> Unit = {}): DownloadT
         setMinIntervalMillisCallbackProcess(1_000) //24帧:60 60帧:16
         setPriority(0)
         setFilename(getFileNameFromUrl(url))
-        setPassIfAlreadyCompleted(true)
-        setWifiRequired(false)
+        setPassIfAlreadyCompleted(downloadConfig.passIfAlreadyCompleted)
+        setWifiRequired(downloadConfig.isWifiRequired)
 
         downloadConfig.onConfigTask(this)
 

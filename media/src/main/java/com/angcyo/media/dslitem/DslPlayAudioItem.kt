@@ -2,6 +2,7 @@ package com.angcyo.media.dslitem
 
 import android.net.Uri
 import android.view.Gravity
+import com.angcyo.download.taskStatus
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.dpi
