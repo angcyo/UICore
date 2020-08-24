@@ -12,7 +12,6 @@ import com.angcyo.core.component.file.wrapData
 import com.angcyo.http.rx.doBack
 import com.angcyo.library.L
 import com.angcyo.library.ex.fileSizeString
-import com.angcyo.library.ex.isDebug
 import com.angcyo.library.toastQQ
 
 /**
