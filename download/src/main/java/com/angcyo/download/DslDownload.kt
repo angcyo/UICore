@@ -279,11 +279,8 @@ fun dslDownload(url: String?, config: DownloadConfig.() -> Unit = {}): DownloadT
 //            onTaskProgress = downloadConfig.onTaskProgress
 //            onTaskFinish = downloadConfig.onTaskFinish
 //        })
-        enqueue(DslListener().apply {
-            onTaskStart = downloadConfig.onTaskStart
-            onTaskProgress = downloadConfig.onTaskProgress
-            onTaskFinish = downloadConfig.onTaskFinish
-        })
+
+        start(downloadConfig)
     }
     return task
 }

@@ -13,6 +13,7 @@ import com.angcyo.library.app
 import com.angcyo.library.component.*
 import com.angcyo.library.ex.fileSizeString
 import com.angcyo.library.ex.toBitmap
+import com.angcyo.library.ex.unregisterReceiver
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.StatusUtil
 import com.liulishuo.okdownload.core.cause.EndCause
@@ -31,6 +32,8 @@ class DslDownloadNotify : DslListener() {
         val _notifyList = mutableListOf<String>()
 
         const val ACTION_CANCEL_DOWNLOAD = "action_cancel_download:"
+        const val ACTION_START_DOWNLOAD = "action_start_download:"
+        const val ACTION_DELETE_DOWNLOAD = "action_delete_download:"
     }
 
     var _downloadUrl: String? = null
@@ -43,8 +46,12 @@ class DslDownloadNotify : DslListener() {
     var autoInstallApk = true
 
     var _cancelIntent = Intent()
+    var _deleteIntent = Intent()
+    var _startIntent = Intent()
 
-    var _cancelReceiver: CancelDownloadBroadcastReceiver = CancelDownloadBroadcastReceiver()
+    var _cancelReceiver = CancelDownloadBroadcastReceiver()
+    var _startReceiver = StartDownloadBroadcastReceiver()
+    var _deleteReceiver = DeleteBroadcastReceiver()
 
     init {
         logo = app().packageName.appBean()!!.appIcon.toBitmap()
@@ -71,7 +78,9 @@ class DslDownloadNotify : DslListener() {
                 _remoteView(filename, process) {
                     setViewVisibility(R.id.lib_delete_view, View.GONE)
 
-                    if (cause == EndCause.COMPLETED) {
+                    if (cause.isSucceed()) {
+                        unregisterReceiver(_cancelReceiver)
+                        unregisterReceiver(_startReceiver)
                         if (filename?.toLowerCase()?.endsWith("apk") == true) {
                             setTextViewText(R.id.lib_sub_text_view, "下载完成, 点击安装!")
 
@@ -92,10 +101,16 @@ class DslDownloadNotify : DslListener() {
                                 "下载完成:${downloadTask.file?.absolutePath}"
                             )
                         }
-                    } else if (cause == EndCause.CANCELED) {
-                        setTextViewText(R.id.lib_sub_text_view, "下载已取消!")
+                    } else if (cause.isCancel()) {
+                        setTextViewText(R.id.lib_sub_text_view, "下载已取消,点击恢复!")
+
+                        notifyAutoCancel = false
+                        notifyContentIntent = DslNotify.pendingBroadcast(app(), _startIntent)
                     } else {
                         setTextViewText(R.id.lib_sub_text_view, "下载失败:${exception?.message}")
+
+                        notifyAutoCancel = false
+                        notifyContentIntent = DslNotify.pendingBroadcast(app(), _startIntent)
                     }
                 }
             }
@@ -109,6 +124,9 @@ class DslDownloadNotify : DslListener() {
             notifyOngoing = true
             notifyDefaults = NotificationCompat.DEFAULT_VIBRATE
             notifyPriority = NotificationCompat.PRIORITY_HIGH
+
+            notifyDeleteIntent = DslNotify.pendingBroadcast(app(), _deleteIntent)
+
             action()
         }
     }
@@ -121,6 +139,9 @@ class DslDownloadNotify : DslListener() {
     ) {
         notifyCustomContentView =
             dslRemoteView {
+                notifyContentIntent = null
+                notifyAutoCancel = true
+
                 layoutId = R.layout.layout_download_notify
                 if (name != null) {
                     setTextViewText(R.id.lib_text_view, name)
@@ -147,6 +168,8 @@ class DslDownloadNotify : DslListener() {
                         DslNotify.pendingBroadcast(app(), _cancelIntent)
                     )
                 }
+
+                //dsl
                 action()
             }
     }
@@ -165,10 +188,20 @@ class DslDownloadNotify : DslListener() {
         url.listener(this)
 
         try {
-            val action = "$ACTION_CANCEL_DOWNLOAD$url"
-            _cancelIntent.action = action
+            val cancelAction = "$ACTION_CANCEL_DOWNLOAD$url"
+            val startAction = "$ACTION_START_DOWNLOAD$url"
+            val deleteAction = "$ACTION_DELETE_DOWNLOAD$url"
+            _cancelIntent.action = cancelAction
+            _startIntent.action = startAction
+            _deleteIntent.action = deleteAction
             app().registerReceiver(_cancelReceiver, IntentFilter().apply {
-                addAction(action)
+                addAction(cancelAction)
+            })
+            app().registerReceiver(_startReceiver, IntentFilter().apply {
+                addAction(startAction)
+            })
+            app().registerReceiver(_deleteReceiver, IntentFilter().apply {
+                addAction(deleteAction)
             })
         } catch (e: Exception) {
             e.printStackTrace()
@@ -183,12 +216,16 @@ class DslDownloadNotify : DslListener() {
         }
 
         _downloadUrl?.removeListener(this)
+    }
 
-        try {
-            app().unregisterReceiver(_cancelReceiver)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+    fun unregisterReceiverAll() {
+        unregisterReceiver(_cancelReceiver)
+        unregisterReceiver(_startReceiver)
+        unregisterReceiver(_deleteReceiver)
+    }
+
+    fun unregisterReceiver(receiver: BroadcastReceiver) {
+        receiver.unregisterReceiver(app())
     }
 
     override fun taskProgress(
@@ -218,6 +255,42 @@ class DslDownloadNotify : DslListener() {
             _downloadUrl?.let {
                 if (intent?.action == "$ACTION_CANCEL_DOWNLOAD$it") {
                     DslDownload.cancel(it)
+                }
+            }
+        }
+    }
+
+    /**恢复下载的广播*/
+    inner class StartDownloadBroadcastReceiver : BroadcastReceiver() {
+
+        override fun onReceive(context: Context, intent: Intent?) {
+            _downloadUrl?.let {
+                if (intent?.action == "$ACTION_START_DOWNLOAD$it") {
+                    it.findDownloadTask()?.apply {
+                        _notify {
+                            _remoteView(filename, -1) {
+                                setTextViewText(
+                                    R.id.lib_sub_text_view,
+                                    "正在恢复下载..."
+                                )
+                            }
+                        }
+                        start()
+                    }
+                    install(it)
+                }
+            }
+        }
+    }
+
+    /**删除了广播*/
+    inner class DeleteBroadcastReceiver : BroadcastReceiver() {
+
+        override fun onReceive(context: Context, intent: Intent?) {
+            _downloadUrl?.let {
+                if (intent?.action == "$ACTION_DELETE_DOWNLOAD$it") {
+                    uninstall(true)
+                    unregisterReceiverAll()
                 }
             }
         }

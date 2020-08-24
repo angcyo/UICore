@@ -11,22 +11,22 @@ import com.liulishuo.okdownload.core.cause.EndCause
  */
 open class DslListener : FDownloadListener() {
 
-    var onTaskStart: (DownloadTask) -> Unit = {}
-    var onTaskProgress: (DownloadTask, progress: Int, speed: Long) -> Unit = { _, _, _ -> }
-    var onTaskFinish: (DownloadTask, cause: EndCause, Exception?) -> Unit = { _, _, _ -> }
+    var onTaskStart: ((DownloadTask) -> Unit)? = null
+    var onTaskProgress: ((DownloadTask, progress: Int, speed: Long) -> Unit)? = null
+    var onTaskFinish: ((DownloadTask, cause: EndCause, Exception?) -> Unit)? = null
 
     override fun fetchStart(task: DownloadTask, blockIndex: Int, contentLength: Long) {
         super.fetchStart(task, blockIndex, contentLength)
-        onTaskStart(task)
+        onTaskStart?.invoke(task)
     }
 
     override fun taskEnd(task: DownloadTask, cause: EndCause, realCause: Exception?) {
         super.taskEnd(task, cause, realCause)
         if (cause == EndCause.COMPLETED) {
             //任务完成, 发送一个100进度的回调
-            onTaskProgress(task, 100, 0)
+            onTaskProgress?.invoke(task, 100, 0)
         }
-        onTaskFinish(task, cause, realCause)
+        onTaskFinish?.invoke(task, cause, realCause)
     }
 
     override fun taskProgress(
@@ -38,6 +38,6 @@ open class DslListener : FDownloadListener() {
     ) {
         super.taskProgress(task, totalLength, totalOffset, increaseBytes, speed)
         val percent = (totalOffset * 100 / totalLength).toInt()
-        onTaskProgress(task, percent, speed)
+        onTaskProgress?.invoke(task, percent, speed)
     }
 }

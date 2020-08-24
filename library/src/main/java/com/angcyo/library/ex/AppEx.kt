@@ -1,5 +1,6 @@
 package com.angcyo.library.ex
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -7,6 +8,7 @@ import android.content.pm.Signature
 import android.net.Uri
 import android.os.Build
 import android.os.Process
+import com.angcyo.library.app
 import java.io.File
 import kotlin.system.exitProcess
 
@@ -80,4 +82,13 @@ fun installApk(context: Context, file: File?) {
 fun killCurrentProcess() {
     Process.killProcess(Process.myPid())
     exitProcess(909)
+}
+
+/**取消注册的广播*/
+fun BroadcastReceiver.unregisterReceiver(context: Context = app()) {
+    try {
+        context.unregisterReceiver(this)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 }
