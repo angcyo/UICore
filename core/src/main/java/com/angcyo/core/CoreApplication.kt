@@ -25,8 +25,11 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
         super.onCreate()
 
         DslHttp.config {
+            val logFileInterceptor = LogFileInterceptor()
             onConfigOkHttpClient.add {
-                it.addInterceptor(LogFileInterceptor())
+                if (!it.interceptors().contains(logFileInterceptor)) {
+                    it.addInterceptor(logFileInterceptor)
+                }
             }
         }
     }
