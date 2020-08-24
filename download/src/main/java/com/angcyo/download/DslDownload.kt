@@ -2,6 +2,7 @@ package com.angcyo.download
 
 import android.content.Context
 import android.util.ArrayMap
+import com.angcyo.core.component.interceptor.LogFileInterceptor
 import com.angcyo.download.DslDownload._taskIdMap
 import com.angcyo.download.DslDownload.defaultDownloadFolder
 import com.angcyo.library.L
@@ -17,6 +18,7 @@ import com.liulishuo.okdownload.core.connection.DownloadOkHttp3Connection
 import com.liulishuo.okdownload.core.dispatcher.DownloadDispatcher
 import com.liulishuo.okdownload.core.dispatcher.RCallbackDispatcher
 import com.liulishuo.okdownload.core.dispatcher.UnifiedTransmitListener
+import okhttp3.OkHttpClient
 import java.util.concurrent.CopyOnWriteArrayList
 
 
@@ -45,7 +47,15 @@ object DslDownload {
         OkDownload.Builder(ctx)
             .callbackDispatcher(RCallbackDispatcher())
             .downloadStore(BreakpointStoreOnSQLite(ctx))
-            .connectionFactory(DownloadOkHttp3Connection.Factory())
+            .connectionFactory(DownloadOkHttp3Connection.Factory().apply {
+                setBuilder(OkHttpClient.Builder().apply {
+                    addInterceptor(LogFileInterceptor().apply {
+                        printLog = true
+                        logRequestBody = false
+                        logResponseBody = false
+                    })
+                })
+            })
             .build()
             .apply {
                 OkDownload.setSingletonInstance(this)
