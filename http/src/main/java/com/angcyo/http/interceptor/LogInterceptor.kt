@@ -41,6 +41,10 @@ open class LogInterceptor : Interceptor {
         fun intervalLog(mill: Long = 1 * 60 * 60 * 1000L /*毫秒*/) = HEADER_LOG to "${INTERVAL}:$mill"
     }
 
+    /**是否打印 请求体和响应体*/
+    var logRequestBody = true
+    var logResponseBody = true
+
     var enable: Boolean = isDebug()
 
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -147,29 +151,33 @@ open class LogInterceptor : Interceptor {
                 appendln().append(pair.first).append(":").append(pair.second)
             }
 
-            //打印请求提
-            request.body?.run {
-                val simpleName = javaClass.simpleName
-                if (simpleName.isNotEmpty()) {
-                    appendln().append(simpleName)
-                }
-                appendln().appends("Content-Type:").append(contentType())
-                appendln().appends("Content-Length:").append(contentLength())
-                appendln().appendln("Body:")
-
-                if (request.headers.hasEncoded()) {
-                    //加密了数据
-                    appendln("(encoded body omitted)")
-                } else {
-                    val buffer = Buffer()
-                    writeTo(buffer)
-                    if (buffer.isPlaintext()) {
-                        appendln(readString())
-                    } else {
-                        appendln("binary request body")
+            if (logRequestBody) {
+                //打印请求体
+                request.body?.run {
+                    val simpleName = javaClass.simpleName
+                    if (simpleName.isNotEmpty()) {
+                        appendln().append(simpleName)
                     }
-                }
-            } ?: appendln(" no request body!")
+                    appendln().appends("Content-Type:").append(contentType())
+                    appendln().appends("Content-Length:").append(contentLength())
+                    appendln().appendln("Body:")
+
+                    if (request.headers.hasEncoded()) {
+                        //加密了数据
+                        appendln("(encoded body omitted)")
+                    } else {
+                        val buffer = Buffer()
+                        writeTo(buffer)
+                        if (buffer.isPlaintext()) {
+                            appendln(readString())
+                        } else {
+                            appendln("binary request body")
+                        }
+                    }
+                } ?: appendln(" no request body!")
+            } else {
+                appendln()
+            }
         }
     }
 
@@ -180,29 +188,33 @@ open class LogInterceptor : Interceptor {
                 appendln().append(pair.first).append(":").append(pair.second)
             }
 
-            //返回体
-            response.body?.run {
-                val contentLength: Long = contentLength()
-                val bodySize: String =
-                    if (contentLength != -1L) "$contentLength-byte" else "unknown-length"
-                appendln().append("Body")
-                append("(").append(bodySize).appendln("):")
+            if (logResponseBody) {
+                //返回体
+                response.body?.run {
+                    val contentLength: Long = contentLength()
+                    val bodySize: String =
+                        if (contentLength != -1L) "$contentLength-byte" else "unknown-length"
+                    appendln().append("Body")
+                    append("(").append(bodySize).appendln("):")
 
-                if (response.headers.hasEncoded()) {
-                    //加密了数据
-                    appendln("(encoded body omitted)")
-                } else {
-                    try {
-                        if (source().buffer.isPlaintext()) {
-                            appendln(readString())
-                        } else {
-                            appendln("binary response body.")
+                    if (response.headers.hasEncoded()) {
+                        //加密了数据
+                        appendln("(encoded body omitted)")
+                    } else {
+                        try {
+                            if (source().buffer.isPlaintext()) {
+                                appendln(readString())
+                            } else {
+                                appendln("binary response body.")
+                            }
+                        } catch (e: Exception) {
+                            appendln(e.message)
                         }
-                    } catch (e: Exception) {
-                        appendln(e.message)
                     }
-                }
-            } ?: appendln("no response body!")
+                } ?: appendln("no response body!")
+            } else {
+                appendln()
+            }
         }
     }
 

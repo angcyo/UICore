@@ -11,19 +11,25 @@ import com.angcyo.http.interceptor.LogInterceptor
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 open class LogFileInterceptor : LogInterceptor() {
+
+    /**是否需要控制台输出日志*/
+    var printLog = false
+
     init {
         enable = true
     }
 
     override fun printRequestLog(builder: StringBuilder) {
-        //super.printRequestLog(builder)
-        //builder.appendln()
+        if (printLog) {
+            super.printRequestLog(builder)
+        }
         DslFileHelper.http(data = builder.toString())
     }
 
     override fun printResponseLog(builder: StringBuilder) {
-        //super.printResponseLog(builder)
-        //builder.appendln()
+        if (printLog) {
+            super.printResponseLog(builder)
+        }
         DslFileHelper.http(data = builder.toString())
     }
 }
