@@ -35,7 +35,7 @@ open class LogInterceptor : Interceptor {
         private val lastLogUrlTimeMap = hashMapOf<String, Long>()
 
         /**关闭日志*/
-        fun closeLog(close: Boolean = true) = HEADER_LOG to "${!close}"
+        fun closeLog(close: Boolean = !isDebug()) = HEADER_LOG to "${!close}"
 
         /**间隔多长时间, 才输出日志. 默认1小时输出一次*/
         fun intervalLog(mill: Long = 1 * 60 * 60 * 1000L /*毫秒*/) = HEADER_LOG to "${INTERVAL}:$mill"
@@ -183,6 +183,9 @@ open class LogInterceptor : Interceptor {
 
     open fun logResponse(response: Response, builder: StringBuilder) {
         builder.apply {
+            appendln().append(response.request.url)
+            append(" ${response.message}").append("(${response.code})")
+
             //返回头
             for (pair in response.headers) {
                 appendln().append(pair.first).append(":").append(pair.second)
