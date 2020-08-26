@@ -1,5 +1,6 @@
 package com.angcyo.library.ex
 
+import android.Manifest
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.ContentValues
@@ -115,8 +116,7 @@ fun Context.havePermission(permissionList: List<String>): Boolean {
 
 /**保存到相册[DCIM]*/
 fun Context.saveToDCIM(file: File): Boolean {
-    val filename = file.name
-
+    val filename: String = file.name
     return try {
         return saveToDCIM(file.inputStream(), filename)
     } catch (e: Exception) {
@@ -126,6 +126,9 @@ fun Context.saveToDCIM(file: File): Boolean {
 }
 
 fun Context.saveToDCIM(input: InputStream, filename: String): Boolean {
+
+    checkPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
     val values = ContentValues()
     val mimeType = filename.mimeType()
 
