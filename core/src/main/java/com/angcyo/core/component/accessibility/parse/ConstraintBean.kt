@@ -84,9 +84,7 @@ data class ConstraintBean(
      * */
     var wordInputIndexList: List<String>? = null,
 
-    /**忽略此次[Action]操作的返回值, 不忽略的话, 如果action返回true, 则可能会执行[doActionFinish].
-     * 忽略之后, 将不会判断[jump]
-     * */
+    /**忽略此次[Action]操作的返回值, 不忽略的话, 如果action返回true, 则可能会执行[doActionFinish].*/
     var ignore: Boolean = false,
 
     /**此次[Action] [操作成功]之后, 是否跳过之后的[handle]约束处理.
