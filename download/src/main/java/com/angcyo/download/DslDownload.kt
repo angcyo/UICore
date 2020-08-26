@@ -6,12 +6,14 @@ import com.angcyo.core.component.interceptor.LogFileInterceptor
 import com.angcyo.download.DslDownload._taskIdMap
 import com.angcyo.download.DslDownload.defaultDownloadFolder
 import com.angcyo.library.L
+import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.isDebugType
 import com.angcyo.library.utils.FileUtils
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.OkDownload
 import com.liulishuo.okdownload.OkDownloadProvider
 import com.liulishuo.okdownload.StatusUtil
+import com.liulishuo.okdownload.core.Util
 import com.liulishuo.okdownload.core.breakpoint.BreakpointStoreOnSQLite
 import com.liulishuo.okdownload.core.cause.EndCause
 import com.liulishuo.okdownload.core.connection.DownloadOkHttp3Connection
@@ -42,7 +44,11 @@ object DslDownload {
     val _taskIdMap = ArrayMap<String, Int>()
 
     /**初始化*/
-    fun init(content: Context? = null) {
+    fun init(
+        content: Context? = null,
+        debug: Boolean = isDebug(),
+        configOkHttp: ((OkHttpClient.Builder) -> Unit)? = null
+    ) {
         val ctx = content ?: OkDownloadProvider.context
         OkDownload.Builder(ctx)
             .callbackDispatcher(RCallbackDispatcher())
@@ -54,6 +60,7 @@ object DslDownload {
                         logRequestBody = false
                         logResponseBody = false
                     })
+                    configOkHttp?.invoke(this)
                 })
             })
             .build()
@@ -71,6 +78,10 @@ object DslDownload {
 
         //移除保存的断点信息
         //OkDownload.with().breakpointStore().remove(taskId)
+
+        if (debug) {
+            Util.enableConsoleLog()
+        }
     }
 
 
