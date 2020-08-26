@@ -141,6 +141,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         event: AccessibilityEvent?,
         nodeList: List<AccessibilityNodeInfo>
     ) {
+        doActionCount.start()
         checkOtherEventCount.clear()
 
         if (doActionCount.isMaxLimit()) {
@@ -159,7 +160,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             val handleConstraintList: List<ConstraintBean> = when (handleType) {
                 ActionBean.HANDLE_TYPE_RANDOM -> constraintList.randomGet(1) //随机获取处理约束
                 ActionBean.HANDLE_TYPE_ORDER -> {
-                    val nextIndex: Int = ((doActionCount.count - 1) % constraintList.size).toInt()
+                    val nextIndex: Int = ((doActionCount.count) % constraintList.size).toInt()
                     val next: ConstraintBean? = constraintList.getOrNull(nextIndex)
 
                     if (next == null) {
