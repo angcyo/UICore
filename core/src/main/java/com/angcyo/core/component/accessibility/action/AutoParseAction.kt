@@ -802,10 +802,11 @@ open class AutoParseAction : BaseAccessibilityAction() {
             //如果忽略了约束
             handleResult.result = false
 
-            if (constraintBean.enable) {
-                //不进行jumpNext操作
-                handleResult.jumpNextHandle = false
-            }
+            //2020-8-26 4.1.2 移除此判断
+//            if (constraintBean.enable) {
+//                //不进行jumpNext操作
+//                handleResult.jumpNextHandle = false
+//            }
         } else {
             if (!handleResult.result) {
                 //执行失败, 不进行jumpNext操作
