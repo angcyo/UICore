@@ -3,6 +3,7 @@ package com.angcyo.download
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
+import java.net.HttpURLConnection
 
 
 /**
@@ -21,14 +22,27 @@ class ETagInterceptor : Interceptor {
         val request = chain.request()
         var newRequest: Request? = null
         if (ignoreETagHostList.contains(request.url.host)) {
-            newRequest = request.newBuilder()
-                .apply {
-                    removeHeader("If-Match")
-                    removeHeader("Range")
-                    removeHeader("ETag")
-                }
-                .build()
+            newRequest = request.newRequest()
         }
-        return chain.proceed(newRequest ?: request)
+        var response = chain.proceed(newRequest ?: request)
+
+        if (response.code == HttpURLConnection.HTTP_PRECON_FAILED ||
+            response.code == 416
+        ) {
+            //重新请求
+            ignoreETagHostList.add("${request.url.host}${request.url.encodedPath}")
+            newRequest = request.newRequest()
+            response = chain.proceed(newRequest)
+        }
+
+        return response
     }
+
+    fun Request.newRequest() = newBuilder()
+        .apply {
+            removeHeader("If-Match")
+            removeHeader("Range")
+            removeHeader("ETag")
+        }
+        .build()
 }
