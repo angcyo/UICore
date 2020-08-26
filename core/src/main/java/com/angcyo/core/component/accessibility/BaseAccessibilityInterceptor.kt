@@ -209,6 +209,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                 } else {
                     //需要的所有节点
                     _lastLeavePackageName = needMainPackageName //todo 是否需要直接赋值?
+                    if (_packageTrackList.lastOrNull() != needMainPackageName) {
+                        _packageTrackList.add(needMainPackageName)
+                    }
                     handleFilterNode(service, needNodeList)
                 }
             }
