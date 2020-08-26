@@ -223,10 +223,8 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
                 }
             }) { map ->
 
-                //将action获取到的所有文本, 打包进参数
-                taskBean.getTextResultMap?.forEach { entry ->
-                    map[entry.key] = entry.value.firstOrNull() ?: ""
-                }
+                //params
+                handleFormParams(map)
 
                 //action执行结果, 执行成功发送 200
                 if (error == null) {
@@ -248,6 +246,14 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
                     invoke(map)
                 }
             }
+        }
+    }
+
+    /**表单参数*/
+    fun handleFormParams(params: HashMap<String, Any>) {
+        //将action获取到的所有文本, 打包进参数
+        taskBean.getTextResultMap?.forEach { entry ->
+            params[entry.key] = "${entry.value.firstOrNull()}"
         }
     }
 }

@@ -9,6 +9,7 @@ import com.angcyo.http.base.jsonObject
 import com.angcyo.http.post
 import com.angcyo.http.rx.observer
 import com.angcyo.library.L
+import com.angcyo.library.ex.isDebugType
 import com.angcyo.library.ex.string
 import com.angcyo.library.utils.UrlParse
 import com.google.gson.JsonElement
@@ -32,7 +33,9 @@ data class FormBean(
     //提交方法, 目前只支持[POST]
     var method: Int = POST,
     //数据提交的类型
-    var contentType: Int = CONTENT_TYPE_FORM
+    var contentType: Int = CONTENT_TYPE_FORM,
+    //不需要传递给后台的key集合
+    var ignoreKeyList: List<String>? = null
 ) {
     companion object {
         //form data 形式
@@ -48,6 +51,27 @@ data class FormBean(
     }
 }
 
+/**表单参数收集*/
+fun FormBean.handleParams(configParams: (params: HashMap<String, Any>) -> Unit = {}): HashMap<String, Any> {
+    //从url中, 获取默认参数
+    val urlParams = UrlParse.getUrlQueryParams(query)
+
+    //请求参数
+    val requestParams = HashMap<String, Any>().apply {
+        putAll(urlParams)
+        configParams(this)
+    }
+
+    //remove key
+    ignoreKeyList?.forEach {
+        if (it.isNotEmpty()) {
+            requestParams.remove(it)
+        }
+    }
+
+    return requestParams
+}
+
 /**发送表单请求*/
 fun FormBean.request(
     result: (
@@ -58,20 +82,20 @@ fun FormBean.request(
 ): Disposable? {
     return if (url.isNullOrEmpty()) {
         L.w("form url is null/empty.")
+
+        if (isDebugType()) {
+            val requestParams = handleParams(configParams)
+            L.i("表单参数:", requestParams)
+        }
         null
     } else {
-        //从url中, 获取默认参数
-        val urlParams = UrlParse.getUrlQueryParams(query)
-
         post {
             url = this@request.url!!
 
             //请求参数
-            val requestParams = HashMap<String, Any>().apply {
-                putAll(urlParams)
-                configParams(this)
-            }
+            val requestParams = handleParams(configParams)
 
+            // to-> get request
 //            var first = true
 //            url = "$url?" + buildString {
 //                requestParams.forEach { entry ->

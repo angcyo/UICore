@@ -75,7 +75,7 @@ fun TaskBean.toInterceptor(
     onEnableAction: (action: ActionBean) -> Boolean = { it.enable },
     onConvertCheckById: (checkId: Long) -> CheckBean? = { null }, //将[checkId]转换成[checkBean]
     onConfigAction: (AutoParseAction) -> Unit = {},
-    onGetTextResult: (action: AutoParseAction, List<CharSequence>) -> Unit = { _, _ -> } //[getText]动作, 返回的文本信息
+    onActionGetTextResult: (action: AutoParseAction, List<CharSequence>) -> Unit = { _, _ -> } //[getText]动作, 返回的文本信息
 ): AutoParseInterceptor {
     return AutoParseInterceptor(this).apply {
         //2020-08-23
@@ -146,7 +146,8 @@ fun TaskBean.toInterceptor(
                             (map as HashMap)[formKey] = textList
                         }
 
-                        onGetTextResult(autoParseAction, textList)
+                        //callback
+                        onActionGetTextResult(autoParseAction, textList)
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }

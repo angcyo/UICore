@@ -913,8 +913,13 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 }
             }) { map ->
 
-                //如果配置了[getText]的[formKey]
-                actionBean?.formKey?.let { map[it] = getTextList?.firstOrNull() ?: "" }
+                //打包所有之前也获取到的数据
+                if (interceptor is AutoParseInterceptor) {
+                    (interceptor as AutoParseInterceptor).handleFormParams(map)
+                } else {
+                    //如果配置了[getText]的[formKey]
+                    actionBean?.formKey?.let { map[it] = getTextList?.firstOrNull() ?: "" }
+                }
 
                 //action执行结果, 执行成功发送 200
                 if (error == null) {
