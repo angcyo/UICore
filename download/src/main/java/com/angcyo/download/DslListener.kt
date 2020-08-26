@@ -2,6 +2,7 @@ package com.angcyo.download
 
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.core.cause.EndCause
+import kotlin.math.max
 
 /**
  * https://github.com/lingochamp/okdownload/wiki/Download-Listener
@@ -37,7 +38,7 @@ open class DslListener : FDownloadListener() {
         speed: Long
     ) {
         super.taskProgress(task, totalLength, totalOffset, increaseBytes, speed)
-        val percent = (totalOffset * 100 / totalLength).toInt()
+        val percent = (totalOffset * 100 / max(1, totalLength)).toInt()
         onTaskProgress?.invoke(task, percent, speed)
     }
 }

@@ -8,6 +8,7 @@ import com.liulishuo.okdownload.StatusUtil
 import com.liulishuo.okdownload.core.breakpoint.BreakpointInfo
 import com.liulishuo.okdownload.core.cause.EndCause
 import com.liulishuo.okdownload.core.cause.ResumeFailedCause
+import kotlin.math.max
 
 /**
  * https://github.com/lingochamp/okdownload/wiki/Download-Listener
@@ -74,13 +75,13 @@ open class FDownloadListener : DownloadListener {
 
     /**常用回调*/
     override fun taskStart(task: DownloadTask) {
-        L.d("下载:${task.id} ${task.url}->${task.file?.absolutePath}")
+        L.d("下载:${task.id} ${task.url} ->${task.file?.absolutePath}")
     }
 
     /**常用回调*/
     override fun taskEnd(task: DownloadTask, cause: EndCause, realCause: Exception?) {
         val info = StatusUtil.getCurrentInfo(task)
-        L.d("this...$cause $realCause ${info?.totalLength?.fileSizeString()}")
+        L.d("this...$cause $realCause ${info?.totalLength?.fileSizeString()} ${task.file?.absolutePath}")
     }
 
     override fun fetchProgress(task: DownloadTask, blockIndex: Int, increaseBytes: Long) {
@@ -108,7 +109,7 @@ open class FDownloadListener : DownloadListener {
         increaseBytes: Long,
         speed: Long
     ) {
-        val percent = (totalOffset * 100 / totalLength).toInt()
+        val percent = (totalOffset * 100 / max(totalLength, 1)).toInt()
         //计算每秒多少
         val sp = "${speed.fileSizeString()}/s"
         val builder = StringBuilder()
