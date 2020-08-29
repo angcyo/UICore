@@ -192,9 +192,9 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
     var dialogType = DIALOG_TYPE_APPCOMPAT
 
     /** 系统默认3个按钮设置 */
-    var positiveButtonText: CharSequence? = null
-    var negativeButtonText: CharSequence? = null
-    var neutralButtonText: CharSequence? = null
+    var positiveButtonText: CharSequence? = null //确定
+    var negativeButtonText: CharSequence? = null //取消
+    var neutralButtonText: CharSequence? = null //中立
 
     var positiveButtonListener: ((dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit)? =
         { dialog, _ ->
