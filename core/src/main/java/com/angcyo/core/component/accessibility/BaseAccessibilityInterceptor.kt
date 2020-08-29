@@ -317,7 +317,6 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             _lastLeaveTime = nowTime()
             val old = _lastLeavePackageName
             _lastLeavePackageName = mainPackageName
-            _packageTrackList.add(mainPackageName)
             onLeavePackageName(service, old, mainPackageName, nodeList)
             true
         } else {
