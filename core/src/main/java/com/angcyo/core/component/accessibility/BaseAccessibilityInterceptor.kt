@@ -204,7 +204,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             val needMainPackageName = needNodeList.mainNode()?.packageName
 
             //track
-            _trackPackage(needMainPackageName)
+            _trackPackage(needMainPackageName ?: mainPackageName)
 
             if (needNodeList.isEmpty()) {
                 //当前主界面, 不在处理的列表中
