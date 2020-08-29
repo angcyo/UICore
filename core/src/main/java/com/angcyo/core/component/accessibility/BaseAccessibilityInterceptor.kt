@@ -189,6 +189,10 @@ abstract class BaseAccessibilityInterceptor : Runnable {
 
         if (filterPackageNameList.isEmpty()) {
             _isInFilterPackageNameApp = true
+
+            //track
+            _trackPackage(mainPackageName)
+
             //所有包名都需要
             handleFilterNode(service, findNodeInfoList)
         } else {
@@ -198,6 +202,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             //需要处理包名对应节点的列表
             val needNodeList = findNodeInfoList.filter(filterPackageNameList)//过滤后的应用程序节点列表
             val needMainPackageName = needNodeList.mainNode()?.packageName
+
+            //track
+            _trackPackage(needMainPackageName)
 
             if (needNodeList.isEmpty()) {
                 //当前主界面, 不在处理的列表中
@@ -209,12 +216,17 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                 } else {
                     //需要的所有节点
                     _lastLeavePackageName = needMainPackageName //todo 是否需要直接赋值?
-                    if (_packageTrackList.lastOrNull() != needMainPackageName) {
-                        _packageTrackList.add(needMainPackageName)
-                    }
                     handleFilterNode(service, needNodeList)
                 }
             }
+        }
+    }
+
+    //跟踪包名
+    fun _trackPackage(packageName: CharSequence?) {
+        //track
+        if (_packageTrackList.lastOrNull() != packageName) {
+            _packageTrackList.add(packageName)
         }
     }
 
