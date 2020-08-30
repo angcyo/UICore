@@ -269,6 +269,11 @@ open class AutoParseAction : BaseAccessibilityAction() {
         onGetTextResult?.invoke(textList)
     }
 
+    //记录指令
+    fun _addActionName(actionName: String) {
+        accessibilityInterceptor?._actionControl?.addActionName(actionName)
+    }
+
     /**
      * [Pair] 第一个值, 表示执行是否成功, 第二个值表示是否需要跳过后续的[handle]
      * */
@@ -789,7 +794,11 @@ open class AutoParseAction : BaseAccessibilityAction() {
                         }
                     } || handleResult.result
 
-                    //...end
+                    if (handleResult.result) {
+                        _addActionName(if (act.isEmpty()) ActionControl.ACTION_randomization else act)
+                    }
+
+                    //...end forEach
                 }
             }
         }

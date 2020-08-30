@@ -409,16 +409,15 @@ open class AutoParser {
                                     _rootNodeRect.height()
                                 )
 
-                                if (p1 == null && p2 == null) {
-                                } else {
+                                if (p1 != null) {
                                     if (p2 == null) {
                                         //只设置了单个点
-                                        if (bound.contains(p1!!.x.toInt(), p1.y.toInt())) {
+                                        if (bound.contains(p1.x.toInt(), p1.y.toInt())) {
                                             result = true
                                         }
                                     } else {
                                         _tempNodeRect.set(
-                                            p1!!.x.toInt(),
+                                            p1.x.toInt(),
                                             p1.y.toInt(),
                                             p2.x.toInt(),
                                             p2.y.toInt()

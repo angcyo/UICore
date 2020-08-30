@@ -143,6 +143,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         maxCountLimit = BaseAccessibilityAction.DEFAULT_INTERCEPTOR_LEAVE_COUNT
     }
 
+    /**[onDoAction]流程监督*/
+    val _actionControl = ActionControl()
+
     init {
         initialIntervalDelay = defaultIntervalDelay
     }
@@ -589,25 +592,37 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             }
         }
 
+        _actionControl.addMethodName(ActionControl.METHOD_checkEvent)
         //事件处理[checkEvent]->[checkOtherEvent]->[doActionWidth]->[onCheckEventOut]
-        if (action.checkEvent(service, lastEvent, nodeList)) {
+        var handle = action.checkEvent(service, lastEvent, nodeList)
+        if (handle) {
             //需要事件处理
+            _actionControl.addMethodName(ActionControl.METHOD_doAction)
             action.doAction(service, lastEvent, nodeList)
-        } else if (action.checkOtherEvent(service, lastEvent, nodeList)) {
-            //内部消化, 被other处理
         } else {
-            //还是未处理的事件
-            var handle = false
-            actionOtherList.forEach {
-                handle = handle || it.doActionWidth(action, service, lastEvent, nodeList)
-            }
-            if (!handle) {
-                //未被处理
-                action.onCheckEventOut(service, lastEvent, nodeList)
-                onNoOtherActionHandle(action, service, lastEvent, nodeList)
+            _actionControl.addMethodName(ActionControl.METHOD_checkOtherEvent)
+            handle = action.checkOtherEvent(service, lastEvent, nodeList)
+
+            if (handle) {
+                //内部消化, 被other处理
+            } else {
+                //还是未处理的事件
+                _actionControl.addMethodName(ActionControl.METHOD_doActionWidth)
+                actionOtherList.forEach {
+                    handle = handle || it.doActionWidth(action, service, lastEvent, nodeList)
+                }
+                if (!handle) {
+                    //未被处理
+                    _actionControl.addMethodName(ActionControl.METHOD_onCheckEventOut)
+                    action.onCheckEventOut(service, lastEvent, nodeList)
+                    onNoOtherActionHandle(action, service, lastEvent, nodeList)
+                }
             }
         }
 
+        //_actionControl.addMethodName("!next!")
+
+        //last
         nodeList.forEach {
             try {
                 it.recycle()
