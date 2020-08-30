@@ -395,7 +395,11 @@ open class AutoParser {
                             result = node.isValid()
                         } else {
 
-                            it.split("-").apply {
+                            if (it.contains("~")) {
+                                it.split("~")
+                            } else {
+                                it.split("-")
+                            }.apply {
                                 val p1 = getOrNull(0)?.toPointF(
                                     _rootNodeRect.width(),
                                     _rootNodeRect.height()

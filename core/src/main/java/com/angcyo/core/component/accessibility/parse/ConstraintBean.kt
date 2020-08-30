@@ -101,6 +101,9 @@ data class ConstraintBean(
      * 如果设置了2个点坐标(左上,右下), 则目标Rect相交这个矩形就算命中.
      *
      * 注意系统状态栏和导航栏对坐标的影响, 参考的是根节点的宽高
+     *
+     * 2020-08-30
+     * 支持[~]分割.
      * */
     var rectList: List<String>? = null,
 
