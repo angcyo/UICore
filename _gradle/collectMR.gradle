@@ -50,13 +50,12 @@ afterEvaluate {
             def buildFlavorsSplit = split(buildFlavors, '([A-Z]{1}[a-z]+)')
 
             def buildDir = project.buildDir.getAbsolutePath()
-//            println it.name
-//            println buildFlavors
-//            println buildFlavorsSplit
-//            println buildDir
-//
-//            1 / 0
-//            0 / 1
+
+            //println it.name              //assemblePreDebug
+            //println buildFlavors         //PreDebug
+            //println buildFlavorsSplit    //[Pre, Debug]
+            //println buildDir             //E:\AndroidProjects\AccTools\AccTools\build
+            //1 / 0
 
             //mapping.txt文件路径
             def mappingName = "mapping.txt"
@@ -83,6 +82,10 @@ afterEvaluate {
             def outputPath = "${project.rootDir.absolutePath}/${output}/"
 
             file(outputPath).mkdirs()
+            //不同的风味, 收集到不同的文件夹
+            outputPath = "${outputPath}/${buildFlavors}/"
+            def outputPathFile = file(outputPath)
+            outputPathFile.mkdirs()
 
             copyFile(mappingPath, outputPath + mappingName)
             copyFile(mappingPath36, outputPath + mappingName)
@@ -95,6 +98,11 @@ afterEvaluate {
 
             copyFile(rPath, outputPath + rName)
             copyFile(rPath36, outputPath + rName)
+
+            //删除空文件夹
+            if (outputPathFile.list().length <= 0) {
+                outputPathFile.deleteDir()
+            }
 
             println "收集文件结束."
         }
