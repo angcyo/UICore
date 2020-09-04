@@ -4,7 +4,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.dsladapter.DslAdapterItem
 
 /**
- * 移除收尾Item的分割线
+ * 移除首尾Item的分割线
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/03/06
