@@ -400,5 +400,8 @@ fun String.appBean(context: Context = app()): AppBean? {
     }
 }
 
+/**是否安装了app*/
+fun String.isInstallApp() = appBean() != null
+
 /**跳转应用详情页面*/
 fun String.toAppDetail(context: Context = app()) = DslIntent.toAppDetail(context, this)
