@@ -163,7 +163,11 @@ data class ConstraintBean(
     companion object {
 
         //可以执行的操作 [action]
-        const val ACTION_CLICK = "click" //触发当前节点的点击事件, null 默认是click操作
+
+        /**触发当前节点的点击事件, null 默认是click操作.
+         * [:STATE_UNSELECTED] 支持状态参数. 表示, 只在节点满足状态时, 才点击
+         * */
+        const val ACTION_CLICK = "click"
         const val ACTION_CLICK2 = "click2" //在当前节点区域双击(手势双击) [:0.1,0.1]指定目标区域
         const val ACTION_CLICK3 = "click3" //在当前节点区域点击(手势点击)
         const val ACTION_LONG_CLICK = "longClick" //触发当前节点的长按事件

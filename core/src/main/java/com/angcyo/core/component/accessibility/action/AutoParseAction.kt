@@ -379,7 +379,14 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             //触发节点自带的click
                             var value = false
                             handleNodeList.forEach {
-                                value = it.getClickParent()?.click() ?: false || value
+                                if (!arg.isNullOrEmpty() &&
+                                    !AutoParser.matchNodeState(it, arg)
+                                ) {
+                                    //携带了状态约束参数, 并且没有匹配到状态
+                                    value = true
+                                } else {
+                                    value = it.getClickParent()?.click() ?: false || value
+                                }
                             }
                             val first = handleNodeList.firstOrNull()
                             handleActionLog("点击节点[${first?.text() ?: first?.bounds()}]:$value")

@@ -94,6 +94,74 @@ open class AutoParser {
                 result
             }
         }
+
+        /**匹配节点的状态*/
+        fun matchNodeState(node: AccessibilityNodeInfoCompat, state: String): Boolean {
+            var match = true
+            when (state) {
+                ConstraintBean.STATE_CLICKABLE -> {
+                    //需要具备可以点击的状态
+                    if (!node.isClickable) {
+                        match = false
+                    }
+                }
+                ConstraintBean.STATE_NOT_CLICKABLE -> {
+                    //需要具备不可以点击的状态
+                    if (node.isClickable) {
+                        match = false
+                    }
+                }
+                ConstraintBean.STATE_FOCUSABLE -> {
+                    //需要具备可以获取焦点状态
+                    if (!node.isFocusable) {
+                        match = false
+                    }
+                }
+                ConstraintBean.STATE_FOCUSED -> {
+                    //需要具备焦点状态
+                    if (!node.isFocused) {
+                        match = false
+                    }
+                }
+                ConstraintBean.STATE_UNFOCUSED -> {
+                    //需要具备无焦点状态
+                    if (node.isFocused) {
+                        match = false
+                    }
+                }
+                ConstraintBean.STATE_SELECTED -> {
+                    //需要具备选中状态
+                    if (!node.isSelected) {
+                        match = false
+                    }
+                }
+                ConstraintBean.STATE_UNSELECTED -> {
+                    //需要具备不选中状态
+                    if (node.isSelected) {
+                        match = false
+                    }
+                }
+                ConstraintBean.STATE_SCROLLABLE -> {
+                    //需要具备可滚动状态
+                    if (!node.isScrollable) {
+                        match = false
+                    }
+                }
+                ConstraintBean.STATE_LONG_CLICKABLE -> {
+                    //需要具备可以长按的状态
+                    if (!node.isLongClickable) {
+                        match = false
+                    }
+                }
+                ConstraintBean.STATE_NOT_LONG_CLICKABLE -> {
+                    //需要具备不可以长按的状态
+                    if (node.isLongClickable) {
+                        match = false
+                    }
+                }
+            }
+            return match
+        }
     }
 
     /**解析id时, 需要补全的id全路径包名*/
@@ -440,71 +508,14 @@ open class AutoParser {
 
         //状态约束
         if (result) {
-            val state: List<String>? = constraintBean.stateList
-            if (state != null && !state.isListEmpty()) {
+            val stateList: List<String>? = constraintBean.stateList
+            if (stateList != null && !stateList.isListEmpty()) {
                 var match = true
-                state.forEach {
-                    when (it) {
-                        ConstraintBean.STATE_CLICKABLE -> {
-                            //需要具备可以点击的状态
-                            if (!node.isClickable) {
-                                match = false
-                            }
-                        }
-                        ConstraintBean.STATE_NOT_CLICKABLE -> {
-                            //需要具备不可以点击的状态
-                            if (node.isClickable) {
-                                match = false
-                            }
-                        }
-                        ConstraintBean.STATE_FOCUSABLE -> {
-                            //需要具备可以获取焦点状态
-                            if (!node.isFocusable) {
-                                match = false
-                            }
-                        }
-                        ConstraintBean.STATE_FOCUSED -> {
-                            //需要具备焦点状态
-                            if (!node.isFocused) {
-                                match = false
-                            }
-                        }
-                        ConstraintBean.STATE_UNFOCUSED -> {
-                            //需要具备无焦点状态
-                            if (node.isFocused) {
-                                match = false
-                            }
-                        }
-                        ConstraintBean.STATE_SELECTED -> {
-                            //需要具备选中状态
-                            if (!node.isSelected) {
-                                match = false
-                            }
-                        }
-                        ConstraintBean.STATE_UNSELECTED -> {
-                            //需要具备不选中状态
-                            if (node.isSelected) {
-                                match = false
-                            }
-                        }
-                        ConstraintBean.STATE_SCROLLABLE -> {
-                            //需要具备可滚动状态
-                            if (!node.isScrollable) {
-                                match = false
-                            }
-                        }
-                        ConstraintBean.STATE_LONG_CLICKABLE -> {
-                            //需要具备可以长按的状态
-                            if (!node.isLongClickable) {
-                                match = false
-                            }
-                        }
-                        ConstraintBean.STATE_NOT_LONG_CLICKABLE -> {
-                            //需要具备不可以长按的状态
-                            if (node.isLongClickable) {
-                                match = false
-                            }
-                        }
+
+                for (state in stateList) {
+                    if (!matchNodeState(node, state)) {
+                        match = false
+                        break
                     }
                 }
 
