@@ -449,7 +449,7 @@ fun ViewGroup.addDslItem(dslAdapterItem: DslAdapterItem, index: Int = -1): DslVi
     itemView.setDslViewHolder(dslViewHolder)
     itemView.setDslAdapterItem(dslAdapterItem)
 
-    val itemIndex = if (index < 0) childCount else index
+    var itemIndex = if (index < 0) childCount else index
 
     dslAdapterItem.itemBind(dslViewHolder, itemIndex, dslAdapterItem, emptyList())
 
@@ -459,6 +459,7 @@ fun ViewGroup.addDslItem(dslAdapterItem: DslAdapterItem, index: Int = -1): DslVi
             if (dslAdapterItem.itemTopInsert > 0) {
                 addView(
                     View(context).apply { setBackgroundColor(dslAdapterItem.itemDecorationColor) },
+                    itemIndex++,
                     LinearLayout.LayoutParams(-1, dslAdapterItem.itemTopInsert).apply {
                         leftMargin = dslAdapterItem.itemLeftOffset
                         rightMargin = dslAdapterItem.itemRightOffset
@@ -468,6 +469,7 @@ fun ViewGroup.addDslItem(dslAdapterItem: DslAdapterItem, index: Int = -1): DslVi
             if (dslAdapterItem.itemLeftInsert > 0) {
                 addView(
                     View(context).apply { setBackgroundColor(dslAdapterItem.itemDecorationColor) },
+                    itemIndex++,
                     LinearLayout.LayoutParams(dslAdapterItem.itemTopInsert, -1).apply {
                         topMargin = dslAdapterItem.itemTopOffset
                         bottomMargin = dslAdapterItem.itemBottomOffset
@@ -475,13 +477,14 @@ fun ViewGroup.addDslItem(dslAdapterItem: DslAdapterItem, index: Int = -1): DslVi
             }
         }
     }
-    addView(itemView, itemIndex)
+    addView(itemView, itemIndex++)
     //尾分割线的支持
     if (this is LinearLayout) {
         if (this.orientation == LinearLayout.VERTICAL) {
             if (dslAdapterItem.itemBottomInsert > 0) {
                 addView(
                     View(context).apply { setBackgroundColor(dslAdapterItem.itemDecorationColor) },
+                    itemIndex,
                     LinearLayout.LayoutParams(-1, dslAdapterItem.itemBottomInsert).apply {
                         leftMargin = dslAdapterItem.itemLeftOffset
                         rightMargin = dslAdapterItem.itemRightOffset
@@ -491,6 +494,7 @@ fun ViewGroup.addDslItem(dslAdapterItem: DslAdapterItem, index: Int = -1): DslVi
             if (dslAdapterItem.itemRightInsert > 0) {
                 addView(
                     View(context).apply { setBackgroundColor(dslAdapterItem.itemDecorationColor) },
+                    itemIndex,
                     LinearLayout.LayoutParams(dslAdapterItem.itemRightInsert, -1).apply {
                         topMargin = dslAdapterItem.itemTopOffset
                         bottomMargin = dslAdapterItem.itemBottomOffset
