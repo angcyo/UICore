@@ -181,7 +181,10 @@ open class AutoParseAction : BaseAccessibilityAction() {
             if (result) {
                 isFinish = true
                 //完成
-                doActionFinish()
+                if (isActionStart()) {
+                    //[parseHandleAction]也会执行[doActionFinish],这样就会导致逻辑执行2次了
+                    doActionFinish()
+                }
             }
 
             //是否需要强制执行完成
@@ -196,7 +199,9 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
                 if (doActionCount.count >= actionMaxCount) {
                     isFinish = true
-                    doActionFinish()
+                    if (isActionStart()) {
+                        doActionFinish()
+                    }
                 }
             }
         }
@@ -326,8 +331,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
         }
 
         if (actionList.isListEmpty()) {
-            handleActionLog("未指定需要指定的指令")
-            handleResult.result = true
+            handleActionLog("未指定指令!")
+            handleResult.result = false //2020-09-06
         } else {
             actionList?.forEach { act ->
                 if (act.isEmpty()) {
@@ -792,6 +797,20 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             handleActionLog("激活ConstraintBean[${arg ?: "this"}]:true")
                             true
                         }
+                        ConstraintBean.ACTION_DO_OTHER -> {
+                            var value = false
+                            accessibilityInterceptor?.actionOtherList?.forEach {
+                                value = value || it.doActionWidth(
+                                    this,
+                                    service,
+                                    accessibilityInterceptor?.lastEvent,
+                                    nodeList.mapTo(ArrayList()) { nodeInfoCompat ->
+                                        nodeInfoCompat.unwrap()
+                                    }
+                                )
+                            }
+                            value
+                        }
                         else -> {
                             handleActionLog("未识别的指令[$action:$arg]:true")
                             /*service.gesture.click().apply {
@@ -812,6 +831,13 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
         if (getTextResultList.isNotEmpty()) {
             onGetTextResult(getTextResultList)
+        }
+
+        if (constraintBean.jumpOnSuccess) {
+            if (handleResult.result) {
+                //执行成功, 跳过后续handle处理
+                handleResult.jumpNextHandle = true
+            }
         }
 
         if (constraintBean.ignore) {

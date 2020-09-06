@@ -92,6 +92,9 @@ data class ConstraintBean(
      * */
     var jump: Boolean = false,
 
+    /**[actionList]指令执行成功后, 是否跳过后续的[handle]约束处理, 失败则不跳过*/
+    var jumpOnSuccess: Boolean = false,
+
     /**和[textList]为一一对应的关系.
      * 坐标矩形约束. 格式10,10-100,100 小于1的数, 表示比例否则就是dp.
      * 空字符只要宽高大于0, 就命中.
@@ -219,6 +222,9 @@ data class ConstraintBean(
 
         /**[ACTION_DISABLE]*/
         const val ACTION_ENABLE = "enable"
+
+        /**执行[actionOtherList]*/
+        const val ACTION_DO_OTHER = "doOther"
 
         //需要指定的状态 [state]
         const val STATE_CLICKABLE = "clickable" //具备可点击

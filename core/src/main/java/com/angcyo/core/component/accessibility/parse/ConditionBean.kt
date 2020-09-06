@@ -22,9 +22,25 @@ data class ConditionBean(
 
     /**节点中, 必须包含指定的所有文本
      * null 忽略此条件*/
+    @Deprecated("废弃:请使用[check]")
     var containsText: List<String>? = null,
 
     /**节点中, 不包含指定的所有文本
      * null 忽略此条件*/
-    var notContainsText: List<String>? = null
-)
+    @Deprecated("废弃:请使用[check]")
+    var notContainsText: List<String>? = null,
+
+    /**[check]的操作条件.*/
+    var op: String? = null,
+
+    /**仅具备条件约束的[ConstraintBean], 需要先设置[op]*/
+    var check: ConstraintBean? = null
+) {
+    companion object {
+        /**节点必须满足[check]条件约束才行*/
+        const val OP_IS = "is"
+
+        /**节点必须不满足[check]条件约束才行*/
+        const val OP_NOT = "not"
+    }
+}

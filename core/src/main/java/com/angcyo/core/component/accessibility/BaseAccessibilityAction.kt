@@ -223,7 +223,7 @@ abstract class BaseAccessibilityAction {
 
     /**当前[Action]是否开始了*/
     open fun isActionStart(): Boolean {
-        return accessibilityInterceptor != null && doActionCount.count > 0
+        return accessibilityInterceptor != null && doActionCount.count >= 0
     }
 
     //</editor-fold desc="核心回调">
