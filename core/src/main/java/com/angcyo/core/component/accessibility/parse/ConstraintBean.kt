@@ -21,6 +21,11 @@ data class ConstraintBean(
      * */
     var textList: List<String>? = null,
 
+    /**约束之后, 如果匹配到的节点数量, 满足此条件.
+     * 不满足条件, 清空所有节点.
+     * [com.angcyo.core.component.accessibility.parse.ConditionBean.childCount]*/
+    var nodeCount: String? = null,
+
     /**
      * [textList]优先从[wordList]集合中取值.
      * 支持表达式:
@@ -105,6 +110,10 @@ data class ConstraintBean(
      *
      * 注意系统状态栏和导航栏对坐标的影响, 参考的是根节点的宽高
      *
+     * [100,100] 目标node矩形包含这个点
+     * [10,10-100,100] 目标node矩形相交这个矩形
+     * [0.5,0.8785-0.75,0.99]
+     *
      * 2020-08-30
      * 支持[~]分割.
      * */
@@ -133,7 +142,8 @@ data class ConstraintBean(
      * */
     var pathList: List<String>? = null,
 
-    /**当以上规则匹配到很多节点时, 挑出指定索引的节点执行[actionList]. 不指定默认所有节点
+    /**挑选需要执行[actionList]的节点.
+     * 当以上规则匹配到很多节点时, 挑出指定索引的节点执行[actionList]. 不指定默认所有节点.
      * index>=0, 正向取索引
      * index<0, 倒数第几个*/
     var handleNodeList: List<Int>? = null,

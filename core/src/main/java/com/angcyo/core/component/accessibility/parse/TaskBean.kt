@@ -31,7 +31,7 @@ data class TaskBean(
 
     //--------------------------------------------------------------
 
-    /**任务对应的包名, 比如(抖音的包名, 快手的包名)*/
+    /**任务对应的包名, 比如(抖音的包名, 快手的包名), 多个包名使用`;`分割*/
     var packageName: String? = null,
 
     /**为[ActionBean]的[ConstraintBean]中的[wordInputIndexList]提供数据*/
