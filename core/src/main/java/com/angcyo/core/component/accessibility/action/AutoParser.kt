@@ -95,6 +95,36 @@ open class AutoParser {
             }
         }
 
+        /**[com.angcyo.core.component.accessibility.parse.ConstraintBean.ACTION_CLICK]*/
+        fun matchNodeStateOfParent(
+            node: AccessibilityNodeInfoCompat,
+            state: String,
+            parentCount: Int = 0
+        ): Boolean {
+            var match = true
+            if (matchNodeState(node, state)) {
+                //自身已经满足条件
+                if (parentCount > 0) {
+                    var parent: AccessibilityNodeInfoCompat? = node
+                    for (count in 1..parentCount) {
+                        parent = parent?.parent
+                        if (parent == null) {
+                            break
+                        }
+                        match = matchNodeState(parent, state)
+
+                        if (!match) {
+                            //有一个不匹配
+                            break
+                        }
+                    }
+                }
+            } else {
+                match = false
+            }
+            return match
+        }
+
         /**匹配节点的状态*/
         fun matchNodeState(node: AccessibilityNodeInfoCompat, state: String): Boolean {
             var match = true

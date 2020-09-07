@@ -206,7 +206,11 @@ open class AutoParseAction : BaseAccessibilityAction() {
             }
         }
 
-        if (!isFinish) {
+        if (isFinish) {
+            //已经执行了 [doActionFinish]
+            checkOtherEventCount.clear()
+        } else {
+            //没有直接完成
             super.doAction(service, event, nodeList)
         }
     }
@@ -383,14 +387,39 @@ open class AutoParseAction : BaseAccessibilityAction() {
                         ConstraintBean.ACTION_CLICK -> {
                             //触发节点自带的click
                             var value = false
-                            handleNodeList.forEach {
-                                if (!arg.isNullOrEmpty() &&
-                                    !AutoParser.matchNodeState(it, arg)
-                                ) {
-                                    //携带了状态约束参数, 并且没有匹配到状态
-                                    value = true
+                            handleNodeList.forEach { node ->
+                                if (arg.isNullOrEmpty()) {
+                                    value = node.getClickParent()?.click() ?: false || value
                                 } else {
-                                    value = it.getClickParent()?.click() ?: false || value
+                                    arg.split(":").also {
+                                        val arg1 = it.getOrNull(0)!!
+                                        val arg2 = it.getOrNull(1)?.toIntOrNull()
+
+                                        if (arg2 == null) {
+                                            //未指定parent
+                                            if (AutoParser.matchNodeState(node, arg1)) {
+                                                value =
+                                                    node.getClickParent()?.click() ?: false || value
+                                            } else {
+                                                //携带了状态约束参数, 并且没有匹配到状态
+                                                value = true
+                                            }
+                                        } else {
+                                            //指定了parent数量
+                                            if (AutoParser.matchNodeStateOfParent(
+                                                    node,
+                                                    arg1,
+                                                    arg2
+                                                )
+                                            ) {
+                                                value =
+                                                    node.getClickParent()?.click() ?: false || value
+                                            } else {
+                                                //携带了状态约束参数, 并且没有匹配到状态
+                                                value = true
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             val first = handleNodeList.firstOrNull()
@@ -560,31 +589,6 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
                             var value = false
                             targetPackageName?.let {
-//                                val actionIndex = accessibilityInterceptor?.actionIndex ?: -1
-//                                value = if (actionIndex <= 1) {
-//                                    service.openApp(
-//                                        it,
-//                                        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-//                                    )
-//                                } else {
-//                                    app().openApp(
-//                                        it,
-//                                        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-//                                    )
-//                                } != null
-
-//                                value = if (it == "com.smile.gifmaker") {
-//                                    app().openApp(
-//                                        it,
-//                                        flags = 0
-//                                    )
-//                                } else {
-//                                    service.openApp(
-//                                        it,
-//                                        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-//                                    )
-//                                } != null
-
                                 value = service.openApp(
                                     it,
                                     flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -810,6 +814,14 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                 )
                             }
                             value
+                        }
+                        ConstraintBean.ACTION_TRUE -> {
+                            handleActionLog("直接返回:true")
+                            true
+                        }
+                        ConstraintBean.ACTION_FALSE -> {
+                            handleActionLog("直接返回:false")
+                            false
                         }
                         else -> {
                             handleActionLog("未识别的指令[$action:$arg]:true")

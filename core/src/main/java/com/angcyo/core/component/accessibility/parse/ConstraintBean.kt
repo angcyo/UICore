@@ -169,6 +169,7 @@ data class ConstraintBean(
 
         /**触发当前节点的点击事件, null 默认是click操作.
          * [:STATE_UNSELECTED] 支持状态参数. 表示, 只在节点满足状态时, 才点击
+         * [:STATE_UNSELECTED:5] 自身要满足且5个parent也都满足状态参数
          * */
         const val ACTION_CLICK = "click"
         const val ACTION_CLICK2 = "click2" //在当前节点区域双击(手势双击) [:0.1,0.1]指定目标区域
@@ -225,6 +226,8 @@ data class ConstraintBean(
 
         /**执行[actionOtherList]*/
         const val ACTION_DO_OTHER = "doOther"
+        const val ACTION_TRUE = "true" //执行结果直接设置true
+        const val ACTION_FALSE = "false" //执行结果直接设置false
 
         //需要指定的状态 [state]
         const val STATE_CLICKABLE = "clickable" //具备可点击
