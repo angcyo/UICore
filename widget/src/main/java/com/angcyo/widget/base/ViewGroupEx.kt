@@ -440,7 +440,11 @@ fun ViewGroup.appendDslItem(dslAdapterItem: DslAdapterItem): DslViewHolder {
     return addDslItem(dslAdapterItem)
 }
 
-fun ViewGroup.addDslItem(dslAdapterItem: DslAdapterItem, index: Int = -1): DslViewHolder {
+fun ViewGroup.addDslItem(
+    dslAdapterItem: DslAdapterItem,
+    index: Int = -1,
+    payloads: List<Any> = emptyList()
+): DslViewHolder {
     setOnHierarchyChangeListener(DslHierarchyChangeListenerWrap())
     val itemView = inflate(dslAdapterItem.itemLayoutId, false)
     val dslViewHolder = DslViewHolder(itemView)
@@ -451,7 +455,7 @@ fun ViewGroup.addDslItem(dslAdapterItem: DslAdapterItem, index: Int = -1): DslVi
 
     var itemIndex = if (index < 0) childCount else index
 
-    dslAdapterItem.itemBind(dslViewHolder, itemIndex, dslAdapterItem, emptyList())
+    dslAdapterItem.itemBind(dslViewHolder, itemIndex, dslAdapterItem, payloads)
 
     //头分割线的支持
     if (this is LinearLayout) {
@@ -564,6 +568,28 @@ fun ViewGroup.findDslItemList(onlyVisible: Boolean = true): List<DslAdapterItem>
         }
     }
     return result
+}
+
+/**更新所有[DslAdapterItem]在[ViewGroup]中*/
+fun ViewGroup.updateAllDslItem(payloads: List<Any> = emptyList()) {
+    forEach { index, child ->
+        val dslItem = child.tagDslAdapterItem()
+        dslItem?.also {
+            it.itemBind(child.dslViewHolder(), index, it, payloads)
+        }
+    }
+}
+
+/**更新指定的[DslAdapterItem]在[ViewGroup]中*/
+fun ViewGroup.updateDslItem(item: DslAdapterItem, payloads: List<Any> = emptyList()) {
+    forEach { index, child ->
+        val dslItem = child.tagDslAdapterItem()
+        dslItem?.also {
+            if (item == it) {
+                it.itemBind(child.dslViewHolder(), index, it, payloads)
+            }
+        }
+    }
 }
 
 //<editor-fold desc="DslAdapterItem操作">
