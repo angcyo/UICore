@@ -8,6 +8,7 @@ import com.angcyo.core.component.accessibility.parse.*
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.file.wrapData
 import com.angcyo.library.LTime
+import com.angcyo.library.component.appBean
 import com.angcyo.library.ex.elseNull
 import com.angcyo.library.ex.file
 import com.angcyo.library.ex.nowTime
@@ -175,9 +176,20 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
         nodeList: List<AccessibilityNodeInfo>
     ) {
         //super.onLeavePackageName(service, fromPackageName, toPackageName, nodeList)
+
+        //权限窗口
         PermissionsAction().apply {
             if (doActionWidth(this, service, lastEvent, nodeList)) {
                 log("[${taskBean.name}]权限请求:true")
+            }
+        }
+
+        //多开窗口
+        MultiAppAction().apply {
+            packageName = filterPackageNameList.firstOrNull()
+            initAction()
+            if (doActionWidth(this, service, lastEvent, nodeList)) {
+                log("检测到多开应用[${packageName?.appBean()?.appName}], 打开第[$defaultOpenIndex]个:true")
             }
         }
     }

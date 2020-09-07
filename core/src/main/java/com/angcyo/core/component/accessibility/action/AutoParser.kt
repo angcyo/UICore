@@ -192,6 +192,52 @@ open class AutoParser {
             }
             return match
         }
+
+        /**比较
+         * [>=2] 数量大于等于2
+         * [>3] 数量大于3
+         * [2] 数量等于2
+         * [=2] 数量等于2
+         * [<3] 数量小于3
+         * 空字符 表示直接过
+         * null 忽略此条件
+         * [expression] 字符串数值表达式, 比如: >=2
+         * [value] 需要比较的数值,比如: 3
+         * */
+        fun compareStringNum(expression: String?, value: Long): Boolean {
+            var result = false
+            if (expression != null) {
+                if (expression.isEmpty()) {
+                    result = true
+                } else {
+                    val num = expression.getLongNum()
+                    num?.let {
+                        if (expression.startsWith(">=")) {
+                            if (value >= num) {
+                                result = true
+                            }
+                        } else if (expression.startsWith(">")) {
+                            if (value > num) {
+                                result = true
+                            }
+                        } else if (expression.startsWith("<=")) {
+                            if (value <= num) {
+                                result = true
+                            }
+                        } else if (expression.startsWith("<")) {
+                            if (value < num) {
+                                result = true
+                            }
+                        } else {
+                            if (value == num) {
+                                result = true
+                            }
+                        }
+                    }
+                }
+            }
+            return result
+        }
     }
 
     /**解析id时, 需要补全的id全路径包名*/
@@ -404,6 +450,14 @@ open class AutoParser {
                         }
                     }
                 }
+            }
+        }
+
+        //节点数量约束
+        if (constraintBean.nodeCount != null) {
+            if (!compareStringNum(constraintBean.nodeCount, result.size.toLong())) {
+                //数量不匹配, 清空节点
+                result.clear()
             }
         }
 
@@ -622,36 +676,10 @@ open class AutoParser {
         //child 数量条件
         val childCount = condition.childCount
         if (childCount != null) {
-            if (childCount.isEmpty()) {
-                isGet = true
-            } else {
-                val num = childCount.getLongNum()?.toInt()
-                num?.let {
-                    if (childCount.startsWith(">=")) {
-                        if (node.childCount >= num) {
-                            isGet = true
-                        }
-                    } else if (childCount.startsWith(">")) {
-                        if (node.childCount > num) {
-                            isGet = true
-                        }
-                    } else if (childCount.startsWith("<=")) {
-                        if (node.childCount <= num) {
-                            isGet = true
-                        }
-                    } else if (childCount.startsWith("<")) {
-                        if (node.childCount < num) {
-                            isGet = true
-                        }
-                    } else {
-                        if (node.childCount == num) {
-                            isGet = true
-                        }
-                    }
-                }
-                if (!isGet) {
-                    return false
-                }
+            isGet = compareStringNum(childCount, node.childCount.toLong())
+            if (!isGet) {
+                //没有匹配上, 结束后续的匹配
+                return false
             }
         }
 
