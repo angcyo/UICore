@@ -21,6 +21,9 @@ import kotlin.random.Random.Default.nextInt
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
+/**函数别名*/
+typealias Action = () -> Unit
+
 /**反射获取[Application]对象*/
 fun currentApplication(): Application? {
     return try {
