@@ -536,48 +536,38 @@ open class AutoParser {
 
             if (rect != null) {
                 //坐标约束
-
                 val bound = node.bounds()
+                //如果设置了矩形匹配规则, 那么这个node的rect一定要是有效的
+                rect.let {
+                    if (it.isEmpty()) {
+                        //空字符只要宽高大于0, 就命中
+                        result = node.isValid()
+                    } else {
 
-                if (node.isValid()) {
-                    //如果设置了矩形匹配规则, 那么这个node的rect一定要是有效的
-                    rect.let {
-                        if (it.isEmpty()) {
-                            //空字符只要宽高大于0, 就命中
-                            result = node.isValid()
+                        if (it.contains("~")) {
+                            it.split("~")
                         } else {
+                            it.split("-")
+                        }.apply {
+                            val p1 = getOrNull(0)?.toPointF()
+                            val p2 = getOrNull(1)?.toPointF()
 
-                            if (it.contains("~")) {
-                                it.split("~")
-                            } else {
-                                it.split("-")
-                            }.apply {
-                                val p1 = getOrNull(0)?.toPointF(
-                                    _rootNodeRect.width(),
-                                    _rootNodeRect.height()
-                                )
-                                val p2 = getOrNull(1)?.toPointF(
-                                    _rootNodeRect.width(),
-                                    _rootNodeRect.height()
-                                )
-
-                                if (p1 != null) {
-                                    if (p2 == null) {
-                                        //只设置了单个点
-                                        if (bound.contains(p1.x.toInt(), p1.y.toInt())) {
-                                            result = true
-                                        }
-                                    } else {
-                                        _tempNodeRect.set(
-                                            p1.x.toInt(),
-                                            p1.y.toInt(),
-                                            p2.x.toInt(),
-                                            p2.y.toInt()
-                                        )
-                                        //设置了多个点, 那么只要2个矩形相交, 就算命中
-                                        if (bound.intersect(_tempNodeRect)) {
-                                            result = true
-                                        }
+                            if (p1 != null) {
+                                if (p2 == null) {
+                                    //只设置了单个点
+                                    if (bound.contains(p1.x.toInt(), p1.y.toInt())) {
+                                        result = true
+                                    }
+                                } else {
+                                    _tempNodeRect.set(
+                                        p1.x.toInt(),
+                                        p1.y.toInt(),
+                                        p2.x.toInt(),
+                                        p2.y.toInt()
+                                    )
+                                    //设置了多个点, 那么只要2个矩形相交, 就算命中
+                                    if (bound.intersect(_tempNodeRect)) {
+                                        result = true
                                     }
                                 }
                             }
