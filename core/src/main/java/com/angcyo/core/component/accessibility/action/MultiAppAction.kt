@@ -38,7 +38,7 @@ class MultiAppAction : AutoParseAction() {
             check = CheckBean().apply {
                 back = listOf(ConstraintBean().apply {
                     textList = listOf(name)
-                    rectList = listOf("0.01,0.9-0.99,0.99")
+                    rectList = listOf("0.01,0.7-0.99,0.99")
                     nodeCount = ">=${max(2, defaultOpenIndex + 1)}"
                     handleNodeList = listOf(defaultOpenIndex)
                     actionList = listOf(ConstraintBean.ACTION_CLICK)
