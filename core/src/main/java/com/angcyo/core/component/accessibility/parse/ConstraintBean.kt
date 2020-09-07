@@ -100,7 +100,7 @@ data class ConstraintBean(
     /**[actionList]指令执行成功后, 是否跳过后续的[handle]约束处理, 失败则不跳过*/
     var jumpOnSuccess: Boolean = false,
 
-    /**和[textList]为一一对应的关系.
+    /**和[textList]为一一对应的关系. 相对于屏幕的坐标计算
      * 坐标矩形约束. 格式10,10-100,100 小于1的数, 表示比例否则就是dp.
      * 空字符只要宽高大于0, 就命中.
      * 只要满足一组矩形约束, 就算命中
