@@ -24,7 +24,7 @@ fun Int.have(value: Int): Boolean = if (this == 0 || value == 0) {
 fun Int.remove(value: Int): Int = this and value.inv()
 fun Int.add(value: Int): Int = this or value
 
-/**第4位的最高字节  0x8000 = 32,768, 未定义的资源*/
+/**第4位的最高字节  0x8000 = 32,768, 未定义的资源. 0默认资源*/
 val undefined_res = -32_768
 
 /**未定义的整数*/
