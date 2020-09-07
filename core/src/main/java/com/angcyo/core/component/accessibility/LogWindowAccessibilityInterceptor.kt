@@ -11,6 +11,8 @@ import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.file.wrapData
 import com.angcyo.http.rx.doBack
 import com.angcyo.library.L
+import com.angcyo.library._screenHeight
+import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.fileSizeString
 import com.angcyo.library.toastQQ
 
@@ -51,7 +53,7 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                     accessibilityWindowInfo.root?.apply {
                         getBoundsInScreen(tempRect)
                         if (rootNodeInfo != null && this == rootNodeInfo) {
-                            builder.append("[root]")
+                            builder.append("[root ${_screenWidth}x${_screenHeight}]")
                             logNodeInfo(outBuilder = builder)
 
                             toastStringBuilder.append("[root] ")

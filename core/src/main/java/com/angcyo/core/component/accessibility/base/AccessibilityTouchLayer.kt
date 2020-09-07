@@ -12,6 +12,7 @@ import com.angcyo.ilayer.container.OffsetPosition
 import com.angcyo.ilayer.container.WindowContainer
 import com.angcyo.library.*
 import com.angcyo.library.ex._color
+import com.angcyo.library.ex.isDebugType
 import com.angcyo.widget.base.setInputText
 import com.angcyo.widget.base.string
 import com.angcyo.widget.checkEmpty
@@ -105,5 +106,5 @@ object AccessibilityTouchLayer : ILayer() {
     }
 
     /**比例从0.5开始到0.9999*/
-    fun Float.toFraction() = min(0.9999f, 0.5f + 0.5f * this)
+    fun Float.toFraction() = if (isDebugType()) this else min(0.9999f, 0.5f + 0.5f * this)
 }
