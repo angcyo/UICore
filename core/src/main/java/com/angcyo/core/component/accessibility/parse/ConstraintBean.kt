@@ -205,8 +205,8 @@ data class ConstraintBean(
 
         /**
          * 指定下一个[action]执行的时间间隔, 当[checkEvent]通过时, 此指令无效
-         * 格式[:5000,500,5]
-         * [com/angcyo/core/component/accessibility/parse/ActionBean.kt:61]
+         * 格式[:5000,500,5],
+         * 空参数表示使用[com.angcyo.core.component.accessibility.parse.ActionBean.interval]
          * */
         const val ACTION_SLEEP = "sleep"
 

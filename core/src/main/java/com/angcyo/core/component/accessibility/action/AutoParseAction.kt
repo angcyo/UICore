@@ -747,15 +747,19 @@ open class AutoParseAction : BaseAccessibilityAction() {
                         ConstraintBean.ACTION_SLEEP -> {
                             //指定下一次周期循环的间隔
                             var value = false
-                            arg?.let { interval ->
-                                if (interval.isNotEmpty()) {
-                                    accessibilityInterceptor?.let {
-                                        it.intervalDelay = getInterceptorIntervalDelay(interval)
-                                        value = true
-                                        handleActionLog("指定下一个周期在[${it.intervalDelay}ms]:$value")
-                                    }
-                                }
+
+                            val interval = if (arg.isNullOrEmpty()) {
+                                actionInterval
+                            } else {
+                                arg
                             }
+
+                            accessibilityInterceptor?.let {
+                                it.intervalDelay = getInterceptorIntervalDelay(interval)
+                                value = true
+                                handleActionLog("指定下一个周期在[${it.intervalDelay}ms]:$value")
+                            }
+
                             value
                         }
                         ConstraintBean.ACTION_HIDE_WINDOW -> {
