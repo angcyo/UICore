@@ -345,12 +345,34 @@ open class AutoParser {
         rootNodeInfo: AccessibilityNodeInfo,
         parseResult: ParseResult
     ) {
-
         //约束条件
         val constraintBean: ConstraintBean = parseResult.constraint
 
         //返回值
         val result: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
+
+        //节点总数约束
+        if (constraintBean.sizeCount != null) {
+            var size = 0L
+            var next = -1
+            rootNodeInfo.findNode {
+                next = -1
+                if (it.childCount == 0) {
+                    //空节点
+                    size++
+                    if (compareStringNum(constraintBean.sizeCount, size)) {
+                        //满足了约束条件
+                        next = -2
+                    }
+                }
+                next
+            }
+
+            if (next != -2) {
+                //不满足了约束条件
+                return
+            }
+        }
 
         if (constraintBean.isConstraintEmpty()) {
             //空约束返回[rootNodeInfo]

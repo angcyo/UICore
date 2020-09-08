@@ -9,7 +9,9 @@ package com.angcyo.core.component.accessibility.parse
  */
 
 data class ConditionBean(
+
     /**节点child数量的条件判断
+     * 格式如下:
      * [>=2] 数量大于等于2
      * [>3] 数量大于3
      * [2] 数量等于2

@@ -21,10 +21,14 @@ data class ConstraintBean(
      * */
     var textList: List<String>? = null,
 
-    /**约束之后, 如果匹配到的节点数量, 满足此条件.
+    /**约束之后, 如果匹配到的节点数量, 满足此条件, 则继续.
      * 不满足条件, 清空所有节点.
-     * [com.angcyo.core.component.accessibility.parse.ConditionBean.childCount]*/
+     * 支持的数据格式: [com.angcyo.core.component.accessibility.parse.ConditionBean.childCount]*/
     var nodeCount: String? = null,
+
+    /**约束根节点视图结构中, 无child节点的节点总数量满足此条件, 则继续. 否则失败.
+     * 支持的数据格式: [com.angcyo.core.component.accessibility.parse.ConditionBean.childCount]*/
+    var sizeCount: String? = null,
 
     /**
      * [textList]优先从[wordList]集合中取值.
