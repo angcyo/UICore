@@ -652,7 +652,9 @@ open class AutoParser {
                 var widthString: String? = null
                 var heightString: String? = null
 
-                if (rect.contains(",")) {
+                if (rect.isNullOrEmpty()) {
+                    rectString = rect
+                } else if (rect.contains(",")) {
                     //包含矩形约束信息
                     if (sum == 0) {
                         rectString = rect
