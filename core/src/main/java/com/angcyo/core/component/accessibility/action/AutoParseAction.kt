@@ -324,11 +324,15 @@ open class AutoParseAction : BaseAccessibilityAction() {
             constraintBean.handleNodeList?.forEach {
                 if (it >= 0) {
                     nodeList.getOrNull(it)?.let { node ->
-                        handleNodeList.add(node)
+                        if (!handleNodeList.contains(node)) {
+                            handleNodeList.add(node)
+                        }
                     }
                 } else {
                     nodeList.getOrNull(nodeList.size + it)?.let { node ->
-                        handleNodeList.add(node)
+                        if (!handleNodeList.contains(node)) {
+                            handleNodeList.add(node)
+                        }
                     }
                 }
             }
@@ -395,29 +399,16 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                         val arg1 = it.getOrNull(0)!!
                                         val arg2 = it.getOrNull(1)?.toIntOrNull()
 
-                                        if (arg2 == null) {
-                                            //未指定parent
-                                            if (AutoParser.matchNodeState(node, arg1)) {
-                                                value =
-                                                    node.getClickParent()?.click() ?: false || value
-                                            } else {
-                                                //携带了状态约束参数, 并且没有匹配到状态
-                                                value = true
-                                            }
+                                        if (AutoParser.matchNodeStateAndParent(
+                                                node,
+                                                arg1,
+                                                arg2 ?: 0
+                                            )
+                                        ) {
+                                            value = node.getClickParent()?.click() ?: false || value
                                         } else {
-                                            //指定了parent数量
-                                            if (AutoParser.matchNodeStateOfParent(
-                                                    node,
-                                                    arg1,
-                                                    arg2
-                                                )
-                                            ) {
-                                                value =
-                                                    node.getClickParent()?.click() ?: false || value
-                                            } else {
-                                                //携带了状态约束参数, 并且没有匹配到状态
-                                                value = true
-                                            }
+                                            //携带了状态约束参数, 并且没有匹配到状态
+                                            value = true
                                         }
                                     }
                                 }

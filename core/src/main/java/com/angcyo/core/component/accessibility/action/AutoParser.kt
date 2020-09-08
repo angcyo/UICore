@@ -95,8 +95,9 @@ open class AutoParser {
             }
         }
 
-        /**[com.angcyo.core.component.accessibility.parse.ConstraintBean.ACTION_CLICK]*/
-        fun matchNodeStateOfParent(
+        /**[com.angcyo.core.component.accessibility.parse.ConstraintBean.ACTION_CLICK]
+         * 判断自身和[parentCount]个parent内所有节点是否都满足状态*/
+        fun matchNodeStateAndParent(
             node: AccessibilityNodeInfoCompat,
             state: String,
             parentCount: Int = 0
@@ -112,7 +113,6 @@ open class AutoParser {
                             break
                         }
                         match = matchNodeState(parent, state)
-
                         if (!match) {
                             //有一个不匹配
                             break
@@ -123,6 +123,40 @@ open class AutoParser {
                 match = false
             }
             return match
+        }
+
+        /**
+         * 判断自身和[parentCount]个parent内是否有满足指定状态的节点, 并返回
+         * [first] 表示是否匹配成功
+         * [second] 当前匹配的节点*/
+        fun matchNodeStateOfParent(
+            node: AccessibilityNodeInfoCompat,
+            state: String,
+            parentCount: Int = 0
+        ): Pair<Boolean, AccessibilityNodeInfoCompat> {
+            var result: Pair<Boolean, AccessibilityNodeInfoCompat> = false to node
+            if (matchNodeState(node, state)) {
+                //自身已经满足条件
+                result = true to node
+            } else if (parentCount > 0) {
+                //自身不满足, 则看看指定的parent中, 是否有满足条件的
+                var parent: AccessibilityNodeInfoCompat? = node
+                for (count in 1..parentCount) {
+                    parent = parent?.parent
+                    if (parent == null) {
+                        break
+                    }
+
+                    val match = matchNodeState(parent, state)
+                    result = match to parent
+
+                    if (match) {
+                        //有一个匹配
+                        break
+                    }
+                }
+            }
+            return result
         }
 
         /**匹配节点的状态*/
@@ -343,16 +377,25 @@ open class AutoParser {
                     //其他约束组合
                     rootNodeInfo.findNode(result) { nodeInfoCompat ->
                         if (match(constraintBean, nodeInfoCompat, 0)) {
+                            val node = getStateParentNode(constraintBean, nodeInfoCompat, 0)
                             if (!constraintBean.pathList.isNullOrEmpty()) {
                                 parseConstraintPath(
                                     constraintBean,
                                     constraintBean.pathList?.getOrNull(0),
-                                    nodeInfoCompat,
+                                    node,
                                     result
                                 )
                                 -1
                             } else {
-                                1
+                                if (node != nodeInfoCompat) {
+                                    //查找的 nodeInfoCompat 被替换成 node
+                                    if (!result.contains(node)) {
+                                        result.add(node)
+                                    }
+                                    -1
+                                } else {
+                                    1
+                                }
                             }
                         } else {
                             -1
@@ -377,8 +420,12 @@ open class AutoParser {
                             if (isIdText) packageName.id(text[index]) else text[index]
 
                         if (!isIdText && subText == null) {
-                            //text匹配模式下, 空字符串处理
-                            tempList.add(rootNodeWrap)
+                            //text匹配模式下, null 匹配所有节点, 注意性能.
+                            //tempList.add(rootNodeWrap)
+                            rootNodeInfo.findNode(tempList) {
+                                //匹配所有节点
+                                1
+                            }
                             matchMap[index] = tempList
                         } else {
                             rootNodeInfo.findNode(tempList) { nodeInfoCompat ->
@@ -403,16 +450,28 @@ open class AutoParser {
                                 if (findNode == 1) {
                                     findNode = if (match(constraintBean, nodeInfoCompat, index)) {
                                         //其他约束匹配成功
+                                        val node =
+                                            getStateParentNode(
+                                                constraintBean,
+                                                nodeInfoCompat,
+                                                index
+                                            )
                                         if (!constraintBean.pathList.isNullOrEmpty()) {
                                             parseConstraintPath(
                                                 constraintBean,
                                                 constraintBean.pathList?.getOrNull(index),
-                                                nodeInfoCompat,
+                                                node,
                                                 tempList
                                             )
                                             -1
                                         } else {
-                                            1
+                                            if (node != nodeInfoCompat) {
+                                                //查找的 nodeInfoCompat 被替换成 node
+                                                tempList.add(node)
+                                                -1
+                                            } else {
+                                                1
+                                            }
                                         }
                                     } else {
                                         -1
@@ -587,9 +646,20 @@ open class AutoParser {
                 var match = true
 
                 for (state in stateList) {
-                    if (!matchNodeState(node, state)) {
-                        match = false
-                        break
+
+                    val s: String?
+                    val pCount: Int
+                    state.split(":").apply {
+                        s = getOrNull(0)
+                        pCount = getOrNull(1)?.toIntOrNull() ?: 0
+                    }
+
+                    if (!s.isNullOrEmpty()) {
+                        //需要状态约束
+                        if (!matchNodeStateOfParent(node, s, pCount).first) {
+                            match = false
+                            break
+                        }
                     }
                 }
 
@@ -600,6 +670,38 @@ open class AutoParser {
             }
         }
 
+        return result
+    }
+
+    /**
+     * 获取状态中, 满足条件的节点
+     * [com.angcyo.core.component.accessibility.parse.ConstraintBean.stateList]
+     * */
+    open fun getStateParentNode(
+        constraintBean: ConstraintBean,
+        node: AccessibilityNodeInfoCompat,
+        index: Int
+    ): AccessibilityNodeInfoCompat {
+        var result = node
+        val stateList: List<String>? = constraintBean.stateList
+        if (stateList != null && !stateList.isListEmpty()) {
+
+            for (state in stateList) {
+
+                val s: String?
+                val pCount: Int
+                state.split(":").apply {
+                    s = getOrNull(0)
+                    pCount = getOrNull(1)?.toIntOrNull() ?: -1
+                }
+
+                if (!s.isNullOrEmpty() && pCount > 0) {
+                    //指定了需要获取数量范围内的parent
+                    result = matchNodeStateOfParent(node, s, pCount).second
+                }
+            }
+
+        }
         return result
     }
 

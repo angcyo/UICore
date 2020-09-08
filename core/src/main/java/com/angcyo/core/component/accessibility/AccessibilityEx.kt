@@ -838,7 +838,7 @@ fun AccessibilityNodeInfo.log() {
 }
 
 /**枚举查找[AccessibilityNodeInfo]
- * [predicate] 返回1, 表示添加并继续查找; 返回0, 添加并返回; 返回-1, 不添加并继续查找
+ * [predicate] 返回1, 表示添加并继续查找; 返回0, 添加并返回,结束find; 返回-1, 不添加并继续查找
  * */
 fun AccessibilityNodeInfo.findNode(
     result: MutableList<AccessibilityNodeInfoCompat> = mutableListOf(),

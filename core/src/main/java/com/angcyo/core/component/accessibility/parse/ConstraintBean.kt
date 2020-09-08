@@ -129,6 +129,7 @@ data class ConstraintBean(
      * [unfocused] 具备无焦点状态
      * [finish] 直接完成操作
      * ...参考下面的静态声明
+     * [clickable:5] 自身具备可点击,如果自身不具备,则查找5个parent之内是否有满足条件的节点, 并且返回它
      * */
     var stateList: List<String>? = null,
 
@@ -179,7 +180,7 @@ data class ConstraintBean(
 
         /**触发当前节点的点击事件, null 默认是click操作.
          * [:STATE_UNSELECTED] 支持状态参数. 表示, 只在节点满足状态时, 才点击
-         * [:STATE_UNSELECTED:5] 自身要满足且5个parent也都满足状态参数
+         * [:STATE_UNSELECTED:5] 自身要满足且5个parent内所有节点也满足状态, 才触发点击
          * */
         const val ACTION_CLICK = "click"
         const val ACTION_CLICK2 = "click2" //在当前节点区域双击(手势双击) [:0.1,0.1]指定目标区域
