@@ -123,7 +123,7 @@ fun TaskBean.toInterceptor(
                 autoParseAction.actionLog = object : ILogPrint() {
                     override fun log(msg: CharSequence?) {
                         super.log(msg)
-                        AutoParseInterceptor.log("$name($actionIndex/${actionList.size})|${autoParseAction.actionTitle}->$msg")
+                        AutoParseInterceptor.log("$name($actionIndex/${actionList.size})|${autoParseAction.actionTitle}|${_actionControl.lastMethodName()}->$msg")
                     }
                 }
 

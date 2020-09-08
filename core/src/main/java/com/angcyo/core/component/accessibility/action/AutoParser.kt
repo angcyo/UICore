@@ -10,6 +10,8 @@ import com.angcyo.core.component.accessibility.parse.ConditionBean
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
 import com.angcyo.core.component.accessibility.parse.isConstraintEmpty
 import com.angcyo.core.component.accessibility.parse.isOnlyPathConstraint
+import com.angcyo.library._screenHeight
+import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.isListEmpty
 import com.angcyo.library.utils.getLongNum
 import kotlin.math.max
@@ -55,7 +57,7 @@ open class AutoParser {
                                     .replace(pattern, originList.getOrNull(i) ?: "")
                         }
                     }
-                    target?.let { result.add(it) }
+                    target?.also { result.add(it) }
                 } else {
                     val num = indexStr.toIntOrNull()
 
@@ -74,14 +76,14 @@ open class AutoParser {
                                 if (endIndex < 0) endIndex + originList.size else endIndex
 
                             for (i in min(fist, second)..max(fist, second)) {
-                                originList.getOrNull(i)?.let {
+                                originList.getOrNull(i)?.also {
                                     result.add(it)
                                 }
                             }
                         }
                     } else {
                         // 匹配 1, -1 索引
-                        originList.getOrNull(if (num < 0) num + originList.size else num)?.let {
+                        originList.getOrNull(if (num < 0) num + originList.size else num)?.also {
                             result.add(indexStr)
                         }
                     }
@@ -245,7 +247,7 @@ open class AutoParser {
                     result = true
                 } else {
                     val num = expression.getLongNum()
-                    num?.let {
+                    num?.also {
                         if (expression.startsWith(">=")) {
                             if (value >= num) {
                                 result = true
@@ -282,6 +284,12 @@ open class AutoParser {
 
     //临时存放
     var _tempNodeRect = Rect()
+
+    val maxWidth: Int
+        get() = max(_screenWidth, _rootNodeRect.width())
+
+    val maxHeight: Int
+        get() = max(_screenHeight, _rootNodeRect.height())
 
     /**返回当前界面, 是否包含[constraintList]约束的Node信息
      * [onTargetResult] 当找到目标时, 通过此方法回调目标给调用者. first:对应的约束, second:约束对应的node集合
@@ -353,14 +361,16 @@ open class AutoParser {
 
         //节点总数约束
         if (constraintBean.sizeCount != null) {
+            val allNode = constraintBean.sizeCount?.startsWith(":") == true
+
             var size = 0L
             var next = -1
             rootNodeInfo.findNode {
                 next = -1
-                if (it.childCount == 0) {
+                if (allNode || it.childCount == 0) {
                     //空节点
                     size++
-                    if (compareStringNum(constraintBean.sizeCount, size)) {
+                    if (compareStringNum(constraintBean.sizeCount?.replaceFirst(":", ""), size)) {
                         //满足了约束条件
                         next = -2
                     }
@@ -619,19 +629,57 @@ open class AutoParser {
                 //坐标约束
                 val bound = node.bounds()
                 //如果设置了矩形匹配规则, 那么这个node的rect一定要是有效的
-                rect.let {
+
+                //:符出现的次数
+                val sum = rect.sumBy { if (it == ':') 1 else 0 }
+
+                //[-0.1,0.9~0.1,0.9999]格式
+                var rectString: String? = null
+                //[>=780]
+                var widthString: String? = null
+                var heightString: String? = null
+
+                if (rect.contains(",")) {
+                    //包含矩形约束信息
+                    if (sum == 0) {
+                        rectString = rect
+                    } else if (sum == 1) {
+                        //出现一次
+                        widthString = rect.split(":").getOrNull(1)
+                    } else if (sum > 1) {
+                        rect.split(":").apply {
+                            widthString = getOrNull(1)
+                            heightString = getOrNull(2)
+                        }
+                    }
+                } else {
+                    //单独宽高约束
+                    if (sum == 0) {
+                        widthString = rect
+                    } else if (sum >= 1) {
+                        rect.split(":").apply {
+                            widthString = getOrNull(0)
+                            heightString = getOrNull(1)
+                        }
+                    }
+                }
+
+                result = true
+                //矩形坐标约束
+                rectString?.also {
+                    result = false
                     if (it.isEmpty()) {
                         //空字符只要宽高大于0, 就命中
                         result = node.isValid()
                     } else {
-
+                        //兼容 ~ 和 -
                         if (it.contains("~")) {
                             it.split("~")
                         } else {
                             it.split("-")
                         }.apply {
-                            val p1 = getOrNull(0)?.toPointF()
-                            val p2 = getOrNull(1)?.toPointF()
+                            val p1 = getOrNull(0)?.toPointF(maxWidth, maxHeight)
+                            val p2 = getOrNull(1)?.toPointF(maxWidth, maxHeight)
 
                             if (p1 != null) {
                                 if (p2 == null) {
@@ -652,6 +700,24 @@ open class AutoParser {
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+
+                if (result) {
+                    //宽度约束
+                    widthString?.also {
+                        if (!compareStringNum(it, bound.width().toLong())) {
+                            result = false
+                        }
+                    }
+                }
+
+                if (result) {
+                    //高度约束
+                    heightString?.also {
+                        if (!compareStringNum(it, bound.height().toLong())) {
+                            result = false
                         }
                     }
                 }

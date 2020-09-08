@@ -27,7 +27,10 @@ data class ConstraintBean(
     var nodeCount: String? = null,
 
     /**约束根节点视图结构中, 无child节点的节点总数量满足此条件, 则继续. 否则失败.
-     * 支持的数据格式: [com.angcyo.core.component.accessibility.parse.ConditionBean.childCount]*/
+     * 支持的数据格式: [com.angcyo.core.component.accessibility.parse.ConditionBean.childCount]
+     * 如果是:开头的格式, 表示所有节点总数量
+     * 否则就是无child节点的节点总数量
+     * */
     var sizeCount: String? = null,
 
     /**
@@ -120,6 +123,11 @@ data class ConstraintBean(
      *
      * 2020-08-30
      * 支持[~]分割.
+     * [-0.1,0.9~0.1,0.9999]
+     *
+     * 2020-9-8
+     * 支持宽高约束, 宽高必须成对出现, 宽在前, 高在后
+     * [-0.1,0.9~0.1,0.9999:>=-780:<1080]
      * */
     var rectList: List<String>? = null,
 

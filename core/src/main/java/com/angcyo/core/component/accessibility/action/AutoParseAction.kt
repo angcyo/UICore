@@ -873,7 +873,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         actionLog?.log(charSequence)
     }
 
-    /** 从参数中, 解析设置的点位信息
+    /** 从参数中, 解析设置的点位信息. 通常用于手势坐标. 手势坐标, 尽量使用 屏幕宽高用来参考计算
      * [move:10,10-100,100]
      * [fling:10,10-100,100]
      * */

@@ -325,8 +325,9 @@ object RUtils {
         return getLongNumFromStr("ro.miui.ui.version.name".getSystemProperty())
     }
 
+    /**支持负数*/
     fun getLongNumFromStr(str: String?): Long? =
-        str?.patternList("\\d+")?.firstOrNull()?.toLongOrNull()
+        str?.patternList("[-]*\\d+")?.firstOrNull()?.toLongOrNull()
 }
 
 /** 检查APK是否安装 */

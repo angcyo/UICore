@@ -53,7 +53,7 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                     accessibilityWindowInfo.root?.apply {
                         getBoundsInScreen(tempRect)
                         if (rootNodeInfo != null && this == rootNodeInfo) {
-                            builder.append("[root ${_screenWidth}x${_screenHeight}]")
+                            builder.append("[root ${_screenWidth}x${_screenHeight} ${tempRect.width()}x${tempRect.height()}]")
                             logNodeInfo(outBuilder = builder)
 
                             toastStringBuilder.append("[root] ")
