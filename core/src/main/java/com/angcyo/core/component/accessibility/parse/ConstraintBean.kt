@@ -40,6 +40,9 @@ data class ConstraintBean(
      * 1-4 取索引为[1-4]的值
      * 0--1 取索引为[0-倒数第1个]的值
      * -1 取倒数第1个的值
+     * 比如:
+     * $0
+     * [2--1]
      * */
     var wordTextIndexList: List<String>? = null,
 
@@ -93,6 +96,9 @@ data class ConstraintBean(
      * 1-4 取索引为[1-4]的值
      * 0--1 取索引为[0-倒数第1个]的值
      * -1 取倒数第1个的值
+     * 比如:
+     * $0
+     * [2--1]
      * */
     var wordInputIndexList: List<String>? = null,
 
@@ -209,12 +215,24 @@ data class ConstraintBean(
         const val ACTION_RANDOM = "random" //随机执行, 空字符会进行随机操作.
         const val ACTION_FINISH = "finish" //直接完成操作
         const val ACTION_ERROR = "error" //直接失败操作, [:xxx]失败信息
-        const val ACTION_START = "start" //[start:com.xxx.xxx]启动应用程序 [:main]本机 [:target]目标(空或null)
+
+        /**启动指定的应用程序
+         * [start:com.xxx.xxx]启动应用程序 [:main]本机APP [:target]目标(空或null)
+         * */
+        const val ACTION_START = "start"
         const val ACTION_COPY = "copy" //复制文本 [inputList], [:xxx]复制指定的文本'xxx'
         const val ACTION_KEY = "key" //发送按键事件[key:66] KEYCODE_ENTER=66 发送回车按键. (test)
         const val ACTION_FOCUS = "focus" //请求焦点
         const val ACTION_SCROLL_FORWARD = "scrollForward" //向前滚动
         const val ACTION_SCROLL_BACKWARD = "scrollBackward" //向后滚动
+
+        /**
+         * [url:$0] [:target] 使用目标(空或null) 打开$0 对应的url地址
+         * [url:$0:main] 使用本机APP 打开$0 对应的url地址
+         * [url:$0:xxx.xxx.xxx] 使用xxx.xxx.xxx APP 打开$0 对应的url地址
+         * 支持从[com.angcyo.core.component.accessibility.parse.TaskBean.wordList]中获取文本并正则匹配链接
+         * */
+        const val ACTION_URL = "url"
 
         /**
          * 跳转指令, 配合[ignore]一起使用, 防止index不准确

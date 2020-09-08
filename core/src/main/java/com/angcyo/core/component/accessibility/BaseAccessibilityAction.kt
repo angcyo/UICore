@@ -56,6 +56,9 @@ abstract class BaseAccessibilityAction {
         const val DEFAULT_ACTION_LEAVE_COUNT = 3L
     }
 
+    /**日志输出*/
+    var actionLog: ILogPrint? = ILogPrint()
+
     /**关联的拦截器*/
     var accessibilityInterceptor: BaseAccessibilityInterceptor? = null
 
@@ -122,7 +125,7 @@ abstract class BaseAccessibilityAction {
         return false
     }
 
-    /**未处理[checkEvent]事件*/
+    /**既没有被[checkEvent]识别, 也没有被[checkOtherEvent]处理*/
     @CallSuper
     open fun onCheckEventOut(
         service: BaseAccessibilityService,
@@ -167,6 +170,7 @@ abstract class BaseAccessibilityAction {
                 }
                 if (rollbackPrev) {
                     accessibilityInterceptor?.apply {
+                        actionLog?.log("准备回滚:[$actionIndex]->[${actionIndex - 1}]")
                         actionIndex -= 1
                     }
                 }

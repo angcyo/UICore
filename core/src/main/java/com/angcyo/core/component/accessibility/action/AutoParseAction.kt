@@ -3,6 +3,7 @@ package com.angcyo.core.component.accessibility.action
 import android.app.Instrumentation
 import android.content.Intent
 import android.graphics.PointF
+import android.net.Uri
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
@@ -15,6 +16,7 @@ import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.*
 import com.angcyo.library.toastQQ
+import com.angcyo.library.utils.PATTERN_URL
 import kotlin.math.absoluteValue
 import kotlin.math.roundToLong
 import kotlin.random.Random.Default.nextInt
@@ -27,9 +29,6 @@ import kotlin.random.Random.Default.nextInt
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 open class AutoParseAction : BaseAccessibilityAction() {
-
-    /**日志输出*/
-    var actionLog: ILogPrint? = ILogPrint()
 
     /**如果是获取文本的任务, 那么多获取到文本时, 触发的回调*/
     var onGetTextResult: ((List<CharSequence>) -> Unit)? = null
@@ -281,6 +280,15 @@ open class AutoParseAction : BaseAccessibilityAction() {
     //记录指令
     fun _addActionName(actionName: String) {
         accessibilityInterceptor?._actionControl?.addActionName(actionName)
+    }
+
+    //获取参数对应的包名
+    fun _targetPackageName(): String? {
+        val actionPackageName = actionBean?.check?.packageName?.split(";")?.firstOrNull()
+        if (actionPackageName.isNullOrEmpty()) {
+            return accessibilityInterceptor?.filterPackageNameList?.firstOrNull()
+        }
+        return actionPackageName
     }
 
     /**
@@ -569,14 +577,10 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             val primaryClip = getPrimaryClip()
 
                             //包名
-                            val targetPackageName = if (arg.isNullOrEmpty() || arg == "target") {
-                                actionBean?.check?.packageName?.split(";")?.firstOrNull()
-                                    ?: accessibilityInterceptor?.filterPackageNameList?.firstOrNull()
-                            } else if (arg == "main") {
-                                service.packageName
-                            } else {
-                                arg
-                            }
+                            val targetPackageName = AutoParser.parseTargetPackageName(
+                                arg,
+                                _targetPackageName()
+                            )
 
                             var value = false
                             targetPackageName?.let {
@@ -588,6 +592,54 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                 handleActionLog("启动程序:[$targetPackageName]剪切板内容:$primaryClip:$value")
                             }
 
+                            value
+                        }
+                        ConstraintBean.ACTION_URL -> {
+                            //打开url
+
+                            //需要打开的url参数
+                            var targetUrl: String? = null
+                            //包名参数
+                            var targetPackageName: String? = null
+
+                            //解析2个点的坐标
+                            val indexOf = arg?.indexOf(":", 0, true) ?: -1
+                            if (indexOf == -1) {
+                                //未找到
+                                targetUrl = arg
+                            } else {
+                                //找到
+                                targetUrl = arg?.substring(0, indexOf)
+                                targetPackageName = arg?.substring(indexOf + 1, arg.length)
+                            }
+
+                            //转换一下
+                            targetUrl = getWordTextList(targetUrl, targetUrl)
+
+                            //解析对应的url
+                            targetUrl?.let {
+                                if (!it.startsWith("http")) {
+                                    targetUrl = it.patternList(PATTERN_URL).firstOrNull()
+                                }
+                            }
+
+                            var value = false
+                            if (!targetUrl.isNullOrEmpty()) {
+                                //解析包名
+                                targetPackageName = AutoParser.parseTargetPackageName(
+                                    targetPackageName,
+                                    _targetPackageName()
+                                )
+
+                                targetPackageName?.let {
+                                    value = service.startIntent {
+                                        setPackage(it)
+                                        data = Uri.parse(targetUrl)
+                                    } != null
+
+                                    handleActionLog("使用:[$targetPackageName]打开[$targetUrl]:$value")
+                                }
+                            }
                             value
                         }
                         ConstraintBean.ACTION_COPY -> {
@@ -924,12 +976,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
     /**获取需要输入的文本,需要复制的文本*/
     fun getInputText(constraintBean: ConstraintBean): String? {
-        val inputList: List<String>? = if (constraintBean.wordInputIndexList != null) {
-            onGetWordTextListAction?.invoke(constraintBean.wordInputIndexList!!)
-        } else {
-            constraintBean.inputList
-        }
-
+        val inputList: List<String?>? =
+            getWordTextList(constraintBean.wordInputIndexList, constraintBean.inputList)
         val text = if (inputList.isListEmpty()) {
             //随机产生文本
             randomString()
@@ -940,13 +988,28 @@ open class AutoParseAction : BaseAccessibilityAction() {
     }
 
     /**获取[textList]*/
-    fun getTextList(constraintBean: ConstraintBean): List<String>? {
-        val inputList: List<String>? = if (constraintBean.wordTextIndexList != null) {
-            onGetWordTextListAction?.invoke(constraintBean.wordTextIndexList!!)
+    fun getTextList(constraintBean: ConstraintBean): List<String?>? {
+        return getWordTextList(constraintBean.wordTextIndexList, constraintBean.textList)
+    }
+
+    /**根据表达式, 从[com.angcyo.core.component.accessibility.parse.TaskBean.wordList]中获取文本*/
+    fun getWordTextList(
+        wordIndexList: List<String>?,
+        defaultTextList: List<String?>?
+    ): List<String?>? {
+        val resultList: List<String?>? = if (wordIndexList != null) {
+            onGetWordTextListAction?.invoke(wordIndexList)
         } else {
-            constraintBean.textList
+            defaultTextList
         }
-        return inputList
+        return resultList ?: defaultTextList
+    }
+
+    fun getWordTextList(wordIndex: String?, defaultText: String?): String? {
+        if (wordIndex.isNullOrEmpty()) {
+            return defaultText
+        }
+        return getWordTextList(listOf(wordIndex), listOf(defaultText))?.firstOrNull()
     }
 
     /**表单请求*/

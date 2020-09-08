@@ -162,6 +162,22 @@ fun Context.openApp(
     return intent
 }
 
+/**启动一个[Intent]*/
+fun Context.startIntent(config: Intent.() -> Unit): Intent? {
+    var result: Intent? = null
+    Intent().apply {
+        baseConfig(this@startIntent)
+        config()
+        try {
+            startActivity(this)
+            result = this
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    return result
+}
+
 @SuppressLint("WrongConstant")
 fun Context.getAppOpenIntentByPackageName(packageName: String): Intent? {
     var mainActivityClass: String? = null

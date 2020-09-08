@@ -12,6 +12,7 @@ import com.angcyo.core.component.accessibility.parse.isConstraintEmpty
 import com.angcyo.core.component.accessibility.parse.isOnlyPathConstraint
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
+import com.angcyo.library.app
 import com.angcyo.library.ex.isListEmpty
 import com.angcyo.library.utils.getLongNum
 import kotlin.math.max
@@ -274,6 +275,18 @@ open class AutoParser {
             }
             return result
         }
+
+        /**将参数转换成对应的包名*/
+        fun parseTargetPackageName(arg: String?, target: String?): String? {
+            //包名
+            return if (arg.isNullOrEmpty() || arg == "target") {
+                target
+            } else if (arg == "main") {
+                app().packageName
+            } else {
+                arg
+            }
+        }
     }
 
     /**解析id时, 需要补全的id全路径包名*/
@@ -390,7 +403,7 @@ open class AutoParser {
         } else {
 
             //需要匹配的文本
-            val text: List<String>? = autoParseAction.getTextList(constraintBean)
+            val text: List<String?>? = autoParseAction.getTextList(constraintBean)
 
             //根节点
             val rootNodeWrap: AccessibilityNodeInfoCompat = rootNodeInfo.wrap()
@@ -449,7 +462,7 @@ open class AutoParser {
                         //完整id 是需要包含包名的
                         val isIdText: Boolean = constraintBean.idList?.getOrNull(index) == 1
                         val subText: String? =
-                            if (isIdText) packageName.id(text[index]) else text[index]
+                            if (isIdText) packageName.id(text[index]!!) else text[index]
 
                         if (!isIdText && subText == null) {
                             //text匹配模式下, null 匹配所有节点, 注意性能.

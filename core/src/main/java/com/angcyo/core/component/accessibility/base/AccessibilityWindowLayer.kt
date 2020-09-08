@@ -1,25 +1,23 @@
 package com.angcyo.core.component.accessibility.base
 
+import android.content.Intent
 import android.graphics.Color
-import android.graphics.PointF
 import android.graphics.RectF
+import android.net.Uri
 import com.angcyo.core.R
 import com.angcyo.core.component.accessibility.AccessibilityHelper
-import com.angcyo.core.component.accessibility.BaseAccessibilityService
 import com.angcyo.core.component.accessibility.LogWindowAccessibilityInterceptor
-import com.angcyo.core.component.accessibility.click
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.file.wrapData
 import com.angcyo.http.rx.doBack
 import com.angcyo.ilayer.ILayer
 import com.angcyo.ilayer.container.DragRectFConstraint
 import com.angcyo.ilayer.container.WindowContainer
-import com.angcyo.library.*
+import com.angcyo.library._satusBarHeight
+import com.angcyo.library._screenHeight
+import com.angcyo.library.app
 import com.angcyo.library.component.MainExecutor
-import com.angcyo.library.ex.isDebug
-import com.angcyo.library.ex.isDebugType
-import com.angcyo.library.ex.nowTime
-import com.angcyo.library.ex.openApp
+import com.angcyo.library.ex.*
 import com.angcyo.widget.progress.CircleLoadingView
 
 
@@ -149,10 +147,33 @@ object AccessibilityWindowLayer : ILayer() {
             //测试按钮
             visible(R.id.test_button, isDebugType())
             throttleClick(R.id.test_button) {
-                //"touch:0.9192,0.9842"
-                val p1 = PointF(_screenWidth * 0.9192f, _screenHeight * 0.9842f)
-                BaseAccessibilityService.lastService?.gesture?.click(p1.x, p1.y)
-                L.w(p1)
+
+                //测试手势点击 "touch:0.9192,0.9842"
+//                val p1 = PointF(_screenWidth * 0.9192f, _screenHeight * 0.9842f)
+//                BaseAccessibilityService.lastService?.gesture?.click(p1.x, p1.y)
+//                L.w(p1)
+
+                //测试url直接打开抖音
+                val list = listOf(
+                    "https://v.douyin.com/JBrY5g9/", //很久的直播 [直播已结束]
+                    "https://v.douyin.com/JBxoeKL", //直播 [打开看看]
+                    "https://v.douyin.com/J6mdAPq/", //视频
+                    "https://v.kuaishou.com/8vnjyY" //快手视频
+                )
+                val url = list[0]
+
+                Intent().apply {
+                    setPackage("com.ss.android.ugc.aweme")
+                    //setPackage("com.smile.gifmaker")
+                    data = Uri.parse(url)
+                    baseConfig(it.context)
+
+                    try {
+                        it.context.startActivity(this)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
 
 //                val imm = context.getSystemService(
 //                    Context.INPUT_METHOD_SERVICE
