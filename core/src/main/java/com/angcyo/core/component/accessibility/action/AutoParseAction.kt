@@ -403,16 +403,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                 if (arg.isNullOrEmpty()) {
                                     value = node.getClickParent()?.click() ?: false || value
                                 } else {
-                                    arg.split(":").also {
-                                        val arg1 = it.getOrNull(0)!!
-                                        val arg2 = it.getOrNull(1)?.toIntOrNull()
-
-                                        if (AutoParser.matchNodeStateAndParent(
-                                                node,
-                                                arg1,
-                                                arg2 ?: 0
-                                            )
-                                        ) {
+                                    AutoParser.getStateParentNode(listOf(arg), node).apply {
+                                        if (first) {
                                             value = node.getClickParent()?.click() ?: false || value
                                         } else {
                                             //携带了状态约束参数, 并且没有匹配到状态

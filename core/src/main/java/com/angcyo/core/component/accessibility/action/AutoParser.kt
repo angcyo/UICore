@@ -104,8 +104,8 @@ open class AutoParser {
             node: AccessibilityNodeInfoCompat,
             state: String,
             parentCount: Int = 0
-        ): Boolean {
-            var match = true
+        ): Pair<Boolean, AccessibilityNodeInfoCompat> {
+            var result: Pair<Boolean, AccessibilityNodeInfoCompat> = true to node
             if (matchNodeState(node, state)) {
                 //自身已经满足条件
                 if (parentCount > 0) {
@@ -115,17 +115,20 @@ open class AutoParser {
                         if (parent == null) {
                             break
                         }
-                        match = matchNodeState(parent, state)
+                        val match = matchNodeState(parent, state)
                         if (!match) {
-                            //有一个不匹配
+                            //有一个不匹配, 返回false, 并且返回根节点
+                            result = false to node
                             break
                         }
+                        //全部匹配, 还是返回根节点
+                        result = match to node
                     }
                 }
             } else {
-                match = false
+                result = false to node
             }
-            return match
+            return result
         }
 
         /**
@@ -287,6 +290,51 @@ open class AutoParser {
                 arg
             }
         }
+
+        /**
+         * 获取状态中, 满足条件的节点
+         * [com.angcyo.core.component.accessibility.parse.ConstraintBean.stateList]
+         * [index] 未使用的参数
+         * */
+        fun getStateParentNode(
+            stateList: List<String>?,
+            node: AccessibilityNodeInfoCompat,
+            index: Int = -1
+        ): Pair<Boolean, AccessibilityNodeInfoCompat> {
+            var result = true to node
+            if (stateList != null && !stateList.isListEmpty()) {
+                for (state in stateList) {
+
+                    //所有节点的状态都要匹配
+                    val allMatch = state.contains("*")
+
+                    val stateString: String?
+                    val parentCount: Int
+
+                    state.replace("*", "").split(":").apply {
+                        stateString = getOrNull(0)
+                        parentCount = getOrNull(1)?.toIntOrNull() ?: 0
+                    }
+
+                    if (!stateString.isNullOrEmpty()) {
+                        //需要状态约束
+                        result = if (allMatch) {
+                            matchNodeStateAndParent(node, stateString, parentCount)
+                        } else {
+                            matchNodeStateOfParent(node, stateString, parentCount)
+                        }
+                    }
+
+                    if (!result.first) {
+                        //有一个状态不匹配
+                        result = false to node
+                        break
+                    }
+                }
+
+            }
+            return result
+        }
     }
 
     /**解析id时, 需要补全的id全路径包名*/
@@ -374,7 +422,7 @@ open class AutoParser {
 
         //节点总数约束
         if (constraintBean.sizeCount != null) {
-            val allNode = constraintBean.sizeCount?.startsWith(":") == true
+            val allNode = constraintBean.sizeCount?.contains("*") == true
 
             var size = 0L
             var next = -1
@@ -383,7 +431,7 @@ open class AutoParser {
                 if (allNode || it.childCount == 0) {
                     //空节点
                     size++
-                    if (compareStringNum(constraintBean.sizeCount?.replaceFirst(":", ""), size)) {
+                    if (compareStringNum(constraintBean.sizeCount?.replaceFirst("*", ""), size)) {
                         //满足了约束条件
                         next = -2
                     }
@@ -422,7 +470,11 @@ open class AutoParser {
                     //其他约束组合
                     rootNodeInfo.findNode(result) { nodeInfoCompat ->
                         if (match(constraintBean, nodeInfoCompat, 0)) {
-                            val node = getStateParentNode(constraintBean, nodeInfoCompat, 0)
+                            val node = getStateParentNode(
+                                constraintBean.stateList,
+                                nodeInfoCompat,
+                                0
+                            ).second
                             if (!constraintBean.pathList.isNullOrEmpty()) {
                                 parseConstraintPath(
                                     constraintBean,
@@ -497,10 +549,10 @@ open class AutoParser {
                                         //其他约束匹配成功
                                         val node =
                                             getStateParentNode(
-                                                constraintBean,
+                                                constraintBean.stateList,
                                                 nodeInfoCompat,
                                                 index
-                                            )
+                                            ).second
                                         if (!constraintBean.pathList.isNullOrEmpty()) {
                                             parseConstraintPath(
                                                 constraintBean,
@@ -746,25 +798,8 @@ open class AutoParser {
         if (result) {
             val stateList: List<String>? = constraintBean.stateList
             if (stateList != null && !stateList.isListEmpty()) {
-                var match = true
-
-                for (state in stateList) {
-
-                    val s: String?
-                    val pCount: Int
-                    state.split(":").apply {
-                        s = getOrNull(0)
-                        pCount = getOrNull(1)?.toIntOrNull() ?: 0
-                    }
-
-                    if (!s.isNullOrEmpty()) {
-                        //需要状态约束
-                        if (!matchNodeStateOfParent(node, s, pCount).first) {
-                            match = false
-                            break
-                        }
-                    }
-                }
+                //状态约束后的匹配结果
+                val match = getStateParentNode(constraintBean.stateList, node, index).first
 
                 if (!match) {
                     //匹配状态失败
@@ -773,38 +808,6 @@ open class AutoParser {
             }
         }
 
-        return result
-    }
-
-    /**
-     * 获取状态中, 满足条件的节点
-     * [com.angcyo.core.component.accessibility.parse.ConstraintBean.stateList]
-     * */
-    open fun getStateParentNode(
-        constraintBean: ConstraintBean,
-        node: AccessibilityNodeInfoCompat,
-        index: Int
-    ): AccessibilityNodeInfoCompat {
-        var result = node
-        val stateList: List<String>? = constraintBean.stateList
-        if (stateList != null && !stateList.isListEmpty()) {
-
-            for (state in stateList) {
-
-                val s: String?
-                val pCount: Int
-                state.split(":").apply {
-                    s = getOrNull(0)
-                    pCount = getOrNull(1)?.toIntOrNull() ?: -1
-                }
-
-                if (!s.isNullOrEmpty() && pCount > 0) {
-                    //指定了需要获取数量范围内的parent
-                    result = matchNodeStateOfParent(node, s, pCount).second
-                }
-            }
-
-        }
         return result
     }
 
