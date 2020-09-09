@@ -174,3 +174,13 @@ fun getRandomChar(): Char {
     /**这样虽然可以生成文本, 但是不是常见字*/
     //return (0x4e00 + (Math.random() * (0x9fa5 - 0x4e00 + 1)).toInt()).toChar()
 }
+
+/**不需要返回值的 .let */
+inline fun <T> T.it(block: (T) -> Unit) {
+    block(this)
+}
+
+/**不需要返回值的 .apply */
+inline fun <T> T.that(block: T.() -> Unit) {
+    block(this)
+}
