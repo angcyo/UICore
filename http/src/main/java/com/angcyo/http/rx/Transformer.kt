@@ -4,6 +4,7 @@ import com.angcyo.http.RequestConfig
 import com.angcyo.http.base.getInt
 import com.angcyo.http.base.getString
 import com.angcyo.http.exception.HttpDataException
+import com.angcyo.library.isMain
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import io.reactivex.FlowableTransformer
@@ -33,6 +34,13 @@ fun <T> observableToMain(): ObservableTransformer<T, T> {
     return ObservableTransformer { upstream ->
         upstream.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+    }
+}
+
+fun <T> observableToAuto(): ObservableTransformer<T, T> {
+    return ObservableTransformer { upstream ->
+        upstream.subscribeOn(Schedulers.io())
+            .observeOn(if (isMain()) AndroidSchedulers.mainThread() else Schedulers.io())
     }
 }
 
