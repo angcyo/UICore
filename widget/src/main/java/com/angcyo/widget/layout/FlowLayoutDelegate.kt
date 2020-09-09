@@ -172,7 +172,7 @@ class FlowLayoutDelegate : LayoutDelegate() {
             //本次追加 child后 , 需要的宽度
             val needWidth =
                 lineWidth + childWidth + if (i != visibleCount - 1) itemHorizontalSpace else 0
-            if (needWidth > viewAvailableWidth || maxCountLine > 0 && lineViewSize == maxCountLine) { //需要换新行
+            if (needWidth > viewAvailableWidth || (maxCountLine > 0 && lineViewSize == maxCountLine)) { //需要换新行
                 if (itemEquWidth) { //margin,padding 消耗的宽度
                     childWidth = measureLineEquWidth(
                         lineViews,
@@ -202,7 +202,7 @@ class FlowLayoutDelegate : LayoutDelegate() {
                 lineHeight = max(childHeight, lineHeight)
             }
             lineViews.add(child)
-            if (i == count - 1) {
+            if (i == visibleCount - 1) {
                 width = max(width, lineWidth)
                 height += lineHeight
             }
