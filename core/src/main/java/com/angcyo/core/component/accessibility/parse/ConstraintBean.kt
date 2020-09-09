@@ -47,7 +47,7 @@ data class ConstraintBean(
     var wordTextIndexList: List<String>? = null,
 
     /**
-     * 上述[textList]字段, 对应的是否是id, 否则就是文本.一一对应的关系.
+     * 用[1]表示上述[textList]字段中对应的是id文本, 否则就是普通文本.一一对应的关系.
      * 可以是 完整的id, 也可以是 gj4.
      * 完整的id应该是: com.ss.android.ugc.aweme:id/gj4
      * ids 列表中, 只要满足任意一个约束条件, 即视为发现目标

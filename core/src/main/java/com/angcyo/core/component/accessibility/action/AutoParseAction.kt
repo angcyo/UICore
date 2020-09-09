@@ -347,7 +347,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         }
 
         if (actionList.isListEmpty()) {
-            handleActionLog("未指定指令!")
+            handleActionLog("(${actionBean?.checkId})未指定指令!")
             handleResult.result = false //2020-09-06
         } else {
             actionList?.forEach { act ->
@@ -392,7 +392,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                     }
 
                     //操作执行提示
-                    handleActionLog("即将执行[${action}${if (arg == null) "" else ":${arg}"}]")
+                    handleActionLog("即将执行(${actionBean?.checkId})[${action}${if (arg == null) "" else ":${arg}"}]")
 
                     //执行对应操作
                     handleResult.result = when (action) {
@@ -444,9 +444,9 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                 }
 
                                 value = if (click) {
-                                    service.gesture.click(x, y, null)
+                                    service.gesture.click(x, y, getGestureStartTime())
                                 } else {
-                                    service.gesture.double(x, y, null)
+                                    service.gesture.double(x, y, getGestureStartTime())
                                 } || value
                             }
                             if (click) {
@@ -464,16 +464,19 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             handleActionLog("长按节点[${handleNodeList.firstOrNull()}]:$value")
                             value
                         }
-                        ConstraintBean.ACTION_DOUBLE -> service.gesture.double(p1.x, p1.y, null)
-                            .apply {
-                                handleActionLog("双击[$p1]:$this")
-                            }
+                        ConstraintBean.ACTION_DOUBLE -> service.gesture.double(
+                            p1.x,
+                            p1.y,
+                            getGestureStartTime()
+                        ).apply {
+                            handleActionLog("双击[$p1]:$this")
+                        }
                         ConstraintBean.ACTION_MOVE -> service.gesture.move(
                             p1.x,
                             p1.y,
                             p2.x,
                             p2.y,
-                            null
+                            getGestureStartTime()
                         ).apply {
                             handleActionLog("move[$p1 $p2]:$this")
                         }
@@ -482,7 +485,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             p1.y,
                             p2.x,
                             p2.y,
-                            null
+                            getGestureStartTime()
                         ).apply {
                             handleActionLog("fling[$p1 $p2]:$this")
                         }
@@ -555,7 +558,11 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             handleActionLog("设置文本[$text]:$value")
                             value
                         }
-                        ConstraintBean.ACTION_TOUCH -> service.gesture.click(p1.x, p1.y).apply {
+                        ConstraintBean.ACTION_TOUCH -> service.gesture.click(
+                            p1.x,
+                            p1.y,
+                            getGestureStartTime()
+                        ).apply {
                             handleActionLog("touch[$p1]:$this")
                         }
                         ConstraintBean.ACTION_RANDOM -> service.gesture.randomization().run {
@@ -1046,6 +1053,18 @@ open class AutoParseAction : BaseAccessibilityAction() {
                     invoke(map)
                 }
             }
+        }
+    }
+
+    /**获取手势执行的开始时间数据*/
+    fun getGestureStartTime(def: Long = DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME): Long {
+        return if (accessibilityInterceptor?._actionControl?.lastMethodAction()
+                ?.startsWith(ConstraintBean.ACTION_HIDE_WINDOW) == true
+        ) {
+            //如果之前触发了[ACTION_HIDE_WINDOW]那么下一次手势执行的时间需要延迟一点
+            60L
+        } else {
+            def
         }
     }
 }

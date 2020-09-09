@@ -99,8 +99,6 @@ data class ActionBean(
 /**转成可以用于执行的[AutoParseAction]*/
 fun ActionBean.toAction(packageName: String): AutoParseAction {
     return AutoParseAction().apply {
-        title?.let { actionTitle = it }
-
         //当前的[BaseAccessibilityAction], 允许执行[doAction]的最大次数, 超过后异常
         doActionCount.maxCountLimit = this@toAction.actionMaxRunCount
 
@@ -114,6 +112,9 @@ fun ActionBean.toAction(packageName: String): AutoParseAction {
         checkOtherEventCount.maxCountLimit = this@toAction.checkOtherCount
 
         actionBean = this@toAction
+
+        //设置 AutoParseAction 的 actionTitle
+        title?.let { actionTitle = "$it($actionId)" }
 
         //时间间隔
         if (!interval.isNullOrEmpty()) {
