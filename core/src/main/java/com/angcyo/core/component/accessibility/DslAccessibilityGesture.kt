@@ -175,8 +175,12 @@ class DslAccessibilityGesture {
     }
 
     /**点击*/
-    fun touch(fromX: Float, fromY: Float) {
-        touch(PointF(fromX, fromY))
+    fun touch(
+        fromX: Float, fromY: Float,
+        startTime: Long = this.startTime,
+        duration: Long = this.clickDuration
+    ) {
+        touch(PointF(fromX, fromY), startTime, duration)
     }
 
     /**点击*/
@@ -185,11 +189,14 @@ class DslAccessibilityGesture {
     }
 
     /**点击*/
-    fun touch(point: PointF) {
-        duration = clickDuration
+    fun touch(
+        point: PointF,
+        startTime: Long = this.startTime,
+        duration: Long = this.clickDuration
+    ) {
         touch(Path().apply {
             moveTo(point.x, point.y)
-        })
+        }, startTime, duration)
     }
 
     /**点击*/
@@ -198,8 +205,15 @@ class DslAccessibilityGesture {
     }
 
     /**移动*/
-    fun touch(fromX: Float, fromY: Float, toX: Float, toY: Float) {
-        touch(Path().apply { moveTo(fromX, fromY);lineTo(toX, toY) })
+    fun touch(
+        fromX: Float,
+        fromY: Float,
+        toX: Float,
+        toY: Float,
+        startTime: Long = this.startTime,
+        duration: Long = this.clickDuration
+    ) {
+        touch(Path().apply { moveTo(fromX, fromY);lineTo(toX, toY) }, startTime, duration)
     }
 
     /**移动*/
@@ -303,9 +317,19 @@ fun DslAccessibilityGesture.move(
     fromY: Int,
     toX: Int,
     toY: Int,
+    startTime: Long = this.startTime,
+    duration: Long = DslAccessibilityGesture.DEFAULT_GESTURE_MOVE_DURATION,
     result: GestureResult? = null
 ): Boolean {
-    return touch(fromX.toFloat(), fromY.toFloat(), toX.toFloat(), toY.toFloat(), result)
+    return touch(
+        fromX.toFloat(),
+        fromY.toFloat(),
+        toX.toFloat(),
+        toY.toFloat(),
+        startTime,
+        duration,
+        result
+    )
 }
 
 fun DslAccessibilityGesture.move(
@@ -313,10 +337,12 @@ fun DslAccessibilityGesture.move(
     fromY: Float,
     toX: Float,
     toY: Float,
+    startTime: Long = this.startTime,
+    duration: Long = DslAccessibilityGesture.DEFAULT_GESTURE_MOVE_DURATION,
     result: GestureResult? = null
 ): Boolean {
-    moveDuration()
-    return touch(fromX, fromY, toX, toY, result)
+    moveDuration(startTime, duration)
+    return touch(fromX, fromY, toX, toY, result = result)
 }
 
 fun DslAccessibilityGesture.moveUp(result: GestureResult? = null): Boolean {
@@ -327,7 +353,7 @@ fun DslAccessibilityGesture.moveUp(result: GestureResult? = null): Boolean {
     val fY = screenHeight * 3 / 5 * 1f - nextInt(5, 10)
     val tY = screenHeight * 2 / 5 * 1f + nextInt(5, 10)
 
-    return move(fX, fY, fX, tY, result)
+    return move(fX, fY, fX, tY, result = result)
 }
 
 fun DslAccessibilityGesture.moveDown(result: GestureResult? = null): Boolean {
@@ -338,7 +364,7 @@ fun DslAccessibilityGesture.moveDown(result: GestureResult? = null): Boolean {
     val fY = screenHeight * 3 / 5 * 1f - nextInt(5, 10)
     val tY = screenHeight * 2 / 5 * 1f + nextInt(5, 10)
 
-    return move(fX, tY, fX, fY, result)
+    return move(fX, tY, fX, fY, result = result)
 }
 
 fun DslAccessibilityGesture.moveLeft(result: GestureResult? = null): Boolean {
@@ -349,7 +375,7 @@ fun DslAccessibilityGesture.moveLeft(result: GestureResult? = null): Boolean {
     val fX = screenWidth * 3 / 5 * 1f + nextInt(5, 10)
     val tX = screenWidth * 2 / 5 * 1f - nextInt(5, 10)
 
-    return move(fX, fY, tX, fY, result)
+    return move(fX, fY, tX, fY, result = result)
 }
 
 fun DslAccessibilityGesture.moveRight(result: GestureResult? = null): Boolean {
@@ -360,7 +386,7 @@ fun DslAccessibilityGesture.moveRight(result: GestureResult? = null): Boolean {
     val fX = screenWidth * 3 / 5 * 1f + nextInt(5, 10)
     val tX = screenWidth * 2 / 5 * 1f - nextInt(5, 10)
 
-    return move(tX, fY, fX, fY, result)
+    return move(tX, fY, fX, fY, result = result)
 }
 
 //</editor-fold desc="move">
@@ -372,10 +398,12 @@ fun DslAccessibilityGesture.fling(
     fromY: Float,
     toX: Float,
     toY: Float,
+    startTime: Long = DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME,
+    duration: Long = DslAccessibilityGesture.DEFAULT_GESTURE_FLING_DURATION,
     result: GestureResult? = null
 ): Boolean {
-    flingDuration()
-    return touch(fromX, fromY, toX, toY, result)
+    flingDuration(startTime, duration)
+    return touch(fromX, fromY, toX, toY, startTime, duration, result)
 }
 
 /**手指往上[fling] ↑*/
@@ -387,7 +415,7 @@ fun DslAccessibilityGesture.flingUp(result: GestureResult? = null): Boolean {
     val fY = screenHeight * 3 / 5 * 1f - nextInt(5, 10)
     val tY = screenHeight * 2 / 5 * 1f + nextInt(5, 10)
 
-    return fling(fX, fY, fX, tY, result)
+    return fling(fX, fY, fX, tY, result = result)
 }
 
 /**手指往下[fling] ↓*/
@@ -399,7 +427,7 @@ fun DslAccessibilityGesture.flingDown(result: GestureResult? = null): Boolean {
     val fY = screenHeight * 3 / 5 * 1f - nextInt(5, 10)
     val tY = screenHeight * 2 / 5 * 1f + nextInt(5, 10)
 
-    return fling(fX, tY, fX, fY, result)
+    return fling(fX, tY, fX, fY, result = result)
 }
 
 fun DslAccessibilityGesture.flingLeft(result: GestureResult? = null): Boolean {
@@ -410,7 +438,7 @@ fun DslAccessibilityGesture.flingLeft(result: GestureResult? = null): Boolean {
     val fX = screenWidth * 3 / 5 * 1f + nextInt(5, 10)
     val tX = screenWidth * 2 / 5 * 1f - nextInt(5, 10)
 
-    return fling(fX, fY, tX, fY, result)
+    return fling(fX, fY, tX, fY, result = result)
 }
 
 fun DslAccessibilityGesture.flingRight(result: GestureResult? = null): Boolean {
@@ -421,7 +449,7 @@ fun DslAccessibilityGesture.flingRight(result: GestureResult? = null): Boolean {
     val fX = screenWidth * 3 / 5 * 1f + nextInt(5, 10)
     val tX = screenWidth * 2 / 5 * 1f - nextInt(5, 10)
 
-    return fling(tX, fY, fX, fY, result)
+    return fling(tX, fY, fX, fY, result = result)
 }
 
 //</editor-fold desc="fling">
@@ -433,33 +461,41 @@ fun DslAccessibilityGesture.touch(
     fromY: Float,
     toX: Float,
     toY: Float,
+    startTime: Long = this.startTime,
+    duration: Long = this.clickDuration,
     result: GestureResult? = null
 ): Boolean {
     val isDo = _isDo
     gestureResult = result
-    touch(fromX, fromY, toX, toY)
+    touch(fromX, fromY, toX, toY, startTime, duration)
     doIt()
     return _isDispatched && !isDo
 }
 
 fun DslAccessibilityGesture.click(
-    x: Float = _screenWidth / 2f, y: Float = _screenHeight / 2f,
+    x: Float = _screenWidth / 2f,
+    y: Float = _screenHeight / 2f,
+    startTime: Long = this.startTime,
+    duration: Long = this.clickDuration,
     result: GestureResult? = null
 ): Boolean {
     val isDo = _isDo
     gestureResult = result
-    touch(x, y)
+    touch(x, y, startTime, duration)
     doIt()
     return _isDispatched && !isDo
 }
 
 fun DslAccessibilityGesture.double(
-    x: Float = _screenWidth / 2f, y: Float = _screenHeight / 2f,
+    x: Float = _screenWidth / 2f,
+    y: Float = _screenHeight / 2f,
+    startTime: Long = DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME,
+    duration: Long = DslAccessibilityGesture.DEFAULT_GESTURE_CLICK_DURATION,
     result: GestureResult? = null
 ): Boolean {
     val isDo = _isDo
     gestureResult = result
-    doubleDuration()
+    doubleDuration(startTime, duration)
     double(x, y)
     doIt()
     return _isDispatched && !isDo
@@ -493,13 +529,13 @@ fun DslAccessibilityGesture.randomization(): Pair<Boolean, String> {
         0 -> fling(p1.x, p1.y, p2.x, p2.y) to "fling ${p1}->${p2}"
         1 -> move(p1.x, p1.y, p2.x, p2.y) to "move ${p1}->${p2}"
         2 -> click(p1.x, p1.y) to "click $p1"
-        3 -> double(p1.x, p1.y, null) to "double $p1"
+        3 -> double(p1.x, p1.y, result = null) to "double $p1"
         4 -> fling(p1.x, p1.y, p2.x, p2.y) to "fling ${p1}->${p2}"
         5 -> fling(p1.x, p1.y, p2.x, p2.y) to "fling ${p1}->${p2}"
         6 -> fling(p1.x, p1.y, p2.x, p2.y) to "fling ${p1}->${p2}"
         7 -> fling(p1.x, p1.y, p2.x, p2.y) to "fling ${p1}->${p2}"
         8 -> click(p1.x, p1.y) to "click $p1"
-        9 -> double(p1.x, p1.y, null) to "double $p1"
+        9 -> double(p1.x, p1.y, result = null) to "double $p1"
         else -> true to "pass"
     }
 }

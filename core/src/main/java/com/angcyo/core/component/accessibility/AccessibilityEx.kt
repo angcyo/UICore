@@ -23,6 +23,7 @@ import com.angcyo.covertToStr
 import com.angcyo.http.RIo
 import com.angcyo.library.L
 import com.angcyo.library._screenWidth
+import com.angcyo.library.ex.Action
 import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.className
 import com.angcyo.library.ex.copy
@@ -49,9 +50,9 @@ fun Context.kill(packageName: String) {
 //    }
 }
 
-fun sleep(delay: Long, action: () -> Unit) {
+fun sleep(delay: Long, action: Action? = null) {
     Thread.sleep(delay)
-    action.invoke()
+    action?.invoke()
 }
 
 fun Rect.toPath(): Path {
