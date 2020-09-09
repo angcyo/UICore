@@ -430,14 +430,26 @@ fun View?.setDslAdapterItem(dslAdapterItem: DslAdapterItem?) {
 
 //</editor-fold desc="DslAdapterItem操作">
 
-fun ViewGroup.appendDslItem(items: List<DslAdapterItem>) {
+fun ViewGroup.appendDslItem(
+    items: List<DslAdapterItem>,
+    index: Int = -1,
+    payloads: List<Any> = emptyList()
+) {
+    var newIndex = index
     items.forEach {
-        appendDslItem(it)
+        appendDslItem(it, newIndex, payloads)
+        if (newIndex >= 0) {
+            newIndex++
+        }
     }
 }
 
-fun ViewGroup.appendDslItem(dslAdapterItem: DslAdapterItem): DslViewHolder {
-    return addDslItem(dslAdapterItem)
+fun ViewGroup.appendDslItem(
+    dslAdapterItem: DslAdapterItem,
+    index: Int = -1,
+    payloads: List<Any> = emptyList()
+): DslViewHolder {
+    return addDslItem(dslAdapterItem, index, payloads)
 }
 
 fun ViewGroup.addDslItem(
