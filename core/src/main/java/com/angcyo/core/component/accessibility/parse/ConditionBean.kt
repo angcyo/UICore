@@ -10,6 +10,9 @@ package com.angcyo.core.component.accessibility.parse
 
 data class ConditionBean(
 
+    /**是否使用根节点判断, 否则则使用约束后的节点. 注意性能*/
+    var root: Boolean = false,
+
     /**节点child数量的条件判断
      * 格式如下:
      * [>=2] 数量大于等于2
@@ -32,11 +35,16 @@ data class ConditionBean(
     @Deprecated("废弃:请使用[check]")
     var notContainsText: List<String>? = null,
 
-    /**[check]的操作条件.*/
+    /**[check]的操作条件.
+     * [is]
+     * [not]*/
     var op: String? = null,
 
     /**仅具备条件约束的[ConstraintBean], 需要先设置[op]*/
-    var check: ConstraintBean? = null
+    var check: ConstraintBean? = null,
+
+    /**所有的[ConstraintBean]都符合[op]*/
+    var checkList: List<ConstraintBean>? = null
 ) {
     companion object {
         /**节点必须满足[check]条件约束才行*/

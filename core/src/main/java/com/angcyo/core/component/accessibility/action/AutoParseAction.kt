@@ -304,16 +304,16 @@ open class AutoParseAction : BaseAccessibilityAction() {
         val nodeList = parseResult.nodeList
 
         //需要执行的动作
-        val actionList: List<String>? = if (parseResult.conditionNodeList == null) {
-            /*未开启筛选条件*/
-            constraintBean.actionList
-        } else {
+        val actionList: List<String>? = if (parseResult.isHaveCondition()) {
             if (parseResult.conditionNodeList?.isEmpty() == true) {
                 //筛选后, 节点为空
                 constraintBean.noActionList
             } else {
                 constraintBean.actionList
             }
+        } else {
+            /*未开启筛选条件*/
+            constraintBean.actionList
         }
 
         //获取到的文件列表

@@ -27,3 +27,6 @@ data class ParseResult(
      * */
     var conditionNodeList: MutableList<AccessibilityNodeInfoCompat>? = null
 )
+
+/**是否开启了筛选条件*/
+fun ParseResult.isHaveCondition() = conditionNodeList != null

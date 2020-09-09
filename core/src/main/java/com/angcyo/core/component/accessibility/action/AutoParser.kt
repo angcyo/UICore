@@ -368,10 +368,17 @@ open class AutoParser {
         constraintList.forEach { constraint ->
             if (constraint.enable || constraint.actionList?.contains(ConstraintBean.ACTION_ENABLE) == true) {
                 //如果当前的[constraint]处于激活状态, 或者拥有激活自身的能力
-                val itemResult = ParseResult(constraint, constraintList)
-                findConstraintNode(service, autoParseAction, nodeList, itemResult)
-                if (itemResult.nodeList.isNotEmpty()) {
-                    result.add(itemResult)
+                val parseResult = ParseResult(constraint, constraintList)
+                findConstraintNode(service, autoParseAction, nodeList, parseResult)
+
+                if (parseResult.isHaveCondition()) {
+                    if (parseResult.conditionNodeList?.isNotEmpty() == true) {
+                        result.add(parseResult)
+                    }
+                } else {
+                    if (parseResult.nodeList.isNotEmpty()) {
+                        result.add(parseResult)
+                    }
                 }
             }
         }
@@ -420,6 +427,9 @@ open class AutoParser {
         //返回值
         val result: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
 
+        //根节点
+        val rootNodeWrap: AccessibilityNodeInfoCompat = rootNodeInfo.wrap()
+
         //节点总数约束
         if (constraintBean.sizeCount != null) {
             val allNode = constraintBean.sizeCount?.contains("*") == true
@@ -447,14 +457,11 @@ open class AutoParser {
 
         if (constraintBean.isConstraintEmpty()) {
             //空约束返回[rootNodeInfo]
-            result.add(rootNodeInfo.wrap())
+            result.add(rootNodeWrap)
         } else {
 
             //需要匹配的文本
             val text: List<String?>? = autoParseAction.getTextList(constraintBean)
-
-            //根节点
-            val rootNodeWrap: AccessibilityNodeInfoCompat = rootNodeInfo.wrap()
 
             if (text == null) {
                 //不约束文本, 单纯约束其他规则
@@ -623,10 +630,11 @@ open class AutoParser {
             val conditionNodeList: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
             result.forEach { node ->
                 for (condition in constraintBean.conditionList!!) {
-                    val isGet = parseCondition(service, autoParseAction, node, condition)
+                    val targetNode = if (condition.root) rootNodeWrap else node
+                    val isGet = parseCondition(service, autoParseAction, targetNode, condition)
                     if (isGet) {
                         //筛选通过
-                        conditionNodeList.add(node)
+                        conditionNodeList.add(node) // rootNodeWrap or node ?
                         break
                     }
                 }
@@ -644,7 +652,7 @@ open class AutoParser {
         } else {
             //还有[after]约束
             val afterNodeList =
-                if (parseResult.conditionNodeList == null) result else parseResult.conditionNodeList!!
+                if (!parseResult.isHaveCondition()) result else parseResult.conditionNodeList!!
 
             afterNodeList.forEach { node ->
                 //继续查找
@@ -659,7 +667,7 @@ open class AutoParser {
                 parseResult.nodeList.addAll(nextParseResult.nodeList)
 
                 //条件约束筛选后的节点集合
-                if (parseResult.conditionNodeList == null) {
+                if (!parseResult.isHaveCondition()) {
                     parseResult.conditionNodeList = nextParseResult.conditionNodeList
                 } else {
                     parseResult.conditionNodeList?.addAll(
@@ -917,33 +925,73 @@ open class AutoParser {
 
         //指定了op
         if (condition.op != null) {
-            val check = condition.check
-            when (condition.op) {
-                ConditionBean.OP_IS -> {
-                    //必须满足 check
-                    if (check != null) {
-                        if (parse(service, autoParseAction, listOf(node.unwrap()), listOf(check))) {
-                            isGet = true
-                        }
-                    }
+            if (condition.checkList == null) {
+                if (parseConditionCheck(
+                        service,
+                        autoParseAction,
+                        node,
+                        condition,
+                        condition.check
+                    )
+                ) {
+                    //匹配通过
+                    isGet = true
                 }
-                ConditionBean.OP_NOT -> {
-                    //必须不满足 check
-                    if (check != null) {
-                        if (!parse(
-                                service,
-                                autoParseAction,
-                                listOf(node.unwrap()),
-                                listOf(check)
-                            )
-                        ) {
-                            isGet = true
-                        }
+            } else {
+                for (check in condition.checkList!!) {
+                    if (!parseConditionCheck(
+                            service,
+                            autoParseAction,
+                            node,
+                            condition,
+                            check
+                        )
+                    ) {
+                        //匹配未通过
+                        isGet = false
+                        break
+                    } else {
+                        isGet = true
                     }
                 }
             }
         }
+        return isGet
+    }
 
+    /**返回某一条[check]是否符合条件*/
+    fun parseConditionCheck(
+        service: AccessibilityService,
+        autoParseAction: AutoParseAction,
+        node: AccessibilityNodeInfoCompat,
+        condition: ConditionBean,
+        check: ConstraintBean?
+    ): Boolean {
+        var isGet = false
+        when (condition.op) {
+            ConditionBean.OP_IS -> {
+                //必须满足 check
+                if (check != null) {
+                    if (parse(service, autoParseAction, listOf(node.unwrap()), listOf(check))) {
+                        isGet = true
+                    }
+                }
+            }
+            ConditionBean.OP_NOT -> {
+                //必须不满足 check
+                if (check != null) {
+                    if (!parse(
+                            service,
+                            autoParseAction,
+                            listOf(node.unwrap()),
+                            listOf(check)
+                        )
+                    ) {
+                        isGet = true
+                    }
+                }
+            }
+        }
         return isGet
     }
 }
