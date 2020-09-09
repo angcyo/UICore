@@ -29,11 +29,12 @@ abstract class BaseAccessibilityInterceptor : Runnable {
 
     companion object {
 
-        const val ACTION_STATUS_INIT = 1     //初始化
-        const val ACTION_STATUS_ING = 2      //进行中
-        const val ACTION_STATUS_FINISH = 3   //完成
-        const val ACTION_STATUS_ERROR = 10   //错误
-        const val ACTION_STATUS_DESTROY = 11 //销毁
+        const val ACTION_STATUS_INIT = 1           //初始化
+        const val ACTION_STATUS_ING = 2            //进行中
+        const val ACTION_STATUS_FINISH = 3         //完成
+        const val ACTION_STATUS_ERROR = 10         //错误
+        const val ACTION_STATUS_INTERRUPTED = 11   //中断
+        const val ACTION_STATUS_DESTROY = 12       //销毁
 
         /**根据设备性能, 算出来的时间间隔*/
         var defaultIntervalDelay: Long = -1
@@ -544,6 +545,8 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         L.w("${action?.simpleHash()} [${action?.actionTitle}] 执行结束:${actionStatus.toActionStatusStr()} ${error ?: ""} 耗时:${(nowTime() - _actionStartTime).toElapsedTime()}")
         if (actionStatus == ACTION_STATUS_ERROR) {
             //出现异常
+        } else if (actionStatus == ACTION_STATUS_INTERRUPTED) {
+            //流程中止
         } else if (actionStatus == ACTION_STATUS_FINISH) {
             //流程结束
         }
@@ -653,7 +656,11 @@ abstract class BaseAccessibilityInterceptor : Runnable {
 
     /**执行异常*/
     fun actionError(action: BaseAccessibilityAction?, error: ActionException?) {
-        actionStatus = ACTION_STATUS_ERROR
+        if (error is ActionInterruptedException) {
+            actionStatus = ACTION_STATUS_INTERRUPTED
+        } else {
+            actionStatus = ACTION_STATUS_ERROR
+        }
         onDoActionFinish(action, error)
     }
 
@@ -762,6 +769,7 @@ fun Int.isActionCanStart() =
 
 fun Int.isActionInit() = this == BaseAccessibilityInterceptor.ACTION_STATUS_INIT
 fun Int.isActionStart() = this == BaseAccessibilityInterceptor.ACTION_STATUS_ING
+fun Int.isActionInterrupted() = this == BaseAccessibilityInterceptor.ACTION_STATUS_INTERRUPTED
 fun Int.isActionFinish() = this == BaseAccessibilityInterceptor.ACTION_STATUS_FINISH
 fun Int.isActionError() = this == BaseAccessibilityInterceptor.ACTION_STATUS_ERROR
 fun Int.isActionDestroy() = this == BaseAccessibilityInterceptor.ACTION_STATUS_DESTROY

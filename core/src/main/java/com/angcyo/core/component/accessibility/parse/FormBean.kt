@@ -122,6 +122,7 @@ fun FormBean.request(
         }.observer {
             onObserverEnd = { data, error ->
                 error?.let {
+                    //错误日志, 写入acc
                     AutoParseInterceptor.log(it.string())
                 }
                 result(data, error)

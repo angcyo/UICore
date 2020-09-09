@@ -4,6 +4,7 @@ import com.angcyo.http.base.isPlaintext
 import com.angcyo.http.base.readString
 import com.angcyo.library.L
 import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.isDebugType
 import com.angcyo.library.ex.nowTime
 import okhttp3.*
 import okio.Buffer
@@ -35,7 +36,7 @@ open class LogInterceptor : Interceptor {
         private val lastLogUrlTimeMap = hashMapOf<String, Long>()
 
         /**关闭日志*/
-        fun closeLog(close: Boolean = !isDebug()) = HEADER_LOG to "${!close}"
+        fun closeLog(close: Boolean = !isDebugType()) = HEADER_LOG to "${!close}"
 
         /**间隔多长时间, 才输出日志. 默认1小时输出一次*/
         fun intervalLog(mill: Long = 1 * 60 * 60 * 1000L /*毫秒*/) = HEADER_LOG to "${INTERVAL}:$mill"

@@ -96,6 +96,7 @@ abstract class BaseFloatInterceptor : BaseAccessibilityInterceptor() {
             }
             ACTION_STATUS_FINISH -> onWindowLog?.invoke("已完成", null, 0)
             ACTION_STATUS_ERROR -> onWindowLog?.invoke("异常", null, 0)
+            ACTION_STATUS_INTERRUPTED -> onWindowLog?.invoke("中止", null, 0)
             ACTION_STATUS_DESTROY -> onWindowLog?.invoke("结束", null, 0)
         }
     }

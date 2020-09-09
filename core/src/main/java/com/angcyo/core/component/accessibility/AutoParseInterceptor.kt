@@ -109,13 +109,20 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
         handleFormRequest(error)
 
         log("[${taskBean.name}/${action?.actionTitle}]执行结束:${actionStatus.toActionStatusStr()} ${error ?: ""} 耗时:${(nowTime() - _actionStartTime).toElapsedTime()}")
-        if (actionStatus == ACTION_STATUS_ERROR) {
-            //出现异常
-            notify("异常:${error?.message}")
-        } else if (actionStatus == ACTION_STATUS_FINISH) {
-            //流程结束
-            notify("执行完成!")
-            //lastService?.home()
+        when (actionStatus) {
+            ACTION_STATUS_ERROR -> {
+                //出现异常
+                notify("异常:${error?.message}")
+            }
+            ACTION_STATUS_INTERRUPTED -> {
+                //出现异常
+                notify("中止:${error?.message}")
+            }
+            ACTION_STATUS_FINISH -> {
+                //流程结束
+                notify("执行完成!")
+                //lastService?.home()
+            }
         }
 
         if (taskBean.finishToApp) {
