@@ -36,17 +36,17 @@ open class RAccessibilityService : BaseAccessibilityService() {
         }
 
         /**移除拦截器*/
-        fun removeInterceptor(interceptor: BaseAccessibilityInterceptor) {
+        fun removeInterceptor(interceptor: BaseAccessibilityInterceptor, reason: String? = null) {
             if (accessibilityInterceptorList.contains(interceptor)) {
                 accessibilityInterceptorList.remove(interceptor)
-                interceptor.onDestroy()
+                interceptor.onDestroy(reason)
             }
         }
 
         /**清空拦截器*/
-        fun clearInterceptor() {
+        fun clearInterceptor(reason: String? = null) {
             accessibilityInterceptorList.forEach {
-                it.onDestroy()
+                it.onDestroy(reason)
             }
             accessibilityInterceptorList.clear()
         }
@@ -134,7 +134,7 @@ open class RAccessibilityService : BaseAccessibilityService() {
             if (accessibilityInterceptorList.size > i) {
                 val interceptor = accessibilityInterceptorList[i]
                 try {
-                    interceptor.onDestroy()
+                    interceptor.onDestroy("无障碍服务被销毁")
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

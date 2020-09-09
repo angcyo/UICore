@@ -9,7 +9,6 @@ import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.file.wrapData
 import com.angcyo.library.LTime
 import com.angcyo.library.component.appBean
-import com.angcyo.library.ex.elseNull
 import com.angcyo.library.ex.file
 import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.toElapsedTime
@@ -109,7 +108,7 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
     override fun onDoActionFinish(action: BaseAccessibilityAction?, error: ActionException?) {
         handleFormRequest(error)
 
-        log("[${taskBean.name}]执行结束:${actionStatus.toActionStatusStr()} ${error ?: ""} 耗时:${(nowTime() - _actionStartTime).toElapsedTime()}")
+        log("[${taskBean.name}/${action?.actionTitle}]执行结束:${actionStatus.toActionStatusStr()} ${error ?: ""} 耗时:${(nowTime() - _actionStartTime).toElapsedTime()}")
         if (actionStatus == ACTION_STATUS_ERROR) {
             //出现异常
             notify("异常:${error?.message}")
@@ -203,22 +202,23 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
         super.onNoOtherActionHandle(action, service, event, nodeList)
     }
 
-    override fun onDestroy() {
+    override fun onDestroy(reason: String?) {
         //clear
         currentActionBean = null
 
         val isInterrupt = actionStatus.isActionStart()
         if (isInterrupt) {
-            val actionInterruptedException = ActionInterruptedException("拦截器被中断[onDestroy]!")
+            val actionInterruptedException =
+                ActionInterruptedException(reason ?: "拦截器被中断[onDestroy]!")
             currentAccessibilityAction?.let {
                 it.doActionFinish(actionInterruptedException)
-            }.elseNull {
-                onDoActionFinish(null, actionInterruptedException)
             }
+
+            onDoActionFinish(currentAccessibilityAction, actionInterruptedException)
         }
 
         //super
-        super.onDestroy()
+        super.onDestroy(reason)
         if (isInterrupt) {
             notify("中止")
         }

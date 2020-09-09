@@ -433,23 +433,34 @@ open class AutoParser {
         //节点总数约束
         if (constraintBean.sizeCount != null) {
             val allNode = constraintBean.sizeCount?.contains("*") == true
+            val sizeCountExp = constraintBean.sizeCount?.replaceFirst("*", "")
 
             var size = 0L
             var next = -1
+            var allow = false
             rootNodeInfo.findNode {
                 next = -1
                 if (allNode || it.childCount == 0) {
                     //空节点
                     size++
-                    if (compareStringNum(constraintBean.sizeCount?.replaceFirst("*", ""), size)) {
-                        //满足了约束条件
+
+                    if (sizeCountExp?.startsWith("<") == true) {
+                        allow = true
+                        //如果是小于运算符, 则没有匹配到时,才退出
+                        if (!compareStringNum(sizeCountExp, size)) {
+                            allow = false
+                            next = -2
+                        }
+                    } else if (compareStringNum(sizeCountExp, size)) {
+                        //其他运算符, 匹配到时, 则退出
+                        allow = true
                         next = -2
                     }
                 }
                 next
             }
 
-            if (next != -2) {
+            if (!allow) {
                 //不满足了约束条件
                 return
             }

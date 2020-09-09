@@ -588,7 +588,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                     flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                                 ) != null
 
-                                handleActionLog("启动程序:[$targetPackageName]剪切板内容:$primaryClip:$value")
+                                handleActionLog("启动:[$targetPackageName]clip:$primaryClip:$value")
                             }
 
                             value
@@ -679,15 +679,13 @@ open class AutoParseAction : BaseAccessibilityAction() {
                         }
                         ConstraintBean.ACTION_ERROR -> {
                             //直接失败操作
-                            val value = false
                             handleResult.jumpNextHandle = true
 
                             //异常退出
                             val error = arg ?: "ACTION_ERROR"
+                            handleActionLog("强制异常退出[$error]:true")
                             doActionFinish(ErrorActionException(error))
-
-                            handleActionLog("强制异常退出[$error]:${handleResult.result}")
-                            value
+                            true
                         }
                         ConstraintBean.ACTION_JUMP -> {
                             //执行跳转指令

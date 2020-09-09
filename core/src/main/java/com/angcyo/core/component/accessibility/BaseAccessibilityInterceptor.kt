@@ -386,11 +386,11 @@ abstract class BaseAccessibilityInterceptor : Runnable {
 
     /**销毁, 释放对象
      * [com.angcyo.core.component.accessibility.RAccessibilityService.onDestroy]*/
-    open fun onDestroy() {
+    open fun onDestroy(reason: String?) {
         if (actionStatus != ACTION_STATUS_ING) {
-            L.w("销毁${this.simpleHash()}")
+            L.w("销毁${this.simpleHash()} $reason")
         } else {
-            L.w("销毁${this.simpleHash()}:[$actionIndex/${actionList.size}] 耗时:${(nowTime() - _actionStartTime).toElapsedTime()}")
+            L.w("销毁${this.simpleHash()}:[$actionIndex/${actionList.size}] 耗时:${(nowTime() - _actionStartTime).toElapsedTime()} $reason")
         }
         //actionIndex = -1 //不重置index, 这样可以支持回复
         actionStatus = ACTION_STATUS_DESTROY
@@ -608,8 +608,12 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             } else {
                 //还是未处理的事件
                 _actionControl.addMethodName(ActionControl.METHOD_doActionWidth)
-                actionOtherList.forEach {
-                    handle = handle || it.doActionWidth(action, service, lastEvent, nodeList)
+                for (otherAction in actionOtherList) {
+                    handle = otherAction.doActionWidth(action, service, lastEvent, nodeList)
+                    if (handle) {
+                        //有一个action处理了
+                        break
+                    }
                 }
                 if (!handle) {
                     //未被处理
@@ -791,8 +795,8 @@ fun BaseAccessibilityInterceptor.run(
 }
 
 /**卸载拦截器*/
-fun BaseAccessibilityInterceptor.uninstall() {
-    RAccessibilityService.removeInterceptor(this)
+fun BaseAccessibilityInterceptor.uninstall(reason: String? = null) {
+    RAccessibilityService.removeInterceptor(this, reason)
 }
 
 /**进入周期回调模式, 每隔[intervalDelay]时间回调一次*/
