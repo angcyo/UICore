@@ -14,7 +14,7 @@ import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.app
 import com.angcyo.library.ex.isListEmpty
-import com.angcyo.library.utils.getLongNum
+import com.angcyo.library.utils.getFloatNum
 import kotlin.math.max
 import kotlin.math.min
 
@@ -244,32 +244,38 @@ open class AutoParser {
          * [expression] 字符串数值表达式, 比如: >=2
          * [value] 需要比较的数值,比如: 3
          * */
-        fun compareStringNum(expression: String?, value: Long): Boolean {
+        fun compareStringNum(expression: String?, value: Float, ref: Float = 1f): Boolean {
             var result = false
             if (expression != null) {
                 if (expression.isEmpty()) {
                     result = true
                 } else {
-                    val num = expression.getLongNum()
+                    val num = expression.getFloatNum()
                     num?.also {
+                        //如果是小数, 则按照比例计算
+                        val tNum = if (it < 1) {
+                            it * ref
+                        } else {
+                            it
+                        }
                         if (expression.startsWith(">=")) {
-                            if (value >= num) {
+                            if (value >= tNum) {
                                 result = true
                             }
                         } else if (expression.startsWith(">")) {
-                            if (value > num) {
+                            if (value > tNum) {
                                 result = true
                             }
                         } else if (expression.startsWith("<=")) {
-                            if (value <= num) {
+                            if (value <= tNum) {
                                 result = true
                             }
                         } else if (expression.startsWith("<")) {
-                            if (value < num) {
+                            if (value < tNum) {
                                 result = true
                             }
                         } else {
-                            if (value == num) {
+                            if (value == tNum) {
                                 result = true
                             }
                         }
@@ -435,7 +441,7 @@ open class AutoParser {
             val allNode = constraintBean.sizeCount?.contains("*") == true
             val sizeCountExp = constraintBean.sizeCount?.replaceFirst("*", "")
 
-            var size = 0L
+            var size = 0f
             var next = -1
             var allow = false
             rootNodeInfo.findNode {
@@ -629,7 +635,7 @@ open class AutoParser {
 
         //节点数量约束
         if (constraintBean.nodeCount != null) {
-            if (!compareStringNum(constraintBean.nodeCount, result.size.toLong())) {
+            if (!compareStringNum(constraintBean.nodeCount, result.size.toFloat())) {
                 //数量不匹配, 清空节点
                 result.clear()
             }
@@ -793,7 +799,7 @@ open class AutoParser {
                 if (result) {
                     //宽度约束
                     widthString?.also {
-                        if (!compareStringNum(it, bound.width().toLong())) {
+                        if (!compareStringNum(it, bound.width().toFloat(), maxWidth.toFloat())) {
                             result = false
                         }
                     }
@@ -802,7 +808,7 @@ open class AutoParser {
                 if (result) {
                     //高度约束
                     heightString?.also {
-                        if (!compareStringNum(it, bound.height().toLong())) {
+                        if (!compareStringNum(it, bound.height().toFloat(), maxHeight.toFloat())) {
                             result = false
                         }
                     }
@@ -893,7 +899,7 @@ open class AutoParser {
         //child 数量条件
         val childCount = condition.childCount
         if (childCount != null) {
-            isGet = compareStringNum(childCount, node.childCount.toLong())
+            isGet = compareStringNum(childCount, node.childCount.toFloat())
             if (!isGet) {
                 //没有匹配上, 结束后续的匹配
                 return false

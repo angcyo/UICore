@@ -330,6 +330,13 @@ object RUtils {
         str?.patternList("[-]*\\d+")?.firstOrNull()?.toLongOrNull()
 
     /**
+     * "V>=0.89-.128 89.128"
+     * 支持正负浮点数
+     * */
+    fun getFloatNumFromStr(str: String?): Float? =
+        str?.patternList("[-]*[\\d.]*\\d+")?.firstOrNull()?.toFloatOrNull()
+
+    /**
      * 修复:
      * java.util.concurrent.TimeoutException: com.android.internal.os.BinderInternal$GcWatcher.finalize() timed out after 10 seconds
      * https://stackoverflow.com/questions/24021609/how-to-handle-java-util-concurrent-timeoutexception-android-os-binderproxy-fin
@@ -443,3 +450,4 @@ fun Context.getIMEI(): String? {
 fun String.getSystemProperty() = RUtils.getSystemProperty(this)
 
 fun String?.getLongNum() = RUtils.getLongNumFromStr(this)
+fun String?.getFloatNum() = RUtils.getFloatNumFromStr(this)
