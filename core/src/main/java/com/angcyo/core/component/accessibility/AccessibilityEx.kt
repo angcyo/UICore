@@ -827,7 +827,10 @@ fun AccessibilityNodeInfo.debugNodeInfo(
                 index + 1,
                 "${if (preIndex.isEmpty()) preIndex else "${preIndex}_"}$i",
                 logFilePath,
-                outBuilder
+                outBuilder,
+                logAction,
+                refWidth,
+                refHeight
             )
         }
     }
