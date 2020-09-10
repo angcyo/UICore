@@ -328,6 +328,24 @@ object RUtils {
     /**支持负数*/
     fun getLongNumFromStr(str: String?): Long? =
         str?.patternList("[-]*\\d+")?.firstOrNull()?.toLongOrNull()
+
+    /**
+     * 修复:
+     * java.util.concurrent.TimeoutException: com.android.internal.os.BinderInternal$GcWatcher.finalize() timed out after 10 seconds
+     * https://stackoverflow.com/questions/24021609/how-to-handle-java-util-concurrent-timeoutexception-android-os-binderproxy-fin
+     * */
+    fun fixFinalizerWatchdogDaemon() {
+        try {
+            val clazz = Class.forName("java.lang.Daemons\$FinalizerWatchdogDaemon")
+            val method = clazz.superclass!!.getDeclaredMethod("stop")
+            method.isAccessible = true
+            val field = clazz.getDeclaredField("INSTANCE")
+            field.isAccessible = true
+            method.invoke(field[null])
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+    }
 }
 
 /** 检查APK是否安装 */

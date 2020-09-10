@@ -15,6 +15,7 @@ import com.angcyo.library.utils.Device
 import java.io.BufferedWriter
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.util.concurrent.TimeoutException
 
 /**
  *
@@ -134,7 +135,11 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
 
         DslFileHelper.async = true
 
-        _defaultUncaughtExceptionHandler?.uncaughtException(t, e)
+        if (t.name == "FinalizerWatchdogDaemon" && e is TimeoutException) {
+            KEY_IS_CRASH.hawkPut("false")
+        } else {
+            _defaultUncaughtExceptionHandler?.uncaughtException(t, e)
+        }
 
         if (crashLaunch) {
             _applicationContext?.let {
