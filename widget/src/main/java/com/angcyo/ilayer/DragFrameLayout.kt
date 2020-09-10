@@ -133,7 +133,7 @@ class DragFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
                     }
                 }
 
-                L.v("${simpleHash()} ${parent.simpleHash()} [$eventX,$eventY](${eventX * 1f / _screenWidth},${eventY * 1f / _screenHeight}) [${event.x},${event.y}]")
+                L.v("${simpleHash()} ${parent?.simpleHash()} [$eventX,$eventY](${eventX * 1f / _screenWidth},${eventY * 1f / _screenHeight}) [${event.x},${event.y}]")
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 removeLongPressRunnable()
