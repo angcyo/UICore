@@ -22,11 +22,9 @@ import com.angcyo.core.component.accessibility.AccessibilityHelper.tempRect
 import com.angcyo.covertToStr
 import com.angcyo.http.RIo
 import com.angcyo.library.L
+import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
-import com.angcyo.library.ex.Action
-import com.angcyo.library.ex.abs
-import com.angcyo.library.ex.className
-import com.angcyo.library.ex.copy
+import com.angcyo.library.ex.*
 
 /**
  *
@@ -648,7 +646,10 @@ fun AccessibilityNodeInfo.getRootNodeInfo(): AccessibilityNodeInfo {
 
 fun AccessibilityNodeInfo.logNodeInfo(
     logFilePath: String? = null,
-    outBuilder: StringBuilder? = null
+    outBuilder: StringBuilder? = null,
+    logAction: Boolean = isDebugType(),
+    refWidth: Int = _screenWidth,
+    refHeight: Int = _screenHeight
 ): String {
 
     outBuilder?.appendln(wrap().toString())
@@ -669,7 +670,7 @@ fun AccessibilityNodeInfo.logNodeInfo(
         L.v(t)
     }
 
-    debugNodeInfo(0, "", logFilePath, outBuilder)
+    debugNodeInfo(0, "", logFilePath, outBuilder, logAction, refWidth, refHeight)
 
     if (logFilePath != null) {
         RIo.appendToFile(logFilePath, "$b\n")
@@ -688,7 +689,10 @@ fun AccessibilityNodeInfo.debugNodeInfo(
     index: Int = 0 /*缩进控制*/,
     preIndex: String = "" /*child路径*/,
     logFilePath: String? = null,
-    outBuilder: StringBuilder? = null
+    outBuilder: StringBuilder? = null,
+    logAction: Boolean = false,
+    refWidth: Int = _screenWidth,
+    refHeight: Int = _screenHeight
 ) {
     fun newLine(i: Int): String {
         val sb = StringBuilder()
@@ -793,12 +797,19 @@ fun AccessibilityNodeInfo.debugNodeInfo(
     //宽高
     stringBuilder.append("[${tempRect.width()}x${tempRect.height()}]")
 
+    //在屏幕中的位置比例
+    stringBuilder.append("(${tempRect.left * 1f / refWidth},${tempRect.top * 1f / refHeight}")
+    stringBuilder.append("~")
+    stringBuilder.append("${tempRect.right * 1f / refWidth},${tempRect.bottom * 1f / refHeight})")
+
     //节点路径 path (2020-07-03 已经不需要了)
     //stringBuilder.append(" $preIndex")
 
     //可执行的action
-    stringBuilder.append(" ")
-    wrap.actionStr(stringBuilder)
+    if (logAction) {
+        stringBuilder.append(" ")
+        wrap.actionStr(stringBuilder)
+    }
 
     if (logFilePath != null) {
         RIo.appendToFile(logFilePath, "$stringBuilder\n")

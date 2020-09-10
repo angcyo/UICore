@@ -54,11 +54,19 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                         getBoundsInScreen(tempRect)
                         if (rootNodeInfo != null && this == rootNodeInfo) {
                             builder.append("[root ${_screenWidth}x${_screenHeight} ${tempRect.width()}x${tempRect.height()}]")
-                            logNodeInfo(outBuilder = builder)
+                            logNodeInfo(
+                                outBuilder = builder,
+                                refWidth = tempRect.width(),
+                                refHeight = tempRect.height()
+                            )
 
                             toastStringBuilder.append("[root] ")
                         } else if (allWindow) {
-                            logNodeInfo(outBuilder = builder)
+                            logNodeInfo(
+                                outBuilder = builder,
+                                refWidth = tempRect.width(),
+                                refHeight = tempRect.height()
+                            )
                         }
                         toastStringBuilder.append("${this.packageName}\n")
                         toastStringBuilder.append("$tempRect\n")
@@ -166,9 +174,15 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                         builder.appendln("$index->$accessibilityWindowInfo")
                         windowBuilder.appendln(accessibilityWindowInfo.toString())
                         accessibilityWindowInfo.root?.apply {
+                            getBoundsInScreen(tempRect)
                             if (rootNodeInfo != null && this == rootNodeInfo) {
-                                builder.append("[root]")
-                                logNodeInfo(outBuilder = builder)
+                                builder.append("[root ${_screenWidth}x${_screenHeight} ${tempRect.width()}x${tempRect.height()}]")
+
+                                logNodeInfo(
+                                    outBuilder = builder,
+                                    refWidth = tempRect.width(),
+                                    refHeight = tempRect.height()
+                                )
 
                                 windowBuilder.append("[root]")
                                 windowBuilder.appendln(wrap().toString())
@@ -177,7 +191,11 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                             } else {
                                 windowBuilder.appendln(wrap().toString())
                                 if (logAllWindow) {
-                                    logNodeInfo(outBuilder = builder)
+                                    logNodeInfo(
+                                        outBuilder = builder,
+                                        refWidth = tempRect.width(),
+                                        refHeight = tempRect.height()
+                                    )
                                 } else {
                                     builder.appendln(wrap().toString())
                                 }
