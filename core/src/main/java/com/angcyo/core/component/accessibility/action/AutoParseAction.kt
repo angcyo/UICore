@@ -696,6 +696,13 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             var value = false
                             val interceptor = accessibilityInterceptor
 
+                            //跳转次数
+                            val defaultJumpCount = if ((actionBean?.actionMaxCount ?: -1) > 0) {
+                                actionBean!!.actionMaxCount
+                            } else {
+                                DEFAULT_JUMP_MAX_COUNT
+                            }
+
                             if (arg.isNullOrEmpty() || interceptor == null) {
                                 //没有跳转参数,直接完成action
                                 value = true
@@ -710,7 +717,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                 if (indexOf == -1) {
                                     //未找到
                                     arg1 = arg
-                                    arg2 = "$DEFAULT_JUMP_MAX_COUNT"
+                                    arg2 = "$defaultJumpCount"
                                 } else {
                                     //找到
                                     arg1 = arg.substring(0, indexOf)
@@ -722,15 +729,27 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                         ?.let { actionId -> actionIdList.add(actionId) }
                                 }
 
-                                val maxCount = arg2.toLongOrNull() ?: DEFAULT_JUMP_MAX_COUNT
+                                val maxCount = arg2.toLongOrNull() ?: defaultJumpCount
 
                                 jumpCount.maxCountLimit = maxCount
                                 jumpCount.start()
 
                                 if (jumpCount.isMaxLimit()) {
                                     //超限后, 不跳转, 直接完成
-                                    value = true
-                                    handleResult.finish = true
+                                    jumpCount.clear()
+
+                                    val jumpOut = actionBean?.check?.jumpOut
+                                    if (jumpOut == null) {
+                                        value = true
+                                        handleResult.finish = true
+                                    } else {
+                                        value = parseHandleAction(
+                                            service,
+                                            handleNodeList.toUnwrapList(),
+                                            actionBean?.check?.jumpOut
+                                        )
+                                    }
+
                                 } else {
                                     value = true
 

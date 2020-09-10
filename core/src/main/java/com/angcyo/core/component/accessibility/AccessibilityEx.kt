@@ -800,7 +800,10 @@ fun AccessibilityNodeInfo.debugNodeInfo(
     //在屏幕中的位置比例
     stringBuilder.append("(${tempRect.left * 1f / refWidth},${tempRect.top * 1f / refHeight}")
     stringBuilder.append("~")
-    stringBuilder.append("${tempRect.right * 1f / refWidth},${tempRect.bottom * 1f / refHeight})")
+    stringBuilder.append("${tempRect.right * 1f / refWidth},${tempRect.bottom * 1f / refHeight}")
+    stringBuilder.append(":${tempRect.width() * 1f / refWidth}")
+    stringBuilder.append(":${tempRect.height() * 1f / refHeight}")
+    stringBuilder.append(")")
 
     //节点路径 path (2020-07-03 已经不需要了)
     //stringBuilder.append(" $preIndex")
@@ -843,6 +846,12 @@ fun AccessibilityNodeInfo.viewIdName() = wrap().viewIdName()
 fun AccessibilityNodeInfoCompat.viewIdName() = viewIdResourceName
 
 fun AccessibilityNodeInfo.wrap() = AccessibilityNodeInfoCompat.wrap(this)
+
+fun List<AccessibilityNodeInfoCompat>.toUnwrapList() =
+    mapTo(ArrayList<AccessibilityNodeInfo>()) { it.unwrap() }
+
+fun List<AccessibilityNodeInfo>.toWrapList() =
+    mapTo(ArrayList<AccessibilityNodeInfoCompat>()) { it.wrap() }
 
 /**获取有文本的文本*/
 fun AccessibilityNodeInfoCompat.text() =

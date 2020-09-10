@@ -249,6 +249,10 @@ data class ConstraintBean(
          * [:<2] 跳转到前2个action
          * [:>3] 跳转到后3个action
          * [:actionId;actionId;:5] id支持指定多个,依次匹配寻找,找到则终止后续. 跳转到指定的actionId,未找到直接完成当前的action
+         *
+         * 如果未指定跳转次数,
+         * 则使用 [com.angcyo.core.component.accessibility.parse.ActionBean.actionMaxCount]的最大次数,如果大于0的话
+         * 其次 [com.angcyo.core.component.accessibility.BaseAccessibilityAction.DEFAULT_JUMP_MAX_COUNT]
          * */
         const val ACTION_JUMP = "jump"
 
