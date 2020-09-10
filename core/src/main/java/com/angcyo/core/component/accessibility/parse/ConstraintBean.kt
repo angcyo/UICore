@@ -276,13 +276,23 @@ data class ConstraintBean(
         const val STATE_CLICKABLE = "clickable" //具备可点击
         const val STATE_NOT_CLICKABLE = "not_clickable" //具备不可点击
         const val STATE_FOCUSABLE = "focusable" //具备可获取交点
+        const val STATE_NOT_FOCUSABLE = "not_focusable" //具备不可获取交点
         const val STATE_FOCUSED = "focused" //具备焦点状态
-        const val STATE_UNFOCUSED = "unfocused" //具备选未中状态
+        const val STATE_UNFOCUSED = "unfocused" //具备无焦点状态
         const val STATE_SELECTED = "selected" //具备选中状态
-        const val STATE_UNSELECTED = "unselected" //具备选未中状态
+        const val STATE_UNSELECTED = "unselected" //具备未选中状态
         const val STATE_SCROLLABLE = "scrollable" //具备可滚动状态
+        const val STATE_NOT_SCROLLABLE = "not_scrollable" //具备不可滚动状态
         const val STATE_LONG_CLICKABLE = "longClickable" //具备长按状态
         const val STATE_NOT_LONG_CLICKABLE = "not_longClickable" //具备不可长按状态
+        const val STATE_ENABLE = "enable" //具备激活状态
+        const val STATE_DISABLE = "disable" //具备非激活状态
+        const val STATE_PASSWORD = "password" //具备密码状态
+        const val STATE_NOT_PASSWORD = "not_password" //具备非密码状态
+        const val STATE_CHECKABLE = "checkable" //具备可check状态
+        const val STATE_NOT_CHECKABLE = "not_checkable" //具备不可check状态
+        const val STATE_CHECKED = "checked" //具备check状态
+        const val STATE_UNCHECKED = "unchecked" //不具备check状态
     }
 }
 

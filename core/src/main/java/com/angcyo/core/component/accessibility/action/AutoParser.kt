@@ -187,6 +187,12 @@ open class AutoParser {
                         match = false
                     }
                 }
+                ConstraintBean.STATE_NOT_FOCUSABLE -> {
+                    //需要具备不可以获取焦点状态
+                    if (node.isFocusable) {
+                        match = false
+                    }
+                }
                 ConstraintBean.STATE_FOCUSED -> {
                     //需要具备焦点状态
                     if (!node.isFocused) {
@@ -217,6 +223,12 @@ open class AutoParser {
                         match = false
                     }
                 }
+                ConstraintBean.STATE_NOT_SCROLLABLE -> {
+                    //需要具备不可滚动状态
+                    if (node.isScrollable) {
+                        match = false
+                    }
+                }
                 ConstraintBean.STATE_LONG_CLICKABLE -> {
                     //需要具备可以长按的状态
                     if (!node.isLongClickable) {
@@ -226,6 +238,50 @@ open class AutoParser {
                 ConstraintBean.STATE_NOT_LONG_CLICKABLE -> {
                     //需要具备不可以长按的状态
                     if (node.isLongClickable) {
+                        match = false
+                    }
+                }
+                ConstraintBean.STATE_ENABLE -> {
+                    //需要具备激活状态
+                    if (!node.isEnabled) {
+                        match = false
+                    }
+                }
+                ConstraintBean.STATE_DISABLE -> {
+                    //需要具备禁用状态
+                    if (node.isEnabled) {
+                        match = false
+                    }
+                }
+                ConstraintBean.STATE_PASSWORD -> {
+                    //需要具备密码状态
+                    if (!node.isPassword) {
+                        match = false
+                    }
+                }
+                ConstraintBean.STATE_NOT_PASSWORD -> {
+                    //需要具备非密码状态
+                    if (node.isPassword) {
+                        match = false
+                    }
+                }
+                ConstraintBean.STATE_CHECKABLE -> {
+                    if (!node.isCheckable) {
+                        match = false
+                    }
+                }
+                ConstraintBean.STATE_NOT_CHECKABLE -> {
+                    if (node.isCheckable) {
+                        match = false
+                    }
+                }
+                ConstraintBean.STATE_CHECKED -> {
+                    if (!node.isChecked) {
+                        match = false
+                    }
+                }
+                ConstraintBean.STATE_UNCHECKED -> {
+                    if (node.isChecked) {
                         match = false
                     }
                 }
