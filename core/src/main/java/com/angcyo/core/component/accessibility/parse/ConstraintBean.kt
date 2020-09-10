@@ -212,7 +212,13 @@ data class ConstraintBean(
         const val ACTION_FLING = "fling" //[fling:10,10-100,100]
         const val ACTION_BACK = "back" //执行返回操作
         const val ACTION_HOME = "home" //回到桌面
-        const val ACTION_GET_TEXT = "getText" //获取文本内容
+
+        /**
+         * 获取文本内容
+         * [:formKey]支持指定formKey, 会优先于action的formKey
+         * [com.angcyo.core.component.accessibility.parse.ActionBean.formKey]*/
+        const val ACTION_GET_TEXT = "getText"
+
         const val ACTION_SET_TEXT = "setText" //设置文本内容 [inputList]
         const val ACTION_RANDOM = "random" //随机执行, 空字符会进行随机操作.
         const val ACTION_FINISH = "finish" //直接完成操作

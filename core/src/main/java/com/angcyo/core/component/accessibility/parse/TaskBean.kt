@@ -128,7 +128,7 @@ fun TaskBean.toInterceptor(
                 }
 
                 //获取到的文本回调
-                autoParseAction.onGetTextResult = { textList ->
+                autoParseAction.onGetTextResult = { textFormKey, textList ->
                     try {
                         if (getTextResultMap == null) {
                             getTextResultMap = hashMapOf()
@@ -138,9 +138,9 @@ fun TaskBean.toInterceptor(
                             getTextResultMap = hashMapOf()
                         }
 
-                        //如果action指定了[formKey]
-                        val formKey =
-                            autoParseAction.actionBean?.formKey /* ?: autoParseAction.hashCode().toString()*/
+                        //优先使用自带的formKey参数, 其次使用action的[formKey]
+                        val formKey = textFormKey
+                            ?: autoParseAction.actionBean?.formKey /* ?: autoParseAction.hashCode().toString()*/
 
                         formKey?.let {
                             (map as HashMap)[formKey] = textList

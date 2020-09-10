@@ -31,7 +31,7 @@ import kotlin.random.Random.Default.nextInt
 open class AutoParseAction : BaseAccessibilityAction() {
 
     /**如果是获取文本的任务, 那么多获取到文本时, 触发的回调*/
-    var onGetTextResult: ((List<CharSequence>) -> Unit)? = null
+    var onGetTextResult: ((String?, List<CharSequence>) -> Unit)? = null
 
     /**根据给定的[wordInputIndexList] [wordTextIndexList]返回对应的文本信息*/
     var onGetWordTextListAction: ((List<String>) -> List<String>?)? = null
@@ -101,7 +101,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         service: BaseAccessibilityService,
         nodeList: List<AccessibilityNodeInfo>,
         constraintList: List<ConstraintBean>?,
-        onGetTextResult: (List<CharSequence>) -> Unit = {}
+        onGetTextResult: (String?, List<CharSequence>) -> Unit = { _, _ -> }
     ): Boolean {
         //执行对应的action操作
         var result = false
@@ -172,9 +172,10 @@ open class AutoParseAction : BaseAccessibilityAction() {
             }
 
             //执行对应的action操作
-            val result: Boolean = parseHandleAction(service, nodeList, handleConstraintList) {
-                handleGetTextResult(it)
-            }
+            val result: Boolean =
+                parseHandleAction(service, nodeList, handleConstraintList) { formKey, textList ->
+                    handleGetTextResult(formKey, textList)
+                }
 
             //判断是否执行成功
             if (result) {
@@ -266,7 +267,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
     //</editor-fold desc="周期回调方法">
 
     /**[getText]动作获取到的文本列表*/
-    fun handleGetTextResult(textList: List<CharSequence>) {
+    fun handleGetTextResult(formKey: String?, textList: List<CharSequence>) {
         if (getTextList == null) {
             getTextList = mutableListOf()
         }
@@ -274,7 +275,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         getTextList?.clear()
         getTextList?.addAll(textList)
 
-        onGetTextResult?.invoke(textList)
+        onGetTextResult?.invoke(formKey, textList)
     }
 
     //记录指令
@@ -297,7 +298,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
     open fun handleAction(
         service: BaseAccessibilityService,
         parseResult: ParseResult,
-        onGetTextResult: (List<CharSequence>) -> Unit
+        onGetTextResult: (String?, List<CharSequence>) -> Unit
     ): HandleResult {
 
         val constraintBean: ConstraintBean = parseResult.constraint
@@ -316,8 +317,9 @@ open class AutoParseAction : BaseAccessibilityAction() {
             constraintBean.actionList
         }
 
-        //获取到的文件列表
+        //获取到的文本列表
         val getTextResultList: MutableList<CharSequence> = mutableListOf()
+        var getTextFormKey: String? = null
 
         //需要返回的处理结果
         val handleResult = HandleResult()
@@ -514,6 +516,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             value
                         }
                         ConstraintBean.ACTION_GET_TEXT -> {
+                            getTextFormKey = arg
                             val textRegexList = constraintBean.getTextRegexList
                             handleNodeList.forEach {
                                 it.text()?.also { text ->
@@ -542,8 +545,9 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                     getTextResultList.addAll(resultTextList)
                                 }
                             }
-                            handleActionLog("获取文本[$getTextResultList]:${getTextResultList.isNotEmpty()}")
-                            getTextResultList.isNotEmpty()
+                            val value = getTextResultList.isNotEmpty()
+                            handleActionLog("获取文本[$getTextResultList]:${value}")
+                            value
                         }
                         ConstraintBean.ACTION_SET_TEXT -> {
                             var value = false
@@ -886,7 +890,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         }
 
         if (getTextResultList.isNotEmpty()) {
-            onGetTextResult(getTextResultList)
+            onGetTextResult(getTextFormKey, getTextResultList)
         }
 
         if (constraintBean.jumpOnSuccess) {
