@@ -35,17 +35,23 @@ import com.angcyo.library.ex.*
  */
 
 
+/**[Manifest.permission.KILL_BACKGROUND_PROCESSES]*/
 @SuppressLint("MissingPermission")
-fun Context.kill(packageName: String) {
-    val am: ActivityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-    am.killBackgroundProcesses(packageName)
-
-//    val infos = am.runningAppProcesses
-//    for (info in infos) {
-//        if (info.processName == packageName) {
-//            android.os.Process.killProcess(info.pid)
-//        }
-//    }
+fun Context.kill(packageName: String): Boolean {
+    return try {
+        val am: ActivityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        am.killBackgroundProcesses(packageName)
+        val infos = am.runningAppProcesses
+        for (info in infos) {
+            if (info.processName == packageName) {
+                android.os.Process.killProcess(info.pid)
+            }
+        }
+        true
+    } catch (e: Exception) {
+        e.printStackTrace()
+        false
+    }
 }
 
 fun sleep(delay: Long, action: Action? = null) {
