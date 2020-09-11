@@ -341,8 +341,8 @@ fun DslAccessibilityGesture.move(
     duration: Long = DslAccessibilityGesture.DEFAULT_GESTURE_MOVE_DURATION,
     result: GestureResult? = null
 ): Boolean {
-    moveDuration(startTime, duration)
-    return touch(fromX, fromY, toX, toY, result = result)
+    moveDuration()
+    return touch(fromX, fromY, toX, toY, startTime, duration, result = result)
 }
 
 fun DslAccessibilityGesture.moveUp(result: GestureResult? = null): Boolean {

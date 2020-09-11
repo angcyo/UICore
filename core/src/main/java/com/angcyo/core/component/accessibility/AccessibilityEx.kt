@@ -807,8 +807,8 @@ fun AccessibilityNodeInfo.debugNodeInfo(
     stringBuilder.append("(${tempRect.left * 1f / refWidth},${tempRect.top * 1f / refHeight}")
     stringBuilder.append("~")
     stringBuilder.append("${tempRect.right * 1f / refWidth},${tempRect.bottom * 1f / refHeight}")
-    stringBuilder.append(":${tempRect.width() * 1f / refWidth}")
-    stringBuilder.append(":${tempRect.height() * 1f / refHeight}")
+    stringBuilder.append(" :${tempRect.width() * 1f / refWidth}")
+    stringBuilder.append(" :${tempRect.height() * 1f / refHeight}")
     stringBuilder.append(")")
 
     //节点路径 path (2020-07-03 已经不需要了)

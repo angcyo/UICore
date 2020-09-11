@@ -385,7 +385,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             action = act.substring(0, indexOf)
                             arg = act.substring(indexOf + 1, act.length)
                         }
-                        parsePoint(arg).let {
+                        parsePoint(arg?.arg()).let {
                             p1.set(it[0])
                             p2.set(it[1])
                         }
@@ -446,9 +446,9 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                 }
 
                                 value = if (click) {
-                                    service.gesture.click(x, y, getGestureStartTime())
+                                    service.gesture.click(x, y, getGestureStartTime(arg?.arg(1)))
                                 } else {
-                                    service.gesture.double(x, y, getGestureStartTime())
+                                    service.gesture.double(x, y, getGestureStartTime(arg?.arg(1)))
                                 } || value
                             }
                             if (click) {
@@ -469,7 +469,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                         ConstraintBean.ACTION_DOUBLE -> service.gesture.double(
                             p1.x,
                             p1.y,
-                            getGestureStartTime()
+                            getGestureStartTime(arg?.arg(1))
                         ).apply {
                             handleActionLog("双击[$p1]:$this")
                         }
@@ -478,7 +478,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             p1.y,
                             p2.x,
                             p2.y,
-                            getGestureStartTime()
+                            getGestureStartTime(arg?.arg(1))
                         ).apply {
                             handleActionLog("move[$p1 $p2]:$this")
                         }
@@ -487,7 +487,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             p1.y,
                             p2.x,
                             p2.y,
-                            getGestureStartTime()
+                            getGestureStartTime(arg?.arg(1))
                         ).apply {
                             handleActionLog("fling[$p1 $p2]:$this")
                         }
@@ -565,7 +565,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                         ConstraintBean.ACTION_TOUCH -> service.gesture.click(
                             p1.x,
                             p1.y,
-                            getGestureStartTime()
+                            getGestureStartTime(arg?.arg(1))
                         ).apply {
                             handleActionLog("touch[$p1]:$this")
                         }
@@ -1077,6 +1077,10 @@ open class AutoParseAction : BaseAccessibilityAction() {
         }
     }
 
+    fun getGestureStartTime(time: String?) = getGestureStartTime(
+        time?.toLongOrNull() ?: DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME
+    )
+
     /**获取手势执行的开始时间数据*/
     fun getGestureStartTime(def: Long = DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME): Long {
         return if (accessibilityInterceptor?._actionControl?.lastMethodAction()
@@ -1143,3 +1147,6 @@ fun Float.toPointF(ref: Int): Float {
         this * dp
     }
 }
+
+/**使用指定的分隔符[split]分割, 获取第[index]个的数据*/
+fun String.arg(index: Int = 0, split: String = ":") = split(split).getOrNull(index)
