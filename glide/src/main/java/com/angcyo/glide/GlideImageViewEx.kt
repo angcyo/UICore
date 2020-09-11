@@ -8,6 +8,7 @@ import com.angcyo.drawable.base.dslGradientDrawable
 import com.angcyo.drawable.text.dslTextDrawable
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.getColor
+import com.angcyo.library.ex.toUri
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -19,6 +20,10 @@ import com.angcyo.widget.DslViewHolder
 
 fun DslViewHolder.giv(@IdRes id: Int): GlideImageView? {
     return v(id)
+}
+
+fun ImageView.loadImage(url: String?, action: DslGlide.() -> Unit = {}) {
+    loadImage(url.toUri(), action)
 }
 
 /**使用[Glide]加载图片*/

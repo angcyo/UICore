@@ -604,4 +604,24 @@ fun ViewGroup.updateDslItem(item: DslAdapterItem, payloads: List<Any> = emptyLis
     }
 }
 
+/**移除所有符合规则的child*/
+fun ViewGroup.removeAllDslItem(predicate: (Int, DslAdapterItem?) -> Boolean = { _, item -> item != null }) {
+
+    val removeIndexList = mutableListOf<Int>()
+
+    forEach { index, child ->
+        val dslItem = child.tagDslAdapterItem()
+
+        if (predicate(index, dslItem)) {
+            removeIndexList.add(index)
+        }
+    }
+
+    //移除item
+    removeIndexList.reverse()
+    removeIndexList.forEach {
+        removeViewAt(it)
+    }
+}
+
 //<editor-fold desc="DslAdapterItem操作">
