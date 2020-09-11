@@ -727,6 +727,7 @@ open class AutoParser {
             val afterNodeList =
                 if (!parseResult.isHaveCondition()) result else parseResult.conditionNodeList!!
 
+            val resultAfter: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
             afterNodeList.forEach { node ->
                 //继续查找
                 val nextParseResult =
@@ -737,7 +738,7 @@ open class AutoParser {
                     node.unwrap(),
                     nextParseResult
                 )
-                parseResult.nodeList.addAll(nextParseResult.nodeList)
+                resultAfter.addAll(nextParseResult.nodeList)
 
                 //条件约束筛选后的节点集合
                 if (!parseResult.isHaveCondition()) {
@@ -747,6 +748,10 @@ open class AutoParser {
                         nextParseResult.conditionNodeList ?: emptyList()
                     )
                 }
+            }
+
+            if (resultAfter.isNotEmpty()) {
+                parseResult.nodeList.addAll(resultAfter)
             }
         }
     }
