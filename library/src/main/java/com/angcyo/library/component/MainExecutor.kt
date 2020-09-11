@@ -4,11 +4,12 @@ import android.os.Handler
 import android.os.Looper
 import com.angcyo.library.R
 import com.angcyo.library.app
-import com.angcyo.library.component.MainExecutor._lastAction
+import com.angcyo.library.component.MainExecutor._lastRunnable
 import com.angcyo.library.ex.Action
 import java.lang.ref.WeakReference
 import java.util.concurrent.Executor
 import java.util.concurrent.RejectedExecutionException
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  *
@@ -20,11 +21,22 @@ import java.util.concurrent.RejectedExecutionException
 object MainExecutor : Executor {
     val handler = Handler(Looper.getMainLooper())
 
-    var _lastAction: WeakReference<Action?>? = null
+    var _lastRunnable: WeakReference<MainRunnable?>? = null
 
     override fun execute(command: Runnable) {
         if (!handler.post(command)) {
             throw RejectedExecutionException("$handler is shutting down")
+        }
+    }
+}
+
+class MainRunnable(var action: Action? = null) : Runnable {
+    var cancel: AtomicBoolean = AtomicBoolean(false)
+    override fun run() {
+        if (cancel.get()) {
+            //被取消
+        } else {
+            action?.invoke()
         }
     }
 }
@@ -34,14 +46,19 @@ fun _delay(
     delayMillis: Long = app().resources.getInteger(R.integer.lib_animation_delay).toLong(),
     action: Action
 ): Action {
-    MainExecutor.handler.postDelayed(action, delayMillis)
-    _lastAction = WeakReference(action)
+    val run = MainRunnable(action)
+    MainExecutor.handler.postDelayed(run, delayMillis)
+    _lastRunnable = WeakReference(run)
     return action
 }
 
 /**移除最后一个[Action]*/
 fun _delayCancel() {
-    _lastAction?.get()?.also { MainExecutor.handler.removeCallbacks(it) }
-    _lastAction?.clear()
-    _lastAction = null
+    _lastRunnable?.get()?.also {
+        it.cancel.set(true)
+        it.action = null
+        MainExecutor.handler.removeCallbacks(it)
+    }
+    _lastRunnable?.clear()
+    _lastRunnable = null
 }
