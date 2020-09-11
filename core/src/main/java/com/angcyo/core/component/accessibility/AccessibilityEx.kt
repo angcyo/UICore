@@ -650,6 +650,13 @@ fun AccessibilityNodeInfo.getRootNodeInfo(): AccessibilityNodeInfo {
     return parent.getRootNodeInfo()
 }
 
+/**返回所有节点信息*/
+fun AccessibilityNodeInfo.logAllNode(): String {
+    val builder = StringBuilder()
+    logNodeInfo(null, builder, false)
+    return builder.toString()
+}
+
 fun AccessibilityNodeInfo.logNodeInfo(
     logFilePath: String? = null,
     outBuilder: StringBuilder? = null,

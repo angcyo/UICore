@@ -258,6 +258,12 @@ abstract class BaseAccessibilityAction {
         rollbackCount.clear()
     }
 
+    /**释放资源
+     * [com.angcyo.core.component.accessibility.BaseAccessibilityInterceptor.onDestroy]*/
+    open fun release() {
+        actionLog = null
+    }
+
     /**获取拦截器下一次间隔回调的时长*/
     open fun getInterceptorIntervalDelay(interval: String? = actionInterval): Long {
         return if (interval.isNullOrEmpty()) {

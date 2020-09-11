@@ -388,6 +388,12 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     /**销毁, 释放对象
      * [com.angcyo.core.component.accessibility.RAccessibilityService.onDestroy]*/
     open fun onDestroy(reason: String?) {
+
+        actionList.forEach {
+            //释放资源
+            it.release()
+        }
+
         if (actionStatus != ACTION_STATUS_ING) {
             L.w("销毁${this.simpleHash()} $reason")
         } else {

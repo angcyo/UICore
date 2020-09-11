@@ -259,9 +259,12 @@ open class AutoParseAction : BaseAccessibilityAction() {
         //表单处理
         handleFormRequest(handleError)
 
-        actionLog = null
-        onGetTextResult = null
         super.doActionFinish(handleError)
+    }
+
+    override fun release() {
+        super.release()
+        onGetTextResult = null
     }
 
     //</editor-fold desc="周期回调方法">
@@ -417,6 +420,9 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             }
                             val first = handleNodeList.firstOrNull()
                             handleActionLog("点击节点[${first?.text() ?: first?.bounds()}]:$value")
+                            if (isDebugType()) {
+                                handleActionLog(first?.unwrap()?.logAllNode() ?: "no node.")
+                            }
                             value
                         }
                         ConstraintBean.ACTION_CLICK2, ConstraintBean.ACTION_CLICK3 -> {
