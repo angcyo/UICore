@@ -433,12 +433,8 @@ open class AutoParser {
                 val parseResult = ParseResult(constraint, constraintList)
                 findConstraintNode(service, autoParseAction, nodeList, parseResult)
 
-                if (parseResult.isHaveCondition()) {
-                    if (parseResult.conditionNodeList?.isNotEmpty() == true) {
-                        result.add(parseResult)
-                    }
-                } else {
-                    if (parseResult.nodeList.isNotEmpty()) {
+                parseResult.resultHandleNodeList().apply {
+                    if (this?.isNotEmpty() == true) {
                         result.add(parseResult)
                     }
                 }

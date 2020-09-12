@@ -30,3 +30,6 @@ data class ParseResult(
 
 /**是否开启了筛选条件*/
 fun ParseResult.isHaveCondition() = conditionNodeList != null
+
+/**返回需要处理的节点列表*/
+fun ParseResult.resultHandleNodeList() = if (isHaveCondition()) conditionNodeList else nodeList
