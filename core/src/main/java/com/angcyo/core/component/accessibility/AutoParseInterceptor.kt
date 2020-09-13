@@ -56,6 +56,9 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
     /**请求表单时, 配置表单数据的回调*/
     var onConfigParams: ((params: HashMap<String, Any>) -> Unit)? = null
 
+    /**离开界面多久后, 重启. 毫秒*/
+    var leaveRestartTime: Long = 10 * 1000
+
     init {
         //固定通知id
         notifyId = 999
@@ -67,10 +70,6 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
         title: CharSequence? = "${taskBean.name}(${max(0, actionIndex)}/${actionList.size})"
     ) {
         sendNotify(title, content)
-    }
-
-    override fun startAction(restart: Boolean) {
-        super.startAction(restart)
     }
 
     override fun onDoActionStart() {
@@ -165,11 +164,12 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
             if (filterPackageNameList.isNotEmpty()) {
                 interceptorLog?.log("离开目标:$filterPackageNameList ${LTime.time(_lastLeaveTime)} 停留在:$_lastLeavePackageName")
 
-                if (needDefaultHandle && nowTime() - _lastLeaveTime > 10 * 60 * 1000) {
+                if (needDefaultHandle && (nowTime() - _lastLeaveTime) > leaveRestartTime) {
                     //离开停留在同一个界面时间超过10分钟,强制重新开始
-                    interceptorLog?.log("超过10分钟,即将重新开始!")
+                    interceptorLog?.log("超过${leaveRestartTime / 1000}秒,即将重新开始!")
                     _lastLeaveTime = 0
-                    restart()
+                    //restart()
+                    startAction(true)
                 }
             }
         }

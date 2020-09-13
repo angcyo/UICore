@@ -121,10 +121,13 @@ fun Activity.navigatorBarHeight(): Int {
 
 //<editor-fold desc="AccessibilityService扩展">
 
-fun AccessibilityService.findNode(predicate: (node: AccessibilityNodeInfoCompat) -> Unit) {
+fun AccessibilityService.findNode(predicate: (node: AccessibilityNodeInfoCompat) -> Boolean) {
     rootNodeInfo()?.findNode(predicate = {
-        predicate(it)
-        -1
+        if (predicate(it)) {
+            -2
+        } else {
+            -1
+        }
     })
 }
 

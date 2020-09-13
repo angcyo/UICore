@@ -32,13 +32,11 @@ open class PermissionsAction : BaseAccessibilityAction() {
         var result = false
 
         service.findNode {
-            if (it.haveText("要允许")) {
+            if (it.haveText("要允许") || it.haveText("安装.+未知应用")) {
                 result = true
             }
+            result
         }
-
-        //event.isClassNameContains("permission") ||
-        //event.isClassNameContains("packageinstaller")
 
         return result
     }
@@ -49,7 +47,7 @@ open class PermissionsAction : BaseAccessibilityAction() {
         event: AccessibilityEvent?
     ): Boolean {
         return service.rootNodeInfo()?.findNode {
-            if (it.haveText("允许")) {
+            if (it.haveText("允许") || it.haveText("取消")) {
                 1
             } else {
                 -1

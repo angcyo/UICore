@@ -305,7 +305,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
     ): HandleResult {
 
         val constraintBean: ConstraintBean = parseResult.constraint
-        val nodeList = parseResult.nodeList
+        val nodeList = parseResult.resultHandleNodeList() ?: emptyList<AccessibilityNodeInfoCompat>() //parseResult.nodeList
 
         //需要执行的动作
         val actionList: List<String>? = if (parseResult.isHaveCondition()) {
