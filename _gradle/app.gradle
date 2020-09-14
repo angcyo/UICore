@@ -36,8 +36,8 @@ def _minify_enabled = project.hasProperty("minify_enabled") ? (project.ext.minif
 def _use_proguard = project.hasProperty("use_proguard") ? (project.ext.use_proguard == "true") : _minify_enabled
 
 println "\n........app.gradle........"
-println "工程名->" + project.name + " 包名->" + application_id + " ->" + _V_NAME + " ->" + _V_CODE
-println "C_SDK->" + _C_SDK + " M_SDK->" + _M_SDK + " T_SDK->" + _T_SDK + " minify_enabled->" + _minify_enabled + " use_proguard->" + _use_proguard
+println "工程名->" + project.name + " 包名->" + application_id + " ->" + _V_NAME + "($_V_CODE)"
+println "C_SDK:" + _C_SDK + " M_SDK:" + _M_SDK + " T_SDK:" + _T_SDK + " minify_enabled:" + _minify_enabled + " use_proguard:" + _use_proguard
 println "........app.gradle........end"
 
 //println hasProperty("V_NAME")
