@@ -110,6 +110,11 @@ open class AutoParseAction : BaseAccessibilityAction() {
             autoParser.parse(service, this, nodeList, constraintList) {
                 for (parseResult in it) {
 
+                    if (!parseResult.constraint.enable) {
+                        handleActionLog("跳过Constraint[${parseResult.constraint.constraintId}]的处理")
+                        continue
+                    }
+
                     //执行action
                     val handleResult: HandleResult =
                         handleAction(service, parseResult, onGetTextResult)
@@ -305,7 +310,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
     ): HandleResult {
 
         val constraintBean: ConstraintBean = parseResult.constraint
-        val nodeList = parseResult.resultHandleNodeList() ?: emptyList<AccessibilityNodeInfoCompat>() //parseResult.nodeList
+        val nodeList = parseResult.resultHandleNodeList()
+            ?: emptyList<AccessibilityNodeInfoCompat>() //parseResult.nodeList
 
         //需要执行的动作
         val actionList: List<String>? = if (parseResult.isHaveCondition()) {
@@ -849,12 +855,15 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             true
                         }
                         ConstraintBean.ACTION_DISABLE -> {
-                            constraintBean.enable = false
-                            arg?.split(",")?.apply {
-                                forEach {
-                                    it.toLongOrNull()?.also { constraintId ->
-                                        parseResult.constraintList.find { it.constraintId == constraintId }?.enable =
-                                            false
+                            if (arg.isNullOrEmpty()) {
+                                constraintBean.enable = false
+                            } else {
+                                arg.split(",").apply {
+                                    forEach {
+                                        it.toLongOrNull()?.also { constraintId ->
+                                            parseResult.constraintList.find { it.constraintId == constraintId }?.enable =
+                                                false
+                                        }
                                     }
                                 }
                             }
@@ -862,12 +871,15 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             true
                         }
                         ConstraintBean.ACTION_ENABLE -> {
-                            constraintBean.enable = true
-                            arg?.split(",")?.apply {
-                                forEach {
-                                    it.toLongOrNull()?.also { constraintId ->
-                                        parseResult.constraintList.find { it.constraintId == constraintId }?.enable =
-                                            true
+                            if (arg.isNullOrEmpty()) {
+                                constraintBean.enable = true
+                            } else {
+                                arg.split(",").apply {
+                                    forEach {
+                                        it.toLongOrNull()?.also { constraintId ->
+                                            parseResult.constraintList.find { it.constraintId == constraintId }?.enable =
+                                                true
+                                        }
                                     }
                                 }
                             }

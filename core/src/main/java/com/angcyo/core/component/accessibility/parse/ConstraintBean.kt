@@ -191,7 +191,10 @@ data class ConstraintBean(
     var constraintId: Long = -1,
 
     /**是否激活此约束*/
-    var enable: Boolean = true
+    var enable: Boolean = true,
+
+    /**是否需要随机激活此[ConstraintBean], 不受[enable]的影响*/
+    var randomEnable: Boolean = false
 ) {
     companion object {
 

@@ -17,6 +17,7 @@ import com.angcyo.library.ex.isListEmpty
 import com.angcyo.library.utils.getFloatNum
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.random.Random.Default.nextBoolean
 
 /**
  * 解析处理
@@ -428,7 +429,20 @@ open class AutoParser {
         val result: MutableList<ParseResult> = mutableListOf()
 
         constraintList.forEach { constraint ->
-            if (constraint.enable || constraint.actionList?.contains(ConstraintBean.ACTION_ENABLE) == true) {
+            var enable: Boolean
+
+            if (constraint.randomEnable) {
+                //随机激活
+                enable = nextBoolean()
+            } else {
+                enable = constraint.enable
+
+                if (!enable) {
+                    enable = constraint.actionList?.contains(ConstraintBean.ACTION_ENABLE) == true
+                }
+            }
+
+            if (enable) {
                 //如果当前的[constraint]处于激活状态, 或者拥有激活自身的能力
                 val parseResult = ParseResult(constraint, constraintList)
                 findConstraintNode(service, autoParseAction, nodeList, parseResult)
