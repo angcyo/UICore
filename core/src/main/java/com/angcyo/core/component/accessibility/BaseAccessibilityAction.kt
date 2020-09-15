@@ -192,7 +192,14 @@ abstract class BaseAccessibilityAction {
 
             //默认直接异常处理
             fun default() {
-                doActionFinish(ActionException("[doAction]执行次数, 已达到最大限制:${doActionCount.maxCountLimit}"))
+
+                val tip = if (this is AutoParseAction) {
+                    actionBean?.title
+                } else {
+                    null
+                } ?: "doAction"
+
+                doActionFinish(ActionException("[$tip]执行超限:${doActionCount.maxCountLimit}"))
             }
 
             if (this is AutoParseAction && this.actionBean?.check?.doAction?.isNotEmpty() == true) {
