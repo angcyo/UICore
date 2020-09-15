@@ -49,6 +49,13 @@ object AccessibilityWindowLayer : ILayer() {
         _show()
     }
 
+    val _defaultClickAction: Action = {
+        app().openApp()
+    }
+
+    /**点击浮窗的回调*/
+    var onLayerClickAction: Action? = _defaultClickAction
+
     init {
         iLayerLayoutId = R.layout.lib_layout_accessibility_window
         enableDrag = true
@@ -121,8 +128,8 @@ object AccessibilityWindowLayer : ILayer() {
             tv(R.id.summary_text_view)?.text = summary
 
             //打开本机程序
-            clickItem {
-                app().openApp()
+            throttleClickItem {
+                onLayerClickAction?.invoke()
             }
 
             //捕捉界面信息

@@ -63,6 +63,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                 else -> 2_000
             }
         }
+
+        /**当前主界面的程序包名*/
+        var _lastPackageName: String? = null
     }
 
     /**需要收到那个程序的事件, 匹配方式为 `包含`, 匹配方式为 `全等`*/
@@ -190,6 +193,8 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         //当前页面主要的程序
         val mainPackageName = findNodeInfoList.mainNode()?.packageName
         //L.e("main:$mainPackageName")
+
+        mainPackageName?.it { _lastPackageName = it.str() }
 
         if (filterPackageNameList.isEmpty()) {
             _isInFilterPackageNameApp = true
