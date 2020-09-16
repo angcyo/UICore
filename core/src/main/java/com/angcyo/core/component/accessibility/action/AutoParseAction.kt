@@ -861,6 +861,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                 arg.split(",").apply {
                                     forEach {
                                         it.toLongOrNull()?.also { constraintId ->
+                                            AutoParser.enableConstraint(constraintId, false)
+
                                             parseResult.constraintList.find { it.constraintId == constraintId }?.enable =
                                                 false
                                         }
@@ -877,8 +879,17 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                 arg.split(",").apply {
                                     forEach {
                                         it.toLongOrNull()?.also { constraintId ->
-                                            parseResult.constraintList.find { it.constraintId == constraintId }?.enable =
-                                                true
+                                            val find =
+                                                parseResult.constraintList.find { it.constraintId == constraintId }
+
+                                            find?.let {
+                                                it.enable = true
+                                            }.elseNull {
+                                                AutoParser.enableConstraint(
+                                                    constraintId,
+                                                    true
+                                                )
+                                            }
                                         }
                                     }
                                 }

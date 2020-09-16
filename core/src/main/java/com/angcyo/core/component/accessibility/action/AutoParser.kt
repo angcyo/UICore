@@ -30,6 +30,23 @@ open class AutoParser {
 
     companion object {
 
+        val enableConstraintIdList = mutableListOf<Long>()
+
+        fun enableConstraint(constraintId: Long, enable: Boolean = true) {
+            if (enable) {
+                if (!isHaveEnableConstraint(constraintId)) {
+                    enableConstraintIdList.add(constraintId)
+                }
+            } else {
+                if (isHaveEnableConstraint(constraintId)) {
+                    enableConstraintIdList.remove(constraintId)
+                }
+            }
+        }
+
+        fun isHaveEnableConstraint(constraintId: Long) =
+            enableConstraintIdList.contains(constraintId)
+
         /**
          * [textList]优先从[wordList]集合中取值.
          * 支持表达式:
@@ -431,6 +448,11 @@ open class AutoParser {
         constraintList.forEach { constraint ->
             var enable: Boolean
 
+            if (isHaveEnableConstraint(constraint.constraintId)) {
+                constraint.enable = true
+                enableConstraint(constraint.constraintId, false)
+            }
+
             if (constraint.randomEnable) {
                 //随机激活
                 enable = nextBoolean()
@@ -438,7 +460,8 @@ open class AutoParser {
                 enable = constraint.enable
 
                 if (!enable) {
-                    enable = constraint.actionList?.contains(ConstraintBean.ACTION_ENABLE) == true
+                    enable =
+                        constraint.actionList?.find { it.startsWith(ConstraintBean.ACTION_ENABLE) } != null
                 }
             }
 
