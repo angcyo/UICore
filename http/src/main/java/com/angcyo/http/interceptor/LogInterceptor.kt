@@ -42,6 +42,8 @@ open class LogInterceptor : Interceptor {
         fun intervalLog(mill: Long = 1 * 60 * 60 * 1000L /*毫秒*/) = HEADER_LOG to "${INTERVAL}:$mill"
     }
 
+    val uuidKey = "uuid"
+
     /**是否打印 请求体和响应体*/
     var logRequestBody = true
     var logResponseBody = true
@@ -49,9 +51,9 @@ open class LogInterceptor : Interceptor {
     var enable: Boolean = isDebug()
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request()
+        val originRequest = chain.request()
 
-        val header = request.header(HEADER_LOG)
+        val header = originRequest.header(HEADER_LOG)
 
         var pass = !enable
         if (header.isNullOrEmpty()) {
@@ -70,11 +72,11 @@ open class LogInterceptor : Interceptor {
                             .toLongOrNull()
                     if (mill != null) {
                         //规定了间隔多长时间, 才输出日志
-                        val url = request.url.toString()//默认的url可能会带?号
+                        val url = originRequest.url.toString()//默认的url可能会带?号
                         val index = url.indexOf("?")
 
                         //key
-                        val key = request.header(HEADER_LOG_KEY) ?: url.substring(
+                        val key = originRequest.header(HEADER_LOG_KEY) ?: url.substring(
                             0,
                             if (index != -1) index else url.length
                         )
@@ -98,16 +100,25 @@ open class LogInterceptor : Interceptor {
         }
 
         if (pass) {
-            return chain.proceed(request)
+            return chain.proceed(originRequest)
         }
 
         val uuid = UUID.randomUUID().toString()
+
+        //new request
+        val request = if (originRequest.header(uuidKey) == null) {
+            originRequest.newBuilder().header(uuidKey, uuid).build()
+        } else {
+            originRequest
+        }
+
+        //result
         val requestBuilder = StringBuilder()
         val responseBuilder = StringBuilder()
 
         //request
         requestBuilder.append("->").append(uuid)
-        logRequest(chain, request, requestBuilder)
+        logRequest(chain, originRequest, requestBuilder)
         printRequestLog(requestBuilder)
 
         //response
@@ -136,11 +147,7 @@ open class LogInterceptor : Interceptor {
         return response
     }
 
-    open fun logRequest(
-        chain: Interceptor.Chain,
-        request: Request,
-        builder: StringBuilder
-    ) {
+    open fun logRequest(chain: Interceptor.Chain, request: Request, builder: StringBuilder) {
         builder.apply {
             appendln().appends(request.method).appends(request.url)
             val connection: Connection? = chain.connection()
