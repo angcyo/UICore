@@ -607,6 +607,10 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                 handleActionLog("启动:[$targetPackageName]clip:$primaryClip:$value")
                             }
 
+                            if (!value) {
+                                doActionFinish(ErrorActionException("无法启动应用[$targetPackageName]"))
+                            }
+
                             value
                         }
                         ConstraintBean.ACTION_URL -> {
@@ -653,6 +657,10 @@ open class AutoParseAction : BaseAccessibilityAction() {
                                     } != null
 
                                     handleActionLog("使用:[$targetPackageName]打开[$targetUrl]:$value")
+                                }
+
+                                if (!value) {
+                                    doActionFinish(ErrorActionException("无法打开[$targetPackageName][$targetUrl]"))
                                 }
                             }
                             value
