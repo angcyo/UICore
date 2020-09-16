@@ -217,11 +217,17 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
         if (isInterrupt) {
             val actionInterruptedException =
                 ActionInterruptedException(reason ?: "拦截器被中断[onDestroy]!")
-            currentAccessibilityAction?.let {
-                it.doActionFinish(actionInterruptedException)
-            }
 
-            onDoActionFinish(currentAccessibilityAction, actionInterruptedException)
+            var needDefaultHandle = true
+            currentAccessibilityAction?.let {
+                if (it.isActionStart()) {
+                    needDefaultHandle = false
+                    it.doActionFinish(actionInterruptedException)
+                }
+            }
+            if (needDefaultHandle) {
+                onDoActionFinish(currentAccessibilityAction, actionInterruptedException)
+            }
         }
 
         //super

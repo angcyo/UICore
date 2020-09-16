@@ -31,10 +31,10 @@ abstract class BaseAccessibilityInterceptor : Runnable {
 
         const val ACTION_STATUS_INIT = 1           //初始化
         const val ACTION_STATUS_ING = 2            //进行中
-        const val ACTION_STATUS_FINISH = 3         //完成
-        const val ACTION_STATUS_ERROR = 10         //错误
-        const val ACTION_STATUS_INTERRUPTED = 11   //中断
-        const val ACTION_STATUS_DESTROY = 12       //销毁
+        const val ACTION_STATUS_FINISH = 10         //完成
+        const val ACTION_STATUS_ERROR = 11         //错误
+        const val ACTION_STATUS_INTERRUPTED = 12   //中断
+        const val ACTION_STATUS_DESTROY = 13       //销毁
 
         /**根据设备性能, 算出来的时间间隔*/
         var defaultIntervalDelay: Long = -1
@@ -669,7 +669,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     fun actionError(action: BaseAccessibilityAction?, error: ActionException?) {
         if (error is ActionInterruptedException) {
             actionStatus = ACTION_STATUS_INTERRUPTED
-        } else {
+        } else if (error != null) {
             actionStatus = ACTION_STATUS_ERROR
         }
         onDoActionFinish(action, error)
@@ -785,12 +785,16 @@ fun Int.isActionFinish() = this == BaseAccessibilityInterceptor.ACTION_STATUS_FI
 fun Int.isActionError() = this == BaseAccessibilityInterceptor.ACTION_STATUS_ERROR
 fun Int.isActionDestroy() = this == BaseAccessibilityInterceptor.ACTION_STATUS_DESTROY
 
+/**[BaseAccessibilityInterceptor]执行结束*/
+fun Int.isActionEnd() = this >= BaseAccessibilityInterceptor.ACTION_STATUS_FINISH
+
 fun Int.toActionStatusStr() = when (this) {
     BaseAccessibilityInterceptor.ACTION_STATUS_INIT -> "ACTION_STATUS_INIT"
     BaseAccessibilityInterceptor.ACTION_STATUS_ING -> "ACTION_STATUS_ING"
     BaseAccessibilityInterceptor.ACTION_STATUS_FINISH -> "ACTION_STATUS_FINISH"
     BaseAccessibilityInterceptor.ACTION_STATUS_ERROR -> "ACTION_STATUS_ERROR"
     BaseAccessibilityInterceptor.ACTION_STATUS_DESTROY -> "ACTION_STATUS_DESTROY"
+    BaseAccessibilityInterceptor.ACTION_STATUS_INTERRUPTED -> "ACTION_STATUS_INTERRUPTED"
     else -> "Unknown:$this"
 }
 
