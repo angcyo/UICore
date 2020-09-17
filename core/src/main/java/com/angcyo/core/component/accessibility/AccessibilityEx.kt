@@ -929,11 +929,11 @@ fun AccessibilityNodeInfo.findNodeByText(text: CharSequence): List<Accessibility
 
 fun AccessibilityNodeInfoCompat.haveText(text: CharSequence, ignoreCase: Boolean = true): Boolean {
 
-    val thisText = this.text
-    val contentDescription = contentDescription
-    val paneTitle = paneTitle
-    val hintText = hintText
-    val tooltipText = tooltipText
+    val thisText: CharSequence? = this.text
+    val contentDescription: CharSequence? = contentDescription
+    val paneTitle: CharSequence? = paneTitle
+    val hintText: CharSequence? = hintText
+    val tooltipText: CharSequence? = tooltipText
 
 //    val tc: Boolean = thisText?.contains(text, ignoreCase) == true
 //    val cdc: Boolean = contentDescription?.contains(text, ignoreCase) == true
@@ -947,7 +947,7 @@ fun AccessibilityNodeInfoCompat.haveText(text: CharSequence, ignoreCase: Boolean
 //            hintText?.contains(text, ignoreCase) == true ||
 //            tooltipText?.contains(text, ignoreCase) == true
 
-    val regex = text.toString().toRegex()
+//    val regex = text.toString().toRegex()
 
 //    val tc: Boolean = thisText?.contains(regex) == true
 //    val cdc: Boolean = contentDescription?.contains(regex) == true
@@ -957,11 +957,17 @@ fun AccessibilityNodeInfoCompat.haveText(text: CharSequence, ignoreCase: Boolean
 //
 //    return tc || cdc || ptc || htc || ttc
 
-    return thisText?.contains(regex) == true ||
-            contentDescription?.contains(regex) == true ||
-            paneTitle?.contains(regex) == true ||
-            hintText?.contains(regex) == true ||
-            tooltipText?.contains(regex) == true
+//    return thisText?.contains(regex) == true ||
+//            contentDescription?.contains(regex) == true ||
+//            paneTitle?.contains(regex) == true ||
+//            hintText?.contains(regex) == true ||
+//            tooltipText?.contains(regex) == true
+
+    return thisText.have(text) ||
+            contentDescription.have(text) ||
+            paneTitle.have(text) ||
+            hintText.have(text) ||
+            tooltipText.have(text)
 }
 
 /**返回[Node]在屏幕中的位置坐标*/

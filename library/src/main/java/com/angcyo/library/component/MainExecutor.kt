@@ -38,6 +38,8 @@ class MainRunnable(var action: Action? = null) : Runnable {
         } else {
             action?.invoke()
         }
+        cancel.set(true)
+        action = null
     }
 }
 

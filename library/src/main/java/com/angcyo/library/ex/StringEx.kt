@@ -453,3 +453,11 @@ fun String?.connectUrl(url: String?): String {
 fun String?.md5(): String? {
     return this?.toByteArray(Charsets.UTF_8)?.encrypt()?.toHexString()
 }
+
+/**[CharSequence]中是否包含指定[text]*/
+fun CharSequence?.have(text: CharSequence): Boolean {
+    if (this == null) {
+        return false
+    }
+    return this.str() == text.str() || this.contains(text.toString().toRegex())
+}

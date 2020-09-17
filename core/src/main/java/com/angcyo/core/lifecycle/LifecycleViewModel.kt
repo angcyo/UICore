@@ -4,8 +4,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.ViewModel
-import com.angcyo.core.lifecycle.CompositeDisposableLifecycle
-import com.angcyo.core.lifecycle.CoroutineScopeLifecycle
 import com.angcyo.http.rx.BaseObserver
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
@@ -41,7 +39,7 @@ open class LifecycleViewModel : ViewModel(), LifecycleOwner {
     }
 
     /**取消所有Rx 和 协程 / 恢复初始状态*/
-    fun reset() {
+    open fun reset() {
         if (lifecycleRegistry.currentState == Lifecycle.State.DESTROYED) {
             setCurrentState(Lifecycle.State.CREATED)
         } else {
@@ -50,7 +48,7 @@ open class LifecycleViewModel : ViewModel(), LifecycleOwner {
     }
 
     /**取消所有Rx 和 协程*/
-    fun cancel() {
+    open fun cancel() {
         onCleared()
     }
 
