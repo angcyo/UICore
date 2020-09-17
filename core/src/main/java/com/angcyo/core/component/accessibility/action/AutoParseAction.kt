@@ -908,14 +908,27 @@ open class AutoParseAction : BaseAccessibilityAction() {
                         ConstraintBean.ACTION_DO_OTHER -> {
                             var value = false
                             accessibilityInterceptor?.actionOtherList?.forEach {
-                                value = value || it.doActionWidth(
-                                    this,
-                                    service,
-                                    accessibilityInterceptor?.lastEvent,
-                                    nodeList.mapTo(ArrayList()) { nodeInfoCompat ->
-                                        nodeInfoCompat.unwrap()
-                                    }
-                                )
+                                if (arg == "*") {
+                                    //所有的actionOtherList都要执行
+                                    value = it.doActionWidth(
+                                        this,
+                                        service,
+                                        accessibilityInterceptor?.lastEvent,
+                                        nodeList.mapTo(ArrayList()) { nodeInfoCompat ->
+                                            nodeInfoCompat.unwrap()
+                                        }
+                                    ) || value
+                                } else {
+                                    //执行一个成功的actionOtherList
+                                    value = value || it.doActionWidth(
+                                        this,
+                                        service,
+                                        accessibilityInterceptor?.lastEvent,
+                                        nodeList.mapTo(ArrayList()) { nodeInfoCompat ->
+                                            nodeInfoCompat.unwrap()
+                                        }
+                                    )
+                                }
                             }
                             value
                         }
