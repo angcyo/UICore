@@ -105,7 +105,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     /**指定了下一个需要执行的的[BaseAccessibilityAction]*/
     var _targetAction: BaseAccessibilityAction? = null
 
-    var actionStatus: Int = ACTION_STATUS_INIT
+    var runActionStatus: Int = ACTION_STATUS_INIT
 
     /***当所有的[Action]处理结束后(成功和失败), 是否自动卸载拦截器.*/
     var autoUninstall: Boolean = true
@@ -277,7 +277,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                             service,
                             service.findNodeInfoList(onlyTopWindow = onlyFilterTopWindow)
                         )
-                        if (enableInterval && actionStatus == ACTION_STATUS_ING) {
+                        if (enableInterval && runActionStatus == ACTION_STATUS_ING) {
                             interceptorLog?.log("拦截器恢复,下一个周期在 ${intervalDelay}ms!")
                             startInterval(intervalDelay)
                         }
@@ -344,21 +344,21 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         if (actionList.isEmpty() && actionIndex < 0) {
             //no op
             L.w("${this.simpleHash()} no action need do. status to [ACTION_STATUS_FINISH].")
-            actionStatus = ACTION_STATUS_FINISH
+            runActionStatus = ACTION_STATUS_FINISH
             onDoActionFinish()
-        } else if (actionStatus.isActionCanStart()) {
+        } else if (runActionStatus.isActionCanStart()) {
             if (actionIndex >= actionList.size) {
-                actionStatus = ACTION_STATUS_FINISH
+                runActionStatus = ACTION_STATUS_FINISH
                 onDoActionFinish()
             } else {
                 if (actionIndex < 0) {
                     //开始执行第一步
                     actionIndex = 0
                 } else {
-                    if (actionIndex == 0 || actionStatus == ACTION_STATUS_INIT) {
+                    if (actionIndex == 0 || runActionStatus == ACTION_STATUS_INIT) {
                         onDoActionStart()
                     }
-                    actionStatus = ACTION_STATUS_ING
+                    runActionStatus = ACTION_STATUS_ING
                     currentAccessibilityAction?.let {
                         if (it is AutoParseAction) {
                             val packageName = it.actionBean?.check?.packageName
@@ -399,13 +399,13 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             it.release()
         }
 
-        if (actionStatus != ACTION_STATUS_ING) {
+        if (runActionStatus != ACTION_STATUS_ING) {
             L.w("销毁${this.simpleHash()} $reason")
         } else {
             L.w("销毁${this.simpleHash()}:[$actionIndex/${actionList.size}] 耗时:${(nowTime() - _actionStartTime).toElapsedTime()} $reason")
         }
         //actionIndex = -1 //不重置index, 这样可以支持回复
-        actionStatus = ACTION_STATUS_DESTROY
+        runActionStatus = ACTION_STATUS_DESTROY
         lastService = null
         lastEvent = null
         interceptorLog = null
@@ -461,7 +461,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         }
 
         //下一个周期
-        if (enableInterval && actionStatus == ACTION_STATUS_ING) {
+        if (enableInterval && runActionStatus == ACTION_STATUS_ING) {
             startInterval(intervalDelay)
         } else {
             interceptorLog?.log("${this.simpleHash()} 拦截器,周期回调结束!")
@@ -513,7 +513,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     /**重新开始*/
     open fun restart() {
         actionIndex = -1
-        actionStatus = ACTION_STATUS_INIT
+        runActionStatus = ACTION_STATUS_INIT
     }
 
     /**在周期回调模式下, 需要手动调用此方法.开始回调*/
@@ -522,14 +522,14 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             restart()
         }
 
-        if (actionStatus != ACTION_STATUS_ING) {
+        if (runActionStatus != ACTION_STATUS_ING) {
             if (restart) {
                 //重启
                 actionIndex = 0
             } else {
                 //恢复
             }
-            actionStatus = ACTION_STATUS_ING
+            runActionStatus = ACTION_STATUS_ING
             onDoActionStart()
             intervalDelay = onHandleIntervalDelay(actionIndex)
             startInterval(intervalDelay)
@@ -553,12 +553,12 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         action: BaseAccessibilityAction? = null,
         error: ActionException? = null
     ) {
-        L.w("${action?.simpleHash()} [${action?.actionTitle}] 执行结束:${actionStatus.toActionStatusStr()} ${error ?: ""} 耗时:${(nowTime() - _actionStartTime).toElapsedTime()}")
-        if (actionStatus == ACTION_STATUS_ERROR) {
+        L.w("${action?.simpleHash()} [${action?.actionTitle}] 执行结束:${runActionStatus.toActionStatusStr()} ${error ?: ""} 耗时:${(nowTime() - _actionStartTime).toElapsedTime()}")
+        if (runActionStatus == ACTION_STATUS_ERROR) {
             //出现异常
-        } else if (actionStatus == ACTION_STATUS_INTERRUPTED) {
+        } else if (runActionStatus == ACTION_STATUS_INTERRUPTED) {
             //流程中止
-        } else if (actionStatus == ACTION_STATUS_FINISH) {
+        } else if (runActionStatus == ACTION_STATUS_FINISH) {
             //流程结束
         }
         onInterceptorFinish?.invoke(action, error)
@@ -668,9 +668,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     /**执行异常*/
     fun actionError(action: BaseAccessibilityAction?, error: ActionException?) {
         if (error is ActionInterruptedException) {
-            actionStatus = ACTION_STATUS_INTERRUPTED
+            runActionStatus = ACTION_STATUS_INTERRUPTED
         } else if (error != null) {
-            actionStatus = ACTION_STATUS_ERROR
+            runActionStatus = ACTION_STATUS_ERROR
         }
         onDoActionFinish(action, error)
     }
@@ -716,7 +716,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             if (this@BaseAccessibilityInterceptor.notifyId > 0) {
                 notifyId = this@BaseAccessibilityInterceptor.notifyId
             }
-            notifyOngoing = actionStatus.isActionStart()
+            notifyOngoing = runActionStatus.isActionStart()
             low()
             single(title, content)
         }
@@ -798,7 +798,7 @@ fun Int.toActionStatusStr() = when (this) {
     else -> "Unknown:$this"
 }
 
-fun BaseAccessibilityInterceptor.isActionInterceptorStart() = actionStatus.isActionStart()
+fun BaseAccessibilityInterceptor.isActionInterceptorStart() = runActionStatus.isActionStart()
 
 /**安装拦截器*/
 fun BaseAccessibilityInterceptor.install(start: Boolean = false, restart: Boolean = false) {

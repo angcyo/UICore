@@ -6,6 +6,7 @@ import androidx.annotation.CallSuper
 import com.angcyo.core.component.accessibility.action.ActionCount
 import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.core.component.accessibility.action.AutoParseAction
+import com.angcyo.core.component.accessibility.parse.ActionBean
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
 import com.angcyo.library.ex.simpleHash
 import kotlin.math.max
@@ -289,5 +290,13 @@ abstract class BaseAccessibilityAction {
 
             start + base * nextLong(1, max(2L, factor + 1))
         }
+    }
+}
+
+fun BaseAccessibilityAction.actionBean(): ActionBean? {
+    return if (this is AutoParseAction) {
+        actionBean
+    } else {
+        null
     }
 }

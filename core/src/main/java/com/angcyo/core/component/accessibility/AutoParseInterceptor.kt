@@ -107,8 +107,8 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
     override fun onDoActionFinish(action: BaseAccessibilityAction?, error: ActionException?) {
         handleFormRequest(error)
 
-        log("[${taskBean.name}/${action?.actionTitle}]执行结束:${actionStatus.toActionStatusStr()} ${error ?: ""} 耗时:${(nowTime() - _actionStartTime).toElapsedTime()}")
-        when (actionStatus) {
+        log("[${taskBean.name}/${action?.actionTitle}]执行结束:${runActionStatus.toActionStatusStr()} ${error ?: ""} 耗时:${(nowTime() - _actionStartTime).toElapsedTime()}")
+        when (runActionStatus) {
             ACTION_STATUS_ERROR -> {
                 //出现异常
                 notify("异常:${error?.message}")
@@ -213,7 +213,7 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
         //clear
         currentActionBean = null
 
-        val isInterrupt = actionStatus.isActionStart()
+        val isInterrupt = runActionStatus.isActionStart()
         if (isInterrupt) {
             val actionInterruptedException =
                 ActionInterruptedException(reason ?: "拦截器被中断[onDestroy]!")
