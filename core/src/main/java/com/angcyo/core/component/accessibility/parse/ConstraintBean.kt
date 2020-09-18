@@ -222,6 +222,7 @@ data class ConstraintBean(
          * [com.angcyo.core.component.accessibility.parse.ActionBean.formKey]*/
         const val ACTION_GET_TEXT = "getText"
 
+        /**[setText:$0] 支持参数*/
         const val ACTION_SET_TEXT = "setText" //设置文本内容 [inputList]
         const val ACTION_RANDOM = "random" //随机执行, 空字符会进行随机操作.
         const val ACTION_FINISH = "finish" //直接完成操作

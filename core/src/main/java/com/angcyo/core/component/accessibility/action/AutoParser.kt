@@ -82,8 +82,11 @@ open class AutoParser {
 
                     if (num == null) {
                         //匹配 [1-4] 范围
-
-                        val indexOf = indexStr.indexOf("-")
+                        var indexOf = indexStr.indexOf("~")
+                        if (indexOf == -1) {
+                            //未找到~号, 则使用-号
+                            indexOf = indexStr.indexOf("-")
+                        }
                         if (indexOf != -1) {
                             val startIndex = indexStr.substring(0, indexOf).toIntOrNull() ?: 0
                             val endIndex =

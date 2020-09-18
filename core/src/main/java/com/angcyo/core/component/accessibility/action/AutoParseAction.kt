@@ -565,7 +565,11 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             var value = false
 
                             //执行set text时的文本
-                            val text = getInputText(constraintBean)
+                            val text = if (arg.isNullOrEmpty()) {
+                                getInputText(constraintBean)
+                            } else {
+                                getWordTextList(arg, arg)
+                            }
 
                             handleNodeList.forEach {
                                 value = it.setNodeText(text) || value
@@ -1075,6 +1079,14 @@ open class AutoParseAction : BaseAccessibilityAction() {
         return resultList ?: defaultTextList
     }
 
+    /**
+     * [wordIndex]
+     * 支持表达式:
+     * $N $0将会替换为[wordList]索引为0的值.最大支持10000
+     * 1-4 取索引为[1-4]的值
+     * 0--1 取索引为[0-倒数第1个]的值
+     * -1 取倒数第1个的值
+     * */
     fun getWordTextList(wordIndex: String?, defaultText: String?): String? {
         if (wordIndex.isNullOrEmpty()) {
             return defaultText
