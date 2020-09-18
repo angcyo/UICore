@@ -426,6 +426,13 @@ fun View?.setDslAdapterItem(dslAdapterItem: DslAdapterItem?) {
     this?.setTag(R.id.lib_tag_dsl_adapter_item, dslAdapterItem)
 }
 
+fun View?.setDslAdapterItemDecoration(dslAdapterItem: DslAdapterItem?) {
+    this?.setTag(
+        R.id.lib_tag_dsl_item_decoration,
+        "${dslAdapterItem?.itemTag ?: dslAdapterItem?.hashCode()}"
+    )
+}
+
 //</editor-fold desc="Dsl吸附">
 
 //</editor-fold desc="DslAdapterItem操作">
@@ -458,6 +465,8 @@ fun ViewGroup.addDslItem(
     payloads: List<Any> = emptyList()
 ): DslViewHolder {
     setOnHierarchyChangeListener(DslHierarchyChangeListenerWrap())
+    val visible = !dslAdapterItem.itemHidden
+
     val itemView = inflate(dslAdapterItem.itemLayoutId, false)
     val dslViewHolder = DslViewHolder(itemView)
     itemView.tag = dslViewHolder
@@ -467,6 +476,7 @@ fun ViewGroup.addDslItem(
 
     var itemIndex = if (index < 0) childCount else index
 
+    itemView.visible(visible)
     dslAdapterItem.itemBind(dslViewHolder, itemIndex, dslAdapterItem, payloads)
 
     //头分割线的支持
@@ -474,7 +484,11 @@ fun ViewGroup.addDslItem(
         if (this.orientation == LinearLayout.VERTICAL) {
             if (dslAdapterItem.itemTopInsert > 0) {
                 addView(
-                    View(context).apply { setBackgroundColor(dslAdapterItem.itemDecorationColor) },
+                    View(context).apply {
+                        setDslAdapterItemDecoration(dslAdapterItem)
+                        visible(visible)
+                        setBackgroundColor(dslAdapterItem.itemDecorationColor)
+                    },
                     itemIndex++,
                     LinearLayout.LayoutParams(-1, dslAdapterItem.itemTopInsert).apply {
                         leftMargin = dslAdapterItem.itemLeftOffset
@@ -484,7 +498,11 @@ fun ViewGroup.addDslItem(
         } else {
             if (dslAdapterItem.itemLeftInsert > 0) {
                 addView(
-                    View(context).apply { setBackgroundColor(dslAdapterItem.itemDecorationColor) },
+                    View(context).apply {
+                        setDslAdapterItemDecoration(dslAdapterItem)
+                        visible(visible)
+                        setBackgroundColor(dslAdapterItem.itemDecorationColor)
+                    },
                     itemIndex++,
                     LinearLayout.LayoutParams(dslAdapterItem.itemTopInsert, -1).apply {
                         topMargin = dslAdapterItem.itemTopOffset
@@ -499,7 +517,11 @@ fun ViewGroup.addDslItem(
         if (this.orientation == LinearLayout.VERTICAL) {
             if (dslAdapterItem.itemBottomInsert > 0) {
                 addView(
-                    View(context).apply { setBackgroundColor(dslAdapterItem.itemDecorationColor) },
+                    View(context).apply {
+                        setDslAdapterItemDecoration(dslAdapterItem)
+                        visible(visible)
+                        setBackgroundColor(dslAdapterItem.itemDecorationColor)
+                    },
                     itemIndex,
                     LinearLayout.LayoutParams(-1, dslAdapterItem.itemBottomInsert).apply {
                         leftMargin = dslAdapterItem.itemLeftOffset
@@ -509,7 +531,11 @@ fun ViewGroup.addDslItem(
         } else {
             if (dslAdapterItem.itemRightInsert > 0) {
                 addView(
-                    View(context).apply { setBackgroundColor(dslAdapterItem.itemDecorationColor) },
+                    View(context).apply {
+                        setDslAdapterItemDecoration(dslAdapterItem)
+                        visible(visible)
+                        setBackgroundColor(dslAdapterItem.itemDecorationColor)
+                    },
                     itemIndex,
                     LinearLayout.LayoutParams(dslAdapterItem.itemRightInsert, -1).apply {
                         topMargin = dslAdapterItem.itemTopOffset

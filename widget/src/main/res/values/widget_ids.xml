@@ -7,6 +7,8 @@
     <item name="lib_tag_dsl_view_holder" type="id" />
     <!--将DslAdapterItem, 放在View的tag中-->
     <item name="lib_tag_dsl_adapter_item" type="id" />
+    <!--取出来的值, 表示属于那个[DslAdapterItem.itemTag]-->
+    <item name="lib_tag_dsl_item_decoration" type="id" />
 
     <item name="lib_retry_button" type="id" />
     <item name="lib_close_view" type="id" />
