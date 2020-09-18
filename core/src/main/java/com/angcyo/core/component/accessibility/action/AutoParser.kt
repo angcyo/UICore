@@ -443,12 +443,15 @@ open class AutoParser {
         autoParseAction: AutoParseAction,
         nodeList: List<AccessibilityNodeInfo>,
         constraintList: List<ConstraintBean>,
-        onTargetResult: (List<ParseResult>) -> Unit = {}
+        onTargetResult: ((List<ParseResult>) -> Unit)? = null
     ): Boolean {
 
         val result: MutableList<ParseResult> = mutableListOf()
 
-        constraintList.forEach { constraint ->
+        //是否需要深度解析,否则只需要有一个满足条件,就break
+        val deep = onTargetResult != null
+
+        for (constraint in constraintList) {
             var enable: Boolean
 
             if (isHaveEnableConstraint(constraint.constraintId)) {
@@ -479,12 +482,19 @@ open class AutoParser {
                     }
                 }
             }
+
+            if (!deep) {
+                //不需要深度循环
+                if (result.isNotEmpty()) {
+                    onTargetResult?.invoke(result)
+                    return true
+                }
+            }
         }
 
         if (result.isNotEmpty()) {
             //通过约束, 找到了目标
-
-            onTargetResult(result)
+            onTargetResult?.invoke(result)
             return true
         }
 
