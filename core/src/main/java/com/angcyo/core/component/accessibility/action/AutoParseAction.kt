@@ -1021,9 +1021,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
         try {
             arg?.apply {
-
-                split("-").apply {
-
+                (if (this.contains("~")) split("~") else split("-")).apply {
                     //p1
                     getOrNull(0)?.toPointF(
                         refWidth,
