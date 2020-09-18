@@ -229,7 +229,17 @@ fun Context.readAssets(fileName: String): String? {
     return try {
         assets.open(fileName).reader().readText()
     } catch (e: Exception) {
-        L.w(e)
+        e.printStackTrace()
+        null
+    }
+}
+
+/**过滤[assets]中指定[path]路径下的所有文件*/
+fun Context.filterAssets(path: String = "", predicate: (String) -> Boolean): List<String>? {
+    return try {
+        assets.list(path)?.filter(predicate)
+    } catch (e: Exception) {
+        e.printStackTrace()
         null
     }
 }
