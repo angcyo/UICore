@@ -41,7 +41,7 @@ open class BaseObserver<T> : AtomicReference<Disposable>(),
     }
 
     /**不管是成功, 还是失败, 都会触发的回调*/
-    var onObserverEnd: (data: T?, error: Throwable?) -> Unit = { data, error ->
+    var onObserverEnd: ((data: T?, error: Throwable?) -> Unit)? = { data, error ->
         val string = buildString {
             appendln().appendln("订阅结束#onObserverEnd:")
             append("data->").appendln(data)
@@ -116,7 +116,7 @@ open class BaseObserver<T> : AtomicReference<Disposable>(),
     //</editor-fold desc="Observer 回调">
 
     open fun onEnd() {
-        onObserverEnd.invoke(_lastData, _lastError)
+        onObserverEnd?.invoke(_lastData, _lastError)
     }
 
     //<editor-fold desc="支持 Disposable">

@@ -260,3 +260,50 @@ fun File?.readText() = try {
     e.printStackTrace()
     null
 }
+
+/**从最后一行开始读取文本, 倒序一行一行读取
+ * [limit] 限制需要多少行
+ * [truncated] 超限后追加的字符
+ * [reversed]  是否是文件末尾开始一行一行读取
+ */
+fun File?.readReverseText(
+    limit: Int = -1,
+    truncated: CharSequence = "...",
+    reversed: Boolean = true,
+) = try {
+    this?.readLines(Charsets.UTF_8)?.run {
+        (if (reversed) reversed() else this).joinToString(
+            "\n",
+            limit = limit,
+            truncated = truncated
+        )
+    }
+} catch (e: Exception) {
+    e.printStackTrace()
+    null
+}
+
+/**[readReverseText]*/
+fun File?.readTextLines(
+    limit: Int = -1,
+    truncated: CharSequence = "...",
+    reversed: Boolean = false
+) = readReverseText(limit, truncated, reversed)
+
+/**读取文件最后多少行的数据*/
+fun File?.readTextLastLines(
+    limit: Int = -1,
+    truncated: CharSequence = "..."
+) = try {
+    this?.readLines(Charsets.UTF_8)?.run {
+        val lastLineIndex = if (limit >= 0) this.size - limit else 0
+        this.filterIndexed { index, _ -> index >= lastLineIndex }.joinToString(
+            "\n",
+            limit = limit,
+            truncated = truncated
+        )
+    }
+} catch (e: Exception) {
+    e.printStackTrace()
+    null
+}
