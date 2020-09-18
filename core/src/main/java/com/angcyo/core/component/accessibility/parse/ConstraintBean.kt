@@ -21,18 +21,6 @@ data class ConstraintBean(
      * */
     var textList: List<String>? = null,
 
-    /**约束之后, 如果匹配到的节点数量, 满足此条件, 则继续.
-     * 不满足条件, 清空所有节点.
-     * 支持的数据格式: [com.angcyo.core.component.accessibility.parse.ConditionBean.childCount]*/
-    var nodeCount: String? = null,
-
-    /**约束根节点视图结构中, 无child节点的节点总数量满足此条件, 则继续. 否则失败.
-     * 支持的数据格式: [com.angcyo.core.component.accessibility.parse.ConditionBean.childCount]
-     * 如果包含[*]的格式, 表示所有节点总数量. 如"<=10*" ">=20*"
-     * 否则就是无child节点的节点总数量
-     * */
-    var sizeCount: String? = null,
-
     /**
      * [textList]优先从[wordList]集合中取值.
      * 支持表达式:
@@ -45,6 +33,18 @@ data class ConstraintBean(
      * [2--1]
      * */
     var wordTextIndexList: List<String>? = null,
+
+    /**约束之后, 如果匹配到的节点数量, 满足此条件, 则继续.
+     * 不满足条件, 清空所有节点.
+     * 支持的数据格式: [com.angcyo.core.component.accessibility.parse.ConditionBean.childCount]*/
+    var nodeCount: String? = null,
+
+    /**约束根节点视图结构中, 无child节点的节点总数量满足此条件, 则继续. 否则失败.
+     * 支持的数据格式: [com.angcyo.core.component.accessibility.parse.ConditionBean.childCount]
+     * 如果包含[*]的格式, 表示所有节点总数量. 如"<=10*" ">=20*"
+     * 否则就是无child节点的节点总数量
+     * */
+    var sizeCount: String? = null,
 
     /**
      * 用[1]表示上述[textList]字段中对应的是id文本, 否则就是普通文本.一一对应的关系.
