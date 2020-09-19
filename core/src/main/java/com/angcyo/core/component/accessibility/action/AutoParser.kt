@@ -13,6 +13,7 @@ import com.angcyo.core.component.accessibility.parse.isOnlyPathConstraint
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.app
+import com.angcyo.library.ex.have
 import com.angcyo.library.ex.isListEmpty
 import com.angcyo.library.utils.getFloatNum
 import kotlin.math.max
@@ -815,7 +816,7 @@ open class AutoParser {
         var result = false
 
         if (!cls.isNullOrEmpty() /*指定了匹配类名*/ &&
-            node.className?.contains(cls.toString().toRegex()) != true /*类名匹配未命中*/
+            !node.className.have(cls) /*类名匹配未命中*/
         ) {
             //但是类名不同
             result = false
