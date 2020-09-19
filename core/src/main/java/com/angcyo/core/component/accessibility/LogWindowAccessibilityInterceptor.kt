@@ -31,6 +31,10 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
         const val LOG_OTHER_NAME = "other.log"
         const val LOG_INTERVAL_NAME = "interval.log"
 
+
+        //最后一次未处理时的节点数据
+        var _lastNoHandleInfo: String? = null
+
         /**获取所有[AccessibilityWindowInfo]的信息*/
         fun logWindow(
             allWindow: Boolean = true,
@@ -81,6 +85,9 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
                 }
             }
             return builder.toString().apply {
+                if (this.length > 100) {
+                    _lastNoHandleInfo = this
+                }
                 L.w("log size:${this.toByteArray().size.toLong().fileSizeString()}")
             }
         }

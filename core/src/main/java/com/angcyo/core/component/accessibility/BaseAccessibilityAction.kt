@@ -189,6 +189,12 @@ abstract class BaseAccessibilityAction {
         checkOtherEventCount.clear()
         doActionCount.doCount()
 
+        val logCount = 3
+        if (doActionCount.count >= logCount && (doActionCount.count % logCount) == 0L) {
+            //执行了2次
+            LogWindowAccessibilityInterceptor.logWindow()
+        }
+
         if (doActionCount.isMaxLimit()) {
 
             //默认直接异常处理
