@@ -15,6 +15,7 @@ import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.fileSizeString
 import com.angcyo.library.toastQQ
+import java.lang.ref.WeakReference
 
 /**
  * 窗口改变日志输出
@@ -33,7 +34,7 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
 
 
         //最后一次未处理时的节点数据
-        var _lastNoHandleInfo: String? = null
+        var _lastNoHandleInfo: WeakReference<String>? = null
 
         /**获取所有[AccessibilityWindowInfo]的信息*/
         fun logWindow(
@@ -86,7 +87,7 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
             }
             return builder.toString().apply {
                 if (this.length > 100) {
-                    _lastNoHandleInfo = this
+                    _lastNoHandleInfo = WeakReference(this)
                 }
                 L.w("log size:${this.toByteArray().size.toLong().fileSizeString()}")
             }
