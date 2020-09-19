@@ -341,17 +341,15 @@ open class AutoParseAction : BaseAccessibilityAction() {
             handleNodeList.addAll(nodeList)
         } else {
             constraintBean.handleNodeList?.forEach {
-                if (it >= 0) {
-                    nodeList.getOrNull(it)?.let { node ->
-                        if (!handleNodeList.contains(node)) {
-                            handleNodeList.add(node)
-                        }
-                    }
-                } else {
-                    nodeList.getOrNull(nodeList.size + it)?.let { node ->
-                        if (!handleNodeList.contains(node)) {
-                            handleNodeList.add(node)
-                        }
+                val index = when {
+                    it == 666666 -> nextInt(0, nodeList.size)
+                    it >= 0 -> it
+                    else -> nodeList.size + it
+                }
+
+                nodeList.getOrNull(index)?.let { node ->
+                    if (!handleNodeList.contains(node)) {
+                        handleNodeList.add(node)
                     }
                 }
             }

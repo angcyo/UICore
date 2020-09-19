@@ -167,7 +167,8 @@ data class ConstraintBean(
     /**挑选需要执行[actionList]的节点.
      * 当以上规则匹配到很多节点时, 挑出指定索引的节点执行[actionList]. 不指定默认所有节点.
      * index>=0, 正向取索引
-     * index<0, 倒数第几个*/
+     * index<0, 倒数第几个.
+     * 666666: 表示随机选择index*/
     var handleNodeList: List<Int>? = null,
 
     /**[ACTION_GET_TEXT]获取文本时, 需要过滤的文本正则, 非一一对应,
