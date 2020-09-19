@@ -946,9 +946,6 @@ open class AutoParseAction : BaseAccessibilityAction() {
                         }
                         else -> {
                             handleActionLog("未识别的指令[$action:$arg]:true")
-                            /*service.gesture.click().apply {
-                                handleActionLog("默认点击:$this")
-                            }*/
                             true
                         }
                     } || handleResult.result
