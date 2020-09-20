@@ -33,6 +33,8 @@ object AccessibilityWindowLayer : ILayer() {
     /**触发的保存窗口日志*/
     var onSaveWindowLog: ((log: String) -> Unit)? = null
 
+    var showCatchButton: Boolean = isDebug()
+
     val _windowContainer = WindowContainer(app())
 
     /**浮窗需要隐藏到什么时间, 13位时间戳*/
@@ -123,7 +125,7 @@ object AccessibilityWindowLayer : ILayer() {
                 setTextColor(textColor)
             }
 
-            visible(R.id.catch_button, isDebug())
+            visible(R.id.catch_button, showCatchButton)
             visible(R.id.summary_text_view, summary != null)
             tv(R.id.summary_text_view)?.text = summary
 
