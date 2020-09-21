@@ -78,9 +78,18 @@ data class ConstraintBean(
      * 空字符会进行随机操作.
      * null 默认是click操作
      *
-     * 未知指令, 直接完成处理
+     * 未知指令, 直接返回true处理
      * */
     var actionList: List<String>? = null,
+
+    /**当节点集合不为空, 但是通过条件约束后变为空集合后, 触发的动作集合.
+     * [actionList]*/
+    var noActionList: List<String>? = null,
+
+    /**
+     * 当[actionList]或[noActionList]执行失败后, 需要执行的指令列表.
+     * */
+    var notActionList: List<String>? = null,
 
     /**
      * [setText]时的输入数据集合, 随机从里面取一个.
@@ -180,10 +189,6 @@ data class ConstraintBean(
      * 在[after]之前过滤, [after]会使用筛选后的节点集合
      * */
     var conditionList: List<ConditionBean>? = null,
-
-    /**当节点集合不为空, 但是通过条件约束后变为空集合后, 触发的动作集合.
-     * [actionList]*/
-    var noActionList: List<String>? = null,
 
     /**上述匹配规则, 匹配之后, 获取到的节点列表当做根节点, 再一次匹配.
      * 只有匹配规则会生效, 非控制匹配规则的属性不会生效

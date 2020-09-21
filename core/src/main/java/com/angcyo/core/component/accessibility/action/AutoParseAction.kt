@@ -390,46 +390,59 @@ open class AutoParseAction : BaseAccessibilityAction() {
             handleActionLog("(${actionBean?.checkId})未指定指令!")
             handleResult.result = false //2020-09-06
         } else {
-            actionList?.forEach { act ->
-                //操作执行提示
-                handleActionLog("即将执行(${actionBean?.checkId})[${act}]")
 
-                var isIntercept = false
-                for (cmd in cmdActionList) {
-                    if (cmd.interceptAction(this, act)) {
-                        if (cmd is GetTextAction) {
-                            cmd.onGetTextAction = { key, list ->
-                                getTextFormKey = key
-                                getTextResultList.addAll(list)
+            //fun...
+            fun runActionList(actionList: List<String>?) {
+                actionList?.forEach { act ->
+                    //操作执行提示
+                    handleActionLog("即将执行(${actionBean?.checkId})[${act}]")
+
+                    var isIntercept = false
+                    for (cmd in cmdActionList) {
+                        if (cmd.interceptAction(this, act)) {
+                            if (cmd is GetTextAction) {
+                                cmd.onGetTextAction = { key, list ->
+                                    getTextFormKey = key
+                                    getTextResultList.addAll(list)
+                                }
+                            } else if (cmd is BaseConstraintAction) {
+                                cmd.onGetConstraintList = {
+                                    parseResult.constraintList
+                                }
                             }
-                        } else if (cmd is BaseConstraintAction) {
-                            cmd.onGetConstraintList = {
-                                parseResult.constraintList
+
+                            val runResult = cmd.runAction(
+                                this,
+                                service,
+                                constraintBean,
+                                handleNodeList,
+                                handleResult
+                            )
+
+                            if (runResult) {
+                                _addActionName(if (act.isEmpty()) ActionControl.ACTION_randomization else act)
                             }
+
+                            handleResult.result = runResult || handleResult.result
+                            isIntercept = true
+                            break
                         }
+                    }
 
-                        val runResult = cmd.runAction(
-                            this,
-                            service,
-                            constraintBean,
-                            handleNodeList,
-                            handleResult
-                        )
-
-                        if (runResult) {
-                            _addActionName(if (act.isEmpty()) ActionControl.ACTION_randomization else act)
-                        }
-
-                        handleResult.result = runResult || handleResult.result
-                        isIntercept = true
-                        break
+                    if (!isIntercept) {
+                        //未识别的act
+                        handleResult.result = true
+                        handleActionLog("未识别的指令[$act]:true")
                     }
                 }
+            }
 
-                if (!isIntercept) {
-                    //未识别的act
-                    handleResult.result = true
-                    handleActionLog("未识别的指令[$act]:true")
+            runActionList(actionList)
+
+            if (!handleResult.result) {
+                //actionList执行失败了
+                if (constraintBean.notActionList != null) {
+                    runActionList(constraintBean.notActionList)
                 }
             }
         }
