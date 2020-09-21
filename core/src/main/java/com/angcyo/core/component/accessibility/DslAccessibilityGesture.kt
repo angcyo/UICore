@@ -264,6 +264,7 @@ class DslAccessibilityGesture {
         }
         ensureBuilder {
             try {
+                AutoParseInterceptor.log("添加手势:$startTime ms,$duration ms")
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     addStroke(
                         GestureDescription.StrokeDescription(
