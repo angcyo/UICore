@@ -1,23 +1,16 @@
 package com.angcyo.core.component.accessibility.action
 
-import android.app.Instrumentation
-import android.content.Intent
 import android.graphics.PointF
-import android.net.Uri
-import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
-import com.angcyo.core.component.accessibility.base.AccessibilityWindowLayer
+import com.angcyo.core.component.accessibility.action.a.*
 import com.angcyo.core.component.accessibility.parse.*
-import com.angcyo.http.rx.doBack
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.*
 import com.angcyo.library.toastQQ
-import com.angcyo.library.utils.PATTERN_URL
-import kotlin.math.absoluteValue
 import kotlin.math.roundToLong
 import kotlin.random.Random.Default.nextInt
 
@@ -47,6 +40,44 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
     /**获取到的文本, 临时存储*/
     var getTextList: MutableList<CharSequence>? = null
+
+    //指令列表
+    val cmdActionList = mutableListOf<BaseAction>()
+
+    init {
+        cmdActionList.apply {
+            add(BackAction())
+            add(ClickAction())
+            add(ClickTouchAction())
+            add(CopyAction())
+            add(DefaultAction())
+            add(DisableAction())
+            add(DoOtherAction())
+            add(DoubleAction())
+            add(EnableAction())
+            add(ErrorAction())
+            add(FalseAction())
+            add(FinishAction())
+            add(FlingAction())
+            add(FocusAction())
+            add(GetTextAction())
+            add(HideWindowAction())
+            add(HomeAction())
+            add(JumpAction())
+            add(KeyAction())
+            add(LongClickAction())
+            add(MoveAction())
+            add(RandomAction())
+            add(ScrollBackwardAction())
+            add(ScrollForwardAction())
+            add(SetTextAction())
+            add(SleepAction())
+            add(StartAction())
+            add(TouchAction())
+            add(TrueAction())
+            add(UrlAction())
+        }
+    }
 
     //<editor-fold desc="周期回调方法">
 
@@ -310,8 +341,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
     ): HandleResult {
 
         val constraintBean: ConstraintBean = parseResult.constraint
-        val nodeList = parseResult.resultHandleNodeList()
-            ?: emptyList<AccessibilityNodeInfoCompat>() //parseResult.nodeList
+        val nodeList: List<AccessibilityNodeInfoCompat> =
+            parseResult.resultHandleNodeList() ?: emptyList() //parseResult.nodeList
 
         //需要执行的动作
         val actionList: List<String>? = if (parseResult.isHaveCondition()) {
@@ -360,599 +391,45 @@ open class AutoParseAction : BaseAccessibilityAction() {
             handleResult.result = false //2020-09-06
         } else {
             actionList?.forEach { act ->
-                if (act.isEmpty()) {
-                    //随机操作
-                    service.gesture.randomization().apply {
-                        handleResult.result = first || handleResult.result
-                        handleActionLog("随机操作[${this.second}]:${handleResult.result}")
+                //操作执行提示
+                handleActionLog("即将执行(${actionBean?.checkId})[${act}]")
+
+                var isIntercept = false
+                for (cmd in cmdActionList) {
+                    if (cmd.interceptAction(this, act)) {
+                        if (cmd is GetTextAction) {
+                            cmd.onGetTextAction = { key, list ->
+                                getTextFormKey = key
+                                getTextResultList.addAll(list)
+                            }
+                        } else if (cmd is BaseConstraintAction) {
+                            cmd.onGetConstraintList = {
+                                parseResult.constraintList
+                            }
+                        }
+
+                        val runResult = cmd.runAction(
+                            this,
+                            service,
+                            constraintBean,
+                            handleNodeList,
+                            handleResult
+                        )
+
+                        if (runResult) {
+                            _addActionName(if (act.isEmpty()) ActionControl.ACTION_randomization else act)
+                        }
+
+                        handleResult.result = runResult || handleResult.result
+                        isIntercept = true
+                        break
                     }
-                } else if (act == ConstraintBean.ACTION_FINISH) {
-                    //直接完成操作
+                }
+
+                if (!isIntercept) {
+                    //未识别的act
                     handleResult.result = true
-                    handleResult.jumpNextHandle = true
-                    handleResult.finish = true
-                } else {
-                    //需要执行的动作
-                    var action: String? = null
-                    //动作携带的参数
-                    var arg: String? = null
-
-                    //点位
-                    val p1 = PointF()
-                    val p2 = PointF()
-                    try {
-                        //解析2个点的坐标
-                        val indexOf = act.indexOf(":", 0, true)
-
-                        if (indexOf == -1) {
-                            //未找到
-                            action = act
-                        } else {
-                            //找到
-                            action = act.substring(0, indexOf)
-                            arg = act.substring(indexOf + 1, act.length)
-                        }
-                        parsePoint(arg?.arg()).let {
-                            p1.set(it[0])
-                            p2.set(it[1])
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-
-                    //操作执行提示
-                    handleActionLog("即将执行(${actionBean?.checkId})[${action}${if (arg == null) "" else ":${arg}"}]")
-
-                    //执行对应操作
-                    handleResult.result = when (action) {
-                        ConstraintBean.ACTION_CLICK -> {
-                            //触发节点自带的click
-                            var value = false
-                            handleNodeList.forEach { node ->
-                                if (arg.isNullOrEmpty()) {
-                                    value = node.getClickParent()?.click() ?: false || value
-                                } else {
-                                    AutoParser.getStateParentNode(listOf(arg), node).apply {
-                                        if (first) {
-                                            value = node.getClickParent()?.click() ?: false || value
-                                        } else {
-                                            //携带了状态约束参数, 并且没有匹配到状态
-                                            value = true
-                                        }
-                                    }
-                                }
-                            }
-                            val first = handleNodeList.firstOrNull()
-                            handleActionLog("点击节点[${first?.text() ?: first?.bounds()}]:$value")
-                            if (isDebugType()) {
-                                handleActionLog(first?.unwrap()?.logAllNode() ?: "no node.")
-                            }
-                            value
-                        }
-                        ConstraintBean.ACTION_CLICK2, ConstraintBean.ACTION_CLICK3 -> {
-                            //触发节点区域的手势双击
-                            var value = false
-                            val click = action == ConstraintBean.ACTION_CLICK3
-
-                            var x = 0f
-                            var y = 0f
-
-                            handleNodeList.forEach {
-                                val bound = it.bounds()
-
-                                var specifyPoint: PointF? = null
-                                if (!arg.isNullOrEmpty()) {
-                                    parsePoint(arg, bound.width(), bound.height()).let {
-                                        specifyPoint = it[0]
-                                    }
-                                }
-
-                                if (specifyPoint == null) {
-                                    x = bound.centerX().toFloat()
-                                    y = bound.centerY().toFloat()
-                                } else {
-                                    x = specifyPoint!!.x + bound.left
-                                    y = specifyPoint!!.y + bound.top
-                                }
-
-                                value = if (click) {
-                                    service.gesture.click(x, y, getGestureStartTime(arg?.arg(1)))
-                                } else {
-                                    service.gesture.double(x, y, getGestureStartTime(arg?.arg(1)))
-                                } || value
-                            }
-                            if (click) {
-                                handleActionLog("点击节点区域[${x},${y}]:$value")
-                            } else {
-                                handleActionLog("双击节点区域[${x},${y}]:$value")
-                            }
-                            value
-                        }
-                        ConstraintBean.ACTION_LONG_CLICK -> {
-                            var value = false
-                            handleNodeList.forEach {
-                                value = it.getLongClickParent()?.longClick() ?: false || value
-                            }
-                            handleActionLog("长按节点[${handleNodeList.firstOrNull()}]:$value")
-                            value
-                        }
-                        ConstraintBean.ACTION_DOUBLE -> service.gesture.double(
-                            p1.x,
-                            p1.y,
-                            getGestureStartTime(arg?.arg(1))
-                        ).apply {
-                            handleActionLog("双击[$p1]:$this")
-                        }
-                        ConstraintBean.ACTION_MOVE -> service.gesture.move(
-                            p1.x,
-                            p1.y,
-                            p2.x,
-                            p2.y,
-                            getGestureStartTime(arg?.arg(1))
-                        ).apply {
-                            handleActionLog("move[$p1 $p2]:$this")
-                        }
-                        ConstraintBean.ACTION_FLING -> service.gesture.fling(
-                            p1.x,
-                            p1.y,
-                            p2.x,
-                            p2.y,
-                            getGestureStartTime(arg?.arg(1))
-                        ).apply {
-                            handleActionLog("fling[$p1 $p2]:$this")
-                        }
-                        ConstraintBean.ACTION_BACK -> service.back().apply {
-                            handleActionLog("返回:$this")
-                        }
-                        ConstraintBean.ACTION_HOME -> service.home().apply {
-                            handleActionLog("回到桌面:$this")
-                        }
-                        ConstraintBean.ACTION_SCROLL_BACKWARD -> {
-                            //如果滚动到头部了, 会滚动失败
-                            var value = false
-                            handleNodeList.forEach {
-                                value = it.scrollBackward() || value
-                            }
-                            handleActionLog("向后滚动:$value")
-                            value
-                        }
-                        ConstraintBean.ACTION_SCROLL_FORWARD -> {
-                            //如果滚动到底了, 会滚动失败
-                            var value = false
-                            handleNodeList.forEach {
-                                value = it.scrollForward() || value
-                            }
-                            handleActionLog("向前滚动:$value")
-                            value
-                        }
-                        ConstraintBean.ACTION_GET_TEXT -> {
-                            getTextFormKey = arg
-                            val textRegexList = constraintBean.getTextRegexList
-                            handleNodeList.forEach {
-                                it.text()?.also { text ->
-                                    val resultTextList = mutableListOf<String>()
-
-                                    if (textRegexList == null) {
-                                        //未指定正则匹配规则
-                                        resultTextList.add(text.toString())
-                                    } else {
-                                        textRegexList.forEach {
-                                            text.patternList(it).let { list ->
-                                                //正则匹配过滤后的文本列表
-                                                if (list.isNotEmpty()) {
-                                                    resultTextList.addAll(list)
-                                                }
-                                            }
-                                        }
-
-                                        //未匹配到正则时, 使用默认
-                                        if (resultTextList.isEmpty()) {
-                                            resultTextList.add(text.toString())
-                                        }
-                                    }
-
-                                    //汇总所有文本
-                                    getTextResultList.addAll(resultTextList)
-                                }
-                            }
-                            val value = getTextResultList.isNotEmpty()
-                            handleActionLog("获取文本[$getTextResultList]:${value}")
-                            value
-                        }
-                        ConstraintBean.ACTION_SET_TEXT -> {
-                            var value = false
-
-                            //执行set text时的文本
-                            val text = if (arg.isNullOrEmpty()) {
-                                getInputText(constraintBean)
-                            } else {
-                                getWordTextList(arg, arg)
-                            }
-
-                            handleNodeList.forEach {
-                                value = it.setNodeText(text) || value
-                            }
-
-                            handleActionLog("设置文本[$text]:$value")
-                            value
-                        }
-                        ConstraintBean.ACTION_TOUCH -> service.gesture.click(
-                            p1.x,
-                            p1.y,
-                            getGestureStartTime(arg?.arg(1))
-                        ).apply {
-                            handleActionLog("touch[$p1]:$this")
-                        }
-                        ConstraintBean.ACTION_RANDOM -> service.gesture.randomization().run {
-                            handleActionLog("随机操作[$this]:$this")
-                            first
-                        }
-                        ConstraintBean.ACTION_START -> {
-                            //启动应用程序
-
-                            //剪切板内容
-                            val primaryClip = getPrimaryClip()
-
-                            //包名
-                            val targetPackageName = AutoParser.parseTargetPackageName(
-                                arg,
-                                _targetPackageName()
-                            )
-
-                            var value = false
-                            targetPackageName?.let {
-                                value = service.openApp(
-                                    it,
-                                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-                                ) != null
-
-                                handleActionLog("启动:[$targetPackageName]clip:$primaryClip:$value")
-                            }
-
-                            if (!value) {
-                                doActionFinish(ErrorActionException("无法启动应用[$targetPackageName]"))
-                            }
-
-                            value
-                        }
-                        ConstraintBean.ACTION_URL -> {
-                            //打开url
-
-                            //需要打开的url参数
-                            var targetUrl: String? = null
-                            //包名参数
-                            var targetPackageName: String? = null
-
-                            //解析2个点的坐标
-                            val indexOf = arg?.indexOf(":", 0, true) ?: -1
-                            if (indexOf == -1) {
-                                //未找到
-                                targetUrl = arg
-                            } else {
-                                //找到
-                                targetUrl = arg?.substring(0, indexOf)
-                                targetPackageName = arg?.substring(indexOf + 1, arg.length)
-                            }
-
-                            //转换一下
-                            targetUrl = getWordTextList(targetUrl, targetUrl)
-
-                            //解析对应的url
-                            targetUrl?.let {
-                                if (!it.startsWith("http")) {
-                                    targetUrl = it.patternList(PATTERN_URL).firstOrNull()
-                                }
-                            }
-
-                            var value = false
-                            if (!targetUrl.isNullOrEmpty()) {
-                                //解析包名
-                                targetPackageName = AutoParser.parseTargetPackageName(
-                                    targetPackageName,
-                                    _targetPackageName()
-                                )
-
-                                targetPackageName?.let {
-                                    value = service.startIntent {
-                                        setPackage(it)
-                                        data = Uri.parse(targetUrl)
-                                    } != null
-
-                                    handleActionLog("使用:[$targetPackageName]打开[$targetUrl]:$value")
-                                }
-
-                                if (!value) {
-                                    doActionFinish(ErrorActionException("无法打开[$targetPackageName][$targetUrl]"))
-                                }
-                            }
-                            value
-                        }
-                        ConstraintBean.ACTION_COPY -> {
-                            val text = arg ?: getInputText(constraintBean)
-                            val value = text?.copy() == true
-                            handleActionLog("复制文本[$text]:$value")
-                            value
-                        }
-                        ConstraintBean.ACTION_KEY -> {
-                            var value = false
-
-                            val keyCode = arg?.toIntOrNull() ?: -1
-                            val keyCodeStr = KeyEvent.keyCodeToString(keyCode)
-
-                            if (keyCode > 0) {
-                                doBack {
-                                    try {
-                                        val inst = Instrumentation()
-                                        inst.sendKeyDownUpSync(keyCode)
-                                    } catch (e: Exception) {
-                                        AccessibilityHelper.log("Exception when sendKeyDownUpSync $keyCodeStr :$e")
-                                        e.printStackTrace()
-                                    }
-                                }
-                                value = true
-                            }
-
-                            handleActionLog("发送按键[$keyCodeStr]:$value")
-                            value
-                        }
-                        ConstraintBean.ACTION_FOCUS -> {
-                            var value = false
-                            handleNodeList.forEach {
-                                value = it.focus() || value
-                            }
-                            handleActionLog("设置焦点:$value")
-                            value
-                        }
-                        ConstraintBean.ACTION_ERROR -> {
-                            //直接失败操作
-                            handleResult.jumpNextHandle = true
-
-                            //异常退出
-                            val error = arg ?: "ACTION_ERROR"
-                            handleActionLog("强制异常退出[$error]:true")
-                            doActionFinish(ErrorActionException(error))
-                            true
-                        }
-                        ConstraintBean.ACTION_JUMP -> {
-                            //执行跳转指令
-                            var value = false
-                            val interceptor = accessibilityInterceptor
-
-                            //跳转次数
-                            val defaultJumpCount = if ((actionBean?.actionMaxCount ?: -1) > 0) {
-                                actionBean!!.actionMaxCount
-                            } else {
-                                DEFAULT_JUMP_MAX_COUNT
-                            }
-
-                            if (arg.isNullOrEmpty() || interceptor == null) {
-                                //没有跳转参数,直接完成action
-                                value = true
-                                handleResult.finish = true
-                            } else {
-                                //[:1:3] [:-1] [:<2]前 [:>3]后 [:actionId;actionId;:4]
-                                val indexOf = arg.indexOf(":", 0, true)
-                                val arg1: String?
-                                val arg2: String?
-
-                                val actionIdList = mutableListOf<Long>()
-                                if (indexOf == -1) {
-                                    //未找到
-                                    arg1 = arg
-                                    arg2 = "$defaultJumpCount"
-                                } else {
-                                    //找到
-                                    arg1 = arg.substring(0, indexOf)
-                                    arg2 = arg.substring(indexOf + 1, arg.length)
-                                }
-
-                                arg1.split(";").forEach {
-                                    it.toLongOrNull()
-                                        ?.let { actionId -> actionIdList.add(actionId) }
-                                }
-
-                                val maxCount = arg2.toLongOrNull() ?: defaultJumpCount
-
-                                jumpCount.maxCountLimit = maxCount
-                                jumpCount.start()
-
-                                if (jumpCount.isMaxLimit()) {
-                                    //超限后, 不跳转, 直接完成
-                                    jumpCount.clear()
-
-                                    val jumpOut = actionBean?.check?.jumpOut
-                                    if (jumpOut == null) {
-                                        value = true
-                                        handleResult.finish = true
-                                    } else {
-                                        value = parseHandleAction(
-                                            service,
-                                            handleNodeList.toUnwrapList(),
-                                            actionBean?.check?.jumpOut
-                                        )
-                                    }
-
-                                } else {
-                                    value = true
-
-                                    if (actionIdList.isEmpty()) {
-                                        // [:<2]前2个 [:>3]后3个
-                                        val num = arg1.substring(1, arg1.length).toIntOrNull() ?: 0
-                                        if (arg1.startsWith("<")) {
-                                            interceptor._targetAction =
-                                                interceptor.actionList.getOrNull(interceptor.actionIndex - num)
-                                        } else if (arg1.startsWith(">")) {
-                                            interceptor._targetAction =
-                                                interceptor.actionList.getOrNull(interceptor.actionIndex + num)
-                                        } else {
-                                            value = false
-                                            handleResult.finish = true
-                                        }
-                                    } else {
-                                        var findAction = false
-                                        for (i in 0 until actionIdList.size) {
-                                            if (findAction) {
-                                                break
-                                            }
-                                            val targetIndex = actionIdList[i]
-
-                                            val size = interceptor.actionList.size
-                                            if (targetIndex.absoluteValue in 0 until size) {
-                                                //处理[:1] [:-1]的情况, 第多少个
-                                                if (targetIndex > 0) {
-                                                    interceptor._targetAction =
-                                                        interceptor.actionList.getOrNull(targetIndex.toInt())
-                                                } else {
-                                                    interceptor._targetAction =
-                                                        interceptor.actionList.getOrNull((size + targetIndex).toInt())
-                                                }
-                                                findAction = true
-                                            } else {
-                                                //寻找指定[actionId;actionId;]
-                                                interceptor.actionList.forEachIndexed { _, baseAccessibilityAction ->
-                                                    if (baseAccessibilityAction is AutoParseAction) {
-                                                        if (baseAccessibilityAction.actionBean?.actionId == targetIndex) {
-                                                            interceptor._targetAction =
-                                                                baseAccessibilityAction
-                                                            findAction = true
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    jumpCount.doCount()
-                                }
-                            }
-
-                            handleActionLog("跳转[$arg]:$value")
-                            value
-                        }
-                        ConstraintBean.ACTION_SLEEP -> {
-                            //指定下一次周期循环的间隔
-                            var value = false
-
-                            val interval = if (arg.isNullOrEmpty()) {
-                                actionInterval
-                            } else {
-                                arg
-                            }
-
-                            accessibilityInterceptor?.let {
-                                it.intervalDelay = getInterceptorIntervalDelay(interval)
-                                value = true
-                                handleActionLog("指定下一个周期在[${it.intervalDelay}ms]:$value")
-                            }
-
-                            value
-                        }
-                        ConstraintBean.ACTION_HIDE_WINDOW -> {
-                            AccessibilityWindowLayer.hide()
-                            arg?.toLongOrNull()?.apply {
-                                val actionSize = accessibilityInterceptor?.actionList?.size ?: 0
-                                if (this in 1..actionSize.toLong()) {
-                                    AccessibilityWindowLayer.hideCount(this)
-
-                                    handleActionLog("隐藏浮窗Count[${this}]:true")
-                                } else {
-                                    //指定需要隐藏的时长, 毫秒
-                                    AccessibilityWindowLayer.hideTime(this)
-
-                                    handleActionLog("隐藏浮窗Time[${AccessibilityWindowLayer._hideToTime.fullTime()}]:true")
-                                }
-                            }
-                            true
-                        }
-                        ConstraintBean.ACTION_DISABLE -> {
-                            if (arg.isNullOrEmpty()) {
-                                constraintBean.enable = false
-                            } else {
-                                arg.split(",").apply {
-                                    forEach {
-                                        it.toLongOrNull()?.also { constraintId ->
-                                            AutoParser.enableConstraint(constraintId, false)
-
-                                            parseResult.constraintList.find { it.constraintId == constraintId }?.enable =
-                                                false
-                                        }
-                                    }
-                                }
-                            }
-                            handleActionLog("禁用ConstraintBean[${arg ?: "this"}]:true")
-                            true
-                        }
-                        ConstraintBean.ACTION_ENABLE -> {
-                            if (arg.isNullOrEmpty()) {
-                                constraintBean.enable = true
-                            } else {
-                                arg.split(",").apply {
-                                    forEach {
-                                        it.toLongOrNull()?.also { constraintId ->
-                                            val find =
-                                                parseResult.constraintList.find { it.constraintId == constraintId }
-
-                                            find?.let {
-                                                it.enable = true
-                                            }.elseNull {
-                                                AutoParser.enableConstraint(
-                                                    constraintId,
-                                                    true
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            handleActionLog("激活ConstraintBean[${arg ?: "this"}]:true")
-                            true
-                        }
-                        ConstraintBean.ACTION_DO_OTHER -> {
-                            var value = false
-                            accessibilityInterceptor?.actionOtherList?.forEach {
-                                if (arg == "*") {
-                                    //所有的actionOtherList都要执行
-                                    value = it.doActionWidth(
-                                        this,
-                                        service,
-                                        accessibilityInterceptor?.lastEvent,
-                                        nodeList.mapTo(ArrayList()) { nodeInfoCompat ->
-                                            nodeInfoCompat.unwrap()
-                                        }
-                                    ) || value
-                                } else {
-                                    //执行一个成功的actionOtherList
-                                    value = value || it.doActionWidth(
-                                        this,
-                                        service,
-                                        accessibilityInterceptor?.lastEvent,
-                                        nodeList.mapTo(ArrayList()) { nodeInfoCompat ->
-                                            nodeInfoCompat.unwrap()
-                                        }
-                                    )
-                                }
-                            }
-                            value
-                        }
-                        ConstraintBean.ACTION_TRUE -> {
-                            handleActionLog("直接返回:true")
-                            true
-                        }
-                        ConstraintBean.ACTION_FALSE -> {
-                            handleActionLog("直接返回:false")
-                            false
-                        }
-                        else -> {
-                            handleActionLog("未识别的指令[$action:$arg]:true")
-                            true
-                        }
-                    } || handleResult.result
-
-                    if (handleResult.result) {
-                        _addActionName(if (act.isEmpty()) ActionControl.ACTION_randomization else act)
-                    }
-
-                    //...end forEach
+                    handleActionLog("未识别的指令[$act]:true")
                 }
             }
         }
