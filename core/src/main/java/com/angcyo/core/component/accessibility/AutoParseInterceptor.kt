@@ -167,7 +167,7 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
                 if (needDefaultHandle && (nowTime() - _lastLeaveTime) > leaveRestartTime) {
                     //离开停留在同一个界面时间超过10分钟,强制重新开始
                     interceptorLog?.log("超过${leaveRestartTime / 1000}秒,即将重新开始!")
-                    _lastLeaveTime = 0
+                    _lastLeaveTime = nowTime()
                     //restart()
                     startAction(true)
                 }
