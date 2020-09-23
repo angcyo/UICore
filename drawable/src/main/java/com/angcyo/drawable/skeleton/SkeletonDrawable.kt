@@ -24,17 +24,20 @@ class SkeletonDrawable : AbsDslDrawable() {
 
     /**闪光颜色*/
     var lightColors =
-        intArrayOf("#E7E7E7".toColorInt(), "#D7D7D7".toColorInt(), "#E7E7E7".toColorInt())
+        intArrayOf("#E7E7E7".toColorInt(), "#E1E1E1".toColorInt(), "#E7E7E7".toColorInt())
 
     /**闪光旋转*/
     var lightRotate = 15f
+
+    /**闪光步长,相对于宽度 */
+    var lightStep = 0.16f
 
     /**激活光线特效*/
     var enableLight = true
 
     init {
-        loadNormalSkeleton()
-//        loadNormalSkeleton2()
+//        loadNormalSkeleton()
+        loadNormalSkeleton2()
     }
 
     override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
@@ -120,15 +123,55 @@ class SkeletonDrawable : AbsDslDrawable() {
     fun loadNormalSkeleton2() {
         rootGroup.clear()
 
-        val c1r = 0.03f
+        val c1r = 0.025f
         val c1l = 0.02f
         val c1t = 0.02f
 
-        val c2r = 0.1
+        val c2r = 0.04
         val c2l = c1l
         val c2t = c1t
 
-        loop(5) {
+        val r1l = c1l
+        val r1t = c1t
+        val r1w = 0.2f
+        val r1h = 0.03f
+
+        val r2l = r1l
+        val r2t = r1t + r1h + 0.02
+        val r2w = r1w
+        val r2h = r1h
+
+        val r3l = r1l
+        val r3t = r1t
+        val r3w = r1w
+        val r3h = r1h
+
+        val r4l = c2l
+        val r4t = c2t * 2 / 3
+        val r4w = 1 - 2 * c2l - c1l - c1r * 2
+        val r4h = 0.035f
+
+        val r5l = r4l
+        val r5t = r1t
+        val r5w = r4w / 4
+        val r5h = r4h
+
+        val r6l = r5l
+        val r6t = r5t * 2
+        val r6w = r4w
+        val r6h = r4h
+
+        val r7l = r1l
+        val r7t = r6t * 2 / 3
+        val r7w = r4w / 6
+        val r7h = r1h
+
+        val r8w = r4w / 3
+        val r8l = 1 - r1l - r8w - c1l - c1r * 2
+        val r8t = r7t
+        val r8h = r1h
+
+        loop(6) {
             rootGroup.vertical {
                 horizontal {
                     group {
@@ -139,16 +182,82 @@ class SkeletonDrawable : AbsDslDrawable() {
                     }
                     vertical {
                         horizontal {
-                            circle("$c2r") {
-                                left = "$c2l"
-                                top = "$c2t"
+                            group {
+                                circle("$c2r") {
+                                    left = "$c2l"
+                                    top = "$c2t"
+                                }
+                            }
+                            horizontal {
+                                vertical {
+                                    rect("2dp") {
+                                        left = "$r1l"
+                                        top = "$r1t"
+                                        width = "$r1w"
+                                        height = "$r1h"
+                                    }
+                                    rect("2dp") {
+                                        left = "$r2l"
+                                        top = "$r2t"
+                                        width = "$r2w"
+                                        height = "$r2h"
+                                    }
+                                }
+                                group {
+                                    rect("2dp") {
+                                        left = "$r3l"
+                                        top = "$r3t"
+                                        width = "$r3w"
+                                        height = "$r3h"
+                                    }
+                                }
+                            }
+                        }
+                        group {
+                            rect("2dp") {
+                                left = "$r4l"
+                                top = "$r4t"
+                                width = "$r4w"
+                                height = "$r4h"
+                            }
+                        }
+                        group {
+                            rect("2dp") {
+                                left = "$r5l"
+                                top = "$r5t"
+                                width = "$r5w"
+                                height = "$r5h"
+                            }
+                        }
+                        group {
+                            rect("2dp") {
+                                left = "$r6l"
+                                top = "$r6t"
+                                width = "$r6w"
+                                height = "$r6h"
+                            }
+                        }
+                        group {
+                            rect("2dp") {
+                                left = "$r7l"
+                                top = "$r7t"
+                                width = "$r7w"
+                                height = "$r7h"
+                            }
+                            rect("2dp") {
+                                left = "$r8l"
+                                top = "$r8t"
+                                width = "$r8w"
+                                height = "$r8h"
                             }
                         }
                     }
                 }
                 group {
                     line {
-
+                        left = "$c1l"
+                        top = "$c1t"
+                        width = "${1 - c1l * 2}"
                     }
                 }
             }
@@ -186,7 +295,7 @@ class SkeletonDrawable : AbsDslDrawable() {
 
         if (enableLight) {
             if (_translate <= 2 * viewWidth) {
-                _translate += viewWidth / 10
+                _translate += (viewWidth * lightStep).toInt()
             } else {
                 _translate = -viewWidth
             }
@@ -199,11 +308,7 @@ class SkeletonDrawable : AbsDslDrawable() {
         }
     }
 
-    fun _drawGroup(
-        canvas: Canvas,
-        layoutParams: LayoutParams,
-        groupBean: SkeletonGroupBean
-    ) {
+    fun _drawGroup(canvas: Canvas, layoutParams: LayoutParams, groupBean: SkeletonGroupBean) {
 
         groupBean.skeletonList?.forEach {
             _drawSkeleton(canvas, layoutParams, it)
@@ -256,11 +361,7 @@ class SkeletonDrawable : AbsDslDrawable() {
         }
     }
 
-    fun _drawSkeleton(
-        canvas: Canvas,
-        layoutParams: LayoutParams,
-        skeletonBean: SkeletonBean
-    ) {
+    fun _drawSkeleton(canvas: Canvas, layoutParams: LayoutParams, skeletonBean: SkeletonBean) {
         textPaint.color = skeletonBean.fillColor
         textPaint.style = Paint.Style.FILL
         textPaint.strokeWidth = 0f
@@ -320,8 +421,8 @@ class SkeletonDrawable : AbsDslDrawable() {
                 val cy = top + size
                 canvas.drawCircle(cx, cy, size, textPaint)
 
-                layoutParams.useWidth = cx + size
-                layoutParams.useHeight = cy + size
+                layoutParams.useWidth = useLeft + size * 2
+                layoutParams.useHeight = useTop + size * 2
             }
             SkeletonBean.SKELETON_TYPE_RECT -> {
                 //画矩形
