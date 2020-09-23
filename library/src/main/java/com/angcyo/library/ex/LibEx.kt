@@ -184,3 +184,10 @@ inline fun <T> T.it(block: (T) -> Unit) {
 inline fun <T> T.that(block: T.() -> Unit) {
     block(this)
 }
+
+/**循环, 多少次*/
+fun loop(count: Int, action: () -> Unit) {
+    for (i in 0 until count) {
+        action()
+    }
+}

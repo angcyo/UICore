@@ -44,7 +44,7 @@ fun String?.layoutSize(refWidth: Int = _screenWidth, refHeight: Int = _screenHei
     }
 
     var ref = refWidth
-    if (this.contains("h")) {
+    if (contains("h")) {
         ref = refHeight
     }
 
@@ -53,6 +53,10 @@ fun String?.layoutSize(refWidth: Int = _screenWidth, refHeight: Int = _screenHei
     return if (num < 1f) {
         num * ref
     } else {
-        num * dp
+        if (contains("dp")) {
+            num * dp
+        } else {
+            num
+        }
     }
 }

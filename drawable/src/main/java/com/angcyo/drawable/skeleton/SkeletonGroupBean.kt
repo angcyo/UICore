@@ -16,29 +16,25 @@ data class SkeletonGroupBean(
     /**套娃*/
     var groupList: List<SkeletonGroupBean>? = null,
 
-    /**组的排列方向*/
-    var orientation: Int = -1,
-
-    /**[Group]的定位数据, 小于1f,表示比例(参考值是控件宽高); 否则就是dp*/
-    var groupLeft: Float = 0f,
-    var groupTop: Float = 0f,
-    var groupWidth: Float = 0f,
-    var groupHeight: Float = 0f
+    /**组内元素的排列方向*/
+    var orientation: Int = -1
 )
 
 /*----------------------------------------Group------------------------------------------------*/
 
 /**追加一个新的[SkeletonGroupBean]*/
 fun SkeletonGroupBean.group(
-    orientation: Int = LinearLayout.VERTICAL,
+    orientation: Int = -1,
     dsl: SkeletonGroupBean.() -> Unit
-) {
+): SkeletonGroupBean {
     val list = groupList
+    val groupBean = SkeletonGroupBean(orientation = orientation).apply(dsl)
     if (list is MutableList) {
-        list.add(SkeletonGroupBean(orientation = orientation).apply(dsl))
+        list.add(groupBean)
     } else {
-        groupList = mutableListOf(SkeletonGroupBean(orientation = orientation).apply(dsl))
+        groupList = mutableListOf(groupBean)
     }
+    return groupBean
 }
 
 fun SkeletonGroupBean.horizontal(dsl: SkeletonGroupBean.() -> Unit) {
@@ -47,6 +43,11 @@ fun SkeletonGroupBean.horizontal(dsl: SkeletonGroupBean.() -> Unit) {
 
 fun SkeletonGroupBean.vertical(dsl: SkeletonGroupBean.() -> Unit) {
     group(LinearLayout.VERTICAL, dsl)
+}
+
+fun SkeletonGroupBean.clear() {
+    skeletonList = null
+    groupList = null
 }
 
 /*--------------------------------------Skeleton-----------------------------------------------*/
@@ -68,9 +69,10 @@ fun SkeletonGroupBean.line(dsl: SkeletonBean.() -> Unit) {
     }
 }
 
-fun SkeletonGroupBean.circle(dsl: SkeletonBean.() -> Unit) {
+fun SkeletonGroupBean.circle(radius: String, dsl: SkeletonBean.() -> Unit) {
     skeleton {
         type = SkeletonBean.SKELETON_TYPE_CIRCLE
+        size = radius
         dsl()
     }
 }

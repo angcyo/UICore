@@ -69,6 +69,10 @@ fun Int.alpha(alpha: Int): Int {
     return ColorUtils.setAlphaComponent(this, MathUtils.clamp(alpha, 0, 255))
 }
 
+fun Int.alphaRatio(alpha: Float): Int {
+    return alpha(alpha * 255)
+}
+
 fun Int.alpha(alpha: Float): Int {
     return alpha(alpha.toInt())
 }
