@@ -38,8 +38,8 @@ class SkeletonDrawable : AbsDslDrawable() {
     var infiniteMode = true
 
     init {
-//        loadNormalSkeleton()
-        loadNormalSkeleton2()
+        loadNormalSkeleton()
+//        loadNormalSkeleton2()
     }
 
     override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
@@ -123,16 +123,19 @@ class SkeletonDrawable : AbsDslDrawable() {
     fun loadNormalSkeleton2() {
         rootGroup.clear()
 
+        val l = 0.02f
+        val t = 0.02f
+
         val c1r = 0.025f
-        val c1l = 0.02f
-        val c1t = 0.02f
+        val c1l = l + c1r
+        val c1t = t + c1r
 
         val c2r = 0.04
-        val c2l = c1l
-        val c2t = c1t
+        val c2l = l + c2r
+        val c2t = t + c2r
 
-        val r1l = c1l
-        val r1t = c1t
+        val r1l = l
+        val r1t = t
         val r1w = 0.2f
         val r1h = 0.03f
 
@@ -146,9 +149,9 @@ class SkeletonDrawable : AbsDslDrawable() {
         val r3w = r1w
         val r3h = r1h
 
-        val r4l = c2l
-        val r4t = c2t * 2 / 3
-        val r4w = 1 - 2 * c2l - c1l - c1r * 2
+        val r4l = l
+        val r4t = t * 2 / 3
+        val r4w = 1 - 2 * l - l - c1r * 2
         val r4h = 0.035f
 
         val r5l = r4l
@@ -167,7 +170,7 @@ class SkeletonDrawable : AbsDslDrawable() {
         val r7h = r1h
 
         val r8w = r4w / 3
-        val r8l = 1 - r1l - r8w - c1l - c1r * 2
+        val r8l = 1 - r1l - r8w - l - c1r * 2
         val r8t = r7t
         val r8h = r1h
 
@@ -254,11 +257,18 @@ class SkeletonDrawable : AbsDslDrawable() {
             }
             group {
                 line {
-                    left = "$c1l"
-                    top = "$c1t"
-                    width = "${1 - c1l * 2}"
+                    left = "$l"
+                    top = "$t"
+                    width = "${1 - l * 2}"
                 }
             }
+        }
+    }
+
+    fun render(dsl: SkeletonGroupBean.() -> Unit) {
+        rootGroup.apply {
+            clear()
+            apply(dsl)
         }
     }
 
@@ -291,7 +301,7 @@ class SkeletonDrawable : AbsDslDrawable() {
 
         _layoutParams.reset()
         _drawGroup(canvas, _layoutParams, rootGroup)
-        if (infiniteMode) {
+        if (infiniteMode && !rootGroup.groupList.isNullOrEmpty()) {
             if (rootGroup.orientation == LinearLayout.VERTICAL) {
                 var top = _layoutParams.top + _layoutParams.useHeight
                 while (top < viewHeight - paddingBottom) {
@@ -397,15 +407,15 @@ class SkeletonDrawable : AbsDslDrawable() {
         textPaint.style = Paint.Style.FILL
         textPaint.strokeWidth = 0f
 
-        val useLeft = skeletonBean.left.layoutSize(viewDrawWidth, viewDrawHeight)
-        val useTop = skeletonBean.top.layoutSize(viewDrawWidth, viewDrawHeight)
+        val useLeft = skeletonBean.left.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawWidth)
+        val useTop = skeletonBean.top.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawHeight)
 
         var left = layoutParams.left + useLeft
         var top = layoutParams.top + useTop
-        val width = skeletonBean.width.layoutSize(viewDrawWidth, viewDrawHeight)
-        val height = skeletonBean.height.layoutSize(viewDrawWidth, viewDrawHeight)
+        val width = skeletonBean.width.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawWidth)
+        val height = skeletonBean.height.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawHeight)
 
-        val size = skeletonBean.size.layoutSize(viewDrawWidth, viewDrawHeight)
+        val size = skeletonBean.size.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawWidth)
 
         layoutParams.useWidth = 0f
         layoutParams.useHeight = 0f
@@ -448,12 +458,12 @@ class SkeletonDrawable : AbsDslDrawable() {
             }
             SkeletonBean.SKELETON_TYPE_CIRCLE -> {
                 //画圆
-                val cx = left + size
-                val cy = top + size
+                val cx = left
+                val cy = top
                 canvas.drawCircle(cx, cy, size, textPaint)
 
-                layoutParams.useWidth = useLeft + size * 2
-                layoutParams.useHeight = useTop + size * 2
+                layoutParams.useWidth = useLeft + size
+                layoutParams.useHeight = useTop + size
             }
             SkeletonBean.SKELETON_TYPE_RECT -> {
                 //画矩形

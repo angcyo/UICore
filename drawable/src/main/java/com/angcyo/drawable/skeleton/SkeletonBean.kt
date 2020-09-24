@@ -18,7 +18,7 @@ data class SkeletonBean(
     /**线的宽度或者圆的半径或者圆角大小*/
     var size: String? = null,
     var fillColor: Int = "#E7E7E7".toColorInt(),
-    /**[Bean]的定位数据, 小于1f,表示比例; 否则就是dp; */
+    /**[Bean]的定位数据, 小于1f,表示比例; 否则就是dp; 如果是圆的话, 表示圆心的坐标*/
     var left: String? = null,//相对于当前[SkeletonGroupBean]的左边距离
     var top: String? = null,
     var width: String? = null,
@@ -38,13 +38,19 @@ data class SkeletonBean(
  * 10
  * 20
  * */
-fun String?.layoutSize(refWidth: Int = _screenWidth, refHeight: Int = _screenHeight): Float {
+fun String?.layoutSize(
+    refWidth: Int = _screenWidth,
+    refHeight: Int = _screenHeight,
+    defRef: Int = _screenWidth
+): Float {
     if (this.isNullOrEmpty()) {
         return 0f
     }
 
-    var ref = refWidth
-    if (contains("h")) {
+    var ref = defRef
+    if (contains("w") || contains("W")) {
+        ref = refWidth
+    } else if (contains("h") || contains("H")) {
         ref = refHeight
     }
 

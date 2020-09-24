@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import com.angcyo.drawable.base.AbsDslDrawable
 import com.angcyo.drawable.skeleton.SkeletonDrawable
+import com.angcyo.drawable.skeleton.SkeletonGroupBean
 import com.angcyo.widget.base.BaseDrawableView
 
 /**
@@ -18,5 +19,13 @@ class SkeletonView(context: Context, attributeSet: AttributeSet? = null) :
     BaseDrawableView(context, attributeSet) {
     override fun initDrawables(list: MutableList<AbsDslDrawable>) {
         list.add(SkeletonDrawable())
+    }
+
+    fun skeletonDrawable(dsl: SkeletonDrawable.() -> Unit) {
+        firstDrawable<SkeletonDrawable>()?.apply(dsl)
+    }
+
+    fun render(dsl: SkeletonGroupBean.() -> Unit) {
+        skeletonDrawable { render(dsl) }
     }
 }
