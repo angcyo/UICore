@@ -12,6 +12,25 @@ import com.angcyo.core.component.accessibility.parse.ConstraintBean.Companion.AC
  */
 data class ConstraintBean(
 
+    /*------------------------------------作用于根节点的约束------------------------------------*/
+
+    /**约束根节点视图结构中, 无child节点的节点总数量满足此条件, 则继续. 否则失败.
+     * 支持的数据格式: [com.angcyo.core.component.accessibility.parse.ConditionBean.childCount]
+     * 如果包含[*]的格式, 表示所有节点总数量. 如"<=10*" ">=20*"
+     * 否则就是无child节点的节点总数量
+     * */
+    var sizeCount: String? = null,
+
+    /**
+     * 约束根节点的[boundsInScreen]是否符合条件.通常用于在[Dialog]中查找节点
+     * [rectList]
+     * */
+    var boundRect: String? = null,
+
+    /*---------------------------------------------------------------------------------------*/
+
+    /*-------------------------------------查找子节点的约束------------------------------------*/
+
     /**约束的文本, 这个文本可以是对应的id, 或者node上的文本内容
      * 文本需要全部命中.
      * 优先匹配[wordTextIndexList]对应的数据.
@@ -34,18 +53,6 @@ data class ConstraintBean(
      * */
     var wordTextIndexList: List<String>? = null,
 
-    /**约束之后, 如果匹配到的节点数量, 满足此条件, 则继续.
-     * 不满足条件, 清空所有节点.
-     * 支持的数据格式: [com.angcyo.core.component.accessibility.parse.ConditionBean.childCount]*/
-    var nodeCount: String? = null,
-
-    /**约束根节点视图结构中, 无child节点的节点总数量满足此条件, 则继续. 否则失败.
-     * 支持的数据格式: [com.angcyo.core.component.accessibility.parse.ConditionBean.childCount]
-     * 如果包含[*]的格式, 表示所有节点总数量. 如"<=10*" ">=20*"
-     * 否则就是无child节点的节点总数量
-     * */
-    var sizeCount: String? = null,
-
     /**
      * 用[1]表示上述[textList]字段中对应的是id文本, 否则就是普通文本.一一对应的关系.
      * 可以是 完整的id, 也可以是 gj4.
@@ -60,67 +67,6 @@ data class ConstraintBean(
      * 空字符会命中所有
      * */
     var clsList: List<String>? = null,
-
-    /**此约束需要执行的指令, 不指定坐标. 将随机产生. 小于1的数, 表示比例
-     * [click] 触发当前节点的点击事件
-     * [click2] 在当前节点区域双击
-     * [longClick] 触发当前节点的长按事件
-     * [touch:10,10] 在屏幕坐标x=10dp y=10dp的地方点击
-     * [double:20,30] 在屏幕坐标x=20dp y=30dp的地方双击
-     * [move:10,10-100,100] 从屏幕坐标x=10dp y=10dp的地方移动到100dp 100dp的地方
-     * [fling:10,10-100,100]
-     * [back] 执行返回操作
-     * [getText] 获取文本内容
-     * [setText] 设置文本内容
-     * [random] 随机执行
-     * ...参考下面的静态声明
-     *
-     * 空字符会进行随机操作.
-     * null 默认是click操作
-     *
-     * 未知指令, 直接返回true处理
-     * */
-    var actionList: List<String>? = null,
-
-    /**当节点集合不为空, 但是通过条件约束后变为空集合后, 触发的动作集合.
-     * [actionList]*/
-    var noActionList: List<String>? = null,
-
-    /**
-     * 当[actionList]或[noActionList]执行失败后, 需要执行的指令列表.
-     * */
-    var notActionList: List<String>? = null,
-
-    /**
-     * [setText]时的输入数据集合, 随机从里面取一个.
-     * 如果为null, 则从代码中随机产生
-     * */
-    var inputList: List<String>? = null,
-
-    /**
-     * [setText]时的输入数据在[wordList]集合的索引集合, 随机从里面取一个.
-     * 如果为null, 则从[inputList]读取. 如果[inputList]也为null, 则从代码中随机产生
-     * 支持表达式:
-     * $N $0将会替换为[wordList]索引为0的值.最大支持10000
-     * 1-4 取索引为[1-4]的值
-     * 0--1 取索引为[0-倒数第1个]的值
-     * -1 取倒数第1个的值
-     * 比如:
-     * $0
-     * [2--1]
-     * */
-    var wordInputIndexList: List<String>? = null,
-
-    /**忽略此次[Action]操作的返回值, 不忽略的话, 如果action返回true, 则可能会执行[doActionFinish].*/
-    var ignore: Boolean = false,
-
-    /**此次[Action] [操作成功]之后, 是否跳过之后的[handle]约束处理.
-     * [stateList] 中的[finish]操作, 拥有相同效果
-     * */
-    var jump: Boolean = false,
-
-    /**[actionList]指令执行成功后, 是否跳过后续的[handle]约束处理, 失败则不跳过*/
-    var jumpOnSuccess: Boolean = false,
 
     /**和[textList]为一一对应的关系. 相对于屏幕的坐标计算
      * 坐标矩形约束. 格式10,10-100,100 小于1的数, 表示比例否则就是dp.
@@ -173,6 +119,15 @@ data class ConstraintBean(
      * */
     var pathList: List<String>? = null,
 
+    /**约束之后, 如果匹配到的节点数量, 满足此条件, 则继续.
+     * 不满足条件, 清空所有节点.
+     * 支持的数据格式: [com.angcyo.core.component.accessibility.parse.ConditionBean.childCount]*/
+    var nodeCount: String? = null,
+
+    /*---------------------------------------------------------------------------------------*/
+
+    /*----------------------------------------执行的指令--------------------------------------*/
+
     /**挑选需要执行[actionList]的节点.
      * 当以上规则匹配到很多节点时, 挑出指定索引的节点执行[actionList]. 不指定默认所有节点.
      * index>=0, 正向取索引
@@ -180,9 +135,78 @@ data class ConstraintBean(
      * 666666: 表示随机选择index*/
     var handleNodeList: List<Int>? = null,
 
+    /**此约束需要执行的指令, 不指定坐标. 将随机产生. 小于1的数, 表示比例
+     * [click] 触发当前节点的点击事件
+     * [click2] 在当前节点区域双击
+     * [longClick] 触发当前节点的长按事件
+     * [touch:10,10] 在屏幕坐标x=10dp y=10dp的地方点击
+     * [double:20,30] 在屏幕坐标x=20dp y=30dp的地方双击
+     * [move:10,10-100,100] 从屏幕坐标x=10dp y=10dp的地方移动到100dp 100dp的地方
+     * [fling:10,10-100,100]
+     * [back] 执行返回操作
+     * [getText] 获取文本内容
+     * [setText] 设置文本内容
+     * [random] 随机执行
+     * ...参考下面的静态声明
+     *
+     * 空字符会进行随机操作.
+     * null 默认是click操作
+     *
+     * 未知指令, 直接返回true处理
+     * */
+    var actionList: List<String>? = null,
+
+    /**当节点集合不为空, 但是通过条件约束后变为空集合后, 触发的动作集合.
+     * [actionList]*/
+    var noActionList: List<String>? = null,
+
+    /**
+     * 当[actionList]或[noActionList]执行失败后, 需要执行的指令列表.
+     * */
+    var notActionList: List<String>? = null,
+
+    /**
+     * [setText]时的输入数据集合, 随机从里面取一个.
+     * 如果为null, 则从代码中随机产生
+     * */
+    var inputList: List<String>? = null,
+
+    /**
+     * [setText]时的输入数据在[wordList]集合的索引集合, 随机从里面取一个.
+     * 如果为null, 则从[inputList]读取. 如果[inputList]也为null, 则从代码中随机产生
+     * 支持表达式:
+     * $N $0将会替换为[wordList]索引为0的值.最大支持10000
+     * 1-4 取索引为[1-4]的值
+     * 0--1 取索引为[0-倒数第1个]的值
+     * -1 取倒数第1个的值
+     * 比如:
+     * $0
+     * [2--1]
+     * */
+    var wordInputIndexList: List<String>? = null,
+
     /**[ACTION_GET_TEXT]获取文本时, 需要过滤的文本正则, 非一一对应,
      * 如果匹配到, 则中断后续的匹配规则. 如果全部未匹配到, 则直接使用本身 */
     var getTextRegexList: List<String>? = null,
+
+    /*---------------------------------------------------------------------------------------*/
+
+    /*---------------------------------------指令执行后---------------------------------------*/
+
+    /**忽略此次[Action]操作的返回值, 不忽略的话, 如果action返回true, 则可能会执行[doActionFinish].*/
+    var ignore: Boolean = false,
+
+    /**此次[Action] [操作成功]之后, 是否跳过之后的[handle]约束处理.
+     * [stateList] 中的[finish]操作, 拥有相同效果
+     * */
+    var jump: Boolean = false,
+
+    /**[actionList]指令执行成功后, 是否跳过后续的[handle]约束处理, 失败则不跳过*/
+    var jumpOnSuccess: Boolean = false,
+
+    /*---------------------------------------------------------------------------------------*/
+
+    /*-----------------------------------------后处理----------------------------------------*/
 
     /**筛选条件, 满足任意一条即可通过
      * 通过上述约束条件, 获取到的节点集合, 再次通过此条件约束,筛选出符合条件的节点
@@ -194,6 +218,8 @@ data class ConstraintBean(
      * 只有匹配规则会生效, 非控制匹配规则的属性不会生效
      * */
     var after: ConstraintBean? = null,
+
+    /*---------------------------------------------------------------------------------------*/
 
     /**id标识, 用于[enable]参数*/
     var constraintId: Long = -1,
@@ -293,6 +319,8 @@ data class ConstraintBean(
         const val ACTION_DO_OTHER = "doOther"
         const val ACTION_TRUE = "true" //执行结果直接设置true
         const val ACTION_FALSE = "false" //执行结果直接设置false
+
+        /*---------------------------------------状态匹配--------------------------------------*/
 
         //需要指定的状态 [state]
         const val STATE_CLICKABLE = "clickable" //具备可点击

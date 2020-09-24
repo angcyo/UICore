@@ -37,6 +37,7 @@ class MultiAppAction : AutoParseAction() {
         actionBean = ActionBean().apply {
             check = CheckBean().apply {
                 back = listOf(ConstraintBean().apply {
+                    //boundRect = ">=0.5:<=0.8"
                     textList = listOf(name)
                     stateList = listOf("clickable:5")
                     rectList = listOf("0.01,0.7-0.99,0.99")

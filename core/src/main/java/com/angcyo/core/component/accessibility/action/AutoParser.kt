@@ -570,7 +570,15 @@ open class AutoParser {
             }
 
             if (!allow) {
-                //不满足了约束条件
+                //不满足节点总数约束条件
+                return
+            }
+        }
+
+        //节点bound约束
+        if (constraintBean.boundRect != null) {
+            if (!matchClassAndRect(rootNodeWrap, rect = constraintBean.boundRect)) {
+                //不满足bound约束条件
                 return
             }
         }
@@ -596,7 +604,7 @@ open class AutoParser {
                 } else {
                     //其他约束组合
                     rootNodeInfo.findNode(result) { nodeInfoCompat ->
-                        if (match(constraintBean, nodeInfoCompat, 0)) {
+                        if (matchClassAndRectAndState(constraintBean, nodeInfoCompat, 0)) {
                             val node = getStateParentNode(
                                 constraintBean.stateList,
                                 nodeInfoCompat,
@@ -672,7 +680,12 @@ open class AutoParser {
                                 }
 
                                 if (findNode == 1) {
-                                    findNode = if (match(constraintBean, nodeInfoCompat, index)) {
+                                    findNode = if (matchClassAndRectAndState(
+                                            constraintBean,
+                                            nodeInfoCompat,
+                                            index
+                                        )
+                                    ) {
                                         //其他约束匹配成功
                                         val node =
                                             getStateParentNode(
@@ -803,15 +816,12 @@ open class AutoParser {
         }
     }
 
-    /**其他规则匹配*/
-    open fun match(
-        constraintBean: ConstraintBean,
+    /**匹配类名和矩形约束*/
+    open fun matchClassAndRect(
         node: AccessibilityNodeInfoCompat,
-        index: Int /*对应text中的索引*/
+        cls: String? = null,
+        rect: String? = null,
     ): Boolean {
-        val cls = constraintBean.clsList?.getOrNull(index)
-        val rect = constraintBean.rectList?.getOrNull(index)
-
         //是否匹配成功
         var result = false
 
@@ -926,6 +936,21 @@ open class AutoParser {
                 result = true
             }
         }
+
+        return result
+    }
+
+    /**匹配类名和矩形约束和状态约束*/
+    open fun matchClassAndRectAndState(
+        constraintBean: ConstraintBean,
+        node: AccessibilityNodeInfoCompat,
+        index: Int /*对应text中的索引*/
+    ): Boolean {
+        val cls = constraintBean.clsList?.getOrNull(index)
+        val rect = constraintBean.rectList?.getOrNull(index)
+
+        //矩形和类名
+        var result = matchClassAndRect(node, cls, rect)
 
         //状态约束
         if (result) {
