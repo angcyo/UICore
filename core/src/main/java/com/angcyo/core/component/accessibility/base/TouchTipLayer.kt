@@ -128,12 +128,12 @@ object TouchTipLayer : ILayer() {
 
                             if (btt) {
                                 top = "$y2"
-                                cl = x2
-                                ct = y2
-                            } else {
-                                top = "$y1"
                                 cl = x1
                                 ct = y1
+                            } else {
+                                top = "$y1"
+                                cl = x2
+                                ct = y2
                             }
 
                             height = "${(y2 - y1).abs()}"
