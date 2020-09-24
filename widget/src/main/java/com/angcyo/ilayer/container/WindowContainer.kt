@@ -37,11 +37,11 @@ class WindowContainer(context: Context) : BaseContainer(context) {
         width = WindowManager.LayoutParams.WRAP_CONTENT
         height = WindowManager.LayoutParams.WRAP_CONTENT
 
-        flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR or
-                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or    //范围外的触摸事件发送给后面的窗口处理
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or       //不获取焦点
+                /*WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR or  //布局在装饰条之外*/
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or    //占满整个屏幕
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS       //允许到屏幕之外
 
         windowAnimations = 0
 

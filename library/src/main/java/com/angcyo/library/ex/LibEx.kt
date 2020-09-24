@@ -1,6 +1,8 @@
 package com.angcyo.library.ex
 
 import android.app.Application
+import android.graphics.Point
+import android.graphics.PointF
 import com.angcyo.library.BuildConfig
 import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.RUtils
@@ -190,4 +192,14 @@ fun loop(count: Int, action: () -> Unit) {
     for (i in 0 until count) {
         action()
     }
+}
+
+fun PointF.reset() {
+    this.x = 0f
+    this.y = 0f
+}
+
+fun Point.reset() {
+    this.x = 0
+    this.y = 0
 }

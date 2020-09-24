@@ -1,6 +1,5 @@
 package com.angcyo.core.component.accessibility.action.a
 
-import android.graphics.PointF
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.BaseAccessibilityService
 import com.angcyo.core.component.accessibility.action.AutoParseAction
@@ -26,13 +25,15 @@ open class BaseAction {
     //动作携带的参数
     var arg: String? = null
 
-    //点位
-    val p1 = PointF()
-    val p2 = PointF()
+    protected open fun reset() {
+        parseAction = null
+        arg = null
+    }
 
     /**解析[action]*/
     protected open fun parseAction(autoParseAction: AutoParseAction, action: String?) {
         try {
+            reset()
             if (!action.isNullOrEmpty()) {
                 //解析2个点的坐标
                 val indexOf = action.indexOf(":", 0, true)
@@ -45,10 +46,6 @@ open class BaseAction {
                     this.parseAction = action.substring(0, indexOf)
                     arg = action.substring(indexOf + 1, action.length)
                 }
-            }
-            autoParseAction.parsePoint(arg?.arg()).let {
-                p1.set(it[0])
-                p2.set(it[1])
             }
         } catch (e: Exception) {
             e.printStackTrace()

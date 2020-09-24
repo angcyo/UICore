@@ -114,6 +114,7 @@ open class ILayer {
         container?.add(this)
     }
 
+    /**从指定的[container]中移除[ILayer]*/
     fun hide(container: IContainer) {
         container.remove(this)
     }

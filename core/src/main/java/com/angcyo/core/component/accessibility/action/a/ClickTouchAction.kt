@@ -2,11 +2,12 @@ package com.angcyo.core.component.accessibility.action.a
 
 import android.graphics.PointF
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
-import com.angcyo.core.component.accessibility.*
+import com.angcyo.core.component.accessibility.BaseAccessibilityService
 import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.action.HandleResult
-import com.angcyo.core.component.accessibility.action.arg
+import com.angcyo.core.component.accessibility.bounds
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
+import com.angcyo.core.component.accessibility.touch
 
 /**
  * 在节点区域执行手势[touch]操作
@@ -15,7 +16,7 @@ import com.angcyo.core.component.accessibility.parse.ConstraintBean
  * @date 2020/09/21
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class ClickTouchAction : BaseAction() {
+class ClickTouchAction : BaseTouchAction() {
 
     override fun interceptAction(autoParseAction: AutoParseAction, action: String?): Boolean {
         super.interceptAction(autoParseAction, action)
@@ -56,10 +57,10 @@ class ClickTouchAction : BaseAction() {
 
             value = if (click) {
                 //点击节点区域
-                service.gesture.click(x, y, autoParseAction.getGestureStartTime(arg?.arg(1)))
+                click(autoParseAction, service, x, y)
             } else {
                 //双击节点区域
-                service.gesture.double(x, y, autoParseAction.getGestureStartTime(arg?.arg(1)))
+                double(autoParseAction, service, x, y)
             } || value
         }
         if (click) {

@@ -1,9 +1,8 @@
 package com.angcyo.core.component.accessibility.base
 
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.RectF
-import android.net.Uri
+import android.view.WindowManager
 import com.angcyo.core.R
 import com.angcyo.core.component.accessibility.AccessibilityHelper
 import com.angcyo.core.component.accessibility.LogWindowAccessibilityInterceptor
@@ -35,7 +34,10 @@ object AccessibilityWindowLayer : ILayer() {
 
     var showCatchButton: Boolean = isDebug()
 
-    val _windowContainer = WindowContainer(app())
+    val _windowContainer = WindowContainer(app()).apply {
+        wmLayoutParams.flags = wmLayoutParams.flags or
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+    }
 
     /**浮窗需要隐藏到什么时间, 13位时间戳*/
     var _hideToTime: Long = -1
@@ -157,70 +159,75 @@ object AccessibilityWindowLayer : ILayer() {
             visible(R.id.test_button, isDebugType())
             throttleClick(R.id.test_button) {
 
-                //测试手势点击 "touch:0.9192,0.9842"
-//                val p1 = PointF(_screenWidth * 0.9192f, _screenHeight * 0.9842f)
-//                BaseAccessibilityService.lastService?.gesture?.click(p1.x, p1.y)
-//                L.w(p1)
+                //测试手势线
+                TouchTipLayer.showTouch(0.9162f, 0.9762f)
+                //TouchTipLayer.showMove(0.5f, 0.5f, 0.5f, 0.3f)
+                //TouchTipLayer.showMove(0.3f, 0.5f, 0.5f, 0.5f)
 
-                //测试url直接打开抖音
-                val list = listOf(
-                    "https://v.douyin.com/JBrY5g9/", //很久的直播 [直播已结束]
-                    "https://v.douyin.com/JBxoeKL", //直播 [打开看看]
-                    "https://v.douyin.com/J6mdAPq/", //视频
-                    "https://v.kuaishou.com/8vnjyY" //快手视频
-                )
-                val url = list[0]
+                /*//测试手势点击 "touch:0.9192,0.9842"
+                    val p1 = PointF(_screenWidth * 0.9192f, _screenHeight * 0.9842f)
+                    BaseAccessibilityService.lastService?.gesture?.click(p1.x, p1.y)
+                    L.w(p1)*/
 
-                Intent().apply {
-                    setPackage("com.ss.android.ugc.aweme")
-                    //setPackage("com.smile.gifmaker")
-                    data = Uri.parse(url)
-                    baseConfig(it.context)
+                /*//测试url直接打开抖音
+                 val list = listOf(
+                     "https://v.douyin.com/JBrY5g9/", //很久的直播 [直播已结束]
+                     "https://v.douyin.com/JBxoeKL", //直播 [打开看看]
+                     "https://v.douyin.com/J6mdAPq/", //视频
+                     "https://v.kuaishou.com/8vnjyY" //快手视频
+                 )
+                 val url = list[0]
 
+                 Intent().apply {
+                     setPackage("com.ss.android.ugc.aweme")
+                     //setPackage("com.smile.gifmaker")
+                     data = Uri.parse(url)
+                     baseConfig(it.context)
+
+                     try {
+                         it.context.startActivity(this)
+                     } catch (e: Exception) {
+                         e.printStackTrace()
+                     }
+                 }*/
+
+                /*val imm = context.getSystemService(
+                    Context.INPUT_METHOD_SERVICE
+                ) as InputMethodManager
+
+                doBack {
+                    LTime.tick()
                     try {
-                        it.context.startActivity(this)
+                        val inst = Instrumentation()
+                        inst.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER)
+                    } catch (e: Exception) {
+                        L.e("Exception when sendKeyDownUpSync $e")
+                    }
+                    L.i(LTime.time())
+                }
+
+                try {
+                    val keyCommand = "input keyevent " + KeyEvent.KEYCODE_ENTER
+                    val runtime = Runtime.getRuntime()
+                    val proc = runtime.exec(keyCommand)
+                    //L.i(proc.waitFor(), " ", proc.exitValue())
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
+                doBack {
+                    try {
+                        val keyCommand = "input keyevent " + KeyEvent.KEYCODE_ENTER
+                        val runtime = Runtime.getRuntime()
+                        val proc = runtime.exec(keyCommand)
+                        //L.i(proc.waitFor(), " ", proc.exitValue())
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
                 }
 
-//                val imm = context.getSystemService(
-//                    Context.INPUT_METHOD_SERVICE
-//                ) as InputMethodManager
-
-//                doBack {
-//                    LTime.tick()
-//                    try {
-//                        val inst = Instrumentation()
-//                        inst.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER)
-//                    } catch (e: Exception) {
-//                        L.e("Exception when sendKeyDownUpSync $e")
-//                    }
-//                    L.i(LTime.time())
-//                }
-
-//                try {
-//                    val keyCommand = "input keyevent " + KeyEvent.KEYCODE_ENTER
-//                    val runtime = Runtime.getRuntime()
-//                    val proc = runtime.exec(keyCommand)
-//                    //L.i(proc.waitFor(), " ", proc.exitValue())
-//                } catch (e: Exception) {
-//                    e.printStackTrace()
-//                }
-
-//                doBack {
-//                    try {
-//                        val keyCommand = "input keyevent " + KeyEvent.KEYCODE_ENTER
-//                        val runtime = Runtime.getRuntime()
-//                        val proc = runtime.exec(keyCommand)
-//                        //L.i(proc.waitFor(), " ", proc.exitValue())
-//                    } catch (e: Exception) {
-//                        e.printStackTrace()
-//                    }
-//                }
-
-//                val inputConnection = BaseInputConnection(it, true)
-//                L.e(inputConnection.performEditorAction(EditorInfo.IME_ACTION_SEARCH))
+                val inputConnection = BaseInputConnection(it, true)
+                L.e(inputConnection.performEditorAction(EditorInfo.IME_ACTION_SEARCH))*/
             }
         }
 

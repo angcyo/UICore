@@ -4,8 +4,6 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.BaseAccessibilityService
 import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.action.HandleResult
-import com.angcyo.core.component.accessibility.action.arg
-import com.angcyo.core.component.accessibility.click
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
 
 /**
@@ -14,7 +12,7 @@ import com.angcyo.core.component.accessibility.parse.ConstraintBean
  * @date 2020/09/21
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class TouchAction : BaseAction() {
+class TouchAction : BaseTouchAction() {
 
     init {
         handleAction = ConstraintBean.ACTION_TOUCH
@@ -27,11 +25,7 @@ class TouchAction : BaseAction() {
         handleNodeList: List<AccessibilityNodeInfoCompat>,
         handleResult: HandleResult
     ): Boolean {
-        return service.gesture.click(
-            p1.x,
-            p1.y,
-            autoParseAction.getGestureStartTime(arg?.arg(1))
-        ).apply {
+        return click(autoParseAction, service, p1.x, p1.y).apply {
             autoParseAction.handleActionLog("touch[$p1]:$this")
         }
     }
