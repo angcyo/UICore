@@ -37,6 +37,10 @@ class KeyAction : BaseAction() {
         if (keyCode > 0) {
             doBack {
                 try {
+                    //This method can not be called from the main application thread
+
+                    //发送给其他应用程序需要权限:
+                    //Injecting to another application requires INJECT_EVENTS permission
                     val inst = Instrumentation()
                     inst.sendKeyDownUpSync(keyCode)
                 } catch (e: Exception) {

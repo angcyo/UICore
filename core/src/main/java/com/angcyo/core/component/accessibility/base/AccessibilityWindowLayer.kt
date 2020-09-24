@@ -1,7 +1,9 @@
 package com.angcyo.core.component.accessibility.base
 
+import android.app.Instrumentation
 import android.graphics.Color
 import android.graphics.RectF
+import android.view.KeyEvent
 import android.view.WindowManager
 import com.angcyo.core.R
 import com.angcyo.core.component.accessibility.AccessibilityHelper
@@ -163,6 +165,16 @@ object AccessibilityWindowLayer : ILayer() {
                 TouchTipLayer.showTouch(0.9162f, 0.9762f)
                 //TouchTipLayer.showMove(0.5f, 0.5f, 0.5f, 0.3f)
                 //TouchTipLayer.showMove(0.3f, 0.5f, 0.5f, 0.5f)
+
+                //发送键盘
+                doBack {
+                    try {
+                        val inst = Instrumentation()
+                        inst.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
 
                 /*//测试手势点击 "touch:0.9192,0.9842"
                     val p1 = PointF(_screenWidth * 0.9192f, _screenHeight * 0.9842f)
