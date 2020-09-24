@@ -5,7 +5,6 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import com.angcyo.drawable.base.AbsDslDrawable
-import com.angcyo.library.ex.loop
 import com.angcyo.library.ex.toColorInt
 import kotlin.math.max
 
@@ -34,6 +33,9 @@ class SkeletonDrawable : AbsDslDrawable() {
 
     /**激活光线特效*/
     var enableLight = true
+
+    /**是否根据剩余空间, 自动循环补齐*/
+    var infiniteMode = true
 
     init {
 //        loadNormalSkeleton()
@@ -71,50 +73,48 @@ class SkeletonDrawable : AbsDslDrawable() {
         val r5h = r2h
         val r5t = r1h + r1t - r5h
 
-        loop(8) {
-            rootGroup.vertical {
-                horizontal {
-                    group {
-                        rect {
-                            left = "$r1l"
-                            top = "$r1t"
-                            width = "$r1w"
-                            height = "$r1h"
-                        }
-                    }
-                    vertical {
-                        rect("2dp") {
-                            left = "$r2l"
-                            top = "$r2t"
-                            width = "$r2w"
-                            height = "$r2h"
-                        }
-                        rect("2dp") {
-                            left = "$r3l"
-                            top = "$r3t"
-                            width = "$r3w"
-                            height = "$r3h"
-                        }
-                        rect("2dp") {
-                            left = "$r4l"
-                            top = "$r4t"
-                            width = "$r4w"
-                            height = "$r4h"
-                        }
-                        rect("2dp") {
-                            left = "$r5l"
-                            top = "$r5t"
-                            width = "$r5w"
-                            height = "$r5h"
-                        }
-                    }
-                }
+        rootGroup.vertical {
+            horizontal {
                 group {
-                    line {
+                    rect {
                         left = "$r1l"
                         top = "$r1t"
-                        width = "${1 - r1l * 2}"
+                        width = "$r1w"
+                        height = "$r1h"
                     }
+                }
+                vertical {
+                    rect("2dp") {
+                        left = "$r2l"
+                        top = "$r2t"
+                        width = "$r2w"
+                        height = "$r2h"
+                    }
+                    rect("2dp") {
+                        left = "$r3l"
+                        top = "$r3t"
+                        width = "$r3w"
+                        height = "$r3h"
+                    }
+                    rect("2dp") {
+                        left = "$r4l"
+                        top = "$r4t"
+                        width = "$r4w"
+                        height = "$r4h"
+                    }
+                    rect("2dp") {
+                        left = "$r5l"
+                        top = "$r5t"
+                        width = "$r5w"
+                        height = "$r5h"
+                    }
+                }
+            }
+            group {
+                line {
+                    left = "$r1l"
+                    top = "$r1t"
+                    width = "${1 - r1l * 2}"
                 }
             }
         }
@@ -171,94 +171,92 @@ class SkeletonDrawable : AbsDslDrawable() {
         val r8t = r7t
         val r8h = r1h
 
-        loop(6) {
-            rootGroup.vertical {
-                horizontal {
-                    group {
-                        circle("$c1r") {
-                            left = "$c1l"
-                            top = "$c1t"
+        rootGroup.vertical {
+            horizontal {
+                group {
+                    circle("$c1r") {
+                        left = "$c1l"
+                        top = "$c1t"
+                    }
+                }
+                vertical {
+                    horizontal {
+                        group {
+                            circle("$c2r") {
+                                left = "$c2l"
+                                top = "$c2t"
+                            }
+                        }
+                        horizontal {
+                            vertical {
+                                rect("2dp") {
+                                    left = "$r1l"
+                                    top = "$r1t"
+                                    width = "$r1w"
+                                    height = "$r1h"
+                                }
+                                rect("2dp") {
+                                    left = "$r2l"
+                                    top = "$r2t"
+                                    width = "$r2w"
+                                    height = "$r2h"
+                                }
+                            }
+                            group {
+                                rect("2dp") {
+                                    left = "$r3l"
+                                    top = "$r3t"
+                                    width = "$r3w"
+                                    height = "$r3h"
+                                }
+                            }
                         }
                     }
-                    vertical {
-                        horizontal {
-                            group {
-                                circle("$c2r") {
-                                    left = "$c2l"
-                                    top = "$c2t"
-                                }
-                            }
-                            horizontal {
-                                vertical {
-                                    rect("2dp") {
-                                        left = "$r1l"
-                                        top = "$r1t"
-                                        width = "$r1w"
-                                        height = "$r1h"
-                                    }
-                                    rect("2dp") {
-                                        left = "$r2l"
-                                        top = "$r2t"
-                                        width = "$r2w"
-                                        height = "$r2h"
-                                    }
-                                }
-                                group {
-                                    rect("2dp") {
-                                        left = "$r3l"
-                                        top = "$r3t"
-                                        width = "$r3w"
-                                        height = "$r3h"
-                                    }
-                                }
-                            }
+                    group {
+                        rect("2dp") {
+                            left = "$r4l"
+                            top = "$r4t"
+                            width = "$r4w"
+                            height = "$r4h"
                         }
-                        group {
-                            rect("2dp") {
-                                left = "$r4l"
-                                top = "$r4t"
-                                width = "$r4w"
-                                height = "$r4h"
-                            }
+                    }
+                    group {
+                        rect("2dp") {
+                            left = "$r5l"
+                            top = "$r5t"
+                            width = "$r5w"
+                            height = "$r5h"
                         }
-                        group {
-                            rect("2dp") {
-                                left = "$r5l"
-                                top = "$r5t"
-                                width = "$r5w"
-                                height = "$r5h"
-                            }
+                    }
+                    group {
+                        rect("2dp") {
+                            left = "$r6l"
+                            top = "$r6t"
+                            width = "$r6w"
+                            height = "$r6h"
                         }
-                        group {
-                            rect("2dp") {
-                                left = "$r6l"
-                                top = "$r6t"
-                                width = "$r6w"
-                                height = "$r6h"
-                            }
+                    }
+                    group {
+                        rect("2dp") {
+                            left = "$r7l"
+                            top = "$r7t"
+                            width = "$r7w"
+                            height = "$r7h"
                         }
-                        group {
-                            rect("2dp") {
-                                left = "$r7l"
-                                top = "$r7t"
-                                width = "$r7w"
-                                height = "$r7h"
-                            }
-                            rect("2dp") {
-                                left = "$r8l"
-                                top = "$r8t"
-                                width = "$r8w"
-                                height = "$r8h"
-                            }
+                        rect("2dp") {
+                            left = "$r8l"
+                            top = "$r8t"
+                            width = "$r8w"
+                            height = "$r8h"
                         }
                     }
                 }
-                group {
-                    line {
-                        left = "$c1l"
-                        top = "$c1t"
-                        width = "${1 - c1l * 2}"
-                    }
+            }
+            group {
+                line {
+                    left = "$c1l"
+                    top = "$c1t"
+                    width = "${1 - c1l * 2}"
                 }
             }
         }
@@ -282,6 +280,8 @@ class SkeletonDrawable : AbsDslDrawable() {
         _linearGradientMatrix = Matrix()
     }
 
+    //当前布局的坐标参数
+    val _layoutParams = LayoutParams()
     override fun draw(canvas: Canvas) {
         if (enableLight) {
             textPaint.shader = _linearGradient
@@ -289,9 +289,27 @@ class SkeletonDrawable : AbsDslDrawable() {
             textPaint.shader = null
         }
 
-        //当前布局的坐标参数
-        val layoutParams = LayoutParams()
-        _drawGroup(canvas, layoutParams, rootGroup)
+        _layoutParams.reset()
+        _drawGroup(canvas, _layoutParams, rootGroup)
+        if (infiniteMode) {
+            if (rootGroup.orientation == LinearLayout.VERTICAL) {
+                var top = _layoutParams.top + _layoutParams.useHeight
+                while (top < viewHeight - paddingBottom) {
+                    _layoutParams.reset()
+                    _layoutParams.top = top
+                    _drawGroup(canvas, _layoutParams, rootGroup)
+                    top += _layoutParams.useHeight
+                }
+            } else if (rootGroup.orientation == LinearLayout.HORIZONTAL) {
+                var left = _layoutParams.left
+                while (left < viewWidth - paddingRight) {
+                    _layoutParams.reset()
+                    _layoutParams.left = left
+                    _drawGroup(canvas, _layoutParams, rootGroup)
+                    left += _layoutParams.useWidth
+                }
+            }
+        }
 
         if (enableLight) {
             if (_translate <= 2 * viewWidth) {
@@ -308,6 +326,7 @@ class SkeletonDrawable : AbsDslDrawable() {
         }
     }
 
+    val _groupLayoutParams = LayoutParams()
     fun _drawGroup(canvas: Canvas, layoutParams: LayoutParams, groupBean: SkeletonGroupBean) {
 
         groupBean.skeletonList?.forEach {
@@ -319,7 +338,9 @@ class SkeletonDrawable : AbsDslDrawable() {
         }
 
         val orientation = groupBean.orientation
-        val groupLayoutParams = LayoutParams(layoutParams.left, layoutParams.top)
+
+        var groupLeft = layoutParams.left
+        var groupTop = layoutParams.top
 
         var maxUsedWidth = 0f
         var maxUsedHeight = 0f
@@ -328,23 +349,33 @@ class SkeletonDrawable : AbsDslDrawable() {
         var allUseHeight = 0f
 
         groupBean.groupList?.forEach {
-            _drawGroup(canvas, groupLayoutParams, it)
+            _groupLayoutParams.left = groupLeft
+            _groupLayoutParams.top = groupTop
+            _drawGroup(canvas, _groupLayoutParams, it)
 
-            allUseWidth += groupLayoutParams.useWidth
-            allUseHeight += groupLayoutParams.useHeight
+            allUseWidth += _groupLayoutParams.useWidth
+            allUseHeight += _groupLayoutParams.useHeight
 
-            maxUsedWidth = max(maxUsedWidth, groupLayoutParams.useWidth)
-            maxUsedHeight = max(maxUsedHeight, groupLayoutParams.useHeight)
+            maxUsedWidth = max(maxUsedWidth, _groupLayoutParams.useWidth)
+            maxUsedHeight = max(maxUsedHeight, _groupLayoutParams.useHeight)
 
             //根据方向, 进行位置偏移
             if (orientation == LinearLayout.VERTICAL) {
-                groupLayoutParams.top += groupLayoutParams.useHeight
-            } else if (orientation == LinearLayout.HORIZONTAL) {
-                groupLayoutParams.left += groupLayoutParams.useWidth
-            }
+                groupTop += _groupLayoutParams.useHeight
 
-            if (groupLayoutParams.top > viewHeight) {
-                return@forEach
+                if (groupTop > viewHeight) {
+                    return@forEach
+                }
+            } else if (orientation == LinearLayout.HORIZONTAL) {
+                groupLeft += _groupLayoutParams.useWidth
+
+                if (groupLeft > viewWidth) {
+                    return@forEach
+                }
+            } else {
+                if (groupLeft > viewWidth || groupTop > viewHeight) {
+                    return@forEach
+                }
             }
         }
 
@@ -366,15 +397,15 @@ class SkeletonDrawable : AbsDslDrawable() {
         textPaint.style = Paint.Style.FILL
         textPaint.strokeWidth = 0f
 
-        val useLeft = skeletonBean.left.layoutSize(viewWidth, viewHeight)
-        val useTop = skeletonBean.top.layoutSize(viewWidth, viewHeight)
+        val useLeft = skeletonBean.left.layoutSize(viewDrawWidth, viewDrawHeight)
+        val useTop = skeletonBean.top.layoutSize(viewDrawWidth, viewDrawHeight)
 
         var left = layoutParams.left + useLeft
         var top = layoutParams.top + useTop
-        val width = skeletonBean.width.layoutSize(viewWidth, viewHeight)
-        val height = skeletonBean.height.layoutSize(viewWidth, viewHeight)
+        val width = skeletonBean.width.layoutSize(viewDrawWidth, viewDrawHeight)
+        val height = skeletonBean.height.layoutSize(viewDrawWidth, viewDrawHeight)
 
-        val size = skeletonBean.size.layoutSize(viewWidth, viewHeight)
+        val size = skeletonBean.size.layoutSize(viewDrawWidth, viewDrawHeight)
 
         layoutParams.useWidth = 0f
         layoutParams.useHeight = 0f
@@ -441,4 +472,11 @@ class SkeletonDrawable : AbsDslDrawable() {
         var useWidth: Float = 0f,
         var useHeight: Float = 0f
     )
+
+    fun LayoutParams.reset() {
+        left = paddingLeft.toFloat()
+        top = paddingTop.toFloat()
+        useWidth = 0f
+        useHeight = 0f
+    }
 }

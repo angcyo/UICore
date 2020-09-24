@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
+import com.angcyo.library.L
 import com.angcyo.library.ex.dp
 
 
@@ -160,6 +161,7 @@ abstract class AbsDslDrawable : Drawable() {
 
     override fun onBoundsChange(bounds: Rect?) {
         super.onBoundsChange(bounds)
+        L.v("bound change:$bounds")
     }
 
     override fun onLevelChange(level: Int): Boolean {
