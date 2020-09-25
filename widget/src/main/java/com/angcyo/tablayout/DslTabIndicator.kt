@@ -72,6 +72,7 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
      * 40dp: 固定值
      * */
     var indicatorWidth = ViewGroup.LayoutParams.MATCH_PARENT
+
     /**宽度补偿*/
     var indicatorWidthOffset = 0
 
@@ -82,11 +83,13 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
      * 40dp: 固定值
      * */
     var indicatorHeight = 3 * dpi
+
     /**高度补偿*/
     var indicatorHeightOffset = 0
 
     /**XY轴方向补偿*/
     var indicatorXOffset = 0
+
     /**会根据[indicatorStyle]自动取负值*/
     var indicatorYOffset = 2 * dpi
 
@@ -254,14 +257,8 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
                 //有指定
                 if (childView is ViewGroup && contentIndex in 0 until childView.childCount) {
                     val contentChildView = childView.getChildAt(contentIndex)
-
-                    val contentLp = contentChildView.layoutParams
-                    val contentLeftMargin =
-                        (contentLp as? ViewGroup.MarginLayoutParams)?.leftMargin ?: 0
-
                     result =
-                        childView.left + childView.paddingLeft +
-                                contentLeftMargin + contentChildView.paddingLeft + contentChildView.viewDrawWidth / 2
+                        childView.left + contentChildView.left + contentChildView.paddingLeft + contentChildView.viewDrawWidth / 2
                 }
             } else {
                 //没有指定
