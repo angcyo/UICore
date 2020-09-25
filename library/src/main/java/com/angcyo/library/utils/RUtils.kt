@@ -327,14 +327,14 @@ object RUtils {
 
     /**支持负数*/
     fun getLongNumFromStr(str: String?): Long? =
-        str?.patternList("[-]*\\d+")?.firstOrNull()?.toLongOrNull()
+        str?.patternList("[-]?\\d+")?.firstOrNull()?.toLongOrNull()
 
     /**
      * "V>=0.89-.128 89.128"
      * 支持正负浮点数
      * */
     fun getFloatNumFromStr(str: String?): Float? =
-        str?.patternList("[-]*[\\d.]*\\d+")?.firstOrNull()?.toFloatOrNull()
+        str?.patternList("[-]?[\\d.]*\\d+")?.firstOrNull()?.toFloatOrNull()
 
     /**
      * 修复:
