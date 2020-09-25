@@ -54,6 +54,13 @@ data class ConstraintBean(
      * */
     var wordTextIndexList: List<String>? = null,
 
+    /**当节点中不包含文本列表[notTextList]时,
+     * 则匹配成功[根节点], 或者执行[noActionList]
+     * */
+    var notTextList: List<String>? = null,
+    var wordNotTextIndexList: List<String>? = null,
+    var notIdList: List<Int>? = null,
+
     /**
      * 用[1]表示上述[textList]字段中对应的是id文本, 否则就是普通文本.一一对应的关系.
      * 可以是 完整的id, 也可以是 gj4.

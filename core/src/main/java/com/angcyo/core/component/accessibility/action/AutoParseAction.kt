@@ -345,16 +345,18 @@ open class AutoParseAction : BaseAccessibilityAction() {
             parseResult.resultHandleNodeList() ?: emptyList() //parseResult.nodeList
 
         //需要执行的动作
-        val actionList: List<String>? = if (parseResult.isHaveCondition()) {
-            if (parseResult.conditionNodeList?.isEmpty() == true) {
-                //筛选后, 节点为空
-                constraintBean.noActionList
-            } else {
-                constraintBean.actionList
+        val actionList: List<String>? = when {
+            parseResult.notTextMatch -> constraintBean.noActionList
+            parseResult.isHaveCondition() -> {
+                if (parseResult.conditionNodeList?.isEmpty() == true) {
+                    //筛选后, 节点为空
+                    constraintBean.noActionList
+                } else {
+                    constraintBean.actionList
+                }
             }
-        } else {
             /*未开启筛选条件*/
-            constraintBean.actionList
+            else -> constraintBean.actionList
         }
 
         //获取到的文本列表
@@ -368,7 +370,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
         //过滤需要处理的节点列表
         val handleNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
-        if (constraintBean.handleNodeList.isListEmpty()) {
+        if (parseResult.notTextMatch || constraintBean.handleNodeList.isListEmpty()) {
             handleNodeList.addAll(nodeList)
         } else {
             constraintBean.handleNodeList?.forEach {

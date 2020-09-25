@@ -25,11 +25,15 @@ data class ParseResult(
     /**条件筛选过滤后的节点集合.
      * 如果为null, 表示没有开启条件过滤
      * */
-    var conditionNodeList: MutableList<AccessibilityNodeInfoCompat>? = null
+    var conditionNodeList: MutableList<AccessibilityNodeInfoCompat>? = null,
+
+    /**是否是[notTextList]匹配的结果*/
+    var notTextMatch: Boolean = false
 )
 
 /**是否开启了筛选条件*/
 fun ParseResult.isHaveCondition() = conditionNodeList != null
 
 /**返回需要处理的节点列表*/
-fun ParseResult.resultHandleNodeList() = if (isHaveCondition()) conditionNodeList else nodeList
+fun ParseResult.resultHandleNodeList() =
+    if (notTextMatch) nodeList else if (isHaveCondition()) conditionNodeList else nodeList

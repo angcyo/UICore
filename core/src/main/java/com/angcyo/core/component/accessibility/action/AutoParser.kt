@@ -608,6 +608,61 @@ open class AutoParser {
             }
         }
 
+        //不包含文本约束
+        val notTextList = autoParseAction.getWordTextList(
+            constraintBean.wordNotTextIndexList,
+            constraintBean.notTextList
+        )
+        if (notTextList != null) {
+            //只要满足不包含的文本即可
+            val packageName: String = idPackageName ?: service.packageName
+
+            var haveTextNode = false
+            for (index: Int in notTextList.indices) {
+                val text = notTextList[index] ?: ""
+                //完整id 是需要包含包名的
+                val isIdText: Boolean = constraintBean.notIdList?.getOrNull(index) == 1
+                val subText: String? = if (isIdText) packageName.id(text) else text
+
+                val findList = rootNodeInfo.findNode() { nodeInfoCompat ->
+                    var findNode = -1
+                    if (isIdText) {
+                        //id 全等匹配
+                        val idName = nodeInfoCompat.viewIdName()
+                        findNode = if (subText == idName) {
+                            1
+                        } else {
+                            -1
+                        }
+                    } else {
+                        //文本包含匹配
+                        findNode = if (nodeInfoCompat.haveText(subText ?: "")) {
+                            1
+                        } else {
+                            -1
+                        }
+                    }
+                    findNode
+                }
+
+                if (findList.isNotEmpty()) {
+                    //不需要包含的文本, 却找到了对应文本的节点
+                    haveTextNode = true
+                    break
+                }
+            }
+
+            if (haveTextNode) {
+                //匹配失败, 则走正常流程
+            } else {
+                //特殊流程
+                result.add(rootNodeWrap)
+                parseResult.notTextMatch = true
+                parseResult.nodeList.addAll(result)
+                return
+            }
+        }
+
         if (constraintBean.isConstraintEmpty()) {
             //空约束返回[rootNodeInfo]
             result.add(rootNodeWrap)
