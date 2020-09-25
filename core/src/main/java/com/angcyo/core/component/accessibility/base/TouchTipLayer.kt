@@ -13,6 +13,7 @@ import com.angcyo.library.component.MainExecutor
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.abs
 import com.angcyo.widget.SkeletonView
+import kotlin.math.min
 
 /**
  *
@@ -108,35 +109,17 @@ object TouchTipLayer : ILayer() {
 
                         if (isHorizontal) {
                             //从左到右
-                            val ltr = x2 > x1
                             top = "$y1"
-                            if (ltr) {
-                                left = "$x1"
-                                cl = x2
-                                ct = y2
-                            } else {
-                                left = "$x2"
-                                cl = x1
-                                ct = y1
-                            }
+                            left = "${min(x1, x2)}"
+                            cl = x2
+                            ct = y2
                             width = "${(x2 - x1).abs()}"
                         } else {
-                            //从下到上
-                            val btt = y2 < y1
-
                             left = "$x1"
-
-                            if (btt) {
-                                top = "$y2"
-                                cl = x1
-                                ct = y1
-                            } else {
-                                top = "$y1"
-                                cl = x2
-                                ct = y2
-                            }
-
+                            top = "${min(y1, y2)}"
                             height = "${(y2 - y1).abs()}"
+                            cl = x2
+                            ct = y2
                         }
                     }
                     circle("0.01") {
