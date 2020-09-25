@@ -50,7 +50,7 @@ class UrlAction : BaseAction() {
         }
 
         //转换一下
-        targetUrl = autoParseAction.getWordTextList(targetUrl, targetUrl)
+        targetUrl = autoParseAction.getTextFromWord(targetUrl)
 
         //解析对应的url
         targetUrl?.let {

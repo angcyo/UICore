@@ -13,9 +13,12 @@ import com.angcyo.core.component.accessibility.parse.isOnlyPathConstraint
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.app
+import com.angcyo.library.ex.getOrNull2
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.isListEmpty
+import com.angcyo.library.ex.patternList
 import com.angcyo.library.utils.getFloatNum
+import com.angcyo.library.utils.getLongNum
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random.Default.nextBoolean
@@ -31,6 +34,7 @@ open class AutoParser {
 
     companion object {
 
+        /**需要被激活的[ConstraintId]临时存放*/
         val enableConstraintIdList = mutableListOf<Long>()
 
         fun enableConstraint(constraintId: Long, enable: Boolean = true) {
@@ -51,47 +55,68 @@ open class AutoParser {
         /**
          * [textList]优先从[wordList]集合中取值.
          * 支持表达式:
-         * $N $0将会替换为[wordList]索引为0的值.最大支持10000
+         * $N $0将会替换为[wordList]索引为0的值.
+         * $-2 表示倒数第二个
          * 1-4 取索引为[1-4]的值
          * 0--1 取索引为[0-倒数第1个]的值
          * -1 取倒数第1个的值
+         * [originTextList] 数据源
+         * [indexTextList] 包含匹配表达式的文本
          * */
-        fun parseWordTextList(originList: List<String>?, indexList: List<String>): List<String>? {
-            if (originList.isListEmpty()) {
+        fun parseWordTextList(
+            originTextList: List<String>?,
+            indexTextList: List<String>
+        ): List<String>? {
+            if (originTextList.isListEmpty()) {
                 return null
             }
 
-            val originList: List<String> = originList!!
-
+            val originList: List<String> = originTextList!!
             val result = mutableListOf<String>()
-            indexList.forEach { indexStr ->
-                if (indexStr.contains("$")) {
-                    //匹配 $表达式
 
-                    var target: String? = null
-                    for (i in 0..1_00_00) {
-                        val pattern = "$$i"
-                        if (indexStr.contains(pattern)) {
-                            target =
-                                (target ?: indexStr)
-                                    .replace(pattern, originList.getOrNull(i) ?: "")
+            for (indexText in indexTextList) {
+                if (!indexText.contains("$") &&
+                    !indexText.contains("~") &&
+                    !indexText.contains("-")
+                ) {
+                    //不符合规则的表达式
+                    result.add(indexText)
+                    continue
+                }
+
+                if (indexText.contains("$")) {
+                    //找出所有的$N
+                    val tList = indexText.patternList("\\$[-]?\\d+")
+                    if (tList.isEmpty()) {
+                        result.add(indexText)
+                    } else {
+                        //替换表达式后的文本
+                        var target: String? = indexText
+                        tList.forEach { exp ->
+                            //exp like this: $-999 $999
+                            val num = exp.getLongNum() ?: -1
+                            val originText = originList.getOrNull2(num.toInt())
+                            if (originText != null) {
+                                target = target?.replace(exp, originText)
+                            }
                         }
+                        target?.also { result.add(it) }
                     }
-                    target?.also { result.add(it) }
                 } else {
-                    val num = indexStr.toIntOrNull()
+                    val num = indexText.toIntOrNull()
 
                     if (num == null) {
-                        //匹配 [1-4] 范围
-                        var indexOf = indexStr.indexOf("~")
+                        //不是一个单纯的数字, 匹配 [1-4] 范围
+                        var indexOf = indexText.indexOf("~")
                         if (indexOf == -1) {
                             //未找到~号, 则使用-号
-                            indexOf = indexStr.indexOf("-")
+                            indexOf = indexText.indexOf("-")
                         }
                         if (indexOf != -1) {
-                            val startIndex = indexStr.substring(0, indexOf).toIntOrNull() ?: 0
+                            val startIndex = indexText.substring(0, indexOf).toIntOrNull() ?: 0
                             val endIndex =
-                                indexStr.substring(indexOf + 1, indexStr.length).toIntOrNull() ?: 0
+                                indexText.substring(indexOf + 1, indexText.length).toIntOrNull()
+                                    ?: 0
 
                             val fist =
                                 if (startIndex < 0) startIndex + originList.size else startIndex
@@ -99,15 +124,15 @@ open class AutoParser {
                                 if (endIndex < 0) endIndex + originList.size else endIndex
 
                             for (i in min(fist, second)..max(fist, second)) {
-                                originList.getOrNull(i)?.also {
+                                originList.getOrNull2(i)?.also {
                                     result.add(it)
                                 }
                             }
                         }
                     } else {
                         // 匹配 1, -1 索引
-                        originList.getOrNull(if (num < 0) num + originList.size else num)?.also {
-                            result.add(indexStr)
+                        originList.getOrNull2(num)?.also {
+                            result.add(indexText)
                         }
                     }
                 }
@@ -589,9 +614,9 @@ open class AutoParser {
         } else {
 
             //需要匹配的文本
-            val text: List<String?>? = autoParseAction.getTextList(constraintBean)
+            val textList: List<String?>? = autoParseAction.getTextList(constraintBean)
 
-            if (text == null) {
+            if (textList == null) {
                 //不约束文本, 单纯约束其他规则
                 if (constraintBean.isOnlyPathConstraint()) {
                     //单纯的path约束
@@ -642,14 +667,13 @@ open class AutoParser {
 
                 //列表中的所有文本是否都匹配通过
                 val matchMap = ArrayMap<Int, List<AccessibilityNodeInfoCompat>>()
-                for (index: Int in text.indices) {
+                for (index: Int in textList.indices) {
                     tempList = mutableListOf()
                     try {
-
+                        val text = textList[index] ?: ""
                         //完整id 是需要包含包名的
                         val isIdText: Boolean = constraintBean.idList?.getOrNull(index) == 1
-                        val subText: String? =
-                            if (isIdText) packageName.id(text[index]!!) else text[index]
+                        val subText: String? = if (isIdText) packageName.id(text) else text
 
                         if (!isIdText && subText == null) {
                             //text匹配模式下, null 匹配所有节点, 注意性能.
@@ -729,7 +753,7 @@ open class AutoParser {
 
                 //是否所有文本都匹配到了
                 var allTextMatch = true
-                for (index: Int in text.indices) {
+                for (index: Int in textList.indices) {
                     if (matchMap[index].isNullOrEmpty()) {
                         allTextMatch = false
                         break
@@ -738,7 +762,7 @@ open class AutoParser {
 
                 //全部匹配到, 将匹配到的node返回
                 if (allTextMatch) {
-                    for (index: Int in text.indices) {
+                    for (index: Int in textList.indices) {
                         matchMap[index]?.forEach {
                             if (!result.contains(it)) {
                                 result.add(it)

@@ -565,12 +565,13 @@ open class AutoParseAction : BaseAccessibilityAction() {
     /**
      * [wordIndex]
      * 支持表达式:
-     * $N $0将会替换为[wordList]索引为0的值.最大支持10000
+     * $N $0将会替换为[wordList]索引为0的值.
+     * $-2 表示倒数第二个
      * 1-4 取索引为[1-4]的值
      * 0--1 取索引为[0-倒数第1个]的值
      * -1 取倒数第1个的值
      * */
-    fun getWordTextList(wordIndex: String?, defaultText: String?): String? {
+    fun getTextFromWord(wordIndex: String?, defaultText: String? = wordIndex): String? {
         if (wordIndex.isNullOrEmpty()) {
             return defaultText
         }

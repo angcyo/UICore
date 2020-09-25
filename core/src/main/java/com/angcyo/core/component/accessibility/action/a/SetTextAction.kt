@@ -32,7 +32,7 @@ class SetTextAction : BaseAction() {
         val text = if (arg.isNullOrEmpty()) {
             autoParseAction.getInputText(constraintBean)
         } else {
-            autoParseAction.getWordTextList(arg, arg)
+            autoParseAction.getTextFromWord(arg)
         }
 
         handleNodeList.forEach {
