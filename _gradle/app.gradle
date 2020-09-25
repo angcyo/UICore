@@ -168,6 +168,13 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    //android.packageBuildConfig = false
+    //https://stackoverflow.com/questions/63072764/android-packagebuildconfig-false-is-deprecated
+    buildFeatures {
+        buildConfig = true
+    }
+
     /*Gradle3.0 以下的方法*/
 //    getApplicationVariants().all { variant ->
 //        variant.outputs.each { output ->
