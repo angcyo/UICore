@@ -32,7 +32,7 @@ open class DslBadgeDrawable : DslGradientDrawable() {
     /**角标文本颜色*/
     var badgeTextColor = Color.WHITE
 
-    /**角标的文本, 空字符串会绘制成小圆点*/
+    /**角标的文本, 空字符串会绘制成小圆点, null表示不绘制*/
     var badgeText: String? = null
 
     /**角标的文本大小*/

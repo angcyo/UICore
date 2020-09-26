@@ -168,7 +168,7 @@ open class DslTabBadge : DslBadgeDrawable() {
 
 /**角标绘制参数配置*/
 data class TabBadgeConfig(
-    /**角标的文本, 空字符串会绘制成小圆点*/
+    /**角标的文本, 空字符串会绘制成小圆点, null表示不绘制*/
     var badgeText: String? = null,
     /**重力*/
     var badgeGravity: Int = Gravity.CENTER,
