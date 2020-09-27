@@ -181,7 +181,7 @@ object RUtils {
         return try {
             Runtime.getRuntime().exec("su").outputStream != null
         } catch (e: IOException) {
-            e.printStackTrace()
+            L.w(e.message)
             false
         }
     }
