@@ -23,13 +23,13 @@ class SkeletonDrawable : AbsDslDrawable() {
 
     /**闪光颜色*/
     var lightColors =
-        intArrayOf("#E7E7E7".toColorInt(), "#E1E1E1".toColorInt(), "#E7E7E7".toColorInt())
+        intArrayOf("#E7E7E7".toColorInt(), "#E2E2E2".toColorInt(), "#E7E7E7".toColorInt())
 
     /**闪光旋转*/
     var lightRotate = 15f
 
     /**闪光步长,相对于宽度 */
-    var lightStep = 0.16f
+    var lightStep = 0.12f
 
     /**激活光线特效*/
     var enableLight = true
@@ -77,36 +77,36 @@ class SkeletonDrawable : AbsDslDrawable() {
             horizontal {
                 group {
                     rect {
-                        left = "$r1l"
-                        top = "$r1t"
-                        width = "$r1w"
-                        height = "$r1h"
+                        left = "$r1l w"
+                        top = "$r1t w"
+                        width = "$r1w w"
+                        height = "$r1h w"
                     }
                 }
                 vertical {
                     rect("2dp") {
-                        left = "$r2l"
-                        top = "$r2t"
-                        width = "$r2w"
-                        height = "$r2h"
+                        left = "$r2l w"
+                        top = "$r2t w"
+                        width = "$r2w w"
+                        height = "$r2h w"
                     }
                     rect("2dp") {
-                        left = "$r3l"
-                        top = "$r3t"
-                        width = "$r3w"
-                        height = "$r3h"
+                        left = "$r3l w"
+                        top = "$r3t w"
+                        width = "$r3w w"
+                        height = "$r3h w"
                     }
                     rect("2dp") {
-                        left = "$r4l"
-                        top = "$r4t"
-                        width = "$r4w"
-                        height = "$r4h"
+                        left = "$r4l w"
+                        top = "$r4t w"
+                        width = "$r4w w"
+                        height = "$r4h w"
                     }
                     rect("2dp") {
-                        left = "$r5l"
-                        top = "$r5t"
-                        width = "$r5w"
-                        height = "$r5h"
+                        left = "$r5l w"
+                        top = "$r5t w"
+                        width = "$r5w w"
+                        height = "$r5h w"
                     }
                 }
             }
@@ -178,88 +178,88 @@ class SkeletonDrawable : AbsDslDrawable() {
             horizontal {
                 group {
                     circle("$c1r") {
-                        left = "$c1l"
-                        top = "$c1t"
+                        left = "$c1l w"
+                        top = "$c1t w"
                     }
                 }
                 vertical {
                     horizontal {
                         group {
                             circle("$c2r") {
-                                left = "$c2l"
-                                top = "$c2t"
+                                left = "$c2l w"
+                                top = "$c2t w"
                             }
                         }
                         horizontal {
                             vertical {
                                 rect("2dp") {
-                                    left = "$r1l"
-                                    top = "$r1t"
-                                    width = "$r1w"
-                                    height = "$r1h"
+                                    left = "$r1l w"
+                                    top = "$r1t w"
+                                    width = "$r1w w"
+                                    height = "$r1h w"
                                 }
                                 rect("2dp") {
-                                    left = "$r2l"
-                                    top = "$r2t"
-                                    width = "$r2w"
-                                    height = "$r2h"
+                                    left = "$r2l w"
+                                    top = "$r2t w"
+                                    width = "$r2w w"
+                                    height = "$r2h w"
                                 }
                             }
                             group {
                                 rect("2dp") {
-                                    left = "$r3l"
-                                    top = "$r3t"
-                                    width = "$r3w"
-                                    height = "$r3h"
+                                    left = "$r3l w"
+                                    top = "$r3t w"
+                                    width = "$r3w w"
+                                    height = "$r3h w"
                                 }
                             }
                         }
                     }
                     group {
                         rect("2dp") {
-                            left = "$r4l"
-                            top = "$r4t"
-                            width = "$r4w"
-                            height = "$r4h"
+                            left = "$r4l w"
+                            top = "$r4t w"
+                            width = "$r4w w"
+                            height = "$r4h w"
                         }
                     }
                     group {
                         rect("2dp") {
-                            left = "$r5l"
-                            top = "$r5t"
-                            width = "$r5w"
-                            height = "$r5h"
+                            left = "$r5l w"
+                            top = "$r5t w"
+                            width = "$r5w w"
+                            height = "$r5h w"
                         }
                     }
                     group {
                         rect("2dp") {
-                            left = "$r6l"
-                            top = "$r6t"
-                            width = "$r6w"
-                            height = "$r6h"
+                            left = "$r6l w"
+                            top = "$r6t w"
+                            width = "$r6w w"
+                            height = "$r6h w"
                         }
                     }
                     group {
                         rect("2dp") {
-                            left = "$r7l"
-                            top = "$r7t"
-                            width = "$r7w"
-                            height = "$r7h"
+                            left = "$r7l w"
+                            top = "$r7t w"
+                            width = "$r7w w"
+                            height = "$r7h w"
                         }
                         rect("2dp") {
-                            left = "$r8l"
-                            top = "$r8t"
-                            width = "$r8w"
-                            height = "$r8h"
+                            left = "$r8l w"
+                            top = "$r8t w"
+                            width = "$r8w w"
+                            height = "$r8h w"
                         }
                     }
                 }
             }
             group {
                 line {
-                    left = "$l"
-                    top = "$t"
-                    width = "${1 - l * 2}"
+                    left = "$l w"
+                    top = "$t w"
+                    width = "${1 - l * 2} w"
                 }
             }
         }
@@ -284,7 +284,7 @@ class SkeletonDrawable : AbsDslDrawable() {
             0f,
             0f,
             lightColors,
-            floatArrayOf(0.4f, 0.5f, 0.6f),
+            floatArrayOf(0.3f, 0.5f, 0.7f),
             Shader.TileMode.CLAMP
         )
         _linearGradientMatrix = Matrix()
