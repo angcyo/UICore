@@ -174,6 +174,11 @@ data class ConstraintBean(
     var notActionList: List<String>? = null,
 
     /**
+     * 当[actionList]或[noActionList]执行失败后, 需要执行的约束检查.
+     * */
+    var not: List<ConstraintBean>? = null,
+
+    /**
      * [setText]时的输入数据集合, 随机从里面取一个.
      * 如果为null, 则从代码中随机产生
      * */

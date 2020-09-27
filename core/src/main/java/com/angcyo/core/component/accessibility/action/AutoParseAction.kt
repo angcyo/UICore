@@ -150,6 +150,18 @@ open class AutoParseAction : BaseAccessibilityAction() {
                     val handleResult: HandleResult =
                         handleAction(service, parseResult, onGetTextResult)
 
+                    if (!handleResult.result) {
+                        //执行失败后,
+                        if (parseResult.constraint.not != null) {
+                            handleResult.result = parseHandleAction(
+                                service,
+                                nodeList,
+                                parseResult.constraint.not,
+                                onGetTextResult
+                            )
+                        }
+                    }
+
                     //执行结果
                     result = handleResult.result || result
 
