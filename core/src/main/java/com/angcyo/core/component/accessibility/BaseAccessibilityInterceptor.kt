@@ -561,9 +561,10 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         } else if (runActionStatus == ACTION_STATUS_FINISH) {
             //流程结束
         }
-        onInterceptorFinish?.invoke(action, error)
-        //清空
+        val _finish = onInterceptorFinish
         onInterceptorFinish = null
+        _finish?.invoke(action, error)
+        //清空
         if (autoUninstall) {
             //注意调用顺序
             uninstall()
