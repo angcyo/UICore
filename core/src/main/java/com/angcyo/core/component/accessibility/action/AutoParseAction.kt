@@ -44,6 +44,9 @@ open class AutoParseAction : BaseAccessibilityAction() {
     //指令列表
     val cmdActionList = mutableListOf<BaseAction>()
 
+    /**[ActionBean.HANDLE_TYPE_ORDER2]顺序执行次数统计*/
+    val doOrderCount: ActionCount = ActionCount()
+
     init {
         cmdActionList.apply {
             add(BackAction())
@@ -189,6 +192,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
         nodeList: List<AccessibilityNodeInfo>
     ) {
         doActionCount.start()
+        doOrderCount.start()
+
         checkOtherEventCount.clear()
 
         if (doActionCount.isMaxLimit()) {
@@ -206,8 +211,11 @@ open class AutoParseAction : BaseAccessibilityAction() {
             val handleType = actionBean?.handleType
             val handleConstraintList: List<ConstraintBean> = when (handleType) {
                 ActionBean.HANDLE_TYPE_RANDOM -> constraintList.randomGet(1) //随机获取处理约束
-                ActionBean.HANDLE_TYPE_ORDER -> {
-                    val nextIndex: Int = ((doActionCount.count) % constraintList.size).toInt()
+                ActionBean.HANDLE_TYPE_ORDER, ActionBean.HANDLE_TYPE_ORDER2 -> {
+                    val count =
+                        if (handleType == ActionBean.HANDLE_TYPE_ORDER2) doOrderCount.count else doActionCount.count
+
+                    val nextIndex: Int = (count % constraintList.size).toInt()
                     val next: ConstraintBean? = constraintList.getOrNull(nextIndex)
 
                     if (next == null) {
@@ -225,6 +233,9 @@ open class AutoParseAction : BaseAccessibilityAction() {
                     handleGetTextResult(formKey, textList)
                 }
 
+            //计数
+            doOrderCount.doCount()
+
             //判断是否执行成功
             if (result) {
                 isFinish = true
@@ -240,7 +251,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             if (accessibilityInterceptor != null && actionMaxCount > 0) {
 
                 if (handleType == ActionBean.HANDLE_TYPE_RANDOM) {
-                    //随机[actionMaxCount]
+                    //随机设置[actionMaxCount]
                     actionMaxCount =
                         (actionMaxCount + actionMaxCount * nextInt(0, 100) / 100f).roundToLong()
                 }

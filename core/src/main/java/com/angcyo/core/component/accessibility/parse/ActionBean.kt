@@ -87,11 +87,14 @@ data class ActionBean(
     var onlyTopWindow: Boolean? = null
 ) {
     companion object {
-        const val HANDLE_TYPE_NONE = 0 //匹配执行, 匹配到谁, 谁就执行
-        const val HANDLE_TYPE_RANDOM = 1 //随机执行, 如果设置了[actionMaxCount],这个值也会随机设置
-        const val HANDLE_TYPE_ORDER = 2 //顺序执行
 
-        const val ERROR_HANDLE_TYPE_NEXT = 1 //异常后, 继续流程
+        /**[handle]中[constraintList]的处理方式*/
+        const val HANDLE_TYPE_NONE = 0    //匹配执行, 匹配到谁, 谁就执行
+        const val HANDLE_TYPE_RANDOM = 1  //随机执行, 这个模式下, [actionMaxCount]也会随机设置
+        const val HANDLE_TYPE_ORDER = 2   //顺序执行, 根据[doActionCount]计数
+        const val HANDLE_TYPE_ORDER2 = 3  //累积顺序执行, 不清空计数
+
+        const val ERROR_HANDLE_TYPE_NEXT = 1  //异常后, 继续流程
         const val ERROR_HANDLE_TYPE_STOP = -1 //异常后, 停止处理
     }
 }
