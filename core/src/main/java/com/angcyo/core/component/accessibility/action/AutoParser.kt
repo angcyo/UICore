@@ -10,8 +10,8 @@ import com.angcyo.core.component.accessibility.parse.ConditionBean
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
 import com.angcyo.core.component.accessibility.parse.isConstraintEmpty
 import com.angcyo.core.component.accessibility.parse.isOnlyPathConstraint
-import com.angcyo.library._screenHeight
-import com.angcyo.library._screenWidth
+import com.angcyo.library._contentHeight
+import com.angcyo.library._contentWidth
 import com.angcyo.library.app
 import com.angcyo.library.ex.getOrNull2
 import com.angcyo.library.ex.have
@@ -456,10 +456,10 @@ open class AutoParser {
     var _tempNodeRect = Rect()
 
     val maxWidth: Int
-        get() = max(_screenWidth, _rootNodeRect.width())
+        get() = _contentWidth
 
     val maxHeight: Int
-        get() = max(_screenHeight, _rootNodeRect.height())
+        get() = _contentHeight
 
     /**返回当前界面, 是否包含[constraintList]约束的Node信息
      * [onTargetResult] 当找到目标时, 通过此方法回调目标给调用者. first:对应的约束, second:约束对应的node集合

@@ -160,11 +160,15 @@ object AccessibilityWindowLayer : ILayer() {
             //测试按钮
             visible(R.id.test_button, isDebugType())
             throttleClick(R.id.test_button) {
+                //TouchTipLayer.showTouch(0.2f, 0f)
 
                 //测试手势线
-                //TouchTipLayer.showTouch(0.9162f, 0.9762f)
+                //TouchTipLayer.showTouch(0.9162f, 0.9762f)   //1.
+                TouchTipLayer.showTouch(0.9162f, 0.9562f)   //2.
+                //TouchTipLayer.showTouch(0.9162f, 0.9362f)   //3.
+
                 //TouchTipLayer.showMove(0.5f, 0.5f, 0.5f, 0.3f)
-                TouchTipLayer.showMove(0.3f, 0.5f, 0.5f, 0.5f)
+                //TouchTipLayer.showMove(0.3f, 0.5f, 0.5f, 0.5f)
 
                 //发送键盘
                 /*doBack {

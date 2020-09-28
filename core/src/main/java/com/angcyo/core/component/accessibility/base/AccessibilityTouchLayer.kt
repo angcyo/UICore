@@ -88,6 +88,8 @@ object AccessibilityTouchLayer : ILayer() {
 
                     postDelay(3_00) {
                         BaseAccessibilityService.lastService?.gesture?.click(x, y)
+                        TouchTipLayer.showTouch(x, y)
+
                         L.w("touch:", x, ",", y)
                     }
                 }

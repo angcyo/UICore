@@ -8,6 +8,9 @@ import com.angcyo.drawable.skeleton.line
 import com.angcyo.ilayer.ILayer
 import com.angcyo.ilayer.container.OffsetPosition
 import com.angcyo.ilayer.container.WindowContainer
+import com.angcyo.library.Screen
+import com.angcyo.library._satusBarHeight
+import com.angcyo.library._screenHeight
 import com.angcyo.library.app
 import com.angcyo.library.component.MainExecutor
 import com.angcyo.library.ex._color
@@ -29,10 +32,11 @@ object TouchTipLayer : ILayer() {
         defaultOffsetPosition = OffsetPosition(offsetX = 0f, offsetY = 0f)
         wmLayoutParams.apply {
             width = -1
-            height = -1
-            flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or  //不获取焦点
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or  //不接受触摸屏事件
-                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN  //占满整个屏幕
+            height = Screen.contentHeight
+            flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or    //不获取焦点
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or    //不接受触摸屏事件
+                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or //占满整个屏幕
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS    //允许到屏幕之外
         }
     }
 
@@ -41,11 +45,11 @@ object TouchTipLayer : ILayer() {
     }
 
     /**多少毫秒后, 自动隐藏*/
-    var showTime: Long = 800
+    var showTime: Long = 800 /** 10*/
 
     /**圆点的半径*/
     var cr = 0.012f
-    var lineWidth = 2f
+    var lineWidth = 1.5f
     var lineWidth2 = lineWidth * 3.5
     var cColor = _color(R.color.colorAccent)
     var lineColor = Color.GREEN                        //"92C3FE".toColor()
@@ -53,7 +57,7 @@ object TouchTipLayer : ILayer() {
 
     init {
         iLayerLayoutId = R.layout.lib_layout_touch_tip
-        enableDrag = false
+        enableDrag = true
         autoRestorePosition = false
     }
 
@@ -70,6 +74,9 @@ object TouchTipLayer : ILayer() {
      * [x] [y] 请使用比例值*/
     fun showTouch(x: Float, y: Float) {
         renderLayer = {
+            post {
+                _windowContainer.updateLayout(this@TouchTipLayer)
+            }
             v<SkeletonView>(R.id.lib_skeleton_view)?.skeletonDrawable {
                 infiniteMode = false
                 enableLight = false
@@ -102,6 +109,9 @@ object TouchTipLayer : ILayer() {
     /**显示移动提示*/
     fun showMove(x1: Float, y1: Float, x2: Float, y2: Float) {
         renderLayer = {
+            post {
+                _windowContainer.updateLayout(this@TouchTipLayer)
+            }
             v<SkeletonView>(R.id.lib_skeleton_view)?.skeletonDrawable {
                 infiniteMode = false
                 enableLight = false

@@ -5,6 +5,8 @@ import com.angcyo.core.component.accessibility.*
 import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.action.arg
 import com.angcyo.core.component.accessibility.base.TouchTipLayer
+import com.angcyo.library._contentHeight
+import com.angcyo.library._contentWidth
 import com.angcyo.library.ex.reset
 
 /**
@@ -30,7 +32,7 @@ abstract class BaseTouchAction : BaseAction() {
 
     override fun parseAction(autoParseAction: AutoParseAction, action: String?) {
         super.parseAction(autoParseAction, action)
-        autoParseAction.parsePoint(arg?.arg()).let {
+        autoParseAction.parsePoint(arg?.arg(), _contentWidth, _contentHeight).let {
             p1.set(it[0])
             p2.set(it[1])
         }

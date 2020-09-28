@@ -78,6 +78,7 @@ class JumpAction : BaseAction() {
 
                 val jumpOut = autoParseAction.actionBean?.check?.jumpOut
                 if (jumpOut == null) {
+                    //未指定跳转超限的处理, 则直接完成
                     value = true
                     handleResult.finish = true
                 } else {
