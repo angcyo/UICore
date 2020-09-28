@@ -21,18 +21,18 @@ import kotlin.math.min
 object Screen {
 
     /**屏幕可见区域宽度*/
-    var visibleWidth: Int = _screenWidth
+    internal var visibleWidth: Int = _screenWidth
 
     /**屏幕可见区域高度, 包含状态栏和导航栏*/
-    var visibleHeight: Int = _screenHeight
+    internal var visibleHeight: Int = _screenHeight
 
     /**内容区域的宽度*/
-    var contentWidth: Int = _screenWidth
+    internal var contentWidth: Int = _screenWidth
 
     /**内容区域的高度, 不包含导航栏*/
-    var contentHeight: Int = _screenHeight
+    internal var contentHeight: Int = _screenHeight
 
-    val _metrics = DisplayMetrics()
+    internal val _metrics = DisplayMetrics()
 
     fun init(context: Context) {
         val windowManager: WindowManager =
