@@ -52,8 +52,7 @@ fun Context.navBarHeight(): Int {
         val decorRect = Rect()
         val windowRect = Rect()
         window.decorView.getGlobalVisibleRect(decorRect)
-        window.findViewById<View>(Window.ID_ANDROID_CONTENT)
-            .getGlobalVisibleRect(windowRect)
+        window.findViewById<View>(Window.ID_ANDROID_CONTENT).getGlobalVisibleRect(windowRect)
         result = if (decorRect.width() > decorRect.height()) { //横屏
             decorRect.width() - windowRect.width()
         } else { //竖屏

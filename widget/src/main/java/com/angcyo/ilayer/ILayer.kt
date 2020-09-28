@@ -126,7 +126,10 @@ open class ILayer {
     /**拖拽约束*/
     var dragContainer: IDragConstraint? = null
 
-    /**位置拖动*/
+    /**位置拖动
+     * [dx] x轴方向移动的距离
+     * [dy] y轴方向移动的距离
+     * */
     open fun onDragBy(dx: Float, dy: Float, end: Boolean) {
         val container = _container
         if (container is BaseContainer) {

@@ -35,6 +35,10 @@ abstract class BaseDrawableView(context: Context, attributeSet: AttributeSet? = 
         return super.verifyDrawable(who) || drawables.all { it == who }
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
         if (changed) {

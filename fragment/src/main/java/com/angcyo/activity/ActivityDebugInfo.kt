@@ -11,6 +11,7 @@ import android.os.Build
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
+import android.util.DisplayMetrics
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -21,6 +22,7 @@ import androidx.fragment.app.FragmentManager
 import com.angcyo.fragment.R
 import com.angcyo.http.base.toJson
 import com.angcyo.library.L
+import com.angcyo.library._isNavigationBarShow
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.getFieldValue
 import com.angcyo.widget.base.onDoubleTap
@@ -114,7 +116,12 @@ fun Activity.showDebugInfoView(
         fun showDetailText(textView: TextView) {
             showNormal(textView, false)
 
+            //real
+            val realMetrics = DisplayMetrics()
+            windowManager.defaultDisplay.getRealMetrics(realMetrics)
+
             val displayMetrics = resources.displayMetrics
+
             val widthDp: Float = displayMetrics.widthPixels / displayMetrics.density
             val heightDp: Float = displayMetrics.heightPixels / displayMetrics.density
 
@@ -142,10 +149,18 @@ fun Activity.showDebugInfoView(
                 append("sh:").append(statusBarHeight).append(" ")
                     .append(statusBarHeight / displayMetrics.density)
                 append(" nh:").append(navBarHeight).append(" ")
-                    .appendln(navBarHeight / displayMetrics.density)
+                    .append(getNavBarHeight())
+                    .append(" ")
+                    .append(getNavBarHeight() / displayMetrics.density)
+                    .append(" ")
+                    .append(_isNavigationBarShow)
+                    .appendLine()
 
                 append("wp:").append(displayMetrics.widthPixels)
                 append(" hp:").appendln(displayMetrics.heightPixels)
+
+                append("realW:").append(realMetrics.widthPixels)
+                append(" realH:").appendln(realMetrics.heightPixels)
 
                 append("decorW:").append(decorView.measuredWidth)
                 append(" decorH:").appendln(decorView.measuredHeight)

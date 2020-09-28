@@ -13,6 +13,7 @@ import com.angcyo.base.*
 import com.angcyo.dslTargetIntentHandle
 import com.angcyo.fragment.R
 import com.angcyo.library.L
+import com.angcyo.library.Screen
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.library.utils.resultString
@@ -58,13 +59,29 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         onShowDebugInfoView(hasFocus)
     }
 
+    override fun onResume() {
+        super.onResume()
+        /*val config = resources.configuration
+        val appConfig = app().resources.configuration
+        L.w("config↓\nact:$config\napp:$appConfig")*/
+        Screen.init(this)
+    }
+
+    override fun onPostResume() {
+        super.onPostResume()
+        Screen.init(this)
+    }
+
     override fun onConfigurationChanged(newConfig: Configuration) {
+        val oldConfig = resources.configuration
         super.onConfigurationChanged(newConfig)
+        L.w("onConfigurationChanged↓\nold:$oldConfig\nnew:$newConfig")
         if (isDebug()) {
             baseDslViewHolder.postDelay(300) {
                 onShowDebugInfoView()
             }
         }
+        Screen.init(this)
     }
 
     open fun onShowDebugInfoView(show: Boolean = true) {
@@ -94,9 +111,11 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
 //            val runningTasks = am.getRunningTasks(Int.MAX_VALUE)
 
             L.i(
-                "${this.simpleHash()} new:$fromNew $intent pid:${Process.myPid()} uid:${Process.myUid()} call:${packageManager.getNameForUid(
-                    Binder.getCallingUid()
-                )}"
+                "${this.simpleHash()} new:$fromNew $intent pid:${Process.myPid()} uid:${Process.myUid()} call:${
+                    packageManager.getNameForUid(
+                        Binder.getCallingUid()
+                    )
+                }"
             )
         }
     }

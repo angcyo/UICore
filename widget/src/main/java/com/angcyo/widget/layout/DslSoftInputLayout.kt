@@ -457,7 +457,7 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
             _lastSoftInputHeight = height
         }
         if (action == ACTION_HIDE_SOFT_INPUT && action == _action) {
-            L.w("no op")
+            //L.w("no op!")
             return
         }
         if (keepEmojiState &&

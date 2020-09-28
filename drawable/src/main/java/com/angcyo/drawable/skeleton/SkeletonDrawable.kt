@@ -410,8 +410,8 @@ class SkeletonDrawable : AbsDslDrawable() {
         val useLeft = skeletonBean.left.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawWidth)
         val useTop = skeletonBean.top.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawHeight)
 
-        var left = layoutParams.left + useLeft
-        var top = layoutParams.top + useTop
+        val left = layoutParams.left + useLeft
+        val top = layoutParams.top + useTop
         val width = skeletonBean.width.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawWidth)
         val height = skeletonBean.height.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawHeight)
 

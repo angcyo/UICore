@@ -11,6 +11,7 @@ import com.angcyo.drawable.isLeft
 import com.angcyo.drawable.isTop
 import com.angcyo.ilayer.CancelLayer
 import com.angcyo.ilayer.ILayer
+import com.angcyo.library.L
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.widget.base.mH
@@ -118,6 +119,8 @@ class WindowContainer(context: Context) : BaseContainer(context) {
         } else {
             wmLayoutParams.y = (wmLayoutParams.y + dy).toInt()
         }
+
+        L.d("wm x:${wmLayoutParams.x} y:${wmLayoutParams.y} ${rootView.screenRect()}")
 
         if (end) {
             //保存位置
