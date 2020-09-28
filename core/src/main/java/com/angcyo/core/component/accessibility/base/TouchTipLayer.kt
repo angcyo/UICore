@@ -12,6 +12,7 @@ import com.angcyo.library.app
 import com.angcyo.library.component.MainExecutor
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.abs
+import com.angcyo.library.ex.alphaRatio
 import com.angcyo.widget.SkeletonView
 import kotlin.math.min
 
@@ -43,9 +44,12 @@ object TouchTipLayer : ILayer() {
     var showTime: Long = 800
 
     /**圆点的半径*/
-    var cr = "0.01"
+    var cr = 0.012f
+    var lineWidth = 2f
+    var lineWidth2 = lineWidth * 3.5
     var cColor = _color(R.color.colorAccent)
-    var lineColor = Color.GREEN
+    var lineColor = Color.GREEN                        //"92C3FE".toColor()
+    var bgColor = Color.WHITE.alphaRatio(0.8f)  //_color(R.color.transparent40)
 
     init {
         iLayerLayoutId = R.layout.lib_layout_touch_tip
@@ -74,15 +78,17 @@ object TouchTipLayer : ILayer() {
                         left = "0"
                         top = "$y"
                         width = "0.9999"
+                        size = "${lineWidth}dp"
                         fillColor = lineColor
                     }
                     line {
                         left = "$x"
                         top = "0"
                         height = "0.9999"
+                        size = "${lineWidth}dp"
                         fillColor = lineColor
                     }
-                    circle(cr) {
+                    circle("$cr") {
                         left = "$x"
                         top = "$y"
                         fillColor = cColor
@@ -102,27 +108,62 @@ object TouchTipLayer : ILayer() {
                 render {
                     var cl = 0f
                     var ct = 0f
-                    line {
-                        fillColor = lineColor
-                        //是否是横向
-                        val isHorizontal = (x2 - x1).abs() > (y2 - y1).abs()
+                    val isHorizontal = (x2 - x1).abs() > (y2 - y1).abs()
 
+                    val t: String
+                    val l: String
+
+                    //是否是横向
+                    if (isHorizontal) {
+                        //从左到右
+                        t = "$y1"
+                        l = "${min(x1, x2)}"
+                        cl = x2
+                        ct = y2
+                    } else {
+                        l = "$x1"
+                        t = "${min(y1, y2)}"
+                        cl = x2
+                        ct = y2
+                    }
+
+                    //bg
+                    line {
+                        fillColor = bgColor
+                        size = "${lineWidth2}dp"
+                        top = t
+                        left = l
+
+                        //是否是横向
                         if (isHorizontal) {
                             //从左到右
-                            top = "$y1"
-                            left = "${min(x1, x2)}"
-                            cl = x2
-                            ct = y2
                             width = "${(x2 - x1).abs()}"
                         } else {
-                            left = "$x1"
-                            top = "${min(y1, y2)}"
                             height = "${(y2 - y1).abs()}"
-                            cl = x2
-                            ct = y2
                         }
                     }
-                    circle("0.01") {
+                    circle("${cr * 2}") {
+                        left = "$cl"
+                        top = "$ct"
+                        fillColor = bgColor
+                    }
+
+                    //raw
+                    line {
+                        fillColor = lineColor
+                        size = "${lineWidth}dp"
+                        top = t
+                        left = l
+
+                        //是否是横向
+                        if (isHorizontal) {
+                            //从左到右
+                            width = "${(x2 - x1).abs()}"
+                        } else {
+                            height = "${(y2 - y1).abs()}"
+                        }
+                    }
+                    circle("$cr") {
                         left = "$cl"
                         top = "$ct"
                         fillColor = cColor

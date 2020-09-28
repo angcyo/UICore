@@ -425,7 +425,6 @@ class SkeletonDrawable : AbsDslDrawable() {
                 textPaint.strokeWidth = size
                 //画线
                 if (width > 0) {
-                    top += textPaint.strokeWidth / 2
                     canvas.drawLine(
                         left,
                         top,
@@ -440,9 +439,6 @@ class SkeletonDrawable : AbsDslDrawable() {
                 }
 
                 if (height > 0) {
-                    textPaint.strokeWidth = size
-
-                    left += textPaint.strokeWidth / 2
                     canvas.drawLine(
                         left,
                         top,

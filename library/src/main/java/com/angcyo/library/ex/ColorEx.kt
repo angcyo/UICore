@@ -63,12 +63,13 @@ fun evaluateColor(fraction: Float, startValue: Int, endValue: Int): Int {
 /**
  * 设置一个颜色的透明值, 并返回这个颜色值.
  *
- * @param alpha [0..255] 值越小,越透明
+ * @param alpha [0..255] 值越小,越透明.
  */
 fun Int.alpha(alpha: Int): Int {
     return ColorUtils.setAlphaComponent(this, MathUtils.clamp(alpha, 0, 255))
 }
 
+/**[alpha]不透明度比例, 值越大越不透明, 值越小越透明*/
 fun Int.alphaRatio(alpha: Float): Int {
     return alpha(alpha * 255)
 }

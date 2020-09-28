@@ -162,19 +162,19 @@ object AccessibilityWindowLayer : ILayer() {
             throttleClick(R.id.test_button) {
 
                 //测试手势线
-                TouchTipLayer.showTouch(0.9162f, 0.9762f)
+                //TouchTipLayer.showTouch(0.9162f, 0.9762f)
                 //TouchTipLayer.showMove(0.5f, 0.5f, 0.5f, 0.3f)
-                //TouchTipLayer.showMove(0.3f, 0.5f, 0.5f, 0.5f)
+                TouchTipLayer.showMove(0.3f, 0.5f, 0.5f, 0.5f)
 
                 //发送键盘
-                doBack {
+                /*doBack {
                     try {
                         val inst = Instrumentation()
                         inst.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER)
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
-                }
+                }*/
 
                 /*//测试手势点击 "touch:0.9192,0.9842"
                     val p1 = PointF(_screenWidth * 0.9192f, _screenHeight * 0.9842f)
