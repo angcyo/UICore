@@ -8,10 +8,7 @@ import com.angcyo.drawable.skeleton.line
 import com.angcyo.ilayer.ILayer
 import com.angcyo.ilayer.container.OffsetPosition
 import com.angcyo.ilayer.container.WindowContainer
-import com.angcyo.library.Screen
-import com.angcyo.library._satusBarHeight
-import com.angcyo.library._screenHeight
-import com.angcyo.library.app
+import com.angcyo.library.*
 import com.angcyo.library.component.MainExecutor
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.abs
@@ -32,7 +29,7 @@ object TouchTipLayer : ILayer() {
         defaultOffsetPosition = OffsetPosition(offsetX = 0f, offsetY = 0f)
         wmLayoutParams.apply {
             width = -1
-            height = Screen.contentHeight
+            height = _contentHeight
             flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or    //不获取焦点
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or    //不接受触摸屏事件
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or //占满整个屏幕
