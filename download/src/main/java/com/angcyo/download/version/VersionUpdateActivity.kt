@@ -6,7 +6,9 @@ import android.os.Bundle
 import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.base.dslAHelper
 import com.angcyo.download.R
+import com.angcyo.download.cancelDownload
 import com.angcyo.download.download
+import com.angcyo.download.getTaskStatus
 import com.angcyo.getData
 import com.angcyo.library.L
 import com.angcyo.library.app
@@ -15,7 +17,10 @@ import com.angcyo.library.ex.isDebug
 import com.angcyo.library.getAppVersionCode
 import com.angcyo.putData
 import com.angcyo.widget.bar
+import com.liulishuo.okdownload.StatusUtil
 import com.liulishuo.okdownload.core.cause.EndCause
+import com.liulishuo.okdownload.core.exception.ServerCanceledException
+import java.net.HttpURLConnection
 
 /**
  * 版本更新提示Activity
@@ -59,23 +64,39 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
 
         //下载
         _vh.click(R.id.lib_button) {
+            bean.versionUrl?.apply {
+                if (getTaskStatus() == StatusUtil.Status.RUNNING) {
+                    cancelDownload()
+                } else {
+                    download {
+                        onTaskStart = {
+                            _vh.tv(R.id.lib_button)?.text = "下载中..."
+                        }
 
-            bean.versionUrl?.download {
-                onTaskStart = {
-                    _vh.tv(R.id.lib_button)?.text = "开始下载..."
-                }
+                        onTaskProgress = { _, progress, _ ->
+                            _vh.bar(R.id.lib_progress_bar)?.setProgress(progress)
+                        }
 
-                onTaskProgress = { _, progress, _ ->
-                    _vh.bar(R.id.lib_progress_bar)?.setProgress(progress)
-                }
+                        onTaskFinish = { downloadTask, cause, error ->
+                            when (cause) {
+                                EndCause.COMPLETED -> {
+                                    _vh.tv(R.id.lib_button)?.text = "立即安装"
 
-                onTaskFinish = { downloadTask, cause, _ ->
-                    if (cause == EndCause.COMPLETED) {
-                        _vh.tv(R.id.lib_button)?.text = "立即安装"
-
-                        installApk(app(), downloadTask.file)
-                    } else {
-                        _vh.tv(R.id.lib_button)?.text = "下载失败, 点击重试"
+                                    installApk(app(), downloadTask.file)
+                                }
+                                EndCause.ERROR -> {
+                                    if (error is ServerCanceledException &&
+                                        error.responseCode == HttpURLConnection.HTTP_OK
+                                    ) {
+                                        downloadTask.info?.resetInfo()
+                                    }
+                                    _vh.tv(R.id.lib_button)?.text = "下载失败, 点击重试"
+                                }
+                                else -> {
+                                    _vh.tv(R.id.lib_button)?.text = "点击重新开始"
+                                }
+                            }
+                        }
                     }
                 }
             }

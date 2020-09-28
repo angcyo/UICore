@@ -35,8 +35,21 @@ class ETagInterceptor : Interceptor {
             response = chain.proceed(newRequest)
         }
 
+        /*//new response
+        if (ignoreETagHostList.contains(request.url.host)) {
+            response = response.newResponse()
+        }*/
+
         return response
     }
+
+    fun Response.newResponse() = newBuilder()
+        .apply {
+            removeHeader("If-Match")
+            removeHeader("Range")
+            removeHeader("ETag")
+        }
+        .build()
 
     fun Request.newRequest() = newBuilder()
         .apply {

@@ -264,6 +264,10 @@ fun String.download(config: DownloadConfig.() -> Unit = {}): DownloadTask? {
     return dslDownload(this, config)
 }
 
+fun String?.getTaskStatus() = DslDownload.getStatus(this)
+
+fun String?.cancelDownload() = DslDownload.cancel(this)
+
 /**扩展[String], 监听下载事件*/
 fun String.listener(listener: FDownloadListener) {
     DslDownload.listener(this, listener)
