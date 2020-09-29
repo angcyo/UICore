@@ -630,11 +630,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                     map[FormBean.KEY_MSG] = "${actionBean?.title} 执行完成."
                     map[FormBean.KEY_DATA] = "${getTextList?.firstOrNull()}"
                 } else {
-                    if (error is ErrorActionException) {
-                        map[FormBean.KEY_MSG] = error.message ?: "${actionBean?.title} 执行失败!"
-                    } else {
-                        map[FormBean.KEY_MSG] = "${actionBean?.title} 执行失败,${error.message}"
-                    }
+                    map[FormBean.KEY_MSG] = "${actionBean?.title},${error.message ?: ""},执行失败!"
                 }
 
                 //错误码绑定

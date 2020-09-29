@@ -256,11 +256,7 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
                     map[FormBean.KEY_MSG] =
                         "${taskBean.name} 执行完成,耗时${nowTime() - _actionStartTime}"
                 } else {
-                    if (error is ErrorActionException) {
-                        map[FormBean.KEY_MSG] = error.message ?: "${taskBean.name} 执行失败!"
-                    } else {
-                        map[FormBean.KEY_MSG] = "${taskBean.name} 执行失败,${error.message}"
-                    }
+                    map[FormBean.KEY_MSG] = "${taskBean.name},${error.message ?: ""},任务失败!"
                 }
 
                 //错误码绑定
