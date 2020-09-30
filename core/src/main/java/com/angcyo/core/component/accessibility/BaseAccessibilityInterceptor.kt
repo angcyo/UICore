@@ -624,6 +624,13 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                 //还是未处理的事件
                 _actionControl.addMethodName(ActionControl.METHOD_doActionWidth)
                 for (otherAction in actionOtherList) {
+                    otherAction._actionFinish = {
+                        otherAction._actionFinish = null
+                        if (it != null) {
+                            //只处理异常
+                            actionError(otherAction, it)
+                        }
+                    }
                     handle = otherAction.doActionWidth(action, service, lastEvent, nodeList)
                     if (handle) {
                         //有一个action处理了
