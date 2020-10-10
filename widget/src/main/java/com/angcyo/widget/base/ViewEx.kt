@@ -841,6 +841,8 @@ fun View.padWithDisplayCutout() {
     }
 }
 
+fun CompoundButton.isCheckedAndEnable() = isChecked && isEnabled
+
 //</editor-fold desc="其他">
 
 //<editor-fold desc="截图">
