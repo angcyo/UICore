@@ -128,7 +128,7 @@ data class ConstraintBean(
     var pathList: List<String>? = null,
 
     /**约束之后, 如果匹配到的节点数量, 满足此条件, 则继续.
-     * 不满足条件, 清空所有节点.
+     * 不满足条件, 清空所有节点, 本次匹配失败.
      * 支持的数据格式: [com.angcyo.core.component.accessibility.parse.ConditionBean.childCount]*/
     var nodeCount: String? = null,
 
