@@ -13,21 +13,22 @@ import com.angcyo.core.component.accessibility.parse.ConstraintBean
  */
 data class ParseResult(
 
-    /**当前解析使用的约束条件*/
+    /**输入: 当前解析使用的约束条件*/
     var constraint: ConstraintBean,
 
-    /**所有的[constraint], 用于激活/禁用*/
+    /**输入: 所有的[constraint], 用于[BaseConstraintAction]激活/禁用约束*/
     var constraintList: List<ConstraintBean>,
 
-    /**匹配到的节点集合*/
+    /**输出: 匹配到的节点集合*/
     var nodeList: MutableList<AccessibilityNodeInfoCompat> = mutableListOf(),
 
-    /**条件筛选过滤后的节点集合.
+    /**输出:
+     * 条件筛选过滤后的节点集合.
      * 如果为null, 表示没有开启条件过滤
      * */
     var conditionNodeList: MutableList<AccessibilityNodeInfoCompat>? = null,
 
-    /**是否是[notTextList]匹配的结果*/
+    /**输出: 是否是[notTextList]匹配的结果*/
     var notTextMatch: Boolean = false
 )
 
