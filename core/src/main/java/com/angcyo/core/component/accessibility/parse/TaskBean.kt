@@ -130,24 +130,31 @@ fun TaskBean.toInterceptor(
                 //获取到的文本回调
                 autoParseAction.onGetTextResult = { textFormKey, textList ->
                     try {
-                        if (getTextResultMap == null) {
-                            getTextResultMap = hashMapOf()
-                        }
-                        val map = getTextResultMap
-                        if (map !is HashMap) {
-                            getTextResultMap = hashMapOf()
-                        }
+                        if (textList != null) {
+                            if (getTextResultMap == null) {
+                                getTextResultMap = hashMapOf()
+                            }
+                            val map = getTextResultMap
+                            if (map !is HashMap) {
+                                getTextResultMap = hashMapOf()
+                            }
 
-                        //优先使用自带的formKey参数, 其次使用action的[formKey]
-                        val formKey = textFormKey
-                            ?: autoParseAction.actionBean?.formKey /* ?: autoParseAction.hashCode().toString()*/
+                            //优先使用自带的formKey参数, 其次使用action的[formKey]
+                            val formKey = textFormKey
+                                ?: autoParseAction.actionBean?.formKey /* ?: autoParseAction.hashCode().toString()*/
 
-                        formKey?.let {
-                            (map as HashMap)[formKey] = textList
+                            val oldValue = (map as HashMap)[formKey]
+                            formKey?.let {
+                                if (textList.isEmpty()) {
+                                    map[formKey] = oldValue ?: textList
+                                } else {
+                                    map[formKey] = textList
+                                }
+                            }
+
+                            //callback
+                            onActionGetTextResult(autoParseAction, textList)
                         }
-
-                        //callback
-                        onActionGetTextResult(autoParseAction, textList)
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }

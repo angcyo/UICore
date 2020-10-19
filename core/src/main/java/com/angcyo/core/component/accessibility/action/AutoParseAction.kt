@@ -24,7 +24,7 @@ import kotlin.random.Random.Default.nextInt
 open class AutoParseAction : BaseAccessibilityAction() {
 
     /**如果是获取文本的任务, 那么多获取到文本时, 触发的回调*/
-    var onGetTextResult: ((String?, List<CharSequence>) -> Unit)? = null
+    var onGetTextResult: ((String?, List<CharSequence>?) -> Unit)? = null
 
     /**根据给定的[wordInputIndexList] [wordTextIndexList]返回对应的文本信息*/
     var onGetWordTextListAction: ((List<String>) -> List<String>?)? = null
@@ -135,13 +135,13 @@ open class AutoParseAction : BaseAccessibilityAction() {
         service: BaseAccessibilityService,
         nodeList: List<AccessibilityNodeInfo>,
         constraintList: List<ConstraintBean>?,
-        onGetTextResult: (String?, List<CharSequence>) -> Unit = { _, _ -> }
+        onGetTextResult: (String?, List<CharSequence>?) -> Unit = { _, _ -> }
     ): Boolean {
         //执行对应的action操作
         var result = false
 
         if (constraintList != null) {
-            autoParser.parse(service, this, nodeList, constraintList) {
+            autoParser.parse(service, this, nodeList, constraintList, true) {
                 for (parseResult in it) {
 
                     if (!parseResult.constraint.enable) {
@@ -329,13 +329,16 @@ open class AutoParseAction : BaseAccessibilityAction() {
     //</editor-fold desc="周期回调方法">
 
     /**[getText]动作获取到的文本列表*/
-    fun handleGetTextResult(formKey: String?, textList: List<CharSequence>) {
-        if (getTextList == null) {
-            getTextList = mutableListOf()
-        }
+    fun handleGetTextResult(formKey: String?, textList: List<CharSequence>?) {
 
-        getTextList?.clear()
-        getTextList?.addAll(textList)
+        if (textList != null) {
+            if (getTextList == null) {
+                getTextList = mutableListOf()
+            }
+
+            getTextList?.clear()
+            getTextList?.addAll(textList)
+        }
 
         onGetTextResult?.invoke(formKey, textList)
     }
@@ -360,7 +363,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
     open fun handleAction(
         service: BaseAccessibilityService,
         parseResult: ParseResult,
-        onGetTextResult: (String?, List<CharSequence>) -> Unit
+        onGetTextResult: (String?, List<CharSequence>?) -> Unit
     ): HandleResult {
 
         val constraintBean: ConstraintBean = parseResult.constraint
@@ -383,7 +386,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         }
 
         //获取到的文本列表
-        val getTextResultList: MutableList<CharSequence> = mutableListOf()
+        var getTextResultList: MutableList<CharSequence>? = mutableListOf()
         var getTextFormKey: String? = null
 
         //需要返回的处理结果
@@ -428,7 +431,11 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             if (cmd is GetTextAction) {
                                 cmd.onGetTextAction = { key, list ->
                                     getTextFormKey = key
-                                    getTextResultList.addAll(list)
+                                    if (list == null) {
+                                        getTextResultList = null
+                                    } else {
+                                        getTextResultList?.addAll(list)
+                                    }
                                 }
                             } else if (cmd is BaseConstraintAction) {
                                 cmd.onGetConstraintList = {
@@ -472,7 +479,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             }
         }
 
-        if (getTextResultList.isNotEmpty()) {
+        if (getTextResultList?.isNotEmpty() == true) {
             onGetTextResult(getTextFormKey, getTextResultList)
         }
 

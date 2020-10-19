@@ -6,10 +6,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import androidx.collection.ArrayMap
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
-import com.angcyo.core.component.accessibility.parse.ConditionBean
-import com.angcyo.core.component.accessibility.parse.ConstraintBean
-import com.angcyo.core.component.accessibility.parse.isConstraintEmpty
-import com.angcyo.core.component.accessibility.parse.isOnlyPathConstraint
+import com.angcyo.core.component.accessibility.parse.*
 import com.angcyo.library._contentHeight
 import com.angcyo.library._contentWidth
 import com.angcyo.library.app
@@ -469,6 +466,7 @@ open class AutoParser {
         autoParseAction: AutoParseAction,
         nodeList: List<AccessibilityNodeInfo>,
         constraintList: List<ConstraintBean>,
+        includeDisableConstraint: Boolean = false,//是否需要包含被禁用的约束
         onTargetResult: ((List<ParseResult>) -> Unit)? = null
     ): Boolean {
 
@@ -489,11 +487,14 @@ open class AutoParser {
                 //随机激活
                 enable = nextBoolean()
             } else {
-                enable = constraint.enable
-
-                if (!enable) {
-                    enable =
-                        constraint.actionList?.find { it.startsWith(ConstraintBean.ACTION_ENABLE) } != null
+                if (includeDisableConstraint) {
+                    enable = true
+                } else {
+                    enable = constraint.enable
+                    if (!enable) {
+                        enable =
+                            constraint.actionList?.find { it.startsWith(ConstraintBean.ACTION_ENABLE) } != null
+                    }
                 }
             }
 
@@ -504,7 +505,10 @@ open class AutoParser {
 
                 parseResult.resultHandleNodeList().apply {
                     if (this?.isNotEmpty() == true) {
+                        //找到了节点
                         result.add(parseResult)
+                    } else {
+                        //没有找到节点
                     }
                 }
             }
@@ -854,12 +858,15 @@ open class AutoParser {
             parseResult.conditionNodeList = conditionNodeList
         }
 
+        //最终需要返回的节点列表
+        val _result: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
+
         if (constraintBean.after == null ||
             constraintBean.after?.isConstraintEmpty() == true ||
             result.isEmpty()
         ) {
             if (result.isNotEmpty()) {
-                parseResult.nodeList.addAll(result)
+                _result.addAll(result)
             }
         } else {
             //还有[after]约束
@@ -890,7 +897,21 @@ open class AutoParser {
             }
 
             if (resultAfter.isNotEmpty()) {
-                parseResult.nodeList.addAll(resultAfter)
+                _result.addAll(resultAfter)
+            }
+        }
+
+        if (_result.isNotEmpty()) {
+            //parent 递归查询
+            val parent = constraintBean.parent
+            if (parent != null) {
+                val _resultParent: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
+                _result.forEach { node ->
+                    parseParentNode(service, autoParseAction, node, parent, 1, _resultParent)
+                }
+                parseResult.nodeList.addAll(_resultParent)
+            } else {
+                parseResult.nodeList.addAll(_result)
             }
         }
     }
@@ -1048,7 +1069,9 @@ open class AutoParser {
         return result
     }
 
-    /**根据约束的路径, 找出对应的node*/
+    /**根据约束的路径, 找出对应的node
+     * @param path 格式: +1 -2 >3 <4
+     * */
     open fun parseConstraintPath(
         constraintBean: ConstraintBean,
         path: String?,
@@ -1074,6 +1097,7 @@ open class AutoParser {
         }
     }
 
+    /**@param path +1 / -1  / >1 / <1 */
     open fun parsePath(
         path: String,
         node: AccessibilityNodeInfoCompat?
@@ -1222,5 +1246,75 @@ open class AutoParser {
             }
         }
         return isGet
+    }
+
+    /**递归查找parent, 直到找到符合条件的节点*/
+    fun parseParentNode(
+        service: AccessibilityService,
+        autoParseAction: AutoParseAction,
+        node: AccessibilityNodeInfoCompat,//从此节点开始查询
+        parentBean: ParentBean,
+        depth: Int = 1, //当前查询深度
+        result: MutableList<AccessibilityNodeInfoCompat> //查询到的节点
+    ) {
+        val constraintList = parentBean.checkList
+        val maxDepth = parentBean.depth
+
+        if (constraintList.isNullOrEmpty() || depth > maxDepth) {
+            //深度超限
+            return
+        }
+
+        val path = parentBean.path ?: "-1"
+
+        //先拿到parent node
+        val parent = parsePath("<1", node)
+        if (parent != null) {
+            //再拿到需要搜索的根节点
+            val target = parsePath(path, parent)
+
+            if (target == null) {
+                parseParentNode(
+                    service,
+                    autoParseAction,
+                    parent,
+                    parentBean,
+                    depth + 1,
+                    result
+                )
+            } else {
+                //开始查询
+
+                for (constraint in constraintList) {
+                    val parseResult = ParseResult(constraint, constraintList)
+                    findConstraintNodeByRootNode(
+                        service,
+                        autoParseAction,
+                        target.unwrap(),
+                        parseResult
+                    )
+                    parseResult.resultHandleNodeList().apply {
+                        if (this?.isNotEmpty() == true) {
+                            result.addAll(this)
+                        }
+                    }
+                }
+
+                if (result.isNotEmpty()) {
+                    //查找到了
+                    return
+                } else {
+                    //没有查找到, 继续递归parent查询
+                    parseParentNode(
+                        service,
+                        autoParseAction,
+                        parent,
+                        parentBean,
+                        depth + 1,
+                        result
+                    )
+                }
+            }
+        }
     }
 }

@@ -29,6 +29,18 @@ data class ConstraintBean(
 
     /*---------------------------------------------------------------------------------------*/
 
+    /*-------------------------------------查找子节点前的约束------------------------------------*/
+
+    /**当节点中不包含文本列表[notTextList]时, 则使用[根节点]直接执行特殊指令[noActionList].
+     *
+     * 如果包含[notTextList], 则执行正常流程.
+     * */
+    var notTextList: List<String>? = null,
+    var wordNotTextIndexList: List<String>? = null,
+    var notIdList: List<Int>? = null,
+
+    /*---------------------------------------------------------------------------------------*/
+
     /*-------------------------------------查找子节点的约束------------------------------------*/
 
     /**约束的文本, 这个文本可以是对应的id, 或者node上的文本内容
@@ -53,13 +65,6 @@ data class ConstraintBean(
      * [2--1]
      * */
     var wordTextIndexList: List<String>? = null,
-
-    /**当节点中不包含文本列表[notTextList]时,
-     * 则匹配成功[根节点], 或者执行[noActionList]
-     * */
-    var notTextList: List<String>? = null,
-    var wordNotTextIndexList: List<String>? = null,
-    var notIdList: List<Int>? = null,
 
     /**
      * 用[1]表示上述[textList]字段中对应的是id文本, 否则就是普通文本.一一对应的关系.
@@ -232,6 +237,9 @@ data class ConstraintBean(
      * 只有匹配规则会生效, 非控制匹配规则的属性不会生效
      * */
     var after: ConstraintBean? = null,
+
+    /**递归parent查询满足条件的节点*/
+    var parent: ParentBean? = null,
 
     /*---------------------------------------------------------------------------------------*/
 

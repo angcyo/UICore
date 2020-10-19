@@ -16,7 +16,7 @@ import com.angcyo.library.ex.patternList
  */
 class GetTextAction : BaseAction() {
 
-    var onGetTextAction: ((String?, List<CharSequence>) -> Unit)? = null
+    var onGetTextAction: ((String?, List<CharSequence>?) -> Unit)? = null
 
     init {
         handleAction = ConstraintBean.ACTION_GET_TEXT
@@ -66,7 +66,7 @@ class GetTextAction : BaseAction() {
         val value = getTextResultList.isNotEmpty()
         autoParseAction.handleActionLog("获取文本[$getTextResultList]:${value}")
 
-        onGetTextAction?.invoke(getTextFormKey, getTextResultList)
+        onGetTextAction?.invoke(getTextFormKey, if (value) getTextResultList else null)
         return value
     }
 }
