@@ -662,7 +662,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     fun actionNext(service: BaseAccessibilityService) {
         actionIndex++
 
-        AccessibilityWindowLayer._hideToCount--
+        AccessibilityWindowLayer.hideCountDown()
 
         if (enableInterval) {
             //no op, 等待下一个周期回调

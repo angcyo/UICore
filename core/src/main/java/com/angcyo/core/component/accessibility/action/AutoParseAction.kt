@@ -651,17 +651,16 @@ open class AutoParseAction : BaseAccessibilityAction() {
         }
     }
 
-    fun getGestureStartTime(time: String?) = getGestureStartTime(
-        time?.toLongOrNull() ?: DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME
+    fun getGestureStartTime(time: String?) = time?.toLongOrNull() ?: getGestureStartTime(
+        DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME
     )
 
     /**获取手势执行的开始时间数据*/
     fun getGestureStartTime(def: Long = DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME): Long {
-        return if (accessibilityInterceptor?._actionControl?.lastMethodAction()
-                ?.startsWith(ConstraintBean.ACTION_HIDE_WINDOW) == true
-        ) {
+        val lastMethodAction = accessibilityInterceptor?._actionControl?.lastMethodAction()
+        return if (lastMethodAction?.contains(ConstraintBean.ACTION_HIDE_WINDOW) == true) {
             //如果之前触发了[ACTION_HIDE_WINDOW]那么下一次手势执行的时间需要延迟一点
-            60L
+            240L
         } else {
             def
         }

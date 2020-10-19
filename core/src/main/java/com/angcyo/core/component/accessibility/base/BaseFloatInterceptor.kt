@@ -31,10 +31,13 @@ abstract class BaseFloatInterceptor : BaseAccessibilityInterceptor() {
     /**浮窗日志输出*/
     var onWindowLog: ((text: CharSequence?, summary: CharSequence?, duration: Long) -> Unit)? =
         { text, summary, duration ->
-            AccessibilityWindowLayer.show(
-                text, summary, duration,
-                if (_isInFilterPackageNameApp) Color.WHITE else _color(R.color.warning)
-            )
+            AccessibilityWindowLayer.show {
+                this.text = text
+                this.summary = summary
+                this.duration = duration
+                this.textColor =
+                    if (_isInFilterPackageNameApp) Color.WHITE else _color(R.color.warning)
+            }
         }
 
     /**描述概要*/

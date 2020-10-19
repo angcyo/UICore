@@ -3,6 +3,7 @@ package com.angcyo.core.component.accessibility
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import com.angcyo.core.component.accessibility.action.*
+import com.angcyo.core.component.accessibility.base.AccessibilityWindowLayer
 import com.angcyo.core.component.accessibility.base.BaseFloatInterceptor
 import com.angcyo.core.component.accessibility.parse.*
 import com.angcyo.core.component.file.DslFileHelper
@@ -10,10 +11,12 @@ import com.angcyo.core.component.file.wrapData
 import com.angcyo.library.LTime
 import com.angcyo.library.component.appBean
 import com.angcyo.library.ex.file
+import com.angcyo.library.ex.isNumber
 import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.toElapsedTime
 import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.FileUtils
+import com.angcyo.widget.span.span
 import kotlin.math.max
 
 /**
@@ -74,6 +77,26 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
 
     override fun onDoActionStart() {
         super.onDoActionStart()
+
+        if (taskBean.fullscreen) {
+            //全屏浮窗
+            AccessibilityWindowLayer.fullscreenLayer = true
+        }
+        AccessibilityWindowLayer.fullTitleText = span {
+            if (!taskBean.name.isNullOrEmpty()) {
+                append(taskBean.name)
+            }
+            if (!taskBean.gold.isNullOrEmpty()) {
+                if (!taskBean.name.isNullOrEmpty()) {
+                    appendln()
+                }
+                if (taskBean.gold!!.isNumber()) {
+                    append("做完任务您将获得${taskBean.gold}金币")
+                } else {
+                    append(taskBean.gold)
+                }
+            }
+        }
 
         //清空缓存
         taskBean.getTextResultMap = null

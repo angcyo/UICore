@@ -19,6 +19,9 @@ data class TaskBean(
     var id: Long = -1,
     var rwid: Long = -1,
 
+    /**任务金币提示*/
+    var gold: String? = null,
+
     //----------------------------------------------------------
 
     /**任务id, 不参与auto parse*/
@@ -67,7 +70,10 @@ data class TaskBean(
     var leaveCount: Long = BaseAccessibilityAction.DEFAULT_INTERCEPTOR_LEAVE_COUNT,
 
     /**当拦截器离开主程序界面多少次后, 触发的指令.任务需要统一处理离开界面的处理*/
-    var leave: List<ConstraintBean>? = null
+    var leave: List<ConstraintBean>? = null,
+
+    /**是否使用全屏浮窗提示*/
+    var fullscreen: Boolean = true
 )
 
 /**转成拦截器*/

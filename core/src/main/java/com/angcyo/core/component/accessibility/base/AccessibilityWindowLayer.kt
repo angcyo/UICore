@@ -1,25 +1,14 @@
 package com.angcyo.core.component.accessibility.base
 
-import android.app.Instrumentation
 import android.graphics.Color
-import android.graphics.RectF
-import android.view.KeyEvent
-import android.view.WindowManager
-import com.angcyo.core.R
-import com.angcyo.core.component.accessibility.AccessibilityHelper
-import com.angcyo.core.component.accessibility.LogWindowAccessibilityInterceptor
-import com.angcyo.core.component.file.DslFileHelper
-import com.angcyo.core.component.file.wrapData
-import com.angcyo.http.rx.doBack
-import com.angcyo.ilayer.ILayer
-import com.angcyo.ilayer.container.DragRectFConstraint
-import com.angcyo.ilayer.container.WindowContainer
-import com.angcyo.library._satusBarHeight
-import com.angcyo.library._screenHeight
 import com.angcyo.library.app
 import com.angcyo.library.component.MainExecutor
-import com.angcyo.library.ex.*
-import com.angcyo.widget.progress.CircleLoadingView
+import com.angcyo.library.ex.Action
+import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.nowTime
+import com.angcyo.library.ex.openApp
+import com.angcyo.library.getAppName
+import com.angcyo.widget.span.span
 
 
 /**
@@ -29,17 +18,69 @@ import com.angcyo.widget.progress.CircleLoadingView
  * @date 2020/07/03
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-object AccessibilityWindowLayer : ILayer() {
+object AccessibilityWindowLayer {
 
     /**触发的保存窗口日志*/
     var onSaveWindowLog: ((log: String) -> Unit)? = null
 
     var showCatchButton: Boolean = isDebug()
+        set(value) {
+            val old = field
+            field = value
+            if (old != value && value) {
+                AccessibilityWindowFullLayer.update()
+                AccessibilityWindowMiniLayer.update()
+            }
+        }
 
-    val _windowContainer = WindowContainer(app()).apply {
-        wmLayoutParams.flags = wmLayoutParams.flags or
-                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+    val _defaultClickAction: Action = {
+        app().openApp()
     }
+
+    /**点击浮窗的回调*/
+    var onLayerClickAction: Action? = _defaultClickAction
+
+    var onStopAction: Action? = null
+
+    var fullscreenLayer: Boolean = false
+        set(value) {
+            field = value
+            if (value) {
+                AccessibilityWindowMiniLayer.hide()
+                if (!_isNeedHide()) {
+                    AccessibilityWindowFullLayer._show()
+                }
+            } else {
+                AccessibilityWindowFullLayer.hide()
+                if (!_isNeedHide()) {
+                    AccessibilityWindowMiniLayer._show()
+                }
+            }
+        }
+
+    var fullTopText: CharSequence? = span {
+        append(getAppName())
+        appendln()
+        append("全自动操作中...")
+    }
+
+    var fullTitleText: CharSequence? = span {
+        append("任务进行中")
+    }
+
+    /**步骤进度提示文本*/
+    var text: CharSequence? = null
+
+    var textColor: Int = Color.WHITE
+
+    /**描述文本*/
+    var des: CharSequence? = null
+
+    /**描述概要文本*/
+    var summary: CharSequence? = null
+
+    /**转圈时长, 毫秒. -1 保持原来的进度; 0 清空进度; 其他 进度动画时长*/
+    var duration: Long = -1
 
     /**浮窗需要隐藏到什么时间, 13位时间戳*/
     var _hideToTime: Long = -1
@@ -52,216 +93,66 @@ object AccessibilityWindowLayer : ILayer() {
 
     //显示浮窗
     val _showRunnable: Runnable? = Runnable {
-        _show()
+        show()
     }
 
-    val _defaultClickAction: Action = {
-        app().openApp()
+    /**清空默认*/
+    fun reset() {
+        this.text = null
+        this.summary = null
+        this.des = null
+        this.duration = 0
+        this.textColor = Color.WHITE
     }
 
-    /**点击浮窗的回调*/
-    var onLayerClickAction: Action? = _defaultClickAction
+    fun show(dsl: AccessibilityWindowLayer.() -> Unit = {}) {
+        dsl()
+        if (!_isNeedHide()) {
+            _showRunnable?.let {
+                MainExecutor.handler.removeCallbacks(it)
+            }
 
-    init {
-        iLayerLayoutId = R.layout.lib_layout_accessibility_window
-        enableDrag = true
-        showCancelLayer = true
-        dragContainer = DragRectFConstraint(
-            RectF(
-                0f,
-                _satusBarHeight * 1f / _screenHeight,
-                0f,
-                0.0000001f
-            )
-        )
-    }
-
-    /**[text] 需要提示的文本
-     * [summary] 描述文本
-     * [duration] 转圈时长, 毫秒. -1 保持原来的进度; 0 清空进度; 其他 进度动画时长*/
-    fun show(
-        text: CharSequence?,
-        summary: CharSequence? = null,
-        duration: Long = -1,
-        textColor: Int = Color.WHITE
-    ) {
-
-        var hide = false
-
-        if (_hideToCount > 0) {
-            //仍然需要隐藏浮窗
-            hide = true
-        }
-
-        val nowTime: Long = nowTime()
-
-        if (nowTime <= _hideToTime) {
-            //仍然需要隐藏浮窗
-            hide = true
-        }
-
-        renderLayer = {
-            //常亮
-            itemView.keepScreenOn = true
-
-            if (duration > 0) {
-                var animDuration = duration
-                var fromProgress = 0
-
-                if (_hideTime in 1 until duration) {
-                    fromProgress = (_hideTime * 1f / duration * 100).toInt()
-                    animDuration = duration - _hideTime
-                }
-                v<CircleLoadingView>(R.id.progress_bar)?.setProgress(
-                    100,
-                    fromProgress,
-                    animDuration
-                )
-            } else if (duration == 0L) {
-                v<CircleLoadingView>(R.id.progress_bar)?.setProgress(0)
+            if (fullscreenLayer) {
+                AccessibilityWindowFullLayer.show()
+            } else {
+                AccessibilityWindowMiniLayer.show()
             }
 
             //clear
-            _hideTime = 0
-
-            tv(R.id.text_view)?.apply {
-                this.text = text
-                setTextColor(textColor)
-            }
-
-            visible(R.id.catch_button, showCatchButton)
-            visible(R.id.summary_text_view, summary != null)
-            tv(R.id.summary_text_view)?.text = summary
-
-            //打开本机程序
-            throttleClickItem {
-                onLayerClickAction?.invoke()
-            }
-
-            //捕捉界面信息
-            throttleClick(R.id.catch_button) {
-                doBack {
-                    val logWindow =
-                        LogWindowAccessibilityInterceptor.logWindow(showToast = true)
-                    if (!logWindow.isNullOrEmpty()) {
-
-                        val log = logWindow.wrapData()
-                        DslFileHelper.write(
-                            AccessibilityHelper.logFolderName,
-                            "catch.log",
-                            log
-                        )
-
-                        onSaveWindowLog?.invoke(log)
-                    }
-                }
-            }
-
-            //测试按钮
-            visible(R.id.test_button, isDebugType())
-            throttleClick(R.id.test_button) {
-                //TouchTipLayer.showTouch(0.2f, 0f)
-
-                //测试手势线
-                //TouchTipLayer.showTouch(0.9162f, 0.9762f)   //1.
-                TouchTipLayer.showTouch(0.9162f, 0.9562f)   //2.
-                //TouchTipLayer.showTouch(0.9162f, 0.9362f)   //3.
-
-                //TouchTipLayer.showMove(0.5f, 0.5f, 0.5f, 0.3f)
-                //TouchTipLayer.showMove(0.3f, 0.5f, 0.5f, 0.5f)
-
-                //发送键盘
-                /*doBack {
-                    try {
-                        val inst = Instrumentation()
-                        inst.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }*/
-
-                /*//测试手势点击 "touch:0.9192,0.9842"
-                    val p1 = PointF(_screenWidth * 0.9192f, _screenHeight * 0.9842f)
-                    BaseAccessibilityService.lastService?.gesture?.click(p1.x, p1.y)
-                    L.w(p1)*/
-
-                /*//测试url直接打开抖音
-                 val list = listOf(
-                     "https://v.douyin.com/JBrY5g9/", //很久的直播 [直播已结束]
-                     "https://v.douyin.com/JBxoeKL", //直播 [打开看看]
-                     "https://v.douyin.com/J6mdAPq/", //视频
-                     "https://v.kuaishou.com/8vnjyY" //快手视频
-                 )
-                 val url = list[0]
-
-                 Intent().apply {
-                     setPackage("com.ss.android.ugc.aweme")
-                     //setPackage("com.smile.gifmaker")
-                     data = Uri.parse(url)
-                     baseConfig(it.context)
-
-                     try {
-                         it.context.startActivity(this)
-                     } catch (e: Exception) {
-                         e.printStackTrace()
-                     }
-                 }*/
-
-                /*val imm = context.getSystemService(
-                    Context.INPUT_METHOD_SERVICE
-                ) as InputMethodManager
-
-                doBack {
-                    LTime.tick()
-                    try {
-                        val inst = Instrumentation()
-                        inst.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER)
-                    } catch (e: Exception) {
-                        L.e("Exception when sendKeyDownUpSync $e")
-                    }
-                    L.i(LTime.time())
-                }
-
-                try {
-                    val keyCommand = "input keyevent " + KeyEvent.KEYCODE_ENTER
-                    val runtime = Runtime.getRuntime()
-                    val proc = runtime.exec(keyCommand)
-                    //L.i(proc.waitFor(), " ", proc.exitValue())
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-
-                doBack {
-                    try {
-                        val keyCommand = "input keyevent " + KeyEvent.KEYCODE_ENTER
-                        val runtime = Runtime.getRuntime()
-                        val proc = runtime.exec(keyCommand)
-                        //L.i(proc.waitFor(), " ", proc.exitValue())
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
-
-                val inputConnection = BaseInputConnection(it, true)
-                L.e(inputConnection.performEditorAction(EditorInfo.IME_ACTION_SEARCH))*/
-            }
-        }
-
-        if (hide) {
-            hide()
-        } else {
-            show(_windowContainer)
+            _hideTime = -1
         }
     }
 
+    fun update() {
+        AccessibilityWindowFullLayer.update()
+        AccessibilityWindowMiniLayer.update()
+    }
+
     fun hide() {
-        hide(_windowContainer)
+        AccessibilityWindowMiniLayer.hide()
+        AccessibilityWindowFullLayer.hide()
+    }
+
+    fun _isNeedHide(): Boolean {
+        return if (_hideToCount > 0) {
+            //需要隐藏
+            true
+        } else {
+            val nowTime: Long = nowTime()
+            nowTime <= _hideToTime
+        }
     }
 
     /**异常多少次的显示请求*/
     fun hideCount(count: Long) {
-        hideTime(-1)
         _hideToCount = count
+        if (count > 0) {
+            hide()
+        }
+    }
+
+    fun hideCountDown() {
+        _hideToCount--
     }
 
     /**浮窗隐藏多长时间*/
@@ -273,6 +164,8 @@ object AccessibilityWindowLayer : ILayer() {
         }
 
         if (time > 0) {
+            hide()
+
             _hideTime = time
             _hideToTime = time + nowTime()
 
@@ -282,13 +175,6 @@ object AccessibilityWindowLayer : ILayer() {
         } else {
             _hideTime = -1
             _hideToTime = -1
-        }
-    }
-
-    //仅显示浮窗
-    fun _show() {
-        if (_rootView != null && _rootView?.parent == null) {
-            show(_windowContainer)
         }
     }
 }

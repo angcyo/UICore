@@ -10,6 +10,7 @@ import com.angcyo.ilayer.container.IDragConstraint
 import com.angcyo.library.L
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.dslViewHolder
 
 /**
  * 视图小部件, 类似于[IView], 比[IView]更轻量.
@@ -117,6 +118,13 @@ open class ILayer {
     /**从指定的[container]中移除[ILayer]*/
     fun hide(container: IContainer) {
         container.remove(this)
+    }
+
+    /**更新[ILayer], 如果已经添加*/
+    fun update() {
+        _rootView?.apply {
+            renderLayer?.invoke(dslViewHolder())
+        }
     }
 
     //</editor-fold desc="操作方法">
