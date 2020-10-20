@@ -141,6 +141,9 @@ data class ConstraintBean(
 
     /*----------------------------------------执行的指令--------------------------------------*/
 
+    /**执行[handleAction]需要延迟的毫秒数, 激活延迟后, 所有影响返回值的操作都将被忽略*/
+    var delay: String? = null,
+
     /**挑选需要执行[actionList]的节点.
      * 当以上规则匹配到很多节点时, 挑出指定索引的节点执行[actionList]. 不指定默认所有节点.
      * index>=0, 正向取索引
@@ -341,6 +344,13 @@ data class ConstraintBean(
         const val ACTION_DO_OTHER = "doOther"
         const val ACTION_TRUE = "true" //执行结果直接设置true
         const val ACTION_FALSE = "false" //执行结果直接设置false
+
+        /**设置浮窗全屏or小屏
+         * true: 全屏
+         * false: 小屏
+         * 空字符: 使用[TaskBean.fullscreen]
+         * */
+        const val ACTION_FULLSCREEN = "fullscreen"
 
         /*---------------------------------------状态匹配--------------------------------------*/
 

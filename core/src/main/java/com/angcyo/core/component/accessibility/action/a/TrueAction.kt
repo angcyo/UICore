@@ -25,7 +25,7 @@ class TrueAction : BaseAction() {
         handleNodeList: List<AccessibilityNodeInfoCompat>,
         handleResult: HandleResult
     ): Boolean {
-        autoParseAction.handleActionLog("直接返回:true")
+        autoParseAction.handleActionLog("直接返回[true]:true")
         return true
     }
 }

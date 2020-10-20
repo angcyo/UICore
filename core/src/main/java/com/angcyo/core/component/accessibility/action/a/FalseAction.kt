@@ -25,7 +25,7 @@ class FalseAction : BaseAction() {
         handleNodeList: List<AccessibilityNodeInfoCompat>,
         handleResult: HandleResult
     ): Boolean {
-        autoParseAction.handleActionLog("直接返回:false")
+        autoParseAction.handleActionLog("直接返回[false]:true")
         return false
     }
 }

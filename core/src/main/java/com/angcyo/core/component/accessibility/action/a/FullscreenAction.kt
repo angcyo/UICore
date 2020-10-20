@@ -1,22 +1,23 @@
 package com.angcyo.core.component.accessibility.action.a
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
+import com.angcyo.core.component.accessibility.AutoParseInterceptor
 import com.angcyo.core.component.accessibility.BaseAccessibilityService
 import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.action.HandleResult
+import com.angcyo.core.component.accessibility.base.AccessibilityWindow
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
 
 /**
- *
  * Email:angcyo@126.com
  * @author angcyo
- * @date 2020/09/21
+ * @date 2020/10/20
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class FinishAction : BaseAction() {
+class FullscreenAction : BaseAction() {
 
     init {
-        handleAction = ConstraintBean.ACTION_FINISH
+        handleAction = ConstraintBean.ACTION_FULLSCREEN
     }
 
     override fun runAction(
@@ -26,11 +27,19 @@ class FinishAction : BaseAction() {
         handleNodeList: List<AccessibilityNodeInfoCompat>,
         handleResult: HandleResult
     ): Boolean {
-        autoParseAction.handleActionLog("直接[finish]:true")
-        //直接完成操作
-        handleResult.result = true
-        handleResult.jumpNextHandle = true
-        handleResult.finish = true
+
+        val fullscreen = if (arg.isNullOrEmpty()) {
+            if (autoParseAction.accessibilityInterceptor is AutoParseInterceptor) {
+                (autoParseAction.accessibilityInterceptor as AutoParseInterceptor).taskBean.fullscreen
+            } else {
+                true
+            }
+        } else {
+            arg == "true"
+        }
+
+        AccessibilityWindow.fullscreenLayer = fullscreen
+        autoParseAction.handleActionLog("设置浮窗全屏显示模式[$fullscreen]:true")
         return true
     }
 }

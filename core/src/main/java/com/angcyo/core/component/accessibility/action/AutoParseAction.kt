@@ -9,6 +9,7 @@ import com.angcyo.core.component.accessibility.action.a.*
 import com.angcyo.core.component.accessibility.parse.*
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
+import com.angcyo.library.component._delay
 import com.angcyo.library.ex.*
 import com.angcyo.library.toastQQ
 import kotlin.math.roundToLong
@@ -63,6 +64,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             add(FinishAction())
             add(FlingAction())
             add(FocusAction())
+            add(FullscreenAction())
             add(GetTextAction())
             add(HideWindowAction())
             add(HomeAction())
@@ -144,40 +146,50 @@ open class AutoParseAction : BaseAccessibilityAction() {
             autoParser.parse(service, this, nodeList, constraintList, true) {
                 for (parseResult in it) {
 
-                    if (!parseResult.constraint.enable) {
-                        handleActionLog("跳过Constraint[${parseResult.constraint.constraintId}]的处理")
+                    val constraint = parseResult.constraint
+                    if (!constraint.enable) {
+                        handleActionLog("跳过Constraint[${constraint.constraintId}]的处理.")
                         continue
                     }
 
-                    //执行action
-                    val handleResult: HandleResult =
-                        handleAction(service, parseResult, onGetTextResult)
+                    val delay = constraint.delay?.toLongOrNull() ?: -1
 
-                    if (!handleResult.result) {
-                        //执行失败后,
-                        if (parseResult.constraint.not != null) {
-                            handleResult.result = parseHandleAction(
-                                service,
-                                nodeList,
-                                parseResult.constraint.not,
-                                onGetTextResult
-                            )
+                    if (delay >= 0) {
+                        handleActionLog("将延迟[$delay ms]执行[${constraint.constraintId}]的处理.")
+                        _delay(delay) {
+                            handleAction(service, parseResult, onGetTextResult)
                         }
-                    }
+                    } else {
+                        //执行action
+                        val handleResult: HandleResult =
+                            handleAction(service, parseResult, onGetTextResult)
 
-                    //执行结果
-                    result = handleResult.result || result
+                        if (!handleResult.result) {
+                            //执行失败后,
+                            if (constraint.not != null) {
+                                handleResult.result = parseHandleAction(
+                                    service,
+                                    nodeList,
+                                    constraint.not,
+                                    onGetTextResult
+                                )
+                            }
+                        }
 
-                    if (handleResult.finish) {
-                        //直接完成
-                        result = true
-                        doActionFinish()
-                        break
-                    }
+                        //执行结果
+                        result = handleResult.result || result
 
-                    //是否跳过后续action
-                    if (handleResult.jumpNextHandle) {
-                        break
+                        if (handleResult.finish) {
+                            //直接完成
+                            result = true
+                            doActionFinish()
+                            break
+                        }
+
+                        //是否跳过后续action
+                        if (handleResult.jumpNextHandle) {
+                            break
+                        }
                     }
                 }
             }
