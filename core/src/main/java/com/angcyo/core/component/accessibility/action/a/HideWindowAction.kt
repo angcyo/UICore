@@ -4,7 +4,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.BaseAccessibilityService
 import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.action.HandleResult
-import com.angcyo.core.component.accessibility.base.AccessibilityWindowLayer
+import com.angcyo.core.component.accessibility.base.AccessibilityWindow
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
 import com.angcyo.library.ex.fullTime
 
@@ -27,18 +27,18 @@ class HideWindowAction : BaseAction() {
         handleNodeList: List<AccessibilityNodeInfoCompat>,
         handleResult: HandleResult
     ): Boolean {
-        AccessibilityWindowLayer.hide()
+        AccessibilityWindow.hide()
         arg?.toLongOrNull()?.apply {
             val actionSize = autoParseAction.accessibilityInterceptor?.actionList?.size ?: 0
             if (this in 1..actionSize.toLong()) {
-                AccessibilityWindowLayer.hideCount(this)
+                AccessibilityWindow.hideCount(this)
 
                 autoParseAction.handleActionLog("隐藏浮窗Count[${this}]:true")
             } else {
                 //指定需要隐藏的时长, 毫秒
-                AccessibilityWindowLayer.hideTime(this)
+                AccessibilityWindow.hideTime(this)
 
-                autoParseAction.handleActionLog("隐藏浮窗Time[${AccessibilityWindowLayer._hideToTime.fullTime()}]:true")
+                autoParseAction.handleActionLog("隐藏浮窗Time[${AccessibilityWindow._hideToTime.fullTime()}]:true")
             }
         }
         return true

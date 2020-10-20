@@ -3,7 +3,7 @@ package com.angcyo.core.component.accessibility
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import com.angcyo.core.component.accessibility.action.*
-import com.angcyo.core.component.accessibility.base.AccessibilityWindowLayer
+import com.angcyo.core.component.accessibility.base.AccessibilityWindow
 import com.angcyo.core.component.accessibility.base.BaseFloatInterceptor
 import com.angcyo.core.component.accessibility.parse.*
 import com.angcyo.core.component.file.DslFileHelper
@@ -80,9 +80,9 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
 
         if (taskBean.fullscreen) {
             //全屏浮窗
-            AccessibilityWindowLayer.fullscreenLayer = true
+            AccessibilityWindow.fullscreenLayer = true
         }
-        AccessibilityWindowLayer.fullTitleText = span {
+        AccessibilityWindow.fullTitleText = span {
             if (!taskBean.name.isNullOrEmpty()) {
                 append(taskBean.name)
             }

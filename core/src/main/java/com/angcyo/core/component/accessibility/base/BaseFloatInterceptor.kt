@@ -31,7 +31,7 @@ abstract class BaseFloatInterceptor : BaseAccessibilityInterceptor() {
     /**浮窗日志输出*/
     var onWindowLog: ((text: CharSequence?, summary: CharSequence?, duration: Long) -> Unit)? =
         { text, summary, duration ->
-            AccessibilityWindowLayer.show {
+            AccessibilityWindow.show {
                 this.text = text
                 this.summary = summary
                 this.duration = duration

@@ -44,8 +44,8 @@ object AccessibilityWindowFullLayer : ILayer() {
             //常亮
             itemView.keepScreenOn = true
 
-            val duration = AccessibilityWindowLayer.duration
-            val _hideTime = AccessibilityWindowLayer._hideTime
+            val duration = AccessibilityWindow.duration
+            val _hideTime = AccessibilityWindow._hideTime
             if (duration > 0) {
                 var animDuration = duration
                 var fromProgress = 0
@@ -66,26 +66,26 @@ object AccessibilityWindowFullLayer : ILayer() {
             }
 
             tv(R.id.text_view)?.apply {
-                this.text = AccessibilityWindowLayer.text
-                setTextColor(AccessibilityWindowLayer.textColor)
+                this.text = AccessibilityWindow.text
+                setTextColor(AccessibilityWindow.textColor)
             }
 
-            visible(R.id.summary_text_view, AccessibilityWindowLayer.summary != null)
-            tv(R.id.summary_text_view)?.text = "正在执行:${AccessibilityWindowLayer.summary}"
+            visible(R.id.summary_text_view, AccessibilityWindow.summary != null)
+            tv(R.id.summary_text_view)?.text = "正在执行:${AccessibilityWindow.summary}"
 
-            tv(R.id.top_text_view)?.text = AccessibilityWindowLayer.fullTopText
-            tv(R.id.title_text_view)?.text = AccessibilityWindowLayer.fullTitleText
+            tv(R.id.top_text_view)?.text = AccessibilityWindow.fullTopText
+            tv(R.id.title_text_view)?.text = AccessibilityWindow.fullTitleText
 
             //打开本机程序
             throttleClickItem {
-                AccessibilityWindowLayer.onLayerClickAction?.invoke()
+                AccessibilityWindow.onLayerClickAction?.invoke()
             }
 
             throttleClick(R.id.stop_button) {
-                AccessibilityWindowLayer.onStopAction?.invoke()
+                AccessibilityWindow.onStopAction?.invoke()
             }
 
-            visible(R.id.catch_button, AccessibilityWindowLayer.showCatchButton)
+            visible(R.id.catch_button, AccessibilityWindow.showCatchButton)
             //捕捉界面信息
             throttleClick(R.id.catch_button) {
                 doBack {
@@ -100,7 +100,7 @@ object AccessibilityWindowFullLayer : ILayer() {
                             log
                         )
 
-                        AccessibilityWindowLayer.onSaveWindowLog?.invoke(log)
+                        AccessibilityWindow.onSaveWindowLog?.invoke(log)
                     }
                 }
             }

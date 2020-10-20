@@ -18,7 +18,7 @@ import com.angcyo.widget.span.span
  * @date 2020/07/03
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-object AccessibilityWindowLayer {
+object AccessibilityWindow {
 
     /**触发的保存窗口日志*/
     var onSaveWindowLog: ((log: String) -> Unit)? = null
@@ -105,7 +105,7 @@ object AccessibilityWindowLayer {
         this.textColor = Color.WHITE
     }
 
-    fun show(dsl: AccessibilityWindowLayer.() -> Unit = {}) {
+    fun show(dsl: AccessibilityWindow.() -> Unit = {}) {
         dsl()
         if (!_isNeedHide()) {
             _showRunnable?.let {

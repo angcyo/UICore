@@ -8,7 +8,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.CallSuper
 import com.angcyo.core.component.accessibility.BaseAccessibilityInterceptor.Companion.defaultIntervalDelay
 import com.angcyo.core.component.accessibility.action.*
-import com.angcyo.core.component.accessibility.base.AccessibilityWindowLayer
+import com.angcyo.core.component.accessibility.base.AccessibilityWindow
 import com.angcyo.core.component.accessibility.parse.ActionBean
 import com.angcyo.library.L
 import com.angcyo.library.component.dslNotify
@@ -662,7 +662,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     fun actionNext(service: BaseAccessibilityService) {
         actionIndex++
 
-        AccessibilityWindowLayer.hideCountDown()
+        AccessibilityWindow.hideCountDown()
 
         if (enableInterval) {
             //no op, 等待下一个周期回调

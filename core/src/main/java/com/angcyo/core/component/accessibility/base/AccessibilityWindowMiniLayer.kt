@@ -54,8 +54,8 @@ object AccessibilityWindowMiniLayer : ILayer() {
             //常亮
             itemView.keepScreenOn = true
 
-            val duration = AccessibilityWindowLayer.duration
-            val _hideTime = AccessibilityWindowLayer._hideTime
+            val duration = AccessibilityWindow.duration
+            val _hideTime = AccessibilityWindow._hideTime
             if (duration > 0) {
                 var animDuration = duration
                 var fromProgress = 0
@@ -76,17 +76,17 @@ object AccessibilityWindowMiniLayer : ILayer() {
             }
 
             tv(R.id.text_view)?.apply {
-                this.text = AccessibilityWindowLayer.text
-                setTextColor(AccessibilityWindowLayer.textColor)
+                this.text = AccessibilityWindow.text
+                setTextColor(AccessibilityWindow.textColor)
             }
 
-            visible(R.id.catch_button, AccessibilityWindowLayer.showCatchButton)
-            visible(R.id.summary_text_view, AccessibilityWindowLayer.summary != null)
-            tv(R.id.summary_text_view)?.text = AccessibilityWindowLayer.summary
+            visible(R.id.catch_button, AccessibilityWindow.showCatchButton)
+            visible(R.id.summary_text_view, AccessibilityWindow.summary != null)
+            tv(R.id.summary_text_view)?.text = AccessibilityWindow.summary
 
             //打开本机程序
             throttleClickItem {
-                AccessibilityWindowLayer.onLayerClickAction?.invoke()
+                AccessibilityWindow.onLayerClickAction?.invoke()
             }
 
             //捕捉界面信息
@@ -103,7 +103,7 @@ object AccessibilityWindowMiniLayer : ILayer() {
                             log
                         )
 
-                        AccessibilityWindowLayer.onSaveWindowLog?.invoke(log)
+                        AccessibilityWindow.onSaveWindowLog?.invoke(log)
                     }
                 }
             }
