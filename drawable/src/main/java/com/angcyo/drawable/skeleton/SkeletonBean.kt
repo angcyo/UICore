@@ -22,7 +22,14 @@ data class SkeletonBean(
     var left: String? = null,//相对于当前[SkeletonGroupBean]的左边距离
     var top: String? = null,
     var width: String? = null,
-    var height: String? = null
+    var height: String? = null,
+
+    //计算之后的属性值
+    var _left: Float = -1f,
+    var _top: Float = -1f,
+    var _width: Float = -1f,
+    var _height: Float = -1f,
+    var _size: Float = -1f
 ) {
     companion object {
         const val SKELETON_TYPE_LINE = 1 //绘制线

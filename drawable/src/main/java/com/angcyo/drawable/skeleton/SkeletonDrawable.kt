@@ -23,13 +23,13 @@ class SkeletonDrawable : AbsDslDrawable() {
 
     /**闪光颜色*/
     var lightColors =
-        intArrayOf("#E7E7E7".toColorInt(), "#E2E2E2".toColorInt(), "#E7E7E7".toColorInt())
+        intArrayOf("#E7E7E7".toColorInt(), "#DFDFDF".toColorInt(), "#E7E7E7".toColorInt())
 
     /**闪光旋转*/
     var lightRotate = 15f
 
     /**闪光步长,相对于宽度 */
-    var lightStep = 0.12f
+    var lightStep = 0.04f
 
     /**激活光线特效*/
     var enableLight = true
@@ -288,6 +288,34 @@ class SkeletonDrawable : AbsDslDrawable() {
             Shader.TileMode.CLAMP
         )
         _linearGradientMatrix = Matrix()
+
+        _initGroup(rootGroup)
+    }
+
+    /**计算[SkeletonBean]需要占用的大小*/
+    fun _initGroup(groupBean: SkeletonGroupBean) {
+        groupBean.skeletonList?.forEach {
+            _initSkeleton(it)
+        }
+
+        groupBean.groupList?.forEach {
+            _initGroup(it)
+        }
+    }
+
+    fun _initSkeleton(skeletonBean: SkeletonBean) {
+        skeletonBean._left =
+            skeletonBean.left.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawWidth)
+        skeletonBean._top =
+            skeletonBean.top.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawHeight)
+
+        skeletonBean._width =
+            skeletonBean.width.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawWidth)
+        skeletonBean._height =
+            skeletonBean.height.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawHeight)
+
+        skeletonBean._size =
+            skeletonBean.size.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawWidth)
     }
 
     //当前布局的坐标参数
@@ -407,15 +435,15 @@ class SkeletonDrawable : AbsDslDrawable() {
         textPaint.style = Paint.Style.FILL
         textPaint.strokeWidth = 0f
 
-        val useLeft = skeletonBean.left.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawWidth)
-        val useTop = skeletonBean.top.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawHeight)
+        val useLeft = skeletonBean._left
+        val useTop = skeletonBean._top
 
         val left = layoutParams.left + useLeft
         val top = layoutParams.top + useTop
-        val width = skeletonBean.width.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawWidth)
-        val height = skeletonBean.height.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawHeight)
+        val width = skeletonBean._width
+        val height = skeletonBean._height
 
-        val size = skeletonBean.size.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawWidth)
+        val size = skeletonBean._size
 
         layoutParams.useWidth = 0f
         layoutParams.useHeight = 0f
