@@ -191,7 +191,25 @@ android {
     apkFolder.mkdirs()
     println "\napp.gradle→APK输出目录:${apkFolder.absolutePath}"
 
-    if (gradle.gradleVersion.startsWith("6")) {
+    if (gradle.gradleVersion.startsWith("6.5")) {
+        /*Gradle4.1 以上的方法*/
+        applicationVariants.all { variant ->
+            if (variant.buildType.name != "debug") {
+                variant.packageApplicationProvider.get().outputDirectory = apkFolder
+            }
+            variant.outputs.forEach {
+                it.outputFileName = formatApkName(apkFormatName,
+                        _app_name,
+                        variant.versionName,
+                        apk_time,
+                        variant.flavorName,
+                        variant.buildType.name,
+                        variant.signingConfig.name,
+                        signConfig.key_alias
+                )
+            }
+        }
+    } else if (gradle.gradleVersion.startsWith("6")) {
         /*Gradle4.0 以上的方法*/
         applicationVariants.all { variant ->
             if (variant.buildType.name != "debug") {

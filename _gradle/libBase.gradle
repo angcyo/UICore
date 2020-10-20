@@ -96,10 +96,17 @@ android {
         }
 
         variant.outputs.all { output ->
-            output.apkData.outputFileName = ((project.name != "app") ? project.name : rootProject.name) + "-" +
-                    defaultConfig.versionName + "_" +
-                    variant.buildType.name +
-                    ".aar"
+            if (gradle.gradleVersion.startsWith("6.5")) {
+                output.outputFileName = ((project.name != "app") ? project.name : rootProject.name) + "-" +
+                        defaultConfig.versionName + "_" +
+                        variant.buildType.name +
+                        ".aar"
+            } else {
+                output.apkData.outputFileName = ((project.name != "app") ? project.name : rootProject.name) + "-" +
+                        defaultConfig.versionName + "_" +
+                        variant.buildType.name +
+                        ".aar"
+            }
         }
     }
 }
