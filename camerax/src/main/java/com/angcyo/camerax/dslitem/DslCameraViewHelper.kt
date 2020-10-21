@@ -5,6 +5,7 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.VideoCapture
 import androidx.camera.view.CameraView
+import androidx.core.net.toFile
 import com.angcyo.library.L
 import com.angcyo.library.component.MainExecutor
 import com.angcyo.library.ex.havePermission
@@ -74,7 +75,16 @@ class DslCameraViewHelper {
                     captureMode = CameraView.CaptureMode.VIDEO
                 }
                 startRecording(saveFile, MainExecutor, object : VideoCapture.OnVideoSavedCallback {
-                    override fun onVideoSaved(file: File) {
+                    /*override fun onVideoSaved(file: File) {
+                        L.i(saveFile)
+                        if (saveToDCIM) {
+                            cameraView?.context?.saveToDCIM(saveFile)
+                            //cameraView?.context?.scanFile(saveFile)
+                        }
+                        onResult(saveFile, null)
+                    }*/
+
+                    override fun onVideoSaved(outputFileResults: VideoCapture.OutputFileResults) {
                         L.i(saveFile)
                         if (saveToDCIM) {
                             cameraView?.context?.saveToDCIM(saveFile)
