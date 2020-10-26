@@ -87,7 +87,10 @@ object AccessibilityWindowFullLayer : ILayer() {
             }
 
             //捕捉界面信息
-            visible(R.id.catch_button, AccessibilityWindow.showCatchButton)
+            visible(
+                R.id.catch_button,
+                AccessibilityWindow.showCatchButton && !AccessibilityWindow.notTouch
+            )
             throttleClick(R.id.catch_button) {
                 AccessibilityWindow.onCatchAction?.invoke()
             }

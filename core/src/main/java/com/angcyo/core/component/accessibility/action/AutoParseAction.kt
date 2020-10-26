@@ -224,7 +224,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
             val segmentList = if (actionIds.contains(";")) {
                 //具有多段
-                actionIds.split(":")
+                actionIds.split(";")
             } else {
                 listOf(actionIds)
             }
