@@ -7,6 +7,7 @@ import com.angcyo.ilayer.container.OffsetPosition
 import com.angcyo.ilayer.container.WindowContainer
 import com.angcyo.library._contentHeight
 import com.angcyo.library.app
+import com.angcyo.library.ex.remove
 import com.angcyo.widget.progress.CircleLoadingView
 
 
@@ -25,6 +26,7 @@ object AccessibilityWindowFullLayer : ILayer() {
             width = -1
             height = _contentHeight //_contentHeight //-1
             flags = wmLayoutParams.flags or
+                    /*WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or*/
                     WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         }
     }
@@ -99,5 +101,20 @@ object AccessibilityWindowFullLayer : ILayer() {
         if (_rootView != null && _rootView?.parent == null) {
             show(_windowContainer)
         }
+    }
+
+    /**修改[WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE]*/
+    fun notTouchable(value: Boolean) {
+        val wmLayoutParams = _windowContainer.wmLayoutParams
+        if (value) {
+            wmLayoutParams.flags = wmLayoutParams.flags or
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
+                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+        } else {
+            wmLayoutParams.flags =
+                wmLayoutParams.flags.remove(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        }
+
+        _windowContainer.updateLayout(this)
     }
 }

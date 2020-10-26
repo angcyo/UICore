@@ -41,6 +41,7 @@ class WindowContainer(context: Context) : BaseContainer(context) {
         flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or    //范围外的触摸事件发送给后面的窗口处理
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or       //不获取焦点
                 /*WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR or  //布局在装饰条之外*/
+                /*WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or    //不接受触摸屏事件*/
                 WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or    //占满整个屏幕
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS       //允许到屏幕之外
 
@@ -100,7 +101,6 @@ class WindowContainer(context: Context) : BaseContainer(context) {
             e.printStackTrace()
         }
     }
-
 
     val _rootRect = Rect()
     override fun onDragBy(layer: ILayer, dx: Float, dy: Float, end: Boolean) {

@@ -54,7 +54,7 @@ data class CheckBean(
     var doAction: List<ConstraintBean>? = null,
 
     /**当拦截器离开主程序界面多少次后, 触发的指令*/
-    var leave: List<ConstraintBean>? = null,
+    var leaveOut: List<ConstraintBean>? = null,
 
     /**跳转指令超出了阈值时, 需要触发的指令
      * [com.angcyo.core.component.accessibility.parse.ConstraintBean.ACTION_JUMP]*/

@@ -311,14 +311,14 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                 if (!handle) {
                     interceptorLeaveCount.start()
                     val leaveCount = action.actionBean?.leaveCount ?: -1
-                    if (action.actionBean?.check?.leave != null &&
+                    if (action.actionBean?.check?.leaveOut != null &&
                         interceptorLeaveCount.count + 1 >= leaveCount
                     ) {
                         //到达阈值
                         handle = action.parseHandleAction(
                             service,
                             nodeList,
-                            action.actionBean?.check?.leave
+                            action.actionBean?.check?.leaveOut
                         )
                         if (handle) {
                             //处理了leave, 清空计数
@@ -631,6 +631,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
 
             if (handle) {
                 //内部消化, 被other处理
+                action.checkEventOutCount.clear()
             } else {
                 //还是未处理的事件
                 _actionControl.addMethodName(ActionControl.METHOD_doActionWidth)
@@ -644,7 +645,8 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                     }
                     handle = otherAction.doActionWidth(action, service, lastEvent, nodeList)
                     if (handle) {
-                        //有一个action处理了
+                        //有一个action处理了, 清空checkEventOutCount计数
+                        action.checkEventOutCount.clear()
                         break
                     }
                 }

@@ -81,6 +81,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             add(TouchAction())
             add(TrueAction())
             add(UrlAction())
+            add(NotTouchableAction())
         }
     }
 

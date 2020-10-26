@@ -352,6 +352,9 @@ data class ConstraintBean(
          * */
         const val ACTION_FULLSCREEN = "fullscreen"
 
+        /**设置全屏浮窗不接受touch事件*/
+        const val ACTION_NOT_TOUCHABLE = "notTouchable"
+
         /*---------------------------------------状态匹配--------------------------------------*/
 
         //需要指定的状态 [state]

@@ -81,6 +81,14 @@ object AccessibilityWindow {
             }
         }
 
+    var notTouch: Boolean = false
+        set(value) {
+            field = value
+            if (fullscreenLayer) {
+                AccessibilityWindowFullLayer.notTouchable(value)
+            }
+        }
+
     var fullTopText: CharSequence? = span {
         append(getAppName())
         appendln()

@@ -233,6 +233,9 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
     }
 
     override fun onDestroy(reason: String?) {
+        //自动恢复touch
+        AccessibilityWindow.notTouch = false
+
         //clear
         currentActionBean = null
 
