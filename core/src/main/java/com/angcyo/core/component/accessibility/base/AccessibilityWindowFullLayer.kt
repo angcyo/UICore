@@ -2,11 +2,6 @@ package com.angcyo.core.component.accessibility.base
 
 import android.view.WindowManager
 import com.angcyo.core.R
-import com.angcyo.core.component.accessibility.AccessibilityHelper
-import com.angcyo.core.component.accessibility.LogWindowAccessibilityInterceptor
-import com.angcyo.core.component.file.DslFileHelper
-import com.angcyo.core.component.file.wrapData
-import com.angcyo.http.rx.doBack
 import com.angcyo.ilayer.ILayer
 import com.angcyo.ilayer.container.OffsetPosition
 import com.angcyo.ilayer.container.WindowContainer
@@ -88,21 +83,7 @@ object AccessibilityWindowFullLayer : ILayer() {
             visible(R.id.catch_button, AccessibilityWindow.showCatchButton)
             //捕捉界面信息
             throttleClick(R.id.catch_button) {
-                doBack {
-                    val logWindow =
-                        LogWindowAccessibilityInterceptor.logWindow(showToast = true)
-                    if (!logWindow.isNullOrEmpty()) {
-
-                        val log = logWindow.wrapData()
-                        DslFileHelper.write(
-                            AccessibilityHelper.logFolderName,
-                            "catch.log",
-                            log
-                        )
-
-                        AccessibilityWindow.onSaveWindowLog?.invoke(log)
-                    }
-                }
+                AccessibilityWindow.onCatchAction?.invoke()
             }
         }
 

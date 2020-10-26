@@ -1,6 +1,11 @@
 package com.angcyo.core.component.accessibility.base
 
 import android.graphics.Color
+import com.angcyo.core.component.accessibility.AccessibilityHelper
+import com.angcyo.core.component.accessibility.LogWindowAccessibilityInterceptor
+import com.angcyo.core.component.file.DslFileHelper
+import com.angcyo.core.component.file.wrapData
+import com.angcyo.http.rx.doBack
 import com.angcyo.library.app
 import com.angcyo.library.component.MainExecutor
 import com.angcyo.library.ex.Action
@@ -32,6 +37,24 @@ object AccessibilityWindow {
                 AccessibilityWindowMiniLayer.update()
             }
         }
+
+    var onCatchAction: Action? = {
+        doBack {
+            val logWindow =
+                LogWindowAccessibilityInterceptor.logWindow(showToast = true)
+            if (!logWindow.isNullOrEmpty()) {
+
+                val log = logWindow.wrapData()
+                DslFileHelper.write(
+                    AccessibilityHelper.logFolderName,
+                    "catch.log",
+                    log
+                )
+
+                onSaveWindowLog?.invoke(log)
+            }
+        }
+    }
 
     val _defaultClickAction: Action = {
         app().openApp()
