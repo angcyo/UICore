@@ -582,10 +582,20 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         }
     }
 
-    fun _actionFinish(
+    /**开始执行[action]前回调*/
+    open fun _actionStart(
         action: BaseAccessibilityAction,
         service: BaseAccessibilityService,
-        error: ActionException?
+        nodeList: List<AccessibilityNodeInfo>
+    ) {
+    }
+
+    /**[action]执行结束后回调*/
+    open fun _actionFinish(
+        action: BaseAccessibilityAction,
+        service: BaseAccessibilityService,
+        error: ActionException?,
+        nodeList: List<AccessibilityNodeInfo>
     ) {
         //action执行完成
         interceptorLog?.log("finish[${actionIndex}/${actionList.size}]->${action.simpleHash()} [${action.actionTitle}] ${if (error == null) "完成" else error.message}")
@@ -612,9 +622,16 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     ) {
         if (!action.isActionStart()) {
             interceptorLog?.log("start[${actionIndex}/${actionList.size}]->${action.simpleHash()} [${action.actionTitle}]")
+            _actionStart(action, service, nodeList)
+
+            if (!isActionInterceptorStart()) {
+                interceptorLog?.log("已结束[${actionIndex}/${actionList.size}]->${action.simpleHash()} [${action.actionTitle}]")
+                return
+            }
+
             action.onActionStart(this)
             action._actionFinish = {
-                _actionFinish(action, service, it)
+                _actionFinish(action, service, it, nodeList)
             }
         }
 

@@ -103,6 +103,24 @@ object AccessibilityWindow {
     var text: CharSequence? = null
 
     var textColor: Int = Color.WHITE
+        set(value) {
+            field = value
+            update()
+        }
+
+    var summaryColor: Int = Color.WHITE
+        get() {
+            return if (notTouch) {
+                //可穿透事件时的提示颜色
+                Color.RED
+            } else {
+                field
+            }
+        }
+        set(value) {
+            field = value
+            update()
+        }
 
     /**描述文本*/
     var des: CharSequence? = null

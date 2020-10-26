@@ -79,7 +79,11 @@ object AccessibilityWindowMiniLayer : ILayer() {
             visible(R.id.fullscreen_button, AccessibilityWindow.showCatchButton)
 
             visible(R.id.summary_text_view, AccessibilityWindow.summary != null)
-            tv(R.id.summary_text_view)?.text = AccessibilityWindow.summary
+
+            tv(R.id.summary_text_view)?.apply {
+                text = AccessibilityWindow.summary
+                setTextColor(AccessibilityWindow.summaryColor)
+            }
 
             //打开本机程序
             throttleClickItem {

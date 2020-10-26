@@ -153,6 +153,25 @@ open class AutoParseAction : BaseAccessibilityAction() {
                         continue
                     }
 
+                    val actionId = actionBean?.actionId ?: -1
+                    val actionIds = constraint.actionIds
+                    if (!actionIds.isNullOrEmpty()) {
+                        //限制了需要执行的 actionId
+                        if (actionIds.have("$actionId")) {
+                            //满足条件
+                        } else {
+                            //不满足条件
+                            continue
+                        }
+                    }
+                    val notActionIds = constraint.notActionIds
+                    if (!notActionIds.isNullOrEmpty()) {
+                        if (notActionIds.have("$actionId")) {
+                            //跳过指定的actionId
+                            continue
+                        }
+                    }
+
                     val delay = constraint.delay?.toLongOrNull() ?: -1
 
                     if (delay >= 0) {

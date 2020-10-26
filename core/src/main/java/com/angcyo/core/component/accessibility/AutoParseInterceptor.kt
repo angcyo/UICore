@@ -10,13 +10,11 @@ import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.file.wrapData
 import com.angcyo.library.LTime
 import com.angcyo.library.component.appBean
-import com.angcyo.library.ex.file
-import com.angcyo.library.ex.isNumber
-import com.angcyo.library.ex.nowTime
-import com.angcyo.library.ex.toElapsedTime
+import com.angcyo.library.ex.*
 import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.FileUtils
 import com.angcyo.widget.span.span
+import kotlin.io.readText
 import kotlin.math.max
 
 /**
@@ -171,7 +169,7 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
                         if (action is AutoParseAction) {
                             if (action._actionFinish == null) {
                                 action._actionFinish = {
-                                    _actionFinish(action, service, it)
+                                    _actionFinish(action, service, it, nodeList)
                                 }
                             }
                             val result = action.parseHandleAction(service, nodeList, taskBean.leave)
@@ -301,6 +299,51 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
         //将action获取到的所有文本, 打包进参数
         taskBean.getTextResultMap?.forEach { entry ->
             params[entry.key] = "${entry.value.firstOrNull()}"
+        }
+    }
+
+    override fun _actionStart(
+        action: BaseAccessibilityAction,
+        service: BaseAccessibilityService,
+        nodeList: List<AccessibilityNodeInfo>
+    ) {
+        super._actionStart(action, service, nodeList)
+
+        if (action is AutoParseAction && !taskBean.start.isListEmpty()) {
+            action._actionFinish = {
+                action._actionFinish = null
+                if (it != null) {
+                    actionError(action, it)
+                }
+            }
+
+            action.handleActionLog("执行(${action.actionBean?.title})前的处理↓")
+            val result = action.parseHandleAction(service, nodeList, taskBean.start)
+            action.handleActionLog("执行(${action.actionBean?.title})前的处理:$result")
+            action._actionFinish = null
+        }
+    }
+
+    override fun _actionFinish(
+        action: BaseAccessibilityAction,
+        service: BaseAccessibilityService,
+        error: ActionException?,
+        nodeList: List<AccessibilityNodeInfo>
+    ) {
+        super._actionFinish(action, service, error, nodeList)
+
+        if (action is AutoParseAction && !taskBean.end.isListEmpty()) {
+            action._actionFinish = {
+                action._actionFinish = null
+                if (it != null) {
+                    actionError(action, it)
+                }
+            }
+
+            action.handleActionLog("执行(${action.actionBean?.title})后的处理↓")
+            val result = action.parseHandleAction(service, nodeList, taskBean.end)
+            action.handleActionLog("执行(${action.actionBean?.title})后的处理:$result")
+            action._actionFinish = null
         }
     }
 }

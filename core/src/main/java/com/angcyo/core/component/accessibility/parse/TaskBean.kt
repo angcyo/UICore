@@ -73,7 +73,21 @@ data class TaskBean(
     var leave: List<ConstraintBean>? = null,
 
     /**是否使用全屏浮窗提示*/
-    var fullscreen: Boolean = true
+    var fullscreen: Boolean = true,
+
+    //--------------------------------------------------------------
+
+    /**
+     * 每个[AutoParseAction]执行前回调
+     * 参考[com.angcyo.core.component.accessibility.parse.CheckBean.back]
+     * 执行逻辑[parseHandleAction]
+     * */
+    var start: List<ConstraintBean>? = null,
+
+    /**
+     * 每个[AutoParseAction]执行后回调
+     * */
+    var end: List<ConstraintBean>? = null
 )
 
 /**转成拦截器*/

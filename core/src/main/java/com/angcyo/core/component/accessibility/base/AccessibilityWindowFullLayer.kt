@@ -68,8 +68,10 @@ object AccessibilityWindowFullLayer : ILayer() {
             }
 
             visible(R.id.summary_text_view, AccessibilityWindow.summary != null)
-            tv(R.id.summary_text_view)?.text = "正在执行:${AccessibilityWindow.summary}"
-
+            tv(R.id.summary_text_view)?.apply {
+                text = "正在执行:${AccessibilityWindow.summary}"
+                setTextColor(AccessibilityWindow.summaryColor)
+            }
             tv(R.id.top_text_view)?.text = AccessibilityWindow.fullTopText
             tv(R.id.title_text_view)?.text = AccessibilityWindow.fullTitleText
 
@@ -116,5 +118,6 @@ object AccessibilityWindowFullLayer : ILayer() {
         }
 
         _windowContainer.updateLayout(this)
+        update()
     }
 }
