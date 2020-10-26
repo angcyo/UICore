@@ -119,7 +119,11 @@ open class LogInterceptor : Interceptor {
         //request
         requestBuilder.append("->").append(uuid)
         logRequest(chain, originRequest, requestBuilder)
-        printRequestLog(requestBuilder)
+        try {
+            printRequestLog(requestBuilder)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         //response
         val startTime = System.nanoTime()
@@ -133,7 +137,11 @@ open class LogInterceptor : Interceptor {
                 .append("HTTP FAILED(").append(requestTime).append("ms):")
                 .append(e)
 
-            printResponseLog(responseBuilder)
+            try {
+                printResponseLog(responseBuilder)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             throw e
         }
 
@@ -142,7 +150,11 @@ open class LogInterceptor : Interceptor {
         responseBuilder.append(" (").append(requestTime).append("ms)")
         logResponse(response, responseBuilder)
 
-        printResponseLog(responseBuilder)
+        try {
+            printResponseLog(responseBuilder)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         return response
     }
