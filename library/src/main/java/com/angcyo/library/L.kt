@@ -124,13 +124,17 @@ object L {
         _log(*msg)
     }
 
+    val _stackContextBuilder = StringBuilder()
+    val _logBuilder = StringBuilder()
+
     fun _log(vararg msg: Any?) {
         if (!debug) {
             return
         }
 
+        _stackContextBuilder.clear()
         val stackTrace = getStackTrace(stackTraceFront, stackTraceDepth)
-        val stackContext = buildString {
+        val stackContext = _stackContextBuilder.apply {
             append("[")
             stackTrace.forEachIndexed { index, element ->
                 append("(")
@@ -154,7 +158,9 @@ object L {
             }
             append("]")
         }
-        val logMsg = buildString {
+
+        _logBuilder.clear()
+        val logMsg = _logBuilder.apply {
             msg.forEach {
                 when (it) {
                     is CharSequence -> append(_wrapJson("$it"))

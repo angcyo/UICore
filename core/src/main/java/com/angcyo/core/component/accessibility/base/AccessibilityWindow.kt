@@ -1,6 +1,7 @@
 package com.angcyo.core.component.accessibility.base
 
 import android.graphics.Color
+import com.angcyo.core.R
 import com.angcyo.core.component.accessibility.AccessibilityHelper
 import com.angcyo.core.component.accessibility.LogWindowAccessibilityInterceptor
 import com.angcyo.core.component.file.DslFileHelper
@@ -8,10 +9,7 @@ import com.angcyo.core.component.file.wrapData
 import com.angcyo.http.rx.doBack
 import com.angcyo.library.app
 import com.angcyo.library.component.MainExecutor
-import com.angcyo.library.ex.Action
-import com.angcyo.library.ex.isDebug
-import com.angcyo.library.ex.nowTime
-import com.angcyo.library.ex.openApp
+import com.angcyo.library.ex.*
 import com.angcyo.library.getAppName
 import com.angcyo.widget.span.span
 
@@ -90,11 +88,14 @@ object AccessibilityWindow {
         }
 
     var fullTopText: CharSequence? = span {
-        append(getAppName())
+        append(getAppName()) {
+            foregroundColor = _color(R.color.colorPrimary)
+            style = android.graphics.Typeface.BOLD
+        }
         appendln()
         append("全自动操作中...")
         appendln()
-        append("!请勿手动操作!") {
+        append("!...请勿手动操作...!") {
             foregroundColor = Color.RED
             style = android.graphics.Typeface.BOLD
         }
