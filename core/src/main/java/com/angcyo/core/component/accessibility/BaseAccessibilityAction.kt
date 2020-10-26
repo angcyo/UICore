@@ -8,6 +8,7 @@ import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.parse.ActionBean
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
+import com.angcyo.library.ex.isListEmpty
 import com.angcyo.library.ex.simpleHash
 import kotlin.math.max
 import kotlin.random.Random.Default.nextLong
@@ -235,8 +236,20 @@ abstract class BaseAccessibilityAction {
 
     /**[Action]首次执行开始*/
     @CallSuper
-    open fun onActionStart(interceptor: BaseAccessibilityInterceptor) {
+    open fun onActionStart(
+        interceptor: BaseAccessibilityInterceptor,
+        service: BaseAccessibilityService,
+        nodeList: List<AccessibilityNodeInfo>
+    ) {
         accessibilityInterceptor = interceptor
+
+        if (this is AutoParseAction) {
+            if (!actionBean?.check?.start.isListEmpty()) {
+                handleActionLog("[onActionStart](${actionBean?.title})前的处理↓")
+                val result = parseHandleAction(service, nodeList, actionBean?.check?.start)
+                handleActionLog("[onActionStart](${actionBean?.title})前的处理:$result")
+            }
+        }
     }
 
     /**当前[Action]是否开始了*/
@@ -249,6 +262,23 @@ abstract class BaseAccessibilityAction {
     /**[Action]执行完成, 可以用于释放一些数据*/
     @CallSuper
     open fun doActionFinish(error: ActionException? = null) {
+        if (this is AutoParseAction) {
+            val lastService = BaseAccessibilityService.lastService
+            val interceptor = accessibilityInterceptor
+            if (lastService != null && interceptor != null && !actionBean?.check?.end.isListEmpty()) {
+                handleActionLog("[doActionFinish](${actionBean?.title})后的处理↓")
+                val result = parseHandleAction(
+                    lastService,
+                    lastService.findNodeInfoList(
+                        interceptor.filterPackageNameList,
+                        interceptor.onlyFilterTopWindow
+                    ),
+                    actionBean?.check?.end
+                )
+                handleActionLog("[doActionFinish](${actionBean?.title})后的处理:$result")
+            }
+        }
+
         //完成回调
         _actionFinish?.invoke(error)
         _actionFinish = null

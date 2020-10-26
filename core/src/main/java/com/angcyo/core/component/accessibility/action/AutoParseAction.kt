@@ -156,18 +156,15 @@ open class AutoParseAction : BaseAccessibilityAction() {
                     val actionId = actionBean?.actionId ?: -1
                     val actionIds = constraint.actionIds
                     if (!actionIds.isNullOrEmpty()) {
-                        //限制了需要执行的 actionId
-                        if (actionIds.have("$actionId")) {
-                            //满足条件
-                        } else {
+                        if (!_haveActionId(actionIds, actionId)) {
                             //不满足条件
                             continue
                         }
                     }
                     val notActionIds = constraint.notActionIds
                     if (!notActionIds.isNullOrEmpty()) {
-                        if (notActionIds.have("$actionId")) {
-                            //跳过指定的actionId
+                        if (_haveActionId(notActionIds, actionId)) {
+                            //不满足条件
                             continue
                         }
                     }
@@ -215,6 +212,46 @@ open class AutoParseAction : BaseAccessibilityAction() {
             }
         }
         return result
+    }
+
+    /**是否包含当前的[actionId]*/
+    fun _haveActionId(actionIds: String?, actionId: Long): Boolean {
+        if (actionIds.isNullOrEmpty()) {
+            return false
+        }
+
+        return if (actionIds.contains("~")) {
+
+            val segmentList = if (actionIds.contains(";")) {
+                //具有多段
+                actionIds.split(":")
+            } else {
+                listOf(actionIds)
+            }
+
+            fun isInSegment(segment: String): Boolean {
+                //指定的是一个范围
+                val split = segment.split("~")
+                val startId = split.getOrNull2(0)?.toLongOrNull()
+                val endId = split.getOrNull2(1)?.toLongOrNull()
+
+                return if (startId != null && endId != null) {
+                    actionId >= startId && actionId <= endId
+                } else {
+                    segment.have("$actionId")
+                }
+            }
+
+            for (segment in segmentList) {
+                if (isInSegment(segment)) {
+                    return true
+                }
+            }
+
+            actionIds.have("$actionId")
+        } else {
+            actionIds.have("$actionId")
+        }
     }
 
     /**当[checkEvent]通过时, 需要怎么处理*/

@@ -93,6 +93,11 @@ object AccessibilityWindow {
         append(getAppName())
         appendln()
         append("全自动操作中...")
+        appendln()
+        append("!请勿手动操作!") {
+            foregroundColor = Color.RED
+            style = android.graphics.Typeface.BOLD
+        }
     }
 
     var fullTitleText: CharSequence? = span {

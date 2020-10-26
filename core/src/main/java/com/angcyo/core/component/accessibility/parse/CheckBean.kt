@@ -1,5 +1,7 @@
 package com.angcyo.core.component.accessibility.parse
 
+import com.angcyo.core.component.accessibility.action.AutoParseAction
+
 /**
  * 界面元素识别, 识别处理, 异常处理, 未知处理. 等约束关键
  * Email:angcyo@126.com
@@ -58,5 +60,11 @@ data class CheckBean(
 
     /**跳转指令超出了阈值时, 需要触发的指令
      * [com.angcyo.core.component.accessibility.parse.ConstraintBean.ACTION_JUMP]*/
-    var jumpOut: List<ConstraintBean>? = null
+    var jumpOut: List<ConstraintBean>? = null,
+
+    /**[AutoParseAction]执行前触发*/
+    var start: List<ConstraintBean>? = null,
+
+    /**[AutoParseAction]执行后触发*/
+    var end: List<ConstraintBean>? = null,
 )

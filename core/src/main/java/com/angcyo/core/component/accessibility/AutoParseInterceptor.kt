@@ -80,6 +80,8 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
             //全屏浮窗
             AccessibilityWindow.fullscreenLayer = true
         }
+        AccessibilityWindow.notTouch = taskBean.notTouchable
+
         AccessibilityWindow.fullTitleText = span {
             if (!taskBean.name.isNullOrEmpty()) {
                 append(taskBean.name)

@@ -75,6 +75,9 @@ data class TaskBean(
     /**是否使用全屏浮窗提示*/
     var fullscreen: Boolean = true,
 
+    /**浮窗是否不需要拦截手势*/
+    var notTouchable: Boolean = false,
+
     //--------------------------------------------------------------
 
     /**

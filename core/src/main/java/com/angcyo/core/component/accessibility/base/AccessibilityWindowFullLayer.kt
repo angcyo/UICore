@@ -80,12 +80,14 @@ object AccessibilityWindowFullLayer : ILayer() {
                 AccessibilityWindow.onLayerClickAction?.invoke()
             }
 
+            //停止按钮
+            visible(R.id.stop_button, !AccessibilityWindow.notTouch)
             throttleClick(R.id.stop_button) {
                 AccessibilityWindow.onStopAction?.invoke()
             }
 
-            visible(R.id.catch_button, AccessibilityWindow.showCatchButton)
             //捕捉界面信息
+            visible(R.id.catch_button, AccessibilityWindow.showCatchButton)
             throttleClick(R.id.catch_button) {
                 AccessibilityWindow.onCatchAction?.invoke()
             }

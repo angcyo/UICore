@@ -29,8 +29,9 @@ class FullscreenAction : BaseAction() {
     ): Boolean {
 
         val fullscreen = if (arg.isNullOrEmpty()) {
-            if (autoParseAction.accessibilityInterceptor is AutoParseInterceptor) {
-                (autoParseAction.accessibilityInterceptor as AutoParseInterceptor).taskBean.fullscreen
+            val interceptor = autoParseAction.accessibilityInterceptor
+            if (interceptor is AutoParseInterceptor) {
+                interceptor.taskBean.fullscreen
             } else {
                 true
             }

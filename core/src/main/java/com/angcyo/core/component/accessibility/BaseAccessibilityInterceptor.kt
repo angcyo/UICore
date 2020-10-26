@@ -629,10 +629,11 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                 return
             }
 
-            action.onActionStart(this)
             action._actionFinish = {
                 _actionFinish(action, service, it, nodeList)
             }
+
+            action.onActionStart(this, service, nodeList)
         }
 
         _actionControl.addMethodName(ActionControl.METHOD_checkEvent)

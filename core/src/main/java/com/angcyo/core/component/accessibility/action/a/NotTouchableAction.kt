@@ -1,6 +1,7 @@
 package com.angcyo.core.component.accessibility.action.a
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
+import com.angcyo.core.component.accessibility.AutoParseInterceptor
 import com.angcyo.core.component.accessibility.BaseAccessibilityService
 import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.action.HandleResult
@@ -26,7 +27,17 @@ class NotTouchableAction : BaseAction() {
         handleNodeList: List<AccessibilityNodeInfoCompat>,
         handleResult: HandleResult
     ): Boolean {
-        val notTouch = arg == "true"
+        val notTouch = if (arg.isNullOrEmpty()) {
+            val interceptor = autoParseAction.accessibilityInterceptor
+            if (interceptor is AutoParseInterceptor) {
+                interceptor.taskBean.notTouchable
+            } else {
+                true
+            }
+        } else {
+            arg == "true"
+        }
+
         AccessibilityWindow.notTouch = notTouch
         autoParseAction.handleActionLog("设置浮窗不接受Touch事件[$notTouch]:true")
         return true
