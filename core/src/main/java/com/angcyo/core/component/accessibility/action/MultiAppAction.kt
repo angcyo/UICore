@@ -28,7 +28,7 @@ class MultiAppAction : AutoParseAction() {
     /**构建action*/
     fun initAction() {
 
-        val name: String? = appName ?: packageName?.appBean()?.appName?.str()
+        val name: String? = appName ?: packageName?.appBean()?.appName?.str() ?: "微信"
 
         if (name.isNullOrEmpty()) {
             return
