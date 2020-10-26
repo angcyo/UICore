@@ -69,6 +69,22 @@
         tools:visibility="visible" />
 
     <com.angcyo.widget.DslButton
+        android:id="@+id/fullscreen_button"
+        style="@style/DefaultButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lib_hdpi"
+        android:text="全屏"
+        app:button_press_gradient_colors=""
+        app:button_press_stroke_color="@color/colorAccent"
+        app:button_press_stroke_width="@dimen/lib_line"
+        app:button_press_text_color="@color/colorAccent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/catch_button"
+        tools:visibility="visible" />
+
+    <com.angcyo.widget.DslButton
         android:id="@+id/test_button"
         style="@style/DefaultButtonStyle"
         android:layout_width="wrap_content"
@@ -82,7 +98,7 @@
         app:button_press_text_color="@color/colorAccent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/catch_button"
+        app:layout_constraintTop_toBottomOf="@id/fullscreen_button"
         tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

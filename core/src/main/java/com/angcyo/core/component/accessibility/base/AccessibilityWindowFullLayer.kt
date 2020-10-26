@@ -28,7 +28,7 @@ object AccessibilityWindowFullLayer : ILayer() {
         defaultOffsetPosition = OffsetPosition(offsetX = 0f, offsetY = 0f)
         wmLayoutParams.apply {
             width = -1
-            height = _contentHeight - 1 //_contentHeight //-1  //留1个像素的高度, 要不然抖音窗口识别会有BUG(识别会少一个窗口)
+            height = _contentHeight //_contentHeight //-1
             flags = wmLayoutParams.flags or
                     WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         }

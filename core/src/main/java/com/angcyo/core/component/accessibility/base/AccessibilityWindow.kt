@@ -65,7 +65,7 @@ object AccessibilityWindow {
     }
 
     var fullTitleText: CharSequence? = span {
-        append("任务进行中")
+        append("...")
     }
 
     /**步骤进度提示文本*/

@@ -81,12 +81,25 @@ object AccessibilityWindowMiniLayer : ILayer() {
             }
 
             visible(R.id.catch_button, AccessibilityWindow.showCatchButton)
+            visible(R.id.fullscreen_button, AccessibilityWindow.showCatchButton)
+
             visible(R.id.summary_text_view, AccessibilityWindow.summary != null)
             tv(R.id.summary_text_view)?.text = AccessibilityWindow.summary
 
             //打开本机程序
             throttleClickItem {
                 AccessibilityWindow.onLayerClickAction?.invoke()
+            }
+
+            //切换至全屏
+            throttleClick(R.id.fullscreen_button) {
+                AccessibilityWindow.fullscreenLayer = true
+                AccessibilityWindow.show()
+
+                AccessibilityWindow.onStopAction = {
+                    AccessibilityWindow.fullscreenLayer = false
+                    //AccessibilityWindow.show()
+                }
             }
 
             //捕捉界面信息
