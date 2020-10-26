@@ -57,15 +57,23 @@ open class LogWindowAccessibilityInterceptor : BaseAccessibilityInterceptor() {
 
                     accessibilityWindowInfo.root?.apply {
                         getBoundsInScreen(tempRect)
+
+                        val type = StringBuilder("")
+                        if (this == rootNodeInfo) {
+                            type.append("root ")
+                        }
+                        if (this == service.rootInActiveWindow) {
+                            type.append("active ")
+                        }
+
                         if (rootNodeInfo != null && this == rootNodeInfo) {
-                            builder.append("[root ${_screenWidth}x${_screenHeight} ${tempRect.width()}x${tempRect.height()}]")
+                            builder.append("[${type} ${_screenWidth}x${_screenHeight} ${tempRect.width()}x${tempRect.height()}]")
                             logNodeInfo(
                                 outBuilder = builder,
                                 refWidth = tempRect.width(),
                                 refHeight = tempRect.height()
                             )
-
-                            toastStringBuilder.append("[root] ")
+                            toastStringBuilder.append("[${type}] ")
                         } else if (allWindow) {
                             logNodeInfo(
                                 outBuilder = builder,

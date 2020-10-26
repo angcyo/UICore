@@ -84,7 +84,7 @@ data class ActionBean(
     var errorHandleType: Int = ERROR_HANDLE_TYPE_STOP,
 
     /**[com.angcyo.core.component.accessibility.BaseAccessibilityInterceptor.getOnlyFilterTopWindow]*/
-    var onlyTopWindow: Boolean? = null
+    var onlyTopWindow: Boolean = false
 ) {
     companion object {
 

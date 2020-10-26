@@ -36,6 +36,7 @@ class MultiAppAction : AutoParseAction() {
 
         actionBean = ActionBean().apply {
             check = CheckBean().apply {
+                onlyTopWindow = true
                 back = listOf(ConstraintBean().apply {
                     //boundRect = ">=0.5:<=0.8"
                     textList = listOf(name)

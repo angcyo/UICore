@@ -149,44 +149,57 @@ fun AccessibilityService.rootNodeInfo(event: AccessibilityEvent? = null): Access
 }
 
 /**根据给定包名, 获取对应的根节点
- * [packageName] 只需要指定的包名, 空表示所有
+ * [packageNameList] 只需要指定的包名, 空表示所有
  *
  * 此方法会带来以下警告:[android.view.accessibility.AccessibilityWindowInfo.getRoot]
  * AccessibilityInteractionClient: old interaction Id is: -1,current interaction Id is:0
  *
  * [onlyTopWindow] 是否只对应包名的顶层window中的节点信息, 否则会获取所有window中的节点信息
+ * [ignoreMainWindow] 不抓取主程序的节点信息
  * */
 fun AccessibilityService.findNodeInfoList(
-    packageName: List<String>? = null,
-    onlyTopWindow: Boolean = false
+    packageNameList: List<String>? = null,
+    onlyTopWindow: Boolean = false,
+    ignoreMainWindow: Boolean = true
 ): List<AccessibilityNodeInfo> {
     //需要返回的根节点信息
-    val allNode: MutableList<AccessibilityNodeInfo> = mutableListOf()
+    val result: MutableList<AccessibilityNodeInfo> = mutableListOf()
 
-    //保存顶层window
-    val windowLayerList = mutableListOf<CharSequence>()
+    fun addResult(node: AccessibilityNodeInfo) {
+        if (!result.contains(node)) {
+            if (ignoreMainWindow && node.packageName?.str() == packageName) {
+                //忽略主程序
+            } else {
+                result.add(node)
+            }
+        }
+    }
 
-    windows.forEach { windowInfo ->
-        windowInfo.root?.let { root ->
-            if (onlyTopWindow && windowLayerList.contains(root.packageName)) {
-                //只需要获取顶层window的节点信息 //已经获取了
-            } else if (!allNode.contains(root)) {
-                if (packageName.isNullOrEmpty() || packageName.contains(root.packageName)) {
-                    allNode.add(root)
+    if (onlyTopWindow) {
+        val topPackageName = windows.lastOrNull()?.root?.packageName
+        if (!topPackageName.isNullOrEmpty()) {
+            //顶层的应用包名
+            windows.forEach { windowInfo ->
+                windowInfo.root?.let { root ->
+                    if (root.packageName == topPackageName) {
+                        addResult(root)
+                    }
                 }
-                if (onlyTopWindow) {
-                    //保存
-                    windowLayerList.add(root.packageName)
+            }
+        }
+    } else {
+        windows.forEach { windowInfo ->
+            windowInfo.root?.let { root ->
+                if (packageNameList.isNullOrEmpty() || packageNameList.contains(root.packageName)) {
+                    addResult(root)
                 }
             }
         }
     }
 
     rootInActiveWindow?.let { node ->
-        if (!allNode.contains(node)) {
-            if (packageName.isNullOrEmpty() || packageName.contains(node.packageName)) {
-                allNode.add(node)
-            }
+        if (packageNameList.isNullOrEmpty() || packageNameList.contains(node.packageName)) {
+            addResult(node)
         }
     }
 
@@ -203,7 +216,7 @@ fun AccessibilityService.findNodeInfoList(
 //        }
 //    })
 
-    return allNode
+    return result
 }
 
 /**在节点列表中, 过滤指定包名的节点*/

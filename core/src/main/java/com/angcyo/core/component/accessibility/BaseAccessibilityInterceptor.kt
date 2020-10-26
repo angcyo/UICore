@@ -290,8 +290,19 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                         if (it is AutoParseAction) {
                             if (it.actionBean?.check?.packageName?.isEmpty() == true) {
                                 //空字符的包名, 才允许处理
-                                handle =
-                                    it.doActionWidth(action, service, lastEvent, nodeList) || handle
+
+                                val handleNodeList = if (it.actionBean?.onlyTopWindow == true) {
+                                    service.findNodeInfoList(onlyTopWindow = true)
+                                } else {
+                                    nodeList
+                                }
+
+                                handle = it.doActionWidth(
+                                    action,
+                                    service,
+                                    lastEvent,
+                                    handleNodeList
+                                ) || handle
                             }
                         }
                     }
