@@ -164,17 +164,28 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
 
             var needDefaultHandle = true
 
-            if (interceptorLeaveCount.isMaxLimit()) {
-                //超限
-                if (taskBean.leave != null) {
-                    currentAccessibilityAction?.also { action ->
-                        if (action is AutoParseAction) {
-                            if (action._actionFinish == null) {
-                                action._actionFinish = {
-                                    _actionFinish(action, service, it, nodeList)
-                                }
+            //超限
+            if (taskBean.leave != null || taskBean.leaveOut != null) {
+                currentAccessibilityAction?.also { action ->
+                    if (action is AutoParseAction) {
+                        if (action._actionFinish == null) {
+                            action._actionFinish = {
+                                _actionFinish(action, service, it, nodeList)
                             }
-                            val result = action.parseHandleAction(service, nodeList, taskBean.leave)
+                        }
+
+                        if (taskBean.leave != null) {
+                            val result =
+                                action.parseHandleAction(service, nodeList, taskBean.leave)
+                            if (result) {
+                                needDefaultHandle = false
+                                interceptorLeaveCount.clear()
+                            }
+                        }
+
+                        if (taskBean.leaveOut != null && interceptorLeaveCount.isMaxLimit()) {
+                            val result =
+                                action.parseHandleAction(service, nodeList, taskBean.leaveOut)
                             if (result) {
                                 needDefaultHandle = false
                                 interceptorLeaveCount.clear()

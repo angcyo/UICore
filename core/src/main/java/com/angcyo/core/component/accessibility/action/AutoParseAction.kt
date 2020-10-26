@@ -248,7 +248,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                 }
             }
 
-            actionIds.have("$actionId")
+            return false
         } else {
             actionIds.have("$actionId")
         }

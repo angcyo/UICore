@@ -70,6 +70,9 @@ data class TaskBean(
     var leaveCount: Long = BaseAccessibilityAction.DEFAULT_INTERCEPTOR_LEAVE_COUNT,
 
     /**当拦截器离开主程序界面多少次后, 触发的指令.任务需要统一处理离开界面的处理*/
+    var leaveOut: List<ConstraintBean>? = null,
+
+    /**离开主界面后的回调*/
     var leave: List<ConstraintBean>? = null,
 
     /**是否使用全屏浮窗提示*/
