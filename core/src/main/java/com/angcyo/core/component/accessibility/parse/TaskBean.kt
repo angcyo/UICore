@@ -6,6 +6,7 @@ import com.angcyo.core.component.accessibility.ILogPrint
 import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.action.AutoParser
 import com.angcyo.core.component.accessibility.intervalMode
+import com.angcyo.library.L
 
 /**
  * 每个任务的数据结构, action约束
@@ -200,10 +201,13 @@ fun TaskBean.toInterceptor(
                 onConfigAction(autoParseAction)
 
                 //判断是否是back check
-                if (it.check?.back == null) {
+                if (it.check?.back != null) {
+                    actionOtherList.add(autoParseAction)
+                } else if (it.check?.event != null) {
                     actionList.add(autoParseAction)
                 } else {
-                    actionOtherList.add(autoParseAction)
+                    //无效的[autoParseAction]
+                    L.w("无效的[autoParseAction]")
                 }
             }//...end enable
         }

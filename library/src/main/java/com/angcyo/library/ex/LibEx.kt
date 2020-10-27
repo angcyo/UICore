@@ -25,6 +25,8 @@ import kotlin.random.Random.Default.nextInt
 
 /**函数别名*/
 typealias Action = () -> Unit
+typealias Action1 = (Any?) -> Unit
+typealias Action2 = (Any?, Any?) -> Unit
 
 /**反射获取[Application]对象*/
 fun currentApplication(): Application? {

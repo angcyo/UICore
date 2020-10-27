@@ -11,6 +11,8 @@ import androidx.annotation.IdRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.angcyo.library.L
+import com.angcyo.library.utils.Reflect
+import com.angcyo.library.utils.getMember
 import com.angcyo.widget.base.ThrottleClickListener
 import java.lang.ref.WeakReference
 
@@ -101,6 +103,18 @@ open class DslViewHolder(
         click(id, ThrottleClickListener(throttleInterval = throttleInterval, action = action))
     }
 
+    /**节流点击一组事件*/
+    fun throttleClick(
+        vararg ids: Int,
+        throttleInterval: Long = ThrottleClickListener.DEFAULT_THROTTLE_INTERVAL,
+        action: (View) -> Unit
+    ) {
+        val listener = ThrottleClickListener(throttleInterval = throttleInterval, action = action)
+        ids.forEach {
+            click(it, listener)
+        }
+    }
+
     fun clickItem(listener: View.OnClickListener?) {
         click(itemView, listener)
     }
@@ -111,6 +125,14 @@ open class DslViewHolder(
 
     fun throttleClickItem(action: (View) -> Unit) {
         click(itemView, ThrottleClickListener(action = action))
+    }
+
+    fun throttleClickItem(vararg ids: Int, action: (View) -> Unit) {
+        val listener = ThrottleClickListener(action = action)
+        click(itemView, listener)
+        ids.forEach {
+            click(it, listener)
+        }
     }
 
     fun click(view: View?, listener: View.OnClickListener?) {
@@ -356,9 +378,21 @@ open class DslViewHolder(
         return this
     }
 
-    fun check(@IdRes resId: Int, check: Boolean = true): CompoundButton? {
+    fun check(@IdRes resId: Int, check: Boolean = true, notify: Boolean = true): CompoundButton? {
         return v<CompoundButton>(resId)?.apply {
-            isChecked = check
+            if (notify) {
+                isChecked = check
+            } else {
+                try {
+                    val mOnCheckedChangeListener =
+                        Reflect.getMember(CompoundButton::class.java, "mOnCheckedChangeListener")
+                    setOnCheckedChangeListener(null)
+                    isChecked = check
+                    setOnCheckedChangeListener(mOnCheckedChangeListener as CompoundButton.OnCheckedChangeListener?)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
         }
     }
 
