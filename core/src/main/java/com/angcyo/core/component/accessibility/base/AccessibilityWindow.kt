@@ -188,6 +188,15 @@ object AccessibilityWindow {
         AccessibilityWindowFullLayer.hide()
     }
 
+    fun hideAuto() {
+        AccessibilityWindowMiniLayer.hide()
+        if (notTouch) {
+            //如果已经无法接收手势, 则不隐藏浮窗, 多此一举
+        } else {
+            AccessibilityWindowFullLayer.hide()
+        }
+    }
+
     fun _isNeedHide(): Boolean {
         return if (_hideToCount > 0) {
             //需要隐藏
@@ -202,7 +211,7 @@ object AccessibilityWindow {
     fun hideCount(count: Long) {
         _hideToCount = count
         if (count > 0) {
-            hide()
+            hideAuto()
         }
     }
 
@@ -219,7 +228,7 @@ object AccessibilityWindow {
         }
 
         if (time > 0) {
-            hide()
+            hideAuto()
 
             _hideTime = time
             _hideToTime = time + nowTime()

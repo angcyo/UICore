@@ -27,16 +27,18 @@ class HideWindowAction : BaseAction() {
         handleNodeList: List<AccessibilityNodeInfoCompat>,
         handleResult: HandleResult
     ): Boolean {
-        AccessibilityWindow.hide()
-        arg?.toLongOrNull()?.apply {
+        val time = arg?.toLongOrNull()
+        if (time == null) {
+            AccessibilityWindow.hide()
+        } else {
             val actionSize = autoParseAction.accessibilityInterceptor?.actionList?.size ?: 0
-            if (this in 1..actionSize.toLong()) {
-                AccessibilityWindow.hideCount(this)
+            if (time in 1..actionSize.toLong()) {
+                AccessibilityWindow.hideCount(time)
 
                 autoParseAction.handleActionLog("隐藏浮窗Count[${this}]:true")
             } else {
                 //指定需要隐藏的时长, 毫秒
-                AccessibilityWindow.hideTime(this)
+                AccessibilityWindow.hideTime(time)
 
                 autoParseAction.handleActionLog("隐藏浮窗Time[${AccessibilityWindow._hideToTime.fullTime()}]:true")
             }
