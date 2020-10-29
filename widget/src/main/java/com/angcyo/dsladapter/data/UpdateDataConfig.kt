@@ -35,6 +35,9 @@ class UpdateDataConfig {
         )
     }
 
+    /**本次更新, 需要更新的数据量*/
+    var updateSize: () -> Int = { max(updateDataList?.size ?: 0, pageSize) }
+
     /**
      * 更新已有的item, 创建不存在的item, 移除不需要的item
      * [oldItem] 如果有值, 则希望更新[oldItem]
@@ -110,7 +113,7 @@ fun UpdateDataConfig.updateData(originList: List<DslAdapterItem>): List<DslAdapt
         val newAddList = mutableListOf<DslAdapterItem>()
 
         val updateStartIndex = max(0, updatePage - 1) * pageSize
-        val updateEndIndex = updateStartIndex + max(list.size, pageSize)
+        val updateEndIndex = updateStartIndex + updateSize()
 
         for (i in updateStartIndex until updateEndIndex) {
             val index = i - updateStartIndex
