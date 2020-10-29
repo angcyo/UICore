@@ -6,7 +6,6 @@ import com.angcyo.library.ex.isListEmpty
 import com.angcyo.library.model.Page
 import com.angcyo.widget.R
 import kotlin.math.max
-import kotlin.math.min
 
 /**
  *数据更新Dsl配置项
@@ -111,7 +110,7 @@ fun UpdateDataConfig.updateData(originList: List<DslAdapterItem>): List<DslAdapt
         val newAddList = mutableListOf<DslAdapterItem>()
 
         val updateStartIndex = max(0, updatePage - 1) * pageSize
-        val updateEndIndex = updateStartIndex + min(pageSize, list.size)
+        val updateEndIndex = updateStartIndex + if (list.size > pageSize) list.size else pageSize
 
         for (i in updateStartIndex until updateEndIndex) {
             val index = i - updateStartIndex
