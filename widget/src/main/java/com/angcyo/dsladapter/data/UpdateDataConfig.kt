@@ -110,11 +110,11 @@ fun UpdateDataConfig.updateData(originList: List<DslAdapterItem>): List<DslAdapt
         val newAddList = mutableListOf<DslAdapterItem>()
 
         val updateStartIndex = max(0, updatePage - 1) * pageSize
-        val updateEndIndex = updateStartIndex + list.size
+        val updateEndIndex = updateStartIndex + max(list.size, pageSize)
 
         for (i in updateStartIndex until updateEndIndex) {
             val index = i - updateStartIndex
-            val data = list[index]
+            val data = list.getOrNull(index)
             val oldItem = oldList.getOrNull(i)
             val newItem = updateOrCreateItem(oldItem, data, index)
 
