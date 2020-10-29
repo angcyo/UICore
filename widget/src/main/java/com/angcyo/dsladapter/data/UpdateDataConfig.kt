@@ -52,6 +52,7 @@ class UpdateDataConfig {
      * ```
      * 当前界面已经有5个item.
      * 此时需要更新, 页码(updatePage)为2, 数据量(pageSize)为3, 数据(updateDataList)为[i1, i2, i3, i4, i5]
+     * 这样第1页的数据就是(pageSize)3条, 对应界面上的[item1, item2, item3], 从第2页开始更新界面[item4, item5, ...]
      * 那么updateOrCreateItem方法执行参数依次是:
      * ```
      *  1: oldItem = item4; data = i1; index = 0;
