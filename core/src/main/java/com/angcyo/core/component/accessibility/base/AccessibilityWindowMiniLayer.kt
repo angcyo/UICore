@@ -49,25 +49,27 @@ object AccessibilityWindowMiniLayer : ILayer() {
             //常亮
             itemView.keepScreenOn = true
 
-            val duration = AccessibilityWindow.duration
-            val _hideTime = AccessibilityWindow._hideTime
-            if (duration > 0) {
-                var animDuration = duration
-                var fromProgress = 0
+            if (AccessibilityWindow.updateProgress) {
+                val duration = AccessibilityWindow.duration
+                val _hideTime = AccessibilityWindow._hideTime
+                if (duration > 0) {
+                    var animDuration = duration
+                    var fromProgress = 0
 
-                if (_hideTime in 1 until duration) {
-                    fromProgress =
-                        (_hideTime * 1f / duration * 100).toInt()
-                    animDuration =
-                        duration - _hideTime
+                    if (_hideTime in 1 until duration) {
+                        fromProgress =
+                            (_hideTime * 1f / duration * 100).toInt()
+                        animDuration =
+                            duration - _hideTime
+                    }
+                    v<CircleLoadingView>(R.id.progress_bar)?.setProgress(
+                        100,
+                        fromProgress,
+                        animDuration
+                    )
+                } else if (duration == 0L) {
+                    v<CircleLoadingView>(R.id.progress_bar)?.setProgress(0)
                 }
-                v<CircleLoadingView>(R.id.progress_bar)?.setProgress(
-                    100,
-                    fromProgress,
-                    animDuration
-                )
-            } else if (duration == 0L) {
-                v<CircleLoadingView>(R.id.progress_bar)?.setProgress(0)
             }
 
             tv(R.id.text_view)?.apply {

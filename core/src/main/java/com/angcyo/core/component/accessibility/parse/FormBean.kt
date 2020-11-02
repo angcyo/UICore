@@ -4,8 +4,10 @@ import com.angcyo.core.component.accessibility.AutoParseInterceptor
 import com.angcyo.core.component.accessibility.action.ActionException
 import com.angcyo.core.component.accessibility.action.ActionInterruptedException
 import com.angcyo.core.component.accessibility.action.ActionInterruptedNextException
+import com.angcyo.http.GET
 import com.angcyo.http.POST
 import com.angcyo.http.base.jsonObject
+import com.angcyo.http.get
 import com.angcyo.http.post
 import com.angcyo.http.rx.observer
 import com.angcyo.library.L
@@ -26,11 +28,13 @@ import kotlin.collections.set
  */
 
 data class FormBean(
+    //用于之后的停止子任务
+    var formId: Long = -1,
     //服务器地址, 尽量使用完整的地址
     var url: String? = null,
     //查询参数, a=2&b=3.3&c=name&d=true
     var query: String? = null,
-    //提交方法, 目前只支持[POST]
+    //提交方法, 目前支持[POST] [GET]
     var method: Int = POST,
     //数据提交的类型
     var contentType: Int = CONTENT_TYPE_FORM,
@@ -89,33 +93,28 @@ fun FormBean.request(
         }
         null
     } else {
-        post {
-            url = this@request.url!!
+        if (method == GET) {
+            get {
+                url = this@request.url!!
 
-            //请求参数
-            val requestParams = handleParams(configParams)
+                //请求参数
+                query = handleParams(configParams)
+            }
+        } else {
+            post {
+                url = this@request.url!!
 
-            // to-> get request
-//            var first = true
-//            url = "$url?" + buildString {
-//                requestParams.forEach { entry ->
-//                    if (!first) {
-//                        append("&")
-//                    }
-//                    first = false
-//                    append(entry.key)
-//                    append("=")
-//                    append(entry.value)
-//                }
-//            }
+                //请求参数
+                val requestParams = handleParams(configParams)
 
-            //请求体
-            if (contentType == FormBean.CONTENT_TYPE_FORM) {
-                formMap = requestParams
-            } else {
-                body = jsonObject {
-                    requestParams.forEach { entry ->
-                        add(entry.key, entry.value)
+                //请求体
+                if (contentType == FormBean.CONTENT_TYPE_FORM) {
+                    formMap = requestParams
+                } else {
+                    body = jsonObject {
+                        requestParams.forEach { entry ->
+                            add(entry.key, entry.value)
+                        }
                     }
                 }
             }

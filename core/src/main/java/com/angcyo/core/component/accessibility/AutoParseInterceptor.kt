@@ -75,25 +75,28 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
 
     override fun onDoActionStart() {
         super.onDoActionStart()
-
-        if (taskBean.fullscreen) {
-            //全屏浮窗
-            AccessibilityWindow.fullscreenLayer = true
-        }
         AccessibilityWindow.notTouch = taskBean.notTouchable
 
-        AccessibilityWindow.fullTitleText = span {
-            if (!taskBean.name.isNullOrEmpty()) {
-                append(taskBean.name)
+        if (updateWindow) {
+
+            if (taskBean.fullscreen) {
+                //全屏浮窗
+                AccessibilityWindow.fullscreenLayer = true
             }
-            if (!taskBean.gold.isNullOrEmpty()) {
+
+            AccessibilityWindow.fullTitleText = span {
                 if (!taskBean.name.isNullOrEmpty()) {
-                    appendln()
+                    append(taskBean.name)
                 }
-                if (taskBean.gold!!.isNumber()) {
-                    append("做完任务您将获得${taskBean.gold}金币")
-                } else {
-                    append(taskBean.gold)
+                if (!taskBean.gold.isNullOrEmpty()) {
+                    if (!taskBean.name.isNullOrEmpty()) {
+                        appendln()
+                    }
+                    if (taskBean.gold!!.isNumber()) {
+                        append("做完任务您将获得${taskBean.gold}金币")
+                    } else {
+                        append(taskBean.gold)
+                    }
                 }
             }
         }
@@ -167,6 +170,7 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
             //超限
             if (taskBean.leave != null || taskBean.leaveOut != null) {
                 currentAccessibilityAction?.also { action ->
+                    action.accessibilityInterceptor = this@AutoParseInterceptor
                     if (action is AutoParseAction) {
                         if (action._actionFinish == null) {
                             action._actionFinish = {
@@ -192,6 +196,7 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
                             }
                         }
                     }
+                    action.accessibilityInterceptor = null
                 }
             }
 

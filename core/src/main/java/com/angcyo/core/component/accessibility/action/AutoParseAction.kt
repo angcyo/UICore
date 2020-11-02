@@ -30,6 +30,9 @@ open class AutoParseAction : BaseAccessibilityAction() {
     /**根据给定的[wordInputIndexList] [wordTextIndexList]返回对应的文本信息*/
     var onGetWordTextListAction: ((List<String>) -> List<String>?)? = null
 
+    var onStartTaskAction: ((autoParseAction: AutoParseAction, formBean: FormBean, loop: String?, count: Long) -> Boolean)? =
+        null
+
     /**请求表单时, 配置表单数据的回调*/
     var onConfigParams: ((params: HashMap<String, Any>) -> Unit)? = null
 
@@ -82,6 +85,18 @@ open class AutoParseAction : BaseAccessibilityAction() {
             add(TrueAction())
             add(UrlAction())
             add(NotTouchableAction())
+            add(TaskAction().apply {
+                onStartTask =
+                    { autoParseAction: AutoParseAction, taskFormBean: FormBean, loop: String?, count: Long ->
+                        onStartTaskAction?.invoke(
+                            autoParseAction,
+                            taskFormBean,
+                            loop,
+                            count
+                        ) ?: false
+                    }
+            })
+            add(DestroyAction())
         }
     }
 
@@ -484,7 +499,8 @@ open class AutoParseAction : BaseAccessibilityAction() {
         }
 
         if (actionList.isListEmpty()) {
-            handleActionLog("(${actionBean?.checkId})未指定指令!")
+            val checkId = actionBean?.checkId ?: -1
+            handleActionLog("(${if (checkId > 0) checkId else actionBean?.title})未指定指令!")
             handleResult.result = false //2020-09-06
         } else {
 

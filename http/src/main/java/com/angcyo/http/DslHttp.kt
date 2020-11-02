@@ -276,10 +276,14 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
                     requestConfig.onSuccess(it)
                 }
                 body is JsonObject -> {
-                    throw HttpDataException(
-                        body.getString(requestConfig.msgKey) ?: "数据异常",
-                        body.getInt(requestConfig.codeKey, -1)
-                    )
+                    if (body.has(requestConfig.codeKey)) {
+                        throw HttpDataException(
+                            body.getString(requestConfig.msgKey) ?: "数据异常",
+                            body.getInt(requestConfig.codeKey, -200)
+                        )
+                    } else {
+                        throw HttpDataException("返回体无[${requestConfig.codeKey}]", -200)
+                    }
                 }
                 else -> {
                     requestConfig.onSuccess(it)

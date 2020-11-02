@@ -28,6 +28,12 @@ object MainExecutor : Executor {
             throw RejectedExecutionException("$handler is shutting down")
         }
     }
+
+    fun delay(command: Runnable, delayMillis: Long) {
+        if (!handler.postDelayed(command, delayMillis)) {
+            throw RejectedExecutionException("$handler is shutting down")
+        }
+    }
 }
 
 class MainRunnable(var action: Action? = null) : Runnable {

@@ -56,6 +56,27 @@ abstract class BaseAccessibilityAction {
 
         /**同上*/
         const val DEFAULT_ACTION_LEAVE_COUNT = 3L
+
+        /**获取拦截器下一次间隔回调的时长*/
+        fun parseInterceptorIntervalDelay(
+            interval: String?,
+            defaultDelay: Long = BaseAccessibilityInterceptor.defaultIntervalDelay
+        ): Long {
+            return if (interval.isNullOrEmpty()) {
+                defaultDelay
+            } else {
+                val split = interval.split(",")
+
+                val start = split.getOrNull(0)?.toLongOrNull() ?: defaultDelay
+
+                val base = split.getOrNull(1)?.toLongOrNull()
+                    ?: BaseAccessibilityInterceptor.defaultIntervalDelay
+
+                val factor = split.getOrNull(2)?.toLongOrNull() ?: 1 //nextLong(2, 5)
+
+                start + base * nextLong(1, max(2L, factor + 1))
+            }
+        }
     }
 
     /**日志输出*/
@@ -310,22 +331,10 @@ abstract class BaseAccessibilityAction {
 
     /**获取拦截器下一次间隔回调的时长*/
     open fun getInterceptorIntervalDelay(interval: String? = actionInterval): Long {
-        return if (interval.isNullOrEmpty()) {
-            (accessibilityInterceptor?.initialIntervalDelay ?: -1L)
-        } else {
-            val split = interval.split(",")
-
-            val start = split.getOrNull(0)?.toLongOrNull()
-                ?: (accessibilityInterceptor?.initialIntervalDelay
-                    ?: BaseAccessibilityInterceptor.defaultIntervalDelay)
-
-            val base = split.getOrNull(1)?.toLongOrNull()
-                ?: BaseAccessibilityInterceptor.defaultIntervalDelay
-
-            val factor = split.getOrNull(2)?.toLongOrNull() ?: 1 //nextLong(2, 5)
-
-            start + base * nextLong(1, max(2L, factor + 1))
-        }
+        return parseInterceptorIntervalDelay(
+            interval,
+            accessibilityInterceptor?.initialIntervalDelay ?: -1L
+        )
     }
 }
 

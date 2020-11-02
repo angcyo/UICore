@@ -77,6 +77,9 @@ data class ActionBean(
     /**[Action]完成后, 需要执行的网络请求*/
     var form: FormBean? = null,
 
+    /**[com.angcyo.core.component.accessibility.parse.ConstraintBean.ACTION_TASK]需要启动的[FormBean]*/
+    var task: FormBean? = null,
+
     /**getText获取到的文本, 需要放在表单的那个key中*/
     var formKey: String? = null,
 

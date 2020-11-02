@@ -94,7 +94,10 @@ data class TaskBean(
     /**
      * 每个[AutoParseAction]执行后回调
      * */
-    var end: List<ConstraintBean>? = null
+    var end: List<ConstraintBean>? = null,
+
+    /**是否激活任务, 仅在测试页面有效*/
+    var enable: Boolean = true
 )
 
 /**转成拦截器*/

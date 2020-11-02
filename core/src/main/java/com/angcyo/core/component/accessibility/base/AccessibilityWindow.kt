@@ -87,6 +87,9 @@ object AccessibilityWindow {
             }
         }
 
+    /**是否更新进度条*/
+    var updateProgress: Boolean = false
+
     var fullTopText: CharSequence? = span {
         append(getAppName()) {
             foregroundColor = _color(R.color.colorPrimary)
@@ -136,6 +139,10 @@ object AccessibilityWindow {
 
     /**转圈时长, 毫秒. -1 保持原来的进度; 0 清空进度; 其他 进度动画时长*/
     var duration: Long = -1
+        set(value) {
+            field = value
+            updateProgress = true
+        }
 
     /**浮窗需要隐藏到什么时间, 13位时间戳*/
     var _hideToTime: Long = -1
@@ -158,6 +165,7 @@ object AccessibilityWindow {
         this.des = null
         this.duration = 0
         this.textColor = Color.WHITE
+        this.updateProgress = false
     }
 
     fun show(dsl: AccessibilityWindow.() -> Unit = {}) {
@@ -174,6 +182,7 @@ object AccessibilityWindow {
             }
 
             //clear
+            updateProgress = false
             _hideTime = -1
         }
     }

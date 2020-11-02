@@ -6,6 +6,7 @@ import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.CallSuper
+import com.angcyo.core.component.accessibility.BaseAccessibilityAction.Companion.parseInterceptorIntervalDelay
 import com.angcyo.core.component.accessibility.BaseAccessibilityInterceptor.Companion.defaultIntervalDelay
 import com.angcyo.core.component.accessibility.action.*
 import com.angcyo.core.component.accessibility.base.AccessibilityWindow
@@ -126,6 +127,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
 
     /**间隔回调周期, 根据手机性能自动调整*/
     var intervalDelay: Long = -1
+
+    /**[com.angcyo.core.component.accessibility.parse.ConstraintBean.ACTION_SLEEP]指令, 指定的间隔时间*/
+    var sleepIntervalDelay: String? = null
 
     /**当无法处理[AccessibilityEvent]时*/
     var onNoOtherEventHandleAction: ((service: BaseAccessibilityService, mainNode: AccessibilityNodeInfo) -> Unit)? =
@@ -460,7 +464,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             if (indexOf != -1) {
                 actionIndex = indexOf
 
-                intervalDelay = onHandleIntervalDelay(actionIndex)
+                intervalDelay = nextSleepIntervalDelay(onHandleIntervalDelay(actionIndex))
             } else {
                 L.w("${this.simpleHash()} 指定需要运行的action:${action.simpleHash()} 不存在.".apply {
                     interceptorLog?.log(this)
@@ -469,6 +473,8 @@ abstract class BaseAccessibilityInterceptor : Runnable {
 
             //清空
             _targetAction = null
+        } else {
+            intervalDelay = nextSleepIntervalDelay(intervalDelay)
         }
 
         //下一个周期
@@ -605,9 +611,6 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         if (error == null || error is ActionInterruptedNextException) {
             //[BaseAccessibilityAction] 被中断时, 允许继续玩下执行
             actionNext(service)
-
-            //切换间隔时长
-            intervalDelay = onHandleIntervalDelay(actionIndex)
         } else {
             actionError(action, error)
         }
@@ -694,6 +697,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
     /**下一个[Action]*/
     fun actionNext(service: BaseAccessibilityService) {
         actionIndex++
+
+        //切换间隔时长
+        intervalDelay = nextSleepIntervalDelay(onHandleIntervalDelay(actionIndex))
 
         AccessibilityWindow.hideCountDown()
 
@@ -811,6 +817,30 @@ abstract class BaseAccessibilityInterceptor : Runnable {
 
         }
         return delay
+    }
+
+    /**下一个周期时间*/
+    fun nextSleepIntervalDelay(startDelay: Long): Long {
+        val intervalDelay = sleepIntervalDelay
+        if (intervalDelay.isNullOrEmpty()) {
+            return startDelay
+        }
+
+        val delay = parseInterceptorIntervalDelay(sleepIntervalDelay, startDelay)
+        val result = when {
+            intervalDelay.startsWith("+") -> startDelay + parseInterceptorIntervalDelay(
+                intervalDelay.arg(1, "+")
+            )
+            intervalDelay.startsWith("-") -> startDelay - parseInterceptorIntervalDelay(
+                intervalDelay.arg(1, "-")
+            )
+            else -> delay
+        }
+
+        //清空
+        sleepIntervalDelay = null
+
+        return result
     }
 
     //</editor-fold desc="其他">

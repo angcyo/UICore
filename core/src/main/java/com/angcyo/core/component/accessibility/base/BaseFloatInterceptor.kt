@@ -19,6 +19,9 @@ import com.angcyo.library.ex._color
  */
 abstract class BaseFloatInterceptor : BaseAccessibilityInterceptor() {
 
+    /**是否需要更新浮窗*/
+    var updateWindow = true
+
 //    /**显示通知*/
 //    open fun notify(title: CharSequence? = null, content: CharSequence? = null) {
 //        if (!actionStatus.isActionInit()) {
@@ -31,12 +34,14 @@ abstract class BaseFloatInterceptor : BaseAccessibilityInterceptor() {
     /**浮窗日志输出*/
     var onWindowLog: ((text: CharSequence?, summary: CharSequence?, duration: Long) -> Unit)? =
         { text, summary, duration ->
-            AccessibilityWindow.show {
-                this.text = text
-                this.summary = summary
-                this.duration = duration
-                this.textColor =
-                    if (_isInFilterPackageNameApp) Color.WHITE else _color(R.color.warning)
+            if (updateWindow) {
+                AccessibilityWindow.show {
+                    this.text = text
+                    this.summary = summary
+                    this.duration = duration
+                    this.textColor =
+                        if (_isInFilterPackageNameApp) Color.WHITE else _color(R.color.warning)
+                }
             }
         }
 

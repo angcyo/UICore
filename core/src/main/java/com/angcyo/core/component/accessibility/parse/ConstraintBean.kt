@@ -369,6 +369,13 @@ data class ConstraintBean(
         /**设置全屏浮窗不接受touch事件*/
         const val ACTION_NOT_TOUCHABLE = "notTouchable"
 
+        /**根据[FormBean]启动一个新的任务
+         * [task:5000,500,1:-1], 第一次执行后, 多久再执行,多少次, -1 无限[默认].*/
+        const val ACTION_TASK = "task"
+
+        /**销毁拦截器*/
+        const val ACTION_DESTROY = "destroy"
+
         /*---------------------------------------状态匹配--------------------------------------*/
 
         //需要指定的状态 [state]
