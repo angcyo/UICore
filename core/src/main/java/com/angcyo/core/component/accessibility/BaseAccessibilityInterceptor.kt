@@ -497,7 +497,9 @@ abstract class BaseAccessibilityInterceptor : Runnable {
 
     }
 
-    /**间隔周期回调 */
+    /**间隔周期回调
+     * [run] -> [onInterval] -> [handleAccessibility] -> [handleFilterNode] -> [onDoAction]
+     * */
     open fun onInterval() {
         //interceptorLog?.log(this@BaseAccessibilityInterceptor.simpleHash(), " $it")
         val service = lastService

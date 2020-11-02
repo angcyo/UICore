@@ -333,8 +333,9 @@ data class ConstraintBean(
         const val ACTION_JUMP = "jump"
 
         /**
-         * 指定下一个[action]执行的时间间隔, 当[checkEvent]通过时, 此指令无效
-         * 格式[:5000,500,5],
+         * 指定下一个[action]执行的时间间隔
+         * 格式[:5000,500,5]
+         * 支持[:+5000,500,5] [:-5000,500,5] 加/减 时间
          * 空参数表示使用[com.angcyo.core.component.accessibility.parse.ActionBean.interval]
          * */
         const val ACTION_SLEEP = "sleep"

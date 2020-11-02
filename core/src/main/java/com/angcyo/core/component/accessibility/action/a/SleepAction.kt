@@ -4,6 +4,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.BaseAccessibilityService
 import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.action.HandleResult
+import com.angcyo.core.component.accessibility.action.arg
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
 
 /**
@@ -27,15 +28,23 @@ class SleepAction : BaseAction() {
     ): Boolean {
         //指定下一次周期循环的间隔
         var value = false
+        val arg = arg
 
-        val interval = if (arg.isNullOrEmpty()) {
-            autoParseAction.actionInterval
-        } else {
-            arg
+        val delay = autoParseAction.getInterceptorIntervalDelay(autoParseAction.actionInterval)
+
+        val interval: Long = when {
+            arg.isNullOrEmpty() -> delay
+            arg.startsWith("+") -> delay + autoParseAction.getInterceptorIntervalDelay(
+                arg.arg(1, "+")
+            )
+            arg.startsWith("-") -> delay - autoParseAction.getInterceptorIntervalDelay(
+                arg.arg(1, "-")
+            )
+            else -> autoParseAction.getInterceptorIntervalDelay(arg)
         }
 
         autoParseAction.accessibilityInterceptor?.let {
-            it.intervalDelay = autoParseAction.getInterceptorIntervalDelay(interval)
+            it.intervalDelay = interval//autoParseAction.getInterceptorIntervalDelay(interval)
             value = true
             autoParseAction.handleActionLog("指定下一个周期在[${it.intervalDelay}ms]:$value")
         }
