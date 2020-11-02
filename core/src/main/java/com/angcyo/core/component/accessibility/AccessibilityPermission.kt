@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.appcompat.app.AlertDialog
-import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.toApplicationDetailsSettings
 import ezy.assist.compat.SettingsCompat
 
@@ -23,9 +22,6 @@ object AccessibilityPermission {
 
     /**是否有无障碍权限和浮窗权限*/
     fun haveAllPermission(context: Context): Boolean {
-//        if (isDebug()) {
-//            return true
-//        }
         return haveAccessibilityService(context) && haveDrawOverlays(context)
     }
 
