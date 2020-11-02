@@ -170,6 +170,7 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
             //超限
             if (taskBean.leave != null || taskBean.leaveOut != null) {
                 currentAccessibilityAction?.also { action ->
+                    val old = action.accessibilityInterceptor
                     action.accessibilityInterceptor = this@AutoParseInterceptor
                     if (action is AutoParseAction) {
                         if (action._actionFinish == null) {
@@ -196,7 +197,7 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
                             }
                         }
                     }
-                    action.accessibilityInterceptor = null
+                    action.accessibilityInterceptor = old
                 }
             }
 
