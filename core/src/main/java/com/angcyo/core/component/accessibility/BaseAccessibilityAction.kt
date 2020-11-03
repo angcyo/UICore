@@ -96,7 +96,7 @@ abstract class BaseAccessibilityAction {
         maxCountLimit = DEFAULT_ACTION_MAX_COUNT
     }
 
-    /**[checkOtherEvent]执行次数统计*/
+    /**[checkOtherEvent]执行失败的次数统计*/
     val checkOtherEventCount: ActionCount = ActionCount().apply {
         maxCountLimit = DEFAULT_ACTION_OTHER_MAX_COUNT
     }
