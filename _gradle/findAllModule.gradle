@@ -43,11 +43,12 @@ def listPath(filePath, depth = 0 /*当前枚举的路径深度, 深度大于maxD
     }
 }
 
-/**include复合目标的文件夹*/
+/**include符合目标的文件夹*/
 def includePath(filePath, parent) {
     if (filePath.isDirectory()) {
         def buildFile = new File(filePath, "build.gradle")
-        if (buildFile.exists()) {
+        def buildFileKts = new File(filePath, "build.gradle.kts")
+        if (buildFile.exists() || buildFileKts.exists()) {
             def name = filePath.getName()
             def path = parent + ":${name}"
 

@@ -8,13 +8,13 @@ def ignoreFile = new File(rootPath, 'ignore')
 if (ignoreFile.exists()) {
     ignoreModule = ignoreFile.readLines('UTF8')
 }
-println "忽略以下Module->\n" + ignoreModule
+println "忽略以下Module->↓\n" + ignoreModule
 
 listPath(rootPath)
 //includeConfig.each { key, value ->
 //    println "->include " + value + " ::" + key
 //}
-println includeConfig
+println "包含以下Module->↓\n" + includeConfig
 println "...end...↑\n"
 
 /**枚举所有文件夹*/
@@ -40,7 +40,8 @@ def listPath(filePath, depth = 0 /*当前枚举的路径深度, 深度大于maxD
 def includePath(filePath, parent) {
     if (filePath.isDirectory()) {
         def buildFile = new File(filePath, "build.gradle")
-        if (buildFile.exists()) {
+        def buildFileKts = new File(filePath, "build.gradle.kts")
+        if (buildFile.exists() || buildFileKts.exists()) {
             def name = filePath.getName()
             def path = parent + ":${name}"
 
