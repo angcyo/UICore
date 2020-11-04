@@ -63,7 +63,7 @@ abstract class BaseFloatInterceptor : BaseAccessibilityInterceptor() {
 
     override fun onIntervalStart(delay: Long) {
         super.onIntervalStart(delay)
-        updateWindow()
+        updateWindow(delay)
     }
 
     override fun onDoActionFinish(action: BaseAccessibilityAction?, error: ActionException?) {
@@ -78,16 +78,16 @@ abstract class BaseFloatInterceptor : BaseAccessibilityInterceptor() {
         super.onDestroy(reason)
     }
 
-    fun updateWindow() {
+    fun updateWindow(delay: Long = intervalDelay) {
         when (runActionStatus) {
             ACTION_STATUS_INIT -> {
                 if (actionIndex < 0) {
-                    onWindowLog?.invoke("就绪", null, intervalDelay)
+                    onWindowLog?.invoke("就绪", null, delay)
                 } else {
                     onWindowLog?.invoke(
                         "$actionIndex/${actionList.size}",
                         currentActionSummary,
-                        intervalDelay
+                        delay
                     )
                 }
             }
@@ -96,10 +96,10 @@ abstract class BaseFloatInterceptor : BaseAccessibilityInterceptor() {
                     onWindowLog?.invoke(
                         "$actionIndex/${actionList.size}",
                         currentActionSummary,
-                        intervalDelay
+                        delay
                     )
                 } else {
-                    onWindowLog?.invoke("等待", null, intervalDelay)
+                    onWindowLog?.invoke("等待", null, delay)
                 }
             }
             ACTION_STATUS_FINISH -> onWindowLog?.invoke("已完成", null, 0)
