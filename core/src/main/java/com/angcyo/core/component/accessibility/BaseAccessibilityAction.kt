@@ -263,6 +263,7 @@ abstract class BaseAccessibilityAction {
         nodeList: List<AccessibilityNodeInfo>
     ) {
         accessibilityInterceptor = interceptor
+        doActionCount.start()
 
         if (this is AutoParseAction) {
             if (!actionBean?.check?.start.isListEmpty()) {

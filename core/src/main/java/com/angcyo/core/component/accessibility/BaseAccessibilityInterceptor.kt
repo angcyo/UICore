@@ -449,6 +449,8 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         return true
     }
 
+    var _tempIntervalDelay = 0L
+
     override fun run() {
         try {
             onInterval()
@@ -464,7 +466,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             if (indexOf != -1) {
                 actionIndex = indexOf
 
-                intervalDelay = nextSleepIntervalDelay(onHandleIntervalDelay(actionIndex))
+                _tempIntervalDelay = nextSleepIntervalDelay(onHandleIntervalDelay(actionIndex))
             } else {
                 L.w("${this.simpleHash()} 指定需要运行的action:${action.simpleHash()} 不存在.".apply {
                     interceptorLog?.log(this)
@@ -474,12 +476,12 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             //清空
             _targetAction = null
         } else {
-            intervalDelay = nextSleepIntervalDelay(intervalDelay)
+            _tempIntervalDelay = nextSleepIntervalDelay(intervalDelay)
         }
 
         //下一个周期
         if (enableInterval && runActionStatus == ACTION_STATUS_ING) {
-            startInterval(intervalDelay)
+            startInterval(_tempIntervalDelay)
         } else {
             interceptorLog?.log("${this.simpleHash()} 拦截器,周期回调结束!")
             onIntervalEnd()
@@ -511,6 +513,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
         val service = lastService
         if (service == null) {
             if (isActionInterceptorStart()) {
+                actionError(currentAccessibilityAction, ActionException("service is null"))
                 L.w("${this.simpleHash()} service is null.".apply {
                     interceptorLog?.log(this)
                 })
@@ -639,6 +642,11 @@ abstract class BaseAccessibilityInterceptor : Runnable {
             }
 
             action.onActionStart(this, service, nodeList)
+
+            if (!sleepIntervalDelay.isNullOrEmpty()) {
+                //如果在[onActionStart]中触发了[ACTION_SLEEP]
+                return
+            }
         }
 
         _actionControl.addMethodName(ActionControl.METHOD_checkEvent)
