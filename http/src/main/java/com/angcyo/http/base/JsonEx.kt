@@ -257,6 +257,7 @@ fun gson(config: GsonBuilder.() -> Unit = {}): Gson {
     val gson = GsonBuilder()
         .setPrettyPrinting()
         .serializeNulls()
+        .setDateFormat("yyyy-MM-dd HH:mm:ss")
         .setLenient() //支持畸形json解析
         .excludeFieldsWithModifiers(
             Modifier.STATIC,
