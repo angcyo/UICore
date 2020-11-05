@@ -97,7 +97,10 @@ data class TaskBean(
     var end: List<ConstraintBean>? = null,
 
     /**是否激活任务, 仅在测试页面有效*/
-    var enable: Boolean = true
+    var enable: Boolean = true,
+
+    /**是否响应适配信息, 仅在测试页面有效*/
+    var adaptive: Boolean = false
 )
 
 /**转成拦截器*/
