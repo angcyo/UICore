@@ -206,12 +206,12 @@ fun SpannableStringBuilder.safe(): SpannableStringBuilder {
     return delete(kotlin.math.max(0, lastIndex), kotlin.math.max(0, length))
 }
 
-/**判断字符串是否是纯数字*/
+/**判断字符串是否是纯数字, 支持正负整数,正负浮点数*/
 fun String.isNumber(): Boolean {
     if (TextUtils.isEmpty(this)) {
         return false
     }
-    val pattern = Pattern.compile("^[-\\+]?[\\d]+$")
+    val pattern = Pattern.compile("^[-\\+]?[\\d.]*\\d+$")
     return pattern.matcher(this).matches()
 }
 

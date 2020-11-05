@@ -14,7 +14,6 @@ import com.angcyo.library.ex.getOrNull2
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.isListEmpty
 import com.angcyo.library.ex.patternList
-import com.angcyo.library.utils.getFloatNum
 import com.angcyo.library.utils.getLongNum
 import kotlin.math.max
 import kotlin.math.min
@@ -333,56 +332,10 @@ open class AutoParser {
             return match
         }
 
-        /**比较
-         * [>=2] 数量大于等于2
-         * [>3] 数量大于3
-         * [2] 数量等于2
-         * [=2] 数量等于2
-         * [<3] 数量小于3
-         * 空字符 表示直接过
-         * null 忽略此条件
-         * [expression] 字符串数值表达式, 比如: >=2
-         * [value] 需要比较的数值,比如: 3
-         * */
+
+        /**验证[value]是否满足数学表达式*/
         fun compareStringNum(expression: String?, value: Float, ref: Float = 1f): Boolean {
-            var result = false
-            if (expression != null) {
-                if (expression.isEmpty()) {
-                    result = true
-                } else {
-                    val num = expression.getFloatNum()
-                    num?.also {
-                        //如果是小数, 则按照比例计算
-                        val tNum = if (it < 1) {
-                            it * ref
-                        } else {
-                            it
-                        }
-                        if (expression.startsWith(">=")) {
-                            if (value >= tNum) {
-                                result = true
-                            }
-                        } else if (expression.startsWith(">")) {
-                            if (value > tNum) {
-                                result = true
-                            }
-                        } else if (expression.startsWith("<=")) {
-                            if (value <= tNum) {
-                                result = true
-                            }
-                        } else if (expression.startsWith("<")) {
-                            if (value < tNum) {
-                                result = true
-                            }
-                        } else {
-                            if (value == tNum) {
-                                result = true
-                            }
-                        }
-                    }
-                }
-            }
-            return result
+            return MathParser.verifyValue(value, expression, ref)
         }
 
         /**将参数转换成对应的包名*/
@@ -567,6 +520,18 @@ open class AutoParser {
 
         //根节点
         val rootNodeWrap: AccessibilityNodeInfoCompat = rootNodeInfo.wrap()
+
+        if (!ConfigParser.verifySystem(constraintBean.system)) {
+            return
+        }
+
+        if (!ConfigParser.verifyAction(
+                autoParseAction.accessibilityInterceptor,
+                constraintBean.action
+            )
+        ) {
+            return
+        }
 
         //节点总数约束
         if (constraintBean.sizeCount != null) {

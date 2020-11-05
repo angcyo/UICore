@@ -12,6 +12,21 @@ import com.angcyo.core.component.accessibility.parse.ConstraintBean.Companion.AC
  */
 data class ConstraintBean(
 
+    /*----------------------------------------前置约束----------------------------------------*/
+
+    /**系统信息约束, 多个用;号分割. 并且的关系; 用 !or! 分割或者
+     * [com.angcyo.core.component.accessibility.action.ConfigParser]
+     * */
+    var system: String? = null,
+
+    /**当前运行的[AutoParseAction]索引信息约束
+     * ">1" 运行的索引大于1时有效
+     * "1~-1" 运行的索引大于1并且小于倒数第一个时有效
+     * "205000" 当前运行的[actionId]是[205000]时有效
+     * "205000~300000" 当前运行的[actionId]在范围[205000~300000]之间时时有效
+     * */
+    var action: String? = null,
+
     /*------------------------------------作用于根节点的约束------------------------------------*/
 
     /**约束根节点视图结构中, 无child节点的节点总数量满足此条件, 则继续. 否则失败.
