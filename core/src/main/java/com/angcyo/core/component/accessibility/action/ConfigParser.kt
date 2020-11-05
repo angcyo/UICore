@@ -50,14 +50,6 @@ object ConfigParser {
                             //约束手机型号
                             Build.MODEL == con.drop(5)
                         }
-                        con.startsWith("w") -> {
-                            //约束手机屏幕宽度
-                            MathParser.verifyRangeValue(_screenWidth.toFloat(), con.drop(1))
-                        }
-                        con.startsWith("h") -> {
-                            //约束手机屏幕高度
-                            MathParser.verifyRangeValue(_screenHeight.toFloat(), con.drop(1))
-                        }
                         con.startsWith("cpu") -> {
                             //约束手机cpu最大频率
                             /*CpuUtils.cpuMaxFreq >= 2_800_000L*/
@@ -69,6 +61,15 @@ object ConfigParser {
                                 Device.getTotalMemory().toFloat(),
                                 con.drop(3)
                             )
+                        }
+                        //字母少的, 放在后面匹配
+                        con.startsWith("w") -> {
+                            //约束手机屏幕宽度
+                            MathParser.verifyRangeValue(_screenWidth.toFloat(), con.drop(1))
+                        }
+                        con.startsWith("h") -> {
+                            //约束手机屏幕高度
+                            MathParser.verifyRangeValue(_screenHeight.toFloat(), con.drop(1))
                         }
                         else -> {
                             //无法识别的指令
