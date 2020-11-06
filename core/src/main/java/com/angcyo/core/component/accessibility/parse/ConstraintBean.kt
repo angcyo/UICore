@@ -1,5 +1,6 @@
 package com.angcyo.core.component.accessibility.parse
 
+import com.angcyo.core.component.accessibility.action.ConfigParser
 import com.angcyo.core.component.accessibility.back
 import com.angcyo.core.component.accessibility.parse.ConstraintBean.Companion.ACTION_GET_TEXT
 
@@ -12,7 +13,7 @@ import com.angcyo.core.component.accessibility.parse.ConstraintBean.Companion.AC
  */
 data class ConstraintBean(
 
-    /*----------------------------------------前置约束----------------------------------------*/
+    /*----------------------------------------前置约束判断----------------------------------------*/
 
     /**系统信息约束, 多个用;号分割. 并且的关系; 用 !or! 分割或者
      * [com.angcyo.core.component.accessibility.action.ConfigParser]
@@ -26,6 +27,19 @@ data class ConstraintBean(
      * "205000~300000" 当前运行的[actionId]在范围[205000~300000]之间时时有效
      * */
     var action: String? = null,
+
+
+    /*----------------------------------------指令执行前--------------------------------------*/
+
+    /**只有指定的[com.angcyo.core.component.accessibility.parse.ActionBean.actionId]才执行action
+     * 多个用;号分割*/
+    var actionIds: String? = null,
+
+    /**跳过指定的[actionId]
+     * 多个用;号分割*/
+    var notActionIds: String? = null,
+
+    /*---------------------------------------------------------------------------------------*/
 
     /*------------------------------------作用于根节点的约束------------------------------------*/
 
@@ -152,18 +166,6 @@ data class ConstraintBean(
      * 不满足条件, 清空所有节点, 本次匹配失败.
      * 支持的数据格式: [com.angcyo.core.component.accessibility.parse.ConditionBean.childCount]*/
     var nodeCount: String? = null,
-
-    /*---------------------------------------------------------------------------------------*/
-
-    /*----------------------------------------指令执行前--------------------------------------*/
-
-    /**只有指定的[com.angcyo.core.component.accessibility.parse.ActionBean.actionId]才执行action
-     * 多个用;号分割*/
-    var actionIds: String? = null,
-
-    /**跳过指定的[actionId]
-     * 多个用;号分割*/
-    var notActionIds: String? = null,
 
     /*---------------------------------------------------------------------------------------*/
 
@@ -437,3 +439,6 @@ fun ConstraintBean.isOnlyPathConstraint(): Boolean {
             stateList == null &&
             pathList != null
 }
+
+/**筛选出, 只符合系统条件的[ConstraintBean], 返回的是一个新的集合*/
+fun List<ConstraintBean>.filterSystem() = filter { ConfigParser.verifySystem(it.system) }

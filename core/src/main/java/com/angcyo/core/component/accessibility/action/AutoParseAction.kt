@@ -159,7 +159,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         var result = false
 
         if (constraintList != null) {
-            autoParser.parse(service, this, nodeList, constraintList, true) {
+            autoParser.parse(service, this, nodeList, constraintList.filterSystem(), true) {
                 for (parseResult in it) {
 
                     val constraint = parseResult.constraint
@@ -293,22 +293,29 @@ open class AutoParseAction : BaseAccessibilityAction() {
         } else {
             //解析拿到对应的node
             val handleType = actionBean?.handleType
+
+            val filterConstraintList = if (handleType != null) {
+                constraintList.filterSystem()
+            } else {
+                constraintList
+            }
+
             val handleConstraintList: List<ConstraintBean> = when (handleType) {
-                ActionBean.HANDLE_TYPE_RANDOM -> constraintList.randomGet(1) //随机获取处理约束
+                ActionBean.HANDLE_TYPE_RANDOM -> filterConstraintList.randomGet(1) //随机获取处理约束
                 ActionBean.HANDLE_TYPE_ORDER, ActionBean.HANDLE_TYPE_ORDER2 -> {
                     val count =
                         if (handleType == ActionBean.HANDLE_TYPE_ORDER2) doOrderCount.count else doActionCount.count
 
-                    val nextIndex: Int = (count % constraintList.size).toInt()
-                    val next: ConstraintBean? = constraintList.getOrNull(nextIndex)
+                    val nextIndex: Int = (count % filterConstraintList.size).toInt()
+                    val next: ConstraintBean? = filterConstraintList.getOrNull(nextIndex)
 
                     if (next == null) {
-                        constraintList
+                        filterConstraintList
                     } else {
                         listOf(next)
                     }
                 } //顺序获取处理约束
-                else -> constraintList //默认
+                else -> filterConstraintList //默认
             }
 
             //执行对应的action操作
