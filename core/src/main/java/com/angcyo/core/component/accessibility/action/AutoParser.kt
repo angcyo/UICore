@@ -904,7 +904,7 @@ open class AutoParser {
                 //如果设置了矩形匹配规则, 那么这个node的rect一定要是有效的
 
                 //:符出现的次数
-                val sum = rect.sumBy { if (it == ':') 1 else 0 }
+                val separatorCount = rect.sumBy { if (it == ':') 1 else 0 }
 
                 //[-0.1,0.9~0.1,0.9999]格式
                 var rectString: String? = null
@@ -915,23 +915,23 @@ open class AutoParser {
                 if (rect.isNullOrEmpty()) {
                     rectString = rect
                 } else if (rect.contains(",")) {
-                    //包含矩形约束信息
-                    if (sum == 0) {
+                    //包含矩形约束信息, l,t~r,b
+                    if (separatorCount == 0) {
                         rectString = rect
-                    } else if (sum == 1) {
+                    } else if (separatorCount == 1) {
                         //出现一次
                         widthString = rect.split(":").getOrNull(1)
-                    } else if (sum > 1) {
+                    } else if (separatorCount > 1) {
                         rect.split(":").apply {
                             widthString = getOrNull(1)
                             heightString = getOrNull(2)
                         }
                     }
                 } else {
-                    //单独宽高约束
-                    if (sum == 0) {
+                    //单独宽高约束 w:h
+                    if (separatorCount == 0) {
                         widthString = rect
-                    } else if (sum >= 1) {
+                    } else if (separatorCount >= 1) {
                         rect.split(":").apply {
                             widthString = getOrNull(0)
                             heightString = getOrNull(1)

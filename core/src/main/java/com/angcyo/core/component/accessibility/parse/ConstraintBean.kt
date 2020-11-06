@@ -38,6 +38,7 @@ data class ConstraintBean(
 
     /**
      * 约束根节点的[boundsInScreen]是否符合条件.通常用于在[Dialog]中查找节点
+     * 支持格式[-0.1,0.9~0.1,0.9999:>=-780:<1080]
      * [rectList]
      * */
     var boundRect: String? = null,
