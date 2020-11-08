@@ -1,5 +1,6 @@
 package com.angcyo.core.component.accessibility.action
 
+import com.angcyo.library.ex.dp
 import com.angcyo.library.utils.getFloatNum
 
 /**
@@ -17,6 +18,7 @@ object MathParser {
      * [>3] 数量大于3
      * [2] 数量等于2
      * [=2] 数量等于2
+     * [≈2] 数量大约2±dp
      * [<3] 数量小于3
      * 空字符 表示直接过
      * null 忽略此条件
@@ -32,11 +34,13 @@ object MathParser {
                 result = true
             } else {
                 val num = expression.getFloatNum()
+                val isDp = expression.contains("dp")
                 num?.also {
                     //如果是小数, 则按照比例计算
                     val fixNum = when {
                         it < 0 -> it + size
                         it < 1 -> it * ref
+                        isDp -> it * dp
                         else -> it
                     }
                     if (expression.startsWith(">=")) {
@@ -53,6 +57,12 @@ object MathParser {
                         }
                     } else if (expression.startsWith("<")) {
                         if (value < fixNum) {
+                            result = true
+                        }
+                    } else if (expression.startsWith("≈")) {
+                        val max = fixNum + dp
+                        val min = fixNum - dp
+                        if (value in min..max) {
                             result = true
                         }
                     } else {

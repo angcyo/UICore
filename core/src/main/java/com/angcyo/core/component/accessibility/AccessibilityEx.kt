@@ -824,14 +824,17 @@ fun AccessibilityNodeInfo.debugNodeInfo(
     stringBuilder.append(" sr:$tempRect")
 
     //宽高
-    stringBuilder.append("[${tempRect.width()}x${tempRect.height()}]")
+    val width = tempRect.width()
+    val height = tempRect.height()
+    stringBuilder.append("[${width}x$height]")
+    stringBuilder.append("[${width / dp}x${height / dp}]")
 
     //在屏幕中的位置比例
     stringBuilder.append("(${tempRect.left * 1f / refWidth},${tempRect.top * 1f / refHeight}")
     stringBuilder.append("~")
     stringBuilder.append("${tempRect.right * 1f / refWidth},${tempRect.bottom * 1f / refHeight}")
-    stringBuilder.append(" :${tempRect.width() * 1f / refWidth}")
-    stringBuilder.append(" :${tempRect.height() * 1f / refHeight}")
+    stringBuilder.append(" :${width * 1f / refWidth}")
+    stringBuilder.append(" :${height * 1f / refHeight}")
     stringBuilder.append(")")
 
     //节点路径 path (2020-07-03 已经不需要了)
