@@ -723,20 +723,20 @@ fun AccessibilityNodeInfo.debugNodeInfo(
     refWidth: Int = _screenWidth,
     refHeight: Int = _screenHeight
 ) {
-    fun newLine(i: Int): String {
+    fun newLineIndent(i: Int): String {
         val sb = StringBuilder()
         for (j in 0 until i) {
-            sb.append("  ")
+            sb.append(" ")
         }
         return sb.toString()
     }
 
     val wrap: AccessibilityNodeInfoCompat = AccessibilityNodeInfoCompat.wrap(this)
 
-    val stringBuilder = StringBuilder("|")
+    val stringBuilder = StringBuilder("") //"|"
 
     stringBuilder.apply {
-        append(newLine(index))
+        append(newLineIndent(index))
         append(" ${wrap.className}")
         wrap.viewIdName()?.let {
             append("(${it})")
