@@ -183,7 +183,13 @@ abstract class BaseAccessibilityAction {
                     if (constraintList == null) {
                         rollbackPrev = true
                     } else {
-                        if (parseHandleAction(service, nodeList, constraintList)) {
+                        if (parseHandleAction(
+                                service,
+                                currentAccessibilityAction(),
+                                nodeList,
+                                constraintList
+                            )
+                        ) {
                             //处理了回滚操作, 清空计数
                             checkEventOutCount.clear()
                             rollbackCount.clear()
@@ -232,7 +238,8 @@ abstract class BaseAccessibilityAction {
             }
 
             if (this is AutoParseAction && this.actionBean?.check?.doAction?.isNotEmpty() == true) {
-                val handleResult = parseHandleAction(service, nodeList, actionBean?.check?.doAction)
+                val handleResult =
+                    parseHandleAction(service, this, nodeList, actionBean?.check?.doAction)
                 if (handleResult) {
                     //处理了doAction, 清空计数
                     doActionCount.clear()
@@ -266,9 +273,10 @@ abstract class BaseAccessibilityAction {
         doActionCount.start()
 
         if (this is AutoParseAction) {
-            if (!actionBean?.check?.start.isListEmpty()) {
-                handleActionLog("[onActionStart](${actionBean?.title})前的处理↓")
-                val result = parseHandleAction(service, nodeList, actionBean?.check?.start)
+            val start = actionBean?.check?.start
+            if (!start.isListEmpty()) {
+                handleActionLog("[onActionStart](${actionBean?.title})前的处理(${start!!.size})↓")
+                val result = parseHandleAction(service, this, nodeList, start)
                 handleActionLog("[onActionStart](${actionBean?.title})前的处理:$result")
             }
         }
@@ -287,15 +295,17 @@ abstract class BaseAccessibilityAction {
         if (this is AutoParseAction) {
             val lastService = BaseAccessibilityService.lastService
             val interceptor = accessibilityInterceptor
-            if (lastService != null && interceptor != null && !actionBean?.check?.end.isListEmpty()) {
-                handleActionLog("[doActionFinish](${actionBean?.title})后的处理↓")
+            val end = actionBean?.check?.end
+            if (lastService != null && interceptor != null && !end.isListEmpty()) {
+                handleActionLog("[doActionFinish](${actionBean?.title})后的处理(${end!!.size})↓")
                 val result = parseHandleAction(
                     lastService,
+                    currentAccessibilityAction(),
                     lastService.findNodeInfoList(
                         interceptor.filterPackageNameList,
                         interceptor.onlyFilterTopWindow
                     ),
-                    actionBean?.check?.end
+                    end
                 )
                 handleActionLog("[doActionFinish](${actionBean?.title})后的处理:$result")
             }
@@ -344,5 +354,13 @@ fun BaseAccessibilityAction.actionBean(): ActionBean? {
         actionBean
     } else {
         null
+    }
+}
+
+fun BaseAccessibilityAction.currentAccessibilityAction(): BaseAccessibilityAction? {
+    return if (accessibilityInterceptor == null) {
+        this
+    } else {
+        accessibilityInterceptor?.currentAccessibilityAction
     }
 }

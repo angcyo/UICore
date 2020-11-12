@@ -127,7 +127,13 @@ open class AutoParseAction : BaseAccessibilityAction() {
         nodeList: List<AccessibilityNodeInfo>
     ): Boolean {
 
-        var handleResult: Boolean = parseHandleAction(service, nodeList, actionBean?.check?.other)
+        var handleResult: Boolean =
+            parseHandleAction(
+                service,
+                currentAccessibilityAction(),
+                nodeList,
+                actionBean?.check?.other
+            )
 
         if (!handleResult) {
             //处理没有成功, 再进行计数统计
@@ -136,7 +142,12 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
         if (checkOtherEventCount.isMaxLimit()) {
             //超限制
-            handleResult = parseHandleAction(service, nodeList, actionBean?.check?.otherOut)
+            handleResult = parseHandleAction(
+                service,
+                currentAccessibilityAction(),
+                nodeList,
+                actionBean?.check?.otherOut
+            )
             if (handleResult) {
                 //处理了otherEvent, 清空计数
                 checkOtherEventCount.clear()
@@ -151,6 +162,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
      * */
     fun parseHandleAction(
         service: BaseAccessibilityService,
+        fromAction: BaseAccessibilityAction?,
         nodeList: List<AccessibilityNodeInfo>,
         constraintList: List<ConstraintBean>?,
         onGetTextResult: (String?, List<CharSequence>?) -> Unit = { _, _ -> }
@@ -168,7 +180,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                         continue
                     }
 
-                    val actionId = actionBean?.actionId ?: -1
+                    val actionId = fromAction?.actionBean()?.actionId ?: actionBean?.actionId ?: -1
                     val actionIds = constraint.actionIds
                     if (!actionIds.isNullOrEmpty()) {
                         if (!_haveActionId(actionIds, actionId)) {
@@ -201,6 +213,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
                             if (constraint.not != null) {
                                 handleResult.result = parseHandleAction(
                                     service,
+                                    fromAction,
                                     nodeList,
                                     constraint.not,
                                     onGetTextResult
@@ -235,7 +248,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             return false
         }
 
-        return if (actionIds.contains("~")) {
+        return if (actionIds.contains("~") || actionIds.contains(":")) {
 
             val segmentList = if (actionIds.contains(";")) {
                 //具有多段
@@ -320,7 +333,12 @@ open class AutoParseAction : BaseAccessibilityAction() {
 
             //执行对应的action操作
             val result: Boolean =
-                parseHandleAction(service, nodeList, handleConstraintList) { formKey, textList ->
+                parseHandleAction(
+                    service,
+                    this,
+                    nodeList,
+                    handleConstraintList
+                ) { formKey, textList ->
                     handleGetTextResult(formKey, textList)
                 }
 
@@ -381,12 +399,12 @@ open class AutoParseAction : BaseAccessibilityAction() {
             val eventConstraintList: List<ConstraintBean>? = actionBean?.check?.event
             if (eventConstraintList == null) {
                 //无界面约束匹配, 则不检查. 直接处理
-                result = parseHandleAction(service, nodeList, constraintList)
+                result = parseHandleAction(service, action, nodeList, constraintList)
             } else {
                 //匹配当前界面, 匹配成功后, 再处理
                 if (autoParser.parse(service, this, nodeList, eventConstraintList)) {
                     //匹配成功
-                    result = parseHandleAction(service, nodeList, constraintList)
+                    result = parseHandleAction(service, action, nodeList, constraintList)
                 }
             }
             return result

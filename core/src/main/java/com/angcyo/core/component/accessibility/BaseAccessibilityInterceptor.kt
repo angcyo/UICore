@@ -321,6 +321,7 @@ abstract class BaseAccessibilityInterceptor : Runnable {
                         //到达阈值
                         handle = action.parseHandleAction(
                             service,
+                            currentAccessibilityAction,
                             nodeList,
                             action.actionBean?.check?.leaveOut
                         )

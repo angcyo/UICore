@@ -181,7 +181,12 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
 
                         if (taskBean.leave != null) {
                             val result =
-                                action.parseHandleAction(service, nodeList, taskBean.leave)
+                                action.parseHandleAction(
+                                    service,
+                                    currentAccessibilityAction,
+                                    nodeList,
+                                    taskBean.leave
+                                )
                             if (result) {
                                 needDefaultHandle = false
                                 interceptorLeaveCount.clear()
@@ -190,7 +195,12 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
 
                         if (taskBean.leaveOut != null && interceptorLeaveCount.isMaxLimit()) {
                             val result =
-                                action.parseHandleAction(service, nodeList, taskBean.leaveOut)
+                                action.parseHandleAction(
+                                    service,
+                                    currentAccessibilityAction,
+                                    nodeList,
+                                    taskBean.leaveOut
+                                )
                             if (result) {
                                 needDefaultHandle = false
                                 interceptorLeaveCount.clear()
@@ -337,7 +347,12 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
             }
 
             action.handleActionLog("执行(${action.actionBean?.title})前的处理↓")
-            val result = action.parseHandleAction(service, nodeList, taskBean.start)
+            val result = action.parseHandleAction(
+                service,
+                currentAccessibilityAction,
+                nodeList,
+                taskBean.start
+            )
             action.handleActionLog("执行(${action.actionBean?.title})前的处理:$result")
             action._actionFinish = null
         }
@@ -360,7 +375,12 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
             }
 
             action.handleActionLog("执行(${action.actionBean?.title})后的处理↓")
-            val result = action.parseHandleAction(service, nodeList, taskBean.end)
+            val result = action.parseHandleAction(
+                service,
+                currentAccessibilityAction,
+                nodeList,
+                taskBean.end
+            )
             action.handleActionLog("执行(${action.actionBean?.title})后的处理:$result")
             action._actionFinish = null
         }

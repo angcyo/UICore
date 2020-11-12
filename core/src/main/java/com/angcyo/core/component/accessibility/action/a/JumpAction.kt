@@ -5,6 +5,7 @@ import com.angcyo.core.component.accessibility.BaseAccessibilityAction
 import com.angcyo.core.component.accessibility.BaseAccessibilityService
 import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.action.HandleResult
+import com.angcyo.core.component.accessibility.currentAccessibilityAction
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
 import com.angcyo.core.component.accessibility.toUnwrapList
 import kotlin.math.absoluteValue
@@ -84,6 +85,7 @@ class JumpAction : BaseAction() {
                 } else {
                     value = autoParseAction.parseHandleAction(
                         service,
+                        autoParseAction.currentAccessibilityAction(),
                         handleNodeList.toUnwrapList(),
                         autoParseAction.actionBean?.check?.jumpOut
                     )
