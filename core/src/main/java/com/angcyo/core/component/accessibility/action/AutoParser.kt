@@ -7,13 +7,12 @@ import androidx.collection.ArrayMap
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
 import com.angcyo.core.component.accessibility.parse.*
+import com.angcyo.http.base.default
+import com.angcyo.http.base.toJson
 import com.angcyo.library._contentHeight
 import com.angcyo.library._contentWidth
 import com.angcyo.library.app
-import com.angcyo.library.ex.getOrNull2
-import com.angcyo.library.ex.have
-import com.angcyo.library.ex.isListEmpty
-import com.angcyo.library.ex.patternList
+import com.angcyo.library.ex.*
 import com.angcyo.library.utils.getLongNum
 import kotlin.math.max
 import kotlin.math.min
@@ -401,9 +400,6 @@ open class AutoParser {
 
     /**根节点在屏幕中的坐标*/
     var _rootNodeRect = Rect()
-
-    //临时存放
-    var _tempNodeRect = Rect()
 
     val maxWidth: Int
         get() = _contentWidth
@@ -869,14 +865,26 @@ open class AutoParser {
         if (_result.isNotEmpty()) {
             //parent 递归查询
             val parent = constraintBean.parent
-            if (parent != null) {
-                val _resultParent: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
+            val finishResult = if (parent != null) {
+                val resultParent: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
                 _result.forEach { node ->
-                    parseParentNode(service, autoParseAction, node, parent, 1, _resultParent)
+                    parseParentNode(service, autoParseAction, node, parent, 1, resultParent)
                 }
-                parseResult.nodeList.addAll(_resultParent)
+                resultParent
             } else {
-                parseResult.nodeList.addAll(_result)
+                _result
+            }
+            parseResult.nodeList.addAll(finishResult)
+            if (isDebug()) {
+                autoParseAction.handleActionLog(buildString {
+                    append("命中↓")
+                    appendLine()
+                    append(constraintBean.toJson {
+                        default()
+                    })
+                    appendLine()
+                    append(finishResult)
+                })
             }
         }
     }
@@ -903,9 +911,6 @@ open class AutoParser {
                 val bound = node.bounds()
                 //如果设置了矩形匹配规则, 那么这个node的rect一定要是有效的
 
-                //:符出现的次数
-                val separatorCount = rect.sumBy { if (it == ':') 1 else 0 }
-
                 //[-0.1,0.9~0.1,0.9999]格式
                 var rectString: String? = null
                 //[>=780]
@@ -916,67 +921,23 @@ open class AutoParser {
                     rectString = rect
                 } else if (rect.contains(",")) {
                     //包含矩形约束信息, l,t~r,b
-                    if (separatorCount == 0) {
-                        rectString = rect
-                    } else if (separatorCount == 1) {
-                        //出现一次
-                        widthString = rect.split(":").getOrNull(1)
-                    } else if (separatorCount > 1) {
-                        rect.split(":").apply {
-                            widthString = getOrNull(1)
-                            heightString = getOrNull(2)
-                        }
+                    rect.split(":").apply {
+                        rectString = getOrNull(0)
+                        widthString = getOrNull(1)
+                        heightString = getOrNull(2)
                     }
                 } else {
                     //单独宽高约束 w:h
-                    if (separatorCount == 0) {
-                        widthString = rect
-                    } else if (separatorCount >= 1) {
-                        rect.split(":").apply {
-                            widthString = getOrNull(0)
-                            heightString = getOrNull(1)
-                        }
+                    rect.split(":").apply {
+                        widthString = getOrNull(0)
+                        heightString = getOrNull(1)
                     }
                 }
 
                 result = true
                 //矩形坐标约束
                 rectString?.also {
-                    result = false
-                    if (it.isEmpty()) {
-                        //空字符只要宽高大于0, 就命中
-                        result = node.isValid()
-                    } else {
-                        //兼容 ~ 和 -
-                        if (it.contains("~")) {
-                            it.split("~")
-                        } else {
-                            it.split("-")
-                        }.apply {
-                            val p1 = getOrNull(0)?.toPointF(maxWidth, maxHeight)
-                            val p2 = getOrNull(1)?.toPointF(maxWidth, maxHeight)
-
-                            if (p1 != null) {
-                                if (p2 == null) {
-                                    //只设置了单个点
-                                    if (bound.contains(p1.x.toInt(), p1.y.toInt())) {
-                                        result = true
-                                    }
-                                } else {
-                                    _tempNodeRect.set(
-                                        p1.x.toInt(),
-                                        p1.y.toInt(),
-                                        p2.x.toInt(),
-                                        p2.y.toInt()
-                                    )
-                                    //设置了多个点, 那么只要2个矩形相交, 就算命中
-                                    if (bound.intersect(_tempNodeRect)) {
-                                        result = true
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    result = MathParser.verifyRectValue(bound, it, maxWidth, maxHeight)
                 }
 
                 if (result) {

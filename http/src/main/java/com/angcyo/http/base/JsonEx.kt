@@ -253,25 +253,35 @@ fun String?.jsonArray(): JsonArray? {
 
 //<editor-fold desc="Json 解析">
 
-fun gson(config: GsonBuilder.() -> Unit = {}): Gson {
-    val gson = GsonBuilder()
-        .setPrettyPrinting()
-        .serializeNulls()
-        .setDateFormat("yyyy-MM-dd HH:mm:ss")
-        .setLenient() //支持畸形json解析
-        .excludeFieldsWithModifiers(
-            Modifier.STATIC,
-            Modifier.TRANSIENT,
-            Modifier.VOLATILE
-        )
-        //.disableHtmlEscaping() //关闭html转义
-        .apply(config)
-        .create()
+fun GsonBuilder.default(): GsonBuilder {
+    setDateFormat("yyyy-MM-dd HH:mm:ss")
+    setLenient() //支持畸形json解析
+    excludeFieldsWithModifiers(
+        Modifier.STATIC,
+        Modifier.TRANSIENT,
+        Modifier.VOLATILE
+    )
+    return this
+}
+
+fun gson(config: (GsonBuilder.() -> Unit)? = null): Gson {
+    val gson = if (config == null) {
+        GsonBuilder()
+            .default()
+            .setPrettyPrinting()
+            .serializeNulls()
+            //.disableHtmlEscaping() //关闭html转义
+            .create()
+    } else {
+        GsonBuilder()
+            .apply(config)
+            .create()
+    }
     return gson
 }
 
 /**任意对象, 转成json字符串*/
-fun Any?.toJson(config: GsonBuilder.() -> Unit = {}): String? {
+fun Any?.toJson(config: (GsonBuilder.() -> Unit)? = null): String? {
     return this?.run {
         try {
             gson(config).toJson(this)
