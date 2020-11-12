@@ -114,18 +114,18 @@ object MathParser {
                 expression.split("-")
             }.apply {
                 if (haveExpression(expression)) {
-                    val left = getOrNull(0)?.arg(0, ",")
-                    val top = getOrNull(0)?.arg(1, ",")
+                    val leftExp = getOrNull(0)?.arg(0, ",")
+                    val topExp = getOrNull(0)?.arg(1, ",")
 
-                    val right = getOrNull(1)?.arg(0, ",")
-                    val bottom = getOrNull(1)?.arg(1, ",")
+                    val rightExp = getOrNull(1)?.arg(0, ",")
+                    val bottomExp = getOrNull(1)?.arg(1, ",")
 
-                    if (!left.isNullOrEmpty() && !top.isNullOrEmpty()) {
-                        val leftNum = parseValue(left, maxWidth.toFloat())
-                        val topNum = parseValue(top, maxHeight.toFloat())
+                    if (!leftExp.isNullOrEmpty() && !topExp.isNullOrEmpty()) {
+                        val leftNum = parseValue(leftExp, maxWidth.toFloat())
+                        val topNum = parseValue(topExp, maxHeight.toFloat())
 
-                        val rightNum = parseValue(right, maxWidth.toFloat())
-                        val bottomNum = parseValue(bottom, maxHeight.toFloat())
+                        val rightNum = parseValue(rightExp, maxWidth.toFloat())
+                        val bottomNum = parseValue(bottomExp, maxHeight.toFloat())
 
                         var leftResult = false
                         var topResult = false
@@ -133,73 +133,58 @@ object MathParser {
                         var bottomResult = false
 
                         //check
-                        fun verify(exp: String, value: Float?, min: Float, max: Float): Boolean {
-                            if (value == null) {
+                        fun verify(
+                            exp: String,/*计算表达式*/
+                            calcValue: Float?,/*需要计算的值*/
+                            currentValue: Float,/*当前参考比较的值*/
+                            min: Float,/*最小取值*/
+                            max: Float/*最大取值*/
+                        ): Boolean {
+                            if (calcValue == null) {
                                 return false
                             }
                             var pass = false
-                            if (exp.startsWith(">")) {
-                                pass = value > min
-                            } else if (exp.startsWith(">=")) {
-                                pass = value >= min
-                            } else if (exp.startsWith("<")) {
-                                pass = value < max
+                            if (exp.startsWith(">=")) {
+                                pass = currentValue >= calcValue
+                            } else if (exp.startsWith(">")) {
+                                pass = currentValue > calcValue
                             } else if (exp.startsWith("<=")) {
-                                pass = value <= max
+                                pass = currentValue <= calcValue
+                            } else if (exp.startsWith("<")) {
+                                pass = currentValue < calcValue
                             } else if (exp.startsWith("≈")) {
-                                val ref = getIntimateNum(value, min, max)
-                                val refMin = ref - dp
-                                val refMax = ref + dp
-                                if (value in refMin..refMax) {
+                                val refMin = currentValue - dp
+                                val refMax = currentValue + dp
+                                if (calcValue in refMin..refMax) {
                                     pass = true
                                 }
                             } else if (exp.startsWith("=")) {
-                                val ref = getIntimateNum(value, min, max)
-                                pass = value == ref
+                                pass = calcValue == currentValue
                             } else {
-                                pass = value in min..max
+                                pass = calcValue in min..max
                             }
                             return pass
                         }
 
+                        val rLeft = rect.left.toFloat()
+                        val rRight = rect.right.toFloat()
+                        val rTop = rect.top.toFloat()
+                        val rBottom = rect.bottom.toFloat()
+
                         //数据有效
-                        if (right.isNullOrEmpty() || bottom.isNullOrEmpty()) {
+                        if (rightExp.isNullOrEmpty() || bottomExp.isNullOrEmpty()) {
                             //只设置了一个点
                             rightResult = true
                             bottomResult = true
 
-                            leftResult = verify(
-                                left, leftNum,
-                                rect.left.toFloat(),
-                                rect.right.toFloat()
-                            )
-                            topResult = verify(
-                                top, topNum,
-                                rect.top.toFloat(),
-                                rect.bottom.toFloat()
-                            )
+                            leftResult = verify(leftExp, leftNum, rLeft, rLeft, rRight)
+                            topResult = verify(topExp, topNum, rTop, rTop, rBottom)
                         } else {
                             //矩形
-                            leftResult = verify(
-                                left, leftNum,
-                                rect.left.toFloat(),
-                                rect.right.toFloat()
-                            )
-                            topResult = verify(
-                                top, topNum,
-                                rect.top.toFloat(),
-                                rect.bottom.toFloat()
-                            )
-                            rightResult = verify(
-                                right, rightNum,
-                                rect.left.toFloat(),
-                                rect.right.toFloat()
-                            )
-                            bottomResult = verify(
-                                bottom, bottomNum,
-                                rect.top.toFloat(),
-                                rect.bottom.toFloat()
-                            )
+                            leftResult = verify(leftExp, leftNum, rLeft, rLeft, rRight)
+                            topResult = verify(topExp, topNum, rTop, rTop, rBottom)
+                            rightResult = verify(rightExp, rightNum, rRight, rLeft, rRight)
+                            bottomResult = verify(bottomExp, bottomNum, rBottom, rTop, rBottom)
                         }
                         result = leftResult && topResult && rightResult && bottomResult
                     }
@@ -247,7 +232,7 @@ object MathParser {
             //如果是小数, 则按照比例计算
             when {
                 this < 0 -> this + size //负数情况
-                this < 1 -> this * ref //小数情况
+                this <= 1 -> this * ref //小数情况
                 isDp -> this * dp //dp数
                 else -> this //其他
             }

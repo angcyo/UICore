@@ -33,7 +33,7 @@ class GetTextAction : BaseAction() {
         //获取到的文本列表
         val getTextResultList: MutableList<CharSequence> = mutableListOf()
         //需要的formKey
-        var getTextFormKey = arg
+        val getTextFormKey = arg
 
         val textRegexList = constraintBean.getTextRegexList
         handleNodeList.forEach {

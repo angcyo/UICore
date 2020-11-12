@@ -19,6 +19,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityWindowInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.AccessibilityHelper.tempRect
+import com.angcyo.core.component.accessibility.action.AutoParser
 import com.angcyo.covertToStr
 import com.angcyo.http.RIo
 import com.angcyo.library.L
@@ -721,7 +722,8 @@ fun AccessibilityNodeInfo.debugNodeInfo(
     outBuilder: StringBuilder? = null,
     logAction: Boolean = false,
     refWidth: Int = _screenWidth,
-    refHeight: Int = _screenHeight
+    refHeight: Int = _screenHeight,
+    logChild: Boolean = true
 ) {
     fun newLineIndent(i: Int): String {
         val sb = StringBuilder()
@@ -856,17 +858,19 @@ fun AccessibilityNodeInfo.debugNodeInfo(
 
     outBuilder?.appendln("$stringBuilder")
 
-    for (i in 0 until childCount) {
-        getChild(i)?.let {
-            it.debugNodeInfo(
-                index + 1,
-                "${if (preIndex.isEmpty()) preIndex else "${preIndex}_"}$i",
-                logFilePath,
-                outBuilder,
-                logAction,
-                refWidth,
-                refHeight
-            )
+    if (logChild) {
+        for (i in 0 until childCount) {
+            getChild(i)?.let {
+                it.debugNodeInfo(
+                    index + 1,
+                    "${if (preIndex.isEmpty()) preIndex else "${preIndex}_"}$i",
+                    logFilePath,
+                    outBuilder,
+                    logAction,
+                    refWidth,
+                    refHeight
+                )
+            }
         }
     }
 }
@@ -1084,6 +1088,60 @@ fun AccessibilityNodeInfoCompat.getBrotherNode(index: Int): AccessibilityNodeInf
     }
 }
 
+fun AccessibilityNodeInfoCompat.getBrotherNodePrev(stateList: List<String>): AccessibilityNodeInfoCompat? {
+    val beforeList = mutableListOf<AccessibilityNodeInfoCompat>()
+    val afterList = mutableListOf<AccessibilityNodeInfoCompat>()
+
+    var findAnchor = false
+
+    parent?.eachChild { _, child ->
+        if (child == this) {
+            findAnchor = true
+        } else {
+            if (findAnchor) {
+                afterList.add(child)
+            } else {
+                beforeList.add(child)
+            }
+        }
+    }
+
+    beforeList.reversed().forEach {
+        if (AutoParser.matchNodeStateOr(it, stateList)) {
+            return it
+        }
+    }
+
+    return null
+}
+
+fun AccessibilityNodeInfoCompat.getBrotherNodeNext(stateList: List<String>): AccessibilityNodeInfoCompat? {
+    val beforeList = mutableListOf<AccessibilityNodeInfoCompat>()
+    val afterList = mutableListOf<AccessibilityNodeInfoCompat>()
+
+    var findAnchor = false
+
+    parent?.eachChild { _, child ->
+        if (child == this) {
+            findAnchor = true
+        } else {
+            if (findAnchor) {
+                afterList.add(child)
+            } else {
+                beforeList.add(child)
+            }
+        }
+    }
+
+    afterList.forEach {
+        if (AutoParser.matchNodeStateOr(it, stateList)) {
+            return it
+        }
+    }
+
+    return null
+}
+
 /**获取自身的child/parent节点
  * [index] >0 表示获取自身下面的第几个child; <0 表示获取自身上面的第几个parent
  * */
@@ -1102,6 +1160,33 @@ fun AccessibilityNodeInfoCompat.getParentOrChildNode(index: Int): AccessibilityN
         target = target?.parent
     }
     return target
+}
+
+fun AccessibilityNodeInfoCompat.getParentOrChildNodeUp(stateList: List<String>): AccessibilityNodeInfoCompat? {
+    var target: AccessibilityNodeInfoCompat? = this
+    do {
+        val parent = target?.parent ?: return null
+        if (AutoParser.matchNodeStateOr(parent, stateList)) {
+            return parent
+        }
+        target = parent
+    } while (target != null)
+    return null
+}
+
+fun AccessibilityNodeInfoCompat.getParentOrChildNodeDown(stateList: List<String>): AccessibilityNodeInfoCompat? {
+    forEachChild {
+        if (AutoParser.matchNodeStateOr(it, stateList)) {
+            return it
+        }
+    }
+    return null
+}
+
+inline fun AccessibilityNodeInfoCompat.forEachChild(action: (child: AccessibilityNodeInfoCompat) -> Unit) {
+    for (i in 0 until childCount) {
+        action(getChild(i))
+    }
 }
 
 //</editor-fold desc="AccessibilityNodeInfo扩展">

@@ -171,7 +171,13 @@ open class AutoParseAction : BaseAccessibilityAction() {
         var result = false
 
         if (constraintList != null) {
-            autoParser.parse(service, this, nodeList, constraintList.filterSystem(), true) {
+            autoParser.parse(
+                service,
+                this,
+                nodeList,
+                constraintList.filterSystem(firstPackageName()),
+                true
+            ) {
                 for (parseResult in it) {
 
                     val constraint = parseResult.constraint
@@ -308,7 +314,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
             val handleType = actionBean?.handleType
 
             val filterConstraintList = if (handleType != null) {
-                constraintList.filterSystem()
+                constraintList.filterSystem(firstPackageName())
             } else {
                 constraintList
             }
@@ -833,3 +839,12 @@ fun Float.toPointF(ref: Int): Float {
 
 /**使用指定的分隔符[split]分割, 获取第[index]个的数据*/
 fun String.arg(index: Int = 0, split: String = ":") = split(split).getOrNull(index)
+
+fun AutoParseAction.firstPackageName(): String? {
+    val checkPackageName = actionBean?.check?.packageName?.arg(split = ";")
+    return if (checkPackageName.isNullOrEmpty()) {
+        accessibilityInterceptor?.filterPackageNameList?.firstOrNull()
+    } else {
+        checkPackageName
+    }
+}

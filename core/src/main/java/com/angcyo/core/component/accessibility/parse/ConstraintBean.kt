@@ -13,12 +13,18 @@ import com.angcyo.core.component.accessibility.parse.ConstraintBean.Companion.AC
  */
 data class ConstraintBean(
 
+    /**描述字符串*/
+    var des: String? = null,
+
     /*----------------------------------------前置约束判断----------------------------------------*/
 
     /**系统信息约束, 多个用;号分割. 并且的关系; 用 !or! 分割或者
      * [com.angcyo.core.component.accessibility.action.ConfigParser]
      * */
     var system: String? = null,
+
+    /**对应目标应用程序的信息约束*/
+    var app: String? = null,
 
     /**当前运行的[AutoParseAction]索引信息约束
      * ">1" 运行的索引大于1时有效
@@ -157,8 +163,10 @@ data class ConstraintBean(
      * 格式: +1 -2 >3 <4
      * [+1] 获取自身的下1个兄弟节点
      * [-2] 获取自身的上2个兄弟节点
-     * [>3] 获取第3个子节点(非索引值)
+     * [>3] 获取第3个子节点, 非索引(index)值
      * [<4] 获取第4个parent
+     * [<4clickable] 获取第4个具有clickable状态的parent
+     * [<4clickable|focusable]
      * */
     var pathList: List<String>? = null,
 
@@ -441,4 +449,5 @@ fun ConstraintBean.isOnlyPathConstraint(): Boolean {
 }
 
 /**筛选出, 只符合系统条件的[ConstraintBean], 返回的是一个新的集合*/
-fun List<ConstraintBean>.filterSystem() = filter { ConfigParser.verifySystem(it.system) }
+fun List<ConstraintBean>.filterSystem(packageName: String? = null) =
+    filter { ConfigParser.verifySystem(it.system) && ConfigParser.verifyApp(packageName, it.app) }

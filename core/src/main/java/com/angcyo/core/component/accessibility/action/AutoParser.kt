@@ -207,6 +207,26 @@ open class AutoParser {
             return result
         }
 
+        /**只要有一个状态匹配, 即可*/
+        fun matchNodeStateOr(node: AccessibilityNodeInfoCompat, stateList: List<String>): Boolean {
+            stateList.forEach {
+                if (matchNodeState(node, it)) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        /**所有状态都匹配*/
+        fun matchNodeStateAnd(node: AccessibilityNodeInfoCompat, stateList: List<String>): Boolean {
+            stateList.forEach {
+                if (!matchNodeState(node, it)) {
+                    return false
+                }
+            }
+            return true
+        }
+
         /**匹配节点的状态*/
         fun matchNodeState(node: AccessibilityNodeInfoCompat, state: String): Boolean {
             var match = true
@@ -877,13 +897,15 @@ open class AutoParser {
             parseResult.nodeList.addAll(finishResult)
             if (isDebug()) {
                 autoParseAction.handleActionLog(buildString {
-                    append("命中↓")
+                    append("命中(${finishResult.size})↓")
                     appendLine()
                     append(constraintBean.toJson {
                         default()
+                        disableHtmlEscaping()
                     })
                     appendLine()
-                    append(finishResult)
+                    finishResult.first().unwrap()
+                        .debugNodeInfo(outBuilder = this, logAction = false, logChild = false)
                 })
             }
         }
@@ -1036,14 +1058,45 @@ open class AutoParser {
             //[>3] child第3个节点
             //[<4] 第4个parent
 
-            val num = path.substring(1, path.length).toIntOrNull() ?: 0
+            val num = path.getLongNum()?.toInt() ?: 0 //path.substring(1, path.length).toIntOrNull()
+            val stateList = path.patternList("[a-z]+") //clickable等状态匹配
 
-            when {
-                path.startsWith("+") -> node.getBrotherNode(num)
-                path.startsWith("-") -> node.getBrotherNode(-num)
-                path.startsWith(">") -> node.getParentOrChildNode(num)
-                path.startsWith("<") -> node.getParentOrChildNode(-num)
-                else -> null
+            if (stateList.isEmpty()) {
+                val numAbs = num.abs()
+                //不需要匹配状态
+                when {
+                    path.startsWith("+") -> node.getBrotherNode(numAbs)
+                    path.startsWith("-") -> node.getBrotherNode(-numAbs)
+                    path.startsWith(">") -> node.getParentOrChildNode(numAbs)
+                    path.startsWith("<") -> node.getParentOrChildNode(-numAbs)
+                    else -> null
+                }
+            } else {
+                //需要匹配状态
+                if (num > 1) {
+                    var result: AccessibilityNodeInfoCompat? = node
+                    for (i in 0 until num) {
+                        result = when {
+                            path.startsWith("+") -> result?.getBrotherNodeNext(stateList)
+                            path.startsWith("-") -> result?.getBrotherNodePrev(stateList)
+                            path.startsWith(">") -> result?.getParentOrChildNodeDown(stateList)
+                            path.startsWith("<") -> result?.getParentOrChildNodeUp(stateList)
+                            else -> null
+                        }
+                        if (result == null) {
+                            break
+                        }
+                    }
+                    result
+                } else {
+                    when {
+                        path.startsWith("+") -> node.getBrotherNodeNext(stateList)
+                        path.startsWith("-") -> node.getBrotherNodePrev(stateList)
+                        path.startsWith(">") -> node.getParentOrChildNodeDown(stateList)
+                        path.startsWith("<") -> node.getParentOrChildNodeUp(stateList)
+                        else -> null
+                    }
+                }
             }
         }
     }

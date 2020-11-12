@@ -2,8 +2,10 @@ package com.angcyo.core.component.accessibility.action
 
 import android.os.Build
 import com.angcyo.core.component.accessibility.BaseAccessibilityInterceptor
+import com.angcyo.core.component.accessibility.base.AccessibilityWindow
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
+import com.angcyo.library.component.appBean
 import com.angcyo.library.ex.isNumber
 import com.angcyo.library.getAppVersionCode
 import com.angcyo.library.utils.CpuUtils
@@ -31,6 +33,16 @@ object ConfigParser {
             for (con in all) {
                 if (con.isNotEmpty()) {
                     result = when {
+                        con.startsWith("windowFullscreen:") -> {
+                            //约束浮窗全屏状态
+                            AccessibilityWindow.fullscreenLayer == con.drop("windowFullscreen:".length)
+                                .toBoolean()
+                        }
+                        con.startsWith("windowTouchable:") -> {
+                            //约束浮窗全屏状态
+                            AccessibilityWindow.notTouch == !con.drop("windowTouchable:".length)
+                                .toBoolean()
+                        }
                         con.startsWith("api") -> {
                             //约束系统api
                             MathParser.verifyRangeValue(
@@ -70,6 +82,52 @@ object ConfigParser {
                         con.startsWith("h") -> {
                             //约束手机屏幕高度
                             MathParser.verifyRangeValue(_screenHeight.toFloat(), con.drop(1))
+                        }
+                        else -> {
+                            //无法识别的指令
+                            def
+                        }
+                    }
+
+                    if (!result) {
+                        break
+                    }
+                }
+            }
+
+            return result
+        }
+
+        val groups = value.split("!or!")
+
+        var result = false
+        for (group in groups) {
+            if (_verify(group, result)) {
+                result = true
+                break
+            }
+        }
+
+        return result
+    }
+
+    fun verifyApp(packageName: String?, value: String?): Boolean {
+        if (packageName.isNullOrEmpty() || value.isNullOrEmpty()) {
+            return true
+        }
+
+        val appBean = packageName.appBean() ?: return false
+
+        fun _verify(v: String, def: Boolean = false): Boolean {
+            val all = v.split(";")
+
+            var result = true
+            for (con in all) {
+                if (con.isNotEmpty()) {
+                    result = when {
+                        con.startsWith("code") -> {
+                            //约束应用程序版本
+                            MathParser.verifyRangeValue(appBean.versionCode.toFloat(), con.drop(4))
                         }
                         else -> {
                             //无法识别的指令
