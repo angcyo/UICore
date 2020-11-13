@@ -436,7 +436,7 @@ open class AutoParser {
         nodeList: List<AccessibilityNodeInfo>,
         constraintList: List<ConstraintBean>,
         includeDisableConstraint: Boolean = false,//是否需要包含被禁用的约束
-        onTargetResult: ((List<ParseResult>) -> Unit)? = null
+        onTargetResult: ((List<ParseResult>) -> Unit)? = null //为空, 则只需要有一个满足条件,就break
     ): Boolean {
 
         val result: MutableList<ParseResult> = mutableListOf()
