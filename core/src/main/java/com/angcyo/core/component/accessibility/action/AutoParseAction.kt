@@ -338,15 +338,14 @@ open class AutoParseAction : BaseAccessibilityAction() {
             }
 
             //执行对应的action操作
-            val result: Boolean =
-                parseHandleAction(
-                    service,
-                    this,
-                    nodeList,
-                    handleConstraintList
-                ) { formKey, textList ->
-                    handleGetTextResult(formKey, textList)
-                }
+            val result: Boolean = parseHandleAction(
+                service,
+                this,
+                nodeList,
+                handleConstraintList
+            ) { formKey, textList ->
+                handleGetTextResult(formKey, textList)
+            }
 
             //计数
             doOrderCount.doCount()
