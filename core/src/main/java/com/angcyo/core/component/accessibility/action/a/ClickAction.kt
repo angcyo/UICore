@@ -6,6 +6,7 @@ import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.action.AutoParser
 import com.angcyo.core.component.accessibility.action.HandleResult
 import com.angcyo.core.component.accessibility.parse.ConstraintBean
+import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.isDebugType
 
 /**
@@ -46,7 +47,7 @@ class ClickAction : BaseAction() {
         }
         val first = handleNodeList.firstOrNull()
         autoParseAction.handleActionLog("点击节点[${first?.text() ?: first?.bounds()}]:$value")
-        if (isDebugType()) {
+        if (isDebug()) {
             autoParseAction.handleActionLog(first?.unwrap()?.logAllNode() ?: "no node.")
         }
         return value
