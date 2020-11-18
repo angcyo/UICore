@@ -14,6 +14,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.angcyo.dsladapter.SwipeMenuHelper.Companion.SWIPE_MENU_TYPE_DEFAULT
 import com.angcyo.dsladapter.SwipeMenuHelper.Companion.SWIPE_MENU_TYPE_FLOWING
 import com.angcyo.library.L
@@ -96,6 +97,9 @@ open class DslAdapterItem : LifecycleOwner {
      * 在 GridLayoutManager 中, 需要占多少个 span. -1表示满屏
      * [itemIsGroupHead]
      * [com.angcyo.dsladapter.DslAdapter.onViewAttachedToWindow]
+     * 需要[dslSpanSizeLookup]支持.
+     *
+     * 在[StaggeredGridLayoutManager]中, 会使用[layoutParams.isFullSpan]的方式满屏
      * */
     var itemSpanCount = 1
 
