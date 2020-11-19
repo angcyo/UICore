@@ -11,7 +11,15 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
-    <style name="BaseAppTheme" parent="BaseTheme">
+    <style name="BaseAppTheme21" parent="BaseTheme">
+        <!--no op-->
+    </style>
+
+    <style name="BaseAppTheme27" parent="BaseAppTheme21">
+        <!--no op-->
+    </style>
+
+    <style name="BaseAppTheme" parent="BaseAppTheme27">
         <!--开启此属性, 效果等于 SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN -->
         <!--<item name="android:windowTranslucentStatus">true</item>-->
         <!--<item name="android:windowDrawsSystemBarBackgrounds">true</item>-->
