@@ -37,12 +37,14 @@ import kotlin.math.sqrt
 object Device {
 
     //https://developer.android.google.cn/training/articles/user-data-ids
+    //86756e10cf9a9562
     var androidId: String = ""
         get() = if (field.isEmpty()) Settings.Secure.getString(
             app().contentResolver,
             Settings.Secure.ANDROID_ID
         ) else field
 
+    //00000000-4759-42f8-ffff-ffffeabf4809
     var deviceId: String = ""
         get() = if (field.isEmpty()) getUniqueDeviceId() else field
 

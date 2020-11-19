@@ -1,5 +1,6 @@
 package com.angcyo.library.utils
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AppOpsManager
@@ -17,6 +18,7 @@ import android.telephony.TelephonyManager
 import android.view.Surface
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.ex.checkPermissions
 import com.angcyo.library.ex.patternList
 import com.angcyo.library.toast
 import java.io.BufferedReader
@@ -425,9 +427,10 @@ fun Int.rotationString(): String {
 
 /**
  * 获取设备唯一标识码, 需要权限 android.permission.READ_PHONE_STATE
+ * 868938012791119
  */
 @SuppressLint("MissingPermission", "HardwareIds")
-fun Context.getIMEI(): String? {
+fun Context.getIMEI(requestPermission: Boolean = false): String? {
     var imei: String? = null
     try {
         val telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
@@ -439,9 +442,13 @@ fun Context.getIMEI(): String? {
             }
         }
         //L.w("call: getIMEI([])-> " + imei);
-    } catch (e: java.lang.Exception) {
+    } catch (e: SecurityException) {
         L.e("IMEI获取失败, 请检查权限:" + e.message)
-        //e.printStackTrace();
+        if (requestPermission) {
+            checkPermissions(Manifest.permission.READ_PHONE_STATE)
+        }
+    } catch (e: java.lang.Exception) {
+        e.printStackTrace();
         //L.e("call: getIMEI([])-> " + imei + " " + e.getMessage());
     }
     return imei
