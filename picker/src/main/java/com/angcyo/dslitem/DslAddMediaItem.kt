@@ -1,15 +1,12 @@
 package com.angcyo.dslitem
 
 import androidx.fragment.app.Fragment
-import com.angcyo.base.dslAHelper
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.library.L
 import com.angcyo.library.ex.elseNull
 import com.angcyo.library.model.LoaderMedia
 import com.angcyo.loader.LoaderConfig
-import com.angcyo.media.video.record.recordVideo
 import com.angcyo.picker.R
-import com.angcyo.picker.dslPicker
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -25,17 +22,29 @@ open class DslAddMediaItem : DslAdapterItem() {
     var itemFragment: Fragment? = null
 
     /**是否使用录制视频和拍照功能, 否则就是选择相册*/
+    @Deprecated("请使用[itemMediaSelectorConfig]")
     var itemTakeVideo: Boolean = false
+        set(value) {
+            field = value
+            if (value) {
+                itemMediaSelectorConfig.selectorMode = MediaSelectorConfig.MODE_TAKE
+            } else {
+                itemMediaSelectorConfig.selectorMode = MediaSelectorConfig.MODE_PICKER
+            }
+        }
 
-    /**最小和最大录制时长*/
-    var itemMinRecordTime: Int = 3
-
-    var itemMaxRecordTime: Int = 15
+    /**配置如何选择媒体信息*/
+    val itemMediaSelectorConfig = MediaSelectorConfig()
 
     /**媒体加载配置*/
     var itemLoaderConfig = LoaderConfig()
 
     var itemUpdateLoaderConfig: (LoaderConfig) -> Unit = {}
+
+    /**最小和最大录制时长*/
+    var itemMinRecordTime: Int = 3
+
+    var itemMaxRecordTime: Int = 15
 
     /**录像返回*/
     var itemTakeResult: (LoaderMedia?) -> Unit = {
@@ -51,24 +60,14 @@ open class DslAddMediaItem : DslAdapterItem() {
         itemLayoutId = R.layout.dsl_add_media_item
 
         itemClick = {
-
             itemFragment?.apply {
-                if (itemTakeVideo) {
-                    dslAHelper {
-                        recordVideo(itemMaxRecordTime, itemMinRecordTime) {
-                            it?.apply {
-                                itemTakeResult(LoaderMedia(localPath = this))
-                            }.elseNull {
-                                //被取消
-                                itemTakeResult(null)
-                            }
-                        }
-                    }
-                } else {
-                    dslPicker(itemLoaderConfig.apply(itemUpdateLoaderConfig)) {
-                        itemResult(it)
-                    }
-                }
+                itemLoaderConfig.apply(itemUpdateLoaderConfig)
+
+                itemMediaSelectorConfig.minRecordTime = itemMinRecordTime
+                itemMediaSelectorConfig.maxRecordTime = itemMaxRecordTime
+                itemMediaSelectorConfig.takeResult = itemTakeResult
+                itemMediaSelectorConfig.pickerResult = itemResult
+                itemMediaSelectorConfig.doSelector(this, itemLoaderConfig)
             }.elseNull {
                 L.w("itemFragment is null, cannot take media.")
             }

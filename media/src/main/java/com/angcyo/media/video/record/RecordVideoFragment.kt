@@ -183,6 +183,7 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
 //                finishActivityOnLastFragmentRemove = false
 //                remove(this@RecordVideoFragment)
 //            }
+            i("onTakeVideo:${newFilePath}")
             callback!!.onTakeVideo(newFilePath)
         })
     }
