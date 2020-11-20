@@ -200,7 +200,6 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
     }
 
     override fun onTakePhoto(data: ByteArray) {
-        i("onTakePhoto")
         try {
             val options = BitmapFactory.Options()
             options.inPreferredConfig = Bitmap.Config.RGB_565
@@ -247,6 +246,7 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
 //            Uri fileContentUri = Uri.fromFile(mediaFile);
 //            mediaScannerIntent.setData(fileContentUri);
 //            getActivity().sendBroadcast(mediaScannerIntent);
+            i("onTakePhoto:${outputFile.absolutePath}")
         } catch (exception: Exception) {
             exception.printStackTrace()
         }

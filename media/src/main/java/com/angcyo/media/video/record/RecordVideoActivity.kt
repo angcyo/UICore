@@ -28,15 +28,24 @@ open class RecordVideoActivity : BasePermissionsActivity() {
         const val KEY_MAX_TIME = "KEY_MAX_TIME"
         const val KEY_MIN_TIME = "KEY_MIN_TIME"
 
+        //拍照 or 录像 or all
+        const val KEY_TAKE_MODEL = "KEY_TAKE_MODEL"
+
         /**静态全局回调变量, 在界面销毁时置空*/
         var recordVideoCallback: RecordVideoCallback? = null
 
         /**限制录制界面*/
-        fun show(activity: Activity, maxRecordTime: Int = 15, minRecordTime: Int = 3) {
+        fun show(
+            activity: Activity,
+            maxRecordTime: Int = 15,
+            minRecordTime: Int = 3,
+            takeModel: Int = RecordVideoCallback.TAKE_MODEL_PHOTO or RecordVideoCallback.TAKE_MODEL_VIDEO
+        ) {
             activity.dslAHelper {
                 start(RecordVideoActivity::class.java) {
                     intent.putExtra(KEY_MIN_TIME, minRecordTime)
                     intent.putExtra(KEY_MAX_TIME, maxRecordTime)
+                    intent.putExtra(KEY_TAKE_MODEL, takeModel)
                     resultCode = REQUEST_CODE
                 }
             }
@@ -68,6 +77,7 @@ open class RecordVideoActivity : BasePermissionsActivity() {
                         intent.extras?.apply {
                             minRecordTime = getInt(KEY_MIN_TIME, minRecordTime)
                             maxRecordTime = getInt(KEY_MAX_TIME, maxRecordTime)
+                            takeModel = getInt(KEY_TAKE_MODEL, takeModel)
                         }
                     }
 
@@ -120,6 +130,32 @@ fun DslAHelper.recordVideo(
     start(RecordVideoActivity::class.java) {
         intent.putExtra(RecordVideoActivity.KEY_MIN_TIME, minRecordTime)
         intent.putExtra(RecordVideoActivity.KEY_MAX_TIME, maxRecordTime)
+        requestCode = RecordVideoActivity.REQUEST_CODE
+        onActivityResult = { resultCode, data ->
+            result(RecordVideoActivity.getResultPath(requestCode, resultCode, data))
+        }
+    }
+}
+
+fun DslAHelper.recordVideoOnly(
+    maxRecordTime: Int = 15, //秒
+    minRecordTime: Int = 3, //秒
+    result: (String?) -> Unit
+) {
+    start(RecordVideoActivity::class.java) {
+        intent.putExtra(RecordVideoActivity.KEY_MIN_TIME, minRecordTime)
+        intent.putExtra(RecordVideoActivity.KEY_MAX_TIME, maxRecordTime)
+        intent.putExtra(RecordVideoActivity.KEY_TAKE_MODEL, RecordVideoCallback.TAKE_MODEL_VIDEO)
+        requestCode = RecordVideoActivity.REQUEST_CODE
+        onActivityResult = { resultCode, data ->
+            result(RecordVideoActivity.getResultPath(requestCode, resultCode, data))
+        }
+    }
+}
+
+fun DslAHelper.recordPhotoOnly(result: (String?) -> Unit) {
+    start(RecordVideoActivity::class.java) {
+        intent.putExtra(RecordVideoActivity.KEY_TAKE_MODEL, RecordVideoCallback.TAKE_MODEL_PHOTO)
         requestCode = RecordVideoActivity.REQUEST_CODE
         onActivityResult = { resultCode, data ->
             result(RecordVideoActivity.getResultPath(requestCode, resultCode, data))

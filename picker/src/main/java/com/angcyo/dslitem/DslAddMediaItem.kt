@@ -70,7 +70,7 @@ open class DslAddMediaItem : DslAdapterItem() {
                     }
                 }
             }.elseNull {
-                L.w("itemFragment is null, cannot show picker.")
+                L.w("itemFragment is null, cannot take media.")
             }
         }
     }
