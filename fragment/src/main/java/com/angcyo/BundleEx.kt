@@ -63,7 +63,7 @@ inline fun <reified DATA> String.covertFromStr(): DATA? {
 //<editor-fold desc="Fragment put get">
 
 /**快速设置[Fragment]的参数, 如果已经存在[arguments], 则追加数据*/
-fun Fragment.putData(data: Any?, key: String = BUNDLE_KEY_JSON) {
+fun Fragment.putData(data: Any?, key: String = BUNDLE_KEY_JSON): Fragment {
     val bundle = jsonBundle(data, key)
 
     arguments?.putAll(bundle)
@@ -71,6 +71,8 @@ fun Fragment.putData(data: Any?, key: String = BUNDLE_KEY_JSON) {
     if (arguments == null) {
         arguments = bundle
     }
+
+    return this
 }
 
 /**快速从[Fragment]获取[putData]设置的数据*/

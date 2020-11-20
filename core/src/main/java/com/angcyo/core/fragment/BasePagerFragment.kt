@@ -11,6 +11,7 @@ import com.angcyo.core.R
 import com.angcyo.core.viewpager.ViewPager1Delegate
 import com.angcyo.getData
 import com.angcyo.library.ex.simpleClassName
+import com.angcyo.putData
 import com.angcyo.widget.base.eachChild
 import com.angcyo.widget.base.find
 import com.angcyo.widget.base.onDoubleTap
@@ -35,6 +36,9 @@ abstract class BasePagerFragment : BaseTitleFragment() {
 
     /**默认选中第几个tab item*/
     var defaultTabSelectIndex = 0
+
+    /**保存所有页面*/
+    val pages = mutableListOf<Fragment>()
 
     lateinit var fragmentAdapter: FragmentStatePagerAdapter
 
@@ -142,14 +146,20 @@ abstract class BasePagerFragment : BaseTitleFragment() {
     open fun getPageOffscreenLimit(): Int = min(5, getPageCount())
 
     /**获取对应页面*/
-    abstract fun getPageItem(position: Int): Fragment
+    open fun getPageItem(position: Int): Fragment = pages[position]
 
     /**页面数量*/
-    abstract fun getPageCount(): Int
+    open fun getPageCount(): Int = pages.size
 
     open fun getPageTitle(position: Int): CharSequence? {
         return getPageItem(position).simpleClassName()
     }
 
     //</editor-fold desc="ViewPager相关">
+}
+
+/**设置默认tab的索引*/
+fun BasePagerFragment.tabIndex(index: Int): BasePagerFragment {
+    putData(index, BasePagerFragment.TAB_SELECT_INDEX)
+    return this
 }
