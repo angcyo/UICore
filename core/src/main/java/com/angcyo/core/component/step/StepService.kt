@@ -52,17 +52,39 @@ class StepService : Service(), SensorEventListener {
     companion object {
         /** 存储计步传感器类型  Sensor.TYPE_STEP_COUNTER或者Sensor.TYPE_STEP_DETECTOR */
         private var stepSensorType = -1
+
+        /**强制指定需要使用计步的传感器类型, 不指定自动选择
+         * [Sensor.TYPE_ACCELEROMETER]
+         * [Sensor.TYPE_STEP_COUNTER]
+         * [Sensor.TYPE_STEP_DETECTOR]*/
+        const val KEY_SENSOR_TYPE = "KEY_SENSOR_TYPE"
     }
 
     override fun onCreate() {
         super.onCreate()
         //获取传感器管理类
         sensorManager = this.getSystemService(SENSOR_SERVICE) as SensorManager
-        L.i("StepService—onCreate", "开启计步")
-        doBack {
-            startStepDetector()
-            L.i("StepService—子线程", "startStepDetector()")
+    }
+
+    private var sensorType = Sensor.TYPE_ALL
+
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+        //返回START_STICKY ：在运行onStartCommand后service进程被kill后，那将保留在开始状态，但是不保留那些传入的intent。
+        // 不久后service就会再次尝试重新创建，因为保留在开始状态，在创建     service后将保证调用onstartCommand。
+        // 如果没有传递任何开始命令给service，那将获取到null的intent。
+        if (intent.hasExtra(KEY_SENSOR_TYPE)) {
+            sensorType = intent.getIntExtra(KEY_SENSOR_TYPE, sensorType)
+
+            if (stepSensorType == -1) {
+                //还未开始
+                doBack {
+                    L.i("StepService—onCreate", "开启计步")
+                    startStepDetector()
+                    L.i("StepService—子线程", "startStepDetector()")
+                }
+            }
         }
+        return START_STICKY
     }
 
     /**
@@ -70,12 +92,18 @@ class StepService : Service(), SensorEventListener {
      * SDK大于等于19，开启计步传感器，小于开启加速度传感器
      */
     private fun startStepDetector() {
-        val versionCodes = Build.VERSION.SDK_INT //取得SDK版本
-        if (versionCodes >= Build.VERSION_CODES.KITKAT) {
-            //SDK版本大于等于19开启计步传感器
-            addCountStepListener()
-        } else {        //小于就使用加速度传感器
+        if (sensorType == Sensor.TYPE_ACCELEROMETER) {
+            //使用加速度传感器
             addBasePedometerListener()
+        } else {
+            val versionCodes = Build.VERSION.SDK_INT //取得SDK版本
+            if (versionCodes >= Build.VERSION_CODES.KITKAT) {
+                //SDK版本大于等于19开启计步传感器
+                addCountStepListener()
+            } else {
+                //小于就使用加速度传感器
+                addBasePedometerListener()
+            }
         }
     }
 
@@ -119,12 +147,20 @@ class StepService : Service(), SensorEventListener {
             SensorManager.SENSOR_DELAY_UI
         )
 
+        stepSensorType = Sensor.TYPE_ACCELEROMETER
+
         mStepCount!!.initListener(object : StepValuePassListener {
             override fun stepChanged(steps: Long) {
                 nowBuSu = steps //通过接口回调获得当前步数
                 updateNotification() //更新步数通知
             }
         })
+
+        if (isAvailable) {
+            L.v("StepService", "加速度传感器可以使用")
+        } else {
+            L.v("StepService", "加速度传感器无法使用")
+        }
     }
 
     /**
@@ -187,15 +223,10 @@ class StepService : Service(), SensorEventListener {
         mCallback = paramICallback
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        //返回START_STICKY ：在运行onStartCommand后service进程被kill后，那将保留在开始状态，但是不保留那些传入的intent。
-        // 不久后service就会再次尝试重新创建，因为保留在开始状态，在创建     service后将保证调用onstartCommand。
-        // 如果没有传递任何开始命令给service，那将获取到null的intent。
-        return START_STICKY
-    }
-
     override fun onDestroy() {
         super.onDestroy()
+
+        stepSensorType = -1
 
         sensorManager.unregisterListener(this)
         mStepCount?.stepDetector?.let { sensorManager.unregisterListener(it) }
