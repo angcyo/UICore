@@ -52,7 +52,10 @@
         </service>
 
         <!--计步服务-->
-        <service android:name=".component.step.StepService" />
+        <service
+            android:name=".component.step.StepService"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>

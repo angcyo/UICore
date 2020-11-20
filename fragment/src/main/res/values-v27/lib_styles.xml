@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="BaseAppTheme21" parent="BaseTheme">
-        <!--no op-->
-    </style>
-
     <style name="BaseAppTheme27" parent="BaseAppTheme21">
         <item name="android:navigationBarDividerColor">@color/navigation_bar_divider_color</item>
     </style>
 
-    <style name="BaseAppTheme" parent="BaseAppTheme27">
-
-    </style>
 </resources>
