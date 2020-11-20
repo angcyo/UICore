@@ -2,6 +2,7 @@ package com.angcyo.http
 
 import com.angcyo.http.base.gson
 import com.angcyo.http.interceptor.LogInterceptor
+import com.angcyo.http.interceptor.UUIDInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -35,6 +36,7 @@ class DslHttpConfig {
         proxy(Proxy.NO_PROXY)
         followRedirects(true)
         followSslRedirects(true)
+        addInterceptor(UUIDInterceptor())
         addInterceptor(LogInterceptor())
     }
 
