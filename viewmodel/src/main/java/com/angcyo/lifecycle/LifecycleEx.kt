@@ -12,25 +12,41 @@ import androidx.lifecycle.LifecycleOwner
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 
-fun LifecycleOwner.on(onEvent: Lifecycle.Event, action: () -> Unit): LifecycleEventObserver {
+/**生命周期快速监听
+ * [action] 返回true, 表示调用完之后移除观察*/
+fun Lifecycle.on(event: Lifecycle.Event, action: () -> Boolean): LifecycleEventObserver {
 
     val observer = object : LifecycleEventObserver {
-        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-            if (event == onEvent) {
-                action()
-                lifecycle.removeObserver(this)
+        override fun onStateChanged(source: LifecycleOwner, en: Lifecycle.Event) {
+            if (en == event) {
+                if (action()) {
+                    removeObserver(this)
+                }
             }
         }
     }
 
-    lifecycle.addObserver(observer)
+    addObserver(observer)
 
     return observer
 }
 
-fun LifecycleOwner.onDestroy(action: () -> Unit) = on(Lifecycle.Event.ON_DESTROY, action)
-fun LifecycleOwner.onPause(action: () -> Unit) = on(Lifecycle.Event.ON_PAUSE, action)
-fun LifecycleOwner.onCreate(action: () -> Unit) = on(Lifecycle.Event.ON_CREATE, action)
-fun LifecycleOwner.onStop(action: () -> Unit) = on(Lifecycle.Event.ON_STOP, action)
-fun LifecycleOwner.onStart(action: () -> Unit) = on(Lifecycle.Event.ON_START, action)
-fun LifecycleOwner.onAny(action: () -> Unit) = on(Lifecycle.Event.ON_ANY, action)
+fun Lifecycle.onDestroy(action: () -> Boolean) = on(Lifecycle.Event.ON_DESTROY, action)
+fun Lifecycle.onPause(action: () -> Boolean) = on(Lifecycle.Event.ON_PAUSE, action)
+fun Lifecycle.onCreate(action: () -> Boolean) = on(Lifecycle.Event.ON_CREATE, action)
+fun Lifecycle.onStop(action: () -> Boolean) = on(Lifecycle.Event.ON_STOP, action)
+fun Lifecycle.onStart(action: () -> Boolean) = on(Lifecycle.Event.ON_START, action)
+fun Lifecycle.onAny(action: () -> Boolean) = on(Lifecycle.Event.ON_ANY, action)
+
+/*-----------------------------------LifecycleOwner------------------------------------*/
+
+fun LifecycleOwner.on(event: Lifecycle.Event, action: () -> Boolean): LifecycleEventObserver {
+    return lifecycle.on(event, action)
+}
+
+fun LifecycleOwner.onDestroy(action: () -> Boolean) = on(Lifecycle.Event.ON_DESTROY, action)
+fun LifecycleOwner.onPause(action: () -> Boolean) = on(Lifecycle.Event.ON_PAUSE, action)
+fun LifecycleOwner.onCreate(action: () -> Boolean) = on(Lifecycle.Event.ON_CREATE, action)
+fun LifecycleOwner.onStop(action: () -> Boolean) = on(Lifecycle.Event.ON_STOP, action)
+fun LifecycleOwner.onStart(action: () -> Boolean) = on(Lifecycle.Event.ON_START, action)
+fun LifecycleOwner.onAny(action: () -> Boolean) = on(Lifecycle.Event.ON_ANY, action)

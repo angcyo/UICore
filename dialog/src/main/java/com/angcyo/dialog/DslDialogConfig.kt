@@ -17,7 +17,6 @@ import androidx.annotation.StyleRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDialog
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.angcyo.base.dslAHelper
@@ -27,7 +26,7 @@ import com.angcyo.library.UndefinedDrawable
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.undefined_float
 import com.angcyo.library.ex.undefined_res
-import com.angcyo.lifecycle.on
+import com.angcyo.lifecycle.onDestroy
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.dslViewHolder
 import com.angcyo.widget.base.replace
@@ -531,8 +530,9 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
             val oldCancelListener = onCancelListener
 
             val observer: LifecycleEventObserver =
-                (dialogContext as LifecycleOwner).on(Lifecycle.Event.ON_DESTROY) {
+                (dialogContext as LifecycleOwner).onDestroy {
                     dialog.cancel()
+                    true
                 }
 
             onCancelListener = {

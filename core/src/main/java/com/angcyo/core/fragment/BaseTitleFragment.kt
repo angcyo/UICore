@@ -10,6 +10,7 @@ import androidx.annotation.DrawableRes
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
+import androidx.lifecycle.Lifecycle
 import com.angcyo.DslAHelper
 import com.angcyo.base.getAllValidityFragment
 import com.angcyo.behavior.placeholder.TitleBarPlaceholderBehavior
@@ -26,6 +27,7 @@ import com.angcyo.library.component.dslIntent
 import com.angcyo.library.ex.className
 import com.angcyo.library.ex.colorFilter
 import com.angcyo.library.ex.undefined_res
+import com.angcyo.lifecycle.onStart
 import com.angcyo.widget.DslGroupHelper
 import com.angcyo.widget.base.*
 import com.angcyo.widget.layout.DslSoftInputLayout
@@ -427,4 +429,22 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     }
 
     // </editor-fold desc="情感图切换">
+}
+
+/**设置为一个简单的内嵌列表界面*/
+fun BaseTitleFragment.singleRecycler() {
+    fragmentLayoutId = R.layout.lib_recycler_layout
+}
+
+/**设置为一个简单的内嵌列表界面, 请在[onCreateView]之后使用*/
+fun BaseTitleFragment.hideTitle() {
+    //titleLayoutId = R.layout.lib_empty_item
+    if (lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+        _vh.gone(R.id.lib_title_wrap_layout)
+    } else {
+        lifecycle.onStart {
+            _vh.gone(R.id.lib_title_wrap_layout)
+            true
+        }
+    }
 }
