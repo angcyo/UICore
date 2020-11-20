@@ -547,6 +547,10 @@ fun ViewGroup.addDslItem(
     return dslViewHolder
 }
 
+fun ViewGroup.resetDslItem(item: DslAdapterItem) {
+    resetDslItem(listOf(item))
+}
+
 fun ViewGroup.resetDslItem(items: List<DslAdapterItem>) {
     val childSize = childCount
     val itemSize = items.size
