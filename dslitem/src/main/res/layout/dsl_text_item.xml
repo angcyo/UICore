@@ -1,12 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.angcyo.widget.text.DslTextView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/lib_text_view"
     style="@style/LibBodyTextStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingLeft="@dimen/lib_padding_left"
     android:paddingTop="@dimen/lib_hdpi"
     android:paddingRight="@dimen/lib_padding_left"
-    android:paddingBottom="@dimen/lib_hdpi"
-    tools:text="Text" />
+    android:paddingBottom="@dimen/lib_hdpi">
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_text_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        tools:text="Text" />
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_des_view"
+        style="@style/LibSubTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        tools:text="Text" />
+</FrameLayout>

@@ -7,6 +7,7 @@ import com.angcyo.behavior.refresh.IRefreshContentBehavior
 import com.angcyo.core.R
 import com.angcyo.dsladapter.*
 import com.angcyo.dsladapter.data.loadDataEnd
+import com.angcyo.dsladapter.data.resetRender
 import com.angcyo.library.L
 import com.angcyo.library.model.Page
 import com.angcyo.widget.recycler.DslRecyclerView
@@ -113,6 +114,12 @@ open class BaseDslFragment : BaseTitleFragment() {
     ) {
         finishRefresh()
         _adapter.loadDataEnd(itemClass, dataList, error, page, initItem)
+    }
+
+    /**简单的加载多类型的item*/
+    fun resetRender(error: Throwable? = null, render: DslAdapter.() -> Unit) {
+        finishRefresh()
+        _adapter.resetRender(error, page, render)
     }
 
     //</editor-fold desc="数据加载">

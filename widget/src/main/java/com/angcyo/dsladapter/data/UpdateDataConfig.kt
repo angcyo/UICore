@@ -267,6 +267,23 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.updateSingleDataIndex(
     }
 }
 
+/**更新[DslAdapter]的异常状态*/
+fun DslAdapter.updateAdapterErrorState(error: Throwable?) {
+    if (error != null) {
+        //加载失败
+        if (adapterItems.isEmpty()) {
+            dslAdapterStatusItem.onBindStateLayout = { itemHolder, state ->
+                if (state == DslAdapterStatusItem.ADAPTER_STATUS_ERROR) {
+                    itemHolder.tv(R.id.lib_text_view)?.text = error.message
+                }
+            }
+            toError()
+        } else {
+            toLoadMoreError()
+        }
+    }
+}
+
 /**
  * 单一数据类型加载完成后, 调用此方法.
  * 自动处理, 情感图切换, 加载更多切换.
@@ -296,23 +313,14 @@ fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEndIndex(
     page: Page,
     initItem: Item.(data: Bean, index: Int) -> Unit = { _, _ -> }
 ) {
+    updateAdapterErrorState(error)
+
     if (error != null) {
-        //加载失败
-        if (adapterItems.isEmpty()) {
-            dslAdapterStatusItem.onBindStateLayout = { itemHolder, state ->
-                if (state == DslAdapterStatusItem.ADAPTER_STATUS_ERROR) {
-                    itemHolder.tv(R.id.lib_text_view)?.text = error.message
-                }
-            }
-            toError()
-        } else {
-            toLoadMoreError()
-        }
         return
-    } else {
-        //加载成功
-        page.pageLoadEnd()
     }
+
+    //加载成功
+    page.pageLoadEnd()
 
     //更新数据源
     updateData {
@@ -323,6 +331,30 @@ fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEndIndex(
             updateOrCreateItemByClass(itemClass, oldItem) {
                 initItem(data as Bean, index)
             }
+        }
+    }
+}
+
+/**重置[DslAdapter], 重新渲染[DslAdapter.dataItems]数据*/
+fun DslAdapter.resetRender(error: Throwable?, page: Page, render: DslAdapter.() -> Unit) {
+
+    updateAdapterErrorState(error)
+
+    if (error != null) {
+        return
+    }
+
+    //加载成功
+    page.pageLoadEnd()
+
+    changeDataItems {
+        it.clear()
+        render()
+        if (it.isEmpty() && headerItems.isEmpty() && footerItems.isEmpty()) {
+            //空数据
+            setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_EMPTY)
+        } else {
+            setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_NONE)
         }
     }
 }

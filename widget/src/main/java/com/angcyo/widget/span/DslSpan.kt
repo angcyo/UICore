@@ -167,7 +167,7 @@ class DslSpan : Appendable {
     }
 
     /**追加空隙*/
-    fun appendSpace(@Px size: Int, @ColorInt color: Int = Color.TRANSPARENT): DslSpan {
+    fun appendSpace(@Px size: Int = 10 * dpi, @ColorInt color: Int = Color.TRANSPARENT): DslSpan {
         append("<space>", SpaceSpan(size, color))
         return this
     }

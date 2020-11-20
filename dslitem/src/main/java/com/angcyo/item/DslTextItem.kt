@@ -23,6 +23,16 @@ open class DslTextItem : DslAdapterItem() {
     /**统一样式配置*/
     var itemTextStyle = TextStyleConfig()
 
+    /**文本*/
+    var itemDes: CharSequence? = null
+        set(value) {
+            field = value
+            itemDesStyle.text = value
+        }
+
+    /**统一样式配置*/
+    var itemDesStyle = TextStyleConfig()
+
     init {
         itemLayoutId = R.layout.dsl_text_item
     }
@@ -38,9 +48,18 @@ open class DslTextItem : DslAdapterItem() {
         itemHolder.tv(R.id.lib_text_view)?.apply {
             itemTextStyle.updateStyle(this)
         }
+
+        itemHolder.gone(R.id.lib_des_view, itemDes == null)
+        itemHolder.tv(R.id.lib_des_view)?.apply {
+            itemDesStyle.updateStyle(this)
+        }
     }
 
     open fun configTextStyle(action: TextStyleConfig.() -> Unit) {
         itemTextStyle.action()
+    }
+
+    open fun configDesStyle(action: TextStyleConfig.() -> Unit) {
+        itemDesStyle.action()
     }
 }
