@@ -19,13 +19,36 @@ class CameraPreviewView(context: Context, attributeSet: AttributeSet? = null) :
 
     var visibilityOld = GONE
 
+    override fun init(context: Context?) {
+        super.init(context)
+        //setBackgroundColor(Color.RED)
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        _changed(VISIBLE)
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        _changed(INVISIBLE)
+    }
+
     override fun onVisibilityChanged(changedView: View, visibility: Int) {
         super.onVisibilityChanged(changedView, visibility)
+        _changed(visibility)
+    }
+
+    fun _changed(visibility: Int) {
 
         //Log.i(TAG, "...onVisibilityChanged:" + visibility);
         if (visibility == VISIBLE) {
             if (visibilityOld != VISIBLE) {
-                onResume()
+                if (havePermission()) {
+                    onResume()
+                } else {
+                    onPause()
+                }
             }
         } else {
             onPause()

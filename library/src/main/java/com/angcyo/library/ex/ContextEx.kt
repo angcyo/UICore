@@ -115,17 +115,17 @@ fun Context.havePermission(permissionList: List<String>): Boolean {
 }
 
 /**保存到相册[DCIM]*/
-fun Context.saveToDCIM(file: File): Boolean {
+fun Context.saveToDCIM(file: File): Pair<Boolean, Uri?> {
     val filename: String = file.name
     return try {
         return saveToDCIM(file.inputStream(), filename)
     } catch (e: Exception) {
         e.printStackTrace()
-        false
+        false to null
     }
 }
 
-fun Context.saveToDCIM(input: InputStream, filename: String): Boolean {
+fun Context.saveToDCIM(input: InputStream, filename: String): Pair<Boolean, Uri?> {
 
     checkPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
@@ -155,7 +155,7 @@ fun Context.saveToDCIM(input: InputStream, filename: String): Boolean {
         else -> contentResolver.insert(MediaStore.Files.getContentUri("external"), values)
     }
 
-    return uri?.run {
+    val result = uri?.run {
         try {
             input.use { input ->
                 contentResolver.openOutputStream(uri)?.use { output ->
@@ -168,6 +168,8 @@ fun Context.saveToDCIM(input: InputStream, filename: String): Boolean {
             false
         }
     } ?: false
+
+    return result to uri
 }
 
 fun Context.scanUri(uri: Uri) {

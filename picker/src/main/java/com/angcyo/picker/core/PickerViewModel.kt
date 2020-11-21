@@ -31,6 +31,12 @@ class PickerViewModel : ViewModel() {
     /**选择原图*/
     val selectorOrigin = MutableLiveData<Boolean>(false)
 
+    //录像单独保存的视频
+    val takeVideoList = mutableListOf<LoaderMedia>()
+
+    //拍照单独保存的图片
+    val takeImageList = mutableListOf<LoaderMedia>()
+
     /**添加选中项*/
     fun addSelectedMedia(media: LoaderMedia?) {
         media?.run {

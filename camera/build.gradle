@@ -4,5 +4,5 @@ dependencies {
     implementation project(allModule.widget)
 
     //https://gitee.com/angcyo/aar
-    api 'com.gitee.angcyo.aar:CameraCapturer:CameraCapturer_1.0'
+    api 'com.gitee.angcyo.aar:CameraCapturer:CameraCapturer_1.2'
 }

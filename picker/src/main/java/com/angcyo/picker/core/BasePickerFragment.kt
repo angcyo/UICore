@@ -29,7 +29,7 @@ abstract class BasePickerFragment : BaseDslFragment() {
     /**数据共享*/
     val pickerViewModel: PickerViewModel by VMAProperty(PickerViewModel::class.java)
 
-    //加载配置
+    //Loader配置
     val loaderConfig: LoaderConfig? get() = pickerViewModel.loaderConfig.value
 
     init {

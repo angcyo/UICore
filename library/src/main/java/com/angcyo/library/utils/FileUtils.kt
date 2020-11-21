@@ -27,7 +27,7 @@ object FileUtils {
     var fileMaxSize: Long = 10 * 1024 * 1024
 
     /**所有文件写入的在此根目录下*/
-    var rootFolder: String = getAppString("schema") ?: ""
+    var rootFolder: String = getAppString("schema") ?: "angcyo"
 
     /**获取文件夹路径*/
     var onGetFolderPath: (folderName: String) -> String = {
