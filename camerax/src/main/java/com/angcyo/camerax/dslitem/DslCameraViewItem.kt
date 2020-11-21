@@ -19,7 +19,7 @@ open class DslCameraViewItem : DslAdapterItem() {
     var cameraLifecycleOwner: LifecycleOwner? = null
 
     init {
-        itemLayoutId = R.layout.lib_item_camera
+        itemLayoutId = R.layout.lib_camerax_item
     }
 
     override fun onItemBind(
