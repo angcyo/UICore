@@ -12,7 +12,12 @@ import com.angcyo.library.model.LoaderMedia
 data class LoaderFolder(
     /**文件夹名*/
     var folderName: String? = "",
-    /**文件夹路径*/
+    /**文件夹路径
+     * [com.angcyo.loader.FolderCreator.ALL_IMAGE]
+     * [com.angcyo.loader.FolderCreator.ALL_VIDEO]
+     * [com.angcyo.loader.FolderCreator.ALL_AUDIO]
+     * [com.angcyo.loader.FolderCreator.ALL_IMAGE_AND_VIDEO]
+     * */
     var folderPath: String? = "",
     /**所有媒体*/
     var mediaItemList: MutableList<LoaderMedia> = mutableListOf()

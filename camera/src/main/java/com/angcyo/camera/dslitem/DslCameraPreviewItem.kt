@@ -15,9 +15,9 @@ import cool.capturer.android.capturer.CameraView
  */
 
 open class DslCameraPreviewItem : DslAdapterItem() {
-    
+
     init {
-        itemLayoutId = R.layout.lib_camera_item
+        itemLayoutId = R.layout.lib_camera_preview_item
     }
 
     override fun onItemBind(

@@ -88,6 +88,7 @@ object DslPicker {
                                 }
                                 if (resultCode == Activity.RESULT_OK) {
                                     L.i(uri.loadUrl())
+                                    //activity.scanUri(uri)
                                     action(uri)
                                 } else {
                                     action(null)
@@ -121,6 +122,7 @@ object DslPicker {
                                 }
                                 if (resultCode == Activity.RESULT_OK) {
                                     L.i(uri.loadUrl())
+                                    //activity.scanUri(uri)
                                     action(uri)
                                 } else {
                                     action(null)

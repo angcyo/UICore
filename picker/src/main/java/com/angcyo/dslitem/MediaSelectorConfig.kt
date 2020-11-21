@@ -10,6 +10,7 @@ import com.angcyo.loader.LoaderConfig
 import com.angcyo.media.video.record.recordPhotoOnly
 import com.angcyo.media.video.record.recordVideo
 import com.angcyo.media.video.record.recordVideoOnly
+import com.angcyo.picker.DslPicker
 import com.angcyo.picker.dslPicker
 
 /**
@@ -30,8 +31,14 @@ class MediaSelectorConfig {
         /**相册选择*/
         const val MODE_PICKER = 0x02
 
+        /**系统拍照/录像*/
+        const val MODE_CAPTURE = 0x04
+
         /**手动选择*/
         const val MODE_MANUAL = MODE_TAKE or MODE_PICKER
+
+        /**手动选择全部*/
+        const val MODE_ALL = MODE_TAKE or MODE_PICKER or MODE_CAPTURE
 
         const val TYPE_IMAGE = 0x01
         const val TYPE_VIDEO = 0x02
@@ -117,6 +124,41 @@ class MediaSelectorConfig {
                         _picker(fragment, loaderConfig)
                     }
                 }
+                //capture
+                if (selectorMode.have(MODE_CAPTURE)) {
+                    if (selectorType.have(TYPE_IMAGE)) {
+                        addDialogItem {
+                            itemText = "相机图片"
+                            itemClick = {
+                                _capturePhoto(fragment)
+                            }
+                        }
+                    }
+                    if (selectorType.have(TYPE_VIDEO)) {
+                        addDialogItem {
+                            itemText = "相机视频"
+                            itemClick = {
+                                _captureVideo(fragment)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun _capturePhoto(fragment: Fragment) {
+        fragment.apply {
+            DslPicker.takePhoto(activity) {
+                takeResult(LoaderMedia(localUri = it))
+            }
+        }
+    }
+
+    fun _captureVideo(fragment: Fragment) {
+        fragment.apply {
+            DslPicker.takeVideo(activity, maxDuration = maxRecordTime) {
+                takeResult(LoaderMedia(localUri = it))
             }
         }
     }

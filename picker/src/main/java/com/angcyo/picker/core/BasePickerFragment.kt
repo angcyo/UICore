@@ -10,6 +10,7 @@ import com.angcyo.library.ex.fileSizeString
 import com.angcyo.library.ex.getColor
 import com.angcyo.library.model.LoaderMedia
 import com.angcyo.library.model.isImage
+import com.angcyo.loader.LoaderConfig
 import com.angcyo.picker.R
 import com.angcyo.picker.dslitem.DslPickerStatusItem
 import com.angcyo.transition.dslTransition
@@ -28,6 +29,9 @@ abstract class BasePickerFragment : BaseDslFragment() {
     /**数据共享*/
     val pickerViewModel: PickerViewModel by VMAProperty(PickerViewModel::class.java)
 
+    //加载配置
+    val loaderConfig: LoaderConfig? get() = pickerViewModel.loaderConfig.value
+
     init {
         fragmentConfig.apply {
             fragmentBackgroundDrawable = ColorDrawable(getColor(R.color.picker_fragment_bg_color))
@@ -36,9 +40,6 @@ abstract class BasePickerFragment : BaseDslFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        //加载配置
-        val loaderConfig = pickerViewModel.loaderConfig.value
 
         //监听原图选择
         pickerViewModel.selectorOrigin.observe {
@@ -96,7 +97,6 @@ abstract class BasePickerFragment : BaseDslFragment() {
     }
 
     open fun onSelectorMediaListChange(mediaList: MutableList<LoaderMedia>?) {
-        val loaderConfig = pickerViewModel.loaderConfig.value
 
         if (mediaList.isNullOrEmpty()) {
             _vh.enable(R.id.preview_text_view, false)

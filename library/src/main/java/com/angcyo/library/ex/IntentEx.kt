@@ -31,23 +31,25 @@ fun Intent.baseConfig(context: Context) {
     }
 }
 
-fun Intent.uriConfig(context: Context, uri: Uri) {
-    putExtra(MediaStore.EXTRA_OUTPUT, uri)
+fun Intent.uriConfig(context: Context, uri: Uri?) {
     addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
-    if (Build.VERSION.SDK_INT < 21) {
-        context.grantUriPermission(
-            context.packageName, uri,
-            Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
-        )
+    if (uri != null) {
+        putExtra(MediaStore.EXTRA_OUTPUT, uri)
+        if (Build.VERSION.SDK_INT < 21) {
+            context.grantUriPermission(
+                context.packageName, uri,
+                Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
+        }
     }
 
     baseConfig(context)
 }
 
 /**系统拍照[android.Manifest.permission.CAMERA]*/
-fun takePhotoIntent(context: Context, saveUri: Uri): Intent {
+fun takePhotoIntent(context: Context, saveUri: Uri?): Intent {
     val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
     intent.uriConfig(context, saveUri)
     return intent
@@ -56,7 +58,7 @@ fun takePhotoIntent(context: Context, saveUri: Uri): Intent {
 /**系统录制[android.Manifest.permission.CAMERA]*/
 fun takeVideoIntent(
     context: Context,
-    saveUri: Uri,
+    saveUri: Uri?,
     videoQuality: Int = 1,
     maxSize: Long = Long.MAX_VALUE, //字节
     maxDuration: Int = -1//秒

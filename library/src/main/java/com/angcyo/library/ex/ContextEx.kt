@@ -170,6 +170,34 @@ fun Context.saveToDCIM(input: InputStream, filename: String): Boolean {
     } ?: false
 }
 
+fun Context.scanUri(uri: Uri) {
+    val path = uri.loadUrl()
+    val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(path)
+
+    // Implicit broadcasts will be ignored for devices running API level >= 24
+    // so if you only target API level 24+ you can remove this statement
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+        if (mimeType.isImageMimeType()) {
+            sendBroadcast(Intent(Camera.ACTION_NEW_PICTURE, uri))
+        } else if (mimeType.isImageMimeType()) {
+            sendBroadcast(Intent(Camera.ACTION_NEW_VIDEO, uri))
+        }
+    }
+
+    // If the folder selected is an external media directory, this is unnecessary
+    // but otherwise other apps will not be able to access our images unless we
+    // scan them using [MediaScannerConnection]
+    MediaScannerConnection.scanFile(
+        this,
+        arrayOf(path),
+        arrayOf(mimeType)
+    ) { path, uri1 ->
+        //uri 为空, 表示失败.
+        L.i("$path $uri1")
+    }
+}
+
+
 /**相机拍摄新照片，并将照片的条目添加到媒体存储。*/
 fun Context.scanFile(file: File) {
     val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
