@@ -11,7 +11,9 @@ import com.angcyo.DslAHelper
 import com.angcyo.base.checkAndRequestPermission
 import com.angcyo.fragment.FragmentBridge
 import com.angcyo.fragment.IFragmentBridge
+import com.angcyo.library.L
 import com.angcyo.library.ex.fileUri
+import com.angcyo.library.ex.loadUrl
 import com.angcyo.library.ex.takePhotoIntent
 import com.angcyo.library.ex.takeVideoIntent
 import com.angcyo.library.model.LoaderMedia
@@ -70,13 +72,10 @@ object DslPicker {
     }
 
     /**拍照*/
-    fun takePhoto(activity: FragmentActivity, action: (Uri?) -> Unit) {
-        activity.checkAndRequestPermission(arrayOf(Manifest.permission.CAMERA)) {
-            val uri =
-                fileUri(
-                    activity,
-                    File(filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".jpeg")))
-                )
+    fun takePhoto(activity: FragmentActivity?, action: (Uri?) -> Unit) {
+        activity?.checkAndRequestPermission(arrayOf(Manifest.permission.CAMERA)) {
+            val filePath = filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".jpeg"))
+            val uri = fileUri(activity, File(filePath))
             takePhotoIntent(activity, uri).run {
                 FragmentBridge.install(activity.supportFragmentManager)
                     .startActivityForResult(this,
@@ -88,6 +87,7 @@ object DslPicker {
                                     data?.data = uri
                                 }
                                 if (resultCode == Activity.RESULT_OK) {
+                                    L.i(uri.loadUrl())
                                     action(uri)
                                 } else {
                                     action(null)
@@ -100,18 +100,15 @@ object DslPicker {
 
     /**录像*/
     fun takeVideo(
-        activity: FragmentActivity,
-        videoQuality: Int = 1,
+        activity: FragmentActivity?,
+        videoQuality: Int = 1, //视频质量, 0:低质量, 1:高质量
         maxSize: Long = Long.MAX_VALUE, //字节
         maxDuration: Int = -1,//秒,
         action: (Uri?) -> Unit
     ) {
-        activity.checkAndRequestPermission(arrayOf(Manifest.permission.CAMERA)) {
-            val uri =
-                fileUri(
-                    activity,
-                    File(filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".mp4")))
-                )
+        activity?.checkAndRequestPermission(arrayOf(Manifest.permission.CAMERA)) {
+            val filePath = filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".mp4"))
+            val uri = fileUri(activity, File(filePath))
             takeVideoIntent(activity, uri, videoQuality, maxSize, maxDuration).run {
                 FragmentBridge.install(activity.supportFragmentManager)
                     .startActivityForResult(this,
@@ -123,6 +120,7 @@ object DslPicker {
                                     data?.data = uri
                                 }
                                 if (resultCode == Activity.RESULT_OK) {
+                                    L.i(uri.loadUrl())
                                     action(uri)
                                 } else {
                                     action(null)
