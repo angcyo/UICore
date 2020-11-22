@@ -1,6 +1,8 @@
 package com.angcyo.http.interceptor
 
+import android.Manifest
 import com.angcyo.library.app
+import com.angcyo.library.ex.havePermissions
 import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.getIMEI
 import okhttp3.Interceptor
@@ -21,7 +23,11 @@ class UUIDInterceptor : Interceptor {
         val newRequest = chain.request().newBuilder()
             .addHeader("deviceId", Device.deviceId)
             .addHeader("androidId", Device.androidId)
-            .addHeader("imei", app().getIMEI() ?: "")
+            .apply {
+                if (app().havePermissions(Manifest.permission.READ_PHONE_STATE)) {
+                    addHeader("imei", app().getIMEI() ?: "")
+                }
+            }
             .build()
         return chain.proceed(newRequest)
     }
