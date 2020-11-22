@@ -49,10 +49,13 @@ fun Intent.uriConfig(context: Context, uri: Uri?) {
 }
 
 /**系统拍照[android.Manifest.permission.CAMERA]*/
-fun takePhotoIntent(context: Context, saveUri: Uri?): Intent {
+fun takePhotoIntent(context: Context, saveUri: Uri?): Intent? {
     val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
     intent.uriConfig(context, saveUri)
-    return intent
+    if (intent.resolveActivity(context.packageManager) != null) {
+        return intent
+    }
+    return null
 }
 
 /**系统录制[android.Manifest.permission.CAMERA]*/
@@ -62,7 +65,7 @@ fun takeVideoIntent(
     videoQuality: Int = 1,
     maxSize: Long = Long.MAX_VALUE, //字节
     maxDuration: Int = -1//秒
-): Intent {
+): Intent? {
     val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
     intent.uriConfig(context, saveUri)
 
@@ -75,7 +78,10 @@ fun takeVideoIntent(
         putExtra(MediaStore.EXTRA_DURATION_LIMIT, maxDuration)
     }
 
-    return intent
+    if (intent.resolveActivity(context.packageManager) != null) {
+        return intent
+    }
+    return null
 }
 
 /**

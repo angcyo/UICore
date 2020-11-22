@@ -77,7 +77,7 @@ object DslPicker {
         activity?.checkAndRequestPermission(arrayOf(Manifest.permission.CAMERA)) {
             val filePath = filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".jpeg"))
             val uri = fileUri(activity, File(filePath))
-            takePhotoIntent(activity, uri).run {
+            takePhotoIntent(activity, uri)?.run {
                 FragmentBridge.install(activity.supportFragmentManager)
                     .startActivityForResult(this,
                         FragmentBridge.generateCode(),
@@ -88,8 +88,11 @@ object DslPicker {
                                     data?.data = uri
                                 }
                                 if (resultCode == Activity.RESULT_OK) {
+                                    //不指定uri时, 可以使用此方式获取缩略图
+                                    //https://developer.android.google.cn/training/camera/photobasics#TaskPhotoView
+                                    //val imageBitmap = data?.extras?.get("data") as Bitmap
                                     L.i(uri.loadUrl())
-                                    //activity.scanUri(uri)
+                                    //activity.scanFile2(uri)
                                     action(uri)
                                 } else {
                                     action(null)
@@ -111,7 +114,7 @@ object DslPicker {
         activity?.checkAndRequestPermission(arrayOf(Manifest.permission.CAMERA)) {
             val filePath = filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".mp4"))
             val uri = fileUri(activity, File(filePath))
-            takeVideoIntent(activity, uri, videoQuality, maxSize, maxDuration).run {
+            takeVideoIntent(activity, uri, videoQuality, maxSize, maxDuration)?.run {
                 FragmentBridge.install(activity.supportFragmentManager)
                     .startActivityForResult(this,
                         FragmentBridge.generateCode(),
@@ -122,6 +125,9 @@ object DslPicker {
                                     data?.data = uri
                                 }
                                 if (resultCode == Activity.RESULT_OK) {
+                                    //https://developer.android.google.cn/training/camera/videobasics#TaskVideoView
+                                    //不指定uri, 可以使用以下方式获取uri
+                                    //val videoUri: Uri = intent.data
                                     L.i(uri.loadUrl())
                                     //activity.scanUri(uri)
                                     action(uri)

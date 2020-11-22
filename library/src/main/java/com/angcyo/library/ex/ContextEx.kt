@@ -172,6 +172,21 @@ fun Context.saveToDCIM(input: InputStream, filename: String): Pair<Boolean, Uri?
     return result to uri
 }
 
+/**https://developer.android.google.cn/training/camera/photobasics#TaskGallery*/
+fun Context.scanFile2(file: File) {
+    scanFile2(Uri.fromFile(file))
+}
+
+/**https://developer.android.google.cn/training/camera/photobasics#TaskGallery
+ * 效果不佳*/
+fun Context.scanFile2(uri: Uri) {
+    Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
+        mediaScanIntent.data = uri
+        sendBroadcast(mediaScanIntent)
+    }
+}
+
+/**效果不佳*/
 fun Context.scanUri(uri: Uri) {
     val path = uri.loadUrl()
     val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(path)
@@ -200,7 +215,8 @@ fun Context.scanUri(uri: Uri) {
 }
 
 
-/**相机拍摄新照片，并将照片的条目添加到媒体存储。*/
+/**相机拍摄新照片，并将照片的条目添加到媒体存储。
+ * 效果不佳*/
 fun Context.scanFile(file: File) {
     val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
 
