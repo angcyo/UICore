@@ -7,6 +7,8 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.BaseDependsBehavior
 import com.angcyo.behavior.ITitleBarBehavior
 import com.angcyo.widget.base.behavior
+import com.angcyo.widget.base.coordinatorParams
+import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.offsetTopTo
 
 /**
@@ -25,9 +27,14 @@ open class TitleBarBelowBehavior(
     var titleBarPlaceholderBehavior: ITitleBarBehavior? = null
 
     /**[child]需要排除多少高度*/
-    val excludeHeight get() = titleBarPlaceholderBehavior?.getContentExcludeHeight(this) ?: 0
+    val _excludeHeight get() = titleBarPlaceholderBehavior?.getContentExcludeHeight(this) ?: 0
 
     var _titleBarView: View? = null
+
+    val _titleBarHeight get() = _titleBarView?.mH(0) ?: 0
+
+    /**是否固定位置, 不跟随[ITitleBarBehavior]的偏移而偏移*/
+    var fixed: Boolean = false
 
     override fun layoutDependsOn(
         parent: CoordinatorLayout,
@@ -43,6 +50,13 @@ open class TitleBarBelowBehavior(
             }
         }
 
+        if (titleBarPlaceholderBehavior != null) {
+            //去掉布局的layout_anchor属性, 否则会循环触发[onDependentViewChanged]
+            child.coordinatorParams {
+                anchorId = View.NO_ID
+            }
+        }
+
         super.layoutDependsOn(parent, child, dependency)
 
         return behavior is ITitleBarBehavior
@@ -53,10 +67,15 @@ open class TitleBarBelowBehavior(
         child: View,
         dependency: View
     ): Boolean {
-        super.onDependentViewChanged(parent, child, dependency)
-        val top = dependency.bottom
-        child.layout(child.left, top, child.right, top + child.measuredHeight)
-        return false
+        val result = super.onDependentViewChanged(parent, child, dependency)
+        return if (fixed) {
+            child.offsetTopTo(_titleBarHeight)
+            result
+        } else {
+            val top = dependency.bottom
+            child.layout(child.left, top, child.right, top + child.measuredHeight)
+            false
+        }
     }
 
     override fun onMeasureChild(
@@ -77,19 +96,32 @@ open class TitleBarBelowBehavior(
             heightUsed
         )
 
-        parent.onMeasureChild(
-            child,
-            parentWidthMeasureSpec,
-            widthUsed,
-            parentHeightMeasureSpec,
-            heightUsed + excludeHeight
-        )
-
+        if (fixed) {
+            parent.onMeasureChild(
+                child,
+                parentWidthMeasureSpec,
+                widthUsed,
+                parentHeightMeasureSpec,
+                heightUsed + _titleBarHeight
+            )
+        } else {
+            parent.onMeasureChild(
+                child,
+                parentWidthMeasureSpec,
+                widthUsed,
+                parentHeightMeasureSpec,
+                heightUsed + _excludeHeight
+            )
+        }
         return true
     }
 
     override fun onLayoutChildAfter(parent: CoordinatorLayout, child: View, layoutDirection: Int) {
         super.onLayoutChildAfter(parent, child, layoutDirection)
-        child.offsetTopTo(_titleBarView?.bottom ?: 0)
+        if (fixed) {
+            child.offsetTopTo(_titleBarHeight)
+        } else {
+            child.offsetTopTo(_titleBarView?.bottom ?: 0)
+        }
     }
 }
