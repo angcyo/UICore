@@ -13,16 +13,29 @@ import com.angcyo.dsladapter.filter.FilterChain
  * @date 2020/02/05
  */
 class LoadMoreFilterInterceptor : BaseFilterInterceptor() {
+
+    /**总是激活加载更多, 会覆盖[dslLoadMoreItem]的状态*/
+    var alwaysEnable = false
+
     override fun intercept(chain: FilterChain): List<DslAdapterItem> {
-        return if (chain.dslAdapter.isAdapterStatus() ||
-            !chain.dslAdapter.dslLoadMoreItem.itemStateEnable
-        ) {
-            chain.requestList
-        } else {
-            val result = mutableListOf<DslAdapterItem>()
-            result.addAll(chain.requestList)
-            result.add(chain.dslAdapter.dslLoadMoreItem)
-            result
+        if (chain.dslAdapter.isAdapterStatus()) {
+            return chain.requestList
         }
+
+        val dslLoadMoreItem = chain.dslAdapter.dslLoadMoreItem
+        if (alwaysEnable) {
+            val oldState = dslLoadMoreItem.itemState
+            dslLoadMoreItem.itemStateEnable = true
+            dslLoadMoreItem.itemState = oldState
+        }
+
+        if (!dslLoadMoreItem.itemStateEnable) {
+            return chain.requestList
+        }
+
+        val result = mutableListOf<DslAdapterItem>()
+        result.addAll(chain.requestList)
+        result.add(dslLoadMoreItem)
+        return result
     }
 }
