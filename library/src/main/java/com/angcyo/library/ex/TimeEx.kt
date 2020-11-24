@@ -4,8 +4,10 @@ import com.angcyo.library.L
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.ceil
 
 /**
+ * https://github.com/JodaOrg/joda-time
  * Created by angcyo on ：2018/04/12 13:36
  * 修改备注：
  * Version: 1.0.0
@@ -15,7 +17,12 @@ fun nowTime() = System.currentTimeMillis()
 
 /**返回毫秒对应的天数*/
 fun Long.toDay(): Int {
-    return (this / (24 * 60 * 60 * 1000)).toInt()
+    return ceil((this * 1.0 / (24 * 60 * 60 * 1000L))).toInt()
+}
+
+/**返回毫秒对应的年数*/
+fun Long.toYear(): Int {
+    return ceil(toDay() * 1.0 / 365).toInt()
 }
 
 /**当前时间和现在时间对比, 还剩多少天*/
@@ -196,4 +203,9 @@ fun timeDifference(start: String, end: String, pattern: String = "yyyy-MM-dd HH:
     } else {
         e - s
     }
+}
+
+/**两个时间相差多少毫秒*/
+fun String.diffTime(end: String, pattern: String = "yyyy-MM-dd HH:mm:ss"): Long {
+    return timeDifference(this, end, pattern)
 }
