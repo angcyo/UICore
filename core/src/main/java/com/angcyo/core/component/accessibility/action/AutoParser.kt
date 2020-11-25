@@ -17,6 +17,7 @@ import com.angcyo.library.utils.getLongNum
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random.Default.nextBoolean
+import kotlin.random.Random.Default.nextInt
 
 /**
  * 解析处理
@@ -372,7 +373,7 @@ open class AutoParser {
         /**
          * 获取状态中, 满足条件的节点
          * [com.angcyo.core.component.accessibility.parse.ConstraintBean.stateList]
-         * [index] 未使用的参数
+         * [index] 未使用的参数, 支持负数
          * */
         fun getStateParentNode(
             stateList: List<String>?,
@@ -470,6 +471,8 @@ open class AutoParser {
             if (enable) {
                 //如果当前的[constraint]处于激活状态, 或者拥有激活自身的能力
                 val parseResult = ParseResult(constraint, constraintList)
+
+                //查找node
                 findConstraintNode(service, autoParseAction, nodeList, parseResult)
 
                 parseResult.resultHandleNodeList().apply {
@@ -648,6 +651,8 @@ open class AutoParser {
             }
         }
 
+        /*------------------------------开始匹配条件-------------------------------------*/
+
         if (constraintBean.isConstraintEmpty()) {
             //空约束返回[rootNodeInfo]
             result.add(rootNodeWrap)
@@ -700,6 +705,7 @@ open class AutoParser {
                     }
                 }
             } else {
+                //文本或者id匹配查找目标
                 val packageName: String = idPackageName ?: service.packageName
 
                 //临时存储node
@@ -710,10 +716,10 @@ open class AutoParser {
                 for (index: Int in textList.indices) {
                     tempList = mutableListOf()
                     try {
-                        val text = textList[index] ?: ""
+                        val text = textList[index]
                         //完整id 是需要包含包名的
                         val isIdText: Boolean = constraintBean.idList?.getOrNull(index) == 1
-                        val subText: String? = if (isIdText) packageName.id(text) else text
+                        val subText: String? = if (isIdText) packageName.id(text!!) else text
 
                         if (!isIdText && subText == null) {
                             //text匹配模式下, null 匹配所有节点, 注意性能.
@@ -744,20 +750,48 @@ open class AutoParser {
                                 }
 
                                 if (findNode == 1) {
-                                    findNode = if (matchClassAndRectAndState(
-                                            constraintBean,
-                                            nodeInfoCompat,
-                                            index
-                                        )
-                                    ) {
-                                        //其他约束匹配成功
-                                        val node =
-                                            getStateParentNode(
+                                    if (constraintBean.selectNodeList.isNullOrEmpty()) {
+                                        //不需要挑选节点
+                                        findNode = if (matchClassAndRectAndState(
+                                                constraintBean,
+                                                nodeInfoCompat,
+                                                index
+                                            )
+                                        ) {
+                                            //其他约束匹配成功
+                                            val node = getStateParentNode(
                                                 constraintBean.stateList,
                                                 nodeInfoCompat,
                                                 index
                                             ).second
-                                        if (!constraintBean.pathList.isNullOrEmpty()) {
+                                            if (!constraintBean.pathList.isNullOrEmpty()) {
+                                                parseConstraintPath(
+                                                    constraintBean,
+                                                    constraintBean.pathList?.getOrNull(index),
+                                                    node,
+                                                    tempList
+                                                )
+                                                -1
+                                            } else {
+                                                if (node != nodeInfoCompat) {
+                                                    //查找的 nodeInfoCompat 被替换成 node
+                                                    tempList.add(node)
+                                                    -1
+                                                } else {
+                                                    1
+                                                }
+                                            }
+                                        } else {
+                                            -1
+                                        }
+                                    } else {
+                                        //需要挑选节点, 那么[matchClassAndRectAndState]将在后面执行
+                                        val node = getStateParentNode(
+                                            constraintBean.stateList,
+                                            nodeInfoCompat,
+                                            index
+                                        ).second
+                                        findNode = if (!constraintBean.pathList.isNullOrEmpty()) {
                                             parseConstraintPath(
                                                 constraintBean,
                                                 constraintBean.pathList?.getOrNull(index),
@@ -774,8 +808,6 @@ open class AutoParser {
                                                 1
                                             }
                                         }
-                                    } else {
-                                        -1
                                     }
                                 }
 
@@ -820,6 +852,32 @@ open class AutoParser {
                 result.clear()
             }
         }
+
+        //筛选需要特殊处理的节点
+        if (!constraintBean.selectNodeList.isNullOrEmpty()) {
+            var selectResult = true
+
+            constraintBean.selectNodeList?.forEach {
+                val index = when (it) {
+                    666666 -> nextInt(0, result.size)
+                    else -> it
+                }
+                val node = result.getOrNull2(index)
+                if (node != null) {
+                    if (!matchClassAndRectAndState(constraintBean, node, index)) {
+                        selectResult = false
+                        return@forEach
+                    }
+                }
+            }
+
+            if (!selectResult) {
+                //不匹配
+                result.clear()
+            }
+        }
+
+        /*------------------------------后置处理---------------------------------------*/
 
         //条件过滤筛选
         if (!constraintBean.conditionList.isNullOrEmpty()) {
@@ -994,8 +1052,8 @@ open class AutoParser {
         node: AccessibilityNodeInfoCompat,
         index: Int /*对应text中的索引*/
     ): Boolean {
-        val cls = constraintBean.clsList?.getOrNull(index)
-        val rect = constraintBean.rectList?.getOrNull(index)
+        val cls = constraintBean.clsList?.getOrNull2(index)
+        val rect = constraintBean.rectList?.getOrNull2(index)
 
         //矩形和类名
         var result = matchClassAndRect(node, cls, rect)

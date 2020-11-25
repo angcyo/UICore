@@ -111,6 +111,13 @@ data class ConstraintBean(
      * */
     var idList: List<Int>? = null,
 
+    /**当文本或者id匹配到节点之后, 再次筛选出指定的节点, 进行[clsList] [rectList] [stateList] 匹配.
+     * 设置了此属性, 在文本或id匹配时, 不会检查[clsList] [rectList] [stateList] 所有匹配成功, 就返回成功的节点
+     * index>=0, 正向取索引
+     * index<0, 倒数第几个.
+     * 666666: 表示随机选择index*/
+    var selectNodeList: List<Int>? = null,
+
     /**类名约束, 和[textList]为一一对应的关系.为空, 表示不约束类名
      * 匹配规则时包含, 只要当前设置的cls包含视图中的cls就算命中.
      * 空字符会命中所有
