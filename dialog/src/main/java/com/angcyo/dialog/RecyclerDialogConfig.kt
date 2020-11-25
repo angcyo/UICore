@@ -37,7 +37,8 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
 
     /**对话框返回, 取消不会触发此回调
      * [dialogItemList] 数据列表
-     * [dialogItemIndexList] 索引列表*/
+     * [dialogItemIndexList] 索引列表
+     * @return true 拦截默认处理*/
     var dialogResult: (dialog: Dialog, itemList: List<DslAdapterItem>, indexList: List<Int>) -> Boolean =
         { _, _, _ -> false }
 

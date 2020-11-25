@@ -29,6 +29,9 @@ open class RecyclerConfig {
     /**事件回调*/
     var adapterItemClick: (dslItem: DslAdapterItem, view: View) -> Unit = { _, _ -> }
 
+    /**移除收尾分割线*/
+    var removeFirstLastItemDecoration: Boolean = true
+
     //适配器
     lateinit var _adapter: DslAdapter
 
@@ -37,9 +40,11 @@ open class RecyclerConfig {
         holder.rv(R.id.lib_recycler_view)?.apply {
             //初始化DslAdapter
             _adapter = initDslAdapter() {
-                dslDataFilter?.dataAfterInterceptorList?.add(
-                    RemoveItemDecorationFilterAfterInterceptor()
-                )
+                if (removeFirstLastItemDecoration) {
+                    dslDataFilter?.dataAfterInterceptorList?.add(
+                        RemoveItemDecorationFilterAfterInterceptor()
+                    )
+                }
                 resetItem(adapterItemList)
                 updateNow()
             }

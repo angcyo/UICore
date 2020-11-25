@@ -1,11 +1,14 @@
 package com.angcyo.dsladapter
 
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import androidx.annotation.LayoutRes
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
 import com.angcyo.widget.base.Anim
+import com.angcyo.widget.base.setBgDrawable
 import com.angcyo.widget.base.setWidthHeight
 
 
@@ -151,13 +154,21 @@ fun <T : DslAdapterItem> DslAdapter.dslCustomItem(
 /**空的占位item*/
 fun DslAdapter.renderEmptyItem(
     height: Int = 120 * dpi,
-    color: Int = Color.TRANSPARENT,
+    backgroundColor: Int = Color.TRANSPARENT,
+    action: DslAdapterItem.() -> Unit = {}
+) {
+    renderEmptyItem(height, ColorDrawable(backgroundColor), action)
+}
+
+fun DslAdapter.renderEmptyItem(
+    height: Int = 120 * dpi,
+    background: Drawable?,
     action: DslAdapterItem.() -> Unit = {}
 ) {
     val adapterItem = DslAdapterItem()
     adapterItem.itemLayoutId = R.layout.lib_empty_item
     adapterItem.itemBindOverride = { itemHolder, _, _, _ ->
-        itemHolder.itemView.setBackgroundColor(color)
+        itemHolder.itemView.setBgDrawable(background)
         itemHolder.itemView.setWidthHeight(-1, height)
     }
     adapterItem.action()

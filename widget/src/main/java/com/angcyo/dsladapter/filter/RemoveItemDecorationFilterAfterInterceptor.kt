@@ -12,6 +12,12 @@ import com.angcyo.dsladapter.DslAdapterItem
  */
 class RemoveItemDecorationFilterAfterInterceptor : BaseFilterAfterInterceptor() {
 
+    /**移除头部分割线*/
+    var remoteHeader: Boolean = true
+
+    /**移除尾部分割线*/
+    var remoteFooter: Boolean = true
+
     var orientation: Int = RecyclerView.VERTICAL
 
     var removeConfig: (chain: FilterAfterChain, index: Int, dslAdapterItem: DslAdapterItem) -> Unit =
@@ -21,17 +27,21 @@ class RemoveItemDecorationFilterAfterInterceptor : BaseFilterAfterInterceptor() 
 
     override fun intercept(chain: FilterAfterChain): List<DslAdapterItem> {
         chain.requestList.firstOrNull()?.apply {
-            if (orientation == RecyclerView.VERTICAL) {
-                itemTopInsert = 0
-            } else {
-                itemLeftInsert = 0
+            if (remoteHeader) {
+                if (orientation == RecyclerView.VERTICAL) {
+                    itemTopInsert = 0
+                } else {
+                    itemLeftInsert = 0
+                }
             }
         }
         chain.requestList.lastOrNull()?.apply {
-            if (orientation == RecyclerView.VERTICAL) {
-                itemBottomInsert = 0
-            } else {
-                itemRightInsert = 0
+            if (remoteFooter) {
+                if (orientation == RecyclerView.VERTICAL) {
+                    itemBottomInsert = 0
+                } else {
+                    itemRightInsert = 0
+                }
             }
         }
 

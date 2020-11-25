@@ -10,15 +10,14 @@ import android.text.TextUtils
 import android.view.*
 import android.view.WindowManager.LayoutParams.*
 import android.widget.FrameLayout
-import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
-import androidx.annotation.LayoutRes
-import androidx.annotation.StyleRes
+import androidx.annotation.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDialog
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import com.angcyo.base.dslAHelper
 import com.angcyo.dialog.activity.DialogActivity
 import com.angcyo.library.L
@@ -38,7 +37,8 @@ import java.io.Serializable
  * @author angcyo
  * @date 2020/02/01
  */
-open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Serializable {
+open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
+    LifecycleOwner, Serializable {
 
     companion object {
         /** Dialog -> AppCompatDialog -> AlertDialog */
@@ -277,19 +277,12 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
             throw NullPointerException("context is null.")
         }
 
+        //lifecycle
+        onDialogCreate(dialog)
+
         dialog.setCancelable(cancelable)
         if (!TextUtils.isEmpty(dialogTitle)) {
             dialog.setTitle(dialogTitle)
-        }
-        if (onDismissListener != null) {
-            dialog.setOnDismissListener {
-                onDismissListener?.invoke(it as Dialog)
-            }
-        }
-        if (onCancelListener != null) {
-            dialog.setOnCancelListener {
-                onCancelListener?.invoke(it as Dialog)
-            }
         }
         dialog.setCanceledOnTouchOutside(canceledOnTouchOutside)
         val window = dialog.window
@@ -313,6 +306,23 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
 
             decorView = window.decorView
             val viewHolder = decorView.dslViewHolder()
+
+            //lifecycle
+            dialog.setOnShowListener {
+                onDialogShow(dialog, viewHolder)
+            }
+
+            //lifecycle
+            dialog.setOnDismissListener {
+                onDialogDestroy(dialog, viewHolder)
+                onDismissListener?.invoke(it as Dialog)
+            }
+
+            dialog.setOnCancelListener {
+                onDialogCancel(dialog, viewHolder)
+                onCancelListener?.invoke(it as Dialog)
+            }
+
             initDialogView(dialog, viewHolder)
             onDialogInitListener(dialog, viewHolder)
         }
@@ -499,6 +509,8 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
 
     /**根据类型, 自动显示对应[Dialog]*/
     open fun show(type: Int = dialogType): Dialog {
+        onDialogInit()
+
         val dialog = when (type) {
             DIALOG_TYPE_DIALOG -> showDialog()
             DIALOG_TYPE_APPCOMPAT -> {
@@ -544,6 +556,42 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Seri
 
         return dialog
     }
+
+    //<editor-fold desc="Lifecycle支持">
+
+    val lifecycleRegistry = LifecycleRegistry(this)
+
+    override fun getLifecycle(): Lifecycle {
+        return lifecycleRegistry
+    }
+
+    @CallSuper
+    open fun onDialogInit() {
+        lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
+    }
+
+    @CallSuper
+    open fun onDialogCreate(dialog: Dialog) {
+        lifecycleRegistry.currentState = Lifecycle.State.CREATED
+    }
+
+    @CallSuper
+    open fun onDialogShow(dialog: Dialog, dialogViewHolder: DslViewHolder) {
+        lifecycleRegistry.currentState = Lifecycle.State.STARTED
+    }
+
+    @CallSuper
+    open fun onDialogCancel(dialog: Dialog, dialogViewHolder: DslViewHolder) {
+
+    }
+
+    @CallSuper
+    open fun onDialogDestroy(dialog: Dialog, dialogViewHolder: DslViewHolder) {
+        lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
+        dialogViewHolder.clear()
+    }
+
+    //</editor-fold desc="Lifecycle支持">
 }
 
 fun Dialog.dialogViewHolder(): DslViewHolder = DslViewHolder(window!!.decorView)
