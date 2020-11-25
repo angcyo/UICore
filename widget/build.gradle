@@ -24,7 +24,7 @@ dependencies {
     api 'androidx.recyclerview:recyclerview:1.1.0'
 
     //https://mvnrepository.com/artifact/androidx.constraintlayout/constraintlayout
-    api 'androidx.constraintlayout:constraintlayout:2.0.2'
+    api 'androidx.constraintlayout:constraintlayout:2.0.4'
 
     //https://mvnrepository.com/artifact/androidx.coordinatorlayout/coordinatorlayout
     api 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
