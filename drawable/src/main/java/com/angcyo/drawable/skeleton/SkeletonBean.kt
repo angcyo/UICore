@@ -24,12 +24,22 @@ data class SkeletonBean(
     var width: String? = null,
     var height: String? = null,
 
+    /**绘制时的偏移*/
+    var offsetX: String? = null,
+    var offsetY: String? = null,
+
+    /**矩形时的圆角大小*/
+    var round: String? = null,
+
     //计算之后的属性值
     var _left: Float = -1f,
     var _top: Float = -1f,
     var _width: Float = -1f,
     var _height: Float = -1f,
-    var _size: Float = -1f
+    var _size: Float = -1f,
+    var _offsetX: Float = -1f,
+    var _offsetY: Float = -1f,
+    var _round: Float = -1f,
 ) {
     companion object {
         const val SKELETON_TYPE_LINE = 1 //绘制线

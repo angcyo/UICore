@@ -42,15 +42,16 @@ object TouchTipLayer : ILayer() {
     }
 
     /**多少毫秒后, 自动隐藏*/
-    var showTime: Long = 800 /** 10*/
+    var showTime: Long = 800
+    /** 10*/
 
     /**圆点的半径*/
     var cr = 0.012f
-    var lineWidth = 1.5f
-    var lineWidth2 = lineWidth * 3.5
+    var lineWidth = 2f
+    var lineWidth2 = lineWidth * 2.5
     var cColor = _color(R.color.colorAccent)
-    var lineColor = Color.GREEN                        //"92C3FE".toColor()
-    var bgColor = Color.WHITE.alphaRatio(0.8f)  //_color(R.color.transparent40)
+    var lineColor = cColor.alphaRatio(0.8f)//Color.GREEN                        //"92C3FE".toColor()
+    var bgColor = Color.WHITE.alphaRatio(0.8f) //_color(R.color.transparent40)
 
     init {
         iLayerLayoutId = R.layout.lib_layout_touch_tip
@@ -103,7 +104,8 @@ object TouchTipLayer : ILayer() {
         _show()
     }
 
-    /**显示移动提示*/
+    /**显示移动提示
+     *  [x] [y] 请使用比例值*/
     fun showMove(x1: Float, y1: Float, x2: Float, y2: Float) {
         renderLayer = {
             post {
@@ -140,6 +142,7 @@ object TouchTipLayer : ILayer() {
                         size = "${lineWidth2}dp"
                         top = t
                         left = l
+                        round = size
 
                         //是否是横向
                         if (isHorizontal) {
@@ -161,12 +164,15 @@ object TouchTipLayer : ILayer() {
                         size = "${lineWidth}dp"
                         top = t
                         left = l
+                        round = size
 
                         //是否是横向
                         if (isHorizontal) {
+                            offsetX = size
                             //从左到右
                             width = "${(x2 - x1).abs()}"
                         } else {
+                            offsetY = size
                             height = "${(y2 - y1).abs()}"
                         }
                     }

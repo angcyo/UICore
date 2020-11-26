@@ -316,6 +316,14 @@ class SkeletonDrawable : AbsDslDrawable() {
 
         skeletonBean._size =
             skeletonBean.size.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawWidth)
+
+        skeletonBean._offsetX =
+            skeletonBean.offsetX.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawWidth)
+        skeletonBean._offsetY =
+            skeletonBean.offsetY.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawWidth)
+
+        skeletonBean._round =
+            skeletonBean.round.layoutSize(viewDrawWidth, viewDrawHeight, viewDrawWidth)
     }
 
     //当前布局的坐标参数
@@ -445,19 +453,28 @@ class SkeletonDrawable : AbsDslDrawable() {
 
         val size = skeletonBean._size
 
+        val offsetX = skeletonBean._offsetX
+        val offsetY = skeletonBean._offsetY
+
+        val round = skeletonBean._round
+
         layoutParams.useWidth = 0f
         layoutParams.useHeight = 0f
 
         when (skeletonBean.type) {
             SkeletonBean.SKELETON_TYPE_LINE -> {
+                if (round > 0) {
+                    textPaint.strokeCap = Paint.Cap.ROUND
+                }
+
                 textPaint.strokeWidth = size
                 //画线
                 if (width > 0) {
                     canvas.drawLine(
-                        left,
-                        top,
-                        left + width,
-                        top,
+                        left + offsetX,
+                        top + offsetY,
+                        left + width + offsetX,
+                        top + offsetY,
                         textPaint
                     )
 
@@ -468,10 +485,10 @@ class SkeletonDrawable : AbsDslDrawable() {
 
                 if (height > 0) {
                     canvas.drawLine(
-                        left,
-                        top,
-                        left,
-                        top + height,
+                        left + offsetX,
+                        top + offsetY,
+                        left + offsetX,
+                        top + height + offsetY,
                         textPaint
                     )
 
@@ -484,14 +501,24 @@ class SkeletonDrawable : AbsDslDrawable() {
                 //画圆
                 val cx = left
                 val cy = top
-                canvas.drawCircle(cx, cy, size, textPaint)
+                canvas.drawCircle(cx + offsetX, cy + offsetY, size, textPaint)
 
                 layoutParams.useWidth = useLeft + size
                 layoutParams.useHeight = useTop + size
             }
             SkeletonBean.SKELETON_TYPE_RECT -> {
                 //画矩形
-                canvas.drawRoundRect(left, top, left + width, top + height, size, size, textPaint)
+                val r = if (round > 0) round else size
+
+                canvas.drawRoundRect(
+                    left + offsetX,
+                    top + offsetY,
+                    left + width + offsetX,
+                    top + height + offsetY,
+                    r,
+                    r,
+                    textPaint
+                )
 
                 layoutParams.useWidth = width + useLeft
                 layoutParams.useHeight = height + useTop
