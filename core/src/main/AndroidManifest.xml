@@ -18,6 +18,8 @@
     <uses-feature android:name="android.hardware.sensor.stepcounter" />
     <uses-feature android:name="android.hardware.sensor.stepdetector" />
 
+    <!--“standard:0” “singleTop:1” “singleTask:2” “singleInstance:3”-->
+
     <!--https://developer.android.com/guide/topics/manifest/application-element-->
     <application
         android:requestLegacyExternalStorage="true"
