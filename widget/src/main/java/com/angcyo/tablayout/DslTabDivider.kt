@@ -18,6 +18,7 @@ import com.angcyo.widget.R
 open class DslTabDivider : DslGradientDrawable() {
 
     var dividerWidth = 2 * dpi
+    var dividerHeight = 2 * dpi
     var dividerMarginLeft = 0
     var dividerMarginRight = 0
     var dividerMarginTop = 0
@@ -31,12 +32,16 @@ open class DslTabDivider : DslGradientDrawable() {
     var dividerShowMode = LinearLayout.SHOW_DIVIDER_MIDDLE
 
     override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
-        val typedArray =
-            context.obtainStyledAttributes(attributeSet, R.styleable.DslTabLayout)
+        super.initAttribute(context, attributeSet)
+        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.DslTabLayout)
 
         dividerWidth = typedArray.getDimensionPixelOffset(
             R.styleable.DslTabLayout_tab_divider_width,
             dividerWidth
+        )
+        dividerHeight = typedArray.getDimensionPixelOffset(
+            R.styleable.DslTabLayout_tab_divider_height,
+            dividerHeight
         )
         dividerMarginLeft = typedArray.getDimensionPixelOffset(
             R.styleable.DslTabLayout_tab_divider_margin_left,

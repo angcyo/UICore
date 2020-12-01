@@ -9,6 +9,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.math.MathUtils
@@ -136,3 +137,7 @@ fun Paint?.textWidth(text: String?): Float {
 }
 
 fun Paint?.textHeight(): Float = this?.run { descent() - ascent() } ?: 0f
+
+fun Int.isHorizontal() = this == LinearLayout.HORIZONTAL
+
+fun Int.isVertical() = this == LinearLayout.VERTICAL
