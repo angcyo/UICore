@@ -33,6 +33,7 @@ import com.angcyo.library.ex.loadDrawable
 import com.angcyo.library.ex.remove
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.library.utils.getMember
+import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.ViewEx._tempArray
 import com.angcyo.widget.base.ViewEx._tempRect
 import com.angcyo.widget.edit.IEditDelegate
@@ -337,6 +338,17 @@ fun View?.postDelay(delayMillis: Long = 160, action: () -> Unit) {
             action()
         }
     }, delayMillis)
+}
+
+fun Context.viewOf(
+    @LayoutRes id: Int,
+    parent: ViewGroup? = null,
+    action: (DslViewHolder) -> Unit
+): View {
+    val view = LayoutInflater.from(this).inflate(id, parent)
+    val viewHolder = view.dslViewHolder()
+    action(viewHolder)
+    return view
 }
 
 //</editor-fold desc="基础扩展">

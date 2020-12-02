@@ -91,6 +91,7 @@ open class BaseObserver<T> : AtomicReference<Disposable>(),
 
                 onEnd()
             } catch (e: Throwable) {
+                e.printStackTrace()
                 Exceptions.throwIfFatal(e)
                 RxJavaPlugins.onError(CompositeException(t, e))
             }
@@ -107,6 +108,7 @@ open class BaseObserver<T> : AtomicReference<Disposable>(),
 
                 onEnd()
             } catch (e: Throwable) {
+                e.printStackTrace()
                 Exceptions.throwIfFatal(e)
                 RxJavaPlugins.onError(e)
             }
@@ -116,7 +118,13 @@ open class BaseObserver<T> : AtomicReference<Disposable>(),
     //</editor-fold desc="Observer 回调">
 
     open fun onEnd() {
-        onObserverEnd?.invoke(_lastData, _lastError)
+        try {
+            onObserverEnd?.invoke(_lastData, _lastError)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            onError.invoke(e)
+            onObserverEnd?.invoke(null, e)
+        }
     }
 
     //<editor-fold desc="支持 Disposable">
@@ -144,4 +152,15 @@ fun <T> Observable<T>.observer(action: BaseObserver<T>.() -> Unit = {}): Disposa
     observer.action()
     subscribe(observer)
     return observer
+}
+
+/**快速监听*/
+fun <T> Observable<T>.observe(
+    config: BaseObserver<T>.() -> Unit = {},
+    end: (data: T?, error: Throwable?) -> Unit
+): Disposable {
+    return observer(BaseObserver<T>().apply {
+        config()
+        onObserverEnd = end
+    })
 }

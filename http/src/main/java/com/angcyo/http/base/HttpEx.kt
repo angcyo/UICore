@@ -1,11 +1,13 @@
 package com.angcyo.http.base
 
+import com.angcyo.library.model.Page
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import okio.Buffer
 import java.io.EOFException
+import java.lang.reflect.Type
 import java.net.URLDecoder
 import java.nio.charset.Charset
 
@@ -99,3 +101,28 @@ fun mapOf(vararg args: String, split: String = ":"): HashMap<String, Any> {
 /**application/json*/
 fun String.toJsonBody(): RequestBody =
     toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+
+/**快速设置[page]参数*/
+fun JsonBuilder.addPage(page: Page?) {
+    if (page != null) {
+        if (page.requestPageSize < 0) {
+            add("size", Int.MAX_VALUE)
+            add("current", 1)
+        } else {
+            add("size", page.requestPageSize)
+            add("current", page.requestPageIndex)
+        }
+    }
+}
+
+/**
+ * HttpBean<Bean>
+ * */
+fun httpBeanType(wrapClass: Class<*>, typeClass: Class<*>): Type =
+    type(wrapClass, typeClass)
+
+/**
+ * HttpBean<List<Bean>>
+ * */
+fun httpListBeanType(wrapClass: Class<*>, typeClass: Class<*>): Type =
+    type(wrapClass, type(List::class.java, typeClass))
