@@ -34,8 +34,7 @@ class DslIntent {
 
         /** 跳至拨号界面 @param phoneNumber 电话号码 */
         fun callTo(context: Context, phoneNumber: String) {
-            val intent =
-                Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phoneNumber"))
+            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phoneNumber"))
             intent.baseConfig(context)
             context.startActivity(intent)
         }
@@ -51,8 +50,7 @@ class DslIntent {
 
         /**发送短信*/
         fun sendSMS(context: Activity, message: String?, phoneNumber: String) {
-            val intent =
-                Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:$phoneNumber"))
+            val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:$phoneNumber"))
             intent.putExtra("sms_body", message)
             context.startActivity(intent)
         }
