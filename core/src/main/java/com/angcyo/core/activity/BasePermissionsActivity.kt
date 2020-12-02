@@ -52,7 +52,7 @@ abstract class BasePermissionsActivity : BaseCoreAppCompatActivity() {
                 permissions.addAll(this@BasePermissionsActivity.permissions)
 
                 //请求权限
-                onPermissionRequest = {
+                onPermissionRequest = { _, _ ->
                     requestPermissions(permissions.mapTo(mutableListOf()) {
                         it.permission
                     }) {

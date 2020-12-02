@@ -27,7 +27,7 @@ class PermissionFragment : BaseFragment() {
     val permissions = mutableListOf<PermissionBean>()
 
     //触发权限请求
-    var onPermissionRequest: (View) -> Unit = {}
+    var onPermissionRequest: (View, List<PermissionBean>) -> Unit = { _, _ -> }
 
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)
@@ -36,10 +36,14 @@ class PermissionFragment : BaseFragment() {
             "\n为了更好的服务体验,\n${getAppName()} 需要以下权限"
 
         baseViewHolder.rv(R.id.recycler_view)?.apply {
-            val count = permissions.size
+            val filterPermissions = permissions.filter { it.icon > 0 }
+
+            val count = filterPermissions.size
 
             layoutManager = GridLayoutManager(
                 fContext(), when {
+                    count > 4 -> 3
+                    count == 4 -> 2
                     count <= 3 -> 1
                     else -> 2
                 }
@@ -51,9 +55,12 @@ class PermissionFragment : BaseFragment() {
                         itemLayoutId = R.layout.dsl_item_permission
 
                         itemBindOverride = { itemHolder, itemPosition, _, _ ->
-                            itemHolder.img(R.id.lib_image_view)
-                                ?.setImageResource(permissions[itemPosition].icon)
-                            itemHolder.tv(R.id.lib_text_view)?.text = permissions[itemPosition].des
+                            if (filterPermissions[itemPosition].icon > 0) {
+                                itemHolder.img(R.id.lib_image_view)
+                                    ?.setImageResource(filterPermissions[itemPosition].icon)
+                            }
+                            itemHolder.tv(R.id.lib_text_view)?.text =
+                                filterPermissions[itemPosition].des
                         }
                     }
                 }
@@ -61,7 +68,7 @@ class PermissionFragment : BaseFragment() {
         }
 
         baseViewHolder.click(R.id.enable_button) {
-            onPermissionRequest(it)
+            onPermissionRequest(it, permissions)
         }
     }
 

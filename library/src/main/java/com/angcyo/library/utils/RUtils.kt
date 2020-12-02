@@ -428,21 +428,43 @@ fun Int.rotationString(): String {
 /**
  * 获取设备唯一标识码, 需要权限 android.permission.READ_PHONE_STATE
  * 868938012791119
+ *
+ * IMEI(International Mobile Equipment Identity) 是国际移动设备身份码的缩写
+ * IMEI是联通移动手机的标识，MEID是电信手机的标识。
+ *
+ * https://www.jianshu.com/p/e714e42483ba
+ *
+ * AndroidQ 已经拿不到IMEI/MEDI了
+ * https://stackoverflow.com/questions/55173823/i-am-getting-imei-null-in-android-q
  */
 @SuppressLint("MissingPermission", "HardwareIds")
-fun Context.getIMEI(requestPermission: Boolean = false): String? {
+fun Context.getIMEI(requestPermission: Boolean = false, slotIndex: Int = Int.MIN_VALUE): String? {
     var imei: String? = null
     try {
         val telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
         if (telephonyManager != null) {
             imei = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                telephonyManager.imei
+                if (slotIndex != Int.MIN_VALUE) {
+                    telephonyManager.getImei(slotIndex)
+                } else {
+                    telephonyManager.imei
+                }
             } else {
-                telephonyManager.deviceId
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (slotIndex != Int.MIN_VALUE) {
+                        telephonyManager.getDeviceId(slotIndex)
+                    } else {
+                        telephonyManager.deviceId
+                    }
+                } else {
+                    telephonyManager.deviceId
+                }
             }
         }
         //L.w("call: getIMEI([])-> " + imei);
+        //L.w("call: getIMEI([])-> " + imei);
     } catch (e: SecurityException) {
+        //The user 10198 does not meet the requirements to access device identifiers.
         L.e("IMEI获取失败, 请检查权限:" + e.message)
         if (requestPermission) {
             checkPermissions(Manifest.permission.READ_PHONE_STATE)
