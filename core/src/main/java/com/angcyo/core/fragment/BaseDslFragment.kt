@@ -117,9 +117,9 @@ open class BaseDslFragment : BaseTitleFragment() {
     }
 
     /**简单的加载多类型的item*/
-    fun resetRender(error: Throwable? = null, render: DslAdapter.() -> Unit) {
+    fun <T> resetRender(data: T?, error: Throwable? = null, render: DslAdapter.(data: T) -> Unit) {
         finishRefresh()
-        _adapter.resetRender(error, page, render)
+        _adapter.resetRender(data, error, page, render)
     }
 
     //</editor-fold desc="数据加载">

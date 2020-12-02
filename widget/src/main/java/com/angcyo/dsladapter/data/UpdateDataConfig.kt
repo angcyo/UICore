@@ -267,6 +267,10 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.updateSingleDataIndex(
     }
 }
 
+fun DslAdapter.toAdapterError(error: Throwable?) {
+    updateAdapterErrorState(error)
+}
+
 /**更新[DslAdapter]的异常状态*/
 fun DslAdapter.updateAdapterErrorState(error: Throwable?) {
     if (error != null) {
@@ -336,11 +340,21 @@ fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEndIndex(
 }
 
 /**重置[DslAdapter], 重新渲染[DslAdapter.dataItems]数据*/
-fun DslAdapter.resetRender(error: Throwable?, page: Page, render: DslAdapter.() -> Unit) {
+fun <T> DslAdapter.resetRender(
+    data: T?,
+    error: Throwable?,
+    page: Page,
+    render: DslAdapter.(data: T) -> Unit
+) {
 
     updateAdapterErrorState(error)
 
     if (error != null) {
+        return
+    }
+
+    if (data == null) {
+        setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_EMPTY)
         return
     }
 
@@ -349,7 +363,7 @@ fun DslAdapter.resetRender(error: Throwable?, page: Page, render: DslAdapter.() 
 
     changeDataItems {
         it.clear()
-        render()
+        render(data)
         if (it.isEmpty() && headerItems.isEmpty() && footerItems.isEmpty()) {
             //空数据
             setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_EMPTY)
