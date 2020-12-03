@@ -343,7 +343,7 @@ fun View?.postDelay(delayMillis: Long = 160, action: () -> Unit) {
 fun Context.viewOf(
     @LayoutRes id: Int,
     parent: ViewGroup? = null,
-    action: (DslViewHolder) -> Unit
+    action: DslViewHolder.() -> Unit
 ): View {
     val view = LayoutInflater.from(this).inflate(id, parent)
     val viewHolder = view.dslViewHolder()
