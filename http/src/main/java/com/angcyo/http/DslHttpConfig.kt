@@ -27,8 +27,10 @@ class DslHttpConfig {
 
     /*----------OkHttp3-----------*/
 
+    //客户端队形
     var okHttpClient: OkHttpClient? = null
 
+    //构造器
     val defaultOkHttpClientBuilder = OkHttpClient.Builder().apply {
         connectTimeout(TIME_OUT, TimeUnit.SECONDS)
         readTimeout(TIME_OUT, TimeUnit.SECONDS)
@@ -40,6 +42,7 @@ class DslHttpConfig {
         addInterceptor(LogInterceptor())
     }
 
+    //构造器配置
     val onConfigOkHttpClient = mutableListOf<(OkHttpClient.Builder) -> Unit>()
 
     /**可以使用默认的[okHttpClient], 也可以返回自定义的client*/

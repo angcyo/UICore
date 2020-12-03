@@ -12,7 +12,7 @@ import android.widget.LinearLayout
 class DslFlowLayout(context: Context, attrs: AttributeSet? = null) :
     LinearLayout(context, attrs), IFlowLayoutDelegate {
 
-    val flowLayoutDelegate = FlowLayoutDelegate()
+    var flowLayoutDelegate: FlowLayoutDelegate = FlowLayoutDelegate()
 
     init {
         flowLayoutDelegate.initAttribute(this, attrs)

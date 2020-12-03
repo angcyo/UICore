@@ -24,18 +24,21 @@ class FlowLayoutDelegate : LayoutDelegate() {
     val _allVisibleViews = mutableListOf<View>() //保存所有可见的view
 
     /** 每一行最多多少个, 强制限制. -1, 不限制. 大于0生效 */
-    var maxCountLine: Int by RequestLayoutDelegateProperty(-1)
+    var maxCountLine: Int = -1
+
+    /**最大的行数*/
+    var maxLineCount: Int = -1
 
     /** 每一行的Item等宽 */
-    var itemEquWidth: Boolean by RequestLayoutDelegateProperty(false)
+    var itemEquWidth: Boolean = false
 
     /**配合[itemEquWidth]使用, 开启仅支持单行样式*/
-    var singleLine: Boolean by RequestLayoutDelegateProperty(false)
+    var singleLine: Boolean = false
 
     /** item之间, 横竖向间隔. */
-    var itemHorizontalSpace: Int by RequestLayoutDelegateProperty(0)
+    var itemHorizontalSpace: Int = 0
 
-    var itemVerticalSpace: Int by RequestLayoutDelegateProperty(0)
+    var itemVerticalSpace: Int = 0
 
     /**布局方式, 相对于一行中*/
     var lineGravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
@@ -43,13 +46,13 @@ class FlowLayoutDelegate : LayoutDelegate() {
     override fun initAttribute(view: View, attributeSet: AttributeSet?) {
         this.delegateView = view
 
-        val array =
-            delegateView.context.obtainStyledAttributes(
-                attributeSet,
-                R.styleable.FlowLayoutDelegate
-            )
+        val array = delegateView.context.obtainStyledAttributes(
+            attributeSet,
+            R.styleable.FlowLayoutDelegate
+        )
         maxCountLine =
             array.getInt(R.styleable.FlowLayoutDelegate_r_flow_max_line_child_count, maxCountLine)
+        maxLineCount = array.getInt(R.styleable.FlowLayoutDelegate_r_flow_max_line_count, -1)
         itemEquWidth =
             array.getBoolean(R.styleable.FlowLayoutDelegate_r_flow_equ_width, itemEquWidth)
         singleLine =
@@ -197,6 +200,12 @@ class FlowLayoutDelegate : LayoutDelegate() {
                 lineWidth = childWidth
                 lineHeight = childHeight
                 lineViews = mutableListOf()
+
+                if (maxLineCount > 0) {
+                    if (_allViews.size >= maxLineCount) {
+                        break
+                    }
+                }
             } else {
                 lineWidth += childWidth + itemHorizontalSpace
                 lineHeight = max(childHeight, lineHeight)
@@ -207,11 +216,17 @@ class FlowLayoutDelegate : LayoutDelegate() {
                 height += lineHeight
             }
         }
-        _lineHeight.add(lineHeight)
-        _allViews.add(lineViews)
-        if (itemEquWidth) {
-            measureLineEquWidth(lineViews, measureWidthSize, heightMeasureSpec)
+
+        if (_allViews.size >= maxLineCount) {
+            //行数超限, 已经收尾了操作
+        } else {
+            _lineHeight.add(lineHeight)
+            _allViews.add(lineViews)
+            if (itemEquWidth) {
+                measureLineEquWidth(lineViews, measureWidthSize, heightMeasureSpec)
+            }
         }
+
         width += paddingLeft + paddingRight
         height += paddingTop + paddingBottom
 

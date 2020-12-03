@@ -64,3 +64,7 @@
 # Animal Sniffer compileOnly dependency to ensure APIs are compatible with older versions of Java.
 -dontwarn org.codehaus.mojo.animal_sniffer.*
 # end okio
+
+# https://github.com/JessYanCoding/ProgressManager/blob/master/README-zh.md
+-keep class me.jessyan.progressmanager.** { *; }
+-keep interface me.jessyan.progressmanager.** { *; }

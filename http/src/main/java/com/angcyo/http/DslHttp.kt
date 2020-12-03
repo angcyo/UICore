@@ -190,6 +190,16 @@ object DslHttp {
         return dslHttpConfig.okHttpClient!!
     }
 
+    /**根据配置, 创建一个[OkHttpClient]客户端*/
+    fun createClient(): OkHttpClient {
+        val client = dslHttpConfig.defaultOkHttpClientBuilder.apply {
+            dslHttpConfig.onConfigOkHttpClient.forEach {
+                it(this)
+            }
+        }.build()
+        return client
+    }
+
     /**获取[Retrofit]对象*/
     fun retrofit(rebuild: Boolean = false): Retrofit {
         if (rebuild) {

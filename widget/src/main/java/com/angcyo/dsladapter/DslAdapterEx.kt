@@ -188,6 +188,19 @@ fun DslAdapter.renderItem(count: Int = 1, init: DslAdapterItem.(index: Int) -> U
     }
 }
 
+/**追加一个简单的[DslAdapterItem]*/
+fun DslAdapter.singleItem(
+    @LayoutRes layoutId: Int,
+    init: DslAdapterItem.() -> Unit = {},
+    bind: (itemHolder: DslViewHolder, itemPosition: Int, adapterItem: DslAdapterItem, payloads: List<Any>) -> Unit
+) {
+    val adapterItem = DslAdapterItem()
+    adapterItem.itemLayoutId = layoutId
+    adapterItem.itemBindOverride = bind
+    adapterItem.init()
+    addLastItem(adapterItem)
+}
+
 fun <T> DslAdapter.renderItem(data: T, init: DslAdapterItem.() -> Unit) {
     val adapterItem = DslAdapterItem()
     adapterItem.itemData = data

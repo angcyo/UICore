@@ -21,6 +21,7 @@ import com.bumptech.glide.RequestManager
 import com.bumptech.glide.TransitionOptions
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.Transformation
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.Headers
@@ -108,6 +109,12 @@ class DslGlide {
 
     /**开始过渡动画*/
     var transition = false
+
+    /**缓存策略*/
+    var diskCacheStrategy: DiskCacheStrategy = DiskCacheStrategy.AUTOMATIC
+
+    /**跳过内存缓存*/
+    var skipMemoryCache = false
 
     /**
      * 转换
@@ -378,7 +385,10 @@ class DslGlide {
 
     //配置请求
     @SuppressLint("CheckResult")
-    fun <T> RequestBuilder<T>.configRequest(string: String?, model: Class<*>): RequestBuilder<T> {
+    fun <T> RequestBuilder<T>.configRequest(
+        string: String?,
+        model: Class<*>
+    ): RequestBuilder<T> {
 
         //override
         if (originalSize) {
@@ -417,6 +427,12 @@ class DslGlide {
         //other
         //disallowHardwareConfig()
         //format(DecodeFormat.PREFER_RGB_565)
+
+        //diskCacheStrategy
+        diskCacheStrategy(this@DslGlide.diskCacheStrategy)
+
+        //skipMemoryCache
+        skipMemoryCache(this@DslGlide.skipMemoryCache)
 
         //listener
         addListener(object : RequestListener<T> {

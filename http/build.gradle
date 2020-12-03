@@ -6,7 +6,7 @@ dependencies {
 
     //https://github.com/square/okhttp
     //https://jcenter.bintray.com/com/squareup/okhttp3/
-    api "com.squareup.okhttp3:okhttp:4.3.1"
+    api "com.squareup.okhttp3:okhttp:4.8.1"
     //https://github.com/google/conscrypt
     //https://jcenter.bintray.com/org/conscrypt
     debugImplementation 'org.conscrypt:conscrypt-android:2.2.1'
@@ -36,4 +36,9 @@ dependencies {
 
     //https://github.com/ikidou/TypeBuilder/
     api 'com.github.ikidou:TypeBuilder:1.0'
+
+    //https://github.com/JessYanCoding/ProgressManager
+    //api 'me.jessyan:progressmanager:1.5.0'
+    //https://github.com/AndroidStudioIst/ProgressManager
+    api 'com.github.AndroidStudioIst:ProgressManager:1.5.0_fix3'
 }

@@ -2,6 +2,7 @@
 <resources>
 
     <attr name="r_flow_max_line_child_count" format="integer" />
+    <attr name="r_flow_max_line_count" format="integer" />
     <attr name="r_flow_equ_width" format="boolean" />
     <attr name="r_flow_single_line" format="boolean" />
     <attr name="r_flow_item_vertical_space" format="dimension" />
@@ -9,6 +10,7 @@
 
     <declare-styleable name="FlowLayoutDelegate">
         <attr name="r_flow_max_line_child_count" />
+        <attr name="r_flow_max_line_count" />
         <attr name="r_flow_equ_width" />
         <attr name="r_flow_single_line" />
         <attr name="r_flow_item_vertical_space" />
@@ -17,6 +19,7 @@
 
     <declare-styleable name="DslFlowLayout">
         <attr name="r_flow_max_line_child_count" />
+        <attr name="r_flow_max_line_count" />
         <attr name="r_flow_equ_width" />
         <attr name="r_flow_single_line" />
         <attr name="r_flow_item_vertical_space" />
@@ -25,6 +28,7 @@
 
     <declare-styleable name="DslRadioFlowLayout">
         <attr name="r_flow_max_line_child_count" />
+        <attr name="r_flow_max_line_count" />
         <attr name="r_flow_equ_width" />
         <attr name="r_flow_single_line" />
         <attr name="r_flow_item_vertical_space" />

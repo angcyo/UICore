@@ -72,12 +72,3 @@ abstract class LayoutDelegate {
     //</editor-fold desc="兼容方法">
 
 }
-
-class RequestLayoutDelegateProperty<T>(var value: T) : ReadWriteProperty<LayoutDelegate, T> {
-    override fun getValue(thisRef: LayoutDelegate, property: KProperty<*>): T = value
-
-    override fun setValue(thisRef: LayoutDelegate, property: KProperty<*>, value: T) {
-        this.value = value
-        thisRef.delegateView.requestLayout()
-    }
-}
