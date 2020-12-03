@@ -201,10 +201,8 @@ class FlowLayoutDelegate : LayoutDelegate() {
                 lineHeight = childHeight
                 lineViews = mutableListOf()
 
-                if (maxLineCount > 0) {
-                    if (_allViews.size >= maxLineCount) {
-                        break
-                    }
+                if (maxLineCount > 0 && _allViews.size >= maxLineCount) {
+                    break
                 }
             } else {
                 lineWidth += childWidth + itemHorizontalSpace
@@ -217,7 +215,7 @@ class FlowLayoutDelegate : LayoutDelegate() {
             }
         }
 
-        if (_allViews.size >= maxLineCount) {
+        if (maxLineCount > 0 && _allViews.size >= maxLineCount) {
             //行数超限, 已经收尾了操作
         } else {
             _lineHeight.add(lineHeight)
