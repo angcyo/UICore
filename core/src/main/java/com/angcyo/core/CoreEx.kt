@@ -12,6 +12,7 @@ import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.angcyo.core.activity.BaseCoreAppCompatActivity
 import com.angcyo.library.app
 import com.angcyo.library.component.toAppDetail
 import com.angcyo.library.ex.baseConfig
@@ -32,6 +33,14 @@ import ezy.assist.compat.RomUtil
 
 
 fun coreApp() = app() as CoreApplication
+
+/**在[Fragment]中检查crash*/
+fun Fragment.checkCrash() {
+    val act = activity
+    if (act is BaseCoreAppCompatActivity) {
+        act.checkCrash()
+    }
+}
 
 //<editor-fold desc="Application级别的单例模式">
 

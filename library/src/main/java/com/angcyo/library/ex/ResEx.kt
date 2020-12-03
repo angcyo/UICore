@@ -3,6 +3,7 @@ package com.angcyo.library.ex
 import android.app.Activity
 import android.content.Context
 import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.Window
@@ -124,6 +125,17 @@ fun _integer(@IntegerRes id: Int): Int {
 
 fun _drawable(@DrawableRes id: Int): Drawable? {
     return app().loadDrawable(id)
+}
+
+/**判断[Int]是否是资源的id*/
+fun Int.isRes() = this.have(0x7F000000)
+
+fun _colorDrawable(color: Int): Drawable {
+    return if (color.isRes()) {
+        ColorDrawable(_color(color))
+    } else {
+        ColorDrawable(color)
+    }
 }
 
 fun _string(@StringRes id: Int): String {

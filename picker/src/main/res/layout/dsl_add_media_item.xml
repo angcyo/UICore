@@ -10,7 +10,7 @@
         android:id="@+id/lib_image_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="#F3F5F9"
+        android:background="@color/lib_image_placeholder_white_color"
         android:scaleType="centerCrop"
         app:layout_constraintDimensionRatio="1:1"
         app:r_draw_border="false"

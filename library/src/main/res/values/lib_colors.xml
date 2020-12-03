@@ -18,6 +18,7 @@
 
     <color name="lib_icon_dark_color">#5C5D5E</color>
     <color name="lib_image_placeholder_color">#474849</color>
+    <color name="lib_image_placeholder_white_color">#F3F5F9</color>
 
     <!--全透明-->
     <color name="transparent">#00000000</color>
