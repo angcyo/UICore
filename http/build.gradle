@@ -40,5 +40,5 @@ dependencies {
     //https://github.com/JessYanCoding/ProgressManager
     //api 'me.jessyan:progressmanager:1.5.0'
     //https://github.com/AndroidStudioIst/ProgressManager
-    api 'com.github.AndroidStudioIst:ProgressManager:1.5.0_fix3'
+    api 'com.github.AndroidStudioIst:ProgressManager:1.5.0_fix4'
 }
