@@ -104,9 +104,17 @@ class JsonBuilder {
         return this
     }
 
+    fun addJson(key: String, call: JsonBuilder.() -> Unit): JsonBuilder {
+        addJson(key)
+        call(call)
+        endAdd()
+        return this
+    }
+
     fun addArray(key: String, call: JsonBuilder.() -> Unit): JsonBuilder {
         addArray(key)
         call(call)
+        endAdd()
         return this
     }
 
