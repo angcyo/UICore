@@ -295,12 +295,15 @@ fun Any?.toJson(config: (GsonBuilder.() -> Unit)? = null): String? {
 /**json字符串, 转成指定对象.
  * 注意, 如果json格式有问题,会返回null, 异常会被捕获
  * */
-fun <T> String?.fromJson(typeOfT: Type): T? {
+fun <T> String?.fromJson(typeOfT: Type, exception: Boolean = false): T? {
     return this?.run {
         try {
             gson().fromJson<T>(this, typeOfT)
         } catch (e: Exception) {
             e.printStackTrace()
+            if (exception) {
+                throw e
+            }
             null
         }
     }
