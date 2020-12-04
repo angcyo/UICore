@@ -12,7 +12,6 @@ import androidx.appcompat.widget.AppCompatImageView
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
-import com.angcyo.widget.base.InvalidateProperty
 import com.angcyo.widget.base.drawHeight
 import com.angcyo.widget.base.drawWidth
 import com.angcyo.widget.base.save
@@ -32,16 +31,16 @@ open class ShapeImageView : AppCompatImageView {
     var imageRadius = 5 * dpi
 
     /**绘制边框*/
-    var drawBorder: Boolean by InvalidateProperty(false)
+    var drawBorder: Boolean = false
 
     /**边框的宽度*/
-    var borderWidth: Int by InvalidateProperty(2 * dpi)
+    var borderWidth: Int = 2 * dpi
 
     /**是否是圆*/
-    var isCircle: Boolean by InvalidateProperty(false)
+    var isCircle: Boolean = false
 
     /**边框的颜色*/
-    var borderColor: Int by InvalidateProperty(Color.WHITE)
+    var borderColor: Int = Color.WHITE
 
     /**激活shape绘制功能*/
     var enableShape: Boolean = true

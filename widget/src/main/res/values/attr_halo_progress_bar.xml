@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="HaloProgressBar">
+        <!--背景颜色-->
+        <attr name="halo_bg_color" format="color" />
+        <!--背景矩形圆角大小-->
+        <attr name="halo_rect_round" format="dimension" />
+        <!--光圈内圈半径-->
+        <attr name="halo_circle_inner_radius" format="dimension" />
+        <attr name="halo_circle_inner_radius_increase" format="dimension" />
+        <attr name="halo_keep_inner_circle_width" format="dimension" />
+        <!--光圈外圈半径-->
+        <attr name="halo_circle_outer_radius" format="dimension" />
+        <attr name="halo_circle_outer_radius_increase" format="dimension" />
+        <attr name="halo_keep_outer_circle_width" format="dimension" />
+        <!--圈的颜色-->
+        <attr name="halo_circle_color" format="color" />
+        <!--光圈的颜色-->
+        <attr name="halo_circle_halo_color" format="color" />
+        <attr name="halo_text_color" format="color" />
+        <attr name="halo_text_size" format="dimension" />
+        <!--一直绘制进度文本-->
+        <attr name="halo_draw_text_always" format="boolean" />
+        <!--当前的进度-->
+        <attr name="halo_progress" format="integer" />
+    </declare-styleable>
+</resources>

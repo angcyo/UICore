@@ -8,7 +8,9 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
+import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
+import com.angcyo.widget.base.*
 import kotlin.math.sqrt
 
 /**
@@ -33,15 +35,23 @@ class HaloProgressBar(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
-    init {
-        //context.obtainStyledAttributes()
-    }
-
     /**内圈半径*/
-    var circleInnerRadius = 16 * density
+    var circleInnerRadius = 16 * dpi
+
+    /**内圈增长*/
+    var circleInnerRadiusIncrease = 2 * dpi
+
+    /**保持内圈镂空后最小的宽度*/
+    var keepInnerCircleWidth = 3 * dpi
 
     /**外圈半径*/
-    var circleOuterRadius = 18 * density
+    var circleOuterRadius = 18 * dpi
+
+    /**保持外圈镂空后最小的宽度*/
+    var keepOuterCircleWidth = 0
+
+    /**内圈增长*/
+    var circleOuterRadiusIncrease = 0
 
     var circleBgColor = getColor(R.color.transparent40)
 
@@ -50,6 +60,12 @@ class HaloProgressBar(context: Context, attributeSet: AttributeSet? = null) :
 
     /**光晕圆圈颜色*/
     var circleHaloColor = getTranColor(Color.WHITE, 0x30)
+
+    /**进度文本大小*/
+    var textSize = 12 * dpi
+
+    /**进度文本颜色*/
+    var textColor = circleColor
 
     /**进度 0 - 100*/
     var progress = 0
@@ -63,8 +79,59 @@ class HaloProgressBar(context: Context, attributeSet: AttributeSet? = null) :
     /**总是绘制进度*/
     var drawTextAlways = true
 
-    private val View.density: Float
-        get() = resources.displayMetrics.density
+    /**背景圆角大小*/
+    var drawRectRound = 0
+
+    init {
+        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.HaloProgressBar)
+        circleBgColor =
+            typedArray.getColor(R.styleable.HaloProgressBar_halo_bg_color, circleBgColor)
+        circleColor =
+            typedArray.getColor(R.styleable.HaloProgressBar_halo_circle_color, circleColor)
+        circleHaloColor =
+            typedArray.getColor(R.styleable.HaloProgressBar_halo_circle_halo_color, circleHaloColor)
+
+        textColor =
+            typedArray.getColor(R.styleable.HaloProgressBar_halo_text_color, circleColor)
+        textSize =
+            typedArray.getDimensionPixelOffset(R.styleable.HaloProgressBar_halo_text_size, textSize)
+
+        circleInnerRadius = typedArray.getDimensionPixelOffset(
+            R.styleable.HaloProgressBar_halo_circle_inner_radius,
+            circleInnerRadius
+        )
+        circleInnerRadiusIncrease = typedArray.getDimensionPixelOffset(
+            R.styleable.HaloProgressBar_halo_circle_inner_radius_increase,
+            circleInnerRadiusIncrease
+        )
+        keepInnerCircleWidth = typedArray.getDimensionPixelOffset(
+            R.styleable.HaloProgressBar_halo_keep_inner_circle_width,
+            keepInnerCircleWidth
+        )
+        circleOuterRadius = typedArray.getDimensionPixelOffset(
+            R.styleable.HaloProgressBar_halo_circle_outer_radius,
+            circleOuterRadius
+        )
+        circleOuterRadiusIncrease = typedArray.getDimensionPixelOffset(
+            R.styleable.HaloProgressBar_halo_circle_outer_radius_increase,
+            circleInnerRadiusIncrease * 3
+        )
+        keepOuterCircleWidth = typedArray.getDimensionPixelOffset(
+            R.styleable.HaloProgressBar_halo_keep_outer_circle_width,
+            keepInnerCircleWidth / 2
+        )
+
+        drawRectRound = typedArray.getDimensionPixelOffset(
+            R.styleable.HaloProgressBar_halo_rect_round,
+            drawRectRound
+        )
+
+        drawTextAlways =
+            typedArray.getBoolean(R.styleable.HaloProgressBar_halo_draw_text_always, drawTextAlways)
+        progress = typedArray.getInt(R.styleable.HaloProgressBar_halo_progress, progress)
+
+        typedArray.recycle()
+    }
 
     private fun View.getColor(id: Int): Int = ContextCompat.getColor(context, id)
 
@@ -94,45 +161,20 @@ class HaloProgressBar(context: Context, attributeSet: AttributeSet? = null) :
     private val dstOutXF by lazy { PorterDuffXfermode(PorterDuff.Mode.DST_OUT) }
     private val srcOutXF by lazy { PorterDuffXfermode(PorterDuff.Mode.SRC_OUT) }
 
-    /**动画时, 外圈允许的最大半径*/
-    private val circleOuterAnimMaxRadius: Float
-        get() {
-            return circleOuterRadius + 2 * density
-        }
-
-    private val circleHaloInnerAnimMiniRadius: Float
-        get() {
-            return circleHaloInnerRadius - 4 * density
-        }
-
-    private val circleHaloOuterAnimMaxRadius: Float
-        get() {
-            return circleHaloOuterRadius + 4 * density
-        }
-
-    private val circleHaloInnerRadius: Float
-        get() {
-            return circleInnerRadius - 1 * density
-        }
-    private val circleHaloOuterRadius: Float
-        get() {
-            return circleOuterRadius + 1 * density
-        }
-
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         if (progress < 100) {
-            if (animator.isStarted) {
+            if (animator.isStarted || isInEditMode) {
                 //动画开始了, 才绘制
 
-                //背景色
-                canvas.drawColor(circleBgColor)
+                //绘制背景
+                _drawBackground(canvas)
 
                 //绘制光晕
                 circleHaloCanvas?.let {
                     it.save()
-                    it.translate((measuredWidth / 2).toFloat(), (measuredHeight / 2).toFloat())
+                    it.translate(drawCenterX.toFloat(), drawCenterY.toFloat())
 
                     paint.xfermode = clearXF
                     it.drawPaint(paint)
@@ -143,15 +185,16 @@ class HaloProgressBar(context: Context, attributeSet: AttributeSet? = null) :
                     it.drawCircle(
                         0f,
                         0f,
-                        circleHaloOuterRadius + (circleHaloOuterAnimMaxRadius - circleHaloOuterRadius) * animatorValue,
+                        circleOuterRadius + circleOuterRadiusIncrease * animatorValue + keepOuterCircleWidth,
                         paint
                     )
 
+                    //镂空
                     paint.xfermode = srcOutXF
                     it.drawCircle(
                         0f,
                         0f,
-                        circleHaloInnerRadius - (circleHaloInnerRadius - circleHaloInnerAnimMiniRadius) * animatorValue,
+                        circleInnerRadius.toFloat(),
                         paint
                     )
                     paint.xfermode = null
@@ -160,10 +203,11 @@ class HaloProgressBar(context: Context, attributeSet: AttributeSet? = null) :
 
                     canvas.drawBitmap(circleHaloBitmap!!, 0f, 0f, null)
                 }
+
                 //绘制圆
                 circleCanvas?.let {
                     it.save()
-                    it.translate((measuredWidth / 2).toFloat(), (measuredHeight / 2).toFloat())
+                    it.translate(drawCenterX.toFloat(), drawCenterY.toFloat())
 
                     paint.xfermode = clearXF
                     it.drawPaint(paint)
@@ -174,12 +218,13 @@ class HaloProgressBar(context: Context, attributeSet: AttributeSet? = null) :
                     it.drawCircle(
                         0f,
                         0f,
-                        circleOuterRadius + (circleOuterAnimMaxRadius - circleOuterRadius) * animatorValue,
+                        circleInnerRadius + circleInnerRadiusIncrease * animatorValue + keepInnerCircleWidth,
                         paint
                     )
 
+                    //镂空
                     paint.xfermode = srcOutXF
-                    it.drawCircle(0f, 0f, circleInnerRadius, paint)
+                    it.drawCircle(0f, 0f, circleInnerRadius.toFloat(), paint)
                     paint.xfermode = null
 
                     it.restore()
@@ -191,8 +236,8 @@ class HaloProgressBar(context: Context, attributeSet: AttributeSet? = null) :
                     //绘制进度文本
                     paint.apply {
                         paint.style = Paint.Style.FILL_AND_STROKE
-                        paint.textSize = 12 * density
-                        paint.color = circleColor
+                        paint.textSize = this@HaloProgressBar.textSize.toFloat()
+                        paint.color = this@HaloProgressBar.textColor
                         paint.strokeWidth = 1f
                     }
                     val text = "${progress}%"
@@ -211,19 +256,16 @@ class HaloProgressBar(context: Context, attributeSet: AttributeSet? = null) :
         if (animatorFinish.isRunning) {
             circleCanvas?.let {
                 paint.xfermode = clearXF
-                it.drawPaint(paint)
-                paint.xfermode = null
 
-                //绘制圆圈
-                paint.color = circleBgColor
-                it.drawRect(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), paint)
+                _drawBackground(it)
 
                 it.save()
-                it.translate((measuredWidth / 2).toFloat(), (measuredHeight / 2).toFloat())
+                it.translate(drawCenterX.toFloat(), drawCenterY.toFloat())
 
+                //用圆圈镂空背景
                 paint.xfermode = srcOutXF
                 paint.color = Color.TRANSPARENT
-                it.drawCircle(0f, 0f, circleFinishDrawRadius, paint)
+                it.drawCircle(0f, 0f, circleFinishDrawRadius.toFloat(), paint)
                 paint.xfermode = null
 
                 it.restore()
@@ -231,6 +273,21 @@ class HaloProgressBar(context: Context, attributeSet: AttributeSet? = null) :
                 canvas.drawBitmap(circleBitmap!!, 0f, 0f, null)
             }
         }
+    }
+
+    fun _drawBackground(canvas: Canvas) {
+        //绘制圆圈背景
+        paint.xfermode = null
+        paint.color = circleBgColor
+        canvas.drawRoundRect(
+            drawLeft.toFloat(),
+            drawTop.toFloat(),
+            drawRight.toFloat(),
+            drawBottom.toFloat(),
+            drawRectRound.toFloat(),
+            drawRectRound.toFloat(),
+            paint
+        )
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -312,12 +369,12 @@ class HaloProgressBar(context: Context, attributeSet: AttributeSet? = null) :
 
     private val animatorFinish by lazy {
         ObjectAnimator.ofFloat(
-            circleInnerRadius,
+            circleInnerRadius.toFloat(),
             c((measuredWidth / 2).toFloat(), (measuredHeight / 2).toFloat())
         ).apply {
             duration = 300
             addUpdateListener {
-                circleFinishDrawRadius = it.animatedValue as Float
+                circleFinishDrawRadius = (it.animatedValue as Float).toInt()
                 postInvalidate()
             }
         }
