@@ -56,6 +56,20 @@ fun DslAdapter.findItemByTag(
     }
 }
 
+fun <T : DslAdapterItem> DslAdapter.findItemByTag(
+    tag: String?,
+    clazz: Class<T>,
+    useFilterList: Boolean = true
+): T? {
+    if (tag == null) {
+        return null
+    }
+    val item = findItem(useFilterList) {
+        it::class.java.isAssignableFrom(clazz) && it.itemTag == tag
+    } ?: return null
+    return item as T
+}
+
 fun DslAdapter.findItemByGroup(
     groups: List<String>,
     useFilterList: Boolean = true

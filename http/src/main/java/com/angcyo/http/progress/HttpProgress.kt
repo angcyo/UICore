@@ -17,9 +17,13 @@ object HttpProgress {
 
 }
 
+/**相同下载地址, 不同下载内容*/
+fun String.newProgressUrl(key: String) = ProgressManager.newUrl(this, key)
+
 /**Http下载进度*/
 fun String.downloadProgress(
     removeOnEnd: Boolean = true,
+    key: String? = null,
     action: (ProgressInfo?, Exception?) -> Unit
 ): ProgressListener {
     val url = this
@@ -43,7 +47,11 @@ fun String.downloadProgress(
             }
         }
     }
-    ProgressManager.getInstance().addResponseListener(this, listener)
+    if (key == null) {
+        ProgressManager.getInstance().addResponseListener(this, listener)
+    } else {
+        ProgressManager.getInstance().addDiffResponseListenerOnSameUrl(this, key, listener)
+    }
     return listener
 }
 
@@ -57,9 +65,11 @@ fun ProgressListener.removeDownloadProgress() {
     ProgressManager.getInstance().removeResponseListener(this)
 }
 
-/**Http 上传进度*/
+/**Http 上传进度
+ * [key] 通常上传接口都是一样的, 但是上传的文件路径不一样*/
 fun String.uploadProgress(
     removeOnEnd: Boolean = true,
+    key: String? = null,
     action: (ProgressInfo?, Exception?) -> Unit
 ): ProgressListener {
     val url = this
@@ -83,7 +93,11 @@ fun String.uploadProgress(
             }
         }
     }
-    ProgressManager.getInstance().addRequestListener(this, listener)
+    if (key == null) {
+        ProgressManager.getInstance().addRequestListener(this, listener)
+    } else {
+        ProgressManager.getInstance().addDiffRequestListenerOnSameUrl(this, key, listener)
+    }
     return listener
 }
 

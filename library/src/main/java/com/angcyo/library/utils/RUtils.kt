@@ -438,7 +438,11 @@ fun Int.rotationString(): String {
  * https://stackoverflow.com/questions/55173823/i-am-getting-imei-null-in-android-q
  */
 @SuppressLint("MissingPermission", "HardwareIds")
-fun Context.getIMEI(requestPermission: Boolean = false, slotIndex: Int = Int.MIN_VALUE): String? {
+fun Context.getIMEI(
+    requestPermission: Boolean = false,
+    slotIndex: Int = Int.MIN_VALUE,
+    log: Boolean = true
+): String? {
     var imei: String? = null
     try {
         val telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
@@ -465,12 +469,16 @@ fun Context.getIMEI(requestPermission: Boolean = false, slotIndex: Int = Int.MIN
         //L.w("call: getIMEI([])-> " + imei);
     } catch (e: SecurityException) {
         //The user 10198 does not meet the requirements to access device identifiers.
-        L.e("IMEI获取失败, 请检查权限:" + e.message)
+        if (log) {
+            L.e("IMEI获取失败, 请检查权限:" + e.message)
+        }
         if (requestPermission) {
             checkPermissions(Manifest.permission.READ_PHONE_STATE)
         }
     } catch (e: java.lang.Exception) {
-        e.printStackTrace();
+        if (log) {
+            e.printStackTrace();
+        }
         //L.e("call: getIMEI([])-> " + imei + " " + e.getMessage());
     }
     return imei
