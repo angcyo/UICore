@@ -10,10 +10,7 @@ import android.os.Build
 import android.provider.Settings
 import com.angcyo.library.L
 import com.angcyo.library.app
-import com.angcyo.library.ex.baseConfig
-import com.angcyo.library.ex.fileUri
-import com.angcyo.library.ex.mimeType
-import com.angcyo.library.ex.uriConfig
+import com.angcyo.library.ex.*
 import com.angcyo.library.model.AppBean
 import java.io.File
 
@@ -168,10 +165,15 @@ class DslIntent {
          * @param packageName 包名
          * @return intent
          */
-        fun getUninstallAppIntent(packageName: String): Intent? {
+        fun getUninstallAppIntent(packageName: String): Intent {
             val intent = Intent(Intent.ACTION_DELETE)
             intent.data = Uri.parse("package:$packageName")
             return intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+
+        /**打开应用的Intent*/
+        fun openAppIntent(packageName: String): Intent? {
+            return app().getAppOpenIntentByPackageName(packageName)
         }
     }
 
