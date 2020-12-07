@@ -1,5 +1,6 @@
 package com.angcyo.library.ex
 
+import android.os.SystemClock
 import java.text.DecimalFormat
 import kotlin.math.max
 import kotlin.math.min
@@ -136,3 +137,6 @@ fun Long.toShortString(
 
     return builder.toString()
 }
+
+/**构建一个16位的整数*/
+fun generateInt(): Int = SystemClock.uptimeMillis().toInt() and 0xFFFF
