@@ -32,7 +32,11 @@ open class LogInterceptor : Interceptor {
         /**用于指定当前url需要对应的key, 默认就是url?号之前的字符串*/
         const val HEADER_LOG_KEY = "header_key"
 
-        private const val INTERVAL = "interval"
+        const val HEADER_LOG_REQUEST_BODY = "header_log_request_body"
+        const val HEADER_LOG_RESPONSE_BODY = "header_log_response_body"
+
+        const val INTERVAL = "interval"
+
         private val lastLogUrlTimeMap = hashMapOf<String, Long>()
 
         /**关闭日志*/
@@ -148,7 +152,7 @@ open class LogInterceptor : Interceptor {
         //请求耗时[毫秒]
         val requestTime = toMillis(System.nanoTime() - startTime)
         responseBuilder.append(" (").append(requestTime).append("ms)")
-        logResponse(response, responseBuilder)
+        logResponse(originRequest, response, responseBuilder)
 
         try {
             printResponseLog(responseBuilder)
@@ -171,7 +175,7 @@ open class LogInterceptor : Interceptor {
                 appendln().append(pair.first).append(":").append(pair.second)
             }
 
-            if (logRequestBody) {
+            if (logRequestBody && request.logRequestBody(logRequestBody)) {
                 //打印请求体
                 request.body?.run {
                     val simpleName = javaClass.simpleName
@@ -201,7 +205,7 @@ open class LogInterceptor : Interceptor {
         }
     }
 
-    open fun logResponse(response: Response, builder: StringBuilder) {
+    open fun logResponse(request: Request, response: Response, builder: StringBuilder) {
         builder.apply {
             appendln().append(response.request.url)
             append(" ${response.message}").append("(${response.code})")
@@ -211,7 +215,7 @@ open class LogInterceptor : Interceptor {
                 appendln().append(pair.first).append(":").append(pair.second)
             }
 
-            if (logResponseBody) {
+            if (logResponseBody && request.logResponseBody(logResponseBody)) {
                 //返回体
                 response.body?.run {
                     val contentLength: Long = contentLength()
@@ -263,3 +267,31 @@ open class LogInterceptor : Interceptor {
         L.d(builder.toString())
     }
 }
+
+/**关闭日志*/
+fun Request.Builder.closeLog(close: Boolean = !isDebugType()): Request.Builder {
+    header(LogInterceptor.HEADER_LOG, "${!close}")
+    return this
+}
+
+fun Request.Builder.logRequestBody(log: Boolean = true): Request.Builder {
+    header(LogInterceptor.HEADER_LOG_REQUEST_BODY, "$log")
+    return this
+}
+
+fun Request.Builder.logResponseBody(log: Boolean = true): Request.Builder {
+    header(LogInterceptor.HEADER_LOG_RESPONSE_BODY, "$log")
+    return this
+}
+
+/**间隔多长时间, 才输出日志. 默认1小时输出一次*/
+fun Request.Builder.intervalLog(mill: Long = 1 * 60 * 60 * 1000L /*毫秒*/): Request.Builder {
+    header(LogInterceptor.HEADER_LOG, "${LogInterceptor.INTERVAL}:$mill")
+    return this
+}
+
+fun Request.logRequestBody(def: Boolean = true) =
+    header(LogInterceptor.HEADER_LOG_REQUEST_BODY) ?: "true" == def.toString()
+
+fun Request.logResponseBody(def: Boolean = true) =
+    header(LogInterceptor.HEADER_LOG_RESPONSE_BODY) ?: "true" == def.toString()

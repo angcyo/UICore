@@ -156,3 +156,10 @@ fun Fragment.delay(delayMillis: Long = delayMillis(-1), action: () -> Unit) {
 fun Fragment.hideSoftInput() {
     view?.hideSoftInput()
 }
+
+fun Fragment.removeThis(init: DslFHelper.() -> Unit = {}) {
+    dslFHelper {
+        remove(this@removeThis)
+        init()
+    }
+}

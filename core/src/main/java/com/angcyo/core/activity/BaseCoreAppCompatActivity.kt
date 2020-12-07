@@ -31,32 +31,36 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
 
     open fun checkCrash() {
         if (!isRelease()) {
-            haveLastCrash = DslCrashHandler.checkCrash(true) { filePath, message, crashTime ->
-                filePath?.file()?.readText()?.copy(this)
+            showCrashDialog()
+        }
+    }
 
-                normalDialog {
-                    canceledOnTouchOutside = false
-                    dialogTitle = "发生了什么啊^_^"
-                    dialogMessage = span {
-                        append(crashTime) {
-                            foregroundColor = _color(R.color.colorAccent)
-                        }
-                        appendln()
-                        append(message)
+    fun showCrashDialog() {
+        haveLastCrash = DslCrashHandler.checkCrash(true) { filePath, message, crashTime ->
+            filePath?.file()?.readText()?.copy(this)
+
+            normalDialog {
+                canceledOnTouchOutside = false
+                dialogTitle = "发生了什么啊^_^"
+                dialogMessage = span {
+                    append(crashTime) {
+                        foregroundColor = _color(R.color.colorAccent)
                     }
-                    positiveButton("粘贴给作者?") { _, _ ->
-                        RUtils.chatQQ(this@BaseCoreAppCompatActivity)
-                    }
-                    negativeButton("加入QQ群?") { _, _ ->
-                        RUtils.joinQQGroup(this@BaseCoreAppCompatActivity)
-                    }
-                    neutralButton("分享文件?") { _, _ ->
-                        filePath?.file()?.shareFile(this@BaseCoreAppCompatActivity)
-                    }
-                    onDialogInitListener = { _, dialogViewHolder ->
-                        dialogViewHolder.click(R.id.message_view) {
-                            filePath?.file()?.open(this@BaseCoreAppCompatActivity)
-                        }
+                    appendln()
+                    append(message)
+                }
+                positiveButton("粘贴给作者?") { _, _ ->
+                    RUtils.chatQQ(this@BaseCoreAppCompatActivity)
+                }
+                negativeButton("加入QQ群?") { _, _ ->
+                    RUtils.joinQQGroup(this@BaseCoreAppCompatActivity)
+                }
+                neutralButton("分享文件?") { _, _ ->
+                    filePath?.file()?.shareFile(this@BaseCoreAppCompatActivity)
+                }
+                onDialogInitListener = { _, dialogViewHolder ->
+                    dialogViewHolder.click(R.id.message_view) {
+                        filePath?.file()?.open(this@BaseCoreAppCompatActivity)
                     }
                 }
             }

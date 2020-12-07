@@ -16,6 +16,7 @@ import com.angcyo.core.activity.BaseCoreAppCompatActivity
 import com.angcyo.library.app
 import com.angcyo.library.component.toAppDetail
 import com.angcyo.library.ex.baseConfig
+import com.angcyo.library.ex.isRelease
 import com.angcyo.library.utils.RUtils
 import com.angcyo.widget.DslGroupHelper
 import com.angcyo.widget.base.find
@@ -36,9 +37,11 @@ fun coreApp() = app() as CoreApplication
 
 /**在[Fragment]中检查crash*/
 fun Fragment.checkCrash() {
-    val act = activity
-    if (act is BaseCoreAppCompatActivity) {
-        act.checkCrash()
+    if (!isRelease()) {
+        val act = activity
+        if (act is BaseCoreAppCompatActivity) {
+            act.showCrashDialog()
+        }
     }
 }
 
