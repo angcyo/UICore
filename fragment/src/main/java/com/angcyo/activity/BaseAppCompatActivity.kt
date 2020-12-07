@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.os.Binder
 import android.os.Bundle
 import android.os.Process
+import android.view.KeyEvent
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.angcyo.DslAHelper
@@ -127,7 +128,7 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
 
     //</editor-fold desc="基础方法处理">
 
-    //<editor-fold desc="Touch事件拦截">
+    //<editor-fold desc="事件拦截">
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         return super.onTouchEvent(event)
@@ -147,7 +148,12 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         return super.dispatchTouchEvent(ev)
     }
 
-    //</editor-fold desc="Touch事件拦截">
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        L.d("onKeyDown:$keyCode ${KeyEvent.keyCodeToString(keyCode)}")
+        return super.onKeyDown(keyCode, event)
+    }
+
+    //</editor-fold desc="事件拦截">
 
     //<editor-fold desc="默认回调">
 

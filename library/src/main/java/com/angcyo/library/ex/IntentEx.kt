@@ -210,3 +210,13 @@ fun Context.getAppOpenIntentByPackageName(packageName: String): Intent? {
     intent.component = ComponentName(packageName, mainActivityClass!!)
     return intent
 }
+
+/**快速发送广播*/
+fun Context.sendBroadcast(action: String, extra: Intent.() -> Unit = {}) {
+    sendBroadcast(Intent(action).apply {
+        //putExtra("reason", "homekey")
+        extra()
+    })
+}
+
+
