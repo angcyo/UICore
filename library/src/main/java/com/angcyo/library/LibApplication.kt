@@ -6,6 +6,9 @@ import android.content.Context
 import android.os.Process
 import android.text.TextUtils
 import android.util.SparseArray
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import com.angcyo.library.component.OnBackgroundObserver
 import com.angcyo.library.component.RBackground
 import com.angcyo.library.ex.isDebug
@@ -43,9 +46,12 @@ import java.io.InputStreamReader
  * #                                                   #
  */
 
-open class LibApplication : Application() {
+open class LibApplication : Application(), LifecycleOwner {
+
     override fun onCreate() {
         super.onCreate()
+        lifecycleRegistry.currentState = Lifecycle.State.STARTED
+
         //必须第一个初始化
         Library.init(this, isDebug())
         L.init(getAppString("app_name") ?: "Log", isDebug())
@@ -69,7 +75,23 @@ open class LibApplication : Application() {
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
+        lifecycleRegistry.currentState = Lifecycle.State.CREATED
     }
+
+    override fun onTerminate() {
+        super.onTerminate()
+        lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
+    }
+
+    //<editor-fold desc="Lifecycle支持">
+
+    val lifecycleRegistry = LifecycleRegistry(this)
+
+    override fun getLifecycle(): Lifecycle {
+        return lifecycleRegistry
+    }
+
+    //</editor-fold desc="Lifecycle支持">
 }
 
 fun Context?.isMainProgress() = isMainProcess(this)

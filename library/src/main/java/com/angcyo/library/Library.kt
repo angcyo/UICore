@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Looper
 import android.view.View
+import androidx.lifecycle.LifecycleOwner
 import com.angcyo.library.ex.*
 import com.orhanobut.hawk.Hawk
 
@@ -38,6 +39,9 @@ fun app(): Application =
     Library.application ?: LibInitProvider.contentProvider as? Application ?: Application().apply {
         L.e("application 为初始化")
     }
+
+fun appLifecycleOwner(): LifecycleOwner? =
+    if (Library.application is LifecycleOwner) Library.application as LifecycleOwner else null
 
 /**
  * 获取APP的名字
