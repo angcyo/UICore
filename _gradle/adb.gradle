@@ -1,0 +1,41 @@
+/**
+ * 执行adb命令
+ * */
+
+def schema = project.hasProperty("schema") ? project.ext.schema : 'default'
+
+static def getApplicationId(rootProject) {
+    def applicationId = ''
+    def childProjects = rootProject.getChildProjects()
+    childProjects.each {
+        def application = "com.android.application"
+
+        def projectObj = it.value
+        def isApp = projectObj.plugins.hasPlugin(application)
+
+        if (isApp) {
+            def applicationPlugin = projectObj.plugins.findPlugin(application)
+            applicationId = applicationPlugin.extension.defaultConfig.applicationId
+        }
+    }
+    return applicationId
+}
+
+task _pullSchemaFolder(type: Exec) {
+    def path = '../.pull'
+    def file = file(path)
+    workingDir(path)
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString("UTF8")
+    }
+    doFirst {
+        file.mkdirs()
+        def appId = getApplicationId(rootProject)
+        commandLine 'adb', 'pull', "/sdcard/android/data/${appId}/files/${schema}/", './'
+    }
+    doLast {
+        println "执行结束,文件在: ${file.absolutePath} ↓"
+        println ext.output()
+    }
+}

@@ -187,7 +187,7 @@ android {
 //        }
 //    }
 
-    def apkFolder = new File(project.rootDir.absolutePath + "/apk")//rootProject.file("/apk")
+    def apkFolder = new File(project.rootDir.absolutePath + "/.apk")//rootProject.file("/.apk")
     apkFolder.mkdirs()
     println "\napp.gradle→APK输出目录:${apkFolder.absolutePath}"
 
@@ -281,7 +281,7 @@ static def formatApkName(format, an, vn, t, fn, bn, sn, ka) {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(allModule.core)
+    implementation project(allModule.wtcore)
 
     //https://stackoverflow.com/questions/51957944/android-view-viewonunhandledkeyeventlistener
     //https://github.com/DonaldDu/FixUnhandledEvent/

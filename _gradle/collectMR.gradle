@@ -23,7 +23,7 @@ import java.util.regex.Pattern
 /**
  * 文件输出的文件夹(基于项目根目录的相对路径)
  * */
-ext.output = "apk"
+ext.output = ".apk"
 
 afterEvaluate {
 

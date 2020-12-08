@@ -106,3 +106,5 @@ android {
     </application>
     * */
 }
+
+apply from: allGradle.adb
