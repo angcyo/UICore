@@ -27,7 +27,11 @@ object DslFileHelper {
 
     val dateFormat: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss-SSS", Locale.CHINA)
 
-    /**返回文件路径*/
+    /**返回文件路径
+     *
+     * adb pull /sdcard/android/data/xxx/files/xxx/ ./
+     * code .
+     * */
     fun write(
         folder: String /*文件夹名, 相对于应用目录下的/files/文件夹*/,
         name: String = logFileName() /*文件名, 默认当天日期*/,

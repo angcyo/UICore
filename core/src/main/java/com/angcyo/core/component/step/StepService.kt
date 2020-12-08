@@ -226,6 +226,9 @@ class StepService : Service(), SensorEventListener {
     override fun onDestroy() {
         super.onDestroy()
 
+        nowBuSu = 0
+        stepModel.stepCountData.postValue(nowBuSu)
+
         stepSensorType = -1
 
         sensorManager.unregisterListener(this)
