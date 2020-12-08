@@ -900,10 +900,8 @@ open class AutoParser {
         //最终需要返回的节点列表
         val _result: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
 
-        if (constraintBean.after == null ||
-            constraintBean.after?.isConstraintEmpty() == true ||
-            result.isEmpty()
-        ) {
+        val after = constraintBean.after
+        if (after == null || after.isConstraintEmpty() || result.isEmpty()) {
             if (result.isNotEmpty()) {
                 _result.addAll(result)
             }
@@ -914,9 +912,8 @@ open class AutoParser {
 
             val resultAfter: MutableList<AccessibilityNodeInfoCompat> = mutableListOf()
             afterNodeList.forEach { node ->
-                //继续查找
-                val nextParseResult =
-                    ParseResult(constraintBean.after!!, parseResult.constraintList)
+                //after 继续查找
+                val nextParseResult = ParseResult(after, parseResult.constraintList)
                 findConstraintNodeByRootNode(
                     service,
                     autoParseAction,
@@ -933,6 +930,10 @@ open class AutoParser {
                         nextParseResult.conditionNodeList ?: emptyList()
                     )
                 }
+            }
+
+            if (constraintBean.useAfterNode) {
+                _result.clear()
             }
 
             if (resultAfter.isNotEmpty()) {

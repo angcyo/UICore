@@ -287,6 +287,9 @@ data class ConstraintBean(
      * */
     var after: ConstraintBean? = null,
 
+    /**使用[after]条件过滤之后的节点列表进行后续操作, 如后续的[after]操作, [parent]操作和[handleAction]操作*/
+    var useAfterNode: Boolean = false,
+
     /**递归parent查询满足条件的节点*/
     var parent: ParentBean? = null,
 

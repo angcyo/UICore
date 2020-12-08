@@ -36,5 +36,12 @@ data class ParseResult(
 fun ParseResult.isHaveCondition() = conditionNodeList != null
 
 /**返回需要处理的节点列表*/
-fun ParseResult.resultHandleNodeList() =
-    if (notTextMatch) nodeList else if (isHaveCondition()) conditionNodeList else nodeList
+fun ParseResult.resultHandleNodeList() = if (notTextMatch) {
+    nodeList
+} else if (isHaveCondition()) {
+    if (constraint.useAfterNode) {
+        nodeList
+    } else {
+        conditionNodeList
+    }
+} else nodeList
