@@ -8,16 +8,19 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.content.pm.PackageManager.GET_ACTIVITIES
 import android.content.res.Configuration
 import android.media.AudioManager
 import android.net.Uri
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Looper
 import android.os.Process.myUid
-import android.telephony.TelephonyManager
+import android.telephony.*
 import android.view.Surface
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.component.RNetwork.isWifiConnect
 import com.angcyo.library.ex.checkPermissions
 import com.angcyo.library.ex.patternList
 import com.angcyo.library.toast
@@ -191,7 +194,7 @@ object RUtils {
     /**判断应用程序是否可以被debug*/
     fun isAppDebug(context: Context = app(), packageName: String = app().packageName): Boolean {
         try {
-            val packageInfo = context.packageManager.getPackageInfo(packageName, 1)
+            val packageInfo = context.packageManager.getPackageInfo(packageName, GET_ACTIVITIES)
             if (packageInfo != null) {
                 val info = packageInfo.applicationInfo
                 return info.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
@@ -355,6 +358,118 @@ object RUtils {
             e.printStackTrace()
         }
     }
+
+    /**获取手机信号强度
+     * 4G网络 最佳范围 >-90dBm 越大越好
+     * 3G网络最佳范围  >-90dBm  越大越好  ps:中国移动3G获取不到  返回的无效dbm值是正数（85dbm）
+     * 在这个范围的已经确定是3G，但不同运营商的3G有不同的获取方法，故在此需做判断 判断运营商与网络类型的工具类在最下方
+     * 2G网络最佳范围>-90dBm 越大越好
+     *
+     * -50dBm~0dBm范围内，恭喜你，你的信号已经好得很了。话说你就站在基站旁边是吧，哈
+     * -90dBm~-60dBm，同样恭喜你，你基本不会面临打不了电话的问题。如果打不了的，找运营商吧，那是他们的问题。
+     * https://blog.csdn.net/pan0755/article/details/78437249
+     * */
+    @SuppressLint("MissingPermission")
+    fun getMobileDbm(context: Context): Int {
+        var dbm = -1
+        val tm = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            try {
+                val cellInfoList = tm.allCellInfo
+                if (null != cellInfoList) {
+                    for (cellInfo in cellInfoList) {
+                        L.i(cellInfo)
+                        if (cellInfo is CellInfoTdscdma) {
+                            dbm = cellInfo.cellSignalStrength.dbm
+                        } else if (cellInfo is CellInfoGsm) {
+                            val cellSignalStrength = cellInfo.cellSignalStrength
+                            dbm = cellSignalStrength.dbm
+                            //L.i("cellSignalStrengthGsm→$cellSignalStrength")
+                        } else if (cellInfo is CellInfoCdma) {
+                            val cellSignalStrength = cellInfo.cellSignalStrength
+                            dbm = cellSignalStrength.dbm
+                            //L.i("cellSignalStrengthCdma→$cellSignalStrength")
+                        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 && cellInfo is CellInfoWcdma) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                                val cellSignalStrength = cellInfo.cellSignalStrength
+                                dbm = cellSignalStrength.dbm
+                                //L.i("cellSignalStrengthWcdma→$cellSignalStrength")
+                            }
+                        } else if (cellInfo is CellInfoLte) {
+                            val cellSignalStrength = cellInfo.cellSignalStrength
+                            dbm = cellSignalStrength.dbm
+                            //L.i("cellSignalStrengthLte.getAsuLevel()\t" + cellSignalStrength.asuLevel)
+                            //L.i("cellSignalStrengthLte.getDbm()\t " + cellSignalStrength.dbm)
+                            //L.i("cellSignalStrengthLte.getLevel()\t " + cellSignalStrength.level)
+                            //L.i("cellSignalStrengthLte.getTimingAdvance()\t " + cellSignalStrength.timingAdvance)
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                //L.i("cellSignalStrengthLte.getCqi()\t" + cellSignalStrength.cqi)
+                                //L.i("cellSignalStrengthLte.getRsrq()\t " + cellSignalStrength.rsrq)
+                                //L.i("cellSignalStrengthLte.getRsrp()\t " + cellSignalStrength.rsrp)
+                                //L.i("cellSignalStrengthLte.getRssnr()\t " + cellSignalStrength.rssnr)
+                            }
+                        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && cellInfo is CellInfoNr) {
+                            val cellSignalStrengthNr = cellInfo.cellSignalStrength
+                            dbm = cellSignalStrengthNr.dbm
+                            //L.i(cellSignalStrengthNr)
+                        }
+                        break
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        /*val listener: PhoneStateListener = object : PhoneStateListener() {
+            override fun onSignalStrengthsChanged(signalStrength: SignalStrength) {
+                */
+        /**
+         * {mCdma=CellSignalStrengthCdma:
+         * cdmaDbm=2147483647 cdmaEcio=2147483647 evdoDbm=2147483647 evdoEcio=2147483647 evdoSnr=2147483647
+         * level=0 oplevel=0,mGsm=CellSignalStrengthGsm: rssi=2147483647 ber=2147483647 mTa=2147483647 mLevel=0,
+         *
+         * mWcdma=CellSignalStrengthWcdma: ss=2147483647 ber=2147483647 rscp=2147483647 ecno=2147483647 level=0 oplevel=0,
+         *
+         * mTdscdma=CellSignalStrengthTdscdma: rssi=2147483647 ber=2147483647 rscp=2147483647 level=0,
+         *
+         * mLte=CellSignalStrengthLte: rssi=-71 rsrp=-95 rsrq=-8 rssnr=48 cqi=2147483647 ta=2147483647 level=4 oplevel=4,
+         *
+         * mNr=CellSignalStrengthNr:{ csiRsrp = 2147483647 csiRsrq = 2147483647 csiSinr = 2147483647 ssRsrp = 2147483647 ssRsrq = 2147483647 ssSinr = 2147483647 level = 0 },
+         *
+         * primary=CellSignalStrengthLte,voice level =4,data level =4,isGsm =true}
+         * *//*
+                // 0表示非常差的信号强度，而4表示非常强的信号强度
+                //L.w(signalStrength.level)
+                L.w(signalStrength)
+            }
+        }
+        tm.listen(listener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS)*/
+        return dbm
+    }
+
+    /**获取wifi信号强度*/
+    fun getWifiRssi(context: Context): Int {
+        var rssi = -1
+        if (isWifiConnect(context)) {
+            val mWifiInfo =
+                (context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager).connectionInfo
+            rssi = mWifiInfo.rssi //获取wifi信号强度
+            if (rssi > -50 && rssi < 0) { //最强
+                L.i("wifi 最强")
+            } else if (rssi > -70 && rssi < -50) { //较强
+                L.i("wifi 较强")
+            } else if (rssi > -80 && rssi < -70) { //较弱
+                L.i("wifi 较弱")
+            } else if (rssi > -100 && rssi < -80) { //微弱
+                L.i("wifi 微弱")
+            }
+        } else {
+            //无连接
+            L.i("无wifi连接")
+        }
+        return rssi
+    }
 }
 
 /** 检查APK是否安装 */
@@ -477,7 +592,7 @@ fun Context.getIMEI(
         }
     } catch (e: java.lang.Exception) {
         if (log) {
-            e.printStackTrace();
+            e.printStackTrace()
         }
         //L.e("call: getIMEI([])-> " + imei + " " + e.getMessage());
     }

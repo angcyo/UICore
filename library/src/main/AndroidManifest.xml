@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.angcyo.library">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!--获取网络状态, WIFI ip-->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 

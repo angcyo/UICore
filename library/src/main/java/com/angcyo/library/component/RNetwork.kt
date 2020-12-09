@@ -10,12 +10,12 @@ import android.net.*
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import androidx.annotation.RequiresPermission
 import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.component.RNetwork.getNetWorkState
 import com.angcyo.library.component.RNetwork.notifyObservers
 import com.angcyo.library.utils.RUtils
+
 
 /**
  * Email:angcyo@126.com
@@ -128,7 +128,7 @@ object RNetwork {
                             if (networkInfo.type == ConnectivityManager.TYPE_WIFI) {
                                 notifyObservers(NetworkType.NETWORK_WIFI)
                                 return
-                            } else if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
+                            } else if (networkInfo.type == ConnectivityManager.TYPE_MOBILE) {
                                 notifyObservers(NetworkType.NETWORK_MOBILE)
                                 return
                             }
@@ -252,6 +252,13 @@ object RNetwork {
     fun isConnect(context: Context): Boolean {
         return checkState(context)[0] || checkState(context)[1]
     }
+
+    /**[android.Manifest.permission.ACCESS_NETWORK_STATE]*/
+    fun isWifiConnect(context: Context): Boolean {
+        val manager: ConnectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)?.isConnected == true
+    }
 }
 
 /**
@@ -298,7 +305,6 @@ fun isNetworkAvailable(context: Context = app()): Boolean {
     try {
         val cm =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-                ?: return false
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val network = cm.activeNetwork
             val networkCapabilities = cm.getNetworkCapabilities(network)
