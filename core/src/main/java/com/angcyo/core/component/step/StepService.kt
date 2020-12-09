@@ -68,11 +68,11 @@ class StepService : Service(), SensorEventListener {
 
     private var sensorType = Sensor.TYPE_ALL
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //返回START_STICKY ：在运行onStartCommand后service进程被kill后，那将保留在开始状态，但是不保留那些传入的intent。
         // 不久后service就会再次尝试重新创建，因为保留在开始状态，在创建     service后将保证调用onstartCommand。
         // 如果没有传递任何开始命令给service，那将获取到null的intent。
-        if (intent.hasExtra(KEY_SENSOR_TYPE)) {
+        if (intent?.hasExtra(KEY_SENSOR_TYPE) == true) {
             sensorType = intent.getIntExtra(KEY_SENSOR_TYPE, sensorType)
 
             if (stepSensorType == -1) {
