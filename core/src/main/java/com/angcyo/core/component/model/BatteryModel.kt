@@ -10,6 +10,7 @@ import android.os.BatteryManager.*
 import android.os.Build
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.angcyo.library.isMain
 
 
 /**
@@ -90,7 +91,11 @@ class BatteryModel : ViewModel() {
             }
 
             //发送数据
-            batteryData.value = bean
+            if (isMain()) {
+                batteryData.value = bean
+            } else {
+                batteryData.postValue(bean)
+            }
         }
         return bean
     }
@@ -148,17 +153,17 @@ data class BatteryBean(
 )
 
 /**是否正在充电*/
-fun BatteryBean.isCharging(): Boolean = status == BATTERY_STATUS_CHARGING
+fun BatteryBean.isCharging(): Boolean = status == BATTERY_STATUS_CHARGING || plugged > 0
 
 /**电池健康状态*/
 fun Int.toBatteryHealthStr(): String = when (this) {
     BATTERY_HEALTH_GOOD -> "BATTERY_HEALTH_GOOD" //2
-    BATTERY_HEALTH_OVERHEAT -> "BATTERY_HEALTH_OVERHEAT"
-    BATTERY_HEALTH_DEAD -> "BATTERY_HEALTH_DEAD"
-    BATTERY_HEALTH_OVER_VOLTAGE -> "BATTERY_HEALTH_OVER_VOLTAGE"
-    BATTERY_HEALTH_UNSPECIFIED_FAILURE -> "BATTERY_HEALTH_UNSPECIFIED_FAILURE"
-    BATTERY_HEALTH_COLD -> "BATTERY_HEALTH_COLD"
-    BATTERY_HEALTH_UNKNOWN -> "BATTERY_HEALTH_UNKNOWN"
+    BATTERY_HEALTH_OVERHEAT -> "BATTERY_HEALTH_OVERHEAT"//3
+    BATTERY_HEALTH_DEAD -> "BATTERY_HEALTH_DEAD"//4
+    BATTERY_HEALTH_OVER_VOLTAGE -> "BATTERY_HEALTH_OVER_VOLTAGE"//5
+    BATTERY_HEALTH_UNSPECIFIED_FAILURE -> "BATTERY_HEALTH_UNSPECIFIED_FAILURE"//6
+    BATTERY_HEALTH_COLD -> "BATTERY_HEALTH_COLD"//7
+    BATTERY_HEALTH_UNKNOWN -> "BATTERY_HEALTH_UNKNOWN"//1
     else -> "BATTERY_HEALTH_UNKNOWN"
 }
 
@@ -173,10 +178,10 @@ fun Int.toBatteryPluggedStr(): String = when (this) {
 
 /**电池状态*/
 fun Int.toBatteryStatusStr(): String = when (this) {
-    BATTERY_STATUS_CHARGING -> "BATTERY_STATUS_CHARGING" //充电中
-    BATTERY_STATUS_DISCHARGING -> "BATTERY_STATUS_DISCHARGING" //放电中
-    BATTERY_STATUS_NOT_CHARGING -> "BATTERY_STATUS_NOT_CHARGING" //未充电
-    BATTERY_STATUS_FULL -> "BATTERY_STATUS_FULL" //满电
-    BATTERY_STATUS_UNKNOWN -> "BATTERY_STATUS_UNKNOWN" //未知
+    BATTERY_STATUS_CHARGING -> "BATTERY_STATUS_CHARGING" //充电中 2
+    BATTERY_STATUS_DISCHARGING -> "BATTERY_STATUS_DISCHARGING" //放电中 3
+    BATTERY_STATUS_NOT_CHARGING -> "BATTERY_STATUS_NOT_CHARGING" //未充电 4
+    BATTERY_STATUS_FULL -> "BATTERY_STATUS_FULL" //满电 5
+    BATTERY_STATUS_UNKNOWN -> "BATTERY_STATUS_UNKNOWN" //未知 1
     else -> "BATTERY_STATUS_UNKNOWN"
 }
