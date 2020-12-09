@@ -269,6 +269,15 @@ class JsonBuilder {
         return this
     }
 
+    //add map
+    fun add(map: Map<String, Any?>?): JsonBuilder {
+        require(isObj) { "不允许在Array对象中, 使用此方法" }
+        map?.forEach { entry ->
+            operateElement(operateElement, entry.key, entry.value, ignoreNull)
+        }
+        return this
+    }
+
     /**
      * 回调出去
      */
