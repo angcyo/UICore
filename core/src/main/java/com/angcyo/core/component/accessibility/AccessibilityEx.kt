@@ -898,10 +898,14 @@ fun AccessibilityNodeInfo.log() {
 }
 
 /**枚举查找[AccessibilityNodeInfo]
+ * [deep] 节点查询深度, >=0生效, 0:表示根节点 1:表示根节点+child
+ * [currentDeep] 当前的深度, 自动控制的变量
  * [predicate] 返回1, 表示添加并继续查找; 返回0, 添加并返回,结束find; 返回-1, 不添加并继续查找; 返回-2, 不添加并结束find
  * */
 fun AccessibilityNodeInfo.findNode(
     result: MutableList<AccessibilityNodeInfoCompat> = mutableListOf(),
+    deep: Int = -1,
+    currentDeep: Int = 0,
     predicate: (node: AccessibilityNodeInfoCompat) -> Int
 ): List<AccessibilityNodeInfoCompat> {
 
@@ -926,7 +930,12 @@ fun AccessibilityNodeInfo.findNode(
                 }
 
                 //继续查找
-                child.findNode(result, predicate)
+                if (deep in 0..currentDeep) {
+                    //已达到深度
+                    continue
+                } else {
+                    child.findNode(result, deep, currentDeep + 1, predicate)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }

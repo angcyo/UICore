@@ -181,11 +181,39 @@ object MathParser {
                             topResult = verify(topExp, topNum, rTop, rTop, rBottom)
                         } else {
                             //矩形
-                            leftResult = verify(leftExp, leftNum, rLeft, rLeft, rRight)
-                            topResult = verify(topExp, topNum, rTop, rTop, rBottom)
-                            rightResult = verify(rightExp, rightNum, rRight, rLeft, rRight)
-                            bottomResult = verify(bottomExp, bottomNum, rBottom, rTop, rBottom)
+                            leftResult = verify(
+                                leftExp,
+                                leftNum,
+                                rLeft,
+                                rLeft,
+                                rRight
+                            ) && verify("<=", rightNum, leftNum ?: Float.MIN_VALUE, rLeft, rRight)
+
+                            topResult = verify(
+                                topExp,
+                                topNum,
+                                rTop,
+                                rTop,
+                                rBottom
+                            ) && verify("<=", bottomNum, topNum ?: Float.MIN_VALUE, rTop, rBottom)
+
+                            rightResult = verify(
+                                rightExp,
+                                rightNum,
+                                rRight,
+                                rLeft,
+                                rRight
+                            ) && verify(">=", leftNum, rightNum ?: Float.MAX_VALUE, rLeft, rRight)
+
+                            bottomResult = verify(
+                                bottomExp,
+                                bottomNum,
+                                rBottom,
+                                rTop,
+                                rBottom
+                            ) && verify(">=", topNum, bottomNum ?: Float.MAX_VALUE, rTop, rBottom)
                         }
+
                         result = leftResult && topResult && rightResult && bottomResult
                     }
 

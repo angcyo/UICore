@@ -560,7 +560,7 @@ open class AutoParser {
             var size = 0f
             var next = -1
             var allow = false
-            rootNodeInfo.findNode {
+            rootNodeInfo.findNode(deep = constraintBean.deep) {
                 next = -1
                 if (allNode || it.childCount == 0) {
                     //空节点
@@ -612,7 +612,7 @@ open class AutoParser {
                 val isIdText: Boolean = constraintBean.notIdList?.getOrNull(index) == 1
                 val subText: String? = if (isIdText) packageName.id(text) else text
 
-                val findList = rootNodeInfo.findNode() { nodeInfoCompat ->
+                val findList = rootNodeInfo.findNode(deep = constraintBean.deep) { nodeInfoCompat ->
                     var findNode = -1
                     if (isIdText) {
                         //id 全等匹配
@@ -673,7 +673,7 @@ open class AutoParser {
                     )
                 } else {
                     //其他约束组合
-                    rootNodeInfo.findNode(result) { nodeInfoCompat ->
+                    rootNodeInfo.findNode(result, deep = constraintBean.deep) { nodeInfoCompat ->
                         if (matchClassAndRectAndState(constraintBean, nodeInfoCompat, 0)) {
                             val node = getStateParentNode(
                                 constraintBean.stateList,
@@ -724,13 +724,16 @@ open class AutoParser {
                         if (!isIdText && subText == null) {
                             //text匹配模式下, null 匹配所有节点, 注意性能.
                             //tempList.add(rootNodeWrap)
-                            rootNodeInfo.findNode(tempList) {
+                            rootNodeInfo.findNode(tempList, deep = constraintBean.deep) {
                                 //匹配所有节点
                                 1
                             }
                             matchMap[index] = tempList
                         } else {
-                            rootNodeInfo.findNode(tempList) { nodeInfoCompat ->
+                            rootNodeInfo.findNode(
+                                tempList,
+                                deep = constraintBean.deep
+                            ) { nodeInfoCompat ->
                                 var findNode = -1
                                 if (isIdText) {
                                     //id 全等匹配
@@ -895,6 +898,33 @@ open class AutoParser {
                 }
             }
             parseResult.conditionNodeList = conditionNodeList
+        }
+
+        //依次需要匹配child
+        if (!constraintBean.childMatchList.isNullOrEmpty()) {
+            if (parseResult.isHaveCondition()) {
+                parseResult.conditionNodeList?.apply {
+                    val list = parseChildMatch(
+                        service,
+                        autoParseAction,
+                        this,
+                        constraintBean.childMatchList!!
+                    )
+                    clear()
+                    addAll(list)
+                }
+            } else {
+                result.apply {
+                    val list = parseChildMatch(
+                        service,
+                        autoParseAction,
+                        this,
+                        constraintBean.childMatchList!!
+                    )
+                    clear()
+                    addAll(list)
+                }
+            }
         }
 
         //最终需要返回的节点列表
@@ -1354,5 +1384,46 @@ open class AutoParser {
                 }
             }
         }
+    }
+
+    /**依次匹配node的所有child,是否都符合条件*/
+    fun parseChildMatch(
+        service: AccessibilityService,
+        autoParseAction: AutoParseAction,
+        nodeList: List<AccessibilityNodeInfoCompat>,
+        childMatchList: List<ConstraintBean>
+    ): List<AccessibilityNodeInfoCompat> {
+        val result = mutableListOf<AccessibilityNodeInfoCompat>()
+
+        nodeList.forEach {
+            var add = true
+            it.eachChild { index, child ->
+                val matchConstraint = childMatchList.getOrNull(index)
+                if (matchConstraint == null) {
+                    //没有约束条件, 则直接通过
+                } else {
+                    //只用了约束条件, 则符合条件才通过
+                    val parseResult = ParseResult(matchConstraint)
+                    findConstraintNodeByRootNode(
+                        service,
+                        autoParseAction,
+                        child.unwrap(),
+                        parseResult
+                    )
+                    if (parseResult.haveNodeList()) {
+                        //找到了符合条件的node
+                    } else {
+                        //不符合条件
+                        add = false
+                    }
+                }
+            }
+            if (add) {
+                //...
+                result.add(it)
+            }
+        }
+
+        return result
     }
 }

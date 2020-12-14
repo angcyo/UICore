@@ -17,7 +17,7 @@ data class ParseResult(
     var constraint: ConstraintBean,
 
     /**输入: 所有的[constraint], 用于[BaseConstraintAction]激活/禁用约束*/
-    var constraintList: List<ConstraintBean>,
+    var constraintList: List<ConstraintBean> = listOf(),
 
     /**输出: 匹配到的节点集合*/
     var nodeList: MutableList<AccessibilityNodeInfoCompat> = mutableListOf(),
@@ -45,3 +45,6 @@ fun ParseResult.resultHandleNodeList() = if (notTextMatch) {
         conditionNodeList
     }
 } else nodeList
+
+/**是否找到了节点*/
+fun ParseResult.haveNodeList() = resultHandleNodeList()?.isNotEmpty() == true

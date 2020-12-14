@@ -63,6 +63,9 @@ data class ConstraintBean(
      * */
     var boundRect: String? = null,
 
+    /**节点查询深度, >=0生效, 0:表示根节点 1:表示根节点+child*/
+    var deep: Int = -1,
+
     /*---------------------------------------------------------------------------------------*/
 
     /*-------------------------------------查找子节点前的约束------------------------------------*/
@@ -281,6 +284,11 @@ data class ConstraintBean(
      * 在[after]之前过滤, [after]会使用筛选后的节点集合
      * */
     var conditionList: List<ConditionBean>? = null,
+
+    /**
+     * [conditionList]之后, 每一个[AccessibilityNodeInfo]的child一一匹配[childMatchList], 全部满足才继续
+     * */
+    var childMatchList: List<ConstraintBean>? = null,
 
     /**上述匹配规则, 匹配之后, 获取到的节点列表当做根节点, 再一次匹配.
      * 只有匹配规则会生效, 非控制匹配规则的属性不会生效
