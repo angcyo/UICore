@@ -72,6 +72,9 @@ object DslFileHelper {
     fun error(name: String = logFileName(), data: String) =
         write(Constant.ERROR_FOLDER_NAME, name, _wrapData(data))
 
+    fun push(name: String = logFileName(), data: String) =
+        write(Constant.PUSH_FOLDER_NAME, name, _wrapData(data))
+
     fun _wrapData(data: String): String {
         return buildString {
             appendln()

@@ -24,4 +24,5 @@ object Constant {
     var CROP_FOLDER_NAME = "crop"
     var LUBAN_FOLDER_NAME = "luban"
     var PICTURE_FOLDER_NAME = "picture"
+    var PUSH_FOLDER_NAME = "push"
 }
