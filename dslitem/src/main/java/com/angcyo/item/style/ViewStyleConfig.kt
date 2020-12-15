@@ -2,7 +2,9 @@ package com.angcyo.item.style
 
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.view.Gravity
 import android.view.View
+import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.angcyo.library.UndefinedDrawable
 import com.angcyo.library.ex.undefined_size
@@ -35,9 +37,14 @@ open class ViewStyleConfig {
     /**背景*/
     var backgroundDrawable: Drawable? = UndefinedDrawable()
 
+    /**部分布局支持*/
+    var layoutGravity: Int = Gravity.NO_GRAVITY
+
     /**更新样式*/
     open fun updateStyle(view: View) {
         with(view) {
+            val lp = layoutParams
+
             if (backgroundDrawable is UndefinedDrawable) {
                 backgroundDrawable = background
             }
@@ -66,13 +73,25 @@ open class ViewStyleConfig {
 
             //初始化默认值
             if (viewWidth == undefined_size) {
-                viewWidth = layoutParams.width
+                viewWidth = lp.width
             }
             if (viewHeight == undefined_size) {
-                viewHeight = layoutParams.height
+                viewHeight = lp.height
             }
             //设置
             setWidthHeight(viewWidth, viewHeight)
+
+            //Gravity
+            if (lp is FrameLayout.LayoutParams) {
+                val oldGravity = lp.gravity
+                if (layoutGravity == Gravity.NO_GRAVITY) {
+                    layoutGravity = oldGravity
+                }
+                lp.gravity = layoutGravity
+                if (oldGravity != layoutGravity) {
+                    layoutParams = lp
+                }
+            }
         }
     }
 }
