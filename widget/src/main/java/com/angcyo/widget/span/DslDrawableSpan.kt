@@ -13,6 +13,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.core.view.GravityCompat
 import com.angcyo.library.ex.*
+import kotlin.math.max
 import kotlin.math.min
 
 /**
@@ -52,6 +53,9 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
 
     /**限制span的最大宽度*/
     var spanMaxWidth: Int = undefined_int
+
+    /**限制span的最小宽度*/
+    var spanMinWidth: Int = undefined_int
 
     /**span相对于[TextView]的比例, 不支持平分. 需要[DslSpanTextView]支持*/
     var spanWeight: Float = undefined_float
@@ -175,7 +179,7 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
 
         val textWidth = textPaint.measureText(targetText, 0, targetText.length).toInt()
 
-        val bgWidth = _drawableWidth(backgroundDrawable)
+        val bgWidth = max(spanMinWidth, _drawableWidth(backgroundDrawable))
         val fgWidth = _drawableWidth(foregroundDrawable)
 
         val bgHeight = _drawableHeight(backgroundDrawable)
