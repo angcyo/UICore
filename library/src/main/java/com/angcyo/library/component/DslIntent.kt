@@ -30,7 +30,10 @@ class DslIntent {
         const val QUERY_TYPE_PROVIDER = 3
 
         /** 跳至拨号界面 @param phoneNumber 电话号码 */
-        fun callTo(context: Context, phoneNumber: String) {
+        fun callTo(context: Context, phoneNumber: String?) {
+            if (phoneNumber.isNullOrEmpty()) {
+                return
+            }
             val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phoneNumber"))
             intent.baseConfig(context)
             context.startActivity(intent)
@@ -39,7 +42,10 @@ class DslIntent {
         /** 拨打电话 需添加权限 `<uses-permission android:name="android.permission.CALL_PHONE"/>`
          * @param phoneNumber 电话号码 */
         @SuppressLint("MissingPermission")
-        fun call(context: Context, phoneNumber: String) {
+        fun call(context: Context, phoneNumber: String?) {
+            if (phoneNumber.isNullOrEmpty()) {
+                return
+            }
             val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$phoneNumber"))
             intent.baseConfig(context)
             context.startActivity(intent)
