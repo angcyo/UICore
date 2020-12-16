@@ -1,5 +1,6 @@
 package com.angcyo.library.component
 
+import android.app.Application
 import android.content.Context
 import android.content.res.Resources
 import android.util.DisplayMetrics
@@ -61,6 +62,92 @@ class DslDensityAdapter {
                 }
             }
         }
+
+        /**临时使用系统默认值值进行操作*/
+        fun <T> useDefault(context: Context, action: () -> T): T {
+            val sysDisplayMetrics = Resources.getSystem()?.displayMetrics
+            val appDisplayMetrics = context.applicationContext.resources.displayMetrics
+            val contextDisplayMetrics = context.resources.displayMetrics
+
+            var _holdSysDp: Float = -1f
+            var _holdSysDpi: Int = -1
+            var _holdSysSp: Float = -1f
+
+            var _holdAppDp: Float = -1f
+            var _holdAppDpi: Int = -1
+            var _holdAppSp: Float = -1f
+
+            var _holdCtxDp: Float = -1f
+            var _holdCtxDpi: Int = -1
+            var _holdCtxSp: Float = -1f
+
+            //default
+            if (_oldSysDp > 0) {
+                sysDisplayMetrics?.apply {
+                    _holdSysDp = density
+                    _holdSysDpi = densityDpi
+                    _holdSysSp = scaledDensity
+
+                    density = _oldSysDp
+                    densityDpi = _oldSysDpi
+                    scaledDensity = _oldSysSp
+                }
+            }
+
+            if (_oldAppDp > 0) {
+                appDisplayMetrics.apply {
+                    _holdAppDp = density
+                    _holdAppDpi = densityDpi
+                    _holdAppSp = scaledDensity
+
+                    density = _oldAppDp
+                    densityDpi = _oldAppDpi
+                    scaledDensity = _oldAppSp
+                }
+            }
+
+            if (_oldCtxDp > 0) {
+                contextDisplayMetrics.apply {
+                    _holdCtxDp = density
+                    _holdCtxDpi = densityDpi
+                    _holdCtxSp = scaledDensity
+
+                    density = _oldCtxDp
+                    densityDpi = _oldCtxDpi
+                    scaledDensity = _oldCtxSp
+                }
+            }
+
+            //do
+            val result = action()
+
+            //restore
+            if (_oldSysDp > 0) {
+                sysDisplayMetrics?.apply {
+                    density = _holdSysDp
+                    densityDpi = _holdSysDpi
+                    scaledDensity = _holdSysSp
+                }
+            }
+
+            if (_oldAppDp > 0) {
+                appDisplayMetrics.apply {
+                    density = _holdAppDp
+                    densityDpi = _holdAppDpi
+                    scaledDensity = _holdAppSp
+                }
+            }
+
+            if (_oldCtxDp > 0) {
+                contextDisplayMetrics.apply {
+                    density = _holdCtxDp
+                    densityDpi = _holdCtxDpi
+                    scaledDensity = _holdCtxSp
+                }
+            }
+
+            return result
+        }
     }
 
     /**指定原始的宽度. 小于0默认是屏幕宽度*/
@@ -79,7 +166,10 @@ class DslDensityAdapter {
 
     var _context: Context? = null
 
-    /**开始适配*/
+    /**开始适配
+     * [context] 如果是[Application]级别的上下文, 那么只会影响部分资源
+     * 推荐使用[Activity]级别的上下文
+     * */
     fun adapter(context: Context) {
         _context = context
 
@@ -124,7 +214,7 @@ class DslDensityAdapter {
         val adapterDpi: Int = appDisplayMetrics.densityDpi
         val adapterSp = appDisplayMetrics.scaledDensity
 
-        L.w("density:$_oldAppDp $adapterDp densityDpi:$_oldAppDpi $adapterDpi scaledDensity:$_oldAppSp $adapterSp")
+        L.w("density:$_oldAppDp->$adapterDp densityDpi:$_oldAppDpi->$adapterDpi scaledDensity:$_oldAppSp->$adapterSp")
     }
 
     fun DisplayMetrics.adapter(defDp: Float, defSp: Float) {
@@ -157,7 +247,8 @@ fun Context.densityRestore() {
     DslDensityAdapter.restore(this)
 }
 
-/**将设备的宽度, 适配到指定的宽度*/
+/**将设备的宽度, 适配到指定的宽度
+ * [densityAdapter(340)]*/
 fun Context.densityAdapter(targetWidth: Int, targetDensity: Float = 1f) {
     DslDensityAdapter().apply {
         adapterWidth = targetWidth
@@ -172,4 +263,8 @@ fun Context.densityAdapterFrom(width: Int) {
         originWidth = width
         adapter(this@densityAdapterFrom)
     }
+}
+
+fun <T> Context.defaultDensityAdapter(action: () -> T): T {
+    return DslDensityAdapter.useDefault(this, action)
 }

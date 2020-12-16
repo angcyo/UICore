@@ -40,7 +40,7 @@ class MenuConfig {
     }
 
     /**菜单配置*/
-    var configMenu: (PopupMenu, Menu) -> Unit = { _, _ -> }
+    var configMenuAction: (PopupMenu, Menu) -> Unit = { _, _ -> }
 
     /**菜单点击事件*/
     var menuItemClickAction: ((item: MenuItem) -> Boolean)? = null
@@ -57,7 +57,7 @@ fun MenuConfig.show(context: Context): PopupMenu {
         if (showIcon) {
             setOptionalIconsVisible()
         }
-        config.configMenu(this, menu)
+        config.configMenuAction(this, menu)
 
         setOnMenuItemClickListener {
             config.menuItemClickAction?.invoke(it) ?: false

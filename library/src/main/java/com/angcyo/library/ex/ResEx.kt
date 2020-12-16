@@ -11,6 +11,7 @@ import androidx.annotation.*
 import androidx.core.content.ContextCompat
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.component.defaultDensityAdapter
 
 /**
  *
@@ -22,13 +23,15 @@ import com.angcyo.library.app
 
 /**获取状态栏高度*/
 fun Context.getStatusBarHeight(): Int {
-    val resources = resources
-    var result = 0
-    val resourceId: Int = resources.getIdentifier("status_bar_height", "dimen", "android")
-    if (resourceId > 0) {
-        result = resources.getDimensionPixelSize(resourceId)
+    return defaultDensityAdapter {
+        val resources = resources
+        var result = 0
+        val resourceId: Int = resources.getIdentifier("status_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            result = resources.getDimensionPixelSize(resourceId)
+        }
+        result
     }
-    return result
 }
 
 /**
@@ -37,11 +40,13 @@ fun Context.getStatusBarHeight(): Int {
  * @see [navBarHeight]
  */
 fun Context.getNavBarHeight(): Int {
-    val resources = resources
-    val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
-    return if (resourceId > 0) {
-        resources.getDimensionPixelSize(resourceId)
-    } else 0
+    return defaultDensityAdapter {
+        val resources = resources
+        val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            resources.getDimensionPixelSize(resourceId)
+        } else 0
+    }
 }
 
 /**

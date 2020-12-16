@@ -79,8 +79,7 @@ open class TitleWrapLayout(context: Context, attributeSet: AttributeSet? = null)
         for (i in 0 until count) {
             val child = getChildAt(i)
             if (child.visibility != View.GONE) {
-                val lp =
-                    child.layoutParams as LayoutParams
+                val lp = child.layoutParams as LayoutParams
                 val width = child.measuredWidth
                 val height = child.measuredHeight
                 var childLeft: Int
