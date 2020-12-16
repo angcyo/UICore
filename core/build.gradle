@@ -8,7 +8,8 @@ dependencies {
     api project(allModule.viewmodel)
 
     //https://github.com/tiann/FreeReflection
-    implementation 'me.weishu:free_reflection:2.2.0'
+    //https://jcenter.bintray.com/me/weishu/free_reflection/
+    implementation 'me.weishu:free_reflection:3.0.1'
 
     //浮窗权限 https://github.com/czy1121/settingscompat
     api 'com.github.czy1121:settingscompat:1.1.4'
