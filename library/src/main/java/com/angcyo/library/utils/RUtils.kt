@@ -330,15 +330,23 @@ object RUtils {
         return getLongNumFromStr("ro.miui.ui.version.name".getSystemProperty())
     }
 
-    /**支持负数*/
-    fun getLongNumFromStr(str: String?): Long? =
+    /**支持负数
+     * [str] 需要提取的字符串
+     * [positive] 是否只获取正数, 否则会支持负数*/
+    fun getLongNumFromStr(str: String?, positive: Boolean = false): Long? = if (positive)
+        str?.patternList("\\d+")?.firstOrNull()?.toLongOrNull()
+    else
         str?.patternList("[-]?\\d+")?.firstOrNull()?.toLongOrNull()
 
     /**
      * "V>=0.89-.128 89.128"
      * 支持正负浮点数
+     * [str] 需要提取的字符串
+     * [positive] 是否只获取正数, 否则会支持负数
      * */
-    fun getFloatNumFromStr(str: String?): Float? =
+    fun getFloatNumFromStr(str: String?, positive: Boolean = false): Float? = if (positive)
+        str?.patternList("[\\d.]*\\d+")?.firstOrNull()?.toFloatOrNull()
+    else
         str?.patternList("[-]?[\\d.]*\\d+")?.firstOrNull()?.toFloatOrNull()
 
     /**
@@ -601,5 +609,8 @@ fun Context.getIMEI(
 
 fun String.getSystemProperty() = RUtils.getSystemProperty(this)
 
-fun String?.getLongNum() = RUtils.getLongNumFromStr(this)
-fun String?.getFloatNum() = RUtils.getFloatNumFromStr(this)
+/**[positive] 是否只获取正数, 否则会支持负数*/
+fun String?.getLongNum(positive: Boolean = false) = RUtils.getLongNumFromStr(this, positive)
+
+/**[positive] 是否只获取正数, 否则会支持负数*/
+fun String?.getFloatNum(positive: Boolean = false) = RUtils.getFloatNumFromStr(this, positive)

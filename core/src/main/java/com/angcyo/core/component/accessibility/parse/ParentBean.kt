@@ -1,7 +1,7 @@
 package com.angcyo.core.component.accessibility.parse
 
 /**
- * 递归parent查询满足条件的节点
+ * 递归parent.parent.parent查询满足条件的节点
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/10/19
@@ -12,6 +12,9 @@ data class ParentBean(
     /**
      * [+1] parent往下查找
      * [-1] parent往上查找
+     *
+     * [+3] parent往下第3个兄弟node开始到parent的child end枚举查找
+     * [-3] parent往上第3个兄弟node开始到parent的第0个child枚举查找
      * */
     var path: String? = "+1",
 

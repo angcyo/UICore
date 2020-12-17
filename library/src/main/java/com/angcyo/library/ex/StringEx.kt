@@ -303,17 +303,24 @@ fun String?.isTextMimeType(): Boolean {
     return this?.startsWith("text", true) ?: false
 }
 
-/**获取字符串中所有匹配的数据(部分匹配), 更像是contains的关系*/
 fun CharSequence?.patternList(
     regex: String?,
+    orNoFind: String? = null /*未找到时, 默认*/
+): MutableList<String> {
+    return this.patternList(regex?.toPattern(), orNoFind)
+}
+
+/**获取字符串中所有匹配的数据(部分匹配), 更像是contains的关系*/
+fun CharSequence?.patternList(
+    pattern: Pattern?,
     orNoFind: String? = null /*未找到时, 默认*/
 ): MutableList<String> {
     val result = mutableListOf<String>()
     if (this == null) {
         return result
     }
-    regex?.let {
-        val matcher = regex.toPattern().matcher(this)
+    pattern?.let {
+        val matcher = it.matcher(this)
         var isFind = false
         while (matcher.find()) {
             isFind = true
@@ -326,8 +333,12 @@ fun CharSequence?.patternList(
     return result
 }
 
-/**是否匹配成功(完成匹配)*/
 fun CharSequence?.pattern(regex: String?, allowEmpty: Boolean = true): Boolean {
+    return pattern(regex?.toPattern(), allowEmpty)
+}
+
+/**是否匹配成功(完成匹配)*/
+fun CharSequence?.pattern(pattern: Pattern?, allowEmpty: Boolean = true): Boolean {
 
     if (TextUtils.isEmpty(this)) {
         if (allowEmpty) {
@@ -338,13 +349,13 @@ fun CharSequence?.pattern(regex: String?, allowEmpty: Boolean = true): Boolean {
     if (this == null) {
         return false
     }
-    if (regex == null) {
+    if (pattern == null) {
         if (allowEmpty) {
             return true
         }
         return !TextUtils.isEmpty(this)
     }
-    val matcher = regex.toPattern().matcher(this)
+    val matcher = pattern.matcher(this)
     return matcher.matches()
 }
 

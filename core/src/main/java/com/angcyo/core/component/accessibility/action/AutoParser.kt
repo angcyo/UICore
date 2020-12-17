@@ -986,7 +986,7 @@ open class AutoParser {
             parseResult.nodeList.addAll(finishResult)
             if (isDebug()) {
                 autoParseAction.handleActionLog(buildString {
-                    append("命中(${finishResult.size})↓")
+                    append("命中(count=${finishResult.size}) first↓")
                     appendLine()
                     append(constraintBean.toJson {
                         default()
@@ -1339,9 +1339,53 @@ open class AutoParser {
         val parent = parsePath("<1", node)
         if (parent != null) {
             //再拿到需要搜索的根节点
-            val target = parsePath(path, parent)
 
-            if (target == null) {
+            fun findNodeByTarget(
+                findPath: String,
+                findByNode: AccessibilityNodeInfoCompat
+            ): Boolean /*返回值, 表示是否需要继续递归parent*/ {
+                val target = parsePath(findPath, findByNode)
+
+                if (target == null) {
+                    return true
+                } else {
+                    //开始查询
+
+                    for (constraint in constraintList) {
+                        val parseResult = ParseResult(constraint, constraintList)
+                        findConstraintNodeByRootNode(
+                            service,
+                            autoParseAction,
+                            target.unwrap(),
+                            parseResult
+                        )
+                        parseResult.resultHandleNodeList().apply {
+                            if (this?.isNotEmpty() == true) {
+                                result.addAll(this)
+                            }
+                        }
+                    }
+
+                    if (result.isNotEmpty()) {
+                        //查找到了
+                        return false
+                    } else {
+                        //没有查找到, 继续枚举其他兄弟node
+                        val newPath: String
+                        val newIndex = (findPath.getLongNum(true) ?: 0) + 1
+                        if (findPath.startsWith("-")) {
+                            newPath = "-${newIndex}"
+                        } else if (findPath.startsWith("+")) {
+                            newPath = "+${newIndex}"
+                        } else {
+                            return true
+                        }
+                        return findNodeByTarget(newPath, findByNode)
+                    }
+                }
+            }
+
+            if (findNodeByTarget(path, parent)) {
                 parseParentNode(
                     service,
                     autoParseAction,
@@ -1350,38 +1394,6 @@ open class AutoParser {
                     depth + 1,
                     result
                 )
-            } else {
-                //开始查询
-
-                for (constraint in constraintList) {
-                    val parseResult = ParseResult(constraint, constraintList)
-                    findConstraintNodeByRootNode(
-                        service,
-                        autoParseAction,
-                        target.unwrap(),
-                        parseResult
-                    )
-                    parseResult.resultHandleNodeList().apply {
-                        if (this?.isNotEmpty() == true) {
-                            result.addAll(this)
-                        }
-                    }
-                }
-
-                if (result.isNotEmpty()) {
-                    //查找到了
-                    return
-                } else {
-                    //没有查找到, 继续递归parent查询
-                    parseParentNode(
-                        service,
-                        autoParseAction,
-                        parent,
-                        parentBean,
-                        depth + 1,
-                        result
-                    )
-                }
             }
         }
     }
