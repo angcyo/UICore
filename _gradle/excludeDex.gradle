@@ -1,0 +1,90 @@
+import java.util.regex.Pattern
+
+/**
+ * Email:angcyo@126.com
+ * 打包APK时, 排除 [makDex.gradle] 配置的类
+ * @author angcyo* @date 2019/09/19
+ * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
+ */
+
+ext.excludeConfig = [
+        "enable": "false"
+]
+
+def excludeDexAction = { Task task ->
+    task.doLast {
+        if (excludeConfig.enable == "true") {
+
+            def buildFlavors = pick(task.name, '(?<=compile).*(?=JavaWithJavac)')
+
+            def buildDir = project.buildDir.getAbsolutePath()
+            def javaClassPath = "$buildDir/intermediates/javac/$buildFlavors/classes/"
+            def kotlinClassPath = "$buildDir/tmp/kotlin-classes/$buildFlavors/"
+
+            deleteFile(javaClassPath)
+            deleteFile(kotlinClassPath)
+        }
+    }
+}
+
+afterEvaluate {
+    if (excludeConfig.enable == "true") {
+
+        def targets = []
+
+        project.tasks.each {
+            def name = it.name
+            if (!name.contains("Debug") && name.endsWith("JavaWithJavac")) {
+                targets.add(it)
+            }
+        }
+
+        targets.each {
+            excludeDexAction(it)
+        }
+    }
+}
+
+def deleteFile(String path) {
+    def originPath = path.replace("\\", "/")
+
+    def includePackageNames = dexConfig.includePackageNames
+    def excludePackageNames = dexConfig.excludePackageNames
+
+    fileTree(path).each {
+        def fullPath = it.getAbsolutePath().replace("\\", "/")
+
+        def fileName = pick(fullPath, "(?<=$originPath).*")
+
+        if (it.isFile()) {
+            def classPath = fileName
+
+            def include = includePackageNames.any {
+                classPath.startsWith(it)
+            }
+
+            if (include) {
+                include = !excludePackageNames.any {
+                    classPath.startsWith(it) || Pattern.compile(it).matcher(classPath).matches()
+                }
+            }
+
+            if (include) {
+                error "剔除: $classPath ${it.delete()}"
+            }
+        }
+    }
+}
+
+static def pick(String source, String regex) {
+    def matcher = Pattern.compile(regex).matcher(source)
+    if (matcher.find()) {
+        return matcher.group()
+    } else {
+        return ""
+    }
+}
+
+static def error(Object msg) {
+    System.err.println msg
+}

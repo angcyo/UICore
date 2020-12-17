@@ -169,10 +169,12 @@ android {
         jvmTarget = "1.8"
     }
 
-    //android.packageBuildConfig = false
-    //https://stackoverflow.com/questions/63072764/android-packagebuildconfig-false-is-deprecated
-    buildFeatures {
-        buildConfig = true
+    if (gradle.gradleVersion.startsWith("6")) {
+        //android.packageBuildConfig = false
+        //https://stackoverflow.com/questions/63072764/android-packagebuildconfig-false-is-deprecated
+        buildFeatures {
+            buildConfig = true
+        }
     }
 
     /*Gradle3.0 以下的方法*/
@@ -231,10 +233,10 @@ android {
         /*Gradle3.3 以上的方法*/
         applicationVariants.all { variant ->
             if (variant.buildType.name != "debug") {
-                variant.packageApplicationProvider.get()?.outputDirectory = apkFolder
+                variant.packageApplication.outputDirectory = apkFolder
             }
 
-            variant.packageApplicationProvider.get()?.outputScope?.apkDatas?.forEach { apkData ->
+            variant.packageApplication.outputScope?.apkDatas?.forEach { apkData ->
                 apkData.outputFileName = formatApkName(apkFormatName,
                         _app_name,
                         variant.versionName,
@@ -285,7 +287,7 @@ dependencies {
 
     //https://stackoverflow.com/questions/51957944/android-view-viewonunhandledkeyeventlistener
     //https://github.com/DonaldDu/FixUnhandledEvent/
-    debugImplementation 'com.github.DonaldDu:FixUnhandledEvent:1.0'
+    debugImplementation 'com.github.DonaldDu:FixUnhandledEvent:1.0.1'
 }
 
 apply from: allGradle.version
