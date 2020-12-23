@@ -57,9 +57,6 @@ abstract class BasePermissionsActivity : BaseCoreAppCompatActivity() {
                         it.permission
                     }) {
                         if (it) {
-                            this@BasePermissionsActivity.dslFHelper {
-                                removeAll()
-                            }
                             onPermissionGranted()
                         } else {
                             onPermissionDenied()
@@ -102,7 +99,10 @@ abstract class BasePermissionsActivity : BaseCoreAppCompatActivity() {
 
     /**权限通过*/
     open fun onPermissionGranted() {
-
+        dslFHelper {
+            finishActivityOnLastFragmentRemove = true
+            removeAll()
+        }
     }
 
     /**权限拒绝*/
