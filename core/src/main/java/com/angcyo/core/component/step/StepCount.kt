@@ -58,7 +58,7 @@ class StepCount : StepCountListener {
      * 更新步数，通过接口函数通过上层调用者
      */
     fun notifyListener() {
-        L.i("countStep", "数据更新")
+        L.i("countStep", "数据更新:$mCount")
         stepValuePassListener?.stepChanged(mCount) //当前步数通过接口传递给调用者
     }
 
