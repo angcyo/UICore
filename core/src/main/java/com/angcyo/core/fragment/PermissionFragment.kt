@@ -7,6 +7,7 @@ import com.angcyo.core.R
 import com.angcyo.core.activity.PermissionBean
 import com.angcyo.dsladapter.renderItem
 import com.angcyo.library.getAppName
+import com.angcyo.tablayout.screenWidth
 import com.angcyo.widget.recycler.dslAdapter
 
 
@@ -42,6 +43,9 @@ class PermissionFragment : BaseFragment() {
 
             layoutManager = GridLayoutManager(
                 fContext(), when {
+                    screenWidth <= 640 && count % 2 == 0 -> 2
+                    screenWidth <= 640 && count >= 4 -> 2
+                    screenWidth <= 640 -> 1
                     count > 4 -> 3
                     count == 4 -> 2
                     count <= 3 -> 1
