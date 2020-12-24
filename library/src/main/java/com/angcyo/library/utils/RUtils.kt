@@ -386,7 +386,7 @@ object RUtils {
                 val cellInfoList = tm.allCellInfo
                 if (null != cellInfoList) {
                     for (cellInfo in cellInfoList) {
-                        L.i(cellInfo)
+                        L.d(cellInfo)
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && cellInfo is CellInfoTdscdma) {
                             dbm = cellInfo.cellSignalStrength.dbm
                         } else if (cellInfo is CellInfoGsm) {

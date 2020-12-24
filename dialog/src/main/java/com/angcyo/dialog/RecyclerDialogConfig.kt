@@ -28,7 +28,7 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
     var dialogSelectorModel: Int = ItemSelectorHelper.MODEL_NORMAL
 
     /**最大的高度*/
-    var dialogMaxHeight: String = "0.5sh"
+    var dialogMaxHeight: String? = "0.5sh"
 
     //包裹取消按钮的布局id
     var _cancelItemWrapLayoutId = R.id.lib_dialog_root_layout
