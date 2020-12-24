@@ -25,7 +25,10 @@ class UUIDInterceptor : Interceptor {
             .addHeader("androidId", Device.androidId)
             .apply {
                 if (app().havePermissions(Manifest.permission.READ_PHONE_STATE)) {
-                    addHeader("imei", app().getIMEI(log = false) ?: "")
+                    val imei = app().getIMEI(log = false) ?: ""
+                    if (imei.isNotEmpty()) {
+                        addHeader("imei", app().getIMEI(log = false) ?: "")
+                    }
                 }
             }
             .build()
