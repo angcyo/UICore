@@ -162,7 +162,7 @@ fun Array<*>.connect(
 }
 
 /**分割字符串*/
-fun String?.splitList(
+fun CharSequence?.splitList(
     separator: String = ",",
     allowEmpty: Boolean = false,
     checkExist: Boolean = false,
@@ -171,7 +171,7 @@ fun String?.splitList(
     val result = mutableListOf<String>()
 
     if (this.isNullOrEmpty()) {
-    } else if (this.toLowerCase() == "null") {
+    } else if (this.toString().toLowerCase() == "null") {
     } else if (separator.isNullOrEmpty()) {
     } else {
         for (s in this.split(separator.toRegex(), Int.MAX_VALUE)) {

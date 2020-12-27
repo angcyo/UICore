@@ -34,7 +34,7 @@ fun EditText.showSoftInput() {
     isFocusable = true
     requestFocus()
     val manager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    manager.showSoftInput(this, 0)
+    manager.showSoftInput(this, InputMethodManager.SHOW_FORCED)
 }
 
 /**是否是密码输入类型*/

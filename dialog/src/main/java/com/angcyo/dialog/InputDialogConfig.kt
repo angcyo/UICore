@@ -4,6 +4,8 @@ import android.app.Dialog
 import android.content.Context
 import android.text.InputFilter
 import android.text.InputType
+import android.text.InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE
+import android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE
 import android.view.Gravity
 import android.view.View
 import android.widget.EditText
@@ -91,7 +93,7 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
         _configView(editView, indicatorView, positiveButton)
 
         if (showSoftInput) {
-            dialogViewHolder.post { editView?.showSoftInput() }
+            dialogViewHolder.postDelay(60) { editView?.showSoftInput() }
         }
     }
 
@@ -123,6 +125,7 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
 
         //单行or多行
         if (inputViewHeight > 0) {
+            inputType = inputType or TYPE_TEXT_FLAG_MULTI_LINE or TYPE_TEXT_FLAG_IME_MULTI_LINE
             editView?.setWidthHeight(height = inputViewHeight)
             editView?.gravity = Gravity.TOP
             editView?.setSingleLineMode(false)
