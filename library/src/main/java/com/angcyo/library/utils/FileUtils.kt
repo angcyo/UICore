@@ -81,6 +81,21 @@ object FileUtils {
 
         try {
             appRootExternalFolderFile(context, folder, name)?.apply {
+                filePath = writeExternal(this, data, append)
+            }
+        } catch (e: Exception) {
+            L.e("写入文件失败:$e")
+        }
+
+        return filePath
+    }
+
+    fun writeExternal(file: File, data: String, append: Boolean = true): String? {
+        var filePath: String? = null
+
+        try {
+            file.parentFile?.mkdirs()
+            file.apply {
                 filePath = absolutePath
 
                 when {

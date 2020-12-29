@@ -8,6 +8,7 @@ import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.FileUtils
 import com.angcyo.library.utils.fileName
 import kotlinx.coroutines.Dispatchers
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -104,6 +105,10 @@ fun String?.writeTo(
     name: String = logFileName()
 ) {
     DslFileHelper.write(folder, name, this ?: "null")
+}
+
+fun String?.writeTo(file: File, append: Boolean = true) {
+    FileUtils.writeExternal(file, this ?: "null", append)
 }
 
 /**获取文件夹全路径*/
