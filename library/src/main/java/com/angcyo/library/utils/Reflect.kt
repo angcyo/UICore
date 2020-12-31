@@ -4,6 +4,7 @@ import android.text.TextUtils
 import com.angcyo.library.L
 import com.angcyo.library.L.e
 import com.angcyo.library.L.i
+import java.lang.reflect.Field
 import java.util.*
 
 /**
@@ -112,7 +113,7 @@ fun Any?.setMember(
     value: Any?
 ) {
     try {
-        val memberField = cls.getDeclaredField(member!!)
+        val memberField = cls.getDeclaredField(member)
         memberField.isAccessible = true
         memberField[this] = value
     } catch (e: Exception) {
@@ -274,8 +275,7 @@ fun Any?.setFieldValue(clazz: Class<*>, fieldName: String, value: Any?) {
 /**将对象的成员, 放在map里面*/
 fun Any.toMap(): Map<String, String> {
     val objFields = this.javaClass.declaredFields
-    val map: MutableMap<String, String> =
-        HashMap()
+    val map = hashMapOf<String, String>()
     for (f in objFields) {
         try {
             val name = f.name
@@ -289,6 +289,19 @@ fun Any.toMap(): Map<String, String> {
         }
     }
     return map
+}
+
+fun Any.eachField(each: (field: Field, value: Any?) -> Unit) {
+    val objFields = this.javaClass.declaredFields
+    for (f in objFields) {
+        try {
+            f.isAccessible = true
+            val o = f[this]
+            each(f, o)
+        } catch (e: IllegalAccessException) {
+            e.printStackTrace()
+        }
+    }
 }
 
 /**
