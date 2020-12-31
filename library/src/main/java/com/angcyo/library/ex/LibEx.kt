@@ -12,6 +12,7 @@ import java.io.FileWriter
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.*
+import java.util.concurrent.CountDownLatch
 import kotlin.math.min
 import kotlin.random.Random.Default.nextInt
 
@@ -212,4 +213,12 @@ fun <T> List<T>.getOrNull2(index: Int): T? {
         return getOrNull(size + index)
     }
     return getOrNull(index)
+}
+
+/**异步代码, 同步执行. 会阻塞当前线程*/
+fun <R> sync(count: Int = 1, action: (CountDownLatch) -> R?): R? {
+    val latch = CountDownLatch(count)
+    val result = action(latch)
+    latch.await()
+    return result
 }
