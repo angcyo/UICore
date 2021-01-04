@@ -255,14 +255,9 @@ fun File?.isFile(): Boolean = this?.isFile == true
 fun File?.isFolder(): Boolean = this?.isDirectory == true
 
 fun File?.readText() = try {
-    fun File?.readText() = try {
-        if (this?.exists() == true) {
-            this.readText(Charsets.UTF_8)
-        } else {
-            null
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
+    if (this?.exists() == true) {
+        this.readText(Charsets.UTF_8)
+    } else {
         null
     }
 } catch (e: Exception) {
