@@ -19,11 +19,20 @@ import okhttp3.Response
  */
 
 class UUIDInterceptor : Interceptor {
+
+    companion object {
+        val PUBLIC_HEADER = hashMapOf<String, String>()
+    }
+
     override fun intercept(chain: Interceptor.Chain): Response {
         val newRequest = chain.request().newBuilder()
             .addHeader("deviceId", Device.deviceId)
             .addHeader("androidId", Device.androidId)
             .apply {
+                PUBLIC_HEADER.forEach { entry ->
+                    addHeader(entry.key, entry.value)
+                }
+
                 if (app().havePermissions(Manifest.permission.READ_PHONE_STATE)) {
                     val imei = app().getIMEI(log = false) ?: ""
                     if (imei.isNotEmpty()) {
