@@ -66,10 +66,13 @@ fun Any?.hash(): String? {
 }
 
 fun Any.simpleHash(): String {
-    return "${this.javaClass.simpleName}(${this.hash()})"
+    return "${this.simpleClassName()}(${this.hash()})"
 }
 
 fun Any.simpleClassName(): String {
+    if (this is Class<*>) {
+        return this.simpleName
+    }
     return this.javaClass.simpleName
 }
 
