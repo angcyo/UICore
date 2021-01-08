@@ -107,6 +107,10 @@ fun String?.writeTo(
     DslFileHelper.write(folder, name, this ?: "null")
 }
 
+fun File.writeText(data:String?, append: Boolean = true){
+    FileUtils.writeExternal(this, data ?: "null", append)
+}
+
 fun String?.writeTo(file: File, append: Boolean = true) {
     FileUtils.writeExternal(file, this ?: "null", append)
 }
