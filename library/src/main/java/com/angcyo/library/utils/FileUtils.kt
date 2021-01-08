@@ -125,9 +125,11 @@ object FileUtils {
     }
 }
 
+fun uuid() = UUID.randomUUID().toString()
+
 /**随机一个文件名*/
 fun fileNameUUID(suffix: String = ""): String {
-    return UUID.randomUUID().toString() + suffix
+    return "${uuid()}$suffix"
 }
 
 /**获取一个时间文件名*/
