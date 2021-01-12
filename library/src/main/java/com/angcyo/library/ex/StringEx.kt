@@ -473,3 +473,5 @@ fun CharSequence?.have(text: CharSequence): Boolean {
     }
     return this.str() == text.str() || this.contains(text.toString().toRegex())
 }
+
+fun CharSequence.count(char: Char) = count { it == char }

@@ -240,3 +240,8 @@ fun <T> List<T>?.updateHistoryList(value: T?): List<T> {
         }
     }
 }
+
+fun <T> MutableCollection<T>.resetAll(new: Collection<T>) {
+    clear()
+    addAll(new)
+}
