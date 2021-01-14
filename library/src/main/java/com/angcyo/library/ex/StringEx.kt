@@ -475,3 +475,22 @@ fun CharSequence?.have(text: CharSequence): Boolean {
 }
 
 fun CharSequence.count(char: Char) = count { it == char }
+
+
+/**获取分割字符串[partition]之前的全部字符串*/
+fun String.subStart(partition: String, ignoreCase: Boolean = true): String? {
+    val indexOf = indexOf(partition, 0, ignoreCase)
+    if (indexOf == -1) {
+        return null
+    }
+    return substring(0, indexOf)
+}
+
+/**获取分割字符串[partition]之后的全部字符串*/
+fun String.subEnd(partition: String, ignoreCase: Boolean = true): String? {
+    val indexOf = indexOf(partition, 0, ignoreCase)
+    if (indexOf == -1) {
+        return null
+    }
+    return substring(indexOf + 1, length)
+}
