@@ -609,8 +609,25 @@ fun Context.getIMEI(
 
 fun String.getSystemProperty() = RUtils.getSystemProperty(this)
 
-/**[positive] 是否只获取正数, 否则会支持负数*/
-fun String?.getLongNum(positive: Boolean = false) = RUtils.getLongNumFromStr(this, positive)
+
+///**[positive] 是否只获取正数, 否则会支持负数*/
+//fun String?.getLongNum(positive: Boolean = false) = RUtils.getLongNumFromStr(this, positive)
+//
+///**[positive] 是否只获取正数, 否则会支持负数*/
+//fun String?.getFloatNum(positive: Boolean = false) = RUtils.getFloatNumFromStr(this, positive)
 
 /**[positive] 是否只获取正数, 否则会支持负数*/
-fun String?.getFloatNum(positive: Boolean = false) = RUtils.getFloatNumFromStr(this, positive)
+fun String?.getLongNum(positive: Boolean = false) = getLongNumList(positive)?.firstOrNull()
+
+fun String?.getLongNumList(positive: Boolean = false) = if (positive)
+    this?.patternList("\\d+")?.map { it.toLongOrNull() }
+else
+    this?.patternList("[-]?\\d+")?.map { it.toLongOrNull() }
+
+/**[positive] 是否只获取正数, 否则会支持负数*/
+fun String?.getFloatNum(positive: Boolean = false) = getFloatNumList(positive)?.firstOrNull()
+
+fun String?.getFloatNumList(positive: Boolean = false) = if (positive)
+    this?.patternList("[\\d.]*\\d+")?.map { it.toFloatOrNull() }
+else
+    this?.patternList("[-]?[\\d.]*\\d+")?.map { it.toFloatOrNull() }
