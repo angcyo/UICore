@@ -487,8 +487,8 @@ fun String.subStart(partition: String, ignoreCase: Boolean = true): String? {
 }
 
 /**获取分割字符串[partition]之后的全部字符串*/
-fun String.subEnd(partition: String, ignoreCase: Boolean = true): String? {
-    val indexOf = indexOf(partition, 0, ignoreCase)
+fun String.subEnd(partition: String, fromLast: Boolean = false, ignoreCase: Boolean = true): String? {
+    val indexOf = if (fromLast) lastIndexOf(partition, lastIndex, ignoreCase) else indexOf(partition, 0, ignoreCase)
     if (indexOf == -1) {
         return null
     }

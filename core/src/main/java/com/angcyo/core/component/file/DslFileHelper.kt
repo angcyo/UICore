@@ -107,12 +107,19 @@ fun String?.writeTo(
     DslFileHelper.write(folder, name, this ?: "null")
 }
 
-fun File.writeText(data:String?, append: Boolean = true){
+fun File.writeText(data: String?, append: Boolean = true) {
     FileUtils.writeExternal(this, data ?: "null", append)
 }
 
-fun String?.writeTo(file: File, append: Boolean = true) {
+fun String?.writeTo(file: File, append: Boolean = true) =
     FileUtils.writeExternal(file, this ?: "null", append)
+
+fun String?.writeTo(filePath: String, append: Boolean = true): String? {
+    val file = filePath.file()
+    if (file != null) {
+        return FileUtils.writeExternal(file, this ?: "null", append)
+    }
+    return null
 }
 
 /**获取文件夹全路径*/
