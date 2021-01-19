@@ -4,6 +4,7 @@ import android.app.Application
 import android.graphics.Point
 import android.graphics.PointF
 import com.angcyo.library.BuildConfig
+import com.angcyo.library.component.ThreadExecutor.onMain
 import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.RUtils
 import com.angcyo.library.utils.protector.EmulatorCheckUtil
@@ -13,6 +14,7 @@ import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.*
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.min
 import kotlin.random.Random.Default.nextInt
 
@@ -219,11 +221,22 @@ fun <T> List<T>.getOrNull2(index: Int): T? {
 }
 
 /**异步代码, 同步执行. 会阻塞当前线程*/
-fun <R> sync(count: Int = 1, action: (CountDownLatch) -> R?): R? {
+fun <R> sync(count: Int = 1, action: (CountDownLatch, AtomicReference<R>) -> Unit): R? {
     val latch = CountDownLatch(count)
-    val result = action(latch)
+    val result = AtomicReference<R>()
+    action(latch, result)
     latch.await()
-    return result
+    return result.get()
+}
+
+/**在子线程等待主线程的同步结果*/
+fun <R> syncBack(onMainAction: () -> R?): R? {
+    return sync { countDownLatch, atomicReference ->
+        onMain {
+            atomicReference.set(onMainAction())
+            countDownLatch.countDown()
+        }
+    }
 }
 
 /**更新具有历史属性的[List]*/
