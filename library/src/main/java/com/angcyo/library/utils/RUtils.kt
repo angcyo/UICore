@@ -619,15 +619,31 @@ fun String.getSystemProperty() = RUtils.getSystemProperty(this)
 /**[positive] 是否只获取正数, 否则会支持负数*/
 fun String?.getLongNum(positive: Boolean = false) = getLongNumList(positive)?.firstOrNull()
 
-fun String?.getLongNumList(positive: Boolean = false) = if (positive)
-    this?.patternList("\\d+")?.map { it.toLongOrNull() }
+fun String?.getLongNumList(positive: Boolean = false) = (if (positive)
+    this?.patternList("\\d+")
 else
-    this?.patternList("[-]?\\d+")?.map { it.toLongOrNull() }
+    this?.patternList("[-]?\\d+"))?.run {
+    val result = mutableListOf<Long>()
+    for (str in this) {
+        str.toLongOrNull()?.let {
+            result.add(it)
+        }
+    }
+    result
+}
 
 /**[positive] 是否只获取正数, 否则会支持负数*/
 fun String?.getFloatNum(positive: Boolean = false) = getFloatNumList(positive)?.firstOrNull()
 
-fun String?.getFloatNumList(positive: Boolean = false) = if (positive)
-    this?.patternList("[\\d.]*\\d+")?.map { it.toFloatOrNull() }
+fun String?.getFloatNumList(positive: Boolean = false) = (if (positive)
+    this?.patternList("[\\d.]*\\d+")
 else
-    this?.patternList("[-]?[\\d.]*\\d+")?.map { it.toFloatOrNull() }
+    this?.patternList("[-]?[\\d.]*\\d+"))?.run {
+    val result = mutableListOf<Float>()
+    for (str in this) {
+        str.toFloatOrNull()?.let {
+            result.add(it)
+        }
+    }
+    result
+}

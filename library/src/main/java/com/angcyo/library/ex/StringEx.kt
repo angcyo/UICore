@@ -19,6 +19,7 @@ import com.angcyo.library.app
 import com.angcyo.library.utils.PATTERN_MOBILE_SIMPLE
 import java.net.URLDecoder
 import java.net.URLEncoder
+import java.util.Base64.getDecoder
 import java.util.regex.Pattern
 
 /**
@@ -487,14 +488,24 @@ fun String.subStart(partition: String, ignoreCase: Boolean = true): String? {
 }
 
 /**获取分割字符串[partition]之后的全部字符串*/
-fun String.subEnd(partition: String, fromLast: Boolean = false, ignoreCase: Boolean = true): String? {
-    val indexOf = if (fromLast) lastIndexOf(partition, lastIndex, ignoreCase) else indexOf(partition, 0, ignoreCase)
+fun String.subEnd(
+    partition: String,
+    fromLast: Boolean = false,
+    ignoreCase: Boolean = true
+): String? {
+    val indexOf = if (fromLast) lastIndexOf(partition, lastIndex, ignoreCase) else indexOf(
+        partition,
+        0,
+        ignoreCase
+    )
     if (indexOf == -1) {
         return null
     }
     return substring(indexOf + 1, length)
 }
 
-fun String.base64Encode(): String = java.util.Base64.getEncoder().encodeToString(toByteArray(Charsets.UTF_8))
+fun String.base64Encode(): String =
+    Base64.encodeToString(toByteArray(Charsets.UTF_8), Base64.NO_WRAP)
 
-fun String.base64Decoder(): String = java.util.Base64.getDecoder().decode(toByteArray(Charsets.UTF_8)).toString(Charsets.UTF_8)
+fun String.base64Decoder(): String =
+    Base64.decode(toByteArray(Charsets.UTF_8), Base64.NO_WRAP).toString(Charsets.UTF_8)
