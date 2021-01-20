@@ -494,3 +494,7 @@ fun String.subEnd(partition: String, fromLast: Boolean = false, ignoreCase: Bool
     }
     return substring(indexOf + 1, length)
 }
+
+fun String.base64Encode(): String = java.util.Base64.getEncoder().encodeToString(toByteArray(Charsets.UTF_8))
+
+fun String.base64Decoder(): String = java.util.Base64.getDecoder().decode(toByteArray(Charsets.UTF_8)).toString(Charsets.UTF_8)
