@@ -327,3 +327,8 @@ inline fun <reified T> String?.fromJson2(): T? =
     gson().fromJson<T>(this, object : TypeToken<T>() {}.type)
 
 //</editor-fold desc="Json 解析">
+
+/**使用json进行深拷贝*/
+fun <T> T.copyByJson(classOfT: Class<T>): T {
+    return toJson().fromJson<T>(classOfT)!!
+}
