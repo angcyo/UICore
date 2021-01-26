@@ -468,7 +468,10 @@ fun String?.md5(): String? {
 }
 
 /**[CharSequence]中是否包含指定[text]*/
-fun CharSequence?.have(text: CharSequence): Boolean {
+fun CharSequence?.have(text: CharSequence?): Boolean {
+    if (text == null) {
+        return false
+    }
     if (this == null) {
         return false
     }
