@@ -55,8 +55,8 @@ fun doMain(action: () -> Unit) {
 }
 
 /**在子线程回调*/
-fun doBack(action: () -> Unit) {
-    if (isMain()) {
+fun doBack(check: Boolean = true, action: () -> Unit) {
+    if (!check || isMain()) {
         runRx({ action();true })
     } else {
         action()
