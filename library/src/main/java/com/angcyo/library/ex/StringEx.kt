@@ -512,3 +512,21 @@ fun String.base64Encode(): String =
 
 fun String.base64Decoder(): String =
     Base64.decode(toByteArray(Charsets.UTF_8), Base64.NO_WRAP).toString(Charsets.UTF_8)
+
+/**将字符串展示成密码形式[xx****xx]
+ * [beforeCount] 首至少显示多少个字符
+ * [afterCount] 尾至少显示多少个字符
+ * [secureCount] 星星的数量
+ * */
+fun CharSequence.toSecureShow(beforeCount: Int = 2, afterCount: Int = 2, secureCount: Int = 4): String {
+    val p: StringBuilder = StringBuilder()
+    for (i in 0 until secureCount) {
+        p.append("*")
+    }
+    if (length < beforeCount + afterCount) {
+        return p.toString()
+    }
+    val start = substring(0, kotlin.math.min(beforeCount, length))
+    val end = substring(kotlin.math.max(length - afterCount, 0), length)
+    return "$start$p$end"
+}
