@@ -4,8 +4,8 @@
 
 def schema = project.hasProperty("schema") ? project.ext.schema : 'default'
 
-static def getApplicationId(rootProject) {
-    def applicationId = ''
+static def getApplicationIdList(rootProject) {
+    def appList = []
     def childProjects = rootProject.getChildProjects()
     childProjects.each {
         def application = "com.android.application"
@@ -15,10 +15,10 @@ static def getApplicationId(rootProject) {
 
         if (isApp) {
             def applicationPlugin = projectObj.plugins.findPlugin(application)
-            applicationId = applicationPlugin.extension.defaultConfig.applicationId
+            appList += applicationPlugin.extension.defaultConfig.applicationId
         }
     }
-    return applicationId
+    return appList
 }
 
 //https://docs.gradle.org/current/dsl/org.gradle.api.tasks.Exec.html
@@ -32,8 +32,21 @@ task _pullSchemaFolder(type: Exec) {
     }
     doFirst {
         file.mkdirs()
-        def appId = getApplicationId(rootProject)
-        commandLine 'adb', 'pull', "/sdcard/android/data/${appId}/files/${schema}/", './'
+        def appIdList = getApplicationIdList(rootProject)
+        println "准备pull:$appIdList -> " + file.absolutePath
+
+        try {
+            exec {
+                appIdList.forEach {
+                    commandLine 'adb', 'pull', "/sdcard/android/data/${it}/files/${schema}/", file.absolutePath
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace()
+        }
+
+        def target = "/sdcard/android/data/${appIdList.first()}/files/${schema}/"
+        commandLine 'adb', 'pull', target, './'
     }
     doLast {
         println "执行结束,文件在: ${file.absolutePath} ↓"

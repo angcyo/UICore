@@ -2,14 +2,10 @@ package com.angcyo.acc2.core
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityServiceInfo
-import android.content.Intent
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
-import android.view.accessibility.AccessibilityNodeInfo
-import android.view.accessibility.AccessibilityWindowInfo
 import com.angcyo.library.L
 import com.angcyo.library.ex.simpleHash
-import java.lang.ref.WeakReference
 
 /**
  * 无障碍服务分发.
@@ -51,23 +47,22 @@ import java.lang.ref.WeakReference
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 
-abstract class BaseAccessibilityService : AccessibilityService() {
+abstract class BaseAccService : AccessibilityService() {
 
     companion object {
         var isServiceConnected = false
 
-        var weakService: WeakReference<BaseAccessibilityService>? = null
-
-        val lastService: BaseAccessibilityService? get() = weakService?.get()
+        var lastService: BaseAccService? = null
     }
 
     /**手势处理*/
     var gesture: DslAccessibilityGesture = DslAccessibilityGesture().apply {
-        service = this@BaseAccessibilityService
+        service = this@BaseAccService
     }
 
     override fun onServiceConnected() {
         super.onServiceConnected()
+        L.i("无障碍服务已连接.")
         //AccessibilityHelper.log("onServiceConnected")
         isServiceConnected = true
         serviceInfo.apply {
@@ -79,7 +74,7 @@ abstract class BaseAccessibilityService : AccessibilityService() {
             flags = flags or AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS
             serviceInfo = this
         }
-        weakService = WeakReference(this)
+        lastService = this
     }
 
     /**
@@ -97,9 +92,9 @@ abstract class BaseAccessibilityService : AccessibilityService() {
     override fun onDestroy() {
         super.onDestroy()
         //AccessibilityHelper.log("onDestroy")
+        L.i("无障碍服务已销毁.")
         isServiceConnected = false
-        weakService?.clear()
-        weakService = null
+        lastService = null
     }
 
     override fun onKeyEvent(event: KeyEvent?): Boolean {

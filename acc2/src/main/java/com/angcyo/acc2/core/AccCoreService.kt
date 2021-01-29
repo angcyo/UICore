@@ -7,6 +7,6 @@ package com.angcyo.acc2.core
  * @date 2021/01/29
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-open class AccCoreService : BaseAccessibilityService() {
+open class AccCoreService : BaseAccService() {
 
 }
