@@ -1,0 +1,8 @@
+apply from: allGradle.libBase
+
+dependencies {
+    implementation project(allModule.library)
+
+    //浮窗权限 https://github.com/czy1121/settingscompat
+    implementation 'com.github.czy1121:settingscompat:1.1.4'
+}

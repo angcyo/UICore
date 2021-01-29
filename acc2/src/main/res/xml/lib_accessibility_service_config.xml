@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeAllMask"
+    android:accessibilityFeedbackType="feedbackAllMask"
+    android:accessibilityFlags="flagDefault|flagRetrieveInteractiveWindows|flagIncludeNotImportantViews|flagReportViewIds|flagEnableAccessibilityVolume|flagRequestAccessibilityButton|flagRequestEnhancedWebAccessibility|flagRequestFilterKeyEvents|flagRequestFilterKeyEvents|flagRequestShortcutWarningDialogSpokenFeedback"
+    android:canControlMagnification="true"
+    android:canPerformGestures="true"
+    android:canRequestEnhancedWebAccessibility="true"
+    android:canRequestFilterKeyEvents="true"
+    android:canRequestFingerprintGestures="true"
+    android:canRequestTouchExplorationMode="true"
+    android:canRetrieveWindowContent="true"
+    android:description="@string/lib_accessibility_description"
+    android:interactiveUiTimeout="2000"
+    android:nonInteractiveUiTimeout="2000"
+    android:notificationTimeout="100"
+    android:summary="@string/lib_accessibility_summary" />
+
+    <!--属性说明-->
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_accessibilityEventTypes-->
+
+
+    <!--accessibilityEventTypes:该服务希望接收的事件类型-->
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_accessibilityEventTypes-->
+
+    <!--accessibilityFeedbackType:该服务提供的反馈类型-->
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_accessibilityFeedbackType-->
+
+    <!--accessibilityFlags:标志-->
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_accessibilityFlags-->
+    <!--flagRequestTouchExplorationMode 会拦截手机屏幕所有Touch事件, 造成假死现象.-->
+
+
+    <!--animatedImageDrawable:可访问性服务目的或行为的动画图像-->
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_animatedImageDrawable-->
+
+    <!--canControlMagnification:服务是否要能够控制显示倍率-->
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_canControlMagnification-->
+
+    <!--canPerformGestures:服务是否能够执行手势-->
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_canPerformGestures-->
+
+    <!--canRequestEnhancedWebAccessibility:服务是否能够请求增强的Web可访问性增强功能-->
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_canRequestEnhancedWebAccessibility-->
+
+    <!--canRequestFilterKeyEvents:服务是否能够请求过滤关键事件-->
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_canRequestFilterKeyEvents-->
+
+    <!--canRequestFingerprintGestures:服务是否能够从指纹传感器捕获手势-->
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_canRequestFingerprintGestures-->
+
+    <!--canRequestTouchExplorationMode:服务是否能够请求触摸浏览模式-->
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_canRequestTouchExplorationMode-->
+
+    <!--canRetrieveWindowContent:服务是否能够检索活动窗口内容-->
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_canRetrieveWindowContent-->
+
+    <!--canTakeScreenshot:服务是否要能够截屏-->
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_canTakeScreenshot-->
+
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_htmlDescription-->
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_interactiveUiTimeout-->
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_nonInteractiveUiTimeout-->
+
+    <!--packageNames:逗号分隔的程序包名称，此服务希望从中接收事件（对于所有程序包请忽略）-->
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_packageNames-->
+
+    <!--settingsActivity:活动的组件名称，允许用户修改此服务的设置。不能在运行时更改此设置-->
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_settingsActivity-->
+
+    <!--notificationTimeout:发送给此服务的是两个相同类型的可访问性事件之间以毫秒为单位的最小周期。此设置可以在运行时通过调用来更改-->
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_notificationTimeout-->
+
+    <!--packageNames不写, 接收所有程序包名的无障碍事件-->
+    <!--android:packageNames="com.tencent.mm,com.tencent.mobileqq"-->
+    <!--android:notificationTimeout="10"-->
+    <!--android:packageNames="com.tencent.mm,com.tencent.mobileqq"-->
+
+    <!--设置界面-->
+    <!--android:settingsActivity="com.angcyo.accessibility.RAccessibilityActivity"-->
+
+    <!--控制内容放大功能-->
+    <!--android:canControlMagnification="true"-->
+
+    <!--执行手势-->
+    <!--android:canPerformGestures="true"-->
+    <!--android:canRequestFingerprintGestures="true"-->
+
+    <!--启用网页无障碍增强功能-->
+    <!--android:canRequestEnhancedWebAccessibility="true"-->
+
+    <!--监听按键输入-->
+    <!--android:canRequestFilterKeyEvents="true"-->
+
+    <!--启用触摸浏览-->
+    <!--android:canRequestTouchExplorationMode="true"-->
+
+    <!--可以拿到界面node数据, 很重要的属性, 不设置拿不到node info-->
+    <!--android:canRetrieveWindowContent="true"-->
