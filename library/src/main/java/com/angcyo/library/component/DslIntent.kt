@@ -382,6 +382,10 @@ fun dslIntentQuery(
     return dslIntent.doQuery(context)
 }
 
+fun Context.appBean(packageName: String = this.packageName): AppBean? {
+    return packageName.appBean(this)
+}
+
 fun String.appBean(context: Context = app()): AppBean? {
     return try {
         val packageManager = context.packageManager
