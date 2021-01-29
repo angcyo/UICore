@@ -15,9 +15,9 @@ import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.net.Uri
 import android.os.*
-import com.angcyo.core.component.accessibility.density
-import com.angcyo.core.component.accessibility.displayRealSize
 import com.angcyo.library.L
+import com.angcyo.library.ex.density
+import com.angcyo.library.ex.displayRealSize
 import com.angcyo.library.utils.invokeMethod
 import java.io.File
 import java.io.FileNotFoundException

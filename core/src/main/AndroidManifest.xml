@@ -38,21 +38,6 @@
             android:name="android.vendor.full_screen"
             android:value="true" />
 
-        <!--请在主工程配置[tools:replace="android:enabled,android:exported"]-->
-        <service
-            android:name=".component.accessibility.RAccessibilityService"
-            android:enabled="false"
-            android:exported="false"
-            android:label="@string/lib_accessibility_label"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
-            <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService" />
-            </intent-filter>
-            <meta-data
-                android:name="android.accessibilityservice"
-                android:resource="@xml/lib_accessibility_service_config" />
-        </service>
-
         <!--计步服务-->
         <service
             android:name=".component.step.StepService"

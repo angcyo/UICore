@@ -311,3 +311,15 @@ fun File?.readTextLastLines(
     e.printStackTrace()
     null
 }
+
+fun String.writeText(text: String, append: Boolean = true) = file()?.writeText(text, append)
+
+/**向文件中写入[text]
+ * [append] 是否追加, 否则就是重写*/
+fun File.writeText(text: String, append: Boolean = true) {
+    if (append) {
+        writeText(text)
+    } else {
+        appendText(text)
+    }
+}
