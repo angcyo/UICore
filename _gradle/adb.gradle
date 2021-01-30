@@ -4,6 +4,7 @@
 
 def schema = project.hasProperty("schema") ? project.ext.schema : 'default'
 
+/**通过root工程, 获取child所有子工程对应的application id*/
 static def getApplicationIdList(rootProject) {
     def appList = []
     def childProjects = rootProject.getChildProjects()
@@ -21,10 +22,24 @@ static def getApplicationIdList(rootProject) {
     return appList
 }
 
+/**通过project工程, 获取对应的application id*/
+static def getApplicationId(project) {
+    def appId = ''
+    def application = "com.android.application"
+
+    def isApp = project.plugins.hasPlugin(application)
+
+    if (isApp) {
+        def applicationPlugin = project.plugins.findPlugin(application)
+        appId = applicationPlugin.extension.defaultConfig.applicationId
+    }
+    return appId
+}
+
 //https://docs.gradle.org/current/dsl/org.gradle.api.tasks.Exec.html
 
 /**adb pull 拉取手机sd上[/sdcard/android/data/package_name/files/xxx/]的所有文件*/
-task _pullSchemaFolder(type: Exec) {
+task _pullAllSchemaFolder(type: Exec) {
     def path = '../.pull'
     def file = file(path)
     workingDir(path)
@@ -32,6 +47,7 @@ task _pullSchemaFolder(type: Exec) {
     ext.output = {
         return standardOutput.toString("UTF8")
     }
+
     doFirst {
         file.mkdirs()
         def appIdList = getApplicationIdList(rootProject)
@@ -52,7 +68,7 @@ task _pullSchemaFolder(type: Exec) {
         //def target = "/sdcard/android/data/${appIdList.first()}/files/${schema}/"
         //commandLine 'adb', 'pull', target, './'
 
-        commandLine 'cmd', '/C', 'echo', 'ing...' //'cmd', '/C', 'code', file.absolutePath
+        commandLine 'cmd', '/C', 'echo', 'ing...'
     }
     doLast {
         println "执行结束,文件在->${file.absolutePath}"
@@ -61,12 +77,62 @@ task _pullSchemaFolder(type: Exec) {
 }
 
 /**使用code 打开拉取后的文件夹*/
-task _pullSchemaFolderAndOpen(type: Exec, dependsOn: '_pullSchemaFolder') {
+task _pullAllSchemaFolderAndOpen(type: Exec, dependsOn: '_pullAllSchemaFolder') {
     def path = '../.pull'
     def file = file(path)
     workingDir(path)
     doFirst {
         println "使用VS Code打开->${file.absolutePath}"
         commandLine 'cmd', '/C', 'code', file.absolutePath
+    }
+}
+
+task _rmAllSchemaFolder(type: Exec) {
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString("UTF8")
+    }
+
+    doFirst {
+        def appIdList = getApplicationIdList(rootProject)
+
+        appIdList.forEach { appId ->
+            try {
+                exec {
+                    println "准备rm:$appId"
+                    ignoreExitValue = true
+                    commandLine 'adb', 'shell', 'rm', '-rf', "/sdcard/android/data/${appId}/files/${schema}/"
+                }
+            } catch (Exception e) {
+                System.err.println("异常:${e.message}")
+                e.printStackTrace()
+            }
+        }
+
+        //def target = "/sdcard/android/data/${appIdList.first()}/files/${schema}/"
+        //commandLine 'adb', 'pull', target, './'
+
+        commandLine 'cmd', '/C', 'echo', 'ing...'
+    }
+    doLast {
+        println "执行结束!"
+        println ext.output()
+    }
+}
+
+task _rmSchemaFolder(type: Exec) {
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString("UTF8")
+    }
+    ignoreExitValue = true
+    doFirst {
+        def appId = getApplicationId(project)
+        println "准备rm:$appId"
+        commandLine 'adb', 'shell', 'rm', '-rf', "/sdcard/android/data/${appId}/files/${schema}/"
+    }
+    doLast {
+        println "执行结束!"
+        println ext.output()
     }
 }
