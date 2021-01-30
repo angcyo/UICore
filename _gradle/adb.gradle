@@ -22,6 +22,8 @@ static def getApplicationIdList(rootProject) {
 }
 
 //https://docs.gradle.org/current/dsl/org.gradle.api.tasks.Exec.html
+
+/**adb pull 拉取手机sd上[/sdcard/android/data/package_name/files/xxx/]的所有文件*/
 task _pullSchemaFolder(type: Exec) {
     def path = '../.pull'
     def file = file(path)
@@ -35,21 +37,36 @@ task _pullSchemaFolder(type: Exec) {
         def appIdList = getApplicationIdList(rootProject)
         println "准备pull:$appIdList -> " + file.absolutePath
 
-        try {
-            exec {
-                appIdList.forEach {
-                    commandLine 'adb', 'pull', "/sdcard/android/data/${it}/files/${schema}/", file.absolutePath
+        appIdList.forEach { appId ->
+            try {
+                exec {
+                    ignoreExitValue = true
+                    commandLine 'adb', 'pull', "/sdcard/android/data/${appId}/files/${schema}/", file.absolutePath
                 }
+            } catch (Exception e) {
+                System.err.println("异常:${e.message}")
+                e.printStackTrace()
             }
-        } catch (Exception e) {
-            e.printStackTrace()
         }
 
-        def target = "/sdcard/android/data/${appIdList.first()}/files/${schema}/"
-        commandLine 'adb', 'pull', target, './'
+        //def target = "/sdcard/android/data/${appIdList.first()}/files/${schema}/"
+        //commandLine 'adb', 'pull', target, './'
+
+        commandLine 'cmd', '/C', 'echo', 'ing...' //'cmd', '/C', 'code', file.absolutePath
     }
     doLast {
-        println "执行结束,文件在: ${file.absolutePath} ↓"
+        println "执行结束,文件在->${file.absolutePath}"
         println ext.output()
+    }
+}
+
+/**使用code 打开拉取后的文件夹*/
+task _pullSchemaFolderAndOpen(type: Exec, dependsOn: '_pullSchemaFolder') {
+    def path = '../.pull'
+    def file = file(path)
+    workingDir(path)
+    doFirst {
+        println "使用VS Code打开->${file.absolutePath}"
+        commandLine 'cmd', '/C', 'code', file.absolutePath
     }
 }
