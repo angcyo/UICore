@@ -67,10 +67,12 @@ fun Any?.hash(): String? {
     return this?.hashCode()?.run { Integer.toHexString(this) }
 }
 
+/**[DslButton(677fb48)]*/
 fun Any.simpleHash(): String {
     return "${this.simpleClassName()}(${this.hash()})"
 }
 
+/**[DslButton]*/
 fun Any.simpleClassName(): String {
     if (this is Class<*>) {
         return this.simpleName
@@ -78,6 +80,7 @@ fun Any.simpleClassName(): String {
     return this.javaClass.simpleName
 }
 
+/**[com.angcyo.widget.DslButton]*/
 fun Any.className(): String {
     if (this is Class<*>) {
         return this.name
@@ -155,6 +158,8 @@ fun List<Any?>?.isListEmpty(): Boolean {
         find { it != null } == null
     } ?: true
 }
+
+fun List<*>?.size() = this?.size ?: 0
 
 /**随机从列表中获取一组数据*/
 fun <T> List<T?>?.randomGet(count: Int = nextInt(0, this?.size ?: 1)): List<T> {

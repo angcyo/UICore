@@ -16,7 +16,6 @@ import android.view.Window
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
-import android.view.accessibility.AccessibilityWindowInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.library.L
 import com.angcyo.library._screenHeight
@@ -53,9 +52,14 @@ fun Context.kill(packageName: String): Boolean {
     }
 }
 
-fun sleep(delay: Long, action: Action? = null) {
-    Thread.sleep(delay)
-    action?.invoke()
+fun sleep(delay: Long = 160, action: Action? = null) {
+    try {
+        if (delay > 0) {
+            Thread.sleep(delay)
+        }
+    } finally {
+        action?.invoke()
+    }
 }
 
 fun Rect.toPath(): Path {
@@ -160,7 +164,6 @@ fun List<AccessibilityNodeInfo>.mainNode(): AccessibilityNodeInfo? {
 }
 
 
-
 /**
  * 相当于按返回键
  * */
@@ -227,11 +230,26 @@ fun AccessibilityNodeInfo.id(id: String): String {
     return packageName.id(id)
 }
 
+fun AccessibilityNodeInfoCompat.id(id: String): String {
+    if (packageName == null) {
+        return id
+    }
+    return packageName.id(id)
+}
+
 fun CharSequence.id(id: String): String {
     return if (id.startsWith(this) || id.contains(":")) {
         id
     } else {
         "${this}:id/$id"
+    }
+}
+
+fun CharSequence?.des(): String {
+    return if (this.isNullOrEmpty()) {
+        ""
+    } else {
+        "($this)"
     }
 }
 
@@ -286,9 +304,9 @@ fun AccessibilityNodeInfo.longClick() = performAction(AccessibilityNodeInfo.ACTI
 
 fun AccessibilityNodeInfo.setNodeText(text: CharSequence?): Boolean {
     return try {//AccessibilityNodeInfoCompat.wrap(this).text = text
-        val arguments = Bundle()
         when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> {
+                val arguments = Bundle()
                 arguments.putCharSequence(
                     AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,
                     text
@@ -724,12 +742,41 @@ fun AccessibilityNodeInfoCompat.isImageView() = isClass("android.widget.ImageVie
 fun AccessibilityNodeInfoCompat.isButton() = isClass("android.widget.Button")
 fun AccessibilityNodeInfoCompat.isCheckBox() = isClass("android.widget.CheckBox")
 
-fun AccessibilityNodeInfoCompat.click() = unwrap().click()
-fun AccessibilityNodeInfoCompat.focus() = unwrap().focus()
-fun AccessibilityNodeInfoCompat.longClick() = unwrap().longClick()
-fun AccessibilityNodeInfoCompat.scrollForward() = unwrap().scrollForward()
-fun AccessibilityNodeInfoCompat.scrollBackward() = unwrap().scrollBackward()
-fun AccessibilityNodeInfoCompat.setNodeText(text: CharSequence?) = unwrap().setNodeText(text)
+fun AccessibilityNodeInfoCompat.click() = performAction(AccessibilityNodeInfo.ACTION_CLICK)
+fun AccessibilityNodeInfoCompat.focus() = performAction(AccessibilityNodeInfo.ACTION_FOCUS)
+fun AccessibilityNodeInfoCompat.longClick() = performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)
+fun AccessibilityNodeInfoCompat.scrollForward() =
+    performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+
+fun AccessibilityNodeInfoCompat.scrollBackward() =
+    performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
+
+fun AccessibilityNodeInfoCompat.setNodeText(text: CharSequence?): Boolean {
+    return try {//AccessibilityNodeInfoCompat.wrap(this).text = text
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> {
+                val arguments = Bundle()
+                arguments.putCharSequence(
+                    AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,
+                    text
+                )
+                performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
+            }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 -> {
+                text?.copy()
+                performAction(AccessibilityNodeInfo.ACTION_PASTE)
+            }
+            else -> {
+                this.text = text
+                //tip("设备不支持\n设置文本", R.drawable.lib_ic_error)
+                true
+            }
+        }
+    } catch (e: Exception) {
+        L.e(e)
+        false
+    }
+}
 
 /**是一个有效的Node*/
 fun AccessibilityNodeInfoCompat.isValid(): Boolean {

@@ -14,7 +14,7 @@ import com.angcyo.library.ex.*
  * @date 2021/01/29
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class AccLog {
+class AccNodeLog {
 
     //核心
     var service: AccessibilityService? = BaseAccService.lastService
@@ -28,6 +28,9 @@ class AccLog {
     //输出window的node信息
     var logWindowNode: Boolean = true
 
+    //打印设备屏幕信息
+    var logScreenInfo: Boolean = true
+
     /**
      * 获取所有[AccessibilityWindowInfo]的信息
      * [filter] 过滤不需要日志的[AccessibilityWindowInfo]对象
@@ -40,19 +43,25 @@ class AccLog {
      * AccessibilityWindowInfo[title=车队智能辅助, id=821, type=TYPE_APPLICATION, layer=0, bounds=Rect(0, 0 - 1080, 1920), focused=true, active=true, pictureInPicture=false, hasParent=false, isAnchored=false, hasChildren=false]
      * */
     fun getAccessibilityWindowLog(): StringBuilder {
-        service?.windows?.forEachIndexed { index, accessibilityWindowInfo ->
-            if (filterWindow(accessibilityWindowInfo)) {
-                //忽略当前窗口
-            } else {
-                outBuilder.append("$index->")
-                if (accessibilityWindowInfo.root == service?.rootInActiveWindow) {
-                    outBuilder.append("[Active]")
-                }
-                outBuilder.appendln("$accessibilityWindowInfo")
+        val windows = service?.windows
+        if (!windows.isNullOrEmpty()) {
+            if (logScreenInfo) {
+                outBuilder.appendln("screenWidth:$_screenWidth screenHeight:$_screenHeight dp:$dp")
+            }
+            windows.forEachIndexed { index, accessibilityWindowInfo ->
+                if (filterWindow(accessibilityWindowInfo)) {
+                    //忽略当前窗口
+                } else {
+                    outBuilder.append("$index->")
+                    if (accessibilityWindowInfo.root == service?.rootInActiveWindow) {
+                        outBuilder.append("[Active]")
+                    }
+                    outBuilder.appendln("$accessibilityWindowInfo")
 
-                if (logWindowNode) {
-                    //节点日志
-                    accessibilityWindowInfo.root?.let { getNodeLog(it) }
+                    if (logWindowNode) {
+                        //节点日志
+                        accessibilityWindowInfo.root?.let { getNodeLogWrap(it) }
+                    }
                 }
             }
         }
@@ -69,23 +78,23 @@ class AccLog {
     var refHeight: Int = _screenHeight
 
     /**递归获取所有节点的日志*/
-    fun getNodeLog(node: AccessibilityNodeInfo): StringBuilder {
+    fun getNodeLogWrap(node: AccessibilityNodeInfo): StringBuilder {
         outBuilder.appendln(node.wrap().toString())
         val header =
             "╔════════════════════════════════════════════════════════════════════════════════"
         val footer =
             "╚════════════════════════════════════════════════════════════════════════════════"
         outBuilder.appendln(header)
-        _getNodeLog(node, 1, "")
+        getNodeLog(node, 1, "")
         outBuilder.appendln(footer)
         return outBuilder
     }
 
-    fun _getNodeLog(
+    fun getNodeLog(
         node: AccessibilityNodeInfo,
         index: Int = 0, /*缩进控制*/
         preIndex: String = "", /*child路径*/
-    ) {
+    ): StringBuilder {
         val wrapNode = node.wrap()
 
         outBuilder.apply {
@@ -93,6 +102,9 @@ class AccLog {
             append(wrapNode.className)
             wrapNode.viewIdName()?.let {
                 append("(${it})")
+            }
+            if (wrapNode.childCount > 0) {
+                append("[${wrapNode.childCount}]")
             }
 
             buildString {
@@ -162,10 +174,6 @@ class AccLog {
             wrapNode.tooltipText?.apply {
                 append(" tooltipText:[${this}]")
             }
-
-            if (wrapNode.childCount > 0) {
-                append("[${wrapNode.childCount}]")
-            }
         }
 
         //在父布局中的位置
@@ -205,7 +213,7 @@ class AccLog {
         if (logNodeChild) {
             for (i in 0 until wrapNode.childCount) {
                 wrapNode.getChild(i)?.let {
-                    _getNodeLog(
+                    getNodeLog(
                         it.unwrap(),
                         index + 1,
                         "${if (preIndex.isEmpty()) preIndex else "${preIndex}_"}$i",
@@ -213,5 +221,6 @@ class AccLog {
                 }
             }
         }
+        return outBuilder
     }
 }
