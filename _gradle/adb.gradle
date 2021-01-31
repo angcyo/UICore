@@ -4,6 +4,12 @@
 
 def schema = project.hasProperty("schema") ? project.ext.schema : 'default'
 
+static def isMac() {
+    //Mac OS X
+    def os = System.getProperty("os.name").toLowerCase()
+    return os.contains("mac")
+}
+
 /**通过root工程, 获取child所有子工程对应的application id*/
 static def getApplicationIdList(rootProject) {
     def appList = []
@@ -68,7 +74,11 @@ task _pullAllSchemaFolder(type: Exec) {
         //def target = "/sdcard/android/data/${appIdList.first()}/files/${schema}/"
         //commandLine 'adb', 'pull', target, './'
 
-        commandLine 'cmd', '/C', 'echo', 'ing...'
+        if (isMac()) {
+            commandLine 'echo', 'ing...'
+        } else {
+            commandLine 'cmd', '/C', 'echo', 'ing...'
+        }
     }
     doLast {
         println "执行结束,文件在->${file.absolutePath}"
@@ -83,7 +93,12 @@ task _pullAllSchemaFolderAndOpen(type: Exec, dependsOn: '_pullAllSchemaFolder') 
     workingDir(path)
     doFirst {
         println "使用VS Code打开->${file.absolutePath}"
-        commandLine 'cmd', '/C', 'code', file.absolutePath
+
+        if (isMac()) {
+            commandLine 'code', file.absolutePath
+        } else {
+            commandLine 'cmd', '/C', 'code', file.absolutePath
+        }
     }
 }
 
@@ -112,7 +127,11 @@ task _rmAllSchemaFolder(type: Exec) {
         //def target = "/sdcard/android/data/${appIdList.first()}/files/${schema}/"
         //commandLine 'adb', 'pull', target, './'
 
-        commandLine 'cmd', '/C', 'echo', 'ing...'
+        if (isMac()) {
+            commandLine 'echo', 'ing...'
+        } else {
+            commandLine 'cmd', '/C', 'echo', 'ing...'
+        }
     }
     doLast {
         println "执行结束!"
