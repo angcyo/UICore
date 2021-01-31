@@ -145,6 +145,30 @@ object Action {
      * [stop:reason]*/
     const val ACTION_STOP = "stop"
 
+    /*---------------------------------------状态匹配--------------------------------------*/
+
+    //需要指定的状态 [state]
+    const val STATE_CLICKABLE = "clickable" //具备可点击
+    const val STATE_UN_CLICKABLE = "unClickable" //具备不可点击
+    const val STATE_FOCUSABLE = "focusable" //具备可获取交点
+    const val STATE_UN_FOCUSABLE = "unFocusable" //具备不可获取交点
+    const val STATE_FOCUSED = "focused" //具备焦点状态
+    const val STATE_UNFOCUSED = "unfocused" //具备无焦点状态
+    const val STATE_SELECTED = "selected" //具备选中状态
+    const val STATE_UNSELECTED = "unselected" //具备未选中状态
+    const val STATE_SCROLLABLE = "scrollable" //具备可滚动状态
+    const val STATE_UN_SCROLLABLE = "unScrollable" //具备不可滚动状态
+    const val STATE_LONG_CLICKABLE = "longClickable" //具备长按状态
+    const val STATE_UN_LONG_CLICKABLE = "unLongClickable" //具备不可长按状态
+    const val STATE_ENABLE = "enable" //具备激活状态
+    const val STATE_DISABLE = "disable" //具备非激活状态
+    const val STATE_PASSWORD = "password" //具备密码状态
+    const val STATE_UN_PASSWORD = "unPassword" //具备非密码状态
+    const val STATE_CHECKABLE = "checkable" //具备可check状态
+    const val STATE_UN_CHECKABLE = "unCheckable" //具备不可check状态
+    const val STATE_CHECKED = "checked" //具备check状态
+    const val STATE_UNCHECKED = "unchecked" //不具备check状态
+
     /**
      * 从字符串中获取模版参数 key:value
      * 特殊字符请使用[URLEncoder.encode]加码后的字符
