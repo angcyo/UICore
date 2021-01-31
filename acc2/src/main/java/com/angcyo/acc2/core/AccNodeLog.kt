@@ -98,7 +98,7 @@ class AccNodeLog {
         val wrapNode = node.wrap()
 
         outBuilder.apply {
-            append(" ".repeat2(index))
+            append("  ".repeat2(index))
             append(wrapNode.className)
             wrapNode.viewIdName()?.let {
                 append("(${it})")

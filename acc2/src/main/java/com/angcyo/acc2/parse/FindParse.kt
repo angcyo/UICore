@@ -277,7 +277,7 @@ class FindParse(val accParse: AccParse) {
             //空字符, 只要节点有大小即可
             return !bound.isEmpty
         }
-        
+
 
 
         return false
