@@ -21,6 +21,10 @@ data class ActionBean(
     /**是否激活[ActionBean], 未激活直接跳过执行*/
     var enable: Boolean = true,
 
+    /**在那个[AccessibilityWindowInfo]中获取节点
+     * 不指定, 则根据包名默认处理, 包名还未指定, 则使用活跃的窗口*/
+    var window: WindowBean? = null,
+
     /**在[enable=true]的情况下, 额外需要判断的运行条件
      * 只有满足条件的[ActionBean]才能被执行, 不满足条件等同于[enable]为false,
      * 有一个条件满足即可*/
@@ -51,4 +55,7 @@ data class ActionBean(
     /**当前的[ActionBean]依靠的其他[ActionBean]的id,
      * 可用于[com.angcyo.acc2.action.Action.ACTION_JUMP]跳转指令使用*/
     var relyList: List<Long>? = null,
+
+    /**异步执行[ActionBean], 非主线[ActionBean]时有效*/
+    var async: Boolean = false
 )

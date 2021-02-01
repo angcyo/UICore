@@ -179,8 +179,8 @@ class AccControl : Runnable {
 
     /**子线程内调度*/
     override fun run() {
-        accPrint.log("控制器启动[${_taskBean?.title}]")
-        accPrint.next(_taskBean?.title, _taskBean?.des, 0)
+        accPrint.log(this, "控制器启动[${_taskBean?.title}]")
+        accPrint.next(this, _taskBean?.title, _taskBean?.des, 0)
         while (isControlStart) {
             if (_controlState == CONTROL_STATE_RUNNING) {
                 //run
@@ -190,7 +190,7 @@ class AccControl : Runnable {
                 sleep()
             }
         }
-        accPrint.log("控制器结束[${_controlState.toControlStateStr()}]:$finishReason")
+        accPrint.log(this, "控制器结束[${_controlState.toControlStateStr()}]:$finishReason")
     }
 
     //</editor-fold desc="线程">

@@ -1,6 +1,7 @@
 package com.angcyo.acc2.parse
 
 import com.angcyo.acc2.control.AccControl
+import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.patternList
 import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.getLongNum
@@ -21,6 +22,24 @@ class AccParse(val accControl: AccControl) {
 
     /**查找解析器*/
     var findParse = FindParse(this)
+
+    /**处理解析器*/
+    var handleParse = HandleParse(this)
+
+    /**过滤解析器*/
+    var filterParse = FilterParse(this)
+
+    /**矩形解析器*/
+    var rectParse = RectParse(this)
+
+    /**节点上下文*/
+    val accContext = AccContext()
+
+    /**表达式解析, 数值计算, 简单的数学计算*/
+    val expParse = ExpParse().apply {
+        aboutRatio = 10 * dp
+        //ratioRef = 1f
+    }
 
     fun defaultIntervalDelay(): Long {
         return when (Device.performanceLevel()) {
@@ -104,7 +123,7 @@ class AccParse(val accControl: AccControl) {
         }
 
         if (result.isEmpty()) {
-            accControl.accPrint.log("无法解析文本参数[$arg].")
+            accControl.accPrint.log(accControl, "无法解析文本参数[$arg].")
         }
 
         return result

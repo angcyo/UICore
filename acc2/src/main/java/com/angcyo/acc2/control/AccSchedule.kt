@@ -4,8 +4,10 @@ import com.angcyo.acc2.bean.ActionBean
 import com.angcyo.acc2.core.BaseAccService
 import com.angcyo.acc2.parse.AccParse
 import com.angcyo.acc2.parse.HandleResult
+import com.angcyo.acc2.parse.toLog
 import com.angcyo.library.L
 import com.angcyo.library.ex.nowTime
+import com.angcyo.library.ex.simpleHash
 import com.angcyo.library.ex.sleep
 import com.angcyo.library.ex.toElapsedTime
 
@@ -50,8 +52,15 @@ class AccSchedule(val accControl: AccControl) {
 
     fun getJumpCount(actionId: Long): Long = actionCount[actionId]?.jumpCount?.count ?: -1
 
+    /**预备下一个需要执行*/
     fun next() {
         _targetIndex = _currentIndex + 1
+    }
+
+    fun thread(target: Runnable) {
+        Thread(target, this.simpleHash()).apply {
+            start()
+        }
     }
 
     //</editor-fold desc="操作">
@@ -79,7 +88,7 @@ class AccSchedule(val accControl: AccControl) {
     //当前调度的索引
     var _currentIndex = -1
 
-    //当前调度的[ActionBean]
+    //当前调度的[ActionBean], 主线[ActionBean]
     var _currentActionBean: ActionBean? = null
 
     //正在调度的索引, 理论上[_currentIndex]=[_targetIndex]
@@ -122,7 +131,7 @@ class AccSchedule(val accControl: AccControl) {
         //激活条件判断
         if (!accParse.conditionParse.parse(actionBean.conditionList).success) {
             result.success = false
-            accControl.accPrint.log("${actionBean.actionLog()}未满足激活条件,跳过调度.")
+            accControl.accPrint.log(accControl, "${actionBean.actionLog()}未满足激活条件,跳过调度.")
             if (isPrimaryAction) {
                 next()
             }
@@ -138,7 +147,7 @@ class AccSchedule(val accControl: AccControl) {
             if (isPrimaryAction) {
                 val beforeAction = taskBean?.before
                 if (beforeAction != null) {
-                    accControl.accPrint.log("任务前置执行:${beforeAction}")
+                    accControl.accPrint.log(accControl, "任务前置执行:${beforeAction}")
                     beforeHandleResult = _runAction(beforeAction, null, false)
                 }
             }
@@ -149,13 +158,16 @@ class AccSchedule(val accControl: AccControl) {
                 //action前置处理
                 val beforeAction = actionBean.before
                 if (beforeAction != null) {
-                    accControl.accPrint.log("前置执行:${beforeAction}")
+                    accControl.accPrint.log(accControl, "前置执行:${beforeAction}")
                     beforeHandleResult = _runAction(beforeAction, null, false)
                 }
 
                 //action处理
                 if (beforeHandleResult?.success != true) {
-                    accControl.accPrint.log("${if (isPrimaryAction) "[主线]" else ""}开始执行[${actionBean.actionId}]:${actionBean}")
+                    accControl.accPrint.log(
+                        accControl,
+                        "${if (isPrimaryAction) "[主线]" else ""}开始执行[${actionBean.actionId}]:${actionBean}"
+                    )
                     if (isPrimaryAction) {
                         //执行统计
                         runCountIncrement(actionBean.actionId)
@@ -166,13 +178,16 @@ class AccSchedule(val accControl: AccControl) {
 
                     if (result.success) {
                         //只有成功才打印日志, 否则日志太多
-                        accControl.accPrint.log("${actionBean.actionLog()}执行结果:${result.success}")
+                        accControl.accPrint.log(
+                            accControl,
+                            "${actionBean.actionLog()}执行结果:${result.success}"
+                        )
                     }
 
                     //action后置处理
                     val afterAction = actionBean.after
                     if (afterAction != null) {
-                        accControl.accPrint.log("后置执行:${afterAction}")
+                        accControl.accPrint.log(accControl, "后置执行:${afterAction}")
                         _runAction(afterAction, null, false)
                     }
                 }
@@ -183,7 +198,7 @@ class AccSchedule(val accControl: AccControl) {
             if (isPrimaryAction) {
                 val afterAction = taskBean?.after
                 if (afterAction != null) {
-                    accControl.accPrint.log("任务后置执行:${afterAction}")
+                    accControl.accPrint.log(accControl, "任务后置执行:${afterAction}")
                     _runAction(afterAction, null, false)
                 }
             }
@@ -191,7 +206,7 @@ class AccSchedule(val accControl: AccControl) {
         } catch (e: Exception) {
             L.e("异常:$e")
             e.printStackTrace()
-            accControl.accPrint.log("运行失败[${actionBean.title}]:$e")
+            accControl.accPrint.log(accControl, "运行失败[${actionBean.title}]:$e")
         }
 
         return result
@@ -217,7 +232,10 @@ class AccSchedule(val accControl: AccControl) {
                         if (bean.enable) {
                             //找到激活的
                             if (!accParse.conditionParse.parse(bean.conditionList).success) {
-                                accControl.accPrint.log("${bean.actionLog()}未满足激活条件,跳过调度.")
+                                accControl.accPrint.log(
+                                    accControl,
+                                    "${bean.actionLog()}未满足激活条件,跳过调度."
+                                )
                                 continue
                             }
                             _targetIndex = i
@@ -232,10 +250,13 @@ class AccSchedule(val accControl: AccControl) {
                                     result = bean
                                     break
                                 } else {
-                                    accControl.accPrint.log("${bean.actionLog()}自动激活失败,跳过调度.")
+                                    accControl.accPrint.log(
+                                        accControl,
+                                        "${bean.actionLog()}自动激活失败,跳过调度."
+                                    )
                                 }
                             } else {
-                                accControl.accPrint.log("${bean.actionLog()}未激活,跳过调度.")
+                                accControl.accPrint.log(accControl, "${bean.actionLog()}未激活,跳过调度.")
                             }
                         }
                     }
@@ -254,7 +275,7 @@ class AccSchedule(val accControl: AccControl) {
      * value = 成功or失败*/
     val actionResultMap = hashMapOf<Long, Boolean>()
 
-    //正在运行的[ActionBean]
+    //正在运行的[ActionBean], 有可能是主线[ActionBean]
     var _runActionBean: ActionBean? = null
 
     /**开始执行[actionBean]
@@ -275,10 +296,18 @@ class AccSchedule(val accControl: AccControl) {
             return handleActionResult
         }
 
+        //激活条件判断
+        if (!accParse.conditionParse.parse(actionBean.conditionList).success) {
+            handleActionResult.success = false
+            accControl.accPrint.log(accControl, "${actionBean.actionLog()}未满足激活条件,跳过执行.")
+            return handleActionResult
+        }
+
         //等待执行
         val delayTime = accParse.parseTime(actionBean.start)
-        accControl.accPrint.log("${actionBean.actionLog()}等待[$delayTime]ms后运行.")
+        accControl.accPrint.log(accControl, "${actionBean.actionLog()}等待[$delayTime]ms后运行.")
         accControl.accPrint.next(
+            accControl,
             actionBean.title,
             actionBean.des,
             delayTime
@@ -290,78 +319,74 @@ class AccSchedule(val accControl: AccControl) {
             it.onActionRunBefore(actionBean, isPrimaryAction)
         }
 
+        val handleParse = accParse.handleParse
+        val findParse = accParse.findParse
+        val accPrint = accParse.accControl.accPrint
+        val accSchedule = accParse.accControl.accSchedule
+
         val handleList = actionBean.check?.handle
         val eventList = actionBean.check?.event
 
-        /* if (actionBean.check == null) {
-             //未指定check, 直接操作根元素
-             handleActionResult = accParse.handle(this, actionBean, handleList)
-         } else {
-             val eventElementList = if (eventList == null)
-                 listOf(DriverWebElement(_autoParse.getBounds())) else _autoParse.parseSelector(
-                 this,
-                 eventList
-             )
+        //窗口根节点集合
+        val rootNodeList = findParse.findRootNode(actionBean.window)
+        if (actionBean.check == null) {
+            //未指定check, 直接操作根元素
+            handleActionResult = handleParse.parse(rootNodeList, handleList)
+        } else {
+            val eventNodeList = if (eventList == null) rootNodeList else
+                findParse.parse(rootNodeList, eventList).nodeList
 
-             if (eventElementList.isEmpty()) {
-                 logAction?.invoke("[event]未匹配到元素:${eventList}")
-                 //未找到元素
-                 val handleResult = _autoParse.handle(this, actionBean, actionBean.check?.other)
-                 if (!handleResult.success) {
-                     //还是未成功
-                     otherActionList?.forEach {
-                         actionSchedule.scheduleAction(it)
-                     }
-                 }
-             } else {
-                 //找到了目标元素
-                 logAction?.invoke(eventElementList.toLog("[event]匹配到元素(${eventElementList.size})${actionBean.check}↓"))
-                 val result = _autoParse.handle(this, actionBean, handleList, eventElementList)
-                 handleActionResult = result
-                 if (result.success) {
-                     //未处理成功
-                     actionBean.check?.success?.let {
-                         handleActionResult =
-                             _autoParse.handle(this, actionBean, it, eventElementList)
-                     }
-                 } else {
-                     //未处理成功
-                     actionBean.check?.fail?.let {
-                         handleActionResult =
-                             _autoParse.handle(this, actionBean, it, eventElementList)
-                     }
-                 }
-             }
-         }
+            if (eventNodeList.isNullOrEmpty()) {
+                accPrint.log(accControl, "[event]未匹配到元素:${eventList}")
+                //未找到元素
+                val handleResult = handleParse.parse(rootNodeList, actionBean.check?.other)
+                if (!handleResult.success) {
+                    //还是未成功
+                    otherActionList?.forEach {
+                        if (it.async) {
+                            thread { accSchedule.scheduleAction(it, null, false) }
+                        } else {
+                            accSchedule.scheduleAction(it, null, false)
+                        }
+                    }
+                }
+            } else {
+                //找到了目标元素
+                accPrint.log(
+                    accControl,
+                    eventNodeList.toLog("[event]匹配到元素(${eventNodeList.size})${actionBean.check}↓")
+                )
+                val result = handleParse.parse(eventNodeList, handleList)
+                handleActionResult = result
+                if (result.success) {
+                    //未处理成功
+                    actionBean.check?.success?.let {
+                        handleActionResult = handleParse.parse(eventNodeList, it)
+                    }
+                } else {
+                    //未处理成功
+                    actionBean.check?.fail?.let {
+                        handleActionResult = handleParse.parse(eventNodeList, it)
+                    }
+                }
+            }
+        }
 
-         //退出框架
-         eventList?.forEach {
-             if (it.frame?._frame != null) {
-                 logAction?.invoke("退出[event]iframe:${it.frame}")
-                 it.frame?._frame = null
-                 driver?.switchTo()?.defaultContent()
-             }
-         }
+        if (isPrimaryAction) {
+            //保存执行结果.
+            actionResultMap[actionBean.actionId] = handleActionResult.success
 
-         if (isPrimaryAction) {
-             //保存执行结果.
-             actionResultMap[actionBean.actionId] = handleActionResult?.success ?: false
-
-             //处理结果
-             handleActionResult?.apply {
-                 if (success) {
-                     //处理成功
-                     //showElementTip(elementList)
-                     actionSchedule.next(actionBean)
-                 } else {
-                     //未处理成功
-                     if (actionSchedule._nextTime <= 0) {
-                         //防止ui卡死
-                         actionSchedule._nextTime = 160
-                     }
-                 }
-             }
-         }*/
+            //处理结果
+            handleActionResult.apply {
+                if (success) {
+                    //处理成功
+                    //showElementTip(elementList)
+                    next()
+                } else {
+                    //未处理成功
+                }
+            }
+        }
 
         //回调
         accControl.controlListenerList.forEach {
@@ -373,5 +398,5 @@ class AccSchedule(val accControl: AccControl) {
         return handleActionResult
     }
 
-    //<editor-fold desc="调度">
+    //</editor-fold desc="调度">
 }

@@ -19,18 +19,122 @@ import com.angcyo.library.ex.*
  */
 class FindParse(val accParse: AccParse) {
 
-    /**通过*/
-    fun parse(findList: List<FindBean>?): FindResult {
+    //<editor-fold desc="parse">
+
+    /**通过一组规则, 查找满足规则的节点集合, 就终止*/
+    fun parse(
+        rootList: List<AccessibilityNodeInfoCompat>?,
+        findList: List<FindBean>?
+    ): FindResult {
         //激活判断
-        //准备window
+
         //准备Context
 
-        val result = FindResult()
+        var result = FindResult()
 
-        //过滤
-        //后处理
+        if (!findList.isNullOrEmpty()) {
+            for (findBean in findList) {
+                val parseResult = parse(rootList, findBean)
+                if (parseResult.success) {
+                    //匹配成功, 中断查询, 提升效率
+                    result = parseResult
+                    break
+                }
+            }
+        }
+
         return result
     }
+
+    /**返回满足规则的节点集合*/
+    fun parse(rootList: List<AccessibilityNodeInfoCompat>?, findBean: FindBean): FindResult {
+        val result = FindResult()
+
+        //准备window
+
+        //根节点选择
+        val rootNodeList = if (findBean.window == null) {
+            rootList
+        } else {
+            val accSchedule = accParse.accControl.accSchedule
+            findRootNode(
+                findBean.window
+                    ?: accSchedule._runActionBean?.window
+                    ?: accSchedule._currentActionBean?.window
+            )
+        }
+
+        if (rootNodeList.isNullOrEmpty()) {
+            return result
+        }
+
+        //-----------------------选择元素------------------------
+
+        //找到的元素
+        val findNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
+
+        val text = findBean.textList != null
+        val cls = findBean.clsList != null
+        val id = findBean.idList != null
+        val rect = findBean.rectList != null
+        val state = findBean.stateList != null
+
+        when {
+            text -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.textList))
+            cls -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.clsList))
+            id -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.idList))
+            rect -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.rectList))
+            state -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.stateList))
+            //空的选择器
+            else -> findNodeList.addAll(rootNodeList)
+        }
+
+        //------------------------后处理-------------------------
+
+        //需要过滤
+        if (findBean.filter != null) {
+            findNodeList.removeAll(accParse.filterParse.parse(findNodeList, findBean.filter))
+        }
+
+        //递归处理
+        val after = findBean.after
+        var afterResult: FindResult? = null
+        if (after != null) {
+            afterResult = parse(findNodeList, after)
+        }
+
+        //-----------------------返回结果--------------------------
+
+        return afterResult ?: result.apply {
+            success = findNodeList.isNotEmpty()
+            nodeList = findNodeList
+            if (success) {
+                this.findBean = findBean
+            }
+        }
+    }
+
+    /**检查是否需要中断枚举查找元素*/
+    fun checkFindLimit(nodeList: List<AccessibilityNodeInfoCompat>?, depth: Int): Boolean {
+        var result = if (accParse.accContext.findLimit >= 0) {
+            nodeList.size() >= accParse.accContext.findLimit
+        } else {
+            false
+        }
+
+        if (!result) {
+            //没有超限, 第二层判断
+            result = if (accParse.accContext.findDepth >= 0) {
+                depth >= accParse.accContext.findDepth
+            } else {
+                false
+            }
+        }
+
+        return result
+    }
+
+    //</editor-fold desc="parse">
 
     //<editor-fold desc="window">
 
@@ -89,20 +193,24 @@ class FindParse(val accParse: AccParse) {
 
     //<editor-fold desc="find">
 
-    /**通过文本选择元素*/
-    fun findNodeByText(
+    /**查找节点*/
+    fun findNode(
         originList: List<AccessibilityNodeInfoCompat>,
-        findBean: FindBean
+        findBean: FindBean,
+        list: List<String?>?
     ): List<AccessibilityNodeInfoCompat> {
         val result = mutableListOf<AccessibilityNodeInfoCompat>()
-        if (findBean.textList.isNullOrEmpty()) {
+        if (list.isNullOrEmpty()) {
             return result
         }
         originList.forEach { rootNode ->
             rootNode.eachChildDepth { node, depth ->
-                findBean.textList?.forEachIndexed { index, text ->
-                    if (node.haveText(text)) {
-
+                list.forEachIndexed { index, _ ->
+                    if (matchNode(node, findBean, index)) {
+                        result.add(node)
+                        if (checkFindLimit(result, depth)) {
+                            return@eachChildDepth true
+                        }
                     }
                 }
                 false
@@ -114,6 +222,15 @@ class FindParse(val accParse: AccParse) {
     //</editor-fold desc="find">
 
     //<editor-fold desc="match">
+
+    /**节点必须要满足的条件*/
+    fun matchNode(node: AccessibilityNodeInfoCompat, findBean: FindBean, index: Int): Boolean {
+        return matchNodeText(node, findBean.textList?.getOrNull(index)) &&
+                matchNodeClass(node, findBean.clsList?.getOrNull(index)) &&
+                matchNodeId(node, findBean.idList?.getOrNull(index)) &&
+                matchNodeState(node, findBean.stateList?.getOrNull(index)) &&
+                matchNodeRect(node, findBean.rectList?.getOrNull(index))
+    }
 
     /**检查节点是否满足text*/
     fun matchNodeText(node: AccessibilityNodeInfoCompat, text: String?): Boolean {
@@ -278,9 +395,7 @@ class FindParse(val accParse: AccParse) {
             return !bound.isEmpty
         }
 
-
-
-        return false
+        return accParse.rectParse.parse(rect, bound)
     }
 
     //</editor-fold desc="match">

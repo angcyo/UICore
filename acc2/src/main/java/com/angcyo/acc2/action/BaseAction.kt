@@ -1,5 +1,10 @@
 package com.angcyo.acc2.action
 
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
+import com.angcyo.acc2.bean.ActionBean
+import com.angcyo.acc2.control.AccControl
+import com.angcyo.acc2.parse.HandleResult
+
 /**
  *
  * Email:angcyo@126.com
@@ -7,5 +12,21 @@ package com.angcyo.acc2.action
  * @date 2021/01/30
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class BaseAction {
+abstract class BaseAction {
+
+    /**是否需要拦截[action]执行*/
+    abstract fun interceptAction(control: AccControl, action: String): Boolean
+
+    /**执行操作*/
+    abstract fun runAction(
+        control: AccControl,
+        node: AccessibilityNodeInfoCompat,
+        action: String
+    ): HandleResult
+
+    /**主线的[ActionBean]*/
+    fun mainActionBean(control: AccControl) = control.accSchedule._currentActionBean
+
+    /**正在运行的[ActionBean]*/
+    fun runActionBean(control: AccControl) = control.accSchedule._runActionBean
 }

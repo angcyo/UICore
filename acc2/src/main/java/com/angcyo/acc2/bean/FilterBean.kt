@@ -10,6 +10,7 @@ package com.angcyo.acc2.bean
 data class FilterBean(
     /**获取一组元素中指定索引位置的元素
      * 支持范围[0~-1]第一个到倒数第一个
+     * 支持文本变量
      * 匹配顺序:1*/
     var index: String? = null,
 
@@ -20,8 +21,4 @@ data class FilterBean(
     /**如果元素不包含指定的元素, 集合中满足一项即可.
      * 匹配顺序:3*/
     var notContainList: List<FindBean>? = null,
-
-    /**过滤一下只满足矩形的条件的元素 , 集合中满足一项即可.
-     * 匹配顺序:4*/
-    var rectList: List<String>? = null,
 )

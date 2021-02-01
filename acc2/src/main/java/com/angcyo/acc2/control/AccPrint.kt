@@ -13,7 +13,7 @@ import com.angcyo.library.ex.des
 open class AccPrint {
 
     /**输出日志*/
-    open fun log(log: String?) {
+    open fun log(accControl: AccControl, log: String?) {
         L.i(log)
     }
 
@@ -22,7 +22,7 @@ open class AccPrint {
      * [des] 步骤的描述
      * [time] 执行步骤的延迟
      * */
-    open fun next(title: String?, des: String?, time: Long) {
+    open fun next(accControl: AccControl, title: String?, des: String?, time: Long) {
         L.w("next[$time]->$title${des.des()}")
     }
 }

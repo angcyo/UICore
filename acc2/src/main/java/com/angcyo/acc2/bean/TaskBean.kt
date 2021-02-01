@@ -10,7 +10,7 @@ package com.angcyo.acc2.bean
 data class TaskBean(
 
     /**任务需要处理那个程序的信息
-     * 支持正则*/
+     * 不支持正则*/
     var packageName: String? = null,
 
     /**任务的标题*/
