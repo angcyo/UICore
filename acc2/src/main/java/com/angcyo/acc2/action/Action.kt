@@ -74,6 +74,21 @@ object Action {
      * */
     const val ACTION_START = "start"
 
+    /**复制文本, 支持文本表达式*/
+    const val ACTION_COPY = "copy"
+
+    /**发送按键事件[key:66] KEYCODE_ENTER=66 发送回车按键. (test)*/
+    const val ACTION_KEY = "key"
+
+    /**请求焦点*/
+    const val ACTION_FOCUS = "focus"
+
+    /**向前滚动, 手指向上滑动*/
+    const val ACTION_SCROLL_FORWARD = "scrollForward"
+
+    /**向后滚动, 手指向上滑动*/
+    const val ACTION_SCROLL_BACKWARD = "scrollBackward"
+
     /*---------------------------------------状态匹配--------------------------------------*/
 
     //需要指定的状态 [state]

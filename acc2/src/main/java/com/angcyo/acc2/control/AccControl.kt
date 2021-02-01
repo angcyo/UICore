@@ -216,7 +216,7 @@ fun Number.toControlStateStr() = when (this) {
     else -> "STATE_UNKNOWN"
 }
 
-fun String.wrap() = "\n${nowTimeString()}\n${this}\n"
+fun String.wrap() = "\n${nowTimeString()} ${Thread.currentThread().name}\n${this}\n"
 
 /**日志输出*/
 fun AccControl.log(log: String?) {
