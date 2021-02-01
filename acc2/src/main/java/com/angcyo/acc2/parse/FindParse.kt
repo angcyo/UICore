@@ -5,7 +5,6 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.action.Action
 import com.angcyo.acc2.bean.FindBean
 import com.angcyo.acc2.bean.WindowBean
-import com.angcyo.acc2.core.BaseAccService
 import com.angcyo.acc2.eachChildDepth
 import com.angcyo.library.ex.*
 
@@ -141,7 +140,7 @@ class FindParse(val accParse: AccParse) {
     fun findWindowBy(packageName: String?): List<AccessibilityWindowInfo> {
         val result = mutableListOf<AccessibilityWindowInfo>()
         if (!packageName.isNullOrEmpty()) {
-            BaseAccService.lastService?.windows?.forEach {
+            accParse.accControl.accService()?.windows?.forEach {
                 if (it.root?.packageName?.have(packageName) == true) {
                     result.add(it)
                 }
@@ -155,13 +154,13 @@ class FindParse(val accParse: AccParse) {
         when {
             //无包名字段, 则使用活动窗口
             packageName == null -> {
-                BaseAccService.lastService?.rootInActiveWindow?.let {
+                accParse.accControl.accService()?.rootInActiveWindow?.let {
                     result.add(it.wrap())
                 }
             }
             //如果包名为空字符, 则支持所有window
             packageName.isEmpty() -> {
-                BaseAccService.lastService?.windows?.forEach {
+                accParse.accControl.accService()?.windows?.forEach {
                     it.root?.let { node -> result.add(node.wrap()) }
                 }
             }
@@ -184,6 +183,11 @@ class FindParse(val accParse: AccParse) {
             if (windowBean.packageName != null) {
                 //指定了要重新获取根节点
                 result.addAll(findRootNodeBy(windowBean.packageName) ?: emptyList())
+            } else {
+                //活动节点
+                accParse.accControl.accService()?.rootInActiveWindow?.let {
+                    result.add(it.wrap())
+                }
             }
         }
         return result

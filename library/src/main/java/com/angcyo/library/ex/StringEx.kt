@@ -477,8 +477,8 @@ fun CharSequence?.have(text: CharSequence?): Boolean {
     return this.str() == text.str() || this.contains(text.toString().toRegex())
 }
 
+/**统计字符[char]出现的次数*/
 fun CharSequence.count(char: Char) = count { it == char }
-
 
 /**获取分割字符串[partition]之前的全部字符串*/
 fun String.subStart(partition: String, ignoreCase: Boolean = true): String? {

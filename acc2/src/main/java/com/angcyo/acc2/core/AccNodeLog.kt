@@ -1,8 +1,8 @@
 package com.angcyo.acc2.core
 
 import android.accessibilityservice.AccessibilityService
-import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityWindowInfo
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.*
@@ -60,7 +60,7 @@ class AccNodeLog {
 
                     if (logWindowNode) {
                         //节点日志
-                        accessibilityWindowInfo.root?.let { getNodeLogWrap(it) }
+                        accessibilityWindowInfo.root?.let { getNodeLogWrap(it.wrap()) }
                     }
                 }
             }
@@ -78,24 +78,25 @@ class AccNodeLog {
     var refHeight: Int = _screenHeight
 
     /**递归获取所有节点的日志*/
-    fun getNodeLogWrap(node: AccessibilityNodeInfo): StringBuilder {
-        outBuilder.appendln(node.wrap().toString())
+    fun getNodeLogWrap(node: AccessibilityNodeInfoCompat): StringBuilder {
+        outBuilder.appendln(node.toString())
         val header =
             "╔════════════════════════════════════════════════════════════════════════════════"
         val footer =
             "╚════════════════════════════════════════════════════════════════════════════════"
         outBuilder.appendln(header)
         getNodeLog(node, 1, "")
+        outBuilder.appendln()
         outBuilder.appendln(footer)
         return outBuilder
     }
 
     fun getNodeLog(
-        node: AccessibilityNodeInfo,
+        node: AccessibilityNodeInfoCompat,
         index: Int = 0, /*缩进控制*/
         preIndex: String = "", /*child路径*/
     ): StringBuilder {
-        val wrapNode = node.wrap()
+        val wrapNode = node
 
         outBuilder.apply {
             append("  ".repeat2(index))
@@ -207,14 +208,13 @@ class AccNodeLog {
             wrapNode.actionStr(outBuilder)
         }
 
-        //new line
-        outBuilder.appendln()
-
         if (logNodeChild) {
             for (i in 0 until wrapNode.childCount) {
                 wrapNode.getChild(i)?.let {
+                    //new line
+                    outBuilder.appendln()
                     getNodeLog(
-                        it.unwrap(),
+                        it,
                         index + 1,
                         "${if (preIndex.isEmpty()) preIndex else "${preIndex}_"}$i",
                     )

@@ -20,7 +20,7 @@ abstract class BaseAction {
     /**执行操作*/
     abstract fun runAction(
         control: AccControl,
-        node: AccessibilityNodeInfoCompat,
+        nodeList: List<AccessibilityNodeInfoCompat>?,
         action: String
     ): HandleResult
 
@@ -29,4 +29,19 @@ abstract class BaseAction {
 
     /**正在运行的[ActionBean]*/
     fun runActionBean(control: AccControl) = control.accSchedule._runActionBean
+
+    /**Dsl*/
+    fun handleResult(action: HandleResult.() -> Unit): HandleResult {
+        return HandleResult().apply(action)
+    }
+
+    fun HandleResult.addNode(node: AccessibilityNodeInfoCompat) {
+        when (val list = nodeList) {
+            null -> nodeList = mutableListOf(node)
+            is MutableList -> list.add(node)
+            else -> nodeList = list.toMutableList().apply {
+                add(node)
+            }
+        }
+    }
 }

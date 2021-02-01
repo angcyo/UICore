@@ -1,6 +1,9 @@
 package com.angcyo.acc2.parse
 
+import com.angcyo.acc2.action.Action
 import com.angcyo.acc2.control.AccControl
+import com.angcyo.acc2.control.log
+import com.angcyo.library.app
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.patternList
 import com.angcyo.library.utils.Device
@@ -123,7 +126,7 @@ class AccParse(val accControl: AccControl) {
         }
 
         if (result.isEmpty()) {
-            accControl.accPrint.log(accControl, "无法解析文本参数[$arg].")
+            accControl.log("无法解析文本参数[$arg].")
         }
 
         return result
@@ -150,5 +153,17 @@ class AccParse(val accControl: AccControl) {
 
             start + base * Random.nextLong(1, max(2L, factor + 1))
         }
+    }
+
+    /**将参数转换成对应的包名*/
+    fun parsePackageName(arg: String?, target: String?): List<String>? {
+        //包名
+        return (if (arg.isNullOrEmpty() || arg == "target") {
+            target
+        } else if (arg == "main") {
+            app().packageName
+        } else {
+            arg
+        })?.split(Action.PACKAGE_SPLIT)?.toList()
     }
 }

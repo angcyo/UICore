@@ -2,7 +2,10 @@ package com.angcyo.acc2.parse
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.action.BaseAction
+import com.angcyo.acc2.action.ClickAction
+import com.angcyo.acc2.action.StartAction
 import com.angcyo.acc2.bean.HandleBean
+import com.angcyo.acc2.control.log
 
 /**
  *
@@ -16,7 +19,8 @@ class HandleParse(val accParse: AccParse) {
     val registerActionList = mutableListOf<BaseAction>()
 
     init {
-        //registerActionList.add()
+        registerActionList.add(ClickAction())
+        registerActionList.add(StartAction())
     }
 
     /**解析, 并处理[handleList]*/
@@ -26,7 +30,7 @@ class HandleParse(val accParse: AccParse) {
     ): HandleResult {
         var result = HandleResult()
         if (handleList.isNullOrEmpty()) {
-            result.success = true
+            //no op
         } else {
             val handleNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
             for (handBean in handleList) {
@@ -104,7 +108,7 @@ class HandleParse(val accParse: AccParse) {
 
         //后置处理
         if (handleBean.ignore) {
-            accParse.accControl.accPrint.log(accParse.accControl, "忽略[handle]结果:${handleBean}")
+            accParse.accControl.log("忽略[handle]结果:${handleBean}")
             result.success = false
         }
 
@@ -119,29 +123,28 @@ class HandleParse(val accParse: AccParse) {
         val result = HandleResult()
         val handledNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
 
-        nodeList?.forEach { node ->
-            //枚举actionList
-            actionList?.forEach { action ->
-                //处理action
-                handleAction(node, action).apply {
-                    result.success = success || result.success
-                    if (success) {
-                        //把处理成功的元素收集起来
-                        result.handleBean = handleBean
-                        this.nodeList?.forEach {
-                            if (!handledNodeList.contains(it)) {
-                                handledNodeList.add(it)
-                            }
+        //枚举actionList
+        actionList?.forEach { action ->
+            //处理action
+            handleAction(nodeList, action).apply {
+                result.success = success || result.success
+                if (success) {
+                    //把处理成功的元素收集起来
+                    result.handleBean = handleBean
+                    this.nodeList?.forEach {
+                        if (!handledNodeList.contains(it)) {
+                            handledNodeList.add(it)
                         }
                     }
                 }
             }
         }
+
         return result
     }
 
     /**处理分发*/
-    fun handleAction(node: AccessibilityNodeInfoCompat, action: String): HandleResult {
+    fun handleAction(nodeList: List<AccessibilityNodeInfoCompat>?, action: String): HandleResult {
         val result = HandleResult()
 
         val handledNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
@@ -153,11 +156,11 @@ class HandleParse(val accParse: AccParse) {
             if (it.interceptAction(accParse.accControl, action)) {
                 isActionIntercept = true
                 //运行处理
-                it.runAction(accParse.accControl, node, action).apply {
+                it.runAction(accParse.accControl, nodeList, action).apply {
                     result.success = success || result.success
                     if (success) {
                         //把处理成功的元素收集起来
-                        nodeList?.forEach {
+                        this.nodeList?.forEach {
                             if (!handledNodeList.contains(it)) {
                                 handledNodeList.add(it)
                             }
@@ -170,7 +173,7 @@ class HandleParse(val accParse: AccParse) {
         if (!isActionIntercept) {
             //动作未识别, 或者无法处理
             result.success = true
-            accParse.accControl.accPrint.log(accParse.accControl, "无法处理[$action],跳过.")
+            accParse.accControl.log("无法处理[$action],跳过.")
         }
         if (result.success) {
             result.nodeList = handledNodeList

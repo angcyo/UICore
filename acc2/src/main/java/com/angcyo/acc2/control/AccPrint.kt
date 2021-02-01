@@ -23,6 +23,6 @@ open class AccPrint {
      * [time] 执行步骤的延迟
      * */
     open fun next(accControl: AccControl, title: String?, des: String?, time: Long) {
-        L.w("next[$time]->$title${des.des()}")
+        L.w("next[$time]->$title${des.des()}".wrap())
     }
 }

@@ -10,7 +10,7 @@ package com.angcyo.acc2.bean
 data class ActionBean(
 
     /**标识[ActionBean]*/
-    var actionId: Long = 0,
+    var actionId: Long = -1,
 
     /**操作的标题*/
     var title: String? = null,

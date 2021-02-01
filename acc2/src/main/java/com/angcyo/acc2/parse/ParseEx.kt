@@ -1,10 +1,10 @@
 package com.angcyo.acc2.parse
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
-import com.angcyo.acc2.action.Action
 import com.angcyo.acc2.core.AccNodeLog
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.patternList
+import java.net.URLEncoder
 
 /**
  * Email:angcyo@126.com
@@ -19,7 +19,15 @@ fun String?.getIntList(): List<Int> {
 }
 
 //扩展函数
-fun String.arg(key: String, delimiters: Char = ':') = Action.patternArg(this, key, delimiters)
+
+/**
+ * 从字符串中获取模版参数 key:value
+ * 特殊字符请使用[URLEncoder.encode]加码后的字符
+ * [str] 数据字符串 "code:$[ke+y+] k:key type:30400 \b last line"
+ * [key] 键值 code 或k 或type
+ */
+fun String.arg(key: String, delimiters: Char = ':') =
+    patternList("(?<=$key$delimiters)(\\S+)").firstOrNull()
 
 /**将 input:$[abc] clear:true 转换成 key value的形式*/
 fun String.toKeyValue(delimiters: Char = ':'): List<Pair<String, String?>> {
@@ -118,6 +126,12 @@ fun String?.args(
     } ?: emptyList()
 }
 
+fun AccessibilityNodeInfoCompat.toLog(logNodeChild: Boolean = false): StringBuilder {
+    val accNodeLog = AccNodeLog()
+    accNodeLog.logNodeChild = logNodeChild
+    return accNodeLog.getNodeLog(this)
+}
+
 /**转成日志*/
 fun List<AccessibilityNodeInfoCompat>.toLog(header: String?) = buildString {
     if (header != null) {
@@ -126,6 +140,7 @@ fun List<AccessibilityNodeInfoCompat>.toLog(header: String?) = buildString {
     val accNodeLog = AccNodeLog()
     accNodeLog.logNodeChild = false
     this@toLog.forEach {
-        appendLine(accNodeLog.getNodeLog(it.unwrap()))
+        appendLine(accNodeLog.getNodeLog(it))
+        accNodeLog.outBuilder.clear()
     }
 }

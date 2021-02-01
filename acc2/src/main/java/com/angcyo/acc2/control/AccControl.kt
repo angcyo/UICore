@@ -10,6 +10,7 @@ import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_PAUSE
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_RUNNING
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_STOP
 import com.angcyo.acc2.core.BaseAccService
+import com.angcyo.library.ex.nowTimeString
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.library.ex.sleep
 
@@ -66,7 +67,7 @@ class AccControl : Runnable {
                 return false
             }
         }
-        if (BaseAccService.lastService == null) {
+        if (accService() == null) {
             error("无障碍服务未连接")
             return false
         }
@@ -114,6 +115,9 @@ class AccControl : Runnable {
     //</editor-fold desc="启动">
 
     //<editor-fold desc="操作">
+
+    /**无障碍服务*/
+    fun accService() = BaseAccService.lastService
 
     /**更新控制器状态
      * @return 更新是否成功*/
@@ -179,8 +183,8 @@ class AccControl : Runnable {
 
     /**子线程内调度*/
     override fun run() {
-        accPrint.log(this, "控制器启动[${_taskBean?.title}]")
-        accPrint.next(this, _taskBean?.title, _taskBean?.des, 0)
+        log("run控制器启动[${_taskBean?.title}]")
+        next(_taskBean?.title, _taskBean?.des, 0)
         while (isControlStart) {
             if (_controlState == CONTROL_STATE_RUNNING) {
                 //run
@@ -190,7 +194,7 @@ class AccControl : Runnable {
                 sleep()
             }
         }
-        accPrint.log(this, "控制器结束[${_controlState.toControlStateStr()}]:$finishReason")
+        log("run控制器结束[${_controlState.toControlStateStr()}]:$finishReason ${accSchedule.durationStr()}")
     }
 
     //</editor-fold desc="线程">
@@ -210,6 +214,18 @@ fun Number.toControlStateStr() = when (this) {
     CONTROL_STATE_PAUSE -> "STATE_PAUSE"
     CONTROL_STATE_STOP -> "STATE_STOP"
     else -> "STATE_UNKNOWN"
+}
+
+fun String.wrap() = "\n${nowTimeString()}\n${this}\n"
+
+/**日志输出*/
+fun AccControl.log(log: String?) {
+    accPrint.log(this, log?.wrap())
+}
+
+/**日志输出*/
+fun AccControl.next(title: String?, des: String?, time: Long) {
+    accPrint.next(this, title, des, time)
 }
 
 //</editor-fold desc="扩展">
