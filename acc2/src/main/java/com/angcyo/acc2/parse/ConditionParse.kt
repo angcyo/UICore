@@ -38,7 +38,7 @@ class ConditionParse(val accParse: AccParse) {
 
         val accControl = accParse.accControl
 
-       /* condition.apply {
+        condition.apply {
             //random
             if (random) {
                 result = Random.nextBoolean()
@@ -74,18 +74,16 @@ class ConditionParse(val accParse: AccParse) {
                 val exp = expression.subEnd(Action.ARG_SPLIT)
                 if (!exp.isNullOrEmpty()) {
                     val actionBean = if (actionExp == ".") {
-                        accControl.accSchedule._currentActionBean
+                        accControl.accSchedule._scheduleActionBean
                     } else {
                         accControl.findAction(actionId)
                     }
 
                     if (actionBean != null) {
-                        val expValue = valueParse.toValueExp(exp)
                         val count = countGetAction(actionBean.actionId)
-                        if (!valueParse.matchValue(count.toFloat(), expValue)) {
+                        if (!accParse.expParse.parseAndCompute(exp, inputValue = count.toFloat())) {
                             //运行次数不满足条件
                             return false
-
                         }
                     }
                 }
@@ -121,7 +119,7 @@ class ConditionParse(val accParse: AccParse) {
             //actionEnableList
             if (result && !actionEnableList.isNullOrEmpty()) {
                 for (actionId in actionEnableList!!) {
-                    val actionBean = control.findAction(actionId)
+                    val actionBean = accControl.findAction(actionId)
                     if (actionBean != null) {
                         if (!actionBean.enable) {
                             //未激活, 则不满足条件
@@ -131,7 +129,7 @@ class ConditionParse(val accParse: AccParse) {
                     }
                 }
             }
-        }*/
+        }
         return result
     }
 }
