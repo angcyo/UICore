@@ -10,9 +10,9 @@ import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_PAUSE
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_RUNNING
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_STOP
 import com.angcyo.acc2.core.BaseAccService
-import com.angcyo.library.ex.nowTimeString
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.library.ex.sleep
+import com.angcyo.library.ex.wrapLog
 
 /**
  *
@@ -216,11 +216,9 @@ fun Number.toControlStateStr() = when (this) {
     else -> "STATE_UNKNOWN"
 }
 
-fun String.wrap() = "\n${nowTimeString()} ${Thread.currentThread().name}\n${this}\n"
-
 /**日志输出*/
 fun AccControl.log(log: String?) {
-    accPrint.log(this, log?.wrap())
+    accPrint.log(this, log?.wrapLog())
 }
 
 /**日志输出*/

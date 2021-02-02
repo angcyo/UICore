@@ -5,10 +5,7 @@ import com.angcyo.acc2.parse.AccParse
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.acc2.parse.toLog
 import com.angcyo.library.L
-import com.angcyo.library.ex.nowTime
-import com.angcyo.library.ex.simpleHash
-import com.angcyo.library.ex.sleep
-import com.angcyo.library.ex.toElapsedTime
+import com.angcyo.library.ex.*
 
 /**
  *
@@ -61,6 +58,8 @@ class AccSchedule(val accControl: AccControl) {
             start()
         }
     }
+
+    fun indexTip() = "[$_currentIndex/${accControl._taskBean?.actionList.size()}]"
 
     //</editor-fold desc="操作">
 
@@ -147,7 +146,7 @@ class AccSchedule(val accControl: AccControl) {
                 val beforeAction = taskBean?.before
                 if (beforeAction != null) {
                     accControl.log("任务前置执行:${beforeAction}")
-                    beforeHandleResult = _runAction(beforeAction, null, false)
+                    beforeHandleResult = runAction(beforeAction, null, false)
                 }
             }
 
@@ -158,19 +157,19 @@ class AccSchedule(val accControl: AccControl) {
                 val beforeAction = actionBean.before
                 if (beforeAction != null) {
                     accControl.log("前置执行:${beforeAction}")
-                    beforeHandleResult = _runAction(beforeAction, null, false)
+                    beforeHandleResult = runAction(beforeAction, null, false)
                 }
 
                 //action处理
                 if (beforeHandleResult?.success != true) {
-                    accControl.log("${if (isPrimaryAction) "[主线]" else ""}开始执行[${actionBean.actionId}]:${actionBean}")
+                    accControl.log("${if (isPrimaryAction) "[主线]" else ""}开始执行[${actionBean.actionId}]${indexTip()}:${actionBean}")
                     if (isPrimaryAction) {
                         //执行统计
                         runCountIncrement(actionBean.actionId)
                     }
 
                     //run
-                    result = _runAction(actionBean, otherActionList, isPrimaryAction)
+                    result = runAction(actionBean, otherActionList, isPrimaryAction)
 
                     if (result.success) {
                         //只有成功才打印日志, 否则日志太多
@@ -181,7 +180,7 @@ class AccSchedule(val accControl: AccControl) {
                     val afterAction = actionBean.after
                     if (afterAction != null) {
                         accControl.log("后置执行:${afterAction}")
-                        _runAction(afterAction, null, false)
+                        runAction(afterAction, null, false)
                     }
                 }
 
@@ -192,7 +191,7 @@ class AccSchedule(val accControl: AccControl) {
                 val afterAction = taskBean?.after
                 if (afterAction != null) {
                     accControl.log("任务后置执行:${afterAction}")
-                    _runAction(afterAction, null, false)
+                    runAction(afterAction, null, false)
                 }
             }
 
@@ -270,7 +269,7 @@ class AccSchedule(val accControl: AccControl) {
      * [otherActionList] 当[actionBean]无法处理时, 需要执行的动作
      * [isPrimaryAction] 是否是主线动作
      * */
-    fun _runAction(
+    fun runAction(
         actionBean: ActionBean,
         otherActionList: List<ActionBean>?,
         isPrimaryAction: Boolean
@@ -292,8 +291,10 @@ class AccSchedule(val accControl: AccControl) {
 
         //等待执行
         val delayTime = accParse.parseTime(actionBean.start)
+        if (isPrimaryAction) {
+            accControl.next(actionBean.title, actionBean.des, delayTime)
+        }
         accControl.log("${actionBean.actionLog()}等待[$delayTime]ms后运行.")
-        accControl.next(actionBean.title, actionBean.des, delayTime)
         sleep(delayTime)
 
         //回调

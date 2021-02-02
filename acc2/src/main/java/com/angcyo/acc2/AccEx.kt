@@ -23,9 +23,12 @@ fun AccessibilityNodeInfoCompat.eachChildDepth(
     depth: Int,
     each: (node: AccessibilityNodeInfoCompat, depth: Int) -> Boolean
 ): Boolean {
-    var result = each(this, depth)
-    if (result) {
-        return true
+    var result = false
+    if (childCount <= 0) {
+        result = each(this, depth)
+        if (result) {
+            return true
+        }
     }
     for (i in 0 until childCount) {
         val child = getChildOrNull(i)
@@ -34,7 +37,9 @@ fun AccessibilityNodeInfoCompat.eachChildDepth(
             if (result) {
                 break
             } else {
-                result = child.eachChildDepth(depth + 1, each)
+                if (child.childCount > 0) {
+                    result = child.eachChildDepth(depth + 1, each)
+                }
             }
             if (result) {
                 break

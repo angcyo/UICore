@@ -2,6 +2,7 @@ package com.angcyo.acc2.control
 
 import com.angcyo.library.L
 import com.angcyo.library.ex.des
+import com.angcyo.library.ex.wrapLog
 
 /**
  *
@@ -23,6 +24,6 @@ open class AccPrint {
      * [time] 执行步骤的延迟
      * */
     open fun next(accControl: AccControl, title: String?, des: String?, time: Long) {
-        L.w("next[$time]->$title${des.des()}".wrap())
+        L.w("next[$time]->$title${des.des()}".wrapLog())
     }
 }

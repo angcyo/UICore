@@ -1,9 +1,7 @@
 package com.angcyo.acc2.parse
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
-import com.angcyo.acc2.action.BaseAction
-import com.angcyo.acc2.action.ClickAction
-import com.angcyo.acc2.action.StartAction
+import com.angcyo.acc2.action.*
 import com.angcyo.acc2.bean.HandleBean
 import com.angcyo.acc2.control.log
 
@@ -21,6 +19,13 @@ class HandleParse(val accParse: AccParse) {
     init {
         registerActionList.add(ClickAction())
         registerActionList.add(StartAction())
+        registerActionList.add(BackAction())
+        registerActionList.add(CopyAction())
+        registerActionList.add(HomeAction())
+        registerActionList.add(ScrollBackwardAction())
+        registerActionList.add(ScrollForwardAction())
+        registerActionList.add(SleepAction())
+        registerActionList.add(GetTextAction())
     }
 
     /**解析, 并处理[handleList]*/
@@ -67,7 +72,10 @@ class HandleParse(val accParse: AccParse) {
         //待处理的元素节点集合
         var handleNodeList = if (handleBean.findList != null) {
             //需要明确重新指定
-            accParse.findParse.parse(originList, handleBean.findList).nodeList
+            accParse.findParse.parse(
+                accParse.findParse.rootWindowNode(),
+                handleBean.findList
+            ).nodeList
         } else {
             originList
         }

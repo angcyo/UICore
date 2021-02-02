@@ -122,6 +122,13 @@ fun CharSequence?.orString(default: CharSequence = "--"): String =
 
 fun CharSequence?.toString(): String = orString("")
 
+fun Any.toStr(): String = when (this) {
+    is String -> this
+    else -> toString()
+}
+
+fun String.wrapLog() = "\n${nowTimeString()} ${Thread.currentThread().name}\n${this}\n"
+
 /**将列表连成字符串*/
 fun Iterable<*>.connect(
     divide: CharSequence = "," /*连接符*/,

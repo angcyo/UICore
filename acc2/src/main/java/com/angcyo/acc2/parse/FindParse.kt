@@ -55,12 +55,7 @@ class FindParse(val accParse: AccParse) {
         val rootNodeList = if (findBean.window == null) {
             rootList
         } else {
-            val accSchedule = accParse.accControl.accSchedule
-            findRootNode(
-                findBean.window
-                    ?: accSchedule._runActionBean?.window
-                    ?: accSchedule._currentActionBean?.window
-            )
+            rootWindowNode(findBean.window)
         }
 
         if (rootNodeList.isNullOrEmpty()) {
@@ -193,6 +188,13 @@ class FindParse(val accParse: AccParse) {
         return result
     }
 
+    /**规则下的默认根节点集合*/
+    fun rootWindowNode(findWindowBean: WindowBean? = null): List<AccessibilityNodeInfoCompat>? {
+        return accParse.accControl.accSchedule.run {
+            findRootNode(findWindowBean ?: _runActionBean?.window ?: _currentActionBean?.window)
+        }
+    }
+
     //</editor-fold desc="window">
 
     //<editor-fold desc="find">
@@ -237,7 +239,8 @@ class FindParse(val accParse: AccParse) {
     }
 
     /**检查节点是否满足text*/
-    fun matchNodeText(node: AccessibilityNodeInfoCompat, text: String?): Boolean {
+    fun matchNodeText(node: AccessibilityNodeInfoCompat, arg: String?): Boolean {
+        val text = accParse.parseText(arg).firstOrNull()
         if (text.isNullOrBlank()) {
             return true
         }
