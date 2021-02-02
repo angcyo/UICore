@@ -482,6 +482,118 @@ class FindParse(val accParse: AccParse) {
         return false
     }
 
+    /**
+     * 获取状态中, 满足条件的节点
+     * [com.angcyo.acc2.bean.FindBean.stateList]
+     * [index] 未使用的参数, 支持负数
+     * */
+    fun getStateParentNode(
+        stateList: List<String>?,
+        node: AccessibilityNodeInfoCompat,
+        index: Int = -1
+    ): Pair<Boolean, AccessibilityNodeInfoCompat> {
+        var result = true to node
+        if (stateList != null && !stateList.isListEmpty()) {
+            for (state in stateList) {
+
+                //所有节点的状态都要匹配
+                val allMatch = state.contains("*")
+
+                val stateString: String?
+                val parentCount: Int
+
+                state.replace("*", "").split(":").apply {
+                    stateString = getOrNull(0)
+                    parentCount = getOrNull(1)?.toIntOrNull() ?: 0
+                }
+
+                if (!stateString.isNullOrEmpty()) {
+                    //需要状态约束
+                    result = if (allMatch) {
+                        matchNodeStateAndParent(node, stateString, parentCount)
+                    } else {
+                        matchNodeStateOfParent(node, stateString, parentCount)
+                    }
+                }
+
+                if (!result.first) {
+                    //有一个状态不匹配
+                    result = false to node
+                    break
+                }
+            }
+
+        }
+        return result
+    }
+
+    /**[com.angcyo.acc2.action.Action.ACTION_CLICK]
+     * 判断自身和[parentCount]个parent内所有节点是否都满足状态*/
+    fun matchNodeStateAndParent(
+        node: AccessibilityNodeInfoCompat,
+        state: String,
+        parentCount: Int = 0
+    ): Pair<Boolean, AccessibilityNodeInfoCompat> {
+        var result: Pair<Boolean, AccessibilityNodeInfoCompat> = true to node
+        if (matchNodeState(node, state)) {
+            //自身已经满足条件
+            if (parentCount > 0) {
+                var parent: AccessibilityNodeInfoCompat? = node
+                for (count in 1..parentCount) {
+                    parent = parent?.parent
+                    if (parent == null) {
+                        break
+                    }
+                    val match = matchNodeState(parent, state)
+                    if (!match) {
+                        //有一个不匹配, 返回false, 并且返回根节点
+                        result = false to node
+                        break
+                    }
+                    //全部匹配, 还是返回根节点
+                    result = match to node
+                }
+            }
+        } else {
+            result = false to node
+        }
+        return result
+    }
+
+    /**
+     * 判断自身和[parentCount]个parent内是否有满足指定状态的节点, 并返回
+     * [first] 表示是否匹配成功
+     * [second] 当前匹配的节点*/
+    fun matchNodeStateOfParent(
+        node: AccessibilityNodeInfoCompat,
+        state: String,
+        parentCount: Int = 0
+    ): Pair<Boolean, AccessibilityNodeInfoCompat> {
+        var result: Pair<Boolean, AccessibilityNodeInfoCompat> = false to node
+        if (matchNodeState(node, state)) {
+            //自身已经满足条件
+            result = true to node
+        } else if (parentCount > 0) {
+            //自身不满足, 则看看指定的parent中, 是否有满足条件的
+            var parent: AccessibilityNodeInfoCompat? = node
+            for (count in 1..parentCount) {
+                parent = parent?.parent
+                if (parent == null) {
+                    break
+                }
+
+                val match = matchNodeState(parent, state)
+                result = match to parent
+
+                if (match) {
+                    //有一个匹配
+                    break
+                }
+            }
+        }
+        return result
+    }
+
     /**检查节点是否满足rect*/
     fun matchNodeRect(node: AccessibilityNodeInfoCompat, rect: String?): Boolean {
         if (rect == null) {

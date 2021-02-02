@@ -33,6 +33,13 @@ class HandleParse(val accParse: AccParse) {
         registerActionList.add(ScrollForwardAction())
         registerActionList.add(FocusAction())
 
+        registerActionList.add(ClickTouchAction())
+        registerActionList.add(LongClickAction())
+        registerActionList.add(TouchAction())
+        registerActionList.add(DoubleAction())
+        registerActionList.add(MoveAction())
+        registerActionList.add(FlingAction())
+
         registerActionList.add(AppendTextAction())
         registerActionList.add(GetTextAction())
         registerActionList.add(ClearTextAction())

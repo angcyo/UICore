@@ -1,9 +1,13 @@
 package com.angcyo.acc2.parse
 
+import android.graphics.PointF
 import android.graphics.Rect
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.core.AccNodeLog
+import com.angcyo.library._screenHeight
+import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.bounds
+import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.patternList
 import java.net.URLEncoder
@@ -159,4 +163,29 @@ fun List<AccessibilityNodeInfoCompat>.toRect(): List<Rect> {
         result.add(Rect(it.bounds()))
     }
     return result
+}
+
+
+fun String.toPointF(width: Int = _screenWidth, height: Int = _screenHeight): PointF {
+    val p = PointF()
+    var x = 0f
+    var y = 0f
+
+    split(",").apply {
+        x = getOrNull(0)?.toFloatOrNull() ?: x
+        y = getOrNull(1)?.toFloatOrNull() ?: y
+    }
+
+    p.x = x.toPointF(width)
+    p.y = y.toPointF(height)
+
+    return p
+}
+
+fun Float.toPointF(ref: Int): Float {
+    return if (this <= 1f) {
+        ref * this
+    } else {
+        this * dp
+    }
 }

@@ -37,4 +37,9 @@ open class AccPrint(val accControl: AccControl? = null) {
     open fun handleNode(nodeList: List<AccessibilityNodeInfoCompat>?) {
 
     }
+
+    /**手势操作*/
+    open fun touch(x1: Float, y1: Float, x2: Float?, y2: Float?) {
+
+    }
 }

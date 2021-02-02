@@ -8,6 +8,7 @@ import com.angcyo.acc2.parse.toLog
 import com.angcyo.library.ex.click
 import com.angcyo.library.ex.getClickParent
 import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.subEnd
 
 /**
  *
@@ -28,8 +29,24 @@ class ClickAction : BaseAction() {
         action: String
     ): HandleResult = handleResult {
         //触发节点自带的click
+
+        val arg = action.subEnd(Action.ARG_SPLIT)
+
         nodeList?.forEach { node ->
-            val result = node.getClickParent()?.click() == true
+            var result = false
+            if (arg.isNullOrEmpty()) {
+                result = node.getClickParent()?.click() == true
+            } else {
+                control.accSchedule.accParse.findParse.getStateParentNode(listOf(arg), node).apply {
+                    result = if (first) {
+                        node.getClickParent()?.click() ?: false || result
+                    } else {
+                        //携带了状态约束参数, 并且没有匹配到状态
+                        true
+                    }
+                }
+            }
+
             success = success || result
             if (result) {
                 addNode(node)

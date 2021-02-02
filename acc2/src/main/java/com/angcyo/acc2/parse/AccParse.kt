@@ -1,8 +1,12 @@
 package com.angcyo.acc2.parse
 
+import android.graphics.PointF
+import android.graphics.Rect
 import com.angcyo.acc2.action.Action
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.log
+import com.angcyo.library._screenHeight
+import com.angcyo.library._screenWidth
 import com.angcyo.library.app
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.patternList
@@ -166,5 +170,51 @@ class AccParse(val accControl: AccControl) {
         } else {
             arg
         })?.split(Action.PACKAGE_SPLIT)?.toList()
+    }
+
+    /** 从参数中, 解析设置的点位信息. 通常用于手势坐标. 手势坐标, 尽量使用 屏幕宽高用来参考计算
+     * [move:10,10~100,100]
+     * [fling:10,10~100,100]
+     * */
+    fun parsePoint(arg: String?, bound: Rect? = null): List<PointF> {
+        val rect = bound ?: accContext.getBound()
+
+        val screenWidth: Int = _screenWidth
+        val screenHeight: Int = _screenHeight
+
+        val fX: Float = screenWidth * 1 / 3f + Random.nextInt(5, 10)
+        val tX: Float = screenWidth * 2 / 3f + Random.nextInt(5, 10)
+        val fY: Float = screenHeight * 3 / 5f - Random.nextInt(5, 10)
+        val tY: Float = screenHeight * 2 / 5f + Random.nextInt(5, 10)
+
+        val p1 = PointF(fX, fY)
+        val p2 = PointF(tX, tY)
+
+
+        try {
+            arg?.apply {
+                (if (this.contains(Action.POINT_SPLIT)) split(Action.POINT_SPLIT) else split("-")).apply {
+                    //p1
+                    getOrNull(0)?.toPointF(
+                        rect.width(),
+                        rect.height()
+                    )?.apply {
+                        p1.set(this)
+                    }
+
+                    //p2
+                    getOrNull(1)?.toPointF(
+                        rect.width(),
+                        rect.height()
+                    )?.apply {
+                        p2.set(this)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return listOf(p1, p2)
     }
 }
