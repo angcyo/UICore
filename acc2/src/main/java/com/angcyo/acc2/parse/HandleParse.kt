@@ -90,6 +90,20 @@ class HandleParse(val accParse: AccParse) {
     ): HandleResult {
         var result = HandleResult()
 
+        //condition
+        var conditionActionList: List<String>? = null
+
+        if (handleBean.conditionList != null) {
+            //有约束条件需要满足
+            if (!accParse.conditionParse.parse(handleBean.conditionList).success) {
+                //未满足条件
+                if (handleBean.conditionActionList == null) {
+                    return result
+                }
+                conditionActionList = handleBean.conditionActionList
+            }
+        }
+
         //待处理的元素节点集合
         var handleNodeList = if (handleBean.findList != null) {
             //需要明确重新指定
@@ -109,7 +123,7 @@ class HandleParse(val accParse: AccParse) {
         }
 
         //待处理的事件列表
-        val handleActionList = if (handleNodeList.isNullOrEmpty()) {
+        val handleActionList = conditionActionList ?: if (handleNodeList.isNullOrEmpty()) {
             //无元素需要处理时, 优先使用[noActionList], 否则[actionList]
             handleBean.noActionList ?: handleBean.actionList
         } else {

@@ -35,6 +35,11 @@ data class HandleBean(
     var actionList: List<String>? = null,
 
     /**
+     * 当[conditionList]不满足时, 需要执行的具体操作.如果未指定, 则跳过当前的[HandleBean]
+     * [com.angcyo.acc2.action.Action]*/
+    var conditionActionList: List<String>? = null,
+
+    /**
      * 当没有元素选择时需要执行的具体操作, 如果未指定则继续使用[actionList]
      * [com.angcyo.acc2.action.Action]*/
     var noActionList: List<String>? = null,
