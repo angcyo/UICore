@@ -10,6 +10,7 @@ import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.getLongNum
 import kotlin.math.max
 import kotlin.random.Random
+import kotlin.random.Random.Default.nextLong
 
 /**
  *
@@ -46,10 +47,10 @@ class AccParse(val accControl: AccControl) {
 
     fun defaultIntervalDelay(): Long {
         return when (Device.performanceLevel()) {
-            Device.PERFORMANCE_HIGH -> 800
-            Device.PERFORMANCE_MEDIUM -> 1200
-            Device.PERFORMANCE_LOW -> 1_500
-            else -> 2_000
+            Device.PERFORMANCE_HIGH -> 200
+            Device.PERFORMANCE_MEDIUM -> 300
+            Device.PERFORMANCE_LOW -> 500
+            else -> 600
         }
     }
 
@@ -126,7 +127,7 @@ class AccParse(val accControl: AccControl) {
         }
 
         if (result.isEmpty()) {
-            accControl.log("无法解析文本参数[$arg].")
+            accControl.log("无法解析文本参数[$arg]↓\n${taskBean?.wordList}\n${taskBean?.textMap}")
         }
 
         return result
@@ -149,7 +150,7 @@ class AccParse(val accControl: AccControl) {
             val base = split.getOrNull(1)?.toLongOrNull() ?: defaultIntervalDelay()
 
             //倍数
-            val factor = split.getOrNull(2)?.toLongOrNull() ?: 1 //nextLong(2, 5)
+            val factor = split.getOrNull(2)?.toLongOrNull() ?: nextLong(2, 5)
 
             start + base * Random.nextLong(1, max(2L, factor + 1))
         }

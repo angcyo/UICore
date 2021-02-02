@@ -14,6 +14,7 @@ import com.angcyo.ilayer.ILayer
 import com.angcyo.library.L
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
+import com.angcyo.library.ex.remove
 import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.mW
 import com.angcyo.widget.base.screenRect
@@ -188,5 +189,20 @@ class WindowContainer(context: Context) : BaseContainer(context) {
     override fun getContainerRect(): Rect {
         _containerRect.set(0, 0, _screenWidth, _screenHeight)
         return _containerRect
+    }
+
+    /**修改[WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE]*/
+    fun notTouchable(value: Boolean, layer: ILayer) {
+        val wmLayoutParams = wmLayoutParams
+        if (value) {
+            wmLayoutParams.flags = wmLayoutParams.flags or
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
+                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+        } else {
+            wmLayoutParams.flags =
+                wmLayoutParams.flags.remove(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        }
+
+        updateLayout(layer)
     }
 }

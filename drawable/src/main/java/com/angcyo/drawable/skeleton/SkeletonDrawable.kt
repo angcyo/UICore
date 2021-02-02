@@ -439,8 +439,7 @@ class SkeletonDrawable : AbsDslDrawable() {
     }
 
     fun _drawSkeleton(canvas: Canvas, layoutParams: LayoutParams, skeletonBean: SkeletonBean) {
-        textPaint.color = skeletonBean.fillColor
-        textPaint.style = Paint.Style.FILL
+        textPaint.color = skeletonBean.color
         textPaint.strokeWidth = 0f
 
         val useLeft = skeletonBean._left
@@ -457,6 +456,14 @@ class SkeletonDrawable : AbsDslDrawable() {
         val offsetY = skeletonBean._offsetY
 
         val round = skeletonBean._round
+
+        if (skeletonBean.type == SkeletonBean.SKELETON_TYPE_RECT_STROKE) {
+            textPaint.style = Paint.Style.STROKE
+            textPaint.strokeWidth = size
+        } else {
+            textPaint.color = skeletonBean.fillColor
+            textPaint.style = Paint.Style.FILL
+        }
 
         layoutParams.useWidth = 0f
         layoutParams.useHeight = 0f
@@ -506,7 +513,7 @@ class SkeletonDrawable : AbsDslDrawable() {
                 layoutParams.useWidth = useLeft + size
                 layoutParams.useHeight = useTop + size
             }
-            SkeletonBean.SKELETON_TYPE_RECT -> {
+            SkeletonBean.SKELETON_TYPE_RECT, SkeletonBean.SKELETON_TYPE_RECT_STROKE -> {
                 //画矩形
                 val r = if (round > 0) round else size
 

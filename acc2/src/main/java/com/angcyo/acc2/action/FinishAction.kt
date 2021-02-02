@@ -4,22 +4,19 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
-import com.angcyo.acc2.parse.toLog
-import com.angcyo.library.ex.click
-import com.angcyo.library.ex.getClickParent
-import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.subEnd
 
 /**
  *
  * Email:angcyo@126.com
  * @author angcyo
- * @date 2021/02/01
+ * @date 2021/02/02
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class ClickAction : BaseAction() {
+class FinishAction : BaseAction() {
 
     override fun interceptAction(control: AccControl, action: String): Boolean {
-        return action.startsWith(Action.ACTION_CLICK)
+        return action.startsWith(Action.ACTION_FINISH)
     }
 
     override fun runAction(
@@ -27,14 +24,9 @@ class ClickAction : BaseAction() {
         nodeList: List<AccessibilityNodeInfoCompat>?,
         action: String
     ): HandleResult = handleResult {
-        //触发节点自带的click
-        nodeList?.forEach { node ->
-            val result = node.getClickParent()?.click() == true
-            success = success || result
-            if (result) {
-                addNode(node)
-            }
-            control.log("点击节点:$result ↓\n${node.toLog(isDebug())}")
-        }
+        val reason = action.subEnd(Action.ARG_SPLIT) ?: "Finish"
+        success = true
+        control.log("FinishAction:$reason")
+        control.finish(reason)
     }
 }

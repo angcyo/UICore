@@ -15,6 +15,9 @@ data class ActionBean(
     /**操作的标题*/
     var title: String? = null,
 
+    /**操作的概要*/
+    var summary: String? = null,
+
     /**操作的描述*/
     var des: String? = null,
 

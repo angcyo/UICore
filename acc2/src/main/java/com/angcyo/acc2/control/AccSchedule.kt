@@ -37,10 +37,12 @@ class AccSchedule(val accControl: AccControl) {
     }
 
     /**累加跳转次数*/
-    fun jumpCountIncrement(actionId: Long) {
-        val count = actionCount[actionId] ?: ActionCount()
-        count.jumpCount.doCount()
-        actionCount[actionId] = count
+    fun jumpCountIncrement(actionId: Long?) {
+        if (actionId != null) {
+            val count = actionCount[actionId] ?: ActionCount()
+            count.jumpCount.doCount()
+            actionCount[actionId] = count
+        }
     }
 
     /**获取[ActionBean]的运行次数*/
@@ -50,7 +52,7 @@ class AccSchedule(val accControl: AccControl) {
 
     /**预备下一个需要执行*/
     fun next() {
-        _targetIndex = _currentIndex + 1
+        _scheduleIndex = _currentIndex + 1
     }
 
     fun thread(target: Runnable) {
@@ -59,7 +61,14 @@ class AccSchedule(val accControl: AccControl) {
         }
     }
 
-    fun indexTip() = "[$_currentIndex/${accControl._taskBean?.actionList.size()}]"
+    fun indexTip() = "$_currentIndex/${actionSize()}"
+
+    /**总共需要执行的[ActionBean]的数量*/
+    fun actionSize() = accControl._taskBean?.actionList.size()
+
+    fun relyList(): List<Long>? {
+        return _runActionBean?.relyList ?: _scheduleActionBean?.relyList
+    }
 
     //</editor-fold desc="操作">
 
@@ -71,8 +80,8 @@ class AccSchedule(val accControl: AccControl) {
         actionCount.clear()
         _endTime = 0
         _currentIndex = -1
-        _currentActionBean = null
-        _targetIndex = -1
+        _scheduleActionBean = null
+        _scheduleIndex = -1
     }
 
     /**结束调度*/
@@ -87,28 +96,39 @@ class AccSchedule(val accControl: AccControl) {
     var _currentIndex = -1
 
     //当前调度的[ActionBean], 主线[ActionBean]
-    var _currentActionBean: ActionBean? = null
+    var _scheduleActionBean: ActionBean? = null
 
     //正在调度的索引, 理论上[_currentIndex]=[_targetIndex]
-    var _targetIndex = -1
+    var _scheduleIndex = -1
+
+    //强制指定下一个需要执行的索引
+    var _targetIndex: Int? = null
 
     /**循环调度*/
     fun scheduleNext() {
         //调度下一个之前
-        _currentActionBean?.let {
+        _scheduleActionBean?.let {
             targetActionList.remove(it)
         }
-        _currentActionBean = null
+        _scheduleActionBean = null
 
-        //下一个
+        //获取下一个需要调度的[ActionBean]
+        val targetIndex = _targetIndex
+        if (targetIndex != null) {
+            _currentIndex = targetIndex
+            _scheduleIndex = targetIndex
+            _targetIndex = null
+        }
+
+        //next
         val nextActionBean = nextActionBean()
 
         if (nextActionBean == null) {
             //无[ActionBean]需要调度, 调度结束
             accControl.finish("执行完成")
         } else {
-            _currentActionBean = nextActionBean
-            _currentIndex = _targetIndex
+            _scheduleActionBean = nextActionBean
+            _currentIndex = _scheduleIndex
 
             val result =
                 scheduleAction(nextActionBean, accControl._taskBean?.backActionList, true)
@@ -162,7 +182,7 @@ class AccSchedule(val accControl: AccControl) {
 
                 //action处理
                 if (beforeHandleResult?.success != true) {
-                    accControl.log("${if (isPrimaryAction) "[主线]" else ""}开始执行[${actionBean.actionId}]${indexTip()}:${actionBean}")
+                    accControl.log("${if (isPrimaryAction) "[主线]" else ""}开始执行[${actionBean.actionId}](${indexTip()}):${actionBean}")
                     if (isPrimaryAction) {
                         //执行统计
                         runCountIncrement(actionBean.actionId)
@@ -212,13 +232,13 @@ class AccSchedule(val accControl: AccControl) {
             //优先执行插队[ActionBean]
             result = targetActionList.first()
         } else {
-            if (_targetIndex < 0) {
-                _targetIndex = 0
+            if (_scheduleIndex < 0) {
+                _scheduleIndex = 0
             }
 
             //获取可以执行的目标
             accControl._taskBean?.actionList?.apply {
-                for (i in _targetIndex..lastIndex) {
+                for (i in _scheduleIndex..lastIndex) {
                     val bean = getOrNull(i)
                     if (bean != null) {
                         if (bean.enable) {
@@ -227,7 +247,7 @@ class AccSchedule(val accControl: AccControl) {
                                 accControl.log("${bean.actionLog()}未满足激活条件,跳过调度.")
                                 continue
                             }
-                            _targetIndex = i
+                            _scheduleIndex = i
                             result = bean
                             break
                         } else {
@@ -235,7 +255,7 @@ class AccSchedule(val accControl: AccControl) {
                                 //开启了自动激活
                                 if (accParse.conditionParse.parse(bean.conditionList).success) {
                                     bean.enable = true
-                                    _targetIndex = i
+                                    _scheduleIndex = i
                                     result = bean
                                     break
                                 } else {
@@ -252,6 +272,38 @@ class AccSchedule(val accControl: AccControl) {
 
         return result
     }
+
+    /**指定下一个需要调度的[ActionBean]*/
+    fun nextScheduleAction(bean: ActionBean) {
+        val targetIndex = accControl._taskBean?.actionList?.indexOf(bean)
+        targetIndex?.let {
+            if (it != -1) {
+                accControl.log("强制执行目标[$it/${actionSize()}]:$bean")
+                _targetIndex = it
+            }
+        }
+    }
+
+    fun clearTargetAction() {
+        targetActionList.clear()
+    }
+
+    fun addTargetAction(bean: ActionBean) {
+        if (!targetActionList.contains(bean)) {
+            targetActionList.add(bean)
+        }
+    }
+
+    /**设置下一个需要执行的[ActionBean]*/
+    fun startTargetAction(bean: ActionBean) {
+        clearTargetAction()
+        addTargetAction(bean)
+        accControl.resume(false)
+    }
+
+    //</editor-fold desc="调度">
+
+    //<editor-fold desc="执行">
 
     /**解析器*/
     var accParse = AccParse(accControl)
@@ -292,7 +344,7 @@ class AccSchedule(val accControl: AccControl) {
         //等待执行
         val delayTime = accParse.parseTime(actionBean.start)
         if (isPrimaryAction) {
-            accControl.next(actionBean.title, actionBean.des, delayTime)
+            accControl.next(actionBean.summary ?: actionBean.title, actionBean.des, delayTime)
         }
         accControl.log("${actionBean.actionLog()}等待[$delayTime]ms后运行.")
         sleep(delayTime)
@@ -377,5 +429,5 @@ class AccSchedule(val accControl: AccControl) {
         return handleActionResult
     }
 
-    //</editor-fold desc="调度">
+    //</editor-fold desc="执行">
 }

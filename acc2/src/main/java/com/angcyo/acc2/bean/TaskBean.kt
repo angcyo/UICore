@@ -1,5 +1,7 @@
 package com.angcyo.acc2.bean
 
+import com.angcyo.acc2.action.Action
+
 /**
  *
  * Email:angcyo@126.com
@@ -48,5 +50,22 @@ fun TaskBean.putMap(key: String?, value: String?) {
     }
     if (key != null) {
         textMap?.put(key, value)
+    }
+}
+
+/**追加[com.angcyo.acc2.bean.TaskBean.textMap]数据*/
+fun TaskBean.appendMap(key: String?, value: String?) {
+    if (textMap == null) {
+        textMap = hashMapOf()
+    }
+    if (key != null) {
+        textMap?.apply {
+            val old = get(key)
+            if (old.isNullOrEmpty()) {
+                put(key, value)
+            } else {
+                put(key, "${old}${Action.TEXT_SPLIT}${value}")
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.angcyo.acc2.action
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.control.AccControl
+import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
 
 /**
@@ -11,10 +12,10 @@ import com.angcyo.acc2.parse.HandleResult
  * @date 2021/02/01
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class _Action : BaseAction() {
+class FalseAction : BaseAction() {
 
     override fun interceptAction(control: AccControl, action: String): Boolean {
-        return action.startsWith(Action.ACTION_START)
+        return action.startsWith(Action.ACTION_FALSE)
     }
 
     override fun runAction(
@@ -22,11 +23,7 @@ class _Action : BaseAction() {
         nodeList: List<AccessibilityNodeInfoCompat>?,
         action: String
     ): HandleResult = handleResult {
-        /*val result = xxx
-        success = success || result
-        if (result) {
-            addNode(node)
-        }
-        control.log("点击节点[${node.toLog(isDebug())}]:$result")*/
+        success = false
+        control.log("直接返回[false]")
     }
 }

@@ -10,12 +10,17 @@ object Action {
     /**参数分隔符*/
     const val ARG_SPLIT = ":"
 
-    /**包名分隔符*/
+    /**多包名分隔符*/
     const val PACKAGE_SPLIT = ";"
+
+    /**多文本分隔符[com.angcyo.acc2.bean.TaskBean.textMap]*/
+    const val TEXT_SPLIT = "|"
 
     const val OP = "><=%≈"
 
     const val RELY = "rely"
+
+    const val ALL = "*"
 
     /**点击[AccessibilityNodeInfoCompat]*/
     const val ACTION_CLICK = "click"
@@ -31,10 +36,25 @@ object Action {
 
     /**获取元素文本保存到
      * [com.angcyo.acc2.bean.TaskBean.textMap]
-     * [getText:key]
+     * [getText:key regex:\\d+]
      * 默认key:getText
+     * regex:文本需要通过正则过滤的表达式
      */
     const val ACTION_GET_TEXT = "getText"
+
+    /**清理[com.angcyo.acc2.bean.TaskBean.textMap]数据
+     * [clearText:*] 清理所有
+     * [clearText:k1 k2 k3] 清理指定key
+     * */
+    const val ACTION_CLEAR_TEXT = "clearText"
+
+    /**获取元素文本追加保存到
+     * [com.angcyo.acc2.bean.TaskBean.textMap]
+     * [appendText:key]
+     * 默认key:appendText
+     * regex:\\d+
+     */
+    const val ACTION_APPEND_TEXT = "appendText"
 
     /**回退按钮*/
     const val ACTION_BACK = "back"
@@ -88,6 +108,12 @@ object Action {
 
     /**向后滚动, 手指向上滑动*/
     const val ACTION_SCROLL_BACKWARD = "scrollBackward"
+
+    /**执行结果直接设置true*/
+    const val ACTION_TRUE = "true"
+
+    /**执行结果直接设置false*/
+    const val ACTION_FALSE = "false"
 
     /*---------------------------------------状态匹配--------------------------------------*/
 

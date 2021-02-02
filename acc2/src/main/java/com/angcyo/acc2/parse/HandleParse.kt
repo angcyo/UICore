@@ -18,15 +18,28 @@ class HandleParse(val accParse: AccParse) {
     val registerActionList = mutableListOf<BaseAction>()
 
     init {
-        registerActionList.add(ClickAction())
+
         registerActionList.add(StartAction())
-        registerActionList.add(BackAction())
+        registerActionList.add(SleepAction())
         registerActionList.add(CopyAction())
+        registerActionList.add(TrueAction())
+        registerActionList.add(FalseAction())
+
+        registerActionList.add(BackAction())
         registerActionList.add(HomeAction())
+
+        registerActionList.add(ClickAction())
         registerActionList.add(ScrollBackwardAction())
         registerActionList.add(ScrollForwardAction())
-        registerActionList.add(SleepAction())
+        registerActionList.add(FocusAction())
+
+        registerActionList.add(AppendTextAction())
         registerActionList.add(GetTextAction())
+        registerActionList.add(ClearTextAction())
+
+        registerActionList.add(FinishAction())
+        registerActionList.add(ErrorAction())
+        registerActionList.add(JumpAction())
     }
 
     /**解析, 并处理[handleList]*/
@@ -160,16 +173,18 @@ class HandleParse(val accParse: AccParse) {
 
         var isActionIntercept = false
 
+        val accControl = accParse.accControl
         if (!nodeList.isNullOrEmpty()) {
-            accParse.accControl.log(nodeList.toLog("处理节点[${nodeList.size()}][$action]↓"))
+            accControl.log(nodeList.toLog("处理节点[${nodeList.size()}][$action]↓"))
+            accControl.accPrint.handleNode(nodeList)
         }
 
         registerActionList.forEach {
             //是否要处理指定的action
-            if (it.interceptAction(accParse.accControl, action)) {
+            if (it.interceptAction(accControl, action)) {
                 isActionIntercept = true
                 //运行处理
-                it.runAction(accParse.accControl, nodeList, action).apply {
+                it.runAction(accControl, nodeList, action).apply {
                     result.success = success || result.success
                     if (success) {
                         //把处理成功的元素收集起来
@@ -186,7 +201,7 @@ class HandleParse(val accParse: AccParse) {
         if (!isActionIntercept) {
             //动作未识别, 或者无法处理
             result.success = true
-            accParse.accControl.log("无法处理[$action],跳过.")
+            accControl.log("无法处理[$action],跳过.")
         }
         if (result.success) {
             result.nodeList = handledNodeList

@@ -25,4 +25,11 @@ data class FilterBean(
     /**过滤一下只满足矩形的条件的元素 , 集合中满足一项即可.
      * 匹配顺序:4*/
     var rectList: List<String>? = null,
+
+    /**当[AccessibilityNodeInfoCompat]节点的文本, 包含列表中的文本时.
+     * 则忽略此节点
+     * 支持文本变量, 支持文本使用[com.angcyo.acc2.action.Action.TEXT_SPLIT]分割
+     * 匹配顺序:5
+     * */
+    var ignoreTextList: List<String>? = null,
 )

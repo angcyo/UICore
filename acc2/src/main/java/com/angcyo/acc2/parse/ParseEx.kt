@@ -1,7 +1,9 @@
 package com.angcyo.acc2.parse
 
+import android.graphics.Rect
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.core.AccNodeLog
+import com.angcyo.library.ex.bounds
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.patternList
 import java.net.URLEncoder
@@ -139,8 +141,22 @@ fun List<AccessibilityNodeInfoCompat>.toLog(header: String?) = buildString {
     }
     val accNodeLog = AccNodeLog()
     accNodeLog.logNodeChild = false
-    this@toLog.forEach {
-        appendLine(accNodeLog.getNodeLog(it))
+
+    val list = this@toLog
+    list.forEachIndexed { index: Int, node: AccessibilityNodeInfoCompat ->
+        append(accNodeLog.getNodeLog(node))
+        if (index != list.lastIndex) {
+            appendLine()
+        }
         accNodeLog.outBuilder.clear()
     }
+}
+
+/**转换成矩形坐标*/
+fun List<AccessibilityNodeInfoCompat>.toRect(): List<Rect> {
+    val result = mutableListOf<Rect>()
+    forEach {
+        result.add(Rect(it.bounds()))
+    }
+    return result
 }

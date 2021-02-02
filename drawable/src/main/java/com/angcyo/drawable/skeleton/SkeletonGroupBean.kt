@@ -85,3 +85,11 @@ fun SkeletonGroupBean.rect(roundSize: String = "5dp", dsl: SkeletonBean.() -> Un
         dsl()
     }
 }
+
+fun SkeletonGroupBean.rectStroke(stroke: String = "5dp", dsl: SkeletonBean.() -> Unit) {
+    skeleton {
+        type = SkeletonBean.SKELETON_TYPE_RECT_STROKE
+        size = stroke
+        dsl()
+    }
+}

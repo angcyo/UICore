@@ -25,7 +25,7 @@ abstract class BaseAction {
     ): HandleResult
 
     /**主线的[ActionBean]*/
-    fun mainActionBean(control: AccControl) = control.accSchedule._currentActionBean
+    fun mainActionBean(control: AccControl) = control.accSchedule._scheduleActionBean
 
     /**正在运行的[ActionBean]*/
     fun runActionBean(control: AccControl) = control.accSchedule._runActionBean

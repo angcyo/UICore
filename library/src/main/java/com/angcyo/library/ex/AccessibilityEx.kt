@@ -835,6 +835,14 @@ fun AccessibilityNodeInfoCompat.getScrollableParent(): AccessibilityNodeInfoComp
     }
 }
 
+fun AccessibilityNodeInfoCompat.getFocusableParent(): AccessibilityNodeInfoCompat? {
+    return if (isFocusable) {
+        this
+    } else {
+        parent?.getFocusableParent()
+    }
+}
+
 /**获取自身的兄弟节点
  * [index] >0 表示获取自身下面的第几个兄弟; <0 表示获取自身上面的第几个兄弟
  * */

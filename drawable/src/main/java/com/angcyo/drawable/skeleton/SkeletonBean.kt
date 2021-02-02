@@ -17,6 +17,8 @@ data class SkeletonBean(
     var type: Int = -1,
     /**线的宽度或者圆的半径或者圆角大小*/
     var size: String? = null,
+    var color: Int = "#E7E7E7".toColorInt(),
+    /**填充时的颜色*/
     var fillColor: Int = "#E7E7E7".toColorInt(),
     /**[Bean]的定位数据, 小于1f,表示比例; 否则就是dp; 如果是圆的话, 表示圆心的坐标*/
     var left: String? = null,//相对于当前[SkeletonGroupBean]的左边距离
@@ -45,6 +47,7 @@ data class SkeletonBean(
         const val SKELETON_TYPE_LINE = 1 //绘制线
         const val SKELETON_TYPE_CIRCLE = 2 //绘制圆
         const val SKELETON_TYPE_RECT = 4 //绘制矩形
+        const val SKELETON_TYPE_RECT_STROKE = 8 //绘制描边矩形
     }
 }
 

@@ -34,7 +34,7 @@ class ScrollBackwardAction : BaseAction() {
             if (result) {
                 addNode(node)
             }
-            control.log("向后滚动[${node.toLog(isDebug())}]:$result")
+            control.log("向后滚动:$result ↓\n${node.toLog(isDebug())}")
         }
     }
 }

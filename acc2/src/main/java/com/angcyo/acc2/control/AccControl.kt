@@ -217,12 +217,12 @@ fun Number.toControlStateStr() = when (this) {
 
 /**日志输出*/
 fun AccControl.log(log: String?) {
-    accPrint.log(this, log)
+    accPrint.log(log)
 }
 
 /**日志输出*/
 fun AccControl.next(title: String?, des: String?, time: Long) {
-    accPrint.next(this, title, des, time)
+    accPrint.next(title, des, time)
 }
 
 //</editor-fold desc="扩展">

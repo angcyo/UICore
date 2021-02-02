@@ -1,7 +1,7 @@
 package com.angcyo.acc2.action
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
-import com.angcyo.acc2.bean.putMap
+import com.angcyo.acc2.bean.appendMap
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
@@ -17,10 +17,10 @@ import com.angcyo.library.ex.toStr
  * @date 2021/02/02
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class GetTextAction : BaseAction() {
+class AppendTextAction : BaseAction() {
 
     override fun interceptAction(control: AccControl, action: String): Boolean {
-        return action.startsWith(Action.ACTION_GET_TEXT)
+        return action.startsWith(Action.ACTION_APPEND_TEXT)
     }
 
     override fun runAction(
@@ -28,21 +28,29 @@ class GetTextAction : BaseAction() {
         nodeList: List<AccessibilityNodeInfoCompat>?,
         action: String
     ): HandleResult = handleResult {
-        var key: String? = Action.ACTION_GET_TEXT
-        key = action.arg(Action.ACTION_GET_TEXT) ?: key
+        var key: String? = Action.ACTION_APPEND_TEXT
+        key = action.arg(Action.ACTION_APPEND_TEXT) ?: key
         val regex = action.arg("regex")
 
-        var text = nodeList?.firstOrNull()?.text()
+        val textList = mutableListOf<String>()
 
-        if (!regex.isNullOrEmpty()) {
-            text = text.patternList(regex).firstOrNull()
+        nodeList?.forEach {
+
+            var text = it.text()
+
+            if (!regex.isNullOrEmpty()) {
+                text = text.patternList(regex).firstOrNull()
+            }
+
+            if (text != null) {
+                //保存起来
+                val textStr = text.toStr()
+                control._taskBean?.appendMap(key, textStr)
+                textList.add(textStr)
+            }
         }
 
-        success = text != null
-        if (text != null) {
-            //保存起来
-            control._taskBean?.putMap(key, text.toStr())
-        }
-        control.log("获取文本[$text] key:[$key] regex:[${regex}]:$success")
+        success = textList.isNotEmpty()
+        control.log("追加文本[$textList] key:[$key] regex:[${regex}]:$success")
     }
 }
