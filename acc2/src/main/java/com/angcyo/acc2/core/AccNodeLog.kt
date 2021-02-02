@@ -25,6 +25,9 @@ class AccNodeLog {
     //是否要过滤window
     var filterWindow: (AccessibilityWindowInfo) -> Boolean = { false }
 
+    //仅输出少量window信息
+    var logMinWindowInfo: Boolean = false
+
     //输出window的node信息
     var logWindowNode: Boolean = true
 
@@ -48,19 +51,33 @@ class AccNodeLog {
             if (logScreenInfo) {
                 outBuilder.appendln("screenWidth:$_screenWidth screenHeight:$_screenHeight dp:$dp")
             }
-            windows.forEachIndexed { index, accessibilityWindowInfo ->
-                if (filterWindow(accessibilityWindowInfo)) {
+            windows.forEachIndexed { index, windowInfo ->
+                if (filterWindow(windowInfo)) {
                     //忽略当前窗口
                 } else {
                     outBuilder.append("$index->")
-                    if (accessibilityWindowInfo.root == service?.rootInActiveWindow) {
+                    if (windowInfo.root == service?.rootInActiveWindow) {
                         outBuilder.append("[Active]")
                     }
-                    outBuilder.appendln("$accessibilityWindowInfo")
+
+                    if (logMinWindowInfo) {
+                        outBuilder.appendln(buildString {
+                            append(windowInfo.title)
+                            append(" ")
+                            append(windowInfo.id)
+                            append(" ")
+                            append(windowInfo.type.toWindowTypeStr())
+                            append(" ")
+                            windowInfo.getBoundsInScreen(tempRect)
+                            append(tempRect)
+                        })
+                    } else {
+                        outBuilder.appendln("$windowInfo")
+                    }
 
                     if (logWindowNode) {
                         //节点日志
-                        accessibilityWindowInfo.root?.let { getNodeLogWrap(it.wrap()) }
+                        windowInfo.root?.let { getNodeLogWrap(it.wrap()) }
                     }
                 }
             }
@@ -74,6 +91,7 @@ class AccNodeLog {
         logScreenInfo = true
         logNodeAction = true
         logNodeChild = true
+        logMinWindowInfo = false
         refWidth = _screenWidth
         refHeight = _screenHeight
     }

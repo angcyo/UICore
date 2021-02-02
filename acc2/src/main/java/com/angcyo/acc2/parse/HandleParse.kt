@@ -159,8 +159,8 @@ class HandleParse(val accParse: AccParse) {
 
         var isActionIntercept = false
 
-        if (nodeList.isNullOrEmpty()) {
-            accParse.accControl.log(nodeList?.toLog("处理节点[$action]↓"))
+        if (!nodeList.isNullOrEmpty()) {
+            accParse.accControl.log(nodeList.toLog("处理节点[$action]↓"))
         }
 
         registerActionList.forEach {

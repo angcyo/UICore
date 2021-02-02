@@ -5,6 +5,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.action.Action
 import com.angcyo.acc2.bean.FindBean
 import com.angcyo.acc2.bean.WindowBean
+import com.angcyo.acc2.control.log
 import com.angcyo.acc2.eachChildDepth
 import com.angcyo.library.ex.*
 
@@ -40,6 +41,10 @@ class FindParse(val accParse: AccParse) {
                     break
                 }
             }
+        }
+
+        if (result.success) {
+            accParse.accControl.log(result.nodeList?.toLog("找到节点[${result.nodeList.size()}]↓"))
         }
 
         return result

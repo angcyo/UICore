@@ -16,6 +16,7 @@ import android.view.Window
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.library.L
 import com.angcyo.library._screenHeight
@@ -889,3 +890,25 @@ inline fun AccessibilityNodeInfoCompat.forEachChild(action: (child: Accessibilit
 }
 
 //</editor-fold desc="AccessibilityNodeInfo扩展">
+
+/**[android.view.accessibility.AccessibilityWindowInfo#typeToString]*/
+fun Int.toWindowTypeStr(): String? {
+    return when (this) {
+        AccessibilityWindowInfo.TYPE_APPLICATION -> {
+            "TYPE_APPLICATION"
+        }
+        AccessibilityWindowInfo.TYPE_INPUT_METHOD -> {
+            "TYPE_INPUT_METHOD"
+        }
+        AccessibilityWindowInfo.TYPE_SYSTEM -> {
+            "TYPE_SYSTEM"
+        }
+        AccessibilityWindowInfo.TYPE_ACCESSIBILITY_OVERLAY -> {
+            "TYPE_ACCESSIBILITY_OVERLAY"
+        }
+        AccessibilityWindowInfo.TYPE_SPLIT_SCREEN_DIVIDER -> {
+            "TYPE_SPLIT_SCREEN_DIVIDER"
+        }
+        else -> "<UNKNOWN>"
+    }
+}
