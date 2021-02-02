@@ -4,6 +4,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.action.*
 import com.angcyo.acc2.bean.HandleBean
 import com.angcyo.acc2.control.log
+import com.angcyo.library.ex.size
 
 /**
  *
@@ -160,7 +161,7 @@ class HandleParse(val accParse: AccParse) {
         var isActionIntercept = false
 
         if (!nodeList.isNullOrEmpty()) {
-            accParse.accControl.log(nodeList.toLog("处理节点[$action]↓"))
+            accParse.accControl.log(nodeList.toLog("处理节点[${nodeList.size()}][$action]↓"))
         }
 
         registerActionList.forEach {
