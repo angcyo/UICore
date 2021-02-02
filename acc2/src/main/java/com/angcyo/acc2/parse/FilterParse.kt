@@ -56,7 +56,7 @@ class FilterParse(val accParse: AccParse) {
         }
         after = if (removeList.isEmpty()) after else after.filter { !removeList.contains(it) }
 
-        //过滤筛选步骤3: notContainList
+        //过滤3: notContainList
         if (filterBean.notContainList != null) {
             after.forEach { node ->
                 accParse.findParse.parse(listOf(node), filterBean.containList).apply {
@@ -64,6 +64,24 @@ class FilterParse(val accParse: AccParse) {
                         //包含目标, 不符合过滤条件
                         removeList.add(node)
                     }
+                }
+            }
+        }
+        after = if (removeList.isEmpty()) after else after.filter { !removeList.contains(it) }
+
+        //过滤4: rectList
+        if (filterBean.rectList != null) {
+            after.forEach { node ->
+                var match = false
+                for (rect in filterBean.rectList!!) {
+                    if (accParse.findParse.matchNodeRect(node, rect)) {
+                        match = true
+                        break
+                    }
+                }
+                if (!match) {
+                    //不符合矩形条件
+                    removeList.add(node)
                 }
             }
         }

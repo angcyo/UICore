@@ -68,6 +68,16 @@ class AccNodeLog {
         return outBuilder
     }
 
+    fun reset() {
+        outBuilder.clear()
+        logWindowNode = true
+        logScreenInfo = true
+        logNodeAction = true
+        logNodeChild = true
+        refWidth = _screenWidth
+        refHeight = _screenHeight
+    }
+
     //输出node的action信息
     var logNodeAction: Boolean = true
 

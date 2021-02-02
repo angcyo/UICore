@@ -21,4 +21,8 @@ data class FilterBean(
     /**如果元素不包含指定的元素, 集合中满足一项即可.
      * 匹配顺序:3*/
     var notContainList: List<FindBean>? = null,
+
+    /**过滤一下只满足矩形的条件的元素 , 集合中满足一项即可.
+     * 匹配顺序:4*/
+    var rectList: List<String>? = null,
 )

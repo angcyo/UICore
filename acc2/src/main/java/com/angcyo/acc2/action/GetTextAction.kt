@@ -38,6 +38,6 @@ class GetTextAction : BaseAction() {
             //保存起来
             control._taskBean?.putMap(key, text.toStr())
         }
-        control.log("获取文本[${text}]:$success")
+        control.log("获取文本[$key]:[${text}]:$success")
     }
 }

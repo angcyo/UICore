@@ -12,7 +12,6 @@ import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_STOP
 import com.angcyo.acc2.core.BaseAccService
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.library.ex.sleep
-import com.angcyo.library.ex.wrapLog
 
 /**
  *
@@ -218,7 +217,7 @@ fun Number.toControlStateStr() = when (this) {
 
 /**日志输出*/
 fun AccControl.log(log: String?) {
-    accPrint.log(this, log?.wrapLog())
+    accPrint.log(this, log)
 }
 
 /**日志输出*/
