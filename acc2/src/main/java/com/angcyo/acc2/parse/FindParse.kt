@@ -3,6 +3,7 @@ package com.angcyo.acc2.parse
 import android.view.accessibility.AccessibilityWindowInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.action.Action
+import com.angcyo.acc2.bean.ChildBean
 import com.angcyo.acc2.bean.FindBean
 import com.angcyo.acc2.bean.WindowBean
 import com.angcyo.acc2.control.log
@@ -18,6 +19,9 @@ import com.angcyo.library.ex.*
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 class FindParse(val accParse: AccParse) {
+
+    /**路径解析*/
+    var pathParse = PathParse(accParse)
 
     //<editor-fold desc="parse">
 
@@ -82,6 +86,8 @@ class FindParse(val accParse: AccParse) {
         val id = findBean.idList != null
         val rect = findBean.rectList != null
         val state = findBean.stateList != null
+        val child = findBean.childList != null
+        val path = findBean.pathList != null
 
         when {
             text -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.textList))
@@ -89,6 +95,18 @@ class FindParse(val accParse: AccParse) {
             id -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.idList))
             rect -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.rectList))
             state -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.stateList))
+            child -> findNodeList.addAll(
+                findNodeByChild(rootNodeList, findBean.childList)
+            )
+            path -> {
+                rootNodeList.forEach { node ->
+                    findBean.pathList?.forEach { pathStr ->
+                        pathParse.parse(node, pathStr)?.let {
+                            findNodeList.add(it)
+                        }
+                    }
+                }
+            }
             //空的选择器
             else -> findNodeList.addAll(rootNodeList)
         }
@@ -223,10 +241,43 @@ class FindParse(val accParse: AccParse) {
             rootNode.eachChildDepth { node, depth ->
                 list.forEachIndexed { index, _ ->
                     if (matchNode(node, findBean, index)) {
-                        result.add(node)
+                        val path = findBean.pathList?.getOrNull(index)
+
+                        if (path.isNullOrEmpty()) {
+                            result.add(node)
+                        } else {
+                            //路径解析
+                            pathParse.parse(node, path)?.let {
+                                result.add(it)
+                            }
+                        }
+
                         if (checkFindLimit(result, depth)) {
                             return@eachChildDepth true
                         }
+                    }
+                }
+                false
+            }
+        }
+        return result
+    }
+
+    /**查找节点*/
+    fun findNodeByChild(
+        originList: List<AccessibilityNodeInfoCompat>,
+        list: List<ChildBean>?
+    ): List<AccessibilityNodeInfoCompat> {
+        val result = mutableListOf<AccessibilityNodeInfoCompat>()
+        if (list.isNullOrEmpty()) {
+            return result
+        }
+        originList.forEach { rootNode ->
+            rootNode.eachChildDepth { node, depth ->
+                if (matchNodeChild(node, list)) {
+                    result.add(node)
+                    if (checkFindLimit(result, depth)) {
+                        return@eachChildDepth true
                     }
                 }
                 false
@@ -241,11 +292,32 @@ class FindParse(val accParse: AccParse) {
 
     /**节点必须要满足的条件*/
     fun matchNode(node: AccessibilityNodeInfoCompat, findBean: FindBean, index: Int): Boolean {
-        return matchNodeText(node, findBean.textList?.getOrNull(index)) &&
-                matchNodeClass(node, findBean.clsList?.getOrNull(index)) &&
-                matchNodeId(node, findBean.idList?.getOrNull(index)) &&
-                matchNodeState(node, findBean.stateList?.getOrNull(index)) &&
-                matchNodeRect(node, findBean.rectList?.getOrNull(index))
+        return matchNode(
+            node, findBean.textList?.getOrNull(index),
+            findBean.clsList?.getOrNull(index),
+            findBean.idList?.getOrNull(index),
+            findBean.rectList?.getOrNull(index),
+            findBean.stateList?.getOrNull(index),
+            findBean.childList
+        )
+    }
+
+    /**节点必须要满足的条件*/
+    fun matchNode(
+        node: AccessibilityNodeInfoCompat,
+        text: String?,
+        cls: String?,
+        id: String?,
+        rect: String?,
+        state: String?,
+        childList: List<ChildBean>?
+    ): Boolean {
+        return matchNodeText(node, text) &&
+                matchNodeClass(node, cls) &&
+                matchNodeId(node, id) &&
+                matchNodeState(node, state) &&
+                matchNodeRect(node, rect) &&
+                matchNodeChild(node, childList)
     }
 
     /**检查节点是否满足text*/
@@ -400,6 +472,16 @@ class FindParse(val accParse: AccParse) {
         return match
     }
 
+    /**判断节点是否满足状态中的任意一个*/
+    fun matchNodeStateOr(node: AccessibilityNodeInfoCompat, stateList: List<String>): Boolean {
+        for (state in stateList) {
+            if (matchNodeState(node, state)) {
+                return true
+            }
+        }
+        return false
+    }
+
     /**检查节点是否满足rect*/
     fun matchNodeRect(node: AccessibilityNodeInfoCompat, rect: String?): Boolean {
         if (rect == null) {
@@ -413,6 +495,55 @@ class FindParse(val accParse: AccParse) {
         }
 
         return accParse.rectParse.parse(rect, bound)
+    }
+
+    /**检查节点是否满足child*/
+    fun matchNodeChild(node: AccessibilityNodeInfoCompat, childList: List<ChildBean>?): Boolean {
+        if (childList.isNullOrEmpty()) {
+            return true
+        }
+
+        if (node.childCount != childList.size()) {
+            return false
+        }
+
+        //是否匹配通过
+        var match = true
+        for (i in 0 until node.childCount) {
+            val child = node.getChild(i)
+            val childBean = childList.getOrNull(i)
+            if (child != null && childBean != null) {
+                if (matchNode(
+                        child,
+                        childBean.rect,
+                        childBean.cls,
+                        childBean.id,
+                        childBean.rect,
+                        childBean.state,
+                        childBean.childList
+                    )
+                ) {
+                    if (childBean.filter != null) {
+                        //需要满足过滤条件
+                        val removeList = accParse.filterParse.parse(listOf(child), childBean.filter)
+                        if (removeList.contains(child)) {
+                            //不满足过滤条件
+                            match = false
+                        }
+                    }
+                } else {
+                    match = false
+                }
+
+                //忽略结果
+                if (childBean.ignore) {
+                    match = true
+                    continue
+                }
+            }
+        }
+
+        return match
     }
 
     //</editor-fold desc="match">

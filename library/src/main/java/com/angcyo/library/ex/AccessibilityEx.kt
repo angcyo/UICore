@@ -897,10 +897,86 @@ inline fun AccessibilityNodeInfoCompat.forEachChild(action: (child: Accessibilit
     }
 }
 
+
+fun AccessibilityNodeInfoCompat.getBrotherNodePrev(matchStateAction: (AccessibilityNodeInfoCompat) -> Boolean): AccessibilityNodeInfoCompat? {
+    val beforeList = mutableListOf<AccessibilityNodeInfoCompat>()
+    val afterList = mutableListOf<AccessibilityNodeInfoCompat>()
+
+    var findAnchor = false
+
+    parent?.eachChild { _, child ->
+        if (child == this) {
+            findAnchor = true
+        } else {
+            if (findAnchor) {
+                afterList.add(child)
+            } else {
+                beforeList.add(child)
+            }
+        }
+    }
+
+    beforeList.reversed().forEach {
+        if (matchStateAction(it)) {
+            return it
+        }
+    }
+
+    return null
+}
+
+fun AccessibilityNodeInfoCompat.getBrotherNodeNext(matchStateAction: (AccessibilityNodeInfoCompat) -> Boolean): AccessibilityNodeInfoCompat? {
+    val beforeList = mutableListOf<AccessibilityNodeInfoCompat>()
+    val afterList = mutableListOf<AccessibilityNodeInfoCompat>()
+
+    var findAnchor = false
+
+    parent?.eachChild { _, child ->
+        if (child == this) {
+            findAnchor = true
+        } else {
+            if (findAnchor) {
+                afterList.add(child)
+            } else {
+                beforeList.add(child)
+            }
+        }
+    }
+
+    afterList.forEach {
+        if (matchStateAction(it)) {
+            return it
+        }
+    }
+
+    return null
+}
+
+fun AccessibilityNodeInfoCompat.getParentOrChildNodeUp(matchStateAction: (AccessibilityNodeInfoCompat) -> Boolean): AccessibilityNodeInfoCompat? {
+    var target: AccessibilityNodeInfoCompat? = this
+    do {
+        val parent = target?.parent ?: return null
+        if (matchStateAction(parent)) {
+            return parent
+        }
+        target = parent
+    } while (target != null)
+    return null
+}
+
+fun AccessibilityNodeInfoCompat.getParentOrChildNodeDown(matchStateAction: (AccessibilityNodeInfoCompat) -> Boolean): AccessibilityNodeInfoCompat? {
+    forEachChild {
+        if (matchStateAction(it)) {
+            return it
+        }
+    }
+    return null
+}
+
 //</editor-fold desc="AccessibilityNodeInfo扩展">
 
 /**[android.view.accessibility.AccessibilityWindowInfo#typeToString]*/
-fun Int.toWindowTypeStr(): String? {
+fun Int.toWindowTypeStr(): String {
     return when (this) {
         AccessibilityWindowInfo.TYPE_APPLICATION -> {
             "TYPE_APPLICATION"
