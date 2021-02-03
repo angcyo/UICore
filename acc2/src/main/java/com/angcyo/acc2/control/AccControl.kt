@@ -10,6 +10,7 @@ import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_PAUSE
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_RUNNING
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_STOP
 import com.angcyo.acc2.core.BaseAccService
+import com.angcyo.library.L
 import com.angcyo.library.ex.des
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.library.ex.sleep
@@ -64,6 +65,7 @@ class AccControl : Runnable {
             if (force) {
                 stop("被迫停止")
             } else {
+                L.w("[${_taskBean?.title}]已在运行.")
                 return false
             }
         }
@@ -100,6 +102,7 @@ class AccControl : Runnable {
     }
 
     fun _end(reason: String, state: Int) {
+        L.i("$reason[${state.toControlStateStr()}]")
         finishReason = reason
         accSchedule.endSchedule()
         _stopThread()
