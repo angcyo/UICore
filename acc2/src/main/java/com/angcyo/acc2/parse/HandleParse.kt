@@ -95,6 +95,8 @@ class HandleParse(val accParse: AccParse) {
     ): HandleResult {
         var result = HandleResult()
 
+        //---------------条件处理----------------
+
         //condition
         var conditionActionList: List<String>? = null
 
@@ -127,20 +129,32 @@ class HandleParse(val accParse: AccParse) {
             }
         }
 
-        //待处理的事件列表
-        val handleActionList = conditionActionList ?: if (handleNodeList.isNullOrEmpty()) {
-            //无元素需要处理时, 优先使用[noActionList], 否则[actionList]
-            handleBean.noActionList ?: handleBean.actionList
-        } else {
-            handleBean.actionList
-        }
-
         //---------------开始处理----------------
 
-        if (handleActionList.isNullOrEmpty()) {
-            result.success = handleActionList != null
+        if (conditionActionList != null) {
+            //不满足约束条件时,又指定了对应的actionList, 优先执行
+            result = handleAction(handleNodeList, conditionActionList)
+        } else if (handleBean.findList != null) {
+            //需要重新选择
+            if (handleNodeList.isNullOrEmpty()) {
+                //重新选择后, 节点为空
+                if (handleBean.noActionList != null) {
+                    result = handleAction(handleNodeList, handleBean.noActionList)
+                } else {
+                    //失败
+                    result.success = false
+                }
+            } else {
+                //重新选择后, 节点不为空
+                result = handleAction(handleNodeList, handleBean.actionList)
+            }
         } else {
-            result = handleAction(handleNodeList, handleActionList)
+            //默认处理
+            if (handleBean.actionList.isNullOrEmpty()) {
+                result.success = handleBean.actionList != null
+            } else {
+                result = handleAction(handleNodeList, handleBean.actionList)
+            }
         }
 
         //如果处理成功,

@@ -366,6 +366,12 @@ class AccSchedule(val accControl: AccControl) {
         if (actionBean.check == null) {
             //未指定check, 直接操作根元素
             handleActionResult = handleParse.parse(rootNodeList, handleList)
+
+            if (isPrimaryAction) {
+                if (!handleActionResult.success) {
+                    accControl.log("无法处理↓\n${actionBean.check}\n${handleList}")
+                }
+            }
         } else {
             val eventNodeList = if (eventList == null) rootNodeList else
                 findParse.parse(rootNodeList, eventList).nodeList

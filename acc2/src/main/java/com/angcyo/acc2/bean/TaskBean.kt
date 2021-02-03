@@ -21,6 +21,9 @@ data class TaskBean(
     /**任务的描述*/
     var des: String? = null,
 
+    /**任务类型, 用于查找匹配使用*/
+    var type: String? = null,
+
     /**操作步骤*/
     var actionList: List<ActionBean>? = null,
 

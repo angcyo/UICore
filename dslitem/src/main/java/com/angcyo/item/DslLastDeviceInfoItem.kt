@@ -1,11 +1,11 @@
 package com.angcyo.item
 
+import android.content.Context
 import android.os.StatFs
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.library.component.work.Trackers
 import com.angcyo.library.ex.*
 import com.angcyo.library.toast
-import com.angcyo.library.utils.CpuUtils
 import com.angcyo.library.utils.Device
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.progress.DslProgressBar
@@ -41,47 +41,7 @@ class DslLastDeviceInfoItem : DslAdapterItem() {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
         //设备信息
-        itemHolder.tv(R.id.lib_text_view)?.text = span {
-            append(getWifiIP()).append(SPLIT).append(getMobileIP())
-
-            val vpn = Device.vpnInfo()
-            val proxy = Device.proxyInfo()
-            if (!vpn.isNullOrBlank() || !proxy.isNullOrBlank()) {
-                vpn?.run {
-                    append(SPLIT)
-                    append(this)
-
-                }
-                proxy?.run {
-                    append(SPLIT)
-                    append(this)
-                }
-            }
-
-            appendln()
-            append(Device.androidId) {
-                foregroundColor = getColor(R.color.colorPrimary)
-            }
-            appendln()
-            append(Device.deviceId) {
-                foregroundColor = getColor(R.color.colorPrimaryDark)
-            }
-            appendln()
-            Device.buildString(this._builder)
-            Device.screenInfo(itemHolder.context, this._builder)
-
-            //机型信息
-            appendln()
-            Device.deviceInfoLess(this._builder)
-
-            //网络信息
-            appendln()
-            append(Trackers.getInstance().networkStateTracker.activeNetworkState.toString())
-
-            itemData = this
-
-            onConfigDeviceInfo(this)
-        }
+        itemHolder.tv(R.id.lib_text_view)?.text = lastDeviceInfo(itemHolder.context)
 
         //SD空间信息
         val statFs = StatFs(
@@ -115,5 +75,47 @@ class DslLastDeviceInfoItem : DslAdapterItem() {
             }
             _clickListener?.onClick(it)
         }
+    }
+
+    fun lastDeviceInfo(context: Context) = span {
+        append(getWifiIP()).append(SPLIT).append(getMobileIP())
+
+        val vpn = Device.vpnInfo()
+        val proxy = Device.proxyInfo()
+        if (!vpn.isNullOrBlank() || !proxy.isNullOrBlank()) {
+            vpn?.run {
+                append(SPLIT)
+                append(this)
+
+            }
+            proxy?.run {
+                append(SPLIT)
+                append(this)
+            }
+        }
+
+        appendln()
+        append(Device.androidId) {
+            foregroundColor = getColor(R.color.colorPrimary)
+        }
+        appendln()
+        append(Device.deviceId) {
+            foregroundColor = getColor(R.color.colorPrimaryDark)
+        }
+        appendln()
+        Device.buildString(this._builder)
+        Device.screenInfo(context, this._builder)
+
+        //机型信息
+        appendln()
+        Device.deviceInfoLess(this._builder)
+
+        //网络信息
+        appendln()
+        append(Trackers.getInstance().networkStateTracker.activeNetworkState.toString())
+
+        itemData = this
+
+        onConfigDeviceInfo(this)
     }
 }

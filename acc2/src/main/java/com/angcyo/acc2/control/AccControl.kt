@@ -189,12 +189,16 @@ class AccControl : Runnable {
         log("run控制器启动[${_taskBean?.title}]")
         next(_taskBean?.title, _taskBean?.des, 0)
         while (isControlStart) {
-            if (_controlState == CONTROL_STATE_RUNNING) {
-                //run
-                accSchedule.scheduleNext()
-            } else {
-                //wait
-                sleep()
+            try {
+                if (_controlState == CONTROL_STATE_RUNNING) {
+                    //run
+                    accSchedule.scheduleNext()
+                } else {
+                    //wait
+                    sleep()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
         log("run控制器结束[${_controlState.toControlStateStr()}]:$finishReason ${accSchedule.durationStr()}")
