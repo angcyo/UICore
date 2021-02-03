@@ -13,6 +13,9 @@ import kotlin.math.ceil
  * Version: 1.0.0
  */
 
+/**多少天对应的毫秒数*/
+fun day(count: Int = 1): Long = count * 24 * 60 * 60 * 1000L
+
 fun nowTime() = System.currentTimeMillis()
 
 /**返回毫秒对应的天数*/
@@ -157,7 +160,7 @@ fun Long.toTimes(): LongArray {
  * @param h24 24小时制
  * */
 fun Long.toElapsedTime(
-    pattern: IntArray = intArrayOf(),
+    pattern: IntArray = intArrayOf(-1, 1, 1),
     h24: BooleanArray = booleanArrayOf(true, true, true, true, true),
     units: Array<String> = arrayOf("毫秒", "秒", "分", "时", "天")
 ): String {

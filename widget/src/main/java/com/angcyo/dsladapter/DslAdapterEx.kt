@@ -34,6 +34,20 @@ fun DslAdapter.findItem(
     return getDataList(useFilterList).find(predicate)
 }
 
+fun <Item : DslAdapterItem> DslAdapter.find(
+    tag: String? = null,
+    useFilterList: Boolean = true,
+    predicate: (DslAdapterItem) -> Boolean = {
+        if (tag != null) {
+            it.itemTag == tag
+        } else {
+            false
+        }
+    }
+): Item? {
+    return getDataList(useFilterList).find(predicate) as? Item
+}
+
 fun DslAdapter.updateItem(
     payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART,
     useFilterList: Boolean = true,

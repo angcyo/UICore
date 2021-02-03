@@ -17,6 +17,11 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.http.*
 import java.lang.reflect.Type
+import java.security.cert.X509Certificate
+import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 /**
  * 网络请求库
@@ -207,6 +212,19 @@ object DslHttp {
         }
         init()
         return dslHttpConfig.retrofit!!
+    }
+
+    /**去掉ssl验证*/
+    fun noSSL() {
+        System.setProperty("sun.net.http.allowRestrictedHeaders", "true")
+        val trm: TrustManager = object : X509TrustManager {
+            override fun checkClientTrusted(certs: Array<X509Certificate?>?, authType: String?) {}
+            override fun checkServerTrusted(certs: Array<X509Certificate?>?, authType: String?) {}
+            override fun getAcceptedIssuers(): Array<X509Certificate>? = null
+        }
+        val sc: SSLContext = SSLContext.getInstance("SSL")
+        sc.init(null, arrayOf(trm), null)
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.socketFactory)
     }
 }
 

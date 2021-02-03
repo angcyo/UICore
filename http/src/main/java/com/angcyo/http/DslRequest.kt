@@ -1,5 +1,6 @@
 package com.angcyo.http
 
+import com.angcyo.http.base.fromJson
 import com.angcyo.http.exception.HttpDataException
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -7,6 +8,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.internal.http.HttpMethod
 import java.io.IOException
+import java.lang.reflect.Type
 import java.nio.charset.Charset
 
 /**
@@ -171,6 +173,20 @@ class DslRequest {
     }
 }
 
+/**toBean*/
+fun <T> Response.toBean(typeOfT: Type): T? = fromJson(typeOfT)
+
+fun <T> Response.fromJson(typeOfT: Type): T? {
+    if (isSuccessful) {
+        val bodyString = body?.string()
+        return bodyString?.fromJson<T>(typeOfT)
+    }
+    return null
+}
+
+fun Response.bodyString(typeOfT: Type): String? = body?.string()
+
+/**[DSL]*/
 fun request(action: DslRequest.() -> Unit): Call? {
     return DslRequest().run {
         action()
