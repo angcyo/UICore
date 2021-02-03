@@ -14,6 +14,7 @@ import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.ex.installApk
 import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.openUrl
 import com.angcyo.library.getAppVersionCode
 import com.angcyo.putData
 import com.angcyo.widget.bar
@@ -56,6 +57,13 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
         _vh.tv(R.id.version_name_view)?.text = bean.versionName
         _vh.tv(R.id.version_des_view)?.text = bean.versionDes
         _vh.visible(R.id.lib_cancel_view, !bean.versionForce)
+        val startButton = _vh.tv(R.id.lib_button)
+
+        if (bean.link) {
+            startButton?.text = "前往下载..."
+        } else {
+            //no op
+        }
 
         //关闭
         _vh.click(R.id.lib_cancel_view) {
@@ -65,39 +73,44 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
         //下载
         _vh.click(R.id.lib_button) {
             bean.versionUrl?.apply {
-                if (getTaskStatus() == StatusUtil.Status.RUNNING) {
-                    cancelDownload()
+                if (bean.link) {
+                    openUrl(bean.versionUrl)
                 } else {
-                    download {
-                        onTaskStart = {
-                            _vh.tv(R.id.lib_button)?.text = "下载中..."
-                        }
+                    if (getTaskStatus() == StatusUtil.Status.RUNNING) {
+                        cancelDownload()
+                    } else {
+                        download {
+                            onTaskStart = {
+                                startButton?.text = "下载中..."
+                            }
 
-                        onTaskProgress = { _, progress, _ ->
-                            _vh.bar(R.id.lib_progress_bar)?.setProgress(progress)
-                        }
+                            onTaskProgress = { _, progress, _ ->
+                                _vh.bar(R.id.lib_progress_bar)?.setProgress(progress)
+                            }
 
-                        onTaskFinish = { downloadTask, cause, error ->
-                            when (cause) {
-                                EndCause.COMPLETED -> {
-                                    _vh.tv(R.id.lib_button)?.text = "立即安装"
+                            onTaskFinish = { downloadTask, cause, error ->
+                                when (cause) {
+                                    EndCause.COMPLETED -> {
+                                        startButton?.text = "立即安装"
 
-                                    installApk(app(), downloadTask.file)
-                                }
-                                EndCause.ERROR -> {
-                                    if (error is ServerCanceledException &&
-                                        error.responseCode == HttpURLConnection.HTTP_OK
-                                    ) {
-                                        downloadTask.info?.resetInfo()
+                                        installApk(app(), downloadTask.file)
                                     }
-                                    _vh.tv(R.id.lib_button)?.text = "下载失败, 点击重试"
-                                }
-                                else -> {
-                                    _vh.tv(R.id.lib_button)?.text = "点击重新开始"
+                                    EndCause.ERROR -> {
+                                        if (error is ServerCanceledException &&
+                                            error.responseCode == HttpURLConnection.HTTP_OK
+                                        ) {
+                                            downloadTask.info?.resetInfo()
+                                        }
+                                        startButton?.text = "下载失败, 点击重试"
+                                    }
+                                    else -> {
+                                        startButton?.text = "点击重新开始"
+                                    }
                                 }
                             }
                         }
                     }
+
                 }
             }
         }
@@ -153,6 +166,7 @@ fun Context.versionUpdate(updateBean: VersionUpdateBean?): Boolean {
     return false
 }
 
+/**[com.angcyo.download.version.VersionUpdateActivityKt.versionUpdate]*/
 fun Context.dslVersionUpdate(action: VersionUpdateBean.() -> Unit) {
     val updateBean = VersionUpdateBean().apply(action)
     versionUpdate(updateBean)

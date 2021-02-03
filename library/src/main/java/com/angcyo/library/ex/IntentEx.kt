@@ -96,6 +96,28 @@ fun String.urlIntent(component: ComponentName? = null): Intent {
     }
 }
 
+/**打开网页
+ * 打开url[url]
+ * [url] 需要指定scheme, 比如http
+ * */
+fun Context.openUrl(url: String?, component: ComponentName? = null): Boolean {
+    return try {
+        if (url.isNullOrBlank()) {
+            false
+        } else {
+            if (url.startsWith("http")) {
+                startActivity(url.urlIntent(component))
+            } else {
+                startActivity("http://$url".urlIntent(component))
+            }
+            true
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        false
+    }
+}
+
 /**
  * Intent.FILL_IN_ACTION or
  * Intent.FILL_IN_CATEGORIES or

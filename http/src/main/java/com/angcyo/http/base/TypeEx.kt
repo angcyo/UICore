@@ -14,9 +14,18 @@ import java.lang.reflect.Type
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
+/**String*/
+fun bean(rootClass: Class<*>, typeClass: Class<*>? = null): Type {
+    return TypeBuilder.newInstance(rootClass).apply {
+        if (typeClass != null) {
+            addTypeParam(typeClass)
+        }
+    }.build()
+}
+
 /**List<String>*/
 fun type(rootClass: Class<*>, typeClass: Class<*>): Type {
-    return TypeBuilder.newInstance(rootClass).addTypeParam(typeClass).build()
+    return bean(rootClass, typeClass)
 }
 
 fun listType(typeClass: Class<*>): Type = type(List::class.java, typeClass)

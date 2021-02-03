@@ -18,6 +18,8 @@ data class VersionUpdateBean(
     var versionForce: Boolean = false,
     /**下载地址*/
     var versionUrl: String? = null,
+    /**[versionUrl]是外链, 而非下载地址*/
+    var link: Boolean = false,
     /**版本更新类型
      * >=0 普通用户版本更新
      * <0 Debug用户版本更新
