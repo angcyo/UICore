@@ -113,6 +113,16 @@ class FindParse(val accParse: AccParse) {
 
         //------------------------筛选器------------------------
 
+        //第1层筛选
+        if (findBean.index != null) {
+            val filterFindNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
+            val index = accParse.parseText(findBean.index).firstOrNull()
+            filterFindNodeList.addAll(findNodeList.eachRangeItem(index))
+            findNodeList.clear()
+            findNodeList.addAll(filterFindNodeList)
+        }
+
+        //第2层筛选
         if (findBean.childIndex != null) {
             val filterFindNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
             val childIndex = accParse.parseText(findBean.childIndex).firstOrNull()
