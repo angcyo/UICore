@@ -18,7 +18,7 @@ import com.angcyo.library.ex.subEnd
 class ClickTouchAction : BaseTouchAction() {
 
     override fun interceptAction(control: AccControl, action: String): Boolean {
-        return action.startsWith(Action.ACTION_CLICK2) || action.startsWith(Action.ACTION_CLICK3)
+        return action.cmd(Action.ACTION_CLICK2) || action.cmd(Action.ACTION_CLICK3)
     }
 
     override fun runAction(

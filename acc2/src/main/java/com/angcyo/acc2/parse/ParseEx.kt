@@ -165,6 +165,15 @@ fun List<AccessibilityNodeInfoCompat>.toRect(): List<Rect> {
     return result
 }
 
+fun AccessibilityNodeInfoCompat.childList(): List<AccessibilityNodeInfoCompat> {
+    val result = mutableListOf<AccessibilityNodeInfoCompat>()
+    for (i in 0 until childCount) {
+        getChild(i)?.let {
+            result.add(it)
+        }
+    }
+    return result
+}
 
 fun String.toPointF(width: Int = _screenWidth, height: Int = _screenHeight): PointF {
     val p = PointF()

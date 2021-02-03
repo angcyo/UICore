@@ -24,6 +24,8 @@ class HandleParse(val accParse: AccParse) {
         registerActionList.add(CopyAction())
         registerActionList.add(TrueAction())
         registerActionList.add(FalseAction())
+        registerActionList.add(EnableAction())
+        registerActionList.add(DisableAction())
 
         registerActionList.add(BackAction())
         registerActionList.add(HomeAction())
@@ -40,13 +42,16 @@ class HandleParse(val accParse: AccParse) {
         registerActionList.add(MoveAction())
         registerActionList.add(FlingAction())
 
-        registerActionList.add(AppendTextAction())
+        registerActionList.add(InputAction())
         registerActionList.add(GetTextAction())
+
+        registerActionList.add(AppendTextAction())
         registerActionList.add(ClearTextAction())
 
+        registerActionList.add(JumpAction())
         registerActionList.add(FinishAction())
         registerActionList.add(ErrorAction())
-        registerActionList.add(JumpAction())
+        registerActionList.add(StopAction())
     }
 
     /**解析, 并处理[handleList]*/

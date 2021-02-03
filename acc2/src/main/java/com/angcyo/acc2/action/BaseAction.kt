@@ -4,6 +4,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.bean.ActionBean
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.parse.HandleResult
+import com.angcyo.library.ex.subStart
 
 /**
  *
@@ -43,5 +44,10 @@ abstract class BaseAction {
                 add(node)
             }
         }
+    }
+
+    fun String.cmd(cmd: String): Boolean {
+        val c = subStart(Action.ARG_SPLIT) ?: subStart(Action.ARG_SPLIT2) ?: this
+        return c == cmd
     }
 }

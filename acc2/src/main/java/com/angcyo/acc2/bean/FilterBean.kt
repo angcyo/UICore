@@ -32,4 +32,25 @@ data class FilterBean(
      * 匹配顺序:5
      * */
     var ignoreTextList: List<String>? = null,
+
+    /**节点直系child数量的条件判断
+     * 格式如下:
+     * [>=2] 数量大于等于2
+     * [>3] 数量大于3
+     * [2] 数量等于2
+     * [=2] 数量等于2
+     * [<3] 数量小于3
+     * 空字符 表示直接过
+     * null 忽略此条件
+     * 匹配顺序:6
+     * */
+    var childCount: String? = null,
+
+    /**节点视图结构中, 无child节点的节点总数量满足此条件, 则继续. 否则失败.
+     * 支持的数据格式参考[childCount]
+     * 如果包含[*]的格式, 表示所有节点总数量. 如"<=10*" ">=20*"
+     * 否则就是无child节点的节点总数量
+     * 匹配顺序:7
+     * */
+    var sizeCount: String? = null,
 )

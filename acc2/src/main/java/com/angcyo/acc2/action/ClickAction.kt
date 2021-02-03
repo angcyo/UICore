@@ -20,7 +20,7 @@ import com.angcyo.library.ex.subEnd
 class ClickAction : BaseAction() {
 
     override fun interceptAction(control: AccControl, action: String): Boolean {
-        return action.startsWith(Action.ACTION_CLICK)
+        return action.cmd(Action.ACTION_CLICK)
     }
 
     override fun runAction(

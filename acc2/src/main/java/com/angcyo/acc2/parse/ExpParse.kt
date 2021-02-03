@@ -58,7 +58,12 @@ class ExpParse {
      * [10dp]
      * [-10.0]
      * */
-    fun parse(exp: String, op: String = Action.OP): List<ExpValue> {
+    fun parse(exp: String?, op: String = Action.OP): List<ExpValue> {
+        expValueList.clear()
+        if (exp.isNullOrEmpty()) {
+            return expValueList
+        }
+
         //获取表达式
         val opPattern = "([$op]+)".toPattern() //<3
 
@@ -88,8 +93,10 @@ class ExpParse {
         return expValueList
     }
 
-    /**判断输入值[inputValue]是否符合表达式*/
-    fun parseAndCompute(exp: String, op: String = Action.OP, inputValue: Float): Boolean {
+    /**判断输入值[inputValue]是否符合表达式
+     * @return true 计算通过
+     * */
+    fun parseAndCompute(exp: String?, op: String = Action.OP, inputValue: Float): Boolean {
         parse(exp, op)
         return compute(inputValue)
     }

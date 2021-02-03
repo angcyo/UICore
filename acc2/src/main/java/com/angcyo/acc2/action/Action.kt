@@ -9,6 +9,7 @@ object Action {
 
     /**参数分隔符*/
     const val ARG_SPLIT = ":"
+    const val ARG_SPLIT2 = " "
 
     /**多包名分隔符*/
     const val PACKAGE_SPLIT = ";"
@@ -40,15 +41,6 @@ object Action {
     const val ACTION_MOVE = "move" //[move:10,10~100,100] 从屏幕坐标x=10dp y=10dp的地方移动到100dp 100dp的地方
     const val ACTION_FLING = "fling" //[fling:10,10~100,100]
 
-    /**输入文本
-     * [input:$0]
-     * [input:$[xxx]]
-     * */
-    const val ACTION_INPUT = "input"
-
-    /**可以用于清除输入框的内容*/
-    const val ACTION_CLEAR = "clear"
-
     /**获取元素文本保存到
      * [com.angcyo.acc2.bean.TaskBean.textMap]
      * [getText:key regex:\\d+]
@@ -56,6 +48,15 @@ object Action {
      * regex:文本需要通过正则过滤的表达式
      */
     const val ACTION_GET_TEXT = "getText"
+
+    /**设置输入框文本内容
+     * [input:$0] 支持文本变量
+     * [input:$[xxx]]
+     * */
+    const val ACTION_INPUT = "input"
+
+    /**[ACTION_INPUT]别名*/
+    const val ACTION_SET_TEXT = "setText"
 
     /**清理[com.angcyo.acc2.bean.TaskBean.textMap]数据
      * [clearText:*] 清理所有
@@ -88,6 +89,9 @@ object Action {
     /**激活指定actionId的[ActionBean]
      * [enable 100 120 200 220]*/
     const val ACTION_ENABLE = "enable"
+
+    /**禁用, 参考[ACTION_ENABLE]*/
+    const val ACTION_DISABLE = "disable"
 
     /**异常, 并中断整个任务
      * [error:reason]*/

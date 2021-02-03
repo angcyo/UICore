@@ -3,6 +3,7 @@ package com.angcyo.acc2.parse
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.action.Action
 import com.angcyo.acc2.bean.FilterBean
+import com.angcyo.acc2.eachChildDepth
 import com.angcyo.library.ex.haveText
 import com.angcyo.library.ex.size
 
@@ -105,6 +106,71 @@ class FilterParse(val accParse: AccParse) {
                 }
                 if (ignore) {
                     //忽略元素
+                    removeList.add(node)
+                }
+            }
+        }
+
+        //过滤6: childCount
+        if (filterBean.childCount != null) {
+            after = if (removeList.isEmpty()) after else after.filter { !removeList.contains(it) }
+            after.forEach { node ->
+                val pass = accParse.expParse.parseAndCompute(
+                    filterBean.childCount,
+                    inputValue = node.childCount.toFloat()
+                )
+                if (!pass) {
+                    //不符合
+                    removeList.add(node)
+                }
+            }
+        }
+
+        //过滤7: sizeCount
+        if (filterBean.sizeCount != null) {
+            after = if (removeList.isEmpty()) after else after.filter { !removeList.contains(it) }
+            after.forEach { node ->
+
+                val allNode = filterBean.sizeCount?.contains("*") == true
+                val sizeCountExp = filterBean.sizeCount?.replaceFirst("*", "")
+
+                //无子节点的节点总数
+                var childSize = 0
+                //是否中断枚举
+                var interrupt = false
+                //node是否满足条件
+                var allow = true
+
+                node.eachChildDepth { child, depth ->
+                    interrupt = false
+                    if (allNode || child.childCount == 0) {
+                        //空节点
+                        childSize++
+
+                        val pass = accParse.expParse.parseAndCompute(
+                            sizeCountExp,
+                            inputValue = childSize.toFloat()
+                        )
+
+                        if (sizeCountExp?.startsWith("<") == true) {
+                            allow = true
+                            //如果是小于运算符, 则没有匹配到时,才退出
+
+                            if (!pass) {
+                                allow = false
+                                interrupt = true
+                            }
+                        } else if (pass) {
+                            //其他运算符, 匹配到时, 则退出
+                            allow = true
+                            interrupt = true
+                        }
+                    }
+                    interrupt
+                }
+
+                if (!allow) {
+                    //不满足节点总数约束条件
                     removeList.add(node)
                 }
             }
