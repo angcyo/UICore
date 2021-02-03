@@ -27,7 +27,10 @@ data class TaskBean(
     /**[actionList]未处理时的操作步骤*/
     var backActionList: List<ActionBean>? = null,
 
-    /**字符串输入供给*/
+    /**字符串输入供给
+     * [$0 ]
+     * [$0 $2 $3]
+     * [$0~$-1]*/
     var wordList: List<String>? = null,
 
     /**

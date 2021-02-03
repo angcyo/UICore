@@ -16,7 +16,7 @@ data class FindBean(
     //<editor-fold desc="选择器">
 
     /**单独存在时, 通过文本获取节点, 集合中满足一条即可.
-     * 支持变量从[TaskBean]中获取值
+     * 支持文本变量 从[TaskBean]中获取值
      * 支持正则
      * 匹配顺序:1
      * */

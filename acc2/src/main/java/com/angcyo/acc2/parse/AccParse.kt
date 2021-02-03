@@ -103,7 +103,7 @@ class AccParse(val accControl: AccControl) {
                     }
                 }
             } else {
-                //$0
+                //$0 $2 $3
                 isHandle = true
                 indexStringList.forEach { indexString ->
                     indexString.getLongNum()?.let { index ->
