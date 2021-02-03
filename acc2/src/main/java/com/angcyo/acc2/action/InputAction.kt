@@ -5,6 +5,7 @@ import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.acc2.parse.toLog
+import com.angcyo.library.ex.randomGet
 import com.angcyo.library.ex.randomString
 import com.angcyo.library.ex.setNodeText
 import com.angcyo.library.ex.subEnd
@@ -33,7 +34,8 @@ class InputAction : BaseAction() {
         val text = if (arg.isNullOrEmpty()) {
             randomString() //随机生成文本
         } else {
-            control.accSchedule.accParse.parseText(arg).firstOrNull()
+            //从列表中, 随机获取一个
+            control.accSchedule.accParse.parseText(arg).randomGet(1).firstOrNull()
         }
 
         nodeList?.forEach { node ->

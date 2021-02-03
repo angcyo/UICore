@@ -9,6 +9,13 @@ package com.angcyo.acc2.bean
  */
 data class WindowBean(
     /**通过包名, 选择window,
-     * 支持正则*/
+     * 支持正则
+     * 支持分割[com.angcyo.acc2.action.Action.PACKAGE_SPLIT]
+     * */
     var packageName: String? = null,
+
+    /**忽略指定包名的window
+     * 支持正则
+     * 支持分割[com.angcyo.acc2.action.Action.PACKAGE_SPLIT]*/
+    var ignorePackageName: String? = null,
 )

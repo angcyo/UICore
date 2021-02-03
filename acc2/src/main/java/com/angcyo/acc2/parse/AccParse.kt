@@ -10,6 +10,7 @@ import com.angcyo.library._screenWidth
 import com.angcyo.library.app
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.patternList
+import com.angcyo.library.ex.toStr
 import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.getLongNum
 import kotlin.math.max
@@ -161,15 +162,30 @@ class AccParse(val accControl: AccControl) {
     }
 
     /**将参数转换成对应的包名*/
-    fun parsePackageName(arg: String?, target: String?): List<String>? {
-        //包名
-        return (if (arg.isNullOrEmpty() || arg == "target") {
-            target
-        } else if (arg == "main") {
-            app().packageName
+    fun parsePackageName(arg: String?, target: String?): List<String> {
+        val result = mutableListOf<String>()
+        if (arg.isNullOrBlank()) {
+            if (!target.isNullOrBlank()) {
+                result.add(target)
+            }
         } else {
-            arg
-        })?.split(Action.PACKAGE_SPLIT)?.toList()
+            arg.split(Action.PACKAGE_SPLIT).forEach { name ->
+                val packageName = if (name.isEmpty() || name == "target") {
+                    target
+                } else if (name == "main") {
+                    app().packageName
+                } else if (name == "active") {
+                    accControl.accService()?.rootInActiveWindow?.packageName
+                } else {
+                    name
+                }?.toStr()
+
+                if (!packageName.isNullOrBlank()) {
+                    result.add(packageName)
+                }
+            }
+        }
+        return result
     }
 
     /** 从参数中, 解析设置的点位信息. 通常用于手势坐标. 手势坐标, 尽量使用 屏幕宽高用来参考计算

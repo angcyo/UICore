@@ -10,6 +10,7 @@ import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_PAUSE
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_RUNNING
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_STOP
 import com.angcyo.acc2.core.BaseAccService
+import com.angcyo.library.ex.des
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.library.ex.sleep
 
@@ -201,9 +202,9 @@ class AccControl : Runnable {
 
 //<editor-fold desc="扩展">
 
-fun ActionBean.actionLog() = "Action[${title}](${actionId})"
+fun ActionBean.actionLog() = "Action[${title}${des.des()}](${actionId})"
 
-fun CheckBean.checkLog() = "Check[${title}](${checkId})"
+fun CheckBean.checkLog() = "Check[${title}${des.des()}](${checkId})"
 
 fun Number.toControlStateStr() = when (this) {
     CONTROL_STATE_NORMAL -> "STATE_NORMAL"

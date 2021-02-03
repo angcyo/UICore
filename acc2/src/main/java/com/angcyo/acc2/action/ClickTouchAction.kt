@@ -15,7 +15,7 @@ import com.angcyo.library.ex.subEnd
  * @date 2020/09/21
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class ClickTouchAction : BaseTouchAction() {
+open class ClickTouchAction : BaseTouchAction() {
 
     override fun interceptAction(control: AccControl, action: String): Boolean {
         return action.cmd(Action.ACTION_CLICK2) || action.cmd(Action.ACTION_CLICK3)
@@ -26,46 +26,54 @@ class ClickTouchAction : BaseTouchAction() {
         nodeList: List<AccessibilityNodeInfoCompat>?,
         action: String
     ): HandleResult = handleResult {
-
-        //触发节点区域的手势操作
-        val click = action.startsWith(Action.ACTION_CLICK3)
-
-        var x = 0f
-        var y = 0f
-
-        val arg = action.subEnd(Action.ARG_SPLIT)
-
-        nodeList?.forEach {
-            val bound = it.bounds()
-
-            var specifyPoint: PointF? = null
-            if (!arg.isNullOrEmpty()) {
-                control.accSchedule.accParse.parsePoint(arg, bound).let {
-                    specifyPoint = it[0]
-                }
-            }
-
-            if (specifyPoint == null) {
-                x = bound.centerX().toFloat()
-                y = bound.centerY().toFloat()
-            } else {
-                x = specifyPoint!!.x + bound.left
-                y = specifyPoint!!.y + bound.top
-            }
-
-            success = if (click) {
-                //点击节点区域
-                click(control, x, y)
-            } else {
-                //双击节点区域
-                double(control, x, y)
-            } || success
-        }
-        if (click) {
-            control.log("点击节点区域[${x},${y}]:$success")
-        } else {
-            control.log("双击节点区域[${x},${y}]:$success")
-        }
+        clickTouch(control, nodeList, this, action, action.subEnd(Action.ARG_SPLIT))
     }
 
+    fun clickTouch(
+        control: AccControl,
+        nodeList: List<AccessibilityNodeInfoCompat>?,
+        handleResult: HandleResult,
+        action: String,
+        pointArg: String?
+    ) {
+        handleResult.apply {
+            //触发节点区域的手势操作
+            val click = action.startsWith(Action.ACTION_CLICK3)
+
+            var x = 0f
+            var y = 0f
+
+            nodeList?.forEach {
+                val bound = it.bounds()
+
+                var specifyPoint: PointF? = null
+                if (!pointArg.isNullOrEmpty()) {
+                    control.accSchedule.accParse.parsePoint(pointArg, bound).let {
+                        specifyPoint = it[0]
+                    }
+                }
+
+                if (specifyPoint == null) {
+                    x = bound.centerX().toFloat()
+                    y = bound.centerY().toFloat()
+                } else {
+                    x = specifyPoint!!.x + bound.left
+                    y = specifyPoint!!.y + bound.top
+                }
+
+                success = if (click) {
+                    //点击节点区域
+                    click(control, x, y)
+                } else {
+                    //双击节点区域
+                    double(control, x, y)
+                } || success
+            }
+            if (click) {
+                control.log("点击节点区域[${x},${y}]:$success")
+            } else {
+                control.log("双击节点区域[${x},${y}]:$success")
+            }
+        }
+    }
 }

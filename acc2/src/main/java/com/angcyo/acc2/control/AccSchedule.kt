@@ -182,7 +182,7 @@ class AccSchedule(val accControl: AccControl) {
 
                 //action处理
                 if (beforeHandleResult?.success != true) {
-                    accControl.log("${if (isPrimaryAction) "[主线]" else ""}开始执行[${actionBean.actionId}](${indexTip()}):${actionBean}")
+                    accControl.log("${if (isPrimaryAction) "[主线]" else ""}开始执行[${actionBean.actionLog()}](${indexTip()}):${actionBean}")
                     if (isPrimaryAction) {
                         //执行统计
                         runCountIncrement(actionBean.actionId)

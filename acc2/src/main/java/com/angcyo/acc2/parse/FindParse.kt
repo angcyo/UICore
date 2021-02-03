@@ -172,35 +172,86 @@ class FindParse(val accParse: AccParse) {
 
     //<editor-fold desc="window">
 
-    fun findWindowBy(packageName: String?): List<AccessibilityWindowInfo> {
+    /**当前节点是否要被忽略*/
+    fun isIgnorePackageName(node: AccessibilityNodeInfoCompat, packageName: String?): Boolean {
+        if (packageName == null) {
+            return false
+        }
+        val nameList = accParse.parsePackageName(packageName, packageName)
+        var ignore = false
+        for (name in nameList) {
+            ignore = node.packageName.have(name)
+            if (ignore) {
+                break
+            }
+        }
+        return ignore
+    }
+
+    /**当前节点是否需要*/
+    fun isNeedPackageName(node: AccessibilityNodeInfoCompat, packageName: String?): Boolean {
+        if (packageName == null) {
+            return false
+        }
+        val nameList = accParse.parsePackageName(packageName, packageName)
+        var need = false
+        for (name in nameList) {
+            need = node.packageName.have(name)
+            if (need) {
+                break
+            }
+        }
+        return need
+    }
+
+    //根据指定包名, 查找符合的[AccessibilityWindowInfo]
+    fun _findWindowBy(packageName: String?): List<AccessibilityWindowInfo> {
         val result = mutableListOf<AccessibilityWindowInfo>()
         if (!packageName.isNullOrEmpty()) {
             accParse.accControl.accService()?.windows?.forEach {
-                if (it.root?.packageName?.have(packageName) == true) {
-                    result.add(it)
+                it.root?.wrap()?.let { node ->
+                    if (isNeedPackageName(node, packageName)) {
+                        result.add(it)
+                    }
                 }
             }
         }
         return result
     }
 
-    fun findRootNodeBy(packageName: String?): List<AccessibilityNodeInfoCompat>? {
+    //根据指定包名和过滤的包名, 查找符合的[AccessibilityNodeInfoCompat]
+    fun _findRootNodeBy(
+        packageName: String?,
+        ignorePackageName: String? = null
+    ): List<AccessibilityNodeInfoCompat> {
         val result = mutableListOf<AccessibilityNodeInfoCompat>()
         when {
             //无包名字段, 则使用活动窗口
             packageName == null -> {
                 accParse.accControl.accService()?.rootInActiveWindow?.let {
-                    result.add(it.wrap())
+                    if (!it.packageName.have(ignorePackageName)) {
+                        result.add(it.wrap())
+                    }
                 }
             }
             //如果包名为空字符, 则支持所有window
             packageName.isEmpty() -> {
                 accParse.accControl.accService()?.windows?.forEach {
-                    it.root?.let { node -> result.add(node.wrap()) }
+                    it.root?.wrap()?.let { node ->
+                        if (!isIgnorePackageName(node, ignorePackageName)) {
+                            result.add(node)
+                        }
+                    }
                 }
             }
             else -> {
-                findWindowBy(packageName).forEach { window -> result.add(window.root.wrap()) }
+                _findWindowBy(packageName).forEach { window ->
+                    window.root?.wrap()?.let { node ->
+                        if (!isIgnorePackageName(node, ignorePackageName)) {
+                            result.add(node)
+                        }
+                    }
+                }
             }
         }
         return result
@@ -212,12 +263,12 @@ class FindParse(val accParse: AccParse) {
         if (windowBean == null) {
             //未指定, 采用默认处理
             val taskPackageName = accParse.accControl._taskBean?.packageName
-            return findRootNodeBy(taskPackageName)
+            return _findRootNodeBy(taskPackageName)
         } else {
             //解析window约束
             if (windowBean.packageName != null) {
                 //指定了要重新获取根节点
-                result.addAll(findRootNodeBy(windowBean.packageName) ?: emptyList())
+                result.addAll(_findRootNodeBy(windowBean.packageName, windowBean.ignorePackageName))
             } else {
                 //活动节点
                 accParse.accControl.accService()?.rootInActiveWindow?.let {

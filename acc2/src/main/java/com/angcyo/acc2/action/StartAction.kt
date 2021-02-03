@@ -37,18 +37,21 @@ class StartAction : BaseAction() {
         val primaryClip = getPrimaryClip()
 
         //启动对应的应用程序
-        packageNameList?.forEach { packageName ->
-            if (!packageNameList.isNullOrEmpty()) {
+        if (packageNameList.isNullOrEmpty()) {
+            control.log("无需要启动的应用:${success}")
+        } else {
+            packageNameList.forEach { packageName ->
                 val result = control.accService()?.openApp(
                     packageName,
                     flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                 ) != null
                 success = success || result
-                if (primaryClip.isNullOrEmpty()) {
-                    control.log("启动应用[$packageName]:${result}")
+                val clipTip = if (primaryClip.isNullOrEmpty()) {
+                    ""
                 } else {
-                    control.log("启动应用[$packageName],剪切板[$primaryClip]:${result}")
+                    ",剪切板[$primaryClip]"
                 }
+                control.log("启动应用[$packageName]${clipTip}:${result}")
             }
         }
     }
