@@ -3,8 +3,11 @@ package com.angcyo.dsladapter
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.os.Handler
+import android.os.Looper
 import androidx.annotation.LayoutRes
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.isMain
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
 import com.angcyo.widget.base.Anim
@@ -56,6 +59,30 @@ fun DslAdapter.updateItem(
     return findItem(useFilterList, predicate)?.apply {
         updateAdapterItem(payload, useFilterList)
     }
+}
+
+/**通过[itemTags]更新对应的[DslAdapterItem]*/
+fun DslAdapter.updateItem(vararg itemTags: String): List<DslAdapterItem> {
+    return updateItem(DslAdapterItem.PAYLOAD_UPDATE_PART, true, *itemTags)
+}
+
+fun DslAdapter.updateItem(
+    payload: Any?,
+    useFilterList: Boolean,
+    vararg itemTags: String
+): List<DslAdapterItem> {
+    val result = mutableListOf<DslAdapterItem>()
+    itemTags.forEach { tag ->
+        findItemByTag(tag, useFilterList)?.let { item ->
+            result.add(item)
+            if (isMain()) {
+                item.updateAdapterItem(payload)
+            } else {
+                Handler(Looper.getMainLooper()).post { item.updateAdapterItem(payload) }
+            }
+        }
+    }
+    return result
 }
 
 fun DslAdapter.findItemByTag(

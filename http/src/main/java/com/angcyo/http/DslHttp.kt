@@ -5,6 +5,7 @@ import com.angcyo.http.DslHttp.DEFAULT_MSG_KEY
 import com.angcyo.http.DslHttp.retrofit
 import com.angcyo.http.base.*
 import com.angcyo.http.exception.HttpDataException
+import com.angcyo.http.rx.observableToBack
 import com.angcyo.http.rx.observableToMain
 import com.angcyo.library.ex.connectUrl
 import com.google.gson.JsonElement
@@ -231,10 +232,15 @@ object DslHttp {
 /**
  * 通用接口请求
  * */
-fun <T> dslHttp(service: Class<T>): T {
-    val retrofit = retrofit(false)
-    /*如果单例API对象的话, 就需要在动态切换BaseUrl的时候, 重新创建. 否则不会生效*/
-    return retrofit.create(service)
+fun <T> dslHttp(service: Class<T>): T? {
+    return try {
+        val retrofit = retrofit(false)
+        /*如果单例API对象的话, 就需要在动态切换BaseUrl的时候, 重新创建. 否则不会生效*/
+        retrofit.create(service)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 }
 
 /**拼接 host 和 api接口*/
@@ -261,9 +267,9 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
         requestConfig.method = POST_FORM
     }
 
-    return when (requestConfig.method) {
+    val observable = when (requestConfig.method) {
         POST -> {
-            dslHttp(Api::class.java).post(
+            dslHttp(Api::class.java)?.post(
                 requestConfig.url,
                 requestConfig.body,
                 requestConfig.query,
@@ -271,14 +277,14 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
             )
         }
         POST_FORM -> {
-            dslHttp(Api::class.java).postForm(
+            dslHttp(Api::class.java)?.postForm(
                 requestConfig.url,
                 requestConfig.formMap,
                 requestConfig.header
             )
         }
         PUT -> {
-            dslHttp(Api::class.java).put(
+            dslHttp(Api::class.java)?.put(
                 requestConfig.url,
                 requestConfig.body,
                 requestConfig.query,
@@ -286,14 +292,15 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
             )
         }
         else -> {
-            dslHttp(Api::class.java).get(
+            dslHttp(Api::class.java)?.get(
                 requestConfig.url,
                 requestConfig.query,
                 requestConfig.header
             )
         }
-    }
-        .compose(observableToMain())
+    } ?: Observable.error(NullPointerException("retrofit创建异常"))
+    //observable
+    return observable.compose(if (requestConfig.observableOnMain) observableToMain() else observableToBack())
         .doOnSubscribe {
             requestConfig.onStart(it)
         }
@@ -337,9 +344,9 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
             connectUrl(DslHttp.dslHttpConfig.onGetBaseUrl(), requestConfig.url)
     }
 
-    return when (requestConfig.method) {
+    val observable = when (requestConfig.method) {
         POST -> {
-            dslHttp(Api::class.java).post2Body(
+            dslHttp(Api::class.java)?.post2Body(
                 requestConfig.url,
                 requestConfig.body,
                 requestConfig.query,
@@ -347,7 +354,7 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
             )
         }
         PUT -> {
-            dslHttp(Api::class.java).put2Body(
+            dslHttp(Api::class.java)?.put2Body(
                 requestConfig.url,
                 requestConfig.body,
                 requestConfig.query,
@@ -355,14 +362,15 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
             )
         }
         else -> {
-            dslHttp(Api::class.java).get2Body(
+            dslHttp(Api::class.java)?.get2Body(
                 requestConfig.url,
                 requestConfig.query,
                 requestConfig.header
             )
         }
-    }
-        .compose(observableToMain())
+    } ?: Observable.error(NullPointerException("retrofit创建异常"))
+    //observable
+    return observable.compose(observableToMain())
         .doOnSubscribe {
             requestConfig.onStart(it)
         }
@@ -464,24 +472,24 @@ fun put2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Response
 suspend fun String.get(
     queryMap: HashMap<String, Any> = hashMapOf(),
     headerMap: HashMap<String, String> = hashMapOf()
-): Response<JsonElement> {
-    return dslHttp(ApiKt::class.java).get(this, queryMap, headerMap)
+): Response<JsonElement>? {
+    return dslHttp(ApiKt::class.java)?.get(this, queryMap, headerMap)
 }
 
 suspend fun String.post(
     json: JsonElement = JsonObject(),
     queryMap: HashMap<String, Any> = hashMapOf(),
     headerMap: HashMap<String, String> = hashMapOf()
-): Response<JsonElement> {
-    return dslHttp(ApiKt::class.java).post(this, json, queryMap, headerMap)
+): Response<JsonElement>? {
+    return dslHttp(ApiKt::class.java)?.post(this, json, queryMap, headerMap)
 }
 
 suspend fun String.put(
     json: JsonElement = JsonObject(),
     queryMap: HashMap<String, Any> = hashMapOf(),
     headerMap: HashMap<String, String> = hashMapOf()
-): Response<JsonElement> {
-    return dslHttp(ApiKt::class.java).put(this, json, queryMap, headerMap)
+): Response<JsonElement>? {
+    return dslHttp(ApiKt::class.java)?.put(this, json, queryMap, headerMap)
 }
 
 //--
@@ -489,24 +497,24 @@ suspend fun String.put(
 suspend fun String.get2Body(
     queryMap: HashMap<String, Any> = hashMapOf(),
     headerMap: HashMap<String, String> = hashMapOf()
-): Response<ResponseBody> {
-    return dslHttp(ApiKt::class.java).get2Body(this, queryMap, headerMap)
+): Response<ResponseBody>? {
+    return dslHttp(ApiKt::class.java)?.get2Body(this, queryMap, headerMap)
 }
 
 suspend fun String.post2Body(
     json: JsonElement = JsonObject(),
     queryMap: HashMap<String, Any> = hashMapOf(),
     headerMap: HashMap<String, String> = hashMapOf()
-): Response<ResponseBody> {
-    return dslHttp(ApiKt::class.java).post2Body(this, json, queryMap, headerMap)
+): Response<ResponseBody>? {
+    return dslHttp(ApiKt::class.java)?.post2Body(this, json, queryMap, headerMap)
 }
 
 suspend fun String.put2Body(
     json: JsonElement = JsonObject(),
     queryMap: HashMap<String, Any> = hashMapOf(),
     headerMap: HashMap<String, String> = hashMapOf()
-): Response<ResponseBody> {
-    return dslHttp(ApiKt::class.java).put2Body(this, json, queryMap, headerMap)
+): Response<ResponseBody>? {
+    return dslHttp(ApiKt::class.java)?.put2Body(this, json, queryMap, headerMap)
 }
 
 //</editor-fold desc="协程同步网络请求">
@@ -613,6 +621,9 @@ open class BaseRequestConfig {
 
     //异常处理
     var onError: (Throwable) -> Unit = {}
+
+    //在主线程观察
+    var observableOnMain: Boolean = true
 }
 
 open class RequestConfig : BaseRequestConfig() {
