@@ -44,7 +44,7 @@ class FindParse(val accParse: AccParse) {
                     //匹配成功, 中断查询, 提升效率
                     result = parseResult
                     val toLog =
-                        parseResult.nodeList?.toLog("找到节点[${result.nodeList.size()}]$findBean↓")
+                        parseResult.nodeList?.toLog("Find找到节点[${result.nodeList.size()}]$findBean↓")
                     accControl.log(toLog)
                     break
                 }
@@ -52,7 +52,7 @@ class FindParse(val accParse: AccParse) {
         }
 
         if (result.success) {
-            accControl.log("找到节点[${result.nodeList.size()}]↑")
+            accControl.log("Find找到节点[${result.nodeList.size()}]↑")
             accControl.accPrint.findNode(result.nodeList)
         }
 
@@ -74,6 +74,17 @@ class FindParse(val accParse: AccParse) {
 
         if (rootNodeList.isNullOrEmpty()) {
             return result
+        }
+
+        //---------------------约束条件判断-----------------------
+
+        if (findBean.conditionList != null) {
+            //有条件需要判断
+            if (!accParse.conditionParse.parse(findBean.conditionList).success) {
+                //不满足条件
+                accParse.accControl.log("Find未满足条件[$findBean]↓\n${findBean.conditionList}")
+                return result
+            }
         }
 
         //-----------------------选择元素------------------------
@@ -291,9 +302,11 @@ class FindParse(val accParse: AccParse) {
 
     /**规则下的默认根节点集合*/
     fun rootWindowNode(findWindowBean: WindowBean? = null): List<AccessibilityNodeInfoCompat>? {
-        return accParse.accControl.accSchedule.run {
-            findRootNode(findWindowBean ?: _runActionBean?.window ?: _scheduleActionBean?.window)
-        }
+        return findRootNode(windowBean(findWindowBean))
+    }
+
+    fun windowBean(findWindowBean: WindowBean? = null) = accParse.accControl.accSchedule.run {
+        findWindowBean ?: _runActionBean?.window ?: _scheduleActionBean?.window
     }
 
     //</editor-fold desc="window">

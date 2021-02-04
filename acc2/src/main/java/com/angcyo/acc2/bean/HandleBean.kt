@@ -9,9 +9,13 @@ package com.angcyo.acc2.bean
  */
 data class HandleBean(
 
+    //<editor-fold desc="激活条件">
+
     /**
      * 满足其中一个条件,[HandleBean]才会被执行*/
     var conditionList: List<ConditionBean>? = null,
+
+    //</editor-fold desc="激活条件">
 
     /**重新选择新的元素, 否则直接使用[com.angcyo.acc2.bean.CheckBean.event]获取到的元素*/
     var findList: List<FindBean>? = null,

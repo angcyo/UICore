@@ -9,9 +9,21 @@ package com.angcyo.acc2.bean
  */
 data class FindBean(
 
+    //<editor-fold desc="上下文">
+
     /**在那个[AccessibilityWindowInfo]中获取节点
      * 不指定, 则根据包名默认处理, 包名还未指定, 则使用活跃的窗口*/
     var window: WindowBean? = null,
+
+    //</editor-fold desc="上下文">
+
+    //<editor-fold desc="激活条件">
+
+    /**只有满足条件的[FindBean]才能被执行, 不满足条件会跳过执行,
+     * 有一个条件满足即可*/
+    var conditionList: List<ConditionBean>? = null,
+
+    //</editor-fold desc="激活条件">
 
     //<editor-fold desc="选择器">
 

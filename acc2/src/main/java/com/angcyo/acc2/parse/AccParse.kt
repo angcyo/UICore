@@ -157,34 +157,31 @@ class AccParse(val accControl: AccControl) {
             //倍数
             val factor = split.getOrNull(2)?.toLongOrNull() ?: nextLong(2, 5)
 
-            start + base * Random.nextLong(1, max(2L, factor + 1))
+            start + base * nextLong(1, max(2L, factor + 1))
         }
     }
 
     /**将参数转换成对应的包名*/
     fun parsePackageName(arg: String?, target: String?): List<String> {
         val result = mutableListOf<String>()
-        if (arg.isNullOrBlank()) {
-            if (!target.isNullOrBlank()) {
-                result.add(target)
-            }
-        } else {
-            arg.split(Action.PACKAGE_SPLIT).forEach { name ->
-                val packageName = if (name.isEmpty() || name == "target") {
-                    target
-                } else if (name == "main") {
-                    app().packageName
-                } else if (name == "active") {
-                    accControl.accService()?.rootInActiveWindow?.packageName
-                } else {
-                    name
-                }?.toStr()
 
-                if (!packageName.isNullOrBlank()) {
-                    result.add(packageName)
-                }
+        val nameArg = arg ?: target
+        nameArg?.split(Action.PACKAGE_SPLIT)?.forEach { name ->
+            val packageName = if (name.isEmpty() || name == "target") {
+                target
+            } else if (name == "main") {
+                app().packageName
+            } else if (name == "active") {
+                accControl.accService()?.rootInActiveWindow?.packageName
+            } else {
+                name
+            }?.toStr()
+
+            if (!packageName.isNullOrBlank()) {
+                result.add(packageName)
             }
         }
+
         return result
     }
 

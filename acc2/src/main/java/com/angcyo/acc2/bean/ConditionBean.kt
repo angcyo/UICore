@@ -35,4 +35,14 @@ data class ConditionBean(
      * [100] [120] [130] 如果对应的id不存在, 则忽略
      * */
     var actionEnableList: List<Long>? = null,
+
+    /**系统信息约束. 多个用;号分割,并且的关系; 用 !or! 分割或者的关系
+     * [code>=1000]
+     * [w>10;h<=10!or!code>=1000]
+     * */
+    var system: String? = null,
+
+    /**对应目标应用程序的信息约束
+     * [system]*/
+    var app: String? = null,
 )
