@@ -324,26 +324,50 @@ class FindParse(val accParse: AccParse) {
             return result
         }
         originList.forEach { rootNode ->
+            val rootResult = mutableListOf<AccessibilityNodeInfoCompat>()
+            val rootMatchMap = hashMapOf<String?, Boolean>()
+
             rootNode.eachChildDepth { node, depth ->
-                list.forEachIndexed { index, _ ->
+                list.forEachIndexed { index, str ->
                     if (matchNode(node, findBean, index)) {
                         val path = findBean.pathList?.getOrNull(index)
 
                         if (path.isNullOrEmpty()) {
-                            result.add(node)
+                            rootResult.add(node)
+                            rootMatchMap[str] = true
                         } else {
                             //路径解析
                             pathParse.parse(node, path)?.let {
-                                result.add(it)
+                                rootResult.add(it)
+                                rootMatchMap[str] = true
                             }
                         }
 
-                        if (checkFindLimit(result, depth)) {
+                        if (checkFindLimit(rootResult, depth)) {
                             return@eachChildDepth true
                         }
                     }
                 }
                 false
+            }
+
+            //必须全部命中
+            var allMatch = true
+            for (key in list) {
+                if (!key.isNullOrBlank()) {
+                    val match = rootMatchMap[key]
+                    if (match == true) {
+                        //匹配到
+                    } else {
+                        //未匹配
+                        allMatch = false
+                        break
+                    }
+                }
+            }
+
+            if (allMatch) {
+                result.addAll(rootResult)
             }
         }
         return result

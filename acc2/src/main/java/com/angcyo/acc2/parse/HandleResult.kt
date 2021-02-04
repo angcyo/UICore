@@ -12,6 +12,9 @@ import com.angcyo.acc2.bean.HandleBean
  */
 open class HandleResult : BaseResult() {
 
+    /**强制执行结果为失败*/
+    var forceFail: Boolean = false
+
     /**处理成功的结构数据*/
     var handleBean: HandleBean? = null
 

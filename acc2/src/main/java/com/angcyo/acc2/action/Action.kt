@@ -26,16 +26,26 @@ object Action {
 
     const val ALL = "*"
 
+    /**取父节点*/
+    const val PARENT = "parent"
+
+    /**不取父节点*/
+    const val NOT_PARENT = "not_parent"
+
     /**触发当前节点的点击事件, null 默认是click操作.
      * [:STATE_UNSELECTED] 支持状态参数. 表示, 只在节点满足状态时, 才点击
      * [:STATE_UNSELECTED:5] 自身要满足且5个parent内所有节点也满足状态, 才触发点击
      * 如果包含[*], 表示所有节点都必须满足状态条件, 否则只要有一个满足状态条件即可
      * [click:0.1,0.1] 效果等同于[ACTION_CLICK3]
+     * 支持[NOT_PARENT]
      * */
     const val ACTION_CLICK = "click"
 
     const val ACTION_CLICK2 = "click2" //在当前节点区域双击(手势双击) [:0.1,0.1]指定目标区域
     const val ACTION_CLICK3 = "click3" //在当前节点区域点击(手势点击) [:0.1,0.1]指定目标区域
+
+    /**
+     * 支持[NOT_PARENT]*/
     const val ACTION_LONG_CLICK = "longClick" //触发当前节点的长按事件
     const val ACTION_DOUBLE = "double" //[double:20,30] 在屏幕坐标x=20dp y=30dp的地方双击
     const val ACTION_TOUCH = "touch" //[touch:10,10] 在屏幕坐标x=10dp y=10dp的地方点击
@@ -52,7 +62,8 @@ object Action {
 
     /**设置输入框文本内容
      * [input:$0] 支持文本变量
-     * [input:$[xxx]]
+     * [input:$[xxx] regex:xxx]
+     * regex:\\d+ 文本需要使用正则过滤取值
      * */
     const val ACTION_INPUT = "input"
 
@@ -67,9 +78,10 @@ object Action {
 
     /**获取元素文本追加保存到
      * [com.angcyo.acc2.bean.TaskBean.textMap]
-     * [appendText:key]
+     * [appendText:key regex:xxx]
      * 默认key:appendText
-     * regex:\\d+
+     * regex:\\d+ 文本需要使用正则过滤取值
+     * [ACTION_INPUT]
      */
     const val ACTION_APPEND_TEXT = "appendText"
 
@@ -123,10 +135,18 @@ object Action {
     /**请求焦点*/
     const val ACTION_FOCUS = "focus"
 
-    /**向前滚动, 手指向上滑动*/
+    /**向前滚动, 手指向上滑动
+     * [scrollForward:parent]
+     * parent是否要使用具有同状态的父节点操作
+     * 支持[PARENT]
+     * */
     const val ACTION_SCROLL_FORWARD = "scrollForward"
 
-    /**向后滚动, 手指向上滑动*/
+    /**向后滚动, 手指向上滑动
+     * [scrollBackward:parent]
+     * parent是否要使用具有同状态的父节点操作
+     * 支持[PARENT]
+     * */
     const val ACTION_SCROLL_BACKWARD = "scrollBackward"
 
     /**执行结果直接设置true*/

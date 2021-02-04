@@ -24,12 +24,14 @@ fun AccessibilityNodeInfoCompat.eachChildDepth(
     each: (node: AccessibilityNodeInfoCompat, depth: Int) -> Boolean
 ): Boolean {
     var result = false
-    if (childCount <= 0) {
+    if (depth <= 1) {
+        //递归顶级开始节点
         result = each(this, depth)
         if (result) {
             return true
         }
     }
+
     for (i in 0 until childCount) {
         val child = getChildOrNull(i)
         if (child != null) {

@@ -37,8 +37,13 @@ class AccControl : Runnable {
     @Volatile
     var _controlState: Int = CONTROL_STATE_NORMAL
 
+    /**控制器已经开始运行了*/
     val isControlStart: Boolean
         get() = _controlState == CONTROL_STATE_RUNNING || _controlState == CONTROL_STATE_PAUSE
+
+    /**控制器暂停中*/
+    val isControlPause: Boolean
+        get() = _controlState == CONTROL_STATE_PAUSE
 
     //<editor-fold desc="组件">
 
@@ -201,7 +206,7 @@ class AccControl : Runnable {
                 e.printStackTrace()
             }
         }
-        log("run控制器结束[${_controlState.toControlStateStr()}]:$finishReason ${accSchedule.durationStr()}")
+        log("run控制器结束[${_controlState.toControlStateStr()}]:$finishReason ${accSchedule.durationStr()}\n${_taskBean?.textMap}")
     }
 
     //</editor-fold desc="线程">

@@ -4,6 +4,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
+import com.angcyo.acc2.parse.arg
 import com.angcyo.acc2.parse.toLog
 import com.angcyo.library.ex.getScrollableParent
 import com.angcyo.library.ex.isDebug
@@ -22,6 +23,17 @@ class ScrollBackwardAction : BaseAction() {
         return action.startsWith(Action.ACTION_SCROLL_BACKWARD)
     }
 
+    fun targetNode(
+        node: AccessibilityNodeInfoCompat,
+        action: String
+    ): AccessibilityNodeInfoCompat? {
+        return if (action.arg(Action.ACTION_SCROLL_BACKWARD)?.contains(Action.PARENT) == true) {
+            node.getScrollableParent()
+        } else {
+            node
+        }
+    }
+
     override fun runAction(
         control: AccControl,
         nodeList: List<AccessibilityNodeInfoCompat>?,
@@ -29,7 +41,7 @@ class ScrollBackwardAction : BaseAction() {
     ): HandleResult = handleResult {
         nodeList?.forEach { node ->
             //如果滚动到头部了, 会滚动失败
-            val result = node.getScrollableParent()?.scrollBackward() == true
+            val result = targetNode(node, action)?.scrollBackward() == true
             success = success || result
             if (result) {
                 addNode(node)

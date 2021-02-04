@@ -382,11 +382,19 @@ class AccSchedule(val accControl: AccControl) {
                 val handleResult = handleParse.parse(rootNodeList, actionBean.check?.other)
                 if (!handleResult.success) {
                     //还是未成功
-                    otherActionList?.forEach {
-                        if (it.async) {
-                            thread { accSchedule.scheduleAction(it, null, false) }
+                    for (otherAction in otherActionList ?: emptyList()) {
+                        var otherHandleResult: HandleResult? = null
+                        if (otherAction.async) {
+                            thread {
+                                otherHandleResult =
+                                    accSchedule.scheduleAction(otherAction, null, false)
+                            }
                         } else {
-                            accSchedule.scheduleAction(it, null, false)
+                            otherHandleResult = accSchedule.scheduleAction(otherAction, null, false)
+                        }
+                        if (otherHandleResult?.success == true) {
+                            accControl.log("[other]已处理[${actionBean.actionLog()}]:${otherAction}")
+                            break
                         }
                     }
                 }

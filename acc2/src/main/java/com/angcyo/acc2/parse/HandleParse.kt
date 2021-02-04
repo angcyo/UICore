@@ -114,10 +114,11 @@ class HandleParse(val accParse: AccParse) {
         //待处理的元素节点集合
         var handleNodeList = if (handleBean.findList != null) {
             //需要明确重新指定
-            accParse.findParse.parse(
+            val findResult = accParse.findParse.parse(
                 accParse.findParse.rootWindowNode(),
                 handleBean.findList
-            ).nodeList
+            )
+            findResult.nodeList
         } else {
             originList
         }
@@ -157,6 +158,10 @@ class HandleParse(val accParse: AccParse) {
             }
         }
 
+        if (result.forceFail) {
+            result.success = false
+        }
+
         //如果处理成功,
         if (result.success) {
             if (handleBean.successActionList != null) {
@@ -189,6 +194,7 @@ class HandleParse(val accParse: AccParse) {
         actionList?.forEach { action ->
             //处理action
             handleAction(nodeList, action).apply {
+                result.forceFail = forceFail || result.forceFail
                 result.success = success || result.success
                 if (success) {
                     //把处理成功的元素收集起来
@@ -225,6 +231,7 @@ class HandleParse(val accParse: AccParse) {
                 isActionIntercept = true
                 //运行处理
                 it.runAction(accControl, nodeList, action).apply {
+                    result.forceFail = forceFail || result.forceFail
                     result.success = success || result.success
                     if (success) {
                         //把处理成功的元素收集起来

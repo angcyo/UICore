@@ -25,6 +25,6 @@ class BackAction : BaseAction() {
         action: String
     ): HandleResult = handleResult {
         success = control.accService()?.back() == true
-        control.log("返回:$success")
+        control.log("[BackAction]返回:$success")
     }
 }

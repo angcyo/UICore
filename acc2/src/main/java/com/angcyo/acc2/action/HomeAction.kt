@@ -25,6 +25,6 @@ class HomeAction : BaseAction() {
         action: String
     ): HandleResult = handleResult {
         success = control.accService()?.home() == true
-        control.log("回到桌面:$success")
+        control.log("[HomeAction]回到桌面:$success")
     }
 }

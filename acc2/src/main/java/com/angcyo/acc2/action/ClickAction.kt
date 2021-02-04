@@ -21,6 +21,17 @@ class ClickAction : ClickTouchAction() {
         return action.cmd(Action.ACTION_CLICK)
     }
 
+    fun targetNode(
+        node: AccessibilityNodeInfoCompat,
+        action: String
+    ): AccessibilityNodeInfoCompat? {
+        return if (action.subEnd(Action.ARG_SPLIT)?.contains(Action.NOT_PARENT) == true) {
+            node
+        } else {
+            node.getClickParent()
+        }
+    }
+
     override fun runAction(
         control: AccControl,
         nodeList: List<AccessibilityNodeInfoCompat>?,
@@ -42,12 +53,12 @@ class ClickAction : ClickTouchAction() {
             nodeList?.forEach { node ->
                 var result = false
                 if (arg.isNullOrEmpty()) {
-                    result = node.getClickParent()?.click() == true
+                    result = targetNode(node, action)?.click() == true
                 } else {
                     control.accSchedule.accParse.findParse.getStateParentNode(listOf(arg), node)
                         .apply {
                             result = if (first) {
-                                node.getClickParent()?.click() ?: false || result
+                                targetNode(node, action)?.click() ?: false || result
                             } else {
                                 //携带了状态约束参数, 并且没有匹配到状态
                                 true

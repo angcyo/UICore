@@ -4,6 +4,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
+import com.angcyo.acc2.parse.arg
 
 /**
  *
@@ -24,6 +25,7 @@ class FalseAction : BaseAction() {
         action: String
     ): HandleResult = handleResult {
         success = false
-        control.log("直接返回[false]")
+        forceFail = action.arg(Action.ACTION_FALSE).isNullOrBlank()
+        control.log("直接返回[false]并且强制失败[${forceFail}]")
     }
 }
