@@ -12,7 +12,10 @@ import android.graphics.Paint
 
 /**文本的宽度*/
 fun Paint.textWidth(text: String?): Float {
-    return measureText(text ?: "")
+    if (text == null) {
+        return 0f
+    }
+    return measureText(text)
 }
 
 /**文本的高度*/

@@ -35,6 +35,7 @@ open class FocusEditDelegate(editText: EditText) : BaseEditDelegate(editText) {
     /**指定[Drawable]的高度*/
     var drawableHeight: String? = "1dp"
 
+    /**计算表达式, 支持 sh ph px dip, 正数是倍数, 负数是减去倍数的值*/
     var drawableMarginLeft: String? = null
     var drawableMarginRight: String? = null
     var drawableMarginBottom: String? = null
@@ -46,6 +47,8 @@ open class FocusEditDelegate(editText: EditText) : BaseEditDelegate(editText) {
     var _valueAnimator: ValueAnimator? = null
 
     override fun initAttribute(context: Context, attrs: AttributeSet?) {
+        super.initAttribute(context, attrs)
+
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.FocusEditDelegate)
         noFocusDrawable = typedArray.getDrawable(R.styleable.FocusEditDelegate_r_no_focus_drawable)
         focusDrawable = typedArray.getDrawable(R.styleable.FocusEditDelegate_r_focus_drawable)
@@ -94,6 +97,8 @@ open class FocusEditDelegate(editText: EditText) : BaseEditDelegate(editText) {
     }
 
     override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+
         val viewWidth = editText.mW()
         val viewHeight = editText.mH()
 

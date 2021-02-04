@@ -323,12 +323,12 @@ open class DslViewHolder(
         return this
     }
 
-    fun invisible(@IdRes resId: Int, visible: Boolean): DslViewHolder {
+    fun invisible(@IdRes resId: Int, invisible: Boolean): DslViewHolder {
         val view = v<View>(resId)!!
-        if (visible) {
-            visible(view)
-        } else {
+        if (invisible) {
             invisible(view)
+        } else {
+            visible(view)
         }
         return this
     }

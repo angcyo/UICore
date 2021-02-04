@@ -39,6 +39,13 @@
     <attr name="r_drawable_margin_bottom" format="string|dimension" />
     <attr name="r_focus_animator_duration" format="integer" />
 
+    <!--绘制在左边的文本-->
+    <attr name="r_draw_left" format="string" />
+
+    <declare-styleable name="BaseEditDelegate">
+        <attr name="r_draw_left" />
+    </declare-styleable>
+
     <declare-styleable name="FocusEditDelegate">
         <attr name="r_focus_drawable" />
         <attr name="r_no_focus_drawable" />
@@ -65,6 +72,8 @@
         <attr name="r_drawable_margin_right" />
         <attr name="r_drawable_margin_bottom" />
         <attr name="r_focus_animator_duration" />
+
+        <attr name="r_draw_left" />
     </declare-styleable>
 
     <declare-styleable name="ClearCompleteEditText">

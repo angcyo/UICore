@@ -140,7 +140,7 @@ class AccParse(val accControl: AccControl) {
 
     /**
      * 解析时间格式
-     * 格式[5000,500,5] 解释:5000+500*[1-5),
+     * 格式[5000,500,5] 解释:5000+500*[1-5],
      * 返回解析后的时间, 毫秒*/
     fun parseTime(arg: String?, def: Long = 0): Long {
         return if (arg.isNullOrEmpty()) {

@@ -207,6 +207,7 @@ class REditDelegate(editText: EditText) : InputTipEditDelegate(editText) {
 
     //代理
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
         if (showClearDrawable) {
             val offset = editText.compoundDrawablePadding
             _clearRect.set(

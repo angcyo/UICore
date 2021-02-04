@@ -5,6 +5,7 @@ import com.angcyo.library.isMain
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.exceptions.Exceptions
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 
@@ -41,6 +42,8 @@ object Rx {
         if (!RxJavaPlugins.isLockdown()) {
             RxJavaPlugins.setErrorHandler {
                 L.e("Rx异常:$it")
+                it.printStackTrace()
+                Exceptions.throwIfFatal(it)
             }
         }
     }

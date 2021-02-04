@@ -53,7 +53,7 @@ open class InputTipEditDelegate(editText: EditText) : FocusEditDelegate(editText
         super.onDraw(canvas)
 
         val view = editText
-        val layout = view.layout
+        val layout = view.layout ?: return
 
         val needDrawInputTip =
             layout.lineCount == 1 && view.isFocused && !hitInputText.isNullOrEmpty()

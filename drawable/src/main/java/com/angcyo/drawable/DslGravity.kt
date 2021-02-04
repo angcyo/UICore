@@ -122,6 +122,10 @@ class DslGravity {
     }
 }
 
+/**
+ * 默认计算出的是目标中心点坐标参考距离
+ * [com.angcyo.drawable.DslGravity.getGravityRelativeCenter]
+ * */
 fun dslGravity(
     rect: RectF, //计算的矩形
     gravity: Int,  //重力
@@ -137,7 +141,10 @@ fun dslGravity(
     return _dslGravity
 }
 
-
+/**
+ * 默认计算出的是目标中心点坐标参考距离
+ * [com.angcyo.drawable.DslGravity.getGravityRelativeCenter]
+ * */
 fun dslGravity(
     rect: Rect, //计算的矩形
     gravity: Int,  //重力

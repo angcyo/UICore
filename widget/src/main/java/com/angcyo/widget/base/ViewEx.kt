@@ -297,6 +297,22 @@ fun View?.paddingVertical(p: Int) {
     this?.setPadding(paddingLeft, p, paddingRight, p)
 }
 
+fun View?.paddingLeft(p: Int) {
+    this?.setPadding(p, paddingTop, paddingRight, paddingBottom)
+}
+
+fun View?.paddingRight(p: Int) {
+    this?.setPadding(paddingLeft, paddingTop, p, paddingBottom)
+}
+
+fun View?.paddingTop(p: Int) {
+    this?.setPadding(paddingLeft, p, paddingRight, paddingBottom)
+}
+
+fun View?.paddingBottom(p: Int) {
+    this?.setPadding(paddingLeft, paddingTop, paddingRight, p)
+}
+
 fun View?.mH(def: Int = 0): Int {
     return this?.measuredHeight ?: def
 }

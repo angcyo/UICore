@@ -98,11 +98,15 @@ open class BaseDslFragment : BaseTitleFragment() {
         onLoadData()
     }
 
-    /**重写此方法, 拉取数据*/
+    /**重写此方法, 拉取数据
+     * [com.angcyo.core.fragment.BaseTitleFragment.finishRefresh]
+     * [com.angcyo.dsladapter.DslAdapterExKt.toNone]*/
     @CallSuper
     open fun onLoadData() {
         //因为使用的behavior实现的刷新, 所以fling操作之后, scroll并不一定就会停止
         _recycler.stopScroll()
+        //finishRefresh()
+        //_adapter.toNone()
     }
 
     /**数据加载完成后, 调用此方法*/

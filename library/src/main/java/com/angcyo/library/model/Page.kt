@@ -58,6 +58,11 @@ class Page {
 
     /**是否是第一页请求*/
     fun isFirstPage() = requestPageIndex == firstPageIndex
+
+    /**单列表数据, 无加载更多*/
+    fun singlePage() {
+        requestPageSize = Int.MAX_VALUE
+    }
 }
 
 /**单页请求, 无加载更多*/
