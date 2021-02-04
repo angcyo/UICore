@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.core.component.interceptor.LogFileInterceptor
 import com.angcyo.http.DslHttp
+import com.angcyo.http.rx.Rx
 import com.angcyo.library.L
 import com.angcyo.library.LibApplication
 import com.angcyo.library.ex.getAppSignatureMD5
@@ -23,6 +24,8 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
 
     override fun onCreate() {
         super.onCreate()
+
+        Rx.init()
 
         DslHttp.config {
             val logFileInterceptor = LogFileInterceptor()
