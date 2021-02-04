@@ -57,16 +57,21 @@ fun MenuConfig.show(context: Context): PopupMenu {
         if (showIcon) {
             setOptionalIconsVisible()
         }
+
+        //配置菜单, 比如修改文本, 可见性控制
         config.configMenuAction(this, menu)
 
+        //菜单点击事件回调
         setOnMenuItemClickListener {
             config.menuItemClickAction?.invoke(it) ?: false
         }
 
+        //销毁回调
         setOnDismissListener {
             config.menuDismissAction?.invoke(this)
         }
 
+        //显示, 或者显示偏移
         if (offsetX == 0 && offsetY == 0) {
             show()
         } else {
@@ -78,6 +83,7 @@ fun MenuConfig.show(context: Context): PopupMenu {
                 (popupField.get(this) as MenuPopupHelper).show(offsetX, offsetY)
             } catch (e: Exception) {
                 e.printStackTrace();
+                show()
             }
         }
     }
