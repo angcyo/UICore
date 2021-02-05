@@ -75,9 +75,9 @@ fun String?.hawkPut(value: CharSequence?): Boolean {
     } ?: false
 }
 
-fun String?.hawkAppend(value: CharSequence?): Boolean {
+fun String?.hawkAppend(value: CharSequence?, symbol: String = ""): Boolean {
     return this?.run {
-        Hawk.put(this, "${hawkGet() ?: ""}${value ?: ""}")
+        Hawk.put(this, "${hawkGet() ?: ""}${symbol}${value ?: ""}")
     } ?: false
 }
 
