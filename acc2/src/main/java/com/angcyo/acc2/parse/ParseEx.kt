@@ -139,12 +139,15 @@ fun AccessibilityNodeInfoCompat.toLog(logNodeChild: Boolean = false): StringBuil
 }
 
 /**转成日志*/
-fun List<AccessibilityNodeInfoCompat>.toLog(header: String?) = buildString {
+fun List<AccessibilityNodeInfoCompat>.toLog(
+    header: String? = null,
+    logNodeChild: Boolean = false
+) = buildString {
     if (header != null) {
         appendLine(header)
     }
     val accNodeLog = AccNodeLog()
-    accNodeLog.logNodeChild = false
+    accNodeLog.logNodeChild = logNodeChild
 
     val list = this@toLog
     list.forEachIndexed { index: Int, node: AccessibilityNodeInfoCompat ->

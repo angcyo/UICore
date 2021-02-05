@@ -35,7 +35,7 @@ class ExpParse {
     /**转换数值*/
     var wrapValue: (ExpValue) -> Float = {
         var value = it.value?.toFloatOrNull() ?: 0f
-        value = if (value > 0.000001 && value < 0.000009) {
+        value = if (value > 0.000001 && value < 0.999999) {
             value * ratioRef
         } else {
             value

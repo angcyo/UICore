@@ -296,7 +296,19 @@ class FindParse(val accParse: AccParse) {
                     result.add(it.wrap())
                 }
             }
+
+            //矩形约束
+            if (windowBean.rect != null) {
+                val removeList = mutableListOf<AccessibilityNodeInfoCompat>()
+                result.forEach {
+                    if (!matchNodeRect(it, windowBean.rect)) {
+                        removeList.add(it)
+                    }
+                }
+                result.removeAll(removeList)
+            }
         }
+
         return result
     }
 

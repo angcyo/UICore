@@ -8,8 +8,10 @@ import com.angcyo.acc2.control.log
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.app
+import com.angcyo.library.component.appBean
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.patternList
+import com.angcyo.library.ex.str
 import com.angcyo.library.ex.toStr
 import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.getLongNum
@@ -120,8 +122,18 @@ class AccParse(val accControl: AccControl) {
         if (mapKeyList.isNotEmpty()) {
             isHandle = true
             mapKeyList.forEach { key ->
-                taskBean?.textMap?.get(key)?.let { value ->
-                    result.add(value)
+
+                if (key == "appName") {
+                    val appName =
+                        parsePackageName(null, accControl._taskBean?.packageName).firstOrNull()
+                            ?.appBean()?.appName?.str()
+                    if (appName.isNullOrBlank()) {
+                        getTextOfMap(key)?.let { value -> result.add(value) }
+                    } else {
+                        result.add(appName)
+                    }
+                } else {
+                    getTextOfMap(key)?.let { value -> result.add(value) }
                 }
             }
         }
@@ -137,6 +149,8 @@ class AccParse(val accControl: AccControl) {
 
         return result
     }
+
+    fun getTextOfMap(key: String) = accControl._taskBean?.textMap?.get(key)
 
     /**
      * 解析时间格式
@@ -162,7 +176,10 @@ class AccParse(val accControl: AccControl) {
     }
 
     /**将参数转换成对应的包名*/
-    fun parsePackageName(arg: String?, target: String?): List<String> {
+    fun parsePackageName(
+        arg: String? = null,
+        target: String? = findParse.windowBean()?.packageName ?: accControl._taskBean?.packageName
+    ): List<String> {
         val result = mutableListOf<String>()
 
         val nameArg = arg ?: target
