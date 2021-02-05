@@ -26,6 +26,7 @@ class HandleParse(val accParse: AccParse) {
         registerActionList.add(FalseAction())
         registerActionList.add(EnableAction())
         registerActionList.add(DisableAction())
+        registerActionList.add(ToastAction())
 
         registerActionList.add(BackAction())
         registerActionList.add(HomeAction())
@@ -67,13 +68,15 @@ class HandleParse(val accParse: AccParse) {
             for (handBean in handleList) {
                 val handleResult = parse(originList, handBean)
                 if (handleResult.success) {
-                    result = handleResult
-                    handleResult.nodeList?.forEach {
-                        if (!handleNodeList.contains(it)) {
-                            handleNodeList.add(it)
+                    if (!handleResult.forceFail) {
+                        result = handleResult
+                        handleResult.nodeList?.forEach {
+                            if (!handleNodeList.contains(it)) {
+                                handleNodeList.add(it)
+                            }
                         }
+                        result.nodeList = handleNodeList
                     }
-                    result.nodeList = handleNodeList
                 }
                 if (handBean.jump) {
                     //跳过后续处理
@@ -159,11 +162,13 @@ class HandleParse(val accParse: AccParse) {
         }
 
         if (result.forceFail) {
-            result.success = false
-        }
-
-        //如果处理成功,
-        if (result.success) {
+            accParse.accControl.log("强制失败处理:${handleBean}")
+            if (handleBean.failActionList != null) {
+                result = handleAction(handleNodeList, handleBean.failActionList)
+                result.forceFail = true
+            }
+        } else if (result.success) {
+            //如果处理成功
             if (handleBean.successActionList != null) {
                 result = handleAction(handleNodeList, handleBean.successActionList)
             }

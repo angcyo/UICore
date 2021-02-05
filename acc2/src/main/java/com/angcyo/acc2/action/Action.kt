@@ -155,6 +155,14 @@ object Action {
     /**执行结果直接设置false*/
     const val ACTION_FALSE = "false"
 
+    /**弹出toast
+     * [toast:xxx]
+     * [toastQQ:xxx]
+     * [toastWX:xxx]*/
+    const val ACTION_TOAST = "toast"
+    const val ACTION_TOAST_QQ = "toastQQ"
+    const val ACTION_TOAST_WX = "toastWX"
+
     /*---------------------------------------状态匹配--------------------------------------*/
 
     //需要指定的状态 [state]
