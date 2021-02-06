@@ -10,6 +10,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.Base64
 import com.angcyo.library.L
+import com.angcyo.library.app
 import com.angcyo.library.utils.Constant.PICTURE_FOLDER_NAME
 import com.angcyo.library.utils.fastBlur
 import com.angcyo.library.utils.fileNameUUID
@@ -39,7 +40,8 @@ fun ByteArray.toBitmap(): Bitmap {
     return BitmapFactory.decodeByteArray(this, 0, this.size)
 }
 
-fun Bitmap.share(context: Context, shareQQ: Boolean = false, chooser: Boolean = true) {
+/**分享图片对象, 注意图片不能太大, 否则[Intent]传不过去*/
+fun Bitmap.share(context: Context = app(), shareQQ: Boolean = false, chooser: Boolean = true) {
     val uri =
         Uri.parse(MediaStore.Images.Media.insertImage(context.contentResolver, this, null, null))
     var intent = Intent()
