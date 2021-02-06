@@ -32,4 +32,8 @@ data class CheckBean(
 
     /**如果[handle]处理成功后, 需要进行的操作*/
     var success: List<HandleBean>? = null,
+
+    /**运行超限后触发
+     * [com.angcyo.acc2.bean.ActionBean.limitRunCount]*/
+    var limitRun: List<HandleBean>? = null,
 )

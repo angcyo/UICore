@@ -55,9 +55,11 @@ class AccSchedule(val accControl: AccControl) {
     }
 
     /**获取[ActionBean]的运行次数*/
-    fun getRunCount(actionId: Long): Long = actionCount[actionId]?.runCount?.count ?: -1
+    fun getRunCount(actionId: Long): Long =
+        if (actionId > 0) actionCount[actionId]?.runCount?.count ?: -1 else -1
 
-    fun getJumpCount(actionId: Long): Long = actionCount[actionId]?.jumpCount?.count ?: -1
+    fun getJumpCount(actionId: Long): Long =
+        if (actionId > 0) actionCount[actionId]?.jumpCount?.count ?: -1 else -1
 
     /**预备下一个需要执行*/
     fun next() {
@@ -445,9 +447,33 @@ class AccSchedule(val accControl: AccControl) {
                 if (success) {
                     //处理成功
                     //showElementTip(elementList)
-                    next()
+                    //next()
                 } else {
                     //未处理成功
+                    //getRunCount(actionBean.actionId)
+                }
+
+                //运行次数限制
+                val limitRunCount = if (actionBean.limitRunCount >= 0) {
+                    actionBean.limitRunCount
+                } else {
+                    accControl._taskBean?.limitRunCount ?: -1
+                }
+
+                if (limitRunCount > 0) {
+                    val runCount = getRunCount(actionBean.actionId)
+                    if (runCount >= limitRunCount) {
+                        //运行次数超出限制
+                        if (actionBean.check?.limitRun == null) {
+                            //默认处理
+                            if (!success) {
+                                accControl.error("[${actionBean.actionLog()}]执行次数超出限制[${limitRunCount}]")
+                            }
+                        } else {
+                            handleActionResult =
+                                handleParse.parse(rootNodeList, actionBean.check?.limitRun)
+                        }
+                    }
                 }
             }
         }

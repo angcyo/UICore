@@ -42,6 +42,12 @@ data class ActionBean(
      * 可用于[com.angcyo.acc2.action.Action.ACTION_JUMP]跳转指令使用*/
     var relyList: List<Long>? = null,
 
+    /**限制最大运行次数后, 异常中断任务.
+     * 可以使用-1,取消限制.
+     * 可以使用[com.angcyo.acc2.bean.CheckBean.limitRun]覆盖默认行为
+     * */
+    var limitRunCount: Int = -1,
+
     //</editor-fold desc="配置">
 
     /**在那个[AccessibilityWindowInfo]中获取节点

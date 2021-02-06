@@ -37,6 +37,10 @@ data class TaskBean(
     /**[actionList]未处理时的操作步骤*/
     var backActionList: List<ActionBean>? = null,
 
+    /**
+     * [com.angcyo.acc2.bean.ActionBean.limitRunCount]*/
+    var limitRunCount: Int = -1,
+
     //<editor-fold desc="文本池">
 
     /**字符串输入供给
