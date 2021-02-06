@@ -140,3 +140,6 @@ fun Long.toShortString(
 
 /**构建一个16位的整数*/
 fun generateInt(): Int = SystemClock.uptimeMillis().toInt() and 0xFFFF
+
+/**转换成 100% 80% 的形式*/
+fun Number.toRatioStr(sum: Number): String = "${(this.toFloat() / sum.toFloat() * 100).toInt()}%"
