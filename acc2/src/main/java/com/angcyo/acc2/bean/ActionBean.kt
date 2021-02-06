@@ -23,6 +23,9 @@ data class ActionBean(
     /**操作的描述*/
     var des: String? = null,
 
+    /**标识一下[ActionBean]*/
+    var type: String? = null,
+
     /**异步执行[ActionBean], 非主线[ActionBean]时有效*/
     var async: Boolean = false,
 

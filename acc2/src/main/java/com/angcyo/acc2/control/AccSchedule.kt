@@ -6,6 +6,7 @@ import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.acc2.parse.toLog
 import com.angcyo.library.L
 import com.angcyo.library.ex.*
+import java.util.*
 
 /**
  *
@@ -34,6 +35,14 @@ class AccSchedule(val accControl: AccControl) {
         val count = actionCount[actionId] ?: ActionCount()
         count.runCount.doCount()
         actionCount[actionId] = count
+    }
+
+    fun clearRunCount(actionId: Long) {
+        actionCount[actionId]?.runCount?.clear()
+    }
+
+    fun clearJumpCount(actionId: Long) {
+        actionCount[actionId]?.jumpCount?.clear()
     }
 
     /**累加跳转次数*/
@@ -313,6 +322,8 @@ class AccSchedule(val accControl: AccControl) {
      * value = 成功or失败*/
     val actionResultMap = hashMapOf<Long, Boolean>()
 
+    val runActionBeanStack = Stack<ActionBean>()
+
     //正在运行的[ActionBean], 有可能是主线[ActionBean]
     var _runActionBean: ActionBean? = null
 
@@ -326,10 +337,14 @@ class AccSchedule(val accControl: AccControl) {
         otherActionList: List<ActionBean>?,
         isPrimaryAction: Boolean
     ): HandleResult {
-        var handleActionResult = HandleResult()
+        runActionBeanStack.push(actionBean)
         _runActionBean = actionBean
 
+        var handleActionResult = HandleResult()
+
         if (accControl.accService() == null) {
+            runActionBeanStack.popSafe()
+            _runActionBean = null
             accControl.error("无障碍服务连接中断")
             return handleActionResult
         }
@@ -337,6 +352,8 @@ class AccSchedule(val accControl: AccControl) {
         //激活条件判断
         if (!accParse.conditionParse.parse(actionBean.conditionList).success) {
             handleActionResult.success = false
+            runActionBeanStack.popSafe()
+            _runActionBean = null
             accControl.log("${actionBean.actionLog()}未满足激活条件,跳过执行.")
             return handleActionResult
         }
@@ -433,12 +450,14 @@ class AccSchedule(val accControl: AccControl) {
             }
         }
 
+        //现场
+        runActionBeanStack.popSafe()
+        _runActionBean = null
+
         //回调
         accControl.controlListenerList.forEach {
             it.onActionRunAfter(actionBean, isPrimaryAction, handleActionResult)
         }
-
-        _runActionBean = null
 
         return handleActionResult
     }

@@ -48,8 +48,11 @@ class HandleParse(val accParse: AccParse) {
 
         registerActionList.add(AppendTextAction())
         registerActionList.add(ClearTextAction())
+        registerActionList.add(PutTextAction())
 
         registerActionList.add(JumpAction())
+        registerActionList.add(ClearRunCountAction())
+        registerActionList.add(ClearJumpCountAction())
         registerActionList.add(FinishAction())
         registerActionList.add(ErrorAction())
         registerActionList.add(StopAction())

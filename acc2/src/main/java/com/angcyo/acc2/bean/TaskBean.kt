@@ -1,6 +1,7 @@
 package com.angcyo.acc2.bean
 
 import com.angcyo.acc2.action.Action
+import com.angcyo.library.ex.uuid
 
 /**
  *
@@ -11,9 +12,9 @@ import com.angcyo.acc2.action.Action
  */
 data class TaskBean(
 
-    /**任务需要处理那个程序的信息
-     * 不支持正则*/
-    var packageName: String? = null,
+    //<editor-fold desc="配置信息">
+
+    var uuid: String? = uuid(),
 
     /**任务的标题*/
     var title: String? = null,
@@ -24,11 +25,19 @@ data class TaskBean(
     /**任务类型, 用于查找匹配使用*/
     var type: String? = null,
 
+    //</editor-fold desc="配置信息">
+
+    /**任务需要处理那个程序的信息
+     * 不支持正则*/
+    var packageName: String? = null,
+
     /**操作步骤*/
     var actionList: List<ActionBean>? = null,
 
     /**[actionList]未处理时的操作步骤*/
     var backActionList: List<ActionBean>? = null,
+
+    //<editor-fold desc="文本池">
 
     /**字符串输入供给
      * [$0 ]
@@ -40,6 +49,8 @@ data class TaskBean(
      * 文本池, 供$[xxx] 获取使用
      * [xxx]命令保存的文本, 供后续使用*/
     var textMap: HashMap<String, String?>? = null,
+
+    //</editor-fold desc="文本池">
 
     /**在每个[ActionBean]执行之前, 都要执行的[ActionBean]
      * 如果处理成功了, 会中断原本需要执行的[ActionBean]*/

@@ -76,6 +76,18 @@ object Action {
      * */
     const val ACTION_CLEAR_TEXT = "clearText"
 
+    /**清除指定id的[ActionBean]的运行次数
+     * [clearRunCount:xxx xxx]
+     * [ACTION_JUMP]
+     * */
+    const val ACTION_CLEAR_RUN_COUNT = "clearRunCount"
+
+    /**清除指定id的[ActionBean]的跳转次数
+     * [clearJumpCount:xxx xxx]
+     * [ACTION_JUMP]
+     * */
+    const val ACTION_CLEAR_JUMP_COUNT = "clearJumpCount"
+
     /**获取元素文本追加保存到
      * [com.angcyo.acc2.bean.TaskBean.textMap]
      * [appendText:key regex:xxx]
@@ -84,6 +96,15 @@ object Action {
      * [ACTION_INPUT]
      */
     const val ACTION_APPEND_TEXT = "appendText"
+
+    /**获取元素文本保存到
+     * [com.angcyo.acc2.bean.TaskBean.textMap]
+     * [appendText:key regex:xxx]
+     * 默认key:appendText
+     * regex:\\d+ 文本需要使用正则过滤取值
+     * [ACTION_INPUT]
+     */
+    const val ACTION_PUT_TEXT = "putText"
 
     /**回退按钮*/
     const val ACTION_BACK = "back"
