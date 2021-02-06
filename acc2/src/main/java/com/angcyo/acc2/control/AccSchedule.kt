@@ -359,7 +359,9 @@ class AccSchedule(val accControl: AccControl) {
         }
 
         //等待执行
-        val delayTime = accParse.parseTime(actionBean.start)
+        val _start =
+            if (isDebugType()) actionBean.debugStart ?: actionBean.start else actionBean.start
+        val delayTime = accParse.parseTime(_start)
         if (isPrimaryAction) {
             accControl.next(actionBean.summary ?: actionBean.title, actionBean.des, delayTime)
         }

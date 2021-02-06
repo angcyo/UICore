@@ -35,6 +35,9 @@ data class ActionBean(
      * */
     var start: String? = null,
 
+    /**调试模式下的时间*/
+    var debugStart: String? = null,
+
     /**当前的[ActionBean]依靠的其他[ActionBean]的id,
      * 可用于[com.angcyo.acc2.action.Action.ACTION_JUMP]跳转指令使用*/
     var relyList: List<Long>? = null,
