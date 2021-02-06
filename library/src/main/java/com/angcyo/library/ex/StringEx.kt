@@ -201,12 +201,20 @@ fun CharSequence?.splitList(
 }
 
 /** 安全的去掉字符串的最后一个字符 */
-fun CharSequence.safe(): CharSequence? {
-    return subSequence(0, kotlin.math.max(0, length - 1))
+fun CharSequence.safe(last: Char? = null): CharSequence {
+    return if (last == null || endsWith(last)) {
+        subSequence(0, kotlin.math.max(0, length - 1))
+    } else {
+        this
+    }
 }
 
-fun StringBuilder.safe(): StringBuilder {
-    return delete(kotlin.math.max(0, lastIndex), kotlin.math.max(0, length))
+fun StringBuilder.safe(last: Char? = null): StringBuilder {
+    return if (last == null || endsWith(last)) {
+        delete(kotlin.math.max(0, lastIndex), kotlin.math.max(0, length))
+    } else {
+        this
+    }
 }
 
 fun SpannableStringBuilder.safe(): SpannableStringBuilder {
