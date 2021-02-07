@@ -45,6 +45,7 @@ object Device {
         ) else field
 
     //00000000-4759-42f8-ffff-ffffeabf4809
+    @Deprecated("相同型号的手机会重复, 请使用[androidId]")
     var deviceId: String = ""
         get() = if (field.isEmpty()) getUniqueDeviceId() else field
 
@@ -54,7 +55,7 @@ object Device {
     const val PERFORMANCE_MIN = 1
 
     /**
-     * 获得独一无二的Psuedo ID
+     * 获得独一无二的Psuedo ID, 2021-02-07 相同手机型号, 会出现重复的
      * https://www.jianshu.com/p/130918ed8b2f
      * */
     private fun getUniqueDeviceId(): String {

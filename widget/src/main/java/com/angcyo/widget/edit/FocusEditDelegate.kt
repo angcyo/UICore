@@ -96,6 +96,19 @@ open class FocusEditDelegate(editText: EditText) : BaseEditDelegate(editText) {
         }
     }
 
+    var mDrawableLeft = 0
+    var mDrawableRight = 0
+    var mDrawableBottom = 0
+    var mDrawableHeight = 0
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        mDrawableLeft = editText.calcSize(drawableMarginLeft, w, h, 0, 0)
+        mDrawableRight = editText.calcSize(drawableMarginRight, w, h, 0, 0)
+        mDrawableBottom = editText.calcSize(drawableMarginBottom, w, h, 0, 0)
+        mDrawableHeight = editText.calcSize(drawableHeight, w, h)
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
@@ -106,29 +119,24 @@ open class FocusEditDelegate(editText: EditText) : BaseEditDelegate(editText) {
         val scrollY = editText.scrollY
 
         //focusDrawable/noFocusDrawable 定位
-        val mLeft = editText.calcSize(drawableMarginLeft, viewWidth, viewHeight, 0, 0)
-        val mRight = editText.calcSize(drawableMarginRight, viewWidth, viewHeight, 0, 0)
-        val mBottom = editText.calcSize(drawableMarginBottom, viewWidth, viewHeight, 0, 0)
-        val dHeight = editText.calcSize(drawableHeight, viewWidth, viewHeight)
-
         noFocusDrawable?.apply {
             setBounds(
-                scrollX + mLeft,
-                scrollY + viewHeight - dHeight - mBottom,
-                scrollX + editText.measuredWidth - mRight,
-                scrollY + viewHeight - mBottom
+                scrollX + mDrawableLeft,
+                scrollY + viewHeight - mDrawableHeight - mDrawableBottom,
+                scrollX + editText.measuredWidth - mDrawableRight,
+                scrollY + viewHeight - mDrawableBottom
             )
             draw(canvas)
         }
         focusDrawable?.apply {
-            val viewDrawWidth = viewWidth - mLeft - mRight
+            val viewDrawWidth = viewWidth - mDrawableLeft - mDrawableRight
             val width = viewDrawWidth * _progress
-            val center = scrollX + viewDrawWidth / 2 + mLeft
+            val center = scrollX + viewDrawWidth / 2 + mDrawableLeft
             setBounds(
                 (center - width / 2).toInt(),
-                scrollY + viewHeight - dHeight - mBottom,
+                scrollY + viewHeight - mDrawableHeight - mDrawableBottom,
                 (center + width / 2).toInt(),
-                scrollY + viewHeight - mBottom
+                scrollY + viewHeight - mDrawableBottom
             )
             draw(canvas)
         }

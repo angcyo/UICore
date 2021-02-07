@@ -29,6 +29,6 @@ data class VersionUpdateBean(
     /**需要更新的包名, 包名不匹配则不需要更新*/
     var packageList: List<String>? = null,
 
-    /**指定设备才能收到更新*/
+    /**指定设备才能收到更新[androidId]*/
     var deviceList: List<String>? = null,
 )

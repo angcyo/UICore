@@ -41,9 +41,17 @@
 
     <!--绘制在左边的文本-->
     <attr name="r_draw_left" format="string" />
+    <attr name="r_draw_left_offset_left" format="string|dimension" />
+    <attr name="r_draw_left_offset_right" format="string|dimension" />
+    <attr name="r_draw_left_offset_top" format="string|dimension" />
+    <attr name="r_draw_left_offset_bottom" format="string|dimension" />
 
     <declare-styleable name="BaseEditDelegate">
         <attr name="r_draw_left" />
+        <attr name="r_draw_left_offset_left" />
+        <attr name="r_draw_left_offset_right" />
+        <attr name="r_draw_left_offset_top" />
+        <attr name="r_draw_left_offset_bottom" />
     </declare-styleable>
 
     <declare-styleable name="FocusEditDelegate">

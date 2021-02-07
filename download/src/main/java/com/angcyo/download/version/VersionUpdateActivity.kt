@@ -147,7 +147,7 @@ fun Context.versionUpdate(updateBean: VersionUpdateBean?): Boolean {
         }
 
         if (!updateBean.deviceList.isNullOrEmpty()) {
-            update = updateBean.deviceList?.contains(Device.deviceId) == true
+            update = updateBean.deviceList?.contains(Device.androidId) == true
         }
 
         if (update) {
