@@ -16,6 +16,7 @@ import com.angcyo.library.ex.installApk
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.openUrl
 import com.angcyo.library.getAppVersionCode
+import com.angcyo.library.utils.Device
 import com.angcyo.putData
 import com.angcyo.widget.bar
 import com.liulishuo.okdownload.StatusUtil
@@ -139,10 +140,14 @@ fun Context.versionUpdate(updateBean: VersionUpdateBean?): Boolean {
     if (updateBean.versionCode > appVersionCode) {
         //需要更新
 
-        val update: Boolean = if (updateBean.packageList.isNullOrEmpty()) {
+        var update: Boolean = if (updateBean.packageList.isNullOrEmpty()) {
             true
         } else {
             updateBean.packageList?.contains(packageName) == true
+        }
+
+        if (!updateBean.deviceList.isNullOrEmpty()) {
+            update = updateBean.deviceList?.contains(Device.deviceId) == true
         }
 
         if (update) {

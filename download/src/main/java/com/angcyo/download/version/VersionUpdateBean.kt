@@ -27,5 +27,8 @@ data class VersionUpdateBean(
     var versionType: Int = 1,
 
     /**需要更新的包名, 包名不匹配则不需要更新*/
-    var packageList: List<String>? = null
+    var packageList: List<String>? = null,
+
+    /**指定设备才能收到更新*/
+    var deviceList: List<String>? = null,
 )
