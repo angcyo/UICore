@@ -27,19 +27,26 @@ data class TaskBean(
 
     //</editor-fold desc="配置信息">
 
+    //<editor-fold desc="参数">
+
+    /**是否使用全屏浮窗提示*/
+    var fullscreen: Boolean = false,
+
+    /**浮窗是否不需要拦截手势*/
+    var notTouchable: Boolean = false,
+
     /**任务需要处理那个程序的信息
      * 不支持正则*/
     var packageName: String? = null,
 
-    /**操作步骤*/
-    var actionList: List<ActionBean>? = null,
-
-    /**[actionList]未处理时的操作步骤*/
-    var backActionList: List<ActionBean>? = null,
-
     /**
      * [com.angcyo.acc2.bean.ActionBean.limitRunCount]*/
     var limitRunCount: Int = -1,
+
+    /**任务完成后, 是否启动主程序.(不管失败或者成功)*/
+    var finishToApp: Boolean = true,
+
+    //</editor-fold desc="参数">
 
     //<editor-fold desc="文本池">
 
@@ -55,6 +62,12 @@ data class TaskBean(
     var textMap: HashMap<String, String?>? = null,
 
     //</editor-fold desc="文本池">
+
+    /**操作步骤*/
+    var actionList: List<ActionBean>? = null,
+
+    /**[actionList]未处理时的操作步骤*/
+    var backActionList: List<ActionBean>? = null,
 
     /**在每个[ActionBean]执行之前, 都要执行的[ActionBean]
      * 如果处理成功了, 会中断原本需要执行的[ActionBean]*/

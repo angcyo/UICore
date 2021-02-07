@@ -10,7 +10,7 @@ import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.CoroutineScope
 
 /**
- *
+ * [LiveData]需要在主线程setValue, 子线程请使用postValue
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/01/16

@@ -25,25 +25,21 @@ import com.angcyo.library.ex.sleep
 class AccControl : Runnable {
 
     companion object {
+
+        //开始
         const val CONTROL_STATE_NORMAL = 0
         const val CONTROL_STATE_RUNNING = 1
-        const val CONTROL_STATE_FINISH = 2
-        const val CONTROL_STATE_ERROR = 3
-        const val CONTROL_STATE_PAUSE = 9
-        const val CONTROL_STATE_STOP = 10
+        const val CONTROL_STATE_PAUSE = 3
+
+        //结束
+        const val CONTROL_STATE_FINISH = 10
+        const val CONTROL_STATE_ERROR = 11
+        const val CONTROL_STATE_STOP = 12
     }
 
     /**控制器的状态*/
     @Volatile
     var _controlState: Int = CONTROL_STATE_NORMAL
-
-    /**控制器已经开始运行了*/
-    val isControlStart: Boolean
-        get() = _controlState == CONTROL_STATE_RUNNING || _controlState == CONTROL_STATE_PAUSE
-
-    /**控制器暂停中*/
-    val isControlPause: Boolean
-        get() = _controlState == CONTROL_STATE_PAUSE
 
     //<editor-fold desc="组件">
 
@@ -192,7 +188,7 @@ class AccControl : Runnable {
     /**子线程内调度*/
     override fun run() {
         log("run控制器启动[${_taskBean?.title}]")
-        next(_taskBean?.title, _taskBean?.des, 0)
+        //next(_taskBean?.title, _taskBean?.des, 0)
         while (isControlStart) {
             try {
                 if (_controlState == CONTROL_STATE_RUNNING) {
@@ -214,6 +210,23 @@ class AccControl : Runnable {
 
 //<editor-fold desc="扩展">
 
+/**控制器已经开始运行了*/
+val AccControl.isControlStart: Boolean
+    get() = _controlState == CONTROL_STATE_RUNNING || _controlState == CONTROL_STATE_PAUSE
+
+val AccControl.isControlEnd: Boolean
+    get() = _controlState >= CONTROL_STATE_FINISH
+
+/**控制器暂停中*/
+val AccControl.isControlPause: Boolean
+    get() = _controlState == CONTROL_STATE_PAUSE
+
+val AccControl.isControlRunning: Boolean
+    get() = _controlState == CONTROL_STATE_RUNNING
+
+val AccControl.controlStateStr: String
+    get() = _controlState.toControlStateStr()
+
 fun ActionBean.actionLog() = "Action[${title}${des.des()}](${actionId})"
 
 fun CheckBean.checkLog() = "Check[${title}${des.des()}](${checkId})"
@@ -234,8 +247,8 @@ fun AccControl.log(log: String?) {
 }
 
 /**日志输出*/
-fun AccControl.next(title: String?, des: String?, time: Long) {
-    accPrint.next(title, des, time)
+fun AccControl.next(actionBean: ActionBean, time: Long) {
+    accPrint.next(actionBean, time)
 }
 
 //</editor-fold desc="扩展">

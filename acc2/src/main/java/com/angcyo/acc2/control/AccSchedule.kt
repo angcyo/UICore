@@ -365,7 +365,7 @@ class AccSchedule(val accControl: AccControl) {
             if (isDebugType()) actionBean.debugStart ?: actionBean.start else actionBean.start
         val delayTime = accParse.parseTime(_start)
         if (isPrimaryAction) {
-            accControl.next(actionBean.summary ?: actionBean.title, actionBean.des, delayTime)
+            accControl.next(actionBean, delayTime)
         }
         accControl.log("${actionBean.actionLog()}等待[$delayTime]ms后运行.")
         sleep(delayTime)

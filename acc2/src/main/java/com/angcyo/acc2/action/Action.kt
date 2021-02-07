@@ -176,13 +176,30 @@ object Action {
     /**执行结果直接设置false*/
     const val ACTION_FALSE = "false"
 
-    /**弹出toast
+    /**弹出toast默认是[ACTION_TOAST_QQ]
      * [toast:xxx]
      * [toastQQ:xxx]
      * [toastWX:xxx]*/
     const val ACTION_TOAST = "toast"
     const val ACTION_TOAST_QQ = "toastQQ"
     const val ACTION_TOAST_WX = "toastWX"
+
+    /**设置浮窗全屏or小屏
+     * true: 全屏
+     * false: 小屏
+     * 空字符: 使用[TaskBean.fullscreen]
+     * */
+    const val ACTION_FULLSCREEN = "fullscreen"
+
+    /**设置全屏浮窗不接受touch事件*/
+    const val ACTION_NOT_TOUCHABLE = "notTouchable"
+
+    /**
+     * 隐藏浮窗, 可以指定需要隐藏多久, 如果不指定隐藏时长, 则下次触发显示时立马会显示
+     * [:1] 表示隐藏浮窗到下一个action. 超过actionList数量时, 就会变成了毫秒时间
+     * [:5000] 表示隐藏浮窗5秒
+     * */
+    const val ACTION_HIDE_WINDOW = "hideWindow"
 
     /*---------------------------------------状态匹配--------------------------------------*/
 

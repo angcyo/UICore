@@ -1,6 +1,7 @@
 package com.angcyo.acc2.control
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
+import com.angcyo.acc2.bean.ActionBean
 import com.angcyo.library.L
 import com.angcyo.library.ex.des
 import com.angcyo.library.ex.wrapLog
@@ -24,8 +25,8 @@ open class AccPrint(val accControl: AccControl? = null) {
      * [des] 步骤的描述
      * [time] 执行步骤的延迟, 毫秒
      * */
-    open fun next(title: String?, des: String?, time: Long) {
-        L.w("next[$time]->$title${des.des()}".wrapLog())
+    open fun next(actionBean: ActionBean, time: Long) {
+        L.w("next[$time]->${actionBean.title}${actionBean.des.des()}".wrapLog())
     }
 
     /**匹配到了元素*/
