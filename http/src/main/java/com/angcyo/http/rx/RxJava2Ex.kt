@@ -2,6 +2,7 @@ package com.angcyo.http.rx
 
 import com.angcyo.http.rx.Rx.rxErrorHandlerOnceList
 import com.angcyo.library.L
+import com.angcyo.library.ex.size
 import com.angcyo.library.isMain
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -45,7 +46,7 @@ object Rx {
     fun init() {
         if (!RxJavaPlugins.isLockdown()) {
             RxJavaPlugins.setErrorHandler { error ->
-                L.e("Rx异常:$error")
+                L.e("Rx异常[${rxErrorHandlerOnceList.size()}]:$error")
                 error.printStackTrace()
                 if (rxErrorHandlerOnceList.isNotEmpty()) {
                     rxErrorHandlerOnceList.toList().forEach {
@@ -59,7 +60,7 @@ object Rx {
 }
 
 fun Consumer<Throwable>.addRxErrorHandleOnce() {
-    rxErrorHandlerOnceList.remove(this)
+    rxErrorHandlerOnceList.add(this)
 }
 
 fun Consumer<Throwable>.removeRxErrorHandleOnce() {
