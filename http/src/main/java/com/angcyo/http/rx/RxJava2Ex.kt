@@ -1,11 +1,12 @@
 package com.angcyo.http.rx
 
+import com.angcyo.http.rx.Rx.rxErrorHandlerOnceList
 import com.angcyo.library.L
 import com.angcyo.library.isMain
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.exceptions.Exceptions
+import io.reactivex.functions.Consumer
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 
@@ -38,15 +39,31 @@ import io.reactivex.schedulers.Schedulers
  */
 
 object Rx {
+
+    val rxErrorHandlerOnceList = mutableListOf<Consumer<Throwable>>()
+
     fun init() {
         if (!RxJavaPlugins.isLockdown()) {
-            RxJavaPlugins.setErrorHandler {
-                L.e("Rx异常:$it")
-                it.printStackTrace()
-                Exceptions.throwIfFatal(it)
+            RxJavaPlugins.setErrorHandler { error ->
+                L.e("Rx异常:$error")
+                error.printStackTrace()
+                if (rxErrorHandlerOnceList.isNotEmpty()) {
+                    rxErrorHandlerOnceList.toList().forEach {
+                        rxErrorHandlerOnceList.remove(it)
+                        it.accept(error)
+                    }
+                }
             }
         }
     }
+}
+
+fun Consumer<Throwable>.addRxErrorHandleOnce() {
+    rxErrorHandlerOnceList.remove(this)
+}
+
+fun Consumer<Throwable>.removeRxErrorHandleOnce() {
+    rxErrorHandlerOnceList.remove(this)
 }
 
 /**使用Rx调度后台线程, 主线程切换*/
