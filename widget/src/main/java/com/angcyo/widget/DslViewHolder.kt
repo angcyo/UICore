@@ -251,12 +251,16 @@ open class DslViewHolder(
         focusView(resId)
     }
 
+    fun focused(view: View?) {
+        view?.isFocusable = true
+        view?.isFocusableInTouchMode = true
+        view?.requestFocus()
+    }
+
     fun <T : View?> focus(@IdRes resId: Int): T? {
         val v = v<View>(resId)
         if (v != null) {
-            v.isFocusable = true
-            v.isFocusableInTouchMode = true
-            v.requestFocus()
+            focused(v)
             return v as? T
         }
         return null
