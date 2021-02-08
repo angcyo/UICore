@@ -34,6 +34,7 @@ open class BaseObserver<T> : AtomicReference<Disposable>(),
 
     var onError: (Throwable) -> Unit = {
         L.e("${this.simpleHash()}#onError:$it")
+        it.printStackTrace()
     }
 
     var onComplete: () -> Unit = {

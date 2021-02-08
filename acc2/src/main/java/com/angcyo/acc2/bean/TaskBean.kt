@@ -16,6 +16,8 @@ data class TaskBean(
 
     var uuid: String? = uuid(),
 
+    var taskId: Long = -1,
+
     /**任务的标题*/
     var title: String? = null,
 
@@ -24,6 +26,11 @@ data class TaskBean(
 
     /**任务类型, 用于查找匹配使用*/
     var type: String? = null,
+
+    /**是否响应适配信息, 仅在测试页面有效*/
+    var adaptive: Boolean = false,
+
+    var enable: Boolean = true,
 
     //</editor-fold desc="配置信息">
 
