@@ -17,6 +17,13 @@ object SystemTime {
 
     /**最后一次获取的北京时间*/
     var lastSystemTime = nowTime()
+        /*get() {
+            if (field < nowTime()) {
+                nowTime()
+            } else {
+                field
+            }
+        }*/
 
     /**获取北京时间
      * https://www.jianshu.com/p/4a68e6c261ae
