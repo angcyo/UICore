@@ -89,10 +89,15 @@ class AccSchedule(val accControl: AccControl) {
     fun startSchedule() {
         _startTime = nowTime()
         actionCount.clear()
+        actionResultMap.clear()
         _endTime = 0
         _currentIndex = -1
         _scheduleActionBean = null
         _scheduleIndex = -1
+        _runActionBean = null
+        _latsRunActionTime = 0L
+        _lastRunActionHash = 0
+        runActionBeanStack.clear()
     }
 
     /**结束调度*/
@@ -324,6 +329,10 @@ class AccSchedule(val accControl: AccControl) {
      * value = 成功or失败*/
     val actionResultMap = hashMapOf<Long, Boolean>()
 
+    /**同一个action,一直在运行的时长,毫秒*/
+    var _latsRunActionTime = 0L
+    var _lastRunActionHash = 0
+
     val runActionBeanStack = Stack<ActionBean>()
 
     //正在运行的[ActionBean], 有可能是主线[ActionBean]
@@ -341,6 +350,16 @@ class AccSchedule(val accControl: AccControl) {
     ): HandleResult {
         runActionBeanStack.push(actionBean)
         _runActionBean = actionBean
+
+        val lastActionHash = _lastRunActionHash
+        val newActionHash = if (isPrimaryAction) {
+            actionBean.hashCode()
+        } else {
+            lastActionHash
+        }
+        if (isPrimaryAction) {
+            _lastRunActionHash = newActionHash
+        }
 
         var handleActionResult = HandleResult()
 
@@ -384,6 +403,43 @@ class AccSchedule(val accControl: AccControl) {
 
         //窗口根节点集合
         val rootNodeList = findParse.findRootNode(actionBean.window)
+
+        //-----------------------------运行前----------------------------------
+
+        //运行时长限制判断
+        if (lastActionHash == newActionHash) {
+            if (isPrimaryAction) {
+                val limitRunTime = if (actionBean.limitRunTime >= 0) {
+                    actionBean.limitRunTime
+                } else {
+                    accControl._taskBean?.limitRunTime ?: -1
+                }
+
+                if (limitRunTime > 0) {
+                    val runTime = nowTime() - _latsRunActionTime
+                    if (runTime >= limitRunTime) {
+                        //运行时长超出限制
+                        if (actionBean.check?.limitTime == null) {
+                            accControl.error("[${actionBean.actionLog()}]执行时长超出限制[${limitRunTime}]ms")
+                        } else {
+                            _latsRunActionTime = nowTime()
+                            handleActionResult =
+                                handleParse.parse(rootNodeList, actionBean.check?.limitTime)
+                        }
+                        if (!handleActionResult.success) {
+                            runActionBeanStack.popSafe()
+                            _runActionBean = null
+                            return handleActionResult
+                        }
+                    }
+                }
+            }
+        } else {
+            _latsRunActionTime = nowTime()
+        }
+
+        //-----------------------------运行流程----------------------------------
+
         if (actionBean.check == null) {
             //未指定check, 直接操作根元素
             handleActionResult = handleParse.parse(rootNodeList, handleList)
@@ -437,6 +493,8 @@ class AccSchedule(val accControl: AccControl) {
                 }
             }
         }
+
+        //-----------------------------运行后----------------------------------
 
         if (isPrimaryAction) {
             //保存执行结果.

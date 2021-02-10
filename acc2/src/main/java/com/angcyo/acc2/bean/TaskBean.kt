@@ -50,6 +50,10 @@ data class TaskBean(
      * [com.angcyo.acc2.bean.ActionBean.limitRunCount]*/
     var limitRunCount: Int = -1,
 
+    /**
+     * [com.angcyo.acc2.bean.ActionBean.limitRunTime]*/
+    var limitRunTime: Int = -1,
+
     /**任务完成后, 是否启动主程序.(不管失败或者成功)*/
     var finishToApp: Boolean = true,
 

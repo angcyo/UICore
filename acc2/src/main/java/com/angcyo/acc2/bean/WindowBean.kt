@@ -12,6 +12,7 @@ data class WindowBean(
      * 支持正则
      * 支持分割[com.angcyo.acc2.action.Action.PACKAGE_SPLIT]
      * 匹配顺序:1
+     * [com.angcyo.acc2.parse.AccParse.parsePackageName]
      * */
     var packageName: String? = null,
 
@@ -19,7 +20,11 @@ data class WindowBean(
      * 支持正则
      * 支持分割[com.angcyo.acc2.action.Action.PACKAGE_SPLIT]
      * 匹配顺序:2
-     * 默认把主app忽略*/
+     * 默认把主app忽略
+     * [main] 主程序,
+     * [target] 目标程序
+     * [com.angcyo.acc2.parse.AccParse.parsePackageName]
+     * */
     var ignorePackageName: String? = "main",
 
     /**

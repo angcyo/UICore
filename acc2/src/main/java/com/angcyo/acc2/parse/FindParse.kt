@@ -249,9 +249,9 @@ class FindParse(val accParse: AccParse) {
         when {
             //无包名字段, 则使用活动窗口
             packageName == null -> {
-                accParse.accControl.accService()?.rootInActiveWindow?.let {
-                    if (!it.packageName.have(ignorePackageName)) {
-                        result.add(it.wrap())
+                accParse.accControl.accService()?.rootInActiveWindow?.wrap()?.let { node ->
+                    if (!isIgnorePackageName(node, ignorePackageName)) {
+                        result.add(node)
                     }
                 }
             }
