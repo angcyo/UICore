@@ -266,3 +266,11 @@ fun <T> MutableCollection<T>.resetAll(new: Collection<T>) {
     clear()
     addAll(new)
 }
+
+/**安全删除一个对象*/
+fun <T> MutableList<T>.removeSafe(bean: T?): Boolean {
+    if (bean == null || !contains(bean)) {
+        return false
+    }
+    return remove(bean)
+}
