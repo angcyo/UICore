@@ -15,6 +15,7 @@ import java.io.StringWriter
 import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.concurrent.thread
 import kotlin.math.min
 import kotlin.random.Random.Default.nextInt
 
@@ -231,7 +232,7 @@ fun <T> List<T>.getOrNull2(index: Int): T? {
 fun <R> sync(count: Int = 1, action: (CountDownLatch, AtomicReference<R>) -> Unit): R? {
     val latch = CountDownLatch(count)
     val result = AtomicReference<R>()
-    action(latch, result)
+    thread(name = "sync-${nowTimeString()}") { action(latch, result) }
     latch.await()
     return result.get()
 }
