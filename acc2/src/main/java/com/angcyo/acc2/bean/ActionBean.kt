@@ -65,6 +65,10 @@ data class ActionBean(
     /**是否激活[ActionBean], 未激活直接跳过执行*/
     var enable: Boolean = true,
 
+    //记录原始的[enable]状态
+    @Transient
+    var _enable: Boolean? = null,
+
     /**在[enable=true]的情况下, 额外需要判断的运行条件
      * 只有满足条件的[ActionBean]才能被执行, 不满足条件等同于[enable]为false,
      * 有一个条件满足即可*/
@@ -72,6 +76,9 @@ data class ActionBean(
 
     /**如果[conditionList]条件满足时, 也激活处理*/
     var autoEnable: Boolean = false,
+
+    /**随机激活[ActionBean]*/
+    var randomEnable: Boolean = false,
 
     //</editor-fold desc="激活">
 

@@ -7,6 +7,7 @@ import com.angcyo.acc2.parse.toLog
 import com.angcyo.library.L
 import com.angcyo.library.ex.*
 import java.util.*
+import kotlin.random.Random
 
 /**
  *
@@ -257,7 +258,7 @@ class AccSchedule(val accControl: AccControl) {
                 for (i in _scheduleIndex..lastIndex) {
                     val bean = getOrNull(i)
                     if (bean != null) {
-                        if (bean.enable) {
+                        if (bean.enable && bean._enable == null) {
                             //找到激活的
                             if (!accParse.conditionParse.parse(bean.conditionList).success) {
                                 accControl.log("${bean.actionLog()}未满足激活条件,跳过调度.")
@@ -266,13 +267,25 @@ class AccSchedule(val accControl: AccControl) {
                             _scheduleIndex = i
                             result = bean
                             break
+                        } else if (bean.randomEnable) {
+                            bean._enable = bean.enable
+                            bean.enable = Random.nextBoolean()
+                            accControl.log("${bean.actionLog()}随机激活:[${bean.enable}]")
+                            if (bean.enable) {
+                                _scheduleIndex = i
+                                result = bean
+                                break
+                            }
                         } else {
                             if (bean.autoEnable) {
                                 //开启了自动激活
-                                if (accParse.conditionParse.parse(bean.conditionList).success) {
+                                val conditionResult =
+                                    accParse.conditionParse.parse(bean.conditionList)
+                                if (conditionResult.success) {
                                     bean.enable = true
                                     _scheduleIndex = i
                                     result = bean
+                                    accControl.log("${bean.actionLog()}自动激活成功:[${conditionResult.conditionBean}]")
                                     break
                                 } else {
                                     accControl.log("${bean.actionLog()}自动激活失败,跳过调度.")
