@@ -26,6 +26,6 @@ class FalseAction : BaseAction() {
     ): HandleResult = handleResult {
         success = false
         forceFail = action.arg(Action.ACTION_FALSE).isNullOrBlank()
-        control.log("直接返回[false]并且强制失败[${forceFail}]")
+        control.log("直接返回[false]并且强制失败[${forceFail}]:${action}")
     }
 }

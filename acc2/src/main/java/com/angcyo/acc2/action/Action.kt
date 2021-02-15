@@ -170,10 +170,12 @@ object Action {
      * */
     const val ACTION_SCROLL_BACKWARD = "scrollBackward"
 
-    /**执行结果直接设置true*/
+    /**执行结果直接设置true 加任意参数取消强制成功
+     * [com.angcyo.acc2.action.TrueAction]*/
     const val ACTION_TRUE = "true"
 
-    /**执行结果直接设置false*/
+    /**执行结果直接设置false 加任意参数取消强制失败
+     * [com.angcyo.acc2.action.FalseAction]*/
     const val ACTION_FALSE = "false"
 
     /**弹出toast默认是[ACTION_TOAST_QQ]

@@ -13,8 +13,14 @@ import com.angcyo.acc2.bean.HandleBean
 open class HandleResult : BaseResult() {
 
     /**强制执行结果为失败
-     * 进行失败的处理, 但是保留成功的状态*/
+     * 进行失败的处理, 但是保留成功的状态
+     * [com.angcyo.acc2.action.FalseAction]*/
     var forceFail: Boolean = false
+
+    /**
+     * 强制执行成功, 这个成功的状态, 可以传递给正在调度的[ActionBean]
+     * [com.angcyo.acc2.action.TrueAction]*/
+    var forceSuccess: Boolean = false
 
     /**处理成功的结构数据*/
     var handleBean: HandleBean? = null

@@ -155,7 +155,9 @@ class FindParse(val accParse: AccParse) {
         val after = findBean.after
         var afterResult: FindResult? = null
         if (after != null) {
-            afterResult = parse(findNodeList, after)
+            if (findBean.afterAlways || findNodeList.isNotEmpty()) {
+                afterResult = parse(findNodeList, after)
+            }
         }
 
         //-----------------------返回结果--------------------------
@@ -214,7 +216,7 @@ class FindParse(val accParse: AccParse) {
         if (packageName == null) {
             return false
         }
-        val nameList = accParse.parsePackageName(packageName, packageName)
+        val nameList = accParse.parsePackageName(packageName)
         var need = false
         for (name in nameList) {
             need = node.packageName.have(name)

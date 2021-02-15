@@ -8,6 +8,7 @@ package com.angcyo.acc2.bean
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 data class FilterBean(
+
     /**获取一组元素中指定索引位置的元素
      * 支持范围[0~-1]第一个到倒数第一个
      * 支持文本变量

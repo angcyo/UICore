@@ -73,6 +73,8 @@ class HandleParse(val accParse: AccParse) {
             val handleNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
             for (handBean in handleList) {
                 val handleResult = parse(originList, handBean)
+                result.forceSuccess = handleResult.forceSuccess || result.forceSuccess
+
                 if (handleResult.success) {
                     if (!handleResult.forceFail) {
                         result = handleResult
@@ -206,6 +208,7 @@ class HandleParse(val accParse: AccParse) {
             //处理action
             handleAction(nodeList, action).apply {
                 result.forceFail = forceFail || result.forceFail
+                result.forceSuccess = forceSuccess || result.forceSuccess
                 result.success = success || result.success
                 if (success) {
                     //把处理成功的元素收集起来
@@ -243,6 +246,7 @@ class HandleParse(val accParse: AccParse) {
                 //运行处理
                 it.runAction(accControl, nodeList, action).apply {
                     result.forceFail = forceFail || result.forceFail
+                    result.forceSuccess = forceSuccess || result.forceSuccess
                     result.success = success || result.success
                     if (success) {
                         //把处理成功的元素收集起来

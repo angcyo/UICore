@@ -4,6 +4,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
+import com.angcyo.acc2.parse.arg
 
 /**
  *
@@ -24,6 +25,7 @@ class TrueAction : BaseAction() {
         action: String
     ): HandleResult = handleResult {
         success = true
-        control.log("直接返回[true]")
+        forceSuccess = action.arg(Action.ACTION_TRUE).isNullOrBlank()
+        control.log("直接返回[true]并且强制成功[${forceSuccess}]:[$action]")
     }
 }

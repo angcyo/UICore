@@ -119,6 +119,10 @@ data class FindBean(
     /**根据过滤条件, 过滤一层*/
     var filter: FilterBean? = null,
 
+    /**无论上述选择器有没有选中元素, 都进行[after]选择.
+     * 默认只在上述选择器选中元素之后, 才会进行[after]*/
+    var afterAlways: Boolean = false,
+
     /**根据本次选择元素列表, 继续查找子子元素*/
     var after: FindBean? = null
 )

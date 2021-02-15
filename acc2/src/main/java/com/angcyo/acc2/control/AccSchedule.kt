@@ -457,6 +457,11 @@ class AccSchedule(val accControl: AccControl) {
                 accControl.log("[event]未匹配到元素:${eventList}")
                 //未找到元素
                 val handleResult = handleParse.parse(rootNodeList, actionBean.check?.other)
+
+                if (handleResult.forceSuccess) {
+                    handleActionResult.success = true
+                }
+
                 if (!handleResult.success) {
                     //还是未成功
                     for (otherAction in otherActionList ?: emptyList()) {
@@ -465,9 +470,15 @@ class AccSchedule(val accControl: AccControl) {
                             thread {
                                 otherHandleResult =
                                     accSchedule.scheduleAction(otherAction, null, false)
+                                if (otherHandleResult?.forceSuccess == true) {
+                                    handleActionResult.success = true
+                                }
                             }
                         } else {
                             otherHandleResult = accSchedule.scheduleAction(otherAction, null, false)
+                            if (otherHandleResult?.forceSuccess == true) {
+                                handleActionResult.success = true
+                            }
                         }
                         if (otherHandleResult?.success == true) {
                             accControl.log("[other]已处理[${actionBean.actionLog()}]:${otherAction}")
