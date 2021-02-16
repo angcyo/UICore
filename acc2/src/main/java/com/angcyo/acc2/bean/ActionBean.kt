@@ -80,6 +80,12 @@ data class ActionBean(
     /**随机激活[ActionBean]*/
     var randomEnable: Boolean = false,
 
+    /**指定随机的概率
+     * [0-100]
+     * [=1] 0.01的概率
+     * [<=30] 30%的概率*/
+    var randomAmount: String? = null,
+
     //</editor-fold desc="激活">
 
     /**未指定[check]时, 可以通过[checkId]在[check]库中根据id查找对应的[CheckBean]*/

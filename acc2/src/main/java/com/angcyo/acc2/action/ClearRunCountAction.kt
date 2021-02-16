@@ -34,12 +34,11 @@ class ClearRunCountAction : BaseAction() {
             success = clearRunCount(control, _actionIdList)
         } else {
             val actionIdList = action.getLongNumList(true)
-            if (actionIdList == null) {
-                //下一个
-                val nextActionBean =
-                    control._taskBean?.actionList?.getOrNull(control.accSchedule._currentIndex + 1)
-                if (nextActionBean != null) {
-                    _actionIdList = listOf(nextActionBean.actionId)
+            if (actionIdList.isNullOrEmpty()) {
+                //当前
+                val actionBean = control.accSchedule._scheduleActionBean
+                if (actionBean != null) {
+                    _actionIdList = listOf(actionBean.actionId)
                     success = clearRunCount(control, _actionIdList)
                 }
             } else {

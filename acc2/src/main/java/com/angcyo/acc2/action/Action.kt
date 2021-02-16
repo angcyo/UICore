@@ -77,10 +77,15 @@ object Action {
     const val ACTION_CLEAR_TEXT = "clearText"
 
     /**清除指定id的[ActionBean]的运行次数
+     * [clearRunCount] 清理当前的[ActionBean]
      * [clearRunCount:xxx xxx]
      * [ACTION_JUMP]
      * */
     const val ACTION_CLEAR_RUN_COUNT = "clearRunCount"
+
+    /**清除[ActionBean]的运行时长
+     * [ACTION_CLEAR_RUN_COUNT]*/
+    const val ACTION_CLEAR_RUN_TIME = "clearRunTime"
 
     /**清除指定id的[ActionBean]的跳转次数
      * [clearJumpCount:xxx xxx]

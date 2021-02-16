@@ -54,8 +54,8 @@ fun CharSequence.copy(context: Context = app()): Boolean {
 
 /**获取剪切板内容*/
 fun getPrimaryClip(context: Context = app()): CharSequence? {
-    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     try {
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val primaryClip = clipboard.primaryClip
         if (primaryClip != null && primaryClip.itemCount > 0) {
             return primaryClip.getItemAt(0).coerceToText(context)

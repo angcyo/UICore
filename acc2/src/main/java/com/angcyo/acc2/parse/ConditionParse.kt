@@ -114,6 +114,42 @@ class ConditionParse(val accParse: AccParse) {
                 }
             }
 
+            //检查时长是否满足表达式 [100:>=9] [.:>=9]
+            fun checkTime(expression: String, timeGetAction: (actionId: Long) -> Long): Boolean {
+                val actionExp = expression.subStart(Action.ARG_SPLIT)
+                val actionId = actionExp?.toLongOrNull()
+                val exp = expression.subEnd(Action.ARG_SPLIT)
+                if (!exp.isNullOrEmpty()) {
+                    val actionBean = if (actionExp == ".") {
+                        accControl.accSchedule._scheduleActionBean
+                    } else {
+                        accControl.findAction(actionId)
+                    }
+
+                    if (actionBean != null) {
+                        val time = timeGetAction(actionBean.actionId)
+                        if (!accParse.expParse.parseAndCompute(exp, inputValue = time.toFloat())) {
+                            //运行次数不满足条件
+                            return false
+                        }
+                    }
+                }
+                return true
+            }
+
+            //actionTimeList
+            if (result && !actionTimeList.isNullOrEmpty()) {
+                for (expression in actionTimeList!!) {
+                    if (!checkTime(expression) {
+                            accControl.accSchedule.getActionRunTime(it)
+                        }) {
+                        //运行时长不满足条件
+                        result = false
+                        break
+                    }
+                }
+            }
+
             //actionJumpList
             if (result && !actionJumpList.isNullOrEmpty()) {
                 for (expression in actionJumpList!!) {

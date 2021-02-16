@@ -27,6 +27,11 @@ data class ConditionBean(
      * */
     var actionRunList: List<String>? = null,
 
+    /**当指定的[ActionBean]满足约束的运行时长时
+     * [.:>=3000] 当前的action运行时长超过3秒时满足条件
+     * [actionRunList]*/
+    var actionTimeList: List<String>? = null,
+
     /**跳转次数*/
     var actionJumpList: List<String>? = null,
 

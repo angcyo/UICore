@@ -7,7 +7,8 @@ import com.angcyo.acc2.parse.toLog
 import com.angcyo.library.L
 import com.angcyo.library.ex.*
 import java.util.*
-import kotlin.random.Random
+import kotlin.random.Random.Default.nextBoolean
+import kotlin.random.Random.Default.nextInt
 
 /**
  *
@@ -23,6 +24,9 @@ class AccSchedule(val accControl: AccControl) {
 
     /**运行次数统计, 从1开始计数*/
     var actionCount = hashMapOf<Long, ActionCount>()
+
+    /**记录action运行的时长, 毫秒*/
+    var actionTime = hashMapOf<Long, Long>()
 
     //<editor-fold desc="操作">
 
@@ -62,6 +66,20 @@ class AccSchedule(val accControl: AccControl) {
     fun getJumpCount(actionId: Long): Long =
         if (actionId > 0) actionCount[actionId]?.jumpCount?.count ?: -1 else -1
 
+    fun setActionRunTime(actionId: Long, time: Long) {
+        actionTime[actionId] = time
+        if (time <= 0) {
+            //清理时间
+            if (actionId == _scheduleActionBean?.actionId) {
+                _latsRunActionTime = nowTime()
+            }
+        }
+    }
+
+    fun getActionRunTime(actionId: Long): Long {
+        return actionTime[actionId] ?: -1
+    }
+
     /**预备下一个需要执行*/
     fun next() {
         _scheduleIndex = _currentIndex + 1
@@ -90,6 +108,7 @@ class AccSchedule(val accControl: AccControl) {
     fun startSchedule() {
         _startTime = nowTime()
         actionCount.clear()
+        actionTime.clear()
         actionResultMap.clear()
         _endTime = 0
         _currentIndex = -1
@@ -236,6 +255,7 @@ class AccSchedule(val accControl: AccControl) {
             L.e("异常:$e")
             e.printStackTrace()
             accControl.log("运行失败[${actionBean.title}]:$e")
+            accControl.log(e.stackTraceToString())
         }
 
         return result
@@ -269,7 +289,17 @@ class AccSchedule(val accControl: AccControl) {
                             break
                         } else if (bean.randomEnable) {
                             bean._enable = bean.enable
-                            bean.enable = Random.nextBoolean()
+                            bean.enable = if (bean.randomAmount.isNullOrEmpty()) {
+                                //未指定随机概率
+                                nextBoolean()
+                            } else {
+                                //指定了随机的概率
+                                val factor = nextInt(1, 101) //[1-100]
+                                accParse.expParse.parseAndCompute(
+                                    bean.randomAmount,
+                                    inputValue = factor.toFloat()
+                                )
+                            }
                             accControl.log("${bean.actionLog()}随机激活:[${bean.enable}]")
                             if (bean.enable) {
                                 _scheduleIndex = i
@@ -450,6 +480,10 @@ class AccSchedule(val accControl: AccControl) {
         } else {
             _latsRunActionTime = nowTime()
         }
+
+        //运行时长
+        val actionRunTime = nowTime() - _latsRunActionTime
+        setActionRunTime(actionBean.actionId, actionRunTime)
 
         //-----------------------------运行流程----------------------------------
 

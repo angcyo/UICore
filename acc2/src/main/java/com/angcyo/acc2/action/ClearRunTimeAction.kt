@@ -11,13 +11,13 @@ import com.angcyo.library.utils.getLongNumList
  *
  * Email:angcyo@126.com
  * @author angcyo
- * @date 2021/02/02
+ * @date 2021/02/16
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class ClearJumpCountAction : BaseAction() {
+class ClearRunTimeAction : BaseAction() {
 
     override fun interceptAction(control: AccControl, action: String): Boolean {
-        return action.startsWith(Action.ACTION_CLEAR_JUMP_COUNT)
+        return action.startsWith(Action.ACTION_CLEAR_RUN_TIME)
     }
 
     override fun runAction(
@@ -28,10 +28,10 @@ class ClearJumpCountAction : BaseAction() {
 
         var _actionIdList: List<Long>? = null
 
-        if (action.arg(Action.ACTION_CLEAR_JUMP_COUNT) == Action.RELY) {
+        if (action.arg(Action.ACTION_CLEAR_RUN_TIME) == Action.RELY) {
             //跳过到依赖的action
             _actionIdList = control.accSchedule.relyList()
-            success = clearJumpCount(control, _actionIdList)
+            success = clearRunTime(control, _actionIdList)
         } else {
             val actionIdList = action.getLongNumList(true)
             if (actionIdList.isNullOrEmpty()) {
@@ -39,25 +39,25 @@ class ClearJumpCountAction : BaseAction() {
                 val actionBean = control.accSchedule._scheduleActionBean
                 if (actionBean != null) {
                     _actionIdList = listOf(actionBean.actionId)
-                    success = clearJumpCount(control, _actionIdList)
+                    success = clearRunTime(control, _actionIdList)
                 }
             } else {
                 //指定id
                 _actionIdList = actionIdList
-                success = clearJumpCount(control, actionIdList)
+                success = clearRunTime(control, actionIdList)
             }
         }
-        control.log("清理跳转次数[${_actionIdList}]:${success}")
+        control.log("清理运行时长[${_actionIdList}]:${success}")
     }
 
-    fun clearJumpCount(control: AccControl, actionIdList: List<Long>?): Boolean {
+    fun clearRunTime(control: AccControl, actionIdList: List<Long>?): Boolean {
         var clearId = -1L
         if (actionIdList != null) {
             for (actionId in actionIdList) {
                 val findAction = control.findAction(actionId)
                 if (findAction != null) {
                     clearId = actionId
-                    control.accSchedule.clearJumpCount(actionId)
+                    control.accSchedule.setActionRunTime(actionId, -1)
                 }
             }
         }
