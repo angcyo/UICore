@@ -11,6 +11,9 @@ data class HandleBean(
 
     //<editor-fold desc="激活条件">
 
+    /**是否激活当前的[HandleBean]*/
+    var enable: Boolean = true,
+
     /**
      * 满足其中一个条件,[HandleBean]才会被执行*/
     var conditionList: List<ConditionBean>? = null,

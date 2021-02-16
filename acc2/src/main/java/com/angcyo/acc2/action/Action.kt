@@ -132,6 +132,9 @@ object Action {
     /**禁用, 参考[ACTION_ENABLE]*/
     const val ACTION_DISABLE = "disable"
 
+    /**禁用当前的[HandleBean]*/
+    const val ACTION_DISABLE_HANDLE = "disableHandle"
+
     /**异常, 并中断整个任务
      * [error:reason]*/
     const val ACTION_ERROR = "error"
