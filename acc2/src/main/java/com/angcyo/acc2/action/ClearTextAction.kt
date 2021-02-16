@@ -29,9 +29,11 @@ class ClearTextAction : BaseAction() {
 
         if (key == Action.ALL) {
             control._taskBean?.textMap = null
+            control._taskBean?.textListMap = null
         } else {
             key.args(" ") { index, arg ->
                 control._taskBean?.textMap?.remove(arg)
+                control._taskBean?.textListMap?.remove(arg)
             }
         }
 

@@ -89,7 +89,7 @@ object Action {
     const val ACTION_CLEAR_JUMP_COUNT = "clearJumpCount"
 
     /**获取元素文本追加保存到
-     * [com.angcyo.acc2.bean.TaskBean.textMap]
+     * [com.angcyo.acc2.bean.TaskBean.textListMap]
      * [appendText:key regex:xxx]
      * 默认key:appendText
      * regex:\\d+ 文本需要使用正则过滤取值

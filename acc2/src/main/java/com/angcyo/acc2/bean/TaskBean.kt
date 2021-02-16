@@ -72,6 +72,9 @@ data class TaskBean(
      * [xxx]命令保存的文本, 供后续使用*/
     var textMap: HashMap<String, String?>? = null,
 
+    /**优先从[textListMap]里面取数据,其次从[textMap]取数据*/
+    var textListMap: HashMap<String, List<String?>?>? = null,
+
     //</editor-fold desc="文本池">
 
     /**操作步骤*/
@@ -95,6 +98,29 @@ fun TaskBean.putMap(key: String?, value: String?) {
     }
     if (key != null) {
         textMap?.put(key, value)
+    }
+}
+
+/**设置[com.angcyo.acc2.bean.TaskBean.textListMap]数据*/
+fun TaskBean.putListMap(key: String?, value: String?) {
+    if (textListMap == null) {
+        textListMap = hashMapOf()
+    }
+    if (key != null) {
+        textListMap?.apply {
+            val list = get(key)?.toMutableList() ?: mutableListOf()
+            list.add(value)
+            put(key, list)
+        }
+    }
+}
+
+fun TaskBean.putListMap(key: String?, value: List<String?>?) {
+    if (textListMap == null) {
+        textListMap = hashMapOf()
+    }
+    if (key != null) {
+        textListMap?.put(key, value)
     }
 }
 

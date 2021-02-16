@@ -1,7 +1,7 @@
 package com.angcyo.acc2.action
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
-import com.angcyo.acc2.bean.appendMap
+import com.angcyo.acc2.bean.putListMap
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
@@ -45,7 +45,7 @@ class AppendTextAction : BaseAction() {
             if (text != null) {
                 //保存起来
                 val textStr = text.toStr()
-                control._taskBean?.appendMap(key, textStr)
+                control._taskBean?.putListMap(key, textStr)
                 textList.add(textStr)
             }
         }

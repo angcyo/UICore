@@ -1,11 +1,9 @@
 package com.angcyo.acc2.parse
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
-import com.angcyo.acc2.action.Action
 import com.angcyo.acc2.bean.FilterBean
 import com.angcyo.acc2.eachChildDepth
 import com.angcyo.library.ex.haveText
-import com.angcyo.library.ex.size
 
 /**
  * 过滤解析器
@@ -182,18 +180,19 @@ class FilterParse(val accParse: AccParse) {
     //</editor-fold desc="filter">
 
     /**返回是否要过滤掉[node]*/
-    fun filterNodeText(node: AccessibilityNodeInfoCompat, textList: List<String>?): Boolean {
+    fun filterNodeText(node: AccessibilityNodeInfoCompat, textList: List<String?>?): Boolean {
         if (textList.isNullOrEmpty()) {
             return false
         }
         var filter = false
         for (text in textList) {
-            val list = text.split(Action.TEXT_SPLIT)
+            /*val list = text?.split(Action.TEXT_SPLIT)
             filter = if (list.size() <= 1) {
                 filterNodeText(node, text)
             } else {
                 filterNodeText(node, list)
-            }
+            }*/
+            filter = filterNodeText(node, text)
             if (filter) {
                 break
             }

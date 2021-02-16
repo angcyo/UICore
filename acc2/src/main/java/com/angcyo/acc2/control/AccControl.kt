@@ -202,7 +202,7 @@ class AccControl : Runnable {
                 e.printStackTrace()
             }
         }
-        log("run控制器结束[${_controlState.toControlStateStr()}]:$finishReason ${accSchedule.durationStr()}\n${_taskBean?.textMap}")
+        log("run控制器结束[${_controlState.toControlStateStr()}]:$finishReason ${accSchedule.durationStr()}\n${_taskBean?.textMap}\n${_taskBean?.textListMap}")
     }
 
     //</editor-fold desc="线程">

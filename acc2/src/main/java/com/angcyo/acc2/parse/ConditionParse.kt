@@ -57,7 +57,8 @@ class ConditionParse(val accParse: AccParse) {
             //textMapList
             if (!textMapList.isNullOrEmpty()) {
                 for (key in textMapList!!) {
-                    val value = accControl._taskBean?.textMap?.get(key)
+                    val value = accControl._taskBean?.textListMap?.get(key)
+                        ?: accControl._taskBean?.textMap?.get(key)
                     if (value == null) {
                         //指定key对应的value没有值, 则条件不满足
                         result = false

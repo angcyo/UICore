@@ -67,11 +67,11 @@ class AccParse(val accControl: AccControl) {
      * $0~$-2 取范围内的字符
      * $[xxx] 从[com.angcyo.acc2.bean.TaskBean.textMap]获取[xxx]键值对应的值
      * */
-    fun parseText(arg: String?): List<String> {
+    fun parseText(arg: String?): List<String?> {
         if (arg.isNullOrEmpty()) {
             return emptyList()
         }
-        val result = mutableListOf<String>()
+        val result = mutableListOf<String?>()
 
         var isHandle = false
 
@@ -133,7 +133,8 @@ class AccParse(val accControl: AccControl) {
                         result.add(appName)
                     }
                 } else {
-                    getTextOfMap(key)?.let { value -> result.add(value) }
+                    getTextOfListMap(key)?.apply { result.addAll(this) }
+                        ?: getTextOfMap(key)?.let { value -> result.add(value) }
                 }
             }
         }
@@ -144,13 +145,14 @@ class AccParse(val accControl: AccControl) {
         }
 
         if (result.isEmpty()) {
-            accControl.log("无法解析文本参数[$arg]↓\n${taskBean?.wordList}\n${taskBean?.textMap}")
+            accControl.log("无法解析文本参数[$arg]↓\n${taskBean?.wordList}\n${taskBean?.textMap}\n${taskBean?.textListMap}")
         }
 
         return result
     }
 
     fun getTextOfMap(key: String) = accControl._taskBean?.textMap?.get(key)
+    fun getTextOfListMap(key: String) = accControl._taskBean?.textListMap?.get(key)
 
     /**
      * 解析时间格式
