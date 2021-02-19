@@ -34,68 +34,81 @@ class DslRecyclerViewShot {
     /**绘制回调*/
     var drawAction: ((index: Int, canvas: Canvas) -> Unit)? = null
 
+    /**错误信息*/
+    var error: Throwable? = null
+
+    /**错误回调*/
+    var errorAction: ((Throwable) -> Unit)? = null
+
     fun doIt(recyclerView: RecyclerView): Bitmap? {
         val adapter = recyclerView.adapter
         if (adapter == null || adapter.itemCount <= 0) {
             return null
         }
 
-        val endIndex = min(fromIndex + itemCount, adapter.itemCount)
-        var height = 0
-        val paint = Paint()
-        val maxMemory = (Runtime.getRuntime().maxMemory() / 1024).toInt()
+        try {
+            val endIndex = min(fromIndex + itemCount, adapter.itemCount)
+            var height = 0
+            val paint = Paint()
+            val maxMemory = (Runtime.getRuntime().maxMemory() / 1024).toInt()
 
-        // Use 1/8th of the available memory for this memory cache.
-        val cacheSize = maxMemory / 8
-        val bitmapCache = LruCache<String, Bitmap>(cacheSize)
+            // Use 1/8th of the available memory for this memory cache.
+            val cacheSize = maxMemory / 8
+            val bitmapCache = LruCache<String, Bitmap>(cacheSize)
 
-        for (i in fromIndex until endIndex) {
-            //offset
-            height += offsetHeightAction?.invoke(i) ?: 0
-            //获取item的图片
-            val holder = adapter.createViewHolder(recyclerView, adapter.getItemViewType(i))
-            adapter.onBindViewHolder(holder, i, listOf<Any>())
-            holder.itemView.measure(
-                View.MeasureSpec.makeMeasureSpec(recyclerView.width, View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-            )
-            holder.itemView.layout(
-                0, 0,
-                holder.itemView.measuredWidth,
-                holder.itemView.measuredHeight
-            )
-            holder.itemView.isDrawingCacheEnabled = true
-            holder.itemView.buildDrawingCache()
-            val drawingCache = holder.itemView.drawingCache
-            if (drawingCache != null) {
-                bitmapCache.put(i.toString(), drawingCache)
+            for (i in fromIndex until endIndex) {
+                //offset
+                height += offsetHeightAction?.invoke(i) ?: 0
+                //获取item的图片
+                val holder = adapter.createViewHolder(recyclerView, adapter.getItemViewType(i))
+                adapter.onBindViewHolder(holder, i, listOf<Any>())
+                holder.itemView.measure(
+                    View.MeasureSpec.makeMeasureSpec(recyclerView.width, View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+                )
+                holder.itemView.layout(
+                    0, 0,
+                    holder.itemView.measuredWidth,
+                    holder.itemView.measuredHeight
+                )
+                holder.itemView.isDrawingCacheEnabled = true
+                holder.itemView.buildDrawingCache()
+                val drawingCache = holder.itemView.drawingCache
+                if (drawingCache != null) {
+                    bitmapCache.put(i.toString(), drawingCache)
+                }
+                //累加高度
+                height += holder.itemView.measuredHeight
             }
-            //累加高度
-            height += holder.itemView.measuredHeight
-        }
 
-        //开始返回
-        val resultBitmap =
-            Bitmap.createBitmap(recyclerView.measuredWidth, height, Bitmap.Config.ARGB_8888)
-        val resultCanvas = Canvas(resultBitmap)
+            //开始返回
+            val resultBitmap =
+                Bitmap.createBitmap(recyclerView.measuredWidth, height, Bitmap.Config.ARGB_8888)
+            val resultCanvas = Canvas(resultBitmap)
 
-        //绘制背景
-        resultCanvas.drawColor(bgColor)
-        val lBackground = recyclerView.background
-        if (lBackground is ColorDrawable) {
-            val lColor = lBackground.color
-            resultCanvas.drawColor(lColor)
+            //绘制背景
+            resultCanvas.drawColor(bgColor)
+            val lBackground = recyclerView.background
+            if (lBackground is ColorDrawable) {
+                val lColor = lBackground.color
+                resultCanvas.drawColor(lColor)
+            }
+            var drawHeight = 0
+            for (i in fromIndex until endIndex) {
+                drawHeight += offsetHeightAction?.invoke(i) ?: 0
+                val bitmap = bitmapCache[i.toString()]
+                resultCanvas.drawBitmap(bitmap, 0f, drawHeight.toFloat(), paint)
+                drawHeight += bitmap.height
+                bitmap.recycle()
+                drawAction?.invoke(i, resultCanvas)
+            }
+            return resultBitmap
+        } catch (e: Exception) {
+            e.printStackTrace()
+            error = e
+            errorAction?.invoke(e)
+            return null
         }
-        var drawHeight = 0
-        for (i in fromIndex until endIndex) {
-            drawHeight += offsetHeightAction?.invoke(i) ?: 0
-            val bitmap = bitmapCache[i.toString()]
-            resultCanvas.drawBitmap(bitmap, 0f, drawHeight.toFloat(), paint)
-            drawHeight += bitmap.height
-            bitmap.recycle()
-            drawAction?.invoke(i, resultCanvas)
-        }
-        return resultBitmap
     }
 }
 
