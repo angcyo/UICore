@@ -489,7 +489,16 @@ fun CharSequence?.have(text: CharSequence?): Boolean {
     if (this == null) {
         return false
     }
-    return this.str() == text.str() || this.contains(text.toString().toRegex())
+    if (this.str() == text.str()) {
+        return true
+    }
+    return try {
+        this.contains(text.toString().toRegex())
+    } catch (e: Exception) {
+        //java.util.regex.PatternSyntaxException: Missing closing bracket in character class near index 19
+        e.printStackTrace()
+        false
+    }
 }
 
 /**统计字符[char]出现的次数*/
