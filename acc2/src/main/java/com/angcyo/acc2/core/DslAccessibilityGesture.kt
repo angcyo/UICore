@@ -84,7 +84,7 @@ class DslAccessibilityGesture {
                     L.d("手势取消:$gestureDescription ${gestureDescription?.strokeCount ?: 0}".apply {
                         //AutoParseInterceptor.log(this)
                     })
-                    _isCompleted = true
+                    _isCompleted = false
                     gestureResult?.invoke(gestureDescription, true, true)
                     _countDownLatch?.countDown()
                     clear()
@@ -95,7 +95,7 @@ class DslAccessibilityGesture {
                     L.d("手势完成:$gestureDescription ${gestureDescription?.strokeCount ?: 0}".apply {
                         //AutoParseInterceptor.log(this)
                     })
-                    _isCompleted = false
+                    _isCompleted = true
                     gestureResult?.invoke(gestureDescription, true, false)
                     _countDownLatch?.countDown()
                     clear()
@@ -107,15 +107,15 @@ class DslAccessibilityGesture {
     fun clear() {
         _isDo = false
         _isDispatched = false
-        _isCompleted = false
         _gestureBuilder = null
         gestureResult = null
+        _countDownLatch = null
     }
 
     /**开始执行手势*/
-    fun doIt() {
+    fun doIt(): Boolean {
         if (_isDo) {
-            return
+            return false
         }
         _isDispatched = false
         _isCompleted = false
@@ -129,11 +129,19 @@ class DslAccessibilityGesture {
                 _gestureResultCallback,
                 null
             )
+            return if (isMain()) {
+                true
+            } else {
+                _countDownLatch = CountDownLatch(1)
+                _countDownLatch?.await()
+                _isCompleted
+            }
             //AutoParseInterceptor.log("派发手势:$_isDispatched")
         } else {
             //设备不支持手势
             gestureResult?.invoke(null, false, true)
             //AutoParseInterceptor.log("设备不支持手势")
+            return true
         }
     }
 
@@ -466,11 +474,9 @@ fun DslAccessibilityGesture.touch(
     duration: Long = this.clickDuration,
     result: GestureResult? = null
 ): Boolean {
-    val isDo = _isDo
     gestureResult = result
     touch(fromX, fromY, toX, toY, startTime, duration)
-    doIt()
-    return _isDispatched && !isDo
+    return doIt()
 }
 
 fun DslAccessibilityGesture.click(
@@ -480,11 +486,9 @@ fun DslAccessibilityGesture.click(
     duration: Long = this.clickDuration,
     result: GestureResult? = null
 ): Boolean {
-    val isDo = _isDo
     gestureResult = result
     touch(x, y, startTime, duration)
-    doIt()
-    return _isDispatched && !isDo
+    return doIt()
 }
 
 fun DslAccessibilityGesture.double(
@@ -494,12 +498,10 @@ fun DslAccessibilityGesture.double(
     duration: Long = DslAccessibilityGesture.DEFAULT_GESTURE_CLICK_DURATION,
     result: GestureResult? = null
 ): Boolean {
-    val isDo = _isDo
     gestureResult = result
     doubleDuration(startTime, duration)
     double(x, y)
-    doIt()
-    return _isDispatched && !isDo
+    return doIt()
 }
 
 /**随机在屏幕中产生一个点位信息*/
