@@ -48,6 +48,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/lib_bg_selector"
+            android:paddingLeft="@dimen/lib_hdpi"
+            android:paddingRight="@dimen/lib_hdpi"
             android:textColor="@color/text_sub_color"
             tools:text="中立" />
 
@@ -58,6 +60,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/lib_xhdpi"
             android:background="@drawable/lib_bg_selector"
+            android:paddingLeft="@dimen/lib_hdpi"
+            android:paddingRight="@dimen/lib_hdpi"
             android:textColor="@color/text_sub_color"
             tools:text="取消" />
 
@@ -68,6 +72,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/lib_xhdpi"
             android:background="@drawable/lib_bg_selector"
+            android:paddingLeft="@dimen/lib_hdpi"
+            android:paddingRight="@dimen/lib_hdpi"
             android:textColor="@color/colorAccent"
             tools:text="确定" />
 
