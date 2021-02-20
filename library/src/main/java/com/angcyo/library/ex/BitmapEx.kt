@@ -40,10 +40,30 @@ fun ByteArray.toBitmap(): Bitmap {
     return BitmapFactory.decodeByteArray(this, 0, this.size)
 }
 
-/**分享图片对象, 注意图片不能太大, 否则[Intent]传不过去*/
-fun Bitmap.share(context: Context = app(), shareQQ: Boolean = false, chooser: Boolean = true) {
-    val uri =
-        Uri.parse(MediaStore.Images.Media.insertImage(context.contentResolver, this, null, null))
+/**分享图片, 先保存图片, 然后通过uri分享*/
+fun Bitmap.share(
+    context: Context = app(),
+    shareQQ: Boolean = false,
+    chooser: Boolean = true,
+    insertPhoto: Boolean = false,
+): Boolean {
+    var uri: Uri? = if (insertPhoto) {
+        val insertImage =
+            MediaStore.Images.Media.insertImage(context.contentResolver, this, null, null)
+        if (insertImage == null) {
+            //插入相册失败
+            //写到本地
+            save().toUri()
+        } else {
+            Uri.parse(insertImage)
+        }
+    } else {
+        save().toUri()
+    }
+
+    if (uri == null) {
+        return false
+    }
     var intent = Intent()
     intent.action = Intent.ACTION_SEND //设置分享行为
     intent.type = "image/*" //设置分享内容的类型
@@ -60,6 +80,7 @@ fun Bitmap.share(context: Context = app(), shareQQ: Boolean = false, chooser: Bo
     }
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     context.startActivity(intent)
+    return true
 }
 
 /**模糊图片*/

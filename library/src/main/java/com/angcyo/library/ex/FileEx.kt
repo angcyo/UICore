@@ -323,3 +323,5 @@ fun File.writeText(text: String, append: Boolean = true) {
         appendText(text)
     }
 }
+
+fun File.toUri(context: Context = app()) = fileUri(context, this)
