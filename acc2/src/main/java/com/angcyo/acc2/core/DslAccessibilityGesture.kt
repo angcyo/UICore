@@ -495,7 +495,7 @@ fun DslAccessibilityGesture.double(
     x: Float = _screenWidth / 2f,
     y: Float = _screenHeight / 2f,
     startTime: Long = DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME,
-    duration: Long = DslAccessibilityGesture.DEFAULT_GESTURE_CLICK_DURATION,
+    duration: Long = DslAccessibilityGesture.DEFAULT_GESTURE_DOUBLE_DURATION,
     result: GestureResult? = null
 ): Boolean {
     gestureResult = result
