@@ -21,7 +21,7 @@ import kotlin.coroutines.CoroutineContext
  */
 open class CoroutineErrorHandler(
     val action: (exception: Throwable) -> Unit = {
-        L.e("协程内发生异常->")
+        L.e("协程内发生异常->\n${it.stackTraceToString()}")
         it.printStackTrace()
     }
 ) : AbstractCoroutineContextElement(CoroutineExceptionHandler), CoroutineExceptionHandler {
