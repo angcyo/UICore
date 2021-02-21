@@ -91,6 +91,7 @@ object FileUtils {
         return filePath
     }
 
+    /**[append]=true 根据文件大小智能判断是否要重写*/
     fun writeExternal(file: File, data: String, append: Boolean = true): String? {
         var filePath: String? = null
 
@@ -152,7 +153,8 @@ fun folderPath(folderName: String): String {
 
 fun logFileName() = fileName("yyyy-MM-dd", ".log")
 
-fun File.writeText(data: String?, append: Boolean = true) {
+/**[append]=true 根据文件大小智能判断是否要重写*/
+fun File.writeText(data: String?, append: Boolean) {
     FileUtils.writeExternal(this, data ?: "null", append)
 }
 

@@ -87,7 +87,6 @@ class DslAccessibilityGesture {
                     })
                     _isCompleted = false
                     gestureResult?.invoke(gestureDescription, true, true)
-                    _countDownLatch?.countDown()
                     clear()
                 }
 
@@ -98,7 +97,6 @@ class DslAccessibilityGesture {
                     })
                     _isCompleted = true
                     gestureResult?.invoke(gestureDescription, true, false)
-                    _countDownLatch?.countDown()
                     clear()
                 }
             }
@@ -110,6 +108,7 @@ class DslAccessibilityGesture {
         _isDispatched = false
         _gestureBuilder = null
         gestureResult = null
+        _countDownLatch?.countDown()
         _countDownLatch = null
     }
 
