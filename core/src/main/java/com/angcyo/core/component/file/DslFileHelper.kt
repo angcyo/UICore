@@ -4,12 +4,11 @@ import android.content.Context
 import com.angcyo.coroutine.CoroutineErrorHandler
 import com.angcyo.coroutine.launchGlobal
 import com.angcyo.library.app
-import com.angcyo.library.ex.file
 import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.FileUtils
 import com.angcyo.library.utils.fileName
+import com.angcyo.library.utils.logFileName
 import kotlinx.coroutines.Dispatchers
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -97,8 +96,6 @@ object DslFileHelper {
     }
 }
 
-fun logFileName() = fileName("yyyy-MM-dd", ".log")
-
 fun CharSequence.wrapData() = DslFileHelper._wrapData2(this)
 
 /**将数据写入到指定文件*/
@@ -107,24 +104,4 @@ fun String?.writeTo(
     name: String = logFileName()
 ) {
     DslFileHelper.write(folder, name, this ?: "null")
-}
-
-fun File.writeText(data: String?, append: Boolean = true) {
-    FileUtils.writeExternal(this, data ?: "null", append)
-}
-
-fun String?.writeTo(file: File, append: Boolean = true) =
-    FileUtils.writeExternal(file, this ?: "null", append)
-
-fun String?.writeTo(filePath: String, append: Boolean = true): String? {
-    val file = filePath.file()
-    if (file != null) {
-        return FileUtils.writeExternal(file, this ?: "null", append)
-    }
-    return null
-}
-
-/**获取文件夹全路径*/
-fun String.logFilePath(name: String = logFileName()): String? {
-    return FileUtils.appRootExternalFolderFile(app(), this, name)?.absolutePath
 }

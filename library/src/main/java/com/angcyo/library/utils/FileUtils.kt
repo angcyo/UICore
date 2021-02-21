@@ -3,6 +3,7 @@ package com.angcyo.library.utils
 import android.content.Context
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.ex.file
 import com.angcyo.library.getAppString
 import java.io.File
 import java.text.DateFormat
@@ -31,7 +32,7 @@ object FileUtils {
 
     /**获取文件夹路径*/
     var onGetFolderPath: (folderName: String) -> String = {
-        "$rootFolder/$it"
+        "$rootFolder${File.separator}$it"
     }
 
     /**APP扩展根目录*/
@@ -74,7 +75,7 @@ object FileUtils {
         folder: String,
         name: String,
         data: String,
-        append: Boolean = true
+        append: Boolean = true /*false 强制重新写入*/
     ): String? {
         // /storage/emulated/0/Android/data/com.angcyo.uicore.demo/files/$type
         var filePath: String? = null
@@ -147,4 +148,26 @@ fun filePath(folderName: String, fileName: String = fileNameUUID()): String {
 fun folderPath(folderName: String): String {
     return FileUtils.appRootExternalFolder(folder = folderName)?.absolutePath
         ?: app().cacheDir.absolutePath
+}
+
+fun logFileName() = fileName("yyyy-MM-dd", ".log")
+
+fun File.writeText(data: String?, append: Boolean = true) {
+    FileUtils.writeExternal(this, data ?: "null", append)
+}
+
+fun String?.writeTo(file: File, append: Boolean = true) =
+    FileUtils.writeExternal(file, this ?: "null", append)
+
+fun String?.writeTo(filePath: String?, append: Boolean = true): String? {
+    val file = filePath?.file()
+    if (file != null) {
+        return FileUtils.writeExternal(file, this ?: "null", append)
+    }
+    return null
+}
+
+/**获取文件夹全路径*/
+fun String.logFilePath(name: String = logFileName()): String? {
+    return FileUtils.appRootExternalFolderFile(app(), this, name)?.absolutePath
 }

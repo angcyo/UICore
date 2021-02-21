@@ -121,27 +121,35 @@ class DslAccessibilityGesture {
         _isCompleted = false
         val service = service
         val builder = _gestureBuilder
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && service != null && builder != null) {
-            //设备支持手势
-            _isDo = true
-            _isDispatched = service.dispatchGesture(
-                builder.build(),
-                _gestureResultCallback,
-                null
-            )
-            return if (isMain()) {
-                true
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && service != null && builder != null) {
+                //设备支持手势
+                _isDo = true
+                _isDispatched = service.dispatchGesture(
+                    builder.build(),
+                    _gestureResultCallback,
+                    null
+                )
+                return if (isMain()) {
+                    true
+                } else {
+                    _countDownLatch = CountDownLatch(1)
+                    _countDownLatch?.await()
+                    _isCompleted
+                }
+                //AutoParseInterceptor.log("派发手势:$_isDispatched")
             } else {
-                _countDownLatch = CountDownLatch(1)
-                _countDownLatch?.await()
-                _isCompleted
+                //设备不支持手势
+                gestureResult?.invoke(null, false, true)
+                //AutoParseInterceptor.log("设备不支持手势")
+                L.w("设备不支持手势")
+                return true
             }
-            //AutoParseInterceptor.log("派发手势:$_isDispatched")
-        } else {
-            //设备不支持手势
-            gestureResult?.invoke(null, false, true)
-            //AutoParseInterceptor.log("设备不支持手势")
-            return true
+        } catch (e: Exception) {
+            clear()
+            e.printStackTrace()
+            L.w("手势异常${e.stackTraceToString()}")
+            return false
         }
     }
 
