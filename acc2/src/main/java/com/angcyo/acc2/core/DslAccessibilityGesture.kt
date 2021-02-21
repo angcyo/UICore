@@ -8,6 +8,7 @@ import android.graphics.Point
 import android.graphics.PointF
 import android.os.Build
 import com.angcyo.library.*
+import com.angcyo.library.component.MainExecutor
 import com.angcyo.library.ex.dpi
 import java.util.concurrent.CountDownLatch
 import kotlin.random.Random.Default.nextInt
@@ -125,14 +126,23 @@ class DslAccessibilityGesture {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && service != null && builder != null) {
                 //设备支持手势
                 _isDo = true
-                _isDispatched = service.dispatchGesture(
-                    builder.build(),
-                    _gestureResultCallback,
-                    null
-                )
                 return if (isMain()) {
-                    true
+                    _isDispatched = service.dispatchGesture(
+                        builder.build(),
+                        _gestureResultCallback,
+                        null
+                    )
+                    L.w("派发手势:$_isDispatched")
+                    _isDispatched
                 } else {
+                    MainExecutor.execute {
+                        _isDispatched = service.dispatchGesture(
+                            builder.build(),
+                            _gestureResultCallback,
+                            null
+                        )
+                        L.w("派发手势:$_isDispatched")
+                    }
                     _countDownLatch = CountDownLatch(1)
                     _countDownLatch?.await()
                     _isCompleted

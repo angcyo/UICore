@@ -6,6 +6,7 @@ import com.angcyo.acc2.bean.ConditionBean
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.component.appBean
+import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.subEnd
 import com.angcyo.library.ex.subStart
 import com.angcyo.library.getAppVersionCode
@@ -199,6 +200,11 @@ class ConditionParse(val accParse: AccParse) {
                     }
                 }
                 result = verifyApp
+            }
+
+            //debug
+            if (result && debug != null) {
+                result = if (debug == true) isDebug() else !isDebug()
             }
         }
         return result

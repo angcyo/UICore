@@ -50,4 +50,7 @@ data class ConditionBean(
     /**对应目标应用程序的信息约束
      * [system]*/
     var app: String? = null,
+
+    /**如果设置了, 是否只在[debug]模式下满足条件*/
+    var debug: Boolean? = null,
 )
