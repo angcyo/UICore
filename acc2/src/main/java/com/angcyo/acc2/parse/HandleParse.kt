@@ -59,8 +59,10 @@ class HandleParse(val accParse: AccParse) {
         registerActionList.add(ClearRunTimeAction())
         registerActionList.add(FinishAction())
         registerActionList.add(ErrorAction())
-        registerActionList.add(StopAction())
         registerActionList.add(DisableHandleAction())
+        registerActionList.add(StopAction())
+        registerActionList.add(PauseAction())
+        registerActionList.add(ResumeAction())
     }
 
     /**解析, 并处理[handleList]*/

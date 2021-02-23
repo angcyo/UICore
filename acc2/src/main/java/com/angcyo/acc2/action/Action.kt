@@ -150,6 +150,13 @@ object Action {
      * [stop:reason]*/
     const val ACTION_STOP = "stop"
 
+    /**暂停控制器*/
+    const val ACTION_PAUSE = "pause"
+
+    /**恢复控制器
+     * [resume restart]*/
+    const val ACTION_RESUME = "resume"
+
     /**启动指定的应用程序
      * [start:com.xxx.xxx]启动应用程序 [:main]本机APP [:target]目标(空或null)
      * */
