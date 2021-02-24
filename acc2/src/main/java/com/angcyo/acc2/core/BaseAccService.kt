@@ -81,7 +81,7 @@ abstract class BaseAccService : AccessibilityService() {
      * 当收到应用发过来的[AccessibilityEvent]无障碍事件
      * */
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        //no op
+        lastService = this
     }
 
     /**中断了反馈*/
