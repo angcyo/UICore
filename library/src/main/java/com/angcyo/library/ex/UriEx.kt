@@ -12,6 +12,7 @@ import com.angcyo.library.model.MediaBean
 import java.io.File
 import java.io.FileDescriptor
 import java.io.InputStream
+import java.util.*
 
 /**
  *
@@ -75,7 +76,7 @@ fun String?.isHttpScheme(): Boolean {
     if (this.isNullOrBlank()) {
         return false
     }
-    val case = this.toLowerCase()
+    val case = this.toLowerCase(Locale.getDefault())
     return case.startsWith("http://") || case.startsWith("https://")
 }
 
