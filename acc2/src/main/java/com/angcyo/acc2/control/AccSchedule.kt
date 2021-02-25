@@ -277,59 +277,63 @@ class AccSchedule(val accControl: AccControl) {
             accControl._taskBean?.actionList?.apply {
                 for (i in _scheduleIndex..lastIndex) {
                     val bean = getOrNull(i)
-                    if (bean != null) {
-                        if (bean.enable && bean._enable == null) {
-                            //找到激活的
-                            if (!accParse.conditionParse.parse(bean.conditionList).success) {
-                                accControl.log("${bean.actionLog()}未满足激活条件,跳过调度.")
-                                continue
-                            }
-                            _scheduleIndex = i
-                            result = bean
-                            break
-                        } else if (bean.randomEnable) {
-                            bean._enable = bean.enable
-                            bean.enable = if (bean.randomAmount.isNullOrEmpty()) {
-                                //未指定随机概率
-                                nextBoolean()
-                            } else {
-                                //指定了随机的概率
-                                val factor = nextInt(1, 101) //[1-100]
-                                accParse.expParse.parseAndCompute(
-                                    bean.randomAmount,
-                                    inputValue = factor.toFloat()
-                                )
-                            }
-                            accControl.log("${bean.actionLog()}随机激活:[${bean.enable}]")
-                            if (bean.enable) {
-                                _scheduleIndex = i
-                                result = bean
-                                break
-                            }
-                        } else {
-                            if (bean.autoEnable) {
-                                //开启了自动激活
-                                val conditionResult =
-                                    accParse.conditionParse.parse(bean.conditionList)
-                                if (conditionResult.success) {
-                                    bean.enable = true
-                                    _scheduleIndex = i
-                                    result = bean
-                                    accControl.log("${bean.actionLog()}自动激活成功:[${conditionResult.conditionBean}]")
-                                    break
-                                } else {
-                                    accControl.log("${bean.actionLog()}自动激活失败,跳过调度.")
-                                }
-                            } else {
-                                accControl.log("${bean.actionLog()}未激活,跳过调度.")
-                            }
-                        }
+                    if (isActionBeanEnable(bean)) {
+                        _scheduleIndex = i
+                        result = bean
+                        break
                     }
                 }
             }
         }
 
         return result
+    }
+
+    /**判断[action]是否激活, 激活后才允许运行*/
+    fun isActionBeanEnable(action: ActionBean?): Boolean {
+        if (action != null) {
+            if (action.enable && action._enable == null) {
+                //找到激活的
+                if (!accParse.conditionParse.parse(action.conditionList).success) {
+                    accControl.log("${action.actionLog()}未满足激活条件,跳过.")
+                    return false
+                }
+                return true
+            } else if (action.randomEnable) {
+                action._enable = action.enable
+                action.enable = if (action.randomAmount.isNullOrEmpty()) {
+                    //未指定随机概率
+                    nextBoolean()
+                } else {
+                    //指定了随机的概率
+                    val factor = nextInt(1, 101) //[1-100]
+                    accParse.expParse.parseAndCompute(
+                        action.randomAmount,
+                        inputValue = factor.toFloat()
+                    )
+                }
+                accControl.log("${action.actionLog()}随机激活:[${action.enable}]")
+                return action.enable
+            } else {
+                return if (action.autoEnable) {
+                    //开启了自动激活
+                    val conditionResult =
+                        accParse.conditionParse.parse(action.conditionList)
+                    if (conditionResult.success) {
+                        action.enable = true
+                        accControl.log("${action.actionLog()}自动激活成功:[${conditionResult.conditionBean}]")
+                        true
+                    } else {
+                        accControl.log("${action.actionLog()}自动激活失败,跳过.")
+                        false
+                    }
+                } else {
+                    accControl.log("${action.actionLog()}未激活,跳过.")
+                    false
+                }
+            }
+        }
+        return false
     }
 
     /**指定下一个需要调度的[ActionBean]*/
@@ -391,6 +395,8 @@ class AccSchedule(val accControl: AccControl) {
         otherActionList: List<ActionBean>?,
         isPrimaryAction: Boolean
     ): HandleResult {
+        var handleActionResult = HandleResult()
+
         runActionBeanStack.push(actionBean)
         _runActionBean = actionBean
 
@@ -404,8 +410,6 @@ class AccSchedule(val accControl: AccControl) {
             _lastRunActionHash = newActionHash
         }
 
-        var handleActionResult = HandleResult()
-
         if (accControl.accService() == null) {
             runActionBeanStack.popSafe()
             _runActionBean = null
@@ -414,7 +418,9 @@ class AccSchedule(val accControl: AccControl) {
         }
 
         //激活条件判断
-        if (!accParse.conditionParse.parse(actionBean.conditionList).success) {
+        if ((isPrimaryAction && !accParse.conditionParse.parse(actionBean.conditionList).success) ||
+            (!isPrimaryAction && !isActionBeanEnable(actionBean))
+        ) {
             handleActionResult.success = false
             runActionBeanStack.popSafe()
             _runActionBean = null
