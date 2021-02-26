@@ -26,8 +26,9 @@ class UUIDInterceptor : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val newRequest = chain.request().newBuilder()
-            .addHeader("deviceId", Device.deviceId)
+            //.addHeader("deviceId", Device.deviceId)
             .addHeader("androidId", Device.androidId)
+            .addHeader("deviceInfo", Device.beautifyDeviceLog()) //设备一些基础信息
             .apply {
                 PUBLIC_HEADER.forEach { entry ->
                     addHeader(entry.key, entry.value)

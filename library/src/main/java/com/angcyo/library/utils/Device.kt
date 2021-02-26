@@ -58,6 +58,7 @@ object Device {
      * 获得独一无二的Psuedo ID, 2021-02-07 相同手机型号, 会出现重复的
      * https://www.jianshu.com/p/130918ed8b2f
      * */
+    @Deprecated("相同型号的手机会重复, 请使用[androidId]")
     private fun getUniqueDeviceId(): String {
         var result: String
         var serial: String?
@@ -278,7 +279,7 @@ object Device {
     fun deviceInfoLess(builder: Appendable, abi: Boolean = true, cpu: Boolean = true) {
         // 硬件制造商/品牌名称/型号/产品名称
         // OnePlus/OnePlus/ONEPLUS A6000/OnePlus6
-        builder.append("api ${Build.VERSION.SDK_INT}/${Build.MANUFACTURER}/${Build.BRAND}/${Build.MODEL}/${Build.PRODUCT}")
+        builder.append("API${Build.VERSION.SDK_INT}/${Build.MANUFACTURER}/${Build.BRAND}/${Build.MODEL}/${Build.PRODUCT}")
         if (abi) {
             builder.appendln()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -405,7 +406,7 @@ object Device {
     fun beautifyDeviceLog(builder: Appendable = StringBuilder()): String {
         deviceInfoLess(builder)
         builder.appendln()
-        builder.append("${getAppVersionName()} ${getAppString("build_time")}")
+        builder.append("${getAppVersionName()}/${getAppVersionCode()}/${getAppString("build_time")}")
         builder.appendln()
         return builder.toString()
     }

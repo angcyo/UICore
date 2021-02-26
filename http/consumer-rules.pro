@@ -1,5 +1,7 @@
 # 保持所有Bean类
 -keep class com.angcyo.**.**Bean {*;}
+# 保持所有Table类
+-keep class com.angcyo.**.**Table {*;}
 #end
 
 
