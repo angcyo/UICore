@@ -5,6 +5,7 @@ import android.graphics.Point
 import android.graphics.PointF
 import com.angcyo.library.BuildConfig
 import com.angcyo.library.component.ThreadExecutor.onMain
+import com.angcyo.library.getAppString
 import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.RUtils
 import com.angcyo.library.utils.protector.EmulatorCheckUtil
@@ -46,6 +47,8 @@ fun currentApplication(): Application? {
 fun isRelease(): Boolean = "release".equals(BuildConfig.BUILD_TYPE, true)
 
 fun isDebugType() = "debug".equals(BuildConfig.BUILD_TYPE, true)
+
+fun isMac() = getAppString("os_name")?.toLowerCase()?.contains("mac") == true
 
 fun isDebug() = BuildConfig.DEBUG
 fun isAppDebug() = RUtils.isAppDebug()

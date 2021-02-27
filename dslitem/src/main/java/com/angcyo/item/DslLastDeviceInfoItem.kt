@@ -50,8 +50,7 @@ class DslLastDeviceInfoItem : DslAdapterItem() {
         )
         val usedBytes = statFs.totalBytes - statFs.availableBytes
         val progress = (usedBytes * 1f / statFs.totalBytes * 100).toInt()
-        itemHolder.v<DslProgressBar>(R.id.lib_progress_bar)
-            ?.setProgress(progress)
+        itemHolder.v<DslProgressBar>(R.id.lib_progress_bar)?.setProgress(progress)
         itemHolder.tv(R.id.lib_tip_view)?.text = span {
             append(usedBytes.fileSizeString())
             append("/")
