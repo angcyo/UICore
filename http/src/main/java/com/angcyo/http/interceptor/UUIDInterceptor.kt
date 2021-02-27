@@ -2,6 +2,7 @@ package com.angcyo.http.interceptor
 
 import android.Manifest
 import com.angcyo.library.app
+import com.angcyo.library.ex.encode
 import com.angcyo.library.ex.havePermissions
 import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.getIMEI
@@ -27,8 +28,9 @@ class UUIDInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val newRequest = chain.request().newBuilder()
             //.addHeader("deviceId", Device.deviceId)
-            .addHeader("androidId", Device.androidId)
-            .addHeader("deviceInfo", Device.beautifyDeviceLog()) //设备一些基础信息
+            .addHeader("androidId", Device.androidId) //86756e10cf9a9562
+            //java.lang.IllegalArgumentException: Unexpected char 0x0a at 34 in deviceInfo
+            .addHeader("deviceInfo", Device.beautifyDeviceLog().encode()) //设备一些基础信息
             .apply {
                 PUBLIC_HEADER.forEach { entry ->
                     addHeader(entry.key, entry.value)
