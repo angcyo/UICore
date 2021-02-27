@@ -25,8 +25,9 @@ object RSAUtil {
 
     /**
      * RSA Maximum decrypted ciphertext size
+     * //256 //mac Data must not be longer than 128 bytes
      */
-    private const val MAX_DECRYPT_BLOCK = 256
+    private const val MAX_DECRYPT_BLOCK = 128
 
     fun encrypt(data: String, publicKey: String): String {
         return Base64Util.encode(encrypt(data.toByteArray(), publicKey))
