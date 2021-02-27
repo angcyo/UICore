@@ -332,3 +332,7 @@ inline fun <reified T> String?.fromJson2(): T? =
 fun <T> T.copyByJson(classOfT: Class<T>): T {
     return toJson().fromJson<T>(classOfT)!!
 }
+
+fun String.toJsonObject() = fromJson(JsonObject::class.java)
+
+fun String.toJsonArray() = fromJson(JsonArray::class.java)

@@ -13,14 +13,17 @@ import kotlin.math.ceil
  * Version: 1.0.0
  */
 
+/**一天的毫秒数 72,000 72,000,000*/
+const val DAY_MILLIS = 24 * 60 * 60 * 1000L
+
 /**多少天对应的毫秒数*/
-fun day(count: Int = 1): Long = count * 24 * 60 * 60 * 1000L
+fun day(count: Int = 1): Long = count * DAY_MILLIS
 
 fun nowTime() = System.currentTimeMillis()
 
 /**返回毫秒对应的天数*/
 fun Long.toDay(): Int {
-    return ceil((this * 1.0 / (24 * 60 * 60 * 1000L))).toInt()
+    return ceil((this * 1.0 / DAY_MILLIS)).toInt()
 }
 
 /**返回毫秒对应的年数*/

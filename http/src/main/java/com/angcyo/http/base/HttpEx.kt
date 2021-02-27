@@ -1,6 +1,7 @@
 package com.angcyo.http.base
 
 import com.angcyo.library.model.Page
+import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -101,6 +102,10 @@ fun mapOf(vararg args: String, split: String = ":"): HashMap<String, Any> {
 /**application/json*/
 fun String.toJsonBody(): RequestBody =
     toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+
+fun MediaType?.isJsonType() = this?.toString()?.startsWith("application/json") == true
+
+fun MediaType?.isTextType() = this?.toString()?.startsWith("text/plain") == true
 
 /**快速设置[page]参数*/
 fun JsonBuilder.addPage(page: Page?) {

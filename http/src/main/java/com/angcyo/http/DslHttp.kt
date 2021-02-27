@@ -521,13 +521,18 @@ suspend fun String.put2Body(
 
 //<editor-fold desc="JsonElement to Bean">
 
-/**[JsonElement]转换成数据bean*/
-fun <T> Response<JsonElement>.toBean(type: Type, parseError: Boolean = false): T? {
+/**[JsonElement]转换成数据bean
+ * [parseError] 失败时, 读取errorBody, 并且json解析失败抛出异常*/
+fun <T> Response<JsonElement>.toBean(
+    type: Type,
+    parseError: Boolean = false,
+    exception: Boolean = false
+): T? {
     return when {
         isSuccessful -> {
             when (val bodyJson = body().toJson()) {
                 null -> null
-                else -> bodyJson.fromJson<T>(type, parseError)
+                else -> bodyJson.fromJson<T>(type, exception)
             }
         }
         parseError -> {

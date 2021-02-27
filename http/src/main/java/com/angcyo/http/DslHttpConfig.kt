@@ -61,6 +61,11 @@ class DslHttpConfig {
     /**base url*/
     var onGetBaseUrl: () -> String = { "http://api.angcyo.com" }
 
+    /**调用此方法, 添加自定义的配置*/
+    fun configHttpBuilder(config: (OkHttpClient.Builder) -> Unit) {
+        onConfigOkHttpClient.add(config)
+    }
+
     /*----------Retrofit-----------*/
 
     var retrofit: Retrofit? = null
