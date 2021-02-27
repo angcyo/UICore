@@ -43,7 +43,7 @@ interface Api {
     @POST
     fun post(
         @Url url: String,
-        @Body json: JsonElement = JsonObject(),
+        @Body json: JsonElement? = null,
         @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Observable<Response<JsonElement>>
@@ -51,7 +51,7 @@ interface Api {
     @POST
     fun post2Body(
         @Url url: String,
-        @Body json: JsonElement = JsonObject(),
+        @Body json: JsonElement? = null,
         @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Observable<Response<ResponseBody>>
@@ -85,7 +85,7 @@ interface Api {
     @PUT
     fun put(
         @Url url: String,
-        @Body json: JsonElement = JsonObject(),
+        @Body json: JsonElement? = null,
         @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Observable<Response<JsonElement>>
@@ -93,7 +93,7 @@ interface Api {
     @PUT
     fun put2Body(
         @Url url: String,
-        @Body json: JsonElement = JsonObject(),
+        @Body json: JsonElement? = null,
         @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Observable<Response<ResponseBody>>
@@ -108,7 +108,7 @@ interface ApiKt {
     @POST
     suspend fun post(
         @Url url: String,
-        @Body json: JsonElement = JsonObject(),
+        @Body json: JsonElement? = null,
         @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Response<JsonElement>
@@ -116,7 +116,7 @@ interface ApiKt {
     @POST
     suspend fun post2Body(
         @Url url: String,
-        @Body json: JsonElement = JsonObject(),
+        @Body json: JsonElement? = null,
         @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Response<ResponseBody>
@@ -138,7 +138,7 @@ interface ApiKt {
     @PUT
     suspend fun put(
         @Url url: String,
-        @Body json: JsonElement = JsonObject(),
+        @Body json: JsonElement? = null,
         @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Response<JsonElement>
@@ -146,7 +146,7 @@ interface ApiKt {
     @PUT
     suspend fun put2Body(
         @Url url: String,
-        @Body json: JsonElement = JsonObject(),
+        @Body json: JsonElement? = null,
         @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Response<ResponseBody>
@@ -604,7 +604,7 @@ open class BaseRequestConfig {
     var autoConnectUrl: Boolean = true
 
     //body数据, 仅用于post请求. @Body
-    var body: JsonElement = JsonObject()
+    var body: JsonElement? = JsonObject()
 
     //url后面拼接的参数列表
     var query: HashMap<String, Any> = hashMapOf()
