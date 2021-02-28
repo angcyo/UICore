@@ -189,9 +189,19 @@ fun DslAdapterItem.noDraw() {
 
 //<editor-fold desc="操作扩展">
 
-fun DslAdapterItem.itemIndexPosition(dslAdapter: DslAdapter? = null) =
-    (dslAdapter ?: itemDslAdapter)?.getValidFilterDataList()?.indexOf(this)
-        ?: RecyclerView.NO_POSITION
+fun DslAdapterItem.itemIndexPosition(
+    dslAdapter: DslAdapter? = null,
+    useFilterList: Boolean = true
+) = (dslAdapter ?: itemDslAdapter)?.getDataList(useFilterList)?.indexOf(this)
+    ?: RecyclerView.NO_POSITION
+
+/**[dataItems]中的索引*/
+fun DslAdapterItem.itemIndexDataPosition(
+    dslAdapter: DslAdapter? = null,
+    useFilterList: Boolean = true
+) = (dslAdapter ?: itemDslAdapter)?.getDataList(useFilterList)
+    ?.filter { (dslAdapter ?: itemDslAdapter)?.dataItems?.contains(it) == true }?.indexOf(this)
+    ?: RecyclerView.NO_POSITION
 
 fun DslAdapterItem.itemViewHolder(recyclerView: RecyclerView?): DslViewHolder? {
     val position = itemIndexPosition()

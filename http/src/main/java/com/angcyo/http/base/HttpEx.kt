@@ -113,9 +113,15 @@ fun JsonBuilder.addPage(page: Page?) {
         if (page.requestPageSize < 0) {
             add("size", Int.MAX_VALUE)
             add("current", 1)
+
+            add("requestPageSize", Int.MAX_VALUE)
+            add("requestPageIndex", 1)
         } else {
             add("size", page.requestPageSize)
             add("current", page.requestPageIndex)
+
+            add("requestPageSize", page.requestPageSize)
+            add("requestPageIndex", page.requestPageIndex)
         }
     }
 }
