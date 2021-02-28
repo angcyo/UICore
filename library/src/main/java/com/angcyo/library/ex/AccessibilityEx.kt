@@ -254,6 +254,14 @@ fun CharSequence?.des(): String {
     }
 }
 
+fun CharSequence?.appendDes(des: String?): String? {
+    return if (this.isNullOrEmpty() || des.isNullOrEmpty()) {
+        this?.toString()
+    } else {
+        "$this[$des]"
+    }
+}
+
 /**[AccessibilityEvent]是否来自自定义的类名*/
 fun AccessibilityEvent.isFromClass(cls: Class<*>): Boolean = className == cls.className()
 
