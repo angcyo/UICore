@@ -1,6 +1,7 @@
 package com.angcyo.library.ex
 
 import android.os.SystemClock
+import java.math.BigDecimal
 import java.text.DecimalFormat
 import kotlin.math.max
 import kotlin.math.min
@@ -143,3 +144,15 @@ fun generateInt(): Int = SystemClock.uptimeMillis().toInt() and 0xFFFF
 
 /**转换成 100% 80% 的形式*/
 fun Number.toRatioStr(sum: Number): String = "${(this.toFloat() / sum.toFloat() * 100).toInt()}%"
+
+/**科学计数转成普通数字
+ * 8.64e+07
+ * 5344.34234e3
+ * */
+fun String?.toBigLongOrNull(): Long? {
+    return this?.toLongOrNull() ?: try {
+        BigDecimal(this).toLong()
+    } catch (e: Exception) {
+        null
+    }
+}
