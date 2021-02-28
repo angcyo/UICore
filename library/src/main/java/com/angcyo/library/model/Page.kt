@@ -1,5 +1,7 @@
 package com.angcyo.library.model
 
+import androidx.annotation.Keep
+
 /**
  * 网络请求, 页面操作参数
  * Email:angcyo@126.com
@@ -7,6 +9,8 @@ package com.angcyo.library.model
  * @date 2020/06/03
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
+
+@Keep
 class Page {
     companion object {
         /**默认一页请求的数量*/
