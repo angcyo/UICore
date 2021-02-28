@@ -63,6 +63,12 @@ class Page {
     fun singlePage() {
         requestPageSize = Int.MAX_VALUE
     }
+
+    /**需要降序排序字段(从大->小), 多个用;分割*/
+    var desc: String? = null
+
+    /**需要升序排序字段(从小->大), 多个用;分割*/
+    var asc: String? = null
 }
 
 /**单页请求, 无加载更多*/
