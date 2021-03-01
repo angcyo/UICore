@@ -34,7 +34,7 @@ object Action {
 
     /**触发当前节点的点击事件, null 默认是click操作.
      * [:STATE_UNSELECTED] 支持状态参数. 表示, 只在节点满足状态时, 才点击
-     * [:STATE_UNSELECTED:5] 自身要满足且5个parent内所有节点也满足状态, 才触发点击
+     * [:STATE_UNSELECTED:5] 自身要满足且5个parent内有节点满足状态, 才触发点击
      * 如果包含[*], 表示所有节点都必须满足状态条件, 否则只要有一个满足状态条件即可
      * [click:0.1,0.1] 效果等同于[ACTION_CLICK3]
      * 支持[NOT_PARENT]

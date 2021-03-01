@@ -66,6 +66,13 @@ data class FindBean(
      * [unselected] 具备选未中状态
      * [focused] 具备焦点状态
      * [unfocused] 具备无焦点状态
+     *
+     * [unselected:5*] 5个parent节点之内都满足状态才行
+     * 如果包含[*], 表示所有节点都必须满足状态条件, 否则只要有一个满足状态条件即可
+     *
+     * 所有状态:
+     * [com.angcyo.acc2.action.Action.STATE_CLICKABLE]
+     * [com.angcyo.acc2.action.Action.STATE_UNSELECTED]
      * 匹配顺序:5
      * */
     var stateList: List<String>? = null,

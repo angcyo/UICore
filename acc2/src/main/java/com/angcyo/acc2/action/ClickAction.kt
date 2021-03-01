@@ -60,7 +60,8 @@ class ClickAction : ClickTouchAction() {
                             result = if (first) {
                                 targetNode(node, action)?.click() ?: false || result
                             } else {
-                                //携带了状态约束参数, 并且没有匹配到状态
+                                //携带了状态约束参数, 并且没有匹配到状态. 则直接返回成功.
+                                control.log("[$arg]状态不满足, 跳过点击节点.")
                                 true
                             }
                         }
