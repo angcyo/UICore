@@ -92,3 +92,24 @@ fun BroadcastReceiver.unregisterReceiver(context: Context = app()) {
         e.printStackTrace()
     }
 }
+
+/**返回不可用原因, 负数表示可用*/
+fun getCanUsedState(): Int {
+    var reason = when {
+        isRoot() -> 1
+        isVpnUsed() -> 2
+        isProxyUsed() -> 3
+        isRootUI() -> 4
+        isXposedExistByThrow() -> 5
+        isRunningInEmulator() -> 6
+        else -> -1
+    }
+
+    if (isRelease()) {
+        if (isAppDebug()) {
+            reason = 7
+        }
+    }
+
+    return reason
+}
