@@ -71,10 +71,10 @@ task _pgyerUpload() {
 
 _pgyerUpload.doFirst {
 
-    def api_key = project.hasProperty("pgyer_api_key") ? project.ext.api_key : pgyerConfig.pgyer_api_key
-    def user_key = project.hasProperty("pgyer_user_key") ? project.ext.user_key : pgyerConfig.pgyer_user_key
+    def api_key = project.hasProperty("pgyer_api_key") ? project.ext.pgyer_api_key : pgyerConfig.pgyer_api_key
+    def user_key = project.hasProperty("pgyer_user_key") ? project.ext.pgyer_user_key : pgyerConfig.pgyer_user_key
 
-    def apkPath = project.hasProperty("pgyerApkPath") ? project.ext.apkPath : pgyerConfig.pgyerApkPath
+    def apkPath = project.hasProperty("pgyerApkPath") ? project.ext.pgyerApkPath : pgyerConfig.pgyerApkPath
     if (apkPath == null || apkPath.isEmpty()) {
         throw new IllegalStateException("请在[gradle.properties]文件中指定需要上传的文件路径[pgyerApkPath=xxx]")
     }
