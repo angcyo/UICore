@@ -210,6 +210,11 @@ object DslHttp {
     fun retrofit(rebuild: Boolean = false): Retrofit {
         if (rebuild) {
             dslHttpConfig.retrofit = null
+        } else {
+            if (dslHttpConfig.retrofit?.baseUrl()?.toString() != dslHttpConfig.onGetBaseUrl()) {
+                //url改变之后,也需要重建
+                dslHttpConfig.retrofit = null
+            }
         }
         init()
         return dslHttpConfig.retrofit!!

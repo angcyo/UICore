@@ -2,15 +2,18 @@ package com.angcyo.core.component
 
 import android.content.Context
 import android.view.View
+import com.angcyo.core.CoreApplication
 import com.angcyo.core.R
 import com.angcyo.dialog.DslDialogConfig
 import com.angcyo.dialog.dslDialog
+import com.angcyo.http.DslHttp
 import com.angcyo.http.base.fromJson
 import com.angcyo.http.base.toJson
 import com.angcyo.http.isSucceed
 import com.angcyo.http.rx.BaseObserver
 import com.angcyo.http.rx.observer
 import com.angcyo.library.L
+import com.angcyo.library.app
 import com.angcyo.library.toast
 import com.angcyo.widget.RSpinner
 import com.angcyo.widget.base.setInputText
@@ -30,6 +33,43 @@ object HttpConfigDialog {
 
     var MAPPING_URL = "https://www.angcyo.com/api/php/android/c/url_mapping"
 
+    /**自定义后的url*/
+    var customBaseUrl: String? = null
+
+    /**app正式使用的服务器地址*/
+    val appBaseUrl: String
+        get() {
+            return DslHttp.dslHttpConfig.onGetBaseUrl()
+        }
+
+    /**app中配置自定义的其他服务器*/
+    val appCustomUrls: List<String>
+        get() {
+            val result = mutableListOf<String>()
+            val app = (app() as? CoreApplication)
+            if (app == null) {
+                customBaseUrl?.let { result.add(it) }
+            } else {
+                result.add("主要服务器 ${app.getHostBaseUrl()}")
+                app.getHostUrls()?.split(";")?.forEach {
+                    if (it.isNotEmpty()) {
+                        result.add(it)
+                    }
+                }
+            }
+            return result
+        }
+
+    /**显示网络配置地址配置对话框*/
+    fun showHttpConfig(context: Context, end: () -> Unit = {}) {
+        show(context, appBaseUrl, appCustomUrls) { url, cancel ->
+            if (!cancel) {
+                customBaseUrl = url
+            }
+            end()
+        }
+    }
+
     /**
      * @param urlList 可以使用空格, key:value 的形式, 会取空格分隔后的最后一个
      */
@@ -37,13 +77,17 @@ object HttpConfigDialog {
         context: Context,
         baseUrl: String,
         urlList: List<String>? = null,
-        save: (String) -> Unit
+        /*url,是否被取消*/
+        save: (url: String?, cancel: Boolean) -> Unit
     ) {
         dslDialog(context) {
             canceledOnTouchOutside = false
             dialogThemeResId = 0
             dialogType = DslDialogConfig.DIALOG_TYPE_ALERT_DIALOG
             dialogLayoutId = R.layout.lib_http_config_layout
+            onDismissListener = {
+                save(null, true)
+            }
             onDialogInitListener = { dialog, dialogViewHolder ->
 
                 dialogViewHolder.ev(R.id.host_edit)?.setInputText(baseUrl)
@@ -96,7 +140,9 @@ object HttpConfigDialog {
                 }
 
                 dialogViewHolder.click(R.id.lib_save_button) {
-                    save(dialogViewHolder.ev(R.id.host_edit).string())
+                    val url = dialogViewHolder.ev(R.id.host_edit).string()
+                    save(url, false)
+                    L.w("save url->$url")
                     dialog.dismiss()
                 }
             }

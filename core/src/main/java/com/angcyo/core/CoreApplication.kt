@@ -5,6 +5,7 @@ import androidx.collection.ArrayMap
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import com.angcyo.core.component.DslCrashHandler
+import com.angcyo.core.component.HttpConfigDialog
 import com.angcyo.core.component.interceptor.LogFileInterceptor
 import com.angcyo.http.DslHttp
 import com.angcyo.http.rx.Rx
@@ -12,6 +13,7 @@ import com.angcyo.library.L
 import com.angcyo.library.LibApplication
 import com.angcyo.library.ex.getAppSignatureMD5
 import com.angcyo.library.ex.getAppSignatureSHA1
+import com.angcyo.library.getAppString
 import me.weishu.reflection.Reflection
 
 /**
@@ -28,6 +30,11 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
         Rx.init()
 
         DslHttp.config {
+            onGetBaseUrl = {
+                //优先使用主动配置的, 其次使用默认配置的
+                HttpConfigDialog.customBaseUrl ?: getHostBaseUrl()
+            }
+
             val logFileInterceptor = LogFileInterceptor()
             onConfigOkHttpClient.add {
                 if (!it.interceptors().contains(logFileInterceptor)) {
@@ -49,6 +56,17 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
         super.attachBaseContext(base)
         Reflection.unseal(base)
     }
+
+    /**服务器地址
+     * resValue "string", "base_api", '"https://rj.appraise.wayto.com.cn/appraiseApi"'
+     * */
+    open fun getHostBaseUrl() = getAppString("base_api") ?: "http://api.angcyo.com"
+
+    /**
+     * 服务器配置
+     * resValue "string", "custom_urls", '"测试服务器 https://rj.appraise.wayto.com.cn/appraiseApi;正式服务器 https://ruijie.appraise.wayto.com.cn:8043/appraiseApi"'
+     * */
+    open fun getHostUrls() = getAppString("custom_urls")
 
     //<editor-fold desc="hold">
 
