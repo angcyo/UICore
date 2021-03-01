@@ -27,7 +27,7 @@
  * */
 ext.pgyerConfig = [
         //需要上传的APK,相对路径/绝对路径 (必填)
-        "apkPath" : "",
+        "pgyerApkPath" : "",
 
         //请求的api地址
         "pgyerUrl": "https://www.pgyer.com/apiv2/app/upload",
@@ -35,8 +35,8 @@ ext.pgyerConfig = [
         //官网, 用于拼接短地址 必须/结尾.
         "pgyer"   : "https://www.pgyer.com/",
 
-        "api_key" : "6e3a8d2537e595a4d5ea95f4bc7b52cc",
-        "user_key": "7290604c20949f99279677efcaface0b"
+        "pgyer_api_key" : "",
+        "pgyer_user_key": ""
 ]
 
 //其他参数配置
@@ -54,12 +54,12 @@ def paramsConfig = [
 buildscript {
     repositories {
         //alliyun 镜像
-        maven() { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven() { url 'https://maven.aliyun.com/repository/public' }
         jcenter()
     }
     dependencies {
         //https://jcenter.bintray.com/com/squareup/okhttp3/
-        classpath "com.squareup.okhttp3:okhttp:4.3.1"
+        classpath "com.squareup.okhttp3:okhttp:4.9.1"
         //https://jcenter.bintray.com/com/google/code/gson/gson/
         classpath "com.google.code.gson:gson:2.8.6"
     }
@@ -71,12 +71,12 @@ task _pgyerUpload() {
 
 _pgyerUpload.doFirst {
 
-    def api_key = project.hasProperty("api_key") ? project.ext.api_key : pgyerConfig.api_key
-    def user_key = project.hasProperty("user_key") ? project.ext.user_key : pgyerConfig.user_key
+    def api_key = project.hasProperty("pgyer_api_key") ? project.ext.api_key : pgyerConfig.pgyer_api_key
+    def user_key = project.hasProperty("pgyer_user_key") ? project.ext.user_key : pgyerConfig.pgyer_user_key
 
-    def apkPath = project.hasProperty("apkPath") ? project.ext.apkPath : pgyerConfig.apkPath
+    def apkPath = project.hasProperty("pgyerApkPath") ? project.ext.apkPath : pgyerConfig.pgyerApkPath
     if (apkPath == null || apkPath.isEmpty()) {
-        throw new IllegalStateException("请在[gradle.properties]文件中指定需要上传的文件路径[apkPath=xxx]")
+        throw new IllegalStateException("请在[gradle.properties]文件中指定需要上传的文件路径[pgyerApkPath=xxx]")
     }
 
     def allPath = apkPath.split(";")

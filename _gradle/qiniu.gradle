@@ -21,39 +21,39 @@
  * mac: '/Users/用户名/.gradle/gradle.properties"'
  * 文件中加入配置:
  * ```
- * AccessKey=xxx
- * SecretKey=xxx
- * Bucket=xxx
+ * qiniu_ak=xxx
+ * qiniu_sk=xxx
+ * qiniu_bucket=xxx
  * ```
  * 也可以在以下配置.(优先读取`gradle.properties`文件中的配置)
  * */
 ext.qiniuConfig = [
         //需要上传的APK路径(必须指定)
-        "apkPath"     : "",
+        "qiniuApkPath"     : "",
 
         //是否要先执行删除文件
-        "deleteBefore": "true",
-
-        //用来保存上传成功后, APK的下载地址
-        "downloadUrl" : "",
+        "qiniuDeleteBefore": "true",
 
         //下载域名前缀, 需要'/'结尾(在七牛云上配置的外链域名)
-        "baseUrl"     : "http://file.angcyo.com/",
+        "qiniuBaseUrl"     : "http://file.angcyo.com/",
 
-        "AccessKey"   : "gqfhS_TN3rPi7PnUNYB03tLwGiLR0xBCXlSAM4cG",
-        "SecretKey"   : "DbPHevxM0tSjA_4FT2AIMllPUVHTRtw-GOtX3_mU",
-        "Bucket"      : "angcyo-apk",
+        "qiniu_ak"         : "",
+        "qiniu_sk"         : "",
+        "qiniu_bucket"     : "angcyo-apk",
 
         //如果需要将url转成二维码, 参考以下链接, 注册app_id和app_secret
         //https://github.com/MZCretin/RollToolsApi#%E8%A7%A3%E9%94%81%E6%96%B0%E6%96%B9%E5%BC%8F
-        "app_id"      : "rhqkxdsnjnrpp3xr",
-        "app_secret"  : "Rlh4c1duMDZ4YnZrRks4dU55c1NEQT09"
+        "app_id"           : "rhqkxdsnjnrpp3xr",
+        "app_secret"       : "Rlh4c1duMDZ4YnZrRks4dU55c1NEQT09",
+
+        //用来保存上传成功后, APK的下载地址
+        "downloadUrl"      : "",
 ]
 
 buildscript {
     repositories {
         //alliyun 镜像
-        maven() { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven() { url 'https://maven.aliyun.com/repository/public' }
         jcenter()
     }
     dependencies {
@@ -71,19 +71,20 @@ buildscript {
 
 task _qiniuUpload() {
     doFirst {
-        def ak = project.hasProperty("AccessKey") ? project.ext.AccessKey : qiniuConfig.AccessKey
-        def sk = project.hasProperty("SecretKey") ? project.ext.SecretKey : qiniuConfig.SecretKey
-        def bk = project.hasProperty("Bucket") ? project.ext.Bucket : qiniuConfig.Bucket
-        def baseUrl = project.hasProperty("baseUrl") ? project.ext.baseUrl : qiniuConfig.baseUrl
+        def ak = project.hasProperty("qiniu_ak") ? project.ext.qiniu_ak : qiniuConfig.qiniu_ak
+        def sk = project.hasProperty("qiniu_sk") ? project.ext.qiniu_sk : qiniuConfig.qiniu_sk
+        def bk = project.hasProperty("qiniu_bucket") ? project.ext.qiniu_bucket : qiniuConfig.qiniu_bucket
+
+        def baseUrl = project.hasProperty("qiniuBaseUrl") ? project.ext.qiniuBaseUrl : qiniuConfig.qiniuBaseUrl
+        def qiniuDeleteBefore = project.hasProperty("qiniuDeleteBefore") ? project.ext.qiniuDeleteBefore : aliyunOssConfig.qiniuDeleteBefore
+        def deleteBefore = qiniuDeleteBefore == "true"
 
         def app_id = project.hasProperty("app_id") ? project.ext.app_id : qiniuConfig.app_id
         def app_secret = project.hasProperty("app_id") ? project.ext.app_secret : qiniuConfig.app_secret
 
-        def deleteBefore = qiniuConfig.deleteBefore != null && qiniuConfig.deleteBefore == "true"
-
-        def apkPath = project.hasProperty("apkPath") ? project.ext.apkPath : qiniuConfig.apkPath
+        def apkPath = project.hasProperty("qiniuApkPath") ? project.ext.qiniuApkPath : qiniuConfig.qiniuApkPath
         if (apkPath == null || apkPath.isEmpty()) {
-            throw new IllegalStateException("请在[gradle.properties]文件中指定需要上传的文件路径[apkPath=xxx]")
+            throw new IllegalStateException("请在[gradle.properties]文件中指定需要上传的文件路径[qiniuApkPath=xxx]")
         }
 
         def allPath = apkPath.split(";")

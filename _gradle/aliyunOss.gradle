@@ -1,0 +1,159 @@
+/**
+ * 阿里云 OSS文件存储 上传脚本
+ * 请无视IDEA的爆红, 并不影响运行.
+ * 请不要随意导入其他包.
+ *
+ * 脚本`apply`之后, 会在gradle窗口中的: 工程->Tasks->other 中出现 `_aliyunOssUpload` 任务. 双击即可运行.
+ *
+ * https://github.com/angcyo/gradle
+ *
+ * https://help.aliyun.com/document_detail/32009.html
+ *
+ * Email:angcyo@126.com
+ * @author angcyo* @date 2021-3-1
+ * Copyright (c) 2021 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
+ */
+
+/**
+ * 为了保证`Key`的安全:
+ * 可以在
+ * win: 'C:\Users\用户名\.gradle\gradle.properties"'
+ * mac: '/Users/用户名/.gradle/gradle.properties"'
+ * 文件中加入配置:
+ * ```
+ * aliyunOss_ak=xxx
+ * qiniu_sk=xxx
+ * qiniu_bucket=xxx
+ * ```
+ * 也可以在以下配置.(优先读取`gradle.properties`文件中的配置)
+ * */
+ext.aliyunOssConfig = [
+        //需要上传的文件路径(多个用;分割,必须指定)
+        "aliyunOssFilePath"       : "",
+        //存储在oss的路径,默认就是文件名.可以指定路径比如[AccAuto/]
+        "aliyunOssFileKey"        : "",
+
+        "aliyunOssEndpoint"       : "http://oss-cn-shenzhen.aliyuncs.com",
+        "aliyunOssBucketName"     : "angcyo-public-file",
+
+        //是否要先执行删除文件, 需要数据删除的权限
+        "aliyunOssDeleteBefore"   : "false",
+
+        //下载域名前缀, 需要'/'结尾(在阿里云上配置的外链域名)
+        "aliyunOssBaseUrl"        : "https://angcyo-public-file.oss-cn-shenzhen.aliyuncs.com/",
+
+        "aliyunOssAccessKeyId"    : "",
+        "aliyunOssAccessKeySecret": "",
+
+        //如果需要将url转成二维码, 参考以下链接, 注册app_id和app_secret
+        //https://github.com/MZCretin/RollToolsApi#%E8%A7%A3%E9%94%81%E6%96%B0%E6%96%B9%E5%BC%8F
+        "app_id"                  : "rhqkxdsnjnrpp3xr",
+        "app_secret"              : "Rlh4c1duMDZ4YnZrRks4dU55c1NEQT09",
+
+
+        //用来保存上传成功后, APK的下载地址
+        "downloadUrl"             : "",
+]
+
+buildscript {
+    repositories {
+        //alliyun 镜像
+        maven() { url 'https://maven.aliyun.com/repository/public' }
+        jcenter()
+    }
+    dependencies {
+        //https://jcenter.bintray.com/com/aliyun/oss/aliyun-sdk-oss
+        classpath 'com.aliyun.oss:aliyun-sdk-oss:3.11.3'
+        //https://jcenter.bintray.com/com/squareup/okhttp3/
+        classpath "com.squareup.okhttp3:okhttp:4.9.1"
+        //https://jcenter.bintray.com/com/google/code/gson/gson/
+        classpath "com.google.code.gson:gson:2.8.6"
+    }
+}
+
+/**
+ * 上传本地文件->阿里云Oss->返回文件下载地址
+ * 拿到下载url->生成url二维码地址
+ * */
+
+task _aliyunOssUpload() {
+    doFirst {
+        def accessKeyId = project.hasProperty("aliyunOssAccessKeyId") ? project.ext.aliyunOssAccessKeyId : aliyunOssConfig.aliyunOssAccessKeyId
+        def accessKeySecret = project.hasProperty("aliyunOssAccessKeySecret") ? project.ext.aliyunOssAccessKeySecret : aliyunOssConfig.aliyunOssAccessKeySecret
+        def endpoint = project.hasProperty("aliyunOssEndpoint") ? project.ext.aliyunOssEndpoint : aliyunOssConfig.aliyunOssEndpoint
+        def bucketName = project.hasProperty("aliyunOssBucketName") ? project.ext.aliyunOssBucketName : aliyunOssConfig.aliyunOssBucketName
+
+        def baseUrl = project.hasProperty("aliyunOssBaseUrl") ? project.ext.aliyunOssBaseUrl : aliyunOssConfig.aliyunOssBaseUrl
+        def aliyunOssDeleteBefore = project.hasProperty("aliyunOssDeleteBefore") ? project.ext.aliyunOssDeleteBefore : aliyunOssConfig.aliyunOssDeleteBefore
+        def deleteBefore = aliyunOssDeleteBefore == "true"
+
+        def app_id = project.hasProperty("app_id") ? project.ext.app_id : aliyunOssConfig.app_id
+        def app_secret = project.hasProperty("app_id") ? project.ext.app_secret : aliyunOssConfig.app_secret
+
+        def filePath = project.hasProperty("aliyunOssFilePath") ? project.ext.aliyunOssFilePath : aliyunOssConfig.aliyunOssFilePath
+        def fileKey = project.hasProperty("aliyunOssFileKey") ? project.ext.aliyunOssFileKey : aliyunOssConfig.aliyunOssFileKey
+        if (filePath == null || filePath.isEmpty()) {
+            throw new IllegalStateException("请在[gradle.properties]文件中指定需要上传的文件路径[aliyunOssFilePath=xxx]")
+        }
+
+        def allPath = filePath.split(";")
+        def allKey = fileKey.split(";")
+
+        allPath.eachWithIndex { path, index ->
+            def file = file(path)
+            def _filePath = file.absolutePath
+
+            if (!file.exists()) {
+                if (allPath.size() > 1) {
+                    System.err.println "跳过不存在的文件:" + _filePath
+                } else {
+                    throw new IllegalStateException("需要上传的文件不存在:" + _filePath)
+                }
+            } else {
+                def name = file.name
+                def key = allKey[index]
+                if (key.isEmpty()) key = name else key = "${key}${name}"
+
+                def ossClient = new com.aliyun.oss.OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret)
+
+                if (deleteBefore) {
+                    //删除文件
+                    try {
+                        ossClient.deleteObject(bucketName, key)
+                        System.err.println "删除文件:${key} 成功."
+                    } catch (Exception ignored) {
+                        //忽略异常
+                        System.err.println "删除文件:${key} 失败."
+                    }
+                }
+
+                def ossRequest = new com.aliyun.oss.model.PutObjectRequest(bucketName, key, file)
+                System.err.println "\n开始上传->" + _filePath + "->" + key
+                ossClient.putObject(ossRequest)
+                // 关闭OSSClient。
+                ossClient.shutdown()
+
+                def downloadUrl = baseUrl + key
+                System.out.println "上传完成->${downloadUrl}"
+                System.out.println ""
+                
+                if (!app_id.isEmpty() && !app_secret.isEmpty()) {
+                    //生成url对应的二维码
+                    //https://github.com/MZCretin/RollToolsApi#%E5%85%AB%E7%94%9F%E6%88%90%E4%BA%8C%E7%BB%B4%E7%A0%81
+                    def client = new okhttp3.OkHttpClient()
+                    def request = new okhttp3.Request.Builder()
+                            .header("app_id", app_id)
+                            .header("app_secret", app_secret)
+                            .url("http://www.mxnzp.com/api/qrcode/create/single?content=${downloadUrl}&size=400&type=0")
+                            .build()
+                    def json = client.newCall(request).execute().body().string()
+                    def map = new com.google.gson.Gson().fromJson(json, Map.class)
+                    println "创建二维码:${json}"
+                    System.err.println "二维码地址->" + map["data"]["qrCodeUrl"]
+
+                    System.err.println "备用二维码地址->http://qr.topscan.com/api.php?text=${downloadUrl}"
+                }
+            }
+        }
+    }
+}
