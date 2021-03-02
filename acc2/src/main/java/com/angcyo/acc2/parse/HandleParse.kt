@@ -149,6 +149,14 @@ class HandleParse(val accParse: AccParse) {
             }
         }
 
+        //index筛选
+        if (handleBean.index != null && !handleNodeList.isNullOrEmpty()) {
+            val filterFindNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
+            val index = accParse.parseText(handleBean.index).firstOrNull()
+            filterFindNodeList.addAll(handleNodeList.eachRangeItem(index))
+            handleNodeList = filterFindNodeList
+        }
+
         //---------------开始处理----------------
 
         if (conditionActionList != null) {

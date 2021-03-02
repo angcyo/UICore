@@ -106,18 +106,22 @@ data class FindBean(
 
     //<editor-fold desc="筛选器">
 
-    /**
+    /**1:
      * 取节点中, 对应的索引, 等同于[com.angcyo.acc2.bean.FilterBean.index]
      * 支持文本变量
      * */
     var index: String? = null,
 
-    /**
+    /**2:
      * 取节点中, 对应的child节点
      * [com.angcyo.acc2.bean.FilterBean.index]
      * 支持文本变量
      * */
     var childIndex: String? = null,
+
+    /**3:
+     * 根据上述查找到的节点, 取满足条件对应的父节点*/
+    var parent: ChildBean? = null,
 
     //</editor-fold desc="筛选器">
 

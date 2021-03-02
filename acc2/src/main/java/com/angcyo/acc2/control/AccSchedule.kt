@@ -1,5 +1,6 @@
 package com.angcyo.acc2.control
 
+import com.angcyo.acc2.action.Action
 import com.angcyo.acc2.bean.ActionBean
 import com.angcyo.acc2.parse.AccParse
 import com.angcyo.acc2.parse.HandleResult
@@ -98,6 +99,45 @@ class AccSchedule(val accControl: AccControl) {
 
     fun relyList(): List<Long>? {
         return _runActionBean?.relyList ?: _scheduleActionBean?.relyList
+    }
+
+    /**通过[group]查找分组中的第一个[ActionBean]*/
+    fun findFirstActionByGroup(group: String?): ActionBean? {
+        if (group.isNullOrEmpty()) {
+            return null
+        }
+        var result: ActionBean? = null
+        accControl._taskBean?.actionList?.apply {
+            for (action in this) {
+                if (action.group?.split(Action.PACKAGE_SPLIT)?.contains(group) == true) {
+                    result = action
+                    break
+                }
+            }
+        }
+        return result
+    }
+
+    /**指定分组中的第一个[ActionBean]是否激活*/
+    fun isFirstActionEnableByGroup(actionBean: ActionBean, group: String?): Boolean {
+        if (group.isNullOrEmpty()) {
+            return true
+        }
+        var result = false
+        val groupList = group.split(Action.PACKAGE_SPLIT)
+        for (g in groupList) {
+            val findFirstActionByGroup = findFirstActionByGroup(g)
+            result = if (findFirstActionByGroup == actionBean) {
+                //第一个就是自身
+                true
+            } else {
+                findFirstActionByGroup?.enable == true
+            }
+            if (result) {
+                break
+            }
+        }
+        return result
     }
 
     //</editor-fold desc="操作">
@@ -292,6 +332,16 @@ class AccSchedule(val accControl: AccControl) {
     /**判断[action]是否激活, 激活后才允许运行*/
     fun isActionBeanEnable(action: ActionBean?): Boolean {
         if (action != null) {
+            //分组判断
+            val group = action.group
+            if (!group.isNullOrEmpty()) {
+                //具有分组标识
+                if (!isFirstActionEnableByGroup(action, group)) {
+                    accControl.log("${action.actionLog()}的分组[${group}]中第一个ActionBean未激活,跳过.")
+                    return false
+                }
+            }
+
             if (action.enable && action._enable == null) {
                 //找到激活的
                 if (!accParse.conditionParse.parse(action.conditionList).success) {
@@ -424,7 +474,7 @@ class AccSchedule(val accControl: AccControl) {
             handleActionResult.success = false
             runActionBeanStack.popSafe()
             _runActionBean = null
-            accControl.log("${actionBean.actionLog()}未满足激活条件,跳过执行.")
+            accControl.log("${actionBean.actionLog()}未满足激活条件,跳过执行.", isPrimaryAction)
             return handleActionResult
         }
 
@@ -435,7 +485,7 @@ class AccSchedule(val accControl: AccControl) {
         if (isPrimaryAction) {
             accControl.next(actionBean, delayTime)
         }
-        accControl.log("${actionBean.actionLog()}等待[$delayTime]ms后运行.")
+        accControl.log("${actionBean.actionLog()}等待[$delayTime]ms后运行.", isPrimaryAction)
         sleep(delayTime)
 
         //回调
@@ -499,7 +549,7 @@ class AccSchedule(val accControl: AccControl) {
 
             if (isPrimaryAction) {
                 if (!handleActionResult.success) {
-                    accControl.log("无法处理↓\n${actionBean.check}\n${handleList}")
+                    accControl.log("无法处理↓\n${actionBean.check}\n${handleList}", isPrimaryAction)
                 }
             }
         } else {
@@ -507,7 +557,7 @@ class AccSchedule(val accControl: AccControl) {
                 findParse.parse(rootNodeList, eventList).nodeList
 
             if (eventNodeList.isNullOrEmpty()) {
-                accControl.log("[event]未匹配到元素:${eventList}")
+                accControl.log("[event]未匹配到元素:${eventList}", isPrimaryAction)
                 //未找到元素
                 val handleResult = handleParse.parse(rootNodeList, actionBean.check?.other)
 
@@ -534,14 +584,20 @@ class AccSchedule(val accControl: AccControl) {
                             }
                         }
                         if (otherHandleResult?.success == true) {
-                            accControl.log("[other]已处理[${actionBean.actionLog()}]:${otherAction}")
+                            accControl.log(
+                                "[other]已处理[${actionBean.actionLog()}]:${otherAction}",
+                                isPrimaryAction
+                            )
                             break
                         }
                     }
                 }
             } else {
                 //找到了目标元素
-                accControl.log(eventNodeList.toLog("[event]匹配到元素(${eventNodeList.size})${actionBean.check}↓"))
+                accControl.log(
+                    eventNodeList.toLog("[event]匹配到元素(${eventNodeList.size})${actionBean.check}↓"),
+                    isPrimaryAction
+                )
                 val result = handleParse.parse(eventNodeList, handleList)
                 handleActionResult = result
                 if (result.success) {

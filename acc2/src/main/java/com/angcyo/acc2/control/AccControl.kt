@@ -241,9 +241,14 @@ fun Number.toControlStateStr() = when (this) {
     else -> "STATE_UNKNOWN"
 }
 
-/**日志输出*/
-fun AccControl.log(log: String?) {
-    accPrint.log(log)
+/**日志输出
+ * [isPrimaryAction] 是否是主线任务, 如果不是, 日志会缩进*/
+fun AccControl.log(log: String?, isPrimaryAction: Boolean = true) {
+    if (isPrimaryAction) {
+        accPrint.log(log)
+    } else {
+        accPrint.log("  $log")
+    }
 }
 
 /**日志输出*/

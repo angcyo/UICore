@@ -12,6 +12,8 @@ data class FilterBean(
     /**获取一组元素中指定索引位置的元素
      * 支持范围[0~-1]第一个到倒数第一个
      * 支持文本变量
+     * 支持随机 [com.angcyo.acc2.action.Action.RANDOM]
+     * [random:5] 随机获取5个
      * 匹配顺序:1*/
     var index: String? = null,
 

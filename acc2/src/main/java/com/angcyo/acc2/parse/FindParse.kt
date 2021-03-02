@@ -129,8 +129,7 @@ class FindParse(val accParse: AccParse) {
             val filterFindNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
             val index = accParse.parseText(findBean.index).firstOrNull()
             filterFindNodeList.addAll(findNodeList.eachRangeItem(index))
-            findNodeList.clear()
-            findNodeList.addAll(filterFindNodeList)
+            findNodeList.resetAll(filterFindNodeList)
         }
 
         //第2层筛选
@@ -140,8 +139,18 @@ class FindParse(val accParse: AccParse) {
             findNodeList.forEach { node ->
                 filterFindNodeList.addAll(node.childList().eachRangeItem(childIndex))
             }
-            findNodeList.clear()
-            findNodeList.addAll(filterFindNodeList)
+            findNodeList.resetAll(filterFindNodeList)
+        }
+
+        //第3层筛选
+        if (findBean.parent != null) {
+            val filterFindNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
+            findNodeList.forEach { node ->
+                findParentByNode(node, findBean.parent!!)?.apply {
+                    filterFindNodeList.add(this)
+                }
+            }
+            findNodeList.resetAll(filterFindNodeList)
         }
 
         //------------------------后处理-------------------------
@@ -250,7 +259,7 @@ class FindParse(val accParse: AccParse) {
         val result = mutableListOf<AccessibilityNodeInfoCompat>()
         when {
             //无包名字段, 则使用活动窗口
-            packageName == null -> {
+            packageName == null && ignorePackageName == null -> {
                 accParse.accControl.accService()?.rootInActiveWindow?.wrap()?.let { node ->
                     if (!isIgnorePackageName(node, ignorePackageName)) {
                         result.add(node)
@@ -258,7 +267,7 @@ class FindParse(val accParse: AccParse) {
                 }
             }
             //如果包名为空字符, 则支持所有window
-            packageName.isEmpty() -> {
+            packageName?.isBlank() == true -> {
                 accParse.accControl.accService()?.windows?.forEach {
                     it.root?.wrap()?.let { node ->
                         if (!isIgnorePackageName(node, ignorePackageName)) {
@@ -289,15 +298,7 @@ class FindParse(val accParse: AccParse) {
             return _findRootNodeBy(taskPackageName)
         } else {
             //解析window约束
-            if (windowBean.packageName != null) {
-                //指定了要重新获取根节点
-                result.addAll(_findRootNodeBy(windowBean.packageName, windowBean.ignorePackageName))
-            } else {
-                //活动节点
-                accParse.accControl.accService()?.rootInActiveWindow?.let {
-                    result.add(it.wrap())
-                }
-            }
+            result.addAll(_findRootNodeBy(windowBean.packageName, windowBean.ignorePackageName))
 
             //矩形约束
             if (windowBean.rect != null) {
@@ -410,6 +411,23 @@ class FindParse(val accParse: AccParse) {
         return result
     }
 
+    /**在当前节点[node]查找符合条件的父节点*/
+    fun findParentByNode(
+        node: AccessibilityNodeInfoCompat,
+        condition: ChildBean
+    ): AccessibilityNodeInfoCompat? {
+        var result: AccessibilityNodeInfoCompat? = node.parent
+
+        while (result != null) {
+            if (matchNode(result, condition)) {
+                break
+            }
+            result = result.parent
+        }
+
+        return result
+    }
+
     //</editor-fold desc="find">
 
     //<editor-fold desc="match">
@@ -423,6 +441,18 @@ class FindParse(val accParse: AccParse) {
             findBean.rectList?.getOrNull(index),
             findBean.stateList?.getOrNull(index),
             findBean.childList
+        )
+    }
+
+    fun matchNode(node: AccessibilityNodeInfoCompat, condition: ChildBean): Boolean {
+        return matchNode(
+            node,
+            condition.rect,
+            condition.cls,
+            condition.id,
+            condition.rect,
+            condition.state,
+            condition.childList
         )
     }
 
@@ -749,16 +779,7 @@ class FindParse(val accParse: AccParse) {
             val child = node.getChild(i)
             val childBean = childList.getOrNull(i)
             if (child != null && childBean != null) {
-                if (matchNode(
-                        child,
-                        childBean.rect,
-                        childBean.cls,
-                        childBean.id,
-                        childBean.rect,
-                        childBean.state,
-                        childBean.childList
-                    )
-                ) {
+                if (matchNode(child, childBean)) {
                     if (childBean.filter != null) {
                         //需要满足过滤条件
                         val removeList = accParse.filterParse.parse(listOf(child), childBean.filter)

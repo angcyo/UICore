@@ -22,8 +22,13 @@ object Action {
 
     const val OP = "><=%≈"
 
+    /**依赖的Action标识*/
     const val RELY = "rely"
 
+    /**随便标识*/
+    const val RANDOM = "random"
+
+    /**所有标识*/
     const val ALL = "*"
 
     /**取父节点*/

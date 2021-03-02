@@ -8,6 +8,9 @@ package com.angcyo.acc2.bean
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 data class WindowBean(
+
+    /**当前[packageName]和[ignorePackageName]都是[null]时, 则取Active窗口*/
+
     /**通过包名, 选择window,
      * 支持正则
      * 支持分割[com.angcyo.acc2.action.Action.PACKAGE_SPLIT]

@@ -86,6 +86,11 @@ data class ActionBean(
      * [<=30] 30%的概率*/
     var randomAmount: String? = null,
 
+    /**[ActionBean]分组, 最优先判断, 只有group判断通过之后, 才会执行剩下的激活逻辑判断.
+     * 只有相同分组中的第一个激活, 自身才激活,否则跳过.
+     * 多个分组使用[com.angcyo.acc2.action.Action.PACKAGE_SPLIT]分割*/
+    var group: String? = null,
+
     //</editor-fold desc="激活">
 
     /**未指定[check]时, 可以通过[checkId]在[check]库中根据id查找对应的[CheckBean]*/

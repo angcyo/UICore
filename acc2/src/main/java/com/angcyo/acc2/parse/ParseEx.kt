@@ -3,13 +3,11 @@ package com.angcyo.acc2.parse
 import android.graphics.PointF
 import android.graphics.Rect
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
+import com.angcyo.acc2.action.Action
 import com.angcyo.acc2.core.AccNodeLog
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
-import com.angcyo.library.ex.bounds
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.have
-import com.angcyo.library.ex.patternList
+import com.angcyo.library.ex.*
 import java.net.URLEncoder
 
 /**
@@ -86,6 +84,21 @@ fun <T> List<T>.eachRangeItem(
         forEachIndexed { index, item ->
             result.add(item)
             action(item, true)
+        }
+        return result
+    }
+
+    //随机获取
+    if (indexString.contains(Action.RANDOM)) {
+        val count = indexString.arg(Action.RANDOM)?.toIntOrNull() ?: 1
+        val randomGet = randomGet(count)
+        forEachIndexed { index, item ->
+            if (randomGet.contains(item)) {
+                result.add(item)
+                action(item, true)
+            } else {
+                action(item, false)
+            }
         }
         return result
     }
