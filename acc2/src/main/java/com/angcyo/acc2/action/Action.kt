@@ -28,6 +28,10 @@ object Action {
     /**随便标识*/
     const val RANDOM = "random"
 
+    /**使用返回的节点信息
+     * [com.angcyo.acc2.bean.HandleBean.rootNode]*/
+    const val RESULT = "result"
+
     /**所有标识*/
     const val ALL = "*"
 

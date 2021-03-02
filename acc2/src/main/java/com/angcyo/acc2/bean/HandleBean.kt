@@ -22,6 +22,11 @@ data class HandleBean(
 
     //<editor-fold desc="前处理">
 
+    /**处理[findList]时,需要使用的根节点
+     * [com.angcyo.acc2.action.Action.RESULT] 使用[com.angcyo.acc2.bean.CheckBean.event]返回的节点,进行后续处理
+     * [null] 使用默认的[com.angcyo.acc2.parse.FindParse.rootWindowNode]节点*/
+    var rootNode: String? = null,
+
     /**重新选择新的元素, 否则直接使用[com.angcyo.acc2.bean.CheckBean.event]获取到的元素*/
     var findList: List<FindBean>? = null,
 

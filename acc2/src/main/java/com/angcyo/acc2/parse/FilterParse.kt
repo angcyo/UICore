@@ -28,7 +28,9 @@ class FilterParse(val accParse: AccParse) {
             return emptyList()
         }
 
+        //剩余节点
         var after: List<AccessibilityNodeInfoCompat> = originList
+        //需要移除的节点
         val removeList = mutableListOf<AccessibilityNodeInfoCompat>()
 
         //过滤1: index
@@ -109,7 +111,28 @@ class FilterParse(val accParse: AccParse) {
             }
         }
 
-        //过滤6: childCount
+        //过滤6: haveTextList
+        if (filterBean.haveTextList != null) {
+            after = if (removeList.isEmpty()) after else after.filter { !removeList.contains(it) }
+            after.forEach { node ->
+                var ignore = false
+                for (text in filterBean.haveTextList!!) {
+                    val textList = accParse.parseText(text)
+                    if (!nodeHaveText(node, textList)) {
+                        ignore = true
+                    }
+                    if (ignore) {
+                        break
+                    }
+                }
+                if (ignore) {
+                    //忽略元素
+                    removeList.add(node)
+                }
+            }
+        }
+
+        //过滤7: childCount
         if (filterBean.childCount != null) {
             after = if (removeList.isEmpty()) after else after.filter { !removeList.contains(it) }
             after.forEach { node ->
@@ -124,7 +147,7 @@ class FilterParse(val accParse: AccParse) {
             }
         }
 
-        //过滤7: sizeCount
+        //过滤8: sizeCount
         if (filterBean.sizeCount != null) {
             after = if (removeList.isEmpty()) after else after.filter { !removeList.contains(it) }
             after.forEach { node ->
@@ -174,12 +197,21 @@ class FilterParse(val accParse: AccParse) {
             }
         }
 
+        //------------------------后处理-------------------------
+
+        if (filterBean.after != null) {
+            after = if (removeList.isEmpty()) after else after.filter { !removeList.contains(it) }
+            removeList.addAll(parse(after, filterBean.after))
+        }
+
         return removeList
     }
 
     //</editor-fold desc="filter">
 
-    /**返回是否要过滤掉[node]*/
+    /**
+     * 如果节点包含[textList]中的一项,则过滤节点
+     * 返回是否要过滤掉[node]*/
     fun filterNodeText(node: AccessibilityNodeInfoCompat, textList: List<String?>?): Boolean {
         if (textList.isNullOrEmpty()) {
             return false
@@ -205,6 +237,37 @@ class FilterParse(val accParse: AccParse) {
     fun filterNodeText(node: AccessibilityNodeInfoCompat, text: String?): Boolean {
         if (text.isNullOrEmpty()) {
             return false
+        }
+        return node.haveText(text)
+    }
+
+    /**节点是否包含指定的文本
+     * [textList]必须全部包含*/
+    fun nodeHaveText(node: AccessibilityNodeInfoCompat, textList: List<String?>?): Boolean {
+        if (textList == null) {
+            return false
+        }
+        if (textList.isEmpty()) {
+            return true
+        }
+        var have = false
+        for (text in textList) {
+            have = nodeHaveText(node, text)
+            if (!have) {
+                break
+            }
+        }
+
+        return have
+    }
+
+    /**如果节点[node]包含文本[text], 则返回true*/
+    fun nodeHaveText(node: AccessibilityNodeInfoCompat, text: String?): Boolean {
+        if (text == null) {
+            return false
+        }
+        if (text.isEmpty()) {
+            return true
         }
         return node.haveText(text)
     }

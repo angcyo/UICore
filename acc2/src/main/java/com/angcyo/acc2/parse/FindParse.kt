@@ -193,7 +193,8 @@ class FindParse(val accParse: AccParse) {
         }
     }
 
-    /**检查是否需要中断枚举查找元素*/
+    /**检查是否需要中断枚举查找元素
+     * 是否中断枚举*/
     fun checkFindLimit(
         nodeList: List<AccessibilityNodeInfoCompat>?,
         findBean: FindBean,
@@ -376,13 +377,9 @@ class FindParse(val accParse: AccParse) {
                                 rootMatchMap[str] = true
                             }
                         }
-
-                        if (checkFindLimit(rootResult, findBean, depth)) {
-                            return@eachChildDepth true
-                        }
                     }
                 }
-                false
+                checkFindLimit(rootResult, findBean, depth)
             }
 
             //必须全部命中

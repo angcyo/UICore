@@ -130,13 +130,17 @@ class HandleParse(val accParse: AccParse) {
             }
         }
 
+        //rootNode
+        val rootNodeList = if (handleBean.rootNode == Action.RESULT) {
+            originList
+        } else {
+            accParse.findParse.rootWindowNode()
+        }
+
         //待处理的元素节点集合
         var handleNodeList = if (handleBean.findList != null) {
             //需要明确重新指定
-            val findResult = accParse.findParse.parse(
-                accParse.findParse.rootWindowNode(),
-                handleBean.findList
-            )
+            val findResult = accParse.findParse.parse(rootNodeList, handleBean.findList)
             findResult.nodeList
         } else {
             originList

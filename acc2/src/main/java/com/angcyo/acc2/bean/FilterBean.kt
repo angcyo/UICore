@@ -29,12 +29,19 @@ data class FilterBean(
      * 匹配顺序:4*/
     var rectList: List<String>? = null,
 
-    /**当[AccessibilityNodeInfoCompat]节点的文本, 包含列表中的文本时.
+    /**如果[androidx.core.view.accessibility.AccessibilityNodeInfoCompat]节点的文本, 在此列表中.
      * 则忽略此节点
      * 支持文本变量, 支持文本使用[com.angcyo.acc2.action.Action.TEXT_SPLIT]分割
      * 匹配顺序:5
      * */
     var ignoreTextList: List<String>? = null,
+
+    /**如果[androidx.core.view.accessibility.AccessibilityNodeInfoCompat]节点的文本, 不在此列表中.
+     * 则忽略此节点
+     * 支持文本变量, 支持文本使用[com.angcyo.acc2.action.Action.TEXT_SPLIT]分割
+     * 匹配顺序:6
+     * */
+    var haveTextList: List<String>? = null,
 
     /**节点直系child数量的条件判断
      * 格式如下:
@@ -45,7 +52,7 @@ data class FilterBean(
      * [<3] 数量小于3
      * 空字符 表示直接过
      * null 忽略此条件
-     * 匹配顺序:6
+     * 匹配顺序:7
      * */
     var childCount: String? = null,
 
@@ -53,7 +60,14 @@ data class FilterBean(
      * 支持的数据格式参考[childCount]
      * 如果包含[*]的格式, 表示所有节点总数量. 如"<=10*" ">=20*"
      * 否则就是无child节点的节点总数量
-     * 匹配顺序:7
+     * 匹配顺序:8
      * */
     var sizeCount: String? = null,
+
+    //<editor-fold desc="后处理">
+
+    /**再次过滤*/
+    var after: FilterBean? = null
+
+    //</editor-fold desc="后处理">
 )
