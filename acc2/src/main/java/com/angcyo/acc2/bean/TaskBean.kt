@@ -34,13 +34,23 @@ data class TaskBean(
 
     //</editor-fold desc="配置信息">
 
-    //<editor-fold desc="参数">
+    //<editor-fold desc="浮窗配置">
 
     /**是否使用全屏浮窗提示*/
     var fullscreen: Boolean = false,
 
     /**浮窗是否不需要拦截手势*/
     var notTouchable: Boolean = false,
+
+    /**显示手势提示框*/
+    var showTouchTip: Boolean = true,
+
+    /**显示节点提示框*/
+    var showNodeTip: Boolean = true,
+
+    //</editor-fold desc="浮窗配置">
+
+    //<editor-fold desc="参数">
 
     /**任务需要处理那个程序的信息
      * 不支持正则*/
