@@ -29,13 +29,14 @@ class ExpParse {
     /**约等于的范围*/
     var aboutRatio = 10f
 
-    /**小于1f 大于0f的小数, 需要放大的倍数*/
+    /**小于1f 大于0f的小数, 需要放大的倍数
+     * [0.000001-0.999999]*/
     var ratioRef = 1f
 
     /**转换数值*/
     var wrapValue: (ExpValue) -> Float = {
         var value = it.value?.toFloatOrNull() ?: 0f
-        value = if (value > 0.000001 && value < 0.999999) {
+        value = if (value in 0.000001..0.999999) {
             value * ratioRef
         } else {
             value

@@ -12,6 +12,7 @@ import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_STOP
 import com.angcyo.acc2.core.BaseAccService
 import com.angcyo.library.L
 import com.angcyo.library.ex.des
+import com.angcyo.library.ex.newLineIndent
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.library.ex.sleep
 
@@ -244,10 +245,15 @@ fun Number.toControlStateStr() = when (this) {
 /**日志输出
  * [isPrimaryAction] 是否是主线任务, 如果不是, 日志会缩进*/
 fun AccControl.log(log: String?, isPrimaryAction: Boolean = true) {
-    if (isPrimaryAction) {
+    log(log, if (isPrimaryAction) 0 else 2)
+}
+
+/**[indent]缩进的数量*/
+fun AccControl.log(log: String?, indent: Int) {
+    if (indent <= 0) {
         accPrint.log(log)
     } else {
-        accPrint.log("  $log")
+        accPrint.log("${newLineIndent(indent)}$log")
     }
 }
 

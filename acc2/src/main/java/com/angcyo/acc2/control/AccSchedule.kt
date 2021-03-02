@@ -225,7 +225,7 @@ class AccSchedule(val accControl: AccControl) {
         //激活条件判断
         if (!accParse.conditionParse.parse(actionBean.conditionList).success) {
             result.success = false
-            accControl.log("${actionBean.actionLog()}未满足激活条件,跳过调度.")
+            accControl.log("${actionBean.actionLog()}未满足激活条件,跳过调度.", isPrimaryAction)
             if (isPrimaryAction) {
                 next()
             }
@@ -241,7 +241,7 @@ class AccSchedule(val accControl: AccControl) {
             if (isPrimaryAction) {
                 val beforeAction = taskBean?.before
                 if (beforeAction != null) {
-                    accControl.log("任务前置执行:${beforeAction}")
+                    accControl.log("任务前置执行:${beforeAction}", isPrimaryAction)
                     beforeHandleResult = runAction(beforeAction, null, false)
                 }
             }
@@ -252,13 +252,16 @@ class AccSchedule(val accControl: AccControl) {
                 //action前置处理
                 val beforeAction = actionBean.before
                 if (beforeAction != null) {
-                    accControl.log("前置执行:${beforeAction}")
+                    accControl.log("前置执行:${beforeAction}", isPrimaryAction)
                     beforeHandleResult = runAction(beforeAction, null, false)
                 }
 
                 //action处理
                 if (beforeHandleResult?.success != true) {
-                    accControl.log("${if (isPrimaryAction) "[主线]" else ""}开始执行[${actionBean.actionLog()}](${indexTip()}):${actionBean}")
+                    accControl.log(
+                        "${if (isPrimaryAction) "[主线]" else ""}开始执行[${actionBean.actionLog()}](${indexTip()}):${actionBean}",
+                        isPrimaryAction
+                    )
                     if (isPrimaryAction) {
                         //执行统计
                         runCountIncrement(actionBean.actionId)
@@ -269,13 +272,16 @@ class AccSchedule(val accControl: AccControl) {
 
                     if (result.success) {
                         //只有成功才打印日志, 否则日志太多
-                        accControl.log("${actionBean.actionLog()}执行结果:${result.success}")
+                        accControl.log(
+                            "${actionBean.actionLog()}执行结果:${result.success}",
+                            isPrimaryAction
+                        )
                     }
 
                     //action后置处理
                     val afterAction = actionBean.after
                     if (afterAction != null) {
-                        accControl.log("后置执行:${afterAction}")
+                        accControl.log("后置执行:${afterAction}", isPrimaryAction)
                         runAction(afterAction, null, false)
                     }
                 }
@@ -286,7 +292,7 @@ class AccSchedule(val accControl: AccControl) {
             if (isPrimaryAction) {
                 val afterAction = taskBean?.after
                 if (afterAction != null) {
-                    accControl.log("任务后置执行:${afterAction}")
+                    accControl.log("任务后置执行:${afterAction}", isPrimaryAction)
                     runAction(afterAction, null, false)
                 }
             }
@@ -294,8 +300,8 @@ class AccSchedule(val accControl: AccControl) {
         } catch (e: Exception) {
             L.e("异常:$e")
             e.printStackTrace()
-            accControl.log("运行失败[${actionBean.title}]:$e")
-            accControl.log(e.stackTraceToString())
+            accControl.log("运行失败[${actionBean.title}]:$e", isPrimaryAction)
+            accControl.log(e.stackTraceToString(), isPrimaryAction)
         }
 
         return result
@@ -553,10 +559,26 @@ class AccSchedule(val accControl: AccControl) {
                 }
             }
         } else {
-            val eventNodeList = if (eventList == null) rootNodeList else
-                findParse.parse(rootNodeList, eventList).nodeList
-
-            if (eventNodeList.isNullOrEmpty()) {
+            //是否要跳过处理
+            var skipHandle = false
+            val eventNodeList = if (eventList == null) {
+                rootNodeList
+            } else {
+                val parse = findParse.parse(rootNodeList, eventList)
+                if (parse.forceSuccess) {
+                    skipHandle = true
+                    handleActionResult.success = true
+                    accControl.log("[event]强制成功,跳过处理:${eventList}", isPrimaryAction)
+                } else if (parse.forceFail) {
+                    skipHandle = true
+                    handleActionResult.success = false
+                    accControl.log("[event]强制失败,跳过处理:${eventList}", isPrimaryAction)
+                }
+                parse.nodeList
+            }
+            if (skipHandle) {
+                //no op
+            } else if (eventNodeList.isNullOrEmpty()) {
                 accControl.log("[event]未匹配到元素:${eventList}", isPrimaryAction)
                 //未找到元素
                 val handleResult = handleParse.parse(rootNodeList, actionBean.check?.other)

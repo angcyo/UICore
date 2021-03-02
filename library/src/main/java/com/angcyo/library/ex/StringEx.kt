@@ -566,3 +566,6 @@ fun String.repeat2(n: Int): String {
         repeat(n)
     }
 }
+
+/**转换成对错字符显示*/
+fun Boolean.toDC() = if (this) "√" else "×"

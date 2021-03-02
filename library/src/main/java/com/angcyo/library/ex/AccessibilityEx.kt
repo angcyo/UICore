@@ -452,6 +452,15 @@ fun AccessibilityNodeInfo.logNodeInfo(
     return outBuilder?.toString() ?: "null"
 }
 
+fun newLineIndent(n: Int, ch: CharSequence = " "): String {
+    return ch.repeat(n)
+    /*val sb = StringBuilder()
+    for (j in 0 until n) {
+        sb.append(" ")
+    }
+    return sb.toString()*/
+}
+
 fun AccessibilityNodeInfo.debugNodeInfo(
     index: Int = 0 /*缩进控制*/,
     preIndex: String = "" /*child路径*/,
@@ -462,14 +471,6 @@ fun AccessibilityNodeInfo.debugNodeInfo(
     refHeight: Int = _screenHeight,
     logChild: Boolean = true
 ) {
-    fun newLineIndent(i: Int): String {
-        val sb = StringBuilder()
-        for (j in 0 until i) {
-            sb.append(" ")
-        }
-        return sb.toString()
-    }
-
     val wrap: AccessibilityNodeInfoCompat = AccessibilityNodeInfoCompat.wrap(this)
 
     val stringBuilder = StringBuilder("") //"|"
@@ -628,7 +629,7 @@ fun List<AccessibilityNodeInfo>.toWrapList() =
 
 /**获取有文本的文本*/
 fun AccessibilityNodeInfoCompat.text() =
-    text ?: (contentDescription ?: (hintText ?: (paneTitle ?: (tooltipText ?: null))))
+    text ?: (contentDescription ?: (hintText ?: (paneTitle ?: tooltipText)))
 
 fun AccessibilityNodeInfo.log() {
     L.v(wrap().toString())

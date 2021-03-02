@@ -79,6 +79,17 @@ data class FindBean(
 
     //</editor-fold desc="选择器">
 
+    //<editor-fold desc="查询效率">
+
+    /**[com.angcyo.acc2.parse.AccContext.findLimit]*/
+    var findLimit: String? = null,
+
+    /**[com.angcyo.acc2.parse.AccContext.findDepth]*/
+    var findDepth: String? = null,
+
+    //</editor-fold desc="查询效率">
+
+
     //<editor-fold desc="约束器">
 
     /**
@@ -101,6 +112,7 @@ data class FindBean(
      * 匹配顺序:7
      * */
     var pathList: List<String>? = null,
+
 
     //</editor-fold desc="约束器">
 
@@ -125,10 +137,23 @@ data class FindBean(
 
     //</editor-fold desc="筛选器">
 
-    //----------------------------------------------------------------
+    //<editor-fold desc="过滤">
 
     /**根据过滤条件, 过滤一层*/
     var filter: FilterBean? = null,
+
+    //</editor-fold desc="过滤">
+
+    //<editor-fold desc="后处理">
+
+    /**临时使用这些查询到的节点
+     * 强制结束/强制成功会影响[com.angcyo.acc2.bean.CheckBean.handle]的流程处理
+     * 直接返回的处理结果暂时未处理*/
+    var use: List<HandleBean>? = null,
+
+    //</editor-fold desc="后处理">
+
+    //----------------------------------------------------------------
 
     /**无论上述选择器有没有选中元素, 都进行[after]选择.
      * 默认只在上述选择器选中元素之后, 才会进行[after]*/

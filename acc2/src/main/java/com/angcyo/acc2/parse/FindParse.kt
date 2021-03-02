@@ -30,16 +30,16 @@ class FindParse(val accParse: AccParse) {
         rootList: List<AccessibilityNodeInfoCompat>?,
         findList: List<FindBean>?
     ): FindResult {
-        //激活判断
-
-        //准备Context
-
         var result = FindResult()
 
         val accControl = accParse.accControl
         if (!findList.isNullOrEmpty()) {
             for (findBean in findList) {
-                val parseResult = parse(rootList, findBean)
+                val parseResult = parse(rootList, findBean).apply {
+                    result.forceSuccess == forceSuccess || result.forceSuccess
+                    result.forceFail == forceFail || result.forceFail
+                }
+
                 if (parseResult.success) {
                     //匹配成功, 中断查询, 提升效率
                     result = parseResult
@@ -63,7 +63,9 @@ class FindParse(val accParse: AccParse) {
     fun parse(rootList: List<AccessibilityNodeInfoCompat>?, findBean: FindBean): FindResult {
         val result = FindResult()
 
-        //准备window
+        //准备content
+
+        //选择window
 
         //根节点选择
         val rootNodeList = if (findBean.window == null) {
@@ -107,7 +109,7 @@ class FindParse(val accParse: AccParse) {
             rect -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.rectList))
             state -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.stateList))
             child -> findNodeList.addAll(
-                findNodeByChild(rootNodeList, findBean.childList)
+                findNodeByChild(rootNodeList, findBean, findBean.childList)
             )
             path -> {
                 rootNodeList.forEach { node ->
@@ -160,12 +162,23 @@ class FindParse(val accParse: AccParse) {
             findNodeList.removeAll(accParse.filterParse.parse(findNodeList, findBean.filter))
         }
 
+        //临时使用这些节点 use
+        if (findBean.use != null) {
+            accParse.handleParse.parse(findNodeList, findBean.use).apply {
+                result.forceSuccess == forceSuccess || result.forceSuccess
+                result.forceFail == forceFail || result.forceFail
+            }
+        }
+
         //递归处理
         val after = findBean.after
         var afterResult: FindResult? = null
         if (after != null) {
             if (findBean.afterAlways || findNodeList.isNotEmpty()) {
-                afterResult = parse(findNodeList, after)
+                afterResult = parse(findNodeList, after).apply {
+                    forceSuccess == forceSuccess || result.forceSuccess
+                    forceFail == forceFail || result.forceFail
+                }
             }
         }
 
@@ -181,19 +194,25 @@ class FindParse(val accParse: AccParse) {
     }
 
     /**检查是否需要中断枚举查找元素*/
-    fun checkFindLimit(nodeList: List<AccessibilityNodeInfoCompat>?, depth: Int): Boolean {
-        var result = if (accParse.accContext.findLimit >= 0) {
-            nodeList.size() >= accParse.accContext.findLimit
-        } else {
+    fun checkFindLimit(
+        nodeList: List<AccessibilityNodeInfoCompat>?,
+        findBean: FindBean,
+        depth: Int
+    ): Boolean {
+        val findLimit = findBean.findLimit ?: accParse.accContext.findLimit
+        var result = if (findLimit.isNullOrEmpty()) {
             false
+        } else {
+            accParse.expParse.parseAndCompute(findLimit, inputValue = nodeList.size().toFloat())
         }
 
         if (!result) {
             //没有超限, 第二层判断
-            result = if (accParse.accContext.findDepth >= 0) {
-                depth >= accParse.accContext.findDepth
-            } else {
+            val findDepth = findBean.findDepth ?: accParse.accContext.findDepth
+            result = if (findDepth.isNullOrEmpty()) {
                 false
+            } else {
+                accParse.expParse.parseAndCompute(findDepth, inputValue = depth.toFloat())
             }
         }
 
@@ -358,7 +377,7 @@ class FindParse(val accParse: AccParse) {
                             }
                         }
 
-                        if (checkFindLimit(rootResult, depth)) {
+                        if (checkFindLimit(rootResult, findBean, depth)) {
                             return@eachChildDepth true
                         }
                     }
@@ -391,6 +410,7 @@ class FindParse(val accParse: AccParse) {
     /**查找节点*/
     fun findNodeByChild(
         originList: List<AccessibilityNodeInfoCompat>,
+        findBean: FindBean,
         list: List<ChildBean>?
     ): List<AccessibilityNodeInfoCompat> {
         val result = mutableListOf<AccessibilityNodeInfoCompat>()
@@ -401,7 +421,7 @@ class FindParse(val accParse: AccParse) {
             rootNode.eachChildDepth { node, depth ->
                 if (matchNodeChild(node, list)) {
                     result.add(node)
-                    if (checkFindLimit(result, depth)) {
+                    if (checkFindLimit(result, findBean, depth)) {
                         return@eachChildDepth true
                     }
                 }
@@ -435,7 +455,8 @@ class FindParse(val accParse: AccParse) {
     /**节点必须要满足的条件*/
     fun matchNode(node: AccessibilityNodeInfoCompat, findBean: FindBean, index: Int): Boolean {
         return matchNode(
-            node, findBean.textList?.getOrNull(index),
+            node,
+            findBean.textList?.getOrNull(index),
             findBean.clsList?.getOrNull(index),
             findBean.idList?.getOrNull(index),
             findBean.rectList?.getOrNull(index),
@@ -466,12 +487,80 @@ class FindParse(val accParse: AccParse) {
         state: String?,
         childList: List<ChildBean>?
     ): Boolean {
-        return matchNodeText(node, text) &&
-                matchNodeClass(node, cls) &&
-                matchNodeId(node, id) &&
-                matchNodeState(node, state) &&
-                matchNodeRect(node, rect) &&
-                matchNodeChild(node, childList)
+        var result = true
+
+        var matchText: Boolean? = null
+        if (result) {
+            matchText = matchNodeText(node, text)
+            result = matchText
+        }
+
+        var matchClass: Boolean? = null
+        if (result) {
+            matchClass = matchNodeClass(node, cls)
+            result = matchClass
+        }
+
+        var matchId: Boolean? = null
+        if (result) {
+            matchId = matchNodeId(node, id)
+            result = matchId
+        }
+
+        var matchState: Boolean? = null
+        if (result) {
+            matchState = matchNodeState(node, state)
+            result = matchState
+        }
+
+        var matchRect: Boolean? = null
+        if (result) {
+            matchRect = matchNodeRect(node, rect)
+            result = matchRect
+        }
+
+        var matchChild: Boolean? = null
+        if (result) {
+            matchChild = matchNodeChild(node, childList)
+            result = matchChild
+        }
+
+        if (!result) {
+            var notNullNum = 0
+            if (matchText != null) {
+                notNullNum++
+            }
+            if (matchClass != null) {
+                notNullNum++
+            }
+            if (matchId != null) {
+                notNullNum++
+            }
+            if (matchState != null) {
+                notNullNum++
+            }
+            if (matchRect != null) {
+                notNullNum++
+            }
+            if (matchChild != null) {
+                notNullNum++
+            }
+            if (isDebug() && notNullNum >= 2) {
+                //匹配2个及以上失败后, 才打印日志
+                accParse.accControl.log(buildString {
+                    appendLine(node.toLog())
+                    append("match:")
+                    append("text:${matchText?.toDC()} ")
+                    append("class:${matchClass?.toDC()} ")
+                    append("id:${matchId?.toDC()} ")
+                    append("state:${matchState?.toDC()} ")
+                    append("rect:${matchRect?.toDC()} ")
+                    append("child:${matchChild?.toDC()} ")
+                }, 2)
+            }
+        }
+
+        return result
     }
 
     /**检查节点是否满足text*/

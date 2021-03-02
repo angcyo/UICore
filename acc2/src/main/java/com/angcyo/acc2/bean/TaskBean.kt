@@ -67,7 +67,7 @@ data class TaskBean(
      * [$0~$-1]*/
     var wordList: List<String>? = null,
 
-    /**
+    /** 优先级低于[textListMap]
      * 文本池, 供$[xxx] 获取使用
      * [xxx]命令保存的文本, 供后续使用*/
     var textMap: HashMap<String, String?>? = null,
