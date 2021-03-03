@@ -349,48 +349,44 @@ class AccSchedule(val accControl: AccControl) {
                 }
             }
 
-            when {
-                //自动激活
-                action.randomEnable -> {
-                    action.enable = if (action.randomAmount.isNullOrEmpty()) {
-                        //未指定随机概率
-                        nextBoolean()
-                    } else {
-                        //指定了随机的概率
-                        val factor = nextInt(1, 101) //[1-100]
-                        accParse.expParse.parseAndCompute(
-                            action.randomAmount,
-                            inputValue = factor.toFloat()
-                        )
-                    }
-                    accControl.log("${action.actionLog()}随机激活:[${action.enable}]")
-                    return action.enable
+            if (action.enable && action._enable == null) {
+                //找到激活的
+                if (!accParse.conditionParse.parse(action.conditionList).success) {
+                    accControl.log("${action.actionLog()}未满足激活条件,跳过.")
+                    return false
                 }
-                action.enable -> {
-                    //找到激活的
-                    if (!accParse.conditionParse.parse(action.conditionList).success) {
-                        accControl.log("${action.actionLog()}未满足激活条件,跳过.")
-                        return false
-                    }
-                    return true
+                return true
+            } else if (action.randomEnable) {
+                action._enable = action.enable
+                action.enable = if (action.randomAmount.isNullOrEmpty()) {
+                    //未指定随机概率
+                    nextBoolean()
+                } else {
+                    //指定了随机的概率
+                    val factor = nextInt(1, 101) //[1-100]
+                    accParse.expParse.parseAndCompute(
+                        action.randomAmount,
+                        inputValue = factor.toFloat()
+                    )
                 }
-                else -> {
-                    return if (action.autoEnable) {
-                        //开启了自动激活
-                        val conditionResult =
-                            accParse.conditionParse.parse(action.conditionList)
-                        if (conditionResult.success) {
-                            action.enable = true
-                            accControl.log("${action.actionLog()}自动激活成功:[${conditionResult.conditionBean}]")
-                            true
-                        } else {
-                            accControl.log("${action.actionLog()}自动激活失败,跳过.")
-                            false
-                        }
+                accControl.log("${action.actionLog()}随机激活:[${action.enable}]")
+                return action.enable
+            } else {
+                return if (action.autoEnable) {
+                    //开启了自动激活
+                    val conditionResult =
+                        accParse.conditionParse.parse(action.conditionList)
+                    if (conditionResult.success) {
+                        action.enable = true
+                        accControl.log("${action.actionLog()}自动激活成功:[${conditionResult.conditionBean}]")
+                        true
                     } else {
-                        accControl.log("${action.actionLog()}未激活,跳过.")
+                        accControl.log("${action.actionLog()}自动激活失败,跳过.")
                         false
                     }
+                } else {
+                    accControl.log("${action.actionLog()}未激活,跳过.")
+                    false
                 }
             }
         }
