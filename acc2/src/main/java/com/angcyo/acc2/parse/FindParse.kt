@@ -287,7 +287,7 @@ class FindParse(val accParse: AccParse) {
                 }
             }
             //如果包名为空字符, 则支持所有window
-            packageName?.isBlank() == true || packageName == Action.ALL -> {
+            packageName.isNullOrBlank() || packageName == Action.ALL -> {
                 accParse.accControl.accService()?.windows?.forEach {
                     it.root?.wrap()?.let { node ->
                         if (!isIgnorePackageName(node, ignorePackageName)) {

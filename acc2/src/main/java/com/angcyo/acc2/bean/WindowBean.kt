@@ -10,7 +10,7 @@ package com.angcyo.acc2.bean
 data class WindowBean(
 
     /**当前[packageName]和[ignorePackageName]都是[null]时, 则取Active窗口*/
-    /**当[packageName]为空字符或*时,则取所有窗口*/
+    /**当[packageName]为null或空字符或*时,则取所有窗口*/
 
     /**通过包名, 选择window,
      * 支持正则
