@@ -75,7 +75,7 @@ data class ActionBean(
     /**如果[conditionList]条件满足时, 也激活处理*/
     var autoEnable: Boolean = false,
 
-    /**随机激活[ActionBean], 优先于[enable]属性*/
+    /**需要先[enable]才会有,随机激活[ActionBean]*/
     var randomEnable: Boolean = false,
 
     /**指定随机的概率
