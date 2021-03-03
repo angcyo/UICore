@@ -51,6 +51,7 @@ open class DslButtonItem : DslAdapterItem() {
             itemButtonConfig(this)
 
             setOnClickListener(_clickListener)
+            setOnLongClickListener(_longClickListener)
         }
     }
 

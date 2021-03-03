@@ -210,13 +210,14 @@ object DslHttp {
     }
 
     /**获取[Retrofit]对象*/
+    @Synchronized
     fun retrofit(rebuild: Boolean = false): Retrofit {
         if (rebuild) {
             dslHttpConfig.retrofit = null
         } else {
             val oldUrl = dslHttpConfig.retrofit?.baseUrl()?.toString()
             val newUrl = dslHttpConfig.onGetBaseUrl()
-            if (oldUrl != newUrl) {
+            if (oldUrl != null && oldUrl != newUrl) {
                 //url改变之后,也需要重建
                 dslHttpConfig.reset()
             }
