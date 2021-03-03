@@ -104,7 +104,7 @@ class AccSchedule(val accControl: AccControl) {
     }
 
     /**通过[group]查找分组中的第一个[ActionBean]*/
-    fun findFirstActionByGroup(group: String?): ActionBean? {
+    fun findFirstActionByGroup(group: String? /*不支持分割*/): ActionBean? {
         if (group.isNullOrEmpty()) {
             return null
         }
@@ -121,7 +121,7 @@ class AccSchedule(val accControl: AccControl) {
     }
 
     /**指定分组中的第一个[ActionBean]是否激活*/
-    fun isFirstActionEnableByGroup(actionBean: ActionBean, group: String?): Boolean {
+    fun isFirstActionEnableByGroup(actionBean: ActionBean, group: String? /*支持分割*/): Boolean {
         if (group.isNullOrEmpty()) {
             return true
         }
@@ -136,6 +136,24 @@ class AccSchedule(val accControl: AccControl) {
                 findFirstActionByGroup?.enable == true
             }
             if (result) {
+                break
+            }
+        }
+        return result
+    }
+
+    /**当前[actionBean]是否在分组中的第一个*/
+    fun isFirstActionInGroup(actionBean: ActionBean): Boolean {
+        val group = actionBean.group
+        if (group.isNullOrEmpty()) {
+            return true
+        }
+        var result = false
+        val groupList = group.split(Action.PACKAGE_SPLIT)
+        for (g in groupList) {
+            val findFirstActionByGroup = findFirstActionByGroup(g)
+            result = findFirstActionByGroup == actionBean
+            if (!result) {
                 break
             }
         }
@@ -341,53 +359,59 @@ class AccSchedule(val accControl: AccControl) {
         if (action != null) {
             //分组判断
             val group = action.group
-            if (!group.isNullOrEmpty()) {
-                //具有分组标识
-                if (!isFirstActionEnableByGroup(action, group)) {
+            if (!group.isNullOrEmpty() && !isFirstActionInGroup(action)) {
+                //具有分组标识, 并且不是第一个
+                return if (isFirstActionEnableByGroup(action, group)) {
+                    //accControl.log("${action.actionLog()}的分组[${group}]中第一个ActionBean激活.")
+                    true
+                } else {
                     accControl.log("${action.actionLog()}的分组[${group}]中第一个ActionBean未激活,跳过.")
-                    return false
-                }
-            }
-
-            if (action.enable && action._enable == null) {
-                //找到激活的
-                if (!accParse.conditionParse.parse(action.conditionList).success) {
-                    accControl.log("${action.actionLog()}未满足激活条件,跳过.")
-                    return false
-                }
-                return true
-            } else if (action.randomEnable) {
-                action._enable = action.enable
-                action.enable = if (action.randomAmount.isNullOrEmpty()) {
-                    //未指定随机概率
-                    nextBoolean()
-                } else {
-                    //指定了随机的概率
-                    val factor = nextInt(1, 101) //[1-100]
-                    accParse.expParse.parseAndCompute(
-                        action.randomAmount,
-                        inputValue = factor.toFloat()
-                    )
-                }
-                accControl.log("${action.actionLog()}随机激活:[${action.enable}]")
-                return action.enable
-            } else {
-                return if (action.autoEnable) {
-                    //开启了自动激活
-                    val conditionResult =
-                        accParse.conditionParse.parse(action.conditionList)
-                    if (conditionResult.success) {
-                        action.enable = true
-                        accControl.log("${action.actionLog()}自动激活成功:[${conditionResult.conditionBean}]")
-                        true
-                    } else {
-                        accControl.log("${action.actionLog()}自动激活失败,跳过.")
-                        false
-                    }
-                } else {
-                    accControl.log("${action.actionLog()}未激活,跳过.")
                     false
                 }
+            }
+            //激活判断
+            if (action.enable || action._enable != null) {
+                var factor = 0
+                if (action.randomEnable) {
+                    //需要处理随机激活
+                    action._enable = action.enable
+                    action.enable = if (action.randomAmount.isNullOrEmpty()) {
+                        //未指定随机概率
+                        nextBoolean()
+                    } else {
+                        //指定了随机的概率
+                        factor = nextInt(1, 101) //[1-100]
+                        accParse.expParse.parseAndCompute(
+                            action.randomAmount,
+                            inputValue = factor.toFloat()
+                        )
+                    }
+                    accControl.log("${action.actionLog()}随机[${factor}][${action.randomAmount}]激活:[${action.enable}]")
+                    return action.enable
+                } else {
+                    if (action.conditionList != null) {
+                        if (!accParse.conditionParse.parse(action.conditionList).success) {
+                            accControl.log("${action.actionLog()}未满足激活条件,跳过.")
+                            return false
+                        }
+                    }
+                    return true
+                }
+            } else if (action.autoEnable) {
+                //开启了自动激活
+                val conditionResult = accParse.conditionParse.parse(action.conditionList)
+                return if (conditionResult.success) {
+                    action.enable = true
+                    accControl.log("${action.actionLog()}自动激活成功:[${conditionResult.conditionBean}]")
+                    true
+                } else {
+                    accControl.log("${action.actionLog()}自动激活失败,跳过.")
+                    false
+                }
+            } else {
+                //未激活的
+                accControl.log("${action.actionLog()}未激活,跳过.")
+                return false
             }
         }
         return false

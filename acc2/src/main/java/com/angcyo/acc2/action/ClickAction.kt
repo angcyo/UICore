@@ -6,6 +6,7 @@ import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.acc2.parse.toLog
 import com.angcyo.library.ex.*
+import com.angcyo.library.toastWX
 import com.angcyo.library.utils.getFloatNumList
 
 /**
@@ -37,6 +38,17 @@ class ClickAction : ClickTouchAction() {
         nodeList: List<AccessibilityNodeInfoCompat>?,
         action: String
     ): HandleResult = handleResult {
+
+        if (action.contains("debug")) {
+            if (isDebugType()) {
+                success = true
+                control.log("[$action]点击节点:debug".apply {
+                    toastWX(this)
+                })
+                return@handleResult
+            }
+        }
+
         val pointList = action.getFloatNumList()
         if (pointList.size() >= 2) {
             clickTouch(
