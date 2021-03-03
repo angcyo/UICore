@@ -28,6 +28,8 @@ abstract class BaseFragment : AbsLifecycleFragment() {
 
     //</editor-fold desc="Fragment样式配置">
 
+    //<editor-fold desc="生命周期">
+
     /**
      * onActivityCreated -> onCreateAnimation -> onCreateAnimator
      */
@@ -53,6 +55,18 @@ abstract class BaseFragment : AbsLifecycleFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
     }
+
+    override fun onFragmentShow(bundle: Bundle?) {
+        super.onFragmentShow(bundle)
+        BaseUI.onFragmentShow?.invoke(this)
+    }
+
+    override fun onFragmentHide() {
+        super.onFragmentHide()
+        BaseUI.onFragmentHide?.invoke(this)
+    }
+
+    //</editor-fold desc="生命周期">
 
     //<editor-fold desc="操作方法">
 

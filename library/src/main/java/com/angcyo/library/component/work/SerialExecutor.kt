@@ -44,7 +44,7 @@ class SerialExecutor(val delegatedExecutor: Executor) : Executor {
      * A [Runnable] which tells the [SerialExecutor] to schedule the next command
      * after completion.
      */
-    class Task(val serialExecutor: SerialExecutor, val runnable: Runnable) : Runnable {
+    internal class Task(val serialExecutor: SerialExecutor, val runnable: Runnable) : Runnable {
         override fun run() {
             try {
                 runnable.run()

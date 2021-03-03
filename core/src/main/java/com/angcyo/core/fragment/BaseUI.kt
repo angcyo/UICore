@@ -23,6 +23,10 @@ import com.angcyo.widget.span.span
 
 object BaseUI {
     var fragmentUI = FragmentUI()
+
+    var onFragmentShow: ((fragment: BaseFragment) -> Unit)? = null
+
+    var onFragmentHide: ((fragment: BaseFragment) -> Unit)? = null
 }
 
 open class FragmentUI {

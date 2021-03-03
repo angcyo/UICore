@@ -82,4 +82,9 @@ class DslHttpConfig {
             client(client)
         }.build()
     }
+
+    fun reset() {
+        retrofit = null
+        okHttpClient = null
+    }
 }

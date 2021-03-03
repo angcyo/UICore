@@ -164,6 +164,7 @@ object DslHttp {
 
     /**自定义配置, 否则使用库中默认配置*/
     fun config(action: DslHttpConfig.() -> Unit) {
+        dslHttpConfig.reset()
         dslHttpConfig.action()
     }
 
@@ -174,6 +175,7 @@ object DslHttp {
             throw NullPointerException("请先初始化[DslHttp.config{ ... }]")
         }
 
+        //缓存客户端
         val client = dslHttpConfig.onBuildHttpClient(
             dslHttpConfig.defaultOkHttpClientBuilder.apply {
                 dslHttpConfig.onConfigOkHttpClient.forEach {
@@ -183,6 +185,7 @@ object DslHttp {
         )
         dslHttpConfig.okHttpClient = client
 
+        //缓存retrofit
         val retrofit = dslHttpConfig.onBuildRetrofit(dslHttpConfig.defaultRetrofitBuilder, client)
         dslHttpConfig.retrofit = retrofit
     }
@@ -211,9 +214,11 @@ object DslHttp {
         if (rebuild) {
             dslHttpConfig.retrofit = null
         } else {
-            if (dslHttpConfig.retrofit?.baseUrl()?.toString() != dslHttpConfig.onGetBaseUrl()) {
+            val oldUrl = dslHttpConfig.retrofit?.baseUrl()?.toString()
+            val newUrl = dslHttpConfig.onGetBaseUrl()
+            if (oldUrl != newUrl) {
                 //url改变之后,也需要重建
-                dslHttpConfig.retrofit = null
+                dslHttpConfig.reset()
             }
         }
         init()
