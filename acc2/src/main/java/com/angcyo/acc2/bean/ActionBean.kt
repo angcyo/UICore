@@ -26,8 +26,10 @@ data class ActionBean(
     /**标识一下[ActionBean]*/
     var type: String? = null,
 
-    /**异步执行[ActionBean], 非主线[ActionBean]时有效*/
-    var async: Boolean = false,
+    /**异步执行[ActionBean], 不指定时, 根据情况.自动选择
+     * [com.angcyo.acc2.bean.TaskBean.backActionList]默认开始异步, 提高效率
+     * */
+    var async: Boolean? = null,
 
     /**
      * 控制自身执行启动的延迟

@@ -95,6 +95,7 @@ class ExpParse {
     }
 
     /**判断输入值[inputValue]是否符合表达式
+     * [exp] 比较的表达式 [>=100]
      * @return true 计算通过
      * */
     fun parseAndCompute(exp: String?, op: String = Action.OP, inputValue: Float): Boolean {

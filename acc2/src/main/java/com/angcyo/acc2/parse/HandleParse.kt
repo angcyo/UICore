@@ -173,7 +173,7 @@ class HandleParse(val accParse: AccParse) {
                 if (handleBean.noActionList != null) {
                     result = handleAction(handleBean, handleNodeList, handleBean.noActionList)
                 } else {
-                    //失败
+                    //重新选择后, 没有找到元素, 也没有指定[noActionList], 这直接失败
                     result.success = false
                 }
             } else {

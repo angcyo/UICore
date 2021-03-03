@@ -6,6 +6,7 @@ import com.angcyo.acc2.parse.AccParse
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.acc2.parse.toLog
 import com.angcyo.library.L
+import com.angcyo.library.component.ThreadExecutor
 import com.angcyo.library.ex.*
 import java.util.*
 import kotlin.random.Random.Default.nextBoolean
@@ -86,10 +87,11 @@ class AccSchedule(val accControl: AccControl) {
         _scheduleIndex = _currentIndex + 1
     }
 
-    fun thread(target: Runnable) {
-        Thread(target, this.simpleHash()).apply {
+    fun async(target: Runnable) {
+        ThreadExecutor.execute(target)
+        /*Thread(target, this.simpleHash()).apply {
             start()
-        }
+        }*/
     }
 
     fun indexTip() = "$_currentIndex/${actionSize()}"
@@ -233,7 +235,6 @@ class AccSchedule(val accControl: AccControl) {
         }
 
         try {
-
             val taskBean = accControl._taskBean
 
             //Task前置处理
@@ -451,26 +452,38 @@ class AccSchedule(val accControl: AccControl) {
         otherActionList: List<ActionBean>?,
         isPrimaryAction: Boolean
     ): HandleResult {
-        var handleActionResult = HandleResult()
+        val handleActionResult = HandleResult()
+        if (actionBean.async == true) {
+            //异步执行
+            async {
+                runActionInner(actionBean, otherActionList, isPrimaryAction, handleActionResult)
+            }
+        } else {
+            //同步执行
+            if (runActionBefore(actionBean, isPrimaryAction, handleActionResult)) {
+                //被中断了
+            } else {
+                runActionInner(actionBean, otherActionList, isPrimaryAction, handleActionResult)
+                runActionAfter(actionBean, isPrimaryAction, handleActionResult)
+            }
+        }
+        return handleActionResult
+    }
 
+    /**返回是否要中断后续运行*/
+    fun runActionBefore(
+        actionBean: ActionBean,
+        isPrimaryAction: Boolean,
+        handleActionResult: HandleResult
+    ): Boolean {
         runActionBeanStack.push(actionBean)
         _runActionBean = actionBean
-
-        val lastActionHash = _lastRunActionHash
-        val newActionHash = if (isPrimaryAction) {
-            actionBean.hashCode()
-        } else {
-            lastActionHash
-        }
-        if (isPrimaryAction) {
-            _lastRunActionHash = newActionHash
-        }
 
         if (accControl.accService() == null) {
             runActionBeanStack.popSafe()
             _runActionBean = null
             accControl.error("无障碍服务连接中断")
-            return handleActionResult
+            return true
         }
 
         //激活条件判断
@@ -481,7 +494,7 @@ class AccSchedule(val accControl: AccControl) {
             runActionBeanStack.popSafe()
             _runActionBean = null
             accControl.log("${actionBean.actionLog()}未满足激活条件,跳过执行.", isPrimaryAction)
-            return handleActionResult
+            return true
         }
 
         //等待执行
@@ -494,22 +507,15 @@ class AccSchedule(val accControl: AccControl) {
         accControl.log("${actionBean.actionLog()}等待[$delayTime]ms后运行.", isPrimaryAction)
         sleep(delayTime)
 
-        //回调
-        accControl.controlListenerList.forEach {
-            it.onActionRunBefore(actionBean, isPrimaryAction)
+        val lastActionHash = _lastRunActionHash
+        val newActionHash = if (isPrimaryAction) {
+            actionBean.hashCode()
+        } else {
+            lastActionHash
         }
-
-        val handleParse = accParse.handleParse
-        val findParse = accParse.findParse
-        val accSchedule = accParse.accControl.accSchedule
-
-        val handleList = actionBean.check?.handle
-        val eventList = actionBean.check?.event
-
-        //窗口根节点集合
-        val rootNodeList = findParse.findRootNode(actionBean.window)
-
-        //-----------------------------运行前----------------------------------
+        if (isPrimaryAction) {
+            _lastRunActionHash = newActionHash
+        }
 
         //运行时长限制判断
         if (lastActionHash == newActionHash) {
@@ -527,14 +533,21 @@ class AccSchedule(val accControl: AccControl) {
                         if (actionBean.check?.limitTime == null) {
                             accControl.error("[${actionBean.actionLog()}]执行时长超出限制[${limitRunTime}]ms")
                         } else {
+
+                            val handleParse = accParse.handleParse
+                            val findParse = accParse.findParse
+
+                            //窗口根节点集合
+                            val rootNodeList = findParse.findRootNode(actionBean.window)
+
                             _latsRunActionTime = nowTime()
-                            handleActionResult =
-                                handleParse.parse(rootNodeList, actionBean.check?.limitTime)
+                            handleParse.parse(rootNodeList, actionBean.check?.limitTime)
+                                .copyTo(handleActionResult)
                         }
                         if (!handleActionResult.success) {
                             runActionBeanStack.popSafe()
                             _runActionBean = null
-                            return handleActionResult
+                            return true
                         }
                     }
                 }
@@ -547,11 +560,33 @@ class AccSchedule(val accControl: AccControl) {
         val actionRunTime = nowTime() - _latsRunActionTime
         setActionRunTime(actionBean.actionId, actionRunTime)
 
-        //-----------------------------运行流程----------------------------------
+        //运行开始的回调
+        accControl.controlListenerList.forEach {
+            it.onActionRunBefore(actionBean, isPrimaryAction)
+        }
+
+        return false
+    }
+
+    fun runActionInner(
+        actionBean: ActionBean,
+        otherActionList: List<ActionBean>?,
+        isPrimaryAction: Boolean,
+        handleActionResult: HandleResult
+    ) {
+        val handleParse = accParse.handleParse
+        val findParse = accParse.findParse
+        val accSchedule = accParse.accControl.accSchedule
+
+        val handleList = actionBean.check?.handle
+        val eventList = actionBean.check?.event
+
+        //窗口根节点集合
+        val rootNodeList = findParse.findRootNode(actionBean.window)
 
         if (actionBean.check == null) {
             //未指定check, 直接操作根元素
-            handleActionResult = handleParse.parse(rootNodeList, handleList)
+            handleParse.parse(rootNodeList, handleList).copyTo(handleActionResult)
 
             if (isPrimaryAction) {
                 if (!handleActionResult.success) {
@@ -591,8 +626,8 @@ class AccSchedule(val accControl: AccControl) {
                     //还是未成功
                     for (otherAction in otherActionList ?: emptyList()) {
                         var otherHandleResult: HandleResult? = null
-                        if (otherAction.async) {
-                            thread {
+                        if (otherAction.async != false) {
+                            async {
                                 otherHandleResult =
                                     accSchedule.scheduleAction(otherAction, null, false)
                                 if (otherHandleResult?.forceSuccess == true) {
@@ -621,23 +656,27 @@ class AccSchedule(val accControl: AccControl) {
                     isPrimaryAction
                 )
                 val result = handleParse.parse(eventNodeList, handleList)
-                handleActionResult = result
+                result.copyTo(handleActionResult)
                 if (result.success) {
                     //未处理成功
                     actionBean.check?.success?.let {
-                        handleActionResult = handleParse.parse(eventNodeList, it)
+                        handleParse.parse(eventNodeList, it).copyTo(handleActionResult)
                     }
                 } else {
                     //未处理成功
                     actionBean.check?.fail?.let {
-                        handleActionResult = handleParse.parse(eventNodeList, it)
+                        handleParse.parse(eventNodeList, it).copyTo(handleActionResult)
                     }
                 }
             }
         }
+    }
 
-        //-----------------------------运行后----------------------------------
-
+    fun runActionAfter(
+        actionBean: ActionBean,
+        isPrimaryAction: Boolean,
+        handleActionResult: HandleResult
+    ) {
         if (isPrimaryAction) {
             //保存执行结果.
             actionResultMap[actionBean.actionId] = handleActionResult.success
@@ -670,8 +709,12 @@ class AccSchedule(val accControl: AccControl) {
                                 accControl.error("[${actionBean.actionLog()}]执行次数超出限制[${limitRunCount}]")
                             }
                         } else {
-                            handleActionResult =
-                                handleParse.parse(rootNodeList, actionBean.check?.limitRun)
+                            val handleParse = accParse.handleParse
+                            val findParse = accParse.findParse
+                            //窗口根节点集合
+                            val rootNodeList = findParse.findRootNode(actionBean.window)
+                            handleParse.parse(rootNodeList, actionBean.check?.limitRun)
+                                .copyTo(handleActionResult)
                         }
                     }
                 }
@@ -686,8 +729,6 @@ class AccSchedule(val accControl: AccControl) {
         accControl.controlListenerList.forEach {
             it.onActionRunAfter(actionBean, isPrimaryAction, handleActionResult)
         }
-
-        return handleActionResult
     }
 
     //</editor-fold desc="执行">

@@ -10,4 +10,9 @@ package com.angcyo.acc2.parse
 open class BaseResult {
     /**是否处理成功*/
     var success: Boolean = false
+
+    /**将自己的值, 赋值给[target]*/
+    open fun copyTo(target: BaseResult) {
+        target.success = success
+    }
 }

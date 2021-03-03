@@ -14,6 +14,15 @@ object Action {
     /**多包名分隔符*/
     const val PACKAGE_SPLIT = ";"
 
+    /**主程序*/
+    const val PACKAGE_MAIN = "main"
+
+    /**任务目标程序*/
+    const val PACKAGE_TARGET = "target"
+
+    /**当前活跃的窗口*/
+    const val PACKAGE_ACTIVE = "active"
+
     /**坐标分隔符*/
     const val POINT_SPLIT = "~"
 
@@ -120,7 +129,8 @@ object Action {
      */
     const val ACTION_PUT_TEXT = "putText"
 
-    /**回退按钮*/
+    /**回退按钮
+     * [back:>1000]连续back操作, 满足条件才触发.否则失败*/
     const val ACTION_BACK = "back"
 
     /**回到桌面*/

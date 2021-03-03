@@ -188,9 +188,9 @@ class AccParse(val accControl: AccControl) {
         nameArg?.split(Action.PACKAGE_SPLIT)?.forEach { name ->
             val packageName = if (name.isEmpty()) {
                 target
-            } else if (name == "main") {
+            } else if (name == Action.PACKAGE_MAIN) {
                 app().packageName
-            } else if (name == "target") {
+            } else if (name == Action.PACKAGE_TARGET) {
                 if (target.isNullOrEmpty()) {
                     //优先使用task的包名, 确保不是空
                     accControl._taskBean?.packageName?.split(Action.PACKAGE_SPLIT)?.firstOrNull()
@@ -198,7 +198,7 @@ class AccParse(val accControl: AccControl) {
                 } else {
                     target
                 }
-            } else if (name == "active") {
+            } else if (name == Action.PACKAGE_ACTIVE) {
                 accControl.accService()?.rootInActiveWindow?.packageName
             } else {
                 name

@@ -28,4 +28,14 @@ open class HandleResult : BaseResult() {
     /**被处理的元素*/
     var nodeList: List<AccessibilityNodeInfoCompat>? = null
 
+    override fun copyTo(target: BaseResult) {
+        super.copyTo(target)
+        if (target is HandleResult) {
+            target.forceFail = forceFail
+            target.forceSuccess = forceSuccess
+            target.handleBean = handleBean
+            target.nodeList = nodeList
+        }
+    }
+
 }
