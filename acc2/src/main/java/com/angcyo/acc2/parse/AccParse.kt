@@ -76,11 +76,38 @@ class AccParse(val accControl: AccControl) {
         var isHandle = false
 
         val taskBean = accControl._taskBean
+        val wordList: List<String?>
+
+        //$[xxx], 在map中获取文本
+        val mapKeyList = arg.patternList("(?<=\\$\\[).+(?=\\])")
+        if (mapKeyList.isNotEmpty()) {
+            isHandle = true
+            mapKeyList.forEach { key ->
+                if (key == "appName") {
+                    val appName =
+                        parsePackageName(null, accControl._taskBean?.packageName).firstOrNull()
+                            ?.appBean()?.appName?.str()
+                    if (appName.isNullOrBlank()) {
+                        getTextOfMap(key)?.let { value -> result.add(value) }
+                    } else {
+                        result.add(appName)
+                    }
+                } else {
+                    getTextOfListMap(key)?.apply { result.addAll(this) }
+                        ?: getTextOfMap(key)?.let { value -> result.add(value) }
+                }
+            }
+
+            //如果指定了$[xxx]
+            wordList = result.toList()
+            result.clear()
+        } else {
+            wordList = taskBean?.wordList ?: emptyList()
+        }
 
         //$0~$-2
         val indexStringList = arg.patternList("\\$[-]?\\d+")
         if (indexStringList.isNotEmpty()) {
-            val wordList = taskBean?.wordList ?: emptyList()
             //$xxx 的情况
             if (arg.havePartition()) {
                 //$0~$1
@@ -113,28 +140,6 @@ class AccParse(val accControl: AccControl) {
                             result.add(word)
                         }
                     }
-                }
-            }
-        }
-
-        //$[xxx], 在map中获取文本
-        val mapKeyList = arg.patternList("(?<=\\$\\[).+(?=\\])")
-        if (mapKeyList.isNotEmpty()) {
-            isHandle = true
-            mapKeyList.forEach { key ->
-
-                if (key == "appName") {
-                    val appName =
-                        parsePackageName(null, accControl._taskBean?.packageName).firstOrNull()
-                            ?.appBean()?.appName?.str()
-                    if (appName.isNullOrBlank()) {
-                        getTextOfMap(key)?.let { value -> result.add(value) }
-                    } else {
-                        result.add(appName)
-                    }
-                } else {
-                    getTextOfListMap(key)?.apply { result.addAll(this) }
-                        ?: getTextOfMap(key)?.let { value -> result.add(value) }
                 }
             }
         }

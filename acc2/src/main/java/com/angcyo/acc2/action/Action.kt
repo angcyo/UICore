@@ -79,8 +79,10 @@ object Action {
     const val ACTION_GET_TEXT = "getText"
 
     /**设置输入框文本内容
-     * [input:$0] 支持文本变量
-     * [input:$[xxx] regex:xxx]
+     * [input:$0] 支持文本变量 [com.angcyo.acc2.bean.TaskBean.wordList]
+     * [input:$0~$-1] [com.angcyo.acc2.bean.TaskBean.wordList]
+     * [input:$[xxx] regex:xxx] [com.angcyo.acc2.bean.TaskBean.textListMap]
+     * [input:$[xxx] $0~$-1 regex:xxx] 从[com.angcyo.acc2.bean.TaskBean.textListMap]中获取, 再获取
      * regex:\\d+ 文本需要使用正则过滤取值
      * */
     const val ACTION_INPUT = "input"
