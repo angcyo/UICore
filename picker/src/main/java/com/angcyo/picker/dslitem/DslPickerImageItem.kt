@@ -173,7 +173,7 @@ open class DslPickerImageItem : DslAdapterItem() {
                     append(
                         duration.toElapsedTime(
                             pattern = intArrayOf(-1, 1, 1),
-                            h24 = booleanArrayOf(false, true, false),
+                            refill = booleanArrayOf(false, true, false),
                             units = arrayOf("", "", ":")
                         )
                     )
