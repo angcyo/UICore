@@ -8,6 +8,7 @@ import com.angcyo.acc2.core.AccNodeLog
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.*
+import com.angcyo.library.utils.getFloatNum
 import java.net.URLEncoder
 
 /**
@@ -197,8 +198,8 @@ fun String.toPointF(width: Int = _screenWidth, height: Int = _screenHeight): Poi
     var y = 0f
 
     split(",").apply {
-        x = getOrNull(0)?.toFloatOrNull() ?: x
-        y = getOrNull(1)?.toFloatOrNull() ?: y
+        x = getOrNull(0).getFloatNum() ?: x
+        y = getOrNull(1).getFloatNum() ?: y
     }
 
     p.x = x.toPointF(width)

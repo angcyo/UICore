@@ -304,7 +304,6 @@ class AccParse(val accControl: AccControl) {
         val p1 = PointF(fX, fY)
         val p2 = PointF(tX, tY)
 
-
         try {
             arg?.apply {
                 (if (this.contains(Action.POINT_SPLIT)) split(Action.POINT_SPLIT) else split("-")).apply {
