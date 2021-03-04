@@ -89,6 +89,7 @@ class AccParse(val accControl: AccControl) {
         val mapKeyList = arg.patternList("(?<=\\$\\[).+(?=\\])")
         if (mapKeyList.isNotEmpty()) {
             isHandle = true
+            val keyResult = mutableListOf<String?>()
             mapKeyList.forEach { key ->
                 when (key) {
                     Action.APP_NAME -> {
@@ -97,14 +98,14 @@ class AccParse(val accControl: AccControl) {
                                 ?.appBean()?.appName?.str()
                         if (appName.isNullOrBlank()) {
                             taskBean?.getTextList(key)?.firstOrNull()?.let { value ->
-                                result.add(value)
+                                keyResult.add(value)
                                 if (replace) {
                                     replaceResult = replaceResult?.replace("$[$key]", value)
                                 }
                             }
                         } else {
                             //程序名
-                            result.add(appName)
+                            keyResult.add(appName)
                             if (replace) {
                                 replaceResult = replaceResult?.replace("$[$key]", appName)
                             }
@@ -112,7 +113,7 @@ class AccParse(val accControl: AccControl) {
                     }
                     Action.NOW_TIME -> {
                         val text = nowTimeString()
-                        result.add(text)
+                        keyResult.add(text)
                         if (replace) {
                             replaceResult = replaceResult?.replace("$[$key]", text)
                         }
@@ -120,7 +121,7 @@ class AccParse(val accControl: AccControl) {
                     Action.LAST_INPUT -> {
                         val text = InputAction.lastInputText
                         if (text != null) {
-                            result.add(text)
+                            keyResult.add(text)
                             if (replace) {
                                 replaceResult = replaceResult?.replace("$[$key]", text)
                             }
@@ -128,12 +129,12 @@ class AccParse(val accControl: AccControl) {
                     }
                     else -> {
                         getTextOfListMap(key)?.apply {
-                            result.addAll(this)
+                            keyResult.addAll(this)
                             if (replace) {
                                 replaceResult = replaceResult?.replace("$[$key]", this.str())
                             }
                         } ?: getTextOfMap(key)?.let { value ->
-                            result.add(value)
+                            keyResult.add(value)
                             if (replace) {
                                 replaceResult = replaceResult?.replace("$[$key]", value)
                             }
@@ -143,8 +144,8 @@ class AccParse(val accControl: AccControl) {
             }
 
             //如果指定了$[xxx]
-            wordList = result.toList()
-            result.clear()
+            wordList = keyResult.toList()
+            result.addAll(keyResult)
         } else {
             wordList = taskBean?.wordList ?: emptyList()
         }
