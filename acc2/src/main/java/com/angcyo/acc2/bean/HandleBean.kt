@@ -60,6 +60,10 @@ data class HandleBean(
      * 直接返回值, 不会影响流程*/
     var handleBefore: List<HandleBean>? = null,
 
+    /**如果满足case, 则使用[CaseBean]中的[com.angcyo.acc2.bean.CaseBean.actionList]替换.
+     * 满足一个即返回*/
+    var caseList: List<CaseBean>? = null,
+
     /**
      * 当有元素选择时需要执行的具体操作
      * [com.angcyo.acc2.action.Action]*/

@@ -171,26 +171,34 @@ class HandleParse(val accParse: AccParse) {
         if (conditionActionList != null) {
             //不满足约束条件时,又指定了对应的actionList, 优先执行
             result = handleAction(handleBean, handleNodeList, conditionActionList)
-        } else if (handleBean.findList != null) {
-            //需要重新选择
-            if (handleNodeList.isNullOrEmpty()) {
-                //重新选择后, 节点为空
-                if (handleBean.noActionList != null) {
-                    result = handleAction(handleBean, handleNodeList, handleBean.noActionList)
+        } else {
+            val targetActionList: List<String>? = if (handleBean.caseList != null) {
+                accParse.caseParse.parse(handleBean.caseList!!)?.actionList
+                    ?: handleBean.actionList
+            } else {
+                handleBean.actionList
+            }
+            if (handleBean.findList != null) {
+                //需要重新选择
+                if (handleNodeList.isNullOrEmpty()) {
+                    //重新选择后, 节点为空
+                    if (handleBean.noActionList != null) {
+                        result = handleAction(handleBean, handleNodeList, handleBean.noActionList)
+                    } else {
+                        //重新选择后, 没有找到元素, 也没有指定[noActionList], 这直接失败
+                        result.success = false
+                    }
                 } else {
-                    //重新选择后, 没有找到元素, 也没有指定[noActionList], 这直接失败
-                    result.success = false
+                    //重新选择后, 节点不为空
+                    result = handleAction(handleBean, handleNodeList, targetActionList)
                 }
             } else {
-                //重新选择后, 节点不为空
-                result = handleAction(handleBean, handleNodeList, handleBean.actionList)
-            }
-        } else {
-            //默认处理
-            if (handleBean.actionList.isNullOrEmpty()) {
-                result.success = handleBean.actionList != null
-            } else {
-                result = handleAction(handleBean, handleNodeList, handleBean.actionList)
+                //默认处理
+                if (targetActionList.isNullOrEmpty()) {
+                    result.success = targetActionList != null
+                } else {
+                    result = handleAction(handleBean, handleNodeList, targetActionList)
+                }
             }
         }
 

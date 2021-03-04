@@ -45,14 +45,17 @@ class AccParse(val accControl: AccControl) {
     /**操作记录解析器*/
     var operateParse = OperateParse(this)
 
-    /**节点上下文*/
-    val accContext = AccContext()
+    /**情况/场景解析器*/
+    var caseParse = CaseParse(this)
 
     /**表达式解析, 数值计算, 简单的数学计算*/
     val expParse = ExpParse().apply {
         aboutRatio = 10 * dp
         //ratioRef = 1f
     }
+
+    /**节点上下文*/
+    val accContext = AccContext()
 
     fun defaultIntervalDelay(): Long {
         return when (Device.performanceLevel()) {
