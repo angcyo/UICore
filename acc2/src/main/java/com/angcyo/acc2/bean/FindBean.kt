@@ -32,7 +32,7 @@ data class FindBean(
      * 支持文本变量 从[TaskBean]中获取值
      * 支持正则
      * 匹配顺序:1
-     * 特殊变量[appName],任务包名对应的程序名
+     * 特殊变量[com.angcyo.acc2.action.Action.APP_NAME],任务包名对应的程序名
      * */
     var textList: List<String>? = null,
 

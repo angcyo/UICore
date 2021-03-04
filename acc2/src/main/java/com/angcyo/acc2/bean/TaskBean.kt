@@ -159,3 +159,10 @@ fun TaskBean.appendMap(key: String?, value: String?) {
         }
     }
 }
+
+/**从[TaskBean]中获取指定[key]的文本*/
+fun TaskBean.getTextList(key: String?): List<String?>? {
+    return textListMap?.get(key) ?: textMap?.get(key)?.run {
+        listOf(this)
+    }
+}

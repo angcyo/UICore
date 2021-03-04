@@ -3,16 +3,15 @@ package com.angcyo.acc2.parse
 import android.graphics.PointF
 import android.graphics.Rect
 import com.angcyo.acc2.action.Action
+import com.angcyo.acc2.action.InputAction
+import com.angcyo.acc2.bean.getTextList
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.log
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.app
 import com.angcyo.library.component.appBean
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.patternList
-import com.angcyo.library.ex.str
-import com.angcyo.library.ex.toStr
+import com.angcyo.library.ex.*
 import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.getLongNum
 import kotlin.math.max
@@ -43,6 +42,9 @@ class AccParse(val accControl: AccControl) {
     /**矩形解析器*/
     var rectParse = RectParse(this)
 
+    /**操作记录解析器*/
+    var operateParse = OperateParse(this)
+
     /**节点上下文*/
     val accContext = AccContext()
 
@@ -66,8 +68,10 @@ class AccParse(val accControl: AccControl) {
      * $-2 从[com.angcyo.acc2.bean.TaskBean.wordList] 取倒数第二个
      * $0~$-2 取范围内的字符
      * $[xxx] 从[com.angcyo.acc2.bean.TaskBean.textMap]获取[xxx]键值对应的值
+     *
+     * [replace] 是否只是替换掉原来的字符
      * */
-    fun parseText(arg: String?): List<String?> {
+    fun parseText(arg: String?, replace: Boolean = false): List<String?> {
         if (arg.isNullOrEmpty()) {
             return emptyList()
         }
@@ -78,23 +82,63 @@ class AccParse(val accControl: AccControl) {
         val taskBean = accControl._taskBean
         val wordList: List<String?>
 
+        //替换后的字符串
+        var replaceResult = arg
+
         //$[xxx], 在map中获取文本
         val mapKeyList = arg.patternList("(?<=\\$\\[).+(?=\\])")
         if (mapKeyList.isNotEmpty()) {
             isHandle = true
             mapKeyList.forEach { key ->
-                if (key == "appName") {
-                    val appName =
-                        parsePackageName(null, accControl._taskBean?.packageName).firstOrNull()
-                            ?.appBean()?.appName?.str()
-                    if (appName.isNullOrBlank()) {
-                        getTextOfMap(key)?.let { value -> result.add(value) }
-                    } else {
-                        result.add(appName)
+                when (key) {
+                    Action.APP_NAME -> {
+                        val appName =
+                            parsePackageName(null, accControl._taskBean?.packageName).firstOrNull()
+                                ?.appBean()?.appName?.str()
+                        if (appName.isNullOrBlank()) {
+                            taskBean?.getTextList(key)?.firstOrNull()?.let { value ->
+                                result.add(value)
+                                if (replace) {
+                                    replaceResult = replaceResult?.replace("$[$key]", value)
+                                }
+                            }
+                        } else {
+                            //程序名
+                            result.add(appName)
+                            if (replace) {
+                                replaceResult = replaceResult?.replace("$[$key]", appName)
+                            }
+                        }
                     }
-                } else {
-                    getTextOfListMap(key)?.apply { result.addAll(this) }
-                        ?: getTextOfMap(key)?.let { value -> result.add(value) }
+                    Action.NOW_TIME -> {
+                        val text = nowTimeString()
+                        result.add(text)
+                        if (replace) {
+                            replaceResult = replaceResult?.replace("$[$key]", text)
+                        }
+                    }
+                    Action.LAST_INPUT -> {
+                        val text = InputAction.lastInputText
+                        if (text != null) {
+                            result.add(text)
+                            if (replace) {
+                                replaceResult = replaceResult?.replace("$[$key]", text)
+                            }
+                        }
+                    }
+                    else -> {
+                        getTextOfListMap(key)?.apply {
+                            result.addAll(this)
+                            if (replace) {
+                                replaceResult = replaceResult?.replace("$[$key]", this.str())
+                            }
+                        } ?: getTextOfMap(key)?.let { value ->
+                            result.add(value)
+                            if (replace) {
+                                replaceResult = replaceResult?.replace("$[$key]", value)
+                            }
+                        }
+                    }
                 }
             }
 
@@ -116,10 +160,18 @@ class AccParse(val accControl: AccControl) {
                     val startIndex = indexStringList[0].getLongNum()?.revise(wordList.size) ?: 0
                     val endIndex = indexStringList[1].getLongNum()?.revise(wordList.size) ?: 0
 
+                    val rangeWordList = mutableListOf<String?>()
                     wordList.forEachIndexed { index, word ->
                         if (index in startIndex..endIndex) {
                             result.add(word)
+                            rangeWordList.add(word)
                         }
+                    }
+                    if (replace) {
+                        replaceResult = replaceResult?.replace(
+                            "$$startIndex${Action.POINT_SPLIT}$${endIndex}",
+                            rangeWordList.str()
+                        )
                     }
                 } else {
                     isHandle = true
@@ -127,6 +179,10 @@ class AccParse(val accControl: AccControl) {
                         indexString.getLongNum()?.let { index ->
                             wordList.getOrNull(index.toInt())?.let { word ->
                                 result.add(word)
+
+                                if (replace) {
+                                    replaceResult = replaceResult?.replace("$$index", word)
+                                }
                             }
                         }
                     }
@@ -138,6 +194,10 @@ class AccParse(val accControl: AccControl) {
                     indexString.getLongNum()?.let { index ->
                         wordList.getOrNull(index.toInt())?.let { word ->
                             result.add(word)
+
+                            if (replace) {
+                                replaceResult = replaceResult?.replace("$$index", word)
+                            }
                         }
                     }
                 }
@@ -149,8 +209,13 @@ class AccParse(val accControl: AccControl) {
             result.add(arg)
         }
 
-        if (result.isEmpty()) {
+        if (result.isEmpty() || (replace && arg == replaceResult)) {
             accControl.log("无法解析文本参数[$arg]↓\n${taskBean?.wordList}\n${taskBean?.textMap}\n${taskBean?.textListMap}")
+        }
+
+        if (replace) {
+            accControl.log("文本替换后[$arg]->[$replaceResult]")
+            return listOf(replaceResult)
         }
 
         return result

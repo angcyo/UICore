@@ -163,6 +163,11 @@ class HandleParse(val accParse: AccParse) {
 
         //---------------开始处理----------------
 
+        if (handleBean.handleBefore != null) {
+            //处理前, 需要的处理
+            parse(handleNodeList, handleBean.handleBefore)
+        }
+
         if (conditionActionList != null) {
             //不满足约束条件时,又指定了对应的actionList, 优先执行
             result = handleAction(handleBean, handleNodeList, conditionActionList)
@@ -206,6 +211,13 @@ class HandleParse(val accParse: AccParse) {
             }
         }
 
+        if (handleBean.handleAfter != null) {
+            //处理后, 需要的处理
+            parse(handleNodeList, handleBean.handleAfter)
+        }
+
+        //---------------处理结束----------------
+
         //
         if (result.success) {
             result.handleBean = result.handleBean ?: handleBean
@@ -215,6 +227,11 @@ class HandleParse(val accParse: AccParse) {
         if (handleBean.ignore) {
             accParse.accControl.log("忽略[handle]结果:${handleBean}")
             result.success = false
+        }
+
+        val operate = handleBean.operate
+        if (operate != null) {
+            accParse.operateParse.parse(handleBean, operate, result)
         }
 
         return result

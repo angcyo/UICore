@@ -205,9 +205,10 @@ class AccNodeLog {
             }
         }
 
+        /*根据经验, 这个日志意义不大
         //在父布局中的位置
         wrapNode.getBoundsInParent(tempRect)
-        outBuilder.append(" pr:$tempRect")
+        outBuilder.append(" pr:$tempRect")*/
 
         //在屏幕中的位置
         wrapNode.getBoundsInScreen(tempRect)
@@ -217,7 +218,7 @@ class AccNodeLog {
         val width = tempRect.width()
         val height = tempRect.height()
         outBuilder.append("[${width}x$height]")
-        outBuilder.append("[${width / dp}x${height / dp}]")
+        //outBuilder.append("[${width / dp}x${height / dp}]")//根据经验, 这个日志意义不大
 
         //在屏幕中的位置比例
         outBuilder.append("(${tempRect.left * 1f / refWidth},${tempRect.top * 1f / refHeight}")

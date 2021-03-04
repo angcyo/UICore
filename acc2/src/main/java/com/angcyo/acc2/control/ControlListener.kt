@@ -1,6 +1,8 @@
 package com.angcyo.acc2.control
 
 import com.angcyo.acc2.bean.ActionBean
+import com.angcyo.acc2.bean.HandleBean
+import com.angcyo.acc2.bean.OperateBean
 import com.angcyo.acc2.bean.TaskBean
 import com.angcyo.acc2.parse.HandleResult
 
@@ -25,6 +27,14 @@ open class ControlListener {
 
     }
 
+    open fun onHandleOperate(
+        handleBean: HandleBean,
+        operateBean: OperateBean,
+        handleResult: HandleResult
+    ) {
+
+    }
+
     /**[ActionBean]运行后回调
      * [handleResult] 处理结果*/
     open fun onActionRunAfter(
@@ -36,7 +46,7 @@ open class ControlListener {
     }
 
     /**控制器开始回调*/
-    open fun onControlStart(taskBean: TaskBean) {
+    open fun onControlStart(control: AccControl, taskBean: TaskBean) {
 
     }
 

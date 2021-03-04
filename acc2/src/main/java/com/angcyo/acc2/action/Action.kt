@@ -20,6 +20,16 @@ object Action {
     /**任务目标程序*/
     const val PACKAGE_TARGET = "target"
 
+    /**特殊文本, 对应目标程序的名字
+     * [com.angcyo.acc2.bean.FindBean.textList]*/
+    const val APP_NAME = "appName"
+
+    /**特殊文本, 当前时间精确到毫秒*/
+    const val NOW_TIME = "nowTime"
+
+    /**特殊文本, 最后一次输入的文本内容*/
+    const val LAST_INPUT = "lastInput"
+
     /**当前活跃的窗口*/
     const val PACKAGE_ACTIVE = "active"
 

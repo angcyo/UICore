@@ -1,6 +1,7 @@
 package com.angcyo.acc2.control
 
 import com.angcyo.acc2.action.Action
+import com.angcyo.acc2.action.InputAction
 import com.angcyo.acc2.bean.ActionBean
 import com.angcyo.acc2.parse.AccParse
 import com.angcyo.acc2.parse.HandleResult
@@ -178,6 +179,7 @@ class AccSchedule(val accControl: AccControl) {
         _latsRunActionTime = 0L
         _lastRunActionHash = 0
         runActionBeanStack.clear()
+        InputAction.lastInputText = null
     }
 
     /**结束调度*/
@@ -401,6 +403,10 @@ class AccSchedule(val accControl: AccControl) {
                 if (action.randomEnable) {
                     //需要处理随机激活
                     action._enable = action.enable
+                    if (isDebugType()) {
+                        //debug模式下, 直接激活. 方便测试
+                        return action.enable
+                    }
                     action.enable = if (action.randomAmount.isNullOrEmpty()) {
                         //未指定随机概率
                         nextBoolean()

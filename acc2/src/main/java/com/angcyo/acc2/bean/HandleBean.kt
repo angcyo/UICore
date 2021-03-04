@@ -56,6 +56,10 @@ data class HandleBean(
 
     //<editor-fold desc="处理动作">
 
+    /**处理动作之前要处理的[HandleBean]
+     * 直接返回值, 不会影响流程*/
+    var handleBefore: List<HandleBean>? = null,
+
     /**
      * 当有元素选择时需要执行的具体操作
      * [com.angcyo.acc2.action.Action]*/
@@ -77,5 +81,16 @@ data class HandleBean(
     /**[actionList] [noActionList] 执行成功时, 需要执行的动作. 不受[ignore]影响*/
     var successActionList: List<String>? = null,
 
+    /**处理动作之后要处理的[HandleBean]
+     * 直接返回值, 不会影响流程*/
+    var handleAfter: List<HandleBean>? = null,
+
     //</editor-fold desc="处理动作">
+
+    //<editor-fold desc="操作记录">
+
+    /**如果指定了操作记录, 那么会回调[com.angcyo.acc2.control.ControlListener.onHandleOperate]*/
+    var operate: OperateBean? = null
+
+    //</editor-fold desc="操作记录">
 )

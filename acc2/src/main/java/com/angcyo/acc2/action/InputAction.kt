@@ -18,6 +18,14 @@ import com.angcyo.library.ex.subEnd
  */
 class InputAction : BaseAction() {
 
+    companion object {
+        var lastInputText: String? = null
+    }
+
+    init {
+        lastInputText = null
+    }
+
     override fun interceptAction(control: AccControl, action: String): Boolean {
         return action.cmd(Action.ACTION_INPUT) || action.cmd(Action.ACTION_SET_TEXT)
     }
@@ -37,6 +45,8 @@ class InputAction : BaseAction() {
             //从列表中, 随机获取一个
             control.accSchedule.accParse.parseText(arg).randomGet(1).firstOrNull()
         }
+
+        lastInputText = text
 
         nodeList?.forEach { node ->
             val result = node.setNodeText(text)

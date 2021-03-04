@@ -48,7 +48,7 @@ fun String.toKeyValue(delimiters: Char = ':'): List<Pair<String, String?>> {
 
 
 /**字符串中, 是否包含分隔符 ~*/
-fun String?.havePartition(text: CharSequence = "~") = have(text)
+fun String?.havePartition(text: CharSequence = Action.POINT_SPLIT) = have(text)
 
 /**修正索引, 比如是负数的索引*/
 fun Int.revise(size: Int) = if (this < 0) this + size else this

@@ -4,8 +4,10 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
+import com.angcyo.library.ex.isDebugType
 import com.angcyo.library.ex.size
 import com.angcyo.library.ex.subEnd
+import com.angcyo.library.toastWX
 
 /**
  * 手势双击
@@ -25,12 +27,23 @@ class DoubleAction : BaseTouchAction() {
         nodeList: List<AccessibilityNodeInfoCompat>?,
         action: String
     ): HandleResult = handleResult {
+
+        if (action.contains("debug")) {
+            if (isDebugType()) {
+                success = true
+                control.log("[$action]双击:debug".apply {
+                    toastWX(this)
+                })
+                return@handleResult
+            }
+        }
+
         val arg = action.subEnd(Action.ARG_SPLIT)
         val pointList = control.accSchedule.accParse.parsePoint(arg)
         if (pointList.size() >= 1) {
             val p1 = pointList[0]
             success = double(control, p1.x, p1.y)
-            control.log("double[$p1]:$success")
+            control.log("双击[$p1]:$success")
         }
     }
 }
