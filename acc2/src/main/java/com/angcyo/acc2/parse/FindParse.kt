@@ -542,7 +542,7 @@ class FindParse(val accParse: AccParse) {
             if (matchChild != null) {
                 notNullNum++
             }
-            if (isDebug() && notNullNum >= 2) {
+            if (isDebug() && notNullNum >= 2 && !node.text().isNullOrEmpty()) {
                 //匹配2个及以上失败后, 才打印日志
                 accParse.accControl.log(buildString {
                     appendLine(node.toLog())
