@@ -56,13 +56,22 @@ data class TaskBean(
      * 不支持正则*/
     var packageName: String? = null,
 
-    /**
+    /**统一配置每个[ActionBean]中的[limitRunCount]参数
      * [com.angcyo.acc2.bean.ActionBean.limitRunCount]*/
     var limitRunCount: Int = -1,
 
-    /**
+    /**统一配置每个[ActionBean]中的[limitRunTime]参数
      * [com.angcyo.acc2.bean.ActionBean.limitRunTime]*/
-    var limitRunTime: Int = -1,
+    var limitRunTime: Long = -1,
+
+    /**限制整个[TaskBean]运行时长
+     * [com.angcyo.acc2.bean.ActionBean.limitRunTime]*/
+    var taskLimitRunTime: Long = -1,
+
+    /**当[taskLimitRunTime]超出限制时,需要处理的操作.如果未指定,则默认异常处理.
+     * [com.angcyo.acc2.bean.CheckBean.limitTime]
+     * 无论[taskLimitTime]执行成功与否, 都会终止任务.*/
+    var taskLimitTime: ActionBean? = null,
 
     /**任务完成后, 是否启动主程序.(不管失败或者成功)*/
     var finishToApp: Boolean = true,

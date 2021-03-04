@@ -159,13 +159,16 @@ fun Long.toTimes(): LongArray {
  *  toElapsedTime( pattern = intArrayOf(-1, 1, 1), units = arrayOf("", "", ":", ":", ":") )
  *</pre>
  *
+ * [-1] 强制不需要
+ * [1] 强制需要
+ * [其他值] 智能判断
  * @param pattern 默认为智能判断值<=0时, 不返回. 如果需要强制返回, 设置1, 强制不返回设置-1
- * @param h24 24小时制
+ * @param refill 24小时制, 前面补齐0
  * */
 fun Long.toElapsedTime(
     pattern: IntArray = intArrayOf(-1, 1, 1),
-    h24: BooleanArray = booleanArrayOf(true, true, true, true, true),
-    units: Array<String> = arrayOf("毫秒", "秒", "分", "时", "天")
+    refill: BooleanArray = booleanArrayOf(true, true, true, true, true),
+    units: Array<String> = arrayOf("毫秒", "秒", "分", "时", "天") /*最大5个计量*/
 ): String {
     val times = toTimes()
     val builder = StringBuilder()
@@ -176,9 +179,10 @@ fun Long.toElapsedTime(
 
     for (i in times.lastIndex downTo 0) {
         val value = times[i]
-        val h24 = h24.getOrNull(i) ?: false
+        val h24 = refill.getOrNull(i) ?: false
         val unit = units.getOrNull(i) ?: ":"
         val need = pattern.getOrNull(i) ?: 0
+
         when {
             need == -1 -> {
                 //强制不要

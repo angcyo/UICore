@@ -223,13 +223,39 @@ class AccSchedule(val accControl: AccControl) {
             //无[ActionBean]需要调度, 调度结束
             accControl.finish("执行完成")
         } else {
-            _scheduleActionBean = nextActionBean
-            _currentIndex = _scheduleIndex
+            val taskLimitRunTime = accControl._taskBean?.taskLimitRunTime ?: -1
+            if (taskLimitRunTime > 0) {
+                //任务指定的运行时长限制
+                val nowTime = nowTime()
+                if (nowTime - _startTime >= taskLimitRunTime) {
+                    //任务超时
 
-            val result =
-                scheduleAction(nextActionBean, accControl._taskBean?.backActionList, true)
-            if (result.success) {
-                next()
+                    val limitTip = "任务超时,限制运行时长[${taskLimitRunTime.toElapsedTime()}]"
+
+                    val taskLimitTime = accControl._taskBean?.taskLimitTime
+                    if (taskLimitTime == null) {
+                        //默认处理
+                        accControl.error(limitTip)
+                    } else {
+                        runAction(taskLimitTime, null, false)
+                        if (accControl.isControlRunning) {
+                            //强制终止任务
+                            accControl.error(limitTip)
+                        }
+                    }
+                }
+            }
+
+            if (accControl.isControlRunning) {
+                //运行状态
+                _scheduleActionBean = nextActionBean
+                _currentIndex = _scheduleIndex
+
+                val result =
+                    scheduleAction(nextActionBean, accControl._taskBean?.backActionList, true)
+                if (result.success) {
+                    next()
+                }
             }
         }
     }

@@ -50,15 +50,15 @@ data class ActionBean(
      * */
     var limitRunCount: Int = -1,
 
-    /**限制最大运行时长后, 异常中断任务.
+    /**限制最大运行时长后, 异常中断任务.毫秒
      * 可以使用-1,取消限制.
      * 可以使用[com.angcyo.acc2.bean.CheckBean.limitTime]覆盖默认行为
      * */
-    var limitRunTime: Int = -1,
+    var limitRunTime: Long = -1,
 
     //</editor-fold desc="配置">
 
-    /**在那个[AccessibilityWindowInfo]中获取节点
+    /**在那个[android.view.accessibility.AccessibilityWindowInfo]中获取节点
      * 不指定, 则根据包名默认处理, 包名还未指定, 则使用活跃的窗口*/
     var window: WindowBean? = null,
 
