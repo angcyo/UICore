@@ -17,6 +17,7 @@ import androidx.core.text.getSpans
 import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.utils.PATTERN_MOBILE_SIMPLE
+import com.angcyo.library.utils.PATTERN_URL
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.util.regex.Pattern
@@ -222,11 +223,19 @@ fun SpannableStringBuilder.safe(): SpannableStringBuilder {
 }
 
 /**判断字符串是否是纯数字, 支持正负整数,正负浮点数*/
-fun String.isNumber(): Boolean {
-    if (TextUtils.isEmpty(this)) {
+fun String?.isNumber(regex: String = "^[-\\+]?[\\d.]*\\d+$"): Boolean {
+    if (isNullOrEmpty()) {
         return false
     }
-    val pattern = Pattern.compile("^[-\\+]?[\\d.]*\\d+$")
+    val pattern = Pattern.compile(regex)
+    return pattern.matcher(this).matches()
+}
+
+fun String?.isUrl(regex: String = PATTERN_URL): Boolean {
+    if (isNullOrEmpty()) {
+        return false
+    }
+    val pattern = Pattern.compile(regex)
     return pattern.matcher(this).matches()
 }
 

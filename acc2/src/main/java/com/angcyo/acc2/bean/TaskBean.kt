@@ -121,25 +121,40 @@ fun TaskBean.putMap(key: String?, value: String?) {
 }
 
 /**设置[com.angcyo.acc2.bean.TaskBean.textListMap]数据*/
-fun TaskBean.putListMap(key: String?, value: String?) {
+fun TaskBean.putListMap(key: String?, value: String?, append: Boolean = true) {
     if (textListMap == null) {
         textListMap = hashMapOf()
     }
     if (key != null) {
         textListMap?.apply {
-            val list = get(key)?.toMutableList() ?: mutableListOf()
+            val list = if (append) {
+                get(key)?.toMutableList()
+            } else {
+                null
+            } ?: mutableListOf()
             list.add(value)
             put(key, list)
         }
     }
 }
 
-fun TaskBean.putListMap(key: String?, value: List<String?>?) {
+fun TaskBean.putListMap(key: String?, value: List<String?>?, append: Boolean = true) {
+    if (value.isNullOrEmpty()) {
+        return
+    }
     if (textListMap == null) {
         textListMap = hashMapOf()
     }
     if (key != null) {
-        textListMap?.put(key, value)
+        textListMap?.apply {
+            val list = if (append) {
+                get(key)?.toMutableList()
+            } else {
+                null
+            } ?: mutableListOf()
+            list.addAll(value)
+            put(key, list)
+        }
     }
 }
 
