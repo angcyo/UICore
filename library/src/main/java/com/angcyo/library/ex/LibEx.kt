@@ -168,7 +168,7 @@ fun List<*>?.size() = this?.size ?: 0
 fun Stack<*>.popSafe() = if (isEmpty()) null else pop()
 
 /**随机从列表中获取一组数据*/
-fun <T> List<T?>?.randomGet(count: Int = nextInt(0, this?.size ?: 1)): List<T> {
+fun <T> List<T?>?.randomGet(count: Int = nextInt(0, min(this.size(), 1))): List<T> {
     val result = mutableListOf<T>()
     for (i in 0 until count) {
         this?.getOrNull(nextInt(0, size))?.apply {

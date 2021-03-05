@@ -229,7 +229,7 @@ class FindParse(val accParse: AccParse) {
         if (packageName == null) {
             return false
         }
-        val nameList = accParse.parsePackageName(packageName, packageName)
+        val nameList = accParse.parsePackageName(packageName, null)
         var ignore = false
         for (name in nameList) {
             ignore = node.packageName.have(name)
@@ -315,21 +315,21 @@ class FindParse(val accParse: AccParse) {
         if (windowBean == null) {
             //未指定, 采用默认处理
             val taskPackageName = accParse.accControl._taskBean?.packageName
-            return _findRootNodeBy(taskPackageName)
+            result.addAll(_findRootNodeBy(taskPackageName))
         } else {
             //解析window约束
             result.addAll(_findRootNodeBy(windowBean.packageName, windowBean.ignorePackageName))
+        }
 
-            //矩形约束
-            if (windowBean.rect != null) {
-                val removeList = mutableListOf<AccessibilityNodeInfoCompat>()
-                result.forEach {
-                    if (!matchNodeRect(it, windowBean.rect)) {
-                        removeList.add(it)
-                    }
+        //矩形约束
+        if (windowBean?.rect != null) {
+            val removeList = mutableListOf<AccessibilityNodeInfoCompat>()
+            result.forEach {
+                if (!matchNodeRect(it, windowBean.rect)) {
+                    removeList.add(it)
                 }
-                result.removeAll(removeList)
             }
+            result.removeAll(removeList)
         }
 
         return result
@@ -341,7 +341,10 @@ class FindParse(val accParse: AccParse) {
     }
 
     fun windowBean(findWindowBean: WindowBean? = null) = accParse.accControl.accSchedule.run {
-        findWindowBean ?: _runActionBean?.window ?: _scheduleActionBean?.window
+        findWindowBean
+            ?: _runActionBean?.check?.window
+            ?: _runActionBean?.window
+            ?: _scheduleActionBean?.window
     }
 
     //</editor-fold desc="window">
