@@ -20,6 +20,7 @@ class HandleParse(val accParse: AccParse) {
     init {
 
         registerActionList.add(StartAction())
+        registerActionList.add(UrlAction())
         registerActionList.add(SleepAction())
         registerActionList.add(CopyAction())
         registerActionList.add(TrueAction())
