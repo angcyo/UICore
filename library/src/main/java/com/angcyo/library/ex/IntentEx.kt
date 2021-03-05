@@ -196,7 +196,7 @@ fun Context.openApp(
 }
 
 /**启动一个[Intent]*/
-fun Context.startIntent(config: Intent.() -> Unit): Intent? {
+fun Context.startIntent(error: Boolean = false, config: Intent.() -> Unit): Intent? {
     var result: Intent? = null
     Intent().apply {
         baseConfig(this@startIntent)
@@ -206,6 +206,9 @@ fun Context.startIntent(config: Intent.() -> Unit): Intent? {
             result = this
         } catch (e: Exception) {
             e.printStackTrace()
+            if (error) {
+                throw e
+            }
         }
     }
     return result

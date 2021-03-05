@@ -59,7 +59,8 @@ data class ActionBean(
     //</editor-fold desc="配置">
 
     /**在那个[android.view.accessibility.AccessibilityWindowInfo]中获取节点
-     * 不指定, 则根据包名默认处理, 包名还未指定, 则使用活跃的窗口*/
+     * 不指定, 则根据包名默认处理, 包名还未指定, 则使用活跃的窗口
+     * 优先级:[FindBean->CheckBean->ActionBean]*/
     var window: WindowBean? = null,
 
     //<editor-fold desc="激活">

@@ -17,6 +17,11 @@ data class CheckBean(
     /**check的描述, 不参与识别逻辑*/
     var des: String? = null,
 
+    /**在那个[android.view.accessibility.AccessibilityWindowInfo]中获取节点
+     * 不指定, 则根据包名默认处理, 包名还未指定, 则使用活跃的窗口
+     * 优先级:[FindBean->CheckBean->ActionBean]*/
+    var window: WindowBean? = null,
+
     /**如果包含目标元素
      * 所有集合中, 选中的元素都会收集在一起*/
     var event: List<FindBean>? = null,
