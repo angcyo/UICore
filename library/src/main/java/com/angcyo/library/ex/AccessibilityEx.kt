@@ -254,6 +254,14 @@ fun CharSequence?.des(): String {
     }
 }
 
+fun CharSequence?.des2(): String {
+    return if (this.isNullOrEmpty()) {
+        ""
+    } else {
+        "[$this]"
+    }
+}
+
 fun CharSequence?.appendDes(des: String?): String? {
     return if (this.isNullOrEmpty() || des.isNullOrEmpty()) {
         this?.toString()

@@ -93,7 +93,8 @@ data class HandleBean(
 
     //<editor-fold desc="操作记录">
 
-    /**如果指定了操作记录, 那么会回调[com.angcyo.acc2.control.ControlListener.onHandleOperate]*/
+    /**如果指定了操作记录, 那么会回调[com.angcyo.acc2.control.ControlListener.onHandleOperate]
+     * 将会在[HandleBean]处理结束之后执行*/
     var operate: OperateBean? = null
 
     //</editor-fold desc="操作记录">
