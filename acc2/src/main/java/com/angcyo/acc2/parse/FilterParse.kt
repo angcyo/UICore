@@ -36,7 +36,7 @@ class FilterParse(val accParse: AccParse) {
         //过滤1: index
         val indexString = filterBean.index
         if (indexString != null) {
-            val index = accParse.parseText(indexString).firstOrNull()
+            val index = accParse.textParse.parse(indexString).firstOrNull()
             originList.eachRangeItem(index) { item, isIn ->
                 if (!isIn) {
                     removeList.add(item)
@@ -96,7 +96,7 @@ class FilterParse(val accParse: AccParse) {
             after.forEach { node ->
                 var ignore = false
                 for (ignoreText in filterBean.ignoreTextList!!) {
-                    val textList = accParse.parseText(ignoreText)
+                    val textList = accParse.textParse.parse(ignoreText)
                     if (filterNodeText(node, textList)) {
                         ignore = true
                     }
@@ -117,7 +117,7 @@ class FilterParse(val accParse: AccParse) {
             after.forEach { node ->
                 var ignore = false
                 for (text in filterBean.haveTextList!!) {
-                    val textList = accParse.parseText(text)
+                    val textList = accParse.textParse.parse(text)
                     if (!nodeHaveText(node, textList)) {
                         ignore = true
                     }

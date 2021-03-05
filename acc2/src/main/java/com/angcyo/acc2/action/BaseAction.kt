@@ -2,6 +2,7 @@ package com.angcyo.acc2.action
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.bean.ActionBean
+import com.angcyo.acc2.bean.TextParamBean
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.library.ex.subStart
@@ -14,6 +15,9 @@ import com.angcyo.library.ex.subStart
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 abstract class BaseAction {
+
+    /**临时存储的文本处理参数, [runAction]之后清除*/
+    var textParamBean: TextParamBean? = null
 
     /**是否需要拦截[action]执行*/
     abstract fun interceptAction(control: AccControl, action: String): Boolean
@@ -34,6 +38,14 @@ abstract class BaseAction {
     /**Dsl*/
     fun handleResult(action: HandleResult.() -> Unit): HandleResult {
         return HandleResult().apply(action)
+    }
+
+    /**[cmd]裸命令*/
+    fun getHandleTextParamBeanByAction(cmd: String): TextParamBean? {
+        if (textParamBean?.handleAction == null || textParamBean?.handleAction?.contains(cmd) == true) {
+            return textParamBean
+        }
+        return null
     }
 
     fun HandleResult.addNode(node: AccessibilityNodeInfoCompat) {

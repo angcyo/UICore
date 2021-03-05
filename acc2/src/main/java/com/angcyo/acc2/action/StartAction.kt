@@ -28,7 +28,7 @@ class StartAction : BaseAction() {
         action: String
     ): HandleResult = handleResult {
         val packageNameParam = action.subEnd(Action.ARG_SPLIT)
-        val packageNameList = control.accSchedule.accParse.parsePackageName(
+        val packageNameList = control.accSchedule.accParse.textParse.parsePackageName(
             packageNameParam,
             control._taskBean?.packageName
         )

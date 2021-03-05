@@ -27,10 +27,10 @@ class UrlAction : BaseAction() {
         action: String
     ): HandleResult = handleResult {
         val url = action.arg(Action.ACTION_URL)
-        val targetUrl = control.accSchedule.accParse.parseText(url).firstOrNull()
+        val targetUrl = control.accSchedule.accParse.textParse.parse(url).firstOrNull()
         val pkg = action.arg("pkg") ?: control._taskBean?.packageName
 
-        val packageNameList = control.accSchedule.accParse.parsePackageName(
+        val packageNameList = control.accSchedule.accParse.textParse.parsePackageName(
             pkg,
             control._taskBean?.packageName
         )

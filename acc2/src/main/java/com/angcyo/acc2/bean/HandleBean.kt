@@ -64,6 +64,13 @@ data class HandleBean(
      * 满足一个即返回*/
     var caseList: List<CaseBean>? = null,
 
+    /**文本特殊处理参数, 如长尾词替换处理
+     * [com.angcyo.acc2.bean.HandleBean.textParam]
+     * [com.angcyo.acc2.bean.TaskBean.textParam]
+     * [com.angcyo.acc2.bean.CaseBean.textParam]
+     * */
+    var textParam: TextParamBean? = null,
+
     /**
      * 当有元素选择时需要执行的具体操作
      * [com.angcyo.acc2.action.Action]*/

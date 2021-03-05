@@ -47,7 +47,7 @@ class OperateParse(val accParse: AccParse) {
             val key = text.subStart(Action.ARG_SPLIT)
             val value = text.subEnd(Action.ARG_SPLIT)
             if (key != null) {
-                map[key] = accParse.parseText(value, true)
+                map[key] = accParse.textParse.parse(value, true)
             }
         }
 

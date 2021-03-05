@@ -129,7 +129,7 @@ class FindParse(val accParse: AccParse) {
         //第1层筛选
         if (findBean.index != null) {
             val filterFindNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
-            val index = accParse.parseText(findBean.index).firstOrNull()
+            val index = accParse.textParse.parse(findBean.index).firstOrNull()
             filterFindNodeList.addAll(findNodeList.eachRangeItem(index))
             findNodeList.resetAll(filterFindNodeList)
         }
@@ -137,7 +137,7 @@ class FindParse(val accParse: AccParse) {
         //第2层筛选
         if (findBean.childIndex != null) {
             val filterFindNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
-            val childIndex = accParse.parseText(findBean.childIndex).firstOrNull()
+            val childIndex = accParse.textParse.parse(findBean.childIndex).firstOrNull()
             findNodeList.forEach { node ->
                 filterFindNodeList.addAll(node.childList().eachRangeItem(childIndex))
             }
@@ -229,7 +229,7 @@ class FindParse(val accParse: AccParse) {
         if (packageName == null) {
             return false
         }
-        val nameList = accParse.parsePackageName(packageName, null)
+        val nameList = accParse.textParse.parsePackageName(packageName, null)
         var ignore = false
         for (name in nameList) {
             ignore = node.packageName.have(name)
@@ -245,7 +245,7 @@ class FindParse(val accParse: AccParse) {
         if (packageName == null) {
             return false
         }
-        val nameList = accParse.parsePackageName(packageName)
+        val nameList = accParse.textParse.parsePackageName(packageName)
         var need = false
         for (name in nameList) {
             need = node.packageName.have(name)
@@ -565,7 +565,7 @@ class FindParse(val accParse: AccParse) {
 
     /**检查节点是否满足text*/
     fun matchNodeText(node: AccessibilityNodeInfoCompat, arg: String?): Boolean {
-        val text = accParse.parseText(arg).firstOrNull()
+        val text = accParse.textParse.parse(arg).firstOrNull()
         if (text.isNullOrBlank()) {
             return true
         }

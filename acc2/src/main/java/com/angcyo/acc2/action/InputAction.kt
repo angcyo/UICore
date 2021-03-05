@@ -43,7 +43,11 @@ class InputAction : BaseAction() {
             randomString() //随机生成文本
         } else {
             //从列表中, 随机获取一个
-            control.accSchedule.accParse.parseText(arg).randomGet(1).firstOrNull()
+            control.accSchedule.accParse.textParse.parse(
+                arg,
+                false,
+                getHandleTextParamBeanByAction(if (action.startsWith(Action.ACTION_INPUT)) Action.ACTION_INPUT else Action.ACTION_SET_TEXT)
+            ).randomGet(1).firstOrNull()
         }
 
         lastInputText = text

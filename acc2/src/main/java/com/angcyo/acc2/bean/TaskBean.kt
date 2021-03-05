@@ -94,6 +94,13 @@ data class TaskBean(
     /**优先从[textListMap]里面取数据,其次从[textMap]取数据*/
     var textListMap: HashMap<String, List<String?>?>? = null,
 
+    /**文本特殊处理参数, 如长尾词替换处理
+     * [com.angcyo.acc2.bean.HandleBean.textParam]
+     * [com.angcyo.acc2.bean.TaskBean.textParam]
+     * [com.angcyo.acc2.bean.CaseBean.textParam]
+     * */
+    var textParam: TextParamBean? = null,
+
     //</editor-fold desc="文本池">
 
     /**操作步骤*/

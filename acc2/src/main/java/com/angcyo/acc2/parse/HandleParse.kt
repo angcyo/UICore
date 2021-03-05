@@ -3,6 +3,7 @@ package com.angcyo.acc2.parse
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.action.*
 import com.angcyo.acc2.bean.HandleBean
+import com.angcyo.acc2.bean.TextParamBean
 import com.angcyo.acc2.control.log
 import com.angcyo.library.ex.size
 
@@ -157,7 +158,7 @@ class HandleParse(val accParse: AccParse) {
         //index筛选
         if (handleBean.index != null && !handleNodeList.isNullOrEmpty()) {
             val filterFindNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
-            val index = accParse.parseText(handleBean.index).firstOrNull()
+            val index = accParse.textParse.parse(handleBean.index).firstOrNull()
             filterFindNodeList.addAll(handleNodeList.eachRangeItem(index))
             handleNodeList = filterFindNodeList
         }
@@ -169,36 +170,49 @@ class HandleParse(val accParse: AccParse) {
             parse(handleNodeList, handleBean.handleBefore)
         }
 
+        //case
+        val caseBean = if (handleBean.caseList != null) {
+            accParse.caseParse.parse(handleBean.caseList!!)
+        } else {
+            null
+        }
+
+        //text param
+        val textParamBean =
+            caseBean?.textParam ?: handleBean.textParam ?: accParse.accControl._taskBean?.textParam
+
         if (conditionActionList != null) {
             //不满足约束条件时,又指定了对应的actionList, 优先执行
-            result = handleAction(handleBean, handleNodeList, conditionActionList)
+            result = handleAction(handleBean, textParamBean, handleNodeList, conditionActionList)
         } else {
-            val targetActionList: List<String>? = if (handleBean.caseList != null) {
-                accParse.caseParse.parse(handleBean.caseList!!)?.actionList
-                    ?: handleBean.actionList
-            } else {
-                handleBean.actionList
-            }
+            val targetActionList: List<String>? = caseBean?.actionList ?: handleBean.actionList
             if (handleBean.findList != null) {
                 //需要重新选择
                 if (handleNodeList.isNullOrEmpty()) {
                     //重新选择后, 节点为空
                     if (handleBean.noActionList != null) {
-                        result = handleAction(handleBean, handleNodeList, handleBean.noActionList)
+                        result = handleAction(
+                            handleBean,
+                            textParamBean,
+                            handleNodeList,
+                            handleBean.noActionList
+                        )
                     } else {
                         //重新选择后, 没有找到元素, 也没有指定[noActionList], 这直接失败
                         result.success = false
                     }
                 } else {
                     //重新选择后, 节点不为空
-                    result = handleAction(handleBean, handleNodeList, targetActionList)
+                    result =
+                        handleAction(handleBean, textParamBean, handleNodeList, targetActionList)
                 }
             } else {
                 //默认处理
                 if (targetActionList.isNullOrEmpty()) {
                     result.success = targetActionList != null
                 } else {
-                    result = handleAction(handleBean, handleNodeList, targetActionList)
+                    result =
+                        handleAction(handleBean, textParamBean, handleNodeList, targetActionList)
                 }
             }
         }
@@ -206,17 +220,32 @@ class HandleParse(val accParse: AccParse) {
         if (result.forceFail) {
             accParse.accControl.log("强制失败处理:${handleBean}")
             if (handleBean.failActionList != null) {
-                result = handleAction(handleBean, handleNodeList, handleBean.failActionList)
+                result = handleAction(
+                    handleBean,
+                    textParamBean,
+                    handleNodeList,
+                    handleBean.failActionList
+                )
                 result.forceFail = true
             }
         } else if (result.success) {
             //如果处理成功
             if (handleBean.successActionList != null) {
-                result = handleAction(handleBean, handleNodeList, handleBean.successActionList)
+                result = handleAction(
+                    handleBean,
+                    textParamBean,
+                    handleNodeList,
+                    handleBean.successActionList
+                )
             }
         } else {
             if (handleBean.failActionList != null) {
-                result = handleAction(handleBean, handleNodeList, handleBean.failActionList)
+                result = handleAction(
+                    handleBean,
+                    textParamBean,
+                    handleNodeList,
+                    handleBean.failActionList
+                )
             }
         }
 
@@ -249,6 +278,7 @@ class HandleParse(val accParse: AccParse) {
     /**处理动作集合*/
     fun handleAction(
         handleBean: HandleBean,
+        textParamBean: TextParamBean?,
         nodeList: List<AccessibilityNodeInfoCompat>?,
         actionList: List<String>?
     ): HandleResult {
@@ -258,7 +288,7 @@ class HandleParse(val accParse: AccParse) {
         //枚举actionList
         actionList?.forEach { action ->
             //处理action
-            handleAction(handleBean, nodeList, action).apply {
+            handleAction(handleBean, textParamBean, nodeList, action).apply {
                 result.forceFail = forceFail || result.forceFail
                 result.forceSuccess = forceSuccess || result.forceSuccess
                 result.success = success || result.success
@@ -280,6 +310,7 @@ class HandleParse(val accParse: AccParse) {
     /**处理分发*/
     fun handleAction(
         handleBean: HandleBean,
+        textParamBean: TextParamBean?,
         nodeList: List<AccessibilityNodeInfoCompat>?,
         action: String
     ): HandleResult {
@@ -299,6 +330,7 @@ class HandleParse(val accParse: AccParse) {
             //是否要处理指定的action
             if (it.interceptAction(accControl, action)) {
                 isActionIntercept = true
+                it.textParamBean = textParamBean
                 //运行处理
                 it.runAction(accControl, nodeList, action).apply {
                     result.forceFail = forceFail || result.forceFail
@@ -319,6 +351,7 @@ class HandleParse(val accParse: AccParse) {
                         }
                     }
                 }
+                it.textParamBean = null
             }
         }
 

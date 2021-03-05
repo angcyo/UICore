@@ -25,7 +25,7 @@ class CopyAction : BaseAction() {
         action: String
     ): HandleResult = handleResult {
         val text =
-            control.accSchedule.accParse.parseText(action.subEnd(Action.ARG_SPLIT)).firstOrNull()
+            control.accSchedule.accParse.textParse.parse(action.subEnd(Action.ARG_SPLIT)).firstOrNull()
         success = !text.isNullOrEmpty()
         control.log("复制文本[$text]:$success")
     }

@@ -198,7 +198,7 @@ class ConditionParse(val accParse: AccParse) {
 
             //app
             if (result && app != null) {
-                val packageList = accParse.parsePackageName(
+                val packageList = accParse.textParse.parsePackageName(
                     null,
                     accParse.findParse.windowBean()?.packageName
                         ?: accControl._taskBean?.packageName
