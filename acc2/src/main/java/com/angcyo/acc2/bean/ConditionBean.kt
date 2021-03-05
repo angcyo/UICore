@@ -16,6 +16,9 @@ data class ConditionBean(
      * 则满足条件!*/
     var textMapList: List<String>? = null,
 
+    /**如果指定key对应的值, 没有时, 满足. 列表中均要满足*/
+    var noTextMapList: List<String>? = null,
+
     /**当指定[com.angcyo.acc2.bean.ActionBean.actionId]的[ActionBean]执行成功时. 列表中均要满足
      * 则满足条件*/
     var actionResultList: List<Long>? = null,

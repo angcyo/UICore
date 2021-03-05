@@ -68,6 +68,19 @@ class ConditionParse(val accParse: AccParse) {
                 }
             }
 
+            //noTextMapList
+            if (!noTextMapList.isNullOrEmpty()) {
+                for (key in noTextMapList!!) {
+                    val value = accControl._taskBean?.textListMap?.get(key)
+                        ?: accControl._taskBean?.textMap?.get(key)
+                    if (value != null) {
+                        //指定key对应的value有值, 则条件不满足
+                        result = false
+                        break
+                    }
+                }
+            }
+
             //actionResultList
             if (result && !actionResultList.isNullOrEmpty()) {
                 for (actionId in actionResultList!!) {
