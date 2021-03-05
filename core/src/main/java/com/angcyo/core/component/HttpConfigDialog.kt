@@ -85,7 +85,7 @@ object HttpConfigDialog {
             dialogThemeResId = 0
             dialogType = DslDialogConfig.DIALOG_TYPE_ALERT_DIALOG
             dialogLayoutId = R.layout.lib_http_config_layout
-            onDismissListener = {
+            onCancelListener = {
                 save(null, true)
             }
             onDialogInitListener = { dialog, dialogViewHolder ->
