@@ -13,7 +13,7 @@ import com.angcyo.library.ex.subStart
  * @date 2021/03/04
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class OperateParse(val accParse: AccParse) {
+class OperateParse(val accParse: AccParse) : BaseParse() {
 
     /**解析操作记录*/
     fun parse(handleBean: HandleBean, operateBean: OperateBean, handleResult: HandleResult) {

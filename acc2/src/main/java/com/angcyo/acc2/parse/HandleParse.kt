@@ -4,6 +4,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.action.*
 import com.angcyo.acc2.bean.HandleBean
 import com.angcyo.acc2.bean.TextParamBean
+import com.angcyo.acc2.control.AccSchedule
 import com.angcyo.acc2.control.log
 import com.angcyo.library.ex.size
 
@@ -14,8 +15,9 @@ import com.angcyo.library.ex.size
  * @date 2021/02/01
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class HandleParse(val accParse: AccParse) {
+class HandleParse(val accParse: AccParse) : BaseParse() {
 
+    /**可执行的动作列表*/
     val registerActionList = mutableListOf<BaseAction>()
 
     init {
@@ -365,6 +367,20 @@ class HandleParse(val accParse: AccParse) {
         }
 
         return result
+    }
+
+    override fun onScheduleStart(scheduled: AccSchedule) {
+        super.onScheduleStart(scheduled)
+        registerActionList.forEach {
+            it.onScheduleStart(scheduled)
+        }
+    }
+
+    override fun onScheduleEnd(scheduled: AccSchedule) {
+        super.onScheduleEnd(scheduled)
+        registerActionList.forEach {
+            it.onScheduleEnd(scheduled)
+        }
     }
 
 }

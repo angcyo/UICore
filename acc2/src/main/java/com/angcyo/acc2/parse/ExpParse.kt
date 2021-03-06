@@ -12,7 +12,7 @@ import com.angcyo.library.ex.size
  * @date 2021/01/30
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class ExpParse {
+class ExpParse(val accParse: AccParse) : BaseParse() {
 
     companion object {
         /**
@@ -48,7 +48,7 @@ class ExpParse {
     }
 
     /**
-     * [exp] 解析表达式, 数值要在符号的后面
+     * [expression] 解析表达式, 数值要在符号的后面
      * [>-10]
      * [>=100]
      * [<=10]
@@ -58,8 +58,11 @@ class ExpParse {
      * [%3>=2]
      * [10dp]
      * [-10.0]
+     * [>:$[xxx]] 支持文本变量
      * */
-    fun parse(exp: String?, op: String = Action.OP): List<ExpValue> {
+    fun parse(expression: String?, op: String = Action.OP): List<ExpValue> {
+        val exp = accParse.textParse.parse(expression, true).firstOrNull()
+
         expValueList.clear()
         if (exp.isNullOrEmpty()) {
             return expValueList

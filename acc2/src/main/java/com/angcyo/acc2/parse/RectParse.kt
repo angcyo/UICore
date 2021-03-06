@@ -10,7 +10,7 @@ import com.angcyo.acc2.action.Action
  * @date 2021/02/01
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class RectParse(val accParse: AccParse) {
+class RectParse(val accParse: AccParse) : BaseParse() {
 
     /**解析矩形, 并且判断目标[rect], 是否满足条件*/
     fun parse(rectMatch: String?, rect: Rect): Boolean {

@@ -14,7 +14,7 @@ import com.angcyo.library.ex.subStart
  * @date 2021/03/04
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class CaseParse(val accParse: AccParse) {
+class CaseParse(val accParse: AccParse) : BaseParse() {
 
     /**解析符合条件的[CaseBean]*/
     fun parse(caseList: List<CaseBean>): CaseBean? {

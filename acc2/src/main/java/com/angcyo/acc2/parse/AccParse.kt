@@ -4,6 +4,7 @@ import android.graphics.PointF
 import android.graphics.Rect
 import com.angcyo.acc2.action.Action
 import com.angcyo.acc2.control.AccControl
+import com.angcyo.acc2.control.AccSchedule
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.dp
@@ -19,7 +20,7 @@ import kotlin.random.Random.Default.nextLong
  * @date 2021/01/30
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class AccParse(val accControl: AccControl) {
+class AccParse(val accControl: AccControl) : BaseParse() {
 
     /**条件解析器*/
     var conditionParse = ConditionParse(this)
@@ -46,13 +47,27 @@ class AccParse(val accControl: AccControl) {
     var textParse = TextParse(this)
 
     /**表达式解析, 数值计算, 简单的数学计算*/
-    val expParse = ExpParse().apply {
+    val expParse = ExpParse(this).apply {
         aboutRatio = 10 * dp
         //ratioRef = 1f
     }
 
+    val parseList = mutableListOf<BaseParse>()
+
     /**节点上下文*/
     val accContext = AccContext()
+
+    init {
+        parseList.add(conditionParse)
+        parseList.add(findParse)
+        parseList.add(handleParse)
+        parseList.add(filterParse)
+        parseList.add(rectParse)
+        parseList.add(operateParse)
+        parseList.add(caseParse)
+        parseList.add(textParse)
+        parseList.add(expParse)
+    }
 
     fun defaultIntervalDelay(): Long {
         return when (Device.performanceLevel()) {
@@ -129,5 +144,19 @@ class AccParse(val accControl: AccControl) {
         }
 
         return listOf(p1, p2)
+    }
+
+    override fun onScheduleStart(scheduled: AccSchedule) {
+        super.onScheduleStart(scheduled)
+        parseList.forEach {
+            it.onScheduleStart(scheduled)
+        }
+    }
+
+    override fun onScheduleEnd(scheduled: AccSchedule) {
+        super.onScheduleEnd(scheduled)
+        parseList.forEach {
+            it.onScheduleEnd(scheduled)
+        }
     }
 }

@@ -18,7 +18,7 @@ import com.angcyo.library.utils.getLongNum
  * @date 2021/03/05
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class TextParse(val accParse: AccParse) {
+class TextParse(val accParse: AccParse) : BaseParse() {
 
     val accControl: AccControl
         get() = accParse.accControl
@@ -42,6 +42,10 @@ class TextParse(val accParse: AccParse) {
         if (arg.isNullOrEmpty()) {
             return emptyList()
         }
+        if (!haveVarFlag(arg)) {
+            return listOf(arg)
+        }
+
         val result = mutableListOf<String?>()
 
         var isHandle = false
@@ -53,7 +57,7 @@ class TextParse(val accParse: AccParse) {
         var replaceResult = arg
 
         //$[xxx], 在map中获取文本
-        val mapKeyList = arg.patternList("(?<=\\$\\[).+(?=\\])")
+        val mapKeyList = parseTextKey(arg)
         if (mapKeyList.isNotEmpty()) {
             isHandle = true
             val keyResult = mutableListOf<String?>()
@@ -189,6 +193,9 @@ class TextParse(val accParse: AccParse) {
         return parseTextParam(result, textParamBean)
     }
 
+    /**是否有变量标识符*/
+    fun haveVarFlag(arg: String?) = arg?.contains("$") == true
+
     /**替换长尾词*/
     fun parseTextParam(originList: List<String?>, textParamBean: TextParamBean?): List<String?> {
         return if (textParamBean != null && !textParamBean.tailList.isNullOrEmpty()) {
@@ -206,6 +213,9 @@ class TextParse(val accParse: AccParse) {
             originList
         }
     }
+
+    /**[xx:$[xxx] $[xxx] xxx]获取$[xxx]格式中的xxx*/
+    fun parseTextKey(arg: String) = arg.patternList("(?<=\\$\\[)[\\s\\S]*?(?=\\])")
 
     /**单个文本替换长尾词*/
     fun handleText(text: String?, textParamBean: TextParamBean?): String? {

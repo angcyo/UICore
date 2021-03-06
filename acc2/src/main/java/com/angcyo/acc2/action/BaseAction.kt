@@ -4,6 +4,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.bean.ActionBean
 import com.angcyo.acc2.bean.TextParamBean
 import com.angcyo.acc2.control.AccControl
+import com.angcyo.acc2.parse.BaseParse
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.library.ex.subStart
 
@@ -14,7 +15,7 @@ import com.angcyo.library.ex.subStart
  * @date 2021/01/30
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-abstract class BaseAction {
+abstract class BaseAction : BaseParse() {
 
     /**临时存储的文本处理参数, [runAction]之后清除*/
     var textParamBean: TextParamBean? = null

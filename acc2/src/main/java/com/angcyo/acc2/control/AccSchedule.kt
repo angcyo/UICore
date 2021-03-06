@@ -181,11 +181,13 @@ class AccSchedule(val accControl: AccControl) {
         _lastRunActionHash = 0
         runActionBeanStack.clear()
         InputAction.lastInputText = null
+        accParse.onScheduleStart(this)
     }
 
     /**结束调度*/
     fun endSchedule() {
         _endTime = nowTime()
+        accParse.onScheduleEnd(this)
     }
 
     /**额外需要执行的[ActionBean]*/

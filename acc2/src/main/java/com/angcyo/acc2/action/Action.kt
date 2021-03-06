@@ -51,6 +51,10 @@ object Action {
      * [com.angcyo.acc2.bean.HandleBean.rootNode]*/
     const val RESULT = "result"
 
+    /**顺序输入文本
+     * [ACTION_INPUT]*/
+    const val ORDER = "order"
+
     /**所有标识*/
     const val ALL = "*"
 
@@ -94,6 +98,9 @@ object Action {
      * [input:$[xxx] regex:xxx] [com.angcyo.acc2.bean.TaskBean.textListMap]
      * [input:$[xxx] $0~$-1 regex:xxx] 从[com.angcyo.acc2.bean.TaskBean.textListMap]中获取, 再获取
      * regex:\\d+ 文本需要使用正则过滤取值
+     * [input:$[xxx] index:1]如果$[xxx]返回了一个列表,那么[index]参数, 就是获取列表中的第几个.
+     * 不指定[index]表示随机获取列表中的数据,使用[index:[ORDER]]表示顺序获取.
+     * [index:$[xxx]]index参数也支持文本变量
      * */
     const val ACTION_INPUT = "input"
 

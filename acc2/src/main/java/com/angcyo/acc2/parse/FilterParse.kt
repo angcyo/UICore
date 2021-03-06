@@ -12,7 +12,7 @@ import com.angcyo.library.ex.haveText
  * @date 2021/01/30
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class FilterParse(val accParse: AccParse) {
+class FilterParse(val accParse: AccParse) : BaseParse() {
 
     //<editor-fold desc="filter">
 

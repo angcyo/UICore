@@ -18,7 +18,7 @@ import com.angcyo.library.ex.*
  * @date 2021/01/30
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class FindParse(val accParse: AccParse) {
+class FindParse(val accParse: AccParse) : BaseParse() {
 
     /**路径解析*/
     var pathParse = PathParse(accParse)

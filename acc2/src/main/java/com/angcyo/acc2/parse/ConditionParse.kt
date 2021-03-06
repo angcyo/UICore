@@ -21,7 +21,7 @@ import kotlin.random.Random
  * @date 2021/01/30
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class ConditionParse(val accParse: AccParse) {
+class ConditionParse(val accParse: AccParse) : BaseParse() {
 
     /**判断给定的条件, 是否有满足
      * [conditionList] 一组条件, 只要满足其中一个, 就会返回true
