@@ -7,10 +7,7 @@ import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.acc2.parse.arg
 import com.angcyo.acc2.parse.toLog
-import com.angcyo.library.ex.randomGet
-import com.angcyo.library.ex.randomString
-import com.angcyo.library.ex.setNodeText
-import com.angcyo.library.ex.subEnd
+import com.angcyo.library.ex.*
 
 /**
  * Email:angcyo@126.com
@@ -88,7 +85,7 @@ class InputAction : BaseAction() {
             } else if (indexText == Action.ORDER) {
                 //按顺序返回
                 control.log("顺序获取输入文本第${inputCount}个:$inputTextList")
-                inputTextList[inputCount]
+                inputTextList.getSafe(inputCount)
             } else {
                 val index = indexText.toIntOrNull()
                 if (index == null) {
@@ -98,7 +95,7 @@ class InputAction : BaseAction() {
                 } else {
                     //指定了index
                     control.log("指定获取输入文本索引第${inputCount}个:$inputTextList")
-                    inputTextList[index]
+                    inputTextList.getSafe(index)
                 }
             }
         }

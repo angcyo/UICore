@@ -231,6 +231,21 @@ fun <T> List<T>.getOrNull2(index: Int): T? {
     return getOrNull(index)
 }
 
+/**如果是负数, 则反向取值
+ * 如果大于size, 则取模*/
+fun <T> List<T>.getSafe(index: Int): T? {
+    val newIndex = if (index < 0) {
+        size + index
+    } else {
+        index
+    }
+    val size = size()
+    if (newIndex >= size) {
+        return getOrNull(size % newIndex)
+    }
+    return getOrNull(newIndex)
+}
+
 /**异步代码, 同步执行. 会阻塞当前线程*/
 fun <R> sync(count: Int = 1, action: (CountDownLatch, AtomicReference<R>) -> Unit): R? {
     val latch = CountDownLatch(count)
