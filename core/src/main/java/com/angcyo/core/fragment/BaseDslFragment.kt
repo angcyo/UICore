@@ -28,13 +28,6 @@ open class BaseDslFragment : BaseTitleFragment() {
     /**为[DslAdapterItem]提供基础的分割线功能*/
     var baseDslItemDecoration: DslItemDecoration? = DslItemDecoration()
 
-    /**实时获取[DslRecyclerView]*/
-    val _recycler: DslRecyclerView
-        get() = (_vh.rv(R.id.lib_recycler_view) as? DslRecyclerView)
-            ?: DslRecyclerView(fContext()).apply {
-                L.e("注意:访问目标[DslRecyclerView]不存在!")
-            }
-
     /**实时获取[DslAdapter]*/
     val _adapter: DslAdapter
         get() = (_recycler.adapter as? DslAdapter) ?: DslAdapter().apply {

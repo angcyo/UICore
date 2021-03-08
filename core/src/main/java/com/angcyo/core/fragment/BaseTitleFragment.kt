@@ -23,6 +23,7 @@ import com.angcyo.component.dslAffect
 import com.angcyo.core.R
 import com.angcyo.core.appendTextItem
 import com.angcyo.core.behavior.ArcLoadingHeaderBehavior
+import com.angcyo.library.L
 import com.angcyo.library.component.dslIntent
 import com.angcyo.library.ex.className
 import com.angcyo.library.ex.colorFilter
@@ -34,6 +35,7 @@ import com.angcyo.widget.layout.DslSoftInputLayout
 import com.angcyo.widget.layout.OnSoftInputListener
 import com.angcyo.widget.layout.isHideAction
 import com.angcyo.widget.layout.isShowAction
+import com.angcyo.widget.recycler.DslRecyclerView
 import com.angcyo.widget.span.span
 import com.angcyo.widget.text.DslTextView
 
@@ -79,6 +81,13 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
     /**情感图状态切换, 按需初始化.*/
     var affectUI: DslAffect? = null
+
+    /**实时获取[DslRecyclerView]*/
+    val _recycler: DslRecyclerView
+        get() = (_vh.rv(R.id.lib_recycler_view) as? DslRecyclerView)
+            ?: DslRecyclerView(fContext()).apply {
+                L.e("注意:访问目标[DslRecyclerView]不存在!")
+            }
 
     //</editor-fold desc="成员配置">
 
@@ -236,6 +245,16 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
         rootControl().setBackground(fragmentConfig.fragmentBackgroundDrawable)
 
         fragmentTitle = fragmentTitle
+
+        //双击标题栏
+        titleControl()?.view(R.id.lib_title_wrap_layout)?.onDoubleTap {
+            onDoubleTitleLayout()
+        }
+    }
+
+    open fun onDoubleTitleLayout(): Boolean {
+        _recycler.smoothScrollToPosition(0)
+        return true
     }
 
     /**初始化[Behavior]*/
