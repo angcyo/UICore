@@ -1,9 +1,12 @@
 package com.angcyo.http.rx
 
+import com.angcyo.http.base.getString
+import com.angcyo.http.base.isJson
+import com.angcyo.http.base.readString
+import com.angcyo.http.base.toJsonObject
 import com.angcyo.http.exception.HttpDataException
 import com.angcyo.http.toBean
 import com.angcyo.library.ex.isDebug
-import com.angcyo.library.ex.orString
 import com.google.gson.JsonElement
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -20,6 +23,34 @@ import java.lang.reflect.Type
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 
+fun Response<JsonElement>.errorMessage(): String {
+    var errorString = errorBody()?.readString()
+    if (errorString.isNullOrEmpty()) {
+        errorString = message()
+    }
+
+    if (!errorString.isNullOrEmpty()) {
+        if (errorString.isJson()) {
+            errorString.toJsonObject()?.let {
+                val e1 = it.getString("error")
+                if (!e1.isNullOrEmpty()) {
+                    errorString = e1
+                } else {
+                    val e2 = it.getString("msg")
+                    if (!e2.isNullOrEmpty()) {
+                        errorString = e2
+                    }
+                }
+            }
+        }
+    }
+    return if (errorString.isNullOrEmpty()) {
+        "接口异常"
+    } else {
+        errorString!!
+    }
+}
+
 fun <T> Observable<Response<JsonElement>>.mapTo(
     type: Type,
     parseError: Boolean = false,
@@ -29,7 +60,7 @@ fun <T> Observable<Response<JsonElement>>.mapTo(
         if (it.isSuccessful) {
             it.toBean<T>(type, parseError, exception)
         } else {
-            val originMessage = "${it.message().orString("接口异常")}[${it.code()}]"
+            val originMessage = "${it.errorMessage()}[${it.code()}]"
             val message = if (isDebug()) {
                 "[${it.raw().request.url}]$originMessage"
             } else {

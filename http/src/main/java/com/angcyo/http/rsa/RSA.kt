@@ -14,8 +14,11 @@ object RSA {
     /**公钥, 用于加密*/
     var publicKey: String? = null
 
-    fun init(publicKey: String) {
+    var securityCode: String? = null
+
+    fun init(publicKey: String, securityCode: String) {
         RSA.publicKey = publicKey
+        RSA.securityCode = securityCode
 
         DslHttp.config {
             val rsaInterceptor = RSAInterceptor()

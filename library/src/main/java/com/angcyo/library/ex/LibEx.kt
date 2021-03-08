@@ -101,9 +101,9 @@ fun <T> T?.elseNull(action: () -> Unit = {}): T? {
     return this
 }
 
-fun Any?.string(nil: CharSequence = ""): CharSequence {
+fun Any?.string(def: CharSequence = ""): CharSequence {
     return when {
-        this == null -> return nil
+        this == null -> return def
         this is CharSequence -> this
         else -> this.toString()
     }
@@ -241,7 +241,7 @@ fun <T> List<T>.getSafe(index: Int): T? {
     }
     val size = size()
     if (newIndex >= size) {
-        return getOrNull(size % newIndex)
+        return getOrNull(newIndex % size)
     }
     return getOrNull(newIndex)
 }

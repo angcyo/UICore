@@ -52,6 +52,8 @@ fun ByteArray.toHexString(): String? {
     return String(ret)
 }
 
+fun String.toHexString(): String? = toByteArray(Charsets.UTF_8).toHexString()
+
 /**格式化十六进制, 两个字符之间加:号
  * 00A8 -> 00:A8
  * */

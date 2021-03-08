@@ -576,5 +576,20 @@ fun String.repeat2(n: Int): String {
     }
 }
 
+/**如果是负数, 则反向取值
+ * 如果大于size, 则取模*/
+fun String.getSafe(index: Int): Char? {
+    val newIndex = if (index < 0) {
+        length + index
+    } else {
+        index
+    }
+    val size = length
+    if (newIndex >= size) {
+        return getOrNull(newIndex % size)
+    }
+    return getOrNull(newIndex)
+}
+
 /**转换成对错字符显示*/
 fun Boolean.toDC() = if (this) "√" else "×"
