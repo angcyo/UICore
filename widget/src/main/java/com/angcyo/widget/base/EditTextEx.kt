@@ -170,9 +170,11 @@ fun EditText.hawkTextChange(
 //</editor-fold desc="事件监听">
 
 /**设置文本, 并且将光标至于文本最后面*/
-fun EditText.setInputText(text: CharSequence? = null) {
+fun EditText.setInputText(text: CharSequence? = null, selection: Boolean = true) {
     setText(text)
-    setSelection(min(text?.length ?: 0, getText().length))
+    if (selection) {
+        setSelection(min(text?.length ?: 0, getText().length))
+    }
 }
 
 /**恢复选中范围*/

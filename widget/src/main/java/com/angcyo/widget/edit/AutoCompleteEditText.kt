@@ -160,13 +160,17 @@ open class AutoCompleteEditText : CompleteEditText {
         }
         setAdapter(adapter)
 
-        if (showOnFocus) {
-            onFocusChange(notifyFirst) {
-                if (it) {
-                    if (focusDelay > 0) {
-                        postDelayed({ showDropDown() }, focusDelay)
-                    } else {
-                        showDropDown()
+        if (list.isEmpty()) {
+            dismissDropDown()
+        } else {
+            if (showOnFocus) {
+                onFocusChange(notifyFirst) {
+                    if (it) {
+                        if (focusDelay > 0) {
+                            postDelayed({ showDropDown() }, focusDelay)
+                        } else {
+                            showDropDown()
+                        }
                     }
                 }
             }
@@ -175,6 +179,7 @@ open class AutoCompleteEditText : CompleteEditText {
 
     override fun showDropDown() {
         if (adapter == null || adapter.count <= 0) {
+            dismissDropDown()
             return
         }
         try {
