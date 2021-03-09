@@ -3,7 +3,6 @@ package com.angcyo.dsladapter
 import com.angcyo.library.L
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
-import com.angcyo.widget.base.setWidthHeight
 
 /**
  * [DslAdapter] 中, 控制情感图显示状态的 [Item]
@@ -46,6 +45,9 @@ open class DslAdapterStatusItem : BaseDslStateItem() {
         itemStateLayoutMap[ADAPTER_STATUS_EMPTY] = R.layout.lib_empty_layout
 
         itemState = ADAPTER_STATUS_NONE
+
+        itemWidth = -1
+        itemHeight = -1
     }
 
     override fun onItemBind(
@@ -53,7 +55,6 @@ open class DslAdapterStatusItem : BaseDslStateItem() {
         itemPosition: Int,
         adapterItem: DslAdapterItem
     ) {
-        itemHolder.itemView.setWidthHeight(-1, -1)
         super.onItemBind(itemHolder, itemPosition, adapterItem)
     }
 

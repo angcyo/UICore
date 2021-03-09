@@ -53,6 +53,9 @@ open class DslLoadMoreItem : BaseDslStateItem() {
         itemStateLayoutMap[LOAD_MORE_ERROR] = R.layout.lib_error_layout
         itemStateLayoutMap[_LOAD_MORE_RETRY] = R.layout.lib_error_layout
 
+        itemWidth = -1
+        itemHeight = -1
+
         thisAreContentsTheSame = { _, _, _, _ ->
             false
         }
@@ -63,7 +66,6 @@ open class DslLoadMoreItem : BaseDslStateItem() {
         itemPosition: Int,
         adapterItem: DslAdapterItem
     ) {
-        itemHolder.itemView.setWidthHeight(-1, -2)
         super.onItemBind(itemHolder, itemPosition, adapterItem)
     }
 
