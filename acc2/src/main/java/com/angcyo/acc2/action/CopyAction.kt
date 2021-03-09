@@ -4,6 +4,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
+import com.angcyo.library.ex.copy
 import com.angcyo.library.ex.subEnd
 
 /**
@@ -25,8 +26,11 @@ class CopyAction : BaseAction() {
         action: String
     ): HandleResult = handleResult {
         val text =
-            control.accSchedule.accParse.textParse.parse(action.subEnd(Action.ARG_SPLIT)).firstOrNull()
-        success = !text.isNullOrEmpty()
+            control.accSchedule.accParse.textParse.parse(action.subEnd(Action.ARG_SPLIT))
+                .firstOrNull()
+        if (!text.isNullOrEmpty()) {
+            success = text.copy() == true
+        }
         control.log("复制文本[$text]:$success")
     }
 }

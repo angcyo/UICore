@@ -3,8 +3,11 @@ package com.angcyo.acc2.parse
 import com.angcyo.acc2.action.Action
 import com.angcyo.acc2.bean.HandleBean
 import com.angcyo.acc2.bean.OperateBean
+import com.angcyo.library.ex.isDebugType
 import com.angcyo.library.ex.subEnd
 import com.angcyo.library.ex.subStart
+import com.angcyo.library.ex.toStr
+import com.angcyo.library.toastQQ
 
 /**
  * 操作记录解析
@@ -29,6 +32,12 @@ class OperateParse(val accParse: AccParse) : BaseParse() {
         parseOperateText(operateBean, operateBean.textList)
 
         /*------------------------------后--------------------------------*/
+
+        if (isDebugType()) {
+            operateBean.map?.toStr()?.let {
+                toastQQ(it)
+            }
+        }
 
         //操作记录的回调
         accParse.accControl.controlListenerList.forEach {
