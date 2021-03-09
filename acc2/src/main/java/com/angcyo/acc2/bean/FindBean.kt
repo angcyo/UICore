@@ -138,6 +138,10 @@ data class FindBean(
      * 根据上述查找到的节点, 取满足条件对应的父节点*/
     var parent: ChildBean? = null,
 
+    /**4:
+     * 根据上述查找到的节点, 获取所有的直系child子节点*/
+    var allChild: Boolean? = null,
+
     //</editor-fold desc="筛选器">
 
     //<editor-fold desc="过滤">

@@ -173,6 +173,8 @@ class FilterParse(val accParse: AccParse) : BaseParse() {
                             inputValue = childSize.toFloat()
                         )
 
+                        allow = pass
+
                         if (sizeCountExp?.startsWith("<") == true) {
                             allow = true
                             //如果是小于运算符, 则没有匹配到时,才退出

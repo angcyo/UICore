@@ -155,6 +155,15 @@ class FindParse(val accParse: AccParse) : BaseParse() {
             findNodeList.resetAll(filterFindNodeList)
         }
 
+        //第4层筛选
+        if (findBean.allChild == true) {
+            val filterFindNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
+            findNodeList.forEach { node ->
+                filterFindNodeList.addAll(node.childList())
+            }
+            findNodeList.resetAll(filterFindNodeList)
+        }
+
         //------------------------后处理-------------------------
 
         //需要过滤
