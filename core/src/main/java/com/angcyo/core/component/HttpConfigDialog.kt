@@ -50,7 +50,7 @@ object HttpConfigDialog {
             if (app == null) {
                 customBaseUrl?.let { result.add(it) }
             } else {
-                result.add("主要服务器 ${app.getHostBaseUrl()}")
+                result.add("当前 ${app.getHostBaseUrl()}")
                 app.getHostUrls()?.split(";")?.forEach {
                     if (it.isNotEmpty()) {
                         result.add(it)
@@ -124,7 +124,7 @@ object HttpConfigDialog {
 
                 val spinner: RSpinner? = dialogViewHolder.v(R.id.url_spinner)
                 val urls = mutableListOf<String>()
-                urls.add("选择服务器")
+                urls.add("选择服务器Url")
                 if (urlList == null || urlList.isEmpty()) {
                     urls.add(baseUrl)
                 } else {
