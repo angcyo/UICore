@@ -27,13 +27,13 @@
  * */
 ext.pgyerConfig = [
         //需要上传的APK,相对路径/绝对路径 (必填)
-        "pgyerApkPath" : "",
+        "pgyerApkPath"  : "",
 
         //请求的api地址
-        "pgyerUrl": "https://www.pgyer.com/apiv2/app/upload",
+        "pgyerUrl"      : "https://www.pgyer.com/apiv2/app/upload",
 
         //官网, 用于拼接短地址 必须/结尾.
-        "pgyer"   : "https://www.pgyer.com/",
+        "pgyer"         : "https://www.pgyer.com/",
 
         "pgyer_api_key" : "",
         "pgyer_user_key": ""
@@ -81,52 +81,54 @@ _pgyerUpload.doFirst {
 
     def allPath = apkPath.split(";")
 
-    def apkFile = new File(allPath[0])
-    if (!apkFile.exists()) {
-        throw new IllegalStateException("需要上传的文件不存在:" + apkFile.getAbsolutePath())
+    allPath.eachWithIndex { path, index ->
+        def apkFile = new File(path)
+        if (!apkFile.exists()) {
+            System.err.println("需要上传的文件不存在:" + apkFile.getAbsolutePath())
+        } else {
+            def clientBuilder = new okhttp3.OkHttpClient.Builder()
+            clientBuilder.connectTimeout(10, java.util.concurrent.TimeUnit.SECONDS)
+            clientBuilder.readTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+
+            okhttp3.OkHttpClient client = clientBuilder.build()
+
+            def bodyBuilder = new okhttp3.MultipartBody.Builder()
+            bodyBuilder.setType(okhttp3.MultipartBody.FORM)
+
+            bodyBuilder.addFormDataPart("_api_key", new String(api_key))
+            bodyBuilder.addFormDataPart("uKey", new String(user_key))
+            bodyBuilder.addFormDataPart("file",
+                    apkFile.name,
+                    okhttp3.RequestBody.create(
+                            okhttp3.MediaType.parse("application/vnd.android.package-archive"),
+                            apkFile)
+            )
+
+            HashMap<String, String> params = paramsConfig
+            for (String key : params.keySet()) {
+                //println("add part key: " + key + " value: " + params.get(key))
+                bodyBuilder.addFormDataPart(key, params.get(key))
+            }
+
+            def request = new okhttp3.Request.Builder()
+                    .url(pgyerConfig.pgyerUrl)
+                    .post(bodyBuilder.build())
+                    .build()
+
+            println "上传至蒲公英: ${path} -> ${pgyerConfig.pgyer}"
+
+            def response = client.newCall(request).execute()
+
+            if (response == null || response.body() == null) {
+                System.err.println "蒲公英上传结果失败"
+                return null
+            }
+            def json = response.body().string()
+            response.close()
+
+            println "蒲公英上传结果:" + json
+            System.err.println "蒲公英安装地址${path}->" + pgyerConfig.pgyer + new com.google.gson.Gson().fromJson(json, Map.class).data.buildShortcutUrl
+        }
     }
-
-    def clientBuilder = new okhttp3.OkHttpClient.Builder()
-    clientBuilder.connectTimeout(10, java.util.concurrent.TimeUnit.SECONDS)
-    clientBuilder.readTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
-
-    okhttp3.OkHttpClient client = clientBuilder.build()
-
-    def bodyBuilder = new okhttp3.MultipartBody.Builder()
-    bodyBuilder.setType(okhttp3.MultipartBody.FORM)
-
-    bodyBuilder.addFormDataPart("_api_key", new String(api_key))
-    bodyBuilder.addFormDataPart("uKey", new String(user_key))
-    bodyBuilder.addFormDataPart("file",
-            apkFile.name,
-            okhttp3.RequestBody.create(
-                    okhttp3.MediaType.parse("application/vnd.android.package-archive"),
-                    apkFile)
-    )
-
-    HashMap<String, String> params = paramsConfig
-    for (String key : params.keySet()) {
-        //println("add part key: " + key + " value: " + params.get(key))
-        bodyBuilder.addFormDataPart(key, params.get(key))
-    }
-
-    def request = new okhttp3.Request.Builder()
-            .url(pgyerConfig.pgyerUrl)
-            .post(bodyBuilder.build())
-            .build()
-
-    println "上传至蒲公英: ${apkPath} -> ${pgyerConfig.pgyer}"
-
-    def response = client.newCall(request).execute()
-
-    if (response == null || response.body() == null) {
-        System.err.println "蒲公英上传结果失败"
-        return null
-    }
-    def json = response.body().string()
-    response.close()
-
-    println "蒲公英上传结果:" + json
-    System.err.println "蒲公英安装地址-> " + pgyerConfig.pgyer + new com.google.gson.Gson().fromJson(json, Map.class).data.buildShortcutUrl
 }
 
