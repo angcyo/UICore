@@ -1,5 +1,6 @@
 package com.angcyo.library
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.os.Build
@@ -49,6 +50,7 @@ object DslToast {
     var _toastRef: WeakReference<Toast>? = null
 
     /**使用[Toast]展示提示信息*/
+    @SuppressLint("ShowToast")
     fun _showWithToast(context: Context, config: ToastConfig) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             _toastRef?.get()?.cancel()
@@ -58,7 +60,7 @@ object DslToast {
         if (_toastRef?.get() == null) {
             _toastRef = WeakReference(Toast.makeText(context, "", config.duration).apply {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    view.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    view?.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 }
             })
         }
