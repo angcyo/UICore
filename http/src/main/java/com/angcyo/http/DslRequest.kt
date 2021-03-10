@@ -30,7 +30,7 @@ class DslRequest {
     /**请求头*/
     var header: HashMap<String, String>? = null
 
-    /**返回回调*/
+    /**返回回调, 有可能在子线程回调*/
     var onEndAction: ((response: Response?, exception: Exception?) -> Unit)? = null
 
     /**异步请求*/
@@ -184,7 +184,7 @@ fun <T> Response.fromJson(typeOfT: Type): T? {
     return null
 }
 
-fun Response.bodyString(typeOfT: Type): String? = body?.string()
+fun Response.bodyString(): String? = body?.string()
 
 /**[DSL]*/
 fun request(action: DslRequest.() -> Unit): Call? {

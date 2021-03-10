@@ -44,6 +44,8 @@ fun currentApplication(): Application? {
     }
 }
 
+fun threadName() = Thread.currentThread().name
+
 fun isRelease(): Boolean = "release".equals(BuildConfig.BUILD_TYPE, true)
 
 fun isDebugType() = "debug".equals(BuildConfig.BUILD_TYPE, true)

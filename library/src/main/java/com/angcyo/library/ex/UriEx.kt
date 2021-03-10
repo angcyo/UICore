@@ -80,6 +80,14 @@ fun String?.isHttpScheme(): Boolean {
     return case.startsWith("http://") || case.startsWith("https://")
 }
 
+fun String?.isDataScheme(): Boolean {
+    if (this.isNullOrBlank()) {
+        return false
+    }
+    val case = this.toLowerCase(Locale.getDefault())
+    return case.startsWith("data://")
+}
+
 /**是否是可直接读写file的uri资源*/
 fun Uri?.isFileScheme(): Boolean {
     if (this == null || path.isNullOrBlank()) {
