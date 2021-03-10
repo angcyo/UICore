@@ -244,7 +244,12 @@ open class DslRecyclerView : RecyclerView, ILayoutDelegate {
 
     override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
         L.v(event)
-        return super.dispatchKeyEvent(event)
+        return try {
+            super.dispatchKeyEvent(event)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            true
+        }
     }
 
     override fun dispatchKeyEventPreIme(event: KeyEvent?): Boolean {
