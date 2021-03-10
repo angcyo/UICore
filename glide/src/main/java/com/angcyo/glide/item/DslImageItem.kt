@@ -1,4 +1,4 @@
-package com.angcyo.item
+package com.angcyo.glide.item
 
 import android.net.Uri
 import android.view.View
@@ -7,6 +7,7 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.isUpdateMedia
 import com.angcyo.glide.DslGlide
 import com.angcyo.glide.GlideImageView
+import com.angcyo.glide.R
 import com.angcyo.glide.giv
 import com.angcyo.library.ex.*
 import com.angcyo.widget.DslViewHolder

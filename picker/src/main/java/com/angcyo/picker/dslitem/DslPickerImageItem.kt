@@ -59,19 +59,19 @@ open class DslPickerImageItem : DslAdapterItem() {
     var itemPlaceholderDrawable: Drawable? = colorDrawable(R.color.picker_image_placeholder_color)
 
     @DrawableRes
-    var itemAudioCoverTipDrawable: Int = com.angcyo.item.R.drawable.lib_audio_cover_tip
+    var itemAudioCoverTipDrawable: Int = R.drawable.lib_audio_cover_tip
 
     @DrawableRes
     var itemVideoCoverTipDrawable: Int = -1
 
     @DrawableRes
-    var itemAudioTipDrawable: Int = com.angcyo.item.R.drawable.lib_audio_tip
+    var itemAudioTipDrawable: Int = R.drawable.lib_audio_tip
 
     @DrawableRes
-    var itemVideoTipDrawable: Int = com.angcyo.item.R.drawable.lib_video_tip
+    var itemVideoTipDrawable: Int = R.drawable.lib_video_tip
 
     @DrawableRes
-    var itemImageTipDrawable: Int = com.angcyo.item.R.drawable.lib_image_tip
+    var itemImageTipDrawable: Int = R.drawable.lib_image_tip
 
     var _transitionDuration = 160
     var _transitionInterpolator = AccelerateInterpolator()

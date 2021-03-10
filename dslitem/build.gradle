@@ -4,5 +4,4 @@ dependencies {
     api project(allModule.dialog)
     api project(allModule.core)
     api project(allModule.widget)
-    api project(allModule.glide)
 }

@@ -3,7 +3,7 @@ package com.angcyo.picker.dslitem
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.margin
 import com.angcyo.glide.giv
-import com.angcyo.item.DslImageItem
+import com.angcyo.glide.item.DslImageItem
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.model.LoaderMedia

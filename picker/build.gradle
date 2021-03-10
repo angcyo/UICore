@@ -19,6 +19,7 @@ dependencies {
     api project(allModule.media)
     api project(allModule.image)
     api project(allModule.camera)
+    api project(allModule.glide)
 
     //https://mvnrepository.com/artifact/androidx.loader/loader
     api "androidx.loader:loader:1.1.0"
