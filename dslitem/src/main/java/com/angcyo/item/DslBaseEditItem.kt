@@ -79,6 +79,11 @@ open class DslBaseEditItem : DslBaseLabelItem() {
         }
     }
 
+    override fun onItemViewDetachedToWindow(itemHolder: DslViewHolder, itemPosition: Int) {
+        super.onItemViewDetachedToWindow(itemHolder, itemPosition)
+        itemHolder.ev(R.id.lib_edit_view)?.clearListeners()
+    }
+
     open fun onItemTextChange(text: CharSequence) {
 
     }
