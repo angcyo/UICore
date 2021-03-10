@@ -258,7 +258,7 @@ class AccSchedule(val accControl: AccControl) {
 
                 val result =
                     scheduleAction(nextActionBean, accControl._taskBean?.backActionList, true)
-                if (result.success) {
+                if (!result.forceFail && result.success) {
                     next()
                 }
             }

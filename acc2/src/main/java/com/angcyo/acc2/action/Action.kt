@@ -234,8 +234,15 @@ object Action {
     const val ACTION_TRUE = "true"
 
     /**执行结果直接设置false 加任意参数取消强制失败
-     * [com.angcyo.acc2.action.FalseAction]*/
+     * [com.angcyo.acc2.action.FalseAction]
+     * [com.angcyo.acc2.parse.HandleResult.forceFail]*/
     const val ACTION_FALSE = "false"
+
+    /**随机进行失败处理, 这样同一个[com.angcyo.acc2.bean.ActionBean]就有可能多次执行
+     * [ACTION_FALSE]
+     * [randomFalse:<=30] 参数可以接上概率. 如果概率命中, 那么功能和[ACTION_FALSE]一样
+     * [com.angcyo.acc2.bean.ActionBean.randomAmount]*/
+    const val ACTION_RANDOM_FALSE = "randomFalse"
 
     /**弹出toast默认是[ACTION_TOAST_QQ]
      * [toast:xxx]

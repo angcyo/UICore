@@ -28,6 +28,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         registerActionList.add(CopyAction())
         registerActionList.add(TrueAction())
         registerActionList.add(FalseAction())
+        registerActionList.add(RandomFalseAction())
         registerActionList.add(EnableAction())
         registerActionList.add(DisableAction())
         registerActionList.add(ToastAction())
@@ -82,6 +83,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
             for (handBean in handleList) {
                 val handleResult = parse(originList, handBean)
                 result.forceSuccess = handleResult.forceSuccess || result.forceSuccess
+                result.forceFail = handleResult.forceFail || result.forceFail
 
                 if (handleResult.success) {
                     if (!handleResult.forceFail) {

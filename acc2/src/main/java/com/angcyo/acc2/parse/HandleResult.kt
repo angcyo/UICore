@@ -13,7 +13,7 @@ import com.angcyo.acc2.bean.HandleBean
 open class HandleResult : BaseResult() {
 
     /**强制执行结果为失败
-     * 进行失败的处理, 但是保留成功的状态
+     * 进行失败的处理, 但是保留成功的状态. 并且失败后, 不会跳转到下一个[com.angcyo.acc2.bean.ActionBean]
      * [com.angcyo.acc2.action.FalseAction]*/
     var forceFail: Boolean = false
 

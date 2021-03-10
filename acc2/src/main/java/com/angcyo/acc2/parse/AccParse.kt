@@ -8,9 +8,12 @@ import com.angcyo.acc2.control.AccSchedule
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.size
 import com.angcyo.library.utils.Device
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.random.Random
+import kotlin.random.Random.Default.nextInt
 import kotlin.random.Random.Default.nextLong
 
 /**
@@ -81,23 +84,38 @@ class AccParse(val accControl: AccControl) : BaseParse() {
     /**
      * 解析时间格式
      * 格式[5000,500,5] 解释:5000+500*[1-5],
+     * [5~15] 5s到15s之间随机
      * 返回解析后的时间, 毫秒*/
     fun parseTime(arg: String?, def: Long = 0): Long {
-        return if (arg.isNullOrEmpty()) {
-            def
-        } else {
-            val split = arg.split(",")
+        return when {
+            arg.isNullOrEmpty() -> def
+            arg.havePartition() -> {
+                val numList = arg.getIntList()
+                if (numList.size() >= 2) {
+                    val first = numList.get(0)
+                    val second = numList.get(1)
+                    val min = min(first, second)
+                    val max = max(first, second)
 
-            //时长
-            val start = split.getOrNull(0)?.toLongOrNull() ?: def
+                    nextInt(min, max + 1) * 1000L
+                } else {
+                    def
+                }
+            }
+            else -> {
+                val split = arg.split(",")
 
-            //基数
-            val base = split.getOrNull(1)?.toLongOrNull() ?: defaultIntervalDelay()
+                //时长
+                val start = split.getOrNull(0)?.toLongOrNull() ?: def
 
-            //倍数
-            val factor = split.getOrNull(2)?.toLongOrNull() ?: nextLong(2, 5)
+                //基数
+                val base = split.getOrNull(1)?.toLongOrNull() ?: defaultIntervalDelay()
 
-            start + base * nextLong(1, max(2L, factor + 1))
+                //倍数
+                val factor = split.getOrNull(2)?.toLongOrNull() ?: nextLong(2, 5)
+
+                start + base * nextLong(1, max(2L, factor + 1))
+            }
         }
     }
 
