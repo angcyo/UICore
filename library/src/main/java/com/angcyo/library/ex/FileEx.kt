@@ -6,6 +6,7 @@ import android.os.Build
 import android.text.TextUtils
 import android.text.format.Formatter
 import com.angcyo.library.app
+import com.angcyo.library.toastQQ
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -202,7 +203,18 @@ fun File.open(context: Context = app()) {
 //        context.startActivity(intent);
 //    }
 /** 分享文件 */
-fun File.shareFile(context: Context = app(), fileProvider: Boolean = true) {
+fun File.shareFile(
+    context: Context = app(),
+    fileProvider: Boolean = true,
+    toast: Boolean = false
+): Boolean {
+    if (!exists()) {
+        if (toast) {
+            toastQQ("文件不存在")
+        }
+        return false
+    }
+
     val share = Intent(Intent.ACTION_SEND)
     share.putExtra(Intent.EXTRA_STREAM, fileUri(context, this, fileProvider))
     share.type = name.mimeType() ?: "*/*" //此处可发送多种文件
@@ -220,6 +232,7 @@ fun File.shareFile(context: Context = app(), fileProvider: Boolean = true) {
     } catch (e: Exception) {
         e.printStackTrace()
     }
+    return true
 }
 
 /**分享图片文件*/
