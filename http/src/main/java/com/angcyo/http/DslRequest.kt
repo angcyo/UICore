@@ -18,6 +18,39 @@ import java.nio.charset.Charset
  */
 class DslRequest {
 
+    companion object {
+        fun body(mediaType: String, byteArray: ByteArray): RequestBody {
+            return byteArray.toRequestBody(mediaType.toMediaTypeOrNull())
+        }
+
+        fun jsonBody(json: String): RequestBody {
+            return json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+        }
+
+        fun textBody(text: String): RequestBody {
+            return text.toRequestBody("text/plain".toMediaTypeOrNull())
+        }
+
+        fun formBody(form: Map<String, String?>?, charset: Charset? = Charsets.UTF_8): FormBody {
+            return FormBody.Builder(charset).apply {
+                form?.forEach { entry ->
+                    entry.value?.let {
+                        add(entry.key, it)
+                    }
+                }
+            }.build()
+        }
+
+        fun multipartBody(config: MultipartBody.Builder.() -> Unit): MultipartBody {
+            return MultipartBody.Builder().apply {
+                //setType()
+                //addPart()
+                //addFormDataPart()
+                config()
+            }.build()
+        }
+    }
+
     /**请求地址*/
     var url: String? = null
 
@@ -140,37 +173,6 @@ class DslRequest {
             }
         }
     }
-
-    fun body(mediaType: String, byteArray: ByteArray): RequestBody {
-        return byteArray.toRequestBody(mediaType.toMediaTypeOrNull())
-    }
-
-    fun jsonBody(json: String): RequestBody {
-        return json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-    }
-
-    fun textBody(text: String): RequestBody {
-        return text.toRequestBody("text/plain".toMediaTypeOrNull())
-    }
-
-    fun formBody(form: Map<String, String?>?, charset: Charset? = Charsets.UTF_8): FormBody {
-        return FormBody.Builder(charset).apply {
-            form?.forEach { entry ->
-                entry.value?.let {
-                    add(entry.key, it)
-                }
-            }
-        }.build()
-    }
-
-    fun multipartBody(config: MultipartBody.Builder.() -> Unit): MultipartBody {
-        return MultipartBody.Builder().apply {
-            //setType()
-            //addPart()
-            //addFormDataPart()
-            config()
-        }.build()
-    }
 }
 
 /**toBean*/
@@ -193,3 +195,5 @@ fun request(action: DslRequest.() -> Unit): Call? {
         doIt()
     }
 }
+
+fun dslRequest(action: DslRequest.() -> Unit): Call? = request(action)
