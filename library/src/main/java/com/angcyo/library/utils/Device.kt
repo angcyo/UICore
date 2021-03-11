@@ -39,15 +39,19 @@ object Device {
     //https://developer.android.google.cn/training/articles/user-data-ids
     //86756e10cf9a9562
     var androidId: String = ""
-        get() = if (field.isEmpty()) Settings.Secure.getString(
-            app().contentResolver,
-            Settings.Secure.ANDROID_ID
-        ) else field
+        get() = if (field.isEmpty())
+            Settings.Secure.getString(
+                app().contentResolver, Settings.Secure.ANDROID_ID
+            ) else field
 
     //00000000-4759-42f8-ffff-ffffeabf4809
     @Deprecated("相同型号的手机会重复, 请使用[androidId]")
     var deviceId: String = ""
         get() = if (field.isEmpty()) getUniqueDeviceId() else field
+
+    //https://www.jianshu.com/p/59440efa020c
+    //设备序列号 //unknown
+    val serial = Build.SERIAL
 
     const val PERFORMANCE_HIGH = 10
     const val PERFORMANCE_MEDIUM = 5

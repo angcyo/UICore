@@ -94,7 +94,7 @@ class DslLastDeviceInfoItem : DslAdapterItem() {
         }
 
         appendln()
-        append(Device.androidId) {
+        append("${Device.androidId}/${Device.serial}") {
             foregroundColor = getColor(R.color.colorPrimary)
         }
         appendln()

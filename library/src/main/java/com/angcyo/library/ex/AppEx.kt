@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Process
 import com.angcyo.library.app
+import com.angcyo.library.utils.Device
 import java.io.File
 import kotlin.system.exitProcess
 
@@ -102,6 +103,7 @@ fun getCanUsedState(): Int {
         isRootUI() -> 4
         isXposedExistByThrow() -> 5
         isRunningInEmulator() -> 6
+        Device.androidId.isBlank() -> 8
         else -> -1
     }
 
