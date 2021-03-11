@@ -12,7 +12,6 @@ import com.angcyo.library.ex.size
 import com.angcyo.library.utils.Device
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.random.Random
 import kotlin.random.Random.Default.nextInt
 import kotlin.random.Random.Default.nextLong
 
@@ -129,10 +128,13 @@ class AccParse(val accControl: AccControl) : BaseParse() {
         val screenWidth: Int = _screenWidth
         val screenHeight: Int = _screenHeight
 
-        val fX: Float = screenWidth * 1 / 3f + Random.nextInt(5, 10)
-        val tX: Float = screenWidth * 2 / 3f + Random.nextInt(5, 10)
-        val fY: Float = screenHeight * 3 / 5f - Random.nextInt(5, 10)
-        val tY: Float = screenHeight * 2 / 5f + Random.nextInt(5, 10)
+        //默认的第一个点
+        val fX: Float = screenWidth * 1 / 3f + nextInt(5, 10)
+        val fY: Float = screenHeight * 3 / 5f - nextInt(5, 10)
+
+        //默认的第二个点
+        val tX: Float = screenWidth * 2 / 3f + nextInt(5, 10)
+        val tY: Float = screenHeight * 2 / 5f + nextInt(5, 10)
 
         val p1 = PointF(fX, fY)
         val p2 = PointF(tX, tY)
