@@ -60,6 +60,18 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         onShowDebugInfoView(hasFocus)
     }
 
+    override fun onStart() {
+        super.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
+    }
+
+    override fun onPause() {
+        super.onPause()
+    }
+
     override fun onResume() {
         super.onResume()
         /*val config = resources.configuration
