@@ -34,7 +34,11 @@ class AccSchedule(val accControl: AccControl) {
     //<editor-fold desc="操作">
 
     /**获取总共运行时长*/
-    fun duration(): Long = _endTime - _startTime
+    fun duration(): Long = if (_endTime <= 0 || _startTime <= 0) {
+        0
+    } else {
+        _endTime - _startTime
+    }
 
     fun durationStr() = duration().toElapsedTime(pattern = intArrayOf(-1, 1, 1))
 
