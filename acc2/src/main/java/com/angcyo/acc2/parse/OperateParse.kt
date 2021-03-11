@@ -41,7 +41,7 @@ class OperateParse(val accParse: AccParse) : BaseParse() {
 
         //操作记录的回调
         accParse.accControl.controlListenerList.forEach {
-            it.onHandleOperate(handleBean, operateBean, handleResult)
+            it.onHandleOperate(accParse.accControl, handleBean, operateBean, handleResult)
         }
     }
 

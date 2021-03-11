@@ -112,7 +112,7 @@ class AccControl : Runnable {
 
         _taskBean?.let { taskBean ->
             controlListenerList.forEach {
-                it.onControlEnd(taskBean, state, reason)
+                it.onControlEnd(this, taskBean, state, reason)
             }
         }
     }

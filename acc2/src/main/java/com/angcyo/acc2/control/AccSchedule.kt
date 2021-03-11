@@ -635,7 +635,7 @@ class AccSchedule(val accControl: AccControl) {
 
         //运行开始的回调
         accControl.controlListenerList.forEach {
-            it.onActionRunBefore(actionBean, isPrimaryAction)
+            it.onActionRunBefore(accControl, actionBean, isPrimaryAction)
         }
 
         return false
@@ -801,7 +801,7 @@ class AccSchedule(val accControl: AccControl) {
 
         //回调
         accControl.controlListenerList.forEach {
-            it.onActionRunAfter(actionBean, isPrimaryAction, handleActionResult)
+            it.onActionRunAfter(accControl, actionBean, isPrimaryAction, handleActionResult)
         }
     }
 

@@ -23,11 +23,16 @@ open class ControlListener {
 
     /**[ActionBean]开始运行前回调
      * [isPrimaryAction] 是否是主线的[ActionBean]*/
-    open fun onActionRunBefore(actionBean: ActionBean, isPrimaryAction: Boolean) {
+    open fun onActionRunBefore(
+        control: AccControl,
+        actionBean: ActionBean,
+        isPrimaryAction: Boolean
+    ) {
 
     }
 
     open fun onHandleOperate(
+        control: AccControl,
         handleBean: HandleBean,
         operateBean: OperateBean,
         handleResult: HandleResult
@@ -38,9 +43,10 @@ open class ControlListener {
     /**[ActionBean]运行后回调
      * [handleResult] 处理结果*/
     open fun onActionRunAfter(
+        control: AccControl,
         actionBean: ActionBean,
         isPrimaryAction: Boolean,
-        handleResult: HandleResult?
+        handleResult: HandleResult
     ) {
 
     }
@@ -51,7 +57,7 @@ open class ControlListener {
     }
 
     /**控制器结束回调*/
-    open fun onControlEnd(taskBean: TaskBean, state: Int, reason: String) {
+    open fun onControlEnd(control: AccControl, taskBean: TaskBean, state: Int, reason: String) {
 
     }
 }
