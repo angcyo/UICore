@@ -12,6 +12,8 @@ import com.angcyo.drawable.isTop
 import com.angcyo.drawable.textHeight
 import com.angcyo.drawable.textWidth
 import com.angcyo.library.ex.calcSize
+import com.angcyo.library.ex.undefined_color
+import com.angcyo.library.ex.undefined_size
 import com.angcyo.widget.R
 import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.mW
@@ -28,6 +30,9 @@ abstract class BaseEditDelegate(val editText: EditText) {
 
     /**绘制在输入框左边的文本*/
     var drawLeftText: String? = null
+    var drawLeftColor: Int = undefined_color
+    var drawLeftSize: Int = undefined_size
+
     var drawLeftOffsetLeft: String? = null
     var drawLeftOffsetRight: String? = null
     var drawLeftOffsetTop: String? = null
@@ -36,6 +41,12 @@ abstract class BaseEditDelegate(val editText: EditText) {
     open fun initAttribute(context: Context, attrs: AttributeSet?) {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.BaseEditDelegate)
         drawLeftText = typedArray.getString(R.styleable.BaseEditDelegate_r_draw_left)
+        drawLeftColor =
+            typedArray.getColor(R.styleable.BaseEditDelegate_r_draw_left_color, undefined_color)
+        drawLeftSize = typedArray.getDimensionPixelOffset(
+            R.styleable.BaseEditDelegate_r_draw_left_size,
+            undefined_size
+        )
 
         drawLeftOffsetLeft =
             typedArray.getString(R.styleable.BaseEditDelegate_r_draw_left_offset_left)
@@ -62,13 +73,19 @@ abstract class BaseEditDelegate(val editText: EditText) {
     var _drawLeftOffsetBottom = 0
     var _drawLeftOffsetRight = 0
 
+    var drawLeftPaint = TextPaint()
+
     val viewRect = Rect()
     open fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         viewRect.set(0, 0, w, h)
 
         drawLeftText?.let { text ->
             val view = editText
-            val textPaint: TextPaint = view.paint
+            drawLeftPaint.set(view.paint)
+            if (drawLeftSize != undefined_size) {
+                drawLeftPaint.textSize = drawLeftSize.toFloat()
+            }
+            val textPaint: TextPaint = drawLeftPaint
             val textWidth = textPaint.textWidth(text)
 
             _drawLeftOffsetLeft = editText.calcSize(drawLeftOffsetLeft, w, h, 0, 0)
@@ -89,14 +106,17 @@ abstract class BaseEditDelegate(val editText: EditText) {
         canvas.getClipBounds(viewDrawRect)
         viewRect.set(0, 0, editText.mW(), editText.mH())
 
-        val view = editText
-        val textPaint: TextPaint = view.paint
+        val textPaint: TextPaint = drawLeftPaint
 
         drawLeftText?.let { text ->
             val textHeight = textPaint.textHeight()
 
             //color
-            textPaint.color = editText.currentHintTextColor
+            if (drawLeftColor == undefined_color) {
+                textPaint.color = editText.currentHintTextColor
+            } else {
+                textPaint.color = drawLeftColor
+            }
 
             val gravity = editText.gravity
             val y = when {
