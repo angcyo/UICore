@@ -20,6 +20,9 @@ object Action {
     /**任务目标程序*/
     const val PACKAGE_TARGET = "target"
 
+    /**文本解析时, 默认的值对应的key*/
+    const val DEF = "def"
+
     /**特殊文本, 对应目标程序的名字
      * [com.angcyo.acc2.bean.FindBean.textList]*/
     const val APP_NAME = "appName"

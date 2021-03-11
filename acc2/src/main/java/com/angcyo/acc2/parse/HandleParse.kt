@@ -162,7 +162,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         //index筛选
         if (handleBean.index != null && !handleNodeList.isNullOrEmpty()) {
             val filterFindNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
-            val index = accParse.textParse.parse(handleBean.index).firstOrNull()
+            val index = accParse.textParse.parseOrDef(handleBean.index).firstOrNull()
             filterFindNodeList.addAll(handleNodeList.eachRangeItem(index))
             handleNodeList = filterFindNodeList
         }

@@ -35,6 +35,7 @@ data class HandleBean(
 
     /**
      * 取过滤后的第几个节点进行操作, 参考[com.angcyo.acc2.bean.FilterBean.index]
+     * 支持[com.angcyo.acc2.action.Action.DEF]
      * */
     var index: String? = null,
 

@@ -36,7 +36,7 @@ class FilterParse(val accParse: AccParse) : BaseParse() {
         //过滤1: index
         val indexString = filterBean.index
         if (indexString != null) {
-            val index = accParse.textParse.parse(indexString).firstOrNull()
+            val index = accParse.textParse.parseOrDef(indexString).firstOrNull()
             originList.eachRangeItem(index) { item, isIn ->
                 if (!isIn) {
                     removeList.add(item)

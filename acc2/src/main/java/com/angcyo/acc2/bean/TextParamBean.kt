@@ -2,6 +2,9 @@ package com.angcyo.acc2.bean
 
 /**
  * 文本参数处理, 文本长尾词替换
+ *
+ * 目前只在[com.angcyo.acc2.action.InputAction]中有处理
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2021/03/05

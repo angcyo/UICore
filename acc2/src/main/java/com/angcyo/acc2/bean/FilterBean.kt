@@ -13,6 +13,7 @@ data class FilterBean(
      * 支持范围[0~-1]第一个到倒数第一个
      * 支持文本变量
      * 支持随机 [com.angcyo.acc2.action.Action.RANDOM]
+     * 支持[com.angcyo.acc2.action.Action.DEF]
      * [random:5] 随机获取5个
      * 匹配顺序:1*/
     var index: String? = null,

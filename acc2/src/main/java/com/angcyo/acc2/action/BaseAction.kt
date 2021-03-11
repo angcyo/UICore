@@ -41,7 +41,8 @@ abstract class BaseAction : BaseParse() {
         return HandleResult().apply(action)
     }
 
-    /**[cmd]裸命令*/
+    /**[cmd]裸命令
+     * 返回文本解析时, 需要处理的一些参数*/
     fun getHandleTextParamBeanByAction(cmd: String): TextParamBean? {
         if (textParamBean?.handleAction == null || textParamBean?.handleAction?.contains(cmd) == true) {
             return textParamBean

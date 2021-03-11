@@ -26,6 +26,27 @@ class TextParse(val accParse: AccParse) : BaseParse() {
     val findParse: FindParse
         get() = accParse.findParse
 
+    /**支持默认值[defKey]*/
+    fun parseOrDef(
+        arg: String?,
+        defKey: String? = Action.DEF,
+        replace: Boolean = false,
+        textParamBean: TextParamBean? = null
+    ): List<String?> {
+        if (arg.isNullOrEmpty() || defKey.isNullOrEmpty()) {
+            return parse(arg, replace, textParamBean)
+        } else {
+            parseTextKeyAndRemove(arg, defKey).let {
+                val result = parse(it.first, replace, textParamBean)
+                return if (result.isEmpty()) {
+                    it.second
+                } else {
+                    result
+                }
+            }
+        }
+    }
+
     /**解析文本
      * $0 从[com.angcyo.acc2.bean.TaskBean.wordList] 取第一个
      * $-2 从[com.angcyo.acc2.bean.TaskBean.wordList] 取倒数第二个
@@ -216,6 +237,19 @@ class TextParse(val accParse: AccParse) : BaseParse() {
 
     /**[xx:$[xxx] $[xxx] xxx]获取$[xxx]格式中的xxx*/
     fun parseTextKey(arg: String) = arg.patternList("(?<=\\$\\[)[\\s\\S]*?(?=\\])")
+
+    /**[xx:$[xxx] $[xxx] xxx]从中获取指定的key对应的值, 并且抹掉后返回
+     * [first] 移除后的文本
+     * [second] key对应的值*/
+    fun parseTextKeyAndRemove(arg: String, key: String): Pair<String, List<String?>> {
+        val value = arg.arg(key)
+        val valueResult = parse(value)
+
+        //替换后的字符串
+        val replaceResult = arg.replace("$key:$[$value]", "").trim()
+
+        return replaceResult to valueResult
+    }
 
     /**单个文本替换长尾词*/
     fun handleText(text: String?, textParamBean: TextParamBean?): String? {
