@@ -191,6 +191,18 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
                 }
             }
 
+            //actionIndex
+            if (result && actionIndex != null) {
+                val pass = accParse.expParse.parseAndCompute(
+                    actionIndex,
+                    inputValue = accControl.accSchedule._currentIndex.toFloat()
+                )
+                if (!pass) {
+                    //不符合
+                    result = false
+                }
+            }
+
             //system
             if (result && system != null) {
                 result = verifySystem(system)

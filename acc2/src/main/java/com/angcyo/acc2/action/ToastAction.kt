@@ -27,7 +27,8 @@ class ToastAction : BaseAction() {
         action: String
     ): HandleResult = handleResult {
         success = true
-        val message = action.subEnd(Action.ARG_SPLIT)
+        val textParse = control.accSchedule.accParse.textParse
+        val message = textParse.parse(action.subEnd(Action.ARG_SPLIT), true).firstOrNull()
         if (action.startsWith(Action.ACTION_TOAST_WX)) {
             toastWX(message)
         } else {

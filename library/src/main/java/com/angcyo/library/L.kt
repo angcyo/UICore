@@ -249,7 +249,11 @@ object L {
             }
         }
 
-        logPrint(tag, _level, "$stackContext $logMsg")
+        try {
+            logPrint(tag, _level, "$stackContext $logMsg")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         _tempTag = null
         _tempStackTraceDepth = -1

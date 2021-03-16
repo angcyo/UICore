@@ -45,6 +45,11 @@ data class ConditionBean(
      * */
     var actionEnableList: List<Long>? = null,
 
+    /**当前运行的[com.angcyo.acc2.bean.ActionBean]在正在集合中的索引, 满足条件
+     * [<=1]
+     * [com.angcyo.acc2.bean.FilterBean.childCount]*/
+    var actionIndex: String? = null,
+
     /**系统信息约束. 多个用;号分割,并且的关系; 用 !or! 分割或者的关系
      * [code>=1000]
      * [w>10;h<=10!or!code>=1000]

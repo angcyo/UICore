@@ -717,14 +717,14 @@ class AccSchedule(val accControl: AccControl) {
                         accControl.log("未匹配到窗口[$windowBean]↓\n$this", isPrimaryAction)
                     }
                 }
-            }
 
-            val leaveActionBean = actionBean.leave ?: accControl._taskBean?.leave
-            if (leaveActionBean != null) {
-                val leaveResult = runAction(leaveActionBean, null, false)
-                if (!leaveResult.forceFail && (leaveResult.success || leaveResult.forceSuccess)) {
-                    //处理成功
-                    return
+                val leaveActionBean = actionBean.leave ?: accControl._taskBean?.leave
+                if (leaveActionBean != null) {
+                    val leaveResult = runAction(leaveActionBean, null, false)
+                    if (!leaveResult.forceFail && (leaveResult.success || leaveResult.forceSuccess)) {
+                        //处理成功
+                        return
+                    }
                 }
             }
         }
@@ -756,6 +756,8 @@ class AccSchedule(val accControl: AccControl) {
                 }
                 parse.nodeList
             }
+
+            //流程处理
             if (skipHandle) {
                 //no op
             } else if (eventNodeList.isNullOrEmpty()) {
