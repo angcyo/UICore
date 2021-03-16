@@ -110,11 +110,17 @@ data class TaskBean(
     var backActionList: List<ActionBean>? = null,
 
     /**在每个[ActionBean]执行之前, 都要执行的[ActionBean]
-     * 如果处理成功了, 会中断原本需要执行的[ActionBean]*/
+     * 如果处理成功了, 会中断原本需要执行的[ActionBean]
+     * [com.angcyo.acc2.bean.ActionBean.before]*/
     var before: ActionBean? = null,
 
-    /**在每个[ActionBean]执行之后, 都要执行的[ActionBean]*/
+    /**在每个[ActionBean]执行之后, 都要执行的[ActionBean]
+     * [com.angcyo.acc2.bean.ActionBean.after]*/
     var after: ActionBean? = null,
+
+    /**每个[ActionBean]执行时, 离开了主程序, 需要执行的[ActionBean]
+     * [com.angcyo.acc2.bean.ActionBean.leave]*/
+    var leave: ActionBean? = null,
 )
 
 /**设置[com.angcyo.acc2.bean.TaskBean.textMap]数据*/

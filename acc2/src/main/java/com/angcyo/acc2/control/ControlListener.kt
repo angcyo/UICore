@@ -31,6 +31,22 @@ open class ControlListener {
 
     }
 
+    /**主线[actionBean]运行时, 是否离开了目标程序窗口
+     * [isPrimaryAction] 是否是主线任务
+     * [leave] 是否不在主程序内*/
+    open fun onActionLeave(
+        control: AccControl,
+        actionBean: ActionBean,
+        isPrimaryAction: Boolean,
+        leave: Boolean
+    ) {
+
+    }
+
+    /**
+     * 操作记录解析回调
+     * [com.angcyo.acc2.parse.OperateParse.parse]
+     * */
     open fun onHandleOperate(
         control: AccControl,
         handleBean: HandleBean,

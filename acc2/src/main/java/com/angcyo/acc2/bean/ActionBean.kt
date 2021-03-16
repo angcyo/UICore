@@ -107,5 +107,9 @@ data class ActionBean(
     var before: ActionBean? = null,
 
     /**在[ActionBean]执行之后, 需要执行的[ActionBean]*/
-    var after: ActionBean? = null
+    var after: ActionBean? = null,
+
+    /**当前[ActionBean]执行时, 离开了主程序, 需要执行的[ActionBean]
+     * [com.angcyo.acc2.bean.TaskBean.leave]*/
+    var leave: ActionBean? = null,
 )

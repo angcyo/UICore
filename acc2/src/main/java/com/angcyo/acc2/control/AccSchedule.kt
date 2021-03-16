@@ -3,6 +3,7 @@ package com.angcyo.acc2.control
 import com.angcyo.acc2.action.Action
 import com.angcyo.acc2.action.InputAction
 import com.angcyo.acc2.bean.ActionBean
+import com.angcyo.acc2.core.AccNodeLog
 import com.angcyo.acc2.parse.AccParse
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.acc2.parse.toLog
@@ -189,6 +190,7 @@ class AccSchedule(val accControl: AccControl) {
         _lastRunActionHash = 0
         runActionBeanStack.clear()
         InputAction.lastInputText = null
+        _isLeaveWindow = false
         accParse.onScheduleStart(this)
     }
 
@@ -304,8 +306,21 @@ class AccSchedule(val accControl: AccControl) {
                 }
             }
 
+            //跳过原本的action处理
+            var skipActionRun = false
+
+            if (beforeHandleResult == null) {
+                skipActionRun = false
+            } else {
+                if (beforeHandleResult.forceFail) {
+                    skipActionRun = false
+                } else if (beforeHandleResult.success || beforeHandleResult.forceSuccess) {
+                    skipActionRun = true
+                }
+            }
+
             //处理
-            if (beforeHandleResult?.success != true) {
+            if (!skipActionRun) {
 
                 //action前置处理
                 val beforeAction = actionBean.before
@@ -314,8 +329,19 @@ class AccSchedule(val accControl: AccControl) {
                     beforeHandleResult = runAction(beforeAction, null, false)
                 }
 
+                skipActionRun = false
+                if (beforeHandleResult == null) {
+                    skipActionRun = false
+                } else {
+                    if (beforeHandleResult.forceFail) {
+                        skipActionRun = false
+                    } else if (beforeHandleResult.success || beforeHandleResult.forceSuccess) {
+                        skipActionRun = true
+                    }
+                }
+
                 //action处理
-                if (beforeHandleResult?.success != true) {
+                if (!skipActionRun) {
                     accControl.log(
                         "${if (isPrimaryAction) "[主线]" else ""}开始执行(${indexTip()})[${actionBean.actionLog()}]:${actionBean}",
                         isPrimaryAction
@@ -654,6 +680,9 @@ class AccSchedule(val accControl: AccControl) {
         return false
     }
 
+    //是否离开了主程序
+    var _isLeaveWindow = false
+
     fun runActionInner(
         actionBean: ActionBean,
         otherActionList: List<ActionBean>?,
@@ -669,7 +698,36 @@ class AccSchedule(val accControl: AccControl) {
         val eventList = actionCheckBean?.event
 
         //窗口根节点集合
-        val rootNodeList = findParse.findRootNode(actionCheckBean?.window ?: actionBean.window)
+        val windowBean = actionCheckBean?.window ?: actionBean.window
+        val rootNodeList = findParse.findRootNode(windowBean)
+
+        if (isPrimaryAction) {
+            val haveWindow = !rootNodeList.isNullOrEmpty()
+            _isLeaveWindow = !haveWindow
+
+            accControl.controlListenerList.forEach {
+                it.onActionLeave(accControl, actionBean, isPrimaryAction, _isLeaveWindow)
+            }
+
+            if (_isLeaveWindow) {
+                AccNodeLog().apply {
+                    logMinWindowInfo = true
+                    logWindowNode = false
+                    getAccessibilityWindowLog().apply {
+                        accControl.log("未匹配到窗口[$windowBean]↓\n$this", isPrimaryAction)
+                    }
+                }
+            }
+
+            val leaveActionBean = actionBean.leave ?: accControl._taskBean?.leave
+            if (leaveActionBean != null) {
+                val leaveResult = runAction(leaveActionBean, null, false)
+                if (!leaveResult.forceFail && (leaveResult.success || leaveResult.forceSuccess)) {
+                    //处理成功
+                    return
+                }
+            }
+        }
 
         if (actionCheckBean == null) {
             //未指定check, 直接操作根元素

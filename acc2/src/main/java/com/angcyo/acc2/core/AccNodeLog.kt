@@ -70,6 +70,9 @@ class AccNodeLog {
                             append(" ")
                             windowInfo.getBoundsInScreen(tempRect)
                             append(tempRect)
+                            windowInfo.root?.packageName?.let {
+                                append(" $it")
+                            }
                         })
                     } else {
                         outBuilder.appendln("$windowInfo")
