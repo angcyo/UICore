@@ -127,7 +127,11 @@ class AccSchedule(val accControl: AccControl) {
 
     /**指定分组中的第一个[ActionBean]是否激活
      * 多个分组中, 有一个满足即可*/
-    fun isFirstActionEnableByGroup(actionBean: ActionBean, group: String? /*支持分割*/): Boolean {
+    fun isFirstActionEnableByGroup(
+        actionBean: ActionBean,
+        group: String? /*支持分割*/,
+        isPrimaryAction: Boolean
+    ): Boolean {
         if (group.isNullOrEmpty()) {
             return true
         }
@@ -137,7 +141,7 @@ class AccSchedule(val accControl: AccControl) {
             val findFirstActionByGroup = findFirstActionByGroup(g)
             result = if (findFirstActionByGroup == actionBean) {
                 //第一个就是自身
-                isActionBeanEnable(actionBean)
+                isActionBeanEnable(actionBean, isPrimaryAction)
             } else {
                 findFirstActionByGroup?.enable == true
             }
@@ -200,7 +204,7 @@ class AccSchedule(val accControl: AccControl) {
     //当前调度的索引
     var _currentIndex = -1
 
-    //当前调度的[ActionBean], 主线[ActionBean]
+    //当前调度的[ActionBean], 主线[ActionBean], 也有可能是[targetActionList]中的
     var _scheduleActionBean: ActionBean? = null
 
     //正在调度的索引, 理论上[_currentIndex]=[_targetIndex]
@@ -313,7 +317,7 @@ class AccSchedule(val accControl: AccControl) {
                 //action处理
                 if (beforeHandleResult?.success != true) {
                     accControl.log(
-                        "${if (isPrimaryAction) "[主线]" else ""}开始执行[${actionBean.actionLog()}](${indexTip()}):${actionBean}",
+                        "${if (isPrimaryAction) "[主线]" else ""}开始执行(${indexTip()})[${actionBean.actionLog()}]:${actionBean}",
                         isPrimaryAction
                     )
                     if (isPrimaryAction) {
@@ -362,7 +366,7 @@ class AccSchedule(val accControl: AccControl) {
     }
 
     /**下一个需要执行的[ActionBean]*/
-    fun nextActionBean(): ActionBean? {
+    fun nextActionBean(isPrimaryAction: Boolean = true): ActionBean? {
         var result: ActionBean? = null
 
         if (targetActionList.isNotEmpty()) {
@@ -377,7 +381,7 @@ class AccSchedule(val accControl: AccControl) {
             accControl._taskBean?.actionList?.apply {
                 for (i in _scheduleIndex..lastIndex) {
                     val bean = getOrNull(i)
-                    if (isActionBeanGroupEnable(bean)) {
+                    if (isActionBeanGroupEnable(bean, isPrimaryAction)) {
                         _scheduleIndex = i
                         result = bean
                         break
@@ -390,21 +394,24 @@ class AccSchedule(val accControl: AccControl) {
     }
 
     /**判断[action]以及[group]中是否激活, 激活后才允许运行*/
-    fun isActionBeanGroupEnable(action: ActionBean?): Boolean {
+    fun isActionBeanGroupEnable(action: ActionBean?, isPrimaryAction: Boolean): Boolean {
         if (action != null) {
             //分组判断
             val group = action.group
             if (!group.isNullOrEmpty() && !isFirstActionInGroup(action)) {
                 //具有分组标识, 并且不是第一个
-                return if (isFirstActionEnableByGroup(action, group)) {
+                return if (isFirstActionEnableByGroup(action, group, isPrimaryAction)) {
                     //accControl.log("${action.actionLog()}的分组[${group}]中第一个ActionBean激活.")
                     true
                 } else {
-                    accControl.log("${action.actionLog()}的分组[${group}]中第一个ActionBean未激活,跳过.")
+                    accControl.log(
+                        "${action.actionLog()}的分组[${group}]中第一个ActionBean未激活,跳过.",
+                        isPrimaryAction
+                    )
                     false
                 }
             }
-            return isActionBeanEnable(action)
+            return isActionBeanEnable(action, isPrimaryAction)
         }
         return false
     }
@@ -412,7 +419,7 @@ class AccSchedule(val accControl: AccControl) {
     /**判断[action]是否激活, 激活后才允许运行
      * 不进行分组判断
      * 分组判断请使用[isActionBeanGroupEnable]*/
-    fun isActionBeanEnable(action: ActionBean?): Boolean {
+    fun isActionBeanEnable(action: ActionBean?, isPrimaryAction: Boolean): Boolean {
         if (action != null) {
             //激活判断
             if (action.enable || action._enable != null) {
@@ -435,12 +442,15 @@ class AccSchedule(val accControl: AccControl) {
                             inputValue = factor.toFloat()
                         )
                     }
-                    accControl.log("${action.actionLog()}随机[${factor}][${action.randomAmount}]激活:[${action.enable}]")
+                    accControl.log(
+                        "${action.actionLog()}随机[${factor}][${action.randomAmount}]激活:[${action.enable}]",
+                        isPrimaryAction
+                    )
                     return action.enable
                 } else {
                     if (action.conditionList != null) {
                         if (!accParse.conditionParse.parse(action.conditionList).success) {
-                            accControl.log("${action.actionLog()}未满足激活条件,跳过.")
+                            accControl.log("${action.actionLog()}未满足激活条件,跳过.", isPrimaryAction)
                             return false
                         }
                     }
@@ -451,15 +461,18 @@ class AccSchedule(val accControl: AccControl) {
                 val conditionResult = accParse.conditionParse.parse(action.conditionList)
                 return if (conditionResult.success) {
                     action.enable = true
-                    accControl.log("${action.actionLog()}自动激活成功:[${conditionResult.conditionBean}]")
+                    accControl.log(
+                        "${action.actionLog()}自动激活成功:[${conditionResult.conditionBean}]",
+                        isPrimaryAction
+                    )
                     true
                 } else {
-                    accControl.log("${action.actionLog()}自动激活失败,跳过.")
+                    accControl.log("${action.actionLog()}自动激活失败,跳过.", isPrimaryAction)
                     false
                 }
             } else {
                 //未激活的
-                accControl.log("${action.actionLog()}未激活,跳过.")
+                accControl.log("${action.actionLog()}未激活,跳过.", isPrimaryAction)
                 return false
             }
         }
@@ -561,7 +574,7 @@ class AccSchedule(val accControl: AccControl) {
 
         //激活条件判断
         if ((isPrimaryAction && !accParse.conditionParse.parse(actionBean.conditionList).success) ||
-            (!isPrimaryAction && !isActionBeanGroupEnable(actionBean))
+            (!isPrimaryAction && !isActionBeanGroupEnable(actionBean, isPrimaryAction))
         ) {
             handleActionResult.success = false
             runActionBeanStack.popSafe()
