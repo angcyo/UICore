@@ -177,7 +177,7 @@ afterEvaluate {
 
                 def os = System.getProperty("os.name").toLowerCase()
 
-                def macUrl = '/angcyo/project/maven'
+                def macUrl = '/Users/angcyo/Project/Android/GithubDemo/maven'
                 def winUrl = 'E:/AndroidProjects/maven'
                 url = os.contains("mac") ? macUrl : winUrl
             }
