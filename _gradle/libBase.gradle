@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'maven-publish'
 
 def C_SDK = 29
 def M_SDK = 21
@@ -66,21 +67,21 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled _minify_enabled
+            //minifyEnabled _minify_enabled
 //            useProguard _use_proguard
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
         pretest {
-            minifyEnabled _minify_enabled
+            //minifyEnabled _minify_enabled
 //            useProguard _use_proguard
             debuggable true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
         debug {
-            minifyEnabled _minify_enabled_debug
+            //minifyEnabled _minify_enabled_debug
 //            useProguard _use_proguard_debug
             debuggable true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -129,3 +130,83 @@ dependencies {
 
 //apply from: allGradle.version
 apply from: allGradle.versionForce
+
+/// 构建源码jar包
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    archiveClassifier.set('sources')
+}
+task javadoc(type: Javadoc) {
+    //增加编码，这行很重要，如果是windows系统，同时如果在代码中有中文的话，不加这行，上传会报错
+    options.encoding = "utf-8"
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+    archiveClassifier.set('javadoc')
+}
+
+def versionName = project.hasProperty('libVersionName') ? project.property('libVersionName') : '0.0.1'
+
+afterEvaluate {
+    publishing {
+
+        //产物收集配置
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                // Applies the component for the release build variant.
+                from components.release
+
+                // You can then customize attributes of the publication as shown below.
+                groupId = 'com.angcyo'
+                artifactId = project.name
+                version = versionName
+
+                //artifact javadocJar
+                artifact sourcesJar
+            }
+        }
+
+        //目标仓库配置
+        repositories {
+            maven {
+                // change to point to your repo, e.g. http://my.org/repo
+                //url = 'E:/AndroidProjects/maven'//"$buildDir/repo"
+
+                def os = System.getProperty("os.name").toLowerCase()
+
+                def macUrl = '/angcyo/project/maven'
+                def winUrl = 'E:/AndroidProjects/maven'
+                url = os.contains("mac") ? macUrl : winUrl
+            }
+        }
+    }
+}
+
+//bintray {
+//    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+//    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+//
+//    publications = ['release']
+//    configurations = ['archives']
+//
+//    //https://github.com/bintray/gradle-bintray-plugin#buildgradle
+//    pkg {
+//        repo = "maven"
+//        name = "library"   //发布到JCenter上的项目名字
+//        desc = 'create by angcyo.'
+//        //userOrg = "angcyo"
+//        websiteUrl = 'https://github.com/angcyo'
+//        vcsUrl = 'https://github.com/angcyo'
+//        licenses = ["MIT"]
+//        publicDownloadNumbers = true
+//        publish = true
+//
+//        /*version {
+//            name = versionName
+//            desc = 'library ' + versionName
+//        }*/
+//    }
+//}
