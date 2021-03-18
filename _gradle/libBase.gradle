@@ -69,6 +69,7 @@ android {
         release {
             //minifyEnabled _minify_enabled
 //            useProguard _use_proguard
+            //matchingFallbacks = ['release']
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
