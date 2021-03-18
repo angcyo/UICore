@@ -88,8 +88,6 @@ android {
         }
     }
 
-    kotlinOptions { jvmTarget = JavaVersion.VERSION_1_8 }
-
     def aarFolder = new File(project.rootDir.absolutePath + "/.aar")
     aarFolder.mkdirs()
 
@@ -130,6 +128,7 @@ dependencies {
 
 //apply from: allGradle.version
 apply from: allGradle.versionForce
+apply from: allGradle.base
 
 /// 构建源码jar包
 task sourcesJar(type: Jar) {
@@ -148,6 +147,8 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 def versionName = project.hasProperty('libVersionName') ? project.property('libVersionName') : '0.0.1'
+def winRepo = project.hasProperty('libWinRepo') ? project.property('libWinRepo') : 'E:/AndroidProjects/maven'
+def macRepo = project.hasProperty('libMacRepo') ? project.property('libMacRepo') : '/Users/angcyo/Project/Android/GithubDemo/maven'
 
 afterEvaluate {
     publishing {
@@ -176,10 +177,7 @@ afterEvaluate {
                 //url = 'E:/AndroidProjects/maven'//"$buildDir/repo"
 
                 def os = System.getProperty("os.name").toLowerCase()
-
-                def macUrl = '/Users/angcyo/Project/Android/GithubDemo/maven'
-                def winUrl = 'E:/AndroidProjects/maven'
-                url = os.contains("mac") ? macUrl : winUrl
+                url = os.contains("mac") ? macRepo : winRepo
             }
         }
     }

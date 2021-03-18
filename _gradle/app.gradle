@@ -155,19 +155,6 @@ android {
             ext.alwaysUpdateBuildId = false
         }
     }
-    lintOptions {
-        abortOnError false
-        //https://www.jianshu.com/p/93678f8b3421
-        disable 'GoogleAppIndexingWarning'
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    // For Kotlin projects https://developer.android.com/studio/write/java8-support.html
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
 
     if (gradle.gradleVersion.startsWith("6")) {
         //android.packageBuildConfig = false
