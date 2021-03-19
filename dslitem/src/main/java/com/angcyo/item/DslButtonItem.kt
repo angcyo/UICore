@@ -55,6 +55,11 @@ open class DslButtonItem : DslAdapterItem() {
         }
     }
 
+    override fun _initItemListener(itemHolder: DslViewHolder) {
+        //去掉整体item的事件监听
+        //super._initItemListener(itemHolder)
+    }
+
     open fun configButtonStyle(action: ButtonStyleConfig.() -> Unit) {
         itemButtonStyle.action()
     }
