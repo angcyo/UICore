@@ -170,12 +170,44 @@ fun Long.toElapsedTime(
     refill: BooleanArray = booleanArrayOf(true, true, true, true, true),
     units: Array<String> = arrayOf("毫秒", "秒", "分", "时", "天") /*最大5个计量*/
 ): String {
-    val times = toTimes()
-    val builder = StringBuilder()
 
     fun toH24(h24: Boolean, value: Long): String {
         return if (!h24 || value >= 10) "$value" else "0${value}"
     }
+
+    val builder = StringBuilder()
+
+    if (this <= 0) {
+        for (i in pattern.indices) {
+            val need = pattern.getOrNull(i) ?: 0
+            val h24 = refill.getOrNull(i) ?: false
+            val unit = units.getOrNull(i) ?: ":"
+
+            if (need == 1) {
+                builder.append(toH24(h24, 0))
+                if (unit.isNotBlank()) {
+                    builder.append(unit)
+                }
+                return builder.toString()
+            }
+        }
+        for (i in pattern.indices) {
+            val need = pattern.getOrNull(i) ?: 0
+            val h24 = refill.getOrNull(i) ?: false
+            val unit = units.getOrNull(i) ?: ":"
+
+            if (need != -1) {
+                builder.append(toH24(h24, 0))
+                if (unit.isNotBlank()) {
+                    builder.append(unit)
+                }
+                return builder.toString()
+            }
+        }
+        return "$this"
+    }
+
+    val times = toTimes()
 
     for (i in times.lastIndex downTo 0) {
         val value = times[i]
