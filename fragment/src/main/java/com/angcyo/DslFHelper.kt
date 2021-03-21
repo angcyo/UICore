@@ -109,6 +109,11 @@ class DslFHelper(
         }
     }
 
+    /**隐藏最后一个[Fragment]*/
+    fun hideLast() {
+        hideBeforeIndex = 1
+    }
+
     //<editor-fold desc="add 或者 show操作">
 
     inline fun <reified F : Fragment> show(

@@ -23,7 +23,8 @@ class DslTransition {
     /**设置需要的转场过渡动画*/
     var onSetTransition: () -> TransitionSet = {
         TransitionSet().apply {
-            //addTransition(ColorTransition())
+            addTransition(ColorTransition())
+            addTransition(AlphaTransition())
             addTransition(Fade(Fade.OUT))
             addTransition(ChangeBounds())
             addTransition(ChangeTransform())
@@ -121,7 +122,10 @@ class DslTransition {
     //</editor-fold desc="Scene 转场">
 }
 
-/**开始转场, 通过[onCaptureStartValues] [onCaptureEndValues] 差值执行动画*/
+/**开始转场, 通过[onCaptureStartValues] [onCaptureEndValues] 差值执行动画
+ * [com.angcyo.transition.DslTransition.onCaptureStartValues]
+ * [com.angcyo.transition.DslTransition.onCaptureEndValues]
+ * */
 fun dslTransition(sceneRoot: ViewGroup?, action: DslTransition.() -> Unit) {
     val dslTransition = DslTransition()
     dslTransition.apply {

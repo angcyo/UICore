@@ -50,7 +50,8 @@ class ColorTransition : Transition() {
                     val color = animation.animatedValue as Int//之后就可以得到动画的颜色了.
                     endValues.view.setBackgroundColor(color)//设置一下, 就可以看到效果..
                 }
-                colorAnimator.interpolator = interpolator
+                //colorAnimator.interpolator = interpolator
+                //colorAnimator.duration = duration
                 return colorAnimator
             }
         }

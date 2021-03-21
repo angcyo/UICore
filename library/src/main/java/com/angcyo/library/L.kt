@@ -144,15 +144,12 @@ object L {
         _log(*msg)
     }
 
-    val _stackContextBuilder = StringBuilder()
-    val _logBuilder = StringBuilder()
-
     fun _log(vararg msg: Any?) {
         if (!debug) {
             return
         }
 
-        _stackContextBuilder.clear()
+        val _stackContextBuilder = StringBuilder()
         val stackTrace = getStackTrace(stackTraceFront, stackTraceDepth)
         val stackContext = _stackContextBuilder.apply {
             append("[")
@@ -179,7 +176,7 @@ object L {
             append("]")
         }
 
-        _logBuilder.clear()
+        val _logBuilder = StringBuilder()
         val logMsg = _logBuilder.apply {
             msg.forEach {
                 when (it) {
