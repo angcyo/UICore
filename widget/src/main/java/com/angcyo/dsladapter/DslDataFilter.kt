@@ -267,8 +267,10 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             val diffResult = calculateDiff(resultList)
             val nowTime = nowTime()
             val s = (nowTime - startTime) / 1000
-            val ms = ((nowTime - startTime) % 1000) * 1f / 1000
-            L.v("${hash()} Diff计算耗时:${String.format("%.3f", s + ms)}s")
+            //val ms = ((nowTime - startTime) % 1000) * 1f / 1000
+            val ms = (nowTime - startTime) % 1000
+            //L.v("${hash()} Diff计算耗时:${String.format("%.3f", s + ms)}s")
+            L.v("${hash()} Diff计算耗时:${s}s${ms}ms")
 
             //回调到主线程
             val notifyDelay = _params?.notifyDiffDelay ?: -1
