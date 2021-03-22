@@ -5,10 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.base.dslAHelper
-import com.angcyo.download.R
-import com.angcyo.download.cancelDownload
-import com.angcyo.download.download
-import com.angcyo.download.getTaskStatus
+import com.angcyo.download.*
 import com.angcyo.getData
 import com.angcyo.library.L
 import com.angcyo.library.app
@@ -42,7 +39,7 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.setLayout(-1, -2)
+        window.setLayout(-1, -1)
     }
 
     override fun onHandleIntent(intent: Intent, fromNew: Boolean) {
@@ -77,9 +74,8 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
                 if (bean.link) {
                     openUrl(bean.versionUrl)
                 } else {
-                    if (getTaskStatus() == StatusUtil.Status.RUNNING) {
-                        cancelDownload()
-                    } else {
+
+                    fun downloadUrl() {
                         download {
                             onTaskStart = {
                                 startButton?.text = "下载中..."
@@ -112,6 +108,22 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
                         }
                     }
 
+                    val taskStatus = getTaskStatus()
+                    if (taskStatus == StatusUtil.Status.RUNNING) {
+                        //下载中
+                        cancelDownload()
+                    } else if (taskStatus == StatusUtil.Status.COMPLETED) {
+                        //下载已完成
+                        val task = DslDownload.findTask(this)
+                        if (task?.file?.exists() == true) {
+                            startButton?.text = "立即安装"
+                            installApk(app(), task.file)
+                        } else {
+                            downloadUrl()
+                        }
+                    } else {
+                        downloadUrl()
+                    }
                 }
             }
         }
