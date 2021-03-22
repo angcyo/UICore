@@ -275,15 +275,17 @@ fun DslAdapter.toAdapterError(error: Throwable?) {
 fun DslAdapter.updateAdapterErrorState(error: Throwable?) {
     if (error != null) {
         //加载失败
-        if (adapterItems.isEmpty()) {
-            dslAdapterStatusItem.onBindStateLayout = { itemHolder, state ->
-                if (state == DslAdapterStatusItem.ADAPTER_STATUS_ERROR) {
-                    itemHolder.tv(R.id.lib_text_view)?.text = error.message
+        when {
+            adapterItems.isEmpty() -> {
+                dslAdapterStatusItem.onBindStateLayout = { itemHolder, state ->
+                    if (state == DslAdapterStatusItem.ADAPTER_STATUS_ERROR) {
+                        itemHolder.tv(R.id.lib_text_view)?.text = error.message
+                    }
                 }
+                toError()
             }
-            toError()
-        } else {
-            toLoadMoreError()
+            isAdapterStatusLoading() -> toNone()
+            else -> toLoadMoreError()
         }
     }
 }
