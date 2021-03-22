@@ -21,12 +21,12 @@ fun day(count: Int = 1): Long = count * DAY_MILLIS
 
 fun nowTime() = System.currentTimeMillis()
 
-/**返回毫秒对应的天数*/
+/**返回毫秒对应多少天数*/
 fun Long.toDay(): Int {
     return ceil((this * 1.0 / DAY_MILLIS)).toInt()
 }
 
-/**返回毫秒对应的年数*/
+/**返回毫秒对应多少年数*/
 fun Long.toYear(): Int {
     return ceil(toDay() * 1.0 / 365).toInt()
 }
@@ -74,7 +74,7 @@ fun String.toMillis(pattern: String = "yyyyMMdd"): Long {
     return time
 }
 
-/**获取当前时间对应的 y m d h s*/
+/**从13位时间戳中,获取当前时间对应的 y m d h s*/
 fun Long.spiltTime(): IntArray {
     val cal = Calendar.getInstance()
     cal.timeInMillis = this
@@ -115,6 +115,15 @@ fun Long.spiltTime(): IntArray {
         week /*7*/
     )
 }
+
+fun Long.year() = spiltTime()[0]
+fun Long.month() = spiltTime()[1]
+fun Long.day() = spiltTime()[2]
+fun Long.hour() = spiltTime()[3]
+fun Long.minute() = spiltTime()[4]
+fun Long.second() = spiltTime()[5]
+fun Long.millisecond() = spiltTime()[6]
+fun Long.week() = spiltTime()[7]
 
 fun String.parseTime(pattern: String = "yyyy-MM-dd"): Long {
     val format: SimpleDateFormat = SimpleDateFormat.getDateInstance() as SimpleDateFormat
