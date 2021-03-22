@@ -336,10 +336,14 @@ fun ViewGroup.resetChild(
         }
     }
 
-    resetChildCount(size) {
-        val childView = LayoutInflater.from(context).inflate(layoutId, this, false)
-        childView.setTag(R.id.tag, layoutId)
-        childView
+    resetChildCount(size) { childIndex, childView ->
+        if (childView == null) {
+            val itemView = LayoutInflater.from(context).inflate(layoutId, this, false)
+            itemView.setTag(R.id.tag, layoutId)
+            itemView
+        } else {
+            childView
+        }
     }
 
     for (i in 0 until size) {
@@ -348,19 +352,27 @@ fun ViewGroup.resetChild(
 }
 
 /**将子View的数量, 重置到指定的数量*/
-fun ViewGroup.resetChildCount(newSize: Int, onCreateView: (childIndex: Int) -> View) {
+fun ViewGroup.resetChildCount(
+    newSize: Int,
+    createOrInitView: (childIndex: Int, childView: View?) -> View
+) {
     val oldSize = childCount
     val count = newSize - oldSize
     if (count > 0) {
         //需要补充子View
         for (i in 0 until count) {
-            addView(onCreateView.invoke(oldSize + i))
+            addView(createOrInitView.invoke(oldSize + i, null))
         }
     } else if (count < 0) {
         //需要移除子View
         for (i in 0 until count.abs()) {
             removeViewAt(oldSize - 1 - i)
         }
+    }
+
+    //初始化
+    for (i in 0 until min(oldSize, newSize)) {
+        createOrInitView.invoke(i, getChildAt(i))
     }
 }
 

@@ -75,6 +75,14 @@ fun String?.hawkPut(value: CharSequence?): Boolean {
     } ?: false
 }
 
+/**数字累加计算,保存并返回*/
+fun String?.hawkAccumulate(value: Long = 1, def: Long = 0): Long {
+    val origin = hawkGet(null)?.toLongOrNull() ?: def
+    val newValue = origin + value
+    hawkPut("$newValue")
+    return newValue
+}
+
 fun String?.hawkAppend(value: CharSequence?, symbol: String = ""): Boolean {
     return this?.run {
         Hawk.put(this, "${hawkGet() ?: ""}${symbol}${value ?: ""}")
