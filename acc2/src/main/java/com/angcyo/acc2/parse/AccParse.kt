@@ -73,10 +73,10 @@ class AccParse(val accControl: AccControl) : BaseParse() {
 
     fun defaultIntervalDelay(): Long {
         return when (Device.performanceLevel()) {
-            Device.PERFORMANCE_HIGH -> 200
-            Device.PERFORMANCE_MEDIUM -> 300
-            Device.PERFORMANCE_LOW -> 500
-            else -> 600
+            Device.PERFORMANCE_HIGH -> 300
+            Device.PERFORMANCE_MEDIUM -> 500
+            Device.PERFORMANCE_LOW -> 800
+            else -> 1000
         }
     }
 

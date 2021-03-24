@@ -46,6 +46,11 @@ fun currentApplication(): Application? {
 
 fun threadName() = Thread.currentThread().name
 
+fun isAndroidPlatform() = "Dalvik" == System.getProperty("java.vm.name")
+
+//1.8
+fun javaVersion() = System.getProperty("java.specification.version", "unknown")
+
 fun isRelease(): Boolean = "release".equals(BuildConfig.BUILD_TYPE, true)
 
 fun isDebugType() = "debug".equals(BuildConfig.BUILD_TYPE, true)

@@ -82,6 +82,12 @@ object Action {
     /**
      * 支持[NOT_PARENT]*/
     const val ACTION_LONG_CLICK = "longClick" //触发当前节点的长按事件
+
+    /**
+     *[double:20,30] 在屏幕坐标x=20dp y=30dp的位置双击
+     *[double:0.3,0.5] 在屏幕宽度0.3, 高度0.5的位置双击
+     *[double:0.1,0.1~0.9,0.9] 随机在屏幕宽度[0.1,0.9], 高度[0.1,0.9]的位置双击
+     * */
     const val ACTION_DOUBLE = "double" //[double:20,30] 在屏幕坐标x=20dp y=30dp的地方双击
     const val ACTION_TOUCH = "touch" //[touch:10,10] 在屏幕坐标x=10dp y=10dp的地方点击
     const val ACTION_MOVE = "move" //[move:10,10~100,100] 从屏幕坐标x=10dp y=10dp的地方移动到100dp 100dp的地方
