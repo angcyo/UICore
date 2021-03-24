@@ -1,7 +1,10 @@
 package com.angcyo.acc2.action
 
+import android.graphics.PointF
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.core.*
+import com.angcyo.library.ex.size
+import kotlin.random.Random.Default.nextInt
 
 /**
  *
@@ -60,5 +63,17 @@ abstract class BaseTouchAction : BaseAction() {
             y2,
             getGestureStartTime()
         ) == true
+    }
+
+    fun randomPoint(pointList: List<PointF>): PointF {
+        return if (pointList.size() >= 2) {
+            val p1 = pointList[0]
+            val p2 = pointList[1]
+            val x = nextInt(p1.x.toInt(), p2.x.toInt())
+            val y = nextInt(p1.y.toInt(), p2.y.toInt())
+            PointF(x.toFloat(), y.toFloat())
+        } else {
+            pointList[0]
+        }
     }
 }

@@ -26,7 +26,13 @@ class TouchAction : BaseTouchAction() {
     ): HandleResult = handleResult {
         val arg = action.subEnd(Action.ARG_SPLIT)
         val pointList = control.accSchedule.accParse.parsePoint(arg)
-        if (pointList.size() >= 1) {
+
+        val size = pointList.size()
+        if (size >= 2) {
+            val p1 = randomPoint(pointList)
+            success = click(control, p1.x, p1.y)
+            control.log("随机touch[$p1]:[$pointList]:$success")
+        } else if (size >= 1) {
             val p1 = pointList[0]
             success = click(control, p1.x, p1.y)
             control.log("touch[$p1]:$success")

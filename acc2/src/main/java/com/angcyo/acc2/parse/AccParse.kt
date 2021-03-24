@@ -137,7 +137,7 @@ class AccParse(val accControl: AccControl) : BaseParse() {
         val tY: Float = screenHeight * 2 / 5f + nextInt(5, 10)
 
         val p1 = PointF(fX, fY)
-        val p2 = PointF(tX, tY)
+        var p2: PointF? = null
 
         try {
             arg?.apply {
@@ -155,7 +155,7 @@ class AccParse(val accControl: AccControl) : BaseParse() {
                         rect.width(),
                         rect.height()
                     )?.apply {
-                        p2.set(this)
+                        p2 = this
                     }
                 }
             }
@@ -163,7 +163,11 @@ class AccParse(val accControl: AccControl) : BaseParse() {
             e.printStackTrace()
         }
 
-        return listOf(p1, p2)
+        return if (p2 == null) {
+            listOf(p1)
+        } else {
+            listOf(p1, p2!!)
+        }
     }
 
     override fun onScheduleStart(scheduled: AccSchedule) {
