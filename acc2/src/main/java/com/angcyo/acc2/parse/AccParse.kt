@@ -94,8 +94,8 @@ class AccParse(val accControl: AccControl) : BaseParse() {
             arg.havePartition() -> {
                 val numList = arg.getIntList()
                 if (numList.size() >= 2) {
-                    val first = numList.get(0)
-                    val second = numList.get(1)
+                    val first = numList[0]
+                    val second = numList[1]
                     val min = min(first, second)
                     val max = max(first, second)
 
