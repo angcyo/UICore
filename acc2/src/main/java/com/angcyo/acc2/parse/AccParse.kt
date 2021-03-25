@@ -59,6 +59,9 @@ class AccParse(val accControl: AccControl) : BaseParse() {
     /**节点上下文*/
     val accContext = AccContext()
 
+    /**默认时间随机因子*/
+    var defTimeRandomFactor = 7L
+
     init {
         parseList.add(conditionParse)
         parseList.add(findParse)
@@ -111,7 +114,7 @@ class AccParse(val accControl: AccControl) : BaseParse() {
                 val base = split.getOrNull(1)?.toLongOrNull() ?: defaultIntervalDelay()
 
                 //倍数
-                val factor = split.getOrNull(2)?.toLongOrNull() ?: nextLong(2, 5)
+                val factor = split.getOrNull(2)?.toLongOrNull() ?: nextLong(2, defTimeRandomFactor)
 
                 start + base * nextLong(1, max(2L, factor + 1))
             }
