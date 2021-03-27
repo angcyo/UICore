@@ -748,11 +748,17 @@ class AccSchedule(val accControl: AccControl) {
                 if (parse.forceSuccess) {
                     skipHandle = true
                     handleActionResult.success = true
-                    accControl.log("[event]强制成功,跳过处理:${eventList}", isPrimaryAction)
+                    accControl.log(
+                        "${actionCheckBean.checkLog()}[event]强制成功,跳过处理:${eventList}",
+                        isPrimaryAction
+                    )
                 } else if (parse.forceFail) {
                     skipHandle = true
                     handleActionResult.success = false
-                    accControl.log("[event]强制失败,跳过处理:${eventList}", isPrimaryAction)
+                    accControl.log(
+                        "${actionCheckBean.checkLog()}[event]强制失败,跳过处理:${eventList}",
+                        isPrimaryAction
+                    )
                 }
                 parse.nodeList
             }
@@ -761,7 +767,10 @@ class AccSchedule(val accControl: AccControl) {
             if (skipHandle) {
                 //no op
             } else if (eventNodeList.isNullOrEmpty()) {
-                accControl.log("[event]未匹配到元素:${eventList}", isPrimaryAction)
+                accControl.log(
+                    "${actionCheckBean.checkLog()}[event]未匹配到元素:${eventList}",
+                    isPrimaryAction
+                )
                 //未找到元素
                 val handleResult = handleParse.parse(rootNodeList, actionCheckBean.other)
 
@@ -799,7 +808,7 @@ class AccSchedule(val accControl: AccControl) {
             } else {
                 //找到了目标元素
                 accControl.log(
-                    eventNodeList.toLog("[event]匹配到元素(${eventNodeList.size})${actionCheckBean}↓"),
+                    eventNodeList.toLog("${actionCheckBean.checkLog()}[event]匹配到元素(${eventNodeList.size})${actionCheckBean}↓"),
                     isPrimaryAction
                 )
                 val result = handleParse.parse(eventNodeList, handleList)
