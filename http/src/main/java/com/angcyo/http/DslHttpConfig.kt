@@ -32,23 +32,24 @@ class DslHttpConfig {
     var okHttpClient: OkHttpClient? = null
 
     //构造器
-    val defaultOkHttpClientBuilder = OkHttpClient.Builder().apply {
-        connectTimeout(TIME_OUT, TimeUnit.SECONDS)
-        readTimeout(TIME_OUT, TimeUnit.SECONDS)
-        writeTimeout(TIME_OUT, TimeUnit.SECONDS)
-        proxy(Proxy.NO_PROXY)
-        followRedirects(true)
-        followSslRedirects(true)
+    val defaultOkHttpClientBuilder: OkHttpClient.Builder
+        get() = OkHttpClient.Builder().apply {
+            connectTimeout(TIME_OUT, TimeUnit.SECONDS)
+            readTimeout(TIME_OUT, TimeUnit.SECONDS)
+            writeTimeout(TIME_OUT, TimeUnit.SECONDS)
+            proxy(Proxy.NO_PROXY)
+            followRedirects(true)
+            followSslRedirects(true)
 
-        //UUID
-        addInterceptor(UUIDInterceptor())
+            //UUID
+            addInterceptor(UUIDInterceptor())
 
-        //日志拦截器
-        addInterceptor(LogInterceptor())
+            //进度拦截器
+            addInterceptor(ProgressManager.getInstance().interceptor)
 
-        //进度拦截器
-        addInterceptor(ProgressManager.getInstance().interceptor)
-    }
+            //日志拦截器, 放在最后拦截
+            addInterceptor(LogInterceptor())
+        }
 
     //构造器配置
     val onConfigOkHttpClient = mutableListOf<(OkHttpClient.Builder) -> Unit>()
@@ -70,9 +71,10 @@ class DslHttpConfig {
 
     var retrofit: Retrofit? = null
 
-    val defaultRetrofitBuilder = Retrofit.Builder().apply {
+    val defaultRetrofitBuilder: Retrofit.Builder
+        get() = Retrofit.Builder().apply {
 
-    }
+        }
 
     var onBuildRetrofit: (Retrofit.Builder, OkHttpClient) -> Retrofit = { builder, client ->
         retrofit ?: builder.apply {
