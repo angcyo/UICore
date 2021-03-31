@@ -214,7 +214,7 @@ fun View.viewRect(rect: RectF) {
     rect.set(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat())
 }
 
-/**视图View 变灰*/
+/**视图View 变灰, 灰度处理*/
 fun View.grayscale(enable: Boolean = true) {
     if (enable) {
         //变灰, 界面灰度处理
