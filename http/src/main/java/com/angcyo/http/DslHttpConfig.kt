@@ -76,7 +76,13 @@ class DslHttpConfig {
 
     var onBuildRetrofit: (Retrofit.Builder, OkHttpClient) -> Retrofit = { builder, client ->
         retrofit ?: builder.apply {
-            baseUrl(onGetBaseUrl())
+            //baseUrl must end in /
+            val getBaseUrl = onGetBaseUrl()
+            if (getBaseUrl.endsWith("/")) {
+                baseUrl(getBaseUrl)
+            } else {
+                baseUrl("${getBaseUrl}/")
+            }
             addCallAdapterFactory(RxJava2CallAdapterFactory.createAsync())
             addConverterFactory(GsonConverterFactory.create(gson()))
             client(client)
