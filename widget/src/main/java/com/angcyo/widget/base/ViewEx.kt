@@ -223,10 +223,17 @@ fun View.grayscale(enable: Boolean = true) {
         val filter = ColorMatrixColorFilter(matrix)
         val paint = Paint()
         paint.colorFilter = filter
-
-        setLayerType(View.LAYER_TYPE_SOFTWARE, paint)
+        if (layerType != View.LAYER_TYPE_HARDWARE) {
+            setLayerType(View.LAYER_TYPE_HARDWARE, paint)
+        }
+        //setLayerType(View.LAYER_TYPE_SOFTWARE, paint)
+        ViewCompat.setLayerPaint(this, paint)
     } else {
-        setLayerType(View.LAYER_TYPE_NONE, null)
+        if (layerType != View.LAYER_TYPE_NONE) {
+            setLayerType(View.LAYER_TYPE_NONE, null)
+        } else {
+            ViewCompat.setLayerPaint(this, null)
+        }
     }
 }
 
