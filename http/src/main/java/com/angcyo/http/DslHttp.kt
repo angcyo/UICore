@@ -176,7 +176,7 @@ object DslHttp {
         }
 
         //缓存客户端
-        val client = dslHttpConfig.onBuildHttpClient(
+        val client = dslHttpConfig.okHttpClient ?: dslHttpConfig.onBuildHttpClient(
             dslHttpConfig.defaultOkHttpClientBuilder.apply {
                 dslHttpConfig.onConfigOkHttpClient.forEach {
                     it(this)
@@ -186,7 +186,8 @@ object DslHttp {
         dslHttpConfig.okHttpClient = client
 
         //缓存retrofit
-        val retrofit = dslHttpConfig.onBuildRetrofit(dslHttpConfig.defaultRetrofitBuilder, client)
+        val retrofit = dslHttpConfig.retrofit
+            ?: dslHttpConfig.onBuildRetrofit(dslHttpConfig.defaultRetrofitBuilder, client)
         dslHttpConfig.retrofit = retrofit
     }
 

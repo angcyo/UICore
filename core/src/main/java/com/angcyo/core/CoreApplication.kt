@@ -32,7 +32,12 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
         DslHttp.config {
             onGetBaseUrl = {
                 //优先使用主动配置的, 其次使用默认配置的
-                HttpConfigDialog.customBaseUrl ?: getHostBaseUrl()
+                val getBaseUrl = HttpConfigDialog.customBaseUrl ?: getHostBaseUrl()
+                if (getBaseUrl.endsWith("/")) {
+                    getBaseUrl
+                } else {
+                    "${getBaseUrl}/"
+                }
             }
 
             val logFileInterceptor = LogFileInterceptor()

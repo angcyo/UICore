@@ -59,8 +59,8 @@ class DslHttpConfig {
         okHttpClient ?: it.build()
     }
 
-    /**base url*/
-    var onGetBaseUrl: () -> String = { "http://api.angcyo.com" }
+    /** baseUrl must end in '/' */
+    var onGetBaseUrl: () -> String = { "http://api.angcyo.com/" }
 
     /**调用此方法, 添加自定义的配置*/
     fun configHttpBuilder(config: (OkHttpClient.Builder) -> Unit) {
