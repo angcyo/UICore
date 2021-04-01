@@ -215,4 +215,10 @@ open class PagerTransitionCallback : ViewTransitionCallback(), ViewPager.OnPageC
 
     //</editor-fold desc="ViewPager事件">
 
+    //<editor-fold desc="事件回调">
+
+    var pageSelected: (fragment: PagerTransitionFragment, position: Int) -> Unit = { _, _ -> }
+
+    //</editor-fold desc="事件回调">
+
 }

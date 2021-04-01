@@ -203,4 +203,10 @@ open class ViewTransitionCallback {
     }
     //</editor-fold desc="hide过渡">
 
+    //<editor-fold desc="事件回调">
+
+    var initFragment: (fragment: ViewTransitionFragment) -> Unit = {}
+
+    //</editor-fold desc="事件回调">
+
 }

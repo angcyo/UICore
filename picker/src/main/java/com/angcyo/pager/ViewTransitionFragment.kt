@@ -66,6 +66,7 @@ abstract class ViewTransitionFragment : AbsLifecycleFragment() {
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)
         initTransitionLayout()
+        transitionCallback.initFragment(this)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

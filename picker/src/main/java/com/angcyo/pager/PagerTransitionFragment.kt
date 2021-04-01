@@ -6,6 +6,7 @@ import android.graphics.RectF
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
 import com.angcyo.base.interceptTouchEvent
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.set
@@ -34,6 +35,25 @@ import com.github.chrisbanes.photoview.PhotoView
 open class PagerTransitionFragment : ViewTransitionFragment() {
 
     val pagerTransitionCallback get() = transitionCallback as PagerTransitionCallback
+
+    //页面监听
+    val pageChangeListener = object : ViewPager.OnPageChangeListener {
+        override fun onPageScrolled(
+            position: Int,
+            positionOffset: Float,
+            positionOffsetPixels: Int
+        ) {
+
+        }
+
+        override fun onPageSelected(position: Int) {
+            pagerTransitionCallback.pageSelected(this@PagerTransitionFragment, position)
+        }
+
+        override fun onPageScrollStateChanged(state: Int) {
+
+        }
+    }
 
     //下拉返回配置
     val onMatrixTouchListener: MatrixLayout.OnMatrixTouchListener =
@@ -103,10 +123,27 @@ open class PagerTransitionFragment : ViewTransitionFragment() {
 
 
         _vh._vp(R.id.lib_view_pager)?.apply {
+            val pagerAdapter = onCreatePagerAdapter()
+            adapter = pagerAdapter
 
-            adapter = onCreatePagerAdapter()
+            //页面监听
+            addOnPageChangeListener(pageChangeListener)
 
-            setCurrentItem(pagerTransitionCallback.startPosition, false)
+            val startPosition = pagerTransitionCallback.startPosition
+
+            val fixIndex = when {
+                pagerAdapter == null -> 0
+                startPosition < 0 -> 0
+                startPosition >= pagerAdapter.count -> pagerAdapter.count - 1
+                else -> startPosition
+            }
+
+            setCurrentItem(fixIndex, false)
+
+            //主动通知监听
+            if (currentItem == fixIndex) {
+                pageChangeListener.onPageSelected(currentItem)
+            }
 
             //在后面添加事件, 那么第一次就不会触发[onPageSelected]
             addOnPageChangeListener(pagerTransitionCallback)
@@ -141,10 +178,6 @@ open class PagerTransitionFragment : ViewTransitionFragment() {
     override fun onTransitionHideStart() {
         super.onTransitionHideStart()
         hideOtherView()
-    }
-
-    override fun onTransitionHideEnd() {
-        super.onTransitionHideEnd()
     }
 
     //</editor-fold desc="其他元素控制">
