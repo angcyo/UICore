@@ -3,9 +3,11 @@ package com.angcyo.core.fragment
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
+import com.angcyo.base.dslFHelper
 import com.angcyo.core.R
 import com.angcyo.core.activity.PermissionBean
 import com.angcyo.dsladapter.renderItem
+import com.angcyo.library.ex.isDebugType
 import com.angcyo.library.getAppName
 import com.angcyo.tablayout.screenWidth
 import com.angcyo.widget.recycler.dslAdapter
@@ -71,8 +73,19 @@ class PermissionFragment : BaseFragment() {
             }
         }
 
-        baseViewHolder.click(R.id.enable_button) {
+        baseViewHolder.throttleClick(R.id.enable_button) {
             onPermissionRequest(it, permissions)
+        }
+
+        if (isDebugType()) {
+            baseViewHolder.longClick(R.id.enable_button) {
+                dslFHelper {
+                    removeLastFragmentOnBack = true
+                    finishActivityOnLastFragmentRemove = true
+                    noAnim()
+                    remove(this@PermissionFragment)
+                }
+            }
         }
     }
 
@@ -81,6 +94,9 @@ class PermissionFragment : BaseFragment() {
     }
 
     override fun onBackPressed(): Boolean {
+        if (isDebugType()) {
+            return true
+        }
         return false
     }
 }

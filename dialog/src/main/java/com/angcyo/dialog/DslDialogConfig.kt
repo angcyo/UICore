@@ -174,7 +174,8 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
      */
     var amount: Float = undefined_float
 
-    /** window动画资源 */
+    /** window动画资源
+     * 0 取消动画*/
     @StyleRes
     var animStyleResId: Int = R.style.LibDialogAnimation
 
@@ -287,7 +288,10 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
         dialog.setCanceledOnTouchOutside(canceledOnTouchOutside)
         val window = dialog.window
         val decorView: View
+
+        //放在[setContentView]前面配置对话框
         configDialog(dialog)
+
         if (dialog is AlertDialog) {
             //从showAlertDialog传过来的dialog
         } else {
@@ -334,6 +338,8 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
     open fun configDialog(dialog: Dialog) {
         _dialog = dialog
         val window = dialog.window
+
+        //Window feature must be requested before adding content
         if (dialog is AppCompatDialog) {
             dialog.supportRequestWindowFeature(windowFeature)
         } else {

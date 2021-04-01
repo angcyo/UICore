@@ -109,8 +109,8 @@ fun Activity.loading(
         DslDialogConfig(activity).run {
             this.onDismissListener = {
                 val dialog = it
-                dialogPool.removeAll {
-                    it.get() == dialog
+                dialogPool.removeAll { ref ->
+                    ref.get() == dialog
                 }
             }
             //取消监听, dismiss不触发cancel
