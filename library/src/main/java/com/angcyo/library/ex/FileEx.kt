@@ -77,6 +77,10 @@ fun String.file(): File? {
     }
 }
 
+fun String?.fileName(): String? {
+    return this?.file()?.name
+}
+
 fun String?.fileSize(): Long {
     if (TextUtils.isEmpty(this)) {
         return 0L
