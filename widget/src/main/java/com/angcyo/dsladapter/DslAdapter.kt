@@ -434,6 +434,42 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         }
     }
 
+    fun renderHeader(
+        filterParams: FilterParams = defaultFilterParams!!,
+        render: DslAdapter.(headerItems: MutableList<DslAdapterItem>) -> Unit
+    ) {
+        val dslAdapter = DslAdapter()
+        dslAdapter.dslDataFilter = null
+        dslAdapter.render(headerItems)
+        changeItems(filterParams) {
+            headerItems.addAll(dslAdapter.adapterItems)
+        }
+    }
+
+    fun renderData(
+        filterParams: FilterParams = defaultFilterParams!!,
+        render: DslAdapter.(dataItems: MutableList<DslAdapterItem>) -> Unit
+    ) {
+        val dslAdapter = DslAdapter()
+        dslAdapter.dslDataFilter = null
+        dslAdapter.render(dataItems)
+        changeItems(filterParams) {
+            dataItems.addAll(dslAdapter.adapterItems)
+        }
+    }
+
+    fun renderFooter(
+        filterParams: FilterParams = defaultFilterParams!!,
+        render: DslAdapter.(footerItems: MutableList<DslAdapterItem>) -> Unit
+    ) {
+        val dslAdapter = DslAdapter()
+        dslAdapter.dslDataFilter = null
+        dslAdapter.render(footerItems)
+        changeItems(filterParams) {
+            footerItems.addAll(dslAdapter.adapterItems)
+        }
+    }
+
     //</editor-fold desc="Item操作">
 
     /**获取有效过滤后的数据集合*/
