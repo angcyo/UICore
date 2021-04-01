@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lib_wrap_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/lib_xhdpi"
+    android:paddingRight="@dimen/lib_xhdpi">
+
+    <include layout="@layout/lib_button_layout" />
+
+</FrameLayout>
