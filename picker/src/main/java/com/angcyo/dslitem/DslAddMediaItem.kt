@@ -41,7 +41,7 @@ open class DslAddMediaItem : DslAdapterItem() {
 
     var itemUpdateLoaderConfig: (LoaderConfig) -> Unit = {}
 
-    /**最小和最大录制时长*/
+    /**最小和最大录制时长, 秒*/
     var itemMinRecordTime: Int = 3
 
     var itemMaxRecordTime: Int = 15

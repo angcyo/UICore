@@ -64,9 +64,6 @@ class PickerViewModel : ViewModel() {
         if (media == null) {
             return false
         }
-        if (selectorMediaList.value.isNullOrEmpty()) {
-            return true
-        }
         if (loaderConfig.value?.canSelectorMedia(selectorMediaList.value!!, media) == true) {
             return true
         }

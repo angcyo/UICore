@@ -67,6 +67,8 @@ class MediaSelectorConfig {
     }
 
     fun configLoader(loaderConfig: LoaderConfig) {
+        loaderConfig.limitVideoMinDuration = minRecordTime * 1000L
+        loaderConfig.limitVideoMaxDuration = maxRecordTime * 1000L
         if (selectorMode.have(MODE_PICKER)) {
             var type = 0
             if (selectorType.have(TYPE_IMAGE)) {

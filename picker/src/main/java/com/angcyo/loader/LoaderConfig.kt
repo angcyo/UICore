@@ -11,6 +11,8 @@ import com.angcyo.loader.LoaderConfig.Companion.LOADER_TYPE_IMAGE
 import com.angcyo.loader.LoaderConfig.Companion.LOADER_TYPE_VIDEO
 import com.angcyo.picker.core.PickerActivity
 import kotlinx.android.parcel.Parcelize
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * 加载媒体的一些配置参数
@@ -48,6 +50,12 @@ data class LoaderConfig(
     var limitFileMinSize: Long = 0L,
     //b
     var limitFileMaxSize: Long = 0L,
+
+    /**限制视频时长, 毫秒*/
+    var limitVideoMinDuration: Long = -1,
+    var limitVideoMaxDuration: Long = -1,
+    var limitAudioMinDuration: Long = -1,
+    var limitAudioMaxDuration: Long = -1,
 
     /**显示文件大小*/
     var showFileSize: Boolean = false,
@@ -165,6 +173,45 @@ fun LoaderConfig.canSelectorMedia(
                 toast("文件大小需要小于 ${limitFileMaxSize.fileSizeString()}")
                 false
             }
+        }
+    }
+
+    //最大时长限制
+    val duration = media.duration
+    if (duration >= 0) {
+        if (media.isVideo()) {
+            return checkLimitDuration(duration, limitVideoMinDuration, limitVideoMaxDuration)
+        } else if (media.isAudio()) {
+            return checkLimitDuration(duration, limitAudioMinDuration, limitAudioMaxDuration)
+        }
+    }
+
+    return true
+}
+
+fun checkLimitDuration(duration: Long, minDuration: Long, maxDuration: Long): Boolean {
+    val min = min(minDuration, maxDuration)
+    val max = max(minDuration, maxDuration)
+    if (min > 0 && max > 0) {
+        return if (duration < min || duration > max) {
+            toast("时长需要在 ${min / 1000}~${max / 1000} 秒之间")
+            false
+        } else {
+            true
+        }
+    } else if (max > 0) {
+        return if (duration > max) {
+            toast("时长需要小于 ${max / 1000} 秒")
+            false
+        } else {
+            true
+        }
+    } else if (min > 0) {
+        return if (duration < min) {
+            toast("时长需要大于 ${min / 1000} 秒")
+            false
+        } else {
+            true
         }
     }
     return true
