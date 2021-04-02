@@ -8,12 +8,14 @@ import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.core.component.HttpConfigDialog
 import com.angcyo.core.component.interceptor.LogFileInterceptor
 import com.angcyo.http.DslHttp
+import com.angcyo.http.addInterceptorEx
 import com.angcyo.http.rx.Rx
 import com.angcyo.library.L
 import com.angcyo.library.LibApplication
 import com.angcyo.library.ex.getAppSignatureMD5
 import com.angcyo.library.ex.getAppSignatureSHA1
 import com.angcyo.library.getAppString
+import me.jessyan.progressmanager.ProgressManager
 import me.weishu.reflection.Reflection
 
 /**
@@ -41,10 +43,10 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
             }
 
             val logFileInterceptor = LogFileInterceptor()
-            onConfigOkHttpClient.add {
-                if (!it.interceptors().contains(logFileInterceptor)) {
-                    it.addInterceptor(logFileInterceptor)
-                }
+            configHttpBuilder {
+                //进度拦截器
+                it.addInterceptorEx(ProgressManager.getInstance().interceptor, 0)
+                it.addInterceptorEx(logFileInterceptor)
             }
         }
     }

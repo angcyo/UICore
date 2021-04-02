@@ -3,7 +3,7 @@ package com.angcyo.http
 import com.angcyo.http.base.gson
 import com.angcyo.http.interceptor.LogInterceptor
 import com.angcyo.http.interceptor.UUIDInterceptor
-import me.jessyan.progressmanager.ProgressManager
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -43,9 +43,6 @@ class DslHttpConfig {
 
             //UUID
             addInterceptor(UUIDInterceptor())
-
-            //进度拦截器
-            addInterceptor(ProgressManager.getInstance().interceptor)
 
             //日志拦截器, 放在最后拦截
             addInterceptor(LogInterceptor())
@@ -94,5 +91,18 @@ class DslHttpConfig {
     fun reset() {
         retrofit = null
         okHttpClient = null
+    }
+}
+
+/**添加拦截器*/
+fun OkHttpClient.Builder.addInterceptorEx(interceptor: Interceptor, index: Int = -1) {
+    with(interceptors()) {
+        if (!this.contains(interceptor)) {
+            if (index in this.indices) {
+                add(index, interceptor)
+            } else {
+                add(interceptor)
+            }
+        }
     }
 }

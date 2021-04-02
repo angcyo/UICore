@@ -13,10 +13,6 @@ import me.jessyan.progressmanager.body.ProgressInfo
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 
-object HttpProgress {
-
-}
-
 /**相同下载地址, 不同下载内容*/
 fun String.newProgressUrl(key: String) = ProgressManager.newUrl(this, key)
 
@@ -102,8 +98,12 @@ fun String.uploadProgress(
 }
 
 /**移除上传进度监听*/
-fun String.removeUploadProgress() {
-    ProgressManager.getInstance().removeRequestListener(this)
+fun String.removeUploadProgress(key: String? = null) {
+    if (key == null) {
+        ProgressManager.getInstance().removeRequestListener(this)
+    } else {
+        ProgressManager.getInstance().removeRequestListener(this, key)
+    }
 }
 
 /**移除上传进度监听*/

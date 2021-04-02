@@ -27,6 +27,28 @@ import com.liulishuo.okdownload.core.cause.EndCause
 
 open class DslTextureVideoItem : DslBaseDownloadItem() {
 
+    companion object {
+        const val KEY_DISABLE_DOWNLOAD = "disable_download"
+
+        /**禁用视频的先下载后播放, 而使用直播播放*/
+        fun disableDownload(url: String?, disable: Boolean = true): String? {
+            if (url.isNullOrEmpty()) {
+                return url
+            }
+            return if (url.contains("?")) {
+                "$url&$KEY_DISABLE_DOWNLOAD=${disable}"
+            } else {
+                "$url?$KEY_DISABLE_DOWNLOAD=${disable}"
+            }
+        }
+
+        fun disableDownload(uri: Uri, disable: Boolean = true): Uri {
+            val builder = uri.buildUpon()
+            builder.appendQueryParameter(KEY_DISABLE_DOWNLOAD, "$disable")
+            return builder.build()
+        }
+    }
+
     /**视频地址*/
     var itemVideoUri: Uri? = null
 
@@ -121,20 +143,23 @@ open class DslTextureVideoItem : DslBaseDownloadItem() {
 
         //播放视频
         itemHolder.click(R.id.play_view) {
-            if (itemVideoUri == null) {
-                return@click
-            }
+            val videoUri = itemVideoUri ?: return@click
 
             itemHolder.gone(R.id.play_view)
 
-            if (itemVideoUri.isHttpScheme()) {
+            if (videoUri.isHttpScheme()) {
                 //下载视频
-                download(itemHolder, itemVideoUri?.loadUrl()) {
-                    playVideo(itemHolder, fileUri(app(), it))
+                if (videoUri.getQueryParameter(KEY_DISABLE_DOWNLOAD) == "true") {
+                    //禁用先下载后播放
+                    playVideo(itemHolder, videoUri)
+                } else {
+                    download(itemHolder, videoUri.loadUrl()) {
+                        playVideo(itemHolder, fileUri(app(), it))
+                    }
                 }
             } else {
                 //本地视频
-                playVideo(itemHolder, itemVideoUri!!)
+                playVideo(itemHolder, videoUri)
             }
         }
 

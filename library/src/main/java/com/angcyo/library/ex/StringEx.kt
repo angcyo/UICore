@@ -13,6 +13,7 @@ import android.text.TextUtils
 import android.util.Base64
 import android.webkit.MimeTypeMap
 import androidx.annotation.ColorInt
+import androidx.core.net.toUri
 import androidx.core.text.getSpans
 import com.angcyo.library.L
 import com.angcyo.library.app
@@ -296,8 +297,13 @@ fun String.noExtName(): String {
  * */
 fun String?.mimeType(): String? {
     return this?.run {
+        val url = try {
+            this.toUri().path?.encode()
+        } catch (e: Exception) {
+            this.encode()
+        }
         MimeTypeMap.getSingleton()
-            .getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(this.encode()))
+            .getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(url))
     }
 }
 

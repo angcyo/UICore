@@ -1,6 +1,7 @@
 package com.angcyo.http.rsa
 
 import com.angcyo.http.DslHttp
+import com.angcyo.http.addInterceptorEx
 
 /**
  *
@@ -23,9 +24,7 @@ object RSA {
         DslHttp.config {
             val rsaInterceptor = RSAInterceptor()
             configHttpBuilder {
-                if (!it.interceptors().contains(rsaInterceptor)) {
-                    it.addInterceptor(rsaInterceptor)
-                }
+                it.addInterceptorEx(rsaInterceptor, 0)
             }
         }
     }
