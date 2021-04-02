@@ -23,7 +23,7 @@
         app:r_draw_badge="true"
         app:r_enable_shape="false"
         tools:r_badge_text="9"
-        tools:src="@drawable/lib_video_cover_tip" />
+        tools:src="@drawable/lib_image_tip" />
 
     <com.angcyo.widget.text.DslTextView
         android:id="@+id/lib_text_view"
