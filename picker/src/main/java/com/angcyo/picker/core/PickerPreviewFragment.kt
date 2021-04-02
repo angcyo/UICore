@@ -313,7 +313,7 @@ class PickerPreviewFragment : BasePickerFragment() {
             _vh.gone(R.id.mini_line_view)
         } else {
             //滚动到当前位置
-            miniAdapter.onDispatchUpdatesAfterOnce = {
+            miniAdapter.onDispatchUpdatesOnce {
                 val currentItem = it.findItem {
                     it.itemData == pageLoaderMedia
                 }?.apply {

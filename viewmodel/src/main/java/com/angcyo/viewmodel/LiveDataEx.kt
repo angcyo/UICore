@@ -63,3 +63,11 @@ fun <T> LiveData<T>.observeOnce(owner: LifecycleOwner, action: (data: T?) -> Uni
 fun <T> vmData(data: T) = MutableLiveData(data)
 
 fun <T> vmDataNull(data: T? = null) = MutableLiveData(data)
+
+fun <T> MutableLiveData<T>.notify() {
+    value = value
+}
+
+fun <T> MutableLiveData<T>.notifyPost() {
+    postValue(value)
+}

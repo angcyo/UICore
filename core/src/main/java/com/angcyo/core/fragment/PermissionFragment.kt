@@ -1,5 +1,6 @@
 package com.angcyo.core.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
@@ -21,6 +22,20 @@ import com.angcyo.widget.recycler.dslAdapter
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 class PermissionFragment : BaseFragment() {
+
+    companion object {
+        var permissionGridStrategy: (context: Context, count: Int) -> Int = { context, count ->
+            when {
+                context.screenWidth <= 640 && count % 2 == 0 -> 2
+                context.screenWidth <= 640 && count >= 4 -> 2
+                context.screenWidth <= 640 -> 1
+                count > 4 -> 3
+                count == 4 -> 2
+                count <= 3 -> 1
+                else -> 2
+            }
+        }
+    }
 
     init {
         fragmentLayoutId = R.layout.lib_permission_fragment
@@ -44,15 +59,7 @@ class PermissionFragment : BaseFragment() {
             val count = filterPermissions.size
 
             layoutManager = GridLayoutManager(
-                fContext(), when {
-                    screenWidth <= 640 && count % 2 == 0 -> 2
-                    screenWidth <= 640 && count >= 4 -> 2
-                    screenWidth <= 640 -> 1
-                    count > 4 -> 3
-                    count == 4 -> 2
-                    count <= 3 -> 1
-                    else -> 2
-                }
+                fContext(), permissionGridStrategy(fContext(), count)
             )
 
             dslAdapter {
