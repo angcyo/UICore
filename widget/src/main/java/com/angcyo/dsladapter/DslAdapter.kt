@@ -435,6 +435,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     }
 
     fun renderHeader(
+        reset: Boolean = false,
         filterParams: FilterParams = defaultFilterParams!!,
         render: DslAdapter.(headerItems: MutableList<DslAdapterItem>) -> Unit
     ) {
@@ -442,11 +443,15 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         dslAdapter.dslDataFilter = null
         dslAdapter.render(headerItems)
         changeItems(filterParams) {
+            if (reset) {
+                headerItems.clear()
+            }
             headerItems.addAll(dslAdapter.adapterItems)
         }
     }
 
     fun renderData(
+        reset: Boolean = false,
         filterParams: FilterParams = defaultFilterParams!!,
         render: DslAdapter.(dataItems: MutableList<DslAdapterItem>) -> Unit
     ) {
@@ -454,11 +459,15 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         dslAdapter.dslDataFilter = null
         dslAdapter.render(dataItems)
         changeItems(filterParams) {
+            if (reset) {
+                dataItems.clear()
+            }
             dataItems.addAll(dslAdapter.adapterItems)
         }
     }
 
     fun renderFooter(
+        reset: Boolean = false,
         filterParams: FilterParams = defaultFilterParams!!,
         render: DslAdapter.(footerItems: MutableList<DslAdapterItem>) -> Unit
     ) {
@@ -466,6 +475,9 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         dslAdapter.dslDataFilter = null
         dslAdapter.render(footerItems)
         changeItems(filterParams) {
+            if (reset) {
+                footerItems.clear()
+            }
             footerItems.addAll(dslAdapter.adapterItems)
         }
     }
