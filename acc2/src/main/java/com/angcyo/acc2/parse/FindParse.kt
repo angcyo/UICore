@@ -873,10 +873,26 @@ class FindParse(val accParse: AccParse) : BaseParse() {
 
         //是否匹配通过
         var match = true
-        for (i in 0 until node.childCount) {
-            val child = node.getChild(i)
-            val childBean = childList.getOrNull(i)
-            if (child != null && childBean != null) {
+        var childIndex = 0
+        var childBeanIndex = 0
+
+        while (childIndex < node.childCount) {
+            val child = node.getChild(childIndex)
+            val childBean = childList.getOrNull(childBeanIndex)
+
+            if (childBean == null) {
+                match = false
+                break
+            }
+
+            if (child != null) {
+                if (childBean.pass) {
+                    match = true
+                    childIndex++
+                    childBeanIndex++
+                    continue
+                }
+
                 if (matchNode(child, childBean)) {
                     if (childBean.filter != null) {
                         //需要满足过滤条件
@@ -890,12 +906,21 @@ class FindParse(val accParse: AccParse) : BaseParse() {
                     match = false
                 }
 
-                //忽略结果
-                if (childBean.ignore) {
+                //忽略匹配检查
+                if (!match && childBean.ignore) {
+                    //如果匹配失败, 又需要忽略当前的匹配项
                     match = true
+                    childBeanIndex++
                     continue
                 }
             }
+
+            if (!match || childBean.jump) {
+                break
+            }
+
+            childIndex++
+            childBeanIndex++
         }
 
         return match

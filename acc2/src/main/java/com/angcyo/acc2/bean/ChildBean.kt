@@ -34,6 +34,14 @@ data class ChildBean(
     /**需要满足的过滤条件[com.angcyo.acc2.bean.FindBean.filter]*/
     var filter: FilterBean? = null,
 
-    /**忽略当前child的匹配结果, 继续下一个child匹配*/
-    var ignore: Boolean = false
+    /**是否直接通过匹配*/
+    var pass: Boolean = false,
+
+    /**直接跳过后续的[ChildBean]匹配, 之前匹配的结果直接返回.
+     * 本次匹配还是会正常进行*/
+    var jump: Boolean = false,
+
+    /**如果匹配通过了, 则正常流程继续匹配,
+     * 如果匹配失败了, 则忽略这个匹配项, 这个匹配项当做不存在, 继续剩下的匹配*/
+    var ignore: Boolean = false,
 )
