@@ -9,6 +9,7 @@ import com.angcyo.acc2.bean.WindowBean
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.eachChildDepth
 import com.angcyo.library.ex.*
+import kotlin.math.max
 
 
 /**
@@ -872,43 +873,50 @@ class FindParse(val accParse: AccParse) : BaseParse() {
         var childIndex = 0
         var childBeanIndex = 0
 
-        while (childIndex < node.childCount) {
-            val child = node.getChild(childIndex)
+        val childCount = node.childCount
+        val childBeanCount = childList.size()
+        val maxCount = max(childCount, childBeanCount)
+
+        while (childIndex < maxCount) {
+            val child = node.getChildOrNull(childIndex)
             val childBean = childList.getOrNull(childBeanIndex)
 
-            if (childBean == null) {
+            if (childIndex == childCount && childBeanIndex == childBeanCount) {
+                //最后一项匹配结束, 终止匹配
+                break
+            }
+
+            if (childBean == null || child == null) {
                 match = false
                 break
             }
 
-            if (child != null) {
-                if (childBean.pass) {
-                    match = true
-                    childIndex++
-                    childBeanIndex++
-                    continue
-                }
+            if (childBean.pass) {
+                match = true
+                childIndex++
+                childBeanIndex++
+                continue
+            }
 
-                if (matchNode(child, childBean)) {
-                    if (childBean.filter != null) {
-                        //需要满足过滤条件
-                        val removeList = accParse.filterParse.parse(listOf(child), childBean.filter)
-                        if (removeList.contains(child)) {
-                            //不满足过滤条件
-                            match = false
-                        }
+            if (matchNode(child, childBean)) {
+                if (childBean.filter != null) {
+                    //需要满足过滤条件
+                    val removeList = accParse.filterParse.parse(listOf(child), childBean.filter)
+                    if (removeList.contains(child)) {
+                        //不满足过滤条件
+                        match = false
                     }
-                } else {
-                    match = false
                 }
+            } else {
+                match = false
+            }
 
-                //忽略匹配检查
-                if (!match && childBean.ignore) {
-                    //如果匹配失败, 又需要忽略当前的匹配项
-                    match = true
-                    childBeanIndex++
-                    continue
-                }
+            //忽略匹配检查
+            if (!match && childBean.ignore) {
+                //如果匹配失败, 又需要忽略当前的匹配项
+                match = true
+                childBeanIndex++
+                continue
             }
 
             if (!match || childBean.jump) {
