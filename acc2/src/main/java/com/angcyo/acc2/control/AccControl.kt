@@ -119,6 +119,7 @@ class AccControl : Runnable {
                 it.onControlEnd(this, taskBean, state, reason)
             }
         }
+        //_taskBean = null
     }
 
     //</editor-fold desc="启动">
