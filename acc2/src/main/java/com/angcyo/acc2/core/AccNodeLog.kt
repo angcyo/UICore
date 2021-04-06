@@ -3,8 +3,7 @@ package com.angcyo.acc2.core
 import android.accessibilityservice.AccessibilityService
 import android.view.accessibility.AccessibilityWindowInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
-import com.angcyo.library._screenHeight
-import com.angcyo.library._screenWidth
+import com.angcyo.library.*
 import com.angcyo.library.ex.*
 
 /**
@@ -15,6 +14,22 @@ import com.angcyo.library.ex.*
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 class AccNodeLog {
+
+    companion object {
+        fun logMinWindowNode(): String {
+            return AccNodeLog().run {
+                logMinWindowInfo = true
+                logWindowNode = false
+                getAccessibilityWindowLog().toString()
+            }
+        }
+
+        fun logWindowNode(): String {
+            return AccNodeLog().run {
+                getAccessibilityWindowLog().toString()
+            }
+        }
+    }
 
     //核心
     var service: AccessibilityService? = BaseAccService.lastService

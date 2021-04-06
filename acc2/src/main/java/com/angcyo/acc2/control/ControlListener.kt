@@ -43,6 +43,15 @@ open class ControlListener {
 
     }
 
+    /**当[actionBean]没有被有效处理时, 回调*/
+    open fun onActionNoHandle(
+        control: AccControl,
+        actionBean: ActionBean,
+        isPrimaryAction: Boolean,
+    ) {
+
+    }
+
     /**
      * 操作记录解析回调
      * [com.angcyo.acc2.parse.OperateParse.parse]
@@ -73,7 +82,7 @@ open class ControlListener {
     }
 
     /**控制器结束回调*/
-    open fun onControlEnd(control: AccControl, taskBean: TaskBean, state: Int, reason: String) {
+    open fun onControlEnd(control: AccControl, taskBean: TaskBean, state: Int, reason: String?) {
 
     }
 }

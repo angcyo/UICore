@@ -12,10 +12,19 @@ import com.angcyo.library.ex.uuid
  */
 data class TaskBean(
 
+    //json配置
+    var id: Long = -1,
+    var rwid: Long = -1,
+
+    /**表单请求*/
+    var form: FormBean? = null,
+
     //<editor-fold desc="配置信息">
 
+    /**任务uuid*/
     var uuid: String? = uuid(),
 
+    /**任务id*/
     var taskId: Long = -1,
 
     /**任务的标题*/

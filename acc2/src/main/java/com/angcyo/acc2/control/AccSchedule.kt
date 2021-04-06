@@ -27,10 +27,13 @@ class AccSchedule(val accControl: AccControl) {
     var _endTime: Long = 0
 
     /**运行次数统计, 从1开始计数*/
-    var actionCount = hashMapOf<Long, ActionCount>()
+    val actionCount = hashMapOf<Long, ActionCount>()
 
     /**记录action运行的时长, 毫秒*/
-    var actionTime = hashMapOf<Long, Long>()
+    val actionTime = hashMapOf<Long, Long>()
+
+    /**记录运行期间, 程序包名的变化*/
+    val packageTrackList = mutableListOf<String>()
 
     //<editor-fold desc="操作">
 
@@ -181,6 +184,7 @@ class AccSchedule(val accControl: AccControl) {
         actionCount.clear()
         actionTime.clear()
         actionResultMap.clear()
+        packageTrackList.clear()
         _endTime = 0
         _currentIndex = -1
         _scheduleActionBean = null
@@ -677,12 +681,25 @@ class AccSchedule(val accControl: AccControl) {
                 }
             }
         } else {
-            _latsRunActionTime = nowTime()
+            //切换了action
+            if (isPrimaryAction || actionBean.actionId > 0) {
+                _latsRunActionTime = nowTime()
+            }
+            if (isPrimaryAction) {
+                //窗口根节点集合
+                val findParse = accParse.findParse
+                val rootNodeList = findParse.findRootNode(actionBean.window)
+                rootNodeList.lastOrNull()?.packageName?.let {
+                    packageTrackList.add(it.str())
+                }
+            }
         }
 
-        //运行时长
-        val actionRunTime = nowTime() - _latsRunActionTime
-        setActionRunTime(actionBean.actionId, actionRunTime)
+        if (isPrimaryAction || actionBean.actionId > 0) {
+            //运行时长
+            val actionRunTime = nowTime() - _latsRunActionTime
+            setActionRunTime(actionBean.actionId, actionRunTime)
+        }
 
         //运行开始的回调
         accControl.controlListenerList.forEach {
@@ -787,7 +804,7 @@ class AccSchedule(val accControl: AccControl) {
                     "${actionCheckBean.checkLog()}[event]未匹配到元素:${eventList}",
                     isPrimaryAction
                 )
-                //未找到元素
+                //未找到元素, 交给other处理
                 val handleResult = handleParse.parse(rootNodeList, actionCheckBean.other)
 
                 if (handleResult.forceSuccess) {
@@ -818,6 +835,11 @@ class AccSchedule(val accControl: AccControl) {
                                 isPrimaryAction
                             )
                             break
+                        } else {
+                            //other action 也没有处理成功
+                            accControl.controlListenerList.forEach {
+                                it.onActionNoHandle(accControl, actionBean, isPrimaryAction)
+                            }
                         }
                     }
                 }

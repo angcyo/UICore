@@ -89,21 +89,25 @@ class AccControl : Runnable {
     }
 
     /**停止任务*/
-    fun stop(reason: String = "主动停止") {
+    fun stop(reason: String? = "主动停止") {
         _end(reason, CONTROL_STATE_STOP)
     }
 
     /**异常任务*/
-    fun error(reason: String = "任务异常") {
+    fun error(reason: String? = "任务异常") {
         _end(reason, CONTROL_STATE_ERROR)
     }
 
     /**完成任务*/
-    fun finish(reason: String = "任务完成") {
+    fun finish(reason: String? = "任务完成") {
         _end(reason, CONTROL_STATE_FINISH)
     }
 
-    fun _end(reason: String, state: Int) {
+    fun _end(reason: String?, state: Int) {
+        if (_controlState == state) {
+            L.i("控制器已经[${state.toControlStateStr()}]")
+            return
+        }
         L.i("$reason[${state.toControlStateStr()}]")
         finishReason = reason
         accSchedule.endSchedule()
@@ -203,7 +207,14 @@ class AccControl : Runnable {
                 e.printStackTrace()
             }
         }
-        log("run控制器结束[${_controlState.toControlStateStr()}]:$finishReason ${accSchedule.durationStr()}\n${_taskBean?.textMap}\n${_taskBean?.textListMap}")
+        log(buildString {
+            append("run控制器结束")
+            append("[${_controlState.toControlStateStr()}]:$finishReason ")
+            appendLine(accSchedule.durationStr())
+            appendLine(accSchedule.packageTrackList)
+            appendLine(_taskBean?.textMap)
+            appendLine(_taskBean?.textListMap)
+        })
     }
 
     //</editor-fold desc="线程">

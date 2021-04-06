@@ -320,7 +320,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
     }
 
     /**根据[WindowBean]的描述, 获取根节点集合*/
-    fun findRootNode(windowBean: WindowBean?): List<AccessibilityNodeInfoCompat>? {
+    fun findRootNode(windowBean: WindowBean?): List<AccessibilityNodeInfoCompat> {
         val result = mutableListOf<AccessibilityNodeInfoCompat>()
         if (windowBean == null) {
             //未指定, 采用默认处理
@@ -346,7 +346,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
     }
 
     /**规则下的默认根节点集合*/
-    fun rootWindowNode(findWindowBean: WindowBean? = null): List<AccessibilityNodeInfoCompat>? {
+    fun rootWindowNode(findWindowBean: WindowBean? = null): List<AccessibilityNodeInfoCompat> {
         return findRootNode(windowBean(findWindowBean))
     }
 
