@@ -565,6 +565,9 @@ class AccSchedule(val accControl: AccControl) {
         isPrimaryAction: Boolean
     ): HandleResult {
         val handleActionResult = HandleResult()
+        if (!accControl.isControlRunning) {
+            return handleActionResult
+        }
         if (actionBean.async == true) {
             //异步执行
             async {
@@ -573,16 +576,20 @@ class AccSchedule(val accControl: AccControl) {
         } else {
             //同步执行
             if (runActionBefore(actionBean, isPrimaryAction, handleActionResult)) {
-                //被中断了
-            } else {
+                if (!accControl.isControlRunning) {
+                    return handleActionResult
+                }
                 runActionInner(actionBean, otherActionList, isPrimaryAction, handleActionResult)
+                if (!accControl.isControlRunning) {
+                    return handleActionResult
+                }
                 runActionAfter(actionBean, isPrimaryAction, handleActionResult)
             }
         }
         return handleActionResult
     }
 
-    /**返回是否要中断后续运行*/
+    /**返回是否运行成功, 运行失败, 会中断后续执行*/
     fun runActionBefore(
         actionBean: ActionBean,
         isPrimaryAction: Boolean,
@@ -595,7 +602,7 @@ class AccSchedule(val accControl: AccControl) {
             runActionBeanStack.popSafe()
             _runActionBean = null
             accControl.error("无障碍服务连接中断")
-            return true
+            return false
         }
 
         //激活条件判断
@@ -606,7 +613,7 @@ class AccSchedule(val accControl: AccControl) {
             runActionBeanStack.popSafe()
             _runActionBean = null
             accControl.log("${actionBean.actionLog()}未满足激活条件,跳过执行.", isPrimaryAction)
-            return true
+            return false
         }
 
         //等待执行
@@ -618,6 +625,11 @@ class AccSchedule(val accControl: AccControl) {
         }
         accControl.log("${actionBean.actionLog()}等待[$delayTime]ms后运行.", isPrimaryAction)
         sleep(delayTime)
+
+        //停止了运行
+        if (!accControl.isControlRunning) {
+            return false
+        }
 
         val lastActionHash = _lastRunActionHash
         val newActionHash = if (isPrimaryAction) {
@@ -659,7 +671,7 @@ class AccSchedule(val accControl: AccControl) {
                         if (!handleActionResult.success) {
                             runActionBeanStack.popSafe()
                             _runActionBean = null
-                            return true
+                            return false
                         }
                     }
                 }
@@ -677,7 +689,7 @@ class AccSchedule(val accControl: AccControl) {
             it.onActionRunBefore(accControl, actionBean, isPrimaryAction)
         }
 
-        return false
+        return true
     }
 
     //是否离开了主程序
@@ -689,6 +701,10 @@ class AccSchedule(val accControl: AccControl) {
         isPrimaryAction: Boolean,
         handleActionResult: HandleResult
     ) {
+        if (!accControl.isControlRunning) {
+            return
+        }
+
         val handleParse = accParse.handleParse
         val findParse = accParse.findParse
         val accSchedule = accParse.accControl.accSchedule
