@@ -867,10 +867,6 @@ class FindParse(val accParse: AccParse) : BaseParse() {
             return true
         }
 
-        if (node.childCount != childList.size()) {
-            return false
-        }
-
         //是否匹配通过
         var match = true
         var childIndex = 0
