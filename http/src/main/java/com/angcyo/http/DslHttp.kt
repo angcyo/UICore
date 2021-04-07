@@ -44,7 +44,7 @@ interface Api {
     fun post(
         @Url url: String,
         @Body json: JsonElement? = null,
-        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @QueryMap queryMap: HashMap<String, Any?> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Observable<Response<JsonElement>>
 
@@ -52,7 +52,7 @@ interface Api {
     fun post2Body(
         @Url url: String,
         @Body json: JsonElement? = null,
-        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @QueryMap queryMap: HashMap<String, Any?> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Observable<Response<ResponseBody>>
 
@@ -61,7 +61,7 @@ interface Api {
     @FormUrlEncoded
     fun postForm(
         @Url url: String,
-        @FieldMap formMap: HashMap<String, Any> = hashMapOf(),
+        @FieldMap formMap: HashMap<String, Any?> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Observable<Response<JsonElement>>
 
@@ -71,14 +71,14 @@ interface Api {
     @GET
     fun get(
         @Url url: String,
-        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @QueryMap queryMap: HashMap<String, Any?> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Observable<Response<JsonElement>>
 
     @GET
     fun get2Body(
         @Url url: String,
-        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @QueryMap queryMap: HashMap<String, Any?> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Observable<Response<ResponseBody>>
 
@@ -86,7 +86,7 @@ interface Api {
     fun put(
         @Url url: String,
         @Body json: JsonElement? = null,
-        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @QueryMap queryMap: HashMap<String, Any?> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Observable<Response<JsonElement>>
 
@@ -94,7 +94,7 @@ interface Api {
     fun put2Body(
         @Url url: String,
         @Body json: JsonElement? = null,
-        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @QueryMap queryMap: HashMap<String, Any?> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Observable<Response<ResponseBody>>
 }
@@ -109,7 +109,7 @@ interface ApiKt {
     suspend fun post(
         @Url url: String,
         @Body json: JsonElement? = null,
-        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @QueryMap queryMap: HashMap<String, Any?> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Response<JsonElement>
 
@@ -117,21 +117,21 @@ interface ApiKt {
     suspend fun post2Body(
         @Url url: String,
         @Body json: JsonElement? = null,
-        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @QueryMap queryMap: HashMap<String, Any?> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Response<ResponseBody>
 
     @GET
     suspend fun get(
         @Url url: String,
-        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @QueryMap queryMap: HashMap<String, Any?> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Response<JsonElement>
 
     @GET
     suspend fun get2Body(
         @Url url: String,
-        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @QueryMap queryMap: HashMap<String, Any?> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Response<ResponseBody>
 
@@ -139,7 +139,7 @@ interface ApiKt {
     suspend fun put(
         @Url url: String,
         @Body json: JsonElement? = null,
-        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @QueryMap queryMap: HashMap<String, Any?> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Response<JsonElement>
 
@@ -147,7 +147,7 @@ interface ApiKt {
     suspend fun put2Body(
         @Url url: String,
         @Body json: JsonElement? = null,
-        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @QueryMap queryMap: HashMap<String, Any?> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Response<ResponseBody>
 }
@@ -482,7 +482,7 @@ fun put2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Response
 //<editor-fold desc="协程同步网络请求">
 
 suspend fun String.get(
-    queryMap: HashMap<String, Any> = hashMapOf(),
+    queryMap: HashMap<String, Any?> = hashMapOf(),
     headerMap: HashMap<String, String> = hashMapOf()
 ): Response<JsonElement>? {
     return dslHttp(ApiKt::class.java)?.get(this, queryMap, headerMap)
@@ -490,7 +490,7 @@ suspend fun String.get(
 
 suspend fun String.post(
     json: JsonElement = JsonObject(),
-    queryMap: HashMap<String, Any> = hashMapOf(),
+    queryMap: HashMap<String, Any?> = hashMapOf(),
     headerMap: HashMap<String, String> = hashMapOf()
 ): Response<JsonElement>? {
     return dslHttp(ApiKt::class.java)?.post(this, json, queryMap, headerMap)
@@ -498,7 +498,7 @@ suspend fun String.post(
 
 suspend fun String.put(
     json: JsonElement = JsonObject(),
-    queryMap: HashMap<String, Any> = hashMapOf(),
+    queryMap: HashMap<String, Any?> = hashMapOf(),
     headerMap: HashMap<String, String> = hashMapOf()
 ): Response<JsonElement>? {
     return dslHttp(ApiKt::class.java)?.put(this, json, queryMap, headerMap)
@@ -507,7 +507,7 @@ suspend fun String.put(
 //--
 
 suspend fun String.get2Body(
-    queryMap: HashMap<String, Any> = hashMapOf(),
+    queryMap: HashMap<String, Any?> = hashMapOf(),
     headerMap: HashMap<String, String> = hashMapOf()
 ): Response<ResponseBody>? {
     return dslHttp(ApiKt::class.java)?.get2Body(this, queryMap, headerMap)
@@ -515,7 +515,7 @@ suspend fun String.get2Body(
 
 suspend fun String.post2Body(
     json: JsonElement = JsonObject(),
-    queryMap: HashMap<String, Any> = hashMapOf(),
+    queryMap: HashMap<String, Any?> = hashMapOf(),
     headerMap: HashMap<String, String> = hashMapOf()
 ): Response<ResponseBody>? {
     return dslHttp(ApiKt::class.java)?.post2Body(this, json, queryMap, headerMap)
@@ -523,7 +523,7 @@ suspend fun String.post2Body(
 
 suspend fun String.put2Body(
     json: JsonElement = JsonObject(),
-    queryMap: HashMap<String, Any> = hashMapOf(),
+    queryMap: HashMap<String, Any?> = hashMapOf(),
     headerMap: HashMap<String, String> = hashMapOf()
 ): Response<ResponseBody>? {
     return dslHttp(ApiKt::class.java)?.put2Body(this, json, queryMap, headerMap)
@@ -619,10 +619,10 @@ open class BaseRequestConfig {
     var body: JsonElement? = JsonObject()
 
     //url后面拼接的参数列表
-    var query: HashMap<String, Any> = hashMapOf()
+    var query: HashMap<String, Any?> = hashMapOf()
 
     //表单格式请求数据 method使用[POST_FORM]
-    var formMap: HashMap<String, Any> = hashMapOf()
+    var formMap: HashMap<String, Any?> = hashMapOf()
 
     //请求头
     var header: HashMap<String, String> = hashMapOf()
