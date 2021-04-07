@@ -33,11 +33,9 @@ class PutTextAction : BaseAction() {
         val regex = action.arg("regex")
 
         var textStr: String? = null
-        var text: CharSequence? = null
 
-        nodeList?.forEach {
-
-            text = it.text()
+        for (node in nodeList ?: emptyList()) {
+            var text = node.text()
 
             if (!regex.isNullOrEmpty()) {
                 text = text.patternList(regex).firstOrNull()
@@ -45,8 +43,9 @@ class PutTextAction : BaseAction() {
 
             if (text != null) {
                 //保存起来
-                textStr = text!!.toStr()
+                textStr = text.toStr()
                 control._taskBean?.putMap(key, textStr)
+                break
             }
         }
 

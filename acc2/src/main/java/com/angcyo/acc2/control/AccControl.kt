@@ -76,6 +76,7 @@ class AccControl : Runnable {
             return false
         }
         _taskBean = taskBean
+        finishReason = null
         accSchedule.startSchedule()
         _startThread()
         updateControlState(CONTROL_STATE_RUNNING)

@@ -38,13 +38,17 @@ class AccSchedule(val accControl: AccControl) {
     //<editor-fold desc="操作">
 
     /**获取总共运行时长*/
-    fun duration(): Long = if (_endTime <= 0 || _startTime <= 0) {
+    fun duration(): Long = if (_endTime <= 0 && _startTime <= 0) {
         0
+    } else if (_endTime <= 0) {
+        nowTime() - _startTime
     } else {
         _endTime - _startTime
     }
 
-    fun durationStr() = duration().toElapsedTime(pattern = intArrayOf(-1, 1, 1))
+    fun durationStr() = if (_endTime <= 0) {
+        "已运行 ${(nowTime() - _startTime).toElapsedTime(pattern = intArrayOf(-1, 1, 1))}"
+    } else "共运行 ${duration().toElapsedTime(pattern = intArrayOf(-1, 1, 1))}"
 
     /**累加运行次数*/
     fun runCountIncrement(actionId: Long) {

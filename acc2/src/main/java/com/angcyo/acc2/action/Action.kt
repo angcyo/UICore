@@ -97,9 +97,31 @@ object Action {
      * [com.angcyo.acc2.bean.TaskBean.textMap]
      * [getText:key regex:\\d+]
      * 默认key:getText
-     * regex:文本需要通过正则过滤的表达式
+     * regex:文本需要通过正则过滤的表达式.
+     *
+     * 只会获取节点列表中第一个节点的文本
      */
     const val ACTION_GET_TEXT = "getText"
+
+    /**获取元素文本保存到
+     * [com.angcyo.acc2.bean.TaskBean.textMap]
+     * [appendText:key regex:xxx]
+     * 默认key:appendText
+     * regex:\\d+ 文本需要使用正则过滤取值
+     * [ACTION_INPUT]
+     *
+     * 获取节点列表中第一个节点文本不为空的文本
+     */
+    const val ACTION_PUT_TEXT = "putText"
+
+    /**获取元素文本追加保存到
+     * [com.angcyo.acc2.bean.TaskBean.textListMap]
+     * [appendText:key regex:xxx]
+     * 默认key:appendText
+     * regex:\\d+ 文本需要使用正则过滤取值
+     * [ACTION_INPUT]
+     */
+    const val ACTION_APPEND_TEXT = "appendText"
 
     /**设置输入框文本内容
      * [input:$0] 支持文本变量 [com.angcyo.acc2.bean.TaskBean.wordList]
@@ -138,24 +160,6 @@ object Action {
      * [ACTION_JUMP]
      * */
     const val ACTION_CLEAR_JUMP_COUNT = "clearJumpCount"
-
-    /**获取元素文本追加保存到
-     * [com.angcyo.acc2.bean.TaskBean.textListMap]
-     * [appendText:key regex:xxx]
-     * 默认key:appendText
-     * regex:\\d+ 文本需要使用正则过滤取值
-     * [ACTION_INPUT]
-     */
-    const val ACTION_APPEND_TEXT = "appendText"
-
-    /**获取元素文本保存到
-     * [com.angcyo.acc2.bean.TaskBean.textMap]
-     * [appendText:key regex:xxx]
-     * 默认key:appendText
-     * regex:\\d+ 文本需要使用正则过滤取值
-     * [ACTION_INPUT]
-     */
-    const val ACTION_PUT_TEXT = "putText"
 
     /**回退按钮
      * [back:>1000]连续back操作, 满足条件才触发.否则失败*/

@@ -116,7 +116,6 @@ data class FindBean(
      * */
     var pathList: List<String>? = null,
 
-
     //</editor-fold desc="约束器">
 
     //<editor-fold desc="筛选器">
