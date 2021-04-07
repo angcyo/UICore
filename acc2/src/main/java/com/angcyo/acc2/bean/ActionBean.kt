@@ -112,4 +112,7 @@ data class ActionBean(
     /**当前[ActionBean]执行时, 离开了主程序, 需要执行的[ActionBean]
      * [com.angcyo.acc2.bean.TaskBean.leave]*/
     var leave: ActionBean? = null,
+
+    /**表单请求*/
+    var form: FormBean? = null,
 )

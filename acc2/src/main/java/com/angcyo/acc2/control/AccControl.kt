@@ -10,6 +10,7 @@ import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_PAUSE
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_RUNNING
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_STOP
 import com.angcyo.acc2.core.BaseAccService
+import com.angcyo.acc2.core.ControlInterruptException
 import com.angcyo.library.L
 import com.angcyo.library.ex.des
 import com.angcyo.library.ex.newLineIndent
@@ -205,10 +206,14 @@ class AccControl : Runnable {
                     //wait
                     sleep()
                 }
+            } catch (e: ControlInterruptException) {
+                e.printStackTrace()
+                error(e.message)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
+        //end...
         log(buildString {
             append("run控制器结束")
             append("[${_controlState.toControlStateStr()}]:$finishReason ")

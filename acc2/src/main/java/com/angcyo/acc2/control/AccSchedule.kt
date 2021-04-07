@@ -291,6 +291,10 @@ class AccSchedule(val accControl: AccControl) {
     ): HandleResult {
         var result = HandleResult()
 
+        if (!accControl.isControlRunning) {
+            return result
+        }
+
         //激活条件判断
         if (!accParse.conditionParse.parse(actionBean.conditionList).success) {
             result.success = false
