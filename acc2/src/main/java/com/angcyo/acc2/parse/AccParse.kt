@@ -111,7 +111,9 @@ class AccParse(val accControl: AccControl) : BaseParse() {
                 val start = split.getOrNull(0)?.toLongOrNull() ?: def
 
                 //基数
-                val base = split.getOrNull(1)?.toLongOrNull() ?: defaultIntervalDelay()
+                val baseStr = split.getOrNull(1)
+                val base = if (split.size() > 1 && baseStr.isNullOrEmpty())
+                    0 else baseStr?.toLongOrNull() ?: defaultIntervalDelay()
 
                 //倍数
                 val factor = split.getOrNull(2)?.toLongOrNull() ?: nextLong(2, defTimeRandomFactor)
