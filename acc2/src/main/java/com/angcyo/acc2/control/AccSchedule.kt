@@ -776,7 +776,17 @@ class AccSchedule(val accControl: AccControl) {
 
             if (isPrimaryAction) {
                 if (!handleActionResult.success) {
-                    accControl.log("无法处理↓\n$actionCheckBean\n${handleList}", isPrimaryAction)
+                    if (handleList == null) {
+                        accControl.log(
+                            "无法处理${actionBean.actionLog()}, 请检查[check]是否未初始化.",
+                            isPrimaryAction
+                        )
+                    } else {
+                        accControl.log(
+                            "无法处理↓\nhandle:${handleList}",
+                            isPrimaryAction
+                        )
+                    }
                 }
             }
         } else {
@@ -854,7 +864,7 @@ class AccSchedule(val accControl: AccControl) {
             } else {
                 //找到了目标元素
                 accControl.log(
-                    eventNodeList.toLog("${actionCheckBean.checkLog()}[event]匹配到元素(${eventNodeList.size})${actionCheckBean}↓"),
+                    eventNodeList.toLog("${actionCheckBean.checkLog()}[event]匹配到元素(${eventNodeList.size}) ${actionBean.actionLog()} ${actionCheckBean}↓"),
                     isPrimaryAction
                 )
                 val result = handleParse.parse(eventNodeList, handleList)

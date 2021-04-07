@@ -246,7 +246,7 @@ val AccControl.isControlRunning: Boolean
 val AccControl.controlStateStr: String
     get() = _controlState.toControlStateStr()
 
-fun ActionBean.actionLog() = "Action[${title}${des.des()}](${actionId})"
+fun ActionBean.actionLog() = "Action[${title}${(des ?: summary).des()}](${actionId})"
 
 fun CheckBean.checkLog() = "Check[${title}${des.des()}](${checkId})"
 

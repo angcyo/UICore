@@ -5,6 +5,7 @@ import com.angcyo.acc2.action.*
 import com.angcyo.acc2.bean.HandleBean
 import com.angcyo.acc2.bean.TextParamBean
 import com.angcyo.acc2.control.AccSchedule
+import com.angcyo.acc2.control.actionLog
 import com.angcyo.acc2.control.log
 import com.angcyo.library.ex.size
 
@@ -326,7 +327,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
 
         val accControl = accParse.accControl
         if (!nodeList.isNullOrEmpty()) {
-            accControl.log(nodeList.toLog("处理节点[${nodeList.size()}][$action]↓"))
+            accControl.log(nodeList.toLog("处理节点[${nodeList.size()}][$action] ${accControl.accSchedule._runActionBean?.actionLog()}↓"))
             accControl.accPrint.handleNode(nodeList)
         }
 

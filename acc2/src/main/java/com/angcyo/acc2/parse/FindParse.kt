@@ -6,6 +6,7 @@ import com.angcyo.acc2.action.Action
 import com.angcyo.acc2.bean.ChildBean
 import com.angcyo.acc2.bean.FindBean
 import com.angcyo.acc2.bean.WindowBean
+import com.angcyo.acc2.control.actionLog
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.eachChildDepth
 import com.angcyo.library.ex.*
@@ -53,7 +54,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
         }
 
         if (result.success) {
-            accControl.log("Find找到节点[${result.nodeList.size()}]↑")
+            accControl.log("Find找到节点[${result.nodeList.size()}] ${accParse.accControl.accSchedule._runActionBean?.actionLog()}↑")
             accControl.accPrint.findNode(result.nodeList)
         }
 
@@ -478,7 +479,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
     fun matchNode(node: AccessibilityNodeInfoCompat, condition: ChildBean): Boolean {
         return matchNode(
             node,
-            condition.rect,
+            condition.text,
             condition.cls,
             condition.id,
             condition.rect,
