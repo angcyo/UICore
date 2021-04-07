@@ -26,7 +26,7 @@ open class AccPrint(val accControl: AccControl? = null) {
      * [time] 执行步骤的延迟, 毫秒
      * */
     open fun next(actionBean: ActionBean, time: Long) {
-        L.w("next[$time]->${actionBean.title}${actionBean.des.des()}".wrapLog())
+        L.w("next[$time]->${actionBean.title}${(actionBean.summary ?: actionBean.des).des()}".wrapLog())
     }
 
     /**匹配到了元素*/
