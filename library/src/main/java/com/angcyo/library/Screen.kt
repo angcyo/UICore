@@ -32,6 +32,9 @@ object Screen {
     /**内容区域的高度, 不包含导航栏*/
     internal var contentHeight: Int = _screenHeight
 
+    internal var decorWidth: Int = _screenWidth
+    internal var decorHeight: Int = _screenHeight
+
     internal val _metrics = DisplayMetrics()
 
     fun init(context: Context) {
@@ -45,9 +48,13 @@ object Screen {
             windowManager.defaultDisplay.getRealMetrics(_metrics)
             visibleWidth = _metrics.widthPixels
             visibleHeight = _metrics.heightPixels
+
+            decorWidth = _metrics.widthPixels
+            decorHeight = _metrics.heightPixels
         }
 
         if (context is Activity) {
+            val decorView = context.window.decorView
             val contentView = context.window.findViewById<View>(Window.ID_ANDROID_CONTENT)
             if (contentView.measuredWidth == 0 && contentView.measuredHeight == 0) {
                 contentView.post {
@@ -58,10 +65,22 @@ object Screen {
                 contentWidth = contentView.measuredWidth
                 contentHeight = contentView.measuredHeight
             }
+            if (decorView.measuredWidth == 0 && decorView.measuredHeight == 0) {
+                contentView.post {
+                    decorWidth = decorView.measuredWidth
+                    decorHeight = decorView.measuredHeight
+                }
+            } else {
+                decorWidth = decorView.measuredWidth
+                decorHeight = decorView.measuredHeight
+            }
         } else {
             windowManager.defaultDisplay.getMetrics(_metrics)
             contentWidth = _metrics.widthPixels
             contentHeight = _metrics.heightPixels
+
+            decorWidth = _metrics.widthPixels
+            decorHeight = _metrics.heightPixels
         }
     }
 
@@ -72,14 +91,24 @@ object Screen {
         } else {
             val oldWidth = visibleWidth
             val oldHeight = visibleHeight
+
+            val oldDecorWidth = decorWidth
+            val oldDecorHeight = decorHeight
+
             if (_screenHeight > _screenWidth) {
                 //竖屏
                 visibleWidth = min(oldHeight, oldWidth)
                 visibleHeight = max(oldHeight, oldWidth)
+
+                decorWidth = min(oldDecorHeight, oldDecorWidth)
+                decorHeight = max(oldDecorHeight, oldDecorWidth)
             } else {
                 //横屏
                 visibleWidth = max(oldHeight, oldWidth)
                 visibleHeight = min(oldHeight, oldWidth)
+
+                decorWidth = max(oldDecorHeight, oldDecorWidth)
+                decorHeight = min(oldDecorHeight, oldDecorWidth)
             }
         }
     }
@@ -107,6 +136,18 @@ val _contentHeight: Int
     get() {
         Screen._adjust()
         return Screen.contentHeight
+    }
+
+val _decorWidth: Int
+    get() {
+        Screen._adjust()
+        return Screen.decorWidth
+    }
+
+val _decorHeight: Int
+    get() {
+        Screen._adjust()
+        return Screen.decorHeight
     }
 
 /**导航栏是否显示*/

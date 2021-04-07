@@ -17,7 +17,11 @@ open class AccPrint(val accControl: AccControl? = null) {
 
     /**输出日志*/
     open fun log(log: String?) {
-        L.i(log)
+        if (log?.startsWith(" ") == true) {
+            L.d(log)
+        } else {
+            L.i(log)
+        }
     }
 
     /**下一个步骤的提示

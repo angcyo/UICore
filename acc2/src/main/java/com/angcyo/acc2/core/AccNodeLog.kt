@@ -64,7 +64,7 @@ class AccNodeLog {
         val windows = service?.windows
         if (!windows.isNullOrEmpty()) {
             if (logScreenInfo) {
-                outBuilder.appendln("screenWidth:$_screenWidth screenHeight:$_screenHeight dp:$dp")
+                outBuilder.appendln("screenWidth:$_screenWidth screenHeight:$_screenHeight dp:$dp decorWidth:${_decorWidth} decorHeight:${_decorHeight}")
             }
             windows.forEachIndexed { index, windowInfo ->
                 if (filterWindow(windowInfo)) {
