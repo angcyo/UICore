@@ -4,6 +4,8 @@
  * transitive = false
  *
  * 用@aar结尾，以中断依赖传递
+ * `implementation('com.github.angcyo:DslItem:1.0.10@aar')`
+ *
  * */
 
 //强制版本依赖

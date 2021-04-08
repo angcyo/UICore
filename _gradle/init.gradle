@@ -1,5 +1,8 @@
 //https://plugins.gradle.org/ 插件市场
 
+//org.apache.groovy.json.internal.LazyMap
+//new groovy.json.JsonSlurper().parse(file('./AccAuto/src/main/assets/admin.json'))
+
 apply from: 'UICore/_gradle/findAllModule.gradle'
 
 //配置基本库 强制版本信息
