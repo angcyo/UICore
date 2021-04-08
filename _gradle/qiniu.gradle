@@ -9,6 +9,18 @@
  *
  * https://developer.qiniu.com/kodo/sdk/1239/java
  *
+ * <p>
+ *
+ * 其中关于Region对象和机房的关系如下：
+ * https://developer.qiniu.com/kodo/1239/java#upload-config
+ *
+ * 机房	Region
+ * 华东	Region.region0(), Region.huadong()
+ * 华北	Region.region1(), Region.huabei()
+ * 华南	Region.region2(), Region.huanan()
+ * 北美	Region.regionNa0(), Region.beimei()
+ * 东南亚	Region.regionAs0(), Region.xinjiapo()
+ *
  * Email:angcyo@126.com
  * @author angcyo* @date 2019/08/09
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
@@ -121,8 +133,11 @@ task _qiniuUpload() {
 
                 //上传配置参考 https://developer.qiniu.com/kodo/sdk/1239/java#upload-config
 
-                def cfg = new com.qiniu.storage.Configuration(com.qiniu.storage.Region.huanan())
                 //华南地区
+                //def cfg = new com.qiniu.storage.Configuration(com.qiniu.storage.Region.huanan())
+
+                //自动判断
+                def cfg = new com.qiniu.storage.Configuration(com.qiniu.storage.Region.autoRegion())
 
                 if (deleteBefore) {
                     //删除文件

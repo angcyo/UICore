@@ -21,9 +21,9 @@
  * mac: '/Users/用户名/.gradle/gradle.properties"'
  * 文件中加入配置:
  * ```
- * aliyunOss_ak=xxx
- * qiniu_sk=xxx
- * qiniu_bucket=xxx
+ * aliyunOssAccessKeyId=xxx
+ * aliyunOssAccessKeySecret=xxx
+ * aliyunOssBucketName=xxx
  * ```
  * 也可以在以下配置.(优先读取`gradle.properties`文件中的配置)
  * */
