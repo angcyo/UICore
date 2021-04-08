@@ -73,6 +73,7 @@ object AccPermission {
             context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
         val accessibilityServices =
             accessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
+        //val enabledServicesSetting = Settings.Secure.getString(context.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)
         return accessibilityServices.any { it.id.startsWith(context.packageName) }
     }
 }
