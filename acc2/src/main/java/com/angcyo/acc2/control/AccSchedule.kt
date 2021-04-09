@@ -3,6 +3,7 @@ package com.angcyo.acc2.control
 import com.angcyo.acc2.action.Action
 import com.angcyo.acc2.action.InputAction
 import com.angcyo.acc2.bean.ActionBean
+import com.angcyo.acc2.bean.findFirstActionByGroup
 import com.angcyo.acc2.core.AccNodeLog
 import com.angcyo.acc2.parse.AccParse
 import com.angcyo.acc2.parse.HandleResult
@@ -118,19 +119,7 @@ class AccSchedule(val accControl: AccControl) {
 
     /**通过[group]查找分组中的第一个[ActionBean]*/
     fun findFirstActionByGroup(group: String? /*不支持分割*/): ActionBean? {
-        if (group.isNullOrEmpty()) {
-            return null
-        }
-        var result: ActionBean? = null
-        accControl._taskBean?.actionList?.apply {
-            for (action in this) {
-                if (action.group?.split(Action.PACKAGE_SPLIT)?.contains(group) == true) {
-                    result = action
-                    break
-                }
-            }
-        }
-        return result
+        return accControl._taskBean?.findFirstActionByGroup(group)
     }
 
     /**指定分组中的第一个[ActionBean]是否激活

@@ -41,6 +41,21 @@ data class TaskBean(
 
     var enable: Boolean = true,
 
+    /**
+     * 配置用于激活在[actionList]中的[ActionBean],
+     * 支持通过[com.angcyo.acc2.bean.ActionBean.actionId]激活
+     * 支持通过[com.angcyo.acc2.bean.ActionBean.group]名字, 激活分组中的第一个[ActionBean]
+     * 多个用[com.angcyo.acc2.action.Action.PACKAGE_SPLIT]分割*/
+    var enableAction: String? = null,
+
+    /**随机激活[actionList]中的[ActionBean]
+     * [enableAction]*/
+    var randomEnableAction: String? = null,
+
+    /**禁用[actionList]中的[ActionBean]
+     * [enableAction]*/
+    var disableAction: String? = null,
+
     //</editor-fold desc="配置信息">
 
     //<editor-fold desc="浮窗配置">
@@ -131,6 +146,69 @@ data class TaskBean(
      * [com.angcyo.acc2.bean.ActionBean.leave]*/
     var leave: ActionBean? = null,
 )
+
+/**初始化配置*/
+fun TaskBean.initConfig() {
+    actionList?.let {
+
+        //激活指定的ActionBean
+        enableAction?.split(Action.PACKAGE_SPLIT)?.forEach { str ->
+            if (str.isNotEmpty()) {
+                str.toLongOrNull()
+                    ?.let { id -> findActionById(id).forEach { it.enable = true } }
+                findFirstActionByGroup(str)?.let { it.enable = true }
+            }
+        }
+
+        //随机激活指定的ActionBean
+        randomEnableAction?.split(Action.PACKAGE_SPLIT)?.forEach { str ->
+            if (str.isNotEmpty()) {
+                str.toLongOrNull()
+                    ?.let { id -> findActionById(id).forEach { it.randomEnable = true } }
+                findFirstActionByGroup(str)?.let { it.randomEnable = true }
+            }
+        }
+
+        //禁用指定的ActionBean
+        disableAction?.split(Action.PACKAGE_SPLIT)?.forEach { str ->
+            if (str.isNotEmpty()) {
+                str.toLongOrNull()
+                    ?.let { id -> findActionById(id).forEach { it.enable = false } }
+                findFirstActionByGroup(str)?.let { it.enable = false }
+            }
+        }
+
+    }
+}
+
+/**通过[group]查找分组中的第一个[ActionBean]*/
+fun TaskBean.findFirstActionByGroup(group: String? /*不支持分割*/): ActionBean? {
+    if (group.isNullOrEmpty()) {
+        return null
+    }
+    var result: ActionBean? = null
+    actionList?.apply {
+        for (action in this) {
+            if (action.group?.split(Action.PACKAGE_SPLIT)?.contains(group) == true) {
+                result = action
+                break
+            }
+        }
+    }
+    return result
+}
+
+fun TaskBean.findActionById(actionId: Long): List<ActionBean> {
+    val result = mutableListOf<ActionBean>()
+    actionList?.apply {
+        for (action in this) {
+            if (action.actionId == actionId) {
+                result.add(action)
+            }
+        }
+    }
+    return result
+}
 
 /**设置[com.angcyo.acc2.bean.TaskBean.textMap]数据*/
 fun TaskBean.putMap(key: String?, value: String?) {
