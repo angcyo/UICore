@@ -13,7 +13,7 @@ import com.angcyo.library.ex.subEnd
  * @date 2021/02/02
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class ErrorAction : BaseAction() {
+class ErrorAction : BaseTextAction() {
 
     override fun interceptAction(control: AccControl, action: String): Boolean {
         return action.startsWith(Action.ACTION_ERROR)
@@ -24,7 +24,7 @@ class ErrorAction : BaseAction() {
         nodeList: List<AccessibilityNodeInfoCompat>?,
         action: String
     ): HandleResult = handleResult {
-        val reason = action.subEnd(Action.ARG_SPLIT) ?: "Error"
+        val reason = replaceText(control, action.subEnd(Action.ARG_SPLIT), "Error")
         success = true
         control.log("ErrorAction:$reason")
         control.error(reason)

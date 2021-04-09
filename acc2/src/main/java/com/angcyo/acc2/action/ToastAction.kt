@@ -15,7 +15,7 @@ import com.angcyo.library.toastWX
  * @date 2021/02/01
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class ToastAction : BaseAction() {
+class ToastAction : BaseTextAction() {
 
     override fun interceptAction(control: AccControl, action: String): Boolean {
         return action.startsWith(Action.ACTION_TOAST)
@@ -26,9 +26,8 @@ class ToastAction : BaseAction() {
         nodeList: List<AccessibilityNodeInfoCompat>?,
         action: String
     ): HandleResult = handleResult {
+        val message = replaceText(control, action.subEnd(Action.ARG_SPLIT), "")
         success = true
-        val textParse = control.accSchedule.accParse.textParse
-        val message = textParse.parse(action.subEnd(Action.ARG_SPLIT), true).firstOrNull()
         if (action.startsWith(Action.ACTION_TOAST_WX)) {
             toastWX(message)
         } else {

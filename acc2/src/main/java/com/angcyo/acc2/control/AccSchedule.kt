@@ -76,11 +76,9 @@ class AccSchedule(val accControl: AccControl) {
     }
 
     /**获取[ActionBean]的运行次数*/
-    fun getRunCount(actionId: Long): Long =
-        if (actionId > 0) actionCount[actionId]?.runCount?.count ?: -1 else -1
+    fun getRunCount(actionId: Long): Long = actionCount[actionId]?.runCount?.count ?: -1
 
-    fun getJumpCount(actionId: Long): Long =
-        if (actionId > 0) actionCount[actionId]?.jumpCount?.count ?: -1 else -1
+    fun getJumpCount(actionId: Long): Long = actionCount[actionId]?.jumpCount?.count ?: -1
 
     fun setActionRunTime(actionId: Long, time: Long) {
         actionTime[actionId] = time
@@ -94,6 +92,10 @@ class AccSchedule(val accControl: AccControl) {
 
     fun getActionRunTime(actionId: Long): Long {
         return actionTime[actionId] ?: -1
+    }
+
+    fun clearActionRunTime(actionId: Long) {
+        actionTime.remove(actionId)
     }
 
     /**预备下一个需要执行*/
@@ -679,7 +681,7 @@ class AccSchedule(val accControl: AccControl) {
             }
         } else {
             //切换了action
-            if (isPrimaryAction || actionBean.actionId > 0) {
+            if (isPrimaryAction || actionBean.actionId != -1L) {
                 _latsRunActionTime = nowTime()
             }
             if (isPrimaryAction) {
@@ -692,7 +694,7 @@ class AccSchedule(val accControl: AccControl) {
             }
         }
 
-        if (isPrimaryAction || actionBean.actionId > 0) {
+        if (isPrimaryAction || actionBean.actionId != -1L) {
             //运行时长
             val actionRunTime = nowTime() - _latsRunActionTime
             setActionRunTime(actionBean.actionId, actionRunTime)

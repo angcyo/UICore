@@ -13,7 +13,7 @@ import com.angcyo.library.ex.subEnd
  * @date 2021/02/02
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class FinishAction : BaseAction() {
+class FinishAction : BaseTextAction() {
 
     override fun interceptAction(control: AccControl, action: String): Boolean {
         return action.startsWith(Action.ACTION_FINISH)
@@ -24,7 +24,7 @@ class FinishAction : BaseAction() {
         nodeList: List<AccessibilityNodeInfoCompat>?,
         action: String
     ): HandleResult = handleResult {
-        val reason = action.subEnd(Action.ARG_SPLIT) ?: "Finish"
+        val reason = replaceText(control, action.subEnd(Action.ARG_SPLIT), "Finish")
         success = true
         control.log("FinishAction:$reason")
         control.finish(reason)

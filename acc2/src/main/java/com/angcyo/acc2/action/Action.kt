@@ -67,6 +67,9 @@ object Action {
     /**不取父节点*/
     const val NOT_PARENT = "not_parent"
 
+    /**标识: 是否清空统计*/
+    const val CLEAR = "clear"
+
     /**触发当前节点的点击事件, null 默认是click操作.
      * [:STATE_UNSELECTED] 支持状态参数. 表示, 只在节点满足状态时, 才点击
      * [:STATE_UNSELECTED:5] 自身要满足且5个parent内有节点满足状态, 才触发点击
@@ -186,18 +189,19 @@ object Action {
     /**禁用当前的[HandleBean]*/
     const val ACTION_DISABLE_HANDLE = "disableHandle"
 
-    /**异常, 并中断整个任务
-     * [error:reason]*/
+    /**异常, 并中断整个任务, 支持替换文本变量
+     * [error:reason]
+     * */
     const val ACTION_ERROR = "error"
 
     /**[sleep:1000]线程休眠1000毫秒*/
     const val ACTION_SLEEP = "sleep"
 
-    /**直接完成任务
+    /**直接完成任务, 支持替换文本变量
      * [finish:reason]*/
     const val ACTION_FINISH = "finish"
 
-    /**停止控制器, 释放资源
+    /**停止控制器, 释放资源, 支持替换文本变量
      * [stop:reason]*/
     const val ACTION_STOP = "stop"
 
@@ -257,7 +261,7 @@ object Action {
      * [com.angcyo.acc2.bean.ActionBean.randomAmount]*/
     const val ACTION_RANDOM_FALSE = "randomFalse"
 
-    /**弹出toast默认是[ACTION_TOAST_QQ]
+    /**弹出toast默认是[ACTION_TOAST_QQ], 支持替换文本变量
      * [toast:xxx]
      * [toastQQ:xxx]
      * [toastWX:xxx]*/

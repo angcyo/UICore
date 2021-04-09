@@ -26,7 +26,7 @@ data class ConditionBean(
     /**当指定[com.angcyo.acc2.bean.ActionBean.actionId]的[ActionBean]执行次数满足条件时.
      * 则满足条件. 列表中均要满足
      * [100:>=9] [120:<2] [130:<2] 如果对应的id不存在, 则忽略
-     * [.:>=3] 当前的action运行次数
+     * [.:>=3 clear] 当前的action运行次数, 当条件满足后, 是否清空统计
      * [.:%3>=2] 当前的action运行次数模3>=2
      * */
     var actionRunList: List<String>? = null,

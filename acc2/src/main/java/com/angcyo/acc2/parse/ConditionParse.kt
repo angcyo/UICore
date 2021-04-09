@@ -95,12 +95,13 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
             //检查次数是否满足表达式 [100:>=9] [.:>=9]
             fun checkCount(expression: String, countGetAction: (actionId: Long) -> Long): Boolean {
                 val actionExp = expression.subStart(Action.ARG_SPLIT)
-                val actionId = actionExp?.toLongOrNull()
                 val exp = expression.subEnd(Action.ARG_SPLIT)
+
                 if (!exp.isNullOrEmpty()) {
                     val actionBean = if (actionExp == ".") {
                         accControl.accSchedule._scheduleActionBean
                     } else {
+                        val actionId = actionExp?.toLongOrNull()
                         accControl.findAction(actionId)
                     }
 
@@ -118,9 +119,18 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
             //actionRunList
             if (result && !actionRunList.isNullOrEmpty()) {
                 for (expression in actionRunList!!) {
-                    if (!checkCount(expression) {
-                            accControl.accSchedule.getRunCount(it)
-                        }) {
+
+                    var actionId = -1L
+                    val check = checkCount(expression) {
+                        actionId = it
+                        accControl.accSchedule.getRunCount(it)
+                    }
+
+                    if (check) {
+                        if (expression.contains(Action.CLEAR)) {
+                            accControl.accSchedule.clearRunCount(actionId)
+                        }
+                    } else {
                         //运行次数不满足条件
                         result = false
                         break
@@ -154,9 +164,18 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
             //actionTimeList
             if (result && !actionTimeList.isNullOrEmpty()) {
                 for (expression in actionTimeList!!) {
-                    if (!checkTime(expression) {
-                            accControl.accSchedule.getActionRunTime(it)
-                        }) {
+
+                    var actionId = -1L
+                    val check = checkTime(expression) {
+                        actionId = it
+                        accControl.accSchedule.getActionRunTime(it)
+                    }
+
+                    if (check) {
+                        if (expression.contains(Action.CLEAR)) {
+                            accControl.accSchedule.clearActionRunTime(actionId)
+                        }
+                    } else {
                         //运行时长不满足条件
                         result = false
                         break
@@ -167,9 +186,18 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
             //actionJumpList
             if (result && !actionJumpList.isNullOrEmpty()) {
                 for (expression in actionJumpList!!) {
-                    if (!checkCount(expression) {
-                            accControl.accSchedule.getJumpCount(it)
-                        }) {
+
+                    var actionId = -1L
+                    val check = checkCount(expression) {
+                        actionId = it
+                        accControl.accSchedule.getJumpCount(it)
+                    }
+
+                    if (check) {
+                        if (expression.contains(Action.CLEAR)) {
+                            accControl.accSchedule.clearJumpCount(actionId)
+                        }
+                    } else {
                         //跳转次数不满足条件
                         result = false
                         break
