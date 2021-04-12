@@ -149,6 +149,7 @@ data class TaskBean(
 
 /**初始化配置*/
 fun TaskBean.initConfig() {
+
     actionList?.let {
 
         //激活指定的ActionBean

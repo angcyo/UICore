@@ -115,4 +115,8 @@ data class ActionBean(
 
     /**表单请求*/
     var form: FormBean? = null,
+
+    /**是否要在[com.angcyo.acc2.bean.TaskBean.actionList]或者
+     * [com.angcyo.acc2.bean.TaskBean.backActionList] 中隐藏*/
+    var hide: Boolean = false
 )
