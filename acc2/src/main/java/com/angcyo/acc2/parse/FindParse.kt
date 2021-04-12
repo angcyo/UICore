@@ -47,8 +47,10 @@ class FindParse(val accParse: AccParse) : BaseParse() {
                     result = parseResult
                     val toLog =
                         parseResult.nodeList?.toLog("Find找到节点[${result.nodeList.size()}]$findBean↓")
-                    accControl.log(toLog)
+                    accControl.log(toLog, accControl.accSchedule.isRunPrimaryAction)
                     break
+                } else {
+                    accControl.log("Find未找到节点:$findBean", accControl.accSchedule.isRunPrimaryAction)
                 }
             }
         }
@@ -108,8 +110,8 @@ class FindParse(val accParse: AccParse) : BaseParse() {
             text -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.textList))
             cls -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.clsList))
             id -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.idList))
-            rect -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.rectList))
             state -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.stateList))
+            rect -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.rectList))
             child -> findNodeList.addAll(
                 findNodeByChild(rootNodeList, findBean, findBean.childList)
             )

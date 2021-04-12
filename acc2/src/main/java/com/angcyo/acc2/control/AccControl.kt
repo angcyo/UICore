@@ -205,6 +205,7 @@ class AccControl : Runnable {
                     //run
                     accSchedule.scheduleNext()
                 } else {
+                    log("${controlStateStr} ${accSchedule.durationStr()}")
                     //wait
                     sleep()
                 }

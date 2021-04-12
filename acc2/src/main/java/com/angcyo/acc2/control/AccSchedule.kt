@@ -199,6 +199,9 @@ class AccSchedule(val accControl: AccControl) {
         accParse.onScheduleEnd(this)
     }
 
+    val isRunPrimaryAction: Boolean
+        get() = _runActionBean != null && _runActionBean == _scheduleActionBean
+
     /**额外需要执行的[ActionBean]*/
     val targetActionList = mutableListOf<ActionBean>()
 
@@ -345,10 +348,6 @@ class AccSchedule(val accControl: AccControl) {
 
                 //action处理
                 if (!skipActionRun) {
-                    accControl.log(
-                        "${if (isPrimaryAction) "[主线]" else ""}开始执行(${indexTip()})[${actionBean.actionLog()}]:${actionBean}",
-                        isPrimaryAction
-                    )
                     if (isPrimaryAction) {
                         accControl.log(
                             "[主线]开始执行(${indexTip()})[${actionBean.actionLog()}]:${actionBean}",
