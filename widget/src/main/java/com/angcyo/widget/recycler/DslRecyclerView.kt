@@ -116,7 +116,7 @@ open class DslRecyclerView : RecyclerView, ILayoutDelegate {
         val layoutWidthHeightSpec =
             layoutDelegate.layoutWidthHeightSpec(widthMeasureSpec, heightMeasureSpec)
         super.onMeasure(layoutWidthHeightSpec[0], layoutWidthHeightSpec[1])
-        layoutDelegate.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        layoutDelegate.onMeasure(layoutWidthHeightSpec[0], layoutWidthHeightSpec[1])
     }
 
     override fun draw(canvas: Canvas) {

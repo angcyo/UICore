@@ -305,15 +305,16 @@ class RLayoutDelegate : LayoutDelegate() {
                     val wSpec: Int
                     val hSpec: Int
 
-                    if (widthFactor == 1f) {
-                        //以宽度作为基数调整
-                        wSpec = exactly(vWidth)
-                        hSpec = exactly((vWidth * heightFactor).toInt())
-                    } else {
+                    if (View.MeasureSpec.getMode(heightMeasureSpec) == View.MeasureSpec.EXACTLY && heightFactor == 1f) {
                         //以高度作为基数调整
                         wSpec = exactly((vHeight * widthFactor).toInt())
                         hSpec = exactly(vHeight)
+                    } else {//widthFactor == 1f
+                        //以宽度作为基数调整
+                        wSpec = exactly(vWidth)
+                        hSpec = exactly((vWidth * heightFactor).toInt())
                     }
+
                     delegateView.measure(wSpec, hSpec)
                 }
             }
