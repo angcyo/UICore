@@ -581,7 +581,7 @@ class AccSchedule(val accControl: AccControl) {
         if (!accControl.isControlRunning) {
             return handleActionResult
         }
-        if (actionBean.async == true) {
+        if (actionBean.async == true && !threadName().startsWith(AccControl.ACC_MAIN_THREAD)) {
             //异步执行
             async {
                 runActionInner(actionBean, otherActionList, isPrimaryAction, handleActionResult)

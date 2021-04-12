@@ -28,6 +28,8 @@ class AccControl : Runnable {
 
     companion object {
 
+        const val ACC_MAIN_THREAD = "AccMainThread"
+
         //开始
         const val CONTROL_STATE_NORMAL = 0
         const val CONTROL_STATE_RUNNING = 1
@@ -183,7 +185,7 @@ class AccControl : Runnable {
 
     fun _startThread() {
         _stopThread()
-        _controlThread = Thread(this, this.simpleHash()).apply {
+        _controlThread = Thread(this, "${ACC_MAIN_THREAD}_${this.simpleHash()}").apply {
             start()
         }
     }

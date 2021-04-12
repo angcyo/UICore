@@ -134,7 +134,8 @@ data class FindBean(
     var childIndex: String? = null,
 
     /**3:
-     * 根据上述查找到的节点, 取满足条件对应的父节点*/
+     * 根据上述查找到的节点, 取满足条件对应的父节点.
+     * 直到匹配通过为止, 否则返回null*/
     var parent: ChildBean? = null,
 
     /**4:
