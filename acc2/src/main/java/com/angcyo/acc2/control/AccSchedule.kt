@@ -239,6 +239,12 @@ class AccSchedule(val accControl: AccControl) {
         if (nextActionBean == null) {
             //无[ActionBean]需要调度, 调度结束
             accControl.finish("执行完成")
+        } else if (nextActionBean.async == true) {
+            async {
+                scheduleAction(nextActionBean, accControl._taskBean?.backActionList, true)
+            }
+            accControl.log("异步执行:${nextActionBean.actionLog()}")
+            next()
         } else {
             val taskLimitRunTime = accControl._taskBean?.taskLimitRunTime ?: -1
             if (taskLimitRunTime > 0) {
@@ -270,8 +276,16 @@ class AccSchedule(val accControl: AccControl) {
 
                 val result =
                     scheduleAction(nextActionBean, accControl._taskBean?.backActionList, true)
-                if (!result.forceFail && result.success) {
-                    next()
+                val loop = nextActionBean.loop
+
+                if (loop == null) {
+                    if (!result.forceFail && result.success) {
+                        next()
+                    }
+                } else {
+                    if (!accParse.loopParse.parse(nextActionBean, result, loop)) {
+                        next()
+                    }
                 }
             }
         }

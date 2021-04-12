@@ -48,6 +48,9 @@ class AccParse(val accControl: AccControl) : BaseParse() {
     /**文本解析器*/
     var textParse = TextParse(this)
 
+    /**循环解析器*/
+    var loopParse = LoopParse(this)
+
     /**表达式解析, 数值计算, 简单的数学计算*/
     val expParse = ExpParse(this).apply {
         aboutRatio = 10 * dp
