@@ -91,6 +91,11 @@ open class RCoordinatorLayout(
         }
     }
 
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        layoutDelegate.onSizeChanged(w, h, oldw, oldh)
+    }
+
     override fun onMeasureChild(
         child: View,
         parentWidthMeasureSpec: Int,
@@ -118,6 +123,7 @@ open class RCoordinatorLayout(
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         super.onLayout(changed, l, t, r, b)
+        layoutDelegate.onLayout(changed, l, t, r, b)
 
         val layoutDirection = ViewCompat.getLayoutDirection(this)
 

@@ -197,49 +197,12 @@ class RLayoutDelegate : LayoutDelegate() {
         val parentWidth = (delegateView.parent as? View)?.measuredWidth ?: 0
         val parentHeight = (delegateView.parent as? View)?.measuredHeight ?: 0
 
-        val minWidthHeight = delegateView.context.calcLayoutWidthHeight(
-            rMinWidth, rMinHeight,
-            if (parentWidth > 0) parentWidth else delegateView.screenWidth,
-            if (parentHeight > 0) parentHeight else delegateView.screenHeight,
-            0, 0
-        )
-
         val maxWidthHeight = delegateView.context.calcLayoutWidthHeight(
             rMaxWidth, rMaxHeight,
             if (parentWidth > 0) parentWidth else delegateView.screenWidth,
             if (parentHeight > 0) parentHeight else delegateView.screenHeight,
             0, 0
         )
-
-        //---------------------最小宽高限制------------------------
-
-        val minWidth = minWidthHeight[0]
-        val minHeight = minWidthHeight[1]
-
-        val isWidthMin = minWidth > -1 && delegateView.measuredWidth < minWidth
-        val isHeightMin = minHeight > -1 && delegateView.measuredHeight < minHeight
-
-        if (isWidthMin || isHeightMin) {
-            //宽高有一项不满足
-
-            //替换布局参数, 可以提高性能
-            val wSpec = if (isWidthMin) {
-                delegateView.layoutParams.width = minWidth
-                exactly(minWidth)
-            } else {
-                widthMeasureSpec
-            }
-
-            val hSpec = if (isHeightMin) {
-                delegateView.layoutParams.height = minHeight
-                exactly(minHeight)
-            } else {
-                heightMeasureSpec
-            }
-
-            //如果使用重新测量的方式,布局就会每次都至少测量2次
-            delegateView.measure(wSpec, hSpec)
-        }
 
         //---------------------最大宽高限制------------------------
 
@@ -321,5 +284,31 @@ class RLayoutDelegate : LayoutDelegate() {
         }
 
         return super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+
+        val parentWidth = (delegateView.parent as? View)?.measuredWidth ?: 0
+        val parentHeight = (delegateView.parent as? View)?.measuredHeight ?: 0
+
+        val minWidthHeight = delegateView.context.calcLayoutWidthHeight(
+            rMinWidth, rMinHeight,
+            if (parentWidth > 0) parentWidth else delegateView.screenWidth,
+            if (parentHeight > 0) parentHeight else delegateView.screenHeight,
+            0, 0
+        )
+        //---------------------最小宽高限制------------------------
+
+        val minWidth = minWidthHeight[0]
+        val minHeight = minWidthHeight[1]
+
+        if (minWidth != -1) {
+            delegateView.minimumWidth = minWidth
+        }
+
+        if (minHeight != -1) {
+            delegateView.minimumHeight = minHeight
+        }
     }
 }

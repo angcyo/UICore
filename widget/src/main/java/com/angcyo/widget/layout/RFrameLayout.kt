@@ -42,6 +42,16 @@ open class RFrameLayout(
         layoutDelegate.onMeasure(layoutWidthHeightSpec[0], layoutWidthHeightSpec[1])
     }
 
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        layoutDelegate.onLayout(changed, left, top, right, bottom)
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        layoutDelegate.onSizeChanged(w, h, oldw, oldh)
+    }
+
     override fun getCustomLayoutDelegate(): RLayoutDelegate {
         return layoutDelegate
     }

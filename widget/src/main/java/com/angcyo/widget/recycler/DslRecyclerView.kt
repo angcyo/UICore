@@ -119,6 +119,16 @@ open class DslRecyclerView : RecyclerView, ILayoutDelegate {
         layoutDelegate.onMeasure(layoutWidthHeightSpec[0], layoutWidthHeightSpec[1])
     }
 
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        layoutDelegate.onLayout(changed, left, top, right, bottom)
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        layoutDelegate.onSizeChanged(w, h, oldw, oldh)
+    }
+
     override fun draw(canvas: Canvas) {
         layoutDelegate.maskLayout(canvas) {
             layoutDelegate.draw(canvas)
@@ -132,10 +142,6 @@ open class DslRecyclerView : RecyclerView, ILayoutDelegate {
 
     override fun getCustomLayoutDelegate(): RLayoutDelegate {
         return layoutDelegate
-    }
-
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        super.onLayout(changed, l, t, r, b)
     }
 
     override fun onAttachedToWindow() {

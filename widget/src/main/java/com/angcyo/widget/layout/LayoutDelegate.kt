@@ -4,8 +4,6 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 /**
  *
@@ -32,10 +30,17 @@ abstract class LayoutDelegate {
 
     //<editor-fold desc="核心代理方法">
 
+    /**1*/
     open fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int): IntArray {
         return intArrayOf(-1, -1)
     }
 
+    /**2*/
+    open fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+
+    }
+
+    /**3*/
     open fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
 
     }
