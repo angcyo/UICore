@@ -64,30 +64,32 @@ open class ViewContainer(val parent: ViewGroup) : BaseContainer(parent.context) 
         }
     }
 
-    override fun update(layer: ILayer, position: OffsetPosition) {
+    override fun update(layer: ILayer, position: OffsetPosition?) {
         super.update(layer, position)
 
         val rootView = layer._rootView ?: return
 
         if (parent is FrameLayout) {
-            rootView.frameParams {
-                this.gravity = position.gravity
-                if (gravity.isLeft()) {
-                    leftMargin = (position.offsetX * parent.mW()).toInt()
-                    rootView.left = (position.offsetX * parent.mW()).toInt()
-                    rightMargin = 0
-                } else {
-                    rightMargin = (position.offsetX * parent.mW()).toInt()
-                    leftMargin = 0
-                }
+            position?.let {
+                rootView.frameParams {
+                    this.gravity = position.gravity
+                    if (gravity.isLeft()) {
+                        leftMargin = (position.offsetX * parent.mW()).toInt()
+                        rootView.left = (position.offsetX * parent.mW()).toInt()
+                        rightMargin = 0
+                    } else {
+                        rightMargin = (position.offsetX * parent.mW()).toInt()
+                        leftMargin = 0
+                    }
 
-                if (gravity.isTop()) {
-                    topMargin = (position.offsetY * parent.mH()).toInt()
-                    rootView.top = (position.offsetY * parent.mH()).toInt()
-                    bottomMargin = 0
-                } else {
-                    bottomMargin = (position.offsetY * parent.mH()).toInt()
-                    topMargin = 0
+                    if (gravity.isTop()) {
+                        topMargin = (position.offsetY * parent.mH()).toInt()
+                        rootView.top = (position.offsetY * parent.mH()).toInt()
+                        bottomMargin = 0
+                    } else {
+                        bottomMargin = (position.offsetY * parent.mH()).toInt()
+                        topMargin = 0
+                    }
                 }
             }
         } else {

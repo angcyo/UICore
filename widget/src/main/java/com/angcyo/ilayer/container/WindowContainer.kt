@@ -175,12 +175,14 @@ class WindowContainer(context: Context) : BaseContainer(context) {
         }
     }
 
-    override fun update(layer: ILayer, position: OffsetPosition) {
+    override fun update(layer: ILayer, position: OffsetPosition?) {
         super.update(layer, position)
         layer._rootView?.let {
-            wmLayoutParams.gravity = position.gravity
-            wmLayoutParams.x = (_screenWidth * position.offsetX).toInt()
-            wmLayoutParams.y = (_screenHeight * position.offsetY).toInt()
+            position?.let {
+                wmLayoutParams.gravity = position.gravity
+                wmLayoutParams.x = (_screenWidth * position.offsetX).toInt()
+                wmLayoutParams.y = (_screenHeight * position.offsetY).toInt()
+            }
 
             updateLayout(layer)
         }

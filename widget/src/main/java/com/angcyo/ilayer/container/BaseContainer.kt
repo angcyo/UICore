@@ -65,11 +65,13 @@ abstract class BaseContainer(val context: Context) : IContainer {
                         }
                 }
 
+                layer.onInitLayer(rootView.dslViewHolder(), LayerParams())
                 update(layer, firstPosition)
             } else {
                 //已经存在, 重新初始化
+                layer.onInitLayer(rootView.dslViewHolder(), LayerParams())
+                update(layer, null)
             }
-            layer.onInitLayer(rootView.dslViewHolder(), LayerParams())
         }
     }
 
@@ -98,8 +100,8 @@ abstract class BaseContainer(val context: Context) : IContainer {
     }
 
     @CallSuper
-    override fun update(layer: ILayer, position: OffsetPosition) {
-        "${this.className()}_${layer.className()}_${layer.iLayerLayoutId}".hawkPut("${position.gravity}:${position.offsetX}:${position.offsetY}")
+    override fun update(layer: ILayer, position: OffsetPosition?) {
+        "${this.className()}_${layer.className()}_${layer.iLayerLayoutId}".hawkPut("${position?.gravity}:${position?.offsetX}:${position?.offsetY}")
     }
 
     /**更新布局位置, 使用视图左上角定位, 计算出对应的[gravity]和边界百分比*/

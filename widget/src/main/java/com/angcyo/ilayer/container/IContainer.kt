@@ -20,7 +20,7 @@ interface IContainer {
     fun remove(layer: ILayer)
 
     /**更新[ILayer]在容器中的位置. 使用[gravity]和边界比例[offsetX] [offsetY]控制位置*/
-    fun update(layer: ILayer, position: OffsetPosition)
+    fun update(layer: ILayer, position: OffsetPosition?)
 
     /**获取容器的矩形坐标*/
     fun getContainerRect(): Rect

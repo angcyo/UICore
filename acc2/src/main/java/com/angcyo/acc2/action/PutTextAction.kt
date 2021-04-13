@@ -31,7 +31,13 @@ class PutTextAction : BaseAction() {
     ): HandleResult = handleResult {
         var key: String? = Action.ACTION_PUT_TEXT
         key = action.arg(Action.ACTION_PUT_TEXT) ?: key
-        val regex = action.arg("regex")?.decode()
+        val regex = action.arg("regex")?.run {
+            if (action.arg("decode") == "true") {
+                decode()
+            } else {
+                this
+            }
+        }
 
         var textStr: String? = null
 
