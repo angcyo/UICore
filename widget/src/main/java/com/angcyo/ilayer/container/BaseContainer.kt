@@ -33,6 +33,7 @@ abstract class BaseContainer(val context: Context) : IContainer {
             L.e("请配置[iLayerLayoutId]")
         } else {
             val rootView: View = layer.onCreateView(context, this)
+            val layerPosition: OffsetPosition?
             if (rootView.parent == null) {
                 //不存在旧的, 重新创建
 
@@ -64,14 +65,13 @@ abstract class BaseContainer(val context: Context) : IContainer {
                             }
                         }
                 }
-
-                layer.onInitLayer(rootView.dslViewHolder(), LayerParams())
-                update(layer, firstPosition)
+                layerPosition = firstPosition
             } else {
                 //已经存在, 重新初始化
-                layer.onInitLayer(rootView.dslViewHolder(), LayerParams())
-                update(layer, null)
+                layerPosition = null
             }
+            layer.onInitLayer(rootView.dslViewHolder(), LayerParams())
+            update(layer, layerPosition)
         }
     }
 
