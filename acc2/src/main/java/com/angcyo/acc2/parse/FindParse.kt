@@ -6,6 +6,7 @@ import com.angcyo.acc2.action.Action
 import com.angcyo.acc2.bean.ChildBean
 import com.angcyo.acc2.bean.FindBean
 import com.angcyo.acc2.bean.WindowBean
+import com.angcyo.acc2.control.ControlContext
 import com.angcyo.acc2.control.actionLog
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.eachChildDepth
@@ -29,6 +30,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
 
     /**通过一组规则, 查找满足规则的节点集合, 就终止*/
     fun parse(
+        controlContext: ControlContext,
         rootList: List<AccessibilityNodeInfoCompat>?,
         findList: List<FindBean>?
     ): FindResult {
@@ -37,7 +39,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
         val accControl = accParse.accControl
         if (!findList.isNullOrEmpty()) {
             for (findBean in findList) {
-                val parseResult = parse(rootList, findBean).apply {
+                val parseResult = parse(controlContext, rootList, findBean).apply {
                     result.forceSuccess == forceSuccess || result.forceSuccess
                     result.forceFail == forceFail || result.forceFail
                 }
@@ -47,10 +49,14 @@ class FindParse(val accParse: AccParse) : BaseParse() {
                     result = parseResult
                     val toLog =
                         parseResult.nodeList?.toLog("Find找到节点[${result.nodeList.size()}]$findBean↓")
-                    accControl.log(toLog, accControl.accSchedule.isRunPrimaryAction)
+                    controlContext.log {
+                        append(toLog)
+                    }
                     break
                 } else {
-                    accControl.log("Find未找到节点:$findBean", accControl.accSchedule.isRunPrimaryAction)
+                    controlContext.log {
+                        append("Find未找到节点:$findBean")
+                    }
                 }
             }
         }
@@ -64,8 +70,14 @@ class FindParse(val accParse: AccParse) : BaseParse() {
     }
 
     /**返回满足规则的节点集合*/
-    fun parse(rootList: List<AccessibilityNodeInfoCompat>?, findBean: FindBean): FindResult {
+    fun parse(
+        controlContext: ControlContext,
+        rootList: List<AccessibilityNodeInfoCompat>?,
+        findBean: FindBean
+    ): FindResult {
         val result = FindResult()
+
+        controlContext.find = findBean
 
         //准备content
 
@@ -107,13 +119,48 @@ class FindParse(val accParse: AccParse) : BaseParse() {
         val path = findBean.pathList != null
 
         when {
-            text -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.textList))
-            cls -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.clsList))
-            id -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.idList))
-            state -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.stateList))
-            rect -> findNodeList.addAll(findNode(rootNodeList, findBean, findBean.rectList))
+            text -> findNodeList.addAll(
+                findNode(
+                    controlContext,
+                    rootNodeList,
+                    findBean,
+                    findBean.textList
+                )
+            )
+            cls -> findNodeList.addAll(
+                findNode(
+                    controlContext,
+                    rootNodeList,
+                    findBean,
+                    findBean.clsList
+                )
+            )
+            id -> findNodeList.addAll(
+                findNode(
+                    controlContext,
+                    rootNodeList,
+                    findBean,
+                    findBean.idList
+                )
+            )
+            state -> findNodeList.addAll(
+                findNode(
+                    controlContext,
+                    rootNodeList,
+                    findBean,
+                    findBean.stateList
+                )
+            )
+            rect -> findNodeList.addAll(
+                findNode(
+                    controlContext,
+                    rootNodeList,
+                    findBean,
+                    findBean.rectList
+                )
+            )
             child -> findNodeList.addAll(
-                findNodeByChild(rootNodeList, findBean, findBean.childList)
+                findNodeByChild(controlContext, rootNodeList, findBean, findBean.childList)
             )
             path -> {
                 rootNodeList.forEach { node ->
@@ -152,7 +199,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
         if (findBean.parent != null) {
             val filterFindNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
             findNodeList.forEach { node ->
-                findParentByNode(node, findBean.parent!!)?.apply {
+                findParentByNode(controlContext, node, findBean.parent!!)?.apply {
                     filterFindNodeList.add(this)
                 }
             }
@@ -168,16 +215,31 @@ class FindParse(val accParse: AccParse) : BaseParse() {
             findNodeList.resetAll(filterFindNodeList)
         }
 
+        //第5层筛选
+        if (findBean.upList != null) {
+            val filterFindNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
+            findNodeList.forEach { node ->
+                filterFindNodeList.addAll(findNodeByUpList(controlContext, node, findBean.upList!!))
+            }
+            findNodeList.resetAll(filterFindNodeList)
+        }
+
         //------------------------后处理-------------------------
 
         //需要过滤
         if (findBean.filter != null) {
-            findNodeList.removeAll(accParse.filterParse.parse(findNodeList, findBean.filter))
+            findNodeList.removeAll(
+                accParse.filterParse.parse(
+                    controlContext,
+                    findNodeList,
+                    findBean.filter
+                )
+            )
         }
 
         //临时使用这些节点 use
         if (findBean.use != null) {
-            accParse.handleParse.parse(findNodeList, findBean.use).apply {
+            accParse.handleParse.parse(controlContext, findNodeList, findBean.use).apply {
                 result.forceSuccess == forceSuccess || result.forceSuccess
                 result.forceFail == forceFail || result.forceFail
             }
@@ -188,7 +250,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
         var afterResult: FindResult? = null
         if (after != null) {
             if (findBean.afterAlways || findNodeList.isNotEmpty()) {
-                afterResult = parse(findNodeList, after).apply {
+                afterResult = parse(controlContext, findNodeList, after).apply {
                     forceSuccess == forceSuccess || result.forceSuccess
                     forceFail == forceFail || result.forceFail
                 }
@@ -366,6 +428,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
 
     /**查找节点*/
     fun findNode(
+        controlContext: ControlContext,
         originList: List<AccessibilityNodeInfoCompat>,
         findBean: FindBean,
         list: List<String?>?
@@ -380,7 +443,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
 
             rootNode.eachChildDepth { node, depth ->
                 list.forEachIndexed { index, str ->
-                    if (matchNode(node, findBean, index)) {
+                    if (matchNode(controlContext, node, findBean, index)) {
                         val path = findBean.pathList?.getOrNull(index)
 
                         if (path.isNullOrEmpty()) {
@@ -422,6 +485,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
 
     /**查找节点*/
     fun findNodeByChild(
+        controlContext: ControlContext,
         originList: List<AccessibilityNodeInfoCompat>,
         findBean: FindBean,
         list: List<ChildBean>?
@@ -432,7 +496,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
         }
         originList.forEach { rootNode ->
             rootNode.eachChildDepth { node, depth ->
-                if (matchNodeChild(node, list)) {
+                if (matchNodeChild(controlContext, node, list)) {
                     result.add(node)
                     if (checkFindLimit(result, findBean, depth)) {
                         return@eachChildDepth true
@@ -446,16 +510,40 @@ class FindParse(val accParse: AccParse) : BaseParse() {
 
     /**在当前节点[node]查找符合条件的父节点*/
     fun findParentByNode(
+        controlContext: ControlContext,
         node: AccessibilityNodeInfoCompat,
         condition: ChildBean
     ): AccessibilityNodeInfoCompat? {
         var result: AccessibilityNodeInfoCompat? = node.parent
 
         while (result != null) {
-            if (matchNode(result, condition)) {
+            if (matchNode(controlContext, result, condition)) {
                 break
             }
             result = result.parent
+        }
+
+        return result
+    }
+
+    fun findNodeByUpList(
+        controlContext: ControlContext,
+        node: AccessibilityNodeInfoCompat,
+        upList: List<FindBean>
+    ): List<AccessibilityNodeInfoCompat> {
+        val result = mutableListOf<AccessibilityNodeInfoCompat>()
+
+        var parent: AccessibilityNodeInfoCompat? = node.parent
+
+        while (parent != null) {
+            val nodeList = parse(controlContext, listOf(parent), upList).nodeList
+            if (nodeList.isNullOrEmpty()) {
+                parent = parent.parent
+                continue
+            }
+            //找到了
+            result.addAll(nodeList)
+            break
         }
 
         return result
@@ -466,8 +554,14 @@ class FindParse(val accParse: AccParse) : BaseParse() {
     //<editor-fold desc="match">
 
     /**节点必须要满足的条件*/
-    fun matchNode(node: AccessibilityNodeInfoCompat, findBean: FindBean, index: Int): Boolean {
+    fun matchNode(
+        controlContext: ControlContext,
+        node: AccessibilityNodeInfoCompat,
+        findBean: FindBean,
+        index: Int
+    ): Boolean {
         return matchNode(
+            controlContext,
             node,
             findBean.textList?.getOrNull(index),
             findBean.clsList?.getOrNull(index),
@@ -478,8 +572,13 @@ class FindParse(val accParse: AccParse) : BaseParse() {
         )
     }
 
-    fun matchNode(node: AccessibilityNodeInfoCompat, condition: ChildBean): Boolean {
+    fun matchNode(
+        controlContext: ControlContext,
+        node: AccessibilityNodeInfoCompat,
+        condition: ChildBean
+    ): Boolean {
         return matchNode(
+            controlContext,
             node,
             condition.text,
             condition.cls,
@@ -492,6 +591,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
 
     /**节点必须要满足的条件*/
     fun matchNode(
+        controlContext: ControlContext,
         node: AccessibilityNodeInfoCompat,
         text: String?,
         cls: String?,
@@ -534,7 +634,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
 
         var matchChild: Boolean? = null
         if (result) {
-            matchChild = matchNodeChild(node, childList)
+            matchChild = matchNodeChild(controlContext, node, childList)
             result = matchChild
         }
 
@@ -607,122 +707,131 @@ class FindParse(val accParse: AccParse) : BaseParse() {
             return true
         }
         var match = true
-        when (state) {
-            Action.STATE_CLICKABLE -> {
-                //需要具备可以点击的状态
-                if (!node.isClickable) {
-                    match = false
+        for (subState in state.split(" ")) {
+            if (subState.contains(":") || subState.contains("*")) {
+                match = getStateParentNode(listOf(subState), node).first
+            } else {
+                when (subState) {
+                    Action.STATE_CLICKABLE -> {
+                        //需要具备可以点击的状态
+                        if (!node.isClickable) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_UN_CLICKABLE -> {
+                        //需要具备不可以点击的状态
+                        if (node.isClickable) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_FOCUSABLE -> {
+                        //需要具备可以获取焦点状态
+                        if (!node.isFocusable) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_UN_FOCUSABLE -> {
+                        //需要具备不可以获取焦点状态
+                        if (node.isFocusable) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_FOCUSED -> {
+                        //需要具备焦点状态
+                        if (!node.isFocused) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_UNFOCUSED -> {
+                        //需要具备无焦点状态
+                        if (node.isFocused) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_SELECTED -> {
+                        //需要具备选中状态
+                        if (!node.isSelected) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_UNSELECTED -> {
+                        //需要具备不选中状态
+                        if (node.isSelected) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_SCROLLABLE -> {
+                        //需要具备可滚动状态
+                        if (!node.isScrollable) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_UN_SCROLLABLE -> {
+                        //需要具备不可滚动状态
+                        if (node.isScrollable) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_LONG_CLICKABLE -> {
+                        //需要具备可以长按的状态
+                        if (!node.isLongClickable) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_UN_LONG_CLICKABLE -> {
+                        //需要具备不可以长按的状态
+                        if (node.isLongClickable) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_ENABLE -> {
+                        //需要具备激活状态
+                        if (!node.isEnabled) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_DISABLE -> {
+                        //需要具备禁用状态
+                        if (node.isEnabled) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_PASSWORD -> {
+                        //需要具备密码状态
+                        if (!node.isPassword) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_UN_PASSWORD -> {
+                        //需要具备非密码状态
+                        if (node.isPassword) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_CHECKABLE -> {
+                        if (!node.isCheckable) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_UN_CHECKABLE -> {
+                        if (node.isCheckable) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_CHECKED -> {
+                        if (!node.isChecked) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_UNCHECKED -> {
+                        if (node.isChecked) {
+                            match = false
+                        }
+                    }
                 }
             }
-            Action.STATE_UN_CLICKABLE -> {
-                //需要具备不可以点击的状态
-                if (node.isClickable) {
-                    match = false
-                }
-            }
-            Action.STATE_FOCUSABLE -> {
-                //需要具备可以获取焦点状态
-                if (!node.isFocusable) {
-                    match = false
-                }
-            }
-            Action.STATE_UN_FOCUSABLE -> {
-                //需要具备不可以获取焦点状态
-                if (node.isFocusable) {
-                    match = false
-                }
-            }
-            Action.STATE_FOCUSED -> {
-                //需要具备焦点状态
-                if (!node.isFocused) {
-                    match = false
-                }
-            }
-            Action.STATE_UNFOCUSED -> {
-                //需要具备无焦点状态
-                if (node.isFocused) {
-                    match = false
-                }
-            }
-            Action.STATE_SELECTED -> {
-                //需要具备选中状态
-                if (!node.isSelected) {
-                    match = false
-                }
-            }
-            Action.STATE_UNSELECTED -> {
-                //需要具备不选中状态
-                if (node.isSelected) {
-                    match = false
-                }
-            }
-            Action.STATE_SCROLLABLE -> {
-                //需要具备可滚动状态
-                if (!node.isScrollable) {
-                    match = false
-                }
-            }
-            Action.STATE_UN_SCROLLABLE -> {
-                //需要具备不可滚动状态
-                if (node.isScrollable) {
-                    match = false
-                }
-            }
-            Action.STATE_LONG_CLICKABLE -> {
-                //需要具备可以长按的状态
-                if (!node.isLongClickable) {
-                    match = false
-                }
-            }
-            Action.STATE_UN_LONG_CLICKABLE -> {
-                //需要具备不可以长按的状态
-                if (node.isLongClickable) {
-                    match = false
-                }
-            }
-            Action.STATE_ENABLE -> {
-                //需要具备激活状态
-                if (!node.isEnabled) {
-                    match = false
-                }
-            }
-            Action.STATE_DISABLE -> {
-                //需要具备禁用状态
-                if (node.isEnabled) {
-                    match = false
-                }
-            }
-            Action.STATE_PASSWORD -> {
-                //需要具备密码状态
-                if (!node.isPassword) {
-                    match = false
-                }
-            }
-            Action.STATE_UN_PASSWORD -> {
-                //需要具备非密码状态
-                if (node.isPassword) {
-                    match = false
-                }
-            }
-            Action.STATE_CHECKABLE -> {
-                if (!node.isCheckable) {
-                    match = false
-                }
-            }
-            Action.STATE_UN_CHECKABLE -> {
-                if (node.isCheckable) {
-                    match = false
-                }
-            }
-            Action.STATE_CHECKED -> {
-                if (!node.isChecked) {
-                    match = false
-                }
-            }
-            Action.STATE_UNCHECKED -> {
-                if (node.isChecked) {
-                    match = false
-                }
+            if (!match) {
+                break
             }
         }
         return match
@@ -866,7 +975,11 @@ class FindParse(val accParse: AccParse) : BaseParse() {
     }
 
     /**检查节点是否满足child*/
-    fun matchNodeChild(node: AccessibilityNodeInfoCompat, childList: List<ChildBean>?): Boolean {
+    fun matchNodeChild(
+        controlContext: ControlContext,
+        node: AccessibilityNodeInfoCompat,
+        childList: List<ChildBean>?
+    ): Boolean {
         if (childList.isNullOrEmpty()) {
             return true
         }
@@ -901,10 +1014,11 @@ class FindParse(val accParse: AccParse) : BaseParse() {
                 continue
             }
 
-            if (matchNode(child, childBean)) {
+            if (matchNode(controlContext, child, childBean)) {
                 if (childBean.filter != null) {
                     //需要满足过滤条件
-                    val removeList = accParse.filterParse.parse(listOf(child), childBean.filter)
+                    val removeList =
+                        accParse.filterParse.parse(controlContext, listOf(child), childBean.filter)
                     if (removeList.contains(child)) {
                         //不满足过滤条件
                         match = false

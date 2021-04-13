@@ -81,8 +81,8 @@ fun <T> runRx(backAction: () -> T, mainAction: (T?) -> Unit = {}): Disposable {
 }
 
 /**在主线程回调*/
-fun doMain(action: () -> Unit) {
-    if (isMain()) {
+fun doMain(check: Boolean = true, action: () -> Unit) {
+    if (check && isMain()) {
         action()
     } else {
         runRx({ true }, { action() })

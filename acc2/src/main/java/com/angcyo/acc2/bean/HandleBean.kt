@@ -27,7 +27,8 @@ data class HandleBean(
      * [null] 使用默认的[com.angcyo.acc2.parse.FindParse.rootWindowNode]节点*/
     var rootNode: String? = null,
 
-    /**重新选择新的元素, 否则直接使用[com.angcyo.acc2.bean.CheckBean.event]获取到的元素*/
+    /**重新选择新的元素, 否则直接使用[com.angcyo.acc2.bean.CheckBean.event]获取到的元素
+     * 当指定了[findList], 又想使用[com.angcyo.acc2.bean.CheckBean.event]的节点时, 设置[rootNode]为[com.angcyo.acc2.action.Action.RESULT]*/
     var findList: List<FindBean>? = null,
 
     /**过滤目标元素, 只处理之后的元素*/

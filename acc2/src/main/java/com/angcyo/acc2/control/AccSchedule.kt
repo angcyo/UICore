@@ -7,7 +7,6 @@ import com.angcyo.acc2.bean.findFirstActionByGroup
 import com.angcyo.acc2.core.AccNodeLog
 import com.angcyo.acc2.parse.AccParse
 import com.angcyo.acc2.parse.HandleResult
-import com.angcyo.acc2.parse.toLog
 import com.angcyo.library.L
 import com.angcyo.library.component.ThreadExecutor
 import com.angcyo.library.ex.*
@@ -241,7 +240,10 @@ class AccSchedule(val accControl: AccControl) {
             accControl.finish("执行完成")
         } else if (nextActionBean.async == true) {
             async {
-                scheduleAction(nextActionBean, accControl._taskBean?.backActionList, true)
+                scheduleAction(ControlContext().apply {
+                    control = accControl
+                    action = nextActionBean
+                }, nextActionBean, accControl._taskBean?.backActionList, true)
             }
             accControl.log("异步执行:${nextActionBean.actionLog()}")
             next()
@@ -260,7 +262,10 @@ class AccSchedule(val accControl: AccControl) {
                         //默认处理
                         accControl.error(limitTip)
                     } else {
-                        runAction(taskLimitTime, null, false)
+                        runAction(ControlContext().apply {
+                            control = accControl
+                            action = taskLimitTime
+                        }, taskLimitTime, null, false)
                         if (accControl.isControlRunning) {
                             //强制终止任务
                             accControl.error(limitTip)
@@ -275,7 +280,10 @@ class AccSchedule(val accControl: AccControl) {
                 _currentIndex = _scheduleIndex
 
                 val result =
-                    scheduleAction(nextActionBean, accControl._taskBean?.backActionList, true)
+                    scheduleAction(ControlContext().apply {
+                        control = accControl
+                        action = nextActionBean
+                    }, nextActionBean, accControl._taskBean?.backActionList, true)
                 val loop = nextActionBean.loop
 
                 if (loop == null) {
@@ -293,6 +301,7 @@ class AccSchedule(val accControl: AccControl) {
 
     /**开始调度[actionBean]*/
     fun scheduleAction(
+        controlContext: ControlContext,
         actionBean: ActionBean,
         otherActionList: List<ActionBean>?,
         isPrimaryAction: Boolean
@@ -322,7 +331,9 @@ class AccSchedule(val accControl: AccControl) {
                 val beforeAction = taskBean?.before
                 if (beforeAction != null) {
                     accControl.log("任务前置执行:${beforeAction}", isPrimaryAction)
-                    beforeHandleResult = runAction(beforeAction, null, false)
+                    beforeHandleResult = runAction(controlContext.copy {
+                        action = beforeAction
+                    }, beforeAction, null, false)
                 }
             }
 
@@ -346,7 +357,9 @@ class AccSchedule(val accControl: AccControl) {
                 val beforeAction = actionBean.before
                 if (beforeAction != null) {
                     accControl.log("前置执行:${beforeAction}", isPrimaryAction)
-                    beforeHandleResult = runAction(beforeAction, null, false)
+                    beforeHandleResult = runAction(controlContext.copy {
+                        action = beforeAction
+                    }, beforeAction, null, false)
                 }
 
                 skipActionRun = false
@@ -378,7 +391,9 @@ class AccSchedule(val accControl: AccControl) {
                     }
 
                     //run
-                    result = runAction(actionBean, otherActionList, isPrimaryAction)
+                    result = runAction(controlContext.copy {
+                        action = actionBean
+                    }, actionBean, otherActionList, isPrimaryAction)
 
                     if (result.success) {
                         //只有成功才打印日志, 否则日志太多
@@ -392,7 +407,9 @@ class AccSchedule(val accControl: AccControl) {
                     val afterAction = actionBean.after
                     if (afterAction != null) {
                         accControl.log("后置执行:${afterAction}", isPrimaryAction)
-                        runAction(afterAction, null, false)
+                        runAction(controlContext.copy {
+                            action = afterAction
+                        }, afterAction, null, false)
                     }
                 }
 
@@ -403,7 +420,9 @@ class AccSchedule(val accControl: AccControl) {
                 val afterAction = taskBean?.after
                 if (afterAction != null) {
                     accControl.log("任务后置执行:${afterAction}", isPrimaryAction)
-                    runAction(afterAction, null, false)
+                    runAction(controlContext.copy {
+                        action = afterAction
+                    }, afterAction, null, false)
                 }
             }
 
@@ -586,6 +605,7 @@ class AccSchedule(val accControl: AccControl) {
      * [isPrimaryAction] 是否是主线动作
      * */
     fun runAction(
+        controlContext: ControlContext,
         actionBean: ActionBean,
         otherActionList: List<ActionBean>?,
         isPrimaryAction: Boolean
@@ -597,19 +617,33 @@ class AccSchedule(val accControl: AccControl) {
         if (actionBean.async == true && !threadName().startsWith(AccControl.ACC_MAIN_THREAD)) {
             //异步执行
             async {
-                runActionInner(actionBean, otherActionList, isPrimaryAction, handleActionResult)
+                runActionInner(
+                    controlContext.copy {
+                        action = actionBean
+                    },
+                    actionBean,
+                    otherActionList,
+                    isPrimaryAction,
+                    handleActionResult
+                )
             }
         } else {
             //同步执行
-            if (runActionBefore(actionBean, isPrimaryAction, handleActionResult)) {
+            if (runActionBefore(controlContext, actionBean, isPrimaryAction, handleActionResult)) {
                 if (!accControl.isControlRunning) {
                     return handleActionResult
                 }
-                runActionInner(actionBean, otherActionList, isPrimaryAction, handleActionResult)
+                runActionInner(
+                    controlContext,
+                    actionBean,
+                    otherActionList,
+                    isPrimaryAction,
+                    handleActionResult
+                )
                 if (!accControl.isControlRunning) {
                     return handleActionResult
                 }
-                runActionAfter(actionBean, isPrimaryAction, handleActionResult)
+                runActionAfter(controlContext, actionBean, isPrimaryAction, handleActionResult)
             }
         }
         return handleActionResult
@@ -617,6 +651,7 @@ class AccSchedule(val accControl: AccControl) {
 
     /**返回是否运行成功, 运行失败, 会中断后续执行*/
     fun runActionBefore(
+        controlContext: ControlContext,
         actionBean: ActionBean,
         isPrimaryAction: Boolean,
         handleActionResult: HandleResult
@@ -691,8 +726,11 @@ class AccSchedule(val accControl: AccControl) {
                             val rootNodeList = findParse.findRootNode(actionBean.window)
 
                             _latsRunActionTime = nowTime()
-                            handleParse.parse(rootNodeList, actionBean.check?.limitTime)
-                                .copyTo(handleActionResult)
+                            handleParse.parse(
+                                controlContext,
+                                rootNodeList,
+                                actionBean.check?.limitTime
+                            ).copyTo(handleActionResult)
                         }
                         if (!handleActionResult.success) {
                             runActionBeanStack.popSafe()
@@ -735,6 +773,7 @@ class AccSchedule(val accControl: AccControl) {
     var _isLeaveWindow = false
 
     fun runActionInner(
+        controlContext: ControlContext,
         actionBean: ActionBean,
         otherActionList: List<ActionBean>?,
         isPrimaryAction: Boolean,
@@ -751,6 +790,8 @@ class AccSchedule(val accControl: AccControl) {
         val actionCheckBean = actionBean.check
         val handleList = actionCheckBean?.handle
         val eventList = actionCheckBean?.event
+
+        controlContext.check = actionCheckBean
 
         //窗口根节点集合
         val windowBean = actionCheckBean?.window ?: actionBean.window
@@ -775,7 +816,9 @@ class AccSchedule(val accControl: AccControl) {
 
                 val leaveActionBean = actionBean.leave ?: accControl._taskBean?.leave
                 if (leaveActionBean != null) {
-                    val leaveResult = runAction(leaveActionBean, null, false)
+                    val leaveResult = runAction(controlContext.copy {
+                        action = leaveActionBean
+                    }, leaveActionBean, null, false)
                     if (!leaveResult.forceFail && (leaveResult.success || leaveResult.forceSuccess)) {
                         //处理成功
                         return
@@ -786,7 +829,7 @@ class AccSchedule(val accControl: AccControl) {
 
         if (actionCheckBean == null) {
             //未指定check, 直接操作根元素
-            handleParse.parse(rootNodeList, handleList).copyTo(handleActionResult)
+            handleParse.parse(controlContext, rootNodeList, handleList).copyTo(handleActionResult)
 
             if (isPrimaryAction) {
                 if (!handleActionResult.success) {
@@ -809,7 +852,7 @@ class AccSchedule(val accControl: AccControl) {
             val eventNodeList = if (eventList == null) {
                 rootNodeList
             } else {
-                val parse = findParse.parse(rootNodeList, eventList)
+                val parse = findParse.parse(controlContext, rootNodeList, eventList)
                 if (parse.forceSuccess) {
                     skipHandle = true
                     handleActionResult.success = true
@@ -832,12 +875,13 @@ class AccSchedule(val accControl: AccControl) {
             if (skipHandle) {
                 //no op
             } else if (eventNodeList.isNullOrEmpty()) {
-                accControl.log(
-                    "${actionCheckBean.checkLog()}[event]未匹配到元素:${eventList}",
-                    isPrimaryAction
-                )
+                controlContext.log {
+                    append("[event]未匹配到元素:${eventList}")
+                }
+
                 //未找到元素, 交给other处理
-                val handleResult = handleParse.parse(rootNodeList, actionCheckBean.other)
+                val handleResult =
+                    handleParse.parse(controlContext, rootNodeList, actionCheckBean.other)
 
                 if (handleResult.forceSuccess) {
                     handleActionResult.success = true
@@ -850,13 +894,17 @@ class AccSchedule(val accControl: AccControl) {
                         if (otherAction.async != false) {
                             async {
                                 otherHandleResult =
-                                    accSchedule.scheduleAction(otherAction, null, false)
+                                    accSchedule.scheduleAction(controlContext.copy {
+                                        action = otherAction
+                                    }, otherAction, null, false)
                                 if (otherHandleResult?.forceSuccess == true) {
                                     handleActionResult.success = true
                                 }
                             }
                         } else {
-                            otherHandleResult = accSchedule.scheduleAction(otherAction, null, false)
+                            otherHandleResult = accSchedule.scheduleAction(controlContext.copy {
+                                action = otherAction
+                            }, otherAction, null, false)
                             if (otherHandleResult?.forceSuccess == true) {
                                 handleActionResult.success = true
                             }
@@ -877,21 +925,23 @@ class AccSchedule(val accControl: AccControl) {
                 }
             } else {
                 //找到了目标元素
-                accControl.log(
-                    eventNodeList.toLog("${actionCheckBean.checkLog()}[event]匹配到元素(${eventNodeList.size}) ${actionBean.actionLog()} ${actionCheckBean}↓"),
-                    isPrimaryAction
-                )
-                val result = handleParse.parse(eventNodeList, handleList)
+                controlContext.log {
+                    append("[event]匹配到元素:${eventNodeList.size}")
+                }
+
+                val result = handleParse.parse(controlContext, eventNodeList, handleList)
                 result.copyTo(handleActionResult)
                 if (result.success) {
                     //未处理成功
                     actionCheckBean.success?.let {
-                        handleParse.parse(eventNodeList, it).copyTo(handleActionResult)
+                        handleParse.parse(controlContext, eventNodeList, it)
+                            .copyTo(handleActionResult)
                     }
                 } else {
                     //未处理成功
                     actionCheckBean.fail?.let {
-                        handleParse.parse(eventNodeList, it).copyTo(handleActionResult)
+                        handleParse.parse(controlContext, eventNodeList, it)
+                            .copyTo(handleActionResult)
                     }
                 }
             }
@@ -899,6 +949,7 @@ class AccSchedule(val accControl: AccControl) {
     }
 
     fun runActionAfter(
+        controlContext: ControlContext,
         actionBean: ActionBean,
         isPrimaryAction: Boolean,
         handleActionResult: HandleResult
@@ -939,8 +990,11 @@ class AccSchedule(val accControl: AccControl) {
                             val findParse = accParse.findParse
                             //窗口根节点集合
                             val rootNodeList = findParse.findRootNode(actionBean.window)
-                            handleParse.parse(rootNodeList, actionBean.check?.limitRun)
-                                .copyTo(handleActionResult)
+                            handleParse.parse(
+                                controlContext,
+                                rootNodeList,
+                                actionBean.check?.limitRun
+                            ).copyTo(handleActionResult)
                         }
                     }
                 }

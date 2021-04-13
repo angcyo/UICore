@@ -5,6 +5,7 @@ import com.angcyo.acc2.action.*
 import com.angcyo.acc2.bean.HandleBean
 import com.angcyo.acc2.bean.TextParamBean
 import com.angcyo.acc2.control.AccSchedule
+import com.angcyo.acc2.control.ControlContext
 import com.angcyo.acc2.control.actionLog
 import com.angcyo.acc2.control.log
 import com.angcyo.library.ex.size
@@ -73,6 +74,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
 
     /**解析, 并处理[handleList]*/
     fun parse(
+        controlContext: ControlContext,
         originList: List<AccessibilityNodeInfoCompat>?,
         handleList: List<HandleBean>?
     ): HandleResult {
@@ -82,7 +84,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         } else {
             val handleNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
             for (handBean in handleList) {
-                val handleResult = parse(originList, handBean)
+                val handleResult = parse(controlContext, originList, handBean)
                 result.forceSuccess = handleResult.forceSuccess || result.forceSuccess
                 result.forceFail = handleResult.forceFail || result.forceFail
 
@@ -112,10 +114,13 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
 
     /**单个处理*/
     fun parse(
+        controlContext: ControlContext,
         originList: List<AccessibilityNodeInfoCompat>?,
         handleBean: HandleBean
     ): HandleResult {
         var result = HandleResult()
+
+        controlContext.handle = handleBean
 
         //---------------条件处理----------------
 
@@ -147,7 +152,8 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         //待处理的元素节点集合
         var handleNodeList = if (handleBean.findList != null) {
             //需要明确重新指定
-            val findResult = accParse.findParse.parse(rootNodeList, handleBean.findList)
+            val findResult =
+                accParse.findParse.parse(controlContext, rootNodeList, handleBean.findList)
             findResult.nodeList
         } else {
             originList
@@ -156,7 +162,13 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         //过滤
         if (handleBean.filter != null) {
             handleNodeList = handleNodeList?.toMutableList()?.apply {
-                removeAll(accParse.filterParse.parse(handleNodeList, handleBean.filter))
+                removeAll(
+                    accParse.filterParse.parse(
+                        controlContext,
+                        handleNodeList,
+                        handleBean.filter
+                    )
+                )
             }
         }
 
@@ -172,7 +184,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
 
         if (handleBean.handleBefore != null) {
             //处理前, 需要的处理
-            parse(handleNodeList, handleBean.handleBefore)
+            parse(controlContext, handleNodeList, handleBean.handleBefore)
         }
 
         //case
@@ -256,7 +268,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
 
         if (handleBean.handleAfter != null) {
             //处理后, 需要的处理
-            parse(handleNodeList, handleBean.handleAfter)
+            parse(controlContext, handleNodeList, handleBean.handleAfter)
         }
 
         //---------------处理结束----------------
@@ -268,7 +280,9 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
 
         //后置处理
         if (handleBean.ignore) {
-            accParse.accControl.log("忽略[handle]结果:${handleBean}")
+            controlContext.log {
+                append("忽略[handle]结果:${handleBean}")
+            }
             result.success = false
         }
 

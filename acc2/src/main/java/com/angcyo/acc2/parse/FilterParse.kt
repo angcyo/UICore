@@ -2,6 +2,7 @@ package com.angcyo.acc2.parse
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.bean.FilterBean
+import com.angcyo.acc2.control.ControlContext
 import com.angcyo.acc2.eachChildDepth
 import com.angcyo.library.ex.haveText
 
@@ -21,6 +22,7 @@ class FilterParse(val accParse: AccParse) : BaseParse() {
      * 返回需要被移除的节点集合
      * */
     fun parse(
+        controlContext: ControlContext,
         originList: List<AccessibilityNodeInfoCompat>?,
         filterBean: FilterBean?
     ): List<AccessibilityNodeInfoCompat> {
@@ -48,14 +50,15 @@ class FilterParse(val accParse: AccParse) : BaseParse() {
         if (filterBean.containList != null) {
             after = if (removeList.isEmpty()) after else after.filter { !removeList.contains(it) }
             after.forEach { node ->
-                accParse.findParse.parse(listOf(node), filterBean.containList).apply {
-                    if (success && !nodeList.isNullOrEmpty()) {
-                        //解析成功
-                    } else {
-                        //不包含目标, 不符合过滤条件
-                        removeList.add(node)
+                accParse.findParse.parse(controlContext, listOf(node), filterBean.containList)
+                    .apply {
+                        if (success && !nodeList.isNullOrEmpty()) {
+                            //解析成功
+                        } else {
+                            //不包含目标, 不符合过滤条件
+                            removeList.add(node)
+                        }
                     }
-                }
             }
         }
 
@@ -63,12 +66,13 @@ class FilterParse(val accParse: AccParse) : BaseParse() {
         if (filterBean.notContainList != null) {
             after = if (removeList.isEmpty()) after else after.filter { !removeList.contains(it) }
             after.forEach { node ->
-                accParse.findParse.parse(listOf(node), filterBean.containList).apply {
-                    if (success && !nodeList.isNullOrEmpty()) {
-                        //包含目标, 不符合过滤条件
-                        removeList.add(node)
+                accParse.findParse.parse(controlContext, listOf(node), filterBean.containList)
+                    .apply {
+                        if (success && !nodeList.isNullOrEmpty()) {
+                            //包含目标, 不符合过滤条件
+                            removeList.add(node)
+                        }
                     }
-                }
             }
         }
 
@@ -203,7 +207,7 @@ class FilterParse(val accParse: AccParse) : BaseParse() {
 
         if (filterBean.after != null) {
             after = if (removeList.isEmpty()) after else after.filter { !removeList.contains(it) }
-            removeList.addAll(parse(after, filterBean.after))
+            removeList.addAll(parse(controlContext, after, filterBean.after))
         }
 
         return removeList

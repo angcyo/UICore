@@ -2,6 +2,7 @@ package com.angcyo.acc2.control
 
 import com.angcyo.acc2.bean.ActionBean
 import com.angcyo.acc2.bean.CheckBean
+import com.angcyo.acc2.bean.FindBean
 import com.angcyo.acc2.bean.TaskBean
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_ERROR
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_FINISH
@@ -147,6 +148,9 @@ class AccControl : Runnable {
             it.onControlStateChanged(this, old, newState)
         }
 
+        //状态改变
+        log("控制器状态改变:$controlStateStr :${accSchedule.durationStr()}")
+
         return true
     }
 
@@ -205,7 +209,6 @@ class AccControl : Runnable {
                     //run
                     accSchedule.scheduleNext()
                 } else {
-                    log("${controlStateStr} ${accSchedule.durationStr()}")
                     //wait
                     sleep()
                 }
@@ -249,9 +252,11 @@ val AccControl.isControlRunning: Boolean
 val AccControl.controlStateStr: String
     get() = _controlState.toControlStateStr()
 
-fun ActionBean.actionLog() = "Action[${title}${(des ?: summary).des()}](${actionId})"
+fun ActionBean.actionLog() = "Action[${title ?: ""}${(des ?: summary).des()}](${actionId})"
 
-fun CheckBean.checkLog() = "Check[${title}${des.des()}](${checkId})"
+fun CheckBean.checkLog() = "Check[${title ?: ""}${des.des()}](${checkId})"
+
+fun FindBean.findLog() = "Find[${textList ?: stateList ?: clsList ?: rectList}]"
 
 fun Number.toControlStateStr() = when (this) {
     CONTROL_STATE_NORMAL -> "STATE_NORMAL"

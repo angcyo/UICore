@@ -62,7 +62,7 @@ data class FindBean(
 
     /**单独存在时, 通过节点状态获取节点, 所有状态都命中节点时才有效.
      * 同时存在时, 会进行一一对应满足匹配
-     * [clickable] 具备可点击
+     * [clickable longClickable] 具备可点击, 具备可长按. 用空格分割多个
      * [unclickable] 具备不可点击
      * [focusable] 具备可获取交点
      * [selected] 具备选中状态
@@ -91,7 +91,6 @@ data class FindBean(
     var findDepth: String? = null,
 
     //</editor-fold desc="查询效率">
-
 
     //<editor-fold desc="约束器">
 
@@ -141,6 +140,11 @@ data class FindBean(
     /**4:
      * 根据上述查找到的节点, 获取所有的直系child子节点*/
     var allChild: Boolean? = null,
+
+    /**5:
+     * 根据上述查找到的节点,递归parent节点, 直到找到了符合条件的节点.
+     * */
+    var upList: List<FindBean>? = null,
 
     //</editor-fold desc="筛选器">
 
