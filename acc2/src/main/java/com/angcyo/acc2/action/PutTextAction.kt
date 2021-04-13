@@ -6,6 +6,7 @@ import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.acc2.parse.arg
+import com.angcyo.library.ex.decode
 import com.angcyo.library.ex.patternList
 import com.angcyo.library.ex.text
 import com.angcyo.library.ex.toStr
@@ -30,7 +31,7 @@ class PutTextAction : BaseAction() {
     ): HandleResult = handleResult {
         var key: String? = Action.ACTION_PUT_TEXT
         key = action.arg(Action.ACTION_PUT_TEXT) ?: key
-        val regex = action.arg("regex")
+        val regex = action.arg("regex")?.decode()
 
         var textStr: String? = null
 
