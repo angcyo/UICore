@@ -9,6 +9,7 @@ object Action {
 
     /**参数分隔符*/
     const val ARG_SPLIT = ":"
+
     const val ARG_SPLIT2 = " "
 
     /**多包名分隔符*/
@@ -69,6 +70,9 @@ object Action {
 
     /**标识: 是否清空统计*/
     const val CLEAR = "clear"
+
+    /**async*/
+    const val ASYNC = "async"
 
     /**触发当前节点的点击事件, null 默认是click操作.
      * [:STATE_UNSELECTED] 支持状态参数. 表示, 只在节点满足状态时, 才点击
@@ -276,7 +280,12 @@ object Action {
      * */
     const val ACTION_FULLSCREEN = "fullscreen"
 
-    /**设置全屏浮窗不接受touch事件*/
+    /**设置全屏浮窗不接受touch事件
+     * [notTouchable] 跟随[com.angcyo.acc2.bean.TaskBean.notTouchable]的设置
+     * [notTouchable:true]
+     * [notTouchable:true wait:3000] 等待3000毫秒后执行
+     * [notTouchable async] 异步指定
+     * */
     const val ACTION_NOT_TOUCHABLE = "notTouchable"
 
     /**

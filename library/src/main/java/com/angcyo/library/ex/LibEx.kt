@@ -257,7 +257,12 @@ fun <T> List<T>.getSafe(index: Int): T? {
 fun <R> sync(count: Int = 1, action: (CountDownLatch, AtomicReference<R>) -> Unit): R? {
     val latch = CountDownLatch(count)
     val result = AtomicReference<R>()
-    thread(name = "sync-${nowTimeString()}") { action(latch, result) }
+    thread(name = "sync-${nowTimeString()}") {
+        action(latch, result)
+        if (latch.count == 1L) {
+            latch.countDown()
+        }
+    }
     latch.await()
     return result.get()
 }

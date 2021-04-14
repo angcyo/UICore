@@ -4,7 +4,8 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
-import com.angcyo.library.ex.subEnd
+import com.angcyo.acc2.parse.arg
+import com.angcyo.library.component.MainExecutor
 
 /**
  * Email:angcyo@126.com
@@ -25,13 +26,24 @@ class NotTouchableAction : BaseAction() {
         nodeList: List<AccessibilityNodeInfoCompat>?,
         action: String
     ): HandleResult = handleResult {
-        val arg = action.subEnd(Action.ARG_SPLIT)
+        val arg = action.arg(Action.ACTION_NOT_TOUCHABLE)
+        val wait = action.arg("wait")?.toLongOrNull() ?: 0
+        val async = action.contains(Action.ASYNC)
+
         val notTouchable = if (arg.isNullOrEmpty()) {
             control._taskBean?.notTouchable ?: true
         } else {
             arg == "true"
         }
-        success = notTouchableAction(notTouchable)
+
+        success = if (async) {
+            MainExecutor.delay({
+                notTouchableAction(notTouchable)
+            }, wait)
+            true
+        } else {
+            notTouchableAction(notTouchable)
+        }
         control.log("设置浮窗不接受Touch事件[${arg}]:$success")
     }
 }

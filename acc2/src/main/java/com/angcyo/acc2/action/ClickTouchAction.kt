@@ -5,8 +5,9 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
+import com.angcyo.acc2.parse.arg
 import com.angcyo.library.ex.bounds
-import com.angcyo.library.ex.subEnd
+import com.angcyo.library.ex.sync
 
 /**
  * 在节点区域执行手势[touch]操作
@@ -26,7 +27,13 @@ open class ClickTouchAction : BaseTouchAction() {
         nodeList: List<AccessibilityNodeInfoCompat>?,
         action: String
     ): HandleResult = handleResult {
-        clickTouch(control, nodeList, this, action, action.subEnd(Action.ARG_SPLIT))
+        clickTouch(
+            control,
+            nodeList,
+            this,
+            action,
+            action.arg(Action.ACTION_CLICK3) ?: action.arg(Action.ACTION_CLICK2)
+        )
     }
 
     fun clickTouch(
@@ -36,6 +43,8 @@ open class ClickTouchAction : BaseTouchAction() {
         action: String,
         pointArg: String?
     ) {
+        val async = action.contains(Action.ASYNC)
+
         handleResult.apply {
             //触发节点区域的手势操作
             val click = action.startsWith(Action.ACTION_CLICK3)
@@ -63,10 +72,22 @@ open class ClickTouchAction : BaseTouchAction() {
 
                 success = if (click) {
                     //点击节点区域
-                    click(control, x, y)
+                    if (async) {
+                        sync<Boolean> { _, atomicReference ->
+                            atomicReference.set(click(control, x, y))
+                        } == true
+                    } else {
+                        click(control, x, y)
+                    }
                 } else {
                     //双击节点区域
-                    double(control, x, y)
+                    if (async) {
+                        sync<Boolean> { _, atomicReference ->
+                            atomicReference.set(double(control, x, y))
+                        } == true
+                    } else {
+                        double(control, x, y)
+                    }
                 } || success
             }
             if (click) {

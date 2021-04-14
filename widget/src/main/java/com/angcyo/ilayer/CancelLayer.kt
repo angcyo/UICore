@@ -27,6 +27,7 @@ class CancelLayer : ILayer() {
 
     init {
         iLayerLayoutId = R.layout.layout_cancel_layer
+        autoRestorePosition = false
     }
 
     val _windowContainer = WindowContainer(app()).apply {

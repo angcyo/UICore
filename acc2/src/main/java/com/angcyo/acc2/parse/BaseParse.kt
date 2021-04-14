@@ -18,5 +18,4 @@ open class BaseParse {
     open fun onScheduleEnd(scheduled: AccSchedule) {
 
     }
-
 }

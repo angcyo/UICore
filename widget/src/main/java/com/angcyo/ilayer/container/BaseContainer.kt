@@ -10,6 +10,7 @@ import com.angcyo.library.L
 import com.angcyo.library.ex.className
 import com.angcyo.library.ex.hawkGet
 import com.angcyo.library.ex.hawkPut
+import com.angcyo.tablayout.clamp
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.dslViewHolder
 import com.angcyo.widget.base.mH
@@ -28,12 +29,14 @@ abstract class BaseContainer(val context: Context) : IContainer {
     /**默认位置*/
     var defaultOffsetPosition: OffsetPosition = OffsetPosition()
 
+    var layerPosition: OffsetPosition? = null
+
     override fun add(layer: ILayer) {
         if (layer.iLayerLayoutId == -1) {
             L.e("请配置[iLayerLayoutId]")
         } else {
             val rootView: View = layer.onCreateView(context, this)
-            val layerPosition: OffsetPosition?
+
             if (rootView.parent == null) {
                 //不存在旧的, 重新创建
 
@@ -68,7 +71,6 @@ abstract class BaseContainer(val context: Context) : IContainer {
                 layerPosition = firstPosition
             } else {
                 //已经存在, 重新初始化
-                layerPosition = null
             }
             layer.onInitLayer(rootView.dslViewHolder(), LayerParams())
             update(layer, layerPosition)
@@ -101,7 +103,11 @@ abstract class BaseContainer(val context: Context) : IContainer {
 
     @CallSuper
     override fun update(layer: ILayer, position: OffsetPosition?) {
-        "${this.className()}_${layer.className()}_${layer.iLayerLayoutId}".hawkPut("${position?.gravity}:${position?.offsetX}:${position?.offsetY}")
+        position?.let {
+            layerPosition = it
+            //保存位置
+            "${this.className()}_${layer.className()}_${layer.iLayerLayoutId}".hawkPut("${position.gravity}:${position.offsetX}:${position.offsetY}")
+        }
     }
 
     /**更新布局位置, 使用视图左上角定位, 计算出对应的[gravity]和边界百分比*/
@@ -135,6 +141,6 @@ abstract class BaseContainer(val context: Context) : IContainer {
         }
 
         val gravity = hGravity or vGravity
-        return OffsetPosition(gravity, offsetX, offsetY)
+        return OffsetPosition(gravity, clamp(offsetX, 0f, 1f), clamp(offsetY, 0f, 1f))
     }
 }

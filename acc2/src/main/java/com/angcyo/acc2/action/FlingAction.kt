@@ -4,8 +4,9 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
+import com.angcyo.acc2.parse.arg
 import com.angcyo.library.ex.size
-import com.angcyo.library.ex.subEnd
+import com.angcyo.library.ex.sync
 
 /**
  * Email:angcyo@126.com
@@ -24,12 +25,20 @@ class FlingAction : BaseTouchAction() {
         nodeList: List<AccessibilityNodeInfoCompat>?,
         action: String
     ): HandleResult = handleResult {
-        val arg = action.subEnd(Action.ARG_SPLIT)
+        val arg = action.arg(Action.ACTION_FLING)
+        val async = action.contains(Action.ASYNC)
+
         val pointList = control.accSchedule.accParse.parsePoint(arg)
         if (pointList.size() >= 2) {
             val p1 = pointList[0]
             val p2 = pointList[1]
-            success = fling(control, p1.x, p1.y, p2.x, p2.y)
+            success = if (async) {
+                sync<Boolean> { _, atomicReference ->
+                    atomicReference.set(fling(control, p1.x, p1.y, p2.x, p2.y))
+                } == true
+            } else {
+                fling(control, p1.x, p1.y, p2.x, p2.y)
+            }
             control.log("fling[$p1]->[$p2]:$success")
         }
     }
