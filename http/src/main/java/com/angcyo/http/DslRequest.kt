@@ -90,7 +90,14 @@ class DslRequest {
                     url(requestUrl)
                 }
 
-                val requestMethod = method.toUpperCase()
+                var requestMethod = method.toUpperCase()
+
+                if (body != null) {
+                    if (requestMethod == "GET") {
+                        requestMethod = "POST"
+                    }
+                }
+
                 val requestBody = if (HttpMethod.requiresRequestBody(requestMethod)) {
                     body ?: jsonBody("")
                 } else {
