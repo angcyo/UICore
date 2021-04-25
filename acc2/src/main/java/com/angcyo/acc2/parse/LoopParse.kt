@@ -1,14 +1,15 @@
 package com.angcyo.acc2.parse
 
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.bean.ActionBean
 import com.angcyo.acc2.bean.LoopBean
 import com.angcyo.acc2.control.AccSchedule
+import com.angcyo.acc2.control.ControlContext
 import com.angcyo.acc2.control.log
 import com.angcyo.library.ex.size
 import com.angcyo.selenium.auto.Count
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.random.Random
 import kotlin.random.Random.Default.nextInt
 
 /**
@@ -25,28 +26,40 @@ class LoopParse(val accParse: AccParse) : BaseParse() {
 
     /**返回true, 则表示被循环控制器处理了.
      * 返回false, 表示没有被处理, 需要自行处理*/
-    fun parse(action: ActionBean, result: HandleResult, loop: LoopBean): Boolean {
+    fun parse(
+        controlContext: ControlContext,
+        originList: List<AccessibilityNodeInfoCompat>?,
+        action: ActionBean,
+        result: HandleResult,
+        loop: LoopBean
+    ): Boolean {
         if (loop.check) {
             if (result.forceSuccess || result.success) {
                 loopCountIncrement(action.actionId)
-                return _parse(action, loop)
+                return _parse(controlContext, originList, action, loop)
             }
-            accParse.accControl.log("Loop check faild.")
+            accParse.accControl.log("Loop check failed.")
         } else {
             loopCountIncrement(action.actionId)
-            return _parse(action, loop)
+            return _parse(controlContext, originList, action, loop)
         }
         return false
     }
 
-    fun _parse(action: ActionBean, loop: LoopBean): Boolean {
-        val successCount = loop.success
-        val errorCount = loop.error
-        if (successCount == null && errorCount == null) {
-            //空
-            return false
-        }
-        if (successCount != null) {
+    fun _parse(
+        controlContext: ControlContext,
+        originList: List<AccessibilityNodeInfoCompat>?,
+        action: ActionBean, loop: LoopBean
+    ): Boolean {
+        val successCount = accParse.textParse.parse(loop.success).firstOrNull()
+        val errorCount = accParse.textParse.parse(loop.error).firstOrNull()
+        val handle = loop.handle
+
+        //返回是否被处理了
+        var result = false
+
+        //1.
+        if (!result && successCount != null) {
             val numList = successCount.getIntList()
             val targetCount = if (successCount.havePartition() && numList.size() >= 2) {
                 // 3~10
@@ -54,7 +67,7 @@ class LoopParse(val accParse: AccParse) : BaseParse() {
                 val second = numList[1]
                 val min = min(first, second)
                 val max = max(first, second)
-                Random.nextInt(min, max + 1)
+                nextInt(min, max + 1)
             } else if (numList.isNullOrEmpty()) {
                 //随机
                 nextInt()
@@ -62,14 +75,12 @@ class LoopParse(val accParse: AccParse) : BaseParse() {
                 numList.firstOrNull() ?: 0
             }
 
-            val count = getLoopCount(action.actionId)
-            if (count >= targetCount) {
-                return false
-            } else {
-                return true
-            }
+            val loopCount = getLoopCount(action.actionId)
+            result = loopCount < targetCount
         }
-        if (errorCount != null) {
+
+        //2.
+        if (!result && errorCount != null) {
             val numList = errorCount.getIntList()
             val targetCount = if (errorCount.havePartition() && numList.size() >= 2) {
                 // 3~10
@@ -77,7 +88,7 @@ class LoopParse(val accParse: AccParse) : BaseParse() {
                 val second = numList[1]
                 val min = min(first, second)
                 val max = max(first, second)
-                Random.nextInt(min, max + 1)
+                nextInt(min, max + 1)
             } else if (numList.isNullOrEmpty()) {
                 //随机
                 nextInt()
@@ -85,15 +96,25 @@ class LoopParse(val accParse: AccParse) : BaseParse() {
                 numList.firstOrNull() ?: 0
             }
 
-            val count = getLoopCount(action.actionId)
-            if (count >= targetCount) {
+            val loopCount = getLoopCount(action.actionId)
+            result = if (loopCount >= targetCount) {
                 accParse.accControl.error("循环控制超限:$targetCount 次")
-                return true
+                true
             } else {
-                return false
+                true
             }
         }
-        return false
+
+        //3.
+        if (handle != null) {
+            if (result || (successCount == null && errorCount == null)) {
+                val handleResult = accParse.handleParse.parse(controlContext, originList, handle)
+                result = handleResult.isSuccessResult()
+            }
+        }
+
+        //end
+        return result
     }
 
     /**累加Loop次数*/

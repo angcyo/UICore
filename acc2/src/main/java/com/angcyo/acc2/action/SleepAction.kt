@@ -26,7 +26,9 @@ class SleepAction : BaseAction() {
         action: String
     ): HandleResult = handleResult {
         success = true
-        val parseTime = control.accSchedule.accParse.parseTime(action.subEnd(Action.ARG_SPLIT))
+        val arg = action.subEnd(Action.ARG_SPLIT)
+        val argText = control.accSchedule.accParse.textParse.parse(arg).firstOrNull()
+        val parseTime = control.accSchedule.accParse.parseTime(argText)
         control.log("休眠[${parseTime}]:$success")
         sleep(parseTime)
     }

@@ -20,6 +20,16 @@ class InputAction : BaseAction() {
     /**记录文本key输入的次数*/
     val inputCountMap = hashMapOf<String, Int>()
 
+    companion object {
+
+        /**
+         * 可以通过key[com.angcyo.acc2.action.Action.LAST_INPUT]引用到
+         *
+         * [com.angcyo.acc2.parse.TextParse.parse]
+         * */
+        var lastInputText: String? = null
+    }
+
     init {
         lastInputText = null
     }
@@ -56,7 +66,10 @@ class InputAction : BaseAction() {
             randomString() //随机生成文本
         } else {
             //指定key, 文本已经输入的次数
-            textKey = textParse.parseTextKey(arg).firstOrNull()
+            textKey = textParse.parseTextKey(arg).firstOrNull() ?: action.arg("key")
+            if (textKey.isNullOrEmpty()) {
+                textKey = control.accSchedule._scheduleActionBean?.actionId?.toString()
+            }
             if (!textKey.isNullOrEmpty()) {
                 inputCount = inputCountMap[textKey] ?: 0
             }
@@ -113,9 +126,5 @@ class InputAction : BaseAction() {
             }
             control.log("输入文本[$text]:$result\n${node.toLog()}")
         }
-    }
-
-    companion object {
-        var lastInputText: String? = null
     }
 }

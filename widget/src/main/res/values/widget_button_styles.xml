@@ -49,6 +49,14 @@
         <item name="android:paddingBottom">2dp</item>
     </style>
 
+    <!--按下去是Stroke的效果-->
+    <style name="DefaultButtonPressStrokeStyle" parent="DefaultButtonStyle">
+        <item name="button_press_gradient_colors">""</item>
+        <item name="button_press_stroke_color">@color/colorAccent</item>
+        <item name="button_press_stroke_width">@dimen/lib_line</item>
+        <item name="button_press_text_color">@color/colorAccent</item>
+    </style>
+
     <!--大padding的按钮-->
     <style name="DefaultButtonStyleNormal" parent="DefaultButtonStyle">
         <item name="android:paddingLeft">8dp</item>

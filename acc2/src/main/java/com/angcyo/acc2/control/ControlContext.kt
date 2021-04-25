@@ -28,7 +28,7 @@ class ControlContext {
     /**当前上下文中的[HandleBean]*/
     var handle: HandleBean? = null
 
-    fun isPrimaryAction() = action != null && action == control?.accSchedule?._scheduleActionBean
+    fun isPrimaryAction() = control?.accSchedule?.isPrimaryAction(action) == true
 
     fun copy(init: ControlContext.() -> Unit = {}): ControlContext {
         return ControlContext().also {

@@ -15,4 +15,6 @@ open class BaseResult {
     open fun copyTo(target: BaseResult) {
         target.success = success
     }
+
+    open fun isSuccessResult() = success
 }

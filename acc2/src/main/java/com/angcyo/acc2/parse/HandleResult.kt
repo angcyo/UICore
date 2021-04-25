@@ -38,4 +38,8 @@ open class HandleResult : BaseResult() {
         }
     }
 
+    override fun isSuccessResult(): Boolean {
+        return super.isSuccessResult() || forceSuccess
+    }
+
 }

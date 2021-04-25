@@ -198,7 +198,8 @@ object Action {
      * */
     const val ACTION_ERROR = "error"
 
-    /**[sleep:1000]线程休眠1000毫秒*/
+    /**[sleep:1000]线程休眠1000毫秒
+     * 支持文本变量*/
     const val ACTION_SLEEP = "sleep"
 
     /**直接完成任务, 支持替换文本变量
