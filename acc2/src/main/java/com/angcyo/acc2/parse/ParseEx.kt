@@ -25,6 +25,23 @@ fun String?.getIntList(): List<Int> {
 
 //扩展函数
 
+/**判断是否有指定的参数信息
+ * [pass]
+ * [pass:]
+ * [sta:xx pass:xxx]*/
+fun String.haveArg(key: String): Boolean {
+    var have = false
+    val pattern = "($key)|($key:).*".toPattern()
+
+    for (text in split(" ")) {
+        if (text == key || pattern.matcher(text).matches()) {
+            have = true
+            break
+        }
+    }
+    return have
+}
+
 /**
  * 从字符串中获取模版参数 key:value
  * 特殊字符请使用[URLEncoder.encode]加码后的字符

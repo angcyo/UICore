@@ -74,6 +74,8 @@ object Action {
     /**async*/
     const val ASYNC = "async"
 
+    const val GROUP = "group"
+
     /**触发当前节点的点击事件, null 默认是click操作.
      * [:STATE_UNSELECTED] 支持状态参数. 表示, 只在节点满足状态时, 才点击
      * [:STATE_UNSELECTED:5] 自身要满足且5个parent内有节点满足状态, 才触发点击
@@ -151,18 +153,18 @@ object Action {
      * */
     const val ACTION_CLEAR_TEXT = "clearText"
 
-    /**清除指定id的[ActionBean]的运行次数
-     * [clearRunCount] 清理当前的[ActionBean]
+    /**清除指定id的[com.angcyo.acc2.bean.ActionBean]的运行次数
+     * [clearRunCount] 清理当前的[com.angcyo.acc2.bean.ActionBean]
      * [clearRunCount:xxx xxx]
      * [ACTION_JUMP]
      * */
     const val ACTION_CLEAR_RUN_COUNT = "clearRunCount"
 
-    /**清除[ActionBean]的运行时长
+    /**清除[com.angcyo.acc2.bean.ActionBean]的运行时长
      * [ACTION_CLEAR_RUN_COUNT]*/
     const val ACTION_CLEAR_RUN_TIME = "clearRunTime"
 
-    /**清除指定id的[ActionBean]的跳转次数
+    /**清除指定id的[com.angcyo.acc2.bean.ActionBean]的跳转次数
      * [clearJumpCount:xxx xxx]
      * [ACTION_JUMP]
      * */
@@ -183,14 +185,20 @@ object Action {
      * */
     const val ACTION_JUMP = "jump"
 
-    /**激活指定actionId的[ActionBean]
+    /**[pass] 直接返回true
+     * [pass group]跳过同一组中的所有[com.angcyo.acc2.bean.ActionBean]
+     * [com.angcyo.acc2.action.Action.ACTION_TRUE]
+     * [com.angcyo.acc2.action.Action.ACTION_FALSE]*/
+    const val ACTION_PASS = "pass"
+
+    /**激活指定actionId的[com.angcyo.acc2.bean.ActionBean]
      * [enable 100 120 200 220]*/
     const val ACTION_ENABLE = "enable"
 
     /**禁用, 参考[ACTION_ENABLE]*/
     const val ACTION_DISABLE = "disable"
 
-    /**禁用当前的[HandleBean]*/
+    /**禁用当前的[com.angcyo.acc2.bean.HandleBean]*/
     const val ACTION_DISABLE_HANDLE = "disableHandle"
 
     /**异常, 并中断整个任务, 支持替换文本变量

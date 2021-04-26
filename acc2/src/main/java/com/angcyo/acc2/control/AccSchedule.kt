@@ -147,26 +147,31 @@ class AccSchedule(val accControl: AccControl) {
     }
 
     /**指定分组中的第一个[ActionBean]是否激活
-     * 多个分组中, 有一个满足即可*/
+     * 多个分组中, 有一个满足即可
+     * [actionBean] 当前的[ActionBean]
+     *
+     * 返回[first] 是否激活
+     * [second] 激活时的分组信息
+     * */
     fun isFirstActionEnableByGroup(
         actionBean: ActionBean,
         group: String? /*支持分割*/,
         isPrimaryAction: Boolean
-    ): Boolean {
+    ): Pair<Boolean, String?> {
         if (group.isNullOrEmpty()) {
-            return true
+            return true to null
         }
-        var result = false
+        var result: Pair<Boolean, String?> = false to null
         val groupList = group.split(Action.PACKAGE_SPLIT)
         for (g in groupList) {
-            val findFirstActionByGroup = findFirstActionByGroup(g)
-            result = if (findFirstActionByGroup == actionBean) {
+            val firstActionByGroup = findFirstActionByGroup(g)
+            result = if (firstActionByGroup != null && firstActionByGroup == actionBean) {
                 //第一个就是自身
                 isActionBeanEnable(actionBean, isPrimaryAction)
             } else {
-                findFirstActionByGroup?.enable == true
-            }
-            if (result) {
+                (firstActionByGroup?.enable == true)
+            } to g
+            if (result.first) {
                 break
             }
         }
@@ -519,7 +524,7 @@ class AccSchedule(val accControl: AccControl) {
             val group = action.group
             if (!group.isNullOrEmpty() && !isFirstActionInGroup(action)) {
                 //具有分组标识, 并且不是第一个
-                return if (isFirstActionEnableByGroup(action, group, isPrimaryAction)) {
+                return if (isFirstActionEnableByGroup(action, group, isPrimaryAction).first) {
                     //accControl.log("${action.actionLog()}的分组[${group}]中第一个ActionBean激活.")
                     true
                 } else {
@@ -537,7 +542,8 @@ class AccSchedule(val accControl: AccControl) {
 
     /**判断[action]是否激活, 激活后才允许运行
      * 不进行分组判断
-     * 分组判断请使用[isActionBeanGroupEnable]*/
+     * 分组判断请使用[isActionBeanGroupEnable]
+     * [isPrimaryAction] 日志打印使用*/
     fun isActionBeanEnable(action: ActionBean?, isPrimaryAction: Boolean): Boolean {
         if (action != null) {
             //激活判断
@@ -596,6 +602,43 @@ class AccSchedule(val accControl: AccControl) {
             }
         }
         return false
+    }
+
+    /**跳过当前分组的所有[ActionBean],指定下一个需要调度的[ActionBean]
+     * [group]支持分割
+     * [actionBean] 当前的[ActionBean]
+     * */
+    fun nextScheduleActionByGroup(actionBean: ActionBean, group: String?): Boolean {
+        val pair = isFirstActionEnableByGroup(actionBean, group, isPrimaryAction(actionBean))
+        val targetGroup = pair.second
+        if (!pair.first || targetGroup == null) {
+            return false
+        }
+
+        var result = false
+        var isFindGroup = false
+
+        //获取可以执行的目标
+        accControl._taskBean?.actionList?.apply {
+            for (i in 0..lastIndex) {
+                val bean = getOrNull(i)
+
+                val isInGroup = bean?.group?.contains(targetGroup) == true
+
+                if (isFindGroup && !isInGroup) {
+                    accControl.log("下一个执行目标[$i/${actionSize()}]:$bean")
+                    _targetIndex = i
+                    result = true
+                    break
+                }
+
+                if (isInGroup) {
+                    isFindGroup = true
+                }
+            }
+        }
+
+        return result
     }
 
     /**指定下一个需要调度的[ActionBean]*/

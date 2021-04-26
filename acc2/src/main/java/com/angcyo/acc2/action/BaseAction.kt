@@ -4,6 +4,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.bean.ActionBean
 import com.angcyo.acc2.bean.TextParamBean
 import com.angcyo.acc2.control.AccControl
+import com.angcyo.acc2.control.ControlContext
 import com.angcyo.acc2.parse.BaseParse
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.library.ex.subStart
@@ -24,11 +25,20 @@ abstract class BaseAction : BaseParse() {
     abstract fun interceptAction(control: AccControl, action: String): Boolean
 
     /**执行操作*/
-    abstract fun runAction(
+    open fun runAction(
         control: AccControl,
         nodeList: List<AccessibilityNodeInfoCompat>?,
         action: String
-    ): HandleResult
+    ): HandleResult = handleResult {
+        success = false
+    }
+
+    open fun runAction(
+        control: AccControl,
+        controlContext: ControlContext,
+        nodeList: List<AccessibilityNodeInfoCompat>?,
+        action: String
+    ): HandleResult = runAction(control, nodeList, action)
 
     /**主线的[ActionBean]*/
     fun mainActionBean(control: AccControl) = control.accSchedule._scheduleActionBean
@@ -60,6 +70,7 @@ abstract class BaseAction : BaseParse() {
         }
     }
 
+    /**判断字符串是否是执行的命令*/
     fun String.cmd(cmd: String): Boolean {
         val c = subStart(Action.ARG_SPLIT) ?: subStart(Action.ARG_SPLIT2) ?: this
         return c == cmd

@@ -41,18 +41,20 @@ data class TaskBean(
 
     var enable: Boolean = true,
 
-    /**
+    /** 判断优先:1
      * 配置用于激活在[actionList]中的[ActionBean],
      * 支持通过[com.angcyo.acc2.bean.ActionBean.actionId]激活
      * 支持通过[com.angcyo.acc2.bean.ActionBean.group]名字, 激活分组中的第一个[ActionBean]
      * 多个用[com.angcyo.acc2.action.Action.PACKAGE_SPLIT]分割*/
     var enableAction: String? = null,
 
-    /**随机激活[actionList]中的[ActionBean]
+    /**判断优先:2
+     * 随机激活[actionList]中的[ActionBean]
      * [enableAction]*/
     var randomEnableAction: String? = null,
 
-    /**禁用[actionList]中的[ActionBean]
+    /**判断优先:3
+     * 禁用[actionList]中的[ActionBean]
      * [enableAction]*/
     var disableAction: String? = null,
 
