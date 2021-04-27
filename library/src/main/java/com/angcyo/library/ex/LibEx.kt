@@ -5,6 +5,7 @@ import android.graphics.Point
 import android.graphics.PointF
 import com.angcyo.library.BuildConfig
 import com.angcyo.library.component.ThreadExecutor.onMain
+import com.angcyo.library.ex.LibEx.isDebugTypeVal
 import com.angcyo.library.getAppString
 import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.RUtils
@@ -27,6 +28,10 @@ import kotlin.random.Random.Default.nextInt
  * @date 2019/12/19
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
+
+object LibEx {
+    var isDebugTypeVal = false
+}
 
 /**函数别名*/
 typealias Action = () -> Unit
@@ -53,7 +58,7 @@ fun javaVersion() = System.getProperty("java.specification.version", "unknown")
 
 fun isRelease(): Boolean = "release".equals(BuildConfig.BUILD_TYPE, true)
 
-fun isDebugType() = "debug".equals(BuildConfig.BUILD_TYPE, true)
+fun isDebugType() = isDebugTypeVal || "debug".equals(BuildConfig.BUILD_TYPE, true)
 
 fun isMac() = getAppString("os_name")?.toLowerCase()?.contains("mac") == true
 
