@@ -124,6 +124,12 @@ open class DslTabLayout(
     /**布局的方向*/
     var orientation: Int = LinearLayout.HORIZONTAL
 
+    /**布局时, 滚动到居中是否需要动画*/
+    var layoutScrollAnim: Boolean = false
+
+    /**滚动动画的时长*/
+    var scrollAnimDuration = 250
+
     //<editor-fold desc="内部属性">
 
     //fling 速率阈值
@@ -214,6 +220,11 @@ open class DslTabLayout(
 
         orientation = typedArray.getInt(R.styleable.DslTabLayout_tab_orientation, orientation)
 
+        layoutScrollAnim =
+            typedArray.getBoolean(R.styleable.DslTabLayout_tab_layout_scroll_anim, layoutScrollAnim)
+        scrollAnimDuration =
+            typedArray.getInt(R.styleable.DslTabLayout_tab_scroll_anim_duration, scrollAnimDuration)
+
         typedArray.recycle()
 
         val vc = ViewConfiguration.get(context)
@@ -257,14 +268,7 @@ open class DslTabLayout(
             _scrollToCenter(index, tabIndicator.indicatorAnim)
             return
         }
-        val targetView = dslSelector.visibleViewList.getOrNull(index)
-        if (targetView == null || ViewCompat.isLaidOut(targetView)) {
-            dslSelector.selector(index, true, notify, fromUser)
-        } else {
-            post {
-                setCurrentItem(index, notify, fromUser)
-            }
-        }
+        dslSelector.selector(index, true, notify, fromUser)
     }
 
     /**关联[ViewPagerDelegate]*/
@@ -1079,7 +1083,7 @@ open class DslTabLayout(
             //还没有选中
             setCurrentItem(tabDefaultIndex)
         } else {
-            _scrollToCenter(dslSelector.dslSelectIndex, false)
+            _scrollToCenter(dslSelector.dslSelectIndex, layoutScrollAnim)
         }
     }
 
@@ -1129,7 +1133,7 @@ open class DslTabLayout(
             //还没有选中
             setCurrentItem(tabDefaultIndex)
         } else {
-            _scrollToCenter(dslSelector.dslSelectIndex, false)
+            _scrollToCenter(dslSelector.dslSelectIndex, layoutScrollAnim)
         }
     }
 
@@ -1396,9 +1400,9 @@ open class DslTabLayout(
     fun startScroll(dv: Int) {
         _overScroller.abortAnimation()
         if (isHorizontal()) {
-            _overScroller.startScroll(scrollX, scrollY, dv, 0)
+            _overScroller.startScroll(scrollX, scrollY, dv, 0, scrollAnimDuration)
         } else {
-            _overScroller.startScroll(scrollX, scrollY, 0, dv)
+            _overScroller.startScroll(scrollX, scrollY, 0, dv, scrollAnimDuration)
         }
         ViewCompat.postInvalidateOnAnimation(this)
     }
@@ -1466,6 +1470,13 @@ open class DslTabLayout(
             return
         }
 
+        dslSelector.visibleViewList.getOrNull(index)?.let {
+            if (!ViewCompat.isLaidOut(it)) {
+                //没有布局
+                return
+            }
+        }
+
         val dx = if (isHorizontal()) {
             val childCenterX = tabIndicator.getChildCenterX(index)
             val viewDrawCenterX = paddingLeft + viewDrawWidth / 2
@@ -1501,12 +1512,14 @@ open class DslTabLayout(
 
         if (isHorizontal()) {
             if (isInEditMode || !scrollAnim) {
+                _overScroller.abortAnimation()
                 scrollBy(dx, 0)
             } else {
                 startScroll(dx)
             }
         } else {
             if (isInEditMode || !scrollAnim) {
+                _overScroller.abortAnimation()
                 scrollBy(0, dx)
             } else {
                 startScroll(dx)
