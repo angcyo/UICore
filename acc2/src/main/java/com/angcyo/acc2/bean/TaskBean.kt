@@ -12,9 +12,8 @@ import com.angcyo.library.ex.uuid
  */
 data class TaskBean(
 
-    //json配置
-    var id: Long = -1,
-    var rwid: Long = -1,
+    /**额外数据, 存放点*/
+    var map: HashMap<String, Any?>? = null,
 
     /**表单请求*/
     var form: FormBean? = null,
@@ -284,3 +283,10 @@ fun TaskBean.getTextList(key: String?): List<String?>? {
         listOf(this)
     }
 }
+
+/**map value*/
+fun TaskBean.mapVal(key: String?): Any? = map?.get(key)
+
+fun TaskBean.mapStringVal(key: String?): String? = map?.get(key)?.toString()
+
+fun TaskBean.mapLongVal(key: String?): Long? = mapStringVal(key)?.toLongOrNull()
