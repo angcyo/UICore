@@ -80,8 +80,12 @@ open class RCoordinatorLayout(
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val layoutWidthHeightSpec =
             layoutDelegate.layoutWidthHeightSpec(widthMeasureSpec, heightMeasureSpec)
-        super.onMeasure(layoutWidthHeightSpec[0], layoutWidthHeightSpec[1])
-        layoutDelegate.onMeasure(layoutWidthHeightSpec[0], layoutWidthHeightSpec[1])
+        val layoutDimensionRatioSpec = layoutDelegate.layoutDimensionRatioSpec(
+            layoutWidthHeightSpec[0],
+            layoutWidthHeightSpec[1]
+        )
+        super.onMeasure(layoutDimensionRatioSpec[0], layoutDimensionRatioSpec[1])
+        layoutDelegate.onMeasure(layoutDimensionRatioSpec[0], layoutDimensionRatioSpec[1])
 
         eachChildVisibility { _, child ->
             (child.layoutParams.coordinatorParams()?.behavior as? BaseDependsBehavior)?.onMeasureAfter(

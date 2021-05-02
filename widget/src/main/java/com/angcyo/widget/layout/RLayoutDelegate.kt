@@ -192,6 +192,57 @@ class RLayoutDelegate : LayoutDelegate() {
         return intArrayOf(widthSpec, heightSpec)
     }
 
+    /**返回约束了比例,替换后的测量宽高Spec*/
+    fun layoutDimensionRatioSpec(widthMeasureSpec: Int, heightMeasureSpec: Int): IntArray {
+        var wSpec: Int = widthMeasureSpec
+        var hSpec: Int = heightMeasureSpec
+
+        layoutDimensionRatio?.run {
+            //约束了比例计算
+            var ratio: Float = -1f
+
+            var widthFactor = 1f
+            var heightFactor = 1f
+
+            if (contains(":")) {
+                split(":").also {
+                    widthFactor = it[0].toFloatOrNull() ?: -1f
+                    heightFactor = it[1].toFloatOrNull() ?: 0f
+                    ratio = widthFactor / heightFactor
+                }
+            } else {
+                toFloatOrNull()?.run {
+                    heightFactor = 1f
+                    widthFactor = this
+                    ratio = widthFactor / heightFactor
+                }
+            }
+
+            if (ratio > 0f) {
+
+                val vWidth = View.MeasureSpec.getSize(widthMeasureSpec)
+                val vHeight = View.MeasureSpec.getSize(heightMeasureSpec)
+                val rawRatio = vWidth * 1f / vHeight
+
+                if ((rawRatio - ratio).absoluteValue > 0.00000001f) {
+                    //比例需要调整
+
+                    if (View.MeasureSpec.getMode(heightMeasureSpec) == View.MeasureSpec.EXACTLY) {
+                        //以高度作为基数调整
+                        wSpec = exactly((vHeight * widthFactor).toInt())
+                        hSpec = exactly(vHeight)
+                    } else if (View.MeasureSpec.getMode(widthMeasureSpec) == View.MeasureSpec.EXACTLY) {
+                        //以宽度作为基数调整
+                        wSpec = exactly(vWidth)
+                        hSpec = exactly((vWidth * heightFactor).toInt())
+                    }
+                }
+            }
+        }
+
+        return intArrayOf(wSpec, hSpec)
+    }
+
     /**[rMaxHeight]属性支持*/
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int): IntArray {
         val parentWidth = (delegateView.parent as? View)?.measuredWidth ?: 0
