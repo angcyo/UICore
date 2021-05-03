@@ -11,6 +11,7 @@ import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_PAUSE
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_RUNNING
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_STOP
 import com.angcyo.acc2.core.BaseAccService
+import com.angcyo.acc2.core.ControlException
 import com.angcyo.acc2.core.ControlInterruptException
 import com.angcyo.library.L
 import com.angcyo.library.ex.des
@@ -63,7 +64,11 @@ class AccControl : Runnable {
 
     var _taskBean: TaskBean? = null
 
+    /**完成的原因*/
     var finishReason: String? = null
+
+    /**异常的信息*/
+    var lastError: Throwable? = null
 
     /**启动一个任务*/
     fun start(taskBean: TaskBean, force: Boolean): Boolean {
@@ -81,6 +86,7 @@ class AccControl : Runnable {
         }
         _taskBean = taskBean
         finishReason = null
+        lastError = null
         accSchedule.startSchedule()
         _startThread()
         updateControlState(CONTROL_STATE_RUNNING)
@@ -99,8 +105,13 @@ class AccControl : Runnable {
     }
 
     /**异常任务*/
-    fun error(reason: String? = "任务异常") {
-        _end(reason, CONTROL_STATE_ERROR)
+    @Deprecated("废弃")
+    fun error(reason: String?) {
+        error(ControlException(reason ?: "任务异常"))
+    }
+
+    fun error(error: Throwable) {
+        _end(error.message, CONTROL_STATE_ERROR, error)
     }
 
     /**完成任务*/
@@ -108,13 +119,14 @@ class AccControl : Runnable {
         _end(reason, CONTROL_STATE_FINISH)
     }
 
-    fun _end(reason: String?, state: Int) {
+    fun _end(reason: String?, state: Int, error: Throwable? = null) {
         if (_controlState == state) {
             L.i("控制器已经[${state.toControlStateStr()}]")
             return
         }
         L.i("$reason[${state.toControlStateStr()}]")
         finishReason = reason
+        lastError = error
         accSchedule.endSchedule()
         _stopThread()
         updateControlState(state)
