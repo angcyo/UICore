@@ -23,7 +23,7 @@ object VolumeObserver : Runnable {
 
     var isListening = false
 
-    lateinit var am: AudioManager
+    var am: AudioManager? = null
     val handler = Handler(Looper.getMainLooper())
     val listenerType = listOf(
         AudioManager.STREAM_SYSTEM,
@@ -75,7 +75,7 @@ object VolumeObserver : Runnable {
 
     fun _getValue(type: Int = AudioManager.STREAM_MUSIC): StreamValue {
         //val max = am.getStreamMaxVolume(type)
-        val value = am.getStreamVolume(type)
+        val value = am?.getStreamVolume(type) ?: 0
         return StreamValue(type, value)
     }
 

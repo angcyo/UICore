@@ -37,7 +37,8 @@ object UrlParse {
         return queryMap
     }
 
-    /**除url之外的参数进行解析*/
+    /**除url之外的参数进行解析
+     * &xxx=xxx&xxx=xxx*/
     fun getUrlQueryParams(
         query: String?,
         queryMap: MutableMap<String, Any> = LinkedHashMap()

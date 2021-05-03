@@ -18,6 +18,9 @@ data class TaskBean(
     /**表单请求*/
     var form: FormBean? = null,
 
+    /**是否初始化了*/
+    var _init: Boolean = false,
+
     //<editor-fold desc="配置信息">
 
     /**任务uuid*/
