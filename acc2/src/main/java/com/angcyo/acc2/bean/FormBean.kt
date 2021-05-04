@@ -1,6 +1,7 @@
 package com.angcyo.acc2.bean
 
 import com.angcyo.acc2.action.Action
+import com.angcyo.acc2.action.InputAction
 import com.angcyo.library.utils.UrlParse
 
 /**
@@ -74,7 +75,12 @@ fun FormBean.handleParams(
         //add key
         params?.split(Action.PACKAGE_SPLIT)?.forEach { key ->
             if (key.isNotEmpty()) {
-                put(key, taskBean.getTextList(key)?.firstOrNull())
+                //key
+                if (key == Action.LAST_INPUT) {
+                    put(key, InputAction.lastInputText)
+                } else {
+                    put(key, taskBean.getTextList(key)?.firstOrNull())
+                }
             }
         }
 
