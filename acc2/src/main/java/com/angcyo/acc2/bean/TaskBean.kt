@@ -154,45 +154,51 @@ data class TaskBean(
 /**初始化配置*/
 fun TaskBean.initConfig() {
 
-    actionList?.let {
+    val list = mutableListOf(actionList, backActionList)
 
-        //激活指定的ActionBean
-        enableAction?.split(Action.PACKAGE_SPLIT)?.forEach { str ->
-            if (str.isNotEmpty()) {
-                str.toLongOrNull()
-                    ?.let { id -> findActionById(id).forEach { it.enable = true } }
-                findFirstActionByGroup(str)?.let { it.enable = true }
+    for (l in list) {
+        l?.let {
+
+            //激活指定的ActionBean
+            enableAction?.split(Action.PACKAGE_SPLIT)?.forEach { str ->
+                if (str.isNotEmpty()) {
+                    str.toLongOrNull()
+                        ?.let { id -> findActionById(id, l).forEach { it.enable = true } }
+                    findFirstActionByGroup(str, l)?.let { it.enable = true }
+                }
+            }
+
+            //随机激活指定的ActionBean
+            randomEnableAction?.split(Action.PACKAGE_SPLIT)?.forEach { str ->
+                if (str.isNotEmpty()) {
+                    str.toLongOrNull()
+                        ?.let { id -> findActionById(id, l).forEach { it.randomEnable = true } }
+                    findFirstActionByGroup(str, l)?.let { it.randomEnable = true }
+                }
+            }
+
+            //禁用指定的ActionBean
+            disableAction?.split(Action.PACKAGE_SPLIT)?.forEach { str ->
+                if (str.isNotEmpty()) {
+                    str.toLongOrNull()
+                        ?.let { id -> findActionById(id, l).forEach { it.enable = false } }
+                    findFirstActionByGroup(str, l)?.let { it.enable = false }
+                }
             }
         }
-
-        //随机激活指定的ActionBean
-        randomEnableAction?.split(Action.PACKAGE_SPLIT)?.forEach { str ->
-            if (str.isNotEmpty()) {
-                str.toLongOrNull()
-                    ?.let { id -> findActionById(id).forEach { it.randomEnable = true } }
-                findFirstActionByGroup(str)?.let { it.randomEnable = true }
-            }
-        }
-
-        //禁用指定的ActionBean
-        disableAction?.split(Action.PACKAGE_SPLIT)?.forEach { str ->
-            if (str.isNotEmpty()) {
-                str.toLongOrNull()
-                    ?.let { id -> findActionById(id).forEach { it.enable = false } }
-                findFirstActionByGroup(str)?.let { it.enable = false }
-            }
-        }
-
     }
 }
 
 /**通过[group]查找分组中的第一个[ActionBean]*/
-fun TaskBean.findFirstActionByGroup(group: String? /*不支持分割*/): ActionBean? {
+fun TaskBean.findFirstActionByGroup(
+    group: String? /*不支持分割*/,
+    list: List<ActionBean>? = actionList
+): ActionBean? {
     if (group.isNullOrEmpty()) {
         return null
     }
     var result: ActionBean? = null
-    actionList?.apply {
+    list?.apply {
         for (action in this) {
             if (action.group?.split(Action.PACKAGE_SPLIT)?.contains(group) == true) {
                 result = action
@@ -203,9 +209,12 @@ fun TaskBean.findFirstActionByGroup(group: String? /*不支持分割*/): ActionB
     return result
 }
 
-fun TaskBean.findActionById(actionId: Long): List<ActionBean> {
+fun TaskBean.findActionById(
+    actionId: Long,
+    list: List<ActionBean>? = actionList
+): List<ActionBean> {
     val result = mutableListOf<ActionBean>()
-    actionList?.apply {
+    list?.apply {
         for (action in this) {
             if (action.actionId == actionId) {
                 result.add(action)
