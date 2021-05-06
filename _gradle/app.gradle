@@ -178,9 +178,9 @@ android {
 
     def apkFolder = new File(project.rootDir.absolutePath + "/.apk")//rootProject.file("/.apk")
     apkFolder.mkdirs()
-    println "\napp.gradle→APK输出目录:${apkFolder.absolutePath}"
+    println "\napp.gradle ${gradle.gradleVersion}→APK输出目录:${apkFolder.absolutePath}"
 
-    if (gradle.gradleVersion.startsWith("6.5")) {
+    if (gradle.gradleVersion.startsWith("6.5") || gradle.gradleVersion.startsWith("6.7")) {
         /*Gradle4.1 以上的方法*/
         applicationVariants.all { variant ->
             if (variant.buildType.name != "debug") {
