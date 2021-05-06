@@ -81,6 +81,9 @@ afterEvaluate {
 
             def outputPath = "${project.rootDir.absolutePath}/${output}/"
 
+            //output
+            println outputPath
+
             file(outputPath).mkdirs()
             //不同的风味, 收集到不同的文件夹
             outputPath = "${outputPath}/${buildFlavors}/"
