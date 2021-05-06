@@ -35,6 +35,14 @@ class AccSchedule(val accControl: AccControl) {
     /**记录运行期间, 程序包名的变化*/
     val packageTrackList = mutableListOf<String>()
 
+    /**记录输入过的文本内容
+     *
+     * 可以通过key[com.angcyo.acc2.action.Action.LAST_INPUT]引用到
+     *
+     * [com.angcyo.acc2.parse.TextParse.parse]
+     * */
+    val inputTextList = mutableListOf<String?>()
+
     //<editor-fold desc="操作">
 
     /**获取总共运行时长*/
@@ -216,6 +224,7 @@ class AccSchedule(val accControl: AccControl) {
         actionTime.clear()
         actionResultMap.clear()
         packageTrackList.clear()
+        inputTextList.clear()
         _endTime = 0
         _currentIndex = -1
         _scheduleActionBean = null
@@ -224,7 +233,6 @@ class AccSchedule(val accControl: AccControl) {
         _latsRunActionTime = 0L
         _lastRunActionHash = 0
         runActionBeanStack.clear()
-        InputAction.lastInputText = null
         _isLeaveWindow = false
         accParse.onScheduleStart(this)
     }

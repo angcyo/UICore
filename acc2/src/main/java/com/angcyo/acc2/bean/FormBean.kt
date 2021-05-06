@@ -1,7 +1,7 @@
 package com.angcyo.acc2.bean
 
 import com.angcyo.acc2.action.Action
-import com.angcyo.acc2.action.InputAction
+import com.angcyo.acc2.control.AccControl
 import com.angcyo.library.utils.UrlParse
 
 /**
@@ -62,6 +62,7 @@ data class FormBean(
 
 /**表单参数收集*/
 fun FormBean.handleParams(
+    control: AccControl,
     taskBean: TaskBean,
     configParams: (formBean: FormBean, params: HashMap<String, Any?>) -> Unit = { _, _ -> }
 ): HashMap<String, Any?> {
@@ -77,7 +78,7 @@ fun FormBean.handleParams(
             if (key.isNotEmpty()) {
                 //key
                 if (key == Action.LAST_INPUT) {
-                    put(key, InputAction.lastInputText)
+                    put(key, control.accSchedule.inputTextList.lastOrNull())
                 } else {
                     put(key, taskBean.getTextList(key)?.firstOrNull())
                 }

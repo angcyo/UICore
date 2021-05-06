@@ -17,22 +17,8 @@ import com.angcyo.library.ex.*
  */
 class InputAction : BaseAction() {
 
-    /**记录文本key输入的次数*/
+    /**记录文本key输入的次数, 用于执行[com.angcyo.acc2.action.Action.ORDER]*/
     val inputCountMap = hashMapOf<String, Int>()
-
-    companion object {
-
-        /**
-         * 可以通过key[com.angcyo.acc2.action.Action.LAST_INPUT]引用到
-         *
-         * [com.angcyo.acc2.parse.TextParse.parse]
-         * */
-        var lastInputText: String? = null
-    }
-
-    init {
-        lastInputText = null
-    }
 
     override fun interceptAction(control: AccControl, action: String): Boolean {
         return action.cmd(Action.ACTION_INPUT) || action.cmd(Action.ACTION_SET_TEXT)
@@ -113,7 +99,8 @@ class InputAction : BaseAction() {
             }
         }
 
-        lastInputText = text
+        //save
+        control.accSchedule.inputTextList.add(text)
 
         nodeList?.forEach { node ->
             val result = node.setNodeText(text)

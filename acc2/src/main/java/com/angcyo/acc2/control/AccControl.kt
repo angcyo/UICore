@@ -161,7 +161,7 @@ class AccControl : Runnable {
         }
 
         //状态改变
-        log("控制器状态改变:$controlStateStr :${accSchedule.durationStr()}")
+        log("控制器状态改变:${old.toControlStateStr()} -> $controlStateStr :${accSchedule.durationStr()}")
 
         return true
     }
@@ -237,6 +237,7 @@ class AccControl : Runnable {
             append("[${_controlState.toControlStateStr()}]:$finishReason ")
             appendLine(accSchedule.durationStr())
             appendLine(accSchedule.packageTrackList)
+            appendLine(accSchedule.inputTextList)
             appendLine(_taskBean?.textMap)
             appendLine(_taskBean?.textListMap)
         })

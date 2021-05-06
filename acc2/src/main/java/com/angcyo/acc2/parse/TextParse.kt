@@ -111,7 +111,7 @@ class TextParse(val accParse: AccParse) : BaseParse() {
                         }
                     }
                     Action.LAST_INPUT -> {
-                        val text = InputAction.lastInputText
+                        val text = accControl.accSchedule.inputTextList.lastOrNull()
                         if (text != null) {
                             keyResult.add(text)
                             if (replace) {
