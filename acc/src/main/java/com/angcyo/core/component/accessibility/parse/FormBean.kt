@@ -132,7 +132,7 @@ fun FormBean.request(
 }
 
 /**错误信息的赋值等*/
-fun HashMap<String, Any>.bindErrorCode(error: ActionException?) {
+fun HashMap<String, Any?>.bindErrorCode(error: ActionException?) {
     this[FormBean.KEY_CODE] = when (error) {
         null -> 200 //本地执行成功
         is ActionInterruptedNextException -> 301 //本地执行中断, 但是需要继续任务

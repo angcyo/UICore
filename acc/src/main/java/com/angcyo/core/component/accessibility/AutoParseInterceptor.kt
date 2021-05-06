@@ -55,7 +55,7 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
     }
 
     /**请求表单时, 配置表单数据的回调*/
-    var onConfigParams: ((params: HashMap<String, Any>) -> Unit)? = null
+    var onConfigParams: ((params: HashMap<String, Any?>) -> Unit)? = null
 
     /**离开界面多久后, 重启. 毫秒*/
     var leaveRestartTime: Long = 10 * 1000
@@ -324,7 +324,7 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
     }
 
     /**表单参数*/
-    fun handleFormParams(params: HashMap<String, Any>) {
+    fun handleFormParams(params: HashMap<String, Any?>) {
         //将action获取到的所有文本, 打包进参数
         taskBean.getTextResultMap?.forEach { entry ->
             params[entry.key] = "${entry.value.firstOrNull()}"
