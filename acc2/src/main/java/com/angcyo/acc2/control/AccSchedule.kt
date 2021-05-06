@@ -5,6 +5,7 @@ import com.angcyo.acc2.bean.ActionBean
 import com.angcyo.acc2.bean.findFirstActionByGroup
 import com.angcyo.acc2.core.AccNodeLog
 import com.angcyo.acc2.parse.AccParse
+import com.angcyo.acc2.parse.ConditionParse
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.library.L
 import com.angcyo.library.component.ThreadExecutor
@@ -166,7 +167,8 @@ class AccSchedule(val accControl: AccControl) {
     }
 
     /**指定分组中的第一个[ActionBean]是否激活
-     * 多个分组中, 有一个满足即可
+     * 默认有多个分组时, 必须全部满足才可以. (请注意分组的顺序)
+     * 可以通过包含[ConditionParse.OR],采用或者的关系
      * [actionBean] 当前的[ActionBean]
      *
      * 返回[first] 是否激活
@@ -180,21 +182,59 @@ class AccSchedule(val accControl: AccControl) {
         if (group.isNullOrEmpty()) {
             return true to null
         }
-        var result: Pair<Boolean, String?> = false to null
-        val groupList = group.split(Action.PACKAGE_SPLIT)
-        for (g in groupList) {
-            val firstActionByGroup = findFirstActionByGroup(g)
-            result = if (firstActionByGroup != null && firstActionByGroup == actionBean) {
-                //第一个就是自身
-                isActionBeanEnable(actionBean, isPrimaryAction)
-            } else {
-                (firstActionByGroup?.enable == true)
-            } to g
-            if (result.first) {
-                break
+
+        if (group.contains(ConditionParse.OR)) {
+            //或者
+            var result: Pair<Boolean, String?> = false to null
+            val groupList = group.split(Action.PACKAGE_SPLIT)
+            for (g in groupList) {
+                if (g.isEmpty() || g == ConditionParse.OR) {
+                    continue
+                }
+
+                val firstActionByGroup = findFirstActionByGroup(g)
+
+                result = if (firstActionByGroup != null && firstActionByGroup == actionBean) {
+                    //第一个就是自身
+                    isActionBeanEnable(actionBean, isPrimaryAction)
+                } else {
+                    (firstActionByGroup?.enable == true)
+                } to g
+
+                if (result.first) {
+                    break
+                }
             }
+            return result
+        } else {
+            //全部匹配
+            var allMatch = true
+            var matchGroup: String? = null
+
+            val groupList = group.split(Action.PACKAGE_SPLIT)
+            for (g in groupList) {
+                if (g.isEmpty() || g == ConditionParse.OR) {
+                    continue
+                }
+
+                //分组中的第一个ActionBean
+                val firstActionByGroup = findFirstActionByGroup(g)
+
+                allMatch = if (firstActionByGroup != null && firstActionByGroup == actionBean) {
+                    //第一个就是自身
+                    isActionBeanEnable(actionBean, isPrimaryAction)
+                } else {
+                    (firstActionByGroup?.enable == true)
+                }
+                matchGroup = g
+
+                if (!allMatch) {
+                    break
+                }
+            }
+
+            return allMatch to matchGroup
         }
-        return result
     }
 
     /**当前[actionBean]是否在分组中的第一个*/

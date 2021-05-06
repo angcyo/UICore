@@ -23,6 +23,11 @@ import kotlin.random.Random
  */
 class ConditionParse(val accParse: AccParse) : BaseParse() {
 
+    companion object {
+        /**条件是或者的关系*/
+        val OR = "!or!"
+    }
+
     /**判断给定的条件, 是否有满足
      * [conditionList] 一组条件, 只要满足其中一个, 就会返回true
      * @return true 表示有条件满足*/
@@ -350,7 +355,7 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
             return result
         }
 
-        val groups = value.split("!or!")
+        val groups = value.split(OR)
 
         var result = false
         for (group in groups) {
@@ -399,7 +404,7 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
             return result
         }
 
-        val groups = value.split("!or!")
+        val groups = value.split(OR)
 
         var result = false
         for (group in groups) {
