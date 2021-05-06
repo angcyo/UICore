@@ -21,9 +21,9 @@ import java.nio.charset.Charset
  */
 
 /**读取ResponseBody中的字符串*/
-fun ResponseBody?.readString(urlDecode: Boolean = true, charsetName: String = "UTF-8"): String {
+fun ResponseBody?.readString(urlDecode: Boolean = false, charsetName: String = "UTF-8"): String? {
     if (this == null) {
-        return ""
+        return null
     }
 
 //    return Buffer().use { buffer ->
