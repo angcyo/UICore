@@ -490,7 +490,7 @@ class AccSchedule(val accControl: AccControl) {
         } catch (e: Exception) {
             L.e("异常:$e")
             e.printStackTrace()
-            accControl.log("运行失败[${actionBean.title}]:$e", isPrimaryAction)
+            accControl.log("scheduleAction运行失败[${actionBean.actionLog()}]:$e", isPrimaryAction)
             accControl.log(e.stackTraceToString(), isPrimaryAction)
         }
 
