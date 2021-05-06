@@ -120,7 +120,7 @@ class AccControl : Runnable {
     }
 
     fun _end(reason: String?, state: Int, error: Throwable? = null) {
-        if (_controlState == state) {
+        if (isControlEnd || _controlState == state) {
             L.i("控制器已经[${state.toControlStateStr()}]")
             return
         }
@@ -232,15 +232,44 @@ class AccControl : Runnable {
             }
         }
         //end...
-        log(buildString {
+        log(controlToLog())
+    }
+
+    fun controlToLog(): String = buildString {
+
+        if (_controlState != CONTROL_STATE_NORMAL) {
             append("run控制器结束")
             append("[${_controlState.toControlStateStr()}]:$finishReason ")
             appendLine(accSchedule.durationStr())
-            appendLine(accSchedule.packageTrackList)
-            appendLine(accSchedule.inputTextList)
-            appendLine(_taskBean?.textMap)
-            appendLine(_taskBean?.textListMap)
-        })
+        }
+
+        accSchedule.packageTrackList.apply {
+            if (isNotEmpty()) {
+                append("track:")
+                appendLine(this)
+            }
+        }
+
+        accSchedule.inputTextList.apply {
+            if (isNotEmpty()) {
+                append("input:")
+                appendLine(this)
+            }
+        }
+
+        _taskBean?.textMap?.apply {
+            if (isNotEmpty()) {
+                append("text:")
+                appendLine(this)
+            }
+        }
+
+        _taskBean?.textListMap?.apply {
+            if (isNotEmpty()) {
+                append("textList:")
+                appendLine(this)
+            }
+        }
     }
 
     //</editor-fold desc="线程">

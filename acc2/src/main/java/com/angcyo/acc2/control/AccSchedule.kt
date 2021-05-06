@@ -1,7 +1,6 @@
 package com.angcyo.acc2.control
 
 import com.angcyo.acc2.action.Action
-import com.angcyo.acc2.action.InputAction
 import com.angcyo.acc2.bean.ActionBean
 import com.angcyo.acc2.bean.findFirstActionByGroup
 import com.angcyo.acc2.core.AccNodeLog
@@ -54,9 +53,13 @@ class AccSchedule(val accControl: AccControl) {
         _endTime - _startTime
     }
 
-    fun durationStr() = if (_endTime <= 0) {
-        "已运行 ${(nowTime() - _startTime).toElapsedTime(pattern = intArrayOf(-1, 1, 1))}"
-    } else "共运行 ${duration().toElapsedTime(pattern = intArrayOf(-1, 1, 1))}"
+    fun durationStr() = when {
+        _startTime <= 0 -> "未开始"
+        _endTime <= 0 -> {
+            "已运行 ${(nowTime() - _startTime).toElapsedTime(pattern = intArrayOf(-1, 1, 1))}"
+        }
+        else -> "共运行 ${duration().toElapsedTime(pattern = intArrayOf(-1, 1, 1))}"
+    }
 
     /**累加运行次数*/
     fun runCountIncrement(actionId: Long) {
@@ -138,6 +141,14 @@ class AccSchedule(val accControl: AccControl) {
         /*Thread(target, this.simpleHash()).apply {
             start()
         }*/
+    }
+
+    /**记录切换的应用程序*/
+    fun addPackageTrack(packageName: String) {
+        val last = packageTrackList.lastOrNull()
+        if (last != packageName) {
+            packageTrackList.add(packageName)
+        }
     }
 
     fun indexTip() = "$_currentIndex/${actionSize()}"
@@ -437,20 +448,13 @@ class AccSchedule(val accControl: AccControl) {
 
                 //action处理
                 if (!skipActionRun) {
-                    if (isPrimaryAction) {
-                        accControl.log(
-                            "[主线]开始执行(${indexTip()})[${actionBean.actionLog()}]:${actionBean}",
-                            true
-                        )
-
-                        //执行统计
-                        runCountIncrement(actionBean.actionId)
-                    } else {
-                        accControl.log(
-                            "执行[${actionBean.actionLog()}]:${actionBean}",
-                            false
-                        )
-                    }
+                    val pLog = if (isPrimaryAction) "[主线]" else ""
+                    accControl.log(
+                        "${pLog}开始执行(${indexTip()})[${actionBean.actionLog()}]:${actionBean}",
+                        isPrimaryAction
+                    )
+                    //执行统计
+                    runCountIncrement(actionBean.actionId)
 
                     //run
                     result = runAction(controlContext.copy {
@@ -554,6 +558,7 @@ class AccSchedule(val accControl: AccControl) {
      * [isPrimaryAction] 日志打印使用*/
     fun isActionBeanEnable(action: ActionBean?, isPrimaryAction: Boolean): Boolean {
         if (action != null) {
+            val pLog = if (isPrimaryAction) "[主线]" else ""
             //激活判断
             if (action.enable || action._enable != null) {
                 var factor = 0
@@ -576,14 +581,17 @@ class AccSchedule(val accControl: AccControl) {
                         )
                     }
                     accControl.log(
-                        "${action.actionLog()}随机[${factor}][${action.randomAmount}]激活:[${action.enable}]",
+                        "${pLog}${action.actionLog()}随机[${factor}][${action.randomAmount}]激活:[${action.enable}]",
                         isPrimaryAction
                     )
                     return action.enable
                 } else {
                     if (action.conditionList != null) {
                         if (!accParse.conditionParse.parse(action.conditionList).success) {
-                            accControl.log("${action.actionLog()}未满足激活条件,跳过.", isPrimaryAction)
+                            accControl.log(
+                                "${pLog}${action.actionLog()}未满足激活条件,跳过.",
+                                isPrimaryAction
+                            )
                             return false
                         }
                     }
@@ -595,17 +603,17 @@ class AccSchedule(val accControl: AccControl) {
                 return if (conditionResult.success) {
                     action.enable = true
                     accControl.log(
-                        "${action.actionLog()}自动激活成功:[${conditionResult.conditionBean}]",
+                        "${pLog}${action.actionLog()}自动激活成功:[${conditionResult.conditionBean}]",
                         isPrimaryAction
                     )
                     true
                 } else {
-                    accControl.log("${action.actionLog()}自动激活失败,跳过.", isPrimaryAction)
+                    accControl.log("${pLog}${action.actionLog()}自动激活失败,跳过.", isPrimaryAction)
                     false
                 }
             } else {
                 //未激活的
-                accControl.log("${action.actionLog()}未激活,跳过.", isPrimaryAction)
+                accControl.log("${pLog}${action.actionLog()}未激活,跳过.", isPrimaryAction)
                 return false
             }
         }
@@ -713,6 +721,14 @@ class AccSchedule(val accControl: AccControl) {
         if (!accControl.isControlRunning) {
             return handleActionResult
         }
+
+        if (isPrimaryAction) {
+            //窗口根节点集合, 记录窗口切换轨迹
+            accParse.accControl.accService()?.rootInActiveWindow?.packageName?.let {
+                addPackageTrack(it.str())
+            }
+        }
+
         if (actionBean.async == true && !threadName().startsWith(AccControl.ACC_MAIN_THREAD)) {
             //异步执行
             async {
@@ -843,14 +859,6 @@ class AccSchedule(val accControl: AccControl) {
             //切换了action
             if (isPrimaryAction || actionBean.actionId != -1L) {
                 _latsRunActionTime = nowTime()
-            }
-            if (isPrimaryAction) {
-                //窗口根节点集合
-                val findParse = accParse.findParse
-                val rootNodeList = findParse.findRootNode(actionBean.window)
-                rootNodeList.lastOrNull()?.packageName?.let {
-                    packageTrackList.add(it.str())
-                }
             }
         }
 
