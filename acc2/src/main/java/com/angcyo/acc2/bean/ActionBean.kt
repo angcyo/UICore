@@ -106,7 +106,8 @@ data class ActionBean(
      * 如果处理成功了, 会中断原本需要执行的[ActionBean]*/
     var before: ActionBean? = null,
 
-    /**在[ActionBean]执行之后, 需要执行的[ActionBean]*/
+    /**在[ActionBean]执行之后, 需要执行的[ActionBean]
+     * 强制执行成功时, 可以完成当前的[ActionBean]*/
     var after: ActionBean? = null,
 
     /**当前[ActionBean]执行时, 离开了主程序, 需要执行的[ActionBean]

@@ -512,12 +512,19 @@ class AccSchedule(val accControl: AccControl) {
                     val afterAction = actionBean.after
                     if (afterAction != null) {
                         accControl.log("后置执行:${afterAction}", isPrimaryAction)
-                        runAction(controlContext.copy {
+
+                        val runActionResult = runAction(controlContext.copy {
                             action = afterAction
                         }, afterAction, null, false)
+
+                        if (isPrimaryAction) {
+                            if (runActionResult.forceSuccess) {
+                                //强制成功, 跳过当前的actionBean
+                                next()
+                            }
+                        }
                     }
                 }
-
             }
 
             //Task后置处理
