@@ -94,6 +94,24 @@ class FilterParse(val accParse: AccParse) : BaseParse() {
             }
         }
 
+        //过滤4.x: clsList
+        if (filterBean.clsList != null) {
+            after = if (removeList.isEmpty()) after else after.filter { !removeList.contains(it) }
+            after.forEach { node ->
+                var match = false
+                for (cls in filterBean.clsList!!) {
+                    if (accParse.findParse.matchNodeClass(node, cls)) {
+                        match = true
+                        break
+                    }
+                }
+                if (!match) {
+                    //不符合矩形条件
+                    removeList.add(node)
+                }
+            }
+        }
+
         //过滤5: ignoreTextList
         if (filterBean.ignoreTextList != null) {
             after = if (removeList.isEmpty()) after else after.filter { !removeList.contains(it) }
@@ -115,13 +133,45 @@ class FilterParse(val accParse: AccParse) : BaseParse() {
             }
         }
 
+        //过滤5.x: ignoreNodeTextList
+        if (filterBean.ignoreNodeTextList != null) {
+            after = if (removeList.isEmpty()) after else after.filter { !removeList.contains(it) }
+            after.forEach { node ->
+                var ignore = false
+                for (ignoreText in filterBean.ignoreNodeTextList!!) {
+                    val textList = accParse.textParse.parse(ignoreText)
+
+                    for (text in textList) {
+                        val nodeList = accParse.findParse.findNodeByText(listOf(node), text)
+                        if (nodeList.isNotEmpty()) {
+                            //通过文本找到了节点, 则忽略node
+                            ignore = true
+                        }
+
+                        if (ignore) {
+                            break
+                        }
+                    }
+
+                    if (ignore) {
+                        break
+                    }
+                }
+
+                if (ignore) {
+                    //忽略元素
+                    removeList.add(node)
+                }
+            }
+        }
+
         //过滤6: haveTextList
         if (filterBean.haveTextList != null) {
             after = if (removeList.isEmpty()) after else after.filter { !removeList.contains(it) }
             after.forEach { node ->
                 var ignore = false
-                for (text in filterBean.haveTextList!!) {
-                    val textList = accParse.textParse.parse(text)
+                for (haveText in filterBean.haveTextList!!) {
+                    val textList = accParse.textParse.parse(haveText)
                     if (!nodeHaveText(node, textList)) {
                         ignore = true
                     }
@@ -129,6 +179,38 @@ class FilterParse(val accParse: AccParse) : BaseParse() {
                         break
                     }
                 }
+                if (ignore) {
+                    //忽略元素
+                    removeList.add(node)
+                }
+            }
+        }
+
+        //过滤6.x: haveNodeTextList
+        if (filterBean.haveNodeTextList != null) {
+            after = if (removeList.isEmpty()) after else after.filter { !removeList.contains(it) }
+            after.forEach { node ->
+                var ignore = true
+                for (haveText in filterBean.haveNodeTextList!!) {
+                    val textList = accParse.textParse.parse(haveText)
+
+                    for (text in textList) {
+                        val nodeList = accParse.findParse.findNodeByText(listOf(node), text)
+                        if (nodeList.isNotEmpty()) {
+                            //通过文本找到了节点, 则不忽略node
+                            ignore = false
+                        }
+
+                        if (!ignore) {
+                            break
+                        }
+                    }
+
+                    if (!ignore) {
+                        break
+                    }
+                }
+
                 if (ignore) {
                     //忽略元素
                     removeList.add(node)

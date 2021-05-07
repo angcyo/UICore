@@ -12,7 +12,7 @@ import com.angcyo.library.ex.getChildOrNull
  */
 
 /**枚举所有子节点[AccessibilityNodeInfoCompat]
- * [each] 返回是否中断查询
+ * [each] 返回是否中断查询, 返回true中断each, 返回false继续
  * [depth] 递归深度, 从1开始
  * */
 fun AccessibilityNodeInfoCompat.eachChildDepth(each: (node: AccessibilityNodeInfoCompat, depth: Int) -> Boolean) {

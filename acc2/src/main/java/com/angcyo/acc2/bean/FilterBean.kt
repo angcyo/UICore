@@ -11,6 +11,7 @@ data class FilterBean(
 
     /**获取一组元素中指定索引位置的元素
      * 支持范围[0~-1]第一个到倒数第一个
+     * [1 3 -1]
      * 支持文本变量
      * 支持随机 [com.angcyo.acc2.action.Action.RANDOM]
      * 支持[com.angcyo.acc2.action.Action.DEF]
@@ -18,17 +19,23 @@ data class FilterBean(
      * 匹配顺序:1*/
     var index: String? = null,
 
-    /**如果元素包含指定的元素, 集合中满足一项即可.
+    /**如果元素包含指定的元素, 则不过滤. 不包含则过滤.
+     * 集合中满足一项即可.
      * 匹配顺序:2*/
     var containList: List<FindBean>? = null,
 
-    /**如果元素不包含指定的元素, 集合中满足一项即可.
+    /**如果元素不包含指定的元素, 则不过滤. 包含则过滤.
+     * 集合中满足一项即可.
      * 匹配顺序:3*/
     var notContainList: List<FindBean>? = null,
 
-    /**过滤一下只满足矩形的条件的元素 , 集合中满足一项即可.
+    /**过滤一下只满足矩形条件的元素 , 集合中满足一项即可.
      * 匹配顺序:4*/
     var rectList: List<String>? = null,
+
+    /**过滤一下只满足类名条件的元素 , 集合中满足一项即可.
+     * 匹配顺序:4.x*/
+    var clsList: List<String>? = null,
 
     /**如果[androidx.core.view.accessibility.AccessibilityNodeInfoCompat]节点的文本, 在此列表中.
      * 则忽略此节点
@@ -37,12 +44,26 @@ data class FilterBean(
      * */
     var ignoreTextList: List<String>? = null,
 
+    /**如果在当前节点中, 能找到列表中指定文本的节点, 则忽略此节点. 集合中满足一项即可.
+     * 节点不能有指定文本, 有就过滤
+     * 支持文本变量, 支持文本使用[com.angcyo.acc2.action.Action.TEXT_SPLIT]分割
+     * 匹配顺序:5.x
+     * */
+    var ignoreNodeTextList: List<String>? = null,
+
     /**如果[androidx.core.view.accessibility.AccessibilityNodeInfoCompat]节点的文本, 不在此列表中.
      * 则忽略此节点
      * 支持文本变量, 支持文本使用[com.angcyo.acc2.action.Action.TEXT_SPLIT]分割
      * 匹配顺序:6
      * */
     var haveTextList: List<String>? = null,
+
+    /**如果在当前节点中, 不能找到列表中任意文本的节点, 则忽略此节点. 集合中满足一项即可.
+     * 节点必须有指定文本, 没有就过滤
+     * 支持文本变量, 支持文本使用[com.angcyo.acc2.action.Action.TEXT_SPLIT]分割
+     * 匹配顺序:6.x
+     * */
+    var haveNodeTextList: List<String>? = null,
 
     /**节点直系child数量的条件判断
      * 格式如下:

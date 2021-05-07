@@ -237,6 +237,18 @@ class FindParse(val accParse: AccParse) : BaseParse() {
             )
         }
 
+        //each
+        val eachFindList = findBean.each
+        if (eachFindList != null) {
+            val eachFindNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
+            findNodeList.forEach { node ->
+                parse(controlContext.copy(), listOf(node), eachFindList).nodeList?.let {
+                    eachFindNodeList.addAll(it)
+                }
+            }
+            findNodeList.resetAll(eachFindNodeList)
+        }
+
         //临时使用这些节点 use
         if (findBean.use != null) {
             accParse.handleParse.parse(controlContext, findNodeList, findBean.use).apply {
@@ -501,6 +513,26 @@ class FindParse(val accParse: AccParse) : BaseParse() {
                     if (checkFindLimit(result, findBean, depth)) {
                         return@eachChildDepth true
                     }
+                }
+                false
+            }
+        }
+        return result
+    }
+
+    /**查找符合文本的节点*/
+    fun findNodeByText(
+        originList: List<AccessibilityNodeInfoCompat>,
+        text: String?
+    ): List<AccessibilityNodeInfoCompat> {
+        val result = mutableListOf<AccessibilityNodeInfoCompat>()
+        if (text == null) {
+            return result
+        }
+        originList.forEach { rootNode ->
+            rootNode.eachChildDepth { node, _ ->
+                if (matchNodeText(node, text)) {
+                    result.add(node)
                 }
                 false
             }

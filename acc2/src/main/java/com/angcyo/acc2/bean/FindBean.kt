@@ -35,20 +35,20 @@ data class FindBean(
      * 匹配顺序:1
      * 特殊变量[com.angcyo.acc2.action.Action.APP_NAME],任务包名对应的程序名
      * */
-    var textList: List<String>? = null,
+    var textList: List<String?>? = null,
 
     /**单独存在时, 通过类名获取节点, 所有类名都命中节点时才有效.
      * 同时存在时, 会进行一一对应满足匹配
      * 支持正则
      * 匹配顺序:2
      * */
-    var clsList: List<String>? = null,
+    var clsList: List<String?>? = null,
 
     /**单独存在时, 通过id获取节点, 所有id都命中节点时才有效.
      * 同时存在时, 会进行一一对应满足匹配
      * 匹配顺序:3
      * */
-    var idList: List<String>? = null,
+    var idList: List<String?>? = null,
 
     /**单独存在时, 通过节点矩形获取节点, 所有矩形都命中节点时才有效.
      * 同时存在时, 会进行一一对应满足匹配
@@ -58,7 +58,7 @@ data class FindBean(
      * [l:>1.02r] 强制使用比例
      * 匹配顺序:4
      * */
-    var rectList: List<String>? = null,
+    var rectList: List<String?>? = null,
 
     /**单独存在时, 通过节点状态获取节点, 所有状态都命中节点时才有效.
      * 同时存在时, 会进行一一对应满足匹配
@@ -78,7 +78,7 @@ data class FindBean(
      * [com.angcyo.acc2.action.Action.STATE_UNSELECTED]
      * 匹配顺序:5
      * */
-    var stateList: List<String>? = null,
+    var stateList: List<String?>? = null,
 
     //</editor-fold desc="选择器">
 
@@ -156,6 +156,9 @@ data class FindBean(
     //</editor-fold desc="过滤">
 
     //<editor-fold desc="后处理">
+
+    /**遍历上述找到的节点列表, 替换成[FindBean]找到的新节点*/
+    var each: List<FindBean>? = null,
 
     /**临时使用这些查询到的节点
      * 强制结束/强制成功会影响[com.angcyo.acc2.bean.CheckBean.handle]的流程处理
