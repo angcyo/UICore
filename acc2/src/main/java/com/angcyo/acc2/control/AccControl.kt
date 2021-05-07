@@ -162,9 +162,12 @@ class AccControl : Runnable {
 
         //状态改变
         log(buildString {
-            appendLine("控制器状态改变:${old.toControlStateStr()} -> $controlStateStr :${accSchedule.durationStr()}")
-            //app info
-            append("${app().getAppName()} ${app().packageName} ${getAppVersionName()} ${getAppVersionCode()}")
+            append("控制器状态改变:${old.toControlStateStr()} -> $controlStateStr :${accSchedule.durationStr()}")
+            if (newState == CONTROL_STATE_PAUSE) {
+                appendLine()
+                //app info
+                append(controlToLog())
+            }
         })
 
         return true
@@ -241,7 +244,7 @@ class AccControl : Runnable {
 
     fun controlToLog(): String = buildString {
 
-        if (_controlState != CONTROL_STATE_NORMAL) {
+        if (isControlEnd) {
             append("run控制器结束")
             append("[${_controlState.toControlStateStr()}]:$finishReason ")
             appendLine(accSchedule.durationStr())
