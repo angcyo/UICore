@@ -6,6 +6,8 @@ import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.library.ex.copy
 import com.angcyo.library.ex.subEnd
+import com.angcyo.library.ex.syncBack
+import com.angcyo.library.isMain
 
 /**
  *
@@ -29,7 +31,13 @@ class CopyAction : BaseAction() {
             control.accSchedule.accParse.textParse.parse(action.subEnd(Action.ARG_SPLIT))
                 .firstOrNull()
         if (!text.isNullOrEmpty()) {
-            success = text.copy() == true
+            if (isMain()) {
+                success = text.copy() == true
+            } else {
+                syncBack {
+                    success = text.copy() == true
+                }
+            }
         }
         control.log("复制文本[$text]:$success")
     }

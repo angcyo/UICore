@@ -13,6 +13,7 @@ import android.text.TextUtils
 import android.util.Base64
 import android.webkit.MimeTypeMap
 import androidx.annotation.ColorInt
+import androidx.annotation.UiThread
 import androidx.core.net.toUri
 import androidx.core.text.getSpans
 import com.angcyo.library.L
@@ -31,7 +32,9 @@ import java.util.regex.Pattern
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
-/**复制文本*/
+/**复制文本
+ * 需要在主线程执行*/
+@UiThread
 fun CharSequence.copy(context: Context = app()): Boolean {
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     try {

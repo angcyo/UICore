@@ -13,7 +13,7 @@ import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_STOP
 import com.angcyo.acc2.core.BaseAccService
 import com.angcyo.acc2.core.ControlException
 import com.angcyo.acc2.core.ControlInterruptException
-import com.angcyo.library.L
+import com.angcyo.library.*
 import com.angcyo.library.ex.des
 import com.angcyo.library.ex.newLineIndent
 import com.angcyo.library.ex.simpleHash
@@ -270,6 +270,9 @@ class AccControl : Runnable {
                 appendLine(this)
             }
         }
+
+        //app info
+        append("${app().getAppName()} ${app().packageName} ${getAppVersionName()} ${getAppVersionCode()}")
     }
 
     //</editor-fold desc="线程">
