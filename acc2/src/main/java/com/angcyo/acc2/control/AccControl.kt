@@ -161,7 +161,11 @@ class AccControl : Runnable {
         }
 
         //状态改变
-        log("控制器状态改变:${old.toControlStateStr()} -> $controlStateStr :${accSchedule.durationStr()}")
+        log(buildString {
+            appendLine("控制器状态改变:${old.toControlStateStr()} -> $controlStateStr :${accSchedule.durationStr()}")
+            //app info
+            append("${app().getAppName()} ${app().packageName} ${getAppVersionName()} ${getAppVersionCode()}")
+        })
 
         return true
     }
