@@ -85,8 +85,11 @@ object Action {
      * */
     const val ACTION_CLICK = "click"
 
-    const val ACTION_CLICK2 = "click2" //在当前节点区域双击(手势双击) [:0.1,0.1]指定目标区域
-    const val ACTION_CLICK3 = "click3" //在当前节点区域点击(手势点击) [:0.1,0.1]指定目标区域
+    /**在当前节点区域双击(手势双击) [:0.1,0.1]指定目标区域*/
+    const val ACTION_CLICK2 = "click2"
+
+    /**在当前节点区域点击(手势点击) [:0.1,0.1]指定目标区域*/
+    const val ACTION_CLICK3 = "click3"
 
     /**
      * 支持[NOT_PARENT]*/

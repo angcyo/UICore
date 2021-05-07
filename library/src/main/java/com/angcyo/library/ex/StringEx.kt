@@ -35,7 +35,7 @@ import java.util.regex.Pattern
 /**复制文本
  * 需要在主线程执行*/
 @UiThread
-fun CharSequence.copy(context: Context = app()): Boolean {
+fun CharSequence.copy(context: Context = app(), throwable: Boolean = false): Boolean {
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     try {
         return try {
@@ -53,6 +53,9 @@ fun CharSequence.copy(context: Context = app()): Boolean {
         }
     } catch (e: Exception) {
         e.printStackTrace()
+        if (throwable) {
+            throw  e
+        }
         return false
     }
 }

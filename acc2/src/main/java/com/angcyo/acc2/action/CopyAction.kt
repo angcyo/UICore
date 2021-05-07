@@ -27,18 +27,35 @@ class CopyAction : BaseAction() {
         nodeList: List<AccessibilityNodeInfoCompat>?,
         action: String
     ): HandleResult = handleResult {
-        val text =
-            control.accSchedule.accParse.textParse.parse(action.subEnd(Action.ARG_SPLIT))
-                .firstOrNull()
+
+        val textParse = control.accSchedule.accParse.textParse
+        val text = textParse.parse(action.subEnd(Action.ARG_SPLIT)).firstOrNull()
+
+        var throwable: Throwable? = null
+
         if (!text.isNullOrEmpty()) {
             if (isMain()) {
-                success = text.copy() == true
+                try {
+                    success = text.copy(throwable = true) == true
+                } catch (e: Exception) {
+                    throwable = e
+                }
             } else {
                 syncBack {
-                    success = text.copy() == true
+                    try {
+                        success = text.copy(throwable = true) == true
+                    } catch (e: Exception) {
+                        throwable = e
+                    }
                 }
             }
         }
-        control.log("复制文本[$text]:$success")
+
+        if (throwable == null) {
+            control.log("复制文本[$text]:$success")
+        } else {
+            control.log("复制文本异常[$text]")
+            throw throwable!!
+        }
     }
 }
