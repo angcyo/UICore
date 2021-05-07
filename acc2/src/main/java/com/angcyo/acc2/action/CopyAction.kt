@@ -6,7 +6,7 @@ import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.library.ex.copy
 import com.angcyo.library.ex.subEnd
-import com.angcyo.library.ex.syncBack
+import com.angcyo.library.ex.syncToMain
 import com.angcyo.library.isMain
 
 /**
@@ -41,7 +41,7 @@ class CopyAction : BaseAction() {
                     throwable = e
                 }
             } else {
-                syncBack {
+                syncToMain {
                     try {
                         success = text.copy(throwable = true) == true
                     } catch (e: Exception) {

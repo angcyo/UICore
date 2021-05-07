@@ -282,6 +282,18 @@ fun <R> syncBack(onMainAction: () -> R?): R? {
     }
 }
 
+/**子线程 同步主线程执行*/
+fun <R> syncToMain(onMainAction: () -> R?): R? {
+    val latch = CountDownLatch(1)
+    val result = AtomicReference<R>()
+    onMain {
+        result.set(onMainAction())
+        latch.countDown()
+    }
+    latch.await()
+    return result.get()
+}
+
 /**更新具有历史属性的[List]*/
 fun <T> List<T>?.updateHistoryList(value: T?): List<T> {
     val list = this
