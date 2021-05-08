@@ -416,6 +416,24 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         return result
     }
 
+    /**[InputAction]整个集合列表输入结束之后触发*/
+    fun onTextInputEnd(
+        handleBean: HandleBean,
+        controlContext: ControlContext,
+        nodeList: List<AccessibilityNodeInfoCompat>?,
+        action: String
+    ) {
+        if (handleBean.handleActionEndActionList != null) {
+            handleAction(
+                controlContext,
+                handleBean,
+                null,
+                nodeList,
+                handleBean.handleActionEndActionList
+            )
+        }
+    }
+
     override fun onScheduleStart(scheduled: AccSchedule) {
         super.onScheduleStart(scheduled)
         registerActionList.forEach {

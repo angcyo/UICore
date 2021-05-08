@@ -3,6 +3,7 @@ package com.angcyo.acc2.action
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.AccSchedule
+import com.angcyo.acc2.control.ControlContext
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.acc2.parse.arg
@@ -37,6 +38,7 @@ class InputAction : BaseAction() {
 
     override fun runAction(
         control: AccControl,
+        controlContext: ControlContext,
         nodeList: List<AccessibilityNodeInfoCompat>?,
         action: String
     ): HandleResult = handleResult {
@@ -46,6 +48,9 @@ class InputAction : BaseAction() {
 
         var textKey: String? = null
         var inputCount = 0
+
+        //文本列表的数量
+        var textListSize = -1
 
         //执行set text时的文本
         val text = if (arg.isNullOrEmpty()) {
@@ -75,6 +80,8 @@ class InputAction : BaseAction() {
                 false,
                 getHandleTextParamBeanByAction(getCmd(action))
             )
+
+            textListSize = inputTextList.size()
 
             //获取目标
             if (indexText.isNullOrEmpty()) {
@@ -107,8 +114,17 @@ class InputAction : BaseAction() {
             success = result || success
             if (success) {
                 if (!textKey.isNullOrEmpty()) {
+                    val count = inputCount + 1
                     //保存输入次数
-                    inputCountMap[textKey] = inputCount + 1
+                    inputCountMap[textKey] = count
+
+                    if (textListSize in 1 until count) {
+                        //文本输入结束后
+                        controlContext.handle?.let {
+                            val handleParse = control.accSchedule.accParse.handleParse
+                            handleParse.onTextInputEnd(it, controlContext, nodeList, action)
+                        }
+                    }
                 }
             }
             control.log("输入文本[$text]:$result\n${node.toLog()}")

@@ -3,6 +3,7 @@ package com.angcyo.acc2.control
 import com.angcyo.acc2.action.Action
 import com.angcyo.acc2.bean.ActionBean
 import com.angcyo.acc2.bean.findFirstActionByGroup
+import com.angcyo.acc2.bean.isLoopValid
 import com.angcyo.acc2.core.AccNodeLog
 import com.angcyo.acc2.parse.AccParse
 import com.angcyo.acc2.parse.ConditionParse
@@ -397,20 +398,24 @@ class AccSchedule(val accControl: AccControl) {
                     }
                 } else {
                     //loop处理
-                    if (!accParse.loopParse.parse(
-                            controlContext,
-                            null,
-                            nextActionBean,
-                            result,
-                            loop
-                        )
-                    ) {
-                        if (loop.exit == null) {
-                            //未被loop处理
-                            next()
-                        } else {
-                            accParse.handleParse.parse(controlContext, null, loop.exit)
+                    if (!loop.valid || (loop.valid && loop.isLoopValid(accParse))) {
+                        //如果不需要验证数据结构, 或者 需要验证但是验证通过了
+                        if (!accParse.loopParse.parse(
+                                controlContext,
+                                null,
+                                nextActionBean,
+                                result,
+                                loop
+                            )
+                        ) {
+                            if (loop.exit == null) {
+                                //未被loop处理
+                                next()
+                            } else {
+                                accParse.handleParse.parse(controlContext, null, loop.exit)
+                            }
                         }
+
                     }
                 }
             }

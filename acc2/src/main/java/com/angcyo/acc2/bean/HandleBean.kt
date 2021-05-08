@@ -1,5 +1,7 @@
 package com.angcyo.acc2.bean
 
+import com.angcyo.acc2.action.InputAction
+
 /**
  *
  * Email:angcyo@126.com
@@ -93,6 +95,10 @@ data class HandleBean(
 
     /**[actionList] [noActionList] 执行成功时, 需要执行的动作. 不受[ignore]影响*/
     var successActionList: List<String>? = null,
+
+    /**[InputAction]整个集合列表输入结束之后需要执行的操作.
+     * 返回结果不影响主流程, 部位跳转命令有效*/
+    var handleActionEndActionList: List<String>? = null,
 
     /**处理动作之后要处理的[HandleBean]
      * 直接返回值, 不会影响流程*/

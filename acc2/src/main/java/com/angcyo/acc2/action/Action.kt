@@ -140,12 +140,14 @@ object Action {
     /**设置输入框文本内容
      * [input:$0] 支持文本变量 [com.angcyo.acc2.bean.TaskBean.wordList]
      * [input:$0~$-1] [com.angcyo.acc2.bean.TaskBean.wordList]
+     * [input:$0~$-1 key:xxx] key用来累加输入计数
      * [input:$[xxx] regex:xxx] [com.angcyo.acc2.bean.TaskBean.textListMap]
      * [input:$[xxx] $0~$-1 regex:xxx] 从[com.angcyo.acc2.bean.TaskBean.textListMap]中获取, 再获取
      * regex:\\d+ 文本需要使用正则过滤取值
      * [input:$[xxx] index:1]如果$[xxx]返回了一个列表,那么[index]参数, 就是获取列表中的第几个.
      * 不指定[index]表示随机获取列表中的数据,使用[index:[ORDER]]表示顺序获取.
-     * [index:$[xxx]]index参数也支持文本变量
+     * [index:$[xxx]] index参数也支持文本变量
+     * 不指定index, 则随机从解析集合结果中获取一个
      * */
     const val ACTION_INPUT = "input"
 
