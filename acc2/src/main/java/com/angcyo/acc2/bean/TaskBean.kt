@@ -15,7 +15,11 @@ data class TaskBean(
     /**额外数据, 存放点*/
     var map: HashMap<String, Any?>? = null,
 
-    /**表单请求*/
+    /**表单请求
+     * [com.angcyo.acc2.bean.OperateBean.form]
+     * [com.angcyo.acc2.bean.ActionBean.form]
+     * [com.angcyo.acc2.bean.TaskBean.form]
+     * */
     var form: FormBean? = null,
 
     /**是否初始化了*/

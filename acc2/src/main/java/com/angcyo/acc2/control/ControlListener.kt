@@ -65,6 +65,19 @@ open class ControlListener {
 
     }
 
+    /**
+     * [HandleBean]处理完之后的回调
+     * [com.angcyo.acc2.parse.HandleParse.parse]
+     * */
+    open fun onHandleAction(
+        controlContext: ControlContext,
+        control: AccControl,
+        handleBean: HandleBean,
+        handleResult: HandleResult
+    ) {
+
+    }
+
     /**[ActionBean]运行后回调
      * [handleResult] 处理结果*/
     open fun onActionRunAfter(

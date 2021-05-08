@@ -34,6 +34,17 @@ data class OperateBean(
 
     //</editor-fold desc="数据配置">
 
+    //<editor-fold desc="表单请求">
+
+    /**表单请求
+     * [com.angcyo.acc2.bean.OperateBean.form]
+     * [com.angcyo.acc2.bean.ActionBean.form]
+     * [com.angcyo.acc2.bean.TaskBean.form]
+     * */
+    var form: FormBean? = null,
+
+    //</editor-fold desc="表单请求">
+
     //<editor-fold desc="数据存储">
 
     /**最终的数据存储*/

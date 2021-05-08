@@ -21,23 +21,26 @@ class OperateParse(val accParse: AccParse) : BaseParse() {
     /**解析操作记录*/
     fun parse(handleBean: HandleBean, operateBean: OperateBean, handleResult: HandleResult) {
 
-        //1
+        //1 用空格分割多个 key:value 组合
         if (!operateBean.text.isNullOrEmpty()) {
             operateBean.text?.split(Action.ARG_SPLIT2)?.let {
                 parseOperateText(operateBean, it)
             }
         }
 
-        //2
+        //2 不用空格隔开的 key:value 集合
         parseOperateText(operateBean, operateBean.textList)
 
         /*------------------------------后--------------------------------*/
 
+        //toast
         if (isDebugType()) {
             operateBean.map?.toStr()?.let {
                 toastQQ(it)
             }
         }
+
+        //解析后的值在 operateBean.map 中保存
 
         //操作记录的回调
         accParse.accControl.controlListenerList.forEach {

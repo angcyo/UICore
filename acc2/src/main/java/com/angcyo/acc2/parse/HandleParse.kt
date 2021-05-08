@@ -314,6 +314,11 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
             accParse.operateParse.parse(handleBean, operate, result)
         }
 
+        //operate form
+        accParse.accControl.controlListenerList.forEach {
+            it.onHandleAction(controlContext, accParse.accControl, handleBean, result)
+        }
+
         return result
     }
 

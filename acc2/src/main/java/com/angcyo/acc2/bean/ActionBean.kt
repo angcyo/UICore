@@ -114,7 +114,11 @@ data class ActionBean(
      * [com.angcyo.acc2.bean.TaskBean.leave]*/
     var leave: ActionBean? = null,
 
-    /**表单请求*/
+    /**表单请求
+     * [com.angcyo.acc2.bean.OperateBean.form]
+     * [com.angcyo.acc2.bean.ActionBean.form]
+     * [com.angcyo.acc2.bean.TaskBean.form]
+     * */
     var form: FormBean? = null,
 
     /**是否要在[com.angcyo.acc2.bean.TaskBean.actionList]或者
