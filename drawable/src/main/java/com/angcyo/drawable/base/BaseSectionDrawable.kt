@@ -27,7 +27,7 @@ abstract class BaseSectionDrawable : AbsDslDrawable() {
     /**
      * 每一段的差值器, 可以和sections数量不一致, 有的就取, 没有就默认
      */
-    var interpolatorList: List<Interpolator>? = null
+    var interpolatorList: List<Interpolator?>? = null
 
     /**
      * 总进度, 100表示需要绘制path的全部, 这个值用来触发动画
@@ -58,8 +58,10 @@ abstract class BaseSectionDrawable : AbsDslDrawable() {
                     sectionProgress = (totalProgress - sum) / section
                 }
                 //差值器
-                if (interpolatorList != null && interpolatorList!!.size > i) {
-                    sectionProgress = interpolatorList!![i].getInterpolation(sectionProgress)
+                if (!interpolatorList.isNullOrEmpty()) {
+                    sectionProgress =
+                        interpolatorList?.getOrNull(i)?.getInterpolation(sectionProgress)
+                            ?: sectionProgress
                 }
                 if (totalProgress >= sum && totalProgress < sum + section) {
                     onDrawProgressSection(
@@ -71,7 +73,7 @@ abstract class BaseSectionDrawable : AbsDslDrawable() {
                         sectionProgress
                     )
                 }
-                /*小于总进度的 section 都会执行绘制*/
+                /*小于总进度的 section 都会执行绘制, 到了这里之前的section进度肯定已经是100%了*/
                 if (totalProgress >= sum) {
                     if (totalProgress > sum + section) { //当section的总和小于1时, 最后一个是section会多执行剩余的进度
                         sectionProgress = 1f

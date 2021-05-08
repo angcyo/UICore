@@ -63,8 +63,8 @@ private fun fixAngle(rotation: Float): Float {
  * 获取[Path]指定进度[progress]之前的[Path]
  * @param progress [0,1]
  * */
-fun Path.getProgressPath(progress: Float): Path {
-    val dst = Path()
+fun Path.getProgressPath(progress: Float, dst: Path = Path()): Path {
+
     dst.reset()
     // 硬件加速的BUG
     dst.lineTo(0f, 0f)
