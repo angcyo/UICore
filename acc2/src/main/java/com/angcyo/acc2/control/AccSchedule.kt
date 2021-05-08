@@ -5,6 +5,7 @@ import com.angcyo.acc2.bean.ActionBean
 import com.angcyo.acc2.bean.findFirstActionByGroup
 import com.angcyo.acc2.bean.isLoopValid
 import com.angcyo.acc2.core.AccNodeLog
+import com.angcyo.acc2.core.ControlException
 import com.angcyo.acc2.parse.AccParse
 import com.angcyo.acc2.parse.ConditionParse
 import com.angcyo.acc2.parse.HandleResult
@@ -1002,6 +1003,7 @@ class AccSchedule(val accControl: AccControl) {
                             "无法处理${actionBean.actionLog()}, 请检查[check]是否未初始化.",
                             isPrimaryAction
                         )
+                        accControl.error(ControlException("请检查[check]是否未初始化."))
                     } else {
                         accControl.log(
                             "无法处理↓\nhandle:${handleList}",

@@ -309,9 +309,11 @@ fun <T> List<T>?.updateHistoryList(value: T?): List<T> {
     }
 }
 
-fun <T> MutableCollection<T>.resetAll(new: Collection<T>) {
+fun <T> MutableCollection<T>.resetAll(new: Collection<T>?) {
     clear()
-    addAll(new)
+    new?.let {
+        addAll(it)
+    }
 }
 
 /**安全删除一个对象*/
