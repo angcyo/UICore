@@ -74,6 +74,8 @@ object Action {
     /**async*/
     const val ASYNC = "async"
 
+    /**是否要跳过当前的整个组
+     * [com.angcyo.acc2.action.PassAction]*/
     const val GROUP = "group"
 
     /**触发当前节点的点击事件, null 默认是click操作.

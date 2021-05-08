@@ -445,15 +445,22 @@ class FindParse(val accParse: AccParse) : BaseParse() {
         findBean: FindBean,
         list: List<String?>?
     ): List<AccessibilityNodeInfoCompat> {
+
+        //返回结果
         val result = mutableListOf<AccessibilityNodeInfoCompat>()
         if (list.isNullOrEmpty()) {
             return result
         }
+
+        //枚举
         originList.forEach { rootNode ->
             val rootResult = mutableListOf<AccessibilityNodeInfoCompat>()
             val rootMatchMap = hashMapOf<String?, Boolean>()
 
+            //枚举节点
             rootNode.eachChildDepth { node, depth ->
+
+                //枚举条件
                 list.forEachIndexed { index, str ->
                     if (matchNode(controlContext, node, findBean, index)) {
                         val path = findBean.pathList?.getOrNull(index)
@@ -473,23 +480,28 @@ class FindParse(val accParse: AccParse) : BaseParse() {
                 checkFindLimit(rootResult, findBean, depth)
             }
 
-            //必须全部命中
-            var allMatch = true
-            for (key in list) {
-                if (!key.isNullOrBlank()) {
-                    val match = rootMatchMap[key]
-                    if (match == true) {
-                        //匹配到
-                    } else {
-                        //未匹配
-                        allMatch = false
-                        break
+            if (findBean.or) {
+                //任意命中集合
+                result.addAll(rootResult)
+            } else {
+                //必须全部命中
+                var allMatch = true
+                for (key in list) {
+                    if (!key.isNullOrBlank()) {
+                        val match = rootMatchMap[key]
+                        if (match == true) {
+                            //匹配到
+                        } else {
+                            //未匹配
+                            allMatch = false
+                            break
+                        }
                     }
                 }
-            }
 
-            if (allMatch) {
-                result.addAll(rootResult)
+                if (allMatch) {
+                    result.addAll(rootResult)
+                }
             }
         }
         return result

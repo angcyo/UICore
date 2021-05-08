@@ -27,4 +27,8 @@ data class LoopBean(
 
     /**Loop操作时, 需要进行的处理.*/
     var handle: List<HandleBean>? = null,
+
+    /**Loop退出时, 需要进行的处理.
+     * 默认是next()处理*/
+    var exit: List<HandleBean>? = null,
 )

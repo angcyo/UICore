@@ -396,6 +396,7 @@ class AccSchedule(val accControl: AccControl) {
                         next()
                     }
                 } else {
+                    //loop处理
                     if (!accParse.loopParse.parse(
                             controlContext,
                             null,
@@ -404,8 +405,12 @@ class AccSchedule(val accControl: AccControl) {
                             loop
                         )
                     ) {
-                        //未被loop处理
-                        next()
+                        if (loop.exit == null) {
+                            //未被loop处理
+                            next()
+                        } else {
+                            accParse.handleParse.parse(controlContext, null, loop.exit)
+                        }
                     }
                 }
             }

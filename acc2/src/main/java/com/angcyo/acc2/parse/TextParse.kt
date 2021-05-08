@@ -1,7 +1,6 @@
 package com.angcyo.acc2.parse
 
 import com.angcyo.acc2.action.Action
-import com.angcyo.acc2.action.InputAction
 import com.angcyo.acc2.bean.TextParamBean
 import com.angcyo.acc2.bean.getTextList
 import com.angcyo.acc2.control.AccControl
@@ -89,11 +88,10 @@ class TextParse(val accParse: AccParse) : BaseParse() {
                             parsePackageName(null, accControl._taskBean?.packageName).firstOrNull()
                                 ?.appBean()?.appName?.str()
                         if (appName.isNullOrBlank()) {
-                            taskBean?.getTextList(key)?.firstOrNull()?.let { value ->
-                                keyResult.add(value)
-                                if (replace) {
-                                    replaceResult = replaceResult?.replace("$[$key]", value)
-                                }
+                            val value = taskBean?.getTextList(key)?.firstOrNull()
+                            keyResult.add(value)
+                            if (replace) {
+                                replaceResult = replaceResult?.replace("$[$key]", value ?: "")
                             }
                         } else {
                             //程序名
@@ -112,11 +110,9 @@ class TextParse(val accParse: AccParse) : BaseParse() {
                     }
                     Action.LAST_INPUT -> {
                         val text = accControl.accSchedule.inputTextList.lastOrNull()
-                        if (text != null) {
-                            keyResult.add(text)
-                            if (replace) {
-                                replaceResult = replaceResult?.replace("$[$key]", text)
-                            }
+                        keyResult.add(text)
+                        if (replace) {
+                            replaceResult = replaceResult?.replace("$[$key]", text ?: "")
                         }
                     }
                     else -> {
@@ -130,6 +126,9 @@ class TextParse(val accParse: AccParse) : BaseParse() {
                             if (replace) {
                                 replaceResult = replaceResult?.replace("$[$key]", value)
                             }
+                        }.elseNull {
+                            keyResult.add(null)
+                            replaceResult = replaceResult?.replace("$[$key]", "")
                         }
                     }
                 }
