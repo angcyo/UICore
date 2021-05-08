@@ -4,8 +4,6 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
-import com.angcyo.acc2.parse.arg
-import com.angcyo.library.utils.getLongNumList
 
 /**
  *
@@ -14,7 +12,7 @@ import com.angcyo.library.utils.getLongNumList
  * @date 2021/02/16
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class ClearRunTimeAction : BaseAction() {
+class ClearRunTimeAction : BaseClearAction() {
 
     override fun interceptAction(control: AccControl, action: String): Boolean {
         return action.startsWith(Action.ACTION_CLEAR_RUN_TIME)
@@ -26,41 +24,10 @@ class ClearRunTimeAction : BaseAction() {
         action: String
     ): HandleResult = handleResult {
 
-        var _actionIdList: List<Long>? = null
+        val clearActionIdList = getClearActionIdList(control, action)
 
-        if (action.arg(Action.ACTION_CLEAR_RUN_TIME) == Action.RELY) {
-            //跳过到依赖的action
-            _actionIdList = control.accSchedule.relyList()
-            success = clearRunTime(control, _actionIdList)
-        } else {
-            val actionIdList = action.getLongNumList(true)
-            if (actionIdList.isNullOrEmpty()) {
-                //当前
-                val actionBean = control.accSchedule._scheduleActionBean
-                if (actionBean != null) {
-                    _actionIdList = listOf(actionBean.actionId)
-                    success = clearRunTime(control, _actionIdList)
-                }
-            } else {
-                //指定id
-                _actionIdList = actionIdList
-                success = clearRunTime(control, actionIdList)
-            }
-        }
-        control.log("清理运行时长[${_actionIdList}]:${success}")
-    }
+        success = clearRunTime(control, clearActionIdList)
 
-    fun clearRunTime(control: AccControl, actionIdList: List<Long>?): Boolean {
-        var clearId = -1L
-        if (actionIdList != null) {
-            for (actionId in actionIdList) {
-                val findAction = control.findAction(actionId)
-                if (findAction != null) {
-                    clearId = actionId
-                    control.accSchedule.setActionRunTime(actionId, -1)
-                }
-            }
-        }
-        return clearId != -1L
+        control.log("清理运行时长[${clearActionIdList}]:${success}")
     }
 }

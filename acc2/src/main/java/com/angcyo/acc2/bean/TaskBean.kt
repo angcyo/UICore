@@ -153,6 +153,10 @@ data class TaskBean(
     /**每个[ActionBean]执行时, 离开了主程序, 需要执行的[ActionBean]
      * [com.angcyo.acc2.bean.ActionBean.leave]*/
     var leave: ActionBean? = null,
+
+    /**统一设置每个[ActionBean]丢失节点后, 需要执行的[ActionBean]
+     * [com.angcyo.acc2.bean.ActionBean.lose]*/
+    var lose: ActionBean? = null,
 )
 
 /**初始化配置*/

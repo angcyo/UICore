@@ -168,7 +168,11 @@ object Action {
     const val ACTION_CLEAR_RUN_COUNT = "clearRunCount"
 
     /**清除[com.angcyo.acc2.bean.ActionBean]的运行时长
-     * [ACTION_CLEAR_RUN_COUNT]*/
+     * [ACTION_CLEAR_RUN_COUNT]
+     * [clearRunTime:rely]
+     * [clearRunTime:.]
+     * [clearRunTime:1 2 3 4]
+     * */
     const val ACTION_CLEAR_RUN_TIME = "clearRunTime"
 
     /**清除指定id的[com.angcyo.acc2.bean.ActionBean]的跳转次数

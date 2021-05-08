@@ -114,6 +114,10 @@ data class ActionBean(
      * [com.angcyo.acc2.bean.TaskBean.leave]*/
     var leave: ActionBean? = null,
 
+    /**当前[ActionBean]执行时, 丢失节点后, 需要执行的[ActionBean]
+     * [com.angcyo.acc2.bean.TaskBean.lose]*/
+    var lose: ActionBean? = null,
+
     /**表单请求
      * [com.angcyo.acc2.bean.OperateBean.form]
      * [com.angcyo.acc2.bean.ActionBean.form]

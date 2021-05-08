@@ -934,7 +934,7 @@ class AccSchedule(val accControl: AccControl) {
         return true
     }
 
-    //是否离开了主程序
+    /**标识是否离开了主程序*/
     var _isLeaveWindow = false
 
     fun runActionInner(
@@ -1085,6 +1085,29 @@ class AccSchedule(val accControl: AccControl) {
                             //other action 也没有处理成功
                             accControl.controlListenerList.forEach {
                                 it.onActionNoHandle(accControl, actionBean, isPrimaryAction)
+                            }
+
+                            //如果这个时候, 丢失了窗口节点
+                            val nodeList = findParse.findRootNode(null)
+                            if (nodeList.isNullOrEmpty() ||
+                                (nodeList.size() == 1 && nodeList.firstOrNull()?.childCount ?: 0 <= 0)
+                            ) {
+                                //leave
+                                _isLeaveWindow = true
+                                val loseActionBean = actionBean.lose ?: accControl._taskBean?.lose
+                                if (loseActionBean != null) {
+                                    val runResult = runAction(controlContext.copy {
+                                        action = loseActionBean
+                                    }, loseActionBean, null, false)
+
+                                    //result
+                                    if (runResult.forceFail) {
+                                        handleActionResult.success = false
+                                    } else if (runResult.forceSuccess) {
+                                        handleActionResult.success = true
+                                        handleActionResult.nodeList = runResult.nodeList
+                                    }
+                                }
                             }
                         }
                     }
