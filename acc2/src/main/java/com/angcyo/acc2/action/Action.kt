@@ -164,6 +164,8 @@ object Action {
      * [clearRunCount] 清理当前的[com.angcyo.acc2.bean.ActionBean]
      * [clearRunCount:xxx xxx]
      * [ACTION_JUMP]
+     * [ACTION_CLEAR_RUN_TIME]
+     * [ACTION_CLEAR_JUMP_COUNT]
      * */
     const val ACTION_CLEAR_RUN_COUNT = "clearRunCount"
 
