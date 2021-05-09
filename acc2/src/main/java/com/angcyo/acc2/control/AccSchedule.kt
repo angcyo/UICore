@@ -159,6 +159,20 @@ class AccSchedule(val accControl: AccControl) {
     /**总共需要执行的[ActionBean]的数量*/
     fun actionSize() = accControl._taskBean?.actionList.size()
 
+    /**打印[ActionBean]控制的日志*/
+    fun printActionLog(
+        log: String?,
+        actionBean: ActionBean? = null,
+        isPrimaryAction: Boolean = true
+    ) {
+        if (actionBean == null ||
+            actionBean.log == true ||
+            (actionBean.log == null && isPrimaryAction)
+        ) {
+            accControl.log(log, isPrimaryAction)
+        }
+    }
+
     fun relyList(): List<Long>? {
         return _runActionBean?.relyList ?: _scheduleActionBean?.relyList
     }
@@ -343,7 +357,7 @@ class AccSchedule(val accControl: AccControl) {
                     action = nextActionBean
                 }, nextActionBean, accControl._taskBean?.backActionList, true)
             }
-            accControl.log("异步执行:${nextActionBean.actionLog()}")
+            printActionLog("异步执行:${nextActionBean.actionLog()}")
             next()
         } else {
             val taskLimitRunTime = accControl._taskBean?.taskLimitRunTime ?: -1
@@ -439,7 +453,7 @@ class AccSchedule(val accControl: AccControl) {
         //激活条件判断
         if (!accParse.conditionParse.parse(actionBean.conditionList).success) {
             result.success = false
-            accControl.log("${actionBean.actionLog()}未满足激活条件,跳过调度.", isPrimaryAction)
+            printActionLog("${actionBean.actionLog()}未满足激活条件,跳过调度.", actionBean, isPrimaryAction)
             if (isPrimaryAction) {
                 next()
             }
@@ -452,12 +466,12 @@ class AccSchedule(val accControl: AccControl) {
             //Task前置处理
             var beforeHandleResult: HandleResult? = null
             if (isPrimaryAction) {
-                val beforeAction = taskBean?.before
-                if (beforeAction != null) {
-                    accControl.log("任务前置执行:${beforeAction}", isPrimaryAction)
+                val taskBeforeAction = taskBean?.before
+                if (taskBeforeAction != null) {
+                    printActionLog("任务前置执行:${taskBeforeAction}", taskBeforeAction, isPrimaryAction)
                     beforeHandleResult = runAction(controlContext.copy {
-                        action = beforeAction
-                    }, beforeAction, null, false)
+                        action = taskBeforeAction
+                    }, taskBeforeAction, null, false)
                 }
             }
 
@@ -480,7 +494,7 @@ class AccSchedule(val accControl: AccControl) {
                 //action前置处理
                 val beforeAction = actionBean.before
                 if (beforeAction != null) {
-                    accControl.log("前置执行:${beforeAction}", isPrimaryAction)
+                    printActionLog("前置执行:${beforeAction}", beforeAction, isPrimaryAction)
                     beforeHandleResult = runAction(controlContext.copy {
                         action = beforeAction
                     }, beforeAction, null, false)
@@ -500,8 +514,9 @@ class AccSchedule(val accControl: AccControl) {
                 //action处理
                 if (!skipActionRun) {
                     val pLog = if (isPrimaryAction) "[主线]" else ""
-                    accControl.log(
+                    printActionLog(
                         "${pLog}开始执行(${indexTip()})[${actionBean.actionLog()}]:${actionBean}",
+                        actionBean,
                         isPrimaryAction
                     )
                     //执行统计
@@ -522,7 +537,7 @@ class AccSchedule(val accControl: AccControl) {
                     //action后置处理
                     val afterAction = actionBean.after
                     if (afterAction != null) {
-                        accControl.log("后置执行:${afterAction}", isPrimaryAction)
+                        printActionLog("后置执行:${afterAction}", afterAction, isPrimaryAction)
 
                         val runActionResult = runAction(controlContext.copy {
                             action = afterAction
@@ -540,20 +555,24 @@ class AccSchedule(val accControl: AccControl) {
 
             //Task后置处理
             if (isPrimaryAction) {
-                val afterAction = taskBean?.after
-                if (afterAction != null) {
-                    accControl.log("任务后置执行:${afterAction}", isPrimaryAction)
+                val taskAfterAction = taskBean?.after
+                if (taskAfterAction != null) {
+                    printActionLog("任务后置执行:${taskAfterAction}", taskAfterAction, isPrimaryAction)
                     runAction(controlContext.copy {
-                        action = afterAction
-                    }, afterAction, null, false)
+                        action = taskAfterAction
+                    }, taskAfterAction, null, false)
                 }
             }
 
         } catch (e: Exception) {
             L.e("异常:$e")
             e.printStackTrace()
-            accControl.log("scheduleAction运行失败[${actionBean.actionLog()}]:$e", isPrimaryAction)
-            accControl.log(e.stackTraceToString(), isPrimaryAction)
+            printActionLog(
+                "scheduleAction运行失败[${actionBean.actionLog()}]:$e",
+                null,
+                isPrimaryAction
+            )
+            printActionLog(e.stackTraceToString(), null, isPrimaryAction)
         }
 
         return result
@@ -595,11 +614,12 @@ class AccSchedule(val accControl: AccControl) {
             if (!group.isNullOrEmpty() && !isFirstActionInGroup(action)) {
                 //具有分组标识, 并且不是第一个
                 return if (isFirstActionEnableByGroup(action, group, isPrimaryAction).first) {
-                    //accControl.log("${action.actionLog()}的分组[${group}]中第一个ActionBean激活.")
+                    //printActionLog("${action.actionLog()}的分组[${group}]中第一个ActionBean激活.")
                     true
                 } else {
-                    accControl.log(
+                    printActionLog(
                         "${action.actionLog()}的分组[${group}]中第一个ActionBean未激活,跳过.",
+                        action,
                         isPrimaryAction
                     )
                     false
@@ -638,16 +658,18 @@ class AccSchedule(val accControl: AccControl) {
                             inputValue = factor.toFloat()
                         )
                     }
-                    accControl.log(
+                    printActionLog(
                         "${pLog}${action.actionLog()}随机[${factor}][${action.randomAmount}]激活:[${action.enable}]",
+                        action,
                         isPrimaryAction
                     )
                     return action.enable
                 } else {
                     if (action.conditionList != null) {
                         if (!accParse.conditionParse.parse(action.conditionList).success) {
-                            accControl.log(
+                            printActionLog(
                                 "${pLog}${action.actionLog()}未满足激活条件,跳过.",
+                                action,
                                 isPrimaryAction
                             )
                             return false
@@ -660,18 +682,23 @@ class AccSchedule(val accControl: AccControl) {
                 val conditionResult = accParse.conditionParse.parse(action.conditionList)
                 return if (conditionResult.success) {
                     action.enable = true
-                    accControl.log(
+                    printActionLog(
                         "${pLog}${action.actionLog()}自动激活成功:[${conditionResult.conditionBean}]",
+                        action,
                         isPrimaryAction
                     )
                     true
                 } else {
-                    accControl.log("${pLog}${action.actionLog()}自动激活失败,跳过.", isPrimaryAction)
+                    printActionLog(
+                        "${pLog}${action.actionLog()}自动激活失败,跳过.",
+                        action,
+                        isPrimaryAction
+                    )
                     false
                 }
             } else {
                 //未激活的
-                accControl.log("${pLog}${action.actionLog()}未激活,跳过.", isPrimaryAction)
+                printActionLog("${pLog}${action.actionLog()}未激活,跳过.", action, isPrimaryAction)
                 return false
             }
         }
@@ -700,7 +727,7 @@ class AccSchedule(val accControl: AccControl) {
                 val isInGroup = bean?.group?.contains(targetGroup) == true
 
                 if (isFindGroup && !isInGroup) {
-                    accControl.log("下一个执行目标[$i/${actionSize()}]:$bean")
+                    printActionLog("下一个执行目标[$i/${actionSize()}]:$bean")
                     _targetIndex = i
                     result = true
                     break
@@ -720,7 +747,7 @@ class AccSchedule(val accControl: AccControl) {
         val targetIndex = accControl._taskBean?.actionList?.indexOf(bean)
         targetIndex?.let {
             if (it != -1) {
-                accControl.log("强制执行目标[$it/${actionSize()}]:$bean")
+                printActionLog("强制执行目标[$it/${actionSize()}]:$bean")
                 _targetIndex = it
             }
         }
@@ -846,7 +873,7 @@ class AccSchedule(val accControl: AccControl) {
             handleActionResult.success = false
             runActionBeanStack.popSafe()
             _runActionBean = null
-            accControl.log("${actionBean.actionLog()}未满足激活条件,跳过执行.", isPrimaryAction)
+            printActionLog("${actionBean.actionLog()}未满足激活条件,跳过执行.", actionBean, isPrimaryAction)
             return false
         }
 
@@ -857,7 +884,7 @@ class AccSchedule(val accControl: AccControl) {
         if (isPrimaryAction) {
             accControl.next(actionBean, delayTime)
         }
-        accControl.log("${actionBean.actionLog()}等待[$delayTime]ms后运行.", isPrimaryAction)
+        printActionLog("${actionBean.actionLog()}等待[$delayTime]ms后运行.", actionBean, isPrimaryAction)
         sleep(delayTime)
 
         //停止了运行
@@ -975,7 +1002,7 @@ class AccSchedule(val accControl: AccControl) {
                     logMinWindowInfo = true
                     logWindowNode = false
                     getAccessibilityWindowLog().apply {
-                        accControl.log("未匹配到窗口[$windowBean]↓\n$this", isPrimaryAction)
+                        printActionLog("未匹配到窗口[$windowBean]↓\n$this", actionBean, isPrimaryAction)
                     }
                 }
 
@@ -999,14 +1026,16 @@ class AccSchedule(val accControl: AccControl) {
             if (isPrimaryAction) {
                 if (!handleActionResult.isSuccessResult()) {
                     if (handleList == null) {
-                        accControl.log(
+                        printActionLog(
                             "无法处理${actionBean.actionLog()}, 请检查[check]是否未初始化.",
+                            actionBean,
                             isPrimaryAction
                         )
                         accControl.error(ControlException("请检查[check]是否未初始化."))
                     } else {
-                        accControl.log(
+                        printActionLog(
                             "无法处理↓\nhandle:${handleList}",
+                            actionBean,
                             isPrimaryAction
                         )
                     }
@@ -1022,15 +1051,17 @@ class AccSchedule(val accControl: AccControl) {
                 if (parse.forceSuccess) {
                     skipHandle = true
                     handleActionResult.success = true
-                    accControl.log(
+                    printActionLog(
                         "${actionCheckBean.checkLog()}[event]强制成功,跳过处理:${eventList}",
+                        actionBean,
                         isPrimaryAction
                     )
                 } else if (parse.forceFail) {
                     skipHandle = true
                     handleActionResult.success = false
-                    accControl.log(
+                    printActionLog(
                         "${actionCheckBean.checkLog()}[event]强制失败,跳过处理:${eventList}",
+                        actionBean,
                         isPrimaryAction
                     )
                 }
@@ -1076,8 +1107,9 @@ class AccSchedule(val accControl: AccControl) {
                             }
                         }
                         if (otherHandleResult?.success == true) {
-                            accControl.log(
+                            printActionLog(
                                 "[other]已处理[${actionBean.actionLog()}]:${otherAction}",
+                                actionBean,
                                 isPrimaryAction
                             )
                             break

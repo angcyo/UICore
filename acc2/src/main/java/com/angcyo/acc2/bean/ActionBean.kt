@@ -31,6 +31,12 @@ data class ActionBean(
      * */
     var async: Boolean? = null,
 
+    /**是否要输出日志
+     * [null] 时智能控制,主线[ActionBean]才有日志
+     * [true] 强制输出日志
+     * [false] 强制不要日志*/
+    var log: Boolean? = null,
+
     /**
      * 控制自身执行启动的延迟
      * [com.angcyo.acc2.parse.AccParse.parseTime]
