@@ -26,7 +26,8 @@ data class CheckBean(
      * 所有集合中, 选中的元素都会收集在一起*/
     var event: List<FindBean>? = null,
 
-    /**如果未包含目标元素时, 需要进行的操作*/
+    /**如果未包含目标元素时, 需要进行的操作
+     * 强制成功, 会影响主流程*/
     var other: List<HandleBean>? = null,
 
     /**包含目标元素或者[event]为空的情况下,目标元素需要进行的操作*/
