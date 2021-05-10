@@ -310,12 +310,15 @@ fun <T> String?.fromJson(typeOfT: Type, exception: Boolean = false): T? {
 }
 
 /**json字符串, 转成指定对象*/
-fun <T> String?.fromJson(classOfT: Class<T>): T? {
+fun <T> String?.fromJson(classOfT: Class<T>, throwError: Boolean = false): T? {
     return this?.run {
         try {
             gson().fromJson<T>(this, classOfT)
         } catch (e: Exception) {
             e.printStackTrace()
+            if (throwError) {
+                throw e
+            }
             null
         }
     }

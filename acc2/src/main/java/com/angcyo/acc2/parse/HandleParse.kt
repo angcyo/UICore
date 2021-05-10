@@ -315,9 +315,20 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         }
 
         //operate form
+        accParse.formParse.parseOperateForm(
+            controlContext,
+            accParse.accControl,
+            handleBean,
+            originList,
+            result
+        )
+
         accParse.accControl.controlListenerList.forEach {
             it.onHandleAction(controlContext, accParse.accControl, handleBean, result)
         }
+
+        //form result
+
 
         return result
     }
@@ -325,7 +336,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
     /**处理动作集合*/
     fun handleAction(
         controlContext: ControlContext,
-        handleBean: HandleBean,
+        handleBean: HandleBean?,
         textParamBean: TextParamBean?,
         nodeList: List<AccessibilityNodeInfoCompat>?,
         actionList: List<String>?
@@ -358,7 +369,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
     /**处理分发*/
     fun handleAction(
         controlContext: ControlContext,
-        handleBean: HandleBean,
+        handleBean: HandleBean?,
         textParamBean: TextParamBean?,
         nodeList: List<AccessibilityNodeInfoCompat>?,
         action: String
@@ -389,7 +400,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
 
                         //this
                         if (it is DisableHandleAction) {
-                            handleBean.enable = false
+                            handleBean?.enable = false
                         }
 
                         //把处理成功的元素收集起来

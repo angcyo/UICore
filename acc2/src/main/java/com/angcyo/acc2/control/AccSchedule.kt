@@ -386,6 +386,7 @@ class AccSchedule(val accControl: AccControl) {
                 }
             }
 
+            //调度
             if (accControl.isControlRunning) {
                 //运行状态
                 _scheduleActionBean = nextActionBean
@@ -396,6 +397,7 @@ class AccSchedule(val accControl: AccControl) {
                     action = nextActionBean
                 }
 
+                //核心调度
                 val result = scheduleAction(
                     controlContext,
                     nextActionBean,
@@ -407,7 +409,7 @@ class AccSchedule(val accControl: AccControl) {
                 val loop = nextActionBean.loop
 
                 if (loop == null) {
-                    if (!result.forceFail && result.success) {
+                    if (result.forceSuccess || (!result.forceFail && result.success)) {
                         //无loop, 成功后
                         next()
                     }
@@ -755,6 +757,13 @@ class AccSchedule(val accControl: AccControl) {
 
     fun clearTargetAction() {
         targetActionList.clear()
+    }
+
+    /**添加需要额外执行的[ActionBean]*/
+    fun addTargetAction(list: List<ActionBean>) {
+        list.forEach {
+            addTargetAction(it)
+        }
     }
 
     fun addTargetAction(bean: ActionBean) {
@@ -1225,6 +1234,14 @@ class AccSchedule(val accControl: AccControl) {
         //现场
         runActionBeanStack.popSafe()
         _runActionBean = null
+
+        //form
+        accParse.formParse.parseActionForm(
+            controlContext,
+            accControl,
+            actionBean,
+            handleActionResult
+        )
 
         //回调
         accControl.controlListenerList.forEach {

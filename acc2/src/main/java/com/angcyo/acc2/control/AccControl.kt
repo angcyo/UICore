@@ -156,6 +156,9 @@ class AccControl : Runnable {
         val old = _controlState
         _controlState = newState
 
+        //form
+        accSchedule.accParse.formParse.parseTaskForm(this, newState)
+
         controlListenerList.forEach {
             it.onControlStateChanged(this, old, newState)
         }

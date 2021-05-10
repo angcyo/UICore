@@ -43,8 +43,11 @@ data class FormBean(
      * */
     var keyList: List<String>? = null,
 
-    /**是否调试, 如果是那么在debug模式下, 不会进行表单请求*/
-    var debug: Boolean = false
+    /**是否调试, 如果为true, 那么在debug模式下, 不会进行表单请求*/
+    var debug: Boolean = false,
+
+    /**表单数据返回, 交互信息*/
+    var _fromResult: FormResultBean? = null,
 ) {
     companion object {
         //form data 形式
@@ -64,7 +67,7 @@ data class FormBean(
 fun FormBean.handleParams(
     control: AccControl,
     taskBean: TaskBean,
-    configParams: (formBean: FormBean, params: HashMap<String, Any?>) -> Unit = { _, _ -> }
+    configParams: ((formBean: FormBean, params: HashMap<String, Any?>) -> Unit)? = null
 ): HashMap<String, Any?> {
     //从url中, 获取默认参数
     val urlParams = UrlParse.getUrlQueryParams(query)
@@ -92,7 +95,7 @@ fun FormBean.handleParams(
             }
         }
 
-        configParams(this@handleParams, this)
+        configParams?.invoke(this@handleParams, this)
     }
 
     return requestParams

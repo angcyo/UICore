@@ -48,6 +48,9 @@ class AccParse(val accControl: AccControl) : BaseParse() {
     /**文本解析器*/
     var textParse = TextParse(this)
 
+    /**表单解析*/
+    var formParse = FormParse()
+
     /**循环解析器*/
     var loopParse = LoopParse(this)
 

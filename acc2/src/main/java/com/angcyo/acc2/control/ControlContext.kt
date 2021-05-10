@@ -70,7 +70,7 @@ class ControlContext {
             append(indent)
             init()
         }.apply {
-            control?.log(this, true)
+            control?.accSchedule?.printActionLog(this, action, isPrimaryAction())
         }
     }
 }
