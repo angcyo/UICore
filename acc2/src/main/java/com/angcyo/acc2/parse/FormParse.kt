@@ -24,24 +24,32 @@ class FormParse : BaseParse() {
     //<editor-fold desc="触发">
 
     /**表单请求
-     * [com.angcyo.acc2.bean.TaskBean.form]
+     * [com.angcyo.acc2.bean.OperateBean.form]
      * */
-    fun parseTaskForm(control: AccControl, controlState: Int) {
-        control._taskBean?.form?.let {
-            if (controlState >= AccControl.CONTROL_STATE_FINISH) {
-                //结束之后, 才请求form
-                val params = hashMapOf<String, Any?>()
-                when (controlState) {
-                    AccControl.CONTROL_STATE_FINISH -> params[FormBean.KEY_CODE] = 200
-                    AccControl.CONTROL_STATE_STOP -> params[FormBean.KEY_CODE] = 300 //本地执行中断, 任务终止.
-                    AccControl.CONTROL_STATE_ERROR -> params[FormBean.KEY_CODE] =
-                        500 //本地执行错误, 任务终止.
-                }
-                params[FormBean.KEY_MSG] = control.finishReason
-                params[FormBean.KEY_DATA] = controlState
+    fun parseOperateForm(
+        controlContext: ControlContext,
+        control: AccControl,
+        handleBean: HandleBean?,
+        originList: List<AccessibilityNodeInfoCompat>?,
+        handleResult: HandleResult
+    ) {
+        handleBean?.operate?.form?.let {
+            handleForm(controlContext, control, it, controlContext.action, originList, handleResult)
+        }
+    }
 
-                request(control, it, params)
-            }
+    /**表单请求
+     * [com.angcyo.acc2.bean.HandleBean.form]
+     * */
+    fun parseHandleForm(
+        controlContext: ControlContext,
+        control: AccControl,
+        handleBean: HandleBean?,
+        originList: List<AccessibilityNodeInfoCompat>?,
+        handleResult: HandleResult
+    ) {
+        handleBean?.form?.let {
+            handleForm(controlContext, control, it, controlContext.action, originList, handleResult)
         }
     }
 
@@ -51,26 +59,31 @@ class FormParse : BaseParse() {
     fun parseActionForm(
         controlContext: ControlContext,
         control: AccControl,
-        actionBean: ActionBean,
+        actionBean: ActionBean?,
         handleResult: HandleResult
     ) {
-        actionBean.form?.let {
+        actionBean?.form?.let {
             handleForm(controlContext, control, it, actionBean, null, handleResult)
         }
     }
 
     /**表单请求
-     * [com.angcyo.acc2.bean.OperateBean.form]
+     * [com.angcyo.acc2.bean.TaskBean.form]
      * */
-    fun parseOperateForm(
-        controlContext: ControlContext,
-        control: AccControl,
-        handleBean: HandleBean,
-        originList: List<AccessibilityNodeInfoCompat>?,
-        handleResult: HandleResult
-    ) {
-        handleBean.operate?.form?.let {
-            handleForm(controlContext, control, it, controlContext.action, originList, handleResult)
+    fun parseTaskForm(control: AccControl, controlState: Int) {
+        control._taskBean?.form?.let {
+            //结束之后, 才请求form
+            val params = hashMapOf<String, Any?>()
+            when (controlState) {
+                AccControl.CONTROL_STATE_FINISH -> params[FormBean.KEY_CODE] = 200
+                AccControl.CONTROL_STATE_STOP -> params[FormBean.KEY_CODE] = 300 //本地执行中断, 任务终止.
+                AccControl.CONTROL_STATE_ERROR -> params[FormBean.KEY_CODE] =
+                    500 //本地执行错误, 任务终止.
+            }
+            params[FormBean.KEY_MSG] = control.finishReason
+            params[FormBean.KEY_DATA] = controlState
+
+            request(control, it, params)
         }
     }
 

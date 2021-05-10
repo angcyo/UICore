@@ -157,7 +157,9 @@ class AccControl : Runnable {
         _controlState = newState
 
         //form
-        accSchedule.accParse.formParse.parseTaskForm(this, newState)
+        if (newState >= CONTROL_STATE_FINISH) {
+            accSchedule.accParse.formParse.parseTaskForm(this, newState)
+        }
 
         controlListenerList.forEach {
             it.onControlStateChanged(this, old, newState)

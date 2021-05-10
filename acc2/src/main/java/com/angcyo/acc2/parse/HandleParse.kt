@@ -4,10 +4,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.action.*
 import com.angcyo.acc2.bean.HandleBean
 import com.angcyo.acc2.bean.TextParamBean
-import com.angcyo.acc2.control.AccSchedule
-import com.angcyo.acc2.control.ControlContext
-import com.angcyo.acc2.control.actionLog
-import com.angcyo.acc2.control.log
+import com.angcyo.acc2.control.*
 import com.angcyo.library.ex.size
 
 /**
@@ -34,6 +31,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         registerActionList.add(EnableAction())
         registerActionList.add(DisableAction())
         registerActionList.add(ToastAction())
+        registerActionList.add(RequestFormAction())
 
         registerActionList.add(BackAction())
         registerActionList.add(HomeAction())
@@ -327,8 +325,14 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
             it.onHandleAction(controlContext, accParse.accControl, handleBean, result)
         }
 
-        //form result
-
+        //handle form
+        accParse.formParse.parseHandleForm(
+            controlContext,
+            accParse.accControl,
+            handleBean,
+            originList,
+            result
+        )
 
         return result
     }
@@ -345,20 +349,35 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         val handledNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
 
         //枚举actionList
-        actionList?.forEach { action ->
-            //处理action
-            handleAction(controlContext, handleBean, textParamBean, nodeList, action).apply {
-                result.forceFail = forceFail || result.forceFail
-                result.forceSuccess = forceSuccess || result.forceSuccess
-                result.success = success || result.success
-                if (success) {
+        if (actionList != null) {
+            for (action in actionList) {
+                //处理action
+                val handleResult = handleAction(
+                    controlContext,
+                    handleBean,
+                    textParamBean,
+                    nodeList,
+                    action
+                )
+
+                //result
+                result.forceFail = handleResult.forceFail || result.forceFail
+                result.forceSuccess = handleResult.forceSuccess || result.forceSuccess
+                result.success = handleResult.success || result.success
+
+                if (handleResult.success) {
                     //把处理成功的元素收集起来
-                    result.handleBean = this.handleBean
-                    this.nodeList?.forEach {
+                    result.handleBean = handleResult.handleBean
+                    handleResult.nodeList?.forEach {
                         if (!handledNodeList.contains(it)) {
                             handledNodeList.add(it)
                         }
                     }
+                }
+
+                if (handleResult.forceFail || accParse.accControl.isControlEnd) {
+                    //强制失败后, 中断后续action执行
+                    break
                 }
             }
         }

@@ -195,6 +195,7 @@ object Action {
      * [jump:100 120 130] 找到第一个存在的action进行跳转
      * [jump] 跳过当前, 指定下一个
      * [jump:rely] 从[com.angcyo.acc2.bean.ActionBean.relyList]列表中获取一个可以跳转的action
+     * [jump:rely 2] 从[com.angcyo.acc2.bean.ActionBean.relyList]列表中获取索引为2可以跳转的action
      * */
     const val ACTION_JUMP = "jump"
 
@@ -213,6 +214,15 @@ object Action {
 
     /**禁用当前的[com.angcyo.acc2.bean.HandleBean]*/
     const val ACTION_DISABLE_HANDLE = "disableHandle"
+
+    /**用来触发请求表单
+     * [requestForm] 智能根据顺序获取需要请求的表单
+     * [requestForm:task]
+     * [requestForm:action]
+     * [requestForm:handle]
+     * [requestForm:operate]
+     * */
+    const val ACTION_REQUEST_FORM = "requestForm"
 
     /**异常, 并中断整个任务, 支持替换文本变量
      * [error:reason]

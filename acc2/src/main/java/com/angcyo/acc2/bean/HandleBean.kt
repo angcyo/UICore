@@ -108,6 +108,14 @@ data class HandleBean(
 
     //<editor-fold desc="操作记录">
 
+    /**表单请求
+     * [com.angcyo.acc2.bean.OperateBean.form]
+     * [com.angcyo.acc2.bean.HandleBean.form]
+     * [com.angcyo.acc2.bean.ActionBean.form]
+     * [com.angcyo.acc2.bean.TaskBean.form]
+     * */
+    var form: FormBean? = null,
+
     /**如果指定了操作记录, 那么会回调[com.angcyo.acc2.control.ControlListener.onHandleOperate]
      * 将会在[HandleBean]处理结束之后执行*/
     var operate: OperateBean? = null

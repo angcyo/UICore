@@ -17,6 +17,7 @@ data class TaskBean(
 
     /**表单请求
      * [com.angcyo.acc2.bean.OperateBean.form]
+     * [com.angcyo.acc2.bean.HandleBean.form]
      * [com.angcyo.acc2.bean.ActionBean.form]
      * [com.angcyo.acc2.bean.TaskBean.form]
      * */

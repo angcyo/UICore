@@ -5,6 +5,7 @@ import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.acc2.parse.arg
+import com.angcyo.library.ex.getOrNull2
 import com.angcyo.library.utils.getLongNumList
 
 /**
@@ -14,7 +15,7 @@ import com.angcyo.library.utils.getLongNumList
  * @date 2021/02/02
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class JumpAction : BaseAction() {
+class JumpAction : BaseClearAction() {
 
     override fun interceptAction(control: AccControl, action: String): Boolean {
         return action.startsWith(Action.ACTION_JUMP)
@@ -26,11 +27,28 @@ class JumpAction : BaseAction() {
         action: String
     ): HandleResult = handleResult {
 
-        var jumpId = -1L
+        //val actionIdList = getClearActionIdList(control, action)
+
+        var jumpId: Long = -1
 
         if (action.arg(Action.ACTION_JUMP) == Action.RELY) {
             //跳过到依赖的action
-            jumpId = jumpActionList(control, this, control.accSchedule.relyList())
+            val relyList = control.accSchedule.relyList()
+            val indexList = action.getLongNumList(true)
+
+            jumpId = if (indexList.isNullOrEmpty()) {
+                //未指定索引
+                jumpActionList(control, this, relyList)
+            } else {
+                //指定了索引
+                val list = mutableListOf<Long>()
+                indexList.forEach {
+                    relyList?.getOrNull2(it.toInt())?.let { actionId ->
+                        list.add(actionId)
+                    }
+                }
+                jumpActionList(control, this, list)
+            }
         } else {
             val actionIdList = action.getLongNumList(true)
             if (actionIdList == null) {
