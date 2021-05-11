@@ -49,6 +49,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         registerActionList.add(FlingAction())
 
         registerActionList.add(InputAction())
+        registerActionList.add(SetTextAction())
         registerActionList.add(GetTextAction())
         registerActionList.add(FullscreenAction())
         registerActionList.add(NotTouchableAction())

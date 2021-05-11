@@ -151,7 +151,10 @@ object Action {
      * */
     const val ACTION_INPUT = "input"
 
-    /**[ACTION_INPUT]别名*/
+    /**将指定的文本设置给[com.angcyo.acc2.bean.TaskBean.textMap]
+     * [com.angcyo.acc2.bean.TaskBean.textListMap]
+     * [setText:key xxx]
+     * */
     const val ACTION_SET_TEXT = "setText"
 
     /**清理[com.angcyo.acc2.bean.TaskBean.textMap]数据

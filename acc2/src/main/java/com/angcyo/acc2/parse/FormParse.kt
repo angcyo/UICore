@@ -1,13 +1,12 @@
 package com.angcyo.acc2.parse
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
-import com.angcyo.acc2.bean.ActionBean
-import com.angcyo.acc2.bean.FormBean
-import com.angcyo.acc2.bean.FormResultBean
-import com.angcyo.acc2.bean.HandleBean
+import com.angcyo.acc2.action.Action
+import com.angcyo.acc2.bean.*
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.ControlContext
 import com.angcyo.acc2.control.actionLog
+import com.angcyo.library.utils.UrlParse
 
 /**
  * 表单解析器
@@ -159,12 +158,55 @@ class FormParse : BaseParse() {
         }
     }
 
+
+    /**表单参数收集*/
+    fun handleParams(
+        control: AccControl,
+        formBean: FormBean,
+        taskBean: TaskBean?
+    ): HashMap<String, Any?> {
+        //从url中, 获取默认参数
+        val urlParams = UrlParse.getUrlQueryParams(formBean.query)
+
+        //请求参数
+        return HashMap<String, Any?>().apply {
+            putAll(urlParams)
+
+            //add key
+            formBean.params?.split(Action.PACKAGE_SPLIT)?.forEach { key ->
+                if (key.isNotEmpty()) {
+                    //key
+                    if (key == Action.LAST_INPUT) {
+                        put(key, control.accSchedule.inputTextList.lastOrNull())
+                    } else {
+                        put(key, taskBean?.getTextList(key)?.firstOrNull())
+                    }
+                }
+            }
+
+            //add key
+            formBean.keyList?.forEach { key ->
+                if (key.isNotEmpty()) {
+                    put(key, taskBean?.getTextList(key)?.firstOrNull())
+                }
+            }
+        }
+    }
+
+    /**回调转发表单请求*/
     fun request(
         control: AccControl,
         formBean: FormBean,
         params: HashMap<String, Any?>? = null
     ): FormResultBean? {
-        return formRequestListener?.request(control, formBean, params)
+        //解析参数
+        val requestParams = handleParams(control, formBean, control._taskBean).apply {
+            params?.let { putAll(it) }
+
+            formRequestListener?.configParams?.invoke(formBean, this)
+        }
+
+        return formRequestListener?.request(control, formBean, requestParams)
     }
 
     //</editor-fold desc="处理">

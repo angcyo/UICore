@@ -1,9 +1,5 @@
 package com.angcyo.acc2.bean
 
-import com.angcyo.acc2.action.Action
-import com.angcyo.acc2.control.AccControl
-import com.angcyo.library.utils.UrlParse
-
 /**
  * [ActionBean]执行结束后, 或者[TaskBean]流程结束后, 要提交的表单数据.
  * Email:angcyo@126.com
@@ -44,10 +40,7 @@ data class FormBean(
     var keyList: List<String>? = null,
 
     /**是否调试, 如果为true, 那么在debug模式下, 不会进行表单请求*/
-    var debug: Boolean = false,
-
-    /**表单数据返回, 交互信息*/
-    var _fromResult: FormResultBean? = null,
+    var debug: Boolean = false
 ) {
     companion object {
         //form data 形式
@@ -61,42 +54,4 @@ data class FormBean(
         const val KEY_MSG = "resultMsg"   //成功或者失败时, 提示信息
         const val KEY_DATA = "resultData" //一些信息
     }
-}
-
-/**表单参数收集*/
-fun FormBean.handleParams(
-    control: AccControl,
-    taskBean: TaskBean,
-    configParams: ((formBean: FormBean, params: HashMap<String, Any?>) -> Unit)? = null
-): HashMap<String, Any?> {
-    //从url中, 获取默认参数
-    val urlParams = UrlParse.getUrlQueryParams(query)
-
-    //请求参数
-    val requestParams = HashMap<String, Any?>().apply {
-        putAll(urlParams)
-
-        //add key
-        params?.split(Action.PACKAGE_SPLIT)?.forEach { key ->
-            if (key.isNotEmpty()) {
-                //key
-                if (key == Action.LAST_INPUT) {
-                    put(key, control.accSchedule.inputTextList.lastOrNull())
-                } else {
-                    put(key, taskBean.getTextList(key)?.firstOrNull())
-                }
-            }
-        }
-
-        //add key
-        keyList?.forEach { key ->
-            if (key.isNotEmpty()) {
-                put(key, taskBean.getTextList(key)?.firstOrNull())
-            }
-        }
-
-        configParams?.invoke(this@handleParams, this)
-    }
-
-    return requestParams
 }

@@ -29,11 +29,13 @@ class JumpAction : BaseClearAction() {
 
         //val actionIdList = getClearActionIdList(control, action)
 
+        val accSchedule = control.accSchedule
+
         var jumpId: Long = -1
 
         if (action.arg(Action.ACTION_JUMP) == Action.RELY) {
             //跳过到依赖的action
-            val relyList = control.accSchedule.relyList()
+            val relyList = accSchedule.relyList()
             val indexList = action.getLongNumList(true)
 
             jumpId = if (indexList.isNullOrEmpty()) {
@@ -53,7 +55,7 @@ class JumpAction : BaseClearAction() {
             val actionIdList = action.getLongNumList(true)
             if (actionIdList == null) {
                 //下一个
-                control.accSchedule.apply {
+                accSchedule.apply {
                     next()
                     val nextActionBean = nextActionBean()
                     success = nextActionBean != null
@@ -66,7 +68,7 @@ class JumpAction : BaseClearAction() {
         }
 
         if (success) {
-            control.accSchedule.jumpCountIncrement(control.accSchedule._scheduleActionBean?.actionId)
+            accSchedule.jumpCountIncrement(accSchedule._scheduleActionBean?.actionId)
         }
 
         control.log("跳转至[${jumpId}]:${success}")

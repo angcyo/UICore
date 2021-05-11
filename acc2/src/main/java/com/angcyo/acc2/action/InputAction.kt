@@ -22,7 +22,7 @@ class InputAction : BaseAction() {
     val inputCountMap = hashMapOf<String, Int>()
 
     override fun interceptAction(control: AccControl, action: String): Boolean {
-        return action.cmd(Action.ACTION_INPUT) || action.cmd(Action.ACTION_SET_TEXT)
+        return action.cmd(Action.ACTION_INPUT)
     }
 
     fun getCmd(action: String) =
