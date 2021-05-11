@@ -16,6 +16,9 @@
     android:notificationTimeout="100"
     android:summary="@string/lib_accessibility_summary" />
 
+    <!--配置信息-->
+    <!--https://developer.android.google.cn/reference/android/accessibilityservice/AccessibilityServiceInfo-->
+
     <!--属性说明-->
     <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_accessibilityEventTypes-->
 
