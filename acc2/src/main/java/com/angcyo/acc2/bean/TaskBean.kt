@@ -26,6 +26,10 @@ data class TaskBean(
     /**是否初始化了*/
     var _init: Boolean = false,
 
+    /**控制任务的日志
+     * [com.angcyo.acc2.bean.ActionBean.log]*/
+    var log: Boolean? = null,
+
     //<editor-fold desc="配置信息">
 
     /**任务uuid*/

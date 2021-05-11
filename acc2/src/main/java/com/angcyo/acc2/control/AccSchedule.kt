@@ -165,10 +165,22 @@ class AccSchedule(val accControl: AccControl) {
         actionBean: ActionBean? = null,
         isPrimaryAction: Boolean = true
     ) {
-        if (actionBean == null ||
-            actionBean.log == true ||
-            (actionBean.log == null && isPrimaryAction)
-        ) {
+        var needLog: Boolean? = null
+
+        if (accControl._taskBean?.log == true) {
+            needLog = true
+        } else if (accControl._taskBean?.log == false) {
+            needLog = false
+        } else {
+            if (actionBean == null ||
+                actionBean.log == true ||
+                (actionBean.log == null && isPrimaryAction)
+            ) {
+                needLog = true
+            }
+        }
+
+        if (needLog == true) {
             accControl.log(log, isPrimaryAction)
         }
     }

@@ -34,7 +34,8 @@ data class ActionBean(
     /**是否要输出日志
      * [null] 时智能控制,主线[ActionBean]才有日志
      * [true] 强制输出日志
-     * [false] 强制不要日志*/
+     * [false] 强制不要日志
+     * [com.angcyo.acc2.bean.TaskBean.log]*/
     var log: Boolean? = null,
 
     /**
