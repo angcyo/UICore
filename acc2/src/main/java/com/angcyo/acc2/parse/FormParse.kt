@@ -31,10 +31,19 @@ class FormParse : BaseParse() {
         handleBean: HandleBean?,
         originList: List<AccessibilityNodeInfoCompat>?,
         handleResult: HandleResult
-    ) {
+    ): FormResultBean? {
+        var result: FormResultBean? = null
         handleBean?.operate?.form?.let {
-            handleForm(controlContext, control, it, controlContext.action, originList, handleResult)
+            result = handleForm(
+                controlContext,
+                control,
+                it,
+                controlContext.action,
+                originList,
+                handleResult
+            )
         }
+        return result
     }
 
     /**表单请求
@@ -46,10 +55,19 @@ class FormParse : BaseParse() {
         handleBean: HandleBean?,
         originList: List<AccessibilityNodeInfoCompat>?,
         handleResult: HandleResult
-    ) {
+    ): FormResultBean? {
+        var result: FormResultBean? = null
         handleBean?.form?.let {
-            handleForm(controlContext, control, it, controlContext.action, originList, handleResult)
+            result = handleForm(
+                controlContext,
+                control,
+                it,
+                controlContext.action,
+                originList,
+                handleResult
+            )
         }
+        return result
     }
 
     /**表单请求
@@ -60,16 +78,19 @@ class FormParse : BaseParse() {
         control: AccControl,
         actionBean: ActionBean?,
         handleResult: HandleResult
-    ) {
+    ): FormResultBean? {
+        var result: FormResultBean? = null
         actionBean?.form?.let {
-            handleForm(controlContext, control, it, actionBean, null, handleResult)
+            result = handleForm(controlContext, control, it, actionBean, null, handleResult)
         }
+        return result
     }
 
     /**表单请求
      * [com.angcyo.acc2.bean.TaskBean.form]
      * */
-    fun parseTaskForm(control: AccControl, controlState: Int) {
+    fun parseTaskForm(control: AccControl, controlState: Int): FormResultBean? {
+        var result: FormResultBean? = null
         control._taskBean?.form?.let {
             //结束之后, 才请求form
             val params = hashMapOf<String, Any?>()
@@ -82,8 +103,9 @@ class FormParse : BaseParse() {
             params[FormBean.KEY_MSG] = control.finishReason
             params[FormBean.KEY_DATA] = controlState
 
-            request(control, it, params)
+            result = request(control, it, params)
         }
+        return result
     }
 
     //</editor-fold desc="触发">
@@ -97,7 +119,7 @@ class FormParse : BaseParse() {
         actionBean: ActionBean?,
         originList: List<AccessibilityNodeInfoCompat>?,
         handleResult: HandleResult,
-    ) {
+    ): FormResultBean? {
         val params = hashMapOf<String, Any?>()
         if (handleResult.success || handleResult.forceSuccess) {
             params[FormBean.KEY_CODE] = 200
@@ -152,6 +174,8 @@ class FormParse : BaseParse() {
                 _handleResult(handleResult, result)
             }
         }
+
+        return formResultBean
     }
 
     /**交换数据*/

@@ -1,6 +1,7 @@
 package com.angcyo.acc2.action
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
+import com.angcyo.acc2.bean.FormResultBean
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.ControlContext
 import com.angcyo.acc2.control.log
@@ -59,8 +60,11 @@ class RequestFormAction : BaseAction() {
         val formParse = control.accSchedule.accParse.formParse
         success = formBean != null && formParse.formRequestListener != null
 
+        //result
+        var formResultBean: FormResultBean? = null
+
         formBean?.let {
-            when (type) {
+            formResultBean = when (type) {
                 TYPE_OPERATE -> formParse.parseOperateForm(
                     controlContext,
                     control,
@@ -85,11 +89,13 @@ class RequestFormAction : BaseAction() {
                     control,
                     control._controlState
                 )
+                else -> null
             }
         }
 
         //sleep
         if (success && formBean?.sync == true) {
+            success = formResultBean != null
             control.accPrint.sleep(-1)
         }
 
