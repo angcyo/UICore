@@ -68,6 +68,7 @@ class ControlContext {
                 appendLine("${indent}Handle:${handle?.actionList}")
             }
             append(indent)
+            append("->")
             init()
         }.apply {
             control?.accSchedule?.printActionLog(this, action, isPrimaryAction())
