@@ -18,6 +18,7 @@
 
     <!--配置信息-->
     <!--https://developer.android.google.cn/reference/android/accessibilityservice/AccessibilityServiceInfo-->
+    <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService-->
 
     <!--属性说明-->
     <!--https://developer.android.google.cn/reference/android/R.styleable#AccessibilityService_accessibilityEventTypes-->
