@@ -33,6 +33,11 @@ open class AccPrint(val accControl: AccControl? = null) {
         L.w("next[$time]->${actionBean.title}${(actionBean.summary ?: actionBean.des).des()}".wrapLog())
     }
 
+    /**等待状态, 闪烁提示*/
+    open fun sleep(time: Long) {
+        //等待
+    }
+
     /**匹配到了元素*/
     open fun findNode(nodeList: List<AccessibilityNodeInfoCompat>?) {
 

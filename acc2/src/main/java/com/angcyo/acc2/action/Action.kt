@@ -233,7 +233,9 @@ object Action {
     const val ACTION_ERROR = "error"
 
     /**[sleep:1000]线程休眠1000毫秒
-     * 支持文本变量*/
+     * 支持时间格式
+     * 支持文本变量
+     * [com.angcyo.acc2.parse.AccParse.parseTime]*/
     const val ACTION_SLEEP = "sleep"
 
     /**直接完成任务, 支持替换文本变量

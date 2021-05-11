@@ -46,25 +46,28 @@ class CircleLoadingView(context: Context, attributeSet: AttributeSet? = null) :
     /** 每帧增加的速率 */
     var rotateStep = 4
 
-    /** 颜色, 透明到此颜色的渐变 */
+    /** 颜色, 透明到此颜色的渐变, 进度颜色 */
     var loadingColor: Int = -1 //Color.parseColor("#3965D6")
         set(value) {
             field = value
             singleShader = createSingleShader(loadingStartColor, value)
             multiShader = createMultiShader(loadingStartColor, value)
+            postInvalidate()
         }
 
+    /**不确定进度时有效*/
     var loadingStartColor: Int = Color.TRANSPARENT
         set(value) {
             field = value
             singleShader = createSingleShader(value, loadingColor)
             multiShader = createMultiShader(value, loadingColor)
+            postInvalidate()
         }
 
-    /** 单条时候的颜色渐变 [Shader]*/
+    /** 单条时候的颜色渐变 [Shader], 不确定进度时有效*/
     var singleShader: Shader? = null
 
-    /** 双条的时候颜色渐变 [Shader]*/
+    /** 双条的时候颜色渐变 [Shader], 不确定进度时有效*/
     var multiShader: Shader? = null
 
     /** 双龙戏珠模式 */

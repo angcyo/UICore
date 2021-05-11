@@ -88,6 +88,11 @@ class RequestFormAction : BaseAction() {
             }
         }
 
+        //sleep
+        if (success && formBean?.sync == true) {
+            control.accPrint.sleep(-1)
+        }
+
         control.log("请求表单Action[${arg}]:${success}↓\n${formBean}")
     }
 }

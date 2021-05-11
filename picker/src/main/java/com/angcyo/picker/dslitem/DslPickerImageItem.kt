@@ -236,6 +236,7 @@ open class DslPickerImageItem : DslAdapterItem() {
                     ?.bgColorAnimator(
                         Color.TRANSPARENT,
                         _selectorMaskColor,
+                        false,
                         _transitionInterpolator,
                         _transitionDuration.toLong()
                     )
@@ -247,6 +248,7 @@ open class DslPickerImageItem : DslAdapterItem() {
                     ?.bgColorAnimator(
                         _selectorMaskColor,
                         Color.TRANSPARENT,
+                        false,
                         _transitionInterpolator,
                         _transitionDuration.toLong()
                     )

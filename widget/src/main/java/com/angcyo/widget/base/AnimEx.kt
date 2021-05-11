@@ -27,7 +27,7 @@ import com.angcyo.widget.base.Anim.ANIM_DURATION
 
 object Anim {
     /**动画默认时长*/
-    const val ANIM_DURATION = 300L
+    var ANIM_DURATION = 300L
 }
 
 /**从指定资源id中, 加载动画[Animation]*/
@@ -230,19 +230,22 @@ data class RevealConfig(
     var endRadius: Float = 0f
 )
 
-fun View.bgColorAnimator(
-    from: Int,
-    to: Int,
+/**颜色渐变动画*/
+fun colorAnimator(
+    fromColor: Int,
+    toColor: Int,
+    infinite: Boolean = false,
     interpolator: Interpolator = LinearInterpolator(),
     duration: Long = ANIM_DURATION,
     onEnd: (cancel: Boolean) -> Unit = {},
-    config: ValueAnimator.() -> Unit = {}
-) {
-    //背景动画
-    val colorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), from, to)
+    config: ValueAnimator.() -> Unit = {},
+    onUpdate: (animator: ValueAnimator, color: Int) -> Unit
+): ValueAnimator {
+    //颜色动画
+    val colorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), fromColor, toColor)
     colorAnimator.addUpdateListener { animation ->
         val color = animation.animatedValue as Int
-        setBackgroundColor(color)
+        onUpdate(animation, color)
     }
     colorAnimator.addListener(object : RAnimatorListener() {
         override fun _onAnimatorFinish(animator: Animator, fromCancel: Boolean) {
@@ -252,8 +255,37 @@ fun View.bgColorAnimator(
     })
     colorAnimator.interpolator = interpolator
     colorAnimator.duration = duration
+    if (infinite) {
+        colorAnimator.repeatCount = ValueAnimator.INFINITE
+        colorAnimator.repeatMode = ValueAnimator.REVERSE
+    }
     colorAnimator.config()
     colorAnimator.start()
+    return colorAnimator
+}
+
+/**背景变化动画*/
+fun View.bgColorAnimator(
+    fromColor: Int,
+    toColor: Int,
+    infinite: Boolean = false,
+    interpolator: Interpolator = LinearInterpolator(),
+    duration: Long = ANIM_DURATION,
+    onEnd: (cancel: Boolean) -> Unit = {},
+    config: ValueAnimator.() -> Unit = {}
+): ValueAnimator {
+    //背景动画
+    return colorAnimator(
+        fromColor,
+        toColor,
+        infinite,
+        interpolator,
+        duration,
+        onEnd,
+        config
+    ) { _, color ->
+        setBackgroundColor(color)
+    }
 }
 
 /**
