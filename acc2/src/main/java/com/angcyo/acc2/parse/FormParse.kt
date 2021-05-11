@@ -120,6 +120,11 @@ class FormParse : BaseParse() {
         //result
         formResultBean?.apply {
 
+            //wordList
+            wordList?.let {
+                control._taskBean?.wordList = it
+            }
+
             //1.
             actions?.forEach {
                 formRequestListener?.initAction(it)?.let { actionBean ->

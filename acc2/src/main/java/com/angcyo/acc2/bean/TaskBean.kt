@@ -121,7 +121,7 @@ data class TaskBean(
      * [$0 ]
      * [$0 $2 $3]
      * [$0~$-1]*/
-    var wordList: List<String>? = null,
+    var wordList: List<String?>? = null,
 
     /** 优先级低于[textListMap]
      * 文本池, 供$[xxx] 获取使用

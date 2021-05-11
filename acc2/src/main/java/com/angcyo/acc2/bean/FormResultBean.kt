@@ -9,6 +9,10 @@ package com.angcyo.acc2.bean
  */
 data class FormResultBean(
 
+    /**替换任务中的[wordList]
+     * [com.angcyo.acc2.bean.TaskBean.wordList]*/
+    var wordList: List<String?>? = null,
+
     /**需要额外执行的[ActionBean]
      * [com.angcyo.acc2.bean.TaskBean.actionList]*/
     var actions: List<ActionBean>? = null,
