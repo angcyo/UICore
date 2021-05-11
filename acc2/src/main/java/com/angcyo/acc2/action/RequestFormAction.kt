@@ -88,6 +88,6 @@ class RequestFormAction : BaseAction() {
             }
         }
 
-        control.log("请求表单[${arg}]:${success}↓\n${formBean}")
+        control.log("请求表单Action[${arg}]:${success}↓\n${formBean}")
     }
 }
