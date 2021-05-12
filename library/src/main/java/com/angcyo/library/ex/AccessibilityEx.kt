@@ -508,15 +508,28 @@ fun AccessibilityNodeInfo.debugNodeInfo(
             if (isSelected) {
                 append("selected ")
             }
-            if (isPassword) {
-                append("password ")
-            }
 
             if (isCheckable) {
                 append("checkable:$isChecked ")
             }
             if (isFocusable) {
                 append("focusable:$isFocused ")
+            }
+
+            if (isPassword) {
+                append("password ")
+            }
+            if (isVisibleToUser) {
+                append("visibleToUser ")
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                if (isDismissable) {
+                    append("dismissable ")
+                }
+                if (isEditable) {
+                    append("editable ")
+                }
             }
         }.apply {
             if (this.trim().isNotEmpty()) {
@@ -638,10 +651,6 @@ fun List<AccessibilityNodeInfo>.toWrapList() =
 /**获取有文本的文本*/
 fun AccessibilityNodeInfoCompat.text() =
     text ?: (contentDescription ?: (hintText ?: (paneTitle ?: tooltipText)))
-
-fun AccessibilityNodeInfo.log() {
-    L.v(wrap().toString())
-}
 
 /**枚举查找[AccessibilityNodeInfo]
  * [deep] 节点查询深度, >=0生效, 0:表示根节点 1:表示根节点+child
