@@ -872,6 +872,46 @@ class FindParse(val accParse: AccParse) : BaseParse() {
                             match = false
                         }
                     }
+                    Action.STATE_VISIBLE -> {
+                        if (!node.isVisibleToUser) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_UN_VISIBLE -> {
+                        if (node.isVisibleToUser) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_DISMISSABLE -> {
+                        if (!node.isDismissable) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_UN_DISMISSABLE -> {
+                        if (node.isDismissable) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_EDITABLE -> {
+                        if (!node.isEditable) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_UN_EDITABLE -> {
+                        if (node.isEditable) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_MULTILINE -> {
+                        if (!node.isMultiLine) {
+                            match = false
+                        }
+                    }
+                    Action.STATE_UN_MULTILINE -> {
+                        if (node.isMultiLine) {
+                            match = false
+                        }
+                    }
                 }
             }
             if (!match) {

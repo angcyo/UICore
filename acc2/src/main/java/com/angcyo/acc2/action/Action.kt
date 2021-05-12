@@ -340,7 +340,9 @@ object Action {
 
     /*---------------------------------------状态匹配--------------------------------------*/
 
-    //需要指定的状态 [state]
+    /**需要指定的状态
+     * [com.angcyo.acc2.bean.FindBean.stateList]*/
+
     const val STATE_CLICKABLE = "clickable" //具备可点击
     const val STATE_UN_CLICKABLE = "unClickable" //具备不可点击
     const val STATE_FOCUSABLE = "focusable" //具备可获取交点
@@ -361,4 +363,13 @@ object Action {
     const val STATE_UN_CHECKABLE = "unCheckable" //具备不可check状态
     const val STATE_CHECKED = "checked" //具备check状态
     const val STATE_UNCHECKED = "unchecked" //不具备check状态
+
+    const val STATE_VISIBLE = "visible" //具备isVisibleToUser状态
+    const val STATE_UN_VISIBLE = "unVisible" //不具备isVisibleToUser状态
+    const val STATE_DISMISSABLE = "dismissable" //isDismissable
+    const val STATE_UN_DISMISSABLE = "unDismissable"
+    const val STATE_EDITABLE = "editable" //isEditable
+    const val STATE_UN_EDITABLE = "unEditable"
+    const val STATE_MULTILINE = "multiLine" //isMultiLine
+    const val STATE_UN_MULTILINE = "unMultiLine"
 }
