@@ -5,6 +5,7 @@ import com.angcyo.acc2.action.*
 import com.angcyo.acc2.bean.HandleBean
 import com.angcyo.acc2.bean.TextParamBean
 import com.angcyo.acc2.control.*
+import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.size
 
 /**
@@ -35,6 +36,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
 
         registerActionList.add(BackAction())
         registerActionList.add(HomeAction())
+        registerActionList.add(ScreenshotAction())
 
         registerActionList.add(ClickAction())
         registerActionList.add(ScrollBackwardAction())
@@ -198,7 +200,16 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         val textParamBean =
             caseBean?.textParam ?: handleBean.textParam ?: accParse.accControl._taskBean?.textParam
 
-        if (conditionActionList != null) {
+        if (isDebug() && !handleBean.debugActionList.isNullOrEmpty()) {
+            //调试专用
+            result = handleAction(
+                controlContext,
+                handleBean,
+                textParamBean,
+                handleNodeList,
+                handleBean.debugActionList
+            )
+        } else if (conditionActionList != null) {
             //不满足约束条件时,又指定了对应的actionList, 优先执行
             result = handleAction(
                 controlContext,
@@ -227,28 +238,26 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
                     }
                 } else {
                     //重新选择后, 节点不为空
-                    result =
-                        handleAction(
-                            controlContext,
-                            handleBean,
-                            textParamBean,
-                            handleNodeList,
-                            targetActionList
-                        )
+                    result = handleAction(
+                        controlContext,
+                        handleBean,
+                        textParamBean,
+                        handleNodeList,
+                        targetActionList
+                    )
                 }
             } else {
                 //默认处理
                 if (targetActionList.isNullOrEmpty()) {
                     result.success = targetActionList != null
                 } else {
-                    result =
-                        handleAction(
-                            controlContext,
-                            handleBean,
-                            textParamBean,
-                            handleNodeList,
-                            targetActionList
-                        )
+                    result = handleAction(
+                        controlContext,
+                        handleBean,
+                        textParamBean,
+                        handleNodeList,
+                        targetActionList
+                    )
                 }
             }
         }

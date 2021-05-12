@@ -196,7 +196,7 @@ fun AccessibilityService.lockScreen(): Boolean {
 }
 
 /**屏幕截图*/
-fun AccessibilityService.takeScreenShot(): Boolean {
+fun AccessibilityService.takeScreenshot(): Boolean {
     //api 28
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
         performGlobalAction(AccessibilityService.GLOBAL_ACTION_TAKE_SCREENSHOT)

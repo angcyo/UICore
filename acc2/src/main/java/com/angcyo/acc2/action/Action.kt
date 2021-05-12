@@ -190,6 +190,9 @@ object Action {
      * [back:>1000]连续back操作, 满足条件才触发.否则失败*/
     const val ACTION_BACK = "back"
 
+    /**截屏*/
+    const val ACTION_SCREENSHOT = "screenshot"
+
     /**回到桌面*/
     const val ACTION_HOME = "home"
 
@@ -226,6 +229,9 @@ object Action {
      * [requestForm:operate]
      * */
     const val ACTION_REQUEST_FORM = "requestForm"
+
+    /**[ACTION_REQUEST_FORM]别名*/
+    const val ACTION_FORM = "form"
 
     /**异常, 并中断整个任务, 支持替换文本变量
      * [error:reason]

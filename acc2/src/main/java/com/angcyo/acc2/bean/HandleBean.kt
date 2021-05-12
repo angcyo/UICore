@@ -75,6 +75,9 @@ data class HandleBean(
      * */
     var textParam: TextParamBean? = null,
 
+    /**调试模式下测试专用的[actionList]*/
+    var debugActionList: List<String>? = null,
+
     /**
      * 当有元素选择时需要执行的具体操作
      * [com.angcyo.acc2.action.Action]*/

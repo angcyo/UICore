@@ -25,7 +25,7 @@ class RequestFormAction : BaseAction() {
     }
 
     override fun interceptAction(control: AccControl, action: String): Boolean {
-        return action.cmd(Action.ACTION_REQUEST_FORM)
+        return action.cmd(Action.ACTION_REQUEST_FORM) || action.cmd(Action.ACTION_FORM)
     }
 
     override fun runAction(
@@ -35,7 +35,7 @@ class RequestFormAction : BaseAction() {
         action: String
     ): HandleResult = handleResult {
 
-        val arg = action.arg(Action.ACTION_REQUEST_FORM)
+        val arg = action.arg(Action.ACTION_REQUEST_FORM) ?: action.arg(Action.ACTION_FORM)
         var type: String? = arg
 
         val formBean = when {
