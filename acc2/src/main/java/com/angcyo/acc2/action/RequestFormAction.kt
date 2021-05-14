@@ -54,7 +54,7 @@ class RequestFormAction : BaseAction() {
             arg == TYPE_HANDLE -> controlContext.handle?.form
             arg == TYPE_ACTION -> controlContext.action?.form
             arg == TYPE_TASK -> control._taskBean?.form
-            else -> null
+            else -> control._taskBean?.formMap?.get(arg)
         }
 
         val formParse = control.accSchedule.accParse.formParse
@@ -89,7 +89,13 @@ class RequestFormAction : BaseAction() {
                     control,
                     control._controlState
                 )
-                else -> null
+                //default
+                else -> formParse.parseActionForm(
+                    controlContext,
+                    control,
+                    controlContext.action,
+                    this
+                )
             }
         }
 

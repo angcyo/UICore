@@ -12,7 +12,8 @@ import com.angcyo.library.ex.uuid
  */
 data class TaskBean(
 
-    /**额外数据, 存放点*/
+    /**额外数据, 存放点
+     * 方便在定制化app中使用*/
     var map: HashMap<String, Any?>? = null,
 
     /**表单请求
@@ -22,6 +23,12 @@ data class TaskBean(
      * [com.angcyo.acc2.bean.TaskBean.form]
      * */
     var form: FormBean? = null,
+
+    /**[com.angcyo.acc2.bean.TaskBean.form]
+     * [com.angcyo.acc2.action.Action.ACTION_REQUEST_FORM]
+     * [com.angcyo.acc2.action.Action.ACTION_FORM]
+     * */
+    var formMap: Map<String, FormBean?>? = null,
 
     /**是否初始化了*/
     var _init: Boolean = false,

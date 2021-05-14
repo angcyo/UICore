@@ -227,6 +227,8 @@ object Action {
      * [requestForm:action]
      * [requestForm:handle]
      * [requestForm:operate]
+     * [requestForm:xxx]
+     * [form:form1] 支持从[com.angcyo.acc2.bean.TaskBean.formMap]中获取[com.angcyo.acc2.bean.FormBean]
      * */
     const val ACTION_REQUEST_FORM = "requestForm"
 
