@@ -835,7 +835,7 @@ class AccSchedule(val accControl: AccControl) {
             }
         }
 
-        if (actionBean.async == true && !threadName().startsWith(AccControl.ACC_MAIN_THREAD)) {
+        if (actionBean.async == true && !accControl.isControlMainThread()) {
             //异步执行
             async {
                 runActionInner(

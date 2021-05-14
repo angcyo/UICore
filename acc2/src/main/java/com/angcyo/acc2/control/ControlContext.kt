@@ -45,8 +45,14 @@ class ControlContext {
         return buildString {
             val indent = if (isPrimaryAction()) "" else "  "
             append(indent)
+            if (isPrimaryAction()) {
+                append("[主线] ")
+            }
             append(control?.accSchedule?.indexTip())
             append(" ")
+            if (control?.accSchedule?._isLeaveWindow == true) {
+                append("[leave] ")
+            }
             if (action == null) {
                 appendLine("Action:无")
             } else {

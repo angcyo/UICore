@@ -14,10 +14,7 @@ import com.angcyo.acc2.core.BaseAccService
 import com.angcyo.acc2.core.ControlException
 import com.angcyo.acc2.core.ControlInterruptException
 import com.angcyo.library.*
-import com.angcyo.library.ex.des
-import com.angcyo.library.ex.newLineIndent
-import com.angcyo.library.ex.simpleHash
-import com.angcyo.library.ex.sleep
+import com.angcyo.library.ex.*
 
 /**
  *
@@ -204,6 +201,9 @@ class AccControl : Runnable {
 
     fun findAction(actionId: Long?): ActionBean? =
         if (actionId == null) null else _taskBean?.actionList?.find { it.actionId == actionId }
+
+    /**是否是控制器的主线程*/
+    fun isControlMainThread() = threadName().startsWith(ACC_MAIN_THREAD)
 
     //</editor-fold desc="操作">
 
