@@ -137,3 +137,6 @@ fun httpBeanType(wrapClass: Class<*>, typeClass: Class<*>): Type =
  * */
 fun httpListBeanType(wrapClass: Class<*>, typeClass: Class<*>): Type =
     type(wrapClass, type(List::class.java, typeClass))
+
+/**成功*/
+fun Int.isSuccess() = this in 200..299
