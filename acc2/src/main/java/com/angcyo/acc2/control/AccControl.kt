@@ -225,7 +225,15 @@ class AccControl : Runnable {
 
     /**子线程内调度*/
     override fun run() {
-        log("run控制器启动[${_taskBean?.title}]")
+        log(buildString {
+            append("run控制器启动")
+            append("[${_taskBean?.title}]")
+            append("[${_taskBean?.actionList.size()}]")
+            appendLine()
+            appendLine("enable:${_taskBean?.enableAction}")
+            appendLine("disable:${_taskBean?.disableAction}")
+            appendLine("random:${_taskBean?.randomEnableAction}")
+        })
         //next(_taskBean?.title, _taskBean?.des, 0)
         while (isControlStart) {
             try {
