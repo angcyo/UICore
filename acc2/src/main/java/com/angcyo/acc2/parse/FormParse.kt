@@ -93,14 +93,16 @@ class FormParse : BaseParse() {
         var result: FormResultBean? = null
         control._taskBean?.form?.let {
             //结束之后, 才请求form
-            val params = hashMapOf<String, Any?>()
+            val params = hashMapOf<String, Any>()
             when (controlState) {
+                //本地处理成功
                 AccControl.CONTROL_STATE_FINISH -> params[FormBean.KEY_CODE] = 200
-                AccControl.CONTROL_STATE_STOP -> params[FormBean.KEY_CODE] = 300 //本地执行中断, 任务终止.
-                AccControl.CONTROL_STATE_ERROR -> params[FormBean.KEY_CODE] =
-                    500 //本地执行错误, 任务终止.
+                //本地执行中断, 任务终止.
+                AccControl.CONTROL_STATE_STOP -> params[FormBean.KEY_CODE] = 300
+                //本地执行错误, 任务终止.
+                AccControl.CONTROL_STATE_ERROR -> params[FormBean.KEY_CODE] = 500
             }
-            params[FormBean.KEY_MSG] = control.finishReason
+            params[FormBean.KEY_MSG] = control.finishReason ?: "null"
             params[FormBean.KEY_DATA] = controlState
 
             result = request(control, it, params)
@@ -120,14 +122,14 @@ class FormParse : BaseParse() {
         originList: List<AccessibilityNodeInfoCompat>?,
         handleResult: HandleResult,
     ): FormResultBean? {
-        val params = hashMapOf<String, Any?>()
+        val params = hashMapOf<String, Any>()
         if (handleResult.success || handleResult.forceSuccess) {
             params[FormBean.KEY_CODE] = 200
         } else {
             params[FormBean.KEY_CODE] = 301 //本地执行中断, 但是需要继续任务
         }
-        params[FormBean.KEY_MSG] = actionBean?.title
-        params[FormBean.KEY_DATA] = actionBean?.actionLog()
+        params[FormBean.KEY_MSG] = actionBean?.title ?: "null"
+        params[FormBean.KEY_DATA] = actionBean?.actionLog() ?: "null"
 
         var formResultBean: FormResultBean? = null
 
@@ -193,12 +195,12 @@ class FormParse : BaseParse() {
         control: AccControl,
         formBean: FormBean,
         taskBean: TaskBean?
-    ): HashMap<String, Any?> {
+    ): HashMap<String, Any> {
         //从url中, 获取默认参数
         val urlParams = UrlParse.getUrlQueryParams(formBean.query)
 
         //请求参数
-        return HashMap<String, Any?>().apply {
+        return HashMap<String, Any>().apply {
             putAll(urlParams)
 
             //add key
@@ -206,9 +208,11 @@ class FormParse : BaseParse() {
                 if (key.isNotEmpty()) {
                     //key
                     if (key == Action.LAST_INPUT) {
-                        put(key, control.accSchedule.inputTextList.lastOrNull())
+                        control.accSchedule.inputTextList.lastOrNull()
                     } else {
-                        put(key, taskBean?.getTextList(key)?.firstOrNull())
+                        taskBean?.getTextList(key)?.firstOrNull()
+                    }?.let { value ->
+                        put(key, value)
                     }
                 }
             }
@@ -216,7 +220,9 @@ class FormParse : BaseParse() {
             //add key
             formBean.keyList?.forEach { key ->
                 if (key.isNotEmpty()) {
-                    put(key, taskBean?.getTextList(key)?.firstOrNull())
+                    taskBean?.getTextList(key)?.firstOrNull()?.let { value ->
+                        put(key, value)
+                    }
                 }
             }
         }
@@ -226,7 +232,7 @@ class FormParse : BaseParse() {
     fun request(
         control: AccControl,
         formBean: FormBean,
-        params: HashMap<String, Any?>? = null
+        params: HashMap<String, Any>? = null
     ): FormResultBean? {
         //解析参数
         val requestParams = handleParams(control, formBean, control._taskBean).apply {
@@ -243,7 +249,7 @@ class FormParse : BaseParse() {
     abstract class RequestListener {
 
         /**参数配置*/
-        var configParams: ((formBean: FormBean, params: HashMap<String, Any?>) -> Unit)? = null
+        var configParams: ((formBean: FormBean, params: HashMap<String, Any>) -> Unit)? = null
 
         open fun initAction(actionBean: ActionBean): ActionBean {
             return actionBean
@@ -253,7 +259,7 @@ class FormParse : BaseParse() {
         open fun request(
             control: AccControl,
             formBean: FormBean,
-            params: HashMap<String, Any?>? = null
+            params: HashMap<String, Any>? = null
         ): FormResultBean? {
             return null
         }
