@@ -835,13 +835,15 @@ class AccSchedule(val accControl: AccControl) {
             }
         }
 
+        val context = controlContext.copy {
+            action = actionBean
+        }
+
         if (actionBean.async == true && !accControl.isControlMainThread()) {
             //异步执行
             async {
                 runActionInner(
-                    controlContext.copy {
-                        action = actionBean
-                    },
+                    context,
                     actionBean,
                     otherActionList,
                     isPrimaryAction,
@@ -850,12 +852,12 @@ class AccSchedule(val accControl: AccControl) {
             }
         } else {
             //同步执行
-            if (runActionBefore(controlContext, actionBean, isPrimaryAction, handleActionResult)) {
+            if (runActionBefore(context, actionBean, isPrimaryAction, handleActionResult)) {
                 if (!accControl.isControlRunning) {
                     return handleActionResult
                 }
                 runActionInner(
-                    controlContext,
+                    context,
                     actionBean,
                     otherActionList,
                     isPrimaryAction,
@@ -864,7 +866,7 @@ class AccSchedule(val accControl: AccControl) {
                 if (!accControl.isControlRunning) {
                     return handleActionResult
                 }
-                runActionAfter(controlContext, actionBean, isPrimaryAction, handleActionResult)
+                runActionAfter(context, actionBean, isPrimaryAction, handleActionResult)
             }
         }
         return handleActionResult

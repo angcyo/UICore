@@ -37,7 +37,7 @@ class ControlContext {
             it.check = check
             it.find = find
             it.handle = handle
-            init()
+            it.init()
         }
     }
 
