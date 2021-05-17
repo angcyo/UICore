@@ -340,6 +340,12 @@ object Action {
      * */
     const val ACTION_HIDE_WINDOW = "hideWindow"
 
+    /**当满足条件时,中断后面的[actionList]执行
+     * [interrupt:find key:findKey exp:<=100] //中断查找次数小于100次的时候
+     * [interrupt:handle key:handleKey exp:<=100] //中断前100次处理
+     * */
+    const val ACTION_INTERRUPT = "interrupt"
+
     /*---------------------------------------状态匹配--------------------------------------*/
 
     /**需要指定的状态

@@ -237,12 +237,13 @@ class FindParse(val accParse: AccParse) : BaseParse() {
             )
         }
 
+        //判断找到的节点数量
         if (findBean.findNodeCount != null) {
             val match = accParse.expParse.parseAndCompute(
                 findBean.findNodeCount,
-                inputValue = findNodeList.size().toFloat()
+                findNodeList.size().toFloat()
             )
-            if (!match) {
+            if (!accParse.expParse.invalidExp && !match) {
                 //如果没有满足计算表达式
                 findNodeList.clear()
             }

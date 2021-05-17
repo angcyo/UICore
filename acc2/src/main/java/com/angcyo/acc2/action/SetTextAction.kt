@@ -4,13 +4,12 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.bean.putMap
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.ControlContext
-import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.acc2.parse.arg
 import com.angcyo.library.ex.subEnd
 
 /**
- *
+ * 直接给[com.angcyo.acc2.bean.TaskBean.textMap]赋值
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2021/05/11
@@ -36,6 +35,8 @@ class SetTextAction : BaseAction() {
             control._taskBean?.putMap(key, value)
         }
 
-        control.log("设置文本[$key]:$success")
+        controlContext.log {
+            append("设置文本[$key]:$success")
+        }
     }
 }

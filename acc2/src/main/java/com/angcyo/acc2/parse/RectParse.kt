@@ -1,7 +1,6 @@
 package com.angcyo.acc2.parse
 
 import android.graphics.Rect
-import com.angcyo.acc2.action.Action
 
 /**
  *
@@ -29,7 +28,7 @@ class RectParse(val accParse: AccParse) : BaseParse() {
         val leftValueList = ExpParse.getValue(rectMatch, "l:|left:")
         expParse.ratioRef = accParse.accContext.getBound().width().toFloat()
         for (value in leftValueList) {
-            if (!expParse.parseAndCompute(value, Action.OP, left)) {
+            if (!expParse.parseAndCompute(value, left)) {
                 return false
             }
         }
@@ -37,7 +36,7 @@ class RectParse(val accParse: AccParse) : BaseParse() {
         //right
         val rightValueList = ExpParse.getValue(rectMatch, "r:|right:")
         for (value in rightValueList) {
-            if (!expParse.parseAndCompute(value, Action.OP, right)) {
+            if (!expParse.parseAndCompute(value, right)) {
                 return false
             }
         }
@@ -45,7 +44,7 @@ class RectParse(val accParse: AccParse) : BaseParse() {
         //width
         val widthValueList = ExpParse.getValue(rectMatch, "w:|width:")
         for (value in widthValueList) {
-            if (!expParse.parseAndCompute(value, Action.OP, rect.width().toFloat())) {
+            if (!expParse.parseAndCompute(value, rect.width().toFloat())) {
                 return false
             }
         }
@@ -59,7 +58,7 @@ class RectParse(val accParse: AccParse) : BaseParse() {
         val topValueList = ExpParse.getValue(rectMatch, "t:|top:")
         expParse.ratioRef = accParse.accContext.getBound().height().toFloat()
         for (value in topValueList) {
-            if (!expParse.parseAndCompute(value, Action.OP, top)) {
+            if (!expParse.parseAndCompute(value, top)) {
                 return false
             }
         }
@@ -67,7 +66,7 @@ class RectParse(val accParse: AccParse) : BaseParse() {
         //bottom
         val bottomValueList = ExpParse.getValue(rectMatch, "b:|bottom:")
         for (value in bottomValueList) {
-            if (!expParse.parseAndCompute(value, Action.OP, bottom)) {
+            if (!expParse.parseAndCompute(value, bottom)) {
                 return false
             }
         }
@@ -75,7 +74,7 @@ class RectParse(val accParse: AccParse) : BaseParse() {
         //height
         val heightValueList = ExpParse.getValue(rectMatch, "h:|height:")
         for (value in heightValueList) {
-            if (!expParse.parseAndCompute(value, Action.OP, rect.height().toFloat())) {
+            if (!expParse.parseAndCompute(value, rect.height().toFloat())) {
                 return false
             }
         }

@@ -47,6 +47,9 @@ class ExpParse(val accParse: AccParse) : BaseParse() {
         }
     }
 
+    /**是否是无效的计算表达式*/
+    var invalidExp: Boolean = false
+
     /**
      * [expression] 解析表达式, 数值要在符号的后面
      * [>-10]
@@ -65,8 +68,11 @@ class ExpParse(val accParse: AccParse) : BaseParse() {
 
         expValueList.clear()
         if (exp.isNullOrEmpty()) {
+            invalidExp = true
             return expValueList
         }
+
+        invalidExp = false
 
         //获取表达式
         val opPattern = "([$op]+)".toPattern() //<3
@@ -94,6 +100,10 @@ class ExpParse(val accParse: AccParse) : BaseParse() {
             expValueList.add(ExpValue(opList.getOrNull(i), valueList[i], unitList.getOrNull(i)))
         }
 
+        if (expValueList.isEmpty()) {
+            invalidExp = true
+        }
+
         return expValueList
     }
 
@@ -101,7 +111,7 @@ class ExpParse(val accParse: AccParse) : BaseParse() {
      * [exp] 比较的表达式 [>=100]
      * @return true 计算通过
      * */
-    fun parseAndCompute(exp: String?, op: String = Action.OP, inputValue: Float): Boolean {
+    fun parseAndCompute(exp: String?, inputValue: Float, op: String = Action.OP): Boolean {
         parse(exp, op)
         return compute(inputValue)
     }

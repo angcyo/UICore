@@ -4,7 +4,6 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.AccSchedule
 import com.angcyo.acc2.control.ControlContext
-import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.acc2.parse.arg
 import com.angcyo.acc2.parse.toLog
@@ -34,6 +33,7 @@ class InputAction : BaseAction() {
 
     override fun onScheduleEnd(scheduled: AccSchedule) {
         super.onScheduleEnd(scheduled)
+        inputCountMap.clear()
     }
 
     override fun runAction(
@@ -86,21 +86,29 @@ class InputAction : BaseAction() {
             //获取目标
             if (indexText.isNullOrEmpty()) {
                 //未指定index, 随机返回一个
-                control.log("随机获取输入文本:$inputTextList")
+                controlContext.log {
+                    append("随机获取输入文本:$inputTextList")
+                }
                 inputTextList.randomGet(1).firstOrNull()
             } else if (indexText == Action.ORDER) {
                 //按顺序返回
-                control.log("顺序获取输入文本第${inputCount}个:$inputTextList")
+                controlContext.log {
+                    append("顺序获取输入文本第${inputCount}个:$inputTextList")
+                }
                 inputTextList.getSafe(inputCount)
             } else {
                 val index = indexText.toIntOrNull()
                 if (index == null) {
                     //其他无法识别的文本内容, 随机获取
-                    control.log("随机获取输入文本,无效参数[${indexText}]:$inputTextList")
+                    controlContext.log {
+                        append("随机获取输入文本,无效参数[${indexText}]:$inputTextList")
+                    }
                     inputTextList.randomGet(1).firstOrNull()
                 } else {
                     //指定了index
-                    control.log("指定获取输入文本索引第${inputCount}个:$inputTextList")
+                    controlContext.log {
+                        append("指定获取输入文本索引第${inputCount}个:$inputTextList")
+                    }
                     inputTextList.getSafe(index)
                 }
             }
@@ -127,7 +135,10 @@ class InputAction : BaseAction() {
                     }
                 }
             }
-            control.log("输入文本[$text]:$result\n${node.toLog()}")
+
+            controlContext.log {
+                append("输入文本[$text]:$result\n${node.toLog()}")
+            }
         }
     }
 }

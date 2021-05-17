@@ -4,7 +4,6 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.bean.FormResultBean
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.ControlContext
-import com.angcyo.acc2.control.log
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.acc2.parse.arg
 
@@ -105,6 +104,8 @@ class RequestFormAction : BaseAction() {
             control.accPrint.sleep(-1)
         }
 
-        control.log("请求表单Action[${arg}]:${success}↓\n${formBean}")
+        controlContext.log {
+            append("请求表单Action[${arg}]:${success}↓\n${formBean}")
+        }
     }
 }
