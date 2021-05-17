@@ -158,6 +158,12 @@ data class FindBean(
     /**根据过滤条件, 过滤一层*/
     var filter: FilterBean? = null,
 
+    /**
+     * 如果上面查找到, 过滤后的节点总数量满足指定条件时, 则返回找到的节点集合.
+     * 否则, 清空节点集合并返回
+     * [com.angcyo.acc2.bean.FilterBean.sizeCount]*/
+    var findNodeCount: String? = null,
+
     //</editor-fold desc="过滤">
 
     //<editor-fold desc="后处理">

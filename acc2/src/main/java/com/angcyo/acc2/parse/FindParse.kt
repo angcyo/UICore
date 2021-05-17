@@ -224,7 +224,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
             findNodeList.resetAll(filterFindNodeList)
         }
 
-        //------------------------后处理-------------------------
+        //------------------------过滤-------------------------
 
         //需要过滤
         if (findBean.filter != null) {
@@ -236,6 +236,19 @@ class FindParse(val accParse: AccParse) : BaseParse() {
                 )
             )
         }
+
+        if (findBean.findNodeCount != null) {
+            val match = accParse.expParse.parseAndCompute(
+                findBean.findNodeCount,
+                inputValue = findNodeList.size().toFloat()
+            )
+            if (!match) {
+                //如果没有满足计算表达式
+                findNodeList.clear()
+            }
+        }
+
+        //------------------------后处理-------------------------
 
         //each
         val eachFindList = findBean.each
