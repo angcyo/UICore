@@ -45,6 +45,10 @@ class AccSchedule(val accControl: AccControl) {
      * */
     val inputTextList = mutableListOf<String?>()
 
+    /**计数统计
+     * [com.angcyo.acc2.action.CountAction]*/
+    val countMap = hashMapOf<String, Long>()
+
     //<editor-fold desc="操作">
 
     /**获取总共运行时长*/
@@ -304,6 +308,7 @@ class AccSchedule(val accControl: AccControl) {
         actionResultMap.clear()
         packageTrackList.clear()
         inputTextList.clear()
+        countMap.clear()
         _endTime = 0
         _currentIndex = -1
         _scheduleActionBean = null

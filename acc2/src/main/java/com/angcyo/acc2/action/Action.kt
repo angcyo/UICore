@@ -346,6 +346,12 @@ object Action {
      * */
     const val ACTION_INTERRUPT = "interrupt"
 
+    /**计数, 可以被其他条件引用判断
+     * [count:key +1 -2 +3]
+     * [count:key clear]
+     * */
+    const val ACTION_COUNT = "count"
+
     /*---------------------------------------状态匹配--------------------------------------*/
 
     /**需要指定的状态
