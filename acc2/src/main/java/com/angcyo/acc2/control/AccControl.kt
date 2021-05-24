@@ -168,7 +168,7 @@ class AccControl : Runnable {
             if (newState == CONTROL_STATE_PAUSE) {
                 appendLine()
                 //app info
-                append(controlToLog())
+                append(controlEndToLog())
             }
         })
 
@@ -225,15 +225,7 @@ class AccControl : Runnable {
 
     /**子线程内调度*/
     override fun run() {
-        log(buildString {
-            append("run控制器启动")
-            append("[${_taskBean?.title}]")
-            append("[${_taskBean?.actionList.size()}]")
-            appendLine()
-            appendLine("enable:${_taskBean?.enableAction}")
-            appendLine("disable:${_taskBean?.disableAction}")
-            appendLine("random:${_taskBean?.randomEnableAction}")
-        })
+        log(controlStartToLog())
         //next(_taskBean?.title, _taskBean?.des, 0)
         while (isControlStart) {
             try {
@@ -252,12 +244,25 @@ class AccControl : Runnable {
             }
         }
         //end...
-        log(controlToLog())
+        log(controlEndToLog())
     }
 
-    fun controlToLog(): String = buildString {
+    fun controlStartToLog(): String = buildString {
+        if (!isControlEnd && !isControlPause) {
+            append("run控制器启动")
+        }
+        append("[${_taskBean?.title}]")
+        append("[${_taskBean?.actionList.size()}]")
+        appendLine()
+        appendLine("enable:${_taskBean?.enableAction}")
+        appendLine("disable:${_taskBean?.disableAction}")
+        appendLine("random:${_taskBean?.randomEnableAction}")
+    }
+
+    fun controlEndToLog(): String = buildString {
 
         if (isControlEnd) {
+            append(controlStartToLog())
             append("run控制器结束")
             append("[${_controlState.toControlStateStr()}]:$finishReason ")
             appendLine(accSchedule.durationStr())
