@@ -206,6 +206,17 @@ class FindParse(val accParse: AccParse) : BaseParse() {
             findNodeList.resetAll(filterFindNodeList)
         }
 
+        //第3.x层筛选
+        if (findBean.child != null) {
+            val filterFindNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
+            findNodeList.forEach { node ->
+                findChildByNode(controlContext, node, findBean.child!!)?.apply {
+                    filterFindNodeList.add(this)
+                }
+            }
+            findNodeList.resetAll(filterFindNodeList)
+        }
+
         //第4层筛选
         if (findBean.allChild == true) {
             val filterFindNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
@@ -579,6 +590,30 @@ class FindParse(val accParse: AccParse) : BaseParse() {
                 break
             }
             result = result.parent
+        }
+
+        return result
+    }
+
+    /**在当前节点[node]查找符合条件的子节点*/
+    fun findChildByNode(
+        controlContext: ControlContext,
+        node: AccessibilityNodeInfoCompat,
+        condition: ChildBean
+    ): AccessibilityNodeInfoCompat? {
+        var result: AccessibilityNodeInfoCompat? = null
+
+        node.eachChildDepth { child, depth ->
+            if (node == child) {
+                false
+            } else {
+                if (matchNode(controlContext, child, condition)) {
+                    result = child
+                    true
+                } else {
+                    false
+                }
+            }
         }
 
         return result

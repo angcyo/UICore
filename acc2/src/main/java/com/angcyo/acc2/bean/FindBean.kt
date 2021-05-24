@@ -142,6 +142,11 @@ data class FindBean(
      * 直到匹配通过为止, 否则返回null*/
     var parent: ChildBean? = null,
 
+    /**3.x
+     * 根据上述查找到的节点, 取满足条件对应的子节点.
+     * 直到匹配通过为止, 否则返回null*/
+    var child: ChildBean? = null,
+
     /**4:
      * 根据上述查找到的节点, 获取所有的直系child子节点*/
     var allChild: Boolean? = null,
