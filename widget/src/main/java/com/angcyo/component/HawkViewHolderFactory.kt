@@ -169,7 +169,7 @@ interface HawkFactory {
     /**构建用于hawk存储的key值*/
     fun generateKey(view: View): String?
 
-    /**自动识别安装对应的view*/
+    /**自动识别安装对应的view, 监听对应的值变化*/
     fun onInstall(view: View)
 
     /**保存view对应的值*/

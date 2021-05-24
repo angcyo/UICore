@@ -89,8 +89,8 @@ fun DslViewHolder.auto(
 fun DslViewHolder._vp(@IdRes id: Int): DslViewPager? = v(id)
 
 /**设置hawk指定的key value, 返回旧值*/
-fun DslViewHolder.hawkTag(@IdRes id: Int): Any? {
-    return tag(id, R.id.lib_tag_hawk, "$id")
+fun DslViewHolder.hawkTag(@IdRes id: Int, value: Any? = null): Any? {
+    return tag(id, R.id.lib_tag_hawk, value ?: "$id")
 }
 
 /**错误提示*/
