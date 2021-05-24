@@ -193,7 +193,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
 
         //case
         val caseBean = if (handleBean.caseList != null) {
-            accParse.caseParse.parse(handleBean.caseList!!)
+            accParse.caseParse.parse(handleBean.caseList!!, handleNodeList)
         } else {
             null
         }

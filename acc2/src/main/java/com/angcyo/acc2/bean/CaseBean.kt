@@ -19,6 +19,12 @@ data class CaseBean(
      * */
     var textCount: String? = null,
 
+    /**
+     * 对应需要处理的节点, 满足指定的状态. 节点列表一一匹配.
+     * [com.angcyo.acc2.bean.FindBean.stateList]*/
+    var stateList: List<String?>? = null,
+
+
     //</editor-fold desc="条件判断">
 
     //<editor-fold desc="替换处理">

@@ -939,7 +939,7 @@ class AccSchedule(val accControl: AccControl) {
                     accControl._taskBean?.limitRunTime ?: -1
                 }
 
-                if (limitRunTime > 0) {
+                if (limitRunTime > 0 && !isDebugType() /*debug*/) {
                     val runTime = nowTime() - _latsRunActionTime
                     if (runTime >= limitRunTime) {
                         //运行时长超出限制

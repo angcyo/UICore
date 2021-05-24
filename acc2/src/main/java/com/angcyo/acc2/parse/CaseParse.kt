@@ -1,5 +1,6 @@
 package com.angcyo.acc2.parse
 
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.action.Action
 import com.angcyo.acc2.bean.CaseBean
 import com.angcyo.acc2.bean.getTextList
@@ -17,9 +18,9 @@ import com.angcyo.library.ex.subStart
 class CaseParse(val accParse: AccParse) : BaseParse() {
 
     /**解析符合条件的[CaseBean]*/
-    fun parse(caseList: List<CaseBean>): CaseBean? {
+    fun parse(caseList: List<CaseBean>, originList: List<AccessibilityNodeInfoCompat>?): CaseBean? {
         for (case in caseList) {
-            if (parse(case)) {
+            if (parse(case, originList)) {
                 return case
             }
         }
@@ -27,11 +28,11 @@ class CaseParse(val accParse: AccParse) : BaseParse() {
     }
 
     /**[case]是否符合*/
-    fun parse(case: CaseBean): Boolean {
+    fun parse(case: CaseBean, originList: List<AccessibilityNodeInfoCompat>?): Boolean {
 
         var matchCaseBean: CaseBean? = null
 
-        //1.
+        //1.textCount
         val textCount = case.textCount
         if (textCount != null) {
             var allMatch = true
@@ -50,6 +51,30 @@ class CaseParse(val accParse: AccParse) : BaseParse() {
             }
             if (allMatch) {
                 matchCaseBean = case
+            }
+        }
+
+        //2.stateList
+        val stateList = case.stateList
+        if (originList != null && stateList != null) {
+            var allMatch = true
+            for (i in 0 until originList.size()) {
+                val node = originList.getOrNull(i)
+                val state = stateList.getOrNull(i)
+
+                if (state != null && node != null) {
+                    allMatch = accParse.findParse.matchNodeState(node, state)
+
+                    if (!allMatch) {
+                        break
+                    }
+                }
+            }
+
+            matchCaseBean = if (allMatch) {
+                case
+            } else {
+                null
             }
         }
 
