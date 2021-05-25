@@ -7,7 +7,7 @@ package com.angcyo.acc2.bean
  * @date 2021/02/02
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-data class ChildBean(
+data class NodeBean(
 
     /**[com.angcyo.acc2.bean.FindBean.textList]*/
     var text: String? = null,
@@ -27,7 +27,7 @@ data class ChildBean(
     /**
      * 继续约束节点满足指定child约束获取节点
      * */
-    var childList: List<ChildBean>? = null,
+    var childList: List<NodeBean>? = null,
 
     //------------------------------------------------------
 
@@ -37,7 +37,7 @@ data class ChildBean(
     /**是否直接通过匹配*/
     var pass: Boolean = false,
 
-    /**直接跳过后续的[ChildBean]匹配, 之前匹配的结果直接返回.
+    /**直接跳过后续的[NodeBean]匹配, 之前匹配的结果直接返回.
      * 本次匹配还是会正常进行*/
     var jump: Boolean = false,
 
@@ -45,3 +45,7 @@ data class ChildBean(
      * 如果匹配失败了, 则忽略这个匹配项, 这个匹配项当做不存在, 继续剩下的匹配*/
     var ignore: Boolean = false,
 )
+
+/**空节点描述*/
+fun NodeBean.isEmpty() =
+    text == null && cls == null && id == null && rect == null && state == null && childList == null

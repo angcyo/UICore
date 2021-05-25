@@ -3,9 +3,10 @@ package com.angcyo.acc2.parse
 import android.view.accessibility.AccessibilityWindowInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.action.Action
-import com.angcyo.acc2.bean.ChildBean
 import com.angcyo.acc2.bean.FindBean
+import com.angcyo.acc2.bean.NodeBean
 import com.angcyo.acc2.bean.WindowBean
+import com.angcyo.acc2.bean.isEmpty
 import com.angcyo.acc2.control.ControlContext
 import com.angcyo.acc2.control.actionLog
 import com.angcyo.acc2.control.log
@@ -196,11 +197,16 @@ class FindParse(val accParse: AccParse) : BaseParse() {
         }
 
         //第3层筛选
-        if (findBean.parent != null) {
+        val parent = findBean.parent
+        if (parent != null) {
             val filterFindNodeList = mutableListOf<AccessibilityNodeInfoCompat>()
-            findNodeList.forEach { node ->
-                findParentByNode(controlContext, node, findBean.parent!!)?.apply {
-                    filterFindNodeList.add(this)
+            if (parent.isEmpty()) {
+                filterFindNodeList.addAll(rootNodeList)
+            } else {
+                findNodeList.forEach { node ->
+                    findParentByNode(controlContext, node, parent)?.apply {
+                        filterFindNodeList.add(this)
+                    }
                 }
             }
             findNodeList.resetAll(filterFindNodeList)
@@ -537,7 +543,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
         controlContext: ControlContext,
         originList: List<AccessibilityNodeInfoCompat>,
         findBean: FindBean,
-        list: List<ChildBean>?
+        list: List<NodeBean>?
     ): List<AccessibilityNodeInfoCompat> {
         val result = mutableListOf<AccessibilityNodeInfoCompat>()
         if (list.isNullOrEmpty()) {
@@ -581,7 +587,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
     fun findParentByNode(
         controlContext: ControlContext,
         node: AccessibilityNodeInfoCompat,
-        condition: ChildBean
+        condition: NodeBean
     ): AccessibilityNodeInfoCompat? {
         var result: AccessibilityNodeInfoCompat? = node.parent
 
@@ -599,7 +605,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
     fun findChildByNode(
         controlContext: ControlContext,
         node: AccessibilityNodeInfoCompat,
-        condition: ChildBean
+        condition: NodeBean
     ): AccessibilityNodeInfoCompat? {
         var result: AccessibilityNodeInfoCompat? = null
 
@@ -668,7 +674,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
     fun matchNode(
         controlContext: ControlContext,
         node: AccessibilityNodeInfoCompat,
-        condition: ChildBean
+        condition: NodeBean
     ): Boolean {
         return matchNode(
             controlContext,
@@ -691,7 +697,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
         id: String?,
         rect: String?,
         state: String?,
-        childList: List<ChildBean>?
+        childList: List<NodeBean>?
     ): Boolean {
         var result = true
 
@@ -1111,7 +1117,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
     fun matchNodeChild(
         controlContext: ControlContext,
         node: AccessibilityNodeInfoCompat,
-        childList: List<ChildBean>?
+        childList: List<NodeBean>?
     ): Boolean {
         if (childList.isNullOrEmpty()) {
             return true

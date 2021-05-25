@@ -104,7 +104,7 @@ data class FindBean(
      * 同时存在时, 所有匹配到的节点都必须满足约束
      * 匹配顺序:6
      * */
-    var childList: List<ChildBean>? = null,
+    var childList: List<NodeBean>? = null,
 
     /**单独存在时, 从跟节点开始选择元素
      * 同时存在时, 则会从上述匹配的节点,一一解析对应path进行新节点替换
@@ -139,13 +139,14 @@ data class FindBean(
 
     /**3:
      * 根据上述查找到的节点, 取满足条件对应的父节点.
-     * 直到匹配通过为止, 否则返回null*/
-    var parent: ChildBean? = null,
+     * 直到匹配通过为止, 否则返回null
+     * 如果是空节点约束, 则直接使用root节点集合*/
+    var parent: NodeBean? = null,
 
     /**3.x
      * 根据上述查找到的节点, 取满足条件对应的子节点.
      * 直到匹配通过为止, 否则返回null*/
-    var child: ChildBean? = null,
+    var child: NodeBean? = null,
 
     /**4:
      * 根据上述查找到的节点, 获取所有的直系child子节点*/
