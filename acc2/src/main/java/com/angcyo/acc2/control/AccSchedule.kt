@@ -63,9 +63,9 @@ class AccSchedule(val accControl: AccControl) {
     fun durationStr() = when {
         _startTime <= 0 -> "未开始"
         _endTime <= 0 -> {
-            "已运行 ${(nowTime() - _startTime).toElapsedTime(pattern = intArrayOf(-1, 1, 1))}"
+            "已运行 ${(nowTime() - _startTime).toElapsedTime(pattern = intArrayOf(0, 1, 1))}"
         }
-        else -> "共运行 ${duration().toElapsedTime(pattern = intArrayOf(-1, 1, 1))}"
+        else -> "共运行 ${duration().toElapsedTime(pattern = intArrayOf(0, 1, 1))}"
     }
 
     /**累加运行次数*/
