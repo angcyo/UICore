@@ -5,6 +5,7 @@ import com.angcyo.library.L
 import com.angcyo.library.L.e
 import com.angcyo.library.L.i
 import java.lang.reflect.Field
+import java.lang.reflect.Modifier
 import java.util.*
 
 /**
@@ -91,15 +92,33 @@ fun Any?.getMember(member: String): Any? {
     return this?.run { this.getMember(this.javaClass, member) }
 }
 
+fun makeAccessible(field: Field) {
+    if ((!Modifier.isPublic(field.modifiers) ||
+                !Modifier.isPublic(field.declaringClass.modifiers) ||
+                Modifier.isFinal(field.modifiers)) && !field.isAccessible
+    ) {
+        field.isAccessible = true
+    }
+}
+
 fun Any?.getMember(
     cls: Class<*>,
     member: String
 ): Any? {
     var result: Any? = null
     try {
-        val memberField = cls.getDeclaredField(member)
-        memberField.isAccessible = true
-        result = memberField[this]
+        var cl: Class<*>? = cls
+        while (cl != null) {
+            try {
+                val memberField = cls.getDeclaredField(member)
+                //memberField.isAccessible = true
+                makeAccessible(memberField)
+                result = memberField[this]
+                return result
+            } catch (e: NoSuchFieldException) {
+                cl = cl.superclass
+            }
+        }
     } catch (e: Exception) {
         //L.i("错误:" + cls.getSimpleName() + " ->" + e.getMessage());
     }
