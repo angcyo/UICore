@@ -9,8 +9,8 @@
 
     <FrameLayout
         android:id="@+id/wrap_layout"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 
@@ -34,7 +34,7 @@
             android:padding="2dp"
             android:textColor="@color/lib_white"
             android:textSize="11dp"
-            tools:text="99/99" />
+            tools:text="999/999" />
 
     </FrameLayout>
 
