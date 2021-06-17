@@ -74,10 +74,15 @@ fun String.toMillis(pattern: String = "yyyyMMdd"): Long {
     return time
 }
 
-/**从13位时间戳中,获取当前时间对应的 y m d h s*/
-fun Long.spiltTime(): IntArray {
+fun Long.toCalendar(): Calendar {
     val cal = Calendar.getInstance()
     cal.timeInMillis = this
+    return cal
+}
+
+/**从13位时间戳中,获取当前时间对应的 y m d h s*/
+fun Long.spiltTime(): IntArray {
+    val cal = toCalendar()
 
     val year = cal[Calendar.YEAR] //2018
     val month = cal[Calendar.MONTH] + 1 //1-12月
@@ -124,6 +129,28 @@ fun Long.minute() = spiltTime()[4]
 fun Long.second() = spiltTime()[5]
 fun Long.millisecond() = spiltTime()[6]
 fun Long.week() = spiltTime()[7]
+
+fun Calendar.year() = this[Calendar.YEAR]//2018
+fun Calendar.month() = this[Calendar.MONTH] + 1//1-12月
+fun Calendar.day() = this[Calendar.DAY_OF_MONTH]//1-31天
+fun Calendar.hour() = this[Calendar.HOUR_OF_DAY]//24小时制
+fun Calendar.minute() = this[Calendar.MINUTE]//0-59分
+fun Calendar.second() = this[Calendar.SECOND]//0-59秒
+fun Calendar.millisecond() = this[Calendar.MILLISECOND]//0-999毫秒
+fun Calendar.week(): Int {//1-7 周几
+    val dayOfWeek = firstDayOfWeek
+    val weekDay = this[Calendar.DAY_OF_WEEK] //1-7 周几
+
+    var week = weekDay
+    if (dayOfWeek == Calendar.SUNDAY) {
+        week = weekDay - 1
+        if (week <= 0) {
+            week = 7
+        }
+    }
+    return week
+}
+
 
 fun String.parseTime(pattern: String = "yyyy-MM-dd"): Long {
     val format: SimpleDateFormat = SimpleDateFormat.getDateInstance() as SimpleDateFormat
