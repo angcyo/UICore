@@ -7,6 +7,7 @@ import com.angcyo.http.base.*
 import com.angcyo.http.exception.HttpDataException
 import com.angcyo.http.rx.observableToBack
 import com.angcyo.http.rx.observableToMain
+import com.angcyo.library.L
 import com.angcyo.library.ex.connectUrl
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -327,6 +328,7 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
                     requestConfig.onSuccess(it)
                 }
                 body is JsonObject -> {
+                    L.e(requestConfig.url)
                     if (body.has(requestConfig.codeKey)) {
                         throw HttpDataException(
                             body.getString(requestConfig.msgKey) ?: "数据异常",
