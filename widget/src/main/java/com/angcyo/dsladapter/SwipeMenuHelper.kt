@@ -72,6 +72,9 @@ class SwipeMenuHelper(var swipeMenuCallback: SwipeMenuCallback) : ItemDecoration
     var _lastVelocityX = 0f
     var _lastVelocityY = 0f
 
+    //滑动冲突
+    var _dragCallbackHelper: DragCallbackHelper? = null
+
     //</editor-fold desc="成员变量">
 
     //<editor-fold desc="系统回调">
@@ -118,6 +121,8 @@ class SwipeMenuHelper(var swipeMenuCallback: SwipeMenuCallback) : ItemDecoration
         }
 
         fun touchFinish() {
+            _dragCallbackHelper?._shouldReactToLongPress = true
+
             if (_needHandleTouch) {
                 val downViewHolder = _downViewHolder
                 val recyclerView = _recyclerView
@@ -297,6 +302,8 @@ class SwipeMenuHelper(var swipeMenuCallback: SwipeMenuCallback) : ItemDecoration
             val absDy: Float = abs(distanceY)
 
             if (absDx >= _slop || absDy >= _slop) {
+                _dragCallbackHelper?._shouldReactToLongPress = false
+
                 if (absDx > absDy) {
                     _lastDistanceX = distanceX
                 } else {
