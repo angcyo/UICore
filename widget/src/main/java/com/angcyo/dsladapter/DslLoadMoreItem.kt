@@ -1,5 +1,6 @@
 package com.angcyo.dsladapter
 
+import android.view.ViewGroup
 import com.angcyo.library.L
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
@@ -53,8 +54,8 @@ open class DslLoadMoreItem : BaseDslStateItem() {
         itemStateLayoutMap[LOAD_MORE_ERROR] = R.layout.lib_error_layout
         itemStateLayoutMap[_LOAD_MORE_RETRY] = R.layout.lib_error_layout
 
-        itemWidth = -1
-        itemHeight = -1
+        itemWidth = ViewGroup.LayoutParams.MATCH_PARENT
+        itemHeight = ViewGroup.LayoutParams.WRAP_CONTENT
 
         thisAreContentsTheSame = { _, _, _, _ ->
             false

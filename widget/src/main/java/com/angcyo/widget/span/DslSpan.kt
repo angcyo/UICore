@@ -310,6 +310,7 @@ fun DslSpan.drawableTipBorder(
 fun DslSpan.drawableTipFill(
     text: CharSequence? = null,
     solidColor: Int = Color.RED,
+    textColor: Int = Color.WHITE,
     action: DslDrawableSpan.() -> Unit = {}
 ): DslSpan {
     return drawable(text) {
@@ -317,7 +318,7 @@ fun DslSpan.drawableTipFill(
         gradientRadius = 10 * dp
         paddingHorizontal(4 * dpi)
         paddingVertical(2 * dpi)
-        textColor = Color.WHITE
+        this.textColor = textColor
         action()
     }
 }

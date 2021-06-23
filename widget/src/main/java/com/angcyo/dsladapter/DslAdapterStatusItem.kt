@@ -1,5 +1,6 @@
 package com.angcyo.dsladapter
 
+import android.view.ViewGroup
 import com.angcyo.library.L
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
@@ -46,8 +47,8 @@ open class DslAdapterStatusItem : BaseDslStateItem() {
 
         itemState = ADAPTER_STATUS_NONE
 
-        itemWidth = -1
-        itemHeight = -1
+        itemWidth = ViewGroup.LayoutParams.MATCH_PARENT
+        itemHeight = ViewGroup.LayoutParams.MATCH_PARENT
     }
 
     override fun onItemBind(
