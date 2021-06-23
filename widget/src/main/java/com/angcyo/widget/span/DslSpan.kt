@@ -291,10 +291,11 @@ data class DslSpanConfig(
 fun DslSpan.drawableTipBorder(
     text: CharSequence? = null,
     borderColor: Int = "#0EC300".toColorInt(),
+    solidColor: Int = Color.WHITE,
     action: DslDrawableSpan.() -> Unit = {}
 ): DslSpan {
     return drawable(text) {
-        gradientSolidColor = Color.WHITE
+        gradientSolidColor = solidColor
         gradientRadius = 10 * dp
         textSize = 9 * dp
         textGravity = Gravity.CENTER
