@@ -2,6 +2,7 @@ package com.angcyo.item
 
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.TextStyleConfig
+import com.angcyo.library.ex._dimen
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -61,5 +62,13 @@ open class DslTextItem : DslAdapterItem() {
 
     open fun configDesStyle(action: TextStyleConfig.() -> Unit) {
         itemDesStyle.action()
+    }
+}
+
+/**加粗样式*/
+fun DslTextItem.boldStyle() {
+    configTextStyle {
+        textBold = true
+        textSize = _dimen(R.dimen.text_sub_size).toFloat()
     }
 }
