@@ -1,14 +1,13 @@
 package com.angcyo.core.fragment
 
+import android.graphics.Typeface
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import com.angcyo.base.back
 import com.angcyo.core.R
-import com.angcyo.library.ex._dimen
-import com.angcyo.library.ex.colorFilter
-import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.*
 import com.angcyo.widget.base.clickIt
 import com.angcyo.widget.base.find
 import com.angcyo.widget.base.loadDrawable
@@ -97,4 +96,13 @@ open class FragmentUI {
     }
 
     //</editor-fold desc="方法区">
+}
+
+/**白底黑字样式*/
+fun FragmentConfig.lightStyle() {
+    titleBarBackgroundDrawable = colorDrawable(R.color.lib_white)
+    titleItemIconColor = "#333333".toColorInt()
+    titleItemTextColor = titleItemIconColor
+    titleTextColor = "#070822".toColorInt()
+    titleTextType = Typeface.BOLD
 }

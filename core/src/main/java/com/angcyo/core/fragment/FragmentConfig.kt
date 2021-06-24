@@ -1,6 +1,7 @@
 package com.angcyo.core.fragment
 
 import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
@@ -25,6 +26,13 @@ data class FragmentConfig(
 
     /**标题栏文本大小*/
     var titleTextSize: Float = getDimen(R.dimen.text_main_size).toFloat(),
+
+    /**[Typeface.NORMAL]
+     * [Typeface.BOLD]
+     * [Typeface.ITALIC]
+     * [Typeface.BOLD_ITALIC]
+     * */
+    var titleTextType: Int = Typeface.NORMAL,
 
     /**标题栏文本颜色*/
     var titleTextColor: Int = Color.WHITE,

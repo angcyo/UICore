@@ -108,8 +108,7 @@ abstract class BaseBehaviorTabDetailFragment : BasePagerFragment() {
                 itemIsEquWidth = false
             } else {
                 //等宽样式
-                tabIndicator.indicatorStyle = DslTabIndicator.INDICATOR_STYLE_NONE
-                itemIsEquWidth = true
+                tabLayoutConfig?.tabEnableGradientScale = false
             }
         }
     }

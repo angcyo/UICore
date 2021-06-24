@@ -1,6 +1,7 @@
 package com.angcyo.widget
 
 import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.view.View
@@ -70,6 +71,26 @@ class DslGroupHelper(val parentView: View) : DslViewHolder(parentView) {
             )
             is ViewGroup -> view.eachChild { _, child ->
                 setTextSize(child, textSize)
+            }
+        }
+    }
+
+    /**[Typeface.NORMAL]
+     * [Typeface.BOLD]
+     * [Typeface.ITALIC]
+     * [Typeface.BOLD_ITALIC]
+     * */
+    fun setTextStyle(type: Int) {
+        selectorView?.let {
+            setTextStyle(it, type)
+        }
+    }
+
+    fun setTextStyle(view: View, type: Int) {
+        when (view) {
+            is TextView -> view.setTypeface(null, type)
+            is ViewGroup -> view.eachChild { _, child ->
+                setTextStyle(child, type)
             }
         }
     }

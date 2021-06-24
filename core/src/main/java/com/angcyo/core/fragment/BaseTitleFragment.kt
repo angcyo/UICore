@@ -229,6 +229,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
             setBackground(fragmentConfig.titleBarBackgroundDrawable)
             selector(R.id.lib_title_text_view)
             setTextSize(fragmentConfig.titleTextSize)
+            setTextStyle(fragmentConfig.titleTextType)
             setTextColor(fragmentConfig.titleTextColor)
         }
 
