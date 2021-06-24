@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/lib_xhdpi"
+    android:paddingRight="@dimen/lib_xhdpi"
+    tools:background="@color/colorAccent">
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_text_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/lib_main_to_theme_colors"
+        android:textStyle="bold"
+        tools:text="测试" />
+
+</FrameLayout>

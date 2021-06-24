@@ -40,6 +40,9 @@ abstract class BasePagerFragment : BaseTitleFragment() {
     /**保存所有页面*/
     val pages = mutableListOf<Fragment>()
 
+    /**页面标题*/
+    val titles = mutableListOf<CharSequence>()
+
     lateinit var fragmentAdapter: FragmentStatePagerAdapter
 
     init {
@@ -72,7 +75,8 @@ abstract class BasePagerFragment : BaseTitleFragment() {
 
             override fun getCount(): Int = getPageCount()
 
-            override fun getPageTitle(position: Int): CharSequence? = getPageTitle(position)
+            override fun getPageTitle(position: Int): CharSequence? =
+                this@BasePagerFragment.getPageTitle(position)
         }
 
         //tab
@@ -152,7 +156,13 @@ abstract class BasePagerFragment : BaseTitleFragment() {
     open fun getPageCount(): Int = pages.size
 
     open fun getPageTitle(position: Int): CharSequence? {
-        return getPageItem(position).simpleClassName()
+        return titles.getOrNull(position) ?: getPageItem(position).run {
+            if (this is BaseTitleFragment) {
+                this.fragmentTitle ?: simpleClassName()
+            } else {
+                simpleClassName()
+            }
+        }
     }
 
     //</editor-fold desc="ViewPager相关">

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RCoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_coordinator_wrap_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--背景放大-->
+    <FrameLayout
+        android:id="@+id/lib_background_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        app:layout_behavior="com.angcyo.behavior.linkage.LinkageScaleBehavior"
+        app:layout_scale_factor="1"
+        tools:layout_height="200dp">
+
+    </FrameLayout>
+
+    <!--头部占位-->
+    <FrameLayout
+        android:id="@+id/lib_header_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="com.angcyo.behavior.linkage.LinkageHeaderBehavior"
+        app:layout_enable_bottom_over_scroll="true"
+        tools:layout_height="180dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/lib_header_title_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="40dp"
+            android:drawablePadding="@dimen/lib_hdpi"
+            android:lineSpacingExtra="@dimen/lib_spacing_extra"
+            android:padding="@dimen/lib_xhdpi"
+            android:textColor="@color/lib_white"
+            android:textSize="@dimen/text_main_size"
+            android:textStyle="bold"
+            tools:text="太湖路起点签到点签到记录" />
+
+    </FrameLayout>
+
+    <!--内容布局包裹-->
+    <com.angcyo.widget.layout.RFrameLayout
+        android:id="@+id/lib_content_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/lib_white_top_round_bg_big_shape"
+        app:layout_behavior="com.angcyo.behavior.linkage.LinkageFooterBehavior"
+        app:r_layout_mask_drawable="@drawable/lib_white_top_round_bg_big_shape">
+
+        <com.angcyo.widget.recycler.DslRecyclerView
+            android:id="@+id/lib_recycler_view"
+            style="@style/LibRecyclerViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </com.angcyo.widget.layout.RFrameLayout>
+
+    <!--覆盖在内容上面的布局包裹, 不跟随内容滑动-->
+    <FrameLayout
+        android:id="@+id/lib_content_overlay_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_anchor="@id/lib_title_wrap_layout"
+        app:layout_anchorGravity="bottom"
+        app:layout_behavior="com.angcyo.behavior.placeholder.TitleBarBelowBehavior" />
+
+    <!--标题栏放在后面, 可以保证显示在内容之上-->
+    <FrameLayout
+        android:id="@+id/lib_title_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_back_icon_color_from="@color/lib_white"
+        app:layout_back_icon_color_to="@color/lib_white"
+        app:layout_background_color_to="@color/transparent"
+        app:layout_behavior="com.angcyo.behavior.linkage.LinkageGradientTitleBehavior"
+        app:layout_icon_color_from="@color/lib_white"
+        app:layout_icon_color_to="@color/lib_white"
+        app:layout_title_text_color_to="@color/transparent">
+
+        <com.angcyo.widget.layout.TitleWrapLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/action_bar_height">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/lib_title_text_view"
+                style="@style/LibMainTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                tools:text="标题栏文本" />
+
+            <LinearLayout
+                android:id="@+id/lib_left_wrap_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" />
+
+            <LinearLayout
+                android:id="@+id/lib_right_wrap_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|right"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" />
+
+        </com.angcyo.widget.layout.TitleWrapLayout>
+    </FrameLayout>
+
+</com.angcyo.widget.layout.RCoordinatorLayout>

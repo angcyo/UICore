@@ -34,7 +34,7 @@ open class AutoParseAction : BaseAccessibilityAction() {
         null
 
     /**请求表单时, 配置表单数据的回调*/
-    var onConfigParams: ((params: HashMap<String, Any?>) -> Unit)? = null
+    var onConfigParams: ((params: HashMap<String, Any>) -> Unit)? = null
 
     /**需要执行的[Action]描述*/
     var actionBean: ActionBean? = null

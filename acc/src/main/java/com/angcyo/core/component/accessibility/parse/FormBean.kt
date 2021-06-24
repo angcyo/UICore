@@ -56,12 +56,12 @@ data class FormBean(
 }
 
 /**表单参数收集*/
-fun FormBean.handleParams(configParams: (params: HashMap<String, Any?>) -> Unit = {}): HashMap<String, Any?> {
+fun FormBean.handleParams(configParams: (params: HashMap<String, Any>) -> Unit = {}): HashMap<String, Any> {
     //从url中, 获取默认参数
     val urlParams = UrlParse.getUrlQueryParams(query)
 
     //请求参数
-    val requestParams = HashMap<String, Any?>().apply {
+    val requestParams = HashMap<String, Any>().apply {
         putAll(urlParams)
         configParams(this)
     }
@@ -82,7 +82,7 @@ fun FormBean.request(
         data: Response<JsonElement>?,
         error: Throwable?
     ) -> Unit = { _, _ -> },
-    configParams: (params: HashMap<String, Any?>) -> Unit = {}
+    configParams: (params: HashMap<String, Any>) -> Unit = {}
 ): Disposable? {
     return if (url.isNullOrEmpty()) {
         L.w("form url is null/empty.")
@@ -132,7 +132,7 @@ fun FormBean.request(
 }
 
 /**错误信息的赋值等*/
-fun HashMap<String, Any?>.bindErrorCode(error: ActionException?) {
+fun HashMap<String, Any>.bindErrorCode(error: ActionException?) {
     this[FormBean.KEY_CODE] = when (error) {
         null -> 200 //本地执行成功
         is ActionInterruptedNextException -> 301 //本地执行中断, 但是需要继续任务

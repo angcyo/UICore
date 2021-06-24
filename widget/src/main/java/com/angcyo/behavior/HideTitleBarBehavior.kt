@@ -8,7 +8,7 @@ import androidx.core.view.ViewCompat
 import com.angcyo.widget.base.*
 
 /**
- *
+ * 上下移动view, 达到隐藏效果
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/01/03
