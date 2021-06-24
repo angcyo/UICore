@@ -919,7 +919,13 @@ class UpdateDependProperty<T>(var value: T) : ReadWriteProperty<DslAdapterItem, 
         val old = this.value
         this.value = value
         if (old != value) {
-            thisRef.updateItemDepend(FilterParams(thisRef, updateDependItemWithEmpty = true))
+            thisRef.updateItemDepend(
+                FilterParams(
+                    thisRef,
+                    updateDependItemWithEmpty = true,
+                    payload = DslAdapterItem.PAYLOAD_UPDATE_PART
+                )
+            )
         }
     }
 }
