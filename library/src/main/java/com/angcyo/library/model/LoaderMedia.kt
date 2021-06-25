@@ -137,3 +137,19 @@ fun LoaderMedia.loadUri(): Uri? {
     }
     return url?.run { Uri.parse(url) }
 }
+
+fun List<String>.toLoaderMediaList(): List<LoaderMedia> {
+    val result = mutableListOf<LoaderMedia>()
+    forEach {
+        result.add(LoaderMedia(url = it))
+    }
+    return result
+}
+
+fun List<LoaderMedia>.toUrlList(): List<String> {
+    val result = mutableListOf<String>()
+    forEach {
+        it.loadPath()?.let { result.add(it) }
+    }
+    return result
+}

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_item_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/lib_padding_left"
+    android:paddingTop="@dimen/lib_hdpi"
+    android:paddingRight="@dimen/lib_padding_left"
+    android:paddingBottom="@dimen/lib_hdpi"
+    tools:background="@color/lib_white">
+
+    <com.angcyo.widget.DslButton
+        android:id="@+id/save_button"
+        style="@style/LibButtonBorderSelectorStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/lib_xhdpi"
+        android:layout_weight="1"
+        android:minHeight="45dp"
+        android:textColor="@color/colorPrimary"
+        tools:text="保存" />
+
+    <com.angcyo.widget.DslButton
+        android:id="@+id/submit_button"
+        style="@style/DefaultButtonMinStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:minHeight="45dp"
+        tools:text="提交" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

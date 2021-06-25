@@ -19,13 +19,13 @@ import com.angcyo.widget.colorState
 open class ButtonStyleConfig : TextStyleConfig() {
 
     companion object {
-        //主题渐变样式
+        //主题渐变样式, 标准的填充色按钮
         val BUTTON_STYLE_THEME = 1
 
-        //填充颜色的样式
+        //填充颜色的样式, 无渐变, 纯色填充+波纹效果
         val BUTTON_STYLE_SOLID = 2
 
-        //边框->主题渐变
+        //边框->主题渐变填充
         val BUTTON_STYLE_FILL = 3
     }
 
@@ -130,7 +130,7 @@ open class ButtonStyleConfig : TextStyleConfig() {
         style = BUTTON_STYLE_FILL
         textColors = colorState(
             DslButton.ATTR_PRESSED to styleThemeTextColor,
-            DslButton.ATTR_NORMAL to styleSolidTextColor
+            DslButton.ATTR_NORMAL to styleThemeColors[0]
         )
     }
 }

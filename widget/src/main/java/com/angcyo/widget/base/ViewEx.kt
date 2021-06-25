@@ -16,10 +16,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.math.MathUtils.clamp
-import androidx.core.view.GestureDetectorCompat
-import androidx.core.view.NestedScrollingChild
-import androidx.core.view.NestedScrollingChild2
-import androidx.core.view.ViewCompat
+import androidx.core.view.*
 import androidx.core.view.doOnPreDraw
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.ScrollerCompat
@@ -27,10 +24,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.angcyo.component.shot
 import com.angcyo.dsladapter.getViewRect
-import com.angcyo.library.ex.getStatusBarHeight
-import com.angcyo.library.ex.loadDrawable
-import com.angcyo.library.ex.remove
-import com.angcyo.library.ex.undefined_res
+import com.angcyo.library.ex.*
 import com.angcyo.library.utils.getMember
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.ViewEx._tempArray
@@ -122,12 +116,12 @@ fun View.setHeight(height: Int) {
 /**
  * 设置视图的宽高
  * */
-fun View.setWidthHeight(width: Int = undefined_res, height: Int = undefined_res) {
-    val params = layoutParams
-    if (width != undefined_res) {
+fun View.setWidthHeight(width: Int = undefined_size, height: Int = undefined_size) {
+    val params = layoutParams ?: return
+    if (width != undefined_size) {
         params.width = width
     }
-    if (height != undefined_res) {
+    if (height != undefined_size) {
         params.height = height
     }
     layoutParams = params

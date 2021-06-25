@@ -278,10 +278,10 @@ open class DslAdapterItem : LifecycleOwner {
 
         //初始化默认值
         if (itemWidth == undefined_size) {
-            itemWidth = itemView.layoutParams.width
+            itemWidth = itemView.layoutParams?.width ?: itemWidth
         }
         if (itemHeight == undefined_size) {
-            itemHeight = itemView.layoutParams.height
+            itemHeight = itemView.layoutParams?.height ?: itemHeight
         }
         //设置
         itemView.setWidthHeight(itemWidth, itemHeight)
