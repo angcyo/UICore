@@ -39,7 +39,6 @@ open class DslLabelMultiLineEditItem : DslLabelEditItem() {
             if (itemEditTextStyle.editMaxInputLength > 0) {
                 itemHolder.v<TextIndicator>(R.id.lib_text_indicator)
                     ?.setupEditText(this, itemEditTextStyle.editMaxInputLength)
-
             }
         }
     }

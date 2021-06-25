@@ -199,7 +199,8 @@ open class DslAdapterItem : LifecycleOwner {
         itemPosition: Int,
         adapterItem: DslAdapterItem
     ) {
-        //no op
+        //请注意缓存.
+        //itemHolder.clear()
     }
 
     /**用于覆盖默认操作*/

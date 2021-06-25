@@ -39,7 +39,7 @@ open class DslBaseEditItem : DslBaseLabelItem() {
         onItemTextChange(it)
     }
 
-    /**文本改变去频限制, 负数表示不开启*/
+    /**文本改变去频限制, 负数表示不开启, 如果短时间内关闭界面了, 可能会获取不到最新的输入框数据*/
     var itemTextChangeShakeDelay = DEFAULT_INPUT_SHAKE_DELAY
 
     //用于恢复光标的位置
@@ -81,6 +81,12 @@ open class DslBaseEditItem : DslBaseLabelItem() {
 
     override fun onItemViewDetachedToWindow(itemHolder: DslViewHolder, itemPosition: Int) {
         super.onItemViewDetachedToWindow(itemHolder, itemPosition)
+        //itemHolder.ev(R.id.lib_edit_view)?.clearListeners()
+    }
+
+
+    override fun onItemViewRecycled(itemHolder: DslViewHolder, itemPosition: Int) {
+        super.onItemViewRecycled(itemHolder, itemPosition)
         itemHolder.ev(R.id.lib_edit_view)?.clearListeners()
     }
 
