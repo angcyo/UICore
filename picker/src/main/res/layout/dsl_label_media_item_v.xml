@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_item_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/lib_white"
+    android:paddingBottom="@dimen/lib_xhdpi">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_label_view"
+        style="@style/ItemLabelStyle"
+        android:minHeight="@dimen/lib_item_min_height"
+        android:paddingTop="@dimen/lib_min_padding"
+        android:paddingBottom="@dimen/lib_min_padding"
+        android:textColor="@color/text_general_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
+        tools:text="Label" />
+
+    <com.angcyo.widget.recycler.DslRecyclerView
+        android:id="@+id/lib_recycler_view"
+        style="@style/LibInnerRecyclerViewStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="0dp"
+        android:paddingLeft="@dimen/lib_padding_left"
+        android:paddingTop="@dimen/lib_min_padding"
+        android:paddingRight="@dimen/lib_padding_right"
+        android:paddingBottom="@dimen/lib_min_padding"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lib_label_view"
+        app:r_layout_manager="GV4" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_tip_text_view"
+        style="@style/LibSubTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:minWidth="100dp"
+        android:minHeight="80dp"
+        android:text="暂无数据"
+        android:textSize="@dimen/text_main_size"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lib_label_view"
+        tools:visibility="visible" />
+
+</com.angcyo.widget.layout.RConstraintLayout>
