@@ -105,7 +105,13 @@ class DslGroupHelper(val parentView: View) : DslViewHolder(parentView) {
 
     fun setTextColor(view: View, color: Int) {
         when (view) {
-            is TextView -> view.setTextColor(color)
+            is TextView -> {
+                if (view.tag?.toString()?.contains("ignore") == true) {
+                    //忽略文本颜色设置
+                } else {
+                    view.setTextColor(color)
+                }
+            }
             is ViewGroup -> view.eachChild { _, child ->
                 setTextColor(child, color)
             }
