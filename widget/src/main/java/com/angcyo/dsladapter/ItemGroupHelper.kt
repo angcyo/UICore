@@ -3,6 +3,7 @@ package com.angcyo.dsladapter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.angcyo.library.L
 
 
 /**
@@ -16,12 +17,19 @@ import androidx.recyclerview.widget.RecyclerView
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
-/**查找与[dslAdapterItem]相同分组的所有[DslAdapterItem]*/
-fun DslAdapter.findItemGroupParams(dslAdapterItem: DslAdapterItem): ItemGroupParams {
+/**查找与[dslAdapterItem]相同分组的所有[DslAdapterItem]
+ * [dslAdapterItem] 查询的目标
+ * [useFilterList] 数据源
+ * [lm] 指定外部的布局管理*/
+fun DslAdapter.findItemGroupParams(
+    dslAdapterItem: DslAdapterItem,
+    useFilterList: Boolean = true,
+    lm: RecyclerView.LayoutManager? = null
+): ItemGroupParams {
     val params = ItemGroupParams()
     params.currentAdapterItem = dslAdapterItem
 
-    val allItemList = getValidFilterDataList()
+    val allItemList = getDataList(useFilterList)
     var interruptGroup = false
     var findAnchor = false
 
@@ -49,7 +57,7 @@ fun DslAdapter.findItemGroupParams(dslAdapterItem: DslAdapterItem): ItemGroupPar
     params.indexInGroup = params.groupItems.indexOf(dslAdapterItem)
 
     //网格边界计算
-    val layoutManager = _recyclerView?.layoutManager
+    val layoutManager = lm ?: _recyclerView?.layoutManager
 
     if (layoutManager is GridLayoutManager) {
         layoutManager.apply {
@@ -136,6 +144,8 @@ fun DslAdapter.findItemGroupParams(dslAdapterItem: DslAdapterItem): ItemGroupPar
         }
     } else if (layoutManager is LinearLayoutManager) {
         //todo
+    } else if (layoutManager == null) {
+        L.w("layoutManager is null")
     }
 
     return params

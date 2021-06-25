@@ -224,6 +224,11 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         adapterItems.addAll(headerItems)
         adapterItems.addAll(dataItems)
         adapterItems.addAll(footerItems)
+
+        /*//2021-6-25
+        adapterItems.forEach {
+            it.itemDslAdapter = this
+        }*/
     }
 
     //</editor-fold desc="辅助方法">
@@ -317,6 +322,10 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         insertItem(-1, item)
     }
 
+    fun <T : DslAdapterItem> addLastItem(item: T, init: T.() -> Unit) {
+        insertItem(-1, item, init)
+    }
+
     fun addLastItem(item: List<DslAdapterItem>) {
         insertItem(-1, item)
     }
@@ -344,6 +353,14 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     fun insertItem(index: Int, item: DslAdapterItem) {
         dataItems.add(_validIndex(dataItems, index), item)
         _updateAdapterItems()
+        updateItemDepend()
+    }
+
+    /**先插入数据, 再初始化*/
+    fun <T : DslAdapterItem> insertItem(index: Int, item: T, init: T.() -> Unit) {
+        dataItems.add(_validIndex(dataItems, index), item)
+        _updateAdapterItems()
+        item.init()
         updateItemDepend()
     }
 
@@ -580,8 +597,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
      * </pre>
      * */
     operator fun <T : DslAdapterItem> T.invoke(config: T.() -> Unit = {}) {
-        this.config()
-        addLastItem(this)
+        addLastItem(this, config)
     }
 
     /**
