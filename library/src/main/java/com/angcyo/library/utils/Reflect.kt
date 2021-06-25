@@ -347,7 +347,7 @@ fun Any?.fillTo(to: Any?, ignoreNull: Boolean = false) {
                     } else {
                         val fGenericType = f.genericType
                         val tGenericType = t.genericType
-                        if (fGenericType === tGenericType) {
+                        if (fGenericType === tGenericType || f.type == t.type) {
                             t[to] = fromValue
                         } else {
                             L.w("操作字段名:$tName 类型不匹配, From:$fGenericType To:$tGenericType")
