@@ -23,7 +23,7 @@ import kotlin.math.min
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 abstract class BaseDependsBehavior<T : View>(
-    context: Context? = null,
+    val context: Context? = null,
     attrs: AttributeSet? = null
 ) : LogBehavior<T>(context, attrs) {
 

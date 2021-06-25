@@ -7,8 +7,6 @@ import android.text.InputType
 import android.view.Gravity
 import android.view.View
 import com.angcyo.library.ex.dpi
-import com.angcyo.library.ex.getRootHeight
-import com.angcyo.library.ex.getRootWidth
 
 /**
  *
@@ -56,6 +54,15 @@ fun Context.normalDialog(config: NormalDialogConfig.() -> Unit): Dialog {
 fun Context.normalIosDialog(config: IosDialogConfig.() -> Unit): Dialog {
     return IosDialogConfig(this).run {
         dialogWidth = -1
+        config()
+        show()
+    }
+}
+
+fun Context.textDialog(config: TextDialogConfig.() -> Unit): Dialog {
+    return TextDialogConfig(this).run {
+        configBottomDialog()
+        canceledOnTouchOutside = true
         config()
         show()
     }

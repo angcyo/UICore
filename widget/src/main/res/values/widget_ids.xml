@@ -3,6 +3,8 @@
     <item name="tag" type="id" />
     <!--将Hawk需要的key, 放在View的tag中-->
     <item name="lib_tag_hawk" type="id" />
+    <!--临时存放值的key-->
+    <item name="lib_tag_temp" type="id" />
     <!--将DslViewHolder, 放在View的tag中-->
     <item name="lib_tag_dsl_view_holder" type="id" />
     <!--将DslAdapterItem, 放在View的tag中-->

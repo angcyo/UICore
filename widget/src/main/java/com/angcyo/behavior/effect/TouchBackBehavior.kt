@@ -58,7 +58,12 @@ open class TouchBackBehavior(
 
     override fun onMeasureAfter(parent: CoordinatorLayout, child: View) {
         super.onMeasureAfter(parent, child)
-        _scrollOffsetY = defaultScrollOffsetY.toRSize(childView.mW(), childView.mH(), def = 0)
+        _scrollOffsetY = defaultScrollOffsetY.toRSize(
+            childView.mW(),
+            childView.mH(),
+            def = 0,
+            context = context!!
+        )
     }
 
     override fun onLayoutChild(

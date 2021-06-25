@@ -73,8 +73,9 @@ fun String?.toRSize(
     pWidth: Int = _screenWidth,
     pHeight: Int = _screenHeight,
     exclude: Int = 0,
-    def: Int = -1
-): Int = app().calcSize(this, pWidth, pHeight, exclude, def)
+    def: Int = -1,
+    context: Context = app(),
+): Int = context.calcSize(this, pWidth, pHeight, exclude, def)
 
 fun View.calcSize(
     exp: String?,
