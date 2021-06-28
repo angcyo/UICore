@@ -7,10 +7,8 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import com.angcyo.item.DslBaseEditItem
-import com.angcyo.widget.base.addFilter
-import com.angcyo.widget.base.clearListeners
-import com.angcyo.widget.base.setInputText
-import com.angcyo.widget.base.setMaxLine
+import com.angcyo.widget.base.*
+import com.angcyo.widget.edit.CharLengthFilter
 import com.angcyo.widget.edit.DslEditText
 import com.angcyo.widget.edit.IEditDelegate
 
@@ -27,7 +25,7 @@ class EditStyleConfig : TextStyleConfig() {
     /**文本输入类型*/
     var editInputType = InputType.TYPE_CLASS_TEXT
 
-    /**最大输入字符数*/
+    /**最大输入字符数, -1取消限制*/
     var editMaxInputLength = DslBaseEditItem.DEFAULT_MAX_INPUT_LENGTH
 
     /**输入过滤器*/
@@ -68,10 +66,16 @@ class EditStyleConfig : TextStyleConfig() {
                     this.getCustomEditDelegate().isNoEditMode = noEditModel
                 }
 
-                if (this is DslEditText) {
-                    setMaxLength(editMaxInputLength)
+                if (editMaxInputLength > 0) {
+                    if (this is DslEditText) {
+                        setMaxLength(editMaxInputLength)
+                    } else {
+                        addFilter(InputFilter.LengthFilter(editMaxInputLength))
+                    }
                 } else {
-                    addFilter(InputFilter.LengthFilter(editMaxInputLength))
+                    removeFilter {
+                        this is InputFilter.LengthFilter || this is CharLengthFilter
+                    }
                 }
 
                 if (this is EditText) {

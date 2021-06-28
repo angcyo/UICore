@@ -37,18 +37,33 @@ fun DslAdapter.findItem(
     return getDataList(useFilterList).find(predicate)
 }
 
-fun <Item : DslAdapterItem> DslAdapter.find(
+inline fun <reified Item : DslAdapterItem> DslAdapter.find(
     tag: String? = null,
     useFilterList: Boolean = true,
     predicate: (DslAdapterItem) -> Boolean = {
-        if (tag != null) {
-            it.itemTag == tag
-        } else {
-            false
+        when {
+            tag != null -> it.itemTag == tag
+            it is Item -> true
+            else -> false
         }
     }
 ): Item? {
     return getDataList(useFilterList).find(predicate) as? Item
+}
+
+inline fun <reified Item : DslAdapterItem> DslAdapter.findItem(
+    tag: String? = null,
+    useFilterList: Boolean = true,
+    predicate: (DslAdapterItem) -> Boolean = {
+        when {
+            tag != null -> it.itemTag == tag
+            it is Item -> true
+            else -> false
+        }
+    },
+    dsl: Item.() -> Unit
+): Item? {
+    return find<Item>(tag, useFilterList, predicate)?.apply(dsl)
 }
 
 fun DslAdapter.updateItem(

@@ -216,3 +216,21 @@ fun TextView.setFilter(filter: InputFilter, update: Boolean = true) {
         text = text
     }
 }
+
+/**移除指定[InputFilter]*/
+fun TextView.removeFilter(predicate: InputFilter.() -> Boolean) {
+    val oldFilters = filters
+    val removeList = mutableListOf<InputFilter>()
+    oldFilters.forEach {
+        if (it.predicate()) {
+            removeList.add(it)
+        }
+    }
+    if (removeList.isEmpty()) {
+        return
+    }
+    val list = oldFilters.toMutableList().apply {
+        removeAll(removeList)
+    }
+    filters = list.toTypedArray()
+}

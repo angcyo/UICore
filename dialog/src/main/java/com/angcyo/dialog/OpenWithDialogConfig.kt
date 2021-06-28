@@ -23,7 +23,19 @@ import com.angcyo.widget.recycler.initDslAdapter
  */
 class OpenWithDialogConfig(context: Context? = null) : BaseTouchBackDialogConfig(context) {
 
+    companion object {
+        /**点击缓存*/
+        val CLICK_CACHE = mutableListOf<String>()
+    }
+
+    /**目标uri*/
     var openUri: Uri? = null
+
+    /**mime type, 不指定会自动从uri中读取*/
+    var mimeType: String? = null
+
+    /**优先展示的包名*/
+    var priorityList = mutableListOf<String>()
 
     init {
         dialogLayoutId = R.layout.lib_dialog_open_width
@@ -34,7 +46,7 @@ class OpenWithDialogConfig(context: Context? = null) : BaseTouchBackDialogConfig
         super.initDialogView(dialog, dialogViewHolder)
 
         val intent = Intent(Intent.ACTION_VIEW).apply {
-            val mimeType = openUri.loadUrl()?.mimeType()
+            val mimeType = mimeType ?: openUri.loadUrl()?.mimeType()
             setDataAndType(openUri, mimeType)
             L.i("type:$mimeType uri:$openUri")
         }
@@ -49,12 +61,50 @@ class OpenWithDialogConfig(context: Context? = null) : BaseTouchBackDialogConfig
 
             //初始化DslAdapter
             initDslAdapter() {
-                queryList.forEach { resolveInfo ->
+                queryList.apply {
+                    //自然排序, 从小到大
+                    sortWith { o1, o2 ->
+                        val p1 = o1.activityInfo.packageName
+                        val p2 = o2.activityInfo.packageName
+
+                        //p1
+                        var indexOf1 = priorityList.indexOf(p1)
+                        if (indexOf1 == -1) {
+                            indexOf1 = CLICK_CACHE.indexOf(p1)
+                            if (indexOf1 == -1) {
+                                indexOf1 = Int.MAX_VALUE
+                            }
+                        }
+
+                        //p2
+                        var indexOf2 = priorityList.indexOf(p2)
+                        if (indexOf2 == -1) {
+                            indexOf2 = CLICK_CACHE.indexOf(p2)
+                            if (indexOf2 == -1) {
+                                indexOf2 = Int.MAX_VALUE
+                            }
+                        }
+
+                        when {
+                            indexOf1 == indexOf2 -> 0
+                            indexOf1 < indexOf2 -> -1
+                            else -> 1
+                        }
+                    }
+                }.forEach { resolveInfo ->
                     resolveInfo.activityInfo.apply {
                         packageName.appBean(context)?.let { appBean ->
                             DslOpenWidthItem()() {
                                 itemDrawable = appBean.appIcon
                                 itemText = resolveInfo.loadLabel(pm) ?: appBean.appName
+
+                                if (L.debug) {
+                                    if (priorityList.firstOrNull() == packageName) {
+                                        itemText = "${itemText}[推荐]"
+                                    } else if (CLICK_CACHE.firstOrNull() == packageName) {
+                                        itemText = "${itemText}[最近]"
+                                    }
+                                }
 
                                 itemClick = {
                                     dialog.dismiss()
@@ -63,6 +113,8 @@ class OpenWithDialogConfig(context: Context? = null) : BaseTouchBackDialogConfig
                                         //setClassName(packageName, targetActivity)
                                         setPackage(packageName)
                                         context.startActivity(this)
+                                        CLICK_CACHE.remove(packageName)
+                                        CLICK_CACHE.add(0, packageName)
                                     }
                                 }
                             }

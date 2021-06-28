@@ -2,6 +2,7 @@ package com.angcyo.item
 
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.EditStyleConfig
+import com.angcyo.item.style.IEditItem
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clearListeners
 import com.angcyo.widget.base.onTextChange
@@ -84,7 +85,6 @@ open class DslBaseEditItem : DslBaseLabelItem() {
         //itemHolder.ev(R.id.lib_edit_view)?.clearListeners()
     }
 
-
     override fun onItemViewRecycled(itemHolder: DslViewHolder, itemPosition: Int) {
         super.onItemViewRecycled(itemHolder, itemPosition)
         itemHolder.ev(R.id.lib_edit_view)?.clearListeners()
@@ -102,6 +102,8 @@ open class DslBaseEditItem : DslBaseLabelItem() {
 /**快速获取对应Item的值*/
 fun DslAdapterItem.itemEditText(): CharSequence? {
     return if (this is DslBaseEditItem) {
+        this.itemEditText
+    } else if (this is IEditItem) {
         this.itemEditText
     } else {
         null

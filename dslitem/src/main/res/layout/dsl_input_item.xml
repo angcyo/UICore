@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_item_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/lib_white"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_label_view"
+        style="@style/ItemLabelStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/lib_padding_left"
+        android:paddingRight="@dimen/lib_padding_left"
+        android:paddingBottom="0dp"
+        android:text="请输入内容"
+        android:textColor="@color/text_general_color"
+        tools:textStyle="bold" />
+
+    <com.angcyo.widget.edit.DslEditText
+        android:id="@+id/lib_edit_view"
+        style="@style/ItemEditStyle"
+        android:layout_width="match_parent"
+        android:minHeight="@dimen/lib_min_item_height"
+        tools:hint="angcyo" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>
