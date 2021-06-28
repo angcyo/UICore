@@ -443,9 +443,11 @@ fun ViewGroup.LayoutParams.recyclerParams(config: RecyclerView.LayoutParams.() -
 
 //<editor-fold desc="offset扩展">
 
-fun View.offsetTop(offset: Int) {
+fun View.offsetTopBottom(offset: Int) {
     ViewCompat.offsetTopAndBottom(this, offset)
 }
+
+//top
 
 /**限制滚动偏移的范围, 返回值表示 需要消耗的 距离*/
 fun View.offsetTop(offset: Int, minTop: Int, maxTop: Int): Int {
@@ -458,29 +460,73 @@ fun View.offsetTop(offset: Int, minTop: Int, maxTop: Int): Int {
 }
 
 fun View.offsetTopTo(newTop: Int) {
-    offsetTop(newTop - top)
+    offsetTopBottom(newTop - top)
 }
 
 fun View.offsetTopTo(newTop: Int, minTop: Int, maxTop: Int) {
     offsetTop(newTop - top, minTop, maxTop)
 }
 
-fun View.offsetLeft(offset: Int) {
+fun View.offsetLeftRight(offset: Int) {
     ViewCompat.offsetLeftAndRight(this, offset)
 }
+
+//bottom
+
+fun View.offsetBottom(offset: Int, minBottom: Int, maxBottom: Int): Int {
+    val offsetBottom = bottom + offset
+    val newBottom = clamp(offsetBottom, minBottom, maxBottom)
+
+    offsetBottomTo(newBottom)
+
+    return -(offset - (offsetBottom - newBottom))
+}
+
+fun View.offsetBottomTo(newBottom: Int) {
+    offsetTopBottom(newBottom - bottom)
+}
+
+fun View.offsetBottomTo(newBottom: Int, minBottom: Int, maxBottom: Int) {
+    offsetBottom(newBottom - bottom, minBottom, maxBottom)
+}
+
+//left
 
 /**限制滚动偏移的范围, 返回值表示 需要消耗的 距离*/
 fun View.offsetLeft(offset: Int, minLeft: Int, maxLeft: Int): Int {
     val offsetLeft = left + offset
     val newLeft = clamp(offsetLeft, minLeft, maxLeft)
 
-    offsetTopTo(newLeft)
+    offsetLeftTo(newLeft)
 
     return -(offset - (offsetLeft - newLeft))
 }
 
 fun View.offsetLeftTo(newLeft: Int) {
-    offsetLeft(newLeft - left)
+    offsetLeftAndRight(newLeft - left)
+}
+
+fun View.offsetLeftTo(newLeft: Int, minLeft: Int, maxLeft: Int) {
+    offsetLeft(newLeft - left, minLeft, maxLeft)
+}
+
+//right
+
+fun View.offsetRight(offset: Int, minRight: Int, maxRight: Int): Int {
+    val offsetRight = right + offset
+    val newRight = clamp(offsetRight, minRight, maxRight)
+
+    offsetRightTo(newRight)
+
+    return -(offset - (offsetRight - newRight))
+}
+
+fun View.offsetRightTo(newRight: Int) {
+    offsetLeftRight(newRight - right)
+}
+
+fun View.offsetRightTo(newRight: Int, minRight: Int, maxRight: Int) {
+    offsetRight(newRight - right, minRight, maxRight)
 }
 
 //</editor-fold desc="offset扩展">

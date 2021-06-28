@@ -41,7 +41,7 @@ abstract class BaseDependsBehavior<T : View>(
 
     /**是否正在Touch, 手指未放开. 需要[RCoordinatorLayout]的支持*/
     val isTouchHold: Boolean
-        get() = (parentLayout as? RCoordinatorLayout)?._isTouch ?: false
+        get() = (parentLayout as? RCoordinatorLayout)?.isTouchHold ?: false
 
     /**手势是否被其他子控件拦截了*/
     val isDisallowIntercept: Boolean
@@ -239,9 +239,7 @@ abstract class BaseDependsBehavior<T : View>(
 
         val target = current - dy
 
-        val result: Int
-
-        result = if (dy < 0) {
+        val result: Int = if (dy < 0) {
             //手指向下滑动
             if (target > maxValue) {
                 current - maxValue
@@ -258,6 +256,56 @@ abstract class BaseDependsBehavior<T : View>(
 
         consumed?.let {
             it[1] = result
+        }
+
+        return result
+    }
+
+    open fun consumedScrollHorizontal(
+        dx: Int,
+        current: Int,
+        min: Int,
+        max: Int,
+        consumed: IntArray? = null
+    ): Int {
+
+        //修正范围, 主要用于兼容 over scroll
+        val minValue = if (dx < 0) {
+            min(min, current)
+        } else {
+            min
+        }
+
+        val maxValue = if (dx > 0) {
+            max(max, current)
+        } else {
+            max
+        }
+
+        if (current < minValue || current > maxValue) {
+            //不在范围内, 不消耗滚动
+            return 0
+        }
+
+        val target = current - dx
+
+        val result: Int = if (dx < 0) {
+            //手指向右滑动
+            if (target > maxValue) {
+                current - maxValue
+            } else {
+                dx
+            }
+        } else {
+            if (target < minValue) {
+                current - minValue
+            } else {
+                dx
+            }
+        }
+
+        consumed?.let {
+            it[0] = result
         }
 
         return result

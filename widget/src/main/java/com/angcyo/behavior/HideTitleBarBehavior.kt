@@ -73,7 +73,7 @@ open class HideTitleBarBehavior(
             axes,
             type
         )
-        return axes.isVertical()
+        return axes.isAxisVertical()
     }
 
     override fun onNestedPreScroll(

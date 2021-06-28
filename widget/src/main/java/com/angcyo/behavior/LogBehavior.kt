@@ -388,12 +388,21 @@ open class LogBehavior<T : View>(
         }
     }
 
-    fun Int.isVertical(): Boolean {
+    fun Int.isAxisVertical(): Boolean {
         return this == ViewCompat.SCROLL_AXIS_VERTICAL
     }
 
+    fun Int.isAxisHorizontal(): Boolean {
+        return this == ViewCompat.SCROLL_AXIS_HORIZONTAL
+    }
+
+    /**手势按压产生的内嵌滚动*/
     fun Int.isTouch(): Boolean {
         return this == ViewCompat.TYPE_TOUCH
+    }
+
+    fun Int.isNonTouch(): Boolean {
+        return this == ViewCompat.TYPE_NON_TOUCH
     }
 
     fun IntArray.toStr(): String {

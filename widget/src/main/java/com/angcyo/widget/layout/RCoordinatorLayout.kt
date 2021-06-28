@@ -2,7 +2,6 @@ package com.angcyo.widget.layout
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -23,7 +22,7 @@ import com.angcyo.widget.base.*
 open class RCoordinatorLayout(
     context: Context,
     attributeSet: AttributeSet? = null
-) : CoordinatorLayout(context, attributeSet), ILayoutDelegate {
+) : CoordinatorLayout(context, attributeSet), ILayoutDelegate, ITouchHold {
 
     val layoutDelegate = RLayoutDelegate()
 
@@ -36,15 +35,12 @@ open class RCoordinatorLayout(
         typedArray.recycle()
     }
 
-    /**是否还在touch中*/
-    var _isTouch = false
-
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
 
         if (ev.isTouchDown()) {
-            _isTouch = true
+            this.isTouchHold = true
         } else if (ev.isTouchFinish()) {
-            _isTouch = false
+            this.isTouchHold = false
         }
 
         return super.dispatchTouchEvent(ev)
@@ -152,4 +148,7 @@ open class RCoordinatorLayout(
     override fun getCustomLayoutDelegate(): RLayoutDelegate {
         return layoutDelegate
     }
+
+    /**是否还在touch中*/
+    override var isTouchHold: Boolean = false
 }

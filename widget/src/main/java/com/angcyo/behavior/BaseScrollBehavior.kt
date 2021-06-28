@@ -99,6 +99,39 @@ abstract class BaseScrollBehavior<T : View>(
         }
     }
 
+    fun consumedScrollHorizontal(dx: Int, consumed: IntArray, constraint: Boolean = true): Int {
+        if (dx == 0) {
+            return 0
+        }
+        return if (constraint) {
+            //0值约束
+            if (dx > 0) {
+                consumedScrollHorizontal(dx, behaviorScrollX, 0, behaviorScrollX, consumed)
+            } else {
+                consumedScrollHorizontal(dx, behaviorScrollX, behaviorScrollX, 0, consumed)
+            }
+        } else {
+            val absScrollX = behaviorScrollX.absoluteValue
+            consumedScrollHorizontal(dx, behaviorScrollX, -absScrollX, absScrollX, consumed)
+        }
+    }
+
+    override fun consumedScrollHorizontal(
+        dx: Int,
+        current: Int,
+        min: Int,
+        max: Int,
+        consumed: IntArray?
+    ): Int {
+        //计算在范围内,需要消耗的真实dx
+        val consumedDx = super.consumedScrollHorizontal(dx, current, min, max, consumed)
+        consumed?.let {
+            it[0] = consumedDx
+            scrollBy(-consumedDx, 0)
+        }
+        return consumedDx
+    }
+
     /**在滚动范围内, 消耗滚动, 并触发自身滚动*/
     override fun consumedScrollVertical(
         dy: Int,
@@ -139,16 +172,6 @@ abstract class BaseScrollBehavior<T : View>(
             _overScroller.abortAnimation()
         }
         return super.onInterceptTouchEvent(parent, child, ev)
-    }
-
-    override fun onStopNestedScroll(
-        coordinatorLayout: CoordinatorLayout,
-        child: T,
-        target: View,
-        type: Int
-    ) {
-        super.onStopNestedScroll(coordinatorLayout, child, target, type)
-        //_overScroller.abortAnimation()
     }
 
     /**滚动到*/
@@ -265,6 +288,74 @@ abstract class BaseScrollBehavior<T : View>(
             velocityX,
             velocityY
         ) || !_overScroller.isFinished
+    }
+
+    /**停止滚动, 恢复到初始状态*/
+    override fun onStopNestedScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: T,
+        target: View,
+        type: Int
+    ) {
+        super.onStopNestedScroll(coordinatorLayout, child, target, type)
+        //_overScroller.abortAnimation()
+    }
+
+    /**拦截内嵌滚动*/
+    override fun onStartNestedScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: T,
+        directTargetChild: View,
+        target: View,
+        axes: Int,
+        type: Int
+    ): Boolean {
+        return super.onStartNestedScroll(
+            coordinatorLayout,
+            child,
+            directTargetChild,
+            target,
+            axes,
+            type
+        )
+    }
+
+    /**内嵌滚动之前, 检查滚动状态*/
+    override fun onNestedPreScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: T,
+        target: View,
+        dx: Int,
+        dy: Int,
+        consumed: IntArray,
+        type: Int
+    ) {
+        super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type)
+    }
+
+    /**内嵌滚动, 开始滚动效果*/
+    override fun onNestedScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: T,
+        target: View,
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int,
+        type: Int,
+        consumed: IntArray
+    ) {
+        super.onNestedScroll(
+            coordinatorLayout,
+            child,
+            target,
+            dxConsumed,
+            dyConsumed,
+            dxUnconsumed,
+            dyUnconsumed,
+            type,
+            consumed
+        )
     }
 
     val listeners = mutableListOf<IScrollBehaviorListener>()

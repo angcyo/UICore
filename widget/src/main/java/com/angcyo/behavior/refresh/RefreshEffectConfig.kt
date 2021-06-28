@@ -29,6 +29,10 @@ open class RefreshEffectConfig : IRefreshBehavior {
         }
     }
 
+    /**[scroll] 已经滚动的量
+     * [input] 本次滚动的量
+     * [max] 最大滚动量
+     * */
     fun getScrollInterpolation(scroll: Int, input: Int, max: Int): Int {
         val f = scroll.absoluteValue * 1f / max
         return when {

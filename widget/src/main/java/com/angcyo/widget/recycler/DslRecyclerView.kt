@@ -11,8 +11,10 @@ import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.library.L
 import com.angcyo.widget.R
+import com.angcyo.widget.base.isTouchDown
 import com.angcyo.widget.base.isTouchFinish
 import com.angcyo.widget.layout.ILayoutDelegate
+import com.angcyo.widget.layout.ITouchHold
 import com.angcyo.widget.layout.RLayoutDelegate
 import java.lang.ref.WeakReference
 import java.util.*
@@ -27,7 +29,7 @@ import java.util.*
 
 typealias FocusTransitionChanged = (from: View?, to: View?) -> Unit
 
-open class DslRecyclerView : RecyclerView, ILayoutDelegate {
+open class DslRecyclerView : RecyclerView, ILayoutDelegate, ITouchHold {
 
     companion object {
         //用于在多个RV之间共享之前的焦点View
@@ -190,6 +192,13 @@ open class DslRecyclerView : RecyclerView, ILayoutDelegate {
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+
+        if (ev.isTouchDown()) {
+            this.isTouchHold = true
+        } else if (ev.isTouchFinish()) {
+            this.isTouchHold = false
+        }
+
         val result = super.dispatchTouchEvent(ev)
         if (enableFocusTransition && ev.isTouchFinish()) {
             //如果是通过TouchEvent改变的focus, 则需要手动触发一次[findFocus]
@@ -325,5 +334,49 @@ open class DslRecyclerView : RecyclerView, ILayoutDelegate {
     }
 
     //</editor-fold desc="焦点相关处理, TV开发使用居多">
+
+    //<editor-fold desc="Touch Over">
+
+    override fun onInterceptTouchEvent(e: MotionEvent?): Boolean {
+        return super.onInterceptTouchEvent(e)
+    }
+
+    override fun onTouchEvent(e: MotionEvent?): Boolean {
+        return super.onTouchEvent(e)
+    }
+
+    /**是否还在touch中*/
+    override var isTouchHold: Boolean = false
+
+    //</editor-fold desc="Touch Over">
+
+    //<editor-fold desc="Edge Effect">
+
+    fun setOverEdgeEffect(horizontal: Boolean = true, vertical: Boolean = false) {
+        edgeEffectFactory = ProxyEdgeEffectFactory(
+            if (horizontal) HorizontalOverEdgeEffect(this) else null,
+            null,
+            if (horizontal) HorizontalOverEdgeEffect(this, true) else null,
+            null
+        )
+    }
+
+    override fun dispatchNestedScroll(
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int,
+        offsetInWindow: IntArray?
+    ): Boolean {
+        return super.dispatchNestedScroll(
+            dxConsumed,
+            dyConsumed,
+            dxUnconsumed,
+            dyUnconsumed,
+            offsetInWindow
+        )
+    }
+
+    //</editor-fold desc="Edge Effect">
 
 }
