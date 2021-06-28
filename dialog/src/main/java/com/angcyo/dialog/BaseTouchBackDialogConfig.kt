@@ -43,6 +43,7 @@ abstract class BaseTouchBackDialogConfig(context: Context? = null) : DslDialogCo
             text = dialogMessage
         }
 
+        //核心初始化
         initTouchBackLayout(dialog, dialogViewHolder)
     }
 }
