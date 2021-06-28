@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RCoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_dialog_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    tools:background="@color/lib_black">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/touch_back_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/lib_dark_top_round_bg_big_shape"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/lib_xhdpi"
+        android:paddingRight="@dimen/lib_xhdpi"
+        android:paddingBottom="@dimen/lib_xhdpi"
+        app:layout_behavior="com.angcyo.behavior.effect.TouchBackBehavior">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/lib_dpi"
+            app:srcCompat="@drawable/ic_drag_drop_hints" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/title_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/dialog_item_height"
+            android:textSize="@dimen/text_sub_size"
+            android:textStyle="bold"
+            tools:text="标题" />
+
+        <com.angcyo.widget.layout.RCoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.angcyo.widget.recycler.DslRecyclerView
+                android:id="@+id/lib_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_behavior="com.angcyo.behavior.effect.HorizontalEdgeEffectBehavior"
+                app:r_layout_manager="h"
+                tools:minHeight="100dp"
+                tools:visibility="gone" />
+
+        </com.angcyo.widget.layout.RCoordinatorLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/empty_view"
+            style="@style/LibSubTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minHeight="@dimen/dialog_item_height"
+            android:text="找不到对应的打开方式"
+            android:textSize="@dimen/text_sub_size"
+            android:textStyle="bold" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</com.angcyo.widget.layout.RCoordinatorLayout>

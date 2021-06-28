@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="@dimen/lib_xhdpi">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/lib_image_view"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/dialog_open_width_selector"
+        android:padding="@dimen/lib_xhdpi"
+        android:scaleType="fitCenter"
+        tools:srcCompat="@drawable/lib_ic_error" />
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_text_view"
+        style="@style/LibSubTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingTop="@dimen/lib_ldpi"
+        android:textSize="@dimen/text_little_size"
+        tools:text="标题" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

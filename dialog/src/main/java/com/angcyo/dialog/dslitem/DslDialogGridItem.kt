@@ -1,5 +1,6 @@
 package com.angcyo.dialog.dslitem
 
+import android.graphics.drawable.Drawable
 import com.angcyo.dialog.R
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.library.ex.undefined_res
@@ -18,6 +19,7 @@ class DslDialogGridItem : DslDialogTextItem() {
 
     /**网格图标*/
     var itemGridIcon: Int = undefined_res
+    var itemGridDrawable: Drawable? = null
 
     /**图标相对于item的宽度的比例*/
     var itemGridWidthPercent: Float = 0.6f
@@ -39,10 +41,10 @@ class DslDialogGridItem : DslDialogTextItem() {
                 matchConstraintPercentWidth = itemGridWidthPercent
             }
 
-            if (itemGridIcon > 0) {
+            if (itemGridIcon != undefined_res) {
                 setImageResource(itemGridIcon)
             } else {
-                setImageDrawable(null)
+                setImageDrawable(itemGridDrawable)
             }
         }
     }

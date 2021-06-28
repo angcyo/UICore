@@ -68,6 +68,15 @@ fun Context.textDialog(config: TextDialogConfig.() -> Unit): Dialog {
     }
 }
 
+fun Context.openWidthDialog(config: OpenWithDialogConfig.() -> Unit): Dialog {
+    return OpenWithDialogConfig(this).run {
+        configBottomDialog()
+        canceledOnTouchOutside = true
+        config()
+        show()
+    }
+}
+
 //</editor-fold desc="常用对话框">
 
 //<editor-fold desc="高级对话框">

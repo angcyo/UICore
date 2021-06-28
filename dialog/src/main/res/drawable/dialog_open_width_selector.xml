@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/lib_bg_press">
+    <item>
+        <selector>
+            <item android:state_pressed="true">
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/lib_bg_press" />
+                    <corners android:radius="@dimen/lib_radius_common" />
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/lib_white" />
+                    <corners android:radius="@dimen/lib_radius_common" />
+                </shape>
+            </item>
+        </selector>
+    </item>
+</ripple>
