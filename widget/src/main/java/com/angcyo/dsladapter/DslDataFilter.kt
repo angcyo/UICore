@@ -31,7 +31,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
     companion object {
 
         /**默认抖动检查时长, 毫秒. 如果多次连续调用时长小于此时间, 则跳过处理*/
-        var DEFAULT_SHAKE_DELAY = 1L
+        var DEFAULT_SHAKE_DELAY = 16L
 
         //异步调度器
         private val asyncExecutor: ExecutorService by lazy {
@@ -300,50 +300,45 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
 
             //开始计算diff
             val diffResult = DiffUtil.calculateDiff(
-                RDiffCallback(
-                    oldList,
-                    _newList,
-                    object :
-                        RItemDiffCallback<DslAdapterItem> {
+                RDiffCallback(oldList, _newList, object : RItemDiffCallback<DslAdapterItem> {
 
-                        override fun areItemsTheSame(
-                            oldData: DslAdapterItem,
-                            newData: DslAdapterItem,
-                            oldItemPosition: Int, newItemPosition: Int
-                        ): Boolean {
-                            return oldData.thisAreItemsTheSame(
-                                _params?.fromDslAdapterItem,
-                                newData,
-                                oldItemPosition, newItemPosition
-                            )
-                        }
-
-                        override fun areContentsTheSame(
-                            oldData: DslAdapterItem,
-                            newData: DslAdapterItem,
-                            oldItemPosition: Int, newItemPosition: Int
-                        ): Boolean {
-                            return oldData.thisAreContentsTheSame(
-                                _params?.fromDslAdapterItem,
-                                newData,
-                                oldItemPosition, newItemPosition
-                            )
-                        }
-
-                        override fun getChangePayload(
-                            oldData: DslAdapterItem,
-                            newData: DslAdapterItem,
-                            oldItemPosition: Int, newItemPosition: Int
-                        ): Any? {
-                            return oldData.thisGetChangePayload(
-                                _params?.fromDslAdapterItem,
-                                _params?.payload,
-                                newData,
-                                oldItemPosition, newItemPosition
-                            )
-                        }
+                    override fun areItemsTheSame(
+                        oldData: DslAdapterItem,
+                        newData: DslAdapterItem,
+                        oldItemPosition: Int, newItemPosition: Int
+                    ): Boolean {
+                        return oldData.thisAreItemsTheSame(
+                            _params?.fromDslAdapterItem,
+                            newData,
+                            oldItemPosition, newItemPosition
+                        )
                     }
-                )
+
+                    override fun areContentsTheSame(
+                        oldData: DslAdapterItem,
+                        newData: DslAdapterItem,
+                        oldItemPosition: Int, newItemPosition: Int
+                    ): Boolean {
+                        return oldData.thisAreContentsTheSame(
+                            _params?.fromDslAdapterItem,
+                            newData,
+                            oldItemPosition, newItemPosition
+                        )
+                    }
+
+                    override fun getChangePayload(
+                        oldData: DslAdapterItem,
+                        newData: DslAdapterItem,
+                        oldItemPosition: Int, newItemPosition: Int
+                    ): Any? {
+                        return oldData.thisGetChangePayload(
+                            _params?.fromDslAdapterItem,
+                            _params?.payload,
+                            newData,
+                            oldItemPosition, newItemPosition
+                        )
+                    }
+                })
             )
 
             return diffResult

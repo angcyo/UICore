@@ -608,40 +608,70 @@ open class DslAdapterItem : LifecycleOwner {
      * 决定
      * [RecyclerView.Adapter.notifyItemInserted]
      * [RecyclerView.Adapter.notifyItemRemoved]
-     * 的执行
+     * 的执行判断
+     *
+     * [fromItem] 由那个item触发的更新操作
+     * [this] 旧item
+     * [newItem] 新item
+     *
+     * 此方法的默认实现可能无法应对所有场景, 请自行覆盖重写
+     *
+     * @return true 表示2个item相同, false 表示不同
      * */
     var thisAreItemsTheSame: (
         fromItem: DslAdapterItem?, newItem: DslAdapterItem,
         oldItemPosition: Int, newItemPosition: Int
-    ) -> Boolean =
-        { _, newItem, oldItemPosition, newItemPosition ->
-            this == newItem ||
-                    (this.className() == newItem.className() && oldItemPosition == newItemPosition)
+    ) -> Boolean = { fromItem, newItem, oldItemPosition, newItemPosition ->
+        var result = this == newItem
+        if (!result) {
+            val thisItemClassname = this.className()
+            if (thisItemClassname == newItem.className()) {
+                //类名相同的2个item
+                if (itemData != null || newItem.itemData != null) {
+                    //如果有数据, 则使用数据判断2个item是否一样
+                    result = itemData == newItem.itemData
+                } else {
+                    if (thisItemClassname == DslAdapterItem::class.java.className()) {
+                        //默认的DslAdapterItem
+                        result = itemLayoutId == newItem.itemLayoutId
+                    }
+                }
+            } else {
+                //不相同类名的2个item
+            }
         }
+        result
+    }
 
     /**
      * [RecyclerView.Adapter.notifyItemChanged]
+     *
+     * [fromItem] 由那个item触发的更新操作
+     * [this] 旧item
+     * [newItem] 新item
+     *
+     * 此方法的默认实现可能无法应对所有场景, 请自行覆盖重写
+     *
+     * @return true 表示2个item内容相同, false 表示内容不同, 则会触发[RecyclerView.Adapter.notifyItemChanged]
      * */
     var thisAreContentsTheSame: (
         fromItem: DslAdapterItem?, newItem: DslAdapterItem,
         oldItemPosition: Int, newItemPosition: Int
-    ) -> Boolean =
-        { fromItem, newItem, _, _ ->
-            when {
-                itemChanging || newItem.itemChanging -> false
-                (newItem.itemData != null && this.itemData != null && newItem.itemData == this.itemData) -> true
-                fromItem == null -> this == newItem
-                else -> this != fromItem && this == newItem
-            }
+    ) -> Boolean = { fromItem, newItem, _, _ ->
+        when {
+            itemChanging -> false
+            (newItem.itemData != null && itemData != null && newItem.itemData == itemData) -> true
+            fromItem == null -> this == newItem
+            else -> this != fromItem && this == newItem
         }
+    }
 
     var thisGetChangePayload: (
         fromItem: DslAdapterItem?, filterPayload: Any?, newItem: DslAdapterItem,
         oldItemPosition: Int, newItemPosition: Int
-    ) -> Any? =
-        { _, filterPayload, _, _, _ ->
-            filterPayload ?: PAYLOAD_UPDATE_PART
-        }
+    ) -> Any? = { _, filterPayload, _, _, _ ->
+        filterPayload ?: PAYLOAD_UPDATE_PART
+    }
 
     //</editor-fold desc="Diff相关">
 
