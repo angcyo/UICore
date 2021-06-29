@@ -44,6 +44,9 @@ class DslFHelper(
     /**这个列表中的[Fragment]将会被执行[add]操作*/
     val showFragmentList = mutableListOf<Fragment>()
 
+    /**需要隐藏的[Fragment]*/
+    val hideFragmentList = mutableListOf<Fragment>()
+
     /**这个列表中的[Fragment]将会被执行[remove]操作*/
     val removeFragmentList = mutableListOf<Fragment>()
 
@@ -57,7 +60,8 @@ class DslFHelper(
      * */
     var hideBeforeIndex = 2
 
-    /**当显示一个已经存在的[Fragment]时, 是否要移除覆盖在此[Fragment]上的所有[Fragment]*/
+    /**当显示一个已经存在的[Fragment]时, 是否要移除覆盖在此[Fragment]上的所有[Fragment]
+     * false, 则会隐藏覆盖在上面的[Fragment]*/
     var removeOverlayFragmentOnShow = true
 
     /**最后一个[Fragment]在执行的[back]时, 是否需要[remove]*/
@@ -155,8 +159,12 @@ class DslFHelper(
             it.action()
             if (!showFragmentList.contains(it)) {
                 showFragmentList.add(it)
-                if (it.isAdded && removeOverlayFragmentOnShow) {
-                    remove(fm.getOverlayFragment(it))
+                if (it.isAdded) {
+                    if (removeOverlayFragmentOnShow) {
+                        remove(fm.getOverlayFragment(it))
+                    } else {
+                        hide(fm.getOverlayFragment(it))
+                    }
                 }
             }
         }
@@ -213,6 +221,21 @@ class DslFHelper(
     fun remove(fragmentList: List<Fragment>) {
         for (f in fragmentList) {
             remove(f)
+        }
+    }
+
+    fun hide(fragment: Fragment?) {
+        if (fragment == null) {
+            return
+        }
+        if (!hideFragmentList.contains(fragment)) {
+            hideFragmentList.add(fragment)
+        }
+    }
+
+    fun hide(fragmentList: List<Fragment>) {
+        for (f in fragmentList) {
+            hide(f)
         }
     }
 
@@ -462,7 +485,9 @@ class DslFHelper(
                         setMaxLifecycle(fragment, Lifecycle.State.STARTED)
                     }
 
-                    if (index < fmFragmentList.size - hideBeforeIndex) {
+                    if (index < fmFragmentList.size - hideBeforeIndex ||
+                        hideFragmentList.contains(fragment)
+                    ) {
                         hide(fragment)
                     } else {
                         show(fragment)

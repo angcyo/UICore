@@ -52,10 +52,13 @@ fun Fragment.dslAHelper(action: DslAHelper.() -> Unit) {
 
 /**[Fragment]中的[childFragmentManager]*/
 fun Fragment.dslChildFHelper(config: DslFHelper.() -> Unit) {
-    childFragmentManager.dslFHelper(context, config)
+    childFragmentManager.dslFHelper(context) {
+        removeOverlayFragmentOnShow = false
+        config()
+    }
 }
 
-fun Fragment.getFragmentTag(): String? {
+fun Fragment.getFragmentTag(): String {
     return if (this is IFragment) this.getFragmentTag() else this.javaClass.name
 }
 
