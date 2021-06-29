@@ -217,20 +217,20 @@ object RNetwork {
                 //获取ConnectivityManager对象对应的NetworkInfo对象
                 val networkInfo = connMgr.getNetworkInfo(networks[i])
 
-                if ("WIFI".equals(networkInfo.typeName, ignoreCase = true)) {
-                    isWifiConn = networkInfo.isConnected
-                } else if ("MOBILE".equals(networkInfo.typeName, ignoreCase = true)) {
+                if ("WIFI".equals(networkInfo?.typeName, ignoreCase = true)) {
+                    isWifiConn = networkInfo?.isConnected == true
+                } else if ("MOBILE".equals(networkInfo?.typeName, ignoreCase = true)) {
                     //现在的手机, 在wifi 连接的时候, mobile 也会是连接状态
-                    isMobileConn = networkInfo.isConnected
+                    isMobileConn = networkInfo?.isConnected == true
                 }
             }
         } else {
             var networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
-            isWifiConn = networkInfo.isConnected
+            isWifiConn = networkInfo?.isConnected == true
 
             //获取移动数据连接的信息
             networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
-            isMobileConn = networkInfo.isConnected
+            isMobileConn = networkInfo?.isConnected == true
         }
 
         return booleanArrayOf(isWifiConn, isMobileConn)

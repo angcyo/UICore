@@ -65,14 +65,13 @@ object AccessibilityTip {
         val layout = if (toast == null) {
             Toast.makeText(context, "", Toast.LENGTH_LONG).run {
                 toast = this
-                val layout =
-                    LayoutInflater.from(context)
-                        .inflate(R.layout.lib_accessibility_toast_tip, FrameLayout(context), false)
+                val layout = LayoutInflater.from(context)
+                    .inflate(R.layout.lib_accessibility_toast_tip, FrameLayout(context), false)
                 (layout.findViewById<View>(R.id.lib_text_view) as TextView).text = tipText
                 view = layout
                 setGravity(Gravity.END, 0, 0)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    view.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    layout.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 }
                 layout
             }
@@ -90,7 +89,7 @@ object AccessibilityTip {
         toast?.show()
     }
 
-    private fun <T> find(view: View, id: Int): T? {
-        return view.findViewById<View>(id) as? T?
+    private fun <T> find(view: View?, id: Int): T? {
+        return view?.findViewById<View>(id) as? T?
     }
 }

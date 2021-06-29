@@ -120,22 +120,19 @@ class RLocation(private val context: Context) {
             context: Context,
             criteria: Criteria?
         ): String {
-            var criteria = criteria
-            if (criteria == null) {
-                criteria = Criteria()
-            }
-            var provider: String
-            provider = if (isWifi(context)) {
+            val _criteria = criteria ?: Criteria()
+            val provider = if (isWifi(context)) {
                 LocationManager.NETWORK_PROVIDER
             } else {
                 //智能选择 位置服务商 best is GPS
-                getLocationManager(context).getBestProvider(criteria, true)
+                getLocationManager(context).getBestProvider(_criteria, true)
             }
-            if (TextUtils.isEmpty(provider)) {
+            return if (provider.isNullOrEmpty()) {
                 //如果找不到最适合的定位
-                provider = LocationManager.GPS_PROVIDER
+                LocationManager.GPS_PROVIDER
+            } else {
+                provider
             }
-            return provider
         }
 
         /**
@@ -143,7 +140,7 @@ class RLocation(private val context: Context) {
          */
         fun addLocationListener(
             context: Context,
-            provider: String?,
+            provider: String,
             locationListener: ILocationListener?
         ) {
             addLocationListener(
@@ -160,7 +157,7 @@ class RLocation(private val context: Context) {
          */
         fun addLocationListener(
             context: Context,
-            provider: String?,
+            provider: String,
             time: Long,
             meter: Float,
             locationListener: ILocationListener?
@@ -183,7 +180,7 @@ class RLocation(private val context: Context) {
             ) {
                 return
             }
-            manager.requestLocationUpdates(provider, time, meter, listener)
+            manager.requestLocationUpdates(provider, time, meter, listener!!)
         }
 
         /**
@@ -204,7 +201,7 @@ class RLocation(private val context: Context) {
                     return
                 }
                 //移除定位监听
-                manager.removeUpdates(listener)
+                manager.removeUpdates(listener!!)
             }
         }
 
@@ -223,7 +220,7 @@ class RLocation(private val context: Context) {
     private val minDistance = 1f
 
     //位置监听回调
-    private val internalLocationListener: LocationListener? = object : LocationListener {
+    private val internalLocationListener: LocationListener = object : LocationListener {
         /**
          * 数据结构
          * Location[gps 22.570636,114.060309 hAcc=24 et=+10d20h11m57s460ms alt=154.0521240234375 vel=0.29 bear=119.8 vAcc=48 sAcc=2 bAcc=96 {Bundle[mParcelledData.dataSize=96]}]
@@ -280,9 +277,7 @@ class RLocation(private val context: Context) {
      * 停止监听
      */
     fun stopLocationListener() {
-        if (internalLocationListener != null) {
-            locationManager.removeUpdates(internalLocationListener)
-        }
+        locationManager.removeUpdates(internalLocationListener)
     }
 
     /**
@@ -315,9 +310,7 @@ class RLocation(private val context: Context) {
         ) {
             return
         }
-        if (locationListener != null) {
-            locationListener!!.onLocationStart(provider)
-        }
+        locationListener?.onLocationStart(provider)
         //获取所有可用的位置提供器
         val providers = locationManager.allProviders
         if (providers.contains(provider)) {

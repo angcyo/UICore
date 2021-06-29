@@ -27,7 +27,9 @@ fun String?.getMediaDuration(): Long {
         } else {
             retriever.setDataSource(this)
         }
-        duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
+        duration =
+            retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLongOrNull()
+                ?: -1
     } catch (e: Exception) {
         L.w("$e")
         return -1
@@ -55,15 +57,20 @@ fun String?.getMediaMetadata(): LongArray {
         } else {
             retriever.setDataSource(this)
         }
-        duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
-        width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH).toLong()
-        height =
-            retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT).toLong()
+        duration =
+            retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLongOrNull()
+                ?: -1
+        width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
+            ?.toLongOrNull()
+            ?: -1
+        height = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
+            ?.toLongOrNull()
+            ?: -1
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
             val rotation =
                 retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)
-                    .toInt()
+                    ?.toIntOrNull() ?: -1
             if (rotation == 90 || rotation == 270) {
                 val temp = width
                 width = height

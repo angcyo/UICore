@@ -214,7 +214,7 @@ class TextureVideoView : TextureView, SurfaceTextureListener, Handler.Callback,
                     for (i in 0 until mediaExtractor.trackCount) {
                         format = mediaExtractor.getTrackFormat(i)
                         val mime = format.getString(MediaFormat.KEY_MIME)
-                        if (mime.startsWith("audio/")) {
+                        if (mime?.startsWith("audio/") == true) {
                             isHasAudio = true
                             break
                         }

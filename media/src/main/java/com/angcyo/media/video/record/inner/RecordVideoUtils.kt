@@ -59,7 +59,7 @@ class RecordVideoUtils {
          * @param path
          * @return
          */
-        fun getVideoFirstImage(path: String?): Bitmap {
+        fun getVideoFirstImage(path: String?): Bitmap? {
             val media = MediaMetadataRetriever()
             media.setDataSource(path)
             return media.frameAtTime

@@ -60,7 +60,7 @@ object RBackground {
             removeItem(activity.hashCode(), activity.javaClass.name)
         }
 
-        override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle?) {
+        override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
             changeItem(activity.hashCode(), activity.javaClass.name, SAVE)
         }
     }
