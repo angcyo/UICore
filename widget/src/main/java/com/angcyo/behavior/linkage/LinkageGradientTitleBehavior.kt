@@ -60,6 +60,11 @@ open class LinkageGradientTitleBehavior(
     var backgroundColorFrom: Int = Color.TRANSPARENT
     var backgroundColorTo: Int = Color.WHITE
 
+    var enableBackgroundGradient: Boolean = true
+    var enableTitleGradient: Boolean = true
+    var enableBackIconGradient: Boolean = true
+    var enableIconGradient: Boolean = true
+
     init {
         val array =
             context.obtainStyledAttributes(
@@ -120,24 +125,26 @@ open class LinkageGradientTitleBehavior(
         return childView.mH()
     }
 
-
     /**开始渐变*/
     override fun onGradient(percent: Float) {
         val fraction = if (percent > 0) 0f else clamp(-percent, 0f, 1f)
 
         //背景
-        childView?.apply {
-            if (background == null || background is ColorDrawable) {
-                setBackgroundColor(
-                    evaluateColor(
-                        fraction,
-                        backgroundColorFrom,
-                        backgroundColorTo
+        if (enableBackgroundGradient) {
+            childView?.apply {
+                if (background == null || background is ColorDrawable) {
+                    setBackgroundColor(
+                        evaluateColor(
+                            fraction,
+                            backgroundColorFrom,
+                            backgroundColorTo
+                        )
                     )
-                )
-            } else {
-                background?.apply {
-                    alpha = (255 * fraction).toInt()
+                } else {
+                    //如果不是纯色的背景, 则使用透明度过渡
+                    background?.apply {
+                        alpha = (255 * fraction).toInt()
+                    }
                 }
             }
         }
@@ -154,23 +161,31 @@ open class LinkageGradientTitleBehavior(
                 when (it) {
                     //文本
                     is TextView -> {
-                        if (it.id == titleTextId) {
+                        if (enableTitleGradient && it.id == titleTextId) {
                             it.setTextColor(titleTextColor)
                         }
 
                         if (it is DslSpanTextView) {
                             if (it.id == backViewId) {
-                                it.setDrawableColor(backIconColor)
+                                if (enableBackIconGradient) {
+                                    it.setDrawableColor(backIconColor)
+                                }
                             } else {
-                                it.setDrawableColor(iconColor)
+                                if (enableIconGradient) {
+                                    it.setDrawableColor(iconColor)
+                                }
                             }
                         }
                     }
                     //图片icon
                     is ImageView -> if (it.id == backViewId) {
-                        it.setImageDrawable(it.drawable?.color(backIconColor))
+                        if (enableBackIconGradient) {
+                            it.setImageDrawable(it.drawable?.color(backIconColor))
+                        }
                     } else {
-                        it.setImageDrawable(it.drawable?.color(iconColor))
+                        if (enableIconGradient) {
+                            it.setImageDrawable(it.drawable?.color(iconColor))
+                        }
                     }
                 }
             }

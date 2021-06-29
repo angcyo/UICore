@@ -62,8 +62,7 @@ abstract class BaseBehaviorTabDetailFragment : BasePagerFragment() {
             getPageCount(),
             R.layout.lib_behavior_detail_tab_item_layout
         ) { itemView, itemIndex ->
-            itemView.find<TextView>(R.id.lib_text_view)?.text =
-                getPageTitle(itemIndex)
+            itemView.find<TextView>(R.id.lib_text_view)?.text = getPageTitle(itemIndex)
 
             /*if (itemIndex == 0) {
                 //第一个

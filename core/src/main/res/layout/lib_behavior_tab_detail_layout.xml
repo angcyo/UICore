@@ -124,7 +124,7 @@
         app:layout_behavior="com.angcyo.behavior.linkage.LinkageGradientTitleBehavior"
         app:layout_icon_color_from="@color/lib_white"
         app:layout_icon_color_to="@color/lib_white"
-        app:layout_title_text_color_to="@color/transparent">
+        app:layout_title_text_color_to="@color/lib_white">
 
         <com.angcyo.widget.layout.TitleWrapLayout
             android:layout_width="match_parent"
