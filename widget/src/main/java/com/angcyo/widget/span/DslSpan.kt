@@ -297,7 +297,7 @@ fun DslSpan.drawableTipBorder(
     return drawable(text) {
         gradientSolidColor = solidColor
         gradientRadius = 10 * dp
-        textSize = 9 * dp
+        textSize = 10 * dp
         textGravity = Gravity.CENTER
         textColor = borderColor
         gradientStrokeColor = textColor
