@@ -106,7 +106,7 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
     var gradientStrokeColor = undefined_color
 
     /**边框的宽度*/
-    var gradientStrokeWidth = 1 * dp
+    var gradientStrokeWidth = 0.5f * dp
 
     /**圆角大小*/
     var gradientRadius = 25 * dp
