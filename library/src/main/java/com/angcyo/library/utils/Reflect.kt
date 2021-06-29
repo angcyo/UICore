@@ -361,3 +361,9 @@ fun Any?.fillTo(to: Any?, ignoreNull: Boolean = false) {
         }
     }
 }
+
+/**判断当前类, 是否是[subclass]的超类
+ * Integer::class.java.isAssignableFrom(Number::class.java) false
+ * Number::class.java.isAssignableFrom(Integer::class.java) true
+ * */
+fun Class<*>.isSuperClassBy(subclass: Class<*>) = this.isAssignableFrom(subclass)
