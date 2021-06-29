@@ -144,32 +144,18 @@ open class LinkageGradientTitleBehavior(
 
         if (childView is ViewGroup) {
 
-            val titleTextColor = evaluateColor(
-                fraction,
-                titleTextColorFrom,
-                titleTextColorTo
-            )
+            val titleTextColor = evaluateColor(fraction, titleTextColorFrom, titleTextColorTo)
 
-            val backIconColor = evaluateColor(
-                fraction,
-                backIconColorFrom,
-                backIconColorTo
-            )
+            val backIconColor = evaluateColor(fraction, backIconColorFrom, backIconColorTo)
 
-            val iconColor = evaluateColor(
-                fraction,
-                iconColorFrom,
-                iconColorTo
-            )
+            val iconColor = evaluateColor(fraction, iconColorFrom, iconColorTo)
 
             (childView as ViewGroup).each(true) {
                 when (it) {
                     //文本
                     is TextView -> {
                         if (it.id == titleTextId) {
-                            it.setTextColor(
-                                titleTextColor
-                            )
+                            it.setTextColor(titleTextColor)
                         }
 
                         if (it is DslSpanTextView) {
@@ -182,17 +168,9 @@ open class LinkageGradientTitleBehavior(
                     }
                     //图片icon
                     is ImageView -> if (it.id == backViewId) {
-                        it.setImageDrawable(
-                            it.drawable?.color(
-                                backIconColor
-                            )
-                        )
+                        it.setImageDrawable(it.drawable?.color(backIconColor))
                     } else {
-                        it.setImageDrawable(
-                            it.drawable?.color(
-                                iconColor
-                            )
-                        )
+                        it.setImageDrawable(it.drawable?.color(iconColor))
                     }
                 }
             }
