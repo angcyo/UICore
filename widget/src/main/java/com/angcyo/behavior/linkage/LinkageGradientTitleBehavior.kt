@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.angcyo.behavior.BaseDependsBehavior
+import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.behavior.ITitleBarBehavior
 import com.angcyo.library.ex.color
 import com.angcyo.library.ex.loadColor
@@ -17,6 +18,7 @@ import com.angcyo.widget.R
 import com.angcyo.widget.base.each
 import com.angcyo.widget.base.mH
 import com.angcyo.widget.text.DslSpanTextView
+import kotlin.math.min
 
 /**
  * 渐变标题栏颜色的行为. 配合[LinkageHeaderBehavior]使用
@@ -123,6 +125,32 @@ open class LinkageGradientTitleBehavior(
 
     override fun getContentOffsetTop(behavior: BaseDependsBehavior<*>): Int {
         return childView.mH()
+    }
+
+    var _headerScrollY = 0
+
+    override fun onBehaviorScrollTo(
+        scrollBehavior: BaseScrollBehavior<*>,
+        x: Int,
+        y: Int,
+        scrollType: Int
+    ) {
+        if (scrollBehavior is LinkageHeaderBehavior) {
+            _headerScrollY = y
+            scrollTo(x, y, scrollType)
+        } else {
+            super.onBehaviorScrollTo(scrollBehavior, x, y, scrollType)
+        }
+    }
+
+    override fun scrollTo(x: Int, y: Int, scrollType: Int) {
+        super.scrollTo(x, min(y, _headerScrollY), scrollType)
+    }
+
+    override fun getMaxGradientHeight(): Int {
+        return linkageHeaderBehavior?.childView?.mH()?.run {
+            this /*- linkageStickyBehavior?.childView.mH()*/ - childView.mH()
+        } ?: super.getMaxGradientHeight()
     }
 
     /**开始渐变*/

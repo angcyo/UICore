@@ -30,15 +30,25 @@ abstract class BaseLinkageGradientBehavior(
     var _contentScrollBehavior: BaseScrollBehavior<*>? = null
 
     val _linkageStickyBehaviorScroll = object : IScrollBehaviorListener {
-        override fun onBehaviorScrollTo(scrollBehavior: BaseScrollBehavior<*>, x: Int, y: Int) {
+        override fun onBehaviorScrollTo(
+            scrollBehavior: BaseScrollBehavior<*>,
+            x: Int,
+            y: Int,
+            scrollType: Int
+        ) {
             if (linkageHeaderBehavior?.isStickyHoldScroll == true) {
-                this@BaseLinkageGradientBehavior.onBehaviorScrollTo(scrollBehavior, x, -y)
+                this@BaseLinkageGradientBehavior.onBehaviorScrollTo(
+                    scrollBehavior,
+                    x,
+                    -y,
+                    scrollType
+                )
             }
         }
     }
 
     init {
-        behaviorScrollTo = { _, _ ->
+        behaviorScrollTo = { _, _, _ ->
             //no op
         }
     }
@@ -61,29 +71,35 @@ abstract class BaseLinkageGradientBehavior(
         return false
     }
 
-    override fun onScrollTo(x: Int, y: Int) {
-        _gestureScrollY = y
-        //向下滚动是正值
+    override fun onScrollTo(x: Int, y: Int, scrollType: Int) {
+        //_gestureScrollY = y //2021-6-29
+
+        //percent>0 正值 表示向下滚动
         val percent = y * 1f / getMaxGradientHeight()
         //Log.i("angcyo", "$percent $y")
         onGradient(percent)
     }
 
-    override fun onBehaviorScrollTo(scrollBehavior: BaseScrollBehavior<*>, x: Int, y: Int) {
+    override fun onBehaviorScrollTo(
+        scrollBehavior: BaseScrollBehavior<*>,
+        x: Int,
+        y: Int,
+        scrollType: Int
+    ) {
         //Log.w("angcyo", "$y $behaviorScrollY $_gestureScrollY")
         if (scrollBehavior is LinkageStickyBehavior ||
             linkageHeaderBehavior?.isStickyHoldScroll != true
         ) {
             if (y > 0) {
                 //转发给自己处理
-                scrollTo(x, y)
+                scrollTo(x, y, scrollType)
             } else {
                 //内容向上滚动
                 if (linkageHeaderBehavior?.isStickyHoldScroll == true) {
-                    scrollTo(x, y)
+                    scrollTo(x, y, scrollType)
                 } else if (headerScrollView != null) {
                     //Linkage系列滚动
-                    scrollTo(x, min(y, _gestureScrollY))
+                    scrollTo(x, min(y, _gestureScrollY), scrollType)
                 }
             }
         }
@@ -142,7 +158,7 @@ abstract class BaseLinkageGradientBehavior(
                     }
                 }
                 _gestureScrollY -= dyConsumed
-                scrollTo(0, _gestureScrollY)
+                scrollTo(0, _gestureScrollY, SCROLL_TYPE_NESTED)
             }
         } else {
             //OverScroll统一通过[BaseScrollBehavior]的[IScrollBehaviorListener]处理
@@ -150,7 +166,7 @@ abstract class BaseLinkageGradientBehavior(
                 //手指向下OverScroll, 此时的_gestureScrollY应该是正值
                 if (headerScrollView == null || headerScrollView == target) {
                     if (_gestureScrollY < 0) {
-                        scrollTo(0, 0)
+                        scrollTo(0, 0, SCROLL_TYPE_NESTED)
                     }
                 }
             }
@@ -200,11 +216,11 @@ abstract class BaseLinkageGradientBehavior(
                 //在非LinkageHeaderBehavior行为中
                 if (_nestedScrollView == null) {
                     _gestureScrollY -= distanceY.toInt()
-                    scrollTo(0, _gestureScrollY)
+                    scrollTo(0, _gestureScrollY, SCROLL_TYPE_GESTURE)
                 }
             } else if (_nestedScrollView != headerScrollView) {
                 _gestureScrollY -= distanceY.toInt()
-                scrollTo(0, _gestureScrollY)
+                scrollTo(0, _gestureScrollY, SCROLL_TYPE_GESTURE)
             }
         }
         return false

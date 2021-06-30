@@ -308,15 +308,15 @@ class DslFHelper(
     var onCommit: (FragmentTransaction, List<Fragment>) -> Unit = { ft, fl ->
         if (fm.isStateSaved) {
             if (fl.isEmpty()) {
-                ft.commitNowAllowingStateLoss()
-            } else {
                 ft.commitAllowingStateLoss()
+            } else {
+                ft.commitNowAllowingStateLoss()
             }
         } else {
             if (fl.isEmpty()) {
-                ft.commitNow()
-            } else {
                 ft.commit()
+            } else {
+                ft.commitNow()
             }
         }
     }

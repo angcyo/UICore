@@ -190,12 +190,12 @@ class LinkageHeaderBehavior(
         )
         array.recycle()
 
-        behaviorScrollTo = { x, y ->
+        behaviorScrollTo = { x, y, scrollType ->
             //L.w("scrollTo:$y")
             if (enableRefresh) {
                 //激活了下拉刷新
                 refreshBehaviorConfig?.apply {
-                    onContentScrollTo(this@LinkageHeaderBehavior, x, y)
+                    onContentScrollTo(this@LinkageHeaderBehavior, x, y, scrollType)
                 }
             } else {
                 childView?.offsetTopTo(y)
@@ -220,7 +220,7 @@ class LinkageHeaderBehavior(
 
             if (enableStickyHoldMode) {
                 if (this is LinkageStickyBehavior) {
-                    this.behaviorScrollTo = { x, y ->
+                    this.behaviorScrollTo = { x, y, _ ->
                         scrollStickyHoldTo(y)
                     }
                 }
@@ -275,7 +275,7 @@ class LinkageHeaderBehavior(
                     if (dy > 0 && footerScrollView.bottomCanScroll()) {
                         //当sticky hold处于半中间状态, 此时底部向上滑动
                         linkageStickyBehavior?.apply {
-                            scrollBy(0, dy)
+                            scrollBy(0, dy, SCROLL_TYPE_NESTED)
                             consumed[1] = dy
                         }
                     }
@@ -315,7 +315,7 @@ class LinkageHeaderBehavior(
             }
         } else {
             //其他位置发生的内嵌滚动, 比如 Sticky
-            onNestedPreScrollOther(target, dy, consumed)
+            onNestedPreScrollOther(target, dy, consumed, SCROLL_TYPE_NESTED)
         }
     }
 
@@ -341,7 +341,7 @@ class LinkageHeaderBehavior(
             type,
             consumed
         )
-        onHeaderOverScroll(target, -dyUnconsumed)
+        onHeaderOverScroll(target, -dyUnconsumed, SCROLL_TYPE_NESTED)
     }
 
     //</editor-fold desc="内嵌滚动处理">
@@ -349,7 +349,7 @@ class LinkageHeaderBehavior(
     //<editor-fold desc="其他滚动处理">
 
     /**其他位置发生的内嵌滚动处理, 比如Sticky*/
-    fun onNestedPreScrollOther(target: View?, dy: Int, consumed: IntArray) {
+    fun onNestedPreScrollOther(target: View?, dy: Int, consumed: IntArray, scrollType: Int) {
         //L.e("${target?.simpleHash()} $dy")
         //当无内嵌滚动的view访问, 此时发生了滚动的情况下.
         //优先处理footer滚动, 其次处理header滚动
@@ -371,11 +371,11 @@ class LinkageHeaderBehavior(
             )
             if (consumed[1] == 0) {
                 //不需要消耗了
-                if (footerView != null) {
+                if (footerView != null && (footerView.bottomCanScroll())) {
                     footerView.scrollBy(0, dy)
                 } else {
                     if (enableBottomOverScroll) {
-                        onHeaderOverScroll(target, -dy)
+                        onHeaderOverScroll(target, -dy, scrollType)
                     }
                 }
             }
@@ -387,21 +387,21 @@ class LinkageHeaderBehavior(
             } else {
                 if (_nestedScrollView == null) {
                     //没有内嵌滚动访问, Touch事件导致的滑动, 就偏移Header
-                    onHeaderOverScroll(target, -dy)
+                    onHeaderOverScroll(target, -dy, scrollType)
                 }
             }
         }
     }
 
-    override fun scrollTo(x: Int, y: Int) {
-        super.scrollTo(x, y)
+    override fun scrollTo(x: Int, y: Int, scrollType: Int) {
+        super.scrollTo(x, y, scrollType)
     }
 
     //over阻尼效果
     var _overScrollEffect: RefreshEffectConfig = RefreshEffectConfig()
 
     /**头部到达边界的滚动处理*/
-    fun onHeaderOverScroll(target: View?, dy: Int) {
+    fun onHeaderOverScroll(target: View?, dy: Int, scrollType: Int) {
         var isOverScroll = false
 
         if (!isOverScroll) {
@@ -429,27 +429,31 @@ class LinkageHeaderBehavior(
             if (enableRefresh) {
                 //激活了下拉刷新
                 refreshBehaviorConfig?.apply {
-                    onContentOverScroll(this@LinkageHeaderBehavior, 0, -dy)
+                    onContentOverScroll(this@LinkageHeaderBehavior, 0, -dy, scrollType)
                 }
             } else {
                 val overScrollY = if (dy < 0) behaviorScrollY - minScroll else behaviorScrollY
                 if (isTouchHold) {
                     scrollBy(
-                        0, _overScrollEffect.getContentOverScrollValue(
+                        0,
+                        _overScrollEffect.getContentOverScrollValue(
                             overScrollY,
                             getRefreshMaxScrollY(-dy),
                             -dy
-                        )
+                        ),
+                        scrollType
                     )
                 } else {
                     //fling, 数值放大3倍
                     //_overScrollEffect.onContentOverScroll(this, 0, -dy * 4)
                     scrollBy(
-                        0, _overScrollEffect.getContentOverScrollValue(
+                        0,
+                        _overScrollEffect.getContentOverScrollValue(
                             overScrollY,
                             getRefreshMaxScrollY(-dy),
                             (-dy * overScrollEffectFactor).toInt()
-                        )
+                        ),
+                        scrollType
                     )
                 }
             }
@@ -467,12 +471,12 @@ class LinkageHeaderBehavior(
                 if (isOverScroll) {
                     linkageStickyBehavior?.apply {
                         //Log.w("angcyo", "scrollBy:${-dy}")
-                        scrollBy(0, -dy)
+                        scrollBy(0, -dy, scrollType)
                     }
                 }
             } else {
                 val scroll = MathUtils.clamp(behaviorScrollY + dy, minScroll, maxScroll)
-                scrollTo(behaviorScrollX, scroll)
+                scrollTo(behaviorScrollX, scroll, scrollType)
             }
         }
     }
@@ -563,17 +567,28 @@ class LinkageHeaderBehavior(
                 } else {
                     headerScrollView
                 }
-            delegateScrollView?.apply {
-                setFlingView(this)
-                val vY = -velocityY.toInt()
-                (footerView ?: headerView)?.behavior()?.apply {
-                    if (this is LinkageFooterBehavior) {
-                        //这一点很重要, 因为是模拟出来的fling操作
-                        this._nestedPreFling = true
-                        this._nestedFlingDirection = vY
-                    }
+            if (delegateScrollView == null) {
+                //没有需要fling的view, 则自身处理
+                if (velocityY > 0) {
+                    //手指向下fling
+                    open()
+                } else {
+                    //手指向上fling
+                    close()
                 }
-                fling(0, velocity(vY))
+            } else {
+                delegateScrollView.apply {
+                    setFlingView(this)
+                    val vY = -velocityY.toInt()
+                    (footerView ?: headerView)?.behavior()?.apply {
+                        if (this is LinkageFooterBehavior) {
+                            //这一点很重要, 因为是模拟出来的fling操作
+                            this._nestedPreFling = true
+                            this._nestedFlingDirection = vY
+                        }
+                    }
+                    fling(0, velocity(vY))
+                }
             }
             //L.i("fling $velocityY")
             return true
@@ -600,10 +615,15 @@ class LinkageHeaderBehavior(
             if (isStickyHoldScroll) {
                 linkageStickyBehavior?.apply {
                     //Log.i("angcyo", "scrollBy:$distanceY")
-                    scrollBy(0, distanceY.toInt())
+                    scrollBy(0, distanceY.toInt(), SCROLL_TYPE_GESTURE)
                 }
             } else {
-                onNestedPreScrollOther(childView, distanceY.toInt(), _scrollConsumed)
+                onNestedPreScrollOther(
+                    childView,
+                    distanceY.toInt(),
+                    _scrollConsumed,
+                    SCROLL_TYPE_GESTURE
+                )
             }
             return true
         }

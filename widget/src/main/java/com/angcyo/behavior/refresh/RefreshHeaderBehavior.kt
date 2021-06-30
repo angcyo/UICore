@@ -50,8 +50,13 @@ open class RefreshHeaderBehavior(context: Context, attributeSet: AttributeSet? =
         return super.onDependentViewChanged(parent, child, dependency)
     }
 
-    override fun onContentOverScroll(contentBehavior: BaseScrollBehavior<*>, dx: Int, dy: Int) {
-        _refreshEffectConfig.onContentOverScroll(contentBehavior, dx, dy)
+    override fun onContentOverScroll(
+        contentBehavior: BaseScrollBehavior<*>,
+        dx: Int,
+        dy: Int,
+        scrollType: Int
+    ) {
+        _refreshEffectConfig.onContentOverScroll(contentBehavior, dx, dy, scrollType)
     }
 
     override fun onContentStopScroll(contentBehavior: BaseScrollBehavior<*>) {

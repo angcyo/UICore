@@ -74,7 +74,7 @@ class IosFullScreenDialogConfig : BaseDialogConfig() {
                 this.addScrollListener(object : IScrollBehaviorListener {
                     override fun onBehaviorScrollTo(
                         scrollBehavior: BaseScrollBehavior<*>,
-                        x: Int, y: Int
+                        x: Int, y: Int, scrollType: Int
                     ) {
                         //L.i("-> x:$x y:$y")
                         onTouchBackTo(dialogViewHolder, y)

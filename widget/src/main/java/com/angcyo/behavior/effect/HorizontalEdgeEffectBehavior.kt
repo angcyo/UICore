@@ -85,7 +85,7 @@ open class HorizontalEdgeEffectBehavior(context: Context, attributeSet: Attribut
                 -dxUnconsumed,
                 child.mW()
             )
-            scrollBy(scrollInterpolation, 0)
+            scrollBy(scrollInterpolation, 0, SCROLL_TYPE_NESTED)
         }
     }
 

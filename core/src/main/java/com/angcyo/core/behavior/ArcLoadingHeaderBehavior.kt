@@ -30,15 +30,19 @@ class ArcLoadingHeaderBehavior(context: Context, attributeSet: AttributeSet? = n
         //_refreshEffectConfig.enableBottomOver = false
     }
 
-    override fun onContentScrollTo(contentBehavior: BaseScrollBehavior<*>, x: Int, y: Int) {
-        super.onContentScrollTo(contentBehavior, x, y)
+    override fun onContentScrollTo(
+        contentBehavior: BaseScrollBehavior<*>,
+        x: Int,
+        y: Int,
+        scrollType: Int
+    ) {
+        super.onContentScrollTo(contentBehavior, x, y, scrollType)
 
         if (_refreshBehaviorStatus == STATUS_NORMAL) {
             childView.find<ArcLoadingView>(R.id.lib_arc_loading_view)?.apply {
                 val bHeight = parentMeasuredHeight() - bottom
                 if (y >= bHeight) {
-                    val progress =
-                        (((y - bHeight) * 1f / (childView.mH())) * 100).toInt()
+                    val progress = (((y - bHeight) * 1f / (childView.mH())) * 100).toInt()
                     this.progress = min(progress, 51)
                 }
             }

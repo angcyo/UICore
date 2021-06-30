@@ -42,4 +42,37 @@ object LTime {
         return "${s}s${ms}ms"
         //return "${String.format("%.3f", s + ms)}s"
     }
+
+    //-------------------------------
+
+    var _startTime: Long? = null
+
+    var _count: Long = 0
+
+    /**1秒之内, 调用的次数大于[threshold]时, 才输出日志*/
+    fun dump(threshold: Int = 60) {
+        _count++
+        val nowTime = nowTime()
+        if (_startTime == null) {
+            _startTime = nowTime
+        } else {
+            val startTime = _startTime ?: 0
+            if (nowTime - startTime > 2_000) {
+                //间隔很长, 清空计数
+                _startTime = nowTime
+                _count = 0
+                _count++
+            } else if (nowTime - startTime >= 1_000) {
+                //1秒
+                if (_count >= threshold) {
+                    L.w("dump...$_count")
+
+                    //清空计数
+                    _startTime = nowTime
+                    _count = 0
+                    _count++
+                }
+            }
+        }
+    }
 }

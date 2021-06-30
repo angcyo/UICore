@@ -73,17 +73,17 @@ open class TouchBackBehavior(
     ): Boolean {
         if (!ViewCompat.isLaidOut(child)) {
             //首次布局
-            scrollTo(0, _scrollOffsetY)
+            scrollTo(0, _scrollOffsetY, SCROLL_TYPE_CALL)
         }
         return super.onLayoutChild(parent, child, layoutDirection)
     }
 
 
-    override fun scrollTo(x: Int, y: Int) {
+    override fun scrollTo(x: Int, y: Int, scrollType: Int) {
         val min = 0
         val max = childView.mH()
         val targetY = MathUtils.clamp(y, min, max)
-        super.scrollTo(x, targetY)
+        super.scrollTo(x, targetY, scrollType)
         childView?.offsetTopTo(targetY + behaviorOffsetTop)
     }
 
@@ -148,7 +148,7 @@ open class TouchBackBehavior(
 
         if (dyConsumed == 0 && type.isTouch()) {
             //内嵌滚动视图已经不需要消耗滚动值了, 通常是到达了首尾两端
-            scrollBy(0, -dyUnconsumed)
+            scrollBy(0, -dyUnconsumed, SCROLL_TYPE_NESTED)
         }
     }
 
@@ -159,7 +159,7 @@ open class TouchBackBehavior(
         distanceY: Float
     ): Boolean {
         if (_nestedScrollView == null && distanceY.abs() > distanceX.abs()) {
-            scrollBy(0, -distanceY.toInt())
+            scrollBy(0, -distanceY.toInt(), SCROLL_TYPE_GESTURE)
             return true
         }
         return false

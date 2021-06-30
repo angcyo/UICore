@@ -15,8 +15,13 @@ import com.angcyo.behavior.BaseScrollBehavior
 open class RefreshEffectBehavior(context: Context, attributeSet: AttributeSet? = null) :
     RefreshHeaderBehavior(context, attributeSet) {
 
-    override fun onContentOverScroll(contentBehavior: BaseScrollBehavior<*>, dx: Int, dy: Int) {
-        _refreshEffectConfig.onContentOverScroll(contentBehavior, dx, dy)
+    override fun onContentOverScroll(
+        contentBehavior: BaseScrollBehavior<*>,
+        dx: Int,
+        dy: Int,
+        scrollType: Int
+    ) {
+        _refreshEffectConfig.onContentOverScroll(contentBehavior, dx, dy, scrollType)
     }
 
     override fun onContentStopScroll(contentBehavior: BaseScrollBehavior<*>) {

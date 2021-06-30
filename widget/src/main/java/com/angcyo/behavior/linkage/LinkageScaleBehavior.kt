@@ -167,10 +167,15 @@ open class LinkageScaleBehavior(
     //最小差距量, 用于控制[requestLayout]
     val _minGap = 1
 
-    override fun onBehaviorScrollTo(scrollBehavior: BaseScrollBehavior<*>, x: Int, y: Int) {
+    override fun onBehaviorScrollTo(
+        scrollBehavior: BaseScrollBehavior<*>,
+        x: Int,
+        y: Int,
+        scrollType: Int
+    ) {
         if (y >= 0) {
             val oldY = behaviorScrollY
-            super.onBehaviorScrollTo(scrollBehavior, x, y)
+            super.onBehaviorScrollTo(scrollBehavior, x, y, scrollType)
             if (enableHeightEffect && abs(oldY - y) > _minGap) {
                 _targetView?.apply {
                     postAndRemove {
@@ -179,7 +184,7 @@ open class LinkageScaleBehavior(
                 }
             }
         } else {
-            super.onBehaviorScrollTo(scrollBehavior, x, y)
+            super.onBehaviorScrollTo(scrollBehavior, x, y, scrollType)
         }
     }
 

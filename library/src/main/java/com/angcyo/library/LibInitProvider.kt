@@ -1,5 +1,6 @@
 package com.angcyo.library
 
+import android.annotation.SuppressLint
 import android.content.ContentProvider
 import android.content.ContentValues
 import android.content.Context
@@ -16,11 +17,12 @@ import android.net.Uri
 class LibInitProvider : ContentProvider() {
 
     companion object {
-        lateinit var contentProvider: Context
+        @SuppressLint("StaticFieldLeak")
+        var contentProvider: Context? = null
     }
 
     override fun onCreate(): Boolean {
-        contentProvider = context!!.applicationContext
+        contentProvider = context?.applicationContext
         return true
     }
 

@@ -50,7 +50,7 @@ open class ScaleBehavior(
 
     init {
         showLog = false
-        behaviorScrollTo = { x, y ->
+        behaviorScrollTo = { x, y, _ ->
             //L.i("->$y $_scale")
             if (enableScaleEffect) {
                 _targetView?.apply {
@@ -154,7 +154,7 @@ open class ScaleBehavior(
             consumed
         )
         if (dyUnconsumed != 0 || behaviorScrollY != 0) {
-            onTargetOverScroll(target, dyUnconsumed)
+            onTargetOverScroll(target, dyUnconsumed, SCROLL_TYPE_NESTED)
         }
     }
 
@@ -169,7 +169,7 @@ open class ScaleBehavior(
 
         if (_nestedScrollView == null && absY > absX && absY > touchSlop) {
             //L.i("scroll $distanceY")
-            onTargetOverScroll(childView, distanceY.toInt())
+            onTargetOverScroll(childView, distanceY.toInt(), SCROLL_TYPE_GESTURE)
             return true
         }
         return super.onScroll(e1, e2, distanceX, distanceY)
@@ -194,8 +194,8 @@ open class ScaleBehavior(
     }
 
     /**目标Over状态*/
-    open fun onTargetOverScroll(target: View?, dy: Int) {
-        scrollBy(0, -dy)
+    open fun onTargetOverScroll(target: View?, dy: Int, scrollType: Int) {
+        scrollBy(0, -dy, scrollType)
         if (enableHeightEffect) {
             _targetView?.apply {
                 requestLayout()

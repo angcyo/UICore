@@ -47,13 +47,18 @@ interface IRefreshBehavior {
     }
 
     /**当内容滚动时, 界面需要处理的回调*/
-    fun onContentScrollTo(contentBehavior: BaseScrollBehavior<*>, x: Int, y: Int) {
+    fun onContentScrollTo(contentBehavior: BaseScrollBehavior<*>, x: Int, y: Int, scrollType: Int) {
         contentBehavior.childView?.offsetTopTo(y + contentBehavior.behaviorOffsetTop)
     }
 
     /**当内容over滚动时回调, 同样会触发[onContentScrollTo]*/
-    fun onContentOverScroll(contentBehavior: BaseScrollBehavior<*>, dx: Int, dy: Int) {
-        contentBehavior.scrollBy(0, -dy)
+    fun onContentOverScroll(
+        contentBehavior: BaseScrollBehavior<*>,
+        dx: Int,
+        dy: Int,
+        scrollType: Int
+    ) {
+        contentBehavior.scrollBy(0, -dy, scrollType)
     }
 
     /**内容停止了滚动, 此时需要恢复界面*/

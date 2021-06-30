@@ -1,6 +1,6 @@
 apply from: allGradle.libBase
 //@Parcelize
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-parcelize'
 
 dependencies {
     api project(allModule.widget)

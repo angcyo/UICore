@@ -65,8 +65,8 @@ open class MoveBehavior(
         }
     }
 
-    override fun scrollTo(x: Int, y: Int) {
-        super.scrollTo(x, moveScrollY(y))
+    override fun scrollTo(x: Int, y: Int, scrollType: Int) {
+        super.scrollTo(x, moveScrollY(y), scrollType)
     }
 
     override fun onStartNestedScroll(
@@ -130,7 +130,7 @@ open class MoveBehavior(
 
         if (dyConsumed == 0 && type.isTouch()) {
             //内嵌滚动视图已经不需要消耗滚动值了, 通常是到达了首尾两端
-            scrollBy(0, -dyUnconsumed)
+            scrollBy(0, -dyUnconsumed, SCROLL_TYPE_NESTED)
         }
     }
 
@@ -141,7 +141,7 @@ open class MoveBehavior(
         distanceY: Float
     ): Boolean {
         if (_nestedScrollView == null && distanceY.abs() > distanceX.abs()) {
-            scrollBy(0, -distanceY.toInt())
+            scrollBy(0, -distanceY.toInt(), SCROLL_TYPE_GESTURE)
             return true
         }
         return false

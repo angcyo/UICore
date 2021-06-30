@@ -26,6 +26,7 @@ abstract class BaseBehaviorTabDetailFragment : BasePagerFragment() {
 
     /**自定义背景布局*/
     var backgroundScaleLayoutId: Int = -1
+
     var headerLayoutId: Int = -1
 
     /**多少个item, 启动tab 等宽样式*/
@@ -83,8 +84,9 @@ abstract class BaseBehaviorTabDetailFragment : BasePagerFragment() {
         _vh.group(R.id.lib_header_wrap_layout)?.replace(headerLayoutId)
 
         val backgroundHeight = _screenHeight / 3
+        val headerIndent = 20 * dpi
         _vh.view(R.id.lib_background_wrap_layout)?.setHeight(backgroundHeight)
-        _vh.view(R.id.lib_header_wrap_layout)?.setHeight(backgroundHeight - 20 * dpi)
+        _vh.view(R.id.lib_header_wrap_layout)?.setHeight(backgroundHeight - headerIndent)
 
         //内容背景使用和fragment一样的
         _vh.view(R.id.lib_content_wrap_layout)?.background =

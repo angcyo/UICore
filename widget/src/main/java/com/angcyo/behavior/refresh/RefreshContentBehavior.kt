@@ -63,8 +63,8 @@ open class RefreshContentBehavior(
     init {
         showLog = false
 
-        behaviorScrollTo = { x, y ->
-            refreshBehaviorConfig?.onContentScrollTo(this, x, y)
+        behaviorScrollTo = { x, y, scrollType ->
+            refreshBehaviorConfig?.onContentScrollTo(this, x, y, scrollType)
         }
 
         val array = context.obtainStyledAttributes(attrs, R.styleable.RefreshContentBehavior_Layout)
@@ -215,7 +215,12 @@ open class RefreshContentBehavior(
 
         if (dyConsumed == 0 && type.isTouch()) {
             //内嵌滚动视图已经不需要消耗滚动值了, 通常是到达了首尾两端
-            refreshBehaviorConfig?.onContentOverScroll(this, dxUnconsumed, dyUnconsumed)
+            refreshBehaviorConfig?.onContentOverScroll(
+                this,
+                dxUnconsumed,
+                dyUnconsumed,
+                SCROLL_TYPE_NESTED
+            )
         }
     }
 

@@ -8,7 +8,7 @@ def T_SDK = 29
 def V_CODE = 1
 def V_NAME = "1.0"
 
-def _kotlin_version = project.hasProperty("kotlin_version") ? project.ext.kotlin_version : '1.4.31'
+def _kotlin_version = project.hasProperty("kotlin_version") ? project.ext.kotlin_version : '1.5.20'
 
 def _minify_enabled_debug = project.hasProperty("minify_enabled_debug") ? (project.ext.minify_enabled_debug == "true") : false
 def _use_proguard_debug = project.hasProperty("use_proguard_debug") ? (project.ext.use_proguard_debug == "true") : false

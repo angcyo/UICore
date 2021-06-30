@@ -1,5 +1,9 @@
 apply from: allGradle.libBase
-apply plugin: 'kotlin-android-extensions'
+
+//https://github.com/Kotlin/kotlinx.serialization
+apply plugin: 'kotlin-parcelize'
+//apply plugin: 'kotlinx-serialization'
+//apply plugin: 'kotlin-android-extensions'
 
 android {
     defaultConfig {
@@ -20,4 +24,8 @@ dependencies {
     //[androidx.media.app.NotificationCompat.MediaStyle.MediaStyle()]
     //https://mvnrepository.com/artifact/androidx.media
     api "androidx.media:media:1.2.0"
+
+    //kotlinx-serialization
+    //https://github.com/Kotlin/kotlinx.serialization
+    //api "org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1"
 }

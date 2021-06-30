@@ -55,7 +55,12 @@ open class ScaleHeaderRefreshEffectConfig : RefreshEffectConfig() {
         }
     }
 
-    override fun onContentScrollTo(contentBehavior: BaseScrollBehavior<*>, x: Int, y: Int) {
+    override fun onContentScrollTo(
+        contentBehavior: BaseScrollBehavior<*>,
+        x: Int,
+        y: Int,
+        scrollType: Int
+    ) {
         if (_defaultTargetHeight > 0) {
             if (y > 0) {
                 //L.i("$_defaultTargetHeight $y")
@@ -83,7 +88,7 @@ open class ScaleHeaderRefreshEffectConfig : RefreshEffectConfig() {
                 _defaultLayoutParams = null
             }
         } */ else {
-                super.onContentScrollTo(contentBehavior, x, y)
+                super.onContentScrollTo(contentBehavior, x, y, scrollType)
             }
         } else {
             onContentLayout(
@@ -91,7 +96,7 @@ open class ScaleHeaderRefreshEffectConfig : RefreshEffectConfig() {
                 contentBehavior.parentLayout!!,
                 contentBehavior.childView!!
             )
-            super.onContentScrollTo(contentBehavior, x, y)
+            super.onContentScrollTo(contentBehavior, x, y, scrollType)
         }
     }
 }

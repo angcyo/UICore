@@ -66,7 +66,12 @@ open class RefreshEffectConfig : IRefreshBehavior {
         return result
     }
 
-    override fun onContentOverScroll(contentBehavior: BaseScrollBehavior<*>, dx: Int, dy: Int) {
+    override fun onContentOverScroll(
+        contentBehavior: BaseScrollBehavior<*>,
+        dx: Int,
+        dy: Int,
+        scrollType: Int
+    ) {
         if (dy > 0) {
             if (!enableBottomOver) {
                 return
@@ -105,6 +110,6 @@ open class RefreshEffectConfig : IRefreshBehavior {
             }
         }
 
-        contentBehavior.scrollBy(0, result)
+        contentBehavior.scrollBy(0, result, scrollType)
     }
 }

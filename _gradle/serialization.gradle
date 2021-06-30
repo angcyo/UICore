@@ -1,0 +1,14 @@
+//https://github.com/Kotlin/kotlinx.serialization
+apply plugin: 'kotlinx-serialization'
+//apply plugin: 'kotlin-android-extensions'
+//apply plugin: 'kotlin-parcelize'
+
+/*classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+//'kotlinx-serialization'
+classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"*/
+
+dependencies {
+    //kotlinx-serialization
+    //https://github.com/Kotlin/kotlinx.serialization
+    api "org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1"
+}

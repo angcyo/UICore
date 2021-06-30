@@ -7,7 +7,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.BaseDependsBehavior
 import com.angcyo.behavior.ITitleBarBehavior
 import com.angcyo.widget.base.behavior
-import com.angcyo.widget.base.coordinatorParams
 import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.offsetTopTo
 
@@ -52,8 +51,12 @@ open class TitleBarBelowBehavior(
 
         if (titleBarPlaceholderBehavior != null) {
             //去掉布局的layout_anchor属性, 否则会循环触发[onDependentViewChanged]
-            child.coordinatorParams {
-                anchorId = View.NO_ID
+            val layoutParams = child.layoutParams
+            if (layoutParams is CoordinatorLayout.LayoutParams) {
+                if (layoutParams.anchorId != View.NO_ID) {
+                    layoutParams.anchorId = View.NO_ID
+                    child.layoutParams = layoutParams
+                }
             }
         }
 

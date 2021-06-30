@@ -9,6 +9,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import com.angcyo.behavior.BaseDependsBehavior
 import com.angcyo.behavior.BaseScrollBehavior
+import com.angcyo.library.L
 import com.angcyo.widget.R
 import com.angcyo.widget.base.*
 
@@ -51,6 +52,13 @@ open class RCoordinatorLayout(
     override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
         super.requestDisallowInterceptTouchEvent(disallowIntercept)
         _disallowIntercept = disallowIntercept
+    }
+
+    override fun requestLayout() {
+        super.requestLayout()
+        if (!isInEditMode) {
+            L.w("requestLayout...")
+        }
     }
 
     override fun computeScroll() {

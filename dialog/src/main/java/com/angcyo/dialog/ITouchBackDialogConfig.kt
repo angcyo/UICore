@@ -40,7 +40,7 @@ interface ITouchBackDialogConfig {
             addScrollListener(object : IScrollBehaviorListener {
                 override fun onBehaviorScrollTo(
                     scrollBehavior: BaseScrollBehavior<*>,
-                    x: Int, y: Int
+                    x: Int, y: Int, scrollType: Int
                 ) {
                     //L.i("-> x:$x y:$y")
                     val maxY = childView.mH()
