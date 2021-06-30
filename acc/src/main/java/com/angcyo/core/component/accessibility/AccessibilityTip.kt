@@ -76,7 +76,7 @@ object AccessibilityTip {
                 layout
             }
         } else {
-            toast!!.view
+            toast?.view
         }
 
         val titleView = find<TextView>(layout, R.id.lib_text_view)
