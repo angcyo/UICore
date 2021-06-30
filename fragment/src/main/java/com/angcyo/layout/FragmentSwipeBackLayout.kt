@@ -377,10 +377,10 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
         }
     }
 
-    protected fun hideSoftInput() {
+    private fun hideSoftInput() {
         if (isSoftKeyboardShow) {
-            val manager = context
-                .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val manager =
+                context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             manager.hideSoftInputFromWindow(windowToken, 0)
         }
     }
@@ -417,14 +417,14 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
             val lastFragment = findBeforeFragment()
             if (lastFragment != null) {
                 var view: View? = null
-                if (L.debug) {
-                    var targetViewGroup: ViewGroup? = null
-                    val lastFragmentView = lastFragment.view
-                    if (lastFragmentView is ViewGroup) {
-                        targetViewGroup = lastFragmentView
-                    }
-                    if (targetViewGroup != null) {
-                        view = targetViewGroup.findView(ev.rawX, ev.rawY)
+                var targetViewGroup: ViewGroup? = null
+                val lastFragmentView = lastFragment.view
+                if (lastFragmentView is ViewGroup) {
+                    targetViewGroup = lastFragmentView
+                }
+                if (targetViewGroup != null) {
+                    view = targetViewGroup.findView(ev.rawX, ev.rawY)
+                    if (L.debug) {
                         val builder = StringBuilder("\nTouchOn->")
                         if (view == null) {
                             builder.append("null")
@@ -447,12 +447,10 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
                             builder.append(view)
                         }
                         d(builder.toString())
-                    } else {
-                        d("\ntargetViewGroup is null.")
                     }
                 }
                 if (lastFragment is IFragment) {
-                    if ((lastFragment as IFragment).hideSoftInputOnTouchDown(view)) {
+                    if (lastFragment.hideSoftInputOnTouchDown(view)) {
                         hideSoftInput()
                     }
                 }

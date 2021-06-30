@@ -2,6 +2,7 @@ package com.angcyo.library.utils
 
 import android.content.Context
 import com.angcyo.library.L
+import com.angcyo.library.PlaceholderApplication
 import com.angcyo.library.app
 import com.angcyo.library.ex.file
 import com.angcyo.library.getAppString
@@ -58,7 +59,7 @@ object FileUtils {
         folder: String,
         name: String
     ): File? {
-        if (context == null) {
+        if (context == null || context is PlaceholderApplication) {
             return null
         }
         val externalFilesDir = appRootExternalFolder(context, folder)

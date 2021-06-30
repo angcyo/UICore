@@ -203,58 +203,62 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
             if (child.visibility != View.GONE) {
                 val lp = child.layoutParams as MarginLayoutParams
 
-                if (child == _contentView) {
-                    //内容布局测量大小
-                    when (handlerMode) {
-                        //需要改变内容布局的高度
-                        MODE_HEIGHT, MODE_CONTENT_HEIGHT -> measureChildWithMargins(
-                            child,
-                            widthMeasureSpec,
-                            0,
-                            MeasureSpec.makeMeasureSpec(
-                                heightSize - _bottomInsertHeight,
-                                heightMode
-                            ),
-                            _softInputPaddingTop
-                        )
-                        else -> measureChildWithMargins(
-                            child,
-                            widthMeasureSpec,
-                            0,
-                            heightMeasureSpec,
-                            _softInputPaddingTop
-                        )
-                    }
-                } else if (child == _emojiView) {
-                    //emoji布局测量大小
-                    when (handlerMode) {
-                        MODE_HEIGHT, MODE_EMOJI_HEIGHT -> {
-                            //需要改变emoji布局的高度
-                            val childWidthMeasureSpec = ViewGroup.getChildMeasureSpec(
+                when (child) {
+                    _contentView -> {
+                        //内容布局测量大小
+                        when (handlerMode) {
+                            //需要改变内容布局的高度
+                            MODE_HEIGHT, MODE_CONTENT_HEIGHT -> measureChildWithMargins(
+                                child,
                                 widthMeasureSpec,
-                                paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin,
-                                lp.width
+                                0,
+                                MeasureSpec.makeMeasureSpec(
+                                    heightSize - _bottomInsertHeight,
+                                    heightMode
+                                ),
+                                _softInputPaddingTop
                             )
-                            val childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(
-                                _bottomInsertHeight,
-                                MeasureSpec.EXACTLY
-                            )
-                            child.measure(childWidthMeasureSpec, childHeightMeasureSpec)
-                        }
-                        else -> {
-                            val childWidthMeasureSpec = ViewGroup.getChildMeasureSpec(
+                            else -> measureChildWithMargins(
+                                child,
                                 widthMeasureSpec,
-                                paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin,
-                                lp.width
+                                0,
+                                heightMeasureSpec,
+                                _softInputPaddingTop
                             )
-                            val childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(
-                                bottomInsertHeight, MeasureSpec.EXACTLY
-                            )
-                            child.measure(childWidthMeasureSpec, childHeightMeasureSpec)
                         }
                     }
-                } else {
-                    measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0)
+                    _emojiView -> {
+                        //emoji布局测量大小
+                        when (handlerMode) {
+                            MODE_HEIGHT, MODE_EMOJI_HEIGHT -> {
+                                //需要改变emoji布局的高度
+                                val childWidthMeasureSpec = ViewGroup.getChildMeasureSpec(
+                                    widthMeasureSpec,
+                                    paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin,
+                                    lp.width
+                                )
+                                val childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(
+                                    _bottomInsertHeight,
+                                    MeasureSpec.EXACTLY
+                                )
+                                child.measure(childWidthMeasureSpec, childHeightMeasureSpec)
+                            }
+                            else -> {
+                                val childWidthMeasureSpec = ViewGroup.getChildMeasureSpec(
+                                    widthMeasureSpec,
+                                    paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin,
+                                    lp.width
+                                )
+                                val childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(
+                                    bottomInsertHeight, MeasureSpec.EXACTLY
+                                )
+                                child.measure(childWidthMeasureSpec, childHeightMeasureSpec)
+                            }
+                        }
+                    }
+                    else -> {
+                        measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0)
+                    }
                 }
 
                 maxWidth =
@@ -413,9 +417,16 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
         if (childCount > 1) {
             _emojiView = getChildAt(1)
         }
+
+        //预览表情布局的高度
         if (isInEditMode) {
             if (_emojiView != null) {
-                showEmojiLayout(DEFAULT_SOFT_INPUT_HEIGHT)
+                val height = _emojiView?.layoutParams?.height ?: 0
+                if (height > 0) {
+                    showEmojiLayout(height)
+                } else {
+                    showEmojiLayout(DEFAULT_SOFT_INPUT_HEIGHT)
+                }
             }
         }
     }
@@ -592,7 +603,9 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     fun _notifyListenerEnd(action: Int, height: Int, oldHeight: Int) {
-        L.d(action.softAction(), " $oldHeight -> ", height)
+        if (!isInEditMode) {
+            L.d(action.softAction(), " $oldHeight -> ", height)
+        }
         softInputListener.forEach {
             it.onSoftInputChangeEnd(action, height, oldHeight)
         }
