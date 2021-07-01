@@ -57,7 +57,7 @@ open class RCoordinatorLayout(
     override fun requestLayout() {
         super.requestLayout()
         if (!isInEditMode) {
-            L.w("requestLayout...")
+            L.d("requestLayout...")
         }
     }
 
