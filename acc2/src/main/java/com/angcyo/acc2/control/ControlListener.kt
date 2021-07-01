@@ -14,16 +14,16 @@ import com.angcyo.acc2.parse.HandleResult
  * @date 2021/01/30
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-open class ControlListener {
+interface ControlListener {
 
     /**控制器状态改变通知*/
-    open fun onControlStateChanged(control: AccControl, oldState: Int, newState: Int) {
+    fun onControlStateChanged(control: AccControl, oldState: Int, newState: Int) {
 
     }
 
     /**[ActionBean]开始运行前回调
      * [isPrimaryAction] 是否是主线的[ActionBean]*/
-    open fun onActionRunBefore(
+    fun onActionRunBefore(
         control: AccControl,
         actionBean: ActionBean,
         isPrimaryAction: Boolean
@@ -34,7 +34,7 @@ open class ControlListener {
     /**主线[actionBean]运行时, 是否离开了目标程序窗口
      * [isPrimaryAction] 是否是主线任务
      * [leave] 是否不在主程序内*/
-    open fun onActionLeave(
+    fun onActionLeave(
         control: AccControl,
         actionBean: ActionBean,
         isPrimaryAction: Boolean,
@@ -44,7 +44,7 @@ open class ControlListener {
     }
 
     /**当[actionBean]没有被有效处理时, 回调*/
-    open fun onActionNoHandle(
+    fun onActionNoHandle(
         control: AccControl,
         actionBean: ActionBean,
         isPrimaryAction: Boolean,
@@ -56,7 +56,7 @@ open class ControlListener {
      * 操作记录解析回调
      * [com.angcyo.acc2.parse.OperateParse.parse]
      * */
-    open fun onHandleOperate(
+    fun onHandleOperate(
         control: AccControl,
         handleBean: HandleBean,
         operateBean: OperateBean,
@@ -69,7 +69,7 @@ open class ControlListener {
      * [HandleBean]处理完之后的回调
      * [com.angcyo.acc2.parse.HandleParse.parse]
      * */
-    open fun onHandleAction(
+    fun onHandleAction(
         controlContext: ControlContext,
         control: AccControl,
         handleBean: HandleBean,
@@ -80,7 +80,7 @@ open class ControlListener {
 
     /**[ActionBean]运行后回调
      * [handleResult] 处理结果*/
-    open fun onActionRunAfter(
+    fun onActionRunAfter(
         control: AccControl,
         actionBean: ActionBean,
         isPrimaryAction: Boolean,
@@ -90,12 +90,12 @@ open class ControlListener {
     }
 
     /**控制器开始回调*/
-    open fun onControlStart(control: AccControl, taskBean: TaskBean) {
+    fun onControlStart(control: AccControl, taskBean: TaskBean) {
 
     }
 
     /**控制器结束回调*/
-    open fun onControlEnd(control: AccControl, taskBean: TaskBean, state: Int, reason: String?) {
+    fun onControlEnd(control: AccControl, taskBean: TaskBean, state: Int, reason: String?) {
 
     }
 }

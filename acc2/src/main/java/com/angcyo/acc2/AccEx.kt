@@ -1,6 +1,8 @@
 package com.angcyo.acc2
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
+import com.angcyo.acc2.bean.TaskBean
+import com.angcyo.library.ex.des
 import com.angcyo.library.ex.getChildOrNull
 
 /**
@@ -49,4 +51,10 @@ fun AccessibilityNodeInfoCompat.eachChildDepth(
         }
     }
     return result
+}
+
+fun TaskBean.log() = buildString {
+    append(title)
+    append("($taskId)")
+    append(des.des())
 }

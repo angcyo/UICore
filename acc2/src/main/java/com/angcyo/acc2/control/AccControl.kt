@@ -77,11 +77,11 @@ class AccControl : Runnable {
                 return false
             }
         }
+        _taskBean = taskBean
         if (accService() == null) {
             error("无障碍服务未连接")
             return false
         }
-        _taskBean = taskBean
         finishReason = null
         lastError = null
         accSchedule.startSchedule()
@@ -307,17 +307,29 @@ class AccControl : Runnable {
 
 /**控制器已经开始运行了*/
 val AccControl.isControlStart: Boolean
-    get() = _controlState == CONTROL_STATE_RUNNING || _controlState == CONTROL_STATE_PAUSE
+    get() = _controlState.isControlStart
+
+val Int.isControlStart: Boolean
+    get() = this == CONTROL_STATE_RUNNING || this == CONTROL_STATE_PAUSE
 
 val AccControl.isControlEnd: Boolean
-    get() = _controlState >= CONTROL_STATE_FINISH
+    get() = _controlState.isControlEnd
+
+val Int.isControlEnd: Boolean
+    get() = this >= CONTROL_STATE_FINISH
 
 /**控制器暂停中*/
 val AccControl.isControlPause: Boolean
-    get() = _controlState == CONTROL_STATE_PAUSE
+    get() = _controlState.isControlPause
+
+val Int.isControlPause: Boolean
+    get() = this == CONTROL_STATE_PAUSE
 
 val AccControl.isControlRunning: Boolean
-    get() = _controlState == CONTROL_STATE_RUNNING
+    get() = _controlState.isControlRunning
+
+val Int.isControlRunning: Boolean
+    get() = this == CONTROL_STATE_RUNNING
 
 val AccControl.controlStateStr: String
     get() = _controlState.toControlStateStr()

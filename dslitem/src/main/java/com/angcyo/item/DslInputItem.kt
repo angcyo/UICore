@@ -14,7 +14,7 @@ import com.angcyo.widget.DslViewHolder
  * @date 2021/06/28
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class DslInputItem : DslAdapterItem(), ILabelItem, IEditItem {
+open class DslInputItem : DslAdapterItem(), ILabelItem, IEditItem {
 
     //<editor-fold desc="label">
 
