@@ -323,3 +323,10 @@ fun <T> MutableList<T>.removeSafe(bean: T?): Boolean {
     }
     return remove(bean)
 }
+
+/**
+ * [java.util.concurrent.CountDownLatch.await]
+ * [java.util.concurrent.CountDownLatch.countDown]
+ *
+ * */
+fun await(count: Int = 1) = CountDownLatch(count)
