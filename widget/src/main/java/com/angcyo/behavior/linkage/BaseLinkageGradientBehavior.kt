@@ -95,11 +95,16 @@ abstract class BaseLinkageGradientBehavior(
                 scrollTo(x, y, scrollType)
             } else {
                 //内容向上滚动
-                if (linkageHeaderBehavior?.isStickyHoldScroll == true) {
-                    scrollTo(x, y, scrollType)
-                } else if (headerScrollView != null) {
+                when {
+                    linkageHeaderBehavior?.isStickyHoldScroll == true -> scrollTo(x, y, scrollType)
                     //Linkage系列滚动
-                    scrollTo(x, min(y, _gestureScrollY), scrollType)
+                    headerScrollView != null -> scrollTo(x, min(y, _gestureScrollY), scrollType)
+                    scrollBehavior is LinkageHeaderBehavior && scrollBehavior != this -> scrollTo(
+                        x,
+                        y,
+                        scrollType
+                    )
+                    //else -> scrollTo(x, y, scrollType)
                 }
             }
         }

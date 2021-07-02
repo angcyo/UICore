@@ -202,6 +202,8 @@ open class LinkageScaleBehavior(
         return if (_targetDefaultHeight > 0) _targetDefaultHeight else _targetView.mH()
     }
 
+    var _lastPercent: Float = -1f
+
     override fun onGradient(percent: Float) {
         //L.e("percent:$percent")
         if (enableScaleEffect) {
@@ -218,7 +220,10 @@ open class LinkageScaleBehavior(
             }
         }
         if (enableHeightEffect) {
-            _refreshTargetHeight()
+            if (_lastPercent != percent) {
+                _refreshTargetHeight()
+            }
+            _lastPercent = percent
         }
     }
 }

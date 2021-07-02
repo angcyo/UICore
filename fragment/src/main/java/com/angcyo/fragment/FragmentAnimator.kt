@@ -19,18 +19,36 @@ import com.angcyo.widget.base.animatorOf
 object FragmentAnimator {
 
     /**显示进入动画*/
-    var DEFAULT_SHOW_ENTER_ANIMATOR = R.anim.lib_x_show_enter_holder
+    var DEFAULT_SHOW_ENTER_ANIMATOR = R.anim.lib_translate_x_show_enter
     //R.anim.lib_translate_x_show_enter //R.anim.lib_x_show_enter_holder
 
-    var DEFAULT_SHOW_EXIT_ANIMATOR = 0
+    var DEFAULT_SHOW_EXIT_ANIMATOR = R.anim.lib_translate_x_show_exit
     //R.anim.lib_translate_x_show_exit //R.anim.lib_x_show_exit_holder
 
-    var DEFAULT_REMOVE_ENTER_ANIMATOR = 0
+    var DEFAULT_REMOVE_ENTER_ANIMATOR = R.anim.lib_translate_x_remove_enter
     //R.anim.lib_translate_x_remove_enter //R.anim.lib_x_remove_enter_holder
 
     /**隐藏时退出动画*/
-    var DEFAULT_REMOVE_EXIT_ANIMATOR = R.anim.lib_x_remove_exit_holder
+    var DEFAULT_REMOVE_EXIT_ANIMATOR = R.anim.lib_translate_x_remove_exit
     //R.anim.lib_translate_x_remove_exit //R.anim.lib_x_remove_exit_holder
+
+    /**显示/隐藏 全平移动画*/
+    fun allTranslateAnim() {
+        DEFAULT_SHOW_ENTER_ANIMATOR = R.anim.lib_translate_x_show_enter
+        DEFAULT_SHOW_EXIT_ANIMATOR = R.anim.lib_translate_x_show_exit
+
+        DEFAULT_REMOVE_ENTER_ANIMATOR = R.anim.lib_translate_x_remove_enter
+        DEFAULT_REMOVE_EXIT_ANIMATOR = R.anim.lib_translate_x_remove_exit
+    }
+
+    /**显示/隐藏 只有顶层平移动画 */
+    fun onlyTopAnim() {
+        DEFAULT_SHOW_ENTER_ANIMATOR = R.anim.lib_x_show_enter_holder
+        DEFAULT_SHOW_EXIT_ANIMATOR = 0
+
+        DEFAULT_REMOVE_ENTER_ANIMATOR = 0
+        DEFAULT_REMOVE_EXIT_ANIMATOR = R.anim.lib_x_remove_exit_holder
+    }
 
     var loadAnimator: (context: Context, anim: Int) -> Animator? = { context, anim ->
         val sw = _screenWidth.toFloat()

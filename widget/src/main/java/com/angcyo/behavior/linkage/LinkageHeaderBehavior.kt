@@ -571,11 +571,12 @@ class LinkageHeaderBehavior(
                 //没有需要fling的view, 则自身处理
                 if (velocityY > 0) {
                     //手指向下fling
-                    open()
+                    //open()
                 } else {
                     //手指向上fling
-                    close()
+                    //close()
                 }
+                startFlingY(velocityY.toInt(), minScroll, 0)
             } else {
                 delegateScrollView.apply {
                     setFlingView(this)

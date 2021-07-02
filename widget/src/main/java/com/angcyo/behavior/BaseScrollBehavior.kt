@@ -8,12 +8,15 @@ import android.view.ViewConfiguration
 import android.widget.OverScroller
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.library.L
+import com.angcyo.library.ex.abs
+import com.angcyo.library.ex.simpleHash
 import com.angcyo.tablayout.clamp
 import com.angcyo.widget.R
 import com.angcyo.widget.base.isTouchDown
 import com.angcyo.widget.base.offsetLeftTo
 import com.angcyo.widget.base.offsetTopTo
 import kotlin.math.absoluteValue
+import kotlin.math.max
 
 /**
  * 支持[OverScroller]处理.
@@ -166,7 +169,7 @@ abstract class BaseScrollBehavior<T : View>(
     open fun onComputeScroll(parent: CoordinatorLayout, child: T) {
         if (_overScroller.computeScrollOffset()) {
             scrollTo(_overScroller.currX, _overScroller.currY, SCROLL_TYPE_SCROLLER)
-            //L.e("scrollTo: ${_overScroller.currY}")
+            L.w("${this.simpleHash()} scrollTo:x:${_overScroller.currX} y:${_overScroller.currY}")
             invalidate()
         }
     }
@@ -231,28 +234,41 @@ abstract class BaseScrollBehavior<T : View>(
         }
     }
 
-    fun startFlingX(velocityX: Int, maxX: Int) {
-
+    fun startFlingX(
+        velocityX: Int,
+        minX: Int,
+        maxX: Int,
+        overX: Int = max(minX.abs(), maxX.abs()) / 5
+    ) {
         val vX = velocity(velocityX)
-
         _overScroller.abortAnimation()
         _overScroller.fling(
             behaviorScrollX,
             behaviorScrollY,
             vX,
             0,
-            0,
+            minX,
             maxX,
             0,
             0,
-            0,
+            overX,
             0
         )
-
         postInvalidateOnAnimation()
     }
 
-    fun startFlingY(velocityY: Int, maxY: Int) {
+    /**
+     * [velocityY] 速率 >0手指向下fling <0手指向上fling
+     * [minY] 滚动最小值的边界
+     * [maxY] 滚动最大值的边界
+     * [overY] 是否开启over scroll. >0 表示开启, 值表示over的滚动最大距离
+     * */
+    fun startFlingY(
+        velocityY: Int,
+        minY: Int,
+        maxY: Int,
+        overY: Int = max(minY.abs(), maxY.abs()) / 5
+    ) {
         val vY = velocity(velocityY)
         _overScroller.abortAnimation()
         _overScroller.fling(
@@ -262,10 +278,10 @@ abstract class BaseScrollBehavior<T : View>(
             vY,
             0,
             0,
-            0,
+            minY,
             maxY,
             0,
-            0
+            overY
         )
 
         postInvalidateOnAnimation()
