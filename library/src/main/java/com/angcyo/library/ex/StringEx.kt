@@ -302,14 +302,20 @@ fun String.noExtName(): String {
  * https://www.iana.org/assignments/media-types/media-types.xhtml
  * */
 fun String?.mimeType(): String? {
+    //text/html
     return this?.run {
-        val url = try {
-            this.toUri().path?.encode()
-        } catch (e: Exception) {
-            this.encode()
+        val extension = if (this.isHttpScheme()) {
+            "html"
+        } else {
+            val url = try {
+                this.toUri().path?.encode()
+            } catch (e: Exception) {
+                this.encode()
+            }
+            //如果url中有+号, 返回值就会是空字符
+            MimeTypeMap.getFileExtensionFromUrl(url)
         }
-        MimeTypeMap.getSingleton()
-            .getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(url))
+        MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
     }
 }
 
@@ -317,8 +323,9 @@ fun String?.isVideoMimeType(): Boolean {
     return this?.startsWith("video", true) ?: false
 }
 
+/**[text/html]*/
 fun String?.isHttpMimeType(): Boolean {
-    return this?.split("?")?.getOrNull(0)?.endsWith("html", true) ?: false
+    return this == "text/html" || (this?.split("?")?.getOrNull(0)?.endsWith("html", true) ?: false)
 }
 
 /**[android.media.MediaFile#isPlayListMimeType]*/
