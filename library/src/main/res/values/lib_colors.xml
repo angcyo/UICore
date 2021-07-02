@@ -15,7 +15,7 @@
     <!--伪造出来的状态栏颜色-->
     <color name="lib_status_bar_dim">#20000000</color>
 
-    <color name="lib_tran_dark">#80000000</color>
+    <color name="lib_tran_dark">#40000000</color>
 
     <color name="lib_icon_dark_color">#5C5D5E</color>
     <color name="lib_image_placeholder_color">#474849</color>

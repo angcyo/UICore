@@ -35,15 +35,15 @@ fun DslAdapter.findItemGroupParams(
 
     //分组数据计算
     for (i in allItemList.indices) {
-        val newItem = allItemList[i]
+        val targetItem = allItemList[i]
 
         if (!interruptGroup) {
             when {
-                newItem == dslAdapterItem -> {
-                    params.groupItems.add(newItem)
+                targetItem == dslAdapterItem -> {
+                    params.groupItems.add(targetItem)
                     findAnchor = true
                 }
-                dslAdapterItem.isItemInGroups(newItem) -> params.groupItems.add(newItem)
+                dslAdapterItem.isItemInGroups(targetItem) -> params.groupItems.add(targetItem)
                 //如果不是连续的, 则中断分组
                 findAnchor -> interruptGroup = true
             }

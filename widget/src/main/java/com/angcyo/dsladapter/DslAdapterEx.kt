@@ -304,12 +304,18 @@ fun DslAdapter.eachItem(
 
 /**是否包含指定的[payload]*/
 fun Iterable<*>.containsPayload(any: Any): Boolean {
+    return havePayload {
+        it == any
+    }
+}
+
+fun Iterable<*>.havePayload(predicate: (Any?) -> Boolean): Boolean {
     var result = false
     for (payload in this) {
         result = if (payload is Iterable<*>) {
-            payload.containsPayload(any)
+            payload.havePayload(predicate)
         } else {
-            payload == any
+            predicate(payload)
         }
         if (result) {
             break
