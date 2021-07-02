@@ -266,6 +266,12 @@ object Action {
      * */
     const val ACTION_START = "start"
 
+    /**
+     * 使用原生的[Intent]打开界面
+     * [intent:android.settings.SETTINGS]
+     * */
+    const val ACTION_INTENT = "intent"
+
     /**使用目标程序, 打开指定url
      * [url:http://www.baidu.com] 默认使用目标程序打开
      * [url:xxx pkg:$[xxx]] pkd:指定程序的包名, 支持文本变量

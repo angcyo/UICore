@@ -33,6 +33,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         registerActionList.add(DisableAction())
         registerActionList.add(ToastAction())
         registerActionList.add(RequestFormAction())
+        registerActionList.add(IntentAction())
 
         registerActionList.add(BackAction())
         registerActionList.add(HomeAction())

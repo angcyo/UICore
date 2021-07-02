@@ -3,7 +3,9 @@ package com.angcyo.acc2
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.bean.TaskBean
 import com.angcyo.library.ex.des
+import com.angcyo.library.ex.des2
 import com.angcyo.library.ex.getChildOrNull
+import com.angcyo.library.ex.size
 
 /**
  *
@@ -57,4 +59,5 @@ fun TaskBean.log() = buildString {
     append(title)
     append("($taskId)")
     append(des.des())
+    append("${actionList.size()}".des2())
 }
