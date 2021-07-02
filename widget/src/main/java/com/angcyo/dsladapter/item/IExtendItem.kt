@@ -1,4 +1,4 @@
-package com.angcyo.item.style
+package com.angcyo.dsladapter.item
 
 import android.view.View
 import androidx.annotation.IdRes

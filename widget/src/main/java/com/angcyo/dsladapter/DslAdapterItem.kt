@@ -399,12 +399,12 @@ open class DslAdapterItem : LifecycleOwner {
     var itemBottomOffset = 0
 
     /**可以覆盖设置分割线的边距*/
-    var onSetItemOffset: (rect: Rect) -> Unit = {}
+    var onSetItemOffset: (outRect: Rect) -> Unit = {}
 
     /**分割线入口 [DslItemDecoration]*/
-    fun setItemOffsets(rect: Rect) {
-        rect.set(itemLeftInsert, itemTopInsert, itemRightInsert, itemBottomInsert)
-        onSetItemOffset(rect)
+    fun setItemOffsets(outRect: Rect) {
+        outRect.set(itemLeftInsert, itemTopInsert, itemRightInsert, itemBottomInsert)
+        onSetItemOffset(outRect)
     }
 
     /**

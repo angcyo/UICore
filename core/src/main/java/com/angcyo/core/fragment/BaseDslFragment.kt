@@ -128,7 +128,12 @@ open class BaseDslFragment : BaseTitleFragment() {
         initItem: Item.(data: Bean, index: Int) -> Unit = { _, _ -> }
     ) {
         finishRefresh()
-        _adapter.loadDataEndIndex(itemClass, dataList, error, page, initItem)
+        _adapter.loadDataEndIndex(itemClass, dataList, error, page) { data, index ->
+            if (this is IFragmentItem) {
+                this.itemFragment = this@BaseDslFragment
+            }
+            initItem(data, index)
+        }
     }
 
     /**简单的加载多类型的item*/
