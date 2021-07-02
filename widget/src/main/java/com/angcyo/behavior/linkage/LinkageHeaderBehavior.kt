@@ -619,12 +619,18 @@ class LinkageHeaderBehavior(
                     scrollBy(0, distanceY.toInt(), SCROLL_TYPE_GESTURE)
                 }
             } else {
-                onNestedPreScrollOther(
-                    childView,
-                    distanceY.toInt(),
-                    _scrollConsumed,
-                    SCROLL_TYPE_GESTURE
-                )
+                if (behaviorScrollY < minScroll && distanceY < 0) {
+                    //移动超出了屏幕外
+                    //distanceY > 0 手指向上滚动
+                    scrollBy(0, absY.toInt(), SCROLL_TYPE_GESTURE)
+                } else {
+                    onNestedPreScrollOther(
+                        childView,
+                        distanceY.toInt(),
+                        _scrollConsumed,
+                        SCROLL_TYPE_GESTURE
+                    )
+                }
             }
             return true
         }

@@ -9,7 +9,6 @@ import com.angcyo.library.ex.calcSize
 import com.angcyo.tablayout.clamp
 import com.angcyo.widget.R
 import com.angcyo.widget.base.mH
-import com.angcyo.widget.base.postAndRemove
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -178,9 +177,7 @@ open class LinkageScaleBehavior(
             super.onBehaviorScrollTo(scrollBehavior, x, y, scrollType)
             if (enableHeightEffect && abs(oldY - y) > _minGap) {
                 _targetView?.apply {
-                    postAndRemove {
-                        requestLayout()
-                    }
+                    requestLayout()
                 }
             }
         } else {
@@ -191,9 +188,7 @@ open class LinkageScaleBehavior(
     fun _refreshTargetHeight() {
         _targetView?.apply {
             if (abs(measuredHeight - _targetDefaultHeight) > _minGap) {
-                postAndRemove {
-                    requestLayout()
-                }
+                requestLayout()
             }
         }
     }

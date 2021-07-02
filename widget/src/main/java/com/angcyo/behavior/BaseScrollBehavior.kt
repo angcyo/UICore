@@ -169,7 +169,7 @@ abstract class BaseScrollBehavior<T : View>(
     open fun onComputeScroll(parent: CoordinatorLayout, child: T) {
         if (_overScroller.computeScrollOffset()) {
             scrollTo(_overScroller.currX, _overScroller.currY, SCROLL_TYPE_SCROLLER)
-            L.w("${this.simpleHash()} scrollTo:x:${_overScroller.currX} y:${_overScroller.currY}")
+            //L.w("${this.simpleHash()} scrollTo:x:${_overScroller.currX} y:${_overScroller.currY}")
             invalidate()
         }
     }
