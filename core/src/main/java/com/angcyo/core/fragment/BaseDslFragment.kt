@@ -5,9 +5,8 @@ import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.behavior.refresh.IRefreshContentBehavior
 import com.angcyo.core.R
-import com.angcyo.core.dslitem.IFragmentItem
 import com.angcyo.dsladapter.*
-import com.angcyo.dsladapter.data.loadDataEnd
+import com.angcyo.dsladapter.data.loadDataEndIndex
 import com.angcyo.dsladapter.data.resetRender
 import com.angcyo.library.L
 import com.angcyo.library.model.Page
@@ -116,8 +115,19 @@ open class BaseDslFragment : BaseTitleFragment() {
         error: Throwable? = null,
         initItem: Item.(data: Bean) -> Unit = {}
     ) {
+        loadDataEndIndex(itemClass, dataList, error) { data, _ ->
+            initItem(data)
+        }
+    }
+
+    fun <Item : DslAdapterItem, Bean> loadDataEndIndex(
+        itemClass: Class<Item>,
+        dataList: List<Bean>?,
+        error: Throwable? = null,
+        initItem: Item.(data: Bean, index: Int) -> Unit = { _, _ -> }
+    ) {
         finishRefresh()
-        _adapter.loadDataEnd(itemClass, dataList, error, page, initItem)
+        _adapter.loadDataEndIndex(itemClass, dataList, error, page, initItem)
     }
 
     /**简单的加载多类型的item*/
