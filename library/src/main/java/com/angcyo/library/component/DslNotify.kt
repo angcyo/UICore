@@ -639,7 +639,8 @@ fun dslBuildNotify(context: Context = app(), action: DslNotify.() -> Unit): Noti
     }
 }
 
-/**快速创建配置通知, 并显示*/
+/**快速创建配置通知, 并显示
+ * 返回通知id*/
 fun dslNotify(context: Context = app(), action: DslNotify.() -> Unit): Int {
     return DslNotify().run {
         action()
@@ -680,6 +681,17 @@ fun DslNotify.low() {
     channelImportance = NotificationManagerCompat.IMPORTANCE_LOW
     notifyPriority = NotificationCompat.PRIORITY_LOW
     notifyDefaults = NotificationCompat.DEFAULT_LIGHTS
+}
+
+/**快速设置通知点击事件*/
+fun DslNotify.clickActivity(
+    intent: Intent,
+    requestCode: Int = 0x999,
+    flags: Int = PendingIntent.FLAG_UPDATE_CURRENT,
+    options: Bundle? = null,
+    context: Context = app()
+) {
+    notifyContentIntent = DslNotify.pendingActivity(context, intent, requestCode, flags, options)
 }
 
 //</editor-fold desc="通知扩展">

@@ -62,7 +62,11 @@ class AccNodeLog {
      * */
     fun getAccessibilityWindowLog(): StringBuilder {
         val windows = service?.windows
-        if (!windows.isNullOrEmpty()) {
+        if (windows == null) {
+            outBuilder.append("service is null")
+        } else if (windows.isEmpty()) {
+            outBuilder.append("windows is empty")
+        } else if (!windows.isNullOrEmpty()) {
             if (logScreenInfo) {
                 outBuilder.appendln("screenWidth:$_screenWidth screenHeight:$_screenHeight dp:$dp decorWidth:${_decorWidth} decorHeight:${_decorHeight}")
             }
