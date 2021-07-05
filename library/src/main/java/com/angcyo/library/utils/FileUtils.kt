@@ -36,13 +36,15 @@ object FileUtils {
         "$rootFolder${File.separator}$it"
     }
 
-    /**APP扩展根目录*/
+    /**APP扩展根目录
+     * [/storage/emulated/0/Android/data/包名/files]*/
     fun appRootExternalFolder(context: Context = app()): File? {
         // /storage/emulated/0/Android/data/com.angcyo.uicore.demo/files
         return context.getExternalFilesDir("")
     }
 
-    /**扩展目录下的指定文件夹*/
+    /**扩展目录下的指定文件夹
+     * [/storage/emulated/0/Android/data/包名/files/${schema}/${folder}]*/
     fun appRootExternalFolder(context: Context = app(), folder: String): File? {
         // /storage/emulated/0/Android/data/com.angcyo.uicore.demo/files/$folder
         return context.getExternalFilesDir(onGetFolderPath(folder))
