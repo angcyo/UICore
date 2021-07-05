@@ -97,7 +97,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     open var fragmentTitle: CharSequence? = null
         set(value) {
             field = value
-            if (isAdded) {
+            if (isAdded && baseViewHolder != null) {
                 _vh.tv(R.id.lib_title_text_view)?.text = value
             }
         }

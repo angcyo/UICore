@@ -53,7 +53,7 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
         translateX/translateY
         rotation*/
         if (transit == 0) {
-            return FragmentAnimator.loadAnimator(attachContext, nextAnim)
+            return FragmentAnimator.loadAnimator(fContext(), nextAnim)
         }
         return super.onCreateAnimator(transit, enter, nextAnim)
     }

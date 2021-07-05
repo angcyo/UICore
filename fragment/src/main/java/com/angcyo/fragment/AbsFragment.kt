@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
+import com.angcyo.library.L
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.getColor
@@ -46,13 +47,13 @@ abstract class AbsFragment : Fragment() {
 
     //<editor-fold desc="对象属性">
 
-    lateinit var baseViewHolder: DslViewHolder
+    var baseViewHolder: DslViewHolder? = null
 
     /**别名*/
     val _vh: DslViewHolder
-        get() = baseViewHolder
+        get() = baseViewHolder!!
 
-    lateinit var attachContext: Context
+    var attachContext: Context? = null
 
     //</editor-fold">
 
@@ -77,7 +78,7 @@ abstract class AbsFragment : Fragment() {
     }
 
     override fun getContext(): Context {
-        return super.getContext() ?: attachContext
+        return super.getContext() ?: attachContext!!
     }
 
     fun fContext(): Context {
@@ -112,6 +113,7 @@ abstract class AbsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        L.d("savedInstanceState:$savedInstanceState")
         val rootView = onCreateRootView(inflater, container, savedInstanceState)
         baseViewHolder = DslViewHolder(rootView, viewHolderInitialCapacity)
         initBaseView(savedInstanceState)
@@ -161,7 +163,7 @@ abstract class AbsFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        baseViewHolder.clear()
+        baseViewHolder?.clear()
     }
 
     override fun onDestroy() {
@@ -214,8 +216,7 @@ abstract class AbsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val layoutId = fragmentLayoutId
-        val rootView: View
-        rootView = if (layoutId != -1) {
+        val rootView: View = if (layoutId != -1) {
             inflater.inflate(layoutId, container, false)
         } else {
             TextView(context).apply {

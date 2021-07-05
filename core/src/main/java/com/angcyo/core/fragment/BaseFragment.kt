@@ -73,7 +73,7 @@ abstract class BaseFragment : AbsLifecycleFragment() {
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)
         if (interceptRootTouchEvent()) {
-            baseViewHolder.itemView.isClickable = true
+            baseViewHolder?.itemView?.isClickable = true
         }
     }
 

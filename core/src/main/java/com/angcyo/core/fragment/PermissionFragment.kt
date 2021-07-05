@@ -50,10 +50,10 @@ class PermissionFragment : BaseFragment() {
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)
 
-        baseViewHolder.tv(R.id.permission_title)?.text =
+        baseViewHolder?.tv(R.id.permission_title)?.text =
             "\n为了更好的服务体验,\n${getAppName()} 需要以下权限"
 
-        baseViewHolder.rv(R.id.recycler_view)?.apply {
+        baseViewHolder?.rv(R.id.recycler_view)?.apply {
             val filterPermissions = permissions.filter { it.icon > 0 }
 
             val count = filterPermissions.size
@@ -80,12 +80,12 @@ class PermissionFragment : BaseFragment() {
             }
         }
 
-        baseViewHolder.throttleClick(R.id.enable_button) {
+        baseViewHolder?.throttleClick(R.id.enable_button) {
             onPermissionRequest(it, permissions)
         }
 
         if (isDebugType()) {
-            baseViewHolder.longClick(R.id.enable_button) {
+            baseViewHolder?.longClick(R.id.enable_button) {
                 dslFHelper {
                     removeLastFragmentOnBack = true
                     finishActivityOnLastFragmentRemove = true
