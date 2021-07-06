@@ -2,6 +2,7 @@ package com.angcyo.http
 
 import com.angcyo.http.base.fromJson
 import com.angcyo.http.exception.HttpDataException
+import com.angcyo.library.L
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -108,8 +109,8 @@ class DslRequest {
                 //base header
                 header("Accept", "*/*")
                 //header("Accept-Encoding", "gzip, deflate, br") //声明gzip压缩,需要手动解压.
-                //header("Cache-Control", "no-cache")
-                //header("Connection", "keep-alive")
+                header("Cache-Control", "no-cache")
+                header("Connection", "keep-alive")
 
                 requestUrl?.let {
                     val httpUrl = it.toHttpUrl()
@@ -118,7 +119,10 @@ class DslRequest {
                 }
 
                 header?.forEach { entry ->
-                    header(entry.key, entry.value)
+                    if (entry.key.toLowerCase() != "Accept-Encoding".toLowerCase()) {
+                        //不支持压缩
+                        header(entry.key, entry.value)
+                    }
                 }
             }
             .build()
@@ -133,6 +137,7 @@ class DslRequest {
 
         val call = client.newCall(request)
 
+        L.i("请求:$url")
         if (async) {
             call.enqueue(object : Callback {
 
@@ -180,6 +185,33 @@ class DslRequest {
             }
         }
     }
+}
+
+fun jsonBody(json: String): RequestBody {
+    return json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+}
+
+fun textBody(text: String): RequestBody {
+    return text.toRequestBody("text/plain".toMediaTypeOrNull())
+}
+
+fun formBody(form: Map<String, String?>?, charset: Charset = Charsets.UTF_8): FormBody {
+    return FormBody.Builder(charset).apply {
+        form?.forEach { entry ->
+            entry.value?.let {
+                add(entry.key, it)
+            }
+        }
+    }.build()
+}
+
+fun multipartBody(config: MultipartBody.Builder.() -> Unit): MultipartBody {
+    return MultipartBody.Builder().apply {
+        //setType()
+        //addPart()
+        //addFormDataPart()
+        config()
+    }.build()
 }
 
 /**toBean*/
