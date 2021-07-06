@@ -21,6 +21,8 @@ import java.lang.ref.WeakReference
 
 /**
  *
+ *  https://developer.android.com/guide/topics/ui/notifiers/toasts
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/01/02
@@ -60,9 +62,24 @@ object DslToast {
     /**使用[Toast]展示提示信息*/
     @SuppressLint("ShowToast")
     fun _showWithToast(context: Context, config: ToastConfig) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            _toastRef?.get()?.cancel()
+
+        if (config.removeLastView >= 0) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                _toastRef?.get()?.cancel()
+                _toastRef = null
+            }
+        } else {
             _toastRef = null
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            //https://developer.android.com/guide/topics/ui/notifiers/toasts
+            //api 30 自定义toast无法显示
+            Toast.makeText(context, config.text, config.duration).apply {
+                _toastRef = WeakReference(this)
+                show()
+            }
+            return
         }
 
         if (_toastRef?.get() == null) {
