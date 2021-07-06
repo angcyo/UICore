@@ -15,6 +15,7 @@ import com.angcyo.library.utils.Constant.PICTURE_FOLDER_NAME
 import com.angcyo.library.utils.fastBlur
 import com.angcyo.library.utils.fileNameUUID
 import com.angcyo.library.utils.filePath
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.InputStream
@@ -38,6 +39,10 @@ fun configQQIntent(intent: Intent) {
 
 fun ByteArray.toBitmap(): Bitmap {
     return BitmapFactory.decodeByteArray(this, 0, this.size)
+}
+
+fun ByteArray.toInputStream(): InputStream {
+    return ByteArrayInputStream(this)
 }
 
 /**分享图片, 先保存图片, 然后通过uri分享*/
