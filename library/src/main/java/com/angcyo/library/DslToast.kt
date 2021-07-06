@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StyleRes
+import com.angcyo.library.component.RBackground
 import com.angcyo.library.component.ThreadExecutor
 import com.angcyo.library.component.isNotificationsEnabled
 import com.angcyo.library.ex.*
@@ -72,9 +73,9 @@ object DslToast {
             _toastRef = null
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && RBackground.isBackground()) {
             //https://developer.android.com/guide/topics/ui/notifiers/toasts
-            //api 30 自定义toast无法显示
+            //api 30 , 程序在后台时, 自定义toast无法显示
             Toast.makeText(context, config.text, config.duration).apply {
                 _toastRef = WeakReference(this)
                 show()

@@ -61,7 +61,8 @@ object RBackground {
         }
 
         override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-            changeItem(activity.hashCode(), activity.javaClass.name, SAVE)
+            //2021-7-6 注释
+            //changeItem(activity.hashCode(), activity.javaClass.name, SAVE)
         }
     }
 
