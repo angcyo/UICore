@@ -247,12 +247,20 @@ class AccControl : Runnable {
         log(controlEndToLog())
     }
 
+    /**控制器的日志*/
+    fun controlLog(): String = buildString {
+        append(controlStartToLog())
+        append(controlEndToLog())
+    }
+
     fun controlStartToLog(): String = buildString {
-        if (!isControlEnd && !isControlPause) {
+        if (_controlState == CONTROL_STATE_NORMAL) {
+            append("控制器就绪")
+        } else if (!isControlEnd && !isControlPause) {
             append("run控制器启动")
         }
-        append("[${_taskBean?.title}]")
-        append("[${_taskBean?.actionList.size()}]")
+        append(_taskBean?.title.des2())
+        append(_taskBean?.actionList?.size()?.toString().des2())
         appendLine()
         appendLine("enable:${_taskBean?.enableAction}")
         appendLine("disable:${_taskBean?.disableAction}")

@@ -268,8 +268,8 @@ fun gson(config: (GsonBuilder.() -> Unit)? = null): Gson {
     val gson = if (config == null) {
         GsonBuilder()
             .default()
-            .setPrettyPrinting()
-            .serializeNulls()
+            .setPrettyPrinting() //美化json
+            //.serializeNulls() 序列化空值
             //.disableHtmlEscaping() //关闭html转义
             .create()
     } else {
