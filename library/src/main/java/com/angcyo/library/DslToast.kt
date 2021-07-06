@@ -92,8 +92,9 @@ object DslToast {
         }
 
         _toastRef?.get()?.apply {
+            val usedWidth = config.fullMargin * 2
             if (config.fullScreen) {
-                initFullScreenToast(this, config.fullMargin * 2) {
+                initFullScreenToast(this, usedWidth) {
                     windowAnimations = config.toastAnimation
                 }
             }
@@ -106,7 +107,18 @@ object DslToast {
                 //没有自定义的布局
                 setText(config.text)
             } else {
-                view = _inflateLayout(context, config)
+                view = _inflateLayout(context, config).apply {
+                    //宽度设置
+                    if (config.fullScreen && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        if (this is ViewGroup && childCount == 1) {
+                            val rootView = getChildAt(0)
+                            val params = rootView.layoutParams ?: ViewGroup.LayoutParams(-2, -2)
+                            params.width = _screenWidth.coerceAtMost(_screenHeight) - usedWidth
+                            params.height = -2
+                            rootView.layoutParams = params
+                        }
+                    }
+                }
             }
 
             show()
@@ -119,7 +131,7 @@ object DslToast {
         action: WindowManager.LayoutParams.() -> Unit = {}
     ) {
         try {
-            val mTN = toast::class.java.getDeclaredField("mTN")
+            val mTN = Toast::class.java.getDeclaredField("mTN")
             mTN.isAccessible = true
             val mTNObj = mTN.get(toast)
 
