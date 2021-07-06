@@ -214,6 +214,19 @@ fun Context.startIntent(error: Boolean = false, config: Intent.() -> Unit): Inte
     return result
 }
 
+/**
+ * api 30, 需要在 manefist 中,声明 queries
+ *
+ *  获取所有应用
+ *  <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
+ *
+ * https://developer.android.com/training/basics/intents/package-visibility
+ * https://developer.android.com/training/basics/intents/package-visibility#automatic
+ * https://developer.android.com/about/versions/11/privacy/package-visibility
+ *
+ * [android.app.ApplicationPackageManager#getLaunchIntentForPackageAndCategory]
+ *
+ * */
 @SuppressLint("WrongConstant")
 fun Context.getAppOpenIntentByPackageName(packageName: String): Intent? {
     var mainActivityClass: String? = null

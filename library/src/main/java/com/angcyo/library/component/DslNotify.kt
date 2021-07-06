@@ -30,6 +30,18 @@ import kotlin.math.min
  *
  * https://developer.android.google.cn/guide/topics/ui/notifiers/notifications.html#Templates
  *
+ * https://developer.android.com/training/notify-user/channels?hl=zh-cn
+ *
+ * 用户可见的重要性级别	重要性（Android 8.0 及更高版本）	优先级（Android 7.1 及更低版本）
+ * 紧急
+ * ：发出提示音，并以浮动通知的形式显示	IMPORTANCE_HIGH	PRIORITY_HIGH 或 PRIORITY_MAX
+ * 高
+ * ：发出提示音	IMPORTANCE_DEFAULT	PRIORITY_DEFAULT
+ * 中
+ * ：无提示音	IMPORTANCE_LOW	PRIORITY_LOW
+ * 低
+ * ：无提示音，且不会在状态栏中显示。	IMPORTANCE_MIN	PRIORITY_MIN
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/02/13
@@ -63,9 +75,17 @@ class DslNotify {
             _notifyIds.clear()
         }
 
+        fun getNotificationChannel(
+            channelId: String,
+            context: Context = app()
+        ): NotificationChannel? {
+            return getNotificationChannel(context, channelId)
+        }
+
         /**获取[channelId]对应的通道信息, 可以检测通道通知是否被关闭*/
-        fun getNotificationChannel(context: Context?, channelId: String): NotificationChannel? {
-            val manager: NotificationManager? =
+        fun getNotificationChannel(context: Context, channelId: String): NotificationChannel? {
+            return NotificationManagerCompat.from(context).getNotificationChannel(channelId)
+            /*val manager: NotificationManager? =
                 (context ?: app()).getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && manager != null) {
                 try {
@@ -78,7 +98,7 @@ class DslNotify {
                 }
             } else {
                 null
-            }
+            }*/
         }
 
         /**打开通道设置页*/
@@ -92,12 +112,16 @@ class DslNotify {
             }
         }
 
+        fun deleteNotificationChannel(channelId: String, context: Context? = app()) {
+            deleteNotificationChannel(context, channelId)
+        }
+
         /**删除通道*/
         fun deleteNotificationChannel(context: Context?, channelId: String) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val manager: NotificationManager? =
-                    (context
-                        ?: app()).getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
+                val manager: NotificationManager? = (context ?: app()).getSystemService(
+                    NOTIFICATION_SERVICE
+                ) as NotificationManager?
                 try {
                     manager?.deleteNotificationChannel(channelId)
                 } catch (e: Exception) {
@@ -693,5 +717,19 @@ fun DslNotify.clickActivity(
 ) {
     notifyContentIntent = DslNotify.pendingActivity(context, intent, requestCode, flags, options)
 }
+
+/**应用程序的通知是否打开了*/
+fun isNotificationsEnabled() = NotificationManagerCompat.from(app()).areNotificationsEnabled()
+
+/**通知通道是否激活*/
+fun NotificationChannel?.isEnable(): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        this?.importance != NotificationManagerCompat.IMPORTANCE_NONE
+    } else {
+        true
+    }
+}
+
+fun String.isChannelEnable() = DslNotify.getNotificationChannel(this).isEnable()
 
 //</editor-fold desc="通知扩展">

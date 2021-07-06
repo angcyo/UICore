@@ -104,4 +104,19 @@
                 android:resource="@xml/lib_provider_paths" />
         </provider>
     </application>
+
+    <!--api 30, 包的可见性-->
+    <!--https://developer.android.com/training/basics/intents/package-visibility-->
+    <!--<uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>-->
+    <queries>
+        <!--<package android:name="com.facebook.katana" />
+        <package android:name="com.tencent.mm" />-->
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+        </intent>
+    </queries>
+
 </manifest>

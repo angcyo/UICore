@@ -15,6 +15,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StyleRes
 import com.angcyo.library.component.ThreadExecutor
+import com.angcyo.library.component.isNotificationsEnabled
 import com.angcyo.library.ex.*
 import java.lang.ref.WeakReference
 
@@ -30,14 +31,21 @@ object DslToast {
     var LENGTH_SHORT_TIME = 2000L
     var LENGTH_LONG_TIME = 4000L
 
+    /**android o, api 26 , 通知关闭之后, toast显示不出来 */
     fun show(context: Context = app(), action: ToastConfig.() -> Unit) {
         if (!isMain()) {
             //回到主线程调用
-            ThreadExecutor.onMain(Runnable { show(context, action) })
+            ThreadExecutor.onMain { show(context, action) }
             return
         }
 
         val config = ToastConfig()
+
+        //如果通知被关闭了, 自动切换到[withActivity]显示
+        if (!isNotificationsEnabled() && context is Activity) {
+            config.withActivity = context
+        }
+
         config.action()
 
         if (config.withActivity == null) {
@@ -361,11 +369,12 @@ fun toast(action: ToastConfig.() -> Unit) {
 /**文本 ico 布局 简化配置*/
 fun toast(
     text: CharSequence?,
+    context: Context = app(),
     @DrawableRes icon: Int = undefined_res,
     @LayoutRes layoutId: Int = R.layout.lib_toast_layout,
     action: ToastConfig.() -> Unit = {}
 ) {
-    DslToast.show {
+    DslToast.show(context) {
         this.layoutId = layoutId
         this.text = text ?: ""
         this.icon = icon
@@ -377,11 +386,12 @@ fun toast(
 /**居中正方形提示toast*/
 fun tip(
     text: CharSequence?,
+    context: Context = app(),
     @DrawableRes icon: Int = R.drawable.lib_ic_succeed,
     @LayoutRes layoutId: Int = R.layout.lib_toast_tip_layout,
     action: ToastConfig.() -> Unit = {}
 ) {
-    DslToast.show {
+    DslToast.show(context) {
         this.layoutId = layoutId
         this.text = text ?: ""
         this.icon = icon
@@ -397,21 +407,23 @@ fun tip(
 /**文本 ico QQ布局 简化配置*/
 fun toastQQ(
     text: CharSequence?,
+    context: Context = app(),
     @DrawableRes icon: Int = undefined_res,
     @LayoutRes layoutId: Int = R.layout.lib_toast_qq_layout,
     action: ToastConfig.() -> Unit = {}
 ) {
-    toast(text, icon, layoutId, action)
+    toast(text, context, icon, layoutId, action)
 }
 
 /**文本 ico WX布局 简化配置*/
 fun toastWX(
     text: CharSequence?,
+    context: Context = app(),
     @DrawableRes icon: Int = undefined_res,
     @LayoutRes layoutId: Int = R.layout.lib_toast_wx_layout,
     action: ToastConfig.() -> Unit = {}
 ) {
-    toast(text, icon, layoutId) {
+    toast(text, context, icon, layoutId) {
         gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
         fullMargin = 0
         yOffset = 0
