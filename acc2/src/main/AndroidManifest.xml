@@ -19,4 +19,7 @@
         </service>
 
     </application>
+
+    <!--api 30, 包的可见性-->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
 </manifest>

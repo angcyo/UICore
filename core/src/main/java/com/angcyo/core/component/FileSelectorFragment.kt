@@ -213,7 +213,7 @@ open class FileSelectorFragment : BaseFragment() {
                                             if (this) {
                                                 _adapter.removeItem(this@loadSingleData2)
                                             } else {
-                                                toastWX("删除失败", R.drawable.lib_ic_error)
+                                                toastWX("删除失败", fContext(), R.drawable.lib_ic_error)
                                             }
                                         }
                                     }

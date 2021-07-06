@@ -48,7 +48,7 @@ object AccPermission {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
         } catch (e: Exception) {
-            tip("打开失败\n${e.message}", R.drawable.lib_ic_error)
+            tip("打开失败\n${e.message}", context, R.drawable.lib_ic_error)
         }
     }
 

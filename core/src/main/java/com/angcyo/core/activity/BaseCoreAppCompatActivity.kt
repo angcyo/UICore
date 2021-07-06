@@ -89,7 +89,7 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
     }
 
     fun onDoubleBackPressed() {
-        toastQQ("再按一次退出!", R.drawable.lib_ic_info)
+        toastQQ("再按一次退出!", this, R.drawable.lib_ic_info)
     }
 
     //</editor-fold desc="双击Back回调">
