@@ -161,7 +161,9 @@ abstract class AbsDslDrawable : Drawable() {
 
     override fun onBoundsChange(bounds: Rect?) {
         super.onBoundsChange(bounds)
-        L.v("bound change:$bounds")
+        if (attachView?.isInEditMode != true) {
+            L.v("bound change:$bounds")
+        }
     }
 
     override fun onLevelChange(level: Int): Boolean {

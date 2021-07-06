@@ -35,8 +35,9 @@ object Library {
     }
 }
 
-fun app(): Application =
-    Library.application ?: LibInitProvider.contentProvider as? Application ?: PlaceholderApplication().apply {
+fun app(): Application = Library.application
+    ?: (LibInitProvider.contentProvider as? Application)
+    ?: PlaceholderApplication().apply {
         L.e("application 为初始化")
     }
 
