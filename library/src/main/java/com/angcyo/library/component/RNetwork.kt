@@ -14,6 +14,8 @@ import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.component.RNetwork.getNetWorkState
 import com.angcyo.library.component.RNetwork.notifyObservers
+import com.angcyo.library.ex.getMobileIP
+import com.angcyo.library.ex.getWifiIP
 import com.angcyo.library.utils.RUtils
 
 
@@ -56,7 +58,7 @@ object RNetwork {
      * 通知所有的Observer网络状态变化
      */
     internal fun notifyObservers(networkType: NetworkType) {
-        L.w("网络改变->$networkType")
+        L.w("网络改变->$networkType ->${getWifiIP()} ${getMobileIP()}")
 
         fun notify() {
             if (networkType == NetworkType.NETWORK_NO) {
@@ -87,7 +89,16 @@ object RNetwork {
         }
     }
 
-    fun init(application: Application) {
+    var _isInit = false
+
+    /** xml 需要声明权限:
+     * permissions: android.permission.CHANGE_NETWORK_STATE, android.permission.WRITE_SETTINGS.
+     * */
+    fun init(application: Application = app()) {
+        if (_isInit) {
+            return
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val connectivityManager =
                 application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -100,7 +111,7 @@ object RNetwork {
                      */
                     override fun onAvailable(network: Network) {
                         super.onAvailable(network)
-                        L.d("lzp", "onAvailable")
+                        L.d("onAvailable")
                         notifyObservers(NetworkType.NETWORK_AVAILABLE)
                     }
 
@@ -109,7 +120,7 @@ object RNetwork {
                      */
                     override fun onLost(network: Network) {
                         super.onLost(network)
-                        L.d("lzp", "onLost")
+                        L.d("onLost")
                         notifyObservers(NetworkType.NETWORK_NO)
                     }
 
@@ -121,7 +132,7 @@ object RNetwork {
                         linkProperties: LinkProperties
                     ) {
                         super.onLinkPropertiesChanged(network, linkProperties)
-                        L.d("lzp", "onLinkPropertiesChanged")
+                        L.d("onLinkPropertiesChanged")
                         val networkInfo = connectivityManager.getNetworkInfo(network)
 
                         if (networkInfo != null && networkInfo.isConnected) {
@@ -149,7 +160,7 @@ object RNetwork {
                         networkCapabilities: NetworkCapabilities
                     ) {
                         super.onCapabilitiesChanged(network, networkCapabilities)
-                        L.d("lzp", "onCapabilitiesChanged")
+                        L.d("onCapabilitiesChanged")
                     }
 
                     /**
@@ -157,7 +168,7 @@ object RNetwork {
                      */
                     override fun onLosing(network: Network, maxMsToLive: Int) {
                         super.onLosing(network, maxMsToLive)
-                        L.d("lzp", "onLosing")
+                        L.d("onLosing")
                     }
 
                     /**
@@ -165,9 +176,10 @@ object RNetwork {
                      */
                     override fun onUnavailable() {
                         super.onUnavailable()
-                        L.d("lzp", "onUnavailable")
+                        L.d("onUnavailable")
                     }
                 })
+            _isInit = true
         } else
         /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)*/ {
             //实例化IntentFilter对象
@@ -176,6 +188,8 @@ object RNetwork {
             netBroadcastReceiver = NetBroadcastReceiver()
             //注册广播接收
             application.registerReceiver(netBroadcastReceiver, filter)
+
+            _isInit = true
         }
     }
 
