@@ -24,6 +24,7 @@ import com.angcyo.http.base.toJson
 import com.angcyo.library.L
 import com.angcyo.library._isNavigationBarShow
 import com.angcyo.library.ex.*
+import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.getFieldValue
 import com.angcyo.widget.base.onDoubleTap
 import com.angcyo.widget.span.span
@@ -191,6 +192,9 @@ fun Activity.showDebugInfoView(
                 decorView.getWindowVisibleDisplayFrame(rect)
                 appendln()
                 append(" frame:").append(rect)
+
+                appendln()
+                Device.beautifyDeviceLog(this)
             }
         }
 
