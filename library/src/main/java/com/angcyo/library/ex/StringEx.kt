@@ -18,6 +18,7 @@ import androidx.core.net.toUri
 import androidx.core.text.getSpans
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.utils.PATTERN_EMAIL
 import com.angcyo.library.utils.PATTERN_MOBILE_SIMPLE
 import com.angcyo.library.utils.PATTERN_URL
 import java.net.URLDecoder
@@ -248,6 +249,14 @@ fun String?.isUrl(regex: String = PATTERN_URL): Boolean {
 
 /**判断字符串是否是手机号码*/
 fun String?.isPhone(regex: String = PATTERN_MOBILE_SIMPLE): Boolean {
+    if (this.isNullOrEmpty()) {
+        return false
+    }
+    return matches(regex.toRegex())
+}
+
+/**判断字符串是否是邮箱地址*/
+fun String?.isEmail(regex: String = PATTERN_EMAIL): Boolean {
     if (this.isNullOrEmpty()) {
         return false
     }
