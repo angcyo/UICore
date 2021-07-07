@@ -188,7 +188,7 @@ class AccControl : Runnable {
             updateControlState(CONTROL_STATE_RUNNING)
         } else {
             if (isControlStart) {
-
+                //正在运行中...
             } else {
                 if (restart) {
                     _taskBean?.let {

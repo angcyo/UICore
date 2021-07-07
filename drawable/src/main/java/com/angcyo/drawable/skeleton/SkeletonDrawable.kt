@@ -468,6 +468,7 @@ class SkeletonDrawable : AbsDslDrawable() {
         layoutParams.useWidth = 0f
         layoutParams.useHeight = 0f
 
+        //骨架绘制
         when (skeletonBean.type) {
             SkeletonBean.SKELETON_TYPE_LINE -> {
                 if (round > 0) {
@@ -530,6 +531,19 @@ class SkeletonDrawable : AbsDslDrawable() {
                 layoutParams.useWidth = width + useLeft
                 layoutParams.useHeight = height + useTop
             }
+        }
+
+        //drawable 绘制
+        skeletonBean.drawable?.let { drawable ->
+            val minimumWidth = drawable.minimumWidth
+            val minimumHeight = drawable.minimumHeight
+            val l = left.toInt()
+            val t = top.toInt()
+            val w = if (minimumWidth > 0) minimumWidth else width.toInt()
+            val h = if (minimumHeight > 0) minimumHeight else height.toInt()
+            drawable.setBounds(l, t, l + w, t + h)
+            drawable.bounds.offset(offsetX.toInt(), offsetY.toInt())
+            drawable.draw(canvas)
         }
     }
 

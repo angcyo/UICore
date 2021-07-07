@@ -7,11 +7,10 @@ import android.graphics.Paint
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.Gravity
-import com.angcyo.drawable.DslGravity
+import com.angcyo.drawable.*
 import com.angcyo.drawable.base.DslGradientDrawable
-import com.angcyo.drawable.isCenter
-import com.angcyo.drawable.textHeight
-import com.angcyo.drawable.textWidth
+import com.angcyo.library.ex._color
+import com.angcyo.library.ex._dimen
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
 import kotlin.math.max
@@ -47,6 +46,9 @@ open class DslBadgeDrawable : DslGradientDrawable() {
             textPaint.textSize = field
         }
 
+    /**当[badgeText]只有1个字符时, 使用圆形背景*/
+    var badgeAutoCircle: Boolean = true
+
     /**圆点状态时的半径大小*/
     var badgeCircleRadius = 4 * dpi
 
@@ -75,6 +77,31 @@ open class DslBadgeDrawable : DslGradientDrawable() {
      * -1 表示使用使用计算出来的高度值*/
     var badgeMinWidth = -2
 
+    //计算属性
+    val textWidth: Float
+        get() = textPaint.textWidth(badgeText)
+
+    //最大的宽度
+    val maxWidth: Int
+        get() = max(
+            textWidth.toInt(),
+            originDrawable?.minimumWidth ?: 0
+        ) + badgePaddingLeft + badgePaddingRight
+
+    //最大的高度
+    val maxHeight: Int
+        get() = max(
+            textHeight.toInt(),
+            originDrawable?.minimumHeight ?: 0
+        ) + badgePaddingTop + badgePaddingBottom
+
+    val textHeight: Float
+        get() = textPaint.textHeight()
+
+    //原型状态
+    val isCircle: Boolean
+        get() = TextUtils.isEmpty(badgeText)
+
     override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
         super.initAttribute(context, attributeSet)
         updateOriginDrawable()
@@ -86,8 +113,6 @@ open class DslBadgeDrawable : DslGradientDrawable() {
         if (badgeText == null) {
             return
         }
-
-        val isCircle = TextUtils.isEmpty(badgeText)
 
         with(dslGravity) {
             gravity = badgeGravity
@@ -104,35 +129,14 @@ open class DslBadgeDrawable : DslGradientDrawable() {
             val textWidth = textPaint.textWidth(badgeText)
             val textHeight = textPaint.textHeight()
 
-            val drawHeight = if (isCircle) {
-                badgeCircleRadius.toFloat()
-            } else {
-                val height = textHeight + badgePaddingTop + badgePaddingBottom
-                if (badgeMinHeight > 0) {
-                    max(height, badgeMinHeight.toFloat())
-                } else {
-                    height
-                }
-            }
-
-            val drawWidth = if (isCircle) {
-                badgeCircleRadius.toFloat()
-            } else {
-                val width = textWidth + badgePaddingLeft + badgePaddingRight
-                if (badgeMinWidth == -1) {
-                    max(width, drawHeight)
-                } else if (badgeMinWidth > 0) {
-                    max(width, badgeMinWidth.toFloat())
-                } else {
-                    width
-                }
-            }
+            val drawWidth = intrinsicWidth.toFloat()
+            val drawHeight = intrinsicHeight.toFloat()
 
             applyGravity(drawWidth, drawHeight) { centerX, centerY ->
 
                 if (isCircle) {
-                    textPaint.color = gradientSolidColor
 
+                    //圆心计算
                     val cx: Float
                     val cy: Float
                     if (gravity.isCenter()) {
@@ -143,6 +147,8 @@ open class DslBadgeDrawable : DslGradientDrawable() {
                         cy = centerY.toFloat() + _gravityOffsetY
                     }
 
+                    //绘制圆
+                    textPaint.color = gradientSolidColor
                     canvas.drawCircle(
                         cx,
                         cy,
@@ -150,6 +156,7 @@ open class DslBadgeDrawable : DslGradientDrawable() {
                         textPaint
                     )
 
+                    //圆的描边
                     if (gradientStrokeWidth > 0 && gradientStrokeColor != Color.TRANSPARENT) {
                         val oldWidth = textPaint.strokeWidth
                         val oldStyle = textPaint.style
@@ -170,7 +177,6 @@ open class DslBadgeDrawable : DslGradientDrawable() {
                     }
 
                 } else {
-                    textPaint.color = badgeTextColor
 
                     val textDrawX: Float = centerX - textWidth / 2
                     val textDrawY: Float = centerY + textHeight / 2
@@ -179,16 +185,29 @@ open class DslBadgeDrawable : DslGradientDrawable() {
                     val bgTop = _gravityTop
 
                     //绘制背景
-                    originDrawable?.apply {
-                        setBounds(
-                            bgLeft, bgTop,
-                            (bgLeft + drawWidth).toInt(),
-                            (bgTop + drawHeight).toInt()
-                        )
-                        draw(canvas)
+                    if (badgeAutoCircle && badgeText?.length == 1) {
+                        if (gradientSolidColor != Color.TRANSPARENT) {
+                            textPaint.color = gradientSolidColor
+                            canvas.drawCircle(
+                                centerX.toFloat(),
+                                centerY.toFloat(),
+                                max(maxWidth, maxHeight).toFloat() / 2,
+                                textPaint
+                            )
+                        }
+                    } else {
+                        originDrawable?.apply {
+                            setBounds(
+                                bgLeft, bgTop,
+                                (bgLeft + drawWidth).toInt(),
+                                (bgTop + drawHeight).toInt()
+                            )
+                            draw(canvas)
+                        }
                     }
 
                     //绘制文本
+                    textPaint.color = badgeTextColor
                     canvas.drawText(
                         badgeText!!,
                         textDrawX + badgeTextOffsetX,
@@ -198,5 +217,55 @@ open class DslBadgeDrawable : DslGradientDrawable() {
                 }
             }
         }
+    }
+
+    override fun getIntrinsicWidth(): Int {
+        val width = if (isCircle) {
+            badgeCircleRadius * 2
+        } else if (badgeAutoCircle && badgeText?.length == 1) {
+            max(maxWidth, maxHeight)
+        } else {
+            maxWidth
+        }
+        return max(badgeMinWidth, width)
+    }
+
+    override fun getIntrinsicHeight(): Int {
+        val height = if (isCircle) {
+            badgeCircleRadius * 2
+        } else if (badgeAutoCircle && badgeText?.length == 1) {
+            max(maxWidth, maxHeight)
+        } else {
+            maxHeight
+        }
+        return max(badgeMinHeight, height)
+    }
+}
+
+/**未读数提示角标
+ * [number] null 不绘制角标
+ *          ""   空字符绘制圆点
+ *          其他  正常绘制
+ * */
+fun dslNumberBadgeDrawable(
+    number: String?,
+    textColor: Int = Color.WHITE,
+    solidColor: Int = _color(R.color.colorAccent),
+    radius: Int = _dimen(R.dimen.lib_radius_common),
+    dsl: DslBadgeDrawable.() -> Unit = {}
+): DslBadgeDrawable {
+    return DslBadgeDrawable().apply {
+        badgeText = number
+        badgeTextColor = textColor
+
+        badgePaddingLeft = _dimen(R.dimen.lib_dpi)
+        badgePaddingRight = _dimen(R.dimen.lib_dpi)
+
+        configDrawable {
+            fillRadii(radius)
+            gradientSolidColor = solidColor
+        }
+
+        dsl()
     }
 }

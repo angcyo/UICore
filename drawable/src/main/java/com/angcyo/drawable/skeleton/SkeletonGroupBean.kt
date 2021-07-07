@@ -11,13 +11,18 @@ import android.widget.LinearLayout
  */
 
 data class SkeletonGroupBean(
+
     /**需要绘制的骨架*/
     var skeletonList: List<SkeletonBean>? = null,
+
+    //------------------------------------------
 
     /**套娃, 当存在[groupList]时, [skeletonList]将会被忽略*/
     var groupList: List<SkeletonGroupBean>? = null,
 
-    /**组内元素的排列方向*/
+    /**组内元素的排列方向
+     * [LinearLayout.HORIZONTAL]
+     * [LinearLayout.VERTICAL]*/
     var orientation: Int = -1
 )
 

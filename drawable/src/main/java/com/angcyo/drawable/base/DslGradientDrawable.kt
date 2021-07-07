@@ -13,6 +13,9 @@ import java.util.*
 
 /**
  * 用来构建GradientDrawable
+ *
+ * 更改属性时, 为了及时让属性生效, 请使用[configDrawable]方式
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/11/27
@@ -175,6 +178,7 @@ open class DslGradientDrawable : AbsDslDrawable() {
         return drawable
     }
 
+    /**配置[DslGradientDrawable]属性, 并使其生效*/
     open fun configDrawable(config: DslGradientDrawable.() -> Unit): DslGradientDrawable {
         this.config()
         updateOriginDrawable()

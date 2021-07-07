@@ -84,6 +84,8 @@ object Action {
      * 如果包含[*], 表示所有节点都必须满足状态条件, 否则只要有一个满足状态条件即可
      * [click:0.1,0.1] 效果等同于[ACTION_CLICK3]
      * 支持[NOT_PARENT]
+     * [STATE_UNSELECTED]
+     * [STATE_UNCHECKED]
      * */
     const val ACTION_CLICK = "click"
 

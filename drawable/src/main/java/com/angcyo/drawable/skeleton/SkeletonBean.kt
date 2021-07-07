@@ -1,5 +1,6 @@
 package com.angcyo.drawable.skeleton
 
+import android.graphics.drawable.Drawable
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.dp
@@ -33,6 +34,9 @@ data class SkeletonBean(
     /**矩形时的圆角大小*/
     var round: String? = null,
 
+    /**在当前位置, 需要绘制的[Drawable]*/
+    var drawable: Drawable? = null,
+
     //计算之后的属性值
     var _left: Float = -1f,
     var _top: Float = -1f,
@@ -44,6 +48,7 @@ data class SkeletonBean(
     var _round: Float = -1f,
 ) {
     companion object {
+        const val SKELETON_TYPE_NONE = 0 //不绘制骨架, 但是可以绘制[drawable]
         const val SKELETON_TYPE_LINE = 1 //绘制线
         const val SKELETON_TYPE_CIRCLE = 2 //绘制圆
         const val SKELETON_TYPE_RECT = 4 //绘制矩形

@@ -1,7 +1,9 @@
 package com.angcyo.acc2.control
 
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.action.Action
 import com.angcyo.acc2.bean.ActionBean
+import com.angcyo.acc2.bean.FindBean
 import com.angcyo.acc2.bean.findFirstActionByGroup
 import com.angcyo.acc2.bean.isLoopValid
 import com.angcyo.acc2.core.AccNodeLog
@@ -294,6 +296,23 @@ class AccSchedule(val accControl: AccControl) {
         return targetActionList.contains(actionBean) || accControl._taskBean?.actionList?.contains(
             actionBean
         ) == true
+    }
+
+    /**单纯的查找元素, 配置界面高亮, 用于调试*/
+    fun findNodeList(
+        findList: List<FindBean>?,
+        hint: Boolean = true
+    ): List<AccessibilityNodeInfoCompat>? {
+        val findParse = accParse.findParse
+        val rootNodeList = findParse._findRootNodeBy(null)
+        val parse = findParse.parse(ControlContext(), rootNodeList, findList)
+
+        if (hint) {
+            accControl.accPrint.findNode(parse.nodeList)
+            accControl.accPrint.handleNode(parse.nodeList)
+        }
+
+        return parse.nodeList
     }
 
     //</editor-fold desc="操作">
@@ -790,10 +809,10 @@ class AccSchedule(val accControl: AccControl) {
     }
 
     /**设置下一个需要执行的[ActionBean]*/
-    fun startTargetAction(bean: ActionBean) {
+    fun startTargetAction(bean: ActionBean, restart: Boolean = false) {
         clearTargetAction()
         addTargetAction(bean)
-        accControl.resume(false)
+        accControl.resume(restart)
     }
 
     //</editor-fold desc="调度">
@@ -847,13 +866,15 @@ class AccSchedule(val accControl: AccControl) {
         if (actionBean.async == true && !accControl.isControlMainThread()) {
             //异步执行
             async {
-                runActionInner(
-                    context,
-                    actionBean,
-                    otherActionList,
-                    isPrimaryAction,
-                    handleActionResult
-                )
+                if (accControl.isControlRunning) {
+                    runActionInner(
+                        context,
+                        actionBean,
+                        otherActionList,
+                        isPrimaryAction,
+                        handleActionResult
+                    )
+                }
             }
         } else {
             //同步执行
@@ -999,10 +1020,6 @@ class AccSchedule(val accControl: AccControl) {
         isPrimaryAction: Boolean,
         handleActionResult: HandleResult
     ) {
-        if (!accControl.isControlRunning) {
-            return
-        }
-
         val handleParse = accParse.handleParse
         val findParse = accParse.findParse
         val accSchedule = accParse.accControl.accSchedule
