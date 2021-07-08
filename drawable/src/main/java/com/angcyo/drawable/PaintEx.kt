@@ -1,5 +1,6 @@
 package com.angcyo.drawable
 
+import android.graphics.Canvas
 import android.graphics.Paint
 import android.text.TextPaint
 import com.angcyo.library.ex._color
@@ -37,4 +38,13 @@ fun Paint.textHeight(): Float {
  * [originY]原本y坐标¬*/
 fun Paint.drawTextY(originY: Float): Float {
     return originY - descent()
+}
+
+/**从左上角开始绘制文本, 保证文本左上角对齐点坐标
+ * [x] [y] 左上角坐标
+ * */
+fun Canvas.drawTextByLT(text: CharSequence, x: Float, y: Float, paint: Paint) {
+    val drawX = x
+    val drawY = y + paint.textHeight() - paint.descent()
+    drawText(text, 0, text.length, drawX, drawY, paint)
 }
