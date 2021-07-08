@@ -916,6 +916,10 @@ fun View.padWithDisplayCutout() {
 
 fun CompoundButton.isCheckedAndEnable() = isChecked && isEnabled
 
+/**API 17*/
+fun View.isLayoutRtl() =
+    ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_RTL
+
 //</editor-fold desc="其他">
 
 //<editor-fold desc="截图">

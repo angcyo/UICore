@@ -86,6 +86,7 @@ class DslGravity {
         //调整offset
         _gravityOffsetX = when (horizontalGravity) {
             Gravity.RIGHT -> -gravityOffsetX
+            Gravity.END -> -gravityOffsetX
             else -> gravityOffsetX
         }
         _gravityOffsetY = when (verticalGravity) {
@@ -97,6 +98,7 @@ class DslGravity {
         val centerX = when (horizontalGravity) {
             Gravity.CENTER_HORIZONTAL -> (gravityBounds.left + gravityBounds.width() / 2 + _gravityOffsetX).toInt()
             Gravity.RIGHT -> (gravityBounds.right + _gravityOffsetX - if (gravityRelativeCenter) 0f else _targetWidth / 2).toInt()
+            Gravity.END -> (gravityBounds.right + _gravityOffsetX - if (gravityRelativeCenter) 0f else _targetWidth / 2).toInt()
             else -> (gravityBounds.left + _gravityOffsetX + if (gravityRelativeCenter) 0f else _targetWidth / 2).toInt()
         }
 

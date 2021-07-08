@@ -115,7 +115,22 @@ open class DslBadgeDrawable : DslGradientDrawable() {
         }
 
         with(dslGravity) {
-            gravity = badgeGravity
+            gravity = if (isViewRtl) {
+                when (badgeGravity) {
+                    Gravity.RIGHT -> {
+                        Gravity.LEFT
+                    }
+                    Gravity.LEFT -> {
+                        Gravity.RIGHT
+                    }
+                    else -> {
+                        badgeGravity
+                    }
+                }
+            } else {
+                badgeGravity
+            }
+
             setGravityBounds(bounds)
 
             if (isCircle) {
@@ -129,12 +144,34 @@ open class DslBadgeDrawable : DslGradientDrawable() {
             val textWidth = textPaint.textWidth(badgeText)
             val textHeight = textPaint.textHeight()
 
-            val drawWidth = intrinsicWidth.toFloat()
-            val drawHeight = intrinsicHeight.toFloat()
+            val drawHeight = if (isCircle) {
+                badgeCircleRadius.toFloat()
+            } else {
+                val height = textHeight + badgePaddingTop + badgePaddingBottom
+                if (badgeMinHeight > 0) {
+                    max(height, badgeMinHeight.toFloat())
+                } else {
+                    height
+                }
+            }
+
+            val drawWidth = if (isCircle) {
+                badgeCircleRadius.toFloat()
+            } else {
+                val width = textWidth + badgePaddingLeft + badgePaddingRight
+                if (badgeMinWidth == -1) {
+                    max(width, drawHeight)
+                } else if (badgeMinWidth > 0) {
+                    max(width, badgeMinWidth.toFloat())
+                } else {
+                    width
+                }
+            }
 
             applyGravity(drawWidth, drawHeight) { centerX, centerY ->
 
                 if (isCircle) {
+                    textPaint.color = gradientSolidColor
 
                     //圆心计算
                     val cx: Float
@@ -177,6 +214,7 @@ open class DslBadgeDrawable : DslGradientDrawable() {
                     }
 
                 } else {
+                    textPaint.color = badgeTextColor
 
                     val textDrawX: Float = centerX - textWidth / 2
                     val textDrawY: Float = centerY + textHeight / 2

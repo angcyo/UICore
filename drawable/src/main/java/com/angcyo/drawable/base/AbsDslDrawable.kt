@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.view.ViewCompat
 import com.angcyo.library.L
 import com.angcyo.library.ex.dp
 
@@ -62,7 +63,7 @@ abstract class AbsDslDrawable : Drawable() {
 
     /**附着的[View]*/
     val attachView: View?
-        get() = callback as? View
+        get() = if (callback is View) callback as? View else null
 
     val isInEditMode: Boolean
         get() = attachView?.isInEditMode ?: false
@@ -82,6 +83,9 @@ abstract class AbsDslDrawable : Drawable() {
         get() = viewHeight - paddingTop - paddingBottom
     val viewDrawWidth: Int
         get() = viewWidth - paddingLeft - paddingRight
+
+    val isViewRtl: Boolean
+        get() = attachView != null && ViewCompat.getLayoutDirection(attachView!!) == ViewCompat.LAYOUT_DIRECTION_RTL
 
     //</editor-fold desc="View相关方法">
 
