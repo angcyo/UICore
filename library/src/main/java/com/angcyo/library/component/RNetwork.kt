@@ -61,13 +61,10 @@ object RNetwork {
         L.w("网络改变->$networkType ->${getWifiIP()} ${getMobileIP()}")
 
         fun notify() {
-            if (networkType == NetworkType.NETWORK_NO) {
-                for (observer in mObservers) {
+            for (observer in mObservers) {
+                observer.onNetConnected(networkType)
+                if (networkType == NetworkType.NETWORK_NO) {
                     observer.onNetDisconnected()
-                }
-            } else {
-                for (observer in mObservers) {
-                    observer.onNetConnected(networkType)
                 }
             }
         }
@@ -193,7 +190,7 @@ object RNetwork {
         }
     }
 
-    fun getNetWorkState(context: Context): NetworkType {
+    fun getNetWorkState(context: Context = app()): NetworkType {
         //得到连接管理器对象
         val connectivityManager = context
             .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -214,7 +211,7 @@ object RNetwork {
         return NetworkType.NETWORK_NO
     }
 
-    fun checkState(context: Context): BooleanArray {
+    fun checkState(context: Context = app()): BooleanArray {
         val connMgr = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         var isWifiConn = false
@@ -251,24 +248,24 @@ object RNetwork {
     }
 
     /** wifi连接 */
-    fun isWifi(context: Context): Boolean {
+    fun isWifi(context: Context = app()): Boolean {
         return checkState(context)[0]
     }
 
     /** mobile连接*/
-    fun isMobile(context: Context): Boolean {
+    fun isMobile(context: Context = app()): Boolean {
         val checkState = checkState(context)
         //wifi 未连接的情况下, mobile 连接
         return !checkState[0] && checkState[1]
     }
 
     /** 有网络*/
-    fun isConnect(context: Context): Boolean {
+    fun isConnect(context: Context = app()): Boolean {
         return checkState(context)[0] || checkState(context)[1]
     }
 
     /**[android.Manifest.permission.ACCESS_NETWORK_STATE]*/
-    fun isWifiConnect(context: Context): Boolean {
+    fun isWifiConnect(context: Context = app()): Boolean {
         val manager: ConnectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)?.isConnected == true
@@ -300,9 +297,15 @@ class NetBroadcastReceiver : BroadcastReceiver() {
  */
 interface NetStateChangeObserver {
 
-    fun onNetDisconnected()
+    /**网络断开*/
+    fun onNetDisconnected() {
 
-    fun onNetConnected(networkType: NetworkType)
+    }
+
+    /**网络连接类型改变*/
+    fun onNetConnected(networkType: NetworkType) {
+
+    }
 }
 
 enum class NetworkType {
