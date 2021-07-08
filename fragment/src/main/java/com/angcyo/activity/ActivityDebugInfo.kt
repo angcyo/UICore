@@ -82,7 +82,15 @@ fun Activity.showDebugInfoView(
         fun showNormal(textView: TextView, enable: Boolean = true) {
             textView.layoutParams = textView.layoutParams.apply {
                 if (enable) {
-                    width = 18 * dpi
+                    width =
+                        if (_isNavigationBarShow || Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+                            //导航栏显示了
+                            18 * dpi
+                        } else {
+                            //导航栏没有显示, 圆点放大一点.
+                            //Android P 之后, 手机屏幕四个角都是圆弧的了
+                            24 * dpi
+                        }
                     height = width
                 } else {
                     width = -2
