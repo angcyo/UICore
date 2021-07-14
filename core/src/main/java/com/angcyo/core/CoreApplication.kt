@@ -1,6 +1,7 @@
 package com.angcyo.core
 
 import android.content.Context
+import android.os.Build
 import androidx.collection.ArrayMap
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
@@ -16,7 +17,7 @@ import com.angcyo.library.ex.getAppSignatureMD5
 import com.angcyo.library.ex.getAppSignatureSHA1
 import com.angcyo.library.getAppString
 import me.jessyan.progressmanager.ProgressManager
-import me.weishu.reflection.Reflection
+import org.lsposed.hiddenapibypass.HiddenApiBypass
 
 /**
  * Email:angcyo@126.com
@@ -61,7 +62,11 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
-        Reflection.unseal(base)
+        //Reflection.unseal(base)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            HiddenApiBypass.addHiddenApiExemptions("L")
+        }
     }
 
     /**服务器地址

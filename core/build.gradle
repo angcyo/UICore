@@ -9,7 +9,10 @@ dependencies {
 
     //https://github.com/tiann/FreeReflection
     //https://jcenter.bintray.com/me/weishu/free_reflection/
-    implementation 'me.weishu:free_reflection:3.0.1'
+    //implementation 'me.weishu:free_reflection:3.0.1'
+
+    //https://github.com/LSPosed/AndroidHiddenApiBypass
+    implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:2.0'
 
     //浮窗权限 https://github.com/czy1121/settingscompat
     api 'com.github.czy1121:settingscompat:1.1.4'
