@@ -17,6 +17,7 @@ import com.angcyo.widget.DslViewHolder
 open class DslInputItem : DslAdapterItem(), ILabelItem, IEditItem {
 
     //<editor-fold desc="label">
+    override var itemLabelTextViewId: Int = R.id.lib_label_view
 
     override var itemLabelText: CharSequence? = null
         set(value) {

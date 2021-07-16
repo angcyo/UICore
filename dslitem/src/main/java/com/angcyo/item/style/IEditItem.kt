@@ -1,6 +1,7 @@
 package com.angcyo.item.style
 
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.item.IDslItem
 import com.angcyo.item.R
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clearListeners
@@ -14,7 +15,7 @@ import com.angcyo.widget.base.restoreSelection
  * @date 2021/06/28
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-interface IEditItem {
+interface IEditItem : IDslItem {
 
     /**输入框内容*/
     var itemEditText: CharSequence?

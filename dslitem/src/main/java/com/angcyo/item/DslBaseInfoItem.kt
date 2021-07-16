@@ -6,12 +6,13 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.item.style.ITextInfoItem
+import com.angcyo.item.style.TextStyleConfig
+import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.color
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.inflate
-import com.angcyo.widget.base.loadDrawable
-import com.angcyo.widget.base.setLeftIco
 import com.angcyo.widget.base.setRBgDrawable
 
 /**
@@ -21,13 +22,16 @@ import com.angcyo.widget.base.setRBgDrawable
  * @date 2019/08/09
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-open class DslBaseInfoItem : DslAdapterItem() {
-
-    /**条目文本*/
-    var itemInfoText: CharSequence? = null
+open class DslBaseInfoItem : DslAdapterItem(), ITextInfoItem {
 
     @DrawableRes
     var itemInfoIcon: Int = undefined_res
+        set(value) {
+            field = value
+            configInfoTextStyle {
+                leftDrawable = _drawable(value).color(itemInfoIconColor)
+            }
+        }
 
     var itemInfoIconColor: Int = undefined_res
 
@@ -52,15 +56,7 @@ open class DslBaseInfoItem : DslAdapterItem() {
         itemHolder.itemView.setRBgDrawable(itemRBackgroundDrawable)
 
         //文本信息
-        itemHolder.tv(R.id.lib_text_view)?.apply {
-            text = itemInfoText
-
-            if (itemInfoIconColor == undefined_res) {
-                setLeftIco(itemInfoIcon)
-            } else {
-                setLeftIco(loadDrawable(itemInfoIcon).color(itemInfoIconColor))
-            }
-        }
+        initInfoTextItem(itemHolder)
 
         //扩展布局
         if (itemExtendLayoutId != undefined_res) {
@@ -82,4 +78,14 @@ open class DslBaseInfoItem : DslAdapterItem() {
             itemHolder.group(R.id.wrap_layout)?.removeAllViews()
         }
     }
+
+    override var itemInfoTextViewId: Int = R.id.lib_text_view
+
+    override var itemInfoText: CharSequence? = null
+        set(value) {
+            field = value
+            itemInfoTextStyle.text = value
+        }
+
+    override var itemInfoTextStyle: TextStyleConfig = TextStyleConfig()
 }

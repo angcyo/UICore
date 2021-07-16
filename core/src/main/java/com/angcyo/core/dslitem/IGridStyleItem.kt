@@ -3,6 +3,7 @@ package com.angcyo.core.dslitem
 import android.graphics.Rect
 import com.angcyo.core.R
 import com.angcyo.dsladapter.*
+import com.angcyo.dsladapter.item.IDslItem
 import com.angcyo.library.ex._drawable
 import com.angcyo.widget.DslViewHolder
 
@@ -13,7 +14,7 @@ import com.angcyo.widget.DslViewHolder
  * @date 2021/07/02
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-interface IGridStyleItem {
+interface IGridStyleItem : IDslItem {
 
     fun initGridOffset(adapterItem: DslAdapterItem, outRect: Rect, insert: Int) {
         outRect.set(0, 0, 0, 0)

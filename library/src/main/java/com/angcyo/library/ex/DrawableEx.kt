@@ -48,6 +48,9 @@ fun Drawable?.tintDrawable(@ColorInt color: Int): Drawable? {
     if (this == null) {
         return null
     }
+    if (color == undefined_color) {
+        return this
+    }
     val wrappedDrawable = DrawableCompat.wrap(this).mutate()
     DrawableCompat.setTint(wrappedDrawable, color)
     return wrappedDrawable

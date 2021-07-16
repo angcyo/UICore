@@ -15,7 +15,7 @@ import com.angcyo.widget.DslViewHolder
  * @date 2021/07/01
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-interface IExtendItem {
+interface IExtendItem : IDslItem {
 
     fun initExtendItem(
         itemHolder: DslViewHolder,

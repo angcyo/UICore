@@ -1,5 +1,6 @@
 package com.angcyo.item.style
 
+import com.angcyo.dsladapter.item.IDslItem
 import com.angcyo.item.R
 import com.angcyo.widget.DslViewHolder
 
@@ -10,7 +11,10 @@ import com.angcyo.widget.DslViewHolder
  * @date 2021/06/28
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-interface ILabelItem {
+interface ILabelItem : IDslItem {
+
+    /**[R.id.lib_label_view]*/
+    var itemLabelTextViewId: Int
 
     /**Label文本*/
     var itemLabelText: CharSequence?
@@ -20,8 +24,8 @@ interface ILabelItem {
 
     /**初始化*/
     fun initLabelItem(itemHolder: DslViewHolder) {
-        itemHolder.gone(R.id.lib_label_view, itemLabelTextStyle.text == null)
-        itemHolder.tv(R.id.lib_label_view)?.apply {
+        itemHolder.gone(itemLabelTextViewId, itemLabelTextStyle.text == null)
+        itemHolder.tv(itemLabelTextViewId)?.apply {
             itemLabelTextStyle.updateStyle(this)
         }
     }
