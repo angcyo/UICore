@@ -112,8 +112,9 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     //</editor-fold desc="操作属性">
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        fragmentUI?.fragmentCreateBefore?.invoke(this, fragmentConfig, savedInstanceState)
         super.onCreate(savedInstanceState)
-        fragmentUI?.fragmentCreateAfter?.invoke(this, fragmentConfig)
+        fragmentUI?.fragmentCreateAfter?.invoke(this, fragmentConfig, savedInstanceState)
     }
 
     override fun onCreateRootView(

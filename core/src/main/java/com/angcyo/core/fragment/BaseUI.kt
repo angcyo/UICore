@@ -1,6 +1,7 @@
 package com.angcyo.core.fragment
 
 import android.graphics.Typeface
+import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
@@ -41,9 +42,14 @@ open class FragmentUI {
     var backTextSize: Float = _dimen(R.dimen.text_body_size).toFloat()
 
     /**[BaseTitleFragment.onCreate]中触发*/
-    var fragmentCreateAfter: (fragment: BaseTitleFragment, fragmentConfig: FragmentConfig) -> Unit =
-        { fragment, fragmentConfig ->
-            onFragmentCreateAfter(fragment, fragmentConfig)
+    var fragmentCreateBefore: (fragment: BaseTitleFragment, fragmentConfig: FragmentConfig, savedInstanceState: Bundle?) -> Unit =
+        { fragment, fragmentConfig, savedInstanceState ->
+            onFragmentCreateBefore(fragment, fragmentConfig, savedInstanceState)
+        }
+
+    var fragmentCreateAfter: (fragment: BaseTitleFragment, fragmentConfig: FragmentConfig, savedInstanceState: Bundle?) -> Unit =
+        { fragment, fragmentConfig, savedInstanceState ->
+            onFragmentCreateAfter(fragment, fragmentConfig, savedInstanceState)
         }
 
     /**[BaseTitleFragment.onCreateView]中触发*/
@@ -61,7 +67,19 @@ open class FragmentUI {
 
     //<editor-fold desc="方法区">
 
-    open fun onFragmentCreateAfter(fragment: BaseTitleFragment, fragmentConfig: FragmentConfig) {
+    open fun onFragmentCreateBefore(
+        fragment: BaseTitleFragment,
+        fragmentConfig: FragmentConfig,
+        savedInstanceState: Bundle?
+    ) {
+
+    }
+
+    open fun onFragmentCreateAfter(
+        fragment: BaseTitleFragment,
+        fragmentConfig: FragmentConfig,
+        savedInstanceState: Bundle?
+    ) {
 
     }
 
