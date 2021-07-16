@@ -7,8 +7,11 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.DslAHelper
 import com.angcyo.DslFHelper
+import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.fragment.AbsFragment
 import com.angcyo.fragment.IFragment
 import com.angcyo.library.L
 import com.angcyo.library.R
@@ -165,4 +168,14 @@ fun Fragment.removeThis(init: DslFHelper.() -> Unit = {}) {
         remove(this@removeThis)
         init()
     }
+}
+
+/**初始化*/
+fun <T : DslAdapterItem> T.init(
+    fragment: AbsFragment,
+    payloads: List<Any> = emptyList(),
+    dsl: T.() -> Unit
+) {
+    dsl()
+    itemBind.invoke(fragment._vh, RecyclerView.NO_POSITION, this, payloads)
 }
