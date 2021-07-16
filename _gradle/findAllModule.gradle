@@ -18,6 +18,9 @@ println "所有Gradle文件->"
 println allGradle
 println "...end...↑\n"
 
+/**讲项目写入忽略文件, 方便后续操作*/
+writeIgnoreFile()
+
 /**枚举所有文件夹*/
 def listPath(filePath, depth = 0 /*当前枚举的路径深度, 深度大于maxDepth停止枚举*/, parent = "") {
     //println filePath.getAbsolutePath() + " " + depth
@@ -56,6 +59,41 @@ def includePath(filePath, parent) {
             allModule[name] = path
 
             //include path
+        }
+    }
+}
+
+def writeIgnoreFile() {
+    def rootPath = getRootDir()
+    def ignoreFile = new File(rootPath, 'ignore')
+    def ignoreModule = []
+    if (ignoreFile.exists()) {
+        ignoreModule = ignoreFile.readLines('UTF8')
+    } else {
+        ignoreFile.createNewFile()
+    }
+
+    def key = ''
+    def haveKey = false
+
+    def time = null
+    for (module in allModule) {
+
+        key = module.key
+        haveKey = false
+
+        ignoreModule.each {
+            haveKey = haveKey || it == key || it == "#${key}"
+        }
+
+        if (!haveKey) {
+            if (time == null) {
+                time = new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("Asia/Shanghai"))
+                ignoreFile.append("#${time}↓\n")
+            }
+            ignoreFile.append("#${key}\n")
+        } else {
+            //println "跳过:${key}"
         }
     }
 }
