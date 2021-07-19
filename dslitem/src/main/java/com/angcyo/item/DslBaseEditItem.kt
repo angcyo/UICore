@@ -5,8 +5,6 @@ import com.angcyo.item.style.EditStyleConfig
 import com.angcyo.item.style.IEditItem
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clearListeners
-import com.angcyo.widget.base.onTextChange
-import com.angcyo.widget.base.restoreSelection
 
 /**
  * 输入框item基类
@@ -16,7 +14,7 @@ import com.angcyo.widget.base.restoreSelection
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
-open class DslBaseEditItem : DslBaseLabelItem() {
+open class DslBaseEditItem : DslBaseLabelItem(), IEditItem {
 
     companion object {
         /**允许默认输入的字符长度*/
@@ -26,26 +24,26 @@ open class DslBaseEditItem : DslBaseLabelItem() {
         var DEFAULT_INPUT_SHAKE_DELAY = 300L
     }
 
-    var itemEditText: CharSequence? = null
+    override var itemEditText: CharSequence? = null
         set(value) {
             field = value
             itemEditTextStyle.text = value
         }
 
     /**统一样式配置*/
-    var itemEditTextStyle = EditStyleConfig()
+    override var itemEditTextStyle = EditStyleConfig()
 
     /**文本改变*/
-    var itemTextChange: (CharSequence) -> Unit = {
+    override var itemTextChange: (CharSequence) -> Unit = {
         onItemTextChange(it)
     }
 
     /**文本改变去频限制, 负数表示不开启, 如果短时间内关闭界面了, 可能会获取不到最新的输入框数据*/
-    var itemTextChangeShakeDelay = DEFAULT_INPUT_SHAKE_DELAY
+    override var itemTextChangeShakeDelay = DEFAULT_INPUT_SHAKE_DELAY
 
     //用于恢复光标的位置
-    var _lastEditSelectionStart = -1
-    var _lastEditSelectionEnd = -1
+    override var _lastEditSelectionStart = -1
+    override var _lastEditSelectionEnd = -1
 
     init {
         itemLayoutId = R.layout.dsl_edit_item
@@ -58,26 +56,7 @@ open class DslBaseEditItem : DslBaseLabelItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem)
 
-        itemHolder.ev(R.id.lib_edit_view)?.apply {
-            itemEditTextStyle.updateStyle(this)
-
-            clearListeners()
-
-            onTextChange {
-                _lastEditSelectionStart = selectionStart
-                _lastEditSelectionEnd = selectionEnd
-
-                itemEditText = it
-            }
-
-            //放在最后监听, 防止首次setInputText, 就触发事件.
-            onTextChange(shakeDelay = itemTextChangeShakeDelay) {
-                itemChanging = true
-                itemTextChange(it)
-            }
-
-            restoreSelection(_lastEditSelectionStart, _lastEditSelectionEnd)
-        }
+        initEditItem(itemHolder)
     }
 
     override fun onItemViewDetachedToWindow(itemHolder: DslViewHolder, itemPosition: Int) {
@@ -89,23 +68,12 @@ open class DslBaseEditItem : DslBaseLabelItem() {
         super.onItemViewRecycled(itemHolder, itemPosition)
         itemHolder.ev(R.id.lib_edit_view)?.clearListeners()
     }
-
-    open fun onItemTextChange(text: CharSequence) {
-
-    }
-
-    open fun configEditTextStyle(action: EditStyleConfig.() -> Unit) {
-        itemEditTextStyle.action()
-    }
 }
 
 /**快速获取对应Item的值*/
 fun DslAdapterItem.itemEditText(): CharSequence? {
-    return if (this is DslBaseEditItem) {
-        this.itemEditText
-    } else if (this is IEditItem) {
-        this.itemEditText
-    } else {
-        null
+    return when (this) {
+        is IEditItem -> this.itemEditText
+        else -> null
     }
 }
