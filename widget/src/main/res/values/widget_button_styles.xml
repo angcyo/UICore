@@ -78,7 +78,7 @@
     <style name="LibButtonBorderSelectorStyle" parent="DefaultButtonStyle">
         <item name="button_normal_gradient_colors">""</item>
         <item name="button_normal_stroke_color">@color/colorPrimaryDark</item>
-        <item name="button_normal_stroke_width">2dp</item>
+        <item name="button_normal_stroke_width">@dimen/lib_line</item>
         <item name="button_select_text_color">@color/lib_white</item>
         <item name="android:textColor">@color/text_general_color</item>
     </style>
