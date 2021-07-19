@@ -7,9 +7,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.dsladapter.data.UpdateDataConfig
 import com.angcyo.dsladapter.data.updateData
 import com.angcyo.library.L
+import com.angcyo.library.ex._color
+import com.angcyo.library.ex._dimen
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.model.Page
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.R
 import com.angcyo.widget.layout.touch.SwipeBackLayout.Companion.clamp
 
 /**
@@ -166,6 +169,23 @@ fun DslAdapterItem.drawLeft(
     itemBottomInsert = 0
 
     onlyDrawOffsetArea = true
+    itemDecorationColor = color
+}
+
+/**在底部绘制分割线*/
+fun DslAdapterItem.drawBottom(
+    insertBottom: Int = 1,
+    offsetLeft: Int = _dimen(R.dimen.lib_padding_left),
+    offsetRight: Int = _dimen(R.dimen.lib_padding_left),
+    color: Int = _color(R.color.lib_line_dark)
+) {
+    itemLeftOffset = offsetLeft
+    itemRightOffset = offsetRight
+
+    itemTopInsert = 0
+    itemBottomInsert = insertBottom
+
+    onlyDrawOffsetArea = false
     itemDecorationColor = color
 }
 
