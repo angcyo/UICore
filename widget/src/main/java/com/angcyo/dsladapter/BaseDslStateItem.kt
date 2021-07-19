@@ -39,7 +39,7 @@ abstract class BaseDslStateItem : DslAdapterItem() {
 
     init {
         itemLayoutId = R.layout.lib_item_base_state
-        itemSpanCount = -1
+        itemSpanCount = FULL_ITEM
     }
 
     override fun onItemBind(

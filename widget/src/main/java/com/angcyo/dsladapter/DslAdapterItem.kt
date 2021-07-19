@@ -50,6 +50,9 @@ open class DslAdapterItem : LifecycleOwner {
 
         /**负载,请求更新[itemHidden]*/
         const val PAYLOAD_UPDATE_HIDDEN = 0b001001
+
+        /**占满宽度的item*/
+        const val FULL_ITEM = -1
     }
 
     /**适配器, 自动赋值[com.angcyo.dsladapter.DslAdapter.onBindViewHolder]*/
@@ -107,7 +110,7 @@ open class DslAdapterItem : LifecycleOwner {
      *
      * 在[StaggeredGridLayoutManager]中, 会使用[layoutParams.isFullSpan]的方式满屏
      * */
-    var itemSpanCount = 1
+    var itemSpanCount = FULL_ITEM
 
     //</editor-fold>
 
@@ -346,7 +349,7 @@ open class DslAdapterItem : LifecycleOwner {
             if (value) {
                 itemIsHover = true
                 itemDragEnable = false
-                itemSpanCount = -1
+                itemSpanCount = FULL_ITEM
             }
         }
 

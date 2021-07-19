@@ -203,7 +203,7 @@ fun GridLayoutManager.dslSpanSizeLookup(recyclerView: RecyclerView): GridLayoutM
             return when {
                 dslAdapter?.isAdapterStatus() == true -> spanCount
                 else -> dslAdapter?.getItemData(position)?.run {
-                    if (itemSpanCount == -1) {
+                    if (itemSpanCount == DslAdapterItem.FULL_ITEM) {
                         spanCount
                     } else {
                         itemSpanCount
@@ -225,7 +225,7 @@ fun GridLayoutManager.dslSpanSizeLookup(dslAdapter: DslAdapter): GridLayoutManag
             return when {
                 dslAdapter.isAdapterStatus() -> spanCount
                 else -> dslAdapter.getItemData(position)?.run {
-                    if (itemSpanCount == -1) {
+                    if (itemSpanCount == DslAdapterItem.FULL_ITEM) {
                         spanCount
                     } else {
                         itemSpanCount

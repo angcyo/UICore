@@ -151,7 +151,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     override fun onViewAttachedToWindow(holder: DslViewHolder) {
         super.onViewAttachedToWindow(holder)
         holder.getDslAdapterItem()?.apply {
-            holder.itemView.fullSpan(itemSpanCount == -1)
+            holder.itemView.fullSpan(itemSpanCount == DslAdapterItem.FULL_ITEM)
             itemViewAttachedToWindow.invoke(holder, holder.adapterPosition)
         }
     }
