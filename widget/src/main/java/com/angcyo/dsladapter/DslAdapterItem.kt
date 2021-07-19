@@ -103,14 +103,15 @@ open class DslAdapterItem : LifecycleOwner {
     //<editor-fold desc="Grid相关属性">
 
     /**
-     * 在 GridLayoutManager 中, 需要占多少个 span. -1表示满屏
+     * 在 GridLayoutManager 中, 需要占多少个 span. [FULL_ITEM]表示满屏
      * [itemIsGroupHead]
      * [com.angcyo.dsladapter.DslAdapter.onViewAttachedToWindow]
      * 需要[dslSpanSizeLookup]支持.
      *
      * 在[StaggeredGridLayoutManager]中, 会使用[layoutParams.isFullSpan]的方式满屏
+     *
      * */
-    var itemSpanCount = FULL_ITEM
+    var itemSpanCount = 1
 
     //</editor-fold>
 
