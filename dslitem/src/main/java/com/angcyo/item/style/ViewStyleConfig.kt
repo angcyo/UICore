@@ -43,6 +43,27 @@ open class ViewStyleConfig {
     /**更新样式*/
     open fun updateStyle(view: View) {
         with(view) {
+            //初始化默认值
+            if (this@ViewStyleConfig.paddingLeft == undefined_size) {
+                this@ViewStyleConfig.paddingLeft = paddingLeft
+            }
+            if (this@ViewStyleConfig.paddingRight == undefined_size) {
+                this@ViewStyleConfig.paddingRight = paddingRight
+            }
+            if (this@ViewStyleConfig.paddingTop == undefined_size) {
+                this@ViewStyleConfig.paddingTop = paddingTop
+            }
+            if (this@ViewStyleConfig.paddingBottom == undefined_size) {
+                this@ViewStyleConfig.paddingBottom = paddingBottom
+            }
+            //设置
+            setPadding(
+                this@ViewStyleConfig.paddingLeft,
+                this@ViewStyleConfig.paddingTop,
+                this@ViewStyleConfig.paddingRight,
+                this@ViewStyleConfig.paddingBottom
+            )
+
             val lp = layoutParams
 
             if (backgroundDrawable is UndefinedDrawable) {
