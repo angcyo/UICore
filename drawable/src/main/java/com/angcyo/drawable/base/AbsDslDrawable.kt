@@ -10,6 +10,7 @@ import android.view.View
 import androidx.core.view.ViewCompat
 import com.angcyo.library.L
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.hash
 
 
 /**
@@ -166,7 +167,7 @@ abstract class AbsDslDrawable : Drawable() {
     override fun onBoundsChange(bounds: Rect?) {
         super.onBoundsChange(bounds)
         if (attachView?.isInEditMode != true) {
-            L.v("bound change:$bounds")
+            L.v("${hash()} bound change:$bounds")
         }
     }
 

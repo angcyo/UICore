@@ -7,8 +7,10 @@ import com.angcyo.behavior.refresh.IRefreshContentBehavior
 import com.angcyo.core.R
 import com.angcyo.core.dslitem.IFragmentItem
 import com.angcyo.dsladapter.*
+import com.angcyo.dsladapter.data.SingleDataUpdate
 import com.angcyo.dsladapter.data.loadDataEndIndex
 import com.angcyo.dsladapter.data.resetRender
+import com.angcyo.dsladapter.data.updateAdapter
 import com.angcyo.library.L
 import com.angcyo.library.model.Page
 import com.angcyo.widget.recycler.noItemChangeAnim
@@ -66,6 +68,18 @@ open class BaseDslFragment : BaseTitleFragment() {
             _adapter.dataItems.clear()
         }
         _adapter.config()
+
+        //[IFragmentItem]
+        _adapter.adapterItems.forEach {
+            if (it is IFragmentItem) {
+                it.itemFragment = this
+            }
+        }
+    }
+
+    /**调用此方法, 更新界面*/
+    open fun updateDslAdapter(update: SingleDataUpdate.() -> Unit) {
+        _adapter.updateAdapter(update)
 
         //[IFragmentItem]
         _adapter.adapterItems.forEach {
