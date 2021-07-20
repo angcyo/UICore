@@ -70,6 +70,9 @@ open class DslAdapterItem : LifecycleOwner {
     /**
      * 通过diff更新
      * @param notifyUpdate 是否需要触发 [Depend] 关系链.
+     *
+     * [isItemInUpdateList]
+     * [itemUpdateFrom]
      * */
     open fun updateItemDepend(
         filterParams: FilterParams = FilterParams(
@@ -729,13 +732,18 @@ open class DslAdapterItem : LifecycleOwner {
         { _, _ -> false }
 
     /**
+     * [checkItem]是否是在自己更新后, 通知的item列表里面, 如果是:那么[checkItem]的会触发[itemUpdateFrom]
+     *
      * [itemIndex] 最终过滤之后数据列表中的index
      * 返回 true 时, [checkItem] 会收到 来自 [this] 的 [itemUpdateFrom] 触发的回调
+     *
+     * [itemUpdateFrom]
      * */
     var isItemInUpdateList: (checkItem: DslAdapterItem, itemIndex: Int) -> Boolean =
         { _, _ -> false }
 
-    /**入口方法*/
+    /**入口方法
+     * [isItemInUpdateList]*/
     var itemUpdateFrom: (fromItem: DslAdapterItem) -> Unit = {
         onItemUpdateFrom(it)
     }
