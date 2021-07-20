@@ -10,5 +10,7 @@ import com.angcyo.dsladapter.item.IDslItem
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 interface IFormItem : IDslItem {
+
+    /**表单相关信息, 在此对象中配置*/
     var itemFormConfig: DslFormItemConfig
 }
