@@ -336,7 +336,7 @@ fun <T> T.copyByJson(classOfT: Class<T>): T {
     return toJson().fromJson<T>(classOfT)!!
 }
 
-fun Any.toJsonElement() = toJson().fromJson(JsonElement::class.java)
+fun Any.toJsonElement() = (if (this is String) this else toJson()).fromJson(JsonElement::class.java)
 
 fun String.toJsonObject() = fromJson(JsonObject::class.java)
 
