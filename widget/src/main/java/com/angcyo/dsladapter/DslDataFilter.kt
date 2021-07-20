@@ -275,10 +275,13 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             //回调到主线程
             val notifyDelay = _params?.notifyDiffDelay ?: -1
             when {
+                //延迟通知
                 notifyDelay >= 0 -> mainHandler.postDelayed({
                     onDiffResult(diffResult, resultList)
                 }, notifyDelay)
+                //主线程通知
                 Looper.getMainLooper() == Looper.myLooper() -> onDiffResult(diffResult, resultList)
+                //主线程通知
                 else -> mainHandler.post {
                     onDiffResult(diffResult, resultList)
                 }
@@ -386,8 +389,8 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                         true
                     )
                 } else {
-                    //更新界面
-                    diffResult.dispatchUpdatesTo(dslAdapter)
+                    //派发更新界面
+                    diffResult.dispatchUpdatesTo(RBatchingListUpdateCallback(dslAdapter))
                     isDispatchUpdatesTo = true
                 }
             }
