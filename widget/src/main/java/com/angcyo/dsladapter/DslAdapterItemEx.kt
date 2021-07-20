@@ -258,6 +258,83 @@ fun DslAdapterItem.isInGroupItem(targetItem: DslAdapterItem?): Boolean {
     return itemGroups.find { targetItem.itemGroups.contains(it) } != null
 }
 
+fun DslAdapterItem.afterItem(
+    adapter: DslAdapter,
+    useFilterList: Boolean = true,
+    predicate: (item: DslAdapterItem, offset: Int) -> Boolean
+): DslAdapterItem? {
+
+    var findAnchor = false
+    var startIndex = -1
+    var result: DslAdapterItem? = null
+    adapter.getDataList(useFilterList).forEachIndexed { index, dslAdapterItem ->
+        if (this == dslAdapterItem) {
+            findAnchor = true
+            startIndex = index
+        } else {
+            if (findAnchor) {
+                if (predicate(dslAdapterItem, index - startIndex)) {
+                    result = dslAdapterItem
+                    return@forEachIndexed
+                }
+            }
+        }
+    }
+    return result
+}
+
+fun DslAdapterItem.beforeItem(
+    adapter: DslAdapter,
+    useFilterList: Boolean = true,
+    predicate: (item: DslAdapterItem, offset: Int) -> Boolean
+): DslAdapterItem? {
+
+    var findAnchor = false
+    var startIndex = -1
+    var result: DslAdapterItem? = null
+
+    val dataList = adapter.getDataList(useFilterList)
+    for (index in dataList.lastIndex downTo 0) {
+        val dslAdapterItem = dataList[index]
+
+        if (this == dslAdapterItem) {
+            findAnchor = true
+            startIndex = index
+        } else {
+            if (findAnchor) {
+                if (predicate(dslAdapterItem, startIndex - index)) {
+                    result = dslAdapterItem
+                    break
+                }
+            }
+        }
+    }
+
+    return result
+}
+
+/**获取当前[DslAdapterItem]后, 偏移位置的item*/
+fun DslAdapterItem.afterItem(
+    adapter: DslAdapter,
+    useFilterList: Boolean = true,
+    offset: Int = 1
+): DslAdapterItem? {
+    return afterItem(adapter, useFilterList) { item, o ->
+        offset == o
+    }
+}
+
+/**获取当前[DslAdapterItem]前, 偏移位置的item*/
+fun DslAdapterItem.beforeItem(
+    adapter: DslAdapter,
+    useFilterList: Boolean = true,
+    offset: Int = 1
+): DslAdapterItem? {
+    return beforeItem(adapter, useFilterList) { item, o ->
+        offset == o
+    }
+}
+
 //</editor-fold desc="操作扩展">
 
 //<editor-fold desc="更新指定的Item">
