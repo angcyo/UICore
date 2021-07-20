@@ -38,6 +38,9 @@ typealias Action = () -> Unit
 typealias Action1 = (Any?) -> Unit
 typealias Action2 = (Any?, Any?) -> Unit
 
+/**别名*/
+typealias ResultThrowable = (error: Throwable?) -> Unit
+
 /**反射获取[Application]对象*/
 fun currentApplication(): Application? {
     return try {
