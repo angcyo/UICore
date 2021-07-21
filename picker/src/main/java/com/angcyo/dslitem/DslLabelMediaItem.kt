@@ -119,7 +119,7 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
                                     }
                                 }
 
-                                itemResult = {
+                                itemPickerResult = {
                                     //媒体列表
                                     it?.apply {
                                         itemMediaList.clear()

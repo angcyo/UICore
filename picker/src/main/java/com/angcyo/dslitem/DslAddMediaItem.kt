@@ -2,8 +2,6 @@ package com.angcyo.dslitem
 
 import androidx.fragment.app.Fragment
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.library.L
-import com.angcyo.library.ex.elseNull
 import com.angcyo.library.model.LoaderMedia
 import com.angcyo.loader.LoaderConfig
 import com.angcyo.picker.R
@@ -16,10 +14,7 @@ import com.angcyo.widget.DslViewHolder
  * @date 2020/03/25
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-open class DslAddMediaItem : DslAdapterItem() {
-
-    /**用于预览大图*/
-    var itemFragment: Fragment? = null
+open class DslAddMediaItem : DslAdapterItem(), IPickerMediaItem {
 
     /**是否使用录制视频和拍照功能, 否则就是选择相册*/
     @Deprecated("请使用[itemMediaSelectorConfig]")
@@ -33,44 +28,37 @@ open class DslAddMediaItem : DslAdapterItem() {
             }
         }
 
-    /**配置如何选择媒体信息*/
-    val itemMediaSelectorConfig = MediaSelectorConfig()
-
-    /**媒体加载配置*/
-    var itemLoaderConfig = LoaderConfig()
-
-    var itemUpdateLoaderConfig: (LoaderConfig) -> Unit = {}
 
     /**最小和最大录制时长, 秒*/
     var itemMinRecordTime: Int = 3
 
     var itemMaxRecordTime: Int = 15
 
-    /**录像返回*/
-    var itemTakeResult: (LoaderMedia?) -> Unit = {
+    override var itemMediaSelectorConfig: MediaSelectorConfig = MediaSelectorConfig()
+
+    override var itemLoaderConfig: LoaderConfig = LoaderConfig()
+
+    override var itemUpdateLoaderConfig: (LoaderConfig) -> Unit = {
 
     }
-
-    /**相册选择图片返回*/
-    var itemResult: (List<LoaderMedia>?) -> Unit = {
+    override var itemTakeResult: (LoaderMedia?) -> Unit = {
 
     }
+    override var itemPickerResult: (List<LoaderMedia>?) -> Unit = {
+
+    }
+    override var itemPickerMediaList: MutableList<LoaderMedia> = mutableListOf()
+
+    override var itemFragment: Fragment? = null
 
     init {
         itemLayoutId = R.layout.dsl_add_media_item
 
         itemClick = {
-            itemFragment?.apply {
-                itemLoaderConfig.apply(itemUpdateLoaderConfig)
+            itemMediaSelectorConfig.minRecordTime = itemMinRecordTime
+            itemMediaSelectorConfig.maxRecordTime = itemMaxRecordTime
 
-                itemMediaSelectorConfig.minRecordTime = itemMinRecordTime
-                itemMediaSelectorConfig.maxRecordTime = itemMaxRecordTime
-                itemMediaSelectorConfig.takeResult = itemTakeResult
-                itemMediaSelectorConfig.pickerResult = itemResult
-                itemMediaSelectorConfig.doSelector(this, itemLoaderConfig)
-            }.elseNull {
-                L.w("itemFragment is null, cannot take media.")
-            }
+            startSelectorMedia()
         }
     }
 
