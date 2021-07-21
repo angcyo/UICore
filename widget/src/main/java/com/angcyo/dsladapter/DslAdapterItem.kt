@@ -67,6 +67,17 @@ open class DslAdapterItem : LifecycleOwner {
         }
     }
 
+    /**负载更新, 通常用于更新媒体item*/
+    open fun updateItemDependPayload(payload: Any? = mediaPayload()) {
+        updateItemDepend(
+            FilterParams(
+                fromDslAdapterItem = this,
+                updateDependItemWithEmpty = false,
+                payload = payload
+            )
+        )
+    }
+
     /**
      * 通过diff更新
      * @param notifyUpdate 是否需要触发 [Depend] 关系链.
