@@ -118,7 +118,7 @@ class SingleDataUpdate(val adapter: DslAdapter) {
             val oldItem = oldItemList.getOrNull(index)
 
             val newItem = updateOrCreateItemByClass(itemClass, oldItem) {
-                initItem(this, index)
+                initItem(data, index)
             }
 
             /*if (newItem != null) {
