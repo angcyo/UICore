@@ -15,4 +15,13 @@ interface ILoadItem : IDslItem {
     /**触发此方法, 异步加载数据
      * [error] 是否加载异常*/
     var itemLoadAction: ((result: ResultThrowable) -> Unit)?
+
+    fun configItemLoadAction(action: (result: ResultThrowable?) -> Unit) {
+        //配置成员
+        itemLoadAction = {
+            action(it)
+        }
+        //触发回调
+        action(null)
+    }
 }
