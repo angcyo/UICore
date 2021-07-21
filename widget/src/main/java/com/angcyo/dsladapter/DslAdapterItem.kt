@@ -387,6 +387,12 @@ open class DslAdapterItem : LifecycleOwner {
     var itemRightInsert = 0
     var itemBottomInsert = 0
 
+    /**是否绘制分割线*/
+    var itemDrawLeft: Boolean = true
+    var itemDrawTop: Boolean = true
+    var itemDrawRight: Boolean = true
+    var itemDrawBottom: Boolean = true
+
     var itemDecorationColor = Color.TRANSPARENT
 
     /**更强大的分割线自定义, 在color绘制后绘制*/
@@ -455,7 +461,7 @@ open class DslAdapterItem : LifecycleOwner {
         eachDrawItemDecoration(0, itemTopInsert, 0, 0)
         paint.color = itemDecorationColor
         val drawOffsetArea = onlyDrawOffsetArea
-        if (itemTopInsert > 0) {
+        if (itemTopInsert > 0 && itemDrawTop) {
             if (onlyDrawOffsetArea) {
                 //绘制左右区域
                 if (itemLeftOffset > 0) {
@@ -493,7 +499,7 @@ open class DslAdapterItem : LifecycleOwner {
         onlyDrawOffsetArea = drawOffsetArea
         eachDrawItemDecoration(0, 0, 0, itemBottomInsert)
         paint.color = itemDecorationColor
-        if (itemBottomInsert > 0) {
+        if (itemBottomInsert > 0 && itemDrawBottom) {
             if (onlyDrawOffsetArea) {
                 //绘制左右区域
                 if (itemLeftOffset > 0) {
@@ -531,7 +537,7 @@ open class DslAdapterItem : LifecycleOwner {
         onlyDrawOffsetArea = drawOffsetArea
         eachDrawItemDecoration(itemLeftInsert, 0, 0, 0)
         paint.color = itemDecorationColor
-        if (itemLeftInsert > 0) {
+        if (itemLeftInsert > 0 && itemDrawLeft) {
             if (onlyDrawOffsetArea) {
                 //绘制上下区域
                 if (itemTopOffset > 0) {
@@ -569,7 +575,7 @@ open class DslAdapterItem : LifecycleOwner {
         onlyDrawOffsetArea = drawOffsetArea
         eachDrawItemDecoration(0, 0, itemRightInsert, 0)
         paint.color = itemDecorationColor
-        if (itemRightInsert > 0) {
+        if (itemRightInsert > 0 && itemDrawRight) {
             if (onlyDrawOffsetArea) {
                 //绘制上下区域
                 if (itemTopOffset > 0) {
