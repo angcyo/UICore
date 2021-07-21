@@ -4,14 +4,11 @@ import android.net.Uri
 import android.view.View
 import androidx.annotation.DrawableRes
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.dsladapter.isUpdateMedia
 import com.angcyo.glide.DslGlide
 import com.angcyo.glide.GlideImageView
 import com.angcyo.glide.R
-import com.angcyo.glide.giv
 import com.angcyo.library.ex.*
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.image.DslImageView
 import com.angcyo.widget.span.span
 import kotlin.math.max
 
@@ -22,23 +19,8 @@ import kotlin.math.max
  * @date 2020/02/19
  */
 
-open class DslImageItem : DslAdapterItem() {
+open class DslImageItem : DslAdapterItem(), IImageItem {
 
-    /**配置[DslGlide]*/
-    var onConfigGlide: (DslGlide) -> Unit = {
-
-    }
-
-    /**配置[DslImageView]*/
-    var onConfigImageView: (GlideImageView) -> Unit = {
-
-    }
-
-    /**检查gif图片类型, 如果是会使用[GifDrawable]*/
-    var itemCheckGifType = true
-
-    /**加载的媒体*/
-    open var itemLoadUri: Uri? = null
 
     /**媒体类型, 为空会在[itemLoadUri]解析*/
     open var itemMimeType: String? = null
@@ -69,6 +51,14 @@ open class DslImageItem : DslAdapterItem() {
 
     var itemDeleteClick: (View) -> Unit = {}
 
+    override var itemImageViewId: Int = R.id.lib_image_view
+    override var itemCheckGifType: Boolean = true
+    override var itemLoadUri: Uri? = null
+    override var onConfigGlide: (DslGlide) -> Unit = {
+    }
+    override var onConfigImageView: (GlideImageView) -> Unit = {
+    }
+
     init {
         itemLayoutId = R.layout.dsl_image_item
     }
@@ -81,23 +71,7 @@ open class DslImageItem : DslAdapterItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
         //更新媒体
-        val mediaUpdate = payloads.isUpdateMedia()
-
-        itemHolder.giv(R.id.lib_image_view)?.apply {
-            onConfigImageView(this)
-
-            setOnClickListener(_clickListener)
-        }
-
-        if (mediaUpdate) {
-            //缩略图
-            itemHolder.giv(R.id.lib_image_view)?.apply {
-                load(itemLoadUri) {
-                    checkGifType = itemCheckGifType
-                    onConfigGlide(this)
-                }
-            }
-        }
+        initImageItem(itemHolder, payloads)
 
         //audio video tip
         itemHolder.gone(R.id.lib_tip_image_view)

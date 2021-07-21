@@ -12,6 +12,7 @@ import com.angcyo.dsladapter.item.IDslItem
  */
 interface IFragmentItem : IDslItem {
 
+    /**[DslFHelper]*/
     var itemFragment: Fragment?
 
 }
