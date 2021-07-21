@@ -2,8 +2,6 @@ package com.angcyo.dsladapter.data
 
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.dsladapter.afterItem
-import com.angcyo.dsladapter.beforeItem
 import com.angcyo.library.ex.className
 import com.angcyo.library.ex.size
 
@@ -33,14 +31,20 @@ class SingleDataUpdate(val adapter: DslAdapter) {
     }
 
     fun add(item: DslAdapterItem, width: DslAdapterItem? = null) {
-        opList.add(Op(Op.ADD, item, width, addItemList = listOf(item)))
+        opList.add(Op(Op.ADD, null, width, addItemList = listOf(item)))
+    }
+
+    fun add(itemList: List<DslAdapterItem>, width: DslAdapterItem? = null) {
+        if (itemList.isNotEmpty()) {
+            opList.add(Op(Op.ADD, null, width, addItemList = itemList))
+        }
     }
 
 
     fun addWidth(predicate: (index: Int, item: DslAdapterItem) -> Boolean, item: DslAdapterItem) {
         adapter.adapterItems.forEachIndexed { index, dslAdapterItem ->
             if (predicate(index, dslAdapterItem)) {
-                opList.add(Op(Op.ADD, dslAdapterItem, dslAdapterItem, addItemList = listOf(item)))
+                opList.add(Op(Op.ADD, null, dslAdapterItem, addItemList = listOf(item)))
             }
         }
     }
@@ -71,39 +75,11 @@ class SingleDataUpdate(val adapter: DslAdapter) {
     }
 
     /**开始批量更新item
-     * [width] 从这个item后面开始批量更新相同类型的item, 不包含[width]*/
-    fun <Item : DslAdapterItem> updateListWidth(
+     * [at] 在这个item后面开始批量更新相同类型的item, 不包含[at]
+     * 如果[at]为空, 则在列表后面追加*/
+    fun <Item : DslAdapterItem> updateListAt(
         itemClass: Class<Item>,
-        width: DslAdapterItem?,
-        dataList: List<Any?>?,
-        initItem: Item.(data: Any?, dataIndex: Int) -> Unit = { _, _ -> }
-    ) {
-        val start = width?.afterItem(adapter)
-        if (start == null) {
-            //全部添加
-            val newAddList = mutableListOf<DslAdapterItem>()
-            dataList?.forEachIndexed { index, any ->
-                val newItem = updateOrCreateItemByClass(itemClass, null) {
-                    initItem(this, index)
-                }
-                if (newItem != null) {
-                    //add item
-                    newAddList.add(newItem)
-                }
-                if (newAddList.isNotEmpty()) {
-                    opList.add(Op(Op.ADD, width, addAnchorItem = width, addItemList = newAddList))
-                }
-            }
-        } else {
-            updateListStart(itemClass, start, dataList, initItem)
-        }
-    }
-
-    /**开始批量更新item
-     * [start] 从这个item开始批量更新相同类型的item, 包含[start]*/
-    fun <Item : DslAdapterItem> updateListStart(
-        itemClass: Class<Item>,
-        start: DslAdapterItem,
+        at: DslAdapterItem?,
         dataList: List<Any?>?,
         initItem: Item.(data: Any?, dataIndex: Int) -> Unit = { _, _ -> }
     ) {
@@ -111,16 +87,19 @@ class SingleDataUpdate(val adapter: DslAdapter) {
         //界面上已经存在的连续item
         val oldItemList = mutableListOf<DslAdapterItem>()
         var findAnchor = false
-        adapter.adapterItems.forEach { item ->
-            if (item == start) {
-                findAnchor = true
-            }
-            if (findAnchor) {
-                if (item.className() == start.className()) {
-                    oldItemList.add(item)
+        if (at != null) {
+            adapter.adapterItems.forEach { item ->
+                if (item == at) {
+                    findAnchor = true
                 } else {
-                    //不一样的item, 中断forEach
-                    return@forEach
+                    if (findAnchor) {
+                        if (item.className() == itemClass.className()) {
+                            oldItemList.add(item)
+                        } else {
+                            //不一样的item, 中断forEach
+                            return@forEach
+                        }
+                    }
                 }
             }
         }
@@ -131,7 +110,7 @@ class SingleDataUpdate(val adapter: DslAdapter) {
         val newAddList = mutableListOf<DslAdapterItem>()
 
         //添加item操作时的锚点
-        var addAnchorItem = start.beforeItem(adapter)
+        var addAnchorItem = at
 
         for (index in updateStartIndex until updateEndIndex) {
 
@@ -176,7 +155,7 @@ class SingleDataUpdate(val adapter: DslAdapter) {
         }
 
         if (newAddList.isNotEmpty()) {
-            opList.add(Op(Op.ADD, start, addAnchorItem = addAnchorItem, addItemList = newAddList))
+            opList.add(Op(Op.ADD, null, addAnchorItem = addAnchorItem, addItemList = newAddList))
         }
     }
 
@@ -245,7 +224,7 @@ class SingleDataUpdate(val adapter: DslAdapter) {
             //无操作
             const val NO = 0b000000000
 
-            //添加操作
+            //添加操作, 在锚点后面追加item list
             const val ADD = 0b00000001
 
             //移除操作
