@@ -4,6 +4,9 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.http.base.JsonBuilder
 import com.angcyo.http.base.jsonBuilder
 import com.angcyo.http.base.toJson
+import com.angcyo.library.ex.getOrNull2
+import com.angcyo.library.ex.patternList
+import com.angcyo.library.utils.getLongNum
 
 /**
  * [FormHelper] 用到一些约定参数
@@ -49,7 +52,7 @@ class DslFormParams {
     var jsonBuilder: JsonBuilder = jsonBuilder()
 
     /**表单数据存储*/
-    var dataMap: LinkedHashMap<String, Any?> = linkedMapOf()
+    var dataMap: HashMap<String, Any?> = linkedMapOf()
 
     /**是否需要跳过[FormHelper]的[formCheck]检查*/
     var skipFormCheck: Boolean = false
@@ -93,27 +96,89 @@ fun DslFormParams.json() = if (dataMap.isEmpty()) {
     dataMap.toJson { } ?: "{}"
 }
 
-
-/**将数据放置在[dataMap]中
- * [key] 支持[xxx.xxx]的格式
- * */
+/**将数据放置在[dataMap]中*/
 fun DslFormParams.put(key: String, value: Any?) {
+    dataMap.putDepth(key, value)
+}
+
+/**
+ * [key] 支持[xxx.xxx]的对象格式, 支持[xxx[].xxx]的数组对象格式, 支持[xxx[]]的数组格式
+ * 暂不支持 [[].[].[]]的格式
+ * */
+fun HashMap<String, Any?>.putDepth(key: String, value: Any?) {
+    val arrayFlag = "\\[-?\\d*\\]"
+    val arrayFlagRegex = arrayFlag.toRegex()
     val keyList = key.split(".")
 
-    var map = dataMap
-    keyList.forEachIndexed { index, k ->
-        if (index == keyList.lastIndex) {
-            map[k] = value
-        } else {
-            val v = map[k]
-            val vMap: LinkedHashMap<String, Any?>? = when (v) {
-                null -> linkedMapOf()
-                is LinkedHashMap<*, *> -> v as LinkedHashMap<String, Any?>?
-                else -> throw IllegalArgumentException("key[${key}]的值类型不匹配")
+    //操作的数据
+    var opDataMap: Any = this
+    var isArray = false
+    var arrayIndex: Int? = null //数组的索引
+    keyList.forEachIndexed { index, subKey ->
+
+        val k = if (subKey.contains(arrayFlagRegex)) {
+            val indexStr = subKey.patternList(arrayFlag).first()
+            arrayIndex = indexStr.getLongNum()?.toInt()
+            //数组
+            subKey.substring(0, subKey.length - indexStr.length).apply {
+                isArray = true
             }
-            if (vMap != null) {
-                map[k] = vMap
-                map = vMap
+        } else {
+            subKey.apply {
+                isArray = false
+            }
+        }
+
+        if (isArray) {
+            if (index == keyList.lastIndex) {
+                if (opDataMap is MutableList<*>) {
+                    (opDataMap as MutableList<Any?>).apply {
+                        if (arrayIndex ?: -1 < 0) {
+                            add(value)
+                        } else {
+                            set(arrayIndex!!, value) //越界异常
+                        }
+                    }
+                } else {
+                    throw IllegalStateException("key[$key]类型不匹配")
+                }
+            } else {
+                if (opDataMap is HashMap<*, *>) {
+                    //转移操作对象
+                    val rawList = (opDataMap as HashMap<String, Any?>)[k]
+                    val list = (rawList ?: mutableListOf<Any?>()) as MutableList<Any?>
+
+                    if (arrayIndex == null) {
+                        list.add(linkedMapOf<String, Any?>().apply {
+                            //转移操作对象
+                            (opDataMap as HashMap<String, Any?>)[k] = list
+                            opDataMap = this
+                        })
+                    } else {
+                        opDataMap = list.getOrNull2(arrayIndex!!)!! //越界异常
+                    }
+                } else {
+                    throw IllegalStateException("key[$key]类型不匹配")
+                }
+            }
+        } else {
+            if (index == keyList.lastIndex) {
+                if (opDataMap is HashMap<*, *>) {
+                    (opDataMap as HashMap<String, Any?>)[k] = value
+                } else if (opDataMap is MutableList<*>) {
+                    (opDataMap as MutableList<Any?>).add(value)
+                }
+            } else {
+                if (opDataMap is HashMap<*, *>) {
+                    //转移操作对象
+                    ((opDataMap as HashMap<String, Any?>)[k]
+                        ?: linkedMapOf<String, Any?>()).apply {
+                        (opDataMap as HashMap<String, Any?>)[k] = this
+                        opDataMap = this
+                    }
+                } else {
+                    throw IllegalStateException("key[$key]类型不匹配")
+                }
             }
         }
     }
