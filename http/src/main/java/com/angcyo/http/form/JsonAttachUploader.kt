@@ -5,6 +5,8 @@ import com.angcyo.http.rx.doBack
 import com.angcyo.http.rx.doMain
 import com.angcyo.library.L
 import com.angcyo.library.ex.connect
+import com.angcyo.library.ex.isHttpScheme
+import com.angcyo.library.ex.queryParameter
 import java.io.File
 
 /**
@@ -135,6 +137,21 @@ class JsonAttachUploader {
                 onUploadFinish(json, error)
             }
         }
+    }
+}
+
+/**从url中解析出文件id*/
+fun String.parseFileId(fileIdKey: String = FormAttachManager.KEY_FILE_ID): Pair<Long?, String> {
+    val path = this
+    return if (path.isHttpScheme()) {
+        val fileId: Long = path.queryParameter(fileIdKey)?.toLongOrNull() ?: -1
+        if (fileId == -1L) {
+            null to path
+        } else {
+            fileId to path
+        }
+    } else {
+        null to path
     }
 }
 

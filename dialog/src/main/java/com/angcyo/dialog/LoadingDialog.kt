@@ -198,15 +198,14 @@ fun Fragment.loadLoadingBottom(
     }
 
     action(false) { data, error ->
-        error?.apply {
+        if (error != null) {
+            //失败
             if (showErrorToast) {
-                toastQQ(message)
+                toastQQ(error.message)
             }
-        }
-        data?.apply {
+            hideLoading(error.message)
+        } else {
             hideLoading(successTip)
-        }.elseNull {
-            hideLoading(error?.message)
         }
     }
 
