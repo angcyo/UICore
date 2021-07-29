@@ -46,7 +46,12 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
     }
 
     /**媒体Loader配置*/
-    var itemUpdateLoaderConfig: (LoaderConfig) -> Unit = {}
+    var itemUpdateLoaderConfig: (LoaderConfig) -> Unit = {
+        addMediaItem?.apply {
+            itemPickerMediaList.clear()
+            itemPickerMediaList.addAll(itemMediaList)
+        }
+    }
 
     /**需要显示的媒体列表*/
     var itemMediaList = mutableListOf<LoaderMedia>()
