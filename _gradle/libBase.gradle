@@ -105,7 +105,9 @@ android {
         }
 
         variant.outputs.all { output ->
-            if (gradle.gradleVersion.startsWith("6.5") || gradle.gradleVersion.startsWith("6.7")) {
+            if (gradle.gradleVersion.startsWith("6.5") ||
+                    gradle.gradleVersion.startsWith("6.7") ||
+                    gradle.gradleVersion.startsWith("7")) {
                 output.outputFileName = ((project.name != "app") ? project.name : rootProject.name) + "-" +
                         defaultConfig.versionName + "_" +
                         variant.buildType.name +
