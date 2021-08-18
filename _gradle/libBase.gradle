@@ -154,6 +154,8 @@ def versionName = project.hasProperty('libVersionName') ? project.property('libV
 def winRepo = project.hasProperty('libWinRepo') ? project.property('libWinRepo') : 'E:/AndroidProjects/maven'
 def macRepo = project.hasProperty('libMacRepo') ? project.property('libMacRepo') : '/Users/angcyo/Project/Android/GithubDemo/maven'
 
+//Executing task 'publish'...
+
 afterEvaluate {
     publishing {
 
@@ -181,7 +183,10 @@ afterEvaluate {
                 //url = 'E:/AndroidProjects/maven'//"$buildDir/repo"
 
                 def os = System.getProperty("os.name").toLowerCase()
-                url = os.contains("mac") ? macRepo : winRepo
+                def path = os.contains("mac") ? macRepo : winRepo
+                url = path
+
+                System.err.println("目标发布路径:${path}")
             }
         }
     }
