@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lib_dark_bg">
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/lib_tab_height" />
+
+    <com.angcyo.tablayout.DslTabLayout
+        android:id="@+id/lib_tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/lib_tab_height"
+        android:layout_gravity="bottom"
+        android:background="@color/lib_white"
+        app:tab_deselect_color="@color/lib_tab_deselect_color"
+        app:tab_draw_indicator="false"
+        app:tab_icon_view_id="@+id/lib_tab_image_view"
+        app:tab_item_auto_equ_width="false"
+        app:tab_item_is_equ_width="true"
+        app:tab_select_color="@color/lib_tab_select_color"
+        app:tab_text_view_id="@+id/lib_tab_text_view">
+
+        <!--预览使用-->
+        <!-- <LinearLayout
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:gravity="center"
+             android:orientation="vertical">
+
+             <androidx.appcompat.widget.AppCompatImageView
+                 android:id="@+id/lib_tab_image_view"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 app:srcCompat="@drawable/lib_ic_file" />
+
+             <androidx.appcompat.widget.AppCompatTextView
+                 android:id="@+id/lib_tab_text_view"
+                 style="@style/LibBodyTextStyle"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:gravity="center"
+                 android:text="我的"
+                 android:textSize="@dimen/text_assist_size" />
+
+         </LinearLayout>-->
+
+    </com.angcyo.tablayout.DslTabLayout>
+
+    <View
+        android:id="@+id/lib_tab_line_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/lib_line_px"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="@dimen/lib_tab_height"
+        android:background="@color/lib_line" />
+
+</FrameLayout>

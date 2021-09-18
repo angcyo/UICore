@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="core_icon_color">#ACAFB7</color>
+
+    <!--底部tab栏, 颜色配置-->
+    <color name="lib_tab_select_color">@color/colorAccent</color>
+    <color name="lib_tab_deselect_color">@color/lib_icon_dark_color</color>
 </resources>
