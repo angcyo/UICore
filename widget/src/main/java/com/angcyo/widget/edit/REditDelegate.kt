@@ -212,9 +212,9 @@ class REditDelegate(editText: EditText) : InputTipEditDelegate(editText) {
             val offset = editText.compoundDrawablePadding
             _clearRect.set(
                 w - editText.paddingRight - clearDrawable!!.intrinsicWidth - offset,
-                editText.paddingTop - offset,
+                editText.paddingTop,
                 w - editText.paddingRight + offset,
-                min(w, h) - editText.paddingBottom + offset
+                min(w, h) - editText.paddingBottom
             )
         }
     }

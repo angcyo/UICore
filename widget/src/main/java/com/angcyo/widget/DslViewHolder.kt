@@ -251,6 +251,7 @@ open class DslViewHolder(
         focusView(resId)
     }
 
+    /**获取焦点*/
     fun focused(view: View?) {
         view?.isFocusable = true
         view?.isFocusableInTouchMode = true

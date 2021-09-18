@@ -122,6 +122,10 @@ class DslTransition {
     //</editor-fold desc="Scene 转场">
 }
 
+fun ViewGroup.transition(action: DslTransition.() -> Unit) {
+    dslTransition(this, action)
+}
+
 /**开始转场, 通过[onCaptureStartValues] [onCaptureEndValues] 差值执行动画
  * [com.angcyo.transition.DslTransition.onCaptureStartValues]
  * [com.angcyo.transition.DslTransition.onCaptureEndValues]
