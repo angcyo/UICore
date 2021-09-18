@@ -4,5 +4,5 @@
 
     <!--底部tab栏, 颜色配置-->
     <color name="lib_tab_select_color">@color/colorAccent</color>
-    <color name="lib_tab_deselect_color">@color/lib_icon_dark_color</color>
+    <color name="lib_tab_deselect_color">@color/lib_icon_color</color>
 </resources>
