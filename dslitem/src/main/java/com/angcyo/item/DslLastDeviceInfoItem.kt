@@ -3,17 +3,19 @@ package com.angcyo.item
 import android.content.Context
 import android.os.StatFs
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.isItemLastInAdapter
 import com.angcyo.library.component.work.Trackers
 import com.angcyo.library.ex.*
 import com.angcyo.library.toast
 import com.angcyo.library.utils.Device
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.progress.DslProgressBar
+import com.angcyo.widget.recycler.RecyclerBottomLayout
 import com.angcyo.widget.span.DslSpan
 import com.angcyo.widget.span.span
 
 /**
- *
+ * 设备信息item
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/01/16
@@ -23,6 +25,46 @@ class DslLastDeviceInfoItem : DslAdapterItem() {
 
     companion object {
         const val SPLIT = "/"
+
+        fun deviceInfo(context: Context, config: DslSpan.() -> Unit = {}) = span {
+            append(getWifiIP()).append(SPLIT).append(getMobileIP())
+
+            val vpn = Device.vpnInfo()
+            val proxy = Device.proxyInfo()
+            if (!vpn.isNullOrBlank() || !proxy.isNullOrBlank()) {
+                vpn?.run {
+                    append(SPLIT)
+                    append(this)
+
+                }
+                proxy?.run {
+                    append(SPLIT)
+                    append(this)
+                }
+            }
+
+            appendln()
+            append("${Device.androidId}/${Device.serial}") {
+                foregroundColor = getColor(R.color.colorPrimary)
+            }
+            appendln()
+            append(Device.deviceId) {
+                foregroundColor = getColor(R.color.colorPrimaryDark)
+            }
+            appendln()
+            Device.buildString(this._builder)
+            Device.screenInfo(context, this._builder)
+
+            //机型信息
+            appendln()
+            Device.deviceInfoLess(this._builder)
+
+            //网络信息
+            appendln()
+            append(Trackers.getInstance().networkStateTracker.activeNetworkState.toString())
+
+            config(this)
+        }
     }
 
     /**额外的配置信息回调*/
@@ -40,8 +82,14 @@ class DslLastDeviceInfoItem : DslAdapterItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
+        itemHolder.v<RecyclerBottomLayout>(R.id.lib_item_root_layout)?.isEnabled =
+            isItemLastInAdapter()
+
         //设备信息
-        itemHolder.tv(R.id.lib_text_view)?.text = lastDeviceInfo(itemHolder.context)
+        itemHolder.tv(R.id.lib_text_view)?.text = deviceInfo(itemHolder.context) {
+            itemData = this
+            onConfigDeviceInfo(this)
+        }
 
         //SD空间信息
         val statFs = StatFs(
@@ -74,47 +122,5 @@ class DslLastDeviceInfoItem : DslAdapterItem() {
             }
             _clickListener?.onClick(it)
         }
-    }
-
-    fun lastDeviceInfo(context: Context) = span {
-        append(getWifiIP()).append(SPLIT).append(getMobileIP())
-
-        val vpn = Device.vpnInfo()
-        val proxy = Device.proxyInfo()
-        if (!vpn.isNullOrBlank() || !proxy.isNullOrBlank()) {
-            vpn?.run {
-                append(SPLIT)
-                append(this)
-
-            }
-            proxy?.run {
-                append(SPLIT)
-                append(this)
-            }
-        }
-
-        appendln()
-        append("${Device.androidId}/${Device.serial}") {
-            foregroundColor = getColor(R.color.colorPrimary)
-        }
-        appendln()
-        append(Device.deviceId) {
-            foregroundColor = getColor(R.color.colorPrimaryDark)
-        }
-        appendln()
-        Device.buildString(this._builder)
-        Device.screenInfo(context, this._builder)
-
-        //机型信息
-        appendln()
-        Device.deviceInfoLess(this._builder)
-
-        //网络信息
-        appendln()
-        append(Trackers.getInstance().networkStateTracker.activeNetworkState.toString())
-
-        itemData = this
-
-        onConfigDeviceInfo(this)
     }
 }

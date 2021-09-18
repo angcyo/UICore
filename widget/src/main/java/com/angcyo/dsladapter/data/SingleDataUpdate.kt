@@ -2,6 +2,7 @@ package com.angcyo.dsladapter.data
 
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.findItem
 import com.angcyo.library.ex.className
 import com.angcyo.library.ex.size
 
@@ -243,5 +244,19 @@ fun DslAdapter.updateAdapter(update: SingleDataUpdate.() -> Unit) {
     SingleDataUpdate(this).apply {
         update()
         doIt()
+    }
+}
+
+/**通过[itemClass]更新item*/
+fun <Item : DslAdapterItem> DslAdapter.updateItem(
+    itemClass: Class<Item>,
+    initItem: Item.() -> Unit = { }
+) {
+    findItem(itemClass, true)?.apply {
+        itemChanging = true
+        (this as? Item)?.initItem()
+
+        //触发更新
+        updateItemDepend()
     }
 }

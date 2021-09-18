@@ -209,13 +209,23 @@ fun DslAdapterItem.noDraw() {
 
 //<editor-fold desc="操作扩展">
 
+/**[item]在[adapterItems]中的索引*/
 fun DslAdapterItem.itemIndexPosition(
     dslAdapter: DslAdapter? = null,
     useFilterList: Boolean = true
 ) = (dslAdapter ?: itemDslAdapter)?.getDataList(useFilterList)?.indexOf(this)
     ?: RecyclerView.NO_POSITION
 
-/**[dataItems]中的索引*/
+/**是否在Adapter中最后一个*/
+fun DslAdapterItem.isItemLastInAdapter(
+    dslAdapter: DslAdapter? = null,
+    useFilterList: Boolean = true
+): Boolean {
+    val list = (dslAdapter ?: itemDslAdapter)?.getDataList(useFilterList)
+    return (list?.indexOf(this) ?: RecyclerView.NO_POSITION) == list?.lastIndex
+}
+
+/**[item]在[dataItems]中的索引*/
 fun DslAdapterItem.itemIndexDataPosition(
     dslAdapter: DslAdapter? = null,
     useFilterList: Boolean = true

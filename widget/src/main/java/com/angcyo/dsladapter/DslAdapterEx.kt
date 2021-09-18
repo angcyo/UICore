@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.LayoutRes
+import com.angcyo.library.ex.className
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.isMain
 import com.angcyo.widget.DslViewHolder
@@ -35,6 +36,15 @@ fun DslAdapter.findItem(
     predicate: (DslAdapterItem) -> Boolean
 ): DslAdapterItem? {
     return getDataList(useFilterList).find(predicate)
+}
+
+fun <Item : DslAdapterItem> DslAdapter.findItem(
+    itemClass: Class<Item>,
+    useFilterList: Boolean = true
+): DslAdapterItem? {
+    return findItem(useFilterList) {
+        it.className() == itemClass.className()
+    }
 }
 
 inline fun <reified Item : DslAdapterItem> DslAdapter.find(

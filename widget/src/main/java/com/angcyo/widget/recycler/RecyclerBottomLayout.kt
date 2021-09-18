@@ -29,6 +29,12 @@ class RecyclerBottomLayout(
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        if (!isEnabled) {
+            //未激活
+            super.onLayout(changed, left, top, right, bottom)
+            return
+        }
+
         val parent = parent
         //Log.w("angcyo", "layout:" + top + " " + bottom);
         var callSuper = true
