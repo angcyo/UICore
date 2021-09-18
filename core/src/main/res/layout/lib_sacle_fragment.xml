@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RCoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_coordinator_wrap_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--背景放大布局包裹-->
+    <FrameLayout
+        android:id="@+id/lib_background_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="com.angcyo.behavior.linkage.LinkageScaleBehavior"
+        app:layout_scale_factor="1">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/lib_background_scale_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY" />
+
+    </FrameLayout>
+
+    <!--内容布局包裹-->
+    <FrameLayout
+        android:id="@+id/lib_content_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_behavior="com.angcyo.behavior.refresh.RefreshContentBehavior">
+
+        <com.angcyo.widget.recycler.DslRecyclerView
+            android:id="@+id/lib_recycler_view"
+            style="@style/LibRecyclerViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:r_layout_manager="V" />
+
+    </FrameLayout>
+
+
+</com.angcyo.widget.layout.RCoordinatorLayout>
