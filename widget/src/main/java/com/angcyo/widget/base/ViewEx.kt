@@ -29,6 +29,7 @@ import com.angcyo.library.utils.getMember
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.ViewEx._tempArray
 import com.angcyo.widget.base.ViewEx._tempRect
+import com.angcyo.widget.base.ViewEx._tempRectF
 import com.angcyo.widget.edit.IEditDelegate
 import com.angcyo.widget.edit.REditDelegate
 import com.angcyo.widget.layout.ILayoutDelegate
@@ -45,6 +46,8 @@ import com.angcyo.widget.recycler.getLastVelocity
 
 object ViewEx {
     val _tempRect = Rect()
+
+    val _tempRectF = RectF()
 
     val _tempArray = intArrayOf(-1, -1)
 }
@@ -200,12 +203,24 @@ fun View.drawRect(rect: RectF) {
     )
 }
 
-fun View.viewRect(rect: Rect) {
+fun View.viewRect(rect: Rect = _tempRect): Rect {
     rect.set(0, 0, measuredWidth, measuredHeight)
+    return rect
 }
 
-fun View.viewRect(rect: RectF) {
+fun View.viewRect(rect: RectF = _tempRectF): RectF {
     rect.set(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat())
+    return rect
+}
+
+fun View.viewFrame(rect: Rect = _tempRect): Rect {
+    rect.set(left, top, right, bottom)
+    return rect
+}
+
+fun View.viewFrameF(rect: RectF = _tempRectF): RectF {
+    rect.set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
+    return rect
 }
 
 /**视图View 变灰, 灰度处理*/

@@ -1,16 +1,14 @@
 package com.angcyo.behavior
 
 import android.content.Context
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.CallSuper
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
-import com.angcyo.widget.base.bottomCanScroll
-import com.angcyo.widget.base.isTouchDown
-import com.angcyo.widget.base.stopScroll
-import com.angcyo.widget.base.topCanScroll
+import com.angcyo.widget.base.*
 import com.angcyo.widget.layout.RCoordinatorLayout
 import kotlin.math.max
 import kotlin.math.min
@@ -154,14 +152,19 @@ abstract class BaseDependsBehavior<T : View>(
 //        return super.onLayoutChild(parent, child, layoutDirection)
 //    }
 
+    /**保存布局第一次布局后的坐标位置*/
+    var _childFrame: Rect? = null
+
     /**
      * 某一个 [child] 布局结束之后的回调, 可以用来恢复[offset]的值
      * [RCoordinatorLayout.onLayoutChild]
      * */
     open fun onLayoutChildAfter(parent: CoordinatorLayout, child: T, layoutDirection: Int) {
-
+        if (_childFrame == null) {
+            _childFrame = Rect(child.left, child.top, child.right, child.bottom)
+        }
     }
-
+    
     /**
      * 所有[child]布局结束之后回调
      * */

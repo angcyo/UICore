@@ -11,5 +11,14 @@ package com.angcyo.behavior
 interface IScrollBehaviorListener {
 
     /**[com.angcyo.behavior.BaseScrollBehavior.scrollTo]*/
-    fun onBehaviorScrollTo(scrollBehavior: BaseScrollBehavior<*>, x: Int, y: Int, scrollType: Int)
+    fun onBehaviorScrollTo(scrollBehavior: BaseScrollBehavior<*>, x: Int, y: Int, scrollType: Int) {
+        //default
+    }
+
+    /**
+     * [scrollType]滚动类型,
+     * [endType]滚动结束类型, 是内嵌滚动结束, 还是touch结束. 数值和[scrollType]一致*/
+    fun onBehaviorScrollStop(scrollBehavior: BaseScrollBehavior<*>, scrollType: Int, endType: Int) {
+        //default
+    }
 }

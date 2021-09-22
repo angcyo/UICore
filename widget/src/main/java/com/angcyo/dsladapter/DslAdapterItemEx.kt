@@ -146,12 +146,20 @@ fun DslAdapterItem.padding(padding: Int) {
     itemPaddingBottom = padding
 }
 
-fun DslAdapterItem.paddingVertical(top: Int, bottom: Int = 0) {
+fun DslAdapterItem.paddingVertical(padding: Int) {
+    paddingVertical(padding, padding)
+}
+
+fun DslAdapterItem.paddingHorizontal(padding: Int) {
+    paddingHorizontal(padding, padding)
+}
+
+fun DslAdapterItem.paddingVertical(top: Int, bottom: Int) {
     itemPaddingTop = top
     itemPaddingBottom = bottom
 }
 
-fun DslAdapterItem.paddingHorizontal(left: Int, right: Int = 0) {
+fun DslAdapterItem.paddingHorizontal(left: Int, right: Int) {
     itemPaddingLeft = left
     itemPaddingRight = right
 }

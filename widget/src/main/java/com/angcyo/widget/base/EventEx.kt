@@ -1,6 +1,7 @@
 package com.angcyo.widget.base
 
 import android.view.MotionEvent
+import android.view.View
 
 /**
  *
@@ -16,6 +17,11 @@ fun MotionEvent.isTouchDown(): Boolean {
 
 fun MotionEvent.isTouchFinish(): Boolean {
     return actionMasked == MotionEvent.ACTION_UP || actionMasked == MotionEvent.ACTION_CANCEL
+}
+
+/**是否在当前view中touch*/
+fun MotionEvent.isTouchIn(view: View): Boolean {
+    return view.viewFrameF().contains(x, y)
 }
 
 fun MotionEvent.actionToString(): String = this.actionMasked.actionToString()

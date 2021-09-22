@@ -9,7 +9,7 @@ import android.widget.OverScroller
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.library.L
 import com.angcyo.library.ex.abs
-import com.angcyo.library.ex.simpleHash
+import com.angcyo.library.ex.orDef
 import com.angcyo.tablayout.clamp
 import com.angcyo.widget.R
 import com.angcyo.widget.base.isTouchDown
@@ -73,8 +73,8 @@ abstract class BaseScrollBehavior<T : View>(
 
     /**滚动值响应界面的处理*/
     var behaviorScrollTo: (x: Int, y: Int, scrollType: Int) -> Unit = { x, y, _ ->
-        childView?.offsetLeftTo(x + behaviorOffsetLeft)
-        childView?.offsetTopTo(y + behaviorOffsetTop)
+        childView?.offsetLeftTo(_childFrame?.left.orDef(0) + x + behaviorOffsetLeft)
+        childView?.offsetTopTo(_childFrame?.top.orDef(0) + y + behaviorOffsetTop)
     }
 
     init {
@@ -314,17 +314,6 @@ abstract class BaseScrollBehavior<T : View>(
         ) || !_overScroller.isFinished
     }
 
-    /**停止滚动, 恢复到初始状态*/
-    override fun onStopNestedScroll(
-        coordinatorLayout: CoordinatorLayout,
-        child: T,
-        target: View,
-        type: Int
-    ) {
-        super.onStopNestedScroll(coordinatorLayout, child, target, type)
-        //_overScroller.abortAnimation()
-    }
-
     /**拦截内嵌滚动*/
     override fun onStartNestedScroll(
         coordinatorLayout: CoordinatorLayout,
@@ -382,6 +371,22 @@ abstract class BaseScrollBehavior<T : View>(
         )
     }
 
+    /**停止滚动, 恢复到初始状态*/
+    override fun onStopNestedScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: T,
+        target: View,
+        type: Int
+    ) {
+        super.onStopNestedScroll(coordinatorLayout, child, target, type)
+        //_overScroller.abortAnimation()
+        if (!isTouchHold) {
+            listeners.forEach {
+                it.onBehaviorScrollStop(this, SCROLL_TYPE_NESTED, SCROLL_TYPE_NESTED)
+            }
+        }
+    }
+
     val listeners = mutableListOf<IScrollBehaviorListener>()
     fun addScrollListener(listener: IScrollBehaviorListener) {
         if (!listeners.contains(listener)) {
@@ -396,3 +401,10 @@ abstract class BaseScrollBehavior<T : View>(
     }
 }
 
+fun <T : View> BaseScrollBehavior<T>.scrollToY(y: Int) {
+    scrollTo(0, y, BaseScrollBehavior.SCROLL_TYPE_CALL)
+}
+
+fun <T : View> BaseScrollBehavior<T>.scrollToX(x: Int) {
+    scrollTo(x, 0, BaseScrollBehavior.SCROLL_TYPE_CALL)
+}

@@ -45,6 +45,10 @@ fun Int?.or(default: Int) = if (this ?: 0 > 0) this else default
 
 fun Long?.or(default: Long) = if (this ?: 0 > 0) this else default
 
+fun Int?.orDef(default: Int) = this ?: default
+
+fun Long?.orDef(default: Long) = this ?: default
+
 /**目标值的最小值是自己,  目标值必须超过自己*/
 fun Float.withMinValue(value: Float /*允许的最小值*/) = max(value, this)
 

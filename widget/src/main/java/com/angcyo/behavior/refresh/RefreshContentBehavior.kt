@@ -170,7 +170,7 @@ open class RefreshContentBehavior(
             type
         )
         _overScroller.abortAnimation()
-        return axes.isAxisVertical()
+        return coordinatorLayout.isEnabled && axes.isAxisVertical()
     }
 
     override fun onNestedPreScroll(

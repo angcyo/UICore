@@ -54,7 +54,7 @@ open class LogBehavior<T : View>(
         type: Int
     ): Boolean {
         e("child:${directTargetChild.simpleHash()} target:${target.simpleHash()} axes:${axes.toAxesString()} type:${type.toTypeString()}")
-        return super.onStartNestedScroll(
+        return coordinatorLayout.isEnabled && super.onStartNestedScroll(
             coordinatorLayout,
             child,
             directTargetChild,

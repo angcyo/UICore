@@ -6,8 +6,10 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
 import com.angcyo.widget.base.isTouchDown
 import com.angcyo.widget.base.isTouchFinish
+import com.angcyo.widget.base.isTouchIn
 
 /**
  * 支持[GestureDetector]的处理.
@@ -28,6 +30,9 @@ abstract class BaseGestureBehavior<T : View>(
 
     /**是否开启touch捕捉*/
     var enableGesture = true
+
+    /**是否只处理child上的touch事件*/
+    var enableGestureTouchIn = false
 
     /**手指松开时的横向速率, 小于0 手指向左fling*/
     var lastVelocityX = 0f
@@ -96,7 +101,13 @@ abstract class BaseGestureBehavior<T : View>(
             onTouchDown(parent, child, ev)
         }
         if (enableGesture && _needHandleTouch) {
-            result = _gestureDetector.onTouchEvent(ev)
+            if (enableGestureTouchIn) {
+                if (ev.isTouchIn(child)) {
+                    result = _gestureDetector.onTouchEvent(ev)
+                }
+            } else {
+                result = _gestureDetector.onTouchEvent(ev)
+            }
         }
         return result
     }
@@ -106,7 +117,12 @@ abstract class BaseGestureBehavior<T : View>(
     }
 
     open fun onTouchFinish(parent: CoordinatorLayout, child: T, ev: MotionEvent) {
-
+        if (!isTouchHold && _nestedScrollView == null && ViewCompat.isLaidOut(child)) {
+            //在非nested scroll 视图上滚动过
+            listeners.forEach {
+                it.onBehaviorScrollStop(this, SCROLL_TYPE_GESTURE, SCROLL_TYPE_GESTURE)
+            }
+        }
     }
 
     open fun onGestureFling(
