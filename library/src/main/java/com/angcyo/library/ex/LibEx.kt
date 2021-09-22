@@ -3,6 +3,7 @@ package com.angcyo.library.ex
 import android.app.Application
 import android.graphics.Point
 import android.graphics.PointF
+import android.view.View
 import com.angcyo.library.BuildConfig
 import com.angcyo.library.component.ThreadExecutor.onMain
 import com.angcyo.library.ex.LibEx.isDebugTypeVal
@@ -37,6 +38,7 @@ object LibEx {
 typealias Action = () -> Unit
 typealias Action1 = (Any?) -> Unit
 typealias Action2 = (Any?, Any?) -> Unit
+typealias ClickAction = (View) -> Unit
 
 /**别名*/
 typealias ResultThrowable = (error: Throwable?) -> Unit
