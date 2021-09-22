@@ -1,6 +1,7 @@
 package com.angcyo.item.style
 
 import com.angcyo.dsladapter.item.IDslItem
+import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
 import com.angcyo.widget.DslViewHolder
 
@@ -13,24 +14,36 @@ import com.angcyo.widget.DslViewHolder
  */
 interface ILabelItem : IDslItem {
 
+    /**统一样式配置*/
+    var labelItemConfig: LabelItemConfig
+}
+
+class LabelItemConfig : IDslItemConfig {
     /**[R.id.lib_label_view]*/
-    var itemLabelTextViewId: Int
+    var itemLabelTextViewId: Int = R.id.lib_label_view
 
     /**Label文本*/
-    var itemLabelText: CharSequence?
+    var itemLabelText: CharSequence? = null
+        set(value) {
+            field = value
+            itemLabelTextStyle.text = value
+        }
 
     /**统一样式配置*/
-    var itemLabelTextStyle: TextStyleConfig
+    var itemLabelTextStyle: TextStyleConfig = TextStyleConfig()
+}
 
-    /**初始化*/
-    fun initLabelItem(itemHolder: DslViewHolder) {
-        itemHolder.gone(itemLabelTextViewId, itemLabelTextStyle.text == null)
-        itemHolder.tv(itemLabelTextViewId)?.apply {
-            itemLabelTextStyle.updateStyle(this)
-        }
+/**初始化*/
+fun ILabelItem.initLabelItem(itemHolder: DslViewHolder) {
+    itemHolder.gone(
+        labelItemConfig.itemLabelTextViewId,
+        labelItemConfig.itemLabelTextStyle.text == null
+    )
+    itemHolder.tv(labelItemConfig.itemLabelTextViewId)?.apply {
+        labelItemConfig.itemLabelTextStyle.updateStyle(this)
     }
+}
 
-    fun configLabelTextStyle(action: TextStyleConfig.() -> Unit) {
-        itemLabelTextStyle.action()
-    }
+fun ILabelItem.configLabelTextStyle(action: TextStyleConfig.() -> Unit) {
+    labelItemConfig.itemLabelTextStyle.action()
 }

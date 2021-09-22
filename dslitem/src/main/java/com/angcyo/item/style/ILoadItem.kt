@@ -1,6 +1,7 @@
 package com.angcyo.item.style
 
 import com.angcyo.dsladapter.item.IDslItem
+import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.library.ex.ResultThrowable
 
 /**
@@ -12,16 +13,21 @@ import com.angcyo.library.ex.ResultThrowable
  */
 interface ILoadItem : IDslItem {
 
-    /**触发此方法, 异步加载数据
-     * [error] 是否加载异常*/
-    var itemLoadAction: ((result: ResultThrowable) -> Unit)?
+    var loadItemConfig: LoadItemConfig
 
     fun configItemLoadAction(action: (result: ResultThrowable?) -> Unit) {
         //配置成员
-        itemLoadAction = {
+        loadItemConfig.itemLoadAction = {
             action(it)
         }
         //触发回调
         action(null)
     }
+}
+
+class LoadItemConfig : IDslItemConfig {
+
+    /**触发此方法, 异步加载数据
+     * [error] 是否加载异常*/
+    var itemLoadAction: ((result: ResultThrowable) -> Unit)? = null
 }

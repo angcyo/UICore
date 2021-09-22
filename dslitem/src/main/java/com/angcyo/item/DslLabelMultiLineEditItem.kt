@@ -16,11 +16,11 @@ open class DslLabelMultiLineEditItem : DslLabelEditItem() {
     init {
         itemLayoutId = R.layout.dsl_label_multi_line_edit_item
 
-        itemEditTextStyle.editMaxInputLength = 200
-        itemEditTextStyle.editMaxLine = 80
+        editItemConfig.itemEditTextStyle.editMaxInputLength = 200
+        editItemConfig.itemEditTextStyle.editMaxLine = 80
 
         /**多行输入时, 需要 [InputType.TYPE_TEXT_FLAG_MULTI_LINE] 否则输入框, 不能输入 回车 */
-        itemEditTextStyle.editInputType =
+        editItemConfig.itemEditTextStyle.editInputType =
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
     }
 
@@ -32,13 +32,16 @@ open class DslLabelMultiLineEditItem : DslLabelEditItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
-        itemHolder.visible(R.id.lib_text_indicator, itemEditTextStyle.noEditModel && itemEnable)
+        itemHolder.visible(
+            R.id.lib_text_indicator,
+            editItemConfig.itemEditTextStyle.noEditModel && itemEnable
+        )
 
         //输入框
         itemHolder.ev(R.id.lib_edit_view)?.apply {
-            if (itemEditTextStyle.editMaxInputLength > 0) {
+            if (editItemConfig.itemEditTextStyle.editMaxInputLength > 0) {
                 itemHolder.v<TextIndicator>(R.id.lib_text_indicator)
-                    ?.setupEditText(this, itemEditTextStyle.editMaxInputLength)
+                    ?.setupEditText(this, editItemConfig.itemEditTextStyle.editMaxInputLength)
             }
         }
     }

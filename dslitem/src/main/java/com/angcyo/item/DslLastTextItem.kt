@@ -1,7 +1,7 @@
 package com.angcyo.item
 
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.item.style.ITextConfigItem
+import com.angcyo.item.style.ITextItem
 import com.angcyo.item.style.TextItemConfig
 import com.angcyo.item.style.initTextItem
 import com.angcyo.library.ex.isDebug
@@ -17,7 +17,7 @@ import com.angcyo.widget.span.span
  * @date 2021/09/18
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class DslLastTextItem : DslAdapterItem(), ITextConfigItem {
+class DslLastTextItem : DslAdapterItem(), ITextItem {
 
     override var textItemConfig: TextItemConfig = TextItemConfig()
 

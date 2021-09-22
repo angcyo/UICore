@@ -21,7 +21,7 @@ class DslFormItemConfig {
     /**获取表单的值*/
     var onGetFormValue: (params: DslFormParams) -> Any? = {
         when (val item = it._formAdapterItem) {
-            is IEditItem -> item.itemEditText
+            is IEditItem -> item.editItemConfig.itemEditText
             else -> null
         }
     }

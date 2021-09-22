@@ -76,7 +76,7 @@ open class DslLabelOptionItem : DslLabelTextItem() {
     /**显示dialog*/
     open fun showOptionDialog(context: Context) {
         context.optionDialog {
-            dialogTitle = itemLabelText
+            dialogTitle = labelItemConfig.itemLabelText
 
             optionList.addAll(itemOptionList)
 

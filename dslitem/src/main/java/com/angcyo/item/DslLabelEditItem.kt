@@ -58,7 +58,7 @@ open class DslLabelEditItem : DslBaseEditItem() {
 
             //处理默认弹出软键盘
             if (itemRightIcoClick == null) {
-                if (itemEditTextStyle.noEditModel) {
+                if (editItemConfig.itemEditTextStyle.noEditModel) {
                     gone()
                 } else {
                     throttleClickIt {

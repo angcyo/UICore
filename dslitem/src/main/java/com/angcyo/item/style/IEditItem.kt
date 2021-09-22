@@ -2,6 +2,8 @@ package com.angcyo.item.style
 
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.item.IDslItem
+import com.angcyo.dsladapter.item.IDslItemConfig
+import com.angcyo.item.DslBaseEditItem
 import com.angcyo.item.R
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clearListeners
@@ -17,57 +19,73 @@ import com.angcyo.widget.base.restoreSelection
  */
 interface IEditItem : IDslItem {
 
-    /**输入框内容*/
-    var itemEditText: CharSequence?
-
-    /**统一样式配置*/
-    var itemEditTextStyle: EditStyleConfig
-
-    /**文本改变*/
-    var itemTextChange: (CharSequence) -> Unit
-
-    /**文本改变去频限制, 负数表示不开启, 如果短时间内关闭界面了, 可能会获取不到最新的输入框数据*/
-    var itemTextChangeShakeDelay: Long
-
-    //用于恢复光标的位置
-    var _lastEditSelectionStart: Int
-    var _lastEditSelectionEnd: Int
-
-    /**初始化*/
-    fun initEditItem(itemHolder: DslViewHolder) {
-        itemHolder.ev(R.id.lib_edit_view)?.apply {
-            itemEditTextStyle.updateStyle(this)
-
-            clearListeners()
-
-            onTextChange {
-                _lastEditSelectionStart = selectionStart
-                _lastEditSelectionEnd = selectionEnd
-
-                itemEditText = it
-            }
-
-            //放在最后监听, 防止首次setInputText, 就触发事件.
-            onTextChange(shakeDelay = itemTextChangeShakeDelay) {
-                if (this@IEditItem is DslAdapterItem) {
-                    itemChanging = true
-                }
-                itemTextChange(it)
-            }
-
-            restoreSelection(_lastEditSelectionStart, _lastEditSelectionEnd)
-        }
-    }
-
-    fun clearEditListeners(itemHolder: DslViewHolder) {
-        itemHolder.ev(R.id.lib_edit_view)?.clearListeners()
-    }
+    var editItemConfig: EditItemConfig
 
     fun onItemTextChange(text: CharSequence) {
-
+        editItemConfig.itemTextChange?.invoke(text)
     }
+}
 
-    fun configEditTextStyle(action: EditStyleConfig.() -> Unit) {
-        itemEditTextStyle.action()
+class EditItemConfig : IDslItemConfig {
+
+    /**[R.id.lib_edit_view]*/
+    var itemEditTextViewId: Int = R.id.lib_edit_view
+
+    /**输入框内容*/
+    var itemEditText: CharSequence? = null
+        set(value) {
+            field = value
+            itemEditTextStyle.text = value
+        }
+
+    /**统一样式配置*/
+    var itemEditTextStyle: EditStyleConfig = EditStyleConfig()
+
+    /**文本改变*/
+    var itemTextChange: ((CharSequence) -> Unit)? = null
+
+    /**文本改变去频限制, 负数表示不开启, 如果短时间内关闭界面了, 可能会获取不到最新的输入框数据*/
+    var itemTextChangeShakeDelay: Long = DslBaseEditItem.DEFAULT_INPUT_SHAKE_DELAY
+
+    //用于恢复光标的位置
+    var _lastEditSelectionStart: Int = -1
+
+    var _lastEditSelectionEnd: Int = -1
+}
+
+/**初始化*/
+fun IEditItem.initEditItem(itemHolder: DslViewHolder) {
+    itemHolder.ev(editItemConfig.itemEditTextViewId)?.apply {
+        editItemConfig.itemEditTextStyle.updateStyle(this)
+
+        clearListeners()
+
+        onTextChange {
+            editItemConfig._lastEditSelectionStart = selectionStart
+            editItemConfig._lastEditSelectionEnd = selectionEnd
+
+            editItemConfig.itemEditText = it
+        }
+
+        //放在最后监听, 防止首次setInputText, 就触发事件.
+        onTextChange(shakeDelay = editItemConfig.itemTextChangeShakeDelay) {
+            if (this is DslAdapterItem) {
+                itemChanging = true
+            }
+            onItemTextChange(it)
+        }
+
+        restoreSelection(
+            editItemConfig._lastEditSelectionStart,
+            editItemConfig._lastEditSelectionEnd
+        )
     }
+}
+
+fun IEditItem.clearEditListeners(itemHolder: DslViewHolder) {
+    itemHolder.ev(editItemConfig.itemEditTextViewId)?.clearListeners()
+}
+
+fun IEditItem.configEditTextStyle(action: EditStyleConfig.() -> Unit) {
+    editItemConfig.itemEditTextStyle.action()
 }

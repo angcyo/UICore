@@ -3,23 +3,21 @@ package com.angcyo.item
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.ILabelItem
 import com.angcyo.item.style.LabelItemConfig
-import com.angcyo.item.style.initLabelItem
 import com.angcyo.widget.DslViewHolder
 
 /**
- * 带有Label的item
+ * 简单的搜索输入框提示样式item
  * Email:angcyo@126.com
  * @author angcyo
- * @date 2020/03/23
- * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
+ * @date 2021/09/22
+ * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
+class DslSearchTipItem : DslAdapterItem(), ILabelItem {
 
-open class DslBaseLabelItem : DslAdapterItem(), ILabelItem {
-    
     override var labelItemConfig: LabelItemConfig = LabelItemConfig()
 
     init {
-        itemLayoutId = R.layout.dsl_label_item
+        itemLayoutId = R.layout.dsl_search_tip_item
     }
 
     override fun onItemBind(
@@ -29,8 +27,7 @@ open class DslBaseLabelItem : DslAdapterItem(), ILabelItem {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
-        initLabelItem(itemHolder)
+
     }
+
 }
-
-

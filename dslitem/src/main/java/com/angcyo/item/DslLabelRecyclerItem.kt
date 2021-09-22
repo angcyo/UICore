@@ -64,7 +64,7 @@ class DslLabelRecyclerItem : DslBaseLabelItem() {
 
         itemClick = {
             it.context.itemsDialog {
-                dialogTitle = itemLabelText
+                dialogTitle = labelItemConfig.itemLabelText
 
                 dialogBottomCancelItem = null
 

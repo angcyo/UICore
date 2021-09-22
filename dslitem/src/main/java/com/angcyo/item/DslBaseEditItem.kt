@@ -1,8 +1,9 @@
 package com.angcyo.item
 
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.item.style.EditStyleConfig
+import com.angcyo.item.style.EditItemConfig
 import com.angcyo.item.style.IEditItem
+import com.angcyo.item.style.initEditItem
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clearListeners
 
@@ -24,26 +25,7 @@ open class DslBaseEditItem : DslBaseLabelItem(), IEditItem {
         var DEFAULT_INPUT_SHAKE_DELAY = 300L
     }
 
-    override var itemEditText: CharSequence? = null
-        set(value) {
-            field = value
-            itemEditTextStyle.text = value
-        }
-
-    /**统一样式配置*/
-    override var itemEditTextStyle = EditStyleConfig()
-
-    /**文本改变*/
-    override var itemTextChange: (CharSequence) -> Unit = {
-        onItemTextChange(it)
-    }
-
-    /**文本改变去频限制, 负数表示不开启, 如果短时间内关闭界面了, 可能会获取不到最新的输入框数据*/
-    override var itemTextChangeShakeDelay = DEFAULT_INPUT_SHAKE_DELAY
-
-    //用于恢复光标的位置
-    override var _lastEditSelectionStart = -1
-    override var _lastEditSelectionEnd = -1
+    override var editItemConfig: EditItemConfig = EditItemConfig()
 
     init {
         itemLayoutId = R.layout.dsl_edit_item
@@ -68,12 +50,13 @@ open class DslBaseEditItem : DslBaseLabelItem(), IEditItem {
         super.onItemViewRecycled(itemHolder, itemPosition)
         itemHolder.ev(R.id.lib_edit_view)?.clearListeners()
     }
+
 }
 
 /**快速获取对应Item的值*/
 fun DslAdapterItem.itemEditText(): CharSequence? {
     return when (this) {
-        is IEditItem -> this.itemEditText
+        is IEditItem -> this.editItemConfig.itemEditText
         else -> null
     }
 }
