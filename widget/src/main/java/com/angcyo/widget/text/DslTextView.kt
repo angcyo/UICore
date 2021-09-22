@@ -2,6 +2,7 @@ package com.angcyo.widget.text
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.util.AttributeSet
 import android.view.Gravity
 import com.angcyo.library.ex.have
@@ -51,8 +52,12 @@ open class DslTextView : DslScrollTextView {
     }
 
     private fun initAttribute(context: Context, attributeSet: AttributeSet?) {
-        dslBadeDrawable.initAttribute(context, attributeSet)
-        dslBadeDrawable.callback = this
+        dslBadeDrawable.apply {
+            initAttribute(context, attributeSet)
+            callback = this@DslTextView
+            dslGravity.gravityRelativeCenter = false
+            gradientSolidColor = Color.RED
+        }
 
         val typedArray =
             context.obtainStyledAttributes(attributeSet, R.styleable.DslTextView)

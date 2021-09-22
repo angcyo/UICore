@@ -55,6 +55,7 @@ open class GlideImageView : DslImageView {
             typedArray.getBoolean(R.styleable.GlideImageView_r_show_debug_info, showDebugInfo)
         typedArray.recycle()
         dslGlide.placeholderDrawable = drawable
+        enableShape = false
     }
 
     override fun setImageDrawable(drawable: Drawable?) {

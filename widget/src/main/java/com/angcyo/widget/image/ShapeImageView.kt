@@ -43,7 +43,7 @@ open class ShapeImageView : AppCompatImageView {
     var borderColor: Int = Color.WHITE
 
     /**激活shape绘制功能*/
-    var enableShape: Boolean = true
+    var enableShape: Boolean = false
         set(value) {
             field = value
             if (value) {

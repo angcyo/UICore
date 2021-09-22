@@ -20,6 +20,7 @@ import com.angcyo.library.ex.isRelease
 import com.angcyo.library.utils.RUtils
 import com.angcyo.widget.DslGroupHelper
 import com.angcyo.widget.base.find
+import com.angcyo.widget.image.DslImageView
 import com.angcyo.widget.text.DslTextView
 import ezy.assist.compat.RomUtil
 
@@ -97,6 +98,17 @@ fun DslGroupHelper.appendTextItem(
 ): View? {
     return inflate(R.layout.lib_text_layout, attachToRoot) {
         find<DslTextView>(R.id.lib_text_view)?.apply {
+            this.action()
+        }
+    }
+}
+
+fun DslGroupHelper.appendIconItem(
+    attachToRoot: Boolean = true,
+    action: DslImageView.() -> Unit
+): View? {
+    return inflate(R.layout.lib_icon_layout, attachToRoot) {
+        find<DslImageView>(R.id.lib_icon_view)?.apply {
             this.action()
         }
     }

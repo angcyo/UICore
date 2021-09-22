@@ -2,6 +2,7 @@ package com.angcyo.widget.image
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
@@ -103,8 +104,12 @@ open class DslImageView : ShapeImageView {
 
         typedArray.recycle()
 
-        dslBadeDrawable.initAttribute(context, attributeSet)
-        dslBadeDrawable.callback = this
+        dslBadeDrawable.apply {
+            initAttribute(context, attributeSet)
+            callback = this@DslImageView
+            dslGravity.gravityRelativeCenter = false
+            gradientSolidColor = Color.RED
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
