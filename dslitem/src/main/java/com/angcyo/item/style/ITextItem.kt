@@ -3,6 +3,8 @@ package com.angcyo.item.style
 import com.angcyo.dsladapter.item.IDslItem
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
+import com.angcyo.library.ex._dimen
+import com.angcyo.library.ex.undefined_float
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -46,4 +48,15 @@ fun ITextItem.initTextItem(itemHolder: DslViewHolder) {
 
 fun ITextItem.configTextStyle(action: TextStyleConfig.() -> Unit) {
     textItemConfig.itemTextStyle.action()
+}
+
+
+/**加粗样式*/
+fun ITextItem.boldStyle() {
+    configTextStyle {
+        textBold = true
+        if (textSize == undefined_float) {
+            textSize = _dimen(R.dimen.text_sub_size).toFloat()
+        }
+    }
 }

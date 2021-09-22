@@ -3,6 +3,7 @@ package com.angcyo.item
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.ILabelItem
 import com.angcyo.item.style.LabelItemConfig
+import com.angcyo.item.style.initLabelItem
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -18,6 +19,8 @@ class DslSearchTipItem : DslAdapterItem(), ILabelItem {
 
     init {
         itemLayoutId = R.layout.dsl_search_tip_item
+
+        labelItemConfig.itemLabelText = "请输入搜索关键字"
     }
 
     override fun onItemBind(
@@ -27,7 +30,7 @@ class DslSearchTipItem : DslAdapterItem(), ILabelItem {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
-
+        initLabelItem(itemHolder)
     }
 
 }

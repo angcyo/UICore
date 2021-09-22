@@ -1,8 +1,10 @@
 package com.angcyo.item
 
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.item.style.ITextItem
+import com.angcyo.item.style.TextItemConfig
 import com.angcyo.item.style.TextStyleConfig
-import com.angcyo.library.ex._dimen
+import com.angcyo.item.style.initTextItem
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -12,17 +14,9 @@ import com.angcyo.widget.DslViewHolder
  * @date 2020/04/23
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-open class DslTextItem : DslAdapterItem() {
+open class DslTextItem : DslAdapterItem(), ITextItem {
 
-    /**文本*/
-    var itemText: CharSequence? = null
-        set(value) {
-            field = value
-            itemTextStyle.text = value
-        }
-
-    /**统一样式配置*/
-    var itemTextStyle = TextStyleConfig()
+    override var textItemConfig: TextItemConfig = TextItemConfig()
 
     /**文本*/
     var itemDes: CharSequence? = null
@@ -46,9 +40,7 @@ open class DslTextItem : DslAdapterItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
-        itemHolder.tv(R.id.lib_text_view)?.apply {
-            itemTextStyle.updateStyle(this)
-        }
+        initTextItem(itemHolder)
 
         itemHolder.gone(R.id.lib_des_view, itemDes == null)
         itemHolder.tv(R.id.lib_des_view)?.apply {
@@ -56,19 +48,7 @@ open class DslTextItem : DslAdapterItem() {
         }
     }
 
-    open fun configTextStyle(action: TextStyleConfig.() -> Unit) {
-        itemTextStyle.action()
-    }
-
     open fun configDesStyle(action: TextStyleConfig.() -> Unit) {
         itemDesStyle.action()
-    }
-}
-
-/**加粗样式*/
-fun DslTextItem.boldStyle() {
-    configTextStyle {
-        textBold = true
-        textSize = _dimen(R.dimen.text_sub_size).toFloat()
     }
 }
