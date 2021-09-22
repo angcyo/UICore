@@ -15,7 +15,7 @@ import com.angcyo.widget.R
 import com.angcyo.widget.base.*
 
 /**
- *
+ *协调布局
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/09/10
