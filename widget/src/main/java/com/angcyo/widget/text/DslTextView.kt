@@ -2,7 +2,6 @@ package com.angcyo.widget.text
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.util.AttributeSet
 import android.view.Gravity
 import com.angcyo.library.ex.have
@@ -17,10 +16,10 @@ import java.util.*
  * @author angcyo
  * @date 2020/01/08
  */
-open class DslTextView : DslScrollTextView {
+open class DslTextView : DslScrollTextView, IBadgeView {
 
     /**角标绘制*/
-    var dslBadeDrawable = DslAttrBadgeDrawable()
+    override var dslBadeDrawable = DslAttrBadgeDrawable()
 
     /**支持设置format,[java.lang.String.format] [%1$s]*/
     var textFormat: String? = null
@@ -56,7 +55,6 @@ open class DslTextView : DslScrollTextView {
             initAttribute(context, attributeSet)
             callback = this@DslTextView
             dslGravity.gravityRelativeCenter = false
-            gradientSolidColor = Color.RED
         }
 
         val typedArray =

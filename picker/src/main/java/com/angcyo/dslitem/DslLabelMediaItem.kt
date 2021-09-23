@@ -5,8 +5,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.dsladapter.*
 import com.angcyo.dsladapter.data.updateSingleData
 import com.angcyo.dsladapter.filter.AddMediaFilterAfterInterceptor
-import com.angcyo.glide.item.DslImageItem
 import com.angcyo.item.DslBaseLabelItem
+import com.angcyo.item.DslImageItem
 import com.angcyo.library.L
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.elseNull
@@ -48,8 +48,8 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
     /**媒体Loader配置*/
     var itemUpdateLoaderConfig: (LoaderConfig) -> Unit = {
         addMediaItem?.apply {
-            itemPickerMediaList.clear()
-            itemPickerMediaList.addAll(itemMediaList)
+            pickerMediaItemConfig.itemPickerMediaList.clear()
+            pickerMediaItemConfig.itemPickerMediaList.addAll(itemMediaList)
         }
     }
 
@@ -106,12 +106,14 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
                         if (itemShowAddMediaItem && itemEnable) {
                             addMediaItem?.apply {
                                 itemFragment = this@DslLabelMediaItem.itemFragment
-                                itemLoaderConfig.maxSelectorLimit = itemShowMaxMediaCount
-                                itemLoaderConfig.selectorMediaList = itemMediaList
+                                pickerMediaItemConfig.itemLoaderConfig.maxSelectorLimit =
+                                    itemShowMaxMediaCount
+                                pickerMediaItemConfig.itemLoaderConfig.selectorMediaList =
+                                    itemMediaList
                                 itemUpdateLoaderConfig =
                                     this@DslLabelMediaItem.itemUpdateLoaderConfig
 
-                                itemTakeResult = {
+                                pickerMediaItemConfig.itemTakeResult = {
                                     it?.apply {
                                         itemMediaList.add(this)
                                         loadMediaList(
@@ -124,7 +126,7 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
                                     }
                                 }
 
-                                itemPickerResult = {
+                                pickerMediaItemConfig.itemPickerResult = {
                                     //媒体列表
                                     it?.apply {
                                         itemMediaList.clear()
@@ -176,7 +178,7 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
             margin(2 * dpi)
 
             itemData = media
-            itemLoadUri = media.loadUri()
+            imageItemConfig.itemLoadUri = media.loadUri()
             itemMimeType = media.mimeType()
             itemMediaDuration = media.duration
             itemShowTip = false

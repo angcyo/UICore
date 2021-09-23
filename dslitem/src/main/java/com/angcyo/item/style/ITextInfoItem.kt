@@ -1,6 +1,5 @@
 package com.angcyo.item.style
 
-import com.angcyo.dsladapter.item.IDslItem
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
 import com.angcyo.widget.DslViewHolder
@@ -12,7 +11,7 @@ import com.angcyo.widget.DslViewHolder
  * @date 2021/07/16
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-interface ITextInfoItem : IDslItem {
+interface ITextInfoItem : IAutoInitItem {
 
     var textInfoItemConfig: TextInfoItemConfig
 
@@ -31,6 +30,13 @@ interface ITextInfoItem : IDslItem {
         textInfoItemConfig.itemInfoTextStyle.action()
     }
 }
+
+var ITextInfoItem.itemInfoText: CharSequence?
+    get() = textInfoItemConfig.itemInfoText
+    set(value) {
+        textInfoItemConfig.itemInfoText = value
+    }
+
 
 class TextInfoItemConfig : IDslItemConfig {
     /**[R.id.lib_text_view]*/

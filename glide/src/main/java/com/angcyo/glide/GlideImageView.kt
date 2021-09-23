@@ -53,9 +53,9 @@ open class GlideImageView : DslImageView {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.GlideImageView)
         showDebugInfo =
             typedArray.getBoolean(R.styleable.GlideImageView_r_show_debug_info, showDebugInfo)
+        enableShape = typedArray.getBoolean(R.styleable.ShapeImageView_r_enable_shape, true)
         typedArray.recycle()
         dslGlide.placeholderDrawable = drawable
-        enableShape = false
     }
 
     override fun setImageDrawable(drawable: Drawable?) {

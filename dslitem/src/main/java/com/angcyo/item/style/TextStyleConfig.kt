@@ -22,6 +22,7 @@ import org.buffer.android.buffertextinputlayout.BufferTextInputLayout
  */
 
 open class TextStyleConfig : ViewStyleConfig() {
+
     var text: CharSequence? = null
     var hint: CharSequence? = null
     var textBold: Boolean = false

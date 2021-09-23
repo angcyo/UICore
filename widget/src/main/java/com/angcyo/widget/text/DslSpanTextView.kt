@@ -57,7 +57,9 @@ open class DslSpanTextView : AppCompatTextView {
                 R.styleable.DslSpanTextView_r_install_span_click_method,
                 installSpanClickMethod
             )
-            setMaxShowLine(this@DslSpanTextView, maxShowLine)
+            if (isEnableMaxShowLine) {
+                setMaxShowLine(this@DslSpanTextView, maxShowLine)
+            }
         }
         typedArray.recycle()
     }
@@ -103,7 +105,7 @@ open class DslSpanTextView : AppCompatTextView {
     }
 
     /**是否激活了折叠行显示*/
-    fun isEnableFoldLine() = maxLineDelegate != null && maxLineDelegate.maxShowLine > 0
+    fun isEnableFoldLine() = maxLineDelegate != null && maxLineDelegate.isEnableMaxShowLine
 
     override fun onCreateDrawableState(extraSpace: Int): IntArray {
         if (!isInitExtraState) {

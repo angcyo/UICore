@@ -29,7 +29,6 @@ class DslSearchTipItem : DslAdapterItem(), ILabelItem {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
-        initLabelItem(itemHolder)
     }
 
 }

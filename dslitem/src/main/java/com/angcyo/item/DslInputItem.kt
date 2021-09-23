@@ -35,8 +35,6 @@ open class DslInputItem : DslAdapterItem(), ILabelItem, IEditItem {
         adapterItem: DslAdapterItem
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem)
-        initLabelItem(itemHolder)
-        initEditItem(itemHolder)
     }
 
     override fun onItemViewRecycled(itemHolder: DslViewHolder, itemPosition: Int) {

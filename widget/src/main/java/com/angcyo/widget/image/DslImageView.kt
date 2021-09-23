@@ -2,7 +2,6 @@ package com.angcyo.widget.image
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
@@ -15,6 +14,7 @@ import com.angcyo.widget.R
 import com.angcyo.widget.base.drawRect
 import com.angcyo.widget.base.viewRect
 import com.angcyo.widget.drawable.DslAttrBadgeDrawable
+import com.angcyo.widget.text.IBadgeView
 
 /**
  *
@@ -23,7 +23,7 @@ import com.angcyo.widget.drawable.DslAttrBadgeDrawable
  * @date 2020/01/20
  */
 
-open class DslImageView : ShapeImageView {
+open class DslImageView : ShapeImageView, IBadgeView {
 
     /**点击的时候, 是否显示蒙层*/
     var showTouchMask: Boolean = true
@@ -42,7 +42,7 @@ open class DslImageView : ShapeImageView {
     var _isTouchHold = false
 
     /**角标绘制*/
-    var dslBadeDrawable = DslAttrBadgeDrawable()
+    override var dslBadeDrawable = DslAttrBadgeDrawable()
 
     constructor(context: Context) : super(context) {
         initAttribute(context, null)
@@ -108,7 +108,6 @@ open class DslImageView : ShapeImageView {
             initAttribute(context, attributeSet)
             callback = this@DslImageView
             dslGravity.gravityRelativeCenter = false
-            gradientSolidColor = Color.RED
         }
     }
 

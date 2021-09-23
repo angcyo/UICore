@@ -40,7 +40,7 @@ open class DslAttrBadgeDrawable : DslBadgeDrawable() {
         )
         badgeOffsetX = typedArray.getDimensionPixelOffset(
             R.styleable.DslAttrBadgeDrawable_r_badge_offset_x,
-            2 * dpi
+            badgeOffsetX
         )
         badgeCircleRadius = typedArray.getDimensionPixelOffset(
             R.styleable.DslAttrBadgeDrawable_r_badge_circle_radius,
@@ -53,7 +53,7 @@ open class DslAttrBadgeDrawable : DslBadgeDrawable() {
         cornerRadius(badgeRadius.toFloat())
         badgeOffsetY = typedArray.getDimensionPixelOffset(
             R.styleable.DslAttrBadgeDrawable_r_badge_offset_y,
-            2 * dpi
+            badgeOffsetY
         )
         badgePaddingLeft = typedArray.getDimensionPixelOffset(
             R.styleable.DslAttrBadgeDrawable_r_badge_padding_left,
@@ -93,12 +93,12 @@ open class DslAttrBadgeDrawable : DslBadgeDrawable() {
 
         badgeCircleOffsetX = typedArray.getDimensionPixelOffset(
             R.styleable.DslAttrBadgeDrawable_r_badge_circle_offset_x,
-            badgeOffsetX
+            badgeCircleOffsetX
         )
 
         badgeCircleOffsetY = typedArray.getDimensionPixelOffset(
             R.styleable.DslAttrBadgeDrawable_r_badge_circle_offset_y,
-            badgeOffsetY
+            badgeCircleOffsetY
         )
         typedArray.recycle()
         super.initAttribute(context, attributeSet)

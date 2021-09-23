@@ -70,6 +70,11 @@
         <item name="android:textColor">@color/text_general_color</item>
     </style>
 
+    <style name="LibDesTextStyle" parent="LibMainTextStyle">
+        <item name="android:textSize">@dimen/text_body_size</item>
+        <item name="android:textColor">@color/text_sub_color</item>
+    </style>
+
     <style name="LibSubTextStyle" parent="LibBodyTextStyle">
         <item name="android:textSize">@dimen/text_assist_size</item>
         <item name="android:textColor">@color/text_sub_color</item>

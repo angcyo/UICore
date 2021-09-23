@@ -1,0 +1,46 @@
+package com.angcyo.item.style
+
+import com.angcyo.dsladapter.item.IDslItemConfig
+import com.angcyo.item.R
+import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.text.IBadgeView
+
+/**
+ * 角标文本[BadgeTextView]item
+ * Email:angcyo@126.com
+ * @author angcyo
+ * @date 2021/09/23
+ * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
+ */
+interface IBadgeItem : IAutoInitItem {
+
+    var badgeItemConfig: BadgeItemConfig
+
+    /**初始化*/
+    fun initBadgeItem(itemHolder: DslViewHolder) {
+        itemHolder.view(badgeItemConfig.itemBadgeViewId)?.apply {
+            if (this is IBadgeView) {
+                dslBadeDrawable.apply {
+                    drawBadge = true
+                    badgeText = badgeItemConfig.itemBadgeText
+                    requestLayout()
+                }
+            }
+        }
+    }
+}
+
+var IBadgeItem.itemBadgeText: String?
+    get() = badgeItemConfig.itemBadgeText
+    set(value) {
+        badgeItemConfig.itemBadgeText = value
+    }
+
+
+class BadgeItemConfig : IDslItemConfig {
+
+    var itemBadgeViewId: Int = R.id.lib_badge_view
+
+    /**[com.angcyo.drawable.text.DslBadgeDrawable.badgeText]*/
+    var itemBadgeText: String? = null
+}

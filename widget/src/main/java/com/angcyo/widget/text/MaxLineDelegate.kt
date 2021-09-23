@@ -3,7 +3,6 @@ package com.angcyo.widget.text
 import android.text.*
 import android.text.style.CharacterStyle
 import android.widget.TextView
-import com.angcyo.library.L
 import com.angcyo.library.ex.clearSpans
 import com.angcyo.library.ex.undefined_color
 import com.angcyo.widget.span.DslDrawableSpan
@@ -51,14 +50,17 @@ class MaxLineDelegate {
 
     var installSpanClickMethod: Boolean = false
 
+    val isEnableMaxShowLine: Boolean
+        get() = maxShowLine > 0
+
     /**多行折叠检查*/
     fun checkMaxShowLine(textView: TextView) {
-        if (maxShowLine > 0 && installSpanClickMethod) {
+        if (isEnableMaxShowLine && installSpanClickMethod) {
             SpanClickMethod.install(textView)
         }
 
         val layout: Layout? = textView.layout
-        if (maxShowLine > 0 && layout != null) {
+        if (isEnableMaxShowLine && layout != null) {
             val lines = layout.lineCount
             if (lines > 0) {
                 if (lines > maxShowLine) {

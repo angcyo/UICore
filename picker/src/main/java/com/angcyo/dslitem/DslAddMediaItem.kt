@@ -2,8 +2,6 @@ package com.angcyo.dslitem
 
 import androidx.fragment.app.Fragment
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.library.model.LoaderMedia
-import com.angcyo.loader.LoaderConfig
 import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
 
@@ -22,9 +20,11 @@ open class DslAddMediaItem : DslAdapterItem(), IPickerMediaItem {
         set(value) {
             field = value
             if (value) {
-                itemMediaSelectorConfig.selectorMode = MediaSelectorConfig.MODE_TAKE
+                pickerMediaItemConfig.itemMediaSelectorConfig.selectorMode =
+                    MediaSelectorConfig.MODE_TAKE
             } else {
-                itemMediaSelectorConfig.selectorMode = MediaSelectorConfig.MODE_PICKER
+                pickerMediaItemConfig.itemMediaSelectorConfig.selectorMode =
+                    MediaSelectorConfig.MODE_PICKER
             }
         }
 
@@ -34,20 +34,7 @@ open class DslAddMediaItem : DslAdapterItem(), IPickerMediaItem {
 
     var itemMaxRecordTime: Int = 15
 
-    override var itemMediaSelectorConfig: MediaSelectorConfig = MediaSelectorConfig()
-
-    override var itemLoaderConfig: LoaderConfig = LoaderConfig()
-
-    override var itemUpdateLoaderConfig: (LoaderConfig) -> Unit = {
-
-    }
-    override var itemTakeResult: (LoaderMedia?) -> Unit = {
-
-    }
-    override var itemPickerResult: (List<LoaderMedia>?) -> Unit = {
-
-    }
-    override var itemPickerMediaList: MutableList<LoaderMedia> = mutableListOf()
+    override var pickerMediaItemConfig: PickerMediaItemConfig = PickerMediaItemConfig()
 
     override var itemFragment: Fragment? = null
 
@@ -55,8 +42,8 @@ open class DslAddMediaItem : DslAdapterItem(), IPickerMediaItem {
         itemLayoutId = R.layout.dsl_add_media_item
 
         itemClick = {
-            itemMediaSelectorConfig.minRecordTime = itemMinRecordTime
-            itemMediaSelectorConfig.maxRecordTime = itemMaxRecordTime
+            pickerMediaItemConfig.itemMediaSelectorConfig.minRecordTime = itemMinRecordTime
+            pickerMediaItemConfig.itemMediaSelectorConfig.maxRecordTime = itemMaxRecordTime
 
             startSelectorMedia()
         }

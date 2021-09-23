@@ -40,9 +40,6 @@ class DslLastTextItem : DslAdapterItem(), ITextItem {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
-
-        //初始化
-        initTextItem(itemHolder)
     }
 
 }

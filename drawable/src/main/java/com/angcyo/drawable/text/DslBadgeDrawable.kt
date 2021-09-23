@@ -57,8 +57,8 @@ open class DslBadgeDrawable : DslGradientDrawable() {
     var badgeCircleOffsetY: Int = 0
 
     /**额外偏移距离, 会根据[Gravity]自动取负值*/
-    var badgeOffsetX: Int = 0
-    var badgeOffsetY: Int = 0
+    var badgeOffsetX: Int = 2 * dpi
+    var badgeOffsetY: Int = 2 * dpi
 
     /**文本偏移*/
     var badgeTextOffsetX: Int = 0
@@ -145,7 +145,7 @@ open class DslBadgeDrawable : DslGradientDrawable() {
             val textHeight = textPaint.textHeight()
 
             val drawHeight = if (isCircle) {
-                badgeCircleRadius.toFloat()
+                badgeCircleRadius.toFloat() * 2
             } else {
                 val height = textHeight + badgePaddingTop + badgePaddingBottom
                 if (badgeMinHeight > 0) {
@@ -156,7 +156,7 @@ open class DslBadgeDrawable : DslGradientDrawable() {
             }
 
             val drawWidth = if (isCircle) {
-                badgeCircleRadius.toFloat()
+                badgeCircleRadius.toFloat() * 2
             } else {
                 val width = textWidth + badgePaddingLeft + badgePaddingRight
                 if (badgeMinWidth == -1) {
@@ -259,20 +259,20 @@ open class DslBadgeDrawable : DslGradientDrawable() {
 
     override fun getIntrinsicWidth(): Int {
         val width = if (isCircle) {
-            badgeCircleRadius * 2
+            badgeCircleRadius * 2 + badgeCircleOffsetX
         } else if (badgeAutoCircle && badgeText?.length == 1) {
-            max(maxWidth, maxHeight)
+            max(maxWidth, maxHeight) + badgeCircleOffsetX
         } else {
-            maxWidth
+            maxWidth + badgeOffsetX
         }
         return max(badgeMinWidth, width)
     }
 
     override fun getIntrinsicHeight(): Int {
         val height = if (isCircle) {
-            badgeCircleRadius * 2
+            badgeCircleRadius * 2 + badgeCircleOffsetY
         } else if (badgeAutoCircle && badgeText?.length == 1) {
-            max(maxWidth, maxHeight)
+            max(maxWidth, maxHeight) + badgeCircleOffsetY
         } else {
             maxHeight
         }

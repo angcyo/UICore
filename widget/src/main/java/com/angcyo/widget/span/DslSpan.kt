@@ -10,6 +10,7 @@ import android.view.Gravity
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import com.angcyo.library.ex.*
+import com.angcyo.widget.R
 import kotlin.math.max
 
 /**
@@ -290,13 +291,14 @@ data class DslSpanConfig(
 /**快速绘制一个轻提示, 边框*/
 fun DslSpan.drawableTipBorder(
     text: CharSequence? = null,
-    borderColor: Int = "#0EC300".toColorInt(),
+    borderColor: Int = _color(R.color.colorAccent), // "#0EC300".toColorInt(),
     solidColor: Int = Color.WHITE,
+    radius: Float = 10 * dp,
     action: DslDrawableSpan.() -> Unit = {}
 ): DslSpan {
     return drawable(text) {
         gradientSolidColor = solidColor
-        gradientRadius = 10 * dp
+        gradientRadius = radius
         textSize = 10 * dp
         textGravity = Gravity.CENTER
         textColor = borderColor

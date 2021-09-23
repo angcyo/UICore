@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/lib_bg_selector">
+
+    <com.angcyo.glide.GlideImageView
+        android:id="@+id/lib_image_view"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginLeft="@dimen/lib_padding_left"
+        android:layout_marginTop="@dimen/lib_xhdpi"
+        android:layout_marginBottom="@dimen/lib_xhdpi"
+        android:scaleType="centerCrop"
+        android:src="@color/lib_image_placeholder_white_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:r_image_radius="@dimen/lib_radius_common2" />
+
+    <com.angcyo.widget.text.BadgeTextView
+        android:id="@+id/lib_badge_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintCircle="@id/lib_image_view"
+        app:layout_constraintCircleAngle="45"
+        app:layout_constraintCircleRadius="28dp"
+        tools:r_badge_text="" />
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_text_view"
+        style="@style/LibTitleTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/lib_hdpi"
+        app:layout_constraintBottom_toTopOf="@id/lib_des_view"
+        app:layout_constraintLeft_toRightOf="@id/lib_image_view"
+        app:layout_constraintRight_toLeftOf="@id/lib_time_view"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="公告" />
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_des_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/lib_padding_left"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="@color/text_sub_color"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/lib_text_view"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lib_text_view"
+        tools:text="您有一条新的未读公告!您有一条新的未读公告!您有一条新的未读公告!您有一条新的未读公告!" />
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_time_view"
+        style="@style/LibSubTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/lib_padding_left"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        app:layout_constraintBottom_toBottomOf="@id/lib_text_view"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/lib_text_view"
+        tools:text="2021-9-23" />
+
+    <View
+        android:id="@+id/lib_line_view"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/lib_line_px"
+        android:background="@color/lib_line"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/lib_text_view"
+        app:layout_constraintRight_toRightOf="parent" />
+
+</com.angcyo.widget.layout.RConstraintLayout>

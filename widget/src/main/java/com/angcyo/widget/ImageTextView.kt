@@ -13,6 +13,7 @@ import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.base.drawCenterX
 import com.angcyo.widget.drawable.DslAttrBadgeDrawable
+import com.angcyo.widget.text.IBadgeView
 import kotlin.math.max
 
 /**
@@ -23,7 +24,7 @@ import kotlin.math.max
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 class ImageTextView(context: Context, attributeSet: AttributeSet? = null) :
-    AppCompatImageView(context, attributeSet) {
+    AppCompatImageView(context, attributeSet), IBadgeView {
 
     /**需要绘制显示的文本*/
     var showText: String? = null
@@ -65,7 +66,7 @@ class ImageTextView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     /**角标绘制*/
-    var dslBadeDrawable = DslAttrBadgeDrawable()
+    override var dslBadeDrawable = DslAttrBadgeDrawable()
 
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.ImageTextView)

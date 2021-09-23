@@ -1,9 +1,10 @@
 package com.angcyo.item
 
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.item.style.DesItemConfig
+import com.angcyo.item.style.IDesItem
 import com.angcyo.item.style.ITextItem
 import com.angcyo.item.style.TextItemConfig
-import com.angcyo.item.style.TextStyleConfig
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -13,19 +14,11 @@ import com.angcyo.widget.DslViewHolder
  * @date 2020/04/23
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-open class DslTextItem : DslAdapterItem(), ITextItem {
+open class DslTextItem : DslAdapterItem(), ITextItem, IDesItem {
 
-    override var textItemConfig: TextItemConfig = TextItemConfig()
+    override var textItemConfig = TextItemConfig()
 
-    /**文本*/
-    var itemDes: CharSequence? = null
-        set(value) {
-            field = value
-            itemDesStyle.text = value
-        }
-
-    /**统一样式配置*/
-    var itemDesStyle = TextStyleConfig()
+    override var desItemConfig = DesItemConfig()
 
     init {
         itemLayoutId = R.layout.dsl_text_item
@@ -38,16 +31,5 @@ open class DslTextItem : DslAdapterItem(), ITextItem {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
-
-        initTextItem(itemHolder)
-
-        itemHolder.gone(R.id.lib_des_view, itemDes == null)
-        itemHolder.tv(R.id.lib_des_view)?.apply {
-            itemDesStyle.updateStyle(this)
-        }
-    }
-
-    open fun configDesStyle(action: TextStyleConfig.() -> Unit) {
-        itemDesStyle.action()
     }
 }

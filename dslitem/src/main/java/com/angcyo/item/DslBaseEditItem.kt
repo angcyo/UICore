@@ -36,8 +36,6 @@ open class DslBaseEditItem : DslBaseLabelItem(), IEditItem {
         adapterItem: DslAdapterItem
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem)
-
-        initEditItem(itemHolder)
     }
 
     override fun onItemViewDetachedToWindow(itemHolder: DslViewHolder, itemPosition: Int) {

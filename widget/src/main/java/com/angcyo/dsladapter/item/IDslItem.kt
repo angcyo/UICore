@@ -2,6 +2,7 @@ package com.angcyo.dsladapter.item
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.widget.DslViewHolder
 
 /**
  * 空实现, 方便查找实现类
@@ -11,6 +12,16 @@ import com.angcyo.dsladapter.DslAdapterItem
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 interface IDslItem {
+
+    /**统一初始化入口*/
+    fun initItemConfig(
+        itemHolder: DslViewHolder,
+        itemPosition: Int,
+        adapterItem: DslAdapterItem,
+        payloads: List<Any>
+    ) {
+        //default
+    }
 
     /**是否是占满宽度的item*/
     fun isFullWidthItem(item: DslAdapterItem): Boolean {
@@ -23,4 +34,10 @@ interface IDslItem {
         return false
     }
 
+}
+
+/**
+ * 基类, [IDslItem]的配置类
+ */
+interface IDslItemConfig {
 }

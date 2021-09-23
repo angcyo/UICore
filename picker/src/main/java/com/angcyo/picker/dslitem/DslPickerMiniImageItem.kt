@@ -3,7 +3,7 @@ package com.angcyo.picker.dslitem
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.margin
 import com.angcyo.glide.giv
-import com.angcyo.glide.item.DslImageItem
+import com.angcyo.item.DslImageItem
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.model.LoaderMedia
@@ -32,7 +32,7 @@ class DslPickerMiniImageItem : DslImageItem() {
     init {
         itemVideoCoverTipDrawable = -1
         margin(8 * dpi)
-        onConfigImageView = {
+        imageItemConfig.onConfigImageView = {
             it.drawBorder = itemIsSelected
             it.borderColor = _color(R.color.picker_button_accent_bg_color)
         }
@@ -44,7 +44,7 @@ class DslPickerMiniImageItem : DslImageItem() {
         if (data is LoaderMedia) {
             //显示不下
             //itemMediaDuration = value.duration
-            itemLoadUri = data.loadUri()
+            imageItemConfig.itemLoadUri = data.loadUri()
             itemMimeType = data.mimeType()
         }
     }

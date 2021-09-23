@@ -1,12 +1,11 @@
-package com.angcyo.glide.item
+package com.angcyo.item
 
-import android.net.Uri
 import android.view.View
 import androidx.annotation.DrawableRes
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.glide.DslGlide
-import com.angcyo.glide.GlideImageView
 import com.angcyo.glide.R
+import com.angcyo.item.style.IImageItem
+import com.angcyo.item.style.ImageItemConfig
 import com.angcyo.library.ex.*
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.span.span
@@ -51,13 +50,7 @@ open class DslImageItem : DslAdapterItem(), IImageItem {
 
     var itemDeleteClick: (View) -> Unit = {}
 
-    override var itemImageViewId: Int = R.id.lib_image_view
-    override var itemCheckGifType: Boolean = true
-    override var itemLoadUri: Uri? = null
-    override var onConfigGlide: (DslGlide) -> Unit = {
-    }
-    override var onConfigImageView: (GlideImageView) -> Unit = {
-    }
+    override var imageItemConfig: ImageItemConfig = ImageItemConfig()
 
     init {
         itemLayoutId = R.layout.dsl_image_item
@@ -71,14 +64,14 @@ open class DslImageItem : DslAdapterItem(), IImageItem {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
         //更新媒体
-        initImageItem(itemHolder, payloads)
+        //initImageItem(itemHolder, payloads)
 
         //audio video tip
         itemHolder.gone(R.id.lib_tip_image_view)
         itemHolder.gone(R.id.lib_duration_view)
 
         //mimeType
-        val mimeType = itemMimeType ?: itemLoadUri?.loadUrl()?.mimeType()
+        val mimeType = itemMimeType ?: imageItemConfig.itemLoadUri?.loadUrl()?.mimeType()
 
         val isVideo = mimeType?.isVideoMimeType() == true
         val isAudio = mimeType?.isAudioMimeType() == true

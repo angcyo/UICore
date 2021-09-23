@@ -1,6 +1,5 @@
 package com.angcyo.item.style
 
-import com.angcyo.dsladapter.item.IDslItem
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
 import com.angcyo.library.ex._dimen
@@ -14,7 +13,7 @@ import com.angcyo.widget.DslViewHolder
  * @date 2021/09/18
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-interface ITextItem : IDslItem {
+interface ITextItem : IAutoInitItem {
 
     /**配置类
      * */
@@ -43,6 +42,12 @@ interface ITextItem : IDslItem {
         }
     }
 }
+
+var ITextItem.itemText: CharSequence?
+    get() = textItemConfig.itemText
+    set(value) {
+        textItemConfig.itemText = value
+    }
 
 class TextItemConfig : IDslItemConfig {
 

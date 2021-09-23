@@ -1,7 +1,6 @@
 package com.angcyo.item.style
 
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.dsladapter.item.IDslItem
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.DslBaseEditItem
 import com.angcyo.item.R
@@ -17,7 +16,7 @@ import com.angcyo.widget.base.restoreSelection
  * @date 2021/06/28
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-interface IEditItem : IDslItem {
+interface IEditItem : IAutoInitItem {
 
     var editItemConfig: EditItemConfig
 
@@ -62,6 +61,12 @@ interface IEditItem : IDslItem {
         editItemConfig.itemEditTextStyle.action()
     }
 }
+
+var IEditItem.itemEditText: CharSequence?
+    get() = editItemConfig.itemEditText
+    set(value) {
+        editItemConfig.itemEditText = value
+    }
 
 class EditItemConfig : IDslItemConfig {
 

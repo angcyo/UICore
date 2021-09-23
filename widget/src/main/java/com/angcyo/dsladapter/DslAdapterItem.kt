@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.angcyo.dsladapter.SwipeMenuHelper.Companion.SWIPE_MENU_TYPE_DEFAULT
 import com.angcyo.dsladapter.SwipeMenuHelper.Companion.SWIPE_MENU_TYPE_FLOWING
+import com.angcyo.dsladapter.item.IDslItem
 import com.angcyo.library.L
 import com.angcyo.library.UndefinedDrawable
 import com.angcyo.library.ex.className
@@ -214,6 +215,7 @@ open class DslAdapterItem : LifecycleOwner {
         _initItemSize(itemHolder)
         _initItemPadding(itemHolder)
         _initItemListener(itemHolder)
+        _initItemConfig(itemHolder, itemPosition, adapterItem, payloads)
 
         onItemBind(itemHolder, itemPosition, adapterItem)
     }
@@ -324,6 +326,17 @@ open class DslAdapterItem : LifecycleOwner {
             itemHolder.itemView.isLongClickable = false
         } else {
             itemHolder.itemView.setOnLongClickListener(_longClickListener)
+        }
+    }
+
+    open fun _initItemConfig(
+        itemHolder: DslViewHolder,
+        itemPosition: Int,
+        adapterItem: DslAdapterItem,
+        payloads: List<Any>
+    ) {
+        if (this is IDslItem) {
+            initItemConfig(itemHolder, itemPosition, adapterItem, payloads)
         }
     }
 

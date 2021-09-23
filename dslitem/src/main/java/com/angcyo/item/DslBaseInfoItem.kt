@@ -57,9 +57,6 @@ open class DslBaseInfoItem : DslAdapterItem(), ITextInfoItem {
 
         itemHolder.itemView.setRBgDrawable(itemRBackgroundDrawable)
 
-        //文本信息
-        initInfoTextItem(itemHolder)
-
         //扩展布局
         if (itemExtendLayoutId != undefined_res) {
             var inflateLayoutId = undefined_res //已经inflate的布局id
