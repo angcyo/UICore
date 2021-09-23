@@ -11,6 +11,7 @@
         android:id="@+id/lib_tab_image_view"
         android:layout_width="@dimen/lib_tab_icon_size"
         android:layout_height="@dimen/lib_tab_icon_size"
+        android:scaleType="fitCenter"
         tools:srcCompat="@drawable/lib_ic_file" />
 
     <androidx.appcompat.widget.AppCompatTextView

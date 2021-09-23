@@ -257,10 +257,7 @@ fun DslAdapterItem.isItemAttached(): Boolean {
 
 /**是否是占满宽度的item*/
 fun DslAdapterItem.isFullWidthItem(): Boolean {
-    if (itemSpanCount == DslAdapterItem.FULL_ITEM) {
-        return true
-    }
-    return isInLinearLayoutManager()
+    return isInLinearLayoutManager() || itemSpanCount == DslAdapterItem.FULL_ITEM
 }
 
 fun DslAdapterItem.isInLinearLayoutManager(): Boolean {

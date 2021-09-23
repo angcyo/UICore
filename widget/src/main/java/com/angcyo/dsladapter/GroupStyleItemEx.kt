@@ -56,9 +56,6 @@ fun DslAdapterItem.initGridOffset(outRect: Rect, left: Int, top: Int, right: Int
         itemGroupParams.apply {
             if (isFullWidthItem()) {
                 //全屏宽度
-                if (isInLinearLayoutManager()) {
-                    outRect.top = top
-                }
                 outRect.left = left
                 outRect.right = right
                 if (isOnlyOne()) {
@@ -68,6 +65,10 @@ fun DslAdapterItem.initGridOffset(outRect: Rect, left: Int, top: Int, right: Int
                     outRect.top = top
                 } else if (isLastPosition() || isGroupLastRow()) {
                     outRect.bottom = bottom
+                } else {
+                    if (isInLinearLayoutManager()) {
+                        outRect.bottom = bottom
+                    }
                 }
             } else {
                 if (isEdgeLeft()) {
@@ -133,6 +134,36 @@ fun DslAdapterItem.initGridInset(outRect: Rect, left: Int, top: Int, right: Int,
                 if (isEdgeBottom()) {
                     outRect.bottom = bottom
                 }
+            }
+        }
+    }
+}
+
+fun DslAdapterItem.initLinearOffset(insert: Int = _dimen(R.dimen.lib_padding_left)) {
+    initLinearOffset(insert, insert, insert, insert)
+}
+
+/**自动设置*/
+fun DslAdapterItem.initLinearOffset(left: Int, top: Int, right: Int, bottom: Int) {
+    onSetItemOffset = {
+        initLinearOffset(it, left, top, right, bottom)
+    }
+}
+
+/**RecyclerView内边距插入, item之间不处理*/
+fun DslAdapterItem.initLinearOffset(outRect: Rect, left: Int, top: Int, right: Int, bottom: Int) {
+    if (onSetItemOffset == null) {
+        onSetItemOffset = {
+            initLinearOffset(it, left, top, right, bottom)
+        }
+    } else {
+        outRect.set(0, 0, 0, 0)
+        itemGroupParams.apply {
+            outRect.top = top
+            outRect.left = left
+            outRect.right = right
+            if (isOnlyOne() || isLastPosition() || isGroupLastRow()) {
+                outRect.bottom = bottom
             }
         }
     }
