@@ -40,5 +40,8 @@ interface IAutoInitItem : IDslItem {
         if (this is ITextInfoItem) {
             initInfoTextItem(itemHolder)
         }
+        if (this is IBodyItem) {
+            initBodyItem(itemHolder)
+        }
     }
 }

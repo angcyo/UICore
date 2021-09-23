@@ -1,7 +1,7 @@
 package com.angcyo.dsladapter.item
 
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.isFullWidthItem
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -25,15 +25,8 @@ interface IDslItem {
 
     /**是否是占满宽度的item*/
     fun isFullWidthItem(item: DslAdapterItem): Boolean {
-        if (item.itemSpanCount == DslAdapterItem.FULL_ITEM) {
-            return true
-        }
-        if (item.itemDslAdapter?._recyclerView?.layoutManager is LinearLayoutManager) {
-            return true
-        }
-        return false
+        return item.isFullWidthItem()
     }
-
 }
 
 /**

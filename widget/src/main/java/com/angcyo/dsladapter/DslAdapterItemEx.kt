@@ -3,6 +3,7 @@ package com.angcyo.dsladapter
 import android.graphics.Color
 import androidx.annotation.LayoutRes
 import androidx.lifecycle.Lifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.dsladapter.data.UpdateDataConfig
 import com.angcyo.dsladapter.data.updateData
@@ -252,6 +253,21 @@ fun DslAdapterItem.itemViewHolder(recyclerView: RecyclerView?): DslViewHolder? {
 
 fun DslAdapterItem.isItemAttached(): Boolean {
     return lifecycle.currentState == Lifecycle.State.RESUMED
+}
+
+/**是否是占满宽度的item*/
+fun DslAdapterItem.isFullWidthItem(): Boolean {
+    if (itemSpanCount == DslAdapterItem.FULL_ITEM) {
+        return true
+    }
+    return isInLinearLayoutManager()
+}
+
+fun DslAdapterItem.isInLinearLayoutManager(): Boolean {
+    if (itemDslAdapter?._recyclerView?.layoutManager is LinearLayoutManager) {
+        return true
+    }
+    return false
 }
 
 /**提供和[DslAdapter]相同的使用方式, 快速创建[DslAdapterItem]集合*/
