@@ -26,12 +26,7 @@ fun DslAdapterItem.initGridOffsetVertical(insert: Int) {
 }
 
 /**自动设置*/
-fun DslAdapterItem.initGridOffset(
-    left: Int,
-    top: Int,
-    right: Int,
-    bottom: Int
-) {
+fun DslAdapterItem.initGridOffset(left: Int, top: Int, right: Int, bottom: Int) {
     onSetItemOffset = {
         initGridOffset(it, left, top, right, bottom)
     }
@@ -42,10 +37,7 @@ fun DslAdapterItem.initGridOffset(outRect: Rect, insert: Int) {
     initGridOffset(outRect, insert, insert, insert, insert)
 }
 
-fun DslAdapterItem.initGridOffsetHorizontal(
-    outRect: Rect,
-    insert: Int
-) {
+fun DslAdapterItem.initGridOffsetHorizontal(outRect: Rect, insert: Int) {
     initGridOffset(outRect, insert, 0, insert, 0)
 }
 
@@ -54,13 +46,7 @@ fun DslAdapterItem.initGridOffsetVertical(outRect: Rect, insert: Int) {
 }
 
 /**需要在[onSetItemOffset]中调用此方法*/
-fun DslAdapterItem.initGridOffset(
-    outRect: Rect,
-    left: Int,
-    top: Int,
-    right: Int,
-    bottom: Int
-) {
+fun DslAdapterItem.initGridOffset(outRect: Rect, left: Int, top: Int, right: Int, bottom: Int) {
     if (onSetItemOffset == null) {
         onSetItemOffset = {
             initGridOffset(it, left, top, right, bottom)
@@ -73,6 +59,57 @@ fun DslAdapterItem.initGridOffset(
                 if (isInLinearLayoutManager()) {
                     outRect.top = top
                 }
+                outRect.left = left
+                outRect.right = right
+                if (isOnlyOne()) {
+                    outRect.top = top
+                    outRect.bottom = bottom
+                } else if (isFirstPosition() || isGroupFirstRow()) {
+                    outRect.top = top
+                } else if (isLastPosition() || isGroupLastRow()) {
+                    outRect.bottom = bottom
+                }
+            } else {
+                if (isEdgeLeft()) {
+                    outRect.left = left
+                }
+                if (isEdgeTop()) {
+                    outRect.top = top
+                }
+                if (isEdgeRight()) {
+                    outRect.right = right
+                }
+                if (isEdgeBottom()) {
+                    outRect.bottom = bottom
+                }
+            }
+        }
+    }
+}
+
+/**网格四边插入偏移量*/
+fun DslAdapterItem.initGridInset(insert: Int = _dimen(R.dimen.lib_padding_left)) {
+    initGridInset(insert, insert, insert, insert)
+}
+
+/**自动设置*/
+fun DslAdapterItem.initGridInset(left: Int, top: Int, right: Int, bottom: Int) {
+    onSetItemOffset = {
+        initGridInset(it, left, top, right, bottom)
+    }
+}
+
+/**RecyclerView内边距插入, item之间不处理*/
+fun DslAdapterItem.initGridInset(outRect: Rect, left: Int, top: Int, right: Int, bottom: Int) {
+    if (onSetItemOffset == null) {
+        onSetItemOffset = {
+            initGridOffset(it, left, top, right, bottom)
+        }
+    } else {
+        outRect.set(0, 0, 0, 0)
+        itemGroupParams.apply {
+            if (isFullWidthItem()) {
+                //全屏宽度
                 outRect.left = left
                 outRect.right = right
                 if (isOnlyOne()) {

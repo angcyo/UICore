@@ -13,6 +13,7 @@ import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.Lifecycle
 import com.angcyo.DslAHelper
 import com.angcyo.base.getAllValidityFragment
+import com.angcyo.behavior.HideTitleBarBehavior
 import com.angcyo.behavior.placeholder.TitleBarPlaceholderBehavior
 import com.angcyo.behavior.refresh.IRefreshBehavior
 import com.angcyo.behavior.refresh.IRefreshContentBehavior
@@ -274,17 +275,34 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
         }
     }
 
+    /**是否需要激活隐藏标题栏的行为*/
+    var enableTitleBarHideBehavior = false
+
+    /**是否开启内容边界回弹*/
+    var enableContentBounds = true
+
     /**根据[child]创建对应的[Behavior]*/
     open fun onCreateBehavior(child: View): CoordinatorLayout.Behavior<*>? {
         return child.behavior() ?: when (child.id) {
-            //HideTitleBarBehavior(fContext())
-            R.id.lib_title_wrap_layout -> TitleBarPlaceholderBehavior(fContext())
+            R.id.lib_title_wrap_layout -> if (enableTitleBarHideBehavior) {
+                HideTitleBarBehavior(fContext()).apply {
+                    ignoreStatusBar = true
+                }
+            } else {
+                TitleBarPlaceholderBehavior(fContext())
+            }
             R.id.lib_content_wrap_layout -> RefreshContentBehavior(fContext())
             R.id.lib_refresh_wrap_layout -> if (enableRefresh) {
-                ArcLoadingHeaderBehavior(fContext())
+                ArcLoadingHeaderBehavior(fContext()).apply {
+                    enableTopOver = enableContentBounds
+                    enableBottomOver = enableContentBounds
+                }
             } else {
                 _vh.gone(R.id.lib_refresh_wrap_layout)
-                RefreshEffectBehavior(fContext())
+                RefreshEffectBehavior(fContext()).apply {
+                    enableTopOver = enableContentBounds
+                    enableBottomOver = enableContentBounds
+                }
             }
             else -> null
         }

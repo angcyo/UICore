@@ -113,12 +113,16 @@ open class RefreshContentBehavior(
         child: View,
         layoutDirection: Int
     ): Boolean {
+        return super.onLayoutChild(parent, child, layoutDirection)
+    }
+
+    override fun onLayoutAfter(parent: CoordinatorLayout, child: View, layoutDirection: Int) {
+        super.onLayoutAfter(parent, child, layoutDirection)
         behaviorOffsetTop = if (offsetTitleBarHeight) {
             titleBarPlaceholderBehavior?.getContentOffsetTop(this) ?: 0
         } else {
             0
         }
-        return super.onLayoutChild(parent, child, layoutDirection)
     }
 
     override fun onLayoutChildAfter(parent: CoordinatorLayout, child: View, layoutDirection: Int) {

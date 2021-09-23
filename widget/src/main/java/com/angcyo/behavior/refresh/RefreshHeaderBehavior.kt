@@ -29,6 +29,10 @@ open class RefreshHeaderBehavior(context: Context, attributeSet: AttributeSet? =
 
     override var _refreshBehaviorStatus: Int = STATUS_NORMAL
 
+    override var enableTopOver: Boolean = true
+
+    override var enableBottomOver: Boolean = true
+
     //为了阻尼效果的算法
     var _refreshEffectConfig = RefreshEffectConfig()
 

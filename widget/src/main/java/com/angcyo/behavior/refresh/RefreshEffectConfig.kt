@@ -15,12 +15,8 @@ import kotlin.math.absoluteValue
 open class RefreshEffectConfig : IRefreshBehavior {
 
     override var _refreshBehaviorStatus: Int = IRefreshBehavior.STATUS_NORMAL
-
-    /**顶部over效果*/
-    var enableTopOver: Boolean = true
-
-    /**底部over效果*/
-    var enableBottomOver: Boolean = true
+    override var enableTopOver: Boolean = true
+    override var enableBottomOver: Boolean = true
 
     /**输入dy, 输出修正后的dy*/
     var behaviorInterpolator: BehaviorInterpolator = object : BehaviorInterpolator {

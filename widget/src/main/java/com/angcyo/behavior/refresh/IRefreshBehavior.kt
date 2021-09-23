@@ -3,6 +3,7 @@ package com.angcyo.behavior.refresh
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.BaseScrollBehavior
+import com.angcyo.tablayout.clamp
 import com.angcyo.widget.base.offsetTopTo
 
 /**
@@ -28,6 +29,12 @@ interface IRefreshBehavior {
     /**刷新状态*/
     var _refreshBehaviorStatus: Int
 
+    /**顶部over效果*/
+    var enableTopOver: Boolean
+
+    /**底部over效果*/
+    var enableBottomOver: Boolean
+
     /**请调用此方法设置[_refreshBehaviorStatus]状态*/
     fun onSetRefreshBehaviorStatus(contentBehavior: BaseScrollBehavior<*>, newStatus: Int) {
         val old = _refreshBehaviorStatus
@@ -48,7 +55,11 @@ interface IRefreshBehavior {
 
     /**当内容滚动时, 界面需要处理的回调*/
     fun onContentScrollTo(contentBehavior: BaseScrollBehavior<*>, x: Int, y: Int, scrollType: Int) {
-        contentBehavior.childView?.offsetTopTo(y + contentBehavior.behaviorOffsetTop)
+        val min = if (enableBottomOver) Int.MIN_VALUE else 0
+        val max = if (enableTopOver || this is RefreshHeaderBehavior) Int.MAX_VALUE else 0
+
+        val top = clamp(y, min, max)
+        contentBehavior.childView?.offsetTopTo(top + contentBehavior.behaviorOffsetTop)
     }
 
     /**当内容over滚动时回调, 同样会触发[onContentScrollTo]*/
@@ -58,6 +69,15 @@ interface IRefreshBehavior {
         dy: Int,
         scrollType: Int
     ) {
+        if (dy > 0) {
+            if (!enableBottomOver) {
+                return
+            }
+        } else {
+            if (!enableTopOver) {
+                return
+            }
+        }
         contentBehavior.scrollBy(0, -dy, scrollType)
     }
 

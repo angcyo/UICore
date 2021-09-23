@@ -1,6 +1,7 @@
 package com.angcyo.core.fragment
 
 import android.os.Bundle
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
@@ -58,10 +59,17 @@ abstract class BaseTabFragment : BaseFragment() {
         @DrawableRes imageResId: Int
     ) {
         _fragmentList.add(fragment)
-        _vh.tab(R.id.lib_tab_layout)?.append(tabItemLayoutId) {
-            find<TextView>(R.id.lib_tab_text_view)?.text = text
-            find<ImageView>(R.id.lib_tab_image_view)?.setImageResource(imageResId)
-        }
+        _vh.tab(R.id.lib_tab_layout)?.appendTabItem(text, imageResId, tabItemLayoutId)
     }
+}
 
+fun ViewGroup.appendTabItem(
+    text: CharSequence,
+    @DrawableRes imageResId: Int = 0,
+    tabItemLayoutId: Int = R.layout.lib_tab_item_layout
+) {
+    append(tabItemLayoutId) {
+        find<TextView>(R.id.lib_tab_text_view)?.text = text
+        find<ImageView>(R.id.lib_tab_image_view)?.setImageResource(imageResId)
+    }
 }

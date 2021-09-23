@@ -6,6 +6,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.core.component.accessibility.*
 import com.angcyo.core.component.accessibility.action.a.*
+import com.angcyo.core.component.accessibility.action.a.ClickAction
 import com.angcyo.core.component.accessibility.parse.*
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
