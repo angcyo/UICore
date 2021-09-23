@@ -7,7 +7,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.ITextInfoItem
-import com.angcyo.item.style.TextStyleConfig
+import com.angcyo.item.style.TextInfoItemConfig
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.color
 import com.angcyo.library.ex.undefined_res
@@ -40,6 +40,8 @@ open class DslBaseInfoItem : DslAdapterItem(), ITextInfoItem {
     var itemExtendLayoutId: Int = undefined_res
 
     var itemRBackgroundDrawable: Drawable? = ColorDrawable(Color.WHITE)
+
+    override var textInfoItemConfig: TextInfoItemConfig = TextInfoItemConfig()
 
     init {
         itemLayoutId = R.layout.dsl_info_item
@@ -78,14 +80,4 @@ open class DslBaseInfoItem : DslAdapterItem(), ITextInfoItem {
             itemHolder.group(R.id.wrap_layout)?.removeAllViews()
         }
     }
-
-    override var itemInfoTextViewId: Int = R.id.lib_text_view
-
-    override var itemInfoText: CharSequence? = null
-        set(value) {
-            field = value
-            itemInfoTextStyle.text = value
-        }
-
-    override var itemInfoTextStyle: TextStyleConfig = TextStyleConfig()
 }

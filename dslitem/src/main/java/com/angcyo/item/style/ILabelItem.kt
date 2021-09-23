@@ -16,6 +16,21 @@ interface ILabelItem : IDslItem {
 
     /**统一样式配置*/
     var labelItemConfig: LabelItemConfig
+
+    /**初始化*/
+    fun initLabelItem(itemHolder: DslViewHolder) {
+        itemHolder.gone(
+            labelItemConfig.itemLabelTextViewId,
+            labelItemConfig.itemLabelTextStyle.text == null
+        )
+        itemHolder.tv(labelItemConfig.itemLabelTextViewId)?.apply {
+            labelItemConfig.itemLabelTextStyle.updateStyle(this)
+        }
+    }
+
+    fun configLabelTextStyle(action: TextStyleConfig.() -> Unit) {
+        labelItemConfig.itemLabelTextStyle.action()
+    }
 }
 
 class LabelItemConfig : IDslItemConfig {
@@ -31,19 +46,4 @@ class LabelItemConfig : IDslItemConfig {
 
     /**统一样式配置*/
     var itemLabelTextStyle: TextStyleConfig = TextStyleConfig()
-}
-
-/**初始化*/
-fun ILabelItem.initLabelItem(itemHolder: DslViewHolder) {
-    itemHolder.gone(
-        labelItemConfig.itemLabelTextViewId,
-        labelItemConfig.itemLabelTextStyle.text == null
-    )
-    itemHolder.tv(labelItemConfig.itemLabelTextViewId)?.apply {
-        labelItemConfig.itemLabelTextStyle.updateStyle(this)
-    }
-}
-
-fun ILabelItem.configLabelTextStyle(action: TextStyleConfig.() -> Unit) {
-    labelItemConfig.itemLabelTextStyle.action()
 }

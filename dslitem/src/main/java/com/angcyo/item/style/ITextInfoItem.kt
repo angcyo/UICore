@@ -1,6 +1,7 @@
 package com.angcyo.item.style
 
 import com.angcyo.dsladapter.item.IDslItem
+import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
 import com.angcyo.widget.DslViewHolder
 
@@ -13,24 +14,35 @@ import com.angcyo.widget.DslViewHolder
  */
 interface ITextInfoItem : IDslItem {
 
-    /**[R.id.lib_text_view]*/
-    var itemInfoTextViewId: Int
-
-    /**条目文本*/
-    var itemInfoText: CharSequence?
-
-    /**统一样式配置*/
-    var itemInfoTextStyle: TextStyleConfig
+    var textInfoItemConfig: TextInfoItemConfig
 
     /**初始化*/
     fun initInfoTextItem(itemHolder: DslViewHolder) {
-        itemHolder.gone(itemInfoTextViewId, itemInfoTextStyle.text == null)
-        itemHolder.tv(itemInfoTextViewId)?.apply {
-            itemInfoTextStyle.updateStyle(this)
+        itemHolder.gone(
+            textInfoItemConfig.itemInfoTextViewId,
+            textInfoItemConfig.itemInfoTextStyle.text == null
+        )
+        itemHolder.tv(textInfoItemConfig.itemInfoTextViewId)?.apply {
+            textInfoItemConfig.itemInfoTextStyle.updateStyle(this)
         }
     }
 
     fun configInfoTextStyle(action: TextStyleConfig.() -> Unit) {
-        itemInfoTextStyle.action()
+        textInfoItemConfig.itemInfoTextStyle.action()
     }
+}
+
+class TextInfoItemConfig : IDslItemConfig {
+    /**[R.id.lib_text_view]*/
+    var itemInfoTextViewId: Int = R.id.lib_text_view
+
+    /**条目文本*/
+    var itemInfoText: CharSequence? = null
+        set(value) {
+            field = value
+            itemInfoTextStyle.text = value
+        }
+
+    /**统一样式配置*/
+    var itemInfoTextStyle: TextStyleConfig = TextStyleConfig()
 }

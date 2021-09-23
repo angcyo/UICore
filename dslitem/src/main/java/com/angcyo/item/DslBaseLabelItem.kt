@@ -3,7 +3,6 @@ package com.angcyo.item
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.ILabelItem
 import com.angcyo.item.style.LabelItemConfig
-import com.angcyo.item.style.initLabelItem
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -15,7 +14,7 @@ import com.angcyo.widget.DslViewHolder
  */
 
 open class DslBaseLabelItem : DslAdapterItem(), ILabelItem {
-    
+
     override var labelItemConfig: LabelItemConfig = LabelItemConfig()
 
     init {

@@ -1,5 +1,6 @@
 package com.angcyo.item.form
 
+import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.style.IEditItem
 import com.angcyo.library.L
 
@@ -10,7 +11,7 @@ import com.angcyo.library.L
  * @date 2020/12/08
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class DslFormItemConfig {
+class DslFormItemConfig : IDslItemConfig {
 
     /**数据key*/
     var formKey: String? = null

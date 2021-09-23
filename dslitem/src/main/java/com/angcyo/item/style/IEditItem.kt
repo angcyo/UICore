@@ -24,6 +24,43 @@ interface IEditItem : IDslItem {
     fun onItemTextChange(text: CharSequence) {
         editItemConfig.itemTextChange?.invoke(text)
     }
+
+    /**初始化*/
+    fun initEditItem(itemHolder: DslViewHolder) {
+        itemHolder.ev(editItemConfig.itemEditTextViewId)?.apply {
+            editItemConfig.itemEditTextStyle.updateStyle(this)
+
+            clearListeners()
+
+            onTextChange {
+                editItemConfig._lastEditSelectionStart = selectionStart
+                editItemConfig._lastEditSelectionEnd = selectionEnd
+
+                editItemConfig.itemEditText = it
+            }
+
+            //放在最后监听, 防止首次setInputText, 就触发事件.
+            onTextChange(shakeDelay = editItemConfig.itemTextChangeShakeDelay) {
+                if (this is DslAdapterItem) {
+                    itemChanging = true
+                }
+                onItemTextChange(it)
+            }
+
+            restoreSelection(
+                editItemConfig._lastEditSelectionStart,
+                editItemConfig._lastEditSelectionEnd
+            )
+        }
+    }
+
+    fun clearEditListeners(itemHolder: DslViewHolder) {
+        itemHolder.ev(editItemConfig.itemEditTextViewId)?.clearListeners()
+    }
+
+    fun configEditTextStyle(action: EditStyleConfig.() -> Unit) {
+        editItemConfig.itemEditTextStyle.action()
+    }
 }
 
 class EditItemConfig : IDslItemConfig {
@@ -51,41 +88,4 @@ class EditItemConfig : IDslItemConfig {
     var _lastEditSelectionStart: Int = -1
 
     var _lastEditSelectionEnd: Int = -1
-}
-
-/**初始化*/
-fun IEditItem.initEditItem(itemHolder: DslViewHolder) {
-    itemHolder.ev(editItemConfig.itemEditTextViewId)?.apply {
-        editItemConfig.itemEditTextStyle.updateStyle(this)
-
-        clearListeners()
-
-        onTextChange {
-            editItemConfig._lastEditSelectionStart = selectionStart
-            editItemConfig._lastEditSelectionEnd = selectionEnd
-
-            editItemConfig.itemEditText = it
-        }
-
-        //放在最后监听, 防止首次setInputText, 就触发事件.
-        onTextChange(shakeDelay = editItemConfig.itemTextChangeShakeDelay) {
-            if (this is DslAdapterItem) {
-                itemChanging = true
-            }
-            onItemTextChange(it)
-        }
-
-        restoreSelection(
-            editItemConfig._lastEditSelectionStart,
-            editItemConfig._lastEditSelectionEnd
-        )
-    }
-}
-
-fun IEditItem.clearEditListeners(itemHolder: DslViewHolder) {
-    itemHolder.ev(editItemConfig.itemEditTextViewId)?.clearListeners()
-}
-
-fun IEditItem.configEditTextStyle(action: EditStyleConfig.() -> Unit) {
-    editItemConfig.itemEditTextStyle.action()
 }

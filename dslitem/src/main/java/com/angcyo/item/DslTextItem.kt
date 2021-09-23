@@ -4,7 +4,6 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.ITextItem
 import com.angcyo.item.style.TextItemConfig
 import com.angcyo.item.style.TextStyleConfig
-import com.angcyo.item.style.initTextItem
 import com.angcyo.widget.DslViewHolder
 
 /**

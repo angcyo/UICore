@@ -19,6 +19,29 @@ interface ITextItem : IDslItem {
     /**配置类
      * */
     var textItemConfig: TextItemConfig
+
+    /**初始化*/
+    fun initTextItem(itemHolder: DslViewHolder) {
+        //itemHolder.gone(itemTextViewId, itemTextStyle.text == null)
+        itemHolder.tv(textItemConfig.itemTextViewId)?.apply {
+            textItemConfig.itemTextStyle.updateStyle(this)
+        }
+    }
+
+    fun configTextStyle(action: TextStyleConfig.() -> Unit) {
+        textItemConfig.itemTextStyle.action()
+    }
+
+
+    /**加粗样式*/
+    fun boldStyle() {
+        configTextStyle {
+            textBold = true
+            if (textSize == undefined_float) {
+                textSize = _dimen(R.dimen.text_sub_size).toFloat()
+            }
+        }
+    }
 }
 
 class TextItemConfig : IDslItemConfig {
@@ -36,27 +59,4 @@ class TextItemConfig : IDslItemConfig {
     /**统一样式配置*/
     var itemTextStyle: TextStyleConfig = TextStyleConfig()
 
-}
-
-/**初始化*/
-fun ITextItem.initTextItem(itemHolder: DslViewHolder) {
-    //itemHolder.gone(itemTextViewId, itemTextStyle.text == null)
-    itemHolder.tv(textItemConfig.itemTextViewId)?.apply {
-        textItemConfig.itemTextStyle.updateStyle(this)
-    }
-}
-
-fun ITextItem.configTextStyle(action: TextStyleConfig.() -> Unit) {
-    textItemConfig.itemTextStyle.action()
-}
-
-
-/**加粗样式*/
-fun ITextItem.boldStyle() {
-    configTextStyle {
-        textBold = true
-        if (textSize == undefined_float) {
-            textSize = _dimen(R.dimen.text_sub_size).toFloat()
-        }
-    }
 }

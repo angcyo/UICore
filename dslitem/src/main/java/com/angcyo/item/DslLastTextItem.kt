@@ -3,7 +3,6 @@ package com.angcyo.item
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.ITextItem
 import com.angcyo.item.style.TextItemConfig
-import com.angcyo.item.style.initTextItem
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.isDebugType
 import com.angcyo.library.getAppVersionName

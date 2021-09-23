@@ -3,7 +3,6 @@ package com.angcyo.item
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.EditItemConfig
 import com.angcyo.item.style.IEditItem
-import com.angcyo.item.style.initEditItem
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clearListeners
 

@@ -3,7 +3,6 @@ package com.angcyo.item
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.ILabelItem
 import com.angcyo.item.style.LabelItemConfig
-import com.angcyo.item.style.initLabelItem
 import com.angcyo.widget.DslViewHolder
 
 /**
