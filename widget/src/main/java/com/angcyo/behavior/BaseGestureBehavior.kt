@@ -50,8 +50,11 @@ abstract class BaseGestureBehavior<T : View>(
                 velocityX: Float,
                 velocityY: Float
             ): Boolean {
+                _nestedFlingView = childView
                 lastVelocityX = velocityX
                 lastVelocityY = velocityY
+                nestedFlingVelocityX = -velocityX
+                nestedFlingVelocityY = -velocityY
                 return onGestureFling(e1, e2, velocityX, velocityY)
             }
 

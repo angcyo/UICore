@@ -94,6 +94,12 @@ abstract class BaseDependsBehavior<T : View>(
     //fling访问的view, 不管是否是child包裹的
     var _nestedFlingView: View? = null
 
+    /**内嵌滚动fling速率, 小于0:手指向右fling */
+    var nestedFlingVelocityX = 0f
+
+    /**内嵌滚动fling速率, 小于0:手指向下fling */
+    var nestedFlingVelocityY = 0f
+
     override fun onNestedScrollAccepted(
         coordinatorLayout: CoordinatorLayout,
         child: T,
@@ -121,6 +127,8 @@ abstract class BaseDependsBehavior<T : View>(
         velocityY: Float
     ): Boolean {
         _nestedFlingView = target
+        nestedFlingVelocityX = velocityX
+        nestedFlingVelocityY = velocityY
         return super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY)
     }
 
@@ -164,7 +172,7 @@ abstract class BaseDependsBehavior<T : View>(
             _childFrame = Rect(child.left, child.top, child.right, child.bottom)
         }
     }
-    
+
     /**
      * 所有[child]布局结束之后回调
      * */
