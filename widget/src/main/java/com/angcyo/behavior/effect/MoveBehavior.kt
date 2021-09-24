@@ -61,7 +61,12 @@ open class MoveBehavior(
     override fun onMeasureAfter(parent: CoordinatorLayout, child: View) {
         super.onMeasureAfter(parent, child)
         if (!ViewCompat.isLaidOut(child)) {
-            behaviorScrollY = defaultOffsetY.toRSize(childView.mW(), childView.mH(), def = 0)
+            behaviorScrollY = defaultOffsetY.toRSize(
+                childView.mW(),
+                childView.mH(),
+                def = 0,
+                context = parent.context
+            )
         }
     }
 
