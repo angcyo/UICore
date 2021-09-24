@@ -4,10 +4,14 @@ import android.content.Context
 import android.os.StatFs
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.isItemLastInAdapter
+import com.angcyo.library.app
 import com.angcyo.library.component.work.Trackers
 import com.angcyo.library.ex.*
 import com.angcyo.library.toast
+import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.Device
+import com.angcyo.library.utils.logFilePath
+import com.angcyo.library.utils.writeTo
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.progress.DslProgressBar
 import com.angcyo.widget.recycler.RecyclerBottomLayout
@@ -25,6 +29,11 @@ class DslLastDeviceInfoItem : DslAdapterItem() {
 
     companion object {
         const val SPLIT = "/"
+
+        fun saveDeviceInfo(context: Context = app()) {
+            deviceInfo(context).toString()
+                .writeTo(Constant.LOG_FOLDER_NAME.logFilePath("device.log"), false)
+        }
 
         fun deviceInfo(context: Context, config: DslSpan.() -> Unit = {}) = span {
             append(getWifiIP()).append(SPLIT).append(getMobileIP())
@@ -81,6 +90,9 @@ class DslLastDeviceInfoItem : DslAdapterItem() {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
+
+        //save
+        saveDeviceInfo()
 
         itemHolder.v<RecyclerBottomLayout>(R.id.lib_item_root_layout)?.isEnabled =
             isItemLastInAdapter()
