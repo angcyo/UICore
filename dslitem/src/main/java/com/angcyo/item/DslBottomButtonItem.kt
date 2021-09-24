@@ -10,6 +10,6 @@ package com.angcyo.item
 open class DslBottomButtonItem : DslButtonItem() {
     init {
         itemLayoutId = R.layout.dsl_bottom_button_item
-        itemButtonStyle.themeStyle()
+        buttonItemConfig.itemButtonStyle.themeStyle()
     }
 }

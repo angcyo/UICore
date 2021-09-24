@@ -43,5 +43,8 @@ interface IAutoInitItem : IDslItem {
         if (this is IBodyItem) {
             initBodyItem(itemHolder)
         }
+        if (this is IButtonItem) {
+            initButtonItem(itemHolder)
+        }
     }
 }

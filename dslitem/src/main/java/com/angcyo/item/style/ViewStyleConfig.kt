@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.angcyo.library.UndefinedDrawable
+import com.angcyo.library.ex.undefined_int
 import com.angcyo.library.ex.undefined_size
 import com.angcyo.widget.base.setBgDrawable
 import com.angcyo.widget.base.setWidthHeight
@@ -27,6 +28,8 @@ open class ViewStyleConfig {
 
     var viewHeight: Int = undefined_size
     var viewMinHeight: Int = undefined_size
+
+    var viewVisibility: Int = undefined_int
 
     /**padding值*/
     var paddingLeft: Int = undefined_size
@@ -56,6 +59,13 @@ open class ViewStyleConfig {
             if (this@ViewStyleConfig.paddingBottom == undefined_size) {
                 this@ViewStyleConfig.paddingBottom = paddingBottom
             }
+
+            //可见性
+            if (viewVisibility == undefined_int) {
+                viewVisibility = visibility
+            }
+            visibility = viewVisibility
+
             //设置
             setPadding(
                 this@ViewStyleConfig.paddingLeft,

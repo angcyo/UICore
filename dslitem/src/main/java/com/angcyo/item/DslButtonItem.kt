@@ -1,11 +1,10 @@
 package com.angcyo.item
 
-import android.view.Gravity
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.item.style.ButtonStyleConfig
+import com.angcyo.item.style.ButtonItemConfig
+import com.angcyo.item.style.IButtonItem
 import com.angcyo.widget.DslButton
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.button
 
 /**
  * 带有[DslButton]的item
@@ -14,24 +13,9 @@ import com.angcyo.widget.button
  * @date 2020/03/26
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-open class DslButtonItem : DslAdapterItem() {
+open class DslButtonItem : DslAdapterItem(), IButtonItem {
 
-    /**按钮显示的文本*/
-    var itemButtonText: CharSequence? = null
-        set(value) {
-            field = value
-            itemButtonStyle.text = value
-        }
-
-    /**按钮样式配置项*/
-    var itemButtonStyle = ButtonStyleConfig().apply {
-        textGravity = Gravity.CENTER
-    }
-
-    /**按钮配置回调*/
-    var itemButtonConfig: (DslButton) -> Unit = {
-
-    }
+    override var buttonItemConfig = ButtonItemConfig()
 
     init {
         itemLayoutId = R.layout.dsl_button_item
@@ -44,23 +28,10 @@ open class DslButtonItem : DslAdapterItem() {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
-        itemHolder.itemView.isClickable = false
-
-        itemHolder.button(R.id.lib_button)?.apply {
-            itemButtonStyle.updateStyle(this)
-            itemButtonConfig(this)
-
-            setOnClickListener(_clickListener)
-            setOnLongClickListener(_longClickListener)
-        }
     }
 
     override fun _initItemListener(itemHolder: DslViewHolder) {
         //去掉整体item的事件监听
         //super._initItemListener(itemHolder)
-    }
-
-    open fun configButtonStyle(action: ButtonStyleConfig.() -> Unit) {
-        itemButtonStyle.action()
     }
 }
