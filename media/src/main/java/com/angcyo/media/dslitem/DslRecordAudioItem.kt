@@ -2,6 +2,7 @@ package com.angcyo.media.dslitem
 
 import android.app.Activity
 import androidx.fragment.app.Fragment
+import com.angcyo.core.dslitem.IFragmentItem
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.data.updateSingleData
@@ -24,7 +25,7 @@ import com.angcyo.widget.span.span
  * @date 2020/04/16
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-open class DslRecordAudioItem : DslNestedRecyclerItem() {
+open class DslRecordAudioItem : DslNestedRecyclerItem(), IFragmentItem {
 
     /**输入按钮提示文本*/
     var itemRecordText: CharSequence? = span {
@@ -49,7 +50,7 @@ open class DslRecordAudioItem : DslNestedRecyclerItem() {
     /**最小录制时长, 默认3秒*/
     var itemRecordTimeMinLimit = 3L
 
-    var itemFragment: Fragment? = null
+    override var itemFragment: Fragment? = null
         set(value) {
             field = value
             if (itemActivity == null) {

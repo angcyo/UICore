@@ -32,8 +32,7 @@ class RRecord(context: Context, folderPath: String /*保存在那个文件夹*/)
          * 请求拿到音频焦点
          */
         private fun requestAudioFocus(context: Context) {
-            val audioManager =
-                context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
             audioManager.requestAudioFocus(
                 null,
                 AudioManager.STREAM_MUSIC,
