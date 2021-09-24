@@ -50,11 +50,12 @@ open class LibApplication : Application(), LifecycleOwner {
 
     override fun onCreate() {
         super.onCreate()
-        lifecycleRegistry.currentState = Lifecycle.State.STARTED
 
         //必须第一个初始化
         Library.init(this, isDebug())
         L.init(getAppString("app_name") ?: "Log", isDebug())
+
+        lifecycleRegistry.currentState = Lifecycle.State.STARTED
 
         if (isMainProgress()) {
             onCreateMain()
