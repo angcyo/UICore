@@ -183,7 +183,7 @@ fun DslAdapterItem.drawLeft(
 
 /**在底部绘制分割线*/
 fun DslAdapterItem.drawBottom(
-    insertBottom: Int = 1,
+    insertBottom: Int = _dimen(R.dimen.lib_line_px),
     offsetLeft: Int = _dimen(R.dimen.lib_padding_left),
     offsetRight: Int = _dimen(R.dimen.lib_padding_left),
     color: Int = _color(R.color.lib_line_dark)
@@ -195,6 +195,23 @@ fun DslAdapterItem.drawBottom(
     itemBottomInsert = insertBottom
 
     onlyDrawOffsetArea = false
+    itemDecorationColor = color
+}
+
+/**在底部两边绘制分割线*/
+fun DslAdapterItem.drawBottomOffset(
+    insertBottom: Int = _dimen(R.dimen.lib_line_px),
+    offsetLeft: Int = _dimen(R.dimen.lib_padding_left),
+    offsetRight: Int = _dimen(R.dimen.lib_padding_left),
+    color: Int = _color(R.color.lib_white)
+) {
+    itemLeftOffset = offsetLeft
+    itemRightOffset = offsetRight
+
+    itemTopInsert = 0
+    itemBottomInsert = insertBottom
+
+    onlyDrawOffsetArea = true
     itemDecorationColor = color
 }
 
@@ -212,6 +229,11 @@ fun DslAdapterItem.noDraw() {
 
     onlyDrawOffsetArea = false
     itemDecorationColor = Color.TRANSPARENT
+}
+
+/**不绘制分割线*/
+fun DslAdapterItem.noDrawDecoration() {
+    noDraw()
 }
 
 //</editor-fold desc="分割线操作扩展">
@@ -286,7 +308,10 @@ fun DslAdapterItem.isInGroupItem(targetItem: DslAdapterItem?): Boolean {
     if (targetItem == null) {
         return false
     }
-    return itemGroups.find { targetItem.itemGroups.contains(it) } != null
+    if (this == targetItem) {
+        return true
+    }
+    return isItemInGroups(targetItem)
 }
 
 fun DslAdapterItem.afterItem(

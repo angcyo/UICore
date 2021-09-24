@@ -93,6 +93,13 @@ fun DslAdapterItem.initGridInset(insert: Int = _dimen(R.dimen.lib_padding_left))
     initGridInset(insert, insert, insert, insert)
 }
 
+fun DslAdapterItem.initGridInset2(
+    horizontal: Int = _dimen(R.dimen.lib_padding_left),
+    vertical: Int = _dimen(R.dimen.lib_item_height)
+) {
+    initGridInset(horizontal, vertical, horizontal, vertical)
+}
+
 /**自动设置*/
 fun DslAdapterItem.initGridInset(left: Int, top: Int, right: Int, bottom: Int) {
     onSetItemOffset = {
@@ -107,7 +114,7 @@ fun DslAdapterItem.initGridInset(outRect: Rect, left: Int, top: Int, right: Int,
             initGridOffset(it, left, top, right, bottom)
         }
     } else {
-        outRect.set(0, 0, 0, 0)
+        outRect.set(itemLeftInsert, itemTopInsert, itemRightInsert, itemBottomInsert) //初始化成默认的值
         itemGroupParams.apply {
             if (isFullWidthItem()) {
                 //全屏宽度

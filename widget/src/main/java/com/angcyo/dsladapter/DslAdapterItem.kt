@@ -811,11 +811,7 @@ open class DslAdapterItem : LifecycleOwner {
 
     /**动态计算的属性*/
     val itemGroupParams: ItemGroupParams
-        get() = itemDslAdapter?.findItemGroupParams(this) ?: ItemGroupParams(
-            0,
-            this,
-            mutableListOf(this)
-        ).apply {
+        get() = itemDslAdapter?.findItemGroupParams(this) ?: createItemGroupParams().apply {
             L.w("注意获取[itemGroupParams]时[itemDslAdapter]为null")
         }
 
