@@ -219,7 +219,7 @@ abstract class BaseScrollBehavior<T : View>(
 
     /**开始滚动偏移量*/
     open fun startScroll(dx: Int, dy: Int) {
-        _overScroller.abortAnimation()
+        //_overScroller.abortAnimation()
         _overScroller.startScroll(behaviorScrollX, behaviorScrollY, dx, dy, scrollDuration)
         //postInvalidateOnAnimation()
         invalidate()
@@ -241,7 +241,7 @@ abstract class BaseScrollBehavior<T : View>(
         overX: Int = max(minX.abs(), maxX.abs()) / 5
     ) {
         val vX = velocity(velocityX)
-        _overScroller.abortAnimation()
+        //_overScroller.abortAnimation()
         _overScroller.fling(
             behaviorScrollX,
             behaviorScrollY,
@@ -270,7 +270,7 @@ abstract class BaseScrollBehavior<T : View>(
         overY: Int = max(minY.abs(), maxY.abs()) / 5
     ) {
         val vY = velocity(velocityY)
-        _overScroller.abortAnimation()
+        //_overScroller.abortAnimation()
         _overScroller.fling(
             behaviorScrollX,
             behaviorScrollY,
