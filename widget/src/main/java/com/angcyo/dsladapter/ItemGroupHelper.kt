@@ -72,7 +72,7 @@ fun DslAdapter.findItemGroupParams(
                 }
 
                 if (item.isInGroupItem(otherItem)) {
-                    nextGroupItems.add(item)
+                    nextGroupItems.add(otherItem)
                 } else {
                     nextItem = otherItem
                     break
