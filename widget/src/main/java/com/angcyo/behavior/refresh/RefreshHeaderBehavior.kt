@@ -28,10 +28,9 @@ open class RefreshHeaderBehavior(context: Context, attributeSet: AttributeSet? =
     BaseScrollBehavior<View>(context, attributeSet), IRefreshBehavior {
 
     override var _refreshBehaviorStatus: Int = STATUS_NORMAL
-
     override var enableTopOver: Boolean = true
-
     override var enableBottomOver: Boolean = true
+    override var contentScrollView: View? = null
 
     //为了阻尼效果的算法
     var _refreshEffectConfig = RefreshEffectConfig()

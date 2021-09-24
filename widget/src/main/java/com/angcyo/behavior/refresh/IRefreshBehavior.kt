@@ -35,6 +35,9 @@ interface IRefreshBehavior {
     /**底部over效果*/
     var enableBottomOver: Boolean
 
+    /**需要滚动的内容view, 可以为null*/
+    var contentScrollView: View?
+
     /**请调用此方法设置[_refreshBehaviorStatus]状态*/
     fun onSetRefreshBehaviorStatus(contentBehavior: BaseScrollBehavior<*>, newStatus: Int) {
         val old = _refreshBehaviorStatus
@@ -59,7 +62,23 @@ interface IRefreshBehavior {
         val max = if (enableTopOver || this is RefreshHeaderBehavior) Int.MAX_VALUE else 0
 
         val top = clamp(y, min, max)
-        contentBehavior.childView?.offsetTopTo(top + contentBehavior.behaviorOffsetTop)
+
+        val childView = contentBehavior.childView
+        val targetView = contentScrollView ?: contentBehavior.childView
+
+        if (childView == targetView) {
+            childView?.offsetTopTo(top + contentBehavior.behaviorOffsetTop)
+        } else {
+            if (y > 0 && !enableTopOver) {
+                //未激活top over时,  向下滚动需要触发刷新布局, 所以只能移动child
+                childView?.offsetTopTo(top + contentBehavior.behaviorOffsetTop)
+            } else {
+                //child 偏移到默认的位置
+                childView?.offsetTopTo(contentBehavior.behaviorOffsetTop)
+                //滚动时, 目标view的偏移
+                targetView?.offsetTopTo(top)
+            }
+        }
     }
 
     /**当内容over滚动时回调, 同样会触发[onContentScrollTo]*/
