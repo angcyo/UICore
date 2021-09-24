@@ -40,7 +40,7 @@ interface IEditItem : IAutoInitItem {
 
             //放在最后监听, 防止首次setInputText, 就触发事件.
             onTextChange(shakeDelay = editItemConfig.itemTextChangeShakeDelay) {
-                if (this is DslAdapterItem) {
+                if (this@IEditItem is DslAdapterItem) {
                     itemChanging = true
                 }
                 onItemTextChange(it)

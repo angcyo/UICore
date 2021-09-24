@@ -26,7 +26,7 @@ interface IButtonItem : IAutoInitItem {
             buttonItemConfig.itemButtonStyle.updateStyle(this)
             buttonItemConfig.itemButtonConfig(this)
 
-            if (this is DslAdapterItem) {
+            if (this@IButtonItem is DslAdapterItem) {
                 setOnClickListener(_clickListener)
                 setOnLongClickListener(_longClickListener)
             }
