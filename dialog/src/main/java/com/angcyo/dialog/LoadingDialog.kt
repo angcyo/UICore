@@ -212,6 +212,38 @@ fun Fragment.loadLoadingBottom(
     return dialog
 }
 
+fun Fragment.loadLoadingBottom2(
+    tip: CharSequence? = "处理中...",
+    successTip: CharSequence? = "处理完成!",
+    showErrorToast: Boolean = false,
+    showCloseView: Boolean = true,
+    action: (cancel: AtomicBoolean, loadEnd: (data: Any?, error: Throwable?) -> Unit) -> Unit
+): Dialog? {
+    val isCancel = AtomicBoolean(false)
+    val dialog = loadingBottom(tip, showCloseView) {
+        isCancel.set(true)
+        action(isCancel) { _, _ ->
+            //no op
+        }
+    }
+
+    isCancel.set(false)
+    action(isCancel) { data, error ->
+        if (error != null) {
+            //失败
+            if (showErrorToast) {
+                toastQQ(error.message)
+            }
+            hideLoading(error.message)
+        } else {
+            hideLoading(successTip)
+        }
+    }
+
+    return dialog
+}
+
+
 /**快速在[Fragment]显示loading, 通常用于包裹一个网络请求*/
 fun Fragment.loadLoading(
     tip: CharSequence? = null,
