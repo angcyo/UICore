@@ -18,6 +18,8 @@ class RecyclerBottomLayout(
     context: Context, attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
 
+    var enableLayout: Boolean = true
+
     var _layoutMeasureHeight = -1
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -29,7 +31,7 @@ class RecyclerBottomLayout(
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        if (!isEnabled) {
+        if (!enableLayout) {
             //未激活
             super.onLayout(changed, left, top, right, bottom)
             return

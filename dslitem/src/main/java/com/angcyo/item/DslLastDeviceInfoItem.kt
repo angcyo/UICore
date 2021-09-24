@@ -2,6 +2,10 @@ package com.angcyo.item
 
 import android.content.Context
 import android.os.StatFs
+import androidx.fragment.app.Fragment
+import com.angcyo.base.dslFHelper
+import com.angcyo.core.component.fileSelector
+import com.angcyo.core.dslitem.IFragmentItem
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.isItemLastInAdapter
 import com.angcyo.library.app
@@ -25,7 +29,7 @@ import com.angcyo.widget.span.span
  * @date 2020/01/16
  */
 
-class DslLastDeviceInfoItem : DslAdapterItem() {
+class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
 
     companion object {
         const val SPLIT = "/"
@@ -76,6 +80,8 @@ class DslLastDeviceInfoItem : DslAdapterItem() {
         }
     }
 
+    override var itemFragment: Fragment? = null
+
     /**额外的配置信息回调*/
     var onConfigDeviceInfo: (DslSpan) -> Unit = {}
 
@@ -94,7 +100,7 @@ class DslLastDeviceInfoItem : DslAdapterItem() {
         //save
         saveDeviceInfo()
 
-        itemHolder.v<RecyclerBottomLayout>(R.id.lib_item_root_layout)?.isEnabled =
+        itemHolder.v<RecyclerBottomLayout>(R.id.lib_item_root_layout)?.enableLayout =
             isItemLastInAdapter()
 
         //设备信息
@@ -131,6 +137,15 @@ class DslLastDeviceInfoItem : DslAdapterItem() {
             itemData?.toString()?.run {
                 copy()
                 toast("信息已复制")
+            }
+            itemFragment?.dslFHelper {
+                fileSelector({
+                    showFileMd5 = true
+                    showFileMenu = true
+                    showHideFile = true
+                }) {
+
+                }
             }
             _clickListener?.onClick(it)
         }
