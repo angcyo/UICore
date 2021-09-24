@@ -2,7 +2,6 @@ package com.angcyo.item.style
 
 import android.view.Gravity
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.dsladapter.item.IDslItem
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
 import com.angcyo.widget.DslButton
@@ -16,7 +15,7 @@ import com.angcyo.widget.button
  * @date 2021/09/24
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-interface IButtonItem : IDslItem {
+interface IButtonItem : IAutoInitItem {
 
     var buttonItemConfig: ButtonItemConfig
 
@@ -55,7 +54,6 @@ class ButtonItemConfig : IDslItemConfig {
     /**按钮样式配置项*/
     var itemButtonStyle = ButtonStyleConfig().apply {
         textGravity = Gravity.CENTER
-        themeStyle()
     }
 
     /**按钮配置回调*/
