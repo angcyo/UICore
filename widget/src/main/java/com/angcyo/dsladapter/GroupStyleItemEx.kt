@@ -46,7 +46,14 @@ fun DslAdapterItem.initGridOffsetVertical(outRect: Rect, insert: Int) {
 }
 
 /**需要在[onSetItemOffset]中调用此方法*/
-fun DslAdapterItem.initGridOffset(outRect: Rect, left: Int, top: Int, right: Int, bottom: Int) {
+fun DslAdapterItem.initGridOffset(
+    outRect: Rect,
+    left: Int,
+    top: Int,
+    right: Int,
+    bottom: Int,
+    linearOffsetBottom: Int = 0 /*线性连续item之间的间隙*/
+) {
     if (onSetItemOffset == null) {
         onSetItemOffset = {
             initGridOffset(it, left, top, right, bottom)
@@ -67,7 +74,7 @@ fun DslAdapterItem.initGridOffset(outRect: Rect, left: Int, top: Int, right: Int
                     outRect.bottom = bottom
                 } else {
                     if (isInLinearLayoutManager()) {
-                        outRect.bottom = bottom
+                        outRect.bottom = linearOffsetBottom
                     }
                 }
             } else {
@@ -160,7 +167,7 @@ fun DslAdapterItem.initLinearOffset(left: Int, top: Int, right: Int, bottom: Int
     }
 }
 
-/**RecyclerView内边距插入, item之间不处理*/
+/**RecyclerView内边距插入, item之间同步处理*/
 fun DslAdapterItem.initLinearOffset(outRect: Rect, left: Int, top: Int, right: Int, bottom: Int) {
     if (onSetItemOffset == null) {
         onSetItemOffset = {
