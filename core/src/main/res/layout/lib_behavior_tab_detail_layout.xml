@@ -74,7 +74,7 @@
             app:tab_indicator_enable_flow="true"
             app:tab_indicator_gradient_end_color="@color/colorPrimaryDark"
             app:tab_indicator_gradient_start_color="@color/colorPrimary"
-            app:tab_indicator_style="STYLE_NONE"
+            app:tab_indicator_style="STYLE_BOTTOM"
             app:tab_indicator_width="30dp"
             app:tab_item_is_equ_width="true"
             app:tab_max_scale="1.2"
@@ -87,6 +87,13 @@
 
             <!--<include layout="@layout/lib_tab_item_layout" />-->
         </com.angcyo.tablayout.DslTabLayout>
+
+        <View
+            android:id="@+id/lib_line_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/lib_line_px"
+            android:layout_gravity="bottom"
+            android:background="@color/lib_line" />
 
     </com.angcyo.widget.layout.RFrameLayout>
 
