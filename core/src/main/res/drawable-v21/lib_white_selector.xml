@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="@color/lib_bg_press">
-    <item android:drawable="@drawable/lib_white_round_shape" />
+    <item android:drawable="@color/lib_white" />
 </ripple>
