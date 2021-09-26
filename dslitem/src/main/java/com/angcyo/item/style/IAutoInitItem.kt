@@ -5,7 +5,8 @@ import com.angcyo.dsladapter.item.IDslItem
 import com.angcyo.widget.DslViewHolder
 
 /**
- * 自动初始化
+ * 自动初始化, 继承此类的item, 可以实现自动初始化
+ * [com.angcyo.dsladapter.DslAdapterItem._initItemConfig]
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2021/09/23

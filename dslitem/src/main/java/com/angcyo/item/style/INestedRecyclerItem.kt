@@ -4,7 +4,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.core.dslitem.IFragmentItem
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.dsladapter.item.IDslItem
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.dsladapter.updateNow
 import com.angcyo.item.R
@@ -19,7 +18,7 @@ import com.angcyo.widget.recycler.*
  * @date 2021/09/26
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-interface INestedRecyclerItem : IDslItem {
+interface INestedRecyclerItem : IAutoInitItem {
 
     var nestedRecyclerItemConfig: NestedRecyclerItemConfig
 
@@ -87,6 +86,7 @@ interface INestedRecyclerItem : IDslItem {
             nestedRecyclerItemConfig.itemNestedItemList?.let {
                 clearItems()
                 dataItems.addAll(it)
+                _updateAdapterItems()
             }
 
             nestedRecyclerItemConfig.itemRenderNestedAdapter(this)
