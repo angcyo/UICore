@@ -24,6 +24,11 @@ object Factory {
     var factory: FragmentFactory = FragmentFactory()
 }
 
+/**实例化*/
+fun Class<out Fragment>.instantiate(): Fragment? {
+    return instantiateFragment(classLoader!!, name)
+}
+
 /**实例化一个[Fragment]对象*/
 fun instantiateFragment(classLoader: ClassLoader, className: String): Fragment? {
     return try {

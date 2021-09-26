@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.angcyo.base.instantiate
 import com.angcyo.core.R
 import com.angcyo.core.viewpager.ViewPager1Delegate
 import com.angcyo.getData
@@ -44,6 +45,9 @@ abstract class BasePagerFragment : BaseTitleFragment() {
     val titles = mutableListOf<CharSequence>()
 
     lateinit var fragmentAdapter: FragmentStatePagerAdapter
+
+    /**tab item 的布局*/
+    var tabItemLayoutId: Int = R.layout.lib_tab_item_layout
 
     init {
         contentLayoutId = R.layout.lib_pager_fragment
@@ -115,24 +119,23 @@ abstract class BasePagerFragment : BaseTitleFragment() {
 
     /**填充Tab Item*/
     open fun inflateTabItems(viewGroup: ViewGroup) {
-        viewGroup.resetChild(
-            getPageCount(),
-            R.layout.lib_tab_item_layout
-        ) { itemView, itemIndex ->
-            itemView.find<TextView>(R.id.lib_text_view)?.text =
-                getPageTitle(itemIndex)
+        viewGroup.resetChild(getPageCount(), tabItemLayoutId, this::initTabItem)
+    }
 
-            itemView.onDoubleTap {
-                //双击tab item 滚动至顶部
-                getPageItem(itemIndex).view?.find<RecyclerView>(R.id.lib_recycler_view)
-                    ?.scrollHelper {
-                        scrollToFirst {
-                            firstScrollAnim = false
-                            scrollAnim = false
-                        }
+    open fun initTabItem(itemView: View, itemIndex: Int) {
+        itemView.find<TextView>(R.id.lib_text_view)?.text =
+            getPageTitle(itemIndex)
+
+        itemView.onDoubleTap {
+            //双击tab item 滚动至顶部
+            getPageItem(itemIndex).view?.find<RecyclerView>(R.id.lib_recycler_view)
+                ?.scrollHelper {
+                    scrollToFirst {
+                        firstScrollAnim = false
+                        scrollAnim = false
                     }
-                false
-            }
+                }
+            false
         }
     }
 
@@ -166,6 +169,12 @@ abstract class BasePagerFragment : BaseTitleFragment() {
     }
 
     //</editor-fold desc="ViewPager相关">
+
+    /**添加一个页面*/
+    fun addPage(title: CharSequence, fragment: Class<out Fragment>) {
+        titles.add(title)
+        pages.add(fragment.instantiate()!!)
+    }
 }
 
 /**设置默认tab的索引*/

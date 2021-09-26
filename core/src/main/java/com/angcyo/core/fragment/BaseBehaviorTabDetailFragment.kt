@@ -2,8 +2,6 @@ package com.angcyo.core.fragment
 
 import android.graphics.Color
 import android.os.Bundle
-import android.view.ViewGroup
-import android.widget.TextView
 import com.angcyo.core.R
 import com.angcyo.library._screenHeight
 import com.angcyo.library.ex.copyDrawable
@@ -11,7 +9,6 @@ import com.angcyo.library.ex.dpi
 import com.angcyo.tablayout.DslTabIndicator
 import com.angcyo.widget.base.find
 import com.angcyo.widget.base.replace
-import com.angcyo.widget.base.resetChild
 import com.angcyo.widget.base.setHeight
 import com.angcyo.widget.tab
 
@@ -44,6 +41,7 @@ abstract class BaseBehaviorTabDetailFragment : BasePagerFragment() {
     init {
         fragmentLayoutId = R.layout.lib_behavior_tab_detail_layout
         contentLayoutId = -1
+        tabItemLayoutId = R.layout.lib_behavior_detail_tab_item_layout
         pages
     }
 
@@ -55,25 +53,6 @@ abstract class BaseBehaviorTabDetailFragment : BasePagerFragment() {
     override fun onInitFragment() {
         super.onInitFragment()
         initHeaderLayout()
-    }
-
-    override fun inflateTabItems(viewGroup: ViewGroup) {
-        //super.inflateTabItems(viewGroup)
-        viewGroup.resetChild(
-            getPageCount(),
-            R.layout.lib_behavior_detail_tab_item_layout
-        ) { itemView, itemIndex ->
-            itemView.find<TextView>(R.id.lib_text_view)?.text = getPageTitle(itemIndex)
-
-            /*if (itemIndex == 0) {
-                //第一个
-                itemView.setBackgroundResource(R.drawable.wt_nav_left_selector)
-            }
-            if (itemIndex == getPageCount() - 1) {
-                //最后一个
-                itemView.setBackgroundResource(R.drawable.wt_nav_right_selector)
-            }*/
-        }
     }
 
     /**初始化头部布局*/
