@@ -41,6 +41,9 @@ class RecyclerBottomLayout(
         //Log.w("angcyo", "layout:" + top + " " + bottom);
         var callSuper = true
         if (parent is RecyclerView) {
+            val b = parent.layoutManager?.getDecoratedBottom(this) ?: bottom
+            val bottomDecorationHeight =
+                parent.layoutManager?.getBottomDecorationHeight(this) ?: 0 //底部分割线的高度
             if (parent.scrollState != RecyclerView.SCROLL_STATE_IDLE) {
                 //滚动过程不处理
                 super.onLayout(changed, left, top, right, bottom)
@@ -52,11 +55,12 @@ class RecyclerBottomLayout(
             //只处理第一屏
             if (parent.computeVerticalScrollOffset() == 0 &&
                 top < parentHeight /*布局有部分展示了*/ &&
-                bottom > top
+                b > top
             ) {
-                if (bottom + layoutParams.bottomMargin != parentHeight) { //布局未全部展示
+                if (b + layoutParams.bottomMargin != parentHeight) { //布局未全部展示
                     //当前布局在RecyclerView的第一屏(没有任何滚动的状态), 并且底部没有显示全.
-                    var spaceHeight = parentHeight - top - layoutParams.bottomMargin
+                    var spaceHeight =
+                        parentHeight - top - layoutParams.bottomMargin - bottomDecorationHeight
                     var handle: Boolean
                     if (_layoutMeasureHeight > 0) {
                         handle =
@@ -69,7 +73,7 @@ class RecyclerBottomLayout(
                         }
                     } else {
                         handle =
-                            spaceHeight - layoutParams.topMargin - layoutParams.bottomMargin > bottom - top
+                            spaceHeight - layoutParams.topMargin - layoutParams.bottomMargin > b - top
                     }
                     if (handle) { //剩余空间足够大, 同时也解决了动态隐藏导航栏带来的BUG
                         callSuper = false

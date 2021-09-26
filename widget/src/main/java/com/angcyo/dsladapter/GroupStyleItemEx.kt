@@ -65,16 +65,21 @@ fun DslAdapterItem.initGridOffset(
                 //全屏宽度
                 outRect.left = left
                 outRect.right = right
-                if (isOnlyOne()) {
-                    outRect.top = top
-                    outRect.bottom = bottom
-                } else if (isFirstPosition() || isGroupFirstRow()) {
-                    outRect.top = top
-                } else if (isLastPosition() || isGroupLastRow()) {
-                    outRect.bottom = bottom
-                } else {
-                    if (isInLinearLayoutManager()) {
-                        outRect.bottom = linearOffsetBottom
+
+                if (isFirstGroup() || isLastGroup()) {
+                    if (isOnlyOne()) {
+                        outRect.top = top
+                        if (isLastGroup()) {
+                            outRect.bottom = bottom
+                        }
+                    } else if (isFirstPosition() || isGroupFirstRow()) {
+                        outRect.top = top
+                    } else if (isLastPosition() || isGroupLastRow()) {
+                        outRect.bottom = bottom
+                    } else {
+                        if (isInLinearLayoutManager()) {
+                            outRect.bottom = linearOffsetBottom
+                        }
                     }
                 }
             } else {
