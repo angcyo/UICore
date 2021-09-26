@@ -221,7 +221,9 @@ class FlowLayoutDelegate : LayoutDelegate() {
             _lineHeight.add(lineHeight)
             _allViews.add(lineViews)
             if (itemEquWidth) {
-                measureLineEquWidth(lineViews, measureWidthSize, heightMeasureSpec)
+                if (!singleLine) {
+                    measureLineEquWidth(lineViews, measureWidthSize, heightMeasureSpec)
+                }
             }
         }
 
@@ -277,11 +279,12 @@ class FlowLayoutDelegate : LayoutDelegate() {
             lineChildWidth = measureEquChildWidth(lineViews, viewWidth)
         } else {
             var consumeWidth =
-                paddingLeft + paddingRight + itemHorizontalSpace * max(maxCountLine - 1, 0)
+                paddingLeft + paddingRight + itemHorizontalSpace * max(lineViewSize - 1, 0)
             for (j in 0 until lineViewSize) {
                 val lineView = lineViews[j]
                 val lineViewParams =
-                    lineView.layoutParams as LinearLayout.LayoutParams; consumeWidth += lineViewParams.leftMargin + lineViewParams.rightMargin
+                    lineView.layoutParams as LinearLayout.LayoutParams
+                consumeWidth += lineViewParams.leftMargin + lineViewParams.rightMargin
             }
             lineChildWidth = (viewWidth - consumeWidth) / lineViewSize
         }
