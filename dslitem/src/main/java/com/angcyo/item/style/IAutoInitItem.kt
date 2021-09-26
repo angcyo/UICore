@@ -46,5 +46,8 @@ interface IAutoInitItem : IDslItem {
         if (this is IButtonItem) {
             initButtonItem(itemHolder)
         }
+        if (this is INestedRecyclerItem) {
+            initNestedRecyclerItem(itemHolder, itemPosition, adapterItem, payloads)
+        }
     }
 }

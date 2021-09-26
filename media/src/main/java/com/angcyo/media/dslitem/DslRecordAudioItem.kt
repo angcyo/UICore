@@ -6,6 +6,7 @@ import com.angcyo.core.dslitem.IFragmentItem
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.data.updateSingleData
+import com.angcyo.item.DslNestedRecyclerItem
 import com.angcyo.library.L
 import com.angcyo.library.ex.*
 import com.angcyo.library.model.LoaderMedia
@@ -15,7 +16,6 @@ import com.angcyo.media.R
 import com.angcyo.media.audio.record.RecordControl
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt
-import com.angcyo.widget.dslitem.DslNestedRecyclerItem
 import com.angcyo.widget.span.span
 
 /**
@@ -63,8 +63,6 @@ open class DslRecordAudioItem : DslNestedRecyclerItem(), IFragmentItem {
 
     init {
         itemLayoutId = R.layout.dsl_record_audio_item
-        //关闭adapter状态提示
-        itemNestedAdapter.dslAdapterStatusItem.itemEnable = false
     }
 
     override fun onItemBind(
@@ -104,7 +102,7 @@ open class DslRecordAudioItem : DslNestedRecyclerItem(), IFragmentItem {
                     itemLoaderMedias.add(localMedia)
                     itemChanging = true
 
-                    itemNestedAdapter + DslPlayAudioItem().apply {
+                    nestedRecyclerItemConfig.itemNestedAdapter + DslPlayAudioItem().apply {
                         configDslRecordVoiceItem(this, localMedia)
                     }
                 }
@@ -114,7 +112,9 @@ open class DslRecordAudioItem : DslNestedRecyclerItem(), IFragmentItem {
     }
 
     override fun onRenderNestedAdapter(dslAdapter: DslAdapter) {
-        itemNestedAdapter.updateSingleData<DslPlayAudioItem>(itemLoaderMedias) { data ->
+        nestedRecyclerItemConfig.itemNestedAdapter.updateSingleData<DslPlayAudioItem>(
+            itemLoaderMedias
+        ) { data ->
             configDslRecordVoiceItem(this, data as LoaderMedia?)
         }
     }
