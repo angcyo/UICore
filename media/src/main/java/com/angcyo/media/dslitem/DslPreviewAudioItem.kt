@@ -9,7 +9,7 @@ import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.core.cause.EndCause
 
 /**
- *
+ * 全屏音频播放界面item
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/02/22

@@ -31,7 +31,7 @@ open class DrawLineDrawable : AbsDslDrawable() {
     }
 
     /**绘制线的类型*/
-    var drawLine = 0 //不绘制线
+    var drawLineType = DRAW_NONE //不绘制线
 
     var drawLineColor = 0
 
@@ -60,7 +60,7 @@ open class DrawLineDrawable : AbsDslDrawable() {
         val typedArray =
             context.obtainStyledAttributes(attributeSet, R.styleable.DrawLineDrawable)
 
-        drawLine = typedArray.getInt(R.styleable.DrawLineDrawable_r_draw_line, drawLine)
+        drawLineType = typedArray.getInt(R.styleable.DrawLineDrawable_r_draw_line, drawLineType)
         drawLineOffsetLeft = typedArray.getDimensionPixelOffset(
             R.styleable.DrawLineDrawable_r_draw_line_offset_left,
             drawLineOffsetLeft
@@ -108,11 +108,11 @@ open class DrawLineDrawable : AbsDslDrawable() {
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
 
-        if (drawLine <= 0) {
+        if (drawLineType <= DRAW_NONE) {
             return
         }
 
-        when (drawLine) {
+        when (drawLineType) {
             DRAW_LINE_LEFT -> {
                 //左边的线
                 val left = drawLineOffsetX + drawLineOffsetLeft
