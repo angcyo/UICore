@@ -1,9 +1,7 @@
 package com.angcyo.core.dslitem
 
-import android.graphics.Color
 import com.angcyo.core.R
 import com.angcyo.dsladapter.*
-import com.angcyo.library.ex._colorDrawable
 import com.angcyo.library.ex._drawable
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.layout.ILayoutDelegate
@@ -40,40 +38,40 @@ fun DslAdapterItem.initGridStyleItem(
             //全屏宽度
             when {
                 isOnlyOne() -> itemView.background =
-                    _drawable(R.drawable.lib_white_round_shape)
+                    _drawable(R.drawable.lib_white_round_selector)
                 isFirstPosition() || isGroupFirstRow() -> itemView.background =
-                    _drawable(R.drawable.lib_white_top_round_shape)
+                    _drawable(R.drawable.lib_white_top_round_selector)
                 isLastPosition() || isGroupLastRow() -> itemView.background =
-                    _drawable(R.drawable.lib_white_bottom_round_shape)
-                else -> itemView.background = _colorDrawable(Color.WHITE)
+                    _drawable(R.drawable.lib_white_bottom_round_selector)
+                else -> itemView.background = _drawable(R.drawable.lib_white_selector)
             }
         } else {
             when {
                 //独一个
                 isOnlyOne() -> itemView.background =
-                    _drawable(R.drawable.lib_white_round_shape)
+                    _drawable(R.drawable.lib_white_round_selector)
                 //左边1个
                 isEdgeGroupLeftTop() && isEdgeGroupLeftBottom() -> itemView.background =
-                    _drawable(R.drawable.lib_white_left_round_shape)
+                    _drawable(R.drawable.lib_white_left_round_selector)
                 //右边1个
                 isEdgeGroupRightTop() && isEdgeGroupRightBottom() -> itemView.background =
-                    _drawable(R.drawable.lib_white_right_round_shape)
+                    _drawable(R.drawable.lib_white_right_round_selector)
                 //最后一行独1个
                 isEdgeGroupLeftBottom() && isEdgeGroupRightBottom() -> itemView.background =
-                    _drawable(R.drawable.lib_white_bottom_round_shape)
+                    _drawable(R.drawable.lib_white_bottom_round_selector)
                 //左上
                 isEdgeGroupLeftTop() -> itemView.background =
-                    _drawable(R.drawable.lib_white_lt_round_shape)
+                    _drawable(R.drawable.lib_white_lt_round_selector)
                 //右上
                 isEdgeGroupRightTop() -> itemView.background =
-                    _drawable(R.drawable.lib_white_tr_round_shape)
+                    _drawable(R.drawable.lib_white_tr_round_selector)
                 //左下
                 isEdgeGroupLeftBottom() -> itemView.background =
-                    _drawable(R.drawable.lib_white_lb_round_shape)
+                    _drawable(R.drawable.lib_white_lb_round_selector)
                 //右下
                 isEdgeGroupRightBottom() -> itemView.background =
-                    _drawable(R.drawable.lib_white_br_round_shape)
-                else -> itemView.background = _colorDrawable(Color.WHITE)
+                    _drawable(R.drawable.lib_white_br_round_selector)
+                else -> itemView.background = _drawable(R.drawable.lib_white_selector)
             }
         }
     }
