@@ -40,20 +40,15 @@ interface IImageItem : IAutoInitItem {
         if (mediaUpdate) {
             //缩略图
             itemHolder.giv(imageItemConfig.itemImageViewId)?.apply {
-                val image = imageItemConfig.itemLoadImage ?: imageItemConfig.itemLoadUri
-                when (image) {
-                    null -> setImageDrawable(null)
-                    is Number -> {
-                        imageItemConfig.imageResStyleConfig.updateStyle(this)
-                        setImageResource(image as Int)
-                    }
+                imageItemConfig.imageStyleConfig.updateStyle(this)
+                when (val image = imageItemConfig.itemLoadImage ?: imageItemConfig.itemLoadUri) {
+                    is Number -> setImageResource(image as Int)
                     else -> {
                         val uri: Uri? = when (image) {
                             is String -> image.toUri()
                             is Uri -> image
                             else -> null
                         }
-                        imageItemConfig.imageStyleConfig.updateStyle(this)
                         load(uri) {
                             checkGifType = imageItemConfig.itemCheckGifType
                             imageItemConfig.onConfigGlide(this)
