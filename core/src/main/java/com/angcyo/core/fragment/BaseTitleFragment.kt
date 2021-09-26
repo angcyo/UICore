@@ -32,10 +32,7 @@ import com.angcyo.library.ex.undefined_res
 import com.angcyo.lifecycle.onStart
 import com.angcyo.widget.DslGroupHelper
 import com.angcyo.widget.base.*
-import com.angcyo.widget.layout.DslSoftInputLayout
-import com.angcyo.widget.layout.OnSoftInputListener
-import com.angcyo.widget.layout.isHideAction
-import com.angcyo.widget.layout.isShowAction
+import com.angcyo.widget.layout.*
 import com.angcyo.widget.recycler.DslRecyclerView
 import com.angcyo.widget.span.span
 import com.angcyo.widget.text.DslTextView
@@ -76,6 +73,9 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
     /**是否需要强制显示返回按钮, 否则智能判断*/
     var enableBackItem: Boolean = false
+
+    /**是否隐藏标题布局, null表示智能默认行为*/
+    var hideTitleLayout: Boolean? = null
 
     /**用于控制刷新状态, 开始刷新/结束刷新*/
     var refreshContentBehavior: IRefreshContentBehavior? = null
@@ -142,6 +142,21 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
         savedInstanceState: Bundle?
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
+
+        if (parentFragment != null) {
+            //关闭, 自身协调布局的特性
+            _vh.v<RCoordinatorLayout>(R.id.lib_coordinator_wrap_layout)?.isEnabled = false
+        }
+
+        if (hideTitleLayout == null) {
+            if (parentFragment != null) {
+                //在parent中, 智能去除标题栏
+                _vh.gone(R.id.lib_title_wrap_layout)
+            }
+        } else {
+            _vh.gone(R.id.lib_title_wrap_layout, hideTitleLayout == true)
+        }
+
         onCreateViewAfter(savedInstanceState)
         fragmentUI?.fragmentCreateViewAfter?.invoke(this)
         return view
