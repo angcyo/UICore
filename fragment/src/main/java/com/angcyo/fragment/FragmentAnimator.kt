@@ -41,7 +41,7 @@ object FragmentAnimator {
         DEFAULT_REMOVE_EXIT_ANIMATOR = R.anim.lib_translate_x_remove_exit
     }
 
-    /**显示/隐藏 只有顶层平移动画 */
+    /**显示/隐藏 只有顶层平移动画, 顶层单独使用属性动画, 可以提高部分动画性能 */
     fun onlyTopAnim() {
         DEFAULT_SHOW_ENTER_ANIMATOR = R.anim.lib_x_show_enter_holder
         DEFAULT_SHOW_EXIT_ANIMATOR = 0

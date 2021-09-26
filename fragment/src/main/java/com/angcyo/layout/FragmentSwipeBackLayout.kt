@@ -285,6 +285,11 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
         get() = measuredHeight - 4 * vSpace
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        /*if (isDebug()) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+            return
+        }*/
+
         //of java
         //int widthSize = MeasureSpec.getSize(widthMeasureSpec)
         //int widthMode = MeasureSpec.getMode(widthMeasureSpec);
@@ -337,6 +342,11 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         //L.e("debug layout 1 " + isInDebugLayout + " " + getScrollX() + " " + getScrollY());
+        /*if (isDebug()) {
+            super.onLayout(changed, left, top, right, bottom)
+            return
+        }*/
+
         if (isInDebugLayout) {
             val count = childCount
             //int l = hSpace;

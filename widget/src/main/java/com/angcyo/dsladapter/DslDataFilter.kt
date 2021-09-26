@@ -31,7 +31,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
     companion object {
 
         /**默认抖动检查时长, 毫秒. 如果多次连续调用时长小于此时间, 则跳过处理*/
-        var DEFAULT_SHAKE_DELAY = 16L
+        var DEFAULT_SHAKE_DELAY = 6L
 
         //异步调度器
         private val asyncExecutor: ExecutorService by lazy {
