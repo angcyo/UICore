@@ -131,7 +131,9 @@ fun DslAdapterItem.initGridInset(outRect: Rect, left: Int, top: Int, right: Int,
                 if (isFirstGroup() || isLastGroup()) {
                     if (isOnlyOne()) {
                         outRect.top = top
-                        outRect.bottom = bottom
+                        if (isLastGroup()) {
+                            outRect.bottom = bottom
+                        }
                     } else if (isFirstPosition() || isGroupFirstRow()) {
                         outRect.top = top
                     } else if (isLastPosition() || isGroupLastRow()) {
