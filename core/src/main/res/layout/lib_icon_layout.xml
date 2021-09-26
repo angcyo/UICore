@@ -2,7 +2,7 @@
 <com.angcyo.widget.image.DslImageView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/lib_icon_view"
-    style="@style/LibItemStyle"
+    style="@style/LibIconItemStyle"
     android:gravity="center"
     android:scaleType="center"
     tools:srcCompat="@drawable/ic_file_share" />
