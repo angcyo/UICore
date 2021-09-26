@@ -23,7 +23,7 @@ import com.angcyo.widget.base.isTouchIn
 abstract class BaseGestureBehavior<T : View>(
     context: Context,
     attributeSet: AttributeSet? = null
-) : BaseScrollBehavior<T>(context, attributeSet), Runnable {
+) : BaseScrollBehavior<T>(context, attributeSet) {
 
     /**touch scroll 阈值*/
     var touchSlop = 0
@@ -171,9 +171,5 @@ abstract class BaseGestureBehavior<T : View>(
         distanceY: Float
     ): Boolean {
         return false
-    }
-
-    override fun run() {
-
     }
 }
