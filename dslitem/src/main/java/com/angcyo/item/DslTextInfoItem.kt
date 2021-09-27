@@ -23,6 +23,7 @@ open class DslTextInfoItem : DslBaseInfoItem() {
 
     @DrawableRes
     var itemDarkIcon: Int = undefined_res
+
     var itemDarkIconColor: Int = undefined_res
 
     /**未读数,空字符串会绘制成小圆点 */
