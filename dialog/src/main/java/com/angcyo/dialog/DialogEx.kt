@@ -6,6 +6,8 @@ import android.graphics.Color
 import android.text.InputType
 import android.view.Gravity
 import android.view.View
+import com.angcyo.base.enableLayoutFullScreen
+import com.angcyo.base.translucentStatusBar
 import com.angcyo.library.ex.dpi
 
 /**
@@ -35,9 +37,31 @@ fun DslDialogConfig.configBottomDialog(context: Context? = null): DslDialogConfi
 
 //<editor-fold desc="常用对话框">
 
+/**自定义对话框*/
 fun Context.dslDialog(config: DslDialogConfig.() -> Unit): Dialog {
     return DslDialogConfig(this).run {
         dialogWidth = -1
+        config()
+        show()
+    }
+}
+
+/**自定义全屏对话框*/
+fun Context.customFullScreenDialog(config: DslDialogConfig.() -> Unit): Dialog {
+    return DslDialogConfig(this).run {
+        //R.style.LibDialogAnimation//R.style.LibFullPopupAnimation
+        animStyleResId = R.style.LibFullPopupAnimation
+        dialogWidth = -1
+        //全屏的三金刚属性
+        dialogWidth = -1
+        //很关键的一点, 高度一定要撑满全屏. 撑满之后, 如果导航栏显示了, 内部View布局会有点BUG, 顶部偏移有问题.
+        dialogHeight = -1 //getRootHeight()
+        setDialogBgColor(Color.TRANSPARENT)
+        onConfigWindow = {
+            it.enableLayoutFullScreen(true)
+            it.translucentStatusBar(true)
+//        it.translucentNavigationBar(true)
+        }
         config()
         show()
     }
