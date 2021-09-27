@@ -223,6 +223,13 @@ fun RecyclerView.noItemChangeAnim(no: Boolean = true) {
     }
 }
 
+/**
+ * 设置RecyclerView的默认动画
+ * */
+fun RecyclerView.setItemAnim(animator: ItemAnimator? = DefaultItemAnimator()) {
+    itemAnimator = animator
+}
+
 //</editor-fold desc="基础">
 
 //<editor-fold desc="ViewHolder相关">

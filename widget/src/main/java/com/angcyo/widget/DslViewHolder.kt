@@ -267,25 +267,30 @@ open class DslViewHolder(
         return null
     }
 
-    fun enable(@IdRes resId: Int, enable: Boolean = true): DslViewHolder {
+    fun enable(
+        @IdRes resId: Int,
+        enable: Boolean = true,
+        recursive: Boolean = true
+    ): DslViewHolder {
         val view = v<View>(resId)
-        enable(view, enable)
+        enable(view, enable, recursive)
         return this
     }
 
-    private fun enable(view: View?, enable: Boolean) {
+    private fun enable(view: View?, enable: Boolean, recursive: Boolean = true) {
         if (view == null) {
             return
         }
-        if (view is ViewGroup) {
+        if (view is ViewGroup && recursive) {
             for (i in 0 until view.childCount) {
-                enable(view.getChildAt(i), enable)
+                enable(view.getChildAt(i), enable, recursive)
             }
-        } else {
-            if (view.isEnabled != enable) {
-                view.isEnabled = enable
-            }
-            (view as? EditText)?.clearFocus()
+        }
+        if (view.isEnabled != enable) {
+            view.isEnabled = enable
+        }
+        if (view is EditText) {
+            view.clearFocus()
         }
     }
 
