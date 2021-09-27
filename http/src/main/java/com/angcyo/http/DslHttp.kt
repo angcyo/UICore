@@ -322,25 +322,30 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
             requestConfig.onStart(it)
         }
         .doOnNext {
-            val body = it.body()
-            when {
-                requestConfig.isSuccessful(it) -> {
-                    requestConfig.onSuccess(it)
-                }
-                body is JsonObject -> {
-                    L.e(requestConfig.url)
-                    if (body.has(requestConfig.codeKey)) {
-                        throw HttpDataException(
-                            body.getString(requestConfig.msgKey) ?: "数据异常",
-                            body.getInt(requestConfig.codeKey, -200)
-                        )
-                    } else {
-                        throw HttpDataException("返回体无[${requestConfig.codeKey}]", -200)
+            if (it.isSuccessful) {
+                val body = it.body()
+                when {
+                    requestConfig.isSuccessful(it) -> {
+                        requestConfig.onSuccess(it)
+                    }
+                    body is JsonObject -> {
+                        L.e(requestConfig.url)
+                        if (body.has(requestConfig.codeKey)) {
+                            throw HttpDataException(
+                                body.getString(requestConfig.msgKey) ?: "数据异常",
+                                body.getInt(requestConfig.codeKey, -200)
+                            )
+                        } else {
+                            throw HttpDataException("返回体无[${requestConfig.codeKey}]", -200)
+                        }
+                    }
+                    else -> {
+                        requestConfig.onSuccess(it)
                     }
                 }
-                else -> {
-                    requestConfig.onSuccess(it)
-                }
+            } else {
+                val code = it.code()
+                throw HttpDataException("[$code]${it.message()}", code)
             }
         }
         .doOnComplete {
@@ -393,13 +398,18 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
             requestConfig.onStart(it)
         }
         .doOnNext {
-            when {
-                requestConfig.isSuccessful(it) -> {
-                    requestConfig.onSuccess(it)
+            if (it.isSuccessful) {
+                when {
+                    requestConfig.isSuccessful(it) -> {
+                        requestConfig.onSuccess(it)
+                    }
+                    else -> {
+                        requestConfig.onSuccess(it)
+                    }
                 }
-                else -> {
-                    requestConfig.onSuccess(it)
-                }
+            } else {
+                val code = it.code()
+                throw HttpDataException("[$code]${it.message()}", code)
             }
         }
         .doOnComplete {
