@@ -49,7 +49,7 @@ open class DslLabelEditItem : DslBaseEditItem() {
 
         itemHolder.img(R.id.lib_right_ico_view)?.apply {
             val drawable = itemEditTipDrawable ?: loadDrawable(itemEditTipIcon)
-            if (drawable == null) {
+            if (drawable == null || editItemConfig.itemNoEditModel == true /*不可编辑*/) {
                 gone()
             } else {
                 visible()
@@ -73,6 +73,7 @@ open class DslLabelEditItem : DslBaseEditItem() {
 
         }
 
+        //右边文本, cm unit
         itemHolder.gone(R.id.lib_right_text_view, itemRightTextStyle.text == null)
         itemHolder.tv(R.id.lib_right_text_view)?.apply {
             itemRightTextStyle.updateStyle(this)

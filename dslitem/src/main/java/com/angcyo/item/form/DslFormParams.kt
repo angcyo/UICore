@@ -4,6 +4,7 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.http.base.JsonBuilder
 import com.angcyo.http.base.jsonBuilder
 import com.angcyo.http.base.toJson
+import com.angcyo.library.L
 import com.angcyo.library.ex.getOrNull2
 import com.angcyo.library.ex.patternList
 import com.angcyo.library.utils.getLongNum
@@ -111,28 +112,30 @@ fun HashMap<String, Any?>.putDepth(key: String, value: Any?) {
     val keyList = key.split(".")
 
     //操作的数据
-    var opDataMap: Any = this
-    var isArray = false
+    var opData: Any = this
+    var isArrayKey = false
     var arrayIndex: Int? = null //数组的索引
     keyList.forEachIndexed { index, subKey ->
 
+        //剔除[-1] , 剩下干净的key
         val k = if (subKey.contains(arrayFlagRegex)) {
             val indexStr = subKey.patternList(arrayFlag).first()
             arrayIndex = indexStr.getLongNum()?.toInt()
             //数组
             subKey.substring(0, subKey.length - indexStr.length).apply {
-                isArray = true
+                isArrayKey = true
             }
         } else {
             subKey.apply {
-                isArray = false
+                isArrayKey = false
             }
         }
 
-        if (isArray) {
+        //处理
+        if (isArrayKey) {
             if (index == keyList.lastIndex) {
-                if (opDataMap is MutableList<*>) {
-                    (opDataMap as MutableList<Any?>).apply {
+                if (opData is MutableList<*>) {
+                    (opData as MutableList<Any?>).apply {
                         if (arrayIndex ?: -1 < 0) {
                             add(value)
                         } else {
@@ -143,19 +146,19 @@ fun HashMap<String, Any?>.putDepth(key: String, value: Any?) {
                     throw IllegalStateException("key[$key]类型不匹配")
                 }
             } else {
-                if (opDataMap is HashMap<*, *>) {
+                if (opData is HashMap<*, *>) {
                     //转移操作对象
-                    val rawList = (opDataMap as HashMap<String, Any?>)[k]
+                    val rawList = (opData as HashMap<String, Any?>)[k]
                     val list = (rawList ?: mutableListOf<Any?>()) as MutableList<Any?>
 
                     if (arrayIndex == null) {
                         list.add(linkedMapOf<String, Any?>().apply {
                             //转移操作对象
-                            (opDataMap as HashMap<String, Any?>)[k] = list
-                            opDataMap = this
+                            (opData as HashMap<String, Any?>)[k] = list
+                            opData = this
                         })
                     } else {
-                        opDataMap = list.getOrNull2(arrayIndex!!)!! //越界异常
+                        opData = list.getOrNull2(arrayIndex!!)!! //越界异常
                     }
                 } else {
                     throw IllegalStateException("key[$key]类型不匹配")
@@ -163,18 +166,18 @@ fun HashMap<String, Any?>.putDepth(key: String, value: Any?) {
             }
         } else {
             if (index == keyList.lastIndex) {
-                if (opDataMap is HashMap<*, *>) {
-                    (opDataMap as HashMap<String, Any?>)[k] = value
-                } else if (opDataMap is MutableList<*>) {
-                    (opDataMap as MutableList<Any?>).add(value)
+                if (opData is HashMap<*, *>) {
+                    (opData as HashMap<String, Any?>)[k] = value
+                } else if (opData is MutableList<*>) {
+                    (opData as MutableList<Any?>).add(value)
                 }
             } else {
-                if (opDataMap is HashMap<*, *>) {
+                if (opData is HashMap<*, *>) {
                     //转移操作对象
-                    ((opDataMap as HashMap<String, Any?>)[k]
+                    ((opData as HashMap<String, Any?>)[k]
                         ?: linkedMapOf<String, Any?>()).apply {
-                        (opDataMap as HashMap<String, Any?>)[k] = this
-                        opDataMap = this
+                        (opData as HashMap<String, Any?>)[k] = this
+                        opData = this
                     }
                 } else {
                     throw IllegalStateException("key[$key]类型不匹配")
@@ -182,4 +185,81 @@ fun HashMap<String, Any?>.putDepth(key: String, value: Any?) {
             }
         }
     }
+}
+
+/**获取深度key, 对应的value*/
+fun HashMap<String, Any?>.getDepth(key: String): Any? {
+    val arrayFlag = "\\[-?\\d*\\]"
+    val arrayFlagRegex = arrayFlag.toRegex()
+    val keyList = key.split(".")
+
+    //操作的数据
+    var opData: Any = this
+    var isArrayKey = false
+    var arrayIndex: Int? = null //数组的索引
+
+    var result: Any? = null
+
+    keyList.forEachIndexed { index, subKey ->
+
+        //剔除[-1] , 剩下干净的key
+        val k = if (subKey.contains(arrayFlagRegex)) {
+            val indexStr = subKey.patternList(arrayFlag).first()
+            arrayIndex = indexStr.getLongNum()?.toInt()
+            //数组
+            subKey.substring(0, subKey.length - indexStr.length).apply {
+                isArrayKey = true
+            }
+        } else {
+            subKey.apply {
+                isArrayKey = false
+            }
+        }
+
+        //处理
+        if (isArrayKey) {
+            if (opData is HashMap<*, *>) {
+                result = (opData as HashMap<*, *>)[k]
+
+                if (arrayIndex != null) {
+                    result = (result as? List<*>)?.get(arrayIndex!!)
+                }
+
+                if (result == null) {
+                    return null
+                } else {
+                    opData = result!!
+                }
+            } else if (opData is List<*>) {
+                result = (opData as? List<*>)
+
+                if (arrayIndex != null) {
+                    result = (opData as? List<*>)?.get(arrayIndex!!)
+                }
+
+                if (result == null) {
+                    return null
+                } else {
+                    opData = result!!
+                }
+            } else {
+                L.w("异常类型获取值:$k 在:$opData")
+                return null
+            }
+        } else {
+            if (opData is HashMap<*, *>) {
+                result = (opData as HashMap<*, *>)[k]
+                if (result == null) {
+                    return null
+                } else {
+                    opData = result!!
+                }
+            } else {
+                L.w("异常获取值:$k 在:$opData")
+                return null
+            }
+        }
+    }
+
+    return result
 }

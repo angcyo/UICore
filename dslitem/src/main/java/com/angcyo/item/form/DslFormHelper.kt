@@ -96,24 +96,29 @@ class DslFormHelper {
         }
     }
 
+    //<editor-fold desc="仅检查数据">
+
     /** 检查表单数据验证
      * 返回 true 数据通过 */
     fun checkFormData(
         adapter: DslAdapter,
         params: DslFormParams,
+        onCheckNext: (DslAdapterItem, Int) -> Unit = { _, _ -> },
         end: (error: Throwable?) -> Unit
     ) {
         if (params.skipFormCheck) {
+            end(null)
             return
         }
         val allDataList = adapter.getDataList(params.useFilterList)
-        _checkFormData(params, allDataList, 0, end)
+        _checkFormData(params, allDataList, 0, onCheckNext, end)
     }
 
     fun _checkFormData(
         params: DslFormParams,
         itemList: List<DslAdapterItem>,
         checkIndex: Int,
+        onCheckNext: (DslAdapterItem, Int) -> Unit = { _, _ -> },
         end: (error: Throwable?) -> Unit
     ) {
         if (checkIndex >= itemList.size()) {
@@ -122,16 +127,13 @@ class DslFormHelper {
         }
 
         val item = itemList[checkIndex]
-
-        var result = RecyclerView.NO_POSITION
-        var formItem: DslAdapterItem? = null
+        L.i("开始检查表单数据:$checkIndex ->$item")
 
         //错误表单之前, 是否有悬浮item
         var haveHoverItem = false
 
         if (item is IFormItem) {
             params._formAdapterItem = item
-            formItem = item
 
             if (item.itemIsHover) {
                 haveHoverItem = true
@@ -141,28 +143,27 @@ class DslFormHelper {
                 //跳过了默认的check检查
             } else {
                 item.itemFormConfig.formCheck(params) { error ->
+                    params._formAdapterItem = null
                     if (error == null) {
+                        //无错误
                         //item.formRequired 表单的[formRequired]必填判断, 请在[formCheck]里面自行处理
+                        onCheckNext(item, checkIndex)
+                        _checkFormData(params, itemList, checkIndex + 1, onCheckNext, end)
                     } else {
-                        result = checkIndex
+                        //有错误
+                        tipFormItemError(item)
+                        end(IllegalStateException("第${checkIndex}个Item有异常"))
                     }
                 }
-
             }
         } else {
             params._formAdapterItem = null
         }
-
-        if (result != RecyclerView.NO_POSITION) {
-            //有错误
-            formItem?.let {
-                tipFormItemError(it)
-            }
-            end(IllegalStateException("第${result}个Item有异常"))
-        } else {
-            _checkFormData(params, itemList, checkIndex + 1, end)
-        }
     }
+
+    //</editor-fold desc="仅检查数据">
+
+    //<editor-fold desc="检查后, 获取数据">
 
     /**获取表单数据, 支持 json 和 map
      * 默认是可见item的数据*/
@@ -206,10 +207,13 @@ class DslFormHelper {
 
         val item = itemList[obtainIndex]
 
+        L.i("开始获取表单数据:$obtainIndex ->$item")
+
         if (item is IFormItem) {
             params._formAdapterItem = item
             if (!params.formObtainBeforeAction(item)) {
                 item.itemFormConfig.formObtain(params) { error ->
+                    params._formAdapterItem = null
                     if (error == null) {
                         //无异常
                         params.formObtainAfterAction(item)
@@ -225,4 +229,44 @@ class DslFormHelper {
             _obtainData(adapter, params, itemList, obtainIndex + 1, end)
         }
     }
+
+    //</editor-fold desc="检查后, 获取数据">
+
+    //<editor-fold desc="检查的同时获取数据">
+
+    /**检查的同时获取数据*/
+    fun checkAndObtainData(
+        adapter: DslAdapter = _recyclerView!!._dslAdapter!!,
+        params: DslFormParams = DslFormParams.fromHttp(),
+        end: (params: DslFormParams, error: Throwable?) -> Unit
+    ) {
+        val dataList = adapter.getDataList(params.useFilterList)
+
+        if (params.isHttp()) {
+            checkFormData(adapter, params, { item, index ->
+                L.i("开始获取表单数据:$index ->$item")
+                if (item is IFormItem) {
+                    params._formAdapterItem = item
+                    if (!params.formObtainBeforeAction(item)) {
+                        item.itemFormConfig.formObtain(params) { error ->
+                            params._formAdapterItem = null
+                            if (error == null) {
+                                //无异常
+                                params.formObtainAfterAction(item)
+                            }
+                        }
+                    }
+                }
+            }) {
+                //检查结束
+                end(params, it)
+            }
+        } else {
+            _obtainData(adapter, params, dataList, 0) {
+                end(params, it)
+            }
+        }
+    }
+
+    //</editor-fold desc="检查的同时获取数据">
 }

@@ -3,6 +3,7 @@
 
     <dimen name="lib_item_label_min_width">75dp</dimen>
 
+    <!--显示时, 标签的样式-->
     <style name="ItemLabelStyle" parent="LibSubTextStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -32,5 +33,10 @@
         <item name="android:padding">@dimen/lib_padding_right</item>
         <item name="android:background">@drawable/lib_bg2_selector</item>
         <item name="android:clickable">false</item>
+    </style>
+
+    <!--表单填写时的标签样式-->
+    <style name="FormItemLabelStyle" parent="ItemLabelStyle">
+        <item name="android:textColor">@color/text_primary_color</item>
     </style>
 </resources>

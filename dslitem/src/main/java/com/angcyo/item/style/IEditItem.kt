@@ -4,10 +4,13 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.DslBaseEditItem
 import com.angcyo.item.R
+import com.angcyo.item.form.IFormItem
+import com.angcyo.item.form.formItemConfig
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clearListeners
 import com.angcyo.widget.base.onTextChange
 import com.angcyo.widget.base.restoreSelection
+import com.angcyo.widget.edit.IEditDelegate
 
 /**
  * 输入框item
@@ -28,6 +31,18 @@ interface IEditItem : IAutoInitItem {
     fun initEditItem(itemHolder: DslViewHolder) {
         itemHolder.ev(editItemConfig.itemEditTextViewId)?.apply {
             editItemConfig.itemEditTextStyle.updateStyle(this)
+
+            if (this is IEditDelegate) {
+                val customEditDelegate = this.getCustomEditDelegate()
+                if (this@IEditItem is IFormItem) {
+                    customEditDelegate.isNoEditMode =
+                        editItemConfig.itemNoEditModel ?: !formItemConfig.formCanEdit
+                } else {
+                    editItemConfig.itemNoEditModel?.apply {
+                        customEditDelegate.isNoEditMode = this
+                    }
+                }
+            }
 
             clearListeners()
 
@@ -78,6 +93,15 @@ class EditItemConfig : IDslItemConfig {
         set(value) {
             field = value
             itemEditTextStyle.text = value
+        }
+
+    /**是否可编辑*/
+    var itemNoEditModel: Boolean? = null
+        set(value) {
+            field = value
+            if (value == true) {
+                itemEditTextStyle.hint = null
+            }
         }
 
     /**统一样式配置*/
