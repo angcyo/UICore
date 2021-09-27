@@ -39,6 +39,12 @@ var IFormItem.formCanEdit: Boolean
         }
     }
 
+var IFormItem.formIgnore: Boolean
+    get() = itemFormConfig.formIgnore
+    set(value) {
+        itemFormConfig.formIgnore = value
+    }
+
 /**
  * 表单[IFormItem]配置信息
  * Email:angcyo@126.com

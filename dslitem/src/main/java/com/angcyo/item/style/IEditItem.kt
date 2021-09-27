@@ -83,6 +83,12 @@ var IEditItem.itemEditText: CharSequence?
         editItemConfig.itemEditText = value
     }
 
+var IEditItem.itemMaxInputLength: Int
+    get() = editItemConfig.itemEditTextStyle.editMaxInputLength
+    set(value) {
+        editItemConfig.itemEditTextStyle.editMaxInputLength = value
+    }
+
 class EditItemConfig : IDslItemConfig {
 
     /**[R.id.lib_edit_view]*/
