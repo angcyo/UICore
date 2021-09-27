@@ -37,6 +37,9 @@ data class LoaderConfig(
     /**显示拍照按钮*/
     var enableCamera: Boolean = true,
 
+    /**拍照后, 是否立马返回. 单选模式下生效*/
+    var cameraTakeResult: Boolean = true,
+
     /**图片,解析文件的Exif信息, 耗时操作*/
     var loaderExif: Boolean = false,
 

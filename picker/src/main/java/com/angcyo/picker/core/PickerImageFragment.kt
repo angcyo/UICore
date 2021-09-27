@@ -232,15 +232,25 @@ class PickerImageFragment : BasePickerFragment() {
                             if (it != null) {
                                 val path = it.loadUrl()
                                 val meta = path?.getMediaMetadata()
-                                pickerViewModel.takeVideoList.add(
-                                    LoaderMedia(
-                                        localUri = it,
-                                        fileSize = path?.fileSize() ?: -1,
-                                        duration = meta?.getOrNull(0) ?: -1,
-                                        width = (meta?.getOrNull(1) ?: -1).toInt(),
-                                        height = (meta?.getOrNull(2) ?: -1).toInt(),
-                                    )
+
+                                val loaderMedia = LoaderMedia(
+                                    localUri = it,
+                                    fileSize = path?.fileSize() ?: -1,
+                                    duration = meta?.getOrNull(0) ?: -1,
+                                    width = (meta?.getOrNull(1) ?: -1).toInt(),
+                                    height = (meta?.getOrNull(2) ?: -1).toInt(),
                                 )
+                                pickerViewModel.takeVideoList.add(loaderMedia)
+
+                                if (pickerViewModel.isSingleModel()) {
+                                    pickerViewModel.removeSelectedAll()
+                                }
+                                pickerViewModel.addSelectedMedia(loaderMedia)
+
+                                //单选模式下, 直接返回
+                                if (pickerViewModel.isSingleModel() && loaderConfig?.cameraTakeResult == true) {
+                                    PickerActivity.send(this@PickerImageFragment)
+                                }
                             }
                         }
                     } else {
@@ -248,14 +258,24 @@ class PickerImageFragment : BasePickerFragment() {
                             if (it != null) {
                                 val path = it.loadUrl()
                                 val size = path?.bitmapSize()
-                                pickerViewModel.takeImageList.add(
-                                    LoaderMedia(
-                                        localUri = it,
-                                        fileSize = path?.fileSize() ?: -1,
-                                        width = size?.getOrNull(0) ?: -1,
-                                        height = size?.getOrNull(0) ?: -1
-                                    )
+
+                                val loaderMedia = LoaderMedia(
+                                    localUri = it,
+                                    fileSize = path?.fileSize() ?: -1,
+                                    width = size?.getOrNull(0) ?: -1,
+                                    height = size?.getOrNull(0) ?: -1
                                 )
+                                pickerViewModel.takeImageList.add(loaderMedia)
+
+                                if (pickerViewModel.isSingleModel()) {
+                                    pickerViewModel.removeSelectedAll()
+                                }
+                                pickerViewModel.addSelectedMedia(loaderMedia)
+
+                                //单选模式下, 直接返回
+                                if (pickerViewModel.isSingleModel() && loaderConfig?.cameraTakeResult == true) {
+                                    PickerActivity.send(this@PickerImageFragment)
+                                }
                             }
                         }
                     }
