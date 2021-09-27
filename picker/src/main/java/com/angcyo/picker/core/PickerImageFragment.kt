@@ -15,6 +15,7 @@ import com.angcyo.library.ex.*
 import com.angcyo.library.model.LoaderMedia
 import com.angcyo.loader.DslLoader
 import com.angcyo.loader.FolderCreator
+import com.angcyo.loader.LoaderConfig
 import com.angcyo.loader.LoaderFolder
 import com.angcyo.picker.DslPicker
 import com.angcyo.picker.R
@@ -143,7 +144,19 @@ class PickerImageFragment : BasePickerFragment() {
 
         loaderConfig?.apply {
             loader.onLoaderResult = {
-                it.forEach { folder ->
+                val folderList = mutableListOf<LoaderFolder>()
+                folderList.addAll(it)
+
+                //系统相册无媒体, 此时开启了摄像头功能
+                if (it.isEmpty() && enableCamera) {
+                    if (mediaLoaderType.have(LoaderConfig.LOADER_TYPE_IMAGE)) {
+                        folderList.add(LoaderFolder("所有图片", FolderCreator.ALL_IMAGE))
+                    } else if (mediaLoaderType.have(LoaderConfig.LOADER_TYPE_VIDEO)) {
+                        folderList.add(LoaderFolder("所有视频", FolderCreator.ALL_VIDEO))
+                    }
+                }
+
+                folderList.forEach { folder ->
                     //手动追加拍摄的图片
                     if (folder.folderPath == FolderCreator.ALL_IMAGE) {
                         folder.mediaItemList.addAll(0, pickerViewModel.takeImageList)
@@ -152,24 +165,24 @@ class PickerImageFragment : BasePickerFragment() {
                     }
                 }
 
-                if (it.isEmpty()) {
+                if (folderList.isEmpty()) {
                     _adapter.setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_EMPTY)
                 } else {
                     _adapter.setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_NONE)
-                    pickerViewModel.loaderFolderList.value = it
+                    pickerViewModel.loaderFolderList.value = folderList
 
                     val currentFolder = pickerViewModel.currentFolder.value
                     if (currentFolder == null) {
                         //未选中文件夹, 默认选中第一个
-                        pickerViewModel.currentFolder.value = it.first()
+                        pickerViewModel.currentFolder.value = folderList.first()
                     } else {
                         //如果已经选中了, 替换当前的数据
                         val find =
-                            it.find { folder -> folder.folderPath == currentFolder.folderPath }
+                            folderList.find { folder -> folder.folderPath == currentFolder.folderPath }
 
                         if (find == null) {
                             //未找到
-                            pickerViewModel.currentFolder.value = it.first()
+                            pickerViewModel.currentFolder.value = folderList.first()
                         } else {
                             //找到
                             currentFolder.mediaItemList = find.mediaItemList
@@ -206,6 +219,51 @@ class PickerImageFragment : BasePickerFragment() {
         }
     }
 
+    /**在adapter头部, 添加一个摄像头预览item*/
+    fun _addCameraItem() {
+        if (_adapter.headerItems.isEmpty()) {
+            _adapter.headerItems.add(DslPickerCameraPreviewItem().apply {
+                itemClick = {
+                    val folderPath = pickerViewModel.currentFolder.value?.folderPath
+                    val isVideoFolder2 = folderPath == FolderCreator.ALL_VIDEO
+                    //val isImageFolder2 = folderPath == FolderCreator.ALL_IMAGE
+                    if (isVideoFolder2) {
+                        DslPicker.takeVideo(activity) {
+                            if (it != null) {
+                                val path = it.loadUrl()
+                                val meta = path?.getMediaMetadata()
+                                pickerViewModel.takeVideoList.add(
+                                    LoaderMedia(
+                                        localUri = it,
+                                        fileSize = path?.fileSize() ?: -1,
+                                        duration = meta?.getOrNull(0) ?: -1,
+                                        width = (meta?.getOrNull(1) ?: -1).toInt(),
+                                        height = (meta?.getOrNull(2) ?: -1).toInt(),
+                                    )
+                                )
+                            }
+                        }
+                    } else {
+                        DslPicker.takePhoto(activity) {
+                            if (it != null) {
+                                val path = it.loadUrl()
+                                val size = path?.bitmapSize()
+                                pickerViewModel.takeImageList.add(
+                                    LoaderMedia(
+                                        localUri = it,
+                                        fileSize = path?.fileSize() ?: -1,
+                                        width = size?.getOrNull(0) ?: -1,
+                                        height = size?.getOrNull(0) ?: -1
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+            })
+        }
+    }
+
     /**切换显示的文件夹*/
     fun _switchFolder(folder: LoaderFolder?, scrollToFirst: Boolean = true) {
         if (folder == null) {
@@ -220,47 +278,7 @@ class PickerImageFragment : BasePickerFragment() {
         val isVideoFolder = folder.folderPath == FolderCreator.ALL_VIDEO
         val isImageFolder = folder.folderPath == FolderCreator.ALL_IMAGE
         if (loaderConfig?.enableCamera == true && (isVideoFolder || isImageFolder)) {
-            if (_adapter.headerItems.isEmpty()) {
-                _adapter.headerItems.add(DslPickerCameraPreviewItem().apply {
-                    itemClick = {
-                        val folderPath = pickerViewModel.currentFolder.value?.folderPath
-                        val isVideoFolder2 = folderPath == FolderCreator.ALL_VIDEO
-                        val isImageFolder2 = folderPath == FolderCreator.ALL_IMAGE
-                        if (isVideoFolder2) {
-                            DslPicker.takeVideo(activity) {
-                                if (it != null) {
-                                    val path = it.loadUrl()
-                                    val meta = path?.getMediaMetadata()
-                                    pickerViewModel.takeVideoList.add(
-                                        LoaderMedia(
-                                            localUri = it,
-                                            fileSize = path?.fileSize() ?: -1,
-                                            duration = meta?.getOrNull(0) ?: -1,
-                                            width = (meta?.getOrNull(1) ?: -1).toInt(),
-                                            height = (meta?.getOrNull(2) ?: -1).toInt(),
-                                        )
-                                    )
-                                }
-                            }
-                        } else if (isImageFolder2) {
-                            DslPicker.takePhoto(activity) {
-                                if (it != null) {
-                                    val path = it.loadUrl()
-                                    val size = path?.bitmapSize()
-                                    pickerViewModel.takeImageList.add(
-                                        LoaderMedia(
-                                            localUri = it,
-                                            fileSize = path?.fileSize() ?: -1,
-                                            width = size?.getOrNull(0) ?: -1,
-                                            height = size?.getOrNull(0) ?: -1
-                                        )
-                                    )
-                                }
-                            }
-                        }
-                    }
-                })
-            }
+            _addCameraItem()
         } else {
             _adapter.headerItems.clear()
         }
