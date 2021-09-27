@@ -8,7 +8,6 @@ import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.glide.DslGlide
 import com.angcyo.glide.GlideImageView
 import com.angcyo.glide.R
-import com.angcyo.glide.giv
 import com.angcyo.library.ex.toUri
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.image.DslImageView
@@ -29,8 +28,10 @@ interface IImageItem : IAutoInitItem {
         //更新媒体
         val mediaUpdate = payloads.isUpdateMedia()
 
-        itemHolder.giv(imageItemConfig.itemImageViewId)?.apply {
-            imageItemConfig.onConfigImageView(this)
+        itemHolder.img(imageItemConfig.itemImageViewId)?.apply {
+            if (this is GlideImageView) {
+                imageItemConfig.onConfigImageView(this)
+            }
 
             if (this@IImageItem is DslAdapterItem) {
                 setOnClickListener(_clickListener)
@@ -39,19 +40,21 @@ interface IImageItem : IAutoInitItem {
 
         if (mediaUpdate) {
             //缩略图
-            itemHolder.giv(imageItemConfig.itemImageViewId)?.apply {
+            itemHolder.img(imageItemConfig.itemImageViewId)?.apply {
                 imageItemConfig.imageStyleConfig.updateStyle(this)
                 when (val image = imageItemConfig.itemLoadImage ?: imageItemConfig.itemLoadUri) {
                     is Number -> setImageResource(image as Int)
                     else -> {
-                        val uri: Uri? = when (image) {
-                            is String -> image.toUri()
-                            is Uri -> image
-                            else -> null
-                        }
-                        load(uri) {
-                            checkGifType = imageItemConfig.itemCheckGifType
-                            imageItemConfig.onConfigGlide(this)
+                        if (this is GlideImageView) {
+                            val uri: Uri? = when (image) {
+                                is String -> image.toUri()
+                                is Uri -> image
+                                else -> null
+                            }
+                            load(uri) {
+                                checkGifType = imageItemConfig.itemCheckGifType
+                                imageItemConfig.onConfigGlide(this)
+                            }
                         }
                         //L.w("不支持的图片类型:${image}")
                     }
