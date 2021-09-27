@@ -127,7 +127,7 @@ class DslFormHelper {
         }
 
         val item = itemList[checkIndex]
-        L.i("开始检查表单数据:$checkIndex ->$item")
+        L.i("开始检查表单数据:$checkIndex/${itemList.size} ->$item")
 
         //错误表单之前, 是否有悬浮item
         var haveHoverItem = false
@@ -208,7 +208,7 @@ class DslFormHelper {
 
         val item = itemList[obtainIndex]
 
-        L.i("开始获取表单数据:$obtainIndex ->$item")
+        L.i("开始获取表单数据:$obtainIndex/${itemList.size} ->$item")
 
         if (item is IFormItem) {
             params._formAdapterItem = item
@@ -244,8 +244,8 @@ class DslFormHelper {
         val dataList = adapter.getDataList(params.useFilterList)
 
         if (params.isHttp()) {
-            checkFormData(adapter, params, { item, index ->
-                L.i("开始获取表单数据:$index ->$item")
+            _checkFormData(params, dataList, 0, { item, index ->
+                L.i("开始获取表单数据:$index/${dataList.size} ->$item")
                 if (item is IFormItem) {
                     params._formAdapterItem = item
                     if (!params.formObtainBeforeAction(item)) {
