@@ -41,16 +41,16 @@ open class DslAdapterItem : LifecycleOwner {
 
     companion object {
         /**负载,请求刷新部分界面*/
-        const val PAYLOAD_UPDATE_PART = 0b0001
+        const val PAYLOAD_UPDATE_PART = 0x0001
 
         /**负载,强制更新媒体, 比如图片*/
-        const val PAYLOAD_UPDATE_MEDIA = 0b0011
+        const val PAYLOAD_UPDATE_MEDIA = 0x0011
 
         /**负载,请求更新[itemGroupExtend]*/
-        const val PAYLOAD_UPDATE_EXTEND = 0b00101
+        const val PAYLOAD_UPDATE_EXTEND = 0x00101
 
         /**负载,请求更新[itemHidden]*/
-        const val PAYLOAD_UPDATE_HIDDEN = 0b001001
+        const val PAYLOAD_UPDATE_HIDDEN = 0x001001
 
         /**占满宽度的item*/
         const val FULL_ITEM = -1
