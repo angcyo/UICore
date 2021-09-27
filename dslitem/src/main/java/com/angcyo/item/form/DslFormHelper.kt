@@ -158,6 +158,7 @@ class DslFormHelper {
             }
         } else {
             params._formAdapterItem = null
+            _checkFormData(params, itemList, checkIndex + 1, onCheckNext, end)
         }
     }
 

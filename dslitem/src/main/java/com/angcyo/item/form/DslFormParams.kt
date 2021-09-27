@@ -222,7 +222,7 @@ fun HashMap<String, Any?>.getDepth(key: String): Any? {
                 result = (opData as HashMap<*, *>)[k]
 
                 if (arrayIndex != null) {
-                    result = (result as? List<*>)?.get(arrayIndex!!)
+                    result = (result as? List<*>)?.getOrNull2(arrayIndex!!)
                 }
 
                 if (result == null) {
@@ -234,7 +234,7 @@ fun HashMap<String, Any?>.getDepth(key: String): Any? {
                 result = (opData as? List<*>)
 
                 if (arrayIndex != null) {
-                    result = (opData as? List<*>)?.get(arrayIndex!!)
+                    result = (opData as? List<*>)?.getOrNull2(arrayIndex!!)
                 }
 
                 if (result == null) {
