@@ -308,6 +308,16 @@ fun DslAdapter.eachItem(
     getDataList(useFilterList).forEachIndexed(action)
 }
 
+/**是否有item发生过改变*/
+fun DslAdapter.haveItemChanged(useFilterList: Boolean = true): Boolean {
+    for (item in getDataList(useFilterList)) {
+        if (item.itemChanged) {
+            return true
+        }
+    }
+    return false
+}
+
 //</editor-fold desc="Item操作">
 
 //<editor-fold desc="payload">
