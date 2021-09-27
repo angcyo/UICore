@@ -83,6 +83,9 @@ class FormItemConfig : IDslItemConfig {
             }
         }
 
+    /**异常时的错误提示*/
+    var formErrorTip: String = "无效的值"
+
     /**表单是否可编辑*/
     var formCanEdit: Boolean = true
 
@@ -125,11 +128,11 @@ class FormItemConfig : IDslItemConfig {
             } else if (formRequired) {
                 val value = onGetFormValue(params)
                 if (value == null) {
-                    end(IllegalArgumentException("无效的值"))
+                    end(IllegalArgumentException(formErrorTip))
                 } else if (value is String && value.isEmpty()) {
-                    end(IllegalArgumentException("无效的值"))
+                    end(IllegalArgumentException(formErrorTip))
                 } else if (value is Collection<*> && value.isEmpty()) {
-                    end(IllegalArgumentException("无效的值"))
+                    end(IllegalArgumentException(formErrorTip))
                 } else {
                     end(null)
                 }
