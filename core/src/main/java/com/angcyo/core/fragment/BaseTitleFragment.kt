@@ -143,13 +143,15 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
 
-        if (parentFragment != null) {
+        val isInTitleFragment = parentFragment is BaseTitleFragment
+
+        if (isInTitleFragment) {
             //关闭, 自身协调布局的特性
             _vh.v<RCoordinatorLayout>(R.id.lib_coordinator_wrap_layout)?.isEnabled = false
         }
 
         if (hideTitleLayout == null) {
-            if (parentFragment != null) {
+            if (isInTitleFragment) {
                 //在parent中, 智能去除标题栏
                 _vh.gone(R.id.lib_title_wrap_layout)
             }
