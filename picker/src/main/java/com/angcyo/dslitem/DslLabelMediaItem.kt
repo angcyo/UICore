@@ -106,11 +106,12 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
                         if (itemShowAddMediaItem && itemEnable) {
                             addMediaItem?.apply {
                                 itemFragment = this@DslLabelMediaItem.itemFragment
+
                                 pickerMediaItemConfig.itemLoaderConfig.maxSelectorLimit =
                                     itemShowMaxMediaCount
                                 pickerMediaItemConfig.itemLoaderConfig.selectorMediaList =
                                     itemMediaList
-                                itemUpdateLoaderConfig =
+                                pickerMediaItemConfig.itemUpdateLoaderConfig =
                                     this@DslLabelMediaItem.itemUpdateLoaderConfig
 
                                 pickerMediaItemConfig.itemTakeResult = {
