@@ -426,3 +426,42 @@ fun DslAdapter.delayNotify(filterParams: FilterParams = FilterParams(notifyDiffD
 
 //</editor-fold desc="Update">
 
+//<editor-fold desc="操作扩展">
+
+/**查找相同类名的item
+ * [continuous]连续or不连续*/
+fun <T : DslAdapterItem> DslAdapter.findSameClassItem(
+    item: T,
+    useFilterList: Boolean = true,
+    continuous: Boolean = true
+): List<T> {
+    val list = getDataList(useFilterList)
+    val result = mutableListOf<T>()
+
+    if (continuous) {
+        var findAnchor = false /*是否找到锚点*/
+        for (it in list) {
+            findAnchor = it == item
+            if (it.className() == item.className()) {
+                result.add(it as T)
+            } else {
+                if (findAnchor) {
+                    break
+                } else {
+                    result.clear()
+                }
+            }
+        }
+    } else {
+        for (it in list) {
+            if (it.className() == item.className()) {
+                result.add(it as T)
+            }
+        }
+    }
+
+    return result
+}
+
+//</editor-fold desc="操作扩展">
+

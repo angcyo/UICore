@@ -19,10 +19,10 @@ interface ILabelItem : IAutoInitItem {
     /**初始化*/
     fun initLabelItem(itemHolder: DslViewHolder) {
         itemHolder.gone(
-            labelItemConfig.itemLabelTextViewId,
+            labelItemConfig.itemLabelViewId,
             labelItemConfig.itemLabelTextStyle.text == null
         )
-        itemHolder.tv(labelItemConfig.itemLabelTextViewId)?.apply {
+        itemHolder.tv(labelItemConfig.itemLabelViewId)?.apply {
             labelItemConfig.itemLabelTextStyle.updateStyle(this)
         }
     }
@@ -39,8 +39,9 @@ var ILabelItem.itemLabelText: CharSequence?
     }
 
 class LabelItemConfig : IDslItemConfig {
+
     /**[R.id.lib_label_view]*/
-    var itemLabelTextViewId: Int = R.id.lib_label_view
+    var itemLabelViewId: Int = R.id.lib_label_view
 
     /**Label文本*/
     var itemLabelText: CharSequence? = null

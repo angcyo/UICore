@@ -335,3 +335,21 @@ fun <T> MutableList<T>.removeSafe(bean: T?): Boolean {
  *
  * */
 fun await(count: Int = 1) = CountDownLatch(count)
+
+/**列表中, 当前[element]的前一个元素*/
+fun <T> List<T>.before(element: T): T? {
+    val index = indexOf(element)
+    if (index <= 0) {
+        return null
+    }
+    return getOrNull(index - 1)
+}
+
+/**后一个*/
+fun <T> List<T>.after(element: T): T? {
+    val index = indexOf(element)
+    if (index >= lastIndex) {
+        return null
+    }
+    return getOrNull(index + 1)
+}
