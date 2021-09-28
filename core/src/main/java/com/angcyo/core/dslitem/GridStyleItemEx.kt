@@ -2,6 +2,7 @@ package com.angcyo.core.dslitem
 
 import com.angcyo.core.R
 import com.angcyo.dsladapter.*
+import com.angcyo.library.ex._dimen
 import com.angcyo.library.ex._drawable
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.layout.ILayoutDelegate
@@ -14,6 +15,7 @@ import com.angcyo.widget.layout.ILayoutDelegate
  * @date 2021/07/02
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
+
 /**自动设置*/
 fun DslAdapterItem.initGridStyleItem() {
     itemBindOverride = { itemHolder, itemPosition, adapterItem, payloads ->
@@ -75,4 +77,17 @@ fun DslAdapterItem.initGridStyleItem(
             }
         }
     }
+}
+
+/**组与组之间的偏移, 和背景样式*/
+fun DslAdapterItem.initGroupOffsetAndStyle(
+    left: Int = _dimen(com.angcyo.widget.R.dimen.lib_padding_left),
+    top: Int = _dimen(com.angcyo.widget.R.dimen.lib_padding_left),
+    right: Int = _dimen(com.angcyo.widget.R.dimen.lib_padding_left),
+    bottom: Int = _dimen(com.angcyo.widget.R.dimen.lib_padding_left)
+) {
+    onSetItemOffset = {
+        initGroupOffset(it, left, top, right, bottom)
+    }
+    initGridStyleItem()
 }
