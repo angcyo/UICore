@@ -18,6 +18,7 @@ import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.dslViewHolder
 import java.lang.ref.WeakReference
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * 快速配置加载对话框

@@ -102,7 +102,7 @@ class DslFormHelper {
      * 返回 true 数据通过 */
     fun checkFormData(
         adapter: DslAdapter,
-        params: DslFormParams,
+        params: DslFormParams = DslFormParams.fromHttp(),
         onCheckNext: (DslAdapterItem, Int) -> Unit = { _, _ -> },
         end: (error: Throwable?) -> Unit
     ) {
