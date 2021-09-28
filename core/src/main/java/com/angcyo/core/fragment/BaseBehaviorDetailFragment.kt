@@ -60,6 +60,10 @@ abstract class BaseBehaviorDetailFragment : BaseDslFragment() {
         initHeaderLayout()
     }
 
+    open fun backgroundHeight(): Int {
+        return _screenHeight / 3
+    }
+
     /**初始化头部布局*/
     open fun initHeaderLayout() {
         //背景层
@@ -67,7 +71,7 @@ abstract class BaseBehaviorDetailFragment : BaseDslFragment() {
         //头部层
         _vh.group(R.id.lib_header_wrap_layout)?.replace(headerLayoutId)
 
-        val backgroundHeight = _screenHeight / 3
+        val backgroundHeight = backgroundHeight()
         _vh.view(R.id.lib_background_wrap_layout)?.setHeight(backgroundHeight)
         _vh.view(R.id.lib_header_wrap_layout)?.setHeight(backgroundHeight - 20 * dpi)
     }

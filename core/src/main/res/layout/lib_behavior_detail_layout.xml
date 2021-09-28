@@ -11,9 +11,9 @@
         android:id="@+id/lib_background_wrap_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
         app:layout_behavior="com.angcyo.behavior.linkage.LinkageScaleBehavior"
         app:layout_scale_factor="1"
+        tools:background="@color/colorAccent"
         tools:layout_height="200dp">
 
     </FrameLayout>

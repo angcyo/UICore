@@ -55,6 +55,10 @@ abstract class BaseBehaviorTabDetailFragment : BasePagerFragment() {
         initHeaderLayout()
     }
 
+    open fun backgroundHeight(): Int {
+        return _screenHeight / 3
+    }
+
     /**初始化头部布局*/
     open fun initHeaderLayout() {
         //背景层
@@ -62,7 +66,7 @@ abstract class BaseBehaviorTabDetailFragment : BasePagerFragment() {
         //头部层
         _vh.group(R.id.lib_header_wrap_layout)?.replace(headerLayoutId)
 
-        val backgroundHeight = _screenHeight / 3
+        val backgroundHeight = backgroundHeight()
         val headerIndent = 20 * dpi
         _vh.view(R.id.lib_background_wrap_layout)?.setHeight(backgroundHeight)
         _vh.view(R.id.lib_header_wrap_layout)?.setHeight(backgroundHeight - headerIndent)
