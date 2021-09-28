@@ -434,6 +434,16 @@ fun tip(
     }
 }
 
+fun tip2(
+    text: CharSequence?,
+    @DrawableRes icon: Int = R.drawable.lib_ic_succeed,
+    @LayoutRes layoutId: Int = R.layout.lib_toast_tip2_layout,
+    context: Context = app(),
+    action: ToastConfig.() -> Unit = {}
+) {
+    tip(text, context, icon, layoutId, action)
+}
+
 /**文本 ico QQ布局 简化配置*/
 fun toastQQ(
     text: CharSequence?,

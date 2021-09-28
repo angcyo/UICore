@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/lib_toast_tip_bg_shape2"
+    android:gravity="center"
+    android:minWidth="120dp"
+    android:minHeight="120dp"
+    android:orientation="vertical"
+    tools:layout_gravity="center">
+
+    <ImageView
+        android:id="@+id/lib_image_view"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:minWidth="60dp"
+        android:minHeight="60dp"
+        android:scaleType="fitCenter"
+        tools:src="@drawable/lib_ic_succeed" />
+
+    <TextView
+        android:id="@+id/lib_text_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/lib_hdpi"
+        android:textColor="@color/lib_white"
+        tools:text="签到成功" />
+
+</LinearLayout>
