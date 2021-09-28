@@ -5,6 +5,7 @@ import com.angcyo.http.DslHttp.DEFAULT_MSG_KEY
 import com.angcyo.http.DslHttp.retrofit
 import com.angcyo.http.base.*
 import com.angcyo.http.exception.HttpDataException
+import com.angcyo.http.exception.HttpResponseException
 import com.angcyo.http.rx.observableToBack
 import com.angcyo.http.rx.observableToMain
 import com.angcyo.library.L
@@ -345,7 +346,7 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
                 }
             } else {
                 val code = it.code()
-                throw HttpDataException("[$code]${it.message()}", code)
+                throw HttpResponseException("[$code]${it.message()}", code, it)
             }
         }
         .doOnComplete {
