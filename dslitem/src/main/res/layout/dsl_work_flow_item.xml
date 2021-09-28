@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_item_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/lib_bg_selector"
+    android:minHeight="@dimen/lib_item_min_height"
+    app:r_background="@color/lib_white">
+
+    <View
+        android:id="@+id/lib_work_flow_head_line"
+        android:layout_width="@dimen/lib_line"
+        android:layout_height="0dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@id/lib_work_flow_status"
+        app:layout_constraintLeft_toLeftOf="@id/lib_work_flow_status"
+        app:layout_constraintRight_toRightOf="@id/lib_work_flow_status"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/lib_work_flow_status"
+        android:layout_width="@dimen/lib_xhdpi"
+        android:layout_height="@dimen/lib_xhdpi"
+        android:layout_marginLeft="@dimen/lib_padding_left"
+        android:layout_marginTop="@dimen/lib_xxhdpi"
+        android:padding="2dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@drawable/lib_work_flow_pass" />
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_work_flow_label"
+        style="@style/ItemLabelStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/lib_padding_left"
+        android:padding="0dp"
+        android:textColor="@color/text_general_color"
+        android:textSize="@dimen/text_body_size"
+        app:layout_constraintBottom_toBottomOf="@id/lib_work_flow_status"
+        app:layout_constraintLeft_toRightOf="@id/lib_work_flow_status"
+        app:layout_constraintTop_toTopOf="@id/lib_work_flow_status"
+        tools:text="表单标签" />
+
+    <TextView
+        android:id="@+id/lib_work_flow_time"
+        style="@style/LibSubTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:paddingLeft="0dp"
+        android:paddingTop="0dp"
+        android:paddingRight="@dimen/lib_padding_left"
+        android:paddingBottom="0dp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="@id/lib_work_flow_status"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintLeft_toRightOf="@id/lib_work_flow_label"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/lib_work_flow_status"
+        tools:text="2021-9-28" />
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_work_flow_des"
+        style="@style/LibSubTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lib_hdpi"
+        android:maxLines="10"
+        android:paddingLeft="0dp"
+        android:paddingRight="@dimen/lib_padding_left"
+        android:singleLine="false"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintLeft_toLeftOf="@id/lib_work_flow_label"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lib_work_flow_label"
+        tools:text="表单描述内容表单描述内容表单描述内容表单描述内容表单描述内容表单描述内容表单描述内容表单描述内容表单描述内容表单描述内容表单描述内容表单描述内容" />
+
+    <!--内部的item, 通常都具有padding left.-->
+    <com.angcyo.widget.recycler.DslRecyclerView
+        android:id="@+id/lib_nested_recycler_view"
+        style="@style/LibInnerRecyclerViewStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/lib_hdpi"
+        android:nestedScrollingEnabled="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/lib_work_flow_status"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lib_work_flow_des" />
+
+    <View
+        android:id="@+id/lib_work_flow_footer_line"
+        android:layout_width="@dimen/lib_line"
+        android:layout_height="0dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/lib_work_flow_status"
+        app:layout_constraintRight_toRightOf="@id/lib_work_flow_status"
+        app:layout_constraintTop_toBottomOf="@id/lib_work_flow_status" />
+
+</com.angcyo.widget.layout.RConstraintLayout>
