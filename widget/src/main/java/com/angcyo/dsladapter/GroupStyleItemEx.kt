@@ -12,50 +12,17 @@ import com.angcyo.widget.R
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 
-/**网格四边插入偏移量*/
+/**网格四边插入偏移量, 自动设置*/
 fun DslAdapterItem.initGridOffset(
-    insert: Int = _dimen(R.dimen.lib_padding_left),
-    linearOffsetBottom: Int = 0
-) {
-    initGridOffset(insert, insert, insert, insert, linearOffsetBottom)
-}
-
-fun DslAdapterItem.initGridOffsetHorizontal(insert: Int, linearOffsetBottom: Int = 0) {
-    initGridOffset(insert, 0, insert, 0, linearOffsetBottom)
-}
-
-fun DslAdapterItem.initGridOffsetVertical(insert: Int, linearOffsetBottom: Int = 0) {
-    initGridOffset(0, insert, 0, insert, linearOffsetBottom)
-}
-
-/**自动设置*/
-fun DslAdapterItem.initGridOffset(
-    left: Int,
-    top: Int,
-    right: Int,
-    bottom: Int,
+    left: Int = _dimen(R.dimen.lib_padding_left),
+    top: Int = _dimen(R.dimen.lib_padding_left),
+    right: Int = _dimen(R.dimen.lib_padding_left),
+    bottom: Int = _dimen(R.dimen.lib_padding_left),
     linearOffsetBottom: Int = 0
 ) {
     onSetItemOffset = {
         initGridOffset(it, left, top, right, bottom, linearOffsetBottom)
     }
-}
-
-/**网格四边插入偏移量*/
-fun DslAdapterItem.initGridOffset(outRect: Rect, insert: Int, linearOffsetBottom: Int = 0) {
-    initGridOffset(outRect, insert, insert, insert, insert, linearOffsetBottom)
-}
-
-fun DslAdapterItem.initGridOffsetHorizontal(
-    outRect: Rect,
-    insert: Int,
-    linearOffsetBottom: Int = 0
-) {
-    initGridOffset(outRect, insert, 0, insert, 0, linearOffsetBottom)
-}
-
-fun DslAdapterItem.initGridOffsetVertical(outRect: Rect, insert: Int, linearOffsetBottom: Int = 0) {
-    initGridOffset(outRect, 0, insert, 0, insert, linearOffsetBottom)
 }
 
 /**需要在[onSetItemOffset]中调用此方法
@@ -119,10 +86,6 @@ fun DslAdapterItem.initGridOffset(
 }
 
 /**网格四边插入偏移量*/
-fun DslAdapterItem.initGridInset(insert: Int = _dimen(R.dimen.lib_padding_left)) {
-    initGridInset(insert, insert, insert, insert)
-}
-
 fun DslAdapterItem.initGridInset2(
     horizontal: Int = _dimen(R.dimen.lib_padding_left),
     vertical: Int = _dimen(R.dimen.lib_item_height)
@@ -131,7 +94,12 @@ fun DslAdapterItem.initGridInset2(
 }
 
 /**自动设置*/
-fun DslAdapterItem.initGridInset(left: Int, top: Int, right: Int, bottom: Int) {
+fun DslAdapterItem.initGridInset(
+    left: Int = _dimen(R.dimen.lib_padding_left),
+    top: Int = _dimen(R.dimen.lib_padding_left),
+    right: Int = _dimen(R.dimen.lib_padding_left),
+    bottom: Int = _dimen(R.dimen.lib_padding_left)
+) {
     onSetItemOffset = {
         initGridInset(it, left, top, right, bottom)
     }
@@ -182,12 +150,13 @@ fun DslAdapterItem.initGridInset(outRect: Rect, left: Int, top: Int, right: Int,
     }
 }
 
-fun DslAdapterItem.initLinearOffset(insert: Int = _dimen(R.dimen.lib_padding_left)) {
-    initLinearOffset(insert, insert, insert, insert)
-}
-
 /**自动设置*/
-fun DslAdapterItem.initLinearOffset(left: Int, top: Int, right: Int, bottom: Int) {
+fun DslAdapterItem.initLinearOffset(
+    left: Int = _dimen(R.dimen.lib_padding_left),
+    top: Int = _dimen(R.dimen.lib_padding_left),
+    right: Int = _dimen(R.dimen.lib_padding_left),
+    bottom: Int = _dimen(R.dimen.lib_padding_left)
+) {
     onSetItemOffset = {
         initLinearOffset(it, left, top, right, bottom)
     }
@@ -212,3 +181,60 @@ fun DslAdapterItem.initLinearOffset(outRect: Rect, left: Int, top: Int, right: I
         }
     }
 }
+
+//<editor-fold desc="分组与边距, 分组与分组之间的偏移">
+
+/**自动设置*/
+fun DslAdapterItem.initGroupOffset(
+    left: Int = _dimen(R.dimen.lib_padding_left),
+    top: Int = _dimen(R.dimen.lib_padding_left),
+    right: Int = _dimen(R.dimen.lib_padding_left),
+    bottom: Int = _dimen(R.dimen.lib_padding_left)
+) {
+    onSetItemOffset = {
+        initGroupOffset(it, left, top, right, bottom)
+    }
+}
+
+/**RecyclerView内边距插入, item之间不处理
+ * 四边有偏移, 组之间无*/
+fun DslAdapterItem.initGroupOffset(outRect: Rect, left: Int, top: Int, right: Int, bottom: Int) {
+    if (onSetItemOffset == null) {
+        onSetItemOffset = {
+            initGroupOffset(it, left, top, right, bottom)
+        }
+    } else {
+        outRect.set(itemLeftInsert, itemTopInsert, itemRightInsert, itemBottomInsert) //初始化成默认的值
+        itemGroupParams.apply {
+            if (isFullWidthItem()) {
+                //全屏宽度
+                outRect.left = left
+                outRect.right = right
+
+                if (isFirstPosition()) {
+                    outRect.top = top
+                }
+
+                if (isLastGroup() && isLastPosition()) {
+                    outRect.bottom = bottom
+                }
+            } else {
+                //待测试
+                if (isEdgeLeft()) {
+                    outRect.left = left
+                }
+                if (isEdgeTop()) {
+                    outRect.top = top
+                }
+                if (isEdgeRight()) {
+                    outRect.right = right
+                }
+                if (isEdgeBottom()) {
+                    outRect.bottom = bottom
+                }
+            }
+        }
+    }
+}
+
+//</editor-fold desc="分组与边距, 分组与分组之间的偏移">

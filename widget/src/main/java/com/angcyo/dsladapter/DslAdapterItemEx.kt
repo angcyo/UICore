@@ -391,6 +391,25 @@ fun DslAdapterItem.beforeItem(
     }
 }
 
+/**快速设置item的分组信息*/
+var DslAdapterItem.itemGroup: String?
+    get() = itemGroups.firstOrNull()
+    set(value) {
+        if (value == null) {
+            itemGroups = listOf()
+        } else if (!itemGroups.contains(value)) {
+            val groups = itemGroups
+            if (groups is MutableList) {
+                groups.add(value)
+            } else {
+                val list = mutableListOf<String>()
+                list.addAll(groups)
+                list.add(value)
+                itemGroups = list
+            }
+        }
+    }
+
 //</editor-fold desc="操作扩展">
 
 //<editor-fold desc="更新指定的Item">
