@@ -10,7 +10,7 @@ import com.angcyo.rcode.ScanActivity
 import com.angcyo.rcode.ScanFragment
 
 /**
- * 二维码
+ * 二维码扫码界面, 并获取扫码结果
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/02/28

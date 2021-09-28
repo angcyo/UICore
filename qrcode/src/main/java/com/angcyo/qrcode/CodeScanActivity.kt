@@ -7,7 +7,7 @@ import com.angcyo.rcode.ScanActivity
 import com.angcyo.rcode.ScanFragment
 
 /**
- *
+ * 包裹[CodeScanFragment]的Activity
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/02/28

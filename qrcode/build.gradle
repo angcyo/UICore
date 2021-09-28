@@ -2,6 +2,7 @@ apply from: allGradle.libBase
 
 dependencies {
     implementation project(allModule.fragment)
+    compileOnly project(allModule.core)
 
     //https://github.com/angcyo/QrCodeZxingZbar
     api 'com.github.angcyo:QrCodeZxingZbar:1.0.2'
