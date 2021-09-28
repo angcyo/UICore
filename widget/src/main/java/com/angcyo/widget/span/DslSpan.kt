@@ -294,12 +294,13 @@ fun DslSpan.drawableTipBorder(
     borderColor: Int = _color(R.color.colorAccent), // "#0EC300".toColorInt(),
     solidColor: Int = Color.WHITE,
     radius: Float = 10 * dp,
+    textSize: Float = 10 * dp,
     action: DslDrawableSpan.() -> Unit = {}
 ): DslSpan {
     return drawable(text) {
         gradientSolidColor = solidColor
         gradientRadius = radius
-        textSize = 10 * dp
+        this.textSize = textSize
         textGravity = Gravity.CENTER
         textColor = borderColor
         gradientStrokeColor = textColor
@@ -315,11 +316,13 @@ fun DslSpan.drawableTipFill(
     solidColor: Int = Color.RED,
     textColor: Int = Color.WHITE,
     radius: Float = 10 * dp,
+    textSize: Float = 10 * dp,
     action: DslDrawableSpan.() -> Unit = {}
 ): DslSpan {
     return drawable(text) {
         gradientSolidColor = solidColor
         gradientRadius = radius
+        this.textSize = textSize
         paddingHorizontal(4 * dpi)
         paddingVertical(2 * dpi)
         this.textColor = textColor

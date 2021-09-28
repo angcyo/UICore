@@ -89,9 +89,13 @@ fun DslAdapterItem.initGridOffset(
                     }
                 } else if (isFirstPosition() || isGroupFirstRow()) {
                     outRect.top = top
+                    if (isInLinearLayoutManager()) {
+                        outRect.bottom = linearOffsetBottom
+                    }
                 } else if (isLastPosition() || isGroupLastRow()) {
                     outRect.bottom = bottom
                 } else {
+                    //中间item
                     if (isInLinearLayoutManager()) {
                         outRect.bottom = linearOffsetBottom
                     }
