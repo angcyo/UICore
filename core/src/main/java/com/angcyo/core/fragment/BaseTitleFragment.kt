@@ -26,6 +26,7 @@ import com.angcyo.core.appendTextItem
 import com.angcyo.core.behavior.ArcLoadingHeaderBehavior
 import com.angcyo.library.L
 import com.angcyo.library.component.dslIntent
+import com.angcyo.library.ex.Action
 import com.angcyo.library.ex.className
 import com.angcyo.library.ex.colorFilter
 import com.angcyo.library.ex.undefined_res
@@ -51,6 +52,10 @@ import com.angcyo.widget.text.DslTextView
  */
 abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
+    companion object {
+        var DEFAULT_FIRST_REFRESH_DELAY = 240L
+    }
+
     //<editor-fold desc="成员配置">
 
     /**自定义内容布局*/
@@ -67,6 +72,27 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
     /**是否激活刷新回调*/
     var enableRefresh: Boolean = false
+        set(value) {
+            field = value
+            if (value) {
+                enableAdapterRefresh = true
+            }
+        }
+
+    /**是否激活适配器的刷新回调*/
+    var enableAdapterRefresh: Boolean = false
+        set(value) {
+            field = value
+            if (value) {
+                firstRefreshDelay = DEFAULT_FIRST_REFRESH_DELAY
+            }
+        }
+
+    /**首次加载刷新时, 延迟的时长. 以便动画流畅执行完*/
+    var firstRefreshDelay: Long = 0
+
+    //记录刷新的次数
+    var _refreshCount: Int = 0
 
     /**激活软键盘输入*/
     var enableSoftInput: Boolean = false
@@ -285,7 +311,11 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
                     refreshContentBehavior = this
 
                     //刷新监听
-                    refreshAction = this@BaseTitleFragment::onRefresh
+                    refreshAction = {
+                        _delayRefresh {
+                            this@BaseTitleFragment.onRefresh(it)
+                        }
+                    }
                 }
                 child.setBehavior(this)
             }
@@ -365,7 +395,15 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
     /**刷新回调*/
     open fun onRefresh(refreshContentBehavior: IRefreshContentBehavior?) {
+        _refreshCount++
+    }
 
+    fun _delayRefresh(action: Action) {
+        if (_refreshCount <= 0) {
+            _vh.postDelay(firstRefreshDelay, action)
+        } else {
+            action()
+        }
     }
 
     //</editor-fold desc="操作方法">

@@ -52,22 +52,28 @@ open class BaseDslFragment : BaseTitleFragment() {
         baseDslItemDecoration?.attachToRecyclerView(recyclerView)
         hoverItemDecoration?.attachToRecyclerView(recyclerView)
 
-        dslAdapter.onRefreshOrLoadMore { itemHolder, loadMore ->
+        dslAdapter.onRefreshOrLoadMore { _, loadMore ->
             if (loadMore) {
                 onLoadMore()
             } else {
-                onRefresh(null)
+                _delayRefresh {
+                    onRefresh(null)
+                }
             }
         }
     }
 
     /**调用此方法, 渲染界面
      * [reset] 是否需要重置界面*/
-    open fun renderDslAdapter(reset: Boolean = false, config: DslAdapter.() -> Unit) {
+    open fun renderDslAdapter(
+        reset: Boolean = enableAdapterRefresh,
+        config: DslAdapter.() -> Unit
+    ) {
         if (reset) {
             _adapter.dataItems.clear()
         }
         _adapter.config()
+        _adapter.toNone()
 
         //[IFragmentItem]
         _adapter.adapterItems.forEach {
@@ -97,12 +103,13 @@ open class BaseDslFragment : BaseTitleFragment() {
     override fun onFragmentFirstShow(bundle: Bundle?) {
         super.onFragmentFirstShow(bundle)
         //触发加载中
-        if (enableRefresh) {
+        if (enableAdapterRefresh) {
             _adapter.toLoading()
         }
     }
 
     override fun onRefresh(refreshContentBehavior: IRefreshContentBehavior?) {
+        super.onRefresh(refreshContentBehavior)
         page.pageRefresh()
         onLoadData()
     }
