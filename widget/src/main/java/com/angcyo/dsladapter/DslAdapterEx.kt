@@ -428,6 +428,23 @@ fun DslAdapter.delayNotify(filterParams: FilterParams = FilterParams(notifyDiffD
 
 //<editor-fold desc="操作扩展">
 
+/**查找符合条件的item集合*/
+fun DslAdapter.findItemList(
+    useFilterList: Boolean = true,
+    predicate: (DslAdapterItem) -> Boolean
+): List<DslAdapterItem> {
+    val list = getDataList(useFilterList)
+    val result = mutableListOf<DslAdapterItem>()
+
+    for (it in list) {
+        if (predicate(it)) {
+            result.add(it)
+        }
+    }
+
+    return result
+}
+
 /**查找相同类名的item
  * [continuous]连续or不连续*/
 fun <T : DslAdapterItem> DslAdapter.findSameClassItem(
