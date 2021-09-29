@@ -13,7 +13,7 @@ import com.angcyo.widget.base.find
 import com.angcyo.widget.tab
 
 /**
- * 简单的底部tab界面, 多用于首页
+ * 简单的底部tab界面,不支持title, 多用于首页
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2021/09/18
@@ -24,9 +24,15 @@ abstract class BaseTabFragment : BaseFragment() {
     /**Tab Item 的布局*/
     var tabItemLayoutId: Int = R.layout.lib_tab_item_layout
 
+    /**线*/
+    var showTabLine: Boolean = true
+
     init {
-        /**Fragment根布局*/
+        //Fragment根布局, tab 在下面
         fragmentLayoutId = R.layout.lib_tab_fragment
+
+        //tab 在上面的布局
+        //fragmentLayoutId = R.layout.lib_top_tab_fragment
     }
 
     override fun initBaseView(savedInstanceState: Bundle?) {
@@ -35,6 +41,7 @@ abstract class BaseTabFragment : BaseFragment() {
     }
 
     open fun initTabLayout() {
+        _vh.visible(R.id.lib_tab_line_view, showTabLine)
         _vh.tab(R.id.lib_tab_layout)?.configTabLayoutConfig {
             onSelectIndexChange = { fromIndex, selectIndexList, reselect, fromUser ->
                 val to = selectIndexList.first()
