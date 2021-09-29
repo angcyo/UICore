@@ -3,11 +3,14 @@ package com.angcyo.core.fragment
 import android.animation.Animator
 import android.os.Bundle
 import android.view.animation.Animation
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import com.angcyo.core.R
 import com.angcyo.core.lifecycle.CompositeDisposableLifecycle
 import com.angcyo.core.lifecycle.CoroutineScopeLifecycle
 import com.angcyo.fragment.AbsLifecycleFragment
+import com.angcyo.widget.layout.RCoordinatorLayout
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.CoroutineScope
 
@@ -59,6 +62,27 @@ abstract class BaseFragment : AbsLifecycleFragment() {
     override fun onFragmentShow(bundle: Bundle?) {
         super.onFragmentShow(bundle)
         BaseUI.onFragmentShow?.invoke(this)
+        changeCoordinatorBehavior()
+    }
+
+    /**协调布局内容行为控制*/
+    open fun changeCoordinatorBehavior() {
+        val isInTitleFragment = parentFragment is BaseTitleFragment
+
+        if (isInTitleFragment) {
+            val parentTitleFragment = parentFragment as BaseTitleFragment
+
+            //关闭, parent/自身协调布局的特性
+            var closeParentCoordinator: Boolean = true
+            if (this is BaseTitleFragment) {
+                closeParentCoordinator = enableRefresh
+            }
+
+            parentTitleFragment._vh.v<CoordinatorLayout>(R.id.lib_coordinator_wrap_layout)?.isEnabled =
+                !closeParentCoordinator
+            _vh.v<RCoordinatorLayout>(R.id.lib_coordinator_wrap_layout)?.isEnabled =
+                closeParentCoordinator
+        }
     }
 
     override fun onFragmentHide() {

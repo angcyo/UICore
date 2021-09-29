@@ -168,6 +168,7 @@ fun <L1, L2> each(list1: List<L1>?, list2: List<L2>?, run: (item1: L1, item2: L2
     }
 }
 
+/**a7503205-ab31-4e67-bc89-64a129f0540b*/
 fun uuid(): String = UUID.randomUUID().toString()
 
 /**判断列表是否为空, 包括内部的数据也是非空*/

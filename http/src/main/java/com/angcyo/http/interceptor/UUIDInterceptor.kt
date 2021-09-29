@@ -3,6 +3,7 @@ package com.angcyo.http.interceptor
 import android.Manifest
 import com.angcyo.library.app
 import com.angcyo.library.ex.havePermissions
+import com.angcyo.library.ex.uuid
 import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.getIMEI
 import okhttp3.Interceptor
@@ -28,6 +29,7 @@ class UUIDInterceptor : Interceptor {
         val newRequest = chain.request().newBuilder()
             //.addHeader("deviceId", Device.deviceId)
             .addHeader("androidId", Device.androidId) //86756e10cf9a9562
+            .addHeader("log-trace-id", uuid()) //86756e10cf9a9562
             //java.lang.IllegalArgumentException: Unexpected char 0x0a at 34 in deviceInfo
             //.addHeader("deviceInfo", Device.beautifyDeviceLog().encode()) //设备一些基础信息, 去掉节省流量
             .apply {
