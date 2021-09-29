@@ -1,6 +1,10 @@
 package com.angcyo.item.style
 
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.Icon
 import android.net.Uri
+import android.os.Build
 import android.widget.ImageView
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.isUpdateMedia
@@ -44,16 +48,22 @@ interface IImageItem : IAutoInitItem {
                 imageItemConfig.imageStyleConfig.updateStyle(this)
                 when (val image = imageItemConfig.itemLoadImage ?: imageItemConfig.itemLoadUri) {
                     is Number -> setImageResource(image as Int)
+                    is Drawable -> setImageDrawable(image)
+                    is Bitmap -> setImageBitmap(image)
                     else -> {
-                        if (this is GlideImageView) {
-                            val uri: Uri? = when (image) {
-                                is String -> image.toUri()
-                                is Uri -> image
-                                else -> null
-                            }
-                            load(uri) {
-                                checkGifType = imageItemConfig.itemCheckGifType
-                                imageItemConfig.onConfigGlide(this)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && image is Icon) {
+                            setImageIcon(image)
+                        } else {
+                            if (this is GlideImageView) {
+                                val uri: Uri? = when (image) {
+                                    is String -> image.toUri()
+                                    is Uri -> image
+                                    else -> null
+                                }
+                                load(uri) {
+                                    checkGifType = imageItemConfig.itemCheckGifType
+                                    imageItemConfig.onConfigGlide(this)
+                                }
                             }
                         }
                         //L.w("不支持的图片类型:${image}")
@@ -78,8 +88,11 @@ var IImageItem.itemLoadImage: AnyImage?
 
 /**
  * 支持[res]图片
- * 支持[String] http图片
+ * 支持[String] http图片, file图片
  * 支持[Uri]图片
+ * 支持[Drawable]图片
+ * 支持[Bitmap]图片
+ * 支持[Icon]图片
  * */
 typealias AnyImage = Any
 
