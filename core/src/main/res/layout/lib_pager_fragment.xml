@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
+    <com.angcyo.widget.pager.DslViewPager
+        android:id="@+id/lib_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/lib_item_min_height" />
 
     <com.angcyo.tablayout.DslTabLayout
         android:id="@+id/lib_tab_layout"
@@ -34,15 +40,9 @@
         app:tab_min_scale="1"
         app:tab_select_color="@color/colorPrimary">
         <!--预览使用-->
-<!--                <include layout="@layout/lib_tab_text_item_layout" />-->
-<!--                <include layout="@layout/lib_tab_text_item_layout" />-->
-<!--                <include layout="@layout/lib_tab_text_item_layout" />-->
+        <!--                <include layout="@layout/lib_tab_text_item_layout" />-->
+        <!--                <include layout="@layout/lib_tab_text_item_layout" />-->
+        <!--                <include layout="@layout/lib_tab_text_item_layout" />-->
     </com.angcyo.tablayout.DslTabLayout>
 
-    <com.angcyo.widget.pager.DslViewPager
-        android:id="@+id/lib_view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-</LinearLayout>
+</FrameLayout>

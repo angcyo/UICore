@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.base.instantiate
+import com.angcyo.behavior.refresh.IRefreshBehavior
 import com.angcyo.core.R
 import com.angcyo.core.viewpager.ViewPager1Delegate
 import com.angcyo.getData
@@ -60,6 +62,14 @@ abstract class BasePagerFragment : BaseTitleFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         defaultTabSelectIndex = getData(TAB_SELECT_INDEX) ?: defaultTabSelectIndex
+    }
+
+    override fun onCreateBehavior(child: View): CoordinatorLayout.Behavior<*>? {
+        return super.onCreateBehavior(child)?.apply {
+            if (this is IRefreshBehavior) {
+                contentScrollView = _vh.view(R.id.lib_view_pager)
+            }
+        }
     }
 
     override fun initBaseView(savedInstanceState: Bundle?) {

@@ -56,6 +56,11 @@ interface IRefreshBehavior {
 
     }
 
+    /**滚动内容, 默认布局的头部距离*/
+    fun onGetContentScrollLayoutTop(contentBehavior: BaseScrollBehavior<*>): Int {
+        return 0
+    }
+
     /**当内容滚动时, 界面需要处理的回调*/
     fun onContentScrollTo(contentBehavior: BaseScrollBehavior<*>, x: Int, y: Int, scrollType: Int) {
         val min = if (enableBottomOver) Int.MIN_VALUE else 0
@@ -67,7 +72,10 @@ interface IRefreshBehavior {
         val targetView = contentScrollView ?: contentBehavior.childView
 
         if (childView == targetView) {
-            childView?.offsetTopTo(top + contentBehavior.behaviorOffsetTop)
+            childView?.offsetTopTo(
+                top + contentBehavior.behaviorOffsetTop +
+                        onGetContentScrollLayoutTop(contentBehavior)
+            )
         } else {
             if (y > 0 && !enableTopOver) {
                 //未激活top over时,  向下滚动需要触发刷新布局, 所以只能移动child
@@ -76,7 +84,7 @@ interface IRefreshBehavior {
                 //child 偏移到默认的位置
                 childView?.offsetTopTo(contentBehavior.behaviorOffsetTop)
                 //滚动时, 目标view的偏移
-                targetView?.offsetTopTo(top)
+                targetView?.offsetTopTo(top + onGetContentScrollLayoutTop(contentBehavior))
             }
         }
     }

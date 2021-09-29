@@ -53,6 +53,22 @@ open class RefreshHeaderBehavior(context: Context, attributeSet: AttributeSet? =
         return super.onDependentViewChanged(parent, child, dependency)
     }
 
+    override fun onLayoutChildAfter(parent: CoordinatorLayout, child: View, layoutDirection: Int) {
+        super.onLayoutChildAfter(parent, child, layoutDirection)
+    }
+
+    var _contentScrollViewTop: Int = -1
+
+    override fun onGetContentScrollLayoutTop(contentBehavior: BaseScrollBehavior<*>): Int {
+        if (contentScrollView != null) {
+            if (_contentScrollViewTop < 0) {
+                _contentScrollViewTop = contentScrollView?.top ?: 0
+            }
+            return _contentScrollViewTop
+        }
+        return super.onGetContentScrollLayoutTop(contentBehavior)
+    }
+
     override fun onContentOverScroll(
         contentBehavior: BaseScrollBehavior<*>,
         dx: Int,
