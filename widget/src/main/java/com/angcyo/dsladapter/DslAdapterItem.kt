@@ -25,6 +25,7 @@ import com.angcyo.library.ex.elseNull
 import com.angcyo.library.ex.undefined_size
 import com.angcyo.tablayout.clamp
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.R
 import com.angcyo.widget.base.*
 import com.angcyo.widget.recycler.RecyclerBottomLayout
 import kotlin.properties.ReadWriteProperty
@@ -186,6 +187,7 @@ open class DslAdapterItem : LifecycleOwner {
         { itemHolder, itemPosition, adapterItem, payloads ->
             onItemBind(itemHolder, itemPosition, adapterItem, payloads)
             itemBindOverride(itemHolder, itemPosition, adapterItem, payloads)
+            onItemBindAfter(itemHolder, itemPosition, adapterItem, payloads)
         }
 
     /**
@@ -216,6 +218,7 @@ open class DslAdapterItem : LifecycleOwner {
         _initItemPadding(itemHolder)
         _initItemListener(itemHolder)
         _initItemConfig(itemHolder, itemPosition, adapterItem, payloads)
+        _initItemStyle(itemHolder)
 
         onItemBind(itemHolder, itemPosition, adapterItem)
     }
@@ -225,6 +228,16 @@ open class DslAdapterItem : LifecycleOwner {
         itemPosition: Int,
         adapterItem: DslAdapterItem
     ) {
+
+    }
+
+    open fun onItemBindAfter(
+        itemHolder: DslViewHolder,
+        itemPosition: Int,
+        adapterItem: DslAdapterItem,
+        payloads: List<Any>
+    ) {
+        _itemGroupParamsCache = null
         //请注意缓存.
         //itemHolder.clear()
     }
@@ -340,6 +353,14 @@ open class DslAdapterItem : LifecycleOwner {
         }
     }
 
+    open fun _initItemStyle(itemHolder: DslViewHolder) {
+        if (hideLastLineView) {
+            itemGroupParams.apply {
+                itemHolder.gone(R.id.lib_line_view, isLastPosition())
+            }
+        }
+    }
+
     //初始化padding
     open fun _initItemPadding(itemHolder: DslViewHolder) {
         if (itemPaddingLeft == undefined_size) {
@@ -426,6 +447,12 @@ open class DslAdapterItem : LifecycleOwner {
      * 仅绘制offset的区域
      * */
     var onlyDrawOffsetArea = false
+
+    /**自动隐藏分组最后一个item的[R.id.lib_line_view]view*/
+    var hideLastLineView: Boolean = true
+
+    /**不绘制分组最后一个item的底部分割线*/
+    var noDrawLastItemDecoration: Boolean = true
 
     /**
      * 分割线绘制时的偏移
@@ -523,7 +550,7 @@ open class DslAdapterItem : LifecycleOwner {
         onlyDrawOffsetArea = drawOffsetArea
         eachDrawItemDecoration(0, 0, 0, itemBottomInsert)
         paint.color = itemDecorationColor
-        if (itemBottomInsert > 0 && itemDrawBottom) {
+        if (itemBottomInsert > 0 && itemDrawBottom && !(noDrawLastItemDecoration && itemGroupParams.isLastPosition())) {
             if (onlyDrawOffsetArea) {
                 //绘制左右区域
                 if (itemLeftOffset > 0) {
@@ -811,9 +838,14 @@ open class DslAdapterItem : LifecycleOwner {
 
     /**动态计算的属性*/
     val itemGroupParams: ItemGroupParams
-        get() = itemDslAdapter?.findItemGroupParams(this) ?: createItemGroupParams().apply {
+        get() = _itemGroupParamsCache ?: itemDslAdapter?.findItemGroupParams(this)?.apply {
+            _itemGroupParamsCache = this
+        } ?: createItemGroupParams().apply {
             L.w("注意获取[itemGroupParams]时[itemDslAdapter]为null")
         }
+
+    /**缓存, 一个bind周期内, 只计算一次*/
+    var _itemGroupParamsCache: ItemGroupParams? = null
 
     /**所在的分组名, 只用来做快捷变量存储*/
     var itemGroups: List<String> = listOf()

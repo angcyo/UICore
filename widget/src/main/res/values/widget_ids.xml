@@ -22,4 +22,7 @@
 
     <!--将IView放置在View中-->
     <item name="lib_tag_iview" type="id" />
+
+    <!--隐藏item中的线-->
+    <item name="lib_line_view" type="id" />
 </resources>
