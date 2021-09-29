@@ -356,7 +356,7 @@ open class DslAdapterItem : LifecycleOwner {
     open fun _initItemStyle(itemHolder: DslViewHolder) {
         if (hideLastLineView) {
             itemGroupParams.apply {
-                itemHolder.gone(R.id.lib_line_view, isLastPosition())
+                itemHolder.gone(R.id.lib_item_line_view, isLastPosition())
             }
         }
     }
