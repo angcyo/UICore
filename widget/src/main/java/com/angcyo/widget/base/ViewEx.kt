@@ -940,6 +940,12 @@ fun View.isLayoutRtl() =
 
 //<editor-fold desc="截图">
 
+fun View.toBitmap(): Bitmap? = if (this is RecyclerView) {
+    saveRecyclerViewBitmap()
+} else {
+    saveView()
+}
+
 /**
  * 保存View的截图
  */

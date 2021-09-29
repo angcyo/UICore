@@ -37,6 +37,10 @@ fun configQQIntent(intent: Intent) {
     //        intent.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");//微信朋友圈，仅支持分享图片
 }
 
+fun configWxIntent(intent: Intent) {
+    intent.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");//微信朋友
+}
+
 fun ByteArray.toBitmap(): Bitmap {
     return BitmapFactory.decodeByteArray(this, 0, this.size)
 }
@@ -49,10 +53,11 @@ fun ByteArray.toInputStream(): InputStream {
 fun Bitmap.share(
     context: Context = app(),
     shareQQ: Boolean = false,
+    shareWX: Boolean = false,
     chooser: Boolean = true,
     insertPhoto: Boolean = false,
 ): Boolean {
-    var uri: Uri? = if (insertPhoto) {
+    val uri: Uri? = if (insertPhoto) {
         val insertImage =
             MediaStore.Images.Media.insertImage(context.contentResolver, this, null, null)
         if (insertImage == null) {
@@ -78,10 +83,15 @@ fun Bitmap.share(
     if (shareQQ) {
         configQQIntent(intent)
         if (chooser) {
-            intent = Intent.createChooser(intent, "分享图片") //QQ WX分享的BUG
+            intent = Intent.createChooser(intent, "分享图片") //QQ分享
+        }
+    } else if (shareWX) {
+        configWxIntent(intent)
+        if (chooser) {
+            intent = Intent.createChooser(intent, "分享图片") //WX分享
         }
     } else {
-        intent = Intent.createChooser(intent, "分享图片") //QQ WX分享的BUG
+        intent = Intent.createChooser(intent, "分享图片")
     }
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     context.startActivity(intent)

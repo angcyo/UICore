@@ -410,6 +410,11 @@ var DslAdapterItem.itemGroup: String?
         }
     }
 
+/**找到[DslAdapterItem]对应的*/
+fun DslAdapterItem.findViewHolder(recyclerView: RecyclerView?): RecyclerView.ViewHolder? {
+    return recyclerView?.findViewHolderForAdapterPosition(itemIndexPosition())
+}
+
 //</editor-fold desc="操作扩展">
 
 //<editor-fold desc="更新指定的Item">

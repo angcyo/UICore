@@ -41,10 +41,10 @@ fun DslAdapter.findItem(
 fun <Item : DslAdapterItem> DslAdapter.findItem(
     itemClass: Class<Item>,
     useFilterList: Boolean = true
-): DslAdapterItem? {
+): Item? {
     return findItem(useFilterList) {
         it.className() == itemClass.className()
-    }
+    } as? Item
 }
 
 inline fun <reified Item : DslAdapterItem> DslAdapter.find(
