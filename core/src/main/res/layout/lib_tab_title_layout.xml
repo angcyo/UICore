@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.TitleWrapLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/action_bar_height">
+
+    <com.angcyo.tablayout.DslTabLayout
+        android:id="@+id/lib_tab_layout"
+        style="@style/LibTabCommonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="80dp"
+        android:background="@color/lib_white"
+        app:tab_badge_anchor_child_index="0"
+        app:tab_badge_circle_offset_x="-10dp"
+        app:tab_badge_circle_offset_y="2dp"
+        app:tab_badge_gravity="top|right"
+        app:tab_badge_offset_x="-10dp"
+        app:tab_badge_offset_y="2dp"
+        app:tab_badge_text="9"
+        app:tab_deselect_color="@color/text_sub_color"
+        app:tab_draw_badge="true"
+        app:tab_enable_gradient_color="true"
+        app:tab_enable_gradient_scale="true"
+        app:tab_enable_ico_gradient_color="true"
+        app:tab_indicator_content_index="1"
+        app:tab_indicator_enable_flow="true"
+        app:tab_indicator_gradient_end_color="@color/colorPrimaryDark"
+        app:tab_indicator_gradient_start_color="@color/colorPrimary"
+        app:tab_indicator_style="STYLE_NONE"
+        app:tab_indicator_width="50dp"
+        app:tab_item_is_equ_width="true"
+        app:tab_max_scale="1.2"
+        app:tab_min_scale="1"
+        app:tab_select_color="@color/text_general_color">
+        <!--预览使用-->
+        <!--<include layout="@layout/lib_tab_text_item_layout" />-->
+        <!--<include layout="@layout/lib_tab_text_item_layout" />-->
+        <!--<include layout="@layout/lib_tab_text_item_layout" />-->
+    </com.angcyo.tablayout.DslTabLayout>
+
+    <LinearLayout
+        android:id="@+id/lib_left_wrap_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" />
+
+    <LinearLayout
+        android:id="@+id/lib_right_wrap_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|right"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" />
+
+</com.angcyo.widget.layout.TitleWrapLayout>

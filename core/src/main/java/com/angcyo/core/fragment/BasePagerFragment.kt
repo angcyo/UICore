@@ -51,8 +51,21 @@ abstract class BasePagerFragment : BaseTitleFragment() {
     /**tab item 的布局*/
     var tabItemLayoutId: Int = R.layout.lib_tab_text_item_layout
 
+    /**是否将tab layout放在title栏中*/
+    var enableTitleTabLayout: Boolean = false
+        set(value) {
+            field = value
+            if (value) {
+                titleLayoutId = R.layout.lib_tab_title_layout
+                contentLayoutId = R.layout.lib_pager_fragment
+            } else {
+                titleLayoutId = -1
+                contentLayoutId = R.layout.lib_tab_pager_fragment
+            }
+        }
+
     init {
-        contentLayoutId = R.layout.lib_pager_fragment
+        contentLayoutId = R.layout.lib_tab_pager_fragment
     }
 
     override fun canFlingBack(): Boolean {
