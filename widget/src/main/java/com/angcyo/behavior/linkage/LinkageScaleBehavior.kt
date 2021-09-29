@@ -32,7 +32,7 @@ open class LinkageScaleBehavior(
     var enableHeightEffect: Boolean = true
 
     /**激活Scale变化*/
-    var enableScaleEffect: Boolean = true
+    var enableScaleEffect: Boolean = false
 
     /**当滚动比例(滚动距离/child高度)大于等于此值时, 开始缩放. 需要先激活[enableScaleEffect]*/
     var scaleThreshold: Float = 0.3f
