@@ -2,10 +2,14 @@ package com.angcyo.qrcode
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Color
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.angcyo.fragment.dslBridge
 import com.angcyo.library.L
+import com.angcyo.library.ex.dpi
+import com.angcyo.rcode.RCode
 import com.angcyo.rcode.ScanActivity
 import com.angcyo.rcode.ScanFragment
 
@@ -67,3 +71,10 @@ fun Fragment?.dslCode(action: DslCode.() -> Unit) {
     dslCode(this?.activity, action)
 }
 
+/**使用字符串, 创建二维码*/
+fun String.createQRCode(
+    size: Int = 100 * dpi,
+    foregroundColor: Int = Color.BLACK,
+    backgroundColor: Int = Color.WHITE,
+    logo: Bitmap? = null
+): Bitmap? = RCode.syncEncodeQRCode(this, size, foregroundColor, backgroundColor, logo)
