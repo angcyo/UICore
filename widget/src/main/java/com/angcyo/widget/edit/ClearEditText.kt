@@ -70,6 +70,10 @@ open class ClearEditText : AppCompatEditText, IEditDelegate {
         editDelegate?.drawableStateChanged()
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         editDelegate?.onSizeChanged(w, h, oldw, oldh)
@@ -127,4 +131,8 @@ open class ClearEditText : AppCompatEditText, IEditDelegate {
     }
 
     override fun getCustomEditDelegate(): REditDelegate = editDelegate!!
+
+    override fun setMaxLines(maxLines: Int) {
+        super.setMaxLines(maxLines)
+    }
 }

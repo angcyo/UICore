@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -178,6 +179,9 @@ open class DslAdapterItem : LifecycleOwner {
 
     /**唯一标识此item的值*/
     var itemTag: String? = null
+
+    /**item存储数据使用*/
+    var itemTags: SparseArray<Any?>? = null
 
     /**
      * 界面绑定入口
@@ -1053,3 +1057,13 @@ class UpdateDependProperty<T>(var value: T, val payload: Int = DslAdapterItem.PA
         }
     }
 }
+
+/**存储tag数据*/
+fun DslAdapterItem.putTag(key: Int, value: Any?) {
+    val tags = itemTags ?: SparseArray()
+    tags.put(key, value)
+    itemTags = tags
+}
+
+/**获取tag数据*/
+fun DslAdapterItem.getTag(key: Int): Any? = itemTags?.get(key)

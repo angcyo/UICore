@@ -7,6 +7,8 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import com.angcyo.item.DslBaseEditItem
+import com.angcyo.library.ex.add
+import com.angcyo.library.ex.remove
 import com.angcyo.widget.base.*
 import com.angcyo.widget.edit.CharLengthFilter
 import com.angcyo.widget.edit.DslEditText
@@ -38,10 +40,12 @@ class EditStyleConfig : TextStyleConfig() {
     var editMaxLine: Int = 1
         set(value) {
             field = value
-            textGravity = if (value <= 1) {
-                Gravity.LEFT or Gravity.CENTER_VERTICAL
+            if (value <= 1) {
+                textGravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
+                editInputType = editInputType.remove(InputType.TYPE_TEXT_FLAG_MULTI_LINE)
             } else {
-                Gravity.TOP or Gravity.LEFT
+                textGravity = Gravity.TOP or Gravity.LEFT
+                editInputType = editInputType.add(InputType.TYPE_TEXT_FLAG_MULTI_LINE)
             }
         }
 
