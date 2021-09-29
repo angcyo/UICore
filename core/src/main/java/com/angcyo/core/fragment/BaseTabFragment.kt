@@ -43,6 +43,14 @@ abstract class BaseTabFragment : BaseFragment() {
     open fun initTabLayout() {
         _vh.visible(R.id.lib_tab_line_view, showTabLine)
         _vh.tab(R.id.lib_tab_layout)?.configTabLayoutConfig {
+
+            onGetTextStyleView = { itemView, _ ->
+                itemView.find(R.id.lib_tab_text_view)
+            }
+            onGetIcoStyleView = { itemView, _ ->
+                itemView.find(R.id.lib_tab_image_view)
+            }
+
             onSelectIndexChange = { fromIndex, selectIndexList, reselect, fromUser ->
                 val to = selectIndexList.first()
                 if (!reselect) {

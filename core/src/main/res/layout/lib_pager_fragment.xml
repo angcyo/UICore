@@ -18,19 +18,25 @@
         app:tab_badge_offset_x="-10dp"
         app:tab_badge_offset_y="2dp"
         app:tab_badge_text="9"
+        app:tab_deselect_color="@color/text_general_color"
         app:tab_draw_badge="true"
+        app:tab_enable_gradient_color="true"
         app:tab_enable_gradient_scale="true"
+        app:tab_enable_ico_gradient_color="true"
         app:tab_indicator_content_index="1"
+        app:tab_indicator_enable_flow="true"
         app:tab_indicator_gradient_end_color="@color/colorPrimaryDark"
         app:tab_indicator_gradient_start_color="@color/colorPrimary"
         app:tab_indicator_style="STYLE_BOTTOM"
         app:tab_indicator_width="50dp"
-        app:tab_max_scale="1"
-        app:tab_min_scale="0.9">
+        app:tab_item_is_equ_width="true"
+        app:tab_max_scale="1.2"
+        app:tab_min_scale="1"
+        app:tab_select_color="@color/colorPrimary">
         <!--预览使用-->
-        <!--        <include layout="@layout/lib_tab_item_layout" />-->
-        <!--        <include layout="@layout/lib_tab_item_layout" />-->
-        <!--        <include layout="@layout/lib_tab_item_layout" />-->
+<!--                <include layout="@layout/lib_tab_text_item_layout" />-->
+<!--                <include layout="@layout/lib_tab_text_item_layout" />-->
+<!--                <include layout="@layout/lib_tab_text_item_layout" />-->
     </com.angcyo.tablayout.DslTabLayout>
 
     <com.angcyo.widget.pager.DslViewPager
