@@ -78,11 +78,11 @@ abstract class BaseBehaviorTabDetailFragment : BasePagerFragment() {
         //tab
         _vh.tab(R.id.lib_tab_layout)?.apply {
             configTabLayoutConfig {
-                onGetTextStyleView = { itemView, index ->
-                    itemView.find(R.id.lib_text_view)
+                onGetTextStyleView = { itemView, _ ->
+                    itemView.find(R.id.lib_tab_text_view)
                 }
-                onGetIcoStyleView = { itemView, index ->
-                    itemView.find(R.id.lib_text_view)
+                onGetIcoStyleView = { itemView, _ ->
+                    itemView.find(R.id.lib_tab_image_view)
                 }
             }
 

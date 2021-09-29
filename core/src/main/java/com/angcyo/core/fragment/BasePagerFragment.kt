@@ -81,10 +81,8 @@ abstract class BasePagerFragment : BaseTitleFragment() {
     open fun onInitPager() {
         //adapter
         fragmentAdapter = object :
-            FragmentStatePagerAdapter(
-                childFragmentManager,
-                BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
-            ) {
+            FragmentStatePagerAdapter(childFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+
             override fun getItem(position: Int): Fragment = getPageItem(position)
 
             override fun getCount(): Int = getPageCount()
