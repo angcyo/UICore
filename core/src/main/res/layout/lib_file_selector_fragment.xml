@@ -25,6 +25,14 @@
                 android:orientation="horizontal"
                 android:paddingEnd="@dimen/lib_xhdpi">
 
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/file_go_home_view"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/lib_bg2_selector"
+                    android:padding="@dimen/lib_hdpi"
+                    app:srcCompat="@drawable/icon_file_go_home" />
+
                 <com.angcyo.widget.layout.RHorizontalScrollView
                     android:id="@+id/current_file_path_layout"
                     android:layout_width="0dp"

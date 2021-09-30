@@ -36,6 +36,12 @@ object FileUtils {
         "$rootFolder${File.separator}$it"
     }
 
+    /* *//**[dataDir]:[/data/user/0/com.wayto.plugin.gb.security]
+     * *//*
+    fun appRootFolder(context: Context = app()): File? {
+        return context.externalMediaDirs?.firstOrNull()
+    }*/
+
     /**APP扩展根目录
      * [/storage/emulated/0/Android/data/包名/files]*/
     fun appRootExternalFolder(context: Context = app()): File? {

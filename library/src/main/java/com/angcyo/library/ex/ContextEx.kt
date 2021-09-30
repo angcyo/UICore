@@ -1,6 +1,7 @@
 package com.angcyo.library.ex
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.ContentValues
@@ -16,6 +17,7 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Process
+import android.os.Vibrator
 import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.view.Display
@@ -337,4 +339,12 @@ fun Context.processName(): String? {
     }
 
     return null
+}
+
+/**振动提示[milliseconds]振动时长
+ * android.Manifest.permission.VIBRATE*/
+@SuppressLint("MissingPermission")
+fun Context.vibrate(milliseconds: Long = 50) {
+    val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    vibrator.vibrate(milliseconds)
 }

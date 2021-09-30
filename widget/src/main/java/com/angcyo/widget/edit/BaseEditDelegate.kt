@@ -28,6 +28,10 @@ import com.angcyo.widget.base.paddingLeft
  */
 abstract class BaseEditDelegate(val editText: EditText) {
 
+    companion object {
+        var onDebugTextChanged: ((editText: EditText?) -> Unit)? = null
+    }
+
     /**绘制在输入框左边的文本*/
     var drawLeftText: String? = null
     var drawLeftColor: Int = undefined_color
@@ -65,7 +69,7 @@ abstract class BaseEditDelegate(val editText: EditText) {
     }
 
     open fun onTextChanged(text: CharSequence?, start: Int, lengthBefore: Int, lengthAfter: Int) {
-
+        onDebugTextChanged?.invoke(editText)
     }
 
     var _drawLeftOffsetLeft = 0

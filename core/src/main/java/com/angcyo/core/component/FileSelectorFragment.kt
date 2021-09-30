@@ -23,6 +23,7 @@ import com.angcyo.dsladapter.data.loadSingleData2
 import com.angcyo.fragment.requestPermissions
 import com.angcyo.library.ex.*
 import com.angcyo.library.toastWX
+import com.angcyo.library.utils.FileUtils
 import com.angcyo.widget._rv
 import com.angcyo.widget.base.Anim
 import com.angcyo.widget.base.doAnimate
@@ -128,6 +129,12 @@ open class FileSelectorFragment : BaseFragment() {
         /*上一个路径*/
         _vh.click(R.id.current_file_path_layout) {
             resetPath(getPrePath())
+        }
+        /*回到app根目录*/
+        _vh.click(R.id.file_go_home_view) {
+            resetPath(
+                FileUtils.appRootExternalFolder()?.absolutePath ?: fileSelectorConfig.targetPath
+            )
         }
         //选择按钮
         _vh.click(R.id.file_selector_button) {
@@ -403,4 +410,13 @@ fun DslFHelper.fileSelector(
             onFileSelector = onResult
         }
     })
+}
+
+/**获取上一层路径*/
+fun String.prePath(): String? {
+    val index = lastIndexOf("/")
+    if (index == -1) {
+        return null
+    }
+    return substring(0, index)
 }

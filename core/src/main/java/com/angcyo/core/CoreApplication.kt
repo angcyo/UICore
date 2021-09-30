@@ -16,6 +16,7 @@ import com.angcyo.library.LibApplication
 import com.angcyo.library.ex.getAppSignatureMD5
 import com.angcyo.library.ex.getAppSignatureSHA1
 import com.angcyo.library.getAppString
+import com.angcyo.widget.edit.BaseEditDelegate
 import me.jessyan.progressmanager.ProgressManager
 import org.lsposed.hiddenapibypass.HiddenApiBypass
 
@@ -50,6 +51,9 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
                 it.addInterceptorEx(logFileInterceptor)
             }
         }
+
+        //debug
+        BaseEditDelegate.onDebugTextChanged = Debug::debugTextChanged
     }
 
     override fun onCreateMain() {
