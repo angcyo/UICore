@@ -14,8 +14,10 @@ import kotlin.math.absoluteValue
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
+typealias RSize = String?
+
 fun View.calcLayoutWidthHeight(
-    rLayoutWidth: String?, rLayoutHeight: String?,
+    rLayoutWidth: RSize, rLayoutHeight: RSize,
     parentWidth: Int, parentHeight: Int,
     rLayoutWidthExclude: Int = 0, rLayoutHeightExclude: Int = 0
 ): IntArray {
@@ -33,7 +35,7 @@ fun View.calcLayoutWidthHeight(
  * 支持格式0.3pw 0.5ph, p表示[parent]的多少倍数, s表示[screen]的多少倍数
  * */
 fun Context.calcLayoutWidthHeight(
-    rLayoutWidth: String?, rLayoutHeight: String?,
+    rLayoutWidth: RSize, rLayoutHeight: RSize,
     parentWidth: Int, parentHeight: Int,
     rLayoutWidthExclude: Int = 0, rLayoutHeightExclude: Int = 0
 ): IntArray {
@@ -47,7 +49,7 @@ fun Context.calcLayoutWidthHeight(
 }
 
 fun Context.calcLayoutMaxHeight(
-    rMaxHeight: String?,
+    rMaxHeight: RSize,
     parentWidth: Int,
     parentHeight: Int,
     exclude: Int = 0,
@@ -59,7 +61,7 @@ fun Context.calcLayoutMaxHeight(
 /**[exp] 计算表达式, 支持 sh ph px dip, 正数是倍数, 负数是减去倍数的值*/
 
 fun calcSize(
-    exp: String?,
+    exp: RSize,
     pWidth: Int = _screenWidth,
     pHeight: Int = _screenHeight,
     exclude: Int = 0,
@@ -69,7 +71,7 @@ fun calcSize(
 }
 
 /**计算表达式, 支持 sh ph px dip, 正数是倍数, 负数是减去倍数的值*/
-fun String?.toRSize(
+fun RSize.toRSize(
     pWidth: Int = _screenWidth,
     pHeight: Int = _screenHeight,
     exclude: Int = 0,
@@ -127,21 +129,13 @@ fun Context.calcSize(
         }
 
         when {
-            _get("sh", getScreenHeight()) -> {
-            }
-            _get("ph", pHeight) -> {
-            }
-            _get("sw", getScreenWidth()) -> {
-            }
-            _get("pw", pWidth) -> {
-            }
-            _getDp("dip", dpi) -> {
-            }
-            _getDp("dp", dpi) -> {
-            }
-            _getDp("px", 1) -> {
-
-            }
+            _get("sh", getScreenHeight()) -> Unit
+            _get("ph", pHeight) -> Unit
+            _get("sw", getScreenWidth()) -> Unit
+            _get("pw", pWidth) -> Unit
+            _getDp("dip", dpi) -> Unit
+            _getDp("dp", dpi) -> Unit
+            _getDp("px", 1) -> Unit
         }
     }
     return result

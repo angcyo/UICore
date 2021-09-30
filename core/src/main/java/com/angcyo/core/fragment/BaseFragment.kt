@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager
 import com.angcyo.core.R
 import com.angcyo.core.lifecycle.CompositeDisposableLifecycle
 import com.angcyo.core.lifecycle.CoroutineScopeLifecycle
+import com.angcyo.fragment.AbsFragment
 import com.angcyo.fragment.AbsLifecycleFragment
 import com.angcyo.widget.layout.RCoordinatorLayout
 import io.reactivex.disposables.Disposable
@@ -168,4 +169,23 @@ abstract class BaseFragment : AbsLifecycleFragment() {
         coroutineScopeLifecycle.launch(block)
 
     //</editor-fold desc="Rx 协程">
+}
+
+/**关闭父[Fragment]中的协调布局功能*/
+fun Fragment.closeParentCoordinator(close: Boolean = true) {
+    val isInTitleFragment = parentFragment is BaseTitleFragment
+
+    if (isInTitleFragment) {
+        val parentTitleFragment = parentFragment as BaseTitleFragment
+        parentTitleFragment._vh.v<CoordinatorLayout>(R.id.lib_coordinator_wrap_layout)?.isEnabled =
+            !close
+    }
+}
+
+/**关闭自身[Fragment]的协调布局功能*/
+fun Fragment.closeCoordinator(close: Boolean = true) {
+    if (this is AbsFragment) {
+        _vh.v<CoordinatorLayout>(R.id.lib_coordinator_wrap_layout)?.isEnabled =
+            !close
+    }
 }

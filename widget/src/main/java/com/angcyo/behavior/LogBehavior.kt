@@ -94,6 +94,8 @@ open class LogBehavior<T : View>(
         consumed: IntArray,
         type: Int
     ) {
+        //dy > 0 手指向上滑动
+        //dy < 0 手指向下滑动
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type)
         i("${target.simpleHash()} dx:$dx dy:$dy consumed:${consumed.toStr()} type:${type.toTypeString()}")
     }
@@ -143,6 +145,8 @@ open class LogBehavior<T : View>(
         velocityX: Float,
         velocityY: Float
     ): Boolean {
+        //velocityY > 0 手指快速向上滑动
+        //velocityY < 0 手指快速向下滑动
         w("${target.simpleHash()} velocityX:$velocityX velocityY:$velocityY")
         return super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY)
     }

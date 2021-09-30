@@ -7,16 +7,17 @@ import android.view.View
 import android.view.ViewConfiguration
 import android.widget.OverScroller
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
 import com.angcyo.library.L
 import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.orDef
+import com.angcyo.library.ex.toRSize
 import com.angcyo.tablayout.clamp
 import com.angcyo.widget.R
-import com.angcyo.widget.base.isTouchDown
-import com.angcyo.widget.base.offsetLeftTo
-import com.angcyo.widget.base.offsetTopTo
+import com.angcyo.widget.base.*
 import kotlin.math.absoluteValue
 import kotlin.math.max
+import kotlin.math.min
 
 /**
  * 支持[OverScroller]处理.
@@ -57,6 +58,10 @@ abstract class BaseScrollBehavior<T : View>(
             behaviorScrollTo(behaviorScrollX, behaviorScrollY, SCROLL_TYPE_CALL)
         }
 
+    //属性
+    var behaviorOffsetTopAttr: String? = null
+    var behaviorOffsetLeftAttr: String? = null
+
     var behaviorOffsetLeft = 0
         set(value) {
             field = value
@@ -89,9 +94,25 @@ abstract class BaseScrollBehavior<T : View>(
                 R.styleable.BaseScrollBehavior_Layout_layout_scroll_duration,
                 scrollDuration
             )
-        array.recycle()
+        behaviorOffsetTopAttr =
+            array.getString(R.styleable.BaseScrollBehavior_Layout_layout_scroll_offset_top)
+                ?: behaviorOffsetTopAttr
+        behaviorOffsetLeftAttr =
+            array.getString(R.styleable.BaseScrollBehavior_Layout_layout_scroll_offset_left)
+                ?: behaviorOffsetLeftAttr
 
+        array.recycle()
     }
+
+    /**限制消耗滚动的y值
+     * 限制手指向上消耗滑动时, 允许滚动的最小Y值*/
+    var minConsumedScrollY: Int = 0
+    var minConsumedScrollX: Int = 0
+
+    /**限制消耗滚动的y值
+     * 限制手指向下消耗滑动时, 允许滚动的最大Y值*/
+    var maxConsumedScrollY: Int = 0
+    var maxConsumedScrollX: Int = 0
 
     fun consumedScrollVertical(dy: Int, consumed: IntArray, constraint: Boolean = true): Int {
         if (dy == 0) {
@@ -100,9 +121,21 @@ abstract class BaseScrollBehavior<T : View>(
         return if (constraint) {
             //0值约束
             if (dy > 0) {
-                consumedScrollVertical(dy, behaviorScrollY, 0, behaviorScrollY, consumed)
+                consumedScrollVertical(
+                    dy,
+                    behaviorScrollY,
+                    minConsumedScrollY,
+                    max(behaviorScrollY, maxConsumedScrollY),
+                    consumed
+                )
             } else {
-                consumedScrollVertical(dy, behaviorScrollY, behaviorScrollY, 0, consumed)
+                consumedScrollVertical(
+                    dy,
+                    min(behaviorScrollY, minConsumedScrollY),
+                    behaviorScrollY,
+                    maxConsumedScrollY,
+                    consumed
+                )
             }
         } else {
             val absScrollY = behaviorScrollY.absoluteValue
@@ -117,9 +150,21 @@ abstract class BaseScrollBehavior<T : View>(
         return if (constraint) {
             //0值约束
             if (dx > 0) {
-                consumedScrollHorizontal(dx, behaviorScrollX, 0, behaviorScrollX, consumed)
+                consumedScrollHorizontal(
+                    dx,
+                    behaviorScrollX,
+                    minConsumedScrollX,
+                    max(behaviorScrollX, maxConsumedScrollX),
+                    consumed
+                )
             } else {
-                consumedScrollHorizontal(dx, behaviorScrollX, behaviorScrollX, 0, consumed)
+                consumedScrollHorizontal(
+                    dx,
+                    min(behaviorScrollX, minConsumedScrollX),
+                    behaviorScrollX,
+                    maxConsumedScrollX,
+                    consumed
+                )
             }
         } else {
             val absScrollX = behaviorScrollX.absoluteValue
@@ -160,6 +205,28 @@ abstract class BaseScrollBehavior<T : View>(
         return consumedDy
     }
 
+    override fun onMeasureAfter(parent: CoordinatorLayout, child: T) {
+        super.onMeasureAfter(parent, child)
+        if (!ViewCompat.isLaidOut(child)) {
+            behaviorOffsetTopAttr?.apply {
+                behaviorOffsetTop = toRSize(
+                    childView.mW(),
+                    childView.mH(),
+                    def = behaviorOffsetTop,
+                    context = parent.context
+                )
+            }
+            behaviorOffsetLeftAttr?.apply {
+                behaviorOffsetLeft = toRSize(
+                    childView.mW(),
+                    childView.mH(),
+                    def = behaviorOffsetLeft,
+                    context = parent.context
+                )
+            }
+        }
+    }
+
     override fun onLayoutChildAfter(parent: CoordinatorLayout, child: T, layoutDirection: Int) {
         super.onLayoutChildAfter(parent, child, layoutDirection)
         //调用requestLayout之后, 重新恢复布局状态. 如offsetTop
@@ -185,8 +252,19 @@ abstract class BaseScrollBehavior<T : View>(
         return super.onInterceptTouchEvent(parent, child, ev)
     }
 
+    /**最后一次滚动差值
+     * 差值<0 手指向右滑动*/
+    var _lastScrollDx: Int = 0
+
+    /**最后一次滚动差值
+     * 差值<0 手指向下滑动*/
+    var _lastScrollDy: Int = 0
+
     /**滚动到*/
     open fun scrollTo(x: Int, y: Int, scrollType: Int) {
+        _lastScrollDx = behaviorScrollX - x
+        _lastScrollDy = behaviorScrollY - y
+
         behaviorScrollX = x
         behaviorScrollY = y
 
@@ -203,6 +281,9 @@ abstract class BaseScrollBehavior<T : View>(
     open fun onScrollTo(x: Int, y: Int, scrollType: Int) {
 
     }
+
+    /**滚动是否完成*/
+    fun isOverScrollFinish(): Boolean = _overScroller.isFinished
 
     /**滚动多少*/
     open fun scrollBy(x: Int, y: Int, scrollType: Int) {

@@ -94,10 +94,10 @@ abstract class BaseDependsBehavior<T : View>(
     //fling访问的view, 不管是否是child包裹的
     var _nestedFlingView: View? = null
 
-    /**内嵌滚动fling速率, 小于0:手指向右fling */
+    /**最后一次内嵌滚动fling速率, 小于0:手指向右fling */
     var nestedFlingVelocityX = 0f
 
-    /**内嵌滚动fling速率, 小于0:手指向下fling */
+    /**最后一次内嵌滚动fling速率, 小于0:手指向下fling */
     var nestedFlingVelocityY = 0f
 
     override fun onNestedScrollAccepted(

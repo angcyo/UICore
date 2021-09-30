@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
+import com.angcyo.widget.R
 import com.angcyo.widget.base.isTouchDown
 import com.angcyo.widget.base.isTouchFinish
 import com.angcyo.widget.base.isTouchIn
@@ -67,6 +68,22 @@ abstract class BaseGestureBehavior<T : View>(
                 return onGestureScroll(e1, e2, distanceX, distanceY)
             }
         })
+    }
+
+    init {
+        val array =
+            context.obtainStyledAttributes(attributeSet, R.styleable.BaseGestureBehavior_Layout)
+
+        enableGesture = array.getBoolean(
+            R.styleable.BaseGestureBehavior_Layout_layout_enable_gesture,
+            enableGesture
+        )
+        enableGestureTouchIn = array.getBoolean(
+            R.styleable.BaseGestureBehavior_Layout_layout_enable_gesture_touch_in,
+            enableGestureTouchIn
+        )
+
+        array.recycle()
     }
 
     /**手势捕捉*/

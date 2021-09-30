@@ -3,6 +3,13 @@
 
     <declare-styleable name="BaseScrollBehavior_Layout">
         <attr name="layout_scroll_duration" format="integer" />
+        <attr name="layout_scroll_offset_top" format="string|dimension" />
+        <attr name="layout_scroll_offset_left" format="string|dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="BaseGestureBehavior_Layout">
+        <attr name="layout_enable_gesture" format="boolean" />
+        <attr name="layout_enable_gesture_touch_in" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="LinkageHeaderBehavior_Layout">

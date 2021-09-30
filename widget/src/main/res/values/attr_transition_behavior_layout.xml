@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="TransitionBehavior_Layout">
+        <attr name="layout_default_transition_x" format="string|dimension" />
+        <attr name="layout_default_transition_y" format="string|dimension" />
+        <attr name="layout_min_transition_x" format="string|dimension" />
+        <attr name="layout_min_transition_y" format="string|dimension" />
+        <attr name="layout_max_transition_x" format="string|dimension" />
+        <attr name="layout_max_transition_y" format="string|dimension" />
+        <attr name="layout_child_width_used" format="string|dimension" />
+        <attr name="layout_child_height_used" format="string|dimension" />
+        <attr name="layout_auto_scroll_on_result" format="boolean" />
+        <attr name="layout_auto_scroll_threshold" format="float" />
+    </declare-styleable>
+</resources>
