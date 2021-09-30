@@ -48,6 +48,12 @@
 
         <attr name="layout_icon_color_from" format="color" />
         <attr name="layout_icon_color_to" format="color" />
+
+        <attr name="layout_enable_background_gradient" format="boolean" />
+        <attr name="layout_enable_title_gradient" format="boolean" />
+        <attr name="layout_enable_back_icon_gradient" format="boolean" />
+        <attr name="layout_enable_icon_gradient" format="boolean" />
+        <attr name="layout_enable_title_hide" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="RefreshContentBehavior_Layout">

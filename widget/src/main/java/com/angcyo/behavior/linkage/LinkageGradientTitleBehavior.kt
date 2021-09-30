@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -67,6 +68,9 @@ open class LinkageGradientTitleBehavior(
     var enableBackIconGradient: Boolean = true
     var enableIconGradient: Boolean = true
 
+    /**隐藏或显示标题*/
+    var enableTitleHide: Boolean = false
+
     init {
         val array =
             context.obtainStyledAttributes(
@@ -116,6 +120,28 @@ open class LinkageGradientTitleBehavior(
             R.styleable.LinkageGradientTitleBehavior_Layout_layout_back_icon_color_to,
             backIconColorTo
         )
+
+        enableBackgroundGradient = array.getBoolean(
+            R.styleable.LinkageGradientTitleBehavior_Layout_layout_enable_background_gradient,
+            enableBackgroundGradient
+        )
+        enableTitleGradient = array.getBoolean(
+            R.styleable.LinkageGradientTitleBehavior_Layout_layout_enable_title_gradient,
+            enableTitleGradient
+        )
+        enableIconGradient = array.getBoolean(
+            R.styleable.LinkageGradientTitleBehavior_Layout_layout_enable_icon_gradient,
+            enableIconGradient
+        )
+        enableBackIconGradient = array.getBoolean(
+            R.styleable.LinkageGradientTitleBehavior_Layout_layout_enable_back_icon_gradient,
+            enableBackIconGradient
+        )
+        enableTitleHide = array.getBoolean(
+            R.styleable.LinkageGradientTitleBehavior_Layout_layout_enable_title_hide,
+            enableTitleHide
+        )
+
         array.recycle()
     }
 
@@ -189,8 +215,17 @@ open class LinkageGradientTitleBehavior(
                 when (it) {
                     //文本
                     is TextView -> {
-                        if (enableTitleGradient && it.id == titleTextId) {
-                            it.setTextColor(titleTextColor)
+                        if (it.id == titleTextId) {
+                            if (enableTitleGradient) {
+                                it.setTextColor(titleTextColor)
+                            }
+                            if (enableTitleHide) {
+                                it.visibility = if (fraction >= 0.99) {
+                                    View.VISIBLE
+                                } else {
+                                    View.INVISIBLE
+                                }
+                            }
                         }
 
                         if (it is DslSpanTextView) {
