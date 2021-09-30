@@ -59,7 +59,7 @@ object Debug {
                                 showFileMenu = true
                                 showHideFile = true
                                 targetPath =
-                                    FileUtils.appRootExternalFolder()?.absolutePath?.prePath()
+                                    FileUtils.appRootExternalFolder(folder = "")?.absolutePath
                                         ?: targetPath
                             }) {
                                 //no op

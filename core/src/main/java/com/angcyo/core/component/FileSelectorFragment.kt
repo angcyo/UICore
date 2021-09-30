@@ -133,7 +133,8 @@ open class FileSelectorFragment : BaseFragment() {
         /*回到app根目录*/
         _vh.click(R.id.file_go_home_view) {
             resetPath(
-                FileUtils.appRootExternalFolder()?.absolutePath ?: fileSelectorConfig.targetPath
+                FileUtils.appRootExternalFolder()?.absolutePath?.prePath()
+                    ?: fileSelectorConfig.targetPath
             )
         }
         //选择按钮
