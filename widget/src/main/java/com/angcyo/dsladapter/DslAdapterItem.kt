@@ -780,7 +780,15 @@ open class DslAdapterItem : LifecycleOwner {
 
     /**其次, 提供一个可以被子类覆盖的方法*/
     open fun onItemChangeListener(item: DslAdapterItem) {
-        updateItemDepend()
+        val notifyChildFormItemList = mutableListOf<DslAdapterItem>()
+        itemDslAdapter?.getValidFilterDataList()?.forEachIndexed { index, dslAdapterItem ->
+            if (item.isItemInUpdateList(dslAdapterItem, index)) {
+                return@forEachIndexed
+            }
+        }
+        if (notifyChildFormItemList.isNotEmpty()) {
+            updateItemDepend()
+        }
     }
 
     /**

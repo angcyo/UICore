@@ -30,6 +30,8 @@ interface IEditItem : IAutoInitItem {
     /**初始化*/
     fun initEditItem(itemHolder: DslViewHolder) {
         itemHolder.ev(editItemConfig.itemEditTextViewId)?.apply {
+            clearListeners()
+
             editItemConfig.itemEditTextStyle.updateStyle(this)
 
             if (this is IEditDelegate) {
@@ -43,8 +45,6 @@ interface IEditItem : IAutoInitItem {
                     }
                 }
             }
-
-            clearListeners()
 
             onTextChange {
                 editItemConfig._lastEditSelectionStart = selectionStart
