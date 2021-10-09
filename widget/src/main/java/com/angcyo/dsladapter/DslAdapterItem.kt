@@ -115,6 +115,27 @@ open class DslAdapterItem : LifecycleOwner {
         }
     }
 
+    /**有依赖时, 才更新
+     * [updateItemDepend]*/
+    open fun updateItemOnHaveDepend(
+        filterParams: FilterParams = FilterParams(
+            fromDslAdapterItem = this,
+            updateDependItemWithEmpty = false,
+            payload = PAYLOAD_UPDATE_PART
+        )
+    ) {
+        val notifyChildFormItemList = mutableListOf<DslAdapterItem>()
+        itemDslAdapter?.getValidFilterDataList()?.forEachIndexed { index, dslAdapterItem ->
+            if (isItemInUpdateList(dslAdapterItem, index)) {
+                return@forEachIndexed
+            }
+        }
+
+        if (notifyChildFormItemList.isNotEmpty()) {
+            updateItemDepend(filterParams)
+        }
+    }
+
     //</editor-fold desc="update操作">
 
     //<editor-fold desc="Grid相关属性">
@@ -780,15 +801,7 @@ open class DslAdapterItem : LifecycleOwner {
 
     /**其次, 提供一个可以被子类覆盖的方法*/
     open fun onItemChangeListener(item: DslAdapterItem) {
-        val notifyChildFormItemList = mutableListOf<DslAdapterItem>()
-        itemDslAdapter?.getValidFilterDataList()?.forEachIndexed { index, dslAdapterItem ->
-            if (item.isItemInUpdateList(dslAdapterItem, index)) {
-                return@forEachIndexed
-            }
-        }
-        if (notifyChildFormItemList.isNotEmpty()) {
-            updateItemDepend()
-        }
+        updateItemDepend()
     }
 
     /**

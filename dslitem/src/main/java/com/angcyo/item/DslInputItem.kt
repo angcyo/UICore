@@ -1,7 +1,10 @@
 package com.angcyo.item
 
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.item.style.*
+import com.angcyo.item.style.EditItemConfig
+import com.angcyo.item.style.IEditItem
+import com.angcyo.item.style.ILabelItem
+import com.angcyo.item.style.LabelItemConfig
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -40,5 +43,10 @@ open class DslInputItem : DslAdapterItem(), ILabelItem, IEditItem {
     override fun onItemViewRecycled(itemHolder: DslViewHolder, itemPosition: Int) {
         super.onItemViewRecycled(itemHolder, itemPosition)
         clearEditListeners(itemHolder)
+    }
+
+    override fun onItemChangeListener(item: DslAdapterItem) {
+        //super.onItemChangeListener(item)
+        updateItemOnHaveDepend()
     }
 }

@@ -48,6 +48,11 @@ open class DslBaseEditItem : DslBaseLabelItem(), IEditItem {
         itemHolder.ev(R.id.lib_edit_view)?.clearListeners()
     }
 
+    override fun onItemChangeListener(item: DslAdapterItem) {
+        //super.onItemChangeListener(item)
+        updateItemOnHaveDepend()
+    }
+
 }
 
 /**快速获取对应Item的值*/
