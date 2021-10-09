@@ -23,6 +23,7 @@ import com.angcyo.fragment.R
 import com.angcyo.http.base.toJson
 import com.angcyo.library.L
 import com.angcyo.library._isNavigationBarShow
+import com.angcyo.library.component.NetUtils
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.getFieldValue
@@ -149,6 +150,10 @@ fun Activity.showDebugInfoView(
                     true,
                     "\\-"
                 )
+
+                NetUtils.localIPAddress?.toString()?.apply {
+                    appendln(this)
+                }
 
                 val statusBarHeight = getStatusBarHeight()
                 val navBarHeight = max(

@@ -55,7 +55,7 @@ buildscript {
     repositories {
         //alliyun 镜像
         maven() { url 'https://maven.aliyun.com/repository/public' }
-        jcenter()
+        mavenCentral()
     }
     dependencies {
         //https://jcenter.bintray.com/com/squareup/okhttp3/

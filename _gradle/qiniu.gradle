@@ -66,11 +66,14 @@ buildscript {
     repositories {
         //alliyun 镜像
         maven() { url 'https://maven.aliyun.com/repository/public' }
-        jcenter()
+        mavenCentral()
     }
     dependencies {
+        //https://github.com/qiniu/java-sdk/releases
         //https://jcenter.bintray.com/com/qiniu/qiniu-java-sdk/
-        classpath 'com.qiniu:qiniu-java-sdk:7.2.29'
+        //https://search.maven.org/search?q=g:com.qiniu%20AND%20a:qiniu-java-sdk
+        classpath 'com.qiniu:qiniu-java-sdk:7.8.0'
+        classpath 'com.squareup.okhttp3:okhttp:3.14.4'
         //https://jcenter.bintray.com/com/google/code/gson/gson/
         classpath "com.google.code.gson:gson:2.8.6"
     }
@@ -93,6 +96,7 @@ task _qiniuUpload() {
 
         def app_id = project.hasProperty("app_id") ? project.ext.app_id : qiniuConfig.app_id
         def app_secret = project.hasProperty("app_id") ? project.ext.app_secret : qiniuConfig.app_secret
+        def codeLogo = project.hasProperty("codeLogo") ? project.ext.codeLogo : null
 
         def apkPath = project.hasProperty("qiniuApkPath") ? project.ext.qiniuApkPath : qiniuConfig.qiniuApkPath
         if (apkPath == null || apkPath.isEmpty()) {
@@ -161,20 +165,50 @@ task _qiniuUpload() {
                 System.err.println "七牛云上传成功->" + qiniuConfig.downloadUrl
 
                 if (!app_id.isEmpty() && !app_secret.isEmpty()) {
+
+                    def url = ""
+                    def request = null
+                    if (codeLogo == null || codeLogo.isEmpty()) {
+                        //无logo
+                        url = "http://www.mxnzp.com/api/qrcode/create/single?content=${downloadUrl}&size=400&type=0"
+
+                        request = new okhttp3.Request.Builder()
+                                .header("app_id", app_id)
+                                .header("app_secret", app_secret)
+                                .url(url)
+                                .build()
+                    } else {
+                        //有logo
+                        url = "https://www.mxnzp.com/api/qrcode/create/logo?content=${downloadUrl}&size=400&type=0"
+
+                        okhttp3.RequestBody requestBody = new okhttp3.MultipartBody.Builder()
+                                .setType(okhttp3.MultipartBody.FORM)
+                                .addFormDataPart("logo_img",
+                                        "codeLogo",
+                                        okhttp3.RequestBody.create(okhttp3.MediaType.parse("multipart/form-data"), new File(codeLogo)))
+                                .build()
+
+                        request = new okhttp3.Request.Builder()
+                                .post(requestBody)
+                                .header("app_id", app_id)
+                                .header("app_secret", app_secret)
+                                .url(url)
+                                .build()
+                    }
+
                     //生成url对应的二维码
                     //https://github.com/MZCretin/RollToolsApi#%E5%85%AB%E7%94%9F%E6%88%90%E4%BA%8C%E7%BB%B4%E7%A0%81
                     def client = new okhttp3.OkHttpClient()
-                    def request = new okhttp3.Request.Builder()
-                            .header("app_id", app_id)
-                            .header("app_secret", app_secret)
-                            .url("http://www.mxnzp.com/api/qrcode/create/single?content=${downloadUrl}&size=400&type=0")
-                            .build()
                     def json = client.newCall(request).execute().body().string()
                     def map = new com.google.gson.Gson().fromJson(json, Map.class)
                     println "创建二维码:${json}"
                     System.err.println "二维码地址->" + map["data"]["qrCodeUrl"]
 
-                    System.err.println "备用二维码地址->http://qr.topscan.com/api.php?text=${downloadUrl}"
+                    if (codeLogo == null || codeLogo.isEmpty()) {
+                        System.err.println "备用二维码地址->http://qr.topscan.com/api.php?text=${downloadUrl}"
+                    } else {
+                        System.err.println "备用二维码地址->http://qr.topscan.com/api.php?text=${downloadUrl}&logo=${codeLogo}"
+                    }
                 }
             }
         }
