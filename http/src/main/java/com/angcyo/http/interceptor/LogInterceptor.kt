@@ -3,9 +3,7 @@ package com.angcyo.http.interceptor
 import com.angcyo.http.base.isPlaintext
 import com.angcyo.http.base.readString
 import com.angcyo.library.L
-import com.angcyo.library.ex.isDebug
-import com.angcyo.library.ex.isDebugType
-import com.angcyo.library.ex.nowTime
+import com.angcyo.library.ex.*
 import okhttp3.*
 import okio.Buffer
 import java.util.*
@@ -132,8 +130,7 @@ open class LogInterceptor : Interceptor {
         //response
         val startTime = System.nanoTime()
         responseBuilder.append("<-").append(uuid)
-        val response: Response
-        response = try {
+        val response: Response = try {
             chain.proceed(request)
         } catch (e: Exception) {
             val requestTime = toMillis(System.nanoTime() - startTime)
@@ -217,28 +214,39 @@ open class LogInterceptor : Interceptor {
 
             if (logResponseBody && request.logResponseBody(logResponseBody)) {
                 //返回体
-                response.body?.run {
-                    val contentLength: Long = contentLength()
-                    val bodySize: String =
-                        if (contentLength != -1L) "$contentLength-byte" else "unknown-length"
-                    appendln().append("Body")
-                    append("(").append(bodySize).appendln("):")
+                var bodyLength = -1L //body长度
+                var bodyString: String? = "no response body!" //body字符串
 
-                    if (response.headers.hasEncoded()) {
+                response.body?.run {
+                    bodyLength = contentLength()
+
+                    bodyString = if (response.headers.hasEncoded()) {
                         //加密了数据
-                        appendln("(encoded body omitted)")
+                        "(encoded body omitted)"
                     } else {
                         try {
-                            if (source().buffer.isPlaintext()) {
-                                appendln(readString())
-                            } else {
-                                appendln("binary response body.")
+                            val buffer = source().buffer
+                            when {
+                                buffer.size <= 0 -> "buffer is empty."
+                                buffer.isPlaintext() -> readString()
+                                else -> "binary response body."
                             }
                         } catch (e: Exception) {
-                            appendln(e.message)
+                            e.message
                         }
                     }
-                } ?: appendln("no response body!")
+                }
+
+                if (bodyLength == -1L) {
+                    bodyLength = (bodyString?.byteSize() ?: -1).toLong()
+                }
+
+                val bodyLengthString: String =
+                    if (bodyLength != -1L) "$bodyLength-byte" else "unknown-length"
+
+                appendln().appendln("Body(${bodyLengthString}):")
+                appendln(bodyString)
+
             } else {
                 appendln()
             }

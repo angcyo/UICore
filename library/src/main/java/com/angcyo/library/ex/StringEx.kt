@@ -518,6 +518,11 @@ fun String?.md5(): String? {
     return this?.toByteArray(Charsets.UTF_8)?.encrypt()?.toHexString()
 }
 
+/**字节大小*/
+fun String.byteSize(): Int {
+    return toByteArray(Charsets.UTF_8).size
+}
+
 /**[CharSequence]中是否包含指定[text]
  * [match] 是否是全匹配, 否则包含即可*/
 fun CharSequence?.have(text: CharSequence?, match: Boolean = false): Boolean {
