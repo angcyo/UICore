@@ -38,6 +38,15 @@ var ILabelItem.itemLabelText: CharSequence?
         labelItemConfig.itemLabelText = value
     }
 
+/**label视图的最小宽度*/
+var ILabelItem.itemLabelMinWidth: Int
+    get() = labelItemConfig.itemLabelTextStyle.viewMinWidth
+    set(value) {
+        configLabelTextStyle {
+            viewMinWidth = value
+        }
+    }
+
 class LabelItemConfig : IDslItemConfig {
 
     /**[R.id.lib_label_view]*/

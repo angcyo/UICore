@@ -28,6 +28,7 @@ import kotlin.math.min
  * @date 2020/02/05
  */
 class REditDelegate(editText: EditText) : InputTipEditDelegate(editText) {
+
     companion object {
         val STATE_NONE = StateSet.WILD_CARD
         val STATE_PRESSED = intArrayOf(android.R.attr.state_pressed)
@@ -50,8 +51,50 @@ class REditDelegate(editText: EditText) : InputTipEditDelegate(editText) {
     /** 隐藏显示密码, 在touch down一段时候后. 如果是密码类型, 默认开启 */
     var showPasswordOnTouch = false
 
-    /**禁止弹出粘贴系统弹窗.默认等于[showPasswordOnTouch]*/
-    var disableEditPaste = showPasswordOnTouch
+    /**禁止弹出粘贴系统弹窗.默认密码模式下等于[showPasswordOnTouch]*/
+    var disableEditPaste: Boolean? = null
+        set(value) {
+            field = value
+            if (value == true) {
+                //(无效) 能阻止长按弹出粘贴, 但是阻止不了点击手柄弹出的粘贴
+                editText.isLongClickable = false
+                editText.setTextIsSelectable(false)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    TextViewCompat.setCustomSelectionActionModeCallback(
+                        editText,
+                        object : ActionMode.Callback2() {
+
+                            override fun onCreateActionMode(
+                                mode: ActionMode?,
+                                menu: Menu?
+                            ): Boolean {
+                                L.i("$mode : $menu")
+                                return false
+                            }
+
+                            override fun onPrepareActionMode(
+                                mode: ActionMode?,
+                                menu: Menu?
+                            ): Boolean {
+                                L.i("$mode : $menu")
+                                return false
+                            }
+
+                            override fun onActionItemClicked(
+                                mode: ActionMode?,
+                                item: MenuItem?
+                            ): Boolean {
+                                L.i("$mode : $item")
+                                return false
+                            }
+
+                            override fun onDestroyActionMode(mode: ActionMode?) {
+                                L.i("$mode ")
+                            }
+                        })
+                }
+            }
+        }
 
     /**删除ico*/
     var clearDrawable: Drawable? = null
@@ -133,11 +176,13 @@ class REditDelegate(editText: EditText) : InputTipEditDelegate(editText) {
                 showPasswordOnTouch
             )
 
-        disableEditPaste =
-            typedArray.getBoolean(
-                R.styleable.REditDelegate_r_disable_edit_paste,
-                showPasswordOnTouch
-            )
+        if (typedArray.hasValue(R.styleable.REditDelegate_r_disable_edit_paste)) {
+            disableEditPaste =
+                typedArray.getBoolean(
+                    R.styleable.REditDelegate_r_disable_edit_paste,
+                    showPasswordOnTouch
+                )
+        }
 
         if (typedArray.hasValue(R.styleable.REditDelegate_r_clear_drawable)) {
             clearDrawable =
@@ -155,46 +200,11 @@ class REditDelegate(editText: EditText) : InputTipEditDelegate(editText) {
                     editText.compoundDrawablePadding = 4 * dpi
                 }
             }
-
         }
 
         typedArray.recycle()
 
         _touchSlop = ViewConfiguration.get(editText.context).scaledTouchSlop
-
-        if (disableEditPaste) {
-            //(无效) 能阻止长按弹出粘贴, 但是阻止不了点击手柄弹出的粘贴
-            editText.isLongClickable = false
-            editText.setTextIsSelectable(false)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                TextViewCompat.setCustomSelectionActionModeCallback(
-                    editText,
-                    object : ActionMode.Callback2() {
-
-                        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                            L.i("$mode : $menu")
-                            return false
-                        }
-
-                        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                            L.i("$mode : $menu")
-                            return false
-                        }
-
-                        override fun onActionItemClicked(
-                            mode: ActionMode?,
-                            item: MenuItem?
-                        ): Boolean {
-                            L.i("$mode : $item")
-                            return false
-                        }
-
-                        override fun onDestroyActionMode(mode: ActionMode?) {
-                            L.i("$mode ")
-                        }
-                    })
-            }
-        }
     }
 
     //<editor-fold desc="代理View的方法">
@@ -280,7 +290,7 @@ class REditDelegate(editText: EditText) : InputTipEditDelegate(editText) {
             }
         }
 
-        if (disableEditPaste) {
+        if (disableEditPaste == true || (showPasswordOnTouch && editText.isPasswordType())) {
             //检查是否需要取消此次事件
             cancelEvent(event)
         }

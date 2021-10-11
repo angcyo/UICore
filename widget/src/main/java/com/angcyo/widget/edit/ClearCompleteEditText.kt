@@ -119,7 +119,7 @@ open class ClearCompleteEditText : AppCompatAutoCompleteTextView, IEditDelegate 
 
     /**长按弹出的菜单点击事件*/
     override fun onTextContextMenuItem(id: Int): Boolean {
-        if (getCustomEditDelegate().disableEditPaste) {
+        if (getCustomEditDelegate().disableEditPaste == true) {
             return true
         }
         return super.onTextContextMenuItem(id)
