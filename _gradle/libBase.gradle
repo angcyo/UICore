@@ -186,7 +186,7 @@ afterEvaluate {
                 def path = os.contains("mac") ? macRepo : winRepo
                 url = path
 
-                System.err.println("目标发布路径:${path}")
+                System.err.println(project.name + "->本地Maven路径:${path}")
             }
         }
     }
