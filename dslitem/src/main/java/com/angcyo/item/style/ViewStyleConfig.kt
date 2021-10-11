@@ -29,6 +29,7 @@ open class ViewStyleConfig {
     var viewHeight: Int = undefined_size
     var viewMinHeight: Int = undefined_size
 
+    /**视图可见性[visibility]*/
     var viewVisibility: Int = undefined_int
 
     /**padding值*/
