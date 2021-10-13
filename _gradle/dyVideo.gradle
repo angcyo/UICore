@@ -1,0 +1,168 @@
+import java.util.concurrent.TimeUnit
+import java.util.regex.Pattern
+
+/**
+ *
+ * 抖音无水印视频下载
+ * https://juejin.cn/post/6873272584201633806
+ */
+
+buildscript {
+    repositories {
+        //alliyun 镜像
+        maven() { url 'https://maven.aliyun.com/repository/public' }
+        mavenCentral()
+    }
+    dependencies {
+        //https://repo1.maven.org/maven2/com/squareup/okhttp3/
+        //https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+        classpath "com.squareup.okhttp3:okhttp:4.9.2"
+        //https://repo1.maven.org/maven2/com/google/code/gson/gson/
+        //https://mvnrepository.com/artifact/com.google.code.gson/gson
+        classpath "com.google.code.gson:gson:2.8.8"
+    }
+}
+
+task _dyVideoDownload() {
+    //配置任务
+}
+
+_dyVideoDownload.doFirst {
+    def savePath
+    if (project.hasProperty("dy_save_path")) {
+        savePath = project.ext.dy_save_path
+    } else {
+        throw new IllegalStateException("请在[gradle.properties]文件中配置视频保存路径[dy_save_path]")
+    }
+
+    def downloadUrls
+    if (project.hasProperty("dy_urls")) {
+        downloadUrls = project.ext.dy_urls
+    } else {
+        throw new IllegalStateException("请在[gradle.properties]文件中配置要下载的视频地址;分割多个[dy_urls]")
+    }
+
+    def startTime = System.currentTimeMillis()
+
+    downloadUrls.split(";").each { downloadUrl ->
+        def url = getUrlFromStr(downloadUrl)
+        if (url != null) {
+            System.err.println "开始解析抖音地址:$url"
+
+            //1: 通过短连接, 解析出视频id
+            def rep = httpGet(url)
+            if (rep.isSuccessful()) {
+                //https://www.douyin.com/video/7016842614234402063?previous_page=app_code_link
+
+                def videoUrl = rep.request.url.toString()
+                def videoId = getVideoIdFromStr(videoUrl)
+
+                if (videoId == null) {
+                    System.err.println "无法获取视频id:$videoUrl"
+                } else {
+
+                    //2: 通过视频id, 获取播放地址
+                    def videoDetailUrl = "https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?item_ids=$videoId"
+                    def videoDetailRep = httpGet(videoDetailUrl)
+                    if (videoDetailRep.isSuccessful()) {
+                        def json = videoDetailRep.body().string()
+                        try {
+                            def map = new com.google.gson.Gson().fromJson(json, Map.class)
+                            def playUrls = map["item_list"][0]["video"]["play_addr"]["url_list"]
+                            System.err.println "视频播放地址:$playUrls"
+
+                            //3:开始下载无水印视频
+                            playUrls.each { playUrl ->
+                                def noWmUrl = playUrl.toString().replace("/playwm/", "/play/")
+                                System.err.println "无水印视频播放地址:$playUrl -> $noWmUrl"
+
+                                System.err.println "开始下载:$noWmUrl"
+                                def videoRep = httpGet(noWmUrl)
+                                def videoPath = "${savePath}/${videoId}.mp4"
+                                saveStream(videoRep.body().byteStream(), videoPath)
+                                def videoFileLength = new File(videoPath).length()
+
+                                if (videoFileLength == 0) {
+                                    System.err.println "无水印视频下载失败, 开始下载带水印视频."
+
+                                    //4:开始下载带水印视频
+                                    def videoRep2 = httpGet(playUrl)
+                                    saveStream(videoRep2.body().byteStream(), videoPath)
+                                }
+                                System.err.println "视频保存成功:$videoPath ${new File(videoPath).length()}b"
+                            }
+                        } catch (ignored) {
+                            System.err.println "无法获取视频播放地址:$json"
+                        }
+                    } else {
+                        System.err.println "获取视频详情失败:$videoDetailUrl"
+                    }
+                }
+            } else {
+                System.err.println "解析失败:$url"
+            }
+        }
+    }
+
+    def nowTime = System.currentTimeMillis()
+    def duration = nowTime - startTime
+    System.err.println "结束耗时:${duration / 1000}秒"
+}
+
+/**从字符串中获取url地址*/
+static def getUrlFromStr(str) {
+    def pattern = Pattern.compile("[a-zA-z]+://[^\\s]*")
+    def matcher = pattern.matcher(str)
+    if (matcher.find()) {
+        return matcher.group()
+    }
+    return null
+}
+
+/**从字符串中获取视频id*/
+static def getVideoIdFromStr(str) {
+    def pattern = Pattern.compile("[a-zA-z0-9]{15,}")
+    def matcher = pattern.matcher(str)
+    if (matcher.find()) {
+        return matcher.group()
+    }
+    return null
+}
+
+/**默认的请求客户端*/
+static def defaultHttpClient() {
+    def builder = new okhttp3.OkHttpClient.Builder()
+
+    builder.connectTimeout(10, TimeUnit.SECONDS)
+    builder.readTimeout(10, TimeUnit.SECONDS)
+    builder.writeTimeout(10, TimeUnit.SECONDS)
+    builder.proxy(Proxy.NO_PROXY)
+    builder.followRedirects(true)
+    builder.followSslRedirects(true)
+
+    return builder.build()
+}
+
+static def httpGet(url, client = null) {
+    def _client = client == null ? defaultHttpClient() : client
+    def request = new okhttp3.Request.Builder()
+            .url(url)
+            .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Edg/91.0.864.64")
+            .get()
+            .build()
+
+    def response = _client.newCall(request).execute()
+    println "请求[${url}]返回↓"
+    println response
+    //println response.headers()
+    return response
+}
+
+/**保存输入流
+ * [inputStream] 输入流
+ * [path] 文件全路径*/
+static def saveStream(inputStream, path) {
+    def file = new File(path)
+    file.leftShift(inputStream)
+    return file
+}

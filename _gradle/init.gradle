@@ -16,3 +16,6 @@ apply from: allGradle.pgyer
 
 //添加阿里Oss文件上传任务
 apply from: allGradle.aliyunOss
+
+//抖音无水印视频下载
+apply from: allGradle.dyVideo
