@@ -5,6 +5,10 @@ import java.util.regex.Pattern
  *
  * 抖音无水印视频下载
  * https://juejin.cn/post/6873272584201633806
+ *
+ * 默认保存路径, 脚本当前路径/.dyVideo
+ * 支持从链接口令中下载
+ * 支持直接使用视频id下载
  */
 
 buildscript {
@@ -28,12 +32,8 @@ task _dyVideoDownload() {
 }
 
 _dyVideoDownload.doFirst {
-    def savePath
-    if (project.hasProperty("dy_save_path")) {
-        savePath = project.ext.dy_save_path
-    } else {
-        throw new IllegalStateException("请在[gradle.properties]文件中配置视频保存路径[dy_save_path]")
-    }
+    def savePath = project.hasProperty("dy_save_path") ? project.ext.dy_save_path : ".dyVideo"
+    new File(savePath).mkdirs()
 
     def downloadUrls
     if (project.hasProperty("dy_urls")) {
@@ -45,62 +45,32 @@ _dyVideoDownload.doFirst {
     def startTime = System.currentTimeMillis()
 
     downloadUrls.split(";").each { downloadUrl ->
-        def url = getUrlFromStr(downloadUrl)
-        if (url != null) {
-            System.err.println "开始解析抖音地址:$url"
+        def videoId = getVideoIdFromStr(downloadUrl)
+        if (videoId == null) {
+            def url = getUrlFromStr(downloadUrl)
+            if (url != null) {
+                System.err.println "开始解析抖音地址:$url"
 
-            //1: 通过短连接, 解析出视频id
-            def rep = httpGet(url)
-            if (rep.isSuccessful()) {
-                //https://www.douyin.com/video/7016842614234402063?previous_page=app_code_link
+                //1: 通过短连接, 解析出视频id
+                def rep = httpGet(url)
+                if (rep.isSuccessful()) {
+                    //https://www.douyin.com/video/7016842614234402063?previous_page=app_code_link
 
-                def videoUrl = rep.request.url.toString()
-                def videoId = getVideoIdFromStr(videoUrl)
+                    def videoUrl = rep.request.url.toString()
+                    videoId = getVideoIdFromStr(videoUrl)
 
-                if (videoId == null) {
-                    System.err.println "无法获取视频id:$videoUrl"
-                } else {
-
-                    //2: 通过视频id, 获取播放地址
-                    def videoDetailUrl = "https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?item_ids=$videoId"
-                    def videoDetailRep = httpGet(videoDetailUrl)
-                    if (videoDetailRep.isSuccessful()) {
-                        def json = videoDetailRep.body().string()
-                        try {
-                            def map = new com.google.gson.Gson().fromJson(json, Map.class)
-                            def playUrls = map["item_list"][0]["video"]["play_addr"]["url_list"]
-                            System.err.println "视频播放地址:$playUrls"
-
-                            //3:开始下载无水印视频
-                            playUrls.each { playUrl ->
-                                def noWmUrl = playUrl.toString().replace("/playwm/", "/play/")
-                                System.err.println "无水印视频播放地址:$playUrl -> $noWmUrl"
-
-                                System.err.println "开始下载:$noWmUrl"
-                                def videoRep = httpGet(noWmUrl)
-                                def videoPath = "${savePath}/${videoId}.mp4"
-                                saveStream(videoRep.body().byteStream(), videoPath)
-                                def videoFileLength = new File(videoPath).length()
-
-                                if (videoFileLength == 0) {
-                                    System.err.println "无水印视频下载失败, 开始下载带水印视频."
-
-                                    //4:开始下载带水印视频
-                                    def videoRep2 = httpGet(playUrl)
-                                    saveStream(videoRep2.body().byteStream(), videoPath)
-                                }
-                                System.err.println "视频保存成功:$videoPath ${new File(videoPath).length()}b"
-                            }
-                        } catch (ignored) {
-                            System.err.println "无法获取视频播放地址:$json"
-                        }
+                    if (videoId == null) {
+                        System.err.println "无法获取视频id:$videoUrl"
                     } else {
-                        System.err.println "获取视频详情失败:$videoDetailUrl"
+                        saveVideoById(videoId, savePath)
                     }
+                } else {
+                    System.err.println "解析失败:$url"
                 }
-            } else {
-                System.err.println "解析失败:$url"
             }
+        } else {
+            //直接就是id,则直接下载
+            saveVideoById(videoId, savePath)
         }
     }
 
@@ -158,11 +128,61 @@ static def httpGet(url, client = null) {
     return response
 }
 
+/**通过视频id, 保存视频*/
+static def saveVideoById(videoId, savePath) {
+
+    //2: 通过视频id, 获取播放地址
+    def videoDetailUrl = "https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?item_ids=$videoId"
+    def videoDetailRep = httpGet(videoDetailUrl)
+    if (videoDetailRep.isSuccessful()) {
+        def json = videoDetailRep.body().string()
+        try {
+            def map = new com.google.gson.Gson().fromJson(json, Map.class)
+            def playUrls = map["item_list"][0]["video"]["play_addr"]["url_list"]
+            System.err.println "视频播放地址:$playUrls"
+
+            //3:开始下载无水印视频
+            playUrls.each { playUrl ->
+                def noWmUrl = playUrl.toString().replace("/playwm/", "/play/")
+                System.err.println "无水印视频播放地址:$playUrl -> $noWmUrl"
+
+                System.err.println "开始下载:$noWmUrl"
+                def videoRep = httpGet(noWmUrl)
+                def videoPath = "${savePath}/${videoId}.mp4"
+                try {
+                    saveStream(videoRep.body().byteStream(), videoPath)
+
+                    def videoFile = new File(videoPath)
+                    def videoFileLength = videoFile.length()
+
+                    if (videoFileLength == 0) {
+                        System.err.println "无水印视频下载失败, 开始下载带水印视频."
+
+                        //4:开始下载带水印视频
+                        def videoRep2 = httpGet(playUrl)
+                        saveStream(videoRep2.body().byteStream(), videoPath)
+                    }
+                    System.err.println "视频保存成功:${videoFile.absolutePath} ${videoFile.length() / 1024}kb\n"
+                } catch (e) {
+                    System.err.println "下载失败↓"
+                    e.printStackTrace()
+                }
+            }
+        } catch (e) {
+            System.err.println "无法获取视频播放地址:$json ↓"
+            e.printStackTrace()
+        }
+    } else {
+        System.err.println "获取视频详情失败:$videoDetailUrl"
+    }
+}
+
 /**保存输入流
  * [inputStream] 输入流
  * [path] 文件全路径*/
 static def saveStream(inputStream, path) {
     def file = new File(path)
-    file.leftShift(inputStream)
+    def out = new FileOutputStream(new File(path), false)
+    out.leftShift(inputStream)
     return file
 }
