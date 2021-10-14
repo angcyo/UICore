@@ -139,6 +139,12 @@ static def saveVideoById(videoId, savePath) {
         try {
             def map = new com.google.gson.Gson().fromJson(json, Map.class)
             def playUrls = map["item_list"][0]["video"]["play_addr"]["url_list"]
+
+            //作者昵称
+            def nickname = map["item_list"][0].get("author")?.get("nickname")
+            //视频描述
+            def desc = map["item_list"][0].get("desc")
+
             System.err.println "视频播放地址:$playUrls"
 
             //3:开始下载无水印视频
@@ -148,7 +154,7 @@ static def saveVideoById(videoId, savePath) {
 
                 System.err.println "开始下载:$noWmUrl"
                 def videoRep = httpGet(noWmUrl)
-                def videoPath = "${savePath}/${videoId}.mp4"
+                def videoPath = "${savePath}/${nickname}-${desc}-${videoId}.mp4"
                 try {
                     saveStream(videoRep.body().byteStream(), videoPath)
 
