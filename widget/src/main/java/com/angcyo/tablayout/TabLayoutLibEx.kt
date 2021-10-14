@@ -79,7 +79,7 @@ fun Any.loge() {
 }
 
 fun evaluateColor(fraction: Float /*0-1*/, startColor: Int, endColor: Int): Int {
-    val fraction = MathUtils.clamp(fraction, 0f, 1f)
+    val fr = MathUtils.clamp(fraction, 0f, 1f)
     val startA = startColor shr 24 and 0xff
     val startR = startColor shr 16 and 0xff
     val startG = startColor shr 8 and 0xff
@@ -88,10 +88,10 @@ fun evaluateColor(fraction: Float /*0-1*/, startColor: Int, endColor: Int): Int 
     val endR = endColor shr 16 and 0xff
     val endG = endColor shr 8 and 0xff
     val endB = endColor and 0xff
-    return startA + (fraction * (endA - startA)).toInt() shl 24 or
-            (startR + (fraction * (endR - startR)).toInt() shl 16) or
-            (startG + (fraction * (endG - startG)).toInt() shl 8) or
-            startB + (fraction * (endB - startB)).toInt()
+    return startA + (fr * (endA - startA)).toInt() shl 24 or
+            (startR + (fr * (endR - startR)).toInt() shl 16) or
+            (startG + (fr * (endG - startG)).toInt() shl 8) or
+            startB + (fr * (endB - startB)).toInt()
 }
 
 fun Drawable?.tintDrawableColor(color: Int): Drawable? {
