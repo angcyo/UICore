@@ -219,13 +219,23 @@ task _qiniuUpload() {
                     }
                     System.err.println "备用二维码地址->$qrCodeUrlBack"
 
+                    //保存二维码图片到文件
+                    def qrCodeFile =  file(".apk/二维码_${getBuildTime()}.png")
+                    def qrCodeFileRequest = new okhttp3.Request.Builder()
+                            .url(qrCodeUrl)
+                            .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Edg/91.0.864.64")
+                            .get()
+                            .build()
+                    def qrCodeFileRep = client.newCall(qrCodeFileRequest).execute()
+                    saveStream(qrCodeFileRep.body().byteStream(), qrCodeFile)
+
                     //将二维码url存入文件, 方便在Jenkins中使用
-                    def codeFile =  file(".apk/二维码地址_${getBuildTime()}.txt")
-                    codeFile.createNewFile()
-                    codeFile.append("二维码地址↓\n")
-                    codeFile.append(qrCodeUrl)
-                    codeFile.append("\n备用二维码地址↓")
-                    codeFile.append(qrCodeUrlBack)
+                    def codeTextFile =  file(".apk/二维码地址_${getBuildTime()}.txt")
+                    codeTextFile.createNewFile()
+                    codeTextFile.append("二维码地址↓\n")
+                    codeTextFile.append(qrCodeUrl)
+                    codeTextFile.append("\n备用二维码地址↓\n")
+                    codeTextFile.append(qrCodeUrlBack)
                 }
             }
         }
@@ -252,6 +262,11 @@ static def findApkFile() {
     }
 
     return result
+}
+
+static def saveStream(inputStream, file) {
+    def out = new FileOutputStream(file, false)
+    out.leftShift(inputStream)
 }
 
 static def getBuildTime() {
