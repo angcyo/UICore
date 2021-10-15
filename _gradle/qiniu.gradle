@@ -190,7 +190,7 @@ task _qiniuUpload() {
                                 .setType(okhttp3.MultipartBody.FORM)
                                 .addFormDataPart("logo_img",
                                         "codeLogo",
-                                        okhttp3.RequestBody.create(okhttp3.MediaType.parse("multipart/form-data"), new File(codeLogo)))
+                                        okhttp3.RequestBody.create(okhttp3.MediaType.parse("multipart/form-data"), file(codeLogo)))
                                 .build()
 
                         request = new okhttp3.Request.Builder()
@@ -232,8 +232,8 @@ static def findApkFile() {
             if (it.getName().endsWith(".apk")) {
                 if (result == null) {
                     result = it.absolutePath
-                }else{
-                    result = result +";" + it.absolutePath
+                } else {
+                    result = result + ";" + it.absolutePath
                 }
             }
         }
