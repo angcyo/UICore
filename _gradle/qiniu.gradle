@@ -207,13 +207,25 @@ task _qiniuUpload() {
                     def json = client.newCall(request).execute().body().string()
                     def map = new com.google.gson.Gson().fromJson(json, Map.class)
                     println "创建二维码:${json}"
-                    System.err.println "二维码地址->" + map["data"]["qrCodeUrl"]
 
+                    def qrCodeUrl = map["data"]["qrCodeUrl"]
+                    System.err.println "二维码地址->$qrCodeUrl"
+
+                    def qrCodeUrlBack
                     if (codeLogo == null || codeLogo.isEmpty()) {
-                        System.err.println "备用二维码地址->http://qr.topscan.com/api.php?text=${downloadUrl}"
+                        qrCodeUrlBack = "http://qr.topscan.com/api.php?text=${downloadUrl}"
                     } else {
-                        System.err.println "备用二维码地址->http://qr.topscan.com/api.php?text=${downloadUrl}&logo=${codeLogo}"
+                        qrCodeUrlBack = "http://qr.topscan.com/api.php?text=${downloadUrl}&logo=${codeLogo}"
                     }
+                    System.err.println "备用二维码地址->$qrCodeUrlBack"
+
+                    //将二维码url存入文件, 方便在Jenkins中使用
+                    def codeFile =  file(".apk/二维码地址_${getBuildTime()}.txt")
+                    codeFile.createNewFile()
+                    codeFile.append("二维码地址↓\n")
+                    codeFile.append(qrCodeUrl)
+                    codeFile.append("\n备用二维码地址↓")
+                    codeFile.append(qrCodeUrlBack)
                 }
             }
         }
@@ -240,4 +252,8 @@ static def findApkFile() {
     }
 
     return result
+}
+
+static def getBuildTime() {
+    return new Date().format("yyyy-MM-dd_HH-mm-ss")
 }
