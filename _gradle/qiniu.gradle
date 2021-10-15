@@ -221,13 +221,11 @@ task _qiniuUpload() {
 
                     //保存二维码图片到文件
                     def qrCodeFile =  file(".apk/二维码_${getBuildTime()}.png")
-                    def qrCodeFileRequest = new okhttp3.Request.Builder()
-                            .url(qrCodeUrl)
-                            .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Edg/91.0.864.64")
-                            .get()
-                            .build()
-                    def qrCodeFileRep = client.newCall(qrCodeFileRequest).execute()
-                    saveStream(qrCodeFileRep.body().byteStream(), qrCodeFile)
+                    saveUrlToFile(client, url, qrCodeFile)
+
+                    //保存备用二维码图片到文件
+                    def qrCodeFileBack =  file(".apk/二维码备用_${getBuildTime()}.png")
+                    saveUrlToFile(client, qrCodeUrlBack, qrCodeFileBack)
 
                     //将二维码url存入文件, 方便在Jenkins中使用
                     def codeTextFile =  file(".apk/二维码地址_${getBuildTime()}.txt")
@@ -262,6 +260,16 @@ static def findApkFile() {
     }
 
     return result
+}
+
+static def saveUrlToFile(client, url, file) {
+    def request = new okhttp3.Request.Builder()
+            .url(url)
+            .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Edg/91.0.864.64")
+            .get()
+            .build()
+    def rep = client.newCall(request).execute()
+    saveStream(rep.body().byteStream(), file)
 }
 
 static def saveStream(inputStream, file) {
