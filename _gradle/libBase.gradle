@@ -183,7 +183,7 @@ afterEvaluate {
                 //url = 'E:/AndroidProjects/maven'//"$buildDir/repo"
 
                 def os = System.getProperty("os.name").toLowerCase()
-                def path = os.contains("mac") ? macRepo : winRepo
+                def path = os.contains("window") ? winRepo : macRepo
                 url = path
 
                 System.err.println(project.name + "->本地Maven路径:${path}")
