@@ -14,6 +14,11 @@ import com.angcyo.library.L
  */
 interface IFormItem : IDslItem {
 
+    companion object {
+        var DEFAULT_SELECTOR_HINT = "请选择"
+        var DEFAULT_INPUT_HINT = "请输入"
+    }
+
     /**表单相关信息, 在此对象中配置*/
     var itemFormConfig: FormItemConfig
 }

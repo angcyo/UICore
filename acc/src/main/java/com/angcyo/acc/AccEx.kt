@@ -237,8 +237,10 @@ fun AccessibilityService.findNodeById(
     val rootNodeInfo = rootNodeInfo(event)
     val idString = event?.id(id) ?: rootNodeInfo?.id(id)
     val nodes = mutableListOf<AccessibilityNodeInfo>()
-    rootNodeInfo?.findAccessibilityNodeInfosByViewId(idString)?.let {
-        nodes.addAll(it)
+    if (idString != null) {
+        rootNodeInfo?.findAccessibilityNodeInfosByViewId(idString)?.let {
+            nodes.addAll(it)
+        }
     }
     return nodes
 }
@@ -268,7 +270,7 @@ fun AccessibilityService.findRectByText(
 fun AccessibilityService.findRectById(id: String, event: AccessibilityEvent? = null): Array<Rect> {
     val rootNodeInfo = rootNodeInfo(event)
 
-    val idString = event?.id(id)
+    val idString = event?.id(id) ?: return emptyArray()
 
     val nodes = rootNodeInfo?.findAccessibilityNodeInfosByViewId(idString)
     val rectList = mutableListOf<Rect>()
