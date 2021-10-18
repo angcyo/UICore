@@ -202,6 +202,13 @@ class DslFHelper(
     fun remove(vararg tag: String?) {
         for (t in tag) {
             fm.findFragmentByTag(t)?.let { remove(it) }
+
+            //this
+            fm.fragments.forEach {
+                if (it.tag == t) {
+                    remove(it)
+                }
+            }
         }
     }
 
