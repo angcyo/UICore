@@ -103,9 +103,13 @@ fun mapOf(vararg args: String, split: String = ":"): HashMap<String, Any> {
 fun String.toJsonBody(): RequestBody =
     toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 
-fun MediaType?.isJsonType() = this?.toString()?.startsWith("application/json") == true
+fun String?.isJsonType() = this?.startsWith("application/json") == true
+fun String?.isTextType() = this?.startsWith("text/plain") == true
+fun String?.isHtmlType() = this?.startsWith("text/html") == true
 
-fun MediaType?.isTextType() = this?.toString()?.startsWith("text/plain") == true
+fun MediaType?.isJsonType() = this?.toString().isJsonType()
+fun MediaType?.isTextType() = this?.toString().isTextType()
+fun MediaType?.isHtmlType() = this?.toString().isHtmlType()
 
 /**快速设置[page]参数*/
 fun JsonBuilder.addPage(page: Page?) {
