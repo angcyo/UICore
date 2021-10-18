@@ -235,7 +235,7 @@ fun TextView.removeFilter(predicate: InputFilter.() -> Boolean) {
     filters = list.toTypedArray()
 }
 
-var TextView.textColor: Int
+var TextView._textColor: Int
     get() = currentTextColor
     set(value) {
         setTextColor(value)
