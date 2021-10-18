@@ -104,6 +104,18 @@ interface INestedRecyclerItem : IAutoInitItem {
     }
 }
 
+var INestedRecyclerItem.itemNestedAdapter
+    get() = nestedRecyclerItemConfig.itemNestedAdapter
+    set(value) {
+        nestedRecyclerItemConfig.itemNestedAdapter = value
+    }
+
+var INestedRecyclerItem.itemNestedLayoutManager
+    get() = nestedRecyclerItemConfig.itemNestedLayoutManager
+    set(value) {
+        nestedRecyclerItemConfig.itemNestedLayoutManager = value
+    }
+
 fun INestedRecyclerItem.renderNestedAdapter(init: DslAdapter.() -> Unit) {
     nestedRecyclerItemConfig.itemRenderNestedAdapter = init
 }

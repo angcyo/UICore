@@ -32,6 +32,10 @@ interface IButtonItem : IAutoInitItem {
             }
         }
     }
+
+    fun configButtonStyle(action: ButtonStyleConfig.() -> Unit) {
+        buttonItemConfig.itemButtonStyle.action()
+    }
 }
 
 var IButtonItem.itemButtonText: CharSequence?

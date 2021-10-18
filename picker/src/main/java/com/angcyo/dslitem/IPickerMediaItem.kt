@@ -44,6 +44,7 @@ interface IPickerMediaItem : IFragmentItem {
 }
 
 class PickerMediaItemConfig : IDslItemConfig {
+
     /**媒体选择时的配置*/
     var itemMediaSelectorConfig: MediaSelectorConfig = MediaSelectorConfig()
 
