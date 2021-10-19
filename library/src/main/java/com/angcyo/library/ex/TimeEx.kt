@@ -297,3 +297,111 @@ fun wrapDuration(action: () -> Unit): String {
     val nowTime = nowTime()
     return (nowTime - startTime).toElapsedTime(intArrayOf(1, 1, 1))
 }
+
+/**毫秒转成缩短的时间
+ * 缩短时间显示*/
+fun Long.shotTimeString(
+    showToday: Boolean = false, //显示今天字符串
+    abbreviate: Boolean = true, //缩短显示
+    datePattern: String = "yyyy-MM-dd",
+    timePattern: String = "HH:mm",
+): String {
+    val dataString: String
+    val timeStringBy24: String
+    val currentTime = Date(this)
+    val today = Date()
+    val todayStart = Calendar.getInstance()
+    todayStart[Calendar.HOUR_OF_DAY] = 0
+    todayStart[Calendar.MINUTE] = 0
+    todayStart[Calendar.SECOND] = 0
+    todayStart[Calendar.MILLISECOND] = 0
+    val todayBegin = todayStart.time //今天开始的日期
+    val yesterdayBegin = Date(todayBegin.time - 3600 * 24 * 1000) //昨天开始的日期
+    val preYesterday = Date(yesterdayBegin.time - 3600 * 24 * 1000) //前天开始的日期
+    dataString = if (!currentTime.before(todayBegin)) {
+        if (showToday) {
+            "今天"
+        } else {
+            ""
+        }
+    } else if (!currentTime.before(yesterdayBegin)) {
+        "昨天"
+    } else if (!currentTime.before(preYesterday)) {
+        "前天"
+    } else if (isSameWeekDates(currentTime, today)) {
+        getWeekOfDate(currentTime)
+    } else {
+        val dateFormatter = SimpleDateFormat(datePattern, Locale.getDefault())
+        dateFormatter.format(currentTime)
+    }
+    val timeFormatter24 = SimpleDateFormat(timePattern, Locale.getDefault())
+    timeStringBy24 = timeFormatter24.format(currentTime)
+    return if (abbreviate) {
+        if (!currentTime.before(todayBegin)) {
+            getTodayTimeBucket(currentTime)
+        } else {
+            dataString
+        }
+    } else {
+        "$dataString $timeStringBy24"
+    }
+}
+
+/**
+ * 根据日期获得星期
+ *
+ * @param date
+ * @return
+ */
+fun getWeekOfDate(date: Date): String {
+    val weekDaysName = arrayOf("星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六")
+    // String[] weekDaysCode = { "0", "1", "2", "3", "4", "5", "6" };
+    val calendar = Calendar.getInstance()
+    calendar.time = date
+    val intWeek = calendar[Calendar.DAY_OF_WEEK] - 1
+    return weekDaysName[intWeek]
+}
+
+/**
+ * 判断两个日期是否在同一周
+ *
+ * @param date1
+ * @param date2
+ * @return
+ */
+fun isSameWeekDates(date1: Date, date2: Date): Boolean {
+    val cal1 = Calendar.getInstance()
+    val cal2 = Calendar.getInstance()
+    cal1.time = date1
+    cal2.time = date2
+    val subYear = cal1[Calendar.YEAR] - cal2[Calendar.YEAR]
+    if (0 == subYear) {
+        if (cal1[Calendar.WEEK_OF_YEAR] == cal2[Calendar.WEEK_OF_YEAR]) return true
+    } else if (1 == subYear && 11 == cal2[Calendar.MONTH]) {
+        // 如果12月的最后一周横跨来年第一周的话则最后一周即算做来年的第一周
+        if (cal1[Calendar.WEEK_OF_YEAR] == cal2[Calendar.WEEK_OF_YEAR]) return true
+    } else if (-1 == subYear && 11 == cal1[Calendar.MONTH]) {
+        if (cal1[Calendar.WEEK_OF_YEAR] == cal2[Calendar.WEEK_OF_YEAR]) return true
+    }
+    return false
+}
+
+/**
+ * 根据不同时间段，显示不同时间
+ *
+ * @param date
+ * @return
+ */
+fun getTodayTimeBucket(date: Date): String {
+    val calendar = Calendar.getInstance()
+    calendar.time = date
+    val timeFormatter0to11 = SimpleDateFormat("KK:mm", Locale.getDefault())
+    val timeFormatter1to12 = SimpleDateFormat("hh:mm", Locale.getDefault())
+    return when (calendar[Calendar.HOUR_OF_DAY]) {
+        in 0..4 -> "凌晨 " + timeFormatter0to11.format(date)
+        in 5..11 -> "上午 " + timeFormatter0to11.format(date)
+        in 12..17 -> "下午 " + timeFormatter1to12.format(date)
+        in 18..23 -> "晚上 " + timeFormatter1to12.format(date)
+        else -> ""
+    }
+}
