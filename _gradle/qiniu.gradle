@@ -169,6 +169,10 @@ task _qiniuUpload() {
                 qiniuConfig.downloadUrl = downloadUrl
                 System.err.println "七牛云上传成功->" + qiniuConfig.downloadUrl
 
+                if (codeLogo == null || codeLogo.isEmpty()) {
+                    codeLogo = getLogoPath(key)
+                }
+
                 if (!app_id.isEmpty() && !app_secret.isEmpty()) {
 
                     def url = ""
@@ -260,6 +264,23 @@ static def findApkFile() {
     }
 
     return result
+}
+
+/**根据文件名, 获取png目录的logo图片
+ * [png/logo.png] 正式包logo
+ * [png/logo_test.png] 测试式包logo
+ * */
+def getLogoPath(apkFileName) {
+    def path
+    if (apkFileName.contains("apk_release")) {
+        path = "png/logo.png"
+    } else {
+        path = "png/logo_test.png"
+    }
+    if (file(path).exists()) {
+        return path
+    }
+    return null
 }
 
 static def saveUrlToFile(client, url, file) {
