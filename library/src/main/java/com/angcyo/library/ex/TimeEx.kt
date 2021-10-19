@@ -289,3 +289,11 @@ fun timeDifference(start: String, end: String, pattern: String = "yyyy-MM-dd HH:
 fun String.diffTime(end: String, pattern: String = "yyyy-MM-dd HH:mm:ss"): Long {
     return timeDifference(this, end, pattern)
 }
+
+/**耗时围绕*/
+fun wrapDuration(action: () -> Unit): String {
+    val startTime = nowTime()
+    action()
+    val nowTime = nowTime()
+    return (nowTime - startTime).toElapsedTime(intArrayOf(1, 1, 1))
+}
