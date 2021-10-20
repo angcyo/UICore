@@ -8,7 +8,7 @@ dependencies {
     //ok type
     implementation project(allModule.http)
 
-    def glide_version = "4.11.0"
+    def glide_version = "4.12.0"
 
     //https://muyangmin.github.io/glide-docs-cn/
     //https://github.com/bumptech/glide
@@ -20,9 +20,9 @@ dependencies {
 
     //https://github.com/koral--/android-gif-drawable
     //https://jcenter.bintray.com/pl/droidsonroids/gif/
-    api 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
+    api 'pl.droidsonroids.gif:android-gif-drawable:1.2.23'
 
     //https://github.com/wasabeef/glide-transformations
     //https://jcenter.bintray.com/jp/wasabeef/
-    api 'jp.wasabeef:glide-transformations:4.1.0'
+    api 'jp.wasabeef:glide-transformations:4.3.0'
 }

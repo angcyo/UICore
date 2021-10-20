@@ -32,8 +32,8 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
+import jp.wasabeef.glide.transformations.BlurTransformation
 import jp.wasabeef.glide.transformations.GrayscaleTransformation
-import jp.wasabeef.glide.transformations.SupportRSBlurTransformation
 import okhttp3.Call
 import pl.droidsonroids.gif.GifDrawable
 import java.io.File
@@ -205,7 +205,7 @@ class DslGlide {
 
     /**添加一个模糊[Transformation]*/
     fun blur(radius: Int = 25, sampling: Int = 1) {
-        addTransformation(SupportRSBlurTransformation(radius, sampling))
+        addTransformation(BlurTransformation(radius, sampling))
     }
 
     /**添加一个灰度[Transformation]*/

@@ -6,6 +6,7 @@ dependencies {
     implementation project(allModule.coroutine)
     implementation project(allModule.dslitem)
 
+    //https://github.com/lingochamp/okdownload
     def latest_version = "1.0.7"
     api "com.liulishuo.okdownload:okdownload:$latest_version"
     implementation "com.liulishuo.okdownload:sqlite:$latest_version"
