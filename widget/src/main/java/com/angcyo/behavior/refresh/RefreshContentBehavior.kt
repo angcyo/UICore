@@ -18,6 +18,7 @@ import com.angcyo.widget.R
 import com.angcyo.widget.base.behavior
 import com.angcyo.widget.base.isTouchFinish
 import com.angcyo.widget.base.mH
+import com.angcyo.widget.layout.isEnableCoordinator
 
 
 /**
@@ -174,7 +175,7 @@ open class RefreshContentBehavior(
             type
         )
         _overScroller.abortAnimation()
-        return coordinatorLayout.isEnabled && axes.isAxisVertical()
+        return coordinatorLayout.isEnableCoordinator && axes.isAxisVertical()
     }
 
     override fun onNestedPreScroll(

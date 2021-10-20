@@ -6,6 +6,7 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import com.angcyo.widget.base.*
+import com.angcyo.widget.layout.isEnableCoordinator
 
 /**
  * 上下移动view, 达到隐藏效果
@@ -73,7 +74,7 @@ open class HideTitleBarBehavior(
             axes,
             type
         )
-        return axes.isAxisVertical()
+        return axes.isAxisVertical() && coordinatorLayout.isEnableCoordinator
     }
 
     override fun onNestedPreScroll(
@@ -129,6 +130,9 @@ open class HideTitleBarBehavior(
     }
 
     override fun getContentExcludeHeight(behavior: BaseDependsBehavior<*>): Int {
+        if (parentLayout?.isEnabled == false) {
+            return childView.mH(0)
+        }
         return if (ignoreStatusBar) 0 else childView?.getStatusBarHeight() ?: 0
     }
 

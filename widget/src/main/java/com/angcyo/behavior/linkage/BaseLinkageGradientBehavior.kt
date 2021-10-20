@@ -12,6 +12,7 @@ import com.angcyo.behavior.refresh.IRefreshContentBehavior
 import com.angcyo.widget.base.behavior
 import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.topCanScroll
+import com.angcyo.widget.layout.isEnableCoordinator
 import kotlin.math.absoluteValue
 import kotlin.math.min
 
@@ -118,14 +119,14 @@ abstract class BaseLinkageGradientBehavior(
         axes: Int,
         type: Int
     ): Boolean {
-        return super.onStartNestedScroll(
+        return (super.onStartNestedScroll(
             coordinatorLayout,
             child,
             directTargetChild,
             target,
             axes,
             type
-        ) || axes == ViewCompat.SCROLL_AXIS_VERTICAL
+        ) || axes == ViewCompat.SCROLL_AXIS_VERTICAL) && coordinatorLayout.isEnableCoordinator
     }
 
     override fun onNestedScroll(

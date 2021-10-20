@@ -11,6 +11,7 @@ import com.angcyo.behavior.BaseGestureBehavior
 import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.widget.base.*
+import com.angcyo.widget.layout.isEnableCoordinator
 import java.lang.ref.WeakReference
 
 /**
@@ -92,7 +93,8 @@ abstract class BaseLinkageBehavior(
             type
         )
         return axes == ViewCompat.SCROLL_AXIS_VERTICAL &&
-                (headerView.mH() + stickyView.mH() + footerView.mH()) > coordinatorLayout.mH()
+                (headerView.mH() + stickyView.mH() + footerView.mH()) > coordinatorLayout.mH() &&
+                coordinatorLayout.isEnableCoordinator
     }
 
     override fun onTouchDown(parent: CoordinatorLayout, child: View, ev: MotionEvent) {

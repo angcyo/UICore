@@ -12,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.angcyo.library.L
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.widget.base.actionToString
+import com.angcyo.widget.layout.isEnableCoordinator
 
 /**
  * 打印相应方法日志
@@ -54,7 +55,7 @@ open class LogBehavior<T : View>(
         type: Int
     ): Boolean {
         e("child:${directTargetChild.simpleHash()} target:${target.simpleHash()} axes:${axes.toAxesString()} type:${type.toTypeString()}")
-        return coordinatorLayout.isEnabled && super.onStartNestedScroll(
+        return coordinatorLayout.isEnableCoordinator && super.onStartNestedScroll(
             coordinatorLayout,
             child,
             directTargetChild,

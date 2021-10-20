@@ -10,6 +10,7 @@ import androidx.core.view.ViewCompat
 import com.angcyo.behavior.BaseGestureBehavior
 import com.angcyo.tablayout.clamp
 import com.angcyo.widget.base.mH
+import com.angcyo.widget.layout.isEnableCoordinator
 import kotlin.math.abs
 
 /**
@@ -128,7 +129,7 @@ open class ScaleBehavior(
             axes,
             type
         )
-        return axes == ViewCompat.SCROLL_AXIS_VERTICAL
+        return axes.isAxisVertical() && coordinatorLayout.isEnableCoordinator
     }
 
     override fun onNestedScroll(

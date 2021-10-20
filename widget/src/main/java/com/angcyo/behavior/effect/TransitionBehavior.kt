@@ -15,6 +15,7 @@ import com.angcyo.tablayout.clamp
 import com.angcyo.widget.R
 import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.mW
+import com.angcyo.widget.layout.isEnableCoordinator
 
 /**
  * 支持在竖直方向内, 任意移动的[Behavior]
@@ -249,7 +250,7 @@ open class TransitionBehavior(
             axes,
             type
         )
-        return true
+        return coordinatorLayout.isEnableCoordinator
     }
 
     override fun onNestedPreScroll(

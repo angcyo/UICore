@@ -14,6 +14,7 @@ import com.angcyo.library.ex.toRSize
 import com.angcyo.widget.R
 import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.mW
+import com.angcyo.widget.layout.isEnableCoordinator
 
 /**
  * 支持竖直方向移动[move]的[Behavior], 通过[addScrollListener]监听滚动, 实现想要的效果.
@@ -90,7 +91,7 @@ open class MoveBehavior(
             axes,
             type
         )
-        return axes == ViewCompat.SCROLL_AXIS_VERTICAL
+        return axes.isAxisVertical() && coordinatorLayout.isEnableCoordinator
     }
 
     override fun onNestedPreScroll(

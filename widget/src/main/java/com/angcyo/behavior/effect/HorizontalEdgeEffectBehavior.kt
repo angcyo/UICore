@@ -7,6 +7,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.behavior.refresh.RefreshEffectConfig
 import com.angcyo.widget.base.mW
+import com.angcyo.widget.layout.isEnableCoordinator
 
 /**
  * 横向刷新效果的行为, 只有效果, 不触发回调.
@@ -38,7 +39,7 @@ open class HorizontalEdgeEffectBehavior(context: Context, attributeSet: Attribut
             axes,
             type
         )
-        return axes.isAxisHorizontal()
+        return axes.isAxisHorizontal() && coordinatorLayout.isEnableCoordinator
     }
 
     override fun onNestedPreScroll(

@@ -15,6 +15,7 @@ import com.angcyo.widget.R
 import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.mW
 import com.angcyo.widget.base.offsetTopTo
+import com.angcyo.widget.layout.isEnableCoordinator
 
 /**
  * 支持下拉返回的[Behavior], 通过[addScrollListener]方法, 添加滚动监听, 实现自定义的功能.
@@ -103,7 +104,7 @@ open class TouchBackBehavior(
             axes,
             type
         )
-        return axes == ViewCompat.SCROLL_AXIS_VERTICAL
+        return axes.isAxisVertical() && coordinatorLayout.isEnableCoordinator
     }
 
     override fun onNestedPreScroll(

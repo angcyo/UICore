@@ -101,8 +101,8 @@ fun Context.loadDrawable(id: Int): Drawable? {
 }
 
 @ColorInt
-fun getColor(@ColorRes id: Int): Int {
-    return ContextCompat.getColor(app(), id)
+fun getColor(@ColorRes id: Int, context: Context = app()): Int {
+    return ContextCompat.getColor(context, id)
 }
 
 @Px
@@ -115,8 +115,8 @@ fun getInteger(@IntegerRes id: Int): Int {
 }
 
 @ColorInt
-fun _color(@ColorRes id: Int): Int {
-    return getColor(id)
+fun _color(@ColorRes id: Int, context: Context = app()): Int {
+    return getColor(id, context)
 }
 
 @Px

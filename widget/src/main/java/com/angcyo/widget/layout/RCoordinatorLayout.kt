@@ -161,3 +161,10 @@ open class RCoordinatorLayout(
     /**是否还在touch中*/
     override var isTouchHold: Boolean = false
 }
+
+/**是否激活了协调功能*/
+var CoordinatorLayout.isEnableCoordinator: Boolean
+    get() = isEnabled
+    set(value) {
+        isEnabled = value
+    }
