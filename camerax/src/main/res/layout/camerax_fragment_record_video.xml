@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_recorder_video"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <!--mixed模式, 既支持拍照, 又支持录像-->
-    <androidx.camera.view.CameraView
+    <androidx.camera.view.PreviewView
         android:id="@+id/lib_camera_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        app:captureMode="mixed" />
+        android:layout_gravity="center" />
 
     <com.angcyo.widget.layout.ExpandRecordLayout
         android:id="@+id/record_control_layout"

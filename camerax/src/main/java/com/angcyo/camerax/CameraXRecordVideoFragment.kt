@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
+import androidx.camera.view.LifecycleCameraController
 import androidx.core.app.ActivityCompat
 import com.angcyo.camerax.dslitem.DslCameraViewHelper
 import com.angcyo.core.fragment.BaseFragment
@@ -62,7 +63,9 @@ class CameraXRecordVideoFragment : BaseFragment() {
 
     private fun onDelayInitView() {
         dslCameraViewHelper.cameraView = _vh.v(R.id.lib_camera_view)
-        dslCameraViewHelper.cameraView?.bindToLifecycle(this)
+        dslCameraViewHelper.cameraView?.controller = LifecycleCameraController(fContext()).apply {
+            bindToLifecycle(this@CameraXRecordVideoFragment)
+        }
 
         _previewPictureLayoutControl =
             PreviewPictureLayoutControl(_vh.view(R.id.camera_confirm_layout)!!)

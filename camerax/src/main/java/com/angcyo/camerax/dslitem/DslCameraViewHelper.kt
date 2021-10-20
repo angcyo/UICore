@@ -1,11 +1,14 @@
 package com.angcyo.camerax.dslitem
 
 import android.Manifest
+import android.annotation.SuppressLint
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.VideoCapture
-import androidx.camera.view.CameraView
-import androidx.core.net.toFile
+import androidx.camera.view.CameraController
+import androidx.camera.view.PreviewView
+import androidx.camera.view.video.OnVideoSavedCallback
+import androidx.camera.view.video.OutputFileOptions
+import androidx.camera.view.video.OutputFileResults
 import com.angcyo.library.L
 import com.angcyo.library.component.MainExecutor
 import com.angcyo.library.ex.havePermission
@@ -30,19 +33,25 @@ class DslCameraViewHelper {
     var recordPermissionList = listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
 
     /**核心[CameraView]*/
-    var cameraView: CameraView? = null
+    var cameraView: PreviewView? = null
 
     /**是否要在DCIM中显示*/
     var saveToDCIM: Boolean = false
 
     /**拍照, 拍照*/
-    fun takePicture(file: File? = null, onResult: (File, Exception?) -> Unit) {
+    fun takePicture(
+        file: File? = null,
+        autoEnableCase: Boolean = true,
+        onResult: (File, Exception?) -> Unit
+    ) {
         val saveFile =
             file ?: File(filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".jpg")))
-        cameraView?.run {
-            if (captureMode == CameraView.CaptureMode.VIDEO) {
-                captureMode = CameraView.CaptureMode.IMAGE
+        cameraView?.controller?.run {
+
+            if (autoEnableCase && !isImageCaptureEnabled) {
+                setEnabledUseCases(CameraController.IMAGE_CAPTURE)
             }
+
             takePicture(
                 ImageCapture.OutputFileOptions.Builder(saveFile).build(),
                 MainExecutor,
@@ -66,42 +75,53 @@ class DslCameraViewHelper {
     }
 
     /**录像, 需要录音权限*/
-    fun startRecording(file: File? = null, onResult: (File, Exception?) -> Unit): Boolean {
+    @SuppressLint("UnsafeOptInUsageError")
+    fun startRecording(
+        file: File? = null,
+        autoEnableCase: Boolean = true,
+        onResult: (File, Exception?) -> Unit
+    ): Boolean {
         val saveFile =
             file ?: File(filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".mp4")))
         if (cameraView?.context?.havePermission(recordPermissionList) == true) {
-            cameraView?.run {
-                if (captureMode == CameraView.CaptureMode.IMAGE) {
-                    captureMode = CameraView.CaptureMode.VIDEO
+            cameraView?.controller?.run {
+
+                if (autoEnableCase && !isVideoCaptureEnabled) {
+                    setEnabledUseCases(CameraController.VIDEO_CAPTURE)
                 }
-                startRecording(saveFile, MainExecutor, object : VideoCapture.OnVideoSavedCallback {
-                    /*override fun onVideoSaved(file: File) {
-                        L.i(saveFile)
-                        if (saveToDCIM) {
-                            cameraView?.context?.saveToDCIM(saveFile)
-                            //cameraView?.context?.scanFile(saveFile)
-                        }
-                        onResult(saveFile, null)
-                    }*/
 
-                    override fun onVideoSaved(outputFileResults: VideoCapture.OutputFileResults) {
-                        L.i(saveFile)
-                        if (saveToDCIM) {
-                            cameraView?.context?.saveToDCIM(saveFile)
-                            //cameraView?.context?.scanFile(saveFile)
-                        }
-                        onResult(saveFile, null)
-                    }
+                startRecording(
+                    OutputFileOptions.builder(saveFile).build(),
+                    MainExecutor,
+                    object : OnVideoSavedCallback {
 
-                    override fun onError(
-                        videoCaptureError: Int,
-                        message: String,
-                        cause: Throwable?
-                    ) {
-                        L.w("$videoCaptureError $message $cause")
-                        onResult(saveFile, Exception(message, cause))
-                    }
-                })
+                        /*override fun onVideoSaved(file: File) {
+                            L.i(saveFile)
+                            if (saveToDCIM) {
+                                cameraView?.context?.saveToDCIM(saveFile)
+                                //cameraView?.context?.scanFile(saveFile)
+                            }
+                            onResult(saveFile, null)
+                        }*/
+
+                        override fun onVideoSaved(outputFileResults: OutputFileResults) {
+                            L.i(saveFile)
+                            if (saveToDCIM) {
+                                cameraView?.context?.saveToDCIM(saveFile)
+                                //cameraView?.context?.scanFile(saveFile)
+                            }
+                            onResult(saveFile, null)
+                        }
+
+                        override fun onError(
+                            videoCaptureError: Int,
+                            message: String,
+                            cause: Throwable?
+                        ) {
+                            L.w("$videoCaptureError $message $cause")
+                            onResult(saveFile, Exception(message, cause))
+                        }
+                    })
             }
             return true
         } else {
@@ -111,7 +131,8 @@ class DslCameraViewHelper {
         }
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     fun stopRecording() {
-        cameraView?.stopRecording()
+        cameraView?.controller?.stopRecording()
     }
 }
