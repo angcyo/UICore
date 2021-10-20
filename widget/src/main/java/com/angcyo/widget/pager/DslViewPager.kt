@@ -13,6 +13,10 @@ import androidx.viewpager.widget.ViewPager
 import com.angcyo.widget.DslViewHolder
 
 /**
+ * 垂直滚动的ViewPager
+ * https://github.com/kaelaela/VerticalViewPager
+ *
+ * https://github.com/xmuSistone/ViewpagerTransition
  *
  * Email:angcyo@126.com
  * @author angcyo
