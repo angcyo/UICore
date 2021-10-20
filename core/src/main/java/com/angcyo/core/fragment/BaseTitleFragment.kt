@@ -196,6 +196,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
         return fragmentUI?.fragmentCreateBackItem?.invoke(this)
     }
 
+    /**[onCreateView]*/
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)
         onInitFragment()
@@ -252,7 +253,8 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
         }
     }
 
-    /**初始化样式*/
+    /**初始化样式
+     * [initBaseView]*/
     open fun onInitFragment() {
         _vh.itemView.isClickable = fragmentConfig.interceptRootTouchEvent
 
@@ -298,7 +300,8 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
         return true
     }
 
-    /**初始化[Behavior]*/
+    /**初始化[Behavior]
+     * [initBaseView]*/
     open fun onInitBehavior() {
         rootControl().group(R.id.lib_coordinator_wrap_layout)?.eachChild { _, child ->
             onCreateBehavior(child)?.run {

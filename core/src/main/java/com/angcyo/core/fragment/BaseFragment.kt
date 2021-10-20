@@ -95,6 +95,7 @@ abstract class BaseFragment : AbsLifecycleFragment() {
 
     //<editor-fold desc="操作方法">
 
+    /**[onCreateView]*/
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)
         if (interceptRootTouchEvent()) {

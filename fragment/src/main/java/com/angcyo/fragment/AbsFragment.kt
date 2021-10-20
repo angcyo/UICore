@@ -232,7 +232,8 @@ abstract class AbsFragment : Fragment() {
         return rootView
     }
 
-    /**初始化布局, 此时的[View]还没有[attach]*/
+    /**初始化布局, 此时的[View]还没有[attach]
+     * [onCreateView]*/
     open fun initBaseView(savedInstanceState: Bundle?) {
 
     }
