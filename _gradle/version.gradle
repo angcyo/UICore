@@ -83,8 +83,8 @@ def checkVersion(config, requested, details) {
                         it == packageName
                     }
                     if (!log) {
-                        //没有输出过log
-                        error "强制: ${originVersion}  ->  ${value}"
+                        //没有输出过log时, 则输出一次日志
+                        error "!!![强制]: ${originVersion}  ->  ${value}"
                     }
 
                     _logVersion += packageName
