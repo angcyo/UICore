@@ -50,6 +50,12 @@ var IFormItem.formIgnore: Boolean
         itemFormConfig.formIgnore = value
     }
 
+var IFormItem.formErrorTip: String
+    get() = itemFormConfig.formErrorTip
+    set(value) {
+        itemFormConfig.formErrorTip = value
+    }
+
 /**
  * 表单[IFormItem]配置信息
  * Email:angcyo@126.com
