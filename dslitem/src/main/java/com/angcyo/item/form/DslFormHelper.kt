@@ -152,7 +152,8 @@ class DslFormHelper {
                     } else {
                         //有错误
                         tipFormItemError(item)
-                        end(IllegalStateException("第${checkIndex}个Item有异常"))
+                        //end(IllegalStateException("第${checkIndex}个Item有异常"))
+                        end(error)
                     }
                 }
             }
