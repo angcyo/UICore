@@ -5,7 +5,10 @@ import com.angcyo.http.base.readString
 import com.angcyo.library.L
 import com.angcyo.library.ex.*
 import okhttp3.*
+import okhttp3.internal.http.promisesBody
 import okio.Buffer
+import okio.GzipSource
+import java.io.EOFException
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -213,6 +216,7 @@ open class LogInterceptor : Interceptor {
             }
 
             if (logResponseBody && request.logResponseBody(logResponseBody)) {
+
                 //返回体
                 var bodyLength = -1L //body长度
                 var bodyString: String? = "no response body!" //body字符串
@@ -220,13 +224,33 @@ open class LogInterceptor : Interceptor {
                 response.body?.run {
                     bodyLength = contentLength()
 
-                    bodyString = if (response.headers.hasEncoded()) {
+                    bodyString = if (!response.promisesBody()) {
+                        "(no body)"
+                    } else if (bodyHasUnknownEncoding(response.headers) || response.headers.hasEncoded()) {
                         //加密了数据
                         "(encoded body omitted)"
                     } else {
                         try {
-                            val buffer = source().buffer
+                            val source = source()
+                            source.request(Long.MAX_VALUE) // Buffer the entire body.
+                            var buffer = source.buffer
+
+                            var gzippedLength: Long? = null
+                            if ("gzip".equals(
+                                    response.headers["Content-Encoding"],
+                                    ignoreCase = true
+                                )
+                            ) {
+                                gzippedLength = buffer.size
+                                GzipSource(buffer.clone()).use { gzippedResponseBody ->
+                                    buffer = Buffer()
+                                    buffer.writeAll(gzippedResponseBody)
+                                }
+                            }
+
                             when {
+                                !buffer.isProbablyUtf8() -> "(binary ${buffer.size}-byte body omitted)"
+                                gzippedLength != null -> "(${buffer.size}-byte, $gzippedLength-gzipped-byte body)"
                                 buffer.size <= 0 -> "buffer is empty."
                                 buffer.isPlaintext() -> readString()
                                 else -> "binary response body."
@@ -273,6 +297,32 @@ open class LogInterceptor : Interceptor {
 
     open fun printResponseLog(builder: StringBuilder) {
         L.d(builder.toString())
+    }
+
+    private fun bodyHasUnknownEncoding(headers: Headers): Boolean {
+        val contentEncoding = headers["Content-Encoding"] ?: return false
+        return !contentEncoding.equals("identity", ignoreCase = true) &&
+                !contentEncoding.equals("gzip", ignoreCase = true)
+    }
+}
+
+internal fun Buffer.isProbablyUtf8(): Boolean {
+    try {
+        val prefix = Buffer()
+        val byteCount = size.coerceAtMost(64)
+        copyTo(prefix, 0, byteCount)
+        for (i in 0 until 16) {
+            if (prefix.exhausted()) {
+                break
+            }
+            val codePoint = prefix.readUtf8CodePoint()
+            if (Character.isISOControl(codePoint) && !Character.isWhitespace(codePoint)) {
+                return false
+            }
+        }
+        return true
+    } catch (_: EOFException) {
+        return false // Truncated UTF-8 sequence.
     }
 }
 

@@ -42,10 +42,13 @@ class DslHttpConfig {
             followSslRedirects(true)
 
             //UUID
-            addInterceptor(UUIDInterceptor())
+            addNetworkInterceptor(UUIDInterceptor())
 
             //日志拦截器, 放在最后拦截
-            addInterceptor(LogInterceptor())
+            addNetworkInterceptor(LogInterceptor())
+            /*addNetworkInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })*/
         }
 
     //构造器配置

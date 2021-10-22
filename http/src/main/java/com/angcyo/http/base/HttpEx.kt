@@ -13,7 +13,7 @@ import java.net.URLDecoder
 import java.nio.charset.Charset
 
 /**
- *
+ * https://mvnrepository.com/artifact/com.squareup.okhttp3/logging-interceptor/4.9.2
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/12/25

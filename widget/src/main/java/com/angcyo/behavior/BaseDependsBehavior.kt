@@ -168,7 +168,7 @@ abstract class BaseDependsBehavior<T : View>(
      * [RCoordinatorLayout.onLayoutChild]
      * */
     open fun onLayoutChildAfter(parent: CoordinatorLayout, child: T, layoutDirection: Int) {
-        if (_childFrame == null) {
+        if (_childFrame == null && child.mH() > 0 && child.mW() > 0 && child.isVisible()) {
             _childFrame = Rect(child.left, child.top, child.right, child.bottom)
         }
     }
