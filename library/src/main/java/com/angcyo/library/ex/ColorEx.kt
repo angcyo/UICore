@@ -3,6 +3,7 @@ package com.angcyo.library.ex
 import android.animation.ArgbEvaluator
 import android.graphics.Color
 import android.os.SystemClock
+import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
 import androidx.core.math.MathUtils
 import java.util.*
@@ -85,4 +86,50 @@ fun Int.toHexColorString(): String {
     val g = Color.green(this)
     val b = Color.blue(this)
     return String.format(Locale.getDefault(), "0x%02X%02X%02X%02X", a, r, g, b)
+}
+
+@ColorInt
+fun Int.toHsv(h: Float = 1f, s: Float = 1f, v: Float = 1f): Int {
+    var result = this
+    val hsv = FloatArray(3)
+    Color.colorToHSV(result, hsv)
+    hsv[0] *= h
+    hsv[1] *= s
+    hsv[2] *= v
+    result = Color.HSVToColor(hsv)
+    return result
+}
+
+/**改变颜色的色调*/
+@ColorInt
+fun Int.toHue(factor: Float = 0.8f): Int {
+    var result = this
+    val hsv = FloatArray(3)
+    Color.colorToHSV(result, hsv)
+    hsv[0] *= factor // value component
+    result = Color.HSVToColor(hsv)
+    return result
+}
+
+/**改变颜色的饱和度 */
+@ColorInt
+fun Int.toSaturation(factor: Float = 0.8f): Int {
+    var result = this
+    val hsv = FloatArray(3)
+    Color.colorToHSV(result, hsv)
+    hsv[1] *= factor // value component
+    result = Color.HSVToColor(hsv)
+    return result
+}
+
+/**改变颜色的亮度
+ * [factor] 值越小, 越暗*/
+@ColorInt
+fun Int.toBrightness(factor: Float = 0.8f): Int {
+    var result = this
+    val hsv = FloatArray(3)
+    Color.colorToHSV(result, hsv)
+    hsv[2] *= factor // value component
+    result = Color.HSVToColor(hsv)
+    return result
 }

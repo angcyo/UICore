@@ -1051,7 +1051,7 @@ private fun View.getVisibleRect() {
     //去掉不可见位置时的矩形
     getLocalVisibleRect(_tempRect)
 
-    //视图左上角坐标, 相对于window的坐标
+    //视图左上角坐标, 相对于window的坐标, 全屏情况下会等于[getLocationOnScreen]
     getLocationInWindow(_tempArray)
 
     //视图左上角坐标, 相对于屏幕的坐标. (包含了状态的高度)

@@ -74,9 +74,24 @@ fun String.toMillis(pattern: String = "yyyyMMdd"): Long {
     return time
 }
 
+/**毫秒*/
+fun Calendar.toTime(): Long {
+    return timeInMillis
+}
+
 fun Long.toCalendar(): Calendar {
     val cal = Calendar.getInstance()
     cal.timeInMillis = this
+    return cal
+}
+
+fun Calendar.toDate(): Date {
+    return time
+}
+
+fun Date.toCalendar(): Calendar {
+    val cal = Calendar.getInstance()
+    cal.time = this
     return cal
 }
 

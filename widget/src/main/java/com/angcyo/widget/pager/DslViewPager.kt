@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.view.GestureDetectorCompat
@@ -137,16 +138,38 @@ open class DslViewPager : ViewPager {
         return false
     }
 
+    /**交换之前的x, y坐标*/
+    var originX: Float = -1f
+    var originY: Float = -1f
+
     fun swapTouchEvent(event: MotionEvent?): MotionEvent? {
         if (event == null) {
             return null
         }
+
+        originX = event.x
+        originY = event.y
+
         val width = width.toFloat()
         val height = height.toFloat()
         val swappedX = event.y / height * width
         val swappedY = event.x / width * height
         event.setLocation(swappedX, swappedY)
+
         return event
+    }
+
+    /**获取原始*/
+    fun getOriginTouch(event: MotionEvent): FloatArray {
+        val result = FloatArray(2)
+        val local = IntArray(2)
+        val parent = parent
+        if (parent is View) {
+            (parent as View).getLocationOnScreen(local)
+            result[0] = event.rawX - local[0]
+            result[1] = event.rawY - local[1]
+        }
+        return result
     }
 
     override fun setAdapter(adapter: PagerAdapter?) {
