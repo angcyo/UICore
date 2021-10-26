@@ -218,8 +218,24 @@ fun View.viewFrame(rect: Rect = _tempRect): Rect {
     return rect
 }
 
+/**视图在父控件中的位置*/
 fun View.viewFrameF(rect: RectF = _tempRectF): RectF {
     rect.set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
+    return rect
+}
+
+/**视图在屏幕中的位置*/
+fun View.viewScreenFrameF(rect: RectF = _tempRectF): RectF {
+
+    //视图左上角坐标, 相对于屏幕的坐标. (包含了状态的高度)
+    getLocationOnScreen(_tempArray)
+
+    val x = _tempArray[0]
+    val y = _tempArray[1]
+    rect.set(
+        x.toFloat(), y.toFloat(),
+        (x + measuredWidth).toFloat(), (y + measuredHeight).toFloat()
+    )
     return rect
 }
 

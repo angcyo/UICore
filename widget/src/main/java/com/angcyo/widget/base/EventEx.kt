@@ -24,6 +24,10 @@ fun MotionEvent.isTouchIn(view: View): Boolean {
     return view.viewFrameF().contains(x, y)
 }
 
+fun MotionEvent.isScreenTouchIn(view: View): Boolean {
+    return view.viewScreenFrameF().contains(rawX, rawY)
+}
+
 fun MotionEvent.actionToString(): String = this.actionMasked.actionToString()
 
 fun Int.actionToString(): String {
