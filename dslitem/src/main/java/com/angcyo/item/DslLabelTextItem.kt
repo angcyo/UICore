@@ -12,7 +12,10 @@ import com.angcyo.widget.base.throttleClickIt
 import com.angcyo.widget.base.visible
 
 /**
- * 简单的文本显示item
+ * 简单的文本显示item, 支持右图标设置
+ *
+ * [DslInlineLabelTextItem]
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/03/23

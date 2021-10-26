@@ -7,7 +7,7 @@ import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.button
 
 /**
- * 表单提交按钮布局item
+ * 表单提交按钮布局item, 2个按钮
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2021/06/25

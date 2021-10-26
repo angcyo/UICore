@@ -79,7 +79,8 @@ fun DslAdapterItem.initGridStyleItem(
     }
 }
 
-/**组与组之间的偏移, 和背景样式*/
+/**组与组之间设置偏移, 组内item之间不设置偏移
+ * 首并且尾item设置背景样式*/
 fun DslAdapterItem.initGroupOffsetAndStyle(
     left: Int = _dimen(com.angcyo.widget.R.dimen.lib_padding_left),
     top: Int = _dimen(com.angcyo.widget.R.dimen.lib_padding_left),

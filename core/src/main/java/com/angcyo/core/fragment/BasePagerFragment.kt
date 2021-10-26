@@ -26,6 +26,10 @@ import kotlin.math.min
 
 /**
  * Tab+ViewPager 页面结构
+ *
+ * 顶部 [DslTabLayout]
+ * 底部 [DslViewPager]
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/03/27

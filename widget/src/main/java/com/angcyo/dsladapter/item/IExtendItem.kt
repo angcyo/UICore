@@ -26,7 +26,8 @@ interface IExtendItem : IDslItem {
         @IdRes triggerViewId: Int = View.NO_ID, /*触发旋转控件的id, 默认是itemView*/
         extendRotation: Float = 0f, /*展开时的旋转角度*/
         foldRotation: Float = 180f, /*折叠时的旋转角度*/
-        rotation: Float = 180f, /*动画需要旋转的角度*/
+        toExtendRotation: Float = 180f, /*动画到展开需要旋转的角度*/
+        toFoldRotation: Float = 180f, /*动画到折叠需要旋转的角度*/
     ) {
 
         val extend = adapterItem.itemGroupExtend
@@ -39,14 +40,12 @@ interface IExtendItem : IDslItem {
 
         fun trigger() {
             itemHolder.view(arrowViewId)?.animate()?.apply {
-                if (rotation == 180f) {
-                    rotationBy(rotation)
+                if (extend) {
+                    //to fold
+                    rotationBy(toFoldRotation)
                 } else {
-                    if (extend) {
-                        rotationBy(rotation)
-                    } else {
-                        rotationBy(-rotation)
-                    }
+                    //to extend
+                    rotationBy(toExtendRotation)
                 }
                 duration = 300
                 start()

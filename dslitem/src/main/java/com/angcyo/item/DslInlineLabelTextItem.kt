@@ -6,6 +6,9 @@ import com.angcyo.item.style.TextItemConfig
 /**
  * 内嵌的标签+文本的item
  * 左标签, 又文本
+ *
+ * [DslLabelTextItem]
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2021/09/30

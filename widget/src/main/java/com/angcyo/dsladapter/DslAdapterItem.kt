@@ -46,13 +46,13 @@ open class DslAdapterItem : LifecycleOwner {
         const val PAYLOAD_UPDATE_PART = 0x0001
 
         /**负载,强制更新媒体, 比如图片*/
-        const val PAYLOAD_UPDATE_MEDIA = 0x0011
+        const val PAYLOAD_UPDATE_MEDIA = 0x002
 
         /**负载,请求更新[itemGroupExtend]*/
-        const val PAYLOAD_UPDATE_EXTEND = 0x00101
+        const val PAYLOAD_UPDATE_EXTEND = 0x004
 
         /**负载,请求更新[itemHidden]*/
-        const val PAYLOAD_UPDATE_HIDDEN = 0x001001
+        const val PAYLOAD_UPDATE_HIDDEN = 0x008
 
         /**占满宽度的item*/
         const val FULL_ITEM = -1
@@ -430,10 +430,16 @@ open class DslAdapterItem : LifecycleOwner {
     /**
      * 当前分组是否[展开]
      * */
-    var itemGroupExtend: Boolean by UpdateDependProperty(true, PAYLOAD_UPDATE_EXTEND)
+    var itemGroupExtend: Boolean by UpdateDependProperty(
+        true,
+        listOf(PAYLOAD_UPDATE_PART, PAYLOAD_UPDATE_EXTEND)
+    )
 
     /**是否需要隐藏item*/
-    var itemHidden: Boolean by UpdateDependProperty(false, PAYLOAD_UPDATE_HIDDEN)
+    var itemHidden: Boolean by UpdateDependProperty(
+        false,
+        listOf(PAYLOAD_UPDATE_PART, PAYLOAD_UPDATE_HIDDEN)
+    )
 
     //</editor-fold>
 
@@ -473,7 +479,7 @@ open class DslAdapterItem : LifecycleOwner {
      * */
     var onlyDrawOffsetArea = false
 
-    /**自动隐藏分组最后一个item的[R.id.lib_line_view]view*/
+    /**自动隐藏分组最后一个item的[R.id.lib_item_line_view]view*/
     var hideLastLineView: Boolean = true
 
     /**不绘制分组最后一个item的底部分割线*/
@@ -1064,7 +1070,10 @@ open class DslAdapterItem : LifecycleOwner {
 
 }
 
-class UpdateDependProperty<T>(var value: T, val payload: Int = DslAdapterItem.PAYLOAD_UPDATE_PART) :
+class UpdateDependProperty<T>(
+    var value: T,
+    val payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART
+) :
     ReadWriteProperty<DslAdapterItem, T> {
     override fun getValue(thisRef: DslAdapterItem, property: KProperty<*>): T = value
 

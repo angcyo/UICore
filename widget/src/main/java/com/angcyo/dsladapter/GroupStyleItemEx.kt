@@ -162,7 +162,7 @@ fun DslAdapterItem.initLinearOffset(
     }
 }
 
-/**RecyclerView内边距插入, item之间同步处理
+/**RecyclerView内边距插入, item之间也处理
  * 四边有偏移, 组之间和组内item都有偏移*/
 fun DslAdapterItem.initLinearOffset(outRect: Rect, left: Int, top: Int, right: Int, bottom: Int) {
     if (onSetItemOffset == null) {
@@ -197,7 +197,7 @@ fun DslAdapterItem.initGroupOffset(
 }
 
 /**RecyclerView内边距插入, item之间不处理
- * 四边有偏移, 组之间无*/
+ * 四边有偏移, 组之间有偏移, 组内无偏移*/
 fun DslAdapterItem.initGroupOffset(outRect: Rect, left: Int, top: Int, right: Int, bottom: Int) {
     if (onSetItemOffset == null) {
         onSetItemOffset = {
