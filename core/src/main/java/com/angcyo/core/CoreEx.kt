@@ -18,6 +18,7 @@ import com.angcyo.library.component.toAppDetail
 import com.angcyo.library.ex.baseConfig
 import com.angcyo.library.ex.isRelease
 import com.angcyo.library.utils.RUtils
+import com.angcyo.widget.DslButton
 import com.angcyo.widget.DslGroupHelper
 import com.angcyo.widget.base.find
 import com.angcyo.widget.image.DslImageView
@@ -32,7 +33,6 @@ import ezy.assist.compat.RomUtil
  * @date 2019/12/24
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-
 
 fun coreApp() = app() as CoreApplication
 
@@ -92,6 +92,19 @@ inline fun <reified VM : ViewModel> vmApp(): VM = vmCore()
 
 //</editor-fold desc="Application级别的单例模式">
 
+//<editor-fold desc="Append操作">
+
+fun DslGroupHelper.appendButtonItem(
+    attachToRoot: Boolean = true,
+    action: DslButton.() -> Unit
+): View? {
+    return inflate(R.layout.lib_button_layout, attachToRoot) {
+        find<DslButton>(R.id.lib_button)?.apply {
+            this.action()
+        }
+    }
+}
+
 fun DslGroupHelper.appendTextItem(
     attachToRoot: Boolean = true,
     action: DslTextView.() -> Unit
@@ -124,6 +137,8 @@ fun DslGroupHelper.appendItem(
         this.action()
     }
 }
+
+//</editor-fold desc="Append操作">
 
 /**跳转app权限管理页
  * https://www.jianshu.com/p/b5c494dba0bc

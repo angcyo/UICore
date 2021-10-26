@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.DslButton xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_button"
+    style="@style/DefaultButtonMinStyle"
+    android:layout_marginLeft="@dimen/lib_hdpi"
+    android:layout_marginRight="@dimen/lib_hdpi"
+    android:gravity="center"
+    android:minWidth="@dimen/lib_min_item_height"
+    android:minHeight="@dimen/lib_min_item_height"
+    android:padding="@dimen/lib_hdpi"
+    tools:text="确定" />
