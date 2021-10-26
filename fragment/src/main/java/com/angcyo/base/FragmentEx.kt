@@ -62,6 +62,20 @@ fun Fragment.dslChildFHelper(config: DslFHelper.() -> Unit) {
     }
 }
 
+/**是否有指定类型的[Fragment]*/
+fun Fragment.have(cls: Class<*>): Boolean {
+    return try {
+        val context = activity
+        if (context is FragmentActivity) {
+            context.supportFragmentManager.have(cls) || parentFragmentManager.have(cls)
+        } else {
+            parentFragmentManager.have(cls)
+        }
+    } catch (e: Exception) {
+        false
+    }
+}
+
 fun Fragment.getFragmentTag(): String {
     return if (this is IFragment) this.getFragmentTag() else this.javaClass.name
 }

@@ -90,8 +90,9 @@ fun FragmentManager.restore(vararg tag: String?): List<Fragment> {
     return list
 }
 
+/**是否有指定类型的[Fragment]*/
 fun FragmentManager.have(cls: Class<*>): Boolean {
-    return have(cls.name)
+    return fragments.find { it.javaClass == cls } != null || have(cls.name)
 }
 
 /**查找是否有指定Tag的[Fragment]*/
