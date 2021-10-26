@@ -25,6 +25,7 @@ open class LogBehavior<T : View>(
     context: Context? = null,
     attrs: AttributeSet? = null
 ) : CoordinatorLayout.Behavior<T>(context, attrs) {
+
     var showLog = false
 
     init {

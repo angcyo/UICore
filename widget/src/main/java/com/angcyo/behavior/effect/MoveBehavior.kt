@@ -37,7 +37,7 @@ open class MoveBehavior(
     var moveBehaviorReset: (moveBehavior: MoveBehavior, behaviorScrollY: Int) -> Unit = { _, _ -> }
 
     /**滚动距离约束, [y]需要滚动至的距离, 返回修正后的滚动距离*/
-    var moveScrollY: (y: Int) -> Int = {
+    var moveScrollY: ((y: Int) -> Int)? = {
         //滚动距离约束
         val min = 0
         val max = childView.mH()
@@ -72,7 +72,9 @@ open class MoveBehavior(
     }
 
     override fun scrollTo(x: Int, y: Int, scrollType: Int) {
-        super.scrollTo(x, moveScrollY(y), scrollType)
+        val clampX = x
+        val clampY = moveScrollY?.invoke(y) ?: y
+        super.scrollTo(clampX, clampY, scrollType)
     }
 
     override fun onStartNestedScroll(

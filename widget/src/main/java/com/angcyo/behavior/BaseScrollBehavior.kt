@@ -55,7 +55,7 @@ abstract class BaseScrollBehavior<T : View>(
     var behaviorOffsetTop = 0
         set(value) {
             field = value
-            behaviorScrollTo(behaviorScrollX, behaviorScrollY, SCROLL_TYPE_CALL)
+            behaviorScrollTo?.invoke(behaviorScrollX, behaviorScrollY, SCROLL_TYPE_CALL)
         }
 
     //属性
@@ -65,7 +65,7 @@ abstract class BaseScrollBehavior<T : View>(
     var behaviorOffsetLeft = 0
         set(value) {
             field = value
-            behaviorScrollTo(behaviorScrollX, behaviorScrollY, SCROLL_TYPE_CALL)
+            behaviorScrollTo?.invoke(behaviorScrollX, behaviorScrollY, SCROLL_TYPE_CALL)
         }
 
     //fling 速率阈值
@@ -77,7 +77,7 @@ abstract class BaseScrollBehavior<T : View>(
     var behaviorScrollY: Int = 0
 
     /**滚动值响应界面的处理*/
-    var behaviorScrollTo: (x: Int, y: Int, scrollType: Int) -> Unit = { x, y, _ ->
+    var behaviorScrollTo: ((x: Int, y: Int, scrollType: Int) -> Unit)? = { x, y, _ ->
         childView?.offsetLeftTo(_childFrame?.left.orDef(0) + x + behaviorOffsetLeft)
         childView?.offsetTopTo(_childFrame?.top.orDef(0) + y + behaviorOffsetTop)
     }
@@ -271,7 +271,7 @@ abstract class BaseScrollBehavior<T : View>(
         if (showLog) {
             L.v("scrollTo: x:$x y:$y")
         }
-        behaviorScrollTo(x, y, scrollType)
+        behaviorScrollTo?.invoke(x, y, scrollType) // offset操作
         onScrollTo(x, y, scrollType)
         listeners.forEach {
             it.onBehaviorScrollTo(this, x, y, scrollType)
@@ -462,9 +462,17 @@ abstract class BaseScrollBehavior<T : View>(
         super.onStopNestedScroll(coordinatorLayout, child, target, type)
         //_overScroller.abortAnimation()
         if (!isTouchHold) {
-            listeners.forEach {
-                it.onBehaviorScrollStop(this, SCROLL_TYPE_NESTED, SCROLL_TYPE_NESTED)
-            }
+            onBehaviorScrollStop(SCROLL_TYPE_NESTED, SCROLL_TYPE_NESTED)
+        }
+    }
+
+    /**滚动结束*/
+    open fun onBehaviorScrollStop(scrollType: Int, endType: Int) {
+        if (isFlingAccepted) {
+            //fling
+        }
+        listeners.forEach {
+            it.onBehaviorScrollStop(this, scrollType, endType)
         }
     }
 
