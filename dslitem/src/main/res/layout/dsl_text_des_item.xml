@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/LibBodyTextStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/lib_padding_left"
+    android:paddingTop="@dimen/lib_hdpi"
+    android:paddingRight="@dimen/lib_padding_left"
+    android:paddingBottom="@dimen/lib_hdpi">
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_text_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="123" />
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_des_view"
+        style="@style/LibSubTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/lib_xhdpi"
+        android:textSize="@dimen/text_body_size"
+        tools:text="TextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextText" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>
