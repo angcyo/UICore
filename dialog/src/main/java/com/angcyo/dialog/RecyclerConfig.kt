@@ -88,9 +88,9 @@ open class RecyclerConfig {
     }
 
     /**获取选中项列表*/
-    fun getSelectorItemList(): MutableList<DslAdapterItem> =
+    fun getSelectorItemList(): List<DslAdapterItem> =
         _adapter.selector().getSelectorItemList()
 
     /**获取选中项的索引列表*/
-    fun getSelectorIndexList(): MutableList<Int> = _adapter.selector().getSelectorIndexList()
+    fun getSelectorIndexList(): List<Int> = _adapter.selector().getSelectorIndexList()
 }

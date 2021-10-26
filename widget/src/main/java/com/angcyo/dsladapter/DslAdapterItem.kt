@@ -54,6 +54,9 @@ open class DslAdapterItem : LifecycleOwner {
         /**负载,请求更新[itemHidden]*/
         const val PAYLOAD_UPDATE_HIDDEN = 0x008
 
+        /**负载,请求更新[itemIsSelected]*/
+        const val PAYLOAD_UPDATE_SELECT = 0x010
+
         /**占满宽度的item*/
         const val FULL_ITEM = -1
     }
@@ -858,7 +861,8 @@ open class DslAdapterItem : LifecycleOwner {
         }
     }
 
-    /**选中变化后触发*/
+    /**选中变化后触发
+     * [com.angcyo.dsladapter.ItemSelectorHelper._selectorInner]*/
     open fun _itemSelectorChange(selectorParams: SelectorParams) {
         onItemSelectorChange(selectorParams)
     }

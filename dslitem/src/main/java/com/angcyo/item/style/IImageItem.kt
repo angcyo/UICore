@@ -37,9 +37,10 @@ interface IImageItem : IAutoInitItem {
                 imageItemConfig.onConfigImageView(this)
             }
 
-            if (this@IImageItem is DslAdapterItem) {
+            //2021-10-26 不必要的设置
+            /*if (this@IImageItem is DslAdapterItem) {
                 setOnClickListener(_clickListener)
-            }
+            }*/
         }
 
         if (mediaUpdate) {

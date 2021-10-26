@@ -48,7 +48,7 @@ class ItemSelectorHelper(val dslAdapter: DslAdapter) {
 
     }
 
-    /**固定选项, 这里的数据不允许被操作, 切强制选中状态*/
+    /**固定选项, 这里的数据不允许被操作, 强制选中状态*/
     var fixedSelectorItemList: List<DslAdapterItem>? = null
         set(value) {
             field = value
@@ -76,13 +76,12 @@ class ItemSelectorHelper(val dslAdapter: DslAdapter) {
 
             if (old != value) {
                 onItemSelectorListenerList.forEach { it.onSelectorModelChange(old, value) }
-                onItemSelectorListener.onSelectorModelChange(old, value)
+                onItemSelectorListener?.onSelectorModelChange(old, value)
             }
         }
 
     /**事件监听*/
-    var onItemSelectorListener: OnItemSelectorListener = object :
-        OnItemSelectorListener {}
+    var onItemSelectorListener: OnItemSelectorListener? = null
 
     val onItemSelectorListenerList: CopyOnWriteArrayList<OnItemSelectorListener> =
         CopyOnWriteArrayList()
@@ -125,13 +124,7 @@ class ItemSelectorHelper(val dslAdapter: DslAdapter) {
         selectorParams: SelectorParams = SelectorParams()
     ) {
         itemList.forEach {
-            selector(
-                SelectorParams(
-                    it,
-                    selectorParams.selector,
-                    false
-                )
-            )
+            selector(SelectorParams(it, selectorParams.selector, false))
         }
         if (selectorParams.notifySelectListener) {
             if (itemList.isEmpty() && !selectorParams.notifyWithListEmpty) {
@@ -139,6 +132,10 @@ class ItemSelectorHelper(val dslAdapter: DslAdapter) {
                 _notifySelectorChange(selectorParams)
             }
         }
+    }
+
+    fun selector(dslAdapterItem: DslAdapterItem?) {
+        selector(dslAdapterItem, dslAdapterItem?.itemIsSelected != true)
     }
 
     /**
@@ -157,6 +154,14 @@ class ItemSelectorHelper(val dslAdapter: DslAdapter) {
     fun selector(position: Int, selectorParams: SelectorParams = SelectorParams()) {
         val allItems = dslAdapter.getDataList(selectorParams._useFilterList)
         selectorParams.item = allItems.getOrNull(position)
+        selector(selectorParams)
+    }
+
+    fun selector(dslAdapterItem: DslAdapterItem?, action: SelectorParams.() -> Unit = {}) {
+        val selectorParams = SelectorParams()
+        selectorParams.item = dslAdapterItem
+        selectorParams.selector = OPTION_MUTEX
+        selectorParams.action()
         selector(selectorParams)
     }
 
@@ -316,7 +321,7 @@ class ItemSelectorHelper(val dslAdapter: DslAdapter) {
                 selectorParams
             )
         }
-        onItemSelectorListener.onSelectorItemChange(
+        onItemSelectorListener?.onSelectorItemChange(
             selectorItemList,
             selectorIndexList,
             isSelectorAll,
@@ -329,7 +334,7 @@ class ItemSelectorHelper(val dslAdapter: DslAdapter) {
     //<editor-fold desc="其他操作">
 
     /**获取所有选中项的列表*/
-    fun getSelectorItemList(useFilterList: Boolean = true): MutableList<DslAdapterItem> {
+    fun getSelectorItemList(useFilterList: Boolean = true): List<DslAdapterItem> {
         val result = mutableListOf<DslAdapterItem>()
         dslAdapter.getDataList(useFilterList).filterTo(result) {
             it.itemIsSelected
@@ -338,7 +343,7 @@ class ItemSelectorHelper(val dslAdapter: DslAdapter) {
     }
 
     /**获取所有选中项的索引列表*/
-    fun getSelectorIndexList(useFilterList: Boolean = true): MutableList<Int> {
+    fun getSelectorIndexList(useFilterList: Boolean = true): List<Int> {
         val result = mutableListOf<Int>()
         dslAdapter.getDataList(useFilterList).apply {
             forEachIndexed { index, dslAdapterItem ->
@@ -433,7 +438,10 @@ data class SelectorParams(
     var notifyItemChanged: Boolean = true,
 
     /**参考[androidx.recyclerview.widget.RecyclerView.Adapter.onBindViewHolder(VH, int, java.util.List<java.lang.Object>)]*/
-    var payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART
+    var payload: Any? = listOf(
+        DslAdapterItem.PAYLOAD_UPDATE_PART,
+        DslAdapterItem.PAYLOAD_UPDATE_SELECT
+    )
 )
 
 fun Boolean.toSelectOption(): Int = if (this) OPTION_SELECT else OPTION_DESELECT
@@ -520,6 +528,51 @@ fun RecyclerView?.singleModel() {
 
 fun RecyclerView?.multiModel() {
     (this?.adapter as? DslAdapter)?.multiModel()
+}
+
+/**获取选中项列表*/
+fun DslAdapter.getSelectorItemList(useFilterList: Boolean = true): List<DslAdapterItem> =
+    selector().getSelectorItemList(useFilterList)
+
+fun DslAdapter.getSelectorIndexList(useFilterList: Boolean = true): List<Int> =
+    selector().getSelectorIndexList(useFilterList)
+
+/**选择改变的监听回调*/
+fun DslAdapter.onSelectorChangeListener(
+    action: (
+        selectorItems: MutableList<DslAdapterItem>,
+        selectorIndexList: MutableList<Int>,
+        isSelectorAll: Boolean,
+        selectorParams: SelectorParams
+    ) -> Unit
+) {
+    selector().onItemSelectorListener = object : OnItemSelectorListener {
+        override fun onSelectorItemChange(
+            selectorItems: MutableList<DslAdapterItem>,
+            selectorIndexList: MutableList<Int>,
+            isSelectorAll: Boolean,
+            selectorParams: SelectorParams
+        ) {
+            action(selectorItems, selectorIndexList, isSelectorAll, selectorParams)
+        }
+    }
+}
+
+fun DslAdapter.observerSelectorChangeListener(
+    action: (
+        selectorItems: MutableList<DslAdapterItem>,
+        selectorIndexList: MutableList<Int>,
+        isSelectorAll: Boolean,
+        selectorParams: SelectorParams
+    ) -> Unit
+) {
+    selector().observer {
+        onItemChange = action
+    }
+}
+
+fun DslAdapterItem.select(action: SelectorParams.() -> Unit = {}) {
+    itemDslAdapter?.selector()?.selector(this, action)
 }
 
 /**快速获取[ItemSelectorHelper]*/

@@ -300,17 +300,17 @@ open class DslViewHolder(
         return this
     }
 
+    /**选中当前的view, 以及其所有的子view*/
     private fun selected(view: View?, selected: Boolean) {
         if (view == null) {
             return
         }
+        if (view.isSelected != selected) {
+            view.isSelected = selected
+        }
         if (view is ViewGroup) {
             for (i in 0 until view.childCount) {
                 selected(view.getChildAt(i), selected)
-            }
-        } else {
-            if (view.isSelected != selected) {
-                view.isSelected = selected
             }
         }
     }

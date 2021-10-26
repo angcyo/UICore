@@ -264,7 +264,7 @@ fun DslAdapterItem.itemIndexDataPosition(
     ?.filter { (dslAdapter ?: itemDslAdapter)?.dataItems?.contains(it) == true }?.indexOf(this)
     ?: RecyclerView.NO_POSITION
 
-fun DslAdapterItem.itemViewHolder(recyclerView: RecyclerView?): DslViewHolder? {
+fun DslAdapterItem.itemViewHolder(recyclerView: RecyclerView? = itemDslAdapter?._recyclerView): DslViewHolder? {
     val position = itemIndexPosition()
     return if (position != RecyclerView.NO_POSITION) {
         recyclerView?.findViewHolderForAdapterPosition(position) as? DslViewHolder
@@ -411,8 +411,8 @@ var DslAdapterItem.itemGroup: String?
     }
 
 /**找到[DslAdapterItem]对应的*/
-fun DslAdapterItem.findViewHolder(recyclerView: RecyclerView?): RecyclerView.ViewHolder? {
-    return recyclerView?.findViewHolderForAdapterPosition(itemIndexPosition())
+fun DslAdapterItem.findViewHolder(recyclerView: RecyclerView? = itemDslAdapter?._recyclerView): RecyclerView.ViewHolder? {
+    return itemViewHolder(recyclerView)
 }
 
 //</editor-fold desc="操作扩展">
