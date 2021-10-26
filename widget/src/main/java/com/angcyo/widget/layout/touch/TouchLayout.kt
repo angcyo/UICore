@@ -9,6 +9,8 @@ import android.widget.FrameLayout
 import android.widget.OverScroller
 import androidx.annotation.CallSuper
 import androidx.core.view.GestureDetectorCompat
+import com.angcyo.library.L
+import com.angcyo.library.ex.simpleHash
 import com.angcyo.widget.base.isTouchDown
 import com.angcyo.widget.base.isTouchFinish
 import kotlin.math.abs
@@ -23,23 +25,19 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) :
     FrameLayout(context, attributeSet) {
 
     companion object {
-        /**当滚动距离大于多少时, 视为滚动了*/
-        var scrollDistanceSlop = 0
-
-        /**当Fling速度大于多少时, 视为Fling*/
-        var flingVelocitySlop = 0
-
         const val HANDLE_TOUCH_TYPE_DISPATCH = 1
         const val HANDLE_TOUCH_TYPE_INTERCEPT = 2
     }
 
     /**手指指向移动的4个方向*/
-    enum class ORIENTATION { LEFT, RIGHT, TOP, BOTTOM }
+    enum class ORIENTATION { LEFT /*手指向左滑动*/, RIGHT, TOP, BOTTOM /*手指向底部滑动*/ }
 
     /**采用什么方式, 处理touch事件 */
     var handleTouchType = HANDLE_TOUCH_TYPE_INTERCEPT
 
     val overScroller = OverScroller(context)
+
+    var debug = false
 
     var firstMotionEvent: MotionEvent? = null
     var secondMotionEvent: MotionEvent? = null
@@ -53,7 +51,11 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) :
     /**是否处于长按状态下*/
     var isLongPress = false
 
-    var scaledTouchSlop = 0
+    /**当滚动距离大于多少时, 视为滚动了*/
+    var scrollDistanceSlop = 0
+
+    /**当Fling速度大于多少时, 视为Fling*/
+    var flingVelocitySlop = 0
 
     //<editor-fold desc="手势处理">
 
@@ -72,7 +74,9 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) :
                 velocityX: Float,
                 velocityY: Float
             ): Boolean {
-                //L.e("call: onFling -> \n$e1 \n$e2 \n$velocityX $velocityY")
+                if (debug) {
+                    L.w("${this@TouchLayout.simpleHash()}: onFling -> \n$e1 \n$e2 \n$velocityX $velocityY")
+                }
 
                 firstMotionEvent = e1
                 secondMotionEvent = e2
@@ -109,7 +113,9 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) :
                 distanceX: Float,
                 distanceY: Float
             ): Boolean {
-                //L.e("call: onScroll -> \n$e1 \n$e2 \n$distanceX $distanceY")
+                if (debug) {
+                    L.i("${this@TouchLayout.simpleHash()}: onScroll -> \n$e1 \n$e2 \n$distanceX $distanceY")
+                }
                 firstMotionEvent = e1
                 secondMotionEvent = e2
 
@@ -147,7 +153,8 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) :
         }
 
     init {
-        scaledTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
+        scrollDistanceSlop = ViewConfiguration.get(context).scaledTouchSlop
+        flingVelocitySlop = ViewConfiguration.get(context).scaledMinimumFlingVelocity
     }
 
     @CallSuper
@@ -169,10 +176,10 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     @CallSuper
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        if (handleTouchType == HANDLE_TOUCH_TYPE_INTERCEPT) {
-            orientationGestureDetector.onTouchEvent(ev)
-        }
         handleCommonTouchEvent(ev)
+        if (handleTouchType == HANDLE_TOUCH_TYPE_INTERCEPT) {
+            return orientationGestureDetector.onTouchEvent(ev)
+        }
         return super.onInterceptTouchEvent(ev)
     }
 
@@ -284,3 +291,14 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     //</editor-fold desc="回调处理">
 }
+
+fun TouchLayout.ORIENTATION.isLeft() = this == TouchLayout.ORIENTATION.LEFT
+fun TouchLayout.ORIENTATION.isRight() = this == TouchLayout.ORIENTATION.RIGHT
+fun TouchLayout.ORIENTATION.isTop() = this == TouchLayout.ORIENTATION.TOP
+fun TouchLayout.ORIENTATION.isBottom() = this == TouchLayout.ORIENTATION.BOTTOM
+
+fun TouchLayout.ORIENTATION.isVertical() =
+    this == TouchLayout.ORIENTATION.TOP || this == TouchLayout.ORIENTATION.BOTTOM
+
+fun TouchLayout.ORIENTATION.isHorizontal() =
+    this == TouchLayout.ORIENTATION.LEFT || this == TouchLayout.ORIENTATION.RIGHT

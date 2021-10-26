@@ -156,7 +156,7 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null) :
 
             if (needInterceptTouchEvent) {
                 if (isTouchDownInContentWithMenuOpen &&
-                    ((touchEventX - touchDownX).abs() <= scaledTouchSlop.toFloat()) ||
+                    ((touchEventX - touchDownX).abs() <= scrollDistanceSlop.toFloat()) ||
                     (touchEventY - touchDownY).abs() >= (touchEventX - touchDownX).abs()
                 ) {
                     if ((menuSliderGravity == SLIDER_GRAVITY_LEFT && event.x >= maxMenuWidth) ||
