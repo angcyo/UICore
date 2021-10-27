@@ -41,6 +41,8 @@ abstract class BaseScrollBehavior<T : View>(
         const val DEFAULT_DURATION = 360
 
         /**由什么方式触发的滚动*/
+        /**[androidx.core.view.ViewCompat.TYPE_NON_TOUCH]*/
+        const val SCROLL_TYPE_NONE = 0
         const val SCROLL_TYPE_CALL = 1 //主动调用触发的滚动
         const val SCROLL_TYPE_GESTURE = 2 //手势触发的滚动
         const val SCROLL_TYPE_NESTED = 3 //内嵌触发的滚动
@@ -462,7 +464,10 @@ abstract class BaseScrollBehavior<T : View>(
         super.onStopNestedScroll(coordinatorLayout, child, target, type)
         //_overScroller.abortAnimation()
         if (!isTouchHold) {
-            onBehaviorScrollStop(SCROLL_TYPE_NESTED, SCROLL_TYPE_NESTED)
+            onBehaviorScrollStop(
+                SCROLL_TYPE_NESTED,
+                if (type == ViewCompat.TYPE_NON_TOUCH) SCROLL_TYPE_NONE else SCROLL_TYPE_NESTED
+            )
         }
     }
 
@@ -477,10 +482,11 @@ abstract class BaseScrollBehavior<T : View>(
     }
 
     val listeners = mutableListOf<IScrollBehaviorListener>()
-    fun addScrollListener(listener: IScrollBehaviorListener) {
+    fun addScrollListener(listener: IScrollBehaviorListener): IScrollBehaviorListener {
         if (!listeners.contains(listener)) {
             listeners.add(listener)
         }
+        return listener
     }
 
     fun removeScrollListener(listener: IScrollBehaviorListener) {
@@ -488,6 +494,46 @@ abstract class BaseScrollBehavior<T : View>(
             listeners.remove(listener)
         }
     }
+}
+
+/**监听滚动改变*/
+fun BaseScrollBehavior<*>.observerScroll(
+    action: (
+        x: Int,
+        y: Int,
+        scrollType: Int
+    ) -> Unit
+): IScrollBehaviorListener {
+    return addScrollListener(object : IScrollBehaviorListener {
+        override fun onBehaviorScrollTo(
+            scrollBehavior: BaseScrollBehavior<*>,
+            x: Int,
+            y: Int,
+            scrollType: Int
+        ) {
+            super.onBehaviorScrollTo(scrollBehavior, x, y, scrollType)
+            action(x, y, scrollType)
+        }
+    })
+}
+
+/**监听滚动停止回调*/
+fun BaseScrollBehavior<*>.observerScrollStop(
+    action: (
+        scrollType: Int,
+        endType: Int
+    ) -> Unit
+): IScrollBehaviorListener {
+    return addScrollListener(object : IScrollBehaviorListener {
+        override fun onBehaviorScrollStop(
+            scrollBehavior: BaseScrollBehavior<*>,
+            scrollType: Int,
+            endType: Int
+        ) {
+            super.onBehaviorScrollStop(scrollBehavior, scrollType, endType)
+            action(scrollType, endType)
+        }
+    })
 }
 
 fun <T : View> BaseScrollBehavior<T>.scrollToY(y: Int) {

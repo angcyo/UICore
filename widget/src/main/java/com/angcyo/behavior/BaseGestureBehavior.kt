@@ -139,7 +139,10 @@ abstract class BaseGestureBehavior<T : View>(
     open fun onTouchFinish(parent: CoordinatorLayout, child: T, ev: MotionEvent) {
         if (!isTouchHold && _nestedScrollView == null && ViewCompat.isLaidOut(child)) {
             //在非nested scroll 视图上滚动过
-            onBehaviorScrollStop(SCROLL_TYPE_GESTURE, SCROLL_TYPE_GESTURE)
+            onBehaviorScrollStop(
+                SCROLL_TYPE_GESTURE,
+                if (_isFirstScroll) SCROLL_TYPE_NONE /*还为发生过滚动*/ else SCROLL_TYPE_GESTURE
+            )
         }
     }
 
