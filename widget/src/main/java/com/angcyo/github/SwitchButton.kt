@@ -155,17 +155,17 @@ class SwitchButton : View, Checkable {
     /**
      * 背景底色
      */
-    private var background = 0
+    var background = 0
 
     /**
      * 背景关闭颜色
      */
-    private var uncheckColor = 0
+    var uncheckColor = 0
 
     /**
      * 背景打开颜色
      */
-    private var checkedColor = 0
+    var checkedColor = 0
 
     /**
      * 边框宽度px
@@ -175,7 +175,7 @@ class SwitchButton : View, Checkable {
     /**
      * 打开指示线颜色
      */
-    private var checkLineColor = 0
+    var checkLineColor = 0
 
     /**
      * 打开指示线宽
@@ -190,7 +190,7 @@ class SwitchButton : View, Checkable {
     /**
      * 关闭圆圈颜色
      */
-    private var uncheckCircleColor = 0
+    var uncheckCircleColor = 0
 
     /**
      * 关闭圆圈线宽

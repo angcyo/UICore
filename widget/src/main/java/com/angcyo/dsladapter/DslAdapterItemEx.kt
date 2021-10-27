@@ -167,7 +167,7 @@ fun DslAdapterItem.paddingHorizontal(left: Int, right: Int) {
 
 /**仅绘制左边区域的分割线*/
 fun DslAdapterItem.drawLeft(
-    offsetLeft: Int,
+    offsetLeft: Int = _dimen(R.dimen.lib_padding_left),
     insertTop: Int = 1 * dpi,
     color: Int = Color.WHITE
 ) {
@@ -176,6 +176,38 @@ fun DslAdapterItem.drawLeft(
 
     itemTopInsert = insertTop
     itemBottomInsert = 0
+
+    onlyDrawOffsetArea = true
+    itemDecorationColor = color
+}
+
+/**仅绘制顶部左边/右边区域的偏移分割线*/
+fun DslAdapterItem.drawLeftRightOnTop(
+    offset: Int = _dimen(R.dimen.lib_padding_left),
+    insert: Int = 1 * dpi,
+    color: Int = Color.WHITE
+) {
+    itemLeftOffset = offset
+    itemRightOffset = offset
+
+    itemTopInsert = insert
+    itemBottomInsert = 0
+
+    onlyDrawOffsetArea = true
+    itemDecorationColor = color
+}
+
+/**仅绘制底部左边/右边区域的偏移分割线*/
+fun DslAdapterItem.drawLeftRightOnBottom(
+    offset: Int = _dimen(R.dimen.lib_padding_left),
+    insert: Int = 1 * dpi,
+    color: Int = Color.WHITE
+) {
+    itemLeftOffset = offset
+    itemRightOffset = offset
+
+    itemTopInsert = 0
+    itemBottomInsert = insert
 
     onlyDrawOffsetArea = true
     itemDecorationColor = color
