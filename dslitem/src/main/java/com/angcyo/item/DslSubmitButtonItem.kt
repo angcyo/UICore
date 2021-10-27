@@ -15,6 +15,8 @@ import com.angcyo.widget.button
  */
 open class DslSubmitButtonItem : DslAdapterItem() {
 
+    //<editor-fold desc="左边的button">
+
     /**样式*/
     var itemSaveButtonText: CharSequence? = null
         set(value) {
@@ -26,6 +28,13 @@ open class DslSubmitButtonItem : DslAdapterItem() {
         textGravity = Gravity.CENTER
         fillStyle()
     }
+
+    /**回调*/
+    var saveAction: () -> Unit = {}
+
+    //</editor-fold desc="左边的button">
+
+    //<editor-fold desc="右边的button">
 
     /**样式*/
     var itemSubmitButtonText: CharSequence? = null
@@ -40,10 +49,9 @@ open class DslSubmitButtonItem : DslAdapterItem() {
     }
 
     /**回调*/
-    var saveAction: () -> Unit = {}
-
-    /**回调*/
     var submitAction: () -> Unit = {}
+
+    //<editor-fold desc="右边的button">
 
     init {
         itemLayoutId = R.layout.dsl_submit_button_item

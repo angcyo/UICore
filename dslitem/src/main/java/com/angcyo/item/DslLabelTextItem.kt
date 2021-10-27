@@ -3,6 +3,8 @@ package com.angcyo.item
 import android.graphics.drawable.Drawable
 import android.view.View
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.item.style.ITextItem
+import com.angcyo.item.style.TextItemConfig
 import com.angcyo.item.style.TextStyleConfig
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.DslViewHolder
@@ -21,17 +23,7 @@ import com.angcyo.widget.base.visible
  * @date 2020/03/23
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-open class DslLabelTextItem : DslBaseLabelItem() {
-
-    /**显示的文本*/
-    var itemText: CharSequence? = null
-        set(value) {
-            field = value
-            itemTextStyle.text = value
-        }
-
-    /**统一样式配置*/
-    var itemTextStyle = TextStyleConfig()
+open class DslLabelTextItem : DslBaseLabelItem(), ITextItem {
 
     /**右边按钮*/
     var itemRightIcon: Int = -1
@@ -52,6 +44,10 @@ open class DslLabelTextItem : DslBaseLabelItem() {
     /**统一样式配置*/
     var itemRightTextStyle = TextStyleConfig()
 
+    override var textItemConfig: TextItemConfig = TextItemConfig().apply {
+        itemTextStyle.goneOnTextNull = true
+    }
+
     init {
         itemLayoutId = R.layout.dsl_label_text_item
     }
@@ -63,10 +59,6 @@ open class DslLabelTextItem : DslBaseLabelItem() {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
-
-        itemHolder.tv(R.id.lib_text_view)?.apply {
-            itemTextStyle.updateStyle(this)
-        }
 
         itemHolder.img(R.id.lib_right_ico_view)?.apply {
             if (itemRightIcoClick == null) {
@@ -97,9 +89,5 @@ open class DslLabelTextItem : DslBaseLabelItem() {
         //itemMinHeight = _dimen(R.dimen.lib_min_item_height)
         itemPaddingTop = padding
         itemPaddingBottom = padding
-    }
-
-    open fun configTextStyle(action: TextStyleConfig.() -> Unit) {
-        itemTextStyle.action()
     }
 }

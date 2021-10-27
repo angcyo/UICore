@@ -133,4 +133,11 @@ open class ButtonStyleConfig : TextStyleConfig() {
             DslButton.ATTR_NORMAL to styleThemeColors[0]
         )
     }
+
+    /**白底黑字样式*/
+    fun whiteStyle() {
+        style = BUTTON_STYLE_SOLID
+        textColor = styleSolidTextColor
+        styleSolidSolidColor = Color.WHITE
+    }
 }

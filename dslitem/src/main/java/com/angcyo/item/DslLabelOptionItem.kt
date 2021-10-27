@@ -6,6 +6,7 @@ import android.view.View
 import com.angcyo.dialog.OptionDialogConfig
 import com.angcyo.dialog.optionDialog
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.item.style.itemText
 import com.angcyo.library.ex.string
 import com.angcyo.widget.DslViewHolder
 

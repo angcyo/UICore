@@ -23,7 +23,13 @@ import org.buffer.android.buffertextinputlayout.BufferTextInputLayout
 
 open class TextStyleConfig : ViewStyleConfig() {
 
+    /**显示的文本内容*/
     var text: CharSequence? = null
+
+    /**当[text]为null时, 隐藏控件*/
+    var goneOnTextNull: Boolean = false
+
+    /**提示文本内容*/
     var hint: CharSequence? = null
     var textBold: Boolean = false
     var textColor: Int = undefined_color
@@ -45,6 +51,10 @@ open class TextStyleConfig : ViewStyleConfig() {
         if (view is TextView) {
             with(view) {
                 text = this@TextStyleConfig.text
+
+                if (goneOnTextNull) {
+                    visible(this@TextStyleConfig.text != null)
+                }
 
                 //兼容
                 val parent = view.parent
