@@ -51,6 +51,12 @@ class AccSchedule(val accControl: AccControl) {
      * [com.angcyo.acc2.action.CountAction]*/
     val countMap = hashMapOf<String, Long>()
 
+    /**需要激活的action bean id*/
+    val enableActionIdList = mutableSetOf<Long>()
+
+    /**需要禁用的action bean id*/
+    val disableActionIdList = mutableSetOf<Long>()
+
     //<editor-fold desc="操作">
 
     /**获取总共运行时长*/
@@ -336,6 +342,8 @@ class AccSchedule(val accControl: AccControl) {
         _latsRunActionTime = 0L
         _lastRunActionHash = 0
         runActionBeanStack.clear()
+        enableActionIdList.clear()
+        disableActionIdList.clear()
         _isLeaveWindow = false
         accParse.onScheduleStart(this)
     }
@@ -815,6 +823,47 @@ class AccSchedule(val accControl: AccControl) {
         accControl.resume(restart)
     }
 
+    /**循环调度器*/
+    fun intervalSchedule() {
+        val intervalActionBean = _scheduleActionBean?.interval
+        if (intervalActionBean == null) {
+            //无action需要循环调度执行
+            sleep()
+        } else {
+            runActionOnly(intervalActionBean)
+        }
+    }
+
+    /**仅运行[actionBean]*/
+    fun runActionOnly(actionBean: ActionBean) {
+        val context = ControlContext().apply {
+            control = accControl
+            action = actionBean
+        }
+
+        val handleActionResult = HandleResult()
+        val isPrimaryAction = false
+
+        if (runActionBefore(context, actionBean, isPrimaryAction, handleActionResult)) {
+            if (!accControl.isControlRunning) {
+                return
+            }
+            runActionInner(
+                context,
+                actionBean,
+                null,
+                isPrimaryAction,
+                handleActionResult
+            )
+            if (!accControl.isControlRunning) {
+                return
+            }
+            runActionAfter(context, actionBean, isPrimaryAction, handleActionResult)
+        } else {
+            sleep()
+        }
+    }
+
     //</editor-fold desc="调度">
 
     //<editor-fold desc="执行">
@@ -916,8 +965,12 @@ class AccSchedule(val accControl: AccControl) {
         }
 
         //激活条件判断
-        if ((isPrimaryAction && !accParse.conditionParse.parse(actionBean.conditionList).success) ||
-            (!isPrimaryAction && !isActionBeanGroupEnable(actionBean, isPrimaryAction))
+        if ((isPrimaryAction && !accParse.conditionParse.parse(actionBean.conditionList).success) /*主要action*/ ||
+            (!isPrimaryAction && !isActionBeanGroupEnable(
+                actionBean,
+                isPrimaryAction
+            )) /*非主要action*/ ||
+            disableActionIdList.contains(actionBean.actionId)
         ) {
             handleActionResult.success = false
             runActionBeanStack.popSafe()

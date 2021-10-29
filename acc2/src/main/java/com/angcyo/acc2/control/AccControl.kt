@@ -15,6 +15,9 @@ import com.angcyo.acc2.core.ControlException
 import com.angcyo.acc2.core.ControlInterruptException
 import com.angcyo.library.*
 import com.angcyo.library.ex.*
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
+import java.util.concurrent.ThreadFactory
 
 /**
  *
@@ -209,18 +212,43 @@ class AccControl : Runnable {
 
     //<editor-fold desc="线程">
 
-    var _controlThread: Thread? = null
+    val pool = Executors.newFixedThreadPool(2, ThreadFactory {
+        Thread(it, "${ACC_MAIN_THREAD}_${this.simpleHash()}")
+    })
+
+    /**主流程控制的线程*/
+    var _controlThread: Future<*>? = null
+
+    /**循环调度的线程*/
+    var _intervalThread: Future<*>? = null
 
     fun _startThread() {
         _stopThread()
-        _controlThread = Thread(this, "${ACC_MAIN_THREAD}_${this.simpleHash()}").apply {
-            start()
+        _controlThread = pool.submit(this)
+        _intervalThread = pool.submit {
+            while (isControlStart) {
+                try {
+                    if (_controlState == CONTROL_STATE_RUNNING) {
+                        //run
+                        accSchedule.intervalSchedule()
+                    } else {
+                        //wait
+                        sleep()
+                    }
+                } catch (e: ControlInterruptException) {
+                    e.printStackTrace()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
         }
     }
 
     fun _stopThread() {
-        _controlThread?.interrupt()
+        _controlThread?.cancel(true)
         _controlThread = null
+        _intervalThread?.cancel(true)
+        _intervalThread = null
     }
 
     /**子线程内调度*/

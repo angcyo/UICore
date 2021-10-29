@@ -28,10 +28,19 @@ class EnableAction : BaseAction() {
 
         val actionIdList = mutableListOf<Long>()
         actionIdList.addAll(action.getLongNumList(true) ?: emptyList())
+
         if (action.contains(Action.RELY)) {
             actionIdList.addAll(control.accSchedule.relyList() ?: emptyList())
         }
+        if (action.contains(Action.CURRENT)) {
+            control.accSchedule._runActionBean?.actionId?.let {
+                actionIdList.add(it)
+            }
+        }
         val actionList = getActionList(control, actionIdList)
+
+        control.accSchedule.enableActionIdList.addAll(actionIdList)
+        control.accSchedule.disableActionIdList.removeAll(actionIdList)
 
         success = actionList.isNotEmpty()
 

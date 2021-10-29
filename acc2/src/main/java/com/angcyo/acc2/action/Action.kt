@@ -48,6 +48,9 @@ object Action {
     /**依赖的Action标识*/
     const val RELY = "rely"
 
+    /**表示当前的对象*/
+    const val CURRENT = "."
+
     /**随便标识*/
     const val RANDOM = "random"
 

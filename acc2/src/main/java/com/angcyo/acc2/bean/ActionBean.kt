@@ -125,6 +125,9 @@ data class ActionBean(
      * [com.angcyo.acc2.bean.TaskBean.lose]*/
     var lose: ActionBean? = null,
 
+    /**循环间隔执行的[ActionBean]*/
+    var interval: ActionBean? = null,
+
     /**表单请求
      * [com.angcyo.acc2.bean.OperateBean.form]
      * [com.angcyo.acc2.bean.HandleBean.form]

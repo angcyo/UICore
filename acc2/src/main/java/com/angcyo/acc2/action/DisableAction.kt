@@ -31,7 +31,15 @@ class DisableAction : BaseAction() {
         if (action.contains(Action.RELY)) {
             actionIdList.addAll(control.accSchedule.relyList() ?: emptyList())
         }
+        if (action.contains(Action.CURRENT)) {
+            control.accSchedule._runActionBean?.actionId?.let {
+                actionIdList.add(it)
+            }
+        }
         val actionList = getActionList(control, actionIdList)
+
+        control.accSchedule.disableActionIdList.addAll(actionIdList)
+        control.accSchedule.enableActionIdList.removeAll(actionIdList)
 
         success = actionList.isNotEmpty()
 
