@@ -67,6 +67,7 @@ task _saveStream() {
             def num = Integer.parseInt(saveUrlNum)
             for (i in start..<(start + num)) {
                 def url = saveUrl.replace("%i%", String.format(saveUrlNumFormat, i))
+                println "准备请求[$i]:$url"
                 saveStreamFromUrl(url, savePath)
             }
         }
