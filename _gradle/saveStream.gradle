@@ -68,7 +68,7 @@ task _saveStream() {
             def max = start + num
             for (i in start..<max) {
                 def url = saveUrl.replace("%i%", String.format(saveUrlNumFormat, i))
-                println "准备请求[$i:$max]:$url"
+                println "准备请求[$i/$max]:$url"
                 saveStreamFromUrl(url, savePath)
             }
         }
