@@ -1,0 +1,153 @@
+import java.util.concurrent.TimeUnit
+
+/**
+ * 保存url对应的流到文件
+ *
+ */
+
+buildscript {
+    repositories {
+        //alliyun 镜像
+        maven() { url 'https://maven.aliyun.com/repository/public' }
+        mavenCentral()
+    }
+    dependencies {
+        //https://repo1.maven.org/maven2/com/squareup/okhttp3/
+        //https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+        classpath "com.squareup.okhttp3:okhttp:4.9.2"
+        //https://repo1.maven.org/maven2/com/google/code/gson/gson/
+        //https://mvnrepository.com/artifact/com.google.code.gson/gson
+        classpath "com.google.code.gson:gson:2.8.8"
+    }
+}
+
+task _saveStream() {
+    //配置任务
+    doFirst {
+        def savePath = project.hasProperty("save_stream_path") ? project.ext.save_stream_path : ".save"
+        def savePathFile = file(savePath)
+        savePathFile.mkdirs()
+        savePath = savePathFile.absolutePath
+
+        //批量保存的模板url, 需要包含 %i%
+        def saveUrl
+        def saveUrlStart = "1" //从000x 开始
+        def saveUrlNum = "1000" //共多少个额
+        def saveUrlNumFormat = "%04d" //替换的模板格式
+
+        def saveUrls
+
+        if (project.hasProperty("save_urls")) {
+            saveUrls = project.ext.save_urls
+        } else if (project.hasProperty("save_url")) {
+            saveUrl = project.ext.save_url
+            if (project.hasProperty("saveUrlStart")) {
+                saveUrlStart = project.ext.saveUrlStart
+            }
+            if (project.hasProperty("save_url_num")) {
+                saveUrlNum = project.ext.save_url_num
+            }
+            if (project.hasProperty("save_url_num_format")) {
+                saveUrlNumFormat = project.ext.save_url_num_format
+            }
+        } else {
+            throw new IllegalStateException("请在[gradle.properties]文件中配置要保存的流地址;分割多个[save_urls]")
+        }
+
+        def startTime = System.currentTimeMillis()
+
+        if (saveUrls != null) {
+            //下载明确的url地址
+            saveUrls.split(";").each { downloadUrl ->
+                saveStreamFromUrl(downloadUrl, savePath)
+            }
+        } else if (saveUrl != null) {
+            //匹配数字, 批量下载url
+            def start = Integer.parseInt(saveUrlStart)
+            def num = Integer.parseInt(saveUrlNum)
+            for (i in start..<(start + num)) {
+                def url = saveUrl.replace("%i%", String.format(saveUrlNumFormat, i))
+                saveStreamFromUrl(url, savePath)
+            }
+        }
+
+        def nowTime = System.currentTimeMillis()
+        def duration = nowTime - startTime
+        System.err.println "结束耗时:${duration / 1000}秒"
+    }
+}
+
+/**默认的请求客户端*/
+static def defaultHttpClient() {
+    def builder = new okhttp3.OkHttpClient.Builder()
+
+    builder.connectTimeout(10, TimeUnit.SECONDS)
+    builder.readTimeout(10, TimeUnit.SECONDS)
+    builder.writeTimeout(10, TimeUnit.SECONDS)
+    //builder.proxy(Proxy.NO_PROXY)
+    builder.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 1080)))
+    builder.followRedirects(true)
+    builder.followSslRedirects(true)
+
+    return builder.build()
+}
+
+static def httpGet(url, client = null) {
+    def _client = client == null ? defaultHttpClient() : client
+    def request = new okhttp3.Request.Builder()
+            .url(url)
+            .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Edg/91.0.864.64")
+            .get()
+            .build()
+
+    def response = _client.newCall(request).execute()
+    println "请求[${url}]返回↓"
+    println response
+    //println response.headers()
+    return response
+}
+
+/**将url流, 保存起来*/
+static def saveStreamFromUrl(url, savePath) {
+    def rep
+    try {
+        rep = httpGet(url)
+        if (rep.isSuccessful()) {
+            try {
+                url = rep.request.url.toString()
+                def name = url.substring(url.lastIndexOf("/") + 1)
+                def filePath = "${savePath}/${name}"
+
+                System.err.println "开始下载:$url -> $filePath"
+
+                saveStream(rep.body().byteStream(), filePath)
+
+                def file = new File(filePath)
+                def fileLength = file.length()
+
+                if (fileLength == 0) {
+                    System.err.println "下载失败:$url"
+                } else {
+                    System.err.println "保存成功:${file.absolutePath} ${file.length() / 1024}kb\n"
+                }
+            } catch (e) {
+                System.err.println "下载失败↓"
+                e.printStackTrace()
+            }
+        } else {
+            System.err.println "请求失败失败:$url"
+        }
+    } finally {
+        rep?.close()
+    }
+}
+
+/**保存输入流
+ * [inputStream] 输入流
+ * [path] 文件全路径*/
+static def saveStream(inputStream, path) {
+    def file = new File(path)
+    def out = new FileOutputStream(file, false)
+    out.leftShift(inputStream)
+    return file
+}

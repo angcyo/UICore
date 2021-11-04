@@ -33,7 +33,9 @@ task _dyVideoDownload() {
 
 _dyVideoDownload.doFirst {
     def savePath = project.hasProperty("dy_save_path") ? project.ext.dy_save_path : ".dyVideo"
-    new File(savePath).mkdirs()
+    def savePathFile = file(savePath)
+    savePathFile.mkdirs()
+    savePath = savePathFile.absolutePath
 
     def downloadUrls
     if (project.hasProperty("dy_urls")) {
@@ -172,6 +174,8 @@ static def saveVideoById(videoId, savePath) {
                 } catch (e) {
                     System.err.println "下载失败↓"
                     e.printStackTrace()
+                } finally {
+                    videoRep?.close()
                 }
             }
         } catch (e) {
@@ -181,6 +185,7 @@ static def saveVideoById(videoId, savePath) {
     } else {
         System.err.println "获取视频详情失败:$videoDetailUrl"
     }
+    videoDetailRep?.clsoe()
 }
 
 /**保存输入流
@@ -188,7 +193,7 @@ static def saveVideoById(videoId, savePath) {
  * [path] 文件全路径*/
 static def saveStream(inputStream, path) {
     def file = new File(path)
-    def out = new FileOutputStream(new File(path), false)
+    def out = new FileOutputStream(file, false)
     out.leftShift(inputStream)
     return file
 }
