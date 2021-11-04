@@ -139,6 +139,9 @@ static def saveStreamFromUrl(url, savePath) {
         } else {
             System.err.println "请求失败失败:$url"
         }
+    } catch (e) {
+        System.err.println "请求失败↓"
+        e.printStackTrace()
     } finally {
         rep?.close()
     }
