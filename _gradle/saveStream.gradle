@@ -65,9 +65,10 @@ task _saveStream() {
             //匹配数字, 批量下载url
             def start = Integer.parseInt(saveUrlStart)
             def num = Integer.parseInt(saveUrlNum)
-            for (i in start..<(start + num)) {
+            def max = start + num
+            for (i in start..<max) {
                 def url = saveUrl.replace("%i%", String.format(saveUrlNumFormat, i))
-                println "准备请求[$i]:$url"
+                println "准备请求[$i:$max]:$url"
                 saveStreamFromUrl(url, savePath)
             }
         }
