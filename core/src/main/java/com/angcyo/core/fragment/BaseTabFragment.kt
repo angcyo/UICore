@@ -11,8 +11,10 @@ import com.angcyo.base.dslChildFHelper
 import com.angcyo.core.R
 import com.angcyo.widget.base.append
 import com.angcyo.widget.base.find
+import com.angcyo.widget.base.getChildOrNull
 import com.angcyo.widget.base.setWidthHeight
 import com.angcyo.widget.tab
+import com.angcyo.widget.text.BadgeTextView
 
 /**
  * 简单的底部tab界面,不支持title, 多用于首页
@@ -88,6 +90,12 @@ abstract class BaseTabFragment : BaseFragment() {
             }
             action()
         }
+    }
+
+    /**更新角标*/
+    open fun updateBadge(index: Int, badge: String?) {
+        _vh.group(R.id.lib_tab_layout)?.getChildOrNull(index)
+            ?.find<BadgeTextView>(R.id.lib_tab_badge_view)?.updateBadge(badge)
     }
 }
 
