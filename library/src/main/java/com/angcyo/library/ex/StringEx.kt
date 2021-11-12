@@ -630,5 +630,16 @@ fun String.getSafe(index: Int): Char? {
     return getOrNull(newIndex)
 }
 
-/**转换成对错字符显示*/
+/**转换成对错字符显示
+ * 对错字符*/
 fun Boolean.toDC() = if (this) "√" else "×"
+
+/**从一堆字符串中, 获取到第一个不为空时返回*/
+fun notEmptyOf(vararg str: String?): String {
+    for (s in str) {
+        if (!s.isNullOrEmpty()) {
+            return s
+        }
+    }
+    return ""
+}

@@ -4,6 +4,7 @@ import android.app.Application
 import android.graphics.Point
 import android.graphics.PointF
 import android.view.View
+import android.widget.TextView
 import com.angcyo.library.BuildConfig
 import com.angcyo.library.component.ThreadExecutor.onMain
 import com.angcyo.library.ex.LibEx.isDebugTypeVal
@@ -121,6 +122,7 @@ fun <T> T?.elseNull(action: () -> Unit = {}): T? {
 fun Any?.string(def: CharSequence = ""): CharSequence {
     return when {
         this == null -> return def
+        this is TextView -> text ?: def
         this is CharSequence -> this
         else -> this.toString()
     }
