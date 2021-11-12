@@ -39,6 +39,14 @@ import kotlin.reflect.KProperty
  * @date 2019/05/07
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
+
+typealias ItemBindAction = (
+    itemHolder: DslViewHolder,
+    itemPosition: Int,
+    adapterItem: DslAdapterItem,
+    payloads: List<Any>
+) -> Unit
+
 open class DslAdapterItem : LifecycleOwner {
 
     companion object {
@@ -211,12 +219,11 @@ open class DslAdapterItem : LifecycleOwner {
      * 界面绑定入口
      * [DslAdapter.onBindViewHolder(com.angcyo.widget.DslViewHolder, int, java.util.List<? extends java.lang.Object>)]
      * */
-    var itemBind: (itemHolder: DslViewHolder, itemPosition: Int, adapterItem: DslAdapterItem, payloads: List<Any>) -> Unit =
-        { itemHolder, itemPosition, adapterItem, payloads ->
-            onItemBind(itemHolder, itemPosition, adapterItem, payloads)
-            itemBindOverride(itemHolder, itemPosition, adapterItem, payloads)
-            onItemBindAfter(itemHolder, itemPosition, adapterItem, payloads)
-        }
+    var itemBind: ItemBindAction = { itemHolder, itemPosition, adapterItem, payloads ->
+        onItemBind(itemHolder, itemPosition, adapterItem, payloads)
+        itemBindOverride(itemHolder, itemPosition, adapterItem, payloads)
+        onItemBindAfter(itemHolder, itemPosition, adapterItem, payloads)
+    }
 
     /**
      * 点击事件和长按事件封装
@@ -251,12 +258,13 @@ open class DslAdapterItem : LifecycleOwner {
         onItemBind(itemHolder, itemPosition, adapterItem)
     }
 
+    @Deprecated("请使用4个参数的方法[onItemBind]")
     open fun onItemBind(
         itemHolder: DslViewHolder,
         itemPosition: Int,
         adapterItem: DslAdapterItem
     ) {
-
+        //no op
     }
 
     open fun onItemBindAfter(
@@ -1074,6 +1082,7 @@ open class DslAdapterItem : LifecycleOwner {
 
 }
 
+/**属性改变时, 通过diff更新列表*/
 class UpdateDependProperty<T>(
     var value: T,
     val payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART
@@ -1088,6 +1097,23 @@ class UpdateDependProperty<T>(
             thisRef.updateItemDepend(
                 FilterParams(thisRef, updateDependItemWithEmpty = true, payload = payload)
             )
+        }
+    }
+}
+
+/**属性改变时, 通过[notifyItemChangedPayload]更新列表*/
+class UpdateAdapterProperty<T>(
+    var value: T,
+    val payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART
+) :
+    ReadWriteProperty<DslAdapterItem, T> {
+    override fun getValue(thisRef: DslAdapterItem, property: KProperty<*>): T = value
+
+    override fun setValue(thisRef: DslAdapterItem, property: KProperty<*>, value: T) {
+        val old = this.value
+        this.value = value
+        if (old != value) {
+            thisRef.updateAdapterItem(payload)
         }
     }
 }

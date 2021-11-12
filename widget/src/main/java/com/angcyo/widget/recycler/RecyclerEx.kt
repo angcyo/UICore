@@ -363,6 +363,19 @@ fun RecyclerView.scrollHelper(action: ScrollHelper.() -> Unit = {}): ScrollHelpe
     }
 }
 
+/**滚动到尾部*/
+fun RecyclerView.scrollToEnd(smooth: Boolean = false) {
+    val count = adapter?.itemCount ?: 0
+    val position = count - 1
+    if (position in 0 until count) {
+        if (smooth) {
+            smoothScrollToPosition(position)
+        } else {
+            scrollToPosition(position)
+        }
+    }
+}
+
 /**保存当前的滚动位置*/
 fun RecyclerView.saveScrollPosition(): ScrollPositionConfig {
     val result = ScrollPositionConfig()
@@ -396,6 +409,36 @@ fun RecyclerView.restoreScrollPosition(config: ScrollPositionConfig) {
             else -> scrollToPosition(config.adapterPosition)
         }
     }
+}
+
+/**监听滚动状态改变*/
+fun RecyclerView.onScrollStateChangedAction(action: (recyclerView: RecyclerView, newState: Int) -> Unit): OnScrollListener {
+    val listener = object : OnScrollListener() {
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            action(recyclerView, newState)
+        }
+
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+        }
+    }
+    addOnScrollListener(listener)
+    return listener
+}
+
+/**监听滚动改变*/
+fun RecyclerView.onScrolledAction(action: (recyclerView: RecyclerView, dx: Int, dy: Int) -> Unit): OnScrollListener {
+    val listener = object : OnScrollListener() {
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+        }
+
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            action(recyclerView, dx, dy)
+        }
+    }
+    addOnScrollListener(listener)
+    return listener
 }
 
 //</editor-fold desc="滚动相关">

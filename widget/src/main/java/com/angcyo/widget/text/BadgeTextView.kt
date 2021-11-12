@@ -8,6 +8,13 @@ import com.angcyo.widget.base.isNotSpecified
 import com.angcyo.widget.drawable.DslAttrBadgeDrawable
 
 /**
+ * 单纯的用来绘制角标的控件
+ * 使用属性[app:r_badge_text="xxx"]设置角标
+ *
+ * badgePaddingLeft
+ * badgePaddingRight
+ * badgePaddingTop
+ * badgePaddingBottom
  *
  * Email:angcyo@126.com
  * @author angcyo
@@ -54,11 +61,11 @@ class BadgeTextView : AppCompatTextView, IBadgeView {
         }
     }
 
-    override fun setText(text: CharSequence?, type: BufferType?) {
+    /*override fun setText(text: CharSequence?, type: BufferType?) {
         super.setText(text, type)
         //在构造方法中调用此方法[dslBadeDrawable]为空
         dslBadeDrawable?.badgeText = text.toString()
-    }
+    }*/
 
     /**角标的文本, 空字符串会绘制成小圆点*/
     fun updateBadge(text: String? = null, action: DslAttrBadgeDrawable.() -> Unit = {}) {

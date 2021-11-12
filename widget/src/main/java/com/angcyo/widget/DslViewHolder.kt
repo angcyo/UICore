@@ -39,6 +39,9 @@ open class DslViewHolder(
      */
     val sparseArray: SparseArray<WeakReference<View?>> = SparseArray(initialCapacity)
 
+    /**是否绑定过界面, 用来标识是否是首次创建布局*/
+    var isBindView: Boolean = false
+
     /**
      * 清理缓存
      */

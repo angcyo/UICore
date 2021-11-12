@@ -88,6 +88,8 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     val dispatchUpdatesAfterList = mutableListOf<DispatchUpdates>()
     val dispatchUpdatesAfterOnceList = mutableListOf<DispatchUpdates>()
 
+    val itemBindObserver = mutableSetOf<ItemBindAction>()
+
     init {
         dslDataFilter = DslDataFilter(this)
 
@@ -127,9 +129,18 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     ) {
         super.onBindViewHolder(holder, position, payloads)
 
+        //核心, 开始绑定界面
         val dslItem = getItemData(position)
-        dslItem?.itemDslAdapter = this
-        dslItem?.itemBind?.invoke(holder, position, dslItem, payloads)
+        dslItem?.let {
+            dslItem.itemDslAdapter = this
+            dslItem.itemBind(holder, position, dslItem, payloads)
+            holder.isBindView = true
+
+            //绑定监听
+            itemBindObserver.forEach {
+                it(holder, position, dslItem, payloads)
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: DslViewHolder, position: Int) {
@@ -212,6 +223,15 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
 
     fun onDispatchUpdatesOnce(action: DispatchUpdates) {
         dispatchUpdatesAfterOnceList.add(action)
+    }
+
+    /**观察[onBindViewHolder]*/
+    fun observeItemBind(itemBindAction: ItemBindAction) {
+        itemBindObserver.add(itemBindAction)
+    }
+
+    fun removeItemBind(itemBindAction: ItemBindAction) {
+        itemBindObserver.remove(itemBindAction)
     }
 
     //</editor-fold>
