@@ -570,7 +570,14 @@ class DslFHelper(
                     finish()
                 }
             } else {
-                onCommit(this, fmFragmentList)
+                try {
+                    onCommit(this, fmFragmentList)
+                } catch (e: IllegalStateException) {
+                    e.printStackTrace()
+                    _handle.postDelayed({
+                        onCommit(this, fmFragmentList)
+                    }, 16)
+                }
             }
 
             if (debug) {

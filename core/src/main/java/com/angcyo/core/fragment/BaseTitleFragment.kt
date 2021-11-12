@@ -81,15 +81,10 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
     /**是否激活适配器的刷新回调*/
     var enableAdapterRefresh: Boolean = false
-        set(value) {
-            field = value
-            if (value) {
-                firstRefreshDelay = DEFAULT_FIRST_REFRESH_DELAY
-            }
-        }
 
-    /**首次加载刷新时, 延迟的时长. 以便动画流畅执行完*/
-    var firstRefreshDelay: Long = 0
+    /**首次加载刷新时, 延迟的时长. 以便动画流畅执行完
+     * -1 自动设置*/
+    var firstRefreshDelay: Long = -1
 
     //记录刷新的次数
     var _refreshCount: Int = 0
@@ -171,6 +166,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
         val isInTitleFragment = parentFragment is BaseTitleFragment
 
+        //智能处理标题栏
         if (hideTitleLayout == null) {
             if (isInTitleFragment) {
                 //在parent中, 智能去除标题栏
@@ -178,6 +174,13 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
             }
         } else {
             _vh.gone(R.id.lib_title_wrap_layout, hideTitleLayout == true)
+        }
+
+        //智能处理加载延迟
+        if (firstRefreshDelay < 0) {
+            if (parentFragment == null) {
+                firstRefreshDelay = DEFAULT_FIRST_REFRESH_DELAY
+            }
         }
 
         onCreateViewAfter(savedInstanceState)
