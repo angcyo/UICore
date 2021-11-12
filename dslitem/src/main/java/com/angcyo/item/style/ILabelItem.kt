@@ -18,10 +18,6 @@ interface ILabelItem : IAutoInitItem {
 
     /**初始化*/
     fun initLabelItem(itemHolder: DslViewHolder) {
-        itemHolder.gone(
-            labelItemConfig.itemLabelViewId,
-            labelItemConfig.itemLabelTextStyle.text == null
-        )
         itemHolder.tv(labelItemConfig.itemLabelViewId)?.apply {
             labelItemConfig.itemLabelTextStyle.updateStyle(this)
         }

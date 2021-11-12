@@ -1,17 +1,19 @@
 package com.angcyo.item.style
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
 import android.widget.ImageView
-import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.isUpdateMedia
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.glide.DslGlide
 import com.angcyo.glide.GlideImageView
 import com.angcyo.glide.R
+import com.angcyo.glide.loadAvatar
+import com.angcyo.library.ex.getColor
 import com.angcyo.library.ex.toUri
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.image.DslImageView
@@ -47,6 +49,7 @@ interface IImageItem : IAutoInitItem {
             //缩略图
             itemHolder.img(imageItemConfig.itemImageViewId)?.apply {
                 imageItemConfig.imageStyleConfig.updateStyle(this)
+
                 when (val image = imageItemConfig.itemLoadImage ?: imageItemConfig.itemLoadUri) {
                     is Number -> setImageResource(image as Int)
                     is Drawable -> setImageDrawable(image)
@@ -56,14 +59,25 @@ interface IImageItem : IAutoInitItem {
                             setImageIcon(image)
                         } else {
                             if (this is GlideImageView) {
-                                val uri: Uri? = when (image) {
-                                    is String -> image.toUri()
-                                    is Uri -> image
+                                val uri: Uri? = when {
+                                    image is String && image.isNotEmpty() -> image.toUri()
+                                    image is Uri -> image
                                     else -> null
                                 }
-                                load(uri) {
-                                    checkGifType = imageItemConfig.itemCheckGifType
-                                    imageItemConfig.onConfigGlide(this)
+
+                                val itemLoadImageText = imageItemConfig.itemLoadImageText
+                                if (uri == null && itemLoadImageText != null) {
+                                    loadAvatar(
+                                        null,
+                                        itemLoadImageText,
+                                        imageItemConfig.itemLoadImageTextColor,
+                                        solidColor = imageItemConfig.itemLoadImageTextBgColor
+                                    )
+                                } else {
+                                    load(uri) {
+                                        checkGifType = imageItemConfig.itemCheckGifType
+                                        imageItemConfig.onConfigGlide(this)
+                                    }
                                 }
                             }
                         }
@@ -85,6 +99,18 @@ var IImageItem.itemLoadImage: AnyImage?
     get() = imageItemConfig.itemLoadImage
     set(value) {
         imageItemConfig.itemLoadImage = value
+    }
+
+var IImageItem.itemLoadImageText: String?
+    get() = imageItemConfig.itemLoadImageText
+    set(value) {
+        imageItemConfig.itemLoadImageText = value
+    }
+
+var IImageItem.itemLoadImageTextBgColor: Int
+    get() = imageItemConfig.itemLoadImageTextBgColor
+    set(value) {
+        imageItemConfig.itemLoadImageTextBgColor = value
     }
 
 /**
@@ -111,6 +137,15 @@ class ImageItemConfig : IDslItemConfig {
 
     /**加载的媒体*/
     var itemLoadImage: AnyImage? = null
+
+    /**当[itemLoadImage]为空时, 需要绘制的文本*/
+    var itemLoadImageText: String? = null
+
+    /**绘制[itemLoadImageText]时的文本颜色*/
+    var itemLoadImageTextColor: Int = Color.WHITE
+
+    /**绘制[itemLoadImageText]时的背景颜色*/
+    var itemLoadImageTextBgColor: Int = getColor(R.color.colorPrimaryDark)
 
     var imageStyleConfig = ImageStyleConfig().apply {
         imageScaleType = ImageView.ScaleType.CENTER_CROP

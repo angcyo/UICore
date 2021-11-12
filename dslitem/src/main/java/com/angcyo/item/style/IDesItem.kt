@@ -18,10 +18,6 @@ interface IDesItem : IAutoInitItem {
 
     /**初始化*/
     fun initDesItem(itemHolder: DslViewHolder) {
-        itemHolder.gone(
-            desItemConfig.itemDesViewId,
-            desItemConfig.itemDesStyle.text == null
-        )
         itemHolder.tv(desItemConfig.itemDesViewId)?.apply {
             desItemConfig.itemDesStyle.updateStyle(this)
         }

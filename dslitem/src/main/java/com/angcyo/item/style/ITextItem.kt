@@ -21,7 +21,6 @@ interface ITextItem : IAutoInitItem {
 
     /**初始化*/
     fun initTextItem(itemHolder: DslViewHolder) {
-        //itemHolder.gone(itemTextViewId, itemTextStyle.text == null)
         itemHolder.tv(textItemConfig.itemTextViewId)?.apply {
             textItemConfig.itemTextStyle.updateStyle(this)
         }
