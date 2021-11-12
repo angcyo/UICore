@@ -60,9 +60,9 @@ fun <T> LiveData<T>.observeOnce(owner: LifecycleOwner, action: (data: T?) -> Uni
 }
 
 /**快速创建一个可以修改的[MutableLiveData]*/
-fun <T> vmData(data: T) = MutableLiveData(data)
+fun <T> vmData(data: T) = MutableErrorLiveData(data)
 
-fun <T> vmDataNull(data: T? = null) = MutableLiveData(data)
+fun <T> vmDataNull(data: T? = null) = MutableErrorLiveData(data)
 
 fun <T> MutableLiveData<T>.notify() {
     value = value
