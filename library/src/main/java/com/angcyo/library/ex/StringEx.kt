@@ -276,7 +276,7 @@ fun String.toBase64(): String {
 fun String?.toUri(): Uri? {
     return try {
         when {
-            isFileExist() -> Uri.fromFile(this!!.file())
+            isFileExist() -> this?.file()?.toFileUri()
             isHttpScheme() -> Uri.parse(this)
             else -> Uri.parse(this)
         }

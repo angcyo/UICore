@@ -15,10 +15,7 @@ import com.angcyo.library.utils.Constant.PICTURE_FOLDER_NAME
 import com.angcyo.library.utils.fastBlur
 import com.angcyo.library.utils.fileNameUUID
 import com.angcyo.library.utils.filePath
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.InputStream
+import java.io.*
 
 /**
  *
@@ -172,6 +169,40 @@ fun InputStream.bitmapSize(): IntArray {
         L.w(e)
     }
     return result
+}
+
+/**
+ * 读取图片的旋转的角度
+ */
+fun String.bitmapDegree(): Int {
+    var degree = 0
+    try {
+        // 从指定路径下读取图片，并获取其EXIF信息
+        val exifInterface = ExifInterface(this)
+        degree = exifInterface.bitmapDegree()
+    } catch (e: IOException) {
+        e.printStackTrace()
+    }
+    return degree
+}
+
+fun ExifInterface.bitmapDegree(): Int {
+    var degree = 0
+    try {
+        // 获取图片的旋转信息
+        val orientation = getAttributeInt(
+            ExifInterface.TAG_ORIENTATION,
+            ExifInterface.ORIENTATION_NORMAL
+        )
+        when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> degree = 90
+            ExifInterface.ORIENTATION_ROTATE_180 -> degree = 180
+            ExifInterface.ORIENTATION_ROTATE_270 -> degree = 270
+        }
+    } catch (e: IOException) {
+        e.printStackTrace()
+    }
+    return degree
 }
 
 fun String.bitmapSize(): IntArray {

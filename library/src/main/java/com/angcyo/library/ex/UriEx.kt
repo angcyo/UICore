@@ -21,6 +21,8 @@ import java.util.*
  * @date 2020/02/03
  */
 
+fun File.toFileUri(context: Context = app()): Uri = fileUri(context, this)
+
 fun fileUri(context: Context, file: String): Uri {
     return fileUri(context, File(file))
 }

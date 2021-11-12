@@ -16,6 +16,20 @@ import kotlin.random.Random.Default.nextInt
  * @date 2020/01/20
  */
 
+/**随机颜色*/
+val randomColorList = listOf(
+    "#4CC38F",
+    "#57A7F1",
+    "#8076d6",
+    "#62bec7",
+    "#f0a72e",
+    "#f6899e",
+    "#b4846d",
+    "#67719d",
+    "#b8838c",
+    "#63bca4"
+)
+
 /**随机产生一个颜色*/
 fun randomColor(minValue: Int = 120, maxValue: Int = 250): Int {
     val r = nextInt(minValue, maxValue)
