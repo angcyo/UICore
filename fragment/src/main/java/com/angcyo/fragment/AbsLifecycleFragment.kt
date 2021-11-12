@@ -33,6 +33,9 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
      */
     var fragmentShowCount = 0
 
+    /**界面是否处于显示状态*/
+    var isFragmentShow: Boolean = false
+
     /**[childFragmentManager]中最后一个可见性的[Fragment]*/
     val lastFragment: Fragment? get() = childFragmentManager.getAllResumedFragment().lastOrNull()
 
@@ -111,6 +114,7 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
 
     @CallSuper
     open fun onFragmentShow(bundle: Bundle?) {
+        isFragmentShow = true
         i(buildString {
             append(this@AbsLifecycleFragment.javaClass.simpleName)
             append("#").append(this@AbsLifecycleFragment.hash())
@@ -137,6 +141,7 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
     open fun onFragmentNotFirstShow(bundle: Bundle?) {}
 
     open fun onFragmentHide() {
+        isFragmentShow = false
         i(buildString {
             append(this@AbsLifecycleFragment.javaClass.simpleName)
             append("#").append(this@AbsLifecycleFragment.hash())
