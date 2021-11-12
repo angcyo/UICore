@@ -230,6 +230,15 @@ fun RecyclerView.setItemAnim(animator: ItemAnimator? = DefaultItemAnimator()) {
     itemAnimator = animator
 }
 
+/**最后一个item是否可见*/
+fun RecyclerView.isLastItemVisibleCompleted(): Boolean {
+    val linearLayoutManager = layoutManager as? LinearLayoutManager? ?: return false
+    val lastPosition = linearLayoutManager.findLastCompletelyVisibleItemPosition()
+    val childCount = linearLayoutManager.childCount
+    val firstPosition = linearLayoutManager.findFirstVisibleItemPosition()
+    return lastPosition >= firstPosition + childCount - 1
+}
+
 //</editor-fold desc="基础">
 
 //<editor-fold desc="ViewHolder相关">

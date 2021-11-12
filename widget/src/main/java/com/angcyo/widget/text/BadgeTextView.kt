@@ -71,6 +71,7 @@ class BadgeTextView : AppCompatTextView, IBadgeView {
             //cornerRadius(25 * dp)
             action()
         }
+        postInvalidateOnAnimation()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
