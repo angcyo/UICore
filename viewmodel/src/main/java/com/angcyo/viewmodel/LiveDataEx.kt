@@ -71,3 +71,6 @@ fun <T> MutableLiveData<T>.notify() {
 fun <T> MutableLiveData<T>.notifyPost() {
     postValue(value)
 }
+
+/**数据通知专用[LiveData]*/
+fun <T> vmDataOnce(data: T? = null) = MutableOnceLiveData(data)
