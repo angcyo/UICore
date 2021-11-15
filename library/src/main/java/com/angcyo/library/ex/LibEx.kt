@@ -350,11 +350,31 @@ fun <T> List<T>.before(element: T): T? {
     return getOrNull(index - 1)
 }
 
-/**后一个*/
+/**列表中, 当前[element]的后一个元素*/
 fun <T> List<T>.after(element: T): T? {
     val index = indexOf(element)
     if (index >= lastIndex) {
         return null
     }
     return getOrNull(index + 1)
+}
+
+/**将当前元素, 移动到列表末尾*/
+fun <T> MutableList<T>.moveToLast(element: T) {
+    remove(element)
+    add(element)
+}
+
+/**将指定位置的元素, 替换成新的元素.
+ * 如果新的元素为空, 则仅移除旧元素*/
+fun <T> MutableList<T>.replace(element: T, newElement: T?) {
+    val index = indexOf(element)
+    if (index != -1) {
+        if (newElement == null) {
+            //remove
+            remove(element)
+        } else {
+            set(index, newElement)
+        }
+    }
 }
