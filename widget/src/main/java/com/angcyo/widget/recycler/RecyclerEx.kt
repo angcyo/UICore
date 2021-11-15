@@ -239,6 +239,30 @@ fun RecyclerView.isLastItemVisibleCompleted(): Boolean {
     return lastPosition >= firstPosition + childCount - 1
 }
 
+/**列表中所有的item, 均已显示*/
+fun RecyclerView.isAllItemVisibleCompleted(): Boolean {
+    val linearLayoutManager = layoutManager as? LinearLayoutManager? ?: return false
+    val firstPosition = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
+    val lastPosition = linearLayoutManager.findLastCompletelyVisibleItemPosition()
+
+    if (firstPosition == 0 && lastPosition - firstPosition <= adapter?.itemCount ?: 0) {
+        return true
+    }
+    return false
+}
+
+/**在列表可滚动的情况下, 顶部item已经全部显示*/
+fun RecyclerView.isTopItemVisibleCompleted(): Boolean {
+    val linearLayoutManager = layoutManager as? LinearLayoutManager? ?: return false
+    val firstPosition = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
+    val lastPosition = linearLayoutManager.findLastCompletelyVisibleItemPosition()
+
+    if (firstPosition == 0 && lastPosition + 1 < adapter?.itemCount ?: 0) {
+        return true
+    }
+    return false
+}
+
 //</editor-fold desc="基础">
 
 //<editor-fold desc="ViewHolder相关">
@@ -292,18 +316,22 @@ fun RecyclerView.allViewHolder(): List<DslViewHolder> {
 
 /**本地更新[RecyclerView]界面,
  * [position] 指定需要更新的位置, 负数表示全部*/
-fun RecyclerView.localUpdateItem(position: Int = -1, payloads: List<Any> = emptyList()) {
+fun RecyclerView.localUpdateItem(position: Int = -1, payloads: List<Any> = payload()) {
     if (adapter !is DslAdapter) {
         return
     }
-    allViewHolder().forEach { viewHolder ->
+    val allViewHolder = allViewHolder()
+    if (position >= allViewHolder.size) {
+        return
+    }
+    allViewHolder.forEach { viewHolder ->
         val adapterPosition = viewHolder.adapterPosition
         val adapterItem = (adapter as DslAdapter).getItemData(adapterPosition)
         adapterItem?.run {
-            if (position >= 0) {
-                if (position == adapterPosition) {
-                    itemBind(viewHolder, adapterPosition, adapterItem, payloads)
-                }
+            if (position >= 0 && position == adapterPosition) {
+                //只更新指定的位置
+                itemBind(viewHolder, adapterPosition, adapterItem, payloads)
+                return
             } else {
                 itemBind(viewHolder, adapterPosition, adapterItem, payloads)
             }

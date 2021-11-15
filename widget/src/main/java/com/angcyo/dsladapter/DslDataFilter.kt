@@ -272,18 +272,29 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             //L.v("${hash()} Diff计算耗时:${String.format("%.3f", s + ms)}s")
             L.v("${hash()} Diff计算耗时:${s}s${ms}ms")
 
+            val oldSize = filterDataList.size
+            //因为是异步操作, 所以在延迟前, 就要覆盖 filterDataList 数据源
+            resultList.let {
+                filterDataList.clear()
+                filterDataList.addAll(it)
+            }
+
             //回调到主线程
             val notifyDelay = _params?.notifyDiffDelay ?: -1
             when {
                 //延迟通知
                 notifyDelay >= 0 -> mainHandler.postDelayed({
-                    onDiffResult(diffResult, resultList)
+                    onDiffResult(diffResult, resultList, oldSize)
                 }, notifyDelay)
                 //主线程通知
-                Looper.getMainLooper() == Looper.myLooper() -> onDiffResult(diffResult, resultList)
+                Looper.getMainLooper() == Looper.myLooper() -> onDiffResult(
+                    diffResult,
+                    resultList,
+                    oldSize
+                )
                 //主线程通知
                 else -> mainHandler.post {
-                    onDiffResult(diffResult, resultList)
+                    onDiffResult(diffResult, resultList, oldSize)
                 }
             }
         }
@@ -350,18 +361,10 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
         /**Diff返回后, 通知界面更新*/
         private fun onDiffResult(
             diffResult: DiffUtil.DiffResult,
-            diffList: MutableList<DslAdapterItem>
+            diffList: MutableList<DslAdapterItem>,
+            oldSize: Int
         ) {
-            //因为是异步操作, 所以在 [dispatchUpdatesTo] 时, 才覆盖 filterDataList 数据源
-
-            val oldSize = filterDataList.size
-            var newSize = 0
-
-            diffList.let {
-                newSize = it.size
-                filterDataList.clear()
-                filterDataList.addAll(it)
-            }
+            val newSize = diffList.size
 
             diffList.forEach {
                 //清空标志
@@ -390,7 +393,12 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                     )
                 } else {
                     //派发更新界面
-                    diffResult.dispatchUpdatesTo(RBatchingListUpdateCallback(dslAdapter))
+                    val updateTo = _params?.onDispatchUpdatesTo
+                    if (updateTo == null) {
+                        diffResult.dispatchUpdatesTo(RBatchingListUpdateCallback(dslAdapter))
+                    } else {
+                        updateTo(diffResult, diffList)
+                    }
                     isDispatchUpdatesTo = true
                 }
             }
@@ -501,7 +509,10 @@ data class FilterParams(
     var shakeDelay: Long = DEFAULT_SHAKE_DELAY,
 
     /**计算完diff之后, 延迟多久通知界面*/
-    var notifyDiffDelay: Long = -1
+    var notifyDiffDelay: Long = -1,
+
+    /**实现此方法, 拦截库中的[dispatchUpdatesTo]界面更新*/
+    var onDispatchUpdatesTo: ((DiffUtil.DiffResult, List<DslAdapterItem>) -> Unit)? = null
 )
 
 typealias DispatchUpdates = (dslAdapter: DslAdapter) -> Unit

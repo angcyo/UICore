@@ -635,8 +635,16 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
     //</editor-fold desc="操作方法">
 }
 
+//显示键盘or表情
 fun Int.isShowAction() = this == ACTION_SHOW_SOFT_INPUT || this == ACTION_SHOW_EMOJI
+
 fun Int.isHideAction() = this == ACTION_HIDE_SOFT_INPUT || this == ACTION_HIDE_EMOJI
+
+//显示键盘的操作
+fun Int.isSoftInputShowAction() = this == ACTION_SHOW_SOFT_INPUT
+
+//显示表情的操作
+fun Int.isEmojiShowAction() = this == ACTION_SHOW_EMOJI
 
 fun Int.softAction(): String = when (this) {
     ACTION_SHOW_SOFT_INPUT -> "SHOW_SOFT_INPUT"
@@ -656,4 +664,13 @@ interface OnSoftInputListener {
 
     /**动画处理中, 只有开启动画才会回调*/
     fun onSoftInputChange(action: Int, height: Int, oldHeight: Int, fraction: Float) {}
+}
+
+/**键盘/表情, 显示完成之后*/
+fun DslSoftInputLayout.onSoftInputChangeEnd(action: (action: Int, height: Int, oldHeight: Int) -> Unit) {
+    addSoftInputListener(object : OnSoftInputListener {
+        override fun onSoftInputChangeEnd(action: Int, height: Int, oldHeight: Int) {
+            action(action, height, oldHeight)
+        }
+    })
 }

@@ -156,6 +156,22 @@ class ScrollHelper {
         }
     }
 
+    /**短时间之内, 锁定滚动到倒数第一个的位置*/
+    fun scrollToLast(config: LockDrawListener.() -> Unit = {}) {
+        lockPositionByDraw {
+            scrollType = SCROLL_TYPE_BOTTOM
+            lockPosition = -1
+            firstScrollAnim = true
+            scrollAnim = true
+            force = true
+            firstForce = true
+            lockDuration = 60
+            autoDetach = true
+            isFromAddItem = false
+            config()
+        }
+    }
+
     /**
      * 当界面有变化时, 自动滚动到最后一个位置
      * [unlockPosition]

@@ -349,9 +349,17 @@ fun Iterable<*>.isUpdateMedia(): Boolean {
     return count() <= 0 || containsPayload(DslAdapterItem.PAYLOAD_UPDATE_MEDIA)
 }
 
+fun payload(vararg payload: Int): List<Int> {
+    return if (payload.isEmpty()) {
+        listOf(DslAdapterItem.PAYLOAD_UPDATE_PART)
+    } else {
+        payload.toList()
+    }
+}
+
 /**需要更新媒体的负载*/
 fun mediaPayload(): List<Int> =
-    listOf(DslAdapterItem.PAYLOAD_UPDATE_PART, DslAdapterItem.PAYLOAD_UPDATE_MEDIA)
+    payload(DslAdapterItem.PAYLOAD_UPDATE_PART, DslAdapterItem.PAYLOAD_UPDATE_MEDIA)
 
 //</editor-fold desc="payload">
 
