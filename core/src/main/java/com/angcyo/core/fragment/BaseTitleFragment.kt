@@ -481,6 +481,19 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
         super.onSoftInputChange(action, height, oldHeight, fraction)
     }
 
+    /**返回键监听*/
+    override fun onBackPressed(): Boolean {
+        val softInputLayout = _vh.v<DslSoftInputLayout>(R.id.lib_soft_input_layout)
+        if (softInputLayout != null) {
+            return if (softInputLayout.onBackPress()) {
+                super.onBackPressed()
+            } else {
+                false
+            }
+        }
+        return super.onBackPressed()
+    }
+
     //</editor-fold desc="软键盘监听">
 
     //<editor-fold desc="情感图切换">
