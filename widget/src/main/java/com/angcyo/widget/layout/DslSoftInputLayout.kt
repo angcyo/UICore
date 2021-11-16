@@ -106,6 +106,9 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
     //记录当前操作行为
     var _action = 0
 
+    //底部窗口是否有inset, 如果有通常是键盘显示了
+    var _isBottomWindowInset: Boolean = false
+
     //</editor-fold desc="私有属性辅助计算">
 
     init {
@@ -173,6 +176,7 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            _isBottomWindowInset = insets.systemWindowInsetBottom > 0
             if (insets.systemWindowInsetBottom > 0) {
                 //需要显示键盘
                 handleSoftInput(ACTION_SHOW_SOFT_INPUT, insets.systemWindowInsetBottom)
@@ -504,17 +508,22 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     fun insertBottom(action: Int, height: Int) {
+        val fromHeight = _bottomInsertHeight
+        val toHeight = height
+
         _animator?.cancel()
         _animator = null
 
         _action = action
         _actionList.append(_action)
 
+        if (fromHeight == toHeight) {
+            //无变化
+            return
+        }
+
         val anim = (action.isShowAction() && enableShowAnimator) ||
                 (action.isHideAction() && enableHideAnimator)
-
-        val fromHeight = _bottomInsertHeight
-        val toHeight = height
 
         val fromPaddingTop = _softInputPaddingTop
         val toPaddingTop = if (action.isShowAction()) {
@@ -664,6 +673,15 @@ interface OnSoftInputListener {
 
     /**动画处理中, 只有开启动画才会回调*/
     fun onSoftInputChange(action: Int, height: Int, oldHeight: Int, fraction: Float) {}
+}
+
+/**键盘/表情, 显示完成之后*/
+fun DslSoftInputLayout.onSoftInputChangeStart(action: (action: Int, height: Int, oldHeight: Int) -> Unit) {
+    addSoftInputListener(object : OnSoftInputListener {
+        override fun onSoftInputChangeStart(action: Int, height: Int, oldHeight: Int) {
+            action(action, height, oldHeight)
+        }
+    })
 }
 
 /**键盘/表情, 显示完成之后*/
