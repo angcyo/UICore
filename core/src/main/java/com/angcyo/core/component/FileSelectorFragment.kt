@@ -248,7 +248,7 @@ open class FileSelectorFragment : BaseFragment() {
             }
 
             _adapter.onDispatchUpdatesOnce {
-                _vh._rv(R.id.lib_recycler_view)?.scrollHelper?.scrollToFirst {
+                _vh._rv(R.id.lib_recycler_view)?.scrollHelper?.lockScrollToFirst {
                     scrollAnim = false
                 }
             }

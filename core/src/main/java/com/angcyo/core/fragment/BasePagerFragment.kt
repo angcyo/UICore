@@ -155,7 +155,7 @@ abstract class BasePagerFragment : BaseTitleFragment() {
             //双击tab item 滚动至顶部
             getPageItem(itemIndex).view?.find<RecyclerView>(R.id.lib_recycler_view)
                 ?.scrollHelper {
-                    scrollToFirst {
+                    lockScrollToFirst {
                         firstScrollAnim = false
                         scrollAnim = false
                     }

@@ -141,7 +141,7 @@ class ScrollHelper {
     private var lockLayoutListener: LockLayoutListener? = null
 
     /**短时间之内, 锁定滚动到0的位置*/
-    fun scrollToFirst(config: LockDrawListener.() -> Unit = {}) {
+    fun lockScrollToFirst(config: LockDrawListener.() -> Unit = {}) {
         lockPositionByDraw {
             scrollType = SCROLL_TYPE_TOP
             lockPosition = 0
@@ -149,6 +149,7 @@ class ScrollHelper {
             scrollAnim = true
             force = true
             firstForce = true
+            enableLock = true
             lockDuration = 60
             autoDetach = true
             isFromAddItem = false
@@ -157,7 +158,7 @@ class ScrollHelper {
     }
 
     /**短时间之内, 锁定滚动到倒数第一个的位置*/
-    fun scrollToLast(config: LockDrawListener.() -> Unit = {}) {
+    fun lockScrollToLast(config: LockDrawListener.() -> Unit = {}) {
         lockPositionByDraw {
             scrollType = SCROLL_TYPE_BOTTOM
             lockPosition = -1
@@ -165,6 +166,7 @@ class ScrollHelper {
             scrollAnim = true
             force = true
             firstForce = true
+            enableLock = true
             lockDuration = 60
             autoDetach = true
             isFromAddItem = false
@@ -400,13 +402,19 @@ class ScrollHelper {
         var scrollAnim: Boolean = true
             set(value) {
                 field = value
-                if (!value) {
+                if (!value && firstScrollAnim) {
                     firstScrollAnim = false
                 }
             }
 
         /**激活第一个滚动的动画*/
         var firstScrollAnim: Boolean = true
+            set(value) {
+                field = value
+                if (!value && scrollAnim) {
+                    scrollAnim = false
+                }
+            }
 
         /**不检查界面 情况, 强制滚动到最后的位置. 关闭后. 会智能判断*/
         var force: Boolean = false

@@ -429,7 +429,7 @@ class PickerImageFragment : BasePickerFragment() {
         //_adapter.updateItemDepend(FilterParams(null, true, true, payload = mediaPayload()))
         if (scrollToFirst) {
             _adapter.onDispatchUpdatesOnce {
-                _recycler.scrollHelper.scrollToFirst {
+                _recycler.scrollHelper.lockScrollToFirst {
                     scrollAnim = false
                 }
             }
