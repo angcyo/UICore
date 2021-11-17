@@ -18,10 +18,14 @@ dependencies {
     api "androidx.fragment:fragment-ktx:1.3.6"
 
     //https://mvnrepository.com/artifact/androidx.appcompat/appcompat
-    api "androidx.appcompat:appcompat:1.3.1"
+    //api "androidx.appcompat:appcompat:1.3.1"
+
+    //https://mvnrepository.com/artifact/androidx.activity/
+    //api "androidx.activity:activity:1.4.0"
+    //api "androidx.activity:activity-ktx:1.4.0"
 
     //https://mvnrepository.com/artifact/androidx.recyclerview/recyclerview
-    api 'androidx.recyclerview:recyclerview:1.2.0'
+    api 'androidx.recyclerview:recyclerview:1.2.1'
 
     //https://mvnrepository.com/artifact/androidx.constraintlayout/constraintlayout
     api 'androidx.constraintlayout:constraintlayout:2.1.1'

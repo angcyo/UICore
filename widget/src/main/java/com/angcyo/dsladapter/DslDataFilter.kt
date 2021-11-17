@@ -364,6 +364,10 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             diffList: MutableList<DslAdapterItem>,
             oldSize: Int
         ) {
+            if (taskCancel.get()) {
+                return
+            }
+
             val newSize = diffList.size
 
             diffList.forEach {

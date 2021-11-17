@@ -90,6 +90,9 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
 
     val itemBindObserver = mutableSetOf<ItemBindAction>()
 
+    //关联item type和item layout id
+    val _itemLayoutHold = hashMapOf<Int, Int>()
+
     init {
         dslDataFilter = DslDataFilter(this)
 
@@ -104,16 +107,22 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     //<editor-fold desc="生命周期方法">
 
     override fun getItemViewType(position: Int): Int {
-        return getItemData(position)?.itemLayoutId ?: 0
+        var type = 0
+        getItemData(position)?.apply {
+            type = itemViewType ?: itemLayoutId
+            _itemLayoutHold[type] = itemLayoutId
+        }
+        return type
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DslViewHolder {
-        if (viewType <= 0) {
+        val layoutId = _itemLayoutHold[viewType] ?: 0
+        if (layoutId <= 0) {
             throw IllegalStateException("请检查是否未指定[itemLayoutId]")
         }
         //viewType, 就是布局的 Id, 这是设计核心原则.
         val dslViewHolder: DslViewHolder
-        val itemView: View = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
+        val itemView: View = LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
         dslViewHolder = DslViewHolder(itemView)
         return dslViewHolder
     }
