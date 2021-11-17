@@ -264,12 +264,30 @@ fun Context.requestAudioFocus(
     ) //请求焦点
 }
 
+fun Context.requestAudioFocus(
+    streamType: Int = AudioManager.STREAM_MUSIC,//请求流的类型
+    durationHint: Int = AudioManager.AUDIOFOCUS_GAIN,//请求焦点大概要多长时间
+    onAudioFocusChange: AudioManager.OnAudioFocusChangeListener//监听其他焦点请求的改变
+): Int {
+    val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    return audioManager.requestAudioFocus(
+        onAudioFocusChange,
+        streamType,
+        durationHint
+    ) //请求焦点
+}
+
 /**
  * 释放音频焦点
  */
 fun Context.abandonAudioFocus(change: ((focusChange: Int) -> Unit)? = null): Int {
     val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
     return audioManager.abandonAudioFocus(change) //放弃焦点
+}
+
+fun Context.abandonAudioFocus(listener: AudioManager.OnAudioFocusChangeListener?): Int {
+    val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    return audioManager.abandonAudioFocus(listener) //放弃焦点
 }
 
 /**从[assets]中读取字符串*/
