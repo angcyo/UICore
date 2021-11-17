@@ -152,10 +152,29 @@ fun Fragment.dslPicker(action: LoaderConfig.() -> Unit) {
 }
 
 fun Fragment.dslPicker(
-    config: LoaderConfig.() -> Unit = {},
+    config: LoaderConfig.() -> Unit,
     onResult: (List<LoaderMedia>?) -> Unit
 ) {
     dslPicker(LoaderConfig().apply(config), onResult)
+}
+
+/**选择图片和视频*/
+fun Fragment.dslPickerImageVideo(
+    count: Int = 1,
+    videoMinDuration: Long = 3 * 1000L, //3秒的视频
+    videoMaxDuration: Long = 30 * 1000L, //30秒的视频
+    config: LoaderConfig.() -> Unit = {},
+    onResult: (List<LoaderMedia>?) -> Unit
+) {
+    dslPicker(LoaderConfig().apply {
+        mediaLoaderType = LoaderConfig.LOADER_TYPE_IMAGE or LoaderConfig.LOADER_TYPE_VIDEO
+        maxSelectorLimit = count
+        enableImageEdit = false
+        enableCamera = false
+        limitVideoMinDuration = videoMinDuration
+        limitVideoMaxDuration = videoMaxDuration
+        config()
+    }, onResult)
 }
 
 fun Fragment.dslPicker(config: LoaderConfig, onResult: (List<LoaderMedia>?) -> Unit) {
