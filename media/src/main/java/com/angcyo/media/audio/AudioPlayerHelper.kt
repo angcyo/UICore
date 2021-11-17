@@ -45,6 +45,9 @@ object AudioPlayerHelper {
             }
 
             override fun onPlayStateChange(playUrl: String, from: Int, to: Int) {
+                if (to == RPlayer.STATE_STOP) {
+                    onEnd(-1, null)
+                }
             }
         }
     }
