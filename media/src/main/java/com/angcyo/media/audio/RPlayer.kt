@@ -25,39 +25,23 @@ class RPlayer {
 
     var onPlayListener: OnPlayerListener? = null
 
+    val playListenerList = mutableListOf<OnPlayerListener>()
+
     var audioStreamType = AudioManager.STREAM_MUSIC
 
     var leftVolume: Float = 0.5f
     var rightVolume: Float = 0.5f
 
-    /**正在播放的url, 播放完成后, 会被置空*/
+    /**正在播放的url, 播放完成后, 会被置空
+     * 可以真正用来表示是否正在播放指定的地址*/
     var _playingUrl = ""
 
-    /**播放的url, 正常播放过的url*/
+    /**播放的url, 正常播放过的url
+     * 播放过的url, 播放结束后, 不置空*/
     var playUrl = ""
 
-    var onAudioFocusChange: (focusChange: Int) -> Unit = {
-        when (it) {
-            AudioManager.AUDIOFOCUS_LOSS -> {
-                // Permanent loss of audio focus
-                // Pause playback immediately
-                //焦点丢失,停止播放
-                stopPlay()
-            }
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
-                // Pause playback
-            }
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-                // Lower the volume, keep playing
-                //保持播放, 减少音量
-            }
-            AudioManager.AUDIOFOCUS_GAIN -> {
-                // Your app has been granted audio focus again
-                // Raise volume to normal, restart playback if necessary
-                //重新获得焦点
-            }
-        }
-    }
+    /**音频焦点监听*/
+    var onAudioFocusChange: AudioFocusChange? = null
 
     /**当前播放的状态*/
     private var playState: AtomicInteger = AtomicInteger(STATE_INIT)
@@ -117,7 +101,10 @@ class RPlayer {
     }
 
     /**@param url 可以有效的网络, 和有效的本地地址*/
-    fun startPlay(url: String) {
+    fun startPlay(url: String?) {
+        if (url.isNullOrEmpty()) {
+            return
+        }
         if (_playingUrl == url) {
             if (isPlayCall()) {
 
@@ -144,18 +131,23 @@ class RPlayer {
                 //L.e("call: startPlay -> $what $extra")
                 setPlayState(STATE_ERROR)
                 onPlayListener?.onPlayError(what, extra)
+                playListenerList.forEach { it.onPlayError(what, extra) }
 
                 it.reset()
                 true
             }
             it.setOnCompletionListener {
                 setPlayState(STATE_COMPLETION)
-                onPlayListener?.onPlayCompletion(it.duration)
+                val duration = it.duration
+                onPlayListener?.onPlayCompletion(duration)
+                playListenerList.forEach { it.onPlayCompletion(duration) }
                 it.reset()
             }
             it.setOnPreparedListener {
                 //L.e("call: startPlay -> onPrepared ${it.duration}")
-                onPlayListener?.onPreparedCompletion(it.duration)
+                val duration = it.duration
+                onPlayListener?.onPreparedCompletion(duration)
+                playListenerList.forEach { it.onPreparedCompletion(duration) }
                 if (playState.get() == STATE_NORMAL) {
                     //startPlayInner(it)
                     playSeekTo(max(seekToPosition, 0))
@@ -215,7 +207,9 @@ class RPlayer {
 
     /**获取音频焦点*/
     fun MediaPlayer.checkStart(action: () -> Unit = {}) {
-        app().requestAudioFocus(audioStreamType, onAudioFocusChange = onAudioFocusChange).apply {
+        onAudioFocusChange?.invalid = true
+        onAudioFocusChange = AudioFocusChange()
+        app().requestAudioFocus(audioStreamType, onAudioFocusChange = onAudioFocusChange!!).apply {
             if (this == AudioManager.AUDIOFOCUS_GAIN) {
                 //获取焦点
                 start()
@@ -293,6 +287,7 @@ class RPlayer {
 
         if (oldState != state) {
             onPlayListener?.onPlayStateChange(playUrl, oldState, state)
+            playListenerList.forEach { it.onPlayStateChange(playUrl, oldState, state) }
         }
     }
 
@@ -304,16 +299,17 @@ class RPlayer {
 
     /*开始进度读取*/
     private fun startProgress() {
-        Thread(Runnable {
+        Thread {
             while ((isPlayCall() || isPause()) &&
-                mediaPlay != null &&
-                onPlayListener != null
+                    mediaPlay != null &&
+                    (onPlayListener != null || playListenerList.isNotEmpty())
             ) {
                 MainExecutor.execute {
                     if (isPlaying() && mediaPlay != null) {
                         currentPosition = mediaPlay!!.currentPosition
                         L.d("RPlayer: startProgress -> $currentPosition:${mediaPlay!!.duration}")
                         onPlayListener?.onPlayProgress(currentPosition, mediaPlay!!.duration)
+                        playListenerList.forEach { it.onPlayProgress(currentPosition, mediaPlay!!.duration) }
                     }
                 }
                 try {
@@ -321,7 +317,7 @@ class RPlayer {
                 } catch (e: Exception) {
                 }
             }
-        }).apply {
+        }.apply {
             start()
         }
     }
@@ -345,7 +341,6 @@ class RPlayer {
 
         /**播放状态回调*/
         fun onPlayStateChange(playUrl: String, from: Int, to: Int)
-
     }
 
     /**[fraction]比例*/
@@ -359,6 +354,39 @@ class RPlayer {
             mediaPlay?.let {
                 it.seekTo(msec)
                 seekToPosition = -1
+            }
+        }
+    }
+
+    inner class AudioFocusChange : AudioManager.OnAudioFocusChangeListener {
+
+        /**是否无效*/
+        var invalid: Boolean = false
+
+        override fun onAudioFocusChange(focusChange: Int) {
+            if (invalid) {
+                return
+            }
+
+            when (focusChange) {
+                AudioManager.AUDIOFOCUS_LOSS -> {
+                    // Permanent loss of audio focus
+                    // Pause playback immediately
+                    //焦点丢失,停止播放
+                    stopPlay()
+                }
+                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                    // Pause playback
+                }
+                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                    // Lower the volume, keep playing
+                    //保持播放, 减少音量
+                }
+                AudioManager.AUDIOFOCUS_GAIN -> {
+                    // Your app has been granted audio focus again
+                    // Raise volume to normal, restart playback if necessary
+                    //重新获得焦点
+                }
             }
         }
     }

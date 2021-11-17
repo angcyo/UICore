@@ -7,7 +7,7 @@ import com.angcyo.widget.progress.HSProgressView
 import kotlin.math.max
 
 /**
- * 进度控制
+ * 进度ui面板控制
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/02/24
@@ -47,7 +47,7 @@ object MediaProgressHelper {
         itemHolder?.tv(R.id.left_text_view)?.text = progress.toElapsedTime(pattern, units = units)
         val maxProgress = max(1, duration)
         itemHolder?.tv(R.id.right_text_view)?.text =
-            maxProgress.toElapsedTime(pattern, units = units)
+                maxProgress.toElapsedTime(pattern, units = units)
 
         itemHolder?.v<DslSeekBar>(R.id.lib_seek_bar)?.run {
             if (!isTouchDown) {

@@ -38,11 +38,15 @@ open class RecordControl {
      * 监听那个view的事件, 触发录制
      * */
     open fun wrap(
-        view: View,
-        activity: Activity,
-        onRecordStart: () -> Boolean = { true } /*返回true, 表示可以开始录制*/,
-        onRecordEnd: (voiceFile: File) -> Unit = {}
+            view: View?,
+            activity: Activity?,
+            onRecordStart: () -> Boolean = { true } /*返回true, 表示可以开始录制*/,
+            onTouch: (MotionEvent) -> Unit = {} /*手势回调*/,
+            onRecordEnd: (voiceFile: File) -> Unit = {}
     ) {
+        if (view == null || activity == null) {
+            return
+        }
         if (record == null) {
             val folder = folderPath(FOLDER_NAME)
             record = RRecord(activity, folder)
@@ -61,6 +65,7 @@ open class RecordControl {
         }
 
         view.setOnTouchListener { v, event ->
+            onTouch(event)
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
                     if (autoHideSoft) {
@@ -124,8 +129,8 @@ open class RecordControl {
         val recordTime = recordUI.currentRecordTime
         val time = (recordTime / 1000).toInt()
         val recordFile = File(
-            sampleFile.parent,
-            "${sampleFile.name.noExtName()}_t_${time}.${sampleFile.name.ext()}"
+                sampleFile.parent,
+                "${sampleFile.name.noExtName()}_t_${time}.${sampleFile.name.ext()}"
         )
         sampleFile.renameTo(recordFile)
         return recordFile

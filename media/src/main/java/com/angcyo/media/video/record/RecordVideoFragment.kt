@@ -65,23 +65,28 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
     }
 
     private fun onDelayInitView() {
-        _recordView = _vh.v(R.id.recorder_view)
+        val recordSurfaceView: SizeSurfaceView = _vh.v(R.id.recorder_view)!!
+        _recordView = recordSurfaceView
         _previewPictureLayoutControl =
             PreviewPictureLayoutControl(_vh.view(R.id.camera_confirm_layout)!!)
         _previewVideoLayoutControl =
             PreviewVideoLayoutControl(_vh.view(R.id.video_confirm_layout)!!)
-        _recordControl =
-            RecordVideoControl(requireActivity(), _recordView!!, this@RecordVideoFragment)
+
+        val recordControl =
+            RecordVideoControl(requireActivity(), recordSurfaceView, this@RecordVideoFragment)
+        _recordControl = recordControl
+
         if (isResumed) {
-            _recordControl!!.surfaceChanged(
-                _recordView!!.holder,
+            recordControl.surfaceChanged(
+                recordSurfaceView.holder,
                 0,
-                _recordView!!.width,
-                _recordView!!.height
+                recordSurfaceView.width,
+                recordSurfaceView.height
             )
         }
         val recordLayout: ExpandRecordLayout? = _vh.v(R.id.record_control_layout)
         callback?.initConfig() ?: return
+        _vh.enable(R.id.record_control_layout, true)
 
         recordLayout?.apply {
             maxTime = callback?.maxRecordTime ?: 10

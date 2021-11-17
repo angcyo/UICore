@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import com.angcyo.DslAHelper
 import com.angcyo.base.dslAHelper
 import com.angcyo.base.dslFHelper
@@ -121,7 +122,7 @@ open class RecordVideoActivity : BasePermissionsActivity() {
     }
 }
 
-/**快速启动录制视频界面, 并拿到返回数据*/
+/**快速启动录制视频和拍照界面, 并拿到返回数据*/
 fun DslAHelper.recordVideo(
     maxRecordTime: Int = 15, //秒
     minRecordTime: Int = 3, //秒
@@ -160,5 +161,31 @@ fun DslAHelper.recordPhotoOnly(result: (String?) -> Unit) {
         onActivityResult = { resultCode, data ->
             result(RecordVideoActivity.getResultPath(requestCode, resultCode, data))
         }
+    }
+}
+
+fun Fragment.recordVideo(
+    maxRecordTime: Int = 15, //秒
+    minRecordTime: Int = 3, //秒
+    result: (String?) -> Unit
+) {
+    dslAHelper {
+        recordVideo(maxRecordTime, minRecordTime, result)
+    }
+}
+
+fun Fragment.recordVideoOnly(
+    maxRecordTime: Int = 15, //秒
+    minRecordTime: Int = 3, //秒
+    result: (String?) -> Unit
+) {
+    dslAHelper {
+        recordVideoOnly(maxRecordTime, minRecordTime, result)
+    }
+}
+
+fun Fragment.recordPhotoOnly(result: (String?) -> Unit) {
+    dslAHelper {
+        recordPhotoOnly(result)
     }
 }
