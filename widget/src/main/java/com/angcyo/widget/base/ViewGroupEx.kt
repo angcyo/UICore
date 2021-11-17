@@ -376,6 +376,19 @@ fun ViewGroup.resetChildCount(
     }
 }
 
+/**调整child的顺序
+ * 按照传进来的顺序重新排列*/
+fun ViewGroup.adjustOrder(vararg childOrder: View?) {
+    childOrder.forEachIndexed { index, view ->
+        val child = getChildOrNull(index)
+        if (child != view) {
+            //当前位置的child, 需要被替换
+            removeView(view)
+            addView(view, index)
+        }
+    }
+}
+
 //</editor-fold desc="child操作">
 
 //<editor-fold desc="Dsl吸附">
