@@ -12,6 +12,7 @@ import android.provider.MediaStore
 import android.provider.Settings
 import android.text.TextUtils
 import com.angcyo.library.L
+import com.angcyo.library.app
 import com.angcyo.library.component.queryActivities
 
 /**
@@ -256,5 +257,3 @@ fun Context.sendBroadcast(action: String, extra: Intent.() -> Unit = {}) {
         extra()
     })
 }
-
-

@@ -203,6 +203,9 @@ fun Long.toTimes(): LongArray {
     return longArrayOf(ms, s, m, h, day)
 }
 
+/**转成毫秒*/
+fun Int.toMillisecond() = this * 1000L
+
 /**
  * 将毫秒转成 x天x时x分x秒x毫秒.
  *

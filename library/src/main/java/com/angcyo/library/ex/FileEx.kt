@@ -81,6 +81,15 @@ fun String?.fileName(): String? {
     return this?.file()?.name
 }
 
+/**从路径中直接获取文件名*/
+fun String?.fileNameByPath(): String? {
+    if (this == null) {
+        return null
+    }
+    val index = lastIndexOf('/')
+    return substring(index + 1)
+}
+
 fun String?.fileSize(): Long {
     if (TextUtils.isEmpty(this)) {
         return 0L
@@ -342,3 +351,35 @@ fun File.writeText(text: String, append: Boolean = true) {
 }
 
 fun File.toUri(context: Context = app()) = fileUri(context, this)
+
+fun generateFileName(name: String?, directory: File): File? {
+    var _name = name
+    if (_name == null) {
+        return null
+    }
+    var file = File(directory, _name)
+    if (file.exists()) {
+        var fileName: String = _name
+        var extension = ""
+        val dotIndex = _name.lastIndexOf('.')
+        if (dotIndex > 0) {
+            fileName = _name.substring(0, dotIndex)
+            extension = _name.substring(dotIndex)
+        }
+        var index = 0
+        while (file.exists()) {
+            index++
+            _name = "$fileName($index)$extension"
+            file = File(directory, _name)
+        }
+    }
+    try {
+        if (!file.createNewFile()) {
+            return null
+        }
+    } catch (e: IOException) {
+        e.printStackTrace()
+        return null
+    }
+    return file
+}

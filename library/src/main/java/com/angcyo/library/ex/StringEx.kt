@@ -292,8 +292,38 @@ fun String.queryParameter(key: String): String? {
     return uri.getQueryParameter(key)
 }
 
-/**返回文件扩展名*/
-fun String.ext(): String = MimeTypeMap.getFileExtensionFromUrl(this.encode())
+/**返回文件扩展名
+ * [MimeTypeMap.getFileExtensionFromUrl]*/
+fun String.ext(): String {  //=MimeTypeMap.getFileExtensionFromUrl(this.encode())
+    // 修复 android.webkit.MimeTypeMap 的 getFileExtensionFromUrl 方法不支持中文的问题
+    var url = this
+    if (!TextUtils.isEmpty(url)) {
+        val fragment = url.lastIndexOf('#')
+        if (fragment > 0) {
+            url = url.substring(0, fragment)
+        }
+        val query = url.lastIndexOf('?')
+        if (query > 0) {
+            url = url.substring(0, query)
+        }
+        val filenamePos = url.lastIndexOf('/')
+        val filename = if (0 <= filenamePos) url.substring(filenamePos + 1) else url
+
+        // if the filename contains special characters, we don't
+        // consider it valid for our matching purposes:
+        // 去掉正则表达式判断以添加中文支持
+//          if (!filename.isEmpty() && Pattern.matches("[a-zA-Z_0-9\\.\\-\\(\\)\\%]+", filename))
+        if (filename.isNotEmpty()) {
+            val dotPos = filename.lastIndexOf('.')
+            if (0 <= dotPos) {
+                // 后缀转为小写
+                return filename.substring(dotPos + 1).toLowerCase()
+            }
+        }
+    }
+    return ""
+}
+
 fun String.extName(): String = ext()
 
 /**获取不带扩展名的文件名*/
@@ -322,7 +352,8 @@ fun String?.mimeType(): String? {
                 this.encode()
             }
             //如果url中有+号, 返回值就会是空字符
-            MimeTypeMap.getFileExtensionFromUrl(url)
+            //MimeTypeMap.getFileExtensionFromUrl(url)
+            url?.extName()
         }
         MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
     }
