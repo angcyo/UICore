@@ -90,15 +90,15 @@ fun String?.fileNameByPath(): String? {
     return substring(index + 1)
 }
 
-fun String?.fileSize(): Long {
+fun String?.fileSize(def: Long = 0L): Long {
     if (TextUtils.isEmpty(this)) {
-        return 0L
+        return def
     }
     val file = this?.file()
     return if (file?.exists() == true) {
         file.length()
     } else {
-        0L
+        def
     }
 }
 
