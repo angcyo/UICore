@@ -498,6 +498,10 @@ fun dslGlide(imageView: ImageView, uri: Uri?, action: DslGlide.() -> Unit = {}) 
     }
 }
 
+fun View.clearGlide() {
+    clear()
+}
+
 fun View.clear() {
     try {
         Glide.with(this).clear(this)
