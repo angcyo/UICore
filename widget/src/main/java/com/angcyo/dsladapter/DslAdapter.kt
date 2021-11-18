@@ -582,6 +582,14 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         }
     }
 
+    /**[notifyDataSetChanged]*/
+    fun notifyDataChanged() {
+        dslDataFilter?.clearTask()
+        dslDataFilter?.filterDataList?.clear()
+        dslDataFilter?.filterDataList?.addAll(adapterItems)
+        notifyDataSetChanged()
+    }
+
     /**更新界面上所有[DslAdapterItem]*/
     fun updateAllItem(payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART) {
         notifyItemRangeChanged(0, itemCount, payload)
