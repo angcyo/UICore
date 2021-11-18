@@ -224,15 +224,15 @@ task _qiniuUpload() {
                     System.err.println "备用二维码地址->$qrCodeUrlBack"
 
                     //保存二维码图片到文件
-                    def qrCodeFile =  file(".apk/二维码_${getBuildTime()}.png")
+                    def qrCodeFile = file(".apk/二维码_${getBuildTime()}.png")
                     saveUrlToFile(client, url, qrCodeFile)
 
                     //保存备用二维码图片到文件
-                    def qrCodeFileBack =  file(".apk/二维码备用_${getBuildTime()}.png")
+                    def qrCodeFileBack = file(".apk/二维码备用_${getBuildTime()}.png")
                     saveUrlToFile(client, qrCodeUrlBack, qrCodeFileBack)
 
                     //将二维码url存入文件, 方便在Jenkins中使用
-                    def codeTextFile =  file(".apk/二维码地址_${getBuildTime()}.txt")
+                    def codeTextFile = file(".apk/二维码地址_${getBuildTime()}.txt")
                     codeTextFile.createNewFile()
                     codeTextFile.append("二维码地址↓\n")
                     codeTextFile.append(qrCodeUrl)
@@ -245,9 +245,9 @@ task _qiniuUpload() {
 }
 
 /**查找apk文件路径*/
-static def findApkFile() {
+def findApkFile() {
     def path = ".apk"
-    def folder = new File(path)
+    def folder = file(path)
     def result = null
 
     def files = folder.listFiles()
