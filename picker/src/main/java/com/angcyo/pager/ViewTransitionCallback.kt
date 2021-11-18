@@ -5,6 +5,7 @@ import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
 import androidx.transition.*
+import com.angcyo.library.L
 import com.angcyo.picker.R
 import com.angcyo.transition.ColorTransition
 import com.angcyo.widget.DslViewHolder
@@ -78,6 +79,8 @@ open class ViewTransitionCallback {
                 translationY = it.top.toFloat()
 
                 setWidthHeight(it.width(), it.height())
+
+                L.i("过渡从:$it")
             }
         }
 
@@ -92,13 +95,16 @@ open class ViewTransitionCallback {
         backgroundTransitionView(viewHolder).setBackgroundColor(backgroundEndColor)
 
         transitionTargetView(viewHolder)?.apply {
-            translationX = (transitionShowToRect?.left ?: 0).toFloat()
-            translationY = (transitionShowToRect?.top ?: 0).toFloat()
+            val x = (transitionShowToRect?.left ?: 0).toFloat()
+            val y = (transitionShowToRect?.top ?: 0).toFloat()
+            translationX = x
+            translationY = y
 
-            setWidthHeight(
-                transitionShowToRect?.width() ?: -1,
-                transitionShowToRect?.height() ?: -1
-            )
+            val w = transitionShowToRect?.width() ?: -1
+            val h = transitionShowToRect?.height() ?: -1
+            setWidthHeight(w, h)
+
+            L.i("过渡到:x:$x y:$y w:$w, h:$h")
         }
 
         transitionOverlayViewIds.forEach {
@@ -152,6 +158,8 @@ open class ViewTransitionCallback {
                 translationY = it.top.toFloat()
 
                 setWidthHeight(it.width(), it.height())
+
+                L.i("隐藏从:$it")
             }
         }
 
@@ -171,6 +179,8 @@ open class ViewTransitionCallback {
                 translationY = it.top.toFloat()
 
                 setWidthHeight(it.width(), it.height())
+
+                L.i("隐藏到:$it")
             }
         }
     }
