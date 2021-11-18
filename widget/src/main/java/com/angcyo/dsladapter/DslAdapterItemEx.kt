@@ -309,6 +309,10 @@ fun DslAdapterItem.isItemAttached(): Boolean {
     return lifecycle.currentState == Lifecycle.State.RESUMED
 }
 
+fun DslAdapterItem.isItemDetached(): Boolean {
+    return lifecycle.currentState != Lifecycle.State.RESUMED
+}
+
 /**是否是占满宽度的item*/
 fun DslAdapterItem.isFullWidthItem(): Boolean {
     return isInLinearLayoutManager() || itemSpanCount == DslAdapterItem.FULL_ITEM

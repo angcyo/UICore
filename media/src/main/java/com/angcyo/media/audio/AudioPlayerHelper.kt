@@ -28,7 +28,7 @@ object AudioPlayerHelper {
         player.stopPlay()
     }
 
-    fun onPlayEnd(onEnd: (Int, PlayerException?) -> Unit) {
+    fun onPlayEnd(onEnd: (duration: Int, error: PlayerException?) -> Unit) {
         player.onPlayListener = object : RPlayer.OnPlayerListener {
             override fun onPreparedCompletion(duration: Int) {
             }
