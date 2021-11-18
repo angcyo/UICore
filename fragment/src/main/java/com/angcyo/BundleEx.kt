@@ -7,6 +7,7 @@ import android.os.Parcelable
 import androidx.fragment.app.Fragment
 import com.angcyo.http.base.fromJson
 import com.angcyo.http.base.toJson
+import java.io.Serializable
 
 /**
  *
@@ -18,6 +19,7 @@ import com.angcyo.http.base.toJson
 //<editor-fold desc="Bundle操作">
 
 const val BUNDLE_KEY_JSON = "BUNDLE_KEY_JSON"
+const val BUNDLE_KEY_SERIALIZABLE = "BUNDLE_KEY_SERIALIZABLE"
 
 /**创建一个默认传输[json]数据的[Bundle]*/
 fun jsonBundle(data: Any?, key: String = BUNDLE_KEY_JSON): Bundle {
@@ -75,9 +77,29 @@ fun Fragment.putData(data: Any?, key: String = BUNDLE_KEY_JSON): Fragment {
     return this
 }
 
+/**当前对象需要实现[Serializable]接口, 成员可以不需要. */
+fun Fragment.putDataSerializable(
+    data: Serializable?,
+    key: String = BUNDLE_KEY_SERIALIZABLE
+): Fragment {
+    val bundle = Bundle()
+    bundle.putSerializable(key, data)
+
+    arguments?.putAll(bundle)
+
+    if (arguments == null) {
+        arguments = bundle
+    }
+
+    return this
+}
+
 /**快速从[Fragment]获取[putData]设置的数据*/
 inline fun <reified DATA> Fragment.getData(key: String = BUNDLE_KEY_JSON): DATA? =
     arguments?.getJson(key)?.covertFromStr()
+
+inline fun <reified DATA> Fragment.getDataSerializable(key: String = BUNDLE_KEY_SERIALIZABLE): DATA? =
+    arguments?.getSerializable(key) as? DATA?
 
 //</editor-fold desc="Fragment put get">
 
