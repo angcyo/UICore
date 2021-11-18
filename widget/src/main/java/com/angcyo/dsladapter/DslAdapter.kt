@@ -85,6 +85,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
      * */
     var onDispatchUpdatesAfterOnce: DispatchUpdates? = null
 
+    val dispatchUpdatesBeforeList = mutableListOf<DispatchUpdates>()
     val dispatchUpdatesAfterList = mutableListOf<DispatchUpdates>()
     val dispatchUpdatesAfterOnceList = mutableListOf<DispatchUpdates>()
 
@@ -208,6 +209,12 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
 
     //<editor-fold desc="其他方法">
 
+    override fun onDispatchUpdatesBefore(dslAdapter: DslAdapter) {
+        dispatchUpdatesBeforeList.forEach {
+            it.invoke(dslAdapter)
+        }
+    }
+
     /**
      * [Diff]操作结束之后的通知事件
      * */
@@ -228,6 +235,14 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
 
     fun onDispatchUpdates(action: DispatchUpdates) {
         dispatchUpdatesAfterList.add(action)
+    }
+
+    fun onDispatchUpdatesAfter(action: DispatchUpdates) {
+        dispatchUpdatesAfterList.add(action)
+    }
+
+    fun onDispatchUpdatesBefore(action: DispatchUpdates) {
+        dispatchUpdatesBeforeList.add(action)
     }
 
     fun onDispatchUpdatesOnce(action: DispatchUpdates) {

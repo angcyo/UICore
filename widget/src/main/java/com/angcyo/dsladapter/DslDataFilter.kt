@@ -388,6 +388,9 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             //是否调用了[Dispatch]
             var isDispatchUpdatesTo = false
 
+            val updatesSet = mutableSetOf<OnDispatchUpdatesListener>()
+            updatesSet.addAll(_dispatchUpdatesSet)
+
             if (_params?.justFilter == true) {
                 //仅过滤数据源,不更新界面
                 //跳过 dispatchUpdatesTo
@@ -404,6 +407,12 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                         true
                     )
                 } else {
+
+                    //回调
+                    updatesSet.forEach {
+                        it.onDispatchUpdatesBefore(dslAdapter)
+                    }
+
                     //派发更新界面
                     val updateTo = _params?.onDispatchUpdatesTo
                     if (updateTo == null) {
@@ -411,6 +420,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                     } else {
                         updateTo(diffResult, diffList)
                     }
+
                     isDispatchUpdatesTo = true
                 }
             }
@@ -418,9 +428,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             notifyUpdateDependItem(updateDependItemList)
 
             //DispatchUpdates结束回调通知
-            if (isDispatchUpdatesTo && _dispatchUpdatesSet.isNotEmpty()) {
-                val updatesSet = mutableSetOf<OnDispatchUpdatesListener>()
-                updatesSet.addAll(_dispatchUpdatesSet)
+            if (isDispatchUpdatesTo && updatesSet.isNotEmpty()) {
                 updatesSet.forEach {
                     it.onDispatchUpdatesAfter(dslAdapter)
                 }
@@ -530,8 +538,18 @@ data class FilterParams(
 typealias DispatchUpdates = (dslAdapter: DslAdapter) -> Unit
 
 interface OnDispatchUpdatesListener {
+
+    /**
+     * 触发[dispatchUpdatesTo]前回调
+     * */
+    fun onDispatchUpdatesBefore(dslAdapter: DslAdapter) {
+
+    }
+
     /**
      * 当触发了[dispatchUpdatesTo]后回调
      * */
-    fun onDispatchUpdatesAfter(dslAdapter: DslAdapter)
+    fun onDispatchUpdatesAfter(dslAdapter: DslAdapter) {
+
+    }
 }
