@@ -1,6 +1,7 @@
 package com.angcyo.fragment
 
 import android.animation.Animator
+import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -50,36 +51,86 @@ object FragmentAnimator {
         DEFAULT_REMOVE_EXIT_ANIMATOR = R.anim.lib_x_remove_exit_holder
     }
 
+    /**从80%开始动画, 提高动画的流畅度 */
+    fun onlyTopAnim2() {
+        DEFAULT_SHOW_ENTER_ANIMATOR = R.anim.lib_x_show_enter_holder2
+        DEFAULT_SHOW_EXIT_ANIMATOR = R.anim.lib_x_show_exit_holder2
+
+        DEFAULT_REMOVE_ENTER_ANIMATOR = R.anim.lib_x_remove_enter_holder2
+        DEFAULT_REMOVE_EXIT_ANIMATOR = R.anim.lib_x_remove_exit_holder2
+    }
+
     var loadAnimator: (context: Context, anim: Int) -> Animator? = { context, anim ->
         val sw = _screenWidth.toFloat()
         val duration = _integer(R.integer.lib_animation_duration).toLong()
 
-        val objectAnimator = ObjectAnimator()
-        objectAnimator.duration = duration
-        objectAnimator.interpolator = AccelerateDecelerateInterpolator()
+        val animator = ObjectAnimator()
+        animator.duration = duration
+        animator.interpolator = AccelerateDecelerateInterpolator()
 
         /*将占位的动画, 翻译成属性动画*/
         when (anim) {
             R.anim.lib_x_show_enter_holder -> {
-                objectAnimator.setPropertyName("translationX")
-                objectAnimator.setFloatValues(sw, 0f)
-                objectAnimator
+                animator.setPropertyName("translationX")
+                animator.setFloatValues(sw, 0f)
+                animator
+            }
+            R.anim.lib_x_show_enter_holder2 -> {
+                val set = AnimatorSet()
+                set.duration = duration
+                set.interpolator = AccelerateDecelerateInterpolator()
+
+                animator.setPropertyName("translationX")
+                animator.setFloatValues(sw * 0.2f, 0f)
+
+                val alpha = ObjectAnimator()
+                alpha.setPropertyName("alpha")
+                alpha.setFloatValues(0f, 1f)
+
+                set.playTogether(animator, alpha)
+                set
             }
             R.anim.lib_x_show_exit_holder -> {
-                objectAnimator.setPropertyName("translationX")
-                objectAnimator.setFloatValues(0f, -sw * 0.8f)
-                objectAnimator.interpolator = AccelerateInterpolator()
-                objectAnimator
+                animator.setPropertyName("translationX")
+                animator.setFloatValues(0f, -sw * 0.8f)
+                animator.interpolator = AccelerateInterpolator()
+                animator
+            }
+            R.anim.lib_x_show_exit_holder2 -> {
+                animator.setPropertyName("translationX")
+                animator.setFloatValues(0f, -sw * 0.1f)
+                animator.interpolator = AccelerateInterpolator()
+                animator
             }
             R.anim.lib_x_remove_enter_holder -> {
-                objectAnimator.setPropertyName("translationX")
-                objectAnimator.setFloatValues(-sw, 0f)
-                objectAnimator
+                animator.setPropertyName("translationX")
+                animator.setFloatValues(-sw, 0f)
+                animator
+            }
+            R.anim.lib_x_remove_enter_holder2 -> {
+                animator.setPropertyName("translationX")
+                animator.setFloatValues(-sw * 0.1f, 0f)
+                animator
             }
             R.anim.lib_x_remove_exit_holder -> {
-                objectAnimator.setPropertyName("translationX")
-                objectAnimator.setFloatValues(0f, sw)
-                objectAnimator
+                animator.setPropertyName("translationX")
+                animator.setFloatValues(0f, sw)
+                animator
+            }
+            R.anim.lib_x_remove_exit_holder2 -> {
+                val set = AnimatorSet()
+                set.duration = duration
+                set.interpolator = AccelerateDecelerateInterpolator()
+
+                animator.setPropertyName("translationX")
+                animator.setFloatValues(0f, sw * 0.2f)
+
+                val alpha = ObjectAnimator()
+                alpha.setPropertyName("alpha")
+                alpha.setFloatValues(1f, 0f)
+
+                set.playTogether(animator, alpha)
+                set
             }
             else -> animatorOf(context, anim)
         }
