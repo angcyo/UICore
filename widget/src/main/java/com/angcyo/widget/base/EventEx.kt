@@ -2,6 +2,7 @@ package com.angcyo.widget.base
 
 import android.view.MotionEvent
 import android.view.View
+import com.angcyo.library.ex.nowTime
 
 /**
  *
@@ -52,4 +53,18 @@ fun Int.actionToString(): String {
         MotionEvent.ACTION_POINTER_UP -> "ACTION_POINTER_UP($index)"
         else -> action.toString()
     }
+}
+
+/**发送一个取消事件*/
+fun View.sendCancelEvent() {
+    val cancelEvent = MotionEvent.obtain(
+        nowTime(),
+        nowTime(),
+        MotionEvent.ACTION_CANCEL,
+        0f,
+        0f,
+        0
+    )
+    dispatchTouchEvent(cancelEvent)
+    cancelEvent.recycle()
 }

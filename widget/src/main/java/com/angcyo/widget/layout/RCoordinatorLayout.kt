@@ -15,7 +15,7 @@ import com.angcyo.widget.R
 import com.angcyo.widget.base.*
 
 /**
- *协调布局
+ * 协调布局
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/09/10
@@ -24,28 +24,39 @@ import com.angcyo.widget.base.*
 open class RCoordinatorLayout(
     context: Context,
     attributeSet: AttributeSet? = null
-) : CoordinatorLayout(context, attributeSet), ILayoutDelegate, ITouchHold {
+) : CoordinatorLayout(context, attributeSet), ILayoutDelegate, ITouchHold, ITouchDelegate {
 
     val layoutDelegate = RLayoutDelegate()
+
+    val _touchDelegate = TouchActionDelegate()
 
     init {
         val typedArray: TypedArray =
             context.obtainStyledAttributes(attributeSet, R.styleable.RCoordinatorLayout)
 
-        layoutDelegate.initAttribute(this, attributeSet)
+        getCustomLayoutDelegate().initAttribute(this, attributeSet)
 
         typedArray.recycle()
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-
         if (ev.isTouchDown()) {
             this.isTouchHold = true
         } else if (ev.isTouchFinish()) {
             this.isTouchHold = false
         }
-
+        getTouchActionDelegate().dispatchTouchEvent(ev)
         return super.dispatchTouchEvent(ev)
+    }
+
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        getTouchActionDelegate().onInterceptTouchEvent(ev)
+        return super.onInterceptTouchEvent(ev)
+    }
+
+    override fun onTouchEvent(ev: MotionEvent): Boolean {
+        getTouchActionDelegate().onTouchEvent(ev)
+        return super.onTouchEvent(ev)
     }
 
     var _disallowIntercept: Boolean = false
@@ -83,6 +94,7 @@ open class RCoordinatorLayout(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val layoutDelegate = getCustomLayoutDelegate()
         val layoutWidthHeightSpec =
             layoutDelegate.layoutWidthHeightSpec(widthMeasureSpec, heightMeasureSpec)
         val layoutDimensionRatioSpec = layoutDelegate.layoutDimensionRatioSpec(
@@ -102,6 +114,7 @@ open class RCoordinatorLayout(
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        val layoutDelegate = getCustomLayoutDelegate()
         layoutDelegate.onSizeChanged(w, h, oldw, oldh)
     }
 
@@ -132,6 +145,7 @@ open class RCoordinatorLayout(
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         super.onLayout(changed, l, t, r, b)
+        val layoutDelegate = getCustomLayoutDelegate()
         layoutDelegate.onLayout(changed, l, t, r, b)
 
         val layoutDirection = ViewCompat.getLayoutDirection(this)
@@ -156,6 +170,10 @@ open class RCoordinatorLayout(
 
     override fun getCustomLayoutDelegate(): RLayoutDelegate {
         return layoutDelegate
+    }
+
+    override fun getTouchActionDelegate(): TouchActionDelegate {
+        return _touchDelegate
     }
 
     /**是否还在touch中*/

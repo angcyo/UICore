@@ -489,6 +489,8 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
         handleEmojiLayout(ACTION_SHOW_EMOJI, height.orHeight())
     }
 
+    /**处理隐藏键盘/表情布局的高度,
+     * 并不会调用隐藏键盘的方法*/
     fun hideEmojiLayout() {
         if (_action == ACTION_SHOW_SOFT_INPUT) {
             handleSoftInput(ACTION_HIDE_SOFT_INPUT, 0)
@@ -640,6 +642,15 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
         }
         return true
     }
+
+    /**正常布局状态, 无键盘显示, 表情显示*/
+    fun isNormal(): Boolean = _bottomInsertHeight == 0
+
+    /**键盘是否显示了*/
+    fun isSoftInputShow(): Boolean = _isBottomWindowInset
+
+    /**表情布局是否显示*/
+    fun isEmojiLayoutShow(): Boolean = !isSoftInputShow() && _bottomInsertHeight > 0
 
     //</editor-fold desc="操作方法">
 }

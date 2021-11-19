@@ -6,6 +6,7 @@ import com.angcyo.behavior.BaseScrollBehavior
 
 /**
  * 刷新效果的行为, 只有效果, 不触发回调.
+ * 作用在刷新布局上, 需要配合[IRefreshContentBehavior]一起使用
  *
  * Email:angcyo@126.com
  * @author angcyo

@@ -13,9 +13,7 @@ import com.angcyo.library.L
 import com.angcyo.widget.R
 import com.angcyo.widget.base.isTouchDown
 import com.angcyo.widget.base.isTouchFinish
-import com.angcyo.widget.layout.ILayoutDelegate
-import com.angcyo.widget.layout.ITouchHold
-import com.angcyo.widget.layout.RLayoutDelegate
+import com.angcyo.widget.layout.*
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -29,7 +27,7 @@ import java.util.*
 
 typealias FocusTransitionChanged = (from: View?, to: View?) -> Unit
 
-open class DslRecyclerView : RecyclerView, ILayoutDelegate, ITouchHold {
+open class DslRecyclerView : RecyclerView, ILayoutDelegate, ITouchHold, ITouchDelegate {
 
     companion object {
         //用于在多个RV之间共享之前的焦点View
@@ -68,6 +66,8 @@ open class DslRecyclerView : RecyclerView, ILayoutDelegate, ITouchHold {
     }
 
     val layoutDelegate = RLayoutDelegate()
+
+    val _touchDelegate = TouchActionDelegate()
 
     /** 通过[V] [H] [GV2] [GH3] [SV2] [SV3] 方式, 设置 [LayoutManager] */
     var layout: String? = null
@@ -189,22 +189,6 @@ open class DslRecyclerView : RecyclerView, ILayoutDelegate, ITouchHold {
             setFocusView(this, null)
             clearChildFocus(child)
         }
-    }
-
-    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-
-        if (ev.isTouchDown()) {
-            this.isTouchHold = true
-        } else if (ev.isTouchFinish()) {
-            this.isTouchHold = false
-        }
-
-        val result = super.dispatchTouchEvent(ev)
-        if (enableFocusTransition && ev.isTouchFinish()) {
-            //如果是通过TouchEvent改变的focus, 则需要手动触发一次[findFocus]
-            findFocus()
-        }
-        return result
     }
 
     /**这个方法可以改变child绘制的顺序.
@@ -337,12 +321,36 @@ open class DslRecyclerView : RecyclerView, ILayoutDelegate, ITouchHold {
 
     //<editor-fold desc="Touch Over">
 
-    override fun onInterceptTouchEvent(e: MotionEvent?): Boolean {
-        return super.onInterceptTouchEvent(e)
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.isTouchDown()) {
+            this.isTouchHold = true
+        } else if (ev.isTouchFinish()) {
+            this.isTouchHold = false
+        }
+
+        getTouchActionDelegate().dispatchTouchEvent(ev)
+
+        val result = super.dispatchTouchEvent(ev)
+        if (enableFocusTransition && ev.isTouchFinish()) {
+            //如果是通过TouchEvent改变的focus, 则需要手动触发一次[findFocus]
+            findFocus()
+        }
+        return result
     }
 
-    override fun onTouchEvent(e: MotionEvent?): Boolean {
-        return super.onTouchEvent(e)
+
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        getTouchActionDelegate().onInterceptTouchEvent(ev)
+        return super.onInterceptTouchEvent(ev)
+    }
+
+    override fun onTouchEvent(ev: MotionEvent): Boolean {
+        getTouchActionDelegate().onTouchEvent(ev)
+        return super.onTouchEvent(ev)
+    }
+
+    override fun getTouchActionDelegate(): TouchActionDelegate {
+        return _touchDelegate
     }
 
     /**是否还在touch中*/

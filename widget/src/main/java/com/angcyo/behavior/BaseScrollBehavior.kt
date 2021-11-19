@@ -11,6 +11,7 @@ import androidx.core.view.ViewCompat
 import com.angcyo.library.L
 import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.orDef
+import com.angcyo.library.ex.simpleHash
 import com.angcyo.library.ex.toRSize
 import com.angcyo.tablayout.clamp
 import com.angcyo.widget.R
@@ -270,9 +271,8 @@ abstract class BaseScrollBehavior<T : View>(
         behaviorScrollX = x
         behaviorScrollY = y
 
-        if (showLog) {
-            L.v("scrollTo: x:$x y:$y")
-        }
+        L.v("${simpleHash()} scrollTo: x:$x y:$y")
+
         behaviorScrollTo?.invoke(x, y, scrollType) // offset操作
         onScrollTo(x, y, scrollType)
         listeners.forEach {
@@ -493,6 +493,37 @@ abstract class BaseScrollBehavior<T : View>(
         if (listeners.contains(listener)) {
             listeners.remove(listener)
         }
+    }
+
+    /**追加滚动监听*/
+    fun onBehaviorScrollToAction(action: (scrollBehavior: BaseScrollBehavior<*>, x: Int, y: Int, scrollType: Int) -> Unit): IScrollBehaviorListener {
+        val listener = object : IScrollBehaviorListener {
+            override fun onBehaviorScrollTo(
+                scrollBehavior: BaseScrollBehavior<*>,
+                x: Int,
+                y: Int,
+                scrollType: Int
+            ) {
+                action(scrollBehavior, x, y, scrollType)
+            }
+        }
+        addScrollListener(listener)
+        return listener
+    }
+
+    /**追加滚动停止监听*/
+    fun onBehaviorScrollStopAction(action: (scrollBehavior: BaseScrollBehavior<*>, scrollType: Int, endType: Int) -> Unit): IScrollBehaviorListener {
+        val listener = object : IScrollBehaviorListener {
+            override fun onBehaviorScrollStop(
+                scrollBehavior: BaseScrollBehavior<*>,
+                scrollType: Int,
+                endType: Int
+            ) {
+                action(scrollBehavior, scrollType, endType)
+            }
+        }
+        addScrollListener(listener)
+        return listener
     }
 }
 

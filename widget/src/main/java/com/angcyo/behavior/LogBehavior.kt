@@ -139,7 +139,8 @@ open class LogBehavior<T : View>(
         i("${target.simpleHash()} type:${type.toTypeString()}")
     }
 
-    /**即将fling操作*/
+    /**即将fling操作,
+     * 需要消耗fling 则返回true*/
     override fun onNestedPreFling(
         coordinatorLayout: CoordinatorLayout,
         child: T,
@@ -153,7 +154,8 @@ open class LogBehavior<T : View>(
         return super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY)
     }
 
-    /**内嵌滚动开始fling操作*/
+    /**内嵌滚动开始fling操作
+     * 需要消耗fling 则返回true*/
     override fun onNestedFling(
         coordinatorLayout: CoordinatorLayout,
         child: T,
