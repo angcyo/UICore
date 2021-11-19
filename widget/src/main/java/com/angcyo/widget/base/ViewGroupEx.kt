@@ -659,6 +659,32 @@ fun ViewGroup.updateDslItem(item: DslAdapterItem, payloads: List<Any> = emptyLis
     }
 }
 
+/**更新或者插入指定的[DslAdapterItem]在[ViewGroup]中*/
+fun ViewGroup.updateOrInsertDslItem(
+    item: DslAdapterItem,
+    insertIndex: Int = -1,
+    payloads: List<Any> = emptyList()
+) {
+    var have = false
+    forEach { index, child ->
+        val dslItem = child.tagDslAdapterItem()
+        if (item == dslItem) {
+            have = true
+            //更新
+            item.itemBind(child.dslViewHolder(), index, item, payloads)
+        }
+    }
+    if (!have) {
+        //插入
+        addDslItem(item, insertIndex, payloads)
+    }
+}
+
+/**移除指定的[item]*/
+fun ViewGroup.removeDslItem(item: DslAdapterItem?) {
+    removeAllDslItem { index, dslAdapterItem -> dslAdapterItem == item }
+}
+
 /**移除所有符合规则的child*/
 fun ViewGroup.removeAllDslItem(predicate: (Int, DslAdapterItem?) -> Boolean = { _, item -> item != null }) {
 

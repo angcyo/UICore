@@ -64,18 +64,19 @@ fun DslAdapter.findItemGroupParams(
             }
 
             for (j in i + 1 until allItemList.count()) {
-                val otherItem = allItemList[j]
+                val otherItem = allItemList.getOrNull(j)
+                if (otherItem != null) {
+                    //目标
+                    if (otherItem == dslAdapterItem) {
+                        anchorParams = nextParams
+                    }
 
-                //目标
-                if (otherItem == dslAdapterItem) {
-                    anchorParams = nextParams
-                }
-
-                if (item.isInGroupItem(otherItem)) {
-                    nextGroupItems.add(otherItem)
-                } else {
-                    nextItem = otherItem
-                    break
+                    if (item.isInGroupItem(otherItem)) {
+                        nextGroupItems.add(otherItem)
+                    } else {
+                        nextItem = otherItem
+                        break
+                    }
                 }
             }
         }
