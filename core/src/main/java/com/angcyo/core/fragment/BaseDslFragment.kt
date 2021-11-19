@@ -104,7 +104,9 @@ open class BaseDslFragment : BaseTitleFragment() {
         super.onFragmentFirstShow(bundle)
         //触发加载中
         if (enableAdapterRefresh) {
-            if (_adapter.dslAdapterStatusItem.itemState == DslAdapterStatusItem.ADAPTER_STATUS_NONE) {
+            if (_adapter.dslAdapterStatusItem.itemState == DslAdapterStatusItem.ADAPTER_STATUS_NONE ||
+                _adapter.dataItems.isEmpty()
+            ) {
                 _adapter.toLoading()
             }
         }
