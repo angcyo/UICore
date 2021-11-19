@@ -225,7 +225,7 @@ task _qiniuUpload() {
 
                     //保存二维码图片到文件
                     def qrCodeFile = file(".apk/二维码_${getBuildTime()}.png")
-                    saveUrlToFile(client, url, qrCodeFile)
+                    saveUrlToFile(client, qrCodeUrl, qrCodeFile)
 
                     //保存备用二维码图片到文件
                     def qrCodeFileBack = file(".apk/二维码备用_${getBuildTime()}.png")
@@ -296,6 +296,8 @@ static def saveUrlToFile(client, url, file) {
 static def saveStream(inputStream, file) {
     def out = new FileOutputStream(file, false)
     out.leftShift(inputStream)
+    out.flush()
+    out.close()
 }
 
 static def getBuildTime() {
