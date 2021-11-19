@@ -181,6 +181,20 @@ class DslIntent {
         fun openAppIntent(packageName: String): Intent? {
             return app().getAppOpenIntentByPackageName(packageName)
         }
+
+        /**打开系统设置界面
+         * https://www.jianshu.com/p/7145c2544ef4*/
+        fun openSettingIntent(content: Context = app()) {
+            val intent = Intent(Settings.ACTION_SETTINGS)
+            content.startActivity(intent)
+        }
+
+        /**打开网络设置界面
+         * https://blog.csdn.net/qq_15527669/article/details/80264884*/
+        fun openWirelessIntent(content: Context = app()) {
+            val intent = Intent(Settings.ACTION_WIRELESS_SETTINGS)
+            content.startActivity(intent)
+        }
     }
 
     //<editor-fold desc="分享相关配置">
