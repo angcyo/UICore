@@ -6,7 +6,6 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.ColorInt
-import androidx.appcompat.widget.AppCompatTextView
 import com.angcyo.widget.R
 import com.angcyo.widget.base.spans
 import com.angcyo.widget.span.IDrawableSpan
@@ -18,7 +17,7 @@ import com.angcyo.widget.span.IWeightSpan
  * @author angcyo
  * @date 2020/01/08
  */
-open class DslSpanTextView : AppCompatTextView {
+open class DslSpanTextView : PaintTextView {
 
     //drawable 额外的状态
     val _extraState = mutableListOf<Int>()

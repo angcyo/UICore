@@ -10,4 +10,9 @@
         <attr name="r_fold_text_color" format="color" />
         <attr name="r_install_span_click_method" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="PaintTextView">
+        <attr name="r_text_stroke_width" format="dimension" />
+        <attr name="r_text_stroke_color" format="color" />
+    </declare-styleable>
 </resources>

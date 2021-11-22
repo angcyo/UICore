@@ -47,6 +47,11 @@ typealias ItemBindAction = (
     payloads: List<Any>
 ) -> Unit
 
+typealias HolderBindAction = (
+    itemHolder: DslViewHolder,
+    itemPosition: Int
+) -> Unit
+
 open class DslAdapterItem : LifecycleOwner {
 
     companion object {
@@ -283,34 +288,29 @@ open class DslAdapterItem : LifecycleOwner {
     }
 
     /**用于覆盖默认操作*/
-    var itemBindOverride: (itemHolder: DslViewHolder, itemPosition: Int, adapterItem: DslAdapterItem, payloads: List<Any>) -> Unit =
-        { _, _, _, _ ->
-
-        }
+    var itemBindOverride: ItemBindAction = { _, _, _, _ ->
+    }
 
     /**
      * [DslAdapter.onViewAttachedToWindow]
      * */
-    var itemViewAttachedToWindow: (itemHolder: DslViewHolder, itemPosition: Int) -> Unit =
-        { itemHolder, itemPosition ->
-            onItemViewAttachedToWindow(itemHolder, itemPosition)
-        }
+    var itemViewAttachedToWindow: HolderBindAction = { itemHolder, itemPosition ->
+        onItemViewAttachedToWindow(itemHolder, itemPosition)
+    }
 
     /**
      * [DslAdapter.onViewDetachedFromWindow]
      * */
-    var itemViewDetachedToWindow: (itemHolder: DslViewHolder, itemPosition: Int) -> Unit =
-        { itemHolder, itemPosition ->
-            onItemViewDetachedToWindow(itemHolder, itemPosition)
-        }
+    var itemViewDetachedToWindow: HolderBindAction = { itemHolder, itemPosition ->
+        onItemViewDetachedToWindow(itemHolder, itemPosition)
+    }
 
     /**
      * [DslAdapter.onViewRecycled]
      * */
-    var itemViewRecycled: (itemHolder: DslViewHolder, itemPosition: Int) -> Unit =
-        { itemHolder, itemPosition ->
-            onItemViewRecycled(itemHolder, itemPosition)
-        }
+    var itemViewRecycled: HolderBindAction = { itemHolder, itemPosition ->
+        onItemViewRecycled(itemHolder, itemPosition)
+    }
 
     //</editor-fold desc="标准属性">
 
@@ -394,10 +394,15 @@ open class DslAdapterItem : LifecycleOwner {
     }
 
     open fun _initItemStyle(itemHolder: DslViewHolder) {
-        if (hideLastLineView) {
-            itemGroupParams.apply {
-                itemHolder.gone(R.id.lib_item_line_view, isLastPosition())
+        val showLine = itemShowLastLineView
+        if (showLine == null) {
+            if (itemAutoHideLastLineView) {
+                itemGroupParams.apply {
+                    itemHolder.gone(R.id.lib_item_line_view, isLastPosition())
+                }
             }
+        } else {
+            itemHolder.visible(R.id.lib_item_line_view, showLine)
         }
     }
 
@@ -495,7 +500,10 @@ open class DslAdapterItem : LifecycleOwner {
     var onlyDrawOffsetArea = false
 
     /**自动隐藏分组最后一个item的[R.id.lib_item_line_view]view*/
-    var hideLastLineView: Boolean = true
+    var itemAutoHideLastLineView: Boolean = true
+
+    /**是否强制隐藏/显示线*/
+    var itemShowLastLineView: Boolean? = null
 
     /**不绘制分组最后一个item的底部分割线*/
     var noDrawLastItemDecoration: Boolean = true
