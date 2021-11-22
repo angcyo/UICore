@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="GuideFrameLayout">
+        <!--注意, 原有FrameLayout的xml属性依旧有效-->
+
+        <!--用来在布局编辑器中预览 x,y,w,h:x,y,w,h 格式-->
+        <attr name="r_guide_anchors" format="string"/>
+    </declare-styleable>
+    <declare-styleable name="GuideFrameLayout_Layout">
+        <!--注意, 原有FrameLayout的xml属性依旧有效-->
+
+        <!--是否作为锚点显示-->
+        <attr name="r_guide_is_anchor" format="boolean"/>
+        <!--将自身的坐标, 映射成锚点坐标-->
+        <attr name="r_guide_with_anchor" format="boolean"/>
+        <!--需要和那个Anchor关联, -1不关联Anchor-->
+        <attr name="r_guide_show_in_anchor" format="integer"/>
+        <!--相对于Anchor的位置-->
+        <attr name="r_guide_gravity" format="enum">
+            <enum name="LEFT" value="1"/>
+            <enum name="RIGHT" value="3"/>
+            <enum name="TOP" value="2"/>
+            <enum name="BOTTOM" value="4"/>
+            <enum name="CENTER" value="5"/>
+            <enum name="LEFT_CENTER" value="6"/>
+            <enum name="TOP_CENTER" value="7"/>
+            <enum name="RIGHT_CENTER" value="8"/>
+            <enum name="BOTTOM_CENTER" value="9"/>
+        </attr>
+
+        <!--会受到gravity的影响-->
+        <attr name="r_guide_offset_x" format="dimension"/>
+        <attr name="r_guide_offset_y" format="dimension"/>
+
+        <!--补偿的宽度和高度, 只当 isAnchor=true 时有效-->
+        <attr name="r_guide_offset_width" format="dimension"/>
+        <attr name="r_guide_offset_height" format="dimension"/>
+    </declare-styleable>
+</resources>

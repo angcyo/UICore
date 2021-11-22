@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <!--虚线, 需要配合 android:layerType="software" -->
+    <stroke
+        android:width="2dp"
+        android:color="@color/lib_white"
+        android:dashWidth="6dp"
+        android:dashGap="2dp" />
+</shape>

@@ -160,3 +160,10 @@ fun String?.toBigLongOrNull(): Long? {
         null
     }
 }
+
+/**判断2个浮点数是否相等*/
+fun Float.eq(other: Float): Boolean =
+    java.lang.Float.floatToIntBits(this) == java.lang.Float.floatToIntBits(other)
+
+fun Double.eq(other: Double): Boolean =
+    java.lang.Double.doubleToLongBits(this) == java.lang.Double.doubleToLongBits(other)
