@@ -74,7 +74,7 @@
         tools:text="2021-9-23" />
 
     <View
-        android:id="@+id/lib_line_view"
+        android:id="@+id/lib_item_line_view"
         android:layout_width="0dp"
         android:layout_height="@dimen/lib_line_px"
         android:background="@color/lib_line"

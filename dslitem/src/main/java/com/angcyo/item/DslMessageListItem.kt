@@ -1,7 +1,6 @@
 package com.angcyo.item
 
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.dsladapter.isItemLastInAdapter
 import com.angcyo.item.style.*
 import com.angcyo.widget.DslViewHolder
 
@@ -38,8 +37,5 @@ open class DslMessageListItem : DslAdapterItem(), IImageItem, ITextItem, IDesIte
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
         itemHolder.tv(R.id.lib_time_view)?.text = itemTime
-
-        //最后一条, 隐藏线
-        itemHolder.gone(R.id.lib_line_view, isItemLastInAdapter())
     }
 }
