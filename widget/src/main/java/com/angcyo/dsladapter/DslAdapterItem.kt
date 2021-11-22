@@ -749,20 +749,10 @@ open class DslAdapterItem : LifecycleOwner {
         var result = this == newItem
         if (!result) {
             val thisItemClassname = this.className()
-            if (thisItemClassname == newItem.className()) {
-                //类名相同的2个item
-                if (itemData != null || newItem.itemData != null) {
-                    //如果有数据, 则使用数据判断2个item是否一样
-                    result = itemData == newItem.itemData
-                } else {
-                    if (thisItemClassname == DslAdapterItem::class.java.className()) {
-                        //默认的DslAdapterItem
-                        result = itemLayoutId == newItem.itemLayoutId
-                    }
-                }
-            } else {
-                //不相同类名的2个item
-            }
+            val newItemClassName = newItem.className()
+            //相同类名, 且布局类型相同的2个item, 不进行insert/remove操作
+            result = thisItemClassname == newItemClassName &&
+                    itemViewType ?: itemLayoutId == newItem.itemViewType ?: newItem.itemLayoutId
         }
         result
     }
