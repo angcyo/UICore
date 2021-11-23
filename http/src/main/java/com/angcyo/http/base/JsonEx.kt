@@ -341,3 +341,25 @@ fun Any.toJsonElement() = (if (this is String) this else toJson()).fromJson(Json
 fun String.toJsonObject() = fromJson(JsonObject::class.java)
 
 fun String.toJsonArray() = fromJson(JsonArray::class.java)
+
+//<editor-fold desc="数据类型转换">
+
+/**将数据结构[T]通过json转换成[R]*/
+fun <T, R> T.toBean(cls: Class<R>): R {
+    val json = this.toJson()
+    return json.fromJson(cls)!!
+}
+
+fun <T, R> List<T>.toBeanList(cls: Class<R>, init: R.(T) -> Unit = {}): List<R> {
+    val result = mutableListOf<R>()
+    forEach {
+        it.toBean(cls)?.let { bean ->
+            result.add(bean.apply {
+                init(it)
+            })
+        }
+    }
+    return result
+}
+
+//</editor-fold desc="数据类型转换">
