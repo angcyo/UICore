@@ -9,7 +9,9 @@ import android.graphics.Color
 import android.net.Uri
 import android.text.Spannable
 import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.text.TextUtils
+import android.text.style.ForegroundColorSpan
 import android.util.Base64
 import android.webkit.MimeTypeMap
 import androidx.annotation.ColorInt
@@ -17,13 +19,16 @@ import androidx.annotation.UiThread
 import androidx.core.net.toUri
 import androidx.core.text.getSpans
 import com.angcyo.library.L
+import com.angcyo.library.R
 import com.angcyo.library.app
 import com.angcyo.library.utils.PATTERN_EMAIL
 import com.angcyo.library.utils.PATTERN_MOBILE_SIMPLE
 import com.angcyo.library.utils.PATTERN_URL
 import java.net.URLDecoder
 import java.net.URLEncoder
+import java.util.regex.Matcher
 import java.util.regex.Pattern
+
 
 /**
  *
@@ -673,4 +678,57 @@ fun notEmptyOf(vararg str: String?): String {
         }
     }
     return ""
+}
+
+/**高亮匹配的文本*/
+fun CharSequence.highlight(
+    pattern: String,
+    color: Int = _color(R.color.colorAccent)
+): SpannableStringBuilder {
+
+    if (TextUtils.isEmpty(this)) {
+        return SpannableStringBuilder("")
+    }
+
+    if (TextUtils.isEmpty(pattern)) {
+        return SpannableStringBuilder(this)
+    }
+
+    //关键代码
+    val builder = SpannableStringBuilder(this)
+
+    val p = Pattern.compile(pattern)
+    val m: Matcher = p.matcher(this)
+    while (m.find()) {
+        val start = m.start()
+        val end = m.end()
+        builder.setSpan(ForegroundColorSpan(color), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    }
+    return builder
+}
+
+/**移除指定类型的span*/
+fun CharSequence.removeSpan(cls: Class<*>) {
+    if (this is Spannable) {
+        val spans = getSpans(0, length, Any::class.java)
+        for (span in spans) {
+            if (span.javaClass == cls) {
+                this.removeSpan(span)
+            }
+        }
+    }
+}
+
+/**转义正则特殊字符 （$()*+.[]?\^{},|）*/
+fun CharSequence.escapeExprSpecialWord(): CharSequence {
+    var keyword: String = this.toString()
+    if (!TextUtils.isEmpty(this)) {
+        val fbsArr = arrayOf("\\", "$", "(", ")", "*", "+", ".", "[", "]", "?", "^", "{", "}", "|")
+        for (key in fbsArr) {
+            if (keyword.contains(key)) {
+                keyword = keyword.replace(key, "\\" + key)
+            }
+        }
+    }
+    return keyword
 }
