@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import androidx.fragment.app.Fragment
 import com.angcyo.http.base.fromJson
+import com.angcyo.http.base.listType
 import com.angcyo.http.base.toJson
 import java.io.Serializable
 
@@ -94,12 +95,35 @@ fun Fragment.putDataSerializable(
     return this
 }
 
+/**[Parcelable]*/
+fun Fragment.putParcelableList(
+    data: ArrayList<out Parcelable>?,
+    key: String = BUNDLE_KEY_SERIALIZABLE
+): Fragment {
+    val bundle = Bundle()
+    bundle.putParcelableArrayList(key, data)
+
+    arguments?.putAll(bundle)
+
+    if (arguments == null) {
+        arguments = bundle
+    }
+
+    return this
+}
+
 /**快速从[Fragment]获取[putData]设置的数据*/
 inline fun <reified DATA> Fragment.getData(key: String = BUNDLE_KEY_JSON): DATA? =
     arguments?.getJson(key)?.covertFromStr()
 
+fun <DATA> Fragment.getDataList(cls: Class<DATA>, key: String = BUNDLE_KEY_JSON): List<DATA>? =
+    arguments?.getJson(key)?.fromJson(listType(cls))
+
 inline fun <reified DATA> Fragment.getDataSerializable(key: String = BUNDLE_KEY_SERIALIZABLE): DATA? =
     arguments?.getSerializable(key) as? DATA?
+
+inline fun <reified DATA : Parcelable?> Fragment.getParcelableList(key: String = BUNDLE_KEY_SERIALIZABLE): ArrayList<DATA>? =
+    arguments?.getParcelableArrayList(key)
 
 //</editor-fold desc="Fragment put get">
 

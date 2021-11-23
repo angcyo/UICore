@@ -22,6 +22,9 @@ import java.util.concurrent.atomic.AtomicReference
 open class BaseObserver<T> : AtomicReference<Disposable>(),
     Observer<T>, Disposable {
 
+    /**自动处置*/
+    var autoDispose = true
+
     //<editor-fold desc="Dsl">
 
     var onSubscribe: (Disposable) -> Unit = {
@@ -125,6 +128,10 @@ open class BaseObserver<T> : AtomicReference<Disposable>(),
             e.printStackTrace()
             onError.invoke(e)
             onObserverEnd?.invoke(null, e)
+        }
+
+        if (autoDispose) {
+            dispose()
         }
     }
 
