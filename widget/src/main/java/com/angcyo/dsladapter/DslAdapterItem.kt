@@ -230,9 +230,11 @@ open class DslAdapterItem : LifecycleOwner {
      * [DslAdapter.onBindViewHolder(com.angcyo.widget.DslViewHolder, int, java.util.List<? extends java.lang.Object>)]
      * */
     var itemBind: ItemBindAction = { itemHolder, itemPosition, adapterItem, payloads ->
+        _itemGroupParamsCache = null //清空[ItemGroupParams]缓存
         onItemBind(itemHolder, itemPosition, adapterItem, payloads)
         itemBindOverride(itemHolder, itemPosition, adapterItem, payloads)
         onItemBindAfter(itemHolder, itemPosition, adapterItem, payloads)
+        _itemGroupParamsCache = null //清空[ItemGroupParams]缓存
     }
 
     /**
@@ -283,7 +285,6 @@ open class DslAdapterItem : LifecycleOwner {
         adapterItem: DslAdapterItem,
         payloads: List<Any>
     ) {
-        _itemGroupParamsCache = null
         //请注意缓存.
         //itemHolder.clear()
     }

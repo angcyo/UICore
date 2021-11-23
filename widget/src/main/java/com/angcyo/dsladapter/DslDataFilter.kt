@@ -230,6 +230,17 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
         _dispatchUpdatesSet.remove(listener)
     }
 
+    /**添加一个数据过滤器*/
+    fun addFilterInterceptor(intercept: (chain: FilterChain) -> List<DslAdapterItem>): IFilterInterceptor {
+        val obj = object : BaseFilterInterceptor() {
+            override fun intercept(chain: FilterChain): List<DslAdapterItem> {
+                return intercept(chain)
+            }
+        }
+        filterInterceptorList.add(obj)
+        return obj
+    }
+
     /**Diff更新任务*/
     internal inner class UpdateTaskRunnable : Runnable {
 
