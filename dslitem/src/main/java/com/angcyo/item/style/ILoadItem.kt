@@ -27,6 +27,9 @@ interface ILoadItem : IDslItem {
 
 class LoadItemConfig : IDslItemConfig {
 
+    /**是否使用加载后的缓存*/
+    var itemUseLoadCache: Boolean = true
+
     /**触发此方法, 异步加载数据
      * [error] 是否加载异常*/
     var itemLoadAction: ((result: ResultThrowable) -> Unit)? = null

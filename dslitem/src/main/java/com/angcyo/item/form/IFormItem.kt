@@ -56,6 +56,12 @@ var IFormItem.formErrorTip: String
         itemFormConfig.formErrorTip = value
     }
 
+var IFormItem.formKey: String?
+    get() = itemFormConfig.formKey
+    set(value) {
+        itemFormConfig.formKey = value
+    }
+
 /**
  * 表单[IFormItem]配置信息
  * Email:angcyo@126.com
