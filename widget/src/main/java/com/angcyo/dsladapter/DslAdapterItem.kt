@@ -13,6 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -728,6 +729,10 @@ open class DslAdapterItem : LifecycleOwner {
 
     //<editor-fold desc="Diff相关">
 
+    /**是否需要更新item
+     * 在[diffResult]之后会被重置*/
+    var itemUpdateFlag: Boolean = false
+
     /**
      * 决定
      * [RecyclerView.Adapter.notifyItemInserted]
@@ -773,6 +778,7 @@ open class DslAdapterItem : LifecycleOwner {
         oldItemPosition: Int, newItemPosition: Int
     ) -> Boolean = { fromItem, newItem, _, _ ->
         when {
+            itemUpdateFlag -> false
             itemChanging -> false
             (newItem.itemData != null && itemData != null && newItem.itemData == itemData) -> true
             fromItem == null -> this == newItem
@@ -785,6 +791,12 @@ open class DslAdapterItem : LifecycleOwner {
         oldItemPosition: Int, newItemPosition: Int
     ) -> Any? = { _, filterPayload, _, _, _ ->
         filterPayload ?: PAYLOAD_UPDATE_PART
+    }
+
+    /**Diff计算完成之后的回调
+     * [com.angcyo.dsladapter.DslDataFilter.UpdateTaskRunnable.onDiffResult]*/
+    open fun diffResult(filterParams: FilterParams?, result: DiffUtil.DiffResult) {
+        itemChanging = false
     }
 
     //</editor-fold desc="Diff相关">
@@ -1096,6 +1108,7 @@ class UpdateDependProperty<T>(
         val old = this.value
         this.value = value
         if (old != value) {
+            thisRef.itemUpdateFlag = true
             thisRef.updateItemDepend(
                 FilterParams(thisRef, updateDependItemWithEmpty = true, payload = payload)
             )
@@ -1115,6 +1128,7 @@ class UpdateAdapterProperty<T>(
         val old = this.value
         this.value = value
         if (old != value) {
+            thisRef.itemUpdateFlag = true
             thisRef.updateAdapterItem(payload)
         }
     }

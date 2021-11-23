@@ -379,8 +379,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             val newSize = diffList.size
 
             diffList.forEach {
-                //清空标志
-                it.itemChanging = false
+                it.diffResult(_params, diffResult)
             }
 
             val updateDependItemList = getUpdateDependItemList()
