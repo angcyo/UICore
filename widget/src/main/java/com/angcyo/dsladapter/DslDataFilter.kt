@@ -467,24 +467,25 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
         }
 
         /**通知依赖的子项, 更新界面*/
-        private fun notifyUpdateDependItem(itemList: List<DslAdapterItem>) {
+        private fun notifyUpdateDependItem(dependItemList: List<DslAdapterItem>) {
             if (_params?.fromDslAdapterItem == null || taskCancel.get()) {
                 return
             }
 
             val fromItem = _params!!.fromDslAdapterItem!!
 
-            if (itemList.isNotEmpty()) {
+            if (dependItemList.isNotEmpty()) {
                 L.v("来自:${fromItem.simpleHash()} tag:${fromItem.itemTag}的更新↓")
             }
 
-            itemList.forEachIndexed { index, dslAdapterItem ->
-                dslAdapterItem.apply {
-                    itemUpdateFrom(fromItem)
-                    dslAdapterItem.updateAdapterItem(true)
+            dependItemList.forEachIndexed { index, dependItem ->
+                dependItem.apply {
+                    if (itemUpdateFrom(fromItem)) {
+                        dependItem.updateAdapterItem(true)
+                    }
+                    itemUpdateFromListenerList.forEach { it(fromItem) }
                 }
-
-                L.v("$index->通知更新:${dslAdapterItem.simpleHash()} tag:${dslAdapterItem.itemTag}")
+                L.v("$index->通知更新:${dependItem.simpleHash()} tag:${dependItem.itemTag}")
             }
         }
 

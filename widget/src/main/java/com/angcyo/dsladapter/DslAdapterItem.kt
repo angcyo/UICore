@@ -41,6 +41,8 @@ import kotlin.reflect.KProperty
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
+typealias ItemAction = (DslAdapterItem) -> Unit
+
 typealias ItemBindAction = (
     itemHolder: DslViewHolder,
     itemPosition: Int,
@@ -810,6 +812,7 @@ open class DslAdapterItem : LifecycleOwner {
             field = value
             if (value) {
                 itemChangeListener(this)
+                itemChangeListenerList.forEach { it(this) }
             }
         }
 
@@ -836,6 +839,18 @@ open class DslAdapterItem : LifecycleOwner {
         updateItemDepend()
     }
 
+    /**[itemChangeListener]*/
+    val itemChangeListenerList = mutableSetOf<ItemAction>()
+
+    fun observeItemChange(action: ItemAction): ItemAction {
+        itemChangeListenerList.add(action)
+        return action
+    }
+
+    fun removeItemChangeObserver(action: ItemAction): Boolean {
+        return itemChangeListenerList.remove(action)
+    }
+
     /**
      * [checkItem] 是否需要关联到处理列表
      * [itemIndex] 分组折叠之后数据列表中的index
@@ -857,14 +872,28 @@ open class DslAdapterItem : LifecycleOwner {
         { _, _ -> false }
 
     /**入口方法
-     * [isItemInUpdateList]*/
-    var itemUpdateFrom: (fromItem: DslAdapterItem) -> Unit = {
+     * [isItemInUpdateList]
+     * 返回值表示, 是否需要更新自己
+     * [com.angcyo.dsladapter.DslDataFilter.UpdateTaskRunnable.notifyUpdateDependItem]*/
+    var itemUpdateFrom: (fromItem: DslAdapterItem) -> Boolean = {
         onItemUpdateFrom(it)
     }
 
     /**覆盖方法 [itemUpdateFrom]*/
-    open fun onItemUpdateFrom(fromItem: DslAdapterItem) {
+    open fun onItemUpdateFrom(fromItem: DslAdapterItem): Boolean {
+        return true
+    }
 
+    /**[itemUpdateFrom]*/
+    val itemUpdateFromListenerList = mutableSetOf<ItemAction>()
+
+    fun observeItemUpdateFrom(action: ItemAction): ItemAction {
+        itemUpdateFromListenerList.add(action)
+        return action
+    }
+
+    fun removeItemUpdateFromObserver(action: ItemAction): Boolean {
+        return itemUpdateFromListenerList.remove(action)
     }
 
     //</editor-fold desc="定向更新">
