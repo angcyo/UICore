@@ -44,10 +44,25 @@ var IFormItem.formCanEdit: Boolean
         }
     }
 
+/**全忽略*/
 var IFormItem.formIgnore: Boolean
     get() = itemFormConfig.formIgnore
     set(value) {
         itemFormConfig.formIgnore = value
+    }
+
+/**忽略check*/
+var IFormItem.formIgnoreCheck: Boolean
+    get() = itemFormConfig.formIgnoreCheck
+    set(value) {
+        itemFormConfig.formIgnoreCheck = value
+    }
+
+/**忽略数据获取*/
+var IFormItem.formIgnoreObtain: Boolean
+    get() = itemFormConfig.formIgnoreObtain
+    set(value) {
+        itemFormConfig.formIgnoreObtain = value
     }
 
 var IFormItem.formErrorTip: String

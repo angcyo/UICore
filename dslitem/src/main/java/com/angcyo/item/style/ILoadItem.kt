@@ -13,9 +13,16 @@ import com.angcyo.library.ex.ResultThrowable
  */
 interface ILoadItem : IDslItem {
 
+    /**配置类*/
     var loadItemConfig: LoadItemConfig
 
-    fun configItemLoadAction(action: (result: ResultThrowable?) -> Unit) {
+    /**配置动态加载数据的action*/
+    fun configItemLoadAction(
+        enableCache: Boolean = loadItemConfig.itemUseLoadCache,
+        action: (result: ResultThrowable?) -> Unit
+    ) {
+        //是否使用缓存
+        loadItemConfig.itemUseLoadCache = enableCache
         //配置成员
         loadItemConfig.itemLoadAction = {
             action(it)
@@ -25,6 +32,20 @@ interface ILoadItem : IDslItem {
     }
 }
 
+typealias LoadResultAction = (result: ResultThrowable) -> Unit
+
+var ILoadItem.itemUseLoadCache: Boolean
+    get() = loadItemConfig.itemUseLoadCache
+    set(value) {
+        loadItemConfig.itemUseLoadCache = value
+    }
+
+var ILoadItem.itemLoadAction: LoadResultAction?
+    get() = loadItemConfig.itemLoadAction
+    set(value) {
+        loadItemConfig.itemLoadAction = value
+    }
+
 class LoadItemConfig : IDslItemConfig {
 
     /**是否使用加载后的缓存*/
@@ -32,5 +53,5 @@ class LoadItemConfig : IDslItemConfig {
 
     /**触发此方法, 异步加载数据
      * [error] 是否加载异常*/
-    var itemLoadAction: ((result: ResultThrowable) -> Unit)? = null
+    var itemLoadAction: LoadResultAction? = null
 }
