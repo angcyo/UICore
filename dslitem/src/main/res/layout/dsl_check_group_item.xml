@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_item_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/lib_white"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/lib_xhdpi">
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_label_view"
+        style="@style/ItemLabelStyle"
+        android:textColor="@color/text_general_color"
+        tools:text="Label" />
+
+    <com.angcyo.widget.layout.DslFlowLayout
+        android:id="@+id/lib_flow_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:paddingLeft="@dimen/lib_padding_left"
+        android:paddingRight="@dimen/lib_padding_left"
+        app:r_flow_item_horizontal_space="@dimen/lib_xxhdpi" />
+
+</com.angcyo.widget.layout.RLinearLayout>
