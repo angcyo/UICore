@@ -94,6 +94,18 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
         lock.withLock {
             val nowTime = System.currentTimeMillis()
 
+            if (!params.important) {
+                //非重要的操作
+                val importantTask =
+                    _updateTaskLit.find { !it.taskCancel.get() && it._params?.important == true }
+
+                if (importantTask != null) {
+                    //有主要的任务还未处理
+                    L.w("来自[${params.fromDslAdapterItem?.simpleHash()}]的Diff被忽略,原因[important]")
+                    return
+                }
+            }
+
             if (handle.hasCallbacks()) {
                 //立即触发一次, 子项依赖的更新, 防止部分状态丢失.
                 _updateTaskLit.lastOrNull()?.notifyUpdateDependItem()
@@ -106,6 +118,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                     if (it._params?.justRun == true) {
                         //此任务需要立即执行, 跳过取消
                     } else {
+                        L.w("来自[${it._params?.fromDslAdapterItem?.simpleHash()}]的Diff被忽略,原因[justRun:${params.justRun}][debounce:${params.shakeType == OnceHandler.SHAKE_TYPE_DEBOUNCE}]")
                         it.taskCancel.set(true)
                     }
                 } else if (params.shakeType == OnceHandler.SHAKE_TYPE_THROTTLE) {
@@ -117,6 +130,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
                             if (it._params?.justRun == true) {
                                 //此任务需要立即执行, 跳过取消
                             } else {
+                                L.w("来自[${it._params?.fromDslAdapterItem?.simpleHash()}]的Diff被忽略,原因[throttle]")
                                 it.taskCancel.set(true)
                             }
                         }
@@ -504,25 +518,22 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
 }
 
 data class FilterParams(
-    /**
-     * 触发更新的来源, 定向更新其子项.
-     * */
+    /** 触发更新的来源, 定向更新其子项. */
     val fromDslAdapterItem: DslAdapterItem? = null,
-    /**
-     * 异步计算Diff
-     * */
+
+    /** 异步计算Diff */
     var asyncDiff: Boolean = true,
-    /**
-     * 立即执行, 不检查抖动
-     * */
+
+    /** 立即执行, 不检查抖动 */
     var justRun: Boolean = false,
-    /**
-     * 只过滤列表数据, 不通知界面操作, 但是会通过子项更新. 开启此属性会:[async=true] [just=true]
-     * */
+
+    /** 只过滤列表数据, 不通知界面操作, 但是会通过子项更新. 开启此属性会:[async=true] [just=true] */
     var justFilter: Boolean = false,
-    /**
-     * 前提, Diff 之后, 2个数据列表的大小要一致.
-     *
+
+    /**重要的, 确保本次diff一定会执行, 再次操作后续的非[important]操作都将被忽略*/
+    var important: Boolean = false,
+
+    /** 前提, Diff 之后, 2个数据列表的大小要一致.
      * 当依赖的[DslAdapterItem] [isItemInUpdateList]列表为空时, 是否要调用[dispatchUpdatesTo]更新界面
      * */
     var updateDependItemWithEmpty: Boolean = true,
