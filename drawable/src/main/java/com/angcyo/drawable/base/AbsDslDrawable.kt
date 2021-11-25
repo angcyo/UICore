@@ -164,9 +164,12 @@ abstract class AbsDslDrawable : Drawable() {
         return textPaint.isFilterBitmap
     }
 
+    var _lastBounds: Rect? = null
+
     override fun onBoundsChange(bounds: Rect?) {
         super.onBoundsChange(bounds)
-        if (attachView?.isInEditMode != true) {
+        if (attachView?.isInEditMode != true && _lastBounds != bounds) {
+            _lastBounds = bounds
             L.v("${hash()} bound change:$bounds")
         }
     }

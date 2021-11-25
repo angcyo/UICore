@@ -107,6 +107,13 @@ open class DslViewPager : ViewPager {
         }
     }
 
+    var _disallowIntercept: Boolean = false
+
+    override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+        super.requestDisallowInterceptTouchEvent(disallowIntercept)
+        _disallowIntercept = disallowIntercept
+    }
+
     override fun onTouchEvent(ev: MotionEvent?): Boolean {
         if (!isEnabled) {
             return true

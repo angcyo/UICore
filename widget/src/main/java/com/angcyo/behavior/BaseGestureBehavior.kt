@@ -111,7 +111,7 @@ abstract class BaseGestureBehavior<T : View>(
     open fun handleTouchEvent(parent: CoordinatorLayout, child: T, ev: MotionEvent): Boolean {
         var result = false
         if (ev.isTouchFinish()) {
-            parent.requestDisallowInterceptTouchEvent(false)
+            //parent.requestDisallowInterceptTouchEvent(false)//2021-11-25
             onTouchFinish(parent, child, ev)
         } else if (ev.isTouchDown()) {
             _needHandleTouch = true
