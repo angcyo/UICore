@@ -6,7 +6,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/lib_bg_selector"
-    android:button="@drawable/wt_check_selector"
+    android:button="@drawable/lib_check_selector"
     android:paddingLeft="@dimen/lib_hdpi"
     android:paddingTop="@dimen/lib_ldpi"
     android:paddingRight="@dimen/lib_hdpi"

@@ -2,6 +2,7 @@
 <resources>
 
     <dimen name="lib_item_label_min_width">75dp</dimen>
+    <dimen name="lib_check_box_size">18dp</dimen>
 
     <!--显示时, 标签的样式-->
     <style name="ItemLabelStyle" parent="LibSubTextStyle">
