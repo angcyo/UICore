@@ -3,7 +3,9 @@ package com.angcyo.dsladapter.data
 import com.angcyo.dsladapter.*
 import com.angcyo.library.ex.className
 import com.angcyo.library.ex.isListEmpty
+import com.angcyo.library.ex.size
 import com.angcyo.library.model.Page
+import com.angcyo.library.model.singlePage
 import com.angcyo.widget.R
 import kotlin.math.max
 import kotlin.math.min
@@ -288,6 +290,26 @@ fun DslAdapter.updateAdapterErrorState(error: Throwable?) {
             isAdapterStatusLoading() -> toNone()
             else -> toLoadMoreError()
         }
+    }
+}
+
+/**更新[DslAdapter]情感图状态*/
+fun DslAdapter.updateAdapterState(list: List<*>?, error: Throwable?, page: Page = singlePage()) {
+    updateAdapterErrorState(error)
+    if (error == null) {
+        val isDataEmpty: Boolean = if (page.isFirstPage()) {
+            list.isNullOrEmpty()
+        } else {
+            dataItems.isEmpty()
+        }
+
+        if (isDataEmpty && headerItems.isEmpty() && footerItems.isEmpty()) {
+            //空数据
+            setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_EMPTY)
+        } else {
+            setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_NONE)
+        }
+        updateLoadMore(page.requestPageIndex, list.size(), page.requestPageSize, false)
     }
 }
 
