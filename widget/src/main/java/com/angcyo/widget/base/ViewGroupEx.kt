@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import androidx.annotation.LayoutRes
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.library.ex.abs
+import com.angcyo.library.ex.size
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
 import com.angcyo.widget.layout.RSoftInputLayout
@@ -321,6 +322,17 @@ fun ViewGroup.replace(viewGroup: ViewGroup): ViewGroup {
     return viewGroup
 }
 
+fun <T> ViewGroup.resetChild(
+    list: List<T>?,
+    layoutId: Int,
+    init: (itemView: View, item: T, itemIndex: Int) -> Unit = { _, _, _ -> }
+) {
+    resetChild(list.size(), layoutId) { itemView, itemIndex ->
+        val item = list!!.get(itemIndex)
+        init(itemView, item, itemIndex)
+    }
+}
+
 fun ViewGroup.resetChild(
     size: Int,
     layoutId: Int,
@@ -387,6 +399,14 @@ fun ViewGroup.adjustOrder(vararg childOrder: View?) {
             addView(view, index)
         }
     }
+}
+
+fun ViewGroup.adjustOrder(vararg id: Int) {
+    val array = Array<View?>(id.size) { null }
+    id.forEachIndexed { index, i ->
+        array[index] = findViewById(i)
+    }
+    adjustOrder(*array)
 }
 
 //</editor-fold desc="child操作">

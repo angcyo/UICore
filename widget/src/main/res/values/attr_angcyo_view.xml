@@ -20,9 +20,23 @@
     <attr name="r_dimension_ratio" format="string" />
 
     <!--宽高是否相等-->
-    <attr name="r_is_aeq_width" format="boolean"/>
+    <attr name="r_is_aeq_width" format="boolean" />
+
+    <attr name="r_clip_type" format="flags">
+        <flag name="CLIP_TYPE_NONE" value="0" />
+        <flag name="CLIP_TYPE_DEFAULT" value="1" />
+        <flag name="CLIP_TYPE_ROUND" value="2" />
+        <flag name="CLIP_TYPE_CIRCLE" value="3" />
+        <flag name="CLIP_TYPE_RECT" value="4" />
+    </attr>
+    <attr name="r_clip_radius" format="dimension" />
 
     <!--相同[Layout]属性代理读取设置¬-->
+    <declare-styleable name="ClipLayoutDelegate">
+        <attr name="r_clip_type" />
+        <attr name="r_clip_radius" />
+    </declare-styleable>
+
     <declare-styleable name="RLayoutDelegate">
         <attr name="r_background" />
         <attr name="r_max_height" />
@@ -60,6 +74,9 @@
         <attr name="r_draw_line_offset_y" />
         <attr name="r_draw_line_drawable" />
         <attr name="r_draw_line_front" />
+
+        <attr name="r_clip_type" />
+        <attr name="r_clip_radius" />
     </declare-styleable>
 
     <declare-styleable name="RCoordinatorLayout">
@@ -86,6 +103,9 @@
         <attr name="r_draw_line_offset_y" />
         <attr name="r_draw_line_drawable" />
         <attr name="r_draw_line_front" />
+
+        <attr name="r_clip_type" />
+        <attr name="r_clip_radius" />
     </declare-styleable>
 
     <declare-styleable name="RConstraintLayout">
@@ -112,6 +132,9 @@
         <attr name="r_draw_line_offset_y" />
         <attr name="r_draw_line_drawable" />
         <attr name="r_draw_line_front" />
+
+        <attr name="r_clip_type" />
+        <attr name="r_clip_radius" />
     </declare-styleable>
 
     <declare-styleable name="RFrameLayout">
@@ -138,6 +161,9 @@
         <attr name="r_draw_line_offset_y" />
         <attr name="r_draw_line_drawable" />
         <attr name="r_draw_line_front" />
+
+        <attr name="r_clip_type" />
+        <attr name="r_clip_radius" />
     </declare-styleable>
 
 </resources>

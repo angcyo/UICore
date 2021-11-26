@@ -24,7 +24,7 @@ import kotlin.math.absoluteValue
  * @author angcyo
  * @date 2020/02/03
  */
-class RLayoutDelegate : LayoutDelegate() {
+class RLayoutDelegate : ClipLayoutDelegate() {
 
     /**额外的底层背景[Drawable]*/
     var bDrawable: Drawable? = null
@@ -99,7 +99,7 @@ class RLayoutDelegate : LayoutDelegate() {
     var drawLineDrawable = DrawLineDrawable()
 
     override fun initAttribute(view: View, attributeSet: AttributeSet?) {
-        this.delegateView = view
+        super.initAttribute(view, attributeSet)
         val typedArray =
             view.context.obtainStyledAttributes(attributeSet, R.styleable.RLayoutDelegate)
 
@@ -126,29 +126,37 @@ class RLayoutDelegate : LayoutDelegate() {
     }
 
     /**布局蒙版*/
-    fun maskLayout(canvas: Canvas, drawSuper: () -> Unit = {}) {
-        maskDrawable?.run {
-            val width: Int = delegateView.width
-            val height: Int = delegateView.height
-            val saveCount = delegateView.save(canvas)
-            setBounds(
-                delegateView.paddingLeft,
-                delegateView.paddingTop,
-                width - delegateView.paddingRight,
-                height - delegateView.paddingBottom
-            )
-            draw(canvas)
-            delegateView.save(canvas, _maskPaint)
-            drawSuper()
-            canvas.restoreToCount(saveCount)
-        } ?: drawSuper()
+    override fun maskLayout(canvas: Canvas, drawSuper: () -> Unit) {
+        super.maskLayout(canvas) {
+            maskDrawable?.run {
+                val width: Int = delegateView.width
+                val height: Int = delegateView.height
+                val saveCount = delegateView.save(canvas)
+                setBounds(
+                    delegateView.paddingLeft,
+                    delegateView.paddingTop,
+                    width - delegateView.paddingRight,
+                    height - delegateView.paddingBottom
+                )
+                draw(canvas)
+                delegateView.save(canvas, _maskPaint)
+                drawSuper()
+                canvas.restoreToCount(saveCount)
+            } ?: drawSuper()
 
-        drawLineDrawable.setBounds(0, 0, delegateView.measuredWidth, delegateView.measuredHeight)
-        drawLineDrawable.draw(canvas)
+            drawLineDrawable.setBounds(
+                0,
+                0,
+                delegateView.measuredWidth,
+                delegateView.measuredHeight
+            )
+            drawLineDrawable.draw(canvas)
+        }
     }
 
     /**[bDrawable]属性支持*/
     override fun draw(canvas: Canvas) {
+        super.draw(canvas)
         bDrawable?.run {
             setBounds(0, 0, delegateView.width, delegateView.height)
             draw(canvas)

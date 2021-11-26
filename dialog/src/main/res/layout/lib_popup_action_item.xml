@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.AppCompatTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_text_view"
+    style="@style/LibBodyTextStyle"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/popup_action_item_background_selector"
+    android:gravity="center"
+    android:minWidth="80dp"
+    android:paddingHorizontal="@dimen/lib_ldpi"
+    android:paddingVertical="@dimen/lib_hdpi"
+    android:textColor="#E4E4E4"
+    tools:text="撤回撤回" />

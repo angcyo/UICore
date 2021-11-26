@@ -84,6 +84,13 @@
         <item name="android:windowHideAnimation">@anim/lib_full_popup_exit_animation</item>
     </style>
 
+    <style name="LibActionPopupAnimation" parent="Animation.AppCompat.DropDownUp">
+        <item name="android:windowExitAnimation">@anim/lib_action_popup_exit_animation</item>
+        <item name="android:windowHideAnimation">@anim/lib_action_popup_exit_animation</item>
+        <item name="android:windowEnterAnimation">@anim/lib_action_popup_enter_animation</item>
+        <item name="android:windowShowAnimation">@anim/lib_action_popup_enter_animation</item>
+    </style>
+
     <!--底部Translate动画-->
     <style name="LibDialogAlphaAnimation" >
         <item name="android:windowEnterAnimation">@anim/lib_dialog_alpha_enter_animation</item>

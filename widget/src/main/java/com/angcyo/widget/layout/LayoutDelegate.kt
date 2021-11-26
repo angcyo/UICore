@@ -20,13 +20,18 @@ abstract class LayoutDelegate {
     val paddingRight: Int get() = delegateView.paddingRight
     val paddingBottom: Int get() = delegateView.paddingBottom
 
+    val measuredWidth: Int get() = delegateView.measuredWidth
+    val measuredHeight: Int get() = delegateView.measuredHeight
+
     val minimumWidth: Int get() = delegateView.minimumWidth
     val minimumHeight: Int get() = delegateView.minimumHeight
 
     val childCount: Int
         get() = if (delegateView is ViewGroup) (delegateView as ViewGroup).childCount else 0
 
-    abstract fun initAttribute(view: View, attributeSet: AttributeSet?)
+    open fun initAttribute(view: View, attributeSet: AttributeSet?) {
+        this.delegateView = view
+    }
 
     //<editor-fold desc="核心代理方法">
 
@@ -46,6 +51,11 @@ abstract class LayoutDelegate {
     }
 
     open fun draw(canvas: Canvas) {
+
+    }
+
+    /**[draw]之后绘制*/
+    open fun drawAfter(canvas: Canvas) {
 
     }
 

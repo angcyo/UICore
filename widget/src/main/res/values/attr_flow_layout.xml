@@ -7,6 +7,11 @@
     <attr name="r_flow_single_line" format="boolean" />
     <attr name="r_flow_item_vertical_space" format="dimension" />
     <attr name="r_flow_item_horizontal_space" format="dimension" />
+    <attr name="r_flow_horizontal_divider" format="reference" />
+    <attr name="r_flow_vertical_divider" format="reference" />
+    <attr name="r_flow_vertical_divider_size" format="dimension" />
+    <attr name="r_flow_horizontal_divider_size" format="dimension" />
+
 
     <declare-styleable name="FlowLayoutDelegate">
         <attr name="r_flow_max_line_child_count" />
@@ -15,6 +20,11 @@
         <attr name="r_flow_single_line" />
         <attr name="r_flow_item_vertical_space" />
         <attr name="r_flow_item_horizontal_space" />
+
+        <attr name="r_flow_horizontal_divider" />
+        <attr name="r_flow_vertical_divider" />
+        <attr name="r_flow_vertical_divider_size" />
+        <attr name="r_flow_horizontal_divider_size" />
     </declare-styleable>
 
     <declare-styleable name="DslFlowLayout">
@@ -24,6 +34,14 @@
         <attr name="r_flow_single_line" />
         <attr name="r_flow_item_vertical_space" />
         <attr name="r_flow_item_horizontal_space" />
+
+        <attr name="r_clip_type" />
+        <attr name="r_clip_radius" />
+
+        <attr name="r_flow_horizontal_divider" />
+        <attr name="r_flow_vertical_divider" />
+        <attr name="r_flow_vertical_divider_size" />
+        <attr name="r_flow_horizontal_divider_size" />
     </declare-styleable>
 
     <declare-styleable name="DslRadioFlowLayout">
@@ -33,5 +51,13 @@
         <attr name="r_flow_single_line" />
         <attr name="r_flow_item_vertical_space" />
         <attr name="r_flow_item_horizontal_space" />
+
+        <attr name="r_clip_type" />
+        <attr name="r_clip_radius" />
+
+        <attr name="r_flow_horizontal_divider" />
+        <attr name="r_flow_vertical_divider" />
+        <attr name="r_flow_vertical_divider_size" />
+        <attr name="r_flow_horizontal_divider_size" />
     </declare-styleable>
 </resources>

@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex._integer
@@ -66,11 +65,11 @@ object FragmentAnimator {
 
         val animator = ObjectAnimator()
         animator.duration = duration
-        animator.interpolator = AccelerateDecelerateInterpolator()
 
         /*将占位的动画, 翻译成属性动画*/
         when (anim) {
             R.anim.lib_x_show_enter_holder -> {
+                animator.interpolator = AccelerateInterpolator()
                 animator.setPropertyName("translationX")
                 animator.setFloatValues(sw, 0f)
                 animator
@@ -78,7 +77,7 @@ object FragmentAnimator {
             R.anim.lib_x_show_enter_holder2 -> {
                 val set = AnimatorSet()
                 set.duration = duration
-                set.interpolator = AccelerateDecelerateInterpolator()
+                set.interpolator = AccelerateInterpolator()
 
                 animator.setPropertyName("translationX")
                 animator.setFloatValues(sw * 0.2f, 0f)
@@ -103,16 +102,19 @@ object FragmentAnimator {
                 animator
             }
             R.anim.lib_x_remove_enter_holder -> {
+                animator.interpolator = AccelerateInterpolator()
                 animator.setPropertyName("translationX")
                 animator.setFloatValues(-sw, 0f)
                 animator
             }
             R.anim.lib_x_remove_enter_holder2 -> {
+                animator.interpolator = AccelerateInterpolator()
                 animator.setPropertyName("translationX")
                 animator.setFloatValues(-sw * 0.1f, 0f)
                 animator
             }
             R.anim.lib_x_remove_exit_holder -> {
+                animator.interpolator = AccelerateInterpolator()
                 animator.setPropertyName("translationX")
                 animator.setFloatValues(0f, sw)
                 animator
@@ -120,7 +122,7 @@ object FragmentAnimator {
             R.anim.lib_x_remove_exit_holder2 -> {
                 val set = AnimatorSet()
                 set.duration = duration
-                set.interpolator = AccelerateDecelerateInterpolator()
+                set.interpolator = AccelerateInterpolator()
 
                 animator.setPropertyName("translationX")
                 animator.setFloatValues(0f, sw * 0.2f)

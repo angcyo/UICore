@@ -3,5 +3,9 @@
     <color name="dialog_line">#E0E0E0</color>
     <color name="dialog_cancel_line">#E7E7ED</color>
     <color name="dialog_ios_bg">#D2F4F5F6</color>
+    <color name="popup_action_bg">#5B5C5E</color>
+    <color name="popup_action_bg_press">#464749</color>
+    <color name="popup_action_divider_start">#404141</color>
+    <color name="popup_action_divider_end">#565657</color>
 
 </resources>

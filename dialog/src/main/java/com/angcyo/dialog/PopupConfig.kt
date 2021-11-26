@@ -14,14 +14,15 @@ import androidx.activity.OnBackPressedDispatcherOwner
 import androidx.core.view.doOnPreDraw
 import androidx.core.widget.PopupWindowCompat
 import com.angcyo.dsladapter.getViewRect
+import com.angcyo.library.L
 import com.angcyo.library._screenHeight
+import com.angcyo.library._screenWidth
+import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.getContentViewHeight
 import com.angcyo.library.ex.undefined_int
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.bgColorAnimator
-import com.angcyo.widget.base.getChildOrNull
-import com.angcyo.widget.base.setBgDrawable
+import com.angcyo.widget.base.*
 import kotlin.math.max
 
 /**
@@ -33,11 +34,18 @@ import kotlin.math.max
  */
 open class PopupConfig {
     /**
-     * 标准需要显示的属性
+     * 标准需要显示的属性, 使用[showAsDropDown]显示
+     *
+     * Gravity.LEFT  左下角对齐
+     * Gravity.RIGHT 右下角对齐
+     * Gravity.TOP 和 Gravity.BOTTOM 不起作用
+     *
+     * https://www.jianshu.com/p/0115713cca49
      * */
     var anchor: View? = null
 
     /**
+     * 优先级高, [anchor] [parent] 至少需要配置一个
      * 使用此属性, 将会使用 showAtLocation(View parent, int gravity, int x, int y) 显示window
      *
      * 相对于父控件的位置（例如正中央Gravity.CENTER，下方Gravity.BOTTOM等），可以设置偏移或无偏移
@@ -49,6 +57,18 @@ open class PopupConfig {
 
     //此属性 似乎只在 showAtLocation 有效, 在showAsDropDown中, anchor完全在屏幕底部, 系统会控制在TOP显示, 手动控制无效
     var gravity: Int = Gravity.NO_GRAVITY//Gravity.TOP or Gravity.START or Gravity.LEFT
+
+    /**自动调整偏移到
+     * [anchor]的 TOP_CENTER or BOTTOM_CENTER
+     * 比不会覆盖 [xoff] [yoff] 而是追加*/
+    var autoOffset: Boolean = false
+        set(value) {
+            field = value
+            gravity = Gravity.LEFT // 默认左下角对齐
+        }
+
+    /**自动设置offset, 到达屏幕横向居中的状态*/
+    var autoOffsetCenterInScreen: Boolean = false
 
     /** 标准属性 */
     var contentView: View? = null
@@ -98,6 +118,9 @@ open class PopupConfig {
      * */
     var onDismiss: (window: Any) -> Boolean = { false }
 
+    /**
+     * [window] :[PopupWindow] or [Window]
+     * */
     var onInitLayout: (window: Any, viewHolder: DslViewHolder) -> Unit =
         { _, _ -> }
 
@@ -167,10 +190,12 @@ open class PopupConfig {
                 onDismiss(window)
             }
 
+            //创建布局和初始化
             val view = createContentView(context)
-
             val popupViewHolder = DslViewHolder(view!!)
             initPopupWindow(window, popupViewHolder)
+            initLayout(window, popupViewHolder)
+
             onInitLayout(window, popupViewHolder)
 
             contentView = view
@@ -178,17 +203,98 @@ open class PopupConfig {
 
         if (parent != null) {
             window.showAtLocation(parent, gravity, xoff, yoff)
-        } else {
+        } else if (anchor != null) {
             PopupWindowCompat.showAsDropDown(window, anchor!!, xoff, yoff, gravity)
+        } else {
+            L.w("至少需要配置一项[parent]or[anchor]")
         }
 
         return window
     }
 
+    open fun isAnchorInTopArea(anchor: View): Boolean {
+        val rect = anchor.getViewRect()
+        return rect.centerY() < _screenHeight / 4
+    }
+
+    open fun isAnchorInLeftArea(anchor: View): Boolean {
+        val rect = anchor.getViewRect()
+        return rect.centerX() < _screenWidth / 4
+    }
+
+    /**[autoOffset]后, 根布局所在的坐标矩形*/
+    val rootViewRect = Rect()
+
+    /**都会触发, 初始化View*/
+    open fun initLayout(window: Any, viewHolder: DslViewHolder) {
+        val view = anchor
+        if (view != null && autoOffset) {
+            val minOffset = 20 * dpi //最小边距
+
+            val rootView = viewHolder.itemView
+            rootView.measure(atMost(_screenWidth - minOffset * 2), atMost(_screenHeight))
+            val rootViewWidth = rootView.mW()
+            val rootViewHeight = rootView.mH()
+
+            //固定宽度
+            if (window is PopupWindow) {
+                window.width = rootViewWidth
+                window.height = rootViewHeight
+            }
+
+            val rect = view.getViewRect()
+            if (isAnchorInTopArea(view)) {
+                //目标在屏幕的上半区
+            } else {
+                //目标在屏幕的下半区
+                yoff -= rect.height() + rootViewHeight
+            }
+            rootViewRect.top = rect.bottom + yoff
+            rootViewRect.bottom = rootViewRect.top + rootViewHeight
+
+            //计算横向偏移
+
+            //优先显示在横向居中的位置
+            if (autoOffsetCenterInScreen) {
+                rootViewRect.left = _screenWidth / 2 - rootViewWidth / 2 + xoff
+                rootViewRect.right = rootViewRect.left + rootViewWidth
+
+                if (isAnchorInLeftArea(view)) {
+                    gravity = Gravity.LEFT
+                    xoff += _screenWidth / 2 - rect.left - rootViewWidth / 2
+                } else {
+                    gravity = Gravity.RIGHT
+                    xoff -= rect.right - (_screenWidth / 2 + rootViewWidth / 2)
+                }
+            } else {
+                //优先目标横向居中的位置
+                if (isAnchorInLeftArea(view)) {
+                    gravity = Gravity.LEFT
+                    if (rect.left > minOffset) {
+                        xoff += rect.width() / 2 - rootViewWidth / 2
+                    }
+
+                    rootViewRect.left = rect.left + xoff
+                    rootViewRect.right = rootViewRect.left + rootViewWidth
+                } else {
+                    gravity = Gravity.RIGHT
+                    if (rect.right + minOffset < _screenWidth) {
+                        xoff += rect.width() / 2 - rootViewWidth / 2
+                    }
+
+                    rootViewRect.right = rect.right - xoff
+                    rootViewRect.left = rootViewRect.right - rootViewWidth
+                }
+            }
+        }
+    }
+
+    /**[showWithPopupWindow]*/
     open fun initPopupWindow(popupWindow: PopupWindow, popupViewHolder: DslViewHolder) {
 
     }
 
+    /**[showWidthActivity]*/
     open fun initPopupActivity(activity: Activity, popupViewHolder: DslViewHolder) {
 
     }
@@ -226,8 +332,12 @@ open class PopupConfig {
         val window = activity.window
 
         val windowLayout = window.findViewById<FrameLayout>(Window.ID_ANDROID_CONTENT)
-        //创建内容布局
+
+        //创建内容布局, 和初始化
         val contentLayout = createContentView(activity)
+        val viewHolder = DslViewHolder(contentLayout!!)
+        initPopupActivity(activity, viewHolder)
+        initLayout(window, viewHolder)
 
         //全屏覆盖层
         val rootLayout = FrameLayout(activity)
@@ -281,9 +391,7 @@ open class PopupConfig {
         windowLayout.addView(contentView)
 
         //回调
-        val viewHolder = DslViewHolder(rootLayout)
         onAddRootLayout(activity, viewHolder)
-        initPopupActivity(activity, viewHolder)
 
         onInitLayout(window, viewHolder)
 

@@ -1,6 +1,7 @@
 package com.angcyo.widget.layout
 
 import android.content.Context
+import android.graphics.Canvas
 import android.util.AttributeSet
 import android.widget.LinearLayout
 
@@ -16,6 +17,14 @@ class DslFlowLayout(context: Context, attrs: AttributeSet? = null) :
 
     init {
         flowLayoutDelegate.initAttribute(this, attrs)
+    }
+
+    override fun draw(canvas: Canvas) {
+        getCustomFlowLayoutDelegate().maskLayout(canvas) {
+            getCustomFlowLayoutDelegate().draw(canvas)
+            super.draw(canvas)
+            getCustomFlowLayoutDelegate().drawAfter(canvas)
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

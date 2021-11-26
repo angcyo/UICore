@@ -51,7 +51,6 @@ fun Context.customFullScreenDialog(config: DslDialogConfig.() -> Unit): Dialog {
     return DslDialogConfig(this).run {
         //R.style.LibDialogAnimation//R.style.LibFullPopupAnimation
         animStyleResId = R.style.LibFullPopupAnimation
-        dialogWidth = -1
         //全屏的三金刚属性
         dialogWidth = -1
         //很关键的一点, 高度一定要撑满全屏. 撑满之后, 如果导航栏显示了, 内部View布局会有点BUG, 顶部偏移有问题.

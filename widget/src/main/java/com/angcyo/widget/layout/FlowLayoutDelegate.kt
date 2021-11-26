@@ -1,11 +1,14 @@
 package com.angcyo.widget.layout
 
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.view.GravityCompat
+import com.angcyo.library.ex.size
 import com.angcyo.widget.R
 import com.angcyo.widget.base.exactly
 import kotlin.math.max
@@ -17,7 +20,7 @@ import kotlin.math.max
  * @date 2020/03/07
  */
 
-class FlowLayoutDelegate : LayoutDelegate() {
+class FlowLayoutDelegate : ClipLayoutDelegate() {
 
     val _allViews = mutableListOf<List<View>>() //保存所有行的所有View
     val _lineHeight = mutableListOf<Int>() //保存每一行的行高
@@ -43,8 +46,19 @@ class FlowLayoutDelegate : LayoutDelegate() {
     /**布局方式, 相对于一行中*/
     var lineGravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
 
+    /**分割线的大小*/
+    var dividerHorizontalSize = 1
+
+    var dividerVerticalSize = 1
+
+    /**横向分割线*/
+    var dividerHorizontalDrawable: Drawable? = null
+
+    /**纵向分割线*/
+    var dividerVerticalDrawable: Drawable? = null
+
     override fun initAttribute(view: View, attributeSet: AttributeSet?) {
-        this.delegateView = view
+        super.initAttribute(view, attributeSet)
 
         val array = delegateView.context.obtainStyledAttributes(
             attributeSet,
@@ -65,6 +79,21 @@ class FlowLayoutDelegate : LayoutDelegate() {
             R.styleable.FlowLayoutDelegate_r_flow_item_vertical_space,
             itemVerticalSpace
         )
+
+        dividerHorizontalDrawable =
+            array.getDrawable(R.styleable.FlowLayoutDelegate_r_flow_horizontal_divider)
+        dividerVerticalDrawable =
+            array.getDrawable(R.styleable.FlowLayoutDelegate_r_flow_vertical_divider)
+
+        dividerHorizontalSize = array.getDimensionPixelOffset(
+            R.styleable.FlowLayoutDelegate_r_flow_horizontal_divider_size,
+            dividerHorizontalSize
+        )
+        dividerVerticalSize = array.getDimensionPixelOffset(
+            R.styleable.FlowLayoutDelegate_r_flow_vertical_divider_size,
+            dividerVerticalSize
+        )
+
         array.recycle()
 
         //获取系统属性值
@@ -232,16 +261,10 @@ class FlowLayoutDelegate : LayoutDelegate() {
 
         _allVisibleViews.clear()
 
-        return intArrayOf(
-            max(
-                if (measureWidthMode == View.MeasureSpec.AT_MOST || measureWidthMode == View.MeasureSpec.UNSPECIFIED) width else measureWidthSize,
-                minimumWidth
-            ),
-            max(
-                if (measureHeightMode == View.MeasureSpec.AT_MOST || measureHeightMode == View.MeasureSpec.UNSPECIFIED) height else measureHeightSize,
-                minimumHeight
-            )
-        )
+        val w = if (measureWidthMode != View.MeasureSpec.EXACTLY) width else measureWidthSize
+        val h = if (measureHeightMode != View.MeasureSpec.EXACTLY) height else measureHeightSize
+
+        return intArrayOf(max(w, minimumWidth), max(h, minimumHeight))
     }
 
     /**
@@ -258,8 +281,7 @@ class FlowLayoutDelegate : LayoutDelegate() {
         for (i in 0 until maxCountLine) {
             consumeWidth += lineViewParams.leftMargin + lineViewParams.rightMargin
         }
-        val lineChildWidth: Int
-        lineChildWidth = if (maxCountLine > 0) {
+        val lineChildWidth: Int = if (maxCountLine > 0) {
             (viewWidth - consumeWidth) / maxCountLine
         } else {
             viewWidth - consumeWidth
@@ -358,6 +380,47 @@ class FlowLayoutDelegate : LayoutDelegate() {
             Gravity.CENTER_HORIZONTAL -> delegateView.measuredWidth / 2 - lineViewWidth / 2 + paddingLeft - paddingRight
             Gravity.RIGHT -> delegateView.measuredWidth - paddingRight - lineViewWidth
             else -> paddingLeft
+        }
+    }
+
+    override fun drawAfter(canvas: Canvas) {
+        super.drawAfter(canvas)
+        //分割线, 绘制在child的上面
+
+        val horizontalDrawable = dividerHorizontalDrawable
+        val verticalDrawable = dividerVerticalDrawable
+        if (horizontalDrawable != null || verticalDrawable != null) {
+
+            var lineBottom = 0
+
+            _allViews.forEachIndexed { row, lineList ->
+                if (verticalDrawable != null) {
+                    lineList.forEachIndexed { column, view ->
+                        lineBottom = max(view.bottom, lineBottom)
+
+                        val left = view.left - dividerVerticalSize
+                        val right = view.left
+                        val top = view.top
+                        val bottom = view.bottom
+
+                        if (column > 0) {
+                            //只在左边绘制
+                            verticalDrawable.setBounds(left, top, right, bottom)
+                            verticalDrawable.draw(canvas)
+                        }
+                    }
+                }
+
+                if (horizontalDrawable != null && row + 1 != _allViews.size()) {
+                    horizontalDrawable.setBounds(
+                        paddingLeft,
+                        lineBottom - dividerHorizontalSize,
+                        measuredWidth - paddingRight,
+                        lineBottom,
+                    )
+                    horizontalDrawable.draw(canvas)
+                }
+            }
         }
     }
 }
