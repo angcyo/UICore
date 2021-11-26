@@ -45,7 +45,8 @@ open class DslTabLayout(
     /**item是否等宽*/
     var itemIsEquWidth = false
 
-    /**智能判断Item是否等宽, 如果所有子项, 未撑满tab时, 开启等宽模式.此属性会覆盖[itemIsEquWidth]*/
+    /**智能判断Item是否等宽.
+     * 如果所有子项, 未撑满tab时, 则开启等宽模式.此属性会覆盖[itemIsEquWidth]*/
     var itemAutoEquWidth = false
 
     /**在等宽的情况下, 指定item的宽度, 小于0, 平分*/
@@ -340,22 +341,34 @@ open class DslTabLayout(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        if (dslSelector.dslSelectIndex < 0) {
+            //还没有选中
+            setCurrentItem(tabDefaultIndex)
+        }
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
     }
 
+    override fun onFinishInflate() {
+        super.onFinishInflate()
+    }
+
     override fun onViewAdded(child: View?) {
         super.onViewAdded(child)
-        dslSelector.updateVisibleList()
-        dslSelector.updateStyle()
-        dslSelector.updateClickListener()
+        updateTabLayout()
     }
 
     override fun onViewRemoved(child: View?) {
         super.onViewRemoved(child)
+        updateTabLayout()
+    }
+
+    open fun updateTabLayout() {
         dslSelector.updateVisibleList()
+        dslSelector.updateStyle()
+        dslSelector.updateClickListener()
     }
 
     override fun draw(canvas: Canvas) {
