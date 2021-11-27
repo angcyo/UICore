@@ -91,7 +91,7 @@ def writeIgnoreFile() {
                 time = new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("Asia/Shanghai"))
                 ignoreFile.append("#${time}↓\n")
             }
-            ignoreFile.append("#${key}\n")
+            ignoreFile.append("${key}\n") //新增的库, 默认忽略
         } else {
             //println "跳过:${key}"
         }
