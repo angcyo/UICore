@@ -296,12 +296,12 @@ open class PopupConfig {
                     }*/
                     val originOffset = xoff
 
-                    xoff += rect.width() / 2 - rootViewWidth / 2
-                    if (rect.right - xoff > _screenWidth) {
+                    xoff -= rect.width() / 2 - rootViewWidth / 2
+                    if (rect.right + xoff > _screenWidth) {
                         //越界了, 不便宜
                         xoff = originOffset
                     }
-                    rootViewRect.right = rect.right - xoff
+                    rootViewRect.right = rect.right + xoff
                     rootViewRect.left = rootViewRect.right - rootViewWidth
                 }
             }
