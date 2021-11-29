@@ -1,6 +1,6 @@
 package com.angcyo.dialog.popup
 
-import com.angcyo.library.ex.ClickAction
+import com.angcyo.dialog.WindowClickAction
 
 /**
  * [ActionPopupConfig]
@@ -12,6 +12,8 @@ import com.angcyo.library.ex.ClickAction
 data class PopupAction(
     /**显示的文本*/
     val text: CharSequence?,
+    /**是否自动关闭弹窗*/
+    val autoDismiss: Boolean = true,
     /**点击动作*/
-    val action: ClickAction?
+    val action: WindowClickAction?,
 )

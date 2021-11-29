@@ -451,6 +451,24 @@ fun DslAdapterItem.findViewHolder(recyclerView: RecyclerView? = itemDslAdapter?.
     return itemViewHolder(recyclerView)
 }
 
+/**移除自身*/
+fun DslAdapterItem.removeIt(adapter: DslAdapter? = null): Boolean {
+    val item = this
+    var reslut = false
+    (adapter ?: itemDslAdapter)?.apply {
+        val h = headerItems.remove(item)
+        val d = dataItems.remove(item)
+        val f = footerItems.remove(item)
+
+        reslut = h || d || f
+        if (reslut) {
+            _updateAdapterItems()
+            item.updateItemDepend()
+        }
+    }
+    return reslut
+}
+
 //</editor-fold desc="操作扩展">
 
 //<editor-fold desc="更新指定的Item">

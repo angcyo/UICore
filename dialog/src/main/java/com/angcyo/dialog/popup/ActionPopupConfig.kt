@@ -6,11 +6,12 @@ import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.TextView
 import com.angcyo.dialog.PopupConfig
 import com.angcyo.dialog.R
+import com.angcyo.dialog.WindowClickAction
 import com.angcyo.dsladapter.getViewRect
-import com.angcyo.library.ex.ClickAction
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.*
@@ -47,7 +48,10 @@ class ActionPopupConfig : PopupConfig() {
             ?.resetChild(actionList, actionItemLayout) { itemView, item, itemIndex ->
                 itemView.find<TextView>(R.id.lib_text_view)?.text = item.text
                 itemView.clickIt {
-                    item.action?.invoke(it)
+                    if (item.autoDismiss && window is PopupWindow) {
+                        window.dismiss()
+                    }
+                    item.action?.invoke(window, it)
                 }
             }
 
@@ -91,8 +95,8 @@ class ActionPopupConfig : PopupConfig() {
     }
 
     /**添加[PopupAction]*/
-    fun addAction(text: CharSequence?, action: ClickAction?) {
-        actionList.add(PopupAction(text, action))
+    fun addAction(text: CharSequence?, autoDismiss: Boolean = true, action: WindowClickAction?) {
+        actionList.add(PopupAction(text, autoDismiss, action))
     }
 }
 
