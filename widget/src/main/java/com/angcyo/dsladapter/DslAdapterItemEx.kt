@@ -11,6 +11,7 @@ import com.angcyo.library.L
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex._dimen
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.replace
 import com.angcyo.library.model.Page
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
@@ -464,6 +465,24 @@ fun DslAdapterItem.removeIt(adapter: DslAdapter? = null): Boolean {
         if (reslut) {
             _updateAdapterItems()
             item.updateItemDepend()
+        }
+    }
+    return reslut
+}
+
+/**使用新的item, 替换自身*/
+fun DslAdapterItem.replaceIt(newItem: DslAdapterItem?, adapter: DslAdapter? = null): Boolean {
+    val item = this
+    var reslut = false
+    (adapter ?: itemDslAdapter)?.apply {
+        val h = headerItems.replace(item, newItem)
+        val d = dataItems.replace(item, newItem)
+        val f = footerItems.replace(item, newItem)
+        reslut = h || d || f
+        if (reslut) {
+            _updateAdapterItems()
+            //item.updateItemDepend()
+            notifyDataChanged()//替换了数据之后, 只能通过此方法才能更新界面
         }
     }
     return reslut

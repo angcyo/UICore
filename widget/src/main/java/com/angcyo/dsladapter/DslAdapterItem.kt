@@ -783,9 +783,7 @@ open class DslAdapterItem : LifecycleOwner {
         when {
             itemUpdateFlag -> false
             itemChanging -> false
-            (newItem.itemData != null && itemData != null && newItem.itemData == itemData) -> true
-            fromItem == null -> this == newItem
-            else -> this != fromItem && this == newItem
+            else -> itemData == newItem.itemData
         }
     }
 
