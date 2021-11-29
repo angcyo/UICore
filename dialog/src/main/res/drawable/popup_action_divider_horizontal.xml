@@ -2,6 +2,6 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <gradient
         android:angle="-180"
-        android:endColor="@color/popup_action_divider_start"
-        android:startColor="@color/popup_action_divider_end" />
+        android:endColor="@color/popup_action_divider_end"
+        android:startColor="@color/popup_action_divider_start" />
 </shape>
