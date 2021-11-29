@@ -11,6 +11,7 @@ import com.angcyo.dialog.PopupConfig
 import com.angcyo.dialog.R
 import com.angcyo.dsladapter.getViewRect
 import com.angcyo.library.ex.ClickAction
+import com.angcyo.library.ex.dpi
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.*
 import kotlin.math.max
@@ -37,6 +38,7 @@ class ActionPopupConfig : PopupConfig() {
         autoOffset = true
         autoOffsetCenterInScreen = false
         background = ColorDrawable(Color.TRANSPARENT)
+        yoff = 4 * dpi
     }
 
     override fun initLayout(window: Any, viewHolder: DslViewHolder) {

@@ -247,7 +247,7 @@ open class PopupConfig {
                 //目标在屏幕的上半区
             } else {
                 //目标在屏幕的下半区
-                yoff -= rect.height() + rootViewHeight
+                yoff = -(rect.height() + rootViewHeight) - yoff
             }
             rootViewRect.top = rect.bottom + yoff
             rootViewRect.bottom = rootViewRect.top + rootViewHeight
