@@ -128,8 +128,10 @@ fun Any?.string(def: CharSequence = ""): CharSequence {
     }
 }
 
-fun Any?.str(): String {
-    return if (this is String) {
+fun Any?.str(def: String = ""): String {
+    return if (this == null) {
+        return def
+    } else if (this is String) {
         this
     } else {
         this.toString()
