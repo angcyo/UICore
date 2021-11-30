@@ -66,10 +66,13 @@ open class BaseDslFragment : BaseTitleFragment() {
     /**调用此方法, 渲染界面
      * [reset] 是否需要重置界面*/
     open fun renderDslAdapter(
+        clear: Boolean = false,
         reset: Boolean = enableAdapterRefresh,
         config: DslAdapter.() -> Unit
     ) {
-        if (reset) {
+        if (clear) {
+            _adapter.clearAllItems()
+        } else if (reset) {
             _adapter.dataItems.clear()
         }
         _adapter.config()

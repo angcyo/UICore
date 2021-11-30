@@ -30,7 +30,6 @@ interface ITextItem : IAutoInitItem {
         textItemConfig.itemTextStyle.action()
     }
 
-
     /**加粗样式*/
     fun boldStyle() {
         configTextStyle {

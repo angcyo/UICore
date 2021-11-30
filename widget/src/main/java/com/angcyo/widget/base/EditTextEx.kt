@@ -3,6 +3,7 @@ package com.angcyo.widget.base
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
 import android.text.TextUtils
 import android.text.method.PasswordTransformationMethod
 import android.view.KeyEvent
@@ -132,7 +133,7 @@ fun EditText.onTextChange(
 
         var lastText: CharSequence? = defaultText
 
-        override fun onTextChanged(sequence: CharSequence?, start: Int, before: Int, count: Int) {
+        override fun onTextChanged(sequence: CharSequence, start: Int, before: Int, count: Int) {
             super.onTextChanged(sequence, start, before, count)
             mainHandle?.removeCallbacks(callback)
 
@@ -146,6 +147,15 @@ fun EditText.onTextChange(
                     mainHandle?.postDelayed(callback, shakeDelay)
                 }
             }
+        }
+    })
+}
+
+fun EditText.onAfterTextChanged(listener: (Editable) -> Unit) {
+    addTextChangedListener(object : SingleTextWatcher() {
+
+        override fun afterTextChanged(editable: Editable) {
+            listener(editable)
         }
     })
 }
