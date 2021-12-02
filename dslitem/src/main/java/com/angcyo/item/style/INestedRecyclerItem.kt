@@ -47,9 +47,7 @@ interface INestedRecyclerItem : IAutoInitItem {
             clearItemDecoration()
             initDsl()
 
-            if (layoutManager != nestedRecyclerItemConfig.itemNestedLayoutManager) {
-                layoutManager = nestedRecyclerItemConfig.itemNestedLayoutManager
-            }
+            layoutManager = nestedRecyclerItemConfig.itemNestedLayoutManagerProvide()
 
             //关键地方, 如果每次都赋值[adapter], 系统会重置所有缓存.
             if (adapter != nestedRecyclerItemConfig.itemNestedAdapter) {
@@ -111,9 +109,9 @@ var INestedRecyclerItem.itemNestedAdapter
     }
 
 var INestedRecyclerItem.itemNestedLayoutManager
-    get() = nestedRecyclerItemConfig.itemNestedLayoutManager
+    get() = nestedRecyclerItemConfig.itemNestedLayoutManagerProvide
     set(value) {
-        nestedRecyclerItemConfig.itemNestedLayoutManager = value
+        nestedRecyclerItemConfig.itemNestedLayoutManagerProvide = value
     }
 
 fun INestedRecyclerItem.renderNestedAdapter(init: DslAdapter.() -> Unit) {
@@ -140,10 +138,11 @@ class NestedRecyclerItemConfig : IDslItemConfig {
 
     /**布局管理,
      * 请注意使用属性:[recycleChildrenOnDetach]*/
-    var itemNestedLayoutManager: RecyclerView.LayoutManager? =
+    var itemNestedLayoutManagerProvide: () -> RecyclerView.LayoutManager = {
         LinearLayoutManagerWrap(app()).apply {
             recycleChildrenOnDetach = true
         }
+    }
 
     /**自动恢复滚动位置*/
     var itemKeepScrollPosition = true

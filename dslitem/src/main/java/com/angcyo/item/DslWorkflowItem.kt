@@ -44,6 +44,7 @@ class DslWorkflowItem : DslNestedRecyclerItem(), ILabelItem, IDesItem {
 
     override var desItemConfig: DesItemConfig = DesItemConfig().apply {
         itemDesViewId = R.id.lib_work_flow_des
+        itemDesStyle.goneOnTextNull = true
     }
 
     override var labelItemConfig: LabelItemConfig = LabelItemConfig().apply {

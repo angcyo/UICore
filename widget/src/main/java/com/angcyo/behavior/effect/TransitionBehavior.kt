@@ -15,6 +15,7 @@ import com.angcyo.tablayout.clamp
 import com.angcyo.widget.R
 import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.mW
+import com.angcyo.widget.base.topCanScroll
 import com.angcyo.widget.layout.isEnableCoordinator
 
 /**
@@ -266,11 +267,30 @@ open class TransitionBehavior(
 
         if (dx != 0) {
             //内容产生过偏移, 那么此次的内嵌滚动肯定是需要消耗的
-            consumedScrollHorizontal(dx, consumed)
+            if (dx > 0) {
+                consumedScrollHorizontal(dx, consumed)
+            } else {
+                //手指向左
+                if (!target.topCanScroll()) {
+                    consumedScrollHorizontal(dx, consumed)
+                }
+            }
         }
         if (dy != 0) {
             //内容产生过偏移, 那么此次的内嵌滚动肯定是需要消耗的
-            consumedScrollVertical(dy, consumed)
+            if (dy > 0) {
+                //手指向上滑动
+                /*if (behaviorScrollY - dy >= minTransitionY) {
+                    //有空间滚动
+                    consumedScrollVertical(dy, consumed)
+                }*/
+                consumedScrollVertical(dy, consumed)
+            } else {
+                //手指向下滑动
+                if (!target.topCanScroll()) {  //&& behaviorScrollY - dy <= maxTransitionY
+                    consumedScrollVertical(dy, consumed)
+                }
+            }
         }
     }
 
@@ -297,7 +317,7 @@ open class TransitionBehavior(
             consumed
         )
 
-        if ((dxConsumed == 0 || dyConsumed == 0) && type.isTouch()) {
+        if ((dxUnconsumed != 0 || dyUnconsumed != 0) && type.isTouch()) {
             //内嵌滚动视图已经不需要消耗滚动值了, 通常是到达了首尾两端
             scrollBy(-dxUnconsumed, -dyUnconsumed, SCROLL_TYPE_NESTED)
         }
@@ -323,14 +343,20 @@ open class TransitionBehavior(
         type: Int
     ) {
         super.onStopNestedScroll(coordinatorLayout, child, target, type)
-        if (!isTouchHold && type.isTouch()) {
+        if (behaviorScrollY != minTransitionY && behaviorScrollY != maxTransitionY) {
             _resetScroll()
+        }
+        if (behaviorScrollX != minTransitionX && behaviorScrollX != maxTransitionX) {
+            _resetScroll()
+        }
+        if (!isTouchHold && type.isTouch() && !isFlingAccepted) {
+            //
         }
     }
 
     override fun onTouchFinish(parent: CoordinatorLayout, child: View, ev: MotionEvent) {
         super.onTouchFinish(parent, child, ev)
-        if (!isTouchHold && _nestedScrollView == null && ViewCompat.isLaidOut(child)) {
+        if (!isTouchHold && !isFlingAccepted && ViewCompat.isLaidOut(child)) {
             //在非nested scroll 视图上滚动过
             _resetScroll()
         }
