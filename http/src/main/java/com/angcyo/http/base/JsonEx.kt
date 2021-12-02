@@ -324,6 +324,8 @@ fun <T> String?.fromJson(classOfT: Class<T>, throwError: Boolean = false): T? {
     }
 }
 
+fun String?.fromJsonMap(): Map<String, Any>? = this?.fromJson<Map<String, Any>>()
+
 inline fun <reified T> String?.fromJson(): T? = this?.fromJson(T::class.java)
 
 inline fun <reified T> String?.fromJson2(): T? =

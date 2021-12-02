@@ -2,6 +2,7 @@ package com.angcyo.dslitem
 
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import com.angcyo.core.dslitem.IFragmentItem
 import com.angcyo.dsladapter.*
 import com.angcyo.dsladapter.data.updateSingleData
 import com.angcyo.dsladapter.filter.AddMediaFilterAfterInterceptor
@@ -29,7 +30,7 @@ import com.angcyo.widget.recycler.resetLayoutManager
  * @date 2020/03/25
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-open class DslLabelMediaItem : DslBaseLabelItem() {
+open class DslLabelMediaItem : DslBaseLabelItem(), IFragmentItem {
 
     /**内部adapter*/
     var itemMediaAdapter: DslAdapter = DslAdapter()
@@ -57,7 +58,7 @@ open class DslLabelMediaItem : DslBaseLabelItem() {
     var itemMediaList = mutableListOf<LoaderMedia>()
 
     /**用于预览大图*/
-    var itemFragment: Fragment? = null
+    override var itemFragment: Fragment? = null
 
     /**是否要显示加号*/
     var itemShowAddMediaItem: Boolean = false

@@ -1,9 +1,7 @@
 package com.angcyo.item.form
 
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.http.base.JsonBuilder
-import com.angcyo.http.base.jsonBuilder
-import com.angcyo.http.base.toJson
+import com.angcyo.http.base.*
 import com.angcyo.library.L
 import com.angcyo.library.ex.getOrNull2
 import com.angcyo.library.ex.patternList
@@ -95,6 +93,13 @@ fun DslFormParams.json() = if (dataMap.isEmpty()) {
     jsonBuilder.get()
 } else {
     dataMap.toJson { } ?: "{}"
+}
+
+/**获取json 对象*/
+fun DslFormParams.jsonElement() = if (dataMap.isEmpty()) {
+    jsonBuilder.build()
+} else {
+    dataMap.toJson()?.toJsonElement()
 }
 
 /**将数据放置在[dataMap]中*/
