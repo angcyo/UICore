@@ -381,6 +381,15 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         insertItem(-1, item, init)
     }
 
+    /**支持指定数据源[list]*/
+    fun <T : DslAdapterItem> addLastItem(
+        list: MutableList<DslAdapterItem>,
+        item: T,
+        init: T.() -> Unit
+    ) {
+        insertItem(list, -1, item, init)
+    }
+
     fun addLastItem(item: List<DslAdapterItem>) {
         insertItem(-1, item)
     }
@@ -414,6 +423,19 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     /**先插入数据, 再初始化*/
     fun <T : DslAdapterItem> insertItem(index: Int, item: T, init: T.() -> Unit) {
         dataItems.add(_validIndex(dataItems, index), item)
+        _updateAdapterItems()
+        item.init()
+        updateItemDepend()
+    }
+
+    /**支持指定数据源[list]*/
+    fun <T : DslAdapterItem> insertItem(
+        list: MutableList<DslAdapterItem>,
+        index: Int,
+        item: T,
+        init: T.() -> Unit
+    ) {
+        list.add(_validIndex(list, index), item)
         _updateAdapterItems()
         item.init()
         updateItemDepend()
@@ -666,6 +688,13 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
      * */
     operator fun <T : DslAdapterItem> T.invoke(config: T.() -> Unit = {}) {
         addLastItem(this, config)
+    }
+
+    operator fun <T : DslAdapterItem> T.invoke(
+        list: MutableList<DslAdapterItem>,
+        config: T.() -> Unit = {}
+    ) {
+        addLastItem(list, this, config)
     }
 
     /**

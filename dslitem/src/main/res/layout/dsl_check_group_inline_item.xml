@@ -24,6 +24,6 @@
         android:paddingLeft="@dimen/lib_padding_left"
         android:paddingRight="@dimen/lib_padding_left"
         app:r_flow_item_horizontal_space="@dimen/lib_xxhdpi"
-        tools:layout_height="@dimen/lib_item_min_height" />
+        tools:layout_height="@dimen/lib_xhdpi" />
 
 </com.angcyo.widget.layout.RLinearLayout>

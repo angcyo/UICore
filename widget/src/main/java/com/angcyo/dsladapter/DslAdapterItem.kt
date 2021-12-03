@@ -734,9 +734,10 @@ open class DslAdapterItem : LifecycleOwner {
 
     //<editor-fold desc="Diff相关">
 
-    /**是否需要更新item
-     * 在[diffResult]之后会被重置*/
-    var itemUpdateFlag: Boolean = false
+    /**是否需要更新item,等同于[itemChanging], 但不会触发[itemChanged]
+     * 在[diffResult]之后会被重置为[false]
+     * * 默认为[true], 确保每次new的[DslAdapterItem]有机会更新数据*/
+    var itemUpdateFlag: Boolean = true
 
     /**
      * 决定
@@ -783,8 +784,8 @@ open class DslAdapterItem : LifecycleOwner {
         oldItemPosition: Int, newItemPosition: Int
     ) -> Boolean = { fromItem, newItem, _, _ ->
         when {
-            itemUpdateFlag -> false
-            itemChanging -> false
+            itemUpdateFlag || newItem.itemUpdateFlag -> false
+            itemChanging || newItem.itemChanging -> false
             else -> itemData == newItem.itemData
         }
     }
@@ -800,6 +801,7 @@ open class DslAdapterItem : LifecycleOwner {
      * [com.angcyo.dsladapter.DslDataFilter.UpdateTaskRunnable.onDiffResult]*/
     open fun diffResult(filterParams: FilterParams?, result: DiffUtil.DiffResult) {
         itemChanging = false
+        itemUpdateFlag = false
     }
 
     //</editor-fold desc="Diff相关">
@@ -816,7 +818,7 @@ open class DslAdapterItem : LifecycleOwner {
             }
         }
 
-    /**[Item]是否正在改变, 会影响[thisAreContentsTheSame]的判断, 并且会在[Diff]计算完之后, 设置为`false`*/
+    /**[Item]是否正在改变, 会影响[thisAreContentsTheSame]的判断, 并且会在[Diff]计算完之后, 重置为[false]*/
     var itemChanging = false
         set(value) {
             field = value

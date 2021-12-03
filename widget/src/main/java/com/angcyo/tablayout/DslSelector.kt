@@ -73,7 +73,7 @@ open class DslSelector {
 
     /**兼容[CompoundButton]*/
     val _onCheckedChangeListener = CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
-        buttonView.isChecked = !isChecked //恢复状态 不做任何处理, 在[OnClickListener]中处理
+        buttonView.isChecked = buttonView.isSelected //恢复状态 不做任何处理, 在[OnClickListener]中处理
         /*val index = visibleViewList.indexOf(buttonView)
 
         if (interceptSelector(index, isChecked, false)) {
@@ -183,21 +183,21 @@ open class DslSelector {
         fromUser: Boolean = false,
         forceNotify: Boolean = false
     ) {
-        val selectorIndexList = ArrayList(selectorIndexList)
-        val lastSelectorIndex: Int? = selectorIndexList.lastOrNull()
+        val oldSelectorList = ArrayList(selectorIndexList)
+        val lastSelectorIndex: Int? = oldSelectorList.lastOrNull()
         val reselect = !dslSelectorConfig.dslMultiMode &&
-                selectorIndexList.isNotEmpty() &&
-                selectorIndexList.contains(index)
+                oldSelectorList.isNotEmpty() &&
+                oldSelectorList.contains(index)
 
         var needNotify = _selector(index, select, fromUser) || forceNotify
 
-        if (!selectorIndexList.isChange(selectorIndexList)) {
+        if (!oldSelectorList.isChange(selectorIndexList)) {
             //选中项, 未改变时不通知
             needNotify = false
         }
 
         if (needNotify) {
-            dslSelectIndex = this.selectorIndexList.lastOrNull() ?: -1
+            dslSelectIndex = selectorIndexList.lastOrNull() ?: -1
             if (notify) {
                 notifySelectChange(lastSelectorIndex ?: -1, reselect, fromUser)
             }
