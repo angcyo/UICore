@@ -91,6 +91,8 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
 
     val itemBindObserver = mutableSetOf<ItemBindAction>()
 
+    val itemUpdateDependObserver = mutableSetOf<ItemUpdateDependAction>()
+
     //关联item type和item layout id
     val _itemLayoutHold = hashMapOf<Int, Int>()
 
@@ -256,6 +258,15 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
 
     fun removeItemBind(itemBindAction: ItemBindAction) {
         itemBindObserver.remove(itemBindAction)
+    }
+
+    /**观察[updateItemDepend]*/
+    fun observeItemUpdateDepend(action: ItemUpdateDependAction) {
+        itemUpdateDependObserver.add(action)
+    }
+
+    fun removeItemUpdateDepend(action: ItemUpdateDependAction) {
+        itemUpdateDependObserver.remove(action)
     }
 
     //</editor-fold>
@@ -571,6 +582,11 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
 
     /**调用[DiffUtil]更新界面*/
     fun updateItemDepend(filterParams: FilterParams = defaultFilterParams!!) {
+
+        itemUpdateDependObserver.forEach {
+            it(filterParams)
+        }
+
         dslDataFilter?.let {
             it.updateFilterItemDepend(filterParams)
 

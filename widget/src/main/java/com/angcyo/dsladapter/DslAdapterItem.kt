@@ -43,6 +43,8 @@ import kotlin.reflect.KProperty
 
 typealias ItemAction = (DslAdapterItem) -> Unit
 
+typealias ItemUpdateDependAction = (FilterParams) -> Unit
+
 typealias ItemBindAction = (
     itemHolder: DslViewHolder,
     itemPosition: Int,

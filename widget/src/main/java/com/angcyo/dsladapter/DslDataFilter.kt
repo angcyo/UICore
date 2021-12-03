@@ -94,7 +94,10 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
         lock.withLock {
             val nowTime = System.currentTimeMillis()
 
-            if (!params.important) {
+            if (params.skip) {
+                L.w("来自[${params.fromDslAdapterItem?.simpleHash()}]的Diff被忽略,原因[skip]")
+                return
+            } else if (!params.important) {
                 //非重要的操作
                 val importantTask =
                     _updateTaskLit.find { !it.taskCancel.get() && it._params?.important == true }
@@ -265,8 +268,11 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
 
         var _taskStartTime = 0L
 
+        val taskIsCancel: Boolean
+            get() = taskCancel.get() || _params?.skip == true
+
         override fun run() {
-            if (taskCancel.get()) {
+            if (taskIsCancel) {
                 return
             }
 
@@ -289,7 +295,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
         }
 
         private fun doInner() {
-            if (taskCancel.get()) {
+            if (taskIsCancel) {
                 return
             }
 
@@ -397,7 +403,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             diffList: MutableList<DslAdapterItem>,
             oldSize: Int
         ) {
-            if (taskCancel.get()) {
+            if (taskIsCancel) {
                 return
             }
 
@@ -520,6 +526,9 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
 data class FilterParams(
     /** 触发更新的来源, 定向更新其子项. */
     val fromDslAdapterItem: DslAdapterItem? = null,
+
+    /** 是否跳过当前的Filter操作 */
+    var skip: Boolean = false,
 
     /** 异步计算Diff */
     var asyncDiff: Boolean = true,

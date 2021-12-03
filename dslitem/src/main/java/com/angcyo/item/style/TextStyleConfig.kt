@@ -52,6 +52,15 @@ open class TextStyleConfig : ViewStyleConfig() {
             with(view) {
                 text = this@TextStyleConfig.text
 
+                //[TextView]设置最小宽度和最小高度
+                if (viewMinWidth != undefined_size) {
+                    minWidth = viewMinWidth
+
+                }
+                if (viewMinHeight != undefined_size) {
+                    minHeight = viewMinHeight
+                }
+
                 if (goneOnTextNull) {
                     visible(this@TextStyleConfig.text != null)
                 }

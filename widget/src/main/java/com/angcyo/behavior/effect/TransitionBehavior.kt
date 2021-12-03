@@ -13,9 +13,7 @@ import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.toRSize
 import com.angcyo.tablayout.clamp
 import com.angcyo.widget.R
-import com.angcyo.widget.base.mH
-import com.angcyo.widget.base.mW
-import com.angcyo.widget.base.topCanScroll
+import com.angcyo.widget.base.*
 import com.angcyo.widget.layout.isEnableCoordinator
 
 /**
@@ -358,7 +356,9 @@ open class TransitionBehavior(
         super.onTouchFinish(parent, child, ev)
         if (!isTouchHold && !isFlingAccepted && ViewCompat.isLaidOut(child)) {
             //在非nested scroll 视图上滚动过
-            _resetScroll()
+            if (ev.isScreenTouchIn(child)) {
+                _resetScroll()
+            }
         }
     }
 

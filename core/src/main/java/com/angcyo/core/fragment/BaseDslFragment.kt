@@ -41,6 +41,14 @@ open class BaseDslFragment : BaseTitleFragment() {
 
         _vh.rv(R.id.lib_recycler_view)?.apply {
             val dslAdapter = DslAdapter()
+            //监听[IFragmentItem]
+            dslAdapter.observeItemUpdateDepend {
+                dslAdapter.adapterItems.forEach {
+                    if (it is IFragmentItem) {
+                        it.itemFragment = this@BaseDslFragment
+                    }
+                }
+            }
             onInitDslLayout(this, dslAdapter)
             adapter = dslAdapter
         }
@@ -77,25 +85,11 @@ open class BaseDslFragment : BaseTitleFragment() {
         }
         _adapter.config()
         _adapter.toNone()
-
-        //[IFragmentItem]
-        _adapter.adapterItems.forEach {
-            if (it is IFragmentItem) {
-                it.itemFragment = this
-            }
-        }
     }
 
     /**调用此方法, 更新界面*/
     open fun updateDslAdapter(update: SingleDataUpdate.() -> Unit) {
         _adapter.updateAdapter(update)
-
-        //[IFragmentItem]
-        _adapter.adapterItems.forEach {
-            if (it is IFragmentItem) {
-                it.itemFragment = this
-            }
-        }
     }
 
     //<editor-fold desc="数据加载">
@@ -157,9 +151,6 @@ open class BaseDslFragment : BaseTitleFragment() {
     ) {
         finishRefresh()
         _adapter.loadDataEndIndex(itemClass, dataList, error, page) { data, index ->
-            if (this is IFragmentItem) {
-                this.itemFragment = this@BaseDslFragment
-            }
             initItem(data, index)
         }
     }

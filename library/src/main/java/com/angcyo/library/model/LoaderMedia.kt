@@ -153,3 +153,5 @@ fun List<LoaderMedia>.toUrlList(): List<String> {
     }
     return result
 }
+
+fun String.toLoaderMedia(): LoaderMedia = LoaderMedia(url = this)

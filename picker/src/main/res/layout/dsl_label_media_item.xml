@@ -25,7 +25,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:minHeight="0dp"
-        android:paddingLeft="@dimen/lib_padding_left"
+        android:paddingLeft="@dimen/lib_hdpi"
         android:paddingTop="@dimen/lib_min_padding"
         android:paddingRight="@dimen/lib_padding_right"
         android:paddingBottom="@dimen/lib_min_padding"
