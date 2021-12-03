@@ -108,7 +108,7 @@ var INestedRecyclerItem.itemNestedAdapter
         nestedRecyclerItemConfig.itemNestedAdapter = value
     }
 
-var INestedRecyclerItem.itemNestedLayoutManager
+var INestedRecyclerItem.itemNestedLayoutManagerProvide
     get() = nestedRecyclerItemConfig.itemNestedLayoutManagerProvide
     set(value) {
         nestedRecyclerItemConfig.itemNestedLayoutManagerProvide = value
