@@ -3,6 +3,7 @@ package com.angcyo.tablayout
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
+import com.angcyo.library.ex.isChange
 
 /**
  * 用来操作[ViewGroup]中的[child], 支持单选, 多选, 拦截.
@@ -54,11 +55,7 @@ open class DslSelector {
     val _onChildClickListener = View.OnClickListener {
         val index = visibleViewList.indexOf(it)
         val select = if (dslSelectorConfig.dslMultiMode) {
-            if (it is CompoundButton) {
-                it.isChecked
-            } else {
-                !it.isSe()
-            }
+            !it.isSe()
         } else {
             true
         }
@@ -72,6 +69,39 @@ open class DslSelector {
                 forceNotify = it is CompoundButton && dslSelectorConfig.dslMultiMode
             )
         }
+    }
+
+    /**兼容[CompoundButton]*/
+    val _onCheckedChangeListener = CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+        buttonView.isChecked = !isChecked //恢复状态 不做任何处理, 在[OnClickListener]中处理
+        /*val index = visibleViewList.indexOf(buttonView)
+
+        if (interceptSelector(index, isChecked, false)) {
+            //拦截了此操作
+            buttonView.isChecked = !isChecked //恢复状态
+        }
+
+        val selectorViewList = selectorViewList
+        val sum = selectorViewList.size
+        //Limit 过滤
+        if (buttonView.isChecked) {
+            if (sum > dslSelectorConfig.dslMaxSelectLimit) {
+                //不允许选择
+                buttonView.isChecked = false //恢复状态
+            }
+        } else {
+            //取消选择, 检查是否达到了 limit
+            if (sum < dslSelectorConfig.dslMinSelectLimit) {
+                //不允许取消选择
+                buttonView.isChecked = true //恢复状态
+            }
+        }
+
+        if (isChecked) {
+            //已经选中了控件
+        } else {
+            //已经取消了控件
+        }*/
     }
 
     /**当前选中的索引*/
@@ -108,6 +138,9 @@ open class DslSelector {
             for (i in 0 until childCount) {
                 getChildAt(i)?.let {
                     it.setOnClickListener(_onChildClickListener)
+                    if (it is CompoundButton) {
+                        it.setOnCheckedChangeListener(_onCheckedChangeListener)
+                    }
                 }
             }
         }
@@ -150,13 +183,20 @@ open class DslSelector {
         fromUser: Boolean = false,
         forceNotify: Boolean = false
     ) {
-        val selectorIndexList = selectorIndexList
+        val selectorIndexList = ArrayList(selectorIndexList)
         val lastSelectorIndex: Int? = selectorIndexList.lastOrNull()
         val reselect = !dslSelectorConfig.dslMultiMode &&
                 selectorIndexList.isNotEmpty() &&
                 selectorIndexList.contains(index)
 
-        if (_selector(index, select, fromUser) || forceNotify) {
+        var needNotify = _selector(index, select, fromUser) || forceNotify
+
+        if (!selectorIndexList.isChange(selectorIndexList)) {
+            //选中项, 未改变时不通知
+            needNotify = false
+        }
+
+        if (needNotify) {
             dslSelectIndex = this.selectorIndexList.lastOrNull() ?: -1
             if (notify) {
                 notifySelectChange(lastSelectorIndex ?: -1, reselect, fromUser)

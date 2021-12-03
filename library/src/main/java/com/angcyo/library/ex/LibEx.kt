@@ -187,6 +187,19 @@ fun List<Any?>?.isListEmpty(): Boolean {
 
 fun List<*>?.size() = this?.size ?: 0
 
+/**判断2个列表中的数据是否改变过*/
+fun <T> List<T>?.isChange(other: List<T>?): Boolean {
+    if (this.size() != other.size()) {
+        return true
+    }
+    this?.forEachIndexed { index, t ->
+        if (t != other?.getOrNull(index)) {
+            return true
+        }
+    }
+    return false
+}
+
 fun Stack<*>.popSafe() = if (isEmpty()) null else pop()
 
 fun <T> List<T?>?.randomGetOnce(): T? = randomGet(1).firstOrNull()
