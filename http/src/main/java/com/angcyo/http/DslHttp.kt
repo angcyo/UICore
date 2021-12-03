@@ -261,6 +261,11 @@ fun <T> dslHttp(service: Class<T>): T? {
     }
 }
 
+fun String?.toApi(): String {
+    return connectUrl(DslHttp.dslHttpConfig.onGetBaseUrl(), this)
+}
+
+
 /**拼接 host 和 api接口*/
 fun connectUrl(host: String?, url: String?): String {
 //    val h = host?.trimEnd('/') ?: ""
