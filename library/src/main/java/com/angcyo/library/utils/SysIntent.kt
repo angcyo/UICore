@@ -1,11 +1,13 @@
 package com.angcyo.library.utils
 
+import android.Manifest
 import android.app.Activity
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
+import android.provider.CallLog
+import android.provider.ContactsContract
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultCaller
@@ -14,6 +16,10 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import com.angcyo.library.app
+import com.angcyo.library.ex.*
+import kotlin.random.Random.Default.nextInt
+
 
 /**
  * 系统[Intent]
@@ -22,6 +28,15 @@ import androidx.fragment.app.Fragment
  * @date 2021/11/16
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
+
+data class SystemBatchBean(
+    val name: String = "", // 姓名
+    val number: String = "", // 号码
+    val callLogType: Int = listOf(1, 2, 3).randomGetOnce()!!, // 通话记录的状态 1:来电 2:去电 3:未接
+    val callLogDate: Long = nowTime(), // 通话记录日期
+    val callLogDuration: Int = nextInt(10, 160), // 通话记录时长, 秒
+)
+
 object SysIntent {
 
     /**调用系统的界面选择图片*/
@@ -36,7 +51,110 @@ object SysIntent {
         fragment.startActivityForResult(intent, requestCode)
     }
 
+    /**批量插入通话记录
+     * requires android.permission.READ_CALL_LOG or android.permission.WRITE_CALL_LOG*/
+    fun batchAddCallLogs(
+        list: List<SystemBatchBean>,
+        context: Context = app()
+    ): Array<out ContentProviderResult> {
 
+        if (!context.checkPermissions(
+                Manifest.permission.READ_CALL_LOG,
+                Manifest.permission.WRITE_CALL_LOG
+            )
+        ) {
+            return emptyArray()
+        }
+
+        val ops = ArrayList<ContentProviderOperation>()
+        val values = ContentValues()
+        for (call in list) {
+            values.clear()
+            values.put(CallLog.Calls.NUMBER, call.number)
+            values.put(CallLog.Calls.TYPE, call.callLogType)
+            values.put(CallLog.Calls.DATE, call.callLogDate)
+            values.put(CallLog.Calls.DURATION, call.callLogDuration)
+            values.put(CallLog.Calls.NEW, "0")
+            ops.add(
+                ContentProviderOperation
+                    .newInsert(CallLog.Calls.CONTENT_URI).withValues(values)
+                    .withYieldAllowed(true).build()
+            )
+        }
+        if (ops.isNotEmpty()) {
+            return context.contentResolver.applyBatch(CallLog.AUTHORITY, ops)
+        }
+        return emptyArray()
+    }
+
+    /**批量添加通讯录
+     * requires android.permission.READ_CONTACTS or android.permission.WRITE_CONTACTS*/
+    fun batchAddContacts(
+        list: List<SystemBatchBean>,
+        context: Context = app()
+    ): Array<out ContentProviderResult> {
+
+        if (!context.checkPermissions(
+                Manifest.permission.READ_CONTACTS,
+                Manifest.permission.WRITE_CONTACTS
+            )
+        ) {
+            return emptyArray()
+        }
+
+        val ops = ArrayList<ContentProviderOperation>()
+        var rawContactInsertIndex = 0
+        for (contact in list) {
+            rawContactInsertIndex = ops.size()
+            ops.add(
+                ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
+                    .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
+                    .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
+                    .withYieldAllowed(true).build()
+            )
+
+            // 添加姓名
+            ops.add(
+                ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(
+                        ContactsContract.Data.RAW_CONTACT_ID,
+                        rawContactInsertIndex
+                    )
+                    .withValue(
+                        ContactsContract.Data.MIMETYPE,
+                        ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE
+                    )
+                    .withValue(
+                        ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,
+                        contact.name
+                    )
+                    .withYieldAllowed(true).build()
+            )
+            // 添加号码
+            ops.add(
+                ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(
+                        ContactsContract.Data.RAW_CONTACT_ID,
+                        rawContactInsertIndex
+                    )
+                    .withValue(
+                        ContactsContract.Data.MIMETYPE,
+                        ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE
+                    )
+                    .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, contact.number)
+                    .withValue(
+                        ContactsContract.CommonDataKinds.Phone.TYPE,
+                        ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE
+                    )
+                    .withValue(ContactsContract.CommonDataKinds.Phone.LABEL, "")
+                    .withYieldAllowed(true).build()
+            )
+        }
+        if (ops.isNotEmpty()) {
+            return context.contentResolver.applyBatch(ContactsContract.AUTHORITY, ops)
+        }
+        return emptyArray()
+    }
 }
 
 //must call registerForActivityResult() before they are created

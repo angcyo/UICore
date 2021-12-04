@@ -97,7 +97,8 @@ fun Context.checkPermissions(vararg permissions: String): Boolean =
         false
     }
 
-/**是否具有指定的权限*/
+/**是否具有指定的权限
+ * [Manifest.permission.READ_PHONE_STATE]*/
 fun Context.havePermissions(vararg permissions: String): Boolean {
     return permissions.all {
         ActivityCompat.checkSelfPermission(
