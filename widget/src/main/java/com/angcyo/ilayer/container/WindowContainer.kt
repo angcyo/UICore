@@ -208,3 +208,8 @@ class WindowContainer(context: Context) : BaseContainer(context) {
         updateLayout(layer)
     }
 }
+
+/**[android.view.WindowManager.LayoutParams.flags]*/
+fun Int.flagLayoutFullScreen() = this or
+        WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR or
+        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
