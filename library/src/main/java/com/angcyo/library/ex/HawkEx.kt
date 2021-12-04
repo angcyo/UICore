@@ -11,20 +11,21 @@ import com.orhanobut.hawk.Hawk
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
+const val HAWK_SPLIT_CHAR = ","
+
 /**
  * this 对应的 key值,
  * 将获取到的 value 用 `,` 分割, 返回列表集合 (不含空字符)
  * @param maxCount 需要返回多少条
  * */
-fun String?.hawkGetList(maxCount: Int = Int.MAX_VALUE): MutableList<String> {
+fun String?.hawkGetList(def: String? = "", maxCount: Int = Int.MAX_VALUE): List<String> {
     val result = mutableListOf<String>()
     this?.let {
-        val get = Hawk.get(it, "")
+        val get = Hawk.get(it, def)
 
         if (!TextUtils.isEmpty(get)) {
-            result.addAll(get.splitList(",", false, true, maxCount))
+            result.addAll(get.splitList(HAWK_SPLIT_CHAR, false, true, maxCount))
         }
-
     }
     return result
 }
@@ -45,7 +46,7 @@ fun String?.hawkPutList(
             return false
         }
     }
-    val char = ","
+    val char = HAWK_SPLIT_CHAR
     return this?.run {
 
         val oldString = Hawk.get(this, "")
@@ -69,6 +70,18 @@ fun String?.hawkPutList(
     } ?: false
 }
 
+fun String?.hawkPutList(
+    value: List<String>?,
+    sort: Boolean = true,
+    allowEmpty: Boolean = false
+): Boolean {
+    var result = false
+    value?.forEach {
+        result = this?.hawkPutList(it, sort, allowEmpty) == true || result
+    }
+    return result
+}
+
 fun String?.hawkPut(value: CharSequence?): Boolean {
     return this?.run {
         Hawk.put(this, value)
@@ -83,6 +96,7 @@ fun String?.hawkAccumulate(value: Long = 1, def: Long = 0): Long {
     return newValue
 }
 
+/**直接追加到原来的数据尾部*/
 fun String?.hawkAppend(value: CharSequence?, symbol: String = ""): Boolean {
     return this?.run {
         Hawk.put(this, "${hawkGet() ?: ""}${symbol}${value ?: ""}")
@@ -102,3 +116,4 @@ fun String?.hawkDelete(): Boolean {
         Hawk.delete(this)
     } ?: false
 }
+
