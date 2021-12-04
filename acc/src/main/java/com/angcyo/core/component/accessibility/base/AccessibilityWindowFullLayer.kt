@@ -1,5 +1,6 @@
 package com.angcyo.core.component.accessibility.base
 
+import android.annotation.SuppressLint
 import android.view.WindowManager
 import com.angcyo.core.R
 import com.angcyo.ilayer.ILayer
@@ -18,6 +19,8 @@ import com.angcyo.widget.progress.CircleLoadingView
  * @date 2020/10/19
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
+
+@SuppressLint("StaticFieldLeak")
 object AccessibilityWindowFullLayer : ILayer() {
 
     val _windowContainer = WindowContainer(app()).apply {

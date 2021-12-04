@@ -121,7 +121,10 @@ abstract class BaseContainer(val context: Context) : IContainer {
         val hGravity: Int
         val offsetX: Float
 
-        if (left < maxWidth / 2) {
+        val leftGap = left
+        val rightGap = maxWidth - left - layer._rootView.mW()
+
+        if (leftGap < rightGap) {
             hGravity = Gravity.LEFT
             offsetX = left * 1f / maxWidth
         } else {
@@ -129,16 +132,35 @@ abstract class BaseContainer(val context: Context) : IContainer {
             offsetX = (maxWidth - left - layer._rootView.mW()) * 1f / maxWidth
         }
 
+        /*if (left < maxWidth / 2) {
+            hGravity = Gravity.LEFT
+            offsetX = left * 1f / maxWidth
+        } else {
+            hGravity = Gravity.RIGHT
+            offsetX = (maxWidth - left - layer._rootView.mW()) * 1f / maxWidth
+        }*/
+
         val vGravity: Int
         val offsetY: Float
 
-        if (top < maxHeight / 2) {
+        val topGap = top
+        val bottomGap = maxHeight - top - layer._rootView.mH()
+
+        if (topGap < bottomGap) {
             vGravity = Gravity.TOP
             offsetY = top * 1f / maxHeight
         } else {
             vGravity = Gravity.BOTTOM
             offsetY = (maxHeight - top - layer._rootView.mH()) * 1f / maxHeight
         }
+
+        /*if (top < maxHeight / 2) {
+            vGravity = Gravity.TOP
+            offsetY = top * 1f / maxHeight
+        } else {
+            vGravity = Gravity.BOTTOM
+            offsetY = (maxHeight - top - layer._rootView.mH()) * 1f / maxHeight
+        }*/
 
         val gravity = hGravity or vGravity
         return OffsetPosition(gravity, clamp(offsetX, 0f, 1f), clamp(offsetY, 0f, 1f))

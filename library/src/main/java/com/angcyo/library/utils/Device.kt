@@ -364,7 +364,7 @@ object Device {
             append(" h:").append("%.02f".format(height))
             append(" inches:").append("%.02f".format(screenInches))
             //导航栏, 状态栏高度
-            val statusBarHeight = _satusBarHeight
+            val statusBarHeight = _statusBarHeight
             val navBarHeight = max(dvWidth - cvWidth, dvHeight - cvHeight)
             append(" sh:").append(statusBarHeight).append(" ")
                 .append(statusBarHeight / displayMetrics.density).append("dp")

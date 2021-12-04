@@ -505,7 +505,7 @@ fun DslAccessibilityGesture.double(
 /**随机在屏幕中产生一个点位信息*/
 fun randomPoint(
     offsetLeft: Int = 10 * dpi,
-    offsetTop: Int = _satusBarHeight,
+    offsetTop: Int = _statusBarHeight,
     offsetRight: Int = 10 * dpi,
     offsetBottom: Int = _navBarHeight
 ): Point {

@@ -1,5 +1,6 @@
 package com.angcyo.core.component.accessibility.base
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.WindowManager
 import com.angcyo.acc.R
@@ -24,6 +25,8 @@ import kotlin.math.min
  * @date 2020/09/24
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
+
+@SuppressLint("StaticFieldLeak")
 object TouchTipLayer : ILayer() {
 
     val _windowContainer = WindowContainer(app()).apply {

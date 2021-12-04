@@ -1,5 +1,6 @@
 package com.angcyo.core.component.accessibility.base
 
+import android.annotation.SuppressLint
 import android.graphics.RectF
 import android.view.Gravity
 import com.angcyo.core.R
@@ -27,6 +28,8 @@ import kotlin.math.min
  * @date 2020/08/10
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
+
+@SuppressLint("StaticFieldLeak")
 object AccessibilityTouchLayer : ILayer() {
 
     val _windowContainer = WindowContainer(app()).apply {
@@ -38,7 +41,7 @@ object AccessibilityTouchLayer : ILayer() {
         enableDrag = false
         showCancelLayer = enableDrag
         dragContainer = DragRectFConstraint(
-            RectF(0f, _satusBarHeight * 1f / _screenHeight, 0f, 0.0000001f)
+            RectF(0f, _statusBarHeight * 1f / _screenHeight, 0f, 0.0000001f)
         )
     }
 

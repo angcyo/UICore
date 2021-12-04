@@ -25,7 +25,10 @@ open class ILayer {
     /**布局id, 这是必须的*/
     var iLayerLayoutId: Int = -1
 
-    /**是否要激活拖拽*/
+    /**是否要激活拖拽
+     * [dragContainer] 拖拽约束
+     * DragRectFConstraint(RectF(0f, _statusBarHeight * 1f / _screenHeight, 0f, 0.0000001f))
+     * */
     var enableDrag = false
 
     /**是否长按才激活拖拽*/
@@ -131,7 +134,8 @@ open class ILayer {
 
     //<editor-fold desc="内部方法">
 
-    /**拖拽约束*/
+    /**拖拽约束
+     * [enableDrag] 激活拖拽*/
     var dragContainer: IDragConstraint? = null
 
     /**位置拖动

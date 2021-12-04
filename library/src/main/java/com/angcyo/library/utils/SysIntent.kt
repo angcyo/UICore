@@ -29,6 +29,10 @@ import kotlin.random.Random.Default.nextInt
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 
+/**
+ * https://github.com/Atinerlengs/InsertDemo
+ * https://github.com/AndroidStudioIst/InsertDemo
+ * */
 data class SystemBatchBean(
     val name: String = "", // 姓名
     val number: String = "", // 号码
@@ -52,7 +56,10 @@ object SysIntent {
     }
 
     /**批量插入通话记录
-     * requires android.permission.READ_CALL_LOG or android.permission.WRITE_CALL_LOG*/
+     * requires android.permission.READ_CALL_LOG or android.permission.WRITE_CALL_LOG
+     * https://github.com/Atinerlengs/InsertDemo
+     * https://github.com/AndroidStudioIst/InsertDemo
+     * */
     fun batchAddCallLogs(
         list: List<SystemBatchBean>,
         context: Context = app()
@@ -88,7 +95,10 @@ object SysIntent {
     }
 
     /**批量添加通讯录
-     * requires android.permission.READ_CONTACTS or android.permission.WRITE_CONTACTS*/
+     * requires android.permission.READ_CONTACTS or android.permission.WRITE_CONTACTS
+     * https://github.com/Atinerlengs/InsertDemo
+     * https://github.com/AndroidStudioIst/InsertDemo
+     * */
     fun batchAddContacts(
         list: List<SystemBatchBean>,
         context: Context = app()

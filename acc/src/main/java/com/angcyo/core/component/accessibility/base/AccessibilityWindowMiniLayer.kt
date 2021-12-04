@@ -1,12 +1,13 @@
 package com.angcyo.core.component.accessibility.base
 
+import android.annotation.SuppressLint
 import android.graphics.RectF
 import android.view.WindowManager
 import com.angcyo.core.R
 import com.angcyo.ilayer.ILayer
 import com.angcyo.ilayer.container.DragRectFConstraint
 import com.angcyo.ilayer.container.WindowContainer
-import com.angcyo.library._satusBarHeight
+import com.angcyo.library._statusBarHeight
 import com.angcyo.library._screenHeight
 import com.angcyo.library.app
 import com.angcyo.library.ex.isDebugType
@@ -20,6 +21,8 @@ import com.angcyo.widget.progress.CircleLoadingView
  * @date 2020/07/03
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
+
+@SuppressLint("StaticFieldLeak")
 object AccessibilityWindowMiniLayer : ILayer() {
 
     val _windowContainer = WindowContainer(app()).apply {
@@ -34,7 +37,7 @@ object AccessibilityWindowMiniLayer : ILayer() {
         dragContainer = DragRectFConstraint(
             RectF(
                 0f,
-                _satusBarHeight * 1f / _screenHeight,
+                _statusBarHeight * 1f / _screenHeight,
                 0f,
                 0.0000001f
             )

@@ -153,7 +153,7 @@ val _decorHeight: Int
 /**导航栏是否显示*/
 val _isNavigationBarShow: Boolean
     get() {
-        return (_visibleWidth - _contentWidth) > _satusBarHeight ||
-                (_visibleHeight - _contentHeight) > _satusBarHeight
+        return (_visibleWidth - _contentWidth) > _statusBarHeight ||
+                (_visibleHeight - _contentHeight) > _statusBarHeight
     }
 
