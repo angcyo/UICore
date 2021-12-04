@@ -88,3 +88,12 @@ fun Float.decimal(digit: Int = 2, fadedUp: Boolean = false): Float {
     return this.toDouble().decimal(digit, fadedUp)
 }
 
+/**向上取整
+ * 1.01 -> 2*/
+fun Double.ceil() = ceil(this)
+fun Float.ceil() = ceil(this.toDouble()).toFloat()
+
+/**向下取整
+ * 1.01 -> 1*/
+fun Double.floor() = floor(this)
+fun Float.floor() = floor(this.toDouble()).toFloat()

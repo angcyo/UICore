@@ -15,6 +15,9 @@ import androidx.annotation.AnimatorRes
 import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.ex.c
+import com.angcyo.library.ex.evaluateColor
+import com.angcyo.library.ex.floor
+import com.angcyo.library.ex.size
 import com.angcyo.widget.base.Anim.ANIM_DURATION
 
 /**
@@ -262,6 +265,76 @@ fun colorAnimator(
     colorAnimator.config()
     colorAnimator.start()
     return colorAnimator
+}
+
+/**一组颜色变化的动画*/
+fun colorListAnimator(
+    colorList: List<Int>,
+    infinite: Boolean = false,
+    interpolator: Interpolator = LinearInterpolator(),
+    duration: Long = colorList.size() * 1000L,
+    onEnd: (cancel: Boolean) -> Unit = {},
+    config: ValueAnimator.() -> Unit = {},
+    onUpdate: (animator: ValueAnimator, color: Int) -> Unit
+): ValueAnimator {
+    //是否需要反序
+    var reverse = false
+    val animator = ValueAnimator.ofFloat(0f, 1f)
+    animator.addUpdateListener { animation ->
+        val section = colorList.size()
+        if (section <= 1) {
+            onUpdate(animation, colorList[0])
+        } else {
+            //每一段能运行的时间
+            val sectionTime = duration / (section - 1)
+            //当前在那一段
+            val time = animation.currentPlayTime * 1f % duration //取模调整时间
+            val currentStep: Int = (time / sectionTime).floor().toInt()
+
+            //获取需要变化的颜色
+            val startColor: Int
+            val endColor: Int
+            if (reverse) {
+                val startIndex = section - currentStep - 1
+                endColor = colorList[startIndex]
+                startColor = colorList.getOrNull(startIndex - 1) ?: colorList.first()
+            } else {
+                startColor = colorList[currentStep]
+                endColor = colorList.getOrNull(currentStep + 1) ?: colorList.last()
+            }
+
+            //当前的进度
+            val animatedValue = animation.animatedValue as Float
+            val sectionProgress = 1f / (section - 1)
+            val currentProgress: Float =
+                interpolator.getInterpolation(animatedValue % sectionProgress / sectionProgress)
+
+            onUpdate(animation, evaluateColor(currentProgress, startColor, endColor))
+        }
+    }
+    animator.addListener(object : RAnimatorListener() {
+
+        override fun onAnimationRepeat(animation: Animator) {
+            super.onAnimationRepeat(animation)
+            if (animator.repeatMode == ValueAnimator.REVERSE) {
+                reverse = !reverse
+            }
+        }
+
+        override fun _onAnimatorFinish(animator: Animator, fromCancel: Boolean) {
+            super._onAnimatorFinish(animator, fromCancel)
+            onEnd(fromCancel)
+        }
+    })
+    animator.interpolator = LinearInterpolator()
+    animator.duration = duration
+    if (infinite) {
+        animator.repeatCount = ValueAnimator.INFINITE
+        animator.repeatMode = ValueAnimator.REVERSE
+    }
+    animator.config()
+    animator.start()
+    return animator
 }
 
 /**背景变化动画*/
