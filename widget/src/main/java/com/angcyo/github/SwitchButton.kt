@@ -26,6 +26,9 @@ import kotlin.math.min
  * SwitchButton.
  * 2019-7-3
  * https://github.com/zcweng/SwitchButton
+ *
+ * 2021-12-04
+ * https://github.com/Leo199206/SwitchButton
  */
 class SwitchButton : View, Checkable {
 
@@ -945,9 +948,7 @@ class SwitchButton : View, Checkable {
         valueAnimator!!.start()
     }
 
-    /**
-     *
-     */
+    /** 广播事件 */
     private fun broadcastEvent() {
         if (onCheckedChangeListener != null) {
             isEventBroadcast = true
@@ -1162,6 +1163,7 @@ class SwitchButton : View, Checkable {
     interface OnCheckedChangeListener {
         fun onCheckedChanged(view: SwitchButton, isChecked: Boolean)
     }
+
     /** */
     /**
      * 保存动画状态

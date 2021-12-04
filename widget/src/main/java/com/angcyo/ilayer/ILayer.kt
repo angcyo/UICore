@@ -50,6 +50,10 @@ open class ILayer {
     /**渲染界面*/
     var renderLayer: (DslViewHolder.() -> Unit)? = null
 
+    /**[ILayer]当前是否追加到了容器[IContainer]*/
+    val isLayerAttach: Boolean
+        get() = _rootView?.parent != null
+
     //<editor-fold desc="生命周期方法">
 
     var _rootView: View? = null
