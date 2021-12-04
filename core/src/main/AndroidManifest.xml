@@ -43,6 +43,12 @@
             android:name=".component.step.StepService"
             android:enabled="true"
             android:exported="true" />
+
+        <!--保活服务-->
+        <service
+            android:name=".component.AliveService"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>

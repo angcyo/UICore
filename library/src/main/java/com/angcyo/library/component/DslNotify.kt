@@ -709,13 +709,16 @@ fun DslNotify.low() {
 
 /**快速设置通知点击事件*/
 fun DslNotify.clickActivity(
-    intent: Intent,
+    intent: Intent?,
     requestCode: Int = 0x999,
     flags: Int = PendingIntent.FLAG_UPDATE_CURRENT,
     options: Bundle? = null,
     context: Context = app()
 ) {
-    notifyContentIntent = DslNotify.pendingActivity(context, intent, requestCode, flags, options)
+    if (intent != null) {
+        notifyContentIntent =
+            DslNotify.pendingActivity(context, intent, requestCode, flags, options)
+    }
 }
 
 /**应用程序的通知是否打开了*/
