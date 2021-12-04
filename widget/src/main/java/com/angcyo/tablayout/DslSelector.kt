@@ -183,7 +183,7 @@ open class DslSelector {
         fromUser: Boolean = false,
         forceNotify: Boolean = false
     ) {
-        val oldSelectorList = ArrayList(selectorIndexList)
+        val oldSelectorList = selectorIndexList.toList()
         val lastSelectorIndex: Int? = oldSelectorList.lastOrNull()
         val reselect = !dslSelectorConfig.dslMultiMode &&
                 oldSelectorList.isNotEmpty() &&
@@ -215,17 +215,17 @@ open class DslSelector {
         notify: Boolean = true,
         fromUser: Boolean = false
     ) {
-        val selectorIndexList = selectorIndexList
-        val lastSelectorIndex: Int? = selectorIndexList.lastOrNull()
+        val oldSelectorIndexList = selectorIndexList
+        val lastSelectorIndex: Int? = oldSelectorIndexList.lastOrNull()
 
         var result = false
 
         indexList.forEach {
-            result = result || _selector(it, select, fromUser)
+            result = _selector(it, select, fromUser) || result
         }
 
         if (result) {
-            dslSelectIndex = this.selectorIndexList.lastOrNull() ?: -1
+            dslSelectIndex = selectorIndexList.lastOrNull() ?: -1
             if (notify) {
                 notifySelectChange(lastSelectorIndex ?: -1, false, fromUser)
             }
@@ -384,7 +384,7 @@ open class DslSelectorConfig {
         }
 
     /**
-     * 选中[View]改变回调
+     * 选中[View]改变回调, 优先于[onSelectIndexChange]触发
      * @param fromView 单选模式下有效, 表示之前选中的[View]
      * @param reselect 是否是重复选择, 只在单选模式下有效
      * @param fromUser 是否是用户产生的回调, 而非代码设置

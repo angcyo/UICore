@@ -18,7 +18,7 @@ import com.angcyo.widget.base.mW
 open class InputTipEditDelegate(editText: EditText) : FocusEditDelegate(editText) {
 
     /**需要匹配的数据池*/
-    var inputHitTipTextList: MutableList<String> = mutableListOf()
+    var inputHitTipTextList: List<String> = mutableListOf()
 
     /**命中后的数据*/
     var hitInputText: String? = null

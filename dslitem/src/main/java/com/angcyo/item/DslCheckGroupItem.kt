@@ -1,6 +1,7 @@
 package com.angcyo.item
 
 import android.view.Gravity
+import android.view.View
 import android.widget.TextView
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.extend.IToText
@@ -97,33 +98,20 @@ open class DslCheckGroupItem : DslAdapterItem(), ILabelItem {
                 flowLayoutDelegate.singleLine = itemSingleLineEquWidth
 
                 resetChild(itemCheckItems.size, itemCheckLayoutId) { itemView, itemIndex ->
+                    val item = itemCheckItems[itemIndex]
+                    itemView.tag = item //保存数据
                     itemView.find<TextView>(R.id.lib_text_view)?.text =
-                        itemCheckItemToText(itemCheckItems[itemIndex])
+                        itemCheckItemToText(item)
                 }
 
+                /**安装选择组件*/
                 itemSelectorHelper.install(this) {
                     dslMultiMode = itemMultiMode
                     dslMinSelectLimit = if (itemMultiMode) itemMinSelectLimit else 1
 
-                    onSelectIndexChange = { fromIndex, selectIndexList, reselect, fromUser ->
-                        "选择:[$fromIndex]->${selectIndexList} reselect:$reselect fromUser:$fromUser".logi()
-
-                        _itemCheckedIndexList.clear()
-                        _itemCheckedIndexList.addAll(selectIndexList)
-
-                        //清空之前
-                        itemCheckedItems.clear()
-
-                        //当前选中项
-                        selectIndexList.forEach {
-                            itemCheckedItems.add(itemCheckItems[it])
-                        }
-
-                        //更新依赖
-                        if (fromUser) {
-                            itemChanging = true
-                        }
-                    }
+                    onSelectItemView = this@DslCheckGroupItem::onCheckInterceptSelectView
+                    onSelectViewChange = this@DslCheckGroupItem::onCheckSelectViewChange
+                    onSelectIndexChange = this@DslCheckGroupItem::onCheckSelectIndexChange
                 }
 
                 val indexList = mutableListOf<Int>()
@@ -135,4 +123,49 @@ open class DslCheckGroupItem : DslAdapterItem(), ILabelItem {
             }
     }
 
+    /**是否需要拦截选中*/
+    open fun onCheckInterceptSelectView(
+        itemView: View,
+        index: Int,
+        select: Boolean,
+        fromUser: Boolean
+    ): Boolean {
+        return false
+    }
+
+    /**选中后的view改变的回调*/
+    open fun onCheckSelectViewChange(
+        fromView: View?,
+        selectViewList: List<View>,
+        reselect: Boolean,
+        fromUser: Boolean
+    ) {
+
+    }
+
+    /**选中后的index改变的回调*/
+    open fun onCheckSelectIndexChange(
+        fromIndex: Int,
+        selectIndexList: List<Int>,
+        reselect: Boolean,
+        fromUser: Boolean
+    ) {
+        "选择:[$fromIndex]->${selectIndexList} reselect:$reselect fromUser:$fromUser".logi()
+
+        _itemCheckedIndexList.clear()
+        _itemCheckedIndexList.addAll(selectIndexList)
+
+        //清空之前
+        itemCheckedItems.clear()
+
+        //当前选中项
+        selectIndexList.forEach {
+            itemCheckedItems.add(itemCheckItems[it])
+        }
+
+        //更新依赖
+        if (fromUser) {
+            itemChanging = true
+        }
+    }
 }
