@@ -631,6 +631,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         val indexOf = list.indexOf(item)
 
         if (indexOf in list.indices) {
+            item.diffResult(null, null)
             notifyItemChangedPayload(indexOf, payload)
         }
     }
@@ -640,11 +641,17 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         dslDataFilter?.clearTask()
         dslDataFilter?.filterDataList?.clear()
         dslDataFilter?.filterDataList?.addAll(adapterItems)
+        adapterItems.forEach {
+            it.diffResult(null,null)
+        }
         notifyDataSetChanged()
     }
 
     /**更新界面上所有[DslAdapterItem]*/
     fun updateAllItem(payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART) {
+        adapterItems.forEach {
+            it.diffResult(null,null)
+        }
         notifyItemRangeChanged(0, itemCount, payload)
     }
 
@@ -659,6 +666,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
                 val indexOf = indexOf(item)
 
                 if (indexOf in this.indices) {
+                    item.diffResult(null, null)
                     notifyItemChangedPayload(indexOf, payload)
                 }
             }

@@ -798,8 +798,13 @@ open class DslAdapterItem : LifecycleOwner {
     }
 
     /**Diff计算完成之后的回调
-     * [com.angcyo.dsladapter.DslDataFilter.UpdateTaskRunnable.onDiffResult]*/
-    open fun diffResult(filterParams: FilterParams?, result: DiffUtil.DiffResult) {
+     * [com.angcyo.dsladapter.DslDataFilter.UpdateTaskRunnable.onDiffResult]
+     * [com.angcyo.dsladapter.DslAdapter.notifyItemChanged]
+     * [com.angcyo.dsladapter.DslAdapter.notifyDataChanged]
+     * [com.angcyo.dsladapter.DslAdapter.updateAllItem]
+     * [com.angcyo.dsladapter.DslAdapter.updateItems]
+     * */
+    open fun diffResult(filterParams: FilterParams?, result: DiffUtil.DiffResult?) {
         itemChanging = false
         itemUpdateFlag = false
     }

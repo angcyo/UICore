@@ -99,7 +99,7 @@ open class DslCheckGroupItem : DslAdapterItem(), ILabelItem {
 
                 resetChild(itemCheckItems.size, itemCheckLayoutId) { itemView, itemIndex ->
                     val item = itemCheckItems[itemIndex]
-                    itemView.tag = item //保存数据
+                    itemView.tag = itemCheckItemToValue(item)  //保存数据
                     itemView.find<TextView>(R.id.lib_text_view)?.text =
                         itemCheckItemToText(item)
                 }

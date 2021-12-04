@@ -47,6 +47,8 @@ open class DslAdapterStatusItem : BaseDslStateItem() {
 
         itemState = ADAPTER_STATUS_NONE
 
+        itemUpdateFlag = false
+
         itemWidth = ViewGroup.LayoutParams.MATCH_PARENT
         itemHeight = ViewGroup.LayoutParams.MATCH_PARENT
     }

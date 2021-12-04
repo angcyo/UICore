@@ -4,7 +4,6 @@ import android.view.ViewGroup
 import com.angcyo.library.L
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
-import com.angcyo.widget.base.setWidthHeight
 
 /**
  * [RecyclerView.Adapter] 加载更多实现
@@ -56,6 +55,8 @@ open class DslLoadMoreItem : BaseDslStateItem() {
 
         itemWidth = ViewGroup.LayoutParams.MATCH_PARENT
         itemHeight = ViewGroup.LayoutParams.WRAP_CONTENT
+
+        itemUpdateFlag = false
 
         thisAreContentsTheSame = { _, _, _, _ ->
             false

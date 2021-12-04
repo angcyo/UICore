@@ -20,6 +20,9 @@ import java.nio.charset.Charset
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
+/**网络请求回调*/
+typealias HttpCallback<T> = (data: T?, error: Throwable?) -> Unit
+
 /**读取ResponseBody中的字符串*/
 fun ResponseBody?.readString(urlDecode: Boolean = false, charsetName: String = "UTF-8"): String? {
     if (this == null) {

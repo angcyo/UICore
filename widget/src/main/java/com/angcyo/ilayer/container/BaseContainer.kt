@@ -80,7 +80,7 @@ abstract class BaseContainer(val context: Context) : IContainer {
     override fun remove(layer: ILayer) {
         val rootView: View? = layer._rootView
         if (rootView == null) {
-            L.w("[layer]已不在已移除.")
+            L.w("[layer]已不在,已移除.")
         } else {
             val dslViewHolder = rootView.dslViewHolder()
             layer.onDestroy(this, dslViewHolder)
