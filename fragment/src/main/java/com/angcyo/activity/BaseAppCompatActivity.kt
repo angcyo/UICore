@@ -9,6 +9,9 @@ import android.os.Process
 import android.view.KeyEvent
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.angcyo.DslAHelper
 import com.angcyo.base.*
 import com.angcyo.dslTargetIntentHandle
@@ -207,4 +210,43 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
     }
 
     //</editor-fold desc="默认回调">
+
+    //<editor-fold desc="高级扩展">
+
+    /**快速观察[LiveData]*/
+    fun <T> LiveData<T>.observe(
+        autoClear: Boolean = false,
+        action: (data: T?) -> Unit
+    ): Observer<T> {
+        val result: Observer<T>
+        observe(this@BaseAppCompatActivity, Observer<T> {
+            action(it)
+            if (it != null && autoClear && this is MutableLiveData) {
+                postValue(null)
+            }
+        }.apply {
+            result = this
+        })
+        return result
+    }
+
+    /**快速观察[LiveData]一次, 确保不收到null数据*/
+    fun <T> LiveData<T>.observeOnce(action: (data: T?) -> Unit): Observer<T> {
+        var result: Observer<T>? = null
+        observe(this@BaseAppCompatActivity, Observer<T> {
+            if (it is List<*>) {
+                if (it.isNotEmpty()) {
+                    removeObserver(result!!)
+                }
+            } else if (it != null) {
+                removeObserver(result!!)
+            }
+            action(it)
+        }.apply {
+            result = this
+        })
+        return result!!
+    }
+
+    //</editor-fold>
 }
