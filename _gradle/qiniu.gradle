@@ -123,7 +123,7 @@ task _qiniuUpload() {
                     throw new IllegalStateException("需要上传的文件不存在:" + apkFile.getAbsolutePath())
                 }
             } else {
-                def key = apkFile.name
+                def key = apkFile.name /*+ new Date().format("_yyyy-MM-dd_HH-mm-ss")*/
 
                 def putPolicy = new com.qiniu.util.StringMap()
                 putPolicy.put("returnBody", "{\"key\":\"" + key + "\", \"hash\":\"" + System.currentTimeMillis() + "\"}")
