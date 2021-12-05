@@ -134,6 +134,10 @@ open class ILayer {
         }
     }
 
+    /**直接操作控件*/
+    val _vh: DslViewHolder?
+        get() = _rootView?.dslViewHolder()
+
     //</editor-fold desc="操作方法">
 
     //<editor-fold desc="内部方法">
