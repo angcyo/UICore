@@ -16,6 +16,9 @@ import kotlin.math.ceil
 /**一天的毫秒数 72,000 72,000,000*/
 const val DAY_MILLIS = 24 * 60 * 60 * 1000L
 
+/**一周的毫秒数*/
+const val WEEK_MILLIS = 7 * DAY_MILLIS
+
 /**多少天对应的毫秒数*/
 fun day(count: Int = 1): Long = count * DAY_MILLIS
 
