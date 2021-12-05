@@ -17,7 +17,7 @@ import kotlin.reflect.KProperty
 /**自动同步保存至[Hawk]
  * [HawkProperty]*/
 class HawkListProperty<T>(
-    val def: String?,
+    val def: String? = null,
     /*是否重新排序*/
     val sort: Boolean = true,
     /*是否允许空值*/
