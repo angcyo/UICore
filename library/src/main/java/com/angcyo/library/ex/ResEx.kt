@@ -106,12 +106,12 @@ fun getColor(@ColorRes id: Int, context: Context = app()): Int {
 }
 
 @Px
-fun getDimen(@DimenRes id: Int): Int {
-    return app().getDimen(id)
+fun getDimen(@DimenRes id: Int, context: Context = app()): Int {
+    return context.getDimen(id)
 }
 
-fun getInteger(@IntegerRes id: Int): Int {
-    return app().resources.getInteger(id)
+fun getInteger(@IntegerRes id: Int, context: Context = app()): Int {
+    return context.resources.getInteger(id)
 }
 
 @ColorInt
@@ -120,16 +120,16 @@ fun _color(@ColorRes id: Int, context: Context = app()): Int {
 }
 
 @Px
-fun _dimen(@DimenRes id: Int): Int {
-    return getDimen(id)
+fun _dimen(@DimenRes id: Int, context: Context = app()): Int {
+    return getDimen(id, context)
 }
 
-fun _integer(@IntegerRes id: Int): Int {
-    return getInteger(id)
+fun _integer(@IntegerRes id: Int, context: Context = app()): Int {
+    return getInteger(id, context)
 }
 
-fun _drawable(@DrawableRes id: Int): Drawable? {
-    return app().loadDrawable(id)
+fun _drawable(@DrawableRes id: Int, context: Context = app()): Drawable? {
+    return context.loadDrawable(id)
 }
 
 /**判断[Int]是否是资源的id*/

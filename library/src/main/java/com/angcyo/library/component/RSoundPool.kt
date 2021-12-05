@@ -48,6 +48,9 @@ class RSoundPool {
     /**资源和id的映射*/
     val soundIdMap = hashMapOf<Any, Int>()
 
+    /**无限循环时, 正在播放的资源列表*/
+    val playResList = mutableListOf<Any>()
+
     /**等待播放的sound id*/
     val pendingPlayIdList = mutableListOf<Int>()
 
@@ -102,17 +105,26 @@ class RSoundPool {
         return true
     }
 
+    fun soundIdToRes(soundId: Int): Any? {
+        soundIdMap.forEach { entry ->
+            if (entry.value == soundId) {
+                return entry.key
+            }
+        }
+        return null
+    }
+
     /**播放资源
      * [R.raw.incoming]*/
-    fun play(resId: Int, context: Context = app()) {
+    fun play(res: Int, context: Context = app()) {
         init(context)
-        val soundId = soundIdMap[resId]
-        if (isLoad(resId)) {
+        val soundId = soundIdMap[res]
+        if (isLoad(res)) {
             _play(soundId!!)
         } else {
             //资源还未加载, 或者加载失败, 在重新加载
-            val id = soundPool.load(context, resId, priority)
-            soundIdMap[resId] = id
+            val id = soundPool.load(context, res, priority)
+            soundIdMap[res] = id
             pendingPlayIdList.add(id)
         }
     }
@@ -144,6 +156,14 @@ class RSoundPool {
     }
 
     fun _play(soundId: Int) {
+        val res = soundIdToRes(soundId)
+        if (res != null) {
+            if (playResList.contains(res)) {
+                //正在播放当前的资源
+                return
+            }
+        }
+
         pendingPlayIdList.remove(soundId)
         val streamId = soundPool.play(soundId, volume, volume, priority, loop, rate)
         if (streamId == 0) {
@@ -153,14 +173,20 @@ class RSoundPool {
                 if (entry.value == soundId) {
                     //将资源id和流id对应起来
                     streamIdMap[entry.key] = streamId
+
+                    if (loop == -1) {
+                        //无限循环时, 才保存播放过的资源
+                        playResList.add(entry.key)
+                    }
                 }
             }
         }
     }
 
     /**停止播放, 如果是无限循环的播放, 则需要主动停止*/
-    fun stop(resId: Int) {
-        streamIdMap[resId]?.let {
+    fun stop(res: Any) {
+        playResList.remove(res)
+        streamIdMap[res]?.let {
             soundPool.stop(it)
         }
     }
@@ -169,7 +195,7 @@ class RSoundPool {
     fun release() {
         if (isInit) {
             streamIdMap.forEach { entry ->
-                soundPool.stop(entry.value)
+                stop(entry.key)
             }
             completeSampleIdList.forEach {
                 soundPool.unload(it)

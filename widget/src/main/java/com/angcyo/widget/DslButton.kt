@@ -186,7 +186,11 @@ open class DslButton : AppCompatTextView {
     }
 
     /**xml属性读取*/
-    fun initAttribute(context: Context, attributeSet: AttributeSet? = null, defStyleAttr: Int = 0) {
+    private fun initAttribute(
+        context: Context,
+        attributeSet: AttributeSet? = null,
+        defStyleAttr: Int = 0
+    ) {
         val typedArray =
             context.obtainStyledAttributes(attributeSet, R.styleable.DslButton, defStyleAttr, 0)
 
