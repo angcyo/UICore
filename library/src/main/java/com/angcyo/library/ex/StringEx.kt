@@ -66,7 +66,8 @@ fun CharSequence.copy(context: Context = app(), throwable: Boolean = false): Boo
     }
 }
 
-/**获取剪切板内容*/
+/**获取剪切板内容
+ * 兼容性问题: 只有应用程序在前台的时候,才能读取剪切板*/
 fun getPrimaryClip(context: Context = app()): CharSequence? {
     try {
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
