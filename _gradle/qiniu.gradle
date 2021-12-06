@@ -210,10 +210,23 @@ task _qiniuUpload() {
                     def client = new okhttp3.OkHttpClient()
                     def json = client.newCall(request).execute().body().string()
                     def map = new com.google.gson.Gson().fromJson(json, Map.class)
-                    println "创建二维码:${json}"
+                    println "接口返回:${json}"
 
                     def qrCodeUrl = map["data"]["qrCodeUrl"]
+                    System.err.println ''
                     System.err.println "二维码地址->$qrCodeUrl"
+
+                    //下载网站地址
+                    def t = URLEncoder.encode("App应用下载", "UTF-8")
+                    def d = URLEncoder.encode("欢迎下载", "UTF-8")
+                    def webUrl = "https://angcyo.gitee.io/download?r=${downloadUrl}&q=${qrCodeUrl}&t=${t}&d=${d}"
+                    System.err.println ''
+                    System.err.println "下载web地址->${webUrl}"
+                    def webQrUrl = requestQrCodeUrl(app_id, app_secret, webUrl)
+                    System.err.println "下载web地址[二维码]->${webQrUrl}"
+                    System.err.println ''
+                    def webQrCodeFile = file(".apk/二维码网站_${getBuildTime()}.png")
+                    saveUrlToFile(client, webQrUrl, webQrCodeFile)
 
                     def qrCodeUrlBack
                     if (codeLogo == null || codeLogo.isEmpty()) {
@@ -236,6 +249,8 @@ task _qiniuUpload() {
                     codeTextFile.createNewFile()
                     codeTextFile.append("二维码地址↓\n")
                     codeTextFile.append(qrCodeUrl)
+                    codeTextFile.append("\n网站二维码地址↓\n")
+                    codeTextFile.append(webQrUrl)
                     codeTextFile.append("\n备用二维码地址↓\n")
                     codeTextFile.append(qrCodeUrlBack)
                 }
@@ -302,4 +317,25 @@ static def saveStream(inputStream, file) {
 
 static def getBuildTime() {
     return new Date().format("yyyy-MM-dd_HH-mm-ss")
+}
+
+/**将内容打成二维码图片地址*/
+static def requestQrCodeUrl(app_id, app_secret, content) {
+    def url = "http://www.mxnzp.com/api/qrcode/create/single?content=${content}&size=400&type=0"
+
+    def request = new okhttp3.Request.Builder()
+            .header("app_id", app_id)
+            .header("app_secret", app_secret)
+            .url(url)
+            .build()
+
+    //生成url对应的二维码
+    //https://github.com/MZCretin/RollToolsApi#%E5%85%AB%E7%94%9F%E6%88%90%E4%BA%8C%E7%BB%B4%E7%A0%81
+    def client = new okhttp3.OkHttpClient()
+    def json = client.newCall(request).execute().body().string()
+    def map = new com.google.gson.Gson().fromJson(json, Map.class)
+    println "接口返回:${json}"
+
+    def qrCodeUrl = map["data"]["qrCodeUrl"]
+    return qrCodeUrl
 }
