@@ -179,10 +179,20 @@ fun EditText.hawkTextChange(
 
 //</editor-fold desc="事件监听">
 
+fun TextView.restoreInputText(
+    text: CharSequence? = null,
+    selection: Boolean = true,
+    force: Boolean = false
+) {
+    if (isEmpty() || force) {
+        setInputText(text, selection)
+    }
+}
+
 /**设置文本, 并且将光标至于文本最后面*/
-fun EditText.setInputText(text: CharSequence? = null, selection: Boolean = true) {
+fun TextView.setInputText(text: CharSequence? = null, selection: Boolean = true) {
     setText(text)
-    if (selection) {
+    if (selection && this is EditText) {
         setSelection(min(text?.length ?: 0, getText().length))
     }
 }
