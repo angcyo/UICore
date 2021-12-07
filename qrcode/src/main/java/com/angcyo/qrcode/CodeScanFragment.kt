@@ -1,9 +1,12 @@
 package com.angcyo.qrcode
 
+import android.Manifest
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.CompoundButton
 import com.angcyo.library.L
+import com.angcyo.library.ex.checkPermissions
 import com.angcyo.rcode.ScanFragment
 
 /**
@@ -21,6 +24,14 @@ open class CodeScanFragment : ScanFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        //权限请求
+        activity?.let {
+            it.checkPermissions(Manifest.permission.CAMERA)
+        }
     }
 
     override fun initFragment(view: View, savedInstanceState: Bundle?) {
