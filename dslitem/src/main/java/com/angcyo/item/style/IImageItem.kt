@@ -32,7 +32,7 @@ interface IImageItem : IAutoInitItem {
     /**初始化*/
     fun initImageItem(itemHolder: DslViewHolder, payloads: List<Any>) {
         //更新媒体
-        val mediaUpdate = payloads.isUpdateMedia()
+        val mediaUpdate = payloads.isUpdateMedia() || imageItemConfig.itemLoadImageFlag
 
         itemHolder.img(imageItemConfig.itemImageViewId)?.apply {
             if (this is GlideImageView) {
@@ -48,6 +48,8 @@ interface IImageItem : IAutoInitItem {
         if (mediaUpdate) {
             //缩略图
             itemHolder.img(imageItemConfig.itemImageViewId)?.apply {
+                imageItemConfig.itemLoadImageFlag = false
+                
                 imageItemConfig.imageStyleConfig.updateStyle(this)
 
                 when (val image = imageItemConfig.itemLoadImage ?: imageItemConfig.itemLoadUri) {
@@ -131,12 +133,22 @@ class ImageItemConfig : IDslItemConfig {
     /**检查gif图片类型, 如果是会使用[GifDrawable]*/
     var itemCheckGifType: Boolean = true
 
+    /**是否需要加载图片的标识, 加载图片后, 自动恢复[false]*/
+    var itemLoadImageFlag: Boolean = true
+
     /**加载的媒体*/
     @Deprecated("已废弃,请使用[itemLoadImage],2021-9-23")
     var itemLoadUri: Uri? = null
 
     /**加载的媒体*/
     var itemLoadImage: AnyImage? = null
+        set(value) {
+            val old = field
+            field = value
+            if (old != value) {
+                itemLoadImageFlag = true
+            }
+        }
 
     /**当[itemLoadImage]为空时, 需要绘制的文本*/
     var itemLoadImageText: String? = null
