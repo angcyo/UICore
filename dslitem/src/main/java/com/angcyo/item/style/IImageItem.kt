@@ -49,7 +49,7 @@ interface IImageItem : IAutoInitItem {
             //缩略图
             itemHolder.img(imageItemConfig.itemImageViewId)?.apply {
                 imageItemConfig.itemLoadImageFlag = false
-                
+
                 imageItemConfig.imageStyleConfig.updateStyle(this)
 
                 when (val image = imageItemConfig.itemLoadImage ?: imageItemConfig.itemLoadUri) {
