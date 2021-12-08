@@ -2,12 +2,11 @@ package com.angcyo.base
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.SparseArray
-import androidx.core.util.set
 import androidx.fragment.app.Fragment
 import com.angcyo.base.IFragmentResult.Companion.KEY_RESULT
 import com.angcyo.base.IFragmentResult.Companion._doResult
 import com.angcyo.base.IFragmentResult.Companion._setRef
+import kotlin.collections.set
 
 /**
  *
@@ -22,20 +21,20 @@ interface IFragmentResult {
         val KEY_RESULT = "key_fragment_result"
 
         //弱引用保存回调实例
-        val sparseArray = SparseArray<IFragmentResult?>()
+        val resultRefMap = HashMap<Int, IFragmentResult?>()
 
         fun _clearRef(key: Int) {
-            sparseArray[key] = null
+            resultRefMap[key] = null
         }
 
         fun _setRef(key: Int, result: IFragmentResult) {
             _clearRef(key)
-            sparseArray[key] = result
+            resultRefMap[key] = result
         }
 
         fun _doResult(key: Int, resultCode: Int, data: Any?) {
             try {
-                sparseArray.get(key)?.onFragmentResult(resultCode, data)
+                resultRefMap[key]?.onFragmentResult(resultCode, data)
             } finally {
                 _clearRef(key)
             }
