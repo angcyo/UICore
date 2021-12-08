@@ -10,6 +10,7 @@ import com.angcyo.item.R
 import com.angcyo.library.app
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.recycler.*
+import java.lang.ref.WeakReference
 
 /**
  * 内嵌一个RecyclerView的Item
@@ -80,9 +81,19 @@ interface INestedRecyclerItem : IAutoInitItem {
 
     /**开始界面渲染*/
     fun onRenderNestedAdapter(dslAdapter: DslAdapter) {
+        val item = this
         dslAdapter.apply {
             nestedRecyclerItemConfig.itemNestedItemList?.let {
                 clearItems()
+                if (item is DslAdapterItem) {
+                    it.forEach {
+                        if (it.itemParentRef?.get() == item) {
+                            //一样的对象
+                        } else {
+                            it.itemParentRef = WeakReference(item)
+                        }
+                    }
+                }
                 dataItems.addAll(it)
                 _updateAdapterItems()
             }
@@ -97,7 +108,11 @@ interface INestedRecyclerItem : IAutoInitItem {
                 }
             }
 
-            updateNow()
+            if (item is DslAdapterItem && item.itemParentRef?.get() == null) {
+                updateNow()
+            } else {
+                notifyDataChanged()
+            }
         }
     }
 }

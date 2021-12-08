@@ -207,6 +207,10 @@ open class DslLabelMediaItem : DslBaseLabelItem(), IFragmentItem {
             }
         }
 
-        adapter.updateNow()
+        if (itemParentRef?.get() == null) {
+            adapter.updateNow()
+        } else {
+            adapter.notifyDataChanged()
+        }
     }
 }

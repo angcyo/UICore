@@ -30,6 +30,7 @@ import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
 import com.angcyo.widget.base.*
 import com.angcyo.widget.recycler.RecyclerBottomLayout
+import java.lang.ref.WeakReference
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -317,6 +318,11 @@ open class DslAdapterItem : LifecycleOwner {
     var itemViewRecycled: HolderBindAction = { itemHolder, itemPosition ->
         onItemViewRecycled(itemHolder, itemPosition)
     }
+
+    /**
+     * 如果当前的[DslAdapterItem]在另一个[DslAdapterItem]内, 此属性用来保存父[DslAdapterItem]标识
+     * [INestedRecyclerItem]*/
+    var itemParentRef: WeakReference<DslAdapterItem>? = null
 
     //</editor-fold desc="标准属性">
 
