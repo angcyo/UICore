@@ -18,7 +18,6 @@ class CodeHelper : Runnable {
     /**结束回调*/
     var codeTimeEnd: () -> Unit = {}
 
-
     //是否已经发送过
     var _isSend = false
 

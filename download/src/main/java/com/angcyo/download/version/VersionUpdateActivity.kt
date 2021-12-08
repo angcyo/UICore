@@ -45,6 +45,7 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //全屏显示, 否则...窗口只有一点点
         window.setLayout(-1, -1)
     }
 

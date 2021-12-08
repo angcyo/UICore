@@ -1143,8 +1143,7 @@ open class DslAdapterItem : LifecycleOwner {
 class UpdateDependProperty<T>(
     var value: T,
     val payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART
-) :
-    ReadWriteProperty<DslAdapterItem, T> {
+) : ReadWriteProperty<DslAdapterItem, T> {
     override fun getValue(thisRef: DslAdapterItem, property: KProperty<*>): T = value
 
     override fun setValue(thisRef: DslAdapterItem, property: KProperty<*>, value: T) {
@@ -1163,8 +1162,8 @@ class UpdateDependProperty<T>(
 class UpdateAdapterProperty<T>(
     var value: T,
     val payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART
-) :
-    ReadWriteProperty<DslAdapterItem, T> {
+) : ReadWriteProperty<DslAdapterItem, T> {
+
     override fun getValue(thisRef: DslAdapterItem, property: KProperty<*>): T = value
 
     override fun setValue(thisRef: DslAdapterItem, property: KProperty<*>, value: T) {
