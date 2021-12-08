@@ -6,6 +6,7 @@ import android.os.Bundle
 import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.base.dslAHelper
 import com.angcyo.download.*
+import com.angcyo.download.version.VersionUpdateActivity.Companion.isUpdateIgnore
 import com.angcyo.getData
 import com.angcyo.library.L
 import com.angcyo.library.app
@@ -31,6 +32,11 @@ import java.net.HttpURLConnection
 
 open class VersionUpdateActivity : BaseAppCompatActivity() {
 
+    companion object {
+        /**忽略更新提示*/
+        var isUpdateIgnore = false
+    }
+
     var updateBean: VersionUpdateBean? = null
 
     init {
@@ -40,6 +46,16 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.setLayout(-1, -1)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        updateBean?.let {
+            if (!it.versionForce) {
+                //非强制更新的版本, 忽略本次内存提示
+                isUpdateIgnore = true
+            }
+        }
     }
 
     override fun onHandleIntent(intent: Intent, fromNew: Boolean) {
@@ -144,9 +160,14 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
 
 /**版本更新界面配置
  * 返回值表示是否有新版本*/
-fun Context.versionUpdate(updateBean: VersionUpdateBean?): Boolean {
+fun Context.versionUpdate(updateBean: VersionUpdateBean?, force: Boolean = false): Boolean {
     if (updateBean == null) {
         return false
+    }
+    if (force) {
+        isUpdateIgnore = false
+    } else if (isUpdateIgnore) {
+        return true
     }
     val appVersionCode = getAppVersionCode()
     if (updateBean.versionCode > appVersionCode) {
