@@ -5,7 +5,6 @@ import com.angcyo.core.dslitem.IFragmentItem
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.item.IDslItemConfig
-import com.angcyo.dsladapter.updateNow
 import com.angcyo.item.R
 import com.angcyo.library.app
 import com.angcyo.widget.DslViewHolder
@@ -111,11 +110,12 @@ interface INestedRecyclerItem : IAutoInitItem {
                 }
             }
 
-            if (item is DslAdapterItem && item.itemParentRef?.get() == null) {
+            /*if (item is DslAdapterItem && item.itemParentRef?.get() == null) {
                 updateNow()
             } else {
                 notifyDataChanged()
-            }
+            }*/
+            notifyDataChanged()
         }
     }
 }
