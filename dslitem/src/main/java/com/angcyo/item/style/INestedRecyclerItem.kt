@@ -5,6 +5,7 @@ import com.angcyo.core.dslitem.IFragmentItem
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.item.IDslItemConfig
+import com.angcyo.dsladapter.updateNow
 import com.angcyo.item.R
 import com.angcyo.library.app
 import com.angcyo.widget.DslViewHolder
@@ -46,8 +47,11 @@ interface INestedRecyclerItem : IAutoInitItem {
             clearOnScrollListeners()
             clearItemDecoration()
             initDsl()
+            noItemAnim()
 
-            layoutManager = nestedRecyclerItemConfig.itemNestedLayoutManagerProvide()
+            if (layoutManager != nestedRecyclerItemConfig.itemNestedLayoutManager) {
+                layoutManager = nestedRecyclerItemConfig.itemNestedLayoutManager
+            }
 
             //关键地方, 如果每次都赋值[adapter], 系统会重置所有缓存.
             if (adapter != nestedRecyclerItemConfig.itemNestedAdapter) {
@@ -107,12 +111,11 @@ interface INestedRecyclerItem : IAutoInitItem {
                 }
             }
 
-            /*if (item is DslAdapterItem && item.itemParentRef?.get() == null) {
+            if (item is DslAdapterItem && item.itemParentRef?.get() == null) {
                 updateNow()
             } else {
                 notifyDataChanged()
-            }*/
-            notifyDataChanged()
+            }
         }
     }
 }
@@ -123,10 +126,10 @@ var INestedRecyclerItem.itemNestedAdapter
         nestedRecyclerItemConfig.itemNestedAdapter = value
     }
 
-var INestedRecyclerItem.itemNestedLayoutManagerProvide
-    get() = nestedRecyclerItemConfig.itemNestedLayoutManagerProvide
+var INestedRecyclerItem.itemNestedLayoutManager
+    get() = nestedRecyclerItemConfig.itemNestedLayoutManager
     set(value) {
-        nestedRecyclerItemConfig.itemNestedLayoutManagerProvide = value
+        nestedRecyclerItemConfig.itemNestedLayoutManager = value
     }
 
 fun INestedRecyclerItem.renderNestedAdapter(init: DslAdapter.() -> Unit) {
@@ -153,10 +156,8 @@ class NestedRecyclerItemConfig : IDslItemConfig {
 
     /**布局管理,
      * 请注意使用属性:[recycleChildrenOnDetach]*/
-    var itemNestedLayoutManagerProvide: () -> RecyclerView.LayoutManager = {
-        LinearLayoutManagerWrap(app()).apply {
-            recycleChildrenOnDetach = true
-        }
+    var itemNestedLayoutManager: RecyclerView.LayoutManager = LinearLayoutManagerWrap(app()).apply {
+        recycleChildrenOnDetach = true
     }
 
     /**自动恢复滚动位置*/
