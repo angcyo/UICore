@@ -45,17 +45,14 @@ class RSoundPool {
     /**加载成功的id*/
     val completeSampleIdList = mutableListOf<Int>()
 
-    /**资源和id的映射*/
-    val soundIdMap = hashMapOf<Any, Int>()
-
-    /**无限循环时, 正在播放的资源列表*/
-    val playResList = mutableListOf<Any>()
+    /**所有播放/待播放的资源*/
+    val soundList = mutableListOf<SoundItem>()
 
     /**等待播放的sound id*/
     val pendingPlayIdList = mutableListOf<Int>()
 
-    /**已经播放的stream id*/
-    val streamIdMap = hashMapOf<Any, Int>()
+    /**无限循环时, 播放的资源列表*/
+    val playResList = mutableListOf<Any>()
 
     lateinit var soundPool: SoundPool
 
@@ -90,7 +87,9 @@ class RSoundPool {
                 completeSampleIdList.add(sampleId)
 
                 if (pendingPlayIdList.contains(sampleId)) {
-                    _play(sampleId)
+                    soundList.find { it.soundId == sampleId }?.let {
+                        _play(it)
+                    }
                 }
             }
         }
@@ -98,35 +97,85 @@ class RSoundPool {
 
     /**指定的资源, 是否加载成功了*/
     fun isLoad(res: Any): Boolean {
-        val soundId = soundIdMap[res]
-        if (soundId == null || !completeSampleIdList.contains(soundId)) {
-            return false
-        }
-        return true
+        return soundList.find { it.res == res }?.run {
+            if (soundId == -1) {
+                false
+            } else {
+                completeSampleIdList.contains(soundId)
+            }
+        } ?: false
     }
 
     fun soundIdToRes(soundId: Int): Any? {
-        soundIdMap.forEach { entry ->
-            if (entry.value == soundId) {
-                return entry.key
-            }
+        return soundList.find { it.soundId == soundId }?.res
+    }
+
+    /**加载资源, 可选是否播放*/
+    fun loadRes(
+        res: Int,
+        play: Boolean = false,
+        context: Context = app(),
+        init: (SoundItem.() -> Unit)? = null
+    ) {
+        if (isLoad(res) && !play) {
+            return
         }
-        return null
+
+        init(context)
+        val soundItem = soundList.find { it.res == res }
+
+        if (soundItem == null) {
+            //资源还未加载, 或者加载失败, 在重新加载
+            val item = soundItem ?: SoundItem(res, volume, volume, priority, loop, rate).apply {
+                soundList.add(this)
+            }
+            init?.invoke(item)
+            val id = soundPool.load(context, res, item.priority)
+            item.soundId = id
+            if (play) {
+                pendingPlayIdList.add(id)
+            }
+        } else if (play) {
+            _play(soundItem)
+        }
+    }
+
+    fun loadDefaultRingtone(
+        type: Int = RingtoneManager.TYPE_NOTIFICATION,
+        play: Boolean = false,
+        context: Context = app()
+    ) {
+        if (isLoad(type) && !play) {
+            return
+        }
+
+        init(context)
+
+        val soundItem = soundList.find { it.res == type }
+
+        if (soundItem == null || !isLoad(type)) {
+            //资源还未加载, 或者加载失败, 在重新加载
+            val item = soundItem ?: SoundItem(type, volume, volume, priority, loop, rate).apply {
+                soundList.add(this)
+            }
+            val uri = RingtoneManager.getActualDefaultRingtoneUri(
+                context,
+                type
+            )
+            val id = soundPool.load(uri.path, priority)
+            item.soundId = id
+            if (play) {
+                pendingPlayIdList.add(id)
+            }
+        } else if (play) {
+            _play(soundItem)
+        }
     }
 
     /**播放资源
      * [R.raw.incoming]*/
     fun play(res: Int, context: Context = app()) {
-        init(context)
-        val soundId = soundIdMap[res]
-        if (isLoad(res)) {
-            _play(soundId!!)
-        } else {
-            //资源还未加载, 或者加载失败, 在重新加载
-            val id = soundPool.load(context, res, priority)
-            soundIdMap[res] = id
-            pendingPlayIdList.add(id)
-        }
+        loadRes(res, true, context)
     }
 
     /**播放系统默认的铃声
@@ -139,46 +188,33 @@ class RSoundPool {
         type: Int = RingtoneManager.TYPE_NOTIFICATION,
         context: Context = app()
     ) {
-        init(context)
-        val soundId = soundIdMap[type]
-        if (isLoad(type)) {
-            _play(soundId!!)
-        } else {
-            //资源还未加载, 或者加载失败, 在重新加载
-            val uri = RingtoneManager.getActualDefaultRingtoneUri(
-                context,
-                type
-            )
-            val id = soundPool.load(uri.path, priority)
-            soundIdMap[type] = id
-            pendingPlayIdList.add(id)
-        }
+        loadDefaultRingtone(type, true, context)
     }
 
-    fun _play(soundId: Int) {
-        val res = soundIdToRes(soundId)
-        if (res != null) {
-            if (playResList.contains(res)) {
-                //正在播放当前的资源
-                return
-            }
+    fun _play(soundItem: SoundItem) {
+        val soundId = soundItem.soundId
+        if (playResList.contains(soundItem.res)) {
+            //正在播放当前的资源
+            return
         }
 
         pendingPlayIdList.remove(soundId)
-        val streamId = soundPool.play(soundId, volume, volume, priority, loop, rate)
+        val streamId = soundPool.play(
+            soundId,
+            soundItem.leftVolume,
+            soundItem.rightVolume,
+            soundItem.priority,
+            soundItem.loop,
+            soundItem.rate
+        )
+
         if (streamId == 0) {
             L.w("播放失败->[$soundId]")
         } else {
-            soundIdMap.forEach { entry ->
-                if (entry.value == soundId) {
-                    //将资源id和流id对应起来
-                    streamIdMap[entry.key] = streamId
-
-                    if (loop == -1) {
-                        //无限循环时, 才保存播放过的资源
-                        playResList.add(entry.key)
-                    }
-                }
+            soundItem.streamId = streamId
+            if (soundItem.loop == -1) {
+                //无限循环时, 才保存播放过的资源
+                playResList.add(soundItem.res)
             }
         }
     }
@@ -186,16 +222,17 @@ class RSoundPool {
     /**停止播放, 如果是无限循环的播放, 则需要主动停止*/
     fun stop(res: Any) {
         playResList.remove(res)
-        streamIdMap[res]?.let {
-            soundPool.stop(it)
+        val soundItem = soundList.find { it.res == res }
+        soundItem?.let {
+            soundPool.stop(soundItem.streamId)
         }
     }
 
     /**释放资源*/
     fun release() {
         if (isInit) {
-            streamIdMap.forEach { entry ->
-                stop(entry.key)
+            soundList.forEach {
+                stop(it.res)
             }
             completeSampleIdList.forEach {
                 soundPool.unload(it)
@@ -203,4 +240,15 @@ class RSoundPool {
             soundPool.release()
         }
     }
+
+    data class SoundItem(
+        var res: Any, //播放的资源, 系统音效/R.raw.xxx等
+        var leftVolume: Float = 1f, //需要播放的音量值（范围= 0.0到1.0)
+        var rightVolume: Float = 1f,
+        var priority: Int = 1,//优先级
+        var loop: Int = 0,//loop 为音频重复播放次数，0为值播放一次，-1为无限循环，其他值为播放loop+1次
+        var rate: Float = 1f,//rate为播放的速率，范围0.5-2.0(0.5为一半速率，1.0为正常速率，2.0为两倍速率
+        var soundId: Int = -1, //加载成功之后, 用来真正播放的id
+        var streamId: Int = -1, //播放之后, 流的id, 用来关闭
+    )
 }

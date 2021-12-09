@@ -86,6 +86,9 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
 
     override fun onDestroy() {
         super.onDestroy()
+        foreverObserveMap.forEach {
+            it.key.removeObserver(it.value as Observer<in Any>)
+        }
         onFragmentSetResult()
     }
 
@@ -212,6 +215,25 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
             result = this
         })
         return result!!
+    }
+
+    val foreverObserveMap = hashMapOf<LiveData<*>, Observer<*>>()
+
+    fun <T> LiveData<T>.observeForever(
+        autoClear: Boolean = false,
+        action: (data: T?) -> Unit
+    ): Observer<T> {
+        val result: Observer<T>
+        observeForever(Observer<T> {
+            action(it)
+            if (it != null && autoClear && this is MutableLiveData) {
+                postValue(null)
+            }
+        }.apply {
+            result = this
+        })
+        foreverObserveMap[this] = result
+        return result
     }
 
     //</editor-fold>
