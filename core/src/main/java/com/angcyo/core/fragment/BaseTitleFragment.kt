@@ -411,36 +411,6 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
     //<editor-fold desc="扩展方法">
 
-    fun DslGroupHelper.appendItem(
-        text: CharSequence? = null,
-        @DrawableRes ico: Int = undefined_res,
-        action: DslTextView.() -> Unit = {},
-        onClick: (View) -> Unit
-    ) {
-        appendTextItem {
-            gravity = Gravity.CENTER
-            setTextColor(fragmentConfig.titleItemTextColor)
-            this.text = span {
-
-                if (ico != undefined_res) {
-                    drawable {
-                        backgroundDrawable =
-                            loadDrawable(ico).colorFilter(fragmentConfig.titleItemIconColor)
-                        textGravity = Gravity.CENTER
-                    }
-                }
-
-                if (text != null) {
-                    drawable(text) {
-                        textGravity = Gravity.CENTER
-                    }
-                }
-            }
-            clickIt(onClick)
-            this.action()
-        }
-    }
-
     fun appendLeftItem(
         text: CharSequence? = null,
         @DrawableRes ico: Int = undefined_res,

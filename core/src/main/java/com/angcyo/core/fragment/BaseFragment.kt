@@ -2,16 +2,27 @@ package com.angcyo.core.fragment
 
 import android.animation.Animator
 import android.os.Bundle
+import android.view.Gravity
+import android.view.View
 import android.view.animation.Animation
+import androidx.annotation.DrawableRes
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.angcyo.core.R
+import com.angcyo.core.appendTextItem
 import com.angcyo.core.lifecycle.CompositeDisposableLifecycle
 import com.angcyo.core.lifecycle.CoroutineScopeLifecycle
 import com.angcyo.fragment.AbsFragment
 import com.angcyo.fragment.AbsLifecycleFragment
+import com.angcyo.library.ex.colorFilter
+import com.angcyo.library.ex.undefined_res
+import com.angcyo.widget.DslGroupHelper
+import com.angcyo.widget.base.clickIt
+import com.angcyo.widget.base.loadDrawable
 import com.angcyo.widget.layout.RCoordinatorLayout
+import com.angcyo.widget.span.span
+import com.angcyo.widget.text.DslTextView
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.CoroutineScope
 
@@ -170,6 +181,40 @@ abstract class BaseFragment : AbsLifecycleFragment() {
         coroutineScopeLifecycle.launch(block)
 
     //</editor-fold desc="Rx 协程">
+
+    //<editor-fold desc="Append操作">
+
+    fun DslGroupHelper.appendItem(
+        text: CharSequence? = null,
+        @DrawableRes ico: Int = undefined_res,
+        action: DslTextView.() -> Unit = {},
+        onClick: (View) -> Unit
+    ) {
+        appendTextItem {
+            gravity = Gravity.CENTER
+            setTextColor(fragmentConfig.titleItemTextColor)
+            this.text = span {
+
+                if (ico != undefined_res) {
+                    drawable {
+                        backgroundDrawable =
+                            loadDrawable(ico).colorFilter(fragmentConfig.titleItemIconColor)
+                        textGravity = Gravity.CENTER
+                    }
+                }
+
+                if (text != null) {
+                    drawable(text) {
+                        textGravity = Gravity.CENTER
+                    }
+                }
+            }
+            clickIt(onClick)
+            this.action()
+        }
+    }
+
+    //</editor-fold desc="Append操作">
 }
 
 /**关闭父[Fragment]中的协调布局功能*/
