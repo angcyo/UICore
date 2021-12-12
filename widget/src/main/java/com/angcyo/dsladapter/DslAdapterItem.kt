@@ -155,6 +155,9 @@ open class DslAdapterItem : LifecycleOwner {
 
         if (notifyChildFormItemList.isNotEmpty()) {
             updateItemDepend(filterParams)
+        } else {
+            //否则更新自己
+            updateAdapterItem(filterParams.payload)
         }
     }
 
