@@ -235,14 +235,16 @@ fun <T : DslAdapterItem> DslAdapter.dslCustomItem(
 fun DslAdapter.renderEmptyItem(
     height: Int = 120 * dpi,
     backgroundColor: Int = Color.TRANSPARENT,
+    list: MutableList<DslAdapterItem> = dataItems,
     action: DslAdapterItem.() -> Unit = {}
 ) {
-    renderEmptyItem(height, ColorDrawable(backgroundColor), action)
+    renderEmptyItem(height, ColorDrawable(backgroundColor), list, action)
 }
 
 fun DslAdapter.renderEmptyItem(
     height: Int = 120 * dpi,
     background: Drawable?,
+    list: MutableList<DslAdapterItem> = dataItems,
     action: DslAdapterItem.() -> Unit = {}
 ) {
     val adapterItem = DslAdapterItem()
@@ -252,7 +254,7 @@ fun DslAdapter.renderEmptyItem(
         itemHolder.itemView.setWidthHeight(-1, height)
     }
     adapterItem.action()
-    addLastItem(adapterItem)
+    addLastItem(list, adapterItem)
 }
 
 /**换个贴切的名字*/

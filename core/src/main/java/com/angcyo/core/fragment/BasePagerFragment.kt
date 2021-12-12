@@ -180,6 +180,8 @@ abstract class BasePagerFragment : BaseTitleFragment() {
     /**获取对应页面*/
     open fun getPageItem(position: Int): Fragment = pages[position]
 
+    open fun <T : Fragment> getPage(position: Int, cls: Class<T>): T = pages[position] as T
+
     /**页面数量*/
     open fun getPageCount(): Int = pages.size
 
@@ -196,9 +198,13 @@ abstract class BasePagerFragment : BaseTitleFragment() {
     //</editor-fold desc="ViewPager相关">
 
     /**添加一个页面*/
-    fun addPage(title: CharSequence, fragment: Class<out Fragment>) {
+    fun addPage(
+        title: CharSequence,
+        fragment: Class<out Fragment>,
+        init: Fragment.() -> Unit = {}
+    ) {
         titles.add(title)
-        pages.add(fragment.instantiate()!!)
+        pages.add(fragment.instantiate()!!.apply(init))
     }
 }
 

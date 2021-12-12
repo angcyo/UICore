@@ -385,7 +385,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     fun <T : DslAdapterItem> addLastItem(
         list: MutableList<DslAdapterItem>,
         item: T,
-        init: T.() -> Unit
+        init: T.() -> Unit = {}
     ) {
         insertItem(list, -1, item, init)
     }
@@ -421,7 +421,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     }
 
     /**先插入数据, 再初始化*/
-    fun <T : DslAdapterItem> insertItem(index: Int, item: T, init: T.() -> Unit) {
+    fun <T : DslAdapterItem> insertItem(index: Int, item: T, init: T.() -> Unit = {}) {
         dataItems.add(_validIndex(dataItems, index), item)
         _updateAdapterItems()
         item.init()
@@ -642,7 +642,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         dslDataFilter?.filterDataList?.clear()
         dslDataFilter?.filterDataList?.addAll(adapterItems)
         adapterItems.forEach {
-            it.diffResult(null,null)
+            it.diffResult(null, null)
         }
         notifyDataSetChanged()
     }
@@ -650,7 +650,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     /**更新界面上所有[DslAdapterItem]*/
     fun updateAllItem(payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART) {
         adapterItems.forEach {
-            it.diffResult(null,null)
+            it.diffResult(null, null)
         }
         notifyItemRangeChanged(0, itemCount, payload)
     }
