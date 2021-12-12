@@ -77,6 +77,13 @@ var IFormItem.formKey: String?
         itemFormConfig.formKey = value
     }
 
+/**需要调用[end]结束操作*/
+var IFormItem.formObtain: (params: DslFormParams, end: (error: Throwable?) -> Unit) -> Unit
+    get() = itemFormConfig.formObtain
+    set(value) {
+        itemFormConfig.formObtain = value
+    }
+
 /**
  * 表单[IFormItem]配置信息
  * Email:angcyo@126.com
