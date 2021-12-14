@@ -5,7 +5,7 @@
     <dimen name="title_bar_height">75dp</dimen>
     <dimen name="title_bar_offset_height">87dp</dimen>
 
-    <!--最最最小item的高度-->
+    <!--最最小item的高度-->
     <dimen name="lib_min_item_height">35dp</dimen>
     <!--item最小的高度-->
     <dimen name="lib_item_min_height">45dp</dimen>

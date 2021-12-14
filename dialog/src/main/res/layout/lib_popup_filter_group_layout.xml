@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/lib_xhdpi"
+    android:paddingTop="@dimen/lib_xhdpi"
+    android:paddingRight="@dimen/lib_xhdpi"
+    android:paddingBottom="@dimen/lib_hdpi">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/filter_group_name_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_sub_color"
+        tools:text="过滤分组1" />
+
+    <com.angcyo.widget.layout.DslFlowLayout
+        android:id="@+id/filter_group_item_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lib_hdpi"
+        app:r_flow_item_horizontal_space="@dimen/lib_xhdpi"
+        app:r_flow_item_vertical_space="@dimen/lib_xhdpi" />
+
+</LinearLayout>

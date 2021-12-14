@@ -129,12 +129,19 @@ open class PopupConfig {
     var onInitLayout: (window: Any, viewHolder: DslViewHolder) -> Unit =
         { _, _ -> }
 
+    /**[PopupWindow]or[Window]载体*/
+    var _container: Any? = null
+
     /**显示, 根据条件, 选择使用[PopupWindow]or[Window]载体*/
     open fun show(context: Context): Any {
         return if (showWithActivity && context is Activity) {
-            showWidthActivity(context)
+            showWidthActivity(context).apply {
+                _container = this
+            }
         } else {
-            showWithPopupWindow(context)
+            showWithPopupWindow(context).apply {
+                _container = this
+            }
         }
     }
 
@@ -417,7 +424,9 @@ open class PopupConfig {
         return window
     }
 
-    /**透明颜色变暗透明度, [PopupWindow]不支持此属性*/
+    /**
+     * 透明颜色变暗透明度, [PopupWindow]不支持此属性
+     * */
     var amount: Float = 0.8f
     var animatorDuration = 300L
 

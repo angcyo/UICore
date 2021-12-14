@@ -27,6 +27,7 @@ open class FullPopupConfig : PopupConfig() {
         height = -1
         animationStyle = R.style.LibFullPopupAnimation
         exactlyHeight = true
+        amount = 0.2f
     }
 
     override fun createContentView(context: Context): View? {

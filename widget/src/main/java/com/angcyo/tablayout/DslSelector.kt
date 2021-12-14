@@ -416,3 +416,9 @@ open class DslSelectorConfig {
             false
         }
 }
+
+fun dslSelector(viewGroup: ViewGroup, config: DslSelectorConfig.() -> Unit = {}): DslSelector {
+    return DslSelector().apply {
+        install(viewGroup, config)
+    }
+}

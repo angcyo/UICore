@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_wrap_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/lib_white"
+    android:clickable="true"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/lib_container_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/lib_container_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:layout_height="200dp" />
+
+    </FrameLayout>
+
+    <View
+        android:id="@+id/lib_line_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/lib_line_px"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="@dimen/lib_xhdpi"
+        android:background="@color/lib_line" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lib_xhdpi"
+        android:layout_marginBottom="@dimen/lib_xhdpi"
+        android:orientation="horizontal">
+
+        <com.angcyo.widget.DslButton
+            android:id="@+id/reset_button"
+            style="@style/LibButtonBorderGraySelectorStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/lib_xhdpi"
+            android:layout_weight="0.3"
+            android:minHeight="@dimen/lib_min_item_height"
+            android:paddingLeft="@dimen/lib_xhdpi"
+            android:paddingTop="@dimen/lib_hdpi"
+            android:paddingRight="@dimen/lib_xhdpi"
+            android:paddingBottom="@dimen/lib_hdpi"
+            android:text="重置" />
+
+        <com.angcyo.widget.DslButton
+            android:id="@+id/save_button"
+            style="@style/DefaultButtonMinStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/lib_xhdpi"
+            android:layout_marginRight="@dimen/lib_xhdpi"
+            android:layout_weight="0.7"
+            android:minHeight="@dimen/lib_min_item_height"
+            android:paddingLeft="@dimen/lib_xhdpi"
+            android:paddingTop="@dimen/lib_hdpi"
+            android:paddingRight="@dimen/lib_xhdpi"
+            android:paddingBottom="@dimen/lib_hdpi"
+            android:text="确定" />
+
+    </LinearLayout>
+
+</LinearLayout>

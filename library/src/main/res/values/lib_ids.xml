@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!--存储数据-->
     <item name="tag" type="id" />
+
+    <!--DslAffect拾取对应的布局-->
     <item name="tag_affect" type="id" />
+
+    <!--DslToast的动画样式-->
     <item name="lib_tag_animation_style" type="id" />
+
+    <!--将value, 放在view的tag中-->
+    <item name="lib_tag_value" type="id" />
 </resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/popup_filter_item_background_selector"
+    android:minWidth="80dp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_text_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:minWidth="80dp"
+        android:paddingHorizontal="@dimen/lib_ldpi"
+        android:paddingVertical="@dimen/lib_hdpi"
+        android:textColor="@color/popup_filter_text_color_selector"
+        tools:text="撤回撤回" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/lib_image_tip_view"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_gravity="right|bottom"
+        app:srcCompat="@drawable/ic_filter_selected" />
+</FrameLayout>

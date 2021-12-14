@@ -7,6 +7,7 @@ import androidx.annotation.LayoutRes
 import androidx.collection.ArrayMap
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
+import com.angcyo.component.DslAffect.Companion.AFFECT_CONTENT
 import com.angcyo.component.DslAffect.Companion.AFFECT_EMPTY
 import com.angcyo.component.DslAffect.Companion.AFFECT_ERROR
 import com.angcyo.component.DslAffect.Companion.AFFECT_LOADING
@@ -242,6 +243,34 @@ class DslAffect {
     }
 }
 
+fun DslAffect.toLoading(data: Any? = null) {
+    showAffect(AFFECT_LOADING, data)
+}
+
+fun DslAffect.toEmpty(data: Any? = null) {
+    showAffect(AFFECT_EMPTY, data)
+}
+
+fun DslAffect.toError(data: Any? = null) {
+    showAffect(AFFECT_ERROR, data)
+}
+
+fun DslAffect.toContent(data: Any? = null) {
+    showAffect(AFFECT_CONTENT, data)
+}
+
+fun DslAffect.initWith(viewGroup: ViewGroup?) {
+    //注册布局
+    addAffect(AFFECT_LOADING, R.layout.lib_loading_layout)
+    addAffect(AFFECT_EMPTY, R.layout.lib_empty_layout)
+    addAffect(AFFECT_ERROR, R.layout.lib_error_layout)
+    addAffect(AFFECT_OTHER, R.layout.lib_error_layout)
+    //内容处理方式
+    contentAffect = CONTENT_AFFECT_INVISIBLE
+    //安装
+    viewGroup?.run { install(this) }
+}
+
 /**快速获取情感图切换组件*/
 fun dslAffect(viewGroup: View? = null, action: DslAffect.() -> Unit): DslAffect {
     return DslAffect().apply {
@@ -250,10 +279,10 @@ fun dslAffect(viewGroup: View? = null, action: DslAffect.() -> Unit): DslAffect 
         addAffect(AFFECT_EMPTY, R.layout.lib_empty_layout)
         addAffect(AFFECT_ERROR, R.layout.lib_error_layout)
         addAffect(AFFECT_OTHER, R.layout.lib_error_layout)
-        //安装
-        viewGroup?.run { install(this) }
         //内容处理方式
         contentAffect = CONTENT_AFFECT_INVISIBLE
+        //安装
+        viewGroup?.run { install(this) }
         action()
     }
 }

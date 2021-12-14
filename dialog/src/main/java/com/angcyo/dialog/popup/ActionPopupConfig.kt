@@ -100,8 +100,8 @@ class ActionPopupConfig : PopupConfig() {
     }
 }
 
-/** 展示一个popup window */
-fun Context.actionPopupWindow(anchor: View? = null, config: ActionPopupConfig.() -> Unit): Any {
+/** 展示一个 弹窗菜单 popup window */
+fun Context.actionPopupWindow(anchor: View?, config: ActionPopupConfig.() -> Unit): Any {
     val popupConfig = ActionPopupConfig()
     popupConfig.anchor = anchor
 
