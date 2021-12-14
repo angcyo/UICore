@@ -1,90 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.angcyo.widget.layout.TitleWrapLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/action_bar_height">
+    <include layout="@layout/lib_title_layout" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/lib_title_text_view"
-            style="@style/LibMainTextStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            tools:text="标题栏文本" />
-
-        <LinearLayout
-            android:id="@+id/lib_left_wrap_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:gravity="center_vertical"
-            android:orientation="horizontal" />
-
-        <LinearLayout
-            android:id="@+id/lib_right_wrap_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|right"
-            android:gravity="center_vertical"
-            android:orientation="horizontal" />
-
-    </com.angcyo.widget.layout.TitleWrapLayout>
-
-    <FrameLayout
-        android:id="@+id/lib_search_root_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/lib_xhdpi"
-        android:layout_marginRight="@dimen/lib_xhdpi"
-        android:layout_marginBottom="@dimen/lib_xhdpi"
-        android:background="@drawable/lib_search_tip_selector"
-        android:visibility="visible">
-
-        <LinearLayout
-            android:id="@+id/lib_search_wrap_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:minHeight="@dimen/lib_min_item_height"
-            android:orientation="horizontal"
-            tools:visibility="gone">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/lib_search_icon_view"
-                android:layout_width="13dp"
-                android:layout_height="13dp"
-                app:srcCompat="@drawable/icon_search_tip" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/lib_search_label_view"
-                style="@style/LibSubTextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/lib_ldpi"
-                tools:text="请输入关键字" />
-
-        </LinearLayout>
-
-        <com.angcyo.widget.edit.DslEditText
-            android:id="@+id/lib_search_edit_view"
-            style="@style/LibBodyTextStyle"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/lib_min_item_height"
-            android:background="@null"
-            android:maxLines="1"
-            android:paddingLeft="@dimen/lib_xhdpi"
-            android:paddingRight="@dimen/lib_xhdpi"
-            android:singleLine="true"
-            app:r_hide_soft_input_on_lost_focus="true"
-            tools:text="angcyo" />
-
-    </FrameLayout>
+    <include layout="@layout/lib_search_layout" />
 
 </LinearLayout>

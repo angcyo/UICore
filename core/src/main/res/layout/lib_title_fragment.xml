@@ -55,36 +55,7 @@
         android:layout_height="wrap_content"
         tools:layout_behavior="com.angcyo.behavior.HideTitleBarBehavior">
 
-        <com.angcyo.widget.layout.TitleWrapLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/action_bar_height">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/lib_title_text_view"
-                style="@style/LibMainTextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                tools:text="标题栏文本" />
-
-            <LinearLayout
-                android:id="@+id/lib_left_wrap_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:orientation="horizontal" />
-
-            <LinearLayout
-                android:id="@+id/lib_right_wrap_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|right"
-                android:gravity="center_vertical"
-                android:orientation="horizontal" />
-
-        </com.angcyo.widget.layout.TitleWrapLayout>
+        <include layout="@layout/lib_title_layout" />
     </FrameLayout>
 
 </com.angcyo.widget.layout.RCoordinatorLayout>
