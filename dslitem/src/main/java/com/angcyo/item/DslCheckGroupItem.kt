@@ -6,6 +6,7 @@ import android.widget.TextView
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.ILabelItem
 import com.angcyo.item.style.LabelItemConfig
+import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.string
 import com.angcyo.library.ex.toStr
 import com.angcyo.library.extend.IToText
@@ -75,6 +76,11 @@ open class DslCheckGroupItem : DslAdapterItem(), ILabelItem {
     /**Gravity*/
     var itemFlowLayoutGravity: Int = Gravity.CENTER_HORIZONTAL
 
+    /**主工程*/
+    var itemFlowDividerHorizontalSize: Int = 22 * dpi
+
+    var itemFlowDividerVerticalSize: Int = 16 * dpi
+
     override var labelItemConfig: LabelItemConfig = LabelItemConfig()
 
     init {
@@ -96,6 +102,9 @@ open class DslCheckGroupItem : DslAdapterItem(), ILabelItem {
 
                 flowLayoutDelegate.itemEquWidth = itemSingleLineEquWidth
                 flowLayoutDelegate.singleLine = itemSingleLineEquWidth
+
+                flowLayoutDelegate.dividerHorizontalSize = itemFlowDividerHorizontalSize
+                flowLayoutDelegate.dividerVerticalSize = itemFlowDividerVerticalSize
 
                 resetChild(itemCheckItems.size, itemCheckLayoutId) { itemView, itemIndex ->
                     val item = itemCheckItems[itemIndex]
