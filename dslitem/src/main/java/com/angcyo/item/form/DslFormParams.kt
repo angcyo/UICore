@@ -107,6 +107,10 @@ fun DslFormParams.put(key: String, value: Any?) {
     dataMap.putDepth(key, value)
 }
 
+fun DslFormParams.get(key: String): Any? {
+    return dataMap.getDepth(key)
+}
+
 /**
  * [key] 支持[xxx.xxx]的对象格式, 支持[xxx[].xxx]的数组对象格式, 支持[xxx[]]的数组格式
  * 暂不支持 [[].[].[]]的格式
