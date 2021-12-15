@@ -198,12 +198,22 @@ fun HashMap<String, Any?>.putDepth(key: String, value: Any?) {
                 if (opData is MutableList<*>) {
                     //最后一组是数组, 上一组又是数据, 二维数组
                     (opData as MutableList<Any?>).add(hashMapOf(k to newArray))
-                    opData = newArray
+
+                    opData = if (arrayIndex == null) {
+                        newArray
+                    } else {
+                        newArray.getOrNull2(arrayIndex!!)!! //注意越界异常
+                    }
                 } else if (opData is HashMap<*, *>) {
                     val attr = (opData as HashMap<String, Any?>)[k]
                     val list = (attr ?: newArray) as MutableList<Any?>
                     (opData as HashMap<String, Any?>)[k] = list
-                    opData = list
+
+                    opData = if (arrayIndex == null) {
+                        list
+                    } else {
+                        list.getOrNull2(arrayIndex!!)!! //注意越界异常
+                    }
                 } else {
                     L.w("无法识别: key:${key} value:${value}")
                 }
