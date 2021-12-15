@@ -151,11 +151,12 @@ fun HashMap<String, Any?>.putDepth(key: String, value: Any?) {
                 //最后的key是数组
                 if (opData is MutableList<*>) {
                     //最后一组是数组, 上一组又是数据, 二维数组
+                    val newValue = if (value == null) listOf<Any>() else listOf(value)
                     (opData as MutableList<Any?>).apply {
                         if (arrayIndex ?: -1 < 0) {
-                            add(listOf(value))
+                            add(newValue)
                         } else {
-                            set(arrayIndex!!, listOf(value)) //注意越界异常
+                            set(arrayIndex!!, newValue) //注意越界异常
                         }
                     }
                 } else if (opData is HashMap<*, *>) {
@@ -164,7 +165,9 @@ fun HashMap<String, Any?>.putDepth(key: String, value: Any?) {
                     val list = (attr ?: mutableListOf<Any?>()) as MutableList<Any?>
 
                     if (arrayIndex ?: -1 < 0) {
-                        list.add(value)
+                        if (value != null) {
+                            list.add(value)
+                        }
                     } else {
                         list[arrayIndex!!] = value //注意越界异常
                     }
