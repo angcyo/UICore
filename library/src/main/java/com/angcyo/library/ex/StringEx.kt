@@ -349,7 +349,7 @@ fun String.noExtName(): String {
 fun String?.mimeType(): String? {
     //text/html
     return this?.run {
-        val extension = if (this.isHttpScheme()) {
+        /*val extension = if (this.isHttpScheme()) {
             "html"
         } else {
             val url = try {
@@ -360,7 +360,13 @@ fun String?.mimeType(): String? {
             //如果url中有+号, 返回值就会是空字符
             //MimeTypeMap.getFileExtensionFromUrl(url)
             url?.extName()
+        }*/
+        val url = try {
+            this.toUri().path?.encode()
+        } catch (e: Exception) {
+            this.encode()
         }
+        val extension = url?.extName()
         MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
     }
 }

@@ -114,6 +114,10 @@ fun DslFormParams.get(key: String): Any? {
 /**
  * [key] 支持[xxx.xxx]的对象格式, 支持[xxx[].xxx]的数组对象格式, 支持[xxx[]]的数组格式
  * 暂不支持 [[].[].[]]的格式
+ *
+ * 数组操作:
+ * paramExt.userFileList[].commonFileId :在数组userFileList中加入新对象, 值赋给属性commonFileId
+ * paramExt.userFileList[-1].fileType :在数组userFileList最后一个对象, 值赋给fileType
  * */
 fun HashMap<String, Any?>.putDepth(key: String, value: Any?) {
     val arrayFlag = "\\[-?\\d*\\]"
