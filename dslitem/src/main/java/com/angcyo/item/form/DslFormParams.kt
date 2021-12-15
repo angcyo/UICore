@@ -128,24 +128,104 @@ fun HashMap<String, Any?>.putDepth(key: String, value: Any?) {
     var opData: Any = this
     var isArrayKey = false
     var arrayIndex: Int? = null //数组的索引
+
+    val lastIndex = keyList.lastIndex
     keyList.forEachIndexed { index, subKey ->
 
         //剔除[-1] , 剩下干净的key
         val k = if (subKey.contains(arrayFlagRegex)) {
+            isArrayKey = true
             val indexStr = subKey.patternList(arrayFlag).first()
             arrayIndex = indexStr.getLongNum()?.toInt()
             //数组
-            subKey.substring(0, subKey.length - indexStr.length).apply {
-                isArrayKey = true
-            }
+            subKey.substring(0, subKey.length - indexStr.length)
         } else {
-            subKey.apply {
-                isArrayKey = false
-            }
+            isArrayKey = false
+            subKey
         }
 
         //处理
-        if (isArrayKey) {
+        if (index == lastIndex) {
+            //最后一级, 肯定是需要赋值的
+            if (isArrayKey) {
+                //最后的key是数组
+                if (opData is MutableList<*>) {
+                    //最后一组是数组, 上一组又是数据, 二维数组
+                    (opData as MutableList<Any?>).apply {
+                        if (arrayIndex ?: -1 < 0) {
+                            add(listOf(value))
+                        } else {
+                            set(arrayIndex!!, listOf(value)) //注意越界异常
+                        }
+                    }
+                } else if (opData is HashMap<*, *>) {
+                    //操作的是对象数组成员属性
+                    val attr = (opData as HashMap<String, Any?>)[k]
+                    val list = (attr ?: mutableListOf<Any?>()) as MutableList<Any?>
+
+                    if (arrayIndex ?: -1 < 0) {
+                        list.add(value)
+                    } else {
+                        list[arrayIndex!!] = value //注意越界异常
+                    }
+
+                    (opData as HashMap<String, Any?>)[k] = list
+                } else {
+                    L.w("无法处理: key:${key} value:${value}")
+                }
+            } else {
+                //最后的key是属性
+                if (opData is MutableList<*>) {
+                    //最后一组是属性, 上一组数组, 则追加对象
+                    (opData as MutableList<Any?>).apply {
+                        if (arrayIndex ?: -1 < 0) {
+                            add(hashMapOf(k to value))
+                        } else {
+                            set(arrayIndex!!, hashMapOf(k to value)) //注意越界异常
+                        }
+                    }
+                } else if (opData is HashMap<*, *>) {
+                    //操作的是对象, 则直接修改对应的属性
+                    (opData as HashMap<String, Any?>)[k] = value
+                } else {
+                    L.w("无法处理: key:${key} value:${value}")
+                }
+            }
+        } else {
+            //非最后一组, 确定操作对象
+            if (isArrayKey) {
+                val newArray = mutableListOf<Any>()
+                if (opData is MutableList<*>) {
+                    //最后一组是数组, 上一组又是数据, 二维数组
+                    (opData as MutableList<Any?>).add(hashMapOf(k to newArray))
+                    opData = newArray
+                } else if (opData is HashMap<*, *>) {
+                    val attr = (opData as HashMap<String, Any?>)[k]
+                    val list = (attr ?: newArray) as MutableList<Any?>
+                    (opData as HashMap<String, Any?>)[k] = list
+                    opData = list
+                } else {
+                    L.w("无法识别: key:${key} value:${value}")
+                }
+            } else {
+                val newObj = hashMapOf<String, Any?>()
+                if (opData is MutableList<*>) {
+                    //最后一组是数组, 上一组又是数据, 二维数组
+                    (opData as MutableList<Any?>).add(newObj)
+                    opData = newObj
+                } else if (opData is HashMap<*, *>) {
+                    val attr = (opData as HashMap<String, Any?>)[k]
+                    val obj = (attr ?: newObj) as HashMap<String, Any?>
+                    (opData as HashMap<String, Any?>)[k] = obj
+                    opData = obj
+                } else {
+                    L.w("无法识别: key:${key} value:${value}")
+                }
+            }
+        }
+
+        //处理 2
+        /*if (isArrayKey) {
             if (index == keyList.lastIndex) {
                 if (opData is MutableList<*>) {
                     (opData as MutableList<Any?>).apply {
@@ -196,7 +276,7 @@ fun HashMap<String, Any?>.putDepth(key: String, value: Any?) {
                     throw IllegalStateException("key[$key]类型不匹配")
                 }
             }
-        }
+        }*/
     }
 }
 

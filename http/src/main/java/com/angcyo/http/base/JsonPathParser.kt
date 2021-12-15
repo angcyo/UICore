@@ -59,9 +59,8 @@ object JsonPathParser {
                 END_OBJECT -> reader.endObject()
                 NAME -> reader.nextName()
                 STRING -> {
-                    val value = reader.nextString()
                     val jsonPath = reader.path
-
+                    val value = reader.nextString()
                     check(jsonPath, value)
                 }
                 NUMBER -> reader.nextDouble()
