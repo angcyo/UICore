@@ -75,9 +75,16 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         registerActionList.add(ResumeAction())
         registerActionList.add(InterruptAction())
         registerActionList.add(CountAction())
+
+        registerActionList.add(ClassAction())
     }
 
-    /**解析, 并处理[handleList]*/
+    /**解析, 并处理[handleList]
+     *
+     * 如果处理失败, 会进行
+     * [com.angcyo.acc2.bean.TaskBean.limitRunCount]
+     * [com.angcyo.acc2.bean.TaskBean.limitRunTime] 检查
+     * */
     fun parse(
         controlContext: ControlContext,
         originList: List<AccessibilityNodeInfoCompat>?,
@@ -201,7 +208,8 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
 
         //text param
         val textParamBean =
-            caseBean?.textParam ?: handleBean.textParam ?: accParse.accControl._taskBean?.textParam
+            caseBean?.textParam ?: handleBean.textParam
+            ?: accParse.accControl._taskBean?.textParam
 
         if (isDebug() && !handleBean.debugActionList.isNullOrEmpty()) {
             //调试专用

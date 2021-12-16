@@ -26,18 +26,18 @@ abstract class BaseAction : BaseParse() {
 
     /**执行操作*/
     open fun runAction(
-        control: AccControl,
-        nodeList: List<AccessibilityNodeInfoCompat>?,
-        action: String
+            control: AccControl,
+            nodeList: List<AccessibilityNodeInfoCompat>?,
+            action: String
     ): HandleResult = handleResult {
         success = false
     }
 
     open fun runAction(
-        control: AccControl,
-        controlContext: ControlContext,
-        nodeList: List<AccessibilityNodeInfoCompat>?,
-        action: String
+            control: AccControl,
+            controlContext: ControlContext,
+            nodeList: List<AccessibilityNodeInfoCompat>?,
+            action: String
     ): HandleResult = runAction(control, nodeList, action)
 
     /**主线的[ActionBean]*/
@@ -45,11 +45,6 @@ abstract class BaseAction : BaseParse() {
 
     /**正在运行的[ActionBean]*/
     fun runActionBean(control: AccControl) = control.accSchedule._runActionBean
-
-    /**Dsl*/
-    fun handleResult(action: HandleResult.() -> Unit): HandleResult {
-        return HandleResult().apply(action)
-    }
 
     /**[cmd]裸命令
      * 返回文本解析时, 需要处理的一些参数*/
@@ -75,4 +70,9 @@ abstract class BaseAction : BaseParse() {
         val c = subStart(Action.ARG_SPLIT) ?: subStart(Action.ARG_SPLIT2) ?: this
         return c == cmd
     }
+}
+
+/**Dsl*/
+fun handleResult(action: HandleResult.() -> Unit): HandleResult {
+    return HandleResult().apply(action)
 }

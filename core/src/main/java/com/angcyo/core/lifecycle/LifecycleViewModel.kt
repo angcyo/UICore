@@ -5,6 +5,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.ViewModel
 import com.angcyo.http.rx.BaseObserver
+import com.angcyo.http.rx.doMain
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +26,9 @@ open class LifecycleViewModel : ViewModel(), LifecycleOwner {
     }
 
     fun setCurrentState(state: Lifecycle.State) {
-        lifecycleRegistry.currentState = state
+        doMain {
+            lifecycleRegistry.currentState = state
+        }
     }
 
     /**clear*/

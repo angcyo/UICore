@@ -140,6 +140,7 @@ data class ActionBean(
      * [com.angcyo.acc2.bean.TaskBean.backActionList] 中隐藏*/
     var hide: Boolean = false,
 
-    /**循环控制*/
+    /**循环控制
+     * 如果不配置, 则会执行下一个[ActionBean]*/
     var loop: LoopBean? = null
 )

@@ -363,6 +363,9 @@ object Action {
      * */
     const val ACTION_COUNT = "count"
 
+    /**动态代码执行Action*/
+    const val ACTION_CLS = "cls"
+
     /*---------------------------------------状态匹配--------------------------------------*/
 
     /**需要指定的状态
