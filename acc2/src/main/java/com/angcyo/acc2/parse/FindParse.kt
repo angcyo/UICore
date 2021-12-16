@@ -29,7 +29,12 @@ class FindParse(val accParse: AccParse) : BaseParse() {
 
     //<editor-fold desc="parse">
 
-    /**通过一组规则, 查找满足规则的节点集合, 就终止*/
+    /**通过一组规则, 查找满足规则的节点集合, 就终止
+     * [rootWindowNode]
+     * [findRootNode]
+     * [_findRootNodeBy]
+     * [_findWindowBy]
+     * */
     fun parse(
         controlContext: ControlContext,
         rootList: List<AccessibilityNodeInfoCompat>?,
