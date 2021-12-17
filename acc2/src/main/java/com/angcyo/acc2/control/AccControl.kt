@@ -13,6 +13,7 @@ import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_STOP
 import com.angcyo.acc2.core.BaseAccService
 import com.angcyo.acc2.core.ControlException
 import com.angcyo.acc2.core.ControlInterruptException
+import com.angcyo.acc2.dynamic.ITaskDynamic
 import com.angcyo.library.*
 import com.angcyo.library.ex.*
 import java.util.concurrent.Executors
@@ -87,12 +88,18 @@ class AccControl : Runnable {
         }
         finishReason = null
         lastError = null
+
+        initTaskDynamic(taskBean)
+
         accSchedule.startSchedule()
         _startThread()
         updateControlState(CONTROL_STATE_RUNNING)
 
         _taskBean?.let {
             controlListenerList.forEach {
+                it.onControlStart(this, taskBean)
+            }
+            taskBean._listenerList?.forEach {
                 it.onControlStart(this, taskBean)
             }
         }
@@ -135,8 +142,30 @@ class AccControl : Runnable {
             controlListenerList.forEach {
                 it.onControlEnd(this, taskBean, state, reason)
             }
+            taskBean._listenerList?.forEach {
+                it.onControlEnd(this, taskBean, state, reason)
+            }
         }
         //_taskBean = null
+    }
+
+    /**[ITaskDynamic]*/
+    fun initTaskDynamic(taskBean: TaskBean) {
+        val listenerOjbList = mutableListOf<ITaskDynamic>()
+        taskBean.listenerList?.forEach {
+            try {
+                val cls = Class.forName(it)
+                if (ITaskDynamic::class.java.isAssignableFrom(cls)) {
+                    listenerOjbList.add(cls.newInstance() as ITaskDynamic)
+                }
+            } catch (e: Exception) {
+                L.w("无法实例化:$it")
+            }
+        }
+
+        if (listenerOjbList.isNotEmpty()) {
+            taskBean._listenerList = listenerOjbList
+        }
     }
 
     //</editor-fold desc="启动">
@@ -162,6 +191,10 @@ class AccControl : Runnable {
         }
 
         controlListenerList.forEach {
+            it.onControlStateChanged(this, old, newState)
+        }
+
+        _taskBean?._listenerList?.forEach {
             it.onControlStateChanged(this, old, newState)
         }
 
@@ -255,10 +288,28 @@ class AccControl : Runnable {
     override fun run() {
         log(controlStartToLog())
         //next(_taskBean?.title, _taskBean?.des, 0)
+
+        controlListenerList.forEach {
+            it.onControlThreadStart(this)
+        }
+
+        _taskBean?._listenerList?.forEach {
+            it.onControlThreadStart(this)
+        }
+
         while (isControlStart) {
             try {
                 if (_controlState == CONTROL_STATE_RUNNING) {
                     //run
+
+                    controlListenerList.forEach {
+                        it.onControlThreadSchedule(this)
+                    }
+
+                    _taskBean?._listenerList?.forEach {
+                        it.onControlThreadSchedule(this)
+                    }
+
                     accSchedule.scheduleNext()
                 } else {
                     //wait
@@ -272,6 +323,15 @@ class AccControl : Runnable {
             }
         }
         //end...
+
+        controlListenerList.forEach {
+            it.onControlThreadEnd(this)
+        }
+
+        _taskBean?._listenerList?.forEach {
+            it.onControlThreadEnd(this)
+        }
+
         log(controlEndToLog())
     }
 

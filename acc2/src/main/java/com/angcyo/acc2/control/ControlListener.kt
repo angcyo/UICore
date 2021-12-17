@@ -98,4 +98,19 @@ interface ControlListener {
     fun onControlEnd(control: AccControl, taskBean: TaskBean, state: Int, reason: String?) {
 
     }
+
+    /**控制器线程开始执行*/
+    fun onControlThreadStart(control: AccControl) {
+
+    }
+
+    /**控制器线程调度*/
+    fun onControlThreadSchedule(control: AccControl) {
+
+    }
+
+    /**控制器线程结束执行*/
+    fun onControlThreadEnd(control: AccControl) {
+
+    }
 }

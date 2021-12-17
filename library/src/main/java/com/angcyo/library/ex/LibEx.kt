@@ -297,6 +297,13 @@ fun <R> sync(count: Int = 1, action: (CountDownLatch, AtomicReference<R>) -> Uni
     return result.get()
 }
 
+/**无返回值*/
+fun syncSingle(count: Int = 1, action: (CountDownLatch) -> Unit) {
+    sync<String>(count){countDownLatch, _ ->
+        action(countDownLatch)
+    }
+}
+
 /**在子线程等待主线程的同步结果*/
 fun <R> syncBack(onMainAction: () -> R?): R? {
     return sync { countDownLatch, atomicReference ->

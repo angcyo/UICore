@@ -1,6 +1,7 @@
 package com.angcyo.acc2.bean
 
 import com.angcyo.acc2.action.Action
+import com.angcyo.acc2.dynamic.ITaskDynamic
 import com.angcyo.library.ex.uuid
 
 /**
@@ -171,6 +172,20 @@ data class TaskBean(
     /**统一设置每个[ActionBean]丢失节点后, 需要执行的[ActionBean]
      * [com.angcyo.acc2.bean.ActionBean.lose]*/
     var lose: ActionBean? = null,
+
+    /**循环间隔执行的[ActionBean]
+     * [com.angcyo.acc2.bean.ActionBean.interval]*/
+    var intervalList: List<ActionBean>? = null,
+
+    //<editor-fold desc="动态cls监听任务">
+
+    /**任务监听的动态class*/
+    var listenerList: List<String>? = null,
+
+    //实例化后的类
+    @Transient var _listenerList: List<ITaskDynamic>? = null,
+
+    //</editor-fold desc="动态cls监听任务">
 )
 
 /**初始化配置*/

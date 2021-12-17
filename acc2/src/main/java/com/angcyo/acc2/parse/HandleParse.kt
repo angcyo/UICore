@@ -345,6 +345,9 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         accParse.accControl.controlListenerList.forEach {
             it.onHandleAction(controlContext, accParse.accControl, handleBean, result)
         }
+        accParse.accControl._taskBean?._listenerList?.forEach {
+            it.onHandleAction(controlContext, accParse.accControl, handleBean, result)
+        }
 
         //handle form
         accParse.formParse.parseHandleForm(

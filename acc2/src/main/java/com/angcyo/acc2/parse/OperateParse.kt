@@ -46,6 +46,9 @@ class OperateParse(val accParse: AccParse) : BaseParse() {
         accParse.accControl.controlListenerList.forEach {
             it.onHandleOperate(accParse.accControl, handleBean, operateBean, handleResult)
         }
+        accParse.accControl._taskBean?._listenerList?.forEach {
+            it.onHandleOperate(accParse.accControl, handleBean, operateBean, handleResult)
+        }
     }
 
     fun parseOperateText(operateBean: OperateBean, textList: List<String>?) {

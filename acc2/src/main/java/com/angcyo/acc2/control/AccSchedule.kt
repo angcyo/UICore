@@ -1064,6 +1064,9 @@ class AccSchedule(val accControl: AccControl) {
         accControl.controlListenerList.forEach {
             it.onActionRunBefore(accControl, actionBean, isPrimaryAction)
         }
+        accControl._taskBean?._listenerList?.forEach {
+            it.onActionRunBefore(accControl, actionBean, isPrimaryAction)
+        }
 
         return true
     }
@@ -1097,6 +1100,10 @@ class AccSchedule(val accControl: AccControl) {
             _isLeaveWindow = !haveWindow
 
             accControl.controlListenerList.forEach {
+                it.onActionLeave(accControl, actionBean, isPrimaryAction, _isLeaveWindow)
+            }
+
+            accControl._taskBean?._listenerList?.forEach {
                 it.onActionLeave(accControl, actionBean, isPrimaryAction, _isLeaveWindow)
             }
 
@@ -1221,6 +1228,9 @@ class AccSchedule(val accControl: AccControl) {
                             accControl.controlListenerList.forEach {
                                 it.onActionNoHandle(accControl, actionBean, isPrimaryAction)
                             }
+                            accControl._taskBean?._listenerList?.forEach {
+                                it.onActionNoHandle(accControl, actionBean, isPrimaryAction)
+                            }
 
                             //如果这个时候, 丢失了窗口节点
                             val nodeList = findParse.findRootNode(null)
@@ -1339,6 +1349,10 @@ class AccSchedule(val accControl: AccControl) {
 
         //回调
         accControl.controlListenerList.forEach {
+            it.onActionRunAfter(accControl, actionBean, isPrimaryAction, handleActionResult)
+        }
+
+        accControl._taskBean?._listenerList?.forEach {
             it.onActionRunAfter(accControl, actionBean, isPrimaryAction, handleActionResult)
         }
     }
