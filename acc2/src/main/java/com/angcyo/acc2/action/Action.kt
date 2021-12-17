@@ -31,7 +31,9 @@ object Action {
     /**特殊文本, 当前时间精确到毫秒*/
     const val NOW_TIME = "nowTime"
 
-    /**特殊文本, 最后一次输入的文本内容*/
+    /**特殊文本, 最后一次输入的文本内容
+     * "message:$[lastInput]"
+     * */
     const val LAST_INPUT = "lastInput"
 
     /**当前活跃的窗口*/
@@ -45,7 +47,9 @@ object Action {
 
     const val OP = "><=%≈"
 
-    /**依赖的Action标识*/
+    /**依赖的Action标识
+     * "jump:rely"
+     * */
     const val RELY = "rely"
 
     /**表示当前的对象*/
@@ -152,7 +156,11 @@ object Action {
      * [input:$[xxx] index:1]如果$[xxx]返回了一个列表,那么[index]参数, 就是获取列表中的第几个.
      * 不指定[index]表示随机获取列表中的数据,使用[index:[ORDER]]表示顺序获取.
      * [index:$[xxx]] index参数也支持文本变量
-     * 不指定index, 则随机从解析集合结果中获取一个
+     *
+     * 不指定index, 则随机从解析集合结果中获取一个.
+     *
+     * "input:$0~$-1 key:comment index:order",
+     * "input:$[searchName] index:order"
      * */
     const val ACTION_INPUT = "input"
 

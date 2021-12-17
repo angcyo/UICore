@@ -114,7 +114,7 @@ class InputAction : BaseAction() {
             }
         }
 
-        //save
+        //save, 保存最后一次输入
         control.accSchedule.inputTextList.add(text)
 
         nodeList?.forEach { node ->
@@ -125,6 +125,11 @@ class InputAction : BaseAction() {
                     val count = inputCount + 1
                     //保存输入次数
                     inputCountMap[textKey] = count
+
+                    if (count >= textListSize) {
+                        //输入结束标识
+                        control.accSchedule.inputFinishList.add(textKey)
+                    }
 
                     if (textListSize in 1 until count) {
                         //文本输入结束后

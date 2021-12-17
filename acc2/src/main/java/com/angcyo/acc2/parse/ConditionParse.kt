@@ -15,6 +15,7 @@ import com.angcyo.library.utils.Device
 import kotlin.random.Random
 
 /**
+ * 条件解析, 判断是否满足约束的条件
  *
  * Email:angcyo@126.com
  * @author angcyo
@@ -61,7 +62,7 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
             }
 
             //textMapList
-            if (!textMapList.isNullOrEmpty()) {
+            if (result && !textMapList.isNullOrEmpty()) {
                 for (key in textMapList!!) {
                     val value = accControl._taskBean?.textListMap?.get(key)
                         ?: accControl._taskBean?.textMap?.get(key)
@@ -74,12 +75,35 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
             }
 
             //noTextMapList
-            if (!noTextMapList.isNullOrEmpty()) {
+            if (result && !noTextMapList.isNullOrEmpty()) {
                 for (key in noTextMapList!!) {
                     val value = accControl._taskBean?.textListMap?.get(key)
                         ?: accControl._taskBean?.textMap?.get(key)
                     if (value != null) {
                         //指定key对应的value有值, 则条件不满足
+                        result = false
+                        break
+                    }
+                }
+            }
+
+            //textInputFinishList
+            if (result && !textInputFinishList.isNullOrEmpty()) {
+                //约束文本书否输入完成
+                result = false
+                for (textKey in textInputFinishList!!) {
+                    if (accControl.accSchedule.inputFinishList.contains(textKey)) {
+                        result = true
+                        break
+                    }
+                }
+            }
+
+            //noTextInputFinishList
+            if (result && !noTextInputFinishList.isNullOrEmpty()) {
+                //约束文本书否输入未完成
+                for (textKey in noTextInputFinishList!!) {
+                    if (accControl.accSchedule.inputFinishList.contains(textKey)) {
                         result = false
                         break
                     }

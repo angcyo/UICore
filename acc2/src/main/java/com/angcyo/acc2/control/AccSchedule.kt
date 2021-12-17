@@ -47,6 +47,11 @@ class AccSchedule(val accControl: AccControl) {
      * */
     val inputTextList = mutableListOf<String?>()
 
+    /**顺序输入列表文本时, 输入全部完成标识. 存储的是输入text key
+     * [com.angcyo.acc2.action.InputAction]
+     * */
+    val inputFinishList = mutableListOf<String?>()
+
     /**计数统计
      * [com.angcyo.acc2.action.CountAction]*/
     val countMap = hashMapOf<String, Long>()
