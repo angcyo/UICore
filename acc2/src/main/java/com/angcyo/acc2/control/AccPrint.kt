@@ -4,6 +4,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.bean.ActionBean
 import com.angcyo.library.L
 import com.angcyo.library.ex.des
+import com.angcyo.library.ex.size
 import com.angcyo.library.ex.wrapLog
 
 /**
@@ -15,8 +16,24 @@ import com.angcyo.library.ex.wrapLog
  */
 open class AccPrint(val accControl: AccControl? = null) {
 
+    /**日志是否保存到内存*/
+    var memory: Boolean = false
+
+    var memoryLogCache: MutableList<String>? = null
+
     /**输出日志*/
     open fun log(log: String?) {
+        if (memory) {
+            if (memoryLogCache == null) {
+                memoryLogCache = mutableListOf()
+            }
+            log?.let {
+                memoryLogCache?.add(it)
+            }
+            if (memoryLogCache.size() > 100) {
+                memoryLogCache?.removeFirstOrNull()
+            }
+        }
         if (log?.startsWith(" ") == true) {
             L.d(log)
         } else {

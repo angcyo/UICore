@@ -1,5 +1,7 @@
 package com.angcyo.acc2.action
 
+import java.net.URLDecoder
+
 /**
  * Email:angcyo@126.com
  * @author angcyo
@@ -132,6 +134,8 @@ object Action {
      * 默认key:appendText
      * regex:\\d+ 文本需要使用正则过滤取值
      * [ACTION_INPUT]
+     *
+     * 支持[decode:true], 使用[URLDecoder]解码字符串
      *
      * 获取节点列表中第一个节点文本不为空的文本
      */

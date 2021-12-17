@@ -174,11 +174,13 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         if (!handleObjList.isNullOrEmpty()) {
             //动态cls处理
             for (obj in handleObjList) {
-                val r = obj.handle(accParse.accControl,
+                val r = obj.handle(
+                    accParse.accControl,
                     controlContext,
                     originList,
                     handleBean,
-                    rootNodeList)
+                    rootNodeList
+                )
                 if (r.success) {
                     handleDefaultAction = false
                     result = r
@@ -246,8 +248,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
 
         //text param
         val textParamBean =
-            caseBean?.textParam ?: handleBean.textParam
-            ?: accParse.accControl._taskBean?.textParam
+            caseBean?.textParam ?: handleBean.textParam ?: accParse.accControl._taskBean?.textParam
 
         if (isDebug() && !handleBean.debugActionList.isNullOrEmpty()) {
             //调试专用

@@ -16,9 +16,12 @@ data class FindBean(
     var des: String? = null,
 
     /**标识配置, 拾取文本时的正则
-     * 支持配置 decode:true 参数
+     * 支持配置 decode:true 参数, 必须放在字符串最后面, 用空格隔开
      * [com.angcyo.acc2.action.PutTextAction]*/
     var regex: String? = null,
+
+    /**标识配置, 拾取文本时, 追加到列表中, 否则默认就是取最后一个文本的文本 */
+    var putArray: Boolean? = null,
 
     //<editor-fold desc="上下文">
 

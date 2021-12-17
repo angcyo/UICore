@@ -2,10 +2,7 @@ package com.angcyo.acc2.control
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.action.Action
-import com.angcyo.acc2.bean.ActionBean
-import com.angcyo.acc2.bean.FindBean
-import com.angcyo.acc2.bean.findFirstActionByGroup
-import com.angcyo.acc2.bean.isLoopValid
+import com.angcyo.acc2.bean.*
 import com.angcyo.acc2.core.AccNodeLog
 import com.angcyo.acc2.core.ControlException
 import com.angcyo.acc2.parse.AccParse
@@ -1355,6 +1352,20 @@ class AccSchedule(val accControl: AccControl) {
         accControl._taskBean?._listenerObjList?.forEach {
             it.onActionRunAfter(accControl, actionBean, isPrimaryAction, handleActionResult)
         }
+    }
+
+    /**直接处理[HandleBean]*/
+    fun handle(handleList: List<HandleBean>): HandleResult {
+        val controlContext = ControlContext().apply {
+            control = accControl
+        }
+
+        val handleParse = accParse.handleParse
+        val findParse = accParse.findParse
+
+        val rootNodeList = findParse.findRootNode(null)
+
+        return handleParse.parse(controlContext, rootNodeList, handleList)
     }
 
     //</editor-fold desc="执行">
