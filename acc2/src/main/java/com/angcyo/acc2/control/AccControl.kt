@@ -111,12 +111,12 @@ class AccControl : Runnable {
         _end(reason, CONTROL_STATE_STOP)
     }
 
-    /**异常任务*/
     @Deprecated("废弃")
     fun error(reason: String?) {
         error(ControlException(reason ?: "任务异常"))
     }
 
+    /**异常任务*/
     fun error(error: Throwable) {
         _end(error.message, CONTROL_STATE_ERROR, error)
     }
