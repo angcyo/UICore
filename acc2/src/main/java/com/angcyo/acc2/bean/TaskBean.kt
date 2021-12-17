@@ -180,10 +180,10 @@ data class TaskBean(
     //<editor-fold desc="动态cls监听任务">
 
     /**任务监听的动态class*/
-    var listenerList: List<String>? = null,
+    var listenerClsList: List<String>? = null,
 
     //实例化后的类
-    @Transient var _listenerList: List<ITaskDynamic>? = null,
+    @Transient var _listenerObjList: List<ITaskDynamic>? = null,
 
     //</editor-fold desc="动态cls监听任务">
 )

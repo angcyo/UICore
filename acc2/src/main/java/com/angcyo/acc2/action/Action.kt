@@ -372,7 +372,7 @@ object Action {
     const val ACTION_COUNT = "count"
 
     /**动态代码执行Action
-     * [com.angcyo.acc2.dynamic.IHandleDynamic]*/
+     * [com.angcyo.acc2.dynamic.IHandleActionDynamic]*/
     const val ACTION_CLS = "cls"
 
     /*---------------------------------------状态匹配--------------------------------------*/

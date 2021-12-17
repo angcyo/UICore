@@ -99,7 +99,7 @@ class AccControl : Runnable {
             controlListenerList.forEach {
                 it.onControlStart(this, taskBean)
             }
-            taskBean._listenerList?.forEach {
+            taskBean._listenerObjList?.forEach {
                 it.onControlStart(this, taskBean)
             }
         }
@@ -142,7 +142,7 @@ class AccControl : Runnable {
             controlListenerList.forEach {
                 it.onControlEnd(this, taskBean, state, reason)
             }
-            taskBean._listenerList?.forEach {
+            taskBean._listenerObjList?.forEach {
                 it.onControlEnd(this, taskBean, state, reason)
             }
         }
@@ -152,7 +152,7 @@ class AccControl : Runnable {
     /**[ITaskDynamic]*/
     fun initTaskDynamic(taskBean: TaskBean) {
         val listenerOjbList = mutableListOf<ITaskDynamic>()
-        taskBean.listenerList?.forEach {
+        taskBean.listenerClsList?.forEach {
             try {
                 val cls = Class.forName(it)
                 if (ITaskDynamic::class.java.isAssignableFrom(cls)) {
@@ -164,7 +164,7 @@ class AccControl : Runnable {
         }
 
         if (listenerOjbList.isNotEmpty()) {
-            taskBean._listenerList = listenerOjbList
+            taskBean._listenerObjList = listenerOjbList
         }
     }
 
@@ -194,7 +194,7 @@ class AccControl : Runnable {
             it.onControlStateChanged(this, old, newState)
         }
 
-        _taskBean?._listenerList?.forEach {
+        _taskBean?._listenerObjList?.forEach {
             it.onControlStateChanged(this, old, newState)
         }
 
@@ -293,7 +293,7 @@ class AccControl : Runnable {
             it.onControlThreadStart(this)
         }
 
-        _taskBean?._listenerList?.forEach {
+        _taskBean?._listenerObjList?.forEach {
             it.onControlThreadStart(this)
         }
 
@@ -306,7 +306,7 @@ class AccControl : Runnable {
                         it.onControlThreadSchedule(this)
                     }
 
-                    _taskBean?._listenerList?.forEach {
+                    _taskBean?._listenerObjList?.forEach {
                         it.onControlThreadSchedule(this)
                     }
 
@@ -328,7 +328,7 @@ class AccControl : Runnable {
             it.onControlThreadEnd(this)
         }
 
-        _taskBean?._listenerList?.forEach {
+        _taskBean?._listenerObjList?.forEach {
             it.onControlThreadEnd(this)
         }
 

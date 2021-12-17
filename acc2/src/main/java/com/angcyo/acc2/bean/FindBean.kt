@@ -9,6 +9,17 @@ package com.angcyo.acc2.bean
  */
 data class FindBean(
 
+    /**标识配置*/
+    var key: String? = null,
+
+    /**标识配置*/
+    var des: String? = null,
+
+    /**标识配置, 拾取文本时的正则
+     * 支持配置 decode:true 参数
+     * [com.angcyo.acc2.action.PutTextAction]*/
+    var regex: String? = null,
+
     //<editor-fold desc="上下文">
 
     /**在那个[AccessibilityWindowInfo]中获取节点

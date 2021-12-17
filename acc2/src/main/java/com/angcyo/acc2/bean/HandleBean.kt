@@ -1,6 +1,7 @@
 package com.angcyo.acc2.bean
 
 import com.angcyo.acc2.action.InputAction
+import com.angcyo.acc2.dynamic.IHandleDynamic
 
 /**
  *
@@ -82,6 +83,12 @@ data class HandleBean(
      * 当有元素选择时需要执行的具体操作
      * [com.angcyo.acc2.action.Action]*/
     var actionList: List<String>? = null,
+
+    /**直接接管[com.angcyo.acc2.bean.HandleBean]的处理*/
+    var handleClsList: List<String>? = null,
+
+    //实例化后的类
+    @Transient var _handleObjList: List<IHandleDynamic>? = null,
 
     /**
      * 当[conditionList]不满足时, 需要执行的具体操作.如果未指定, 则跳过当前的[HandleBean]

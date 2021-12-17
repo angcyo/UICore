@@ -1064,7 +1064,7 @@ class AccSchedule(val accControl: AccControl) {
         accControl.controlListenerList.forEach {
             it.onActionRunBefore(accControl, actionBean, isPrimaryAction)
         }
-        accControl._taskBean?._listenerList?.forEach {
+        accControl._taskBean?._listenerObjList?.forEach {
             it.onActionRunBefore(accControl, actionBean, isPrimaryAction)
         }
 
@@ -1103,7 +1103,7 @@ class AccSchedule(val accControl: AccControl) {
                 it.onActionLeave(accControl, actionBean, isPrimaryAction, _isLeaveWindow)
             }
 
-            accControl._taskBean?._listenerList?.forEach {
+            accControl._taskBean?._listenerObjList?.forEach {
                 it.onActionLeave(accControl, actionBean, isPrimaryAction, _isLeaveWindow)
             }
 
@@ -1228,7 +1228,7 @@ class AccSchedule(val accControl: AccControl) {
                             accControl.controlListenerList.forEach {
                                 it.onActionNoHandle(accControl, actionBean, isPrimaryAction)
                             }
-                            accControl._taskBean?._listenerList?.forEach {
+                            accControl._taskBean?._listenerObjList?.forEach {
                                 it.onActionNoHandle(accControl, actionBean, isPrimaryAction)
                             }
 
@@ -1352,7 +1352,7 @@ class AccSchedule(val accControl: AccControl) {
             it.onActionRunAfter(accControl, actionBean, isPrimaryAction, handleActionResult)
         }
 
-        accControl._taskBean?._listenerList?.forEach {
+        accControl._taskBean?._listenerObjList?.forEach {
             it.onActionRunAfter(accControl, actionBean, isPrimaryAction, handleActionResult)
         }
     }

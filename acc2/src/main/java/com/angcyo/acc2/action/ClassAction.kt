@@ -2,8 +2,9 @@ package com.angcyo.acc2.action
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.control.AccControl
+import com.angcyo.acc2.control.ControlContext
 import com.angcyo.acc2.control.log
-import com.angcyo.acc2.dynamic.IHandleDynamic
+import com.angcyo.acc2.dynamic.IHandleActionDynamic
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.library.ex.subEnd
 
@@ -21,18 +22,14 @@ class ClassAction : BaseAction() {
         return action.startsWith(Action.ACTION_CLS)
     }
 
-    override fun runAction(
-        control: AccControl,
-        nodeList: List<AccessibilityNodeInfoCompat>?,
-        action: String
-    ): HandleResult {
+    override fun runAction(control: AccControl, controlContext: ControlContext, nodeList: List<AccessibilityNodeInfoCompat>?, action: String): HandleResult {
         try {
             val clsName = action.subEnd(Action.ARG_SPLIT)!!
             val cls = Class.forName(clsName)
             val obj = cls.newInstance()
 
-            return if (obj is IHandleDynamic) {
-                obj.runAction(control, nodeList, action).apply {
+            return if (obj is IHandleActionDynamic) {
+                obj.runAction(control, controlContext, nodeList, action).apply {
                     control.log("[ClassAction][$action]返回:$success")
                 }
             } else {

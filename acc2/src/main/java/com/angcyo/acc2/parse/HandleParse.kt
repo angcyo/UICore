@@ -5,6 +5,8 @@ import com.angcyo.acc2.action.*
 import com.angcyo.acc2.bean.HandleBean
 import com.angcyo.acc2.bean.TextParamBean
 import com.angcyo.acc2.control.*
+import com.angcyo.acc2.dynamic.IHandleDynamic
+import com.angcyo.library.L
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.size
 
@@ -130,6 +132,9 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         originList: List<AccessibilityNodeInfoCompat>?,
         handleBean: HandleBean
     ): HandleResult {
+        //cls
+        initHandleDynamic(handleBean)
+
         var result = HandleResult()
 
         controlContext.handle = handleBean
@@ -161,8 +166,41 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
             accParse.findParse.rootWindowNode()
         }
 
+        //是否需要处理默认的[actionList]
+        var handleDefaultAction = true
+
+        //handleClsList
+        val handleObjList = handleBean._handleObjList
+        if (!handleObjList.isNullOrEmpty()) {
+            //动态cls处理
+            for (obj in handleObjList) {
+                val r = obj.handle(accParse.accControl,
+                    controlContext,
+                    originList,
+                    handleBean,
+                    rootNodeList)
+                if (r.success) {
+                    handleDefaultAction = false
+                    result = r
+                }
+                if (r.forceSuccess) {
+                    handleDefaultAction = false
+                    //中断处理
+                    result = r
+                    break
+                }
+                if (r.forceFail) {
+                    handleDefaultAction = false
+                    //中断处理
+                    break
+                }
+            }
+        }
+
         //待处理的元素节点集合
-        var handleNodeList = if (handleBean.findList != null) {
+        var handleNodeList = if (!handleDefaultAction) {
+            null
+        } else if (handleBean.findList != null) {
             //需要明确重新指定
             val findResult =
                 accParse.findParse.parse(controlContext, rootNodeList, handleBean.findList)
@@ -229,7 +267,8 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
                 handleNodeList,
                 conditionActionList
             )
-        } else {
+        } else if (handleDefaultAction) {
+            //默认的[actionList]处理
             val targetActionList: List<String>? = caseBean?.actionList ?: handleBean.actionList
             if (handleBean.findList != null) {
                 //需要重新选择
@@ -258,7 +297,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
                     )
                 }
             } else {
-                //默认处理
+                //无[actionList]时的默认处理, 可以用空数组[]实现执行成功
                 if (targetActionList.isNullOrEmpty()) {
                     result.success = targetActionList != null
                 } else {
@@ -271,6 +310,8 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
                     )
                 }
             }
+        } else {
+            //不处理[actionList]
         }
 
         if (result.forceFail) {
@@ -345,7 +386,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         accParse.accControl.controlListenerList.forEach {
             it.onHandleAction(controlContext, accParse.accControl, handleBean, result)
         }
-        accParse.accControl._taskBean?._listenerList?.forEach {
+        accParse.accControl._taskBean?._listenerObjList?.forEach {
             it.onHandleAction(controlContext, accParse.accControl, handleBean, result)
         }
 
@@ -502,4 +543,29 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         }
     }
 
+    /**[IHandleDynamic]*/
+    fun initHandleDynamic(handleBean: HandleBean) {
+        val clsList = handleBean.handleClsList
+        if (clsList.isNullOrEmpty()) {
+            handleBean._handleObjList = null
+        } else {
+            if (handleBean._handleObjList == null) {
+                val ojbList = mutableListOf<IHandleDynamic>()
+                clsList.forEach {
+                    try {
+                        val cls = Class.forName(it)
+                        if (IHandleDynamic::class.java.isAssignableFrom(cls)) {
+                            ojbList.add(cls.newInstance() as IHandleDynamic)
+                        }
+                    } catch (e: Exception) {
+                        L.w("无法实例化:$it")
+                    }
+                }
+
+                if (ojbList.isNotEmpty()) {
+                    handleBean._handleObjList = ojbList
+                }
+            }
+        }
+    }
 }
