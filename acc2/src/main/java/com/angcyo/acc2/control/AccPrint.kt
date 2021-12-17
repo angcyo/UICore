@@ -60,7 +60,11 @@ open class AccPrint(val accControl: AccControl? = null) {
 
     }
 
-    /**处理元素*/
+    /**处理元素
+     * [AppAccLog]中显示了节点提示矩形框
+     * [AccTouchTipLayer]
+     * [com.angcyo.acc2.app.AppAccLogKt.showNodeRect]
+     * */
     open fun handleNode(nodeList: List<AccessibilityNodeInfoCompat>?) {
 
     }
