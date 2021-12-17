@@ -176,7 +176,7 @@ fun <L1, L2> each(list1: List<L1>?, list2: List<L2>?, run: (item1: L1, item2: L2
 fun uuid(): String = UUID.randomUUID().toString()
 
 /**判断列表是否为空, 包括内部的数据也是非空*/
-fun List<Any?>?.isListEmpty(): Boolean {
+fun Collection<Any?>?.isListEmpty(): Boolean {
     if (this?.size ?: -1 > 0) {
         return false
     }
@@ -185,7 +185,7 @@ fun List<Any?>?.isListEmpty(): Boolean {
     } ?: true
 }
 
-fun List<*>?.size() = this?.size ?: 0
+fun Collection<*>?.size() = this?.size ?: 0
 
 /**判断2个列表中的数据是否改变过*/
 fun <T> List<T>?.isChange(other: List<T>?): Boolean {
@@ -299,7 +299,7 @@ fun <R> sync(count: Int = 1, action: (CountDownLatch, AtomicReference<R>) -> Uni
 
 /**无返回值*/
 fun syncSingle(count: Int = 1, action: (CountDownLatch) -> Unit) {
-    sync<String>(count){countDownLatch, _ ->
+    sync<String>(count) { countDownLatch, _ ->
         action(countDownLatch)
     }
 }

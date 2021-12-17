@@ -24,6 +24,6 @@ interface IHandleDynamic {
         controlContext: ControlContext,
         originList: List<AccessibilityNodeInfoCompat>?,
         handleBean: HandleBean,
-        rootNodeList: List<AccessibilityNodeInfoCompat>?,
+        handleNodeList: List<AccessibilityNodeInfoCompat>?,
     ): HandleResult = handleResult { }
 }

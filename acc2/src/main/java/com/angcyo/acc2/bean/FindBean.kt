@@ -207,3 +207,7 @@ data class FindBean(
     /**根据本次选择元素列表, 继续查找子子元素*/
     var after: FindBean? = null
 )
+
+fun findBean(dsl: FindBean.() -> Unit): FindBean = FindBean().apply(dsl)
+
+fun findBeanList(dsl: FindBean.() -> Unit): List<FindBean> = listOf(FindBean().apply(dsl))

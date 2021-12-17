@@ -86,6 +86,8 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
      * 如果处理失败, 会进行
      * [com.angcyo.acc2.bean.TaskBean.limitRunCount]
      * [com.angcyo.acc2.bean.TaskBean.limitRunTime] 检查
+     *
+     * [originList] event[com.angcyo.acc2.bean.CheckBean.event]返回的[eventNodeList]
      * */
     fun parse(
         controlContext: ControlContext,
@@ -166,42 +168,9 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
             accParse.findParse.rootWindowNode()
         }
 
-        //是否需要处理默认的[actionList]
-        var handleDefaultAction = true
-
-        //handleClsList
-        val handleObjList = handleBean._handleObjList
-        if (!handleObjList.isNullOrEmpty()) {
-            //动态cls处理
-            for (obj in handleObjList) {
-                val r = obj.handle(
-                    accParse.accControl,
-                    controlContext,
-                    originList,
-                    handleBean,
-                    rootNodeList
-                )
-                if (r.success) {
-                    handleDefaultAction = false
-                    result = r
-                }
-                if (r.forceSuccess) {
-                    handleDefaultAction = false
-                    //中断处理
-                    result = r
-                    break
-                }
-                if (r.forceFail) {
-                    handleDefaultAction = false
-                    //中断处理
-                    break
-                }
-            }
-        }
-
         //待处理的元素节点集合
-        var handleNodeList = if (!handleDefaultAction) {
-            null
+        var handleNodeList = if (handleBean.noFind == true) {
+            rootNodeList
         } else if (handleBean.findList != null) {
             //需要明确重新指定
             val findResult =
@@ -268,51 +237,86 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
                 handleNodeList,
                 conditionActionList
             )
-        } else if (handleDefaultAction) {
-            //默认的[actionList]处理
-            val targetActionList: List<String>? = caseBean?.actionList ?: handleBean.actionList
-            if (handleBean.findList != null) {
-                //需要重新选择
-                if (handleNodeList.isNullOrEmpty()) {
-                    //重新选择后, 节点为空
-                    if (handleBean.noActionList != null) {
+        } else {
+
+            //是否需要处理默认的[actionList]
+            var handleDefaultAction = true
+
+            //handleClsList
+            val handleObjList = handleBean._handleObjList
+            if (!handleObjList.isNullOrEmpty()) {
+                //动态cls处理
+                for (obj in handleObjList) {
+                    val r = obj.handle(
+                        accParse.accControl,
+                        controlContext,
+                        originList,
+                        handleBean,
+                        handleNodeList
+                    )
+                    if (r.success) {
+                        handleDefaultAction = false
+                        result = r
+                    }
+                    if (r.forceSuccess) {
+                        handleDefaultAction = false
+                        //中断处理
+                        result = r
+                        break
+                    }
+                    if (r.forceFail) {
+                        handleDefaultAction = false
+                        //中断处理
+                        break
+                    }
+                }
+            }
+
+            //this
+            if (handleDefaultAction) {
+                //默认的[actionList]处理
+                val targetActionList: List<String>? = caseBean?.actionList ?: handleBean.actionList
+                if (handleBean.findList != null) {
+                    //需要重新选择
+                    if (handleNodeList.isNullOrEmpty()) {
+                        //重新选择后, 节点为空
+                        if (handleBean.noActionList != null) {
+                            result = handleAction(
+                                controlContext,
+                                handleBean,
+                                textParamBean,
+                                handleNodeList,
+                                handleBean.noActionList
+                            )
+                        } else {
+                            //重新选择后, 没有找到元素, 也没有指定[noActionList], 这直接失败
+                            result.success = false
+                        }
+                    } else {
+                        //重新选择后, 节点不为空
                         result = handleAction(
                             controlContext,
                             handleBean,
                             textParamBean,
                             handleNodeList,
-                            handleBean.noActionList
+                            targetActionList
                         )
-                    } else {
-                        //重新选择后, 没有找到元素, 也没有指定[noActionList], 这直接失败
-                        result.success = false
                     }
                 } else {
-                    //重新选择后, 节点不为空
-                    result = handleAction(
-                        controlContext,
-                        handleBean,
-                        textParamBean,
-                        handleNodeList,
-                        targetActionList
-                    )
-                }
-            } else {
-                //无[actionList]时的默认处理, 可以用空数组[]实现执行成功
-                if (targetActionList.isNullOrEmpty()) {
-                    result.success = targetActionList != null
-                } else {
-                    result = handleAction(
-                        controlContext,
-                        handleBean,
-                        textParamBean,
-                        handleNodeList,
-                        targetActionList
-                    )
+                    //无[actionList]时的默认处理, 可以用空数组[]实现执行成功
+                    if (targetActionList.isNullOrEmpty()) {
+                        result.success = targetActionList != null
+                    } else {
+                        result = handleAction(
+                            controlContext,
+                            handleBean,
+                            textParamBean,
+                            handleNodeList,
+                            targetActionList
+                        )
+                    }
                 }
             }
-        } else {
-            //不处理[actionList]
         }
 
         if (result.forceFail) {

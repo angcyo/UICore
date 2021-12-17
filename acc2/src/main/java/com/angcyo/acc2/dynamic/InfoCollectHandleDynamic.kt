@@ -2,6 +2,7 @@ package com.angcyo.acc2.dynamic
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.action.handleResult
+import com.angcyo.acc2.action.toNodeTextList
 import com.angcyo.acc2.bean.HandleBean
 import com.angcyo.acc2.bean.putListMap
 import com.angcyo.acc2.bean.putMap
@@ -9,9 +10,6 @@ import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.ControlContext
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.library.ex.decode
-import com.angcyo.library.ex.patternList
-import com.angcyo.library.ex.text
-import com.angcyo.library.ex.toStr
 
 /**
  * 采集信息
@@ -28,14 +26,14 @@ open class InfoCollectHandleDynamic : IHandleDynamic {
         controlContext: ControlContext,
         originList: List<AccessibilityNodeInfoCompat>?,
         handleBean: HandleBean,
-        rootNodeList: List<AccessibilityNodeInfoCompat>?
+        handleNodeList: List<AccessibilityNodeInfoCompat>?
     ): HandleResult {
         val result = handleResult {
             //op
         }
         val accParse = control.accSchedule.accParse
         handleBean.findList?.forEach { findBean ->
-            val findResult = accParse.findParse.parse(controlContext, rootNodeList, findBean)
+            val findResult = accParse.findParse.parse(controlContext, handleNodeList, findBean)
             if (findResult.success) {
                 //节点提示
                 control.accPrint.findNode(findResult.nodeList)
@@ -51,30 +49,14 @@ open class InfoCollectHandleDynamic : IHandleDynamic {
                 }
 
                 //收集节点文本
-                val textStrList = mutableListOf<String>()
-
-                for (node in findResult.nodeList ?: emptyList()) {
-                    var text = node.text()
-
-                    if (!regex.isNullOrEmpty()) {
-                        try {
-                            text = text.patternList(regex).firstOrNull()
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
-
-                    if (text != null) {
-                        textStrList.add(text.toStr())
-                    }
-                }
+                val textList = findResult.nodeList.toNodeTextList(regex)
 
                 //保存起来
-                if (textStrList.isNotEmpty()) {
+                if (textList.isNotEmpty()) {
                     if (findBean.putArray == true) {
-                        control._taskBean?.putListMap(findBean.key, textStrList, true)
+                        control._taskBean?.putListMap(findBean.key, textList, true)
                     } else {
-                        val lastText = textStrList.lastOrNull()
+                        val lastText = textList.lastOrNull()
                         control._taskBean?.putMap(findBean.key ?: lastText, lastText)
                     }
                     //获取成功

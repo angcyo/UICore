@@ -25,6 +25,10 @@ data class HandleBean(
 
     //<editor-fold desc="前处理">
 
+    /**是否不解析[findList],
+     * 当设置了[handleClsList], 开启此属性, 提高性能*/
+    var noFind: Boolean? = null,
+
     /**处理[findList]时,需要使用的根节点
      * [com.angcyo.acc2.action.Action.RESULT] 使用[com.angcyo.acc2.bean.CheckBean.event]返回的节点,进行后续处理
      * [null] 使用默认的[com.angcyo.acc2.parse.FindParse.rootWindowNode]节点*/

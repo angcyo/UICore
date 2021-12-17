@@ -47,6 +47,9 @@ data class ActionBean(
     /**调试模式下的时间*/
     var debugStart: String? = null,
 
+    /**调试模式下是否激活*/
+    var debugEnable: Boolean? = null,
+
     /**当前的[ActionBean]依靠的其他[ActionBean]的id,
      * 可用于[com.angcyo.acc2.action.Action.ACTION_JUMP]跳转指令使用*/
     var relyList: List<Long>? = null,
@@ -98,7 +101,8 @@ data class ActionBean(
 
     /**[ActionBean]分组, 最优先判断, 只有group判断通过之后, 才会执行剩下的激活逻辑判断.
      * 只有相同分组中的第一个激活, 自身才激活,否则跳过.
-     * 多个分组使用[com.angcyo.acc2.action.Action.PACKAGE_SPLIT]分割*/
+     * 多个分组使用[com.angcyo.acc2.action.Action.PACKAGE_SPLIT]分割
+     * [com.angcyo.acc2.parse.ConditionParse.Companion.OR]*/
     var group: String? = null,
 
     //</editor-fold desc="激活">

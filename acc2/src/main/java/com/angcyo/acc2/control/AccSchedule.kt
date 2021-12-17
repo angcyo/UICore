@@ -208,6 +208,19 @@ class AccSchedule(val accControl: AccControl) {
         return accControl._taskBean?.findFirstActionByGroup(group)
     }
 
+    /**不支持分组, 直接判断第一个[ActionBean]是否激活*/
+    fun isFirstEnable(actionBean: ActionBean, g: String, isPrimaryAction: Boolean): Boolean {
+        val firstActionByGroup = findFirstActionByGroup(g)
+        return if (firstActionByGroup != null && firstActionByGroup == actionBean) {
+            //第一个就是自身
+            isActionBeanEnable(actionBean, isPrimaryAction)
+        } else if (isDebugType() && firstActionByGroup?.debugEnable == false) {
+            false
+        } else {
+            (firstActionByGroup?.enable == true)
+        }
+    }
+
     /**指定分组中的第一个[ActionBean]是否激活
      * 默认有多个分组时, 必须全部满足才可以. (请注意分组的顺序)
      * 可以通过包含[ConditionParse.OR],采用或者的关系
@@ -234,14 +247,7 @@ class AccSchedule(val accControl: AccControl) {
                     continue
                 }
 
-                val firstActionByGroup = findFirstActionByGroup(g)
-
-                result = if (firstActionByGroup != null && firstActionByGroup == actionBean) {
-                    //第一个就是自身
-                    isActionBeanEnable(actionBean, isPrimaryAction)
-                } else {
-                    (firstActionByGroup?.enable == true)
-                } to g
+                result = isFirstEnable(actionBean, g, isPrimaryAction) to g
 
                 if (result.first) {
                     break
@@ -259,15 +265,7 @@ class AccSchedule(val accControl: AccControl) {
                     continue
                 }
 
-                //分组中的第一个ActionBean
-                val firstActionByGroup = findFirstActionByGroup(g)
-
-                allMatch = if (firstActionByGroup != null && firstActionByGroup == actionBean) {
-                    //第一个就是自身
-                    isActionBeanEnable(actionBean, isPrimaryAction)
-                } else {
-                    (firstActionByGroup?.enable == true)
-                }
+                allMatch = isFirstEnable(actionBean, g, isPrimaryAction)
                 matchGroup = g
 
                 if (!allMatch) {
@@ -686,7 +684,10 @@ class AccSchedule(val accControl: AccControl) {
         if (action != null) {
             val pLog = if (isPrimaryAction) "[主线]" else ""
             //激活判断
-            if (action.enable || action._enable != null) {
+            if (isDebugType() && action.debugEnable == false) {
+                //调试模式下禁用[ActionBean]
+                return false
+            } else if (action.enable || action._enable != null) {
                 var factor = 0
                 if (action.randomEnable) {
                     //需要处理随机激活

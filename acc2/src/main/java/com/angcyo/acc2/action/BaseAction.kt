@@ -7,7 +7,10 @@ import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.ControlContext
 import com.angcyo.acc2.parse.BaseParse
 import com.angcyo.acc2.parse.HandleResult
+import com.angcyo.library.ex.patternList
 import com.angcyo.library.ex.subStart
+import com.angcyo.library.ex.text
+import com.angcyo.library.ex.toStr
 
 /**
  *
@@ -26,18 +29,18 @@ abstract class BaseAction : BaseParse() {
 
     /**执行操作*/
     open fun runAction(
-            control: AccControl,
-            nodeList: List<AccessibilityNodeInfoCompat>?,
-            action: String
+        control: AccControl,
+        nodeList: List<AccessibilityNodeInfoCompat>?,
+        action: String
     ): HandleResult = handleResult {
         success = false
     }
 
     open fun runAction(
-            control: AccControl,
-            controlContext: ControlContext,
-            nodeList: List<AccessibilityNodeInfoCompat>?,
-            action: String
+        control: AccControl,
+        controlContext: ControlContext,
+        nodeList: List<AccessibilityNodeInfoCompat>?,
+        action: String
     ): HandleResult = runAction(control, nodeList, action)
 
     /**主线的[ActionBean]*/
@@ -75,4 +78,28 @@ abstract class BaseAction : BaseParse() {
 /**Dsl*/
 fun handleResult(action: HandleResult.() -> Unit): HandleResult {
     return HandleResult().apply(action)
+}
+
+/**转换成节点对应的文本列表*/
+fun List<AccessibilityNodeInfoCompat>?.toNodeTextList(regex: String? = null): List<String> {
+    //收集节点文本
+    val textStrList = mutableListOf<String>()
+
+    for (node in this ?: emptyList()) {
+        var text = node.text()
+
+        if (!regex.isNullOrEmpty()) {
+            try {
+                text = text.patternList(regex).firstOrNull()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        if (text != null) {
+            textStrList.add(text.toStr())
+        }
+    }
+
+    return textStrList
 }
