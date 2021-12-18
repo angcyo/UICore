@@ -1,5 +1,6 @@
 package com.angcyo.acc2.dynamic
 
+import androidx.annotation.Keep
 import com.angcyo.acc2.control.ControlListener
 
 /**
@@ -10,6 +11,8 @@ import com.angcyo.acc2.control.ControlListener
  * @date 2021/12/17
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
+
+@Keep
 interface ITaskDynamic : ControlListener {
 
 }

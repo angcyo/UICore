@@ -1,5 +1,6 @@
 package com.angcyo.acc2.dynamic
 
+import androidx.annotation.Keep
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.action.handleResult
 import com.angcyo.acc2.action.toNodeTextList
@@ -19,6 +20,8 @@ import com.angcyo.library.ex.decode
  * @date 2021/12/17
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
+
+@Keep
 open class InfoCollectHandleDynamic : IHandleDynamic {
 
     override fun handle(

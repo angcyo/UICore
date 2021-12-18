@@ -1,5 +1,6 @@
 package com.angcyo.acc2.dynamic
 
+import androidx.annotation.Keep
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.action.handleResult
 import com.angcyo.acc2.control.AccControl
@@ -14,6 +15,8 @@ import com.angcyo.acc2.parse.HandleResult
  * @date 2021/12/16
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
+
+@Keep
 interface IHandleActionDynamic {
 
     fun runAction(control: AccControl, nodeList: List<AccessibilityNodeInfoCompat>?, action: String): HandleResult {
