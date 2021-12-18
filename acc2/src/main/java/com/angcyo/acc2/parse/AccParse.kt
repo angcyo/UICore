@@ -134,18 +134,21 @@ class AccParse(val accControl: AccControl) : BaseParse() {
      * [fling:10,10~100,100]
      * */
     fun parsePoint(arg: String?, bound: Rect? = null): List<PointF> {
+        val from = accControl._taskBean?.touchFrom ?: 5
+        val until = accControl._taskBean?.touchUntil ?: 10
+
         val rect = bound ?: accContext.getBound()
 
         val screenWidth: Int = _screenWidth
         val screenHeight: Int = _screenHeight
 
         //默认的第一个点
-        val fX: Float = screenWidth * 1 / 3f + nextInt(5, 10)
-        val fY: Float = screenHeight * 3 / 5f - nextInt(5, 10)
+        val fX: Float = screenWidth * 1 / 3f + nextInt(from, until)
+        val fY: Float = screenHeight * 3 / 5f - nextInt(from, until)
 
         //默认的第二个点
-        val tX: Float = screenWidth * 2 / 3f + nextInt(5, 10)
-        val tY: Float = screenHeight * 2 / 5f + nextInt(5, 10)
+        val tX: Float = screenWidth * 2 / 3f + nextInt(from, until)
+        val tY: Float = screenHeight * 2 / 5f + nextInt(from, until)
 
         val p1 = PointF(fX, fY)
         var p2: PointF? = null

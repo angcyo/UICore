@@ -77,6 +77,11 @@ data class TaskBean(
      * [enableAction]*/
     var disableAction: String? = null,
 
+    /**Touch操作时, 需要随机的坐标位置*/
+    var touchFrom: Int? = null,
+
+    var touchUntil: Int? = null,
+
     //</editor-fold desc="配置信息">
 
     //<editor-fold desc="浮窗配置">
@@ -335,6 +340,13 @@ fun TaskBean.getTextList(key: String?): List<String?>? {
 
 /**map value*/
 fun TaskBean.mapVal(key: String?): Any? = map?.get(key)
+
+fun TaskBean.mapVal(key: String, value: Any?) {
+    if (map == null) {
+        map = hashMapOf()
+    }
+    map?.put(key, value)
+}
 
 fun TaskBean.mapStringVal(key: String?): String? = map?.get(key)?.toString()
 

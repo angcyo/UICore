@@ -256,15 +256,17 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
                     )
                     if (r.success) {
                         handleDefaultAction = false
-                        result = r
+                        r.copyTo(result)
                     }
                     if (r.forceSuccess) {
                         handleDefaultAction = false
                         //中断处理
-                        result = r
+                        r.copyTo(result)
                         break
                     }
                     if (r.forceFail) {
+                        result.success = false
+                        result.forceFail = true
                         handleDefaultAction = false
                         //中断处理
                         break
@@ -554,7 +556,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         if (clsList.isNullOrEmpty()) {
             handleBean._handleObjList = null
         } else {
-            if (handleBean._handleObjList == null) {
+            if (handleBean._handleObjList == null || handleBean._handleObjList.size() != clsList.size()) {
                 val ojbList = mutableListOf<IHandleDynamic>()
                 clsList.forEach {
                     try {

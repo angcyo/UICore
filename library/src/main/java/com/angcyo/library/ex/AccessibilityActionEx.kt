@@ -82,3 +82,18 @@ fun AccessibilityNodeInfoCompat.actionStr(builder: StringBuilder) {
     }
     builder.append("]")
 }
+
+/**
+ * 是否具有指定的动作action
+ * [AccessibilityNodeInfoCompat.ACTION_SCROLL_FORWARD]
+ * [AccessibilityNodeInfoCompat.ACTION_SCROLL_BACKWARD]
+ * */
+fun AccessibilityNodeInfoCompat.haveAction(action: Int): Boolean {
+    return if (Build.VERSION.SDK_INT >= 21) {
+        val actions = actionList
+        actions.find { it.id == action } != null
+    } else {
+        val actionBits = actions
+        actionBits.have(action)
+    }
+}

@@ -652,6 +652,20 @@ fun List<AccessibilityNodeInfo>.toWrapList() =
 fun AccessibilityNodeInfoCompat.text() =
     text ?: (contentDescription ?: (hintText ?: (paneTitle ?: tooltipText)))
 
+/**拼接所有的child节点的文本*/
+fun AccessibilityNodeInfoCompat.contactChildText(): String {
+    val node = this
+    return buildString {
+        node.text()?.let { append(it) }
+        node.eachChild { _, child ->
+            val childText = child.contactChildText()
+            if (childText.isNotEmpty()) {
+                append(childText)
+            }
+        }
+    }
+}
+
 /**枚举查找[AccessibilityNodeInfo]
  * [deep] 节点查询深度, >=0生效, 0:表示根节点 1:表示根节点+child
  * [currentDeep] 当前的深度, 自动控制的变量
@@ -760,6 +774,8 @@ fun AccessibilityNodeInfoCompat.bounds(): Rect {
     return tempRect
 }
 
+fun AccessibilityNodeInfoCompat.rect() = bounds()
+
 fun AccessibilityNodeInfoCompat.isClass(claName: CharSequence) =
     className?.toString() == claName.toString()
 
@@ -828,6 +844,14 @@ inline fun AccessibilityNodeInfoCompat.eachChild(action: (index: Int, child: Acc
     }
 }
 
+fun AccessibilityNodeInfoCompat.firstChild(): AccessibilityNodeInfoCompat? {
+    return getChildOrNull(0)
+}
+
+fun AccessibilityNodeInfoCompat.lastChild(): AccessibilityNodeInfoCompat? {
+    return getChildOrNull(childCount - 1)
+}
+
 fun AccessibilityNodeInfoCompat.getChildOrNull(index: Int): AccessibilityNodeInfoCompat? {
     return if (index in 0 until childCount) {
         getChild(index)
@@ -851,6 +875,17 @@ fun AccessibilityNodeInfoCompat.getLongClickParent(): AccessibilityNodeInfoCompa
     } else {
         parent?.getLongClickParent()
     }
+}
+
+/**从列表中, 获取可以滚动的node*/
+fun List<AccessibilityNodeInfoCompat>.getScrollableNodeList(): List<AccessibilityNodeInfoCompat> {
+    val result = mutableListOf<AccessibilityNodeInfoCompat>()
+    forEach {
+        if (it.isScrollable) {
+            result.add(it)
+        }
+    }
+    return result
 }
 
 fun AccessibilityNodeInfoCompat.getScrollableParent(): AccessibilityNodeInfoCompat? {

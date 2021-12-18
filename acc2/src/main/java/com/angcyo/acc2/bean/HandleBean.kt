@@ -88,6 +88,9 @@ data class HandleBean(
      * [com.angcyo.acc2.action.Action]*/
     var actionList: List<String>? = null,
 
+    /**[handleClsList]参数存储池*/
+    var handleClsParams: Map<String, Any>? = null,
+
     /**直接接管[com.angcyo.acc2.bean.HandleBean]的处理*/
     var handleClsList: List<String>? = null,
 

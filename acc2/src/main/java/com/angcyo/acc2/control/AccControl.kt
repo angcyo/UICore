@@ -21,6 +21,7 @@ import java.util.concurrent.Future
 import java.util.concurrent.ThreadFactory
 
 /**
+ * 无障碍控制器, 包含[AccSchedule]核心调度器对象
  *
  * Email:angcyo@126.com
  * @author angcyo
@@ -364,33 +365,40 @@ class AccControl : Runnable {
             appendLine(accSchedule.durationStr())
         }
 
-        accSchedule.packageTrackList.apply {
-            if (isNotEmpty()) {
+        accSchedule.packageTrackList.let { list ->
+            if (list.isNotEmpty()) {
                 append("track:")
-                appendLine(this)
+                appendLine(list)
             }
         }
 
-        accSchedule.inputTextList.apply {
-            if (isNotEmpty()) {
+        accSchedule.inputTextList.let { list ->
+            if (list.isNotEmpty()) {
                 append("input:")
-                appendLine(this)
+                appendLine(list)
             }
         }
 
-        _taskBean?.textMap?.apply {
-            if (isNotEmpty()) {
+        _taskBean?.textMap?.let { map ->
+            if (map.isNotEmpty()) {
                 append("text:")
-                appendLine(this)
+                appendLine(map)
             }
         }
 
-        _taskBean?.textListMap?.apply {
-            if (isNotEmpty()) {
+        _taskBean?.textListMap?.let { map ->
+            if (map.isNotEmpty()) {
                 append("textList:")
-                appendLine(this)
+                appendLine(map)
             }
         }
+
+        /*_taskBean?.map?.let { map ->
+            if (map.isNotEmpty()) {
+                append("map:")
+                appendLine(map)
+            }
+        }*/
 
         //app info
         append("${app().getAppName()} ${app().packageName} ${getAppVersionName()} ${getAppVersionCode()}")
@@ -467,4 +475,35 @@ fun AccControl.next(actionBean: ActionBean, time: Long) {
 }
 
 //</editor-fold desc="扩展">
+
+//<editor-fold desc="Dynamic扩展">
+
+/**一次性创建所有[com.angcyo.acc2.dynamic.IHandleDynamic]*/
+fun AccControl.initAllHandleCls() {
+    _taskBean?.apply {
+        actionList?.forEach { actionBean ->
+            actionBean.check?.handle?.forEach { handleBean ->
+                accSchedule.accParse.handleParse.initHandleDynamic(handleBean)
+            }
+        }
+    }
+}
+
+/**查找[com.angcyo.acc2.dynamic.IHandleDynamic]对象*/
+fun <T> AccControl.findHandleObj(cls: Class<T>): T? {
+    val actionList = _taskBean?.actionList ?: return null
+    for (action in actionList) {
+        for (handleBean in action.check?.handle ?: emptyList()) {
+            for (obj in handleBean._handleObjList ?: emptyList()) {
+                if (cls.isAssignableFrom(obj.javaClass)) {
+                    return obj as T
+                }
+            }
+        }
+    }
+    return null
+}
+
+//</editor-fold desc="Dynamic扩展">
+
 
