@@ -61,205 +61,6 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
                 result = Random.nextBoolean()
             }
 
-            //textMapList
-            if (result && !textMapList.isNullOrEmpty()) {
-                for (key in textMapList!!) {
-                    val value = accControl._taskBean?.textListMap?.get(key)
-                        ?: accControl._taskBean?.textMap?.get(key)
-                    if (value == null) {
-                        //指定key对应的value没有值, 则条件不满足
-                        result = false
-                        break
-                    }
-                }
-            }
-
-            //noTextMapList
-            if (result && !noTextMapList.isNullOrEmpty()) {
-                for (key in noTextMapList!!) {
-                    val value = accControl._taskBean?.textListMap?.get(key)
-                        ?: accControl._taskBean?.textMap?.get(key)
-                    if (value != null) {
-                        //指定key对应的value有值, 则条件不满足
-                        result = false
-                        break
-                    }
-                }
-            }
-
-            //textInputFinishList
-            if (result && !textInputFinishList.isNullOrEmpty()) {
-                //约束文本书否输入完成
-                result = false
-                for (textKey in textInputFinishList!!) {
-                    if (accControl.accSchedule.inputFinishList.contains(textKey)) {
-                        result = true
-                        break
-                    }
-                }
-            }
-
-            //noTextInputFinishList
-            if (result && !noTextInputFinishList.isNullOrEmpty()) {
-                //约束文本书否输入未完成
-                for (textKey in noTextInputFinishList!!) {
-                    if (accControl.accSchedule.inputFinishList.contains(textKey)) {
-                        result = false
-                        break
-                    }
-                }
-            }
-
-            //actionResultList
-            if (result && !actionResultList.isNullOrEmpty()) {
-                for (actionId in actionResultList!!) {
-                    if (accControl.accSchedule.actionResultMap[actionId] != true) {
-                        //指定id的action执行失败, 则条件不满足
-                        result = false
-                        break
-                    }
-                }
-            }
-
-            //检查次数是否满足表达式 [100:>=9] [.:>=9]
-            fun checkCount(expression: String, countGetAction: (actionId: Long) -> Long): Boolean {
-                val actionExp = expression.subStart(Action.ARG_SPLIT)
-                val exp = expression.subEnd(Action.ARG_SPLIT)
-
-                if (!exp.isNullOrEmpty()) {
-                    val actionBean = if (actionExp == ".") {
-                        accControl.accSchedule._scheduleActionBean
-                    } else {
-                        val actionId = actionExp?.toLongOrNull()
-                        accControl.findAction(actionId)
-                    }
-
-                    if (actionBean != null) {
-                        val count = countGetAction(actionBean.actionId)
-                        if (!accParse.expParse.parseAndCompute(exp, inputValue = count.toFloat())) {
-                            //运行次数不满足条件
-                            return false
-                        }
-                    }
-                }
-                return true
-            }
-
-            //actionRunList
-            if (result && !actionRunList.isNullOrEmpty()) {
-                for (expression in actionRunList!!) {
-
-                    var actionId = -1L
-                    val check = checkCount(expression) {
-                        actionId = it
-                        accControl.accSchedule.getRunCount(it)
-                    }
-
-                    if (check) {
-                        if (expression.contains(Action.CLEAR)) {
-                            accControl.accSchedule.clearRunCount(actionId)
-                        }
-                    } else {
-                        //运行次数不满足条件
-                        result = false
-                        break
-                    }
-                }
-            }
-
-            //检查时长是否满足表达式 [100:>=9] [.:>=9]
-            fun checkTime(expression: String, timeGetAction: (actionId: Long) -> Long): Boolean {
-                val actionExp = expression.subStart(Action.ARG_SPLIT)
-                val actionId = actionExp?.toLongOrNull()
-                val exp = expression.subEnd(Action.ARG_SPLIT)
-                if (!exp.isNullOrEmpty()) {
-                    val actionBean = if (actionExp == ".") {
-                        accControl.accSchedule._scheduleActionBean
-                    } else {
-                        accControl.findAction(actionId)
-                    }
-
-                    if (actionBean != null) {
-                        val time = timeGetAction(actionBean.actionId)
-                        if (!accParse.expParse.parseAndCompute(exp, inputValue = time.toFloat())) {
-                            //运行次数不满足条件
-                            return false
-                        }
-                    }
-                }
-                return true
-            }
-
-            //actionTimeList
-            if (result && !actionTimeList.isNullOrEmpty()) {
-                for (expression in actionTimeList!!) {
-
-                    var actionId = -1L
-                    val check = checkTime(expression) {
-                        actionId = it
-                        accControl.accSchedule.getActionRunTime(it)
-                    }
-
-                    if (check) {
-                        if (expression.contains(Action.CLEAR)) {
-                            accControl.accSchedule.clearActionRunTime(actionId)
-                        }
-                    } else {
-                        //运行时长不满足条件
-                        result = false
-                        break
-                    }
-                }
-            }
-
-            //actionJumpList
-            if (result && !actionJumpList.isNullOrEmpty()) {
-                for (expression in actionJumpList!!) {
-
-                    var actionId = -1L
-                    val check = checkCount(expression) {
-                        actionId = it
-                        accControl.accSchedule.getJumpCount(it)
-                    }
-
-                    if (check) {
-                        if (expression.contains(Action.CLEAR)) {
-                            accControl.accSchedule.clearJumpCount(actionId)
-                        }
-                    } else {
-                        //跳转次数不满足条件
-                        result = false
-                        break
-                    }
-                }
-            }
-
-            //actionEnableList
-            if (result && !actionEnableList.isNullOrEmpty()) {
-                for (actionId in actionEnableList!!) {
-                    val actionBean = accControl.findAction(actionId)
-                    if (actionBean != null) {
-                        if (!actionBean.enable) {
-                            //未激活, 则不满足条件
-                            result = false
-                            break
-                        }
-                    }
-                }
-            }
-
-            //actionIndex
-            if (result && actionIndex != null) {
-                val pass = accParse.expParse.parseAndCompute(
-                    actionIndex,
-                    inputValue = accControl.accSchedule._currentIndex.toFloat()
-                )
-                if (!pass) {
-                    //不符合
-                    result = false
-                }
-            }
-
             //system
             if (result && system != null) {
                 result = verifySystem(system)
@@ -287,6 +88,251 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
             //debug
             if (result && debug != null) {
                 result = if (debug == true) isDebug() else !isDebug()
+            }
+
+            val or = condition.or
+
+            //textMapList
+            if (result && !textMapList.isNullOrEmpty()) {
+                for (key in textMapList!!) {
+                    val value = accControl._taskBean?.textListMap?.get(key)
+                        ?: accControl._taskBean?.textMap?.get(key)
+                    if (value == null) {
+                        //指定key对应的value没有值, 则条件不满足
+                        result = false
+                        break
+                    }
+                }
+            }
+
+            if (or && result) {
+                return result
+            }
+
+            //noTextMapList
+            if (result && !noTextMapList.isNullOrEmpty()) {
+                for (key in noTextMapList!!) {
+                    val value = accControl._taskBean?.textListMap?.get(key)
+                        ?: accControl._taskBean?.textMap?.get(key)
+                    if (value != null) {
+                        //指定key对应的value有值, 则条件不满足
+                        result = false
+                        break
+                    }
+                }
+            }
+
+            if (or && result) {
+                return result
+            }
+
+            //textInputFinishList
+            if (result && !textInputFinishList.isNullOrEmpty()) {
+                //约束文本书否输入完成
+                result = false
+                for (textKey in textInputFinishList!!) {
+                    if (accControl.accSchedule.inputFinishList.contains(textKey)) {
+                        result = true
+                        break
+                    }
+                }
+            }
+
+            if (or && result) {
+                return result
+            }
+
+            //noTextInputFinishList
+            if (result && !noTextInputFinishList.isNullOrEmpty()) {
+                //约束文本书否输入未完成
+                for (textKey in noTextInputFinishList!!) {
+                    if (accControl.accSchedule.inputFinishList.contains(textKey)) {
+                        result = false
+                        break
+                    }
+                }
+            }
+
+            if (or && result) {
+                return result
+            }
+
+            //actionResultList
+            if (result && !actionResultList.isNullOrEmpty()) {
+                for (actionId in actionResultList!!) {
+                    if (accControl.accSchedule.actionResultMap[actionId] != true) {
+                        //指定id的action执行失败, 则条件不满足
+                        result = false
+                        break
+                    }
+                }
+            }
+
+            if (or && result) {
+                return result
+            }
+
+            //检查次数是否满足表达式 [100:>=9] [.:>=9]
+            fun checkCount(expression: String, countGetAction: (actionId: Long) -> Long): Boolean {
+                val actionExp = expression.subStart(Action.ARG_SPLIT)
+                val exp = expression.subEnd(Action.ARG_SPLIT)
+
+                if (!exp.isNullOrEmpty()) {
+                    val actionBean = if (actionExp == ".") {
+                        accControl.accSchedule._scheduleActionBean
+                    } else {
+                        val actionId = actionExp?.toLongOrNull()
+                        accControl.findAction(actionId)
+                    }
+
+                    if (actionBean != null) {
+                        val count = countGetAction(actionBean.actionId)
+                        if (!accParse.expParse.parseAndCompute(exp, inputValue = count.toFloat())) {
+                            //运行次数不满足条件
+                            return false
+                        }
+                    }
+                }
+                return true
+            }
+
+            if (or && result) {
+                return result
+            }
+
+            //actionRunList
+            if (result && !actionRunList.isNullOrEmpty()) {
+                for (expression in actionRunList!!) {
+
+                    var actionId = -1L
+                    val check = checkCount(expression) {
+                        actionId = it
+                        accControl.accSchedule.getRunCount(it)
+                    }
+
+                    if (check) {
+                        if (expression.contains(Action.CLEAR)) {
+                            accControl.accSchedule.clearRunCount(actionId)
+                        }
+                    } else {
+                        //运行次数不满足条件
+                        result = false
+                        break
+                    }
+                }
+            }
+
+            if (or && result) {
+                return result
+            }
+
+            //检查时长是否满足表达式 [100:>=9] [.:>=9]
+            fun checkTime(expression: String, timeGetAction: (actionId: Long) -> Long): Boolean {
+                val actionExp = expression.subStart(Action.ARG_SPLIT)
+                val actionId = actionExp?.toLongOrNull()
+                val exp = expression.subEnd(Action.ARG_SPLIT)
+                if (!exp.isNullOrEmpty()) {
+                    val actionBean = if (actionExp == ".") {
+                        accControl.accSchedule._scheduleActionBean
+                    } else {
+                        accControl.findAction(actionId)
+                    }
+
+                    if (actionBean != null) {
+                        val time = timeGetAction(actionBean.actionId)
+                        if (!accParse.expParse.parseAndCompute(exp, inputValue = time.toFloat())) {
+                            //运行次数不满足条件
+                            return false
+                        }
+                    }
+                }
+                return true
+            }
+
+            if (or && result) {
+                return result
+            }
+
+            //actionTimeList
+            if (result && !actionTimeList.isNullOrEmpty()) {
+                for (expression in actionTimeList!!) {
+
+                    var actionId = -1L
+                    val check = checkTime(expression) {
+                        actionId = it
+                        accControl.accSchedule.getActionRunTime(it)
+                    }
+
+                    if (check) {
+                        if (expression.contains(Action.CLEAR)) {
+                            accControl.accSchedule.clearActionRunTime(actionId)
+                        }
+                    } else {
+                        //运行时长不满足条件
+                        result = false
+                        break
+                    }
+                }
+            }
+
+            if (or && result) {
+                return result
+            }
+
+            //actionJumpList
+            if (result && !actionJumpList.isNullOrEmpty()) {
+                for (expression in actionJumpList!!) {
+
+                    var actionId = -1L
+                    val check = checkCount(expression) {
+                        actionId = it
+                        accControl.accSchedule.getJumpCount(it)
+                    }
+
+                    if (check) {
+                        if (expression.contains(Action.CLEAR)) {
+                            accControl.accSchedule.clearJumpCount(actionId)
+                        }
+                    } else {
+                        //跳转次数不满足条件
+                        result = false
+                        break
+                    }
+                }
+            }
+
+            if (or && result) {
+                return result
+            }
+
+            //actionEnableList
+            if (result && !actionEnableList.isNullOrEmpty()) {
+                for (actionId in actionEnableList!!) {
+                    val actionBean = accControl.findAction(actionId)
+                    if (actionBean != null) {
+                        if (!actionBean.enable) {
+                            //未激活, 则不满足条件
+                            result = false
+                            break
+                        }
+                    }
+                }
+            }
+
+            if (or && result) {
+                return result
+            }
+
+            //actionIndex
+            if (result && actionIndex != null) {
+                val pass = accParse.expParse.parseAndCompute(
+                    actionIndex,
+                    inputValue = accControl.accSchedule._currentIndex.toFloat()
+                )
+                if (!pass) {
+                    //不符合
+                    result = false
+                }
             }
         }
         return result

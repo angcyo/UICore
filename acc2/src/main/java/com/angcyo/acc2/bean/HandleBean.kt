@@ -25,6 +25,12 @@ data class HandleBean(
 
     //<editor-fold desc="前处理">
 
+    /**
+     * 执行[HandleBean]时的sleep
+     * [com.angcyo.acc2.parse.AccParse.parseTime]
+     * */
+    var wait: String? = null,
+
     /**是否不解析[findList],
      * 当设置了[handleClsList], 开启此属性, 提高性能*/
     var noFind: Boolean? = null,
@@ -116,6 +122,9 @@ data class HandleBean(
     /**[InputAction]整个集合列表输入结束之后需要执行的操作.
      * 返回结果不影响主流程, 部位跳转命令有效*/
     var handleActionEndActionList: List<String>? = null,
+
+    /**是否成功之后才执行[handleAfter]*/
+    var handleAfterOnSuccess: Boolean = false,
 
     /**处理动作之后要处理的[HandleBean]
      * 直接返回值, 不会影响流程*/

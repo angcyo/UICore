@@ -168,6 +168,20 @@ object Action {
      * */
     const val ACTION_INPUT = "input"
 
+    /**
+     * 移除存在在map中的输入的文本, 默认key, [Action.DEF]
+     * [com.angcyo.acc2.control.AccSchedule.inputTextMap]
+     * "removeInputTextMap:searchWord"
+     * */
+    const val ACTION_REMOVE_INPUT_TEXT_MAP = "removeInputTextMap"
+
+    /**
+     * 保存指定的值, 到
+     * [com.angcyo.acc2.control.AccSchedule.inputTextMap]
+     * "saveInputTextMap:$[lastInput] key:xxx"
+     * */
+    const val ACTION_SAVE_INPUT_TEXT_MAP = "saveInputTextMap"
+
     /**将指定的文本设置给[com.angcyo.acc2.bean.TaskBean.textMap]
      * [com.angcyo.acc2.bean.TaskBean.textListMap]
      * [setText:key xxx]

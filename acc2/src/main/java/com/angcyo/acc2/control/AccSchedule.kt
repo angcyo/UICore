@@ -44,12 +44,19 @@ class AccSchedule(val accControl: AccControl) {
      * */
     val inputTextList = mutableListOf<String?>()
 
+    /**
+     * 记录输入过的文本内容
+     * key : text 的形式,
+     * 如果未指定key, 则统一使用 [Action.DEF]
+     * */
+    val inputTextMap = hashMapOf<String, MutableList<String?>>()
+
     /**顺序输入列表文本时, 输入全部完成标识. 存储的是输入text key
      * [com.angcyo.acc2.action.InputAction]
      * */
     val inputFinishList = mutableListOf<String?>()
 
-    /**计数统计
+    /**计数统计, [actionId, count]
      * [com.angcyo.acc2.action.CountAction]*/
     val countMap = hashMapOf<String, Long>()
 
@@ -123,6 +130,26 @@ class AccSchedule(val accControl: AccControl) {
 
     fun clearActionRunTime(actionId: Long) {
         actionTime.remove(actionId)
+    }
+
+    /**保存输入过的文本*/
+    fun saveInputText(text: String?, key: String? = null) {
+        inputTextList.add(text)
+        val _key = key ?: Action.DEF
+        val list = inputTextMap[_key] ?: mutableListOf()
+        list.add(text)
+        inputTextMap[_key] = list
+    }
+
+    /**移除对应key保存的最后一个输入的文本*/
+    fun removeLastInputText(key: String? = null): String? {
+        var result: String? = null
+        val _key = key ?: Action.DEF
+        val list = inputTextMap[_key]
+        list?.let {
+            result = it.removeLastOrNull()
+        }
+        return result
     }
 
     /**预备下一个需要执行*/
@@ -333,6 +360,8 @@ class AccSchedule(val accControl: AccControl) {
         actionResultMap.clear()
         packageTrackList.clear()
         inputTextList.clear()
+        inputTextMap.clear()
+        inputFinishList.clear()
         countMap.clear()
         _endTime = 0
         _currentIndex = -1

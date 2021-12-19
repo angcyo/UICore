@@ -9,6 +9,7 @@ import com.angcyo.acc2.dynamic.IHandleDynamic
 import com.angcyo.library.L
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.size
+import com.angcyo.library.ex.sleep
 
 /**
  *
@@ -79,6 +80,8 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         registerActionList.add(CountAction())
 
         registerActionList.add(ClassAction())
+        registerActionList.add(RemoveInputTextMapAction())
+        registerActionList.add(SaveInputTextMapAction())
     }
 
     /**解析, 并处理[handleList]
@@ -136,6 +139,12 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
     ): HandleResult {
         //cls
         initHandleDynamic(handleBean)
+
+        //wait
+        val wait = handleBean.wait
+        if (!wait.isNullOrEmpty()) {
+            sleep(accParse.parseTime(wait))
+        }
 
         var result = HandleResult()
 
@@ -358,7 +367,13 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
 
         if (handleBean.handleAfter != null) {
             //处理后, 需要的处理
-            parse(controlContext, handleNodeList, handleBean.handleAfter)
+            if (handleBean.handleAfterOnSuccess) {
+                if (result.isSuccessResult()) {
+                    parse(controlContext, handleNodeList, handleBean.handleAfter)
+                }
+            } else {
+                parse(controlContext, handleNodeList, handleBean.handleAfter)
+            }
         }
 
         //---------------处理结束----------------

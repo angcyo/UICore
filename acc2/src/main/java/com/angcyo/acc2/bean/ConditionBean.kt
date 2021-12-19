@@ -8,7 +8,11 @@ package com.angcyo.acc2.bean
  */
 data class ConditionBean(
 
-    /**随机是否激活*/
+    /**条件是否是或者的关系, 否则就是并且*/
+    var or: Boolean = false,
+
+    /**随机是否激活
+     * 不参与or运算*/
     var random: Boolean = false,
 
     /**当[com.angcyo.acc2.bean.TaskBean.textMap]包含指定key对应的值时. 列表中均要满足
@@ -59,13 +63,16 @@ data class ConditionBean(
     /**系统信息约束. 多个用;号分割,并且的关系; 用 !or! 分割或者的关系
      * [code>=1000]
      * [w>10;h<=10!or!code>=1000]
+     * 不参与or运算
      * */
     var system: String? = null,
 
     /**对应目标应用程序的信息约束
-     * [system]*/
+     * [system]
+     * 不参与or运算*/
     var app: String? = null,
 
-    /**如果设置了, 是否只在[debug]模式下满足条件*/
+    /**如果设置了, 是否只在[debug]模式下满足条件
+     * 不参与or运算*/
     var debug: Boolean? = null,
 )

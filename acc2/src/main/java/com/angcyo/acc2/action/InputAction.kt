@@ -115,7 +115,8 @@ class InputAction : BaseAction() {
         }
 
         //save, 保存最后一次输入
-        control.accSchedule.inputTextList.add(text)
+        //control.accSchedule.inputTextList.add(text)
+        control.accSchedule.saveInputText(text, textKey)
 
         nodeList?.forEach { node ->
             val result = node.setNodeText(text)
