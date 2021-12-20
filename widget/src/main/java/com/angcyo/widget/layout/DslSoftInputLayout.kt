@@ -3,6 +3,7 @@ package com.angcyo.widget.layout
 import android.animation.ValueAnimator
 import android.annotation.TargetApi
 import android.content.Context
+import android.graphics.Canvas
 import android.os.Build
 import android.util.AttributeSet
 import android.view.Gravity
@@ -168,6 +169,14 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     //<editor-fold desc="基础方法">
+
+    override fun dispatchDraw(canvas: Canvas) {
+        try {
+            super.dispatchDraw(canvas)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
     override fun onViewAdded(child: View?) {
         super.onViewAdded(child)

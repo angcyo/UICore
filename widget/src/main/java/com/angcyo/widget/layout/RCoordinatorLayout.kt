@@ -2,6 +2,7 @@ package com.angcyo.widget.layout
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -37,6 +38,14 @@ open class RCoordinatorLayout(
         getCustomLayoutDelegate().initAttribute(this, attributeSet)
 
         typedArray.recycle()
+    }
+
+    override fun dispatchDraw(canvas: Canvas) {
+        try {
+            super.dispatchDraw(canvas)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {

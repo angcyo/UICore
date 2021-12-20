@@ -27,6 +27,14 @@ open class RConstraintLayout(
         typedArray.recycle()
     }
 
+    override fun dispatchDraw(canvas: Canvas) {
+        try {
+            super.dispatchDraw(canvas)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     override fun draw(canvas: Canvas) {
         layoutDelegate.maskLayout(canvas) {
             layoutDelegate.draw(canvas)
