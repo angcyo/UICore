@@ -46,7 +46,6 @@ interface INestedRecyclerItem : IAutoInitItem {
             clearOnScrollListeners()
             clearItemDecoration()
             initDsl()
-            noItemAnim()
 
             if (layoutManager != nestedRecyclerItemConfig.itemNestedLayoutManager) {
                 layoutManager = nestedRecyclerItemConfig.itemNestedLayoutManager
@@ -57,15 +56,20 @@ interface INestedRecyclerItem : IAutoInitItem {
                 adapter = nestedRecyclerItemConfig.itemNestedAdapter
             }
 
+            //配置
+            nestedRecyclerItemConfig.itemNestedRecyclerViewConfig(this)
+
             //渲染数据
             if (adapter is DslAdapter) {
                 onRenderNestedAdapter(adapter as DslAdapter)
             }
 
+            //恢复滚动位置
             if (nestedRecyclerItemConfig.itemKeepScrollPosition) {
                 nestedRecyclerItemConfig._scrollPositionConfig?.run { restoreScrollPosition(this) }
             }
 
+            //记录滚动位置
             object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
@@ -75,9 +79,6 @@ interface INestedRecyclerItem : IAutoInitItem {
                 nestedRecyclerItemConfig._onScrollListener = this
                 addOnScrollListener(this)
             }
-
-            //配置
-            nestedRecyclerItemConfig.itemNestedRecyclerViewConfig(this)
         }
     }
 
@@ -115,6 +116,7 @@ interface INestedRecyclerItem : IAutoInitItem {
             } else {
                 notifyDataChanged()
             }*/
+            //强刷界面
             notifyDataChanged()
         }
     }
@@ -170,7 +172,9 @@ class NestedRecyclerItemConfig : IDslItemConfig {
     var itemNestedItemList: MutableList<DslAdapterItem>? = null
 
     /**内部[RecyclerView]配置回调*/
-    var itemNestedRecyclerViewConfig: RecyclerView.() -> Unit = {}
+    var itemNestedRecyclerViewConfig: RecyclerView.() -> Unit = {
+        noItemAnim()
+    }
 
     var _onScrollListener: RecyclerView.OnScrollListener? = null
 

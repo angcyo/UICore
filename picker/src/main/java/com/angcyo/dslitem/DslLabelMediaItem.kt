@@ -18,10 +18,7 @@ import com.angcyo.loader.LoaderConfig
 import com.angcyo.pager.dslPager
 import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.recycler.clearItemDecoration
-import com.angcyo.widget.recycler.initDsl
-import com.angcyo.widget.recycler.noItemChangeAnim
-import com.angcyo.widget.recycler.resetLayoutManager
+import com.angcyo.widget.recycler.*
 
 /**
  * 带label, 媒体列表展示的item
@@ -52,6 +49,11 @@ open class DslLabelMediaItem : DslBaseLabelItem(), IFragmentItem {
             pickerMediaItemConfig.itemPickerMediaList.clear()
             pickerMediaItemConfig.itemPickerMediaList.addAll(itemMediaList)
         }
+    }
+
+    /**配置[DslRecyclerView]*/
+    var itemRecyclerConfig: (RecyclerView) -> Unit = {
+        it.noItemChangeAnim()
     }
 
     /**需要显示的媒体列表*/
@@ -85,7 +87,6 @@ open class DslLabelMediaItem : DslBaseLabelItem(), IFragmentItem {
             clearOnScrollListeners()
             clearItemDecoration()
 
-            noItemChangeAnim()
             initDsl()
 
             resetLayoutManager("GV$itemGridSpanCount")
@@ -151,6 +152,9 @@ open class DslLabelMediaItem : DslBaseLabelItem(), IFragmentItem {
                         add(0, addMediaFilterAfterInterceptor)
                     }
                 }
+
+                //config
+                itemRecyclerConfig(recyclerView)
 
                 //媒体列表
                 loadMediaList(itemHolder, recyclerView, this, itemMediaList)

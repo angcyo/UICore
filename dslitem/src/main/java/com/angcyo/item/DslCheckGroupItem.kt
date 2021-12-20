@@ -76,10 +76,15 @@ open class DslCheckGroupItem : DslAdapterItem(), ILabelItem {
     /**Gravity*/
     var itemFlowLayoutGravity: Int = Gravity.CENTER_HORIZONTAL
 
-    /**主工程*/
-    var itemFlowDividerHorizontalSize: Int = 22 * dpi
+    /**分割线的大小*/
+    var itemFlowDividerHorizontalSize: Int = 1
 
-    var itemFlowDividerVerticalSize: Int = 16 * dpi
+    var itemFlowDividerVerticalSize: Int = 1
+
+    /**间隙的大小*/
+    var itemFlowHorizontalSpace: Int = 22 * dpi
+
+    var itemFlowVerticalSpace: Int = 10 * dpi
 
     override var labelItemConfig: LabelItemConfig = LabelItemConfig()
 
@@ -105,6 +110,9 @@ open class DslCheckGroupItem : DslAdapterItem(), ILabelItem {
 
                 flowLayoutDelegate.dividerHorizontalSize = itemFlowDividerHorizontalSize
                 flowLayoutDelegate.dividerVerticalSize = itemFlowDividerVerticalSize
+
+                flowLayoutDelegate.itemHorizontalSpace = itemFlowHorizontalSpace
+                flowLayoutDelegate.itemVerticalSpace = itemFlowVerticalSpace
 
                 resetChild(itemCheckItems.size, itemCheckLayoutId) { itemView, itemIndex ->
                     val item = itemCheckItems[itemIndex]
