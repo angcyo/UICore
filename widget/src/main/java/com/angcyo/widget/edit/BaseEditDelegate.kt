@@ -26,10 +26,16 @@ import com.angcyo.widget.base.paddingLeft
  * @date 2020/08/03
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
+
+/**文本改变监听*/
+typealias TextChangedAction = (editText: EditText?, text: CharSequence?, start: Int, lengthBefore: Int, lengthAfter: Int) -> Unit
+
 abstract class BaseEditDelegate(val editText: EditText) {
 
     companion object {
-        var onDebugTextChanged: ((editText: EditText?) -> Unit)? = null
+
+        /**全局监听文本改变*/
+        val textChangedActionList = mutableListOf<TextChangedAction>()
     }
 
     /**绘制在输入框左边的文本*/
@@ -69,7 +75,9 @@ abstract class BaseEditDelegate(val editText: EditText) {
     }
 
     open fun onTextChanged(text: CharSequence?, start: Int, lengthBefore: Int, lengthAfter: Int) {
-        onDebugTextChanged?.invoke(editText)
+        textChangedActionList.forEach {
+            it.invoke(editText, text, start, lengthBefore, lengthAfter)
+        }
     }
 
     var _drawLeftOffsetLeft = 0

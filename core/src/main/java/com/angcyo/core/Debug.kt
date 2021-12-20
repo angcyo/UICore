@@ -26,8 +26,13 @@ object Debug {
     var onChangedToDebug: MutableList<Action> = mutableListOf()
 
     /**调试:文本输入框文本改变时*/
-    fun debugTextChanged(editText: EditText?) {
-        val text = editText?.text
+    fun onDebugTextChanged(
+        editText: EditText?,
+        text: CharSequence?,
+        start: Int,
+        lengthBefore: Int,
+        lengthAfter: Int
+    ) {
         when (text?.toString()?.lowercase()) {
             //开启调试模式
             "cmd:debug", "9.999999" -> {
@@ -58,7 +63,7 @@ object Debug {
             }
             "cmd:open:file", "9.555555" -> {
                 //打开文件预览对话框
-                editText.context?.apply {
+                editText?.context?.apply {
                     if (this is FragmentActivity) {
                         dslFHelper {
                             fileSelector({

@@ -53,7 +53,7 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
         }
 
         //debug
-        BaseEditDelegate.onDebugTextChanged = Debug::debugTextChanged
+        BaseEditDelegate.textChangedActionList.add(Debug::onDebugTextChanged)
     }
 
     override fun onCreateMain() {
