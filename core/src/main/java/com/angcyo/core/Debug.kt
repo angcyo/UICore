@@ -3,6 +3,7 @@ package com.angcyo.core
 import android.widget.EditText
 import androidx.fragment.app.FragmentActivity
 import com.angcyo.base.dslFHelper
+import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.fileSelector
 import com.angcyo.library.L.DEFAULT_FILE_PRINT_PATH
@@ -45,8 +46,14 @@ object Debug {
                 )
                 file?.shareFile()
             }
+            //分享L.log
             "cmd:share:l", "9.111111" -> {
                 val file = DEFAULT_FILE_PRINT_PATH?.file()
+                file?.shareFile()
+            }
+            //分享crash.log
+            "cmd:share:crash", "9.333333" -> {
+                val file = DslCrashHandler.KEY_CRASH_FILE.hawkGet()?.file()
                 file?.shareFile()
             }
             "cmd:open:file", "9.555555" -> {
