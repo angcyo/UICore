@@ -289,9 +289,9 @@ fun <R> sync(count: Int = 1, action: (CountDownLatch, AtomicReference<R>) -> Uni
     val result = AtomicReference<R>()
     thread(name = "sync-${nowTimeString()}") {
         action(latch, result)
-        if (latch.count == 1L) {
+        /*if (latch.count == 1L) {
             latch.countDown()
-        }
+        }*/
     }
     latch.await()
     return result.get()
