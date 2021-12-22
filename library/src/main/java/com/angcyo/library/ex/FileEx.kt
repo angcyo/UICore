@@ -338,6 +338,23 @@ fun File?.readTextLastLines(
     null
 }
 
+fun String.readTextLastLines(
+    limit: Int = -1,
+    truncated: CharSequence = "..."
+) = try {
+    lines().run {
+        val lastLineIndex = if (limit >= 0) this.size - limit else 0
+        this.filterIndexed { index, _ -> index >= lastLineIndex }.joinToString(
+            "\n",
+            limit = limit,
+            truncated = truncated
+        )
+    }
+} catch (e: Exception) {
+    e.printStackTrace()
+    null
+}
+
 fun String.writeText(text: String, append: Boolean = true) = file()?.writeText(text, append)
 
 /**向文件中写入[text]
