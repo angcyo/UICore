@@ -2,6 +2,7 @@ package com.angcyo.http.base
 
 import android.text.TextUtils
 import com.angcyo.library.L
+import com.angcyo.library.ex.str
 import com.google.gson.*
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -223,7 +224,7 @@ class JsonBuilder {
             is String -> add(key, any)
             is Char -> add(key, any)
             is JsonElement -> add(key, any)
-            else -> L.e("不支持的数据类型!")
+            else -> add(key, any.str()) //L.e("不支持的数据类型!")
         }
         return this
     }
@@ -566,12 +567,12 @@ class JsonBuilder {
 
         private fun isArray(element: JsonElement?): Boolean {
             return element is JsonArray ||
-                    element is WrapJsonArray
+                element is WrapJsonArray
         }
 
         private fun isObj(element: JsonElement?): Boolean {
             return element is JsonObject ||
-                    element is WrapJsonObject
+                element is WrapJsonObject
         }
     }
 }

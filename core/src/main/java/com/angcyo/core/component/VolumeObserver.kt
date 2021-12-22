@@ -16,6 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 object VolumeObserver : Runnable {
+
     val observer = CopyOnWriteArrayList<IObserver>()
 
     /**开始的值*/
@@ -24,7 +25,9 @@ object VolumeObserver : Runnable {
     var isListening = false
 
     var am: AudioManager? = null
+
     val handler = Handler(Looper.getMainLooper())
+
     val listenerType = listOf(
         AudioManager.STREAM_SYSTEM,
         AudioManager.STREAM_MUSIC,

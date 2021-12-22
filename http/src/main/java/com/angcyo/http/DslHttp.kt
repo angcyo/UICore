@@ -261,10 +261,9 @@ fun <T> dslHttp(service: Class<T>): T? {
     }
 }
 
-fun String?.toApi(): String {
-    return connectUrl(DslHttp.dslHttpConfig.onGetBaseUrl(), this)
+fun String?.toApi(host: String? = DslHttp.dslHttpConfig.onGetBaseUrl()): String {
+    return connectUrl(host, this)
 }
-
 
 /**拼接 host 和 api接口*/
 fun connectUrl(host: String?, url: String?): String {
@@ -654,8 +653,8 @@ open class BaseRequestConfig {
     var header: HashMap<String, String> = hashMapOf()
 
     //解析请求返回的json数据, 判断code是否是成功的状态, 否则走异常流程.
-    var codeKey: String = DEFAULT_CODE_KEY
-    var msgKey: String = DEFAULT_MSG_KEY
+    var codeKey: String? = DEFAULT_CODE_KEY
+    var msgKey: String? = DEFAULT_MSG_KEY
 
     var onStart: (Disposable) -> Unit = {}
 

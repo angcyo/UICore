@@ -52,7 +52,10 @@ fun jsonArray(config: JsonBuilder.() -> Unit = {}): JsonElement {
 
 //<editor-fold desc="JsonObject 扩展">
 
-fun JsonObject.getInt(key: String, default: Int = -1): Int {
+fun JsonObject.getInt(key: String?, default: Int = -1): Int {
+    if (key.isNullOrEmpty()) {
+        return default
+    }
     val element = get(key)
     if (element is JsonPrimitive) {
         if (element.isNumber) {
@@ -62,7 +65,10 @@ fun JsonObject.getInt(key: String, default: Int = -1): Int {
     return default
 }
 
-fun JsonObject.getString(key: String, default: String? = null): String? {
+fun JsonObject.getString(key: String?, default: String? = null): String? {
+    if (key.isNullOrEmpty()) {
+        return default
+    }
     val element = get(key)
     if (element is JsonPrimitive) {
         if (element.isString) {
@@ -72,7 +78,10 @@ fun JsonObject.getString(key: String, default: String? = null): String? {
     return default
 }
 
-fun JsonObject.getJson(key: String, default: JsonObject? = null): JsonObject? {
+fun JsonObject.getJson(key: String?, default: JsonObject? = null): JsonObject? {
+    if (key.isNullOrEmpty()) {
+        return default
+    }
     val element = get(key)
     if (element is JsonObject) {
         return element
@@ -80,7 +89,10 @@ fun JsonObject.getJson(key: String, default: JsonObject? = null): JsonObject? {
     return default
 }
 
-fun JsonObject.getArray(key: String, default: JsonArray? = null): JsonArray? {
+fun JsonObject.getArray(key: String?, default: JsonArray? = null): JsonArray? {
+    if (key.isNullOrEmpty()) {
+        return default
+    }
     val element = get(key)
     if (element is JsonArray) {
         return element
@@ -88,7 +100,10 @@ fun JsonObject.getArray(key: String, default: JsonArray? = null): JsonArray? {
     return default
 }
 
-fun JsonObject.getLong(key: String, default: Long = -1): Long {
+fun JsonObject.getLong(key: String?, default: Long = -1): Long {
+    if (key.isNullOrEmpty()) {
+        return default
+    }
     val element = get(key)
     if (element is JsonPrimitive) {
         if (element.isNumber) {
@@ -98,7 +113,10 @@ fun JsonObject.getLong(key: String, default: Long = -1): Long {
     return default
 }
 
-fun JsonObject.getDouble(key: String, default: Double = -1.0): Double {
+fun JsonObject.getDouble(key: String?, default: Double = -1.0): Double {
+    if (key.isNullOrEmpty()) {
+        return default
+    }
     val element = get(key)
     if (element is JsonPrimitive) {
         if (element.isNumber) {
@@ -112,42 +130,42 @@ fun JsonObject.getDouble(key: String, default: Double = -1.0): Double {
 
 //<editor-fold desc="JsonElement 扩展">
 
-fun JsonElement.getInt(key: String): Int {
+fun JsonElement.getInt(key: String?): Int {
     if (this is JsonObject) {
         return this.getInt(key)
     }
     throw IllegalAccessException("不允许使用[JsonArray]操作.")
 }
 
-fun JsonElement.getString(key: String): String? {
+fun JsonElement.getString(key: String?): String? {
     if (this is JsonObject) {
         return this.getString(key)
     }
     throw IllegalAccessException("不允许使用[JsonArray]操作.")
 }
 
-fun JsonElement.getJson(key: String): JsonObject? {
+fun JsonElement.getJson(key: String?): JsonObject? {
     if (this is JsonObject) {
         return this.getJson(key)
     }
     throw IllegalAccessException("不允许使用[JsonArray]操作.")
 }
 
-fun JsonElement.getArray(key: String): JsonArray? {
+fun JsonElement.getArray(key: String?): JsonArray? {
     if (this is JsonObject) {
         return this.getArray(key)
     }
     throw IllegalAccessException("不允许使用[JsonArray]操作.")
 }
 
-fun JsonElement.getLong(key: String): Long {
+fun JsonElement.getLong(key: String?): Long {
     if (this is JsonObject) {
         return this.getLong(key)
     }
     throw IllegalAccessException("不允许使用[JsonArray]操作.")
 }
 
-fun JsonElement.getDouble(key: String): Double {
+fun JsonElement.getDouble(key: String?): Double {
     if (this is JsonObject) {
         return this.getDouble(key)
     }
