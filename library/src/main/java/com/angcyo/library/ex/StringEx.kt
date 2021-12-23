@@ -739,3 +739,14 @@ fun CharSequence.escapeExprSpecialWord(): CharSequence {
     }
     return keyword
 }
+
+fun String.ensureName(end: String = ".json") = if (endsWith(end)) this else "$this${end}"
+
+/**首字母小写*/
+fun CharSequence.lowerFirst(): CharSequence {
+    if (length > 0) {
+        val first = get(0)
+        return "${first.lowercaseChar()}${subSequence(1, length)}"
+    }
+    return this
+}

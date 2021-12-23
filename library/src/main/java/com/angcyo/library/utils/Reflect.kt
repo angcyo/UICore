@@ -5,6 +5,7 @@ import com.angcyo.library.L
 import com.angcyo.library.L.e
 import com.angcyo.library.L.i
 import java.lang.reflect.Field
+import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.util.*
 
@@ -94,8 +95,8 @@ fun Any?.getMember(member: String): Any? {
 
 fun makeAccessible(field: Field) {
     if ((!Modifier.isPublic(field.modifiers) ||
-                !Modifier.isPublic(field.declaringClass.modifiers) ||
-                Modifier.isFinal(field.modifiers)) && !field.isAccessible
+            !Modifier.isPublic(field.declaringClass.modifiers) ||
+            Modifier.isFinal(field.modifiers)) && !field.isAccessible
     ) {
         field.isAccessible = true
     }
@@ -367,3 +368,7 @@ fun Any?.fillTo(to: Any?, ignoreNull: Boolean = false) {
  * Number::class.java.isAssignableFrom(Integer::class.java) true
  * */
 fun Class<*>.isSuperClassBy(subclass: Class<*>) = this.isAssignableFrom(subclass)
+
+fun Field.isPublic() = Modifier.isPublic(modifiers)
+
+fun Method.isPublic() = Modifier.isPublic(modifiers)
