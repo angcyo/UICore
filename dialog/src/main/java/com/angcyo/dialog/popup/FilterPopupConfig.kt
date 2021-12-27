@@ -130,7 +130,7 @@ class FilterPopupConfig : FullPopupConfig() {
 
             //重置
             click(R.id.reset_button) {
-                filterGroupList.forEach {
+                filterGroupList.forEach { group ->
                     /*val haveFilterAll =
                         it.groupFilterItemList?.find { it is FilterGroupItemAll } != null
 
@@ -146,8 +146,9 @@ class FilterPopupConfig : FullPopupConfig() {
                         }
                     }*/
 
-                    it.groupFilterItemList?.forEach {
+                    group.groupFilterItemList?.forEach {
                         it.isSelected = it is FilterGroupItemAll
+                        group._groupSelectAll = group._groupSelectAll || it.isSelected
                     }
                 }
 
