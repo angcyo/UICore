@@ -1,5 +1,6 @@
 package com.angcyo.item.style
 
+import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
 import com.angcyo.library.ex._dimen
@@ -20,7 +21,10 @@ interface ITextItem : IAutoInitItem {
     var textItemConfig: TextItemConfig
 
     /**初始化*/
-    fun initTextItem(itemHolder: DslViewHolder) {
+    fun initTextItem(itemHolder: DslViewHolder,
+                     itemPosition: Int,
+                     adapterItem: DslAdapterItem,
+                     payloads: List<Any>) {
         itemHolder.tv(textItemConfig.itemTextViewId)?.apply {
             textItemConfig.itemTextStyle.updateStyle(this)
         }

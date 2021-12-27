@@ -1,5 +1,6 @@
 package com.angcyo.item.style
 
+import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
 import com.angcyo.widget.DslViewHolder
@@ -17,7 +18,10 @@ interface IDesItem : IAutoInitItem {
     var desItemConfig: DesItemConfig
 
     /**初始化*/
-    fun initDesItem(itemHolder: DslViewHolder) {
+    fun initDesItem(itemHolder: DslViewHolder,
+                    itemPosition: Int,
+                    adapterItem: DslAdapterItem,
+                    payloads: List<Any>) {
         itemHolder.tv(desItemConfig.itemDesViewId)?.apply {
             desItemConfig.itemDesStyle.updateStyle(this)
         }

@@ -13,6 +13,8 @@ import com.angcyo.widget.DslViewHolder
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 interface IAutoInitItem : IDslItem {
+
+    /**自动初始化入口*/
     override fun initItemConfig(
         itemHolder: DslViewHolder,
         itemPosition: Int,
@@ -20,35 +22,39 @@ interface IAutoInitItem : IDslItem {
         payloads: List<Any>
     ) {
         super.initItemConfig(itemHolder, itemPosition, adapterItem, payloads)
+
         if (this is IImageItem) {
-            initImageItem(itemHolder, payloads)
+            initImageItem(itemHolder, itemPosition, adapterItem, payloads)
         }
         if (this is IBadgeItem) {
-            initBadgeItem(itemHolder)
+            initBadgeItem(itemHolder, itemPosition, adapterItem, payloads)
         }
         if (this is IDesItem) {
-            initDesItem(itemHolder)
+            initDesItem(itemHolder, itemPosition, adapterItem, payloads)
         }
         if (this is ITextItem) {
-            initTextItem(itemHolder)
+            initTextItem(itemHolder, itemPosition, adapterItem, payloads)
         }
         if (this is IEditItem) {
-            initEditItem(itemHolder)
+            initEditItem(itemHolder, itemPosition, adapterItem, payloads)
         }
         if (this is ILabelItem) {
-            initLabelItem(itemHolder)
+            initLabelItem(itemHolder, itemPosition, adapterItem, payloads)
         }
         if (this is ITextInfoItem) {
-            initInfoTextItem(itemHolder)
+            initInfoTextItem(itemHolder, itemPosition, adapterItem, payloads)
         }
         if (this is IBodyItem) {
-            initBodyItem(itemHolder)
+            initBodyItem(itemHolder, itemPosition, adapterItem, payloads)
         }
         if (this is IButtonItem) {
-            initButtonItem(itemHolder)
+            initButtonItem(itemHolder, itemPosition, adapterItem, payloads)
         }
         if (this is INestedRecyclerItem) {
             initNestedRecyclerItem(itemHolder, itemPosition, adapterItem, payloads)
+        }
+        if (this is ILoadItem) {
+            initLoadingItem(itemHolder, itemPosition, adapterItem, payloads)
         }
     }
 }

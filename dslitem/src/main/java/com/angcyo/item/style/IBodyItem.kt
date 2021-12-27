@@ -1,5 +1,6 @@
 package com.angcyo.item.style
 
+import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
 import com.angcyo.widget.DslViewHolder
@@ -17,7 +18,10 @@ interface IBodyItem : IAutoInitItem {
     var bodyItemConfig: BodyItemConfig
 
     /**初始化*/
-    fun initBodyItem(itemHolder: DslViewHolder) {
+    fun initBodyItem(itemHolder: DslViewHolder,
+                     itemPosition: Int,
+                     adapterItem: DslAdapterItem,
+                     payloads: List<Any>) {
         itemHolder.tv(bodyItemConfig.itemBodyViewId)?.apply {
             bodyItemConfig.itemBodyStyle.updateStyle(this)
         }

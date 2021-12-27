@@ -19,7 +19,10 @@ interface IButtonItem : IAutoInitItem {
 
     var buttonItemConfig: ButtonItemConfig
 
-    fun initButtonItem(itemHolder: DslViewHolder) {
+    fun initButtonItem(itemHolder: DslViewHolder,
+                       itemPosition: Int,
+                       adapterItem: DslAdapterItem,
+                       payloads: List<Any>) {
         itemHolder.itemView.isClickable = false
 
         itemHolder.button(buttonItemConfig.itemButtonViewId)?.apply {

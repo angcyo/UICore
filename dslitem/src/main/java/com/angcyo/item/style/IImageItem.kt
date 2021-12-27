@@ -7,6 +7,7 @@ import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
 import android.widget.ImageView
+import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.isUpdateMedia
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.glide.DslGlide
@@ -30,7 +31,10 @@ interface IImageItem : IAutoInitItem {
     var imageItemConfig: ImageItemConfig
 
     /**初始化*/
-    fun initImageItem(itemHolder: DslViewHolder, payloads: List<Any>) {
+    fun initImageItem(itemHolder: DslViewHolder,
+                      itemPosition: Int,
+                      adapterItem: DslAdapterItem,
+                      payloads: List<Any>) {
         //更新媒体
         val mediaUpdate = payloads.isUpdateMedia() || imageItemConfig.itemLoadImageFlag
 

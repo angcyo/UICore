@@ -28,7 +28,10 @@ interface IEditItem : IAutoInitItem {
     }
 
     /**初始化*/
-    fun initEditItem(itemHolder: DslViewHolder) {
+    fun initEditItem(itemHolder: DslViewHolder,
+                     itemPosition: Int,
+                     adapterItem: DslAdapterItem,
+                     payloads: List<Any>) {
         itemHolder.ev(editItemConfig.itemEditTextViewId)?.apply {
             clearListeners()
 
