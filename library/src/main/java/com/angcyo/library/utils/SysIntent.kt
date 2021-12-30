@@ -167,14 +167,48 @@ object SysIntent {
     }
 }
 
-//must call registerForActivityResult() before they are created
+/**
+ * 注意:
+ * must call registerForActivityResult() before they are created
+ * 必须在生命周期 Lifecycle.State.STARTED 之前注册
+ * [androidx.activity.result.ActivityResultRegistry.register]
+ * [androidx.fragment.app.Fragment.prepareCallInternal]
+ * */
 
-/**请求权限*/
+/**请求单个权限
+ * 获取一个请求权限的发射器, 通过这个发射器, 可以用来请求权限, 并且返回请求权限的结果.
+ *
+ * context.requestPermissionLauncher(ActivityResultCallback {
+ *   if (it) {
+ *     //有权限
+ *   } else {
+ *     //无权限
+ *   }
+ * }).launch(Manifest.permission.ACCESS_FINE_LOCATION)
+ *
+ * [callback] 请求权限的回调结果
+ * */
 fun ActivityResultCaller.requestPermissionLauncher(callback: ActivityResultCallback<Boolean>): ActivityResultLauncher<String> {
     return registerForActivityResult(ActivityResultContracts.RequestPermission(), callback)
 }
 
-/**请求多个权限*/
+/**请求多个权限
+ * val permissions = AMapHelper.permissions(true).toTypedArray()
+ * context.requestMultiplePermissionsLauncher(ActivityResultCallback {
+ *   var result = true
+ *   for (p in permissions) {
+ *     if (it[p] == false) {
+ *       result = false
+ *       break
+ *     }
+ *   }
+ *   if (result) {
+ *     //有权限
+ *   } else {
+ *     //无权限
+ *   }
+ * }).launch(AMapHelper.permissions(true).toTypedArray())
+ * */
 fun ActivityResultCaller.requestMultiplePermissionsLauncher(callback: ActivityResultCallback<Map<String, Boolean>>): ActivityResultLauncher<Array<String>> {
     return registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions(), callback)
 }
