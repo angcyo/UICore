@@ -264,8 +264,13 @@ class DslFHelper(
         }
     }
 
-    /**移除所有[getView]不为空的[Fragment]*/
+    /**移除所有[Fragment]*/
     fun removeAll() {
+        remove(fm.fragments)
+    }
+
+    /**移除所有[getView]不为空的[Fragment]*/
+    fun removeAllValidity() {
         remove(fm.getAllValidityFragment())
     }
 
