@@ -60,6 +60,9 @@ abstract class AbsDslDrawable : Drawable() {
         //typedArray.recycle()
     }
 
+    /**标识, 是否需要半透明*/
+    var isTranslucent: Boolean? = null
+
     //<editor-fold desc="View相关方法">
 
     /**附着的[View]*/
@@ -134,7 +137,12 @@ abstract class AbsDslDrawable : Drawable() {
 
     //不透明度
     override fun getOpacity(): Int {
-        return if (alpha < 255) PixelFormat.TRANSLUCENT else PixelFormat.OPAQUE
+        val translucent = isTranslucent
+        return if (translucent == null) {
+            if (alpha < 255) PixelFormat.TRANSLUCENT else PixelFormat.OPAQUE /*不需要alpha通道*/
+        } else {
+            if (translucent) PixelFormat.TRANSLUCENT else PixelFormat.OPAQUE
+        }
     }
 
     override fun getColorFilter(): ColorFilter? {

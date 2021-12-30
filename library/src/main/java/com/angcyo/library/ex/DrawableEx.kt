@@ -136,15 +136,13 @@ fun Drawable.copyDrawable(): Drawable? {
 
 fun Drawable.toBitmap(outWidth: Int = -1, outHeight: Int = -1): Bitmap {
     // 获取 drawable 长宽
-    val width: Int = minimumWidth
-    val height: Int = minimumHeight
+    val width: Int = if (minimumWidth <= 0) outWidth else minimumWidth
+    val height: Int = if (minimumHeight <= 0) outHeight else minimumHeight
     setBounds(0, 0, width, height)
 
     // 获取drawable的颜色格式
     val config =
-        if (opacity != PixelFormat.OPAQUE) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565
-
-    var result: Bitmap
+        if (opacity == PixelFormat.OPAQUE) Bitmap.Config.RGB_565 else Bitmap.Config.ARGB_8888
 
     // 创建bitmap
     val bitmap = Bitmap.createBitmap(width, height, config)
@@ -154,7 +152,7 @@ fun Drawable.toBitmap(outWidth: Int = -1, outHeight: Int = -1): Bitmap {
     // 将drawable 内容画到画布中
     draw(canvas)
 
-    result = if (outWidth > 0 || outHeight > 0) {
+    val result = if (outWidth > 0 || outHeight > 0) {
         val width2 = if (outWidth > 0) outWidth else width
         val height2 = if (outHeight > 0) outWidth else height
 

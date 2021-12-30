@@ -78,8 +78,8 @@ open class DslGradientDrawable : AbsDslDrawable() {
     /**当前的配置, 是否能生成有效的[GradientDrawable]*/
     open fun isValidConfig(): Boolean {
         return gradientSolidColor != Color.TRANSPARENT ||
-                gradientStrokeColor != Color.TRANSPARENT ||
-                gradientColors != null
+            gradientStrokeColor != Color.TRANSPARENT ||
+            gradientColors != null
     }
 
     fun _fillRadii(array: FloatArray, radii: String?) {
@@ -90,6 +90,7 @@ open class DslGradientDrawable : AbsDslDrawable() {
         if (split.size != 8) {
             throw IllegalArgumentException("radii 需要8个值.")
         } else {
+            isTranslucent = true
             val dp = Resources.getSystem().displayMetrics.density
             for (i in split.indices) {
                 array[i] = split[i].toFloat() * dp
@@ -98,6 +99,7 @@ open class DslGradientDrawable : AbsDslDrawable() {
     }
 
     fun fillRadii(radius: Float) {
+        isTranslucent = true
         Arrays.fill(gradientRadii, radius)
     }
 
@@ -106,6 +108,7 @@ open class DslGradientDrawable : AbsDslDrawable() {
     }
 
     fun _fillRadii(array: FloatArray, radius: Float) {
+        isTranslucent = true
         Arrays.fill(array, radius)
     }
 
@@ -205,10 +208,12 @@ open class DslGradientDrawable : AbsDslDrawable() {
      */
     fun cornerRadii(radii: FloatArray) {
         gradientRadii = radii
+        isTranslucent = true
     }
 
     fun cornerRadius(radii: Float) {
         Arrays.fill(gradientRadii, radii)
+        isTranslucent = true
     }
 
     fun cornerRadius(
@@ -217,6 +222,7 @@ open class DslGradientDrawable : AbsDslDrawable() {
         rightBottom: Float = 0f,
         leftBottom: Float = 0f
     ) {
+        isTranslucent = true
         gradientRadii[0] = leftTop
         gradientRadii[1] = leftTop
         gradientRadii[2] = rightTop
@@ -231,6 +237,7 @@ open class DslGradientDrawable : AbsDslDrawable() {
      * 只配置左边的圆角
      */
     fun cornerRadiiLeft(radii: Float) {
+        isTranslucent = true
         gradientRadii[0] = radii
         gradientRadii[1] = radii
         gradientRadii[6] = radii
@@ -238,6 +245,7 @@ open class DslGradientDrawable : AbsDslDrawable() {
     }
 
     fun cornerRadiiRight(radii: Float) {
+        isTranslucent = true
         gradientRadii[2] = radii
         gradientRadii[3] = radii
         gradientRadii[4] = radii
@@ -245,6 +253,7 @@ open class DslGradientDrawable : AbsDslDrawable() {
     }
 
     fun cornerRadiiTop(radii: Float) {
+        isTranslucent = true
         gradientRadii[0] = radii
         gradientRadii[1] = radii
         gradientRadii[2] = radii
@@ -252,6 +261,7 @@ open class DslGradientDrawable : AbsDslDrawable() {
     }
 
     fun cornerRadiiBottom(radii: Float) {
+        isTranslucent = true
         gradientRadii[4] = radii
         gradientRadii[5] = radii
         gradientRadii[6] = radii

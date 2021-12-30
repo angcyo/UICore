@@ -55,11 +55,21 @@ class DslNotify {
         /**默认的通知图标*/
         var DEFAULT_NOTIFY_ICON: Int = android.R.mipmap.sym_def_app_icon
 
-        fun cancelNotify(context: Context?, id: Int) {
+        /**默认通知栏大图的大小, px, 请手动乘以 dpi*/
+        var DEFAULT_NOTIFY_LARGE_ICON_SIZE = 40
+
+        fun cancelNotify(context: Context?, id: Int?) {
+            if (id == null) {
+                return
+            }
             val notificationManager: NotificationManagerCompat =
                 NotificationManagerCompat.from(context ?: app())
             notificationManager.cancel(id)
             _notifyIds.remove(id)
+        }
+
+        fun cancelNotify(id: Int?) {
+            cancelNotify(app(), id)
         }
 
         fun cancelNotifyLast(context: Context?) {
@@ -68,6 +78,7 @@ class DslNotify {
             }
         }
 
+        /**取消所有通知*/
         fun cancelNotifyAll(context: Context?) {
             val notificationManager: NotificationManagerCompat =
                 NotificationManagerCompat.from(context ?: app())
@@ -626,13 +637,13 @@ class DslNotify {
     }
 
     /**
-     * Notification.FLAG_SHOW_LIGHTS         //三色灯提醒，在使用三色灯提醒时候必须加该标志符
-     * Notification.FLAG_ONGOING_EVENT       //发起正在运行事件（活动中）
-     * Notification.FLAG_INSISTENT           //让声音、振动无限循环，直到用户响应 （取消或者打开）
-     * Notification.FLAG_ONLY_ALERT_ONCE     //发起Notification后，铃声和震动均只执行一次
-     * Notification.FLAG_AUTO_CANCEL         //用户单击通知后自动消失
-     * Notification.FLAG_NO_CLEAR            //只有全部清除时，Notification才会清除 ，不清楚该通知(QQ的通知无法清除，就是用的这个)
-     * Notification.FLAG_FOREGROUND_SERVICE  //表示正在运行的服务
+     * Notification.FLAG_SHOW_LIGHTS         //三色灯提醒，在使用三色灯提醒时候必须加该标志符
+     * Notification.FLAG_ONGOING_EVENT       //发起正在运行事件（活动中）
+     * Notification.FLAG_INSISTENT           //让声音、振动无限循环，直到用户响应 （取消或者打开）
+     * Notification.FLAG_ONLY_ALERT_ONCE     //发起Notification后，铃声和震动均只执行一次
+     * Notification.FLAG_AUTO_CANCEL         //用户单击通知后自动消失
+     * Notification.FLAG_NO_CLEAR            //只有全部清除时，Notification才会清除 ，不清楚该通知(QQ的通知无法清除，就是用的这个)
+     * Notification.FLAG_FOREGROUND_SERVICE  //表示正在运行的服务
      */
     var notifyFlags: Int = undefined_int
 
@@ -705,6 +716,13 @@ fun DslNotify.low() {
     channelImportance = NotificationManagerCompat.IMPORTANCE_LOW
     notifyPriority = NotificationCompat.PRIORITY_LOW
     notifyDefaults = NotificationCompat.DEFAULT_LIGHTS
+}
+
+/**强提示*/
+fun DslNotify.high() {
+    channelImportance = NotificationManagerCompat.IMPORTANCE_HIGH
+    notifyPriority = NotificationCompat.PRIORITY_HIGH
+    notifyDefaults = NotificationCompat.DEFAULT_ALL
 }
 
 /**快速设置通知点击事件*/
