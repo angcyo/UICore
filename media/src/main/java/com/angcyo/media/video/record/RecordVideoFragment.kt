@@ -76,14 +76,6 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
             RecordVideoControl(requireActivity(), recordSurfaceView, this@RecordVideoFragment)
         _recordControl = recordControl
 
-        if (isResumed) {
-            recordControl.surfaceChanged(
-                recordSurfaceView.holder,
-                0,
-                recordSurfaceView.width,
-                recordSurfaceView.height
-            )
-        }
         val recordLayout: ExpandRecordLayout? = _vh.v(R.id.record_control_layout)
         callback?.initConfig() ?: return
         _vh.enable(R.id.record_control_layout, true)
@@ -148,6 +140,15 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
                     recordLayout.drawTipString = callback!!.modelPhotoVideoText
                 }
             }
+        }
+
+        if (isAdded) {
+            recordControl.surfaceChanged(
+                recordSurfaceView.holder,
+                0,
+                recordSurfaceView.width,
+                recordSurfaceView.height
+            )
         }
     }
 
@@ -289,13 +290,11 @@ class RecordVideoFragment : BaseFragment(), RecordVideoInterface {
     }
 
     private fun requestPermission() {
-        ActivityCompat.requestPermissions(
-            requireActivity(),
+        requestPermissions(
             arrayOf(
                 Manifest.permission.CAMERA,
                 Manifest.permission.RECORD_AUDIO
-            ),
-            999
+            ), 999
         )
     }
 
