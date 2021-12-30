@@ -102,7 +102,7 @@ object RBackground {
         for (i in 0 until stack.size()) {
             val value = stack.get(stack.keyAt(i))
             if (value.endsWith(STOPPED)) {
-
+                //所有的Activity都stop了
             } else {
                 result = false
                 break
@@ -112,9 +112,12 @@ object RBackground {
         return result
     }
 
-    fun registerObserver(observer: OnBackgroundObserver) {
+    fun registerObserver(observer: OnBackgroundObserver, notify: Boolean = false) {
         if (!observers.contains(observer)) {
             observers.add(observer)
+        }
+        if (notify) {
+            observer.onActivityChanged(stack, isBackground())
         }
     }
 

@@ -1,5 +1,6 @@
 package com.angcyo.core.lifecycle
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
@@ -19,6 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 open class LifecycleViewModel : ViewModel(), LifecycleOwner {
 
     //生命周期发射器
+    @SuppressLint("StaticFieldLeak")
     private val lifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
 
     init {
@@ -53,6 +55,11 @@ open class LifecycleViewModel : ViewModel(), LifecycleOwner {
     /**取消所有Rx 和 协程*/
     open fun cancel() {
         onCleared()
+    }
+
+    /**释放资源, 比如切换了登录的账号等*/
+    open fun release() {
+        //no op
     }
 
     //<editor-fold desc="Rx 协程">

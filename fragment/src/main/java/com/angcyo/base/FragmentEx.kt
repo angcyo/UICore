@@ -2,6 +2,7 @@ package com.angcyo.base
 
 import android.app.Activity
 import android.view.View
+import androidx.activity.result.ActivityResultCaller
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
@@ -41,6 +42,15 @@ fun Fragment.dslFHelper(config: DslFHelper.() -> Unit) {
                 this.config()
             }
         }
+    }
+}
+
+/**[ActivityResultCaller]中*/
+fun ActivityResultCaller.dslFHelper(config: DslFHelper.() -> Unit) {
+    when (this) {
+        is Fragment -> dslFHelper(config)
+        is FragmentActivity -> dslFHelper(config)
+        else -> Unit
     }
 }
 

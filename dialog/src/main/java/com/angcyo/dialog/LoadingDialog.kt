@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultCaller
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -26,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * @author angcyo
  * @date 2020/02/07
  */
+
 object LoadingDialog {
     val dialogPool = Stack<WeakReference<Dialog>>()
 }
@@ -98,7 +100,7 @@ fun hideLoading(text: CharSequence?) {
 //<editor-fold desc="中间转菊花的对话框">
 
 /**显示在中间转菊花*/
-fun Activity.loading(
+fun ActivityResultCaller.loading(
     text: CharSequence? = null,
     @LayoutRes layoutId: Int = R.layout.lib_dialog_flow_loading_layout,
     showCloseView: Boolean = true,
@@ -106,7 +108,11 @@ fun Activity.loading(
     onCancel: (dialog: Dialog) -> Unit = {}
 ): Dialog? {
     return try {
-        val activity = this
+        val activity = when (this) {
+            is Fragment -> activity
+            is Activity -> this
+            else -> null
+        } ?: return null
         DslDialogConfig(activity).run {
             this.onDismissListener = {
                 val dialog = it
@@ -149,28 +155,17 @@ fun Activity.loading(
     }
 }
 
-/**显示在中间转菊花*/
-fun Fragment.loading(
-    text: CharSequence? = null,
-    @LayoutRes layoutId: Int = R.layout.lib_dialog_flow_loading_layout,
-    showCloseView: Boolean = true,
-    config: DslDialogConfig.() -> Unit = {},
-    onCancel: (dialog: Dialog) -> Unit = {}
-): Dialog? {
-    return activity?.loading(text, layoutId, showCloseView, config, onCancel)
-}
-
 //</editor-fold desc="中间转菊花的对话框">
 
 //<editor-fold desc="底部弹出显示的loading对话框">
 
 /**在底部显示的加载对话框*/
-fun Fragment.loadingBottom(
+fun ActivityResultCaller.loadingBottom(
     text: CharSequence? = "加载中...",
     showCloseView: Boolean = true,
     onCancel: (dialog: Dialog) -> Unit = {}
 ): Dialog? {
-    return activity?.loading(
+    return loading(
         text,
         R.layout.lib_dialog_bottom_loading_layout,
         showCloseView,
@@ -185,7 +180,7 @@ fun Fragment.loadingBottom(
 }
 
 /**快速在[Fragment]显示底部loading, 通常用于包裹一个网络请求*/
-fun Fragment.loadLoadingBottom(
+fun ActivityResultCaller.loadLoadingBottom(
     tip: CharSequence? = "处理中...",
     successTip: CharSequence? = "处理完成!",
     showErrorToast: Boolean = false,
@@ -218,7 +213,7 @@ fun Fragment.loadLoadingBottom(
 
 
 /**快速在[Fragment]显示loading, 通常用于包裹一个网络请求*/
-fun Fragment.loadLoading(
+fun ActivityResultCaller.loadLoading(
     tip: CharSequence? = null,
     action: (cancel: AtomicBoolean, loadEnd: (data: Any?, error: Throwable?) -> Unit) -> Unit
 ) {
@@ -252,17 +247,20 @@ data class LoadingConfig(
 )
 
 /**快速显示[loading]对话框*/
-fun Fragment.dslLoading(bottom: Boolean = false, action: LoadingConfig.() -> Unit = {}) =
-    activity?.dslLoading(bottom, action)
-
-/**快速显示[loading]对话框*/
-fun Activity.dslLoading(bottom: Boolean = false, action: LoadingConfig.() -> Unit = {}): Dialog? {
+fun ActivityResultCaller.dslLoading(
+    bottom: Boolean = false,
+    action: LoadingConfig.() -> Unit = {}
+): Dialog? {
     val config = LoadingConfig()
     if (bottom) {
         config.loadingLayoutId = R.layout.lib_dialog_bottom_loading_layout
     }
     config.action()
-    return loading(
+    return when (this) {
+        is Fragment -> activity
+        is Activity -> this
+        else -> null
+    }?.loading(
         config.loadingText,
         config.loadingLayoutId,
         config.loadingShowCloseView,
