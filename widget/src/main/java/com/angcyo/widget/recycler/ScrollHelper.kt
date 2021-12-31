@@ -681,7 +681,7 @@ class ScrollHelper {
         var _isFirstPost = true
 
         open fun onLockScroll() {
-            attachView?.removeCallbacks(this)
+            //attachView?.removeCallbacks(this)
             if (enableLock) {
                 if (isLockTimeout()) {
                     //锁定超时, 放弃操作
