@@ -129,14 +129,27 @@ fun getId(name: String, type: String): Int {
     return getIdentifier(name, type)
 }
 
+fun Context.getId(name: String, type: String): Int {
+    return getIdentifier(name, type)
+}
+
 fun getIdentifier(name: String, type: String): Int {
     //(name, string)
-    return app().resources.getIdentifier(name, type, app().packageName)
+    return app().getIdentifier(name, type)
+}
+
+fun Context.getIdentifier(name: String, type: String): Int {
+    return resources.getIdentifier(name, type, packageName)
 }
 
 fun getAppString(name: String): String? {
     val id = getId(name, "string")
     return if (id == 0) null else app().resources.getString(id)
+}
+
+fun Context.getAppString(name: String): String? {
+    val id = getId(name, "string")
+    return if (id == 0) null else resources.getString(id)
 }
 
 fun getAppColor(name: String): Int {
@@ -145,6 +158,15 @@ fun getAppColor(name: String): Int {
         id == 0 -> Color.TRANSPARENT
         Build.VERSION.SDK_INT >= 23 -> app().getColor(id)
         else -> app().resources.getColor(id)
+    }
+}
+
+fun Context.getAppColor(name: String): Int {
+    val id = getId(name, "color")
+    return when {
+        id == 0 -> Color.TRANSPARENT
+        Build.VERSION.SDK_INT >= 23 -> getColor(id)
+        else -> resources.getColor(id)
     }
 }
 
