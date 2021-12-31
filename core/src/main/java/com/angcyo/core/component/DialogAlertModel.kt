@@ -62,6 +62,16 @@ class DialogAlertModel : LifecycleViewModel() {
             }
         }
     }
+
+    /**取消一种类型的弹窗提醒*/
+    fun cancelAlert(type: String) {
+        dialogList.removeAll { it.type == type }
+        val old = dialogAlertData.value
+        old?.let {
+            it.isCancel = true
+            dialogAlertData.postValue(it)
+        }
+    }
 }
 
 /**弹窗的数据*/
@@ -70,4 +80,6 @@ data class DialogBean(
     val type: String,
     //弹窗数据
     val data: Any?,
+    //是否是需要取消
+    var isCancel: Boolean = false,
 )
