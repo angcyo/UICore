@@ -208,7 +208,10 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
 
     var neutralButtonListener: ((dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit)? = null
 
+    /**Dismiss会触发*/
     var onDismissListener: ((dialog: Dialog) -> Unit)? = null
+
+    /**cancel不一定会触发*/
     var onCancelListener: ((dialog: Dialog) -> Unit)? = null
 
     open fun neutralButton(

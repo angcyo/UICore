@@ -24,6 +24,10 @@ import com.angcyo.library.ex.baseConfig
 import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.undefined_int
 import kotlin.math.min
+import androidx.core.content.ContextCompat.startActivity
+
+
+
 
 /**
  * https://developer.android.google.cn/guide/topics/ui/notifiers/notifications.html
@@ -119,12 +123,19 @@ class DslNotify {
         }
 
         /**打开通道设置页*/
-        fun openNotificationChannelSetting(context: Context, channelId: String) {
+        fun openNotificationChannelSetting(context: Context = app(), channelId: String? = null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
-
-                intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName);
-                intent.putExtra(Settings.EXTRA_CHANNEL_ID, channelId)
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                if (!channelId.isNullOrEmpty()) {
+                    intent.putExtra(Settings.EXTRA_CHANNEL_ID, channelId)
+                }
+                context.startActivity(intent)
+            } else {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                intent.addCategory(Intent.CATEGORY_DEFAULT)
+                intent.data = Uri.parse("package:" + context.packageName)
+                //intent.data = Uri.fromParts("package", context.packageName, null)
                 context.startActivity(intent)
             }
         }
@@ -758,5 +769,10 @@ fun NotificationChannel?.isEnable(): Boolean {
 }
 
 fun String.isChannelEnable() = DslNotify.getNotificationChannel(this).isEnable()
+
+/**打开通知通道设置*/
+fun String.openNotificationChannelSetting(context: Context = app()) {
+    DslNotify.openNotificationChannelSetting(context, this)
+}
 
 //</editor-fold desc="通知扩展">
