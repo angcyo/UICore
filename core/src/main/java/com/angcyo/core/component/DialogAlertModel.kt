@@ -66,6 +66,15 @@ class DialogAlertModel : LifecycleViewModel() {
     /**取消一种类型的弹窗提醒*/
     fun cancelAlert(type: String) {
         dialogList.removeAll { it.type == type }
+        cancelCurrent()
+    }
+
+    fun cancelAll() {
+        dialogList.clear()
+        cancelCurrent()
+    }
+
+    fun cancelCurrent() {
         val old = dialogAlertData.value
         old?.let {
             it.isCancel = true
