@@ -130,12 +130,14 @@ class DslNotify {
                 if (!channelId.isNullOrEmpty()) {
                     intent.putExtra(Settings.EXTRA_CHANNEL_ID, channelId)
                 }
+                intent.baseConfig(context)
                 context.startActivity(intent)
             } else {
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 intent.addCategory(Intent.CATEGORY_DEFAULT)
                 intent.data = Uri.parse("package:" + context.packageName)
                 //intent.data = Uri.fromParts("package", context.packageName, null)
+                intent.baseConfig(context)
                 context.startActivity(intent)
             }
         }
