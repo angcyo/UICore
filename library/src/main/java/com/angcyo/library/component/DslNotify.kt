@@ -24,9 +24,6 @@ import com.angcyo.library.ex.baseConfig
 import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.undefined_int
 import kotlin.math.min
-import androidx.core.content.ContextCompat.startActivity
-
-
 
 
 /**
@@ -125,11 +122,14 @@ class DslNotify {
         /**打开通道设置页*/
         fun openNotificationChannelSetting(context: Context = app(), channelId: String? = null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
-                intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                if (!channelId.isNullOrEmpty()) {
-                    intent.putExtra(Settings.EXTRA_CHANNEL_ID, channelId)
+                val intent = if (channelId.isNullOrEmpty()) {
+                    Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                } else {
+                    Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
+                        putExtra(Settings.EXTRA_CHANNEL_ID, channelId)
+                    }
                 }
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
                 intent.baseConfig(context)
                 context.startActivity(intent)
             } else {
