@@ -72,6 +72,12 @@ class DslNotify {
             cancelNotify(app(), id)
         }
 
+        fun cancelNotifyList(idList: Collection<Int>?) {
+            idList?.forEach {
+                cancelNotify(app(), it)
+            }
+        }
+
         fun cancelNotifyLast(context: Context?) {
             _notifyIds.lastOrNull()?.run {
                 cancelNotify(context, this)
@@ -79,7 +85,7 @@ class DslNotify {
         }
 
         /**取消所有通知*/
-        fun cancelNotifyAll(context: Context?) {
+        fun cancelNotifyAll(context: Context? = app()) {
             val notificationManager: NotificationManagerCompat =
                 NotificationManagerCompat.from(context ?: app())
             notificationManager.cancelAll()
