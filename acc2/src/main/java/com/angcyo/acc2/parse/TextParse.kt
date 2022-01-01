@@ -1,10 +1,15 @@
 package com.angcyo.acc2.parse
 
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.action.Action
+import com.angcyo.acc2.action.BaseAction
+import com.angcyo.acc2.bean.InputTextBean
 import com.angcyo.acc2.bean.TextParamBean
 import com.angcyo.acc2.bean.getTextList
 import com.angcyo.acc2.control.AccControl
+import com.angcyo.acc2.control.ControlContext
 import com.angcyo.acc2.control.log
+import com.angcyo.acc2.dynamic.IInputProvider
 import com.angcyo.library.app
 import com.angcyo.library.component.appBean
 import com.angcyo.library.ex.*
@@ -17,7 +22,7 @@ import com.angcyo.library.utils.getLongNum
  * @date 2021/03/05
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class TextParse(val accParse: AccParse) : BaseParse() {
+class TextParse(val accParse: AccParse) : BaseParse(), IInputProvider {
 
     val accControl: AccControl
         get() = accParse.accControl
@@ -306,4 +311,59 @@ class TextParse(val accParse: AccParse) : BaseParse() {
     fun getTextOfMap(key: String) = accControl._taskBean?.textMap?.get(key)
 
     fun getTextOfListMap(key: String) = accControl._taskBean?.textListMap?.get(key)
+
+    //<editor-fold desc="文本提供器">
+
+    /**文本数量*/
+    override fun getInputTextCount(
+        control: AccControl,
+        controlContext: ControlContext,
+        nodeList: List<AccessibilityNodeInfoCompat>?,
+        actionBean: BaseAction,
+        action: String,
+        inputTextBean: InputTextBean?
+    ): Int? {
+        for (provider in accControl._taskBean?._inputProviderObjList ?: emptyList()) {
+            val result = provider.getInputTextCount(
+                control,
+                controlContext,
+                nodeList,
+                actionBean,
+                action,
+                inputTextBean
+            )
+            if (result != null) {
+                return result
+            }
+        }
+        return null
+    }
+
+    /**文本列表*/
+    override fun getInputTextList(
+        control: AccControl,
+        controlContext: ControlContext,
+        nodeList: List<AccessibilityNodeInfoCompat>?,
+        actionBean: BaseAction,
+        action: String,
+        inputTextBean: InputTextBean?
+    ): List<String?>? {
+        for (provider in accControl._taskBean?._inputProviderObjList ?: emptyList()) {
+            val result = provider.getInputTextList(
+                control,
+                controlContext,
+                nodeList,
+                actionBean,
+                action,
+                inputTextBean
+            )
+            if (result != null) {
+                return result
+            }
+        }
+        return null
+    }
+
+    //</editor-fold desc="文本提供器">
+
 }

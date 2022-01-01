@@ -1,6 +1,7 @@
 package com.angcyo.acc2.action
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
+import com.angcyo.acc2.bean.InputTextBean
 import com.angcyo.acc2.control.AccControl
 import com.angcyo.acc2.control.AccSchedule
 import com.angcyo.acc2.control.ControlContext
@@ -42,11 +43,20 @@ class InputAction : BaseAction() {
         nodeList: List<AccessibilityNodeInfoCompat>?,
         action: String
     ): HandleResult = handleResult {
+        var noTextArg = false
 
-        val arg = action.subEnd(Action.ARG_SPLIT)
+        var arg = if (action.startsWith("${Action.ACTION_INPUT}${Action.ARG_SPLIT}")) {
+            action.subEnd(Action.ARG_SPLIT)
+        } else {
+            noTextArg = true //未配置输入参数 input 裸命令
+            action.subEnd(Action.ARG_SPLIT_SPACE)
+        }
+
         val textParse = control.accSchedule.accParse.textParse
 
         var textKey: String? = null
+        var textRegex: String? = null
+
         var inputCount = 0
 
         //文本列表的数量
@@ -60,9 +70,14 @@ class InputAction : BaseAction() {
             textKey = textParse.parseTextKey(arg).firstOrNull() ?: action.arg("key")
             if (textKey.isNullOrEmpty()) {
                 textKey = control.accSchedule._scheduleActionBean?.actionId?.toString()
+            } else {
+                arg = arg.replace(" key:${textKey}", "")//清除key参数
             }
-            if (!textKey.isNullOrEmpty()) {
-                inputCount = inputCountMap[textKey] ?: 0
+            inputCount = inputCountMap[textKey] ?: 0
+
+            textRegex = action.arg("regex")
+            if (!textRegex.isNullOrEmpty()) {
+                arg = arg.replace(" regex:${textRegex}", "")//清除regex参数
             }
 
             //指定获取文本的index
@@ -71,17 +86,49 @@ class InputAction : BaseAction() {
             var indexText: String? = null
             if (!indexArg.isNullOrEmpty()) {
                 indexText = textParse.parse(indexArg).firstOrNull()
-                inputArg = arg.replace(indexArg, "")//清除index参数
+                inputArg = arg.replace(" index:${indexArg}", "")//清除index参数
             }
 
-            //待输入的文本池
-            val inputTextList = textParse.parse(
-                inputArg,
-                false,
-                getHandleTextParamBeanByAction(getCmd(action))
+            val textParamBean = getHandleTextParamBeanByAction(getCmd(action))
+            val inputTextBean = InputTextBean(
+                action,
+                indexText,
+                textKey,
+                textRegex,
+                inputCount,
+                textParamBean
             )
 
-            textListSize = inputTextList.size()
+            var textSize: Int? = null
+            val inputTextList = if (noTextArg) {
+                //通过文本提供器, 提供文本
+                textSize = textParse.getInputTextCount(
+                    control,
+                    controlContext,
+                    nodeList,
+                    this@InputAction,
+                    action,
+                    inputTextBean
+                )
+
+                textParse.getInputTextList(
+                    control,
+                    controlContext,
+                    nodeList,
+                    this@InputAction,
+                    action,
+                    inputTextBean
+                )
+            } else {
+                //待输入的文本池
+                textParse.parse(
+                    inputArg,
+                    false,
+                    textParamBean
+                )
+            }
+
+            textListSize = textSize ?: inputTextList.size()
 
             //获取目标
             if (indexText.isNullOrEmpty()) {
@@ -95,7 +142,7 @@ class InputAction : BaseAction() {
                 controlContext.log {
                     append("顺序获取输入文本第${inputCount}个:$inputTextList")
                 }
-                inputTextList.getSafe(inputCount)
+                inputTextList?.getSafe(inputCount)
             } else {
                 val index = indexText.toIntOrNull()
                 if (index == null) {
@@ -109,7 +156,7 @@ class InputAction : BaseAction() {
                     controlContext.log {
                         append("指定获取输入文本索引第${inputCount}个:$inputTextList")
                     }
-                    inputTextList.getSafe(index)
+                    inputTextList?.getSafe(index)
                 }
             }
         }

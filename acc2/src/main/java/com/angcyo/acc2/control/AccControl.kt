@@ -13,6 +13,7 @@ import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_STOP
 import com.angcyo.acc2.core.BaseAccService
 import com.angcyo.acc2.core.ControlException
 import com.angcyo.acc2.core.ControlInterruptException
+import com.angcyo.acc2.dynamic.IInputProvider
 import com.angcyo.acc2.dynamic.ITaskDynamic
 import com.angcyo.library.*
 import com.angcyo.library.ex.*
@@ -43,6 +44,18 @@ class AccControl : Runnable {
         const val CONTROL_STATE_FINISH = 10
         const val CONTROL_STATE_ERROR = 11
         const val CONTROL_STATE_STOP = 12
+
+        fun <T> newInstance(clsName: String, cls: Class<T>): T? {
+            try {
+                val c = Class.forName(clsName)
+                if (cls.isAssignableFrom(c)) {
+                    return c.newInstance() as T
+                }
+            } catch (e: Exception) {
+                L.w("无法实例化:$clsName")
+            }
+            return null
+        }
     }
 
     /**控制器的状态*/
@@ -150,22 +163,33 @@ class AccControl : Runnable {
         //_taskBean = null
     }
 
-    /**[ITaskDynamic]*/
+    /**
+     * [ITaskDynamic]
+     * [IInputProvider]
+     * */
     fun initTaskDynamic(taskBean: TaskBean) {
+        //ITaskDynamic
         val listenerOjbList = mutableListOf<ITaskDynamic>()
         taskBean.listenerClsList?.forEach {
-            try {
-                val cls = Class.forName(it)
-                if (ITaskDynamic::class.java.isAssignableFrom(cls)) {
-                    listenerOjbList.add(cls.newInstance() as ITaskDynamic)
-                }
-            } catch (e: Exception) {
-                L.w("无法实例化:$it")
+            newInstance(it, ITaskDynamic::class.java)?.let { obj ->
+                listenerOjbList.add(obj)
             }
         }
 
         if (listenerOjbList.isNotEmpty()) {
             taskBean._listenerObjList = listenerOjbList
+        }
+
+        //IInputProvider
+        val inputProviderList = mutableListOf<IInputProvider>()
+        taskBean.inputProviderClsList?.forEach {
+            newInstance(it, IInputProvider::class.java)?.let { obj ->
+                inputProviderList.add(obj)
+            }
+        }
+
+        if (inputProviderList.isNotEmpty()) {
+            taskBean._inputProviderObjList = inputProviderList
         }
     }
 

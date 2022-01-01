@@ -1,6 +1,7 @@
 package com.angcyo.acc2.bean
 
 import com.angcyo.acc2.action.Action
+import com.angcyo.acc2.dynamic.IInputProvider
 import com.angcyo.acc2.dynamic.ITaskDynamic
 import com.angcyo.library.ex.uuid
 
@@ -191,6 +192,16 @@ data class TaskBean(
     @Transient var _listenerObjList: List<ITaskDynamic>? = null,
 
     //</editor-fold desc="动态cls监听任务">
+
+    // <editor-fold desc="动态cls 文本提供">
+
+    /**文本提供的动态class*/
+    var inputProviderClsList: List<String>? = null,
+
+    //实例化后的类
+    @Transient var _inputProviderObjList: List<IInputProvider>? = null,
+
+    //</editor-fold desc="动态cls 文本提供">
 )
 
 /**初始化配置*/

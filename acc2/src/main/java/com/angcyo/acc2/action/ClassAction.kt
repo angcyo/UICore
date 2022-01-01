@@ -19,7 +19,7 @@ import com.angcyo.library.ex.subEnd
 class ClassAction : BaseAction() {
 
     override fun interceptAction(control: AccControl, action: String): Boolean {
-        return action.startsWith(Action.ACTION_CLS)
+        return action.cmd(Action.ACTION_CLS)
     }
 
     override fun runAction(control: AccControl, controlContext: ControlContext, nodeList: List<AccessibilityNodeInfoCompat>?, action: String): HandleResult {

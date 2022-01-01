@@ -70,8 +70,15 @@ abstract class BaseAction : BaseParse() {
 
     /**判断字符串是否是执行的命令*/
     fun String.cmd(cmd: String): Boolean {
-        val c = subStart(Action.ARG_SPLIT) ?: subStart(Action.ARG_SPLIT2) ?: this
-        return c == cmd
+        val c1 = subStart(Action.ARG_SPLIT)
+        if (c1 == cmd) {
+            return true
+        }
+        val c2 = subStart(Action.ARG_SPLIT2)
+        if (c2 == cmd) {
+            return true
+        }
+        return this == cmd
     }
 }
 

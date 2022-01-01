@@ -6,6 +6,7 @@ import com.angcyo.acc2.bean.HandleBean
 import com.angcyo.acc2.bean.TextParamBean
 import com.angcyo.acc2.control.*
 import com.angcyo.acc2.dynamic.IHandleDynamic
+import com.angcyo.acc2.dynamic.IInputProvider
 import com.angcyo.library.L
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.size
@@ -574,13 +575,8 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
             if (handleBean._handleObjList == null || handleBean._handleObjList.size() != clsList.size()) {
                 val ojbList = mutableListOf<IHandleDynamic>()
                 clsList.forEach {
-                    try {
-                        val cls = Class.forName(it)
-                        if (IHandleDynamic::class.java.isAssignableFrom(cls)) {
-                            ojbList.add(cls.newInstance() as IHandleDynamic)
-                        }
-                    } catch (e: Exception) {
-                        L.w("无法实例化:$it")
+                    AccControl.newInstance(it, IHandleDynamic::class.java)?.let { obj ->
+                        ojbList.add(obj)
                     }
                 }
 

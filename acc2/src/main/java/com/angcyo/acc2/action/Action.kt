@@ -14,6 +14,9 @@ object Action {
 
     const val ARG_SPLIT2 = " "
 
+    /**[ARG_SPLIT2]*/
+    const val ARG_SPLIT_SPACE = ARG_SPLIT2
+
     /**多包名分隔符*/
     const val PACKAGE_SPLIT = ";"
 
