@@ -1,9 +1,6 @@
 package com.angcyo.acc2.control
 
-import com.angcyo.acc2.bean.ActionBean
-import com.angcyo.acc2.bean.CheckBean
-import com.angcyo.acc2.bean.FindBean
-import com.angcyo.acc2.bean.TaskBean
+import com.angcyo.acc2.bean.*
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_ERROR
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_FINISH
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_NORMAL
@@ -13,6 +10,7 @@ import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_STOP
 import com.angcyo.acc2.core.BaseAccService
 import com.angcyo.acc2.core.ControlException
 import com.angcyo.acc2.core.ControlInterruptException
+import com.angcyo.acc2.dynamic.IHandleDynamic
 import com.angcyo.acc2.dynamic.IInputProvider
 import com.angcyo.acc2.dynamic.ITaskDynamic
 import com.angcyo.library.*
@@ -55,6 +53,68 @@ class AccControl : Runnable {
                 L.w("无法实例化:$clsName")
             }
             return null
+        }
+
+        /**
+         * [ITaskDynamic]
+         * [IInputProvider]
+         * */
+        fun initTaskDynamic(taskBean: TaskBean) {
+            //ITaskDynamic
+            val listenerOjbList = mutableListOf<ITaskDynamic>()
+            taskBean.listenerClsList?.forEach {
+                newInstance(it, ITaskDynamic::class.java)?.let { obj ->
+                    listenerOjbList.add(obj)
+                }
+            }
+
+            if (listenerOjbList.isNotEmpty()) {
+                taskBean._listenerObjList = listenerOjbList
+            }
+
+            //IInputProvider
+            val inputProviderList = mutableListOf<IInputProvider>()
+            taskBean.inputProviderClsList?.forEach {
+                newInstance(it, IInputProvider::class.java)?.let { obj ->
+                    inputProviderList.add(obj)
+                }
+            }
+
+            if (inputProviderList.isNotEmpty()) {
+                taskBean._inputProviderObjList = inputProviderList
+            }
+        }
+
+        /**一次性创建所有[com.angcyo.acc2.dynamic.IHandleDynamic]*/
+        fun initAllHandleCls(taskBean: TaskBean) {
+            taskBean.apply {
+                actionList?.forEach { actionBean ->
+                    actionBean.check?.handle?.forEach { handleBean ->
+                        initHandleDynamic(handleBean)
+                    }
+                }
+            }
+        }
+
+        /**[IHandleDynamic]*/
+        fun initHandleDynamic(handleBean: HandleBean) {
+            val clsList = handleBean.handleClsList
+            if (clsList.isNullOrEmpty()) {
+                handleBean._handleObjList = null
+            } else {
+                if (handleBean._handleObjList == null || handleBean._handleObjList.size() != clsList.size()) {
+                    val ojbList = mutableListOf<IHandleDynamic>()
+                    clsList.forEach {
+                        newInstance(it, IHandleDynamic::class.java)?.let { obj ->
+                            ojbList.add(obj)
+                        }
+                    }
+
+                    if (ojbList.isNotEmpty()) {
+                        handleBean._handleObjList = ojbList
+                    }
+                }
+            }
         }
     }
 
@@ -102,8 +162,6 @@ class AccControl : Runnable {
         }
         finishReason = null
         lastError = null
-
-        initTaskDynamic(taskBean)
 
         accSchedule.startSchedule()
         _startThread()
@@ -161,36 +219,6 @@ class AccControl : Runnable {
             }
         }
         //_taskBean = null
-    }
-
-    /**
-     * [ITaskDynamic]
-     * [IInputProvider]
-     * */
-    fun initTaskDynamic(taskBean: TaskBean) {
-        //ITaskDynamic
-        val listenerOjbList = mutableListOf<ITaskDynamic>()
-        taskBean.listenerClsList?.forEach {
-            newInstance(it, ITaskDynamic::class.java)?.let { obj ->
-                listenerOjbList.add(obj)
-            }
-        }
-
-        if (listenerOjbList.isNotEmpty()) {
-            taskBean._listenerObjList = listenerOjbList
-        }
-
-        //IInputProvider
-        val inputProviderList = mutableListOf<IInputProvider>()
-        taskBean.inputProviderClsList?.forEach {
-            newInstance(it, IInputProvider::class.java)?.let { obj ->
-                inputProviderList.add(obj)
-            }
-        }
-
-        if (inputProviderList.isNotEmpty()) {
-            taskBean._inputProviderObjList = inputProviderList
-        }
     }
 
     //</editor-fold desc="启动">
@@ -501,17 +529,6 @@ fun AccControl.next(actionBean: ActionBean, time: Long) {
 //</editor-fold desc="扩展">
 
 //<editor-fold desc="Dynamic扩展">
-
-/**一次性创建所有[com.angcyo.acc2.dynamic.IHandleDynamic]*/
-fun AccControl.initAllHandleCls() {
-    _taskBean?.apply {
-        actionList?.forEach { actionBean ->
-            actionBean.check?.handle?.forEach { handleBean ->
-                accSchedule.accParse.handleParse.initHandleDynamic(handleBean)
-            }
-        }
-    }
-}
 
 /**查找[com.angcyo.acc2.dynamic.IHandleDynamic]对象*/
 fun <T> AccControl.findHandleObj(cls: Class<T>): T? {

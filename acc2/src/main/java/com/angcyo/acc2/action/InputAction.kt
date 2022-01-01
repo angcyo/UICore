@@ -166,7 +166,11 @@ class InputAction : BaseAction() {
         control.accSchedule.saveInputText(text, textKey)
 
         nodeList?.forEach { node ->
-            val result = node.setNodeText(text)
+            val result = if (text != null) {
+                node.setNodeText(text)
+            } else {
+                true
+            }
             success = result || success
             if (success) {
                 if (!textKey.isNullOrEmpty()) {

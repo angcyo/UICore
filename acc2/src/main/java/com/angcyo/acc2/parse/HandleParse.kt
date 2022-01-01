@@ -5,9 +5,6 @@ import com.angcyo.acc2.action.*
 import com.angcyo.acc2.bean.HandleBean
 import com.angcyo.acc2.bean.TextParamBean
 import com.angcyo.acc2.control.*
-import com.angcyo.acc2.dynamic.IHandleDynamic
-import com.angcyo.acc2.dynamic.IInputProvider
-import com.angcyo.library.L
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.size
 import com.angcyo.library.ex.sleep
@@ -138,8 +135,6 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         originList: List<AccessibilityNodeInfoCompat>?,
         handleBean: HandleBean
     ): HandleResult {
-        //cls
-        initHandleDynamic(handleBean)
 
         //wait
         val wait = handleBean.wait
@@ -563,27 +558,6 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         super.onScheduleEnd(scheduled)
         registerActionList.forEach {
             it.onScheduleEnd(scheduled)
-        }
-    }
-
-    /**[IHandleDynamic]*/
-    fun initHandleDynamic(handleBean: HandleBean) {
-        val clsList = handleBean.handleClsList
-        if (clsList.isNullOrEmpty()) {
-            handleBean._handleObjList = null
-        } else {
-            if (handleBean._handleObjList == null || handleBean._handleObjList.size() != clsList.size()) {
-                val ojbList = mutableListOf<IHandleDynamic>()
-                clsList.forEach {
-                    AccControl.newInstance(it, IHandleDynamic::class.java)?.let { obj ->
-                        ojbList.add(obj)
-                    }
-                }
-
-                if (ojbList.isNotEmpty()) {
-                    handleBean._handleObjList = ojbList
-                }
-            }
         }
     }
 }
