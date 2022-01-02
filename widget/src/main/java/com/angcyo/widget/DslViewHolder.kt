@@ -397,8 +397,31 @@ open class DslViewHolder(
                 isChecked = check
             } else {
                 try {
+                    val mOnCheckedChangeListener = getMember(CompoundButton::class.java, "mOnCheckedChangeListener")
+                    setOnCheckedChangeListener(null)
+                    isChecked = check
+                    setOnCheckedChangeListener(mOnCheckedChangeListener as CompoundButton.OnCheckedChangeListener?)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
+    fun check(
+        @IdRes resId: Int,
+        check: Boolean = true,
+        notify: Boolean = true,
+        onCheckedChanged: (buttonView: CompoundButton, isChecked: Boolean) -> Unit
+    ): CompoundButton? {
+        return v<CompoundButton>(resId)?.apply {
+            setOnCheckedChangeListener(onCheckedChanged)
+            if (notify) {
+                isChecked = check
+            } else {
+                try {
                     val mOnCheckedChangeListener =
-                        Reflect.getMember(CompoundButton::class.java, "mOnCheckedChangeListener")
+                        getMember(CompoundButton::class.java, "mOnCheckedChangeListener")
                     setOnCheckedChangeListener(null)
                     isChecked = check
                     setOnCheckedChangeListener(mOnCheckedChangeListener as CompoundButton.OnCheckedChangeListener?)
