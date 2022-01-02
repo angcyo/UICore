@@ -456,10 +456,36 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     }
 
     /**移除数据*/
-    fun removeItem(item: DslAdapterItem) {
-        if (dataItems.remove(item)) {
-            _updateAdapterItems()
-            updateItemDepend()
+    fun removeItem(item: DslAdapterItem, updateOther: Boolean = true) {
+        removeItemFrom(dataItems, item, updateOther)
+    }
+
+    /**移除数据*/
+    fun removeHeaderItem(item: DslAdapterItem, updateOther: Boolean = true) {
+        removeItemFrom(headerItems, item, updateOther)
+    }
+
+    fun removeFooterItem(item: DslAdapterItem, updateOther: Boolean = true) {
+        removeItemFrom(footerItems, item, updateOther)
+    }
+
+    fun removeItemFrom(
+        list: MutableList<DslAdapterItem>,
+        item: DslAdapterItem,
+        updateOther: Boolean
+    ) {
+        val index = adapterItems.indexOf(item)
+        if (index != -1) {
+            if (list.remove(item)) {
+                if (updateOther) {
+                    for (i in (index + 1) until adapterItems.size) {
+                        //更新之后的item
+                        adapterItems.getOrNull(i)?.itemUpdateFlag = true
+                    }
+                }
+                _updateAdapterItems()
+                updateItemDepend()
+            }
         }
     }
 

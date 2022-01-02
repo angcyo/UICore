@@ -85,9 +85,20 @@ open class DslAdapterItem : LifecycleOwner {
 
     //<editor-fold desc="update操作">
 
-    /**[notifyItemChanged]*/
+    /**[com.angcyo.dsladapter.DslAdapter.notifyItemChanged]*/
     open fun updateAdapterItem(payload: Any? = PAYLOAD_UPDATE_PART, useFilterList: Boolean = true) {
         itemDslAdapter?.notifyItemChanged(this, payload, useFilterList).elseNull {
+            L.w("跳过操作! updateAdapterItem需要[itemDslAdapter],请赋值.")
+        }
+    }
+
+    /**移除[item]*/
+    open fun removeAdapterItem() {
+        itemDslAdapter?.apply {
+            removeHeaderItem(this@DslAdapterItem)
+            removeItem(this@DslAdapterItem)
+            removeFooterItem(this@DslAdapterItem)
+        }.elseNull {
             L.w("跳过操作! updateAdapterItem需要[itemDslAdapter],请赋值.")
         }
     }
@@ -771,8 +782,21 @@ open class DslAdapterItem : LifecycleOwner {
             val thisItemClassname = this.className()
             val newItemClassName = newItem.className()
             //相同类名, 且布局类型相同的2个item, 不进行insert/remove操作
-            result = thisItemClassname == newItemClassName &&
-                    itemViewType ?: itemLayoutId == newItem.itemViewType ?: newItem.itemLayoutId
+            result = if (thisItemClassname == newItemClassName) {
+                if (itemViewType ?: itemLayoutId == newItem.itemViewType ?: newItem.itemLayoutId) {
+                    //布局一样
+                    if (itemData == null && newItem.itemData == null && fromItem?.itemData == null) {
+                        //未设置itemData时, 默认认为item是一样的
+                        true
+                    } else {
+                        itemData == newItem.itemData
+                    }
+                } else {
+                    false
+                }
+            } else {
+                false
+            }
         }
         result
     }
@@ -795,7 +819,12 @@ open class DslAdapterItem : LifecycleOwner {
         when {
             itemUpdateFlag || newItem.itemUpdateFlag -> false
             itemChanging || newItem.itemChanging -> false
-            else -> itemData == newItem.itemData
+            else -> if (itemData == null && newItem.itemData == null && fromItem?.itemData == null) {
+                //未设置itemData时, 需要刷新界面的情况
+                this == newItem
+            } else {
+                itemData == newItem.itemData
+            }
         }
     }
 
