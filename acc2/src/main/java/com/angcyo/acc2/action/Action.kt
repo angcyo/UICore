@@ -358,6 +358,9 @@ object Action {
     const val ACTION_TOAST_QQ = "toastQQ"
     const val ACTION_TOAST_WX = "toastWX"
 
+    /**事件通知*/
+    const val ACTION_EVENT = "event"
+
     /**设置浮窗全屏or小屏
      * true: 全屏
      * false: 小屏

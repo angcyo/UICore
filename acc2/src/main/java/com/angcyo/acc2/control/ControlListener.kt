@@ -1,5 +1,6 @@
 package com.angcyo.acc2.control
 
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.bean.ActionBean
 import com.angcyo.acc2.bean.HandleBean
 import com.angcyo.acc2.bean.OperateBean
@@ -111,6 +112,17 @@ interface ControlListener {
 
     /**控制器线程结束执行*/
     fun onControlThreadEnd(control: AccControl) {
+
+    }
+
+    /**事件通知[com.angcyo.acc2.action.EventAction] */
+    fun onActionEvent(
+        control: AccControl,
+        controlContext: ControlContext,
+        nodeList: List<AccessibilityNodeInfoCompat>?,
+        action: String,
+        event: String
+    ) {
 
     }
 }

@@ -114,7 +114,7 @@ class TextParse(val accParse: AccParse) : BaseParse(), IInputProvider {
                         }
                     }
                     Action.LAST_INPUT -> {
-                        val text = accControl.accSchedule.inputTextList.lastOrNull()
+                        val text = accControl.accSchedule.lastInputText()
                         keyResult.add(text)
                         if (replace) {
                             replaceResult = replaceResult?.replace("$[$key]", text ?: "")

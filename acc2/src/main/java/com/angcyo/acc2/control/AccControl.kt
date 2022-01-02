@@ -1,5 +1,6 @@
 package com.angcyo.acc2.control
 
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.bean.*
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_ERROR
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_FINISH
@@ -293,6 +294,31 @@ class AccControl : Runnable {
 
     /**是否是控制器的主线程*/
     fun isControlMainThread() = threadName().startsWith(ACC_MAIN_THREAD)
+
+    /**事件通知[com.angcyo.acc2.action.EventAction] */
+    fun onActionEvent(
+        control: AccControl,
+        controlContext: ControlContext,
+        nodeList: List<AccessibilityNodeInfoCompat>?,
+        action: String,
+        event: String
+    ) {
+        controlListenerList.forEach {
+            try {
+                it.onActionEvent(control, controlContext, nodeList, action, event)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        _taskBean?._listenerObjList?.forEach {
+            try {
+                it.onActionEvent(control, controlContext, nodeList, action, event)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 
     //</editor-fold desc="操作">
 

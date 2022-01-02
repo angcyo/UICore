@@ -40,6 +40,7 @@ data class ActionBean(
 
     /**
      * 控制自身执行启动的延迟
+     * [com.angcyo.acc2.control.AccSchedule.runActionBefore]
      * [com.angcyo.acc2.parse.AccParse.parseTime]
      * */
     var start: String? = null,

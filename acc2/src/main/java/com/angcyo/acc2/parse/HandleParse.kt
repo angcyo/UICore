@@ -80,6 +80,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         registerActionList.add(ClassAction())
         registerActionList.add(RemoveInputTextMapAction())
         registerActionList.add(SaveInputTextMapAction())
+        registerActionList.add(EventAction())
     }
 
     /**解析, 并处理[handleList]
@@ -488,32 +489,34 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
             accControl.accPrint.handleNode(nodeList)
         }
 
-        registerActionList.forEach {
+        registerActionList.forEach { baseAction ->
             //是否要处理指定的action
-            if (it.interceptAction(accControl, action)) {
+            if (baseAction.interceptAction(accControl, action)) {
                 isActionIntercept = true
-                it.textParamBean = textParamBean
+                baseAction.textParamBean = textParamBean
                 //运行处理
-                it.runAction(accControl, controlContext, nodeList, action).apply {
-                    result.forceFail = forceFail || result.forceFail
-                    result.forceSuccess = forceSuccess || result.forceSuccess
-                    result.success = success || result.success
-                    if (success) {
+                baseAction.runAction(accControl, controlContext, nodeList, action).apply {
+                    if (!baseAction.ignoreResult || registerActionList.size() <= 1) {
+                        result.forceFail = forceFail || result.forceFail
+                        result.forceSuccess = forceSuccess || result.forceSuccess
+                        result.success = success || result.success
+                        if (success) {
 
-                        //this
-                        if (it is DisableHandleAction) {
-                            handleBean?.enable = false
-                        }
+                            //this
+                            if (baseAction is DisableHandleAction) {
+                                handleBean?.enable = false
+                            }
 
-                        //把处理成功的元素收集起来
-                        this.nodeList?.forEach {
-                            if (!handledNodeList.contains(it)) {
-                                handledNodeList.add(it)
+                            //把处理成功的元素收集起来
+                            this.nodeList?.forEach {
+                                if (!handledNodeList.contains(it)) {
+                                    handledNodeList.add(it)
+                                }
                             }
                         }
                     }
                 }
-                it.textParamBean = null
+                baseAction.textParamBean = null
             }
         }
 

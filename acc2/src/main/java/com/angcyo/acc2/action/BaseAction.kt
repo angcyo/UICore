@@ -21,6 +21,9 @@ import com.angcyo.library.ex.toStr
  */
 abstract class BaseAction : BaseParse() {
 
+    /**当前[BaseAction]处理的结果, 是否不影响[HandleBean]的处理*/
+    var ignoreResult: Boolean = false
+
     /**临时存储的文本处理参数, [runAction]之后清除*/
     var textParamBean: TextParamBean? = null
 
@@ -28,6 +31,7 @@ abstract class BaseAction : BaseParse() {
     abstract fun interceptAction(control: AccControl, action: String): Boolean
 
     /**执行操作*/
+    @Deprecated("废弃")
     open fun runAction(
         control: AccControl,
         nodeList: List<AccessibilityNodeInfoCompat>?,

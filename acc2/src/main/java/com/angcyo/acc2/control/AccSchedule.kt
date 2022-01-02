@@ -141,6 +141,15 @@ class AccSchedule(val accControl: AccControl) {
         inputTextMap[_key] = list
     }
 
+    /**最后一个输入的文本
+     * [com.angcyo.acc2.action.InputAction]*/
+    fun lastInputText() = inputTextList.lastOrNull()
+
+    fun lastInputText(key: String?): String? {
+        val _key = key ?: Action.DEF
+        return inputTextMap[_key]?.lastOrNull()
+    }
+
     /**移除对应key保存的最后一个输入的文本*/
     fun removeLastInputText(key: String? = null): String? {
         var result: String? = null
