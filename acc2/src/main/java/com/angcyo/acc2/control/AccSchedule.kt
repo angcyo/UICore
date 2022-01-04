@@ -150,6 +150,7 @@ class AccSchedule(val accControl: AccControl) {
         return inputTextMap[_key]?.lastOrNull()
     }
 
+    /**指定[key]输入的次数[com.angcyo.acc2.action.InputAction]*/
     fun inputTextCount(key: String?): Int {
         val _key = key ?: Action.DEF
         return inputTextMap[_key].size()
