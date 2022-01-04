@@ -97,7 +97,7 @@ class AccParse(val accControl: AccControl) : BaseParse() {
     fun parseTime(arg: String?, def: Long = 0): Long {
         return when {
             arg.isNullOrEmpty() -> def
-            arg.havePartition() -> {
+            arg.havePartition() -> { //~
                 val numList = arg.getIntList()
                 if (numList.size() >= 2) {
                     val first = numList[0]

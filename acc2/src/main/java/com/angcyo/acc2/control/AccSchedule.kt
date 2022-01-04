@@ -150,6 +150,11 @@ class AccSchedule(val accControl: AccControl) {
         return inputTextMap[_key]?.lastOrNull()
     }
 
+    fun inputTextCount(key: String?): Int {
+        val _key = key ?: Action.DEF
+        return inputTextMap[_key].size()
+    }
+
     /**移除对应key保存的最后一个输入的文本*/
     fun removeLastInputText(key: String? = null): String? {
         var result: String? = null
@@ -1021,9 +1026,11 @@ class AccSchedule(val accControl: AccControl) {
         }
 
         //等待执行
-        val _start =
+        val startText =
             if (isDebugType()) actionBean.debugStart ?: actionBean.start else actionBean.start
-        val delayTime = accParse.parseTime(_start)
+        val startTimeText = accParse.textParse.parse(startText).firstOrNull()
+
+        val delayTime = accParse.parseTime(startTimeText)
         if (isPrimaryAction) {
             accControl.next(actionBean, delayTime)
         }

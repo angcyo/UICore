@@ -186,6 +186,15 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
             originList
         }
 
+        //noFindHandle
+        val noFindHandleList = handleBean.noFindHandleList
+        if (handleBean.findList != null && handleNodeList.isNullOrEmpty() && !noFindHandleList.isNullOrEmpty()) {
+
+            val noFindHandleResult = parse(controlContext, originList, noFindHandleList)
+            noFindHandleResult.copyTo(result)
+            return result
+        }
+
         //过滤
         if (handleBean.filter != null) {
             handleNodeList = handleNodeList?.toMutableList()?.apply {

@@ -664,6 +664,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
 
     /**[notifyDataSetChanged]*/
     fun notifyDataChanged() {
+        _updateAdapterItems()
         dslDataFilter?.clearTask()
         dslDataFilter?.filterDataList?.clear()
         dslDataFilter?.filterDataList?.addAll(adapterItems)

@@ -44,6 +44,12 @@ data class HandleBean(
      * 当指定了[findList], 又想使用[com.angcyo.acc2.bean.CheckBean.event]的节点时, 设置[rootNode]为[com.angcyo.acc2.action.Action.RESULT]*/
     var findList: List<FindBean>? = null,
 
+    /**
+     * 当[findList]未找到任何节点时, 需要处理的[HandleBean],
+     * 处理结果, 会直接赋给当前的[HandleBean]
+     * */
+    var noFindHandleList: List<HandleBean>? = null,
+
     /**过滤目标元素, 只处理之后的元素*/
     var filter: FilterBean? = null,
 

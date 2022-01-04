@@ -133,7 +133,7 @@ class AutoParseInterceptor(val taskBean: TaskBean) : BaseFloatInterceptor() {
     override fun onDoActionFinish(action: BaseAccessibilityAction?, error: ActionException?) {
         handleFormRequest(error)
 
-        log("[${taskBean.name}/${action?.actionTitle}]执行结束:${runActionStatus.toActionStatusStr()} ${error ?: ""} 耗时:${(nowTime() - _actionStartTime).toElapsedTime()}")
+        log("[${taskBean.name}/${action?.actionTitle}]执行结束:${runActionStatus.toActionStatusStr()} ${error ?: ""}\n耗时:${(nowTime() - _actionStartTime).toElapsedTime()}")
         when (runActionStatus) {
             ACTION_STATUS_ERROR -> {
                 //出现异常
