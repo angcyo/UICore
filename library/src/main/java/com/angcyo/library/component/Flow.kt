@@ -18,6 +18,12 @@ class Flow {
 
     val actionList = mutableListOf<FlowAction>()
 
+    /**异常的回调处理*/
+    var onErrorAction: (Throwable) -> Unit = {}
+
+    /**结束的回调处理*/
+    var onEndAction: (Throwable?) -> Unit = {}
+
     /**追加flow*/
     fun flow(action: FlowAction): Flow {
         actionList.add(action)
@@ -25,8 +31,9 @@ class Flow {
     }
 
     /**开始执行*/
-    fun start(): Flow {
+    fun start(onEnd: (Throwable?) -> Unit = {}): Flow {
         _startIndex = 0
+        onEndAction = onEnd
         _start()
         return this
     }
@@ -35,7 +42,9 @@ class Flow {
 
     private fun _start() {
         val action = actionList.getOrNull(_startIndex)
-        action?.apply {
+        if (action == null) {
+            onEndAction(null)
+        } else {
             _startAction(action)
         }
     }
@@ -51,6 +60,9 @@ class Flow {
             if (it != null) {
                 //异常, 中断处理
                 L.w("Flow 被中断:[${_startIndex}/${actionList.size}]")
+
+                onErrorAction(it)
+                onEndAction(it)
             } else {
                 _next()
             }
