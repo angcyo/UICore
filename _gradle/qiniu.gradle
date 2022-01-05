@@ -113,6 +113,8 @@ task _qiniuUpload() {
         //创建上传凭证, 这是必须的.
         def auth = com.qiniu.util.Auth.create(ak, sk)
 
+        def client = new okhttp3.OkHttpClient()
+
         allPath.each { path ->
             def apkFile = file(path)
 
@@ -174,55 +176,21 @@ task _qiniuUpload() {
                 }
 
                 if (!app_id.isEmpty() && !app_secret.isEmpty()) {
+                    def qrCodeUrl = requestQrCodeUrl(app_id, app_secret, downloadUrl, codeLogo)
 
-                    def url = ""
-                    def request = null
-                    if (codeLogo == null || codeLogo.isEmpty()) {
-                        //无logo
-                        url = "http://www.mxnzp.com/api/qrcode/create/single?content=${downloadUrl}&size=400&type=0"
-
-                        request = new okhttp3.Request.Builder()
-                                .header("app_id", app_id)
-                                .header("app_secret", app_secret)
-                                .url(url)
-                                .build()
-                    } else {
-                        //有logo
-                        url = "https://www.mxnzp.com/api/qrcode/create/logo?content=${downloadUrl}&size=400&type=0"
-
-                        okhttp3.RequestBody requestBody = new okhttp3.MultipartBody.Builder()
-                                .setType(okhttp3.MultipartBody.FORM)
-                                .addFormDataPart("logo_img",
-                                        "codeLogo",
-                                        okhttp3.RequestBody.create(okhttp3.MediaType.parse("multipart/form-data"), file(codeLogo)))
-                                .build()
-
-                        request = new okhttp3.Request.Builder()
-                                .post(requestBody)
-                                .header("app_id", app_id)
-                                .header("app_secret", app_secret)
-                                .url(url)
-                                .build()
-                    }
-
-                    //生成url对应的二维码
-                    //https://github.com/MZCretin/RollToolsApi#%E5%85%AB%E7%94%9F%E6%88%90%E4%BA%8C%E7%BB%B4%E7%A0%81
-                    def client = new okhttp3.OkHttpClient()
-                    def json = client.newCall(request).execute().body().string()
-                    def map = new com.google.gson.Gson().fromJson(json, Map.class)
-                    println "接口返回:${json}"
-
-                    def qrCodeUrl = map["data"]["qrCodeUrl"]
                     System.err.println ''
                     System.err.println "二维码地址->$qrCodeUrl"
 
                     //下载网站地址
-                    def t = URLEncoder.encode("App应用下载", "UTF-8")
-                    def d = URLEncoder.encode("欢迎下载", "UTF-8")
+                    def downloadTitle = project.hasProperty("downloadTitle") ? project.ext.downloadTitle : key
+                    def downloadDes = project.hasProperty("downloadDes") ? project.ext.downloadDes : "" //"1.修复已知问题<br>2.优化交互体验"
+                    def t = URLEncoder.encode(downloadTitle, "UTF-8")
+                    def d = URLEncoder.encode(downloadDes, "UTF-8")
+
                     def webUrl = "https://angcyo.gitee.io/download?r=${downloadUrl}&q=${qrCodeUrl}&t=${t}&d=${d}"
                     System.err.println ''
                     System.err.println "下载web地址->${webUrl}"
-                    def webQrUrl = requestQrCodeUrl(app_id, app_secret, webUrl)
+                    def webQrUrl = requestQrCodeUrl(app_id, app_secret, webUrl, codeLogo)
                     System.err.println "下载web地址[二维码]->${webQrUrl}"
                     System.err.println ''
                     def webQrCodeFile = file(".apk/二维码网站_${getBuildTime()}.png")
@@ -298,6 +266,44 @@ def getLogoPath(apkFileName) {
     return null
 }
 
+/**创建一个生成二维码的请求*/
+def qrcodeRequest(content, logoPath, app_id, app_secret) {
+    def s = URLEncoder.encode(content, "UTF-8")
+
+    def url = ""
+    def request = null
+
+    if (logoPath == null || logoPath.isEmpty()) {
+        //无logo
+        url = "http://www.mxnzp.com/api/qrcode/create/single?content=${s}&size=400&type=0"
+
+        request = new okhttp3.Request.Builder()
+                .header("app_id", app_id)
+                .header("app_secret", app_secret)
+                .url(url)
+                .build()
+    } else {
+        //有logo
+        url = "https://www.mxnzp.com/api/qrcode/create/logo?content=${s}&size=400&type=0"
+
+        def logoBody = okhttp3.RequestBody.create(okhttp3.MediaType.parse("multipart/form-data"), file(logoPath))
+
+        okhttp3.RequestBody requestBody = new okhttp3.MultipartBody.Builder()
+                .setType(okhttp3.MultipartBody.FORM)
+                .addFormDataPart("logo_img", "codeLogo", logoBody)
+                .build()
+
+        request = new okhttp3.Request.Builder()
+                .post(requestBody)
+                .header("app_id", app_id)
+                .header("app_secret", app_secret)
+                .url(url)
+                .build()
+    }
+
+    return request
+}
+
 static def saveUrlToFile(client, url, file) {
     def request = new okhttp3.Request.Builder()
             .url(url)
@@ -320,14 +326,8 @@ static def getBuildTime() {
 }
 
 /**将内容打成二维码图片地址*/
-static def requestQrCodeUrl(app_id, app_secret, content) {
-    def url = "http://www.mxnzp.com/api/qrcode/create/single?content=${content}&size=400&type=0"
-
-    def request = new okhttp3.Request.Builder()
-            .header("app_id", app_id)
-            .header("app_secret", app_secret)
-            .url(url)
-            .build()
+def requestQrCodeUrl(app_id, app_secret, content, logoPath) {
+    def request = qrcodeRequest(content, logoPath, app_id, app_secret)
 
     //生成url对应的二维码
     //https://github.com/MZCretin/RollToolsApi#%E5%85%AB%E7%94%9F%E6%88%90%E4%BA%8C%E7%BB%B4%E7%A0%81
