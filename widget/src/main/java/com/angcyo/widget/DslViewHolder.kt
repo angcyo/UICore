@@ -11,7 +11,6 @@ import androidx.annotation.IdRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.angcyo.library.L
-import com.angcyo.library.utils.Reflect
 import com.angcyo.library.utils.getMember
 import com.angcyo.widget.base.ThrottleClickListener
 import java.lang.ref.WeakReference
@@ -280,7 +279,7 @@ open class DslViewHolder(
         return this
     }
 
-    private fun enable(view: View?, enable: Boolean, recursive: Boolean = true) {
+    fun enable(view: View?, enable: Boolean, recursive: Boolean = true) {
         if (view == null) {
             return
         }
@@ -397,7 +396,8 @@ open class DslViewHolder(
                 isChecked = check
             } else {
                 try {
-                    val mOnCheckedChangeListener = getMember(CompoundButton::class.java, "mOnCheckedChangeListener")
+                    val mOnCheckedChangeListener =
+                        getMember(CompoundButton::class.java, "mOnCheckedChangeListener")
                     setOnCheckedChangeListener(null)
                     isChecked = check
                     setOnCheckedChangeListener(mOnCheckedChangeListener as CompoundButton.OnCheckedChangeListener?)

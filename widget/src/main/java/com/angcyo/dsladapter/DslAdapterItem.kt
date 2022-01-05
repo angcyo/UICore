@@ -235,7 +235,10 @@ open class DslAdapterItem : LifecycleOwner {
 
     /**[itemEnable]*/
     open fun onSetItemEnable(enable: Boolean) {
-
+        itemViewHolder()?.let {
+            it.enable(it.itemView, enable, true)
+            _initItemListener(it)
+        }
     }
 
     /**唯一标识此item的值*/

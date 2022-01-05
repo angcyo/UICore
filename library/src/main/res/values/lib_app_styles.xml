@@ -21,6 +21,8 @@
     <color name="text_sub_color">#ACAFB7</color>
     <!--占位文本-->
     <color name="text_place_color">#aab1bd</color>
+    <!--禁用的文本颜色-->
+    <color name="text_disable_color">#aab1bd</color>
 
     <!--app边框颜色配置-->
     <color name="border_primary_color">#dcdde2</color>
