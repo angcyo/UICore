@@ -161,7 +161,7 @@ fun ActivityResultCaller.loading(
 
 /**在底部显示的加载对话框*/
 fun ActivityResultCaller.loadingBottom(
-    text: CharSequence? = "加载中...",
+    text: CharSequence? = "请稍等...",
     showCloseView: Boolean = true,
     onCancel: (dialog: Dialog) -> Unit = {}
 ): Dialog? {
@@ -181,8 +181,8 @@ fun ActivityResultCaller.loadingBottom(
 
 /**快速在[Fragment]显示底部loading, 通常用于包裹一个网络请求*/
 fun ActivityResultCaller.loadLoadingBottom(
-    tip: CharSequence? = "处理中...",
-    successTip: CharSequence? = "处理完成!",
+    tip: CharSequence? = "请稍等...",
+    successTip: CharSequence? = "请求完成!",
     showErrorToast: Boolean = false,
     showCloseView: Boolean = true,
     action: (cancel: AtomicBoolean, loadEnd: (data: Any?, error: Throwable?) -> Unit) -> Unit
