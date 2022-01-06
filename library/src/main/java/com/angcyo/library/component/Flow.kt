@@ -24,6 +24,9 @@ class Flow {
     /**结束的回调处理*/
     var onEndAction: (Throwable?) -> Unit = {}
 
+    /**异常后, 是否中断flow*/
+    var errorInterruptFlow: Boolean = false
+
     /**追加flow*/
     fun flow(action: FlowAction): Flow {
         actionList.add(action)
@@ -59,10 +62,13 @@ class Flow {
             //执行结束后的回调
             if (it != null) {
                 //异常, 中断处理
-                L.w("Flow 被中断:[${_startIndex}/${actionList.size}]")
-
                 onErrorAction(it)
-                onEndAction(it)
+                if (errorInterruptFlow) {
+                    L.w("Flow 被中断:[${_startIndex}/${actionList.size}]")
+                    onEndAction(it)
+                } else {
+                    _next()
+                }
             } else {
                 _next()
             }
