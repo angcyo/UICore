@@ -20,7 +20,6 @@ import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslGroupHelper
 import com.angcyo.widget.base.clickIt
 import com.angcyo.widget.base.loadDrawable
-import com.angcyo.widget.layout.RCoordinatorLayout
 import com.angcyo.widget.span.span
 import com.angcyo.widget.text.DslTextView
 import io.reactivex.disposables.Disposable
@@ -77,23 +76,34 @@ abstract class BaseFragment : AbsLifecycleFragment() {
         changeCoordinatorBehavior()
     }
 
+    /**当前[BaseFragment]是否有[CoordinatorLayout]布局*/
+    open fun haveCoordinatorLayout() = view is CoordinatorLayout
+
+    open fun closeCoordinatorLayout(close: Boolean = true) {
+        val view = view
+        if (view is CoordinatorLayout) {
+            view.isEnabled = close
+        }
+    }
+
     /**协调布局内容行为控制*/
     open fun changeCoordinatorBehavior() {
-        val isInTitleFragment = parentFragment is BaseTitleFragment
+        val parent = parentFragment
+        val isParentHaveCoordinator =
+            if (parent is BaseFragment) parent.haveCoordinatorLayout() else false
 
-        if (isInTitleFragment) {
-            val parentTitleFragment = parentFragment as BaseTitleFragment
-
+        if (isParentHaveCoordinator) {
             //关闭, parent/自身协调布局的特性
-            var closeParentCoordinator: Boolean = true
+            var closeParentCoordinator = true
             if (this is BaseTitleFragment) {
                 closeParentCoordinator = enableRefresh
             }
 
-            parentTitleFragment._vh.v<CoordinatorLayout>(R.id.lib_coordinator_wrap_layout)?.isEnabled =
-                !closeParentCoordinator
-            _vh.v<RCoordinatorLayout>(R.id.lib_coordinator_wrap_layout)?.isEnabled =
-                closeParentCoordinator
+            if (parent is BaseFragment) {
+                parent.closeCoordinatorLayout(!closeParentCoordinator)
+            }
+
+            closeCoordinatorLayout(closeParentCoordinator)
         }
     }
 
