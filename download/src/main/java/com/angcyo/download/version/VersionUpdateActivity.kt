@@ -170,6 +170,10 @@ fun Context.versionUpdate(
     if (updateBean == null) {
         return false
     }
+    if (isDebug()) {
+        //debug包, 允许取消
+        updateBean.versionForce = false
+    }
     if (debug) {
         dslAHelper {
             start(VersionUpdateActivity::class.java) {
