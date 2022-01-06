@@ -414,8 +414,33 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     }
 
     /**插入数据列表*/
-    fun insertItem(index: Int, item: DslAdapterItem) {
+    fun insertItem(index: Int, item: DslAdapterItem, checkExist: Boolean = false) {
+        if (checkExist && dataItems.contains(item)) {
+            return
+        }
         dataItems.add(_validIndex(dataItems, index), item)
+        _updateAdapterItems()
+        updateItemDepend()
+    }
+
+    fun insertItem(item: DslAdapterItem, index: Int = -1, checkExist: Boolean = true) {
+        insertItem(index, item, checkExist)
+    }
+
+    fun insertHeaderItem(item: DslAdapterItem, index: Int = -1, checkExist: Boolean = true) {
+        if (checkExist && headerItems.contains(item)) {
+            return
+        }
+        headerItems.add(_validIndex(headerItems, index), item)
+        _updateAdapterItems()
+        updateItemDepend()
+    }
+
+    fun insertFooterItem(item: DslAdapterItem, index: Int = -1, checkExist: Boolean = true) {
+        if (checkExist && footerItems.contains(item)) {
+            return
+        }
+        footerItems.add(_validIndex(footerItems, index), item)
         _updateAdapterItems()
         updateItemDepend()
     }
