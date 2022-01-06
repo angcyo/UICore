@@ -788,7 +788,7 @@ open class DslAdapterItem : LifecycleOwner {
             result = if (thisItemClassname == newItemClassName) {
                 if (itemViewType ?: itemLayoutId == newItem.itemViewType ?: newItem.itemLayoutId) {
                     //布局一样
-                    if (itemData == null && newItem.itemData == null && fromItem?.itemData == null) {
+                    if (itemData == null && newItem.itemData == null) {
                         //未设置itemData时, 默认认为item是一样的
                         true
                     } else {
@@ -822,7 +822,7 @@ open class DslAdapterItem : LifecycleOwner {
         when {
             itemUpdateFlag || newItem.itemUpdateFlag -> false
             itemChanging || newItem.itemChanging -> false
-            else -> if (itemData == null && newItem.itemData == null && fromItem?.itemData == null) {
+            else -> if (itemData == null && newItem.itemData == null) {
                 //未设置itemData时, 需要刷新界面的情况
                 this == newItem
             } else {
