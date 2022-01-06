@@ -160,10 +160,23 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
 }
 
 /**版本更新界面配置
- * 返回值表示是否有新版本*/
-fun Context.versionUpdate(updateBean: VersionUpdateBean?, force: Boolean = false): Boolean {
+ * 返回值表示是否有新版本
+ * [debug] 调试模式下, 强制弹出界面*/
+fun Context.versionUpdate(
+    updateBean: VersionUpdateBean?,
+    force: Boolean = false,
+    debug: Boolean = false
+): Boolean {
     if (updateBean == null) {
         return false
+    }
+    if (debug) {
+        dslAHelper {
+            start(VersionUpdateActivity::class.java) {
+                putData(updateBean)
+            }
+        }
+        return true
     }
     if (force) {
         isUpdateIgnore = false
@@ -195,7 +208,6 @@ fun Context.versionUpdate(updateBean: VersionUpdateBean?, force: Boolean = false
                         putData(updateBean)
                     }
                 }
-
                 return true
             }
         }

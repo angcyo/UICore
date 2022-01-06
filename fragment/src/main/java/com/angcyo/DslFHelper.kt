@@ -22,6 +22,7 @@ import com.angcyo.library.ex.havePermission
 import com.angcyo.library.ex.isDebug
 import com.angcyo.widget.base.animationOf
 import com.angcyo.widget.base.isVisible
+import kotlin.reflect.KClass
 
 /**
  *
@@ -130,9 +131,18 @@ class DslFHelper(
         }
     }
 
+    fun show(vararg kClass: KClass<out Fragment>, action: Fragment.() -> Unit = {}) {
+        val jClassList = kClass.toList().map { it.java }
+        show(jClassList, action)
+    }
+
     fun show(vararg fClass: Class<out Fragment>, action: Fragment.() -> Unit = {}) {
+        show(fClass.toList(), action)
+    }
+
+    fun show(clsList: List<Class<out Fragment>>, action: Fragment.() -> Unit = {}) {
         val list = mutableListOf<Fragment>()
-        for (cls in fClass) {
+        for (cls in clsList) {
             instantiateFragment(cls.classLoader!!, cls.name)?.run {
                 action()
                 list.add(this)
@@ -143,18 +153,18 @@ class DslFHelper(
 //                cls.name
 //            )
         }
-        show(list)
+        showList(list)
     }
 
     fun show(vararg fragment: Fragment, action: Fragment.() -> Unit = {}) {
-        show(fragment.toList(), action)
+        showList(fragment.toList(), action)
     }
 
     /**
      * 如果显示的[Fragment]已经[add], 那么此[Fragment]上面的其他[Fragment]都将被[remove]
      * 这一点, 有点类似[Activity]的[SINGLE_TASK]启动模式
      * */
-    fun show(fragmentList: List<Fragment>, action: Fragment.() -> Unit = {}) {
+    fun showList(fragmentList: List<Fragment>, action: Fragment.() -> Unit = {}) {
         fragmentList.forEach {
             it.action()
             if (!showFragmentList.contains(it)) {
@@ -172,19 +182,19 @@ class DslFHelper(
 
     /**优先使用已经存在的[Fragment]*/
     fun restore(vararg fClass: Class<out Fragment>, action: Fragment.() -> Unit = {}) {
-        show(fm.restore(*fClass), action)
+        showList(fm.restore(*fClass), action)
     }
 
     fun restore(vararg tag: String?, action: Fragment.() -> Unit = {}) {
-        show(fm.restore(*tag), action)
+        showList(fm.restore(*tag), action)
     }
 
     fun restores(vararg fragment: Fragment, action: Fragment.() -> Unit = {}) {
-        show(fm.restore(*fragment), action)
+        showList(fm.restore(*fragment), action)
     }
 
     fun <T : Fragment> restore(fragment: T, action: T.() -> Unit = {}) {
-        show(fm.restore(fragment).apply {
+        showList(fm.restore(fragment).apply {
             (this.first() as T).action()
         })
     }
