@@ -2,6 +2,7 @@ package com.angcyo.core.component
 
 import com.angcyo.core.lifecycle.LifecycleViewModel
 import com.angcyo.http.rx.doMain
+import com.angcyo.library.ex.nowTime
 import com.angcyo.viewmodel.vmDataNull
 
 /**
@@ -16,23 +17,37 @@ import com.angcyo.viewmodel.vmDataNull
 class DialogAlertModel : LifecycleViewModel() {
 
     /**等待弹出的对话框*/
-    val dialogList = mutableListOf<DialogBean>()
+    val dialogAlertList = mutableListOf<DialogAlertBean>()
 
     /**正在弹出的对话框*/
-    val dialogAlertData = vmDataNull<DialogBean>()
+    val dialogAlertData = vmDataNull<DialogAlertBean>()
+
+    //存储上一次指定类型通知的时间
+    val alertShakeMap = hashMapOf<String, Long>()
 
     /**添加一个弹窗到队列
      *
      * [checkExist] 是否检查相同类型的弹窗, 如果已存在. 则不追加*/
-    fun addDialog(type: String, data: Any? = null, checkExist: Boolean = true) {
+    fun addDialog(
+        type: String,
+        data: Any? = null,
+        shakeDelay: Long = 30 * 60 * 1000,
+        checkExist: Boolean = true
+    ) {
+        addDialogAlert(DialogAlertBean(type, data, shakeDelay = shakeDelay), checkExist)
+    }
+
+    fun addDialogAlert(bean: DialogAlertBean, checkExist: Boolean = true) {
+        val type = bean.type
+
         if (checkExist) {
-            val find = dialogList.find { it.type == type }
+            val find = dialogAlertList.find { it.type == type }
             if (find == null) {
                 //未找到
-                dialogList.add(DialogBean(type, data))
+                dialogAlertList.add(bean)
             }
         } else {
-            dialogList.add(DialogBean(type, data))
+            dialogAlertList.add(bean)
         }
 
         //开始弹窗
@@ -43,7 +58,7 @@ class DialogAlertModel : LifecycleViewModel() {
     fun doNextAlert() {
         val old = dialogAlertData.value
         old?.let {
-            dialogList.remove(it)
+            dialogAlertList.remove(it)
         }
         doMain {
             dialogAlertData.value = null
@@ -54,10 +69,28 @@ class DialogAlertModel : LifecycleViewModel() {
     /**检查是否要弹窗*/
     fun checkDialog() {
         if (dialogAlertData.value == null) {
-            if (dialogList.isNotEmpty()) {
-                dialogList.firstOrNull()?.let {
-                    //开始弹窗
-                    dialogAlertData.postValue(it)
+            if (dialogAlertList.isNotEmpty()) {
+                dialogAlertList.firstOrNull()?.let {
+                    var alert = false
+                    val nowTime = nowTime()
+                    if (it.shakeDelay > 0) {
+                        val lastTime = alertShakeMap[it.type] ?: 0
+                        if (nowTime - lastTime > it.shakeDelay) {
+                            //需要通知
+                            alert = true
+                        }
+                    } else {
+                        alert = true
+                    }
+
+                    if (alert) {
+                        //开始弹窗
+                        alertShakeMap[it.type] = nowTime
+                        dialogAlertData.postValue(it)
+                    } else {
+                        //下一个弹窗
+                        doNextAlert()
+                    }
                 }
             }
         }
@@ -65,12 +98,12 @@ class DialogAlertModel : LifecycleViewModel() {
 
     /**取消一种类型的弹窗提醒*/
     fun cancelAlert(type: String) {
-        dialogList.removeAll { it.type == type }
+        dialogAlertList.removeAll { it.type == type }
         cancelCurrent()
     }
 
     fun cancelAll() {
-        dialogList.clear()
+        dialogAlertList.clear()
         cancelCurrent()
     }
 
@@ -84,11 +117,13 @@ class DialogAlertModel : LifecycleViewModel() {
 }
 
 /**弹窗的数据*/
-data class DialogBean(
+data class DialogAlertBean(
     //弹窗类型
     val type: String,
     //弹窗数据
     val data: Any?,
     //是否是需要取消
     var isCancel: Boolean = false,
+    //距离上一次同类型的通知间隔时长大于此值时才通知, 否则忽略, 默认30分钟内只通知一次. 毫秒
+    var shakeDelay: Long = 30 * 60 * 1000,
 )
