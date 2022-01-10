@@ -4,6 +4,7 @@ import android.text.TextUtils
 import com.angcyo.library.L
 import com.angcyo.library.L.e
 import com.angcyo.library.L.i
+import dalvik.system.PathClassLoader
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
@@ -326,38 +327,78 @@ fun Any.eachField(each: (field: Field, value: Any?) -> Unit) {
 
 /**
  * 将一个对象的成员属性, 赋值给另一个对象, 按照key type 相同的原则匹配
- * @param ignoreNull 如果是null, 是否需要忽略
+ * [ignoreNull]  如果toValue是null, 是否需要忽略
+ * [jumpValue] 如果fromValue不是null, 是否跳过
+ * [appendValue] 如果目标是数组, 列表, Map, 是否追加数据
  */
-fun Any?.fillTo(to: Any?, ignoreNull: Boolean = false) {
+fun Any?.fillTo(
+    to: Any?,
+    ignoreNull: Boolean = false,
+    jumpValue: Boolean = false,
+    appendValue: Boolean = false
+) {
     val from = this
-    if (from == null || to == null) {
+    if (from == null || to == null || from == to) {
         return
     }
     val fromFields = from.javaClass.declaredFields
-    val toFields = to.javaClass.declaredFields
     for (f in fromFields) {
-        val name = f.name
-        for (t in toFields) {
-            val tName = t.name
-            if (name.equals(tName, ignoreCase = true)) {
-                try {
-                    f.isAccessible = true
-                    t.isAccessible = true
-                    val fromValue = f[from]
-                    if (ignoreNull && fromValue == null) {
-                    } else {
-                        val fGenericType = f.genericType
-                        val tGenericType = t.genericType
-                        if (fGenericType === tGenericType || f.type == t.type) {
-                            t[to] = fromValue
-                        } else {
-                            L.w("操作字段名:$tName 类型不匹配, From:$fGenericType To:$tGenericType")
+        val fName = f.name
+        val t = to.javaClass.getDeclaredField(fName) ?: continue
+        val tName = t.name
+        if (fName.equals(tName, ignoreCase = true)) {
+            L.i("开始赋值属性:${fName} ${f.type.name}")
+            try {
+                f.isAccessible = true
+                t.isAccessible = true
+                val fromValue = f[from]
+                val toValue = t[to]
+                if (t.isTransient()) {
+                    //跳过
+                    L.w("跳过字段名:$tName transient")
+                } else if (fromValue == toValue) {
+                    //两个值一样
+                    L.w("字段名:$tName fromValue == toValue $fromValue")
+                } else if (ignoreNull && fromValue == null) {
+                    //不将null值赋值给属性
+                } else {
+                    if (f.type == t.type) {
+                        val loader = f.type.classLoader
+                        if (loader is PathClassLoader) {
+                            //自定义的类型
+                            L.i("开始填充属性:${fName} ${f.type.name}")
+                            fromValue.fillTo(toValue, ignoreNull, jumpValue, appendValue)
+                        } else if (!appendValue || toValue == null) {
+                            //内部类, 基础类型
+                            if (jumpValue && toValue != null) {
+                                //跳过已经有值的属性
+                            } else {
+                                t[to] = fromValue
+                            }
+                        } else if (appendValue) {
+                            try {
+                                if (f.type.isSuperClassBy(List::class.java)) {
+                                    (t[to] as MutableList<*>).addAll(fromValue as Collection<Nothing>)
+                                } else if (f.type.isSuperClassBy(Map::class.java)) {
+                                    (t[to] as MutableMap<*, *>).putAll(fromValue as Map<Nothing, Nothing>)
+                                } else {
+                                    L.w("不支持的集合类型:${f.type.name}, 使用赋值语句")
+                                    if (jumpValue) {
+                                        //跳过已经有值的属性
+                                    } else {
+                                        t[to] = fromValue
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
                         }
+                    } else {
+                        L.w("操作字段名:$tName 类型不匹配, From:${f.type} To:${t.type}")
                     }
-                } catch (e: java.lang.Exception) {
-                    e.printStackTrace()
                 }
-                break
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
@@ -370,5 +411,7 @@ fun Any?.fillTo(to: Any?, ignoreNull: Boolean = false) {
 fun Class<*>.isSuperClassBy(subclass: Class<*>) = this.isAssignableFrom(subclass)
 
 fun Field.isPublic() = Modifier.isPublic(modifiers)
+
+fun Field.isTransient() = Modifier.isTransient(modifiers)
 
 fun Method.isPublic() = Modifier.isPublic(modifiers)
