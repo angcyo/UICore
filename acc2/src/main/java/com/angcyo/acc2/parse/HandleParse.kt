@@ -174,21 +174,32 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
             accParse.findParse.rootWindowNode()
         }
 
-        //待处理的元素节点集合
-        var handleNodeList = if (handleBean.noFind == true) {
-            rootNodeList
-        } else if (handleBean.findList != null) {
-            //需要明确重新指定
+        var jumpFind = false
+        //界面中不能包含指定的元素
+        if (handleBean.outFindList != null) {
             val findResult =
-                accParse.findParse.parse(controlContext, rootNodeList, handleBean.findList)
-            findResult.nodeList
-        } else {
-            originList
+                accParse.findParse.parse(controlContext, rootNodeList, handleBean.outFindList)
+            if (findResult.success) {
+                //包含了指定的元素, 则跳过正常的处理
+                jumpFind = true
+            }
+        }
+
+        //待处理的元素节点集合
+        var handleNodeList = when {
+            jumpFind -> emptyList()
+            handleBean.noFind == true -> rootNodeList
+            handleBean.findList != null -> { //需要明确重新指定
+                val findResult =
+                    accParse.findParse.parse(controlContext, rootNodeList, handleBean.findList)
+                findResult.nodeList
+            }
+            else -> originList
         }
 
         //noFindHandle
         val noFindHandleList = handleBean.noFindHandleList
-        if (handleBean.findList != null && handleNodeList.isNullOrEmpty() && !noFindHandleList.isNullOrEmpty()) {
+        if (!jumpFind && handleBean.findList != null && handleNodeList.isNullOrEmpty() && !noFindHandleList.isNullOrEmpty()) {
 
             val noFindHandleResult = parse(controlContext, originList, noFindHandleList)
             noFindHandleResult.copyTo(result)
@@ -293,7 +304,8 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
             if (handleDefaultAction) {
                 //默认的[actionList]处理
                 val targetActionList: List<String>? = caseBean?.actionList ?: handleBean.actionList
-                if (handleBean.findList != null) {
+
+                if (handleBean.findList != null || handleBean.outFindList != null) {
                     //需要重新选择
                     if (handleNodeList.isNullOrEmpty()) {
                         //重新选择后, 节点为空

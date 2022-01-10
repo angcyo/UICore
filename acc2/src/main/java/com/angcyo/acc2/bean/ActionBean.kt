@@ -80,6 +80,15 @@ data class ActionBean(
     /**是否激活[ActionBean], 未激活直接跳过执行*/
     var enable: Boolean = true,
 
+    /**只在目标指定版本code时生效*/
+    var enableByCodeList: List<Long>? = null,
+
+    /**目标指定版本code时禁用*/
+    var disableByCodeList: List<Long>? = null,
+
+    /**在此code之后(包含当前), 都禁用*/
+    var disableByCodeAfter: Long? = null,
+
     //记录原始的[enable]状态,[randomEnable]随机激活状态下使用
     @Transient
     var _enable: Boolean? = null,

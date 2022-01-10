@@ -10,6 +10,7 @@ import com.angcyo.acc2.parse.ConditionParse
 import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.library.L
 import com.angcyo.library.component.ThreadExecutor
+import com.angcyo.library.component.appBean
 import com.angcyo.library.ex.*
 import java.util.*
 import kotlin.random.Random.Default.nextBoolean
@@ -732,6 +733,47 @@ class AccSchedule(val accControl: AccControl) {
                 //调试模式下禁用[ActionBean]
                 return false
             } else if (action.enable || action._enable != null) {
+
+                val packageList = accParse.textParse.parsePackageName(
+                    null,
+                    accParse.findParse.windowBean()?.packageName
+                        ?: accControl._taskBean?.packageName
+                )
+
+                //有一个包, 验证通过即可
+                //enableByCodeList
+                if (!action.enableByCodeList.isNullOrEmpty()) {
+                    for (packageName in packageList) {
+                        val appBean = packageName.appBean()
+                        if (action.enableByCodeList?.contains(appBean?.versionCode) == true) {
+                            action.enable = true
+                            return action.enable
+                        }
+                    }
+                }
+
+                //disableByCodeList
+                if (!action.disableByCodeList.isNullOrEmpty()) {
+                    for (packageName in packageList) {
+                        val appBean = packageName.appBean()
+                        if (action.disableByCodeList?.contains(appBean?.versionCode) == true) {
+                            action.enable = false
+                            return action.enable
+                        }
+                    }
+                }
+
+                //disableByCodeAfter
+                if (action.disableByCodeAfter != null) {
+                    for (packageName in packageList) {
+                        val appBean = packageName.appBean()
+                        if (appBean?.versionCode ?: 0 >= action.disableByCodeAfter ?: 0) {
+                            action.enable = false
+                            return action.enable
+                        }
+                    }
+                }
+
                 var factor = 0
                 if (action.randomEnable) {
                     //需要处理随机激活
