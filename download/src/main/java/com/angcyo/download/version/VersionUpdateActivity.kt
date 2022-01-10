@@ -170,6 +170,12 @@ fun Context.versionUpdate(
     if (updateBean == null) {
         return false
     }
+    if (updateBean.debug) {
+        if (!isDebug()) {
+            //非调试模式下, 跳过更新处理
+            return false
+        }
+    }
     if (isDebug()) {
         //debug包, 允许取消
         updateBean.versionForce = false

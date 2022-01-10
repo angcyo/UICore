@@ -31,4 +31,6 @@ data class VersionUpdateBean(
 
     /**指定设备才能收到更新[androidId]*/
     var deviceList: List<String>? = null,
+    /**当前版本信息, 是否只在debug模式下生效*/
+    var debug: Boolean = false,
 )
