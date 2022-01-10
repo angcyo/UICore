@@ -327,6 +327,7 @@ fun Any.eachField(each: (field: Field, value: Any?) -> Unit) {
 
 /**
  * 将一个对象的成员属性, 赋值给另一个对象, 按照key type 相同的原则匹配
+ * [ignoreFiledNameList] 需要忽略的属性字段
  * [ignoreNull]  如果toValue是null, 是否需要忽略
  * [jumpValue] 如果fromValue不是null, 是否跳过
  * [appendValue] 如果目标是数组, 列表, Map, 是否追加数据
@@ -335,7 +336,8 @@ fun Any?.fillTo(
     to: Any?,
     ignoreNull: Boolean = false,
     jumpValue: Boolean = false,
-    appendValue: Boolean = false
+    appendValue: Boolean = false,
+    ignoreFiledNameList: List<String>? = null
 ) {
     val from = this
     if (from == null || to == null || from == to) {
@@ -346,7 +348,9 @@ fun Any?.fillTo(
         val fName = f.name
         val t = to.javaClass.getDeclaredField(fName) ?: continue
         val tName = t.name
-        if (fName.equals(tName, ignoreCase = true)) {
+        if (fName.equals(tName, ignoreCase = true) &&
+            ignoreFiledNameList?.contains(tName) != true
+        ) {
             L.i("开始赋值属性:${fName} ${f.type.name}")
             try {
                 f.isAccessible = true
@@ -358,7 +362,7 @@ fun Any?.fillTo(
                     L.w("跳过字段名:$tName transient")
                 } else if (fromValue == toValue) {
                     //两个值一样
-                    L.w("字段名:$tName fromValue == toValue $fromValue")
+                    L.w("字段名:$tName fromValue == toValue")
                 } else if (ignoreNull && fromValue == null) {
                     //不将null值赋值给属性
                 } else {
@@ -402,6 +406,7 @@ fun Any?.fillTo(
             }
         }
     }
+    L.i("填充完成:${from.javaClass.name} $to")
 }
 
 /**判断当前类, 是否是[subclass]的超类
