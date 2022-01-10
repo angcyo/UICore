@@ -11,6 +11,7 @@ import com.angcyo.dsladapter.isItemLastInAdapter
 import com.angcyo.library.app
 import com.angcyo.library.component.work.Trackers
 import com.angcyo.library.ex.*
+import com.angcyo.library.getAppString
 import com.angcyo.library.toast
 import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.Device
@@ -40,6 +41,10 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
         }
 
         fun deviceInfo(context: Context, config: DslSpan.() -> Unit = {}) = span {
+            val api = getAppString("base_api")
+            if (!api.isNullOrEmpty()) {
+                appendln(api)
+            }
             append(getWifiIP()).append(SPLIT).append(getMobileIP())
 
             val vpn = Device.vpnInfo()
