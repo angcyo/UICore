@@ -26,6 +26,9 @@ object Action {
     /**任务目标程序*/
     const val PACKAGE_TARGET = "target"
 
+    /**当前活跃的窗口*/
+    const val PACKAGE_ACTIVE = "active"
+
     /**文本解析时, 默认的值对应的key*/
     const val DEF = "def"
 
@@ -40,9 +43,6 @@ object Action {
      * "message:$[lastInput]"
      * */
     const val LAST_INPUT = "lastInput"
-
-    /**当前活跃的窗口*/
-    const val PACKAGE_ACTIVE = "active"
 
     /**坐标分隔符*/
     const val POINT_SPLIT = "~"
