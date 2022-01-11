@@ -126,12 +126,16 @@ open class BaseObserver<T> : AtomicReference<Disposable>(),
             onObserverEnd?.invoke(_lastData, _lastError)
         } catch (e: Exception) {
             e.printStackTrace()
-            onError.invoke(e)
-            onObserverEnd?.invoke(null, e)
-        }
-
-        if (autoDispose) {
-            dispose()
+            try {
+                onError.invoke(e)
+                onObserverEnd?.invoke(null, e)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        } finally {
+            if (autoDispose) {
+                dispose()
+            }
         }
     }
 

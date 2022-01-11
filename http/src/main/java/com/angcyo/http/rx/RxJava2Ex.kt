@@ -51,9 +51,12 @@ object Rx {
                 L.e("Rx异常[${rxErrorHandlerOnceList.size()}]:$error")
                 error.printStackTrace()
                 if (rxErrorHandlerOnceList.isNotEmpty()) {
-                    rxErrorHandlerOnceList.toList().forEach {
-                        rxErrorHandlerOnceList.remove(it)
-                        it.accept(error)
+                    try {
+                        rxErrorHandlerOnceList.toList().forEach {
+                            it.accept(error)
+                        }
+                    } finally {
+                        rxErrorHandlerOnceList.clear()
                     }
                 }
             }
