@@ -25,7 +25,10 @@ class Flow {
     var onEndAction: (Throwable?) -> Unit = {}
 
     /**异常后, 是否中断flow*/
-    var errorInterruptFlow: Boolean = false
+    var errorInterruptFlow: Boolean = true
+
+    /**最后一次的错误信息*/
+    var lastError: Throwable? = null
 
     /**追加flow*/
     fun flow(action: FlowAction): Flow {
@@ -58,9 +61,10 @@ class Flow {
     }
 
     private fun _startAction(action: FlowAction) {
-        action.invoke {
+        action.invoke(this) {
             //执行结束后的回调
             if (it != null) {
+                lastError = it
                 //异常, 中断处理
                 onErrorAction(it)
                 if (errorInterruptFlow) {
@@ -76,8 +80,11 @@ class Flow {
     }
 }
 
+/**调用此方法, 触发下一个*/
 typealias FlowChain = (error: Throwable?) -> Unit
-typealias FlowAction = (flowChain: FlowChain) -> Unit
+
+/**配置调用请求*/
+typealias FlowAction = Flow.(flowChain: FlowChain) -> Unit
 
 /**Dsl
  * 需要调用 [com.angcyo.library.component.Flow.start]开始flow*/
