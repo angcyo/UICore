@@ -82,6 +82,7 @@ class DslAccessibilityGesture {
             _gestureResultCallback = object : AccessibilityService.GestureResultCallback() {
                 override fun onCancelled(gestureDescription: GestureDescription?) {
                     super.onCancelled(gestureDescription)
+                    toastQQ("手势被取消")
                     L.d("手势取消:$gestureDescription ${gestureDescription?.strokeCount ?: 0}".apply {
                         //AutoParseInterceptor.log(this)
                     })
