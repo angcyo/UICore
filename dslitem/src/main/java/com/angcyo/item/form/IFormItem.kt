@@ -84,6 +84,13 @@ var IFormItem.formObtain: (params: DslFormParams, end: (error: Throwable?) -> Un
         itemFormConfig.formObtain = value
     }
 
+/**需要调用[end]结束操作*/
+var IFormItem.formCheck: (params: DslFormParams, end: (error: Throwable?) -> Unit) -> Unit
+    get() = itemFormConfig.formCheck
+    set(value) {
+        itemFormConfig.formCheck = value
+    }
+
 /**
  * 表单[IFormItem]配置信息
  * Email:angcyo@126.com
@@ -140,43 +147,53 @@ class FormItemConfig : IDslItemConfig {
      * [end] 异步获取数据结束之后的回调*/
     var formObtain: (params: DslFormParams, end: (error: Throwable?) -> Unit) -> Unit =
         { params, end ->
-            if (formIgnoreObtain) {
+            defaultObtain(params, end)
+        }
+
+    /**默认的数据获取*/
+    fun defaultObtain(params: DslFormParams, end: (error: Throwable?) -> Unit) {
+        if (formIgnoreObtain) {
+            end(null)
+        } else {
+            val key = formKey
+            if (key.isNullOrEmpty()) {
                 end(null)
             } else {
-                val key = formKey
-                if (key.isNullOrEmpty()) {
+                val formValue = onGetFormValue(params)
+                if (formValue != null) {
+                    params.put(key, formValue)
                     end(null)
                 } else {
-                    val formValue = onGetFormValue(params)
-                    if (formValue != null) {
-                        params.put(key, formValue)
-                        end(null)
-                    } else {
-                        L.w("跳过空值formKey[$key]")
-                        end(null)
-                    }
+                    L.w("跳过空值formKey[$key]")
+                    end(null)
                 }
             }
         }
+    }
 
     /**获取form item数据之前, 进行的检查. 返回false, 会终止数据获取, 并且提示错误*/
     var formCheck: (params: DslFormParams, end: (error: Throwable?) -> Unit) -> Unit =
         { params, end ->
-            if (formIgnoreCheck) {
-                end(null)
-            } else if (formRequired) {
-                val value = onGetFormValue(params)
-                if (value == null) {
-                    end(IllegalArgumentException(formErrorTip))
-                } else if (value is String && value.isEmpty()) {
-                    end(IllegalArgumentException(formErrorTip))
-                } else if (value is Collection<*> && value.isEmpty()) {
-                    end(IllegalArgumentException(formErrorTip))
-                } else {
-                    end(null)
-                }
+            defaultCheck(params, end)
+        }
+
+    /**默认的验证数据校验*/
+    fun defaultCheck(params: DslFormParams, end: (error: Throwable?) -> Unit) {
+        if (formIgnoreCheck) {
+            end(null)
+        } else if (formRequired) {
+            val value = onGetFormValue(params)
+            if (value == null) {
+                end(IllegalArgumentException(formErrorTip))
+            } else if (value is String && value.isEmpty()) {
+                end(IllegalArgumentException(formErrorTip))
+            } else if (value is Collection<*> && value.isEmpty()) {
+                end(IllegalArgumentException(formErrorTip))
             } else {
                 end(null)
             }
+        } else {
+            end(null)
         }
+    }
 }
