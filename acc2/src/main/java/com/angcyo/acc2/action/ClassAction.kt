@@ -22,11 +22,23 @@ class ClassAction : BaseAction() {
         return action.cmd(Action.ACTION_CLS)
     }
 
-    override fun runAction(control: AccControl, controlContext: ControlContext, nodeList: List<AccessibilityNodeInfoCompat>?, action: String): HandleResult {
+    override fun runAction(
+        control: AccControl,
+        controlContext: ControlContext,
+        nodeList: List<AccessibilityNodeInfoCompat>?,
+        action: String
+    ): HandleResult {
         try {
             val clsName = action.subEnd(Action.ARG_SPLIT)!!
             val cls = Class.forName(clsName)
             val obj = cls.newInstance()
+
+            control.controlListenerList.forEach {
+                it.onCreateDynamicObj(obj)
+            }
+            control._taskBean?._listenerObjList?.forEach {
+                it.onCreateDynamicObj(obj)
+            }
 
             return if (obj is IHandleActionDynamic) {
                 obj.runAction(control, controlContext, nodeList, action).apply {

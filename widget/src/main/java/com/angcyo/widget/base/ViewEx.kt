@@ -24,6 +24,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.angcyo.component.shot
 import com.angcyo.dsladapter.getViewRect
+import com.angcyo.library._screenHeight
+import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.getMember
 import com.angcyo.widget.DslViewHolder
@@ -349,6 +351,22 @@ fun View?.mH(def: Int = 0): Int {
 
 fun View?.mW(def: Int = 0): Int {
     return this?.measuredWidth ?: def
+}
+
+fun View.mWOrMeasure(): Int {
+    if (measuredWidth > 0) {
+        return measuredWidth
+    }
+    measure(atMost(_screenWidth), atMost(_screenHeight))
+    return measuredWidth
+}
+
+fun View.mHOrMeasure(): Int {
+    if (measuredHeight > 0) {
+        return measuredHeight
+    }
+    measure(atMost(_screenWidth), atMost(_screenHeight))
+    return measuredHeight
 }
 
 fun View?.l(def: Int = 0): Int {

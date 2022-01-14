@@ -60,17 +60,25 @@ class AccControl : Runnable {
          * [ITaskDynamic]
          * [IInputProvider]
          * */
-        fun initTaskDynamic(taskBean: TaskBean) {
+        fun initTaskDynamic(control: AccControl?, taskBean: TaskBean) {
             //ITaskDynamic
-            val listenerOjbList = mutableListOf<ITaskDynamic>()
+            val listenerObjList = mutableListOf<ITaskDynamic>()
             taskBean.listenerClsList?.forEach {
                 newInstance(it, ITaskDynamic::class.java)?.let { obj ->
-                    listenerOjbList.add(obj)
+                    listenerObjList.add(obj)
                 }
             }
 
-            if (listenerOjbList.isNotEmpty()) {
-                taskBean._listenerObjList = listenerOjbList
+            if (listenerObjList.isNotEmpty()) {
+                taskBean._listenerObjList = listenerObjList
+                listenerObjList.forEach { obj ->
+                    control?.controlListenerList?.forEach {
+                        it.onCreateDynamicObj(obj)
+                    }
+                    listenerObjList.forEach {
+                        it.onCreateDynamicObj(obj)
+                    }
+                }
             }
 
             //IInputProvider
@@ -83,22 +91,31 @@ class AccControl : Runnable {
 
             if (inputProviderList.isNotEmpty()) {
                 taskBean._inputProviderObjList = inputProviderList
+
+                inputProviderList.forEach { obj ->
+                    control?.controlListenerList?.forEach {
+                        it.onCreateDynamicObj(obj)
+                    }
+                    listenerObjList.forEach {
+                        it.onCreateDynamicObj(obj)
+                    }
+                }
             }
         }
 
         /**一次性创建所有[com.angcyo.acc2.dynamic.IHandleDynamic]*/
-        fun initAllHandleCls(taskBean: TaskBean) {
+        fun initAllHandleCls(control: AccControl?, taskBean: TaskBean) {
             taskBean.apply {
                 actionList?.forEach { actionBean ->
                     actionBean.check?.handle?.forEach { handleBean ->
-                        initHandleDynamic(handleBean)
+                        initHandleDynamic(control, handleBean)
                     }
                 }
             }
         }
 
         /**[IHandleDynamic]*/
-        fun initHandleDynamic(handleBean: HandleBean) {
+        fun initHandleDynamic(control: AccControl?, handleBean: HandleBean) {
             val clsList = handleBean.handleClsList
             if (clsList.isNullOrEmpty()) {
                 handleBean._handleObjList = null
@@ -113,6 +130,15 @@ class AccControl : Runnable {
 
                     if (ojbList.isNotEmpty()) {
                         handleBean._handleObjList = ojbList
+
+                        ojbList.forEach { obj ->
+                            control?.controlListenerList?.forEach {
+                                it.onCreateDynamicObj(obj)
+                            }
+                            control?._taskBean?._listenerObjList?.forEach {
+                                it.onCreateDynamicObj(obj)
+                            }
+                        }
                     }
                 }
             }
@@ -133,6 +159,18 @@ class AccControl : Runnable {
 
     /**日志输出*/
     var accPrint = AccPrint()
+
+    fun addControlListener(listener: ControlListener) {
+        if (!controlListenerList.contains(listener)) {
+            controlListenerList.add(listener)
+        }
+    }
+
+    fun removeControlListener(listener: ControlListener) {
+        if (controlListenerList.contains(listener)) {
+            controlListenerList.remove(listener)
+        }
+    }
 
     //</editor-fold desc="组件">
 

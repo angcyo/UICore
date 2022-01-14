@@ -15,12 +15,19 @@ import kotlin.random.Random.Default.nextInt
  */
 abstract class BaseTouchAction : BaseAction() {
 
-    fun getGestureStartTime() = DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME
+    var gestureStartTime: Long? = DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME
+
+    var gestureDuration: Long? = DslAccessibilityGesture.DEFAULT_GESTURE_CLICK_DURATION
 
     fun click(control: AccControl, x: Float, y: Float): Boolean {
         val gesture = control.accService()?.gesture
         control.accPrint.touch(x, y, null, null)
-        return gesture?.click(x, y, getGestureStartTime()) == true
+        return gesture?.click(
+            x,
+            y,
+            gestureStartTime ?: DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME,
+            gestureDuration ?: DslAccessibilityGesture.DEFAULT_GESTURE_CLICK_DURATION
+        ) == true
     }
 
     fun double(
@@ -30,7 +37,12 @@ abstract class BaseTouchAction : BaseAction() {
     ): Boolean {
         val gesture = control.accService()?.gesture
         control.accPrint.touch(x, y, null, null)
-        return gesture?.double(x, y, getGestureStartTime()) == true
+        return gesture?.double(
+            x,
+            y,
+            gestureStartTime ?: DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME,
+            gestureDuration ?: DslAccessibilityGesture.DEFAULT_GESTURE_DOUBLE_DURATION
+        ) == true
     }
 
     fun move(
@@ -45,7 +57,8 @@ abstract class BaseTouchAction : BaseAction() {
             y1,
             x2,
             y2,
-            getGestureStartTime()
+            gestureStartTime ?: DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME,
+            gestureDuration ?: DslAccessibilityGesture.DEFAULT_GESTURE_MOVE_DURATION
         ) == true
     }
 
@@ -61,7 +74,8 @@ abstract class BaseTouchAction : BaseAction() {
             y1,
             x2,
             y2,
-            getGestureStartTime()
+            gestureStartTime ?: DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME,
+            gestureDuration ?: DslAccessibilityGesture.DEFAULT_GESTURE_FLING_DURATION
         ) == true
     }
 

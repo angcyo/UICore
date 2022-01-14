@@ -9,7 +9,10 @@ import com.angcyo.drawable.isLeft
 import com.angcyo.drawable.isTop
 import com.angcyo.ilayer.ILayer
 import com.angcyo.library.L
+import com.angcyo.library._screenHeight
+import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.className
+import com.angcyo.tablayout.clamp
 import com.angcyo.widget.base.frameParams
 import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.mW
@@ -36,31 +39,73 @@ open class ViewContainer(val parent: ViewGroup) : BaseContainer(parent.context) 
     override fun onDragBy(layer: ILayer, dx: Float, dy: Float, end: Boolean) {
         val rootView = layer._rootView ?: return
 
+        val gravity = if (parent is FrameLayout) {
+            rootView.layoutParams.frameParams()!!.gravity
+        } else {
+            Gravity.LEFT or Gravity.TOP
+        }
+
         if (end) {
             //保存位置
-            val offsetPosition = parseLayerPosition(
-                layer,
-                parent.mW(),
-                parent.mH(),
-                rootView.left - dx,
-                rootView.top - dy
-            )
+            val left = rootView.left - dx
+            val top = rootView.top - dy
+
+            val offsetPosition = if (dragWithGravity) {
+                parseLayerPosition(
+                    layer,
+                    _screenWidth,
+                    _screenHeight,
+                    left,
+                    top
+                )
+            } else {
+                val l: Float
+                val t: Float
+                if (defaultOffsetPosition.reCenter) {
+                    l = left + layer._rootView.mW() / 2
+                    t = top + layer._rootView.mH() / 2
+                } else {
+                    l = left
+                    t = top
+                }
+
+                OffsetPosition(
+                    gravity,
+                    clamp(l / _screenWidth, 0f, 1f),
+                    clamp(t / _screenHeight, 0f, 1f)
+                )
+            }
+            offsetPosition.reCenter = defaultOffsetPosition.reCenter
+
             layer.dragContainer?.onDragEnd(this, layer, offsetPosition) ?: update(
                 layer,
                 offsetPosition
             )
+
+            offsetPosition.reCenter = defaultOffsetPosition.reCenter
+            onDragAction?.invoke(layer, offsetPosition, true)
         } else {
-            val left = (rootView.left - dx).toInt()
-            val top = (rootView.top - dy).toInt()
+            var left = (rootView.left - dx).toInt()
+            var top = (rootView.top - dy).toInt()
             rootView.layout(left, top, left + rootView.mW(), top + rootView.mH())
 
-            val gravity = if (parent is FrameLayout) {
-                rootView.layoutParams.frameParams()!!.gravity
-            } else {
-                Gravity.LEFT or Gravity.TOP
+            layer.dragContainer?.onDragMoveTo(this, layer, gravity, left, top)
+
+            if (defaultOffsetPosition.reCenter) {
+                left += layer._rootView.mW() / 2
+                top += layer._rootView.mH() / 2
             }
 
-            layer.dragContainer?.onDragMoveTo(this, layer, gravity, left, top)
+            onDragAction?.invoke(
+                layer,
+                OffsetPosition(
+                    gravity,
+                    left * 1f / getContainerRect().width(),
+                    top * 1f / getContainerRect().height(),
+                    defaultOffsetPosition.reCenter
+                ),
+                false
+            )
         }
     }
 

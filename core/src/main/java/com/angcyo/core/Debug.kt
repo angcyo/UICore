@@ -14,7 +14,7 @@ import com.angcyo.library.utils.FileUtils
 import com.angcyo.library.utils.logFileName
 
 /**
- *
+ * 输入框调试模式指令
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2021/09/30

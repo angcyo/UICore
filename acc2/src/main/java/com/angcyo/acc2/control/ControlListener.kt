@@ -125,4 +125,15 @@ interface ControlListener {
     ) {
 
     }
+
+    /**当创建动态class时, 的回调
+     * [com.angcyo.acc2.dynamic.IHandleActionDynamic]
+     * [com.angcyo.acc2.dynamic.IHandleDynamic]
+     * [com.angcyo.acc2.dynamic.IInputProvider]
+     * [com.angcyo.acc2.dynamic.ITaskDynamic]
+     * */
+    fun onCreateDynamicObj(obj: Any) {
+
+    }
+
 }

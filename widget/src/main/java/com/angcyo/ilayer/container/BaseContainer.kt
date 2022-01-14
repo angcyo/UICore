@@ -31,6 +31,9 @@ abstract class BaseContainer(val context: Context) : IContainer {
 
     var layerPosition: OffsetPosition? = null
 
+    /**拖拽结束后, 根据left, top位置自动调整Gravity*/
+    var dragWithGravity: Boolean = true
+
     override fun add(layer: ILayer) {
         if (layer.iLayerLayoutId == -1) {
             L.e("请配置[iLayerLayoutId]")
@@ -96,9 +99,12 @@ abstract class BaseContainer(val context: Context) : IContainer {
     /**移除[rootView]*/
     abstract fun onRemoveRootView(layer: ILayer, rootView: View)
 
+    /**拖拽回调*/
+    var onDragAction: ((layer: ILayer, position: OffsetPosition, end: Boolean) -> Unit)? = null
+
     /**[ILayer]位置拖动处理*/
     open fun onDragBy(layer: ILayer, dx: Float, dy: Float, end: Boolean) {
-
+        //onDragAction
     }
 
     @CallSuper
@@ -116,7 +122,7 @@ abstract class BaseContainer(val context: Context) : IContainer {
         maxWidth: Int,
         maxHeight: Int,
         left: Float,
-        top: Float
+        top: Float,
     ): OffsetPosition {
         val hGravity: Int
         val offsetX: Float

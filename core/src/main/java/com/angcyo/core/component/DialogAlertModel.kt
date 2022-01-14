@@ -70,12 +70,12 @@ class DialogAlertModel : LifecycleViewModel() {
     fun checkDialog() {
         if (dialogAlertData.value == null) {
             if (dialogAlertList.isNotEmpty()) {
-                dialogAlertList.firstOrNull()?.let {
+                dialogAlertList.firstOrNull()?.let { alertBean ->
                     var alert = false
                     val nowTime = nowTime()
-                    if (it.shakeDelay > 0) {
-                        val lastTime = alertShakeMap[it.type] ?: 0
-                        if (nowTime - lastTime > it.shakeDelay) {
+                    if (alertBean.shakeDelay > 0) {
+                        val lastTime = alertShakeMap[alertBean.type] ?: 0
+                        if (nowTime - lastTime > alertBean.shakeDelay) {
                             //需要通知
                             alert = true
                         }
@@ -84,11 +84,12 @@ class DialogAlertModel : LifecycleViewModel() {
                     }
 
                     if (alert) {
-                        //开始弹窗
-                        alertShakeMap[it.type] = nowTime
-                        dialogAlertData.postValue(it)
+                        //需要弹窗, 开始弹窗
+                        alertShakeMap[alertBean.type] = nowTime
+                        dialogAlertData.postValue(alertBean)
                     } else {
                         //下一个弹窗
+                        dialogAlertList.remove(alertBean) //不需要弹窗, 直接移除
                         doNextAlert()
                     }
                 }

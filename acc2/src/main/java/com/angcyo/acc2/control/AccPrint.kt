@@ -70,7 +70,9 @@ open class AccPrint(val accControl: AccControl? = null) {
 
     }
 
-    /**手势操作*/
+    /**手势操作
+     * [com.angcyo.acc2.app.AppAccPrint.touch]
+     * [com.angcyo.acc2.app.component.AccTouchTipLayer.showTouch]*/
     open fun touch(x1: Float, y1: Float, x2: Float?, y2: Float?) {
 
     }

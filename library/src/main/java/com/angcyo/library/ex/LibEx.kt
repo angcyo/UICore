@@ -5,6 +5,7 @@ import android.graphics.Point
 import android.graphics.PointF
 import android.view.View
 import android.widget.TextView
+import androidx.collection.SimpleArrayMap
 import com.angcyo.library.BuildConfig
 import com.angcyo.library.component.ThreadExecutor.onMain
 import com.angcyo.library.ex.LibEx.isDebugTypeVal
@@ -401,4 +402,14 @@ fun <T> MutableList<T>.replace(element: T, newElement: T?): Boolean {
         }
     }
     return false
+}
+
+/**枚举[SimpleArrayMap]*/
+fun <K, V> SimpleArrayMap<K, V>.each(action: (key: K, value: V?) -> Unit) {
+    val size = size()
+    for (i in 0 until size) {
+        val k = keyAt(i)
+        val v = get(k)
+        action(k, v)
+    }
 }
