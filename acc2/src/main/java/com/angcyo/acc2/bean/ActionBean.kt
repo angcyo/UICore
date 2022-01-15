@@ -68,6 +68,9 @@ data class ActionBean(
      * */
     var limitRunTime: Long = -1,
 
+    /**执行成功之后, 清空运行次数*/
+    var clearRunCountOnSuccess: Boolean = false,
+
     //</editor-fold desc="配置">
 
     /**在那个[android.view.accessibility.AccessibilityWindowInfo]中获取节点

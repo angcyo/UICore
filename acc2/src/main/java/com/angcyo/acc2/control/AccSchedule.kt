@@ -618,10 +618,14 @@ class AccSchedule(val accControl: AccControl) {
                         action = actionBean
                     }, actionBean, otherActionList, isPrimaryAction)
 
-                    if (result.success) {
+                    if (result.success || result.forceSuccess) {
+                        if (actionBean.clearRunCountOnSuccess) {
+                            clearRunCount(actionBean.actionId)
+                        }
+
                         //只有成功才打印日志, 否则日志太多
                         controlContext.log {
-                            append("执行结果:${result.success}")
+                            append("执行结果:${result.success} :${result.forceSuccess}")
                         }
                     }
 
