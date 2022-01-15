@@ -55,8 +55,8 @@ ext.qiniuConfig = [
 
         //如果需要将url转成二维码, 参考以下链接, 注册app_id和app_secret
         //https://github.com/MZCretin/RollToolsApi#%E8%A7%A3%E9%94%81%E6%96%B0%E6%96%B9%E5%BC%8F
-        "app_id"           : "rhqkxdsnjnrpp3xr",
-        "app_secret"       : "Rlh4c1duMDZ4YnZrRks4dU55c1NEQT09",
+        "qr_api_app_id"           : "",
+        "qr_api_app_secret"       : "",
 
         //用来保存上传成功后, APK的下载地址
         "downloadUrl"      : "",
@@ -75,7 +75,7 @@ buildscript {
         classpath 'com.qiniu:qiniu-java-sdk:7.8.0'
         classpath 'com.squareup.okhttp3:okhttp:3.14.4'
         //https://jcenter.bintray.com/com/google/code/gson/gson/
-        classpath "com.google.code.gson:gson:2.8.6"
+        classpath "com.google.code.gson:gson:2.8.8"
     }
 }
 
@@ -94,8 +94,8 @@ task _qiniuUpload() {
         def qiniuDeleteBefore = project.hasProperty("qiniuDeleteBefore") ? project.ext.qiniuDeleteBefore : aliyunOssConfig.qiniuDeleteBefore
         def deleteBefore = qiniuDeleteBefore == "true"
 
-        def app_id = project.hasProperty("app_id") ? project.ext.app_id : qiniuConfig.app_id
-        def app_secret = project.hasProperty("app_id") ? project.ext.app_secret : qiniuConfig.app_secret
+        def app_id = project.hasProperty("qr_api_app_id") ? project.ext.qr_api_app_id : qiniuConfig.qr_api_app_id
+        def app_secret = project.hasProperty("qr_api_app_secret") ? project.ext.qr_api_app_secret : qiniuConfig.qr_api_app_secret
         def codeLogo = project.hasProperty("codeLogo") ? project.ext.codeLogo : null
 
         def apkPath = null

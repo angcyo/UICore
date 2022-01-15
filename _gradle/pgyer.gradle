@@ -20,33 +20,39 @@
  * mac: '/Users/用户名/.gradle/gradle.properties"'
  * 文件中加入配置:
  * ```
- * api_key=xxx
- * user_key=xxx
+ * pgyer_api_key=xxx
+ * pgyer_user_key=xxx
  * ```
  * 也可以在以下配置.(优先读取`gradle.properties`文件中的配置)
  * */
 ext.pgyerConfig = [
         //需要上传的APK,相对路径/绝对路径 (必填)
-        "pgyerApkPath"  : "",
+        "pgyerApkPath"     : "",
 
         //请求的api地址
-        "pgyerUrl"      : "https://www.pgyer.com/apiv2/app/upload",
+        //https://www.pgyer.com/doc/view/api#uploadApp
+        "pgyerUrl"         : "https://www.pgyer.com/apiv2/app/upload",
 
         //官网, 用于拼接短地址 必须/结尾.
-        "pgyer"         : "https://www.pgyer.com/",
+        "pgyer"            : "https://www.pgyer.com/",
 
-        "pgyer_api_key" : "",
-        "pgyer_user_key": ""
+        "pgyer_api_key"    : "",
+        "pgyer_user_key"   : "",
+
+        //如果需要将url转成二维码, 参考以下链接, 注册app_id和app_secret
+        //https://github.com/MZCretin/RollToolsApi#%E8%A7%A3%E9%94%81%E6%96%B0%E6%96%B9%E5%BC%8F
+        "qr_api_app_id"    : "",
+        "qr_api_app_secret": "",
 ]
 
 //其他参数配置
 def paramsConfig = [
-        //(必填)应用安装方式，值为(2,3)。2：密码安装，3：邀请安装
-        "buildInstallType"      : "2",
-        //(必填) 设置App安装密码
-        "buildPassword"         : "0000",
-        //(选填) 版本更新描述，请传空字符串，或不传。
-        "buildUpdateDescription": "安装密码:0000",
+        /*//(选填)应用安装方式，值为(1,2,3，默认为1 公开安装)。1：公开安装，2：密码安装，3：邀请安装
+        "buildInstallType"      : "1",
+        //(选填) 设置App安装密码，密码为空时默认公开安装
+        "buildPassword"         : "0000",*/
+        //(选填) 版本更新描述，请传空字符串，或不传。 //安装密码:0000
+        "buildUpdateDescription": "1.修复已知问题",
         //(选填) 应用名称
         "buildName"             : "",
 ]
@@ -59,9 +65,9 @@ buildscript {
     }
     dependencies {
         //https://jcenter.bintray.com/com/squareup/okhttp3/
-        classpath "com.squareup.okhttp3:okhttp:4.9.1"
+        classpath "com.squareup.okhttp3:okhttp:4.9.2"
         //https://jcenter.bintray.com/com/google/code/gson/gson/
-        classpath "com.google.code.gson:gson:2.8.6"
+        classpath "com.google.code.gson:gson:2.8.8"
     }
 }
 
@@ -74,7 +80,17 @@ _pgyerUpload.doFirst {
     def api_key = project.hasProperty("pgyer_api_key") ? project.ext.pgyer_api_key : pgyerConfig.pgyer_api_key
     def user_key = project.hasProperty("pgyer_user_key") ? project.ext.pgyer_user_key : pgyerConfig.pgyer_user_key
 
+    def app_id = project.hasProperty("qr_api_app_id") ? project.ext.qr_api_app_id : qiniuConfig.qr_api_app_id
+    def app_secret = project.hasProperty("qr_api_app_secret") ? project.ext.qr_api_app_secret : qiniuConfig.qr_api_app_secret
+    def codeLogo = project.hasProperty("codeLogo") ? project.ext.codeLogo : null
+
     def apkPath = project.hasProperty("pgyerApkPath") ? project.ext.pgyerApkPath : pgyerConfig.pgyerApkPath
+
+    if (project.hasProperty("pgyerApkPath")) {
+        apkPath = project.ext.pgyerApkPath
+    } else {
+        apkPath = findApkFile()
+    }
     if (apkPath == null || apkPath.isEmpty()) {
         throw new IllegalStateException("请在[gradle.properties]文件中指定需要上传的文件路径[pgyerApkPath=xxx]")
     }
@@ -83,6 +99,8 @@ _pgyerUpload.doFirst {
 
     allPath.eachWithIndex { path, index ->
         def apkFile = new File(path)
+        def fileKey = apkFile.name /*+ new Date().format("_yyyy-MM-dd_HH-mm-ss")*/
+
         if (!apkFile.exists()) {
             System.err.println("需要上传的文件不存在:" + apkFile.getAbsolutePath())
         } else {
@@ -127,8 +145,113 @@ _pgyerUpload.doFirst {
             response.close()
 
             println "蒲公英上传结果:" + json
-            System.err.println "蒲公英安装地址${path}->" + pgyerConfig.pgyer + new com.google.gson.Gson().fromJson(json, Map.class).data.buildShortcutUrl
+
+            def url = pgyerConfig.pgyer + new com.google.gson.Gson().fromJson(json, Map.class).data.buildShortcutUrl
+            System.err.println "蒲公英安装地址${path}->" + url
+
+            if (!app_id.isEmpty() && !app_secret.isEmpty()) {
+
+                if (codeLogo == null || codeLogo.isEmpty()) {
+                    codeLogo = getLogoPath(fileKey)
+                }
+
+                def qrCodeUrl = requestQrCodeUrl(app_id, app_secret, url, codeLogo)
+
+                System.err.println ''
+                System.err.println "二维码地址->$qrCodeUrl"
+            }
         }
     }
 }
 
+/**查找apk文件路径*/
+def findApkFile() {
+    def path = ".apk"
+    def folder = file(path)
+    def result = null
+
+    def files = folder.listFiles()
+    files?.each {
+        if (it.isFile()) {
+            if (it.getName().endsWith(".apk")) {
+                if (result == null) {
+                    result = it.absolutePath
+                } else {
+                    result = result + ";" + it.absolutePath
+                }
+            }
+        }
+    }
+
+    return result
+}
+
+/**根据文件名, 获取png目录的logo图片
+ * [png/logo.png] 正式包logo
+ * [png/logo_test.png] 测试式包logo
+ * */
+def getLogoPath(apkFileName) {
+    def path
+    if (apkFileName.contains("apk_release")) {
+        path = "png/logo.png"
+    } else {
+        path = "png/logo_test.png"
+    }
+    if (file(path).exists()) {
+        return path
+    }
+    return null
+}
+
+/**将内容打成二维码图片地址*/
+def requestQrCodeUrl(app_id, app_secret, content, logoPath) {
+    def request = qrcodeRequest(content, logoPath, app_id, app_secret)
+
+    //生成url对应的二维码
+    //https://github.com/MZCretin/RollToolsApi#%E5%85%AB%E7%94%9F%E6%88%90%E4%BA%8C%E7%BB%B4%E7%A0%81
+    def client = new okhttp3.OkHttpClient()
+    def json = client.newCall(request).execute().body().string()
+    def map = new com.google.gson.Gson().fromJson(json, Map.class)
+    println "接口返回:${json}"
+
+    def qrCodeUrl = map["data"]["qrCodeUrl"]
+    return qrCodeUrl
+}
+
+/**创建一个生成二维码的请求*/
+def qrcodeRequest(content, logoPath, app_id, app_secret) {
+    def s = URLEncoder.encode(content, "UTF-8")
+
+    def url = ""
+    def request = null
+
+    if (logoPath == null || logoPath.isEmpty()) {
+        //无logo
+        url = "http://www.mxnzp.com/api/qrcode/create/single?content=${s}&size=400&type=0"
+
+        request = new okhttp3.Request.Builder()
+                .header("app_id", app_id)
+                .header("app_secret", app_secret)
+                .url(url)
+                .build()
+    } else {
+        //有logo
+        url = "https://www.mxnzp.com/api/qrcode/create/logo?content=${s}&size=400&type=0"
+
+        def logoBody = okhttp3.RequestBody.create(okhttp3.MediaType.parse("multipart/form-data"), file(logoPath))
+
+        okhttp3.RequestBody requestBody = new okhttp3.MultipartBody.Builder()
+                .setType(okhttp3.MultipartBody.FORM)
+                .addFormDataPart("logo_img", "codeLogo", logoBody)
+                .build()
+
+        request = new okhttp3.Request.Builder()
+                .post(requestBody)
+                .header("app_id", app_id)
+                .header("app_secret", app_secret)
+                .url(url)
+                .build()
+    }
+
+    return request
+}
