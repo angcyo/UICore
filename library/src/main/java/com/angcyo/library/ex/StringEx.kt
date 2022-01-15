@@ -145,9 +145,10 @@ fun Any.toStr(): String = when (this) {
 fun String.wrapLog() = "\n${nowTimeString()} ${Thread.currentThread().name}\n${this}\n"
 
 /**将列表连成字符串*/
-fun Iterable<*>.connect(
+fun <T> Iterable<T>.connect(
     divide: CharSequence = "," /*连接符*/,
-    convert: (Any) -> CharSequence? = { it.toString() }
+    removeLast: Boolean = true,
+    convert: (T) -> CharSequence? = { it.toString() }
 ): String {
     return buildString {
         this@connect.forEach {
@@ -160,7 +161,9 @@ fun Iterable<*>.connect(
                 }
             }
         }
-        safe()
+        if (removeLast) {
+            safe()
+        }
     }
 }
 
