@@ -116,7 +116,7 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
                 return true
             }
 
-            return touchEvent
+            return touchEvent && !isNestedAccepted
         } else {
             return false
         }
@@ -192,6 +192,16 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
 
     override fun onStopNestedScroll(child: View?) {
         super.onStopNestedScroll(child)
+    }
+
+    override fun onNestedScroll(
+        target: View?,
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int
+    ) {
+        super.onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed)
     }
 
     /*内嵌滚动开始, 处理需要消耗的滚动距离*/

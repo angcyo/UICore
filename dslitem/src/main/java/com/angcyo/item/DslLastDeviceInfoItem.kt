@@ -149,10 +149,13 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
                     showFileMenu = true
                     showHideFile = true
                 }) {
-
+                    //no op
                 }
             }
             _clickListener?.onClick(it)
+
+            //刷新自身
+            updateAdapterItem()
         }
     }
 }
