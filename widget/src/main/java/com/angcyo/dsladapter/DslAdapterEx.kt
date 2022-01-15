@@ -460,7 +460,7 @@ fun DslAdapter.findItemList(
 fun <T : DslAdapterItem> DslAdapter.findSameClassItem(
     item: T,
     useFilterList: Boolean = true,
-    continuous: Boolean = true
+    continuous: Boolean = true //需要连续的item
 ): List<T> {
     val list = getDataList(useFilterList)
     val result = mutableListOf<T>()
@@ -468,7 +468,6 @@ fun <T : DslAdapterItem> DslAdapter.findSameClassItem(
     if (continuous) {
         var findAnchor = false /*是否找到锚点*/
         for (it in list) {
-            findAnchor = it == item
             if (it.className() == item.className()) {
                 result.add(it as T)
             } else {
@@ -478,6 +477,7 @@ fun <T : DslAdapterItem> DslAdapter.findSameClassItem(
                     result.clear()
                 }
             }
+            findAnchor = findAnchor || it == item
         }
     } else {
         for (it in list) {
