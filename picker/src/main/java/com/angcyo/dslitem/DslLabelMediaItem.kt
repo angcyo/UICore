@@ -68,6 +68,9 @@ open class DslLabelMediaItem : DslBaseLabelItem(), IFragmentItem {
     /**网格列数*/
     var itemGridSpanCount = 3
 
+    /**是否需要显示空布局, 如果数据为空时*/
+    var itemShowEmptyLayout: Boolean = true
+
     init {
         itemLayoutId = R.layout.dsl_label_media_item
     }
@@ -164,7 +167,7 @@ open class DslLabelMediaItem : DslBaseLabelItem(), IFragmentItem {
 
     open fun checkEmpty(itemHolder: DslViewHolder) {
         if (itemMediaList.isEmpty() && !itemShowAddMediaItem) {
-            itemHolder.visible(R.id.lib_tip_text_view)
+            itemHolder.visible(R.id.lib_tip_text_view, itemShowEmptyLayout)
             itemHolder.gone(R.id.lib_recycler_view)
         } else {
             itemHolder.visible(R.id.lib_recycler_view)

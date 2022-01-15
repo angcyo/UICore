@@ -19,6 +19,7 @@ import com.angcyo.widget.span.span
 
 /**
  * 语音录制item, 支持多个
+ * 播放item [com.angcyo.media.dslitem.DslPlayAudioItem]
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/04/16
