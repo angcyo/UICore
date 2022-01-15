@@ -87,7 +87,7 @@ static def defaultHttpClient() {
     builder.readTimeout(10, TimeUnit.SECONDS)
     builder.writeTimeout(10, TimeUnit.SECONDS)
     //builder.proxy(Proxy.NO_PROXY)
-    builder.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 1080)))
+    //builder.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 1080)))
     builder.followRedirects(true)
     builder.followSslRedirects(true)
 
