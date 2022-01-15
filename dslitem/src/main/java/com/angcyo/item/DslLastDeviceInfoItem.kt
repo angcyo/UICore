@@ -143,13 +143,15 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
                 copy()
                 toast("信息已复制")
             }
-            itemFragment?.dslFHelper {
-                fileSelector({
-                    showFileMd5 = true
-                    showFileMenu = true
-                    showHideFile = true
-                }) {
-                    //no op
+            if (itemClick == null) {
+                itemFragment?.dslFHelper {
+                    fileSelector({
+                        showFileMd5 = true
+                        showFileMenu = true
+                        showHideFile = true
+                    }) {
+                        //no op
+                    }
                 }
             }
             _clickListener?.onClick(it)

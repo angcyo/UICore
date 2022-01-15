@@ -20,7 +20,9 @@ dependencies {
     //https://jcenter.bintray.com/io/reactivex/rxjava3/
     //implementation "io.reactivex.rxjava3:rxjava:3.0.0-RC6"
 
+    //https://github.com/ReactiveX/RxJava/tree/2.x
     //https://jcenter.bintray.com/io/reactivex/rxjava2/
+    //https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxjava
     api "io.reactivex.rxjava2:rxjava:2.2.20"
     api "io.reactivex.rxjava2:rxandroid:2.1.1"
     api "io.reactivex.rxjava2:rxkotlin:2.4.0"
