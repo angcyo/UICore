@@ -4,6 +4,10 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <!--生物指纹/指纹-->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+
     <!--sendKeyDownUpSync需要root, 系统权限-->
     <!--<uses-permission android:name="android.permission.INJECT_EVENTS" />
     <uses-permission android:name="android.permission.ACCESS_SUPERUSER" />-->
