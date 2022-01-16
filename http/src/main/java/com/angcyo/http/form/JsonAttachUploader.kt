@@ -5,6 +5,7 @@ import com.angcyo.http.rx.doBack
 import com.angcyo.http.rx.doMain
 import com.angcyo.library.L
 import com.angcyo.library.ex.connect
+import com.angcyo.library.ex.file
 import com.angcyo.library.ex.isHttpScheme
 import com.angcyo.library.ex.queryParameter
 import java.io.File
@@ -22,11 +23,11 @@ class JsonAttachUploader {
     var fileIdMap = hashMapOf<String, Long>()
 
     /**上传文件的回调, 子线程回调*/
-    var onUploadFile: (uploader: JsonAttachUploader, filePath: String) -> Unit =
-        { uploader, filePath ->
-            //uploader.uploadNext(null)
-            //uploader.stopUpload()
-        }
+    var onUploadFile: (filePath: String) -> Unit = { filePath ->
+        //uploader.uploadNext(null)
+        //uploader.stopUpload()
+        _uploadFinish(IllegalArgumentException("请实现[onUploadFile]"))
+    }
 
     /**所有附件上传完成回调. 主线程回调*/
     var onUploadFinish: (json: String, error: Throwable?) -> Unit = { _, _ -> }
@@ -64,10 +65,21 @@ class JsonAttachUploader {
         JsonPathParser.read(json) { jsonPath, value ->
 
             if (value.startsWith(FormAttachManager.HTTP_PREFIX) || value.startsWith(File.separatorChar)) {
-                _attachPathMap[jsonPath] = value
+                var haveFile = false
 
                 value.split(FormAttachManager.ATTACH_SPLIT).forEach {
-                    _attachPathList.add(it)
+                    if (it.startsWith(File.separatorChar)) {
+                        val file = it.file()
+                        if (file != null && file.exists() && file.canRead()) {
+                            haveFile = true
+
+                            _attachPathList.add(it)
+                        }
+                    }
+                }
+
+                if (haveFile) {
+                    _attachPathMap[jsonPath] = value
                 }
             }
         }
@@ -87,12 +99,15 @@ class JsonAttachUploader {
         } else {
             val filePath = _attachPathList[index]
             doBack {
-                onUploadFile(this, filePath)
+                onUploadFile(filePath)
             }
         }
     }
 
-    /**[error]是否有异常*/
+    /**开始上传下一个文件,
+     * [filePath] 当前上传的文件路径
+     * [fileId] 上传成功后的文件id
+     * [error]是否有异常, 异常中断上传*/
     fun uploadNext(filePath: String, fileId: Long = -1, error: Throwable? = null) {
         if (error == null) {
             fileIdMap[filePath] = fileId
@@ -155,7 +170,8 @@ fun String.parseFileId(fileIdKey: String = FormAttachManager.KEY_FILE_ID): Pair<
     }
 }
 
-/**开始上传附件*/
+/**开始上传附件
+ * 需要主动设置[onUploadFile]方法*/
 fun String.uploadAttach(config: JsonAttachUploader.() -> Unit): JsonAttachUploader {
     val uploader = JsonAttachUploader()
     uploader.apply(config)
