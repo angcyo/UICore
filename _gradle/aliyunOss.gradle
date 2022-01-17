@@ -17,8 +17,9 @@
 /**
  * 为了保证`Key`的安全:
  * 可以在
- * win: 'C:\Users\用户名\.gradle\gradle.properties"'
- * mac: '/Users/用户名/.gradle/gradle.properties"'
+ * win: 'C:\Users\用户名\.gradle\gradle.properties'
+ * mac: '/Users/用户名/.gradle/gradle.properties'
+ * linux: '/root/.gradle/gradle.properties'
  * 文件中加入配置:
  * ```
  * aliyunOssAccessKeyId=xxx
