@@ -1,5 +1,5 @@
 static def getBuildTime() {
-    return new Date().format("yyyy-MM-dd HH:mm:ss.sss")
+    return new Date().format("yyyy-MM-dd HH:mm:ss.sss", TimeZone.getTimeZone("UTC"))
 }
 
 static def osName() {
