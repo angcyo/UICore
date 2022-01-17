@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.core.hardware.fingerprint.FingerprintManagerCompat
 import androidx.core.os.CancellationSignal
 import com.angcyo.library.L
+import com.angcyo.library.app
 import io.reactivex.*
 
 /**
@@ -19,6 +20,16 @@ import io.reactivex.*
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 class DslFinger {
+
+    companion object {
+
+        /**是否可以使用指纹
+         * 有指纹模块, 并且录入了指纹*/
+        fun canUseFinger(context: Context = app()): Boolean {
+            val fm = FingerprintManagerCompat.from(context)
+            return fm.isHardwareDetected && fm.hasEnrolledFingerprints()
+        }
+    }
 
     /**结果发射器*/
     var _emitter: FlowableEmitter<AuthenticationResult>? = null
