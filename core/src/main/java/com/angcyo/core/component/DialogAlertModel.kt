@@ -17,10 +17,10 @@ import com.angcyo.viewmodel.vmDataNull
 class DialogAlertModel : LifecycleViewModel() {
 
     /**等待弹出的对话框*/
-    val dialogAlertList = mutableListOf<DialogAlertBean>()
+    val dialogAlertList = mutableListOf<DialogAlertData>()
 
     /**正在弹出的对话框*/
-    val dialogAlertData = vmDataNull<DialogAlertBean>()
+    val dialogAlertData = vmDataNull<DialogAlertData>()
 
     //存储上一次指定类型通知的时间
     val alertShakeMap = hashMapOf<String, Long>()
@@ -34,10 +34,10 @@ class DialogAlertModel : LifecycleViewModel() {
         shakeDelay: Long = 30 * 60 * 1000,
         checkExist: Boolean = true
     ) {
-        addDialogAlert(DialogAlertBean(type, data, shakeDelay = shakeDelay), checkExist)
+        addDialogAlert(DialogAlertData(type, data, shakeDelay = shakeDelay), checkExist)
     }
 
-    fun addDialogAlert(bean: DialogAlertBean, checkExist: Boolean = true) {
+    fun addDialogAlert(bean: DialogAlertData, checkExist: Boolean = true) {
         val type = bean.type
 
         if (checkExist) {
@@ -118,7 +118,7 @@ class DialogAlertModel : LifecycleViewModel() {
 }
 
 /**弹窗的数据*/
-data class DialogAlertBean(
+data class DialogAlertData(
     //弹窗类型
     val type: String,
     //弹窗数据
