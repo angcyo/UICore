@@ -475,7 +475,7 @@ open class DslTabLayout(
         if (drawBorder) {
             tabBorder?.draw(canvas)
         }
-        if (drawIndicator && tabIndicator.indicatorStyle > 0x10) {
+        if (drawIndicator && tabIndicator.indicatorStyle > DslTabIndicator.INDICATOR_STYLE_DIVIDE) {
             tabIndicator.draw(canvas)
         }
         if (drawBadge) {
@@ -541,7 +541,7 @@ open class DslTabLayout(
         }
 
         //绘制在child的后面
-        if (drawIndicator && tabIndicator.indicatorStyle <= 0x10) {
+        if (drawIndicator && tabIndicator.indicatorStyle < DslTabIndicator.INDICATOR_STYLE_DIVIDE) {
             tabIndicator.draw(canvas)
         }
     }
@@ -1290,8 +1290,11 @@ open class DslTabLayout(
          * [TabIndicator.indicatorContentIndex]
          * */
         var indicatorContentIndex = -1
+        var indicatorContentId = View.NO_ID
 
-        /**[android.widget.LinearLayout.LayoutParams.weight]*/
+        /**
+         * 剩余空间占比, 1f表示占满剩余空间, 0.5f表示使用剩余空间的0.5倍
+         * [android.widget.LinearLayout.LayoutParams.weight]*/
         var weight: Float = -1f
 
         /**突出需要绘制的Drawable
@@ -1310,6 +1313,10 @@ open class DslTabLayout(
             indicatorContentIndex = a.getInt(
                 R.styleable.DslTabLayout_Layout_layout_tab_indicator_content_index,
                 indicatorContentIndex
+            )
+            indicatorContentId = a.getResourceId(
+                R.styleable.DslTabLayout_Layout_layout_tab_indicator_content_id,
+                indicatorContentId
             )
             weight = a.getFloat(R.styleable.DslTabLayout_Layout_layout_tab_weight, weight)
             highlightDrawable =
