@@ -2,8 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="64dp"
+    android:layout_height="wrap_content"
     android:gravity="center_vertical"
+    android:minHeight="64dp"
     android:orientation="horizontal"
     android:padding="@dimen/lib_xhdpi"
     tools:background="@color/transparent20">
@@ -61,7 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_min_size"
-            tools:text="下载任务名称" />
+            tools:text="下载任务名称下载任务名称下载任务名称下载任务名称下载任务名称下载任务名称下载任务名称下载任务名称下载任务名称" />
 
     </LinearLayout>
 
