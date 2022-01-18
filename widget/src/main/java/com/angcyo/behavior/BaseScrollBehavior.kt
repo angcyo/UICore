@@ -271,7 +271,9 @@ abstract class BaseScrollBehavior<T : View>(
         behaviorScrollX = x
         behaviorScrollY = y
 
-        L.v("${simpleHash()} scrollTo: x:$x y:$y")
+        if (childView?.isInEditMode == false) {
+            L.v("${simpleHash()} scrollTo: x:$x y:$y")
+        }
 
         behaviorScrollTo?.invoke(x, y, scrollType) // offset操作
         onScrollTo(x, y, scrollType)
