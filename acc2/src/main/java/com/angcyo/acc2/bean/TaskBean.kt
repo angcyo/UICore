@@ -94,10 +94,10 @@ data class TaskBean(
     var notTouchable: Boolean = false,
 
     /**显示手势提示框*/
-    var showTouchTip: Boolean = true,
+    var showTouchTip: Boolean? = null,
 
     /**显示节点提示框*/
-    var showNodeTip: Boolean = true,
+    var showNodeTip: Boolean? = null,
 
     //</editor-fold desc="浮窗配置">
 
