@@ -52,6 +52,13 @@ println "........app.gradle........end"
 
 def apkFormatName = project.hasProperty("apkName") ? project.ext.apkName : "#an-#vn_#t_#fn_#bn_#ka.apk"
 
+/**
+ * 文件输出的文件夹(基于项目根目录的相对路径)
+ * */
+ext.output = ".apk"
+
+def output = ext.output
+
 android {
 
     compileSdkVersion Integer.parseInt(_C_SDK)
@@ -176,7 +183,9 @@ android {
 //        }
 //    }
 
-    def apkFolder = new File(project.rootDir.absolutePath + "/.apk")//rootProject.file("/.apk")
+    //rootProject.file("/.apk")
+    def apkFolder = new File(project.rootDir.absolutePath + "/" + output)
+
     apkFolder.mkdirs()
     println "\napp.gradle ${gradle.gradleVersion}→APK输出目录:${apkFolder.absolutePath}"
 
@@ -186,7 +195,7 @@ android {
         /*Gradle4.1 以上的方法*/
         applicationVariants.all { variant ->
             if (variant.buildType.name != "debug") {
-                variant.packageApplicationProvider.get().outputDirectory = apkFolder
+                variant.packageApplicationProvider.get().outputDirectory = new File(apkFolder, variant.name)
             }
             variant.outputs.forEach {
                 it.outputFileName = formatApkName(apkFormatName,
@@ -204,7 +213,7 @@ android {
         /*Gradle4.0 以上的方法*/
         applicationVariants.all { variant ->
             if (variant.buildType.name != "debug") {
-                variant.packageApplicationProvider.get().outputDirectory = apkFolder
+                variant.packageApplicationProvider.get().outputDirectory = new File(apkFolder, variant.name)
             }
             variant.outputs.forEach {
                 it.apkData.outputFileName = formatApkName(apkFormatName,
@@ -222,7 +231,7 @@ android {
         /*Gradle3.3 以上的方法*/
         applicationVariants.all { variant ->
             if (variant.buildType.name != "debug") {
-                variant.packageApplication.outputDirectory = apkFolder
+                variant.packageApplication.outputDirectory = new File(apkFolder, variant.name)
             }
 
             variant.packageApplication.outputScope?.apkDatas?.forEach { apkData ->
@@ -242,7 +251,7 @@ android {
         applicationVariants.all { variant ->
             if (variant.buildType.name != "debug") {
                 //new File(project.rootDir.absolutePath + "/apk")
-                variant.getPackageApplication().outputDirectory = apkFolder
+                variant.getPackageApplication().outputDirectory = new File(apkFolder, variant.name)
             }
 
             variant.getPackageApplication().outputScope.apkDatas.forEach { apkData ->
@@ -281,3 +290,58 @@ dependencies {
 
 apply from: allGradle.version
 apply from: allGradle.collectMR
+
+def isCopy = false
+
+//https://www.jianshu.com/p/e7a40a592f15/
+//构建完成后, 将文件夹(./.apk)子目录中的apk文件, 复制到上一级
+gradle.buildFinished { BuildResult buildResult ->
+    if (!isCopy) {
+        def apkFolder = new File(project.rootDir.absolutePath + "/" + output)
+        def fileList = apkFolder.listFiles()
+        for (file in fileList) {
+            if (file.isDirectory()) {
+                def subFileList = file.listFiles()
+                for (subFile in subFileList) {
+                    if (subFile.isFile() && subFile.name.endsWith(".apk")) {
+                        //apk文件, 开始复制
+                        copyFile(subFile.absolutePath, new File(apkFolder, subFile.name).absolutePath)
+                    }
+                }
+            }
+        }
+        isCopy = true
+    }
+    println "构建完毕->${buildResult.action}"
+}
+
+/**
+ * 复制文件
+ * */
+def copyFile(String from, String toPath) {
+    InputStream input = null
+    OutputStream output = null
+    try {
+        File source = new File(from)
+        if (!source.exists()) {
+            return
+        }
+        File dest = new File(toPath)
+        println '复制文件:' + source.getAbsolutePath() + " -> " + dest.getAbsolutePath()
+
+        input = new FileInputStream(source)
+        output = new FileOutputStream(dest)
+        byte[] buf = new byte[1024]
+        int bytesRead
+        while ((bytesRead = input.read(buf)) != -1) {
+            output.write(buf, 0, bytesRead)
+        }
+    } finally {
+        if (input != null) {
+            input.close()
+        }
+        if (output != null) {
+            output.close()
+        }
+    }
+}

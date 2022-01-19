@@ -20,10 +20,10 @@ import java.util.regex.Pattern
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
-/**
- * 文件输出的文件夹(基于项目根目录的相对路径)
- * */
-ext.output = ".apk"
+///**
+// * 文件输出的文件夹(基于项目根目录的相对路径)
+// * */
+//ext.output = ".apk"
 
 afterEvaluate {
 
