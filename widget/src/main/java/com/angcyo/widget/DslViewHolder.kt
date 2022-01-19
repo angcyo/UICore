@@ -1,5 +1,6 @@
 package com.angcyo.widget
 
+import android.os.Build
 import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
@@ -65,11 +66,15 @@ open class DslViewHolder(
      * 单击某个View, 无音效
      */
     fun clickCallView(view: View?) {
-        view?.callOnClick()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            view?.callOnClick()
+        }
     }
 
     fun clickCallView(@IdRes id: Int) {
-        view(id)?.callOnClick()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            view(id)?.callOnClick()
+        }
     }
 
     fun click(@IdRes id: Int, listener: View.OnClickListener?) {
@@ -208,12 +213,21 @@ open class DslViewHolder(
     }
 
     fun postOnAnimation(runnable: () -> Unit) {
-        itemView.postOnAnimation(object : Runnable {
-            override fun run() {
-                runnable.invoke()
-                removeCallbacks(this)
-            }
-        })
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            itemView.postOnAnimation(object : Runnable {
+                override fun run() {
+                    runnable.invoke()
+                    removeCallbacks(this)
+                }
+            })
+        } else {
+            itemView.post(object : Runnable {
+                override fun run() {
+                    runnable.invoke()
+                    removeCallbacks(this)
+                }
+            })
+        }
     }
 
     fun postDelay(delayMillis: Long, runnable: () -> Unit) {
