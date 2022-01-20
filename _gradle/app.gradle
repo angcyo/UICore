@@ -304,8 +304,11 @@ gradle.buildFinished { BuildResult buildResult ->
                 def subFileList = file.listFiles()
                 for (subFile in subFileList) {
                     if (subFile.isFile() && subFile.name.endsWith(".apk")) {
-                        //apk文件, 开始复制
-                        copyFile(subFile.absolutePath, new File(apkFolder, subFile.name).absolutePath)
+                        def targetFile = new File(apkFolder, subFile.name)
+                        if (!targetFile.exists() || subFile.lastModified() != targetFile.lastModified()) {
+                            //apk文件, 开始复制. 文件不一样的时候才复制
+                            copyFile(subFile.absolutePath, targetFile.absolutePath)
+                        }
                     }
                 }
             }
