@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.AudioManager
 import android.os.Handler
 import android.os.Looper
+import com.angcyo.library.app
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -44,6 +45,9 @@ object VolumeObserver : Runnable {
     fun startListener() {
         if (isListening) {
             return
+        }
+        if (am == null) {
+            init(app())
         }
         isListening = true
         handler.post(this)
