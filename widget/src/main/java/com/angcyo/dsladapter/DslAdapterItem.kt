@@ -87,6 +87,10 @@ open class DslAdapterItem : LifecycleOwner {
 
     /**[com.angcyo.dsladapter.DslAdapter.notifyItemChanged]*/
     open fun updateAdapterItem(payload: Any? = PAYLOAD_UPDATE_PART, useFilterList: Boolean = true) {
+        if (itemDslAdapter?._recyclerView?.isComputingLayout == true) {
+            L.w("跳过操作! [RecyclerView]正在计算布局.")
+            return
+        }
         itemDslAdapter?.notifyItemChanged(this, payload, useFilterList).elseNull {
             L.w("跳过操作! updateAdapterItem需要[itemDslAdapter],请赋值.")
         }

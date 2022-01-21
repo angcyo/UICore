@@ -13,6 +13,7 @@ import com.angcyo.http.addInterceptorEx
 import com.angcyo.http.rx.Rx
 import com.angcyo.library.L
 import com.angcyo.library.LibApplication
+import com.angcyo.library.ex.connectUrl
 import com.angcyo.library.ex.getAppSignatureMD5
 import com.angcyo.library.ex.getAppSignatureSHA1
 import com.angcyo.library.getAppString
@@ -83,6 +84,14 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
      * resValue "string", "custom_urls", '"测试服务器 https://rj.appraise.wayto.com.cn/appraiseApi;正式服务器 https://ruijie.appraise.wayto.com.cn:8043/appraiseApi"'
      * */
     open fun getHostUrls() = getAppString("custom_urls")
+
+    /**将相对路径或者绝对路径, 转换成绝对路径*/
+    open fun toUrl(path: String?): String {
+        if (path.isNullOrEmpty()) {
+            return ""
+        }
+        return HttpConfigDialog.appBaseUrl.connectUrl(path)
+    }
 
     //<editor-fold desc="hold">
 
