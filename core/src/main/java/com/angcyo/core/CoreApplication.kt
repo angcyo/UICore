@@ -70,7 +70,8 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
         //Reflection.unseal(base)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-            HiddenApiBypass.addHiddenApiExemptions("L")
+            //HiddenApiBypass.addHiddenApiExemptions("L")
+            HiddenApiBypass.addHiddenApiExemptions("")
         }
     }
 
