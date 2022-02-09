@@ -262,7 +262,7 @@ fun Point.reset() {
 }
 
 /**支持负数索引[index]*/
-fun <T> List<T>.getOrNull2(index: Int): T? {
+fun <T> List<T?>.getOrNull2(index: Int): T? {
     if (index < 0) {
         return getOrNull(size + index)
     }
