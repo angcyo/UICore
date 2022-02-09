@@ -153,6 +153,7 @@ def copyFile(String from, String toPath) {
         while ((bytesRead = input.read(buf)) != -1) {
             output.write(buf, 0, bytesRead)
         }
+        dest.setLastModified(source.lastModified())
     } finally {
         if (input != null) {
             input.close()
