@@ -167,8 +167,33 @@ class DslAHelper(val context: Context) {
         singTask: Boolean = false,
         wrapActivity: Class<out Activity> = FragmentWrapActivity::class.java,
         action: IntentConfig .() -> Unit = {}
-    ) {
-        start(FragmentWrapActivity.getIntent(context, fragment, singTask, wrapActivity), action)
+    ): Intent {
+        val intent = FragmentWrapActivity.getIntent(context, fragment, singTask, wrapActivity)
+        start(intent, action)
+        return intent
+    }
+
+    /**在指定的容器中, 启动一个[Fragment]*/
+    fun startFragment(
+        wrapActivity: Class<out Activity>,
+        fragment: Class<out Fragment>,
+        singleTask: Boolean = false,
+        action: IntentConfig .() -> Unit = {}
+    ): Intent {
+        val intent = Intent(context, wrapActivity).apply {
+            startFragment(fragment, singleTask)
+
+            if (context !is Activity) {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+
+            if (singleTask) {
+                addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            }
+        }
+        start(intent, action)
+        return intent
     }
 
     //</editor-fold desc="start操作">
@@ -573,6 +598,11 @@ fun IntentConfig.exitAnim(
 /**传递Json数据*/
 fun IntentConfig.putData(data: Any?, key: String = BUNDLE_KEY_JSON) {
     intent.putData(data, key)
+}
+
+/**传递原始的[Intent]*/
+fun IntentConfig.putOriginIntent(originIntent: Intent?) {
+    intent.putExtra(DslTargetIntent.KEY_ORIGIN_INTENT, originIntent)
 }
 
 /**设置共享元素[View], 和对应的[Key]*/

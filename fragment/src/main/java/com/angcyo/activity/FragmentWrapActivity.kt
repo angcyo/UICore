@@ -120,4 +120,8 @@ open class FragmentWrapActivity : BaseAppCompatActivity() {
             }
         }
     }
+
+    override fun handleTargetIntent(intent: Intent) {
+        //super.handleTargetIntent(intent)
+    }
 }
