@@ -12,6 +12,7 @@ import com.angcyo.DslFHelper
 import com.angcyo.base.Factory.factory
 import com.angcyo.library.L
 import com.angcyo.library.utils.setFieldValue
+import kotlin.reflect.KClass
 
 /**
  *
@@ -202,6 +203,14 @@ fun Int.toVisibilityString(): String {
 /**查找[RootView]对应的[Fragment]*/
 fun FragmentManager.findFragmentByView(view: View): Fragment? {
     return fragments.find { it.view == view }
+}
+
+fun <T : Fragment> FragmentManager.find(cls: Class<T>): T? {
+    return fragments.find { it.javaClass == cls } as? T
+}
+
+fun <T : Fragment> FragmentManager.find(cls: KClass<T>): T? {
+    return fragments.find { it.javaClass == cls.java } as? T
 }
 
 /**

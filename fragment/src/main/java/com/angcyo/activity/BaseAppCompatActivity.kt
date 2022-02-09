@@ -55,6 +55,7 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        setIntent(intent)
         intent?.let { onHandleIntent(it, true) }
     }
 

@@ -33,7 +33,7 @@ open class BaseDslFragment : BaseTitleFragment() {
     /**实时获取[DslAdapter]*/
     val _adapter: DslAdapter
         get() = (_recycler.adapter as? DslAdapter) ?: DslAdapter().apply {
-            L.e("注意:访问目标[DslAdapter]不存在!")
+            L.e("注意:访问目标[_adapter]不存在!")
         }
 
     override fun onInitFragment() {

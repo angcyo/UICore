@@ -185,6 +185,11 @@ class DslFHelper(
         showList(fm.restore(*fClass), action)
     }
 
+    fun restore(vararg kClass: KClass<out Fragment>, action: Fragment.() -> Unit = {}) {
+        val jClassList = kClass.toList().map { it.java }
+        showList(fm.restore(*jClassList.toTypedArray()), action)
+    }
+
     fun restore(vararg tag: String?, action: Fragment.() -> Unit = {}) {
         showList(fm.restore(*tag), action)
     }

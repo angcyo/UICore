@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import com.angcyo.library.L
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
+import com.angcyo.library.app
 import com.angcyo.library.ex.getColor
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.exactly
@@ -51,7 +52,9 @@ abstract class AbsFragment : Fragment() {
 
     /**别名*/
     val _vh: DslViewHolder
-        get() = baseViewHolder!!
+        get() = baseViewHolder ?: DslViewHolder(View(app())).apply {
+            L.e("注意:访问目标[baseViewHolder]不存在!")
+        }
 
     var attachContext: Context? = null
 

@@ -2,7 +2,6 @@ package com.angcyo.core.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,20 +21,17 @@ import com.angcyo.behavior.refresh.RefreshEffectBehavior
 import com.angcyo.component.DslAffect
 import com.angcyo.component.dslAffect
 import com.angcyo.core.R
-import com.angcyo.core.appendTextItem
 import com.angcyo.core.behavior.ArcLoadingHeaderBehavior
 import com.angcyo.library.L
 import com.angcyo.library.component.dslIntent
 import com.angcyo.library.ex.Action
 import com.angcyo.library.ex.className
-import com.angcyo.library.ex.colorFilter
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.lifecycle.onStart
 import com.angcyo.widget.DslGroupHelper
 import com.angcyo.widget.base.*
 import com.angcyo.widget.layout.*
 import com.angcyo.widget.recycler.DslRecyclerView
-import com.angcyo.widget.span.span
 import com.angcyo.widget.text.DslTextView
 
 /**
@@ -108,7 +104,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     val _recycler: DslRecyclerView
         get() = (_vh.rv(R.id.lib_recycler_view) as? DslRecyclerView)
             ?: DslRecyclerView(fContext()).apply {
-                L.e("注意:访问目标[DslRecyclerView]不存在!")
+                L.e("注意:访问目标[_recycler]不存在!")
             }
 
     //</editor-fold desc="成员配置">
