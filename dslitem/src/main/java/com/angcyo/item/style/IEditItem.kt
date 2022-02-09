@@ -28,10 +28,12 @@ interface IEditItem : IAutoInitItem {
     }
 
     /**初始化*/
-    fun initEditItem(itemHolder: DslViewHolder,
-                     itemPosition: Int,
-                     adapterItem: DslAdapterItem,
-                     payloads: List<Any>) {
+    fun initEditItem(
+        itemHolder: DslViewHolder,
+        itemPosition: Int,
+        adapterItem: DslAdapterItem,
+        payloads: List<Any>
+    ) {
         itemHolder.ev(editItemConfig.itemEditTextViewId)?.apply {
             clearListeners()
 
@@ -84,6 +86,12 @@ var IEditItem.itemEditText: CharSequence?
     get() = editItemConfig.itemEditText
     set(value) {
         editItemConfig.itemEditText = value
+    }
+
+var IEditItem.itemEditHint: CharSequence?
+    get() = editItemConfig.itemEditTextStyle.hint
+    set(value) {
+        editItemConfig.itemEditTextStyle.hint = value
     }
 
 var IEditItem.itemMaxInputLength: Int

@@ -21,10 +21,12 @@ interface ITextItem : IAutoInitItem {
     var textItemConfig: TextItemConfig
 
     /**初始化*/
-    fun initTextItem(itemHolder: DslViewHolder,
-                     itemPosition: Int,
-                     adapterItem: DslAdapterItem,
-                     payloads: List<Any>) {
+    fun initTextItem(
+        itemHolder: DslViewHolder,
+        itemPosition: Int,
+        adapterItem: DslAdapterItem,
+        payloads: List<Any>
+    ) {
         itemHolder.tv(textItemConfig.itemTextViewId)?.apply {
             textItemConfig.itemTextStyle.updateStyle(this)
         }
@@ -49,6 +51,12 @@ var ITextItem.itemText: CharSequence?
     get() = textItemConfig.itemText
     set(value) {
         textItemConfig.itemText = value
+    }
+
+var ITextItem.itemHint: CharSequence?
+    get() = textItemConfig.itemTextStyle.hint
+    set(value) {
+        textItemConfig.itemTextStyle.hint = value
     }
 
 class TextItemConfig : IDslItemConfig {

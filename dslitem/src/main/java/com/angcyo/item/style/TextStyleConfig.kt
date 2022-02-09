@@ -49,6 +49,15 @@ open class TextStyleConfig : ViewStyleConfig() {
         super.updateStyle(view)
 
         if (view is TextView) {
+
+            if (text == null) {
+                text = view.text
+            }
+
+            if (hint == null) {
+                hint = view.hint
+            }
+
             with(view) {
                 text = this@TextStyleConfig.text
 
