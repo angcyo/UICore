@@ -31,6 +31,7 @@ import com.angcyo.library.L
 import com.angcyo.library.component.queryActivities
 import com.angcyo.library.ex.havePermission
 import com.angcyo.library.ex.runningTasks
+import kotlin.reflect.KClass
 
 /**
  *
@@ -122,6 +123,11 @@ class DslAHelper(val context: Context) {
 
     fun start(aClass: Class<out Activity>, action: IntentConfig.() -> Unit = {}) {
         val intent = Intent(context, aClass)
+        start(intent, action)
+    }
+
+    fun start(kClass: KClass<out Activity>, action: IntentConfig.() -> Unit = {}) {
+        val intent = Intent(context, kClass.java)
         start(intent, action)
     }
 
