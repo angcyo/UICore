@@ -11,7 +11,7 @@ import com.angcyo.library.component.DslNotify
 import com.angcyo.library.component.dslNotify
 import com.angcyo.library.ex.nowTimeString
 import com.angcyo.putData
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 /**
  * 锁屏通知类, 支持通知消息体

@@ -10,7 +10,7 @@ import com.angcyo.loader.LoaderConfig.Companion.LOADER_TYPE_AUDIO
 import com.angcyo.loader.LoaderConfig.Companion.LOADER_TYPE_IMAGE
 import com.angcyo.loader.LoaderConfig.Companion.LOADER_TYPE_VIDEO
 import com.angcyo.picker.core.PickerActivity
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import kotlin.math.max
 import kotlin.math.min
 

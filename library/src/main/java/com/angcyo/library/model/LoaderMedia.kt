@@ -3,7 +3,7 @@ package com.angcyo.library.model
 import android.net.Uri
 import android.os.Parcelable
 import com.angcyo.library.ex.*
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 /**
  * Loader 加载出来的媒体数据
