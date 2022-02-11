@@ -170,9 +170,23 @@ fun Calendar.week(): Int {//1-7 周几
 }
 
 /**创建一个日历对象*/
-fun calendar(
+fun calendarStart(
     year: Int = nowTime().year(), month: Int = 0, dayOfMonth: Int = 1,
     hourOfDay: Int = 0, minute: Int = 0, second: Int = 0
+): Calendar {
+    val cal = Calendar.getInstance()
+    cal.set(Calendar.YEAR, year)
+    cal.set(Calendar.MONTH, month)
+    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+    cal.set(Calendar.HOUR_OF_DAY, hourOfDay)
+    cal.set(Calendar.MINUTE, minute)
+    cal.set(Calendar.SECOND, second)
+    return cal
+}
+
+fun calendarEnd(
+    year: Int = nowTime().year(), month: Int = 11, dayOfMonth: Int = 31,
+    hourOfDay: Int = 23, minute: Int = 59, second: Int = 59
 ): Calendar {
     val cal = Calendar.getInstance()
     cal.set(Calendar.YEAR, year)
