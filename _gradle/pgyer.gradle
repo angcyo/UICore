@@ -167,7 +167,8 @@ _pgyerUpload.doFirst {
 
 /**查找apk文件路径*/
 def findApkFile() {
-    def path = ".apk"
+    def path = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
+
     def folder = file(path)
     def result = null
 

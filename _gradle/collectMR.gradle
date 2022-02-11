@@ -23,16 +23,13 @@ import java.util.regex.Pattern
 ///**
 // * 文件输出的文件夹(基于项目根目录的相对路径)
 // * */
-//ext.output = ".apk"
+//ext.apk_output = ".apk"
 
 afterEvaluate {
 
     def targets = []
 
-    def output = project.hasProperty("apk_path") ? project.ext.apk_path : ext.output
-    if (output == null || output.isEmpty()) {
-        output = ".apk"
-    }
+    def output = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
 
     project.tasks.each {
         if (it.name.startsWith("assemble")) {
