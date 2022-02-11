@@ -55,9 +55,7 @@ def apkFormatName = project.hasProperty("apkName") ? project.ext.apkName : "#an-
 /**
  * 文件输出的文件夹(基于项目根目录的相对路径)
  * */
-ext.output = ".apk"
-
-def output = ext.output
+def output = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
 
 android {
 
