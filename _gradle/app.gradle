@@ -291,7 +291,7 @@ apply from: allGradle.collectMR
 
 //https://www.jianshu.com/p/e7a40a592f15/
 //构建完成后, 将文件夹(./.apk)子目录中的apk文件, 复制到上一级
-gradle.buildFinished { BuildResult buildResult ->
+gradle.buildFinished { buildResult -> /*BuildResult*/
     def apkFolder = new File(project.rootDir.absolutePath + "/" + output)
     def fileList = apkFolder.listFiles()
     for (file in fileList) {
