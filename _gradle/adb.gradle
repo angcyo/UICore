@@ -45,7 +45,7 @@ static def getApplicationId(project) {
 //https://docs.gradle.org/current/dsl/org.gradle.api.tasks.Exec.html
 
 /**adb pull 拉取手机sd上[/sdcard/android/data/package_name/files/xxx/]的所有文件*/
-task _pullAllSchemaFolder(type: Exec, group: 'angcyo', description: '获取Schema文件夹下的所有文件') {
+task _pullAllSchemaFolder(type: Exec, group: 'angcyo', description: '获取所有app工程Schema文件夹下的所有文件') {
     def path = '../.pull'
     def file = file(path)
     workingDir(path)
@@ -87,7 +87,7 @@ task _pullAllSchemaFolder(type: Exec, group: 'angcyo', description: '获取Schem
 }
 
 /**使用code 打开拉取后的文件夹*/
-task _pullAllSchemaFolderAndOpen(type: Exec, dependsOn: '_pullAllSchemaFolder', group: 'angcyo', description: '获取Schema文件夹下的所有文件并打开文件夹') {
+task _pullAllSchemaFolderAndOpen(type: Exec, dependsOn: '_pullAllSchemaFolder', group: 'angcyo', description: '获取所有app工程的Schema文件夹下的所有文件并打开文件夹') {
     def path = '../.pull'
     def file = file(path)
     workingDir(path)
@@ -102,7 +102,7 @@ task _pullAllSchemaFolderAndOpen(type: Exec, dependsOn: '_pullAllSchemaFolder', 
     }
 }
 
-task _rmAllSchemaFolder(type: Exec, group: 'angcyo', description: '删除Schema文件夹下的所有文件') {
+task _rmAllSchemaFolder(type: Exec, group: 'angcyo', description: '删除所有app工程的Schema文件夹下的所有文件') {
     standardOutput = new ByteArrayOutputStream()
     ext.output = {
         return standardOutput.toString("UTF8")
@@ -139,7 +139,7 @@ task _rmAllSchemaFolder(type: Exec, group: 'angcyo', description: '删除Schema�
     }
 }
 
-task _rmSchemaFolder(type: Exec, group: 'angcyo', description: '获取Schema文件夹下的所有文件') {
+task _rmSchemaFolder(type: Exec, group: 'angcyo', description: '获取第一个app工程的Schema文件夹下的所有文件') {
     standardOutput = new ByteArrayOutputStream()
     ext.output = {
         return standardOutput.toString("UTF8")
