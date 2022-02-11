@@ -145,21 +145,27 @@ _pgyerUpload.doFirst {
             def json = response.body().string()
             response.close()
 
-            println "蒲公英上传结果:" + json
+            println "蒲公英上传返回:" + json
 
-            def url = pgyerConfig.pgyer + new com.google.gson.Gson().fromJson(json, Map.class).data.buildShortcutUrl
-            System.err.println "蒲公英安装地址${path}->" + url
+            def map = new com.google.gson.Gson().fromJson(json, Map.class)
+            def data = map.data
+            if (data == null) {
+                System.err.println "上传${path}失败:" + map.message
+            } else {
+                def url = pgyerConfig.pgyer + data.buildShortcutUrl
+                System.err.println "蒲公英安装地址${path}->" + url
 
-            if (!app_id.isEmpty() && !app_secret.isEmpty()) {
+                if (!app_id.isEmpty() && !app_secret.isEmpty()) {
 
-                if (codeLogo == null || codeLogo.isEmpty()) {
-                    codeLogo = getLogoPath(fileKey)
+                    if (codeLogo == null || codeLogo.isEmpty()) {
+                        codeLogo = getLogoPath(fileKey)
+                    }
+
+                    def qrCodeUrl = requestQrCodeUrl(app_id, app_secret, url, codeLogo)
+
+                    System.err.println ''
+                    System.err.println "二维码地址->$qrCodeUrl"
                 }
-
-                def qrCodeUrl = requestQrCodeUrl(app_id, app_secret, url, codeLogo)
-
-                System.err.println ''
-                System.err.println "二维码地址->$qrCodeUrl"
             }
         }
     }
