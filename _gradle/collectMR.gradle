@@ -29,7 +29,10 @@ afterEvaluate {
 
     def targets = []
 
-    def output = ext.output
+    def output = project.hasProperty("apk_path") ? project.ext.apk_path : ext.output
+    if (output == null || output.isEmpty()) {
+        output = ".apk"
+    }
 
     project.tasks.each {
         if (it.name.startsWith("assemble")) {
