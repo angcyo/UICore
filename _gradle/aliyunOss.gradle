@@ -3,7 +3,7 @@
  * 请无视IDEA的爆红, 并不影响运行.
  * 请不要随意导入其他包.
  *
- * 脚本`apply`之后, 会在gradle窗口中的: 工程->Tasks->other 中出现 `_aliyunOssUpload` 任务. 双击即可运行.
+ * 脚本`apply`之后, 会在gradle窗口中的: 工程->Tasks->angcyo 中出现 `_aliyunOssUpload` 任务. 双击即可运行.
  *
  * https://github.com/angcyo/gradle
  *
