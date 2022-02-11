@@ -76,7 +76,7 @@ buildscript {
  * 拿到下载url->生成url二维码地址
  * */
 
-task _aliyunOssUpload() {
+task _aliyunOssUpload(group: 'angcyo', description: '上传文件到阿里云OSS') {
     doFirst {
         def accessKeyId = project.hasProperty("aliyunOssAccessKeyId") ? project.ext.aliyunOssAccessKeyId : aliyunOssConfig.aliyunOssAccessKeyId
         def accessKeySecret = project.hasProperty("aliyunOssAccessKeySecret") ? project.ext.aliyunOssAccessKeySecret : aliyunOssConfig.aliyunOssAccessKeySecret

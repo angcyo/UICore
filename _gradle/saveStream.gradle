@@ -21,7 +21,7 @@ buildscript {
     }
 }
 
-task _saveStream() {
+task _saveStream(group: 'angcyo', description: '下载流文件') {
     //配置任务
     doFirst {
         def savePath = project.hasProperty("save_stream_path") ? project.ext.save_stream_path : ".save"

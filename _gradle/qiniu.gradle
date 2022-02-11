@@ -85,7 +85,7 @@ buildscript {
  * 拿到下载url->生成url二维码地址
  * */
 
-task _qiniuUpload() {
+task _qiniuUpload(group: 'angcyo', description: '上传文件到七牛云') {
     doFirst {
         def ak = project.hasProperty("qiniu_ak") ? project.ext.qiniu_ak : qiniuConfig.qiniu_ak
         def sk = project.hasProperty("qiniu_sk") ? project.ext.qiniu_sk : qiniuConfig.qiniu_sk
