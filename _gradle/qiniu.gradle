@@ -92,7 +92,7 @@ task _qiniuUpload(group: 'angcyo', description: '上传文件到七牛云') {
         def bk = project.hasProperty("qiniu_bucket") ? project.ext.qiniu_bucket : qiniuConfig.qiniu_bucket
 
         def baseUrl = project.hasProperty("qiniuBaseUrl") ? project.ext.qiniuBaseUrl : qiniuConfig.qiniuBaseUrl
-        def qiniuDeleteBefore = project.hasProperty("qiniuDeleteBefore") ? project.ext.qiniuDeleteBefore : aliyunOssConfig.qiniuDeleteBefore
+        def qiniuDeleteBefore = project.hasProperty("qiniuDeleteBefore") ? project.ext.qiniuDeleteBefore : qiniuConfig.qiniuDeleteBefore
         def deleteBefore = qiniuDeleteBefore == "true"
 
         def app_id = project.hasProperty("qr_api_app_id") ? project.ext.qr_api_app_id : qiniuConfig.qr_api_app_id

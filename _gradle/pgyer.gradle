@@ -81,8 +81,8 @@ _pgyerUpload.doFirst {
     def api_key = project.hasProperty("pgyer_api_key") ? project.ext.pgyer_api_key : pgyerConfig.pgyer_api_key
     def user_key = project.hasProperty("pgyer_user_key") ? project.ext.pgyer_user_key : pgyerConfig.pgyer_user_key
 
-    def app_id = project.hasProperty("qr_api_app_id") ? project.ext.qr_api_app_id : qiniuConfig.qr_api_app_id
-    def app_secret = project.hasProperty("qr_api_app_secret") ? project.ext.qr_api_app_secret : qiniuConfig.qr_api_app_secret
+    def app_id = project.hasProperty("qr_api_app_id") ? project.ext.qr_api_app_id : pgyerConfig.qr_api_app_id
+    def app_secret = project.hasProperty("qr_api_app_secret") ? project.ext.qr_api_app_secret : pgyerConfig.qr_api_app_secret
     def codeLogo = project.hasProperty("codeLogo") ? project.ext.codeLogo : null
 
     def apkPath = project.hasProperty("pgyerApkPath") ? project.ext.pgyerApkPath : pgyerConfig.pgyerApkPath
