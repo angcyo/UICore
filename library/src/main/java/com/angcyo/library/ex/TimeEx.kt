@@ -151,7 +151,7 @@ fun Long.week() = spiltTime()[7]
 fun Calendar.year() = this[Calendar.YEAR]//2018
 fun Calendar.month() = this[Calendar.MONTH] + 1//1-12月
 fun Calendar.day() = this[Calendar.DAY_OF_MONTH]//1-31天
-fun Calendar.hour() = this[Calendar.HOUR_OF_DAY]//24小时制
+fun Calendar.hour() = this[Calendar.HOUR_OF_DAY]//24小时制 0-23
 fun Calendar.minute() = this[Calendar.MINUTE]//0-59分
 fun Calendar.second() = this[Calendar.SECOND]//0-59秒
 fun Calendar.millisecond() = this[Calendar.MILLISECOND]//0-999毫秒
@@ -169,6 +169,20 @@ fun Calendar.week(): Int {//1-7 周几
     return week
 }
 
+/**创建一个日历对象*/
+fun calendar(
+    year: Int = nowTime().year(), month: Int = 0, dayOfMonth: Int = 1,
+    hourOfDay: Int = 0, minute: Int = 0, second: Int = 0
+): Calendar {
+    val cal = Calendar.getInstance()
+    cal.set(Calendar.YEAR, year)
+    cal.set(Calendar.MONTH, month)
+    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+    cal.set(Calendar.HOUR_OF_DAY, hourOfDay)
+    cal.set(Calendar.MINUTE, minute)
+    cal.set(Calendar.SECOND, second)
+    return cal
+}
 
 fun String.parseTime(pattern: String = "yyyy-MM-dd"): Long {
     val format: SimpleDateFormat = SimpleDateFormat.getDateInstance() as SimpleDateFormat
