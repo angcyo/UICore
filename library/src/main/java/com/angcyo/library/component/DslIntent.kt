@@ -256,6 +256,8 @@ class DslIntent {
             return
         }
         Intent().apply {
+            baseConfig(context)
+
             action = shareAction
 
             if (shareTitle != null) {

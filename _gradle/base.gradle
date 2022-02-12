@@ -41,6 +41,7 @@ android {
 }
 
 //同时运行多个任务
+//https://docs.gradle.org/current/dsl/org.gradle.api.Task.html
 //https://docs.gradle.org/current/dsl/org.gradle.api.Task.html#org.gradle.api.Task:dependsOn(java.lang.Object[])
 /*
 task uploadApk(dependsOn: ['assembleRelease', '_pgyerUpload']) {
