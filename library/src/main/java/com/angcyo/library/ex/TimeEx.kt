@@ -88,6 +88,10 @@ fun Long.toCalendar(): Calendar {
     return cal
 }
 
+fun Long.toDate(): Date {
+    return Date(this)
+}
+
 fun Calendar.toDate(): Date {
     return time
 }
