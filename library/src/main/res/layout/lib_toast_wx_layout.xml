@@ -1,28 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/lib_toast_wx_bg"
-    android:gravity="left|center_vertical"
-    android:orientation="horizontal"
-    android:padding="@dimen/lib_xhdpi">
+    android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/lib_image_view"
-        android:layout_width="@dimen/lib_icon_tip_size"
-        android:layout_height="@dimen/lib_icon_tip_size"
-        android:layout_marginRight="@dimen/lib_xhdpi"
-        android:scaleType="fitXY"
-        android:visibility="gone"
-        tools:src="@drawable/lib_ic_info"
-        tools:visibility="visible" />
-
-    <TextView
-        android:id="@+id/lib_text_view"
-        style="@style/LibBodyTextStyle"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/lib_white_dark"
-        tools:text="123" />
-</LinearLayout>
+        android:background="@color/lib_toast_wx_bg"
+        android:gravity="left|center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/lib_xhdpi">
+
+        <ImageView
+            android:id="@+id/lib_image_view"
+            android:layout_width="@dimen/lib_icon_tip_size"
+            android:layout_height="@dimen/lib_icon_tip_size"
+            android:layout_marginRight="@dimen/lib_xhdpi"
+            android:scaleType="fitXY"
+            android:visibility="gone"
+            tools:src="@drawable/lib_ic_info"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/lib_text_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/lib_white_dark"
+            tools:text="123" />
+    </LinearLayout>
+</FrameLayout>
