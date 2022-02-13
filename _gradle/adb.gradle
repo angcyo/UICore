@@ -28,23 +28,6 @@ static def getApplicationIdList(rootProject) {
     return appList
 }
 
-/**通过project工程, 获取对应的application id*/
-static def getApplicationId(project) {
-    def appId = ''
-    def application = "com.android.application"
-
-    def isApp = project.plugins.hasPlugin(application)
-
-    if (isApp) {
-        def applicationPlugin = project.plugins.findPlugin(application)
-        appId = applicationPlugin.extension.defaultConfig.applicationId
-    }
-    return appId
-}
-
-//https://docs.gradle.org/current/dsl/org.gradle.api.tasks.Exec.html
-
-/**adb pull 拉取手机sd上[/sdcard/android/data/package_name/files/xxx/]的所有文件*/
 task _pullAllSchemaFolder(type: Exec, group: 'angcyo', description: '获取所有app工程Schema文件夹下的所有文件') {
     def path = '../.pull'
     def file = file(path)
@@ -86,6 +69,23 @@ task _pullAllSchemaFolder(type: Exec, group: 'angcyo', description: '获取所�
     }
 }
 
+//https://docs.gradle.org/current/dsl/org.gradle.api.tasks.Exec.html
+
+/**adb pull 拉取手机sd上[/sdcard/android/data/package_name/files/xxx/]的所有文件*/
+
+/**通过project工程, 获取对应的application id*/
+static def getApplicationId(project) {
+    def appId = ''
+    def application = "com.android.application"
+
+    def isApp = project.plugins.hasPlugin(application)
+
+    if (isApp) {
+        def applicationPlugin = project.plugins.findPlugin(application)
+        appId = applicationPlugin.extension.defaultConfig.applicationId
+    }
+    return appId
+}
 /**使用code 打开拉取后的文件夹*/
 task _pullAllSchemaFolderAndOpen(type: Exec, dependsOn: '_pullAllSchemaFolder', group: 'angcyo', description: '获取所有app工程的Schema文件夹下的所有文件并打开文件夹') {
     def path = '../.pull'
