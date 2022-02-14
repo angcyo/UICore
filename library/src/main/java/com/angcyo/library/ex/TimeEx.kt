@@ -64,6 +64,12 @@ fun Long.toTime(pattern: String = "yyyy-MM-dd HH:mm"): String {
     return format.format(Date(this))
 }
 
+fun Date.toTime(pattern: String = "yyyy-MM-dd HH:mm:ss"): String {
+    val format: SimpleDateFormat = SimpleDateFormat.getDateInstance() as SimpleDateFormat
+    format.applyPattern(pattern)
+    return format.format(this)
+}
+
 /**将字符串换算成毫秒*/
 fun String.toMillis(pattern: String = "yyyyMMdd"): Long {
     val format: SimpleDateFormat = SimpleDateFormat.getDateInstance() as SimpleDateFormat
