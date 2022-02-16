@@ -77,12 +77,20 @@ class DslAccessibilityGesture {
     //是否已经有手势在执行
     var _isDo: Boolean = false
 
+    //记录手势被取消的次数
+    var _cancelCount: Long = 0
+
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             _gestureResultCallback = object : AccessibilityService.GestureResultCallback() {
                 override fun onCancelled(gestureDescription: GestureDescription?) {
                     super.onCancelled(gestureDescription)
-                    toastQQ("手势被取消")
+                    _cancelCount++
+                    if (_cancelCount > 5) {
+                        toastQQ("手势多次被取消, 建议重启手机")
+                    } else {
+                        toastQQ("手势被取消")
+                    }
                     L.d("手势取消:$gestureDescription ${gestureDescription?.strokeCount ?: 0}".apply {
                         //AutoParseInterceptor.log(this)
                     })
@@ -93,6 +101,7 @@ class DslAccessibilityGesture {
 
                 override fun onCompleted(gestureDescription: GestureDescription?) {
                     super.onCompleted(gestureDescription)
+                    _cancelCount--
                     L.d("手势完成:$gestureDescription ${gestureDescription?.strokeCount ?: 0}".apply {
                         //AutoParseInterceptor.log(this)
                     })
@@ -130,7 +139,7 @@ class DslAccessibilityGesture {
                     _isDispatched = service.dispatchGesture(
                         builder.build(),
                         _gestureResultCallback,
-                        null
+                        MainExecutor.handler
                     )
                     L.w("派发手势:$_isDispatched")
                     _isDispatched
@@ -139,9 +148,9 @@ class DslAccessibilityGesture {
                         _isDispatched = service.dispatchGesture(
                             builder.build(),
                             _gestureResultCallback,
-                            null
+                            MainExecutor.handler
                         )
-                        L.w("派发手势:$_isDispatched")
+                        //L.w("派发手势:$_isDispatched")
                     }
                     _countDownLatch = CountDownLatch(1)
                     _countDownLatch?.await()

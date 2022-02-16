@@ -197,11 +197,20 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
             else -> originList
         }
 
+        if (handleNodeList.isNullOrEmpty()) {
+            handleBean._noFindCount++
+        } else {
+            handleBean._noFindCount = 0
+        }
+
         //noFindHandle
         val noFindHandleList = handleBean.noFindHandleList
         if (!jumpFind && handleBean.findList != null && handleNodeList.isNullOrEmpty() && !noFindHandleList.isNullOrEmpty()) {
 
-            val noFindHandleResult = parse(controlContext, originList, noFindHandleList)
+            val _noFindHandleList =
+                noFindHandleList.filter { handleBean._noFindCount >= it.noFindHandleCount }
+
+            val noFindHandleResult = parse(controlContext, originList, _noFindHandleList)
             noFindHandleResult.copyTo(result)
             return result
         }

@@ -1,11 +1,17 @@
 package com.angcyo.acc2.core
 
 import android.accessibilityservice.AccessibilityService
-import android.accessibilityservice.AccessibilityServiceInfo
+import android.accessibilityservice.GestureDescription
+import android.accessibilityservice.GestureDescription.StrokeDescription
+import android.annotation.TargetApi
+import android.graphics.Path
+import android.graphics.Point
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import com.angcyo.library.L
 import com.angcyo.library.ex.simpleHash
+import com.angcyo.library.toastQQ
+
 
 /**
  * 无障碍服务分发.
@@ -65,7 +71,7 @@ abstract class BaseAccService : AccessibilityService() {
         L.i("无障碍服务已连接.")
         //AccessibilityHelper.log("onServiceConnected")
         isServiceConnected = true
-        serviceInfo.apply {
+        /*serviceInfo.apply {
             //可以获取window内容, getWindows
             flags = flags or AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
             //服务需要所有视图
@@ -73,7 +79,7 @@ abstract class BaseAccService : AccessibilityService() {
             //服务需要视图id
             flags = flags or AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS
             serviceInfo = this
-        }
+        }*/
         lastService = this
     }
 
@@ -100,6 +106,27 @@ abstract class BaseAccService : AccessibilityService() {
     override fun onKeyEvent(event: KeyEvent?): Boolean {
         L.v("${this.simpleHash()} $event")
         return super.onKeyEvent(event)
+    }
+
+    @TargetApi(24)
+    fun pressLocation(position: Point) {
+        val builder = GestureDescription.Builder()
+        val p = Path()
+        p.moveTo(position.x.toFloat(), position.y.toFloat())
+        //p.lineTo(position.x.toFloat() + 10, position.y.toFloat() + 10)
+        builder.addStroke(StrokeDescription(p, 0, 100L))
+        val gesture = builder.build()
+        val isDispatched = dispatchGesture(gesture, object : GestureResultCallback() {
+            override fun onCompleted(gestureDescription: GestureDescription) {
+                super.onCompleted(gestureDescription)
+                toastQQ("手势完成")
+            }
+
+            override fun onCancelled(gestureDescription: GestureDescription) {
+                super.onCancelled(gestureDescription)
+                toastQQ("手势被取消")
+            }
+        }, null)
     }
 
 }

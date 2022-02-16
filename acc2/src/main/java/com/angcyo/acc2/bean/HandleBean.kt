@@ -47,6 +47,12 @@ data class HandleBean(
     /**当前界面不包含[outFindList]查找到的元素时, 成立*/
     var outFindList: List<FindBean>? = null,
 
+    /**记录当前[findList]未找到节点的次数*/
+    var _noFindCount: Long = 0,
+
+    /**多少次[findList]未找到节点时, 才处理[noFindHandleList]中的[HandleBean]*/
+    var noFindHandleCount: Long = 0,
+
     /**
      * 当[findList]未找到任何节点时, 需要处理的[HandleBean],
      * 处理结果, 会直接赋给当前的[HandleBean]

@@ -66,7 +66,7 @@ class AccParse(val accControl: AccControl) : BaseParse() {
     val accContext = AccContext()
 
     /**默认时间随机因子*/
-    var defTimeRandomFactor = 7L
+    var defTimeRandomFactor = 4L
 
     init {
         parseList.add(conditionParse)
@@ -83,8 +83,8 @@ class AccParse(val accControl: AccControl) : BaseParse() {
     fun defaultIntervalDelay(): Long {
         return when (Device.performanceLevel()) {
             Device.PERFORMANCE_HIGH -> 300
-            Device.PERFORMANCE_MEDIUM -> 500
-            Device.PERFORMANCE_LOW -> 800
+            Device.PERFORMANCE_MEDIUM -> 1500
+            Device.PERFORMANCE_LOW -> 2500
             else -> 1000
         }
     }
