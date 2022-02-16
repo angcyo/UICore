@@ -1005,6 +1005,14 @@ class AccSchedule(val accControl: AccControl) {
             action = actionBean
         }
 
+        //运行前处理
+        actionBean.beforeCheck?.let {
+            runActionCheck(actionBean, it)
+            if (!accControl.isControlRunning) {
+                return handleActionResult
+            }
+        }
+
         if (actionBean.async == true && !accControl.isControlMainThread()) {
             //异步执行
             async {
@@ -1036,8 +1044,52 @@ class AccSchedule(val accControl: AccControl) {
                 }
                 runActionAfter(context, actionBean, isPrimaryAction, handleActionResult)
             }
+
+            //运行后处理
+            actionBean.afterCheck?.let {
+                runActionCheck(actionBean, it)
+                if (!accControl.isControlRunning) {
+                    return handleActionResult
+                }
+            }
         }
         return handleActionResult
+    }
+
+    fun runActionCheck(actionBean: ActionBean, check: CheckBean?) {
+        val handleParse = accParse.handleParse
+        val findParse = accParse.findParse
+        //val accSchedule = accParse.accControl.accSchedule
+
+        //窗口根节点集合
+        val windowBean = check?.window ?: actionBean.window
+        val rootNodeList = findParse.findRootNode(windowBean)
+        val eventList = check?.event
+        val handleList = check?.handle
+
+        val controlContext = ControlContext().apply {
+            control = accControl
+            action = actionBean
+            this.check = check
+        }
+
+        var skipHandle = false
+        val eventNodeList = if (eventList == null) {
+            rootNodeList
+        } else {
+            val parse = findParse.parse(controlContext, rootNodeList, eventList)
+            if (parse.forceSuccess) {
+                skipHandle = true
+            } else if (parse.forceFail) {
+                skipHandle = true
+            }
+            parse.nodeList
+        }
+
+        if (!skipHandle) {
+            val result = handleParse.parse(controlContext, eventNodeList, handleList)
+            //end
+        }
     }
 
     /**返回是否运行成功, 运行失败, 会中断后续执行*/

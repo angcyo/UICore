@@ -127,6 +127,12 @@ data class ActionBean(
     /**元素解析*/
     var check: CheckBean? = null,
 
+    /**进入[ActionBean]之前的[check]不受[ActionBean.start]参数的影响*/
+    var beforeCheck: CheckBean? = null,
+
+    /**[beforeCheck]*/
+    var afterCheck: CheckBean? = null,
+
     /**[ActionBean]执行之前, 需要提前执行的[ActionBean]
      * 如果处理成功了, 会中断原本需要执行的[ActionBean]*/
     var before: ActionBean? = null,
