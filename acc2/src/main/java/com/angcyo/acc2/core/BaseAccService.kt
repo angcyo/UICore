@@ -78,6 +78,7 @@ abstract class BaseAccService : AccessibilityService() {
             flags = flags or AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS
             //服务需要视图id
             flags = flags or AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS
+            //flags = flags or AccessibilityServiceInfo.FLAG_REQUEST_TOUCH_EXPLORATION_MODE
             serviceInfo = this
         }*/
         lastService = this
