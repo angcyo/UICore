@@ -109,9 +109,10 @@ object AccPermission {
                     //filter
                 } else {
                     pName?.appBean(context)?.apply {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             appName = it.loadSummary(context.packageManager)
-                        }
+                        }*/
+                        appName = it.resolveInfo.serviceInfo.loadLabel(context.packageManager)
                         des = it.loadDescription(context.packageManager)
                         result.add(this)
                     }
