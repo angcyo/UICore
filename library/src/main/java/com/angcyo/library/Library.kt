@@ -1,6 +1,7 @@
 package com.angcyo.library
 
 import android.app.Application
+import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
@@ -203,3 +204,12 @@ fun Context?.getNavBarHeightShow() = activityContent()?.navBarHeight() ?: 0
 
 /**是否是主线程*/
 fun isMain() = Looper.getMainLooper() == Looper.myLooper()
+
+/**激活组件*/
+fun enableComponent(componentClass: Class<*>, enable: Boolean = true, content: Context = app()) {
+    val component = ComponentName(content, componentClass)
+    val packageManager = content.packageManager
+    val state = if (enable) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+    else PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+    packageManager.setComponentEnabledSetting(component, state, PackageManager.DONT_KILL_APP)
+}
