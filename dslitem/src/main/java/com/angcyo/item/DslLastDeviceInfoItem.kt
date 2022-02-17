@@ -1,5 +1,6 @@
 package com.angcyo.item
 
+import android.app.ActivityManager
 import android.content.Context
 import android.os.StatFs
 import androidx.fragment.app.Fragment
@@ -136,6 +137,17 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
             append(" /")
             append(Device.getTotalMemory().fileSizeString())
             append(")")
+
+            //内存信息2
+            val manager =
+                itemHolder.context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            append(" (${manager.memoryClass}MB")
+            append("/${manager.largeMemoryClass}MB)")
+
+            //内存信息3
+            append(" (${Runtime.getRuntime().freeMemory().fileSizeString()}")
+            append(" /${Runtime.getRuntime().totalMemory().fileSizeString()}")
+            append(" /${Runtime.getRuntime().maxMemory().fileSizeString()})")
         }
 
         itemHolder.clickItem {
