@@ -97,6 +97,15 @@ abstract class BaseTabFragment : BaseFragment() {
         _vh.group(R.id.lib_tab_layout)?.getChildOrNull(index)
             ?.find<BadgeTextView>(R.id.lib_tab_badge_view)?.updateBadge(badge)
     }
+
+    /**改变tab*/
+    open fun changeTabIndex(index: Int, notify: Boolean = true, fromUser: Boolean = false) {
+        _vh.tab(R.id.lib_tab_layout)?.apply {
+            if (index in 0 until dslSelector.visibleViewList.size) {
+                setCurrentItem(index, notify, fromUser)
+            }
+        }
+    }
 }
 
 fun ViewGroup.appendTabItem(

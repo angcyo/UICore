@@ -71,7 +71,7 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
 
     override fun onResume() {
         super.onResume()
-        onFragmentShow(null)
+        onFragmentShow(arguments)
     }
 
     override fun onPause() {
