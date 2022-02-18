@@ -306,6 +306,7 @@ class REditDelegate(editText: EditText) : InputTipEditDelegate(editText) {
         /*是否要显示删除按钮*/
         val clearDrawable = clearDrawable
 
+        //布局中请使用 drawableStart drawableEnd 属性, 而不是 drawableLeft drawableRight
         val compoundDrawables = TextViewCompat.getCompoundDrawablesRelative(editText)
         if (compoundDrawables[2] != clearDrawable) {
             TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
@@ -320,6 +321,8 @@ class REditDelegate(editText: EditText) : InputTipEditDelegate(editText) {
 
     fun removeClearDrawable() {
         /*移除显示的删除按钮*/
+
+        //布局中请使用 drawableStart drawableEnd 属性, 而不是 drawableLeft drawableRight
         val compoundDrawables = TextViewCompat.getCompoundDrawablesRelative(editText)
         editText.error = null
         TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
