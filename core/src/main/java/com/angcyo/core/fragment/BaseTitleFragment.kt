@@ -27,6 +27,7 @@ import com.angcyo.library.component.dslIntent
 import com.angcyo.library.ex.Action
 import com.angcyo.library.ex.className
 import com.angcyo.library.ex.undefined_res
+import com.angcyo.library.model.Page
 import com.angcyo.lifecycle.onStart
 import com.angcyo.widget.DslGroupHelper
 import com.angcyo.widget.base.*
@@ -295,7 +296,11 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     }
 
     open fun onDoubleTitleLayout(): Boolean {
-        _recycler.smoothScrollToPosition(0)
+        if (_recycler.adapter?.itemCount ?: 0 >= Page.PAGE_SIZE * 2) {
+            _recycler.scrollToPosition(0)
+        } else {
+            _recycler.smoothScrollToPosition(0)
+        }
         return true
     }
 
