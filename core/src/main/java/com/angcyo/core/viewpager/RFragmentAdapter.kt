@@ -13,8 +13,9 @@ import androidx.fragment.app.FragmentStatePagerAdapter
  */
 open class RFragmentAdapter(
     fragmentManager: FragmentManager,
-    val fragments: List<Fragment>
-) : FragmentStatePagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    val fragments: List<Fragment>,
+    behavior: Int = BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
+) : FragmentStatePagerAdapter(fragmentManager, behavior) {
 
     override fun getItem(position: Int): Fragment {
         return fragments[position]
@@ -25,6 +26,6 @@ open class RFragmentAdapter(
     }
 
     override fun getPageTitle(position: Int): CharSequence? {
-        return super.getPageTitle(position)
+        return fragments[position].javaClass.simpleName
     }
 }

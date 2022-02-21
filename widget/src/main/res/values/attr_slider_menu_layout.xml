@@ -12,5 +12,7 @@
             <enum name="SLIDER_GRAVITY_LEFT" value="1" />
             <enum name="SLIDER_GRAVITY_RIGHT" value="2" />
         </attr>
+        <!--关闭菜单预览-->
+        <attr name="r_menu_close_preview" format="boolean" />
     </declare-styleable>
 </resources>

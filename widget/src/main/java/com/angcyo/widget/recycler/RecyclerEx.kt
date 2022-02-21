@@ -33,6 +33,7 @@ fun RecyclerView.haveItemDecoration(predicate: (ItemDecoration) -> Boolean): Boo
         val itemDecoration = getItemDecorationAt(i)
         if (predicate(itemDecoration)) {
             result = true
+            break
         }
     }
     return result

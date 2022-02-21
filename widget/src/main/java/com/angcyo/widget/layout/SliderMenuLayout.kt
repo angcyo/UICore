@@ -30,6 +30,7 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null) :
     companion object {
         /*菜单在左边*/
         const val SLIDER_GRAVITY_LEFT = 1
+
         /*菜单在右边*/
         const val SLIDER_GRAVITY_RIGHT = 2
     }
@@ -41,6 +42,7 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     /**第几个view是菜单*/
     private var menuViewIndex = 0
+
     /**当开启了enableContentLinkage时, 内容滚动view的index*/
     private var contentViewIndex = 1
 
@@ -58,6 +60,8 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     /**菜单打开的方向*/
     var menuSliderGravity = SLIDER_GRAVITY_LEFT
+
+    var menuClosePreview = false
 
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.SliderMenuLayout)
@@ -78,6 +82,10 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null) :
         enableMenuParallax = typedArray.getBoolean(
             R.styleable.SliderMenuLayout_r_enable_menu_parallax,
             enableMenuParallax
+        )
+        menuClosePreview = typedArray.getBoolean(
+            R.styleable.SliderMenuLayout_r_menu_close_preview,
+            menuClosePreview
         )
         typedArray.recycle()
 
@@ -221,7 +229,10 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
-        refreshContentLayout(if (isInEditMode) maxMenuWidth else scrollHorizontalDistance, false)
+        refreshContentLayout(
+            if (isInEditMode && !menuClosePreview) maxMenuWidth else scrollHorizontalDistance,
+            false
+        )
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {

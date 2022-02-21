@@ -122,22 +122,20 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) :
                 val absX = abs(distanceX)
                 val absY = abs(distanceY)
 
-                if (absX > scrollDistanceSlop || absY > scrollDistanceSlop) {
-                    if (absY > absX) {
-                        //竖直方向的Scroll操作
-                        onScrollChange(
-                            if (distanceY > 0) ORIENTATION.TOP else ORIENTATION.BOTTOM,
-                            distanceX,
-                            distanceY
-                        )
-                    } else if (absX > absY) {
-                        //水平方向的Scroll操作
-                        onScrollChange(
-                            if (distanceX > 0) ORIENTATION.LEFT else ORIENTATION.RIGHT,
-                            distanceX,
-                            distanceY
-                        )
-                    }
+                if (absY > absX) {
+                    //竖直方向的Scroll操作
+                    onScrollChange(
+                        if (distanceY > 0) ORIENTATION.TOP else ORIENTATION.BOTTOM,
+                        distanceX,
+                        distanceY
+                    )
+                } else {
+                    //水平方向的Scroll操作
+                    onScrollChange(
+                        if (distanceX > 0) ORIENTATION.LEFT else ORIENTATION.RIGHT,
+                        distanceX,
+                        distanceY
+                    )
                 }
 
                 removeLongPressRunnable()
