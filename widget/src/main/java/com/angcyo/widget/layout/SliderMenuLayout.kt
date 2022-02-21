@@ -131,9 +131,9 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         val dispatch = super.dispatchTouchEvent(ev)
-        if (!enableScrollOpenMenu && enableFlingOpenMenu) {
+        /*if (!enableScrollOpenMenu && enableFlingOpenMenu) {
             orientationGestureDetector.onTouchEvent(ev)
-        }
+        }*/
         return dispatch
     }
 
