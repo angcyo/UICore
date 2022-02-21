@@ -34,6 +34,12 @@ abstract class BaseTabFragment : BaseFragment() {
     /**线*/
     var showTabLine: Boolean = true
 
+    companion object {
+
+        /**用来切换[DslTabLayout]*/
+        const val KEY_TAB_INDEX = "KEY_TAB_INDEX"
+    }
+
     init {
         //Fragment根布局, tab 在下面
         fragmentLayoutId = R.layout.lib_tab_fragment
@@ -104,6 +110,13 @@ abstract class BaseTabFragment : BaseFragment() {
             if (index in 0 until dslSelector.visibleViewList.size) {
                 setCurrentItem(index, notify, fromUser)
             }
+        }
+    }
+
+    override fun onFragmentShow(bundle: Bundle?) {
+        super.onFragmentShow(bundle)
+        bundle?.getInt(KEY_TAB_INDEX)?.let {
+            changeTabIndex(it)
         }
     }
 }
