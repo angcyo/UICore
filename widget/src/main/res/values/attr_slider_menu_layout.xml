@@ -8,11 +8,15 @@
         <attr name="r_enable_content_linkage" format="boolean" />
         <attr name="r_enable_content_dim" format="boolean" />
         <attr name="r_enable_menu_parallax" format="boolean" />
+        <attr name="r_enable_scroll_open_menu" format="boolean" />
+        <attr name="r_enable_fling_open_menu" format="boolean" />
         <attr name="r_menu_slider_gravity" format="enum">
             <enum name="SLIDER_GRAVITY_LEFT" value="1" />
             <enum name="SLIDER_GRAVITY_RIGHT" value="2" />
         </attr>
         <!--关闭菜单预览-->
         <attr name="r_menu_close_preview" format="boolean" />
+        <!--fling阈值-->
+        <attr name="r_fling_threshold" format="integer" />
     </declare-styleable>
 </resources>

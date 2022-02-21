@@ -63,6 +63,14 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     var menuClosePreview = false
 
+    /**激活通过滚动打开菜单*/
+    var enableScrollOpenMenu = true
+
+    /**激活通过快速滑动打开菜单*/
+    var enableFlingOpenMenu = true
+
+    var flingThreshold = 2000
+
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.SliderMenuLayout)
         menuMaxWidthRatio =
@@ -71,6 +79,8 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null) :
             typedArray.getInt(R.styleable.SliderMenuLayout_r_menu_view_index, menuViewIndex)
         menuSliderGravity =
             typedArray.getInt(R.styleable.SliderMenuLayout_r_menu_slider_gravity, menuSliderGravity)
+        flingThreshold =
+            typedArray.getInt(R.styleable.SliderMenuLayout_r_fling_threshold, flingThreshold)
         enableContentLinkage = typedArray.getBoolean(
             R.styleable.SliderMenuLayout_r_enable_content_linkage,
             enableContentLinkage
@@ -86,6 +96,14 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null) :
         menuClosePreview = typedArray.getBoolean(
             R.styleable.SliderMenuLayout_r_menu_close_preview,
             menuClosePreview
+        )
+        enableScrollOpenMenu = typedArray.getBoolean(
+            R.styleable.SliderMenuLayout_r_enable_scroll_open_menu,
+            enableScrollOpenMenu
+        )
+        enableFlingOpenMenu = typedArray.getBoolean(
+            R.styleable.SliderMenuLayout_r_enable_fling_open_menu,
+            enableFlingOpenMenu
         )
         typedArray.recycle()
 
@@ -111,14 +129,22 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null) :
         return sliderCallback!!.canSlider(this, event)
     }
 
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        val dispatch = super.dispatchTouchEvent(ev)
+        if (!enableScrollOpenMenu && enableFlingOpenMenu) {
+            orientationGestureDetector.onTouchEvent(ev)
+        }
+        return dispatch
+    }
+
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         val intercept = needInterceptTouchEvent
         super.onInterceptTouchEvent(ev)
         if (scrollHorizontalDistance.abs() in 1 until maxMenuWidth) {
-            return true
+            return enableScrollOpenMenu
         }
         return if (canSlider(ev)) {
-            intercept
+            intercept && enableScrollOpenMenu
         } else {
             false
         }
@@ -273,6 +299,9 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null) :
                 }
 
                 if (needInterceptTouchEvent) {
+                    if (isMenuClose() && !enableScrollOpenMenu) {
+                        return
+                    }
                     refreshLayout(distance.toInt())
                 }
             }
@@ -284,19 +313,23 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null) :
         //L.e("call: onFlingChange -> $velocity")
         if (canSlider(firstMotionEvent!!)) {
             if (isHorizontal(orientation)) {
-                if (velocity < -2000) {
+                if (velocity < -flingThreshold) {
                     //快速向左
                     if (menuSliderGravity == SLIDER_GRAVITY_RIGHT) {
-                        openMenu()
+                        if (enableFlingOpenMenu) {
+                            openMenu()
+                        }
                     } else {
                         closeMenu()
                     }
-                } else if (velocity > 2000) {
+                } else if (velocity > flingThreshold) {
                     //快速向右
                     if (menuSliderGravity == SLIDER_GRAVITY_RIGHT) {
                         closeMenu()
                     } else {
-                        openMenu()
+                        if (enableFlingOpenMenu) {
+                            openMenu()
+                        }
                     }
                 }
             }
@@ -357,7 +390,7 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     /**刷新布局位置*/
-    private fun refreshLayout(distanceX: Int /*没次移动的距离*/) {
+    private fun refreshLayout(distanceX: Int /*每次移动的距离*/) {
         //L.e("call: refreshMenuLayout -> $distanceX")
         refreshContentLayout(
             clampViewPositionHorizontal(
