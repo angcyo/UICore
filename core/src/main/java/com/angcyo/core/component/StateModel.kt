@@ -85,6 +85,7 @@ class StateModel : LifecycleViewModel() {
 
 class CancelStateException(message: String) : RuntimeException(message)
 
+/**想要监听的状态*/
 data class PendingStateData(
     val type: String,
     val value: Any?,
@@ -95,6 +96,7 @@ data class PendingStateData(
     val action: StateAction
 )
 
+/**被监听的状态*/
 data class StateData(
     /**状态类型*/
     val type: String,

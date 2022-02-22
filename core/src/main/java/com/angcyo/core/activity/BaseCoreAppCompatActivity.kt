@@ -3,7 +3,10 @@ package com.angcyo.core.activity
 import android.os.Bundle
 import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.core.R
+import com.angcyo.core.component.ComplianceCheck
 import com.angcyo.core.component.DslCrashHandler
+import com.angcyo.core.component.StateModel
+import com.angcyo.core.vmApp
 import com.angcyo.dialog.normalDialog
 import com.angcyo.library.ex.*
 import com.angcyo.library.toastQQ
@@ -26,6 +29,28 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
+
+        //Compliance 合规后的初始化
+        vmApp<StateModel>().waitState(
+            ComplianceCheck.TYPE_COMPLIANCE_STATE,
+            true
+        ) { data, throwable ->
+            if (throwable == null) {
+                //合规后
+                onComplianceCheckAfter()
+            }
+        }
+
+        onComplianceCheck()
+    }
+
+    /**开始合规检查*/
+    open fun onComplianceCheck() {
+        ComplianceCheck.agree()
+    }
+
+    /**合规后的初始化*/
+    open fun onComplianceCheckAfter() {
         checkCrash()
     }
 

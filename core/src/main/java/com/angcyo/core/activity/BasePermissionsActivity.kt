@@ -2,7 +2,6 @@ package com.angcyo.core.activity
 
 import android.os.Bundle
 import com.angcyo.base.dslFHelper
-import com.angcyo.core.component.ComplianceCheck
 import com.angcyo.core.fragment.PermissionFragment
 import com.angcyo.http.rx.BaseObserver
 import com.angcyo.library.L
@@ -32,11 +31,12 @@ abstract class BasePermissionsActivity : BaseCoreAppCompatActivity() {
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
+    }
 
+    override fun onComplianceCheckAfter() {
+        super.onComplianceCheckAfter()
         //合规后初始化
-        if (ComplianceCheck.isCompliance()) {
-            onCheckPermission()
-        }
+        onCheckPermission()
     }
 
     open fun onCheckPermission() {
