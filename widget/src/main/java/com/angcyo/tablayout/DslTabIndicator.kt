@@ -49,6 +49,14 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
         /**前景绘制*/
         const val INDICATOR_STYLE_FOREGROUND = INDICATOR_STYLE_DIVIDE or INDICATOR_STYLE_BACKGROUND
 
+        /**前景顶部*/
+        const val INDICATOR_STYLE_FOREGROUND_TOP =
+            INDICATOR_STYLE_DIVIDE or INDICATOR_STYLE_TOP
+
+        /**前景底部*/
+        const val INDICATOR_STYLE_FOREGROUND_BOTTOM =
+            INDICATOR_STYLE_DIVIDE or INDICATOR_STYLE_BOTTOM
+
         /**指示器重力在开始的位置(横向左边, 纵向上边)*/
         const val INDICATOR_GRAVITY_START = 0x1
 
@@ -61,6 +69,10 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
 
     /**指示器绘制的样式*/
     var indicatorStyle = INDICATOR_STYLE_NONE //初始化
+
+    /**[indicatorStyle]*/
+    val _indicatorDrawStyle: Int
+        get() = indicatorStyle.remove(INDICATOR_STYLE_DIVIDE)
 
     /**优先将指示器显示在[DslTabLayout]的什么位置
      * [INDICATOR_GRAVITY_START] 开始的位置
@@ -436,7 +448,7 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
 
     override fun draw(canvas: Canvas) {
         //super.draw(canvas)
-        if (!isVisible || indicatorStyle == INDICATOR_STYLE_NONE || indicatorDrawable == null) {
+        if (!isVisible || _indicatorDrawStyle == INDICATOR_STYLE_NONE || indicatorDrawable == null) {
             //不绘制
             return
         }
@@ -555,7 +567,7 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
         }
 
         //前景
-        val drawTop = when (indicatorStyle.remove(INDICATOR_STYLE_DIVIDE)) {
+        val drawTop = when (_indicatorDrawStyle) {
             //底部绘制
             INDICATOR_STYLE_BOTTOM -> viewHeight - drawHeight - indicatorYOffset
             //顶部绘制
@@ -795,7 +807,7 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
             animExWidth = ((animEndWidth - drawWidth) * positionOffset).toInt()
         }
 
-        val drawLeft = when (indicatorStyle) {
+        val drawLeft = when (_indicatorDrawStyle) {
             INDICATOR_STYLE_BOTTOM -> {
                 //右边/底部绘制
                 viewWidth - drawWidth - indicatorXOffset
