@@ -5,8 +5,10 @@ import android.os.Build
 import androidx.collection.ArrayMap
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
+import com.angcyo.core.component.ComplianceCheck
 import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.core.component.HttpConfigDialog
+import com.angcyo.core.component.StateModel
 import com.angcyo.core.component.interceptor.LogFileInterceptor
 import com.angcyo.http.DslHttp
 import com.angcyo.http.addInterceptorEx
@@ -55,6 +57,22 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
 
         //debug
         BaseEditDelegate.textChangedActionList.add(Debug::onDebugTextChanged)
+
+        //Compliance 合规后的初始化
+        vmApp<StateModel>().waitState(
+            ComplianceCheck.TYPE_COMPLIANCE_STATE,
+            true
+        ) { data, throwable ->
+            if (throwable == null) {
+                //合规后
+                onComplianceAfter()
+            }
+        }
+    }
+
+    /**合规后的初始化*/
+    open fun onComplianceAfter() {
+        vmApp<StateModel>().updateState(ComplianceCheck.TYPE_COMPLIANCE_INIT_AFTER, true)
     }
 
     override fun onCreateMain() {

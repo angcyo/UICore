@@ -91,6 +91,15 @@ fun Context.textDialog(config: TextDialogConfig.() -> Unit): Dialog {
     }
 }
 
+fun Context.messageDialog(config: MessageDialogConfig.() -> Unit): Dialog {
+    return MessageDialogConfig(this).run {
+        dialogWidth = -1
+        canceledOnTouchOutside = false
+        config()
+        show()
+    }
+}
+
 fun Context.openWidthDialog(config: OpenWithDialogConfig.() -> Unit): Dialog {
     return OpenWithDialogConfig(this).run {
         configBottomDialog()

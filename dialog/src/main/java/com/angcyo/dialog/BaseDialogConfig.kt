@@ -8,7 +8,7 @@ import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt
 
 /**
- *
+ * 对话框基础控制
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/05/11

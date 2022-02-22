@@ -145,8 +145,13 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
             }
         }
 
+    /**对话框标题*/
     var dialogTitle: CharSequence? = null
+
+    /**对话框内容*/
     var dialogMessage: CharSequence? = null
+
+    /**对话框初始化监听*/
     var onDialogInitListener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit =
         { _, _ -> }
 

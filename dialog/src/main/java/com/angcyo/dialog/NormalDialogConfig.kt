@@ -3,7 +3,7 @@ package com.angcyo.dialog
 import android.content.Context
 
 /**
- *
+ * 模拟Android 原生对话框
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/05/11
