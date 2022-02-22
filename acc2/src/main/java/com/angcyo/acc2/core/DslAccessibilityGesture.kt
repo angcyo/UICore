@@ -10,6 +10,7 @@ import android.os.Build
 import com.angcyo.library.*
 import com.angcyo.library.component.MainExecutor
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.nowTime
 import java.util.concurrent.CountDownLatch
 import kotlin.random.Random.Default.nextInt
 
@@ -33,13 +34,20 @@ class DslAccessibilityGesture {
     companion object {
 
         //开始时间
-        const val DEFAULT_GESTURE_START_TIME = 16L
+        const val DEFAULT_GESTURE_START_TIME = 0L
+
+        /**双击间隔时长, 间隔60触发不了双击, =0也无法触发双击
+         *
+         * 第一个手势的up与第二个手势的down之间, 时间间隔必须在[40-300]之间, 否则无法触发双击.
+         *
+         * [android.view.ViewConfiguration.DOUBLE_TAP_MIN_TIME] 40
+         * [android.view.ViewConfiguration.DOUBLE_TAP_TIMEOUT] 300
+         * [android.view.ViewConfiguration.getDoubleTapTimeout]
+         * */
+        const val DEFAULT_GESTURE_DOUBLE_INTERVAL_TIME = 40L
 
         //点击时长
-        const val DEFAULT_GESTURE_CLICK_DURATION = 16L
-
-        //双击间隔时长
-        const val DEFAULT_GESTURE_DOUBLE_DURATION = 60L
+        const val DEFAULT_GESTURE_CLICK_DURATION = 100L
 
         //如果Duration时间太短, 将会产生fling
         const val DEFAULT_GESTURE_MOVE_DURATION = 600L
@@ -50,9 +58,10 @@ class DslAccessibilityGesture {
     var gestureResult: GestureResult? = null
 
     var startTime: Long = DEFAULT_GESTURE_START_TIME
-    var duration: Long = DEFAULT_GESTURE_MOVE_DURATION
     var clickDuration: Long = DEFAULT_GESTURE_CLICK_DURATION
-    var doubleDuration: Long = DEFAULT_GESTURE_DOUBLE_DURATION
+    var doubleInterval: Long = DEFAULT_GESTURE_DOUBLE_INTERVAL_TIME
+
+    var moveDuration: Long = DEFAULT_GESTURE_MOVE_DURATION
     var willContinue: Boolean = false
 
     /**无障碍服务, 用于执行手势*/
@@ -80,6 +89,9 @@ class DslAccessibilityGesture {
     //记录手势被取消的次数
     var _cancelCount: Long = 0
 
+    //手势开始触发的时间戳
+    var _doTime = 0L
+
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             _gestureResultCallback = object : AccessibilityService.GestureResultCallback() {
@@ -91,7 +103,7 @@ class DslAccessibilityGesture {
                     } else {
                         toastQQ("手势被取消")
                     }
-                    L.d("手势取消:$gestureDescription ${gestureDescription?.strokeCount ?: 0}".apply {
+                    L.d("手势取消:$gestureDescription ${gestureDescription?.strokeCount ?: 0} ${nowTime() - _doTime}ms".apply {
                         //AutoParseInterceptor.log(this)
                     })
                     _isCompleted = false
@@ -102,7 +114,7 @@ class DslAccessibilityGesture {
                 override fun onCompleted(gestureDescription: GestureDescription?) {
                     super.onCompleted(gestureDescription)
                     _cancelCount--
-                    L.d("手势完成:$gestureDescription ${gestureDescription?.strokeCount ?: 0}".apply {
+                    L.d("手势完成:$gestureDescription ${gestureDescription?.strokeCount ?: 0} ${nowTime() - _doTime}ms".apply {
                         //AutoParseInterceptor.log(this)
                     })
                     _isCompleted = true
@@ -136,6 +148,7 @@ class DslAccessibilityGesture {
                 //设备支持手势
                 _isDo = true
                 return if (isMain()) {
+                    _doTime = nowTime()
                     _isDispatched = service.dispatchGesture(
                         builder.build(),
                         _gestureResultCallback,
@@ -145,6 +158,7 @@ class DslAccessibilityGesture {
                     _isDispatched
                 } else {
                     MainExecutor.execute {
+                        _doTime = nowTime()
                         _isDispatched = service.dispatchGesture(
                             builder.build(),
                             _gestureResultCallback,
@@ -188,7 +202,7 @@ class DslAccessibilityGesture {
         duration: Long = DEFAULT_GESTURE_MOVE_DURATION
     ) {
         this.startTime = startTime
-        this.duration = duration
+        this.moveDuration = duration
     }
 
     fun flingDuration(
@@ -196,17 +210,17 @@ class DslAccessibilityGesture {
         duration: Long = DEFAULT_GESTURE_FLING_DURATION
     ) {
         this.startTime = startTime
-        this.duration = duration
+        this.moveDuration = duration
     }
 
     fun doubleDuration(
         startTime: Long = DEFAULT_GESTURE_START_TIME,
         duration: Long = DEFAULT_GESTURE_CLICK_DURATION,
-        doubleDuration: Long = DEFAULT_GESTURE_DOUBLE_DURATION
+        doubleInterval: Long = DEFAULT_GESTURE_DOUBLE_INTERVAL_TIME,
     ) {
         this.startTime = startTime
-        this.duration = duration
-        this.doubleDuration = doubleDuration
+        this.clickDuration = duration
+        this.doubleInterval = doubleInterval
     }
 
     /**点击*/
@@ -272,23 +286,25 @@ class DslAccessibilityGesture {
         touch(
             point.x,
             point.y,
-            point.x - nextInt(5, 10),
-            point.y + nextInt(5, 10)
+            point.x - _randomInt(),
+            point.y + _randomInt()
         )
-        startTime += duration + doubleDuration
+        startTime += doubleInterval + clickDuration
         touch(
             point.x,
             point.y,
-            point.x + nextInt(5, 10),
-            point.y - nextInt(5, 10)
+            point.x + _randomInt(),
+            point.y - _randomInt()
         )
     }
+
+    fun _randomInt() = nextInt(1, 2)
 
     /**手势操作核心*/
     fun touch(
         path: Path,
         startTime: Long = this.startTime,
-        duration: Long = this.duration,
+        duration: Long = this.clickDuration,
         willContinue: Boolean = this.willContinue
     ) {
         if (_isDo) {
@@ -522,7 +538,7 @@ fun DslAccessibilityGesture.double(
     x: Float = _screenWidth / 2f,
     y: Float = _screenHeight / 2f,
     startTime: Long = DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME,
-    duration: Long = DslAccessibilityGesture.DEFAULT_GESTURE_DOUBLE_DURATION,
+    duration: Long = DslAccessibilityGesture.DEFAULT_GESTURE_CLICK_DURATION,
     result: GestureResult? = null
 ): Boolean {
     gestureResult = result

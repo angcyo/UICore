@@ -101,6 +101,32 @@
         tools:visibility="visible" />
 
     <com.angcyo.widget.DslButton
+        android:id="@+id/double_button"
+        style="@style/DefaultButtonPressStrokeStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lib_hdpi"
+        android:text="双击"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fullscreen_button"
+        tools:visibility="visible" />
+
+    <com.angcyo.widget.DslButton
+        android:id="@+id/click_button"
+        style="@style/DefaultButtonPressStrokeStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lib_hdpi"
+        android:text="单击"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/double_button"
+        tools:visibility="visible" />
+
+    <com.angcyo.widget.DslButton
         android:id="@+id/test_button"
         style="@style/DefaultButtonPressStrokeStyle"
         android:layout_width="wrap_content"
@@ -110,7 +136,7 @@
         android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fullscreen_button"
+        app:layout_constraintTop_toBottomOf="@id/click_button"
         tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

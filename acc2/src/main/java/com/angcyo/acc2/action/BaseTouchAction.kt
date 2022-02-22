@@ -19,6 +19,8 @@ abstract class BaseTouchAction : BaseAction() {
 
     var gestureDuration: Long? = DslAccessibilityGesture.DEFAULT_GESTURE_CLICK_DURATION
 
+    var gestureDoubleInterval: Long? = DslAccessibilityGesture.DEFAULT_GESTURE_DOUBLE_INTERVAL_TIME
+
     var gestureMoveDuration: Long? = DslAccessibilityGesture.DEFAULT_GESTURE_MOVE_DURATION
 
     var gestureFlingDuration: Long? = DslAccessibilityGesture.DEFAULT_GESTURE_FLING_DURATION
@@ -41,11 +43,13 @@ abstract class BaseTouchAction : BaseAction() {
     ): Boolean {
         val gesture = control.accService()?.gesture
         control.accPrint.touch(x, y, null, null)
+        gesture?.doubleInterval =
+            gestureDoubleInterval ?: DslAccessibilityGesture.DEFAULT_GESTURE_DOUBLE_INTERVAL_TIME
         return gesture?.double(
             x,
             y,
             gestureStartTime ?: DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME,
-            gestureDuration ?: DslAccessibilityGesture.DEFAULT_GESTURE_DOUBLE_DURATION
+            gestureDuration ?: DslAccessibilityGesture.DEFAULT_GESTURE_CLICK_DURATION
         ) == true
     }
 
