@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.angcyo.drawable.base.DslGradientDrawable
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.have
 import com.angcyo.library.ex.remove
 import com.angcyo.widget.R
 import java.util.*
@@ -152,13 +153,13 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
         )
 
         //初始化指示器的高度和宽度
-        if (indicatorStyle.remove(INDICATOR_STYLE_DIVIDE) == 0) {
+        if (indicatorStyle.have(INDICATOR_STYLE_BACKGROUND)) {
             if (tabLayout.isHorizontal()) {
                 indicatorWidth = ViewGroup.LayoutParams.MATCH_PARENT
-                indicatorHeight = -1
+                indicatorHeight = ViewGroup.LayoutParams.MATCH_PARENT
             } else {
                 indicatorHeight = ViewGroup.LayoutParams.MATCH_PARENT
-                indicatorWidth = -1
+                indicatorWidth = ViewGroup.LayoutParams.MATCH_PARENT
             }
             indicatorWidth = typedArray.getLayoutDimension(
                 R.styleable.DslTabLayout_tab_indicator_width,
