@@ -46,6 +46,7 @@
 
     <!--悬浮层-->
     <com.angcyo.widget.layout.RFrameLayout
+        android:id="@+id/lib_tab_wrap_layout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@drawable/lib_white_top_round_bg_big_shape"

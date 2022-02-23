@@ -18,7 +18,9 @@ import com.angcyo.widget.layout.ILayoutDelegate
 
 /**自动设置*/
 fun DslAdapterItem.initGridStyleItem(bind: ItemBindAction? = null) {
+    val old = itemBindOverride
     itemBindOverride = { itemHolder, itemPosition, adapterItem, payloads ->
+        old.invoke(itemHolder, itemPosition, adapterItem, payloads)
         initGridStyleItem(itemHolder, itemPosition, adapterItem, payloads)
         bind?.invoke(itemHolder, itemPosition, adapterItem, payloads)
     }
