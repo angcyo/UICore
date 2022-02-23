@@ -304,13 +304,12 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
      * [DslAdapterStatusItem.ADAPTER_STATUS_LOADING]
      * [DslAdapterStatusItem.ADAPTER_STATUS_ERROR]
      * */
-    fun setAdapterStatus(status: Int, filterParams: FilterParams = defaultFilterParams!!) {
+    fun setAdapterStatus(status: Int) {
         if (dslAdapterStatusItem.itemState == status) {
             return
         }
         dslAdapterStatusItem.itemChanging = true
         dslAdapterStatusItem.itemState = status
-        updateItemDepend(filterParams)
     }
 
     /**自动设置状态*/
@@ -327,29 +326,19 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         }
     }
 
-    fun setAdapterStatusEnable(
-        enable: Boolean = true,
-        filterParams: FilterParams = defaultFilterParams!!
-    ) {
+    fun setAdapterStatusEnable(enable: Boolean = true) {
         val old = dslAdapterStatusItem.itemStateEnable
         if (old == enable) {
             return
         }
         dslAdapterStatusItem.itemStateEnable = enable
-
-        updateItemDepend(filterParams)
     }
 
-    fun setLoadMoreEnable(
-        enable: Boolean = true,
-        filterParams: FilterParams = defaultFilterParams!!
-    ) {
+    fun setLoadMoreEnable(enable: Boolean = true) {
         if (dslLoadMoreItem.itemStateEnable == enable) {
             return
         }
         dslLoadMoreItem.itemStateEnable = enable
-
-        updateItemDepend(filterParams)
     }
 
     /**
@@ -410,7 +399,6 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         }
         dataItems.addAll(_validIndex(dataItems, index), list)
         _updateAdapterItems()
-        updateItemDepend()
     }
 
     /**插入数据列表*/
@@ -420,7 +408,6 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         }
         dataItems.add(_validIndex(dataItems, index), item)
         _updateAdapterItems()
-        updateItemDepend()
     }
 
     fun insertItem(item: DslAdapterItem, index: Int = -1, checkExist: Boolean = true) {
@@ -433,7 +420,6 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         }
         headerItems.add(_validIndex(headerItems, index), item)
         _updateAdapterItems()
-        updateItemDepend()
     }
 
     fun insertFooterItem(item: DslAdapterItem, index: Int = -1, checkExist: Boolean = true) {
@@ -442,7 +428,6 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         }
         footerItems.add(_validIndex(footerItems, index), item)
         _updateAdapterItems()
-        updateItemDepend()
     }
 
     /**先插入数据, 再初始化*/
@@ -450,7 +435,6 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         dataItems.add(_validIndex(dataItems, index), item)
         _updateAdapterItems()
         item.init()
-        updateItemDepend()
     }
 
     /**支持指定数据源[list]*/
@@ -463,7 +447,6 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         list.add(_validIndex(list, index), item)
         _updateAdapterItems()
         item.init()
-        updateItemDepend()
     }
 
     /**移除一组数据*/
@@ -476,7 +459,6 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
 
         if (dataItems.removeAll(listInclude)) {
             _updateAdapterItems()
-            updateItemDepend()
         }
     }
 
@@ -509,7 +491,6 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
                     }
                 }
                 _updateAdapterItems()
-                updateItemDepend()
             }
         }
     }
@@ -519,7 +500,6 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         dataItems.clear()
         dataItems.addAll(list)
         _updateAdapterItems()
-        updateItemDepend()
     }
 
     /**清理数据列表, 但不刷新界面*/
@@ -547,9 +527,10 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
 
     /**可以在回调中改变数据, 并且会自动刷新界面*/
     fun changeItems(filterParams: FilterParams = defaultFilterParams!!, change: () -> Unit) {
-        change()
-        _updateAdapterItems()
-        updateItemDepend(filterParams)
+        render(filterParams) {
+            change()
+            _updateAdapterItems()
+        }
     }
 
     fun changeDataItems(
@@ -651,6 +632,12 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     /**创建默认的[FilterParams]*/
     fun _defaultFilterParams(): FilterParams {
         return FilterParams()
+    }
+
+    /**渲染[DslAdapter]中的item*/
+    fun render(filterParams: FilterParams = defaultFilterParams!!, action: DslAdapter.() -> Unit) {
+        action()
+        updateItemDepend(filterParams)
     }
 
     /**调用[DiffUtil]更新界面*/

@@ -378,23 +378,23 @@ fun DslAdapter.justRunFilterParams() = defaultFilterParams!!.apply {
 }
 
 /**显示情感图[加载中]*/
-fun DslAdapter.toLoading(filterParams: FilterParams = justRunFilterParams()) {
-    setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_LOADING, filterParams)
+fun DslAdapter.toLoading() {
+    setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_LOADING)
 }
 
 /**显示情感图[空数据]*/
-fun DslAdapter.toEmpty(filterParams: FilterParams = justRunFilterParams()) {
-    setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_EMPTY, filterParams)
+fun DslAdapter.toEmpty() {
+    setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_EMPTY)
 }
 
 /**显示情感图[错误]*/
-fun DslAdapter.toError(filterParams: FilterParams = justRunFilterParams()) {
-    setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_ERROR, filterParams)
+fun DslAdapter.toError() {
+    setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_ERROR)
 }
 
 /**显示情感图[正常]*/
-fun DslAdapter.toNone(filterParams: FilterParams = defaultFilterParams!!) {
-    setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_NONE, filterParams)
+fun DslAdapter.toNone() {
+    setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_NONE)
 }
 
 fun DslAdapter.toLoadMoreError() {

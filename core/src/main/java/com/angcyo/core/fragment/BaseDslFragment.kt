@@ -78,13 +78,15 @@ open class BaseDslFragment : BaseTitleFragment() {
         reset: Boolean = enableAdapterRefresh,
         config: DslAdapter.() -> Unit
     ) {
-        if (clear) {
-            _adapter.clearAllItems()
-        } else if (reset) {
-            _adapter.dataItems.clear()
+        _adapter.render {
+            if (clear) {
+                _adapter.clearAllItems()
+            } else if (reset) {
+                _adapter.dataItems.clear()
+            }
+            _adapter.config()
+            _adapter.toNone()
         }
-        _adapter.config()
-        _adapter.toNone()
     }
 
     /**调用此方法, 更新界面*/

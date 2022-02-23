@@ -36,7 +36,6 @@ class UpdateDataConfig {
             DslAdapterItem.PAYLOAD_UPDATE_PART,
             DslAdapterItem.PAYLOAD_UPDATE_MEDIA
         )
-        important = true
     }
 
     /**本次更新, 需要更新的数据量*/
