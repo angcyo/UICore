@@ -13,6 +13,7 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.ViewCompat
 import com.angcyo.drawable.base.DslGradientDrawable
+import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.toColorInt
 import com.angcyo.tablayout.DslTabIndicator.Companion.NO_COLOR
 import java.util.*
@@ -958,3 +959,41 @@ fun DslButton.updateRadius(radius: Float, update: Boolean = true) {
         updateDrawable()
     }
 }
+
+//<editor-fold desc="样式快速设置">
+
+/**填充样式*/
+fun DslButton.solidStyle(solidColor: Int, textColor: Int = NO_COLOR, radius: Float = 0f) {
+    setButtonGradientColors(null)
+    setButtonStrokeColor(NO_COLOR)
+    setButtonSolidColor(solidColor)
+    setButtonRadius(radius)
+    if (textColor != NO_COLOR) {
+        enableTextStyle = true
+        setButtonTextColor(textColor)
+    }
+    updateDrawable()
+}
+
+/**边框样式*/
+fun DslButton.borderStyle(
+    borderColor: Int,
+    strokeWidth: Int = 1 * dpi,
+    textColor: Int = NO_COLOR,
+    radius: Float = 0f
+) {
+    setButtonGradientColors(null)
+    setButtonSolidColor(NO_COLOR)
+    if (textColor != NO_COLOR) {
+        enableTextStyle = true
+        setButtonTextColor(textColor)
+    }
+    setButtonStrokeColor(borderColor)
+    setButtonRadius(radius)
+    if (strokeWidth >= 0) {
+        setButtonStrokeWidth(strokeWidth)
+    }
+    updateDrawable()
+}
+
+//</editor-fold desc="样式快速设置">
