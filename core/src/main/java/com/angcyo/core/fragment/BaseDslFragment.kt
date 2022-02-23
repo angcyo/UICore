@@ -106,7 +106,9 @@ open class BaseDslFragment : BaseTitleFragment() {
             if (_adapter.dslAdapterStatusItem.itemState == DslAdapterStatusItem.ADAPTER_STATUS_NONE ||
                 _adapter.dataItems.isEmpty()
             ) {
-                _adapter.toLoading()
+                _adapter.render {
+                    toLoading()
+                }
             }
         }
     }
