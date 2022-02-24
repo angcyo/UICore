@@ -44,6 +44,11 @@ open class ViewStyleConfig {
     /**部分布局支持*/
     var layoutGravity: Int = Gravity.NO_GRAVITY
 
+    /**
+     * 需要parent为[ConstraintLayout]
+     * [androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.dimensionRatio]*/
+    var viewDimensionRatio: String? = null
+
     /**更新样式*/
     open fun updateStyle(view: View) {
         with(view) {
@@ -112,6 +117,14 @@ open class ViewStyleConfig {
             }
             //设置
             setWidthHeight(viewWidth, viewHeight)
+            if (lp is ConstraintLayout.LayoutParams) {
+                if (viewDimensionRatio == null) {
+                    viewDimensionRatio = lp.dimensionRatio
+                } else {
+                    lp.dimensionRatio = viewDimensionRatio
+                    layoutParams = lp
+                }
+            }
 
             //Gravity
             if (lp is FrameLayout.LayoutParams) {
