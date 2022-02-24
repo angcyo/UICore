@@ -91,30 +91,33 @@ class DrawableIndicator(context: Context, attributeSet: AttributeSet? = null) :
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        var left = paddingLeft
-        var top = paddingTop
-        for (i in 0 until indicatorCount) {
-            val width: Int = when {
-                _animator?.isStarted == true && i == indicatorIndex -> (drawableSize - (drawableSize - drawableSizeFocus) * _animatorFraction).toInt()
-                _animator?.isStarted == true && i == _animatorFromIndex -> (drawableSizeFocus - (drawableSizeFocus - drawableSize) * _animatorFraction).toInt()
-                i == indicatorIndex -> drawableSizeFocus
-                else -> drawableSize
-            }
+        if (indicatorCount > 1) {
+            //大于1个时, 才绘制
+            var left = paddingLeft
+            var top = paddingTop
+            for (i in 0 until indicatorCount) {
+                val width: Int = when {
+                    _animator?.isStarted == true && i == indicatorIndex -> (drawableSize - (drawableSize - drawableSizeFocus) * _animatorFraction).toInt()
+                    _animator?.isStarted == true && i == _animatorFromIndex -> (drawableSizeFocus - (drawableSizeFocus - drawableSize) * _animatorFraction).toInt()
+                    i == indicatorIndex -> drawableSizeFocus
+                    else -> drawableSize
+                }
 
-            val height = drawableSize
+                val height = drawableSize
 
-            top = paddingTop + (drawHeight - height) / 2
+                top = paddingTop + (drawHeight - height) / 2
 
-            val drawable = if (i == indicatorIndex) {
-                indicatorDrawableFocus
-            } else {
-                indicatorDrawable
-            }
-            drawable?.apply {
-                val right = left + width
-                setBounds(left, top, right, top + height)
-                left = right + indicatorSpace
-                draw(canvas)
+                val drawable = if (i == indicatorIndex) {
+                    indicatorDrawableFocus
+                } else {
+                    indicatorDrawable
+                }
+                drawable?.apply {
+                    val right = left + width
+                    setBounds(left, top, right, top + height)
+                    left = right + indicatorSpace
+                    draw(canvas)
+                }
             }
         }
     }
