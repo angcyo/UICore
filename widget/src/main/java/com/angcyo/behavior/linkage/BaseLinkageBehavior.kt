@@ -54,6 +54,27 @@ abstract class BaseLinkageBehavior(
     val linkageHeaderBehavior: LinkageHeaderBehavior? get() = headerView.behavior() as LinkageHeaderBehavior?
     val linkageFooterBehavior: LinkageFooterBehavior? get() = footerView.behavior() as LinkageFooterBehavior?
 
+    /**当[LinkageHeaderBehavior]进行偏移后, 调用此方法*/
+    open fun onHeaderViewOffset(headerView: View) {
+        parentLayout?.let {
+            if (this is LinkageStickyBehavior) {
+                onDependentViewChanged(it, childView!!, headerView)
+
+                //传递给Footer
+                linkageFooterBehavior?.onStickyViewOffset(childView!!)
+            }
+        }
+    }
+
+    /**当[LinkageStickyBehavior]进行偏移后, 调用此方法*/
+    open fun onStickyViewOffset(stickyView: View) {
+        parentLayout?.let {
+            if (this is LinkageFooterBehavior) {
+                onDependentViewChanged(it, childView!!, stickyView)
+            }
+        }
+    }
+
     /**关联布局依赖*/
     override fun layoutDependsOn(
         parent: CoordinatorLayout,

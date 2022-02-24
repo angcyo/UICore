@@ -198,7 +198,14 @@ class LinkageHeaderBehavior(
                     onContentScrollTo(this@LinkageHeaderBehavior, x, y, scrollType)
                 }
             } else {
-                childView?.offsetTopTo(y)
+                childView?.apply {
+                    offsetTopTo(y)
+                    if (linkageStickyBehavior == null) {
+                        linkageFooterBehavior?.onHeaderViewOffset(this)
+                    } else {
+                        linkageStickyBehavior?.onHeaderViewOffset(this)
+                    }
+                }
             }
         }
     }
@@ -561,22 +568,35 @@ class LinkageHeaderBehavior(
             _linkageFlingScrollView == null &&
             absY > absX && absY > minFlingVelocity
         ) {
+            val _headerScrollView = headerScrollView
+            val _footerScrollView = footerScrollView
             val delegateScrollView: NestedScrollingChild? =
-                if (footerScrollView?.topCanScroll() == true || footerScrollView?.bottomCanScroll() == true) {
-                    footerScrollView
+                if (e1?.isScreenTouchIn(_headerScrollView as? View) == true) {
+                    if (_headerScrollView?.topCanScroll() == true || _headerScrollView?.bottomCanScroll() == true) {
+                        _headerScrollView
+                    } else {
+                        null
+                    }
+                } else if (e1?.isScreenTouchIn(_footerScrollView as? View) == true) {
+                    if (_footerScrollView?.topCanScroll() == true || _footerScrollView?.bottomCanScroll() == true) {
+                        _footerScrollView
+                    } else {
+                        null
+                    }
                 } else {
-                    headerScrollView
+                    null
                 }
+
             if (delegateScrollView == null) {
                 //没有需要fling的view, 则自身处理
                 if (velocityY > 0) {
                     //手指向下fling
-                    //open()
+                    open()
                 } else {
                     //手指向上fling
-                    //close()
+                    close()
                 }
-                startFlingY(velocityY.toInt(), minScroll, 0)
+                //startFlingY(velocityY.toInt(), minScroll, 0)
             } else {
                 delegateScrollView.apply {
                     setFlingView(this)

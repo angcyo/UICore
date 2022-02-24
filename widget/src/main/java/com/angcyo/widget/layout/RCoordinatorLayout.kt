@@ -65,7 +65,8 @@ open class RCoordinatorLayout(
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
         getTouchActionDelegate().onTouchEvent(ev)
-        return super.onTouchEvent(ev)
+        super.onTouchEvent(ev)
+        return true
     }
 
     var _disallowIntercept: Boolean = false

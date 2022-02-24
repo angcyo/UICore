@@ -47,7 +47,6 @@ abstract class BaseBehaviorTabDetailFragment : BasePagerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fragmentConfig.titleItemIconColor = Color.WHITE
     }
 
     override fun onInitFragment() {
@@ -61,6 +60,8 @@ abstract class BaseBehaviorTabDetailFragment : BasePagerFragment() {
 
     /**初始化头部布局*/
     open fun initHeaderLayout() {
+        fragmentConfig.titleItemIconColor = Color.WHITE
+
         //背景层
         _vh.group(R.id.lib_background_wrap_layout)?.replace(backgroundScaleLayoutId)
         //头部层

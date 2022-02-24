@@ -21,11 +21,18 @@ fun MotionEvent.isTouchFinish(): Boolean {
 }
 
 /**是否在当前view中touch*/
-fun MotionEvent.isTouchIn(view: View): Boolean {
+fun MotionEvent.isTouchIn(view: View?): Boolean {
+    if (view == null) {
+        return false
+    }
     return view.viewFrameF().contains(x, y)
 }
 
-fun MotionEvent.isScreenTouchIn(view: View): Boolean {
+/**是否在当前view中touch*/
+fun MotionEvent.isScreenTouchIn(view: View?): Boolean {
+    if (view == null) {
+        return false
+    }
     return view.viewScreenFrameF().contains(rawX, rawY)
 }
 
