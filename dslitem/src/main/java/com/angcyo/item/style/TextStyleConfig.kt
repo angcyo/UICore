@@ -27,7 +27,7 @@ open class TextStyleConfig : ViewStyleConfig() {
     var text: CharSequence? = null
 
     /**当[text]为null时, 隐藏控件*/
-    var goneOnTextNull: Boolean = false
+    var goneOnTextEmpty: Boolean = false
 
     /**提示文本内容*/
     var hint: CharSequence? = null
@@ -70,8 +70,8 @@ open class TextStyleConfig : ViewStyleConfig() {
                     minHeight = viewMinHeight
                 }
 
-                if (goneOnTextNull) {
-                    visible(this@TextStyleConfig.text != null)
+                if (goneOnTextEmpty) {
+                    visible(!this@TextStyleConfig.text.isNullOrEmpty())
                 }
 
                 //兼容

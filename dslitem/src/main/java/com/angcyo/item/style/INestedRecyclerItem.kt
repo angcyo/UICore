@@ -22,6 +22,7 @@ interface INestedRecyclerItem : IAutoInitItem {
 
     var nestedRecyclerItemConfig: NestedRecyclerItemConfig
 
+    /**初始化[INestedRecyclerItem]*/
     fun initNestedRecyclerItem(
         itemHolder: DslViewHolder,
         itemPosition: Int,
@@ -30,6 +31,14 @@ interface INestedRecyclerItem : IAutoInitItem {
     ) {
         itemHolder.rv(nestedRecyclerItemConfig.itemNestedRecyclerViewId)?.apply {
             onBindNestedRecyclerView(this, itemHolder, itemPosition, adapterItem, payloads)
+        }
+    }
+
+    /**回收*/
+    fun onRecyclerViewRecycled(itemHolder: DslViewHolder, itemPosition: Int) {
+        itemHolder.rv(nestedRecyclerItemConfig.itemNestedRecyclerViewId)?.apply {
+            layoutManager = null
+            adapter = null
         }
     }
 

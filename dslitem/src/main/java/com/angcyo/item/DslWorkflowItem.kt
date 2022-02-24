@@ -18,7 +18,6 @@ import com.angcyo.widget.base.visible
 
 /**
  * 流程item, 上一步, 下一步, 当前步骤的状态提示item
- * [com.angcyo.item.style.INestedRecyclerItem.addNestedItem]
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2021/09/28
@@ -45,7 +44,7 @@ class DslWorkflowItem : DslNestedRecyclerItem(), ILabelItem, IDesItem {
 
     override var desItemConfig: DesItemConfig = DesItemConfig().apply {
         itemDesViewId = R.id.lib_work_flow_des
-        itemDesStyle.goneOnTextNull = true
+        itemDesStyle.goneOnTextEmpty = true
     }
 
     override var labelItemConfig: LabelItemConfig = LabelItemConfig().apply {

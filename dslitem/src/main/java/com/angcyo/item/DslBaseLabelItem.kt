@@ -16,7 +16,7 @@ import com.angcyo.widget.DslViewHolder
 open class DslBaseLabelItem : DslAdapterItem(), ILabelItem {
 
     override var labelItemConfig: LabelItemConfig = LabelItemConfig().apply {
-        itemLabelTextStyle.goneOnTextNull = true
+        itemLabelTextStyle.goneOnTextEmpty = true
     }
 
     init {

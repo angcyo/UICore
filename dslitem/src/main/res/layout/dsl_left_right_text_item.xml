@@ -5,22 +5,23 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingLeft="@dimen/lib_padding_left"
-    android:paddingTop="@dimen/lib_hdpi"
-    android:paddingRight="@dimen/lib_padding_left"
-    android:paddingBottom="@dimen/lib_hdpi">
+    android:paddingRight="@dimen/lib_padding_left">
 
     <com.angcyo.widget.text.DslTextView
-        android:id="@+id/lib_text_view"
+        android:id="@+id/lib_left_text_view"
         style="@style/LibBodyTextStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/lib_hdpi"
         android:layout_weight="1"
         tools:text="TextTextTextTextTextTextTextTextTextTextTextTextTextTextTextText" />
 
     <com.angcyo.widget.text.DslTextView
-        android:id="@+id/lib_des_view"
-        style="@style/LibSubTextStyle"
-        android:layout_width="wrap_content"
+        android:id="@+id/lib_right_text_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         tools:text="TextTextTextTextTextText" />
+
 </androidx.appcompat.widget.LinearLayoutCompat>

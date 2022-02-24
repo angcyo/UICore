@@ -45,7 +45,7 @@ open class DslLabelTextItem : DslBaseLabelItem(), ITextItem {
     var itemRightTextStyle = TextStyleConfig()
 
     override var textItemConfig: TextItemConfig = TextItemConfig().apply {
-        itemTextStyle.goneOnTextNull = true
+        itemTextStyle.goneOnTextEmpty = true
     }
 
     init {

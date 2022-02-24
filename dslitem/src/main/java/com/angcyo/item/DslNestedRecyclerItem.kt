@@ -34,4 +34,9 @@ open class DslNestedRecyclerItem : DslAdapterItem(), INestedRecyclerItem, IFragm
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
     }
+
+    override fun onItemViewRecycled(itemHolder: DslViewHolder, itemPosition: Int) {
+        super.onItemViewRecycled(itemHolder, itemPosition)
+        onRecyclerViewRecycled(itemHolder, itemPosition)
+    }
 }
