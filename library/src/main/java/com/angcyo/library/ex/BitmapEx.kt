@@ -1,5 +1,6 @@
 package com.angcyo.library.ex
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -11,6 +12,7 @@ import android.provider.MediaStore
 import android.util.Base64
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.Constant.PICTURE_FOLDER_NAME
 import com.angcyo.library.utils.fastBlur
 import com.angcyo.library.utils.fileNameUUID
@@ -91,7 +93,12 @@ fun Bitmap.share(
         intent = Intent.createChooser(intent, "分享图片")
     }
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    context.startActivity(intent)
+    try {
+        context.startActivity(intent)
+    } catch (e: ActivityNotFoundException) {
+        e.printStackTrace()
+        toastQQ("未安装对应程序")
+    }
     return true
 }
 

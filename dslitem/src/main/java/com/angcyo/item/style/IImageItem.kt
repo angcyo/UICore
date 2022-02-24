@@ -14,6 +14,7 @@ import com.angcyo.glide.DslGlide
 import com.angcyo.glide.GlideImageView
 import com.angcyo.glide.R
 import com.angcyo.glide.loadAvatar
+import com.angcyo.library.L
 import com.angcyo.library.ex.getColor
 import com.angcyo.library.ex.toUri
 import com.angcyo.widget.DslViewHolder
@@ -31,10 +32,12 @@ interface IImageItem : IAutoInitItem {
     var imageItemConfig: ImageItemConfig
 
     /**初始化*/
-    fun initImageItem(itemHolder: DslViewHolder,
-                      itemPosition: Int,
-                      adapterItem: DslAdapterItem,
-                      payloads: List<Any>) {
+    fun initImageItem(
+        itemHolder: DslViewHolder,
+        itemPosition: Int,
+        adapterItem: DslAdapterItem,
+        payloads: List<Any>
+    ) {
         //更新媒体
         val mediaUpdate = payloads.isUpdateMedia() || imageItemConfig.itemLoadImageFlag
 
@@ -85,9 +88,10 @@ interface IImageItem : IAutoInitItem {
                                         imageItemConfig.onConfigGlide(this)
                                     }
                                 }
+                            } else {
+                                L.w("注意->控件不是:${GlideImageView::class.java.name}类型,无法加载图片")
                             }
                         }
-                        //L.w("不支持的图片类型:${image}")
                     }
                 }
             }
