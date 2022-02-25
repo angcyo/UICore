@@ -11,6 +11,7 @@ import com.angcyo.acc2.control.ControlContext
 import com.angcyo.acc2.control.actionLog
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.eachChildDepth
+import com.angcyo.library.app
 import com.angcyo.library.ex.*
 import kotlin.math.max
 
@@ -394,6 +395,62 @@ class FindParse(val accParse: AccParse) : BaseParse() {
         return result
     }
 
+    //根据指定包名, 查找符合的[AccessibilityWindowInfo]
+    fun _findWindowBy2(packageName: String?): List<AccessibilityNodeInfoCompat> {
+        val result = mutableListOf<AccessibilityNodeInfoCompat>()
+        val accControl = accParse.accControl
+        if (!packageName.isNullOrEmpty()) {
+            packageName.split(Action.PACKAGE_SPLIT).forEach { name ->
+                when (name) {
+                    Action.PACKAGE_ACTIVE -> {
+                        accControl.accService()?.rootInActiveWindow?.wrap()?.let {
+                            result.add(it)
+                        }
+                    }
+                    Action.PACKAGE_MAIN -> {
+                        accControl.accService()?.windows?.forEach {
+                            it.root?.wrap()?.let { node ->
+                                if (node.packageName == app().packageName) {
+                                    result.add(node)
+                                }
+                            }
+                        }
+                    }
+                    Action.PACKAGE_TARGET -> {
+                        val targetPackageName = accControl._taskBean?.packageName
+                            ?: windowBean()?.packageName ?: accControl._taskBean?.packageName
+                        val targetPackageNameFirst =
+                            targetPackageName?.split(Action.PACKAGE_SPLIT)?.firstOrNull()
+                        accControl.accService()?.windows?.forEach {
+                            it.root?.wrap()?.let { node ->
+                                if (node.packageName == targetPackageNameFirst) {
+                                    result.add(node)
+                                }
+                            }
+                        }
+                    }
+                    Action.ALL -> {
+                        accControl.accService()?.windows?.forEach {
+                            it.root?.wrap()?.let { node ->
+                                result.add(node)
+                            }
+                        }
+                    }
+                    else -> {
+                        accControl.accService()?.windows?.forEach {
+                            it.root?.wrap()?.let { node ->
+                                if (node.packageName == name) {
+                                    result.add(node)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return result
+    }
+
     //根据指定包名和过滤的包名, 查找符合的[AccessibilityNodeInfoCompat]
     fun _findRootNodeBy(
         packageName: String?,
@@ -420,13 +477,14 @@ class FindParse(val accParse: AccParse) : BaseParse() {
                 }
             }
             else -> {
-                _findWindowBy(packageName).forEach { window ->
+                /*_findWindowBy(packageName).forEach { window ->
                     window.root?.wrap()?.let { node ->
                         if (!isIgnorePackageName(node, ignorePackageName)) {
                             result.add(node)
                         }
                     }
-                }
+                }*/
+                result.addAll(_findWindowBy2(packageName))
             }
         }
         return result
