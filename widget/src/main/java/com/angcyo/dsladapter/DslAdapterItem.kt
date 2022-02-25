@@ -44,6 +44,8 @@ import kotlin.reflect.KProperty
 
 typealias ItemAction = (DslAdapterItem) -> Unit
 
+typealias ItemSelectAction = (selectorParams: SelectorParams) -> Unit
+
 typealias ItemUpdateDependAction = (FilterParams) -> Unit
 
 typealias ItemBindAction = (
@@ -936,7 +938,8 @@ open class DslAdapterItem : LifecycleOwner {
         return true
     }
 
-    /**[itemUpdateFrom]*/
+    /**[itemUpdateFrom]
+     * [com.angcyo.dsladapter.DslDataFilter.UpdateTaskRunnable.notifyUpdateDependItem]*/
     val itemUpdateFromListenerList = mutableSetOf<ItemAction>()
 
     fun observeItemUpdateFrom(action: ItemAction): ItemAction {
@@ -959,7 +962,8 @@ open class DslAdapterItem : LifecycleOwner {
     var isItemCanSelected: (fromSelector: Boolean, toSelector: Boolean) -> Boolean =
         { from, to -> from != to }
 
-    var onItemSelectorChange: (selectorParams: SelectorParams) -> Unit = {
+    /**监听item select改变事件*/
+    var onItemSelectorChange: ItemSelectAction = {
         if (it.updateItemDepend) {
             updateItemDepend()
         }
@@ -969,6 +973,18 @@ open class DslAdapterItem : LifecycleOwner {
      * [com.angcyo.dsladapter.ItemSelectorHelper._selectorInner]*/
     open fun _itemSelectorChange(selectorParams: SelectorParams) {
         onItemSelectorChange(selectorParams)
+        itemSelectListener.forEach { it(selectorParams) }
+    }
+
+    val itemSelectListener = mutableSetOf<ItemSelectAction>()
+
+    fun observeItemSelect(action: ItemSelectAction): ItemSelectAction {
+        itemSelectListener.add(action)
+        return action
+    }
+
+    fun removeItemSelectObserver(action: ItemSelectAction): Boolean {
+        return itemSelectListener.remove(action)
     }
 
     //</editor-fold desc="单选/多选相关">

@@ -56,5 +56,8 @@ interface IAutoInitItem : IDslItem {
         if (this is ILoadItem) {
             initLoadingItem(itemHolder, itemPosition, adapterItem, payloads)
         }
+        if (this is ICheckItem) {
+            initCheckItem(itemHolder, itemPosition, adapterItem, payloads)
+        }
     }
 }
