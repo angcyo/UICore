@@ -25,6 +25,19 @@
         <item name="button_radius">@dimen/lib_radius_max</item>
     </style>
 
+    <!--圆角边框的样式-->
+    <style name="LibButtonBorderStyle" parent="LibButtonStyle">
+        <item name="android:paddingStart">@dimen/lib_hdpi</item>
+        <item name="android:paddingEnd">@dimen/lib_hdpi</item>
+        <item name="android:paddingTop">@dimen/lib_ldpi</item>
+        <item name="android:paddingBottom">@dimen/lib_ldpi</item>
+        <item name="button_radius">@dimen/lib_radius_max</item>
+        <item name="button_gradient_colors">""</item>
+        <item name="button_stroke_color">@color/colorPrimary</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="button_stroke_width">@dimen/lib_line</item>
+    </style>
+
     <!--灰色边框线按钮样式-->
     <style name="LibButtonStrokeStyle" parent="LibBodyTextStyle">
         <item name="android:gravity">center</item>
