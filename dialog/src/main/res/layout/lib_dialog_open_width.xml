@@ -47,7 +47,7 @@
                 app:layout_behavior="com.angcyo.behavior.effect.HorizontalEdgeEffectBehavior"
                 app:r_layout_manager="h"
                 tools:minHeight="100dp"
-                tools:visibility="gone" />
+                tools:visibility="visible" />
 
         </com.angcyo.widget.layout.RCoordinatorLayout>
 

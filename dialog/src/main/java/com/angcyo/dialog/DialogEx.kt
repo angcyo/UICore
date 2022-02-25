@@ -172,6 +172,17 @@ fun Context.gridDialog(config: GridDialogConfig.() -> Unit): Dialog {
 }
 
 /**
+ * 底部网格菜单对话框
+ * */
+fun Context.gridMenuDialog(config: GridMenuDialogConfig.() -> Unit): Dialog {
+    return GridMenuDialogConfig(this).run {
+        configBottomDialog()
+        config()
+        show()
+    }
+}
+
+/**
  * 万级联动选项对话框
  * */
 fun Context.optionDialog(config: OptionDialogConfig.() -> Unit): Dialog {

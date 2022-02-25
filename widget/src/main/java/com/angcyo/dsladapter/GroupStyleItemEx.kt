@@ -2,6 +2,7 @@ package com.angcyo.dsladapter
 
 import android.graphics.Rect
 import com.angcyo.library.ex._dimen
+import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
 
 /**
@@ -231,6 +232,34 @@ fun DslAdapterItem.initGroupOffset(outRect: Rect, left: Int, top: Int, right: In
                 }
                 if (isEdgeBottom()) {
                     outRect.bottom = bottom
+                }
+            }
+        }
+    }
+}
+
+/**设置横向/纵向item之间的间隙
+ * [gapSize] 间隙大小*/
+fun DslAdapterItem.initItemGapOffset(gapSize: Int = 10 * dpi, outRect: Rect? = null) {
+    if (onSetItemOffset == null) {
+        onSetItemOffset = {
+            initItemGapOffset(gapSize, it)
+        }
+    } else {
+        outRect?.set(itemLeftInsert, itemTopInsert, itemRightInsert, itemBottomInsert) //初始化成默认的值
+        outRect?.right = gapSize
+        outRect?.bottom = gapSize
+        itemGroupParams.apply {
+            if (isOnlyOne()) {
+                outRect?.right = itemRightInsert
+                outRect?.bottom = itemBottomInsert
+            } else {
+                //待测试
+                if (isEdgeRight()) {
+                    outRect?.right = itemRightInsert
+                }
+                if (isEdgeBottom()) {
+                    outRect?.bottom = itemBottomInsert
                 }
             }
         }

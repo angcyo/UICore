@@ -243,8 +243,9 @@ data class ItemGroupParams(
     /**一组中的所有[item]*/
     var groupItems: List<DslAdapterItem> = listOf(),
 
-    /**网格系统中的edge信息*/
-    var edgeGridParams: EdgeGridParams = EdgeGridParams()
+    /**网格系统中的edge信息
+     * 只有在[GridLayoutManager]中才有值*/
+    var edgeGridParams: EdgeGridParams? = null
 )
 
 fun DslAdapterItem.createItemGroupParams(): ItemGroupParams {
@@ -333,21 +334,21 @@ fun ItemGroupParams.isLastGroup(): Boolean =
 //是否在4条边上
 
 /**在网格的左边*/
-fun ItemGroupParams.isEdgeLeft(): Boolean = edgeGridParams.currentSpanParams.spanIndex == 0
+fun ItemGroupParams.isEdgeLeft(): Boolean = edgeGridParams?.currentSpanParams?.spanIndex == 0
 
 /**在网格的右边*/
-fun ItemGroupParams.isEdgeRight(): Boolean = edgeGridParams.currentSpanParams.run {
+fun ItemGroupParams.isEdgeRight(): Boolean = edgeGridParams?.currentSpanParams?.run {
     spanIndex + spanSize == spanCount
-}
+} ?: false
 
 /**在网格的上边*/
-fun ItemGroupParams.isEdgeTop(): Boolean = edgeGridParams.currentSpanParams.spanGroupIndex == 0
+fun ItemGroupParams.isEdgeTop(): Boolean = edgeGridParams?.currentSpanParams?.spanGroupIndex == 0
 
 /**在网格的下边*/
-fun ItemGroupParams.isEdgeBottom(): Boolean = edgeGridParams.run {
+fun ItemGroupParams.isEdgeBottom(): Boolean = edgeGridParams?.run {
     currentSpanParams.spanGroupIndex != RecyclerView.NO_POSITION &&
             lastParams.spanGroupIndex == currentSpanParams.spanGroupIndex
-}
+} ?: false
 
 /**全屏占满网格整个一行*/
 fun ItemGroupParams.isEdgeHorizontal(): Boolean = isEdgeLeft() && isEdgeRight()
@@ -362,9 +363,9 @@ fun ItemGroupParams.isEdgeVertical(): Boolean = isEdgeTop() && isEdgeBottom()
 //是否在分组4个角上
 
 /**是否在分组左上角*/
-fun ItemGroupParams.isEdgeGroupLeftTop(): Boolean = edgeGridParams.run {
+fun ItemGroupParams.isEdgeGroupLeftTop(): Boolean = edgeGridParams?.run {
     currentSpanParams.spanIndex == 0 && currentSpanParams.spanGroupIndex == firstSpanParams.spanGroupIndex
-}
+} ?: false
 
 /**是否在分组右上角*/
 fun ItemGroupParams.isEdgeGroupRightTop(): Boolean = edgeGridParams.run {
@@ -385,16 +386,16 @@ fun ItemGroupParams.isEdgeGroupRightBottom(): Boolean = edgeGridParams.run {
 }
 
 /**在一组中的第一行中*/
-fun ItemGroupParams.isEdgeGroupTop(): Boolean = edgeGridParams.run {
+fun ItemGroupParams.isEdgeGroupTop(): Boolean = edgeGridParams?.run {
     currentSpanParams.spanGroupIndex != RecyclerView.NO_POSITION &&
             currentSpanParams.spanGroupIndex == firstSpanParams.spanGroupIndex
-}
+} ?: false
 
 /**在一组中的最后一行中*/
-fun ItemGroupParams.isEdgeGroupBottom(): Boolean = edgeGridParams.run {
+fun ItemGroupParams.isEdgeGroupBottom(): Boolean = edgeGridParams?.run {
     currentSpanParams.spanGroupIndex != RecyclerView.NO_POSITION &&
             currentSpanParams.spanGroupIndex == lastSpanParams.spanGroupIndex
-}
+} ?: false
 
 /**占满整个一行(允许非全屏)*/
 fun ItemGroupParams.isEdgeGroupHorizontal(): Boolean =
@@ -405,26 +406,26 @@ fun ItemGroupParams.isEdgeGroupVertical(): Boolean =
     (isEdgeGroupLeftTop() && isEdgeGroupLeftBottom()) || (isEdgeGroupRightTop() && isEdgeGroupRightBottom())
 
 /**在一组中的第一列上, 支持横竖布局*/
-fun ItemGroupParams.isGroupFirstColumn(): Boolean = edgeGridParams.run {
+fun ItemGroupParams.isGroupFirstColumn(): Boolean = edgeGridParams?.run {
     currentSpanParams.spanIndex == firstSpanParams.spanIndex
-}
+} ?: false
 
 /**在一组中的最后一列上, 支持横竖布局, 如果这一列未满, 也属于最后一列*/
-fun ItemGroupParams.isGroupLastColumn(): Boolean = edgeGridParams.run {
+fun ItemGroupParams.isGroupLastColumn(): Boolean = edgeGridParams?.run {
     currentSpanParams.spanIndex == lastSpanParams.spanIndex
-}
+} ?: false
 
 /**在一组中的第一行上, 支持横竖布局*/
-fun ItemGroupParams.isGroupFirstRow(): Boolean = edgeGridParams.run {
+fun ItemGroupParams.isGroupFirstRow(): Boolean = edgeGridParams?.run {
     currentSpanParams.spanGroupIndex != RecyclerView.NO_POSITION &&
             currentSpanParams.spanGroupIndex == firstSpanParams.spanGroupIndex
-}
+} ?: false
 
 /**在一组中的最后一行上, 支持横竖布局*/
-fun ItemGroupParams.isGroupLastRow(): Boolean = edgeGridParams.run {
+fun ItemGroupParams.isGroupLastRow(): Boolean = edgeGridParams?.run {
     currentSpanParams.spanGroupIndex != RecyclerView.NO_POSITION &&
             currentSpanParams.spanGroupIndex == lastSpanParams.spanGroupIndex
-}
+} ?: false
 
 //</editor-fold desc="细粒度 分组边界扩展">
 

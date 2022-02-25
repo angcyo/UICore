@@ -38,6 +38,7 @@ open class GridDialogConfig(context: Context? = null) : RecyclerDialogConfig(con
     override fun defaultCancelItem(): DslDialogTextItem {
         return super.defaultCancelItem().apply {
             margin(0)
+            itemBackgroundDrawable = null
         }
     }
 

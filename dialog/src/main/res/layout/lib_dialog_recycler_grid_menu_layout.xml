@@ -1,21 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.angcyo.widget.layout.RLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/lib_dialog_root_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/lib_xhdpi"
+    android:background="#F2F2F2"
     android:orientation="vertical"
-    app:r_max_height="0.5sh">
+    android:padding="@dimen/lib_xhdpi">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/title_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="0dp"
+        android:padding="@dimen/lib_hdpi"
+        android:textStyle="bold"
+        tools:text="标题" />
+
     <!--列表-->
     <com.angcyo.widget.recycler.DslRecyclerView
         android:id="@+id/lib_recycler_view"
         style="@style/LibRecyclerViewStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="@drawable/dialog_white_round_bg_shape" />
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <!--取消-->
     <FrameLayout
@@ -28,4 +38,4 @@
         android:visibility="gone"
         tools:visibility="visible" />
 
-</com.angcyo.widget.layout.RLinearLayout>
+</LinearLayout>

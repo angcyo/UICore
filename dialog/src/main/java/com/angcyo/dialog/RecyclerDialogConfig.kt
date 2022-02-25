@@ -118,6 +118,11 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
         }
     }
 
+    /**隐藏取消的item*/
+    fun hideCancelItem() {
+        dialogBottomCancelItem = null
+    }
+
     /**配置取消按钮*/
     fun configCancelItem(action: DslDialogTextItem.() -> DslDialogTextItem?) {
         dialogBottomCancelItem = (dialogBottomCancelItem ?: defaultCancelItem()).run {
