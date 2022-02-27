@@ -396,7 +396,10 @@ class FindParse(val accParse: AccParse) : BaseParse() {
     }
 
     //根据指定包名, 查找符合的[AccessibilityWindowInfo]
-    fun _findWindowBy2(packageName: String?): List<AccessibilityNodeInfoCompat> {
+    fun _findWindowBy2(
+        packageName: String?,
+        ignorePackageName: String? = null
+    ): List<AccessibilityNodeInfoCompat> {
         val result = mutableListOf<AccessibilityNodeInfoCompat>()
         val accControl = accParse.accControl
         if (!packageName.isNullOrEmpty()) {
@@ -404,14 +407,18 @@ class FindParse(val accParse: AccParse) : BaseParse() {
                 when (name) {
                     Action.PACKAGE_ACTIVE -> {
                         accControl.accService()?.rootInActiveWindow?.wrap()?.let {
-                            result.add(it)
+                            if (!isIgnorePackageName(it, ignorePackageName)) {
+                                result.add(it)
+                            }
                         }
                     }
                     Action.PACKAGE_MAIN -> {
                         accControl.accService()?.windows?.forEach {
                             it.root?.wrap()?.let { node ->
                                 if (node.packageName == app().packageName) {
-                                    result.add(node)
+                                    if (!isIgnorePackageName(node, ignorePackageName)) {
+                                        result.add(node)
+                                    }
                                 }
                             }
                         }
@@ -424,7 +431,9 @@ class FindParse(val accParse: AccParse) : BaseParse() {
                         accControl.accService()?.windows?.forEach {
                             it.root?.wrap()?.let { node ->
                                 if (node.packageName == targetPackageNameFirst) {
-                                    result.add(node)
+                                    if (!isIgnorePackageName(node, ignorePackageName)) {
+                                        result.add(node)
+                                    }
                                 }
                             }
                         }
@@ -432,7 +441,9 @@ class FindParse(val accParse: AccParse) : BaseParse() {
                     Action.ALL -> {
                         accControl.accService()?.windows?.forEach {
                             it.root?.wrap()?.let { node ->
-                                result.add(node)
+                                if (!isIgnorePackageName(node, ignorePackageName)) {
+                                    result.add(node)
+                                }
                             }
                         }
                     }
@@ -440,7 +451,9 @@ class FindParse(val accParse: AccParse) : BaseParse() {
                         accControl.accService()?.windows?.forEach {
                             it.root?.wrap()?.let { node ->
                                 if (node.packageName == name) {
-                                    result.add(node)
+                                    if (!isIgnorePackageName(node, ignorePackageName)) {
+                                        result.add(node)
+                                    }
                                 }
                             }
                         }
@@ -484,7 +497,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
                         }
                     }
                 }*/
-                result.addAll(_findWindowBy2(packageName))
+                result.addAll(_findWindowBy2(packageName, ignorePackageName))
             }
         }
         return result
