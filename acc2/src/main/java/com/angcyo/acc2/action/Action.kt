@@ -29,6 +29,9 @@ object Action {
     /**当前活跃的窗口*/
     const val PACKAGE_ACTIVE = "active"
 
+    /**最后一个window的窗口*/
+    const val PACKAGE_LAST = "last"
+
     /**文本解析时, 默认的值对应的key*/
     const val DEF = "def"
 

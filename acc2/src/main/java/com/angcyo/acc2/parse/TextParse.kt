@@ -296,12 +296,18 @@ class TextParse(val accParse: AccParse) : BaseParse(), IInputProvider {
                 }
             } else if (name == Action.PACKAGE_ACTIVE) {
                 accControl.accService()?.rootInActiveWindow?.packageName
+            } else if (name == Action.PACKAGE_LAST) {
+                accControl.accService()?.windows?.lastOrNull()?.root?.packageName
+            } else if (name.isNumber()) {
+                accControl.accService()?.windows?.getOrNull2(
+                    name.toIntOrNull() ?: Int.MAX_VALUE
+                )?.root?.packageName
             } else {
                 name
-            }?.toStr()
+            }
 
             if (!packageName.isNullOrBlank()) {
-                result.add(packageName)
+                result.add(packageName.toStr())
             }
         }
 

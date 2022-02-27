@@ -381,6 +381,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
     }
 
     //根据指定包名, 查找符合的[AccessibilityWindowInfo]
+    @Deprecated("请使用[_findWindowBy2]")
     fun _findWindowBy(packageName: String?): List<AccessibilityWindowInfo> {
         val result = mutableListOf<AccessibilityWindowInfo>()
         if (!packageName.isNullOrEmpty()) {
@@ -404,55 +405,72 @@ class FindParse(val accParse: AccParse) : BaseParse() {
         val accControl = accParse.accControl
         if (!packageName.isNullOrEmpty()) {
             packageName.split(Action.PACKAGE_SPLIT).forEach { name ->
-                when (name) {
-                    Action.PACKAGE_ACTIVE -> {
-                        accControl.accService()?.rootInActiveWindow?.wrap()?.let {
-                            if (!isIgnorePackageName(it, ignorePackageName)) {
-                                result.add(it)
-                            }
+                if (name.isNumber()) {
+                    accControl.accService()?.windows?.getOrNull2(
+                        name.toIntOrNull() ?: Int.MAX_VALUE
+                    )?.root?.wrap()?.let {
+                        if (!isIgnorePackageName(it, ignorePackageName)) {
+                            result.add(it)
                         }
                     }
-                    Action.PACKAGE_MAIN -> {
-                        accControl.accService()?.windows?.forEach {
-                            it.root?.wrap()?.let { node ->
-                                if (node.packageName == app().packageName) {
+                } else {
+                    when (name) {
+                        Action.PACKAGE_ACTIVE -> {
+                            accControl.accService()?.rootInActiveWindow?.wrap()?.let {
+                                if (!isIgnorePackageName(it, ignorePackageName)) {
+                                    result.add(it)
+                                }
+                            }
+                        }
+                        Action.PACKAGE_LAST -> {
+                            accControl.accService()?.windows?.lastOrNull()?.root?.wrap()?.let {
+                                if (!isIgnorePackageName(it, ignorePackageName)) {
+                                    result.add(it)
+                                }
+                            }
+                        }
+                        Action.PACKAGE_MAIN -> {
+                            accControl.accService()?.windows?.forEach {
+                                it.root?.wrap()?.let { node ->
+                                    if (node.packageName == app().packageName) {
+                                        if (!isIgnorePackageName(node, ignorePackageName)) {
+                                            result.add(node)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        Action.PACKAGE_TARGET -> {
+                            val targetPackageName = accControl._taskBean?.packageName
+                                ?: windowBean()?.packageName ?: accControl._taskBean?.packageName
+                            val targetPackageNameFirst =
+                                targetPackageName?.split(Action.PACKAGE_SPLIT)?.firstOrNull()
+                            accControl.accService()?.windows?.forEach {
+                                it.root?.wrap()?.let { node ->
+                                    if (node.packageName == targetPackageNameFirst) {
+                                        if (!isIgnorePackageName(node, ignorePackageName)) {
+                                            result.add(node)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        Action.ALL -> {
+                            accControl.accService()?.windows?.forEach {
+                                it.root?.wrap()?.let { node ->
                                     if (!isIgnorePackageName(node, ignorePackageName)) {
                                         result.add(node)
                                     }
                                 }
                             }
                         }
-                    }
-                    Action.PACKAGE_TARGET -> {
-                        val targetPackageName = accControl._taskBean?.packageName
-                            ?: windowBean()?.packageName ?: accControl._taskBean?.packageName
-                        val targetPackageNameFirst =
-                            targetPackageName?.split(Action.PACKAGE_SPLIT)?.firstOrNull()
-                        accControl.accService()?.windows?.forEach {
-                            it.root?.wrap()?.let { node ->
-                                if (node.packageName == targetPackageNameFirst) {
-                                    if (!isIgnorePackageName(node, ignorePackageName)) {
-                                        result.add(node)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    Action.ALL -> {
-                        accControl.accService()?.windows?.forEach {
-                            it.root?.wrap()?.let { node ->
-                                if (!isIgnorePackageName(node, ignorePackageName)) {
-                                    result.add(node)
-                                }
-                            }
-                        }
-                    }
-                    else -> {
-                        accControl.accService()?.windows?.forEach {
-                            it.root?.wrap()?.let { node ->
-                                if (node.packageName == name) {
-                                    if (!isIgnorePackageName(node, ignorePackageName)) {
-                                        result.add(node)
+                        else -> {
+                            accControl.accService()?.windows?.forEach {
+                                it.root?.wrap()?.let { node ->
+                                    if (node.packageName == name) {
+                                        if (!isIgnorePackageName(node, ignorePackageName)) {
+                                            result.add(node)
+                                        }
                                     }
                                 }
                             }
