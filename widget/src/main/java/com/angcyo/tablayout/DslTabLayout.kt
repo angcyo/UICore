@@ -189,7 +189,7 @@ open class DslTabLayout(
                     selectList,
                     reselect,
                     fromUser
-                ) ?: _viewPagerDelegate?.onSetCurrentItem(fromIndex, toIndex)
+                ) ?: _viewPagerDelegate?.onSetCurrentItem(fromIndex, toIndex, reselect, fromUser)
             }
         }
     }
@@ -1846,7 +1846,7 @@ open class DslTabLayout(
     }
 
     fun onPageSelected(position: Int) {
-        setCurrentItem(position)
+        setCurrentItem(position, true, false)
     }
 
     //</editor-fold desc="ViewPager 相关">
