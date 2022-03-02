@@ -38,6 +38,14 @@ class SpanClickMethod : LinkMovementMethod() {
                 }
             }
         }
+
+        fun uninstall(textView: TextView?) {
+            textView?.apply {
+                if (movementMethod == instance) {
+                    movementMethod = null
+                }
+            }
+        }
     }
 
     var _downX: Float = 0f
