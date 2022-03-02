@@ -15,9 +15,8 @@ import android.content.pm.PackageManager
 fun Context.getAppMetaData(key: String?): String? {
     var value: String? = null
     try {
-        val applicationInfo =
-            packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
-        value = applicationInfo.metaData.getString(key)
+        val info = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
+        value = info.metaData.getString(key)
     } catch (e: PackageManager.NameNotFoundException) {
         e.printStackTrace()
     }
@@ -32,11 +31,9 @@ fun Context.getActivityMetaData(activity: Class<*>, key: String?): String? {
 fun Context.getActivityMetaData(activityClass: String, key: String?): String? {
     var value: String? = null
     try {
-        val componentName =
-            ComponentName(packageName, activityClass)
-        val activityInfo =
-            packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
-        value = activityInfo.metaData.getString(key)
+        val componentName = ComponentName(packageName, activityClass)
+        val info = packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
+        value = info.metaData.getString(key)
     } catch (e: PackageManager.NameNotFoundException) {
         e.printStackTrace()
     }
@@ -52,9 +49,8 @@ fun Context.getServiceMetaData(serviceClass: String, key: String?): String? {
     var value: String? = null
     try {
         val componentName = ComponentName(packageName, serviceClass)
-        val serviceInfo = packageManager
-            .getServiceInfo(componentName, PackageManager.GET_META_DATA)
-        value = serviceInfo.metaData.getString(key)
+        val info = packageManager.getServiceInfo(componentName, PackageManager.GET_META_DATA)
+        value = info.metaData.getString(key)
     } catch (e: PackageManager.NameNotFoundException) {
         e.printStackTrace()
     }
@@ -69,11 +65,9 @@ fun Context.getReceiverMetaData(receiver: Class<*>, key: String?): String? {
 fun Context.getReceiverMetaData(receiverClass: String, key: String?): String? {
     var value: String? = null
     try {
-        val componentName =
-            ComponentName(packageName, receiverClass)
-        val receiverInfo = packageManager
-            .getReceiverInfo(componentName, PackageManager.GET_META_DATA)
-        value = receiverInfo.metaData.getString(key)
+        val componentName = ComponentName(packageName, receiverClass)
+        val info = packageManager.getReceiverInfo(componentName, PackageManager.GET_META_DATA)
+        value = info.metaData.getString(key)
     } catch (e: PackageManager.NameNotFoundException) {
         e.printStackTrace()
     }
