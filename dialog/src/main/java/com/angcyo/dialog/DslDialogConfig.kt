@@ -521,6 +521,9 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
         }
     }
 
+    /**监听声明周期*/
+    var _lifecycleObserver: LifecycleEventObserver? = null
+
     /**根据类型, 自动显示对应[Dialog]*/
     open fun show(type: Int = dialogType): Dialog {
         onDialogInit()
@@ -553,19 +556,11 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
 
         //防止activity销毁时, dialog泄漏
         if (dialogContext is LifecycleOwner) {
-            val oldCancelListener = onCancelListener
-
-            val observer: LifecycleEventObserver =
-                (dialogContext as LifecycleOwner).onDestroy {
-                    dialog.cancel()
-                    true
-                }
-
-            onCancelListener = {
-                (dialogContext as LifecycleOwner).lifecycle.removeObserver(observer)
-
-                oldCancelListener?.invoke(it)
+            val observer: LifecycleEventObserver = (dialogContext as LifecycleOwner).onDestroy {
+                dialog.cancel()
+                true
             }
+            _lifecycleObserver = observer
         }
 
         return dialog
@@ -602,6 +597,11 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
     @CallSuper
     open fun onDialogDestroy(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
+        _lifecycleObserver?.let { observer ->
+            if (dialogContext is LifecycleOwner) {
+                (dialogContext as LifecycleOwner).lifecycle.removeObserver(observer)
+            }
+        }
         dialogViewHolder.clear()
     }
 
