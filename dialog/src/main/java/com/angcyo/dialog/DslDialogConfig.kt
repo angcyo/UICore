@@ -280,6 +280,9 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
     //保存[Dialog]对象
     var _dialog: Dialog? = null
 
+    //保存[DslViewHolder]对象
+    var _dialogViewHolder: DslViewHolder? = null
+
     @Throws
     open fun showAndConfigDialog(dialog: Dialog): Dialog {
         if (dialogContext == null) {
@@ -318,6 +321,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
 
             decorView = window.decorView
             val viewHolder = decorView.dslViewHolder()
+            _dialogViewHolder = viewHolder
 
             //lifecycle
             dialog.setOnShowListener {
