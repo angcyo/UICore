@@ -8,6 +8,7 @@ import android.content.pm.Signature
 import android.net.Uri
 import android.os.Build
 import android.os.Process
+import android.provider.Settings
 import com.angcyo.library.app
 import com.angcyo.library.utils.Device
 import java.io.File
@@ -63,6 +64,18 @@ fun getAppSignature(
  * */
 fun installApk(context: Context, file: File?) {
     if (file == null || !file.canRead()) return
+    //兼容8.0
+    /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val hasInstallPermission: Boolean =
+            context.packageManager.canRequestPackageInstalls()
+        if (!hasInstallPermission) {
+            //注意这个是8.0新API
+            val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+            return
+        }
+    }*/
     val intent = Intent(Intent.ACTION_VIEW)
     val type: String? = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
         "application/vnd.android.package-archive"
