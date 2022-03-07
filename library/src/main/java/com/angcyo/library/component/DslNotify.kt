@@ -21,6 +21,7 @@ import androidx.core.app.Person
 import androidx.media.session.MediaButtonReceiver
 import com.angcyo.library.app
 import com.angcyo.library.ex.baseConfig
+import com.angcyo.library.ex.have
 import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.undefined_int
 import kotlin.math.min
@@ -179,7 +180,13 @@ class DslNotify {
             options: Bundle? = null
         ): PendingIntent {
             intent.baseConfig(context)
-            return PendingIntent.getActivity(context, requestCode, intent, flags, options)
+            return PendingIntent.getActivity(
+                context,
+                requestCode,
+                intent,
+                flags.pendingIntentMutableFlag(),
+                options
+            )
         }
 
         fun pendingBroadcast(
@@ -188,7 +195,12 @@ class DslNotify {
             requestCode: Int = 0x999,
             flags: Int = PendingIntent.FLAG_UPDATE_CURRENT
         ): PendingIntent {
-            return PendingIntent.getBroadcast(context, requestCode, intent, flags)
+            return PendingIntent.getBroadcast(
+                context,
+                requestCode,
+                intent,
+                flags.pendingIntentMutableFlag()
+            )
         }
 
         fun pendingService(
@@ -207,7 +219,12 @@ class DslNotify {
             requestCode: Int = 0x999,
             flags: Int = PendingIntent.FLAG_UPDATE_CURRENT
         ): PendingIntent {
-            return PendingIntent.getService(context, requestCode, intent, flags)
+            return PendingIntent.getService(
+                context,
+                requestCode,
+                intent,
+                flags.pendingIntentMutableFlag()
+            )
         }
 
         fun action(
@@ -775,6 +792,19 @@ fun String.isChannelEnable() = DslNotify.getNotificationChannel(this).isEnable()
 /**打开通知通道设置*/
 fun String.openNotificationChannelSetting(context: Context = app()) {
     DslNotify.openNotificationChannelSetting(context, this)
+}
+
+fun Int.pendingIntentMutableFlag(mutableFlag: Int = 33554432): Int {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        //android 12
+        if (this.have(PendingIntent.FLAG_MUTABLE) || this.have(PendingIntent.FLAG_IMMUTABLE)) {
+            this
+        } else {
+            this or mutableFlag
+        }
+    } else {
+        this
+    }
 }
 
 //</editor-fold desc="通知扩展">
