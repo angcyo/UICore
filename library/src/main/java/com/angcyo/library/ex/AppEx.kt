@@ -61,6 +61,7 @@ fun getAppSignature(
  * 安装apk
  * 安卓7.0 需要androidx.core.content.FileProvider
  * 安卓8.0 需要请求安装权限 Manifest.permission.REQUEST_INSTALL_PACKAGES
+ * https://github.com/hgncxzy/InstallApk
  * */
 fun installApk(context: Context, file: File?) {
     if (file == null || !file.canRead()) return
