@@ -63,7 +63,7 @@ fun getAppSignature(
  * */
 fun installApk(context: Context, file: File?) {
     if (file == null || !file.canRead()) return
-    val intent = Intent(Intent.ACTION_VIEW);
+    val intent = Intent(Intent.ACTION_VIEW)
     val type: String? = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
         "application/vnd.android.package-archive"
     } else {
