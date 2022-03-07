@@ -37,6 +37,7 @@ fun fileUri(context: Context, file: String): Uri {
 fun fileUri(context: Context, file: File, permission: Boolean = true): Uri {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && permission) {
         //content://com.angcyo.uicore.demo/sdcard/Android/data/com.angcyo.uicore.demo/files/demo/camera/2020-02-13_15-02-38-993.jpeg
+        //content://com.hingin.l1.hiprint/sdcard/Android/data/com.hingin.l1.hiprint/files/apk/LaserPecker2.apk
         //scheme:content
         FileProvider.getUriForFile(context, context.packageName, file).apply {
             context.grantUriPermission(
