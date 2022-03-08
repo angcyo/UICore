@@ -10,6 +10,7 @@ import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.core.component.HttpConfigDialog
 import com.angcyo.core.component.StateModel
 import com.angcyo.core.component.interceptor.LogFileInterceptor
+import com.angcyo.core.component.model.LanguageModel
 import com.angcyo.http.DslHttp
 import com.angcyo.http.addInterceptorEx
 import com.angcyo.http.rx.Rx
@@ -33,6 +34,9 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
 
     override fun onCreate() {
         super.onCreate()
+
+        //语言
+        vmApp<LanguageModel>().onCreate(this)
 
         Rx.init()
 
@@ -84,7 +88,7 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
     }
 
     override fun attachBaseContext(base: Context) {
-        super.attachBaseContext(base)
+        super.attachBaseContext(LanguageModel.attachBaseContext(base))
         //Reflection.unseal(base)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {

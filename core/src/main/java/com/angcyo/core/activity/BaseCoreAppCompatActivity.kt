@@ -92,6 +92,11 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
         }
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        vmApp<LanguageModel>().onConfigurationChanged(this, newConfig)
+    }
+
     //<editor-fold desc="双击Back回调">
 
     var doubleBackTime = -1
