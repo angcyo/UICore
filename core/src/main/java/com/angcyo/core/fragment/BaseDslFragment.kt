@@ -36,8 +36,8 @@ open class BaseDslFragment : BaseTitleFragment() {
             L.e("注意:访问目标[_adapter]不存在!")
         }
 
-    override fun onInitFragment() {
-        super.onInitFragment()
+    override fun onInitFragment(savedInstanceState: Bundle?) {
+        super.onInitFragment(savedInstanceState)
 
         _vh.rv(R.id.lib_recycler_view)?.apply {
             val dslAdapter = DslAdapter()

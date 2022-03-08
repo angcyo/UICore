@@ -49,8 +49,8 @@ abstract class BaseBehaviorTabDetailFragment : BasePagerFragment() {
         super.onCreate(savedInstanceState)
     }
 
-    override fun onInitFragment() {
-        super.onInitFragment()
+    override fun onInitFragment(savedInstanceState: Bundle?) {
+        super.onInitFragment(savedInstanceState)
         initHeaderLayout()
     }
 

@@ -1,11 +1,13 @@
 package com.angcyo.core.activity
 
+import android.content.res.Configuration
 import android.os.Bundle
 import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.core.R
 import com.angcyo.core.component.ComplianceCheck
 import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.core.component.StateModel
+import com.angcyo.core.component.model.LanguageModel
 import com.angcyo.core.vmApp
 import com.angcyo.dialog.normalDialog
 import com.angcyo.library.ex.*
@@ -37,20 +39,20 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
         ) { data, throwable ->
             if (throwable == null) {
                 //合规后
-                onComplianceCheckAfter()
+                onComplianceCheckAfter(savedInstanceState)
             }
         }
 
-        onComplianceCheck()
+        onComplianceCheck(savedInstanceState)
     }
 
     /**开始合规检查*/
-    open fun onComplianceCheck() {
+    open fun onComplianceCheck(savedInstanceState: Bundle?) {
         ComplianceCheck.agree()
     }
 
     /**合规后的初始化*/
-    open fun onComplianceCheckAfter() {
+    open fun onComplianceCheckAfter(savedInstanceState: Bundle?) {
         checkCrash()
     }
 

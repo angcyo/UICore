@@ -67,8 +67,8 @@ open class RecordVideoActivity : BasePermissionsActivity() {
         translucentStatusBar(true)
     }
 
-    override fun onPermissionGranted() {
-        super.onPermissionGranted()
+    override fun onPermissionGranted(savedInstanceState: Bundle?) {
+        super.onPermissionGranted(savedInstanceState)
 
         dslFHelper {
             show(RecordVideoFragment::class.java) {

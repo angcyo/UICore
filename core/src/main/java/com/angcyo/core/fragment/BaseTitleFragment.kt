@@ -199,7 +199,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     /**[onCreateView]*/
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)
-        onInitFragment()
+        onInitFragment(savedInstanceState)
         onInitBehavior()
     }
 
@@ -255,7 +255,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
     /**初始化样式
      * [initBaseView]*/
-    open fun onInitFragment() {
+    open fun onInitFragment(savedInstanceState: Bundle?) {
         _vh.itemView.isClickable = fragmentConfig.interceptRootTouchEvent
 
         //内容包裹

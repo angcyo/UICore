@@ -94,9 +94,7 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         super.onConfigurationChanged(newConfig)
         L.w("onConfigurationChanged↓\nold:$oldConfig\nnew:$newConfig")
         if (isDebug()) {
-            baseDslViewHolder.postDelay(300) {
-                onShowDebugInfoView()
-            }
+            onShowDebugInfoView()
         }
         Screen.init(this)
     }

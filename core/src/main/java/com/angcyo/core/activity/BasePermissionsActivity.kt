@@ -33,28 +33,28 @@ abstract class BasePermissionsActivity : BaseCoreAppCompatActivity() {
         super.onPostCreate(savedInstanceState)
     }
 
-    override fun onComplianceCheckAfter() {
-        super.onComplianceCheckAfter()
+    override fun onComplianceCheckAfter(savedInstanceState: Bundle?) {
+        super.onComplianceCheckAfter(savedInstanceState)
         //合规后初始化
-        onCheckPermission()
+        onCheckPermission(savedInstanceState)
     }
 
-    open fun onCheckPermission() {
+    open fun onCheckPermission(savedInstanceState: Bundle?) {
         if (permissions.isEmpty()) {
-            onPermissionGranted()
+            onPermissionGranted(savedInstanceState)
         } else {
             if (havePermission(permissions.mapTo(mutableListOf()) {
                     it.permission
                 })) {
-                onPermissionGranted()
+                onPermissionGranted(savedInstanceState)
             } else {
-                showPermissionFragment()
+                showPermissionFragment(savedInstanceState)
             }
         }
     }
 
     /**显示权限请求界面*/
-    open fun showPermissionFragment() {
+    open fun showPermissionFragment(savedInstanceState: Bundle?) {
         dslFHelper {
             restore(PermissionFragment()) {
                 permissions.addAll(this@BasePermissionsActivity.permissions)
@@ -65,9 +65,9 @@ abstract class BasePermissionsActivity : BaseCoreAppCompatActivity() {
                         it.permission
                     }) {
                         if (it) {
-                            onPermissionGranted()
+                            onPermissionGranted(savedInstanceState)
                         } else {
-                            onPermissionDenied()
+                            onPermissionDenied(savedInstanceState)
                         }
                     }
                 }
@@ -106,7 +106,7 @@ abstract class BasePermissionsActivity : BaseCoreAppCompatActivity() {
     }
 
     /**权限通过*/
-    open fun onPermissionGranted() {
+    open fun onPermissionGranted(savedInstanceState: Bundle?) {
         dslFHelper {
             finishActivityOnLastFragmentRemove = true
             removeAll()
@@ -114,7 +114,7 @@ abstract class BasePermissionsActivity : BaseCoreAppCompatActivity() {
     }
 
     /**权限拒绝*/
-    open fun onPermissionDenied() {
+    open fun onPermissionDenied(savedInstanceState: Bundle?) {
 
     }
 }

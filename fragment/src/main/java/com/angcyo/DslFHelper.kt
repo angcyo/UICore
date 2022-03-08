@@ -596,7 +596,7 @@ class DslFHelper(
                     e.printStackTrace()
                     _handle.postDelayed({
                         onCommit(this, fmFragmentList)
-                    }, 16)
+                    }, 0)
                 }
             }
 
@@ -609,7 +609,7 @@ class DslFHelper(
                         _logRunnable = null
                     }
                 }
-                _handle.postDelayed(_logRunnable!!, 16)
+                _handle.postDelayed(_logRunnable!!, 0)
             }
         }
     }

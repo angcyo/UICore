@@ -71,6 +71,8 @@ android {
         versionCode Integer.parseInt(_V_CODE)
         versionName "$_V_NAME"
         multiDexEnabled true
+
+        //https://developer.android.com/studio/build/shrink-code?hl=zh-cn#groovy
         resConfigs "zh", "xhdpi" //, "en"
 
         buildConfigField "boolean", "SHOW_DEBUG", "false"
