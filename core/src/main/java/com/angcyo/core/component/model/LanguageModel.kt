@@ -58,6 +58,15 @@ class LanguageModel : ViewModel() {
             return result
         }
 
+        /** 获取某个语种下的 Resources 对象 */
+        fun getLanguageResources(context: Context, locale: Locale?): Resources {
+            val config = Configuration()
+            setLocale(config, locale)
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                context.createConfigurationContext(config).resources
+            } else Resources(context.assets, context.resources.displayMetrics, config)
+        }
+
         /**创建一个语言配置*/
         @TargetApi(Build.VERSION_CODES.N)
         fun createConfigurationResources(
@@ -115,6 +124,30 @@ class LanguageModel : ViewModel() {
             }
             val dm = resources.displayMetrics
             resources.updateConfiguration(configuration, dm) //语言更换生效的代码!
+        }
+
+        /** 设置语种对象 */
+        fun setLocale(config: Configuration, locale: Locale?) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    val localeList = LocaleList(locale)
+                    config.setLocales(localeList)
+                } else {
+                    config.setLocale(locale)
+                }
+            } else {
+                config.locale = locale
+            }
+        }
+
+        /** 设置默认的语种环境（日期格式化会用到） */
+        fun setDefaultLocale(context: Context) {
+            val configuration = context.resources.configuration
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                LocaleList.setDefault(configuration.locales)
+            } else {
+                Locale.setDefault(configuration.locale)
+            }
         }
 
         /**2个语言是否一样*/
