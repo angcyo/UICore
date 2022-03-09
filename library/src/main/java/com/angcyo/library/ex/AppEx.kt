@@ -1,5 +1,6 @@
 package com.angcyo.library.ex
 
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -8,7 +9,6 @@ import android.content.pm.Signature
 import android.net.Uri
 import android.os.Build
 import android.os.Process
-import android.provider.Settings
 import com.angcyo.library.app
 import com.angcyo.library.utils.Device
 import java.io.File
@@ -130,4 +130,17 @@ fun getCanUsedState(): Int {
     }
 
     return reason
+}
+
+/**重启app*/
+fun restartApp(context: Context = app()) {
+    context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
+        if (context is Activity) {
+            //context.moveTaskToBack(true)
+        }
+        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(this)
+        killCurrentProcess()
+    }
 }
