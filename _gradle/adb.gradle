@@ -10,6 +10,12 @@ static def isMac() {
     return os.contains("mac")
 }
 
+static def isWindows() {
+    //Mac OS X
+    def os = System.getProperty("os.name").toLowerCase()
+    return os.contains("windows")
+}
+
 /**通过root工程, 获取child所有子工程对应的application id*/
 static def getApplicationIdList(rootProject) {
     def appList = []
@@ -153,5 +159,22 @@ task _rmSchemaFolder(type: Exec, group: 'angcyo', description: '获取第一个a
     doLast {
         println "执行结束!"
         println ext.output()
+    }
+}
+
+import org.apache.tools.ant.taskdefs.condition.Os
+
+task _printResumedActivity(group: 'angcyo', description: '获取当前活跃的Activity') {
+    doLast {
+        exec {
+            if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                //adb shell dumpsys activity | findstr "mResumed")
+                //commandLine("cmd", "/c", 'adb', 'shell', 'dumpsys', 'activity', '|', 'findstr', '"mResumed"')
+                commandLine("cmd", "/c", 'adb shell dumpsys activity | findstr "mResumed"')
+            } else {
+                //adb shell dumpsys activity | grep "mResumed"
+                commandLine('adb shell dumpsys activity | grep "mResumed"')
+            }
+        }
     }
 }
