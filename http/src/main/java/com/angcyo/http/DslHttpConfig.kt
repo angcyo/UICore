@@ -51,6 +51,8 @@ class DslHttpConfig {
             })*/
 
             /* https://github.com/MrWu94/AndroidNote/wiki/Okhttp-%E7%9A%84addInterceptor-%E5%92%8C-addNetworkInterceptor-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F
+            //https://www.jianshu.com/p/385780e78861
+
                 addInterceptor（应用拦截器）：
                 1，不需要担心中间过程的响应,如重定向和重试.
                 2，总是只调用一次,即使HTTP响应是从缓存中获取.
@@ -58,11 +60,21 @@ class DslHttpConfig {
                 4，允许短路而不调用 Chain.proceed(),即中止调用.
                 5，允许重试,使 Chain.proceed()调用多次.
 
+                有无网络都会被调用到。
+                拦截器只会被调用一次，调用chain.proceed()得到的是重定向之后最终的响应信息，
+                不会通过chain.connection() 获得中间过程的响应信息。
+                允许短路，并且允许不去调用chain.proceed()请求服务器数据，可通过缓存来返回数据。
+
                 addNetworkInterceptor（网络拦截器）：
                 1，能够操作中间过程的响应,如重定向和重试.
                 2，当网络短路而返回缓存响应时不被调用.
                 3，只观察在网络上传输的数据.
                 4，携带请求来访问连接.
+
+                无网络时不会被调用。
+                可以显示更多的信息，比如OkHttp为了减少数据的传输时间以及传输流量而自动添加的
+                请求头Accept-Encoding: gzip，从而希望服务器能返回经过压缩过的响应数据。
+                chain.connection()返回不为空的Connection对象，可以查询到客户端所连接的服务器的IP地址以及TLS配置信息。
             * */
         }
 
