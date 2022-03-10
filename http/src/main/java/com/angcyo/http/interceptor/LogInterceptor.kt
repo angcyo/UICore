@@ -198,7 +198,7 @@ open class LogInterceptor : Interceptor {
                             appendln("binary request body")
                         }
                     }
-                } ?: appendln(" no request body!")
+                } ?: appendln("\nno request body!")
             } else {
                 appendln()
             }
