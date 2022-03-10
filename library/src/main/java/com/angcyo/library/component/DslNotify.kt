@@ -795,7 +795,7 @@ fun String.openNotificationChannelSetting(context: Context = app()) {
 }
 
 fun Int.pendingIntentMutableFlag(mutableFlag: Int = 33554432): Int {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         //android 12
         if (this.have(PendingIntent.FLAG_MUTABLE) || this.have(PendingIntent.FLAG_IMMUTABLE)) {
             this
