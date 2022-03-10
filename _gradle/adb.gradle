@@ -164,7 +164,7 @@ task _rmSchemaFolder(type: Exec, group: 'angcyo', description: '获取第一个a
 
 import org.apache.tools.ant.taskdefs.condition.Os
 
-task _printResumedActivity(group: 'angcyo', description: '获取当前活跃的Activity') {
+task _dumpResumedActivity(group: 'angcyo', description: '获取当前活跃的Activity') {
     doLast {
         exec {
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
