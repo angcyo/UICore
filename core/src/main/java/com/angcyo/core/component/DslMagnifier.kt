@@ -81,6 +81,9 @@ class DslMagnifier {
         /**放大镜直径*/
         var magnifierSize: Int = 0
 
+        /**放大镜Y轴偏移的距离*/
+        var magnifierOffsetY: Int = 0
+
         /**内圈的直径*/
         var magnifierInsideSize: Float = 0f
         var magnifierStrokeWidth: Float = 0f
@@ -91,9 +94,19 @@ class DslMagnifier {
         /**绘制的矩阵*/
         var magnifierMatrix: Matrix = Matrix()
 
+        var statusBarHeight: Int = 0
+
         init {
-            val density = context.resources.displayMetrics.density
-            val size = 100 * density.toInt()
+            val density = resources.displayMetrics.density
+            val size = 120 * density.toInt()
+
+            resources.getIdentifier("status_bar_height", "dimen", "android").apply {
+                if (this > 0) {
+                    statusBarHeight = resources.getDimensionPixelSize(this)
+                }
+            }
+
+            magnifierOffsetY = 80 * density.toInt()
             magnifierSize = size
             magnifierStrokeWidth = 2 * density
             magnifierInsideSize = 20 * density
@@ -119,6 +132,7 @@ class DslMagnifier {
 
             magnifierPathPaint.color = magnifierColor
             magnifierPathPaint.style = Paint.Style.STROKE
+            magnifierPathPaint.strokeCap = Paint.Cap.ROUND
             magnifierPathPaint.strokeWidth = magnifierStrokeWidth //有一半会被clip
 
             magnifierBitmap?.recycle()
@@ -186,12 +200,18 @@ class DslMagnifier {
             super.onDraw(canvas)
             if (isEnabled) {
                 magnifierBitmap?.let {
-                    //canvas.drawBitmap(it, measuredWidth / 2f, measuredHeight / 2f, null)
                     canvas.save()
+
+                    val top = if (targetTouchY < resources.displayMetrics.heightPixels / 3) {
+                        targetTouchY - statusBarHeight + magnifierOffsetY
+                    } else {
+                        targetTouchY - magnifierSize - statusBarHeight - magnifierOffsetY
+                    }
+
                     canvas.drawBitmap(
                         it,
                         targetTouchX - magnifierSize / 2,
-                        targetTouchY - magnifierSize * 2,
+                        top,
                         null
                     )
                     canvas.restore()
