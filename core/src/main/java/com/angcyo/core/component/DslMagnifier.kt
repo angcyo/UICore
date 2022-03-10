@@ -6,7 +6,7 @@ import android.view.*
 import androidx.core.graphics.toColorInt
 
 /**
- * 放大镜, 可以用来方法任意控件
+ * 放大镜, 可以用来放大任意控件
  *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/03/09
