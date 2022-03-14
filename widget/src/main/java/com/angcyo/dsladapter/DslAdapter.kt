@@ -637,6 +637,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     /**渲染[DslAdapter]中的item*/
     fun render(filterParams: FilterParams = defaultFilterParams!!, action: DslAdapter.() -> Unit) {
         action()
+        _updateAdapterItems()
         updateItemDepend(filterParams)
     }
 
