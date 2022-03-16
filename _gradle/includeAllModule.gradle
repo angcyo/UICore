@@ -24,12 +24,13 @@ def listPath(filePath, depth = 0 /*当前枚举的路径深度, 深度大于maxD
         return
     }
 
+    def autoInclude = rootProject.hasProperty('autoInclude') ? rootProject.autoInclude == "true" : true
     if (filePath.isDirectory()) {
-
         filePath.listFiles()?.each {
             if (it.isDirectory()) {
-                includePath(it, parent)
-
+                if (autoInclude) {
+                    includePath(it, parent)
+                }
                 listPath(it, depth + 1, ":" + it.getName())
             }
         }
