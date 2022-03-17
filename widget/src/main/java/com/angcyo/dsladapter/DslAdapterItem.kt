@@ -765,7 +765,8 @@ open class DslAdapterItem : LifecycleOwner {
 
     /**是否需要更新item,等同于[itemChanging], 但不会触发[itemChanged]
      * 在[diffResult]之后会被重置为[false]
-     * * 默认为[true], 确保每次new的[DslAdapterItem]有机会更新数据*/
+     * * 默认为[true], 确保每次new的[DslAdapterItem]有机会更新数据
+     * [itemChanging]*/
     var itemUpdateFlag: Boolean = true
 
     /**
@@ -870,7 +871,8 @@ open class DslAdapterItem : LifecycleOwner {
             }
         }
 
-    /**[Item]是否正在改变, 会影响[thisAreContentsTheSame]的判断, 并且会在[Diff]计算完之后, 重置为[false]*/
+    /**[Item]是否正在改变, 会影响[thisAreContentsTheSame]的判断, 并且会在[Diff]计算完之后, 重置为[false]
+     * [itemUpdateFlag]*/
     var itemChanging = false
         set(value) {
             field = value

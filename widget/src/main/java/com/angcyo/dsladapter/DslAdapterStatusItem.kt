@@ -68,7 +68,7 @@ open class DslAdapterStatusItem : BaseDslStateItem() {
             itemHolder.clickItem {
                 if (itemState == ADAPTER_STATUS_ERROR) {
                     _notifyRefresh(itemHolder)
-                    itemDslAdapter?.setAdapterStatus(ADAPTER_STATUS_LOADING)
+                    itemDslAdapter?.updateAdapterStatus(ADAPTER_STATUS_LOADING)
                 }
             }
             itemHolder.click(R.id.lib_retry_button) {

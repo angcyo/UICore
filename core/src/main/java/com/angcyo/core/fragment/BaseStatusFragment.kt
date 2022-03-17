@@ -137,7 +137,7 @@ open class BaseStatusFragment : BaseDslFragment() {
 
         each(statusList, leftDslAdapter.getValidFilterDataList()) { status, item ->
             (item as? DslStatusTipItem)?.apply {
-                itemChanging = true
+                itemUpdateFlag = true
                 itemStatusText = status.statusText
                 itemStatusCount = status.statusCount
             }
