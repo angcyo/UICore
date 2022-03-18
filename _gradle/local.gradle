@@ -1,0 +1,13 @@
+/**
+ * 读取本地文件[local.properties], 并将配置赋值给[ext]
+ * 2022-03-18
+ * */
+
+// 加载properties
+def properties = new Properties()
+def inputStream = rootProject.file("${rootDir}/local.properties").newDataInputStream()
+properties.load(inputStream)
+
+properties.stringPropertyNames().forEach { key ->
+    rootProject.ext.setProperty(key, properties.getProperty(key))
+}

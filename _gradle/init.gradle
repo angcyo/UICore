@@ -5,6 +5,9 @@
 
 apply from: 'UICore/_gradle/findAllModule.gradle'
 
+//读取local.properties
+apply from: allGradle.local
+
 //配置基本库 强制版本信息
 apply from: allGradle.versionConfigLib
 
