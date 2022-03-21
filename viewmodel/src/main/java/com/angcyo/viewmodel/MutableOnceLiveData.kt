@@ -10,10 +10,14 @@ package com.angcyo.viewmodel
  */
 class MutableOnceLiveData<T>(value: T? = null) : MutableErrorLiveData<T>(value) {
 
+    /**存储最后一次的值*/
+    var lastValue: T? = null
+
     /**立马清空数据*/
     override fun setValue(value: T?) {
         super.setValue(value)
         if (value != null) {
+            lastValue = value
             postValue(null)
         }
     }
