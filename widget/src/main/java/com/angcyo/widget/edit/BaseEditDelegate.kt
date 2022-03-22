@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.text.TextPaint
 import android.util.AttributeSet
+import android.view.KeyEvent
 import android.view.MotionEvent
 import android.widget.EditText
 import com.angcyo.drawable.isBottom
@@ -72,6 +73,10 @@ abstract class BaseEditDelegate(val editText: EditText) {
 
     open fun onFocusChanged(focused: Boolean) {
 
+    }
+
+    open fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        return false
     }
 
     open fun onTextChanged(text: CharSequence?, start: Int, lengthBefore: Int, lengthAfter: Int) {

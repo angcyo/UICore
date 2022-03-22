@@ -94,6 +94,13 @@ open class ClearCompleteEditText : AppCompatAutoCompleteTextView, IEditDelegate 
         return super.onKeyDown(keyCode, event)
     }
 
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        return editDelegate?.onKeyUp(keyCode, event) ?: super.onKeyUp(
+            keyCode,
+            event
+        ) || super.onKeyUp(keyCode, event)
+    }
+
     override fun hasOnClickListeners(): Boolean {
         //使用AutoCompleteTextView时, 会被默认设置onClickListener
         //这个时候, 输入法中的"下一步"触发的onKeyUp事件, 就会根据这个方法的返回值,

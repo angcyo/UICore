@@ -26,7 +26,7 @@ import com.angcyo.widget.base.mW
  * @date 2020/04/17
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-open class FocusEditDelegate(editText: EditText) : BaseEditDelegate(editText) {
+open class FocusEditDelegate(editText: EditText) : PatternEditDelegate(editText) {
 
     /**无焦点时, 绘制的Drawable*/
     var noFocusDrawable: Drawable? = null
