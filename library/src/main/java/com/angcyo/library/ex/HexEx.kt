@@ -1,7 +1,5 @@
 package com.angcyo.library.ex
 
-import android.util.Log
-import java.nio.charset.Charset
 import java.util.*
 
 /**
@@ -24,11 +22,21 @@ fun String.toHexByteArray(): ByteArray {
 /**将字节数组[ByteArray]转换成十六进制字符串[01 23 45 67 89 AB CD EF ]
  * [hasSpace] 是否包含空格*/
 fun ByteArray.toHexString(hasSpace: Boolean = true) = joinToString("") {
-    (it.toInt() and 0xFF).toString(16).padStart(2, '0')
-        .uppercase(Locale.ROOT) + if (hasSpace) " " else ""
+    it.toHexString() + if (hasSpace) " " else ""
 }
 
+/**将字节数据转成大写十六进制字符
+ * [-86, -69, 19, 0, 6, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 1, 0, 1, 12]
+ *   AA   BB  13 00 06  FF 00 00 00 00 00 00 00 00 00 00 06 00 01 00 01 0C
+ * [length] 需要输出多少个字符, 不足前面补充0*/
+fun Byte.toHexString(length: Int = 2, padChar: Char = '0') =
+    (toInt() and 0xFF).toString(16).padStart(length, padChar).uppercase(Locale.ROOT)
 
+/**将十六进制字符串转换成字节数字
+ * AA -> -86
+ * 必须是16进制字符
+ * */
+fun String.toByte(): Byte = toInt(16).toByte()
 
 /**
  * 获取文件编码类型

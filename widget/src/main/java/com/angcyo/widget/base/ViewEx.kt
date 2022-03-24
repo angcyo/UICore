@@ -650,6 +650,26 @@ fun View?.simulateClick(delay: Long = Anim.ANIM_DURATION) {
     }
 }
 
+/**观察[View]短时间之内被点击的次数*/
+fun View.watchClickCount(count: Int, action: () -> Unit) {
+    var clickCount = 0
+    var clickTime = System.currentTimeMillis()
+
+    setOnClickListener {
+        val nowTime = System.currentTimeMillis()
+        if (nowTime - clickTime < 600) {
+            clickCount++
+        } else {
+            clickCount = 1
+        }
+        clickTime = nowTime
+        if (clickCount >= count) {
+            clickCount = 1
+            action()
+        }
+    }
+}
+
 //</editor-fold desc="事件扩展">
 
 //<editor-fold desc="draw相关扩展">
