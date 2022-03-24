@@ -9,6 +9,7 @@ import java.util.*
 
 /**
  * 将十六进制字符串[0123456789ABCDEF]转成字节数组[ByteArray]
+ * 字符串需要是偶数
  * */
 fun String.toHexByteArray(): ByteArray {
     val s = replace(" ", "")
@@ -19,11 +20,43 @@ fun String.toHexByteArray(): ByteArray {
     return bs
 }
 
+/**
+ * 将十六进制字符串[0123456789ABCDEF]补齐到指定的字节数组长度
+ * [padEnd] 往后垫, 否则就是往前垫
+ * */
+fun String.padHexString(length: Int, padEnd: Boolean = true): String {
+    val bytes = toHexByteArray().padHexByteArray(length, padEnd)
+    return bytes.toHexString(contains(' '))
+}
+
+fun ByteArray.padHexByteArray(length: Int, padEnd: Boolean = true): ByteArray {
+    val bytes = this
+
+    if (bytes.size >= length) {
+        return bytes
+    } else {
+        val result = ByteArray(length)
+        val count = length - bytes.size
+        if (padEnd) {
+            System.arraycopy(bytes, 0, result, 0, bytes.size)
+            for (i in 0 until count) {
+                result[bytes.size + i] = 0
+            }
+        } else {
+            System.arraycopy(bytes, 0, result, count, bytes.size)
+            for (i in 0 until count) {
+                result[i] = 0
+            }
+        }
+        return result
+    }
+}
+
 /**将字节数组[ByteArray]转换成十六进制字符串[01 23 45 67 89 AB CD EF ]
  * [hasSpace] 是否包含空格*/
 fun ByteArray.toHexString(hasSpace: Boolean = true) = joinToString("") {
     it.toHexString() + if (hasSpace) " " else ""
-}
+}.trimEnd(' ')
 
 /**将字节数据转成大写十六进制字符
  * [-86, -69, 19, 0, 6, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 1, 0, 1, 12]
