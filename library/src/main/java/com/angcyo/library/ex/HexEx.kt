@@ -94,6 +94,15 @@ fun Int.toHexString(length: Int = 2, padChar: Char = '0') =
 /**将字节转换成无符号整型*/
 fun Byte.toHexInt() = toInt() and 0xFF
 
+/**将字节数组[-86, -69]转换成对应的整型数字[43707]*/
+fun ByteArray.toHexInt() = toHexString(false).toHexInt()
+
+/**将十六进制字符[0101]转换成整型数组*/
+fun String.toHexInt() = if (this.isEmpty()) {
+    -1
+} else {
+    toInt(16)
+}
 
 /**将十六进制字符串转换成字节数字
  * AA -> -86
