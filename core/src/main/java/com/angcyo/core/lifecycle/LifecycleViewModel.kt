@@ -7,6 +7,7 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.ViewModel
 import com.angcyo.http.rx.BaseObserver
 import com.angcyo.http.rx.doMain
+import com.angcyo.viewmodel.IViewModel
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.CoroutineScope
@@ -17,7 +18,7 @@ import kotlinx.coroutines.CoroutineScope
  * @author angcyo
  * @date 2020/01/16
  */
-open class LifecycleViewModel : ViewModel(), LifecycleOwner {
+open class LifecycleViewModel : ViewModel(), IViewModel, LifecycleOwner {
 
     //生命周期发射器
     @SuppressLint("StaticFieldLeak")
@@ -44,7 +45,7 @@ open class LifecycleViewModel : ViewModel(), LifecycleOwner {
     }
 
     /**取消所有Rx 和 协程 / 恢复初始状态*/
-    open fun reset() {
+    override fun reset() {
         if (lifecycleRegistry.currentState == Lifecycle.State.DESTROYED) {
             setCurrentState(Lifecycle.State.CREATED)
         } else {
@@ -53,12 +54,12 @@ open class LifecycleViewModel : ViewModel(), LifecycleOwner {
     }
 
     /**取消所有Rx 和 协程*/
-    open fun cancel() {
+    override fun cancel() {
         onCleared()
     }
 
     /**释放资源, 比如切换了登录的账号等*/
-    open fun release() {
+    override fun release() {
         //no op
     }
 
