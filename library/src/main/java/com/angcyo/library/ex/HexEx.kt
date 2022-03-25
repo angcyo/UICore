@@ -20,6 +20,13 @@ fun String.toHexByteArray(): ByteArray {
     return bs
 }
 
+/**将十六进制字符串[0123456789ABCDEF]转换成字节
+ * 字节范围[-128~127]*/
+fun String.toHexByte(): Byte {
+    val s = replace(" ", "")
+    return s.toInt(16).toByte()
+}
+
 /**
  * 将十六进制字符串[0123456789ABCDEF]补齐到指定的字节数组长度
  * [padEnd] 往后垫, 否则就是往前垫
@@ -27,6 +34,20 @@ fun String.toHexByteArray(): ByteArray {
 fun String.padHexString(length: Int, padEnd: Boolean = true): String {
     val bytes = toHexByteArray().padHexByteArray(length, padEnd)
     return bytes.toHexString(contains(' '))
+}
+
+/**将字节数组复制到新的数组中
+ * [fromStartPos]开始字节数组开始的位置
+ * [targetStartPos]目标字节数组开始的位置
+ * [count]复制的数量
+ * */
+fun ByteArray.copyTo(
+    target: ByteArray,
+    fromStartPos: Int,
+    targetStartPos: Int = 0,
+    count: Int = target.size
+) {
+    System.arraycopy(this, fromStartPos, target, targetStartPos, count)
 }
 
 fun ByteArray.padHexByteArray(length: Int, padEnd: Boolean = true): ByteArray {
@@ -62,8 +83,14 @@ fun ByteArray.toHexString(hasSpace: Boolean = true) = joinToString("") {
  * [-86, -69, 19, 0, 6, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 1, 0, 1, 12]
  *   AA   BB  13 00 06  FF 00 00 00 00 00 00 00 00 00 00 06 00 01 00 01 0C
  * [length] 需要输出多少个字符, 不足前面补充0*/
-fun Byte.toHexString(length: Int = 2, padChar: Char = '0') =
-    (toInt() and 0xFF).toString(16).padStart(length, padChar).uppercase(Locale.ROOT)
+fun Byte.toHexString(length: Int = 2, padChar: Char = '0') = toHexInt().toHexString(length, padChar)
+
+fun Int.toHexString(length: Int = 2, padChar: Char = '0') =
+    toString(16).padStart(length, padChar).uppercase(Locale.ROOT)
+
+/**将字节转换成无符号整型*/
+fun Byte.toHexInt() = toInt() and 0xFF
+
 
 /**将十六进制字符串转换成字节数字
  * AA -> -86
