@@ -2,6 +2,7 @@ package com.angcyo.library.component
 
 import com.angcyo.library.ex.copyTo
 import com.angcyo.library.ex.toHexInt
+import java.nio.charset.Charset
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -30,7 +31,19 @@ class ByteArrayReader(val bytes: ByteArray) {
     /**超范围时, 返回-1*/
     fun readInt(size: Int): Int {
         val array = read(size)
+        if (array.isEmpty()) {
+            return -1
+        }
         return array.toHexInt()
+    }
+
+    /**超范围时, 返回null*/
+    fun readString(size: Int, charset: Charset = Charsets.UTF_8): String? {
+        val array = read(size)
+        if (array.isEmpty()) {
+            return null
+        }
+        return String(array, charset)
     }
 
 }
