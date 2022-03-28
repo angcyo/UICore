@@ -99,12 +99,16 @@ task _qiniuUpload(group: 'angcyo', description: '上传文件到七牛云') {
         def app_secret = project.hasProperty("qr_api_app_secret") ? project.ext.qr_api_app_secret : qiniuConfig.qr_api_app_secret
         def codeLogo = project.hasProperty("codeLogo") ? project.ext.codeLogo : null
 
-        def apkPath = null
-        if (project.hasProperty("qiniuApkPath")) {
-            apkPath = project.ext.qiniuApkPath
-        } else {
+        def apkPath = project.hasProperty("qiniuApkPath") ? project.ext.qiniuApkPath : qiniuConfig.qiniuApkPath
+
+        if (apkPath == null || apkPath.isEmpty()) {
             apkPath = findApkFile()
+        } else {
+            if (file(apkPath).isDirectory()) {
+                apkPath = findApkFile(apkPath)
+            }
         }
+
         if (apkPath == null || apkPath.isEmpty()) {
             throw new IllegalStateException("请在[gradle.properties]文件中指定需要上传的文件路径[qiniuApkPath=xxx]")
         }
@@ -230,8 +234,13 @@ task _qiniuUpload(group: 'angcyo', description: '上传文件到七牛云') {
 }
 
 /**查找apk文件路径*/
-def findApkFile() {
-    def path = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
+def findApkFile(String folderPath = null) {
+    def path
+    if (folderPath == null || folderPath.isEmpty()) {
+        project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
+    } else {
+        path = folderPath
+    }
 
     def folder = file(path)
     def result = null

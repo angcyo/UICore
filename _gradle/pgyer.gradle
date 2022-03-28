@@ -87,11 +87,14 @@ _pgyerUpload.doFirst {
 
     def apkPath = project.hasProperty("pgyerApkPath") ? project.ext.pgyerApkPath : pgyerConfig.pgyerApkPath
 
-    if (project.hasProperty("pgyerApkPath")) {
-        apkPath = project.ext.pgyerApkPath
-    } else {
+    if (apkPath == null || apkPath.isEmpty()) {
         apkPath = findApkFile()
+    } else {
+        if (file(apkPath).isDirectory()) {
+            apkPath = findApkFile(apkPath)
+        }
     }
+
     if (apkPath == null || apkPath.isEmpty()) {
         throw new IllegalStateException("请在[gradle.properties]文件中指定需要上传的文件路径[pgyerApkPath=xxx]")
     }
@@ -172,8 +175,13 @@ _pgyerUpload.doFirst {
 }
 
 /**查找apk文件路径*/
-def findApkFile() {
-    def path = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
+def findApkFile(String folderPath = null) {
+    def path
+    if (folderPath == null || folderPath.isEmpty()) {
+        project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
+    } else {
+        path = folderPath
+    }
 
     def folder = file(path)
     def result = null

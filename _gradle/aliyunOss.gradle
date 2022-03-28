@@ -91,13 +91,15 @@ task _aliyunOssUpload(group: 'angcyo', description: '上传文件到阿里云OSS
         def app_secret = project.hasProperty("qr_api_app_secret") ? project.ext.qr_api_app_secret : aliyunOssConfig.qr_api_app_secret
         def codeLogo = project.hasProperty("codeLogo") ? project.ext.codeLogo : null
 
-        def filePath = project.hasProperty("aliyunOssFilePath") ? project.ext.aliyunOssFilePath : aliyunOssConfig.aliyunOssFilePath
         def fileKey = project.hasProperty("aliyunOssFileKey") ? project.ext.aliyunOssFileKey : aliyunOssConfig.aliyunOssFileKey
+        def filePath = project.hasProperty("aliyunOssFilePath") ? project.ext.aliyunOssFilePath : aliyunOssConfig.aliyunOssFilePath
 
-        if (project.hasProperty("aliyunOssFilePath")) {
-            filePath = project.ext.aliyunOssFilePath
-        } else {
+        if (filePath == null || filePath.isEmpty()) {
             filePath = findApkFile()
+        } else {
+            if (file(filePath).isDirectory()) {
+                filePath = findApkFile(apkPath)
+            }
         }
 
         if (filePath == null || filePath.isEmpty()) {
@@ -162,8 +164,13 @@ task _aliyunOssUpload(group: 'angcyo', description: '上传文件到阿里云OSS
 }
 
 /**查找apk文件路径*/
-def findApkFile() {
-    def path = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
+def findApkFile(String folderPath = null) {
+    def path
+    if (folderPath == null || folderPath.isEmpty()) {
+        project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
+    } else {
+        path = folderPath
+    }
 
     def folder = file(path)
     def result = null
