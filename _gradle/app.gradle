@@ -22,9 +22,9 @@ static def apkTime() {
 
 def apk_time = apkTime()
 
-def _C_SDK = project.hasProperty("C_SDK") ? project.ext.C_SDK : '28'
+def _C_SDK = project.hasProperty("C_SDK") ? project.ext.C_SDK : '31'
 def _M_SDK = project.hasProperty("M_SDK") ? project.ext.M_SDK : '21'
-def _T_SDK = project.hasProperty("T_SDK") ? project.ext.T_SDK : '28'
+def _T_SDK = project.hasProperty("T_SDK") ? project.ext.T_SDK : '31'
 def _V_CODE = project.hasProperty("V_CODE") ? project.ext.V_CODE : '1'
 def _V_NAME = project.hasProperty("V_NAME") ? project.ext.V_NAME : '1.0'
 def application_id = project.hasProperty("application_id") ? project.ext.application_id : 'com.angcyo.app'

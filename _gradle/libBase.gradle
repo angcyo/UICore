@@ -2,13 +2,13 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'maven-publish'
 
-def C_SDK = 29
+def C_SDK = 31
 def M_SDK = 21
-def T_SDK = 29
+def T_SDK = 31
 def V_CODE = 1
 def V_NAME = "1.0"
 
-def _kotlin_version = project.hasProperty("kotlin_version") ? project.ext.kotlin_version : '1.5.20'
+def _kotlin_version = project.hasProperty("kotlin_version") ? project.ext.kotlin_version : '1.6.10'
 
 def _minify_enabled_debug = project.hasProperty("minify_enabled_debug") ? (project.ext.minify_enabled_debug == "true") : false
 def _use_proguard_debug = project.hasProperty("use_proguard_debug") ? (project.ext.use_proguard_debug == "true") : false
