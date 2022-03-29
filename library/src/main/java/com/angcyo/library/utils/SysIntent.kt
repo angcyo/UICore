@@ -214,7 +214,7 @@ fun ActivityResultCaller.requestMultiplePermissionsLauncher(callback: ActivityRe
 }
 
 /**拍照, 直接获取[Bitmap]*/
-fun ActivityResultCaller.takePicturePreviewLauncher(callback: ActivityResultCallback<Bitmap?>): ActivityResultLauncher<Void> {
+fun ActivityResultCaller.takePicturePreviewLauncher(callback: ActivityResultCallback<Bitmap?>): ActivityResultLauncher<Void?> {
     return registerForActivityResult(ActivityResultContracts.TakePicturePreview(), callback)
 }
 
@@ -229,7 +229,7 @@ fun ActivityResultCaller.takeVideoLauncher(callback: ActivityResultCallback<Bitm
 }
 
 /**选择联系人*/
-fun ActivityResultCaller.pickContactLauncher(callback: ActivityResultCallback<Uri?>): ActivityResultLauncher<Void> {
+fun ActivityResultCaller.pickContactLauncher(callback: ActivityResultCallback<Uri?>): ActivityResultLauncher<Void?> {
     return registerForActivityResult(ActivityResultContracts.PickContact(), callback)
 }
 
@@ -274,7 +274,7 @@ fun ActivityResultCaller.openMultipleDocumentsResult(callback: ActivityResultCal
     return registerForActivityResult(ActivityResultContracts.OpenMultipleDocuments(), callback)
 }
 
-fun ActivityResultCaller.openDocumentTreeLauncher(callback: ActivityResultCallback<Uri?>): ActivityResultLauncher<Uri> {
+fun ActivityResultCaller.openDocumentTreeLauncher(callback: ActivityResultCallback<Uri?>): ActivityResultLauncher<Uri?> {
     return registerForActivityResult(ActivityResultContracts.OpenDocumentTree(), callback)
 }
 

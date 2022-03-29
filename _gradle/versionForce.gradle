@@ -12,13 +12,17 @@
 configurations.all {
     resolutionStrategy {
         //库中的版本配置信息
-        def libConfig = libVersionConfig
-        if (libConfig instanceof Map) {
-            //强制修改指定的版本号
-            libConfig.each { key, value ->
-                //println "强制-> $key:$value"
-                force "$key:$value"
+        try {
+            def libConfig = libVersionConfig
+            if (libConfig instanceof Map) {
+                //强制修改指定的版本号
+                libConfig.each { key, value ->
+                    //println "强制-> $key:$value"
+                    force "$key:$value"
+                }
             }
+        } catch (MissingPropertyException throwable) {
+            //System.err.println "未找到版本配置信息[ext.libVersionConfig]."
         }
 
         //APP自定义的版本配置信息
@@ -31,6 +35,8 @@ configurations.all {
                     force "$key:$value"
                 }
             }
+        } catch (MissingPropertyException throwable) {
+            //System.err.println "未找到版本配置信息[ext.versionConfig]."
         } catch (Throwable ignored) {
             //throwable.printStackTrace()
         }

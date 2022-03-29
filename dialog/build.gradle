@@ -4,7 +4,7 @@ dependencies {
     implementation project(allModule.widget)
 
     //doOnPreDraw
-    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation 'androidx.core:core-ktx:1.7.0'
 
     //com.angcyo.dialog.LoadingDialogKt.hideLoading
     implementation project(allModule.transition)
