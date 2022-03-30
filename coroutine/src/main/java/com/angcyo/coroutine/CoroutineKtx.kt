@@ -1,6 +1,9 @@
 package com.angcyo.coroutine
 
 import android.os.SystemClock
+import androidx.activity.ComponentActivity
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -10,6 +13,10 @@ import kotlin.coroutines.CoroutineContext
  * @author angcyo
  * @date 2019/12/24
  */
+
+//<editor-fold desc="GlobalScope">
+
+@DelicateCoroutinesApi
 fun <T> launchMain(onBack: CoroutineScope.() -> T, onMain: (T) -> Unit = {}): Job {
     return GlobalScope.launch(Dispatchers.Main) {
         val deferred = async(Dispatchers.IO) {
@@ -19,15 +26,31 @@ fun <T> launchMain(onBack: CoroutineScope.() -> T, onMain: (T) -> Unit = {}): Jo
     }
 }
 
-/**在全局域中启动协程*/
+/**在全局域中启动协程
+ * [kotlinx.coroutines.runBlocking]
+ * [kotlinx.coroutines.delay]
+ * job.join() // 等待直到子协程执行结束*/
+@DelicateCoroutinesApi
 fun launchGlobal(
     context: CoroutineContext = Dispatchers.Main + CoroutineErrorHandler(),
     action: suspend CoroutineScope.() -> Unit
 ): Job {
     return GlobalScope.launch(context) {
+        /*coroutineScope {
+            launch {
+                delay(500L)
+            }
+            repeat(100_00) {
+
+            }
+        }*/
         this.action()
     }
 }
+
+//</editor-fold desc="GlobalScope">
+
+//<editor-fold desc="CoroutineScope">
 
 /**在指定域中启动协程*/
 fun CoroutineScope.launchSafe(
@@ -49,19 +72,23 @@ fun <T> CoroutineScope.onBack(
     action: suspend CoroutineScope.() -> T
 ) = async(context) { this.action() }
 
+//</editor-fold desc="CoroutineScope">
+
+//<editor-fold desc="suspend">
+
 /**
  * 在协程中使用, 用于在[IO]线程中调度
  * [action]内发生的异常, 需要在内部try捕捉.
  * 或者在[launchGlobal]启动协程时用[CoroutineExceptionHandler]捕捉
  * 并且协程会立即中断,后续代码不会被执行
  * */
-suspend fun <T> onBlock(
+suspend fun <T> withBlock(
     context: CoroutineContext = Dispatchers.IO,
     action: suspend CoroutineScope.() -> T
 ) = withContext(context) { this.action() }
 
 /**在协程中使用, 用于在[Main]线程中调度*/
-suspend fun <T> onMain(
+suspend fun <T> withMain(
     context: CoroutineContext = Dispatchers.Main,
     action: suspend CoroutineScope.() -> T
 ) = withContext(context) { this.action() }
@@ -69,3 +96,21 @@ suspend fun <T> onMain(
 fun sleep(ms: Long = 300) {
     SystemClock.sleep(ms)
 }
+
+//</editor-fold desc="suspend">
+
+//<editor-fold desc="lifecycleScope">
+
+fun ComponentActivity.launchLifecycle(
+    context: CoroutineContext = Dispatchers.Main + CoroutineErrorHandler(),
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend CoroutineScope.() -> Unit
+): Job = lifecycleScope.launch(context, start, block)
+
+fun Fragment.launchLifecycle(
+    context: CoroutineContext = Dispatchers.Main + CoroutineErrorHandler(),
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend CoroutineScope.() -> Unit
+): Job = lifecycleScope.launch(context, start, block)
+
+//</editor-fold desc="lifecycleScope">

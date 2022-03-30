@@ -19,15 +19,16 @@ open class AndroidScope(
     val cancelLifeEvent: Lifecycle.Event = Lifecycle.Event.ON_DESTROY
 ) : CoroutineScope, LifecycleEventObserver {
 
-    //协程异常
+    /**协程异常处理*/
     val exceptionHandler = CoroutineExceptionHandler { context, throwable ->
         onHandleException(context, throwable)
     }
 
-    //协程上下文
+    /**协程上下文*/
     override val coroutineContext: CoroutineContext =
         Dispatchers.Main + exceptionHandler + SupervisorJob()
 
+    /**异常回调*/
     var onException: (context: CoroutineContext, exception: Throwable) -> Unit =
         { context, exception ->
             L.e("$context $exception")

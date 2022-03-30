@@ -4,7 +4,7 @@ import android.net.Uri
 import androidx.collection.ArrayMap
 import com.angcyo.coroutine.launchSafe
 import com.angcyo.coroutine.onBack
-import com.angcyo.coroutine.onMain
+import com.angcyo.coroutine.withMain
 import com.angcyo.library.ex.isFileScheme
 import com.angcyo.library.ex.md5
 import com.angcyo.library.ex.mimeType
@@ -102,7 +102,7 @@ class DslFileLoader {
                         }
 
                         //通知文件md5获取结束
-                        onMain {
+                        withMain {
                             onLoaderDelayResult(it)
                         }
                     }

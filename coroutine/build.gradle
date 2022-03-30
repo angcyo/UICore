@@ -15,7 +15,12 @@ dependencies {
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
 
     def lifecycle_version = "2.4.1"
+    //https://mvnrepository.com/artifact/androidx.lifecycle
+
     //https://mvnrepository.com/artifact/androidx.lifecycle/lifecycle-common
-    implementation "androidx.lifecycle:lifecycle-common:$lifecycle_version"
+    api "androidx.lifecycle:lifecycle-common:$lifecycle_version"
+    api "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
+    //https://mvnrepository.com/artifact/androidx.lifecycle/lifecycle-runtime-ktx
+    api "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
 
 }
