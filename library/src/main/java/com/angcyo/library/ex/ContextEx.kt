@@ -28,6 +28,7 @@ import androidx.core.app.ActivityCompat
 import com.angcyo.library.L
 import java.io.File
 import java.io.InputStream
+import java.nio.charset.Charset
 
 /**
  *
@@ -292,9 +293,19 @@ fun Context.abandonAudioFocus(listener: AudioManager.OnAudioFocusChangeListener?
 }
 
 /**从[assets]中读取字符串*/
-fun Context.readAssets(fileName: String): String? {
+fun Context.readAssets(fileName: String, charset: Charset = Charsets.UTF_8): String? {
     return try {
-        assets.open(fileName).reader().readText()
+        assets.open(fileName).reader(charset).readText()
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
+/**从[Resource]中读取字符串*/
+fun Context.readResource(resId: Int, charset: Charset = Charsets.UTF_8): String? {
+    return try {
+        resources.openRawResource(resId).reader(charset).readText()
     } catch (e: Exception) {
         e.printStackTrace()
         null
