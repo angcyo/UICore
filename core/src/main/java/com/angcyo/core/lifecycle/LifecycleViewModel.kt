@@ -38,6 +38,7 @@ open class LifecycleViewModel : ViewModel(), IViewModel, LifecycleOwner {
     override fun onCleared() {
         super.onCleared()
         setCurrentState(Lifecycle.State.DESTROYED)
+        release()
     }
 
     override fun getLifecycle(): Lifecycle {
@@ -55,12 +56,12 @@ open class LifecycleViewModel : ViewModel(), IViewModel, LifecycleOwner {
 
     /**取消所有Rx 和 协程*/
     override fun cancel() {
-        onCleared()
+        cancelSchedule()
     }
 
     /**释放资源, 比如切换了登录的账号等*/
     override fun release() {
-        //no op
+        cancel()
     }
 
     //<editor-fold desc="Rx 协程">
