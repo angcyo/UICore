@@ -1,10 +1,9 @@
 package com.angcyo.library.ex
 
-import android.graphics.Matrix
-import android.graphics.Path
-import android.graphics.PathMeasure
-import android.graphics.RectF
+import android.graphics.*
+import android.os.Build
 import kotlin.math.atan2
+
 
 /**
  *
@@ -100,4 +99,31 @@ fun RectF.scaleFromCenter(scaleX: Float, scaleY: Float): RectF {
     )
     matrix.mapRect(this)
     return this
+}
+
+/**判断点是否在[Path]内*/
+fun Path.contains(x: Int, y: Int): Boolean {
+    val rectF = RectF()
+    computeBounds(rectF, true)
+    val rectRegion =
+        Region(rectF.left.toInt(), rectF.top.toInt(), rectF.right.toInt(), rectF.bottom.toInt())
+    val region = Region()
+    region.setPath(this, rectRegion)
+    return region.contains(x, y)
+}
+
+/**判断矩形是否在[Path]内*/
+fun Path.contains(rectF: RectF): Boolean {
+    val path = Path()
+    path.reset()
+    path.addRect(rectF, Path.Direction.CW)
+
+    val result = Path()
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        result.op(this, path, Path.Op.REVERSE_DIFFERENCE)
+    } else {
+        return false
+    }
+
+    return result.isEmpty
 }
