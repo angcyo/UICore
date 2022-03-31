@@ -278,3 +278,6 @@ fun File.exifOrientation() = try {
 } catch (e: Exception) {
     0
 }
+
+/**[R.drawable.R.drawable.xxx]*/
+fun Context.getBitmapFromRes(id: Int) = BitmapFactory.decodeResource(resources, id)
