@@ -134,6 +134,7 @@ fun Drawable.copyDrawable(): Drawable? {
     return result
 }
 
+/**[androidx.core.graphics.drawable.DrawableKt.toBitmap]*/
 fun Drawable.toBitmap(outWidth: Int = -1, outHeight: Int = -1): Bitmap {
     // 获取 drawable 长宽
     val width: Int = if (minimumWidth <= 0) outWidth else minimumWidth

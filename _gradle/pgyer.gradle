@@ -178,7 +178,7 @@ _pgyerUpload.doFirst {
 def findApkFile(String folderPath = null) {
     def path
     if (folderPath == null || folderPath.isEmpty()) {
-        project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
+        path = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
     } else {
         path = folderPath
     }
