@@ -4,9 +4,9 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
+import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.Transformer
-import com.angcyo.canvas.core.ViewBox
 import com.angcyo.canvas.core.component.XAxis
 import com.angcyo.canvas.core.component.YAxis
 import com.angcyo.canvas.core.renderer.XAxisRenderer
@@ -21,17 +21,17 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
     //<editor-fold desc="成员变量">
 
-    val viewBox = ViewBox(this)
+    val canvasViewBox = CanvasViewBox(this)
 
     //</editor-fold desc="成员变量">
 
     //<editor-fold desc="横纵坐标轴">
 
     /**绘制在顶上的x轴*/
-    val xAxisRender = XAxisRenderer(XAxis(), viewBox, Transformer(viewBox))
+    val xAxisRender = XAxisRenderer(XAxis(), canvasViewBox, Transformer(canvasViewBox))
 
     /**绘制在左边的y轴*/
-    val yAxisRender = YAxisRenderer(YAxis(), viewBox, Transformer(viewBox))
+    val yAxisRender = YAxisRenderer(YAxis(), canvasViewBox, Transformer(canvasViewBox))
 
     //</editor-fold desc="横纵坐标轴">
 
@@ -43,7 +43,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         if (yAxisRender.yAxis.enable) {
             yAxisRender.updateRenderBounds(this)
         }
-        viewBox.updateContentBox()
+        canvasViewBox.updateContentBox()
     }
 
     override fun onDraw(canvas: Canvas) {

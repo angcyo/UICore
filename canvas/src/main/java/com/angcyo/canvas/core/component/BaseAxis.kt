@@ -1,6 +1,6 @@
 package com.angcyo.canvas.core.component
 
-import com.angcyo.canvas.core.ViewBox
+import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.library.ex.dp
 
 /**
@@ -27,6 +27,6 @@ abstract class BaseAxis : BaseComponent() {
     var labelYOffset = 2 * dp
 
     /**获取轴上需要绘制线段的点位坐标, px*/
-    abstract fun getLinePointList(viewBox: ViewBox): List<Float>
+    abstract fun getLinePointList(canvasViewBox: CanvasViewBox): List<Float>
 
 }

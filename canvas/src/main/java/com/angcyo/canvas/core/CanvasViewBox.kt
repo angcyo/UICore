@@ -1,10 +1,11 @@
 package com.angcyo.canvas.core
 
+import android.graphics.Matrix
 import android.graphics.RectF
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import com.angcyo.canvas.CanvasView
-import com.angcyo.library.ex.ceil
+import com.angcyo.library.ex.ceilReverse
 
 /**
  * CanvasView 内容可视区域范围
@@ -12,10 +13,13 @@ import com.angcyo.library.ex.ceil
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/01
  */
-class ViewBox(val view: CanvasView) {
+class CanvasViewBox(val view: CanvasView) {
 
     /**内容可视区域*/
     val contentRect = RectF()
+
+    /**触摸带来的视图矩阵变化*/
+    val matrix: Matrix = Matrix()
 
     /**内容区域左边额外的偏移*/
     var contentOffsetLeft = 0f
@@ -27,6 +31,8 @@ class ViewBox(val view: CanvasView) {
     var canvasViewWidth: Int = 0
     var canvasViewHeight: Int = 0
 
+    //<editor-fold desc="operate">
+
     /**更新可是内容范围*/
     fun updateContentBox() {
         canvasViewWidth = view.measuredWidth
@@ -36,6 +42,14 @@ class ViewBox(val view: CanvasView) {
 
         view.invalidate()
     }
+
+    /**刷新*/
+    fun refresh(newMatrix: Matrix) {
+        matrix.set(newMatrix)
+        view.invalidate()
+    }
+
+    //</editor-fold desc="operate">
 
     //<editor-fold desc="base">
 
@@ -61,6 +75,14 @@ class ViewBox(val view: CanvasView) {
         return canvasViewHeight - contentOffsetBottom
     }
 
+    fun getContentCenterX(): Float {
+        return (getContentLeft() + getContentRight()) / 2
+    }
+
+    fun getContentCenterY(): Float {
+        return (getContentTop() + getContentBottom()) / 2
+    }
+
     //</editor-fold desc="base">
 
     //<editor-fold desc="value unit">
@@ -71,7 +93,7 @@ class ViewBox(val view: CanvasView) {
     /**将value转换成绘制的文本*/
     var formattedValue: (value: Float) -> String = { value ->
         if (valueType == TypedValue.COMPLEX_UNIT_MM) {
-            "${(value.ceil() / 10).toInt()}" //mm 转换成 cm
+            "${(value.ceilReverse() / 10).toInt()}" //mm 转换成 cm
         } else {
             "$value"
         }
@@ -92,4 +114,32 @@ class ViewBox(val view: CanvasView) {
     }
 
     //</editor-fold desc="value unit">
+
+    //<editor-fold desc="matrix">
+
+    /**平移视图
+     * 正向移动后, 绘制的内容在正向指定的位置绘制*/
+    fun translateBy(distanceX: Float, distanceY: Float) {
+        val newMatrix = Matrix()
+        newMatrix.set(matrix)
+        newMatrix.postTranslate(distanceX, distanceY)
+        refresh(newMatrix)
+    }
+
+    /**缩放视图*/
+    fun scaleBy(
+        scaleX: Float,
+        scaleY: Float,
+        px: Float = getContentCenterX(),
+        py: Float = getContentCenterY()
+    ) {
+        val newMatrix = Matrix()
+        newMatrix.set(matrix)
+        newMatrix.postScale(scaleX, scaleY, px, py)
+        refresh(newMatrix)
+    }
+
+    //</editor-fold desc="matrix">
+
+
 }

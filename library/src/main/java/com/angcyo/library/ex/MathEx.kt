@@ -92,8 +92,18 @@ fun Float.decimal(digit: Int = 2, fadedUp: Boolean = false): Float {
  * 1.01 -> 2*/
 fun Double.ceil() = ceil(this)
 fun Float.ceil() = ceil(this.toDouble()).toFloat()
+fun Float.ceilReverse() = if (this > 0f) {
+    ceil(this.toDouble()).toFloat()
+} else {
+    floor()
+}
 
 /**向下取整
  * 1.01 -> 1*/
 fun Double.floor() = floor(this)
 fun Float.floor() = floor(this.toDouble()).toFloat()
+fun Float.floorReverse() = if (this > 0f) {
+    ceil()
+} else {
+    floor(this.toDouble()).toFloat()
+}
