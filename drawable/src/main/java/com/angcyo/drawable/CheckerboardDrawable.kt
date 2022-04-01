@@ -15,6 +15,8 @@ import android.graphics.drawable.Drawable
 class CheckerboardDrawable(builder: Builder) : Drawable() {
 
     companion object {
+
+        /**创建棋盘背景*/
         fun create(): CheckerboardDrawable {
             return CheckerboardDrawable(Builder())
         }

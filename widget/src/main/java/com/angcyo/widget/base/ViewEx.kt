@@ -132,11 +132,6 @@ fun View.setWidthHeight(width: Int = undefined_size, height: Int = undefined_siz
     layoutParams = params
 }
 
-/**设置系统背景*/
-fun View.setBgDrawable(drawable: Drawable?) {
-    ViewCompat.setBackground(this, drawable)
-}
-
 /**设置r背景*/
 fun View.setRBgDrawable(drawable: Drawable?) {
     layoutDelegate {
@@ -413,6 +408,13 @@ fun Context.viewOf(
     val viewHolder = view.dslViewHolder()
     action(viewHolder)
     return view
+}
+
+
+/**设置视图的背景
+ * [android.view.View.setBackground]*/
+fun View?.setBgDrawable(background: Drawable?) {
+    this?.run { ViewCompat.setBackground(this, background) }
 }
 
 //</editor-fold desc="基础扩展">
