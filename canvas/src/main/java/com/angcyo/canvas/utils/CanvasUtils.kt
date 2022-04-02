@@ -16,13 +16,14 @@ val _tempPoint = floatArrayOf(0f, 0f)
 
 val _tempRectF = RectF()
 
-fun createPaint(color: Int = Color.GRAY) = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-    this.color = color
-    strokeWidth = 1f
-    style = Paint.Style.STROKE
-    strokeJoin = Paint.Join.ROUND
-    strokeCap = Paint.Cap.ROUND
-}
+fun createPaint(color: Int = Color.GRAY, style: Paint.Style = Paint.Style.STROKE) =
+    Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        this.color = color
+        this.style = style
+        strokeWidth = 1f
+        strokeJoin = Paint.Join.ROUND
+        strokeCap = Paint.Cap.ROUND
+    }
 
 /**当前矩阵, 偏移的x*/
 fun Matrix.getTranslateX(): Float {

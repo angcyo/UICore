@@ -1,13 +1,27 @@
 package com.angcyo.canvas.core.component
 
-import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.floor
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/01
  */
 abstract class BaseAxis : BaseComponent() {
+
+    companion object {
+        //刻度线的绘制类型, 不绘制
+        const val LINE_TYPE_NONE = 0
+
+        //标准刻度线
+        const val LINE_TYPE_NORMAL = 1
+
+        //主要刻度, 占满整个轴
+        const val LINE_TYPE_PROTRUDE = 2
+
+        //次要刻度, 大小为轴的一半
+        const val LINE_TYPE_SECONDARY = 3
+    }
 
     /**轴的宽度*/
     var axisSize = 20 * dp
@@ -26,6 +40,41 @@ abstract class BaseAxis : BaseComponent() {
 
     var labelYOffset = 2 * dp
 
-    /**获取轴上需要绘制线段的点位坐标, px*/
-    abstract fun getLinePointList(canvasViewBox: CanvasViewBox): List<Float>
+    /**是否绘制网格线*/
+    var drawGridLine: Boolean = true
+
+    /**获取当前索引对应的绘制轴线类型
+     * [lineProtrudeSize]
+     * [lineSecondarySize]
+     * [lineSize]
+     * */
+    fun getAxisLineType(index: Int, scale: Float): Int {
+        val loseStep = 0.3f
+        var gainScale = 10
+
+        if (scale < 1f) {
+            val step = ((1 - scale) / loseStep).floor().toInt()
+
+            if (step >= 1) {
+                gainScale *= step
+                if (index % (10 * gainScale) == 0) {
+                    return LINE_TYPE_PROTRUDE
+                }
+                if (index % (5 * gainScale) == 0) {
+                    return LINE_TYPE_SECONDARY
+                }
+                if (index % (1 * gainScale) == 0) {
+                    return LINE_TYPE_NORMAL
+                }
+                return LINE_TYPE_NONE
+            }
+        }
+        if (index % 10 == 0) {
+            return LINE_TYPE_PROTRUDE
+        }
+        if (index % 5 == 0) {
+            return LINE_TYPE_SECONDARY
+        }
+        return LINE_TYPE_NORMAL
+    }
 }

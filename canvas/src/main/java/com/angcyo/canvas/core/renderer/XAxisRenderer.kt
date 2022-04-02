@@ -5,6 +5,7 @@ import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.Transformer
+import com.angcyo.canvas.core.component.BaseAxis
 import com.angcyo.canvas.core.component.XAxis
 import com.angcyo.canvas.utils.getScaleX
 import com.angcyo.canvas.utils.getTranslateX
@@ -13,7 +14,7 @@ import com.angcyo.canvas.utils.getTranslateX
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/01
  */
-class XAxisRenderer(val xAxis: XAxis, canvasViewBox: CanvasViewBox, transformer: Transformer) :
+class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox, transformer: Transformer) :
     BaseAxisRenderer(canvasViewBox, transformer) {
 
     /**负向的刻度点坐标*/
@@ -28,7 +29,7 @@ class XAxisRenderer(val xAxis: XAxis, canvasViewBox: CanvasViewBox, transformer:
             0f,
             0f,
             canvasView.measuredWidth.toFloat(),
-            xAxis.axisSize
+            axis.axisSize
         )
     }
 
@@ -97,20 +98,26 @@ class XAxisRenderer(val xAxis: XAxis, canvasViewBox: CanvasViewBox, transformer:
         val value = canvasViewBox.convertPixelToValue(distance)
         val valueStr = canvasViewBox.formattedValue(value)
 
-        val size = when {
-            index % 10 == 0 -> xAxis.lineProtrudeSize
-            index % 5 == 0 -> xAxis.lineSecondarySize
-            else -> xAxis.lineSize
-        }
-        canvas.drawLine(left, bottom, left, bottom - size, linePaint)
+        when (axis.getAxisLineType(index, scale)) {
+            BaseAxis.LINE_TYPE_PROTRUDE -> {
+                val size = axis.lineProtrudeSize
+                canvas.drawLine(left, bottom, left, bottom - size, linePaint)
 
-        if (index % 10 == 0) {
-            canvas.drawText(
-                valueStr,
-                left + xAxis.labelXOffset,
-                xAxis.labelYOffset - labelPaint.ascent(),
-                labelPaint
-            )
+                canvas.drawText(
+                    valueStr,
+                    left + axis.labelXOffset,
+                    axis.labelYOffset - labelPaint.ascent(),
+                    labelPaint
+                )
+            }
+            BaseAxis.LINE_TYPE_SECONDARY -> {
+                val size = axis.lineSecondarySize
+                canvas.drawLine(left, bottom, left, bottom - size, linePaint)
+            }
+            BaseAxis.LINE_TYPE_NORMAL -> {
+                val size = axis.lineSize
+                canvas.drawLine(left, bottom, left, bottom - size, linePaint)
+            }
         }
     }
 }

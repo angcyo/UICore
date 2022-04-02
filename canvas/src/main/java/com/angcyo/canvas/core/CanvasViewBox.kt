@@ -55,7 +55,7 @@ class CanvasViewBox(val view: CanvasView) {
     //<editor-fold desc="base">
 
     fun getContentLeft(): Float {
-        if (view.yAxisRender.yAxis.enable) {
+        if (view.yAxisRender.axis.enable) {
             return view.yAxisRender.getRenderBounds().right + contentOffsetLeft
         }
         return contentOffsetLeft
@@ -66,7 +66,7 @@ class CanvasViewBox(val view: CanvasView) {
     }
 
     fun getContentTop(): Float {
-        if (view.xAxisRender.xAxis.enable) {
+        if (view.xAxisRender.axis.enable) {
             return view.xAxisRender.getRenderBounds().bottom + contentOffsetTop
         }
         return contentOffsetTop
@@ -86,7 +86,7 @@ class CanvasViewBox(val view: CanvasView) {
 
     /**获取可视区偏移后的坐标矩形*/
     fun getContentMatrixBounds(matrix: Matrix = this.matrix): RectF {
-        matrix.mapRect(_tempRectF, contentRect)
+        matrix.mapRect(_tempRectF, contentRect, )
         return _tempRectF
     }
 

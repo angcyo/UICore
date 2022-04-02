@@ -37,10 +37,10 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        if (xAxisRender.xAxis.enable) {
+        if (xAxisRender.axis.enable) {
             xAxisRender.updateRenderBounds(this)
         }
-        if (yAxisRender.yAxis.enable) {
+        if (yAxisRender.axis.enable) {
             yAxisRender.updateRenderBounds(this)
         }
         canvasViewBox.updateContentBox()
@@ -49,11 +49,11 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        if (xAxisRender.xAxis.enable) {
+        if (xAxisRender.axis.enable) {
             xAxisRender.render(canvas)
         }
 
-        if (yAxisRender.yAxis.enable) {
+        if (yAxisRender.axis.enable) {
             yAxisRender.render(canvas)
         }
 
