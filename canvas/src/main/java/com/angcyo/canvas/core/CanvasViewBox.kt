@@ -6,6 +6,8 @@ import android.util.DisplayMetrics
 import android.util.TypedValue
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.utils._tempRectF
+import com.angcyo.canvas.utils._tempValues
+import com.angcyo.canvas.utils.clamp
 import com.angcyo.library.ex.ceilReverse
 
 /**
@@ -16,8 +18,7 @@ import com.angcyo.library.ex.ceilReverse
  */
 class CanvasViewBox(val view: CanvasView) {
 
-    /**内容可视区域*/
-    val contentRect = RectF()
+    //<editor-fold desc="控制属性">
 
     /**触摸带来的视图矩阵变化*/
     val matrix: Matrix = Matrix()
@@ -28,25 +29,56 @@ class CanvasViewBox(val view: CanvasView) {
     var contentOffsetTop = 0f
     var contentOffsetBottom = 0f
 
+    /**最小和最大的缩放比例*/
+    var minScaleX: Float = 0.25f
+    var maxScaleX: Float = 5f
+    var minScaleY: Float = 0.25f
+    var maxScaleY: Float = 5f
+
+    /**最小和最大的平移距离*/
+    var minTranslateX: Float = -Float.MAX_VALUE
+    var maxTranslateX: Float = 0f
+    var minTranslateY: Float = -Float.MAX_VALUE
+    var maxTranslateY: Float = 0f
+
+    //</editor-fold desc="控制属性">
+
+    //<editor-fold desc="存储属性">
+
+    /**内容可视区域*/
+    val _contentRect = RectF()
+
     /**[CanvasView]视图的宽高*/
-    var canvasViewWidth: Int = 0
-    var canvasViewHeight: Int = 0
+    var _canvasViewWidth: Int = 0
+    var _canvasViewHeight: Int = 0
+
+    //当前的缩放比例
+    var _scaleX: Float = 1f
+    var _scaleY: Float = 1f
+
+    //当前平移的距离, 像素
+    var _translateX: Float = 0f
+    var _translateY: Float = 0f
+
+    //</editor-fold desc="存储属性">
 
     //<editor-fold desc="operate">
 
     /**更新可是内容范围*/
     fun updateContentBox() {
-        canvasViewWidth = view.measuredWidth
-        canvasViewHeight = view.measuredHeight
+        _canvasViewWidth = view.measuredWidth
+        _canvasViewHeight = view.measuredHeight
 
-        contentRect.set(getContentLeft(), getContentTop(), getContentRight(), getContentBottom())
+        _contentRect.set(getContentLeft(), getContentTop(), getContentRight(), getContentBottom())
 
-        view.invalidate()
+        //刷新视图
+        refresh(matrix)
     }
 
     /**刷新*/
     fun refresh(newMatrix: Matrix) {
         matrix.set(newMatrix)
+        limitTranslateAndScale(matrix)
         view.invalidate()
     }
 
@@ -62,7 +94,7 @@ class CanvasViewBox(val view: CanvasView) {
     }
 
     fun getContentRight(): Float {
-        return canvasViewWidth - contentOffsetRight
+        return _canvasViewWidth - contentOffsetRight
     }
 
     fun getContentTop(): Float {
@@ -73,7 +105,7 @@ class CanvasViewBox(val view: CanvasView) {
     }
 
     fun getContentBottom(): Float {
-        return canvasViewHeight - contentOffsetBottom
+        return _canvasViewHeight - contentOffsetBottom
     }
 
     fun getContentCenterX(): Float {
@@ -86,8 +118,33 @@ class CanvasViewBox(val view: CanvasView) {
 
     /**获取可视区偏移后的坐标矩形*/
     fun getContentMatrixBounds(matrix: Matrix = this.matrix): RectF {
-        matrix.mapRect(_tempRectF, contentRect, )
+        matrix.mapRect(_tempRectF, _contentRect)
         return _tempRectF
+    }
+
+    /**限制[matrix]可视化窗口的平移和缩放大小
+     * [matrix] 输入和输出的 对象*/
+    fun limitTranslateAndScale(matrix: Matrix) {
+        matrix.getValues(_tempValues)
+
+        val curScaleX: Float = _tempValues[Matrix.MSCALE_X]
+        val curScaleY: Float = _tempValues[Matrix.MSCALE_Y]
+
+        val curTransX: Float = _tempValues[Matrix.MTRANS_X]
+        val curTransY: Float = _tempValues[Matrix.MTRANS_Y]
+
+        _scaleX = clamp(curScaleX, minScaleX, maxScaleX)
+        _scaleY = clamp(curScaleY, minScaleY, maxScaleY)
+
+        _translateX = clamp(curTransX, minTranslateX, maxTranslateX)
+        _translateY = clamp(curTransY, minTranslateY, maxTranslateY)
+
+        _tempValues[Matrix.MTRANS_X] = _translateX
+        _tempValues[Matrix.MSCALE_X] = _scaleX
+        _tempValues[Matrix.MTRANS_Y] = _translateY
+        _tempValues[Matrix.MSCALE_Y] = _scaleY
+
+        matrix.setValues(_tempValues)
     }
 
     //</editor-fold desc="base">

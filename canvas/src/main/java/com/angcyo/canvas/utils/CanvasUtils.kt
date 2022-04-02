@@ -4,18 +4,24 @@ import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.RectF
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/01
  */
 
+/**临时对象, 用来存储[Matrix]矩阵值*/
 val _tempValues = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
 
+/**临时对象, 用来存储坐标点位值*/
 val _tempPoint = floatArrayOf(0f, 0f)
 
+/**临时对象, 用来存储矩形坐标*/
 val _tempRectF = RectF()
 
+/**创建一个画笔*/
 fun createPaint(color: Int = Color.GRAY, style: Paint.Style = Paint.Style.STROKE) =
     Paint(Paint.ANTI_ALIAS_FLAG).apply {
         this.color = color
@@ -48,3 +54,5 @@ fun Matrix.getScaleY(): Float {
     getValues(_tempValues)
     return _tempValues[Matrix.MSCALE_Y]
 }
+
+fun clamp(value: Float, min: Float, max: Float): Float = min(max(value, min), max)
