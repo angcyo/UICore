@@ -8,7 +8,6 @@ import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.Transformer
 import com.angcyo.canvas.utils.createPaint
-import com.angcyo.drawable.textHeight
 import com.angcyo.drawable.textWidth
 import com.angcyo.library.ex.dp
 
@@ -49,7 +48,7 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox, transformer: Transformer) :
             //绘制当前的缩放比例
             val text = "${(canvasViewBox._scaleX * 100).toInt()}%"
             val x = canvasViewBox.getContentRight() - paint.textWidth(text) - 10 * dp
-            val y = canvasViewBox.getContentBottom() - paint.textHeight()
+            val y = canvasViewBox.getContentBottom() + paint.ascent()
             canvas.drawText(text, x, y, paint)
         }
     }

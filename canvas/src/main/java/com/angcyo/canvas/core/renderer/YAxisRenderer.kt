@@ -1,6 +1,7 @@
 package com.angcyo.canvas.core.renderer
 
 import android.graphics.Canvas
+import androidx.core.graphics.withSave
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
@@ -47,6 +48,8 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox, transformer: 
         minusList.clear()
         plusList.clear()
 
+        val contentLeft = canvasViewBox.getContentLeft()
+        val contentRight = canvasViewBox.getContentRight()
         val contentTop = canvasViewBox.getContentTop()
         val contentBottom = canvasViewBox.getContentBottom()
 
@@ -82,6 +85,21 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox, transformer: 
                 drawLineAndLabel(canvas, index, top, right, contentTop, scaleY)
             }
         }
+
+        //网格线的绘制
+        canvas.withSave {
+            clipRect(canvasViewBox._contentRect)
+            canvas.withTranslation(y = translateY) {
+
+                minusList.forEachIndexed { index, top ->
+                    drawGridLine(canvas, index, contentLeft, top, contentRight, scaleY)
+                }
+
+                plusList.forEachIndexed { index, top ->
+                    drawGridLine(canvas, index, contentLeft, top, contentRight, scaleY)
+                }
+            }
+        }
     }
 
     fun drawLineAndLabel(
@@ -101,7 +119,7 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox, transformer: 
         when (axis.getAxisLineType(index, scale)) {
             BaseAxis.LINE_TYPE_PROTRUDE -> {
                 val size = axis.lineProtrudeSize
-                canvas.drawLine(right - size, top, right, top, linePaint)
+                canvas.drawLine(right - size, top, right, top, lineProtrudePaint)
 
                 canvas.drawText(
                     valueStr,
@@ -117,6 +135,25 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox, transformer: 
             BaseAxis.LINE_TYPE_NORMAL -> {
                 val size = axis.lineSize
                 canvas.drawLine(right - size, top, right, top, linePaint)
+            }
+        }
+    }
+
+    fun drawGridLine(
+        canvas: Canvas,
+        index: Int,
+        left: Float,
+        top: Float,
+        right: Float,
+        scale: Float
+    ) {
+        //绘制网格
+        val type = axis.getAxisLineType(index, scale)
+        if (axis.drawGridLine) {
+            if (type == BaseAxis.LINE_TYPE_PROTRUDE) {
+                canvas.drawLine(left, top, right, top, gridProtrudePaint)
+            } else if (type != BaseAxis.LINE_TYPE_NONE) {
+                canvas.drawLine(left, top, right, top, gridPaint)
             }
         }
     }

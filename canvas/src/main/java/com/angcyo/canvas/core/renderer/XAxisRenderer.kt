@@ -1,6 +1,7 @@
 package com.angcyo.canvas.core.renderer
 
 import android.graphics.Canvas
+import androidx.core.graphics.withSave
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
@@ -49,11 +50,14 @@ class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox, transformer: 
 
         val contentLeft = canvasViewBox.getContentLeft()
         val contentRight = canvasViewBox.getContentRight()
+        val contentTop = canvasViewBox.getContentTop()
+        val contentBottom = canvasViewBox.getContentBottom()
 
         //只需要绘制这个x坐标范围内的点
         val drawMinX = contentLeft - translateX
         val drawMaxX = contentRight - translateX
 
+        //刻度的绘制
         canvas.withTranslation(x = translateX) {
 
             //先/后 clip, 都有效果
@@ -82,6 +86,21 @@ class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox, transformer: 
                 drawLineAndLabel(canvas, index, left, bottom, contentLeft, scaleX)
             }
         }
+
+        //网格线的绘制
+        canvas.withSave {
+            clipRect(canvasViewBox._contentRect)
+
+            canvas.withTranslation(x = translateX) {
+                minusList.forEachIndexed { index, left ->
+                    drawGridLine(canvas, index, left, contentTop, contentBottom, scaleX)
+                }
+
+                plusList.forEachIndexed { index, left ->
+                    drawGridLine(canvas, index, left, contentTop, contentBottom, scaleX)
+                }
+            }
+        }
     }
 
     fun drawLineAndLabel(
@@ -101,8 +120,7 @@ class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox, transformer: 
         when (axis.getAxisLineType(index, scale)) {
             BaseAxis.LINE_TYPE_PROTRUDE -> {
                 val size = axis.lineProtrudeSize
-                canvas.drawLine(left, bottom, left, bottom - size, linePaint)
-
+                canvas.drawLine(left, bottom, left, bottom - size, lineProtrudePaint)
                 canvas.drawText(
                     valueStr,
                     left + axis.labelXOffset,
@@ -117,6 +135,25 @@ class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox, transformer: 
             BaseAxis.LINE_TYPE_NORMAL -> {
                 val size = axis.lineSize
                 canvas.drawLine(left, bottom, left, bottom - size, linePaint)
+            }
+        }
+    }
+
+    fun drawGridLine(
+        canvas: Canvas,
+        index: Int,
+        left: Float,
+        top: Float,
+        bottom: Float,
+        scale: Float
+    ) {
+        //绘制网格
+        val type = axis.getAxisLineType(index, scale)
+        if (axis.drawGridLine) {
+            if (type == BaseAxis.LINE_TYPE_PROTRUDE) {
+                canvas.drawLine(left, top, left, bottom, gridProtrudePaint)
+            } else if (type != BaseAxis.LINE_TYPE_NONE) {
+                canvas.drawLine(left, top, left, bottom, gridPaint)
             }
         }
     }
