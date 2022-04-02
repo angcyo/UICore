@@ -1,12 +1,15 @@
 package com.angcyo.canvas
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.Transformer
+import com.angcyo.canvas.core.component.CanvasTouchHandler
 import com.angcyo.canvas.core.component.XAxis
 import com.angcyo.canvas.core.component.YAxis
 import com.angcyo.canvas.core.renderer.XAxisRenderer
@@ -21,7 +24,11 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
     //<editor-fold desc="成员变量">
 
+    /**视图控制*/
     val canvasViewBox = CanvasViewBox(this)
+
+    /**手势控制*/
+    val canvasTouchHandler = CanvasTouchHandler(this)
 
     //</editor-fold desc="成员变量">
 
@@ -58,6 +65,14 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }
 
         //canvas.drawColor(Color)
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (canvasTouchHandler.enable) {
+            return canvasTouchHandler.onTouch(this, event)
+        }
+        return super.onTouchEvent(event)
     }
 
 }
