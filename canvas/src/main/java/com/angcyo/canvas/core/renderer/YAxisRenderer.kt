@@ -1,10 +1,13 @@
 package com.angcyo.canvas.core.renderer
 
 import android.graphics.Canvas
+import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.CanvasView
-import com.angcyo.canvas.core.Transformer
 import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.Transformer
 import com.angcyo.canvas.core.component.YAxis
+import com.angcyo.canvas.utils.getScaleY
+import com.angcyo.canvas.utils.getTranslateY
 import com.angcyo.drawable.textHeight
 
 /**
@@ -13,6 +16,12 @@ import com.angcyo.drawable.textHeight
  */
 class YAxisRenderer(val yAxis: YAxis, canvasViewBox: CanvasViewBox, transformer: Transformer) :
     BaseAxisRenderer(canvasViewBox, transformer) {
+
+    /**负向的刻度点坐标*/
+    val minusList = mutableListOf<Float>()
+
+    /**正向的刻度点坐标*/
+    val plusList = mutableListOf<Float>()
 
     override fun updateRenderBounds(canvasView: CanvasView) {
         super.updateRenderBounds(canvasView)
@@ -28,27 +37,80 @@ class YAxisRenderer(val yAxis: YAxis, canvasViewBox: CanvasViewBox, transformer:
         val right = bounds.right
         canvas.drawLine(right, bounds.top, right, bounds.bottom, linePaint)
 
-        //绘制刻度
-        yAxis.getLinePointList(canvasViewBox).forEachIndexed { index, top ->
-            val size = when {
-                index % 10 == 0 -> yAxis.lineProtrudeSize
-                index % 5 == 0 -> yAxis.lineSecondarySize
-                else -> yAxis.lineSize
-            }
-            canvas.drawLine(right - size, top, right, top, linePaint)
+        val translateY = canvasViewBox.matrix.getTranslateY()
+        val scaleY = canvasViewBox.matrix.getScaleY()
 
-            if (index % 10 == 0) {
+        //默认, 每隔1mm绘制一个刻度
+        val step = canvasViewBox.convertValueToPixel(scaleY)
 
-                //绘制刻度文本
-                val value = canvasViewBox.convertPixelToValue(top - canvasViewBox.getContentTop())
-                val valueStr = canvasViewBox.formattedValue(value)
-                canvas.drawText(
-                    valueStr,
-                    yAxis.labelXOffset,
-                    top + labelPaint.textHeight() + yAxis.labelYOffset,
-                    labelPaint
-                )
+        minusList.clear()
+        plusList.clear()
+
+        val contentTop = canvasViewBox.getContentTop()
+        val contentBottom = canvasViewBox.getContentBottom()
+
+        //只需要绘制这个x坐标范围内的点
+        val drawMinY = contentTop - translateY
+        val drawMaxY = contentBottom - translateY
+
+        canvas.withTranslation(y = translateY) {
+
+            //先/后 clip, 都有效果
+            val clipBottom = drawMaxY
+            val clipTop = clipBottom - bounds.height() + contentTop
+            clipRect(bounds.left, clipTop, bounds.right, clipBottom)
+
+            //从0坐标开始, 先绘制负坐标
+            var startTop = contentTop
+            while (startTop > drawMinY) {
+                minusList.add(startTop)
+                startTop -= step //负向延伸
             }
+
+            startTop = contentTop
+            while (startTop < drawMaxY) {
+                plusList.add(startTop)
+                startTop += step //正向延伸
+            }
+
+            minusList.forEachIndexed { index, top ->
+                drawLineAndLabel(canvas, index, top, right, contentTop, scaleY)
+            }
+
+            plusList.forEachIndexed { index, top ->
+                drawLineAndLabel(canvas, index, top, right, contentTop, scaleY)
+            }
+        }
+    }
+
+    fun drawLineAndLabel(
+        canvas: Canvas,
+        index: Int,
+        top: Float,
+        right: Float,
+        originTop: Float,
+        scale: Float
+    ) {
+        //相对于原点的像素距离点数值
+        val distance = (top - originTop) / scale
+        //绘制刻度文本
+        val value = canvasViewBox.convertPixelToValue(distance)
+        val valueStr = canvasViewBox.formattedValue(value)
+
+        val size = when {
+            index % 10 == 0 -> yAxis.lineProtrudeSize
+            index % 5 == 0 -> yAxis.lineSecondarySize
+            else -> yAxis.lineSize
+        }
+        canvas.drawLine(right - size, top, right, top, linePaint)
+
+        if (index % 10 == 0) {
+            canvas.drawText(
+                valueStr,
+                yAxis.labelXOffset,
+                top + labelPaint.textHeight() + yAxis.labelYOffset,
+                labelPaint
+            )
         }
     }
 }

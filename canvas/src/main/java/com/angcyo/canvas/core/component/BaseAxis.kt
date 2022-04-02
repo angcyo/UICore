@@ -28,5 +28,4 @@ abstract class BaseAxis : BaseComponent() {
 
     /**获取轴上需要绘制线段的点位坐标, px*/
     abstract fun getLinePointList(canvasViewBox: CanvasViewBox): List<Float>
-
 }

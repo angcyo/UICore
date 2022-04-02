@@ -3,6 +3,7 @@ package com.angcyo.canvas.utils
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.RectF
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -12,6 +13,8 @@ import android.graphics.Paint
 val _tempValues = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
 
 val _tempPoint = floatArrayOf(0f, 0f)
+
+val _tempRectF = RectF()
 
 fun createPaint(color: Int = Color.GRAY) = Paint(Paint.ANTI_ALIAS_FLAG).apply {
     this.color = color

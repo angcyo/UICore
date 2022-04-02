@@ -5,6 +5,7 @@ import android.graphics.RectF
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.utils._tempRectF
 import com.angcyo.library.ex.ceilReverse
 
 /**
@@ -81,6 +82,12 @@ class CanvasViewBox(val view: CanvasView) {
 
     fun getContentCenterY(): Float {
         return (getContentTop() + getContentBottom()) / 2
+    }
+
+    /**获取可视区偏移后的坐标矩形*/
+    fun getContentMatrixBounds(matrix: Matrix = this.matrix): RectF {
+        matrix.mapRect(_tempRectF, contentRect)
+        return _tempRectF
     }
 
     //</editor-fold desc="base">
