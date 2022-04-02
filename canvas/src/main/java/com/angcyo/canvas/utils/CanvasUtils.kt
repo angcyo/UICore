@@ -21,6 +21,9 @@ val _tempPoint = floatArrayOf(0f, 0f)
 /**临时对象, 用来存储矩形坐标*/
 val _tempRectF = RectF()
 
+/**临时对象, 用来存储[Matrix]*/
+val _tempMatrix = Matrix()
+
 /**创建一个画笔*/
 fun createPaint(color: Int = Color.GRAY, style: Paint.Style = Paint.Style.STROKE) =
     Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -42,6 +45,20 @@ fun Matrix.getTranslateY(): Float {
     return _tempValues[Matrix.MTRANS_Y]
 }
 
+fun Matrix.setTranslateValue(x: Float, y: Float) {
+    getValues(_tempValues)
+    _tempValues[Matrix.MTRANS_X] = x
+    _tempValues[Matrix.MTRANS_Y] = y
+    setValues(_tempValues)
+}
+
+fun Matrix.setScaleValue(x: Float, y: Float) {
+    getValues(_tempValues)
+    _tempValues[Matrix.MSCALE_X] = x
+    _tempValues[Matrix.MSCALE_Y] = y
+    setValues(_tempValues)
+}
+
 /**当前矩阵, 缩放的比例. 默认是1f
  * 比如1.2f 2.0f*/
 fun Matrix.getScaleX(): Float {
@@ -55,4 +72,5 @@ fun Matrix.getScaleY(): Float {
     return _tempValues[Matrix.MSCALE_Y]
 }
 
+/**将[value]限制在[min] [max]之间*/
 fun clamp(value: Float, min: Float, max: Float): Float = min(max(value, min), max)

@@ -6,12 +6,11 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import com.angcyo.canvas.core.CanvasViewBox
-import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.core.Transformer
+import com.angcyo.canvas.core.*
 import com.angcyo.canvas.core.component.CanvasTouchHandler
 import com.angcyo.canvas.core.component.XAxis
 import com.angcyo.canvas.core.component.YAxis
+import com.angcyo.canvas.core.renderer.MonitorRenderer
 import com.angcyo.canvas.core.renderer.XAxisRenderer
 import com.angcyo.canvas.core.renderer.YAxisRenderer
 
@@ -30,6 +29,12 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     /**手势控制*/
     val canvasTouchHandler = CanvasTouchHandler(this)
 
+    /**事件回调*/
+    val canvasListenerList = mutableSetOf<ICanvasListener>()
+
+    /**额外的渲染器*/
+    val rendererList = mutableSetOf<IRenderer>()
+
     //</editor-fold desc="成员变量">
 
     //<editor-fold desc="横纵坐标轴">
@@ -42,6 +47,14 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
     //</editor-fold desc="横纵坐标轴">
 
+    //<editor-fold desc="渲染组件">
+
+    //</editor-fold desc="渲染组件">
+
+    init {
+        rendererList.add(MonitorRenderer(canvasViewBox, Transformer(canvasViewBox)))
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         if (xAxisRender.axis.enable) {
@@ -50,6 +63,11 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         if (yAxisRender.axis.enable) {
             yAxisRender.updateRenderBounds(this)
         }
+
+        rendererList.forEach {
+            it.updateRenderBounds(this)
+        }
+
         canvasViewBox.updateContentBox()
     }
 
@@ -64,11 +82,18 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
             yAxisRender.render(canvas)
         }
 
+        rendererList.forEach {
+            it.render(canvas)
+        }
+
         //canvas.drawColor(Color)
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        canvasListenerList.forEach {
+            it.onCanvasTouchEvent(event)
+        }
         if (canvasTouchHandler.enable) {
             return canvasTouchHandler.onTouch(this, event)
         }

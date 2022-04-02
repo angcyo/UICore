@@ -5,6 +5,7 @@ import android.graphics.RectF
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.utils._tempMatrix
 import com.angcyo.canvas.utils._tempRectF
 import com.angcyo.canvas.utils._tempValues
 import com.angcyo.canvas.utils.clamp
@@ -16,7 +17,7 @@ import com.angcyo.library.ex.ceilReverse
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/01
  */
-class CanvasViewBox(val view: CanvasView) {
+class CanvasViewBox(val canvasView: CanvasView) {
 
     //<editor-fold desc="控制属性">
 
@@ -66,8 +67,8 @@ class CanvasViewBox(val view: CanvasView) {
 
     /**更新可是内容范围*/
     fun updateContentBox() {
-        _canvasViewWidth = view.measuredWidth
-        _canvasViewHeight = view.measuredHeight
+        _canvasViewWidth = canvasView.measuredWidth
+        _canvasViewHeight = canvasView.measuredHeight
 
         _contentRect.set(getContentLeft(), getContentTop(), getContentRight(), getContentBottom())
 
@@ -77,9 +78,18 @@ class CanvasViewBox(val view: CanvasView) {
 
     /**刷新*/
     fun refresh(newMatrix: Matrix) {
+        val oldMatrix = Matrix(matrix)
+        canvasView.canvasListenerList.forEach {
+            it.onCanvasMatrixChangeBefore(matrix)
+        }
+        _tempMatrix.set(newMatrix)
         matrix.set(newMatrix)
+        _tempMatrix.set(newMatrix)
         limitTranslateAndScale(matrix)
-        view.invalidate()
+        canvasView.invalidate()
+        canvasView.canvasListenerList.forEach {
+            it.onCanvasMatrixChangeAfter(matrix, oldMatrix)
+        }
     }
 
     //</editor-fold desc="operate">
@@ -87,8 +97,8 @@ class CanvasViewBox(val view: CanvasView) {
     //<editor-fold desc="base">
 
     fun getContentLeft(): Float {
-        if (view.yAxisRender.axis.enable) {
-            return view.yAxisRender.getRenderBounds().right + contentOffsetLeft
+        if (canvasView.yAxisRender.axis.enable) {
+            return canvasView.yAxisRender.getRenderBounds().right + contentOffsetLeft
         }
         return contentOffsetLeft
     }
@@ -98,8 +108,8 @@ class CanvasViewBox(val view: CanvasView) {
     }
 
     fun getContentTop(): Float {
-        if (view.xAxisRender.axis.enable) {
-            return view.xAxisRender.getRenderBounds().bottom + contentOffsetTop
+        if (canvasView.xAxisRender.axis.enable) {
+            return canvasView.xAxisRender.getRenderBounds().bottom + contentOffsetTop
         }
         return contentOffsetTop
     }
@@ -140,11 +150,44 @@ class CanvasViewBox(val view: CanvasView) {
         _translateY = clamp(curTransY, minTranslateY, maxTranslateY)
 
         _tempValues[Matrix.MTRANS_X] = _translateX
-        _tempValues[Matrix.MSCALE_X] = _scaleX
         _tempValues[Matrix.MTRANS_Y] = _translateY
+
+        _tempValues[Matrix.MSCALE_X] = _scaleX
         _tempValues[Matrix.MSCALE_Y] = _scaleY
 
         matrix.setValues(_tempValues)
+    }
+
+    /**
+     * 调整缩放到限制范围
+     * 返回缩放是否超出了限制*/
+    fun adjustScaleOutToLimit(matrix: Matrix): Boolean {
+        matrix.getValues(_tempValues)
+
+        val curScaleX: Float = _tempValues[Matrix.MSCALE_X]
+        val curScaleY: Float = _tempValues[Matrix.MSCALE_Y]
+
+        var adjustX = 1f
+        var adjustY = 1f
+
+        if (curScaleX <= minScaleX) {
+            adjustX = minScaleX / curScaleX
+        } else if (curScaleX >= maxScaleX) {
+            adjustX = maxScaleX / curScaleX
+        }
+
+        if (curScaleY <= minScaleY) {
+            adjustY = minScaleY / curScaleY
+        } else if (curScaleY >= maxScaleY) {
+            adjustY = maxScaleY / curScaleY
+        }
+
+        if (adjustX != 1f || adjustY != 1f) {
+            matrix.postScale(adjustX, adjustY)
+            return true
+        }
+
+        return false
     }
 
     //</editor-fold desc="base">
@@ -167,7 +210,7 @@ class CanvasViewBox(val view: CanvasView) {
      * 将1个单位的值, 转换成屏幕像素点数值
      * [TypedValue.COMPLEX_UNIT_MM]*/
     fun convertValueToPixel(value: Float): Float {
-        val dm: DisplayMetrics = view.resources.displayMetrics
+        val dm: DisplayMetrics = canvasView.resources.displayMetrics
         return TypedValue.applyDimension(valueType, value, dm)
     }
 
@@ -197,13 +240,21 @@ class CanvasViewBox(val view: CanvasView) {
         px: Float = getContentCenterX(),
         py: Float = getContentCenterY()
     ) {
+        if ((scaleX < 1f && _scaleX <= minScaleX) || (scaleX > 1f && _scaleX >= maxScaleX)) {
+            //已经达到了最小/最大, 还想缩放/放大
+            return
+        }
+
+        if ((scaleY < 1f && _scaleY <= minScaleY) || (scaleY > 1f && _scaleY >= maxScaleY)) {
+            return
+        }
+
         val newMatrix = Matrix()
         newMatrix.set(matrix)
         newMatrix.postScale(scaleX, scaleY, px, py)
+        adjustScaleOutToLimit(newMatrix)
         refresh(newMatrix)
     }
 
     //</editor-fold desc="matrix">
-
-
 }
