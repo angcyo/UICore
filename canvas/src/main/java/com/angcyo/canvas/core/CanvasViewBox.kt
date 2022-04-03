@@ -1,6 +1,7 @@
 package com.angcyo.canvas.core
 
 import android.graphics.Matrix
+import android.graphics.PointF
 import android.graphics.RectF
 import android.util.DisplayMetrics
 import android.util.TypedValue
@@ -92,9 +93,27 @@ class CanvasViewBox(val canvasView: CanvasView) {
         }
     }
 
+    /**获取变换后, 可视化的中点坐标*/
+    fun getContentMatrixPoint(): PointF {
+        val rect = getContentMatrixBounds()
+        return PointF(rect.centerX(), rect.centerY())
+    }
+
+    fun getContentMatrixRect(width: Float, height: Float): RectF {
+        val point = getContentMatrixPoint()
+        return RectF(
+            point.x - width / 2,
+            point.y - height / 2,
+            point.x + width / 2,
+            point.y + height / 2
+        )
+    }
+
     //</editor-fold desc="operate">
 
     //<editor-fold desc="base">
+
+    fun isCanvasInit(): Boolean = _canvasViewWidth > 0 && _canvasViewHeight > 0
 
     fun getContentLeft(): Float {
         if (canvasView.yAxisRender.axis.enable) {

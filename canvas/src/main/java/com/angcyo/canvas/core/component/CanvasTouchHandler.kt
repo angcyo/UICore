@@ -79,7 +79,7 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), View.OnT
     var minScalePointerDistance = 3.5 * dp
 
     /**当手指移动的距离大于此值时, 才视为是平移手势*/
-    var dragTriggerDistance = 3 * dp
+    var dragTriggerDistance = 1 * dp
 
     //手势意图
     var _touchType = TOUCH_TYPE_NONE

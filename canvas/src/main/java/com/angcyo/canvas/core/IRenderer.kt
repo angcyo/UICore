@@ -11,7 +11,10 @@ import com.angcyo.canvas.CanvasView
  */
 interface IRenderer {
 
-    /**更新需要渲染的区域*/
+    /**是否可见, 决定是否绘制*/
+    var visible: Boolean
+
+    /**更新需要渲染的区域, 真实的坐标. 非[Matrix]后的坐标*/
     fun updateRenderBounds(canvasView: CanvasView) {
 
     }
