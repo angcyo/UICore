@@ -44,7 +44,7 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox, transformer: 
         val scaleY = canvasViewBox.matrix.getScaleY()
 
         //默认, 每隔1mm绘制一个刻度
-        val step = canvasViewBox.convertValueToPixel(scaleY)
+        val step = canvasViewBox.valueUnit.convertValueToPixel(scaleY)
 
         minusList.clear()
         plusList.clear()
@@ -114,8 +114,8 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox, transformer: 
         //相对于原点的像素距离点数值
         val distance = (top - originTop) / scale
         //绘制刻度文本
-        val value = canvasViewBox.convertPixelToValue(distance)
-        val valueStr = canvasViewBox.formattedValue(value)
+        val value = canvasViewBox.valueUnit.convertPixelToValue(distance)
+        val valueStr = canvasViewBox.valueUnit.formattedValue(value)
 
         when (axis.getAxisLineType(index, scale)) {
             BaseAxis.LINE_TYPE_PROTRUDE -> {

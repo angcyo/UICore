@@ -1,9 +1,9 @@
 package com.angcyo.canvas.utils
 
-import android.graphics.Color
-import android.graphics.Matrix
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
+import android.text.Layout
+import android.text.TextPaint
+import com.angcyo.library.ex.dp
 import kotlin.math.max
 import kotlin.math.min
 
@@ -16,7 +16,9 @@ import kotlin.math.min
 val _tempValues = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
 
 /**临时对象, 用来存储坐标点位值*/
-val _tempPoint = floatArrayOf(0f, 0f)
+val _tempPoints = floatArrayOf(0f, 0f)
+
+val _tempPoint = PointF()
 
 /**临时对象, 用来存储矩形坐标*/
 val _tempRectF = RectF()
@@ -33,6 +35,14 @@ fun createPaint(color: Int = Color.GRAY, style: Paint.Style = Paint.Style.STROKE
         strokeJoin = Paint.Join.ROUND
         strokeCap = Paint.Cap.ROUND
     }
+
+fun createTextPaint(color: Int = Color.BLACK, textSize: Float = 12 * dp) =
+    TextPaint(createPaint(color, Paint.Style.FILL)).apply {
+        this.textSize = textSize
+        this.textAlign = Paint.Align.LEFT
+    }
+
+//<editor-fold desc="Matrix">
 
 /**当前矩阵, 偏移的x*/
 fun Matrix.getTranslateX(): Float {
@@ -72,5 +82,25 @@ fun Matrix.getScaleY(): Float {
     return _tempValues[Matrix.MSCALE_Y]
 }
 
+/**[point]*/
+fun Matrix.mapPoint(point: PointF): PointF {
+    _tempPoints[0] = point.x
+    _tempPoints[1] = point.y
+    mapPoints(_tempPoints, _tempPoints)
+    _tempPoint.x = _tempPoints[0]
+    _tempPoint.y = _tempPoints[1]
+    return _tempPoint
+}
+
+//</editor-fold desc="Matrix">
+
 /**将[value]限制在[min] [max]之间*/
 fun clamp(value: Float, min: Float, max: Float): Float = min(max(value, min), max)
+
+fun Layout.getMaxLineWidth(): Float {
+    var width = 0f
+    for (line in 0 until lineCount) {
+        width = max(width, getLineWidth(line))
+    }
+    return width
+}

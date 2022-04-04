@@ -157,20 +157,18 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), View.OnT
             //双指 操作
 
             //处理双指缩放
-            if (_touchType == TOUCH_TYPE_NONE || _touchType == TOUCH_TYPE_SCALE) {
-                val moveDistance = spacing(_movePointList[0], _movePointList[1])
-                if ((moveDistance - _touchDistance).abs() > minScalePointerDistance) {
-                    //开始缩放
-                    _touchType = TOUCH_TYPE_SCALE
-                    val scale = moveDistance / _touchDistance
-                    canvasView.canvasViewBox.scaleBy(
-                        scale,
-                        scale,
-                        _touchMiddlePoint.x,
-                        _touchMiddlePoint.y
-                    )
-                    _touchDistance = moveDistance
-                }
+            val moveDistance = spacing(_movePointList[0], _movePointList[1])
+            if ((moveDistance - _touchDistance).abs() > minScalePointerDistance) {
+                //开始缩放
+                _touchType = TOUCH_TYPE_SCALE
+                val scale = moveDistance / _touchDistance
+                canvasView.canvasViewBox.scaleBy(
+                    scale,
+                    scale,
+                    _touchMiddlePoint.x,
+                    _touchMiddlePoint.y
+                )
+                _touchDistance = moveDistance
             }
 
             //处理双指平移

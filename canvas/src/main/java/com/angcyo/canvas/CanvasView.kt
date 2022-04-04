@@ -70,17 +70,26 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     //<editor-fold desc="关键方法">
 
     init {
-        rendererBeforeList.add(MonitorRenderer(canvasViewBox, Transformer(canvasViewBox)))
+        rendererAfterList.add(MonitorRenderer(canvasViewBox, Transformer(canvasViewBox)))
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        canvasViewBox._canvasViewWidth = w
+        canvasViewBox._canvasViewHeight = h
+
+        //前测量
+
         if (xAxisRender.axis.enable) {
             xAxisRender.updateRenderBounds(this)
         }
         if (yAxisRender.axis.enable) {
             yAxisRender.updateRenderBounds(this)
         }
+
+        canvasViewBox.updateContentBox()
+
+        //后测量
 
         rendererBeforeList.forEach {
             it.updateRenderBounds(this)
@@ -93,8 +102,6 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         rendererAfterList.forEach {
             it.updateRenderBounds(this)
         }
-
-        canvasViewBox.updateContentBox()
 
         pendingList.forEach {
             it.run()

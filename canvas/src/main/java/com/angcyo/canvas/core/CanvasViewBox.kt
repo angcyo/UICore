@@ -3,14 +3,11 @@ package com.angcyo.canvas.core
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
-import android.util.DisplayMetrics
-import android.util.TypedValue
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.utils._tempMatrix
 import com.angcyo.canvas.utils._tempRectF
 import com.angcyo.canvas.utils._tempValues
 import com.angcyo.canvas.utils.clamp
-import com.angcyo.library.ex.ceilReverse
 
 /**
  * CanvasView 内容可视区域范围
@@ -145,9 +142,20 @@ class CanvasViewBox(val canvasView: CanvasView) {
         return (getContentTop() + getContentBottom()) / 2
     }
 
+    fun getContentWidth() = getContentRight() - getContentLeft()
+
+    fun getContentHeight() = getContentBottom() - getContentTop()
+
     /**获取可视区偏移后的坐标矩形*/
     fun getContentMatrixBounds(matrix: Matrix = this.matrix): RectF {
-        matrix.mapRect(_tempRectF, _contentRect)
+
+        matrix.getValues(_tempValues)
+
+        _tempValues[Matrix.MTRANS_X] -= _tempValues[Matrix.MTRANS_X]
+        _tempValues[Matrix.MTRANS_Y] -= _tempValues[Matrix.MTRANS_Y]
+
+        _tempMatrix.setValues(_tempValues)
+        _tempMatrix.mapRect(_tempRectF, _contentRect)
         return _tempRectF
     }
 
@@ -213,31 +221,7 @@ class CanvasViewBox(val canvasView: CanvasView) {
 
     //<editor-fold desc="value unit">
 
-    /**绘制时使用的值类型, 最后要都要转换成像素, 在界面上绘制*/
-    var valueType: Int = TypedValue.COMPLEX_UNIT_MM
-
-    /**将value转换成绘制的文本*/
-    var formattedValue: (value: Float) -> String = { value ->
-        if (valueType == TypedValue.COMPLEX_UNIT_MM) {
-            "${(value.ceilReverse() / 10).toInt()}" //mm 转换成 cm
-        } else {
-            "$value"
-        }
-    }
-
-    /**获取每个单位间隔刻度对应的像素大小
-     * 将1个单位的值, 转换成屏幕像素点数值
-     * [TypedValue.COMPLEX_UNIT_MM]*/
-    fun convertValueToPixel(value: Float): Float {
-        val dm: DisplayMetrics = canvasView.resources.displayMetrics
-        return TypedValue.applyDimension(valueType, value, dm)
-    }
-
-    /**将像素转换为单位数值*/
-    fun convertPixelToValue(pixel: Float): Float {
-        val unit = convertValueToPixel(1f)
-        return pixel / unit
-    }
+    var valueUnit: ValueUnit = ValueUnit()
 
     //</editor-fold desc="value unit">
 

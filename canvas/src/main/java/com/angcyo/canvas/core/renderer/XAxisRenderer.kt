@@ -44,7 +44,7 @@ class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox, transformer: 
         val scaleX = canvasViewBox.matrix.getScaleX()
 
         //默认, 每隔1mm绘制一个刻度
-        val step = canvasViewBox.convertValueToPixel(scaleX)
+        val step = canvasViewBox.valueUnit.convertValueToPixel(scaleX)
 
         minusList.clear()
         plusList.clear()
@@ -115,8 +115,8 @@ class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox, transformer: 
         //相对于原点的像素距离点数值
         val distance = (left - originLeft) / scale
         //绘制刻度文本
-        val value = canvasViewBox.convertPixelToValue(distance)
-        val valueStr = canvasViewBox.formattedValue(value)
+        val value = canvasViewBox.valueUnit.convertPixelToValue(distance)
+        val valueStr = canvasViewBox.valueUnit.formattedValue(value)
 
         when (axis.getAxisLineType(index, scale)) {
             BaseAxis.LINE_TYPE_PROTRUDE -> {
