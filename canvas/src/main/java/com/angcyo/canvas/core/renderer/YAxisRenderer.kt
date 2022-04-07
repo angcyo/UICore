@@ -20,12 +20,6 @@ import com.angcyo.drawable.textHeight
 class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox, transformer: Transformer) :
     BaseAxisRenderer(canvasViewBox, transformer) {
 
-    /**负向的刻度点坐标*/
-    val minusList = mutableListOf<Float>()
-
-    /**正向的刻度点坐标*/
-    val plusList = mutableListOf<Float>()
-
     override fun updateRenderBounds(canvasView: CanvasView) {
         super.updateRenderBounds(canvasView)
         bounds.set(
@@ -40,64 +34,49 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox, transformer: 
         val right = bounds.right
         canvas.drawLine(right, bounds.top, right, bounds.bottom, linePaint)
 
+        val plusList = axis.getPlusPixelList(canvasViewBox)
+        val minusList = axis.getMinusPixelList(canvasViewBox)
+
         val translateY = canvasViewBox.matrix.getTranslateY()
         val scaleY = canvasViewBox.matrix.getScaleY()
-
-        //默认, 每隔1mm绘制一个刻度
-        val step = canvasViewBox.valueUnit.convertValueToPixel(scaleY)
-
-        minusList.clear()
-        plusList.clear()
 
         val contentLeft = canvasViewBox.getContentLeft()
         val contentRight = canvasViewBox.getContentRight()
         val contentTop = canvasViewBox.getContentTop()
         val contentBottom = canvasViewBox.getContentBottom()
 
-        //只需要绘制这个x坐标范围内的点
-        val drawMinY = contentTop - translateY
-        val drawMaxY = contentBottom - translateY
-
+        //绘制刻度
         canvas.withTranslation(y = translateY) {
 
             //先/后 clip, 都有效果
-            val clipBottom = drawMaxY
+            val clipBottom = contentBottom - translateY
             val clipTop = clipBottom - bounds.height() + contentTop
             clipRect(bounds.left, clipTop, bounds.right, clipBottom)
 
-            //从0坐标开始, 先绘制负坐标
-            var startTop = contentTop
-            while (startTop > drawMinY) {
-                minusList.add(startTop)
-                startTop -= step //负向延伸
-            }
-
-            startTop = contentTop
-            while (startTop < drawMaxY) {
-                plusList.add(startTop)
-                startTop += step //正向延伸
+            plusList.forEachIndexed { index, top ->
+                val _top = top * scaleY
+                drawLineAndLabel(canvas, index, _top, right, scaleY)
             }
 
             minusList.forEachIndexed { index, top ->
-                drawLineAndLabel(canvas, index, top, right, contentTop, scaleY)
-            }
-
-            plusList.forEachIndexed { index, top ->
-                drawLineAndLabel(canvas, index, top, right, contentTop, scaleY)
+                val _top = top * scaleY
+                drawLineAndLabel(canvas, -index, _top, right, scaleY)
             }
         }
 
         //网格线的绘制
         canvas.withSave {
-            clipRect(canvasViewBox._contentRect)
+            clipRect(canvasViewBox.contentRect)
             canvas.withTranslation(y = translateY) {
 
                 minusList.forEachIndexed { index, top ->
-                    drawGridLine(canvas, index, contentLeft, top, contentRight, scaleY)
+                    val _top = top * scaleY
+                    drawGridLine(canvas, -index, contentLeft, _top, contentRight, scaleY)
                 }
 
                 plusList.forEachIndexed { index, top ->
-                    drawGridLine(canvas, index, contentLeft, top, contentRight, scaleY)
+                    val _top = top * scaleY
+                    drawGridLine(canvas, -index, contentLeft, _top, contentRight, scaleY)
                 }
             }
         }
@@ -108,14 +87,9 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox, transformer: 
         index: Int,
         top: Float,
         right: Float,
-        originTop: Float,
         scale: Float
     ) {
-        //相对于原点的像素距离点数值
-        val distance = (top - originTop) / scale
-        //绘制刻度文本
-        val value = canvasViewBox.valueUnit.convertPixelToValue(distance)
-        val valueStr = canvasViewBox.valueUnit.formattedValue(value)
+        val valueStr = "$index"
 
         when (axis.getAxisLineType(index, scale)) {
             BaseAxis.LINE_TYPE_PROTRUDE -> {

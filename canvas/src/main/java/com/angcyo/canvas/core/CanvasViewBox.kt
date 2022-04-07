@@ -30,22 +30,24 @@ class CanvasViewBox(val canvasView: CanvasView) {
 
     /**最小和最大的缩放比例*/
     var minScaleX: Float = 0.25f
-    var maxScaleX: Float = 5f
+    var maxScaleX: Float = 10f //5f
+    
     var minScaleY: Float = 0.25f
-    var maxScaleY: Float = 5f
+    var maxScaleY: Float = 10f //5f
 
     /**最小和最大的平移距离*/
     var minTranslateX: Float = -Float.MAX_VALUE
-    var maxTranslateX: Float = 0f
+    var maxTranslateX: Float = Float.MAX_VALUE //0f
+
     var minTranslateY: Float = -Float.MAX_VALUE
-    var maxTranslateY: Float = 0f
+    var maxTranslateY: Float = Float.MAX_VALUE //0f
 
     //</editor-fold desc="控制属性">
 
     //<editor-fold desc="存储属性">
 
     /**内容可视区域*/
-    val _contentRect = RectF()
+    val contentRect = RectF()
 
     /**[CanvasView]视图的宽高*/
     var _canvasViewWidth: Int = 0
@@ -68,7 +70,7 @@ class CanvasViewBox(val canvasView: CanvasView) {
         _canvasViewWidth = canvasView.measuredWidth
         _canvasViewHeight = canvasView.measuredHeight
 
-        _contentRect.set(getContentLeft(), getContentTop(), getContentRight(), getContentBottom())
+        contentRect.set(getContentLeft(), getContentTop(), getContentRight(), getContentBottom())
 
         //刷新视图
         refresh(matrix)
@@ -149,13 +151,16 @@ class CanvasViewBox(val canvasView: CanvasView) {
     /**获取可视区偏移后的坐标矩形*/
     fun getContentMatrixBounds(matrix: Matrix = this.matrix): RectF {
 
-        matrix.getValues(_tempValues)
+        /*matrix.getValues(_tempValues)
 
         _tempValues[Matrix.MTRANS_X] -= _tempValues[Matrix.MTRANS_X]
         _tempValues[Matrix.MTRANS_Y] -= _tempValues[Matrix.MTRANS_Y]
 
         _tempMatrix.setValues(_tempValues)
-        _tempMatrix.mapRect(_tempRectF, _contentRect)
+        _tempMatrix.mapRect(_tempRectF, contentRect)*/
+
+        matrix.mapRect(_tempRectF, contentRect)
+
         return _tempRectF
     }
 

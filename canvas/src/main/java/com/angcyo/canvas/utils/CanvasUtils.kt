@@ -82,7 +82,7 @@ fun Matrix.getScaleY(): Float {
     return _tempValues[Matrix.MSCALE_Y]
 }
 
-/**[point]*/
+/**[PointF]*/
 fun Matrix.mapPoint(point: PointF): PointF {
     _tempPoints[0] = point.x
     _tempPoints[1] = point.y
@@ -90,6 +90,46 @@ fun Matrix.mapPoint(point: PointF): PointF {
     _tempPoint.x = _tempPoints[0]
     _tempPoint.y = _tempPoints[1]
     return _tempPoint
+}
+
+/**[RectF]*/
+fun Matrix.mapRectF(rect: RectF): RectF {
+    mapRect(_tempRectF, rect)
+    return _tempRectF
+}
+
+fun Matrix.mapXValueList(xList: List<Float>): List<Float> {
+    val src = FloatArray(xList.size * 2)
+    val dst = FloatArray(src.size)
+
+    xList.forEachIndexed { index, x ->
+        src[index * 2] = x
+        src[index * 2 + 1] = 0f
+    }
+
+    mapPoints(dst, src)
+    val result = mutableListOf<Float>()
+    for (i in xList.indices) {
+        result.add(dst[i * 2])
+    }
+    return result
+}
+
+fun Matrix.mapYValueList(yList: List<Float>): List<Float> {
+    val src = FloatArray(yList.size * 2)
+    val dst = FloatArray(src.size)
+
+    yList.forEachIndexed { index, y ->
+        src[index * 2] = 0f
+        src[index * 2 + 1] = y
+    }
+
+    mapPoints(dst, src)
+    val result = mutableListOf<Float>()
+    for (i in yList.indices) {
+        result.add(dst[i * 2])
+    }
+    return result
 }
 
 //</editor-fold desc="Matrix">

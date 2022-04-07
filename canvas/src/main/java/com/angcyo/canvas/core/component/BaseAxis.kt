@@ -1,5 +1,6 @@
 package com.angcyo.canvas.core.component
 
+import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.floor
 
@@ -23,7 +24,7 @@ abstract class BaseAxis : BaseComponent() {
         const val LINE_TYPE_SECONDARY = 3
     }
 
-    /**轴的宽度*/
+    /**轴的宽度/高度*/
     var axisSize = 20 * dp
 
     /**刻度的大小*/
@@ -52,7 +53,7 @@ abstract class BaseAxis : BaseComponent() {
         val loseStep = 0.3f
         var gainScale = 10
 
-        if (scale < 1f) {
+        /*if (scale < 1f) {
             val step = ((1 - scale) / loseStep).floor().toInt()
 
             if (step >= 1) {
@@ -68,7 +69,7 @@ abstract class BaseAxis : BaseComponent() {
                 }
                 return LINE_TYPE_NONE
             }
-        }
+        }*/
         if (index % 10 == 0) {
             return LINE_TYPE_PROTRUDE
         }
@@ -77,4 +78,10 @@ abstract class BaseAxis : BaseComponent() {
         }
         return LINE_TYPE_NORMAL
     }
+
+    /**获取正向坐标需要绘制刻度的像素点坐标位置, 未映射后的坐标*/
+    abstract fun getPlusPixelList(canvasViewBox: CanvasViewBox): List<Float>
+
+    /**获取负向坐标需要绘制刻度的像素点坐标位置, 未映射后的坐标*/
+    abstract fun getMinusPixelList(canvasViewBox: CanvasViewBox): List<Float>
 }

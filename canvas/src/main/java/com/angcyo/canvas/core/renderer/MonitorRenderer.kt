@@ -7,13 +7,12 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.view.MotionEvent
 import androidx.core.graphics.withTranslation
+import com.angcyo.canvas.BuildConfig
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.Transformer
-import com.angcyo.canvas.utils.createTextPaint
-import com.angcyo.canvas.utils.getMaxLineWidth
-import com.angcyo.canvas.utils.mapPoint
+import com.angcyo.canvas.utils.*
 import com.angcyo.library.ex.dp
 
 /**
@@ -55,23 +54,36 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox, transformer: Transformer) :
     }
 
     override fun render(canvas: Canvas) {
-        if (_isTouchDown) {
+        if (_isTouchDown || BuildConfig.DEBUG) {
             //绘制当前的缩放比例
             val valueUnit = canvasViewBox.valueUnit
-            val rect = canvasViewBox.getContentMatrixBounds()
-            val touchPoint = canvasViewBox.matrix.mapPoint(_touchPoint)
-            val tps = buildString {
-                append("(${touchPoint.x}, ${touchPoint.y})")
-                append(":")
-                val xValue = valueUnit.convertPixelToValue(touchPoint.x)
-                val yValue = valueUnit.convertPixelToValue(touchPoint.y)
-                append(
-                    "(${valueUnit.formattedValueUnit(xValue)}, ${
-                        valueUnit.formattedValueUnit(yValue)
-                    })"
-                )
+            val _rect = canvasViewBox.contentRect
+            //val rect = canvasViewBox.getContentMatrixBounds()
+
+            canvasViewBox.matrix.invert(_tempMatrix)
+            val rect = _tempMatrix.mapRectF(_rect)
+            val touchPoint = _tempMatrix.mapPoint(_touchPoint)
+
+            val tpStr = buildString {
+                val xValue = valueUnit.convertPixelToValue(touchPoint.x - _rect.left)
+                val yValue = valueUnit.convertPixelToValue(touchPoint.y - _rect.top)
+
+                val xUnit = valueUnit.formattedValueUnit(xValue)
+                val yUnit = valueUnit.formattedValueUnit(yValue)
+                append("($xUnit, $yUnit)")
+                appendLine()
+                append("(${_touchPoint.x}, ${_touchPoint.y})") //touch在视图上的真实坐标
+                append("->")
+                append("(${touchPoint.x}, ${touchPoint.y})") //映射后的坐标
             }
-            val text = "${tps}\n${rect}\n${(canvasViewBox._scaleX * 100).toInt()}%"
+
+            val rectStr = buildString {
+                append("(${_rect.left}, ${_rect.top}, ${_rect.right}, ${_rect.bottom})")
+                append("↓\n")
+                append("(${rect.left}, ${rect.top}, ${rect.right}, ${rect.bottom})") //映射后
+            }
+
+            val text = "${tpStr}\n${rectStr}\n${(canvasViewBox._scaleX * 100).toInt()}%"
             assumeLayout(text)
 
             canvas.withTranslation(x = canvasViewBox.getContentLeft(), y = bounds.top) {
