@@ -27,8 +27,13 @@ open class HawkViewHolderFactory : HawkFactory {
     /**是否启用Id当key, 否则请将key放在[R.id.lib_tag_hawk]的tag中*/
     var enableIdKey = true
 
+    /**是否启用tag当key
+     * 优先使用[R.id.lib_tag_hawk] 其次 [enableIdKey] 最后 [enableTagKey]
+     * */
+    var enableTagKey = true
+
     /**通过View的id生成的key的前缀*/
-    var idKeyPrefix = ""
+    var keyPrefix = ""
 
     /**保存选择状态*/
     var enableSelectedState = true
@@ -50,8 +55,19 @@ open class HawkViewHolderFactory : HawkFactory {
         } else if (enableIdKey) {
             val viewId = view.id
             if (viewId != View.NO_ID) {
-                key = "$idKeyPrefix$viewId"
+                key = "$viewId"
             }
+        } else if (enableTagKey) {
+            val viewTag = view.tag
+            if (viewTag is String) {
+                if (viewTag.isNotBlank()) {
+                    key = viewTag
+                }
+            }
+        }
+
+        if (!key.isNullOrEmpty()) {
+            key = "$keyPrefix$key"
         }
 
         return key
@@ -180,34 +196,34 @@ interface HawkFactory {
 }
 
 fun DslViewHolder.hawkInstallAndRestore(
-    idKeyPrefix: String = "",
+    keyPrefix: String = "",
     factory: HawkFactory = hawkViewHolderFactory
 ) {
-    (factory as? HawkViewHolderFactory)?.idKeyPrefix = idKeyPrefix
+    (factory as? HawkViewHolderFactory)?.keyPrefix = keyPrefix
     factory.onInstall(itemView)
     factory.onRestoreView(itemView)
 }
 
 fun DslViewHolder.hawkInstall(
-    idKeyPrefix: String = "",
+    keyPrefix: String = "",
     factory: HawkFactory = hawkViewHolderFactory
 ) {
-    (factory as? HawkViewHolderFactory)?.idKeyPrefix = idKeyPrefix
+    (factory as? HawkViewHolderFactory)?.keyPrefix = keyPrefix
     factory.onInstall(itemView)
 }
 
 fun DslViewHolder.hawkSave(
-    idKeyPrefix: String = "",
+    keyPrefix: String = "",
     factory: HawkFactory = hawkViewHolderFactory
 ) {
-    (factory as? HawkViewHolderFactory)?.idKeyPrefix = idKeyPrefix
+    (factory as? HawkViewHolderFactory)?.keyPrefix = keyPrefix
     factory.onSaveView(itemView)
 }
 
 fun DslViewHolder.hawkRestore(
-    idKeyPrefix: String = "",
+    keyPrefix: String = "",
     factory: HawkFactory = hawkViewHolderFactory
 ) {
-    (factory as? HawkViewHolderFactory)?.idKeyPrefix = idKeyPrefix
+    (factory as? HawkViewHolderFactory)?.keyPrefix = keyPrefix
     factory.onRestoreView(itemView)
 }
