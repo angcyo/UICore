@@ -278,7 +278,10 @@ fun getDataColumn(
 }
 
 /**
+ * 相册选择图片后获取图片
  * 专为Android4.4以上设计的从Uri获取文件路径
+ * [Intent.ACTION_PICK]
+ * [Intent.ACTION_GET_CONTENT]
  */
 @RequiresApi(Build.VERSION_CODES.KITKAT)
 fun Uri.getPathFromIntentData(context: Context = app()): String? {
