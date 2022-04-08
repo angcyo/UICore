@@ -4,10 +4,7 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
 import com.angcyo.canvas.CanvasView
-import com.angcyo.canvas.utils._tempMatrix
-import com.angcyo.canvas.utils._tempRectF
-import com.angcyo.canvas.utils._tempValues
-import com.angcyo.canvas.utils.clamp
+import com.angcyo.canvas.utils.*
 
 /**
  * CanvasView 内容可视区域范围
@@ -31,7 +28,7 @@ class CanvasViewBox(val canvasView: CanvasView) {
     /**最小和最大的缩放比例*/
     var minScaleX: Float = 0.25f
     var maxScaleX: Float = 10f //5f
-    
+
     var minScaleY: Float = 0.25f
     var maxScaleY: Float = 10f //5f
 
@@ -92,12 +89,20 @@ class CanvasViewBox(val canvasView: CanvasView) {
         }
     }
 
-    /**获取变换后, 可视化的中点坐标*/
+    /**获取变换后, 可视化的中点坐标, 像素.
+     * 并非与坐标系中点的距离*/
     fun getContentMatrixPoint(): PointF {
-        val rect = getContentMatrixBounds()
-        return PointF(rect.centerX(), rect.centerY())
+        matrix.invert(_tempMatrix)
+        //转换后中点对应的像素坐标
+        val contentCenterX = getContentCenterX()
+        val contentCenterY = getContentCenterY()
+        val centerPoint = _tempMatrix.mapPoint(contentCenterX, contentCenterY)
+        /*centerPoint.x -= getCoordinateSystemX()
+        centerPoint.y -= getCoordinateSystemY()*/
+        return PointF().apply { set(centerPoint) }
     }
 
+    /**在转换后的视图中心取一个指定宽高的矩形坐标*/
     fun getContentMatrixRect(width: Float, height: Float): RectF {
         val point = getContentMatrixPoint()
         return RectF(
@@ -106,6 +111,27 @@ class CanvasViewBox(val canvasView: CanvasView) {
             point.x + width / 2,
             point.y + height / 2
         )
+    }
+
+    /**计算任意一点, 与坐标系原点的距离, 返回的是[ValueUnit]对应的值
+     * [point] 转换后的点像素坐标*/
+    fun calcDistanceValueWithOrigin(point: PointF): PointF {
+        val xPixelValue = point.x - getCoordinateSystemX()
+        val yPixelValue = point.y - getCoordinateSystemY()
+
+        val xValue = valueUnit.convertPixelToValue(xPixelValue)
+        val yValue = valueUnit.convertPixelToValue(yPixelValue)
+
+        return PointF(xValue, yValue)
+    }
+
+    /**计算任意一点, 与坐标系原点的距离
+     * [point] 转换后的点像素坐标*/
+    fun calcDistancePixelWithOrigin(point: PointF): PointF {
+        val xPixelValue = point.x - getCoordinateSystemX()
+        val yPixelValue = point.y - getCoordinateSystemY()
+
+        return PointF(xPixelValue, yPixelValue)
     }
 
     //</editor-fold desc="operate">
@@ -229,6 +255,20 @@ class CanvasViewBox(val canvasView: CanvasView) {
     var valueUnit: ValueUnit = ValueUnit()
 
     //</editor-fold desc="value unit">
+
+    //<editor-fold desc="coordinate system">
+
+    /**获取坐标系启动的x坐标*/
+    fun getCoordinateSystemX(): Float {
+        return getContentLeft()
+    }
+
+    /**获取坐标系启动的y坐标*/
+    fun getCoordinateSystemY(): Float {
+        return getContentTop()
+    }
+
+    //</editor-fold desc="coordinate system">
 
     //<editor-fold desc="matrix">
 

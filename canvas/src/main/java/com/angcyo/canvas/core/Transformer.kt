@@ -1,5 +1,6 @@
 package com.angcyo.canvas.core
 
+import android.graphics.Matrix
 import android.graphics.RectF
 
 /**
@@ -9,6 +10,9 @@ import android.graphics.RectF
  * @since 2022/04/01
  */
 class Transformer(val canvasViewBox: CanvasViewBox) {
+
+    /**额外的矩阵转换器*/
+    val transformerMatrix: Matrix = Matrix()
 
     /**将坐标矩形, 映射成变换后的矩形*/
     fun mapRectF(rect: RectF): RectF {

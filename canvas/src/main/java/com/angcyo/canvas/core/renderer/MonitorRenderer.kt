@@ -26,7 +26,7 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox, transformer: Transformer) :
     BaseRenderer(canvasViewBox, transformer), ICanvasListener {
 
     val paint = createTextPaint().apply {
-        //
+        //init
     }
 
     var layout: StaticLayout? = null
@@ -72,9 +72,26 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox, transformer: Transformer) :
                 val yUnit = valueUnit.formattedValueUnit(yValue)
                 append("($xUnit, $yUnit)")
                 appendLine()
-                append("(${_touchPoint.x}, ${_touchPoint.y})") //touch在视图上的真实坐标
+                append("touch:(${_touchPoint.x}, ${_touchPoint.y})") //touch在视图上的真实坐标
                 append("->")
                 append("(${touchPoint.x}, ${touchPoint.y})") //映射后的坐标
+
+                //当前视图中点, 距离坐标系左上角的距离 像素和单位数值
+                val centerPoint = canvasViewBox.getContentMatrixPoint()
+                val valuePoint = canvasViewBox.calcDistanceValueWithOrigin(centerPoint)
+
+                val centerXUnit = valueUnit.formattedValueUnit(valuePoint.x)
+                val centerYUnit = valueUnit.formattedValueUnit(valuePoint.y)
+
+                appendLine()
+                append("center:(${centerPoint.x}, ${centerPoint.y}):($centerXUnit, ${centerYUnit})")
+
+                /*val _centerPoint = PointF(_rect.centerX(), _rect.centerY())
+                val centerPoint = PointF(rect.centerX(), rect.centerY())
+                appendLine()
+                append("center:(${_centerPoint.x}, ${_centerPoint.y})") //touch在视图上的真实坐标
+                append("->")
+                append("(${centerPoint.x}, ${centerPoint.y})") //映射后的坐标*/
             }
 
             val rectStr = buildString {

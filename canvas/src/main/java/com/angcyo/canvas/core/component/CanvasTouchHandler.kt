@@ -76,7 +76,7 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), View.OnT
     }
 
     /**当双指捏合的距离大于此值时, 才视为是缩放手势*/
-    var minScalePointerDistance = 10 * dp
+    var minScalePointerDistance = 3.5 * dp
 
     /**当手指移动的距离大于此值时, 才视为是平移手势*/
     var dragTriggerDistance = 1 * dp
@@ -157,7 +157,10 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), View.OnT
             //双指 操作
 
             //处理双指缩放
-            if (_touchType == TOUCH_TYPE_NONE || _touchType == TOUCH_TYPE_SCALE) {
+            if (_touchType == TOUCH_TYPE_NONE ||
+                _touchType == TOUCH_TYPE_SCALE ||
+                _touchDistance > canvasView.canvasViewBox.getContentWidth() / 3
+            ) {
                 val moveDistance = spacing(_movePointList[0], _movePointList[1])
                 if ((moveDistance - _touchDistance).abs() > minScalePointerDistance) {
                     //开始缩放

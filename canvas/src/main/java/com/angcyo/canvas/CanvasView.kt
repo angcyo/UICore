@@ -7,10 +7,12 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.withMatrix
 import com.angcyo.canvas.core.*
 import com.angcyo.canvas.core.component.CanvasTouchHandler
 import com.angcyo.canvas.core.component.XAxis
 import com.angcyo.canvas.core.component.YAxis
+import com.angcyo.canvas.core.renderer.CenterRenderer
 import com.angcyo.canvas.core.renderer.MonitorRenderer
 import com.angcyo.canvas.core.renderer.XAxisRenderer
 import com.angcyo.canvas.core.renderer.YAxisRenderer
@@ -71,6 +73,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
     init {
         rendererAfterList.add(MonitorRenderer(canvasViewBox, Transformer(canvasViewBox)))
+        rendererAfterList.add(CenterRenderer(canvasViewBox, Transformer(canvasViewBox)))
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -132,9 +135,11 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }
 
         //内容
-        itemsRendererList.forEach {
-            if (it.visible) {
-                it.render(canvas)
+        canvas.withMatrix(canvasViewBox.matrix) {
+            itemsRendererList.forEach {
+                if (it.visible) {
+                    it.render(canvas)
+                }
             }
         }
 
@@ -188,19 +193,9 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
                 if (_width > 0 && _height > 0) {
                     //当前可视化的中点坐标
-                    val centerX =
-                        (canvasViewBox.getContentLeft() + canvasViewBox.getContentRight()) / 2 - canvasViewBox._translateX
-                    val centerY =
-                        (canvasViewBox.getContentTop() + canvasViewBox.getContentBottom()) / 2 - canvasViewBox._translateY
-                    item.bounds.set(
-                        centerX - width / 2,
-                        centerY - height / 2,
-                        centerX + width / 2,
-                        centerY + height / 2
-                    )
 
-                    //val rect = canvasViewBox.getContentMatrixRect(width, height)
-                    //item.bounds.set(rect)
+                    val rect = canvasViewBox.getContentMatrixRect(_width, _height)
+                    item.bounds.set(rect)
                 }
             }
             postInvalidateOnAnimation()

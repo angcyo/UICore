@@ -15,7 +15,7 @@ class XAxis : BaseAxis() {
 
     override fun getPlusPixelList(canvasViewBox: CanvasViewBox): List<Float> {
         val result = mutableListOf<Float>()
-        var start = canvasViewBox.getContentLeft()
+        var start = canvasViewBox.getCoordinateSystemX()
         canvasViewBox.matrix.invert(_tempMatrix)
         val factor = max(1f, _tempMatrix.getScaleX())
         val end =
@@ -31,7 +31,7 @@ class XAxis : BaseAxis() {
 
     override fun getMinusPixelList(canvasViewBox: CanvasViewBox): List<Float> {
         val result = mutableListOf<Float>()
-        var start = canvasViewBox.getContentLeft()
+        var start = canvasViewBox.getCoordinateSystemX()
         canvasViewBox.matrix.invert(_tempMatrix)
         val factor = max(1f, _tempMatrix.getScaleX())
         val end =

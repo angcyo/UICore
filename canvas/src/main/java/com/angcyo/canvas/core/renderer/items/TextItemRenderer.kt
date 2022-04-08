@@ -4,13 +4,17 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import androidx.core.graphics.withMatrix
+import androidx.core.graphics.withScale
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.Transformer
 import com.angcyo.canvas.core.component.items.TextItem
 import com.angcyo.canvas.utils.createPaint
+import com.angcyo.canvas.utils.getScaleX
+import com.angcyo.canvas.utils.getScaleY
 import com.angcyo.drawable.textHeight
 import com.angcyo.drawable.textWidth
+import com.angcyo.library.ex.dp
 
 /**
  * 文本组件渲染
@@ -27,7 +31,8 @@ class TextItemRenderer(
 ) : BaseItemRenderer(canvasViewBox, transformer) {
 
     val paint = createPaint(Color.BLACK, Paint.Style.FILL).apply {
-        textSize
+        //init
+        textSize = 12 * dp
     }
 
     override fun updateRenderBounds(canvasView: CanvasView) {
@@ -38,9 +43,30 @@ class TextItemRenderer(
     }
 
     override fun render(canvas: Canvas) {
-        canvas.withMatrix(canvasViewBox.matrix) {
-            canvas.drawText(textItem.text ?: "", bounds.left, bounds.bottom, paint)
-        }
+        val _bounds = bounds//canvasViewBox.matrix.mapRectF(bounds) //bounds
+
+        /*canvas.withScale(
+            canvasViewBox.matrix.getScaleX(),
+            canvasViewBox.matrix.getScaleY(),
+            _bounds.centerX(),
+            _bounds.centerY()
+        ) {
+            canvas.drawText(
+                textItem.text ?: "",
+                _bounds.left,
+                _bounds.bottom - paint.descent(),
+                paint
+            )
+        }*/
+
+//        canvas.withMatrix(transformer.transformerMatrix) {
+            canvas.drawText(
+                textItem.text ?: "",
+                _bounds.left,
+                _bounds.bottom - paint.descent(),
+                paint
+            )
+//        }
     }
 
 }

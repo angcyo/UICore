@@ -83,13 +83,18 @@ fun Matrix.getScaleY(): Float {
 }
 
 /**[PointF]*/
-fun Matrix.mapPoint(point: PointF): PointF {
-    _tempPoints[0] = point.x
-    _tempPoints[1] = point.y
+fun Matrix.mapPoint(x: Float, y: Float): PointF {
+    _tempPoints[0] = x
+    _tempPoints[1] = y
     mapPoints(_tempPoints, _tempPoints)
     _tempPoint.x = _tempPoints[0]
     _tempPoint.y = _tempPoints[1]
     return _tempPoint
+}
+
+/**[PointF]*/
+fun Matrix.mapPoint(point: PointF): PointF {
+    return mapPoint(point.x, point.y)
 }
 
 /**[RectF]*/
