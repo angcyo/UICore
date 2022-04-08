@@ -5,7 +5,6 @@ import androidx.core.graphics.withSave
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
-import com.angcyo.canvas.core.Transformer
 import com.angcyo.canvas.core.component.BaseAxis
 import com.angcyo.canvas.core.component.YAxis
 import com.angcyo.canvas.utils.getScaleY
@@ -17,8 +16,8 @@ import com.angcyo.drawable.textHeight
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/01
  */
-class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox, transformer: Transformer) :
-    BaseAxisRenderer(canvasViewBox, transformer) {
+class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox) :
+    BaseAxisRenderer(canvasViewBox) {
 
     override fun updateRenderBounds(canvasView: CanvasView) {
         super.updateRenderBounds(canvasView)

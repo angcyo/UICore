@@ -3,7 +3,6 @@ package com.angcyo.canvas.core.renderer
 import android.graphics.Color
 import android.graphics.Paint
 import com.angcyo.canvas.core.CanvasViewBox
-import com.angcyo.canvas.core.Transformer
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.toColor
@@ -12,8 +11,7 @@ import com.angcyo.library.ex.toColor
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/01
  */
-abstract class BaseAxisRenderer(canvasViewBox: CanvasViewBox, transformer: Transformer) :
-    BaseRenderer(canvasViewBox, transformer) {
+abstract class BaseAxisRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox) {
 
     /**主要线的画笔*/
     val lineProtrudePaint = createPaint(Color.GRAY)

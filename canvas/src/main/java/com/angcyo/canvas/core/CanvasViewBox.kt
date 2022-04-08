@@ -134,6 +134,12 @@ class CanvasViewBox(val canvasView: CanvasView) {
         return PointF(xPixelValue, yPixelValue)
     }
 
+    /**将可视化坐标点, 映射成坐标系点*/
+    fun mapTouchPoint(point: PointF): PointF {
+        matrix.invert(_tempMatrix)
+        return _tempMatrix.mapPoint(point)
+    }
+
     //</editor-fold desc="operate">
 
     //<editor-fold desc="base">

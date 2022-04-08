@@ -3,7 +3,6 @@ package com.angcyo.canvas.core.renderer
 import android.graphics.Canvas
 import android.graphics.Color
 import com.angcyo.canvas.core.CanvasViewBox
-import com.angcyo.canvas.core.Transformer
 import com.angcyo.canvas.utils.createPaint
 
 /**
@@ -11,8 +10,7 @@ import com.angcyo.canvas.utils.createPaint
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/08
  */
-class CenterRenderer(canvasViewBox: CanvasViewBox, transformer: Transformer) :
-    BaseRenderer(canvasViewBox, transformer) {
+class CenterRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox) {
 
     val paint = createPaint(Color.RED).apply {
         //init

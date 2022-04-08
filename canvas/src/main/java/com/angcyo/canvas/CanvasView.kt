@@ -7,15 +7,17 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.withClip
 import androidx.core.graphics.withMatrix
-import com.angcyo.canvas.core.*
+import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.ICanvasListener
+import com.angcyo.canvas.core.ICanvasView
+import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.core.component.CanvasTouchHandler
+import com.angcyo.canvas.core.component.ControlHandler
 import com.angcyo.canvas.core.component.XAxis
 import com.angcyo.canvas.core.component.YAxis
-import com.angcyo.canvas.core.renderer.CenterRenderer
-import com.angcyo.canvas.core.renderer.MonitorRenderer
-import com.angcyo.canvas.core.renderer.XAxisRenderer
-import com.angcyo.canvas.core.renderer.YAxisRenderer
+import com.angcyo.canvas.core.renderer.*
 import com.angcyo.canvas.core.renderer.items.BaseItemRenderer
 import com.angcyo.canvas.core.renderer.items.IItemsRenderer
 
@@ -50,11 +52,15 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
     //<editor-fold desc="横纵坐标轴">
 
+    val xAxis = XAxis()
+
     /**绘制在顶上的x轴*/
-    val xAxisRender = XAxisRenderer(XAxis(), canvasViewBox, Transformer(canvasViewBox))
+    val xAxisRender = XAxisRenderer(xAxis, canvasViewBox)
+
+    val yAxis = YAxis()
 
     /**绘制在左边的y轴*/
-    val yAxisRender = YAxisRenderer(YAxis(), canvasViewBox, Transformer(canvasViewBox))
+    val yAxisRender = YAxisRenderer(yAxis, canvasViewBox)
 
     //</editor-fold desc="横纵坐标轴">
 
@@ -67,13 +73,18 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
     //<editor-fold desc="内部成员">
 
+    val controlHandler = ControlHandler()
+
+    /**控制器渲染*/
+    val controlRenderer = ControlRenderer(controlHandler, canvasViewBox)
+
     //</editor-fold desc="内部成员">
 
     //<editor-fold desc="关键方法">
 
     init {
-        rendererAfterList.add(MonitorRenderer(canvasViewBox, Transformer(canvasViewBox)))
-        rendererAfterList.add(CenterRenderer(canvasViewBox, Transformer(canvasViewBox)))
+        rendererAfterList.add(MonitorRenderer(canvasViewBox))
+        rendererAfterList.add(CenterRenderer(canvasViewBox))
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -93,6 +104,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         canvasViewBox.updateContentBox()
 
         //后测量
+        controlRenderer.updateRenderBounds(this)
 
         rendererBeforeList.forEach {
             it.updateRenderBounds(this)
@@ -127,23 +139,29 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
             }
         }
 
-        //前置
+        //前置,不处理matrix
         rendererBeforeList.forEach {
             if (it.visible) {
                 it.render(canvas)
             }
         }
 
-        //内容
-        canvas.withMatrix(canvasViewBox.matrix) {
-            itemsRendererList.forEach {
-                if (it.visible) {
-                    it.render(canvas)
+        //内容, 绘制内容时, 自动使用[matrix]
+        canvas.withClip(canvasViewBox.contentRect) {
+            canvas.withMatrix(canvasViewBox.matrix) {
+                itemsRendererList.forEach {
+                    if (it.visible) {
+                        it.render(canvas)
+                    }
                 }
             }
         }
 
-        //后置
+        //后置,不处理matrix
+        if (controlRenderer.visible) {
+            controlRenderer.render(canvas)
+        }
+
         rendererAfterList.forEach {
             if (it.visible) {
                 it.render(canvas)
@@ -217,6 +235,28 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         } else {
             pendingList.add(Runnable { addItemRenderer(item) })
         }
+    }
+
+    /**选中item[IItemsRenderer]*/
+    fun selectedItem(itemRenderer: IItemsRenderer?) {
+        val oldItemRenderer = controlHandler.selectedItemRender
+
+        controlHandler.selectedItemRender = itemRenderer
+
+        //通知
+        if (itemRenderer == null) {
+            if (oldItemRenderer != null) {
+                canvasListenerList.forEach {
+                    it.onClearSelectItem(oldItemRenderer)
+                }
+            }
+        } else {
+            canvasListenerList.forEach {
+                it.onSelectedItem(itemRenderer, oldItemRenderer)
+            }
+        }
+
+        postInvalidateOnAnimation()
     }
 
     //</editor-fold desc="操作方法">

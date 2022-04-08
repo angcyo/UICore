@@ -100,6 +100,8 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), View.OnT
                 obtainPointList(event, _touchPointList)
                 handleActionDown()
                 view.disableParentInterceptTouchEvent()
+
+                handleControlTouchDown()
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
                 //多指按下
@@ -121,6 +123,20 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), View.OnT
             }
         }
         return true
+    }
+
+    /**处理选择*/
+    fun handleControlTouchDown() {
+        if (_touchPointList.size == 1) {
+            if (canvasView.controlHandler.enable) {
+                val itemRenderer =
+                    canvasView.controlHandler.findItemRenderer(
+                        canvasView.canvasViewBox,
+                        _touchPoint
+                    )
+                canvasView.selectedItem(itemRenderer)
+            }
+        }
     }
 
     /**获取所有手指的点位信息*/
@@ -198,7 +214,6 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), View.OnT
                 }
             }
         }
-
 
         /*val dx = event.x - touchPoint.x
         val dy = event.y - touchPoint.y

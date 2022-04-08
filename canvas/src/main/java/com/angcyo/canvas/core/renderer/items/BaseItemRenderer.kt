@@ -1,8 +1,8 @@
 package com.angcyo.canvas.core.renderer.items
 
-import android.graphics.RectF
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.Transformer
+import com.angcyo.canvas.core.renderer.BaseRenderer
 
 /**
  *
@@ -11,13 +11,7 @@ import com.angcyo.canvas.core.Transformer
  * @date 2022/04/03
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-abstract class BaseItemRenderer(val canvasViewBox: CanvasViewBox, val transformer: Transformer) :
-    IItemsRenderer {
-
-    override var visible: Boolean = true
-
-    val bounds = RectF()
-
-    override fun getRenderBounds(): RectF = bounds
+abstract class BaseItemRenderer(canvasViewBox: CanvasViewBox, val transformer: Transformer) :
+    BaseRenderer(canvasViewBox), IItemsRenderer {
 
 }

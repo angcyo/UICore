@@ -11,7 +11,6 @@ import com.angcyo.canvas.BuildConfig
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasListener
-import com.angcyo.canvas.core.Transformer
 import com.angcyo.canvas.utils.*
 import com.angcyo.library.ex.dp
 
@@ -22,8 +21,7 @@ import com.angcyo.library.ex.dp
  * @date 2022/04/02
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class MonitorRenderer(canvasViewBox: CanvasViewBox, transformer: Transformer) :
-    BaseRenderer(canvasViewBox, transformer), ICanvasListener {
+class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox), ICanvasListener {
 
     val paint = createTextPaint().apply {
         //init
