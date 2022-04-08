@@ -4,8 +4,10 @@ import android.graphics.*
 import android.text.Layout
 import android.text.TextPaint
 import com.angcyo.library.ex.dp
+import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToLong
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -82,6 +84,42 @@ fun Matrix.getScaleY(): Float {
     return _tempValues[Matrix.MSCALE_Y]
 }
 
+/**获取旋转的角度, 非弧度
+ * https://stackoverflow.com/questions/12256854/get-the-rotate-value-from-matrix-in-android
+ * [0~180°]
+ * [-180°~0]
+ *
+ * */
+fun Matrix.getRotateDegrees(): Float {
+    getValues(_tempValues)
+/*//    // translation is simple
+ * [0~-180°]
+ * [180°~0]
+//    val tx = _tempValues[Matrix.MTRANS_X]
+//    val ty = _tempValues[Matrix.MTRANS_Y]
+//
+//    // calculate real scale
+//    val scalex: Float = _tempValues[Matrix.MSCALE_X]
+//    val skewy: Float = _tempValues[Matrix.MSKEW_Y]
+//    val rScale = sqrt((scalex * scalex + skewy * skewy).toDouble()).toFloat()
+
+    // calculate the degree of rotation
+    val rAngle = Math.round(
+        atan2(
+            _tempValues[Matrix.MSKEW_X].toDouble(),
+            _tempValues[Matrix.MSCALE_X].toDouble()
+        ) * (180 / Math.PI)
+    ).toFloat()
+    return rAngle*/
+
+    val degrees = atan2(
+        _tempValues[Matrix.MSKEW_X],
+        _tempValues[Matrix.MSCALE_X]
+    ) * (180 / Math.PI)
+
+    return -degrees.roundToLong().toFloat()
+}
+
 /**[PointF]*/
 fun Matrix.mapPoint(x: Float, y: Float): PointF {
     _tempPoints[0] = x
@@ -139,6 +177,8 @@ fun Matrix.mapYValueList(yList: List<Float>): List<Float> {
 
 //</editor-fold desc="Matrix">
 
+//<editor-fold desc="Other">
+
 /**将[value]限制在[min] [max]之间*/
 fun clamp(value: Float, min: Float, max: Float): Float = min(max(value, min), max)
 
@@ -149,3 +189,11 @@ fun Layout.getMaxLineWidth(): Float {
     }
     return width
 }
+
+/**角度转弧度*/
+fun Float.toRadians(): Float = Math.toRadians(this.toDouble()).toFloat()
+
+/**弧度转角度*/
+fun Float.toDegrees(): Float = Math.toDegrees(this.toDouble()).toFloat()
+
+//</editor-fold desc="Other">
