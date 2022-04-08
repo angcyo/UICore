@@ -2,13 +2,14 @@ package com.angcyo.canvas.core.renderer
 
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.PointF
 import androidx.core.graphics.withMatrix
-import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.component.ControlHandler
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.mapRectF
+import com.angcyo.drawable.BuildConfig
 import com.angcyo.drawable.textHeight
 import com.angcyo.drawable.textWidth
 import com.angcyo.library.ex.dp
@@ -45,23 +46,37 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
             val _bounds = canvasViewBox.matrix.mapRectF(bounds)
 
             //绘制宽高文本
-            canvas.withTranslation() {
-                val widthValue = canvasViewBox.valueUnit.convertPixelToValue(bounds.width())
-                val widthUnit = canvasViewBox.valueUnit.formattedValueUnit(widthValue)
-                val heightValue = canvasViewBox.valueUnit.convertPixelToValue(bounds.height())
-                val heightUnit = canvasViewBox.valueUnit.formattedValueUnit(heightValue)
+            val widthUnit = canvasViewBox.valueUnit.convertPixelToValueUnit(bounds.width())
+            val heightUnit = canvasViewBox.valueUnit.convertPixelToValueUnit(bounds.height())
+
+            canvas.drawText(
+                widthUnit,
+                _bounds.centerX() - sizePaint.textWidth(widthUnit) / 2,
+                _bounds.top - sizePaint.descent() - controlHandler.sizeOffset,
+                sizePaint
+            )
+
+            canvas.drawText(
+                heightUnit,
+                _bounds.right + controlHandler.sizeOffset,
+                _bounds.centerY() + sizePaint.textHeight() / 2 - sizePaint.descent(),
+                sizePaint
+            )
+
+            //按下时, 绘制x,y坐标
+            if (canvasViewBox.canvasView.canvasTouchHandler.isTouchHold() || BuildConfig.DEBUG) {
+                val point = PointF(bounds.left, bounds.top)
+                val value = canvasViewBox.calcDistanceValueWithOrigin(point)
+
+                val xUnit = canvasViewBox.valueUnit.formattedValueUnit(value.x)
+                val yUnit = canvasViewBox.valueUnit.formattedValueUnit(value.x)
+
+                val text = "$xUnit x $yUnit"
 
                 canvas.drawText(
-                    widthUnit,
-                    _bounds.centerX() - sizePaint.textWidth(widthUnit) / 2,
-                    _bounds.top - sizePaint.descent() - controlHandler.sizeOffset,
-                    sizePaint
-                )
-
-                canvas.drawText(
-                    heightUnit,
-                    _bounds.right + controlHandler.sizeOffset,
-                    _bounds.centerY() + sizePaint.textHeight() / 2 - sizePaint.descent(),
+                    text,
+                    _bounds.centerX() - sizePaint.textWidth(text) / 2,
+                    _bounds.bottom + sizePaint.textHeight() - sizePaint.descent() + controlHandler.sizeOffset,
                     sizePaint
                 )
             }

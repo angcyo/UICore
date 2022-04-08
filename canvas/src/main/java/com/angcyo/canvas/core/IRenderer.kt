@@ -16,7 +16,6 @@ interface IRenderer {
 
     /**更新需要渲染的区域, 真实的坐标. 非[Matrix]后的坐标*/
     fun updateRenderBounds(canvasView: CanvasView) {
-
     }
 
     /**获取渲染的边界坐标*/

@@ -259,6 +259,14 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         postInvalidateOnAnimation()
     }
 
+    /**平移选中的[IItemsRenderer]*/
+    fun translateItem(itemRenderer: IItemsRenderer?, distanceX: Float = 0f, distanceY: Float = 0f) {
+        itemRenderer?.let {
+            it.translateBy(distanceX, distanceY)
+            postInvalidateOnAnimation()
+        }
+    }
+
     //</editor-fold desc="操作方法">
 
 }

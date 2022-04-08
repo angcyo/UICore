@@ -1,7 +1,9 @@
 package com.angcyo.canvas.utils
 
 import android.graphics.*
+import android.os.Build
 import android.text.Layout
+import android.text.StaticLayout
 import android.text.TextPaint
 import com.angcyo.library.ex.dp
 import kotlin.math.atan2
@@ -13,6 +15,8 @@ import kotlin.math.roundToLong
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/01
  */
+
+//<editor-fold desc="临时变量">
 
 /**临时对象, 用来存储[Matrix]矩阵值*/
 val _tempValues = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
@@ -27,6 +31,10 @@ val _tempRectF = RectF()
 
 /**临时对象, 用来存储[Matrix]*/
 val _tempMatrix = Matrix()
+
+//</editor-fold desc="临时变量">
+
+//<editor-fold desc="canvas">
 
 /**创建一个画笔*/
 fun createPaint(color: Int = Color.GRAY, style: Paint.Style = Paint.Style.STROKE) =
@@ -43,6 +51,40 @@ fun createTextPaint(color: Int = Color.BLACK, textSize: Float = 12 * dp) =
         this.textSize = textSize
         this.textAlign = Paint.Align.LEFT
     }
+
+/**[StaticLayout]*/
+fun createStaticLayout(
+    source: CharSequence,
+    paint: TextPaint,
+    width: Int,
+    align: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL // Layout.Alignment.ALIGN_OPPOSITE
+): StaticLayout {
+    val layout: StaticLayout
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        layout = StaticLayout.Builder.obtain(
+            source,
+            0,
+            source.length,
+            paint,
+            width
+        ).setAlignment(align).build()
+    } else {
+        layout = StaticLayout(
+            source,
+            0,
+            source.length,
+            paint,
+            width,
+            align,
+            1f,
+            0f,
+            false
+        )
+    }
+    return layout
+}
+
+//</editor-fold desc="canvas">
 
 //<editor-fold desc="Matrix">
 
@@ -127,7 +169,7 @@ fun Matrix.mapPoint(x: Float, y: Float): PointF {
     mapPoints(_tempPoints, _tempPoints)
     _tempPoint.x = _tempPoints[0]
     _tempPoint.y = _tempPoints[1]
-    return _tempPoint
+    return PointF().apply { set(_tempPoint) }
 }
 
 /**[PointF]*/

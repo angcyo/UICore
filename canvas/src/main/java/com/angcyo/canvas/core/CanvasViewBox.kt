@@ -4,7 +4,10 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
 import com.angcyo.canvas.CanvasView
-import com.angcyo.canvas.utils.*
+import com.angcyo.canvas.utils._tempRectF
+import com.angcyo.canvas.utils._tempValues
+import com.angcyo.canvas.utils.clamp
+import com.angcyo.canvas.utils.mapPoint
 
 /**
  * CanvasView 内容可视区域范围
@@ -18,6 +21,10 @@ class CanvasViewBox(val canvasView: CanvasView) {
 
     /**触摸带来的视图矩阵变化*/
     val matrix: Matrix = Matrix()
+
+    //零食变量
+    val tempMatrix: Matrix = Matrix()
+    val invertMatrix: Matrix = Matrix()
 
     /**内容区域左边额外的偏移*/
     var contentOffsetLeft = 0f
@@ -79,9 +86,9 @@ class CanvasViewBox(val canvasView: CanvasView) {
         canvasView.canvasListenerList.forEach {
             it.onCanvasMatrixChangeBefore(matrix)
         }
-        _tempMatrix.set(newMatrix)
+        tempMatrix.set(newMatrix)
         matrix.set(newMatrix)
-        _tempMatrix.set(newMatrix)
+        tempMatrix.set(newMatrix)
         limitTranslateAndScale(matrix)
         canvasView.invalidate()
         canvasView.canvasListenerList.forEach {
@@ -92,11 +99,11 @@ class CanvasViewBox(val canvasView: CanvasView) {
     /**获取变换后, 可视化的中点坐标, 像素.
      * 并非与坐标系中点的距离*/
     fun getContentMatrixPoint(): PointF {
-        matrix.invert(_tempMatrix)
+        matrix.invert(invertMatrix)
         //转换后中点对应的像素坐标
         val contentCenterX = getContentCenterX()
         val contentCenterY = getContentCenterY()
-        val centerPoint = _tempMatrix.mapPoint(contentCenterX, contentCenterY)
+        val centerPoint = invertMatrix.mapPoint(contentCenterX, contentCenterY)
         /*centerPoint.x -= getCoordinateSystemX()
         centerPoint.y -= getCoordinateSystemY()*/
         return PointF().apply { set(centerPoint) }
@@ -116,11 +123,10 @@ class CanvasViewBox(val canvasView: CanvasView) {
     /**计算任意一点, 与坐标系原点的距离, 返回的是[ValueUnit]对应的值
      * [point] 转换后的点像素坐标*/
     fun calcDistanceValueWithOrigin(point: PointF): PointF {
-        val xPixelValue = point.x - getCoordinateSystemX()
-        val yPixelValue = point.y - getCoordinateSystemY()
+        val pixelPoint = calcDistancePixelWithOrigin(point)
 
-        val xValue = valueUnit.convertPixelToValue(xPixelValue)
-        val yValue = valueUnit.convertPixelToValue(yPixelValue)
+        val xValue = valueUnit.convertPixelToValue(pixelPoint.x)
+        val yValue = valueUnit.convertPixelToValue(pixelPoint.y)
 
         return PointF(xValue, yValue)
     }
@@ -128,6 +134,7 @@ class CanvasViewBox(val canvasView: CanvasView) {
     /**计算任意一点, 与坐标系原点的距离
      * [point] 转换后的点像素坐标*/
     fun calcDistancePixelWithOrigin(point: PointF): PointF {
+        //val originPoint = getCoordinateSystemPoint()
         val xPixelValue = point.x - getCoordinateSystemX()
         val yPixelValue = point.y - getCoordinateSystemY()
 
@@ -135,9 +142,17 @@ class CanvasViewBox(val canvasView: CanvasView) {
     }
 
     /**将可视化坐标点, 映射成坐标系点*/
-    fun mapTouchPoint(point: PointF): PointF {
-        matrix.invert(_tempMatrix)
-        return _tempMatrix.mapPoint(point)
+    fun mapCoordinateSystemPoint(point: PointF): PointF {
+        matrix.invert(invertMatrix)
+        return invertMatrix.mapPoint(point)
+    }
+
+    /**将可视化矩形, 映射成坐标系矩形*/
+    fun mapCoordinateSystemRect(rect: RectF): RectF {
+        matrix.invert(invertMatrix)
+        val result = RectF()
+        invertMatrix.mapRect(result, rect)
+        return result
     }
 
     //</editor-fold desc="operate">
@@ -188,8 +203,8 @@ class CanvasViewBox(val canvasView: CanvasView) {
         _tempValues[Matrix.MTRANS_X] -= _tempValues[Matrix.MTRANS_X]
         _tempValues[Matrix.MTRANS_Y] -= _tempValues[Matrix.MTRANS_Y]
 
-        _tempMatrix.setValues(_tempValues)
-        _tempMatrix.mapRect(_tempRectF, contentRect)*/
+        tempMatrix.setValues(_tempValues)
+        tempMatrix.mapRect(_tempRectF, contentRect)*/
 
         matrix.mapRect(_tempRectF, contentRect)
 
@@ -272,6 +287,12 @@ class CanvasViewBox(val canvasView: CanvasView) {
     /**获取坐标系启动的y坐标*/
     fun getCoordinateSystemY(): Float {
         return getContentTop()
+    }
+
+    /**获取系统坐标系转换后的所在的像素坐标位置*/
+    fun getCoordinateSystemPoint(): PointF {
+        matrix.invert(invertMatrix)
+        return invertMatrix.mapPoint(getCoordinateSystemX(), getCoordinateSystemY())
     }
 
     //</editor-fold desc="coordinate system">

@@ -3,7 +3,6 @@ package com.angcyo.canvas.core
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import com.angcyo.library.app
-import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.decimal
 
 /**
@@ -43,6 +42,13 @@ class ValueUnit {
         } else {
             "$value"
         }
+    }
+
+    /**[convertPixelToValue]
+     * [formattedValueUnit]*/
+    fun convertPixelToValueUnit(pixel: Float): String {
+        val value = convertPixelToValue(pixel)
+        return formattedValueUnit(value)
     }
 
 }

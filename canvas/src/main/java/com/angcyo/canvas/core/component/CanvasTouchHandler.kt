@@ -114,10 +114,13 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), View.OnT
             MotionEvent.ACTION_MOVE -> {
                 obtainPointList(event, _movePointList)
                 handleActionMove()
+
+                handleControlTouchMove()
                 obtainPointList(event, _touchPointList)
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 _touchPointList.clear()
+                _movePointList.clear()
                 _touchType = TOUCH_TYPE_NONE
                 view.disableParentInterceptTouchEvent(false)
             }
@@ -135,6 +138,29 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), View.OnT
                         _touchPoint
                     )
                 canvasView.selectedItem(itemRenderer)
+            }
+        }
+    }
+
+    /**处理选中后的平移*/
+    fun handleControlTouchMove() {
+        if (_touchPointList.size == 1) {
+            if (canvasView.controlHandler.enable) {
+                canvasView.controlHandler.selectedItemRender?.let {
+                    //canvasView.canvasViewBox.matrix.invert(_tempMatrix)
+                    //canvasView.canvasViewBox.matrix.mapPoint(_movePointList[0])
+                    //val p1 = _tempMatrix.mapPoint(_movePointList[0]) //_movePointList[0]
+                    //canvasView.canvasViewBox.matrix.mapPoint(_touchPointList[0])
+                    //val p2 = _tempMatrix.mapPoint(_touchPointList[0])//_touchPointList[0]
+
+                    val p1 = canvasView.canvasViewBox.mapCoordinateSystemPoint(_movePointList[0])
+                    val p2 = canvasView.canvasViewBox.mapCoordinateSystemPoint(_touchPointList[0])
+
+                    val dx1 = p1.x - p2.x
+                    val dy1 = p1.y - p2.y
+
+                    canvasView.translateItem(it, dx1, dy1)
+                }
             }
         }
     }
@@ -220,5 +246,8 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), View.OnT
         canvasView.canvasViewBox.translateBy(dx, dy)
         touchPoint.set(event.x, event.y)*/
     }
+
+    /**是否有手指处于按下的状态*/
+    fun isTouchHold() = _touchPointList.isNotEmpty()
 
 }

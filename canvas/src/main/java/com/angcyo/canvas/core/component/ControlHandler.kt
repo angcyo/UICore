@@ -21,7 +21,7 @@ class ControlHandler : BaseComponent() {
 
     /**通过坐标, 找到对应的元素*/
     fun findItemRenderer(canvasViewBox: CanvasViewBox, touchPoint: PointF): IItemsRenderer? {
-        val point = canvasViewBox.mapTouchPoint(touchPoint)
+        val point = canvasViewBox.mapCoordinateSystemPoint(touchPoint)
         canvasViewBox.canvasView.itemsRendererList.reversed().forEach {
             if (it.getRenderBounds().contains(point)) {
                 return it
