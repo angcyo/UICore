@@ -2,13 +2,19 @@ package com.angcyo.canvas.core.component
 
 import android.graphics.PointF
 import android.graphics.RectF
-import android.graphics.drawable.Drawable
+import android.view.MotionEvent
 import androidx.core.graphics.contains
+import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.component.control.CloseControlPoint
+import com.angcyo.canvas.core.component.control.LockControlPoint
+import com.angcyo.canvas.core.component.control.RotateControlPoint
+import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.core.renderer.items.IItemRenderer
 import com.angcyo.canvas.utils.mapRectF
 import com.angcyo.library.ex._drawable
+import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
 
@@ -25,7 +31,10 @@ class ControlHandler : BaseComponent() {
     /**绘制宽高时的偏移量*/
     var sizeOffset = 4 * dp
 
-    //<editor-fold desc="4个控制点">
+    /**当前按下的控制点*/
+    var touchControlPoint: ControlPoint? = null
+
+    //<editor-fold desc="控制点">
 
     /**所有的控制点*/
     val controlPointList = mutableListOf<ControlPoint>()
@@ -40,15 +49,98 @@ class ControlHandler : BaseComponent() {
     var controlPointOffset = 4 * dp
 
     //缓存
-    val controlPointOffsetRect = RectF()
+    val _controlPointOffsetRect = RectF()
 
-    //</editor-fold desc="4个控制点">
+    //按下的坐标
+    val _touchPoint = PointF()
+    val _movePoint = PointF()
+
+    //</editor-fold desc="控制点">
+
+    /**手势处理*/
+    fun onTouch(view: CanvasView, event: MotionEvent): Boolean {
+        var holdControlPoint = touchControlPoint
+
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                _touchPoint.set(event.x, event.y)
+                val touchPoint = _touchPoint
+
+                if (selectedItemRender != null) {
+                    //已经有选中, 则查找控制点
+                    val controlPoint = findItemControlPoint(view.canvasViewBox, touchPoint)
+                    touchControlPoint = controlPoint
+                    holdControlPoint = controlPoint
+                }
+
+                if (touchControlPoint == null) {
+                    val itemRenderer = findItemRenderer(view.canvasViewBox, touchPoint)
+                    view.selectedItem(itemRenderer)
+                }
+            }
+            MotionEvent.ACTION_MOVE -> {
+                _movePoint.set(event.x, event.y)
+                if (touchControlPoint == null) {
+                    //没有在控制点上按压时, 才处理本体的移动
+                    selectedItemRender?.let {
+                        //canvasView.canvasViewBox.matrix.invert(_tempMatrix)
+                        //canvasView.canvasViewBox.matrix.mapPoint(_movePointList[0])
+                        //val p1 = _tempMatrix.mapPoint(_movePointList[0]) //_movePointList[0]
+                        //canvasView.canvasViewBox.matrix.mapPoint(_touchPointList[0])
+                        //val p2 = _tempMatrix.mapPoint(_touchPointList[0])//_touchPointList[0]
+
+                        val p1 = view.canvasViewBox.mapCoordinateSystemPoint(_movePoint)
+                        val p1x = p1.x
+                        val p1y = p1.y
+
+                        val p2 = view.canvasViewBox.mapCoordinateSystemPoint(_touchPoint)
+                        val p2x = p2.x
+                        val p2y = p2.y
+
+                        val dx1 = p1x - p2x
+                        val dy1 = p1y - p2y
+
+                        view.translateItem(it, dx1, dy1)
+                    }
+                }
+                _touchPoint.set(_movePoint)
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                touchControlPoint = null
+                view.disableParentInterceptTouchEvent(false)
+            }
+        }
+
+        //控制点
+        selectedItemRender?.let {
+            holdControlPoint?.onTouch(view, it, event)
+        }
+
+        //result
+        val result = selectedItemRender != null || holdControlPoint != null
+        if (result) {
+            view.disableParentInterceptTouchEvent()
+        }
+        return result
+    }
 
     /**通过坐标, 找到对应的元素*/
     fun findItemRenderer(canvasViewBox: CanvasViewBox, touchPoint: PointF): IItemRenderer? {
-        val point = canvasViewBox.mapCoordinateSystemPoint(touchPoint)
+        val point = canvasViewBox.mapCoordinateSystemPoint(touchPoint, _tempPoint)
         canvasViewBox.canvasView.itemsRendererList.reversed().forEach {
             if (it.getRendererBounds().contains(point)) {
+                return it
+            }
+        }
+        return null
+    }
+
+    /**通过坐标, 找到控制点
+     * [touchPoint] 视图坐标点*/
+    fun findItemControlPoint(canvasViewBox: CanvasViewBox, touchPoint: PointF): ControlPoint? {
+        //val point = canvasViewBox.mapCoordinateSystemPoint(touchPoint, _tempPoint)
+        controlPointList.forEach {
+            if (it.bounds.contains(touchPoint)) {
                 return it
             }
         }
@@ -60,46 +152,46 @@ class ControlHandler : BaseComponent() {
     fun calcControlPointLocation(canvasViewBox: CanvasViewBox, itemRenderer: IItemRenderer) {
         val srcRect = itemRenderer.getRendererBounds()
         val _srcRect = canvasViewBox.matrix.mapRectF(srcRect, _tempRect)
-        controlPointOffsetRect.set(_srcRect)
+        _controlPointOffsetRect.set(_srcRect)
 
         val inset = controlPointOffset + controlPointSize / 2
-        controlPointOffsetRect.inset(-inset, -inset)
+        _controlPointOffsetRect.inset(-inset, -inset)
 
         val closeControl = controlPointList.find { it.type == ControlPoint.POINT_TYPE_CLOSE }
             ?: createControlPoint(ControlPoint.POINT_TYPE_CLOSE)
         val rotateControl = controlPointList.find { it.type == ControlPoint.POINT_TYPE_ROTATE }
             ?: createControlPoint(ControlPoint.POINT_TYPE_ROTATE)
         val scaleControl = controlPointList.find { it.type == ControlPoint.POINT_TYPE_SCALE }
-            ?: createControlPoint(ControlPoint.POINT_TYPE_CLOSE)
+            ?: createControlPoint(ControlPoint.POINT_TYPE_SCALE)
         val lockControl = controlPointList.find { it.type == ControlPoint.POINT_TYPE_LOCK }
-            ?: createControlPoint(ControlPoint.POINT_TYPE_CLOSE)
+            ?: createControlPoint(ControlPoint.POINT_TYPE_LOCK)
         updateControlPoint(
             closeControl,
             canvasViewBox,
             itemRenderer,
-            controlPointOffsetRect.left,
-            controlPointOffsetRect.top
+            _controlPointOffsetRect.left,
+            _controlPointOffsetRect.top
         )
         updateControlPoint(
             rotateControl,
             canvasViewBox,
             itemRenderer,
-            controlPointOffsetRect.right,
-            controlPointOffsetRect.top,
+            _controlPointOffsetRect.right,
+            _controlPointOffsetRect.top,
         )
         updateControlPoint(
             scaleControl,
             canvasViewBox,
             itemRenderer,
-            controlPointOffsetRect.right,
-            controlPointOffsetRect.bottom,
+            _controlPointOffsetRect.right,
+            _controlPointOffsetRect.bottom,
         )
         updateControlPoint(
             lockControl,
             canvasViewBox,
             itemRenderer,
-            controlPointOffsetRect.left,
-            controlPointOffsetRect.bottom,
+            _controlPointOffsetRect.left,
+            _controlPointOffsetRect.bottom,
         )
 
         controlPointList.clear()
@@ -111,15 +203,27 @@ class ControlHandler : BaseComponent() {
 
     /**创建一个控制点*/
     fun createControlPoint(type: Int): ControlPoint {
-        return ControlPoint(
-            RectF(), type, when (type) {
-                ControlPoint.POINT_TYPE_CLOSE -> _drawable(R.drawable.control_point_close)
-                ControlPoint.POINT_TYPE_ROTATE -> _drawable(R.drawable.control_point_rotate)
-                ControlPoint.POINT_TYPE_SCALE -> _drawable(R.drawable.control_point_scale)
-                ControlPoint.POINT_TYPE_LOCK -> _drawable(R.drawable.control_point_lock)
-                else -> null
+        return when (type) {
+            ControlPoint.POINT_TYPE_CLOSE -> CloseControlPoint().apply {
+                this.type = type
+                drawable = _drawable(R.drawable.control_point_close)
             }
-        )
+            ControlPoint.POINT_TYPE_ROTATE -> RotateControlPoint().apply {
+                this.type = type
+                drawable = _drawable(R.drawable.control_point_rotate)
+            }
+            ControlPoint.POINT_TYPE_SCALE -> ScaleControlPoint().apply {
+                this.type = type
+                drawable = _drawable(R.drawable.control_point_scale)
+            }
+            ControlPoint.POINT_TYPE_LOCK -> LockControlPoint().apply {
+                this.type = type
+                drawable = _drawable(R.drawable.control_point_lock)
+            }
+            else -> ControlPoint().apply {
+                this.type = type
+            }
+        }
     }
 
     /**更新控制点的位置*/
@@ -139,29 +243,5 @@ class ControlHandler : BaseComponent() {
             point.x + controlPointSize / 2,
             point.y + controlPointSize / 2
         )
-    }
-}
-
-/**控制点信息*/
-data class ControlPoint(
-    /**控制点坐标系的坐标*/
-    val bounds: RectF,
-    /**控制点的类型*/
-    var type: Int,
-    /**图标*/
-    val drawable: Drawable?
-) {
-    companion object {
-        /**控制点类型: 删除*/
-        const val POINT_TYPE_CLOSE = 1
-
-        /**控制点类型: 旋转*/
-        const val POINT_TYPE_ROTATE = 2
-
-        /**控制点类型: 缩放*/
-        const val POINT_TYPE_SCALE = 3
-
-        /**控制点类型: 锁定缩放比例*/
-        const val POINT_TYPE_LOCK = 4
     }
 }

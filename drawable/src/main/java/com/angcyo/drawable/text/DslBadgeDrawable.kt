@@ -13,6 +13,8 @@ import com.angcyo.library.ex._color
 import com.angcyo.library.ex._dimen
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.textHeight
+import com.angcyo.library.ex.textWidth
 import kotlin.math.max
 
 /**

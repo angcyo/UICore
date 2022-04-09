@@ -2,7 +2,6 @@ package com.angcyo.dsladapter
 
 import android.app.Activity
 import android.content.Context
-import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.view.View
@@ -247,8 +246,5 @@ fun View.fullSpan(full: Boolean = true) {
         }
     }
 }
-
-/**文本的高度*/
-fun Paint.textHeight(): Float = descent() - ascent()
 
 val RecyclerView._dslAdapter: DslAdapter? get() = adapter as? DslAdapter?

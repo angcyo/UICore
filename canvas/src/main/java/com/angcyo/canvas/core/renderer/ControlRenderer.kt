@@ -2,6 +2,7 @@ package com.angcyo.canvas.core.renderer
 
 import android.graphics.*
 import androidx.core.graphics.withMatrix
+import com.angcyo.canvas.BuildConfig
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.component.ControlHandler
@@ -9,10 +10,9 @@ import com.angcyo.canvas.core.renderer.items.IItemRenderer
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.mapRectF
-import com.angcyo.drawable.BuildConfig
-import com.angcyo.drawable.textHeight
-import com.angcyo.drawable.textWidth
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.textHeight
+import com.angcyo.library.ex.textWidth
 import com.angcyo.library.ex.toColorInt
 
 /**
@@ -36,6 +36,9 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
     /**用来绘制控制点图标的笔*/
     val controlPointPaint = createPaint(Color.GRAY, Paint.Style.FILL)
 
+    /**绘制按下的控制点*/
+    val controlTouchPointPaint = createPaint(Color.DKGRAY, Paint.Style.FILL)
+
     init {
         canvasViewBox.canvasView.canvasListenerList.add(this)
     }
@@ -50,6 +53,11 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
         if (itemRenderer == controlHandler.selectedItemRender) {
             updateControlPointLocation()
         }
+    }
+
+    override fun onSelectedItem(itemRenderer: IItemRenderer, oldItemRenderer: IItemRenderer?) {
+        super.onSelectedItem(itemRenderer, oldItemRenderer)
+        updateControlPointLocation()
     }
 
     /**更新控制点位坐标*/
@@ -90,7 +98,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
             )
 
             //按下时, 绘制x,y坐标
-            if (canvasViewBox.canvasView.canvasTouchHandler.isTouchHold() || BuildConfig.DEBUG) {
+            if (canvasViewBox.canvasView.isTouchHold || BuildConfig.DEBUG) {
                 val point = PointF(bounds.left, bounds.top)
                 val value = canvasViewBox.calcDistanceValueWithOrigin(point)
 
@@ -109,12 +117,16 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
 
             //绘制控制四个角
             controlHandler.controlPointList.forEach {
+
+                //控制点的背景绘制
                 canvas.drawCircle(
                     it.bounds.centerX(),
                     it.bounds.centerY(),
                     controlHandler.controlPointSize / 2,
-                    controlPointPaint
+                    if (it == controlHandler.touchControlPoint && canvasViewBox.canvasView.isTouchHold) controlTouchPointPaint else controlPointPaint
                 )
+
+                //控制点的图标绘制
                 it.drawable?.apply {
                     setBounds(
                         it.bounds.left.toInt() + controlHandler.controlPointPadding,
@@ -124,6 +136,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
                     )
                     draw(canvas)
                 }
+
                 //canvas.drawRect(it.bounds, controlPointPaint)
             }
 

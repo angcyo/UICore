@@ -2,15 +2,11 @@ package com.angcyo.item.form
 
 import android.graphics.*
 import androidx.recyclerview.widget.RecyclerView
-import com.angcyo.drawable.textHeight
-import com.angcyo.drawable.textWidth
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.DslItemDecoration
 import com.angcyo.item.R
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.dpi
-import com.angcyo.library.ex.toColorInt
+import com.angcyo.library.ex.*
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.error
 import kotlin.math.min

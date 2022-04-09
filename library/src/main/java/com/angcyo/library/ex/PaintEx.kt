@@ -1,10 +1,9 @@
-package com.angcyo.drawable
+package com.angcyo.library.ex
 
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.text.TextPaint
-import com.angcyo.library.ex._color
-import com.angcyo.library.ex.dp
+import com.angcyo.library.R
 
 /**
  *
@@ -30,9 +29,7 @@ fun Paint.textWidth(text: String?): Float {
 }
 
 /**文本的高度*/
-fun Paint.textHeight(): Float {
-    return descent() - ascent()
-}
+fun Paint?.textHeight(): Float = this?.run { descent() - ascent() } ?: 0f
 
 /**文本绘制时的y坐标
  * [originY]原本y坐标¬*/

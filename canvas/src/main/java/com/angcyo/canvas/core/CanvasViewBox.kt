@@ -4,9 +4,11 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
 import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.core.renderer.items.IItemRenderer
 import com.angcyo.canvas.utils._tempRectF
 import com.angcyo.canvas.utils.clamp
 import com.angcyo.canvas.utils.mapPoint
+import com.angcyo.canvas.utils.mapRectF
 
 /**
  * CanvasView 内容可视区域范围
@@ -158,6 +160,28 @@ class CanvasViewBox(val canvasView: CanvasView) {
     fun mapCoordinateSystemRect(rect: RectF, result: RectF = _tempRect): RectF {
         matrix.invert(invertMatrix)
         invertMatrix.mapRect(result, rect)
+        return result
+    }
+
+    /**计算[item]在当前视图中的坐标, 相对于[view]左上角的矩形坐标*/
+    fun calcItemVisibleBounds(item: IItemRenderer, result: RectF): RectF {
+        //重点
+
+        //bounds, 可以直接绘制的坐标
+        val bounds = item.getRendererBounds()
+        //映射之后, 坐标相对于视图左上角的坐标
+        matrix.mapRectF(bounds, result)
+
+        //将相对于与视图左上角的坐标转换成可以直接绘制的坐标, 最终会和bounds一直
+        /*val test = RectF()
+        matrix.invert(invertMatrix)
+        invertMatrix.mapRectF(result, test)*/
+
+        return result
+    }
+
+    /**计算[item]在当前坐标系中的矩形坐标*/
+    fun mapItemCoordinateSystemBounds(item: IItemRenderer, result: RectF): RectF {
         return result
     }
 

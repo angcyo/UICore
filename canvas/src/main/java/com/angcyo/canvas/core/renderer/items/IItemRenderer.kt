@@ -1,6 +1,5 @@
 package com.angcyo.canvas.core.renderer.items
 
-import android.graphics.Matrix
 import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.core.Transformer
 import com.angcyo.canvas.utils._tempMatrix
@@ -20,12 +19,22 @@ interface IItemRenderer : IRenderer {
     /**平移元素
      * [distanceX] 横向需要移动的像素距离
      * [distanceY] 纵向需要移动的像素距离*/
-    fun translateBy(distanceX: Float, distanceY: Float): Matrix {
+    fun translateBy(distanceX: Float, distanceY: Float) {
         _tempMatrix.reset()
         _tempMatrix.postTranslate(distanceX, distanceY)
         getRendererBounds().apply {
             _tempMatrix.mapRect(this, this)
         }
-        return _tempMatrix
+    }
+
+    /**缩放元素
+     * [scaleX] 横向需要移动的像素距离
+     * [scaleY] 纵向需要移动的像素距离*/
+    fun scaleBy(scaleX: Float, scaleY: Float) {
+        _tempMatrix.reset()
+        getRendererBounds().apply {
+            _tempMatrix.postScale(scaleX, scaleY, centerX(), centerY())
+            _tempMatrix.mapRect(this, this)
+        }
     }
 }

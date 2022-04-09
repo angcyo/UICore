@@ -10,11 +10,7 @@ import android.view.MotionEvent
 import android.widget.EditText
 import com.angcyo.drawable.isBottom
 import com.angcyo.drawable.isTop
-import com.angcyo.drawable.textHeight
-import com.angcyo.drawable.textWidth
-import com.angcyo.library.ex.calcSize
-import com.angcyo.library.ex.undefined_color
-import com.angcyo.library.ex.undefined_size
+import com.angcyo.library.ex.*
 import com.angcyo.widget.R
 import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.mW

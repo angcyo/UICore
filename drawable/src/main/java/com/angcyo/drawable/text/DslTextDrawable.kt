@@ -10,10 +10,10 @@ import android.view.ViewGroup
 import com.angcyo.drawable.DslGravity
 import com.angcyo.drawable.R
 import com.angcyo.drawable.base.AbsDslDrawable
-import com.angcyo.drawable.textHeight
-import com.angcyo.drawable.textWidth
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.textHeight
+import com.angcyo.library.ex.textWidth
 import kotlin.math.max
 
 /**

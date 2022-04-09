@@ -170,10 +170,22 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
+    /**手指是否按下*/
+    var isTouchHold: Boolean = false
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        isTouchHold = when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> true
+            else -> false
+        }
         canvasListenerList.forEach {
             it.onCanvasTouchEvent(event)
+        }
+        if (controlHandler.enable) {
+            if (controlHandler.onTouch(this, event)) {
+                return true
+            }
         }
         if (canvasTouchHandler.enable) {
             return canvasTouchHandler.onTouch(this, event)
@@ -275,6 +287,15 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
+    /**移除一个绘制元素*/
+    fun removeItemRenderer(item: IItemRenderer) {
+        itemsRendererList.remove(item)
+        if (controlHandler.selectedItemRender == item) {
+            selectedItem(null)
+        }
+        postInvalidateOnAnimation()
+    }
+
     /**选中item[IItemRenderer]*/
     fun selectedItem(itemRenderer: IItemRenderer?) {
         val oldItemRenderer = controlHandler.selectedItemRender
@@ -301,6 +322,19 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     fun translateItem(itemRenderer: IItemRenderer?, distanceX: Float = 0f, distanceY: Float = 0f) {
         itemRenderer?.let {
             it.translateBy(distanceX, distanceY)
+
+            canvasListenerList.forEach {
+                it.onItemMatrixChangeAfter(itemRenderer)
+            }
+
+            postInvalidateOnAnimation()
+        }
+    }
+
+    /**缩放选中的[IItemRenderer]*/
+    fun scaleItem(itemRenderer: IItemRenderer?, scaleX: Float = 1f, scaleY: Float = 1f) {
+        itemRenderer?.let {
+            it.scaleBy(scaleX, scaleY)
 
             canvasListenerList.forEach {
                 it.onItemMatrixChangeAfter(itemRenderer)

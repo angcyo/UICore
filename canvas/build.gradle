@@ -1,7 +1,7 @@
 apply from: allGradle.libBase
 
 dependencies {
-    implementation project(allModule.widget)
+    implementation project(allModule.library)
 
     //https://github.com/Pixplicity/sharp
     //https://github.com/LaserPeckerIst/sharp

@@ -1,6 +1,7 @@
 package com.angcyo.library.ex
 
 import android.content.Context
+import android.graphics.RectF
 import android.text.TextUtils
 import android.view.View
 import com.angcyo.library.*
@@ -139,4 +140,19 @@ fun Context.calcSize(
         }
     }
     return result
+}
+
+/**禁止[Parent]拦截[TouchEvent]*/
+fun View?.disableParentInterceptTouchEvent(disable: Boolean = true) {
+    this?.parent?.requestDisallowInterceptTouchEvent(disable)
+}
+
+/**调整矩形的宽高到指定的值*/
+fun RectF.adjustSize(width: Float, height: Float) {
+    val w = width()
+    val h = height()
+
+    val ws = w - width
+    val hs = h - height
+    inset(ws / 2, hs / 2)
 }

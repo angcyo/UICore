@@ -28,17 +28,14 @@ import com.angcyo.fragment.IFragment
 import com.angcyo.library.L
 import com.angcyo.library.L.d
 import com.angcyo.library.LTime
-import com.angcyo.library.ex.className
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.hash
-import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.*
 import com.angcyo.tablayout.exactlyMeasure
-import com.angcyo.tablayout.textHeight
 import com.angcyo.widget.R
 import com.angcyo.widget.base.findView
 import com.angcyo.widget.base.getChildOrNull
 import com.angcyo.widget.base.scaleAnimator
 import com.angcyo.widget.layout.touch.SwipeBackLayout
+import kotlin.toString
 
 /**
  * 可以用来显示IView的布局, 每一层的管理, 重写于2018-3-2

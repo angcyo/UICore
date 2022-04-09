@@ -136,8 +136,6 @@ fun Paint?.textWidth(text: String?): Float {
     } ?: 0f
 }
 
-fun Paint?.textHeight(): Float = this?.run { descent() - ascent() } ?: 0f
-
 fun Int.isHorizontal() = this == LinearLayout.HORIZONTAL
 
 fun Int.isVertical() = this == LinearLayout.VERTICAL

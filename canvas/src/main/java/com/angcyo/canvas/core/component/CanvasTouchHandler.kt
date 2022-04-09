@@ -1,13 +1,11 @@
 package com.angcyo.canvas.core.component
 
-import android.annotation.SuppressLint
 import android.graphics.PointF
 import android.view.MotionEvent
-import android.view.View
 import com.angcyo.canvas.CanvasView
 import com.angcyo.library.ex.abs
+import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
-import com.angcyo.widget.base.disableParentInterceptTouchEvent
 import kotlin.math.atan2
 import kotlin.math.min
 import kotlin.math.sqrt
@@ -16,7 +14,7 @@ import kotlin.math.sqrt
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/02
  */
-class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), View.OnTouchListener {
+class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent() {
 
     companion object {
 
@@ -92,16 +90,13 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), View.OnT
     val _movePointList: MutableList<PointF> = mutableListOf()
 
     /**入口*/
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onTouch(view: View, event: MotionEvent): Boolean {
+    fun onTouch(view: CanvasView, event: MotionEvent): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 _touchPoint.set(event.x, event.y)
                 obtainPointList(event, _touchPointList)
                 handleActionDown()
                 view.disableParentInterceptTouchEvent()
-
-                handleControlTouchDown()
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
                 //多指按下
@@ -114,8 +109,6 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), View.OnT
             MotionEvent.ACTION_MOVE -> {
                 obtainPointList(event, _movePointList)
                 handleActionMove()
-
-                handleControlTouchMove()
                 obtainPointList(event, _touchPointList)
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -126,48 +119,6 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), View.OnT
             }
         }
         return true
-    }
-
-    /**处理选择*/
-    fun handleControlTouchDown() {
-        if (_touchPointList.size == 1) {
-            if (canvasView.controlHandler.enable) {
-                val itemRenderer =
-                    canvasView.controlHandler.findItemRenderer(
-                        canvasView.canvasViewBox,
-                        _touchPoint
-                    )
-                canvasView.selectedItem(itemRenderer)
-            }
-        }
-    }
-
-    /**处理选中后的平移*/
-    fun handleControlTouchMove() {
-        if (_touchPointList.size == 1) {
-            if (canvasView.controlHandler.enable) {
-                canvasView.controlHandler.selectedItemRender?.let {
-                    //canvasView.canvasViewBox.matrix.invert(_tempMatrix)
-                    //canvasView.canvasViewBox.matrix.mapPoint(_movePointList[0])
-                    //val p1 = _tempMatrix.mapPoint(_movePointList[0]) //_movePointList[0]
-                    //canvasView.canvasViewBox.matrix.mapPoint(_touchPointList[0])
-                    //val p2 = _tempMatrix.mapPoint(_touchPointList[0])//_touchPointList[0]
-
-                    val p1 = canvasView.canvasViewBox.mapCoordinateSystemPoint(_movePointList[0])
-                    val p1x = p1.x
-                    val p1y = p1.y
-
-                    val p2 = canvasView.canvasViewBox.mapCoordinateSystemPoint(_touchPointList[0])
-                    val p2x = p2.x
-                    val p2y = p2.y
-
-                    val dx1 = p1x - p2x
-                    val dy1 = p1y - p2y
-
-                    canvasView.translateItem(it, dx1, dy1)
-                }
-            }
-        }
     }
 
     /**获取所有手指的点位信息*/
@@ -251,8 +202,4 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), View.OnT
         canvasView.canvasViewBox.translateBy(dx, dy)
         touchPoint.set(event.x, event.y)*/
     }
-
-    /**是否有手指处于按下的状态*/
-    fun isTouchHold() = _touchPointList.isNotEmpty()
-
 }

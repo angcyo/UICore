@@ -5,6 +5,7 @@ import android.text.TextUtils
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.dsladapter.internal.DrawText
+import com.angcyo.library.ex.textHeight
 import java.util.*
 
 /**

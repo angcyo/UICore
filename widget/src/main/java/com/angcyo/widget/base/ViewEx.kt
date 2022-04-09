@@ -672,11 +672,6 @@ fun View.watchClickCount(count: Int, action: () -> Unit) {
     }
 }
 
-/**禁止[Parent]拦截[TouchEvent]*/
-fun View?.disableParentInterceptTouchEvent(disable: Boolean = true) {
-    this?.parent?.requestDisallowInterceptTouchEvent(disable)
-}
-
 //</editor-fold desc="事件扩展">
 
 //<editor-fold desc="draw相关扩展">

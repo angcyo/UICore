@@ -14,6 +14,12 @@ dependencies {
     //https://jcenter.bintray.com/org/jetbrains/kotlinx/kotlinx-coroutines-android/
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
 
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core-jvm
+    //runtimeOnly 'org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.1'
+
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-jdk8
+    //implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.1'
+
     def lifecycle_version = "2.4.1"
     //https://mvnrepository.com/artifact/androidx.lifecycle
 

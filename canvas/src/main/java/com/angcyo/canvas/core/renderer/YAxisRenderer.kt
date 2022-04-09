@@ -10,7 +10,7 @@ import com.angcyo.canvas.core.component.BaseAxis
 import com.angcyo.canvas.core.component.YAxis
 import com.angcyo.canvas.utils.getScaleY
 import com.angcyo.canvas.utils.getTranslateY
-import com.angcyo.drawable.textHeight
+import com.angcyo.library.ex.textHeight
 
 /**
  * [YAxis]
