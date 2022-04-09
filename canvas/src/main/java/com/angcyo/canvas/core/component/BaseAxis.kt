@@ -2,7 +2,6 @@ package com.angcyo.canvas.core.component
 
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.floor
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -78,6 +77,9 @@ abstract class BaseAxis : BaseComponent() {
         }
         return LINE_TYPE_NORMAL
     }
+
+    val plusList = mutableListOf<Float>()
+    val minusList = mutableListOf<Float>()
 
     /**获取正向坐标需要绘制刻度的像素点坐标位置, 未映射后的坐标*/
     abstract fun getPlusPixelList(canvasViewBox: CanvasViewBox): List<Float>

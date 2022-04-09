@@ -154,10 +154,15 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), View.OnT
                     //val p2 = _tempMatrix.mapPoint(_touchPointList[0])//_touchPointList[0]
 
                     val p1 = canvasView.canvasViewBox.mapCoordinateSystemPoint(_movePointList[0])
-                    val p2 = canvasView.canvasViewBox.mapCoordinateSystemPoint(_touchPointList[0])
+                    val p1x = p1.x
+                    val p1y = p1.y
 
-                    val dx1 = p1.x - p2.x
-                    val dy1 = p1.y - p2.y
+                    val p2 = canvasView.canvasViewBox.mapCoordinateSystemPoint(_touchPointList[0])
+                    val p2x = p2.x
+                    val p2y = p2.y
+
+                    val dx1 = p1x - p2x
+                    val dy1 = p1y - p2y
 
                     canvasView.translateItem(it, dx1, dy1)
                 }

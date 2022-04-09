@@ -1,7 +1,6 @@
 package com.angcyo.canvas.core.component
 
 import com.angcyo.canvas.core.CanvasViewBox
-import com.angcyo.canvas.utils._tempMatrix
 import com.angcyo.canvas.utils.getScaleX
 import kotlin.math.max
 
@@ -14,7 +13,7 @@ import kotlin.math.max
 class XAxis : BaseAxis() {
 
     override fun getPlusPixelList(canvasViewBox: CanvasViewBox): List<Float> {
-        val result = mutableListOf<Float>()
+        plusList.clear()
         var start = canvasViewBox.getCoordinateSystemX()
         canvasViewBox.matrix.invert(_tempMatrix)
         val factor = max(1f, _tempMatrix.getScaleX())
@@ -23,14 +22,14 @@ class XAxis : BaseAxis() {
         val step = canvasViewBox.valueUnit.convertValueToPixel(1f)
 
         while (start < end) {
-            result.add(start)
+            plusList.add(start)
             start += step
         }
-        return result
+        return plusList
     }
 
     override fun getMinusPixelList(canvasViewBox: CanvasViewBox): List<Float> {
-        val result = mutableListOf<Float>()
+        minusList.clear()
         var start = canvasViewBox.getCoordinateSystemX()
         canvasViewBox.matrix.invert(_tempMatrix)
         val factor = max(1f, _tempMatrix.getScaleX())
@@ -39,9 +38,9 @@ class XAxis : BaseAxis() {
         val step = canvasViewBox.valueUnit.convertValueToPixel(1f)
 
         while (start > end) {
-            result.add(start)
+            minusList.add(start)
             start -= step
         }
-        return result
+        return minusList
     }
 }

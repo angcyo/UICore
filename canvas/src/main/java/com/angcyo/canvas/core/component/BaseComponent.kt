@@ -1,5 +1,8 @@
 package com.angcyo.canvas.core.component
 
+import android.graphics.Matrix
+import android.graphics.PointF
+import android.graphics.RectF
 import com.angcyo.canvas.core.IComponent
 
 /**
@@ -11,4 +14,8 @@ abstract class BaseComponent : IComponent {
     /**是否激活当前组件*/
     var enable: Boolean = true
 
+    //缓存
+    val _tempMatrix: Matrix = Matrix()
+    val _tempPoint: PointF = PointF()
+    val _tempRect: RectF = RectF()
 }

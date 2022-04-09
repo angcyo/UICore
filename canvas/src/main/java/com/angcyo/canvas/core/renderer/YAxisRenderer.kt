@@ -1,6 +1,7 @@
 package com.angcyo.canvas.core.renderer
 
 import android.graphics.Canvas
+import android.graphics.Matrix
 import androidx.core.graphics.withSave
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.CanvasView
@@ -19,8 +20,8 @@ import com.angcyo.drawable.textHeight
 class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox) :
     BaseAxisRenderer(canvasViewBox) {
 
-    override fun updateRenderBounds(canvasView: CanvasView) {
-        super.updateRenderBounds(canvasView)
+    override fun onUpdateRendererBounds(canvasView: CanvasView) {
+        super.onUpdateRendererBounds(canvasView)
         bounds.set(
             0f,
             0f,
@@ -29,12 +30,19 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox) :
         )
     }
 
+    override fun onCanvasMatrixUpdate(matrix: Matrix, oldValue: Matrix) {
+        super.onCanvasMatrixUpdate(matrix, oldValue)
+        //更新数据
+        axis.getPlusPixelList(canvasViewBox)
+        axis.getMinusPixelList(canvasViewBox)
+    }
+
     override fun render(canvas: Canvas) {
         val right = bounds.right
         canvas.drawLine(right, bounds.top, right, bounds.bottom, linePaint)
 
-        val plusList = axis.getPlusPixelList(canvasViewBox)
-        val minusList = axis.getMinusPixelList(canvasViewBox)
+        val plusList = axis.plusList
+        val minusList = axis.minusList
 
         val translateY = canvasViewBox.matrix.getTranslateY()
         val scaleY = canvasViewBox.matrix.getScaleY()

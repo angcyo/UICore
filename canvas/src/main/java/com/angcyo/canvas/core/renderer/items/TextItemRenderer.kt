@@ -29,8 +29,8 @@ class TextItemRenderer(
         textSize = 12 * dp
     }
 
-    override fun updateRenderBounds(canvasView: CanvasView) {
-        super.updateRenderBounds(canvasView)
+    override fun onUpdateRendererBounds(canvasView: CanvasView) {
+        super.onUpdateRendererBounds(canvasView)
         if (bounds.isEmpty) {
             bounds.set(0f, 0f, paint.textWidth(textItem.text), paint.textHeight())
         }

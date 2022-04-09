@@ -18,13 +18,13 @@ class Transformer(val canvasViewBox: CanvasViewBox) {
     val transformerMatrix: Matrix = Matrix()
 
     /**将坐标矩形, 映射成变换后的矩形*/
-    fun mapRectF(rect: RectF): RectF {
-        return transformerMatrix.mapRectF(rect)
+    fun mapRectF(rect: RectF, result: RectF): RectF {
+        return transformerMatrix.mapRectF(rect, result)
     }
 
     /**将坐标矩形, 映射成变换后的矩形*/
-    fun mapPointF(point: PointF): PointF {
-        return transformerMatrix.mapPoint(point)
+    fun mapPointF(point: PointF, result: PointF): PointF {
+        return transformerMatrix.mapPoint(point, result)
     }
 
 }

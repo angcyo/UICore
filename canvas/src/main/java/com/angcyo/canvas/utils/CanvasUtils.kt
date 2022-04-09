@@ -169,7 +169,7 @@ fun Matrix.mapPoint(x: Float, y: Float): PointF {
     mapPoints(_tempPoints, _tempPoints)
     _tempPoint.x = _tempPoints[0]
     _tempPoint.y = _tempPoints[1]
-    return PointF().apply { set(_tempPoint) }
+    return _tempPoint
 }
 
 /**[PointF]*/
@@ -177,10 +177,20 @@ fun Matrix.mapPoint(point: PointF): PointF {
     return mapPoint(point.x, point.y)
 }
 
+/**[result] 返回值*/
+fun Matrix.mapPoint(point: PointF, result: PointF): PointF {
+    _tempPoints[0] = point.x
+    _tempPoints[1] = point.y
+    mapPoints(_tempPoints, _tempPoints)
+    result.x = _tempPoints[0]
+    result.y = _tempPoints[1]
+    return result
+}
+
 /**[RectF]*/
-fun Matrix.mapRectF(rect: RectF): RectF {
-    mapRect(_tempRectF, rect)
-    return _tempRectF
+fun Matrix.mapRectF(rect: RectF, result: RectF = _tempRectF): RectF {
+    mapRect(result, rect)
+    return result
 }
 
 fun Matrix.mapXValueList(xList: List<Float>): List<Float> {

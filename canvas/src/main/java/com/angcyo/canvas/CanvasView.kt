@@ -3,16 +3,14 @@ package com.angcyo.canvas
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Matrix
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.withClip
 import androidx.core.graphics.withMatrix
-import com.angcyo.canvas.core.CanvasViewBox
-import com.angcyo.canvas.core.ICanvasListener
-import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.core.IRenderer
+import com.angcyo.canvas.core.*
 import com.angcyo.canvas.core.component.CanvasTouchHandler
 import com.angcyo.canvas.core.component.ControlHandler
 import com.angcyo.canvas.core.component.XAxis
@@ -47,6 +45,9 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
     /**将操作移动到[onSizeChanged]后触发*/
     val pendingList = mutableListOf<Runnable>()
+
+    /**撤销/重做管理*/
+    val undoManager: CanvasUndoManager = CanvasUndoManager(this)
 
     //</editor-fold desc="成员变量">
 
@@ -94,28 +95,28 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
         //前测量
 
-        if (xAxisRender.axis.enable) {
-            xAxisRender.updateRenderBounds(this)
+        if (xAxis.enable) {
+            xAxisRender.onUpdateRendererBounds(this)
         }
-        if (yAxisRender.axis.enable) {
-            yAxisRender.updateRenderBounds(this)
+        if (yAxis.enable) {
+            yAxisRender.onUpdateRendererBounds(this)
         }
 
         canvasViewBox.updateContentBox()
 
         //后测量
-        controlRenderer.updateRenderBounds(this)
+        controlRenderer.onUpdateRendererBounds(this)
 
         rendererBeforeList.forEach {
-            it.updateRenderBounds(this)
+            it.onUpdateRendererBounds(this)
         }
 
         itemsRendererList.forEach {
-            it.updateRenderBounds(this)
+            it.onUpdateRendererBounds(this)
         }
 
         rendererAfterList.forEach {
-            it.updateRenderBounds(this)
+            it.onUpdateRendererBounds(this)
         }
 
         pendingList.forEach {
@@ -127,13 +128,13 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        if (xAxisRender.axis.enable) {
+        if (xAxis.enable) {
             if (xAxisRender.visible) {
                 xAxisRender.render(canvas)
             }
         }
 
-        if (yAxisRender.axis.enable) {
+        if (yAxis.enable) {
             if (yAxisRender.visible) {
                 yAxisRender.render(canvas)
             }
@@ -180,6 +181,43 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         return super.onTouchEvent(event)
     }
 
+    /**当[Matrix]更新后触发
+     * [com.angcyo.canvas.core.CanvasViewBox.refresh]*/
+    fun onCanvasMatrixUpdate(matrix: Matrix, oldValue: Matrix) {
+        if (xAxis.enable && xAxisRender.visible) {
+            xAxisRender.onCanvasMatrixUpdate(matrix, oldValue)
+        }
+
+        if (yAxis.enable && yAxisRender.visible) {
+            yAxisRender.onCanvasMatrixUpdate(matrix, oldValue)
+        }
+
+        //前置,不处理matrix
+        rendererBeforeList.forEach {
+            if (it.visible) {
+                it.onCanvasMatrixUpdate(matrix, oldValue)
+            }
+        }
+
+        //内容, 绘制内容时, 自动使用[matrix]
+        itemsRendererList.forEach {
+            if (it.visible) {
+                it.onCanvasMatrixUpdate(matrix, oldValue)
+            }
+        }
+
+        //后置,不处理matrix
+        if (controlRenderer.visible) {
+            controlRenderer.onCanvasMatrixUpdate(matrix, oldValue)
+        }
+
+        rendererAfterList.forEach {
+            if (it.visible) {
+                it.onCanvasMatrixUpdate(matrix, oldValue)
+            }
+        }
+    }
+
     //</editor-fold desc="关键方法">
 
     //<editor-fold desc="操作方法">
@@ -194,7 +232,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
             itemsRendererList.add(item)
             if (item is BaseItemRenderer) {
                 if (item.bounds.isEmpty) {
-                    item.updateRenderBounds(this)
+                    item.onUpdateRendererBounds(this)
                 }
 
                 val _width = if (width == ViewGroup.LayoutParams.WRAP_CONTENT.toFloat()) {
@@ -228,7 +266,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
             itemsRendererList.add(item)
             if (item is BaseItemRenderer) {
                 if (item.bounds.isEmpty) {
-                    item.updateRenderBounds(this)
+                    item.onUpdateRendererBounds(this)
                 }
             }
             postInvalidateOnAnimation()
@@ -263,6 +301,11 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     fun translateItem(itemRenderer: IItemRenderer?, distanceX: Float = 0f, distanceY: Float = 0f) {
         itemRenderer?.let {
             it.translateBy(distanceX, distanceY)
+
+            canvasListenerList.forEach {
+                it.onItemMatrixChangeAfter(itemRenderer)
+            }
+
             postInvalidateOnAnimation()
         }
     }

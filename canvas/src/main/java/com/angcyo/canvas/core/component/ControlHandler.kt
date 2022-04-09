@@ -42,16 +42,13 @@ class ControlHandler : BaseComponent() {
     //缓存
     val controlPointOffsetRect = RectF()
 
-    val _tempPointRect = RectF()
-    val _tempPoint = PointF()
-
     //</editor-fold desc="4个控制点">
 
     /**通过坐标, 找到对应的元素*/
     fun findItemRenderer(canvasViewBox: CanvasViewBox, touchPoint: PointF): IItemRenderer? {
         val point = canvasViewBox.mapCoordinateSystemPoint(touchPoint)
         canvasViewBox.canvasView.itemsRendererList.reversed().forEach {
-            if (it.getRenderBounds().contains(point)) {
+            if (it.getRendererBounds().contains(point)) {
                 return it
             }
         }
@@ -61,79 +58,86 @@ class ControlHandler : BaseComponent() {
     /**计算4个控制点的矩形位置坐标
      * [itemRect] 目标元素坐标系的矩形坐标*/
     fun calcControlPointLocation(canvasViewBox: CanvasViewBox, itemRenderer: IItemRenderer) {
-        controlPointList.clear()
-
-        val srcRect = itemRenderer.getRenderBounds()
-        val _srcRect = canvasViewBox.matrix.mapRectF(srcRect)
+        val srcRect = itemRenderer.getRendererBounds()
+        val _srcRect = canvasViewBox.matrix.mapRectF(srcRect, _tempRect)
         controlPointOffsetRect.set(_srcRect)
 
         val inset = controlPointOffset + controlPointSize / 2
         controlPointOffsetRect.inset(-inset, -inset)
 
-        controlPointList.add(
-            createControlPoint(
-                canvasViewBox,
-                itemRenderer,
-                controlPointOffsetRect.left,
-                controlPointOffsetRect.top,
-                ControlPoint.POINT_TYPE_CLOSE
-            )
+        val closeControl = controlPointList.find { it.type == ControlPoint.POINT_TYPE_CLOSE }
+            ?: createControlPoint(ControlPoint.POINT_TYPE_CLOSE)
+        val rotateControl = controlPointList.find { it.type == ControlPoint.POINT_TYPE_ROTATE }
+            ?: createControlPoint(ControlPoint.POINT_TYPE_ROTATE)
+        val scaleControl = controlPointList.find { it.type == ControlPoint.POINT_TYPE_SCALE }
+            ?: createControlPoint(ControlPoint.POINT_TYPE_CLOSE)
+        val lockControl = controlPointList.find { it.type == ControlPoint.POINT_TYPE_LOCK }
+            ?: createControlPoint(ControlPoint.POINT_TYPE_CLOSE)
+        updateControlPoint(
+            closeControl,
+            canvasViewBox,
+            itemRenderer,
+            controlPointOffsetRect.left,
+            controlPointOffsetRect.top
         )
-        controlPointList.add(
-            createControlPoint(
-                canvasViewBox,
-                itemRenderer,
-                controlPointOffsetRect.right,
-                controlPointOffsetRect.top,
-                ControlPoint.POINT_TYPE_ROTATE
-            )
+        updateControlPoint(
+            rotateControl,
+            canvasViewBox,
+            itemRenderer,
+            controlPointOffsetRect.right,
+            controlPointOffsetRect.top,
         )
-        controlPointList.add(
-            createControlPoint(
-                canvasViewBox,
-                itemRenderer,
-                controlPointOffsetRect.right,
-                controlPointOffsetRect.bottom,
-                ControlPoint.POINT_TYPE_SCALE
-            )
+        updateControlPoint(
+            scaleControl,
+            canvasViewBox,
+            itemRenderer,
+            controlPointOffsetRect.right,
+            controlPointOffsetRect.bottom,
         )
-        controlPointList.add(
-            createControlPoint(
-                canvasViewBox,
-                itemRenderer,
-                controlPointOffsetRect.left,
-                controlPointOffsetRect.bottom,
-                ControlPoint.POINT_TYPE_LOCK
-            )
+        updateControlPoint(
+            lockControl,
+            canvasViewBox,
+            itemRenderer,
+            controlPointOffsetRect.left,
+            controlPointOffsetRect.bottom,
         )
+
+        controlPointList.clear()
+        controlPointList.add(closeControl)
+        controlPointList.add(rotateControl)
+        controlPointList.add(scaleControl)
+        controlPointList.add(lockControl)
     }
 
-    /**在指定位置创建一个控制点*/
-    fun createControlPoint(
-        canvasViewBox: CanvasViewBox,
-        itemRenderer: IItemRenderer,
-        x: Float,
-        y: Float,
-        type: Int
-    ): ControlPoint {
-        _tempPoint.set(x, y)
-        val point = itemRenderer.transformer.mapPointF(_tempPoint)
-
+    /**创建一个控制点*/
+    fun createControlPoint(type: Int): ControlPoint {
         return ControlPoint(
-            RectF().apply {
-                set(
-                    point.x - controlPointSize / 2,
-                    point.y - controlPointSize / 2,
-                    point.x + controlPointSize / 2,
-                    point.y + controlPointSize / 2
-                )
-            }, type, when (type) {
+            RectF(), type, when (type) {
                 ControlPoint.POINT_TYPE_CLOSE -> _drawable(R.drawable.control_point_close)
                 ControlPoint.POINT_TYPE_ROTATE -> _drawable(R.drawable.control_point_rotate)
                 ControlPoint.POINT_TYPE_SCALE -> _drawable(R.drawable.control_point_scale)
                 ControlPoint.POINT_TYPE_LOCK -> _drawable(R.drawable.control_point_lock)
                 else -> null
             }
+        )
+    }
+
+    /**更新控制点的位置*/
+    fun updateControlPoint(
+        controlPoint: ControlPoint,
+        canvasViewBox: CanvasViewBox,
+        itemRenderer: IItemRenderer,
+        x: Float,
+        y: Float
+    ) {
+        _tempPoint.set(x, y)
+        val point = itemRenderer.transformer.mapPointF(_tempPoint, _tempPoint)
+
+        controlPoint.bounds.set(
+            point.x - controlPointSize / 2,
+            point.y - controlPointSize / 2,
+            point.x + controlPointSize / 2,
+            point.y + controlPointSize / 2
         )
     }
 }
@@ -143,7 +147,7 @@ data class ControlPoint(
     /**控制点坐标系的坐标*/
     val bounds: RectF,
     /**控制点的类型*/
-    val type: Int,
+    var type: Int,
     /**图标*/
     val drawable: Drawable?
 ) {

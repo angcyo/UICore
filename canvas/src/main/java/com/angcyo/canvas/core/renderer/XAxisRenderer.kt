@@ -1,6 +1,7 @@
 package com.angcyo.canvas.core.renderer
 
 import android.graphics.Canvas
+import android.graphics.Matrix
 import androidx.core.graphics.withSave
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.CanvasView
@@ -16,8 +17,8 @@ import com.angcyo.canvas.core.component.XAxis
 class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox) :
     BaseAxisRenderer(canvasViewBox) {
 
-    override fun updateRenderBounds(canvasView: CanvasView) {
-        super.updateRenderBounds(canvasView)
+    override fun onUpdateRendererBounds(canvasView: CanvasView) {
+        super.onUpdateRendererBounds(canvasView)
         bounds.set(
             0f,
             0f,
@@ -26,13 +27,20 @@ class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox) :
         )
     }
 
+    override fun onCanvasMatrixUpdate(matrix: Matrix, oldValue: Matrix) {
+        super.onCanvasMatrixUpdate(matrix, oldValue)
+        //更新数据
+        axis.getPlusPixelList(canvasViewBox)
+        axis.getMinusPixelList(canvasViewBox)
+    }
+
     override fun render(canvas: Canvas) {
-        val bounds = getRenderBounds()
+        val bounds = getRendererBounds()
         val bottom = bounds.bottom
         canvas.drawLine(bounds.left, bottom, bounds.right, bottom, linePaint)
 
-        val plusList = axis.getPlusPixelList(canvasViewBox)
-        val minusList = axis.getMinusPixelList(canvasViewBox)
+        val plusList = axis.plusList
+        val minusList = axis.minusList
 
         val translateX = canvasViewBox._translateX
         val scaleX = canvasViewBox._scaleX

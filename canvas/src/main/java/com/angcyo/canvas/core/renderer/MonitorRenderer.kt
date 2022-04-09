@@ -1,7 +1,9 @@
 package com.angcyo.canvas.core.renderer
 
 import android.graphics.Canvas
+import android.graphics.Matrix
 import android.graphics.PointF
+import android.graphics.RectF
 import android.os.Build
 import android.text.Layout
 import android.text.StaticLayout
@@ -11,7 +13,10 @@ import com.angcyo.canvas.BuildConfig
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasListener
-import com.angcyo.canvas.utils.*
+import com.angcyo.canvas.utils.createTextPaint
+import com.angcyo.canvas.utils.getMaxLineWidth
+import com.angcyo.canvas.utils.mapPoint
+import com.angcyo.canvas.utils.mapRectF
 import com.angcyo.library.ex.dp
 
 /**
@@ -37,8 +42,8 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
         canvasViewBox.canvasView.canvasListenerList.add(this)
     }
 
-    override fun updateRenderBounds(canvasView: CanvasView) {
-        super.updateRenderBounds(canvasView)
+    override fun onUpdateRendererBounds(canvasView: CanvasView) {
+        super.onUpdateRendererBounds(canvasView)
     }
 
     override fun onCanvasTouchEvent(event: MotionEvent) {
@@ -51,6 +56,15 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
         canvasViewBox.canvasView.invalidate()
     }
 
+    override fun onCanvasMatrixUpdate(matrix: Matrix, oldValue: Matrix) {
+        super.onCanvasMatrixUpdate(matrix, oldValue)
+    }
+
+    //缓存
+    val _tempMatrix: Matrix = Matrix()
+    val _tempPoint: PointF = PointF()
+    val _tempRect: RectF = RectF()
+
     override fun render(canvas: Canvas) {
         if (_isTouchDown || BuildConfig.DEBUG) {
             //绘制当前的缩放比例
@@ -60,7 +74,7 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
 
             canvasViewBox.matrix.invert(_tempMatrix)
             val rect = _tempMatrix.mapRectF(_rect)
-            val touchPoint = _tempMatrix.mapPoint(_touchPoint)
+            val touchPoint = _tempMatrix.mapPoint(_touchPoint, _tempPoint)
 
             val tpStr = buildString {
                 val xValue = valueUnit.convertPixelToValue(touchPoint.x - _rect.left)

@@ -1,12 +1,11 @@
 package com.angcyo.canvas.core.renderer
 
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.PointF
+import android.graphics.*
 import androidx.core.graphics.withMatrix
 import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.component.ControlHandler
+import com.angcyo.canvas.core.renderer.items.IItemRenderer
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.mapRectF
@@ -22,7 +21,7 @@ import com.angcyo.library.ex.toColorInt
  * @since 2022/04/08
  */
 class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasViewBox) :
-    BaseRenderer(canvasViewBox) {
+    BaseRenderer(canvasViewBox), ICanvasListener {
 
     /**用来绘制边框*/
     val paint = createPaint("#6e9cce".toColorInt()).apply {
@@ -37,9 +36,32 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
     /**用来绘制控制点图标的笔*/
     val controlPointPaint = createPaint(Color.GRAY, Paint.Style.FILL)
 
+    init {
+        canvasViewBox.canvasView.canvasListenerList.add(this)
+    }
+
+    override fun onCanvasMatrixUpdate(matrix: Matrix, oldValue: Matrix) {
+        super.onCanvasMatrixUpdate(matrix, oldValue)
+        updateControlPointLocation()
+    }
+
+    override fun onItemMatrixChangeAfter(itemRenderer: IItemRenderer) {
+        super.onItemMatrixChangeAfter(itemRenderer)
+        if (itemRenderer == controlHandler.selectedItemRender) {
+            updateControlPointLocation()
+        }
+    }
+
+    /**更新控制点位坐标*/
+    fun updateControlPointLocation() {
+        controlHandler.selectedItemRender?.let {
+            controlHandler.calcControlPointLocation(canvasViewBox, it)
+        }
+    }
+
     override fun render(canvas: Canvas) {
         controlHandler.selectedItemRender?.let {
-            val bounds = it.getRenderBounds()
+            val bounds = it.getRendererBounds()
 
             //绘制边框
             canvas.withMatrix(canvasViewBox.matrix) {
@@ -47,7 +69,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
             }
 
             //转换之后的矩形
-            val _bounds = canvasViewBox.matrix.mapRectF(bounds)
+            val _bounds = canvasViewBox.matrix.mapRectF(bounds, controlHandler._tempRect)
 
             //绘制宽高文本
             val widthUnit = canvasViewBox.valueUnit.convertPixelToValueUnit(bounds.width())
@@ -86,7 +108,6 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
             }
 
             //绘制控制四个角
-            controlHandler.calcControlPointLocation(canvasViewBox, it)
             controlHandler.controlPointList.forEach {
                 canvas.drawCircle(
                     it.bounds.centerX(),

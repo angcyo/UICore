@@ -16,6 +16,6 @@ abstract class BaseRenderer(val canvasViewBox: CanvasViewBox) :
 
     val bounds = RectF()
 
-    override fun getRenderBounds(): RectF = bounds
+    override fun getRendererBounds(): RectF = bounds
 
 }
