@@ -3,15 +3,10 @@ package com.angcyo.canvas.core.renderer.items
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import androidx.core.graphics.withMatrix
-import androidx.core.graphics.withScale
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
-import com.angcyo.canvas.core.Transformer
 import com.angcyo.canvas.core.component.items.TextItem
 import com.angcyo.canvas.utils.createPaint
-import com.angcyo.canvas.utils.getScaleX
-import com.angcyo.canvas.utils.getScaleY
 import com.angcyo.drawable.textHeight
 import com.angcyo.drawable.textWidth
 import com.angcyo.library.ex.dp
@@ -26,9 +21,8 @@ import com.angcyo.library.ex.dp
  */
 class TextItemRenderer(
     val textItem: TextItem,
-    canvasViewBox: CanvasViewBox,
-    transformer: Transformer = Transformer(canvasViewBox)
-) : BaseItemRenderer(canvasViewBox, transformer) {
+    canvasViewBox: CanvasViewBox
+) : BaseItemRenderer(canvasViewBox) {
 
     val paint = createPaint(Color.BLACK, Paint.Style.FILL).apply {
         //init
@@ -60,12 +54,12 @@ class TextItemRenderer(
         }*/
 
 //        canvas.withMatrix(transformer.transformerMatrix) {
-            canvas.drawText(
-                textItem.text ?: "",
-                _bounds.left,
-                _bounds.bottom - paint.descent(),
-                paint
-            )
+        canvas.drawText(
+            textItem.text ?: "",
+            _bounds.left,
+            _bounds.bottom - paint.descent(),
+            paint
+        )
 //        }
     }
 

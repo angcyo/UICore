@@ -19,7 +19,7 @@ import com.angcyo.canvas.core.component.XAxis
 import com.angcyo.canvas.core.component.YAxis
 import com.angcyo.canvas.core.renderer.*
 import com.angcyo.canvas.core.renderer.items.BaseItemRenderer
-import com.angcyo.canvas.core.renderer.items.IItemsRenderer
+import com.angcyo.canvas.core.renderer.items.IItemRenderer
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -67,7 +67,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     //<editor-fold desc="渲染组件">
 
     /**核心项目渲染器*/
-    val itemsRendererList = mutableSetOf<IItemsRenderer>()
+    val itemsRendererList = mutableSetOf<IItemRenderer>()
 
     //</editor-fold desc="渲染组件">
 
@@ -186,7 +186,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
     /**默认在当前视图中心添加一个绘制元素*/
     fun addCentreItemRenderer(
-        item: IItemsRenderer,
+        item: IItemRenderer,
         width: Float = ViewGroup.LayoutParams.WRAP_CONTENT.toFloat(),
         height: Float = ViewGroup.LayoutParams.WRAP_CONTENT.toFloat()
     ) {
@@ -223,7 +223,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     /**添加一个绘制元素*/
-    fun addItemRenderer(item: IItemsRenderer) {
+    fun addItemRenderer(item: IItemRenderer) {
         if (canvasViewBox.isCanvasInit()) {
             itemsRendererList.add(item)
             if (item is BaseItemRenderer) {
@@ -237,8 +237,8 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
-    /**选中item[IItemsRenderer]*/
-    fun selectedItem(itemRenderer: IItemsRenderer?) {
+    /**选中item[IItemRenderer]*/
+    fun selectedItem(itemRenderer: IItemRenderer?) {
         val oldItemRenderer = controlHandler.selectedItemRender
 
         controlHandler.selectedItemRender = itemRenderer
@@ -259,8 +259,8 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         postInvalidateOnAnimation()
     }
 
-    /**平移选中的[IItemsRenderer]*/
-    fun translateItem(itemRenderer: IItemsRenderer?, distanceX: Float = 0f, distanceY: Float = 0f) {
+    /**平移选中的[IItemRenderer]*/
+    fun translateItem(itemRenderer: IItemRenderer?, distanceX: Float = 0f, distanceY: Float = 0f) {
         itemRenderer?.let {
             it.translateBy(distanceX, distanceY)
             postInvalidateOnAnimation()

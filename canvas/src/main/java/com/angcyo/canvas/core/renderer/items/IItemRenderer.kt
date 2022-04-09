@@ -1,6 +1,7 @@
 package com.angcyo.canvas.core.renderer.items
 
 import com.angcyo.canvas.core.IRenderer
+import com.angcyo.canvas.core.Transformer
 import com.angcyo.canvas.utils._tempMatrix
 
 /**
@@ -10,7 +11,10 @@ import com.angcyo.canvas.utils._tempMatrix
  * @date 2022/04/03
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-interface IItemsRenderer : IRenderer {
+interface IItemRenderer : IRenderer {
+
+    /**变压器*/
+    val transformer: Transformer
 
     /**平移元素
      * [distanceX] 横向需要移动的像素距离

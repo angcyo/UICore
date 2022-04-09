@@ -2,7 +2,7 @@ package com.angcyo.canvas.core
 
 import android.graphics.Matrix
 import android.view.MotionEvent
-import com.angcyo.canvas.core.renderer.items.IItemsRenderer
+import com.angcyo.canvas.core.renderer.items.IItemRenderer
 
 /**
  *
@@ -34,13 +34,13 @@ interface ICanvasListener {
 
     //<editor-fold desc="Item相关">
 
-    /**选中[IItemsRenderer]*/
-    fun onSelectedItem(itemRenderer: IItemsRenderer, oldItemRenderer: IItemsRenderer?) {
+    /**选中[IItemRenderer]*/
+    fun onSelectedItem(itemRenderer: IItemRenderer, oldItemRenderer: IItemRenderer?) {
 
     }
 
-    /**清除选中[IItemsRenderer]*/
-    fun onClearSelectItem(itemRenderer: IItemsRenderer) {
+    /**清除选中[IItemRenderer]*/
+    fun onClearSelectItem(itemRenderer: IItemRenderer) {
 
     }
 

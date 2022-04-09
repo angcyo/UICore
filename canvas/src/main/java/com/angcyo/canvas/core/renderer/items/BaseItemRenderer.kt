@@ -11,7 +11,9 @@ import com.angcyo.canvas.core.renderer.BaseRenderer
  * @date 2022/04/03
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-abstract class BaseItemRenderer(canvasViewBox: CanvasViewBox, val transformer: Transformer) :
-    BaseRenderer(canvasViewBox), IItemsRenderer {
+abstract class BaseItemRenderer(canvasViewBox: CanvasViewBox) :
+    BaseRenderer(canvasViewBox), IItemRenderer {
+
+    override val transformer: Transformer = Transformer(canvasViewBox)
 
 }

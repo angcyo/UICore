@@ -19,13 +19,6 @@ class CanvasViewBox(val canvasView: CanvasView) {
 
     //<editor-fold desc="控制属性">
 
-    /**触摸带来的视图矩阵变化*/
-    val matrix: Matrix = Matrix()
-
-    //零食变量
-    val tempMatrix: Matrix = Matrix()
-    val invertMatrix: Matrix = Matrix()
-
     /**内容区域左边额外的偏移*/
     var contentOffsetLeft = 0f
     var contentOffsetRight = 0f
@@ -49,6 +42,13 @@ class CanvasViewBox(val canvasView: CanvasView) {
     //</editor-fold desc="控制属性">
 
     //<editor-fold desc="存储属性">
+
+    /**触摸带来的视图矩阵变化*/
+    val matrix: Matrix = Matrix()
+
+    //临时变量
+    val tempMatrix: Matrix = Matrix()
+    val invertMatrix: Matrix = Matrix()
 
     /**内容可视区域*/
     val contentRect = RectF()

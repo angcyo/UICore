@@ -1,7 +1,10 @@
 package com.angcyo.canvas.core
 
 import android.graphics.Matrix
+import android.graphics.PointF
 import android.graphics.RectF
+import com.angcyo.canvas.utils.mapPoint
+import com.angcyo.canvas.utils.mapRectF
 
 /**
  * 变压器, 用来将像素坐标转换成绘图可视化坐标
@@ -16,7 +19,12 @@ class Transformer(val canvasViewBox: CanvasViewBox) {
 
     /**将坐标矩形, 映射成变换后的矩形*/
     fun mapRectF(rect: RectF): RectF {
-        return RectF()
+        return transformerMatrix.mapRectF(rect)
+    }
+
+    /**将坐标矩形, 映射成变换后的矩形*/
+    fun mapPointF(point: PointF): PointF {
+        return transformerMatrix.mapPoint(point)
     }
 
 }
