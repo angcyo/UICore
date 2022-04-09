@@ -37,4 +37,14 @@ interface IItemRenderer : IRenderer {
             _tempMatrix.mapRect(this, this)
         }
     }
+
+    /**旋转元素
+     * [degrees] 旋转的角度*/
+    fun rotateBy(degrees: Float) {
+        _tempMatrix.reset()
+        getRendererBounds().apply {
+            _tempMatrix.postRotate(degrees, centerX(), centerY())
+            _tempMatrix.mapRect(this, this)
+        }
+    }
 }
