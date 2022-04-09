@@ -3,6 +3,7 @@ package com.angcyo.canvas.core.renderer
 import android.graphics.*
 import androidx.core.graphics.withMatrix
 import com.angcyo.canvas.BuildConfig
+import com.angcyo.canvas.R
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.component.ControlHandler
@@ -10,10 +11,7 @@ import com.angcyo.canvas.core.renderer.items.IItemRenderer
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.mapRectF
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.textHeight
-import com.angcyo.library.ex.textWidth
-import com.angcyo.library.ex.toColorInt
+import com.angcyo.library.ex.*
 
 /**
  * 选中[IItemsRenderer]后, 用来绘制控制按钮的渲染器
@@ -24,8 +22,9 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
     BaseRenderer(canvasViewBox), ICanvasListener {
 
     /**用来绘制边框*/
-    val paint = createPaint("#6e9cce".toColorInt()).apply {
+    val paint = createPaint(_color(R.color.colorAccent)).apply {
         //init
+        strokeWidth = 1 * dp
     }
 
     /**用来绘制选中元素的宽高*/
