@@ -13,7 +13,7 @@ class LockControlPoint : ControlPoint() {
 
     override fun onTouch(
         view: CanvasView,
-        itemRenderer: IItemRenderer,
+        itemRenderer: IItemRenderer<*>,
         event: MotionEvent
     ): Boolean {
         return false

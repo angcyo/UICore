@@ -31,7 +31,7 @@ abstract class BaseAction : BaseParse() {
     abstract fun interceptAction(control: AccControl, action: String): Boolean
 
     /**执行操作*/
-    @Deprecated("废弃")
+    @Deprecated("废弃,请使用4个参数的函数")
     open fun runAction(
         control: AccControl,
         nodeList: List<AccessibilityNodeInfoCompat>?,

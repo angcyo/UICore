@@ -36,7 +36,7 @@ open class ControlPoint : BaseComponent() {
     /**图标*/
     var drawable: Drawable? = null
 
-    open fun onTouch(view: CanvasView, itemRenderer: IItemRenderer, event: MotionEvent): Boolean {
+    open fun onTouch(view: CanvasView, itemRenderer: IItemRenderer<*>, event: MotionEvent): Boolean {
         return false
     }
 }

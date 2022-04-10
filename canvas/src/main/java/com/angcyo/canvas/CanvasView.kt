@@ -68,7 +68,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     //<editor-fold desc="渲染组件">
 
     /**核心项目渲染器*/
-    val itemsRendererList = mutableSetOf<IItemRenderer>()
+    val itemsRendererList = mutableSetOf<IItemRenderer<*>>()
 
     //</editor-fold desc="渲染组件">
 
@@ -236,7 +236,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
     /**默认在当前视图中心添加一个绘制元素*/
     fun addCentreItemRenderer(
-        item: IItemRenderer,
+        item: IItemRenderer<*>,
         width: Float = ViewGroup.LayoutParams.WRAP_CONTENT.toFloat(),
         height: Float = ViewGroup.LayoutParams.WRAP_CONTENT.toFloat()
     ) {
@@ -273,7 +273,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     /**添加一个绘制元素*/
-    fun addItemRenderer(item: IItemRenderer) {
+    fun addItemRenderer(item: IItemRenderer<*>) {
         if (canvasViewBox.isCanvasInit()) {
             itemsRendererList.add(item)
             if (item is BaseItemRenderer) {
@@ -288,7 +288,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     /**移除一个绘制元素*/
-    fun removeItemRenderer(item: IItemRenderer) {
+    fun removeItemRenderer(item: IItemRenderer<*>) {
         itemsRendererList.remove(item)
         if (controlHandler.selectedItemRender == item) {
             selectedItem(null)
@@ -297,7 +297,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     /**选中item[IItemRenderer]*/
-    fun selectedItem(itemRenderer: IItemRenderer?) {
+    fun selectedItem(itemRenderer: IItemRenderer<*>?) {
         val oldItemRenderer = controlHandler.selectedItemRender
 
         controlHandler.selectedItemRender = itemRenderer
@@ -319,7 +319,11 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     /**平移选中的[IItemRenderer]*/
-    fun translateItem(itemRenderer: IItemRenderer?, distanceX: Float = 0f, distanceY: Float = 0f) {
+    fun translateItem(
+        itemRenderer: IItemRenderer<*>?,
+        distanceX: Float = 0f,
+        distanceY: Float = 0f
+    ) {
         itemRenderer?.let {
             it.translateBy(distanceX, distanceY)
             canvasListenerList.forEach {
@@ -331,7 +335,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     /**缩放选中的[IItemRenderer]*/
-    fun scaleItem(itemRenderer: IItemRenderer?, scaleX: Float = 1f, scaleY: Float = 1f) {
+    fun scaleItem(itemRenderer: IItemRenderer<*>?, scaleX: Float = 1f, scaleY: Float = 1f) {
         itemRenderer?.let {
             it.scaleBy(scaleX, scaleY)
             canvasListenerList.forEach {
@@ -343,7 +347,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     /**旋转[IItemRenderer]*/
-    fun rotateItem(itemRenderer: IItemRenderer?, degrees: Float) {
+    fun rotateItem(itemRenderer: IItemRenderer<*>?, degrees: Float) {
         itemRenderer?.let {
             it.rotateBy(degrees)
             canvasListenerList.forEach {

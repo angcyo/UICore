@@ -26,7 +26,7 @@ import com.angcyo.library.ex.dpi
 class ControlHandler : BaseComponent() {
 
     /**当前选中的[IItemRenderer]*/
-    var selectedItemRender: IItemRenderer? = null
+    var selectedItemRender: IItemRenderer<*>? = null
 
     /**绘制宽高时的偏移量*/
     var sizeOffset = 4 * dp
@@ -125,7 +125,7 @@ class ControlHandler : BaseComponent() {
     }
 
     /**通过坐标, 找到对应的元素*/
-    fun findItemRenderer(canvasViewBox: CanvasViewBox, touchPoint: PointF): IItemRenderer? {
+    fun findItemRenderer(canvasViewBox: CanvasViewBox, touchPoint: PointF): IItemRenderer<*>? {
         val point = canvasViewBox.mapCoordinateSystemPoint(touchPoint, _tempPoint)
         canvasViewBox.canvasView.itemsRendererList.reversed().forEach {
             if (it.getRendererBounds().contains(point)) {
@@ -149,7 +149,7 @@ class ControlHandler : BaseComponent() {
 
     /**计算4个控制点的矩形位置坐标
      * [itemRect] 目标元素坐标系的矩形坐标*/
-    fun calcControlPointLocation(canvasViewBox: CanvasViewBox, itemRenderer: IItemRenderer) {
+    fun calcControlPointLocation(canvasViewBox: CanvasViewBox, itemRenderer: IItemRenderer<*>) {
         val srcRect = itemRenderer.getRendererBounds()
         val _srcRect = canvasViewBox.matrix.mapRectF(srcRect, _tempRect)
         _controlPointOffsetRect.set(_srcRect)
@@ -230,12 +230,12 @@ class ControlHandler : BaseComponent() {
     fun updateControlPoint(
         controlPoint: ControlPoint,
         canvasViewBox: CanvasViewBox,
-        itemRenderer: IItemRenderer,
+        itemRenderer: IItemRenderer<*>,
         x: Float,
         y: Float
     ) {
         _tempPoint.set(x, y)
-        val point = itemRenderer.transformer.mapPointF(_tempPoint, _tempPoint)
+        val point = _tempPoint
 
         controlPoint.bounds.set(
             point.x - controlPointSize / 2,

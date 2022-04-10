@@ -5,7 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
-import com.angcyo.canvas.core.component.items.TextItem
+import com.angcyo.canvas.core.items.TextItem
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.library.ex.adjustSize
 import com.angcyo.library.ex.dp
@@ -21,20 +21,26 @@ import kotlin.math.max
  * @date 2022/04/03
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class TextItemRenderer(
-    val textItem: TextItem,
-    canvasViewBox: CanvasViewBox
-) : BaseItemRenderer(canvasViewBox) {
+class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem>(canvasViewBox) {
 
     val paint = createPaint(Color.BLACK, Paint.Style.FILL).apply {
         //init
         textSize = 12 * dp
     }
 
+    override fun onUpdateRendererItem(item: TextItem) {
+        super.onUpdateRendererItem(item)
+        if (bounds.isEmpty) {
+            bounds.set(0f, 0f, paint.textWidth(rendererItem?.text), paint.textHeight())
+        } else {
+            bounds.adjustSize(paint.textWidth(rendererItem?.text), paint.textHeight())
+        }
+    }
+
     override fun onUpdateRendererBounds(canvasView: CanvasView) {
         super.onUpdateRendererBounds(canvasView)
         if (bounds.isEmpty) {
-            bounds.set(0f, 0f, paint.textWidth(textItem.text), paint.textHeight())
+            bounds.set(0f, 0f, paint.textWidth(rendererItem?.text), paint.textHeight())
         }
     }
 
@@ -44,7 +50,7 @@ class TextItemRenderer(
         super.scaleBy(scaleX, scaleY)
         val max = max(scaleX, scaleY)
         paint.textSize = paint.textSize * max
-        bounds.adjustSize(paint.textWidth(textItem.text ?: ""), paint.textHeight())
+        bounds.adjustSize(paint.textWidth(rendererItem?.text ?: ""), paint.textHeight())
 
         //paint.getTextBounds(textItem.text, 0, textItem.text?.length ?: 0, _rect)//这样测量出来的文本高度, 非行高
         //bounds.adjustSize(_rect.width().toFloat(), _rect.height().toFloat())
@@ -52,11 +58,12 @@ class TextItemRenderer(
 
     override fun render(canvas: Canvas) {
         canvas.drawText(
-            textItem.text ?: "",
+            rendererItem?.text ?: "",
             bounds.left,
             bounds.bottom - paint.descent(),
             paint
         )
     }
+
 
 }

@@ -1,7 +1,7 @@
 package com.angcyo.canvas.core.renderer.items
 
 import com.angcyo.canvas.core.CanvasViewBox
-import com.angcyo.canvas.core.Transformer
+import com.angcyo.canvas.core.items.BaseItem
 import com.angcyo.canvas.core.renderer.BaseRenderer
 
 /**
@@ -11,9 +11,16 @@ import com.angcyo.canvas.core.renderer.BaseRenderer
  * @date 2022/04/03
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-abstract class BaseItemRenderer(canvasViewBox: CanvasViewBox) :
-    BaseRenderer(canvasViewBox), IItemRenderer {
+abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
+    BaseRenderer(canvasViewBox), IItemRenderer<T> {
 
-    override val transformer: Transformer = Transformer(canvasViewBox)
-
+    /**需要渲染的数据*/
+    override var rendererItem: T? = null
+        set(value) {
+            val old = field
+            field = value
+            if (old != value && value != null) {
+                onUpdateRendererItem(value)
+            }
+        }
 }

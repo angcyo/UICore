@@ -35,17 +35,17 @@ interface ICanvasListener {
     //<editor-fold desc="Item相关">
 
     /**选中[IItemRenderer], 有可能[oldItemRenderer]会等于[itemRenderer]*/
-    fun onSelectedItem(itemRenderer: IItemRenderer, oldItemRenderer: IItemRenderer?) {
+    fun onSelectedItem(itemRenderer: IItemRenderer<*>, oldItemRenderer: IItemRenderer<*>?) {
 
     }
 
     /**清除选中[IItemRenderer]*/
-    fun onClearSelectItem(itemRenderer: IItemRenderer) {
+    fun onClearSelectItem(itemRenderer: IItemRenderer<*>) {
 
     }
 
     /**[IItemRenderer]改变[Matrix]之后回调*/
-    fun onItemMatrixChangeAfter(itemRenderer: IItemRenderer) {
+    fun onItemMatrixChangeAfter(itemRenderer: IItemRenderer<*>) {
 
     }
 

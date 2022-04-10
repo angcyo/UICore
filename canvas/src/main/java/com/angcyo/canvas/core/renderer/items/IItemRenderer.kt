@@ -1,7 +1,7 @@
 package com.angcyo.canvas.core.renderer.items
 
 import com.angcyo.canvas.core.IRenderer
-import com.angcyo.canvas.core.Transformer
+import com.angcyo.canvas.core.items.ICanvasItem
 import com.angcyo.canvas.utils._tempMatrix
 
 /**
@@ -11,10 +11,17 @@ import com.angcyo.canvas.utils._tempMatrix
  * @date 2022/04/03
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-interface IItemRenderer : IRenderer {
+interface IItemRenderer<T : ICanvasItem> : IRenderer {
 
-    /**变压器*/
-    val transformer: Transformer
+    /**需要渲染的item*/
+    var rendererItem: T?
+
+    /**当[rendererItem]需要更新时触发, 用来更新渲染器*/
+    fun onUpdateRendererItem(item: T) {
+
+    }
+
+    //<editor-fold desc="控制方法">
 
     /**平移元素
      * [distanceX] 横向需要移动的像素距离
@@ -47,4 +54,6 @@ interface IItemRenderer : IRenderer {
             _tempMatrix.mapRect(this, this)
         }
     }
+
+    //</editor-fold desc="控制方法">
 }
