@@ -5,4 +5,6 @@ package com.angcyo.canvas.core.items
  * @since 2022/04/08
  */
 abstract class BaseItem : ICanvasItem {
+
+    override var rotate: Float = 0f
 }

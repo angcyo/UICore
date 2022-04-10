@@ -164,7 +164,7 @@ class CanvasViewBox(val canvasView: CanvasView) {
     }
 
     /**计算[item]在当前视图中的坐标, 相对于[view]左上角的矩形坐标*/
-    fun calcItemVisibleBounds(item: IItemRenderer<*>, result: RectF): RectF {
+    fun calcItemVisibleBounds(item: IRenderer, result: RectF): RectF {
         //重点
 
         //bounds, 可以直接绘制的坐标

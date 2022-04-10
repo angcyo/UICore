@@ -16,6 +16,12 @@ abstract class BaseRenderer(val canvasViewBox: CanvasViewBox) :
 
     val bounds = RectF()
 
+    /**此[bounds]是相对于坐标原点的坐标*/
     override fun getRendererBounds(): RectF = bounds
 
+    /**获取当前[bounds]相对于[view]左上角的坐标
+     * [com.angcyo.canvas.core.CanvasViewBox.calcItemVisibleBounds]*/
+    fun getRendererVisibleBounds(result: RectF): RectF {
+        return canvasViewBox.calcItemVisibleBounds(this, result)
+    }
 }

@@ -150,10 +150,11 @@ class ControlHandler : BaseComponent() {
     /**计算4个控制点的矩形位置坐标
      * [itemRect] 目标元素坐标系的矩形坐标*/
     fun calcControlPointLocation(canvasViewBox: CanvasViewBox, itemRenderer: IItemRenderer<*>) {
-        val srcRect = itemRenderer.getRendererBounds()
-        val _srcRect = canvasViewBox.matrix.mapRectF(srcRect, _tempRect)
-        _controlPointOffsetRect.set(_srcRect)
+        val bounds = itemRenderer.getRendererBounds()
+        val _bounds = canvasViewBox.matrix.mapRectF(bounds, _tempRect)
+        _controlPointOffsetRect.set(_bounds)
 
+        //在原目标位置, 进行矩形的放大
         val inset = controlPointOffset + controlPointSize / 2
         _controlPointOffsetRect.inset(-inset, -inset)
 
@@ -165,6 +166,7 @@ class ControlHandler : BaseComponent() {
             ?: createControlPoint(ControlPoint.POINT_TYPE_SCALE)
         val lockControl = controlPointList.find { it.type == ControlPoint.POINT_TYPE_LOCK }
             ?: createControlPoint(ControlPoint.POINT_TYPE_LOCK)
+
         updateControlPoint(
             closeControl,
             canvasViewBox,

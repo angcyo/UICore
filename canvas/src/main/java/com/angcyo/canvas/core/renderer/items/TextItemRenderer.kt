@@ -64,6 +64,4 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
             paint
         )
     }
-
-
 }

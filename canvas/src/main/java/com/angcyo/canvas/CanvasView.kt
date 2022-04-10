@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.withClip
 import androidx.core.graphics.withMatrix
+import androidx.core.graphics.withRotation
 import com.angcyo.canvas.core.*
 import com.angcyo.canvas.core.component.CanvasTouchHandler
 import com.angcyo.canvas.core.component.ControlHandler
@@ -152,7 +153,15 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
             canvas.withMatrix(canvasViewBox.matrix) {
                 itemsRendererList.forEach {
                     if (it.visible) {
-                        it.render(canvas)
+                        //item的旋转, 在此处理
+                        val bounds = it.getRendererBounds()
+                        canvas.withRotation(
+                            it.rendererItem?.rotate ?: 0f,
+                            bounds.centerX(),
+                            bounds.centerY()
+                        ) {
+                            it.render(canvas)
+                        }
                     }
                 }
             }

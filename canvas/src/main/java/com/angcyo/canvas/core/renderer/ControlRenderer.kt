@@ -2,6 +2,7 @@ package com.angcyo.canvas.core.renderer
 
 import android.graphics.*
 import androidx.core.graphics.withMatrix
+import androidx.core.graphics.withRotation
 import com.angcyo.canvas.BuildConfig
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.CanvasViewBox
@@ -54,7 +55,10 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
         }
     }
 
-    override fun onSelectedItem(itemRenderer: IItemRenderer<*>, oldItemRenderer: IItemRenderer<*>?) {
+    override fun onSelectedItem(
+        itemRenderer: IItemRenderer<*>,
+        oldItemRenderer: IItemRenderer<*>?
+    ) {
         super.onSelectedItem(itemRenderer, oldItemRenderer)
         updateControlPointLocation()
     }
@@ -72,15 +76,30 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
 
             //绘制边框
             canvas.withMatrix(canvasViewBox.matrix) {
-                canvas.drawRect(bounds, paint)
+                canvas.withRotation(
+                    it.rendererItem?.rotate ?: 0f,
+                    bounds.centerX(),
+                    bounds.centerY()
+                ) {
+                    canvas.drawRect(bounds, paint)
+                }
             }
+
+            //放大后的矩形, 进行相应的旋转
+            val rotateRect = it.mapRotateRect(bounds, controlHandler._tempRect)
+            if (BuildConfig.DEBUG) {
+                //绘制旋转之后的矩形
+                canvas.withMatrix(canvasViewBox.matrix) {
+                    canvas.drawRect(rotateRect, paint)
+                }
+            }
+
+            //绘制宽高文本
+            val widthUnit = canvasViewBox.valueUnit.convertPixelToValueUnit(rotateRect.width())
+            val heightUnit = canvasViewBox.valueUnit.convertPixelToValueUnit(rotateRect.height())
 
             //转换之后的矩形
             val _bounds = canvasViewBox.matrix.mapRectF(bounds, controlHandler._tempRect)
-
-            //绘制宽高文本
-            val widthUnit = canvasViewBox.valueUnit.convertPixelToValueUnit(bounds.width())
-            val heightUnit = canvasViewBox.valueUnit.convertPixelToValueUnit(bounds.height())
 
             canvas.drawText(
                 widthUnit,
