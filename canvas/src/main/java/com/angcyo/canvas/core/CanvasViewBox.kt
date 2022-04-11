@@ -9,6 +9,7 @@ import com.angcyo.canvas.utils._tempRectF
 import com.angcyo.canvas.utils.clamp
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.canvas.utils.mapRectF
+import com.angcyo.library.ex.matrixAnimator
 
 /**
  * CanvasView 内容可视区域范围
@@ -329,6 +330,17 @@ class CanvasViewBox(val canvasView: CanvasView) {
     //</editor-fold desc="coordinate system">
 
     //<editor-fold desc="matrix">
+
+    /**重置坐标系*/
+    fun updateTo(endMatrix: Matrix = Matrix(), anim: Boolean = true) {
+        if (anim) {
+            matrixAnimator(matrix, endMatrix) {
+                refresh(it)
+            }
+        } else {
+            refresh(endMatrix)
+        }
+    }
 
     /**平移视图
      * 正向移动后, 绘制的内容在正向指定的位置绘制*/

@@ -89,8 +89,11 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent() {
     val _touchPointList: MutableList<PointF> = mutableListOf()
     val _movePointList: MutableList<PointF> = mutableListOf()
 
+    val initialPointHandler = InitialPointHandler()
+
     /**入口*/
     fun onTouch(view: CanvasView, event: MotionEvent): Boolean {
+        initialPointHandler.onTouch(view, event)
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 _touchPoint.set(event.x, event.y)
