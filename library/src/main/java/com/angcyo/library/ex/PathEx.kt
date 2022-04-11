@@ -101,29 +101,51 @@ fun RectF.scaleFromCenter(scaleX: Float, scaleY: Float): RectF {
     return this
 }
 
-/**判断点是否在[Path]内*/
-fun Path.contains(x: Int, y: Int): Boolean {
-    val rectF = RectF()
-    computeBounds(rectF, true)
-    val rectRegion =
-        Region(rectF.left.toInt(), rectF.top.toInt(), rectF.right.toInt(), rectF.bottom.toInt())
-    val region = Region()
-    region.setPath(this, rectRegion)
-    return region.contains(x, y)
+val _computeBounds: RectF = RectF()
+val _clipRegion: Region = Region()
+val _pathRegion: Region = Region()
+val _tempPath: Path = Path()
+val _resultPath: Path = Path()
+
+/**判断点是否在[Path]内, path是否包含点
+ * [clipRect] 需要裁剪的矩形区域, 限制点位只在这个区域内有效*/
+fun Path.contains(x: Int, y: Int, clipRect: RectF? = null): Boolean {
+    val _clipRect = if (clipRect == null) {
+        val rectF = _computeBounds
+        computeBounds(rectF, true)
+        rectF
+    } else {
+        clipRect
+    }
+    _clipRegion.setEmpty()
+    _clipRegion.set(
+        _clipRect.left.toInt(),
+        _clipRect.top.toInt(),
+        _clipRect.right.toInt(),
+        _clipRect.bottom.toInt()
+    )
+    val rectRegion = _clipRegion
+
+    _pathRegion.setEmpty()
+    _pathRegion.setPath(this, rectRegion)
+    return _pathRegion.contains(x, y)
 }
 
-/**判断矩形是否在[Path]内*/
+/**判断矩形是否在[Path]内, path是否包含矩形*/
 fun Path.contains(rectF: RectF): Boolean {
-    val path = Path()
-    path.reset()
-    path.addRect(rectF, Path.Direction.CW)
+    _tempPath.reset()
+    _tempPath.addRect(rectF, Path.Direction.CW)
+    return this.contains(_tempPath)
+}
 
-    val result = Path()
+/**判断矩形是否在[Path]内, path是否包含矩形*/
+fun Path.contains(path: Path): Boolean {
+    val result = _resultPath
+    result.reset()
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
         result.op(this, path, Path.Op.REVERSE_DIFFERENCE)
     } else {
         return false
     }
-
     return result.isEmpty
 }
