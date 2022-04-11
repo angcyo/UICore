@@ -217,6 +217,9 @@ class ControlHandler : BaseComponent() {
     fun setLockScale(lock: Boolean = true) {
         (controlPointList.find { it.type == ControlPoint.POINT_TYPE_LOCK } as? LockControlPoint)?.isLock =
             lock
+
+        (controlPointList.find { it.type == ControlPoint.POINT_TYPE_SCALE } as? ScaleControlPoint)?.isLock =
+            lock
     }
 
     /**创建一个控制点*/

@@ -29,7 +29,7 @@ class LockControlPoint : ControlPoint() {
 
     override fun onClickControlPoint(view: CanvasView, itemRenderer: IItemRenderer<*>) {
         super.onClickControlPoint(view, itemRenderer)
-        isLock = !isLock
+        view.controlHandler.setLockScale(!isLock)
     }
 
 }

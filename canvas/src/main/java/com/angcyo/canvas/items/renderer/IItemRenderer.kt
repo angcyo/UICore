@@ -5,6 +5,7 @@ import android.graphics.RectF
 import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.items.ICanvasItem
 import com.angcyo.canvas.utils._tempMatrix
+import com.angcyo.canvas.utils._tempPoint
 
 /**
  * 绘制在[CanvasView]上的具体项目
@@ -42,7 +43,9 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     fun scaleBy(scaleX: Float, scaleY: Float) {
         _tempMatrix.reset()
         getRendererBounds().apply {
-            _tempMatrix.postScale(scaleX, scaleY, left, top)
+            _tempPoint.set(left, top)
+            mapRotatePoint(_tempPoint, _tempPoint)
+            _tempMatrix.postScale(scaleX, scaleY, _tempPoint.x, _tempPoint.y)
             _tempMatrix.mapRect(this, this)
         }
     }
