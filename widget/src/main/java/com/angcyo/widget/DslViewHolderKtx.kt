@@ -4,7 +4,7 @@ import androidx.annotation.IdRes
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 import com.angcyo.tablayout.DslTabLayout
-import com.angcyo.widget.base.Anim
+import com.angcyo.library.ex.Anim
 import com.angcyo.widget.base.checkEmpty
 import com.angcyo.widget.base.error
 import com.angcyo.widget.base.simulateClick

@@ -17,10 +17,7 @@ import com.angcyo.dsladapter.getViewRect
 import com.angcyo.library.L
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
-import com.angcyo.library.ex.dpi
-import com.angcyo.library.ex.getContentViewHeight
-import com.angcyo.library.ex.undefined_int
-import com.angcyo.library.ex.undefined_res
+import com.angcyo.library.ex.*
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.*
 import kotlin.math.max

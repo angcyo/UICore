@@ -14,7 +14,7 @@ import com.angcyo.media.MediaProgressHelper
 import com.angcyo.media.R
 import com.angcyo.media.video.widget.TextureVideoView
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.Anim
+import com.angcyo.library.ex.Anim
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.core.cause.EndCause
 

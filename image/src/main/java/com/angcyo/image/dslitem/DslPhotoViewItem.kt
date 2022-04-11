@@ -6,7 +6,7 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.glide.loadImage
 import com.angcyo.image.R
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.anim
+import com.angcyo.library.ex.anim
 import com.github.chrisbanes.photoview.OnViewTapListener
 import com.github.chrisbanes.photoview.PhotoView
 

@@ -24,8 +24,8 @@ import com.angcyo.picker.dslitem.DslPickerFolderItem
 import com.angcyo.picker.dslitem.DslPickerImageItem
 import com.angcyo.putData
 import com.angcyo.widget._rv
-import com.angcyo.widget.base.Anim
-import com.angcyo.widget.base.anim
+import com.angcyo.library.ex.Anim
+import com.angcyo.library.ex.anim
 import com.angcyo.widget.recycler.decoration.DslDrawItemDecoration
 import com.angcyo.widget.recycler.decoration.isLayoutFirst
 import com.angcyo.widget.recycler.initDslAdapter

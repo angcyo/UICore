@@ -12,7 +12,7 @@ import com.angcyo.library.ex.dpi
 import com.angcyo.library.isMain
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
-import com.angcyo.widget.base.Anim
+import com.angcyo.library.ex.Anim
 import com.angcyo.widget.base.setBgDrawable
 import com.angcyo.widget.base.setWidthHeight
 

@@ -1,4 +1,4 @@
-package com.angcyo.widget.base
+package com.angcyo.library.component
 
 import android.view.animation.Animation
 

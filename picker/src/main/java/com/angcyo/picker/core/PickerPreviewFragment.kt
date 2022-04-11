@@ -20,7 +20,7 @@ import com.angcyo.picker.dslitem.DslPickerMiniImageItem
 import com.angcyo.ucrop.dslCrop
 import com.angcyo.widget._rv
 import com.angcyo.widget._vp
-import com.angcyo.widget.base.Anim
+import com.angcyo.library.ex.Anim
 import com.angcyo.widget.base.lowProfile
 import com.angcyo.widget.base.tagDslAdapterItem
 import com.angcyo.widget.pager.DslPagerAdapter

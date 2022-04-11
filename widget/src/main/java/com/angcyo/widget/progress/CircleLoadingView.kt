@@ -8,9 +8,9 @@ import android.view.View
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.getColor
 import com.angcyo.widget.R
-import com.angcyo.widget.base.Anim
+import com.angcyo.library.ex.Anim
 import com.angcyo.widget.base.InvalidateProperty
-import com.angcyo.widget.base.anim
+import com.angcyo.library.ex.anim
 import com.angcyo.widget.layout.touch.SwipeBackLayout.Companion.clamp
 import kotlin.math.min
 

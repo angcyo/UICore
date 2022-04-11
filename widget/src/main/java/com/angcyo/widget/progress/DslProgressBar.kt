@@ -14,12 +14,13 @@ import androidx.core.graphics.withSave
 import androidx.core.math.MathUtils
 import com.angcyo.drawable.base.DslGradientDrawable
 import com.angcyo.drawable.text.DslTextDrawable
-import com.angcyo.library.ex.dpi
-import com.angcyo.library.ex.toDp
-import com.angcyo.library.ex.toDpi
+import com.angcyo.library.ex.*
 import com.angcyo.widget.R
-import com.angcyo.widget.base.*
+import com.angcyo.widget.base.atMost
+import com.angcyo.widget.base.getColor
+import com.angcyo.widget.base.getMode
 import kotlin.math.max
+import kotlin.text.format
 
 /**
  * 提供一个高度可定义的标准进度条

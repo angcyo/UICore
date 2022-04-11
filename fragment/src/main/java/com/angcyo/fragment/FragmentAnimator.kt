@@ -7,7 +7,7 @@ import android.content.Context
 import android.view.animation.AccelerateInterpolator
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex._integer
-import com.angcyo.widget.base.animatorOf
+import com.angcyo.library.ex.animatorOf
 
 /**
  * [Fragment]切换动画约束

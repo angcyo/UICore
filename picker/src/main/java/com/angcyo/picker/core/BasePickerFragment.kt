@@ -15,7 +15,7 @@ import com.angcyo.picker.R
 import com.angcyo.picker.dslitem.DslPickerStatusItem
 import com.angcyo.transition.dslTransition
 import com.angcyo.viewmodel.VMAProperty
-import com.angcyo.widget.base.Anim
+import com.angcyo.library.ex.Anim
 import com.angcyo.widget.span.span
 
 /**

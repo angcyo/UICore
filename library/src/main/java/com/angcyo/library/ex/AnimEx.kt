@@ -1,24 +1,22 @@
-package com.angcyo.widget.base
+package com.angcyo.library.ex
 
-import android.animation.Animator
-import android.animation.AnimatorInflater
-import android.animation.ArgbEvaluator
-import android.animation.ValueAnimator
+import android.animation.*
 import android.annotation.TargetApi
 import android.content.Context
+import android.graphics.Matrix
 import android.os.Build
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.animation.*
 import androidx.annotation.AnimRes
 import androidx.annotation.AnimatorRes
+import androidx.core.view.doOnPreDraw
 import com.angcyo.library.L
 import com.angcyo.library.app
-import com.angcyo.library.ex.c
-import com.angcyo.library.ex.evaluateColor
-import com.angcyo.library.ex.floor
-import com.angcyo.library.ex.size
-import com.angcyo.widget.base.Anim.ANIM_DURATION
+import com.angcyo.library.component.MatrixEvaluator
+import com.angcyo.library.component.RAnimationListener
+import com.angcyo.library.component.RAnimatorListener
+import com.angcyo.library.ex.Anim.ANIM_DURATION
 
 /**
  *
@@ -390,4 +388,16 @@ fun View.scaleAnimator(
         .setDuration(ANIM_DURATION)
         .withEndAction { onEnd() }
         .start()
+}
+
+/**Matrix动画*/
+fun matrixAnimator(startMatrix: Matrix, endMatrix: Matrix, block: (Matrix) -> Unit): ValueAnimator {
+    return ObjectAnimator.ofObject(MatrixEvaluator(), startMatrix, endMatrix).apply {
+        duration = ANIM_DURATION
+        interpolator = DecelerateInterpolator()
+        addUpdateListener {
+            block(it.animatedValue as Matrix)
+        }
+        start()
+    }
 }

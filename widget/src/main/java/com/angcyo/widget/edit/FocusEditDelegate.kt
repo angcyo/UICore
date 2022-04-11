@@ -9,7 +9,7 @@ import android.view.animation.AccelerateInterpolator
 import android.widget.EditText
 import com.angcyo.library.ex.calcSize
 import com.angcyo.widget.R
-import com.angcyo.widget.base.Anim
+import com.angcyo.library.ex.Anim
 import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.mW
 

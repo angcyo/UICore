@@ -17,7 +17,7 @@ import com.angcyo.library.ex.append
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.getStatusBarHeight
 import com.angcyo.widget.R
-import com.angcyo.widget.base.anim
+import com.angcyo.library.ex.anim
 import com.angcyo.widget.base.hideSoftInput
 import com.angcyo.widget.base.offsetTopTo
 import com.angcyo.widget.layout.DslSoftInputLayout.Companion.ACTION_HIDE_EMOJI

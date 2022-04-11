@@ -3,7 +3,7 @@ package com.angcyo.core.widget
 import android.view.View
 import androidx.annotation.IdRes
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.Anim
+import com.angcyo.library.ex.Anim
 
 /**
  *
