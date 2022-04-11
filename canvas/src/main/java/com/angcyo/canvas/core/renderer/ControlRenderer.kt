@@ -3,12 +3,14 @@ package com.angcyo.canvas.core.renderer
 import android.graphics.*
 import androidx.core.graphics.withMatrix
 import androidx.core.graphics.withRotation
+import androidx.core.graphics.withScale
 import com.angcyo.canvas.BuildConfig
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.component.ControlHandler
 import com.angcyo.canvas.core.renderer.items.IItemRenderer
+import com.angcyo.canvas.utils._tempPoint
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.mapRectF
@@ -70,17 +72,16 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
         }
     }
 
+    val _textBounds = RectF()
+
     override fun render(canvas: Canvas) {
         controlHandler.selectedItemRender?.let {
             val bounds = it.getRendererBounds()
+            val rotate = it.rendererItem?.rotate ?: 0f
 
             //绘制边框
             canvas.withMatrix(canvasViewBox.matrix) {
-                canvas.withRotation(
-                    it.rendererItem?.rotate ?: 0f,
-                    bounds.centerX(),
-                    bounds.centerY()
-                ) {
+                canvas.withRotation(rotate, bounds.centerX(), bounds.centerY()) {
                     canvas.drawRect(bounds, paint)
                 }
             }
@@ -101,28 +102,46 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
             //转换之后的矩形
             val _bounds = canvasViewBox.matrix.mapRectF(bounds, controlHandler._tempRect)
 
-            canvas.withRotation(
-                it.rendererItem?.rotate ?: 0f,
-                bounds.centerX(),
-                bounds.centerY()
-            ) {
-                canvas.drawText(
-                    widthUnit,
-                    _bounds.centerX() - sizePaint.textWidth(widthUnit) / 2,
-                    _bounds.top - sizePaint.descent() - controlHandler.sizeOffset,
-                    sizePaint
-                )
+            canvas.withRotation(rotate, bounds.centerX(), bounds.centerY()) {
 
-                canvas.drawText(
-                    heightUnit,
-                    _bounds.right + controlHandler.sizeOffset,
-                    _bounds.centerY() + sizePaint.textHeight() / 2 - sizePaint.descent(),
-                    sizePaint
+                //绘制宽度
+                var textWidth = sizePaint.textWidth(widthUnit)
+                _textBounds.set(
+                    _bounds.centerX() - textWidth / 2,
+                    _bounds.top - sizePaint.textHeight() - controlHandler.sizeOffset,
+                    _bounds.centerX() + textWidth / 2,
+                    _bounds.top - controlHandler.sizeOffset
                 )
+                withTextScale(rotate, _textBounds) {
+                    canvas.drawText(
+                        widthUnit,
+                        _textBounds.left,
+                        _textBounds.bottom - sizePaint.descent(),
+                        sizePaint
+                    )
+                }
+
+                //绘制高度
+                textWidth = sizePaint.textWidth(heightUnit)
+                _textBounds.set(
+                    _bounds.right + controlHandler.sizeOffset,
+                    _bounds.centerY() - sizePaint.textHeight() / 2,
+                    _bounds.right + controlHandler.sizeOffset + textWidth,
+                    _bounds.centerY() + sizePaint.textHeight() / 2
+                )
+                withTextScale(rotate, _textBounds) {
+                    canvas.drawText(
+                        heightUnit,
+                        _bounds.right + controlHandler.sizeOffset,
+                        _bounds.centerY() + sizePaint.textHeight() / 2 - sizePaint.descent(),
+                        sizePaint
+                    )
+                }
 
                 //按下时, 绘制x,y坐标
                 if (canvasViewBox.canvasView.isTouchHold || BuildConfig.DEBUG) {
-                    val point = PointF(bounds.left, bounds.top)
+                    _tempPoint.set(bounds.left, bounds.top)
+                    val point = _tempPoint
                     val value = canvasViewBox.calcDistanceValueWithOrigin(point)
 
                     val xUnit = canvasViewBox.valueUnit.formattedValueUnit(value.x)
@@ -130,14 +149,23 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
 
                     val text = "$xUnit x $yUnit"
 
-                    canvas.drawText(
-                        text,
-                        _bounds.centerX() - sizePaint.textWidth(text) / 2,
-                        _bounds.bottom + sizePaint.textHeight() - sizePaint.descent() + controlHandler.sizeOffset,
-                        sizePaint
+                    textWidth = sizePaint.textWidth(text)
+                    _textBounds.set(
+                        _bounds.centerX() - textWidth / 2,
+                        _bounds.bottom + controlHandler.sizeOffset,
+                        _bounds.centerX() + textWidth / 2,
+                        _bounds.bottom + sizePaint.textHeight() + controlHandler.sizeOffset
                     )
-                }
 
+                    withTextScale(rotate, _textBounds) {
+                        canvas.drawText(
+                            text,
+                            _textBounds.left,
+                            _textBounds.bottom - sizePaint.descent(),
+                            sizePaint
+                        )
+                    }
+                }
             }
 
             //绘制控制四个角
@@ -185,5 +213,17 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
             val rbY = _bounds.bottom
             canvas.drawCircle(rbX, rbY, 10f, sizePaint)*/
         }
+    }
+
+    fun Canvas.withTextScale(rotate: Float, textBounds: RectF, block: Canvas.() -> Unit) {
+        if (rotate >= -90 && rotate <= 90) {
+            block()
+        } else {
+            withScale(-1f, -1f, textBounds.centerX(), textBounds.centerY(), block)
+        }
+    }
+
+    fun drawText(canvas: Canvas, text: String, x: Float, y: Float) {
+
     }
 }
