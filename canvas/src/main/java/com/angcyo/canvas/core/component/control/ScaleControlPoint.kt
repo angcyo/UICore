@@ -5,7 +5,7 @@ import android.view.MotionEvent
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.component.CanvasTouchHandler
 import com.angcyo.canvas.core.component.ControlPoint
-import com.angcyo.canvas.core.renderer.items.IItemRenderer
+import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.library.ex.abs
 
 /**

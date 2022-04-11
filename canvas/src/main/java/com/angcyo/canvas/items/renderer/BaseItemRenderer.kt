@@ -1,11 +1,11 @@
-package com.angcyo.canvas.core.renderer.items
+package com.angcyo.canvas.items.renderer
 
 import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.RectF
 import com.angcyo.canvas.core.CanvasViewBox
-import com.angcyo.canvas.core.items.BaseItem
+import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.core.renderer.BaseRenderer
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.canvas.utils.mapRectF

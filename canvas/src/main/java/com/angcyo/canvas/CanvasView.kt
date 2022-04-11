@@ -17,8 +17,8 @@ import com.angcyo.canvas.core.component.ControlHandler
 import com.angcyo.canvas.core.component.XAxis
 import com.angcyo.canvas.core.component.YAxis
 import com.angcyo.canvas.core.renderer.*
-import com.angcyo.canvas.core.renderer.items.BaseItemRenderer
-import com.angcyo.canvas.core.renderer.items.IItemRenderer
+import com.angcyo.canvas.items.renderer.BaseItemRenderer
+import com.angcyo.canvas.items.renderer.IItemRenderer
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>

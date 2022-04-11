@@ -1,11 +1,11 @@
-package com.angcyo.canvas.core.renderer.items
+package com.angcyo.canvas.items.renderer
 
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
-import com.angcyo.canvas.core.items.TextItem
+import com.angcyo.canvas.items.TextItem
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.library.ex.adjustSize
 import com.angcyo.library.ex.dp

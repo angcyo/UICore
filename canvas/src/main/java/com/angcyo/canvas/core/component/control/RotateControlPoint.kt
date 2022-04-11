@@ -4,7 +4,8 @@ import android.graphics.PointF
 import android.view.MotionEvent
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.component.ControlPoint
-import com.angcyo.canvas.core.renderer.items.IItemRenderer
+import com.angcyo.canvas.items.renderer.IItemRenderer
+import com.angcyo.library.L
 import kotlin.math.atan2
 
 /**
@@ -49,6 +50,7 @@ class RotateControlPoint : ControlPoint() {
                 )
                 _touchPoint.set(_movePoint)
                 view.rotateItem(itemRenderer, angle)
+                L.i("旋转->$angle°")
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 angle = 0f

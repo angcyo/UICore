@@ -4,7 +4,7 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
 import com.angcyo.canvas.CanvasView
-import com.angcyo.canvas.core.renderer.items.IItemRenderer
+import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils._tempRectF
 import com.angcyo.canvas.utils.clamp
 import com.angcyo.canvas.utils.mapPoint

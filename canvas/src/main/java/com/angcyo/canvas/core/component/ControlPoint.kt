@@ -4,7 +4,7 @@ import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import com.angcyo.canvas.CanvasView
-import com.angcyo.canvas.core.renderer.items.IItemRenderer
+import com.angcyo.canvas.items.renderer.IItemRenderer
 
 /**
  * 控制点

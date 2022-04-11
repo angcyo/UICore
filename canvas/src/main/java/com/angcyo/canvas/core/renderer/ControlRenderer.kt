@@ -9,8 +9,7 @@ import com.angcyo.canvas.R
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.component.ControlHandler
-import com.angcyo.canvas.core.renderer.items.IItemRenderer
-import com.angcyo.canvas.utils._tempPoint
+import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.mapRectF
@@ -73,6 +72,8 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
     }
 
     val _textBounds = RectF()
+    val _tempPoint: PointF = PointF()
+    val _rotateRect: RectF = RectF()
 
     override fun render(canvas: Canvas) {
         controlHandler.selectedItemRender?.let {
@@ -87,7 +88,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
             }
 
             //放大后的矩形, 进行相应的旋转
-            val rotateRect = it.mapRotateRect(bounds, controlHandler._tempRect)
+            val rotateRect = it.mapRotateRect(bounds, _rotateRect)
             /*if (BuildConfig.DEBUG) {
                 //绘制旋转之后的矩形
                 canvas.withMatrix(canvasViewBox.matrix) {
@@ -102,7 +103,8 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
             //转换之后的矩形
             val _bounds = canvasViewBox.matrix.mapRectF(bounds, controlHandler._tempRect)
 
-            canvas.withRotation(rotate, bounds.centerX(), bounds.centerY()) {
+            //绘制控制信息, 宽高xy值
+            canvas.withRotation(rotate, _bounds.centerX(), _bounds.centerY()) {
 
                 //绘制宽度
                 var textWidth = sizePaint.textWidth(widthUnit)
@@ -140,12 +142,12 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
 
                 //按下时, 绘制x,y坐标
                 if (canvasViewBox.canvasView.isTouchHold || BuildConfig.DEBUG) {
-                    _tempPoint.set(bounds.left, bounds.top)
+                    _tempPoint.set(rotateRect.left, rotateRect.top)
                     val point = _tempPoint
                     val value = canvasViewBox.calcDistanceValueWithOrigin(point)
 
                     val xUnit = canvasViewBox.valueUnit.formattedValueUnit(value.x)
-                    val yUnit = canvasViewBox.valueUnit.formattedValueUnit(value.x)
+                    val yUnit = canvasViewBox.valueUnit.formattedValueUnit(value.y)
 
                     val text = "$xUnit x $yUnit"
 
@@ -221,9 +223,5 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
         } else {
             withScale(-1f, -1f, textBounds.centerX(), textBounds.centerY(), block)
         }
-    }
-
-    fun drawText(canvas: Canvas, text: String, x: Float, y: Float) {
-
     }
 }

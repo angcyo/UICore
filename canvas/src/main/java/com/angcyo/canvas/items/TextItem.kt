@@ -1,4 +1,4 @@
-package com.angcyo.canvas.core.items
+package com.angcyo.canvas.items
 
 /**
  * 文本组件数据

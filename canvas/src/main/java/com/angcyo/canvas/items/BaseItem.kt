@@ -1,4 +1,4 @@
-package com.angcyo.canvas.core.items
+package com.angcyo.canvas.items
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>

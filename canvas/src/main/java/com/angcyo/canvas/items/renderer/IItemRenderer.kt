@@ -1,9 +1,9 @@
-package com.angcyo.canvas.core.renderer.items
+package com.angcyo.canvas.items.renderer
 
 import android.graphics.PointF
 import android.graphics.RectF
 import com.angcyo.canvas.core.IRenderer
-import com.angcyo.canvas.core.items.ICanvasItem
+import com.angcyo.canvas.items.ICanvasItem
 import com.angcyo.canvas.utils._tempMatrix
 
 /**

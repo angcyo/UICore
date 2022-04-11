@@ -2,7 +2,7 @@ package com.angcyo.canvas.core
 
 import android.graphics.Matrix
 import android.view.MotionEvent
-import com.angcyo.canvas.core.renderer.items.IItemRenderer
+import com.angcyo.canvas.items.renderer.IItemRenderer
 
 /**
  *

@@ -11,8 +11,10 @@ import com.angcyo.canvas.core.component.control.CloseControlPoint
 import com.angcyo.canvas.core.component.control.LockControlPoint
 import com.angcyo.canvas.core.component.control.RotateControlPoint
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
-import com.angcyo.canvas.core.renderer.items.IItemRenderer
+import com.angcyo.canvas.items.renderer.IItemRenderer
+import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.canvas.utils.mapRectF
+import com.angcyo.library.L
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
@@ -102,6 +104,7 @@ class ControlHandler : BaseComponent() {
                         val dy1 = p1y - p2y
 
                         view.translateItem(it, dx1, dy1)
+                        L.i("移动->x:$dx1 y:$dy1")
                     }
                 }
                 _touchPoint.set(_movePoint)
@@ -242,7 +245,13 @@ class ControlHandler : BaseComponent() {
     ) {
         _tempPoint.set(x, y)
         //旋转后的点坐标
-        itemRenderer.mapRotatePoint(_tempPoint, _tempPoint)
+        _tempMatrix.reset()
+        _tempMatrix.postRotate(
+            itemRenderer.rendererItem?.rotate ?: 0f,
+            _controlPointOffsetRect.centerX(),
+            _controlPointOffsetRect.centerY()
+        )
+        _tempMatrix.mapPoint(_tempPoint, _tempPoint)
         val point = _tempPoint
 
         controlPoint.bounds.set(
