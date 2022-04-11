@@ -18,8 +18,8 @@ class DrawableItemRenderer(canvasViewBox: CanvasViewBox) :
             bounds.set(
                 0f,
                 0f,
-                rendererItem?.drawable?.intrinsicWidth?.toFloat() ?: 0f,
-                rendererItem?.drawable?.intrinsicHeight?.toFloat() ?: 0f
+                rendererItem?.drawable?.minimumWidth?.toFloat() ?: 0f,
+                rendererItem?.drawable?.minimumHeight?.toFloat() ?: 0f
             )
         }
     }
