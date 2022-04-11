@@ -36,10 +36,19 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
         }
     }
 
-    /**缩放元素
+    /**缩放元素, 在元素左上角位置开始缩放
      * [scaleX] 横向需要移动的像素距离
      * [scaleY] 纵向需要移动的像素距离*/
     fun scaleBy(scaleX: Float, scaleY: Float) {
+        _tempMatrix.reset()
+        getRendererBounds().apply {
+            _tempMatrix.postScale(scaleX, scaleY, left, top)
+            _tempMatrix.mapRect(this, this)
+        }
+    }
+
+    /**在中点位置缩放*/
+    fun scaleCenterBy(scaleX: Float, scaleY: Float) {
         _tempMatrix.reset()
         getRendererBounds().apply {
             _tempMatrix.postScale(scaleX, scaleY, centerX(), centerY())

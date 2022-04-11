@@ -350,7 +350,20 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
             canvasListenerList.forEach {
                 it.onItemMatrixChangeAfter(itemRenderer)
             }
+            postInvalidateOnAnimation()
+        }
+    }
 
+    fun scaleItemWithCenter(
+        itemRenderer: IItemRenderer<*>?,
+        scaleX: Float = 1f,
+        scaleY: Float = 1f
+    ) {
+        itemRenderer?.let {
+            it.scaleCenterBy(scaleX, scaleY)
+            canvasListenerList.forEach {
+                it.onItemMatrixChangeAfter(itemRenderer)
+            }
             postInvalidateOnAnimation()
         }
     }
