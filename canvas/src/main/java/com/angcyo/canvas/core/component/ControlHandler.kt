@@ -5,7 +5,6 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import androidx.core.graphics.contains
 import com.angcyo.canvas.CanvasView
-import com.angcyo.canvas.R
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.component.control.CloseControlPoint
 import com.angcyo.canvas.core.component.control.LockControlPoint
@@ -15,7 +14,6 @@ import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.canvas.utils.mapRectF
 import com.angcyo.library.L
-import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
@@ -210,28 +208,27 @@ class ControlHandler : BaseComponent() {
         controlPointList.add(lockControl)
     }
 
+    /**是否锁定了宽高缩放比例*/
+    fun isLockScale(): Boolean {
+        return (controlPointList.find { it.type == ControlPoint.POINT_TYPE_LOCK } as? LockControlPoint)?.isLock
+            ?: true
+    }
+
+    fun setLockScale(lock: Boolean = true) {
+        (controlPointList.find { it.type == ControlPoint.POINT_TYPE_LOCK } as? LockControlPoint)?.isLock =
+            lock
+    }
+
     /**创建一个控制点*/
     fun createControlPoint(type: Int): ControlPoint {
         return when (type) {
-            ControlPoint.POINT_TYPE_CLOSE -> CloseControlPoint().apply {
-                this.type = type
-                drawable = _drawable(R.drawable.control_point_close)
-            }
-            ControlPoint.POINT_TYPE_ROTATE -> RotateControlPoint().apply {
-                this.type = type
-                drawable = _drawable(R.drawable.control_point_rotate)
-            }
-            ControlPoint.POINT_TYPE_SCALE -> ScaleControlPoint().apply {
-                this.type = type
-                drawable = _drawable(R.drawable.control_point_scale)
-            }
-            ControlPoint.POINT_TYPE_LOCK -> LockControlPoint().apply {
-                this.type = type
-                drawable = _drawable(R.drawable.control_point_lock)
-            }
-            else -> ControlPoint().apply {
-                this.type = type
-            }
+            ControlPoint.POINT_TYPE_CLOSE -> CloseControlPoint()
+            ControlPoint.POINT_TYPE_ROTATE -> RotateControlPoint()
+            ControlPoint.POINT_TYPE_SCALE -> ScaleControlPoint()
+            ControlPoint.POINT_TYPE_LOCK -> LockControlPoint()
+            else -> ControlPoint()
+        }.apply {
+            this.type = type
         }
     }
 

@@ -1,9 +1,10 @@
 package com.angcyo.canvas.core.component.control
 
-import android.view.MotionEvent
 import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.R
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.renderer.IItemRenderer
+import com.angcyo.library.ex._drawable
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -11,26 +12,11 @@ import com.angcyo.canvas.items.renderer.IItemRenderer
  */
 class CloseControlPoint : ControlPoint() {
 
-    var isTouchDownIn: Boolean = false
+    init {
+        drawable = _drawable(R.drawable.control_point_close)
+    }
 
-    override fun onTouch(
-        view: CanvasView,
-        itemRenderer: IItemRenderer<*>,
-        event: MotionEvent
-    ): Boolean {
-        when (event.actionMasked) {
-            MotionEvent.ACTION_DOWN -> {
-                isTouchDownIn = true
-            }
-            MotionEvent.ACTION_MOVE -> {
-                isTouchDownIn = bounds.contains(event.x, event.y)
-            }
-            MotionEvent.ACTION_UP -> {
-                if (isTouchDownIn) {
-                    view.removeItemRenderer(itemRenderer)
-                }
-            }
-        }
-        return true
+    override fun onClickControlPoint(view: CanvasView, itemRenderer: IItemRenderer<*>) {
+        view.removeItemRenderer(itemRenderer)
     }
 }

@@ -63,6 +63,10 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
     ) {
         super.onSelectedItem(itemRenderer, oldItemRenderer)
         updateControlPointLocation()
+        if (itemRenderer != oldItemRenderer) {
+            //改变选中目标之后, 重新锁定缩放比
+            controlHandler.setLockScale(true)
+        }
     }
 
     /**更新控制点位坐标*/

@@ -3,9 +3,11 @@ package com.angcyo.canvas.core.component.control
 import android.graphics.PointF
 import android.view.MotionEvent
 import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.R
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.library.L
+import com.angcyo.library.ex._drawable
 import kotlin.math.atan2
 
 /**
@@ -24,6 +26,10 @@ class RotateControlPoint : ControlPoint() {
 
     /**每次移动旋转的角度*/
     var angle = 0f
+
+    init {
+        drawable = _drawable(R.drawable.control_point_rotate)
+    }
 
     override fun onTouch(
         view: CanvasView,

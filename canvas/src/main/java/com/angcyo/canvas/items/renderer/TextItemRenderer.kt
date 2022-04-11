@@ -30,10 +30,14 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
 
     override fun onUpdateRendererItem(item: TextItem) {
         super.onUpdateRendererItem(item)
+        val textWidth = paint.textWidth(rendererItem?.text)
+        val textHeight = paint.textHeight()
         if (bounds.isEmpty) {
-            bounds.set(0f, 0f, paint.textWidth(rendererItem?.text), paint.textHeight())
+            bounds.set(0f, 0f, textWidth, textHeight)
         } else {
-            bounds.adjustSize(paint.textWidth(rendererItem?.text), paint.textHeight())
+            if (textWidth > 0 && textHeight > 0) {
+                bounds.adjustSize(textWidth, textHeight)
+            }
         }
     }
 

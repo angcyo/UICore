@@ -1,9 +1,10 @@
 package com.angcyo.canvas.core.component.control
 
-import android.view.MotionEvent
 import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.R
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.renderer.IItemRenderer
+import com.angcyo.library.ex._drawable
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -11,12 +12,24 @@ import com.angcyo.canvas.items.renderer.IItemRenderer
  */
 class LockControlPoint : ControlPoint() {
 
-    override fun onTouch(
-        view: CanvasView,
-        itemRenderer: IItemRenderer<*>,
-        event: MotionEvent
-    ): Boolean {
-        return false
+    /**是否锁定了缩放比例, 如果解锁之后, 宽高可以任意比例缩放. 否则就是等比缩放*/
+    var isLock: Boolean = true
+        set(value) {
+            field = value
+            drawable = if (value) {
+                _drawable(R.drawable.control_point_lock)
+            } else {
+                _drawable(R.drawable.control_point_unlock)
+            }
+        }
+
+    init {
+        drawable = _drawable(R.drawable.control_point_lock)
+    }
+
+    override fun onClickControlPoint(view: CanvasView, itemRenderer: IItemRenderer<*>) {
+        super.onClickControlPoint(view, itemRenderer)
+        isLock = !isLock
     }
 
 }

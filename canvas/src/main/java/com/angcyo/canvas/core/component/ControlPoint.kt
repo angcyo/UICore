@@ -36,7 +36,32 @@ open class ControlPoint : BaseComponent() {
     /**图标*/
     var drawable: Drawable? = null
 
-    open fun onTouch(view: CanvasView, itemRenderer: IItemRenderer<*>, event: MotionEvent): Boolean {
-        return false
+    //是否在控制点按下
+    var isTouchDownIn: Boolean = false
+
+    open fun onTouch(
+        view: CanvasView,
+        itemRenderer: IItemRenderer<*>,
+        event: MotionEvent
+    ): Boolean {
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                isTouchDownIn = bounds.contains(event.x, event.y)
+            }
+            MotionEvent.ACTION_MOVE -> {
+                //
+            }
+            MotionEvent.ACTION_UP -> {
+                if (isTouchDownIn && bounds.contains(event.x, event.y)) {
+                    onClickControlPoint(view, itemRenderer)
+                }
+            }
+        }
+        return isTouchDownIn
+    }
+
+    /**当点击控制点时回调*/
+    open fun onClickControlPoint(view: CanvasView, itemRenderer: IItemRenderer<*>) {
+
     }
 }
