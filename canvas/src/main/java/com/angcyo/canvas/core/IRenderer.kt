@@ -20,7 +20,7 @@ interface IRenderer {
     fun onUpdateRendererBounds(canvasView: CanvasView) {
     }
 
-    /**获取坐标系中的坐标*/
+    /**获取坐标系中的坐标, 非视图系的坐标*/
     fun getRendererBounds(): RectF
 
     /**

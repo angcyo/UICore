@@ -57,7 +57,8 @@ class ControlHandler : BaseComponent() {
 
     //</editor-fold desc="控制点">
 
-    /**手势处理*/
+    /**手势处理
+     * [com.angcyo.canvas.CanvasView.onTouchEvent]*/
     fun onTouch(view: CanvasView, event: MotionEvent): Boolean {
         var holdControlPoint = touchControlPoint
 
@@ -128,7 +129,10 @@ class ControlHandler : BaseComponent() {
     fun findItemRenderer(canvasViewBox: CanvasViewBox, touchPoint: PointF): IItemRenderer<*>? {
         val point = canvasViewBox.mapCoordinateSystemPoint(touchPoint, _tempPoint)
         canvasViewBox.canvasView.itemsRendererList.reversed().forEach {
-            if (it.getRendererBounds().contains(point)) {
+            /*if (it.getRendererBounds().contains(point)) {
+                return it
+            }*/
+            if (it.containsPoint(point)) {
                 return it
             }
         }
@@ -237,6 +241,8 @@ class ControlHandler : BaseComponent() {
         y: Float
     ) {
         _tempPoint.set(x, y)
+        //旋转后的点坐标
+        itemRenderer.mapRotatePoint(_tempPoint, _tempPoint)
         val point = _tempPoint
 
         controlPoint.bounds.set(

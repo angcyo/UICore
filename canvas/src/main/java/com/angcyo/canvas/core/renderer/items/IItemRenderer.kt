@@ -65,6 +65,14 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
 
     //<editor-fold desc="操作方法">
 
+    /**当前的绘制item, 是否包含指定坐标
+     * [point] 坐标系中的坐标, 非视图系的坐标*/
+    fun containsPoint(point: PointF): Boolean
+
+    /**当前的绘制item, 是否包含指定矩形坐标
+     * [rect] 坐标系中的坐标, 非视图系的坐标*/
+    fun containsRect(rect: RectF): Boolean
+
     /**根据[rotate]映射点*/
     fun mapRotatePoint(point: PointF, result: PointF): PointF
 
