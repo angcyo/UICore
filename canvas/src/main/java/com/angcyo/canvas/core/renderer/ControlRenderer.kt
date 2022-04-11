@@ -9,6 +9,7 @@ import com.angcyo.canvas.R
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.component.ControlHandler
+import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.canvas.utils.createTextPaint
@@ -172,26 +173,26 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
 
             //绘制控制四个角
             controlHandler.controlPointList.forEach {
-
-                //控制点的背景绘制
-                canvas.drawCircle(
-                    it.bounds.centerX(),
-                    it.bounds.centerY(),
-                    controlHandler.controlPointSize / 2,
-                    if (it == controlHandler.touchControlPoint && canvasViewBox.canvasView.isTouchHold) controlTouchPointPaint else controlPointPaint
-                )
-
-                //控制点的图标绘制
-                it.drawable?.apply {
-                    setBounds(
-                        it.bounds.left.toInt() + controlHandler.controlPointPadding,
-                        it.bounds.top.toInt() + controlHandler.controlPointPadding,
-                        it.bounds.right.toInt() - controlHandler.controlPointPadding,
-                        it.bounds.bottom.toInt() - controlHandler.controlPointPadding
+                canvas.withControlPointRotation(rotate, it) {
+                    //控制点的背景绘制
+                    canvas.drawCircle(
+                        it.bounds.centerX(),
+                        it.bounds.centerY(),
+                        controlHandler.controlPointSize / 2,
+                        if (it == controlHandler.touchControlPoint && canvasViewBox.canvasView.isTouchHold) controlTouchPointPaint else controlPointPaint
                     )
-                    draw(canvas)
-                }
 
+                    //控制点的图标绘制
+                    it.drawable?.apply {
+                        setBounds(
+                            it.bounds.left.toInt() + controlHandler.controlPointPadding,
+                            it.bounds.top.toInt() + controlHandler.controlPointPadding,
+                            it.bounds.right.toInt() - controlHandler.controlPointPadding,
+                            it.bounds.bottom.toInt() - controlHandler.controlPointPadding
+                        )
+                        draw(canvas)
+                    }
+                }
                 //canvas.drawRect(it.bounds, controlPointPaint)
             }
 
@@ -223,5 +224,25 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
         } else {
             withScale(-1f, -1f, textBounds.centerX(), textBounds.centerY(), block)
         }
+    }
+
+    fun Canvas.withControlPointRotation(
+        rotate: Float,
+        controlPoint: ControlPoint,
+        block: Canvas.() -> Unit
+    ) {
+        val controlPointRotate =
+            if (controlPoint.type == ControlPoint.POINT_TYPE_SCALE || controlPoint.type == ControlPoint.POINT_TYPE_ROTATE) {
+                rotate
+            } else {
+                0f
+            }
+
+        withRotation(
+            controlPointRotate,
+            controlPoint.bounds.centerX(),
+            controlPoint.bounds.centerY(),
+            block
+        )
     }
 }
