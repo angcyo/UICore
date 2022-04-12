@@ -108,6 +108,11 @@ class ControlHandler : BaseComponent() {
                 _touchPoint.set(_movePoint)
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                if (holdControlPoint != null) {
+                    selectedItemRender?.let {
+                        it.onControlFinish(holdControlPoint)
+                    }
+                }
                 touchControlPoint = null
                 view.disableParentInterceptTouchEvent(false)
             }

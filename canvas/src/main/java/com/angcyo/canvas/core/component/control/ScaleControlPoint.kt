@@ -10,6 +10,7 @@ import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.library.L
 import com.angcyo.library.ex._drawable
+import kotlin.math.min
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -32,6 +33,9 @@ class ScaleControlPoint : ControlPoint() {
 
     /**是否是在元素的中点开始缩放, 否则就是在元素的左上角缩放*/
     var isCenterScale: Boolean = false
+
+    /**最大的缩放阈值, 防止瞬间变大*/
+    var maxScaleThreshold = 2f
 
     var isLockScaleRatio: Boolean = true
         set(value) {
@@ -59,22 +63,22 @@ class ScaleControlPoint : ControlPoint() {
                 val bounds = view.canvasViewBox.calcItemVisibleBounds(itemRenderer, _tempRect)
 
                 _touchCenterDistance =
-                    calcCenterDistance(itemRenderer, _touchPoint.x, _touchPoint.y, bounds)
+                    calcCenterDistance(view, itemRenderer, _touchPoint, bounds)
                 _touchWidthDistance =
-                    calcWidthDistance(itemRenderer, _touchPoint.x, _touchPoint.y, bounds)
+                    calcWidthDistance(view, itemRenderer, _touchPoint, bounds)
                 _touchHeightDistance =
-                    calcHeightDistance(itemRenderer, _touchPoint.x, _touchPoint.y, bounds)
+                    calcHeightDistance(view, itemRenderer, _touchPoint, bounds)
             }
             MotionEvent.ACTION_MOVE -> {
                 _movePoint.set(event.x, event.y)
                 val bounds = view.canvasViewBox.calcItemVisibleBounds(itemRenderer, _tempRect)
 
                 val moveCenterDistance =
-                    calcCenterDistance(itemRenderer, _movePoint.x, _movePoint.y, bounds)
+                    calcCenterDistance(view, itemRenderer, _movePoint, bounds)
                 val moveWidthDistance =
-                    calcWidthDistance(itemRenderer, _movePoint.x, _movePoint.y, bounds)
+                    calcWidthDistance(view, itemRenderer, _movePoint, bounds)
                 val moveHeightDistance =
-                    calcHeightDistance(itemRenderer, _movePoint.x, _movePoint.y, bounds)
+                    calcHeightDistance(view, itemRenderer, _movePoint, bounds)
 
                 if (view.controlHandler.isLockScaleRatio()) {
                     //开始等比缩放
@@ -86,6 +90,7 @@ class ScaleControlPoint : ControlPoint() {
                     if (!scale.isFinite()) {
                         scale = 1f
                     }
+                    scale = min(scale, maxScaleThreshold)
                     if (isCenterScale) {
                         view.scaleItemWithCenter(itemRenderer, scale, scale)
                     } else {
@@ -110,6 +115,8 @@ class ScaleControlPoint : ControlPoint() {
                     if (!hScale.isFinite()) {
                         hScale = 1f
                     }
+                    wScale = min(wScale, maxScaleThreshold)
+                    hScale = min(hScale, maxScaleThreshold)
                     if (isCenterScale || !isLockScaleRatio) {
                         //todo 解锁状态下, 暂时没有办法解决左上角缩放, 坐标飘逸的bug
                         view.scaleItemWithCenter(itemRenderer, wScale, hScale)
@@ -127,11 +134,11 @@ class ScaleControlPoint : ControlPoint() {
         return true
     }
 
-    /**计算点到矩形中点的距离*/
+    /**计算手势点到矩形中点的距离*/
     fun calcCenterDistance(
+        view: CanvasView,
         itemRenderer: IItemRenderer<*>,
-        x: Float,
-        y: Float,
+        touchPoint: PointF,
         bounds: RectF
     ): Float {
         if (isCenterScale) {
@@ -139,38 +146,57 @@ class ScaleControlPoint : ControlPoint() {
         } else {
             _tempPoint.set(bounds.left, bounds.top)
         }
-        itemRenderer.mapRotatePoint(_tempPoint, _tempPoint)
-        return CanvasTouchHandler.spacing(x, y, _tempPoint.x, _tempPoint.y)
+        //itemRenderer.mapRotatePoint(_tempPoint, _tempPoint)
+
+        val x2 = _tempPoint.x
+        val y2 = _tempPoint.y
+
+        val x1 = touchPoint.x
+        val y1 = touchPoint.y
+
+        return CanvasTouchHandler.spacing(x1, y1, x2, y2)
     }
 
     fun calcWidthDistance(
+        view: CanvasView,
         itemRenderer: IItemRenderer<*>,
-        x: Float,
-        y: Float,
+        touchPoint: PointF,
         bounds: RectF
     ): Float {
         if (isCenterScale) {
             _tempPoint.set(bounds.centerX(), bounds.bottom)
         } else {
-            _tempPoint.set(bounds.left, y)
+            _tempPoint.set(bounds.left, touchPoint.y)
         }
-        itemRenderer.mapRotatePoint(_tempPoint, _tempPoint)
-        return CanvasTouchHandler.spacing(x, y, _tempPoint.x, _tempPoint.y)
+        //itemRenderer.mapRotatePoint(_tempPoint, _tempPoint)
+        val x2 = _tempPoint.x
+        val y2 = _tempPoint.y
+
+        val x1 = touchPoint.x
+        val y1 = touchPoint.y
+
+        return CanvasTouchHandler.spacing(x1, y1, x2, y2)
     }
 
     fun calcHeightDistance(
+        view: CanvasView,
         itemRenderer: IItemRenderer<*>,
-        x: Float,
-        y: Float,
+        touchPoint: PointF,
         bounds: RectF
     ): Float {
         if (isCenterScale) {
             _tempPoint.set(bounds.right, bounds.centerY())
         } else {
-            _tempPoint.set(x, bounds.top)
+            _tempPoint.set(touchPoint.x, bounds.top)
         }
-        itemRenderer.mapRotatePoint(_tempPoint, _tempPoint)
-        return CanvasTouchHandler.spacing(x, y, _tempPoint.x, _tempPoint.y)
+        //itemRenderer.mapRotatePoint(_tempPoint, _tempPoint)
+        val x2 = _tempPoint.x
+        val y2 = _tempPoint.y
+
+        val x1 = touchPoint.x
+        val y1 = touchPoint.y
+
+        return CanvasTouchHandler.spacing(x1, y1, x2, y2)
     }
 
 }

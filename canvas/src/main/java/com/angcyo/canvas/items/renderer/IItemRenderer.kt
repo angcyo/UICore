@@ -3,6 +3,7 @@ package com.angcyo.canvas.items.renderer
 import android.graphics.PointF
 import android.graphics.RectF
 import com.angcyo.canvas.core.IRenderer
+import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.ICanvasItem
 import com.angcyo.canvas.utils._tempMatrix
 import com.angcyo.canvas.utils._tempPoint
@@ -35,6 +36,11 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     /**当渲染的bounds改变后回调
      * [com.angcyo.canvas.core.IRenderer.getRendererBounds]*/
     fun onRendererBoundsChanged(afterBounds: RectF) {
+
+    }
+
+    /**控制点操作结束后回调*/
+    fun onControlFinish(controlPoint: ControlPoint) {
 
     }
 

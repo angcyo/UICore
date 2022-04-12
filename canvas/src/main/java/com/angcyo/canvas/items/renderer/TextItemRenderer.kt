@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.TextItem
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.library.ex.*
@@ -45,6 +46,13 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
         }
     }
 
+    override fun onControlFinish(controlPoint: ControlPoint) {
+        super.onControlFinish(controlPoint)
+        if (controlPoint.type == ControlPoint.POINT_TYPE_SCALE) {
+            bounds.adjustSizeWithLT(paint.textWidth(rendererItem?.text ?: ""), paint.textHeight())
+        }
+    }
+
     //val _rect = Rect()
 
     override fun scaleBy(scaleX: Float, scaleY: Float, widthCenter: Boolean) {
@@ -58,7 +66,8 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
                 paint.textHeight()
             )
         } else {
-            bounds.adjustSizeWithLT(paint.textWidth(rendererItem?.text ?: ""), paint.textHeight())
+            //等到操作结束后再更新
+            //bounds.adjustSizeWithLT(paint.textWidth(rendererItem?.text ?: ""), paint.textHeight())
         }
 
         //paint.getTextBounds(textItem.text, 0, textItem.text?.length ?: 0, _rect)//这样测量出来的文本高度, 非行高
