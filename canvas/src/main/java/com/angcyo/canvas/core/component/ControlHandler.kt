@@ -152,10 +152,20 @@ class ControlHandler : BaseComponent() {
         return null
     }
 
+    val _rotateRect: RectF = RectF()
+
     /**计算4个控制点的矩形位置坐标
      * [itemRect] 目标元素坐标系的矩形坐标*/
     fun calcControlPointLocation(canvasViewBox: CanvasViewBox, itemRenderer: IItemRenderer<*>) {
-        val bounds = itemRenderer.getRendererBounds()
+        val isLock = itemRenderer.isLockScaleRatio
+        var bounds = itemRenderer.getRendererBounds()
+
+        /*if (!isLock) {
+            val rotateRect = itemRenderer.mapRotateRect(bounds, _rotateRect)
+            bounds = rotateRect
+        }*/
+
+        //将[bounds]转换成视图坐标
         val _bounds = canvasViewBox.matrix.mapRectF(bounds, _tempRect)
         _controlPointOffsetRect.set(_bounds)
 
@@ -208,18 +218,20 @@ class ControlHandler : BaseComponent() {
         controlPointList.add(lockControl)
     }
 
+    fun <T : ControlPoint> findControlPoint(type: Int): T? {
+        return controlPointList.find { it.type == type } as? T
+    }
+
     /**是否锁定了宽高缩放比例*/
-    fun isLockScale(): Boolean {
-        return (controlPointList.find { it.type == ControlPoint.POINT_TYPE_LOCK } as? LockControlPoint)?.isLock
+    fun isLockScaleRatio(): Boolean {
+        return findControlPoint<LockControlPoint>(ControlPoint.POINT_TYPE_LOCK)?.isLockScaleRatio
             ?: true
     }
 
-    fun setLockScale(lock: Boolean = true) {
-        (controlPointList.find { it.type == ControlPoint.POINT_TYPE_LOCK } as? LockControlPoint)?.isLock =
-            lock
-
-        (controlPointList.find { it.type == ControlPoint.POINT_TYPE_SCALE } as? ScaleControlPoint)?.isLock =
-            lock
+    fun setLockScaleRatio(lock: Boolean = true) {
+        findControlPoint<LockControlPoint>(ControlPoint.POINT_TYPE_LOCK)?.isLockScaleRatio = lock
+        findControlPoint<ScaleControlPoint>(ControlPoint.POINT_TYPE_SCALE)?.isLockScaleRatio = lock
+        selectedItemRender?.updateLockScaleRatio(lock)
     }
 
     /**创建一个控制点*/

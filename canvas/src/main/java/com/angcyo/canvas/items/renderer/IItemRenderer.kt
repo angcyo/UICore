@@ -19,9 +19,17 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     /**需要渲染的item*/
     var rendererItem: T?
 
+    /**是否锁定了缩放比例*/
+    var isLockScaleRatio: Boolean
+
     /**当[rendererItem]需要更新时触发, 用来更新渲染器*/
     fun onUpdateRendererItem(item: T) {
         //重新设置尺寸等信息
+    }
+
+    /**通过此方法更新[isLockScaleRatio]属性*/
+    fun updateLockScaleRatio(lock: Boolean) {
+        isLockScaleRatio = lock
     }
 
     //<editor-fold desc="控制方法">

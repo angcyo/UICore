@@ -310,6 +310,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         val oldItemRenderer = controlHandler.selectedItemRender
 
         controlHandler.selectedItemRender = itemRenderer
+        controlHandler.setLockScaleRatio(itemRenderer?.isLockScaleRatio ?: true)
 
         //通知
         if (itemRenderer == null) {

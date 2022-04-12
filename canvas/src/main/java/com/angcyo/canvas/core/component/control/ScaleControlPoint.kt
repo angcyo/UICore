@@ -33,7 +33,7 @@ class ScaleControlPoint : ControlPoint() {
     /**是否是在元素的中点开始缩放, 否则就是在元素的左上角缩放*/
     var isCenterScale: Boolean = false
 
-    var isLock: Boolean = true
+    var isLockScaleRatio: Boolean = true
         set(value) {
             field = value
             drawable = if (value) {
@@ -76,7 +76,7 @@ class ScaleControlPoint : ControlPoint() {
                 val moveHeightDistance =
                     calcHeightDistance(itemRenderer, _movePoint.x, _movePoint.y, bounds)
 
-                if (view.controlHandler.isLockScale()) {
+                if (view.controlHandler.isLockScaleRatio()) {
                     //开始等比缩放
                     var scale = moveCenterDistance / _touchCenterDistance
                     if (_movePoint.x <= bounds.left || _movePoint.y <= bounds.top) {
@@ -101,7 +101,8 @@ class ScaleControlPoint : ControlPoint() {
                     if (_movePoint.y <= bounds.top) {
                         hScale = -hScale
                     }
-                    if (isCenterScale) {
+                    if (isCenterScale || !isLockScaleRatio) {
+                        //todo 解锁状态下, 暂时没有办法解决左上角缩放, 坐标飘逸的bug
                         view.scaleItemWithCenter(itemRenderer, wScale, hScale)
                     } else {
                         view.scaleItem(itemRenderer, wScale, hScale)

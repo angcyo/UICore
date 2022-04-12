@@ -26,6 +26,7 @@ class DrawableItemRenderer(canvasViewBox: CanvasViewBox) :
 
     override fun render(canvas: Canvas) {
         rendererItem?.drawable?.let { drawable ->
+            val bounds = getRendererBounds()
             drawable.setBounds(
                 bounds.left.toInt(),
                 bounds.top.toInt(),

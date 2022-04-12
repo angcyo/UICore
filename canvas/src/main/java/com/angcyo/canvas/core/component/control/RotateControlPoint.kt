@@ -27,6 +27,9 @@ class RotateControlPoint : ControlPoint() {
     /**每次移动旋转的角度*/
     var angle = 0f
 
+    /**从手势按下, 到抬起共旋转的角度*/
+    var angleSum = 0f
+
     init {
         drawable = _drawable(R.drawable.control_point_rotate)
     }
@@ -38,6 +41,7 @@ class RotateControlPoint : ControlPoint() {
     ): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
+                angleSum = 0f
                 _touchPoint.set(event.x, event.y)
                 val bounds = view.canvasViewBox.calcItemVisibleBounds(itemRenderer, _tempRect)
                 _centerPoint.set(bounds.centerX(), bounds.centerY())
@@ -55,11 +59,14 @@ class RotateControlPoint : ControlPoint() {
                     _movePoint.y,
                 )
                 _touchPoint.set(_movePoint)
+                angleSum += angle
+                angleSum %= 360
                 view.rotateItem(itemRenderer, angle)
                 L.i("旋转->$angle°")
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 angle = 0f
+                angleSum = 0f
             }
         }
         return true

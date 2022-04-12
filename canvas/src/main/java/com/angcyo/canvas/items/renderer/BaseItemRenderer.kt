@@ -5,8 +5,8 @@ import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.RectF
 import com.angcyo.canvas.core.CanvasViewBox
-import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.core.renderer.BaseRenderer
+import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.canvas.utils.mapRectF
 import com.angcyo.library.ex.contains
@@ -20,6 +20,8 @@ import com.angcyo.library.ex.contains
  */
 abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
     BaseRenderer(canvasViewBox), IItemRenderer<T> {
+
+    override var isLockScaleRatio: Boolean = true
 
     /**需要渲染的数据*/
     override var rendererItem: T? = null
@@ -53,7 +55,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
     }
 
     override fun mapRotateRect(rect: RectF, result: RectF): RectF {
-        return rotateMatrix?.mapRectF(rect, result) ?: result
+        return rotateMatrix?.mapRectF(rect, result) ?: rect
     }
 
     val rotatePath: Path = Path()

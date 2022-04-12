@@ -13,7 +13,7 @@ import com.angcyo.library.ex._drawable
 class LockControlPoint : ControlPoint() {
 
     /**是否锁定了缩放比例, 如果解锁之后, 宽高可以任意比例缩放. 否则就是等比缩放*/
-    var isLock: Boolean = true
+    var isLockScaleRatio: Boolean = true
         set(value) {
             field = value
             drawable = if (value) {
@@ -29,7 +29,7 @@ class LockControlPoint : ControlPoint() {
 
     override fun onClickControlPoint(view: CanvasView, itemRenderer: IItemRenderer<*>) {
         super.onClickControlPoint(view, itemRenderer)
-        view.controlHandler.setLockScale(!isLock)
+        view.controlHandler.setLockScaleRatio(!isLockScaleRatio)
     }
 
 }
