@@ -1,7 +1,6 @@
 package com.angcyo.canvas.core.renderer
 
 import android.graphics.*
-import androidx.core.graphics.withMatrix
 import androidx.core.graphics.withRotation
 import androidx.core.graphics.withScale
 import com.angcyo.canvas.BuildConfig
@@ -82,14 +81,14 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
             val rotate = it.rendererItem?.rotate ?: 0f
 
             //绘制边框
-            canvas.withMatrix(canvasViewBox.matrix) {
+            /*canvas.withMatrix(canvasViewBox.matrix) {
                 canvas.withRotation(rotate, bounds.centerX(), bounds.centerY()) {
                     canvas.drawRect(bounds, paint)
                 }
-            }
+            }*/
 
             //放大后的矩形, 进行相应的旋转
-            val rotateRect = bounds //it.mapRotateRect(bounds, _rotateRect)
+            val rotateRect = it.mapRotateRect(bounds, _rotateRect)
             /*if (BuildConfig.DEBUG) {
                 //绘制旋转之后的矩形
                 canvas.withMatrix(canvasViewBox.matrix) {
@@ -102,7 +101,9 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
 
             //绘制控制信息, 宽高xy值
             canvas.withRotation(rotate, _bounds.centerX(), _bounds.centerY()) {
-                drawFrame(canvas, bounds, _bounds, rotate)
+                //绘制边框
+                canvas.drawRect(_bounds, paint)
+                drawFrame(canvas, _bounds, rotateRect, rotate)
             }
 
             //绘制控制四个角
@@ -159,8 +160,8 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
     }
 
     /**绘制控制信息, 宽高xy值
-     * [bounds] 元素未旋转时的坐标
-     * [rotateBounds] 元素旋转之后, 占用的矩形坐标
+     * [bounds] 元素未旋转时的坐标, 用来确定绘制坐标
+     * [rotateBounds] 元素旋转之后, 占用的矩形坐标, 用来计算距离
      * [rotate] 元素旋转的角度*/
     fun drawFrame(canvas: Canvas, bounds: RectF, rotateBounds: RectF, rotate: Float) {
         //绘制宽高文本

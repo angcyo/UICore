@@ -361,7 +361,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         scaleY: Float = 1f
     ) {
         itemRenderer?.let {
-            it.scaleCenterBy(scaleX, scaleY)
+            it.scaleBy(scaleX, scaleY, true)
             canvasListenerList.forEach {
                 it.onItemMatrixChangeAfter(itemRenderer)
             }

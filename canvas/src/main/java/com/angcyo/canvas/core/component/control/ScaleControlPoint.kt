@@ -81,7 +81,10 @@ class ScaleControlPoint : ControlPoint() {
                     var scale = moveCenterDistance / _touchCenterDistance
                     if (_movePoint.x <= bounds.left || _movePoint.y <= bounds.top) {
                         //反向取值
-                        scale = -scale
+                        scale = 1f
+                    }
+                    if (!scale.isFinite()) {
+                        scale = 1f
                     }
                     if (isCenterScale) {
                         view.scaleItemWithCenter(itemRenderer, scale, scale)
@@ -96,10 +99,16 @@ class ScaleControlPoint : ControlPoint() {
                     var hScale = moveHeightDistance / _touchHeightDistance
                     if (_movePoint.x <= bounds.left) {
                         //反向取值
-                        wScale = -wScale
+                        wScale = 1f
                     }
                     if (_movePoint.y <= bounds.top) {
-                        hScale = -hScale
+                        hScale = 1f
+                    }
+                    if (!wScale.isFinite()) {
+                        wScale = 1f
+                    }
+                    if (!hScale.isFinite()) {
+                        hScale = 1f
                     }
                     if (isCenterScale || !isLockScaleRatio) {
                         //todo 解锁状态下, 暂时没有办法解决左上角缩放, 坐标飘逸的bug

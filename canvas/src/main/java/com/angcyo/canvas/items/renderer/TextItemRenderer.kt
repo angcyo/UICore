@@ -7,10 +7,7 @@ import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.items.TextItem
 import com.angcyo.canvas.utils.createPaint
-import com.angcyo.library.ex.adjustSize
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.textHeight
-import com.angcyo.library.ex.textWidth
+import com.angcyo.library.ex.*
 import kotlin.math.max
 
 /**
@@ -36,7 +33,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
             bounds.set(0f, 0f, textWidth, textHeight)
         } else {
             if (textWidth > 0 && textHeight > 0) {
-                bounds.adjustSize(textWidth, textHeight)
+                bounds.adjustSizeWithLT(textWidth, textHeight)
             }
         }
     }
@@ -50,11 +47,19 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
 
     //val _rect = Rect()
 
-    override fun scaleBy(scaleX: Float, scaleY: Float) {
-        super.scaleBy(scaleX, scaleY)
+    override fun scaleBy(scaleX: Float, scaleY: Float, widthCenter: Boolean) {
+        super.scaleBy(scaleX, scaleY, widthCenter)
         val max = max(scaleX, scaleY)
         paint.textSize = paint.textSize * max
-        bounds.adjustSize(paint.textWidth(rendererItem?.text ?: ""), paint.textHeight())
+
+        if (widthCenter) {
+            bounds.adjustSizeWithCenter(
+                paint.textWidth(rendererItem?.text ?: ""),
+                paint.textHeight()
+            )
+        } else {
+            bounds.adjustSizeWithLT(paint.textWidth(rendererItem?.text ?: ""), paint.textHeight())
+        }
 
         //paint.getTextBounds(textItem.text, 0, textItem.text?.length ?: 0, _rect)//这样测量出来的文本高度, 非行高
         //bounds.adjustSize(_rect.width().toFloat(), _rect.height().toFloat())

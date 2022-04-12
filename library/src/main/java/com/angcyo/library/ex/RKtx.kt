@@ -148,11 +148,23 @@ fun View?.disableParentInterceptTouchEvent(disable: Boolean = true) {
 }
 
 /**调整矩形的宽高到指定的值*/
-fun RectF.adjustSize(width: Float, height: Float) {
+fun RectF.adjustSizeWithCenter(width: Float, height: Float) {
     val w = width()
     val h = height()
 
     val ws = w - width
     val hs = h - height
     inset(ws / 2, hs / 2)
+}
+
+/**左上角*/
+fun RectF.adjustSizeWithLT(width: Float, height: Float) {
+    val w = width()
+    val h = height()
+
+    val ws = w - width
+    val hs = h - height
+
+    right -= ws
+    bottom -= hs
 }

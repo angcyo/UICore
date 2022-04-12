@@ -32,6 +32,12 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
         isLockScaleRatio = lock
     }
 
+    /**当渲染的bounds改变后回调
+     * [com.angcyo.canvas.core.IRenderer.getRendererBounds]*/
+    fun onRendererBoundsChanged(afterBounds: RectF) {
+
+    }
+
     //<editor-fold desc="控制方法">
 
     /**平移元素
@@ -42,28 +48,26 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
         _tempMatrix.postTranslate(distanceX, distanceY)
         getRendererBounds().apply {
             _tempMatrix.mapRect(this, this)
+            onRendererBoundsChanged(this)
         }
     }
 
     /**缩放元素, 在元素左上角位置开始缩放
      * [scaleX] 横向需要移动的像素距离
-     * [scaleY] 纵向需要移动的像素距离*/
-    fun scaleBy(scaleX: Float, scaleY: Float) {
+     * [scaleY] 纵向需要移动的像素距离
+     * [centerX] 缩放的中点坐标, 默认是左上角
+     * [centerY]
+     * */
+    fun scaleBy(scaleX: Float, scaleY: Float, widthCenter: Boolean = false) {
         _tempMatrix.reset()
         getRendererBounds().apply {
-            _tempPoint.set(left, top)
+            val x = if (widthCenter) centerX() else left
+            val y = if (widthCenter) centerY() else top
+            _tempPoint.set(x, y)
             mapRotatePoint(_tempPoint, _tempPoint)
             _tempMatrix.postScale(scaleX, scaleY, _tempPoint.x, _tempPoint.y)
             _tempMatrix.mapRect(this, this)
-        }
-    }
-
-    /**在中点位置缩放*/
-    fun scaleCenterBy(scaleX: Float, scaleY: Float) {
-        _tempMatrix.reset()
-        getRendererBounds().apply {
-            _tempMatrix.postScale(scaleX, scaleY, centerX(), centerY())
-            _tempMatrix.mapRect(this, this)
+            onRendererBoundsChanged(this)
         }
     }
 
