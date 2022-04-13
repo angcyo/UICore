@@ -1,9 +1,14 @@
 package com.angcyo.gcode
 
 import android.content.Context
+import android.graphics.*
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import androidx.annotation.WorkerThread
+import com.angcyo.canvas.utils.createPaint
+import com.angcyo.library.ex.ceil
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  *
@@ -47,7 +52,69 @@ object GCodeHelper {
                 }
             }
         }
-        return GCodeDrawable(gCodeLineDataList)
+        return createGCodeDrawable(gCodeLineDataList)
+    }
+
+    /**[GCodeDrawable]*/
+    fun createGCodeDrawable(
+        gcodeLineDataList: List<GCodeLineData>,
+        paint: Paint = createPaint(Color.BLUE)
+    ): GCodeDrawable {
+        val bounds = RectF()
+        val picture = Picture().apply {
+            var minX = 0f
+            var maxX = 0f
+
+            var minY = 0f
+            var maxY = 0f
+
+            gcodeLineDataList.forEach { line ->
+                if (line.isGCodeMoveDirective()) {
+                    val x = line.getGCodeX()
+                    val y = line.getGCodeY()
+
+                    minX = min(x, minX)
+                    maxX = max(x, maxX)
+
+                    minY = min(y, minY)
+                    maxY = max(y, maxY)
+                }
+            }
+
+            bounds.set(minX, minY, maxX, maxY)
+
+            val canvas =
+                beginRecording(bounds.width().ceil().toInt(), bounds.height().ceil().toInt())
+            canvas.translate(-bounds.left, -bounds.top)
+
+            var path: Path? = null
+            gcodeLineDataList.forEach { line ->
+                if (line.isGCodeMoveDirective()) {
+                    val number = line.list.first().number.toInt()
+                    if (number == 0) {
+                        //G0
+                        path = if (path == null) {
+                            Path()
+                        } else {
+                            canvas.drawPath(path!!, paint)
+                            Path()
+                        }
+                        path?.moveTo(line.getGCodeX(), line.getGCodeY())
+                    } else if (number == 1) {
+                        //G1
+                        if (path == null) {
+                            path = Path()
+                        }
+                        path?.lineTo(line.getGCodeX(), line.getGCodeY())
+                    }
+                }
+            }
+            path?.run { canvas.drawPath(this, paint) }
+        }
+
+        return GCodeDrawable(picture).apply {
+            gCodeBound.set(bounds)
+        }
     }
 
     fun _parseGCodeLine(
