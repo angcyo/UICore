@@ -8,20 +8,36 @@ package com.angcyo.gcode
  * @since 2022/04/12
  */
 data class GCodeLineData(
+    /**整行的数据*/
+    val lineCode: String,
     /**一行中的所有指令*/
-    val list: List<GCodeCmd>,
+    val cmdList: List<GCodeCmd>,
     /**这一行的注释*/
     val comment: String? = null
 )
 
 fun GCodeLineData.isGCodeMoveDirective(): Boolean {
-    return list.firstOrNull()?.cmd?.isGCodeMoveDirective() ?: false
+    return cmdList.firstOrNull()?.cmd?.isGCodeMoveDirective() ?: false
 }
 
-fun GCodeLineData.getGCodeX(): Float {
-    return list.find { it.cmd.startsWith("X") }?.pixel ?: 0f
+/**是否具有点位信息*/
+fun GCodeLineData.haveXYZ(): Boolean {
+    return cmdList.find { it.cmd.startsWith("X") || it.cmd.startsWith("Y") || it.cmd.startsWith("Z") } != null
 }
 
-fun GCodeLineData.getGCodeY(): Float {
-    return list.find { it.cmd.startsWith("Y") }?.pixel ?: 0f
+fun GCodeLineData.getGCodeX(): Float? {
+    return getGCodePixel("X")
+}
+
+fun GCodeLineData.getGCodeY(): Float? {
+    return getGCodePixel("Y")
+}
+
+/**获取指令对应的像素值*/
+fun GCodeLineData.getGCodePixel(cmd: String): Float? {
+    return getGCodeCmd(cmd)?.pixel
+}
+
+fun GCodeLineData.getGCodeCmd(cmd: String): GCodeCmd? {
+    return cmdList.find { it.cmd.startsWith(cmd) }
 }

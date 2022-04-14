@@ -32,14 +32,14 @@ fun c(a: Double, b: Double): Double {
 }
 
 /**根据半径[radius],原点[pivotX,pivotY]坐标, 计算出角度[degrees]对应的圆上坐标点*/
-fun dotDegrees(radius: Float, degrees: Int, pivotX: Int, pivotY: Int): PointF {
+fun dotDegrees(radius: Float, degrees: Float, pivotX: Float, pivotY: Float): PointF {
     val x = pivotX + radius * cos(degrees * Math.PI / 180)
     val y = pivotY + radius * sin(degrees * Math.PI / 180)
     return PointF(x.toFloat(), y.toFloat())
 }
 
 /**弧度[radians]*/
-fun dotRadians(radius: Float, radians: Float, pivotX: Int, pivotY: Int): PointF {
+fun dotRadians(radius: Float, radians: Float, pivotX: Float, pivotY: Float): PointF {
     val x = pivotX + radius * cos(radians)
     val y = pivotY + radius * sin(radians)
     return PointF(x, y)

@@ -15,6 +15,8 @@ package com.angcyo.gcode
  * @since 2022/04/12
  */
 data class GCodeCmd(
+    /**指令完整字符串, G21 G20*/
+    val code: String,
     /**指令, 比如:G M X Y*/
     val cmd: String,
     /**指令跟随的数字*/
@@ -26,6 +28,9 @@ data class GCodeCmd(
     /**G指令时[number]对应的像素点单位*/
     val pixel: Float = 0f
 )
+
+/**大写字母A~Z*/
+fun Char.isGCodeCmdChar() = code in 65..90
 
 /**当前指令是否是移动指令, 此指令一般和坐标有关*/
 fun String.isGCodeMoveDirective(): Boolean {
