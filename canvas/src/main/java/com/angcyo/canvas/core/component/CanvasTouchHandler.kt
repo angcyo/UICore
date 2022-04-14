@@ -58,6 +58,13 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent() {
             return degrees.toFloat()
         }
 
+        /*fun angle(y1: Float, x1: Float, y2: Float, x2: Float): Float {
+            return Math.toDegrees(
+                atan2(y1.toDouble(), x1.toDouble()) -
+                        atan2(y2.toDouble(), x2.toDouble())
+            ).toFloat() % 360
+        }*/
+
         /**视图坐标系中的角度
          * [0~360°]*/
         fun angle2(x1: Float, y1: Float, x2: Float, y2: Float): Float {
