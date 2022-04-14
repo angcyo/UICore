@@ -23,13 +23,14 @@ import kotlin.math.min
  */
 object GCodeHelper {
 
-    var _lastRatio = 1f
+    //坐标单位对应的像素比例 (厘米, 英寸)
+    private var _lastRatio = 1f
 
     /**修正GCode残缺指令
      * [1.6004 Y17.2065 I45.0088 J0.] -> [G2 X0 Y17.2065 I45.0088 J0.]
      * [1.6004 Y17.2065] -> [G1 X0 Y17.2065]
      * */
-    var _amendGCodeCmd: Boolean = true
+    var amendGCodeCmd: Boolean = true
 
     fun parseGCode(context: Context, text: String): GCodeDrawable {
         //1毫米等于多少像素
@@ -129,7 +130,7 @@ object GCodeHelper {
 
         //result
         val resultData = GCodeLineData(cmdString, cmdList, comment)
-        if (_amendGCodeCmd) {
+        if (amendGCodeCmd) {
             //修正指令
             val firstCmd = cmdList.firstOrNull()
             if (firstCmd != null) {
@@ -180,9 +181,11 @@ object GCodeHelper {
         val gCodeBounds = RectF()
         val path: Path = Path()
 
-        var _isMoveTo = false
-        var _lastX = 0f
-        var _lastY = 0f
+        //坐标单位是否是绝对位置, 否则就是相对位置, 相对于上一次的位置
+        private var _isAbsolutePosition = true
+        private var _isMoveTo = false
+        private var _lastX = 0f
+        private var _lastY = 0f
 
         /**入口, 开始解析[GCodeLineData]*/
         fun parse(
@@ -247,12 +250,17 @@ object GCodeHelper {
                 val number = firstCmd.number.toInt()
                 if (number == 0 || number == 1 || number == 2 || number == 3) {
                     //G0 G1 G2 G3
-                    val x = line.getGCodeX()
-                    val y = line.getGCodeY()
+                    var x = line.getGCodeX()
+                    var y = line.getGCodeY()
 
                     if (x == null || y == null) {
                         L.w("未找到x,y->${line.lineCode}")
                         return
+                    }
+
+                    if (!_isAbsolutePosition) {
+                        x += _lastX
+                        y += _lastY
                     }
 
                     when (number) {
@@ -325,6 +333,9 @@ object GCodeHelper {
                             }
                         }
                     }
+                } else if (number == 90 || number == 91) {
+                    //90: 绝对位置, 1: 相对位置
+                    _isAbsolutePosition = number == 90
                 } else {
                     L.w("忽略G指令:${line.lineCode}")
                 }
