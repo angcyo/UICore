@@ -25,4 +25,10 @@ dependencies {
     implementation project(allModule.dslitem)
     implementation project(allModule.core)
     implementation project(allModule.media)
+
+    // Machine learning for mobile developers 机器学习
+
+    //https://mvnrepository.com/artifact/com.google.mlkit/barcode-scanning
+    //https://developers.google.com/ml-kit/vision/barcode-scanning/android
+    //implementation 'com.google.mlkit:barcode-scanning:17.0.2'
 }
