@@ -213,6 +213,8 @@ object GCodeHelper {
                 )
                 canvas.translate(-gCodeBounds.left, -gCodeBounds.top)
                 canvas.drawPath(path, paint)
+                //结束
+                endRecording()
             }
             return picture
         }
