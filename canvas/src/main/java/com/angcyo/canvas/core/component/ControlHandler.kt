@@ -150,7 +150,7 @@ class ControlHandler : BaseComponent() {
     fun findItemControlPoint(canvasViewBox: CanvasViewBox, touchPoint: PointF): ControlPoint? {
         //val point = canvasViewBox.mapCoordinateSystemPoint(touchPoint, _tempPoint)
         controlPointList.forEach {
-            if (it.bounds.contains(touchPoint)) {
+            if (it.enable && it.bounds.contains(touchPoint)) {
                 return it
             }
         }
