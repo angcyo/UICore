@@ -2,6 +2,7 @@ package com.angcyo.canvas.core.renderer
 
 import android.graphics.Canvas
 import android.graphics.Color
+import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.utils.createPaint
 
@@ -16,7 +17,7 @@ class CenterRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox)
         //init
     }
 
-    override fun render(canvas: Canvas) {
+    override fun render(canvasView: CanvasView, canvas: Canvas) {
         val x = (canvasViewBox.getContentLeft() + canvasViewBox.getContentRight()) / 2
         val y = (canvasViewBox.getContentTop() + canvasViewBox.getContentBottom()) / 2
 

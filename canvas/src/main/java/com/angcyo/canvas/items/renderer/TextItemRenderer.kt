@@ -39,8 +39,8 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
         }
     }
 
-    override fun onUpdateRendererBounds(canvasView: CanvasView) {
-        super.onUpdateRendererBounds(canvasView)
+    override fun onCanvasSizeChanged(canvasView: CanvasView) {
+        super.onCanvasSizeChanged(canvasView)
         if (bounds.isEmpty) {
             bounds.set(0f, 0f, paint.textWidth(rendererItem?.text), paint.textHeight())
         }
@@ -74,7 +74,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
         //bounds.adjustSize(_rect.width().toFloat(), _rect.height().toFloat())
     }
 
-    override fun render(canvas: Canvas) {
+    override fun render(canvasView: CanvasView, canvas: Canvas) {
         canvas.drawText(
             rendererItem?.text ?: "",
             bounds.left,

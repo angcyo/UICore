@@ -12,8 +12,8 @@ import com.angcyo.canvas.items.DrawableItem
 class DrawableItemRenderer(canvasViewBox: CanvasViewBox) :
     BaseItemRenderer<DrawableItem>(canvasViewBox) {
 
-    override fun onUpdateRendererBounds(canvasView: CanvasView) {
-        super.onUpdateRendererBounds(canvasView)
+    override fun onCanvasSizeChanged(canvasView: CanvasView) {
+        super.onCanvasSizeChanged(canvasView)
         if (bounds.isEmpty) {
             bounds.set(
                 0f,
@@ -24,7 +24,7 @@ class DrawableItemRenderer(canvasViewBox: CanvasViewBox) :
         }
     }
 
-    override fun render(canvas: Canvas) {
+    override fun render(canvasView: CanvasView, canvas: Canvas) {
         rendererItem?.drawable?.let { drawable ->
             val bounds = getRendererBounds()
             drawable.setBounds(

@@ -4,6 +4,7 @@ import android.graphics.*
 import androidx.core.graphics.withRotation
 import androidx.core.graphics.withScale
 import com.angcyo.canvas.BuildConfig
+import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasListener
@@ -44,8 +45,8 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
         canvasViewBox.canvasView.canvasListenerList.add(this)
     }
 
-    override fun onCanvasMatrixUpdate(matrix: Matrix, oldValue: Matrix) {
-        super.onCanvasMatrixUpdate(matrix, oldValue)
+    override fun onCanvasMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
+        super.onCanvasMatrixUpdate(canvasView, matrix, oldValue)
         updateControlPointLocation()
     }
 
@@ -75,7 +76,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
     val _tempPoint: PointF = PointF()
     val _rotateRect: RectF = RectF()
 
-    override fun render(canvas: Canvas) {
+    override fun render(canvasView: CanvasView, canvas: Canvas) {
         controlHandler.selectedItemRender?.let {
             val bounds = it.getRendererBounds()
             val rotate = it.rendererItem?.rotate ?: 0f

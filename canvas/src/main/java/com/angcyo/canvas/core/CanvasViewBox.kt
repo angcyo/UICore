@@ -96,7 +96,7 @@ class CanvasViewBox(val canvasView: CanvasView) {
         matrix.set(newMatrix)
         limitTranslateAndScale(matrix)
 
-        canvasView.onCanvasMatrixUpdate(matrix, oldMatrix)
+        canvasView.canvasMatrixUpdate(matrix, oldMatrix)
         canvasView.invalidate()
         canvasView.canvasListenerList.forEach {
             it.onCanvasMatrixChangeAfter(matrix, oldMatrix)

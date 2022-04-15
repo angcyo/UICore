@@ -20,8 +20,8 @@ import com.angcyo.library.ex.textHeight
 class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox) :
     BaseAxisRenderer(canvasViewBox) {
 
-    override fun onUpdateRendererBounds(canvasView: CanvasView) {
-        super.onUpdateRendererBounds(canvasView)
+    override fun onCanvasSizeChanged(canvasView: CanvasView) {
+        super.onCanvasSizeChanged(canvasView)
         bounds.set(
             0f,
             0f,
@@ -30,14 +30,14 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox) :
         )
     }
 
-    override fun onCanvasMatrixUpdate(matrix: Matrix, oldValue: Matrix) {
-        super.onCanvasMatrixUpdate(matrix, oldValue)
+    override fun onCanvasMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
+        super.onCanvasMatrixUpdate(canvasView, matrix, oldValue)
         //更新数据
         axis.getPlusPixelList(canvasViewBox)
         axis.getMinusPixelList(canvasViewBox)
     }
 
-    override fun render(canvas: Canvas) {
+    override fun render(canvasView: CanvasView, canvas: Canvas) {
         val right = bounds.right
         canvas.drawLine(right, bounds.top, right, bounds.bottom, linePaint)
 

@@ -42,8 +42,8 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
         canvasViewBox.canvasView.canvasListenerList.add(this)
     }
 
-    override fun onUpdateRendererBounds(canvasView: CanvasView) {
-        super.onUpdateRendererBounds(canvasView)
+    override fun onCanvasSizeChanged(canvasView: CanvasView) {
+        super.onCanvasSizeChanged(canvasView)
     }
 
     override fun onCanvasTouchEvent(event: MotionEvent) {
@@ -56,8 +56,8 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
         canvasViewBox.canvasView.invalidate()
     }
 
-    override fun onCanvasMatrixUpdate(matrix: Matrix, oldValue: Matrix) {
-        super.onCanvasMatrixUpdate(matrix, oldValue)
+    override fun onCanvasMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
+        super.onCanvasMatrixUpdate(canvasView, matrix, oldValue)
     }
 
     //缓存
@@ -65,7 +65,7 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
     val _tempPoint: PointF = PointF()
     val _tempRect: RectF = RectF()
 
-    override fun render(canvas: Canvas) {
+    override fun render(canvasView: CanvasView, canvas: Canvas) {
         if (_isTouchDown || BuildConfig.DEBUG) {
             //绘制当前的缩放比例
             val valueUnit = canvasViewBox.valueUnit

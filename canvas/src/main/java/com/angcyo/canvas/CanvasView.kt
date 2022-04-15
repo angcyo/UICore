@@ -12,10 +12,7 @@ import androidx.core.graphics.withClip
 import androidx.core.graphics.withMatrix
 import androidx.core.graphics.withRotation
 import com.angcyo.canvas.core.*
-import com.angcyo.canvas.core.component.CanvasTouchHandler
-import com.angcyo.canvas.core.component.ControlHandler
-import com.angcyo.canvas.core.component.XAxis
-import com.angcyo.canvas.core.component.YAxis
+import com.angcyo.canvas.core.component.*
 import com.angcyo.canvas.core.renderer.*
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
@@ -45,7 +42,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     val rendererAfterList = mutableSetOf<IRenderer>()
 
     /**将操作移动到[onSizeChanged]后触发*/
-    val pendingList = mutableListOf<Runnable>()
+    val pendingTaskList = mutableListOf<Runnable>()
 
     /**撤销/重做管理*/
     val undoManager: CanvasUndoManager = CanvasUndoManager(this)
@@ -89,62 +86,73 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         rendererAfterList.add(CenterRenderer(canvasViewBox))
     }
 
+    /**枚举[BaseAxisRenderer]*/
+    fun eachAxisRender(block: BaseAxisRenderer.(axis: BaseAxis) -> Unit) {
+        xAxisRender.block(xAxis)
+        yAxisRender.block(yAxis)
+    }
+
+    /**枚举所有[IRenderer]*/
+    fun eachAllRenderer(block: IRenderer.() -> Unit) {
+        //前置
+        rendererBeforeList.forEach {
+            it.block()
+        }
+
+        //内容
+        itemsRendererList.forEach {
+            it.block()
+        }
+
+        //后置
+        if (controlRenderer.visible) {
+            controlRenderer.block()
+        }
+
+        rendererAfterList.forEach {
+            it.block()
+        }
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         canvasViewBox._canvasViewWidth = w
         canvasViewBox._canvasViewHeight = h
 
         //前测量
-
-        if (xAxis.enable) {
-            xAxisRender.onUpdateRendererBounds(this)
-        }
-        if (yAxis.enable) {
-            yAxisRender.onUpdateRendererBounds(this)
+        eachAxisRender { axis ->
+            if (axis.enable) {
+                onCanvasSizeChanged(this@CanvasView)
+            }
         }
 
         canvasViewBox.updateContentBox()
 
-        //后测量
-        controlRenderer.onUpdateRendererBounds(this)
-
-        rendererBeforeList.forEach {
-            it.onUpdateRendererBounds(this)
+        //需要等待[canvasViewBox]测量后
+        eachAllRenderer {
+            onCanvasSizeChanged(this@CanvasView)
         }
 
-        itemsRendererList.forEach {
-            it.onUpdateRendererBounds(this)
-        }
-
-        rendererAfterList.forEach {
-            it.onUpdateRendererBounds(this)
-        }
-
-        pendingList.forEach {
+        //任务
+        pendingTaskList.forEach {
             it.run()
         }
-        pendingList.clear()
+        pendingTaskList.clear()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        if (xAxis.enable) {
-            if (xAxisRender.visible) {
-                xAxisRender.render(canvas)
-            }
-        }
-
-        if (yAxis.enable) {
-            if (yAxisRender.visible) {
-                yAxisRender.render(canvas)
+        eachAxisRender { axis ->
+            if (axis.enable && visible) {
+                render(this@CanvasView, canvas)
             }
         }
 
         //前置,不处理matrix
         rendererBeforeList.forEach {
             if (it.visible) {
-                it.render(canvas)
+                it.render(this@CanvasView, canvas)
             }
         }
 
@@ -160,7 +168,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
                             bounds.centerX(),
                             bounds.centerY()
                         ) {
-                            it.render(canvas)
+                            it.render(this@CanvasView, canvas)
                         }
                     }
                 }
@@ -169,12 +177,12 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
         //后置,不处理matrix
         if (controlRenderer.visible) {
-            controlRenderer.render(canvas)
+            controlRenderer.render(this@CanvasView, canvas)
         }
 
         rendererAfterList.forEach {
             if (it.visible) {
-                it.render(canvas)
+                it.render(this@CanvasView, canvas)
             }
         }
     }
@@ -204,37 +212,15 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
     /**当[Matrix]更新后触发
      * [com.angcyo.canvas.core.CanvasViewBox.refresh]*/
-    fun onCanvasMatrixUpdate(matrix: Matrix, oldValue: Matrix) {
-        if (xAxis.enable && xAxisRender.visible) {
-            xAxisRender.onCanvasMatrixUpdate(matrix, oldValue)
-        }
-
-        if (yAxis.enable && yAxisRender.visible) {
-            yAxisRender.onCanvasMatrixUpdate(matrix, oldValue)
-        }
-
-        //前置,不处理matrix
-        rendererBeforeList.forEach {
-            if (it.visible) {
-                it.onCanvasMatrixUpdate(matrix, oldValue)
+    fun canvasMatrixUpdate(matrix: Matrix, oldValue: Matrix) {
+        eachAxisRender { axis ->
+            if (axis.enable && visible) {
+                onCanvasMatrixUpdate(this@CanvasView, matrix, oldValue)
             }
         }
-
-        //内容, 绘制内容时, 自动使用[matrix]
-        itemsRendererList.forEach {
-            if (it.visible) {
-                it.onCanvasMatrixUpdate(matrix, oldValue)
-            }
-        }
-
-        //后置,不处理matrix
-        if (controlRenderer.visible) {
-            controlRenderer.onCanvasMatrixUpdate(matrix, oldValue)
-        }
-
-        rendererAfterList.forEach {
-            if (it.visible) {
-                it.onCanvasMatrixUpdate(matrix, oldValue)
+        eachAllRenderer {
+            if (visible) {
+                onCanvasMatrixUpdate(this@CanvasView, matrix, oldValue)
             }
         }
     }
@@ -253,7 +239,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
             itemsRendererList.add(item)
             if (item is BaseItemRenderer) {
                 if (item.bounds.isEmpty) {
-                    item.onUpdateRendererBounds(this)
+                    item.onCanvasSizeChanged(this)
                 }
 
                 val _width = if (width == ViewGroup.LayoutParams.WRAP_CONTENT.toFloat()) {
@@ -277,7 +263,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
             }
             postInvalidateOnAnimation()
         } else {
-            pendingList.add(Runnable { addCentreItemRenderer(item, width, height) })
+            pendingTaskList.add(Runnable { addCentreItemRenderer(item, width, height) })
         }
     }
 
@@ -287,12 +273,12 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
             itemsRendererList.add(item)
             if (item is BaseItemRenderer) {
                 if (item.bounds.isEmpty) {
-                    item.onUpdateRendererBounds(this)
+                    item.onCanvasSizeChanged(this)
                 }
             }
             postInvalidateOnAnimation()
         } else {
-            pendingList.add(Runnable { addItemRenderer(item) })
+            pendingTaskList.add(Runnable { addItemRenderer(item) })
         }
     }
 

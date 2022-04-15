@@ -17,8 +17,8 @@ import com.angcyo.canvas.core.component.XAxis
 class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox) :
     BaseAxisRenderer(canvasViewBox) {
 
-    override fun onUpdateRendererBounds(canvasView: CanvasView) {
-        super.onUpdateRendererBounds(canvasView)
+    override fun onCanvasSizeChanged(canvasView: CanvasView) {
+        super.onCanvasSizeChanged(canvasView)
         bounds.set(
             0f,
             0f,
@@ -27,14 +27,14 @@ class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox) :
         )
     }
 
-    override fun onCanvasMatrixUpdate(matrix: Matrix, oldValue: Matrix) {
-        super.onCanvasMatrixUpdate(matrix, oldValue)
+    override fun onCanvasMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
+        super.onCanvasMatrixUpdate(canvasView, matrix, oldValue)
         //更新数据
         axis.getPlusPixelList(canvasViewBox)
         axis.getMinusPixelList(canvasViewBox)
     }
 
-    override fun render(canvas: Canvas) {
+    override fun render(canvasView: CanvasView, canvas: Canvas) {
         val bounds = getRendererBounds()
         val bottom = bounds.bottom
         canvas.drawLine(bounds.left, bottom, bounds.right, bottom, linePaint)
