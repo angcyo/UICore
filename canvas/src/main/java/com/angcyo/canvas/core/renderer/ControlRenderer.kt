@@ -236,27 +236,29 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
     /**绘制控制四个角*/
     fun drawControlPoint(canvas: Canvas, rotate: Float) {
         controlHandler.controlPointList.forEach {
-            canvas.withControlPointRotation(rotate, it) {
-                //控制点的背景绘制
-                canvas.drawCircle(
-                    it.bounds.centerX(),
-                    it.bounds.centerY(),
-                    controlHandler.controlPointSize / 2,
-                    if (it == controlHandler.touchControlPoint && canvasViewBox.canvasView.isTouchHold) controlTouchPointPaint else controlPointPaint
-                )
-
-                //控制点的图标绘制
-                it.drawable?.apply {
-                    setBounds(
-                        it.bounds.left.toInt() + controlHandler.controlPointPadding,
-                        it.bounds.top.toInt() + controlHandler.controlPointPadding,
-                        it.bounds.right.toInt() - controlHandler.controlPointPadding,
-                        it.bounds.bottom.toInt() - controlHandler.controlPointPadding
+            if (it.enable) {
+                canvas.withControlPointRotation(rotate, it) {
+                    //控制点的背景绘制
+                    canvas.drawCircle(
+                        it.bounds.centerX(),
+                        it.bounds.centerY(),
+                        controlHandler.controlPointSize / 2,
+                        if (it == controlHandler.touchControlPoint && canvasViewBox.canvasView.isTouchHold) controlTouchPointPaint else controlPointPaint
                     )
-                    draw(canvas)
+
+                    //控制点的图标绘制
+                    it.drawable?.apply {
+                        setBounds(
+                            it.bounds.left.toInt() + controlHandler.controlPointPadding,
+                            it.bounds.top.toInt() + controlHandler.controlPointPadding,
+                            it.bounds.right.toInt() - controlHandler.controlPointPadding,
+                            it.bounds.bottom.toInt() - controlHandler.controlPointPadding
+                        )
+                        draw(canvas)
+                    }
                 }
+                //canvas.drawRect(it.bounds, controlPointPaint)
             }
-            //canvas.drawRect(it.bounds, controlPointPaint)
         }
     }
 }
