@@ -138,7 +138,7 @@ class ControlHandler : BaseComponent() {
             /*if (it.getRendererBounds().contains(point)) {
                 return it
             }*/
-            if (it.containsPoint(point)) {
+            if (it.visible && it.containsPoint(point)) {
                 return it
             }
         }
