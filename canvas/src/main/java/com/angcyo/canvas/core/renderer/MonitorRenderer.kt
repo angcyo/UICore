@@ -115,7 +115,7 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
             val text = "${tpStr}\n${rectStr}\n${(canvasViewBox._scaleX * 100).toInt()}%"
             assumeLayout(text)
 
-            canvas.withTranslation(x = canvasViewBox.getContentLeft(), y = bounds.top) {
+            canvas.withTranslation(x = canvasViewBox.getContentLeft(), y = _bounds.top) {
                 layout?.draw(canvas)
             }
         }
@@ -151,7 +151,7 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
             val height = layout!!.height
             val right = canvasViewBox.getContentRight() - 10 * dp
             val bottom = canvasViewBox.getContentBottom()
-            bounds.set(right - width, bottom - height, right, bottom)
+            _bounds.set(right - width, bottom - height, right, bottom)
         }
     }
 }

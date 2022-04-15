@@ -14,13 +14,14 @@ class DrawableItemRenderer(canvasViewBox: CanvasViewBox) :
 
     override fun onCanvasSizeChanged(canvasView: CanvasView) {
         super.onCanvasSizeChanged(canvasView)
-        if (bounds.isEmpty) {
-            bounds.set(
+        if (_bounds.isEmpty) {
+            _bounds.set(
                 0f,
                 0f,
                 rendererItem?.drawable?.minimumWidth?.toFloat() ?: 0f,
                 rendererItem?.drawable?.minimumHeight?.toFloat() ?: 0f
             )
+            onRendererBoundsChanged()
         }
     }
 

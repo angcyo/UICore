@@ -1,6 +1,8 @@
 package com.angcyo.canvas.core.renderer
 
+import android.graphics.Matrix
 import android.graphics.RectF
+import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.IRenderer
 
@@ -9,19 +11,31 @@ import com.angcyo.canvas.core.IRenderer
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/01
  */
-abstract class BaseRenderer(val canvasViewBox: CanvasViewBox) :
-    IRenderer {
+abstract class BaseRenderer(val canvasViewBox: CanvasViewBox) : IRenderer {
 
-    override var visible: Boolean = true
+    /**是否可见, 决定是否绘制*/
+    var _visible: Boolean = true
 
-    val bounds = RectF()
+    /**在坐标系中的坐标*/
+    val _bounds = RectF()
 
-    /**此[bounds]是相对于坐标原点的坐标*/
-    override fun getRendererBounds(): RectF = bounds
+    /**相对于视图左上角的坐标*/
+    val _visualBounds = RectF()
 
-    /**获取当前[bounds]相对于[view]左上角的坐标
-     * [com.angcyo.canvas.core.CanvasViewBox.calcItemVisibleBounds]*/
-    fun getRendererVisibleBounds(result: RectF): RectF {
-        return canvasViewBox.calcItemVisibleBounds(this, result)
+    override fun isVisible(): Boolean = _visible
+
+    /**此[_bounds]是相对于坐标原点的坐标*/
+    override fun getRendererBounds(): RectF = _bounds
+
+    /**此[_visualBounds]是相对于视图左上角原点的坐标*/
+    override fun getVisualBounds(): RectF = _visualBounds
+
+    override fun onCanvasSizeChanged(canvasView: CanvasView) {
+        //no op
+    }
+
+    /**当[CanvasViewBox]坐标系发生改变时, 实时更新[_visualBounds]*/
+    override fun onCanvasMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
+        canvasViewBox.calcItemVisibleBounds(this, _visualBounds)
     }
 }

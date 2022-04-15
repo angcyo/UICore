@@ -15,7 +15,6 @@ import com.angcyo.canvas.core.*
 import com.angcyo.canvas.core.component.*
 import com.angcyo.canvas.core.renderer.*
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
-import com.angcyo.canvas.items.renderer.IItemRenderer
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -36,10 +35,10 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     val canvasListenerList = mutableSetOf<ICanvasListener>()
 
     /**内容绘制之前, 额外的渲染器*/
-    val rendererBeforeList = mutableSetOf<IRenderer>()
+    val rendererBeforeList = mutableSetOf<BaseRenderer>()
 
     /**内容绘制之后, 额外的渲染器*/
-    val rendererAfterList = mutableSetOf<IRenderer>()
+    val rendererAfterList = mutableSetOf<BaseRenderer>()
 
     /**将操作移动到[onSizeChanged]后触发*/
     val pendingTaskList = mutableListOf<Runnable>()
@@ -66,7 +65,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     //<editor-fold desc="渲染组件">
 
     /**核心项目渲染器*/
-    val itemsRendererList = mutableSetOf<IItemRenderer<*>>()
+    val itemsRendererList = mutableSetOf<BaseItemRenderer<*>>()
 
     //</editor-fold desc="渲染组件">
 
@@ -93,7 +92,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     /**枚举所有[IRenderer]*/
-    fun eachAllRenderer(block: IRenderer.() -> Unit) {
+    fun eachAllRenderer(block: BaseRenderer.() -> Unit) {
         //前置
         rendererBeforeList.forEach {
             it.block()
@@ -105,7 +104,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }
 
         //后置
-        if (controlRenderer.visible) {
+        if (controlRenderer._visible) {
             controlRenderer.block()
         }
 
@@ -144,14 +143,14 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         super.onDraw(canvas)
 
         eachAxisRender { axis ->
-            if (axis.enable && visible) {
+            if (axis.enable && _visible) {
                 render(this@CanvasView, canvas)
             }
         }
 
         //前置,不处理matrix
         rendererBeforeList.forEach {
-            if (it.visible) {
+            if (it._visible) {
                 it.render(this@CanvasView, canvas)
             }
         }
@@ -160,11 +159,11 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         canvas.withClip(canvasViewBox.contentRect) {
             canvas.withMatrix(canvasViewBox.matrix) {
                 itemsRendererList.forEach {
-                    if (it.visible) {
+                    if (it._visible) {
                         //item的旋转, 在此处理
                         val bounds = it.getRendererBounds()
                         canvas.withRotation(
-                            it.rendererItem?.rotate ?: 0f,
+                            it.rotate,
                             bounds.centerX(),
                             bounds.centerY()
                         ) {
@@ -176,12 +175,12 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }
 
         //后置,不处理matrix
-        if (controlRenderer.visible) {
+        if (controlRenderer._visible) {
             controlRenderer.render(this@CanvasView, canvas)
         }
 
         rendererAfterList.forEach {
-            if (it.visible) {
+            if (it._visible) {
                 it.render(this@CanvasView, canvas)
             }
         }
@@ -214,12 +213,12 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
      * [com.angcyo.canvas.core.CanvasViewBox.refresh]*/
     fun canvasMatrixUpdate(matrix: Matrix, oldValue: Matrix) {
         eachAxisRender { axis ->
-            if (axis.enable && visible) {
+            if (axis.enable && _visible) {
                 onCanvasMatrixUpdate(this@CanvasView, matrix, oldValue)
             }
         }
         eachAllRenderer {
-            if (visible) {
+            if (_visible) {
                 onCanvasMatrixUpdate(this@CanvasView, matrix, oldValue)
             }
         }
@@ -231,25 +230,25 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
     /**默认在当前视图中心添加一个绘制元素*/
     fun addCentreItemRenderer(
-        item: IItemRenderer<*>,
+        item: BaseItemRenderer<*>,
         width: Float = ViewGroup.LayoutParams.WRAP_CONTENT.toFloat(),
         height: Float = ViewGroup.LayoutParams.WRAP_CONTENT.toFloat()
     ) {
         if (canvasViewBox.isCanvasInit()) {
             itemsRendererList.add(item)
             if (item is BaseItemRenderer) {
-                if (item.bounds.isEmpty) {
+                if (item._bounds.isEmpty) {
                     item.onCanvasSizeChanged(this)
                 }
 
                 val _width = if (width == ViewGroup.LayoutParams.WRAP_CONTENT.toFloat()) {
-                    item.bounds.width()
+                    item._bounds.width()
                 } else {
                     width
                 }
 
                 val _height = if (height == ViewGroup.LayoutParams.WRAP_CONTENT.toFloat()) {
-                    item.bounds.height()
+                    item._bounds.height()
                 } else {
                     height
                 }
@@ -258,7 +257,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
                     //当前可视化的中点坐标
 
                     val rect = canvasViewBox.getContentMatrixRect(_width, _height)
-                    item.bounds.set(rect)
+                    item._bounds.set(rect)
                 }
             }
             postInvalidateOnAnimation()
@@ -268,11 +267,11 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     /**添加一个绘制元素*/
-    fun addItemRenderer(item: IItemRenderer<*>) {
+    fun addItemRenderer(item: BaseItemRenderer<*>) {
         if (canvasViewBox.isCanvasInit()) {
             itemsRendererList.add(item)
             if (item is BaseItemRenderer) {
-                if (item.bounds.isEmpty) {
+                if (item._bounds.isEmpty) {
                     item.onCanvasSizeChanged(this)
                 }
             }
@@ -283,7 +282,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     /**移除一个绘制元素*/
-    fun removeItemRenderer(item: IItemRenderer<*>) {
+    fun removeItemRenderer(item: BaseItemRenderer<*>) {
         itemsRendererList.remove(item)
         if (controlHandler.selectedItemRender == item) {
             selectedItem(null)
@@ -291,8 +290,8 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         postInvalidateOnAnimation()
     }
 
-    /**选中item[IItemRenderer]*/
-    fun selectedItem(itemRenderer: IItemRenderer<*>?) {
+    /**选中item[BaseItemRenderer]*/
+    fun selectedItem(itemRenderer: BaseItemRenderer<*>?) {
         val oldItemRenderer = controlHandler.selectedItemRender
 
         controlHandler.selectedItemRender = itemRenderer
@@ -314,9 +313,9 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         postInvalidateOnAnimation()
     }
 
-    /**平移选中的[IItemRenderer]*/
+    /**平移选中的[BaseItemRenderer]*/
     fun translateItem(
-        itemRenderer: IItemRenderer<*>?,
+        itemRenderer: BaseItemRenderer<*>?,
         distanceX: Float = 0f,
         distanceY: Float = 0f
     ) {
@@ -330,8 +329,8 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
-    /**缩放选中的[IItemRenderer]*/
-    fun scaleItem(itemRenderer: IItemRenderer<*>?, scaleX: Float = 1f, scaleY: Float = 1f) {
+    /**缩放选中的[BaseItemRenderer]*/
+    fun scaleItem(itemRenderer: BaseItemRenderer<*>?, scaleX: Float = 1f, scaleY: Float = 1f) {
         itemRenderer?.let {
             it.scaleBy(scaleX, scaleY)
             canvasListenerList.forEach {
@@ -342,7 +341,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     fun scaleItemWithCenter(
-        itemRenderer: IItemRenderer<*>?,
+        itemRenderer: BaseItemRenderer<*>?,
         scaleX: Float = 1f,
         scaleY: Float = 1f
     ) {
@@ -355,8 +354,8 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
-    /**旋转[IItemRenderer]*/
-    fun rotateItem(itemRenderer: IItemRenderer<*>?, degrees: Float) {
+    /**旋转[BaseItemRenderer]*/
+    fun rotateItem(itemRenderer: BaseItemRenderer<*>?, degrees: Float) {
         itemRenderer?.let {
             it.rotateBy(degrees)
             canvasListenerList.forEach {

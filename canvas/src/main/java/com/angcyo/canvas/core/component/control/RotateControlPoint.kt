@@ -5,6 +5,7 @@ import android.view.MotionEvent
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.component.ControlPoint
+import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.library.L
 import com.angcyo.library.ex._drawable
@@ -36,7 +37,7 @@ class RotateControlPoint : ControlPoint() {
 
     override fun onTouch(
         view: CanvasView,
-        itemRenderer: IItemRenderer<*>,
+        itemRenderer: BaseItemRenderer<*>,
         event: MotionEvent
     ): Boolean {
         when (event.actionMasked) {

@@ -22,7 +22,7 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox) :
 
     override fun onCanvasSizeChanged(canvasView: CanvasView) {
         super.onCanvasSizeChanged(canvasView)
-        bounds.set(
+        _bounds.set(
             0f,
             0f,
             axis.axisSize,
@@ -38,8 +38,8 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox) :
     }
 
     override fun render(canvasView: CanvasView, canvas: Canvas) {
-        val right = bounds.right
-        canvas.drawLine(right, bounds.top, right, bounds.bottom, linePaint)
+        val right = _bounds.right
+        canvas.drawLine(right, _bounds.top, right, _bounds.bottom, linePaint)
 
         val plusList = axis.plusList
         val minusList = axis.minusList
@@ -57,8 +57,8 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox) :
 
             //先/后 clip, 都有效果
             val clipBottom = contentBottom - translateY
-            val clipTop = clipBottom - bounds.height() + contentTop
-            clipRect(bounds.left, clipTop, bounds.right, clipBottom)
+            val clipTop = clipBottom - _bounds.height() + contentTop
+            clipRect(_bounds.left, clipTop, _bounds.right, clipBottom)
 
             plusList.forEachIndexed { index, top ->
                 val _top = top * scaleY

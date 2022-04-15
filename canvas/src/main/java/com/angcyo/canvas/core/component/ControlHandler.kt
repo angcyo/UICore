@@ -10,9 +10,9 @@ import com.angcyo.canvas.core.component.control.CloseControlPoint
 import com.angcyo.canvas.core.component.control.LockControlPoint
 import com.angcyo.canvas.core.component.control.RotateControlPoint
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
+import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.mapPoint
-import com.angcyo.canvas.utils.mapRectF
 import com.angcyo.library.L
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
@@ -26,7 +26,7 @@ import com.angcyo.library.ex.dpi
 class ControlHandler : BaseComponent() {
 
     /**当前选中的[IItemRenderer]*/
-    var selectedItemRender: IItemRenderer<*>? = null
+    var selectedItemRender: BaseItemRenderer<*>? = null
 
     /**绘制宽高时的偏移量*/
     var sizeOffset = 4 * dp
@@ -72,6 +72,13 @@ class ControlHandler : BaseComponent() {
                     val controlPoint = findItemControlPoint(view.canvasViewBox, touchPoint)
                     touchControlPoint = controlPoint
                     holdControlPoint = controlPoint
+
+                    //notify
+                    if (controlPoint != null) {
+                        selectedItemRender?.let {
+                            it.onControlStart(controlPoint)
+                        }
+                    }
                 }
 
                 if (touchControlPoint == null) {
@@ -108,6 +115,7 @@ class ControlHandler : BaseComponent() {
                 _touchPoint.set(_movePoint)
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                //notify
                 if (holdControlPoint != null) {
                     selectedItemRender?.let {
                         it.onControlFinish(holdControlPoint)
@@ -132,13 +140,13 @@ class ControlHandler : BaseComponent() {
     }
 
     /**通过坐标, 找到对应的元素*/
-    fun findItemRenderer(canvasViewBox: CanvasViewBox, touchPoint: PointF): IItemRenderer<*>? {
+    fun findItemRenderer(canvasViewBox: CanvasViewBox, touchPoint: PointF): BaseItemRenderer<*>? {
         val point = canvasViewBox.mapCoordinateSystemPoint(touchPoint, _tempPoint)
         canvasViewBox.canvasView.itemsRendererList.reversed().forEach {
             /*if (it.getRendererBounds().contains(point)) {
                 return it
             }*/
-            if (it.visible && it.containsPoint(point)) {
+            if (it._visible && it.containsPoint(point)) {
                 return it
             }
         }
@@ -157,13 +165,10 @@ class ControlHandler : BaseComponent() {
         return null
     }
 
-    val _rotateRect: RectF = RectF()
-
     /**计算4个控制点的矩形位置坐标
      * [itemRect] 目标元素坐标系的矩形坐标*/
-    fun calcControlPointLocation(canvasViewBox: CanvasViewBox, itemRenderer: IItemRenderer<*>) {
+    fun calcControlPointLocation(canvasViewBox: CanvasViewBox, itemRenderer: BaseItemRenderer<*>) {
         val isLock = itemRenderer.isLockScaleRatio
-        var bounds = itemRenderer.getRendererBounds()
 
         /*if (!isLock) {
             val rotateRect = itemRenderer.mapRotateRect(bounds, _rotateRect)
@@ -171,8 +176,7 @@ class ControlHandler : BaseComponent() {
         }*/
 
         //将[bounds]转换成视图坐标
-        val _bounds = canvasViewBox.matrix.mapRectF(bounds, _tempRect)
-        _controlPointOffsetRect.set(_bounds)
+        _controlPointOffsetRect.set(itemRenderer.getVisualBounds())
 
         //在原目标位置, 进行矩形的放大
         val inset = controlPointOffset + controlPointSize / 2
@@ -256,7 +260,7 @@ class ControlHandler : BaseComponent() {
     fun updateControlPoint(
         controlPoint: ControlPoint,
         canvasViewBox: CanvasViewBox,
-        itemRenderer: IItemRenderer<*>,
+        itemRenderer: BaseItemRenderer<*>,
         x: Float,
         y: Float
     ) {
@@ -264,7 +268,7 @@ class ControlHandler : BaseComponent() {
         //旋转后的点坐标
         _tempMatrix.reset()
         _tempMatrix.postRotate(
-            itemRenderer.rendererItem?.rotate ?: 0f,
+            itemRenderer.rotate,
             _controlPointOffsetRect.centerX(),
             _controlPointOffsetRect.centerY()
         )

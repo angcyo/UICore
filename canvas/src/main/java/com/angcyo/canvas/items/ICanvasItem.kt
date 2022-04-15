@@ -8,8 +8,4 @@ package com.angcyo.canvas.items
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
 interface ICanvasItem {
-
-    /**当前旋转的角度, 在[CanvasView]中处理此属性
-     * [com.angcyo.canvas.CanvasView.onDraw]*/
-    var rotate: Float
 }

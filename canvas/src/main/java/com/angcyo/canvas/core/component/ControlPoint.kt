@@ -4,7 +4,7 @@ import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import com.angcyo.canvas.CanvasView
-import com.angcyo.canvas.items.renderer.IItemRenderer
+import com.angcyo.canvas.items.renderer.BaseItemRenderer
 
 /**
  * 控制点
@@ -41,7 +41,7 @@ open class ControlPoint : BaseComponent() {
 
     open fun onTouch(
         view: CanvasView,
-        itemRenderer: IItemRenderer<*>,
+        itemRenderer: BaseItemRenderer<*>,
         event: MotionEvent
     ): Boolean {
         when (event.actionMasked) {
@@ -61,7 +61,7 @@ open class ControlPoint : BaseComponent() {
     }
 
     /**当点击控制点时回调*/
-    open fun onClickControlPoint(view: CanvasView, itemRenderer: IItemRenderer<*>) {
+    open fun onClickControlPoint(view: CanvasView, itemRenderer: BaseItemRenderer<*>) {
 
     }
 }

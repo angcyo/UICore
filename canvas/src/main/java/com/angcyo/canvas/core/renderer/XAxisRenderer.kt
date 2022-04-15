@@ -19,7 +19,7 @@ class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox) :
 
     override fun onCanvasSizeChanged(canvasView: CanvasView) {
         super.onCanvasSizeChanged(canvasView)
-        bounds.set(
+        _bounds.set(
             0f,
             0f,
             canvasView.measuredWidth.toFloat(),

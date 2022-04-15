@@ -14,11 +14,16 @@ interface IRenderer {
 
     //<editor-fold desc="属性操作">
 
-    /**是否可见, 决定是否绘制*/
-    var visible: Boolean
+    /**是否可见*/
+    fun isVisible(): Boolean
 
-    /**获取坐标系中的坐标, 非视图系的坐标*/
+    /**获取坐标系中的坐标, 非视图系的坐标
+     * 相对于坐标系原点的坐标*/
     fun getRendererBounds(): RectF
+
+    /**获取视图系中的坐标
+     * 相对于视图左上角的坐标*/
+    fun getVisualBounds(): RectF
 
     //</editor-fold desc="属性操作">
 
@@ -27,15 +32,13 @@ interface IRenderer {
     /**当[CanvasView]大小改变时的回调
      * 更新需要渲染的区域, 真实的坐标. 非[Matrix]后的坐标
      * [com.angcyo.canvas.CanvasView.onSizeChanged]*/
-    fun onCanvasSizeChanged(canvasView: CanvasView) {
-    }
+    fun onCanvasSizeChanged(canvasView: CanvasView)
 
     /**当[CanvasView]中,[CanvasViewBox]的[Matrix]改变时的回调
      * 当视图改变后的回调
      * 可以用来计算数据, 并缓存
      * [com.angcyo.canvas.CanvasView.canvasMatrixUpdate]*/
-    fun onCanvasMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
-    }
+    fun onCanvasMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix)
 
     //</editor-fold desc="回调">
 
@@ -46,6 +49,4 @@ interface IRenderer {
     fun render(canvasView: CanvasView, canvas: Canvas)
 
     //</editor-fold desc="渲染">
-
-
 }

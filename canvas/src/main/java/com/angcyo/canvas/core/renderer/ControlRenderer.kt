@@ -78,15 +78,27 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
 
     override fun render(canvasView: CanvasView, canvas: Canvas) {
         controlHandler.selectedItemRender?.let {
-            val bounds = it.getRendererBounds()
-            val rotate = it.rendererItem?.rotate ?: 0f
 
-            //绘制边框
-            /*canvas.withMatrix(canvasViewBox.matrix) {
-                canvas.withRotation(rotate, bounds.centerX(), bounds.centerY()) {
-                    canvas.drawRect(bounds, paint)
-                }
-            }*/
+            //目标相对于坐标系中的位置
+            val bounds = it.getRendererBounds()
+            //目标相对于视图左上角的位置
+            val visualBounds = it.getVisualBounds()
+            val rotate = it.rotate
+            
+            //绘制控制信息, 宽高xy值
+            canvas.withRotation(rotate, visualBounds.centerX(), visualBounds.centerY()) {
+                //绘制边框
+                canvas.drawRect(visualBounds, paint)
+                drawFrameText(canvas, visualBounds, it.getRendererRotateBounds(), rotate)
+            }
+
+            //绘制控制四个角
+            drawControlPoint(canvas, rotate)
+
+            if (BuildConfig.DEBUG) {
+                return
+            }
+
 
             //放大后的矩形, 进行相应的旋转
             val rotateRect = it.mapRotateRect(bounds, _rotateRect)
@@ -100,12 +112,6 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
             //转换之后的矩形, 视图坐标系
             val _bounds = canvasViewBox.matrix.mapRectF(bounds, controlHandler._tempRect)
 
-            //绘制控制信息, 宽高xy值
-            canvas.withRotation(rotate, _bounds.centerX(), _bounds.centerY()) {
-                //绘制边框
-                canvas.drawRect(_bounds, paint)
-                drawFrame(canvas, _bounds, rotateRect, rotate)
-            }
 
             //绘制控制四个角
             drawControlPoint(canvas, rotate)
@@ -161,10 +167,10 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
     }
 
     /**绘制控制信息, 宽高xy值
-     * [bounds] 元素未旋转时的坐标, 用来确定绘制坐标
+     * [visualBounds] 元素未旋转时的坐标, 用来确定绘制坐标
      * [rotateBounds] 元素旋转之后, 占用的矩形坐标, 用来计算距离
      * [rotate] 元素旋转的角度*/
-    fun drawFrame(canvas: Canvas, bounds: RectF, rotateBounds: RectF, rotate: Float) {
+    fun drawFrameText(canvas: Canvas, visualBounds: RectF, rotateBounds: RectF, rotate: Float) {
         //绘制宽高文本
         val widthUnit = canvasViewBox.valueUnit.convertPixelToValueUnit(rotateBounds.width())
         val heightUnit = canvasViewBox.valueUnit.convertPixelToValueUnit(rotateBounds.height())
@@ -172,10 +178,10 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
         //绘制宽度
         var textWidth = sizePaint.textWidth(widthUnit)
         _textBounds.set(
-            bounds.centerX() - textWidth / 2,
-            bounds.top - sizePaint.textHeight() - controlHandler.sizeOffset,
-            bounds.centerX() + textWidth / 2,
-            bounds.top - controlHandler.sizeOffset
+            visualBounds.centerX() - textWidth / 2,
+            visualBounds.top - sizePaint.textHeight() - controlHandler.sizeOffset,
+            visualBounds.centerX() + textWidth / 2,
+            visualBounds.top - controlHandler.sizeOffset
         )
         canvas.withTextScale(rotate, _textBounds) {
             canvas.drawText(
@@ -189,16 +195,16 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
         //绘制高度
         textWidth = sizePaint.textWidth(heightUnit)
         _textBounds.set(
-            bounds.right + controlHandler.sizeOffset,
-            bounds.centerY() - sizePaint.textHeight() / 2,
-            bounds.right + controlHandler.sizeOffset + textWidth,
-            bounds.centerY() + sizePaint.textHeight() / 2
+            visualBounds.right + controlHandler.sizeOffset,
+            visualBounds.centerY() - sizePaint.textHeight() / 2,
+            visualBounds.right + controlHandler.sizeOffset + textWidth,
+            visualBounds.centerY() + sizePaint.textHeight() / 2
         )
         canvas.withTextScale(rotate, _textBounds) {
             canvas.drawText(
                 heightUnit,
-                bounds.right + controlHandler.sizeOffset,
-                bounds.centerY() + sizePaint.textHeight() / 2 - sizePaint.descent(),
+                visualBounds.right + controlHandler.sizeOffset,
+                visualBounds.centerY() + sizePaint.textHeight() / 2 - sizePaint.descent(),
                 sizePaint
             )
         }
@@ -216,10 +222,10 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
 
             textWidth = sizePaint.textWidth(text)
             _textBounds.set(
-                bounds.centerX() - textWidth / 2,
-                bounds.bottom + controlHandler.sizeOffset,
-                bounds.centerX() + textWidth / 2,
-                bounds.bottom + sizePaint.textHeight() + controlHandler.sizeOffset
+                visualBounds.centerX() - textWidth / 2,
+                visualBounds.bottom + controlHandler.sizeOffset,
+                visualBounds.centerX() + textWidth / 2,
+                visualBounds.bottom + sizePaint.textHeight() + controlHandler.sizeOffset
             )
 
             canvas.withTextScale(rotate, _textBounds) {
