@@ -129,6 +129,8 @@ abstract class AbsDslDrawable : Drawable() {
 
     override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
         super.setBounds(left, top, right, bottom)
+        drawRect.set(left, top, right, bottom)
+        drawRectF.set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
     }
 
     override fun setBounds(bounds: Rect) {
