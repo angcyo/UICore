@@ -72,6 +72,10 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     /**insert过程中, 动画调整的padding大小, [MODE_HEIGHT]模式下生效*/
     var softInputPaddingTop = 0
+        set(value) {
+            field = value
+            _softInputPaddingTop = value
+        }
 
     /**监听器*/
     val softInputListener = mutableListOf<OnSoftInputListener>()
@@ -146,8 +150,6 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
             R.styleable.DslSoftInputLayout_r_soft_input_padding_top,
             softInputPaddingTop
         )
-
-        _softInputPaddingTop = softInputPaddingTop
 
         keepEmojiState =
             typedArray.getBoolean(R.styleable.DslSoftInputLayout_r_keep_emoji_state, keepEmojiState)
