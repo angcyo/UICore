@@ -13,11 +13,11 @@ import android.view.WindowInsets
 import android.widget.FrameLayout
 import androidx.core.view.GravityCompat
 import com.angcyo.library.L
+import com.angcyo.library.ex.anim
 import com.angcyo.library.ex.append
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.getStatusBarHeight
 import com.angcyo.widget.R
-import com.angcyo.library.ex.anim
 import com.angcyo.widget.base.hideSoftInput
 import com.angcyo.widget.base.offsetTopTo
 import com.angcyo.widget.layout.DslSoftInputLayout.Companion.ACTION_HIDE_EMOJI
@@ -38,6 +38,7 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
     FrameLayout(context, attributeSet) {
 
     companion object {
+
         var DEFAULT_SOFT_INPUT_HEIGHT = 275 * dpi
         private val DEFAULT_CHILD_GRAVITY = Gravity.BOTTOM or Gravity.START
 
@@ -59,9 +60,12 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
         const val MODE_EMOJI_HEIGHT = 4
     }
 
-    /**激活动画*/
+    //<editor-fold desc="属性配置">
+
+    /**激活显示表情/键盘时的动画*/
     var enableShowAnimator = true
 
+    /**激活隐藏表情/键盘时的动画*/
     var enableHideAnimator = true
 
     /**动画时长*/
@@ -90,6 +94,12 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
      * 此属性最好配合[softInputPaddingTop]一起使用*/
     var fixStatusBar: Boolean = false
 
+    /**延迟处理[onApplyWindowInsets]
+     * 当从密码键盘切换到非密码键盘时, 可以通过此属性避免跳动*/
+    var delayWindowInsets: Int = 64
+
+    //</editor-fold desc="属性配置">
+
     //<editor-fold desc="私有属性辅助计算">
 
     //需要额外追加的paddingTop, 只影响内容布局的测量
@@ -113,6 +123,8 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     //底部窗口是否有inset, 如果有通常是键盘显示了
     var _isBottomWindowInset: Boolean = false
+
+    var _delayHandleRunnable: DelayHandleRunnable? = null
 
     //</editor-fold desc="私有属性辅助计算">
 
@@ -162,6 +174,11 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
         fixStatusBar =
             typedArray.getBoolean(R.styleable.DslSoftInputLayout_r_fix_status_bar, fixStatusBar)
 
+        delayWindowInsets = typedArray.getInt(
+            R.styleable.DslSoftInputLayout_r_delay_window_insets,
+            delayWindowInsets
+        )
+
         typedArray.recycle()
 
         if (isInEditMode) {
@@ -171,6 +188,21 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     //<editor-fold desc="基础方法">
+
+    fun removeDelayHandle() {
+        removeCallbacks(_delayHandleRunnable)
+        _delayHandleRunnable = null
+    }
+
+    fun delayHandle(action: Int, height: Int) {
+        if (delayWindowInsets > 0) {
+            _delayHandleRunnable = DelayHandleRunnable(action, height)
+            postDelayed(_delayHandleRunnable, delayWindowInsets.toLong())
+        } else {
+            handleSoftInput(action, height)
+            removeDelayHandle()
+        }
+    }
 
     override fun dispatchDraw(canvas: Canvas) {
         try {
@@ -190,11 +222,13 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
             _isBottomWindowInset = insets.systemWindowInsetBottom > 0
             if (insets.systemWindowInsetBottom > 0) {
                 //需要显示键盘
-                handleSoftInput(ACTION_SHOW_SOFT_INPUT, insets.systemWindowInsetBottom)
+                removeDelayHandle()
+                delayHandle(ACTION_SHOW_SOFT_INPUT, insets.systemWindowInsetBottom)
             } else if (insets.systemWindowInsetBottom == 0) {
                 //可能是隐藏键盘, 也可能是显示表情布局
                 if (_action != ACTION_SHOW_EMOJI) {
-                    handleSoftInput(ACTION_HIDE_SOFT_INPUT, insets.systemWindowInsetBottom)
+                    removeDelayHandle()
+                    delayHandle(ACTION_HIDE_SOFT_INPUT, insets.systemWindowInsetBottom)
                 }
             }
         }
@@ -664,6 +698,13 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
     fun isEmojiLayoutShow(): Boolean = !isSoftInputShow() && _bottomInsertHeight > 0
 
     //</editor-fold desc="操作方法">
+
+    inner class DelayHandleRunnable(val action: Int, val height: Int) : Runnable {
+        override fun run() {
+            handleSoftInput(action, height)
+            removeDelayHandle()
+        }
+    }
 }
 
 //显示键盘or表情
