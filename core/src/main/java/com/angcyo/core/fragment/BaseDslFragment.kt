@@ -42,15 +42,20 @@ open class BaseDslFragment : BaseTitleFragment() {
         _vh.rv(R.id.lib_recycler_view)?.apply {
             val dslAdapter = DslAdapter()
             //监听[IFragmentItem]
-            dslAdapter.observeItemUpdateDepend {
-                dslAdapter.adapterItems.forEach {
-                    if (it is IFragmentItem) {
-                        it.itemFragment = this@BaseDslFragment
-                    }
-                }
-            }
+            dslAdapter.hookUpdateDepend()
             onInitDslLayout(this, dslAdapter)
             adapter = dslAdapter
+        }
+    }
+
+    /**监听, 并赋值[IFragmentItem]*/
+    fun DslAdapter.hookUpdateDepend() {
+        observeItemUpdateDepend {
+            adapterItems.forEach {
+                if (it is IFragmentItem) {
+                    it.itemFragment = this@BaseDslFragment
+                }
+            }
         }
     }
 
