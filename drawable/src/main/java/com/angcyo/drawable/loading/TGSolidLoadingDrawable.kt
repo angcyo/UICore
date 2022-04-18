@@ -14,8 +14,9 @@ import kotlin.math.min
  */
 class TGSolidLoadingDrawable : BaseTGLoadingDrawable() {
 
-    /**加载进度偏移背景的距离*/
-    var loadingOffset: Float = 2 * dp
+    init {
+        loadingOffset = 2 * dp
+    }
 
     override fun draw(canvas: Canvas) {
         val x = bounds.centerX().toFloat()

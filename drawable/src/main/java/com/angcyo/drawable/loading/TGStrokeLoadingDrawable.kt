@@ -14,9 +14,13 @@ import kotlin.math.min
  */
 class TGStrokeLoadingDrawable : BaseTGLoadingDrawable() {
 
+    /**背景的宽度*/
+    var bgStrokeWidth: Float = 0f
+
     init {
-        loadingBgColor = "#20FFFFFF".toColorInt()
+        loadingBgColor = "#10000000".toColorInt()
         paint.style = Paint.Style.STROKE
+        bgStrokeWidth = loadingWidth
     }
 
     override fun draw(canvas: Canvas) {
@@ -29,7 +33,7 @@ class TGStrokeLoadingDrawable : BaseTGLoadingDrawable() {
         _loadingRectF.inset(inset, inset)
 
         //绘制背景
-        paint.strokeWidth = loadingWidth
+        paint.strokeWidth = bgStrokeWidth
         paint.color = loadingBgColor
         canvas.drawArc(
             _loadingRectF.left,
@@ -49,6 +53,8 @@ class TGStrokeLoadingDrawable : BaseTGLoadingDrawable() {
         } else {
             progress / 100f * 360
         }
+        paint.strokeWidth = loadingWidth
+        _loadingRectF.inset(loadingOffset, loadingOffset)
         canvas.drawArc(
             _loadingRectF.left,
             _loadingRectF.top,

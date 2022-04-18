@@ -31,6 +31,9 @@ abstract class BaseTGLoadingDrawable : BaseProgressDrawable() {
     /**加载的宽度*/
     var loadingWidth: Float = 3 * dp
 
+    /**加载进度偏移背景的距离*/
+    var loadingOffset: Float = 0f
+
     /**不明确进度时的绘制扫描的角度*/
     var indeterminateSweepAngle = 3f
 
