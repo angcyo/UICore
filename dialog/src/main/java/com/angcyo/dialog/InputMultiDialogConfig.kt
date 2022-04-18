@@ -68,6 +68,7 @@ open class InputMultiDialogConfig(context: Context? = null) : BaseDialogConfig(c
             if (onInputResult.invoke(dialog, result)) {
 
             } else {
+                dialog.hideSoftInput()
                 dialog.dismiss()
             }
         }
@@ -100,5 +101,9 @@ open class InputMultiDialogConfig(context: Context? = null) : BaseDialogConfig(c
         if (showSoftInput) {
             dialogViewHolder.post { dialogViewHolder.ev(R.id.edit_text_view)?.showSoftInput() }
         }
+    }
+
+    override fun onDialogDestroy(dialog: Dialog, dialogViewHolder: DslViewHolder) {
+        super.onDialogDestroy(dialog, dialogViewHolder)
     }
 }

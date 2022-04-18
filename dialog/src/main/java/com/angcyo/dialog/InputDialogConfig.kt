@@ -59,7 +59,9 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
     var useCharLengthFilter = false
 
     /**
-     * 输入框内容回调, 返回 true, 则不会自动 调用 dismiss
+     * 输入框内容回调
+     * 返回true: 拦截默认操作
+     * 返回false: 执行默认操作dismiss
      * */
     var onInputResult: (dialog: Dialog, inputText: CharSequence) -> Boolean = { _, _ ->
         false
@@ -77,6 +79,7 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
             if (onInputResult.invoke(dialog, dialogViewHolder.ev(R.id.edit_text_view).string())) {
 
             } else {
+                dialog.hideSoftInput()
                 dialog.dismiss()
             }
         }
@@ -84,6 +87,10 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
     }
 
     override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
+        if (dialogTitle == null) {
+            //防止标题为空时, 隐藏了控制按钮
+            dialogTitle = hintInputString
+        }
         super.initDialogView(dialog, dialogViewHolder)
 
         val editView = dialogViewHolder.ev(R.id.edit_text_view)
@@ -95,6 +102,10 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
         if (showSoftInput) {
             dialogViewHolder.postDelay(60) { editView?.showSoftInput() }
         }
+    }
+
+    override fun onDialogDestroy(dialog: Dialog, dialogViewHolder: DslViewHolder) {
+        super.onDialogDestroy(dialog, dialogViewHolder)
     }
 
     fun _configView(editView: EditText?, indicatorView: TextIndicator?, positiveButton: View?) {

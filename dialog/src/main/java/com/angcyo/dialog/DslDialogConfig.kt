@@ -28,6 +28,7 @@ import com.angcyo.library.ex.undefined_res
 import com.angcyo.lifecycle.onDestroy
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.dslViewHolder
+import com.angcyo.widget.base.hideSoftInput
 import com.angcyo.widget.base.replace
 import java.io.Serializable
 
@@ -201,16 +202,21 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
     var negativeButtonText: CharSequence? = null //取消
     var neutralButtonText: CharSequence? = null //中立
 
+    //确定
     var positiveButtonListener: ((dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit)? =
         { dialog, _ ->
+            dialog.hideSoftInput()
             dialog.dismiss()
         }
 
+    //取消
     var negativeButtonListener: ((dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit)? =
         { dialog, _ ->
+            dialog.hideSoftInput()
             dialog.cancel()
         }
 
+    //中立
     var neutralButtonListener: ((dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit)? = null
 
     /**Dismiss会触发*/
@@ -626,4 +632,9 @@ fun dslDialog(context: Context, dialog: Dialog, action: DslDialogConfig.() -> Un
     dslDialog.action()
     dslDialog.showAndConfigDialog(dialog)
     return dialog
+}
+
+/**隐藏软键盘*/
+fun Dialog.hideSoftInput() {
+    window?.decorView?.hideSoftInput()
 }
