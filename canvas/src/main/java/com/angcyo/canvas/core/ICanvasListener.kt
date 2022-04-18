@@ -44,8 +44,8 @@ interface ICanvasListener {
 
     }
 
-    /**[IItemRenderer]改变[Matrix]之后回调*/
-    fun onItemMatrixChangeAfter(itemRenderer: IItemRenderer<*>) {
+    /**[IItemRenderer]改变[Bounds]之后的回调*/
+    fun onItemBoundsChanged(itemRenderer: IItemRenderer<*>) {
 
     }
 

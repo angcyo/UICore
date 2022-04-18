@@ -50,8 +50,8 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
         updateControlPointLocation()
     }
 
-    override fun onItemMatrixChangeAfter(itemRenderer: IItemRenderer<*>) {
-        super.onItemMatrixChangeAfter(itemRenderer)
+    override fun onItemBoundsChanged(itemRenderer: IItemRenderer<*>) {
+        super.onItemBoundsChanged(itemRenderer)
         if (itemRenderer == controlHandler.selectedItemRender) {
             updateControlPointLocation()
         }

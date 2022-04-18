@@ -323,10 +323,6 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     ) {
         itemRenderer?.let {
             it.translateBy(distanceX, distanceY)
-            canvasListenerList.forEach {
-                it.onItemMatrixChangeAfter(itemRenderer)
-            }
-
             postInvalidateOnAnimation()
         }
     }
@@ -335,9 +331,6 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     fun scaleItem(itemRenderer: BaseItemRenderer<*>?, scaleX: Float = 1f, scaleY: Float = 1f) {
         itemRenderer?.let {
             it.scaleBy(scaleX, scaleY)
-            canvasListenerList.forEach {
-                it.onItemMatrixChangeAfter(itemRenderer)
-            }
             postInvalidateOnAnimation()
         }
     }
@@ -349,9 +342,6 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     ) {
         itemRenderer?.let {
             it.scaleBy(scaleX, scaleY, true)
-            canvasListenerList.forEach {
-                it.onItemMatrixChangeAfter(itemRenderer)
-            }
             postInvalidateOnAnimation()
         }
     }
@@ -360,10 +350,6 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     fun rotateItem(itemRenderer: BaseItemRenderer<*>?, degrees: Float) {
         itemRenderer?.let {
             it.rotateBy(degrees)
-            canvasListenerList.forEach {
-                it.onItemMatrixChangeAfter(itemRenderer)
-            }
-
             postInvalidateOnAnimation()
         }
     }

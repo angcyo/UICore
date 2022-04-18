@@ -44,7 +44,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
             val old = field
             field = value
             if (old != value && value != null) {
-                onUpdateRendererItem(value)
+                updateRendererItem(value)
             }
         }
 
@@ -77,10 +77,15 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
     override fun changeBounds(block: RectF.() -> Unit) {
         getRendererBounds().block()
         onRendererBoundsChanged()
+        //notify
+        canvasViewBox.canvasView.canvasListenerList.forEach {
+            it.onItemBoundsChanged(this)
+        }
     }
 
-    override fun onUpdateRendererItem(item: T) {
-        super.onUpdateRendererItem(item)
+    override fun updateRendererItem(item: T) {
+        super.updateRendererItem(item)
+        rendererItem = item
     }
 
     override fun updateLockScaleRatio(lock: Boolean) {
