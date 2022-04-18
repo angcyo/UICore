@@ -31,12 +31,14 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
         val textWidth = paint.textWidth(rendererItem?.text)
         val textHeight = paint.textHeight()
         if (_bounds.isEmpty) {
-            _bounds.set(0f, 0f, textWidth, textHeight)
-            onRendererBoundsChanged()
+            changeBounds {
+                set(0f, 0f, textWidth, textHeight)
+            }
         } else {
             if (textWidth > 0 && textHeight > 0) {
-                _bounds.adjustSizeWithLT(textWidth, textHeight)
-                onRendererBoundsChanged()
+                changeBounds {
+                    adjustSizeWithLT(textWidth, textHeight)
+                }
             }
         }
     }
@@ -44,16 +46,18 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
     override fun onCanvasSizeChanged(canvasView: CanvasView) {
         super.onCanvasSizeChanged(canvasView)
         if (_bounds.isEmpty) {
-            _bounds.set(0f, 0f, paint.textWidth(rendererItem?.text), paint.textHeight())
-            onRendererBoundsChanged()
+            changeBounds {
+                set(0f, 0f, paint.textWidth(rendererItem?.text), paint.textHeight())
+            }
         }
     }
 
     override fun onControlFinish(controlPoint: ControlPoint) {
         super.onControlFinish(controlPoint)
         if (controlPoint.type == ControlPoint.POINT_TYPE_SCALE) {
-            _bounds.adjustSizeWithLT(paint.textWidth(rendererItem?.text ?: ""), paint.textHeight())
-            onRendererBoundsChanged()
+            changeBounds {
+                adjustSizeWithLT(paint.textWidth(rendererItem?.text ?: ""), paint.textHeight())
+            }
         }
     }
 
@@ -65,11 +69,9 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
         paint.textSize = paint.textSize * max
 
         if (widthCenter) {
-            _bounds.adjustSizeWithCenter(
-                paint.textWidth(rendererItem?.text ?: ""),
-                paint.textHeight()
-            )
-            onRendererBoundsChanged()
+            changeBounds {
+                adjustSizeWithCenter(paint.textWidth(rendererItem?.text ?: ""), paint.textHeight())
+            }
         } else {
             //等到操作结束后再更新
             //bounds.adjustSizeWithLT(paint.textWidth(rendererItem?.text ?: ""), paint.textHeight())

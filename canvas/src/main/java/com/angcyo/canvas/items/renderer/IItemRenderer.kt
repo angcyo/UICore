@@ -31,7 +31,10 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     }
 
     /**当渲染的bounds改变后回调. 进行了平移, 缩放, 旋转等操作后.
-     * 需要主动触发此方法, 用来更新辅助bounds
+     * 需要主动触发此方法, 用来更新辅助bounds.
+     *
+     * 可以在此方法中限制bounds大小
+     *
      * [com.angcyo.canvas.core.IRenderer.getRendererBounds]*/
     fun onRendererBoundsChanged() {
 

@@ -74,6 +74,11 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
 
     override fun getVisualRotateBounds(): RectF = _visualRotateBounds
 
+    override fun changeBounds(block: RectF.() -> Unit) {
+        getRendererBounds().block()
+        onRendererBoundsChanged()
+    }
+
     override fun onUpdateRendererItem(item: T) {
         super.onUpdateRendererItem(item)
     }
@@ -132,9 +137,8 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
     override fun translateBy(distanceX: Float, distanceY: Float) {
         _tempMatrix.reset()
         _tempMatrix.postTranslate(distanceX, distanceY)
-        getRendererBounds().apply {
+        changeBounds {
             _tempMatrix.mapRect(this, this)
-            onRendererBoundsChanged()
         }
     }
 
@@ -147,28 +151,28 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
         _tempMatrix.reset()
         this.scaleX *= scaleX
         this.scaleY *= scaleY
-        getRendererBounds().apply {
+        changeBounds {
             val x = if (widthCenter) centerX() else left
             val y = if (widthCenter) centerY() else top
             _tempPoint.set(x, y)
             mapRotatePoint(_tempPoint, _tempPoint)
             _tempMatrix.postScale(scaleX, scaleY, _tempPoint.x, _tempPoint.y)
             _tempMatrix.mapRect(this, this)
-            onRendererBoundsChanged()
         }
     }
 
     /**旋转元素, 旋转操作不能用matrix, 不能将操作数据更新到bounds
      * [degrees] 旋转的角度*/
     override fun rotateBy(degrees: Float) {
-        rotate += degrees
-        rotate %= 360
         /*_tempMatrix.reset()
        getRendererBounds().apply {
            _tempMatrix.postRotate(degrees, centerX(), centerY())
            _tempMatrix.mapRect(this, this)
        }*/
-        onRendererBoundsChanged()
+        changeBounds {
+            rotate += degrees
+            rotate %= 360
+        }
     }
 
     //</editor-fold desc="控制方法">

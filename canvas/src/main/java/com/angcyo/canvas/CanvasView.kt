@@ -257,7 +257,9 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
                     //当前可视化的中点坐标
 
                     val rect = canvasViewBox.getContentMatrixRect(_width, _height)
-                    item._bounds.set(rect)
+                    item.changeBounds {
+                        set(rect)
+                    }
                 }
             }
             postInvalidateOnAnimation()

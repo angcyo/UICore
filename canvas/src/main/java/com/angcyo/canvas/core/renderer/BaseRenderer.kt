@@ -38,4 +38,9 @@ abstract class BaseRenderer(val canvasViewBox: CanvasViewBox) : IRenderer {
     override fun onCanvasMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
         canvasViewBox.calcItemVisibleBounds(this, _visualBounds)
     }
+
+    /**调用地方用来更新[getRendererBounds]*/
+    open fun changeBounds(block: RectF.() -> Unit) {
+        getRendererBounds().block()
+    }
 }
