@@ -1,5 +1,6 @@
 package com.angcyo.pager
 
+import android.graphics.Bitmap
 import android.net.Uri
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -18,8 +19,8 @@ import com.angcyo.library.model.LoaderMedia
 
 /**[Fragment]中, 快速启动[Pager]大图视频浏览界面*/
 fun Fragment.dslPager(
-        fragment: Class<out ViewTransitionFragment> = PagerTransitionFragment::class.java,
-        action: PagerTransitionCallback.() -> Unit
+    fragment: Class<out ViewTransitionFragment> = PagerTransitionFragment::class.java,
+    action: PagerTransitionCallback.() -> Unit
 ) {
     //禁止touch事件
     activity?.interceptTouchEvent()
@@ -44,7 +45,11 @@ fun Fragment.dslPager(
  * */
 
 /**单图预览*/
-fun Fragment.dslSinglePager(fromView: View?, path: String?, action: PagerTransitionCallback.() -> Unit = {}) {
+fun Fragment.dslSinglePager(
+    fromView: View?,
+    path: String?,
+    action: PagerTransitionCallback.() -> Unit = {}
+) {
     if (path.isNullOrEmpty()) {
         return
     }
@@ -55,13 +60,32 @@ fun Fragment.dslSinglePager(fromView: View?, path: String?, action: PagerTransit
     }
 }
 
-fun Fragment.dslSinglePager(fromView: View?, uri: Uri?, action: PagerTransitionCallback.() -> Unit = {}) {
+fun Fragment.dslSinglePager(
+    fromView: View?,
+    uri: Uri?,
+    action: PagerTransitionCallback.() -> Unit = {}
+) {
     if (uri == null) {
         return
     }
     dslPager {
         this.fromView = fromView
         addMedia(uri)
+        action()
+    }
+}
+
+fun Fragment.dslSinglePager(
+    fromView: View?,
+    bitmap: Bitmap?,
+    action: PagerTransitionCallback.() -> Unit = {}
+) {
+    if (bitmap == null) {
+        return
+    }
+    dslPager {
+        this.fromView = fromView
+        addMedia(bitmap)
         action()
     }
 }
@@ -78,7 +102,12 @@ fun Fragment.dslSinglePager(fromView: View?, uri: Uri?, action: PagerTransitionC
  * */
 
 /**列表预览*/
-fun Fragment.dslRecyclerPager(recyclerView: RecyclerView?, startPosition: Int, mediaList: List<LoaderMedia>, action: PagerTransitionCallback.() -> Unit = {}) {
+fun Fragment.dslRecyclerPager(
+    recyclerView: RecyclerView?,
+    startPosition: Int,
+    mediaList: List<LoaderMedia>,
+    action: PagerTransitionCallback.() -> Unit = {}
+) {
     if (mediaList.isNullOrEmpty()) {
         return
     }

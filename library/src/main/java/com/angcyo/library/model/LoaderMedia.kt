@@ -1,5 +1,6 @@
 package com.angcyo.library.model
 
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Parcelable
 import com.angcyo.library.ex.*
@@ -33,6 +34,9 @@ data class LoaderMedia(
 
     //Android Q文件存储机制修改成了沙盒模式, 不能直接通过路径的方式访问文件, 优先uri加载
     var localUri: Uri? = null,
+
+    //直接加载的内存图片
+    var bitmap: Bitmap? = null,
 
     //数据库字段↓
 

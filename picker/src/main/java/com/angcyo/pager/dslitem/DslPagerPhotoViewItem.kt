@@ -1,9 +1,11 @@
 package com.angcyo.pager.dslitem
 
 import android.net.Uri
+import android.widget.ImageView
 import com.angcyo.image.dslitem.DslPhotoViewItem
 import com.angcyo.library.model.LoaderMedia
 import com.angcyo.library.model.loadUri
+import com.angcyo.widget.DslViewHolder
 
 /**
  *
@@ -14,6 +16,7 @@ import com.angcyo.library.model.loadUri
  */
 
 open class DslPagerPhotoViewItem : DslPhotoViewItem() {
+
     var itemLoaderMedia: LoaderMedia? = null
         get() = field ?: (itemData as? LoaderMedia)
 
@@ -21,4 +24,14 @@ open class DslPagerPhotoViewItem : DslPhotoViewItem() {
         get() {
             return itemLoaderMedia?.loadUri() ?: field
         }
+
+    override fun loadImage(itemHolder: DslViewHolder, imageView: ImageView) {
+        val bitmap = itemLoaderMedia?.bitmap
+        if (bitmap == null) {
+            super.loadImage(itemHolder, imageView)
+        } else {
+            imageView.setImageBitmap(bitmap)
+            onImageLoadSucceed(itemHolder, imageView)
+        }
+    }
 }

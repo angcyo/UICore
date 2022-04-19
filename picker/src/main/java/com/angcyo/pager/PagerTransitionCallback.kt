@@ -1,5 +1,6 @@
 package com.angcyo.pager
 
+import android.graphics.Bitmap
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -95,6 +96,10 @@ open class PagerTransitionCallback : ViewTransitionCallback(), ViewPager.OnPageC
 
     fun addMedia(uri: Uri?) {
         addMedia(LoaderMedia(localUri = uri))
+    }
+
+    fun addMedia(bitmap: Bitmap?) {
+        addMedia(LoaderMedia(bitmap = bitmap))
     }
 
     fun addMedia(media: LoaderMedia) {
