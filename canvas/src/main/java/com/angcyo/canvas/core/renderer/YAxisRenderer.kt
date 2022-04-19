@@ -2,6 +2,7 @@ package com.angcyo.canvas.core.renderer
 
 import android.graphics.Canvas
 import android.graphics.Matrix
+import androidx.core.graphics.withClip
 import androidx.core.graphics.withSave
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.CanvasView
@@ -38,8 +39,9 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox) :
     }
 
     override fun render(canvasView: CanvasView, canvas: Canvas) {
-        val right = _renderBounds.right
-        canvas.drawLine(right, _renderBounds.top, right, _renderBounds.bottom, linePaint)
+        val bounds = getRendererBounds()
+        val right = bounds.right
+        canvas.drawLine(right, bounds.top, right, bounds.bottom, linePaint)
 
         val plusList = axis.plusList
         val minusList = axis.minusList
@@ -53,21 +55,17 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox) :
         val contentBottom = canvasViewBox.getContentBottom()
 
         //绘制刻度
-        canvas.withTranslation(y = translateY) {
+        canvas.withClip(0f, contentTop, right, contentBottom) {
+            canvas.withTranslation(y = translateY) {
+                plusList.forEachIndexed { index, top ->
+                    val _top = top * scaleY
+                    drawLineAndLabel(canvas, index, _top, right, scaleY)
+                }
 
-            //先/后 clip, 都有效果
-            val clipBottom = contentBottom - translateY
-            val clipTop = clipBottom - _renderBounds.height()
-            clipRect(_renderBounds.left, clipTop, _renderBounds.right, clipBottom)
-
-            plusList.forEachIndexed { index, top ->
-                val _top = top * scaleY
-                drawLineAndLabel(canvas, index, _top, right, scaleY)
-            }
-
-            minusList.forEachIndexed { index, top ->
-                val _top = top * scaleY
-                drawLineAndLabel(canvas, -index, _top, right, scaleY)
+                minusList.forEachIndexed { index, top ->
+                    val _top = top * scaleY
+                    drawLineAndLabel(canvas, -index, _top, right, scaleY)
+                }
             }
         }
 

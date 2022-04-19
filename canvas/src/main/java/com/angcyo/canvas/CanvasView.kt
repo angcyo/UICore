@@ -83,7 +83,9 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
     init {
         rendererAfterList.add(MonitorRenderer(canvasViewBox))
-        rendererAfterList.add(CenterRenderer(canvasViewBox))
+        if (BuildConfig.DEBUG) {
+            rendererAfterList.add(CenterRenderer(canvasViewBox))
+        }
     }
 
     /**枚举[BaseAxisRenderer]*/

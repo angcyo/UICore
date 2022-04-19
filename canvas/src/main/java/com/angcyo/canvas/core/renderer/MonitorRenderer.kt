@@ -65,54 +65,62 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
     val _tempRect: RectF = RectF()
 
     override fun render(canvasView: CanvasView, canvas: Canvas) {
-        if (_isTouchDown || BuildConfig.DEBUG) {
-            //绘制当前的缩放比例
-            val valueUnit = canvasViewBox.valueUnit
-            val _rect = canvasViewBox.contentRect
-            //val rect = canvasViewBox.getContentMatrixBounds()
+        if (_isTouchDown) {
+            val text = if (BuildConfig.DEBUG) {
 
-            canvasViewBox.matrix.invert(_tempMatrix)
-            val rect = _tempMatrix.mapRectF(_rect)
-            val touchPoint = _tempMatrix.mapPoint(_touchPoint, _tempPoint)
+                //绘制当前的缩放比例
+                val valueUnit = canvasViewBox.valueUnit
+                val _rect = canvasViewBox.contentRect
+                //val rect = canvasViewBox.getContentMatrixBounds()
 
-            val tpStr = buildString {
-                val xValue = valueUnit.convertPixelToValue(touchPoint.x - _rect.left)
-                val yValue = valueUnit.convertPixelToValue(touchPoint.y - _rect.top)
+                canvasViewBox.matrix.invert(_tempMatrix)
+                val rect = _tempMatrix.mapRectF(_rect)
+                val touchPoint = _tempMatrix.mapPoint(_touchPoint, _tempPoint)
 
-                val xUnit = valueUnit.formattedValueUnit(xValue)
-                val yUnit = valueUnit.formattedValueUnit(yValue)
-                append("($xUnit, $yUnit)")
-                appendLine()
-                append("touch:(${_touchPoint.x}, ${_touchPoint.y})") //touch在视图上的真实坐标
-                append("->")
-                append("(${touchPoint.x}, ${touchPoint.y})") //映射后的坐标
+                val tpStr = buildString {
+                    val xValue = valueUnit.convertPixelToValue(touchPoint.x - _rect.left)
+                    val yValue = valueUnit.convertPixelToValue(touchPoint.y - _rect.top)
 
-                //当前视图中点, 距离坐标系左上角的距离 像素和单位数值
-                val centerPoint = canvasViewBox.getCoordinateSystemCenter()
+                    val xUnit = valueUnit.formattedValueUnit(xValue)
+                    val yUnit = valueUnit.formattedValueUnit(yValue)
+                    append("($xUnit, $yUnit)")
+                    appendLine()
+                    append("touch:(${_touchPoint.x}, ${_touchPoint.y})") //touch在视图上的真实坐标
+                    append("->")
+                    append("(${touchPoint.x}, ${touchPoint.y})") //映射后的坐标
 
-                val centerXUnit = valueUnit.convertPixelToValueUnit(centerPoint.x)
-                val centerYUnit = valueUnit.convertPixelToValueUnit(centerPoint.y)
+                    //当前视图中点, 距离坐标系左上角的距离 像素和单位数值
+                    val centerPoint = canvasViewBox.getCoordinateSystemCenter()
 
-                appendLine()
-                append("center:(${centerPoint.x}, ${centerPoint.y}):($centerXUnit, ${centerYUnit})")
+                    val centerXUnit = valueUnit.convertPixelToValueUnit(centerPoint.x)
+                    val centerYUnit = valueUnit.convertPixelToValueUnit(centerPoint.y)
 
-                /*val _centerPoint = PointF(_rect.centerX(), _rect.centerY())
-                val centerPoint = PointF(rect.centerX(), rect.centerY())
-                appendLine()
-                append("center:(${_centerPoint.x}, ${_centerPoint.y})") //touch在视图上的真实坐标
-                append("->")
-                append("(${centerPoint.x}, ${centerPoint.y})") //映射后的坐标*/
+                    appendLine()
+                    append("center:(${centerPoint.x}, ${centerPoint.y}):($centerXUnit, ${centerYUnit})")
+
+                    /*val _centerPoint = PointF(_rect.centerX(), _rect.centerY())
+                    val centerPoint = PointF(rect.centerX(), rect.centerY())
+                    appendLine()
+                    append("center:(${_centerPoint.x}, ${_centerPoint.y})") //touch在视图上的真实坐标
+                    append("->")
+                    append("(${centerPoint.x}, ${centerPoint.y})") //映射后的坐标*/
+                }
+
+                val rectStr = buildString {
+                    append("(${_rect.left}, ${_rect.top}, ${_rect.right}, ${_rect.bottom})")
+                    append("↓\n")
+                    append("(${rect.left}, ${rect.top}, ${rect.right}, ${rect.bottom})") //映射后
+                }
+
+                "${tpStr}\n${rectStr}\n${(canvasViewBox._scaleX * 100).toInt()}%"
+            } else {
+                "${(canvasViewBox._scaleX * 100).toInt()}%"
             }
 
-            val rectStr = buildString {
-                append("(${_rect.left}, ${_rect.top}, ${_rect.right}, ${_rect.bottom})")
-                append("↓\n")
-                append("(${rect.left}, ${rect.top}, ${rect.right}, ${rect.bottom})") //映射后
-            }
+            //StaticLayout
+            ensureLayout(text)
 
-            val text = "${tpStr}\n${rectStr}\n${(canvasViewBox._scaleX * 100).toInt()}%"
-            assumeLayout(text)
-
+            //draw
             canvas.withTranslation(x = canvasViewBox.getContentLeft(), y = _renderBounds.top) {
                 layout?.draw(canvas)
             }
@@ -120,7 +128,7 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
     }
 
     var _layoutSource: CharSequence? = null
-    fun assumeLayout(source: CharSequence) {
+    fun ensureLayout(source: CharSequence) {
         if (layout == null || _layoutSource != source) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 layout = StaticLayout.Builder.obtain(

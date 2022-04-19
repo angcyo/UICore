@@ -2,6 +2,7 @@ package com.angcyo.canvas.core.renderer
 
 import android.graphics.Canvas
 import android.graphics.Matrix
+import androidx.core.graphics.withClip
 import androidx.core.graphics.withSave
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.CanvasView
@@ -51,21 +52,17 @@ class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox) :
         val contentBottom = canvasViewBox.getContentBottom()
 
         //绘制刻度
-        canvas.withTranslation(x = translateX) {
+        canvas.withClip(contentLeft, 0f, contentRight, bottom) {
+            canvas.withTranslation(x = translateX) {
+                plusList.forEachIndexed { index, left ->
+                    val _left = left * scaleX
+                    drawLineAndLabel(canvas, index, _left, bottom, scaleX)
+                }
 
-            //先/后 clip, 都有效果
-            val clipRight = contentRight - translateX
-            val clipLeft = clipRight - bounds.width()
-            clipRect(clipLeft, bounds.top, clipRight, bottom)
-
-            plusList.forEachIndexed { index, left ->
-                val _left = left * scaleX
-                drawLineAndLabel(canvas, index, _left, bottom, scaleX)
-            }
-
-            minusList.forEachIndexed { index, left ->
-                val _left = left * scaleX
-                drawLineAndLabel(canvas, -index, _left, bottom, scaleX)
+                minusList.forEachIndexed { index, left ->
+                    val _left = left * scaleX
+                    drawLineAndLabel(canvas, -index, _left, bottom, scaleX)
+                }
             }
         }
 
