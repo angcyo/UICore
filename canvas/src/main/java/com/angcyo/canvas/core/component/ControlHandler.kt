@@ -54,6 +54,7 @@ class ControlHandler : BaseComponent() {
     //按下的坐标
     val _touchPoint = PointF()
     val _movePoint = PointF()
+    var touchPointerId: Int = -1
 
     //</editor-fold desc="控制点">
 
@@ -63,8 +64,10 @@ class ControlHandler : BaseComponent() {
         var handle = false
         var holdControlPoint = touchControlPoint
 
+        val selectedItemRender = selectedItemRender
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
+                touchPointerId = event.getPointerId(0)
                 _touchPoint.set(event.x, event.y)
                 val touchPoint = _touchPoint
 
@@ -76,9 +79,7 @@ class ControlHandler : BaseComponent() {
 
                     //notify
                     if (controlPoint != null) {
-                        selectedItemRender?.let {
-                            it.onControlStart(controlPoint)
-                        }
+                        selectedItemRender.onControlStart(controlPoint)
                     }
                 }
 
@@ -87,38 +88,44 @@ class ControlHandler : BaseComponent() {
                     view.selectedItem(itemRenderer)
                 }
             }
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                touchControlPoint = null
+                touchPointerId = -1
+            }
             MotionEvent.ACTION_MOVE -> {
-                _movePoint.set(event.x, event.y)
-                if (touchControlPoint == null) {
-                    //没有在控制点上按压时, 才处理本体的移动
-                    selectedItemRender?.let {
-                        //canvasView.canvasViewBox.matrix.invert(_tempMatrix)
-                        //canvasView.canvasViewBox.matrix.mapPoint(_movePointList[0])
-                        //val p1 = _tempMatrix.mapPoint(_movePointList[0]) //_movePointList[0]
-                        //canvasView.canvasViewBox.matrix.mapPoint(_touchPointList[0])
-                        //val p2 = _tempMatrix.mapPoint(_touchPointList[0])//_touchPointList[0]
+                if (touchPointerId == event.getPointerId(0)) {
+                    _movePoint.set(event.x, event.y)
+                    if (touchControlPoint == null) {
+                        //没有在控制点上按压时, 才处理本体的移动
+                        if (selectedItemRender != null) {
+                            //canvasView.canvasViewBox.matrix.invert(_tempMatrix)
+                            //canvasView.canvasViewBox.matrix.mapPoint(_movePointList[0])
+                            //val p1 = _tempMatrix.mapPoint(_movePointList[0]) //_movePointList[0]
+                            //canvasView.canvasViewBox.matrix.mapPoint(_touchPointList[0])
+                            //val p2 = _tempMatrix.mapPoint(_touchPointList[0])//_touchPointList[0]
 
-                        val p1 = view.canvasViewBox.mapCoordinateSystemPoint(_movePoint)
-                        val p1x = p1.x
-                        val p1y = p1.y
+                            val p1 = view.canvasViewBox.mapCoordinateSystemPoint(_movePoint)
+                            val p1x = p1.x
+                            val p1y = p1.y
 
-                        val p2 = view.canvasViewBox.mapCoordinateSystemPoint(_touchPoint)
-                        val p2x = p2.x
-                        val p2y = p2.y
+                            val p2 = view.canvasViewBox.mapCoordinateSystemPoint(_touchPoint)
+                            val p2x = p2.x
+                            val p2y = p2.y
 
-                        val dx1 = p1x - p2x
-                        val dy1 = p1y - p2y
+                            val dx1 = p1x - p2x
+                            val dy1 = p1y - p2y
 
-                        if (dx1 != 0f || dy1 != 0f) {
-                            handle = true
-                            view.translateItem(it, dx1, dy1)
-                            L.i("移动->x:$dx1 y:$dy1")
+                            if (dx1 != 0f || dy1 != 0f) {
+                                handle = true
+                                view.translateItem(selectedItemRender, dx1, dy1)
+                                L.i("移动->x:$dx1 y:$dy1")
+                            }
                         }
+                    } else {
+                        handle = true
                     }
-                } else {
-                    handle = true
+                    _touchPoint.set(_movePoint)
                 }
-                _touchPoint.set(_movePoint)
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 //notify
