@@ -3,7 +3,6 @@ package com.angcyo.canvas.core
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
-import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils._tempRectF
 import com.angcyo.canvas.utils.clamp
@@ -17,7 +16,7 @@ import com.angcyo.library.ex.matrixAnimator
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/01
  */
-class CanvasViewBox(val canvasView: CanvasView) {
+class CanvasViewBox(val canvasView: ICanvasView) {
 
     //<editor-fold desc="控制属性">
 
@@ -56,10 +55,6 @@ class CanvasViewBox(val canvasView: CanvasView) {
     /**内容可视区域*/
     val contentRect = RectF()
 
-    /**[CanvasView]视图的宽高*/
-    var _canvasViewWidth: Int = 0
-    var _canvasViewHeight: Int = 0
-
     //当前的缩放比例
     var _scaleX: Float = 1f
     var _scaleY: Float = 1f
@@ -76,13 +71,18 @@ class CanvasViewBox(val canvasView: CanvasView) {
 
     //<editor-fold desc="operate">
 
+    fun updateContentBox(rect: RectF) {
+        updateContentBox(rect.left, rect.top, rect.right, rect.bottom)
+    }
+
     /**更新可是内容范围*/
-    fun updateContentBox() {
-        _canvasViewWidth = canvasView.measuredWidth
-        _canvasViewHeight = canvasView.measuredHeight
-
-        contentRect.set(getContentLeft(), getContentTop(), getContentRight(), getContentBottom())
-
+    fun updateContentBox(left: Float, top: Float, right: Float, bottom: Float) {
+        contentRect.set(
+            left + contentOffsetLeft,
+            top + contentOffsetTop,
+            right - contentOffsetRight,
+            bottom - contentOffsetBottom
+        )
         //刷新视图
         refresh(matrix)
     }
@@ -90,35 +90,23 @@ class CanvasViewBox(val canvasView: CanvasView) {
     /**刷新*/
     fun refresh(newMatrix: Matrix) {
         oldMatrix.set(matrix)
-        canvasView.canvasListenerList.forEach {
-            it.onCanvasMatrixChangeBefore(matrix, newMatrix)
-        }
+        canvasView.dispatchCanvasBoxMatrixChangeBefore(matrix, newMatrix)
+
         matrix.set(newMatrix)
         limitTranslateAndScale(matrix)
 
-        canvasView.canvasMatrixUpdate(matrix, oldMatrix)
-        canvasView.invalidate()
-        canvasView.canvasListenerList.forEach {
-            it.onCanvasMatrixChangeAfter(matrix, oldMatrix)
-        }
+        canvasView.dispatchCanvasBoxMatrixChanged(matrix, oldMatrix)
+
+        canvasView.refresh()
     }
 
-    /**获取变换后, 可视化的中点坐标, 像素.
-     * 并非与坐标系中点的距离*/
-    fun getContentMatrixPoint(result: PointF = _tempPoint): PointF {
-        matrix.invert(invertMatrix)
-        //转换后中点对应的像素坐标
-        val contentCenterX = getContentCenterX()
-        val contentCenterY = getContentCenterY()
-        val centerPoint = invertMatrix.mapPoint(contentCenterX, contentCenterY)
-        /*centerPoint.x -= getCoordinateSystemX()
-        centerPoint.y -= getCoordinateSystemY()*/
-        return result.apply { set(centerPoint) }
-    }
-
-    /**在转换后的视图中心取一个指定宽高的矩形坐标*/
-    fun getContentMatrixRect(width: Float, height: Float, result: RectF = _tempRect): RectF {
-        val point = getContentMatrixPoint()
+    /**在当前视图中心获取一个坐标系中指定宽高的矩形*/
+    fun getCoordinateSystemCenterRect(
+        width: Float,
+        height: Float,
+        result: RectF = _tempRect
+    ): RectF {
+        val point = getCoordinateSystemCenter()
         result.set(
             point.x - width / 2,
             point.y - height / 2,
@@ -164,12 +152,20 @@ class CanvasViewBox(val canvasView: CanvasView) {
         return result
     }
 
-    /**计算[item]在当前视图中的坐标, 相对于[view]左上角的矩形坐标*/
-    fun calcItemVisibleBounds(item: IRenderer, result: RectF): RectF {
+    /**[bounds] 相对于坐标系原点的坐标
+     * [result] 返回相对于视图原点的坐标*/
+    fun calcItemRenderBounds(bounds: RectF, result: RectF): RectF {
+        _tempRect.set(bounds)
+        _tempRect.offset(getCoordinateSystemX(), getCoordinateSystemY())
+        result.set(_tempRect)
+        return result
+    }
+
+    /**计算[item]在当前视图中的坐标, 相对于[view]左上角的矩形坐标
+     * [bounds] 可以直接绘制的坐标*/
+    fun calcItemVisualBounds(bounds: RectF, result: RectF): RectF {
         //重点
 
-        //bounds, 可以直接绘制的坐标
-        val bounds = item.getRendererBounds()
         //映射之后, 坐标相对于视图左上角的坐标
         matrix.mapRectF(bounds, result)
 
@@ -190,29 +186,15 @@ class CanvasViewBox(val canvasView: CanvasView) {
 
     //<editor-fold desc="base">
 
-    fun isCanvasInit(): Boolean = _canvasViewWidth > 0 && _canvasViewHeight > 0
+    fun isCanvasInit(): Boolean = !contentRect.isEmpty
 
-    fun getContentLeft(): Float {
-        if (canvasView.yAxisRender.axis.enable) {
-            return canvasView.yAxisRender.getRendererBounds().right + contentOffsetLeft
-        }
-        return contentOffsetLeft
-    }
+    fun getContentLeft(): Float = contentRect.left
 
-    fun getContentRight(): Float {
-        return _canvasViewWidth - contentOffsetRight
-    }
+    fun getContentRight(): Float = contentRect.right
 
-    fun getContentTop(): Float {
-        if (canvasView.xAxisRender.axis.enable) {
-            return canvasView.xAxisRender.getRendererBounds().bottom + contentOffsetTop
-        }
-        return contentOffsetTop
-    }
+    fun getContentTop(): Float = contentRect.top
 
-    fun getContentBottom(): Float {
-        return _canvasViewHeight - contentOffsetBottom
-    }
+    fun getContentBottom(): Float = contentRect.bottom
 
     fun getContentCenterX(): Float {
         return (getContentLeft() + getContentRight()) / 2
@@ -304,11 +286,24 @@ class CanvasViewBox(val canvasView: CanvasView) {
 
     //<editor-fold desc="value unit">
 
+    /**像素, 坐标单位转换*/
     var valueUnit: ValueUnit = ValueUnit()
 
     //</editor-fold desc="value unit">
 
     //<editor-fold desc="coordinate system">
+
+    /**获取当前视图中心距离坐标系原点的坐标*/
+    fun getCoordinateSystemCenter(result: PointF = _tempPoint): PointF {
+        matrix.invert(invertMatrix)
+        //转换后中点对应的像素坐标
+        val contentCenterX = getContentCenterX()
+        val contentCenterY = getContentCenterY()
+        val centerPoint = invertMatrix.mapPoint(contentCenterX, contentCenterY)
+        centerPoint.x -= getCoordinateSystemX()
+        centerPoint.y -= getCoordinateSystemY()
+        return result.apply { set(centerPoint) }
+    }
 
     /**获取坐标系启动的x坐标*/
     fun getCoordinateSystemX(): Float {

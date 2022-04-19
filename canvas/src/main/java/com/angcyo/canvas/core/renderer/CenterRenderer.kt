@@ -18,13 +18,24 @@ class CenterRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox)
     }
 
     override fun render(canvasView: CanvasView, canvas: Canvas) {
-        val x = (canvasViewBox.getContentLeft() + canvasViewBox.getContentRight()) / 2
-        val y = (canvasViewBox.getContentTop() + canvasViewBox.getContentBottom()) / 2
+
+        //绘制坐标轴中心
+        paint.color = Color.GREEN
+        var x = canvasViewBox.getContentCenterX()
+        var y = canvasViewBox.getContentCenterY()
 
         //横线
         canvas.drawLine(0f, y, canvasViewBox.getContentRight(), y, paint)
-
         //竖线
         canvas.drawLine(x, 0f, x, canvasViewBox.getContentBottom(), paint)
+
+        //绘制视图中心
+        paint.color = Color.MAGENTA
+        x = canvasView.measuredWidth / 2f
+        y = canvasView.measuredHeight / 2f
+        //横线
+        canvas.drawLine(0f, y, canvasView.measuredWidth.toFloat(), y, paint)
+        //竖线
+        canvas.drawLine(x, 0f, x, canvasView.measuredHeight.toFloat(), paint)
     }
 }

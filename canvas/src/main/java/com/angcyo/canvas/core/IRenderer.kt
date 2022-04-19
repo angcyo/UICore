@@ -17,12 +17,15 @@ interface IRenderer {
     /**是否可见*/
     fun isVisible(): Boolean
 
-    /**获取坐标系中的坐标, 非视图系的坐标
-     * 相对于坐标系原点的坐标*/
+    /**距离坐标系原点的像素坐标*/
+    fun getBounds(): RectF
+
+    /**获取坐标系中的可绘制坐标, 非视图系的坐标
+     * 相对于坐标系原点的像素坐标*/
     fun getRendererBounds(): RectF
 
     /**获取视图系中的坐标
-     * 相对于视图左上角的坐标*/
+     * 相对于视图左上角的像素坐标*/
     fun getVisualBounds(): RectF
 
     //</editor-fold desc="属性操作">
@@ -38,7 +41,7 @@ interface IRenderer {
      * 当视图改变后的回调
      * 可以用来计算数据, 并缓存
      * [com.angcyo.canvas.CanvasView.canvasMatrixUpdate]*/
-    fun onCanvasMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix)
+    fun onCanvasBoxMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix)
 
     //</editor-fold desc="回调">
 

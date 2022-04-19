@@ -16,8 +16,11 @@ abstract class BaseRenderer(val canvasViewBox: CanvasViewBox) : IRenderer {
     /**是否可见, 决定是否绘制*/
     var _visible: Boolean = true
 
-    /**在坐标系中的坐标*/
+    /**距离坐标系原点的像素坐标*/
     val _bounds = RectF()
+
+    /**在坐标系中的坐标*/
+    val _renderBounds = RectF()
 
     /**相对于视图左上角的坐标*/
     val _visualBounds = RectF()
@@ -25,7 +28,10 @@ abstract class BaseRenderer(val canvasViewBox: CanvasViewBox) : IRenderer {
     override fun isVisible(): Boolean = _visible
 
     /**此[_bounds]是相对于坐标原点的坐标*/
-    override fun getRendererBounds(): RectF = _bounds
+    override fun getBounds(): RectF = _bounds
+
+    /**此[_renderBounds]是相对于坐标原点的可绘制像素坐标*/
+    override fun getRendererBounds(): RectF = _renderBounds
 
     /**此[_visualBounds]是相对于视图左上角原点的坐标*/
     override fun getVisualBounds(): RectF = _visualBounds
@@ -35,12 +41,15 @@ abstract class BaseRenderer(val canvasViewBox: CanvasViewBox) : IRenderer {
     }
 
     /**当[CanvasViewBox]坐标系发生改变时, 实时更新[_visualBounds]*/
-    override fun onCanvasMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
-        canvasViewBox.calcItemVisibleBounds(this, _visualBounds)
+    override fun onCanvasBoxMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
+        canvasViewBox.calcItemRenderBounds(getBounds(), getRendererBounds())
+        canvasViewBox.calcItemVisualBounds(getRendererBounds(), getVisualBounds())
     }
 
-    /**调用地方用来更新[getRendererBounds]*/
+    /**调用此方法用来更新[getBounds]
+     * 同时需要更新[getRendererBounds],[getVisualBounds]等信息*/
     open fun changeBounds(block: RectF.() -> Unit) {
-        getRendererBounds().block()
+        getBounds().block()
+        //canvasViewBox.canvasView.dispatchItemBoundsChanged()
     }
 }

@@ -16,12 +16,12 @@ interface ICanvasListener {
     //<editor-fold desc="绘制相关">
 
     /**[CanvasView]改变[Matrix]之前回调*/
-    fun onCanvasMatrixChangeBefore(matrix: Matrix, newValue: Matrix) {
+    fun onCanvasBoxMatrixChangeBefore(matrix: Matrix, newValue: Matrix) {
 
     }
 
     /**[CanvasView]改变[Matrix]之后回调*/
-    fun onCanvasMatrixChangeAfter(matrix: Matrix, oldValue: Matrix) {
+    fun onCanvasBoxMatrixChanged(matrix: Matrix, oldValue: Matrix) {
 
     }
 

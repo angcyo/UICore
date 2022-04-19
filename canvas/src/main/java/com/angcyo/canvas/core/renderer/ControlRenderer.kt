@@ -41,12 +41,21 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
     /**绘制按下的控制点*/
     val controlTouchPointPaint = createPaint(Color.DKGRAY, Paint.Style.FILL)
 
+    val isTouchHold: Boolean
+        get() {
+            val canvasView = canvasViewBox.canvasView
+            if (canvasView is CanvasView) {
+                return canvasView.isTouchHold
+            }
+            return false
+        }
+
     init {
-        canvasViewBox.canvasView.canvasListenerList.add(this)
+        canvasViewBox.canvasView.addCanvasListener(this)
     }
 
-    override fun onCanvasMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
-        super.onCanvasMatrixUpdate(canvasView, matrix, oldValue)
+    override fun onCanvasBoxMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
+        super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
         updateControlPointLocation()
     }
 
@@ -84,7 +93,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
             //目标相对于视图左上角的位置
             val visualBounds = it.getVisualBounds()
             val rotate = it.rotate
-            
+
             //绘制控制信息, 宽高xy值
             canvas.withRotation(rotate, visualBounds.centerX(), visualBounds.centerY()) {
                 //绘制边框
@@ -210,7 +219,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
         }
 
         //按下时, 绘制x,y坐标
-        if (canvasViewBox.canvasView.isTouchHold || BuildConfig.DEBUG) {
+        if (isTouchHold || BuildConfig.DEBUG) {
             _tempPoint.set(rotateBounds.left, rotateBounds.top)
             val point = _tempPoint
             val value = canvasViewBox.calcDistanceValueWithOrigin(point)
@@ -249,7 +258,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
                         it.bounds.centerX(),
                         it.bounds.centerY(),
                         controlHandler.controlPointSize / 2,
-                        if (it == controlHandler.touchControlPoint && canvasViewBox.canvasView.isTouchHold) controlTouchPointPaint else controlPointPaint
+                        if (it == controlHandler.touchControlPoint && isTouchHold) controlTouchPointPaint else controlPointPaint
                     )
 
                     //控制点的图标绘制

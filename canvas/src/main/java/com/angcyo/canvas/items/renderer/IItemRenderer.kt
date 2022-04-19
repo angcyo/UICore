@@ -18,6 +18,10 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     //<editor-fold desc="bounds">
 
     /**旋转后的坐标
+     * [getBounds]*/
+    fun getRotateBounds(): RectF
+
+    /**旋转后的坐标
      * [getRendererBounds]*/
     fun getRendererRotateBounds(): RectF
 
@@ -26,7 +30,7 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     fun getVisualRotateBounds(): RectF
 
     /**当[rendererItem]需要更新时触发, 用来更新渲染器*/
-    fun updateRendererItem(item: T) {
+    fun updateRendererItem(item: T?, oldItem: T? = null) {
         //重新设置尺寸等信息
     }
 
@@ -35,8 +39,8 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
      *
      * 可以在此方法中限制bounds大小
      *
-     * [com.angcyo.canvas.core.IRenderer.getRendererBounds]*/
-    fun onRendererBoundsChanged() {
+     * [com.angcyo.canvas.core.IRenderer.getBounds]*/
+    fun onItemBoundsChanged() {
 
     }
 
@@ -90,9 +94,16 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     fun containsRect(rect: RectF): Boolean
 
     /**根据[rotate]映射点*/
-    fun mapRotatePoint(point: PointF, result: PointF): PointF
+    fun mapRotatePoint(
+        rotateCenterX: Float,
+        rotateCenterY: Float,
+        point: PointF,
+        result: PointF
+    ): PointF
 
     /**根据[rotate]映射矩形*/
+    fun mapRotateRect(rotateCenterX: Float, rotateCenterY: Float, rect: RectF, result: RectF): RectF
+
     fun mapRotateRect(rect: RectF, result: RectF): RectF
 
     //</editor-fold desc="操作方法">

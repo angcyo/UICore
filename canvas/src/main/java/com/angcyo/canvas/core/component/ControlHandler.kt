@@ -82,7 +82,7 @@ class ControlHandler : BaseComponent() {
                 }
 
                 if (touchControlPoint == null) {
-                    val itemRenderer = findItemRenderer(view.canvasViewBox, touchPoint)
+                    val itemRenderer = view.findItemRenderer(touchPoint)
                     view.selectedItem(itemRenderer)
                 }
             }
@@ -108,8 +108,10 @@ class ControlHandler : BaseComponent() {
                         val dx1 = p1x - p2x
                         val dy1 = p1y - p2y
 
-                        view.translateItem(it, dx1, dy1)
-                        L.i("移动->x:$dx1 y:$dy1")
+                        if (dx1 != 0f || dy1 != 0f) {
+                            view.translateItem(it, dx1, dy1)
+                            L.i("移动->x:$dx1 y:$dy1")
+                        }
                     }
                 }
                 _touchPoint.set(_movePoint)
@@ -137,20 +139,6 @@ class ControlHandler : BaseComponent() {
             view.disableParentInterceptTouchEvent()
         }
         return result
-    }
-
-    /**通过坐标, 找到对应的元素*/
-    fun findItemRenderer(canvasViewBox: CanvasViewBox, touchPoint: PointF): BaseItemRenderer<*>? {
-        val point = canvasViewBox.mapCoordinateSystemPoint(touchPoint, _tempPoint)
-        canvasViewBox.canvasView.itemsRendererList.reversed().forEach {
-            /*if (it.getRendererBounds().contains(point)) {
-                return it
-            }*/
-            if (it._visible && it.containsPoint(point)) {
-                return it
-            }
-        }
-        return null
     }
 
     /**通过坐标, 找到控制点

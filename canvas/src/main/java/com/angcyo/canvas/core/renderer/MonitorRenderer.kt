@@ -17,7 +17,6 @@ import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.getMaxLineWidth
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.canvas.utils.mapRectF
-import com.angcyo.library.ex.dp
 
 /**
  * 调试监视渲染
@@ -39,7 +38,7 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
     val _touchPoint = PointF()
 
     init {
-        canvasViewBox.canvasView.canvasListenerList.add(this)
+        canvasViewBox.canvasView.addCanvasListener(this)
     }
 
     override fun onCanvasSizeChanged(canvasView: CanvasView) {
@@ -53,11 +52,11 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
         if (_isTouchDown) {
             _touchPoint.set(event.x, event.y)
         }
-        canvasViewBox.canvasView.invalidate()
+        canvasViewBox.canvasView.refresh()
     }
 
-    override fun onCanvasMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
-        super.onCanvasMatrixUpdate(canvasView, matrix, oldValue)
+    override fun onCanvasBoxMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
+        //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
     }
 
     //缓存
@@ -89,11 +88,10 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
                 append("(${touchPoint.x}, ${touchPoint.y})") //映射后的坐标
 
                 //当前视图中点, 距离坐标系左上角的距离 像素和单位数值
-                val centerPoint = canvasViewBox.getContentMatrixPoint()
-                val valuePoint = canvasViewBox.calcDistanceValueWithOrigin(centerPoint)
+                val centerPoint = canvasViewBox.getCoordinateSystemCenter()
 
-                val centerXUnit = valueUnit.formattedValueUnit(valuePoint.x)
-                val centerYUnit = valueUnit.formattedValueUnit(valuePoint.y)
+                val centerXUnit = valueUnit.convertPixelToValueUnit(centerPoint.x)
+                val centerYUnit = valueUnit.convertPixelToValueUnit(centerPoint.y)
 
                 appendLine()
                 append("center:(${centerPoint.x}, ${centerPoint.y}):($centerXUnit, ${centerYUnit})")
@@ -115,7 +113,7 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
             val text = "${tpStr}\n${rectStr}\n${(canvasViewBox._scaleX * 100).toInt()}%"
             assumeLayout(text)
 
-            canvas.withTranslation(x = canvasViewBox.getContentLeft(), y = _bounds.top) {
+            canvas.withTranslation(x = canvasViewBox.getContentLeft(), y = _renderBounds.top) {
                 layout?.draw(canvas)
             }
         }
@@ -149,9 +147,9 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
 
             val width = layout!!.getMaxLineWidth()
             val height = layout!!.height
-            val right = canvasViewBox.getContentRight() - 10 * dp
+            val right = canvasViewBox.getContentRight()
             val bottom = canvasViewBox.getContentBottom()
-            _bounds.set(right - width, bottom - height, right, bottom)
+            _renderBounds.set(right - width, bottom - height, right, bottom)
         }
     }
 }

@@ -12,16 +12,20 @@ import com.angcyo.canvas.items.DrawableItem
 class DrawableItemRenderer(canvasViewBox: CanvasViewBox) :
     BaseItemRenderer<DrawableItem>(canvasViewBox) {
 
-    override fun onCanvasSizeChanged(canvasView: CanvasView) {
-        super.onCanvasSizeChanged(canvasView)
-        if (_bounds.isEmpty) {
-            _bounds.set(
-                0f,
-                0f,
-                rendererItem?.drawable?.minimumWidth?.toFloat() ?: 0f,
-                rendererItem?.drawable?.minimumHeight?.toFloat() ?: 0f
-            )
-            onRendererBoundsChanged()
+    override fun updateRendererItem(item: DrawableItem?, oldItem: DrawableItem?) {
+        super.updateRendererItem(item, oldItem)
+        if (item != oldItem) {
+            val bounds = getBounds()
+            if (bounds.isEmpty) {
+                changeBounds {
+                    set(
+                        0f,
+                        0f,
+                        rendererItem?.drawable?.minimumWidth?.toFloat() ?: 0f,
+                        rendererItem?.drawable?.minimumHeight?.toFloat() ?: 0f
+                    )
+                }
+            }
         }
     }
 

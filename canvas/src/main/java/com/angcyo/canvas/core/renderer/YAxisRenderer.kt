@@ -22,7 +22,7 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox) :
 
     override fun onCanvasSizeChanged(canvasView: CanvasView) {
         super.onCanvasSizeChanged(canvasView)
-        _bounds.set(
+        _renderBounds.set(
             0f,
             0f,
             axis.axisSize,
@@ -30,16 +30,16 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox) :
         )
     }
 
-    override fun onCanvasMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
-        super.onCanvasMatrixUpdate(canvasView, matrix, oldValue)
+    override fun onCanvasBoxMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
+        super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
         //更新数据
         axis.getPlusPixelList(canvasViewBox)
         axis.getMinusPixelList(canvasViewBox)
     }
 
     override fun render(canvasView: CanvasView, canvas: Canvas) {
-        val right = _bounds.right
-        canvas.drawLine(right, _bounds.top, right, _bounds.bottom, linePaint)
+        val right = _renderBounds.right
+        canvas.drawLine(right, _renderBounds.top, right, _renderBounds.bottom, linePaint)
 
         val plusList = axis.plusList
         val minusList = axis.minusList
@@ -57,8 +57,8 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox) :
 
             //先/后 clip, 都有效果
             val clipBottom = contentBottom - translateY
-            val clipTop = clipBottom - _bounds.height() + contentTop
-            clipRect(_bounds.left, clipTop, _bounds.right, clipBottom)
+            val clipTop = clipBottom - _renderBounds.height()
+            clipRect(_renderBounds.left, clipTop, _renderBounds.right, clipBottom)
 
             plusList.forEachIndexed { index, top ->
                 val _top = top * scaleY

@@ -35,20 +35,23 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
     /**高度增益的大小*/
     var heightIncrease: Float = 0f
 
-    override fun updateRendererItem(item: TextItem) {
-        super.updateRendererItem(item)
-        updateTextPaint(item)
+    override fun updateRendererItem(item: TextItem?, oldItem: TextItem?) {
+        super.updateRendererItem(item, oldItem)
 
-        val textWidth = getTextWidth()
-        val textHeight = getTextHeight()
-        if (_bounds.isEmpty) {
-            changeBounds {
-                set(0f, 0f, textWidth, textHeight)
-            }
-        } else {
-            if (textWidth > 0 && textHeight > 0) {
+        item?.let { updateTextPaint(item) }
+
+        if (item != oldItem || item?.text != oldItem?.text) {
+            val textWidth = getTextWidth()
+            val textHeight = getTextHeight()
+            if (getBounds().isEmpty) {
                 changeBounds {
-                    adjustSizeWithLT(textWidth, textHeight)
+                    set(0f, 0f, textWidth, textHeight)
+                }
+            } else {
+                if (textWidth > 0 && textHeight > 0) {
+                    changeBounds {
+                        adjustSizeWithLT(textWidth, textHeight)
+                    }
                 }
             }
         }
@@ -69,7 +72,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
 
     override fun onCanvasSizeChanged(canvasView: CanvasView) {
         super.onCanvasSizeChanged(canvasView)
-        if (_bounds.isEmpty) {
+        if (_renderBounds.isEmpty) {
             changeBounds {
                 set(0f, 0f, getTextWidth(), getTextHeight())
             }
@@ -129,10 +132,11 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
     }
 
     override fun render(canvasView: CanvasView, canvas: Canvas) {
+        val renderBounds = getRendererBounds()
         canvas.drawText(
             rendererItem?.text ?: "",
-            _bounds.left,
-            _bounds.bottom - paint.descent(),
+            renderBounds.left,
+            renderBounds.bottom - paint.descent(),
             paint
         )
     }
@@ -148,7 +152,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
 
             updateRendererItem(this)
 
-            canvasViewBox.canvasView.invalidate()
+            canvasViewBox.canvasView.refresh()
         }
     }
 
@@ -157,7 +161,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
         rendererItem?.apply {
             paint.style = style
             updateRendererItem(this)
-            canvasViewBox.canvasView.invalidate()
+            canvasViewBox.canvasView.refresh()
         }
     }
 
@@ -166,7 +170,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
         rendererItem?.apply {
             paint.typeface = typeface
             updateRendererItem(this)
-            canvasViewBox.canvasView.invalidate()
+            canvasViewBox.canvasView.refresh()
         }
     }
 }

@@ -19,7 +19,7 @@ class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox) :
 
     override fun onCanvasSizeChanged(canvasView: CanvasView) {
         super.onCanvasSizeChanged(canvasView)
-        _bounds.set(
+        _renderBounds.set(
             0f,
             0f,
             canvasView.measuredWidth.toFloat(),
@@ -27,8 +27,8 @@ class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox) :
         )
     }
 
-    override fun onCanvasMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
-        super.onCanvasMatrixUpdate(canvasView, matrix, oldValue)
+    override fun onCanvasBoxMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
+        super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
         //更新数据
         axis.getPlusPixelList(canvasViewBox)
         axis.getMinusPixelList(canvasViewBox)
@@ -55,7 +55,7 @@ class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox) :
 
             //先/后 clip, 都有效果
             val clipRight = contentRight - translateX
-            val clipLeft = clipRight - bounds.width() + contentLeft
+            val clipLeft = clipRight - bounds.width()
             clipRect(clipLeft, bounds.top, clipRight, bottom)
 
             plusList.forEachIndexed { index, left ->

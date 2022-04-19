@@ -6,7 +6,6 @@ import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
-import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.library.L
 import com.angcyo.library.ex._drawable
 import kotlin.math.atan2
@@ -44,7 +43,7 @@ class RotateControlPoint : ControlPoint() {
             MotionEvent.ACTION_DOWN -> {
                 angleSum = 0f
                 _touchPoint.set(event.x, event.y)
-                val bounds = view.canvasViewBox.calcItemVisibleBounds(itemRenderer, _tempRect)
+                val bounds = itemRenderer.getVisualBounds()
                 _centerPoint.set(bounds.centerX(), bounds.centerY())
             }
             MotionEvent.ACTION_MOVE -> {

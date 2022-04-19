@@ -61,7 +61,7 @@ class ScaleControlPoint : ControlPoint() {
             MotionEvent.ACTION_DOWN -> {
                 _touchPoint.set(event.x, event.y)
                 //按下的时候, 计算按下的点和元素中点坐标的距离
-                val bounds = view.canvasViewBox.calcItemVisibleBounds(itemRenderer, _tempRect)
+                val bounds = itemRenderer.getVisualBounds()
 
                 _touchCenterDistance =
                     calcCenterDistance(view, itemRenderer, _touchPoint, bounds)
@@ -72,7 +72,7 @@ class ScaleControlPoint : ControlPoint() {
             }
             MotionEvent.ACTION_MOVE -> {
                 _movePoint.set(event.x, event.y)
-                val bounds = view.canvasViewBox.calcItemVisibleBounds(itemRenderer, _tempRect)
+                val bounds = itemRenderer.getVisualBounds()
 
                 val moveCenterDistance =
                     calcCenterDistance(view, itemRenderer, _movePoint, bounds)

@@ -1,7 +1,9 @@
 package com.angcyo.canvas.core.renderer
 
 import android.graphics.Color
+import android.graphics.Matrix
 import android.graphics.Paint
+import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.library.ex.dp
@@ -29,6 +31,10 @@ abstract class BaseAxisRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(can
     val labelPaint = createPaint(Color.GRAY).apply {
         textSize = 9 * dp
         style = Paint.Style.FILL
+    }
+
+    override fun onCanvasBoxMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
+        //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
     }
 
 }
