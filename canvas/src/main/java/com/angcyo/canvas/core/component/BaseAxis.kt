@@ -2,6 +2,7 @@ package com.angcyo.canvas.core.component
 
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.floor
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -49,31 +50,32 @@ abstract class BaseAxis : BaseComponent() {
      * [lineSize]
      * */
     fun getAxisLineType(index: Int, scale: Float): Int {
-        val loseStep = 0.3f
-        var gainScale = 10
+        val loseStep = 0.25f
 
-        /*if (scale < 1f) {
-            val step = ((1 - scale) / loseStep).floor().toInt()
-
-            if (step >= 1) {
-                gainScale *= step
-                if (index % (10 * gainScale) == 0) {
-                    return LINE_TYPE_PROTRUDE
-                }
-                if (index % (5 * gainScale) == 0) {
-                    return LINE_TYPE_SECONDARY
-                }
-                if (index % (1 * gainScale) == 0) {
-                    return LINE_TYPE_NORMAL
-                }
-                return LINE_TYPE_NONE
+        if (scale < 1f) {
+            val step = ((1 - scale) / loseStep).floor().toInt() + 1
+            if (index % (10 * step) == 0) {
+                return LINE_TYPE_PROTRUDE
             }
-        }*/
-        if (index % 10 == 0) {
+            if (index % (5 * step) == 0) {
+                return LINE_TYPE_SECONDARY
+            }
+            if (index % (1 * step) == 0) {
+                return LINE_TYPE_NORMAL
+            }
+            return LINE_TYPE_NONE
+        }
+
+        val step = ((scale - 1) / loseStep).floor().toInt() + 1
+        val p = 10 / step
+        if (p == 0 || index % p == 0) {
             return LINE_TYPE_PROTRUDE
         }
-        if (index % 5 == 0) {
-            return LINE_TYPE_SECONDARY
+        if (p % 2 == 0) {
+            val s = p / 2
+            if (s != 0 && index % s == 0) {
+                return LINE_TYPE_SECONDARY
+            }
         }
         return LINE_TYPE_NORMAL
     }
