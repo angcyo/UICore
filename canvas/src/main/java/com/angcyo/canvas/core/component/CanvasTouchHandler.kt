@@ -175,46 +175,46 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent() {
             //双指 操作
 
             //处理双指缩放
-            if (_touchType == TOUCH_TYPE_NONE ||
+            /*if (_touchType == TOUCH_TYPE_NONE ||
                 _touchType == TOUCH_TYPE_SCALE ||
                 _touchDistance > canvasView.canvasViewBox.getContentWidth() / 3
-            ) {
-                val moveDistance = spacing(_movePointList[0], _movePointList[1])
-                if ((moveDistance - _touchDistance).abs() > minScalePointerDistance) {
-                    //开始缩放
-                    _touchType = TOUCH_TYPE_SCALE
-                    val scale = moveDistance / _touchDistance
-                    canvasView.canvasViewBox.scaleBy(
-                        scale,
-                        scale,
-                        _touchMiddlePoint.x,
-                        _touchMiddlePoint.y
-                    )
-                    _touchDistance = moveDistance
-                }
+            ) {*/
+            val moveDistance = spacing(_movePointList[0], _movePointList[1])
+            if ((moveDistance - _touchDistance).abs() > minScalePointerDistance) {
+                //开始缩放
+                _touchType = TOUCH_TYPE_SCALE
+                val scale = moveDistance / _touchDistance
+                canvasView.canvasViewBox.scaleBy(
+                    scale,
+                    scale,
+                    _touchMiddlePoint.x,
+                    _touchMiddlePoint.y
+                )
+                _touchDistance = moveDistance
             }
+            /*}*/
 
             //处理双指平移
-            if (_touchType == TOUCH_TYPE_NONE || _touchType == TOUCH_TYPE_TRANSLATE) {
-                val dx1 = _movePointList[0].x - _touchPointList[0].x
-                val dy1 = _movePointList[0].y - _touchPointList[0].y
+            /*if (_touchType == TOUCH_TYPE_NONE || _touchType == TOUCH_TYPE_TRANSLATE) {*/
+            val dx1 = _movePointList[0].x - _touchPointList[0].x
+            val dy1 = _movePointList[0].y - _touchPointList[0].y
 
-                val dx2 = _movePointList[1].x - _touchPointList[1].x
-                val dy2 = _movePointList[1].y - _touchPointList[1].y
+            val dx2 = _movePointList[1].x - _touchPointList[1].x
+            val dy2 = _movePointList[1].y - _touchPointList[1].y
 
-                val dx = min(dx1, dx2)
-                val dy = min(dy1, dy2)
+            val dx = min(dx1, dx2)
+            val dy = min(dy1, dy2)
 
-                if (dx.abs() > dragTriggerDistance || dy.abs() > dragTriggerDistance) {
-                    //开始平移
-                    _touchType = TOUCH_TYPE_TRANSLATE
-                    if (isHorizontalIntent(_movePointList[0], _movePointList[1])) {
-                        canvasView.canvasViewBox.translateBy(dx, 0f)
-                    } else {
-                        canvasView.canvasViewBox.translateBy(0f, dy)
-                    }
+            if (dx.abs() > dragTriggerDistance || dy.abs() > dragTriggerDistance) {
+                //开始平移
+                _touchType = TOUCH_TYPE_TRANSLATE
+                if (isHorizontalIntent(_movePointList[0], _movePointList[1])) {
+                    canvasView.canvasViewBox.translateBy(dx, 0f)
+                } else {
+                    canvasView.canvasViewBox.translateBy(0f, dy)
                 }
             }
+            /*}*/
         }
 
         /*val dx = event.x - touchPoint.x

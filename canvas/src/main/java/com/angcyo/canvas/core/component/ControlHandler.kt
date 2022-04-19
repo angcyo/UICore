@@ -60,6 +60,7 @@ class ControlHandler : BaseComponent() {
     /**手势处理
      * [com.angcyo.canvas.CanvasView.onTouchEvent]*/
     fun onTouch(view: CanvasView, event: MotionEvent): Boolean {
+        var handle = false
         var holdControlPoint = touchControlPoint
 
         when (event.actionMasked) {
@@ -109,10 +110,13 @@ class ControlHandler : BaseComponent() {
                         val dy1 = p1y - p2y
 
                         if (dx1 != 0f || dy1 != 0f) {
+                            handle = true
                             view.translateItem(it, dx1, dy1)
                             L.i("移动->x:$dx1 y:$dy1")
                         }
                     }
+                } else {
+                    handle = true
                 }
                 _touchPoint.set(_movePoint)
             }
@@ -138,7 +142,7 @@ class ControlHandler : BaseComponent() {
         if (result) {
             view.disableParentInterceptTouchEvent()
         }
-        return result
+        return result && handle
     }
 
     /**通过坐标, 找到控制点
