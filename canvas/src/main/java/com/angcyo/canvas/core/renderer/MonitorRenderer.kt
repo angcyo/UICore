@@ -64,7 +64,7 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
     val _tempPoint: PointF = PointF()
     val _tempRect: RectF = RectF()
 
-    override fun render(canvasView: CanvasView, canvas: Canvas) {
+    override fun render(canvas: Canvas) {
         if (_isTouchDown) {
             val text = if (BuildConfig.DEBUG) {
 

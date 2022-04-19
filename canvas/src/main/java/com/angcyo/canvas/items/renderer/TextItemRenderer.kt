@@ -131,7 +131,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
         }
     }
 
-    override fun render(canvasView: CanvasView, canvas: Canvas) {
+    override fun render(canvas: Canvas) {
         val renderBounds = getRendererBounds()
         canvas.drawText(
             rendererItem?.text ?: "",

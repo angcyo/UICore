@@ -84,7 +84,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     init {
         rendererAfterList.add(MonitorRenderer(canvasViewBox))
         if (BuildConfig.DEBUG) {
-            rendererAfterList.add(CenterRenderer(canvasViewBox))
+            rendererAfterList.add(CenterRenderer(this, canvasViewBox))
         }
     }
 
@@ -156,14 +156,14 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
         eachAxisRender { axis ->
             if (axis.enable && isVisible()) {
-                render(this@CanvasView, canvas)
+                render(canvas)
             }
         }
 
         //前置,不处理matrix
         rendererBeforeList.forEach {
             if (it.isVisible()) {
-                it.render(this@CanvasView, canvas)
+                it.render(canvas)
             }
         }
 
@@ -179,7 +179,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
                             bounds.centerX(),
                             bounds.centerY()
                         ) {
-                            it.render(this@CanvasView, canvas)
+                            it.render(canvas)
                         }
                     }
                 }
@@ -188,12 +188,12 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
         //后置,不处理matrix
         if (controlRenderer.isVisible()) {
-            controlRenderer.render(this@CanvasView, canvas)
+            controlRenderer.render(canvas)
         }
 
         rendererAfterList.forEach {
             if (it.isVisible()) {
-                it.render(this@CanvasView, canvas)
+                it.render(canvas)
             }
         }
     }
@@ -308,7 +308,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
                         bounds.centerX(),
                         bounds.centerY()
                     ) {
-                        it.render(this@CanvasView, canvas)
+                        it.render(canvas)
                     }
                 }
             }

@@ -49,7 +49,7 @@ interface IRenderer {
 
     /**核心渲染方法
      * [com.angcyo.canvas.CanvasView.onDraw]*/
-    fun render(canvasView: CanvasView, canvas: Canvas)
+    fun render(canvas: Canvas)
 
     //</editor-fold desc="渲染">
 }

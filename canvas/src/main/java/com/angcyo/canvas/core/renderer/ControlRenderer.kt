@@ -85,7 +85,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
     val _tempPoint: PointF = PointF()
     val _rotateRect: RectF = RectF()
 
-    override fun render(canvasView: CanvasView, canvas: Canvas) {
+    override fun render(canvas: Canvas) {
         controlHandler.selectedItemRender?.let {
 
             //目标相对于坐标系中的位置

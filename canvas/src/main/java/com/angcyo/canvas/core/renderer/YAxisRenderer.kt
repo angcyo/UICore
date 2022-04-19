@@ -38,7 +38,7 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox) :
         axis.getMinusPixelList(canvasViewBox)
     }
 
-    override fun render(canvasView: CanvasView, canvas: Canvas) {
+    override fun render(canvas: Canvas) {
         val bounds = getRendererBounds()
         val right = bounds.right
         canvas.drawLine(right, bounds.top, right, bounds.bottom, linePaint)

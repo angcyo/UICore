@@ -11,13 +11,14 @@ import com.angcyo.canvas.utils.createPaint
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/08
  */
-class CenterRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox) {
+class CenterRenderer(val canvasView: CanvasView, canvasViewBox: CanvasViewBox) :
+    BaseRenderer(canvasViewBox) {
 
     val paint = createPaint(Color.RED).apply {
         //init
     }
 
-    override fun render(canvasView: CanvasView, canvas: Canvas) {
+    override fun render(canvas: Canvas) {
 
         //绘制坐标轴中心
         paint.color = Color.GREEN
