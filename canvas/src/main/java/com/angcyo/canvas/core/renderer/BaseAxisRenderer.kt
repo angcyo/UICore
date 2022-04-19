@@ -3,6 +3,7 @@ package com.angcyo.canvas.core.renderer
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.PointF
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.utils.createPaint
@@ -35,6 +36,15 @@ abstract class BaseAxisRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(can
 
     override fun onCanvasBoxMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
         //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
+        updateAxisData()
     }
+
+    /**坐标系改变后回调*/
+    fun onCoordinateSystemOriginChanged(point: PointF) {
+        updateAxisData()
+    }
+
+    /**更新坐标数据*/
+    abstract fun updateAxisData()
 
 }

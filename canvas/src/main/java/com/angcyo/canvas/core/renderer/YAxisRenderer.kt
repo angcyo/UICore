@@ -1,7 +1,6 @@
 package com.angcyo.canvas.core.renderer
 
 import android.graphics.Canvas
-import android.graphics.Matrix
 import androidx.core.graphics.withClip
 import androidx.core.graphics.withSave
 import androidx.core.graphics.withTranslation
@@ -31,8 +30,7 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox) :
         )
     }
 
-    override fun onCanvasBoxMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
-        super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
+    override fun updateAxisData() {
         //更新数据
         axis.getPlusPixelList(canvasViewBox)
         axis.getMinusPixelList(canvasViewBox)

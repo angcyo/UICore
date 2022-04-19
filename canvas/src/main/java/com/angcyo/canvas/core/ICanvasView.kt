@@ -24,6 +24,9 @@ interface ICanvasView : IComponent {
     /**[com.angcyo.canvas.items.renderer.BaseItemRenderer.changeBounds]*/
     fun dispatchItemBoundsChanged(item: BaseItemRenderer<*>) {}
 
+    /**当[CanvasViewBox]的坐标系原点改变时触发*/
+    fun dispatchCoordinateSystemOriginChanged(point: PointF) {}
+
     //</editor-fold desc="dispatch">
 
     //<editor-fold desc="listener">

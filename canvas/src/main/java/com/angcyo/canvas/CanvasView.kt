@@ -15,6 +15,7 @@ import com.angcyo.canvas.core.*
 import com.angcyo.canvas.core.component.*
 import com.angcyo.canvas.core.renderer.*
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
+import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils._tempPoint
 
 /**
@@ -137,6 +138,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         } else {
             0f
         }
+        canvasViewBox.updateCoordinateSystemOriginPoint(l, t)
         canvasViewBox.updateContentBox(l, t, w.toFloat(), h.toFloat())
 
         //需要等待[canvasViewBox]测量后
@@ -275,6 +277,23 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
+    override fun dispatchCoordinateSystemOriginChanged(point: PointF) {
+        super.dispatchCoordinateSystemOriginChanged(point)
+        eachAxisRender {
+            onCoordinateSystemOriginChanged(point)
+        }
+        eachAllRenderer {
+            if (this is IItemRenderer<*>) {
+                onItemBoundsChanged()
+
+                //更新控制渲染
+                if (this == controlHandler.selectedItemRender) {
+                    controlRenderer.updateControlPointLocation()
+                }
+            }
+        }
+    }
+
     //</editor-fold desc="关键方法">
 
     //<editor-fold desc="操作方法">
@@ -298,11 +317,16 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         val bitmap = Bitmap.createBitmap(width.toInt(), height.toInt(), Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
 
+        val oldRenderRect = RectF()
         canvas.withTranslation(-left, -top) {
             itemsRendererList.forEach {
                 if (it.isVisible()) {
                     //item的旋转, 在此处理
-                    val bounds = it.getRendererBounds()
+                    val bounds = it.getBounds()
+                    //替换渲染矩形坐标
+                    val renderBounds = it.getRendererBounds()
+                    oldRenderRect.set(renderBounds)
+                    renderBounds.set(bounds)
                     canvas.withRotation(
                         it.rotate,
                         bounds.centerX(),
@@ -310,6 +334,8 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
                     ) {
                         it.render(canvas)
                     }
+                    //恢复渲染矩形
+                    renderBounds.set(oldRenderRect)
                 }
             }
         }

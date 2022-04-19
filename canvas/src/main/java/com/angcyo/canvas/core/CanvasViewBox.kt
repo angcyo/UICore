@@ -293,6 +293,16 @@ class CanvasViewBox(val canvasView: ICanvasView) {
 
     //<editor-fold desc="coordinate system">
 
+    /**坐标系的原点像素坐标*/
+    val coordinateSystemOriginPoint: PointF = PointF()
+
+    /**更新坐标系原点*/
+    fun updateCoordinateSystemOriginPoint(x: Float, y: Float) {
+        coordinateSystemOriginPoint.set(x, y)
+        canvasView.dispatchCoordinateSystemOriginChanged(coordinateSystemOriginPoint)
+        canvasView.refresh()
+    }
+
     /**获取当前视图中心距离坐标系原点的坐标*/
     fun getCoordinateSystemCenter(result: PointF = _tempPoint): PointF {
         matrix.invert(invertMatrix)
@@ -307,12 +317,12 @@ class CanvasViewBox(val canvasView: ICanvasView) {
 
     /**获取坐标系启动的x坐标*/
     fun getCoordinateSystemX(): Float {
-        return getContentLeft()
+        return coordinateSystemOriginPoint.x
     }
 
     /**获取坐标系启动的y坐标*/
     fun getCoordinateSystemY(): Float {
-        return getContentTop()
+        return coordinateSystemOriginPoint.y
     }
 
     /**获取系统坐标系转换后的所在的像素坐标位置*/
