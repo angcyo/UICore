@@ -155,6 +155,7 @@ class ControlHandler : BaseComponent() {
                 //双击回调
                 selectedItemRender?.let {
                     if (isDoubleTouch) {
+                        handle = true
                         view.doubleTapItem(it)
                     }
                 }

@@ -93,6 +93,9 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent() {
     /**当双指捏合的距离大于此值时, 才视为是缩放手势*/
     var minScalePointerDistance = 3.5 * dp
 
+    /**双击时, 需要放大的比例*/
+    var doubleScaleValue = 1.25f
+
     /**当手指移动的距离大于此值时, 才视为是平移手势*/
     var dragTriggerDistance = 1 * dp
 
@@ -106,7 +109,14 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent() {
     val _touchPointList: MutableList<PointF> = mutableListOf()
     val _movePointList: MutableList<PointF> = mutableListOf()
 
+    //左上角初始点处理, 点击后恢复原位置
     val initialPointHandler = InitialPointHandler()
+
+    //第一次按下的时候, 用来计算是否是双击
+    var touchTime: Long = 0L
+
+    //是否双击了
+    var isDoubleTouch: Boolean = false
 
     /**入口*/
     fun onTouch(view: CanvasView, event: MotionEvent): Boolean {
@@ -132,6 +142,19 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent() {
                 obtainPointList(event, _touchPointList)
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                if (event.actionMasked == MotionEvent.ACTION_UP) {
+                    if (isDoubleTouch) {
+                        //双击
+                        view.canvasViewBox.scaleBy(
+                            doubleScaleValue,
+                            doubleScaleValue,
+                            event.x,
+                            event.y,
+                            true
+                        )
+                    }
+                }
+                isDoubleTouch = false
                 _touchPointList.clear()
                 _movePointList.clear()
                 _touchType = TOUCH_TYPE_NONE
@@ -161,6 +184,14 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent() {
         if (_touchPointList.size >= 2) {
             _touchDistance = spacing(_touchPointList[0], _touchPointList[1])
             midPoint(_touchPointList[0], _touchPointList[1], _touchMiddlePoint)
+            isDoubleTouch = false
+        } else {
+            val nowTime = System.currentTimeMillis()
+            //选中同一个
+            if (nowTime - touchTime <= 360) {
+                isDoubleTouch = true
+            }
+            touchTime = nowTime
         }
     }
 

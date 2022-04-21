@@ -348,9 +348,11 @@ class CanvasViewBox(val canvasView: ICanvasView) {
     fun updateTo(endMatrix: Matrix = Matrix(), anim: Boolean = true) {
         if (anim) {
             matrixAnimator(matrix, endMatrix) {
+                adjustScaleOutToLimit(endMatrix)
                 refresh(it)
             }
         } else {
+            adjustScaleOutToLimit(endMatrix)
             refresh(endMatrix)
         }
     }
@@ -369,7 +371,8 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         scaleX: Float,
         scaleY: Float,
         px: Float = getContentCenterX(),
-        py: Float = getContentCenterY()
+        py: Float = getContentCenterY(),
+        anim: Boolean = false
     ) {
         if ((scaleX < 1f && getScaleX() <= minScaleX) || (scaleX > 1f && getScaleX() >= maxScaleX)) {
             //已经达到了最小/最大, 还想缩放/放大
@@ -383,8 +386,7 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         val newMatrix = Matrix()
         newMatrix.set(matrix)
         newMatrix.postScale(scaleX, scaleY, px, py)
-        adjustScaleOutToLimit(newMatrix)
-        refresh(newMatrix)
+        updateTo(newMatrix, anim)
     }
 
     //</editor-fold desc="matrix">
