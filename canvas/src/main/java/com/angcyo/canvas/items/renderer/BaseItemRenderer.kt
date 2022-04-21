@@ -13,7 +13,7 @@ import com.angcyo.canvas.utils._tempRectF
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.canvas.utils.mapRectF
 import com.angcyo.library.L
-import com.angcyo.library.ex.adjustSizeWithLT
+import com.angcyo.library.ex.adjustSize
 import com.angcyo.library.ex.contains
 
 /**
@@ -240,7 +240,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
             val originCenterX = centerX()
             val originCenterY = centerY()
             //左上角固定, 调整矩形宽高
-            adjustSizeWithLT(width, height)
+            adjustSize(width, height, withCenter)
 
             //按照原始的旋转中点坐标, 旋转调整后的矩形
             val rotateRect = _tempRectF

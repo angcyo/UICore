@@ -18,23 +18,27 @@ import com.angcyo.library.ex.withPicture
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/11
  */
-class DrawableItemRenderer(canvasViewBox: CanvasViewBox) :
-    BaseItemRenderer<DrawableItem>(canvasViewBox) {
+open class DrawableItemRenderer<T : DrawableItem>(canvasViewBox: CanvasViewBox) :
+    BaseItemRenderer<T>(canvasViewBox) {
 
-    override fun updateRendererItem(item: DrawableItem?, oldItem: DrawableItem?) {
+    override fun updateRendererItem(item: T?, oldItem: T?) {
         super.updateRendererItem(item, oldItem)
         if (item != oldItem) {
             val bounds = getBounds()
             if (bounds.isEmpty) {
-                changeBounds {
-                    set(
-                        0f,
-                        0f,
-                        rendererItem?.drawable?.minimumWidth?.toFloat() ?: 0f,
-                        rendererItem?.drawable?.minimumHeight?.toFloat() ?: 0f
-                    )
-                }
+                initBounds()
             }
+        }
+    }
+
+    open fun initBounds() {
+        changeBounds {
+            set(
+                0f,
+                0f,
+                rendererItem?.drawable?.minimumWidth?.toFloat() ?: 0f,
+                rendererItem?.drawable?.minimumHeight?.toFloat() ?: 0f
+            )
         }
     }
 
@@ -54,7 +58,7 @@ class DrawableItemRenderer(canvasViewBox: CanvasViewBox) :
 
 /**添加一个[Drawable]渲染器*/
 fun CanvasView.addDrawableRenderer(drawable: Drawable) {
-    val renderer = DrawableItemRenderer(canvasViewBox)
+    val renderer = DrawableItemRenderer<DrawableItem>(canvasViewBox)
     renderer.rendererItem = DrawableItem().apply { this.drawable = drawable }
     addCentreItemRenderer(renderer)
     selectedItem(renderer)
@@ -68,7 +72,7 @@ fun CanvasView.addDrawableRenderer(
         textSize = 12 * dp
     }
 ) {
-    val renderer = DrawableItemRenderer(canvasViewBox)
+    val renderer = DrawableItemRenderer<DrawableItem>(canvasViewBox)
     renderer.rendererItem = DrawableItem().apply {
         val width = paint.textWidth(text)
         val height = paint.textHeight()

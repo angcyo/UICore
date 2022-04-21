@@ -10,7 +10,7 @@ import com.angcyo.library.ex.have
  * @date 2022/04/03
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class TextItem : BaseItem() {
+open class TextItem : BaseItem() {
 
     companion object {
 
@@ -35,17 +35,16 @@ class TextItem : BaseItem() {
 
     /**字体样式*/
     var textStyle: Int = TEXT_STYLE_NONE
-
-    val isTextBold: Boolean
-        get() = textStyle.have(TEXT_STYLE_BOLD)
-
-    val isUnderLine: Boolean
-        get() = textStyle.have(TEXT_STYLE_UNDER_LINE)
-
-    val isDeleteLine: Boolean
-        get() = textStyle.have(TEXT_STYLE_DELETE_LINE)
-
-    val isTextItalic: Boolean
-        get() = textStyle.have(TEXT_STYLE_ITALIC)
-
 }
+
+val Int.isTextBold: Boolean
+    get() = have(TextItem.TEXT_STYLE_BOLD)
+
+val Int.isUnderLine: Boolean
+    get() = have(TextItem.TEXT_STYLE_UNDER_LINE)
+
+val Int.isDeleteLine: Boolean
+    get() = have(TextItem.TEXT_STYLE_DELETE_LINE)
+
+val Int.isTextItalic: Boolean
+    get() = have(TextItem.TEXT_STYLE_ITALIC)

@@ -4,7 +4,7 @@ import android.graphics.*
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.component.ControlPoint
-import com.angcyo.canvas.items.TextItem
+import com.angcyo.canvas.items.*
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
@@ -58,10 +58,10 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
 
     fun updateTextPaint(item: TextItem) {
         paint.apply {
-            isStrikeThruText = item.isDeleteLine
-            isUnderlineText = item.isUnderLine
-            isFakeBoldText = item.isTextBold
-            textSkewX = if (item.isTextItalic) -0.25f else 0f
+            isStrikeThruText = item.textStyle.isDeleteLine
+            isUnderlineText = item.textStyle.isUnderLine
+            isFakeBoldText = item.textStyle.isTextBold
+            textSkewX = if (item.textStyle.isTextItalic) -0.25f else 0f
             //typeface =
 
             val text = item.text ?: ""
@@ -82,9 +82,18 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
         super.onControlFinish(controlPoint)
         if (controlPoint.type == ControlPoint.POINT_TYPE_SCALE) {
             changeBounds {
-                adjustSizeWithLT(getTextWidth(), getTextHeight())
+                val newWidth = if (isFlipHorizontal) -getTextWidth() else getTextWidth()
+                val newHeight = if (isFlipVertical) -getTextHeight() else getTextHeight()
+                adjustSizeWithLT(newWidth, newHeight)
             }
         }
+    }
+
+    override fun isSupportControlPoint(type: Int): Boolean {
+        if (type == ControlPoint.POINT_TYPE_LOCK) {
+            return false
+        }
+        return super.isSupportControlPoint(type)
     }
 
     fun getTextWidth(): Float {
@@ -123,7 +132,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
 
         var largestSize = paint.textSize
         var adjustStep = 0.1f
-        
+
         if (getTextWidth() > maxWidth || getTextHeight() > maxHeight) {
             //需要减少size
             adjustStep = -adjustStep
@@ -173,8 +182,8 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
         val renderBounds = getRendererBounds()
         canvas.drawText(
             rendererItem?.text ?: "",
-            renderBounds.left,
-            renderBounds.bottom - paint.descent(),
+            renderBounds.flipLeft,
+            renderBounds.flipBottom - paint.descent(),
             paint
         )
     }
