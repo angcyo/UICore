@@ -284,11 +284,8 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }
         eachAllRenderer {
             if (this is IItemRenderer<*>) {
-                onItemBoundsChanged()
-
-                //更新控制渲染
-                if (this == controlHandler.selectedItemRender) {
-                    controlRenderer.updateControlPointLocation()
+                changeBounds {
+                    //notify changed
                 }
             }
         }
@@ -435,40 +432,58 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     /**平移选中的[BaseItemRenderer]*/
-    fun translateItem(
+    fun translateItemBy(
         itemRenderer: BaseItemRenderer<*>?,
         distanceX: Float = 0f,
         distanceY: Float = 0f
     ) {
-        itemRenderer?.let {
-            it.translateBy(distanceX, distanceY)
+        itemRenderer?.apply {
+            translateBy(distanceX, distanceY)
             postInvalidateOnAnimation()
         }
     }
 
     /**缩放选中的[BaseItemRenderer]*/
-    fun scaleItem(itemRenderer: BaseItemRenderer<*>?, scaleX: Float = 1f, scaleY: Float = 1f) {
-        itemRenderer?.let {
-            it.scaleBy(scaleX, scaleY)
+    fun scaleItemBy(
+        itemRenderer: BaseItemRenderer<*>?,
+        scaleX: Float = 1f,
+        scaleY: Float = 1f,
+        withCenter: Boolean = false
+    ) {
+        itemRenderer?.apply {
+            scaleBy(scaleX, scaleY, withCenter)
             postInvalidateOnAnimation()
         }
     }
 
-    fun scaleItemWithCenter(
+    fun scaleItemTo(
         itemRenderer: BaseItemRenderer<*>?,
         scaleX: Float = 1f,
-        scaleY: Float = 1f
+        scaleY: Float = 1f,
+        withCenter: Boolean = false
     ) {
-        itemRenderer?.let {
-            it.scaleBy(scaleX, scaleY, true)
+        itemRenderer?.apply {
+            scaleTo(scaleX, scaleY, withCenter)
             postInvalidateOnAnimation()
         }
     }
 
     /**旋转[BaseItemRenderer]*/
-    fun rotateItem(itemRenderer: BaseItemRenderer<*>?, degrees: Float) {
-        itemRenderer?.let {
-            it.rotateBy(degrees)
+    fun rotateItemBy(itemRenderer: BaseItemRenderer<*>?, degrees: Float) {
+        itemRenderer?.apply {
+            rotateBy(degrees)
+            postInvalidateOnAnimation()
+        }
+    }
+
+    fun changeItemBounds(
+        itemRenderer: BaseItemRenderer<*>?,
+        width: Float,
+        height: Float,
+        withCenter: Boolean = false
+    ) {
+        itemRenderer?.apply {
+            updateBounds(width, height, withCenter)
             postInvalidateOnAnimation()
         }
     }

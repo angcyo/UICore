@@ -14,9 +14,7 @@ import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.library.L
-import com.angcyo.library.ex.disableParentInterceptTouchEvent
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.*
 
 /**
  * 控制渲染的数据组件
@@ -40,13 +38,13 @@ class ControlHandler : BaseComponent() {
     val controlPointList = mutableListOf<ControlPoint>()
 
     /**控制点的大小, 背景圆的直径*/
-    var controlPointSize = 20 * dp
+    var controlPointSize = 22 * dp
 
     /**图标padding的大小*/
     var controlPointPadding: Int = 4 * dpi
 
     /**相对于目标点的偏移距离*/
-    var controlPointOffset = 4 * dp
+    var controlPointOffset = 2 * dp
 
     //缓存
     val _controlPointOffsetRect = RectF()
@@ -117,7 +115,7 @@ class ControlHandler : BaseComponent() {
 
                             if (dx1 != 0f || dy1 != 0f) {
                                 handle = true
-                                view.translateItem(selectedItemRender, dx1, dy1)
+                                view.translateItemBy(selectedItemRender, dx1, dy1)
                                 L.i("移动->x:$dx1 y:$dy1")
                             }
                         }
@@ -167,15 +165,9 @@ class ControlHandler : BaseComponent() {
     /**计算4个控制点的矩形位置坐标
      * [itemRect] 目标元素坐标系的矩形坐标*/
     fun calcControlPointLocation(canvasViewBox: CanvasViewBox, itemRenderer: BaseItemRenderer<*>) {
-        val isLock = itemRenderer.isLockScaleRatio
-
-        /*if (!isLock) {
-            val rotateRect = itemRenderer.mapRotateRect(bounds, _rotateRect)
-            bounds = rotateRect
-        }*/
-
         //将[bounds]转换成视图坐标
-        _controlPointOffsetRect.set(itemRenderer.getVisualBounds())
+        val visualBounds = itemRenderer.getVisualBounds()
+        _controlPointOffsetRect.set(visualBounds)
 
         //在原目标位置, 进行矩形的放大
         val inset = controlPointOffset + controlPointSize / 2
@@ -190,33 +182,48 @@ class ControlHandler : BaseComponent() {
         val lockControl = controlPointList.find { it.type == ControlPoint.POINT_TYPE_LOCK }
             ?: createControlPoint(ControlPoint.POINT_TYPE_LOCK)
 
+        //矩形是否翻转了
+        val bounds = itemRenderer.getBounds()
+        val isFlipHorizontal = bounds.isFlipHorizontal
+        val isFlipVertical = bounds.isFlipVertical
+
+        val left =
+            if (isFlipHorizontal) _controlPointOffsetRect.right else _controlPointOffsetRect.left
+        val right =
+            if (isFlipHorizontal) _controlPointOffsetRect.left else _controlPointOffsetRect.right
+
+        val top =
+            if (isFlipVertical) _controlPointOffsetRect.bottom else _controlPointOffsetRect.top
+        val bottom =
+            if (isFlipVertical) _controlPointOffsetRect.top else _controlPointOffsetRect.bottom
+
         updateControlPoint(
             closeControl,
             canvasViewBox,
             itemRenderer,
-            _controlPointOffsetRect.left,
-            _controlPointOffsetRect.top
+            left,
+            top
         )
         updateControlPoint(
             rotateControl,
             canvasViewBox,
             itemRenderer,
-            _controlPointOffsetRect.right,
-            _controlPointOffsetRect.top,
+            right,
+            top,
         )
         updateControlPoint(
             scaleControl,
             canvasViewBox,
             itemRenderer,
-            _controlPointOffsetRect.right,
-            _controlPointOffsetRect.bottom,
+            right,
+            bottom,
         )
         updateControlPoint(
             lockControl,
             canvasViewBox,
             itemRenderer,
-            _controlPointOffsetRect.left,
-            _controlPointOffsetRect.bottom,
+            left,
+            bottom,
         )
 
         controlPointList.clear()

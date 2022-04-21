@@ -4,10 +4,7 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
 import com.angcyo.canvas.items.renderer.IItemRenderer
-import com.angcyo.canvas.utils._tempRectF
-import com.angcyo.canvas.utils.clamp
-import com.angcyo.canvas.utils.mapPoint
-import com.angcyo.canvas.utils.mapRectF
+import com.angcyo.canvas.utils.*
 import com.angcyo.library.ex.matrixAnimator
 
 /**
@@ -49,19 +46,10 @@ class CanvasViewBox(val canvasView: ICanvasView) {
     val oldMatrix: Matrix = Matrix()
 
     //临时变量
-    val tempMatrix: Matrix = Matrix()
     val invertMatrix: Matrix = Matrix()
 
     /**内容可视区域*/
     val contentRect = RectF()
-
-    //当前的缩放比例
-    var _scaleX: Float = 1f
-    var _scaleY: Float = 1f
-
-    //当前平移的距离, 像素
-    var _translateX: Float = 0f
-    var _translateY: Float = 0f
 
     val _tempValues = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
     val _tempPoint = PointF()
@@ -94,6 +82,9 @@ class CanvasViewBox(val canvasView: ICanvasView) {
 
         matrix.set(newMatrix)
         limitTranslateAndScale(matrix)
+
+        //反转矩阵后的值
+        matrix.invert(invertMatrix)
 
         canvasView.dispatchCanvasBoxMatrixChanged(matrix, oldMatrix)
 
@@ -141,13 +132,16 @@ class CanvasViewBox(val canvasView: ICanvasView) {
 
     /**将可视化坐标点, 映射成坐标系点*/
     fun mapCoordinateSystemPoint(point: PointF, result: PointF = _tempPoint): PointF {
-        matrix.invert(invertMatrix)
         return invertMatrix.mapPoint(point, result)
+    }
+
+    fun mapCoordinateSystemPoint(x: Float, y: Float, result: PointF = _tempPoint): PointF {
+        _tempPoint.set(x, y)
+        return invertMatrix.mapPoint(_tempPoint, result)
     }
 
     /**将可视化矩形, 映射成坐标系矩形*/
     fun mapCoordinateSystemRect(rect: RectF, result: RectF = _tempRect): RectF {
-        matrix.invert(invertMatrix)
         invertMatrix.mapRect(result, rect)
         return result
     }
@@ -171,7 +165,6 @@ class CanvasViewBox(val canvasView: ICanvasView) {
 
         //将相对于与视图左上角的坐标转换成可以直接绘制的坐标, 最终会和bounds一直
         /*val test = RectF()
-        matrix.invert(invertMatrix)
         invertMatrix.mapRectF(result, test)*/
 
         return result
@@ -208,6 +201,22 @@ class CanvasViewBox(val canvasView: ICanvasView) {
 
     fun getContentHeight() = getContentBottom() - getContentTop()
 
+    fun getScaleX(): Float {
+        return matrix.getScaleX()
+    }
+
+    fun getScaleY(): Float {
+        return matrix.getScaleY()
+    }
+
+    fun getTranslateX(): Float {
+        return matrix.getTranslateX()
+    }
+
+    fun getTranslateY(): Float {
+        return matrix.getTranslateY()
+    }
+
     /**获取可视区偏移后的坐标矩形*/
     fun getContentMatrixBounds(matrix: Matrix = this.matrix): RectF {
 
@@ -235,17 +244,17 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         val curTransX: Float = _tempValues[Matrix.MTRANS_X]
         val curTransY: Float = _tempValues[Matrix.MTRANS_Y]
 
-        _scaleX = clamp(curScaleX, minScaleX, maxScaleX)
-        _scaleY = clamp(curScaleY, minScaleY, maxScaleY)
+        val scaleX = clamp(curScaleX, minScaleX, maxScaleX)
+        val scaleY = clamp(curScaleY, minScaleY, maxScaleY)
 
-        _translateX = clamp(curTransX, minTranslateX, maxTranslateX)
-        _translateY = clamp(curTransY, minTranslateY, maxTranslateY)
+        val translateX = clamp(curTransX, minTranslateX, maxTranslateX)
+        val translateY = clamp(curTransY, minTranslateY, maxTranslateY)
 
-        _tempValues[Matrix.MTRANS_X] = _translateX
-        _tempValues[Matrix.MTRANS_Y] = _translateY
+        _tempValues[Matrix.MTRANS_X] = translateX
+        _tempValues[Matrix.MTRANS_Y] = translateY
 
-        _tempValues[Matrix.MSCALE_X] = _scaleX
-        _tempValues[Matrix.MSCALE_Y] = _scaleY
+        _tempValues[Matrix.MSCALE_X] = scaleX
+        _tempValues[Matrix.MSCALE_Y] = scaleY
 
         matrix.setValues(_tempValues)
     }
@@ -305,7 +314,6 @@ class CanvasViewBox(val canvasView: ICanvasView) {
 
     /**获取当前视图中心距离坐标系原点的坐标*/
     fun getCoordinateSystemCenter(result: PointF = _tempPoint): PointF {
-        matrix.invert(invertMatrix)
         //转换后中点对应的像素坐标
         val contentCenterX = getContentCenterX()
         val contentCenterY = getContentCenterY()
@@ -327,7 +335,6 @@ class CanvasViewBox(val canvasView: ICanvasView) {
 
     /**获取系统坐标系转换后的所在的像素坐标位置*/
     fun getCoordinateSystemPoint(result: PointF = _tempPoint): PointF {
-        matrix.invert(invertMatrix)
         result.set(invertMatrix.mapPoint(getCoordinateSystemX(), getCoordinateSystemY()))
         return result
     }
@@ -363,12 +370,12 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         px: Float = getContentCenterX(),
         py: Float = getContentCenterY()
     ) {
-        if ((scaleX < 1f && _scaleX <= minScaleX) || (scaleX > 1f && _scaleX >= maxScaleX)) {
+        if ((scaleX < 1f && getScaleX() <= minScaleX) || (scaleX > 1f && getScaleX() >= maxScaleX)) {
             //已经达到了最小/最大, 还想缩放/放大
             return
         }
 
-        if ((scaleY < 1f && _scaleY <= minScaleY) || (scaleY > 1f && _scaleY >= maxScaleY)) {
+        if ((scaleY < 1f && getScaleY() <= minScaleY) || (scaleY > 1f && getScaleY() >= maxScaleY)) {
             return
         }
 

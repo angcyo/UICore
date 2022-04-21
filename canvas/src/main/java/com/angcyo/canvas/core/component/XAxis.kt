@@ -15,10 +15,9 @@ class XAxis : BaseAxis() {
     override fun getPlusPixelList(canvasViewBox: CanvasViewBox): List<Float> {
         plusList.clear()
         var start = canvasViewBox.getCoordinateSystemX()
-        canvasViewBox.matrix.invert(_tempMatrix)
-        val factor = max(1f, _tempMatrix.getScaleX())
+        val factor = max(1f, canvasViewBox.invertMatrix.getScaleX())
         val end =
-            (start + canvasViewBox.getContentWidth() * factor - canvasViewBox._translateX) * factor
+            (start + canvasViewBox.getContentWidth() * factor - canvasViewBox.getTranslateX()) * factor
         val step = canvasViewBox.valueUnit.convertValueToPixel(1f)
 
         while (start < end) {
@@ -31,10 +30,9 @@ class XAxis : BaseAxis() {
     override fun getMinusPixelList(canvasViewBox: CanvasViewBox): List<Float> {
         minusList.clear()
         var start = canvasViewBox.getCoordinateSystemX()
-        canvasViewBox.matrix.invert(_tempMatrix)
-        val factor = max(1f, _tempMatrix.getScaleX())
+        val factor = max(1f, canvasViewBox.invertMatrix.getScaleX())
         val end =
-            (start - canvasViewBox.getContentWidth() - canvasViewBox._translateX) * factor
+            (start - canvasViewBox.getContentWidth() - canvasViewBox.getTranslateX()) * factor
         val step = canvasViewBox.valueUnit.convertValueToPixel(1f)
 
         while (start > end) {

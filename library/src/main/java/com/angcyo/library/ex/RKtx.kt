@@ -147,6 +147,17 @@ fun View?.disableParentInterceptTouchEvent(disable: Boolean = true) {
     this?.parent?.requestDisallowInterceptTouchEvent(disable)
 }
 
+//<editor-fold desc="rect sie">
+
+/**调整矩形大小*/
+fun RectF.adjustSize(width: Float, height: Float, withCenter: Boolean) {
+    if (withCenter) {
+        adjustSizeWithCenter(width, height)
+    } else {
+        adjustSizeWithLT(width, height)
+    }
+}
+
 /**调整矩形的宽高到指定的值*/
 fun RectF.adjustSizeWithCenter(width: Float, height: Float) {
     val w = width()
@@ -157,7 +168,8 @@ fun RectF.adjustSizeWithCenter(width: Float, height: Float) {
     inset(ws / 2, hs / 2)
 }
 
-/**左上角*/
+/**左上角
+ * [RectF] 左右上下翻转后的真实坐标*/
 fun RectF.adjustSizeWithLT(width: Float, height: Float) {
     val w = width()
     val h = height()
@@ -167,4 +179,41 @@ fun RectF.adjustSizeWithLT(width: Float, height: Float) {
 
     right -= ws
     bottom -= hs
+
+    /*if (isFlipHorizontal) {
+        left -= ws
+    } else {
+        right -= ws
+    }
+    if (isFlipVertical) {
+        top -= hs
+    } else {
+        bottom -= hs
+    }*/
 }
+
+//</editor-fold desc="rect sie">
+
+//<editor-fold desc="rect flip">
+
+/**矩形是否翻转了*/
+val RectF.isFlipHorizontal: Boolean
+    get() = left > right
+
+val RectF.isFlipVertical: Boolean
+    get() = top > bottom
+
+/**翻转后, 对应的左上右下的坐标*/
+val RectF.flipLeft: Float
+    get() = if (isFlipHorizontal) right else left
+
+val RectF.flipRight: Float
+    get() = if (isFlipHorizontal) left else right
+
+val RectF.flipTop: Float
+    get() = if (isFlipHorizontal) bottom else top
+
+val RectF.flipBottom: Float
+    get() = if (isFlipHorizontal) top else bottom
+
+//</editor-fold desc="rect flip">

@@ -8,7 +8,6 @@ import com.angcyo.canvas.items.TextItem
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
-import kotlin.math.max
 import kotlin.math.tan
 
 /**
@@ -109,27 +108,66 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
 
     //val _rect = Rect()
 
-    override fun scaleBy(scaleX: Float, scaleY: Float, widthCenter: Boolean) {
-        super.scaleBy(scaleX, scaleY, widthCenter)
-
-        rendererItem?.let {
-            val max = max(scaleX, scaleY)
-            paint.textSize = paint.textSize * max
-            updateTextPaint(it)
-
-            if (widthCenter) {
-                changeBounds {
-                    adjustSizeWithCenter(getTextWidth(), getTextHeight())
-                }
-            } else {
-                //等到操作结束后再更新
-                //bounds.adjustSizeWithLT(paint.textWidth(rendererItem?.text ?: ""), getTextHeight())
-            }
-
-            //paint.getTextBounds(textItem.text, 0, textItem.text?.length ?: 0, _rect)//这样测量出来的文本高度, 非行高
-            //bounds.adjustSize(_rect.width().toFloat(), _rect.height().toFloat())
+    override fun onItemBoundsChanged() {
+        super.onItemBoundsChanged()
+        rendererItem?.apply {
+            updateLargestTextSizeWhichFits(getBounds())
+            updateTextPaint(this)
         }
     }
+
+    /**[android.widget.TextView#findLargestTextSizeWhichFits]*/
+    private fun updateLargestTextSizeWhichFits(availableSpace: RectF) {
+        val maxWidth = availableSpace.width().absoluteValue
+        val maxHeight = availableSpace.height().absoluteValue
+
+        var largestSize = paint.textSize
+        var adjustStep = 0.1f
+        
+        if (getTextWidth() > maxWidth || getTextHeight() > maxHeight) {
+            //需要减少size
+            adjustStep = -adjustStep
+
+            while (!(getTextWidth() < maxWidth && getTextHeight() < maxHeight)) {
+                largestSize = paint.textSize
+                val size = largestSize + adjustStep
+                paint.textSize = size
+                if (size <= 0f) {
+                    largestSize = 0f
+                    break
+                }
+            }
+        } else {
+            while (!(getTextWidth() > maxWidth && getTextHeight() > maxHeight)) {
+                largestSize = paint.textSize
+                paint.textSize = largestSize + adjustStep
+            }
+        }
+
+        paint.textSize = largestSize
+    }
+
+    /* override fun scaleBy(scaleX: Float, scaleY: Float, withCenter: Boolean) {
+         super.scaleBy(scaleX, scaleY, withCenter)
+
+         rendererItem?.let {
+             val max = max(scaleX, scaleY)
+             paint.textSize = paint.textSize * max
+             updateTextPaint(it)
+
+             if (withCenter) {
+                 changeBounds {
+                     adjustSizeWithCenter(getTextWidth(), getTextHeight())
+                 }
+             } else {
+                 //等到操作结束后再更新
+                 //bounds.adjustSizeWithLT(paint.textWidth(rendererItem?.text ?: ""), getTextHeight())
+             }
+
+             //paint.getTextBounds(textItem.text, 0, textItem.text?.length ?: 0, _rect)//这样测量出来的文本高度, 非行高
+             //bounds.adjustSize(_rect.width().toFloat(), _rect.height().toFloat())
+         }
+     }*/
 
     override fun render(canvas: Canvas) {
         val renderBounds = getRendererBounds()
@@ -177,8 +215,8 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
 
 /**添加一个文本渲染器*/
 fun CanvasView.addTextRenderer(text: String) {
-    val textRenderer = TextItemRenderer(canvasViewBox)
-    textRenderer.rendererItem = TextItem().apply { this.text = text }
-    addCentreItemRenderer(textRenderer)
-    selectedItem(textRenderer)
+    val renderer = TextItemRenderer(canvasViewBox)
+    renderer.rendererItem = TextItem().apply { this.text = text }
+    addCentreItemRenderer(renderer)
+    selectedItem(renderer)
 }

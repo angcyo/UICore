@@ -73,9 +73,15 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     /**缩放元素, 在元素左上角位置开始缩放
      * [scaleX] 横向需要移动的像素距离
      * [scaleY] 纵向需要移动的像素距离
-     * [widthCenter] 缩放缩放是否使用中点坐标, 默认是左上角
+     * [withCenter] 缩放缩放是否使用中点坐标, 默认是左上角
      * */
-    fun scaleBy(scaleX: Float, scaleY: Float, widthCenter: Boolean = false)
+    fun scaleBy(scaleX: Float, scaleY: Float, withCenter: Boolean = false)
+
+    /**缩放到指定比例*/
+    fun scaleTo(scaleX: Float, scaleY: Float, withCenter: Boolean = false)
+
+    /**更新bounds到指定的宽高*/
+    fun updateBounds(width: Float, height: Float, withCenter: Boolean = false)
 
     /**旋转元素, 旋转操作不能用matrix
      * [degrees] 旋转的角度*/
@@ -105,6 +111,8 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     fun mapRotateRect(rotateCenterX: Float, rotateCenterY: Float, rect: RectF, result: RectF): RectF
 
     fun mapRotateRect(rect: RectF, result: RectF): RectF
+
+    fun mapRotatePoint(point: PointF, result: PointF): PointF
 
     //</editor-fold desc="操作方法">
 }

@@ -41,8 +41,8 @@ class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox) :
         val plusList = axis.plusList
         val minusList = axis.minusList
 
-        val translateX = canvasViewBox._translateX
-        val scaleX = canvasViewBox._scaleX
+        val translateX = canvasViewBox.getTranslateX()
+        val scaleX = canvasViewBox.getScaleX()
 
         val contentLeft = canvasViewBox.getContentLeft()
         val contentRight = canvasViewBox.getContentRight()

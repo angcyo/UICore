@@ -73,9 +73,8 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
                 val _rect = canvasViewBox.contentRect
                 //val rect = canvasViewBox.getContentMatrixBounds()
 
-                canvasViewBox.matrix.invert(_tempMatrix)
-                val rect = _tempMatrix.mapRectF(_rect)
-                val touchPoint = _tempMatrix.mapPoint(_touchPoint, _tempPoint)
+                val rect = canvasViewBox.invertMatrix.mapRectF(_rect)
+                val touchPoint = canvasViewBox.invertMatrix.mapPoint(_touchPoint, _tempPoint)
 
                 val tpStr = buildString {
                     val xValue = valueUnit.convertPixelToValue(touchPoint.x - _rect.left)
@@ -112,9 +111,9 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
                     append("(${rect.left}, ${rect.top}, ${rect.right}, ${rect.bottom})") //映射后
                 }
 
-                "${tpStr}\n${rectStr}\n${(canvasViewBox._scaleX * 100).toInt()}%"
+                "${tpStr}\n${rectStr}\n${(canvasViewBox.getScaleX() * 100).toInt()}%"
             } else {
-                "${(canvasViewBox._scaleX * 100).toInt()}%"
+                "${(canvasViewBox.getScaleX() * 100).toInt()}%"
             }
 
             //StaticLayout

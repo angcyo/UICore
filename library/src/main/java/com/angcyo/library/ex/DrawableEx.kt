@@ -175,3 +175,17 @@ fun Drawable.toBitmap(outWidth: Int = -1, outHeight: Int = -1): Bitmap {
 }
 
 fun colorDrawable(@ColorRes resId: Int): ColorDrawable = ColorDrawable(_color(resId))
+
+//<editor-fold desc="Picture">
+
+/**[Picture]*/
+fun withPicture(width: Int, height: Int, block: Canvas.() -> Unit): Picture {
+    return Picture().apply {
+        val canvas = beginRecording(width, height)
+        canvas.block()
+        //结束
+        endRecording()
+    }
+}
+
+//</editor-fold desc="Picture">

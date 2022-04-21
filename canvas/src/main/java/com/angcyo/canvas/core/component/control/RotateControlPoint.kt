@@ -61,7 +61,7 @@ class RotateControlPoint : ControlPoint() {
                 _touchPoint.set(_movePoint)
                 angleSum += angle
                 angleSum %= 360
-                view.rotateItem(itemRenderer, angle)
+                view.rotateItemBy(itemRenderer, angle)
                 L.i("旋转->$angle°")
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {

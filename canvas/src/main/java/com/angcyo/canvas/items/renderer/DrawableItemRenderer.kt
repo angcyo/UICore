@@ -1,9 +1,18 @@
 package com.angcyo.canvas.items.renderer
 
 import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.drawable.Drawable
 import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.ScalePictureDrawable
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.items.DrawableItem
+import com.angcyo.canvas.utils.createTextPaint
+import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.textHeight
+import com.angcyo.library.ex.textWidth
+import com.angcyo.library.ex.withPicture
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -41,4 +50,32 @@ class DrawableItemRenderer(canvasViewBox: CanvasViewBox) :
             drawable.draw(canvas)
         }
     }
+}
+
+/**添加一个[Drawable]渲染器*/
+fun CanvasView.addDrawableRenderer(drawable: Drawable) {
+    val renderer = DrawableItemRenderer(canvasViewBox)
+    renderer.rendererItem = DrawableItem().apply { this.drawable = drawable }
+    addCentreItemRenderer(renderer)
+    selectedItem(renderer)
+}
+
+/**添加一个文本[Drawable]渲染器*/
+fun CanvasView.addDrawableRenderer(
+    text: String,
+    paint: Paint = createTextPaint(Color.BLACK).apply {
+        //init
+        textSize = 12 * dp
+    }
+) {
+    val renderer = DrawableItemRenderer(canvasViewBox)
+    renderer.rendererItem = DrawableItem().apply {
+        val width = paint.textWidth(text)
+        val height = paint.textHeight()
+        this.drawable = ScalePictureDrawable(withPicture(width.toInt(), height.toInt()) {
+            drawText(text, 0f, height - paint.descent(), paint)
+        })
+    }
+    addCentreItemRenderer(renderer)
+    selectedItem(renderer)
 }

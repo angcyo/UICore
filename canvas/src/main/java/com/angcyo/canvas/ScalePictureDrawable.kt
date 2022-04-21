@@ -6,6 +6,7 @@ import android.graphics.drawable.PictureDrawable
 import android.os.Build
 
 /**
+ * 默认的[PictureDrawable] [setBounds]放大缩小之后, 不会进行缩放
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/13
  */
