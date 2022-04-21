@@ -122,6 +122,14 @@ class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
             updateTextDrawable()
         }
     }
+
+    /**更新文本*/
+    fun updateText(text: String) {
+        rendererItem?.apply {
+            this.text = text
+            updateTextDrawable()
+        }
+    }
 }
 
 /**添加一个文本渲染器*/

@@ -32,7 +32,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     /**视图控制*/
     val canvasViewBox = CanvasViewBox(this)
 
-    /**手势控制*/
+    /**画布的手势, 用来处理画布的双指平移和捏合缩放*/
     val canvasTouchHandler = CanvasTouchHandler(this)
 
     /**事件回调*/
@@ -75,6 +75,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
     //<editor-fold desc="内部成员">
 
+    /**控制点[ControlPoint]的控制和[selectedItemRender]的平移控制*/
     val controlHandler = ControlHandler()
 
     /**控制器渲染*/
@@ -466,6 +467,13 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }
 
         postInvalidateOnAnimation()
+    }
+
+    /**双击item[BaseItemRenderer]*/
+    fun doubleTapItem(itemRenderer: BaseItemRenderer<*>) {
+        canvasListenerList.forEach {
+            it.onDoubleTapItem(itemRenderer)
+        }
     }
 
     /**平移选中的[BaseItemRenderer]*/

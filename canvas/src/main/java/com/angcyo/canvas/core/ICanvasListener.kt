@@ -49,6 +49,12 @@ interface ICanvasListener {
 
     }
 
+    /**双击[IItemRenderer]*/
+    fun onDoubleTapItem(itemRenderer: IItemRenderer<*>) {
+
+    }
+
+
     //</editor-fold desc="Item相关">
 
 }

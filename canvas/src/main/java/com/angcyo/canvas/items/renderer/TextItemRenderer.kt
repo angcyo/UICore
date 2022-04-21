@@ -220,6 +220,15 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
             canvasViewBox.canvasView.refresh()
         }
     }
+
+    /**更新文本*/
+    fun updateText(text: String) {
+        rendererItem?.apply {
+            this.text = text
+            updateRendererItem(this)
+            canvasViewBox.canvasView.refresh()
+        }
+    }
 }
 
 /**添加一个文本渲染器*/

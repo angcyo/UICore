@@ -54,6 +54,12 @@ class ControlHandler : BaseComponent() {
     val _movePoint = PointF()
     var touchPointerId: Int = -1
 
+    //第一次按下的时候, 用来计算是否是双击
+    var touchTime: Long = 0L
+
+    //是否双击在同一个[BaseItemRenderer]中
+    var isDoubleTouch: Boolean = false
+
     //</editor-fold desc="控制点">
 
     /**手势处理
@@ -82,7 +88,20 @@ class ControlHandler : BaseComponent() {
                 }
 
                 if (touchControlPoint == null) {
+                    //检查是否点在[BaseItemRenderer]中
                     val itemRenderer = view.findItemRenderer(touchPoint)
+                    if (itemRenderer != null) {
+                        val nowTime = System.currentTimeMillis()
+                        if (itemRenderer == selectedItemRender) {
+                            //选中同一个
+                            if (nowTime - touchTime <= 360) {
+                                isDoubleTouch = true
+                            }
+                        } else {
+                            isDoubleTouch = false
+                        }
+                        touchTime = nowTime
+                    }
                     view.selectedItem(itemRenderer)
                 }
             }
@@ -128,10 +147,18 @@ class ControlHandler : BaseComponent() {
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 //notify
                 if (holdControlPoint != null) {
+                    //控制点操作结束回调
                     selectedItemRender?.let {
                         it.onControlFinish(holdControlPoint)
                     }
                 }
+                //双击回调
+                selectedItemRender?.let {
+                    if (isDoubleTouch) {
+                        view.doubleTapItem(it)
+                    }
+                }
+                isDoubleTouch = false
                 touchControlPoint = null
                 view.disableParentInterceptTouchEvent(false)
             }
