@@ -115,4 +115,18 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     fun mapRotatePoint(point: PointF, result: PointF): PointF
 
     //</editor-fold desc="操作方法">
+
+    //<editor-fold desc="其他方法">
+
+    /**是否支持指定的控制点
+     * [com.angcyo.canvas.core.component.ControlPoint.POINT_TYPE_CLOSE]
+     * [com.angcyo.canvas.core.component.ControlPoint.POINT_TYPE_ROTATE]
+     * [com.angcyo.canvas.core.component.ControlPoint.POINT_TYPE_SCALE]
+     * [com.angcyo.canvas.core.component.ControlPoint.POINT_TYPE_LOCK]
+     * */
+    fun isSupportControlPoint(type: Int): Boolean {
+        return true
+    }
+
+    //</editor-fold desc="其他方法">
 }

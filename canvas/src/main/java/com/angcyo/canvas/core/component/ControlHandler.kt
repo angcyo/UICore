@@ -226,6 +226,11 @@ class ControlHandler : BaseComponent() {
             bottom,
         )
 
+        closeControl.enable = itemRenderer.isSupportControlPoint(ControlPoint.POINT_TYPE_CLOSE)
+        rotateControl.enable = itemRenderer.isSupportControlPoint(ControlPoint.POINT_TYPE_ROTATE)
+        scaleControl.enable = itemRenderer.isSupportControlPoint(ControlPoint.POINT_TYPE_SCALE)
+        lockControl.enable = itemRenderer.isSupportControlPoint(ControlPoint.POINT_TYPE_LOCK)
+
         controlPointList.clear()
         controlPointList.add(closeControl)
         controlPointList.add(rotateControl)

@@ -52,4 +52,9 @@ abstract class BaseRenderer(val canvasViewBox: CanvasViewBox) : IRenderer {
         getBounds().block()
         //canvasViewBox.canvasView.dispatchItemBoundsChanged()
     }
+
+    /**触发刷新*/
+    fun refresh() {
+        canvasViewBox.canvasView.refresh()
+    }
 }
