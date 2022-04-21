@@ -69,11 +69,18 @@ class JsonAttachUploader {
 
                 value.split(FormAttachManager.ATTACH_SPLIT).forEach {
                     if (it.startsWith(File.separatorChar)) {
+                        //参数是文件路径
                         val file = it.file()
                         if (file != null && file.exists() && file.canRead()) {
                             haveFile = true
 
                             _attachPathList.add(it)
+                        }
+                    } else if (it.startsWith(FormAttachManager.HTTP_PREFIX)) {
+                        //参数是http, 并且包含fileId, 则直接替换
+                        val fileId = it.parseFileId().first
+                        if (fileId != null) {
+                            _attachPathMap[jsonPath] = "$fileId"
                         }
                     }
                 }
@@ -155,7 +162,9 @@ class JsonAttachUploader {
     }
 }
 
-/**从url中解析出文件id*/
+/**从url中解析出文件id
+ * [first] 文件id
+ * [second] this字符串*/
 fun String.parseFileId(fileIdKey: String = FormAttachManager.KEY_FILE_ID): Pair<Long?, String> {
     val path = this
     return if (path.isHttpScheme()) {
