@@ -17,6 +17,8 @@ import com.angcyo.canvas.core.renderer.*
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils._tempPoint
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -296,9 +298,23 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     //<editor-fold desc="操作方法">
 
     fun getBitmap(): Bitmap {
-        val width = canvasViewBox.getContentWidth()
-        val height = canvasViewBox.getContentHeight()
-        return getBitmap(0f, 0f, width, height)
+        val contentWidth = canvasViewBox.getContentWidth()
+        val contentHeight = canvasViewBox.getContentHeight()
+
+        var left = 0f
+        var top = 0f
+        var right = contentWidth
+        var bottom = contentHeight
+
+        itemsRendererList.forEach {
+            val bounds = it.getBounds()
+            left = min(left, bounds.left)
+            top = min(top, bounds.top)
+            right = max(left, bounds.right)
+            bottom = max(bottom, bounds.bottom)
+        }
+
+        return getBitmap(left, top, right - left, bottom - top)
     }
 
     /**获取视图中指定坐标宽度的图片
@@ -357,13 +373,13 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
                     item.onCanvasSizeChanged(this)
                 }
 
-                val _width = if (width == ViewGroup.LayoutParams.WRAP_CONTENT.toFloat()) {
+                var _width = if (width == ViewGroup.LayoutParams.WRAP_CONTENT.toFloat()) {
                     bounds.width()
                 } else {
                     width
                 }
 
-                val _height = if (height == ViewGroup.LayoutParams.WRAP_CONTENT.toFloat()) {
+                var _height = if (height == ViewGroup.LayoutParams.WRAP_CONTENT.toFloat()) {
                     bounds.height()
                 } else {
                     height
@@ -372,6 +388,27 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
                 if (_width > 0 && _height > 0) {
                     //当前可视化的中点坐标
 
+                    val visualRect = canvasViewBox.getVisualRect()
+                    val maxWidth = visualRect.width() * 3 / 4
+                    val maxHeight = visualRect.height() * 3 / 4
+
+                    if (_width > maxWidth || _height > maxHeight) {
+                        //超出范围, 等比缩放
+
+                        val scaleX = maxWidth / _width
+                        val scaleY = maxHeight / _height
+
+                        if (scaleX > scaleY) {
+                            //按照高度缩放
+                            _height = maxHeight
+                            _width *= scaleY
+                        } else {
+                            _width = maxWidth
+                            _height *= scaleX
+                        }
+                    }
+
+                    //更新坐标
                     val rect = canvasViewBox.getCoordinateSystemCenterRect(_width, _height)
                     item.changeBounds {
                         set(rect)

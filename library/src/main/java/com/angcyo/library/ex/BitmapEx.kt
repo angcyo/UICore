@@ -254,6 +254,7 @@ fun Bitmap.rotate(degrees: Float = 0f): Bitmap = if (degrees > 0) {
 /**[rotate]纠正旋转角度*/
 fun File.toBitmap(rotate: Boolean = true) = absolutePath.toBitmap(rotate)
 
+/**将文件路径转换成[Bitmap]对象*/
 fun String.toBitmap(rotate: Boolean = true): Bitmap {
     val file = File(this)
     return BitmapFactory.decodeFile(this).run {

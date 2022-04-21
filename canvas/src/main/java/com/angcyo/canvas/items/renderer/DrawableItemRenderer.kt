@@ -1,14 +1,18 @@
 package com.angcyo.canvas.items.renderer
 
+import android.content.res.Resources
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.ScalePictureDrawable
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.items.DrawableItem
 import com.angcyo.canvas.utils.createTextPaint
+import com.angcyo.library.app
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.textHeight
 import com.angcyo.library.ex.textWidth
@@ -64,7 +68,13 @@ fun CanvasView.addDrawableRenderer(drawable: Drawable) {
     selectedItem(renderer)
 }
 
-/**添加一个文本[Drawable]渲染器*/
+/**添加一个[Bitmap]渲染器*/
+fun CanvasView.addDrawableRenderer(bitmap: Bitmap, res: Resources = app().resources) {
+    addDrawableRenderer(BitmapDrawable(res, bitmap))
+}
+
+/**添加一个文本[Drawable]渲染器 */
+@Deprecated("请使用[com.angcyo.canvas.items.renderer.PictureTextItemRendererKt.addPictureTextRenderer]")
 fun CanvasView.addDrawableRenderer(
     text: String,
     paint: Paint = createTextPaint(Color.BLACK).apply {

@@ -201,3 +201,18 @@ fun Fragment.dslPicker(config: LoaderConfig, onResult: (List<LoaderMedia>?) -> U
         }
     }
 }
+
+/**简单的选择图片*/
+fun Fragment.dslSinglePickerImage(
+    count: Int = 1,
+    config: LoaderConfig.() -> Unit = {},
+    onResult: (List<LoaderMedia>?) -> Unit
+) {
+    dslPicker(LoaderConfig().apply {
+        mediaLoaderType = LoaderConfig.LOADER_TYPE_IMAGE
+        maxSelectorLimit = count
+        enableImageEdit = true
+        enableCamera = true
+        config()
+    }, onResult)
+}

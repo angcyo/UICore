@@ -91,6 +91,23 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         canvasView.refresh()
     }
 
+    /**获取当前坐标系在可视窗口的矩形*/
+    fun getVisualCoordinateSystemRect(): RectF {
+        /*matrix.getValues(_tempValues)
+        _tempValues[Matrix.MTRANS_X] -= _tempValues[Matrix.MTRANS_X]
+        _tempValues[Matrix.MTRANS_Y] -= _tempValues[Matrix.MTRANS_Y]
+        tempMatrix.setValues(_tempValues)
+        tempMatrix.mapRect(_tempRectF, contentRect)*/
+        matrix.mapRect(_tempRectF, contentRect)
+        return _tempRectF
+    }
+
+    /**获取当前能够看到的坐标系的范围矩形*/
+    fun getVisualRect(): RectF {
+        invertMatrix.mapRect(_tempRectF, contentRect)
+        return _tempRectF
+    }
+
     /**在当前视图中心获取一个坐标系中指定宽高的矩形*/
     fun getCoordinateSystemCenterRect(
         width: Float,
@@ -215,22 +232,6 @@ class CanvasViewBox(val canvasView: ICanvasView) {
 
     fun getTranslateY(): Float {
         return matrix.getTranslateY()
-    }
-
-    /**获取可视区偏移后的坐标矩形*/
-    fun getContentMatrixBounds(matrix: Matrix = this.matrix): RectF {
-
-        /*matrix.getValues(_tempValues)
-
-        _tempValues[Matrix.MTRANS_X] -= _tempValues[Matrix.MTRANS_X]
-        _tempValues[Matrix.MTRANS_Y] -= _tempValues[Matrix.MTRANS_Y]
-
-        tempMatrix.setValues(_tempValues)
-        tempMatrix.mapRect(_tempRectF, contentRect)*/
-
-        matrix.mapRect(_tempRectF, contentRect)
-
-        return _tempRectF
     }
 
     /**限制[matrix]可视化窗口的平移和缩放大小
