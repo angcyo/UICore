@@ -33,7 +33,7 @@ class ValueUnit {
         return if (index % 10 == 0) {
             "${convertPixelToValue(pixel).toInt()}"
         } else {
-            "${convertPixelToValue(pixel)}"
+            "${convertPixelToValue(pixel).decimal(1)}"
         }
     }
 
