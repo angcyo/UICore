@@ -174,7 +174,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
 
     override fun render(canvas: Canvas) {
         rendererItem?.apply {
-            val renderBounds = getRendererBounds()
+            val renderBounds = getRenderBounds()
             canvas.drawText(
                 text ?: "",
                 renderBounds.flipLeft,

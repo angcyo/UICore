@@ -23,8 +23,8 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     fun getRotateBounds(): RectF
 
     /**旋转后的坐标
-     * [getRendererBounds]*/
-    fun getRendererRotateBounds(): RectF
+     * [getRenderBounds]*/
+    fun getRenderRotateBounds(): RectF
 
     /**旋转后的坐标
      * [getVisualBounds]*/

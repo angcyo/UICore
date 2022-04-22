@@ -51,7 +51,7 @@ class LineItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<LineItem
 
     override fun render(canvas: Canvas) {
         rendererItem?.apply {
-            val renderBounds = getRendererBounds()
+            val renderBounds = getRenderBounds()
             if (orientation == LinearLayout.VERTICAL) {
                 canvas.drawLine(
                     renderBounds.left,
@@ -82,7 +82,7 @@ class LineItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<LineItem
     val tempRect = RectF()
 
     override fun containsPoint(point: PointF): Boolean {
-        val rendererBounds = getRendererBounds()
+        val rendererBounds = getRenderBounds()
         tempRect.set(rendererBounds)
         tempRect.inset(-5f, -5f)
         return getRotateMatrix(tempRect.centerX(), tempRect.centerY()).run {

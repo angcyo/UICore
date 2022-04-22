@@ -71,7 +71,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
 
     override fun getRotateBounds(): RectF = _rotateBounds
 
-    override fun getRendererRotateBounds(): RectF = _rotateRenderBounds
+    override fun getRenderRotateBounds(): RectF = _rotateRenderBounds
 
     override fun getVisualRotateBounds(): RectF = _visualRotateBounds
 
@@ -101,11 +101,11 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
 
     /**当渲染的bounds改变后, 需要主动触发此方法, 用来更新辅助bounds*/
     override fun onItemBoundsChanged() {
-        canvasViewBox.calcItemRenderBounds(getBounds(), getRendererBounds())
-        canvasViewBox.calcItemVisualBounds(getRendererBounds(), getVisualBounds())
+        canvasViewBox.calcItemRenderBounds(getBounds(), getRenderBounds())
+        canvasViewBox.calcItemVisualBounds(getRenderBounds(), getVisualBounds())
 
         mapRotateRect(getBounds(), getRotateBounds())
-        mapRotateRect(getRendererBounds(), getRendererRotateBounds())
+        mapRotateRect(getRenderBounds(), getRenderRotateBounds())
         mapRotateRect(getVisualBounds(), getVisualRotateBounds())
     }
 
@@ -134,19 +134,19 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
     }
 
     override fun mapRotateRect(rect: RectF, result: RectF): RectF {
-        val rendererBounds = getRendererBounds()
+        val rendererBounds = getRenderBounds()
         return mapRotateRect(rendererBounds.centerX(), rendererBounds.centerY(), rect, result)
     }
 
     override fun mapRotatePoint(point: PointF, result: PointF): PointF {
-        val rendererBounds = getRendererBounds()
+        val rendererBounds = getRenderBounds()
         return mapRotatePoint(rendererBounds.centerX(), rendererBounds.centerY(), point, result)
     }
 
     val rotatePath: Path = Path()
 
     override fun containsPoint(point: PointF): Boolean {
-        val rendererBounds = getRendererBounds()
+        val rendererBounds = getRenderBounds()
         return getRotateMatrix(rendererBounds.centerX(), rendererBounds.centerY()).run {
             rotatePath.reset()
             rotatePath.addRect(rendererBounds, Path.Direction.CW)
@@ -156,7 +156,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
     }
 
     override fun containsRect(rect: RectF): Boolean {
-        val rendererBounds = getRendererBounds()
+        val rendererBounds = getRenderBounds()
         return getRotateMatrix(rendererBounds.centerX(), rendererBounds.centerY()).run {
             rotatePath.reset()
             rotatePath.addRect(rendererBounds, Path.Direction.CW)
@@ -171,6 +171,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
      * [distanceX] 横向需要移动的像素距离
      * [distanceY] 纵向需要移动的像素距离*/
     override fun translateBy(distanceX: Float, distanceY: Float) {
+        L.i("移动by->x:$distanceX y:$distanceY")
         changeBounds {
             offset(distanceX, distanceY)
         }
@@ -182,6 +183,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
      * [withCenter] 缩放缩放是否使用中点坐标, 默认是左上角
      * */
     override fun scaleBy(scaleX: Float, scaleY: Float, adjustType: Int) {
+        L.i("缩放by->x:$scaleX y:$scaleY")
         _tempMatrix.reset()
         this.scaleX *= scaleX
         this.scaleY *= scaleY
@@ -204,6 +206,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
     }
 
     override fun scaleTo(scaleX: Float, scaleY: Float, adjustType: Int) {
+        L.i("缩放to->x:$scaleX y:$scaleY")
         _tempMatrix.reset()
         //复原矩形
         val bounds = getBounds()
@@ -249,6 +252,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
     /**旋转元素, 旋转操作不能用matrix, 不能将操作数据更新到bounds
      * [degrees] 旋转的角度*/
     override fun rotateBy(degrees: Float) {
+        L.i("旋转by->$degrees")
         /*_tempMatrix.reset()
        getRendererBounds().apply {
            _tempMatrix.postRotate(degrees, centerX(), centerY())

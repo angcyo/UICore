@@ -36,7 +36,7 @@ class BitmapItemRenderer(canvasViewBox: CanvasViewBox) :
     override fun render(canvas: Canvas) {
         rendererItem?.bitmap?.let { bitmap ->
             bitmapMatrix.reset()
-            val bounds = getRendererBounds()
+            val bounds = getRenderBounds()
 
             bounds.adjustFlipRect(tempRect)
 

@@ -13,7 +13,6 @@ import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.mapPoint
-import com.angcyo.library.L
 import com.angcyo.library.ex.*
 
 /**
@@ -134,8 +133,11 @@ class ControlHandler : BaseComponent() {
 
                             if (dx1 != 0f || dy1 != 0f) {
                                 handle = true
-                                view.translateItemBy(selectedItemRender, dx1, dy1)
-                                L.i("移动->x:$dx1 y:$dy1")
+                                view.smartAssistant.smartTranslateItemBy(
+                                    selectedItemRender,
+                                    dx1,
+                                    dy1
+                                )
                             }
                         }
                     } else {

@@ -59,10 +59,10 @@ class RotateControlPoint : ControlPoint() {
                     _movePoint.y,
                 )
                 _touchPoint.set(_movePoint)
+                val angle = view.smartAssistant.findOptimalAngle(itemRenderer, angle)
                 angleSum += angle
                 angleSum %= 360
                 view.rotateItemBy(itemRenderer, angle)
-                L.i("旋转->$angle°")
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 angle = 0f

@@ -45,7 +45,7 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasViewBox: CanvasViewBox) 
 
     override fun render(canvas: Canvas) {
         rendererItem?.drawable?.let { drawable ->
-            val bounds = getRendererBounds()
+            val bounds = getRenderBounds()
             //需要处理矩形翻转的情况
             if (drawable is ScalePictureDrawable) {
                 drawable.setBounds(

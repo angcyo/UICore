@@ -34,7 +34,7 @@ class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox) :
     }
 
     override fun render(canvas: Canvas) {
-        val bounds = getRendererBounds()
+        val bounds = getRenderBounds()
         val bottom = bounds.bottom
         canvas.drawLine(bounds.left, bottom, bounds.right, bottom, linePaint)
 

@@ -31,7 +31,7 @@ abstract class BaseRenderer(val canvasViewBox: CanvasViewBox) : IRenderer {
     override fun getBounds(): RectF = _bounds
 
     /**此[_renderBounds]是相对于坐标原点的可绘制像素坐标*/
-    override fun getRendererBounds(): RectF = _renderBounds
+    override fun getRenderBounds(): RectF = _renderBounds
 
     /**此[_visualBounds]是相对于视图左上角原点的坐标*/
     override fun getVisualBounds(): RectF = _visualBounds
@@ -42,12 +42,12 @@ abstract class BaseRenderer(val canvasViewBox: CanvasViewBox) : IRenderer {
 
     /**当[CanvasViewBox]坐标系发生改变时, 实时更新[_visualBounds]*/
     override fun onCanvasBoxMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
-        canvasViewBox.calcItemRenderBounds(getBounds(), getRendererBounds())
-        canvasViewBox.calcItemVisualBounds(getRendererBounds(), getVisualBounds())
+        canvasViewBox.calcItemRenderBounds(getBounds(), getRenderBounds())
+        canvasViewBox.calcItemVisualBounds(getRenderBounds(), getVisualBounds())
     }
 
     /**调用此方法用来更新[getBounds]
-     * 同时需要更新[getRendererBounds],[getVisualBounds]等信息*/
+     * 同时需要更新[getRenderBounds],[getVisualBounds]等信息*/
     open fun changeBounds(block: RectF.() -> Unit) {
         getBounds().block()
         //canvasViewBox.canvasView.dispatchItemBoundsChanged()

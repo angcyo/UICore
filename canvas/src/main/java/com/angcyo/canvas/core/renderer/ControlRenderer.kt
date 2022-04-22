@@ -94,7 +94,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
             canvas.withRotation(rotate, visualBounds.centerX(), visualBounds.centerY()) {
                 //绘制边框
                 canvas.drawRect(visualBounds, paint)
-                drawFrameText(canvas, visualBounds, it.getRendererRotateBounds(), rotate)
+                drawFrameText(canvas, visualBounds, it.getRenderRotateBounds(), rotate)
             }
 
             //绘制控制四个角

@@ -141,7 +141,7 @@ class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
 
     override fun render(canvas: Canvas) {
         rendererItem?.drawable?.let { drawable ->
-            val bounds = getRendererBounds()
+            val bounds = getRenderBounds()
             drawable.setBounds(
                 bounds.left.toInt(),
                 bounds.top.toInt(),

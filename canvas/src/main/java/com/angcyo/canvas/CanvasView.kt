@@ -34,10 +34,10 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     //<editor-fold desc="成员变量">
 
     /**视图控制*/
-    val canvasViewBox = CanvasViewBox(this)
+    var canvasViewBox = CanvasViewBox(this)
 
     /**画布的手势, 用来处理画布的双指平移和捏合缩放*/
-    val canvasTouchHandler = CanvasTouchHandler(this)
+    var canvasTouchHandler = CanvasTouchHandler(this)
 
     /**事件回调*/
     val canvasListenerList = mutableSetOf<ICanvasListener>()
@@ -52,21 +52,28 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     val pendingTaskList = mutableListOf<Runnable>()
 
     /**撤销/重做管理*/
-    val undoManager: CanvasUndoManager = CanvasUndoManager(this)
+    var undoManager: CanvasUndoManager = CanvasUndoManager(this)
+
+    /**智能提示组件*/
+    var smartAssistant: SmartAssistant = SmartAssistant(this)
+
+    /**智能提示组件渲染*/
+    var smartAssistantRenderer: SmartAssistantRenderer =
+        SmartAssistantRenderer(smartAssistant, canvasViewBox)
 
     //</editor-fold desc="成员变量">
 
     //<editor-fold desc="横纵坐标轴">
 
-    val xAxis = XAxis()
+    var xAxis = XAxis()
 
     /**绘制在顶上的x轴*/
-    val xAxisRender = XAxisRenderer(xAxis, canvasViewBox)
+    var xAxisRender = XAxisRenderer(xAxis, canvasViewBox)
 
-    val yAxis = YAxis()
+    var yAxis = YAxis()
 
     /**绘制在左边的y轴*/
-    val yAxisRender = YAxisRenderer(yAxis, canvasViewBox)
+    var yAxisRender = YAxisRenderer(yAxis, canvasViewBox)
 
     //</editor-fold desc="横纵坐标轴">
 
@@ -80,10 +87,10 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     //<editor-fold desc="内部成员">
 
     /**控制点[ControlPoint]的控制和[selectedItemRender]的平移控制*/
-    val controlHandler = ControlHandler()
+    var controlHandler = ControlHandler()
 
     /**控制器渲染*/
-    val controlRenderer = ControlRenderer(controlHandler, canvasViewBox)
+    var controlRenderer = ControlRenderer(controlHandler, canvasViewBox)
 
     //</editor-fold desc="内部成员">
 
@@ -94,6 +101,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         if (BuildConfig.DEBUG) {
             rendererAfterList.add(CenterRenderer(this, canvasViewBox))
         }
+        rendererAfterList.add(smartAssistantRenderer)
     }
 
     /**枚举[BaseAxisRenderer]*/
@@ -136,12 +144,12 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
         //canvasViewBox
         val l = if (yAxisRender.axis.enable) {
-            yAxisRender.getRendererBounds().right
+            yAxisRender.getRenderBounds().right
         } else {
             0f
         }
         val t = if (xAxisRender.axis.enable) {
-            xAxisRender.getRendererBounds().bottom
+            xAxisRender.getRenderBounds().bottom
         } else {
             0f
         }
@@ -182,7 +190,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
                 itemsRendererList.forEach {
                     if (it.isVisible()) {
                         //item的旋转, 在此处理
-                        val bounds = it.getRendererBounds()
+                        val bounds = it.getRenderBounds()
                         canvas.withRotation(
                             it.rotate,
                             bounds.centerX(),
@@ -342,7 +350,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
                     //item的旋转, 在此处理
                     val bounds = it.getBounds()
                     //替换渲染矩形坐标
-                    val renderBounds = it.getRendererBounds()
+                    val renderBounds = it.getRenderBounds()
                     oldRenderRect.set(renderBounds)
                     renderBounds.set(bounds)
                     canvas.withRotation(
