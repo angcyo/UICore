@@ -103,49 +103,52 @@ class ScaleControlPoint : ControlPoint() {
             MotionEvent.ACTION_MOVE -> {
                 _movePoint.set(event.x, event.y)
 
-                val x1: Float
-                val y1: Float
-                view.canvasViewBox.mapCoordinateSystemPoint(rectScaleAnchorPoint).apply {
-                    x1 = x
-                    y1 = y
-                }
-
-                val x2: Float
-                val y2: Float
-                view.canvasViewBox.mapCoordinateSystemPoint(_movePoint).apply {
-                    x2 = x
-                    y2 = y
-                }
-
-                val cX: Float
-                val cY: Float
-                view.canvasViewBox.mapCoordinateSystemPoint((x2 + x1) / 2, (y2 + y1) / 2).apply {
-                    cX = x
-                    cY = y
-                }
-
-                calcRotateBeforeDistance(
-                    x1,
-                    y1,
-                    x2,
-                    y2,
-                    cX,
-                    cY,
-                    itemRenderer.rotate,
-                    _tempPoint
-                ).apply {
-                    var newWidth = x - touchDiffWidth
-                    var newHeight = y - touchDiffHeight
-
-                    if (isLockScaleRatio) {
-                        //等比调整
-                        if (_touchRectWidth > _touchRectHeight) {
-                            newHeight = _touchRectHeight * newWidth / _touchRectWidth
-                        } else {
-                            newWidth = _touchRectWidth * newHeight / _touchRectHeight
-                        }
+                if (_movePoint.x - _touchPoint.x != 0f || _movePoint.y - _touchPoint.y != 0f) {
+                    val x1: Float
+                    val y1: Float
+                    view.canvasViewBox.mapCoordinateSystemPoint(rectScaleAnchorPoint).apply {
+                        x1 = x
+                        y1 = y
                     }
-                    view.changeItemBounds(itemRenderer, newWidth, newHeight, isCenterScale)
+
+                    val x2: Float
+                    val y2: Float
+                    view.canvasViewBox.mapCoordinateSystemPoint(_movePoint).apply {
+                        x2 = x
+                        y2 = y
+                    }
+
+                    val cX: Float
+                    val cY: Float
+                    view.canvasViewBox.mapCoordinateSystemPoint((x2 + x1) / 2, (y2 + y1) / 2)
+                        .apply {
+                            cX = x
+                            cY = y
+                        }
+
+                    calcRotateBeforeDistance(
+                        x1,
+                        y1,
+                        x2,
+                        y2,
+                        cX,
+                        cY,
+                        itemRenderer.rotate,
+                        _tempPoint
+                    ).apply {
+                        var newWidth = x - touchDiffWidth
+                        var newHeight = y - touchDiffHeight
+
+                        if (isLockScaleRatio) {
+                            //等比调整
+                            if (_touchRectWidth > _touchRectHeight) {
+                                newHeight = _touchRectHeight * newWidth / _touchRectWidth
+                            } else {
+                                newWidth = _touchRectWidth * newHeight / _touchRectHeight
+                            }
+                        }
+                        view.changeItemBounds(itemRenderer, newWidth, newHeight, isCenterScale)
+                    }
                 }
 
                 /*//直接修改宽高, 这样才会跟手, 但是不适用与矩形旋转后的计算

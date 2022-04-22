@@ -188,7 +188,9 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent() {
         } else {
             val nowTime = System.currentTimeMillis()
             //选中同一个
-            if (nowTime - touchTime <= 360) {
+            if (nowTime - touchTime <= 360 &&
+                canvasView.controlHandler.selectedItemRender == null
+            ) {
                 isDoubleTouch = true
             }
             touchTime = nowTime
