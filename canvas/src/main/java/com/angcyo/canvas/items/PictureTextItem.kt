@@ -20,7 +20,7 @@ class PictureTextItem : DrawableItem() {
             isStrikeThruText = textStyle.isDeleteLine
             isUnderlineText = textStyle.isUnderLine
             isFakeBoldText = textStyle.isTextBold
-            textSkewX = if (textStyle.isTextItalic) -0.25f else 0f
+            textSkewX = if (textStyle.isTextItalic) TextItem.ITALIC_SKEW else 0f
             //typeface =
         }
     }

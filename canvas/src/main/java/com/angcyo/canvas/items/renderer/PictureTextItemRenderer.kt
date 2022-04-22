@@ -39,7 +39,7 @@ class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
         if (paint?.textSkewX != 0f) {
             val skewWidth =
                 tan((paint?.textSkewX ?: 0f) * 1.0) * getTextHeight()
-            width += skewWidth.absoluteValue.ceil().toFloat()
+            width += skewWidth.absoluteValue.toFloat()
         }
         return width
         /*return textBounds.width().toFloat() + widthIncrease*/
@@ -58,9 +58,23 @@ class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
         rendererItem?.apply {
             val width = paint.textWidth(text)
             val height = paint.textHeight()
-            this.drawable = ScalePictureDrawable(withPicture(width.toInt(), height.toInt()) {
-                drawText(text ?: "", 0f, height - paint.descent(), paint)
-            })
+
+            //倾斜的宽度
+            val skewWidth = if (paint.textSkewX != 0f) {
+                tan(paint.textSkewX.absoluteValue) * height
+                //paint.getTextBounds(text ?: "", 0, text?.length ?: 0, tempRect)
+                //(tempRect.width() - width).toInt()
+            } else {
+                0
+            }
+
+            drawable = ScalePictureDrawable(
+                withPicture(
+                    width.toInt() + skewWidth.toInt(),
+                    height.toInt()
+                ) {
+                    drawText(text ?: "", 0f, height - paint.descent(), paint)
+                })
             val textWidth = getTextWidth()
             val textHeight = getTextHeight()
             if (textBounds.isEmpty) {

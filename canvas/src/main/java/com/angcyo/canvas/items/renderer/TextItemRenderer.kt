@@ -61,7 +61,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
             isStrikeThruText = item.textStyle.isDeleteLine
             isUnderlineText = item.textStyle.isUnderLine
             isFakeBoldText = item.textStyle.isTextBold
-            textSkewX = if (item.textStyle.isTextItalic) -0.25f else 0f
+            textSkewX = if (item.textStyle.isTextItalic) TextItem.ITALIC_SKEW else 0f
             //typeface =
 
             val text = item.text ?: ""
@@ -102,7 +102,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
         width += widthIncrease
         if (paint.textSkewX != 0f) {
             val skewWidth = tan(paint.textSkewX * 1.0) * getTextHeight()
-            width += skewWidth.absoluteValue.ceil().toFloat()
+            width += skewWidth.absoluteValue.toFloat()
         }
         return width
         /*return textBounds.width().toFloat() + widthIncrease*/
@@ -115,12 +115,18 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
         /*return textBounds.height().toFloat() + heightIncrease*/
     }
 
-    //val _rect = Rect()
-
     override fun onItemBoundsChanged() {
         super.onItemBoundsChanged()
         rendererItem?.apply {
             updateLargestTextSizeWhichFits(getBounds())
+
+            /*if (!changeBeforeBounds.isEmpty) {
+                val scaleX = getBounds().width() / changeBeforeBounds.width()
+                val scaleY = getBounds().height() / changeBeforeBounds.height()
+                val max = max(scaleX, scaleY)
+                paint.textSize = paint.textSize * max
+            }*/
+
             updateTextPaint(this)
         }
     }
@@ -131,7 +137,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
         val maxHeight = availableSpace.height().absoluteValue
 
         var largestSize = paint.textSize
-        var adjustStep = 0.1f
+        var adjustStep = 0.05f
 
         if (getTextWidth() > maxWidth || getTextHeight() > maxHeight) {
             //需要减少size

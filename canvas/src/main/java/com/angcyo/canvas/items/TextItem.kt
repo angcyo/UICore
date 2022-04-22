@@ -28,6 +28,9 @@ open class TextItem : BaseItem() {
 
         /**字体样式, 删除线*/
         const val TEXT_STYLE_DELETE_LINE = 0x08
+
+        /**斜体的倾斜角度*/
+        const val ITALIC_SKEW = -0.25f
     }
 
     /**需要绘制的文本*/

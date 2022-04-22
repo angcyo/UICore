@@ -59,6 +59,9 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
     /**[_visualBounds]旋转后的坐标*/
     val _visualRotateBounds = RectF()
 
+    /**[changeBounds]之前的bounds*/
+    val changeBeforeBounds = RectF()
+
     //</editor-fold desc="属性">
 
     //<editor-fold desc="计算属性">
@@ -75,7 +78,10 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
     override fun getVisualRotateBounds(): RectF = _visualRotateBounds
 
     override fun changeBounds(block: RectF.() -> Unit) {
-        getBounds().block()
+        getBounds().apply {
+            changeBeforeBounds.set(this)
+            block()
+        }
         onItemBoundsChanged()
         //notify
         canvasViewBox.canvasView.dispatchItemBoundsChanged(this)
