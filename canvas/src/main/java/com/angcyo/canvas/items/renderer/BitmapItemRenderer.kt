@@ -7,6 +7,7 @@ import android.graphics.RectF
 import androidx.core.graphics.withMatrix
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.items.BitmapItem
 import com.angcyo.canvas.utils.limitMaxWidthHeight
 import com.angcyo.library.ex.adjustFlipRect
 import com.angcyo.library.ex.adjustSizeWithLT

@@ -1,4 +1,4 @@
-package com.angcyo.canvas.items.renderer
+package com.angcyo.canvas.items
 
 import android.graphics.Bitmap
 import com.angcyo.canvas.items.BaseItem
