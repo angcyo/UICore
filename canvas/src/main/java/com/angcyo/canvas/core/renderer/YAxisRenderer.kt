@@ -92,7 +92,7 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox) :
         right: Float,
         scale: Float
     ) {
-        val valueStr = "$index"
+        val valueStr = canvasViewBox.valueUnit.convertGraduatedScaleIndexToUnitValue(index)
 
         when (axis.getAxisLineType(index, scale)) {
             BaseAxis.LINE_TYPE_PROTRUDE -> {

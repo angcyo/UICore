@@ -18,7 +18,7 @@ class YAxis : BaseAxis() {
         val factor = max(1f, canvasViewBox.invertMatrix.getScaleY())
         val end =
             (start + canvasViewBox.getContentHeight() * factor - canvasViewBox.getTranslateX()) * factor
-        val step = canvasViewBox.valueUnit.convertValueToPixel(1f)
+        val step = canvasViewBox.valueUnit.getGraduatedScaleGap()
 
         while (start < end) {
             plusList.add(start)
@@ -33,7 +33,7 @@ class YAxis : BaseAxis() {
         val factor = max(1f, canvasViewBox.invertMatrix.getScaleY())
         val end =
             (start - canvasViewBox.getContentHeight() - canvasViewBox.getTranslateY()) * factor
-        val step = canvasViewBox.valueUnit.convertValueToPixel(1f)
+        val step = canvasViewBox.valueUnit.getGraduatedScaleGap()
 
         while (start > end) {
             minusList.add(start)

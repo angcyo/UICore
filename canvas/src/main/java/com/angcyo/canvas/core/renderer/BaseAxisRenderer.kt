@@ -39,8 +39,13 @@ abstract class BaseAxisRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(can
         updateAxisData()
     }
 
-    /**坐标系改变后回调*/
+    /**坐标系原点改变后回调*/
     fun onCoordinateSystemOriginChanged(point: PointF) {
+        updateAxisData()
+    }
+
+    /**坐标系单位改变后回调*/
+    fun onCoordinateSystemUnitChanged(valueType: Int) {
         updateAxisData()
     }
 

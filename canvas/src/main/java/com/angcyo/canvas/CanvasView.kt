@@ -306,6 +306,20 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
+    override fun dispatchCoordinateSystemUnitChanged(valueType: Int) {
+        super.dispatchCoordinateSystemUnitChanged(valueType)
+        eachAxisRender {
+            onCoordinateSystemUnitChanged(valueType)
+        }
+        /*eachAllRenderer {
+            if (this is IItemRenderer<*>) {
+                changeBounds {
+                    //notify changed
+                }
+            }
+        }*/
+    }
+
     //</editor-fold desc="关键方法">
 
     //<editor-fold desc="操作方法">

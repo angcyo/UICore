@@ -83,7 +83,7 @@ class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox) :
     }
 
     fun drawLineAndLabel(canvas: Canvas, index: Int, left: Float, bottom: Float, scale: Float) {
-        val valueStr = "$index"
+        val valueStr = canvasViewBox.valueUnit.convertGraduatedScaleIndexToUnitValue(index)
 
         when (axis.getAxisLineType(index, scale)) {
             BaseAxis.LINE_TYPE_PROTRUDE -> {

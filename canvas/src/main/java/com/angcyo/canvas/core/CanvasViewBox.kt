@@ -297,7 +297,14 @@ class CanvasViewBox(val canvasView: ICanvasView) {
     //<editor-fold desc="value unit">
 
     /**像素, 坐标单位转换*/
-    var valueUnit: ValueUnit = ValueUnit()
+    val valueUnit: ValueUnit = ValueUnit()
+
+    /**更新坐标单位*/
+    fun updateCoordinateSystemUnit(valueType: Int) {
+        valueUnit.valueType = valueType
+        canvasView.dispatchCoordinateSystemUnitChanged(valueType)
+        canvasView.refresh()
+    }
 
     //</editor-fold desc="value unit">
 

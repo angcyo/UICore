@@ -27,6 +27,9 @@ interface ICanvasView : IComponent {
     /**当[CanvasViewBox]的坐标系原点改变时触发*/
     fun dispatchCoordinateSystemOriginChanged(point: PointF) {}
 
+    /**当[CanvasViewBox]的坐标单位改变时触发*/
+    fun dispatchCoordinateSystemUnitChanged(valueType: Int) {}
+
     //</editor-fold desc="dispatch">
 
     //<editor-fold desc="listener">
