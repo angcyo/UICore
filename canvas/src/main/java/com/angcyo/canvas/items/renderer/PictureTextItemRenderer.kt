@@ -1,9 +1,7 @@
 package com.angcyo.canvas.items.renderer
 
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
-import android.graphics.Typeface
+import android.graphics.*
+import android.text.TextPaint
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.ScalePictureDrawable
 import com.angcyo.canvas.core.CanvasViewBox
@@ -18,7 +16,7 @@ import kotlin.math.tan
  * @since 2022/04/21
  */
 class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
-    DrawableItemRenderer<PictureTextItem>(canvasViewBox) {
+    BaseItemRenderer<PictureTextItem>(canvasViewBox) {
 
     /**Bounds*/
     val textBounds = RectF()
@@ -29,16 +27,13 @@ class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
     /**高度增益的大小*/
     var heightIncrease: Float = 0f
 
-    //绘制文本的画笔
-    var paint: Paint? = null
-
     fun getTextWidth(): Float {
         val text = rendererItem?.text ?: ""
-        var width = paint?.textWidth(text) ?: 0f
+        var width = rendererItem?.paint?.textWidth(text) ?: 0f
         width += widthIncrease
-        if (paint?.textSkewX != 0f) {
+        if (rendererItem?.paint?.textSkewX != 0f) {
             val skewWidth =
-                tan((paint?.textSkewX ?: 0f) * 1.0) * getTextHeight()
+                tan((rendererItem?.paint?.textSkewX ?: 0f) * 1.0) * getTextHeight()
             width += skewWidth.absoluteValue.toFloat()
         }
         return width
@@ -46,7 +41,7 @@ class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
     }
 
     fun getTextHeight(): Float {
-        var height = paint.textHeight()
+        var height = rendererItem?.paint.textHeight()
         height += heightIncrease
         return height
         /*return textBounds.height().toFloat() + heightIncrease*/
@@ -54,7 +49,6 @@ class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
 
     /**更新绘制的内容*/
     fun updateTextDrawable() {
-        val paint = paint ?: return
         rendererItem?.apply {
             val width = paint.textWidth(text)
             val height = paint.textHeight()
@@ -91,10 +85,10 @@ class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
     }
 
     /**添加一个文本用来渲染*/
-    fun addTextRender(text: String, paint: Paint) {
-        this.paint = paint
+    fun addTextRender(text: String, paint: TextPaint) {
         rendererItem = PictureTextItem().apply {
-            updatePaintStyle(paint)
+            this.paint = paint
+            updatePaintStyle()
             this.text = text
         }
         updateTextDrawable()
@@ -102,10 +96,9 @@ class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
 
     /**更新文本样式*/
     fun updateTextStyle(style: Int) {
-        val paint = paint ?: return
         rendererItem?.apply {
             textStyle = style
-            updatePaintStyle(paint)
+            updatePaintStyle()
             updateTextDrawable()
         }
     }
@@ -124,7 +117,7 @@ class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
 
     /**更新笔的样式*/
     fun updatePaintStyle(style: Paint.Style) {
-        paint?.apply {
+        rendererItem?.paint?.apply {
             this.style = style
             updateTextDrawable()
         }
@@ -132,7 +125,7 @@ class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
 
     /**更新笔的字体*/
     fun updatePaintTypeface(typeface: Typeface?) {
-        paint?.apply {
+        rendererItem?.paint?.apply {
             this.typeface = typeface
             updateTextDrawable()
         }
@@ -145,12 +138,25 @@ class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
             updateTextDrawable()
         }
     }
+
+    override fun render(canvas: Canvas) {
+        rendererItem?.drawable?.let { drawable ->
+            val bounds = getRendererBounds()
+            drawable.setBounds(
+                bounds.left.toInt(),
+                bounds.top.toInt(),
+                bounds.right.toInt(),
+                bounds.bottom.toInt()
+            )
+            drawable.draw(canvas)
+        }
+    }
 }
 
 /**添加一个文本渲染器*/
 fun CanvasView.addPictureTextRenderer(
     text: String,
-    paint: Paint = createTextPaint(Color.BLACK).apply {
+    paint: TextPaint = createTextPaint(Color.BLACK).apply {
         //init
         textSize = 12 * dp
     }

@@ -1,5 +1,8 @@
 package com.angcyo.canvas.items
 
+import android.graphics.Color
+import com.angcyo.canvas.utils.createTextPaint
+import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.have
 
 /**
@@ -38,6 +41,22 @@ open class TextItem : BaseItem() {
 
     /**字体样式*/
     var textStyle: Int = TEXT_STYLE_NONE
+
+    var paint = createTextPaint(Color.BLACK).apply {
+        //init
+        textSize = 12 * dp
+    }
+
+    /**更新[textStyle]*/
+    fun updatePaintStyle() {
+        paint.apply {
+            isStrikeThruText = textStyle.isDeleteLine
+            isUnderlineText = textStyle.isUnderLine
+            isFakeBoldText = textStyle.isTextBold
+            textSkewX = if (textStyle.isTextItalic) ITALIC_SKEW else 0f
+            //typeface =
+        }
+    }
 }
 
 val Int.isTextBold: Boolean

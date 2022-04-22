@@ -4,8 +4,7 @@ import android.graphics.*
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.component.ControlPoint
-import com.angcyo.canvas.items.*
-import com.angcyo.canvas.utils.createTextPaint
+import com.angcyo.canvas.items.TextItem
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
 import kotlin.math.tan
@@ -19,11 +18,6 @@ import kotlin.math.tan
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
 class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem>(canvasViewBox) {
-
-    val paint = createTextPaint(Color.BLACK).apply {
-        //init
-        textSize = 12 * dp
-    }
 
     /**Bounds*/
     val textBounds = Rect()
@@ -57,16 +51,9 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
     }
 
     fun updateTextPaint(item: TextItem) {
-        paint.apply {
-            isStrikeThruText = item.textStyle.isDeleteLine
-            isUnderlineText = item.textStyle.isUnderLine
-            isFakeBoldText = item.textStyle.isTextBold
-            textSkewX = if (item.textStyle.isTextItalic) TextItem.ITALIC_SKEW else 0f
-            //typeface =
-
-            val text = item.text ?: ""
-            getTextBounds(text, 0, text.length, textBounds)
-        }
+        item.updatePaintStyle()
+        val text = item.text ?: ""
+        item.paint.getTextBounds(text, 0, text.length, textBounds)
     }
 
     override fun onCanvasSizeChanged(canvasView: CanvasView) {
@@ -98,10 +85,10 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
 
     fun getTextWidth(): Float {
         val text = rendererItem?.text ?: ""
-        var width = paint.textWidth(text)
+        var width = rendererItem?.paint?.textWidth(text) ?: 0f
         width += widthIncrease
-        if (paint.textSkewX != 0f) {
-            val skewWidth = tan(paint.textSkewX * 1.0) * getTextHeight()
+        if (rendererItem?.paint?.textSkewX != 0f) {
+            val skewWidth = tan(rendererItem?.paint?.textSkewX!! * 1.0) * getTextHeight()
             width += skewWidth.absoluteValue.toFloat()
         }
         return width
@@ -109,7 +96,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
     }
 
     fun getTextHeight(): Float {
-        var height = paint.textHeight()
+        var height = rendererItem?.paint.textHeight()
         height += heightIncrease
         return height
         /*return textBounds.height().toFloat() + heightIncrease*/
@@ -133,6 +120,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
 
     /**[android.widget.TextView#findLargestTextSizeWhichFits]*/
     private fun updateLargestTextSizeWhichFits(availableSpace: RectF) {
+        val paint = rendererItem?.paint ?: return
         val maxWidth = availableSpace.width().absoluteValue
         val maxHeight = availableSpace.height().absoluteValue
 
@@ -185,13 +173,15 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
      }*/
 
     override fun render(canvas: Canvas) {
-        val renderBounds = getRendererBounds()
-        canvas.drawText(
-            rendererItem?.text ?: "",
-            renderBounds.flipLeft,
-            renderBounds.flipBottom - paint.descent(),
-            paint
-        )
+        rendererItem?.apply {
+            val renderBounds = getRendererBounds()
+            canvas.drawText(
+                text ?: "",
+                renderBounds.flipLeft,
+                renderBounds.flipBottom - paint.descent(),
+                paint
+            )
+        }
     }
 
     /**更新文本样式*/
