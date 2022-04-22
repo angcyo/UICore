@@ -25,8 +25,8 @@ import com.angcyo.library.ex.withPicture
 open class DrawableItemRenderer<T : DrawableItem>(canvasViewBox: CanvasViewBox) :
     BaseItemRenderer<T>(canvasViewBox) {
 
-    override fun updateRendererItem(item: T?, oldItem: T?) {
-        super.updateRendererItem(item, oldItem)
+    override fun onUpdateRendererItem(item: T?, oldItem: T?) {
+        super.onUpdateRendererItem(item, oldItem)
         if (item != oldItem) {
             val bounds = getBounds()
             if (bounds.isEmpty) {

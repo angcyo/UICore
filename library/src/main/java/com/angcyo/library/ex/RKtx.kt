@@ -6,6 +6,8 @@ import android.text.TextUtils
 import android.view.View
 import com.angcyo.library.*
 import kotlin.math.absoluteValue
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  *
@@ -168,7 +170,7 @@ fun RectF.adjustSizeWithCenter(width: Float, height: Float) {
     inset(ws / 2, hs / 2)
 }
 
-/**左上角
+/**固定左上角的方式, 调整矩形的宽高, 不支持旋转了的矩形
  * [RectF] 左右上下翻转后的真实坐标*/
 fun RectF.adjustSizeWithLT(width: Float, height: Float) {
     val w = width()
@@ -215,5 +217,17 @@ val RectF.flipTop: Float
 
 val RectF.flipBottom: Float
     get() = if (isFlipHorizontal) top else bottom
+
+/**翻转后的矩形坐标修正*/
+fun RectF.adjustFlipRect(result: RectF): RectF {
+    val l = min(left, right)
+    val t = min(top, bottom)
+
+    val r = max(left, right)
+    val b = max(top, bottom)
+
+    result.set(l, t, r, b)
+    return result
+}
 
 //</editor-fold desc="rect flip">

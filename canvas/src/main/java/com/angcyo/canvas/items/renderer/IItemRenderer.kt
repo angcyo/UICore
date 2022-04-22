@@ -30,7 +30,7 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     fun getVisualRotateBounds(): RectF
 
     /**当[rendererItem]需要更新时触发, 用来更新渲染器*/
-    fun updateRendererItem(item: T?, oldItem: T? = null) {
+    fun onUpdateRendererItem(item: T?, oldItem: T? = null) {
         //重新设置尺寸等信息
     }
 

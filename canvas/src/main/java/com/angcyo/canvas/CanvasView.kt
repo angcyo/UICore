@@ -17,6 +17,9 @@ import com.angcyo.canvas.core.renderer.*
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils._tempPoint
+import com.angcyo.canvas.utils._tempRectF
+import com.angcyo.canvas.utils.limitMaxWidthHeight
+import com.angcyo.library.ex.adjustFlipRect
 import kotlin.math.max
 import kotlin.math.min
 
@@ -308,7 +311,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         var bottom = contentHeight
 
         itemsRendererList.forEach {
-            val bounds = it.getBounds()
+            val bounds = it.getBounds().adjustFlipRect(_tempRectF)
             left = min(left, bounds.left)
             top = min(top, bounds.top)
             right = max(left, bounds.right)
@@ -393,20 +396,9 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
                     val maxWidth = visualRect.width() * 3 / 4
                     val maxHeight = visualRect.height() * 3 / 4
 
-                    if (_width > maxWidth || _height > maxHeight) {
-                        //超出范围, 等比缩放
-
-                        val scaleX = maxWidth / _width
-                        val scaleY = maxHeight / _height
-
-                        if (scaleX > scaleY) {
-                            //按照高度缩放
-                            _height = maxHeight
-                            _width *= scaleY
-                        } else {
-                            _width = maxWidth
-                            _height *= scaleX
-                        }
+                    limitMaxWidthHeight(_width, _height, maxWidth, maxHeight).apply {
+                        _width = this[0]
+                        _height = this[1]
                     }
 
                     //更新坐标

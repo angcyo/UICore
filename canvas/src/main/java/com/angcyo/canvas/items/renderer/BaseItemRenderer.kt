@@ -47,7 +47,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
             val old = field
             field = value
             if (old != value) {
-                updateRendererItem(value, old)
+                onUpdateRendererItem(value, old)
             }
         }
 
@@ -87,8 +87,8 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
         canvasViewBox.canvasView.dispatchItemBoundsChanged(this)
     }
 
-    override fun updateRendererItem(item: T?, oldItem: T?) {
-        super.updateRendererItem(item, oldItem)
+    override fun onUpdateRendererItem(item: T?, oldItem: T?) {
+        super.onUpdateRendererItem(item, oldItem)
         rendererItem = item
     }
 
@@ -238,6 +238,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
         }
     }
 
+    /**调整矩形的宽高, 支持旋转后的矩形*/
     override fun updateBounds(width: Float, height: Float, withCenter: Boolean) {
         L.i("调整宽高->w:$width h:${height} $withCenter")
         changeBounds {

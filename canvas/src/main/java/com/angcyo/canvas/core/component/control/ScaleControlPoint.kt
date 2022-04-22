@@ -9,6 +9,7 @@ import com.angcyo.canvas.core.component.CanvasTouchHandler
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
+import com.angcyo.canvas.utils._tempValues
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.library.ex._drawable
 
@@ -93,11 +94,10 @@ class ScaleControlPoint : ControlPoint() {
                     y2,
                     cX,
                     cY,
-                    itemRenderer.rotate,
-                    _tempPoint
+                    itemRenderer.rotate
                 ).apply {
-                    touchDiffWidth = x - bounds.width()
-                    touchDiffHeight = y - bounds.height()
+                    touchDiffWidth = this[0] - bounds.width()
+                    touchDiffHeight = this[1] - bounds.height()
                 }
             }
             MotionEvent.ACTION_MOVE -> {
@@ -133,11 +133,10 @@ class ScaleControlPoint : ControlPoint() {
                         y2,
                         cX,
                         cY,
-                        itemRenderer.rotate,
-                        _tempPoint
+                        itemRenderer.rotate
                     ).apply {
-                        var newWidth = x - touchDiffWidth
-                        var newHeight = y - touchDiffHeight
+                        var newWidth = this[0] - touchDiffWidth
+                        var newHeight = this[1] - touchDiffHeight
 
                         if (isLockScaleRatio) {
                             //等比调整
@@ -317,8 +316,8 @@ class ScaleControlPoint : ControlPoint() {
         x2: Float, y2: Float,
         rotateCenterX: Float, rotateCenterY: Float,
         rotate: Float,
-        result: PointF
-    ): PointF {
+        result: FloatArray = _tempValues
+    ): FloatArray {
         val matrix = _tempMatrix
         matrix.reset()
         matrix.postRotate(rotate, rotateCenterX, rotateCenterY)
@@ -331,8 +330,8 @@ class ScaleControlPoint : ControlPoint() {
         val p2x = p2.x
         val p2y = p2.y
 
-        result.x = p2x - p1x
-        result.y = p2y - p1y
+        result[0] = p2x - p1x
+        result[1] = p2y - p1y
 
         return result
     }

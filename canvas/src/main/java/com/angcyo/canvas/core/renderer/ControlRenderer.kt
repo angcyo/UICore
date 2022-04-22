@@ -13,7 +13,6 @@ import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.canvas.utils.createTextPaint
-import com.angcyo.canvas.utils.mapRectF
 import com.angcyo.library.ex.*
 
 /**
@@ -83,13 +82,10 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
 
     val _textBounds = RectF()
     val _tempPoint: PointF = PointF()
-    val _rotateRect: RectF = RectF()
 
     override fun render(canvas: Canvas) {
         controlHandler.selectedItemRender?.let {
 
-            //目标相对于坐标系中的位置
-            val bounds = it.getRendererBounds()
             //目标相对于视图左上角的位置
             val visualBounds = it.getVisualBounds()
             val rotate = it.rotate
@@ -103,47 +99,6 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
 
             //绘制控制四个角
             drawControlPoint(canvas, rotate)
-
-            if (BuildConfig.DEBUG) {
-                return
-            }
-
-
-            //放大后的矩形, 进行相应的旋转
-            val rotateRect = it.mapRotateRect(bounds, _rotateRect)
-            /*if (BuildConfig.DEBUG) {
-                //绘制旋转之后的矩形
-                canvas.withMatrix(canvasViewBox.matrix) {
-                    canvas.drawRect(rotateRect, paint)
-                }
-            }*/
-
-            //转换之后的矩形, 视图坐标系
-            val _bounds = canvasViewBox.matrix.mapRectF(bounds, controlHandler._tempRect)
-
-
-            //绘制控制四个角
-            drawControlPoint(canvas, rotate)
-
-            /*//左上角的点
-            val ltX = _bounds.left
-            val ltY = _bounds.top
-            canvas.drawCircle(ltX, ltY, 10f, sizePaint)
-
-            //右上角的点
-            val rtX = _bounds.right
-            val rtY = _bounds.top
-            canvas.drawCircle(rtX, rtY, 10f, sizePaint)
-
-            //左下角的点
-            val lbX = _bounds.left
-            val lbY = _bounds.bottom
-            canvas.drawCircle(lbX, lbY, 10f, sizePaint)
-
-            //右下角的点
-            val rbX = _bounds.right
-            val rbY = _bounds.bottom
-            canvas.drawCircle(rbX, rbY, 10f, sizePaint)*/
         }
     }
 

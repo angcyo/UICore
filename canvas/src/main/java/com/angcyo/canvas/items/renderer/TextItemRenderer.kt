@@ -34,8 +34,8 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
     /**高度增益的大小*/
     var heightIncrease: Float = 0f
 
-    override fun updateRendererItem(item: TextItem?, oldItem: TextItem?) {
-        super.updateRendererItem(item, oldItem)
+    override fun onUpdateRendererItem(item: TextItem?, oldItem: TextItem?) {
+        super.onUpdateRendererItem(item, oldItem)
 
         item?.let { updateTextPaint(item) }
 
@@ -203,7 +203,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
                 textStyle.remove(style)
             }
 
-            updateRendererItem(this)
+            onUpdateRendererItem(this)
 
             canvasViewBox.canvasView.refresh()
         }
@@ -213,7 +213,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
     fun updatePaintStyle(style: Paint.Style) {
         rendererItem?.apply {
             paint.style = style
-            updateRendererItem(this)
+            onUpdateRendererItem(this)
             canvasViewBox.canvasView.refresh()
         }
     }
@@ -222,7 +222,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
     fun updatePaintTypeface(typeface: Typeface?) {
         rendererItem?.apply {
             paint.typeface = typeface
-            updateRendererItem(this)
+            onUpdateRendererItem(this)
             canvasViewBox.canvasView.refresh()
         }
     }
@@ -231,7 +231,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
     fun updateText(text: String) {
         rendererItem?.apply {
             this.text = text
-            updateRendererItem(this)
+            onUpdateRendererItem(this)
             canvasViewBox.canvasView.refresh()
         }
     }

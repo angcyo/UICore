@@ -248,4 +248,32 @@ fun Float.toRadians(): Float = Math.toRadians(this.toDouble()).toFloat()
 /**弧度转角度*/
 fun Float.toDegrees(): Float = Math.toDegrees(this.toDouble()).toFloat()
 
+/**等比限制最大的宽高*/
+fun limitMaxWidthHeight(
+    width: Float,
+    height: Float,
+    maxWidth: Float,
+    maxHeight: Float,
+    result: FloatArray = _tempValues
+): FloatArray {
+    result[0] = width
+    result[1] = height
+    if (width > maxWidth || height > maxHeight) {
+        //超出范围, 等比缩放
+
+        val scaleX = maxWidth / width
+        val scaleY = maxHeight / height
+
+        if (scaleX > scaleY) {
+            //按照高度缩放
+            result[1] = maxHeight
+            result[0] *= scaleY
+        } else {
+            result[0] = maxWidth
+            result[1] *= scaleX
+        }
+    }
+    return result
+}
+
 //</editor-fold desc="Other">
