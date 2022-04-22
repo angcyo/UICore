@@ -37,8 +37,9 @@ class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
         var width = paint?.textWidth(text) ?: 0f
         width += widthIncrease
         if (paint?.textSkewX != 0f) {
-            val skewWidth = tan((paint?.textSkewX ?: 0f) * 1.0) * getTextHeight()
-            width += skewWidth.absoluteValue.toFloat()
+            val skewWidth =
+                tan((paint?.textSkewX ?: 0f) * 1.0) * getTextHeight()
+            width += skewWidth.absoluteValue.ceil().toFloat()
         }
         return width
         /*return textBounds.width().toFloat() + widthIncrease*/

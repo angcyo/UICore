@@ -102,7 +102,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
         width += widthIncrease
         if (paint.textSkewX != 0f) {
             val skewWidth = tan(paint.textSkewX * 1.0) * getTextHeight()
-            width += skewWidth.absoluteValue.toFloat()
+            width += skewWidth.absoluteValue.ceil().toFloat()
         }
         return width
         /*return textBounds.width().toFloat() + widthIncrease*/
