@@ -94,7 +94,7 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent() {
     var minScalePointerDistance = 3.5 * dp
 
     /**双击时, 需要放大的比例*/
-    var doubleScaleValue = 1.25f
+    var doubleScaleValue = 1.5f
 
     /**当手指移动的距离大于此值时, 才视为是平移手势*/
     var dragTriggerDistance = 1 * dp
@@ -152,6 +152,7 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent() {
                             event.y,
                             true
                         )
+                        touchTime = 0L
                     }
                 }
                 isDoubleTouch = false

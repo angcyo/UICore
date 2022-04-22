@@ -13,10 +13,7 @@ import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.items.DrawableItem
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.library.app
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.textHeight
-import com.angcyo.library.ex.textWidth
-import com.angcyo.library.ex.withPicture
+import com.angcyo.library.ex.*
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -37,11 +34,10 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasViewBox: CanvasViewBox) 
 
     open fun initBounds() {
         changeBounds {
-            set(
-                0f,
-                0f,
+            adjustSize(
                 rendererItem?.drawable?.minimumWidth?.toFloat() ?: 0f,
-                rendererItem?.drawable?.minimumHeight?.toFloat() ?: 0f
+                rendererItem?.drawable?.minimumHeight?.toFloat() ?: 0f,
+                ADJUST_TYPE_LT
             )
         }
     }

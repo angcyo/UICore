@@ -19,6 +19,7 @@ import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils._tempPoint
 import com.angcyo.canvas.utils._tempRectF
 import com.angcyo.canvas.utils.limitMaxWidthHeight
+import com.angcyo.library.ex.ADJUST_TYPE_LT
 import com.angcyo.library.ex.adjustFlipRect
 import kotlin.math.max
 import kotlin.math.min
@@ -485,10 +486,10 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         itemRenderer: BaseItemRenderer<*>?,
         scaleX: Float = 1f,
         scaleY: Float = 1f,
-        withCenter: Boolean = false
+        adjustType: Int = ADJUST_TYPE_LT
     ) {
         itemRenderer?.apply {
-            scaleBy(scaleX, scaleY, withCenter)
+            scaleBy(scaleX, scaleY, adjustType)
             postInvalidateOnAnimation()
         }
     }
@@ -497,10 +498,10 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         itemRenderer: BaseItemRenderer<*>?,
         scaleX: Float = 1f,
         scaleY: Float = 1f,
-        withCenter: Boolean = false
+        adjustType: Int = ADJUST_TYPE_LT
     ) {
         itemRenderer?.apply {
-            scaleTo(scaleX, scaleY, withCenter)
+            scaleTo(scaleX, scaleY, adjustType)
             postInvalidateOnAnimation()
         }
     }
@@ -517,10 +518,10 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         itemRenderer: BaseItemRenderer<*>?,
         width: Float,
         height: Float,
-        withCenter: Boolean = false
+        adjustType: Int = ADJUST_TYPE_LT
     ) {
         itemRenderer?.apply {
-            updateBounds(width, height, withCenter)
+            updateBounds(width, height, adjustType)
             postInvalidateOnAnimation()
         }
     }

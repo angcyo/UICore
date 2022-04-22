@@ -9,10 +9,7 @@ import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.items.BitmapItem
 import com.angcyo.canvas.utils.limitMaxWidthHeight
-import com.angcyo.library.ex.adjustFlipRect
-import com.angcyo.library.ex.adjustSizeWithLT
-import com.angcyo.library.ex.isFlipHorizontal
-import com.angcyo.library.ex.isFlipVertical
+import com.angcyo.library.ex.*
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -28,9 +25,10 @@ class BitmapItemRenderer(canvasViewBox: CanvasViewBox) :
     override fun onUpdateRendererItem(item: BitmapItem?, oldItem: BitmapItem?) {
         super.onUpdateRendererItem(item, oldItem)
         changeBounds {
-            adjustSizeWithLT(
+            adjustSize(
                 item?.bitmap?.width?.toFloat() ?: 0f,
-                item?.bitmap?.height?.toFloat() ?: 0f
+                item?.bitmap?.height?.toFloat() ?: 0f,
+                ADJUST_TYPE_LT
             )
         }
     }

@@ -43,7 +43,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
             } else {
                 if (textWidth > 0 && textHeight > 0) {
                     changeBounds {
-                        adjustSizeWithLT(textWidth, textHeight)
+                        adjustSize(textWidth, textHeight, ADJUST_TYPE_LT)
                     }
                 }
             }
@@ -71,7 +71,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
             changeBounds {
                 val newWidth = if (isFlipHorizontal) -getTextWidth() else getTextWidth()
                 val newHeight = if (isFlipVertical) -getTextHeight() else getTextHeight()
-                adjustSizeWithLT(newWidth, newHeight)
+                adjustSize(newWidth, newHeight, ADJUST_TYPE_LT)
             }
         }
     }

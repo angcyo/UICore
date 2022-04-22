@@ -11,6 +11,8 @@ import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils._tempValues
 import com.angcyo.canvas.utils.mapPoint
+import com.angcyo.library.ex.ADJUST_TYPE_CENTER
+import com.angcyo.library.ex.ADJUST_TYPE_LT
 import com.angcyo.library.ex._drawable
 
 /**
@@ -146,7 +148,12 @@ class ScaleControlPoint : ControlPoint() {
                                 newWidth = _touchRectWidth * newHeight / _touchRectHeight
                             }
                         }
-                        view.changeItemBounds(itemRenderer, newWidth, newHeight, isCenterScale)
+                        view.changeItemBounds(
+                            itemRenderer,
+                            newWidth,
+                            newHeight,
+                            if (isCenterScale) ADJUST_TYPE_CENTER else ADJUST_TYPE_LT
+                        )
                     }
                 }
 

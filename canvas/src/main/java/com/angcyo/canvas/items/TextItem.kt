@@ -42,11 +42,6 @@ open class TextItem : BaseItem() {
     /**字体样式*/
     var textStyle: Int = TEXT_STYLE_NONE
 
-    var paint = createTextPaint(Color.BLACK).apply {
-        //init
-        textSize = 12 * dp
-    }
-
     /**更新[textStyle]*/
     fun updatePaintStyle() {
         paint.apply {
