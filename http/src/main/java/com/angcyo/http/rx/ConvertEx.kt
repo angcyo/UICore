@@ -23,7 +23,8 @@ import java.lang.reflect.Type
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 
-fun Response<JsonElement>.errorMessage(): String {
+/**从[Response]中获取错误的提示信息*/
+fun Response<*>.errorMessage(def: String = "接口异常"): String {
     var errorString = errorBody()?.readString()
     if (errorString.isNullOrEmpty()) {
         errorString = message()
@@ -45,7 +46,7 @@ fun Response<JsonElement>.errorMessage(): String {
         }
     }
     return if (errorString.isNullOrEmpty()) {
-        "接口异常"
+        def
     } else {
         errorString!!
     }
