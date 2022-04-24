@@ -61,6 +61,9 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     var smartAssistantRenderer: SmartAssistantRenderer =
         SmartAssistantRenderer(smartAssistant, canvasViewBox)
 
+    /**限制框*/
+    var limitRenderer: LimitRenderer = LimitRenderer(canvasViewBox)
+
     //</editor-fold desc="成员变量">
 
     //<editor-fold desc="横纵坐标轴">
@@ -211,6 +214,20 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         rendererAfterList.forEach {
             if (it.isVisible()) {
                 it.render(canvas)
+            }
+        }
+
+        //限制框
+        if (limitRenderer.isVisible()) {
+            canvas.withClip(canvasViewBox.contentRect) {
+                canvas.withMatrix(canvasViewBox.matrix) {
+                    canvas.withTranslation(
+                        canvasViewBox.getCoordinateSystemX(),
+                        canvasViewBox.getCoordinateSystemY()
+                    ) {
+                        limitRenderer.render(canvas)
+                    }
+                }
             }
         }
     }

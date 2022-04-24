@@ -6,7 +6,7 @@ import com.angcyo.library.app
 import com.angcyo.library.ex.decimal
 
 /**
- * 公制单位
+ * 公制单位, 毫米
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2022/04/04

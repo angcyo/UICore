@@ -6,7 +6,7 @@ import com.angcyo.library.app
 import com.angcyo.library.ex.decimal
 
 /**
- * 英制单位
+ * 英制单位, 英寸
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2022/04/04
