@@ -21,22 +21,34 @@ class CenterRenderer(val canvasView: CanvasView, canvasViewBox: CanvasViewBox) :
     override fun render(canvas: Canvas) {
 
         //绘制坐标轴中心
-        paint.color = Color.GREEN
-        var x = canvasViewBox.getContentCenterX()
-        var y = canvasViewBox.getContentCenterY()
+        paint.color = Color.MAGENTA
+        val contentCenterX = canvasViewBox.getContentCenterX()
+        val contentCenterY = canvasViewBox.getContentCenterY()
 
         //横线
-        canvas.drawLine(0f, y, canvasViewBox.getContentRight(), y, paint)
+        canvas.drawLine(0f, contentCenterY, canvasViewBox.getContentRight(), contentCenterY, paint)
         //竖线
-        canvas.drawLine(x, 0f, x, canvasViewBox.getContentBottom(), paint)
+        canvas.drawLine(contentCenterX, 0f, contentCenterX, canvasViewBox.getContentBottom(), paint)
 
         //绘制视图中心
-        paint.color = Color.MAGENTA
-        x = canvasView.measuredWidth / 2f
-        y = canvasView.measuredHeight / 2f
+        /*paint.color = Color.MAGENTA
+        val viewCenterX = canvasView.measuredWidth / 2f
+        val viewCenterY = canvasView.measuredHeight / 2f
         //横线
-        canvas.drawLine(0f, y, canvasView.measuredWidth.toFloat(), y, paint)
+        canvas.drawLine(
+            0f,
+            viewCenterY,
+            canvasView.measuredWidth.toFloat(),
+            viewCenterY,
+            paint
+        )
         //竖线
-        canvas.drawLine(x, 0f, x, canvasView.measuredHeight.toFloat(), paint)
+        canvas.drawLine(
+            viewCenterX,
+            0f,
+            viewCenterX,
+            canvasView.measuredHeight.toFloat(),
+            paint
+        )*/
     }
 }

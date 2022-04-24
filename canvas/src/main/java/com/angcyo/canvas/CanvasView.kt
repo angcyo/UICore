@@ -21,6 +21,7 @@ import com.angcyo.canvas.utils._tempRectF
 import com.angcyo.canvas.utils.limitMaxWidthHeight
 import com.angcyo.library.ex.ADJUST_TYPE_LT
 import com.angcyo.library.ex.adjustFlipRect
+import com.angcyo.library.ex.dp
 import kotlin.math.max
 import kotlin.math.min
 
@@ -257,6 +258,53 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
     override fun refresh() {
         postInvalidateOnAnimation()
+    }
+
+    /**将画板移动到可以完全显示出[rect]
+     * [rect] 坐标系中的矩形坐标
+     * [scale] 是否要缩放, 以适应过大的矩形
+     * [margin] 边缘额外显示的距离*/
+    fun showRectBounds(
+        rect: RectF,
+        margin: Float = 40f * dp,
+        scale: Boolean = true,
+        anim: Boolean = true
+    ) {
+
+        //中心需要偏移的距离量
+        val translateX =
+            canvasViewBox.getContentCenterX() - rect.centerX() - canvasViewBox.getCoordinateSystemX()
+        val translateY =
+            canvasViewBox.getContentCenterY() - rect.centerY() - canvasViewBox.getCoordinateSystemY()
+
+        val matrix = Matrix()
+        matrix.setTranslate(translateX, translateY)
+
+        val width = rect.width() + margin * 2
+        val height = rect.height() + margin * 2
+
+        val contentWidth = canvasViewBox.getContentWidth()
+        val contentHeight = canvasViewBox.getContentHeight()
+
+        if (width > contentWidth || height > contentHeight) {
+            if (scale) {
+                //自动缩放
+                val scaleCenterX = canvasViewBox.getContentCenterX()
+                val scaleCenterY = canvasViewBox.getContentCenterY()
+
+                matrix.postScale(
+                    contentWidth / (rect.width() + margin * 2),
+                    contentHeight / (rect.height() + margin * 2),
+                    scaleCenterX,
+                    scaleCenterY
+                )
+            }
+        } else {
+            //不处理自动放大的情况
+        }
+
+        //更新
+        canvasViewBox.updateTo(matrix, anim)
     }
 
     override fun addCanvasListener(listener: ICanvasListener) {

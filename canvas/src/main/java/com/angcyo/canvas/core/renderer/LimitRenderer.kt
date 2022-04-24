@@ -4,7 +4,9 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
+import com.angcyo.canvas.BuildConfig
 import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.utils._tempRectF
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.library.ex.dp
 
@@ -27,6 +29,9 @@ class LimitRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox) 
     val limitPath: Path = Path()
 
     override fun render(canvas: Canvas) {
+        if (BuildConfig.DEBUG) {
+            limitPath.computeBounds(_tempRectF, true)
+        }
         canvas.drawPath(limitPath, paint)
     }
 

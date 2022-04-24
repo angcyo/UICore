@@ -152,6 +152,7 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         return invertMatrix.mapPoint(point, result)
     }
 
+    /**将屏幕上的点坐标, 映射成坐标系中的坐标*/
     fun mapCoordinateSystemPoint(x: Float, y: Float, result: PointF = _tempPoint): PointF {
         _tempPoint.set(x, y)
         return invertMatrix.mapPoint(_tempPoint, result)
@@ -355,7 +356,7 @@ class CanvasViewBox(val canvasView: ICanvasView) {
     fun updateTo(endMatrix: Matrix = Matrix(), anim: Boolean = true) {
         if (anim) {
             matrixAnimator(matrix, endMatrix) {
-                adjustScaleOutToLimit(endMatrix)
+                adjustScaleOutToLimit(it)
                 refresh(it)
             }
         } else {
