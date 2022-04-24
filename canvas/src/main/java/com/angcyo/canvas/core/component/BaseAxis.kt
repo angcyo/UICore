@@ -15,13 +15,19 @@ abstract class BaseAxis : BaseComponent() {
         const val LINE_TYPE_NONE = 0
 
         //标准刻度线
-        const val LINE_TYPE_NORMAL = 1
+        const val LINE_TYPE_NORMAL = 0x001
 
         //主要刻度, 占满整个轴
-        const val LINE_TYPE_PROTRUDE = 2
+        const val LINE_TYPE_PROTRUDE = 0x002
 
         //次要刻度, 大小为轴的一半
-        const val LINE_TYPE_SECONDARY = 3
+        const val LINE_TYPE_SECONDARY = 0x004
+
+        //这根线是否需要绘制Label标签
+        const val LINE_TYPE_DRAW_LABEL = 0x010
+
+        //这根线是否需要绘制网格线
+        const val LINE_TYPE_DRAW_GRID = 0x100
     }
 
     /**轴的宽度/高度*/
@@ -50,34 +56,42 @@ abstract class BaseAxis : BaseComponent() {
      * [lineSize]
      * */
     fun getAxisLineType(index: Int, scale: Float): Int {
+        var result = LINE_TYPE_NONE
         val loseStep = 0.25f
 
         if (scale < 1f) {
             val step = ((1 - scale) / loseStep).floor().toInt() + 1
             if (index % (10 * step) == 0) {
-                return LINE_TYPE_PROTRUDE
+                result = LINE_TYPE_PROTRUDE or LINE_TYPE_DRAW_LABEL or LINE_TYPE_DRAW_GRID
+                return result
             }
             if (index % (5 * step) == 0) {
-                return LINE_TYPE_SECONDARY
+                result = LINE_TYPE_SECONDARY or LINE_TYPE_DRAW_GRID
+                return result
             }
             if (index % (1 * step) == 0) {
-                return LINE_TYPE_NORMAL
+                result = LINE_TYPE_NORMAL or LINE_TYPE_DRAW_GRID
+                return result
             }
-            return LINE_TYPE_NONE
+            return result
         }
 
-        val step = ((scale - 1) / loseStep).floor().toInt() + 1
-        val p = 10 / step
-        if (p == 0 || index % p == 0) {
-            return LINE_TYPE_PROTRUDE
-        }
-        if (p % 2 == 0) {
-            val s = p / 2
-            if (s != 0 && index % s == 0) {
-                return LINE_TYPE_SECONDARY
+        if (index % 10 == 0) {
+            result = LINE_TYPE_PROTRUDE or LINE_TYPE_DRAW_GRID
+            result = result or LINE_TYPE_DRAW_LABEL
+        } else if (index % 5 == 0) {
+            result = LINE_TYPE_SECONDARY or LINE_TYPE_DRAW_GRID
+            if (scale >= 2f) {
+                result = result or LINE_TYPE_DRAW_LABEL
+            }
+        } else {
+            result = LINE_TYPE_NORMAL or LINE_TYPE_DRAW_GRID
+            if (scale >= 5f) {
+                result = result or LINE_TYPE_DRAW_LABEL
             }
         }
-        return LINE_TYPE_NORMAL
+
+        return result
     }
 
     val plusList = mutableListOf<Float>()

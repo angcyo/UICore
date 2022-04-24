@@ -8,6 +8,7 @@ import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.component.BaseAxis
 import com.angcyo.canvas.core.component.XAxis
+import com.angcyo.library.ex.have
 
 /**
  * [XAxis]
@@ -83,27 +84,31 @@ class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox) :
     }
 
     fun drawLineAndLabel(canvas: Canvas, index: Int, left: Float, bottom: Float, scale: Float) {
-        val valueStr = canvasViewBox.valueUnit.convertGraduatedScaleIndexToUnitValue(index)
+        val valueStr = canvasViewBox.valueUnit.convertGraduatedScaleIndexToValueUnit(index)
+        val axisLineType = axis.getAxisLineType(index, scale)
 
-        when (axis.getAxisLineType(index, scale)) {
-            BaseAxis.LINE_TYPE_PROTRUDE -> {
+        when {
+            axisLineType.have(BaseAxis.LINE_TYPE_PROTRUDE) -> {
                 val size = axis.lineProtrudeSize
                 canvas.drawLine(left, bottom, left, bottom - size, lineProtrudePaint)
-                canvas.drawText(
-                    valueStr,
-                    left + axis.labelXOffset,
-                    axis.labelYOffset - labelPaint.ascent(),
-                    labelPaint
-                )
             }
-            BaseAxis.LINE_TYPE_SECONDARY -> {
+            axisLineType.have(BaseAxis.LINE_TYPE_SECONDARY) -> {
                 val size = axis.lineSecondarySize
                 canvas.drawLine(left, bottom, left, bottom - size, linePaint)
             }
-            BaseAxis.LINE_TYPE_NORMAL -> {
+            axisLineType.have(BaseAxis.LINE_TYPE_NORMAL) -> {
                 val size = axis.lineSize
                 canvas.drawLine(left, bottom, left, bottom - size, linePaint)
             }
+        }
+
+        if (axisLineType.have(BaseAxis.LINE_TYPE_DRAW_LABEL)) {
+            canvas.drawText(
+                valueStr,
+                left + axis.labelXOffset,
+                axis.labelYOffset - labelPaint.ascent(),
+                labelPaint
+            )
         }
     }
 
@@ -116,12 +121,17 @@ class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox) :
         scale: Float
     ) {
         //绘制网格
-        val type = axis.getAxisLineType(index, scale)
         if (axis.drawGridLine) {
-            if (type == BaseAxis.LINE_TYPE_PROTRUDE) {
-                canvas.drawLine(left, top, left, bottom, gridProtrudePaint)
-            } else if (type != BaseAxis.LINE_TYPE_NONE) {
-                canvas.drawLine(left, top, left, bottom, gridPaint)
+            val axisLineType = axis.getAxisLineType(index, scale)
+
+            if (axisLineType.have(BaseAxis.LINE_TYPE_DRAW_GRID)) {
+                if (axisLineType.have(BaseAxis.LINE_TYPE_PROTRUDE)) {
+                    canvas.drawLine(left, top, left, bottom, gridProtrudePaint)
+                } else if (axisLineType.have(BaseAxis.LINE_TYPE_SECONDARY) ||
+                    axisLineType.have(BaseAxis.LINE_TYPE_NORMAL)
+                ) {
+                    canvas.drawLine(left, top, left, bottom, gridPaint)
+                }
             }
         }
     }

@@ -28,13 +28,9 @@ class ValueUnit {
     }
 
     /**将刻度索引值转换成多少个刻度单位*/
-    fun convertGraduatedScaleIndexToUnitValue(index: Int): String {
+    fun convertGraduatedScaleIndexToValueUnit(index: Int): String {
         val pixel = index * getGraduatedScaleGap()
-        return if (index % 10 == 0) {
-            "${convertPixelToValue(pixel).toInt()}"
-        } else {
-            "${convertPixelToValue(pixel).decimal(1)}"
-        }
+        return "${convertPixelToValue(pixel).toInt()}"
     }
 
     /**获取每个单位间隔刻度对应的像素大小
