@@ -306,10 +306,10 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
-    override fun dispatchCoordinateSystemUnitChanged(valueType: Int) {
-        super.dispatchCoordinateSystemUnitChanged(valueType)
+    override fun dispatchCoordinateSystemUnitChanged(valueUnit: IValueUnit) {
+        super.dispatchCoordinateSystemUnitChanged(valueUnit)
         eachAxisRender {
-            onCoordinateSystemUnitChanged(valueType)
+            onCoordinateSystemUnitChanged(valueUnit)
         }
         /*eachAllRenderer {
             if (this is IItemRenderer<*>) {

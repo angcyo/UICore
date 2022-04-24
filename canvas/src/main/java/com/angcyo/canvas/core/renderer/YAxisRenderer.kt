@@ -93,8 +93,8 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox) :
         right: Float,
         scale: Float
     ) {
-        val valueStr = canvasViewBox.valueUnit.convertGraduatedScaleIndexToValueUnit(index)
-        val axisLineType = axis.getAxisLineType(index, scale)
+        val valueStr = canvasViewBox.valueUnit.getGraduatedLabel(index)
+        val axisLineType = axis.getAxisLineType(canvasViewBox, index, scale)
         when {
             axisLineType.have(BaseAxis.LINE_TYPE_PROTRUDE) -> {
                 val size = axis.lineProtrudeSize
@@ -130,7 +130,7 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox) :
     ) {
         //绘制网格
         if (axis.drawGridLine) {
-            val axisLineType = axis.getAxisLineType(index, scale)
+            val axisLineType = axis.getAxisLineType(canvasViewBox, index, scale)
 
             if (axisLineType.have(BaseAxis.LINE_TYPE_DRAW_GRID)) {
                 if (axisLineType.have(BaseAxis.LINE_TYPE_PROTRUDE)) {

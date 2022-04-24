@@ -13,6 +13,7 @@ import com.angcyo.canvas.BuildConfig
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasListener
+import com.angcyo.canvas.core.convertPixelToValueUnit
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.getMaxLineWidth
 import com.angcyo.canvas.utils.mapPoint

@@ -1,6 +1,7 @@
 package com.angcyo.canvas.core.component
 
 import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.InchValueUnit
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.floor
 
@@ -55,7 +56,7 @@ abstract class BaseAxis : BaseComponent() {
      * [lineSecondarySize]
      * [lineSize]
      * */
-    fun getAxisLineType(index: Int, scale: Float): Int {
+    fun getAxisLineType(canvasViewBox: CanvasViewBox, index: Int, scale: Float): Int {
         var result = LINE_TYPE_NONE
         val loseStep = 0.25f
 
@@ -67,6 +68,9 @@ abstract class BaseAxis : BaseComponent() {
             }
             if (index % (5 * step) == 0) {
                 result = LINE_TYPE_SECONDARY or LINE_TYPE_DRAW_GRID
+                if (canvasViewBox.valueUnit is InchValueUnit) {
+                    result = result or LINE_TYPE_DRAW_LABEL
+                }
                 return result
             }
             if (index % (1 * step) == 0) {
@@ -81,12 +85,12 @@ abstract class BaseAxis : BaseComponent() {
             result = result or LINE_TYPE_DRAW_LABEL
         } else if (index % 5 == 0) {
             result = LINE_TYPE_SECONDARY or LINE_TYPE_DRAW_GRID
-            if (scale >= 2f) {
+            if (scale >= 2f || canvasViewBox.valueUnit is InchValueUnit) {
                 result = result or LINE_TYPE_DRAW_LABEL
             }
         } else {
             result = LINE_TYPE_NORMAL or LINE_TYPE_DRAW_GRID
-            if (scale >= 5f) {
+            if (scale >= 5f || (canvasViewBox.valueUnit is InchValueUnit && scale >= 3f)) {
                 result = result or LINE_TYPE_DRAW_LABEL
             }
         }

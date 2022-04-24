@@ -74,7 +74,8 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent() {
             val scaleX = canvasView.canvasViewBox.getScaleX()
             canvasView.xAxis.plusList.forEachIndexed { index, value ->
                 if (left > value) {
-                    val axisLineType = canvasView.xAxis.getAxisLineType(index, scaleX)
+                    val axisLineType =
+                        canvasView.xAxis.getAxisLineType(canvasView.canvasViewBox, index, scaleX)
                     if (axisLineType > 0) {
                         val d = left - value
                         if (d < min) {
@@ -87,7 +88,8 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent() {
 
             canvasView.xAxis.minusList.forEachIndexed { index, value ->
                 if (left > value) {
-                    val axisLineType = canvasView.xAxis.getAxisLineType(index, scaleX)
+                    val axisLineType =
+                        canvasView.xAxis.getAxisLineType(canvasView.canvasViewBox, index, scaleX)
                     if (axisLineType > 0) {
                         val d = left - value
                         if (d < min) {
@@ -109,7 +111,8 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent() {
             val scaleX = canvasView.canvasViewBox.getScaleX()
             canvasView.yAxis.plusList.forEachIndexed { index, value ->
                 if (top > value) {
-                    val axisLineType = canvasView.yAxis.getAxisLineType(index, scaleX)
+                    val axisLineType =
+                        canvasView.yAxis.getAxisLineType(canvasView.canvasViewBox, index, scaleX)
                     if (axisLineType > 0) {
                         val d = top - value
                         if (d < min) {
@@ -122,7 +125,8 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent() {
 
             canvasView.yAxis.minusList.forEachIndexed { index, value ->
                 if (top > value) {
-                    val axisLineType = canvasView.yAxis.getAxisLineType(index, scaleX)
+                    val axisLineType =
+                        canvasView.yAxis.getAxisLineType(canvasView.canvasViewBox, index, scaleX)
                     if (axisLineType > 0) {
                         val d = top - value
                         if (d < min) {

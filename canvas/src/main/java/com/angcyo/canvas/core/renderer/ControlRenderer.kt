@@ -10,6 +10,7 @@ import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.component.ControlHandler
 import com.angcyo.canvas.core.component.ControlPoint
+import com.angcyo.canvas.core.convertPixelToValueUnit
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.canvas.utils.createTextPaint

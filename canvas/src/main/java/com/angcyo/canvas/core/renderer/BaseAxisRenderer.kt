@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.PointF
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.IValueUnit
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.toColor
@@ -45,7 +46,7 @@ abstract class BaseAxisRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(can
     }
 
     /**坐标系单位改变后回调*/
-    fun onCoordinateSystemUnitChanged(valueType: Int) {
+    fun onCoordinateSystemUnitChanged(valueUnit: IValueUnit) {
         updateAxisData()
     }
 
