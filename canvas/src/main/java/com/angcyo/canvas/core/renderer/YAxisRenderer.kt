@@ -111,10 +111,11 @@ class YAxisRenderer(val axis: YAxis, canvasViewBox: CanvasViewBox) :
         }
 
         if (axisLineType.have(BaseAxis.LINE_TYPE_DRAW_LABEL)) {
+            calcLabelPaintSize(axis, valueStr)
             canvas.drawText(
                 valueStr,
                 axis.labelXOffset,
-                top + labelPaint.textHeight() + axis.labelYOffset,
+                top + labelPaint.textHeight() + axis.labelYOffset - labelPaint.descent(),
                 labelPaint
             )
         }

@@ -18,10 +18,12 @@ import com.angcyo.library.ex.dp
  */
 class LimitRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox) {
 
+    /**限制框的宽度*/
+    var limitStrokeWidth = 1 * dp
+
     /**画笔*/
     val paint = createPaint().apply {
         color = Color.RED
-        strokeWidth = 1 * dp
         style = Paint.Style.STROKE
     }
 
@@ -32,6 +34,8 @@ class LimitRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox) 
         if (BuildConfig.DEBUG) {
             limitPath.computeBounds(_tempRectF, true)
         }
+        val scale = canvasViewBox.getScaleX()
+        paint.strokeWidth = limitStrokeWidth / scale //抵消坐标系的缩放
         canvas.drawPath(limitPath, paint)
     }
 

@@ -103,6 +103,7 @@ class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox) :
         }
 
         if (axisLineType.have(BaseAxis.LINE_TYPE_DRAW_LABEL)) {
+            calcLabelPaintSize(axis, valueStr)
             canvas.drawText(
                 valueStr,
                 left + axis.labelXOffset,

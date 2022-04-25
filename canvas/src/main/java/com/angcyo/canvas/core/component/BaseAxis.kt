@@ -61,25 +61,35 @@ abstract class BaseAxis : BaseComponent() {
         val loseStep = 0.25f
 
         if (scale < 1f) {
+            //坐标系缩放后
             val step = ((1 - scale) / loseStep).floor().toInt() + 1
             if (index % (10 * step) == 0) {
+                //主要刻度
                 result = LINE_TYPE_PROTRUDE or LINE_TYPE_DRAW_LABEL or LINE_TYPE_DRAW_GRID
                 return result
             }
             if (index % (5 * step) == 0) {
-                result = LINE_TYPE_SECONDARY or LINE_TYPE_DRAW_GRID
+                //次要刻度
+                result = LINE_TYPE_SECONDARY
+                if (scale >= 0.2f) {
+                    result = result or LINE_TYPE_DRAW_GRID
+                }
                 if (canvasViewBox.valueUnit is InchValueUnit) {
                     result = result or LINE_TYPE_DRAW_LABEL
                 }
                 return result
             }
             if (index % (1 * step) == 0) {
-                result = LINE_TYPE_NORMAL or LINE_TYPE_DRAW_GRID
+                result = LINE_TYPE_NORMAL
+                if (scale >= 0.2f) {
+                    result = result or LINE_TYPE_DRAW_GRID
+                }
                 return result
             }
             return result
         }
 
+        //坐标系放大后
         if (index % 10 == 0) {
             result = LINE_TYPE_PROTRUDE or LINE_TYPE_DRAW_GRID
             result = result or LINE_TYPE_DRAW_LABEL

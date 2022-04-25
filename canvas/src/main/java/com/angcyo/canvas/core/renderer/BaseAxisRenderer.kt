@@ -7,8 +7,11 @@ import android.graphics.PointF
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.IValueUnit
+import com.angcyo.canvas.core.component.BaseAxis
+import com.angcyo.canvas.core.component.YAxis
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.textWidth
 import com.angcyo.library.ex.toColor
 
 /**
@@ -29,9 +32,12 @@ abstract class BaseAxisRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(can
     /**普通网格线的画笔*/
     val gridPaint = createPaint("#d0d0d0".toColor())
 
+    /**label的文本大小*/
+    var labelTextSize = 9 * dp
+
     /**绘制刻度文字的画笔*/
     val labelPaint = createPaint(Color.GRAY).apply {
-        textSize = 9 * dp
+        textSize = labelTextSize
         style = Paint.Style.FILL
     }
 
@@ -52,5 +58,17 @@ abstract class BaseAxisRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(can
 
     /**更新坐标数据*/
     abstract fun updateAxisData()
+
+    /**自动计算文本画笔的大小*/
+    fun calcLabelPaintSize(axis: BaseAxis, label: String) {
+        labelPaint.textSize = labelTextSize
+        if (axis is YAxis) {
+            val requestWidth = labelPaint.textWidth(label) + axis.labelXOffset * 2
+            val renderWidth = getRenderBounds().width()
+            if (requestWidth > renderWidth) {
+                labelPaint.textSize = labelPaint.textSize * renderWidth / requestWidth
+            }
+        }
+    }
 
 }

@@ -24,10 +24,10 @@ class CanvasViewBox(val canvasView: ICanvasView) {
     var contentOffsetBottom = 0f
 
     /**最小和最大的缩放比例*/
-    var minScaleX: Float = 0.25f
+    var minScaleX: Float = 0.1f
     var maxScaleX: Float = 10f //5f
 
-    var minScaleY: Float = 0.25f
+    var minScaleY: Float = 0.1f
     var maxScaleY: Float = 10f //5f
 
     /**最小和最大的平移距离*/
