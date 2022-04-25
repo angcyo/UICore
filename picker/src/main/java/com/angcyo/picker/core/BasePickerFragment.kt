@@ -6,6 +6,7 @@ import android.view.View
 import com.angcyo.base.back
 import com.angcyo.core.fragment.BaseDslFragment
 import com.angcyo.dsladapter.DslAdapterStatusItem
+import com.angcyo.library.ex.Anim
 import com.angcyo.library.ex.fileSizeString
 import com.angcyo.library.ex.getColor
 import com.angcyo.library.model.LoaderMedia
@@ -15,7 +16,6 @@ import com.angcyo.picker.R
 import com.angcyo.picker.dslitem.DslPickerStatusItem
 import com.angcyo.transition.dslTransition
 import com.angcyo.viewmodel.VMAProperty
-import com.angcyo.library.ex.Anim
 import com.angcyo.widget.span.span
 
 /**
@@ -53,7 +53,9 @@ abstract class BasePickerFragment : BaseDslFragment() {
 
         //样式调整
         _adapter.dslAdapterStatusItem = DslPickerStatusItem()
-        _adapter.setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_LOADING)
+        _adapter.render {
+            setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_LOADING)
+        }
 
         _vh.visible(R.id.origin_cb, loaderConfig?.enableOrigin == true)
 

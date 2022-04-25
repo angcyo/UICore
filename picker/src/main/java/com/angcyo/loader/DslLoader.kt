@@ -42,6 +42,7 @@ class DslLoader {
 
         const val WIDTH = "width"
         const val HEIGHT = "height"
+
         //有些字段 高版本才提供
         const val ORIENTATION = "orientation"
         const val DURATION = "duration"
@@ -141,7 +142,7 @@ class DslLoader {
                                 allMedias.add(loaderMedia)
                                 //L.i(loaderMedia, " ", path.file().canRead())
                             } while (data.moveToNext())
-                            L.w("耗时:${LTime.time()} $count")
+                            L.w("DslLoader耗时:${LTime.time()} $count")
                             allFolder = folderCreator.creatorFolder(_loaderConfig, allMedias)
                         }
                     }.await()
@@ -202,7 +203,7 @@ class DslLoader {
             else -> MediaStore.Files.getContentUri(VOLUME_EXTERNAL, id)
         }
 
-        val uri = if (path.isFileExist()) {
+        val uri = if (path.isFilePath()) { //isFileExist
             Uri.fromFile(File(path))
         } else {
             loaderUri

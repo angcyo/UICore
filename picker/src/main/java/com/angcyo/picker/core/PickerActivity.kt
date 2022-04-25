@@ -103,10 +103,8 @@ class PickerActivity : BaseAppCompatActivity() {
                 if (back()) {
                     dslAHelper {
                         finish {
-                            exitAnim =
-                                R.anim.lib_picker_exit_anim
-                            enterAnim =
-                                R.anim.lib_picker_other_enter_anim
+                            exitAnim = R.anim.lib_picker_exit_anim
+                            enterAnim = R.anim.lib_picker_other_enter_anim
                         }
                     }
                 }
@@ -115,9 +113,7 @@ class PickerActivity : BaseAppCompatActivity() {
     }
 
     /**通过[PickerViewModel]在[Fragment]之间共享数据*/
-    val pickerViewModel: PickerViewModel by VMProperty(
-        PickerViewModel::class.java
-    )
+    val pickerViewModel: PickerViewModel by VMProperty(PickerViewModel::class.java)
 
     /**发送数据*/
     fun send() {

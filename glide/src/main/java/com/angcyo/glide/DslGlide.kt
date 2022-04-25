@@ -12,7 +12,7 @@ import com.angcyo.http.OkType
 import com.angcyo.library.L
 import com.angcyo.library.LTime
 import com.angcyo.library.app
-import com.angcyo.library.ex.isFileExist
+import com.angcyo.library.ex.isFilePath
 import com.angcyo.library.ex.isHttpScheme
 import com.angcyo.library.ex.loadUrl
 import com.bumptech.glide.Glide
@@ -276,17 +276,11 @@ class DslGlide {
                         .configRequest(url, File::class.java)
                         .into(GifDrawableImageViewTarget(targetView, autoPlayGif, transition))
                 } else {
-                    if (url.isNullOrBlank()) {
-                        _glide()
-                            .load(url)
-                    } else if (url.isFileExist()) {
-                        _glide()
-                            .load(url)
-                    } else {
-                        _glide()
-                            .load(GlideUrl(url, _header()))
-                    }
-                        .configRequest(url, Drawable::class.java)
+                    when {
+                        url.isNullOrBlank() -> _glide().load(url)
+                        url.isFilePath() -> _glide().load(url)
+                        else -> _glide().load(GlideUrl(url, _header()))
+                    }.configRequest(url, Drawable::class.java)
                         .into(GlideDrawableImageViewTarget(targetView))
                 }
             } else {
@@ -297,16 +291,13 @@ class DslGlide {
                         .configRequest(path, File::class.java)
                         .into(GifDrawableImageViewTarget(targetView, autoPlayGif, transition))
                 } else {
-                    if (path.isFileExist()) {
+                    if (path.isFilePath()) { //isFileExist 有性能损耗
                         //优先直接加载路径
-                        _glide()
-                            .load(path)
+                        _glide().load(path)
                     } else {
                         //其次加载uri
-                        _glide()
-                            .load(uri)
-                    }
-                        .configRequest(path, Drawable::class.java)
+                        _glide().load(uri)
+                    }.configRequest(path, Drawable::class.java)
                         .into(GlideDrawableImageViewTarget(targetView))
                 }
             }

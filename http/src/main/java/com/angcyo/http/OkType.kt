@@ -25,6 +25,8 @@ import java.util.concurrent.ConcurrentHashMap
  */
 
 object OkType {
+
+    /**缓存*/
     private val imageTypeCache: MutableMap<String, ImageType> = ConcurrentHashMap()
 
     val client: OkHttpClient

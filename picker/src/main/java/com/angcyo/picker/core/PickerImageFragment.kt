@@ -24,8 +24,6 @@ import com.angcyo.picker.dslitem.DslPickerFolderItem
 import com.angcyo.picker.dslitem.DslPickerImageItem
 import com.angcyo.putData
 import com.angcyo.widget._rv
-import com.angcyo.library.ex.Anim
-import com.angcyo.library.ex.anim
 import com.angcyo.widget.recycler.decoration.DslDrawItemDecoration
 import com.angcyo.widget.recycler.decoration.isLayoutFirst
 import com.angcyo.widget.recycler.initDslAdapter
@@ -42,7 +40,7 @@ class PickerImageFragment : BasePickerFragment() {
     //媒体loader
     val loader = DslLoader()
 
-    //日期绘制¬
+    //日期绘制
     val timeItemDecoration = DslDrawItemDecoration()
 
     //通过控制透明度, 达到显示和隐藏的效果
