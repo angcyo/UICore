@@ -76,8 +76,11 @@ class PickerActivity : BaseAppCompatActivity() {
         if (havePermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             onPermissionGranted()
         } else {
-            dslPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) {
-                if (it) {
+            dslPermissions(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) { allGranted, foreverDenied ->
+                if (allGranted) {
                     onPermissionGranted()
                 } else {
                     onBackPressed()

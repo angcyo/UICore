@@ -19,7 +19,7 @@ class DslPermissions {
     var fragmentActivity: FragmentActivity? = null
     val permissions = mutableListOf<String>()
 
-    var onPermissionsResult: (allGranted: Boolean) -> Unit = {}
+    var onPermissionsResult: (allGranted: Boolean, foreverDenied: Boolean) -> Unit = { _, _ -> }
 
     fun addPermissions(vararg permissions: String) {
         this.permissions.addAll(permissions)
@@ -39,23 +39,30 @@ class DslPermissions {
                 .subscribe(BaseObserver<Permission>().apply {
                     onObserverEnd = { _, _ ->
 
+                        //所有权限是否给予
                         var allGranted = true
+                        //是否永久禁用了权限
+                        var foreverDenied = false
                         val builder = StringBuilder()
 
                         builder.appendln().appendln("权限状态-->")
 
                         observerDataList.forEachIndexed { index, permission ->
                             builder.append(index).append("->").append(permission.name)
+                                .append(" ${permission.shouldShowRequestPermissionRationale}") //是否需要重新请求, 如果是false则表示用户永远禁止了权限
                                 .appendln(if (permission.granted) " √" else " ×")
 
                             if (!permission.granted) {
                                 allGranted = false
                             }
+                            if (!permission.shouldShowRequestPermissionRationale) {
+                                foreverDenied = true
+                            }
                         }
 
                         L.w(builder.toString())
 
-                        onPermissionsResult(allGranted)
+                        onPermissionsResult(allGranted, foreverDenied)
                     }
                 })
         }
@@ -66,7 +73,7 @@ class DslPermissions {
 fun dslPermissions(
     fragmentActivity: FragmentActivity?,
     permission: String,
-    onResult: (allGranted: Boolean) -> Unit
+    onResult: (allGranted: Boolean, foreverDenied: Boolean) -> Unit
 ) {
     val dslPermissions = DslPermissions()
     dslPermissions.fragmentActivity = fragmentActivity
@@ -83,7 +90,10 @@ fun dslPermissions(action: DslPermissions.() -> Unit = {}) {
     dslPermissions.doIt()
 }
 
-fun Fragment.dslPermissions(permission: String, onResult: (allGranted: Boolean) -> Unit) {
+fun Fragment.dslPermissions(
+    permission: String,
+    onResult: (allGranted: Boolean, foreverDenied: Boolean) -> Unit
+) {
     val dslPermissions = DslPermissions()
     dslPermissions.fragment = this
     if (!permission.isBlank()) {
