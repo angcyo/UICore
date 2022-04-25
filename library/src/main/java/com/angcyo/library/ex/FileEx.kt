@@ -28,7 +28,10 @@ enum class SizeUnit {
     Byte, KB, MB, GB, TB, PB, Auto
 }
 
-/**文件是否存在*/
+/**是否是文件路径*/
+fun String?.isFilePath(): Boolean = this?.startsWith(File.separatorChar) == true
+
+/**文件是否存在, 此方法会有性能损耗*/
 fun String?.isFileExist(): Boolean {
     return try {
         if (this.isNullOrBlank()) {

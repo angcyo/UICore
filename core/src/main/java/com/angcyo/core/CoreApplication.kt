@@ -14,12 +14,17 @@ import com.angcyo.core.component.model.LanguageModel
 import com.angcyo.http.DslHttp
 import com.angcyo.http.addInterceptorEx
 import com.angcyo.http.rx.Rx
+import com.angcyo.http.rx.doBack
 import com.angcyo.library.L
 import com.angcyo.library.LibApplication
 import com.angcyo.library.ex.connectUrl
 import com.angcyo.library.ex.getAppSignatureMD5
 import com.angcyo.library.ex.getAppSignatureSHA1
+import com.angcyo.library.ex.wrapLog
 import com.angcyo.library.getAppString
+import com.angcyo.library.utils.Constant
+import com.angcyo.library.utils.logFilePath
+import com.angcyo.library.utils.writeTo
 import com.angcyo.widget.edit.BaseEditDelegate
 import me.jessyan.progressmanager.ProgressManager
 import org.lsposed.hiddenapibypass.HiddenApiBypass
@@ -32,11 +37,41 @@ import org.lsposed.hiddenapibypass.HiddenApiBypass
 
 open class CoreApplication : LibApplication(), ViewModelStoreOwner {
 
+    companion object {
+
+        /**默认L.log的文件路径*/
+        var DEFAULT_FILE_PRINT_PATH: String? = ""
+
+        /**L.log写入文件, 并且输出到控制台*/
+        val DEFAULT_FILE_PRINT: (tag: String, level: Int, msg: String) -> Unit =
+            { tag, level, msg ->
+                L.DEFAULT_LOG_PRINT.invoke(tag, level, msg)
+                DEFAULT_FILE_PRINT_PATH?.let { path ->
+                    when (level) {
+                        L.VERBOSE -> "[VERBOSE]${msg}"
+                        L.DEBUG -> "[DEBUG]${msg}"
+                        L.INFO -> "[INFO]${msg}"
+                        L.WARN -> "[WARN]${msg}"
+                        L.ERROR -> "[ERROR]${msg}"
+                        else -> "[UNKNOWN]${msg}"
+                    }.wrapLog().apply {
+                        doBack(true) {
+                            writeTo(path)
+                        }
+                    }
+                }
+            }
+    }
+
     override fun onCreate() {
         super.onCreate()
 
         //语言
         vmApp<LanguageModel>().onCreate(this)
+
+        //日志输出到文件
+        DEFAULT_FILE_PRINT_PATH = Constant.LOG_FOLDER_NAME.logFilePath("l.log")
+        L.logPrint = DEFAULT_FILE_PRINT
 
         Rx.init()
 

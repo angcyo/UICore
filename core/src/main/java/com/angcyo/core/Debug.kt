@@ -3,10 +3,10 @@ package com.angcyo.core
 import android.widget.EditText
 import androidx.fragment.app.FragmentActivity
 import com.angcyo.base.dslFHelper
+import com.angcyo.core.CoreApplication.Companion.DEFAULT_FILE_PRINT_PATH
 import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.fileSelector
-import com.angcyo.library.L.DEFAULT_FILE_PRINT_PATH
 import com.angcyo.library.app
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.Constant

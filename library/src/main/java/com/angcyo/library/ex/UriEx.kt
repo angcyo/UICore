@@ -102,7 +102,8 @@ fun Uri?.isFileScheme(): Boolean {
     if (this == null || path.isNullOrBlank()) {
         return false
     }
-    return path.isFileExist()
+    return scheme?.startsWith("file") == true
+    //return path.isFileExist() //有性能损耗
 }
 
 fun Uri.query(context: Context = app()): MediaBean? {
@@ -149,8 +150,8 @@ fun Uri.query(context: Context = app()): MediaBean? {
 fun Uri?.loadUrl(): String? {
     return when {
         this == null -> null
-        this.isHttpScheme() -> toString()
-        isFileScheme() -> this.path
+        isFileScheme() -> path
+        isHttpScheme() -> toString()
         //this?.encodedPath
         //Uri.decode(this?.encodedPath)
         else -> toString()

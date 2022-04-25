@@ -2,10 +2,6 @@ package com.angcyo.library
 
 import android.util.Log
 import com.angcyo.library.ex.isDebug
-import com.angcyo.library.ex.wrapLog
-import com.angcyo.library.utils.Constant
-import com.angcyo.library.utils.logFilePath
-import com.angcyo.library.utils.writeTo
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -38,21 +34,6 @@ object L {
             }
         }
 
-    val DEFAULT_FILE_PRINT_PATH = Constant.LOG_FOLDER_NAME.logFilePath("l.log")
-
-    val DEFAULT_FILE_PRINT: (tag: String, level: Int, msg: String) -> Unit =
-        { tag, level, msg ->
-            DEFAULT_LOG_PRINT.invoke(tag, level, msg)
-            when (level) {
-                VERBOSE -> "[VERBOSE]${msg}"
-                DEBUG -> "[DEBUG]${msg}"
-                INFO -> "[INFO]${msg}"
-                WARN -> "[WARN]${msg}"
-                ERROR -> "[ERROR]${msg}"
-                else -> "[UNKNOWN]${msg}"
-            }.wrapLog().writeTo(DEFAULT_FILE_PRINT_PATH)
-        }
-
     var debug = isDebug()
 
     var tag: String = "L"
@@ -76,7 +57,7 @@ object L {
     var indentJsonDepth: Int = 2
 
     /**打印回调*/
-    var logPrint: (tag: String, level: Int, msg: String) -> Unit = DEFAULT_FILE_PRINT
+    var logPrint: (tag: String, level: Int, msg: String) -> Unit = DEFAULT_LOG_PRINT
 
     //临时tag
     var _tempTag: String? = null
