@@ -14,11 +14,11 @@ class XAxis : BaseAxis() {
 
     override fun getPlusPixelList(canvasViewBox: CanvasViewBox): List<Float> {
         plusList.clear()
-        var start = canvasViewBox.getCoordinateSystemX()
-        val factor = max(1f, canvasViewBox.invertMatrix.getScaleX())
+        var start = canvasViewBox.getCoordinateSystemX() //获取刻度开始的像素位置
+        val factor = max(1f, canvasViewBox.invertMatrix.getScaleX()) //如果放大了, 需要扩大的因子
         val end =
-            (start + canvasViewBox.getContentWidth() * factor - canvasViewBox.getTranslateX()) * factor
-        val step = canvasViewBox.valueUnit.getGraduatedScaleGap()
+            (start + canvasViewBox.getContentWidth() * factor - canvasViewBox.getTranslateX()) * factor //获取刻度结束的像素位置
+        val step = canvasViewBox.valueUnit.getGraduatedScaleGap() //刻度的间隔
 
         while (start < end) {
             plusList.add(start)
