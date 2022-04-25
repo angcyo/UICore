@@ -136,8 +136,11 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
+    val viewBounds: RectF = RectF()
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        viewBounds.set(0f, 0f, w.toFloat(), h.toFloat())
 
         //前测量
         eachAxisRender { axis ->
@@ -243,7 +246,9 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
             else -> false
         }
         canvasListenerList.forEach {
-            it.onCanvasTouchEvent(event)
+            if (it.onCanvasTouchEvent(event)) {
+                return true
+            }
         }
         if (controlHandler.enable) {
             if (controlHandler.onTouch(this, event)) {

@@ -6,7 +6,6 @@ import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
-import com.angcyo.library.L
 import com.angcyo.library.ex._drawable
 import kotlin.math.atan2
 
@@ -59,7 +58,7 @@ class RotateControlPoint : ControlPoint() {
                     _movePoint.y,
                 )
                 _touchPoint.set(_movePoint)
-                val angle = view.smartAssistant.findOptimalAngle(itemRenderer, angle)
+                val angle = view.smartAssistant.smartRotateBy(itemRenderer, angle)
                 angleSum += angle
                 angleSum %= 360
                 view.rotateItemBy(itemRenderer, angle)

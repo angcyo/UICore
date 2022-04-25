@@ -117,3 +117,9 @@ abstract class BaseAxis : BaseComponent() {
     /**获取负向坐标需要绘制刻度的像素点坐标位置, 未映射后的坐标*/
     abstract fun getMinusPixelList(canvasViewBox: CanvasViewBox): List<Float>
 }
+
+/**枚举*/
+fun BaseAxis.eachAxisPixelList(block: (index: Int, value: Float) -> Unit) {
+    plusList.forEachIndexed(block)
+    minusList.forEachIndexed(block)
+}

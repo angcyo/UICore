@@ -13,6 +13,7 @@ import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.mapPoint
+import com.angcyo.library.L
 import com.angcyo.library.ex.*
 
 /**
@@ -111,6 +112,7 @@ class ControlHandler : BaseComponent() {
             MotionEvent.ACTION_MOVE -> {
                 if (touchPointerId == event.getPointerId(0)) {
                     _movePoint.set(event.x, event.y)
+                    L.w("\ntouch:${_touchPoint}\nmove:${_movePoint}")
                     if (touchControlPoint == null) {
                         //没有在控制点上按压时, 才处理本体的移动
                         if (selectedItemRender != null) {

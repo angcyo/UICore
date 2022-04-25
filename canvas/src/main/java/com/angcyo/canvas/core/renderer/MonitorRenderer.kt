@@ -46,7 +46,7 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
         super.onCanvasSizeChanged(canvasView)
     }
 
-    override fun onCanvasTouchEvent(event: MotionEvent) {
+    override fun onCanvasTouchEvent(event: MotionEvent): Boolean {
         super.onCanvasTouchEvent(event)
         val action = event.actionMasked
         _isTouchDown = action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE
@@ -54,6 +54,7 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
             _touchPoint.set(event.x, event.y)
         }
         canvasViewBox.canvasView.refresh()
+        return false
     }
 
     override fun onCanvasBoxMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {

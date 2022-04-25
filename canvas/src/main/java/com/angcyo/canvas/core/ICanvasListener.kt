@@ -26,8 +26,8 @@ interface ICanvasListener {
     }
 
     /**[MotionEvent]事件回调*/
-    fun onCanvasTouchEvent(event: MotionEvent) {
-
+    fun onCanvasTouchEvent(event: MotionEvent): Boolean {
+        return false
     }
 
     //</editor-fold desc="绘制相关">

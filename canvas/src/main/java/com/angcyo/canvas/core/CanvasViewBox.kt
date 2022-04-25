@@ -158,7 +158,9 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         return invertMatrix.mapPoint(_tempPoint, result)
     }
 
-    /**将可视化矩形, 映射成坐标系矩形*/
+    /**将可视化矩形, 映射成坐标系矩形
+     * 可视化的坐标, 映射成坐标系中的坐标.
+     * 比如: 当前手势按下在View的[100,100]处,此时返回在坐标系中的[x,y]处*/
     fun mapCoordinateSystemRect(rect: RectF, result: RectF = _tempRect): RectF {
         invertMatrix.mapRect(result, rect)
         return result
