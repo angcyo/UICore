@@ -297,9 +297,12 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
                 val scaleCenterX = canvasViewBox.getContentCenterX()
                 val scaleCenterY = canvasViewBox.getContentCenterY()
 
+                val scaleX = (contentWidth - margin * 2) / rect.width()
+                val scaleY = (contentHeight - margin * 2) / rect.height()
+
                 matrix.postScale(
-                    contentWidth / (rect.width() + margin * 2),
-                    contentHeight / (rect.height() + margin * 2),
+                    scaleX,
+                    scaleY,
                     scaleCenterX,
                     scaleCenterY
                 )
