@@ -10,6 +10,7 @@ import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.component.ControlHandler
 import com.angcyo.canvas.core.component.ControlPoint
+import com.angcyo.canvas.core.component.control.RotateControlPoint
 import com.angcyo.canvas.core.convertPixelToValueUnit
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.createPaint
@@ -96,6 +97,9 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
                 //绘制边框
                 canvas.drawRect(visualBounds, paint)
                 drawFrameText(canvas, visualBounds, it.getRenderRotateBounds(), rotate)
+                if (controlHandler.touchControlPoint is RotateControlPoint) {
+                    drawRotateText(canvas, visualBounds, rotate)
+                }
             }
 
             //绘制控制四个角
@@ -129,6 +133,28 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
             controlPoint.bounds.centerY(),
             block
         )
+    }
+
+    /**绘制旋转的度数*/
+    fun drawRotateText(canvas: Canvas, visualBounds: RectF, rotate: Float) {
+        val rotateText = "${rotate.decimal(2)}°"
+        //绘制高度
+        val textWidth = sizePaint.textWidth(rotateText)
+        val left = visualBounds.left - textWidth - controlHandler.sizeOffset
+        _textBounds.set(
+            left,
+            visualBounds.centerY() - sizePaint.textHeight() / 2,
+            left + textWidth,
+            visualBounds.centerY() + sizePaint.textHeight() / 2
+        )
+        canvas.withTextScale(rotate, _textBounds) {
+            canvas.drawText(
+                rotateText,
+                _textBounds.left,
+                _textBounds.bottom - sizePaint.descent(),
+                sizePaint
+            )
+        }
     }
 
     /**绘制控制信息, 宽高xy值
