@@ -1,5 +1,6 @@
 package com.angcyo.canvas.core.component
 
+import android.graphics.Matrix
 import android.graphics.RectF
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
@@ -7,11 +8,12 @@ import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
+import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.library.L
 import com.angcyo.library.ex.flipLeft
 import com.angcyo.library.ex.flipTop
+import com.angcyo.library.ex.longFeedback
 import kotlin.math.absoluteValue
-import kotlin.math.tan
 
 /**
  * 智能提示助手
@@ -25,13 +27,22 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
 
     var lastXAssistant: AssistantData? = null
     var lastYAssistant: AssistantData? = null
+    var lastRotateAssistant: AssistantData? = null
 
     /**吸附阈值, 当距离推荐线的距离小于等于此值时, 自动吸附*/
-    var adsorbThreshold: Float = 2f
+    var translateAdsorbThreshold: Float = 2f
+
+    /**旋转吸附角度, 当和目标角度小于这个值时, 自动吸附到目标*/
+    var rotateAdsorbThreshold: Float = 1f
+
+    /**每隔15°推荐一次角度*/
+    var rotateSmartAngle: Int = 15
 
     var xAssistantRect: RectF? = null
     var yAssistantRect: RectF? = null
     var rotateAssistantRect: RectF? = null
+
+    val rotateMatrix = Matrix()
 
     init {
         enable = true
@@ -42,6 +53,9 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
         if (event.actionMasked == MotionEvent.ACTION_CANCEL || event.actionMasked == MotionEvent.ACTION_UP) {
             smartLineList.clear()
             canvasView.refresh()
+            xAssistantRect = null
+            yAssistantRect = null
+            rotateAssistantRect = null
         }
         return super.onCanvasTouchEvent(event)
     }
@@ -59,128 +73,182 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
         }
     }
 
-    /**智能推荐算法平移*/
+    /**智能推荐算法平移
+     * @return true 表示拦截此次手势操作*/
     fun smartTranslateItemBy(
         itemRenderer: BaseItemRenderer<*>,
         distanceX: Float = 0f,
         distanceY: Float = 0f
-    ) {
-        if (enable) {
-            val renderRotateBounds = itemRenderer.getRenderRotateBounds()
-
-            val left = renderRotateBounds.left
-            val top = renderRotateBounds.top
-
-            var dx = distanceX
-            var dy = distanceY
-
-            var newLeft = left + distanceX
-            var newTop = top + distanceY
-
-            val viewRect =
-                canvasView.canvasViewBox.mapCoordinateSystemRect(canvasView.viewBounds, _tempRect)
-
-            var feedback = false
-
-            if (distanceX != 0f) {
-                val assistant = findOptimalX(itemRenderer, left, newLeft, distanceX > 0)
-                if (assistant.isChanged()) {
-                    newLeft = assistant.resultValue!!
-                    dx = newLeft - left
-                    xAssistantRect = RectF(
-                        newLeft,
-                        viewRect.top,
-                        newLeft,
-                        viewRect.bottom
-                    )
-                    feedback = feedback || assistant.isChanged(lastXAssistant)
-                    lastXAssistant = assistant
-                } else {
-                    xAssistantRect = null
-                }
-            }
-
-            if (distanceY != 0f) {
-                val topAssistant = findOptimalY(itemRenderer, top, newTop, distanceY > 0)
-                if (topAssistant.isChanged()) {
-                    newTop = topAssistant.resultValue!!
-                    dy = newTop - top
-                    yAssistantRect = RectF(
-                        viewRect.left,
-                        newTop,
-                        viewRect.right,
-                        newTop
-                    )
-                    feedback = feedback || topAssistant.isChanged(lastYAssistant)
-                    lastYAssistant = topAssistant
-                } else {
-                    yAssistantRect = null
-                }
-            }
-
-            if (feedback) {
-                //震动反馈
-                canvasView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-
-                L.w("智能提示: dx:${distanceX} dy:${distanceY} left:${left} top:${top} newLeft:${newLeft} newTop:${newTop}")
-            }
-
-            resetSmartLine()
-            canvasView.translateItemBy(itemRenderer, dx, dy)
-        } else {
+    ): AssistantData? {
+        if (!enable) {
             canvasView.translateItemBy(itemRenderer, distanceX, distanceY)
+            return null
         }
+
+        val renderRotateBounds = itemRenderer.getRenderRotateBounds()
+
+        val left = renderRotateBounds.left
+        val top = renderRotateBounds.top
+
+        var dx = distanceX
+        var dy = distanceY
+
+        var newLeft = left + distanceX
+        var newTop = top + distanceY
+
+        val viewRect =
+            canvasView.canvasViewBox.mapCoordinateSystemRect(canvasView.viewBounds, _tempRect)
+
+        var feedback = false
+        var result: AssistantData? = null
+
+        if (distanceX != 0f) {
+            val assistant = findOptimalX(itemRenderer, left, newLeft, distanceX > 0)
+            if (assistant.isChanged()) {
+                newLeft = assistant.resultValue!!
+                dx = newLeft - left
+                xAssistantRect = RectF(
+                    newLeft,
+                    viewRect.top,
+                    newLeft,
+                    viewRect.bottom
+                )
+                feedback = feedback || assistant.isChanged(lastXAssistant)
+                lastXAssistant = assistant
+                result = lastXAssistant
+            } else {
+                xAssistantRect = null
+            }
+        }
+
+        if (distanceY != 0f) {
+            val topAssistant = findOptimalY(itemRenderer, top, newTop, distanceY > 0)
+            if (topAssistant.isChanged()) {
+                newTop = topAssistant.resultValue!!
+                dy = newTop - top
+                yAssistantRect = RectF(
+                    viewRect.left,
+                    newTop,
+                    viewRect.right,
+                    newTop
+                )
+                feedback = feedback || topAssistant.isChanged(lastYAssistant)
+                lastYAssistant = topAssistant
+                result = lastYAssistant
+            } else {
+                yAssistantRect = null
+            }
+        }
+
+        if (feedback) {
+            //震动反馈
+            canvasView.longFeedback()
+
+            L.w("智能提示: dx:${distanceX} dy:${distanceY} left:${left} top:${top} newLeft:${newLeft} newTop:${newTop}")
+        }
+
+        resetSmartLine()
+        canvasView.translateItemBy(itemRenderer, dx, dy)
+        return result
     }
 
-    /**智能旋转算法*/
-    fun smartRotateBy(itemRenderer: BaseItemRenderer<*>, angle: Float): Float {
-        if (enable) {
-            return angle
+    /**智能旋转算法
+     * @return true 表示拦截此次手势操作*/
+    fun smartRotateBy(itemRenderer: BaseItemRenderer<*>, angle: Float): AssistantData? {
+        if (!enable) {
+            canvasView.rotateItemBy(itemRenderer, angle)
+            return null
         }
 
         val oldRotate = itemRenderer.rotate
-        var rotate = (itemRenderer.rotate + angle).toInt()
+        var newRotate = itemRenderer.rotate + angle
+        var feedback = false
 
-        val value = 15 //15个度数取一个值
-        if (angle > 0) {
-            //顺时针旋转
-            while (rotate % value != 0) {
-                rotate++
+        val assistant = findOptimalAngle(itemRenderer, angle)
+        if (assistant.isChanged()) {
+            newRotate = assistant.resultValue!!
+
+            val viewRect =
+                canvasView.canvasViewBox.mapCoordinateSystemRect(canvasView.viewBounds, _tempRect)
+            val renderBounds = itemRenderer.getRenderBounds()
+            var left = viewRect.left
+            var right = viewRect.right
+            var top = renderBounds.centerY()
+            var bottom = top
+
+            rotateMatrix.reset()
+            rotateMatrix.postRotate(newRotate, renderBounds.centerX(), renderBounds.centerY())
+
+            rotateMatrix.mapPoint(left, top).apply {
+                left = x
+                top = y
             }
-            rotate %= 360
-        } else {
-            //逆时针旋转
-            while (rotate % value != 0) {
-                rotate--
+
+            rotateMatrix.mapPoint(right, bottom).apply {
+                right = x
+                bottom = y
             }
-            if (rotate < 0) {
-                rotate += 360
-            }
+            rotateAssistantRect = RectF(left, top, right, bottom)
+
+            feedback = feedback || assistant.isChanged(lastRotateAssistant)
+            lastRotateAssistant = assistant
         }
 
-        val result = rotate - oldRotate
-        if (result != angle) {
+        if (feedback) {
             //找到了 震动反馈
-            val visualBounds = itemRenderer.getVisualBounds()
-            smartLineList.clear()
-            val left = visualBounds.centerX() + visualBounds.centerY() / tan(rotate.toFloat())
-            val top = 0f
-            val bottom = canvasView.canvasViewBox.getContentBottom()
-            val right =
-                visualBounds.centerX() - (bottom - visualBounds.centerY()) / tan(rotate.toFloat())
-            smartLineList.add(
-                RectF(left, top, right, bottom)
-            )
-            canvasView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+            canvasView.longFeedback()
+
+            L.w("智能提示: angle:${angle} from:${oldRotate} to:${newRotate}")
         }
-        return result
+        val result = newRotate - oldRotate
+        resetSmartLine()
+        if (result != 0f) {
+            canvasView.rotateItemBy(itemRenderer, result)
+        }
+        return lastRotateAssistant
     }
 
     /**查找最优的旋转角度
      * [angle] 当前需要旋转的角度
      * @return 返回最优需要旋转的角度*/
-    fun findOptimalAngle() {
+    fun findOptimalAngle(itemRenderer: BaseItemRenderer<*>, angle: Float): AssistantData {
+        val oldRotate = itemRenderer.rotate
+        val newValue = itemRenderer.rotate + angle
+        val result = AssistantData(oldRotate, newValue)
 
+        var min = Float.MAX_VALUE
+        if (angle > 0) {
+            //顺时针旋转
+            for (value in 0 until 360 step rotateSmartAngle) {
+                if (value >= oldRotate) {
+                    val d = (newValue - value).absoluteValue
+                    if (d < min) {
+                        result.resultValue = value.toFloat()
+                        min = d
+                    }
+                }
+            }
+        } else if (angle < 0) {
+            //逆时针旋转
+            for (value in 0 downTo -360 step rotateSmartAngle) {
+                if (value <= oldRotate) {
+                    val d = (newValue - value).absoluteValue
+                    if (d < min) {
+                        result.resultValue = value.toFloat()
+                        min = d
+                    }
+                }
+            }
+        }
+
+        result.resultValue?.let {
+            if ((it - newValue).absoluteValue > rotateAdsorbThreshold) {
+                //不够接近推荐值
+                result.resultValue = null
+            }
+        }
+
+        return result
     }
 
     /**查找最贴近的横坐标值
@@ -227,7 +295,7 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
             }
 
             result.resultValue?.let {
-                if ((it - newValue).absoluteValue > adsorbThreshold) {
+                if ((it - newValue).absoluteValue > translateAdsorbThreshold) {
                     //不够接近推荐值
                     result.resultValue = null
                 }
@@ -281,7 +349,7 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
             }
 
             result.resultValue?.let {
-                if ((it - newValue).absoluteValue > adsorbThreshold) {
+                if ((it - newValue).absoluteValue > translateAdsorbThreshold) {
                     //不够接近推荐值
                     result.resultValue = null
                 }
@@ -313,7 +381,7 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
             }
 
             result.resultValue?.let {
-                if ((it - newLeft).absoluteValue > adsorbThreshold) {
+                if ((it - newLeft).absoluteValue > translateAdsorbThreshold) {
                     //不够接近推荐值
                     result.resultValue = null
                 }
@@ -344,7 +412,7 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
             }
 
             result.resultValue?.let {
-                if ((it - newRight).absoluteValue > adsorbThreshold) {
+                if ((it - newRight).absoluteValue > translateAdsorbThreshold) {
                     //不够接近推荐值
                     result.resultValue = null
                 }
@@ -375,7 +443,7 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
             }
 
             result.resultValue?.let {
-                if ((it - newTop).absoluteValue > adsorbThreshold) {
+                if ((it - newTop).absoluteValue > translateAdsorbThreshold) {
                     //不够接近推荐值
                     result.resultValue = null
                 }
@@ -406,7 +474,7 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
             }
 
             result.resultValue?.let {
-                if ((it - newBottom).absoluteValue > adsorbThreshold) {
+                if ((it - newBottom).absoluteValue > translateAdsorbThreshold) {
                     //不够接近推荐值
                     result.resultValue = null
                 }

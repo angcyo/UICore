@@ -140,12 +140,12 @@ class ControlHandler : BaseComponent() {
                                     dx1,
                                     dy1
                                 )
+                                _touchPoint.set(_movePoint)
                             }
                         }
                     } else {
                         handle = true
                     }
-                    _touchPoint.set(_movePoint)
                 }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
