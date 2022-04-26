@@ -10,12 +10,12 @@ import android.util.AttributeSet
 import android.view.View
 import com.angcyo.drawable.DrawLineDrawable
 import com.angcyo.library.ex.calcLayoutWidthHeight
+import com.angcyo.library.ex.save
 import com.angcyo.tablayout.exactlyMeasure
 import com.angcyo.tablayout.screenHeight
 import com.angcyo.tablayout.screenWidth
 import com.angcyo.widget.R
 import com.angcyo.widget.base.exactly
-import com.angcyo.widget.base.save
 import kotlin.math.absoluteValue
 
 /**

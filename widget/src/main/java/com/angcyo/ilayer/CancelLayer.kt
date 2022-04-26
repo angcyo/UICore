@@ -8,9 +8,13 @@ import com.angcyo.ilayer.container.IContainer
 import com.angcyo.ilayer.container.WindowContainer
 import com.angcyo.library.app
 import com.angcyo.library.ex._color
+import com.angcyo.library.ex.gone
+import com.angcyo.library.ex.longFeedback
+import com.angcyo.library.ex.visible
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
-import com.angcyo.widget.base.*
+import com.angcyo.widget.base.screenRect
+import com.angcyo.widget.base.tagDslViewHolder
 
 /**
  * 用于提示滑动至此, 删除浮窗

@@ -6,11 +6,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.LayoutRes
-import com.angcyo.library.L
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
+import com.angcyo.library.ex.mH
+import com.angcyo.library.ex.mW
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.*
+import com.angcyo.widget.base.atMost
+import com.angcyo.widget.base.dslViewHolder
+import com.angcyo.widget.base.exactly
 
 /**
  * layout xml 转成bitmap
@@ -30,7 +33,7 @@ class DslViewShot {
 
     fun doIt(context: Context): Bitmap? {
         if (layoutId == -1) {
-            L.e("布局文件不存在")
+            throw IllegalArgumentException("布局文件不存在")
         }
 
         val rootView = LayoutInflater.from(context).inflate(layoutId, FrameLayout(context), false)
@@ -57,8 +60,9 @@ class DslViewShot {
 }
 
 /**自定义[xml]截图*/
-fun Context.shot(action: DslViewShot.() -> Unit): Bitmap? {
+fun Context.shot(layoutId: Int, action: DslViewShot.() -> Unit): Bitmap? {
     return DslViewShot().run {
+        this.layoutId = layoutId
         action()
         doIt(this@shot)
     }

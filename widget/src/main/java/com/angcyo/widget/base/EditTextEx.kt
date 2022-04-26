@@ -14,9 +14,7 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.angcyo.library.ex.hawkGet
-import com.angcyo.library.ex.hawkPut
-import com.angcyo.library.ex.isPhone
+import com.angcyo.library.ex.*
 import com.angcyo.library.utils.PATTERN_MOBILE_SIMPLE
 import com.angcyo.widget.edit.CharLengthFilter
 import com.angcyo.widget.edit.SingleTextWatcher

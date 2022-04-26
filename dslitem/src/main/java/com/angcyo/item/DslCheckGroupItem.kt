@@ -7,6 +7,7 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.ILabelItem
 import com.angcyo.item.style.LabelItemConfig
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.find
 import com.angcyo.library.ex.string
 import com.angcyo.library.ex.toStr
 import com.angcyo.library.extend.IToText
@@ -14,7 +15,6 @@ import com.angcyo.library.extend.IToValue
 import com.angcyo.tablayout.DslSelector
 import com.angcyo.tablayout.logi
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.find
 import com.angcyo.widget.base.resetChild
 import com.angcyo.widget.layout.DslFlowLayout
 

@@ -4,8 +4,8 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.angcyo.library.ex.offsetTopTo
 import com.angcyo.widget.base.behavior
-import com.angcyo.widget.base.offsetTopTo
 
 /**
  * 头/悬浮/尾 联动滚动, 悬浮的行为

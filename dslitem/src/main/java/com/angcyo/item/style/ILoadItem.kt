@@ -5,8 +5,8 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
 import com.angcyo.library.ex.ResultThrowable
+import com.angcyo.library.ex.visible
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.visible
 
 /**
  * 需要动态加载数据的item

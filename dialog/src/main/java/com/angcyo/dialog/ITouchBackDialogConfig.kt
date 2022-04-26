@@ -6,7 +6,7 @@ import com.angcyo.behavior.IScrollBehaviorListener
 import com.angcyo.behavior.effect.TouchBackBehavior
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.behavior
-import com.angcyo.widget.base.mH
+import com.angcyo.library.ex.mH
 
 /**
  *

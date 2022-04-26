@@ -14,8 +14,8 @@ import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.className
 import com.angcyo.tablayout.clamp
 import com.angcyo.widget.base.frameParams
-import com.angcyo.widget.base.mH
-import com.angcyo.widget.base.mW
+import com.angcyo.library.ex.mH
+import com.angcyo.library.ex.mW
 
 /**
  * 在[ViewGroup]中显示[ILayer]

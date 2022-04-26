@@ -8,9 +8,8 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
-import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.*
 import com.angcyo.widget.R
-import com.angcyo.widget.base.*
 import kotlin.math.sqrt
 
 /**

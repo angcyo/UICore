@@ -8,6 +8,9 @@ import android.view.View
 import androidx.annotation.CallSuper
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
+import com.angcyo.library.ex.isVisible
+import com.angcyo.library.ex.mH
+import com.angcyo.library.ex.mW
 import com.angcyo.widget.base.*
 import com.angcyo.widget.layout.RCoordinatorLayout
 import kotlin.math.max

@@ -14,7 +14,6 @@ import com.angcyo.library.ex.*
 import com.angcyo.library.model.*
 import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.longFeedback
 import com.angcyo.widget.span.span
 import kotlin.math.max
 

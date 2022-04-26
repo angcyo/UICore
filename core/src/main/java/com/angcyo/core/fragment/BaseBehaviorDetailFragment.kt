@@ -10,7 +10,7 @@ import com.angcyo.library._screenHeight
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.base.behavior
 import com.angcyo.widget.base.replace
-import com.angcyo.widget.base.setHeight
+import com.angcyo.library.ex.setHeight
 
 /**
  * 简单的头部放大行为界面

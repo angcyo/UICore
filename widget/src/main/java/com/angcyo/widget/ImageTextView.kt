@@ -11,7 +11,7 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
-import com.angcyo.widget.base.drawCenterX
+import com.angcyo.library.ex.drawCenterX
 import com.angcyo.widget.drawable.DslAttrBadgeDrawable
 import com.angcyo.widget.text.IBadgeView
 import kotlin.math.max

@@ -7,8 +7,8 @@ import com.angcyo.behavior.refresh.RefreshEffectConfig
 import com.angcyo.library.L
 import com.angcyo.library.ex.abs
 import com.angcyo.tablayout.clamp
-import com.angcyo.widget.base.mW
-import com.angcyo.widget.base.offsetLeftTo
+import com.angcyo.library.ex.mW
+import com.angcyo.library.ex.offsetLeftTo
 
 /**
  * 横向拉动偏移的边界效果

@@ -6,7 +6,7 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.behavior.refresh.RefreshEffectConfig
-import com.angcyo.widget.base.mW
+import com.angcyo.library.ex.mW
 import com.angcyo.widget.layout.isEnableCoordinator
 
 /**

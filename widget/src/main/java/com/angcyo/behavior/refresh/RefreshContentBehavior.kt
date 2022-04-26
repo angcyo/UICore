@@ -17,7 +17,7 @@ import com.angcyo.library.ex.simpleHash
 import com.angcyo.widget.R
 import com.angcyo.widget.base.behavior
 import com.angcyo.widget.base.isTouchFinish
-import com.angcyo.widget.base.mH
+import com.angcyo.library.ex.mH
 import com.angcyo.widget.layout.isEnableCoordinator
 
 

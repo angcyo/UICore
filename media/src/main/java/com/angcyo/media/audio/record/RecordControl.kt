@@ -6,11 +6,11 @@ import android.view.MotionEvent
 import android.view.View
 import com.angcyo.library.ex.checkPermissions
 import com.angcyo.library.ex.ext
+import com.angcyo.library.ex.hideSoftInput
 import com.angcyo.library.ex.noExtName
 import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.fileName
 import com.angcyo.library.utils.folderPath
-import com.angcyo.widget.base.hideSoftInput
 import java.io.File
 import kotlin.math.max
 
@@ -38,11 +38,11 @@ open class RecordControl {
      * 监听那个view的事件, 触发录制
      * */
     open fun wrap(
-            view: View?,
-            activity: Activity?,
-            onRecordStart: () -> Boolean = { true } /*返回true, 表示可以开始录制*/,
-            onTouch: (MotionEvent) -> Unit = {} /*手势回调*/,
-            onRecordEnd: (voiceFile: File) -> Unit = {}
+        view: View?,
+        activity: Activity?,
+        onRecordStart: () -> Boolean = { true } /*返回true, 表示可以开始录制*/,
+        onTouch: (MotionEvent) -> Unit = {} /*手势回调*/,
+        onRecordEnd: (voiceFile: File) -> Unit = {}
     ) {
         if (view == null || activity == null) {
             return
@@ -129,8 +129,8 @@ open class RecordControl {
         val recordTime = recordUI.currentRecordTime
         val time = (recordTime / 1000).toInt()
         val recordFile = File(
-                sampleFile.parent,
-                "${sampleFile.name.noExtName()}_t_${time}.${sampleFile.name.ext()}"
+            sampleFile.parent,
+            "${sampleFile.name.noExtName()}_t_${time}.${sampleFile.name.ext()}"
         )
         sampleFile.renameTo(recordFile)
         return recordFile

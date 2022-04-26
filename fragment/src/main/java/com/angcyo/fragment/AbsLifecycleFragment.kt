@@ -16,7 +16,7 @@ import com.angcyo.base.setFragmentResult
 import com.angcyo.base.toVisibilityString
 import com.angcyo.library.L.i
 import com.angcyo.library.ex.hash
-import com.angcyo.widget.base.hideSoftInput
+import com.angcyo.library.ex.hideSoftInput
 
 /**
  * Created by angcyo on 2018/12/03 23:17

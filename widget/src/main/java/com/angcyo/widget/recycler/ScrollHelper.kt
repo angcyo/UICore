@@ -10,7 +10,7 @@ import com.angcyo.library.L
 import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.nowTime
-import com.angcyo.widget.base.mH
+import com.angcyo.library.ex.mH
 import com.angcyo.widget.recycler.ScrollHelper.Companion.DEFAULT_SCROLL_STEP
 import kotlin.math.min
 

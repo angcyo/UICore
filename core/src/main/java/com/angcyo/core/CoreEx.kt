@@ -16,11 +16,11 @@ import com.angcyo.core.activity.BaseCoreAppCompatActivity
 import com.angcyo.library.app
 import com.angcyo.library.component.toAppDetail
 import com.angcyo.library.ex.baseConfig
+import com.angcyo.library.ex.find
 import com.angcyo.library.ex.isRelease
 import com.angcyo.library.utils.RUtils
 import com.angcyo.widget.DslButton
 import com.angcyo.widget.DslGroupHelper
-import com.angcyo.widget.base.find
 import com.angcyo.widget.image.DslImageView
 import com.angcyo.widget.text.DslTextView
 import ezy.assist.compat.RomUtil

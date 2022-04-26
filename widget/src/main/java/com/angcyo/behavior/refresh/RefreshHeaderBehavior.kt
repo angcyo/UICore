@@ -10,7 +10,7 @@ import com.angcyo.behavior.refresh.IRefreshBehavior.Companion.STATUS_FINISH
 import com.angcyo.behavior.refresh.IRefreshBehavior.Companion.STATUS_NORMAL
 import com.angcyo.behavior.refresh.IRefreshBehavior.Companion.STATUS_REFRESH
 import com.angcyo.widget.base.behavior
-import com.angcyo.widget.base.mH
+import com.angcyo.library.ex.mH
 
 /**
  * 布局的位置在[IContentBehavior]的上面.

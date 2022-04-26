@@ -6,9 +6,9 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.BaseDependsBehavior
 import com.angcyo.behavior.ITitleBarBehavior
+import com.angcyo.library.ex.mH
+import com.angcyo.library.ex.offsetTopTo
 import com.angcyo.widget.base.behavior
-import com.angcyo.widget.base.mH
-import com.angcyo.widget.base.offsetTopTo
 
 /**
  * 布局在标题栏下的行为, 可以覆盖在内容上, 也可以被内容覆盖

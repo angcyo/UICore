@@ -18,8 +18,8 @@ import com.angcyo.library.L
 import com.angcyo.library.R
 import com.angcyo.library.app
 import com.angcyo.library.component.MainExecutor
+import com.angcyo.library.ex.hideSoftInput
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.hideSoftInput
 
 /**
  *

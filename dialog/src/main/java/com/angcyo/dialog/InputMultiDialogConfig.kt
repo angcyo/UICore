@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.text.InputType
 import android.widget.EditText
+import com.angcyo.library.ex.find
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.*
 import com.angcyo.widget.pager.TextIndicator

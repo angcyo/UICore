@@ -6,9 +6,9 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.view.ViewCompat
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.isVisible
 import com.angcyo.widget.R
 import com.angcyo.widget.base.atMost
-import com.angcyo.widget.base.isVisible
 import kotlin.math.absoluteValue
 import kotlin.math.max
 
@@ -75,7 +75,8 @@ open class DslScrollTextView : DslSpanTextView {
     }
 
     private fun initAttribute(context: Context, attributeSet: AttributeSet?) {
-        val typedArray = context.obtainStyledAttributes(attributeSet,
+        val typedArray = context.obtainStyledAttributes(
+            attributeSet,
             R.styleable.DslScrollTextView
         )
         scrollText = typedArray.getBoolean(R.styleable.DslScrollTextView_r_text_scroll, scrollText)

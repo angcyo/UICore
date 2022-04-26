@@ -4,7 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.BaseScrollBehavior
-import com.angcyo.widget.base.setHeight
+import com.angcyo.library.ex.setHeight
 
 /**
  * 当[Content]over滚动的时候, 缩放指定的[View].

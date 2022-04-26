@@ -17,11 +17,7 @@ import com.angcyo.fragment.IFragment
 import com.angcyo.fragment.R
 import com.angcyo.fragment.dslBridge
 import com.angcyo.library.L
-import com.angcyo.library.ex.animationOf
-import com.angcyo.library.ex.elseNull
-import com.angcyo.library.ex.havePermission
-import com.angcyo.library.ex.isDebug
-import com.angcyo.widget.base.isVisible
+import com.angcyo.library.ex.*
 import kotlin.reflect.KClass
 
 /**

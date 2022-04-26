@@ -13,11 +13,11 @@ import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.behavior.ITitleBarBehavior
 import com.angcyo.library.ex.color
 import com.angcyo.library.ex.loadColor
+import com.angcyo.library.ex.mH
 import com.angcyo.tablayout.clamp
 import com.angcyo.tablayout.evaluateColor
 import com.angcyo.widget.R
 import com.angcyo.widget.base.each
-import com.angcyo.widget.base.mH
 import com.angcyo.widget.text.DslSpanTextView
 import kotlin.math.min
 

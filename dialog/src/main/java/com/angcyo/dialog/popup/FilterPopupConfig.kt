@@ -11,7 +11,9 @@ import com.angcyo.component.toContent
 import com.angcyo.component.toLoading
 import com.angcyo.dialog.FullPopupConfig
 import com.angcyo.dialog.R
+import com.angcyo.library.ex.find
 import com.angcyo.library.ex.str
+import com.angcyo.library.ex.visible
 import com.angcyo.library.extend.IToText
 import com.angcyo.tablayout.dslSelector
 import com.angcyo.widget.DslViewHolder

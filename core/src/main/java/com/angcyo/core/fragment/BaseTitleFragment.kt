@@ -24,9 +24,7 @@ import com.angcyo.core.R
 import com.angcyo.core.behavior.ArcLoadingHeaderBehavior
 import com.angcyo.library.L
 import com.angcyo.library.component.dslIntent
-import com.angcyo.library.ex.Action
-import com.angcyo.library.ex.className
-import com.angcyo.library.ex.undefined_res
+import com.angcyo.library.ex.*
 import com.angcyo.library.model.Page
 import com.angcyo.lifecycle.onStart
 import com.angcyo.widget.DslGroupHelper

@@ -12,14 +12,10 @@ import com.angcyo.core.appendTextItem
 import com.angcyo.core.fragment.BaseUI
 import com.angcyo.core.fragment.FragmentConfig
 import com.angcyo.core.fragment.FragmentUI
-import com.angcyo.library.ex.colorFilter
-import com.angcyo.library.ex.dpi
-import com.angcyo.library.ex.undefined_res
+import com.angcyo.library.ex.*
 import com.angcyo.widget.DslGroupHelper
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt
-import com.angcyo.widget.base.find
-import com.angcyo.widget.base.loadDrawable
 import com.angcyo.widget.base.replace
 import com.angcyo.widget.span.span
 import com.angcyo.widget.text.DslTextView

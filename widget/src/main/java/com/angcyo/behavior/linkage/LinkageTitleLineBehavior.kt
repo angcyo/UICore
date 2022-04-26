@@ -5,11 +5,11 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.ITitleBarBehavior
+import com.angcyo.library.ex.invisible
+import com.angcyo.library.ex.mH
+import com.angcyo.library.ex.offsetTopTo
 import com.angcyo.widget.R
 import com.angcyo.widget.base.behavior
-import com.angcyo.widget.base.invisible
-import com.angcyo.widget.base.mH
-import com.angcyo.widget.base.offsetTopTo
 
 /**
  * 布局在ITitleBarBehavior下面, 根据内容滚动距离决定是否隐藏或者显示child

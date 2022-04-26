@@ -11,7 +11,7 @@ import com.angcyo.library.model.loadUri
 import com.angcyo.library.model.mimeType
 import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.setWidthHeight
+import com.angcyo.library.ex.setWidthHeight
 
 /**
  *

@@ -9,6 +9,7 @@ import androidx.core.view.NestedScrollingChild
 import androidx.core.view.ViewCompat
 import com.angcyo.behavior.BaseGestureBehavior
 import com.angcyo.library.ex.abs
+import com.angcyo.library.ex.mH
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.widget.base.*
 import com.angcyo.widget.layout.isEnableCoordinator

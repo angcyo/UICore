@@ -15,12 +15,11 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import androidx.core.view.GravityCompat
 import com.angcyo.library.L.w
+import com.angcyo.library.ex.getStatusBarHeight
+import com.angcyo.library.ex.hideSoftInput
 import com.angcyo.library.ex.toDpi
 import com.angcyo.widget.R
-import com.angcyo.widget.base.getStatusBarHeight
-import com.angcyo.widget.base.hideSoftInput
 import com.orhanobut.hawk.Hawk
-import java.util.*
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -78,14 +77,17 @@ class RSoftInputLayout : FrameLayout {
      * 动画执行回调, 可以修改动画执行的值
      */
     var animatorCallback: AnimatorCallback? = null
+
     /**
      * 当键盘未显示过时, 默认的键盘高度
      */
     var defaultKeyboardHeight = -1
+
     /**
      * 由于延迟操作带来的意图延迟, 此变量不考虑无延迟
      */
     var wantIntentAction = INTENT_NONE
+
     /**
      * 当前用户操作的意图
      */
@@ -99,21 +101,27 @@ class RSoftInputLayout : FrameLayout {
             field = value
             wantIntentAction = value
         }
+
     /**
      * 最后一次有效的操作意图
      */
     var lastIntentAction = intentAction
+
     /**
      * 最后一次的意图, 用来实现表情布局状态恢复
      */
     var lastRestoreIntentAction = intentAction
+
     //2级缓存状态
     var lastRestoreIntentAction2 = intentAction
     var contentLayoutMaxHeight = 0
+
     //键盘/emoji 当前显示的高度
     var bottomCurrentShowHeight = 0
+
     //动画过程中的高度变量
     var bottomCurrentShowHeightAnim = 0
+
     //动画进度
     var animProgress = 0f
     var lastKeyboardHeight = 0
@@ -121,11 +129,13 @@ class RSoftInputLayout : FrameLayout {
     var emojiLayout: View? = null
     var mEmojiLayoutChangeListeners =
         HashSet<OnEmojiLayoutChangeListener>()
+
     /**
      * 是否激活控件
      */
     private var enableSoftInput = true
     private var enableSoftInputAnim = true
+
     /**
      * 隐藏和显示的动画 分开控制
      */
@@ -133,10 +143,12 @@ class RSoftInputLayout : FrameLayout {
 
     //<editor-fold defaultState="collapsed" desc="核心方法">
     private var enableSoftInputAnimHide = true
+
     /**
      * 可以关闭此开关, 当键盘弹出时, 只有事件回调, 没有界面size处理. (API>=21)
      */
     private var enableSoftInputInset = true
+
     /**
      * 频繁切换键盘, 延迟检查时长.
      * 如果开启了手机的安全密码输入键盘, 可以适当的加大延迟时间. 消除抖动.
@@ -148,15 +160,18 @@ class RSoftInputLayout : FrameLayout {
     //<editor-fold defaultstate="collapsed" desc="静态区">
     var animDuration: Long = 240
         private set
+
     /**
      * 在软键盘展示的过程中, 动态改变此paddingTop, 需要开启 [enableSoftInputAnim]
      * 大于0, 表示激活属性
      */
     private var animPaddingTop = -1
+
     /**
      * 键盘完全显示时, 依旧需要的padding大小
      */
     private var animPaddingMinTop = 0
+
     /**
      * 激活表情布局恢复, (如:显示键盘之前是表情布局, 那么隐藏键盘后就会显示表情布局)
      */

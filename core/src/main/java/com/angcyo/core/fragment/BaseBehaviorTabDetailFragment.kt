@@ -6,10 +6,10 @@ import com.angcyo.core.R
 import com.angcyo.library._screenHeight
 import com.angcyo.library.ex.copyDrawable
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.find
 import com.angcyo.tablayout.DslTabIndicator
-import com.angcyo.widget.base.find
 import com.angcyo.widget.base.replace
-import com.angcyo.widget.base.setHeight
+import com.angcyo.library.ex.setHeight
 import com.angcyo.widget.tab
 
 /**

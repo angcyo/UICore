@@ -5,8 +5,8 @@ import android.text.TextPaint
 import android.widget.EditText
 import com.angcyo.library.ex.alpha
 import com.angcyo.library.ex.orString
-import com.angcyo.widget.base.mH
-import com.angcyo.widget.base.mW
+import com.angcyo.library.ex.mH
+import com.angcyo.library.ex.mW
 
 /**
  * 绘制一个淡色的输入提示

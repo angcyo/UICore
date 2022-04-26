@@ -12,6 +12,7 @@ import androidx.annotation.DrawableRes
 import androidx.core.widget.TextViewCompat
 import com.angcyo.library.L
 import com.angcyo.library.ex.add
+import com.angcyo.library.ex.loadDrawable
 import com.angcyo.library.ex.remove
 import com.angcyo.library.utils.getMember
 import com.angcyo.widget.span.span

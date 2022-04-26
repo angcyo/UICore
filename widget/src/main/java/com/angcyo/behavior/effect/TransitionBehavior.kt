@@ -7,10 +7,7 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import com.angcyo.behavior.BaseGestureBehavior
-import com.angcyo.library.ex.Action
-import com.angcyo.library.ex.RSize
-import com.angcyo.library.ex.abs
-import com.angcyo.library.ex.toRSize
+import com.angcyo.library.ex.*
 import com.angcyo.tablayout.clamp
 import com.angcyo.widget.R
 import com.angcyo.widget.base.*

@@ -11,6 +11,7 @@ import com.angcyo.library.L
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.abs
+import com.angcyo.library.ex.longFeedback
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.widget.base.isTouchFinish
 
@@ -46,7 +47,7 @@ class DragFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
         _isLongPress = true
         if (!performLongClick()) {
             //手动触发长按反馈
-            performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+            longFeedback()
         }
     }
 

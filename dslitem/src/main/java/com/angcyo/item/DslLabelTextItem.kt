@@ -7,11 +7,11 @@ import com.angcyo.item.style.ITextItem
 import com.angcyo.item.style.TextItemConfig
 import com.angcyo.item.style.TextStyleConfig
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.gone
+import com.angcyo.library.ex.loadDrawable
+import com.angcyo.library.ex.visible
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.gone
-import com.angcyo.widget.base.loadDrawable
 import com.angcyo.widget.base.throttleClickIt
-import com.angcyo.widget.base.visible
 
 /**
  * 简单的文本显示item, 支持右图标设置

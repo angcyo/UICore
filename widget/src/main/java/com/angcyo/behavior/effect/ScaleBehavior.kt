@@ -6,10 +6,9 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.view.ViewCompat
 import com.angcyo.behavior.BaseGestureBehavior
+import com.angcyo.library.ex.mH
 import com.angcyo.tablayout.clamp
-import com.angcyo.widget.base.mH
 import com.angcyo.widget.layout.isEnableCoordinator
 import kotlin.math.abs
 

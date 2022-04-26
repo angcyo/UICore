@@ -11,13 +11,13 @@ import com.angcyo.dsladapter.data.loadSingleData2
 import com.angcyo.dsladapter.singleModel
 import com.angcyo.library.L
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.find
+import com.angcyo.library.ex.setHeight
 import com.angcyo.library.ex.string
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget._rv
 import com.angcyo.widget.base.clickIt
-import com.angcyo.widget.base.find
 import com.angcyo.widget.base.resetChild
-import com.angcyo.widget.base.setHeight
 import com.angcyo.widget.recycler.initDslAdapter
 import com.angcyo.widget.recycler.noItemAnim
 import com.angcyo.widget.tab

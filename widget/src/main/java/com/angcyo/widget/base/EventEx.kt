@@ -3,6 +3,8 @@ package com.angcyo.widget.base
 import android.view.MotionEvent
 import android.view.View
 import com.angcyo.library.ex.nowTime
+import com.angcyo.library.ex.viewFrameF
+import com.angcyo.library.ex.viewScreenFrameF
 
 /**
  *

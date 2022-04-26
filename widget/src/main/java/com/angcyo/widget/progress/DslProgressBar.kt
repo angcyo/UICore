@@ -17,7 +17,6 @@ import com.angcyo.drawable.text.DslTextDrawable
 import com.angcyo.library.ex.*
 import com.angcyo.widget.R
 import com.angcyo.widget.base.atMost
-import com.angcyo.widget.base.getColor
 import com.angcyo.widget.base.getMode
 import kotlin.math.max
 import kotlin.text.format

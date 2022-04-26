@@ -8,8 +8,13 @@ import android.util.AttributeSet
 import android.view.View
 import com.angcyo.library.ex.anim
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.drawHeight
+import com.angcyo.library.ex.loadDrawable
 import com.angcyo.widget.R
-import com.angcyo.widget.base.*
+import com.angcyo.widget.base.InvalidateProperty
+import com.angcyo.widget.base.RequestLayoutProperty
+import com.angcyo.widget.base.getMode
+import com.angcyo.widget.base.getSize
 import kotlin.math.max
 
 /**

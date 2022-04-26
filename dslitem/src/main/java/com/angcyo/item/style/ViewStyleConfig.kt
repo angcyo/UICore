@@ -9,8 +9,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.angcyo.library.UndefinedDrawable
 import com.angcyo.library.ex.undefined_int
 import com.angcyo.library.ex.undefined_size
-import com.angcyo.widget.base.setBgDrawable
-import com.angcyo.widget.base.setWidthHeight
+import com.angcyo.library.ex.setBgDrawable
+import com.angcyo.library.ex.setWidthHeight
 
 /**
  * View基础样式配置

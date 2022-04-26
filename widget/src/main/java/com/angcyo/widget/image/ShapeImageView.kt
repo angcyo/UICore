@@ -9,12 +9,8 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewOutlineProvider
 import androidx.appcompat.widget.AppCompatImageView
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.*
 import com.angcyo.widget.R
-import com.angcyo.widget.base.drawHeight
-import com.angcyo.widget.base.drawWidth
-import com.angcyo.widget.base.save
 import kotlin.math.min
 
 /**

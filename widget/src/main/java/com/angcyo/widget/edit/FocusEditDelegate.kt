@@ -10,8 +10,8 @@ import android.widget.EditText
 import com.angcyo.library.ex.calcSize
 import com.angcyo.widget.R
 import com.angcyo.library.ex.Anim
-import com.angcyo.widget.base.mH
-import com.angcyo.widget.base.mW
+import com.angcyo.library.ex.mH
+import com.angcyo.library.ex.mW
 
 /**
  *

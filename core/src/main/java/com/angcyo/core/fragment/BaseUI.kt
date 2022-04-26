@@ -10,8 +10,6 @@ import com.angcyo.base.back
 import com.angcyo.core.R
 import com.angcyo.library.ex.*
 import com.angcyo.widget.base.clickIt
-import com.angcyo.widget.base.find
-import com.angcyo.widget.base.loadDrawable
 import com.angcyo.widget.span.span
 
 /**

@@ -4,7 +4,7 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.tablayout.clamp
-import com.angcyo.widget.base.offsetTopTo
+import com.angcyo.library.ex.offsetTopTo
 
 /**
  * 刷新行为[RefreshContentBehavior]的UI效果处理类

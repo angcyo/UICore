@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import com.angcyo.behavior.BaseDependsBehavior
 import com.angcyo.behavior.ITitleBarBehavior
-import com.angcyo.widget.base.mH
+import com.angcyo.library.ex.mH
 
 /**
  * 单纯用来标识当前[child]是什么行为

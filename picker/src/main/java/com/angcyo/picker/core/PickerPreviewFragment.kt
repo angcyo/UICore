@@ -8,9 +8,7 @@ import com.angcyo.base.dslFHelper
 import com.angcyo.dsladapter.*
 import com.angcyo.dsladapter.data.loadSingleData
 import com.angcyo.getData
-import com.angcyo.library.ex._drawable
-import com.angcyo.library.ex.fileSize
-import com.angcyo.library.ex.isResultOk
+import com.angcyo.library.ex.*
 import com.angcyo.library.model.*
 import com.angcyo.pager.dslitem.DslPagerPhotoViewItem
 import com.angcyo.pager.dslitem.DslPickerPreviewAudioItem
@@ -20,8 +18,6 @@ import com.angcyo.picker.dslitem.DslPickerMiniImageItem
 import com.angcyo.ucrop.dslCrop
 import com.angcyo.widget._rv
 import com.angcyo.widget._vp
-import com.angcyo.library.ex.Anim
-import com.angcyo.widget.base.lowProfile
 import com.angcyo.widget.base.tagDslAdapterItem
 import com.angcyo.widget.pager.DslPagerAdapter
 import com.angcyo.widget.pager.getPrimaryViewHolder

@@ -10,6 +10,7 @@ import com.angcyo.library.UndefinedDrawable
 import com.angcyo.library.ex.undefined_color
 import com.angcyo.library.ex.undefined_float
 import com.angcyo.library.ex.undefined_size
+import com.angcyo.library.ex.visible
 import com.angcyo.widget.base.*
 import org.buffer.android.buffertextinputlayout.BufferTextInputLayout
 

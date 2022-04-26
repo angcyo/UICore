@@ -8,7 +8,6 @@ import com.angcyo.dsladapter.DslItemDecoration
 import com.angcyo.item.R
 import com.angcyo.library.ex.*
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.error
 import kotlin.math.min
 
 /**

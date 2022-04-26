@@ -9,7 +9,7 @@ import android.widget.FrameLayout
 import com.angcyo.library.ex._drawable
 import com.angcyo.widget.R
 import com.angcyo.widget.base.exactly
-import com.angcyo.widget.base.setBgDrawable
+import com.angcyo.library.ex.setBgDrawable
 
 
 /**

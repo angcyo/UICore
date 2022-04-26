@@ -8,9 +8,9 @@ import android.widget.TextView
 import com.angcyo.library.L
 import com.angcyo.library._screenHeight
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.find
 import com.angcyo.media.R
 import com.angcyo.media.audio.widget.RecordAnimView
-import com.angcyo.widget.base.find
 import com.angcyo.widget.base.frameParams
 
 /**
@@ -33,7 +33,7 @@ class RecordUI {
             var result = -1
             try {
                 val end =
-                        url!!.split("_t_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
+                    url!!.split("_t_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
                 val index = end.indexOf(".")
                 result = if (index != -1) {
                     Integer.parseInt(end.substring(0, index))
@@ -147,7 +147,7 @@ class RecordUI {
             parent = activity.window.findViewById(Window.ID_ANDROID_CONTENT)
 
             recordLayout = LayoutInflater.from(activity)
-                    .inflate(R.layout.layout_record_ui, parent, false) as? ViewGroup
+                .inflate(R.layout.layout_record_ui, parent, false) as? ViewGroup
 
             if (touchY >= 0) {
                 recordLayout?.find<View>(R.id.record_wrap_layout)?.apply {

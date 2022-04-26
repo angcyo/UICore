@@ -8,13 +8,8 @@ import com.angcyo.item.style.DesItemConfig
 import com.angcyo.item.style.IDesItem
 import com.angcyo.item.style.ILabelItem
 import com.angcyo.item.style.LabelItemConfig
-import com.angcyo.library.ex._drawable
-import com.angcyo.library.ex.after
-import com.angcyo.library.ex.before
-import com.angcyo.library.ex.toColor
+import com.angcyo.library.ex.*
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.setBgDrawable
-import com.angcyo.widget.base.visible
 
 /**
  * 流程item, 上一步, 下一步, 当前步骤的状态提示item

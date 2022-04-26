@@ -14,9 +14,13 @@ import com.angcyo.ilayer.ILayer
 import com.angcyo.library.L
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
+import com.angcyo.library.ex.mH
+import com.angcyo.library.ex.mW
 import com.angcyo.library.ex.remove
 import com.angcyo.tablayout.clamp
-import com.angcyo.widget.base.*
+import com.angcyo.widget.base.mHOrMeasure
+import com.angcyo.widget.base.mWOrMeasure
+import com.angcyo.widget.base.screenRect
 
 
 /**
@@ -39,11 +43,11 @@ class WindowContainer(context: Context) : BaseContainer(context) {
         height = WindowManager.LayoutParams.WRAP_CONTENT
 
         flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or    //范围外的触摸事件发送给后面的窗口处理
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or       //不获取焦点
-            /*WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR or  //布局在装饰条之外*/
-            /*WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or    //不接受触摸屏事件*/
-            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or    //占满整个屏幕
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS       //允许到屏幕之外
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or       //不获取焦点
+                /*WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR or  //布局在装饰条之外*/
+                /*WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or    //不接受触摸屏事件*/
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or    //占满整个屏幕
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS       //允许到屏幕之外
 
         windowAnimations = 0
 
@@ -242,8 +246,8 @@ class WindowContainer(context: Context) : BaseContainer(context) {
         val wmLayoutParams = wmLayoutParams
         if (value) {
             wmLayoutParams.flags = wmLayoutParams.flags or
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
-                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
+                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         } else {
             wmLayoutParams.flags =
                 wmLayoutParams.flags.remove(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
@@ -255,5 +259,5 @@ class WindowContainer(context: Context) : BaseContainer(context) {
 
 /**[android.view.WindowManager.LayoutParams.flags]*/
 fun Int.flagLayoutFullScreen() = this or
-    WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR or
-    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+        WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR or
+        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN

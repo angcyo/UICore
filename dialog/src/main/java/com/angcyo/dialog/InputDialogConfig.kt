@@ -9,6 +9,7 @@ import android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE
 import android.view.Gravity
 import android.view.View
 import android.widget.EditText
+import com.angcyo.library.ex.setWidthHeight
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.*
 import com.angcyo.widget.edit.CharLengthFilter

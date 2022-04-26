@@ -27,7 +27,6 @@ import com.angcyo.library.component.NetUtils
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.getFieldValue
-import com.angcyo.widget.base.onDoubleTap
 import com.angcyo.widget.span.span
 import kotlin.math.max
 import kotlin.math.pow

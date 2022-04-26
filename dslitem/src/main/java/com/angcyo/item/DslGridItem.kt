@@ -5,11 +5,10 @@ import android.view.ViewGroup
 import com.angcyo.dsladapter.*
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.setBgDrawable
+import com.angcyo.library.ex.setWidth
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget._img
-import com.angcyo.widget.base.padding
-import com.angcyo.widget.base.setBgDrawable
-import com.angcyo.widget.base.setWidth
 import com.angcyo.widget.drawable.DslAttrBadgeDrawable
 
 /**

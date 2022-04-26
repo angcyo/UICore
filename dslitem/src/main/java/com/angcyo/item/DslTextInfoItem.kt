@@ -3,10 +3,10 @@ package com.angcyo.item
 import androidx.annotation.DrawableRes
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.library.ex.color
+import com.angcyo.library.ex.loadDrawable
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget._tv
-import com.angcyo.widget.base.loadDrawable
 import com.angcyo.widget.base.setRightIco
 
 /**

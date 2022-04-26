@@ -8,9 +8,9 @@ import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.GravityCompat
+import com.angcyo.library.ex.getStatusBarHeight
 import com.angcyo.widget.base.exactly
 import com.angcyo.widget.base.getSize
-import com.angcyo.widget.base.getStatusBarHeight
 
 /**
  *

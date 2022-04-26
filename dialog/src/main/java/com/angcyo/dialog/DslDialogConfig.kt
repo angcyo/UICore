@@ -23,12 +23,12 @@ import com.angcyo.dialog.activity.DialogActivity
 import com.angcyo.library.L
 import com.angcyo.library.UndefinedDrawable
 import com.angcyo.library.ex._drawable
+import com.angcyo.library.ex.hideSoftInput
 import com.angcyo.library.ex.undefined_float
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.lifecycle.onDestroy
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.dslViewHolder
-import com.angcyo.widget.base.hideSoftInput
 import com.angcyo.widget.base.replace
 import java.io.Serializable
 

@@ -13,8 +13,8 @@ import com.angcyo.library.ex.hawkPut
 import com.angcyo.tablayout.clamp
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.dslViewHolder
-import com.angcyo.widget.base.mH
-import com.angcyo.widget.base.mW
+import com.angcyo.library.ex.mH
+import com.angcyo.library.ex.mW
 import com.angcyo.widget.base.setDslViewHolder
 
 /**

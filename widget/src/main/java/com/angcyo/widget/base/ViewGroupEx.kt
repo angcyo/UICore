@@ -8,7 +8,9 @@ import android.widget.LinearLayout
 import androidx.annotation.LayoutRes
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.library.ex.abs
+import com.angcyo.library.ex.isVisible
 import com.angcyo.library.ex.size
+import com.angcyo.library.ex.visible
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
 import com.angcyo.widget.layout.RSoftInputLayout

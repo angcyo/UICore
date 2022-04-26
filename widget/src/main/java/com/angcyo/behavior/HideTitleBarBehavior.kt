@@ -5,6 +5,9 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
+import com.angcyo.library.ex.getStatusBarHeight
+import com.angcyo.library.ex.mH
+import com.angcyo.library.ex.offsetTopTo
 import com.angcyo.widget.base.*
 import com.angcyo.widget.layout.isEnableCoordinator
 

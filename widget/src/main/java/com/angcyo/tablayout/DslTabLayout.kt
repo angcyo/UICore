@@ -19,6 +19,7 @@ import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ViewCompat
 import com.angcyo.library.ex.calcLayoutWidthHeight
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.getChildOrNull
 import com.angcyo.library.ex.have
 import com.angcyo.widget.R
 import com.angcyo.widget.base.getChildOrNull

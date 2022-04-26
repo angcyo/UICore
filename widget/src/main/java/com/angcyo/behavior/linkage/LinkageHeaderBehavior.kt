@@ -15,8 +15,7 @@ import com.angcyo.behavior.refresh.IRefreshBehavior.Companion.STATUS_NORMAL
 import com.angcyo.behavior.refresh.IRefreshContentBehavior
 import com.angcyo.behavior.refresh.RefreshEffectConfig
 import com.angcyo.library.L
-import com.angcyo.library.ex.dpi
-import com.angcyo.library.ex.simpleHash
+import com.angcyo.library.ex.*
 import com.angcyo.widget.R
 import com.angcyo.widget.base.*
 import kotlin.math.abs

@@ -9,12 +9,8 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.math.MathUtils
 import androidx.core.view.ViewCompat
 import com.angcyo.behavior.BaseGestureBehavior
-import com.angcyo.library.ex.abs
-import com.angcyo.library.ex.toRSize
+import com.angcyo.library.ex.*
 import com.angcyo.widget.R
-import com.angcyo.widget.base.mH
-import com.angcyo.widget.base.mW
-import com.angcyo.widget.base.offsetTopTo
 import com.angcyo.widget.layout.isEnableCoordinator
 
 /**

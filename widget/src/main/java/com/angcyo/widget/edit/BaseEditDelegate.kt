@@ -12,9 +12,6 @@ import com.angcyo.drawable.isBottom
 import com.angcyo.drawable.isTop
 import com.angcyo.library.ex.*
 import com.angcyo.widget.R
-import com.angcyo.widget.base.mH
-import com.angcyo.widget.base.mW
-import com.angcyo.widget.base.paddingLeft
 
 /**
  *

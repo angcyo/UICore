@@ -26,8 +26,6 @@ import com.angcyo.library.toastWX
 import com.angcyo.library.utils.FileUtils
 import com.angcyo.widget._rv
 import com.angcyo.library.ex.Anim
-import com.angcyo.widget.base.doAnimate
-import com.angcyo.widget.base.drawWidth
 import com.angcyo.widget.layout.touch.TouchBackLayout
 import com.angcyo.widget.progress.HSProgressView
 import com.angcyo.widget.recycler.initDslAdapter

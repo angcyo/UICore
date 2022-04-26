@@ -9,7 +9,7 @@ import com.angcyo.library.L
 import com.angcyo.picker.R
 import com.angcyo.transition.ColorTransition
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.setWidthHeight
+import com.angcyo.library.ex.setWidthHeight
 
 /**
  *

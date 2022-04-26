@@ -3,7 +3,7 @@ package com.angcyo.behavior.refresh
 import android.view.View
 import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.behavior.BehaviorInterpolator
-import com.angcyo.widget.base.mH
+import com.angcyo.library.ex.mH
 import kotlin.math.absoluteValue
 
 /**

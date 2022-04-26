@@ -10,9 +10,8 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.view.ViewCompat
 import com.angcyo.drawable.loading.ArcLoadingDrawable
-import com.angcyo.library.ex.anim
+import com.angcyo.library.ex.*
 import com.angcyo.widget.R
-import com.angcyo.widget.base.*
 import kotlin.math.min
 
 /**

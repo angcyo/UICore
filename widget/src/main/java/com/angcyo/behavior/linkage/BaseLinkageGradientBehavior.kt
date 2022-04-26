@@ -9,8 +9,8 @@ import androidx.core.view.ViewCompat
 import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.behavior.IScrollBehaviorListener
 import com.angcyo.behavior.refresh.IRefreshContentBehavior
+import com.angcyo.library.ex.mH
 import com.angcyo.widget.base.behavior
-import com.angcyo.widget.base.mH
 import com.angcyo.widget.base.topCanScroll
 import com.angcyo.widget.layout.isEnableCoordinator
 import kotlin.math.absoluteValue

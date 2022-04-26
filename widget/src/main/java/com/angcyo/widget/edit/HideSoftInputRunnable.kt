@@ -2,7 +2,7 @@ package com.angcyo.widget.edit
 
 import android.app.Activity
 import android.view.View
-import com.angcyo.widget.base.hideSoftInput
+import com.angcyo.library.ex.hideSoftInput
 import java.lang.ref.WeakReference
 
 /**
