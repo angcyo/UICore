@@ -13,6 +13,8 @@ data class AssistantData(
     val requestValue: Float,
     /**查找到的最优值, 如果有*/
     var resultValue: Float? = null,
+    /**参考比较的值,通常情况下会会等于[resultValue], 用来临时存储*/
+    var refValue: Float? = null,
     /**参考的[IItemRenderer], 如果有*/
     var refRenderer: IItemRenderer<*>? = null
 )
