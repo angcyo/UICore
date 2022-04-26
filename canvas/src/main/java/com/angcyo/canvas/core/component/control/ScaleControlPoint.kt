@@ -9,6 +9,7 @@ import com.angcyo.canvas.core.component.CanvasTouchHandler
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
+import com.angcyo.canvas.utils._tempMatrix
 import com.angcyo.canvas.utils._tempValues
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.library.ex.ADJUST_TYPE_CENTER
@@ -20,6 +21,34 @@ import com.angcyo.library.ex._drawable
  * @since 2022/04/09
  */
 class ScaleControlPoint : ControlPoint() {
+
+    companion object {
+        /**计算2个在反向旋转后的x,y距离*/
+        fun calcRotateBeforeDistance(
+            x1: Float, y1: Float,
+            x2: Float, y2: Float,
+            rotateCenterX: Float, rotateCenterY: Float,
+            rotate: Float,
+            result: FloatArray = _tempValues
+        ): FloatArray {
+            val matrix = _tempMatrix
+            matrix.reset()
+            matrix.postRotate(rotate, rotateCenterX, rotateCenterY)
+            matrix.invert(matrix)//逆
+
+            val p1 = matrix.mapPoint(x1, y1)
+            val p1x = p1.x
+            val p1y = p1.y
+            val p2 = matrix.mapPoint(x2, y2)
+            val p2x = p2.x
+            val p2y = p2.y
+
+            result[0] = p2x - p1x
+            result[1] = p2y - p1y
+
+            return result
+        }
+    }
 
     /**是否是在元素的中点开始缩放, 否则就是在元素的左上角缩放*/
     var isCenterScale: Boolean = false
@@ -105,7 +134,10 @@ class ScaleControlPoint : ControlPoint() {
             MotionEvent.ACTION_MOVE -> {
                 _movePoint.set(event.x, event.y)
 
-                if (_movePoint.x - _touchPoint.x != 0f || _movePoint.y - _touchPoint.y != 0f) {
+                val dx = _movePoint.x - _touchPoint.x
+                val dy = _movePoint.y - _touchPoint.y
+
+                if (dx != 0f || dy != 0f) {
                     val x1: Float
                     val y1: Float
                     view.canvasViewBox.mapCoordinateSystemPoint(rectScaleAnchorPoint).apply {
@@ -128,6 +160,7 @@ class ScaleControlPoint : ControlPoint() {
                             cY = y
                         }
 
+                    //计算两点之间的长宽距离
                     calcRotateBeforeDistance(
                         x1,
                         y1,
@@ -148,13 +181,18 @@ class ScaleControlPoint : ControlPoint() {
                                 newWidth = _touchRectWidth * newHeight / _touchRectHeight
                             }
                         }
-                        view.changeItemBounds(
+
+                        view.smartAssistant.smartChangeBounds(
                             itemRenderer,
+                            isLockScaleRatio,
                             newWidth,
                             newHeight,
+                            dx,
+                            dy,
                             if (isCenterScale) ADJUST_TYPE_CENTER else ADJUST_TYPE_LT
                         )
                     }
+                    _touchPoint.set(_movePoint)
                 }
 
                 /*//直接修改宽高, 这样才会跟手, 但是不适用与矩形旋转后的计算
@@ -315,31 +353,5 @@ class ScaleControlPoint : ControlPoint() {
         val y1 = touchPoint.y
 
         return CanvasTouchHandler.spacing(x1, y1, x2, y2)
-    }
-
-    /**计算2个在反向旋转后的x,y距离*/
-    private fun calcRotateBeforeDistance(
-        x1: Float, y1: Float,
-        x2: Float, y2: Float,
-        rotateCenterX: Float, rotateCenterY: Float,
-        rotate: Float,
-        result: FloatArray = _tempValues
-    ): FloatArray {
-        val matrix = _tempMatrix
-        matrix.reset()
-        matrix.postRotate(rotate, rotateCenterX, rotateCenterY)
-        matrix.invert(matrix)
-
-        val p1 = matrix.mapPoint(x1, y1)
-        val p1x = p1.x
-        val p1y = p1.y
-        val p2 = matrix.mapPoint(x2, y2)
-        val p2x = p2.x
-        val p2y = p2.y
-
-        result[0] = p2x - p1x
-        result[1] = p2y - p1y
-
-        return result
     }
 }

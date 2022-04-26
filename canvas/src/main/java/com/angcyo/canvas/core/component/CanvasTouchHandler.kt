@@ -2,10 +2,12 @@ package com.angcyo.canvas.core.component
 
 import android.graphics.PointF
 import android.view.MotionEvent
+import android.view.ViewConfiguration
 import com.angcyo.canvas.CanvasView
 import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
+import kotlin.math.absoluteValue
 import kotlin.math.atan2
 import kotlin.math.min
 import kotlin.math.sqrt
@@ -138,7 +140,7 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent() {
             }
             MotionEvent.ACTION_MOVE -> {
                 obtainPointList(event, _movePointList)
-                handleActionMove()
+                handleActionMove(view)
                 obtainPointList(event, _touchPointList)
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -202,8 +204,17 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent() {
     val _moveDistanceList: MutableList<PointF> = mutableListOf()
 
     /**处理手势移动, 平移/缩放*/
-    fun handleActionMove() {
+    fun handleActionMove(view: CanvasView) {
         _moveDistanceList.clear()
+
+        val dx1 = _movePointList[0].x - _touchPointList[0].x
+        val dy1 = _movePointList[0].y - _touchPointList[0].y
+
+        val slop = ViewConfiguration.get(view.context).scaledDoubleTapSlop
+        if (dx1.absoluteValue >= slop || dy1.absoluteValue >= slop) {
+            //移动了之后, 去除双击事件的判断
+            touchTime = 0
+        }
 
         if (_movePointList.size >= 2) {
             //双指 操作
@@ -230,8 +241,6 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent() {
 
             //处理双指平移
             /*if (_touchType == TOUCH_TYPE_NONE || _touchType == TOUCH_TYPE_TRANSLATE) {*/
-            val dx1 = _movePointList[0].x - _touchPointList[0].x
-            val dy1 = _movePointList[0].y - _touchPointList[0].y
 
             val dx2 = _movePointList[1].x - _touchPointList[1].x
             val dy2 = _movePointList[1].y - _touchPointList[1].y

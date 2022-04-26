@@ -3,6 +3,7 @@ package com.angcyo.canvas.core.component
 import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
+import android.view.ViewConfiguration
 import androidx.core.graphics.contains
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
@@ -15,6 +16,7 @@ import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.library.L
 import com.angcyo.library.ex.*
+import kotlin.math.absoluteValue
 
 /**
  * 控制渲染的数据组件
@@ -110,8 +112,18 @@ class ControlHandler : BaseComponent() {
                 touchPointerId = -1
             }
             MotionEvent.ACTION_MOVE -> {
+                _movePoint.set(event.x, event.y)
+
+                val dx = _movePoint.x - _touchPoint.x
+                val dy = _movePoint.y - _touchPoint.y
+
+                val slop = ViewConfiguration.get(view.context).scaledDoubleTapSlop
+                if (dx.absoluteValue >= slop || dy.absoluteValue >= slop) {
+                    //移动了之后, 去除双击事件的判断
+                    touchTime = 0
+                }
+
                 if (touchPointerId == event.getPointerId(0)) {
-                    _movePoint.set(event.x, event.y)
                     L.w("\ntouch:${_touchPoint}\nmove:${_movePoint}")
                     if (touchControlPoint == null) {
                         //没有在控制点上按压时, 才处理本体的移动
