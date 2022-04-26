@@ -10,7 +10,8 @@ import kotlin.math.absoluteValue
 import kotlin.math.tan
 
 /**
- * 文本组件渲染
+ * 文本组件渲染, 通过drawText实现
+ * 改变bounds时, 实时改变textSize, 会抖动. 不支持镜像
  * [TextItem]
  * Email:angcyo@126.com
  * @author angcyo

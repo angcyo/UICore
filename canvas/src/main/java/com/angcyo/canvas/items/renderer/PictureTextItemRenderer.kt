@@ -12,6 +12,8 @@ import kotlin.math.absoluteValue
 import kotlin.math.tan
 
 /**
+ * 通过Picture实现的drawText, 效果比每次都drawText好
+ *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/21
  */
