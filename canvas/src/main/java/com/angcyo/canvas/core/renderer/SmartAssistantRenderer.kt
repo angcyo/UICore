@@ -18,7 +18,8 @@ class SmartAssistantRenderer(val smartAssistant: SmartAssistant, canvasViewBox: 
 
     val paint = createPaint("#8200f1".toColorInt(), Paint.Style.FILL)
 
-    var strokeWidth = 2 * dp
+    /**提示线的宽度*/
+    var strokeWidth = 1 * dp
 
     override fun render(canvas: Canvas) {
         canvas.withMatrix(canvasViewBox.matrix) {

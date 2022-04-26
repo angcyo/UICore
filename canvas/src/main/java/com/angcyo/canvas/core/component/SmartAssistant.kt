@@ -6,7 +6,10 @@ import android.view.MotionEvent
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
+import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.library.L
+import com.angcyo.library.ex.flipLeft
+import com.angcyo.library.ex.flipTop
 import kotlin.math.absoluteValue
 import kotlin.math.tan
 
@@ -80,7 +83,7 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
             var feedback = false
 
             if (distanceX != 0f) {
-                val assistant = findOptimalX(left, newLeft, distanceX > 0)
+                val assistant = findOptimalX(itemRenderer, left, newLeft, distanceX > 0)
                 if (assistant.isChanged()) {
                     newLeft = assistant.resultValue!!
                     dx = newLeft - left
@@ -98,7 +101,7 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
             }
 
             if (distanceY != 0f) {
-                val topAssistant = findOptimalY(top, newTop, distanceY > 0)
+                val topAssistant = findOptimalY(itemRenderer, top, newTop, distanceY > 0)
                 if (topAssistant.isChanged()) {
                     newTop = topAssistant.resultValue!!
                     dy = newTop - top
@@ -185,7 +188,12 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
      * [newValue] 偏移后的横坐标
      * [forward] true, 表示向正方向查找, 否则向负方向查找
      * */
-    fun findOptimalX(origin: Float, newValue: Float, forward: Boolean): AssistantData {
+    fun findOptimalX(
+        originItem: IItemRenderer<*>,
+        origin: Float,
+        newValue: Float,
+        forward: Boolean
+    ): AssistantData {
         val result = AssistantData(origin, newValue)
         if (canvasView.xAxis.enable) {
             var min = Float.MAX_VALUE
@@ -201,6 +209,19 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
                             result.resultValue = value
                             min = d
                         }
+                    }
+                }
+            }
+
+            canvasView.itemsRendererList.forEach {
+                if (it != originItem) {
+                    val bounds = it.getRenderRotateBounds()
+                    val value = bounds.flipLeft
+                    val d = (newValue - value).absoluteValue
+                    if (d < min) {
+                        result.resultValue = value
+                        result.refRenderer = it
+                        min = d
                     }
                 }
             }
@@ -221,7 +242,12 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
      * [newValue] 偏移后的纵坐标
      * [forward] true, 表示向正方向查找, 否则向负方向查找
      * */
-    fun findOptimalY(origin: Float, newValue: Float, forward: Boolean): AssistantData {
+    fun findOptimalY(
+        originItem: IItemRenderer<*>,
+        origin: Float,
+        newValue: Float,
+        forward: Boolean
+    ): AssistantData {
         val result = AssistantData(origin, newValue)
         if (canvasView.yAxis.enable) {
             var min = Float.MAX_VALUE
@@ -237,6 +263,19 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
                             result.resultValue = value
                             min = d
                         }
+                    }
+                }
+            }
+
+            canvasView.itemsRendererList.forEach {
+                if (it != originItem) {
+                    val bounds = it.getRenderRotateBounds()
+                    val value = bounds.flipTop
+                    val d = (newValue - value).absoluteValue
+                    if (d < min) {
+                        result.resultValue = value
+                        result.refRenderer = it
+                        min = d
                     }
                 }
             }
