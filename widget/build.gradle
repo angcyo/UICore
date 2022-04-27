@@ -38,6 +38,8 @@ dependencies {
 
     //https://github.com/bufferapp/BufferTextInputLayout
     //https://mvnrepository.com/artifact/com.wajahatkarim3.BufferTextInputLayout/buffertextinputlayout
-    api 'com.wajahatkarim3.BufferTextInputLayout:buffertextinputlayout:1.2.0'
+    //api 'com.wajahatkarim3.BufferTextInputLayout:buffertextinputlayout:1.2.0'
 
+    //https://github.com/angcyo/BufferTextInputLayout
+    api 'com.github.angcyo:BufferTextInputLayout:1.2.0'
 }
