@@ -124,6 +124,7 @@ android {
 
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
+    api fileTree(dir: 'libs', include: ['*.aar'])
 
     //https://jcenter.bintray.com/org/jetbrains/kotlin/kotlin-stdlib-jdk8/
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$_kotlin_version"
@@ -154,7 +155,10 @@ def versionName = project.hasProperty('libVersionName') ? project.property('libV
 def winRepo = project.hasProperty('libWinRepo') ? project.property('libWinRepo') : 'E:/AndroidProjects/maven'
 def macRepo = project.hasProperty('libMacRepo') ? project.property('libMacRepo') : '/Users/angcyo/Project/Android/GithubDemo/maven'
 
-//Executing task 'publish'...
+//执行任务↓
+//Executing tasks: [publish] in project E:\AndroidProjects\angcyo\UICoreDemo
+//Executing tasks: [publishAllPublicationsToMavenRepository] in project E:\AndroidProjects\angcyo\UICoreDemo
+//Executing tasks: [publishReleasePublicationToMavenRepository] in project E:\AndroidProjects\angcyo\UICoreDemo
 
 afterEvaluate {
     publishing {
