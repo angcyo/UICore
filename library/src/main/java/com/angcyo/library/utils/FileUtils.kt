@@ -53,6 +53,20 @@ object FileUtils {
      * [/storage/emulated/0/Android/data/包名/files/${schema}/${folder}]*/
     fun appRootExternalFolder(context: Context = app(), folder: String): File? {
         // /storage/emulated/0/Android/data/com.angcyo.uicore.demo/files/$folder
+
+        /*
+        ///data/user/0/com.angcyo.uicore.demo/cache
+        context.cacheDir
+
+        ///storage/emulated/0/Android/data/com.angcyo.opencv.demo/cache
+        context.externalCacheDir
+
+        ///data/user/0/com.angcyo.uicore.demo/files
+        context.filesDir
+
+        ///storage/emulated/0/Android/data/com.angcyo.uicore.demo/files
+        context.getExternalFilesDir("")*/
+
         return context.getExternalFilesDir(onGetFolderPath(folder))
     }
 
