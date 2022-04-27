@@ -280,5 +280,9 @@ fun File.exifOrientation() = try {
     0
 }
 
-/**[R.drawable.R.drawable.xxx]*/
+/**从[Resources]中获取[Bitmap]对象
+ * [R.drawable.drawable.xxx]*/
 fun Context.getBitmapFromRes(id: Int) = BitmapFactory.decodeResource(resources, id)
+
+/**从[AssetManager]中获取[Bitmap]对象*/
+fun Context.getBitmapFromAssets(name: String) = BitmapFactory.decodeStream(assets.open(name))
