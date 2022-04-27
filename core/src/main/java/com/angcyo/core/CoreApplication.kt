@@ -17,10 +17,7 @@ import com.angcyo.http.rx.Rx
 import com.angcyo.http.rx.doBack
 import com.angcyo.library.L
 import com.angcyo.library.LibApplication
-import com.angcyo.library.ex.connectUrl
-import com.angcyo.library.ex.getAppSignatureMD5
-import com.angcyo.library.ex.getAppSignatureSHA1
-import com.angcyo.library.ex.wrapLog
+import com.angcyo.library.ex.*
 import com.angcyo.library.getAppString
 import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.logFilePath
@@ -45,7 +42,9 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
         /**L.log写入文件, 并且输出到控制台*/
         val DEFAULT_FILE_PRINT: (tag: String, level: Int, msg: String) -> Unit =
             { tag, level, msg ->
-                L.DEFAULT_LOG_PRINT.invoke(tag, level, msg)
+                if (isDebug()) {
+                    L.DEFAULT_LOG_PRINT.invoke(tag, level, msg)
+                }
                 DEFAULT_FILE_PRINT_PATH?.let { path ->
                     when (level) {
                         L.VERBOSE -> "[VERBOSE]${msg}"
