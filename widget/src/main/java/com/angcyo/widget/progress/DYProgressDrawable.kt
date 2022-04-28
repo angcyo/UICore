@@ -11,6 +11,7 @@ import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
 import com.angcyo.tablayout.evaluateColor
 import com.angcyo.widget.R
+import com.angcyo.widget.layout.touch.SwipeBackLayout.Companion.clamp
 
 /**
  * 从中间开始, 像两端拉长
@@ -19,6 +20,7 @@ import com.angcyo.widget.R
  * @date 2020/03/10
  */
 class DYProgressDrawable : AbsDslDrawable() {
+
     /**进度条颜色*/
     var progressColor = Color.WHITE
         set(value) {
@@ -26,8 +28,12 @@ class DYProgressDrawable : AbsDslDrawable() {
             bgLineColor = value.alpha(0x80)
         }
 
-    /**当前进度*/
+    /**当前进度[0-100]*/
     var progress = 0
+        set(value) {
+            field = clamp(value, 0, 100)
+            invalidateSelf()
+        }
 
     /**保底进度*/
     var startProgress = 0.1f
@@ -69,6 +75,7 @@ class DYProgressDrawable : AbsDslDrawable() {
 
         if (isInEditMode) {
             progress = 50
+            drawType = DRAW_TYPE_ON_DRAW_AFTER
         }
     }
 
