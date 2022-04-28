@@ -17,6 +17,8 @@ def apkFormatName = project.hasProperty("apkName") ? project.ext.apkName : "#an-
 def _app_name = project.hasProperty("APP_NAME") ? project.ext.APP_NAME : ((project.name != "app") ? project.name : rootProject.name)
 def apk_time = apkTime()
 
+def keyAlias = project.hasProperty("signConfig") ? signConfig.key_alias : 'unknown'
+
 android {
 
     /*Gradle3.0 以下的方法*/
@@ -42,6 +44,9 @@ android {
             gradle.gradleVersion.charAt(0) >= '7') {
         /*Gradle4.1 以上的方法*/
         applicationVariants.all { variant ->
+            def defPath = variant.packageApplicationProvider.get().outputDirectory.getAsFile().get().absolutePath
+            println "\napk.gradle ${gradle.gradleVersion}→APK默认输出目录:${defPath}"
+
             if (variant.buildType.name != "debug") {
                 variant.packageApplicationProvider.get().outputDirectory = new File(apkFolder, variant.name)
             }
@@ -52,14 +57,17 @@ android {
                         apk_time,
                         variant.flavorName,
                         variant.buildType.name,
-                        variant.signingConfig.name,
-                        signConfig.key_alias
+                        variant.signingConfig?.name ?: 'unknown',
+                        keyAlias
                 )
             }
         }
     } else if (gradle.gradleVersion.startsWith("6")) {
         /*Gradle4.0 以上的方法*/
         applicationVariants.all { variant ->
+            def defPath = variant.packageApplicationProvider.get().outputDirectory.getAsFile().get().absolutePath
+            println "\napk.gradle ${gradle.gradleVersion}→APK默认输出目录:${defPath}"
+
             if (variant.buildType.name != "debug") {
                 variant.packageApplicationProvider.get().outputDirectory = new File(apkFolder, variant.name)
             }
@@ -70,14 +78,17 @@ android {
                         apk_time,
                         variant.flavorName,
                         variant.buildType.name,
-                        variant.signingConfig.name,
-                        signConfig.key_alias
+                        variant.signingConfig?.name ?: 'unknown',
+                        keyAlias
                 )
             }
         }
     } else if (gradle.gradleVersion.startsWith("5")) {
         /*Gradle3.3 以上的方法*/
         applicationVariants.all { variant ->
+            def defPath = variant.packageApplication.outputDirectory.getAsFile().get().absolutePath
+            println "\napk.gradle ${gradle.gradleVersion}→APK默认输出目录:${defPath}"
+
             if (variant.buildType.name != "debug") {
                 variant.packageApplication.outputDirectory = new File(apkFolder, variant.name)
             }
@@ -89,14 +100,17 @@ android {
                         apk_time,
                         variant.flavorName,
                         variant.buildType.name,
-                        variant.signingConfig.name,
-                        signConfig.key_alias
+                        variant.signingConfig?.name ?: 'unknown',
+                        keyAlias
                 )
             }
         }
     } else {
         /*Gradle3.0 以上的方法*/
         applicationVariants.all { variant ->
+            def defPath = variant.getPackageApplication().outputDirectory.getAsFile().get().absolutePath
+            println "\napk.gradle ${gradle.gradleVersion}→APK默认输出目录:${defPath}"
+
             if (variant.buildType.name != "debug") {
                 //new File(project.rootDir.absolutePath + "/apk")
                 variant.getPackageApplication().outputDirectory = new File(apkFolder, variant.name)
@@ -109,8 +123,8 @@ android {
                         apk_time,
                         variant.flavorName,
                         variant.buildType.name,
-                        variant.signingConfig.name,
-                        signConfig.key_alias
+                        variant.signingConfig?.name ?: 'unknown',
+                        keyAlias
                 )
             }
         }
