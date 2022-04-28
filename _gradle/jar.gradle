@@ -1,0 +1,46 @@
+/**
+ * 2022-4-28
+ * 用来改变aar文件的输出路径和文件名
+ * */
+
+/**
+ * 文件输出的文件夹(基于项目根目录的相对路径)
+ * */
+def aarOutput = project.hasProperty("aar_path") ? project.ext.apk_path : ".aar"
+
+android {
+    def aarFolder = new File(project.rootDir.absolutePath + "/" + aarOutput)
+    aarFolder.mkdirs()
+
+    //println "jar.gradle ${gradle.gradleVersion}→aar输出目录:${aarFolder.absolutePath}"
+
+    /*aar路径修改, 文件名修改*/
+    libraryVariants.all { variant ->
+        if (variant.buildType.name != "debug") {
+            if (gradle.gradleVersion.startsWith("6") || gradle.gradleVersion.charAt(0) >= '6') {
+                variant.getPackageLibraryProvider().get().destinationDir = aarFolder
+            } else if (gradle.gradleVersion.startsWith("5")) {
+                variant.packageLibrary.destinationDirectory.set(aarFolder)
+            } else {
+                //no op
+            }
+        }
+
+        variant.outputs.all { output ->
+            if (gradle.gradleVersion.startsWith("6.5") ||
+                    gradle.gradleVersion.startsWith("6.7") ||
+                    gradle.gradleVersion.startsWith("7") ||
+                    gradle.gradleVersion.charAt(0) >= '7') {
+                output.outputFileName = ((project.name != "app") ? project.name : rootProject.name) + "-" +
+                        defaultConfig.versionName + "_" +
+                        variant.buildType.name +
+                        ".aar"
+            } else {
+                output.apkData.outputFileName = ((project.name != "app") ? project.name : rootProject.name) + "-" +
+                        defaultConfig.versionName + "_" +
+                        variant.buildType.name +
+                        ".aar"
+            }
+        }
+    }
+}

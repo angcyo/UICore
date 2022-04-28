@@ -87,38 +87,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
-    def aarFolder = new File(project.rootDir.absolutePath + "/.aar")
-    aarFolder.mkdirs()
-
-    /*aar路径修改, 文件名修改*/
-    libraryVariants.all { variant ->
-        if (variant.buildType.name != "debug") {
-            if (gradle.gradleVersion.startsWith("6")) {
-                variant.getPackageLibraryProvider().get().destinationDir = aarFolder
-            } else if (gradle.gradleVersion.startsWith("5")) {
-                variant.packageLibrary.destinationDirectory.set(aarFolder)
-            } else {
-                //no op
-            }
-        }
-
-        variant.outputs.all { output ->
-            if (gradle.gradleVersion.startsWith("6.5") ||
-                    gradle.gradleVersion.startsWith("6.7") ||
-                    gradle.gradleVersion.startsWith("7")) {
-                output.outputFileName = ((project.name != "app") ? project.name : rootProject.name) + "-" +
-                        defaultConfig.versionName + "_" +
-                        variant.buildType.name +
-                        ".aar"
-            } else {
-                output.apkData.outputFileName = ((project.name != "app") ? project.name : rootProject.name) + "-" +
-                        defaultConfig.versionName + "_" +
-                        variant.buildType.name +
-                        ".aar"
-            }
-        }
-    }
 }
 
 dependencies {
@@ -132,4 +100,5 @@ dependencies {
 //apply from: allGradle.version
 apply from: allGradle.versionForce
 apply from: allGradle.base
+apply from: allGradle.jar
 apply from: allGradle.publish
