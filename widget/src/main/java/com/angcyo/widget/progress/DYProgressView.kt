@@ -9,7 +9,8 @@ import com.angcyo.widget.R
 import com.angcyo.widget.base.BaseAnimatorDrawableView
 
 /**
- * 模仿抖音进度条, 刷刷刷, 闪电般的加载效果
+ * 模仿抖音进度条, 刷刷刷, 闪电般的加载效果.
+ * 从中间开始, 向两端扩散的效果
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2017/09/25 17:06

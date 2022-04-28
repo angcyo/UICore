@@ -9,7 +9,7 @@ import com.angcyo.widget.R
 import com.angcyo.widget.base.BaseAnimatorDrawableView
 
 /**
- *
+ * 模仿火山进度条, 左右闪电横扫效果
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/06/11
