@@ -26,18 +26,29 @@ object Library {
     var application: Application? = null
     var debug: Boolean = isDebug()
 
+    /**初始化库[Application]*/
     fun init(context: Application, debug: Boolean = isDebug()) {
         application = context
         Library.debug = debug
 
+        initHawk(context)
+    }
+
+    /**初始化[Hawk]*/
+    fun initHawk(context: Application) {
         /*sp持久化库*/
-        Hawk.init(context)
-            .build()
+        if (!Hawk.isBuilt()) {
+            Hawk.init(context)
+                .build()
+        }
     }
 }
 
 fun app(): Application = Library.application
     ?: (LibInitProvider.contentProvider as? Application)
+    ?: currentApplication()?.apply {
+        Library.initHawk(this)
+    }
     ?: PlaceholderApplication().apply {
         L.e("application 为初始化")
     }
