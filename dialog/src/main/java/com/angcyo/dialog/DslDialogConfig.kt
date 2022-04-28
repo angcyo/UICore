@@ -29,7 +29,7 @@ import com.angcyo.library.ex.undefined_res
 import com.angcyo.lifecycle.onDestroy
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.dslViewHolder
-import com.angcyo.widget.base.replace
+import com.angcyo.library.ex.replace
 import java.io.Serializable
 
 /**

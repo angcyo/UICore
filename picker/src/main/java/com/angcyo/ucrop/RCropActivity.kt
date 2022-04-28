@@ -11,7 +11,7 @@ import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.Media
 import com.angcyo.library.utils.folderPath
 import com.angcyo.picker.R
-import com.angcyo.widget.base.getChildOrNull
+import com.angcyo.library.ex.getChildOrNull
 import com.yalantis.ucrop.UCropActivity
 import java.io.File
 

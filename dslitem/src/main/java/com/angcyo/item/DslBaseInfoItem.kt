@@ -12,7 +12,7 @@ import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.color
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.inflate
+import com.angcyo.library.ex.inflate
 import com.angcyo.widget.base.setRBgDrawable
 
 /**

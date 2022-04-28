@@ -4,6 +4,8 @@ import android.app.Dialog
 import android.content.Context
 import android.text.InputType
 import android.widget.EditText
+import com.angcyo.library.ex.append
+import com.angcyo.library.ex.eachChild
 import com.angcyo.library.ex.find
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.*

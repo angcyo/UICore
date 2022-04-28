@@ -3,7 +3,7 @@ package com.angcyo.widget.pager
 import android.view.ViewGroup
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.each
+import com.angcyo.library.ex.each
 import com.angcyo.widget.base.setDslAdapterItem
 import com.angcyo.widget.base.tagDslViewHolder
 

@@ -17,7 +17,7 @@ import com.angcyo.library.ex.find
 import com.angcyo.library.ex.mH
 import com.angcyo.library.ex.mW
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.adjustOrder
+import com.angcyo.library.ex.adjustOrder
 import com.angcyo.widget.base.clickIt
 import com.angcyo.widget.base.resetChild
 import kotlin.math.max

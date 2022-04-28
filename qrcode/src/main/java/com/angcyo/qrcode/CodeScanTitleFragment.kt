@@ -16,7 +16,7 @@ import com.angcyo.library.ex.*
 import com.angcyo.widget.DslGroupHelper
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt
-import com.angcyo.widget.base.replace
+import com.angcyo.library.ex.replace
 import com.angcyo.widget.span.span
 import com.angcyo.widget.text.DslTextView
 

@@ -17,7 +17,7 @@ import com.angcyo.library.ex.find
 import com.angcyo.library.ex.onDoubleTap
 import com.angcyo.library.ex.simpleClassName
 import com.angcyo.putData
-import com.angcyo.widget.base.eachChild
+import com.angcyo.library.ex.eachChild
 import com.angcyo.widget.base.resetChild
 import com.angcyo.widget.recycler.scrollHelper
 import com.angcyo.widget.tab

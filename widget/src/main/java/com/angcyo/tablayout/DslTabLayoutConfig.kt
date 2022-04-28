@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.annotation.IdRes
 import com.angcyo.tablayout.DslTabIndicator.Companion.NO_COLOR
 import com.angcyo.widget.R
-import com.angcyo.widget.base.getChildOrNull
+import com.angcyo.library.ex.getChildOrNull
 import com.angcyo.widget.text.DslSpanTextView
 import kotlin.math.max
 import kotlin.math.min

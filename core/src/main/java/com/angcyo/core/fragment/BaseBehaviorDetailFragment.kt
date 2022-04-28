@@ -9,7 +9,7 @@ import com.angcyo.core.R
 import com.angcyo.library._screenHeight
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.base.behavior
-import com.angcyo.widget.base.replace
+import com.angcyo.library.ex.replace
 import com.angcyo.library.ex.setHeight
 
 /**

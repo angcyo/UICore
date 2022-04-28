@@ -32,7 +32,7 @@ import com.angcyo.library.ex.*
 import com.angcyo.tablayout.exactlyMeasure
 import com.angcyo.widget.R
 import com.angcyo.widget.base.findView
-import com.angcyo.widget.base.getChildOrNull
+import com.angcyo.library.ex.getChildOrNull
 import com.angcyo.widget.layout.touch.SwipeBackLayout
 import kotlin.toString
 

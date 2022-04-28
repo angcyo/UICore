@@ -2,7 +2,7 @@ package com.angcyo.core.fragment
 
 import android.os.Bundle
 import com.angcyo.core.R
-import com.angcyo.widget.base.replace
+import com.angcyo.library.ex.replace
 
 /**
  * 简单的背景放大界面

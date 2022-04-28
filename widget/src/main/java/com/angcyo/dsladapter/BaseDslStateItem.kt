@@ -3,7 +3,7 @@ package com.angcyo.dsladapter
 import android.view.View
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
-import com.angcyo.widget.base.inflate
+import com.angcyo.library.ex.inflate
 
 /**
  *

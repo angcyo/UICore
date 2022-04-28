@@ -12,7 +12,7 @@ import android.widget.PopupWindow
 import androidx.core.view.doOnPreDraw
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt
-import com.angcyo.widget.base.getChildOrNull
+import com.angcyo.library.ex.getChildOrNull
 
 /**
  * 宽度全屏, 高度撑满锚点布局底部到手机底部

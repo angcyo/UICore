@@ -8,7 +8,7 @@ import com.angcyo.library.ex.copyDrawable
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.find
 import com.angcyo.tablayout.DslTabIndicator
-import com.angcyo.widget.base.replace
+import com.angcyo.library.ex.replace
 import com.angcyo.library.ex.setHeight
 import com.angcyo.widget.tab
 

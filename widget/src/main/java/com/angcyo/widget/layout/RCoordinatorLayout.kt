@@ -11,9 +11,13 @@ import androidx.core.view.ViewCompat
 import com.angcyo.behavior.BaseDependsBehavior
 import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.library.L
+import com.angcyo.library.ex.each
+import com.angcyo.library.ex.eachChildVisibility
 import com.angcyo.library.ex.hash
 import com.angcyo.widget.R
-import com.angcyo.widget.base.*
+import com.angcyo.widget.base.coordinatorParams
+import com.angcyo.widget.base.isTouchDown
+import com.angcyo.widget.base.isTouchFinish
 
 /**
  * 协调布局

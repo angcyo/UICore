@@ -22,7 +22,7 @@ import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.getChildOrNull
 import com.angcyo.library.ex.have
 import com.angcyo.widget.R
-import com.angcyo.widget.base.getChildOrNull
+import com.angcyo.library.ex.getChildOrNull
 import com.angcyo.widget.base.getLocationInParent
 import kotlin.math.abs
 import kotlin.math.max

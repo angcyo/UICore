@@ -16,7 +16,7 @@ import com.angcyo.library.L
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.atMost
 import com.angcyo.widget.base.exactly
-import com.angcyo.widget.base.inflate
+import com.angcyo.library.ex.inflate
 
 /**
  * 支持自绘的分割线
