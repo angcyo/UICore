@@ -497,6 +497,7 @@ fun CharSequence?.pattern(regexList: Iterable<String>, allowEmpty: Boolean = tru
     return result
 }
 
+/**注意数据量的大小, 太大会崩*/
 fun String.shareText(
     context: Context,
     title: String,
