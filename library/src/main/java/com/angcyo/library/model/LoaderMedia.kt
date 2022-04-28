@@ -15,8 +15,9 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class LoaderMedia(
+
     //数据库中的id
-    var id: Long = -1,
+    var id: String? = null,
 
     //网络路径
     var url: String? = null,

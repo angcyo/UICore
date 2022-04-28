@@ -221,7 +221,7 @@ class DslLoader {
         val longitude = 0.0
 
         val loaderMedia = LoaderMedia().apply {
-            this.id = id
+            this.id = "$id"
             this.localUri = uri
             this.loaderUri = loaderUri
             this.localPath = path ?: ""
