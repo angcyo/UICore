@@ -12,6 +12,7 @@ import com.angcyo.library.ex.dpi
 import com.angcyo.rcode.RCode
 import com.angcyo.rcode.ScanActivity
 import com.angcyo.rcode.ScanFragment
+import com.google.zxing.BarcodeFormat
 
 /**
  * 二维码扫码界面, 并获取扫码结果
@@ -78,3 +79,20 @@ fun String.createQRCode(
     backgroundColor: Int = Color.WHITE,
     logo: Bitmap? = null
 ): Bitmap? = RCode.syncEncodeQRCode(this, size, foregroundColor, backgroundColor, logo)
+
+/**使用字符串, 创建条形码, 不支持中文*/
+fun String.createBarCode(
+    width: Int = 3000,
+    height: Int = 700,
+    foregroundColor: Int = Color.BLACK,
+    backgroundColor: Int = Color.WHITE,
+    logo: Bitmap? = null
+): Bitmap? = RCode.syncEncodeCode(
+    this,
+    width,
+    height,
+    foregroundColor,
+    backgroundColor,
+    logo,
+    BarcodeFormat.CODE_128
+)
