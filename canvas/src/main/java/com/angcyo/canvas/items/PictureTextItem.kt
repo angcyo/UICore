@@ -3,7 +3,6 @@ package com.angcyo.canvas.items
 import android.graphics.Paint
 import android.widget.LinearLayout
 import com.angcyo.canvas.ScalePictureDrawable
-import com.angcyo.library.ex.have
 import com.angcyo.library.ex.textHeight
 import com.angcyo.library.ex.textWidth
 import com.angcyo.library.ex.withPicture
@@ -106,10 +105,11 @@ class PictureTextItem : PictureItem() {
             //createStaticLayout(text, paint)
             val width = calcTextWidth(text) + widthIncrease
             val height = calcTextHeight(text) + heightIncrease
+            val textHeight = paint.textHeight()
 
             //倾斜的宽度
             val skewWidth = if (paint.textSkewX != 0f) {
-                tan(paint.textSkewX.absoluteValue) * height
+                tan(paint.textSkewX.absoluteValue) * textHeight
                 //paint.getTextBounds(text ?: "", 0, text?.length ?: 0, tempRect)
                 //(tempRect.width() - width).toInt()
             } else {
@@ -133,9 +133,9 @@ class PictureTextItem : PictureItem() {
                     }
 
                     lineTextList.forEach { text ->
-                        val textHeight = calcTextHeight(text)
+                        val lineTextHeight = calcTextHeight(text)
 
-                        y += textHeight
+                        y += lineTextHeight
                         drawText(text, x, y - paint.descent(), paint)
                         y += lineSpacing
                     }
@@ -153,7 +153,7 @@ class PictureTextItem : PictureItem() {
                         }
 
                         text.forEach { char ->
-                            y += paint.textHeight()
+                            y += textHeight
                             drawText("$char", x, y - paint.descent(), paint)
                             y += wordSpacing
                         }
@@ -174,15 +174,3 @@ class PictureTextItem : PictureItem() {
         }
     }
 }
-
-val Int.isTextBold: Boolean
-    get() = have(PictureTextItem.TEXT_STYLE_BOLD)
-
-val Int.isUnderLine: Boolean
-    get() = have(PictureTextItem.TEXT_STYLE_UNDER_LINE)
-
-val Int.isDeleteLine: Boolean
-    get() = have(PictureTextItem.TEXT_STYLE_DELETE_LINE)
-
-val Int.isTextItalic: Boolean
-    get() = have(PictureTextItem.TEXT_STYLE_ITALIC)

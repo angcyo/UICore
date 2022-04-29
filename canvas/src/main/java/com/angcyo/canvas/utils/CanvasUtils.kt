@@ -5,7 +5,9 @@ import android.os.Build
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
+import com.angcyo.canvas.items.PictureTextItem
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.have
 import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min
@@ -230,6 +232,18 @@ fun Matrix.mapYValueList(yList: List<Float>): List<Float> {
 //</editor-fold desc="Matrix">
 
 //<editor-fold desc="Other">
+
+val Int.isTextBold: Boolean
+    get() = have(PictureTextItem.TEXT_STYLE_BOLD)
+
+val Int.isUnderLine: Boolean
+    get() = have(PictureTextItem.TEXT_STYLE_UNDER_LINE)
+
+val Int.isDeleteLine: Boolean
+    get() = have(PictureTextItem.TEXT_STYLE_DELETE_LINE)
+
+val Int.isTextItalic: Boolean
+    get() = have(PictureTextItem.TEXT_STYLE_ITALIC)
 
 /**将[value]限制在[min] [max]之间*/
 fun clamp(value: Float, min: Float, max: Float): Float = min(max(value, min), max)
