@@ -1,9 +1,11 @@
 package com.angcyo.canvas.items.renderer
 
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.Typeface
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.items.PictureItem
+import com.angcyo.canvas.items.PictureShapeItem
 import com.angcyo.canvas.items.PictureTextItem
 import com.angcyo.library.ex.add
 import com.angcyo.library.ex.remove
@@ -70,7 +72,7 @@ class PictureItemRenderer(canvasViewBox: CanvasViewBox) :
     fun addTextRender(text: String) {
         rendererItem = PictureTextItem().apply {
             this.text = text
-            updatePaint(paint)
+            updatePaint()
         }
         updatePictureDrawableBounds()
     }
@@ -133,6 +135,24 @@ class PictureItemRenderer(canvasViewBox: CanvasViewBox) :
 
     //<editor-fold desc="Shapes渲染操作方法">
 
+    /**添加一个文本用来渲染*/
+    fun addShapeRender(path: Path) {
+        rendererItem = PictureShapeItem().apply {
+            this.shapePath = path
+            updatePaint()
+        }
+        updatePictureDrawableBounds()
+    }
+
+    /**更新渲染的Path*/
+    fun updateItemPath(path: Path) {
+        wrapItemUpdate {
+            if (this is PictureShapeItem) {
+                this.shapePath = path
+                updatePaint()
+            }
+        }
+    }
 
     //</editor-fold desc="Shapes渲染操作方法">
 

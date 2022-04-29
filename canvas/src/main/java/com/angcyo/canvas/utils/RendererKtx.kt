@@ -44,14 +44,6 @@ fun CanvasView.addTextRenderer(text: String) {
     selectedItem(renderer)
 }
 
-/**添加一个文本渲染器*/
-fun CanvasView.addPictureTextRender(text: String) {
-    val renderer = PictureItemRenderer(canvasViewBox)
-    renderer.addTextRender(text)
-    addCentreItemRenderer(renderer)
-    selectedItem(renderer)
-}
-
 /**添加一根横线
  * [length] 线的长度
  * [orientation] 线的方向
@@ -123,6 +115,22 @@ fun CanvasView.addDrawableRenderer(
 fun CanvasView.addBitmapRenderer(bitmap: Bitmap) {
     val renderer = BitmapItemRenderer(canvasViewBox)
     renderer.updateBitmap(bitmap)
+    addCentreItemRenderer(renderer)
+    selectedItem(renderer)
+}
+
+/**添加一个文本渲染器*/
+fun CanvasView.addPictureTextRender(text: String) {
+    val renderer = PictureItemRenderer(canvasViewBox)
+    renderer.addTextRender(text)
+    addCentreItemRenderer(renderer)
+    selectedItem(renderer)
+}
+
+/**添加一个形状渲染器*/
+fun CanvasView.addPictureShapeRender(path: Path) {
+    val renderer = PictureItemRenderer(canvasViewBox)
+    renderer.addShapeRender(path)
     addCentreItemRenderer(renderer)
     selectedItem(renderer)
 }

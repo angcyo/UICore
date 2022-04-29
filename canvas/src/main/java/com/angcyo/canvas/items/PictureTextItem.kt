@@ -11,7 +11,7 @@ import kotlin.math.max
 import kotlin.math.tan
 
 /**
- * 文本组件数据
+ * 文本组件渲染数据
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/21
  */

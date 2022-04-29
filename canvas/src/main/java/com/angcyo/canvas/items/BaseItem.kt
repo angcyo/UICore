@@ -4,7 +4,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.text.TextPaint
-import com.angcyo.canvas.utils.createTextPaint
+import com.angcyo.canvas.utils.*
 import com.angcyo.library.ex.dp
 
 /**
