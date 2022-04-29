@@ -140,29 +140,21 @@ class PictureTextItem : PictureItem() {
                         y += lineSpacing
                     }
                 } else {
-                    if (paint.textAlign == Paint.Align.LEFT) {
-                        x = 0f
-                    }
-
-                    lineTextList.forEachIndexed { index, text ->
+                    lineTextList.forEach { text ->
                         val textWidth = calcTextWidth(text)
 
-                        when (paint.textAlign) {
-                            Paint.Align.RIGHT -> x += textWidth
-                            Paint.Align.CENTER -> x += textWidth / 2
+                        val offset = when (paint.textAlign) {
+                            Paint.Align.RIGHT -> textWidth
+                            Paint.Align.CENTER -> textWidth / 2
+                            else -> 0f
                         }
 
                         text.forEach { char ->
                             y += textHeight
-                            drawText("$char", x, y - paint.descent(), paint)
+                            drawText("$char", x + offset, y - paint.descent(), paint)
                             y += wordSpacing
                         }
-
-                        if (paint.textAlign == Paint.Align.LEFT) {
-                            x += textWidth
-                        }
-
-                        x += lineSpacing
+                        x += textWidth + lineSpacing
                         y = 0f
                     }
                 }
