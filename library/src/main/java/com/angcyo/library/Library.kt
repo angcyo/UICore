@@ -45,7 +45,9 @@ object Library {
 }
 
 fun app(): Application = Library.application
-    ?: (LibInitProvider.contentProvider as? Application)
+    ?: (LibInitProvider.contentProvider as? Application)?.apply {
+        Library.initHawk(this)
+    }
     ?: currentApplication()?.apply {
         Library.initHawk(this)
     }
