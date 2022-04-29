@@ -17,6 +17,9 @@ interface IRenderer {
     /**是否可见*/
     fun isVisible(): Boolean
 
+    /**获取图层描述的名字*/
+    fun getName(): String
+
     /**距离坐标系原点的像素坐标*/
     fun getBounds(): RectF
 

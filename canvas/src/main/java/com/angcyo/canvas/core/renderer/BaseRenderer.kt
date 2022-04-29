@@ -25,6 +25,11 @@ abstract class BaseRenderer(val canvasViewBox: CanvasViewBox) : IRenderer {
     /**相对于视图左上角的坐标*/
     val _visualBounds = RectF()
 
+    /**获取图层描述的名字*/
+    override fun getName(): String {
+        return "Default"
+    }
+
     override fun isVisible(): Boolean = _visible
 
     /**此[_bounds]是相对于坐标原点的坐标*/

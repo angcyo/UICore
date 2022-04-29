@@ -57,11 +57,3 @@ class ShapeItemRenderer(canvasViewBox: CanvasViewBox) :
         refresh()
     }
 }
-
-/**添加一个形状渲染器*/
-fun CanvasView.addShapeRenderer(path: Path, paint: TextPaint? = null) {
-    val renderer = ShapeItemRenderer(canvasViewBox)
-    renderer.addShape(path, paint)
-    addCentreItemRenderer(renderer)
-    selectedItem(renderer)
-}

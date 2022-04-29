@@ -1,16 +1,12 @@
 package com.angcyo.canvas.items.renderer
 
-import android.content.res.Resources
-import android.graphics.*
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
+import android.graphics.Canvas
+import android.graphics.Matrix
+import android.graphics.RectF
 import androidx.core.graphics.withMatrix
-import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.ScalePictureDrawable
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.items.DrawableItem
-import com.angcyo.canvas.utils.createTextPaint
-import com.angcyo.library.app
 import com.angcyo.library.ex.*
 
 /**
@@ -79,38 +75,4 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasViewBox: CanvasViewBox) 
             }
         }
     }
-}
-
-/**添加一个[Drawable]渲染器*/
-fun CanvasView.addDrawableRenderer(drawable: Drawable) {
-    val renderer = DrawableItemRenderer<DrawableItem>(canvasViewBox)
-    renderer.rendererItem = DrawableItem().apply { this.drawable = drawable }
-    addCentreItemRenderer(renderer)
-    selectedItem(renderer)
-}
-
-/**添加一个[Bitmap]渲染器*/
-fun CanvasView.addDrawableRenderer(bitmap: Bitmap, res: Resources = app().resources) {
-    addDrawableRenderer(BitmapDrawable(res, bitmap))
-}
-
-/**添加一个文本[Drawable]渲染器 */
-@Deprecated("请使用[com.angcyo.canvas.items.renderer.PictureTextItemRendererKt.addPictureTextRenderer]")
-fun CanvasView.addDrawableRenderer(
-    text: String,
-    paint: Paint = createTextPaint(Color.BLACK).apply {
-        //init
-        textSize = 12 * dp
-    }
-) {
-    val renderer = DrawableItemRenderer<DrawableItem>(canvasViewBox)
-    renderer.rendererItem = DrawableItem().apply {
-        val width = paint.textWidth(text)
-        val height = paint.textHeight()
-        this.drawable = ScalePictureDrawable(withPicture(width.toInt(), height.toInt()) {
-            drawText(text, 0f, height - paint.descent(), paint)
-        })
-    }
-    addCentreItemRenderer(renderer)
-    selectedItem(renderer)
 }

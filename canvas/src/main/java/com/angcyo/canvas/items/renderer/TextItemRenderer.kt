@@ -18,6 +18,7 @@ import kotlin.math.tan
  * @date 2022/04/03
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
+@Deprecated("效果不好")
 class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem>(canvasViewBox) {
 
     /**Bounds*/
@@ -226,12 +227,4 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
             canvasViewBox.canvasView.refresh()
         }
     }
-}
-
-/**添加一个文本渲染器*/
-fun CanvasView.addTextRenderer(text: String) {
-    val renderer = TextItemRenderer(canvasViewBox)
-    renderer.rendererItem = TextItem().apply { this.text = text }
-    addCentreItemRenderer(renderer)
-    selectedItem(renderer)
 }

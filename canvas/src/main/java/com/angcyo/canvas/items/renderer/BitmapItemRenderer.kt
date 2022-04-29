@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.RectF
 import androidx.core.graphics.withMatrix
-import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.items.BitmapItem
 import com.angcyo.canvas.utils.limitMaxWidthHeight
@@ -95,12 +94,4 @@ class BitmapItemRenderer(canvasViewBox: CanvasViewBox) :
         }
         refresh()*/
     }
-}
-
-/**添加一个[Bitmap]渲染器*/
-fun CanvasView.addBitmapRenderer(bitmap: Bitmap) {
-    val renderer = BitmapItemRenderer(canvasViewBox)
-    renderer.updateBitmap(bitmap)
-    addCentreItemRenderer(renderer)
-    selectedItem(renderer)
 }

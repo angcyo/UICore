@@ -17,6 +17,8 @@ import kotlin.math.tan
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/21
  */
+
+@Deprecated("通用性不够好")
 class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
     BaseItemRenderer<PictureTextItem>(canvasViewBox) {
 
@@ -153,18 +155,4 @@ class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
             drawable.draw(canvas)
         }
     }
-}
-
-/**添加一个文本渲染器*/
-fun CanvasView.addPictureTextRenderer(
-    text: String,
-    paint: TextPaint = createTextPaint(Color.BLACK).apply {
-        //init
-        textSize = 12 * dp
-    }
-) {
-    val renderer = PictureTextItemRenderer(canvasViewBox)
-    renderer.addTextRender(text, paint)
-    addCentreItemRenderer(renderer)
-    selectedItem(renderer)
 }

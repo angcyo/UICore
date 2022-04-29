@@ -93,27 +93,3 @@ class LineItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<LineItem
         }
     }
 }
-
-/**添加一根横线
- * [length] 线的长度
- * [orientation] 线的方向
- * [dash] 是否是虚线*/
-fun CanvasView.addLineRenderer(
-    length: Float = 100f,
-    orientation: Int = LinearLayout.VERTICAL,
-    dash: Boolean = false
-) {
-    val renderer = LineItemRenderer(canvasViewBox)
-    renderer.rendererItem = LineItem().apply {
-        this.length = length
-        this.orientation = orientation
-        this.dash = dash
-        if (dash) {
-            this.paint.style = Paint.Style.STROKE
-            //因为是用矩形的方式绘制的线, 所以虚线的间隔和长度必须一致
-            this.paint.pathEffect = DashPathEffect(floatArrayOf(4 * density, 5 * density), 0f)
-        }
-    }
-    addCentreItemRenderer(renderer)
-    selectedItem(renderer)
-}

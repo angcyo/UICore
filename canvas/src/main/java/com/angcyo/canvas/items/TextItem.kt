@@ -1,8 +1,5 @@
 package com.angcyo.canvas.items
 
-import android.graphics.Color
-import com.angcyo.canvas.utils.createTextPaint
-import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.have
 
 /**
