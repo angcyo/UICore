@@ -253,7 +253,7 @@ fun Activity.requestPermission(
 
 fun FragmentActivity.checkAndRequestPermission(
     permissions: List<String>,
-    onPermissionGranted: () -> Unit = {}
+    onPermissionGranted: (grant: Boolean) -> Unit = {}
 ) {
     checkAndRequestPermission(permissions.toTypedArray(), onPermissionGranted)
 }
@@ -261,17 +261,15 @@ fun FragmentActivity.checkAndRequestPermission(
 /**检查或者请求权限*/
 fun FragmentActivity.checkAndRequestPermission(
     permissions: Array<out String>,
-    onPermissionGranted: () -> Unit = {}
+    onPermissionGranted: (grant: Boolean) -> Unit = {}
 ) {
     if (havePermissions(*permissions)) {
-        onPermissionGranted()
+        onPermissionGranted(true)
     } else {
         //请求权限
         FragmentBridge.install(supportFragmentManager).run {
-            startRequestPermissions(permissions) { permissions, _ ->
-                if (havePermissions(*permissions)) {
-                    onPermissionGranted()
-                }
+            startRequestPermissions(permissions) { permissions, grantResults ->
+                onPermissionGranted(havePermissions(*permissions))
             }
         }
     }

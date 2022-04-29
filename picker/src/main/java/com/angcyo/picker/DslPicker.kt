@@ -17,6 +17,7 @@ import com.angcyo.library.ex.loadUrl
 import com.angcyo.library.ex.takePhotoIntent
 import com.angcyo.library.ex.takeVideoIntent
 import com.angcyo.library.model.LoaderMedia
+import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.fileName
 import com.angcyo.library.utils.filePath
@@ -74,31 +75,35 @@ object DslPicker {
 
     /**拍照*/
     fun takePhoto(activity: FragmentActivity?, action: (Uri?) -> Unit) {
-        activity?.checkAndRequestPermission(arrayOf(Manifest.permission.CAMERA)) {
-            val filePath = filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".jpeg"))
-            val uri = fileUri(activity, File(filePath))
-            takePhotoIntent(activity, uri)?.run {
-                FragmentBridge.install(activity.supportFragmentManager)
-                    .startActivityForResult(this,
-                        FragmentBridge.generateCode(),
-                        null,
-                        object : IFragmentBridge {
-                            override fun onActivityResult(resultCode: Int, data: Intent?) {
-                                if (data?.data == null) {
-                                    data?.data = uri
+        activity?.checkAndRequestPermission(arrayOf(Manifest.permission.CAMERA)) { grant ->
+            if (grant) {
+                val filePath = filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".jpeg"))
+                val uri = fileUri(activity, File(filePath))
+                takePhotoIntent(activity, uri)?.run {
+                    FragmentBridge.install(activity.supportFragmentManager)
+                        .startActivityForResult(this,
+                            FragmentBridge.generateCode(),
+                            null,
+                            object : IFragmentBridge {
+                                override fun onActivityResult(resultCode: Int, data: Intent?) {
+                                    if (data?.data == null) {
+                                        data?.data = uri
+                                    }
+                                    if (resultCode == Activity.RESULT_OK) {
+                                        //不指定uri时, 可以使用此方式获取缩略图
+                                        //https://developer.android.google.cn/training/camera/photobasics#TaskPhotoView
+                                        //val imageBitmap = data?.extras?.get("data") as Bitmap
+                                        L.i(uri.loadUrl())
+                                        //activity.scanFile2(uri)
+                                        action(uri)
+                                    } else {
+                                        action(null)
+                                    }
                                 }
-                                if (resultCode == Activity.RESULT_OK) {
-                                    //不指定uri时, 可以使用此方式获取缩略图
-                                    //https://developer.android.google.cn/training/camera/photobasics#TaskPhotoView
-                                    //val imageBitmap = data?.extras?.get("data") as Bitmap
-                                    L.i(uri.loadUrl())
-                                    //activity.scanFile2(uri)
-                                    action(uri)
-                                } else {
-                                    action(null)
-                                }
-                            }
-                        })
+                            })
+                }
+            } else {
+                toastQQ("相机权限被禁用,请在权限设置中打开.")
             }
         }
     }
@@ -111,31 +116,35 @@ object DslPicker {
         maxDuration: Int = -1,//秒,
         action: (Uri?) -> Unit
     ) {
-        activity?.checkAndRequestPermission(arrayOf(Manifest.permission.CAMERA)) {
-            val filePath = filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".mp4"))
-            val uri = fileUri(activity, File(filePath))
-            takeVideoIntent(activity, uri, videoQuality, maxSize, maxDuration)?.run {
-                FragmentBridge.install(activity.supportFragmentManager)
-                    .startActivityForResult(this,
-                        FragmentBridge.generateCode(),
-                        null,
-                        object : IFragmentBridge {
-                            override fun onActivityResult(resultCode: Int, data: Intent?) {
-                                if (data?.data == null) {
-                                    data?.data = uri
+        activity?.checkAndRequestPermission(arrayOf(Manifest.permission.CAMERA)) { grant ->
+            if (grant) {
+                val filePath = filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".mp4"))
+                val uri = fileUri(activity, File(filePath))
+                takeVideoIntent(activity, uri, videoQuality, maxSize, maxDuration)?.run {
+                    FragmentBridge.install(activity.supportFragmentManager)
+                        .startActivityForResult(this,
+                            FragmentBridge.generateCode(),
+                            null,
+                            object : IFragmentBridge {
+                                override fun onActivityResult(resultCode: Int, data: Intent?) {
+                                    if (data?.data == null) {
+                                        data?.data = uri
+                                    }
+                                    if (resultCode == Activity.RESULT_OK) {
+                                        //https://developer.android.google.cn/training/camera/videobasics#TaskVideoView
+                                        //不指定uri, 可以使用以下方式获取uri
+                                        //val videoUri: Uri = intent.data
+                                        L.i(uri.loadUrl())
+                                        //activity.scanUri(uri)
+                                        action(uri)
+                                    } else {
+                                        action(null)
+                                    }
                                 }
-                                if (resultCode == Activity.RESULT_OK) {
-                                    //https://developer.android.google.cn/training/camera/videobasics#TaskVideoView
-                                    //不指定uri, 可以使用以下方式获取uri
-                                    //val videoUri: Uri = intent.data
-                                    L.i(uri.loadUrl())
-                                    //activity.scanUri(uri)
-                                    action(uri)
-                                } else {
-                                    action(null)
-                                }
-                            }
-                        })
+                            })
+                }
+            } else {
+                toastQQ("相机权限被禁用,请在权限设置中打开.")
             }
         }
     }

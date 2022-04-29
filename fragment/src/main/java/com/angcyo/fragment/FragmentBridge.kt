@@ -3,6 +3,7 @@ package com.angcyo.fragment
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.os.SystemClock
 import androidx.collection.SparseArrayCompat
@@ -124,6 +125,7 @@ class FragmentBridge : Fragment() {
         observer: (permissions: Array<out String>, grantResults: IntArray) -> Unit
     ) {
         if (permissions.isEmpty()) {
+            observer(permissions, intArrayOf(PERMISSION_GRANTED))
             return
         }
         startRequestPermissions(permissions, requestCode, object : IFragmentBridge {
