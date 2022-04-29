@@ -47,6 +47,9 @@ interface ICanvasView : IComponent {
     /**通过手势坐标, 查找对应的[BaseItemRenderer]*/
     fun findItemRenderer(touchPoint: PointF): BaseItemRenderer<*>? = null
 
+    /**回退管理*/
+    fun getCanvasUndoManager(): CanvasUndoManager
+
     //</editor-fold desc="operate">
 
 }

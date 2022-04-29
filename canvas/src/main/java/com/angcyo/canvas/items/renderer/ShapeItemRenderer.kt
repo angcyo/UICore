@@ -3,7 +3,6 @@ package com.angcyo.canvas.items.renderer
 import android.graphics.Path
 import android.graphics.RectF
 import android.text.TextPaint
-import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.ScalePictureDrawable
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.items.ShapeItem
@@ -16,6 +15,7 @@ import kotlin.math.roundToInt
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/22
  */
+@Deprecated("请使用[PictureItemRenderer]")
 class ShapeItemRenderer(canvasViewBox: CanvasViewBox) :
     DrawableItemRenderer<ShapeItem>(canvasViewBox) {
 

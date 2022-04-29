@@ -1,12 +1,13 @@
 package com.angcyo.canvas.items.renderer
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.RectF
+import android.graphics.Typeface
 import android.text.TextPaint
-import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.ScalePictureDrawable
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.items.PictureTextItem
-import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
 import kotlin.math.tan
@@ -18,7 +19,7 @@ import kotlin.math.tan
  * @since 2022/04/21
  */
 
-@Deprecated("通用性不够好")
+@Deprecated("通用性不够好, 请使用[PictureItemRenderer]")
 class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
     BaseItemRenderer<PictureTextItem>(canvasViewBox) {
 
@@ -92,7 +93,7 @@ class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
     fun addTextRender(text: String, paint: TextPaint) {
         rendererItem = PictureTextItem().apply {
             this.paint = paint
-            updatePaintStyle()
+            updatePaint(paint)
             this.text = text
         }
         updateTextDrawable()
@@ -102,7 +103,7 @@ class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
     fun updateTextStyle(style: Int) {
         rendererItem?.apply {
             textStyle = style
-            updatePaintStyle()
+            updatePaint(paint)
             updateTextDrawable()
         }
     }

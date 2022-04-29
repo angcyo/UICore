@@ -393,6 +393,8 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }*/
     }
 
+    override fun getCanvasUndoManager(): CanvasUndoManager = undoManager
+
     //</editor-fold desc="关键方法">
 
     //<editor-fold desc="操作方法">

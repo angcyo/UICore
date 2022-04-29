@@ -4,7 +4,7 @@ import android.graphics.*
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.component.ControlPoint
-import com.angcyo.canvas.items.TextItem
+import com.angcyo.canvas.items.PictureTextItem
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
 import kotlin.math.tan
@@ -18,8 +18,9 @@ import kotlin.math.tan
  * @date 2022/04/03
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-@Deprecated("效果不好")
-class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem>(canvasViewBox) {
+@Deprecated("效果不好, 请使用[PictureItemRenderer]")
+class TextItemRenderer(canvasViewBox: CanvasViewBox) :
+    BaseItemRenderer<PictureTextItem>(canvasViewBox) {
 
     /**Bounds*/
     val textBounds = Rect()
@@ -30,7 +31,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
     /**高度增益的大小*/
     var heightIncrease: Float = 0f
 
-    override fun onUpdateRendererItem(item: TextItem?, oldItem: TextItem?) {
+    override fun onUpdateRendererItem(item: PictureTextItem?, oldItem: PictureTextItem?) {
         super.onUpdateRendererItem(item, oldItem)
 
         item?.let { updateTextPaint(item) }
@@ -52,8 +53,8 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<TextItem
         }
     }
 
-    fun updateTextPaint(item: TextItem) {
-        item.updatePaintStyle()
+    fun updateTextPaint(item: PictureTextItem) {
+        item.updatePaint(item.paint)
         val text = item.text ?: ""
         item.paint.getTextBounds(text, 0, text.length, textBounds)
     }

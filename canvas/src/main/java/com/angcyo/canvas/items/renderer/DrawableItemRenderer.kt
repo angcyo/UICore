@@ -16,6 +16,15 @@ import com.angcyo.library.ex.*
 open class DrawableItemRenderer<T : DrawableItem>(canvasViewBox: CanvasViewBox) :
     BaseItemRenderer<T>(canvasViewBox) {
 
+    //<editor-fold desc="临时变量">
+
+    val _flipMatrix = Matrix()
+    val _flipRect = RectF()
+
+    //</editor-fold desc="临时变量">
+
+    //<editor-fold desc="初始化">
+
     override fun onUpdateRendererItem(item: T?, oldItem: T?) {
         super.onUpdateRendererItem(item, oldItem)
         if (item != oldItem) {
@@ -36,9 +45,6 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasViewBox: CanvasViewBox) 
         }
     }
 
-    val flipMatrix = Matrix()
-    val flipRect = RectF()
-
     override fun render(canvas: Canvas) {
         rendererItem?.drawable?.let { drawable ->
             val bounds = getRenderBounds()
@@ -52,7 +58,7 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasViewBox: CanvasViewBox) 
                 )
                 drawable.draw(canvas)
             } else {
-                bounds.adjustFlipRect(flipRect)
+                bounds.adjustFlipRect(_flipRect)
                 var sx = 1f
                 var sy = 1f
                 if (getBounds().isFlipHorizontal) {
@@ -61,18 +67,20 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasViewBox: CanvasViewBox) 
                 if (getBounds().isFlipVertical) {
                     sy = -1f
                 }
-                flipMatrix.reset()
-                flipMatrix.postScale(sx, sy, flipRect.centerX(), flipRect.centerY())
-                canvas.withMatrix(flipMatrix) {
+                _flipMatrix.reset()
+                _flipMatrix.postScale(sx, sy, _flipRect.centerX(), _flipRect.centerY())
+                canvas.withMatrix(_flipMatrix) {
                     drawable.setBounds(
-                        flipRect.left.toInt(),
-                        flipRect.top.toInt(),
-                        flipRect.right.toInt(),
-                        flipRect.bottom.toInt()
+                        _flipRect.left.toInt(),
+                        _flipRect.top.toInt(),
+                        _flipRect.right.toInt(),
+                        _flipRect.bottom.toInt()
                     )
                     drawable.draw(canvas)
                 }
             }
         }
     }
+
+    //</editor-fold desc="初始化">
 }

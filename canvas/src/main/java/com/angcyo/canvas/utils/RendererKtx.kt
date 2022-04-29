@@ -10,7 +10,7 @@ import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.ScalePictureDrawable
 import com.angcyo.canvas.items.DrawableItem
 import com.angcyo.canvas.items.LineItem
-import com.angcyo.canvas.items.TextItem
+import com.angcyo.canvas.items.PictureTextItem
 import com.angcyo.canvas.items.renderer.*
 import com.angcyo.library.app
 import com.angcyo.library.ex.*
@@ -21,6 +21,7 @@ import com.angcyo.library.ex.*
  */
 
 /**添加一个文本渲染器*/
+@Deprecated("废弃")
 fun CanvasView.addPictureTextRenderer(
     text: String,
     paint: TextPaint = createTextPaint(Color.BLACK).apply {
@@ -35,13 +36,21 @@ fun CanvasView.addPictureTextRenderer(
 }
 
 /**添加一个文本渲染器*/
+@Deprecated("废弃")
 fun CanvasView.addTextRenderer(text: String) {
     val renderer = TextItemRenderer(canvasViewBox)
-    renderer.rendererItem = TextItem().apply { this.text = text }
+    renderer.rendererItem = PictureTextItem().apply { this.text = text }
     addCentreItemRenderer(renderer)
     selectedItem(renderer)
 }
 
+/**添加一个文本渲染器*/
+fun CanvasView.addPictureTextRender(text: String) {
+    val renderer = PictureItemRenderer(canvasViewBox)
+    renderer.addTextRender(text)
+    addCentreItemRenderer(renderer)
+    selectedItem(renderer)
+}
 
 /**添加一根横线
  * [length] 线的长度
@@ -68,6 +77,7 @@ fun CanvasView.addLineRenderer(
 }
 
 /**添加一个形状渲染器*/
+@Deprecated("废弃")
 fun CanvasView.addShapeRenderer(path: Path, paint: TextPaint? = null) {
     val renderer = ShapeItemRenderer(canvasViewBox)
     renderer.addShape(path, paint)
