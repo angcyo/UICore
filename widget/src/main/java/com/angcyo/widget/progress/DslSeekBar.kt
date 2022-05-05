@@ -69,7 +69,7 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
                 textColor = progressTextColor
                 textOffsetX = seekThumbTextOffsetX
                 textOffsetY = seekThumbTextOffsetY
-                text = progressTextFormat.format("${(_progressFraction * 100).toInt()}")
+                text = progressTextFormatAction()
             }
             return field
         }

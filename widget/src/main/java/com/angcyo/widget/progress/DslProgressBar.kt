@@ -91,6 +91,14 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     /**文本距离进度偏移的距离*/
     var progressTextOffset = 10.toDpi()
 
+    var progressTextFormatAction: () -> String = {
+        progressTextFormat.format("${(_progressFraction * 100).toInt()}")
+    }
+
+    var progressCenterTextFormatAction: () -> String = {
+        progressCenterTextFormat.format("${(_progressFraction * 100).toInt()}")
+    }
+
     //</editor-fold desc="最右边文本配置">
 
     //<editor-fold desc="居中文本配置">
@@ -105,7 +113,6 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
     //</editor-fold desc="居中文本配置">
 
-
     /**激活有进度和满进度时的动画*/
     var enableShowHideProgress: Boolean = false
 
@@ -114,7 +121,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             with(field) {
                 textSize = progressTextSize
                 textColor = progressTextColor
-                text = progressTextFormat.format("${(_progressFraction * 100).toInt()}")
+                text = progressTextFormatAction()
             }
             return field
         }
@@ -124,7 +131,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             with(field) {
                 textGravity = Gravity.CENTER
                 textSize = progressCenterTextSize
-                text = progressCenterTextFormat.format("${(_progressFraction * 100).toInt()}")
+                text = progressCenterTextFormatAction()
             }
             return field
         }
