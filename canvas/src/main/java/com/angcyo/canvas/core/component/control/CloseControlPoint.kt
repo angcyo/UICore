@@ -4,7 +4,6 @@ import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
-import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.library.ex._drawable
 
 /**
@@ -14,7 +13,7 @@ import com.angcyo.library.ex._drawable
 class CloseControlPoint : ControlPoint() {
 
     init {
-        drawable = _drawable(R.drawable.control_point_close)
+        drawable = _drawable(R.drawable.canvas_control_point_close)
     }
 
     override fun onClickControlPoint(view: CanvasView, itemRenderer: BaseItemRenderer<*>) {

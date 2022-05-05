@@ -7,6 +7,8 @@ import android.widget.LinearLayout
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/22
  */
+
+@Deprecated("废弃")
 class LineItem : BaseItem() {
 
     /**线的长度, 像素*/

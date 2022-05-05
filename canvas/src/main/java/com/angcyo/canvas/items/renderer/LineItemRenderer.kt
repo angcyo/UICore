@@ -1,17 +1,24 @@
 package com.angcyo.canvas.items.renderer
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Path
+import android.graphics.PointF
+import android.graphics.RectF
 import android.widget.LinearLayout
-import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.LineItem
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.ADJUST_TYPE_LT
+import com.angcyo.library.ex.adjustSize
+import com.angcyo.library.ex.adjustSizeWithRotate
+import com.angcyo.library.ex.contains
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/22
  */
+
+@Deprecated("不支持镜像绘制")
 class LineItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<LineItem>(canvasViewBox) {
 
     val lineBounds = RectF()
@@ -92,4 +99,6 @@ class LineItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<LineItem
             rotatePath.contains(point.x.toInt(), point.y.toInt())
         }
     }
+
+
 }

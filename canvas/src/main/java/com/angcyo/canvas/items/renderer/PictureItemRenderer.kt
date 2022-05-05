@@ -3,7 +3,9 @@ package com.angcyo.canvas.items.renderer
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Typeface
+import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.PictureItem
 import com.angcyo.canvas.items.PictureShapeItem
 import com.angcyo.canvas.items.PictureTextItem
@@ -16,6 +18,19 @@ import com.angcyo.library.ex.remove
  */
 class PictureItemRenderer(canvasViewBox: CanvasViewBox) :
     DrawableItemRenderer<PictureItem>(canvasViewBox) {
+
+    override fun isSupportControlPoint(type: Int): Boolean {
+        if (type == ControlPoint.POINT_TYPE_LOCK) {
+            val item = rendererItem
+            if (item is PictureShapeItem) {
+                if (item.shapePath is LinePath) {
+                    //线段不支持任意比例缩放
+                    return false
+                }
+            }
+        }
+        return super.isSupportControlPoint(type)
+    }
 
     /**当渲染的[drawable]改变后, 调用此方法, 更新bounds*/
     fun updatePictureDrawableBounds(oldWidth: Float = 0f, oldHeight: Float = 0f) {
@@ -51,7 +66,7 @@ class PictureItemRenderer(canvasViewBox: CanvasViewBox) :
     /**更新笔的样式*/
     fun updatePaintStyle(style: Paint.Style) {
         wrapItemUpdate {
-            this.paintStyle = style
+            paint.style = style
             updatePaint()
         }
     }
@@ -59,7 +74,7 @@ class PictureItemRenderer(canvasViewBox: CanvasViewBox) :
     /**更新画笔绘制文本时的对齐方式*/
     fun updatePaintAlign(align: Paint.Align) {
         wrapItemUpdate {
-            this.paintAlign = align
+            paint.textAlign = align
             updatePaint()
         }
     }
@@ -115,7 +130,7 @@ class PictureItemRenderer(canvasViewBox: CanvasViewBox) :
     fun updateTextTypeface(typeface: Typeface?) {
         wrapItemUpdate {
             if (this is PictureTextItem) {
-                this.paintTypeface = typeface
+                paint.typeface = typeface
                 updatePaint()
             }
         }

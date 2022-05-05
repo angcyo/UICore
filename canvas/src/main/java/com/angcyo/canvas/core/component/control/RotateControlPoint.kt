@@ -28,7 +28,7 @@ class RotateControlPoint : ControlPoint() {
     var angle = 0f
 
     init {
-        drawable = _drawable(R.drawable.control_point_rotate)
+        drawable = _drawable(R.drawable.canvas_control_point_rotate)
     }
 
     override fun onTouch(

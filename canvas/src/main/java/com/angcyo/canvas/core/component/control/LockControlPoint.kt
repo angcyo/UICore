@@ -17,14 +17,14 @@ class LockControlPoint : ControlPoint() {
         set(value) {
             field = value
             drawable = if (value) {
-                _drawable(R.drawable.control_point_lock)
+                _drawable(R.drawable.canvas_control_point_lock)
             } else {
-                _drawable(R.drawable.control_point_unlock)
+                _drawable(R.drawable.canvas_control_point_unlock)
             }
         }
 
     init {
-        drawable = _drawable(R.drawable.control_point_lock)
+        drawable = _drawable(R.drawable.canvas_control_point_lock)
     }
 
     override fun onClickControlPoint(view: CanvasView, itemRenderer: BaseItemRenderer<*>) {

@@ -57,9 +57,9 @@ class ScaleControlPoint : ControlPoint() {
         set(value) {
             field = value
             drawable = if (value) {
-                _drawable(R.drawable.control_point_scale)
+                _drawable(R.drawable.canvas_control_point_scale)
             } else {
-                _drawable(R.drawable.control_point_scale_any)
+                _drawable(R.drawable.canvas_control_point_scale_any)
             }
         }
 
@@ -78,7 +78,7 @@ class ScaleControlPoint : ControlPoint() {
     var touchDiffHeight = 0f
 
     init {
-        drawable = _drawable(R.drawable.control_point_scale)
+        drawable = _drawable(R.drawable.canvas_control_point_scale)
     }
 
     override fun onTouch(

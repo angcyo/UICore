@@ -1,8 +1,6 @@
 package com.angcyo.canvas.items
 
 import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Typeface
 import android.text.TextPaint
 import com.angcyo.canvas.utils.*
 import com.angcyo.library.ex.dp
@@ -25,14 +23,6 @@ abstract class BaseItem : ICanvasItem {
         textSize = 12 * dp
     }
 
-    var paintStyle: Paint.Style = Paint.Style.FILL
-
-    /**文本对齐方法*/
-    var paintAlign: Paint.Align = Paint.Align.LEFT
-
-    /**字体*/
-    var paintTypeface: Typeface? = Typeface.DEFAULT
-
     /**字体样式*/
     var textStyle: Int = PictureTextItem.TEXT_STYLE_NONE
 
@@ -44,9 +34,9 @@ abstract class BaseItem : ICanvasItem {
             it.isUnderlineText = textStyle.isUnderLine
             it.isFakeBoldText = textStyle.isTextBold
             it.textSkewX = if (textStyle.isTextItalic) PictureTextItem.ITALIC_SKEW else 0f
-            it.typeface = paintTypeface
-            it.textAlign = paintAlign
-            it.style = paintStyle
+            //it.typeface = paintTypeface
+            //it.textAlign = paintAlign
+            //it.style = paintStyle
         }
     }
 

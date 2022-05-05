@@ -48,6 +48,7 @@ fun CanvasView.addTextRenderer(text: String) {
  * [length] 线的长度
  * [orientation] 线的方向
  * [dash] 是否是虚线*/
+@Deprecated("废弃")
 fun CanvasView.addLineRenderer(
     length: Float = 100f,
     orientation: Int = LinearLayout.VERTICAL,

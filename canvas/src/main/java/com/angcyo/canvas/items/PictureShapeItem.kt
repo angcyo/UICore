@@ -1,9 +1,14 @@
 package com.angcyo.canvas.items
 
+import android.graphics.DashPathEffect
+import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.RectF
+import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.ScalePictureDrawable
 import com.angcyo.canvas.core.MmValueUnit
 import com.angcyo.library.ex.ceil
+import com.angcyo.library.ex.density
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.withPicture
 import kotlin.math.roundToInt
@@ -26,34 +31,65 @@ class PictureShapeItem : PictureItem() {
     /**需要绘制的形状[Path]*/
     var shapePath: Path? = null
 
+    /**形状的真正的bounds*/
+    val shapeBounds = RectF()
+
+    /**线段描边时, 用虚线绘制*/
+    val lineStrokeEffect = DashPathEffect(floatArrayOf(4 * density, 5 * density), 0f)
+
     init {
         paint.strokeWidth = 1 * dp
+        paint.style = Paint.Style.FILL_AND_STROKE
     }
 
     override fun updatePictureDrawable() {
         shapePath?.let { path ->
             val unit = MmValueUnit()
+            val strokeWidth = paint.strokeWidth
+            path.computeBounds(shapeBounds, true)
 
             val shapeWidth = if (itemWidth > 0) {
                 itemWidth
+            } else if (!shapeBounds.isEmpty) {
+                shapeBounds.width() + strokeWidth
             } else {
-                unit.convertValueToPixel(SHAPE_DEFAULT_WIDTH)
+                unit.convertValueToPixel(SHAPE_DEFAULT_WIDTH) + strokeWidth
             }
 
             val shapeHeight = if (itemHeight > 0) {
                 itemHeight
+            } else if (!shapeBounds.isEmpty) {
+                shapeBounds.height() + strokeWidth
             } else {
-                unit.convertValueToPixel(SHAPE_DEFAULT_HEIGHT)
+                unit.convertValueToPixel(SHAPE_DEFAULT_HEIGHT) + strokeWidth
             }
 
-            val drawable = ScalePictureDrawable(
-                withPicture(shapeWidth.ceil().roundToInt(), shapeHeight.ceil().roundToInt()) {
-                    drawPath(path, paint)
-                })
+            val drawableWidth = shapeWidth.ceil().roundToInt()
+            val drawableHeight = shapeHeight.ceil().roundToInt()
+
+            val drawable = ScalePictureDrawable(withPicture(drawableWidth, drawableHeight) {
+                var dx = strokeWidth / 2
+                var dy = dx
+                if (!shapeBounds.isEmpty) {
+                    dx -= shapeBounds.left
+                    dy -= shapeBounds.top
+                }
+
+                translate(dx, dy)
+                //线段的描边用虚线处理处理
+                if (path is LinePath) {
+                    if (paint.style == Paint.Style.STROKE) {
+                        paint.pathEffect = lineStrokeEffect
+                    } else {
+                        paint.pathEffect = null
+                    }
+                }
+                drawPath(path, paint)
+            })
 
             this.drawable = drawable
-            this.itemWidth = shapeWidth
-            this.itemHeight = shapeHeight
+            this.itemWidth = drawable.minimumWidth.toFloat()
+            this.itemHeight = drawable.minimumHeight.toFloat()
         }
     }
 

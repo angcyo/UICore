@@ -3,6 +3,7 @@ package com.angcyo.canvas.core.renderer
 import android.graphics.*
 import androidx.core.graphics.withRotation
 import androidx.core.graphics.withScale
+import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.BuildConfig
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.R
@@ -95,7 +96,9 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasV
             //绘制控制信息, 宽高xy值
             canvas.withRotation(rotate, visualBounds.centerX(), visualBounds.centerY()) {
                 //绘制边框
-                canvas.drawRect(visualBounds, paint)
+                canvas.withTranslation(-paint.strokeWidth / 2, -paint.strokeWidth / 2) {
+                    canvas.drawRect(visualBounds, paint)
+                }
                 drawFrameText(canvas, visualBounds, it.getRenderRotateBounds(), rotate)
                 if (controlHandler.touchControlPoint is RotateControlPoint) {
                     drawRotateText(canvas, visualBounds, rotate)
