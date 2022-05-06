@@ -1,7 +1,6 @@
 package com.angcyo.canvas.core
 
 import android.graphics.Matrix
-import android.view.MotionEvent
 import com.angcyo.canvas.items.renderer.IItemRenderer
 
 /**
@@ -11,7 +10,7 @@ import com.angcyo.canvas.items.renderer.IItemRenderer
  * @date 2022/04/02
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-interface ICanvasListener {
+interface ICanvasListener : ICanvasTouch {
 
     //<editor-fold desc="绘制相关">
 
@@ -23,11 +22,6 @@ interface ICanvasListener {
     /**[CanvasView]改变[Matrix]之后回调*/
     fun onCanvasBoxMatrixChanged(matrix: Matrix, oldValue: Matrix) {
 
-    }
-
-    /**[MotionEvent]事件回调*/
-    fun onCanvasTouchEvent(event: MotionEvent): Boolean {
-        return false
     }
 
     //</editor-fold desc="绘制相关">

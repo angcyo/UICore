@@ -30,7 +30,8 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
     var maxInputLength = -1
 
     /**
-     * 强制指定输入框的高度
+     * 强制指定输入框的高度, 默认是单行输入
+     * 大于0, 会启动多行输入模式
      * */
     var inputViewHeight = -1
 

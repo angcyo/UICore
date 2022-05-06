@@ -72,21 +72,20 @@ class RotateControlPoint : ControlPoint() {
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 angle = 0f
                 if (!touchItemRotate.isNaN() && isRotated) {
-                    val originRotate = touchItemRotate
-                    val newRotate = itemRenderer.rotate
-
                     itemRenderer.let {
-
                         view.undoManager.addUndoAction(object : ICanvasStep {
+                            val item = it
+                            val originRotate = touchItemRotate
+                            val newRotate = itemRenderer.rotate
 
                             override fun runUndo() {
-                                it.changeBounds {
+                                item.changeBounds {
                                     it.rotate = originRotate
                                 }
                             }
 
                             override fun runRedo() {
-                                it.changeBounds {
+                                item.changeBounds {
                                     it.rotate = newRotate
                                 }
                             }

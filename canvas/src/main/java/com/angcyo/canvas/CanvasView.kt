@@ -93,10 +93,13 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     //<editor-fold desc="内部成员">
 
     /**控制点[ControlPoint]的控制和[selectedItemRender]的平移控制*/
-    var controlHandler = ControlHandler()
+    var controlHandler = ControlHandler(this)
 
     /**控制器渲染*/
     var controlRenderer = ControlRenderer(controlHandler, canvasViewBox)
+
+    /**手势处理*/
+    var canvasTouchManager = CanvasTouchManager(this)
 
     //</editor-fold desc="内部成员">
 
@@ -243,24 +246,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        isTouchHold = when (event.actionMasked) {
-            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> true
-            else -> false
-        }
-        canvasListenerList.forEach {
-            if (it.onCanvasTouchEvent(event)) {
-                return true
-            }
-        }
-        if (controlHandler.enable) {
-            if (controlHandler.onTouch(this, event)) {
-                return true
-            }
-        }
-        if (canvasTouchHandler.enable) {
-            return canvasTouchHandler.onTouch(this, event)
-        }
-        return super.onTouchEvent(event)
+        return canvasTouchManager.onTouchEvent(event)
     }
 
     override fun refresh() {

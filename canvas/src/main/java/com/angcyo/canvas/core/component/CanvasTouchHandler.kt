@@ -2,21 +2,21 @@ package com.angcyo.canvas.core.component
 
 import android.graphics.PointF
 import android.view.MotionEvent
-import android.view.ViewConfiguration
 import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.core.ICanvasTouch
+import com.angcyo.library.component.DoubleGestureDetector2
 import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
-import kotlin.math.absoluteValue
 import kotlin.math.atan2
 import kotlin.math.min
 import kotlin.math.sqrt
 
-/** [CanvasView]手势处理类
+/** [CanvasView]手势处理类, 双击缩放地图, 双指平移, 捏合放大缩小等
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/02
  */
-class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent() {
+class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), ICanvasTouch {
 
     companion object {
 
@@ -114,21 +114,34 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent() {
     //左上角初始点处理, 点击后恢复原位置
     val initialPointHandler = InitialPointHandler()
 
-    //第一次按下的时候, 用来计算是否是双击
-    var touchTime: Long = 0L
-
     //是否双击了
     var isDoubleTouch: Boolean = false
 
+    /**双击检测*/
+    val doubleGestureDetector = DoubleGestureDetector2(canvasView.context) { event ->
+        if (canvasView.controlHandler.selectedItemRender == null) {
+            isDoubleTouch = true
+            //双击
+            canvasView.canvasViewBox.scaleBy(
+                doubleScaleValue,
+                doubleScaleValue,
+                event.x,
+                event.y,
+                true
+            )
+        }
+    }
+
     /**入口*/
-    fun onTouch(view: CanvasView, event: MotionEvent): Boolean {
-        initialPointHandler.onTouch(view, event)
+    override fun onCanvasTouchEvent(canvasView: CanvasView, event: MotionEvent): Boolean {
+        initialPointHandler.onTouch(canvasView, event)
+        doubleGestureDetector.onTouchEvent(event)
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 _touchPoint.set(event.x, event.y)
                 obtainPointList(event, _touchPointList)
                 handleActionDown()
-                view.disableParentInterceptTouchEvent()
+                canvasView.disableParentInterceptTouchEvent()
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
                 //多指按下
@@ -140,28 +153,15 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent() {
             }
             MotionEvent.ACTION_MOVE -> {
                 obtainPointList(event, _movePointList)
-                handleActionMove(view)
+                handleActionMove(canvasView)
                 obtainPointList(event, _touchPointList)
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                if (event.actionMasked == MotionEvent.ACTION_UP) {
-                    if (isDoubleTouch) {
-                        //双击
-                        view.canvasViewBox.scaleBy(
-                            doubleScaleValue,
-                            doubleScaleValue,
-                            event.x,
-                            event.y,
-                            true
-                        )
-                        touchTime = 0L
-                    }
-                }
                 isDoubleTouch = false
                 _touchPointList.clear()
                 _movePointList.clear()
                 _touchType = TOUCH_TYPE_NONE
-                view.disableParentInterceptTouchEvent(false)
+                canvasView.disableParentInterceptTouchEvent(false)
             }
         }
         return true
@@ -188,15 +188,6 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent() {
             _touchDistance = spacing(_touchPointList[0], _touchPointList[1])
             midPoint(_touchPointList[0], _touchPointList[1], _touchMiddlePoint)
             isDoubleTouch = false
-        } else {
-            val nowTime = System.currentTimeMillis()
-            //选中同一个
-            if (nowTime - touchTime <= 360 &&
-                canvasView.controlHandler.selectedItemRender == null
-            ) {
-                isDoubleTouch = true
-            }
-            touchTime = nowTime
         }
     }
 
@@ -209,12 +200,6 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent() {
 
         val dx1 = _movePointList[0].x - _touchPointList[0].x
         val dy1 = _movePointList[0].y - _touchPointList[0].y
-
-        val slop = ViewConfiguration.get(view.context).scaledDoubleTapSlop
-        if (dx1.absoluteValue >= slop || dy1.absoluteValue >= slop) {
-            //移动了之后, 去除双击事件的判断
-            touchTime = 0
-        }
 
         if (_movePointList.size >= 2) {
             //双指 操作

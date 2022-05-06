@@ -3,10 +3,10 @@ package com.angcyo.canvas.core.component
 import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
-import android.view.ViewConfiguration
 import androidx.core.graphics.contains
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.ICanvasTouch
 import com.angcyo.canvas.core.component.control.CloseControlPoint
 import com.angcyo.canvas.core.component.control.LockControlPoint
 import com.angcyo.canvas.core.component.control.RotateControlPoint
@@ -16,15 +16,15 @@ import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.library.L
+import com.angcyo.library.component.DoubleGestureDetector2
 import com.angcyo.library.ex.*
-import kotlin.math.absoluteValue
 
 /**
- * 控制渲染的数据组件
+ * 控制渲染的数据组件, 用来实现拖拽元素, 操作控制点等
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/08
  */
-class ControlHandler : BaseComponent() {
+class ControlHandler(val canvasView: CanvasView) : BaseComponent(), ICanvasTouch {
 
     /**当前选中的[IItemRenderer]*/
     var selectedItemRender: BaseItemRenderer<*>? = null
@@ -57,9 +57,6 @@ class ControlHandler : BaseComponent() {
     val _movePoint = PointF()
     var touchPointerId: Int = -1
 
-    //第一次按下的时候, 用来计算是否是双击
-    var touchTime: Long = 0L
-
     //是否双击在同一个[BaseItemRenderer]中
     var isDoubleTouch: Boolean = false
 
@@ -69,12 +66,23 @@ class ControlHandler : BaseComponent() {
     //是否移动过
     var isTranslated = false
 
+    /**双击检测*/
+    val doubleGestureDetector = DoubleGestureDetector2() {
+        val itemRenderer = canvasView.findItemRenderer(_touchPoint)
+        if (itemRenderer != null) {
+            isDoubleTouch = true
+            canvasView.doubleTapItem(itemRenderer)
+        }
+    }
+
     //</editor-fold desc="控制点">
 
     /**手势处理
      * [com.angcyo.canvas.CanvasView.onTouchEvent]*/
-    fun onTouch(view: CanvasView, event: MotionEvent): Boolean {
-        var handle = false
+    override fun onCanvasTouchEvent(canvasView: CanvasView, event: MotionEvent): Boolean {
+        doubleGestureDetector.onTouchEvent(event)
+
+        var handle = isDoubleTouch
         var holdControlPoint = touchControlPoint
 
         val selectedItemRender = selectedItemRender
@@ -91,7 +99,7 @@ class ControlHandler : BaseComponent() {
                     touchItemBounds.set(selectedItemRender.getBounds())
 
                     //已经有选中, 则查找控制点
-                    val controlPoint = findItemControlPoint(view.canvasViewBox, touchPoint)
+                    val controlPoint = findItemControlPoint(canvasView.canvasViewBox, touchPoint)
                     touchControlPoint = controlPoint
                     holdControlPoint = controlPoint
 
@@ -103,20 +111,8 @@ class ControlHandler : BaseComponent() {
 
                 if (touchControlPoint == null) {
                     //检查是否点在[BaseItemRenderer]中
-                    val itemRenderer = view.findItemRenderer(touchPoint)
-                    if (itemRenderer != null) {
-                        val nowTime = System.currentTimeMillis()
-                        if (itemRenderer == selectedItemRender) {
-                            //选中同一个
-                            if (nowTime - touchTime <= 360) {
-                                isDoubleTouch = true
-                            }
-                        } else {
-                            isDoubleTouch = false
-                        }
-                        touchTime = nowTime
-                    }
-                    view.selectedItem(itemRenderer)
+                    val itemRenderer = canvasView.findItemRenderer(touchPoint)
+                    canvasView.selectedItem(itemRenderer)
                 }
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
@@ -125,15 +121,6 @@ class ControlHandler : BaseComponent() {
             }
             MotionEvent.ACTION_MOVE -> {
                 _movePoint.set(event.x, event.y)
-
-                val dx = _movePoint.x - _touchPoint.x
-                val dy = _movePoint.y - _touchPoint.y
-
-                val slop = ViewConfiguration.get(view.context).scaledDoubleTapSlop
-                if (dx.absoluteValue >= slop || dy.absoluteValue >= slop) {
-                    //移动了之后, 去除双击事件的判断
-                    touchTime = 0
-                }
 
                 if (touchPointerId == event.getPointerId(0)) {
                     L.w("\ntouch:${_touchPoint}\nmove:${_movePoint}")
@@ -146,11 +133,11 @@ class ControlHandler : BaseComponent() {
                             //canvasView.canvasViewBox.matrix.mapPoint(_touchPointList[0])
                             //val p2 = _tempMatrix.mapPoint(_touchPointList[0])//_touchPointList[0]
 
-                            val p1 = view.canvasViewBox.mapCoordinateSystemPoint(_movePoint)
+                            val p1 = canvasView.canvasViewBox.mapCoordinateSystemPoint(_movePoint)
                             val p1x = p1.x
                             val p1y = p1.y
 
-                            val p2 = view.canvasViewBox.mapCoordinateSystemPoint(_touchPoint)
+                            val p2 = canvasView.canvasViewBox.mapCoordinateSystemPoint(_touchPoint)
                             val p2x = p2.x
                             val p2y = p2.y
 
@@ -160,7 +147,7 @@ class ControlHandler : BaseComponent() {
                             if (dx1 != 0f || dy1 != 0f) {
                                 handle = true
                                 isTranslated = true
-                                view.smartAssistant.smartTranslateItemBy(
+                                canvasView.smartAssistant.smartTranslateItemBy(
                                     selectedItemRender,
                                     dx1,
                                     dy1
@@ -181,49 +168,43 @@ class ControlHandler : BaseComponent() {
                         it.onControlFinish(holdControlPoint)
                     }
                 }
-                //双击回调
+                //平移的撤销
                 selectedItemRender?.let {
-
                     if (!touchItemBounds.isEmpty && isTranslated) {
-                        val originBounds = RectF(touchItemBounds)
-                        val newBounds = RectF(it.getBounds())
-
-                        view.undoManager.addUndoAction(object : ICanvasStep {
+                        canvasView.undoManager.addUndoAction(object : ICanvasStep {
+                            val item = it
+                            val originBounds = RectF(touchItemBounds)
+                            val newBounds = RectF(item.getBounds())
 
                             override fun runUndo() {
-                                it.changeBounds {
+                                item.changeBounds {
                                     set(originBounds)
                                 }
                             }
 
                             override fun runRedo() {
-                                it.changeBounds {
+                                item.changeBounds {
                                     set(newBounds)
                                 }
                             }
                         })
                     }
-
-                    if (isDoubleTouch) {
-                        handle = true
-                        view.doubleTapItem(it)
-                    }
                 }
                 isDoubleTouch = false
                 touchControlPoint = null
-                view.disableParentInterceptTouchEvent(false)
+                canvasView.disableParentInterceptTouchEvent(false)
             }
         }
 
         //控制点
         selectedItemRender?.let {
-            holdControlPoint?.onTouch(view, it, event)
+            holdControlPoint?.onTouch(canvasView, it, event)
         }
 
         //result
         val result = selectedItemRender != null || holdControlPoint != null
         if (result) {
-            view.disableParentInterceptTouchEvent()
+            canvasView.disableParentInterceptTouchEvent()
         }
         return result && handle
     }

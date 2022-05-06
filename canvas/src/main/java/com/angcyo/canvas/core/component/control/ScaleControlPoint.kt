@@ -243,20 +243,19 @@ class ScaleControlPoint : ControlPoint() {
 
                 if (!touchItemBounds.isEmpty && isScaled) {
                     itemRenderer.let {
-
-                        val originBounds = RectF(touchItemBounds)
-                        val newBounds = RectF(it.getBounds())
-
                         view.undoManager.addUndoAction(object : ICanvasStep {
+                            val item = it
+                            val originBounds = RectF(touchItemBounds)
+                            val newBounds = RectF(it.getBounds())
 
                             override fun runUndo() {
-                                it.changeBounds {
+                                item.changeBounds {
                                     set(originBounds)
                                 }
                             }
 
                             override fun runRedo() {
-                                it.changeBounds {
+                                item.changeBounds {
                                     set(newBounds)
                                 }
                             }

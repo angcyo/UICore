@@ -46,8 +46,8 @@ class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox
         super.onCanvasSizeChanged(canvasView)
     }
 
-    override fun onCanvasTouchEvent(event: MotionEvent): Boolean {
-        super.onCanvasTouchEvent(event)
+    override fun onCanvasTouchEvent(canvasView: CanvasView, event: MotionEvent): Boolean {
+        super.onCanvasTouchEvent(canvasView, event)
         val action = event.actionMasked
         _isTouchDown = action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE
         if (_isTouchDown) {
