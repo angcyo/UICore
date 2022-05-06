@@ -22,7 +22,6 @@ import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.getChildOrNull
 import com.angcyo.library.ex.have
 import com.angcyo.widget.R
-import com.angcyo.library.ex.getChildOrNull
 import com.angcyo.widget.base.getLocationInParent
 import kotlin.math.abs
 import kotlin.math.max
@@ -314,6 +313,19 @@ open class DslTabLayout(
         }
         tabLayoutConfig?.config()
         dslSelector.updateStyle()
+    }
+
+    /**观察index的改变回调*/
+    fun observeIndexChange(
+        config: DslTabLayoutConfig.() -> Unit = {},
+        action: (fromIndex: Int, toIndex: Int, reselect: Boolean, fromUser: Boolean) -> Unit
+    ) {
+        configTabLayoutConfig {
+            config()
+            onSelectIndexChange = { fromIndex, selectIndexList, reselect, fromUser ->
+                action(fromIndex, selectIndexList.first(), reselect, fromUser)
+            }
+        }
     }
 
     fun getBadgeConfig(index: Int): TabBadgeConfig {
