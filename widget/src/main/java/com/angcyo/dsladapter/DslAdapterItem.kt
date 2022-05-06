@@ -264,6 +264,9 @@ open class DslAdapterItem : LifecycleOwner {
 
     var itemLongClick: ((View) -> Boolean)? = null
 
+    /**点击节流间隔时长*/
+    var itemClickThrottleInterval: Long = ThrottleClickListener.DEFAULT_THROTTLE_INTERVAL
+
     //使用节流方式处理点击事件
     var _clickListener: View.OnClickListener? = ThrottleClickListener(action = { view ->
         notNull(itemClick, view) {
@@ -396,10 +399,14 @@ open class DslAdapterItem : LifecycleOwner {
 
     //初始化事件
     open fun _initItemListener(itemHolder: DslViewHolder) {
-        if (itemClick == null || _clickListener == null || !itemEnable) {
+        val clickListener = _clickListener
+        if (itemClick == null || clickListener == null || !itemEnable) {
             itemHolder.itemView.isClickable = false
         } else {
-            itemHolder.clickItem(_clickListener)
+            if (clickListener is ThrottleClickListener) {
+                clickListener.throttleInterval = itemClickThrottleInterval
+            }
+            itemHolder.clickItem(clickListener)
         }
 
         if (itemLongClick == null || _longClickListener == null || !itemEnable) {

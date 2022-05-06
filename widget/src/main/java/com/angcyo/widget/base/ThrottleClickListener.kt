@@ -10,7 +10,7 @@ import com.angcyo.widget.base.ThrottleClickListener.Companion.DEFAULT_THROTTLE_I
  * @date 2020/01/06
  */
 open class ThrottleClickListener(
-    val throttleInterval: Long = DEFAULT_THROTTLE_INTERVAL,
+    var throttleInterval: Long = DEFAULT_THROTTLE_INTERVAL,
     val throttle: (lastTime: Long, nowTime: Long, view: View) -> Boolean = { lastTime, nowTime, _ ->
         (nowTime - lastTime) < throttleInterval
     },
@@ -27,11 +27,15 @@ open class ThrottleClickListener(
 
     var _lastClickTime = 0L
     override fun onClick(v: View) {
-        val nowTime = System.currentTimeMillis()
-
-        if (!throttle(_lastClickTime, nowTime, v)) {
+        if (throttleInterval > 0) {
+            //开启了节流
+            val nowTime = System.currentTimeMillis()
+            if (!throttle(_lastClickTime, nowTime, v)) {
+                action(v)
+                _lastClickTime = nowTime
+            }
+        } else {
             action(v)
-            _lastClickTime = nowTime
         }
     }
 }
