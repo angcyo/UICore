@@ -54,7 +54,14 @@ interface ICanvasListener {
 
     }
 
-
     //</editor-fold desc="Item相关">
+
+    //<editor-fold desc="其他">
+
+    /**回退/恢复栈发生改变后的回调
+     * [CanvasUndoManager]*/
+    fun onCanvasUndoChanged(undoManager: CanvasUndoManager) {}
+
+    //</editor-fold desc="其他">
 
 }

@@ -8,6 +8,7 @@ import android.text.TextPaint
 import android.widget.LinearLayout
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.ScalePictureDrawable
+import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.items.DrawableItem
 import com.angcyo.canvas.items.LineItem
 import com.angcyo.canvas.items.PictureTextItem
@@ -31,7 +32,7 @@ fun CanvasView.addPictureTextRenderer(
 ) {
     val renderer = PictureTextItemRenderer(canvasViewBox)
     renderer.addTextRender(text, paint)
-    addCentreItemRenderer(renderer)
+    addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
     selectedItem(renderer)
 }
 
@@ -40,7 +41,7 @@ fun CanvasView.addPictureTextRenderer(
 fun CanvasView.addTextRenderer(text: String) {
     val renderer = TextItemRenderer(canvasViewBox)
     renderer.rendererItem = PictureTextItem().apply { this.text = text }
-    addCentreItemRenderer(renderer)
+    addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
     selectedItem(renderer)
 }
 
@@ -65,7 +66,7 @@ fun CanvasView.addLineRenderer(
             this.paint.pathEffect = DashPathEffect(floatArrayOf(4 * density, 5 * density), 0f)
         }
     }
-    addCentreItemRenderer(renderer)
+    addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
     selectedItem(renderer)
 }
 
@@ -74,7 +75,7 @@ fun CanvasView.addLineRenderer(
 fun CanvasView.addShapeRenderer(path: Path, paint: TextPaint? = null) {
     val renderer = ShapeItemRenderer(canvasViewBox)
     renderer.addShape(path, paint)
-    addCentreItemRenderer(renderer)
+    addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
     selectedItem(renderer)
 }
 
@@ -82,7 +83,7 @@ fun CanvasView.addShapeRenderer(path: Path, paint: TextPaint? = null) {
 fun CanvasView.addDrawableRenderer(drawable: Drawable) {
     val renderer = DrawableItemRenderer<DrawableItem>(canvasViewBox)
     renderer.rendererItem = DrawableItem().apply { this.drawable = drawable }
-    addCentreItemRenderer(renderer)
+    addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
     selectedItem(renderer)
 }
 
@@ -108,7 +109,7 @@ fun CanvasView.addDrawableRenderer(
             drawText(text, 0f, height - paint.descent(), paint)
         })
     }
-    addCentreItemRenderer(renderer)
+    addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
     selectedItem(renderer)
 }
 
@@ -116,7 +117,7 @@ fun CanvasView.addDrawableRenderer(
 fun CanvasView.addBitmapRenderer(bitmap: Bitmap) {
     val renderer = BitmapItemRenderer(canvasViewBox)
     renderer.updateBitmap(bitmap)
-    addCentreItemRenderer(renderer)
+    addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
     selectedItem(renderer)
 }
 
@@ -124,7 +125,7 @@ fun CanvasView.addBitmapRenderer(bitmap: Bitmap) {
 fun CanvasView.addPictureTextRender(text: String) {
     val renderer = PictureItemRenderer(canvasViewBox)
     renderer.addTextRender(text)
-    addCentreItemRenderer(renderer)
+    addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
     selectedItem(renderer)
 }
 
@@ -132,6 +133,6 @@ fun CanvasView.addPictureTextRender(text: String) {
 fun CanvasView.addPictureShapeRender(path: Path) {
     val renderer = PictureItemRenderer(canvasViewBox)
     renderer.addShapeRender(path)
-    addCentreItemRenderer(renderer)
+    addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
     selectedItem(renderer)
 }

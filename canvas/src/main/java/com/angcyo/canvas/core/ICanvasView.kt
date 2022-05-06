@@ -30,6 +30,10 @@ interface ICanvasView : IComponent {
     /**当[CanvasViewBox]的坐标单位改变时触发*/
     fun dispatchCoordinateSystemUnitChanged(valueUnit: IValueUnit) {}
 
+    /**分发回退/恢复栈发生改变
+     * [CanvasUndoManager]*/
+    fun dispatchCanvasUndoChanged() {}
+
     //</editor-fold desc="dispatch">
 
     //<editor-fold desc="listener">

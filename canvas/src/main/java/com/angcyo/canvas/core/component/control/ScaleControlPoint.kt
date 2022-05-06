@@ -7,6 +7,7 @@ import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.component.CanvasTouchHandler
 import com.angcyo.canvas.core.component.ControlPoint
+import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils._tempMatrix
@@ -77,6 +78,12 @@ class ScaleControlPoint : ControlPoint() {
     var touchDiffWidth = 0f
     var touchDiffHeight = 0f
 
+    /**按下时, 记录bounds 用于恢复*/
+    val touchItemBounds = RectF()
+
+    //是否缩放过
+    var isScaled = false
+
     init {
         drawable = _drawable(R.drawable.canvas_control_point_scale)
     }
@@ -88,10 +95,14 @@ class ScaleControlPoint : ControlPoint() {
     ): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
+                touchItemBounds.setEmpty()
+                isScaled = false
+
                 _touchPoint.set(event.x, event.y)
                 val bounds = itemRenderer.getBounds()
                 _touchRectWidth = bounds.width()
                 _touchRectHeight = bounds.height()
+                touchItemBounds.set(bounds)
 
                 //左上角锚点坐标
                 rectScaleAnchorPoint.set(bounds.left, bounds.top)
@@ -182,6 +193,7 @@ class ScaleControlPoint : ControlPoint() {
                             }
                         }
 
+                        isScaled = true
                         view.smartAssistant.smartChangeBounds(
                             itemRenderer,
                             isLockScaleRatio,
@@ -226,6 +238,31 @@ class ScaleControlPoint : ControlPoint() {
 
                 //旧方法
                 //handleActionMove(view, itemRenderer, event)
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+
+                if (!touchItemBounds.isEmpty && isScaled) {
+                    itemRenderer.let {
+
+                        val originBounds = RectF(touchItemBounds)
+                        val newBounds = RectF(it.getBounds())
+
+                        view.undoManager.addUndoAction(object : ICanvasStep {
+
+                            override fun runUndo() {
+                                it.changeBounds {
+                                    set(originBounds)
+                                }
+                            }
+
+                            override fun runRedo() {
+                                it.changeBounds {
+                                    set(newBounds)
+                                }
+                            }
+                        })
+                    }
+                }
             }
         }
         return true

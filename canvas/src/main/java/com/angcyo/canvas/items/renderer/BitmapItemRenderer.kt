@@ -5,7 +5,9 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.RectF
 import androidx.core.graphics.withMatrix
+import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.BitmapItem
 import com.angcyo.canvas.utils.limitMaxWidthHeight
 import com.angcyo.library.ex.*
@@ -55,9 +57,15 @@ class BitmapItemRenderer(canvasViewBox: CanvasViewBox) :
     }
 
     /**更新需要绘制的图片, 并保持原先的缩放比例*/
-    fun updateBitmap(bitmap: Bitmap) {
-        val maxWidth = getBounds().width()
-        val maxHeight = getBounds().height()
+    fun updateBitmap(bitmap: Bitmap, strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)) {
+        val oldValue = rendererItem?.bitmap
+        if (oldValue == bitmap) {
+            return
+        }
+
+        val oldBounds = RectF(getBounds())
+        val maxWidth = oldBounds.width()
+        val maxHeight = oldBounds.height()
 
         rendererItem = BitmapItem().apply { this.bitmap = bitmap }
 
@@ -77,6 +85,25 @@ class BitmapItemRenderer(canvasViewBox: CanvasViewBox) :
             updateBounds(newWidth.toFloat(), newHeight.toFloat())
         }
         refresh()
+
+        val newBounds = RectF(getBounds())
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL && oldValue != null) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    rendererItem?.bitmap = oldValue
+                    changeBounds {
+                        set(oldBounds)
+                    }
+                }
+
+                override fun runRedo() {
+                    rendererItem?.bitmap = bitmap
+                    changeBounds {
+                        set(newBounds)
+                    }
+                }
+            })
+        }
 
         /*val oldWidth = rendererItem?.bitmap?.width ?: 0
         val oldHeight = rendererItem?.bitmap?.height ?: 0

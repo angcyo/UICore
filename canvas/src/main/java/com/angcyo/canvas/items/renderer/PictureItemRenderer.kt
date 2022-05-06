@@ -3,9 +3,12 @@ package com.angcyo.canvas.items.renderer
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Typeface
+import android.widget.LinearLayout
 import com.angcyo.canvas.LinePath
+import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.component.ControlPoint
+import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.PictureItem
 import com.angcyo.canvas.items.PictureShapeItem
 import com.angcyo.canvas.items.PictureTextItem
@@ -64,18 +67,60 @@ class PictureItemRenderer(canvasViewBox: CanvasViewBox) :
     }
 
     /**更新笔的样式*/
-    fun updatePaintStyle(style: Paint.Style) {
+    fun updatePaintStyle(
+        style: Paint.Style,
+        strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
+    ) {
+        val oldValue = rendererItem?.paint?.style
+        if (oldValue == style) {
+            return
+        }
         wrapItemUpdate {
             paint.style = style
             updatePaint()
         }
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    updatePaintStyle(
+                        oldValue ?: Paint.Style.STROKE,
+                        Strategy(Strategy.STRATEGY_TYPE_UNDO)
+                    )
+                }
+
+                override fun runRedo() {
+                    updatePaintStyle(style, Strategy(Strategy.STRATEGY_TYPE_REDO))
+                }
+            })
+        }
     }
 
     /**更新画笔绘制文本时的对齐方式*/
-    fun updatePaintAlign(align: Paint.Align) {
+    fun updatePaintAlign(
+        align: Paint.Align,
+        strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
+    ) {
+        val oldValue = rendererItem?.paint?.textAlign
+        if (oldValue == align) {
+            return
+        }
         wrapItemUpdate {
             paint.textAlign = align
             updatePaint()
+        }
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    updatePaintAlign(
+                        oldValue ?: Paint.Align.LEFT,
+                        Strategy(Strategy.STRATEGY_TYPE_UNDO)
+                    )
+                }
+
+                override fun runRedo() {
+                    updatePaintAlign(align, Strategy(Strategy.STRATEGY_TYPE_REDO))
+                }
+            })
         }
     }
 
@@ -93,27 +138,84 @@ class PictureItemRenderer(canvasViewBox: CanvasViewBox) :
     }
 
     /**更新渲染的文本*/
-    fun updateItemText(text: String) {
+    fun updateItemText(text: String, strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)) {
+        val item = rendererItem
+        val oldValue = if (item is PictureTextItem) {
+            item.text
+        } else {
+            null
+        }
+        if (oldValue == text) {
+            return
+        }
         wrapItemUpdate {
             if (this is PictureTextItem) {
                 this.text = text
                 updatePaint()
             }
         }
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL && oldValue != null) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    updateItemText(oldValue, Strategy(Strategy.STRATEGY_TYPE_UNDO))
+                }
+
+                override fun runRedo() {
+                    updateItemText(text, Strategy(Strategy.STRATEGY_TYPE_REDO))
+                }
+            })
+        }
     }
 
     /**更新文本样式*/
-    fun updateTextStyle(style: Int) {
+    fun updateTextStyle(style: Int, strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)) {
+        val item = rendererItem
+        val oldValue = if (item is PictureTextItem) {
+            item.textStyle
+        } else {
+            null
+        }
+        if (oldValue == style) {
+            return
+        }
         wrapItemUpdate {
             if (this is PictureTextItem) {
                 textStyle = style
                 updatePaint()
             }
         }
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    updateTextStyle(
+                        oldValue ?: PictureTextItem.TEXT_STYLE_NONE,
+                        Strategy(Strategy.STRATEGY_TYPE_UNDO)
+                    )
+                }
+
+                override fun runRedo() {
+                    updateTextStyle(style, Strategy(Strategy.STRATEGY_TYPE_REDO))
+                }
+            })
+        }
     }
 
     /**激活文本样式*/
-    fun enableTextStyle(style: Int, enable: Boolean = true) {
+    fun enableTextStyle(
+        style: Int,
+        enable: Boolean = true,
+        strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
+    ) {
+        val item = rendererItem
+        val oldValue = if (item is PictureTextItem) {
+            item.textStyle
+        } else {
+            null
+        }
+        if (oldValue == style) {
+            return
+        }
+        var newValue = oldValue
         wrapItemUpdate {
             if (this is PictureTextItem) {
                 textStyle = if (enable) {
@@ -121,28 +223,99 @@ class PictureItemRenderer(canvasViewBox: CanvasViewBox) :
                 } else {
                     textStyle.remove(style)
                 }
+                newValue = textStyle
                 updatePaint()
             }
+        }
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    updateTextStyle(
+                        oldValue ?: PictureTextItem.TEXT_STYLE_NONE,
+                        Strategy(Strategy.STRATEGY_TYPE_UNDO)
+                    )
+                }
+
+                override fun runRedo() {
+                    updateTextStyle(
+                        newValue ?: PictureTextItem.TEXT_STYLE_NONE,
+                        Strategy(Strategy.STRATEGY_TYPE_REDO)
+                    )
+                }
+            })
         }
     }
 
     /**更新笔的字体*/
-    fun updateTextTypeface(typeface: Typeface?) {
+    fun updateTextTypeface(
+        typeface: Typeface?,
+        strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
+    ) {
+        val oldValue = rendererItem?.paint?.typeface
+        if (oldValue == typeface) {
+            return
+        }
         wrapItemUpdate {
             if (this is PictureTextItem) {
                 paint.typeface = typeface
                 updatePaint()
             }
         }
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    updateTextTypeface(
+                        oldValue ?: Typeface.DEFAULT,
+                        Strategy(Strategy.STRATEGY_TYPE_UNDO)
+                    )
+                }
+
+                override fun runRedo() {
+                    updateTextTypeface(
+                        typeface,
+                        Strategy(Strategy.STRATEGY_TYPE_REDO)
+                    )
+                }
+            })
+        }
     }
 
     /**更新文本的方向*/
-    fun updateTextOrientation(orientation: Int) {
+    fun updateTextOrientation(
+        orientation: Int,
+        strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
+    ) {
+        val item = rendererItem
+        val oldValue = if (item is PictureTextItem) {
+            item.orientation
+        } else {
+            null
+        }
+        if (oldValue == orientation) {
+            return
+        }
         wrapItemUpdate {
             if (this is PictureTextItem) {
                 this.orientation = orientation
                 updatePaint()
             }
+        }
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    updateTextOrientation(
+                        oldValue ?: LinearLayout.HORIZONTAL,
+                        Strategy(Strategy.STRATEGY_TYPE_UNDO)
+                    )
+                }
+
+                override fun runRedo() {
+                    updateTextOrientation(
+                        orientation,
+                        Strategy(Strategy.STRATEGY_TYPE_REDO)
+                    )
+                }
+            })
         }
     }
 
@@ -160,12 +333,38 @@ class PictureItemRenderer(canvasViewBox: CanvasViewBox) :
     }
 
     /**更新渲染的Path*/
-    fun updateItemPath(path: Path) {
+    fun updateItemPath(path: Path, strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)) {
+        val item = rendererItem
+        val oldValue = if (item is PictureShapeItem) {
+            item.shapePath
+        } else {
+            null
+        }
+        if (oldValue == path) {
+            return
+        }
         wrapItemUpdate {
             if (this is PictureShapeItem) {
                 this.shapePath = path
                 updatePaint()
             }
+        }
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL && oldValue != null) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    updateItemPath(
+                        oldValue,
+                        Strategy(Strategy.STRATEGY_TYPE_UNDO)
+                    )
+                }
+
+                override fun runRedo() {
+                    updateItemPath(
+                        path,
+                        Strategy(Strategy.STRATEGY_TYPE_REDO)
+                    )
+                }
+            })
         }
     }
 

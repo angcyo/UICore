@@ -5,6 +5,7 @@ import android.view.MotionEvent
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.component.ControlPoint
+import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.library.L
 import com.angcyo.library.ex._drawable
@@ -27,6 +28,10 @@ class RotateControlPoint : ControlPoint() {
     /**每次移动旋转的角度*/
     var angle = 0f
 
+    /**按下时, 元素的旋转角度, 用于恢复*/
+    var touchItemRotate: Float = Float.NaN
+    var isRotated: Boolean = false
+
     init {
         drawable = _drawable(R.drawable.canvas_control_point_rotate)
     }
@@ -41,6 +46,9 @@ class RotateControlPoint : ControlPoint() {
                 _touchPoint.set(event.x, event.y)
                 val bounds = itemRenderer.getVisualBounds()
                 _centerPoint.set(bounds.centerX(), bounds.centerY())
+
+                isRotated = false
+                touchItemRotate = itemRenderer.rotate
             }
             MotionEvent.ACTION_MOVE -> {
                 _movePoint.set(event.x, event.y)
@@ -57,11 +65,34 @@ class RotateControlPoint : ControlPoint() {
                 if (angle != 0f) {
                     L.i("即将旋转:$angle °")
                     val assistant = view.smartAssistant.smartRotateBy(itemRenderer, angle)
+                    isRotated = true
                     _touchPoint.set(_movePoint)
                 }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 angle = 0f
+                if (!touchItemRotate.isNaN() && isRotated) {
+                    val originRotate = touchItemRotate
+                    val newRotate = itemRenderer.rotate
+
+                    itemRenderer.let {
+
+                        view.undoManager.addUndoAction(object : ICanvasStep {
+
+                            override fun runUndo() {
+                                it.changeBounds {
+                                    it.rotate = originRotate
+                                }
+                            }
+
+                            override fun runRedo() {
+                                it.changeBounds {
+                                    it.rotate = newRotate
+                                }
+                            }
+                        })
+                    }
+                }
             }
         }
         return true

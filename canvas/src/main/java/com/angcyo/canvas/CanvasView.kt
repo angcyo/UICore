@@ -6,11 +6,13 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.graphics.withClip
 import androidx.core.graphics.withMatrix
 import androidx.core.graphics.withRotation
 import androidx.core.graphics.withTranslation
+import com.angcyo.canvas.Strategy.Companion.STRATEGY_TYPE_NORMAL
+import com.angcyo.canvas.Strategy.Companion.STRATEGY_TYPE_REDO
+import com.angcyo.canvas.Strategy.Companion.STRATEGY_TYPE_UNDO
 import com.angcyo.canvas.core.*
 import com.angcyo.canvas.core.component.*
 import com.angcyo.canvas.core.renderer.*
@@ -393,6 +395,13 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }*/
     }
 
+    override fun dispatchCanvasUndoChanged() {
+        super.dispatchCanvasUndoChanged()
+        canvasListenerList.forEach {
+            it.onCanvasUndoChanged(getCanvasUndoManager())
+        }
+    }
+
     override fun getCanvasUndoManager(): CanvasUndoManager = undoManager
 
     //</editor-fold desc="关键方法">
@@ -462,11 +471,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     /**默认在当前视图中心添加一个绘制元素*/
-    fun addCentreItemRenderer(
-        item: BaseItemRenderer<*>,
-        width: Float = ViewGroup.LayoutParams.WRAP_CONTENT.toFloat(),
-        height: Float = ViewGroup.LayoutParams.WRAP_CONTENT.toFloat()
-    ) {
+    fun addCentreItemRenderer(item: BaseItemRenderer<*>, strategy: Strategy) {
         if (canvasViewBox.isCanvasInit()) {
             itemsRendererList.add(item)
             val bounds = item.getBounds()
@@ -474,18 +479,8 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
                 if (bounds.isEmpty) {
                     item.onCanvasSizeChanged(this)
                 }
-
-                var _width = if (width == ViewGroup.LayoutParams.WRAP_CONTENT.toFloat()) {
-                    bounds.width()
-                } else {
-                    width
-                }
-
-                var _height = if (height == ViewGroup.LayoutParams.WRAP_CONTENT.toFloat()) {
-                    bounds.height()
-                } else {
-                    height
-                }
+                var _width = bounds.width()
+                var _height = bounds.height()
 
                 if (_width > 0 && _height > 0) {
                     //当前可视化的中点坐标
@@ -507,13 +502,25 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
                 }
             }
             postInvalidateOnAnimation()
+
+            if (strategy.type == STRATEGY_TYPE_NORMAL) {
+                undoManager.addUndoAction(object : ICanvasStep {
+                    override fun runUndo() {
+                        removeItemRenderer(item, Strategy(STRATEGY_TYPE_UNDO))
+                    }
+
+                    override fun runRedo() {
+                        addItemRenderer(item, Strategy(STRATEGY_TYPE_REDO))
+                    }
+                })
+            }
         } else {
-            pendingTaskList.add(Runnable { addCentreItemRenderer(item, width, height) })
+            pendingTaskList.add(Runnable { addCentreItemRenderer(item, strategy) })
         }
     }
 
     /**添加一个绘制元素*/
-    fun addItemRenderer(item: BaseItemRenderer<*>) {
+    fun addItemRenderer(item: BaseItemRenderer<*>, strategy: Strategy) {
         if (canvasViewBox.isCanvasInit()) {
             itemsRendererList.add(item)
             if (item is BaseItemRenderer) {
@@ -522,18 +529,42 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
                 }
             }
             postInvalidateOnAnimation()
+
+            if (strategy.type == STRATEGY_TYPE_NORMAL) {
+                undoManager.addUndoAction(object : ICanvasStep {
+                    override fun runUndo() {
+                        removeItemRenderer(item, Strategy(STRATEGY_TYPE_UNDO))
+                    }
+
+                    override fun runRedo() {
+                        addItemRenderer(item, Strategy(STRATEGY_TYPE_REDO))
+                    }
+                })
+            }
         } else {
-            pendingTaskList.add(Runnable { addItemRenderer(item) })
+            pendingTaskList.add(Runnable { addItemRenderer(item, strategy) })
         }
     }
 
     /**移除一个绘制元素*/
-    fun removeItemRenderer(item: BaseItemRenderer<*>) {
+    fun removeItemRenderer(item: BaseItemRenderer<*>, strategy: Strategy) {
         itemsRendererList.remove(item)
         if (controlHandler.selectedItemRender == item) {
             selectedItem(null)
         }
         postInvalidateOnAnimation()
+
+        if (strategy.type == STRATEGY_TYPE_NORMAL) {
+            undoManager.addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    addItemRenderer(item, Strategy(STRATEGY_TYPE_UNDO))
+                }
+
+                override fun runRedo() {
+                    removeItemRenderer(item, Strategy(STRATEGY_TYPE_REDO))
+                }
+            })
+        }
     }
 
     /**选中item[BaseItemRenderer]*/

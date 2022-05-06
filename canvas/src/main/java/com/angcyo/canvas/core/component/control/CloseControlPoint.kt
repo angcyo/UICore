@@ -2,6 +2,7 @@ package com.angcyo.canvas.core.component.control
 
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.R
+import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.library.ex._drawable
@@ -17,6 +18,6 @@ class CloseControlPoint : ControlPoint() {
     }
 
     override fun onClickControlPoint(view: CanvasView, itemRenderer: BaseItemRenderer<*>) {
-        view.removeItemRenderer(itemRenderer)
+        view.removeItemRenderer(itemRenderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
     }
 }

@@ -83,6 +83,8 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
         onItemBoundsChanged()
         //notify
         canvasViewBox.canvasView.dispatchItemBoundsChanged(this)
+        //invalidate
+        refresh()
     }
 
     override fun onUpdateRendererItem(item: T?, oldItem: T?) {

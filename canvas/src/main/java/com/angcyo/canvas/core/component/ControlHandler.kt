@@ -11,6 +11,7 @@ import com.angcyo.canvas.core.component.control.CloseControlPoint
 import com.angcyo.canvas.core.component.control.LockControlPoint
 import com.angcyo.canvas.core.component.control.RotateControlPoint
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
+import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.mapPoint
@@ -62,6 +63,12 @@ class ControlHandler : BaseComponent() {
     //是否双击在同一个[BaseItemRenderer]中
     var isDoubleTouch: Boolean = false
 
+    /**按下时, 记录bounds 用于恢复*/
+    val touchItemBounds = RectF()
+
+    //是否移动过
+    var isTranslated = false
+
     //</editor-fold desc="控制点">
 
     /**手势处理
@@ -73,11 +80,16 @@ class ControlHandler : BaseComponent() {
         val selectedItemRender = selectedItemRender
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
+                touchItemBounds.setEmpty()
+                isTranslated = false
+
                 touchPointerId = event.getPointerId(0)
                 _touchPoint.set(event.x, event.y)
                 val touchPoint = _touchPoint
 
                 if (selectedItemRender != null) {
+                    touchItemBounds.set(selectedItemRender.getBounds())
+
                     //已经有选中, 则查找控制点
                     val controlPoint = findItemControlPoint(view.canvasViewBox, touchPoint)
                     touchControlPoint = controlPoint
@@ -147,6 +159,7 @@ class ControlHandler : BaseComponent() {
 
                             if (dx1 != 0f || dy1 != 0f) {
                                 handle = true
+                                isTranslated = true
                                 view.smartAssistant.smartTranslateItemBy(
                                     selectedItemRender,
                                     dx1,
@@ -170,6 +183,27 @@ class ControlHandler : BaseComponent() {
                 }
                 //双击回调
                 selectedItemRender?.let {
+
+                    if (!touchItemBounds.isEmpty && isTranslated) {
+                        val originBounds = RectF(touchItemBounds)
+                        val newBounds = RectF(it.getBounds())
+
+                        view.undoManager.addUndoAction(object : ICanvasStep {
+
+                            override fun runUndo() {
+                                it.changeBounds {
+                                    set(originBounds)
+                                }
+                            }
+
+                            override fun runRedo() {
+                                it.changeBounds {
+                                    set(newBounds)
+                                }
+                            }
+                        })
+                    }
+
                     if (isDoubleTouch) {
                         handle = true
                         view.doubleTapItem(it)
