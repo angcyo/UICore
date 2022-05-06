@@ -395,19 +395,19 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     //<editor-fold desc="操作方法">
 
     fun getBitmap(): Bitmap {
-        val contentWidth = canvasViewBox.getContentWidth()
-        val contentHeight = canvasViewBox.getContentHeight()
+        //val contentWidth = canvasViewBox.getContentWidth()
+        //val contentHeight = canvasViewBox.getContentHeight()
 
         var left = 0f
         var top = 0f
-        var right = contentWidth
-        var bottom = contentHeight
+        var right = 0f
+        var bottom = 0f
 
         itemsRendererList.forEach {
             val bounds = it.getBounds().adjustFlipRect(_tempRectF)
             left = min(left, bounds.left)
             top = min(top, bounds.top)
-            right = max(left, bounds.right)
+            right = max(right, bounds.right)
             bottom = max(bottom, bounds.bottom)
         }
 

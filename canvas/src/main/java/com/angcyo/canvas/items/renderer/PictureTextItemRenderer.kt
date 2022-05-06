@@ -90,13 +90,14 @@ class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
     }
 
     /**添加一个文本用来渲染*/
-    fun addTextRender(text: String, paint: TextPaint) {
+    fun addTextRender(text: String, paint: TextPaint): PictureTextItem {
         rendererItem = PictureTextItem().apply {
             this.paint = paint
             updatePaint(paint)
             this.text = text
         }
         updateTextDrawable()
+        return rendererItem as PictureTextItem
     }
 
     /**更新文本样式*/

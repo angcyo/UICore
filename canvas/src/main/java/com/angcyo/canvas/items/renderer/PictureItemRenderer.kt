@@ -1,5 +1,6 @@
 package com.angcyo.canvas.items.renderer
 
+import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Typeface
@@ -9,6 +10,7 @@ import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.renderer.ICanvasStep
+import com.angcyo.canvas.items.PictureBitmapItem
 import com.angcyo.canvas.items.PictureItem
 import com.angcyo.canvas.items.PictureShapeItem
 import com.angcyo.canvas.items.PictureTextItem
@@ -129,12 +131,13 @@ class PictureItemRenderer(canvasViewBox: CanvasViewBox) :
     //<editor-fold desc="文本渲染操作方法">
 
     /**添加一个文本用来渲染*/
-    fun addTextRender(text: String) {
+    fun addTextRender(text: String): PictureTextItem {
         rendererItem = PictureTextItem().apply {
             this.text = text
             updatePaint()
         }
         updatePictureDrawableBounds()
+        return rendererItem as PictureTextItem
     }
 
     /**更新渲染的文本*/
@@ -324,12 +327,13 @@ class PictureItemRenderer(canvasViewBox: CanvasViewBox) :
     //<editor-fold desc="Shapes渲染操作方法">
 
     /**添加一个文本用来渲染*/
-    fun addShapeRender(path: Path) {
+    fun addShapeRender(path: Path): PictureShapeItem {
         rendererItem = PictureShapeItem().apply {
             this.shapePath = path
             updatePaint()
         }
         updatePictureDrawableBounds()
+        return rendererItem as PictureShapeItem
     }
 
     /**更新渲染的Path*/
@@ -369,5 +373,60 @@ class PictureItemRenderer(canvasViewBox: CanvasViewBox) :
     }
 
     //</editor-fold desc="Shapes渲染操作方法">
+
+    //<editor-fold desc="Bitmap渲染操作方法">
+
+    /**添加一个图片用来渲染*/
+    fun addBitmapRender(bitmap: Bitmap): PictureBitmapItem {
+        rendererItem = PictureBitmapItem().apply {
+            this.bitmap = bitmap
+            updatePaint()
+        }
+        updatePictureDrawableBounds()
+        return rendererItem as PictureBitmapItem
+    }
+
+    /**更新需要绘制的图片, 并保持原先的缩放比例*/
+    fun updateItemBitmap(
+        bitmap: Bitmap,
+        strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
+    ) {
+        val item = rendererItem
+        val oldValue = if (item is PictureBitmapItem) {
+            item.bitmap
+        } else {
+            null
+        }
+        if (oldValue == bitmap) {
+            return
+        }
+
+        wrapItemUpdate {
+            if (this is PictureBitmapItem) {
+                this.bitmap = bitmap
+                updatePaint()
+            }
+        }
+
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL && oldValue != null) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    updateItemBitmap(
+                        oldValue,
+                        Strategy(Strategy.STRATEGY_TYPE_UNDO)
+                    )
+                }
+
+                override fun runRedo() {
+                    updateItemBitmap(
+                        bitmap,
+                        Strategy(Strategy.STRATEGY_TYPE_REDO)
+                    )
+                }
+            })
+        }
+    }
+
+    //</editor-fold desc="Bitmap渲染操作方法">
 
 }

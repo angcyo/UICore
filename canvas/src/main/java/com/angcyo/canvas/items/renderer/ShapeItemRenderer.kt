@@ -23,7 +23,7 @@ class ShapeItemRenderer(canvasViewBox: CanvasViewBox) :
 
     /**添加一个shape
      * [Path] 请注意需要从0,0的位置开始绘制*/
-    fun addShape(path: Path, paint: TextPaint? = null) {
+    fun addShape(path: Path, paint: TextPaint? = null): ShapeItem {
         val bounds = getBounds()
         path.computeBounds(bounds, true)
         shapeBounds.set(bounds)
@@ -39,6 +39,7 @@ class ShapeItemRenderer(canvasViewBox: CanvasViewBox) :
                 })
         }
         refresh()
+        return rendererItem!!
     }
 
     /**添加一个矩形, 坐标是相对于坐标系的坐标*/

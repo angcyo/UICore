@@ -11,6 +11,12 @@ import com.angcyo.library.ex.dp
  */
 abstract class BaseItem : ICanvasItem {
 
+    /**标签, 自定义的属性, 用来区分数据*/
+    var tag: String? = null
+
+    /**用来存放自定义的数据*/
+    var data: Any? = null
+
     /**自身实际的宽*/
     var itemWidth: Float = 0f
 

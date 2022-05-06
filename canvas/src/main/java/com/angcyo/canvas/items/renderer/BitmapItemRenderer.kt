@@ -57,10 +57,13 @@ class BitmapItemRenderer(canvasViewBox: CanvasViewBox) :
     }
 
     /**更新需要绘制的图片, 并保持原先的缩放比例*/
-    fun updateBitmap(bitmap: Bitmap, strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)) {
+    fun updateBitmap(
+        bitmap: Bitmap,
+        strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
+    ): BitmapItem {
         val oldValue = rendererItem?.bitmap
         if (oldValue == bitmap) {
-            return
+            return rendererItem!!
         }
 
         val oldBounds = RectF(getBounds())
@@ -120,5 +123,7 @@ class BitmapItemRenderer(canvasViewBox: CanvasViewBox) :
             updateBounds(newWidth.toFloat(), newHeight.toFloat())
         }
         refresh()*/
+
+        return rendererItem as BitmapItem
     }
 }
