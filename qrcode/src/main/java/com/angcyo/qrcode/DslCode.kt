@@ -73,22 +73,22 @@ fun Fragment?.dslCode(action: DslCode.() -> Unit) {
 }
 
 /**使用字符串, 创建二维码*/
-fun String.createQRCode(
+fun CharSequence.createQRCode(
     size: Int = 100 * dpi,
     foregroundColor: Int = Color.BLACK,
     backgroundColor: Int = Color.WHITE,
     logo: Bitmap? = null
-): Bitmap? = RCode.syncEncodeQRCode(this, size, foregroundColor, backgroundColor, logo)
+): Bitmap? = RCode.syncEncodeQRCode(this.toString(), size, foregroundColor, backgroundColor, logo)
 
 /**使用字符串, 创建条形码, 不支持中文*/
-fun String.createBarCode(
-    width: Int = 3000,
-    height: Int = 700,
+fun CharSequence.createBarCode(
+    width: Int = 300 * dpi,
+    height: Int = 100 * dpi,
     foregroundColor: Int = Color.BLACK,
     backgroundColor: Int = Color.WHITE,
     logo: Bitmap? = null
 ): Bitmap? = RCode.syncEncodeCode(
-    this,
+    this.toString(),
     width,
     height,
     foregroundColor,
