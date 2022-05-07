@@ -4,7 +4,6 @@ import com.angcyo.library.L
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.absoluteValue
 import kotlin.math.ceil
 
 /**
@@ -508,9 +507,10 @@ fun Calendar.addDay(amount: Int) {
     add(Calendar.DAY_OF_MONTH, amount)
 }
 
-/**返回2个日期的间隔天数(正数) */
+/**返回2个日期的间隔天数
+ * [other] 小值*/
 fun Calendar.distance(other: Calendar): Long {
     val t1 = timeInMillis
     val t2 = other.timeInMillis
-    return (t1 - t2).absoluteValue / DAY_MILLIS
+    return (t1 - t2) / DAY_MILLIS
 }
