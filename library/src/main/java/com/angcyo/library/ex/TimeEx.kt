@@ -4,6 +4,7 @@ import com.angcyo.library.L
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.absoluteValue
 import kotlin.math.ceil
 
 /**
@@ -498,4 +499,18 @@ fun getTodayTimeBucket(date: Date): String {
         in 18..23 -> "晚上 " + timeFormatter1to12.format(date)
         else -> ""
     }
+}
+
+/**在日期上进行 加/减
+ * [amount] 数量, -5表示减5天
+ * */
+fun Calendar.addDay(amount: Int) {
+    add(Calendar.DAY_OF_MONTH, amount)
+}
+
+/**返回2个日期的间隔天数(正数) */
+fun Calendar.distance(other: Calendar): Long {
+    val t1 = timeInMillis
+    val t2 = other.timeInMillis
+    return (t1 - t2).absoluteValue / DAY_MILLIS
 }
