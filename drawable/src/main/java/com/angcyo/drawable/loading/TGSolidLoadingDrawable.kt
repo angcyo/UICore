@@ -7,6 +7,8 @@ import kotlin.math.min
 
 /**
  * 模仿Telegram 加载动画
+ * 圆形填充背景, 指示器在内圈旋转
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2022/04/16

@@ -7,6 +7,9 @@ import kotlin.math.min
 
 /**
  * 模仿Telegram 加载动画
+ *
+ * 指示器在圆圈上滚动, 可以通过偏移让指示器在内圈滚动
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2022/04/16
