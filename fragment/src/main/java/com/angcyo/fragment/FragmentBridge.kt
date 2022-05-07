@@ -200,3 +200,16 @@ fun Context.requestPermissions(
         }
     }
 }
+
+/**快速回调[ActivityResult]*/
+fun requestActivityResult(
+    fragmentManager: FragmentManager?,
+    intent: Intent?,
+    requestCode: Int = FragmentBridge.generateCode(),
+    options: Bundle? = null,
+    observer: ActivityResult
+) {
+    dslBridge(fragmentManager) {
+        startActivityForResult(intent, requestCode, options, observer)
+    }
+}

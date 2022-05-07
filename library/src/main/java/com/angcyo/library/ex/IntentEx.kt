@@ -12,7 +12,6 @@ import android.provider.MediaStore
 import android.provider.Settings
 import android.text.TextUtils
 import com.angcyo.library.L
-import com.angcyo.library.app
 import com.angcyo.library.component.queryActivities
 
 /**
@@ -49,7 +48,8 @@ fun Intent.uriConfig(context: Context, uri: Uri?) {
     baseConfig(context)
 }
 
-/**系统拍照[android.Manifest.permission.CAMERA]*/
+/**系统拍照
+ * 需要权限[android.Manifest.permission.CAMERA]*/
 fun takePhotoIntent(context: Context, saveUri: Uri?): Intent? {
     val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
     intent.uriConfig(context, saveUri)
@@ -59,7 +59,8 @@ fun takePhotoIntent(context: Context, saveUri: Uri?): Intent? {
     return null
 }
 
-/**系统录制[android.Manifest.permission.CAMERA]*/
+/**系统录制
+ * 需要权限[android.Manifest.permission.CAMERA]*/
 fun takeVideoIntent(
     context: Context,
     saveUri: Uri?,

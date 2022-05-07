@@ -43,14 +43,18 @@ data class SystemBatchBean(
 
 object SysIntent {
 
-    /**调用系统的界面选择图片*/
+    /**调用系统的界面选择图片
+     * 从系统相册选择图片
+     * val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)*/
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     fun getPhoto(fragment: Fragment, requestCode: Int) {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "*/*"
-        val mimetypes = arrayOf("image/*", "video/*")
-        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes)
+        intent.type = "image/*"
+
+        //intent.type = "*/*"
+        //val mimetypes = arrayOf("image/*", "video/*")
+        //intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes)
 
         fragment.startActivityForResult(intent, requestCode)
     }
@@ -233,7 +237,12 @@ fun ActivityResultCaller.pickContactLauncher(callback: ActivityResultCallback<Ur
     return registerForActivityResult(ActivityResultContracts.PickContact(), callback)
 }
 
-/**获取内容, 选择文件/图片/等*/
+/**获取内容, 选择文件/图片/等
+ * launcher?.launch("*\*")
+ * launcher?.launch("image\*")
+ * launcher?.launch("video\*")
+ * val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+ **/
 fun ActivityResultCaller.getContentLauncher(callback: ActivityResultCallback<Uri?>): ActivityResultLauncher<String> {
     return registerForActivityResult(ActivityResultContracts.GetContent(), callback)
 }
