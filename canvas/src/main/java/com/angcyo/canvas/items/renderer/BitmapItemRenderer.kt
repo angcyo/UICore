@@ -59,6 +59,7 @@ class BitmapItemRenderer(canvasViewBox: CanvasViewBox) :
     /**更新需要绘制的图片, 并保持原先的缩放比例*/
     fun updateBitmap(
         bitmap: Bitmap,
+        keepBounds: Boolean = false,
         strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
     ): BitmapItem {
         val oldValue = rendererItem?.bitmap
@@ -70,22 +71,28 @@ class BitmapItemRenderer(canvasViewBox: CanvasViewBox) :
         val maxWidth = oldBounds.width()
         val maxHeight = oldBounds.height()
 
-        rendererItem = BitmapItem().apply { this.bitmap = bitmap }
-
-        val newWidth = rendererItem?.bitmap?.width ?: 0
-        val newHeight = rendererItem?.bitmap?.height ?: 0
-
-        if (maxWidth > 0 && maxHeight > 0) {
-            limitMaxWidthHeight(
-                newWidth.toFloat(),
-                newHeight.toFloat(),
-                maxWidth,
-                maxHeight
-            ).apply {
-                updateBounds(this[0], this[1])
-            }
+        if (rendererItem == null) {
+            rendererItem = BitmapItem().apply { this.bitmap = bitmap }
         } else {
-            updateBounds(newWidth.toFloat(), newHeight.toFloat())
+            rendererItem?.bitmap = bitmap
+        }
+
+        if (!keepBounds) {
+            val newWidth = rendererItem?.bitmap?.width ?: 0
+            val newHeight = rendererItem?.bitmap?.height ?: 0
+
+            if (maxWidth > 0 && maxHeight > 0) {
+                limitMaxWidthHeight(
+                    newWidth.toFloat(),
+                    newHeight.toFloat(),
+                    maxWidth,
+                    maxHeight
+                ).apply {
+                    updateBounds(this[0], this[1])
+                }
+            } else {
+                updateBounds(newWidth.toFloat(), newHeight.toFloat())
+            }
         }
         refresh()
 

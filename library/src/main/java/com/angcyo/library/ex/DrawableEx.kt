@@ -89,7 +89,7 @@ fun Drawable?.tintDrawableColor(color: Int): Drawable? {
 
 /**初始化bounds*/
 fun Drawable.initBounds(width: Int = undefined_int, height: Int = undefined_int): Drawable {
-    if (bounds.isEmpty) {
+    if (bounds.isNoSize()) {
         val w = if (width == undefined_int) minimumWidth else width
         val h = if (height == undefined_int) minimumHeight else height
         bounds.set(0, 0, w, h)

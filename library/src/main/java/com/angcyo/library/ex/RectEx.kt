@@ -1,6 +1,7 @@
 package com.angcyo.library.ex
 
 import android.graphics.Matrix
+import android.graphics.Rect
 import android.graphics.RectF
 import kotlin.math.max
 import kotlin.math.min
@@ -29,6 +30,11 @@ const val ADJUST_TYPE_LB = 0x12
 
 val _tempRectF = RectF()
 val _tempMatrix = Matrix()
+
+/**矩形没有大小*/
+fun RectF.isNoSize() = width() == 0f || height() == 0f
+
+fun Rect.isNoSize() = width() == 0 || height() == 0
 
 /**调整矩形大小*/
 fun RectF.adjustSize(width: Float, height: Float, adjustType: Int = ADJUST_TYPE_CENTER) {

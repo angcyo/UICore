@@ -7,10 +7,7 @@ import android.graphics.RectF
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.ScalePictureDrawable
 import com.angcyo.canvas.core.MmValueUnit
-import com.angcyo.library.ex.ceil
-import com.angcyo.library.ex.density
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.withPicture
+import com.angcyo.library.ex.*
 import kotlin.math.roundToInt
 
 /**
@@ -50,7 +47,7 @@ class PictureShapeItem : PictureItem() {
 
             val shapeWidth = if (itemWidth > 0) {
                 itemWidth
-            } else if (!shapeBounds.isEmpty) {
+            } else if (!shapeBounds.isNoSize()) {
                 shapeBounds.width() + strokeWidth
             } else {
                 unit.convertValueToPixel(SHAPE_DEFAULT_WIDTH) + strokeWidth
@@ -58,7 +55,7 @@ class PictureShapeItem : PictureItem() {
 
             val shapeHeight = if (itemHeight > 0) {
                 itemHeight
-            } else if (!shapeBounds.isEmpty) {
+            } else if (!shapeBounds.isNoSize()) {
                 shapeBounds.height() + strokeWidth
             } else {
                 unit.convertValueToPixel(SHAPE_DEFAULT_HEIGHT) + strokeWidth
@@ -70,7 +67,7 @@ class PictureShapeItem : PictureItem() {
             val drawable = ScalePictureDrawable(withPicture(drawableWidth, drawableHeight) {
                 var dx = strokeWidth / 2
                 var dy = dx
-                if (!shapeBounds.isEmpty) {
+                if (!shapeBounds.isNoSize()) {
                     dx -= shapeBounds.left
                     dy -= shapeBounds.top
                 }

@@ -170,7 +170,7 @@ class ControlHandler(val canvasView: CanvasView) : BaseComponent(), ICanvasTouch
                 }
                 //平移的撤销
                 selectedItemRender?.let {
-                    if (!touchItemBounds.isEmpty && isTranslated) {
+                    if (!touchItemBounds.isNoSize() && isTranslated) {
                         canvasView.undoManager.addUndoAction(object : ICanvasStep {
                             val item = it
                             val originBounds = RectF(touchItemBounds)

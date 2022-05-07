@@ -24,6 +24,7 @@ import com.angcyo.canvas.utils.limitMaxWidthHeight
 import com.angcyo.library.ex.ADJUST_TYPE_LT
 import com.angcyo.library.ex.adjustFlipRect
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.isNoSize
 import kotlin.math.max
 import kotlin.math.min
 
@@ -462,7 +463,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
             itemsRendererList.add(item)
             val bounds = item.getBounds()
             if (item is BaseItemRenderer) {
-                if (bounds.isEmpty) {
+                if (bounds.isNoSize()) {
                     item.onCanvasSizeChanged(this)
                 }
                 var _width = bounds.width()
@@ -510,7 +511,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         if (canvasViewBox.isCanvasInit()) {
             itemsRendererList.add(item)
             if (item is BaseItemRenderer) {
-                if (item._renderBounds.isEmpty) {
+                if (item._renderBounds.isNoSize()) {
                     item.onCanvasSizeChanged(this)
                 }
             }

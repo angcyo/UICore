@@ -15,6 +15,7 @@ import com.angcyo.canvas.items.PictureItem
 import com.angcyo.canvas.items.PictureShapeItem
 import com.angcyo.canvas.items.PictureTextItem
 import com.angcyo.library.ex.add
+import com.angcyo.library.ex.isNoSize
 import com.angcyo.library.ex.remove
 
 /**
@@ -43,7 +44,7 @@ class PictureItemRenderer(canvasViewBox: CanvasViewBox) :
             val bounds = getBounds()
             val newWith = item.itemWidth
             val newHeight = item.itemHeight
-            if (bounds.isEmpty || oldWidth == 0f || oldHeight == 0f) {
+            if (bounds.isNoSize() || oldWidth == 0f || oldHeight == 0f) {
                 //首次更新bounds
                 updateBounds(newWith, newHeight)
             } else {

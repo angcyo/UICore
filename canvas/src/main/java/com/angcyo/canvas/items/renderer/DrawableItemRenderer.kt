@@ -29,7 +29,7 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasViewBox: CanvasViewBox) 
         super.onUpdateRendererItem(item, oldItem)
         if (item != oldItem) {
             val bounds = getBounds()
-            if (bounds.isEmpty) {
+            if (bounds.isNoSize()) {
                 initBounds()
             }
         }

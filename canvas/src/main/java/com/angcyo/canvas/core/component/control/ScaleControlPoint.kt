@@ -16,6 +16,7 @@ import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.library.ex.ADJUST_TYPE_CENTER
 import com.angcyo.library.ex.ADJUST_TYPE_LT
 import com.angcyo.library.ex._drawable
+import com.angcyo.library.ex.isNoSize
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -241,7 +242,7 @@ class ScaleControlPoint : ControlPoint() {
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
 
-                if (!touchItemBounds.isEmpty && isScaled) {
+                if (!touchItemBounds.isNoSize() && isScaled) {
                     itemRenderer.let {
                         view.undoManager.addUndoAction(object : ICanvasStep {
                             val item = it

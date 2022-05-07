@@ -76,7 +76,7 @@ class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
                 })
             val textWidth = getTextWidth()
             val textHeight = getTextHeight()
-            if (textBounds.isEmpty) {
+            if (textBounds.isNoSize()) {
                 textBounds.set(0f, 0f, textWidth, textHeight)
                 updateBounds(textWidth, textHeight)
             } else {

@@ -32,14 +32,18 @@ object GCodeHelper {
      * */
     var amendGCodeCmd: Boolean = true
 
-    fun parseGCode(context: Context, text: String): GCodeDrawable {
+    fun parseGCode(
+        context: Context,
+        text: String,
+        paint: Paint = createPaint(Color.BLACK)
+    ): GCodeDrawable {
         //1毫米等于多少像素
         val dm: DisplayMetrics = context.resources.displayMetrics
         val mmPixel = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_MM, 1f, dm) //21.176456
 
         //1英寸等于多少像素, 1英寸=2.54厘米=25.4毫米
         val inPixel = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, 1f, dm) //537.882
-        return parseGCode(text, mmPixel, inPixel)
+        return parseGCode(text, mmPixel, inPixel, paint)
     }
 
     /**
@@ -47,14 +51,19 @@ object GCodeHelper {
      * [inRatio] 英寸单位时, 需要放大的比例
      * */
     @WorkerThread
-    fun parseGCode(text: String, mmRatio: Float, inRatio: Float): GCodeDrawable {
+    fun parseGCode(
+        text: String,
+        mmRatio: Float,
+        inRatio: Float,
+        paint: Paint = createPaint(Color.BLACK)
+    ): GCodeDrawable {
         val gCodeLineDataList = mutableListOf<GCodeLineData>()
         _lastRatio = mmRatio // 默认使用毫米单位
         text.lines().forEach { line ->
             val gCodeLineData = _parseGCodeLine(line, mmRatio, inRatio)
             gCodeLineDataList.add(gCodeLineData)
         }
-        return createGCodeDrawable(gCodeLineDataList)
+        return createGCodeDrawable(gCodeLineDataList, paint)
     }
 
     /**[GCodeDrawable]*/

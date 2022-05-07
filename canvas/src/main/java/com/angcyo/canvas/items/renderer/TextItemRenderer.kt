@@ -61,7 +61,7 @@ class TextItemRenderer(canvasViewBox: CanvasViewBox) :
 
     override fun onCanvasSizeChanged(canvasView: CanvasView) {
         super.onCanvasSizeChanged(canvasView)
-        if (_renderBounds.isEmpty) {
+        if (_renderBounds.isNoSize()) {
             changeBounds {
                 set(0f, 0f, getTextWidth(), getTextHeight())
             }
