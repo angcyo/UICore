@@ -4,7 +4,7 @@ import android.graphics.Canvas
 import androidx.core.graphics.withClip
 import androidx.core.graphics.withSave
 import androidx.core.graphics.withTranslation
-import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.BaseAxis
 import com.angcyo.canvas.core.component.XAxis
@@ -18,12 +18,12 @@ import com.angcyo.library.ex.have
 class XAxisRenderer(val axis: XAxis, canvasView: ICanvasView) :
     BaseAxisRenderer(canvasView) {
 
-    override fun onCanvasSizeChanged(canvasView: CanvasView) {
+    override fun onCanvasSizeChanged(canvasView: CanvasDelegate) {
         super.onCanvasSizeChanged(canvasView)
         _renderBounds.set(
             0f,
             0f,
-            canvasView.measuredWidth.toFloat(),
+            canvasView.viewBounds.width(),
             axis.axisSize
         )
     }

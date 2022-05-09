@@ -4,7 +4,7 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
-import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
@@ -19,7 +19,7 @@ import kotlin.math.absoluteValue
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/22
  */
-class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListener {
+class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasListener {
 
     /**提示线的坐标*/
     val smartLineList = mutableListOf<RectF>()
@@ -55,7 +55,7 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
         canvasView.addCanvasListener(this)
     }
 
-    override fun onCanvasTouchEvent(canvasView: CanvasView, event: MotionEvent): Boolean {
+    override fun onCanvasTouchEvent(canvasView: CanvasDelegate, event: MotionEvent): Boolean {
         if (event.actionMasked == MotionEvent.ACTION_CANCEL || event.actionMasked == MotionEvent.ACTION_UP) {
             smartLineList.clear()
             canvasView.refresh()

@@ -4,6 +4,7 @@ import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.RectF
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.renderer.BaseRenderer
@@ -96,7 +97,11 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         isLockScaleRatio = lock
     }
 
-    override fun onCanvasBoxMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
+    override fun onCanvasBoxMatrixUpdate(
+        canvasView: CanvasDelegate,
+        matrix: Matrix,
+        oldValue: Matrix
+    ) {
         //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
         onItemBoundsChanged()
     }

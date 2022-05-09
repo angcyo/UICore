@@ -3,7 +3,7 @@ package com.angcyo.canvas.core.component
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
-import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 
 /**
@@ -40,7 +40,7 @@ open class ControlPoint : BaseComponent() {
     var isTouchDownIn: Boolean = false
 
     open fun onTouch(
-        view: CanvasView,
+        view: CanvasDelegate,
         itemRenderer: BaseItemRenderer<*>,
         event: MotionEvent
     ): Boolean {
@@ -61,7 +61,7 @@ open class ControlPoint : BaseComponent() {
     }
 
     /**当点击控制点时回调*/
-    open fun onClickControlPoint(view: CanvasView, itemRenderer: BaseItemRenderer<*>) {
+    open fun onClickControlPoint(view: CanvasDelegate, itemRenderer: BaseItemRenderer<*>) {
         //点击控制点后的操作
     }
 }

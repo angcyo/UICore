@@ -5,6 +5,7 @@ import android.graphics.*
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import androidx.annotation.WorkerThread
+import com.angcyo.canvas.core.EntryPoint
 import com.angcyo.canvas.core.component.CanvasTouchHandler
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.library.L
@@ -197,6 +198,7 @@ object GCodeHelper {
         private var _lastY = 0f
 
         /**入口, 开始解析[GCodeLineData]*/
+        @EntryPoint
         fun parse(
             gCodeLineDataList: List<GCodeLineData>,
             paint: Paint = createPaint(Color.BLUE)

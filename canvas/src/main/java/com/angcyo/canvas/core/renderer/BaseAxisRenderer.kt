@@ -4,7 +4,7 @@ import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.PointF
-import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.IValueUnit
 import com.angcyo.canvas.core.component.BaseAxis
@@ -41,7 +41,11 @@ abstract class BaseAxisRenderer(canvasView: ICanvasView) : BaseRenderer(canvasVi
         style = Paint.Style.FILL
     }
 
-    override fun onCanvasBoxMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
+    override fun onCanvasBoxMatrixUpdate(
+        canvasView: CanvasDelegate,
+        matrix: Matrix,
+        oldValue: Matrix
+    ) {
         //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
         updateAxisData()
     }

@@ -4,7 +4,7 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
 import androidx.core.graphics.contains
-import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasTouch
 import com.angcyo.canvas.core.component.control.CloseControlPoint
@@ -24,7 +24,7 @@ import com.angcyo.library.ex.*
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/08
  */
-class ControlHandler(val canvasView: CanvasView) : BaseComponent(), ICanvasTouch {
+class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasTouch {
 
     /**当前选中的[IItemRenderer]*/
     var selectedItemRender: BaseItemRenderer<*>? = null
@@ -79,7 +79,7 @@ class ControlHandler(val canvasView: CanvasView) : BaseComponent(), ICanvasTouch
 
     /**手势处理
      * [com.angcyo.canvas.CanvasView.onTouchEvent]*/
-    override fun onCanvasTouchEvent(canvasView: CanvasView, event: MotionEvent): Boolean {
+    override fun onCanvasTouchEvent(canvasView: CanvasDelegate, event: MotionEvent): Boolean {
         doubleGestureDetector.onTouchEvent(event)
 
         var handle = isDoubleTouch
@@ -133,11 +133,13 @@ class ControlHandler(val canvasView: CanvasView) : BaseComponent(), ICanvasTouch
                             //canvasView.canvasViewBox.matrix.mapPoint(_touchPointList[0])
                             //val p2 = _tempMatrix.mapPoint(_touchPointList[0])//_touchPointList[0]
 
-                            val p1 = canvasView.getCanvasViewBox().mapCoordinateSystemPoint(_movePoint)
+                            val p1 =
+                                canvasView.getCanvasViewBox().mapCoordinateSystemPoint(_movePoint)
                             val p1x = p1.x
                             val p1y = p1.y
 
-                            val p2 = canvasView.getCanvasViewBox().mapCoordinateSystemPoint(_touchPoint)
+                            val p2 =
+                                canvasView.getCanvasViewBox().mapCoordinateSystemPoint(_touchPoint)
                             val p2x = p2.x
                             val p2y = p2.y
 

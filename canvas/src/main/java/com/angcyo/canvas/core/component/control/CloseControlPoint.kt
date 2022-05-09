@@ -1,6 +1,6 @@
 package com.angcyo.canvas.core.component.control
 
-import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.component.ControlPoint
@@ -17,7 +17,7 @@ class CloseControlPoint : ControlPoint() {
         drawable = _drawable(R.drawable.canvas_control_point_close)
     }
 
-    override fun onClickControlPoint(view: CanvasView, itemRenderer: BaseItemRenderer<*>) {
+    override fun onClickControlPoint(view: CanvasDelegate, itemRenderer: BaseItemRenderer<*>) {
         view.removeItemRenderer(itemRenderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
     }
 }

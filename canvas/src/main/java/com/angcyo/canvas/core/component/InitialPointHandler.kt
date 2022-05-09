@@ -2,7 +2,7 @@ package com.angcyo.canvas.core.component
 
 import android.graphics.RectF
 import android.view.MotionEvent
-import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.CanvasDelegate
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -14,7 +14,7 @@ class InitialPointHandler : BaseComponent() {
     val initialPointRect: RectF = RectF()
     var isTouchDownInInitial = false
 
-    fun onTouch(view: CanvasView, event: MotionEvent): Boolean {
+    fun onTouch(view: CanvasDelegate, event: MotionEvent): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 initialPointRect.set(

@@ -28,21 +28,25 @@ fun CanvasView.addPictureTextRenderer(
         textSize = 12 * dp
     }
 ): PictureTextItem {
-    val renderer = PictureTextItemRenderer(this)
-    val result = renderer.addTextRender(text, paint)
-    addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
-    selectedItem(renderer)
-    return result
+    canvasDelegate.apply {
+        val renderer = PictureTextItemRenderer(this)
+        val result = renderer.addTextRender(text, paint)
+        addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
+        selectedItem(renderer)
+        return result
+    }
 }
 
 /**添加一个文本渲染器*/
 @Deprecated("废弃")
 fun CanvasView.addTextRenderer(text: String): PictureTextItem {
-    val renderer = TextItemRenderer(this)
-    renderer.rendererItem = PictureTextItem().apply { this.text = text }
-    addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
-    selectedItem(renderer)
-    return renderer.rendererItem!!
+    canvasDelegate.apply {
+        val renderer = TextItemRenderer(this)
+        renderer.rendererItem = PictureTextItem().apply { this.text = text }
+        addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
+        selectedItem(renderer)
+        return renderer.rendererItem!!
+    }
 }
 
 /**添加一根横线
@@ -55,39 +59,45 @@ fun CanvasView.addLineRenderer(
     orientation: Int = LinearLayout.VERTICAL,
     dash: Boolean = false
 ): LineItem {
-    val renderer = LineItemRenderer(this)
-    renderer.rendererItem = LineItem().apply {
-        this.length = length
-        this.orientation = orientation
-        this.dash = dash
-        if (dash) {
-            this.paint.style = Paint.Style.STROKE
-            //因为是用矩形的方式绘制的线, 所以虚线的间隔和长度必须一致
-            this.paint.pathEffect = DashPathEffect(floatArrayOf(4 * density, 5 * density), 0f)
+    canvasDelegate.apply {
+        val renderer = LineItemRenderer(this)
+        renderer.rendererItem = LineItem().apply {
+            this.length = length
+            this.orientation = orientation
+            this.dash = dash
+            if (dash) {
+                this.paint.style = Paint.Style.STROKE
+                //因为是用矩形的方式绘制的线, 所以虚线的间隔和长度必须一致
+                this.paint.pathEffect = DashPathEffect(floatArrayOf(4 * density, 5 * density), 0f)
+            }
         }
+        addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
+        selectedItem(renderer)
+        return renderer.rendererItem!!
     }
-    addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
-    selectedItem(renderer)
-    return renderer.rendererItem!!
 }
 
 /**添加一个形状渲染器*/
 @Deprecated("废弃")
 fun CanvasView.addShapeRenderer(path: Path, paint: TextPaint? = null): ShapeItem {
-    val renderer = ShapeItemRenderer(this)
-    val result = renderer.addShape(path, paint)
-    addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
-    selectedItem(renderer)
-    return result
+    canvasDelegate.apply {
+        val renderer = ShapeItemRenderer(this)
+        val result = renderer.addShape(path, paint)
+        addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
+        selectedItem(renderer)
+        return result
+    }
 }
 
 /**添加一个[Drawable]渲染器*/
 fun CanvasView.addDrawableRenderer(drawable: Drawable): DrawableItem {
-    val renderer = DrawableItemRenderer<DrawableItem>(this)
-    renderer.rendererItem = DrawableItem().apply { this.drawable = drawable }
-    addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
-    selectedItem(renderer)
-    return renderer.rendererItem!!
+    canvasDelegate.apply {
+        val renderer = DrawableItemRenderer<DrawableItem>(this)
+        renderer.rendererItem = DrawableItem().apply { this.drawable = drawable }
+        addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
+        selectedItem(renderer)
+        return renderer.rendererItem!!
+    }
 }
 
 /**添加一个[Bitmap]渲染器*/
@@ -104,53 +114,63 @@ fun CanvasView.addDrawableRenderer(
         textSize = 12 * dp
     }
 ): DrawableItem {
-    val renderer = DrawableItemRenderer<DrawableItem>(this)
-    renderer.rendererItem = DrawableItem().apply {
-        val width = paint.textWidth(text)
-        val height = paint.textHeight()
-        this.drawable = ScalePictureDrawable(withPicture(width.toInt(), height.toInt()) {
-            drawText(text, 0f, height - paint.descent(), paint)
-        })
+    canvasDelegate.apply {
+        val renderer = DrawableItemRenderer<DrawableItem>(this)
+        renderer.rendererItem = DrawableItem().apply {
+            val width = paint.textWidth(text)
+            val height = paint.textHeight()
+            this.drawable = ScalePictureDrawable(withPicture(width.toInt(), height.toInt()) {
+                drawText(text, 0f, height - paint.descent(), paint)
+            })
+        }
+        addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
+        selectedItem(renderer)
+        return renderer.rendererItem!!
     }
-    addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
-    selectedItem(renderer)
-    return renderer.rendererItem!!
 }
 
 /**添加一个[Bitmap]渲染器
  * [BitmapItemRenderer]*/
 fun CanvasView.addBitmapRenderer(bitmap: Bitmap): BitmapItem {
-    val renderer = BitmapItemRenderer(this)
-    val result = renderer.updateBitmap(bitmap)
-    addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
-    selectedItem(renderer)
-    return result
+    canvasDelegate.apply {
+        val renderer = BitmapItemRenderer(this)
+        val result = renderer.updateBitmap(bitmap)
+        addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
+        selectedItem(renderer)
+        return result
+    }
 }
 
 /**添加一个[Bitmap]渲染器
  * [PictureItemRenderer]*/
 fun CanvasView.addPictureBitmapRenderer(bitmap: Bitmap): PictureBitmapItem {
-    val renderer = PictureItemRenderer(this)
-    val result = renderer.addBitmapRender(bitmap)
-    addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
-    selectedItem(renderer)
-    return result
+    canvasDelegate.apply {
+        val renderer = PictureItemRenderer(this)
+        val result = renderer.addBitmapRender(bitmap)
+        addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
+        selectedItem(renderer)
+        return result
+    }
 }
 
 /**添加一个文本渲染器*/
 fun CanvasView.addPictureTextRender(text: String): PictureTextItem {
-    val renderer = PictureItemRenderer(this)
-    val result = renderer.addTextRender(text)
-    addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
-    selectedItem(renderer)
-    return result
+    canvasDelegate.apply {
+        val renderer = PictureItemRenderer(this)
+        val result = renderer.addTextRender(text)
+        addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
+        selectedItem(renderer)
+        return result
+    }
 }
 
 /**添加一个形状渲染器*/
 fun CanvasView.addPictureShapeRender(path: Path): PictureShapeItem {
-    val renderer = PictureItemRenderer(this)
-    val result = renderer.addShapeRender(path)
-    addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
-    selectedItem(renderer)
-    return result
+    canvasDelegate.apply {
+        val renderer = PictureItemRenderer(this)
+        val result = renderer.addShapeRender(path)
+        addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
+        selectedItem(renderer)
+        return result
+    }
 }

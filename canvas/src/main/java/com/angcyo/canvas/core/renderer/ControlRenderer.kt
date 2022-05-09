@@ -5,7 +5,7 @@ import androidx.core.graphics.withRotation
 import androidx.core.graphics.withScale
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.BuildConfig
-import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.ICanvasView
@@ -46,7 +46,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
     val isTouchHold: Boolean
         get() {
             val canvasView = canvasViewBox.canvasView
-            if (canvasView is CanvasView) {
+            if (canvasView is CanvasDelegate) {
                 return canvasView.isTouchHold
             }
             return false
@@ -56,7 +56,11 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
         canvasViewBox.canvasView.addCanvasListener(this)
     }
 
-    override fun onCanvasBoxMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
+    override fun onCanvasBoxMatrixUpdate(
+        canvasView: CanvasDelegate,
+        matrix: Matrix,
+        oldValue: Matrix
+    ) {
         super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
         updateControlPointLocation()
     }

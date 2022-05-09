@@ -3,6 +3,7 @@ package com.angcyo.canvas.core
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.RectF
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.CanvasView
 
 /**
@@ -38,13 +39,13 @@ interface IRenderer {
     /**当[CanvasView]大小改变时的回调
      * 更新需要渲染的区域, 真实的坐标. 非[Matrix]后的坐标
      * [com.angcyo.canvas.CanvasView.onSizeChanged]*/
-    fun onCanvasSizeChanged(canvasView: CanvasView)
+    fun onCanvasSizeChanged(canvasView: CanvasDelegate)
 
     /**当[CanvasView]中,[CanvasViewBox]的[Matrix]改变时的回调
      * 当视图改变后的回调
      * 可以用来计算数据, 并缓存
      * [com.angcyo.canvas.CanvasView.canvasMatrixUpdate]*/
-    fun onCanvasBoxMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix)
+    fun onCanvasBoxMatrixUpdate(canvasView: CanvasDelegate, matrix: Matrix, oldValue: Matrix)
 
     //</editor-fold desc="回调">
 

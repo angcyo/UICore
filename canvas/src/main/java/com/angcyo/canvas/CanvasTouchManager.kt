@@ -1,23 +1,28 @@
 package com.angcyo.canvas
 
 import android.view.MotionEvent
+import com.angcyo.canvas.core.EntryPoint
 import com.angcyo.canvas.core.ICanvasTouch
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/05/06
  */
-class CanvasTouchManager(val canvasView: CanvasView) {
+class CanvasTouchManager(val canvasView: CanvasDelegate) {
+
+    /**手指是否按下*/
+    var isTouchHold: Boolean = false
 
     /**拦截手势处理*/
     var interceptCanvasTouch: ICanvasTouch? = null
 
     /**入口*/
+    @EntryPoint
     fun onTouchEvent(event: MotionEvent): Boolean {
         val touch = interceptCanvasTouch
 
         //
-        canvasView.isTouchHold = when (event.actionMasked) {
+        isTouchHold = when (event.actionMasked) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> true
             else -> false
         }

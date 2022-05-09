@@ -2,7 +2,7 @@ package com.angcyo.canvas.core.renderer
 
 import android.graphics.Matrix
 import android.graphics.RectF
-import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.IRenderer
@@ -45,12 +45,16 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
     /**此[_visualBounds]是相对于视图左上角原点的坐标*/
     override fun getVisualBounds(): RectF = _visualBounds
 
-    override fun onCanvasSizeChanged(canvasView: CanvasView) {
+    override fun onCanvasSizeChanged(canvasView: CanvasDelegate) {
         //no op
     }
 
     /**当[CanvasViewBox]坐标系发生改变时, 实时更新[_visualBounds]*/
-    override fun onCanvasBoxMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
+    override fun onCanvasBoxMatrixUpdate(
+        canvasView: CanvasDelegate,
+        matrix: Matrix,
+        oldValue: Matrix
+    ) {
         canvasViewBox.calcItemRenderBounds(getBounds(), getRenderBounds())
         canvasViewBox.calcItemVisualBounds(getRenderBounds(), getVisualBounds())
     }

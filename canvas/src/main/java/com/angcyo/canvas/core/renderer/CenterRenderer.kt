@@ -2,6 +2,7 @@ package com.angcyo.canvas.core.renderer
 
 import android.graphics.Canvas
 import android.graphics.Color
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.utils.createPaint
 
@@ -10,7 +11,7 @@ import com.angcyo.canvas.utils.createPaint
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/08
  */
-class CenterRenderer(canvasView: CanvasView) :
+class CenterRenderer(canvasView: CanvasDelegate) :
     BaseRenderer(canvasView) {
 
     val paint = createPaint(Color.RED).apply {

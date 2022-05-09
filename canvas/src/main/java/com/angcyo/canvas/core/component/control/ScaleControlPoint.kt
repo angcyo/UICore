@@ -3,6 +3,7 @@ package com.angcyo.canvas.core.component.control
 import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.component.CanvasTouchHandler
@@ -90,7 +91,7 @@ class ScaleControlPoint : ControlPoint() {
     }
 
     override fun onTouch(
-        view: CanvasView,
+        view: CanvasDelegate,
         itemRenderer: BaseItemRenderer<*>,
         event: MotionEvent
     ): Boolean {

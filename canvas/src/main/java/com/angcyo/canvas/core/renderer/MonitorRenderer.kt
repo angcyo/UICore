@@ -10,7 +10,7 @@ import android.text.StaticLayout
 import android.view.MotionEvent
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.BuildConfig
-import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.convertPixelToValueUnit
@@ -42,11 +42,11 @@ class MonitorRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView), ICanv
         canvasViewBox.canvasView.addCanvasListener(this)
     }
 
-    override fun onCanvasSizeChanged(canvasView: CanvasView) {
+    override fun onCanvasSizeChanged(canvasView: CanvasDelegate) {
         super.onCanvasSizeChanged(canvasView)
     }
 
-    override fun onCanvasTouchEvent(canvasView: CanvasView, event: MotionEvent): Boolean {
+    override fun onCanvasTouchEvent(canvasView: CanvasDelegate, event: MotionEvent): Boolean {
         super.onCanvasTouchEvent(canvasView, event)
         val action = event.actionMasked
         _isTouchDown = action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE
@@ -57,7 +57,11 @@ class MonitorRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView), ICanv
         return false
     }
 
-    override fun onCanvasBoxMatrixUpdate(canvasView: CanvasView, matrix: Matrix, oldValue: Matrix) {
+    override fun onCanvasBoxMatrixUpdate(
+        canvasView: CanvasDelegate,
+        matrix: Matrix,
+        oldValue: Matrix
+    ) {
         //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
     }
 

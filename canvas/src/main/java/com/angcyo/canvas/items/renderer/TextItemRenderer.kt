@@ -1,7 +1,7 @@
 package com.angcyo.canvas.items.renderer
 
 import android.graphics.*
-import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.PictureTextItem
@@ -59,7 +59,7 @@ class TextItemRenderer(canvasView: ICanvasView) :
         item.paint.getTextBounds(text, 0, text.length, textBounds)
     }
 
-    override fun onCanvasSizeChanged(canvasView: CanvasView) {
+    override fun onCanvasSizeChanged(canvasView: CanvasDelegate) {
         super.onCanvasSizeChanged(canvasView)
         if (_renderBounds.isNoSize()) {
             changeBounds {

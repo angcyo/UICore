@@ -1,6 +1,6 @@
 package com.angcyo.canvas.core.component.control
 
-import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
@@ -27,7 +27,7 @@ class LockControlPoint : ControlPoint() {
         drawable = _drawable(R.drawable.canvas_control_point_lock)
     }
 
-    override fun onClickControlPoint(view: CanvasView, itemRenderer: BaseItemRenderer<*>) {
+    override fun onClickControlPoint(view: CanvasDelegate, itemRenderer: BaseItemRenderer<*>) {
         super.onClickControlPoint(view, itemRenderer)
         view.controlHandler.setLockScaleRatio(!isLockScaleRatio)
     }

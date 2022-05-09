@@ -2,11 +2,12 @@ package com.angcyo.canvas.core.component
 
 import android.graphics.PointF
 import android.view.MotionEvent
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.core.EntryPoint
 import com.angcyo.canvas.core.ICanvasTouch
 import com.angcyo.library.component.DoubleGestureDetector2
 import com.angcyo.library.ex.abs
-import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
 import kotlin.math.atan2
 import kotlin.math.min
@@ -16,7 +17,7 @@ import kotlin.math.sqrt
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/02
  */
-class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), ICanvasTouch {
+class CanvasTouchHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasTouch {
 
     companion object {
 
@@ -118,7 +119,7 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), ICanvasT
     var isDoubleTouch: Boolean = false
 
     /**双击检测*/
-    val doubleGestureDetector = DoubleGestureDetector2(canvasView.context) { event ->
+    val doubleGestureDetector = DoubleGestureDetector2 { event ->
         if (canvasView.controlHandler.selectedItemRender == null) {
             isDoubleTouch = true
             //双击
@@ -133,7 +134,8 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), ICanvasT
     }
 
     /**入口*/
-    override fun onCanvasTouchEvent(canvasView: CanvasView, event: MotionEvent): Boolean {
+    @EntryPoint
+    override fun onCanvasTouchEvent(canvasView: CanvasDelegate, event: MotionEvent): Boolean {
         initialPointHandler.onTouch(canvasView, event)
         doubleGestureDetector.onTouchEvent(event)
         when (event.actionMasked) {
@@ -195,7 +197,7 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), ICanvasT
     val _moveDistanceList: MutableList<PointF> = mutableListOf()
 
     /**处理手势移动, 平移/缩放*/
-    fun handleActionMove(view: CanvasView) {
+    fun handleActionMove(view: CanvasDelegate) {
         _moveDistanceList.clear()
 
         val dx1 = _movePointList[0].x - _touchPointList[0].x
