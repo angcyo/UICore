@@ -2,7 +2,7 @@ package com.angcyo.canvas.items.renderer
 
 import android.graphics.*
 import com.angcyo.canvas.CanvasView
-import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.PictureTextItem
 import com.angcyo.library.ex.*
@@ -19,8 +19,8 @@ import kotlin.math.tan
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
 @Deprecated("效果不好, 请使用[PictureItemRenderer]")
-class TextItemRenderer(canvasViewBox: CanvasViewBox) :
-    BaseItemRenderer<PictureTextItem>(canvasViewBox) {
+class TextItemRenderer(canvasView: ICanvasView) :
+    BaseItemRenderer<PictureTextItem>(canvasView) {
 
     /**Bounds*/
     val textBounds = Rect()

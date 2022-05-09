@@ -39,12 +39,13 @@ class CanvasTouchManager(val canvasView: CanvasView) {
 
         //判断拦截
         canvasView.canvasListenerList.forEach {
-            if (it.onCanvasInterceptTouchEvent(canvasView, event)) {
+            if (interceptCanvasTouch == null && it.onCanvasInterceptTouchEvent(canvasView, event)) {
                 interceptCanvasTouch = it
+
+                _checkInterceptTouch(event)?.let {
+                    return it
+                }
             }
-        }
-        if (interceptCanvasTouch != null) {
-            return interceptCanvasTouch!!.onCanvasTouchEvent(canvasView, event)
         }
 
         //
@@ -53,8 +54,8 @@ class CanvasTouchManager(val canvasView: CanvasView) {
                 interceptCanvasTouch = canvasView.controlHandler
             }
         }
-        if (interceptCanvasTouch != null) {
-            return interceptCanvasTouch!!.onCanvasTouchEvent(canvasView, event)
+        _checkInterceptTouch(event)?.let {
+            return it
         }
 
         //
@@ -63,8 +64,8 @@ class CanvasTouchManager(val canvasView: CanvasView) {
                 interceptCanvasTouch = canvasView.canvasTouchHandler
             }
         }
-        if (interceptCanvasTouch != null) {
-            return interceptCanvasTouch!!.onCanvasTouchEvent(canvasView, event)
+        _checkInterceptTouch(event)?.let {
+            return it
         }
 
         //手势处理
@@ -83,6 +84,42 @@ class CanvasTouchManager(val canvasView: CanvasView) {
         }
 
         return true
+    }
+
+    /**检查是否需要拦截事件*/
+    fun _checkInterceptTouch(event: MotionEvent): Boolean? {
+        if (interceptCanvasTouch != null) {
+            val result = interceptCanvasTouch!!.onCanvasTouchEvent(canvasView, event)
+            _dispatchCancelTouchEvent(event)
+            return result
+        }
+        return null
+    }
+
+    /**分发取消手势*/
+    fun _dispatchCancelTouchEvent(event: MotionEvent) {
+        val cancel = MotionEvent.obtain(event)
+        cancel.action = MotionEvent.ACTION_CANCEL
+
+        canvasView.canvasListenerList.forEach {
+            if (it != interceptCanvasTouch) {
+                it.onCanvasTouchEvent(canvasView, cancel)
+            }
+        }
+
+        if (canvasView.controlHandler.enable) {
+            if (canvasView.controlHandler != interceptCanvasTouch) {
+                canvasView.controlHandler.onCanvasTouchEvent(canvasView, cancel)
+            }
+        }
+
+        if (canvasView.canvasTouchHandler.enable) {
+            if (canvasView.canvasTouchHandler != interceptCanvasTouch) {
+                canvasView.canvasTouchHandler.onCanvasTouchEvent(canvasView, cancel)
+            }
+        }
+
+        cancel.recycle()
     }
 
 }

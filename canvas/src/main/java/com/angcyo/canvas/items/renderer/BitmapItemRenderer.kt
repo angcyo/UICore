@@ -6,7 +6,7 @@ import android.graphics.Matrix
 import android.graphics.RectF
 import androidx.core.graphics.withMatrix
 import com.angcyo.canvas.Strategy
-import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.BitmapItem
 import com.angcyo.canvas.utils.limitMaxWidthHeight
@@ -16,8 +16,8 @@ import com.angcyo.library.ex.*
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/22
  */
-class BitmapItemRenderer(canvasViewBox: CanvasViewBox) :
-    BaseItemRenderer<BitmapItem>(canvasViewBox) {
+class BitmapItemRenderer(canvasView: ICanvasView) :
+    BaseItemRenderer<BitmapItem>(canvasView) {
 
     val bitmapMatrix = Matrix()
 

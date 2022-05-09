@@ -7,8 +7,8 @@ import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.BuildConfig
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.R
-import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasListener
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.ControlHandler
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.control.RotateControlPoint
@@ -23,8 +23,8 @@ import com.angcyo.library.ex.*
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/08
  */
-class ControlRenderer(val controlHandler: ControlHandler, canvasViewBox: CanvasViewBox) :
-    BaseRenderer(canvasViewBox), ICanvasListener {
+class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasView) :
+    BaseRenderer(canvasView), ICanvasListener {
 
     /**用来绘制边框*/
     val paint = createPaint(_color(R.color.colorAccent)).apply {

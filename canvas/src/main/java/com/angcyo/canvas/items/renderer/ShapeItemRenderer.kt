@@ -4,7 +4,7 @@ import android.graphics.Path
 import android.graphics.RectF
 import android.text.TextPaint
 import com.angcyo.canvas.ScalePictureDrawable
-import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.items.ShapeItem
 import com.angcyo.library.ex.ceil
 import com.angcyo.library.ex.withPicture
@@ -16,8 +16,8 @@ import kotlin.math.roundToInt
  * @since 2022/04/22
  */
 @Deprecated("请使用[PictureItemRenderer]")
-class ShapeItemRenderer(canvasViewBox: CanvasViewBox) :
-    DrawableItemRenderer<ShapeItem>(canvasViewBox) {
+class ShapeItemRenderer(canvasView: ICanvasView) :
+    DrawableItemRenderer<ShapeItem>(canvasView) {
 
     val shapeBounds = RectF()
 

@@ -111,24 +111,25 @@ class ScaleControlPoint : ControlPoint() {
 
                 val x1: Float
                 val y1: Float
-                view.canvasViewBox.mapCoordinateSystemPoint(rectScaleAnchorPoint).apply {
+                view.getCanvasViewBox().mapCoordinateSystemPoint(rectScaleAnchorPoint).apply {
                     x1 = x
                     y1 = y
                 }
 
                 val x2: Float
                 val y2: Float
-                view.canvasViewBox.mapCoordinateSystemPoint(_touchPoint).apply {
+                view.getCanvasViewBox().mapCoordinateSystemPoint(_touchPoint).apply {
                     x2 = x
                     y2 = y
                 }
 
                 val cX: Float
                 val cY: Float
-                view.canvasViewBox.mapCoordinateSystemPoint((x2 + x1) / 2, (y2 + y1) / 2).apply {
-                    cX = x
-                    cY = y
-                }
+                view.getCanvasViewBox().mapCoordinateSystemPoint((x2 + x1) / 2, (y2 + y1) / 2)
+                    .apply {
+                        cX = x
+                        cY = y
+                    }
 
                 calcRotateBeforeDistance(
                     x1,
@@ -152,21 +153,21 @@ class ScaleControlPoint : ControlPoint() {
                 if (dx != 0f || dy != 0f) {
                     val x1: Float
                     val y1: Float
-                    view.canvasViewBox.mapCoordinateSystemPoint(rectScaleAnchorPoint).apply {
+                    view.getCanvasViewBox().mapCoordinateSystemPoint(rectScaleAnchorPoint).apply {
                         x1 = x
                         y1 = y
                     }
 
                     val x2: Float
                     val y2: Float
-                    view.canvasViewBox.mapCoordinateSystemPoint(_movePoint).apply {
+                    view.getCanvasViewBox().mapCoordinateSystemPoint(_movePoint).apply {
                         x2 = x
                         y2 = y
                     }
 
                     val cX: Float
                     val cY: Float
-                    view.canvasViewBox.mapCoordinateSystemPoint((x2 + x1) / 2, (y2 + y1) / 2)
+                    view.getCanvasViewBox().mapCoordinateSystemPoint((x2 + x1) / 2, (y2 + y1) / 2)
                         .apply {
                             cX = x
                             cY = y

@@ -38,7 +38,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     //<editor-fold desc="成员变量">
 
     /**视图控制*/
-    var canvasViewBox = CanvasViewBox(this)
+    var viewBox = CanvasViewBox(this)
 
     /**画布的手势, 用来处理画布的双指平移和捏合缩放*/
     var canvasTouchHandler = CanvasTouchHandler(this)
@@ -63,10 +63,12 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
     /**智能提示组件渲染*/
     var smartAssistantRenderer: SmartAssistantRenderer =
-        SmartAssistantRenderer(smartAssistant, canvasViewBox)
+        SmartAssistantRenderer(smartAssistant, this)
 
     /**限制框*/
-    var limitRenderer: LimitRenderer = LimitRenderer(canvasViewBox)
+    var limitRenderer: LimitRenderer = LimitRenderer(this)
+
+    var selectGroupRenderer: SelectGroupRenderer = SelectGroupRenderer(this)
 
     //</editor-fold desc="成员变量">
 
@@ -75,12 +77,12 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     var xAxis = XAxis()
 
     /**绘制在顶上的x轴*/
-    var xAxisRender = XAxisRenderer(xAxis, canvasViewBox)
+    var xAxisRender = XAxisRenderer(xAxis, this)
 
     var yAxis = YAxis()
 
     /**绘制在左边的y轴*/
-    var yAxisRender = YAxisRenderer(yAxis, canvasViewBox)
+    var yAxisRender = YAxisRenderer(yAxis, this)
 
     //</editor-fold desc="横纵坐标轴">
 
@@ -97,7 +99,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     var controlHandler = ControlHandler(this)
 
     /**控制器渲染*/
-    var controlRenderer = ControlRenderer(controlHandler, canvasViewBox)
+    var controlRenderer = ControlRenderer(controlHandler, this)
 
     /**手势处理*/
     var canvasTouchManager = CanvasTouchManager(this)
@@ -107,9 +109,9 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     //<editor-fold desc="关键方法">
 
     init {
-        rendererAfterList.add(MonitorRenderer(canvasViewBox))
+        rendererAfterList.add(MonitorRenderer(this))
         if (BuildConfig.DEBUG) {
-            rendererAfterList.add(CenterRenderer(this, canvasViewBox))
+            rendererAfterList.add(CenterRenderer(this))
         }
         rendererAfterList.add(smartAssistantRenderer)
     }
@@ -166,8 +168,8 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         } else {
             0f
         }
-        canvasViewBox.updateCoordinateSystemOriginPoint(l, t)
-        canvasViewBox.updateContentBox(l, t, w.toFloat(), h.toFloat())
+        getCanvasViewBox().updateCoordinateSystemOriginPoint(l, t)
+        getCanvasViewBox().updateContentBox(l, t, w.toFloat(), h.toFloat())
 
         //需要等待[canvasViewBox]测量后
         eachAllRenderer {
@@ -198,8 +200,8 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }
 
         //内容, 绘制内容时, 自动使用[matrix]
-        canvas.withClip(canvasViewBox.contentRect) {
-            canvas.withMatrix(canvasViewBox.matrix) {
+        canvas.withClip(getCanvasViewBox().contentRect) {
+            canvas.withMatrix(getCanvasViewBox().matrix) {
                 itemsRendererList.forEach {
                     if (it.isVisible()) {
                         //item的旋转, 在此处理
@@ -229,11 +231,11 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
         //限制框
         if (limitRenderer.isVisible()) {
-            canvas.withClip(canvasViewBox.contentRect) {
-                canvas.withMatrix(canvasViewBox.matrix) {
+            canvas.withClip(getCanvasViewBox().contentRect) {
+                canvas.withMatrix(getCanvasViewBox().matrix) {
                     canvas.withTranslation(
-                        canvasViewBox.getCoordinateSystemX(),
-                        canvasViewBox.getCoordinateSystemY()
+                        getCanvasViewBox().getCoordinateSystemX(),
+                        getCanvasViewBox().getCoordinateSystemY()
                     ) {
                         limitRenderer.render(canvas)
                     }
@@ -254,6 +256,8 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         postInvalidateOnAnimation()
     }
 
+    override fun getCanvasViewBox(): CanvasViewBox = viewBox
+
     /**将画板移动到可以完全显示出[rect]
      * [rect] 坐标系中的矩形坐标
      * [scale] 是否要缩放, 以适应过大的矩形
@@ -267,9 +271,9 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
         //中心需要偏移的距离量
         val translateX =
-            canvasViewBox.getContentCenterX() - rect.centerX() - canvasViewBox.getCoordinateSystemX()
+            getCanvasViewBox().getContentCenterX() - rect.centerX() - getCanvasViewBox().getCoordinateSystemX()
         val translateY =
-            canvasViewBox.getContentCenterY() - rect.centerY() - canvasViewBox.getCoordinateSystemY()
+            getCanvasViewBox().getContentCenterY() - rect.centerY() - getCanvasViewBox().getCoordinateSystemY()
 
         val matrix = Matrix()
         matrix.setTranslate(translateX, translateY)
@@ -277,14 +281,14 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         val width = rect.width() + margin * 2
         val height = rect.height() + margin * 2
 
-        val contentWidth = canvasViewBox.getContentWidth()
-        val contentHeight = canvasViewBox.getContentHeight()
+        val contentWidth = getCanvasViewBox().getContentWidth()
+        val contentHeight = getCanvasViewBox().getContentHeight()
 
         if (width > contentWidth || height > contentHeight) {
             if (scale) {
                 //自动缩放
-                val scaleCenterX = canvasViewBox.getContentCenterX()
-                val scaleCenterY = canvasViewBox.getContentCenterY()
+                val scaleCenterX = getCanvasViewBox().getContentCenterX()
+                val scaleCenterY = getCanvasViewBox().getContentCenterY()
 
                 val scaleX = (contentWidth - margin * 2) / rect.width()
                 val scaleY = (contentHeight - margin * 2) / rect.height()
@@ -301,7 +305,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }
 
         //更新
-        canvasViewBox.updateTo(matrix, anim)
+        getCanvasViewBox().updateTo(matrix, anim)
     }
 
     override fun addCanvasListener(listener: ICanvasListener) {
@@ -319,7 +323,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     override fun findItemRenderer(touchPoint: PointF): BaseItemRenderer<*>? {
-        val point = canvasViewBox.mapCoordinateSystemPoint(touchPoint, _tempPoint)
+        val point = getCanvasViewBox().mapCoordinateSystemPoint(touchPoint, _tempPoint)
         itemsRendererList.reversed().forEach {
             /*if (it.getRendererBounds().contains(point)) {
                 return it
@@ -396,8 +400,8 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     //<editor-fold desc="操作方法">
 
     fun getBitmap(): Bitmap {
-        //val contentWidth = canvasViewBox.getContentWidth()
-        //val contentHeight = canvasViewBox.getContentHeight()
+        //val contentWidth = getCanvasViewBox().getContentWidth()
+        //val contentHeight = getCanvasViewBox().getContentHeight()
 
         var left = 0f
         var top = 0f
@@ -420,10 +424,10 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
      * [width] [height] 需要获取的像素高度*/
     fun getBitmap(left: Float, top: Float, width: Float, height: Float): Bitmap {
         val oldBoxRect = RectF()
-        oldBoxRect.set(canvasViewBox.contentRect)
+        oldBoxRect.set(getCanvasViewBox().contentRect)
 
         //更新坐标系为0,0
-        canvasViewBox.updateContentBox(0f, 0f, width, height)
+        getCanvasViewBox().updateContentBox(0f, 0f, width, height)
 
         val bitmap = Bitmap.createBitmap(width.toInt(), height.toInt(), Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
@@ -452,14 +456,14 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         }
 
         //恢复
-        canvasViewBox.updateContentBox(oldBoxRect)
+        getCanvasViewBox().updateContentBox(oldBoxRect)
 
         return bitmap
     }
 
     /**默认在当前视图中心添加一个绘制元素*/
     fun addCentreItemRenderer(item: BaseItemRenderer<*>, strategy: Strategy) {
-        if (canvasViewBox.isCanvasInit()) {
+        if (getCanvasViewBox().isCanvasInit()) {
             itemsRendererList.add(item)
             val bounds = item.getBounds()
             if (item is BaseItemRenderer) {
@@ -472,7 +476,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
                 if (_width > 0 && _height > 0) {
                     //当前可视化的中点坐标
 
-                    val visualRect = canvasViewBox.getVisualRect()
+                    val visualRect = getCanvasViewBox().getVisualRect()
                     val maxWidth = visualRect.width() * 3 / 4
                     val maxHeight = visualRect.height() * 3 / 4
 
@@ -482,7 +486,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
                     }
 
                     //更新坐标
-                    val rect = canvasViewBox.getCoordinateSystemCenterRect(_width, _height)
+                    val rect = getCanvasViewBox().getCoordinateSystemCenterRect(_width, _height)
                     item.changeBounds {
                         set(rect)
                     }
@@ -508,7 +512,7 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
 
     /**添加一个绘制元素*/
     fun addItemRenderer(item: BaseItemRenderer<*>, strategy: Strategy) {
-        if (canvasViewBox.isCanvasInit()) {
+        if (getCanvasViewBox().isCanvasInit()) {
             itemsRendererList.add(item)
             if (item is BaseItemRenderer) {
                 if (item._renderBounds.isNoSize()) {
@@ -639,6 +643,13 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
             updateBounds(width, height, adjustType)
             postInvalidateOnAnimation()
         }
+    }
+
+    /**获取选中的渲染器
+     * [BaseItemRenderer]
+     * [SelectGroupRenderer]*/
+    fun getSelectedRenderer(): BaseItemRenderer<*>? {
+        return controlHandler.selectedItemRender
     }
 
     //</editor-fold desc="操作方法">

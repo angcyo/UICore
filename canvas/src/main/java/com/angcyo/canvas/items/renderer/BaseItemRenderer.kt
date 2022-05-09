@@ -5,7 +5,7 @@ import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.RectF
 import com.angcyo.canvas.CanvasView
-import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.renderer.BaseRenderer
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.utils._tempPoint
@@ -21,8 +21,8 @@ import com.angcyo.library.ex.*
  * @date 2022/04/03
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
-    BaseRenderer(canvasViewBox), IItemRenderer<T> {
+abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
+    BaseRenderer(canvasView), IItemRenderer<T> {
 
     //<editor-fold desc="属性">
 
@@ -82,7 +82,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasViewBox: CanvasViewBox) :
         }
         onItemBoundsChanged()
         //notify
-        canvasViewBox.canvasView.dispatchItemBoundsChanged(this)
+        canvasView.dispatchItemBoundsChanged(this)
         //invalidate
         refresh()
     }

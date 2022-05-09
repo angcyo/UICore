@@ -6,7 +6,7 @@ import android.graphics.RectF
 import android.graphics.Typeface
 import android.text.TextPaint
 import com.angcyo.canvas.ScalePictureDrawable
-import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.items.PictureTextItem
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
@@ -20,8 +20,8 @@ import kotlin.math.tan
  */
 
 @Deprecated("通用性不够好, 请使用[PictureItemRenderer]")
-class PictureTextItemRenderer(canvasViewBox: CanvasViewBox) :
-    BaseItemRenderer<PictureTextItem>(canvasViewBox) {
+class PictureTextItemRenderer(canvasView: ICanvasView) :
+    BaseItemRenderer<PictureTextItem>(canvasView) {
 
     /**Bounds*/
     val textBounds = RectF()

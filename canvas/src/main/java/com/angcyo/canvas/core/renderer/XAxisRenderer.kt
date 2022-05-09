@@ -5,7 +5,7 @@ import androidx.core.graphics.withClip
 import androidx.core.graphics.withSave
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.CanvasView
-import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.BaseAxis
 import com.angcyo.canvas.core.component.XAxis
 import com.angcyo.library.ex.have
@@ -15,8 +15,8 @@ import com.angcyo.library.ex.have
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/01
  */
-class XAxisRenderer(val axis: XAxis, canvasViewBox: CanvasViewBox) :
-    BaseAxisRenderer(canvasViewBox) {
+class XAxisRenderer(val axis: XAxis, canvasView: ICanvasView) :
+    BaseAxisRenderer(canvasView) {
 
     override fun onCanvasSizeChanged(canvasView: CanvasView) {
         super.onCanvasSizeChanged(canvasView)

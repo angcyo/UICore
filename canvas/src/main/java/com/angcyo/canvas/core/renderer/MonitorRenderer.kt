@@ -11,8 +11,8 @@ import android.view.MotionEvent
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.BuildConfig
 import com.angcyo.canvas.CanvasView
-import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasListener
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.convertPixelToValueUnit
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.getMaxLineWidth
@@ -26,7 +26,7 @@ import com.angcyo.canvas.utils.mapRectF
  * @date 2022/04/02
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class MonitorRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox), ICanvasListener {
+class MonitorRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView), ICanvasListener {
 
     val paint = createTextPaint().apply {
         //init

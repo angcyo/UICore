@@ -7,7 +7,7 @@ import android.graphics.Typeface
 import android.widget.LinearLayout
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.Strategy
-import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.PictureBitmapItem
@@ -22,8 +22,8 @@ import com.angcyo.library.ex.remove
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/29
  */
-class PictureItemRenderer(canvasViewBox: CanvasViewBox) :
-    DrawableItemRenderer<PictureItem>(canvasViewBox) {
+class PictureItemRenderer(canvasView: ICanvasView) :
+    DrawableItemRenderer<PictureItem>(canvasView) {
 
     override fun isSupportControlPoint(type: Int): Boolean {
         if (type == ControlPoint.POINT_TYPE_LOCK) {

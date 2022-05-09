@@ -10,9 +10,6 @@ import com.angcyo.canvas.items.renderer.BaseItemRenderer
  */
 interface ICanvasView : IComponent {
 
-    /**刷新*/
-    fun refresh()
-
     //<editor-fold desc="dispatch">
 
     /**[com.angcyo.canvas.core.CanvasViewBox.refresh]*/
@@ -47,6 +44,12 @@ interface ICanvasView : IComponent {
     //</editor-fold desc="listener">
 
     //<editor-fold desc="operate">
+
+    /**刷新*/
+    fun refresh()
+
+    /**获取视图盒子*/
+    fun getCanvasViewBox(): CanvasViewBox
 
     /**通过手势坐标, 查找对应的[BaseItemRenderer]*/
     fun findItemRenderer(touchPoint: PointF): BaseItemRenderer<*>? = null

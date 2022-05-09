@@ -110,8 +110,8 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
         var newLeft = left + distanceX
         var newTop = top + distanceY
 
-        val viewRect =
-            canvasView.canvasViewBox.mapCoordinateSystemRect(canvasView.viewBounds, _tempRect)
+        val viewRect = canvasView.getCanvasViewBox()
+            .mapCoordinateSystemRect(canvasView.viewBounds, _tempRect)
 
         var feedback = false
         var result: AssistantData? = null
@@ -182,8 +182,8 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
         if (assistant.isChanged()) {
             newRotate = assistant.resultValue!!
 
-            val viewRect =
-                canvasView.canvasViewBox.mapCoordinateSystemRect(canvasView.viewBounds, _tempRect)
+            val viewRect = canvasView.getCanvasViewBox()
+                .mapCoordinateSystemRect(canvasView.viewBounds, _tempRect)
             val renderBounds = itemRenderer.getRenderBounds()
             var left = viewRect.left
             var right = viewRect.right
@@ -249,8 +249,8 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
         var feedbackHeight = false
         var result: AssistantData? = null
 
-        val viewRect =
-            canvasView.canvasViewBox.mapCoordinateSystemRect(canvasView.viewBounds, _tempRect)
+        val viewRect = canvasView.getCanvasViewBox()
+            .mapCoordinateSystemRect(canvasView.viewBounds, _tempRect)
 
         val widthAssistant = findOptimalWidth(itemRenderer, dx)
         if (widthAssistant.isChanged()) {
@@ -397,12 +397,15 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
         val result = AssistantData(origin, newValue)
         if (canvasView.xAxis.enable) {
             var min = Float.MAX_VALUE
-            val scale = canvasView.canvasViewBox.getScaleX()
+            val scale = canvasView.getCanvasViewBox().getScaleX()
 
             canvasView.xAxis.eachAxisPixelList { index, value ->
                 if ((forward && value >= origin) || (!forward && value <= origin)) {
-                    val axisLineType =
-                        canvasView.xAxis.getAxisLineType(canvasView.canvasViewBox, index, scale)
+                    val axisLineType = canvasView.xAxis.getAxisLineType(
+                        canvasView.getCanvasViewBox(),
+                        index,
+                        scale
+                    )
                     if (axisLineType > 0) {
                         val d = (newValue - value).absoluteValue
                         if (d < min) {
@@ -453,12 +456,15 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
         val result = AssistantData(origin, newValue)
         if (canvasView.yAxis.enable) {
             var min = Float.MAX_VALUE
-            val scale = canvasView.canvasViewBox.getScaleY()
+            val scale = canvasView.getCanvasViewBox().getScaleY()
 
             canvasView.yAxis.eachAxisPixelList { index, value ->
                 if ((forward && value >= origin) || (!forward && value <= origin)) {
-                    val axisLineType =
-                        canvasView.yAxis.getAxisLineType(canvasView.canvasViewBox, index, scale)
+                    val axisLineType = canvasView.yAxis.getAxisLineType(
+                        canvasView.getCanvasViewBox(),
+                        index,
+                        scale
+                    )
                     if (axisLineType > 0) {
                         val d = (newValue - value).absoluteValue
                         if (d < min) {
@@ -588,12 +594,15 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
         val result = AssistantData(origin, newLeft)
         if (canvasView.xAxis.enable) {
             var min = Float.MAX_VALUE
-            val scale = canvasView.canvasViewBox.getScaleX()
+            val scale = canvasView.getCanvasViewBox().getScaleX()
 
             canvasView.xAxis.eachAxisPixelList { index, value ->
                 if (value <= origin) {
-                    val axisLineType =
-                        canvasView.xAxis.getAxisLineType(canvasView.canvasViewBox, index, scale)
+                    val axisLineType = canvasView.xAxis.getAxisLineType(
+                        canvasView.getCanvasViewBox(),
+                        index,
+                        scale
+                    )
                     if (axisLineType > 0) {
                         val d = newLeft - value
                         if (d < min) {
@@ -620,12 +629,15 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
         val result = AssistantData(origin, newRight)
         if (canvasView.xAxis.enable) {
             var min = Float.MAX_VALUE
-            val scale = canvasView.canvasViewBox.getScaleX()
+            val scale = canvasView.getCanvasViewBox().getScaleX()
 
             canvasView.xAxis.eachAxisPixelList { index, value ->
                 if (value >= newRight) {
-                    val axisLineType =
-                        canvasView.xAxis.getAxisLineType(canvasView.canvasViewBox, index, scale)
+                    val axisLineType = canvasView.xAxis.getAxisLineType(
+                        canvasView.getCanvasViewBox(),
+                        index,
+                        scale
+                    )
                     if (axisLineType > 0) {
                         val d = value - newRight
                         if (d < min) {
@@ -652,12 +664,15 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
         val result = AssistantData(origin, newTop)
         if (canvasView.yAxis.enable) {
             var min = Float.MAX_VALUE
-            val scale = canvasView.canvasViewBox.getScaleY()
+            val scale = canvasView.getCanvasViewBox().getScaleY()
 
             canvasView.yAxis.eachAxisPixelList { index, value ->
                 if (value <= newTop) {
-                    val axisLineType =
-                        canvasView.yAxis.getAxisLineType(canvasView.canvasViewBox, index, scale)
+                    val axisLineType = canvasView.yAxis.getAxisLineType(
+                        canvasView.getCanvasViewBox(),
+                        index,
+                        scale
+                    )
                     if (axisLineType > 0) {
                         val d = newTop - value
                         if (d < min) {
@@ -684,12 +699,15 @@ class SmartAssistant(val canvasView: CanvasView) : BaseComponent(), ICanvasListe
         val result = AssistantData(origin, newBottom)
         if (canvasView.yAxis.enable) {
             var min = Float.MAX_VALUE
-            val scale = canvasView.canvasViewBox.getScaleY()
+            val scale = canvasView.getCanvasViewBox().getScaleY()
 
             canvasView.yAxis.eachAxisPixelList { index, value ->
                 if (value >= newBottom) {
-                    val axisLineType =
-                        canvasView.yAxis.getAxisLineType(canvasView.canvasViewBox, index, scale)
+                    val axisLineType = canvasView.yAxis.getAxisLineType(
+                        canvasView.getCanvasViewBox(),
+                        index,
+                        scale
+                    )
                     if (axisLineType > 0) {
                         val d = value - newBottom
                         if (d < min) {

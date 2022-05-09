@@ -99,7 +99,7 @@ class ControlHandler(val canvasView: CanvasView) : BaseComponent(), ICanvasTouch
                     touchItemBounds.set(selectedItemRender.getBounds())
 
                     //已经有选中, 则查找控制点
-                    val controlPoint = findItemControlPoint(canvasView.canvasViewBox, touchPoint)
+                    val controlPoint = findItemControlPoint(touchPoint)
                     touchControlPoint = controlPoint
                     holdControlPoint = controlPoint
 
@@ -133,11 +133,11 @@ class ControlHandler(val canvasView: CanvasView) : BaseComponent(), ICanvasTouch
                             //canvasView.canvasViewBox.matrix.mapPoint(_touchPointList[0])
                             //val p2 = _tempMatrix.mapPoint(_touchPointList[0])//_touchPointList[0]
 
-                            val p1 = canvasView.canvasViewBox.mapCoordinateSystemPoint(_movePoint)
+                            val p1 = canvasView.getCanvasViewBox().mapCoordinateSystemPoint(_movePoint)
                             val p1x = p1.x
                             val p1y = p1.y
 
-                            val p2 = canvasView.canvasViewBox.mapCoordinateSystemPoint(_touchPoint)
+                            val p2 = canvasView.getCanvasViewBox().mapCoordinateSystemPoint(_touchPoint)
                             val p2x = p2.x
                             val p2y = p2.y
 
@@ -211,7 +211,7 @@ class ControlHandler(val canvasView: CanvasView) : BaseComponent(), ICanvasTouch
 
     /**通过坐标, 找到控制点
      * [touchPoint] 视图坐标点*/
-    fun findItemControlPoint(canvasViewBox: CanvasViewBox, touchPoint: PointF): ControlPoint? {
+    fun findItemControlPoint(touchPoint: PointF): ControlPoint? {
         //val point = canvasViewBox.mapCoordinateSystemPoint(touchPoint, _tempPoint)
         controlPointList.forEach {
             if (it.enable && it.bounds.contains(touchPoint)) {

@@ -5,7 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import com.angcyo.canvas.BuildConfig
-import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.utils._tempRectF
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.library.ex.dp
@@ -16,7 +16,7 @@ import com.angcyo.library.ex.dp
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/24
  */
-class LimitRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox) {
+class LimitRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView) {
 
     /**限制框的宽度*/
     var limitStrokeWidth = 1 * dp

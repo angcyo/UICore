@@ -122,7 +122,7 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), ICanvasT
         if (canvasView.controlHandler.selectedItemRender == null) {
             isDoubleTouch = true
             //双击
-            canvasView.canvasViewBox.scaleBy(
+            canvasView.getCanvasViewBox().scaleBy(
                 doubleScaleValue,
                 doubleScaleValue,
                 event.x,
@@ -214,7 +214,7 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), ICanvasT
                 //开始缩放
                 _touchType = TOUCH_TYPE_SCALE
                 val scale = moveDistance / _touchDistance
-                canvasView.canvasViewBox.scaleBy(
+                canvasView.getCanvasViewBox().scaleBy(
                     scale,
                     scale,
                     _touchMiddlePoint.x,
@@ -237,9 +237,9 @@ class CanvasTouchHandler(val canvasView: CanvasView) : BaseComponent(), ICanvasT
                 //开始平移
                 _touchType = TOUCH_TYPE_TRANSLATE
                 if (isHorizontalIntent(_movePointList[0], _movePointList[1])) {
-                    canvasView.canvasViewBox.translateBy(dx, 0f)
+                    canvasView.getCanvasViewBox().translateBy(dx, 0f)
                 } else {
-                    canvasView.canvasViewBox.translateBy(0f, dy)
+                    canvasView.getCanvasViewBox().translateBy(0f, dy)
                 }
             }
             /*}*/

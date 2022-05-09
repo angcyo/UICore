@@ -4,6 +4,7 @@ import android.graphics.Matrix
 import android.graphics.RectF
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.IRenderer
 
 /**
@@ -11,7 +12,7 @@ import com.angcyo.canvas.core.IRenderer
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/01
  */
-abstract class BaseRenderer(val canvasViewBox: CanvasViewBox) : IRenderer {
+abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
 
     /**是否可见, 决定是否绘制*/
     var _visible: Boolean = true
@@ -24,6 +25,9 @@ abstract class BaseRenderer(val canvasViewBox: CanvasViewBox) : IRenderer {
 
     /**相对于视图左上角的坐标*/
     val _visualBounds = RectF()
+
+    val canvasViewBox: CanvasViewBox
+        get() = canvasView.getCanvasViewBox()
 
     /**获取图层描述的名字*/
     override fun getName(): String {
@@ -60,6 +64,6 @@ abstract class BaseRenderer(val canvasViewBox: CanvasViewBox) : IRenderer {
 
     /**触发刷新*/
     fun refresh() {
-        canvasViewBox.canvasView.refresh()
+        canvasView.refresh()
     }
 }

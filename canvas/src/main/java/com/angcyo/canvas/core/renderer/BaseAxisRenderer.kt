@@ -5,7 +5,7 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.PointF
 import com.angcyo.canvas.CanvasView
-import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.IValueUnit
 import com.angcyo.canvas.core.component.BaseAxis
 import com.angcyo.canvas.core.component.YAxis
@@ -18,7 +18,7 @@ import com.angcyo.library.ex.toColor
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/01
  */
-abstract class BaseAxisRenderer(canvasViewBox: CanvasViewBox) : BaseRenderer(canvasViewBox) {
+abstract class BaseAxisRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView) {
 
     /**主要线的画笔*/
     val lineProtrudePaint = createPaint(Color.GRAY)

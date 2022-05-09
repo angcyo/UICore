@@ -20,15 +20,15 @@ class InitialPointHandler : BaseComponent() {
                 initialPointRect.set(
                     0f,
                     0f,
-                    view.canvasViewBox.getContentLeft(),
-                    view.canvasViewBox.getContentTop()
+                    view.getCanvasViewBox().getContentLeft(),
+                    view.getCanvasViewBox().getContentTop()
                 )
                 isTouchDownInInitial = initialPointRect.contains(event.x, event.y)
             }
             MotionEvent.ACTION_UP -> {
                 if (isTouchDownInInitial) {
                     if (initialPointRect.contains(event.x, event.y)) {
-                        view.canvasViewBox.updateTo()
+                        view.getCanvasViewBox().updateTo()
                         return true
                     }
                 }

@@ -5,7 +5,7 @@ import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.RectF
 import android.widget.LinearLayout
-import com.angcyo.canvas.core.CanvasViewBox
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.LineItem
 import com.angcyo.library.ex.ADJUST_TYPE_LT
@@ -19,7 +19,7 @@ import com.angcyo.library.ex.contains
  */
 
 @Deprecated("不支持镜像绘制")
-class LineItemRenderer(canvasViewBox: CanvasViewBox) : BaseItemRenderer<LineItem>(canvasViewBox) {
+class LineItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<LineItem>(canvasView) {
 
     val lineBounds = RectF()
 
