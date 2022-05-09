@@ -190,11 +190,6 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         return result
     }
 
-    /**计算[item]在当前坐标系中的矩形坐标*/
-    fun mapItemCoordinateSystemBounds(item: IItemRenderer<*>, result: RectF): RectF {
-        return result
-    }
-
     //</editor-fold desc="operate">
 
     //<editor-fold desc="base">

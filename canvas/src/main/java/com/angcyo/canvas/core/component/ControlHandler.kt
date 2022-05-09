@@ -7,7 +7,7 @@ import androidx.core.graphics.contains
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasTouch
-import com.angcyo.canvas.core.component.control.CloseControlPoint
+import com.angcyo.canvas.core.component.control.DeleteControlPoint
 import com.angcyo.canvas.core.component.control.LockControlPoint
 import com.angcyo.canvas.core.component.control.RotateControlPoint
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
@@ -110,7 +110,7 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
                 }
 
                 if (touchControlPoint == null) {
-                    //检查是否点在[BaseItemRenderer]中
+                    //未点在控制点上, 则检查是否点在[BaseItemRenderer]中
                     val itemRenderer = canvasView.findItemRenderer(touchPoint)
                     canvasView.selectedItem(itemRenderer)
                 }
@@ -194,7 +194,7 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
                 }
                 isDoubleTouch = false
                 touchControlPoint = null
-                canvasView.disableParentInterceptTouchEvent(false)
+                touchPointerId = -1
             }
         }
 
@@ -205,9 +205,6 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
 
         //result
         val result = selectedItemRender != null || holdControlPoint != null
-        if (result) {
-            canvasView.disableParentInterceptTouchEvent()
-        }
         return result && handle
     }
 
@@ -234,8 +231,8 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
         val inset = controlPointOffset + controlPointSize / 2
         _controlPointOffsetRect.inset(-inset, -inset)
 
-        val closeControl = controlPointList.find { it.type == ControlPoint.POINT_TYPE_CLOSE }
-            ?: createControlPoint(ControlPoint.POINT_TYPE_CLOSE)
+        val closeControl = controlPointList.find { it.type == ControlPoint.POINT_TYPE_DELETE }
+            ?: createControlPoint(ControlPoint.POINT_TYPE_DELETE)
         val rotateControl = controlPointList.find { it.type == ControlPoint.POINT_TYPE_ROTATE }
             ?: createControlPoint(ControlPoint.POINT_TYPE_ROTATE)
         val scaleControl = controlPointList.find { it.type == ControlPoint.POINT_TYPE_SCALE }
@@ -287,7 +284,7 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
             bottom,
         )
 
-        closeControl.enable = itemRenderer.isSupportControlPoint(ControlPoint.POINT_TYPE_CLOSE)
+        closeControl.enable = itemRenderer.isSupportControlPoint(ControlPoint.POINT_TYPE_DELETE)
         rotateControl.enable = itemRenderer.isSupportControlPoint(ControlPoint.POINT_TYPE_ROTATE)
         scaleControl.enable = itemRenderer.isSupportControlPoint(ControlPoint.POINT_TYPE_SCALE)
         lockControl.enable = itemRenderer.isSupportControlPoint(ControlPoint.POINT_TYPE_LOCK)
@@ -318,7 +315,7 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
     /**创建一个控制点*/
     fun createControlPoint(type: Int): ControlPoint {
         return when (type) {
-            ControlPoint.POINT_TYPE_CLOSE -> CloseControlPoint()
+            ControlPoint.POINT_TYPE_DELETE -> DeleteControlPoint()
             ControlPoint.POINT_TYPE_ROTATE -> RotateControlPoint()
             ControlPoint.POINT_TYPE_SCALE -> ScaleControlPoint()
             ControlPoint.POINT_TYPE_LOCK -> LockControlPoint()

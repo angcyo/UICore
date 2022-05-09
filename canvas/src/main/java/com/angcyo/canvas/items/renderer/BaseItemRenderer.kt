@@ -76,14 +76,16 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     override fun getVisualRotateBounds(): RectF = _visualRotateBounds
 
-    override fun changeBounds(block: RectF.() -> Unit) {
+    override fun changeBounds(notify: Boolean, block: RectF.() -> Unit) {
         getBounds().apply {
             changeBeforeBounds.set(this)
             block()
         }
-        onItemBoundsChanged()
+        itemBoundsChanged(changeBeforeBounds)
         //notify
-        canvasView.dispatchItemBoundsChanged(this)
+        if (notify) {
+            canvasView.dispatchItemBoundsChanged(this)
+        }
         //invalidate
         refresh()
     }
@@ -103,11 +105,11 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         oldValue: Matrix
     ) {
         //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
-        onItemBoundsChanged()
+        itemBoundsChanged(changeBeforeBounds)
     }
 
-    /**当渲染的bounds改变后, 需要主动触发此方法, 用来更新辅助bounds*/
-    override fun onItemBoundsChanged() {
+    /**当渲染的bounds改变后, 需要主动触发此方法, 用来更新主要的bounds和辅助的bounds*/
+    override fun itemBoundsChanged(oldBounds: RectF) {
         canvasViewBox.calcItemRenderBounds(getBounds(), getRenderBounds())
         canvasViewBox.calcItemVisualBounds(getRenderBounds(), getVisualBounds())
 
@@ -141,8 +143,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     }
 
     override fun mapRotateRect(rect: RectF, result: RectF): RectF {
-        val rendererBounds = getRenderBounds()
-        return mapRotateRect(rendererBounds.centerX(), rendererBounds.centerY(), rect, result)
+        return mapRotateRect(rect.centerX(), rect.centerY(), rect, result)
     }
 
     override fun mapRotatePoint(point: PointF, result: PointF): PointF {
@@ -172,6 +173,16 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         }
     }
 
+    override fun intersectRect(rect: RectF): Boolean {
+        val rendererBounds = getRenderBounds()
+        return getRotateMatrix(rendererBounds.centerX(), rendererBounds.centerY()).run {
+            rotatePath.reset()
+            rotatePath.addRect(rendererBounds, Path.Direction.CW)
+            rotatePath.transform(this)
+            rotatePath.intersect(rect)
+        }
+    }
+
     //<editor-fold desc="控制方法">
 
     /**平移元素
@@ -194,6 +205,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         _tempMatrix.reset()
         this.scaleX *= scaleX
         this.scaleY *= scaleY
+        _adjustType = adjustType
         changeBounds {
             val x = when (adjustType) {
                 ADJUST_TYPE_LT, ADJUST_TYPE_LB -> left
@@ -238,6 +250,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
         this.scaleX = scaleX
         this.scaleY = scaleY
+        _adjustType = adjustType
         changeBounds {
             val x = when (adjustType) {
                 ADJUST_TYPE_LT, ADJUST_TYPE_LB -> left
@@ -271,9 +284,13 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         L.i("旋转by->$degrees $rotate")
     }
 
+    /**临时存储一下更新Bounds的方式*/
+    var _adjustType: Int = ADJUST_TYPE_LT
+
     /**调整矩形的宽高, 支持旋转后的矩形*/
     override fun updateBounds(width: Float, height: Float, adjustType: Int) {
         L.i("调整宽高->w:$width h:${height} type:$adjustType")
+        _adjustType = adjustType
         changeBounds {
             adjustSizeWithRotate(width, height, rotate, adjustType)
         }

@@ -4,7 +4,7 @@ import android.graphics.PointF
 import android.view.MotionEvent
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.CanvasView
-import com.angcyo.canvas.core.EntryPoint
+import com.angcyo.canvas.core.CanvasEntryPoint
 import com.angcyo.canvas.core.ICanvasTouch
 import com.angcyo.library.component.DoubleGestureDetector2
 import com.angcyo.library.ex.abs
@@ -134,7 +134,7 @@ class CanvasTouchHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICan
     }
 
     /**入口*/
-    @EntryPoint
+    @CanvasEntryPoint
     override fun onCanvasTouchEvent(canvasView: CanvasDelegate, event: MotionEvent): Boolean {
         initialPointHandler.onTouch(canvasView, event)
         doubleGestureDetector.onTouchEvent(event)
@@ -142,13 +142,12 @@ class CanvasTouchHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICan
             MotionEvent.ACTION_DOWN -> {
                 _touchPoint.set(event.x, event.y)
                 obtainPointList(event, _touchPointList)
-                handleActionDown()
-                canvasView.disableParentInterceptTouchEvent()
+                handleActionDown(event)
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
                 //多指按下
                 obtainPointList(event, _touchPointList)
-                handleActionDown()
+                handleActionDown(event)
             }
             MotionEvent.ACTION_POINTER_UP -> {
                 obtainPointList(event, _touchPointList)
@@ -163,7 +162,7 @@ class CanvasTouchHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICan
                 _touchPointList.clear()
                 _movePointList.clear()
                 _touchType = TOUCH_TYPE_NONE
-                canvasView.disableParentInterceptTouchEvent(false)
+                canvasView.selectGroupRenderer.cancelSelect()
             }
         }
         return true
@@ -184,12 +183,32 @@ class CanvasTouchHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICan
     val _touchMiddlePoint = PointF()
 
     /**手势(多指)按下时, 记录一些数据*/
-    fun handleActionDown() {
+    fun handleActionDown(event: MotionEvent) {
         _touchDistance = 0f
+
+        val selectedRenderer = canvasView.getSelectedRenderer()
         if (_touchPointList.size >= 2) {
             _touchDistance = spacing(_touchPointList[0], _touchPointList[1])
             midPoint(_touchPointList[0], _touchPointList[1], _touchMiddlePoint)
             isDoubleTouch = false
+
+            if (selectedRenderer != null) {
+                _tempPoint.set(event.getX(event.actionIndex), event.getY(event.actionIndex))
+                val nextSelectedRenderer = canvasView.findItemRenderer(_tempPoint)
+                if (nextSelectedRenderer != null) {
+                    canvasView.selectGroupRenderer.addSelectedRenderer(nextSelectedRenderer)
+                }
+            } else {
+                canvasView.selectGroupRenderer.cancelSelect()
+            }
+        } else {
+            if (selectedRenderer == null) {
+                //未选中渲染器
+                canvasView.selectGroupRenderer.startSelect(
+                    _touchPointList[0].x,
+                    _touchPointList[0].y
+                )
+            }
         }
     }
 
@@ -245,6 +264,8 @@ class CanvasTouchHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICan
                 }
             }
             /*}*/
+        } else {
+            canvasView.selectGroupRenderer.moveSelect(_movePointList[0].x, _movePointList[0].y)
         }
 
         /*val dx = event.x - touchPoint.x

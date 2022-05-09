@@ -43,7 +43,7 @@ class LineItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<LineItem>(can
     }
 
     /**限制线的宽或高*/
-    override fun onItemBoundsChanged() {
+    override fun itemBoundsChanged(oldBounds: RectF) {
         if (lineBounds.width() <= 1f) {
             getBounds().apply {
                 adjustSizeWithRotate(lineBounds.width(), height(), rotate, ADJUST_TYPE_LT)
@@ -53,7 +53,7 @@ class LineItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<LineItem>(can
                 adjustSizeWithRotate(width(), lineBounds.height(), rotate, ADJUST_TYPE_LT)
             }
         }
-        super.onItemBoundsChanged()
+        super.itemBoundsChanged(oldBounds)
     }
 
     override fun render(canvas: Canvas) {

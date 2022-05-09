@@ -41,7 +41,7 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
      * 可以在此方法中限制bounds大小
      *
      * [com.angcyo.canvas.core.IRenderer.getBounds]*/
-    fun onItemBoundsChanged() {
+    fun itemBoundsChanged(oldBounds: RectF) {
 
     }
 
@@ -56,6 +56,23 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
 
     /**控制点操作结束后的回调*/
     fun onControlFinish(controlPoint: ControlPoint) {
+
+    }
+
+    /**当当前的渲染器被取消了选中状态时回调
+     * [toSelectedItem] 被新选中的渲染器
+     * [com.angcyo.canvas.CanvasDelegate.selectedItem]*/
+    fun onCancelSelected(toSelectedItem: BaseItemRenderer<*>?) {
+
+    }
+
+    /**当渲染器被添加到画布时的回调*/
+    fun onAddRenderer() {
+
+    }
+
+    /**当渲染器被移除画布时的回调*/
+    fun onRemoveRenderer() {
 
     }
 
@@ -93,12 +110,20 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     //<editor-fold desc="操作方法">
 
     /**当前的绘制item, 是否包含指定坐标
-     * [point] 坐标系中的坐标, 非视图系的坐标*/
+     * [point] 坐标系中的坐标, 非视图系的坐标
+     * [containsRect]
+     * [intersectRect]*/
     fun containsPoint(point: PointF): Boolean
 
     /**当前的绘制item, 是否包含指定矩形坐标
-     * [rect] 坐标系中的坐标, 非视图系的坐标*/
+     * [rect] 坐标系中的坐标, 非视图系的坐标
+     * [containsPoint]*/
     fun containsRect(rect: RectF): Boolean
+
+    /**当前的绘制item, 是否和指定的矩形相交
+     * [containsRect]
+     * [containsPoint]*/
+    fun intersectRect(rect: RectF): Boolean
 
     /**根据[rotate]映射点*/
     fun mapRotatePoint(
@@ -120,7 +145,7 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     //<editor-fold desc="其他方法">
 
     /**是否支持指定的控制点
-     * [com.angcyo.canvas.core.component.ControlPoint.POINT_TYPE_CLOSE]
+     * [com.angcyo.canvas.core.component.ControlPoint.POINT_TYPE_DELETE]
      * [com.angcyo.canvas.core.component.ControlPoint.POINT_TYPE_ROTATE]
      * [com.angcyo.canvas.core.component.ControlPoint.POINT_TYPE_SCALE]
      * [com.angcyo.canvas.core.component.ControlPoint.POINT_TYPE_LOCK]

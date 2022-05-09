@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.angcyo.library.ex.disableParentInterceptTouchEvent
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -21,6 +22,11 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+            disableParentInterceptTouchEvent()
+        } else if (event.actionMasked == MotionEvent.ACTION_UP || event.actionMasked == MotionEvent.ACTION_CANCEL) {
+            disableParentInterceptTouchEvent(false)
+        }
         return canvasDelegate.onTouchEvent(event)
     }
 

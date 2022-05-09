@@ -6,6 +6,7 @@ import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.IRenderer
+import com.angcyo.canvas.items.renderer.BaseItemRenderer
 
 /**
  * 渲染器
@@ -61,9 +62,13 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
 
     /**调用此方法用来更新[getBounds]
      * 同时需要更新[getRenderBounds],[getVisualBounds]等信息*/
-    open fun changeBounds(block: RectF.() -> Unit) {
+    open fun changeBounds(notify: Boolean = true, block: RectF.() -> Unit) {
         getBounds().block()
-        //canvasViewBox.canvasView.dispatchItemBoundsChanged()
+        if (notify) {
+            if (this is BaseItemRenderer<*>) {
+                canvasViewBox.canvasView.dispatchItemBoundsChanged(this)
+            }
+        }
     }
 
     /**触发刷新*/

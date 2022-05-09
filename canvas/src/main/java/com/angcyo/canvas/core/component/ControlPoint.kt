@@ -15,7 +15,7 @@ open class ControlPoint : BaseComponent() {
 
     companion object {
         /**控制点类型: 删除*/
-        const val POINT_TYPE_CLOSE = 1
+        const val POINT_TYPE_DELETE = 1
 
         /**控制点类型: 旋转*/
         const val POINT_TYPE_ROTATE = 2

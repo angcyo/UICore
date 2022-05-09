@@ -105,8 +105,8 @@ class TextItemRenderer(canvasView: ICanvasView) :
         /*return textBounds.height().toFloat() + heightIncrease*/
     }
 
-    override fun onItemBoundsChanged() {
-        super.onItemBoundsChanged()
+    override fun itemBoundsChanged(oldBounds: RectF) {
+        super.itemBoundsChanged(oldBounds)
         rendererItem?.apply {
             updateLargestTextSizeWhichFits(getBounds())
 

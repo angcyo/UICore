@@ -1,7 +1,7 @@
 package com.angcyo.canvas
 
 import android.view.MotionEvent
-import com.angcyo.canvas.core.EntryPoint
+import com.angcyo.canvas.core.CanvasEntryPoint
 import com.angcyo.canvas.core.ICanvasTouch
 
 /**
@@ -17,7 +17,7 @@ class CanvasTouchManager(val canvasView: CanvasDelegate) {
     var interceptCanvasTouch: ICanvasTouch? = null
 
     /**入口*/
-    @EntryPoint
+    @CanvasEntryPoint
     fun onTouchEvent(event: MotionEvent): Boolean {
         val touch = interceptCanvasTouch
 

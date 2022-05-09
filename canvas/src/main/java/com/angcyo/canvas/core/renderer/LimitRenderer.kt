@@ -11,7 +11,7 @@ import com.angcyo.canvas.utils.createPaint
 import com.angcyo.library.ex.dp
 
 /**
- * 打印限制框渲染
+ * 打印限制提示框渲染
  *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/24

@@ -85,6 +85,13 @@ fun RectF.scale(scaleX: Float, scaleY: Float): RectF {
     return this
 }
 
+fun RectF.scale(scaleX: Float, scaleY: Float, pivotX: Float, pivotY: Float): RectF {
+    val matrix = Matrix()
+    matrix.setScale(scaleX, scaleY, pivotX, pivotY)
+    matrix.mapRect(this)
+    return this
+}
+
 /**
  * 在矩形中间点, 缩放
  * */
@@ -132,10 +139,17 @@ fun Path.contains(x: Int, y: Int, clipRect: RectF? = null): Boolean {
 }
 
 /**判断矩形是否在[Path]内, path是否包含矩形*/
-fun Path.contains(rectF: RectF): Boolean {
+fun Path.contains(rect: RectF): Boolean {
     _tempPath.reset()
-    _tempPath.addRect(rectF, Path.Direction.CW)
+    _tempPath.addRect(rect, Path.Direction.CW)
     return this.contains(_tempPath)
+}
+
+/**判断路径是否和[rect]相交*/
+fun Path.intersect(rect: RectF): Boolean {
+    _tempPath.reset()
+    _tempPath.addRect(rect, Path.Direction.CW)
+    return this.intersect(_tempPath)
 }
 
 /**判断矩形是否在[Path]内, path是否包含矩形*/
@@ -148,4 +162,16 @@ fun Path.contains(path: Path): Boolean {
         return false
     }
     return result.isEmpty
+}
+
+/**判断2个Path是否相交*/
+fun Path.intersect(path: Path): Boolean {
+    val result = _resultPath
+    result.reset()
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        result.op(this, path, Path.Op.INTERSECT)
+    } else {
+        return false
+    }
+    return !result.isEmpty
 }

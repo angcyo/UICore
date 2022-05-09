@@ -11,10 +11,10 @@ import com.angcyo.library.ex._drawable
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/09
  */
-class CloseControlPoint : ControlPoint() {
+class DeleteControlPoint : ControlPoint() {
 
     init {
-        drawable = _drawable(R.drawable.canvas_control_point_close)
+        drawable = _drawable(R.drawable.canvas_control_point_delete)
     }
 
     override fun onClickControlPoint(view: CanvasDelegate, itemRenderer: BaseItemRenderer<*>) {

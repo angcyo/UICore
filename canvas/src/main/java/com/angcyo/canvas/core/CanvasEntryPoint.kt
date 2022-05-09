@@ -8,4 +8,4 @@ package com.angcyo.canvas.core
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.SOURCE)
-annotation class EntryPoint
+annotation class CanvasEntryPoint

@@ -54,54 +54,55 @@ class CanvasDelegate(val view: View) : ICanvasView {
     /**智能提示组件*/
     var smartAssistant: SmartAssistant = SmartAssistant(this)
 
-    /**智能提示组件渲染*/
-    var smartAssistantRenderer: SmartAssistantRenderer =
-        SmartAssistantRenderer(smartAssistant, this)
-
-    /**限制框*/
-    var limitRenderer: LimitRenderer = LimitRenderer(this)
-
-    var selectGroupRenderer: SelectGroupRenderer = SelectGroupRenderer(this)
-
     /**手指是否按下*/
     val isTouchHold: Boolean
         get() = canvasTouchManager.isTouchHold
 
     //</editor-fold desc="成员变量">
 
-    //<editor-fold desc="横纵坐标轴">
+    //<editor-fold desc="内部成员">
 
+    /**x轴坐标计算*/
     var xAxis = XAxis()
 
-    /**绘制在顶上的x轴*/
-    var xAxisRender = XAxisRenderer(xAxis, this)
-
+    /**y轴坐标计算*/
     var yAxis = YAxis()
-
-    /**绘制在左边的y轴*/
-    var yAxisRender = YAxisRenderer(yAxis, this)
-
-    //</editor-fold desc="横纵坐标轴">
-
-    //<editor-fold desc="渲染组件">
-
-    /**核心项目渲染器*/
-    val itemsRendererList = mutableSetOf<BaseItemRenderer<*>>()
-
-    //</editor-fold desc="渲染组件">
-
-    //<editor-fold desc="内部成员">
 
     /**控制点[ControlPoint]的控制和[selectedItemRender]的平移控制*/
     var controlHandler = ControlHandler(this)
-
-    /**控制器渲染*/
-    var controlRenderer = ControlRenderer(controlHandler, this)
 
     /**手势处理*/
     var canvasTouchManager = CanvasTouchManager(this)
 
     //</editor-fold desc="内部成员">
+
+    //<editor-fold desc="渲染组件">
+
+    /**绘制在顶上的x轴*/
+    var xAxisRender = XAxisRenderer(xAxis, this)
+
+    /**绘制在左边的y轴*/
+    var yAxisRender = YAxisRenderer(yAxis, this)
+
+    /**核心项目渲染器*/
+    val itemsRendererList = mutableSetOf<BaseItemRenderer<*>>()
+
+    /**智能提示组件渲染
+     * [rendererAfterList]*/
+    var smartAssistantRenderer: SmartAssistantRenderer =
+        SmartAssistantRenderer(smartAssistant, this)
+
+    /**控制器渲染*/
+    var controlRenderer = ControlRenderer(controlHandler, this)
+
+    /**限制提示框渲染*/
+    var limitRenderer: LimitRenderer = LimitRenderer(this)
+
+    /**多选提示框
+     * [rendererAfterList]*/
+    var selectGroupRenderer: SelectGroupRenderer = SelectGroupRenderer(this)
+
+    //</editor-fold desc="渲染组件">
 
     //<editor-fold desc="关键方法">
 
@@ -111,6 +112,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
             rendererAfterList.add(CenterRenderer(this))
         }
         rendererAfterList.add(smartAssistantRenderer)
+        rendererAfterList.add(selectGroupRenderer)
     }
 
     /**枚举[BaseAxisRenderer]*/
@@ -146,7 +148,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
     val viewBounds: RectF = RectF()
 
     /**入口点*/
-    @EntryPoint
+    @CanvasEntryPoint
     fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         viewBounds.set(0f, 0f, w.toFloat(), h.toFloat())
 
@@ -184,7 +186,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
     }
 
     /**入口点*/
-    @EntryPoint
+    @CanvasEntryPoint
     fun onDraw(canvas: Canvas) {
         eachAxisRender { axis ->
             if (axis.enable && isVisible()) {
@@ -229,7 +231,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
             }
         }
 
-        //限制框
+        //限制框提示渲染
         if (limitRenderer.isVisible()) {
             canvas.withClip(getCanvasViewBox().contentRect) {
                 canvas.withMatrix(getCanvasViewBox().matrix) {
@@ -245,7 +247,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
     }
 
     /**入口点*/
-    @EntryPoint
+    @CanvasEntryPoint
     fun onTouchEvent(event: MotionEvent): Boolean {
         return canvasTouchManager.onTouchEvent(event)
     }
@@ -255,10 +257,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         view.postInvalidateOnAnimation()
     }
 
-    fun disableParentInterceptTouchEvent(disable: Boolean = true) {
-        view.disableParentInterceptTouchEvent(disable)
-    }
-
+    /**长按事件反馈提示*/
     fun longFeedback() {
         view.longFeedback()
     }
@@ -333,6 +332,15 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
     override fun findItemRenderer(touchPoint: PointF): BaseItemRenderer<*>? {
         val point = getCanvasViewBox().mapCoordinateSystemPoint(touchPoint, _tempPoint)
+
+        //多选渲染优先
+        val selectedRenderer = getSelectedRenderer()
+        if (selectedRenderer is SelectGroupRenderer) {
+            if (selectedRenderer.containsPoint(point)) {
+                return selectedRenderer
+            }
+        }
+
         itemsRendererList.reversed().forEach {
             /*if (it.getRendererBounds().contains(point)) {
                 return it
@@ -418,7 +426,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         var bottom = 0f
 
         itemsRendererList.forEach {
-            val bounds = it.getBounds().adjustFlipRect(_tempRectF)
+            val bounds = it.getRotateBounds().adjustFlipRect(_tempRectF)
             left = min(left, bounds.left)
             top = min(top, bounds.top)
             right = max(right, bounds.right)
@@ -521,11 +529,30 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
     /**添加一个绘制元素*/
     fun addItemRenderer(item: BaseItemRenderer<*>, strategy: Strategy) {
+        val itemList = mutableListOf<BaseItemRenderer<*>>()
+        if (item is SelectGroupRenderer) {
+            itemList.addAll(item.selectItemList)
+            item.onAddRenderer()
+        } else {
+            itemList.add(item)
+        }
+        addItemRenderer(itemList, strategy)
+    }
+
+    fun addItemRenderer(list: List<BaseItemRenderer<*>>, strategy: Strategy) {
         if (getCanvasViewBox().isCanvasInit()) {
-            itemsRendererList.add(item)
-            if (item is BaseItemRenderer) {
-                if (item._renderBounds.isNoSize()) {
-                    item.onCanvasSizeChanged(this)
+            list.forEach { item ->
+                if (itemsRendererList.add(item)) {
+                    item.onAddRenderer()
+
+                    canvasListenerList.forEach {
+                        it.onItemRendererAdd(item)
+                    }
+                }
+                if (item is BaseItemRenderer) {
+                    if (item._renderBounds.isNoSize()) {
+                        item.onCanvasSizeChanged(this)
+                    }
                 }
             }
             refresh()
@@ -533,23 +560,41 @@ class CanvasDelegate(val view: View) : ICanvasView {
             if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
                 undoManager.addUndoAction(object : ICanvasStep {
                     override fun runUndo() {
-                        removeItemRenderer(item, Strategy(Strategy.STRATEGY_TYPE_UNDO))
+                        removeItemRenderer(list, Strategy(Strategy.STRATEGY_TYPE_UNDO))
                     }
 
                     override fun runRedo() {
-                        addItemRenderer(item, Strategy(Strategy.STRATEGY_TYPE_REDO))
+                        addItemRenderer(list, Strategy(Strategy.STRATEGY_TYPE_REDO))
                     }
                 })
             }
         } else {
-            pendingTaskList.add(Runnable { addItemRenderer(item, strategy) })
+            pendingTaskList.add(Runnable { addItemRenderer(list, strategy) })
         }
     }
 
     /**移除一个绘制元素*/
     fun removeItemRenderer(item: BaseItemRenderer<*>, strategy: Strategy) {
-        itemsRendererList.remove(item)
-        if (controlHandler.selectedItemRender == item) {
+        val itemList = mutableListOf<BaseItemRenderer<*>>()
+        if (item is SelectGroupRenderer) {
+            itemList.addAll(item.selectItemList)
+            item.onRemoveRenderer()
+        } else {
+            itemList.add(item)
+        }
+        removeItemRenderer(itemList, strategy)
+    }
+
+    fun removeItemRenderer(list: List<BaseItemRenderer<*>>, strategy: Strategy) {
+        itemsRendererList.removeAll(list)
+        list.forEach { item ->
+            item.onRemoveRenderer()
+            canvasListenerList.forEach {
+                it.onItemRendererRemove(item)
+            }
+        }
+
+        if (list.contains(controlHandler.selectedItemRender)) {
             selectedItem(null)
         }
         refresh()
@@ -557,11 +602,11 @@ class CanvasDelegate(val view: View) : ICanvasView {
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
             undoManager.addUndoAction(object : ICanvasStep {
                 override fun runUndo() {
-                    addItemRenderer(item, Strategy(Strategy.STRATEGY_TYPE_UNDO))
+                    addItemRenderer(list, Strategy(Strategy.STRATEGY_TYPE_UNDO))
                 }
 
                 override fun runRedo() {
-                    removeItemRenderer(item, Strategy(Strategy.STRATEGY_TYPE_REDO))
+                    removeItemRenderer(list, Strategy(Strategy.STRATEGY_TYPE_REDO))
                 }
             })
         }
@@ -570,6 +615,10 @@ class CanvasDelegate(val view: View) : ICanvasView {
     /**选中item[BaseItemRenderer]*/
     fun selectedItem(itemRenderer: BaseItemRenderer<*>?) {
         val oldItemRenderer = controlHandler.selectedItemRender
+
+        if (oldItemRenderer != null && oldItemRenderer != itemRenderer) {
+            oldItemRenderer.onCancelSelected(itemRenderer)
+        }
 
         controlHandler.selectedItemRender = itemRenderer
         controlHandler.setLockScaleRatio(itemRenderer?.isLockScaleRatio ?: true)
