@@ -5,6 +5,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.ceil
+import kotlin.math.roundToLong
 
 /**
  * https://github.com/JodaOrg/joda-time
@@ -512,5 +513,5 @@ fun Calendar.addDay(amount: Int) {
 fun Calendar.distance(other: Calendar): Long {
     val t1 = timeInMillis
     val t2 = other.timeInMillis
-    return (t1 - t2) / DAY_MILLIS
+    return ((t1 - t2) * 1f / DAY_MILLIS).ceil().roundToLong()
 }
