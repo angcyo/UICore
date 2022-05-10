@@ -2,6 +2,8 @@ package com.angcyo.canvas.core
 
 import android.graphics.Matrix
 import android.graphics.PointF
+import android.graphics.RectF
+import com.angcyo.canvas.Reason
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 
 /**
@@ -19,7 +21,7 @@ interface ICanvasView : IComponent {
     fun dispatchCanvasBoxMatrixChanged(matrix: Matrix, oldValue: Matrix) {}
 
     /**[com.angcyo.canvas.items.renderer.BaseItemRenderer.changeBounds]*/
-    fun dispatchItemBoundsChanged(item: BaseItemRenderer<*>) {}
+    fun dispatchItemBoundsChanged(item: IRenderer, reason: Reason, oldBounds: RectF) {}
 
     /**当[CanvasViewBox]的坐标系原点改变时触发*/
     fun dispatchCoordinateSystemOriginChanged(point: PointF) {}
@@ -30,6 +32,9 @@ interface ICanvasView : IComponent {
     /**分发回退/恢复栈发生改变
      * [CanvasUndoManager]*/
     fun dispatchCanvasUndoChanged() {}
+
+    /**分发渲染器可见性改变*/
+    fun dispatchItemVisibleChanged(item: IRenderer, visible: Boolean) {}
 
     //</editor-fold desc="dispatch">
 

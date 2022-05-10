@@ -37,6 +37,7 @@ class PictureShapeItem : PictureItem() {
     init {
         paint.strokeWidth = 1 * dp
         paint.style = Paint.Style.FILL_AND_STROKE
+        itemName = "Shape"
     }
 
     override fun updatePictureDrawable() {

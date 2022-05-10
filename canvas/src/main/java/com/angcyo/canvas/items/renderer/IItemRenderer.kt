@@ -2,6 +2,7 @@ package com.angcyo.canvas.items.renderer
 
 import android.graphics.PointF
 import android.graphics.RectF
+import com.angcyo.canvas.Reason
 import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.ICanvasItem
@@ -41,7 +42,7 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
      * 可以在此方法中限制bounds大小
      *
      * [com.angcyo.canvas.core.IRenderer.getBounds]*/
-    fun itemBoundsChanged(oldBounds: RectF) {
+    fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
 
     }
 

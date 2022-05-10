@@ -58,6 +58,10 @@ class PictureTextItem : PictureItem() {
     /**高度增益的大小*/
     var heightIncrease: Float = 0f
 
+    init {
+        itemName = "Text"
+    }
+
     fun lineTextList(text: String): List<String> = text.lines()
 
     /**计算文本的宽度*/

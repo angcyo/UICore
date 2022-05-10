@@ -16,6 +16,10 @@ class PictureBitmapItem : PictureItem() {
 
     val bitmapBounds = RectF()
 
+    init {
+        itemName = "Bitmap"
+    }
+
     override fun updatePictureDrawable() {
         bitmap?.let { bitmap ->
             val itemWidth = bitmap.width

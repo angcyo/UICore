@@ -2,6 +2,7 @@ package com.angcyo.canvas.items.renderer
 
 import android.graphics.*
 import com.angcyo.canvas.CanvasDelegate
+import com.angcyo.canvas.Reason
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.PictureTextItem
@@ -105,8 +106,8 @@ class TextItemRenderer(canvasView: ICanvasView) :
         /*return textBounds.height().toFloat() + heightIncrease*/
     }
 
-    override fun itemBoundsChanged(oldBounds: RectF) {
-        super.itemBoundsChanged(oldBounds)
+    override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
+        super.itemBoundsChanged(reason, oldBounds)
         rendererItem?.apply {
             updateLargestTextSizeWhichFits(getBounds())
 

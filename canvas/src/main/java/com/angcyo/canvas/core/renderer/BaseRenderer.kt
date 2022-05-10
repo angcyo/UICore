@@ -2,11 +2,15 @@ package com.angcyo.canvas.core.renderer
 
 import android.graphics.Matrix
 import android.graphics.RectF
+import android.graphics.drawable.Drawable
 import com.angcyo.canvas.CanvasDelegate
+import com.angcyo.canvas.Reason
+import com.angcyo.canvas.ScalePictureDrawable
+import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.IRenderer
-import com.angcyo.canvas.items.renderer.BaseItemRenderer
+import com.angcyo.library.ex.withPicture
 
 /**
  * 渲染器
@@ -31,11 +35,34 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
         get() = canvasView.getCanvasViewBox()
 
     /**获取图层描述的名字*/
-    override fun getName(): String {
+    override fun getName(): CharSequence? {
         return "Default"
     }
 
     override fun isVisible(): Boolean = _visible
+
+    /**设置可见性*/
+    fun setVisible(visible: Boolean, strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)) {
+        val oldValue = isVisible()
+        if (visible == oldValue) {
+            return
+        }
+        _visible = visible
+        canvasView.dispatchItemVisibleChanged(this, visible)
+        refresh()
+
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    setVisible(oldValue, Strategy(Strategy.STRATEGY_TYPE_UNDO))
+                }
+
+                override fun runRedo() {
+                    setVisible(visible, Strategy(Strategy.STRATEGY_TYPE_REDO))
+                }
+            })
+        }
+    }
 
     /**此[_bounds]是相对于坐标原点的坐标*/
     override fun getBounds(): RectF = _bounds
@@ -62,17 +89,31 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
 
     /**调用此方法用来更新[getBounds]
      * 同时需要更新[getRenderBounds],[getVisualBounds]等信息*/
-    open fun changeBounds(notify: Boolean = true, block: RectF.() -> Unit) {
+    open fun changeBounds(
+        reason: Reason = Reason(Reason.REASON_USER, true),
+        block: RectF.() -> Unit
+    ) {
         getBounds().block()
-        if (notify) {
-            if (this is BaseItemRenderer<*>) {
-                canvasViewBox.canvasView.dispatchItemBoundsChanged(this)
-            }
-        }
     }
 
     /**触发刷新*/
     fun refresh() {
         canvasView.refresh()
+    }
+
+    override fun preview(): Drawable? {
+        val renderBounds = getRenderBounds()
+        val oldRenderRect = RectF(renderBounds)
+
+        renderBounds.set(0f, 0f, renderBounds.width(), renderBounds.height())
+        val result = ScalePictureDrawable(
+            withPicture(
+                renderBounds.width().toInt(),
+                renderBounds.height().toInt()
+            ) {
+                render(this)
+            })
+        renderBounds.set(oldRenderRect)
+        return result
     }
 }

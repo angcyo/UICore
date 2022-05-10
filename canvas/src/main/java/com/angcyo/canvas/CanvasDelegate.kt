@@ -266,56 +266,6 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
     override fun getCanvasViewBox(): CanvasViewBox = viewBox
 
-    /**将画板移动到可以完全显示出[rect]
-     * [rect] 坐标系中的矩形坐标
-     * [scale] 是否要缩放, 以适应过大的矩形
-     * [margin] 边缘额外显示的距离*/
-    fun showRectBounds(
-        rect: RectF,
-        margin: Float = 40f * dp,
-        scale: Boolean = true,
-        anim: Boolean = true
-    ) {
-
-        //中心需要偏移的距离量
-        val translateX =
-            getCanvasViewBox().getContentCenterX() - rect.centerX() - getCanvasViewBox().getCoordinateSystemX()
-        val translateY =
-            getCanvasViewBox().getContentCenterY() - rect.centerY() - getCanvasViewBox().getCoordinateSystemY()
-
-        val matrix = Matrix()
-        matrix.setTranslate(translateX, translateY)
-
-        val width = rect.width() + margin * 2
-        val height = rect.height() + margin * 2
-
-        val contentWidth = getCanvasViewBox().getContentWidth()
-        val contentHeight = getCanvasViewBox().getContentHeight()
-
-        if (width > contentWidth || height > contentHeight) {
-            if (scale) {
-                //自动缩放
-                val scaleCenterX = getCanvasViewBox().getContentCenterX()
-                val scaleCenterY = getCanvasViewBox().getContentCenterY()
-
-                val scaleX = (contentWidth - margin * 2) / rect.width()
-                val scaleY = (contentHeight - margin * 2) / rect.height()
-
-                matrix.postScale(
-                    scaleX,
-                    scaleY,
-                    scaleCenterX,
-                    scaleCenterY
-                )
-            }
-        } else {
-            //不处理自动放大的情况
-        }
-
-        //更新
-        getCanvasViewBox().updateTo(matrix, anim)
-    }
-
     override fun addCanvasListener(listener: ICanvasListener) {
         canvasListenerList.add(listener)
     }
@@ -336,15 +286,12 @@ class CanvasDelegate(val view: View) : ICanvasView {
         //多选渲染优先
         val selectedRenderer = getSelectedRenderer()
         if (selectedRenderer is SelectGroupRenderer) {
-            if (selectedRenderer.containsPoint(point)) {
+            if (selectedRenderer.isVisible() && selectedRenderer.containsPoint(point)) {
                 return selectedRenderer
             }
         }
 
         itemsRendererList.reversed().forEach {
-            /*if (it.getRendererBounds().contains(point)) {
-                return it
-            }*/
             if (it.isVisible() && it.containsPoint(point)) {
                 return it
             }
@@ -368,10 +315,24 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
     }
 
-    override fun dispatchItemBoundsChanged(item: BaseItemRenderer<*>) {
-        super.dispatchItemBoundsChanged(item)
+    override fun dispatchItemBoundsChanged(item: IRenderer, reason: Reason, oldBounds: RectF) {
+        super.dispatchItemBoundsChanged(item, reason, oldBounds)
         canvasListenerList.forEach {
-            it.onItemBoundsChanged(item)
+            it.onItemBoundsChanged(item, reason, oldBounds)
+        }
+    }
+
+    override fun dispatchItemVisibleChanged(item: IRenderer, visible: Boolean) {
+        super.dispatchItemVisibleChanged(item, visible)
+        canvasListenerList.forEach {
+            it.onItemVisibleChanged(item, visible)
+        }
+        if (!visible) {
+            //不可见
+            val selectedRenderer = getSelectedRenderer()
+            if (selectedRenderer == item) {
+                selectedItem(null)
+            }
         }
     }
 
@@ -614,6 +575,11 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
     /**选中item[BaseItemRenderer]*/
     fun selectedItem(itemRenderer: BaseItemRenderer<*>?) {
+        if (itemRenderer != null && !itemRenderer.isVisible()) {
+            //选中一个不可见的项
+            return
+        }
+
         val oldItemRenderer = controlHandler.selectedItemRender
 
         if (oldItemRenderer != null && oldItemRenderer != itemRenderer) {
@@ -639,8 +605,8 @@ class CanvasDelegate(val view: View) : ICanvasView {
         refresh()
     }
 
-    /**双击item[BaseItemRenderer]*/
-    fun doubleTapItem(itemRenderer: BaseItemRenderer<*>) {
+    /**分发双击item[BaseItemRenderer]*/
+    fun dispatchDoubleTapItem(itemRenderer: BaseItemRenderer<*>) {
         canvasListenerList.forEach {
             it.onDoubleTapItem(itemRenderer)
         }
@@ -708,6 +674,55 @@ class CanvasDelegate(val view: View) : ICanvasView {
      * [SelectGroupRenderer]*/
     fun getSelectedRenderer(): BaseItemRenderer<*>? {
         return controlHandler.selectedItemRender
+    }
+
+    /**将画板移动到可以完全显示出[rect]
+     * [rect] 坐标系中的矩形坐标
+     * [scale] 是否要缩放, 以适应过大的矩形
+     * [margin] 边缘额外显示的距离*/
+    fun showRectBounds(
+        rect: RectF,
+        margin: Float = 40f * dp,
+        scale: Boolean = true,
+        anim: Boolean = true
+    ) {
+        //中心需要偏移的距离量
+        val translateX =
+            getCanvasViewBox().getContentCenterX() - rect.centerX() - getCanvasViewBox().getCoordinateSystemX()
+        val translateY =
+            getCanvasViewBox().getContentCenterY() - rect.centerY() - getCanvasViewBox().getCoordinateSystemY()
+
+        val matrix = Matrix()
+        matrix.setTranslate(translateX, translateY)
+
+        val width = rect.width() + margin * 2
+        val height = rect.height() + margin * 2
+
+        val contentWidth = getCanvasViewBox().getContentWidth()
+        val contentHeight = getCanvasViewBox().getContentHeight()
+
+        if (width > contentWidth || height > contentHeight) {
+            if (scale) {
+                //自动缩放
+                val scaleCenterX = getCanvasViewBox().getContentCenterX()
+                val scaleCenterY = getCanvasViewBox().getContentCenterY()
+
+                val scaleX = (contentWidth - margin * 2) / rect.width()
+                val scaleY = (contentHeight - margin * 2) / rect.height()
+
+                matrix.postScale(
+                    scaleX,
+                    scaleY,
+                    scaleCenterX,
+                    scaleCenterY
+                )
+            }
+        } else {
+            //不处理自动放大的情况
+        }
+
+        //更新
+        getCanvasViewBox().updateTo(matrix, anim)
     }
 
     //</editor-fold desc="操作方法">

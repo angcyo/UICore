@@ -7,8 +7,10 @@ import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.BuildConfig
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
+import com.angcyo.canvas.Reason
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.ICanvasView
+import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.core.component.ControlHandler
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.control.RotateControlPoint
@@ -65,9 +67,9 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
         updateControlPointLocation()
     }
 
-    override fun onItemBoundsChanged(itemRenderer: IItemRenderer<*>) {
-        super.onItemBoundsChanged(itemRenderer)
-        if (itemRenderer == controlHandler.selectedItemRender) {
+    override fun onItemBoundsChanged(item: IRenderer, reason: Reason, oldBounds: RectF) {
+        super.onItemBoundsChanged(item, reason, oldBounds)
+        if (item == controlHandler.selectedItemRender) {
             updateControlPointLocation()
         }
     }

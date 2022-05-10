@@ -22,5 +22,6 @@ class LineItem : BaseItem() {
 
     init {
         paint.style = Paint.Style.STROKE
+        itemName = "Line"
     }
 }

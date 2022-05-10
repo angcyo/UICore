@@ -3,6 +3,7 @@ package com.angcyo.canvas.core
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.RectF
+import android.graphics.drawable.Drawable
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.CanvasView
 
@@ -19,7 +20,7 @@ interface IRenderer {
     fun isVisible(): Boolean
 
     /**获取图层描述的名字*/
-    fun getName(): String
+    fun getName(): CharSequence?
 
     /**距离坐标系原点的像素坐标*/
     fun getBounds(): RectF
@@ -54,6 +55,11 @@ interface IRenderer {
     /**核心渲染方法
      * [com.angcyo.canvas.CanvasView.onDraw]*/
     fun render(canvas: Canvas)
+
+    /**获取用于预览的[Drawable]*/
+    fun preview(): Drawable? {
+        return null
+    }
 
     //</editor-fold desc="渲染">
 }

@@ -11,4 +11,8 @@ open class DrawableItem : BaseItem() {
     /**可绘制的对象*/
     var drawable: Drawable? = null
 
+    init {
+        itemName = "Drawable"
+    }
+
 }

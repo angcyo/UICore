@@ -5,6 +5,7 @@ import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.RectF
 import android.widget.LinearLayout
+import com.angcyo.canvas.Reason
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.LineItem
@@ -43,7 +44,7 @@ class LineItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<LineItem>(can
     }
 
     /**限制线的宽或高*/
-    override fun itemBoundsChanged(oldBounds: RectF) {
+    override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
         if (lineBounds.width() <= 1f) {
             getBounds().apply {
                 adjustSizeWithRotate(lineBounds.width(), height(), rotate, ADJUST_TYPE_LT)
@@ -53,7 +54,7 @@ class LineItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<LineItem>(can
                 adjustSizeWithRotate(width(), lineBounds.height(), rotate, ADJUST_TYPE_LT)
             }
         }
-        super.itemBoundsChanged(oldBounds)
+        super.itemBoundsChanged(reason, oldBounds)
     }
 
     override fun render(canvas: Canvas) {

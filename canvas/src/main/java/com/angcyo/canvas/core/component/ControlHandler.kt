@@ -71,7 +71,7 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
         val itemRenderer = canvasView.findItemRenderer(_touchPoint)
         if (itemRenderer != null) {
             isDoubleTouch = true
-            canvasView.doubleTapItem(itemRenderer)
+            canvasView.dispatchDoubleTapItem(itemRenderer)
         }
     }
 

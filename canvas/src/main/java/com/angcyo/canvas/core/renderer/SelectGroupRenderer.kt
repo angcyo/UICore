@@ -3,8 +3,10 @@ package com.angcyo.canvas.core.renderer
 import android.graphics.*
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
+import com.angcyo.canvas.Reason
 import com.angcyo.canvas.core.CanvasEntryPoint
 import com.angcyo.canvas.core.ICanvasListener
+import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
@@ -50,9 +52,17 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         }
     }
 
-    override fun onItemBoundsChanged(itemRenderer: IItemRenderer<*>) {
-        if (selectItemList.contains(itemRenderer)) {
+    override fun onItemBoundsChanged(item: IRenderer, reason: Reason, oldBounds: RectF) {
+        if (selectItemList.contains(item)) {
             updateSelectBounds()
+        }
+    }
+
+    override fun onItemVisibleChanged(itemRenderer: IRenderer, visible: Boolean) {
+        if (!visible) {
+            if (selectItemList.contains(itemRenderer)) {
+                removeSelectedRenderer(itemRenderer)
+            }
         }
     }
 
@@ -63,22 +73,21 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
 
     fun reset() {
         selectItemList.clear()
+        selectRect.setEmpty()
         //重置滚动
         rotate = 0f
     }
 
     override fun render(canvas: Canvas) {
-        paint.style = Paint.Style.FILL
-        paint.color = paintColor.alpha(32)
-        canvas.drawRect(selectRect, paint)
+        if (_isStart) {
+            paint.style = Paint.Style.FILL
+            paint.color = paintColor.alpha(32)
+            canvas.drawRect(selectRect, paint)
 
-        paint.style = Paint.Style.STROKE
-        paint.color = paintColor
-        canvas.drawRect(selectRect, paint)
-    }
-
-    override fun isVisible(): Boolean {
-        return _isStart
+            paint.style = Paint.Style.STROKE
+            paint.color = paintColor
+            canvas.drawRect(selectRect, paint)
+        }
     }
 
     override fun isSupportControlPoint(type: Int): Boolean {
@@ -105,48 +114,51 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         updateSelectBounds()
     }
 
-    override fun itemBoundsChanged(oldBounds: RectF) {
-        super.itemBoundsChanged(oldBounds)
-        if (!oldBounds.isNoSize() && oldBounds.width() > 0 && oldBounds.height() > 0) {
-            val bounds = getBounds()
+    override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
+        super.itemBoundsChanged(reason, oldBounds)
 
-            //平移
-            val offsetLeft: Float = bounds.left - oldBounds.left
-            val offsetTop: Float = bounds.top - oldBounds.top
-            if (offsetLeft.isFinite() && offsetTop.isFinite() && (offsetLeft != 0f || offsetTop != 0f)) {
-                selectItemList.forEach { item ->
-                    item.changeBounds(false) {
-                        offset(offsetLeft, offsetTop)
+        if (reason.reason == Reason.REASON_USER) {
+            if (!oldBounds.isNoSize() && oldBounds.width() > 0 && oldBounds.height() > 0) {
+                val bounds = getBounds()
+
+                //平移
+                val offsetLeft: Float = bounds.left - oldBounds.left
+                val offsetTop: Float = bounds.top - oldBounds.top
+                if (offsetLeft.isFinite() && offsetTop.isFinite() && (offsetLeft != 0f || offsetTop != 0f)) {
+                    selectItemList.forEach { item ->
+                        item.changeBounds {
+                            offset(offsetLeft, offsetTop)
+                        }
                     }
                 }
-            }
 
-            //缩放
-            val offsetWidth = bounds.width() - oldBounds.width()
-            val offsetHeight = bounds.height() - oldBounds.height()
-            if (offsetWidth.isFinite() && offsetHeight.isFinite() && (offsetWidth != 0f || offsetHeight != 0f)) {
-                //todo 未实现
-                selectItemList.forEach { item ->
-                    val itemBounds = item.getBounds()
-                    val newWidth = itemBounds.width() + offsetWidth
-                    val newHeight = itemBounds.height() + offsetHeight
-                    item.changeBounds(false) {
-                        scale(
-                            newWidth / itemBounds.width(),
-                            newHeight / itemBounds.height(),
-                            bounds.left,
-                            bounds.top
-                        )
-                        //adjustSizeWithRotate(newWidth, newHeight, item.rotate, _adjustType)
+                //缩放
+                // todo 未实现
+                /*val offsetWidth = bounds.width() - oldBounds.width()
+                val offsetHeight = bounds.height() - oldBounds.height()
+                if (offsetWidth.isFinite() && offsetHeight.isFinite() && (offsetWidth != 0f || offsetHeight != 0f)) {
+                    selectItemList.forEach { item ->
+                        val itemBounds = item.getBounds()
+                        val newWidth = itemBounds.width() + offsetWidth
+                        val newHeight = itemBounds.height() + offsetHeight
+                        item.changeBounds(false) {
+                            scale(
+                                newWidth / itemBounds.width(),
+                                newHeight / itemBounds.height(),
+                                bounds.left,
+                                bounds.top
+                            )
+                            //adjustSizeWithRotate(newWidth, newHeight, item.rotate, _adjustType)
+                        }
                     }
-                }
+                }*/
             }
         }
     }
 
     /**更新选中的bounds大小, 需要包含所有选中的元素*/
     fun updateSelectBounds() {
-        changeBounds {
+        changeBounds(Reason(Reason.REASON_CODE, true)) {
             var l = Float.MAX_VALUE
             var t = Float.MAX_VALUE
             var r = Float.MIN_VALUE
@@ -182,7 +194,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
             canvasViewBox.mapCoordinateSystemRect(selectRect, selectRectMap)
             selectItemList.clear()
             canvasDelegate.itemsRendererList.forEach {
-                if (it.intersectRect(selectRectMap)) {
+                if (it.isVisible() && it.intersectRect(selectRectMap)) {
                     selectItemList.add(it)
                     //L.i("相交:$it")
                 }
@@ -191,37 +203,62 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         }
     }
 
-    /**取消选择*/
-    fun cancelSelect() {
-        _isStart = false
-        if (selectItemList.isNotEmpty()) {
-            //不为空, 则表示选中了元素
-            if (selectItemList.size() == 1) {
-                //只选中了一个
-                canvasDelegate.selectedItem(selectItemList.first())
-            } else {
-                //否则选中自己
-                updateSelectBounds()
-                canvasDelegate.selectedItem(this)
+    /**结束选择, 并查找范围内的项目*/
+    fun endSelect() {
+        if (_isStart) {
+            _isStart = false
+            selectRect.setEmpty()
+            if (selectItemList.isNotEmpty()) {
+                //不为空, 则表示选中了元素
+                if (selectItemList.size() == 1) {
+                    //只选中了一个
+                    canvasDelegate.selectedItem(selectItemList.first())
+                } else {
+                    //否则选中自己
+                    updateSelectBounds()
+                    canvasDelegate.selectedItem(this)
+                }
             }
         }
     }
 
     /**主动添加一个渲染器*/
     fun addSelectedRenderer(itemRenderer: BaseItemRenderer<*>) {
-        if (itemRenderer == this) {
+        if (itemRenderer == this || !itemRenderer.isVisible()) {
             return
         }
         val selectedRenderer = canvasDelegate.getSelectedRenderer()
-        if (selectedRenderer == this) {
+        if (selectedRenderer == null) {
+            //还未选中过
+            canvasDelegate.selectedItem(itemRenderer)
+        } else if (selectedRenderer == this) {
             selectItemList.add(itemRenderer)
             updateSelectBounds()
-        } else if (selectedRenderer != null && selectedRenderer != itemRenderer) {
+        } else if (selectedRenderer != itemRenderer) {
             selectItemList.clear()
             selectItemList.add(selectedRenderer)
             selectItemList.add(itemRenderer)
             updateSelectBounds()
             canvasDelegate.selectedItem(this)
+        }
+    }
+
+    /**主动移除一个渲染器*/
+    fun removeSelectedRenderer(itemRenderer: IRenderer) {
+        if (itemRenderer == this) {
+            reset()
+            canvasDelegate.selectedItem(null)
+            return
+        }
+        selectItemList.remove(itemRenderer)
+        if (selectItemList.size() == 1) {
+            //只剩下一个
+            canvasDelegate.selectedItem(selectItemList.first())
+        } else if (selectItemList.isEmpty()) {
+            //全部没了
+            canvasDelegate.selectedItem(null)
+        } else {
+            updateSelectBounds()
         }
     }
 }

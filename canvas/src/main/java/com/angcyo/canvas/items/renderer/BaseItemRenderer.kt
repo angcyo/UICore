@@ -4,8 +4,12 @@ import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.RectF
+import android.graphics.drawable.Drawable
+import androidx.core.graphics.withRotation
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.Reason
+import com.angcyo.canvas.ScalePictureDrawable
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.renderer.BaseRenderer
 import com.angcyo.canvas.items.BaseItem
@@ -76,15 +80,15 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     override fun getVisualRotateBounds(): RectF = _visualRotateBounds
 
-    override fun changeBounds(notify: Boolean, block: RectF.() -> Unit) {
+    override fun changeBounds(reason: Reason, block: RectF.() -> Unit) {
         getBounds().apply {
             changeBeforeBounds.set(this)
             block()
         }
-        itemBoundsChanged(changeBeforeBounds)
+        itemBoundsChanged(reason, changeBeforeBounds)
         //notify
-        if (notify) {
-            canvasView.dispatchItemBoundsChanged(this)
+        if (reason.notify) {
+            canvasView.dispatchItemBoundsChanged(this, reason, changeBeforeBounds)
         }
         //invalidate
         refresh()
@@ -105,11 +109,36 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         oldValue: Matrix
     ) {
         //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
-        itemBoundsChanged(changeBeforeBounds)
+        itemBoundsChanged(Reason(), changeBeforeBounds)
+    }
+
+    override fun preview(): Drawable? {
+        return rendererItem?.run {
+            val renderBounds = getRenderBounds()
+            val oldRenderRect = RectF(renderBounds)
+
+            val rotateBounds = getRenderRotateBounds()
+            renderBounds.set(0f, 0f, rotateBounds.width(), rotateBounds.height())
+            val result = ScalePictureDrawable(
+                withPicture(
+                    renderBounds.width().toInt(),
+                    renderBounds.height().toInt()
+                ) {
+                    withRotation(
+                        rotate,
+                        renderBounds.centerX(),
+                        renderBounds.centerY()
+                    ) {
+                        render(this)
+                    }
+                })
+            renderBounds.set(oldRenderRect)
+            result
+        }
     }
 
     /**当渲染的bounds改变后, 需要主动触发此方法, 用来更新主要的bounds和辅助的bounds*/
-    override fun itemBoundsChanged(oldBounds: RectF) {
+    override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
         canvasViewBox.calcItemRenderBounds(getBounds(), getRenderBounds())
         canvasViewBox.calcItemVisualBounds(getRenderBounds(), getVisualBounds())
 

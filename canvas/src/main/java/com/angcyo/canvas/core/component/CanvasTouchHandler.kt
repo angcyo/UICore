@@ -162,7 +162,7 @@ class CanvasTouchHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICan
                 _touchPointList.clear()
                 _movePointList.clear()
                 _touchType = TOUCH_TYPE_NONE
-                canvasView.selectGroupRenderer.cancelSelect()
+                canvasView.selectGroupRenderer.endSelect()
             }
         }
         return true
@@ -199,7 +199,7 @@ class CanvasTouchHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICan
                     canvasView.selectGroupRenderer.addSelectedRenderer(nextSelectedRenderer)
                 }
             } else {
-                canvasView.selectGroupRenderer.cancelSelect()
+                canvasView.selectGroupRenderer.endSelect()
             }
         } else {
             if (selectedRenderer == null) {

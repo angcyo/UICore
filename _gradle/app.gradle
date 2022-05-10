@@ -13,7 +13,7 @@ apply plugin: 'kotlin-android'
 //apply from: 'build_time.gradle'
 
 apply from: allGradle.appBase
-apply from: allGradle.aar
+//apply from: allGradle.aar
 apply from: allGradle.key
 
 def _C_SDK = project.hasProperty("C_SDK") ? project.ext.C_SDK : '31'

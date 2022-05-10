@@ -1,6 +1,8 @@
 package com.angcyo.canvas.core
 
 import android.graphics.Matrix
+import android.graphics.RectF
+import com.angcyo.canvas.Reason
 import com.angcyo.canvas.items.renderer.IItemRenderer
 
 /**
@@ -31,7 +33,10 @@ interface ICanvasListener : ICanvasTouch {
     fun onClearSelectItem(itemRenderer: IItemRenderer<*>) {}
 
     /**[IItemRenderer]改变[Bounds]之后的回调*/
-    fun onItemBoundsChanged(itemRenderer: IItemRenderer<*>) {}
+    fun onItemBoundsChanged(item: IRenderer, reason: Reason, oldBounds: RectF) {}
+
+    /**可见性改变回调*/
+    fun onItemVisibleChanged(itemRenderer: IRenderer, visible: Boolean) {}
 
     /**双击[IItemRenderer]*/
     fun onDoubleTapItem(itemRenderer: IItemRenderer<*>) {}

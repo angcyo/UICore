@@ -60,15 +60,16 @@ fun RecyclerView.initDsl() {
 }
 
 /**快速初始化[DslAdapter]*/
-fun RecyclerView.initDslAdapter(action: DslAdapter.() -> Unit = {}): DslAdapter {
+fun RecyclerView.initDslAdapter(
+    append: Boolean = false, //当已经是adapter时, 是否追加item. 需要先关闭 new
+    new: Boolean = true, //始终创建新的adapter, 为true时, 则append无效
+    action: DslAdapter.() -> Unit = {}
+): DslAdapter {
     initDsl()
     if (layoutManager == null) {
         resetLayoutManager("v")
     }
-    return DslAdapter().apply {
-        this.action()
-        adapter = this
-    }
+    return dslAdapter(append, new, action)
 }
 
 fun RecyclerView.dslAdapter(

@@ -12,4 +12,8 @@ class BitmapItem : BaseItem() {
     /**可绘制的对象*/
     var bitmap: Bitmap? = null
 
+    init {
+        itemName = "Bitmap"
+    }
+
 }

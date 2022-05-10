@@ -1,6 +1,7 @@
 package com.angcyo.canvas.items
 
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import com.angcyo.canvas.utils.*
 import com.angcyo.library.ex.dp
@@ -46,4 +47,7 @@ abstract class BaseItem : ICanvasItem {
         }
     }
 
+    override var itemName: CharSequence? = null
+
+    override var itemDrawable: Drawable? = null
 }
