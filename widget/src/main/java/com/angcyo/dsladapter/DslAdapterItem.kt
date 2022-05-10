@@ -86,7 +86,10 @@ open class DslAdapterItem : LifecycleOwner {
     /**[com.angcyo.dsladapter.DslAdapter.notifyItemChanged]*/
     open fun updateAdapterItem(payload: Any? = PAYLOAD_UPDATE_PART, useFilterList: Boolean = true) {
         if (itemDslAdapter?._recyclerView?.isComputingLayout == true) {
-            L.w("跳过操作! [RecyclerView]正在计算布局.")
+            //L.w("跳过操作! [RecyclerView]正在计算布局, 请不要在RecyclerView正在布局时, 更新Item. ")
+            itemDslAdapter?._recyclerView?.post {
+                updateAdapterItem(payload, useFilterList)
+            }
             return
         }
         itemDslAdapter?.notifyItemChanged(this, payload, useFilterList).elseNull {
@@ -1181,6 +1184,27 @@ open class DslAdapterItem : LifecycleOwner {
 
     /**是否选中, 需要 [ItemSelectorHelper.selectorModel] 的支持. */
     var itemIsSelected = false
+        set(value) {
+            field = value
+            onSetItemSelected(value)
+        }
+
+    /**简单的互斥操作支持
+     * [onSetItemSelected]*/
+    var itemSingleSelectMutex: Boolean = false
+
+    /**选中状态改变回调*/
+    open fun onSetItemSelected(select: Boolean) {
+        if (select && itemSingleSelectMutex) {
+            itemDslAdapter?.eachItem { index, dslAdapterItem ->
+                if (dslAdapterItem.className() == this.className() && dslAdapterItem != this) {
+                    //互斥操作
+                    dslAdapterItem.itemIsSelected = false
+                    dslAdapterItem.updateAdapterItem()
+                }
+            }
+        }
+    }
 
     /**是否 允许被选中*/
     var isItemCanSelected: (fromSelector: Boolean, toSelector: Boolean) -> Boolean =
