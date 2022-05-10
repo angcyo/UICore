@@ -34,10 +34,10 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
     val canvasViewBox: CanvasViewBox
         get() = canvasView.getCanvasViewBox()
 
+    var _name: CharSequence? = null
+
     /**获取图层描述的名字*/
-    override fun getName(): CharSequence? {
-        return "Default"
-    }
+    override fun getName(): CharSequence? = _name ?: "Default"
 
     override fun isVisible(): Boolean = _visible
 

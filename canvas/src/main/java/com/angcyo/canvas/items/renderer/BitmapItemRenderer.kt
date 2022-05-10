@@ -23,6 +23,10 @@ class BitmapItemRenderer(canvasView: ICanvasView) :
 
     val tempRect = RectF()
 
+    init {
+        _name = "Bitmap"
+    }
+
     override fun onUpdateRendererItem(item: BitmapItem?, oldItem: BitmapItem?) {
         super.onUpdateRendererItem(item, oldItem)
         changeBounds {

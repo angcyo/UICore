@@ -6,7 +6,7 @@ import android.graphics.RectF
 import androidx.core.graphics.withMatrix
 import com.angcyo.canvas.ScalePictureDrawable
 import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.items.DrawableItem
+import com.angcyo.canvas.items.*
 import com.angcyo.library.ex.*
 
 /**
@@ -24,6 +24,16 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasView: ICanvasView) :
     //</editor-fold desc="临时变量">
 
     //<editor-fold desc="初始化">
+
+    override fun getName(): CharSequence? {
+        return _name ?: when (_rendererItem) {
+            is ShapeItem -> "Shape"
+            is PictureTextItem -> "Text"
+            is PictureBitmapItem -> "Bitmap"
+            is PictureShapeItem -> "Shape"
+            else -> super.getName()
+        }
+    }
 
     override fun onUpdateRendererItem(item: T?, oldItem: T?) {
         super.onUpdateRendererItem(item, oldItem)

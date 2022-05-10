@@ -24,7 +24,7 @@ import com.angcyo.library.ex.remove
  */
 class PictureItemRenderer(canvasView: ICanvasView) :
     DrawableItemRenderer<PictureItem>(canvasView) {
-
+    
     override fun isSupportControlPoint(type: Int): Boolean {
         if (type == ControlPoint.POINT_TYPE_LOCK) {
             val item = _rendererItem
