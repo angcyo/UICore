@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="@dimen/lib_hdpi"
-            android:text="暂无数据"
+            android:text="@string/adapter_no_data"
             android:textColor="@color/text_sub_color" />
     </LinearLayout>
 

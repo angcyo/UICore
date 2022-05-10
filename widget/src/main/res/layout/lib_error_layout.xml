@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="@dimen/lib_hdpi"
-            android:text="加载失败, 点击重试"
+            android:text="@string/adapter_error"
             android:textColor="@color/text_sub_color" />
 
     </LinearLayout>
