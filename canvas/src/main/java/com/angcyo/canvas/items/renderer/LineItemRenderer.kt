@@ -58,7 +58,7 @@ class LineItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<LineItem>(can
     }
 
     override fun render(canvas: Canvas) {
-        rendererItem?.apply {
+        _rendererItem?.apply {
             val renderBounds = getRenderBounds()
             if (orientation == LinearLayout.VERTICAL) {
                 canvas.drawLine(

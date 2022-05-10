@@ -42,10 +42,10 @@ fun CanvasView.addPictureTextRenderer(
 fun CanvasView.addTextRenderer(text: String): PictureTextItem {
     canvasDelegate.apply {
         val renderer = TextItemRenderer(this)
-        renderer.rendererItem = PictureTextItem().apply { this.text = text }
+        renderer._rendererItem = PictureTextItem().apply { this.text = text }
         addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
         selectedItem(renderer)
-        return renderer.rendererItem!!
+        return renderer._rendererItem!!
     }
 }
 
@@ -61,7 +61,7 @@ fun CanvasView.addLineRenderer(
 ): LineItem {
     canvasDelegate.apply {
         val renderer = LineItemRenderer(this)
-        renderer.rendererItem = LineItem().apply {
+        renderer._rendererItem = LineItem().apply {
             this.length = length
             this.orientation = orientation
             this.dash = dash
@@ -73,7 +73,7 @@ fun CanvasView.addLineRenderer(
         }
         addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
         selectedItem(renderer)
-        return renderer.rendererItem!!
+        return renderer._rendererItem!!
     }
 }
 
@@ -93,10 +93,10 @@ fun CanvasView.addShapeRenderer(path: Path, paint: TextPaint? = null): ShapeItem
 fun CanvasView.addDrawableRenderer(drawable: Drawable): DrawableItem {
     canvasDelegate.apply {
         val renderer = DrawableItemRenderer<DrawableItem>(this)
-        renderer.rendererItem = DrawableItem().apply { this.drawable = drawable }
+        renderer._rendererItem = DrawableItem().apply { this.drawable = drawable }
         addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
         selectedItem(renderer)
-        return renderer.rendererItem!!
+        return renderer._rendererItem!!
     }
 }
 
@@ -116,7 +116,7 @@ fun CanvasView.addDrawableRenderer(
 ): DrawableItem {
     canvasDelegate.apply {
         val renderer = DrawableItemRenderer<DrawableItem>(this)
-        renderer.rendererItem = DrawableItem().apply {
+        renderer._rendererItem = DrawableItem().apply {
             val width = paint.textWidth(text)
             val height = paint.textHeight()
             this.drawable = ScalePictureDrawable(withPicture(width.toInt(), height.toInt()) {
@@ -125,7 +125,7 @@ fun CanvasView.addDrawableRenderer(
         }
         addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
         selectedItem(renderer)
-        return renderer.rendererItem!!
+        return renderer._rendererItem!!
     }
 }
 

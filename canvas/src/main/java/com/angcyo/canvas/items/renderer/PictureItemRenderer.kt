@@ -27,7 +27,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
 
     override fun isSupportControlPoint(type: Int): Boolean {
         if (type == ControlPoint.POINT_TYPE_LOCK) {
-            val item = rendererItem
+            val item = _rendererItem
             if (item is PictureShapeItem) {
                 if (item.shapePath is LinePath) {
                     //线段不支持任意比例缩放
@@ -40,7 +40,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
 
     /**当渲染的[drawable]改变后, 调用此方法, 更新bounds*/
     fun updatePictureDrawableBounds(oldWidth: Float = 0f, oldHeight: Float = 0f) {
-        rendererItem?.let { item ->
+        _rendererItem?.let { item ->
             val bounds = getBounds()
             val newWith = item.itemWidth
             val newHeight = item.itemHeight
@@ -61,7 +61,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
 
     /**围绕[updatePictureDrawableBounds]*/
     fun wrapItemUpdate(block: PictureItem.() -> Unit) {
-        rendererItem?.let {
+        _rendererItem?.let {
             val oldWidth = it.itemWidth
             val oldHeight = it.itemHeight
             it.block()
@@ -74,7 +74,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
         style: Paint.Style,
         strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
     ) {
-        val oldValue = rendererItem?.paint?.style
+        val oldValue = _rendererItem?.paint?.style
         if (oldValue == style) {
             return
         }
@@ -103,7 +103,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
         align: Paint.Align,
         strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
     ) {
-        val oldValue = rendererItem?.paint?.textAlign
+        val oldValue = _rendererItem?.paint?.textAlign
         if (oldValue == align) {
             return
         }
@@ -133,17 +133,17 @@ class PictureItemRenderer(canvasView: ICanvasView) :
 
     /**添加一个文本用来渲染*/
     fun addTextRender(text: String): PictureTextItem {
-        rendererItem = PictureTextItem().apply {
+        _rendererItem = PictureTextItem().apply {
             this.text = text
             updatePaint()
         }
         updatePictureDrawableBounds()
-        return rendererItem as PictureTextItem
+        return _rendererItem as PictureTextItem
     }
 
     /**更新渲染的文本*/
     fun updateItemText(text: String, strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)) {
-        val item = rendererItem
+        val item = _rendererItem
         val oldValue = if (item is PictureTextItem) {
             item.text
         } else {
@@ -173,7 +173,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
 
     /**更新文本样式*/
     fun updateTextStyle(style: Int, strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)) {
-        val item = rendererItem
+        val item = _rendererItem
         val oldValue = if (item is PictureTextItem) {
             item.textStyle
         } else {
@@ -210,7 +210,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
         enable: Boolean = true,
         strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
     ) {
-        val item = rendererItem
+        val item = _rendererItem
         val oldValue = if (item is PictureTextItem) {
             item.textStyle
         } else {
@@ -255,7 +255,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
         typeface: Typeface?,
         strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
     ) {
-        val oldValue = rendererItem?.paint?.typeface
+        val oldValue = _rendererItem?.paint?.typeface
         if (oldValue == typeface) {
             return
         }
@@ -289,7 +289,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
         orientation: Int,
         strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
     ) {
-        val item = rendererItem
+        val item = _rendererItem
         val oldValue = if (item is PictureTextItem) {
             item.orientation
         } else {
@@ -329,17 +329,17 @@ class PictureItemRenderer(canvasView: ICanvasView) :
 
     /**添加一个文本用来渲染*/
     fun addShapeRender(path: Path): PictureShapeItem {
-        rendererItem = PictureShapeItem().apply {
+        _rendererItem = PictureShapeItem().apply {
             this.shapePath = path
             updatePaint()
         }
         updatePictureDrawableBounds()
-        return rendererItem as PictureShapeItem
+        return _rendererItem as PictureShapeItem
     }
 
     /**更新渲染的Path*/
     fun updateItemPath(path: Path, strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)) {
-        val item = rendererItem
+        val item = _rendererItem
         val oldValue = if (item is PictureShapeItem) {
             item.shapePath
         } else {
@@ -379,12 +379,12 @@ class PictureItemRenderer(canvasView: ICanvasView) :
 
     /**添加一个图片用来渲染*/
     fun addBitmapRender(bitmap: Bitmap): PictureBitmapItem {
-        rendererItem = PictureBitmapItem().apply {
+        _rendererItem = PictureBitmapItem().apply {
             this.bitmap = bitmap
             updatePaint()
         }
         updatePictureDrawableBounds()
-        return rendererItem as PictureBitmapItem
+        return _rendererItem as PictureBitmapItem
     }
 
     /**更新需要绘制的图片, 并保持原先的缩放比例*/
@@ -392,7 +392,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
         bitmap: Bitmap,
         strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
     ) {
-        val item = rendererItem
+        val item = _rendererItem
         val oldValue = if (item is PictureBitmapItem) {
             item.bitmap
         } else {

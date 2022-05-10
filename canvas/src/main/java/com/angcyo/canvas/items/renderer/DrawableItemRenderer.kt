@@ -38,15 +38,15 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasView: ICanvasView) :
     open fun initBounds() {
         changeBounds {
             adjustSize(
-                rendererItem?.drawable?.minimumWidth?.toFloat() ?: 0f,
-                rendererItem?.drawable?.minimumHeight?.toFloat() ?: 0f,
+                _rendererItem?.drawable?.minimumWidth?.toFloat() ?: 0f,
+                _rendererItem?.drawable?.minimumHeight?.toFloat() ?: 0f,
                 ADJUST_TYPE_LT
             )
         }
     }
 
     override fun render(canvas: Canvas) {
-        rendererItem?.drawable?.let { drawable ->
+        _rendererItem?.drawable?.let { drawable ->
             val bounds = getRenderBounds()
             //需要处理矩形翻转的情况
             if (drawable is ScalePictureDrawable) {

@@ -27,7 +27,7 @@ class ShapeItemRenderer(canvasView: ICanvasView) :
         val bounds = getBounds()
         path.computeBounds(bounds, true)
         shapeBounds.set(bounds)
-        rendererItem = ShapeItem().apply {
+        _rendererItem = ShapeItem().apply {
             this.path = path
             this.paint = paint ?: this.paint
             drawable = ScalePictureDrawable(
@@ -39,7 +39,7 @@ class ShapeItemRenderer(canvasView: ICanvasView) :
                 })
         }
         refresh()
-        return rendererItem!!
+        return _rendererItem!!
     }
 
     /**添加一个矩形, 坐标是相对于坐标系的坐标*/

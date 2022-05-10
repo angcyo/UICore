@@ -442,7 +442,6 @@ class CanvasDelegate(val view: View) : ICanvasView {
     /**默认在当前视图中心添加一个绘制元素*/
     fun addCentreItemRenderer(item: BaseItemRenderer<*>, strategy: Strategy) {
         if (getCanvasViewBox().isCanvasInit()) {
-            itemsRendererList.add(item)
             val bounds = item.getBounds()
             if (item is BaseItemRenderer) {
                 if (bounds.isNoSize()) {
@@ -470,19 +469,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
                     }
                 }
             }
-            refresh()
-
-            if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
-                undoManager.addUndoAction(object : ICanvasStep {
-                    override fun runUndo() {
-                        removeItemRenderer(item, Strategy(Strategy.STRATEGY_TYPE_UNDO))
-                    }
-
-                    override fun runRedo() {
-                        addItemRenderer(item, Strategy(Strategy.STRATEGY_TYPE_REDO))
-                    }
-                })
-            }
+            addItemRenderer(item, strategy)
         } else {
             pendingTaskList.add(Runnable { addCentreItemRenderer(item, strategy) })
         }

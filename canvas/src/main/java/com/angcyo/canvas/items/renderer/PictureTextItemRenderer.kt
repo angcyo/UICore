@@ -33,12 +33,12 @@ class PictureTextItemRenderer(canvasView: ICanvasView) :
     var heightIncrease: Float = 0f
 
     fun getTextWidth(): Float {
-        val text = rendererItem?.text ?: ""
-        var width = rendererItem?.paint?.textWidth(text) ?: 0f
+        val text = _rendererItem?.text ?: ""
+        var width = _rendererItem?.paint?.textWidth(text) ?: 0f
         width += widthIncrease
-        if (rendererItem?.paint?.textSkewX != 0f) {
+        if (_rendererItem?.paint?.textSkewX != 0f) {
             val skewWidth =
-                tan((rendererItem?.paint?.textSkewX ?: 0f) * 1.0) * getTextHeight()
+                tan((_rendererItem?.paint?.textSkewX ?: 0f) * 1.0) * getTextHeight()
             width += skewWidth.absoluteValue.toFloat()
         }
         return width
@@ -46,7 +46,7 @@ class PictureTextItemRenderer(canvasView: ICanvasView) :
     }
 
     fun getTextHeight(): Float {
-        var height = rendererItem?.paint.textHeight()
+        var height = _rendererItem?.paint.textHeight()
         height += heightIncrease
         return height
         /*return textBounds.height().toFloat() + heightIncrease*/
@@ -54,7 +54,7 @@ class PictureTextItemRenderer(canvasView: ICanvasView) :
 
     /**更新绘制的内容*/
     fun updateTextDrawable() {
-        rendererItem?.apply {
+        _rendererItem?.apply {
             val width = paint.textWidth(text)
             val height = paint.textHeight()
 
@@ -91,18 +91,18 @@ class PictureTextItemRenderer(canvasView: ICanvasView) :
 
     /**添加一个文本用来渲染*/
     fun addTextRender(text: String, paint: TextPaint): PictureTextItem {
-        rendererItem = PictureTextItem().apply {
+        _rendererItem = PictureTextItem().apply {
             this.paint = paint
             updatePaint(paint)
             this.text = text
         }
         updateTextDrawable()
-        return rendererItem as PictureTextItem
+        return _rendererItem as PictureTextItem
     }
 
     /**更新文本样式*/
     fun updateTextStyle(style: Int) {
-        rendererItem?.apply {
+        _rendererItem?.apply {
             textStyle = style
             updatePaint(paint)
             updateTextDrawable()
@@ -111,7 +111,7 @@ class PictureTextItemRenderer(canvasView: ICanvasView) :
 
     /**激活文本样式*/
     fun enableTextStyle(style: Int, enable: Boolean = true) {
-        rendererItem?.apply {
+        _rendererItem?.apply {
             textStyle = if (enable) {
                 textStyle.add(style)
             } else {
@@ -123,7 +123,7 @@ class PictureTextItemRenderer(canvasView: ICanvasView) :
 
     /**更新笔的样式*/
     fun updatePaintStyle(style: Paint.Style) {
-        rendererItem?.paint?.apply {
+        _rendererItem?.paint?.apply {
             this.style = style
             updateTextDrawable()
         }
@@ -131,7 +131,7 @@ class PictureTextItemRenderer(canvasView: ICanvasView) :
 
     /**更新笔的字体*/
     fun updatePaintTypeface(typeface: Typeface?) {
-        rendererItem?.paint?.apply {
+        _rendererItem?.paint?.apply {
             this.typeface = typeface
             updateTextDrawable()
         }
@@ -139,14 +139,14 @@ class PictureTextItemRenderer(canvasView: ICanvasView) :
 
     /**更新文本*/
     fun updateText(text: String) {
-        rendererItem?.apply {
+        _rendererItem?.apply {
             this.text = text
             updateTextDrawable()
         }
     }
 
     override fun render(canvas: Canvas) {
-        rendererItem?.drawable?.let { drawable ->
+        _rendererItem?.drawable?.let { drawable ->
             val bounds = getRenderBounds()
             drawable.setBounds(
                 bounds.left.toInt(),

@@ -19,6 +19,9 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
 
     //<editor-fold desc="bounds">
 
+    /**渲染具体的项*/
+    fun getRendererItem(): T?
+
     /**旋转后的坐标
      * [getBounds]*/
     fun getRotateBounds(): RectF

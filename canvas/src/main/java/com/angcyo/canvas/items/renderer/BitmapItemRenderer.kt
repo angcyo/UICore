@@ -35,7 +35,7 @@ class BitmapItemRenderer(canvasView: ICanvasView) :
     }
 
     override fun render(canvas: Canvas) {
-        rendererItem?.bitmap?.let { bitmap ->
+        _rendererItem?.bitmap?.let { bitmap ->
             bitmapMatrix.reset()
             val bounds = getRenderBounds()
 
@@ -62,24 +62,24 @@ class BitmapItemRenderer(canvasView: ICanvasView) :
         keepBounds: Boolean = false,
         strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
     ): BitmapItem {
-        val oldValue = rendererItem?.bitmap
+        val oldValue = _rendererItem?.bitmap
         if (oldValue == bitmap) {
-            return rendererItem!!
+            return _rendererItem!!
         }
 
         val oldBounds = RectF(getBounds())
         val maxWidth = oldBounds.width()
         val maxHeight = oldBounds.height()
 
-        if (rendererItem == null) {
-            rendererItem = BitmapItem().apply { this.bitmap = bitmap }
+        if (_rendererItem == null) {
+            _rendererItem = BitmapItem().apply { this.bitmap = bitmap }
         } else {
-            rendererItem?.bitmap = bitmap
+            _rendererItem?.bitmap = bitmap
         }
 
         if (!keepBounds) {
-            val newWidth = rendererItem?.bitmap?.width ?: 0
-            val newHeight = rendererItem?.bitmap?.height ?: 0
+            val newWidth = _rendererItem?.bitmap?.width ?: 0
+            val newHeight = _rendererItem?.bitmap?.height ?: 0
 
             if (maxWidth > 0 && maxHeight > 0) {
                 limitMaxWidthHeight(
@@ -100,14 +100,14 @@ class BitmapItemRenderer(canvasView: ICanvasView) :
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL && oldValue != null) {
             canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
                 override fun runUndo() {
-                    rendererItem?.bitmap = oldValue
+                    _rendererItem?.bitmap = oldValue
                     changeBounds {
                         set(oldBounds)
                     }
                 }
 
                 override fun runRedo() {
-                    rendererItem?.bitmap = bitmap
+                    _rendererItem?.bitmap = bitmap
                     changeBounds {
                         set(newBounds)
                     }
@@ -131,6 +131,6 @@ class BitmapItemRenderer(canvasView: ICanvasView) :
         }
         refresh()*/
 
-        return rendererItem as BitmapItem
+        return _rendererItem as BitmapItem
     }
 }

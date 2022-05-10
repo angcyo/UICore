@@ -45,7 +45,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     var isLockScaleRatio: Boolean = true
 
     /**需要渲染的数据*/
-    var rendererItem: T? = null
+    var _rendererItem: T? = null
         set(value) {
             val old = field
             field = value
@@ -74,6 +74,8 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     //</editor-fold desc="计算属性">
 
+    override fun getRendererItem(): T? = _rendererItem
+
     override fun getRotateBounds(): RectF = _rotateBounds
 
     override fun getRenderRotateBounds(): RectF = _rotateRenderBounds
@@ -96,7 +98,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     override fun onUpdateRendererItem(item: T?, oldItem: T?) {
         super.onUpdateRendererItem(item, oldItem)
-        rendererItem = item
+        _rendererItem = item
     }
 
     override fun updateLockScaleRatio(lock: Boolean) {
@@ -113,7 +115,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     }
 
     override fun preview(): Drawable? {
-        return rendererItem?.run {
+        return _rendererItem?.run {
             val renderBounds = getRenderBounds()
             val oldRenderRect = RectF(renderBounds)
 

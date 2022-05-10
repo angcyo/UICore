@@ -88,11 +88,11 @@ class TextItemRenderer(canvasView: ICanvasView) :
     }
 
     fun getTextWidth(): Float {
-        val text = rendererItem?.text ?: ""
-        var width = rendererItem?.paint?.textWidth(text) ?: 0f
+        val text = _rendererItem?.text ?: ""
+        var width = _rendererItem?.paint?.textWidth(text) ?: 0f
         width += widthIncrease
-        if (rendererItem?.paint?.textSkewX != 0f) {
-            val skewWidth = tan(rendererItem?.paint?.textSkewX!! * 1.0) * getTextHeight()
+        if (_rendererItem?.paint?.textSkewX != 0f) {
+            val skewWidth = tan(_rendererItem?.paint?.textSkewX!! * 1.0) * getTextHeight()
             width += skewWidth.absoluteValue.toFloat()
         }
         return width
@@ -100,7 +100,7 @@ class TextItemRenderer(canvasView: ICanvasView) :
     }
 
     fun getTextHeight(): Float {
-        var height = rendererItem?.paint.textHeight()
+        var height = _rendererItem?.paint.textHeight()
         height += heightIncrease
         return height
         /*return textBounds.height().toFloat() + heightIncrease*/
@@ -108,7 +108,7 @@ class TextItemRenderer(canvasView: ICanvasView) :
 
     override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
         super.itemBoundsChanged(reason, oldBounds)
-        rendererItem?.apply {
+        _rendererItem?.apply {
             updateLargestTextSizeWhichFits(getBounds())
 
             /*if (!changeBeforeBounds.isEmpty) {
@@ -124,7 +124,7 @@ class TextItemRenderer(canvasView: ICanvasView) :
 
     /**[android.widget.TextView#findLargestTextSizeWhichFits]*/
     private fun updateLargestTextSizeWhichFits(availableSpace: RectF) {
-        val paint = rendererItem?.paint ?: return
+        val paint = _rendererItem?.paint ?: return
         val maxWidth = availableSpace.width().absoluteValue
         val maxHeight = availableSpace.height().absoluteValue
 
@@ -177,7 +177,7 @@ class TextItemRenderer(canvasView: ICanvasView) :
      }*/
 
     override fun render(canvas: Canvas) {
-        rendererItem?.apply {
+        _rendererItem?.apply {
             val renderBounds = getRenderBounds()
             canvas.drawText(
                 text ?: "",
@@ -190,7 +190,7 @@ class TextItemRenderer(canvasView: ICanvasView) :
 
     /**更新文本样式*/
     fun enableTextStyle(style: Int, enable: Boolean = true) {
-        rendererItem?.apply {
+        _rendererItem?.apply {
             textStyle = if (enable) {
                 textStyle.add(style)
             } else {
@@ -205,7 +205,7 @@ class TextItemRenderer(canvasView: ICanvasView) :
 
     /**更新笔的样式*/
     fun updatePaintStyle(style: Paint.Style) {
-        rendererItem?.apply {
+        _rendererItem?.apply {
             paint.style = style
             onUpdateRendererItem(this)
             canvasViewBox.canvasView.refresh()
@@ -214,7 +214,7 @@ class TextItemRenderer(canvasView: ICanvasView) :
 
     /**更新笔的字体*/
     fun updatePaintTypeface(typeface: Typeface?) {
-        rendererItem?.apply {
+        _rendererItem?.apply {
             paint.typeface = typeface
             onUpdateRendererItem(this)
             canvasViewBox.canvasView.refresh()
@@ -223,7 +223,7 @@ class TextItemRenderer(canvasView: ICanvasView) :
 
     /**更新文本*/
     fun updateText(text: String) {
-        rendererItem?.apply {
+        _rendererItem?.apply {
             this.text = text
             onUpdateRendererItem(this)
             canvasViewBox.canvasView.refresh()
