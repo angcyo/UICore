@@ -1,8 +1,7 @@
 package com.angcyo.coroutine
 
 import android.os.SystemClock
-import androidx.activity.ComponentActivity
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -101,13 +100,7 @@ fun sleep(ms: Long = 300) {
 
 //<editor-fold desc="lifecycleScope">
 
-fun ComponentActivity.launchLifecycle(
-    context: CoroutineContext = Dispatchers.Main + CoroutineErrorHandler(),
-    start: CoroutineStart = CoroutineStart.DEFAULT,
-    block: suspend CoroutineScope.() -> Unit
-): Job = lifecycleScope.launch(context, start, block)
-
-fun Fragment.launchLifecycle(
+fun LifecycleOwner.launchLifecycle(
     context: CoroutineContext = Dispatchers.Main + CoroutineErrorHandler(),
     start: CoroutineStart = CoroutineStart.DEFAULT,
     block: suspend CoroutineScope.() -> Unit
