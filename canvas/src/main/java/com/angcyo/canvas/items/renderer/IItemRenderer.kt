@@ -45,40 +45,28 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
      * 可以在此方法中限制bounds大小
      *
      * [com.angcyo.canvas.core.IRenderer.getBounds]*/
-    fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
-
-    }
+    fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {}
 
     //</editor-fold desc="bounds">
 
     //<editor-fold desc="控制点回调">
 
     /**控制点操作之前的回调*/
-    fun onControlStart(controlPoint: ControlPoint) {
-
-    }
+    fun onControlStart(controlPoint: ControlPoint) {}
 
     /**控制点操作结束后的回调*/
-    fun onControlFinish(controlPoint: ControlPoint) {
-
-    }
+    fun onControlFinish(controlPoint: ControlPoint) {}
 
     /**当当前的渲染器被取消了选中状态时回调
      * [toSelectedItem] 被新选中的渲染器
      * [com.angcyo.canvas.CanvasDelegate.selectedItem]*/
-    fun onCancelSelected(toSelectedItem: BaseItemRenderer<*>?) {
-
-    }
+    fun onCancelSelected(toSelectedItem: BaseItemRenderer<*>?) {}
 
     /**当渲染器被添加到画布时的回调*/
-    fun onAddRenderer() {
-
-    }
+    fun onAddRenderer() {}
 
     /**当渲染器被移除画布时的回调*/
-    fun onRemoveRenderer() {
-
-    }
+    fun onRemoveRenderer() {}
 
     //</editor-fold desc="控制点回调">
 
@@ -108,6 +96,9 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     /**旋转元素, 旋转操作不能用matrix
      * [degrees] 旋转的角度*/
     fun rotateBy(degrees: Float)
+
+    /**当元素的旋转属性发生改变时触发*/
+    fun itemRotateChanged(oldRotate: Float) {}
 
     //</editor-fold desc="控制方法">
 

@@ -79,15 +79,11 @@ class RotateControlPoint : ControlPoint() {
                             val newRotate = itemRenderer.rotate
 
                             override fun runUndo() {
-                                item.changeBounds {
-                                    it.rotate = originRotate
-                                }
+                                item.rotateBy(originRotate - newRotate)
                             }
 
                             override fun runRedo() {
-                                item.changeBounds {
-                                    it.rotate = newRotate
-                                }
+                                item.rotateBy(newRotate - originRotate)
                             }
                         })
                     }

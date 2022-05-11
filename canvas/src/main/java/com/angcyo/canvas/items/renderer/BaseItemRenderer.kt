@@ -308,10 +308,12 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
            _tempMatrix.postRotate(degrees, centerX(), centerY())
            _tempMatrix.mapRect(this, this)
        }*/
+        val oldRotate = rotate
         changeBounds {
             rotate += degrees
             rotate %= 360
         }
+        itemRotateChanged(oldRotate)
         L.i("旋转by->$degrees $rotate")
     }
 

@@ -7,7 +7,6 @@ import com.angcyo.canvas.Reason
 import com.angcyo.canvas.core.CanvasEntryPoint
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.IRenderer
-import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.createPaint
@@ -54,7 +53,9 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
 
     override fun onItemBoundsChanged(item: IRenderer, reason: Reason, oldBounds: RectF) {
         if (selectItemList.contains(item)) {
-            updateSelectBounds()
+            if (reason.reason == Reason.REASON_USER) {
+                updateSelectBounds()
+            }
         }
     }
 
@@ -91,11 +92,13 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
     }
 
     override fun isSupportControlPoint(type: Int): Boolean {
-        return when (type) {
+        /*return when (type) {
             ControlPoint.POINT_TYPE_DELETE -> true
+            ControlPoint.POINT_TYPE_SCALE -> true
             else -> false
-        }
+        }*/
         //return super.isSupportControlPoint(type)
+        return true
     }
 
     override fun containsPoint(point: PointF): Boolean {
@@ -114,11 +117,27 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         updateSelectBounds()
     }
 
+    override fun itemRotateChanged(oldRotate: Float) {
+        super.itemRotateChanged(oldRotate)
+        val degrees = rotate - oldRotate
+        val changeReason = Reason(Reason.REASON_CODE)
+        val bounds = getBounds()
+        selectItemList.forEach { item ->
+            _tempRectF.set(item.getBounds())
+            _tempRectF.rotate(degrees, bounds.centerX(), bounds.centerY())
+            item.rotate += degrees
+            item.changeBounds(changeReason) {
+                offset(_tempRectF.centerX() - centerX(), _tempRectF.centerY() - centerY())
+            }
+        }
+    }
+
     override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
         super.itemBoundsChanged(reason, oldBounds)
 
         if (reason.reason == Reason.REASON_USER) {
-            if (!oldBounds.isNoSize() && oldBounds.width() > 0 && oldBounds.height() > 0) {
+            if (!oldBounds.isNoSize() && oldBounds.width() != 0f && oldBounds.height() != 0f) {
+                val changeReason = Reason(Reason.REASON_CODE)
                 val bounds = getBounds()
 
                 //平移
@@ -126,30 +145,35 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
                 val offsetTop: Float = bounds.top - oldBounds.top
                 if (offsetLeft.isFinite() && offsetTop.isFinite() && (offsetLeft != 0f || offsetTop != 0f)) {
                     selectItemList.forEach { item ->
-                        item.changeBounds {
+                        item.changeBounds(changeReason) {
                             offset(offsetLeft, offsetTop)
                         }
                     }
                 }
 
                 //缩放
-                // todo 未实现
-                /*val offsetWidth = bounds.width() - oldBounds.width()
+                val offsetWidth = bounds.width() - oldBounds.width()
                 val offsetHeight = bounds.height() - oldBounds.height()
                 if (offsetWidth.isFinite() && offsetHeight.isFinite() && (offsetWidth != 0f || offsetHeight != 0f)) {
                     selectItemList.forEach { item ->
-                        val itemBounds = item.getBounds()
-                        val newWidth = itemBounds.width() + offsetWidth
-                        val newHeight = itemBounds.height() + offsetHeight
-                        item.changeBounds(false) {
+                        item.changeBounds(changeReason) {
                             scale(
-                                newWidth / itemBounds.width(),
-                                newHeight / itemBounds.height(),
+                                bounds.width() / oldBounds.width(),
+                                bounds.height() / oldBounds.height(),
                                 bounds.left,
                                 bounds.top
                             )
-                            //adjustSizeWithRotate(newWidth, newHeight, item.rotate, _adjustType)
                         }
+                    }
+                }
+
+                //旋转
+                /*selectItemList.forEach { item ->
+                    _tempRectF.set(item.getBounds())
+                    _tempRectF.rotate(rotate, bounds.centerX(), bounds.centerY())
+                    item.rotate = rotate
+                    item.changeBounds(changeReason) {
+                        offset(_tempRectF.centerX() - centerX(), _tempRectF.centerY() - centerY())
                     }
                 }*/
             }

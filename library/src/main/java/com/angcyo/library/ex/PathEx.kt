@@ -85,9 +85,24 @@ fun RectF.scale(scaleX: Float, scaleY: Float): RectF {
     return this
 }
 
+/**缩放一个矩形
+ * [scaleX] [scaleY] 宽高缩放的比例
+ * [pivotX] [pivotY] 缩放的轴点
+ * */
 fun RectF.scale(scaleX: Float, scaleY: Float, pivotX: Float, pivotY: Float): RectF {
     val matrix = Matrix()
     matrix.setScale(scaleX, scaleY, pivotX, pivotY)
+    matrix.mapRect(this)
+    return this
+}
+
+/**缩放一个矩形
+ * [degrees] 旋转的角度
+ * [pivotX] [pivotY] 旋转的轴点
+ * */
+fun RectF.rotate(degrees: Float, pivotX: Float, pivotY: Float): RectF {
+    val matrix = Matrix()
+    matrix.setRotate(degrees, pivotX, pivotY)
     matrix.mapRect(this)
     return this
 }
