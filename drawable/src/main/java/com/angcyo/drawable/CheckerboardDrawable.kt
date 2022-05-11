@@ -9,6 +9,8 @@ import android.graphics.drawable.Drawable
  *
  * https://github.com/angcyo/RRes
  *
+ * https://github.com/duanhong169/CheckerboardDrawable
+ *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/03/28
  */
