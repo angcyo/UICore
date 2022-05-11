@@ -6,7 +6,7 @@ import android.os.StatFs
 import androidx.fragment.app.Fragment
 import com.angcyo.base.dslFHelper
 import com.angcyo.core.component.fileSelector
-import com.angcyo.core.dslitem.IFragmentItem
+import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.isItemLastInAdapter
 import com.angcyo.library.app

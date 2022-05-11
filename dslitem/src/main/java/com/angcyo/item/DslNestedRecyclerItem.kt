@@ -2,7 +2,7 @@ package com.angcyo.item
 
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import com.angcyo.core.dslitem.IFragmentItem
+import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.INestedRecyclerItem
 import com.angcyo.item.style.NestedRecyclerItemConfig

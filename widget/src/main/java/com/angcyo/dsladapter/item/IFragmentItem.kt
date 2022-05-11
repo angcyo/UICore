@@ -1,7 +1,6 @@
-package com.angcyo.core.dslitem
+package com.angcyo.dsladapter.item
 
 import androidx.fragment.app.Fragment
-import com.angcyo.dsladapter.item.IDslItem
 
 /**
  * 带有[Fragment]的item
@@ -12,7 +11,6 @@ import com.angcyo.dsladapter.item.IDslItem
  */
 interface IFragmentItem : IDslItem {
 
-    /**[DslFHelper]*/
+    /**[com.angcyo.DslFHelper]*/
     var itemFragment: Fragment?
-
 }

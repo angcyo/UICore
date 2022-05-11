@@ -2,7 +2,7 @@ package com.angcyo.dslitem
 
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import com.angcyo.core.dslitem.IFragmentItem
+import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.dsladapter.*
 import com.angcyo.dsladapter.data.updateSingleData
 import com.angcyo.dsladapter.filter.AddMediaFilterAfterInterceptor

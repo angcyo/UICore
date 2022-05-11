@@ -1,6 +1,6 @@
 package com.angcyo.dslitem
 
-import com.angcyo.core.dslitem.IFragmentItem
+import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.library.L
 import com.angcyo.library.ex.elseNull
