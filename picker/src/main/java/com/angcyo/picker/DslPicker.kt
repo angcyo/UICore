@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import com.angcyo.DslAHelper
 import com.angcyo.base.checkAndRequestPermission
 import com.angcyo.fragment.FragmentBridge
@@ -187,26 +188,32 @@ fun Fragment.dslPickerImageVideo(
 }
 
 fun Fragment.dslPicker(config: LoaderConfig, onResult: (List<LoaderMedia>?) -> Unit) {
-    context?.run {
-        DslAHelper(this).apply {
-            start(PickerActivity::class.java) {
-                requestCode = config.requestCode
-                intent.putExtra(KEY_LOADER_CONFIG, config)
-                enterAnim = R.anim.lib_picker_enter_anim
-                exitAnim = R.anim.lib_picker_other_exit_anim
+    context?.dslPicker(parentFragmentManager, config, onResult)
+}
 
-                FragmentBridge.install(parentFragmentManager)
-                    .startActivityForResult(intent, requestCode) { resultCode, data ->
-                        onResult(
-                            DslPicker.onActivityResult(
-                                requestCode,
-                                resultCode,
-                                data,
-                                requestCode
-                            )
+fun Context.dslPicker(
+    fragmentManager: FragmentManager,
+    config: LoaderConfig,
+    onResult: (List<LoaderMedia>?) -> Unit
+) {
+    DslAHelper(this).apply {
+        start(PickerActivity::class.java) {
+            requestCode = config.requestCode
+            intent.putExtra(KEY_LOADER_CONFIG, config)
+            enterAnim = R.anim.lib_picker_enter_anim
+            exitAnim = R.anim.lib_picker_other_exit_anim
+
+            FragmentBridge.install(fragmentManager)
+                .startActivityForResult(intent, requestCode) { resultCode, data ->
+                    onResult(
+                        DslPicker.onActivityResult(
+                            requestCode,
+                            resultCode,
+                            data,
+                            requestCode
                         )
-                    }
-            }
+                    )
+                }
         }
     }
 }
@@ -218,6 +225,21 @@ fun Fragment.dslSinglePickerImage(
     onResult: (List<LoaderMedia>?) -> Unit
 ) {
     dslPicker(LoaderConfig().apply {
+        mediaLoaderType = LoaderConfig.LOADER_TYPE_IMAGE
+        maxSelectorLimit = count
+        enableImageEdit = true
+        enableCamera = true
+        config()
+    }, onResult)
+}
+
+fun Context.dslSinglePickerImage(
+    fragmentManager: FragmentManager,
+    count: Int = 1,
+    config: LoaderConfig.() -> Unit = {},
+    onResult: (List<LoaderMedia>?) -> Unit
+) {
+    dslPicker(fragmentManager, LoaderConfig().apply {
         mediaLoaderType = LoaderConfig.LOADER_TYPE_IMAGE
         maxSelectorLimit = count
         enableImageEdit = true
