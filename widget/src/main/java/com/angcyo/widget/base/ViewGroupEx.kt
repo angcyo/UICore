@@ -5,6 +5,7 @@ import android.graphics.Rect
 import android.view.*
 import android.widget.EditText
 import android.widget.LinearLayout
+import androidx.fragment.app.Fragment
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.library.ex.*
 import com.angcyo.widget.DslViewHolder
@@ -156,6 +157,12 @@ fun ViewGroup.resetChild(
 
 
 //<editor-fold desc="Dsl吸附">
+
+val Activity._vh: DslViewHolder
+    get() = window.decorView.dslViewHolder()
+
+val Fragment._vh: DslViewHolder?
+    get() = view?.dslViewHolder()
 
 /**从[View]中, 获取挂载的[DslViewHolder].如果没有, 则使用本身创建一个, 并设置给tag*/
 fun View.dslViewHolder(): DslViewHolder {
