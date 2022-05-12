@@ -32,11 +32,11 @@ fun Context.getPhoto(fragmentManager: FragmentManager, onResult: (Bitmap?) -> Un
 
     FragmentBridge.install(fragmentManager).startActivityForResult(intent) { resultCode, data ->
         if (resultCode == Activity.RESULT_OK) {
-            onResult(null)
-        } else {
             val uri = data?.data
             //uri?.getPathFromIntentData()
             onResult(MediaStore.Images.Media.getBitmap(contentResolver, uri))
+        } else {
+            onResult(null)
         }
     }
 }
