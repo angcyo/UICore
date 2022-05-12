@@ -14,4 +14,6 @@
     <string name="picker_no_data">暂无媒体数据</string>
     <string name="picker_selected">选择</string>
     <string name="picker_edit">编辑</string>
+    <string name="picker_this_week">本周</string>
+    <string name="picker_this_month">这个月</string>
 </resources>

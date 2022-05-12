@@ -21,6 +21,13 @@ open class SelectionCreator {
 
     /**媒体选择查询语句*/
     fun LoaderConfig.getMimeTypeSelectorSelection(builder: StringBuilder) {
+        if (mediaLoaderType == LoaderConfig.LOADER_TYPE_IMAGE ||
+            mediaLoaderType == LoaderConfig.LOADER_TYPE_VIDEO ||
+            mediaLoaderType == LoaderConfig.LOADER_TYPE_AUDIO
+        ) {
+            //仅加载图片/视频/音频
+            return
+        }
         builder.apply {
             val loadTypes = mutableListOf<Int>()
             if (mediaLoaderType and LoaderConfig.LOADER_TYPE_IMAGE == LoaderConfig.LOADER_TYPE_IMAGE) {
@@ -60,20 +67,26 @@ open class SelectionCreator {
         builder.apply {
             if (limitFileSizeModel == LoaderConfig.SIZE_MODEL_MEDIA) {
                 if (limitFileMinSize > 0f) {
-                    append(" AND ")
+                    if (isNotEmpty()) {
+                        append(" AND ")
+                    }
                     append(MediaStore.Files.FileColumns.SIZE)
                     append(">=")
                     append(limitFileMinSize)
                 }
 
                 if (limitFileMaxSize > 0f) {
-                    append(" AND ")
+                    if (isNotEmpty()) {
+                        append(" AND ")
+                    }
                     append(MediaStore.Files.FileColumns.SIZE)
                     append("<=")
                     append(limitFileMaxSize)
                 }
             } else {
-                append(" AND ")
+                if (isNotEmpty()) {
+                    append(" AND ")
+                }
                 append(MediaStore.Files.FileColumns.SIZE)
                 append(">0")
             }

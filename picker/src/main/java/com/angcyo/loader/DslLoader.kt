@@ -5,6 +5,9 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import androidx.core.database.getIntOrNull
+import androidx.core.database.getLongOrNull
+import androidx.core.database.getStringOrNull
 import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.FragmentActivity
 import androidx.loader.app.LoaderManager
@@ -29,6 +32,7 @@ import java.io.File
 class DslLoader {
 
     companion object {
+
         init {
             LoaderManager.enableDebugLogging(isDebug())
         }
@@ -38,7 +42,10 @@ class DslLoader {
         val VOLUME_EXTERNAL = "external"
 
         //查询所有媒体的uri
-        val ALL_QUERY_URI = MediaStore.Files.getContentUri(VOLUME_EXTERNAL)
+        var ALL_QUERY_URI = MediaStore.Files.getContentUri(VOLUME_EXTERNAL)
+        var ONLY_IMAGE_URI = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        var ONLY_VIDEO_URI = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+        var ONLY_AUDIO_URI = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
 
         const val WIDTH = "width"
         const val HEIGHT = "height"
@@ -51,7 +58,7 @@ class DslLoader {
          * 全部媒体数据 - PROJECTION
          * 需要返回的数据库字段
          */
-        val ALL_PROJECTION = arrayOf(
+        var ALL_PROJECTION = arrayOf(
             MediaStore.Images.Media._ID,
             MediaStore.MediaColumns.DATA,
             MediaStore.MediaColumns.DISPLAY_NAME,
@@ -62,6 +69,43 @@ class DslLoader {
             HEIGHT,
             DURATION,
             ORIENTATION,
+            MediaStore.MediaColumns.DATE_MODIFIED
+        )
+
+        /**仅加载图片时的字段, 没有[MediaStore.MediaColumns.MIME_TYPE] [DURATION]字段*/
+        var IMAGE_PROJECTION = arrayOf(
+            MediaStore.Images.Media._ID,
+            MediaStore.MediaColumns.DATA,
+            MediaStore.MediaColumns.DISPLAY_NAME,
+            MediaStore.MediaColumns.DATE_ADDED,
+            MediaStore.MediaColumns.SIZE,
+            WIDTH,
+            HEIGHT,
+            ORIENTATION,
+            MediaStore.MediaColumns.DATE_MODIFIED
+        )
+
+        /**仅加载图片时的字段, 没有[MediaStore.MediaColumns.MIME_TYPE] [ORIENTATION]字段*/
+        var VIDEO_PROJECTION = arrayOf(
+            MediaStore.Images.Media._ID,
+            MediaStore.MediaColumns.DATA,
+            MediaStore.MediaColumns.DISPLAY_NAME,
+            MediaStore.MediaColumns.DATE_ADDED,
+            MediaStore.MediaColumns.SIZE,
+            WIDTH,
+            HEIGHT,
+            DURATION,
+            MediaStore.MediaColumns.DATE_MODIFIED
+        )
+
+        /**仅加载音频时的字段, 没有[MediaStore.MediaColumns.MIME_TYPE] [ORIENTATION] [WIDTH] [HEIGHT]字段*/
+        var AUDIO_PROJECTION = arrayOf(
+            MediaStore.Images.Media._ID,
+            MediaStore.MediaColumns.DATA,
+            MediaStore.MediaColumns.DISPLAY_NAME,
+            MediaStore.MediaColumns.DATE_ADDED,
+            MediaStore.MediaColumns.SIZE,
+            DURATION,
             MediaStore.MediaColumns.DATE_MODIFIED
         )
     }
@@ -82,11 +126,30 @@ class DslLoader {
     /**load回调*/
     val _loaderCallback: LoaderManager.LoaderCallbacks<Cursor> =
         object : LoaderManager.LoaderCallbacks<Cursor> {
+
             override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
+                LTime.tick()
+                val selection = selectionCreator.createSelection(_loaderConfig)
                 onLoaderStart()
+                val uri = when (_loaderConfig.mediaLoaderType) {
+                    //仅加载图片
+                    LoaderConfig.LOADER_TYPE_IMAGE -> ONLY_IMAGE_URI
+                    //仅加载视频
+                    LoaderConfig.LOADER_TYPE_VIDEO -> ONLY_VIDEO_URI
+                    //仅加载音频
+                    LoaderConfig.LOADER_TYPE_AUDIO -> ONLY_AUDIO_URI
+                    else -> ALL_QUERY_URI
+                }
+                val projection = when (_loaderConfig.mediaLoaderType) {
+                    LoaderConfig.LOADER_TYPE_IMAGE -> IMAGE_PROJECTION
+                    LoaderConfig.LOADER_TYPE_VIDEO -> VIDEO_PROJECTION
+                    LoaderConfig.LOADER_TYPE_AUDIO -> AUDIO_PROJECTION
+                    else -> ALL_PROJECTION
+                }
+                L.i("DslLoader创建加载器:$selection")
                 return CursorLoader(
-                    _activity, ALL_QUERY_URI, ALL_PROJECTION,
-                    selectionCreator.createSelection(_loaderConfig),
+                    _activity, uri, projection,
+                    selection,
                     null,
                     MediaStore.Files.FileColumns.DATE_ADDED + " DESC"
                 )
@@ -94,12 +157,12 @@ class DslLoader {
 
             override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
                 val count = data?.count ?: 0
-                var allFolder = listOf<LoaderFolder>()
+                L.w("DslLoader媒体数量:$count")
                 launchGlobal {
+                    var allFolder = listOf<LoaderFolder>()
                     onBack {
                         val allMedias = mutableListOf<LoaderMedia>()
                         if (data != null && count > 0) {
-                            LTime.tick()
                             data.moveToFirst()
                             do {
                                 val loaderMedia = loadFromCursor(data)
@@ -182,11 +245,18 @@ class DslLoader {
 
     fun loadFromCursor(data: Cursor): LoaderMedia {
 
-        val id = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[0]))
-        val path = data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[1]))
-        val displayName = data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[2]))
-        val addTime = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[3]))
-        val mimeType = data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[4]))
+        val id = data.getLongOrDef(ALL_PROJECTION[0], -1)
+        val path = data.getStringOrDef(ALL_PROJECTION[1], "")
+        val displayName = data.getStringOrDef(ALL_PROJECTION[2], "")
+        val addTime = data.getLongOrDef(ALL_PROJECTION[3], -1)
+        val mimeType = data.getStringOrDef(
+            ALL_PROJECTION[4], when (_loaderConfig.mediaLoaderType) {
+                LoaderConfig.LOADER_TYPE_IMAGE -> "image/*"
+                LoaderConfig.LOADER_TYPE_VIDEO -> "video/*"
+                LoaderConfig.LOADER_TYPE_AUDIO -> "audio/*"
+                else -> ""
+            }
+        )
 
         val loaderUri = when {
             mimeType.isImageMimeType() -> ContentUris.withAppendedId(
@@ -210,12 +280,12 @@ class DslLoader {
             loaderUri
         }
 
-        val size = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[5]))
-        val width = data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[6]))
-        val height = data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[7]))
-        val duration = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[8]))
-        val orientation = data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[9]))
-        val modifyTime = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[10]))
+        val size = data.getLongOrDef(ALL_PROJECTION[5], -1)
+        val width = data.getIntOrDef(ALL_PROJECTION[6], -1)
+        val height = data.getIntOrDef(ALL_PROJECTION[7], -1)
+        val duration = data.getLongOrDef(ALL_PROJECTION[8], -1)
+        val orientation = data.getIntOrDef(ALL_PROJECTION[9], 0)
+        val modifyTime = data.getLongOrDef(ALL_PROJECTION[10], -1)
 
         //经纬度Android Q中查询会崩溃, 需要通过Exif查询
         val latitude = 0.0
@@ -225,11 +295,11 @@ class DslLoader {
             this.id = "$id"
             this.localUri = uri
             this.loaderUri = loaderUri
-            this.localPath = path ?: ""
-            this.displayName = displayName ?: ""
+            this.localPath = path
+            this.displayName = displayName
             this.addTime = addTime
             this.modifyTime = modifyTime
-            this.mimeType = mimeType ?: ""
+            this.mimeType = mimeType
             this.fileSize = size
             this.width = width
             this.height = height
@@ -241,4 +311,20 @@ class DslLoader {
 
         return loaderMedia
     }
+
+    fun Cursor.getLongOrDef(columnName: String, def: Long): Long {
+        val index = getColumnIndex(columnName)
+        return getLongOrNull(index) ?: def
+    }
+
+    fun Cursor.getIntOrDef(columnName: String, def: Int): Int {
+        val index = getColumnIndex(columnName)
+        return getIntOrNull(index) ?: def
+    }
+
+    fun Cursor.getStringOrDef(columnName: String, def: String): String {
+        val index = getColumnIndex(columnName)
+        return getStringOrNull(index) ?: def
+    }
+
 }

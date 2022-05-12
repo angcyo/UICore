@@ -119,8 +119,8 @@ class PickerImageFragment : BasePickerFragment() {
                     this.loaderMedia?.addTime?.run {
                         val dslCalendar = DslCalendar(this)
                         when {
-                            dslCalendar.isThisWeek() -> "本周"
-                            dslCalendar.isThisMonth() -> "这个月"
+                            dslCalendar.isThisWeek() -> getString(R.string.picker_this_week)
+                            dslCalendar.isThisMonth() -> getString(R.string.picker_this_month)
                             else -> "${dslCalendar.year}/${dslCalendar.month}"
                         }
                     }
