@@ -58,6 +58,20 @@ class CanvasDelegate(val view: View) : ICanvasView {
     val isTouchHold: Boolean
         get() = canvasTouchManager.isTouchHold
 
+    /**渲染项的数量*/
+    val itemRendererCount: Int
+        get() = itemsRendererList.size()
+
+    /**可见渲染项的数量*/
+    val itemRendererVisibleCount: Long
+        get() = itemsRendererList.sumOf {
+            if (it.isVisible()) {
+                1L
+            } else {
+                0L
+            }
+        }
+
     //</editor-fold desc="成员变量">
 
     //<editor-fold desc="内部成员">
