@@ -146,7 +146,7 @@ class DslLoader {
                     LoaderConfig.LOADER_TYPE_AUDIO -> AUDIO_PROJECTION
                     else -> ALL_PROJECTION
                 }
-                L.i("DslLoader创建加载器:$selection")
+                L.i("DslLoader创建加载器:${_loaderConfig.mediaLoaderType}->$selection")
                 return CursorLoader(
                     _activity, uri, projection,
                     selection,
