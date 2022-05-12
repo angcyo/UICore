@@ -35,9 +35,12 @@ object GCodeHelper {
 
     fun parseGCode(
         context: Context,
-        text: String,
+        text: String?,
         paint: Paint = createPaint(Color.BLACK)
-    ): GCodeDrawable {
+    ): GCodeDrawable? {
+        if (text.isNullOrEmpty()) {
+            return null
+        }
         //1毫米等于多少像素
         val dm: DisplayMetrics = context.resources.displayMetrics
         val mmPixel = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_MM, 1f, dm) //21.176456
