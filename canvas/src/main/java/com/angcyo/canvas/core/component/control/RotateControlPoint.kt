@@ -1,11 +1,13 @@
 package com.angcyo.canvas.core.component.control
 
 import android.graphics.PointF
+import android.graphics.RectF
 import android.view.MotionEvent
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.renderer.ICanvasStep
+import com.angcyo.canvas.core.renderer.SelectGroupRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.library.L
 import com.angcyo.library.ex._drawable
@@ -73,17 +75,46 @@ class RotateControlPoint : ControlPoint() {
                 angle = 0f
                 if (!touchItemRotate.isNaN() && isRotated) {
                     itemRenderer.let {
+                        val itemList = mutableListOf<BaseItemRenderer<*>>()
+                        if (it is SelectGroupRenderer) {
+                            itemList.addAll(it.selectItemList)
+                        }
                         view.undoManager.addUndoAction(object : ICanvasStep {
                             val item = it
                             val originRotate = touchItemRotate
                             val newRotate = itemRenderer.rotate
+                            val bounds = RectF(it.getBounds())
 
                             override fun runUndo() {
-                                item.rotateBy(originRotate - newRotate)
+                                if (item is SelectGroupRenderer) {
+                                    SelectGroupRenderer.rotateItemList(
+                                        itemList,
+                                        originRotate - newRotate,
+                                        bounds.centerX(),
+                                        bounds.centerY()
+                                    )
+                                    if (view.getSelectedRenderer() == item) {
+                                        item.updateSelectBounds()
+                                    }
+                                } else {
+                                    item.rotateBy(originRotate - newRotate)
+                                }
                             }
 
                             override fun runRedo() {
-                                item.rotateBy(newRotate - originRotate)
+                                if (item is SelectGroupRenderer) {
+                                    SelectGroupRenderer.rotateItemList(
+                                        itemList,
+                                        newRotate - originRotate,
+                                        bounds.centerX(),
+                                        bounds.centerY()
+                                    )
+                                    if (view.getSelectedRenderer() == item) {
+                                        item.updateSelectBounds()
+                                    }
+                                } else {
+                                    item.rotateBy(newRotate - originRotate)
+                                }
                             }
                         })
                     }

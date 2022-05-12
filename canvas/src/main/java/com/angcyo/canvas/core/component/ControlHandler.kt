@@ -12,6 +12,7 @@ import com.angcyo.canvas.core.component.control.LockControlPoint
 import com.angcyo.canvas.core.component.control.RotateControlPoint
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.core.renderer.ICanvasStep
+import com.angcyo.canvas.core.renderer.SelectGroupRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.mapPoint
@@ -173,20 +174,48 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
                 //平移的撤销
                 selectedItemRender?.let {
                     if (!touchItemBounds.isNoSize() && isTranslated) {
+
+                        val itemList = mutableListOf<BaseItemRenderer<*>>()
+                        if (it is SelectGroupRenderer) {
+                            itemList.addAll(it.selectItemList)
+                        }
+
                         canvasView.undoManager.addUndoAction(object : ICanvasStep {
                             val item = it
                             val originBounds = RectF(touchItemBounds)
                             val newBounds = RectF(item.getBounds())
 
                             override fun runUndo() {
-                                item.changeBounds {
-                                    set(originBounds)
+                                if (item is SelectGroupRenderer) {
+                                    SelectGroupRenderer.changeBoundsItemList(
+                                        itemList,
+                                        newBounds,
+                                        originBounds
+                                    )
+                                    if (canvasView.getSelectedRenderer() == item) {
+                                        item.updateSelectBounds()
+                                    }
+                                } else {
+                                    item.changeBounds {
+                                        set(originBounds)
+                                    }
                                 }
                             }
 
                             override fun runRedo() {
-                                item.changeBounds {
-                                    set(newBounds)
+                                if (item is SelectGroupRenderer) {
+                                    SelectGroupRenderer.changeBoundsItemList(
+                                        itemList,
+                                        originBounds,
+                                        newBounds
+                                    )
+                                    if (canvasView.getSelectedRenderer() == item) {
+                                        item.updateSelectBounds()
+                                    }
+                                } else {
+                                    item.changeBounds {
+                                        set(newBounds)
+                                    }
                                 }
                             }
                         })

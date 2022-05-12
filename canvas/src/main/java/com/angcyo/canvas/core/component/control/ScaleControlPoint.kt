@@ -9,6 +9,7 @@ import com.angcyo.canvas.R
 import com.angcyo.canvas.core.component.CanvasTouchHandler
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.renderer.ICanvasStep
+import com.angcyo.canvas.core.renderer.SelectGroupRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils._tempMatrix
@@ -91,7 +92,7 @@ class ScaleControlPoint : ControlPoint() {
     }
 
     override fun onTouch(
-        view: CanvasDelegate,
+        canvasView: CanvasDelegate,
         itemRenderer: BaseItemRenderer<*>,
         event: MotionEvent
     ): Boolean {
@@ -112,21 +113,21 @@ class ScaleControlPoint : ControlPoint() {
 
                 val x1: Float
                 val y1: Float
-                view.getCanvasViewBox().mapCoordinateSystemPoint(rectScaleAnchorPoint).apply {
+                canvasView.getCanvasViewBox().mapCoordinateSystemPoint(rectScaleAnchorPoint).apply {
                     x1 = x
                     y1 = y
                 }
 
                 val x2: Float
                 val y2: Float
-                view.getCanvasViewBox().mapCoordinateSystemPoint(_touchPoint).apply {
+                canvasView.getCanvasViewBox().mapCoordinateSystemPoint(_touchPoint).apply {
                     x2 = x
                     y2 = y
                 }
 
                 val cX: Float
                 val cY: Float
-                view.getCanvasViewBox().mapCoordinateSystemPoint((x2 + x1) / 2, (y2 + y1) / 2)
+                canvasView.getCanvasViewBox().mapCoordinateSystemPoint((x2 + x1) / 2, (y2 + y1) / 2)
                     .apply {
                         cX = x
                         cY = y
@@ -154,21 +155,21 @@ class ScaleControlPoint : ControlPoint() {
                 if (dx != 0f || dy != 0f) {
                     val x1: Float
                     val y1: Float
-                    view.getCanvasViewBox().mapCoordinateSystemPoint(rectScaleAnchorPoint).apply {
+                    canvasView.getCanvasViewBox().mapCoordinateSystemPoint(rectScaleAnchorPoint).apply {
                         x1 = x
                         y1 = y
                     }
 
                     val x2: Float
                     val y2: Float
-                    view.getCanvasViewBox().mapCoordinateSystemPoint(_movePoint).apply {
+                    canvasView.getCanvasViewBox().mapCoordinateSystemPoint(_movePoint).apply {
                         x2 = x
                         y2 = y
                     }
 
                     val cX: Float
                     val cY: Float
-                    view.getCanvasViewBox().mapCoordinateSystemPoint((x2 + x1) / 2, (y2 + y1) / 2)
+                    canvasView.getCanvasViewBox().mapCoordinateSystemPoint((x2 + x1) / 2, (y2 + y1) / 2)
                         .apply {
                             cX = x
                             cY = y
@@ -197,7 +198,7 @@ class ScaleControlPoint : ControlPoint() {
                         }
 
                         isScaled = true
-                        view.smartAssistant.smartChangeBounds(
+                        canvasView.smartAssistant.smartChangeBounds(
                             itemRenderer,
                             isLockScaleRatio,
                             newWidth,
@@ -246,20 +247,46 @@ class ScaleControlPoint : ControlPoint() {
 
                 if (!touchItemBounds.isNoSize() && isScaled) {
                     itemRenderer.let {
-                        view.undoManager.addUndoAction(object : ICanvasStep {
+                        val itemList = mutableListOf<BaseItemRenderer<*>>()
+                        if (it is SelectGroupRenderer) {
+                            itemList.addAll(it.selectItemList)
+                        }
+                        canvasView.undoManager.addUndoAction(object : ICanvasStep {
                             val item = it
                             val originBounds = RectF(touchItemBounds)
                             val newBounds = RectF(it.getBounds())
 
                             override fun runUndo() {
-                                item.changeBounds {
-                                    set(originBounds)
+                                if (item is SelectGroupRenderer) {
+                                    SelectGroupRenderer.changeBoundsItemList(
+                                        itemList,
+                                        newBounds,
+                                        originBounds
+                                    )
+                                    if (canvasView.getSelectedRenderer() == item) {
+                                        item.updateSelectBounds()
+                                    }
+                                } else {
+                                    item.changeBounds {
+                                        set(originBounds)
+                                    }
                                 }
                             }
 
                             override fun runRedo() {
-                                item.changeBounds {
-                                    set(newBounds)
+                                if (item is SelectGroupRenderer) {
+                                    SelectGroupRenderer.changeBoundsItemList(
+                                        itemList,
+                                        originBounds,
+                                        newBounds
+                                    )
+                                    if (canvasView.getSelectedRenderer() == item) {
+                                        item.updateSelectBounds()
+                                    }
+                                } else {
+                                    item.changeBounds {
+                                        set(newBounds)
+                                    }
                                 }
                             }
                         })
