@@ -24,6 +24,11 @@ class CameraPreviewView(context: Context, attributeSet: AttributeSet? = null) :
         //setBackgroundColor(Color.RED)
     }
 
+    /**一旦销毁了, [android.opengl.GLSurfaceView]就无法被重新渲染了*/
+    override fun release() {
+        super.release()
+    }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         _changed(VISIBLE)
@@ -40,20 +45,20 @@ class CameraPreviewView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     fun _changed(visibility: Int) {
-
-        //Log.i(TAG, "...onVisibilityChanged:" + visibility);
-        if (visibility == VISIBLE) {
-            if (visibilityOld != VISIBLE) {
-                if (havePermission()) {
-                    onResume()
-                } else {
-                    onPause()
+        if (isEnabled) {
+            //Log.i(TAG, "...onVisibilityChanged:" + visibility);
+            if (visibility == VISIBLE) {
+                if (visibilityOld != VISIBLE) {
+                    if (havePermission()) {
+                        onResume()
+                    } else {
+                        onPause()
+                    }
                 }
+            } else {
+                onPause()
             }
-        } else {
-            onPause()
+            visibilityOld = visibility
         }
-
-        visibilityOld = visibility
     }
 }

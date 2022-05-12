@@ -230,10 +230,18 @@ class PickerImageFragment : BasePickerFragment() {
         }
     }
 
+    /**注意摄像头资源的释放*/
+    var _cameraPreviewItem: DslPickerCameraPreviewItem? = null
+        set(value) {
+            value?.release()
+            field = value
+        }
+
     /**在adapter头部, 添加一个摄像头预览item*/
     fun _addCameraItem() {
         if (_adapter.headerItems.isEmpty()) {
             _adapter.headerItems.add(DslPickerCameraPreviewItem().apply {
+                _cameraPreviewItem = this
                 itemClick = {
                     val folderPath = pickerViewModel.currentFolder.value?.folderPath
                     val isVideoFolder2 = folderPath == FolderCreator.ALL_VIDEO
@@ -313,6 +321,7 @@ class PickerImageFragment : BasePickerFragment() {
         if (loaderConfig?.enableCamera == true && (isVideoFolder || isImageFolder)) {
             _addCameraItem()
         } else {
+            _cameraPreviewItem = null
             _adapter.headerItems.clear()
         }
 
@@ -513,6 +522,7 @@ class PickerImageFragment : BasePickerFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        _cameraPreviewItem = null
         loader.destroyLoader()
     }
 }
