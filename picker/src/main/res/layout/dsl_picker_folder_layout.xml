@@ -29,11 +29,11 @@
         android:paddingTop="2dp"
         android:paddingRight="@dimen/lib_hdpi"
         android:paddingBottom="2dp"
-        android:text="Camera"
         android:textColor="@color/lib_white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/lib_image_view"
         app:layout_constraintTop_toTopOf="parent"
+        tools:text="Camera"
         tools:textColor="@color/picker_bottom_text_color" />
 
     <androidx.appcompat.widget.AppCompatImageView

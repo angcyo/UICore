@@ -9,6 +9,7 @@ import com.angcyo.dsladapter.DslAdapterStatusItem
 import com.angcyo.library.ex.Anim
 import com.angcyo.library.ex.fileSizeString
 import com.angcyo.library.ex.getColor
+import com.angcyo.library.ex.size
 import com.angcyo.library.model.LoaderMedia
 import com.angcyo.library.model.isImage
 import com.angcyo.loader.LoaderConfig
@@ -82,11 +83,10 @@ abstract class BasePickerFragment : BaseDslFragment() {
             } ?: 0
 
         if (_vh.isChecked(R.id.origin_cb) && size > 0) {
-            _vh.tv(R.id.origin_cb)?.text = span {
-                append("原图(${size.toLong().fileSizeString()})")
-            }
+            _vh.tv(R.id.origin_cb)?.text =
+                getString(R.string.picker_origin_format, size.toLong().fileSizeString())
         } else {
-            _vh.tv(R.id.origin_cb)?.text = "原图"
+            _vh.tv(R.id.origin_cb)?.text = getString(R.string.picker_origin)
         }
 
         //原图
@@ -102,28 +102,28 @@ abstract class BasePickerFragment : BaseDslFragment() {
 
         if (mediaList.isNullOrEmpty()) {
             _vh.enable(R.id.preview_text_view, false)
-            _vh.tv(R.id.preview_text_view)?.text = "预览"
+            _vh.tv(R.id.preview_text_view)?.text = getString(R.string.picker_preview)
 
             dslTransition(_vh.group(R.id.title_wrap_layout)) {
                 transitionDuration = Anim.ANIM_DURATION
                 onCaptureEndValues = { _ ->
                     _vh.enable(R.id.send_button, false)
-                    _vh.tv(R.id.send_button)?.text = "发送"
+                    _vh.tv(R.id.send_button)?.text = getString(R.string.picker_send)
                 }
             }
         } else {
             _vh.enable(R.id.preview_text_view)
-            _vh.tv(R.id.preview_text_view)?.text = span {
-                append("预览(${mediaList.size})")
-            }
+            _vh.tv(R.id.preview_text_view)?.text =
+                getString(R.string.picker_preview_format, "${mediaList.size()}")
 
             dslTransition(_vh.group(R.id.title_wrap_layout)) {
                 transitionDuration = Anim.ANIM_DURATION
                 onCaptureEndValues = { _ ->
                     _vh.enable(R.id.send_button)
-                    _vh.tv(R.id.send_button)?.text = span {
-                        append("发送(${mediaList.size}/${loaderConfig?.maxSelectorLimit ?: -1})")
-                    }
+                    _vh.tv(R.id.send_button)?.text = getString(
+                        R.string.picker_send_format,
+                        "${mediaList.size}/${loaderConfig?.maxSelectorLimit ?: -1}"
+                    )
                 }
             }
         }

@@ -26,8 +26,8 @@ import com.angcyo.putData
 import com.angcyo.widget._rv
 import com.angcyo.widget.recycler.decoration.DslDrawItemDecoration
 import com.angcyo.widget.recycler.decoration.isLayoutFirst
-import com.angcyo.widget.recycler.initDslAdapter
 import com.angcyo.widget.recycler.localUpdateItem
+import com.angcyo.widget.recycler.renderDslAdapter
 
 /**
  * 媒体选择列表界面
@@ -142,15 +142,27 @@ class PickerImageFragment : BasePickerFragment() {
 
         loaderConfig?.apply {
             loader.onLoaderResult = {
+                L.i("收到文件夹:${it.size()}个")
+
                 val folderList = mutableListOf<LoaderFolder>()
                 folderList.addAll(it)
 
                 //系统相册无媒体, 此时开启了摄像头功能
                 if (it.isEmpty() && enableCamera) {
                     if (mediaLoaderType.have(LoaderConfig.LOADER_TYPE_IMAGE)) {
-                        folderList.add(LoaderFolder("所有图片", FolderCreator.ALL_IMAGE))
+                        folderList.add(
+                            LoaderFolder(
+                                getString(R.string.picker_all_image),
+                                FolderCreator.ALL_IMAGE
+                            )
+                        )
                     } else if (mediaLoaderType.have(LoaderConfig.LOADER_TYPE_VIDEO)) {
-                        folderList.add(LoaderFolder("所有视频", FolderCreator.ALL_VIDEO))
+                        folderList.add(
+                            LoaderFolder(
+                                getString(R.string.picker_all_video),
+                                FolderCreator.ALL_VIDEO
+                            )
+                        )
                     }
                 }
 
@@ -164,9 +176,10 @@ class PickerImageFragment : BasePickerFragment() {
                 }
 
                 if (folderList.isEmpty()) {
-                    _adapter.setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_EMPTY)
+                    _adapter.render {
+                        _adapter.setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_EMPTY)
+                    }
                 } else {
-                    _adapter.setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_NONE)
                     pickerViewModel.loaderFolderList.value = folderList
 
                     val currentFolder = pickerViewModel.currentFolder.value
@@ -284,6 +297,8 @@ class PickerImageFragment : BasePickerFragment() {
 
     /**切换显示的文件夹*/
     fun _switchFolder(folder: LoaderFolder?, scrollToFirst: Boolean = true) {
+        L.i("切换文件夹:${folder?.folderPath} ${folder?.mediaItemList?.size()}")
+
         if (folder == null) {
             return
         }
@@ -311,6 +326,7 @@ class PickerImageFragment : BasePickerFragment() {
                     DslAdapterItem.PAYLOAD_UPDATE_PART,
                     DslAdapterItem.PAYLOAD_UPDATE_MEDIA
                 )
+                asyncDiff = true
                 justRun = true
             },
         ) { data ->
@@ -442,7 +458,7 @@ class PickerImageFragment : BasePickerFragment() {
             layoutId = R.layout.picker_folder_dialog_layout
             onInitLayout = { _, viewHolder ->
                 viewHolder._rv(R.id.lib_recycler_view)?.apply {
-                    initDslAdapter {
+                    renderDslAdapter {
                         defaultFilterParams = _defaultFilterParams().apply {
                             asyncDiff = false
                         }

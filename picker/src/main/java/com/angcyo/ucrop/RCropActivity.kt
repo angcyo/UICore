@@ -7,11 +7,11 @@ import androidx.appcompat.widget.Toolbar
 import com.angcyo.base.enableLayoutFullScreen
 import com.angcyo.base.setNavigationBarColor
 import com.angcyo.base.setStatusBarColor
+import com.angcyo.library.ex.getChildOrNull
 import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.Media
 import com.angcyo.library.utils.folderPath
 import com.angcyo.picker.R
-import com.angcyo.library.ex.getChildOrNull
 import com.yalantis.ucrop.UCropActivity
 import java.io.File
 
@@ -22,6 +22,8 @@ import java.io.File
  * @date 2020/02/20
  */
 class RCropActivity : UCropActivity() {
+
+    /**初始化*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableLayoutFullScreen()
@@ -30,7 +32,6 @@ class RCropActivity : UCropActivity() {
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar?.fitsSystemWindows = true
-
 
         findViewById<ViewGroup>(R.id.layout_aspect_ratio)?.run {
             //默认选中1:1

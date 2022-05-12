@@ -143,7 +143,8 @@ class DslLoader {
                                 //L.i(loaderMedia, " ", path.file().canRead())
                             } while (data.moveToNext())
                             L.w("DslLoader耗时:${LTime.time()} $count")
-                            allFolder = folderCreator.creatorFolder(_loaderConfig, allMedias)
+                            allFolder =
+                                folderCreator.creatorFolder(_activity, _loaderConfig, allMedias)
                         }
                     }.await()
                     onLoaderResult.invoke(allFolder)

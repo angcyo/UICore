@@ -92,6 +92,9 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.loadSingleData(
     }
 }
 
+/**
+ * 与[loadSingleData]的不同在于Dsl的参数不一样
+ * */
 inline fun <reified Item : DslAdapterItem> DslAdapter.loadSingleData2(
     dataList: List<Any>?,
     page: Int = Page.FIRST_PAGE_INDEX,

@@ -16,12 +16,12 @@
             android:layout_height="100dp"
             app:srcCompat="@drawable/ic_picker_empty" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/LibBodyTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="暂无媒体数据"
+            android:text="@string/picker_no_data"
             android:textColor="@color/picker_bottom_text_color" />
     </LinearLayout>
 

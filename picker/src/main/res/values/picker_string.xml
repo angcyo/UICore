@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="picker_image_video">图片和视频</string>
+    <string name="picker_all_image">所有图片</string>
+    <string name="picker_all_video">所有视频</string>
+    <string name="picker_all_audio">所有音频</string>
+    <string name="picker_preview">预览</string>
+    <string name="picker_preview_format">预览(%1$s)</string>
+    <string name="picker_send">发送</string>
+    <string name="picker_send_format">发送(%1$s)</string>
+    <string name="picker_origin">原图</string>
+    <string name="picker_origin_format">原图(%1$s)</string>
+    <string name="picker_no_data">暂无媒体数据</string>
+    <string name="picker_selected">选择</string>
+    <string name="picker_edit">编辑</string>
+</resources>

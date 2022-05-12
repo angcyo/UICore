@@ -1,10 +1,12 @@
 package com.angcyo.loader
 
+import android.content.Context
 import com.angcyo.library.L
 import com.angcyo.library.model.LoaderMedia
 import com.angcyo.library.model.isAudio
 import com.angcyo.library.model.isImage
 import com.angcyo.library.model.isVideo
+import com.angcyo.picker.R
 import java.io.File
 
 /**
@@ -21,7 +23,11 @@ open class FolderCreator {
         const val ALL_AUDIO = "allAudio"
     }
 
-    open fun creatorFolder(config: LoaderConfig, allMedia: List<LoaderMedia>): List<LoaderFolder> {
+    open fun creatorFolder(
+        context: Context,
+        config: LoaderConfig,
+        allMedia: List<LoaderMedia>
+    ): List<LoaderFolder> {
         val result = mutableListOf<LoaderFolder>()
         var allImage: LoaderFolder? = null
         var allVideo: LoaderFolder? = null
@@ -31,21 +37,24 @@ open class FolderCreator {
         val mediaLoaderType = config.mediaLoaderType
         if (mediaLoaderType and LoaderConfig.LOADER_TYPE_IMAGE == LoaderConfig.LOADER_TYPE_IMAGE) {
             if (mediaLoaderType and LoaderConfig.LOADER_TYPE_VIDEO == LoaderConfig.LOADER_TYPE_VIDEO) {
-                allImageAndVideo = LoaderFolder("图片和视频", ALL_IMAGE_AND_VIDEO)
+                allImageAndVideo = LoaderFolder(
+                    context.getString(R.string.picker_image_video),
+                    ALL_IMAGE_AND_VIDEO
+                )
                 result.add(allImageAndVideo)
             }
 
-            allImage = LoaderFolder("所有图片", ALL_IMAGE)
+            allImage = LoaderFolder(context.getString(R.string.picker_all_image), ALL_IMAGE)
             result.add(allImage)
         }
 
         if (mediaLoaderType and LoaderConfig.LOADER_TYPE_VIDEO == LoaderConfig.LOADER_TYPE_VIDEO) {
-            allVideo = LoaderFolder("所有视频", ALL_VIDEO)
+            allVideo = LoaderFolder(context.getString(R.string.picker_all_video), ALL_VIDEO)
             result.add(allVideo)
         }
 
         if (mediaLoaderType and LoaderConfig.LOADER_TYPE_AUDIO == LoaderConfig.LOADER_TYPE_AUDIO) {
-            allAudio = LoaderFolder("所有音频", ALL_AUDIO)
+            allAudio = LoaderFolder(context.getString(R.string.picker_all_audio), ALL_AUDIO)
             result.add(allAudio)
         }
 

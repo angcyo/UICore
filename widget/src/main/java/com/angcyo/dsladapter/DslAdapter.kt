@@ -3,6 +3,7 @@ package com.angcyo.dsladapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.dsladapter.filter.IFilterInterceptor
 import com.angcyo.dsladapter.internal.AdapterStatusFilterInterceptor
@@ -77,6 +78,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     var onceFilterParams: FilterParams? = null
 
     /**默认的[FilterParams]*/
+    @NonNull
     var defaultFilterParams: FilterParams? = null
         get() {
             return onceFilterParams ?: (field ?: _defaultFilterParams())

@@ -49,7 +49,7 @@
             android:paddingTop="6dp"
             android:paddingRight="10dp"
             android:paddingBottom="6dp"
-            android:text="发送"
+            android:text="@string/picker_send"
             android:textColor="@color/lib_white"
             app:button_disable_solid_color="@color/picker_button_disable_bg_color"
             app:button_disable_text_color="@color/picker_button_disable_text_color"
@@ -93,7 +93,7 @@
                 android:background="@drawable/lib_bg_selector"
                 android:enabled="true"
                 android:padding="10dp"
-                android:text="编辑"
+                android:text="@string/picker_edit"
                 android:textColor="@color/preview_text_color_selector" />
 
             <androidx.appcompat.widget.AppCompatCheckBox
@@ -108,7 +108,7 @@
                 android:paddingTop="10dp"
                 android:paddingRight="@dimen/lib_hdpi"
                 android:paddingBottom="10dp"
-                android:text="原图"
+                android:text="@string/picker_origin"
                 android:textColor="@color/lib_white" />
 
             <androidx.appcompat.widget.AppCompatCheckBox
@@ -123,7 +123,7 @@
                 android:paddingTop="10dp"
                 android:paddingRight="10dp"
                 android:paddingBottom="10dp"
-                android:text="选择"
+                android:text="@string/picker_selected"
                 android:textColor="@color/lib_white" />
 
         </FrameLayout>

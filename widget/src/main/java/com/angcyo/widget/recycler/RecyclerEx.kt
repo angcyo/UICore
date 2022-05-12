@@ -59,7 +59,25 @@ fun RecyclerView.initDsl() {
     }
 }
 
-/**快速初始化[DslAdapter]*/
+/**
+ * [initDslAdapter]
+ * dsl在[com.angcyo.dsladapter.DslAdapter.render]方法中执行
+ * */
+fun RecyclerView.renderDslAdapter(
+    append: Boolean = false, //当已经是adapter时, 是否追加item. 需要先关闭 new
+    new: Boolean = true, //始终创建新的adapter, 为true时, 则append无效
+    action: DslAdapter.() -> Unit = {}
+) {
+    initDslAdapter(append, new) {
+        render {
+            action()
+        }
+    }
+}
+
+/**快速初始化[DslAdapter]
+ * [initDsl]
+ * [dslAdapter]*/
 fun RecyclerView.initDslAdapter(
     append: Boolean = false, //当已经是adapter时, 是否追加item. 需要先关闭 new
     new: Boolean = true, //始终创建新的adapter, 为true时, 则append无效

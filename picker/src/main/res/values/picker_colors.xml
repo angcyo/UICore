@@ -4,7 +4,7 @@
     <color name="picker_fragment_bg_color">#000001</color>
     <color name="picker_bottom_bar_bg_color">#18191A</color>
     <color name="picker_bottom_bar_bg_color_tran">#CC18191A</color>
-    <color name="picker_bottom_text_color">#5C5D5E</color>
+    <color name="picker_bottom_text_color">#717171</color>
     <color name="picker_button_disable_bg_color">#424344</color>
     <color name="picker_button_disable_text_color">#363738</color>
     <color name="picker_button_accent_bg_color">#20BF64</color>
