@@ -9,6 +9,7 @@ import android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE
 import android.view.Gravity
 import android.view.View
 import android.widget.EditText
+import com.angcyo.library.ex._string
 import com.angcyo.library.ex.setWidthHeight
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.*
@@ -38,7 +39,7 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
     /**
      * 文本框hint文本
      */
-    var hintInputString: CharSequence? = "请输入..."
+    var hintInputString: CharSequence? = _string(R.string.dialog_input_hint)
 
     /**
      * 缺省的文本框内容

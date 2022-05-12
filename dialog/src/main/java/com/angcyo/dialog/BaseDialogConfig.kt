@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.view.View
 import com.angcyo.library.L
+import com.angcyo.library.ex._string
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt
 
@@ -20,8 +21,8 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
     var hideDialogTitleLine: Boolean = false
 
     init {
-        positiveButtonText = "确定"
-        negativeButtonText = "取消"
+        positiveButtonText = _string(R.string.dialog_positive)
+        negativeButtonText = _string(R.string.dialog_negative)
 
         onCancelListener = {
             L.i("$it is Cancel!")
