@@ -99,7 +99,7 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
         //Compliance 合规后的初始化
         vmApp<StateModel>().waitState(
             ComplianceCheck.TYPE_COMPLIANCE_STATE,
-            true
+            false
         ) { data, throwable ->
             if (throwable == null) {
                 //合规后

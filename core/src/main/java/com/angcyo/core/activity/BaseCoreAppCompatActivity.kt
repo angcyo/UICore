@@ -35,7 +35,7 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
         //Compliance 合规后的初始化
         vmApp<StateModel>().waitState(
             ComplianceCheck.TYPE_COMPLIANCE_STATE,
-            true
+            false //一直监听会内存泄漏
         ) { data, throwable ->
             if (throwable == null) {
                 //合规后
