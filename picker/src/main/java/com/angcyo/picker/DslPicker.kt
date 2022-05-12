@@ -32,6 +32,11 @@ import java.io.File
 
 
 /**
+ * 图片选择器
+ * https://github.com/LuckSiege/PictureSelector
+ *
+ * 图片加载库
+ * https://github.com/panpf/sketch
  *
  * Email:angcyo@126.com
  * @author angcyo
