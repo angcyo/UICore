@@ -51,6 +51,9 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
      * */
     var showSoftInput = true
 
+    /**延迟多久才显示软键盘*/
+    var showSoftInputDelay = 160L
+
     /**
      * 是否允许输入为空
      */
@@ -103,7 +106,7 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
         _configView(editView, indicatorView, positiveButton)
 
         if (showSoftInput) {
-            dialogViewHolder.postDelay(60) { editView?.showSoftInput() }
+            dialogViewHolder.postDelay(showSoftInputDelay) { editView?.showSoftInput() }
         }
     }
 
