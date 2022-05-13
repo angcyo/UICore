@@ -47,7 +47,7 @@
             android:minHeight="@dimen/dialog_item_height"
             android:paddingLeft="@dimen/lib_xhdpi"
             android:paddingRight="@dimen/lib_xhdpi"
-            android:textColor="@color/lib_accent_text_color_selector"
+            android:textColor="@color/dialog_accent_text_color_selector"
             app:button_enable_text_style="false"
             tools:text="确定" />
     </LinearLayout>

@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:layout_marginTop="@dimen/lib_hdpi"
-        android:background="@color/lib_line"
+        android:background="@color/dialog_line"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/message_view" />
@@ -69,7 +69,7 @@
         android:layout_height="0dp"
         android:background="@drawable/lib_bg_selector"
         android:gravity="center"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/dialog_accent_text_color_selector"
         app:layout_constraintBottom_toBottomOf="@id/negative_button"
         app:layout_constraintLeft_toRightOf="@id/negative_button"
         app:layout_constraintRight_toRightOf="parent"

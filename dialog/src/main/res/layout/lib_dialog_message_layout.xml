@@ -44,7 +44,7 @@
         android:id="@+id/dialog_control_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="@color/lib_line"
+        android:divider="@color/dialog_line"
         android:showDividers="middle"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/message_wrap_layout">
@@ -81,7 +81,7 @@
             android:layout_weight="1"
             android:background="@drawable/lib_bg_selector"
             android:minHeight="50dp"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/dialog_accent_text_color_selector"
             android:textStyle="bold"
             tools:text="确定" />
 
@@ -91,7 +91,7 @@
         android:id="@+id/control_line_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/lib_line_px"
-        android:background="@color/lib_line"
+        android:background="@color/dialog_line"
         app:layout_constraintTop_toBottomOf="@id/message_wrap_layout" />
 
 </com.angcyo.widget.layout.RConstraintLayout>

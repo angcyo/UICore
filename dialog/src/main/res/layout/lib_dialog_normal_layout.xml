@@ -74,7 +74,7 @@
             android:background="@drawable/lib_bg_selector"
             android:paddingLeft="@dimen/lib_hdpi"
             android:paddingRight="@dimen/lib_hdpi"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/dialog_accent_text_color_selector"
             tools:text="确定" />
 
     </LinearLayout>

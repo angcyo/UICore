@@ -17,6 +17,7 @@
             android:id="@+id/lib_loading_view"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            app:arc_color="@color/dialog_accent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

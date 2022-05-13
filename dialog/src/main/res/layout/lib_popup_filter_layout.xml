@@ -28,7 +28,7 @@
         android:layout_height="@dimen/lib_line_px"
         android:layout_gravity="bottom"
         android:layout_marginTop="@dimen/lib_xhdpi"
-        android:background="@color/lib_line" />
+        android:background="@color/dialog_line" />
 
     <LinearLayout
         android:layout_width="match_parent"

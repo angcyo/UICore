@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="dialog_line">#E0E0E0</color>
+    <color name="dialog_line">@color/lib_line</color>
     <color name="dialog_cancel_line">#E7E7ED</color>
     <color name="dialog_ios_bg">#D2F4F5F6</color>
+    <color name="dialog_accent">@color/colorAccent</color>
+
     <color name="popup_action_bg">#5B5C5E</color>
     <color name="popup_action_bg_press">#464749</color>
     <color name="popup_action_divider_start">#787878</color>

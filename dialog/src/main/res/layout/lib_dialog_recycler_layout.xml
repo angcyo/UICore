@@ -16,7 +16,7 @@
         android:id="@+id/title_line_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/lib_line_px"
-        android:background="@color/lib_line" />
+        android:background="@color/dialog_line" />
 
     <com.angcyo.widget.recycler.DslRecyclerView
         android:id="@+id/lib_recycler_view"
