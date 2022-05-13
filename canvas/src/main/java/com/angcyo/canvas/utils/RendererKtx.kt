@@ -19,6 +19,8 @@ import com.angcyo.library.ex.*
  * @since 2022/04/29
  */
 
+//<editor-fold desc="已废弃">
+
 /**添加一个文本渲染器*/
 @Deprecated("废弃")
 fun CanvasView.addPictureTextRenderer(
@@ -89,6 +91,11 @@ fun CanvasView.addShapeRenderer(path: Path, paint: TextPaint? = null): ShapeItem
     }
 }
 
+//</editor-fold desc="已废弃">
+
+
+//<editor-fold desc="DrawableItemRenderer">
+
 /**添加一个[Drawable]渲染器*/
 fun CanvasView.addDrawableRenderer(drawable: Drawable): DrawableItem {
     canvasDelegate.apply {
@@ -129,29 +136,9 @@ fun CanvasView.addDrawableRenderer(
     }
 }
 
-/**添加一个[Bitmap]渲染器
- * [BitmapItemRenderer]*/
-fun CanvasView.addBitmapRenderer(bitmap: Bitmap): BitmapItem {
-    canvasDelegate.apply {
-        val renderer = BitmapItemRenderer(this)
-        val result = renderer.updateBitmap(bitmap)
-        addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
-        selectedItem(renderer)
-        return result
-    }
-}
+//</editor-fold desc="DrawableItemRenderer">
 
-/**添加一个[Bitmap]渲染器
- * [PictureItemRenderer]*/
-fun CanvasView.addPictureBitmapRenderer(bitmap: Bitmap): PictureBitmapItem {
-    canvasDelegate.apply {
-        val renderer = PictureItemRenderer(this)
-        val result = renderer.addBitmapRender(bitmap)
-        addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
-        selectedItem(renderer)
-        return result
-    }
-}
+//<editor-fold desc="PictureItemRenderer">
 
 /**添加一个文本渲染器*/
 fun CanvasView.addPictureTextRender(text: String): PictureTextItem {
@@ -174,3 +161,5 @@ fun CanvasView.addPictureShapeRender(path: Path): PictureShapeItem {
         return result
     }
 }
+
+//</editor-fold desc="PictureItemRenderer">
