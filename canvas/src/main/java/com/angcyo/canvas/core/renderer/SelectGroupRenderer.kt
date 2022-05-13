@@ -30,10 +30,11 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         strokeWidth = 1 * dp
     }
 
+    /**选择框的颜色*/
+    var paintColor: Int = _color(R.color.canvas_select)
+
     val canvasDelegate: CanvasDelegate
         get() = canvasView as CanvasDelegate
-
-    var paintColor: Int = _color(R.color.colorAccent)
 
     val selectRect = RectF()
     val selectRectMap = RectF()
@@ -137,11 +138,23 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         }
     }
 
-    override fun onCancelSelected(toSelectedItem: BaseItemRenderer<*>?) {
-        super.onCancelSelected(toSelectedItem)
-        reset()
+    override fun onSelectedItem(
+        itemRenderer: IItemRenderer<*>,
+        oldItemRenderer: IItemRenderer<*>?
+    ) {
+        super.onSelectedItem(itemRenderer, oldItemRenderer)
+        if (itemRenderer != this) {
+            reset()
+        }
     }
 
+    override fun onClearSelectItem(itemRenderer: IItemRenderer<*>) {
+        super.onClearSelectItem(itemRenderer)
+        if (itemRenderer == this) {
+            reset()
+        }
+    }
+    
     fun reset() {
         selectItemList.clear()
         selectRect.setEmpty()
