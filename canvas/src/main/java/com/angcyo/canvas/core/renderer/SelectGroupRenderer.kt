@@ -154,7 +154,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
             reset()
         }
     }
-    
+
     fun reset() {
         selectItemList.clear()
         selectRect.setEmpty()
