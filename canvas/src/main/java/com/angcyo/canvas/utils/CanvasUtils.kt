@@ -262,7 +262,8 @@ fun Float.toRadians(): Float = Math.toRadians(this.toDouble()).toFloat()
 /**弧度转角度*/
 fun Float.toDegrees(): Float = Math.toDegrees(this.toDouble()).toFloat()
 
-/**等比限制最大的宽高*/
+/**等比限制最大的宽高
+ * [com.angcyo.library.ex.RectExKt.adjustScaleSize]*/
 fun limitMaxWidthHeight(
     width: Float,
     height: Float,

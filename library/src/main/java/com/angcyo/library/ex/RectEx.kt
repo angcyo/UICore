@@ -103,6 +103,39 @@ fun RectF.adjustSizeWithRotate(
     offset(rotateRect.centerX() - centerX(), rotateRect.centerY() - centerY())
 }
 
+/**将一个矩形等比缩放到指定限制的宽高
+ * [com.angcyo.canvas.utils.CanvasUtilsKt.limitMaxWidthHeight]
+ * [android.graphics.Matrix.setRectToRect]*/
+fun RectF.adjustScaleSize(
+    maxWidth: Float,
+    maxHeight: Float,
+    adjustType: Int = ADJUST_TYPE_CENTER
+): RectF {
+    val width = width()
+    val height = height()
+
+    if (width > maxWidth || height > maxHeight) {
+        //超出范围, 等比缩放
+
+        val scaleX = maxWidth / width
+        val scaleY = maxHeight / height
+
+        val newWidth: Float
+        val newHeight: Float
+        if (scaleX > scaleY) {
+            //按照高度缩放
+            newHeight = maxHeight
+            newWidth = width * scaleY
+        } else {
+            newWidth = maxWidth
+            newHeight = newWidth * scaleX
+        }
+
+        adjustSize(newWidth, newHeight, adjustType)
+    }
+    return this
+}
+
 //</editor-fold desc="rect sie">
 
 //<editor-fold desc="rect flip">

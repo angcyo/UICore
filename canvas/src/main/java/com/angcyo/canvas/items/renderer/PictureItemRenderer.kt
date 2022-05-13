@@ -1,9 +1,6 @@
 package com.angcyo.canvas.items.renderer
 
-import android.graphics.Bitmap
-import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.Typeface
+import android.graphics.*
 import android.widget.LinearLayout
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.Strategy
@@ -14,6 +11,7 @@ import com.angcyo.canvas.items.PictureBitmapItem
 import com.angcyo.canvas.items.PictureItem
 import com.angcyo.canvas.items.PictureShapeItem
 import com.angcyo.canvas.items.PictureTextItem
+import com.angcyo.canvas.utils.limitMaxWidthHeight
 import com.angcyo.library.ex.add
 import com.angcyo.library.ex.isNoSize
 import com.angcyo.library.ex.remove
@@ -24,7 +22,7 @@ import com.angcyo.library.ex.remove
  */
 class PictureItemRenderer(canvasView: ICanvasView) :
     DrawableItemRenderer<PictureItem>(canvasView) {
-    
+
     override fun isSupportControlPoint(type: Int): Boolean {
         if (type == ControlPoint.POINT_TYPE_LOCK) {
             val item = _rendererItem
@@ -51,7 +49,15 @@ class PictureItemRenderer(canvasView: ICanvasView) :
                 //再次更新bounds
                 val scaleWidth = bounds.width() / oldWidth
                 val scaleHeight = bounds.height() / oldHeight
-                updateBounds(newWith * scaleWidth, newHeight * scaleHeight)
+                if (scaleWidth == 1f && scaleHeight == 1f) {
+                    //限制目标大小到原来的大小
+                    limitMaxWidthHeight(newWith, newHeight, oldWidth, oldHeight).apply {
+                        updateBounds(this[0], this[1])
+                    }
+                } else {
+                    //重新缩放当前的大小,达到和原来的缩放效果一致性
+                    updateBounds(newWith * scaleWidth, newHeight * scaleHeight)
+                }
             }
             refresh()
         }
@@ -387,9 +393,11 @@ class PictureItemRenderer(canvasView: ICanvasView) :
         return _rendererItem as PictureBitmapItem
     }
 
-    /**更新需要绘制的图片, 并保持原先的缩放比例*/
+    /**更新需要绘制的图片, 并保持原先的缩放比例
+     * [bounds] 需要更新的Bounds, 如果有*/
     fun updateItemBitmap(
         bitmap: Bitmap,
+        bounds: RectF? = null,
         strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
     ) {
         val item = _rendererItem
@@ -402,27 +410,39 @@ class PictureItemRenderer(canvasView: ICanvasView) :
             return
         }
 
-        wrapItemUpdate {
-            if (this is PictureBitmapItem) {
-                this.bitmap = bitmap
-                updatePaint()
+        val oldBounds = RectF(getBounds())
+
+        if (bounds != null) {
+            _rendererItem?.apply {
+                if (this is PictureBitmapItem) {
+                    this.bitmap = bitmap
+                    updatePaint()
+
+                    changeBounds {
+                        set(bounds)
+                    }
+                }
+            }
+        } else {
+            wrapItemUpdate {
+                if (this is PictureBitmapItem) {
+                    this.bitmap = bitmap
+                    updatePaint()
+                }
             }
         }
 
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL && oldValue != null) {
             canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+
+                val newBounds = RectF(getBounds())
+
                 override fun runUndo() {
-                    updateItemBitmap(
-                        oldValue,
-                        Strategy(Strategy.STRATEGY_TYPE_UNDO)
-                    )
+                    updateItemBitmap(oldValue, oldBounds, Strategy(Strategy.STRATEGY_TYPE_UNDO))
                 }
 
                 override fun runRedo() {
-                    updateItemBitmap(
-                        bitmap,
-                        Strategy(Strategy.STRATEGY_TYPE_REDO)
-                    )
+                    updateItemBitmap(bitmap, newBounds, Strategy(Strategy.STRATEGY_TYPE_REDO))
                 }
             })
         }

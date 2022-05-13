@@ -60,10 +60,11 @@ class BitmapItemRenderer(canvasView: ICanvasView) :
         }
     }
 
-    /**更新需要绘制的图片, 并保持原先的缩放比例*/
+    /**更新需要绘制的图片, 并保持原先的缩放比例
+     * [bounds] 需要更新的Bounds, 如果有*/
     fun updateBitmap(
         bitmap: Bitmap,
-        keepBounds: Boolean = false,
+        bounds: RectF? = null,
         strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
     ): BitmapItem {
         val oldValue = _rendererItem?.bitmap
@@ -81,7 +82,11 @@ class BitmapItemRenderer(canvasView: ICanvasView) :
             _rendererItem?.bitmap = bitmap
         }
 
-        if (!keepBounds) {
+        if (bounds != null) {
+            changeBounds {
+                set(bounds)
+            }
+        } else {
             val newWidth = _rendererItem?.bitmap?.width ?: 0
             val newHeight = _rendererItem?.bitmap?.height ?: 0
 
@@ -98,23 +103,18 @@ class BitmapItemRenderer(canvasView: ICanvasView) :
                 updateBounds(newWidth.toFloat(), newHeight.toFloat())
             }
         }
-        refresh()
 
-        val newBounds = RectF(getBounds())
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL && oldValue != null) {
             canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+
+                val newBounds = RectF(getBounds())
+
                 override fun runUndo() {
-                    _rendererItem?.bitmap = oldValue
-                    changeBounds {
-                        set(oldBounds)
-                    }
+                    updateBitmap(oldValue, oldBounds, Strategy(Strategy.STRATEGY_TYPE_UNDO))
                 }
 
                 override fun runRedo() {
-                    _rendererItem?.bitmap = bitmap
-                    changeBounds {
-                        set(newBounds)
-                    }
+                    updateBitmap(bitmap, newBounds, Strategy(Strategy.STRATEGY_TYPE_REDO))
                 }
             })
         }
