@@ -20,7 +20,7 @@ class CameraPreviewView(context: Context, attributeSet: AttributeSet? = null) :
     var visibilityOld = GONE
 
     override fun init(context: Context?) {
-        super.init(context)
+        super.init(context?.applicationContext)
         //setBackgroundColor(Color.RED)
     }
 

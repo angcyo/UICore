@@ -233,7 +233,7 @@ class PickerImageFragment : BasePickerFragment() {
     /**注意摄像头资源的释放*/
     var _cameraPreviewItem: DslPickerCameraPreviewItem? = null
         set(value) {
-            value?.release()
+            field?.release()
             field = value
         }
 

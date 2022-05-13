@@ -17,7 +17,6 @@ import com.angcyo.picker.R
 import com.angcyo.picker.dslitem.DslPickerStatusItem
 import com.angcyo.transition.dslTransition
 import com.angcyo.viewmodel.VMAProperty
-import com.angcyo.widget.span.span
 
 /**
  *
@@ -77,10 +76,9 @@ abstract class BasePickerFragment : BaseDslFragment() {
     fun _showOriginSize() {
 
         //只计算所有图片的大小,排除音视频
-        val size =
-            pickerViewModel.selectorMediaList.value?.sumBy {
-                if (it.isImage()) it.fileSize.toInt() else 0
-            } ?: 0
+        val size = pickerViewModel.selectorMediaList.value?.sumOf {
+            if (it.isImage()) it.fileSize else 0L
+        } ?: 0L
 
         if (_vh.isChecked(R.id.origin_cb) && size > 0) {
             _vh.tv(R.id.origin_cb)?.text =
@@ -114,7 +112,7 @@ abstract class BasePickerFragment : BaseDslFragment() {
         } else {
             _vh.enable(R.id.preview_text_view)
             _vh.tv(R.id.preview_text_view)?.text =
-                getString(R.string.picker_preview_format, "${mediaList.size()}")
+                getString(R.string.picker_preview_format, mediaList.size())
 
             dslTransition(_vh.group(R.id.title_wrap_layout)) {
                 transitionDuration = Anim.ANIM_DURATION
