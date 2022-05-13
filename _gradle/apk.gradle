@@ -36,7 +36,7 @@ android {
     //rootProject.file("/.apk")
     def apkFolder = new File(project.rootDir.absolutePath + "/" + output)
     apkFolder.mkdirs()
-    println "\napk.gradle ${gradle.gradleVersion}→APK输出目录:${apkFolder.absolutePath}"
+    println "\napk.gradle ${gradle.gradleVersion}→APK输出目录: ${apkFolder.absolutePath}"
 
     if (gradle.gradleVersion.startsWith("6.5") ||
             gradle.gradleVersion.startsWith("6.7") ||
@@ -45,7 +45,7 @@ android {
         /*Gradle4.1 以上的方法*/
         applicationVariants.all { variant ->
             def defPath = variant.packageApplicationProvider.get().outputDirectory.getAsFile().get().absolutePath
-            println "\napk.gradle ${gradle.gradleVersion}→APK默认输出目录:${defPath}"
+            println "\napk.gradle ${gradle.gradleVersion}→默认输出目录↓\n${variant.name}-> ${defPath}"
 
             if (variant.buildType.name != "debug") {
                 variant.packageApplicationProvider.get().outputDirectory = new File(apkFolder, variant.name)
