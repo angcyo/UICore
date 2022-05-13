@@ -47,7 +47,9 @@ object GCodeHelper {
 
         //1英寸等于多少像素, 1英寸=2.54厘米=25.4毫米
         val inPixel = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, 1f, dm) //537.882
-        return parseGCode(text, mmPixel, inPixel, paint)
+
+        val config = GCodeParseConfig(text, mmPixel, inPixel, true, paint)
+        return parseGCode(config)
     }
 
     /**
@@ -55,28 +57,24 @@ object GCodeHelper {
      * [inRatio] 英寸单位时, 需要放大的比例
      * */
     @WorkerThread
-    fun parseGCode(
-        text: String,
-        mmRatio: Float,
-        inRatio: Float,
-        paint: Paint = createPaint(Color.BLACK)
-    ): GCodeDrawable {
+    fun parseGCode(config: GCodeParseConfig): GCodeDrawable {
         val gCodeLineDataList = mutableListOf<GCodeLineData>()
-        _lastRatio = mmRatio // 默认使用毫米单位
-        text.lines().forEach { line ->
-            val gCodeLineData = _parseGCodeLine(line, mmRatio, inRatio)
+        _lastRatio = config.mmRatio // 默认使用毫米单位
+        config.text.lines().forEach { line ->
+            val gCodeLineData = _parseGCodeLine(line, config.mmRatio, config.inRatio)
             gCodeLineDataList.add(gCodeLineData)
         }
-        return createGCodeDrawable(gCodeLineDataList, paint)
+        return createGCodeDrawable(gCodeLineDataList, config.skipLast, config.paint)
     }
 
     /**[GCodeDrawable]*/
     fun createGCodeDrawable(
         gCodeLineDataList: List<GCodeLineData>,
+        skipLast: Boolean = false,
         paint: Paint = createPaint(Color.BLUE)
     ): GCodeDrawable {
         val gCodeHandler = GCodeHandler()
-        val picture = gCodeHandler.parse(gCodeLineDataList, paint)
+        val picture = gCodeHandler.parsePicture(gCodeLineDataList, skipLast, paint)
         return GCodeDrawable(picture).apply {
             gCodeBound.set(gCodeHandler.gCodeBounds)
         }
@@ -202,14 +200,39 @@ object GCodeHelper {
 
         /**入口, 开始解析[GCodeLineData]*/
         @CanvasEntryPoint
-        fun parse(
+        fun parsePicture(
             gCodeLineDataList: List<GCodeLineData>,
+            skipLast: Boolean = false,
             paint: Paint = createPaint(Color.BLUE)
         ): Picture {
             parseGCodeBound(gCodeLineDataList)
             val picture = Picture().apply {
                 //解析一行的数据
-                gCodeLineDataList.forEach { lineData ->
+                var lastM5Index = -1
+                for ((index, lineData) in gCodeLineDataList.withIndex()) {
+                    if (skipLast) {
+                        val firstCmd = lineData.cmdList.firstOrNull()
+                        val firstCmdString = firstCmd?.cmd
+                        if (firstCmdString?.startsWith("M") == true) {
+                            val number = firstCmd.number.toInt()
+                            if (number == 5) {
+                                lastM5Index = index
+                            }
+                        } else if (lastM5Index != -1 && firstCmdString?.startsWith("G") == true) {
+                            val number = firstCmd.number.toInt()
+                            if (number == 1) {
+                                val x = lineData.getGCodeX()
+                                val y = lineData.getGCodeY()
+                                if (x == 0f && y == 0f) {
+                                    //最后一条G1指令
+                                    if (index == gCodeLineDataList.lastValidIndex()) {
+                                        //中断绘制
+                                        break
+                                    }
+                                }
+                            }
+                        }
+                    }
                     parseGCodeLine(lineData)
                 }
 

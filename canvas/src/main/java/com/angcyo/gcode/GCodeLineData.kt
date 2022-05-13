@@ -41,3 +41,13 @@ fun GCodeLineData.getGCodePixel(cmd: String): Float? {
 fun GCodeLineData.getGCodeCmd(cmd: String): GCodeCmd? {
     return cmdList.find { it.cmd.startsWith(cmd) }
 }
+
+/**最后一条有效指令的索引*/
+fun List<GCodeLineData>.lastValidIndex(): Int {
+    for ((index, line) in withIndex().reversed()) {
+        if (line.cmdList.isNotEmpty()) {
+            return index
+        }
+    }
+    return -1
+}
