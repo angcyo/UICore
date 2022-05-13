@@ -29,7 +29,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
     BaseRenderer(canvasView), ICanvasListener {
 
     /**用来绘制边框*/
-    val paint = createPaint(_color(R.color.colorAccent)).apply {
+    val paint = createPaint(_color(R.color.canvas_select)).apply {
         //init
         strokeWidth = 1 * dp
     }
