@@ -62,7 +62,7 @@ fun IRenderer.getRenderBitmap(): Bitmap? {
 /**更新渲染的[Bitmap]对象, 如果可以*/
 fun IRenderer.updateRenderBitmap(bitmap: Bitmap): BaseItem? {
     return if (this is BitmapItemRenderer) {
-        updateBitmap(bitmap, true)
+        updateBitmap(bitmap)
         _rendererItem
     } else if (this is PictureItemRenderer) {
         val item = _rendererItem
