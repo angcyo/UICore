@@ -31,7 +31,13 @@ import kotlin.math.max
  */
 
 /**window中的点击回调事件*/
-typealias WindowClickAction = (Any, View) -> Unit
+typealias WindowClickAction = (window: TargetWindow, view: View) -> Unit
+
+/**指定类型是以下类型:
+ * [Window]
+ * [PopupWindow]
+ * */
+typealias TargetWindow = Any
 
 open class PopupConfig {
     /**
@@ -56,12 +62,20 @@ open class PopupConfig {
     var xoff: Int = 0
     var yoff: Int = 0
 
+    /**左右最小边界距离*/
+    var minHorizontalOffset = 20 * dpi //最小边距
+
+    /**上下最小边界距离*/
+    var minVerticalOffset = 0 //最小边距
+
     //此属性 似乎只在 showAtLocation 有效, 在showAsDropDown中, anchor完全在屏幕底部, 系统会控制在TOP显示, 手动控制无效
+    //此属性在showAtLocation中配合parent效果才会达到预期
+    //如果是anchor,那么效果有点差异.
     var gravity: Int = Gravity.NO_GRAVITY//Gravity.TOP or Gravity.START or Gravity.LEFT
 
     /**自动调整偏移到
      * [anchor]的 TOP_CENTER or BOTTOM_CENTER
-     * 比不会覆盖 [xoff] [yoff] 而是追加*/
+     * 此值不会覆盖 [xoff] [yoff] 而是追加*/
     var autoOffset: Boolean = false
         set(value) {
             field = value
@@ -72,18 +86,25 @@ open class PopupConfig {
      * 否则就是目标横向居中*/
     var autoOffsetCenterInScreen: Boolean = false
 
+    /**自动设置offset, 到达锚点横向居中的状态*/
+    var autoOffsetCenterInAnchor: Boolean = true
+
     /** 标准属性 */
     var contentView: View? = null
 
     /** 指定布局id */
     var layoutId: Int = -1
 
+    //<editor-fold desc="Popup属性">
+
     var height: Int = WindowManager.LayoutParams.WRAP_CONTENT
     var width: Int = WindowManager.LayoutParams.WRAP_CONTENT
-    var focusable = true
-    var touchable = true
-    var outsideTouchable = true
-    var background: Drawable? = null
+    var focusable = true//是否需要焦点
+    var touchable = true//是否需要按压事件
+    var outsideTouchable = true//是否需要窗口外的事件
+    var background: Drawable? = null//背景
+
+    //</editor-fold desc="Popup属性">
 
     /**将[height]设置为, 锚点距离屏幕*/
     var exactlyHeight = false
@@ -118,19 +139,19 @@ open class PopupConfig {
     /**
      * 回调, 是否要拦截默认操作.[showWithActivity]时有效
      * */
-    var onDismiss: (window: Any) -> Boolean = { false }
+    var onDismiss: (window: TargetWindow) -> Boolean = { false }
 
     /**
      * [window] :[PopupWindow] or [Window]
      * */
-    var onInitLayout: (window: Any, viewHolder: DslViewHolder) -> Unit =
+    var onInitLayout: (window: TargetWindow, viewHolder: DslViewHolder) -> Unit =
         { _, _ -> }
 
     /**[PopupWindow]or[Window]载体*/
-    var _container: Any? = null
+    var _container: TargetWindow? = null
 
     /**显示, 根据条件, 选择使用[PopupWindow]or[Window]载体*/
-    open fun show(context: Context): Any {
+    open fun show(context: Context): TargetWindow {
         return if (showWithActivity && context is Activity) {
             showWidthActivity(context).apply {
                 _container = this
@@ -213,6 +234,9 @@ open class PopupConfig {
         if (parent != null) {
             window.showAtLocation(parent, gravity, xoff, yoff)
         } else if (anchor != null) {
+            //当空间不够时, 系统会自动偏移到最佳位置, 此时xoff也会额外追加偏移计算中
+            // Gravity.LEFT / Gravity.RIGHT 有效
+            // Gravity.CENTER 属性无效, 还是已左上角为计算锚点
             PopupWindowCompat.showAsDropDown(window, anchor!!, xoff, yoff, gravity)
         } else {
             L.w("至少需要配置一项[parent]or[anchor]")
@@ -236,14 +260,17 @@ open class PopupConfig {
     /**[autoOffset]后, 根布局所在的坐标矩形*/
     val rootViewRect = Rect()
 
-    /**都会触发, 初始化View*/
-    open fun initLayout(window: Any, viewHolder: DslViewHolder) {
-        val view = anchor
-        if (view != null && autoOffset) {
-            val minOffset = 20 * dpi //最小边距
+    /**都会触发, 初始化View
+     * [window] 有可能是[PopupWindow] 也有可能是*/
+    open fun initLayout(window: TargetWindow, viewHolder: DslViewHolder) {
+        val anchorView = anchor
+        if (anchorView != null && autoOffset) {
 
             val rootView = viewHolder.itemView
-            rootView.measure(atMost(_screenWidth - minOffset * 2), atMost(_screenHeight))
+            rootView.measure(
+                atMost(_screenWidth - minHorizontalOffset * 2),
+                atMost(_screenHeight - minVerticalOffset * 2)
+            )
             val rootViewWidth = rootView.mW()
             val rootViewHeight = rootView.mH()
 
@@ -253,46 +280,85 @@ open class PopupConfig {
                 window.height = rootViewHeight
             }
 
-            val rect = view.getViewRect()
-            if (isAnchorInTopArea(view)) {
+            val anchorViewRect = anchorView.getViewRect()
+            if (isAnchorInTopArea(anchorView)) {
                 //目标在屏幕的上半区
             } else {
                 //目标在屏幕的下半区
-                yoff = -(rect.height() + rootViewHeight) - yoff
+                yoff = -(anchorViewRect.height() + rootViewHeight) - yoff
             }
-            rootViewRect.top = rect.bottom + yoff
+            rootViewRect.top = anchorViewRect.bottom + yoff
             rootViewRect.bottom = rootViewRect.top + rootViewHeight
 
             //计算横向偏移
-
-            //优先显示在横向居中的位置
             if (autoOffsetCenterInScreen) {
+                //优先显示在屏幕横向居中的位置
                 rootViewRect.left = _screenWidth / 2 - rootViewWidth / 2 + xoff
                 rootViewRect.right = rootViewRect.left + rootViewWidth
 
-                if (isAnchorInLeftArea(view)) {
+                if (isAnchorInLeftArea(anchorView)) {
                     gravity = Gravity.LEFT
-                    xoff += _screenWidth / 2 - rect.left - rootViewWidth / 2
+                    xoff += _screenWidth / 2 - anchorViewRect.left - rootViewWidth / 2
+
+                    _updateRootViewRectLeft(anchorViewRect.left + xoff, rootViewWidth)
                 } else {
                     gravity = Gravity.RIGHT
-                    xoff -= rect.right - (_screenWidth / 2 + rootViewWidth / 2)
+                    xoff -= anchorViewRect.right - (_screenWidth / 2 + rootViewWidth / 2)
+
+                    _updateRootViewRectRight(anchorViewRect.right + xoff, rootViewWidth)
+                }
+            } else if (autoOffsetCenterInAnchor) {
+                //优先显示在锚点横向居中的位置
+                val originOffset = xoff
+                if (isAnchorInLeftArea(anchorView)) {
+                    gravity = Gravity.LEFT
+
+                    rootViewRect.left = anchorViewRect.left
+                    rootViewRect.right = anchorViewRect.left + rootViewWidth
+
+                    val dx = rootViewRect.centerX() - anchorViewRect.centerX()
+                    val newLeft = rootViewRect.left - dx
+
+                    xoff = if (newLeft >= minHorizontalOffset) {
+                        //够空间
+                        -dx
+                    } else {
+                        minHorizontalOffset - rootViewRect.left
+                    } + originOffset
+
+                    _updateRootViewRectLeft(anchorViewRect.left + xoff, rootViewWidth)
+                } else {
+                    gravity = Gravity.RIGHT
+                    rootViewRect.right = anchorViewRect.right
+                    rootViewRect.left = rootViewRect.right - rootViewWidth
+
+                    val dx = anchorViewRect.centerX() - rootViewRect.centerX()
+                    val newRight = rootViewRect.right + dx
+
+                    xoff = if (newRight <= _screenWidth - minHorizontalOffset) {
+                        //够空间
+                        dx
+                    } else {
+                        (_screenWidth - minHorizontalOffset) - anchorViewRect.right
+                    } + originOffset
+
+                    _updateRootViewRectRight(anchorViewRect.right + xoff, rootViewWidth)
                 }
             } else {
-                //优先目标横向居中的位置
-                if (isAnchorInLeftArea(view)) {
+                //优先目标横向居右的位置
+                if (isAnchorInLeftArea(anchorView)) {
                     gravity = Gravity.LEFT
                     /*if (rect.left > minOffset) {
                         xoff += rect.width() / 2 - rootViewWidth / 2
                     }*/
                     val originOffset = xoff
-                    xoff += rect.width() / 2 - rootViewWidth / 2
-                    if (rect.left + xoff < 0) {
+                    xoff += anchorViewRect.width() / 2 - rootViewWidth / 2
+                    if (anchorViewRect.left + xoff < 0) {
                         //越界了
                         xoff = originOffset
                     }
 
-                    rootViewRect.left = rect.left + xoff
-                    rootViewRect.right = rootViewRect.left + rootViewWidth
+                    _updateRootViewRectLeft(anchorViewRect.left + xoff, rootViewWidth)
                 } else {
                     gravity = Gravity.RIGHT
                     /*if (rect.right + minOffset < _screenWidth) {
@@ -300,16 +366,26 @@ open class PopupConfig {
                     }*/
                     val originOffset = xoff
 
-                    xoff -= rect.width() / 2 - rootViewWidth / 2
-                    if (rect.right + xoff > _screenWidth) {
-                        //越界了, 不便宜
+                    xoff -= anchorViewRect.width() / 2 - rootViewWidth / 2
+                    if (anchorViewRect.right + xoff > _screenWidth) {
+                        //越界了, 不偏移
                         xoff = originOffset
                     }
-                    rootViewRect.right = rect.right + xoff
-                    rootViewRect.left = rootViewRect.right - rootViewWidth
+
+                    _updateRootViewRectRight(anchorViewRect.right + xoff, rootViewWidth)
                 }
             }
         }
+    }
+
+    fun _updateRootViewRectLeft(left: Int, width: Int) {
+        rootViewRect.left = left
+        rootViewRect.right = left + width
+    }
+
+    fun _updateRootViewRectRight(right: Int, width: Int) {
+        rootViewRect.right = right
+        rootViewRect.left = right - width
     }
 
     /**[showWithPopupWindow]*/

@@ -8,7 +8,7 @@ import com.angcyo.dsladapter.itemIndexPosition
 import com.angcyo.widget.DslViewHolder
 
 /**
- *
+ * 弹出一个列表选项的Popup对话框
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/03/30
@@ -20,6 +20,7 @@ open class RecyclerPopupConfig : PopupConfig() {
 
     val _recyclerConfig = RecyclerConfig()
 
+    /**单选/多选后的回调*/
     var onPopupResult: (host: Any, itemList: List<DslAdapterItem>, indexList: List<Int>) -> Boolean =
         { _, _, _ -> false }
 
