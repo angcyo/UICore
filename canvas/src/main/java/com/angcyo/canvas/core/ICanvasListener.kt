@@ -29,7 +29,8 @@ interface ICanvasListener : ICanvasTouch {
     /**选中[IItemRenderer], 有可能[oldItemRenderer]会等于[itemRenderer]*/
     fun onSelectedItem(itemRenderer: IItemRenderer<*>, oldItemRenderer: IItemRenderer<*>?) {}
 
-    /**清除选中[IItemRenderer]*/
+    /**清除选中[IItemRenderer]
+     * [itemRenderer] 之前选中的渲染项*/
     fun onClearSelectItem(itemRenderer: IItemRenderer<*>) {}
 
     /**[IItemRenderer]改变[Bounds]之后的回调*/

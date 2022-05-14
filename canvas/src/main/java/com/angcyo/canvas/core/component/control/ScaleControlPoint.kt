@@ -92,7 +92,7 @@ class ScaleControlPoint : ControlPoint() {
     }
 
     override fun onTouch(
-        canvasView: CanvasDelegate,
+        canvasDelegate: CanvasDelegate,
         itemRenderer: BaseItemRenderer<*>,
         event: MotionEvent
     ): Boolean {
@@ -113,21 +113,23 @@ class ScaleControlPoint : ControlPoint() {
 
                 val x1: Float
                 val y1: Float
-                canvasView.getCanvasViewBox().mapCoordinateSystemPoint(rectScaleAnchorPoint).apply {
-                    x1 = x
-                    y1 = y
-                }
+                canvasDelegate.getCanvasViewBox().mapCoordinateSystemPoint(rectScaleAnchorPoint)
+                    .apply {
+                        x1 = x
+                        y1 = y
+                    }
 
                 val x2: Float
                 val y2: Float
-                canvasView.getCanvasViewBox().mapCoordinateSystemPoint(_touchPoint).apply {
+                canvasDelegate.getCanvasViewBox().mapCoordinateSystemPoint(_touchPoint).apply {
                     x2 = x
                     y2 = y
                 }
 
                 val cX: Float
                 val cY: Float
-                canvasView.getCanvasViewBox().mapCoordinateSystemPoint((x2 + x1) / 2, (y2 + y1) / 2)
+                canvasDelegate.getCanvasViewBox()
+                    .mapCoordinateSystemPoint((x2 + x1) / 2, (y2 + y1) / 2)
                     .apply {
                         cX = x
                         cY = y
@@ -155,21 +157,23 @@ class ScaleControlPoint : ControlPoint() {
                 if (dx != 0f || dy != 0f) {
                     val x1: Float
                     val y1: Float
-                    canvasView.getCanvasViewBox().mapCoordinateSystemPoint(rectScaleAnchorPoint).apply {
-                        x1 = x
-                        y1 = y
-                    }
+                    canvasDelegate.getCanvasViewBox().mapCoordinateSystemPoint(rectScaleAnchorPoint)
+                        .apply {
+                            x1 = x
+                            y1 = y
+                        }
 
                     val x2: Float
                     val y2: Float
-                    canvasView.getCanvasViewBox().mapCoordinateSystemPoint(_movePoint).apply {
+                    canvasDelegate.getCanvasViewBox().mapCoordinateSystemPoint(_movePoint).apply {
                         x2 = x
                         y2 = y
                     }
 
                     val cX: Float
                     val cY: Float
-                    canvasView.getCanvasViewBox().mapCoordinateSystemPoint((x2 + x1) / 2, (y2 + y1) / 2)
+                    canvasDelegate.getCanvasViewBox()
+                        .mapCoordinateSystemPoint((x2 + x1) / 2, (y2 + y1) / 2)
                         .apply {
                             cX = x
                             cY = y
@@ -198,7 +202,7 @@ class ScaleControlPoint : ControlPoint() {
                         }
 
                         isScaled = true
-                        canvasView.smartAssistant.smartChangeBounds(
+                        canvasDelegate.smartAssistant.smartChangeBounds(
                             itemRenderer,
                             isLockScaleRatio,
                             newWidth,
@@ -251,7 +255,7 @@ class ScaleControlPoint : ControlPoint() {
                         if (it is SelectGroupRenderer) {
                             itemList.addAll(it.selectItemList)
                         }
-                        canvasView.undoManager.addUndoAction(object : ICanvasStep {
+                        canvasDelegate.undoManager.addUndoAction(object : ICanvasStep {
                             val item = it
                             val originBounds = RectF(touchItemBounds)
                             val newBounds = RectF(it.getBounds())
@@ -263,7 +267,7 @@ class ScaleControlPoint : ControlPoint() {
                                         newBounds,
                                         originBounds
                                     )
-                                    if (canvasView.getSelectedRenderer() == item) {
+                                    if (canvasDelegate.getSelectedRenderer() == item) {
                                         item.updateSelectBounds()
                                     }
                                 } else {
@@ -280,7 +284,7 @@ class ScaleControlPoint : ControlPoint() {
                                         originBounds,
                                         newBounds
                                     )
-                                    if (canvasView.getSelectedRenderer() == item) {
+                                    if (canvasDelegate.getSelectedRenderer() == item) {
                                         item.updateSelectBounds()
                                     }
                                 } else {

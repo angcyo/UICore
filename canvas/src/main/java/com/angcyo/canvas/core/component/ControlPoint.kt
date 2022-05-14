@@ -40,7 +40,7 @@ open class ControlPoint : BaseComponent() {
     var isTouchDownIn: Boolean = false
 
     open fun onTouch(
-        view: CanvasDelegate,
+        canvasDelegate: CanvasDelegate,
         itemRenderer: BaseItemRenderer<*>,
         event: MotionEvent
     ): Boolean {
@@ -53,7 +53,7 @@ open class ControlPoint : BaseComponent() {
             }
             MotionEvent.ACTION_UP -> {
                 if (isTouchDownIn && bounds.contains(event.x, event.y)) {
-                    onClickControlPoint(view, itemRenderer)
+                    onClickControlPoint(canvasDelegate, itemRenderer)
                 }
             }
         }

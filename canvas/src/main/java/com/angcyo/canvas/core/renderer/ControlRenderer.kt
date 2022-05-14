@@ -107,6 +107,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
                 }
                 drawFrameText(canvas, visualBounds, it.getRenderRotateBounds(), rotate)
                 if (controlHandler.touchControlPoint is RotateControlPoint) {
+                    //绘制旋转的角度
                     drawRotateText(canvas, visualBounds, rotate)
                 }
             }

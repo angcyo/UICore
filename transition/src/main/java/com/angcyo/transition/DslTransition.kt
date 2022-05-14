@@ -129,6 +129,12 @@ fun ViewGroup.transition(action: DslTransition.() -> Unit) {
 /**开始转场, 通过[onCaptureStartValues] [onCaptureEndValues] 差值执行动画
  * [com.angcyo.transition.DslTransition.onCaptureStartValues]
  * [com.angcyo.transition.DslTransition.onCaptureEndValues]
+ *
+ * dslTransition(viewGroup) {
+ *   onCaptureEndValues = {
+ *     dialogViewHolder.action()
+ *   }
+ * }
  * */
 fun dslTransition(sceneRoot: ViewGroup?, action: DslTransition.() -> Unit) {
     val dslTransition = DslTransition()

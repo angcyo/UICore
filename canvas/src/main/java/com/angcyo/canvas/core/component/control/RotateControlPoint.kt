@@ -39,7 +39,7 @@ class RotateControlPoint : ControlPoint() {
     }
 
     override fun onTouch(
-        view: CanvasDelegate,
+        canvasDelegate: CanvasDelegate,
         itemRenderer: BaseItemRenderer<*>,
         event: MotionEvent
     ): Boolean {
@@ -66,7 +66,7 @@ class RotateControlPoint : ControlPoint() {
                 )
                 if (angle != 0f) {
                     L.i("即将旋转:$angle °")
-                    val assistant = view.smartAssistant.smartRotateBy(itemRenderer, angle)
+                    val assistant = canvasDelegate.smartAssistant.smartRotateBy(itemRenderer, angle)
                     isRotated = true
                     _touchPoint.set(_movePoint)
                 }
@@ -79,7 +79,7 @@ class RotateControlPoint : ControlPoint() {
                         if (it is SelectGroupRenderer) {
                             itemList.addAll(it.selectItemList)
                         }
-                        view.undoManager.addUndoAction(object : ICanvasStep {
+                        canvasDelegate.undoManager.addUndoAction(object : ICanvasStep {
                             val item = it
                             val originRotate = touchItemRotate
                             val newRotate = itemRenderer.rotate
@@ -93,7 +93,7 @@ class RotateControlPoint : ControlPoint() {
                                         bounds.centerX(),
                                         bounds.centerY()
                                     )
-                                    if (view.getSelectedRenderer() == item) {
+                                    if (canvasDelegate.getSelectedRenderer() == item) {
                                         item.updateSelectBounds()
                                     }
                                 } else {
@@ -109,7 +109,7 @@ class RotateControlPoint : ControlPoint() {
                                         bounds.centerX(),
                                         bounds.centerY()
                                     )
-                                    if (view.getSelectedRenderer() == item) {
+                                    if (canvasDelegate.getSelectedRenderer() == item) {
                                         item.updateSelectBounds()
                                     }
                                 } else {
