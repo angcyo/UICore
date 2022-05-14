@@ -7,16 +7,16 @@
     <!--Toast的动画-->
     <style name="LibToastTopAnimation" parent="android:Animation">
         <item name="android:windowEnterAnimation">@anim/lib_tran_alpha_top_enter</item>
-        <item name="android:windowShowAnimation">@anim/lib_tran_alpha_top_enter</item>
+<!--        <item name="android:windowShowAnimation">@anim/lib_tran_alpha_top_enter</item>-->
         <item name="android:windowExitAnimation">@anim/lib_tran_alpha_top_exit</item>
-        <item name="android:windowHideAnimation">@anim/lib_tran_alpha_top_exit</item>
+<!--        <item name="android:windowHideAnimation">@anim/lib_tran_alpha_top_exit</item>-->
     </style>
 
     <style name="LibToastBottomAnimation" parent="android:Animation">
         <item name="android:windowEnterAnimation">@anim/lib_tran_alpha_bottom_enter</item>
-        <item name="android:windowShowAnimation">@anim/lib_tran_alpha_bottom_enter</item>
+<!--        <item name="android:windowShowAnimation">@anim/lib_tran_alpha_bottom_enter</item>-->
         <item name="android:windowExitAnimation">@anim/lib_tran_alpha_bottom_exit</item>
-        <item name="android:windowHideAnimation">@anim/lib_tran_alpha_bottom_exit</item>
+<!--        <item name="android:windowHideAnimation">@anim/lib_tran_alpha_bottom_exit</item>-->
     </style>
 
     <!--TextView阴影样式-->
