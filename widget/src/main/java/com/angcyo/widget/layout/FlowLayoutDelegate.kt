@@ -27,7 +27,7 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
     val _allVisibleViews = mutableListOf<View>() //保存所有可见的view
 
     /** 每一行最多多少个, 强制限制. -1, 不限制. 大于0生效 */
-    var maxCountLine: Int = -1
+    var maxCountOnLine: Int = -1
 
     /**最大的行数*/
     var maxLineCount: Int = -1
@@ -64,8 +64,8 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
             attributeSet,
             R.styleable.FlowLayoutDelegate
         )
-        maxCountLine =
-            array.getInt(R.styleable.FlowLayoutDelegate_r_flow_max_line_child_count, maxCountLine)
+        maxCountOnLine =
+            array.getInt(R.styleable.FlowLayoutDelegate_r_flow_max_line_child_count, maxCountOnLine)
         maxLineCount = array.getInt(R.styleable.FlowLayoutDelegate_r_flow_max_line_count, -1)
         itemEquWidth =
             array.getBoolean(R.styleable.FlowLayoutDelegate_r_flow_equ_width, itemEquWidth)
@@ -201,10 +201,21 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
             childWidth = child.measuredWidth + params.leftMargin + params.rightMargin
             childHeight = child.measuredHeight + params.topMargin + params.bottomMargin
             val lineViewSize = lineViews.size
+            //一行是否超过最大item数
+            val outOfLineCount = maxCountOnLine > 0 && lineViewSize == maxCountOnLine
+            val nextOutOfLineCount = maxCountOnLine > 0 && (lineViewSize + 1) == maxCountOnLine
+
             //本次追加 child后 , 需要的宽度
-            val needWidth =
-                lineWidth + childWidth + if (i != visibleCount - 1) itemHorizontalSpace else 0
-            if (needWidth > viewAvailableWidth || (maxCountLine > 0 && lineViewSize == maxCountLine)) { //需要换新行
+            var needWidth = lineWidth + childWidth
+            if (nextOutOfLineCount) {
+                //一行超出限制
+            } else if (i == visibleCount - 1) {
+                //最后一个
+            } else {
+                needWidth += itemHorizontalSpace
+            }
+
+            if (needWidth > viewAvailableWidth || outOfLineCount) { //需要换新行
                 if (itemEquWidth) { //margin,padding 消耗的宽度
                     childWidth = measureLineEquWidth(
                         lineViews,
@@ -234,10 +245,11 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
                     break
                 }
             } else {
-                lineWidth += childWidth + itemHorizontalSpace
+                lineWidth = needWidth
                 lineHeight = max(childHeight, lineHeight)
             }
             lineViews.add(child)
+
             if (i == visibleCount - 1) {
                 width = max(width, lineWidth)
                 height += lineHeight
@@ -275,14 +287,14 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
             return viewWidth
         }
         var consumeWidth =
-            paddingLeft + paddingRight + itemHorizontalSpace * max(maxCountLine - 1, 0)
+            paddingLeft + paddingRight + itemHorizontalSpace * max(maxCountOnLine - 1, 0)
         val firstChild = lineViews[0]
         val lineViewParams = firstChild.layoutParams as LinearLayout.LayoutParams
-        for (i in 0 until maxCountLine) {
+        for (i in 0 until maxCountOnLine) {
             consumeWidth += lineViewParams.leftMargin + lineViewParams.rightMargin
         }
-        val lineChildWidth: Int = if (maxCountLine > 0) {
-            (viewWidth - consumeWidth) / maxCountLine
+        val lineChildWidth: Int = if (maxCountOnLine > 0) {
+            (viewWidth - consumeWidth) / maxCountOnLine
         } else {
             viewWidth - consumeWidth
         }
@@ -296,7 +308,7 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
     ): Int {
         val lineViewSize = lineViews.size
         val lineChildWidth: Int
-        if (maxCountLine > 0) {
+        if (maxCountOnLine > 0) {
             //等宽并且平分, 当lineViewSize没有达到maxCountLine数量时, 需要考虑计算方式.
             lineChildWidth = measureEquChildWidth(lineViews, viewWidth)
         } else {
@@ -343,12 +355,21 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
                 if (params.gravity == -1) {
                     params.gravity = lineGravity
                 }
-                val childLeft = left + params.leftMargin
+                var childLeft = left + params.leftMargin
 
                 val childTop = when (params.gravity and Gravity.VERTICAL_GRAVITY_MASK) {
                     Gravity.CENTER_VERTICAL -> top + lineHeight / 2 - childHeight / 2 + params.topMargin
                     Gravity.BOTTOM -> top + lineHeight - params.bottomMargin - childHeight
                     else -> top + params.topMargin
+                }
+
+                if (lineView.size() == 1) {
+                    //如果一行中, 只有一个item, 则激活横向的Gravity
+                    childLeft = when (params.gravity and Gravity.HORIZONTAL_GRAVITY_MASK) {
+                        Gravity.CENTER_HORIZONTAL -> paddingLeft + (measuredWidth - paddingLeft - paddingRight) / 2 - childWidth / 2 + params.leftMargin
+                        Gravity.RIGHT -> measuredWidth - paddingRight - params.rightMargin - childWidth
+                        else -> childLeft
+                    }
                 }
 
                 //不需要加上 params.rightMargin,

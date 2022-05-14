@@ -5,8 +5,8 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import com.angcyo.drawable.isLeft
-import com.angcyo.drawable.isTop
+import com.angcyo.drawable.isGravityLeft
+import com.angcyo.drawable.isGravityTop
 import com.angcyo.ilayer.ILayer
 import com.angcyo.library.L
 import com.angcyo.library._screenHeight
@@ -118,7 +118,7 @@ open class ViewContainer(val parent: ViewGroup) : BaseContainer(parent.context) 
             position?.let {
                 rootView.frameParams {
                     this.gravity = position.gravity
-                    if (gravity.isLeft()) {
+                    if (gravity.isGravityLeft()) {
                         leftMargin = (position.offsetX * parent.mW()).toInt()
                         rootView.left = (position.offsetX * parent.mW()).toInt()
                         rightMargin = 0
@@ -127,7 +127,7 @@ open class ViewContainer(val parent: ViewGroup) : BaseContainer(parent.context) 
                         leftMargin = 0
                     }
 
-                    if (gravity.isTop()) {
+                    if (gravity.isGravityTop()) {
                         topMargin = (position.offsetY * parent.mH()).toInt()
                         rootView.top = (position.offsetY * parent.mH()).toInt()
                         bottomMargin = 0

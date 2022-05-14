@@ -7,8 +7,8 @@ import android.graphics.Rect
 import android.os.Build
 import android.view.View
 import android.view.WindowManager
-import com.angcyo.drawable.isLeft
-import com.angcyo.drawable.isTop
+import com.angcyo.drawable.isGravityLeft
+import com.angcyo.drawable.isGravityTop
 import com.angcyo.ilayer.CancelLayer
 import com.angcyo.ilayer.ILayer
 import com.angcyo.library.L
@@ -113,13 +113,13 @@ class WindowContainer(context: Context) : BaseContainer(context) {
 
         val gravity = wmLayoutParams.gravity
 
-        if (gravity.isLeft()) {
+        if (gravity.isGravityLeft()) {
             wmLayoutParams.x = (wmLayoutParams.x - dx).toInt()
         } else {
             wmLayoutParams.x = (wmLayoutParams.x + dx).toInt()
         }
 
-        if (gravity.isTop()) {
+        if (gravity.isGravityTop()) {
             wmLayoutParams.y = (wmLayoutParams.y - dy).toInt()
         } else {
             wmLayoutParams.y = (wmLayoutParams.y + dy).toInt()
@@ -129,13 +129,13 @@ class WindowContainer(context: Context) : BaseContainer(context) {
 
         if (end) {
             //保存位置
-            val left = if (gravity.isLeft()) {
+            val left = if (gravity.isGravityLeft()) {
                 wmLayoutParams.x
             } else {
                 _screenWidth - wmLayoutParams.x - rootView.mW()
             }
 
-            val top = if (gravity.isTop()) {
+            val top = if (gravity.isGravityTop()) {
                 wmLayoutParams.y
             } else {
                 _screenHeight - wmLayoutParams.y - rootView.mH()

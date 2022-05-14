@@ -5,8 +5,8 @@ import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.graphics.RectF
 import android.view.animation.LinearInterpolator
-import com.angcyo.drawable.isLeft
-import com.angcyo.drawable.isTop
+import com.angcyo.drawable.isGravityLeft
+import com.angcyo.drawable.isGravityTop
 import com.angcyo.ilayer.ILayer
 import com.angcyo.library.ex.abs
 import kotlin.math.max
@@ -34,7 +34,7 @@ class DragRectFConstraint(val rectF: RectF) : IDragConstraint {
     override fun onDragEnd(container: IContainer, layer: ILayer, position: OffsetPosition) {
         _valueAnimator?.cancel()
 
-        val endX: Float = if (position.gravity.isLeft()) {
+        val endX: Float = if (position.gravity.isGravityLeft()) {
             if (rectF.left <= 0) {
                 rectF.left.abs() * 1f / container.getContainerRect().width()
             } else {
@@ -48,7 +48,7 @@ class DragRectFConstraint(val rectF: RectF) : IDragConstraint {
             }
         }
 
-        val endY: Float = if (position.gravity.isTop()) {
+        val endY: Float = if (position.gravity.isGravityTop()) {
             if (rectF.top <= 0) {
                 rectF.top.abs() * 1f / container.getContainerRect().height()
             } else {

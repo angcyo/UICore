@@ -8,8 +8,8 @@ import android.util.AttributeSet
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.widget.EditText
-import com.angcyo.drawable.isBottom
-import com.angcyo.drawable.isTop
+import com.angcyo.drawable.isGravityBottom
+import com.angcyo.drawable.isGravityTop
 import com.angcyo.library.ex.*
 import com.angcyo.widget.R
 
@@ -130,8 +130,8 @@ abstract class BaseEditDelegate(val editText: EditText) {
 
             val gravity = editText.gravity
             val y = when {
-                gravity.isTop() -> textHeight + _drawLeftOffsetTop
-                gravity.isBottom() -> viewRect.height() - _drawLeftOffsetBottom
+                gravity.isGravityTop() -> textHeight + _drawLeftOffsetTop
+                gravity.isGravityBottom() -> viewRect.height() - _drawLeftOffsetBottom
                 else -> viewRect.height() / 2 + textHeight / 2 + _drawLeftOffsetBottom - _drawLeftOffsetBottom
             }
 
