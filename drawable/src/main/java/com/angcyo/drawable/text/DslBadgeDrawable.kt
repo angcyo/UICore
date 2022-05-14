@@ -178,7 +178,7 @@ open class DslBadgeDrawable : DslGradientDrawable() {
                     //圆心计算
                     val cx: Float
                     val cy: Float
-                    if (gravity.isCenter()) {
+                    if (gravity.isGravityCenter()) {
                         cx = centerX.toFloat()
                         cy = centerY.toFloat()
                     } else {
