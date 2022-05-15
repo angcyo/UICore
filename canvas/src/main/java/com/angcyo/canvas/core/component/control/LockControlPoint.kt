@@ -27,9 +27,14 @@ class LockControlPoint : ControlPoint() {
         drawable = _drawable(R.drawable.canvas_control_point_lock)
     }
 
-    override fun onClickControlPoint(view: CanvasDelegate, itemRenderer: BaseItemRenderer<*>) {
-        super.onClickControlPoint(view, itemRenderer)
-        view.controlHandler.setLockScaleRatio(!isLockScaleRatio)
+    override fun onClickControlPoint(
+        canvasDelegate: CanvasDelegate,
+        itemRenderer: BaseItemRenderer<*>
+    ) {
+        super.onClickControlPoint(canvasDelegate, itemRenderer)
+        val lock = !isLockScaleRatio
+        canvasDelegate.controlHandler.setLockScaleRatio(lock)
+        canvasDelegate.dispatchItemLockScaleRatioChanged(itemRenderer)
     }
 
 }

@@ -135,8 +135,8 @@ class CanvasTouchHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICan
 
     /**入口*/
     @CanvasEntryPoint
-    override fun onCanvasTouchEvent(canvasView: CanvasDelegate, event: MotionEvent): Boolean {
-        initialPointHandler.onTouch(canvasView, event)
+    override fun onCanvasTouchEvent(canvasDelegate: CanvasDelegate, event: MotionEvent): Boolean {
+        initialPointHandler.onTouch(canvasDelegate, event)
         doubleGestureDetector.onTouchEvent(event)
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
@@ -154,7 +154,7 @@ class CanvasTouchHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICan
             }
             MotionEvent.ACTION_MOVE -> {
                 obtainPointList(event, _movePointList)
-                handleActionMove(canvasView)
+                handleActionMove(canvasDelegate)
                 obtainPointList(event, _touchPointList)
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -162,7 +162,7 @@ class CanvasTouchHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICan
                 _touchPointList.clear()
                 _movePointList.clear()
                 _touchType = TOUCH_TYPE_NONE
-                canvasView.selectGroupRenderer.endSelect()
+                canvasDelegate.selectGroupRenderer.endSelect()
             }
         }
         return true

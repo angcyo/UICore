@@ -41,76 +41,6 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
     val _startPoint = PointF()
     var _isStart = false
 
-    companion object {
-
-        /**批量旋转[BaseItemRenderer]*/
-        fun rotateItemList(
-            list: Iterable<BaseItemRenderer<*>>,
-            degrees: Float,
-            pivotX: Float,
-            pivotY: Float
-        ) {
-            val changeReason = Reason(Reason.REASON_CODE)
-            list.forEach { item ->
-                _tempRectF.set(item.getBounds())
-                _tempRectF.rotate(degrees, pivotX, pivotY)
-                item.rotate += degrees
-                item.changeBounds(changeReason) {
-                    offset(_tempRectF.centerX() - centerX(), _tempRectF.centerY() - centerY())
-                }
-            }
-        }
-
-        /**批量平移/缩放[BaseItemRenderer]*/
-        fun changeBoundsItemList(
-            list: Iterable<BaseItemRenderer<*>>,
-            oldBounds: RectF,
-            newBounds: RectF
-        ) {
-            if (!oldBounds.isNoSize() && oldBounds.width() != 0f && oldBounds.height() != 0f) {
-                val changeReason = Reason(Reason.REASON_CODE)
-                val bounds = newBounds
-
-                //平移
-                val offsetLeft: Float = bounds.left - oldBounds.left
-                val offsetTop: Float = bounds.top - oldBounds.top
-                if (offsetLeft.isFinite() && offsetTop.isFinite() && (offsetLeft != 0f || offsetTop != 0f)) {
-                    list.forEach { item ->
-                        item.changeBounds(changeReason) {
-                            offset(offsetLeft, offsetTop)
-                        }
-                    }
-                }
-
-                //缩放
-                val offsetWidth = bounds.width() - oldBounds.width()
-                val offsetHeight = bounds.height() - oldBounds.height()
-                if (offsetWidth.isFinite() && offsetHeight.isFinite() && (offsetWidth != 0f || offsetHeight != 0f)) {
-                    list.forEach { item ->
-                        item.changeBounds(changeReason) {
-                            scale(
-                                bounds.width() / oldBounds.width(),
-                                bounds.height() / oldBounds.height(),
-                                bounds.left,
-                                bounds.top
-                            )
-                        }
-                    }
-                }
-
-                //旋转
-                /*list.forEach { item ->
-                    _tempRectF.set(item.getBounds())
-                    _tempRectF.rotate(rotate, bounds.centerX(), bounds.centerY())
-                    item.rotate = rotate
-                    item.changeBounds(changeReason) {
-                        offset(_tempRectF.centerX() - centerX(), _tempRectF.centerY() - centerY())
-                    }
-                }*/
-            }
-        }
-    }
-
     init {
         canvasDelegate.addCanvasListener(this)
     }
@@ -203,14 +133,23 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
     override fun itemRotateChanged(oldRotate: Float) {
         super.itemRotateChanged(oldRotate)
         val degrees = rotate - oldRotate
-        rotateItemList(selectItemList, degrees, getBounds().centerX(), getBounds().centerY())
+        canvasDelegate.operateHandler.rotateItemList(
+            selectItemList,
+            degrees,
+            getBounds().centerX(),
+            getBounds().centerY()
+        )
     }
 
     override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
         super.itemBoundsChanged(reason, oldBounds)
 
         if (reason.reason == Reason.REASON_USER) {
-            changeBoundsItemList(selectItemList, oldBounds, getBounds())
+            canvasDelegate.operateHandler.changeBoundsItemList(
+                selectItemList,
+                oldBounds,
+                getBounds()
+            )
         }
     }
 

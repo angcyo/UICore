@@ -25,6 +25,9 @@ import kotlin.math.max
  */
 open class AnchorPopupConfig : PopupConfig() {
 
+    /**三角形距离左右边距最小值*/
+    var triangleMinMargin: Int = 0
+
     init {
         animationStyle = R.style.LibActionPopupAnimation
         autoOffset = true
@@ -66,10 +69,12 @@ open class AnchorPopupConfig : PopupConfig() {
                 if (lp is LinearLayout.LayoutParams) {
                     if (isAnchorInLeftArea(view)) {
                         lp.gravity = Gravity.LEFT
-                        lp.leftMargin = max(rect.centerX() - rootViewRect.left - w / 2, 0)
+                        lp.leftMargin =
+                            max(rect.centerX() - rootViewRect.left - w / 2, triangleMinMargin)
                     } else {
                         lp.gravity = Gravity.RIGHT
-                        lp.rightMargin = max(rootViewRect.right - rect.centerX() - w / 2, 0)
+                        lp.rightMargin =
+                            max(rootViewRect.right - rect.centerX() - w / 2, triangleMinMargin)
                     }
                 } else if (lp is FrameLayout.LayoutParams) {
                     if (isAnchorInLeftArea(view)) {
@@ -78,14 +83,16 @@ open class AnchorPopupConfig : PopupConfig() {
                         } else {
                             lp.gravity = Gravity.LEFT or Gravity.BOTTOM
                         }
-                        lp.leftMargin = max(rect.centerX() - rootViewRect.left - w / 2, 0)
+                        lp.leftMargin =
+                            max(rect.centerX() - rootViewRect.left - w / 2, triangleMinMargin)
                     } else {
                         if (isAnchorInTopArea(view)) {
                             lp.gravity = Gravity.RIGHT or Gravity.TOP
                         } else {
                             lp.gravity = Gravity.RIGHT or Gravity.BOTTOM
                         }
-                        lp.rightMargin = max(rootViewRect.right - rect.centerX() - w / 2, 0)
+                        lp.rightMargin =
+                            max(rootViewRect.right - rect.centerX() - w / 2, triangleMinMargin)
                     }
                 }
                 layoutParams = lp

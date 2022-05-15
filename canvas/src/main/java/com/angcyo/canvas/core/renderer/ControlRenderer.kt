@@ -169,12 +169,18 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
 
     /**绘制控制信息, 宽高xy值
      * [visualBounds] 元素未旋转时的坐标, 用来确定绘制坐标
-     * [rotateBounds] 元素旋转之后, 占用的矩形坐标, 用来计算距离
+     * [renderRotateBounds] 元素旋转之后, 占用的矩形坐标, 用来计算距离
      * [rotate] 元素旋转的角度*/
-    fun drawFrameText(canvas: Canvas, visualBounds: RectF, rotateBounds: RectF, rotate: Float) {
+    fun drawFrameText(
+        canvas: Canvas,
+        visualBounds: RectF,
+        renderRotateBounds: RectF,
+        rotate: Float
+    ) {
         //绘制宽高文本
-        val widthUnit = canvasViewBox.valueUnit.convertPixelToValueUnit(rotateBounds.width())
-        val heightUnit = canvasViewBox.valueUnit.convertPixelToValueUnit(rotateBounds.height())
+        val widthUnit = canvasViewBox.valueUnit.convertPixelToValueUnit(renderRotateBounds.width())
+        val heightUnit =
+            canvasViewBox.valueUnit.convertPixelToValueUnit(renderRotateBounds.height())
 
         //绘制宽度
         var textWidth = sizePaint.textWidth(widthUnit)
@@ -212,7 +218,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
 
         //按下时, 绘制x,y坐标
         if (isTouchHold || BuildConfig.DEBUG) {
-            _tempPoint.set(rotateBounds.left, rotateBounds.top)
+            _tempPoint.set(renderRotateBounds.left, renderRotateBounds.top)
             val point = _tempPoint
             val value = canvasViewBox.calcDistanceValueWithOrigin(point)
 

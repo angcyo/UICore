@@ -255,14 +255,14 @@ class ScaleControlPoint : ControlPoint() {
                         if (it is SelectGroupRenderer) {
                             itemList.addAll(it.selectItemList)
                         }
-                        canvasDelegate.undoManager.addUndoAction(object : ICanvasStep {
+                        canvasDelegate.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
                             val item = it
                             val originBounds = RectF(touchItemBounds)
                             val newBounds = RectF(it.getBounds())
 
                             override fun runUndo() {
                                 if (item is SelectGroupRenderer) {
-                                    SelectGroupRenderer.changeBoundsItemList(
+                                    canvasDelegate.operateHandler.changeBoundsItemList(
                                         itemList,
                                         newBounds,
                                         originBounds
@@ -279,7 +279,7 @@ class ScaleControlPoint : ControlPoint() {
 
                             override fun runRedo() {
                                 if (item is SelectGroupRenderer) {
-                                    SelectGroupRenderer.changeBoundsItemList(
+                                    canvasDelegate.operateHandler.changeBoundsItemList(
                                         itemList,
                                         originBounds,
                                         newBounds

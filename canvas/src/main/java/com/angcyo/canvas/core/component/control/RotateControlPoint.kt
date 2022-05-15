@@ -79,7 +79,7 @@ class RotateControlPoint : ControlPoint() {
                         if (it is SelectGroupRenderer) {
                             itemList.addAll(it.selectItemList)
                         }
-                        canvasDelegate.undoManager.addUndoAction(object : ICanvasStep {
+                        canvasDelegate.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
                             val item = it
                             val originRotate = touchItemRotate
                             val newRotate = itemRenderer.rotate
@@ -87,7 +87,7 @@ class RotateControlPoint : ControlPoint() {
 
                             override fun runUndo() {
                                 if (item is SelectGroupRenderer) {
-                                    SelectGroupRenderer.rotateItemList(
+                                    canvasDelegate.operateHandler.rotateItemList(
                                         itemList,
                                         originRotate - newRotate,
                                         bounds.centerX(),
@@ -103,7 +103,7 @@ class RotateControlPoint : ControlPoint() {
 
                             override fun runRedo() {
                                 if (item is SelectGroupRenderer) {
-                                    SelectGroupRenderer.rotateItemList(
+                                    canvasDelegate.operateHandler.rotateItemList(
                                         itemList,
                                         newRotate - originRotate,
                                         bounds.centerX(),

@@ -17,7 +17,10 @@ class DeleteControlPoint : ControlPoint() {
         drawable = _drawable(R.drawable.canvas_control_point_delete)
     }
 
-    override fun onClickControlPoint(view: CanvasDelegate, itemRenderer: BaseItemRenderer<*>) {
-        view.removeItemRenderer(itemRenderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
+    override fun onClickControlPoint(
+        canvasDelegate: CanvasDelegate,
+        itemRenderer: BaseItemRenderer<*>
+    ) {
+        canvasDelegate.removeItemRenderer(itemRenderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
     }
 }

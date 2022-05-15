@@ -174,12 +174,16 @@ fun Matrix.mapPoint(x: Float, y: Float): PointF {
     return _tempPoint
 }
 
-/**[PointF]*/
+/**[PointF]
+ * [point] 入参
+ * @return 返回值*/
 fun Matrix.mapPoint(point: PointF): PointF {
     return mapPoint(point.x, point.y)
 }
 
-/**[result] 返回值*/
+/**
+ * [point] 入参
+ * [result] 返回值*/
 fun Matrix.mapPoint(point: PointF, result: PointF): PointF {
     _tempPoints[0] = point.x
     _tempPoints[1] = point.y

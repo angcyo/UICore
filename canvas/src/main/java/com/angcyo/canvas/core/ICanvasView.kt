@@ -36,6 +36,9 @@ interface ICanvasView : IComponent {
     /**分发渲染器可见性改变*/
     fun dispatchItemVisibleChanged(item: IRenderer, visible: Boolean) {}
 
+    /**[com.angcyo.canvas.core.component.control.LockControlPoint.onClickControlPoint]*/
+    fun dispatchItemLockScaleRatioChanged(item: BaseItemRenderer<*>) {}
+
     //</editor-fold desc="dispatch">
 
     //<editor-fold desc="listener">

@@ -10,12 +10,12 @@ import com.angcyo.canvas.CanvasDelegate
 interface ICanvasTouch {
 
     /**是否要拦截处理当前的手势, 拦截后, 后续的手势都会被拦截处理*/
-    fun onCanvasInterceptTouchEvent(canvasView: CanvasDelegate, event: MotionEvent): Boolean {
+    fun onCanvasInterceptTouchEvent(canvasDelegate: CanvasDelegate, event: MotionEvent): Boolean {
         return false
     }
 
     /**手势处理*/
-    fun onCanvasTouchEvent(canvasView: CanvasDelegate, event: MotionEvent): Boolean {
+    fun onCanvasTouchEvent(canvasDelegate: CanvasDelegate, event: MotionEvent): Boolean {
         return false
     }
 

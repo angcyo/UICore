@@ -88,6 +88,9 @@ class CanvasDelegate(val view: View) : ICanvasView {
     /**手势处理*/
     var canvasTouchManager = CanvasTouchManager(this)
 
+    /**[BaseItemRenderer]操作处理*/
+    var operateHandler = OperateHandler(this)
+
     //</editor-fold desc="内部成员">
 
     //<editor-fold desc="渲染组件">
@@ -350,6 +353,13 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
     }
 
+    override fun dispatchItemLockScaleRatioChanged(item: BaseItemRenderer<*>) {
+        super.dispatchItemLockScaleRatioChanged(item)
+        canvasListenerList.forEach {
+            it.onItemLockScaleRatioChanged(item)
+        }
+    }
+
     override fun dispatchCoordinateSystemOriginChanged(point: PointF) {
         super.dispatchCoordinateSystemOriginChanged(point)
         eachAxisRender {
@@ -520,7 +530,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
             refresh()
 
             if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
-                undoManager.addUndoAction(object : ICanvasStep {
+                getCanvasUndoManager().addUndoAction(object : ICanvasStep {
                     override fun runUndo() {
                         removeItemRenderer(list, Strategy(Strategy.STRATEGY_TYPE_UNDO))
                     }
@@ -562,7 +572,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         refresh()
 
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
-            undoManager.addUndoAction(object : ICanvasStep {
+            getCanvasUndoManager().addUndoAction(object : ICanvasStep {
                 override fun runUndo() {
                     addItemRenderer(list, Strategy(Strategy.STRATEGY_TYPE_UNDO))
                 }
@@ -613,13 +623,14 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
     }
 
-    /**平移选中的[BaseItemRenderer]*/
+
+    /**平移选中的[BaseItemRenderer], 不支持撤销*/
     fun translateItemBy(
-        itemRenderer: BaseItemRenderer<*>?,
+        itemRenderer: BaseItemRenderer<*>,
         distanceX: Float = 0f,
         distanceY: Float = 0f
     ) {
-        itemRenderer?.apply {
+        itemRenderer.apply {
             translateBy(distanceX, distanceY)
             refresh()
         }
@@ -627,44 +638,45 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
     /**缩放选中的[BaseItemRenderer]*/
     fun scaleItemBy(
-        itemRenderer: BaseItemRenderer<*>?,
+        itemRenderer: BaseItemRenderer<*>,
         scaleX: Float = 1f,
         scaleY: Float = 1f,
         adjustType: Int = ADJUST_TYPE_LT
     ) {
-        itemRenderer?.apply {
+        itemRenderer.apply {
             scaleBy(scaleX, scaleY, adjustType)
             refresh()
         }
     }
 
     fun scaleItemTo(
-        itemRenderer: BaseItemRenderer<*>?,
+        itemRenderer: BaseItemRenderer<*>,
         scaleX: Float = 1f,
         scaleY: Float = 1f,
         adjustType: Int = ADJUST_TYPE_LT
     ) {
-        itemRenderer?.apply {
+        itemRenderer.apply {
             scaleTo(scaleX, scaleY, adjustType)
             refresh()
         }
     }
 
     /**旋转[BaseItemRenderer]*/
-    fun rotateItemBy(itemRenderer: BaseItemRenderer<*>?, degrees: Float) {
-        itemRenderer?.apply {
+    fun rotateItemBy(itemRenderer: BaseItemRenderer<*>, degrees: Float) {
+        itemRenderer.apply {
             rotateBy(degrees)
             refresh()
         }
     }
 
+    /**改变宽高/平移*/
     fun changeItemBounds(
-        itemRenderer: BaseItemRenderer<*>?,
+        itemRenderer: BaseItemRenderer<*>,
         width: Float,
         height: Float,
         adjustType: Int = ADJUST_TYPE_LT
     ) {
-        itemRenderer?.apply {
+        itemRenderer.apply {
             updateBounds(width, height, adjustType)
             refresh()
         }
@@ -724,6 +736,106 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
         //更新
         getCanvasViewBox().updateTo(matrix, anim)
+    }
+
+    /**改变宽高/平移
+     * 支持撤销
+     * 支持[SelectGroupRenderer]
+     * [bounds] 需要最终设置的矩形*/
+    fun addChangeItemBounds(itemRenderer: BaseItemRenderer<*>, bounds: RectF) {
+        val item = itemRenderer
+        val originBounds = RectF(item.getBounds())
+        val newBounds = RectF(bounds)
+
+        val step: ICanvasStep
+        if (item is SelectGroupRenderer) {
+            val itemList = mutableListOf<BaseItemRenderer<*>>()
+            itemList.addAll(item.selectItemList)
+            step = object : ICanvasStep {
+                override fun runUndo() {
+                    operateHandler.changeBoundsItemList(itemList, newBounds, originBounds)
+                    if (getSelectedRenderer() == item) {
+                        item.updateSelectBounds()
+                    }
+                }
+
+                override fun runRedo() {
+                    operateHandler.changeBoundsItemList(itemList, originBounds, newBounds)
+                    if (getSelectedRenderer() == item) {
+                        item.updateSelectBounds()
+                    }
+                }
+            }
+        } else {
+            step = object : ICanvasStep {
+                override fun runUndo() {
+                    item.changeBounds {
+                        set(originBounds)
+                    }
+                }
+
+                override fun runRedo() {
+                    item.changeBounds {
+                        set(newBounds)
+                    }
+                }
+            }
+        }
+        getCanvasUndoManager().addUndoAction(step)
+        step.runRedo()
+    }
+
+    /**改变旋转角度
+     * 支持撤销
+     * 支持[SelectGroupRenderer]
+     * [rotate] 需要旋转到的角度*/
+    fun addChangeItemRotate(itemRenderer: BaseItemRenderer<*>, rotate: Float) {
+        val item = itemRenderer
+        val originRotate = itemRenderer.rotate
+        val newRotate = rotate
+        val bounds = RectF(item.getBounds())
+
+        val step: ICanvasStep
+        if (item is SelectGroupRenderer) {
+            val itemList = mutableListOf<BaseItemRenderer<*>>()
+            itemList.addAll(item.selectItemList)
+
+            step = object : ICanvasStep {
+                override fun runUndo() {
+                    operateHandler.rotateItemList(
+                        itemList, originRotate - newRotate,
+                        bounds.centerX(),
+                        bounds.centerY()
+                    )
+                    if (getSelectedRenderer() == item) {
+                        item.updateSelectBounds()
+                    }
+                }
+
+                override fun runRedo() {
+                    operateHandler.rotateItemList(
+                        itemList, newRotate - originRotate,
+                        bounds.centerX(),
+                        bounds.centerY()
+                    )
+                    if (getSelectedRenderer() == item) {
+                        item.updateSelectBounds()
+                    }
+                }
+            }
+        } else {
+            step = object : ICanvasStep {
+                override fun runUndo() {
+                    item.rotateBy(originRotate - newRotate)
+                }
+
+                override fun runRedo() {
+                    item.rotateBy(newRotate - originRotate)
+                }
+            }
+        }
+        getCanvasUndoManager().addUndoAction(step)
+        step.runRedo()
     }
 
     //</editor-fold desc="操作方法">

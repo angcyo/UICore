@@ -80,7 +80,7 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
 
     /**手势处理
      * [com.angcyo.canvas.CanvasView.onTouchEvent]*/
-    override fun onCanvasTouchEvent(canvasView: CanvasDelegate, event: MotionEvent): Boolean {
+    override fun onCanvasTouchEvent(canvasDelegate: CanvasDelegate, event: MotionEvent): Boolean {
         doubleGestureDetector.onTouchEvent(event)
 
         var handle = isDoubleTouch
@@ -112,8 +112,8 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
 
                 if (touchControlPoint == null) {
                     //未点在控制点上, 则检查是否点在[BaseItemRenderer]中
-                    val itemRenderer = canvasView.findItemRenderer(touchPoint)
-                    canvasView.selectedItem(itemRenderer)
+                    val itemRenderer = canvasDelegate.findItemRenderer(touchPoint)
+                    canvasDelegate.selectedItem(itemRenderer)
                 }
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
@@ -135,12 +135,14 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
                             //val p2 = _tempMatrix.mapPoint(_touchPointList[0])//_touchPointList[0]
 
                             val p1 =
-                                canvasView.getCanvasViewBox().mapCoordinateSystemPoint(_movePoint)
+                                canvasDelegate.getCanvasViewBox()
+                                    .mapCoordinateSystemPoint(_movePoint)
                             val p1x = p1.x
                             val p1y = p1.y
 
                             val p2 =
-                                canvasView.getCanvasViewBox().mapCoordinateSystemPoint(_touchPoint)
+                                canvasDelegate.getCanvasViewBox()
+                                    .mapCoordinateSystemPoint(_touchPoint)
                             val p2x = p2.x
                             val p2y = p2.y
 
@@ -150,7 +152,7 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
                             if (dx1 != 0f || dy1 != 0f) {
                                 handle = true
                                 isTranslated = true
-                                canvasView.smartAssistant.smartTranslateItemBy(
+                                canvasDelegate.smartAssistant.smartTranslateItemBy(
                                     selectedItemRender,
                                     dx1,
                                     dy1
@@ -180,19 +182,19 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
                             itemList.addAll(it.selectItemList)
                         }
 
-                        canvasView.undoManager.addUndoAction(object : ICanvasStep {
+                        canvasDelegate.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
                             val item = it
                             val originBounds = RectF(touchItemBounds)
                             val newBounds = RectF(item.getBounds())
 
                             override fun runUndo() {
                                 if (item is SelectGroupRenderer) {
-                                    SelectGroupRenderer.changeBoundsItemList(
+                                    canvasDelegate.operateHandler.changeBoundsItemList(
                                         itemList,
                                         newBounds,
                                         originBounds
                                     )
-                                    if (canvasView.getSelectedRenderer() == item) {
+                                    if (canvasDelegate.getSelectedRenderer() == item) {
                                         item.updateSelectBounds()
                                     }
                                 } else {
@@ -204,12 +206,12 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
 
                             override fun runRedo() {
                                 if (item is SelectGroupRenderer) {
-                                    SelectGroupRenderer.changeBoundsItemList(
+                                    canvasDelegate.operateHandler.changeBoundsItemList(
                                         itemList,
                                         originBounds,
                                         newBounds
                                     )
-                                    if (canvasView.getSelectedRenderer() == item) {
+                                    if (canvasDelegate.getSelectedRenderer() == item) {
                                         item.updateSelectBounds()
                                     }
                                 } else {
@@ -229,7 +231,7 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
 
         //控制点
         selectedItemRender?.let {
-            holdControlPoint?.onTouch(canvasView, it, event)
+            holdControlPoint?.onTouch(canvasDelegate, it, event)
         }
 
         //result

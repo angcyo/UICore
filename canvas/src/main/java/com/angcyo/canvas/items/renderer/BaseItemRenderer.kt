@@ -41,7 +41,8 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     /**当前高度的缩放比例*/
     var scaleY: Float = 1f
 
-    /**是否锁定了缩放比例*/
+    /**是否锁定了缩放比例
+     * [com.angcyo.canvas.items.renderer.BaseItemRenderer.updateLockScaleRatio]*/
     var isLockScaleRatio: Boolean = true
 
     /**需要渲染的数据*/

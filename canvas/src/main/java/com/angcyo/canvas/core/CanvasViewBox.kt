@@ -3,7 +3,6 @@ package com.angcyo.canvas.core
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
-import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.*
 import com.angcyo.library.ex.matrixAnimator
 
@@ -125,7 +124,7 @@ class CanvasViewBox(val canvasView: ICanvasView) {
     }
 
     /**计算任意一点, 与坐标系原点的距离, 返回的是[ValueUnit]对应的值
-     * [point] 转换后的点像素坐标*/
+     * [point] 转换后的点像素坐标, [View]左上角坐标系坐标*/
     fun calcDistanceValueWithOrigin(point: PointF, result: PointF = _tempPoint): PointF {
         val pixelPoint = calcDistancePixelWithOrigin(point)
 

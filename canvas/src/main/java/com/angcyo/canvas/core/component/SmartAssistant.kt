@@ -55,17 +55,17 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
         canvasView.addCanvasListener(this)
     }
 
-    override fun onCanvasTouchEvent(canvasView: CanvasDelegate, event: MotionEvent): Boolean {
+    override fun onCanvasTouchEvent(canvasDelegate: CanvasDelegate, event: MotionEvent): Boolean {
         if (event.actionMasked == MotionEvent.ACTION_CANCEL || event.actionMasked == MotionEvent.ACTION_UP) {
             smartLineList.clear()
-            canvasView.refresh()
+            canvasDelegate.refresh()
             xAssistantRect = null
             yAssistantRect = null
             rotateAssistantRect = null
             widthAssistantRect = null
             heightAssistantRect = null
         }
-        return super.onCanvasTouchEvent(canvasView, event)
+        return super.onCanvasTouchEvent(canvasDelegate, event)
     }
 
     fun resetSmartLine() {

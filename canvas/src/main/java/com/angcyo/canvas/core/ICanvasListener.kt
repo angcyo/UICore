@@ -3,6 +3,7 @@ package com.angcyo.canvas.core
 import android.graphics.Matrix
 import android.graphics.RectF
 import com.angcyo.canvas.Reason
+import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 
 /**
@@ -47,6 +48,9 @@ interface ICanvasListener : ICanvasTouch {
 
     /**[com.angcyo.canvas.CanvasDelegate.removeItemRenderer]*/
     fun onItemRendererRemove(itemRenderer: IItemRenderer<*>) {}
+
+    /**[com.angcyo.canvas.core.component.control.LockControlPoint.onClickControlPoint]*/
+    fun onItemLockScaleRatioChanged(item: BaseItemRenderer<*>) {}
 
     //</editor-fold desc="Item相关">
 

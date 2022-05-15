@@ -61,7 +61,10 @@ open class ControlPoint : BaseComponent() {
     }
 
     /**当点击控制点时回调*/
-    open fun onClickControlPoint(view: CanvasDelegate, itemRenderer: BaseItemRenderer<*>) {
+    open fun onClickControlPoint(
+        canvasDelegate: CanvasDelegate,
+        itemRenderer: BaseItemRenderer<*>
+    ) {
         //点击控制点后的操作
     }
 }
