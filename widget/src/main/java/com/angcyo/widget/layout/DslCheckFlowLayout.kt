@@ -13,7 +13,7 @@ import com.angcyo.tablayout.DslSelector
  * @date 2022/01/10
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class DslCheckFlowLayout(context: Context, attrs: AttributeSet? = null) :
+open class DslCheckFlowLayout(context: Context, attrs: AttributeSet? = null) :
     DslFlowLayout(context, attrs) {
 
     /**单选/多选支持*/
