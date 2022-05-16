@@ -17,7 +17,7 @@ open class DslSwitchInfoItem : DslBaseInfoItem() {
     var itemSwitchChecked = false
 
     /**状态回调, 提供一个可以完全覆盖的方法*/
-    var itemSwitchChanged: (checked: Boolean) -> Unit = {
+    var itemSwitchChangedAction: (checked: Boolean) -> Unit = {
         onItemSwitchChanged(it)
     }
 
@@ -40,7 +40,7 @@ open class DslSwitchInfoItem : DslBaseInfoItem() {
                     val old = itemSwitchChecked
                     itemSwitchChecked = isChecked
                     if (old != itemSwitchChecked) {
-                        itemSwitchChanged(itemSwitchChecked)
+                        itemSwitchChangedAction(itemSwitchChecked)
                     }
                 }
             })
