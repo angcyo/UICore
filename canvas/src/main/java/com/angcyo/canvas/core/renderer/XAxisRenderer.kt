@@ -122,17 +122,15 @@ class XAxisRenderer(val axis: XAxis, canvasView: ICanvasView) :
         scale: Float
     ) {
         //绘制网格
-        if (axis.drawGridLine) {
-            val axisLineType = axis.getAxisLineType(canvasViewBox, index, scale)
+        val axisLineType = axis.getAxisLineType(canvasViewBox, index, scale)
 
-            if (axisLineType.have(BaseAxis.LINE_TYPE_DRAW_GRID)) {
-                if (axisLineType.have(BaseAxis.LINE_TYPE_PROTRUDE)) {
-                    canvas.drawLine(left, top, left, bottom, gridProtrudePaint)
-                } else if (axisLineType.have(BaseAxis.LINE_TYPE_SECONDARY) ||
-                    axisLineType.have(BaseAxis.LINE_TYPE_NORMAL)
-                ) {
-                    canvas.drawLine(left, top, left, bottom, gridPaint)
-                }
+        if (axisLineType.have(BaseAxis.LINE_TYPE_DRAW_GRID)) {
+            if (axisLineType.have(BaseAxis.LINE_TYPE_PROTRUDE)) {
+                canvas.drawLine(left, top, left, bottom, gridProtrudePaint)
+            } else if (axisLineType.have(BaseAxis.LINE_TYPE_SECONDARY)) {
+                canvas.drawLine(left, top, left, bottom, gridPaint)
+            } else if (axis.drawGridLine && axisLineType.have(BaseAxis.LINE_TYPE_NORMAL)) {
+                canvas.drawLine(left, top, left, bottom, gridPaint)
             }
         }
     }

@@ -16,4 +16,6 @@
     <color name="canvas_ico_disable">#b8b8b8</color>
     <!--图标选中的颜色-->
     <color name="canvas_ico_selected">@color/canvas_primary</color>
+    <!--分割线的颜色-->
+    <color name="canvas_line">#e7e7e7</color>
 </resources>
