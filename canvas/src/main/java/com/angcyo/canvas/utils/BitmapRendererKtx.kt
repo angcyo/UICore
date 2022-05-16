@@ -23,7 +23,7 @@ fun CanvasView.addBitmapRenderer(bitmap: Bitmap): BitmapItem {
     canvasDelegate.apply {
         val renderer = BitmapItemRenderer(this)
         val result = renderer.updateBitmap(bitmap)
-        addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
+        addCentreItemRenderer(renderer, Strategy.normal)
         selectedItem(renderer)
         return result
     }
@@ -35,7 +35,7 @@ fun CanvasView.addPictureBitmapRenderer(bitmap: Bitmap): PictureBitmapItem {
     canvasDelegate.apply {
         val renderer = PictureItemRenderer(this)
         val result = renderer.addBitmapRender(bitmap)
-        addCentreItemRenderer(renderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
+        addCentreItemRenderer(renderer, Strategy.normal)
         selectedItem(renderer)
         return result
     }
@@ -60,14 +60,17 @@ fun IRenderer.getRenderBitmap(): Bitmap? {
 }
 
 /**更新渲染的[Bitmap]对象, 如果可以*/
-fun IRenderer.updateRenderBitmap(bitmap: Bitmap): BaseItem? {
+fun IRenderer.updateRenderBitmap(
+    bitmap: Bitmap,
+    strategy: Strategy = Strategy.normal
+): BaseItem? {
     return if (this is BitmapItemRenderer) {
-        updateBitmap(bitmap)
+        updateBitmap(bitmap, strategy = strategy)
         _rendererItem
     } else if (this is PictureItemRenderer) {
         val item = _rendererItem
         if (item is PictureBitmapItem) {
-            updateItemBitmap(bitmap)
+            updateItemBitmap(bitmap, strategy = strategy)
             item
         } else {
             null

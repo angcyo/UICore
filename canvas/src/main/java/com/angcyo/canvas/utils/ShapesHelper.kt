@@ -137,8 +137,13 @@ object ShapesHelper {
             close()
         }
 
-    /**星星Path*/
-    fun pentagramPath(width: Float = defaultWidth, height: Float = defaultHeight): Path =
+    /**星星Path
+     * [number] 角的数量*/
+    fun pentagramPath(
+        number: Int = 5,
+        width: Float = defaultWidth,
+        height: Float = defaultHeight
+    ): Path =
         Path().apply {
 
             val r = min(width, height) / 4 //五角星内圆的半径
@@ -150,8 +155,9 @@ object ShapesHelper {
             val startRadians = Math.PI / 2 //开始绘制的弧度
 
             //从底部中心开始的角度
-            for (i in 0..10) {
-                val radians = startRadians + (36f * i).toRadians()
+            val step = 360f / (number * 2)
+            for (i in 0..(number * 2)) {
+                val radians = startRadians + (step * i).toRadians()
                 val nextX: Double
                 val nextY: Double
                 if (i % 2 == 0) {

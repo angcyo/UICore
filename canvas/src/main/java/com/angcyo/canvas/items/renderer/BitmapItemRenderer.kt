@@ -65,7 +65,7 @@ class BitmapItemRenderer(canvasView: ICanvasView) :
     fun updateBitmap(
         bitmap: Bitmap,
         bounds: RectF? = null,
-        strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
+        strategy: Strategy = Strategy.normal
     ): BitmapItem {
         val oldValue = _rendererItem?.bitmap
         if (oldValue == bitmap) {
@@ -110,11 +110,11 @@ class BitmapItemRenderer(canvasView: ICanvasView) :
                 val newBounds = RectF(getBounds())
 
                 override fun runUndo() {
-                    updateBitmap(oldValue, oldBounds, Strategy(Strategy.STRATEGY_TYPE_UNDO))
+                    updateBitmap(oldValue, oldBounds, Strategy.undo)
                 }
 
                 override fun runRedo() {
-                    updateBitmap(bitmap, newBounds, Strategy(Strategy.STRATEGY_TYPE_REDO))
+                    updateBitmap(bitmap, newBounds, Strategy.redo)
                 }
             })
         }

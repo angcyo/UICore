@@ -42,7 +42,7 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
     override fun isVisible(): Boolean = _visible
 
     /**设置可见性*/
-    fun setVisible(visible: Boolean, strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)) {
+    fun setVisible(visible: Boolean, strategy: Strategy = Strategy.normal) {
         val oldValue = isVisible()
         if (visible == oldValue) {
             return
@@ -54,11 +54,11 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
             canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
                 override fun runUndo() {
-                    setVisible(oldValue, Strategy(Strategy.STRATEGY_TYPE_UNDO))
+                    setVisible(oldValue, Strategy.undo)
                 }
 
                 override fun runRedo() {
-                    setVisible(visible, Strategy(Strategy.STRATEGY_TYPE_REDO))
+                    setVisible(visible, Strategy.redo)
                 }
             })
         }

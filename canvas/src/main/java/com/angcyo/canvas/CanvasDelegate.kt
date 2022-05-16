@@ -532,11 +532,11 @@ class CanvasDelegate(val view: View) : ICanvasView {
             if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
                 getCanvasUndoManager().addUndoAction(object : ICanvasStep {
                     override fun runUndo() {
-                        removeItemRenderer(list, Strategy(Strategy.STRATEGY_TYPE_UNDO))
+                        removeItemRenderer(list, Strategy.undo)
                     }
 
                     override fun runRedo() {
-                        addItemRenderer(list, Strategy(Strategy.STRATEGY_TYPE_REDO))
+                        addItemRenderer(list, Strategy.redo)
                     }
                 })
             }
@@ -574,11 +574,11 @@ class CanvasDelegate(val view: View) : ICanvasView {
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
             getCanvasUndoManager().addUndoAction(object : ICanvasStep {
                 override fun runUndo() {
-                    addItemRenderer(list, Strategy(Strategy.STRATEGY_TYPE_UNDO))
+                    addItemRenderer(list, Strategy.undo)
                 }
 
                 override fun runRedo() {
-                    removeItemRenderer(list, Strategy(Strategy.STRATEGY_TYPE_REDO))
+                    removeItemRenderer(list, Strategy.redo)
                 }
             })
         }

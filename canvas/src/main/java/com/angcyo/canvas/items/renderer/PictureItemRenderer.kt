@@ -78,7 +78,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
     /**更新笔的样式*/
     fun updatePaintStyle(
         style: Paint.Style,
-        strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
+        strategy: Strategy = Strategy.normal
     ) {
         val oldValue = _rendererItem?.paint?.style
         if (oldValue == style) {
@@ -93,12 +93,12 @@ class PictureItemRenderer(canvasView: ICanvasView) :
                 override fun runUndo() {
                     updatePaintStyle(
                         oldValue ?: Paint.Style.STROKE,
-                        Strategy(Strategy.STRATEGY_TYPE_UNDO)
+                        Strategy.undo
                     )
                 }
 
                 override fun runRedo() {
-                    updatePaintStyle(style, Strategy(Strategy.STRATEGY_TYPE_REDO))
+                    updatePaintStyle(style, Strategy.redo)
                 }
             })
         }
@@ -107,7 +107,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
     /**更新画笔绘制文本时的对齐方式*/
     fun updatePaintAlign(
         align: Paint.Align,
-        strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
+        strategy: Strategy = Strategy.normal
     ) {
         val oldValue = _rendererItem?.paint?.textAlign
         if (oldValue == align) {
@@ -122,12 +122,12 @@ class PictureItemRenderer(canvasView: ICanvasView) :
                 override fun runUndo() {
                     updatePaintAlign(
                         oldValue ?: Paint.Align.LEFT,
-                        Strategy(Strategy.STRATEGY_TYPE_UNDO)
+                        Strategy.undo
                     )
                 }
 
                 override fun runRedo() {
-                    updatePaintAlign(align, Strategy(Strategy.STRATEGY_TYPE_REDO))
+                    updatePaintAlign(align, Strategy.redo)
                 }
             })
         }
@@ -148,7 +148,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
     }
 
     /**更新渲染的文本*/
-    fun updateItemText(text: String, strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)) {
+    fun updateItemText(text: String, strategy: Strategy = Strategy.normal) {
         val item = _rendererItem
         val oldValue = if (item is PictureTextItem) {
             item.text
@@ -167,18 +167,18 @@ class PictureItemRenderer(canvasView: ICanvasView) :
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL && oldValue != null) {
             canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
                 override fun runUndo() {
-                    updateItemText(oldValue, Strategy(Strategy.STRATEGY_TYPE_UNDO))
+                    updateItemText(oldValue, Strategy.undo)
                 }
 
                 override fun runRedo() {
-                    updateItemText(text, Strategy(Strategy.STRATEGY_TYPE_REDO))
+                    updateItemText(text, Strategy.redo)
                 }
             })
         }
     }
 
     /**更新文本样式*/
-    fun updateTextStyle(style: Int, strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)) {
+    fun updateTextStyle(style: Int, strategy: Strategy = Strategy.normal) {
         val item = _rendererItem
         val oldValue = if (item is PictureTextItem) {
             item.textStyle
@@ -199,12 +199,12 @@ class PictureItemRenderer(canvasView: ICanvasView) :
                 override fun runUndo() {
                     updateTextStyle(
                         oldValue ?: PictureTextItem.TEXT_STYLE_NONE,
-                        Strategy(Strategy.STRATEGY_TYPE_UNDO)
+                        Strategy.undo
                     )
                 }
 
                 override fun runRedo() {
-                    updateTextStyle(style, Strategy(Strategy.STRATEGY_TYPE_REDO))
+                    updateTextStyle(style, Strategy.redo)
                 }
             })
         }
@@ -214,7 +214,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
     fun enableTextStyle(
         style: Int,
         enable: Boolean = true,
-        strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
+        strategy: Strategy = Strategy.normal
     ) {
         val item = _rendererItem
         val oldValue = if (item is PictureTextItem) {
@@ -242,14 +242,14 @@ class PictureItemRenderer(canvasView: ICanvasView) :
                 override fun runUndo() {
                     updateTextStyle(
                         oldValue ?: PictureTextItem.TEXT_STYLE_NONE,
-                        Strategy(Strategy.STRATEGY_TYPE_UNDO)
+                        Strategy.undo
                     )
                 }
 
                 override fun runRedo() {
                     updateTextStyle(
                         newValue ?: PictureTextItem.TEXT_STYLE_NONE,
-                        Strategy(Strategy.STRATEGY_TYPE_REDO)
+                        Strategy.redo
                     )
                 }
             })
@@ -259,7 +259,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
     /**更新笔的字体*/
     fun updateTextTypeface(
         typeface: Typeface?,
-        strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
+        strategy: Strategy = Strategy.normal
     ) {
         val oldValue = _rendererItem?.paint?.typeface
         if (oldValue == typeface) {
@@ -276,15 +276,12 @@ class PictureItemRenderer(canvasView: ICanvasView) :
                 override fun runUndo() {
                     updateTextTypeface(
                         oldValue ?: Typeface.DEFAULT,
-                        Strategy(Strategy.STRATEGY_TYPE_UNDO)
+                        Strategy.undo
                     )
                 }
 
                 override fun runRedo() {
-                    updateTextTypeface(
-                        typeface,
-                        Strategy(Strategy.STRATEGY_TYPE_REDO)
-                    )
+                    updateTextTypeface(typeface, Strategy.redo)
                 }
             })
         }
@@ -293,7 +290,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
     /**更新文本的方向*/
     fun updateTextOrientation(
         orientation: Int,
-        strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
+        strategy: Strategy = Strategy.normal
     ) {
         val item = _rendererItem
         val oldValue = if (item is PictureTextItem) {
@@ -315,15 +312,12 @@ class PictureItemRenderer(canvasView: ICanvasView) :
                 override fun runUndo() {
                     updateTextOrientation(
                         oldValue ?: LinearLayout.HORIZONTAL,
-                        Strategy(Strategy.STRATEGY_TYPE_UNDO)
+                        Strategy.undo
                     )
                 }
 
                 override fun runRedo() {
-                    updateTextOrientation(
-                        orientation,
-                        Strategy(Strategy.STRATEGY_TYPE_REDO)
-                    )
+                    updateTextOrientation(orientation, Strategy.redo)
                 }
             })
         }
@@ -344,7 +338,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
     }
 
     /**更新渲染的Path*/
-    fun updateItemPath(path: Path, strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)) {
+    fun updateItemPath(path: Path, strategy: Strategy = Strategy.normal) {
         val item = _rendererItem
         val oldValue = if (item is PictureShapeItem) {
             item.shapePath
@@ -363,17 +357,11 @@ class PictureItemRenderer(canvasView: ICanvasView) :
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL && oldValue != null) {
             canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
                 override fun runUndo() {
-                    updateItemPath(
-                        oldValue,
-                        Strategy(Strategy.STRATEGY_TYPE_UNDO)
-                    )
+                    updateItemPath(oldValue, Strategy.undo)
                 }
 
                 override fun runRedo() {
-                    updateItemPath(
-                        path,
-                        Strategy(Strategy.STRATEGY_TYPE_REDO)
-                    )
+                    updateItemPath(path, Strategy.redo)
                 }
             })
         }
@@ -398,7 +386,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
     fun updateItemBitmap(
         bitmap: Bitmap,
         bounds: RectF? = null,
-        strategy: Strategy = Strategy(Strategy.STRATEGY_TYPE_NORMAL)
+        strategy: Strategy = Strategy.normal
     ) {
         val item = _rendererItem
         val oldValue = if (item is PictureBitmapItem) {
@@ -438,11 +426,11 @@ class PictureItemRenderer(canvasView: ICanvasView) :
                 val newBounds = RectF(getBounds())
 
                 override fun runUndo() {
-                    updateItemBitmap(oldValue, oldBounds, Strategy(Strategy.STRATEGY_TYPE_UNDO))
+                    updateItemBitmap(oldValue, oldBounds, Strategy.undo)
                 }
 
                 override fun runRedo() {
-                    updateItemBitmap(bitmap, newBounds, Strategy(Strategy.STRATEGY_TYPE_REDO))
+                    updateItemBitmap(bitmap, newBounds, Strategy.redo)
                 }
             })
         }

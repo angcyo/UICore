@@ -22,6 +22,7 @@ class LovePath : Path() {
         bounds.set(this.bounds)
     }
 
+    /**菱形+左右2个半圆*/
     fun initPath(
         width: Float = ShapesHelper.defaultWidth,
         height: Float = ShapesHelper.defaultHeight

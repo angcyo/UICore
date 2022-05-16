@@ -13,10 +13,25 @@ data class Strategy(
         /**正常操作, 需要加入撤销栈*/
         const val STRATEGY_TYPE_NORMAL = 1
 
-        /**撤销操作, 需要加入恢复栈*/
+        /**来自撤销的操作*/
         const val STRATEGY_TYPE_UNDO = 2
 
-        /**恢复操作, 需要加入撤销栈*/
+        /**来自恢复的操作*/
         const val STRATEGY_TYPE_REDO = 2
+
+        /**来自预览的操作*/
+        const val STRATEGY_TYPE_PREVIEW = 3
+
+        val normal: Strategy
+            get() = Strategy(STRATEGY_TYPE_NORMAL)
+
+        val undo: Strategy
+            get() = Strategy(STRATEGY_TYPE_UNDO)
+
+        val redo: Strategy
+            get() = Strategy(STRATEGY_TYPE_REDO)
+
+        val preview: Strategy
+            get() = Strategy(STRATEGY_TYPE_PREVIEW)
     }
 }

@@ -21,6 +21,6 @@ class DeleteControlPoint : ControlPoint() {
         canvasDelegate: CanvasDelegate,
         itemRenderer: BaseItemRenderer<*>
     ) {
-        canvasDelegate.removeItemRenderer(itemRenderer, Strategy(Strategy.STRATEGY_TYPE_NORMAL))
+        canvasDelegate.removeItemRenderer(itemRenderer, Strategy.normal)
     }
 }
