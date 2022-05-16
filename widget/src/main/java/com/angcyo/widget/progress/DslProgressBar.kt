@@ -91,11 +91,11 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     /**文本距离进度偏移的距离*/
     var progressTextOffset = 10.toDpi()
 
-    var progressTextFormatAction: () -> String = {
+    var progressTextFormatAction: (DslProgressBar) -> String = {
         progressTextFormat.format("${(_progressFraction * 100).toInt()}")
     }
 
-    var progressCenterTextFormatAction: () -> String = {
+    var progressCenterTextFormatAction: (DslProgressBar) -> String = {
         progressCenterTextFormat.format("${(_progressFraction * 100).toInt()}")
     }
 
@@ -121,7 +121,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             with(field) {
                 textSize = progressTextSize
                 textColor = progressTextColor
-                text = progressTextFormatAction()
+                text = progressTextFormatAction(this@DslProgressBar)
             }
             return field
         }
@@ -131,7 +131,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             with(field) {
                 textGravity = Gravity.CENTER
                 textSize = progressCenterTextSize
-                text = progressCenterTextFormatAction()
+                text = progressCenterTextFormatAction(this@DslProgressBar)
             }
             return field
         }
@@ -309,6 +309,9 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     val _textWidth: Float
         get() = max(_progressTextDrawable.textWidth, progressTextMinWidth)
 
+    val _textHeight: Float
+        get() = _progressTextDrawable.textHeight
+
     open val _progressBound = Rect()
         get() {
             val right: Int = if (showProgressText) {
@@ -436,27 +439,54 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         }
     }
 
+    /**设置背景渐变的颜色*/
     fun setBgGradientColors(color: String?) {
         DslGradientDrawable().apply {
-            gradientColors = _fillColor(color)
+            if (color?.contains(",") == true) {
+                gradientColors = _fillColor(color)
+            } else if (!color.isNullOrEmpty()) {
+                gradientSolidColor = if (color.startsWith("#")) {
+                    Color.parseColor(color)
+                } else {
+                    color.toInt()
+                }
+            }
             _fillRadii(gradientRadii, progressRadius)
             updateOriginDrawable()
             progressBgDrawable = originDrawable
         }
     }
 
+    /**设置进度条渐变的颜色*/
     fun setTrackGradientColors(color: String?) {
         DslGradientDrawable().apply {
-            gradientColors = _fillColor(color)
+            if (color?.contains(",") == true) {
+                gradientColors = _fillColor(color)
+            } else if (!color.isNullOrEmpty()) {
+                gradientSolidColor = if (color.startsWith("#")) {
+                    Color.parseColor(color)
+                } else {
+                    color.toInt()
+                }
+            }
             _fillRadii(gradientRadii, progressRadius)
             updateOriginDrawable()
             progressTrackDrawable = originDrawable
         }
     }
 
+    /**设置第二进度渐变的颜色*/
     fun setSecondGradientColors(color: String?) {
         DslGradientDrawable().apply {
-            gradientColors = _fillColor(color)
+            if (color?.contains(",") == true) {
+                gradientColors = _fillColor(color)
+            } else if (!color.isNullOrEmpty()) {
+                gradientSolidColor = if (color.startsWith("#")) {
+                    Color.parseColor(color)
+                } else {
+                    color.toInt()
+                }
+            }
             _fillRadii(gradientRadii, progressRadius)
             updateOriginDrawable()
             progressSecondDrawable = originDrawable
