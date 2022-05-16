@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/lib_triangle_wrap_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!--阴影内容包裹层-->
+    <FrameLayout
+        android:id="@+id/lib_triangle_content_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/lib_white_round_shadow">
+
+        <!--内容层-->
+
+    </FrameLayout>
+
+    <!--三角小箭头-->
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/lib_triangle_view"
+        android:layout_width="18dp"
+        android:layout_height="8dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="12dp"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/ic_triangle"
+        app:tint="@color/lib_white" />
+
+</FrameLayout>

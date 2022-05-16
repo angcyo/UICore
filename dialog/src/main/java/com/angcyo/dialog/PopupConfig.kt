@@ -11,6 +11,7 @@ import android.widget.FrameLayout
 import android.widget.PopupWindow
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcherOwner
+import androidx.annotation.LayoutRes
 import androidx.core.view.doOnPreDraw
 import androidx.core.widget.PopupWindowCompat
 import com.angcyo.dsladapter.getViewRect
@@ -93,6 +94,7 @@ open class PopupConfig {
     var contentView: View? = null
 
     /** 指定布局id */
+    @LayoutRes
     var layoutId: Int = -1
 
     //<editor-fold desc="Popup属性">
@@ -137,7 +139,9 @@ open class PopupConfig {
     var windowType: Int = undefined_int
 
     /**
-     * 回调, 是否要拦截默认操作.[showWithActivity]时有效
+     * 回调, 是否要拦截默认操作.
+     * [showWithPopupWindow]时有效
+     * [showWithActivity]时是在[com.angcyo.dialog.PopupConfig.onRemoveRootLayout]中回调
      * */
     var onDismiss: (window: TargetWindow) -> Boolean = { false }
 
@@ -267,9 +271,33 @@ open class PopupConfig {
         if (anchorView != null && autoOffset) {
 
             val rootView = viewHolder.itemView
+            val lp = rootView.layoutParams
+
+            val leftMargin: Int = if (lp is ViewGroup.MarginLayoutParams) {
+                max(lp.leftMargin, minHorizontalOffset)
+            } else {
+                minHorizontalOffset
+            }
+            val rightMargin: Int = if (lp is ViewGroup.MarginLayoutParams) {
+                max(lp.rightMargin, minHorizontalOffset)
+            } else {
+                minHorizontalOffset
+            }
+
+            val topMargin: Int = if (lp is ViewGroup.MarginLayoutParams) {
+                max(lp.topMargin, minVerticalOffset)
+            } else {
+                minVerticalOffset
+            }
+            val bottomMargin: Int = if (lp is ViewGroup.MarginLayoutParams) {
+                max(lp.bottomMargin, minVerticalOffset)
+            } else {
+                minVerticalOffset
+            }
+
             rootView.measure(
-                atMost(_screenWidth - minHorizontalOffset * 2),
-                atMost(_screenHeight - minVerticalOffset * 2)
+                atMost(_screenWidth - (leftMargin + rightMargin)),
+                atMost(_screenHeight - (topMargin + bottomMargin))
             )
             val rootViewWidth = rootView.mW()
             val rootViewHeight = rootView.mH()
