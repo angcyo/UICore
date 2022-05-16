@@ -48,7 +48,7 @@ object GCodeHelper {
         //1英寸等于多少像素, 1英寸=2.54厘米=25.4毫米
         val inPixel = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, 1f, dm) //537.882
 
-        val config = GCodeParseConfig(text, mmPixel, inPixel, true, paint)
+        val config = GCodeParseConfig(text, mmPixel, inPixel, paint)
         return parseGCode(config)
     }
 
@@ -64,17 +64,16 @@ object GCodeHelper {
             val gCodeLineData = _parseGCodeLine(line, config.mmRatio, config.inRatio)
             gCodeLineDataList.add(gCodeLineData)
         }
-        return createGCodeDrawable(gCodeLineDataList, config.skipLast, config.paint)
+        return createGCodeDrawable(gCodeLineDataList, config.paint)
     }
 
     /**[GCodeDrawable]*/
     fun createGCodeDrawable(
         gCodeLineDataList: List<GCodeLineData>,
-        skipLast: Boolean = false,
         paint: Paint = createPaint(Color.BLUE)
     ): GCodeDrawable {
         val gCodeHandler = GCodeHandler()
-        val picture = gCodeHandler.parsePicture(gCodeLineDataList, skipLast, paint)
+        val picture = gCodeHandler.parsePicture(gCodeLineDataList, paint)
         return GCodeDrawable(picture).apply {
             gCodeBound.set(gCodeHandler.gCodeBounds)
         }
@@ -202,38 +201,24 @@ object GCodeHelper {
         @CanvasEntryPoint
         fun parsePicture(
             gCodeLineDataList: List<GCodeLineData>,
-            skipLast: Boolean = false,
             paint: Paint = createPaint(Color.BLUE)
         ): Picture {
             parseGCodeBound(gCodeLineDataList)
             val picture = Picture().apply {
                 //解析一行的数据
-                var lastM5Index = -1
-                for ((index, lineData) in gCodeLineDataList.withIndex()) {
-                    if (skipLast) {
-                        val firstCmd = lineData.cmdList.firstOrNull()
-                        val firstCmdString = firstCmd?.cmd
-                        if (firstCmdString?.startsWith("M") == true) {
-                            val number = firstCmd.number.toInt()
-                            if (number == 5) {
-                                lastM5Index = index
-                            }
-                        } else if (lastM5Index != -1 && firstCmdString?.startsWith("G") == true) {
-                            val number = firstCmd.number.toInt()
-                            if (number == 1) {
-                                val x = lineData.getGCodeX()
-                                val y = lineData.getGCodeY()
-                                if (x == 0f && y == 0f) {
-                                    //最后一条G1指令
-                                    if (index == gCodeLineDataList.lastValidIndex()) {
-                                        //中断绘制
-                                        break
-                                    }
-                                }
-                            }
+                var isSpindleOn = true //M05指令:主轴关闭, M03:主轴打卡
+                for (lineData in gCodeLineDataList) {
+                    val firstCmd = lineData.cmdList.firstOrNull()
+                    val firstCmdString = firstCmd?.cmd
+                    if (firstCmdString?.startsWith("M") == true) {
+                        val number = firstCmd.number.toInt()
+                        if (number == 5) {
+                            isSpindleOn = false
+                        } else if (number == 3) {
+                            isSpindleOn = true
                         }
                     }
-                    parseGCodeLine(lineData)
+                    parseGCodeLine(lineData, isSpindleOn)
                 }
 
                 //更新gCodeBounds
@@ -280,7 +265,8 @@ object GCodeHelper {
             gCodeBounds.set(minX, minY, maxX, maxY)
         }
 
-        fun parseGCodeLine(line: GCodeLineData) {
+        /**[isSpindleOn] 主轴是否开启; 主轴关闭后, 所有的G指令操作, 都变成Move*/
+        fun parseGCodeLine(line: GCodeLineData, isSpindleOn: Boolean) {
             val firstCmd = line.cmdList.firstOrNull()
             val firstCmdString = firstCmd?.cmd
 
@@ -308,7 +294,7 @@ object GCodeHelper {
                             _onMoveTo(x, y)
                         }
                         1 -> { //G1
-                            if (_isMoveTo) {
+                            if (isSpindleOn && _isMoveTo) {
                                 path.lineTo(x, y)
                                 setLastLocation(x, y)
                             } else {
@@ -317,7 +303,7 @@ object GCodeHelper {
                             }
                         }
                         2, 3 -> { //G2 G3, G2是顺时针圆弧移动，G3是逆时针圆弧移动。
-                            if (_isMoveTo) {
+                            if (isSpindleOn && _isMoveTo) {
                                 val i = line.getGCodePixel("I") //圆心距离当前位置的x偏移量
                                 val j = line.getGCodePixel("J") //圆心距离当前位置的y偏移量
 
