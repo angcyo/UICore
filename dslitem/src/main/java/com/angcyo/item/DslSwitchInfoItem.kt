@@ -5,7 +5,7 @@ import com.angcyo.github.SwitchButton
 import com.angcyo.widget.DslViewHolder
 
 /**
- *
+ * [com.angcyo.github.SwitchButton] 开关item
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/08/09

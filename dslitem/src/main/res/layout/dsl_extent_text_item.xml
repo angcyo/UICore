@@ -5,8 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical|right"
-    tools:background="@color/transparent10"
-    tools:showIn="@layout/dsl_info_item">
+    tools:background="@color/transparent10">
 
     <com.angcyo.widget.text.DslTextView
         android:id="@+id/lib_dark_text_view"

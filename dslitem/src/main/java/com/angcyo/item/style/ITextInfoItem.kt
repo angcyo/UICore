@@ -17,10 +17,12 @@ interface ITextInfoItem : IAutoInitItem {
     var textInfoItemConfig: TextInfoItemConfig
 
     /**初始化*/
-    fun initInfoTextItem(itemHolder: DslViewHolder,
-                         itemPosition: Int,
-                         adapterItem: DslAdapterItem,
-                         payloads: List<Any>) {
+    fun initInfoTextItem(
+        itemHolder: DslViewHolder,
+        itemPosition: Int,
+        adapterItem: DslAdapterItem,
+        payloads: List<Any>
+    ) {
         itemHolder.tv(textInfoItemConfig.itemInfoTextViewId)?.apply {
             textInfoItemConfig.itemInfoTextStyle.updateStyle(this)
         }
@@ -36,7 +38,6 @@ var ITextInfoItem.itemInfoText: CharSequence?
     set(value) {
         textInfoItemConfig.itemInfoText = value
     }
-
 
 class TextInfoItemConfig : IDslItemConfig {
     /**[R.id.lib_text_view]*/
