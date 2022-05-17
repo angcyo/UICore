@@ -64,13 +64,13 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
         }
     }
 
-    /**此[_bounds]是相对于坐标原点的坐标*/
+    /**此[_bounds]是相对于坐标原点的坐标, 不带旋转属性*/
     override fun getBounds(): RectF = _bounds
 
-    /**此[_renderBounds]是相对于坐标原点的可绘制像素坐标*/
+    /**此[_renderBounds]是相对于[View]左上角原点的可绘制像素坐标, 不带旋转属性*/
     override fun getRenderBounds(): RectF = _renderBounds
 
-    /**此[_visualBounds]是相对于视图左上角原点的坐标*/
+    /**此[_visualBounds]是相对于[View]左上角原点的坐标, 不带旋转属性, 映射了坐标系的[Matrix]*/
     override fun getVisualBounds(): RectF = _visualBounds
 
     override fun onCanvasSizeChanged(canvasView: CanvasDelegate) {

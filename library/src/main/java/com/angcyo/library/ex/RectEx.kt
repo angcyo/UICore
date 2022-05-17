@@ -11,7 +11,7 @@ import kotlin.math.min
  * @since 2022/04/22
  */
 
-//<editor-fold desc="rect sie">
+//<editor-fold desc="rect size">
 
 /**按照矩形中点调整*/
 const val ADJUST_TYPE_CENTER = 0
@@ -136,7 +136,28 @@ fun RectF.adjustScaleSize(
     return this
 }
 
-//</editor-fold desc="rect sie">
+/**将当前的矩形临时设置成[rect], [block]执行完成之后恢复*/
+public inline fun <T> RectF.withSave(rect: RectF, block: () -> T): T? {
+    return withSave(rect.left, rect.top, rect.right, rect.bottom, block)
+}
+
+public inline fun <T> RectF.withSave(
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+    block: () -> T
+): T? {
+    val old = RectF(this)
+    set(left, top, right, bottom)
+    return try {
+        block()
+    } finally {
+        set(old)
+    }
+}
+
+//</editor-fold desc="rect size">
 
 //<editor-fold desc="rect flip">
 

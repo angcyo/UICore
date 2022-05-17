@@ -6,6 +6,7 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import androidx.core.graphics.withRotation
+import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.Reason
@@ -118,25 +119,24 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     override fun preview(): Drawable? {
         return _rendererItem?.run {
             val renderBounds = getRenderBounds()
-            val oldRenderRect = RectF(renderBounds)
+            renderBounds.withSave(0f, 0f, renderBounds.width(), renderBounds.height()) {
+                val rotateBounds = getRenderRotateBounds()
 
-            val rotateBounds = getRenderRotateBounds()
-            renderBounds.set(0f, 0f, rotateBounds.width(), rotateBounds.height())
-            val result = ScalePictureDrawable(
-                withPicture(
-                    renderBounds.width().toInt(),
-                    renderBounds.height().toInt()
-                ) {
-                    withRotation(
-                        rotate,
-                        renderBounds.centerX(),
-                        renderBounds.centerY()
-                    ) {
-                        render(this)
+                val width = rotateBounds.width()
+                val height = rotateBounds.height()
+
+                val result = ScalePictureDrawable(withPicture(width.toInt(), height.toInt()) {
+                    withRotation(rotate, width / 2, height / 2) {
+                        withTranslation(
+                            width / 2 - renderBounds.width() / 2,
+                            height / 2 - renderBounds.height() / 2
+                        ) {
+                            render(this)
+                        }
                     }
                 })
-            renderBounds.set(oldRenderRect)
-            result
+                result
+            }
         }
     }
 
