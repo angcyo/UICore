@@ -16,6 +16,7 @@ import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.control.RotateControlPoint
 import com.angcyo.canvas.core.convertPixelToValueUnit
 import com.angcyo.canvas.items.renderer.IItemRenderer
+import com.angcyo.canvas.utils.canvasDecimal
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.library.ex.*
@@ -147,7 +148,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
 
     /**绘制旋转的度数*/
     fun drawRotateText(canvas: Canvas, visualBounds: RectF, rotate: Float) {
-        val rotateText = "${rotate.decimal(2)}°"
+        val rotateText = "${rotate.canvasDecimal(2)}°"
         //绘制高度
         val textWidth = sizePaint.textWidth(rotateText)
         val left = visualBounds.left - textWidth - controlHandler.sizeOffset

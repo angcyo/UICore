@@ -2,8 +2,8 @@ package com.angcyo.canvas.core
 
 import android.util.DisplayMetrics
 import android.util.TypedValue
+import com.angcyo.canvas.utils.canvasDecimal
 import com.angcyo.library.app
-import com.angcyo.library.ex.decimal
 
 /**
  * 公制单位, 毫米
@@ -39,7 +39,7 @@ class MmValueUnit : IValueUnit {
         return when {
             //value.abs() / 100 > 1 -> "${(value / 100).decimal(2)}m"
             //value.abs() / 10 > 1 -> "${(value / 10).decimal(2)}cm"
-            else -> "${value.decimal(2)}mm"
+            else -> "${value.canvasDecimal(2)}mm"
         }
     }
 }

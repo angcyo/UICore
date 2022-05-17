@@ -6,6 +6,7 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import com.angcyo.canvas.items.PictureTextItem
+import com.angcyo.library.ex.decimal
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.have
 import kotlin.math.atan2
@@ -294,5 +295,11 @@ fun limitMaxWidthHeight(
     }
     return result
 }
+
+/**保留小数点后几位*/
+fun Float.canvasDecimal(digit: Int = 2, fadedUp: Boolean = true): Float {
+    return this.toDouble().decimal(digit, fadedUp)
+}
+
 
 //</editor-fold desc="Other">

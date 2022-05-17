@@ -100,7 +100,17 @@ fun RectF.adjustSizeWithRotate(
     matrix.mapRect(rotateRect, this)
 
     //旋转后的矩形中点就是调整后的矩形需要偏移的x,y
-    offset(rotateRect.centerX() - centerX(), rotateRect.centerY() - centerY())
+    val dx = if (right > left) {
+        rotateRect.centerX() - centerX()
+    } else {
+        centerX() - rotateRect.centerX()
+    }
+    val dy = if (bottom > top) {
+        rotateRect.centerY() - centerY()
+    } else {
+        centerY() - rotateRect.centerY()
+    }
+    offset(dx, dy)
 }
 
 /**将一个矩形等比缩放到指定限制的宽高

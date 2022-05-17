@@ -89,7 +89,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
     var canvasTouchManager = CanvasTouchManager(this)
 
     /**[BaseItemRenderer]操作处理*/
-    var operateHandler = OperateHandler(this)
+    var operateHandler = OperateHandler()
 
     //</editor-fold desc="内部成员">
 

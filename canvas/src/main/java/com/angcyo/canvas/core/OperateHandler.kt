@@ -3,15 +3,16 @@ package com.angcyo.canvas.core
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
-import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils._tempValues
 import com.angcyo.canvas.utils.mapPoint
+import com.angcyo.canvas.utils.toRadians
 import com.angcyo.library.ex._tempRectF
 import com.angcyo.library.ex.isNoSize
 import com.angcyo.library.ex.rotate
 import com.angcyo.library.ex.scale
+import java.lang.Math.tan
 
 /**
  * [BaseItemRenderer]操作处理
@@ -20,7 +21,7 @@ import com.angcyo.library.ex.scale
  * @date 2022/05/15
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class OperateHandler(val canvasDelegate: CanvasDelegate) {
+class OperateHandler {
 
     /**批量旋转[BaseItemRenderer]*/
     fun rotateItemList(
@@ -119,6 +120,7 @@ class OperateHandler(val canvasDelegate: CanvasDelegate) {
      * [originBounds] 原始真实的Bounds
      * [frameFrom] [frameTo] 边界改变Bounds
      * [rotate] 旋转的角度
+     * [lockRatio] 是否要锁定[originBounds]的比例
      * 返回宽高
      * */
     fun calcBoundsWidthHeightWithFrame(
@@ -126,6 +128,7 @@ class OperateHandler(val canvasDelegate: CanvasDelegate) {
         frameFrom: RectF,
         frameTo: RectF,
         rotate: Float,
+        lockRatio: Boolean,
         result: FloatArray = _tempValues
     ): FloatArray {
         //左上角的点
@@ -142,7 +145,33 @@ class OperateHandler(val canvasDelegate: CanvasDelegate) {
         //以左上角的点为固定点, 偏移右下角的点, 从而计算出新的宽高
         val offsetRight = frameTo.right - frameFrom.right
         val offsetBottom = frameTo.bottom - frameFrom.bottom
-        rb.offset(offsetRight, offsetBottom)
+
+        if (lockRatio) {
+            val scale = if (offsetRight == 0f) {
+                //主动调整高度
+                frameTo.height() / frameFrom.height()
+            } else {
+                frameTo.width() / frameFrom.width()
+            }
+            val newHeight = originBounds.height() * scale
+            val newWidth = originBounds.width() * scale
+
+            result[0] = newWidth
+            result[1] = newHeight
+
+            return result
+        } else if (offsetRight == 0f && offsetBottom != 0f) {
+            //主动调整高度
+            rb.offset(
+                (offsetBottom / tan(rotate.toRadians().toDouble())).toFloat(),
+                offsetBottom
+            )
+        } else if (offsetBottom == 0f && offsetRight != 0f) {
+            //主动调整宽度
+            rb.offset(offsetRight, (offsetRight * tan(rotate.toRadians().toDouble())).toFloat())
+        } else {
+            rb.offset(offsetRight, offsetBottom)
+        }
 
         //逆旋转回去, 算出两点之间的距离, 就是宽高
         rotateMatrix.reset()
