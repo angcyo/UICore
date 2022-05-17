@@ -1,0 +1,33 @@
+/**
+ * 2022-5-17
+ * 统计xml中, 有效字符的数量
+ *
+ * https://blog.csdn.net/angcyo/article/details/88762076
+ * */
+
+task _statisticsWord(group: 'angcyo', description: '统计xml中,有效字符的数量') {
+    //配置任务
+}
+
+_statisticsWord.doLast {
+    def xmlPath = project.hasProperty("xml_path") ? project.ext.xml_path : ''
+    def file = file(xmlPath)
+
+    if (!file.exists()) {
+        throw new IllegalStateException("请在[gradle.properties]文件中配置xml文件路径:xml_path")
+    }
+
+    def rootNode = openXml(file)
+    println "字符长度:${rootNode.toString().length()}"
+}
+
+/**
+ *
+ * 获取一个 GPathResult 对象
+ * @see groovy.util.slurpersupport.GPathResult*  */
+static def openXml(xmlFile) {
+    def xmlSlurper = new groovy.util.XmlSlurper()
+    def result = xmlSlurper.parse(xmlFile)
+    return result
+}
+
