@@ -37,7 +37,13 @@ object Library {
     /**初始化[Hawk]*/
     fun initHawk(context: Application) {
         /*sp持久化库*/
-        if (!Hawk.isBuilt()) {
+        try {
+            if (!Hawk.isBuilt()) {
+                Hawk.init(context)
+                    .build()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
             Hawk.init(context)
                 .build()
         }

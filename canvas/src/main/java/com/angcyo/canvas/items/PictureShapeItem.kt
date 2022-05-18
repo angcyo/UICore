@@ -7,7 +7,10 @@ import android.graphics.RectF
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.ScalePictureDrawable
 import com.angcyo.canvas.core.MmValueUnit
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.ceil
+import com.angcyo.library.ex.density
+import com.angcyo.library.ex.isNoSize
+import com.angcyo.library.ex.withPicture
 import kotlin.math.roundToInt
 
 /**
@@ -35,7 +38,7 @@ class PictureShapeItem : PictureItem() {
     val lineStrokeEffect = DashPathEffect(floatArrayOf(4 * density, 5 * density), 0f)
 
     init {
-        paint.strokeWidth = 1 * dp
+        paint.strokeWidth = 1f //* dp
         paint.style = Paint.Style.FILL_AND_STROKE
         itemName = "Shape"
     }
