@@ -272,9 +272,18 @@ fun String?.isEmail(regex: String = PATTERN_EMAIL): Boolean {
     return matches(regex.toRegex())
 }
 
-/**将base64字符串, 转换成图片*/
+/**将base64字符串, 转换成图片
+ * [com.angcyo.library.ex.BitmapExKt.toBase64Data]*/
 fun String.toBitmapOfBase64(): Bitmap {
-    val bytes = Base64.decode(this, Base64.NO_WRAP)
+    var data = this
+    if (startsWith("data:")) {
+        Base64.decode(this, Base64.NO_WRAP)
+        val index = indexOf(",")
+        if (index != -1) {
+            data = substring(index + 1, length)
+        }
+    }
+    val bytes = Base64.decode(data, Base64.NO_WRAP)
     return bytes.toBitmap()
 }
 

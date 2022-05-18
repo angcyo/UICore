@@ -142,6 +142,18 @@ fun Bitmap.toBase64(
     return result
 }
 
+/**
+ * data:image/png;base64,xxx
+ * [com.angcyo.library.ex.StringExKt.toBitmapOfBase64]
+ * */
+fun Bitmap.toBase64Data(
+    format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG,
+    quality: Int = 100
+): String {
+    val base64 = toBase64(format, quality)
+    return "data:image/${if (format == Bitmap.CompressFormat.PNG) "png" else "jpeg"};base64,${base64}"
+}
+
 /**从流中获取图片类型*/
 fun InputStream.bitmapSuffix(): String {
     return try {
