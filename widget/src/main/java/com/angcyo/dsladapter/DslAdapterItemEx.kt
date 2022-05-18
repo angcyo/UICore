@@ -182,6 +182,23 @@ fun DslAdapterItem.drawLeft(
     itemDecorationColor = color
 }
 
+/**仅绘制右边区域的分割线*/
+fun DslAdapterItem.drawRight(
+    insertRight: Int = _dimen(R.dimen.lib_line_px),
+    offsetTop: Int = _dimen(R.dimen.lib_padding_left),
+    offsetBottom: Int = _dimen(R.dimen.lib_padding_left),
+    color: Int = Color.WHITE
+) {
+    itemTopOffset = offsetTop
+    itemBottomOffset = offsetBottom
+
+    itemRightInsert = insertRight
+    itemLeftInsert = 0
+
+    onlyDrawOffsetArea = false
+    itemDecorationColor = color
+}
+
 /**仅绘制顶部左边/右边区域的偏移分割线*/
 fun DslAdapterItem.drawLeftRightOnTop(
     offset: Int = _dimen(R.dimen.lib_padding_left),
