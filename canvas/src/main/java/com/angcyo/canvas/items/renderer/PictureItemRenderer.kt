@@ -220,20 +220,21 @@ class PictureItemRenderer(canvasView: ICanvasView) :
         val oldValue = if (item is PictureTextItem) {
             item.textStyle
         } else {
-            null
+            style
         }
-        if (oldValue == style) {
+
+        val newValue = if (enable) {
+            oldValue.add(style)
+        } else {
+            oldValue.remove(style)
+        }
+
+        if (oldValue == newValue) {
             return
         }
-        var newValue = oldValue
         wrapItemUpdate {
             if (this is PictureTextItem) {
-                textStyle = if (enable) {
-                    textStyle.add(style)
-                } else {
-                    textStyle.remove(style)
-                }
-                newValue = textStyle
+                textStyle = newValue
                 updatePaint()
             }
         }
