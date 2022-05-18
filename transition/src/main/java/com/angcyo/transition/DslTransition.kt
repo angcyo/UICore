@@ -14,11 +14,15 @@ import com.angcyo.library.L
  */
 
 class DslTransition {
+
     /**根布局*/
     var sceneRoot: ViewGroup? = null
 
     /**过渡时长*/
     var transitionDuration = -1L
+
+    /**多次重复调用时, 自动结束之前的转换*/
+    var autoEndTransition = true
 
     /**设置需要的转场过渡动画*/
     var onSetTransition: () -> TransitionSet = {
@@ -82,6 +86,9 @@ class DslTransition {
     /**开始转场动画, 注意开启条件[ViewCompat.isLaidOut(sceneRoot)], sceneRoot必须布局过至少一次*/
     fun doIt(delay: Long = 0) {
         sceneRoot?.run {
+            if (autoEndTransition) {
+                TransitionManager.endTransitions(this)//结束所有的转换
+            }
             onCaptureStartValues(this)
             postDelayed({
                 TransitionManager.beginDelayedTransition(
