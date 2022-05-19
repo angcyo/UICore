@@ -28,6 +28,20 @@ import kotlin.math.min
  */
 class CanvasDelegate(val view: View) : ICanvasView {
 
+    companion object {
+        /**前进, 图层上移*/
+        const val ARRANGE_FORWARD: Int = 1
+
+        /**后退, 图层下移*/
+        const val ARRANGE_BACKWARD: Int = 2
+
+        /**置顶*/
+        const val ARRANGE_FRONT: Int = 3
+
+        /**置底*/
+        const val ARRANGE_BACK: Int = 4
+    }
+
     //<editor-fold desc="成员变量">
 
     /**视图控制*/
@@ -102,7 +116,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
     var yAxisRender = YAxisRenderer(yAxis, this)
 
     /**核心项目渲染器*/
-    val itemsRendererList = mutableSetOf<BaseItemRenderer<*>>()
+    val itemsRendererList = mutableListOf<BaseItemRenderer<*>>()
 
     /**智能提示组件渲染
      * [rendererAfterList]*/
@@ -395,6 +409,13 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
     }
 
+    override fun dispatchItemSortChanged(itemList: List<BaseItemRenderer<*>>) {
+        super.dispatchItemSortChanged(itemList)
+        canvasListenerList.forEach {
+            it.onItemSortChanged(itemList)
+        }
+    }
+
     override fun getCanvasUndoManager(): CanvasUndoManager = undoManager
 
     //</editor-fold desc="关键方法">
@@ -514,16 +535,18 @@ class CanvasDelegate(val view: View) : ICanvasView {
     fun addItemRenderer(list: List<BaseItemRenderer<*>>, strategy: Strategy) {
         if (getCanvasViewBox().isCanvasInit()) {
             list.forEach { item ->
-                if (itemsRendererList.add(item)) {
-                    item.onAddRenderer()
+                if (!itemsRendererList.contains(item)) {
+                    if (itemsRendererList.add(item)) {
+                        item.onAddRenderer()
 
-                    canvasListenerList.forEach {
-                        it.onItemRendererAdd(item)
+                        canvasListenerList.forEach {
+                            it.onItemRendererAdd(item)
+                        }
                     }
-                }
-                if (item is BaseItemRenderer) {
-                    if (item._renderBounds.isNoSize()) {
-                        item.onCanvasSizeChanged(this)
+                    if (item is BaseItemRenderer) {
+                        if (item._renderBounds.isNoSize()) {
+                            item.onCanvasSizeChanged(this)
+                        }
                     }
                 }
             }
@@ -836,6 +859,115 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
         getCanvasUndoManager().addUndoAction(step)
         step.runRedo()
+    }
+
+    /**检查[renderer]是否可以执行指定的排序操作*/
+    fun canArrange(renderer: BaseItemRenderer<*>, type: Int): Boolean {
+        val list = mutableListOf<BaseItemRenderer<*>>()
+
+        if (renderer is SelectGroupRenderer) {
+            list.addAll(renderer.selectItemList)
+        } else {
+            list.add(renderer)
+        }
+        val first = list.firstOrNull() ?: return false
+        val firstIndex = itemsRendererList.indexOf(first)
+        if (firstIndex == -1) {
+            return false
+        }
+
+        val last = list.lastOrNull() ?: return false
+        val lastIndex = itemsRendererList.indexOf(last)
+        if (lastIndex == -1) {
+            return false
+        }
+
+        return when (type) {
+            //后退, 图层下移
+            ARRANGE_BACKWARD, ARRANGE_BACK -> firstIndex != 0
+            //前进, 图层上移
+            else -> lastIndex != itemsRendererList.lastIndex
+        }
+    }
+
+    /**安排排序*/
+    fun arrange(renderer: BaseItemRenderer<*>, type: Int, strategy: Strategy) {
+        val list = mutableListOf<BaseItemRenderer<*>>()
+
+        if (renderer is SelectGroupRenderer) {
+            list.addAll(renderer.selectItemList)
+        } else {
+            list.add(renderer)
+        }
+        val first = list.firstOrNull() ?: return
+        val firstIndex = itemsRendererList.indexOf(first)
+        if (firstIndex == -1) {
+            return
+        }
+
+        val last = list.lastOrNull() ?: return
+        val lastIndex = itemsRendererList.indexOf(last)
+        if (lastIndex == -1) {
+            return
+        }
+
+        val toIndex = when (type) {
+            //前进, 图层上移
+            ARRANGE_BACKWARD -> firstIndex - 1
+            ARRANGE_FORWARD -> lastIndex + 1
+            ARRANGE_BACK -> 0
+            else -> itemsRendererList.lastIndex
+        }
+
+        arrangeSort(list, toIndex, strategy)
+    }
+
+    /**排序, 将[rendererList], 放到指定的位置[to]
+     * [SelectGroupRenderer]
+     * */
+    fun arrangeSort(rendererList: List<BaseItemRenderer<*>>, to: Int, strategy: Strategy) {
+        val first = rendererList.firstOrNull() ?: return
+        val last = rendererList.lastOrNull() ?: return
+
+        val firstIndex = itemsRendererList.indexOf(first)
+        val lastIndex = itemsRendererList.indexOf(last)
+
+        if (firstIndex == -1 || lastIndex == -1) {
+            return
+        }
+
+        itemsRendererList.getOrNull(to) ?: return
+        val oldRendererList = itemsRendererList.toList()
+
+        itemsRendererList.removeAll(rendererList)
+        if (to <= firstIndex) {
+            //往前移动
+            itemsRendererList.addAll(to, rendererList)
+        } else {
+            //往后移
+            itemsRendererList.addAll(to - (rendererList.size - 1), rendererList)
+        }
+        val newRendererList = itemsRendererList.toList()
+
+        //撤销回退
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            val step: ICanvasStep = object : ICanvasStep {
+                override fun runUndo() {
+                    itemsRendererList.resetAll(oldRendererList)
+                    dispatchItemSortChanged(oldRendererList)
+                }
+
+                override fun runRedo() {
+                    itemsRendererList.resetAll(newRendererList)
+                    dispatchItemSortChanged(newRendererList)
+                }
+            }
+
+            getCanvasUndoManager().addUndoAction(step)
+            step.runRedo()
+        } else {
+            dispatchItemSortChanged(newRendererList)
+        }
     }
 
     //</editor-fold desc="操作方法">

@@ -39,6 +39,10 @@ interface ICanvasView : IComponent {
     /**[com.angcyo.canvas.core.component.control.LockControlPoint.onClickControlPoint]*/
     fun dispatchItemLockScaleRatioChanged(item: BaseItemRenderer<*>) {}
 
+    /**当图层的顺序发生了改变
+     * [com.angcyo.canvas.CanvasDelegate.arrangeSort]*/
+    fun dispatchItemSortChanged(itemList: List<BaseItemRenderer<*>>) {}
+
     //</editor-fold desc="dispatch">
 
     //<editor-fold desc="listener">

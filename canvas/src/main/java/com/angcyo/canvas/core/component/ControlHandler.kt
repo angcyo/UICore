@@ -97,8 +97,6 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
                 val touchPoint = _touchPoint
 
                 if (selectedItemRender != null) {
-                    touchItemBounds.set(selectedItemRender.getBounds())
-
                     //已经有选中, 则查找控制点
                     val controlPoint = findItemControlPoint(touchPoint)
                     touchControlPoint = controlPoint
@@ -113,6 +111,9 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
                 if (touchControlPoint == null) {
                     //未点在控制点上, 则检查是否点在[BaseItemRenderer]中
                     val itemRenderer = canvasDelegate.findItemRenderer(touchPoint)
+                    if (itemRenderer != null) {
+                        touchItemBounds.set(itemRenderer.getBounds())
+                    }
                     canvasDelegate.selectedItem(itemRenderer)
                 }
             }

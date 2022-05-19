@@ -89,6 +89,14 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
             changeBeforeBounds.set(this)
             block()
         }
+        L.i(
+            buildString {
+                appendLine(this@BaseItemRenderer)
+                append(getRendererItem()?.simpleHash())
+                append(":Bounds改变:(w:${changeBeforeBounds.width()} h:${changeBeforeBounds.height()} -> w:${getBounds().width()} h:${getBounds().height()})")
+                append("${changeBeforeBounds}->${getBounds()}")
+            }
+        )
         itemBoundsChanged(reason, changeBeforeBounds)
         //notify
         if (reason.notify) {

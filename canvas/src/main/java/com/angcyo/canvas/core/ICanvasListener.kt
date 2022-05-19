@@ -52,6 +52,9 @@ interface ICanvasListener : ICanvasTouch {
     /**[com.angcyo.canvas.core.component.control.LockControlPoint.onClickControlPoint]*/
     fun onItemLockScaleRatioChanged(item: BaseItemRenderer<*>) {}
 
+    /**[com.angcyo.canvas.core.ICanvasView.dispatchItemSortChanged]*/
+    fun onItemSortChanged(itemList: List<BaseItemRenderer<*>>) {}
+
     //</editor-fold desc="Item相关">
 
     //<editor-fold desc="其他">
