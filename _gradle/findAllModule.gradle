@@ -67,10 +67,11 @@ def writeIgnoreFile() {
     def rootPath = getRootDir()
     def ignoreFile = new File(rootPath, 'ignore')
     def ignoreModule = []
-    if (ignoreFile.exists()) {
-        ignoreModule = ignoreFile.readLines('UTF8')
-    } else {
+    def isNewProject = !ignoreFile.exists() // 是否是新项目
+    if (isNewProject) {
         ignoreFile.createNewFile()
+    } else {
+        ignoreModule = ignoreFile.readLines('UTF8')
     }
 
     def key = ''
@@ -91,7 +92,11 @@ def writeIgnoreFile() {
                 time = new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("Asia/Shanghai"))
                 ignoreFile.append("#${time}↓\n")
             }
-            ignoreFile.append("${key}\n") //新增的库, 默认忽略
+            if (isNewProject) {
+                ignoreFile.append("#${key}\n") //新工程默认不忽略
+            } else {
+                ignoreFile.append("${key}\n") //新增的库, 默认忽略
+            }
         } else {
             //println "跳过:${key}"
         }
