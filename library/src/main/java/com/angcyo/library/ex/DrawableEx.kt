@@ -134,8 +134,13 @@ fun Drawable.copyDrawable(): Drawable? {
     return result
 }
 
-/**[androidx.core.graphics.drawable.DrawableKt.toBitmap]*/
-fun Drawable.toBitmap(outWidth: Int = -1, outHeight: Int = -1): Bitmap {
+/**[androidx.core.graphics.drawable.DrawableKt.toBitmap]
+ * [bgColor] 底色*/
+fun Drawable.toBitmap(
+    outWidth: Int = -1,
+    outHeight: Int = -1,
+    bgColor: Int = Color.TRANSPARENT
+): Bitmap {
     // 获取 drawable 长宽
     val width: Int = if (minimumWidth <= 0) outWidth else minimumWidth
     val height: Int = if (minimumHeight <= 0) outHeight else minimumHeight
@@ -150,6 +155,9 @@ fun Drawable.toBitmap(outWidth: Int = -1, outHeight: Int = -1): Bitmap {
 
     // 创建bitmap画布
     val canvas = Canvas(bitmap)
+    if (bgColor != Color.TRANSPARENT) {
+        canvas.drawColor(bgColor)
+    }
     // 将drawable 内容画到画布中
     draw(canvas)
 
