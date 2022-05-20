@@ -62,7 +62,7 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
         }
     }
 
-    fun showCrashDialog() {
+    open fun showCrashDialog() {
         haveLastCrash = DslCrashHandler.checkCrash(true) { filePath, message, crashTime ->
             filePath?.file()?.readText()?.copy(this)
 
