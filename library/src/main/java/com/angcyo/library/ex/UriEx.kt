@@ -283,6 +283,8 @@ fun getDataColumn(
  * 专为Android4.4以上设计的从Uri获取文件路径
  * [Intent.ACTION_PICK]
  * [Intent.ACTION_GET_CONTENT]
+ * [Intent.ACTION_OPEN_DOCUMENT]
+ * https://blog.csdn.net/xietansheng/article/details/115763279
  */
 @RequiresApi(Build.VERSION_CODES.KITKAT)
 fun Uri.getPathFromIntentData(context: Context = app()): String? {
