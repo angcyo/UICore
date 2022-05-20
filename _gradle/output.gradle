@@ -1,0 +1,158 @@
+/**
+ * 2022-5-19
+ * 用来改变Apk文件的输出路径
+ * */
+
+/**
+ * 文件输出的文件夹(基于项目根目录的相对路径)
+ * */
+def output = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
+
+android {
+
+    /*Gradle3.0 以下的方法*/
+//    getApplicationVariants().all { variant ->
+//        variant.outputs.each { output ->
+//            def appName = "UIViewDemo-${variant.buildType.name}-${variant.versionName}"
+//            def time = ""
+//            if (variant.buildType.name.equalsIgnoreCase("release")) {
+//                time = "_${new Date().format("yyyy-MM-dd_HH-mm")}"
+//            }
+//            output.outputFile = new File(output.outputFile.parent, "${appName}${time}.apk")
+//        }
+//    }
+
+    //rootProject.file("/.apk")
+    def apkFolder = new File(project.rootDir.absolutePath + "/" + output)
+    apkFolder.mkdirs()
+    println "\napk.gradle ${gradle.gradleVersion}→APK输出目录: ${apkFolder.absolutePath}"
+
+    if (gradle.gradleVersion.startsWith("6.5") ||
+            gradle.gradleVersion.startsWith("6.7") ||
+            gradle.gradleVersion.startsWith("7") ||
+            gradle.gradleVersion.charAt(0) >= '7') {
+        /*Gradle4.1 以上的方法*/
+        applicationVariants.all { variant ->
+            def defPath = variant.packageApplicationProvider.get().outputDirectory.getAsFile().get().absolutePath
+            println "\napk.gradle ${gradle.gradleVersion}→默认输出目录↓\n${variant.name}-> ${defPath}"
+
+            if (variant.buildType.name != "debug") {
+                variant.packageApplicationProvider.get().outputDirectory = new File(apkFolder, variant.name)
+            }
+        }
+    } else if (gradle.gradleVersion.startsWith("6")) {
+        /*Gradle4.0 以上的方法*/
+        applicationVariants.all { variant ->
+            def defPath = variant.packageApplicationProvider.get().outputDirectory.getAsFile().get().absolutePath
+            println "\napk.gradle ${gradle.gradleVersion}→APK默认输出目录:${defPath}"
+
+            if (variant.buildType.name != "debug") {
+                variant.packageApplicationProvider.get().outputDirectory = new File(apkFolder, variant.name)
+            }
+        }
+    } else if (gradle.gradleVersion.startsWith("5")) {
+        /*Gradle3.3 以上的方法*/
+        applicationVariants.all { variant ->
+            def defPath = variant.packageApplication.outputDirectory.getAsFile().get().absolutePath
+            println "\napk.gradle ${gradle.gradleVersion}→APK默认输出目录:${defPath}"
+
+            if (variant.buildType.name != "debug") {
+                variant.packageApplication.outputDirectory = new File(apkFolder, variant.name)
+            }
+        }
+    } else {
+        /*Gradle3.0 以上的方法*/
+        applicationVariants.all { variant ->
+            def defPath = variant.getPackageApplication().outputDirectory.getAsFile().get().absolutePath
+            println "\napk.gradle ${gradle.gradleVersion}→APK默认输出目录:${defPath}"
+
+            if (variant.buildType.name != "debug") {
+                //new File(project.rootDir.absolutePath + "/apk")
+                variant.getPackageApplication().outputDirectory = new File(apkFolder, variant.name)
+            }
+        }
+    }
+}
+
+//https://www.jianshu.com/p/e7a40a592f15/
+//构建完成后, 将文件夹(./.apk)子目录中的apk文件, 复制到上一级
+gradle.buildFinished { buildResult -> /*BuildResult*/
+    def apkFolder = new File(project.rootDir.absolutePath + "/" + output)
+    def fileList = apkFolder.listFiles()
+    for (file in fileList) {
+        if (file.isDirectory()) {
+            def subFileList = file.listFiles()
+
+            def isCopyFile = new File(file, ".copy") //文件是否已经复制过
+            if (!isCopyFile.exists()) {
+                isCopyFile.createNewFile()
+            }
+            def copyFileList = []
+            copyFileList = isCopyFile.readLines('UTF8')
+
+            for (subFile in subFileList) {
+                def fileName = subFile.name
+                if (subFile.isFile() && fileName.endsWith(".apk")) {
+                    def ignoreFile = false
+
+                    def haveCopyFile = false
+
+                    //是否要忽略此文件名
+                    copyFileList.each {
+                        haveCopyFile = haveCopyFile || it == fileName
+                    }
+
+                    ignoreFile = haveCopyFile
+
+                    def targetFile = new File(apkFolder, fileName)
+                    if (targetFile.exists() && subFile.lastModified() != targetFile.lastModified()) {
+                        //如果目标文件存在, 但是和源文件时间不一样, 则强制需要复制
+                        ignoreFile = false
+                    }
+
+                    if (!ignoreFile) {
+                        //apk文件, 开始复制. 文件不一样的时候才复制
+                        copyFile(subFile.absolutePath, targetFile.absolutePath)
+
+                        if (!haveCopyFile) {
+                            isCopyFile.append("${fileName}\n") //添加已经复制过的文件名
+                        }
+                    }
+                }
+            }
+        }
+    }
+    println "构建完毕->${buildResult.action}"
+}
+
+/**
+ * 复制文件
+ * */
+def copyFile(String from, String toPath) {
+    InputStream input = null
+    OutputStream output = null
+    try {
+        File source = new File(from)
+        if (!source.exists()) {
+            return
+        }
+        File dest = new File(toPath)
+        println '复制文件:' + source.getAbsolutePath() + " -> " + dest.getAbsolutePath()
+
+        input = new FileInputStream(source)
+        output = new FileOutputStream(dest)
+        byte[] buf = new byte[1024]
+        int bytesRead
+        while ((bytesRead = input.read(buf)) != -1) {
+            output.write(buf, 0, bytesRead)
+        }
+        dest.setLastModified(source.lastModified())
+    } finally {
+        if (input != null) {
+            input.close()
+        }
+        if (output != null) {
+            output.close()
+        }
+    }
+}
