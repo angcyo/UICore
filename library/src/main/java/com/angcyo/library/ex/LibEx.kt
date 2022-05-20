@@ -1,6 +1,7 @@
 package com.angcyo.library.ex
 
 import android.app.Application
+import android.content.pm.ApplicationInfo
 import android.graphics.Point
 import android.graphics.PointF
 import android.view.View
@@ -70,6 +71,8 @@ fun isDebugType() = isDebugTypeVal || "debug".equals(BuildConfig.BUILD_TYPE, tru
 fun isMac() = getAppString("os_name")?.toLowerCase()?.contains("mac") == true
 
 fun isDebug() = BuildConfig.DEBUG
+
+/**[ApplicationInfo.FLAG_DEBUGGABLE]*/
 fun isAppDebug() = RUtils.isAppDebug()
 
 fun isRoot() = RUtils.isRoot()

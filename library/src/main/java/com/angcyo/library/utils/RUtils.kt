@@ -192,9 +192,12 @@ object RUtils {
         }
     }
 
-    /**判断应用程序是否可以被debug*/
+    /**判断应用程序是否可以被debug
+     * [ApplicationInfo.FLAG_DEBUGGABLE]*/
     fun isAppDebug(context: Context = app(), packageName: String = app().packageName): Boolean {
         try {
+            /*val info = context.applicationInfo
+            return info.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0*/
             val packageInfo = context.packageManager.getPackageInfo(packageName, GET_ACTIVITIES)
             if (packageInfo != null) {
                 val info = packageInfo.applicationInfo
