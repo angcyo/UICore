@@ -233,7 +233,8 @@ task _qiniuUpload(group: 'angcyo', description: '上传文件到七牛云') {
     }
 }
 
-/**查找apk文件路径*/
+/**查找apk文件路径
+ * [https://docs.groovy-lang.org/latest/html/groovy-jdk/java/io/File.html]*/
 def findApkFile(String folderPath = null) {
     def path
     if (folderPath == null || folderPath.isEmpty()) {
@@ -245,14 +246,27 @@ def findApkFile(String folderPath = null) {
     def folder = file(path)
     def result = null
 
+    def isUploadFile = new File(file, ".upload") //文件是否已经上传过
+    if (!isUploadFile.exists()) {
+        isUploadFile.createNewFile()
+    }
+    def uploadFileList = []
+    uploadFileList = isUploadFile.readLines('UTF8')
+
     def files = folder.listFiles()
     files?.each {
         if (it.isFile()) {
-            if (it.getName().endsWith(".apk")) {
+            def name = it.getName()
+            if (name.endsWith(".apk")) {
                 if (result == null) {
                     result = it.absolutePath
                 } else {
-                    result = result + ";" + it.absolutePath
+                    if (uploadFileList.contains(name)) {
+                        System.out.println '已上传,跳过文件:' + name
+                    } else {
+                        isUploadFile.append("${name}\n")
+                        result = result + ";" + it.absolutePath
+                    }
                 }
             }
         }
