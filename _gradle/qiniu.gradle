@@ -258,13 +258,13 @@ def findApkFile(String folderPath = null) {
         if (it.isFile()) {
             def name = it.getName()
             if (name.endsWith(".apk")) {
-                if (result == null) {
-                    result = it.absolutePath
+                if (uploadFileList.contains(name)) {
+                    System.out.println '已上传,跳过文件:' + name
                 } else {
-                    if (uploadFileList.contains(name)) {
-                        System.out.println '已上传,跳过文件:' + name
+                    isUploadFile.append("${name}\n")
+                    if (result == null) {
+                        result = it.absolutePath
                     } else {
-                        isUploadFile.append("${name}\n")
                         result = result + ";" + it.absolutePath
                     }
                 }
