@@ -65,26 +65,22 @@ android {
     }
 
     buildTypes {
-        release {
-            //minifyEnabled _minify_enabled
-//            useProguard _use_proguard
-            //matchingFallbacks = ['release']
-            debuggable false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-
-        pretest {
-            //minifyEnabled _minify_enabled
-//            useProguard _use_proguard
-            debuggable true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-
         debug {
             //minifyEnabled _minify_enabled_debug
 //            useProguard _use_proguard_debug
             debuggable true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        pretest {
+            //minifyEnabled _minify_enabled
+//            useProguard _use_proguard
+            initWith debug
+        }
+        release {
+            //minifyEnabled _minify_enabled
+//            useProguard _use_proguard
+            //matchingFallbacks = ['release']
+            debuggable false
         }
     }
 }
