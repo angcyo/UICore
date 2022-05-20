@@ -11,7 +11,6 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.angcyo.dialog.LoadingDialog.dialogPool
-import com.angcyo.library.L
 import com.angcyo.library.ex.elseNull
 import com.angcyo.library.toastQQ
 import com.angcyo.transition.dslTransition
@@ -61,7 +60,7 @@ fun hideLoading(
                                 dismiss()
                                 onEnd()
                             } catch (e: Exception) {
-                                L.w(e)
+                                e.printStackTrace()
                             }
                         }
                     }.elseNull {
@@ -73,7 +72,7 @@ fun hideLoading(
                     onEnd()
                 }
             } catch (e: Exception) {
-                L.w(e)
+                e.printStackTrace()
             }
         }
     }
@@ -150,7 +149,7 @@ fun ActivityResultCaller.loading(
             }
         }
     } catch (e: Exception) {
-        L.w(e)
+        e.printStackTrace()
         return null
     }
 }
