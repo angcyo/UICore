@@ -114,7 +114,7 @@ android {
             zipAlignEnabled true
             shrinkResources false
             minifyEnabled _minify_enabled_debug
-//            useProguard _use_proguard_debug
+            //useProguard _use_proguard_debug //默认会使用R8压缩优化代码
             signingConfig signingConfigs.angcyo
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             debuggable true
@@ -125,7 +125,7 @@ android {
             ext.alwaysUpdateBuildId = false
         }
         pretest {
-            //applicationIdSuffix ".release"
+            //applicationIdSuffix ".pretest"
             initWith debug
             minifyEnabled _minify_enabled
         }

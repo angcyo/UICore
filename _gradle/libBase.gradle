@@ -9,10 +9,10 @@ def V_NAME = "1.0"
 
 def _kotlin_version = project.hasProperty("kotlin_version") ? project.ext.kotlin_version : '1.6.21'
 
-def _minify_enabled_debug = project.hasProperty("minify_enabled_debug") ? (project.ext.minify_enabled_debug == "true") : false
-def _use_proguard_debug = project.hasProperty("use_proguard_debug") ? (project.ext.use_proguard_debug == "true") : false
-def _minify_enabled = project.hasProperty("minify_enabled") ? (project.ext.minify_enabled == "true") : _minify_enabled_debug
-def _use_proguard = project.hasProperty("use_proguard") ? (project.ext.use_proguard == "true") : _minify_enabled
+def lib_minify_enabled_debug = project.hasProperty("lib_minify_enabled_debug") ? (project.ext.lib_minify_enabled_debug == "true") : false
+def lib_use_proguard_debug = project.hasProperty("lib_use_proguard_debug") ? (project.ext.lib_use_proguard_debug == "true") : false
+def lib_minify_enabled = project.hasProperty("lib_minify_enabled") ? (project.ext.lib_minify_enabled == "true") : lib_minify_enabled_debug
+def lib_use_proguard = project.hasProperty("lib_use_proguard") ? (project.ext.lib_use_proguard == "true") : lib_minify_enabled
 
 //println "kotlin版本:" + _kotlin_version
 //println project.getName()
@@ -66,19 +66,20 @@ android {
 
     buildTypes {
         debug {
-            //minifyEnabled _minify_enabled_debug
-//            useProguard _use_proguard_debug
             debuggable true
+            minifyEnabled lib_minify_enabled_debug
+            //useProguard lib_use_proguard_debug
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         pretest {
-            //minifyEnabled _minify_enabled
-//            useProguard _use_proguard
             initWith debug
+            //minifyEnabled lib_minify_enabled
+            //useProguard lib_use_proguard
         }
         release {
+            initWith debug
             //minifyEnabled _minify_enabled
-//            useProguard _use_proguard
+            //useProguard _use_proguard
             //matchingFallbacks = ['release']
             debuggable false
         }
