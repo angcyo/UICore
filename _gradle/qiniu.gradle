@@ -246,7 +246,7 @@ def findApkFile(String folderPath = null) {
     def folder = file(path)
     def result = null
 
-    def isUploadFile = new File(file, ".upload") //文件是否已经上传过
+    def isUploadFile = new File(path, ".upload") //文件是否已经上传过
     if (!isUploadFile.exists()) {
         isUploadFile.createNewFile()
     }
