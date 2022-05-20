@@ -7,12 +7,11 @@ import com.angcyo.DslFHelper
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.library.L
 import com.angcyo.library.component.work.Trackers
-import com.angcyo.library.ex.hawkGet
-import com.angcyo.library.ex.hawkPut
-import com.angcyo.library.ex.isRelease
-import com.angcyo.library.ex.nowTimeString
+import com.angcyo.library.ex.*
 import com.angcyo.library.utils.Device
+import com.angcyo.library.utils.fileName
 import java.io.BufferedWriter
+import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.concurrent.TimeoutException
@@ -61,6 +60,26 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
                     KEY_CRASH_TIME.hawkGet()
                 )
                 true
+            }
+        }
+
+        /**指定某一天的崩溃日志文件*/
+        fun currentCrashFile(fileName: String? = null): File {
+            val name = fileName ?: fileName("yyyy-MM-dd", ".log")
+            val folder = currentApplication()?.getExternalFilesDir("crash")
+            val file = File(folder, name)
+            return file
+        }
+
+        /**分享日志文件
+         * [fileName] 指定要分享的文件名, */
+        fun shareCrashLog(fileName: String? = null) {
+            if (fileName == null) {
+                //未指定文件名, 则获取最后一次崩溃的文件
+                val file = KEY_CRASH_FILE.hawkGet()?.file() ?: currentCrashFile(fileName)
+                file.shareFile()
+            } else {
+                currentCrashFile(fileName).shareFile()
             }
         }
     }

@@ -56,12 +56,14 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
         checkCrash()
     }
 
+    /**检查是否有崩溃*/
     open fun checkCrash() {
         if (!isRelease()) {
             showCrashDialog()
         }
     }
 
+    /**显示崩溃日志对话框*/
     open fun showCrashDialog() {
         haveLastCrash = DslCrashHandler.checkCrash(true) { filePath, message, crashTime ->
             filePath?.file()?.readText()?.copy(this)
