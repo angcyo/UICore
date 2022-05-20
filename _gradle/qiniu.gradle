@@ -258,7 +258,7 @@ def findApkFile(String folderPath = null) {
         if (it.isFile()) {
             def name = it.getName()
             if (name.endsWith(".apk")) {
-                if (uploadFileList.contains(name)) {
+                if (uploadFileList.contains(name) && files.length > 1) {
                     System.out.println '已上传,跳过文件:' + name
                 } else {
                     isUploadFile.append("${name}\n")
