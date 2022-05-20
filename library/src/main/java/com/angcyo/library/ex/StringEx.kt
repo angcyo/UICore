@@ -753,6 +753,7 @@ fun CharSequence.escapeExprSpecialWord(): CharSequence {
     return keyword
 }
 
+/**确保文件后缀*/
 fun String.ensureName(end: String = ".json") = if (endsWith(end)) this else "$this${end}"
 
 /**首字母小写*/
@@ -762,4 +763,97 @@ fun CharSequence.lowerFirst(): CharSequence {
         return "${first.lowercaseChar()}${subSequence(1, length)}"
     }
     return this
+}
+
+/**从url中获取文件名
+ * attachment;filename="百度手机助手(360手机助手).apk"
+ * attachment;filename="baidusearch_AndroidPhone_1021446w.apk"
+ * */
+fun String?.getFileAttachmentName(attachment: String? = null): String? {
+    val url = this
+    var name: String? = null
+    name = getFileNameFromAttachment(attachment)
+    if (!name.isNullOrBlank()) {
+        return name.trim('"')
+    }
+
+    name = getFileNameFromAttachment(url)
+    if (!name.isNullOrBlank()) {
+        return name.trim('"')
+    }
+
+    //最后一步, 截取url后面的文件名
+    url?.split("?")?.getOrNull(0)?.run {
+        val indexOf = lastIndexOf("/")
+        if (indexOf != -1) {
+            name = this.substring(indexOf + 1, this.length)
+        }
+    }
+    return name?.trim('"')
+}
+
+/**
+ * attachment; filename=YYB.998886.4c1b4029188a9b5f2ad007e997da02d4.1004112.apk
+ * attachment;filename="baidusearch_AndroidPhone_1021446w.apk"
+ * */
+fun getFileNameFromAttachment(attachment: String?): String? {
+    var name: String? = null
+    attachment?.run {
+        if (isNotEmpty()) {
+            val decode = Uri.decode(this)
+
+            //正则匹配filename
+            decode.patternList("filename=\"(.*)\"").firstOrNull()?.run {
+                name = this.split("filename=").getOrNull(1)
+
+                if (!name.isNullOrBlank()) {
+                    return name
+                }
+            }
+            decode.patternList("filename=(.*)").firstOrNull()?.run {
+                name = this.split("filename=").getOrNull(1)
+
+                if (!name.isNullOrBlank()) {
+                    return name
+                }
+            }
+
+            //正则匹配name
+            decode.patternList("name=\"(.*)\"").firstOrNull()?.run {
+                name = this.split("name=").getOrNull(1)
+
+                if (!name.isNullOrBlank()) {
+                    return name
+                }
+            }
+            decode.patternList("name=(.*)").firstOrNull()?.run {
+                name = this.split("name=").getOrNull(1)
+
+                if (!name.isNullOrBlank()) {
+                    return name
+                }
+            }
+
+            //uri查询
+            Uri.parse(decode).run {
+                //filename
+                getQueryParameter("filename")?.run {
+                    name = this
+
+                    if (!name.isNullOrBlank()) {
+                        return name
+                    }
+                }
+                //name
+                getQueryParameter("name")?.run {
+                    name = this
+
+                    if (!name.isNullOrBlank()) {
+                        return name
+                    }
+                }
+            }
+        }
+    }
+    return name
 }
