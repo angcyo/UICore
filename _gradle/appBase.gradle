@@ -1,27 +1,4 @@
-static def getBuildTime() {
-    return new Date().format("yyyy-MM-dd HH:mm:ss.sss", TimeZone.getTimeZone("UTC"))
-}
-
-static def osName() {
-    return System.getProperty("os.name") + "@" + System.getProperty("os.version")
-}
-
-static def userName() {
-    return System.getProperty("user.name")
-}
-
-static def releaseTime() {
-    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
-}
-
-static def apkTime() {
-    return new Date().format("yyyy-MM-dd_HH-mm", TimeZone.getTimeZone("UTC"))
-}
-
-def apk_time = apkTime()
-
 def build_time = getBuildTime()
-def release_time = releaseTime()
 
 def schema = project.hasProperty("schema") ? project.ext.schema : 'default'
 

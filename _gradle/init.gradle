@@ -5,6 +5,9 @@
 
 apply from: 'UICore/_gradle/findAllModule.gradle'
 
+//公共方法
+apply from: allGradle.common
+
 //读取local.properties
 apply from: allGradle.local
 

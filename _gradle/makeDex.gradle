@@ -209,7 +209,3 @@ task jarToDex(dependsOn: ['makeJar'], type: Exec, group: 'angcyo', description: 
         args list
     }
 }
-
-static def error(Object msg) {
-    System.err.println msg
-}

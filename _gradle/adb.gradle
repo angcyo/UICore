@@ -4,18 +4,6 @@
 
 def schema = project.hasProperty("schema") ? project.ext.schema : 'default'
 
-static def isMac() {
-    //Mac OS X
-    def os = System.getProperty("os.name").toLowerCase()
-    return os.contains("mac")
-}
-
-static def isWindows() {
-    //Mac OS X
-    def os = System.getProperty("os.name").toLowerCase()
-    return os.contains("windows")
-}
-
 /**通过root工程, 获取child所有子工程对应的application id*/
 static def getApplicationIdList(rootProject) {
     def appList = []

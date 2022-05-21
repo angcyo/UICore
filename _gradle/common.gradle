@@ -1,0 +1,155 @@
+/**
+ * 导出一些公共的方法
+ * 2022-5-21
+ * */
+
+/**判断是否是Mac系统*/
+static def isMac() {
+    //Mac OS X
+    def os = System.getProperty("os.name").toLowerCase()
+    return os.contains("mac")
+}
+
+/**判断是否是Windows系统*/
+static def isWindows() {
+    //Mac OS X
+    def os = System.getProperty("os.name").toLowerCase()
+    return os.contains("windows")
+}
+
+static def getBuildTime() {
+    return new Date().format("yyyy-MM-dd HH:mm:ss.sss", TimeZone.getTimeZone("UTC"))
+}
+
+static def osName() {
+    return System.getProperty("os.name") + "@" + System.getProperty("os.version")
+}
+
+static def userName() {
+    return System.getProperty("user.name")
+}
+
+static def releaseTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+}
+
+static def apkTime() {
+    return new Date().format("yyyy-MM-dd_HH-mm", TimeZone.getTimeZone("UTC"))
+}
+
+static def formatTime(String format) {
+    return new Date().format(format, TimeZone.getTimeZone("UTC"))
+}
+
+static def error(Object msg) {
+    System.err.println msg
+}
+
+/**查找apk文件路径
+ * [https://docs.groovy-lang.org/latest/html/groovy-jdk/java/io/File.html]*/
+def findApkFile(String folderPath = null) {
+    def path
+    if (folderPath == null || folderPath.isEmpty()) {
+        path = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
+    } else {
+        path = folderPath
+    }
+
+    def folder = file(path)
+    def result = null
+
+    def isUploadFile = new File(path, ".upload") //文件是否已经上传过
+    if (!isUploadFile.exists()) {
+        isUploadFile.createNewFile()
+    }
+    def uploadFileList = []
+    uploadFileList = isUploadFile.readLines('UTF8')
+
+    def files = folder.listFiles()
+    files?.each {
+        if (it.isFile()) {
+            def name = it.getName()
+            if (name.endsWith(".apk")) {
+                if (uploadFileList.contains(name) && files.length > 1) {
+                    System.out.println '已上传,跳过文件:' + name
+                } else {
+                    isUploadFile.append("${name}\n")
+                    if (result == null) {
+                        result = it.absolutePath
+                    } else {
+                        result = result + ";" + it.absolutePath
+                    }
+                }
+            }
+        }
+    }
+
+    return result
+}
+
+/**根据文件名, 获取png目录的logo图片
+ * [png/logo.png] 正式包logo
+ * [png/logo_test.png] 测试式包logo
+ * */
+def getLogoPath(apkFileName) {
+    def path
+    if (apkFileName.contains("apk_release")) {
+        path = "png/logo.png"
+    } else {
+        path = "png/logo_test.png"
+    }
+    if (file(path).exists()) {
+        return path
+    }
+    return null
+}
+
+/**
+ * 复制文件
+ * */
+def copyFile(String from, String toPath) {
+    InputStream input = null
+    OutputStream output = null
+    try {
+        File source = new File(from)
+        if (!source.exists()) {
+            return
+        }
+        File dest = new File(toPath)
+        println '复制文件:' + source.getAbsolutePath() + " -> " + dest.getAbsolutePath()
+
+        input = new FileInputStream(source)
+        output = new FileOutputStream(dest)
+        byte[] buf = new byte[1024]
+        int bytesRead
+        while ((bytesRead = input.read(buf)) != -1) {
+            output.write(buf, 0, bytesRead)
+        }
+        dest.setLastModified(source.lastModified())
+    } finally {
+        if (input != null) {
+            input.close()
+        }
+        if (output != null) {
+            output.close()
+        }
+    }
+}
+
+
+
+//导出
+ext {
+    isMac = this.&isMac
+    isWindows = this.&isWindows
+    getBuildTime = this.&getBuildTime
+    osName = this.&osName
+    userName = this.&userName
+    releaseTime = this.&releaseTime
+    apkTime = this.&apkTime
+    formatTime = this.&formatTime
+    error = this.&error
+    findApkFile = this.&findApkFile
+    copyFile = this.&copyFile
+    getLogoPath = this.&getLogoPath
+}

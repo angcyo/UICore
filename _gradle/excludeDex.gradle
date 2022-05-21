@@ -84,7 +84,3 @@ static def pick(String source, String regex) {
         return ""
     }
 }
-
-static def error(Object msg) {
-    System.err.println msg
-}

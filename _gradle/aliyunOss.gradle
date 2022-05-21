@@ -75,7 +75,6 @@ buildscript {
  * 上传本地文件->阿里云Oss->返回文件下载地址
  * 拿到下载url->生成url二维码地址
  * */
-
 task _aliyunOssUpload(group: 'angcyo', description: '上传文件到阿里云OSS') {
     doFirst {
         def accessKeyId = project.hasProperty("aliyunOssAccessKeyId") ? project.ext.aliyunOssAccessKeyId : aliyunOssConfig.aliyunOssAccessKeyId
@@ -161,48 +160,6 @@ task _aliyunOssUpload(group: 'angcyo', description: '上传文件到阿里云OSS
             }
         }
     }
-}
-
-/**查找apk文件路径
- * [https://docs.groovy-lang.org/latest/html/groovy-jdk/java/io/File.html]*/
-def findApkFile(String folderPath = null) {
-    def path
-    if (folderPath == null || folderPath.isEmpty()) {
-        path = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
-    } else {
-        path = folderPath
-    }
-
-    def folder = file(path)
-    def result = null
-
-    def isUploadFile = new File(path, ".upload") //文件是否已经上传过
-    if (!isUploadFile.exists()) {
-        isUploadFile.createNewFile()
-    }
-    def uploadFileList = []
-    uploadFileList = isUploadFile.readLines('UTF8')
-
-    def files = folder.listFiles()
-    files?.each {
-        if (it.isFile()) {
-            def name = it.getName()
-            if (name.endsWith(".apk")) {
-                if (uploadFileList.contains(name) && files.length > 1) {
-                    System.out.println '已上传,跳过文件:' + name
-                } else {
-                    isUploadFile.append("${name}\n")
-                    if (result == null) {
-                        result = it.absolutePath
-                    } else {
-                        result = result + ";" + it.absolutePath
-                    }
-                }
-            }
-        }
-    }
-
-    return result
 }
 
 /**将内容打成二维码图片地址*/

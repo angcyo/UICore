@@ -124,35 +124,3 @@ gradle.buildFinished { buildResult -> /*BuildResult*/
     }
     println "构建完毕->${buildResult.action}"
 }
-
-/**
- * 复制文件
- * */
-def copyFile(String from, String toPath) {
-    InputStream input = null
-    OutputStream output = null
-    try {
-        File source = new File(from)
-        if (!source.exists()) {
-            return
-        }
-        File dest = new File(toPath)
-        println '复制文件:' + source.getAbsolutePath() + " -> " + dest.getAbsolutePath()
-
-        input = new FileInputStream(source)
-        output = new FileOutputStream(dest)
-        byte[] buf = new byte[1024]
-        int bytesRead
-        while ((bytesRead = input.read(buf)) != -1) {
-            output.write(buf, 0, bytesRead)
-        }
-        dest.setLastModified(source.lastModified())
-    } finally {
-        if (input != null) {
-            input.close()
-        }
-        if (output != null) {
-            output.close()
-        }
-    }
-}
