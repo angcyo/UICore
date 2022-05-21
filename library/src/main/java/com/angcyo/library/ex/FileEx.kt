@@ -45,20 +45,34 @@ fun String?.isFileExist(): Boolean {
 }
 
 /**将文件内容, 转移到另一个文件*/
-fun String.transferToFile(filePath: String) {
+fun String.transferToFile(filePath: String): File? {
     if (this.equals(filePath, ignoreCase = true)) {
-        return
+        return null
     }
     var outputChannel: FileChannel? = null
     var inputChannel: FileChannel? = null
     try {
+        val target = File(filePath)
         inputChannel = FileInputStream(File(this)).channel
-        outputChannel = FileOutputStream(File(filePath)).channel
+        outputChannel = FileOutputStream(target).channel
         inputChannel.transferTo(0, inputChannel.size(), outputChannel)
         inputChannel.close()
+        return target
     } finally {
         inputChannel?.close()
         outputChannel?.close()
+    }
+}
+
+/**将文件路径对应的文件, 复制到
+ * [kotlin.io.Utils.kt:217]*/
+fun String?.copyFileTo(target: File, overwrite: Boolean = true): File? {
+    return try {
+        val file = this?.let { File(it) }
+        file?.copyTo(target, overwrite)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }
 
@@ -67,8 +81,8 @@ fun File.md5(): String? {
     return getFileMD5()?.toHexString()
 }
 
-fun File.copyTo(path: String) {
-    copyTo(File(path), true)
+fun File.copyTo(path: String, overwrite: Boolean = true) {
+    copyTo(File(path), overwrite)
 }
 
 fun String.file(): File? {
