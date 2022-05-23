@@ -13,17 +13,17 @@ import com.hwangjr.rxbus.RxBus
  */
 
 /**RxBus*/
-public fun Any.busRegister() {
+public fun Any.rxBusRegister() {
     RxBus.get().register(this)
 }
 
 /**RxBus*/
-public fun Any.busUnRegister() {
+public fun Any.rxBusUnRegister() {
     RxBus.get().unregister(this)
 }
 
 /**RxBus*/
-public fun Any.busPost() {
+public fun Any.rxBusPost() {
     RxBus.get().post(this)
 }
 
