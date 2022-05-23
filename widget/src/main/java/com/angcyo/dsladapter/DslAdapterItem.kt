@@ -76,6 +76,9 @@ open class DslAdapterItem : LifecycleOwner {
 
         /**占满宽度的item*/
         const val FULL_ITEM = -1
+
+        /**节流间隔时长*/
+        var DEFAULT_THROTTLE_INTERVAL = ThrottleClickListener.DEFAULT_THROTTLE_INTERVAL
     }
 
     /**适配器, 自动赋值[com.angcyo.dsladapter.DslAdapter.onBindViewHolder]*/
@@ -268,7 +271,7 @@ open class DslAdapterItem : LifecycleOwner {
     var itemLongClick: ((View) -> Boolean)? = null
 
     /**点击节流间隔时长*/
-    var itemClickThrottleInterval: Long = ThrottleClickListener.DEFAULT_THROTTLE_INTERVAL
+    var itemClickThrottleInterval: Long = DEFAULT_THROTTLE_INTERVAL
 
     //使用节流方式处理点击事件
     var _clickListener: View.OnClickListener? = ThrottleClickListener(action = { view ->

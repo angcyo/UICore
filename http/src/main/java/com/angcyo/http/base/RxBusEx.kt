@@ -4,6 +4,8 @@ import com.hwangjr.rxbus.RxBus
 
 /**
  *
+ * https://github.com/AndroidKnife/RxBus/tree/2.x
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/12/26
@@ -24,3 +26,36 @@ public fun Any.busUnRegister() {
 public fun Any.busPost() {
     RxBus.get().post(this)
 }
+
+/**
+ * ```
+ * //默认线程
+ * @Subscribe
+ * public void eat(String food) {
+ *   // purpose
+ * }
+ *
+ * //后台线程
+ * @Subscribe(
+ *   thread = EventThread.IO,
+ *   tags = {
+ *     @Tag(BusAction.EAT_MORE)
+ * })
+ * public void eat(String food) {
+ *   // purpose
+ * }
+ *
+ * //支持返回值
+ * @Produce(
+ *   thread = EventThread.IO,
+ *   tags = {
+ *     @Tag(BusAction.EAT_MORE)
+ *   }
+ * )
+ * public List<String> produceMoreFood() {
+ *   return Arrays.asList("This is breads!");
+ * }
+ *
+ * ```
+ * */
+

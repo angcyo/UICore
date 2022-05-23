@@ -110,13 +110,12 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
 
     /**合规后的初始化*/
     open fun onComplianceAfter() {
+        DslCrashHandler.init(this)
         vmApp<StateModel>().updateState(ComplianceCheck.TYPE_COMPLIANCE_INIT_AFTER, true)
     }
 
     override fun onCreateMain() {
         super.onCreateMain()
-        DslCrashHandler.init(this)
-
         L.d("MD5->", getAppSignatureMD5())
         L.d("SHA1->", getAppSignatureSHA1())
     }
