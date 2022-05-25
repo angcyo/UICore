@@ -29,7 +29,7 @@ open class LifecycleViewModel : ViewModel(), IViewModel, LifecycleOwner {
     }
 
     fun setCurrentState(state: Lifecycle.State) {
-        doMain {
+        doMain(true) {
             lifecycleRegistry.currentState = state
         }
     }

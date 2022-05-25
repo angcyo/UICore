@@ -55,7 +55,7 @@ open class LibApplication : Application(), LifecycleOwner {
         Library.init(this, isDebug())
         L.init(getAppString("app_name") ?: "Log", isDebug())
 
-        lifecycleRegistry.currentState = Lifecycle.State.STARTED
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
 
         if (isMainProgress()) {
             onCreateMain()
@@ -76,12 +76,12 @@ open class LibApplication : Application(), LifecycleOwner {
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
-        lifecycleRegistry.currentState = Lifecycle.State.CREATED
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
     }
 
     override fun onTerminate() {
         super.onTerminate()
-        lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     }
 
     //<editor-fold desc="Lifecycle支持">
