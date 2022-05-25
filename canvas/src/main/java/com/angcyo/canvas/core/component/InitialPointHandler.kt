@@ -3,6 +3,7 @@ package com.angcyo.canvas.core.component
 import android.graphics.RectF
 import android.view.MotionEvent
 import com.angcyo.canvas.CanvasDelegate
+import com.angcyo.library.ex.emptyRectF
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -11,7 +12,7 @@ import com.angcyo.canvas.CanvasDelegate
 class InitialPointHandler : BaseComponent() {
 
     /**左上角初始点位坐标*/
-    val initialPointRect: RectF = RectF()
+    val initialPointRect: RectF = emptyRectF()
     var isTouchDownInInitial = false
 
     fun onTouch(view: CanvasDelegate, event: MotionEvent): Boolean {

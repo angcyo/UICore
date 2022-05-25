@@ -191,7 +191,7 @@ object ShapesHelper {
             val x2 = R
             val y2 = r
 
-            val rect = RectF()
+            val rect = emptyRectF()
             moveTo(0f, r)
 
             val offsetAngle = 10f
@@ -224,7 +224,7 @@ object ShapesHelper {
 
             moveTo(w2, height)
             lineTo(0f, h2)
-            val rect = RectF()
+            val rect = emptyRectF()
             rect.set(x1 - r, y1 - r, x1 + r, y1 + r)
             val angle = 90f + 90f - atan(h2 / w2).toDegrees()
             arcTo(rect, angle, 180f)

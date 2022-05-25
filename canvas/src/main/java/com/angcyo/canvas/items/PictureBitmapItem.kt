@@ -1,8 +1,8 @@
 package com.angcyo.canvas.items
 
 import android.graphics.Bitmap
-import android.graphics.RectF
 import com.angcyo.canvas.ScalePictureDrawable
+import com.angcyo.library.ex.emptyRectF
 import com.angcyo.library.ex.withPicture
 
 /**
@@ -14,13 +14,13 @@ class PictureBitmapItem : PictureItem() {
     /**绘制的图片*/
     var bitmap: Bitmap? = null
 
-    val bitmapBounds = RectF()
+    val bitmapBounds = emptyRectF()
 
     init {
         itemName = "Bitmap"
     }
 
-    override fun updatePictureDrawable() {
+    override fun updatePictureDrawable(resetSize: Boolean) {
         bitmap?.let { bitmap ->
             val itemWidth = bitmap.width
             val itemHeight = bitmap.height

@@ -4,6 +4,7 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
 import com.angcyo.canvas.utils.*
+import com.angcyo.library.ex.emptyRectF
 import com.angcyo.library.ex.matrixAnimator
 
 /**
@@ -48,11 +49,11 @@ class CanvasViewBox(val canvasView: ICanvasView) {
     val invertMatrix: Matrix = Matrix()
 
     /**内容可视区域*/
-    val contentRect = RectF()
+    val contentRect = emptyRectF()
 
     val _tempValues = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
     val _tempPoint = PointF()
-    val _tempRect: RectF = RectF()
+    val _tempRect: RectF = emptyRectF()
 
     //</editor-fold desc="存储属性">
 
@@ -183,7 +184,7 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         matrix.mapRectF(bounds, result)
 
         //将相对于与视图左上角的坐标转换成可以直接绘制的坐标, 最终会和bounds一直
-        /*val test = RectF()
+        /*val test = emptyRectF()
         invertMatrix.mapRectF(result, test)*/
 
         return result

@@ -10,6 +10,7 @@ import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.IRenderer
+import com.angcyo.library.ex.emptyRectF
 import com.angcyo.library.ex.withPicture
 
 /**
@@ -23,13 +24,13 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
     var _visible: Boolean = true
 
     /**距离坐标系原点的像素坐标*/
-    val _bounds = RectF()
+    val _bounds = emptyRectF()
 
     /**在坐标系中的坐标*/
-    val _renderBounds = RectF()
+    val _renderBounds = emptyRectF()
 
     /**相对于视图左上角的坐标*/
-    val _visualBounds = RectF()
+    val _visualBounds = emptyRectF()
 
     val canvasViewBox: CanvasViewBox
         get() = canvasView.getCanvasViewBox()

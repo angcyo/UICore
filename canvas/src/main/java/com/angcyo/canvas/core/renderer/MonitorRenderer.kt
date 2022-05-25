@@ -18,6 +18,7 @@ import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.getMaxLineWidth
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.canvas.utils.mapRectF
+import com.angcyo.library.ex.emptyRectF
 
 /**
  * 调试监视渲染
@@ -68,7 +69,7 @@ class MonitorRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView), ICanv
     //缓存
     val _tempMatrix: Matrix = Matrix()
     val _tempPoint: PointF = PointF()
-    val _tempRect: RectF = RectF()
+    val _tempRect: RectF = emptyRectF()
 
     override fun render(canvas: Canvas) {
         if (_isTouchDown) {

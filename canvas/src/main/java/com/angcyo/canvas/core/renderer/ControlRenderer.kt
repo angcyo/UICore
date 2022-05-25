@@ -90,7 +90,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
         }
     }
 
-    val _textBounds = RectF()
+    val _textBounds = emptyRectF()
     val _tempPoint: PointF = PointF()
 
     override fun render(canvas: Canvas) {

@@ -113,7 +113,17 @@ fun RectF.adjustSizeWithRotate(
     offset(dx, dy)
 }
 
+fun emptyRectF() = RectF(0f, 0f, 0f, 0f)
+
 fun Rect.toRectF() = RectF(this)
+
+fun RectF.isChanged(other: RectF): Boolean {
+    return left != other.left || top != other.top || right != other.right || bottom != other.bottom
+}
+
+fun RectF.isSizeChanged(other: RectF): Boolean {
+    return width() != other.width() || height() != other.height()
+}
 
 /**[adjustScaleSize]*/
 fun RectF.limitMaxWidthHeight(

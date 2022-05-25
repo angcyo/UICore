@@ -21,7 +21,7 @@ class BitmapItemRenderer(canvasView: ICanvasView) :
 
     val bitmapMatrix = Matrix()
 
-    val tempRect = RectF()
+    val tempRect = emptyRectF()
 
     init {
         _name = "Bitmap"

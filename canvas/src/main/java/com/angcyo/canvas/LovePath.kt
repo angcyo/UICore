@@ -1,5 +1,6 @@
 package com.angcyo.canvas
 
+import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.RectF
 import com.angcyo.canvas.utils.ShapesHelper
@@ -15,11 +16,21 @@ import kotlin.math.sqrt
  */
 class LovePath : Path() {
 
-    val bounds = RectF()
+    val loveBounds = RectF()
 
     override fun computeBounds(bounds: RectF, exact: Boolean) {
         //super.computeBounds(bounds, exact)
-        bounds.set(this.bounds)
+        bounds.set(loveBounds)
+    }
+
+    override fun transform(matrix: Matrix) {
+        super.transform(matrix)
+        matrix.mapRect(loveBounds, loveBounds)
+    }
+
+    override fun transform(matrix: Matrix, dst: Path?) {
+        super.transform(matrix, dst)
+        matrix.mapRect(loveBounds, loveBounds)
     }
 
     /**菱形+左右2个半圆*/
@@ -44,17 +55,17 @@ class LovePath : Path() {
         val y2 = y1
 
         moveTo(w2, height)
-        bounds.bottom = height
+        loveBounds.bottom = height
         lineTo(0f, h2)
         val rect = RectF()
         rect.set(x1 - r, y1 - r, x1 + r, y1 + r)
-        bounds.left = rect.left
-        bounds.top = rect.top
+        loveBounds.left = rect.left
+        loveBounds.top = rect.top
         val angle = 90f + 90f - atan(h2 / w2).toDegrees()
         arcTo(rect, angle, 180f)
 
         rect.set(x2 - r, y2 - r, x2 + r, y2 + r)
-        bounds.right = rect.right
+        loveBounds.right = rect.right
         arcTo(rect, -angle, 180f)
 
         lineTo(w2, height)

@@ -19,7 +19,7 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasView: ICanvasView) :
     //<editor-fold desc="临时变量">
 
     val _flipMatrix = Matrix()
-    val _flipRect = RectF()
+    val _flipRect = emptyRectF()
 
     //</editor-fold desc="临时变量">
 

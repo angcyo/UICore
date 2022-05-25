@@ -36,8 +36,8 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
     val canvasDelegate: CanvasDelegate
         get() = canvasView as CanvasDelegate
 
-    val selectRect = RectF()
-    val selectRectMap = RectF()
+    val selectRect = emptyRectF()
+    val selectRectMap = emptyRectF()
     val _startPoint = PointF()
     var _isStart = false
 

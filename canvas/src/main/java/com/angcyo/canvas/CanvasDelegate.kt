@@ -176,7 +176,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
     //<editor-fold desc="View相关">
 
-    val viewBounds: RectF = RectF()
+    val viewBounds: RectF = emptyRectF()
 
     /**入口点*/
     @CanvasEntryPoint
@@ -446,7 +446,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
      * [left] [top] 左上角的像素坐标
      * [width] [height] 需要获取的像素高度*/
     fun getBitmap(left: Float, top: Float, width: Float, height: Float): Bitmap {
-        val oldBoxRect = RectF()
+        val oldBoxRect = emptyRectF()
         oldBoxRect.set(getCanvasViewBox().contentRect)
 
         //更新坐标系为0,0
@@ -455,7 +455,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         val bitmap = Bitmap.createBitmap(width.toInt(), height.toInt(), Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
 
-        val oldRenderRect = RectF()
+        val oldRenderRect = emptyRectF()
         canvas.withTranslation(-left, -top) {
             itemsRendererList.forEach {
                 if (it.isVisible()) {

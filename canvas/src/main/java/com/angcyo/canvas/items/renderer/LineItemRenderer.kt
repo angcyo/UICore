@@ -9,10 +9,7 @@ import com.angcyo.canvas.Reason
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.LineItem
-import com.angcyo.library.ex.ADJUST_TYPE_LT
-import com.angcyo.library.ex.adjustSize
-import com.angcyo.library.ex.adjustSizeWithRotate
-import com.angcyo.library.ex.contains
+import com.angcyo.library.ex.*
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -22,7 +19,7 @@ import com.angcyo.library.ex.contains
 @Deprecated("不支持镜像绘制")
 class LineItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<LineItem>(canvasView) {
 
-    val lineBounds = RectF()
+    val lineBounds = emptyRectF()
 
     override fun onUpdateRendererItem(item: LineItem?, oldItem: LineItem?) {
         super.onUpdateRendererItem(item, oldItem)
@@ -87,7 +84,7 @@ class LineItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<LineItem>(can
         return super.isSupportControlPoint(type)
     }
 
-    val tempRect = RectF()
+    val tempRect = emptyRectF()
 
     override fun containsPoint(point: PointF): Boolean {
         val rendererBounds = getRenderBounds()

@@ -7,6 +7,7 @@ import com.angcyo.canvas.ScalePictureDrawable
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.items.ShapeItem
 import com.angcyo.library.ex.ceil
+import com.angcyo.library.ex.emptyRectF
 import com.angcyo.library.ex.withPicture
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -19,7 +20,7 @@ import kotlin.math.roundToInt
 class ShapeItemRenderer(canvasView: ICanvasView) :
     DrawableItemRenderer<ShapeItem>(canvasView) {
 
-    val shapeBounds = RectF()
+    val shapeBounds = emptyRectF()
 
     /**添加一个shape
      * [Path] 请注意需要从0,0的位置开始绘制*/

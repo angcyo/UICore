@@ -11,6 +11,7 @@ import com.angcyo.canvas.utils.createPaint
 import com.angcyo.library.L
 import com.angcyo.library.ex.ceil
 import com.angcyo.library.ex.dotDegrees
+import com.angcyo.library.ex.emptyRectF
 import kotlin.math.max
 import kotlin.math.min
 
@@ -188,7 +189,7 @@ object GCodeHelper {
     /**处理类*/
     class GCodeHandler {
 
-        val gCodeBounds = RectF()
+        val gCodeBounds = emptyRectF()
         val path: Path = Path()
 
         //坐标单位是否是绝对位置, 否则就是相对位置, 相对于上一次的位置
@@ -222,7 +223,7 @@ object GCodeHelper {
                 }
 
                 //更新gCodeBounds
-                val pathBounds = RectF()
+                val pathBounds = emptyRectF()
                 path.computeBounds(pathBounds, true)
                 gCodeBounds.left = min(gCodeBounds.left, pathBounds.left)
                 gCodeBounds.top = min(gCodeBounds.top, pathBounds.top)
@@ -317,7 +318,7 @@ object GCodeHelper {
 
                                 val r = CanvasTouchHandler.spacing(circleX, circleY, _lastX, _lastY)
 
-                                val arcRect = RectF()
+                                val arcRect = emptyRectF()
                                 arcRect.set(circleX - r, circleY - r, circleX + r, circleY + r)
 
                                 val lastPointAngle =

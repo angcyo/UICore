@@ -4,6 +4,7 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
 import com.angcyo.canvas.core.IComponent
+import com.angcyo.library.ex.emptyRectF
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -17,5 +18,5 @@ abstract class BaseComponent : IComponent {
     //缓存
     val _tempMatrix: Matrix = Matrix()
     val _tempPoint: PointF = PointF()
-    val _tempRect: RectF = RectF()
+    val _tempRect: RectF = emptyRectF()
 }

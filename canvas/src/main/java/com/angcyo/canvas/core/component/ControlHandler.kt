@@ -51,7 +51,7 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
     var controlPointOffset = 2 * dp
 
     //缓存
-    val _controlPointOffsetRect = RectF()
+    val _controlPointOffsetRect = emptyRectF()
 
     //按下的坐标
     val _touchPoint = PointF()
@@ -62,7 +62,7 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
     var isDoubleTouch: Boolean = false
 
     /**按下时, 记录bounds 用于恢复*/
-    val touchItemBounds = RectF()
+    val touchItemBounds = emptyRectF()
 
     //是否移动过
     var isTranslated = false

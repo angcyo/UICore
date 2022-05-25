@@ -56,16 +56,16 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
             }
         }
 
-    val _rotateBounds = RectF()
+    val _rotateBounds = emptyRectF()
 
     /**[_rotateRenderBounds]旋转后的坐标*/
-    val _rotateRenderBounds = RectF()
+    val _rotateRenderBounds = emptyRectF()
 
     /**[_visualBounds]旋转后的坐标*/
-    val _visualRotateBounds = RectF()
+    val _visualRotateBounds = emptyRectF()
 
     /**[changeBounds]之前的bounds*/
-    val changeBeforeBounds = RectF()
+    val changeBeforeBounds = emptyRectF()
 
     //</editor-fold desc="属性">
 
@@ -89,6 +89,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
             changeBeforeBounds.set(this)
             block()
         }
+        //宽高有变化后
         onChangeBoundsAfter(reason)
         L.i(
             buildString {

@@ -12,10 +12,11 @@ abstract class PictureItem : DrawableItem() {
 
     override fun updatePaint(paint: TextPaint) {
         super.updatePaint(paint)
-        updatePictureDrawable()
+        updatePictureDrawable(false)
     }
 
-    /**重新更新[drawable]*/
-    abstract fun updatePictureDrawable()
+    /**重新更新[drawable]
+     * [resetSize] 是否要重置[BaseItem]的大小*/
+    abstract fun updatePictureDrawable(resetSize: Boolean)
 
 }

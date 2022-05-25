@@ -8,6 +8,7 @@ import android.text.TextPaint
 import com.angcyo.canvas.items.PictureTextItem
 import com.angcyo.library.ex.decimal
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.emptyRectF
 import com.angcyo.library.ex.have
 import kotlin.math.atan2
 import kotlin.math.max
@@ -30,7 +31,7 @@ val _tempPoints = floatArrayOf(0f, 0f)
 val _tempPoint = PointF()
 
 /**临时对象, 用来存储矩形坐标*/
-val _tempRectF = RectF()
+val _tempRectF = emptyRectF()
 
 /**临时对象, 用来存储[Matrix]*/
 val _tempMatrix = Matrix()

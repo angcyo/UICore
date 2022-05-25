@@ -24,7 +24,7 @@ class PictureTextItemRenderer(canvasView: ICanvasView) :
     BaseItemRenderer<PictureTextItem>(canvasView) {
 
     /**Bounds*/
-    val textBounds = RectF()
+    val textBounds = emptyRectF()
 
     /**宽度增益的大小*/
     var widthIncrease: Float = 0f

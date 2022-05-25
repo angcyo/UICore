@@ -3,14 +3,10 @@ package com.angcyo.canvas.items
 import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.RectF
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.ScalePictureDrawable
 import com.angcyo.canvas.core.MmValueUnit
-import com.angcyo.library.ex.ceil
-import com.angcyo.library.ex.density
-import com.angcyo.library.ex.isNoSize
-import com.angcyo.library.ex.withPicture
+import com.angcyo.library.ex.*
 import kotlin.math.roundToInt
 
 /**
@@ -31,8 +27,8 @@ class PictureShapeItem : PictureItem() {
     /**需要绘制的形状[Path]*/
     var shapePath: Path? = null
 
-    /**形状的真正的bounds*/
-    val shapeBounds = RectF()
+    /**形状的真正的bounds, 通过[shapePath.computeBounds]算出来的*/
+    val shapeBounds = emptyRectF()
 
     /**线段描边时, 用虚线绘制*/
     val lineStrokeEffect = DashPathEffect(floatArrayOf(4 * density, 5 * density), 0f)
@@ -43,13 +39,13 @@ class PictureShapeItem : PictureItem() {
         itemName = "Shape"
     }
 
-    override fun updatePictureDrawable() {
+    override fun updatePictureDrawable(resetSize: Boolean) {
         shapePath?.let { path ->
             val unit = MmValueUnit()
             val strokeWidth = paint.strokeWidth
             path.computeBounds(shapeBounds, true)
 
-            val shapeWidth = if (itemWidth > 0) {
+            val shapeWidth = if (!resetSize && itemWidth > 0) {
                 itemWidth
             } else if (!shapeBounds.isNoSize()) {
                 shapeBounds.width() + strokeWidth
@@ -57,7 +53,7 @@ class PictureShapeItem : PictureItem() {
                 unit.convertValueToPixel(SHAPE_DEFAULT_WIDTH) + strokeWidth
             }
 
-            val shapeHeight = if (itemHeight > 0) {
+            val shapeHeight = if (!resetSize && itemHeight > 0) {
                 itemHeight
             } else if (!shapeBounds.isNoSize()) {
                 shapeBounds.height() + strokeWidth

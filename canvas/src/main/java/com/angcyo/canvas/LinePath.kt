@@ -4,6 +4,7 @@ import android.graphics.Path
 import android.graphics.RectF
 import android.widget.LinearLayout
 import com.angcyo.canvas.utils.ShapesHelper
+import com.angcyo.library.ex.emptyRectF
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -14,7 +15,7 @@ class LinePath : Path() {
     /**线的方向, 水平垂直*/
     var orientation: Int = LinearLayout.VERTICAL
 
-    val bounds = RectF()
+    val bounds = emptyRectF()
 
     override fun computeBounds(bounds: RectF, exact: Boolean) {
         //super.computeBounds(bounds, exact)

@@ -15,10 +15,7 @@ import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils._tempMatrix
 import com.angcyo.canvas.utils._tempValues
 import com.angcyo.canvas.utils.mapPoint
-import com.angcyo.library.ex.ADJUST_TYPE_CENTER
-import com.angcyo.library.ex.ADJUST_TYPE_LT
-import com.angcyo.library.ex._drawable
-import com.angcyo.library.ex.isNoSize
+import com.angcyo.library.ex.*
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -82,7 +79,7 @@ class ScaleControlPoint : ControlPoint() {
     var touchDiffHeight = 0f
 
     /**按下时, 记录bounds 用于恢复*/
-    val touchItemBounds = RectF()
+    val touchItemBounds = emptyRectF()
 
     //是否缩放过
     var isScaled = false

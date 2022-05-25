@@ -104,7 +104,7 @@ class PictureTextItem : PictureItem() {
         return result
     }
 
-    override fun updatePictureDrawable() {
+    override fun updatePictureDrawable(resetSize: Boolean) {
         text?.let { text ->
             //createStaticLayout(text, paint)
             val width = calcTextWidth(text) + widthIncrease

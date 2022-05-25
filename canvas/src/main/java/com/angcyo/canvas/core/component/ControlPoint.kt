@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
+import com.angcyo.library.ex.emptyRectF
 
 /**
  * 控制点
@@ -28,7 +29,7 @@ open class ControlPoint : BaseComponent() {
     }
 
     /**控制点视图坐标的位置*/
-    val bounds: RectF = RectF()
+    val bounds: RectF = emptyRectF()
 
     /**控制点的类型*/
     var type: Int = -1
