@@ -10,13 +10,16 @@ import com.angcyo.library.app
 import com.angcyo.widget.DslViewHolder
 
 /**
+ * [com.angcyo.dialog.R.style.LibDialogActivity]
  *
+ * [com.angcyo.download.version.VersionUpdateActivity]
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/03/07
  */
 
 open class DialogActivity : BaseAppCompatActivity() {
+
     companion object {
         const val KEY_DIALOG_CONFIG = "key_dialog_config"
 

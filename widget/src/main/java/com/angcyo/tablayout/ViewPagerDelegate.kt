@@ -7,6 +7,7 @@ package com.angcyo.tablayout
  * @date 2019/12/14
  */
 interface ViewPagerDelegate {
+
     companion object {
         const val SCROLL_STATE_IDLE = 0
         const val SCROLL_STATE_DRAGGING = 1

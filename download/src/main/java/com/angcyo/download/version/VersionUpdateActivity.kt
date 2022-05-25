@@ -24,6 +24,9 @@ import java.net.HttpURLConnection
 
 /**
  * 版本更新提示Activity
+ * [com.angcyo.dialog.R.style.LibDialogActivity]
+ *
+ * [com.angcyo.dialog.activity.DialogActivity]
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/04/08
