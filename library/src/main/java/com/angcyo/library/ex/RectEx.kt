@@ -113,6 +113,46 @@ fun RectF.adjustSizeWithRotate(
     offset(dx, dy)
 }
 
+fun Rect.toRectF() = RectF(this)
+
+/**[adjustScaleSize]*/
+fun RectF.limitMaxWidthHeight(
+    maxWidth: Float,
+    maxHeight: Float,
+    adjustType: Int = ADJUST_TYPE_CENTER
+): RectF = adjustScaleSize(maxWidth, maxHeight, adjustType)
+
+/**限制矩形的最小宽高*/
+fun RectF.limitMinWidthHeight(
+    minWidth: Float,
+    minHeight: Float,
+    adjustType: Int = ADJUST_TYPE_CENTER
+): RectF {
+    val width = width()
+    val height = height()
+
+    if (width < minWidth || height < minHeight) {
+        //小于范围, 等比缩放
+
+        val scaleX = minWidth / width
+        val scaleY = minHeight / height
+
+        val newWidth: Float
+        val newHeight: Float
+        if (scaleX > scaleY) {
+            //按照高度缩放
+            newHeight = minHeight
+            newWidth = newHeight * (width / height)
+        } else {
+            newWidth = minWidth
+            newHeight = newWidth * (height / width)
+        }
+
+        adjustSize(newWidth, newHeight, adjustType)
+    }
+    return this
+}
+
 /**将一个矩形等比缩放到指定限制的宽高
  * [com.angcyo.canvas.utils.CanvasUtilsKt.limitMaxWidthHeight]
  * [android.graphics.Matrix.setRectToRect]*/
@@ -135,10 +175,10 @@ fun RectF.adjustScaleSize(
         if (scaleX > scaleY) {
             //按照高度缩放
             newHeight = maxHeight
-            newWidth = width * scaleY
+            newWidth = newHeight * (width / height)
         } else {
             newWidth = maxWidth
-            newHeight = newWidth * scaleX
+            newHeight = newWidth * (height / width)
         }
 
         adjustSize(newWidth, newHeight, adjustType)

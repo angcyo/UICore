@@ -89,12 +89,13 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
             changeBeforeBounds.set(this)
             block()
         }
+        onChangeBoundsAfter(reason)
         L.i(
             buildString {
                 appendLine(this@BaseItemRenderer)
                 append(getRendererItem()?.simpleHash())
-                append(":Bounds改变:(w:${changeBeforeBounds.width()} h:${changeBeforeBounds.height()} -> w:${getBounds().width()} h:${getBounds().height()})")
-                append("${changeBeforeBounds}->${getBounds()}")
+                appendLine(":Bounds改变:(w:${changeBeforeBounds.width()} h:${changeBeforeBounds.height()} -> w:${getBounds().width()} h:${getBounds().height()})")
+                append("->${changeBeforeBounds}->${getBounds()}")
             }
         )
         itemBoundsChanged(reason, changeBeforeBounds)
@@ -104,6 +105,12 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         }
         //invalidate
         refresh()
+    }
+
+    /**Bounds改变后, 触发. 可以再次限制Bounds的大小
+     * [changeBounds]*/
+    open fun onChangeBoundsAfter(reason: Reason) {
+        //getBounds().limitMinWidthHeight(100f, 100f, ADJUST_TYPE_LT)
     }
 
     override fun onUpdateRendererItem(item: T?, oldItem: T?) {
