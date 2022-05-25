@@ -85,14 +85,7 @@ fun File.copyTo(path: String, overwrite: Boolean = true) {
     copyTo(File(path), overwrite)
 }
 
-fun String.file(): File? {
-    return try {
-        File(this)
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
-    }
-}
+fun String.file(): File = File(this)
 
 fun String?.fileName(): String? {
     return this?.file()?.name
@@ -372,7 +365,7 @@ fun String.readTextLastLines(
     null
 }
 
-fun String.writeText(text: String, append: Boolean = true) = file()?.writeText(text, append)
+fun String.writeText(text: String, append: Boolean = true) = file().writeText(text, append)
 
 /**向文件中写入[text]
  * [append] 是否追加, 否则就是重写*/

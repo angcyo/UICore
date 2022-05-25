@@ -11,6 +11,30 @@ import kotlin.math.min
  * @since 2022/04/22
  */
 
+//<editor-fold desc="base">
+
+val _tempRectF = RectF()
+val _tempMatrix = Matrix()
+
+fun emptyRectF() = RectF(0f, 0f, 0f, 0f)
+
+fun Rect.toRectF() = RectF(this)
+
+fun RectF.isChanged(other: RectF): Boolean {
+    return left != other.left || top != other.top || right != other.right || bottom != other.bottom
+}
+
+fun RectF.isSizeChanged(other: RectF): Boolean {
+    return width() != other.width() || height() != other.height()
+}
+
+/**矩形没有大小*/
+fun RectF.isNoSize() = width() == 0f || height() == 0f
+
+fun Rect.isNoSize() = width() == 0 || height() == 0
+
+//<editor-fold desc="base">
+
 //<editor-fold desc="rect size">
 
 /**按照矩形中点调整*/
@@ -28,13 +52,53 @@ const val ADJUST_TYPE_RB = 0x22
 /**按照矩形左下调整*/
 const val ADJUST_TYPE_LB = 0x12
 
-val _tempRectF = RectF()
-val _tempMatrix = Matrix()
+/**
+ * 简单的缩放一个矩形
+ * */
+fun RectF.scale(scaleX: Float, scaleY: Float): RectF {
+    val matrix = Matrix()
+    matrix.setScale(scaleX, scaleY)
+    matrix.mapRect(this)
+    return this
+}
 
-/**矩形没有大小*/
-fun RectF.isNoSize() = width() == 0f || height() == 0f
+/**缩放一个矩形
+ * [scaleX] [scaleY] 宽高缩放的比例
+ * [pivotX] [pivotY] 缩放的轴点
+ * */
+fun RectF.scale(scaleX: Float, scaleY: Float, pivotX: Float, pivotY: Float): RectF {
+    val matrix = Matrix()
+    matrix.setScale(scaleX, scaleY, pivotX, pivotY)
+    matrix.mapRect(this)
+    return this
+}
 
-fun Rect.isNoSize() = width() == 0 || height() == 0
+/**缩放一个矩形
+ * [degrees] 旋转的角度
+ * [pivotX] [pivotY] 旋转的轴点
+ * */
+fun RectF.rotate(degrees: Float, pivotX: Float, pivotY: Float): RectF {
+    val matrix = Matrix()
+    matrix.setRotate(degrees, pivotX, pivotY)
+    matrix.mapRect(this)
+    return this
+}
+
+/**
+ * 在矩形中间点, 缩放
+ * */
+fun RectF.scaleFromCenter(scaleX: Float, scaleY: Float): RectF {
+    val matrix = Matrix()
+    matrix.setScale(scaleX, scaleY)
+    val tempRectF = RectF()
+    matrix.mapRect(tempRectF, this)
+    matrix.postTranslate(
+        this.width() / 2 - tempRectF.width() / 2,
+        this.height() / 2 - tempRectF.height() / 2
+    )
+    matrix.mapRect(this)
+    return this
+}
 
 /**调整矩形大小*/
 fun RectF.adjustSize(width: Float, height: Float, adjustType: Int = ADJUST_TYPE_CENTER) {
@@ -111,18 +175,6 @@ fun RectF.adjustSizeWithRotate(
         centerY() - rotateRect.centerY()
     }
     offset(dx, dy)
-}
-
-fun emptyRectF() = RectF(0f, 0f, 0f, 0f)
-
-fun Rect.toRectF() = RectF(this)
-
-fun RectF.isChanged(other: RectF): Boolean {
-    return left != other.left || top != other.top || right != other.right || bottom != other.bottom
-}
-
-fun RectF.isSizeChanged(other: RectF): Boolean {
-    return width() != other.width() || height() != other.height()
 }
 
 /**[adjustScaleSize]*/

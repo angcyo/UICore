@@ -193,7 +193,7 @@ class CameraXRecordVideoFragment : BaseFragment() {
             builder.append(height)
             builder.append(".jpg")
             val outputFile =
-                filePath(Constant.CAMERA_FOLDER_NAME, fileNameUUID(builder.toString())).file()!!
+                filePath(Constant.CAMERA_FOLDER_NAME, fileNameUUID(builder.toString())).file()
             var oldBitmap = bitmap
             //水印处理
             result = callback!!.onTakePhotoBefore(bitmap, width, height)

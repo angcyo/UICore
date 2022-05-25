@@ -71,7 +71,7 @@ class JsonAttachUploader {
                     if (it.startsWith(File.separatorChar)) {
                         //参数是文件路径
                         val file = it.file()
-                        if (file != null && file.exists() && file.canRead()) {
+                        if (file.exists() && file.canRead()) {
                             haveFile = true
 
                             _attachPathList.add(it)

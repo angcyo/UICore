@@ -19,22 +19,24 @@ import kotlin.math.atan2
  * @param progress [0,1]
  * */
 
-/**获取[Path]指定进度[progress]时的点坐标*/
+/**获取[Path]指定进度[progress]时的点坐标
+ * [progress] [0~1] */
 fun Path.getProgressPosition(progress: Float): FloatArray {
     val pathMeasure = PathMeasure(this, false)
 
     val floatArray = floatArrayOf()
-    pathMeasure.getPosTan(progress, floatArray, null)
+    pathMeasure.getPosTan(progress * pathMeasure.length, floatArray, null)
 
     return floatArray
 }
 
-/**获取[Path]指定进度[progress]时的点角度*/
+/**获取[Path]指定进度[progress]时的点角度
+ * [progress] [0~1]*/
 fun Path.getProgressAngle(progress: Float): Float {
     val pathMeasure = PathMeasure(this, false)
 
     val floatArray = floatArrayOf()
-    pathMeasure.getPosTan(progress, null, floatArray)
+    pathMeasure.getPosTan(progress * pathMeasure.length, null, floatArray)
 
     //利用反正切函数得到角度
     return fixAngle((atan2(floatArray[1], floatArray[0]) * 180F / Math.PI).toFloat())
@@ -73,54 +75,6 @@ fun Path.getProgressPath(progress: Float, dst: Path = Path()): Path {
     pathMeasure.getSegment(0f, progress * pathMeasure.length, dst, true)
 
     return dst
-}
-
-/**
- * 简单的缩放一个矩形
- * */
-fun RectF.scale(scaleX: Float, scaleY: Float): RectF {
-    val matrix = Matrix()
-    matrix.setScale(scaleX, scaleY)
-    matrix.mapRect(this)
-    return this
-}
-
-/**缩放一个矩形
- * [scaleX] [scaleY] 宽高缩放的比例
- * [pivotX] [pivotY] 缩放的轴点
- * */
-fun RectF.scale(scaleX: Float, scaleY: Float, pivotX: Float, pivotY: Float): RectF {
-    val matrix = Matrix()
-    matrix.setScale(scaleX, scaleY, pivotX, pivotY)
-    matrix.mapRect(this)
-    return this
-}
-
-/**缩放一个矩形
- * [degrees] 旋转的角度
- * [pivotX] [pivotY] 旋转的轴点
- * */
-fun RectF.rotate(degrees: Float, pivotX: Float, pivotY: Float): RectF {
-    val matrix = Matrix()
-    matrix.setRotate(degrees, pivotX, pivotY)
-    matrix.mapRect(this)
-    return this
-}
-
-/**
- * 在矩形中间点, 缩放
- * */
-fun RectF.scaleFromCenter(scaleX: Float, scaleY: Float): RectF {
-    val matrix = Matrix()
-    matrix.setScale(scaleX, scaleY)
-    val tempRectF = RectF()
-    matrix.mapRect(tempRectF, this)
-    matrix.postTranslate(
-        this.width() / 2 - tempRectF.width() / 2,
-        this.height() / 2 - tempRectF.height() / 2
-    )
-    matrix.mapRect(this)
-    return this
 }
 
 val _computeBounds: RectF = RectF()
@@ -189,4 +143,26 @@ fun Path.intersect(path: Path): Boolean {
         return false
     }
     return !result.isEmpty
+}
+
+/**枚举路径上所有的点
+ * [step] 步长*/
+fun Path.eachPath(step: Float = 1f, block: (index: Int, posArray: FloatArray) -> Unit) {
+    val pathMeasure = PathMeasure(this, false)
+    val floatArray = floatArrayOf()
+    var position = 0f
+    val length = pathMeasure.length
+
+    var index = 0
+    while (position <= length) {
+        pathMeasure.getPosTan(position, floatArray, null)
+        block(index++, floatArray)
+        if (position == length) {
+            break
+        }
+        position += step
+        if (position > length) {
+            position = length
+        }
+    }
 }
