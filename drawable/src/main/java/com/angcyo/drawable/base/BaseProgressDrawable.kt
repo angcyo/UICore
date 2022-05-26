@@ -1,5 +1,9 @@
 package com.angcyo.drawable.base
 
+import android.content.Context
+import android.util.AttributeSet
+import com.angcyo.drawable.R
+
 /**
  *
  * Email:angcyo@126.com
@@ -23,5 +27,18 @@ abstract class BaseProgressDrawable : AbsDslDrawable() {
             field = value
             invalidateSelf()
         }
+
+    override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
+        val typedArray =
+            context.obtainStyledAttributes(attributeSet, R.styleable.BaseProgressDrawable)
+        isIndeterminate =
+            typedArray.getBoolean(
+                R.styleable.BaseProgressDrawable_r_loading_is_indeterminate,
+                isIndeterminate
+            )
+        progress =
+            typedArray.getInt(R.styleable.BaseProgressDrawable_r_loading_progress, progress)
+        typedArray.recycle()
+    }
 
 }

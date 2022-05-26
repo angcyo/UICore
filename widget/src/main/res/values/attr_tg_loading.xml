@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="TGSolidLoadingView">
+        <attr name="r_loading_is_indeterminate" />
+        <attr name="r_loading_progress" />
+        <attr name="r_loading_color" />
+        <attr name="r_loading_bg_color" />
+        <attr name="r_loading_width" />
+        <attr name="r_loading_offset" />
+        <attr name="r_loading_indeterminate_sweep_angle" />
+        <attr name="r_loading_angle_step" />
+    </declare-styleable>
+
+    <declare-styleable name="TGStrokeLoadingView">
+        <attr name="r_loading_is_indeterminate" />
+        <attr name="r_loading_progress" />
+        <attr name="r_loading_color" />
+        <attr name="r_loading_bg_color" />
+        <attr name="r_loading_width" />
+        <attr name="r_loading_offset" />
+        <attr name="r_loading_indeterminate_sweep_angle" />
+        <attr name="r_loading_angle_step" />
+        <attr name="r_loading_bg_stroke_width" />
+    </declare-styleable>
+
+</resources>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="r_loading_is_indeterminate" format="boolean" />
+    <attr name="r_loading_progress" format="integer" />
+    <attr name="r_loading_bg_color" format="color" />
+    <attr name="r_loading_color" format="color" />
+    <attr name="r_loading_width" format="dimension" />
+    <attr name="r_loading_offset" format="dimension" />
+    <attr name="r_loading_indeterminate_sweep_angle" format="float" />
+    <attr name="r_loading_angle_step" format="float" />
+    <attr name="r_loading_bg_stroke_width" format="dimension" />
+
+    <declare-styleable name="BaseProgressDrawable">
+        <attr name="r_loading_is_indeterminate" />
+        <attr name="r_loading_progress" />
+    </declare-styleable>
+
+    <declare-styleable name="TGSolidLoadingDrawable">
+        <attr name="r_loading_is_indeterminate" />
+        <attr name="r_loading_progress" />
+        <attr name="r_loading_color" />
+        <attr name="r_loading_bg_color" />
+        <attr name="r_loading_width" />
+        <attr name="r_loading_offset" />
+        <attr name="r_loading_indeterminate_sweep_angle" />
+        <attr name="r_loading_angle_step" />
+    </declare-styleable>
+
+    <declare-styleable name="TGStrokeLoadingDrawable">
+        <attr name="r_loading_is_indeterminate" />
+        <attr name="r_loading_progress" />
+        <attr name="r_loading_color" />
+        <attr name="r_loading_bg_color" />
+        <attr name="r_loading_width" />
+        <attr name="r_loading_offset" />
+        <attr name="r_loading_indeterminate_sweep_angle" />
+        <attr name="r_loading_angle_step" />
+        <attr name="r_loading_bg_stroke_width" />
+    </declare-styleable>
+
+</resources>

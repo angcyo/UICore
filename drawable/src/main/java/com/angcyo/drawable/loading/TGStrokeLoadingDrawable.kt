@@ -1,7 +1,10 @@
 package com.angcyo.drawable.loading
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.util.AttributeSet
+import com.angcyo.drawable.R
 import com.angcyo.library.ex.toColorInt
 import kotlin.math.min
 
@@ -24,6 +27,17 @@ class TGStrokeLoadingDrawable : BaseTGLoadingDrawable() {
         loadingBgColor = "#10000000".toColorInt()
         paint.style = Paint.Style.STROKE
         bgStrokeWidth = loadingWidth
+    }
+
+    override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
+        super.initAttribute(context, attributeSet)
+        val typedArray =
+            context.obtainStyledAttributes(attributeSet, R.styleable.TGStrokeLoadingDrawable)
+        bgStrokeWidth = typedArray.getDimensionPixelOffset(
+            R.styleable.TGStrokeLoadingDrawable_r_loading_bg_stroke_width,
+            bgStrokeWidth.toInt()
+        ).toFloat()
+        typedArray.recycle()
     }
 
     override fun draw(canvas: Canvas) {

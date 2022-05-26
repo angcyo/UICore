@@ -1,8 +1,11 @@
 package com.angcyo.drawable.loading
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
+import android.util.AttributeSet
+import com.angcyo.drawable.R
 import com.angcyo.drawable.base.BaseProgressDrawable
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.toColorInt
@@ -45,6 +48,40 @@ abstract class BaseTGLoadingDrawable : BaseProgressDrawable() {
 
     //当前的角度
     var _angle = 0f
+
+    override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
+        super.initAttribute(context, attributeSet)
+        val typedArray =
+            context.obtainStyledAttributes(attributeSet, R.styleable.TGSolidLoadingDrawable)
+        loadingBgColor = typedArray.getColor(
+            R.styleable.TGSolidLoadingDrawable_r_loading_bg_color,
+            loadingBgColor
+        )
+        loadingColor = typedArray.getColor(
+            R.styleable.TGSolidLoadingDrawable_r_loading_color,
+            loadingColor
+        )
+
+        loadingWidth = typedArray.getDimensionPixelOffset(
+            R.styleable.TGSolidLoadingDrawable_r_loading_width,
+            loadingWidth.toInt()
+        ).toFloat()
+        loadingOffset = typedArray.getDimensionPixelOffset(
+            R.styleable.TGSolidLoadingDrawable_r_loading_offset,
+            loadingOffset.toInt()
+        ).toFloat()
+
+        indeterminateSweepAngle = typedArray.getFloat(
+            R.styleable.TGSolidLoadingDrawable_r_loading_indeterminate_sweep_angle,
+            indeterminateSweepAngle
+        )
+        angleStep = typedArray.getFloat(
+            R.styleable.TGSolidLoadingDrawable_r_loading_angle_step,
+            angleStep
+        )
+
+        typedArray.recycle()
+    }
 
     fun doAngle() {
         //动画
