@@ -10,7 +10,6 @@ import android.graphics.Color
 import android.graphics.Point
 import android.graphics.Rect
 import android.os.Build
-import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
@@ -30,6 +29,7 @@ import com.angcyo.library._isNavigationBarShow
 import com.angcyo.library.app
 import com.angcyo.library.component.ActivityLifecycleCallbacksAdapter
 import com.angcyo.library.component.NetUtils
+import com.angcyo.library.component._delay
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.getFieldValue
@@ -64,18 +64,10 @@ object ActivityDebugInfo {
             show(activity)
         }
 
-        override fun onActivityPostCreated(activity: Activity, savedInstanceState: Bundle?) {
-            super.onActivityPostCreated(activity, savedInstanceState)
-            show(activity)
-        }
-
-        override fun onActivityPostResumed(activity: Activity) {
-            super.onActivityPostResumed(activity)
-            show(activity)
-        }
-
         fun show(activity: Activity) {
-            activity.showDebugInfoView(true, true, gravity)
+            _delay(240L) {
+                activity.showDebugInfoView(true, true, gravity)
+            }
         }
     }
 }
