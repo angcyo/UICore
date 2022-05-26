@@ -1,17 +1,17 @@
-package com.angcyo.widget.progress
+package com.angcyo.drawable.progress
 
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.RectF
 import android.util.AttributeSet
+import androidx.core.math.MathUtils.clamp
+import com.angcyo.drawable.R
 import com.angcyo.drawable.base.AbsDslDrawable
 import com.angcyo.library.ex.alpha
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
-import com.angcyo.tablayout.evaluateColor
-import com.angcyo.widget.R
-import com.angcyo.widget.layout.touch.SwipeBackLayout.Companion.clamp
+import com.angcyo.library.ex.evaluateColor
 
 /**
  * 从中间开始, 像两端拉长

@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.animation.LinearInterpolator
 import com.angcyo.drawable.base.AbsDslDrawable
+import com.angcyo.drawable.progress.HSProgressDrawable
 import com.angcyo.widget.R
 import com.angcyo.widget.base.BaseAnimatorDrawableView
 

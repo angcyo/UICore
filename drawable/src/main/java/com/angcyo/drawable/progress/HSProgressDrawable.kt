@@ -1,14 +1,14 @@
-package com.angcyo.widget.progress
+package com.angcyo.drawable.progress
 
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.util.AttributeSet
 import android.view.animation.DecelerateInterpolator
+import com.angcyo.drawable.R
 import com.angcyo.drawable.base.BaseSectionDrawable
 import com.angcyo.library.ex.alpha
 import com.angcyo.library.ex.dp
-import com.angcyo.widget.R
 import kotlin.math.min
 
 /**
