@@ -6,7 +6,7 @@
         android:centerX="0.5"
         android:centerY="0.5"
         android:endColor="@color/lib_white"
-        android:gradientRadius="15dp"
+        android:gradientRadius="20dp"
         android:startColor="@color/colorPrimary"
         android:type="radial" />
 
