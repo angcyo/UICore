@@ -50,28 +50,32 @@ object ActivityDebugInfo {
     /**小圆点的大小dp单位*/
     var DEFAULT_NORMAL_SIZE = 20
 
-    fun install(context: Context = app()) {
+    fun install(gravity: Int = Gravity.BOTTOM or Gravity.RIGHT, context: Context = app()) {
         val app = context.applicationContext
         if (app is Application) {
-            app.registerActivityLifecycleCallbacks(ActivityListener())
+            app.registerActivityLifecycleCallbacks(ActivityListener(gravity))
         }
     }
 
-    private class ActivityListener : ActivityLifecycleCallbacksAdapter() {
+    private class ActivityListener(val gravity: Int) : ActivityLifecycleCallbacksAdapter() {
 
         override fun onActivityResumed(activity: Activity) {
             super.onActivityResumed(activity)
-            activity.showDebugInfoView()
+            show(activity)
         }
 
         override fun onActivityPostCreated(activity: Activity, savedInstanceState: Bundle?) {
             super.onActivityPostCreated(activity, savedInstanceState)
-            activity.showDebugInfoView()
+            show(activity)
         }
 
         override fun onActivityPostResumed(activity: Activity) {
             super.onActivityPostResumed(activity)
-            activity.showDebugInfoView()
+            show(activity)
+        }
+
+        fun show(activity: Activity) {
+            activity.showDebugInfoView(true, true, gravity)
         }
     }
 }
