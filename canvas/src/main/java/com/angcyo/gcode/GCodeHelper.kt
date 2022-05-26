@@ -23,6 +23,27 @@ import kotlin.math.min
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/12
  */
+
+
+/**
+
+# GCode 常用指令
+
+- `G20` 英寸单位
+- `G21` 毫米单位
+- ---
+- `G90` 绝对位置
+- `G91` 相对位置
+- ---
+- `G0` moveTo
+- `G1` lineTo
+- `G2` 顺时针画弧
+- `G3` 逆时针画弧
+- ---
+- `M05` 关闭主轴,所有`G`操作, 都变成`moveTo`
+- `M03` 打开主轴
+
+ * */
 object GCodeHelper {
 
     //坐标单位对应的像素比例 (厘米, 英寸)

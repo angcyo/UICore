@@ -16,7 +16,7 @@ class ByteArrayReader(val bytes: ByteArray) {
         _index += size
     }
 
-    /**在指针位置读取[size]个字节*/
+    /**在指针位置读取[size]个字节, 并且自动偏移滞后*/
     fun read(size: Int): ByteArray {
         if (_index + size > bytes.size) {
             //超出范围
@@ -28,7 +28,9 @@ class ByteArrayReader(val bytes: ByteArray) {
         return result
     }
 
-    /**超范围时, 返回-1*/
+    /**
+     * 读取多少个字节表示的int数据
+     * 超范围时, 返回-1*/
     fun readInt(size: Int): Int {
         val array = read(size)
         if (array.isEmpty()) {
@@ -37,7 +39,8 @@ class ByteArrayReader(val bytes: ByteArray) {
         return array.toHexInt()
     }
 
-    /**超范围时, 返回null*/
+    /**读取多少个字节表示的string数据
+     * 超范围时, 返回null*/
     fun readString(size: Int, charset: Charset = Charsets.UTF_8): String? {
         val array = read(size)
         if (array.isEmpty()) {
