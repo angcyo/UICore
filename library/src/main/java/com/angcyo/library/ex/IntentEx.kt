@@ -12,7 +12,9 @@ import android.provider.MediaStore
 import android.provider.Settings
 import android.text.TextUtils
 import com.angcyo.library.L
+import com.angcyo.library.app
 import com.angcyo.library.component.queryActivities
+import kotlin.reflect.KClass
 
 /**
  *
@@ -258,3 +260,43 @@ fun Context.sendBroadcast(action: String, extra: Intent.() -> Unit = {}) {
         extra()
     })
 }
+
+//region ------Activity------
+
+/**启动一个Activity*/
+inline fun <reified T> Context.startActivity() {
+    startActivity(Intent(this, T::class.java).apply {
+        baseConfig(this@startActivity)
+    })
+}
+
+inline fun <reified T : Any> Class<T>.startActivity(context: Context = app()) {
+    context.startActivity(Intent(context, this).apply {
+        baseConfig(context)
+    })
+}
+
+inline fun <reified T : Any> KClass<T>.startActivity(context: Context = app()) {
+    java.startActivity(context)
+}
+
+//endregion
+
+//region ------Service------
+
+/**启动一个Activity*/
+inline fun <reified T> Context.startService() {
+    startService(Intent(this, T::class.java).apply {
+        baseConfig(this@startService)
+    })
+}
+
+inline fun <reified T : Any> Class<T>.startService(context: Context = app()) {
+    context.startService(Intent(context, this))
+}
+
+inline fun <reified T : Any> KClass<T>.startService(context: Context = app()) {
+    java.startService(context)
+}
+
+//endregion

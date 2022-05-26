@@ -24,7 +24,7 @@ import kotlin.math.atan2
 fun Path.getProgressPosition(progress: Float): FloatArray {
     val pathMeasure = PathMeasure(this, false)
 
-    val floatArray = floatArrayOf()
+    val floatArray = floatArrayOf(0f, 0f)
     pathMeasure.getPosTan(progress * pathMeasure.length, floatArray, null)
 
     return floatArray
@@ -35,7 +35,7 @@ fun Path.getProgressPosition(progress: Float): FloatArray {
 fun Path.getProgressAngle(progress: Float): Float {
     val pathMeasure = PathMeasure(this, false)
 
-    val floatArray = floatArrayOf()
+    val floatArray = floatArrayOf(0f, 0f)
     pathMeasure.getPosTan(progress * pathMeasure.length, null, floatArray)
 
     //利用反正切函数得到角度
@@ -149,7 +149,7 @@ fun Path.intersect(path: Path): Boolean {
  * [step] 步长*/
 fun Path.eachPath(step: Float = 1f, block: (index: Int, posArray: FloatArray) -> Unit) {
     val pathMeasure = PathMeasure(this, false)
-    val floatArray = floatArrayOf()
+    val floatArray = floatArrayOf(0f, 0f)
     var position = 0f
     val length = pathMeasure.length
 

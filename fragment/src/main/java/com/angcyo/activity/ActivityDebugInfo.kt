@@ -1,6 +1,8 @@
 package com.angcyo.activity
 
 import android.app.Activity
+import android.app.Application
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
@@ -19,10 +21,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import com.angcyo.activity.ActivityDebugInfo.DEFAULT_NORMAL_SIZE
 import com.angcyo.fragment.R
 import com.angcyo.http.base.toJson
 import com.angcyo.library.L
 import com.angcyo.library._isNavigationBarShow
+import com.angcyo.library.app
+import com.angcyo.library.component.ActivityLifecycleCallbacksAdapter
 import com.angcyo.library.component.NetUtils
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.Device
@@ -38,6 +43,27 @@ import kotlin.math.sqrt
  * @author angcyo
  * @date 2019/12/20
  */
+
+object ActivityDebugInfo {
+
+    /**小圆点的大小dp单位*/
+    var DEFAULT_NORMAL_SIZE = 20
+
+    fun install(context: Context = app()) {
+        val app = context.applicationContext
+        if (app is Application) {
+            app.registerActivityLifecycleCallbacks(ActivityListener())
+        }
+    }
+
+    private class ActivityListener : ActivityLifecycleCallbacksAdapter() {
+
+        override fun onActivityPostResumed(activity: Activity) {
+            super.onActivityPostResumed(activity)
+            activity.showDebugInfoView()
+        }
+    }
+}
 
 /**
  * 添加一个TextView,用来提示当前的Activity类
@@ -85,11 +111,11 @@ fun Activity.showDebugInfoView(
                     width =
                         if (_isNavigationBarShow || Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
                             //导航栏显示了
-                            18 * dpi
+                            DEFAULT_NORMAL_SIZE * dpi
                         } else {
                             //导航栏没有显示, 圆点放大一点.
                             //Android P 之后, 手机屏幕四个角都是圆弧的了
-                            24 * dpi
+                            (DEFAULT_NORMAL_SIZE + 8) * dpi
                         }
                     height = width
                 } else {
