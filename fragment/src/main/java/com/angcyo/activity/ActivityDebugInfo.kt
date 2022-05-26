@@ -10,6 +10,7 @@ import android.graphics.Color
 import android.graphics.Point
 import android.graphics.Rect
 import android.os.Build
+import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
@@ -57,6 +58,16 @@ object ActivityDebugInfo {
     }
 
     private class ActivityListener : ActivityLifecycleCallbacksAdapter() {
+
+        override fun onActivityResumed(activity: Activity) {
+            super.onActivityResumed(activity)
+            activity.showDebugInfoView()
+        }
+
+        override fun onActivityPostCreated(activity: Activity, savedInstanceState: Bundle?) {
+            super.onActivityPostCreated(activity, savedInstanceState)
+            activity.showDebugInfoView()
+        }
 
         override fun onActivityPostResumed(activity: Activity) {
             super.onActivityPostResumed(activity)
