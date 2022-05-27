@@ -43,7 +43,12 @@ abstract class BaseDrawableView(context: Context, attributeSet: AttributeSet? = 
         super.onLayout(changed, left, top, right, bottom)
         if (changed) {
             drawables.forEach {
-                it.setBounds(left, top, right, bottom)
+                it.setBounds(
+                    paddingLeft,
+                    paddingTop,
+                    getRight() - getLeft() - paddingRight,
+                    getBottom() - getTop() - paddingBottom
+                )
             }
         }
     }

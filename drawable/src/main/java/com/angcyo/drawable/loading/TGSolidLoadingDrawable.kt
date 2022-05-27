@@ -54,7 +54,9 @@ class TGSolidLoadingDrawable : BaseTGLoadingDrawable() {
             paint
         )
 
-        doAngle()
+        if (loading) {
+            doAngle()
+        }
     }
 
 }

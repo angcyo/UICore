@@ -83,7 +83,9 @@ class TGStrokeLoadingDrawable : BaseTGLoadingDrawable() {
             paint
         )
 
-        doAngle()
+        if (loading) {
+            doAngle()
+        }
     }
 
 }

@@ -25,6 +25,13 @@ abstract class BaseTGLoadingDrawable : BaseProgressDrawable() {
         strokeCap = Paint.Cap.ROUND
     }
 
+    /**是否需要动画*/
+    var loading: Boolean = true
+        set(value) {
+            field = value
+            invalidateSelf()
+        }
+
     /**加载的背景颜色*/
     var loadingBgColor: Int = "#80000000".toColorInt()
 
@@ -83,7 +90,7 @@ abstract class BaseTGLoadingDrawable : BaseProgressDrawable() {
         typedArray.recycle()
     }
 
-    fun doAngle() {
+    open fun doAngle() {
         //动画
         _angle += angleStep
         _angle %= 360

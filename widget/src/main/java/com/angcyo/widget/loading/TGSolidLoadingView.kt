@@ -3,6 +3,7 @@ package com.angcyo.widget.loading
 import android.content.Context
 import android.util.AttributeSet
 import com.angcyo.drawable.base.AbsDslDrawable
+import com.angcyo.drawable.loading.BaseTGLoadingDrawable
 import com.angcyo.drawable.loading.TGSolidLoadingDrawable
 import com.angcyo.library.ex.dp
 import com.angcyo.widget.base.BaseDrawableView
@@ -22,6 +23,10 @@ class TGSolidLoadingView(context: Context, attributeSet: AttributeSet? = null) :
                 indeterminateSweepAngle = 45f
             }
         })
+    }
+
+    fun loading(loading: Boolean = true) {
+        firstDrawable<BaseTGLoadingDrawable>()?.loading = loading
     }
 
 }
