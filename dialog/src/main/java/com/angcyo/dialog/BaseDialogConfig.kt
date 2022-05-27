@@ -35,6 +35,7 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
 
     /**
      * 对话框初始化方法
+     * [initControlLayout]
      * */
     override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         super.initDialogView(dialog, dialogViewHolder)
@@ -53,11 +54,12 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
 
         //标题栏控制
         dialogViewHolder.visible(R.id.title_layout, dialogTitle != null)
-        dialogViewHolder.visible(R.id.title_line_view, dialogTitle != null && !hideDialogTitleLine)
+        dialogViewHolder.gone(R.id.title_line_view, dialogTitle == null || hideDialogTitleLine)
 
         initControlLayout(dialog, dialogViewHolder)
     }
 
+    /**[initDialogView]*/
     open fun initControlLayout(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         //确定按钮
         dialogViewHolder.tv(R.id.positive_button)?.apply {

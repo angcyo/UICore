@@ -22,14 +22,10 @@ import com.angcyo.base.dslAHelper
 import com.angcyo.dialog.activity.DialogActivity
 import com.angcyo.library.L
 import com.angcyo.library.UndefinedDrawable
-import com.angcyo.library.ex._drawable
-import com.angcyo.library.ex.hideSoftInput
-import com.angcyo.library.ex.undefined_float
-import com.angcyo.library.ex.undefined_res
+import com.angcyo.library.ex.*
 import com.angcyo.lifecycle.onDestroy
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.dslViewHolder
-import com.angcyo.library.ex.replace
 import java.io.Serializable
 
 /**
@@ -586,27 +582,30 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
 
     @CallSuper
     open fun onDialogInit() {
-        lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
     }
 
     @CallSuper
     open fun onDialogCreate(dialog: Dialog) {
-        lifecycleRegistry.currentState = Lifecycle.State.CREATED
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
     }
 
     @CallSuper
     open fun onDialogShow(dialog: Dialog, dialogViewHolder: DslViewHolder) {
-        lifecycleRegistry.currentState = Lifecycle.State.STARTED
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
     }
 
+    /**[android.content.DialogInterface.OnCancelListener]*/
     @CallSuper
     open fun onDialogCancel(dialog: Dialog, dialogViewHolder: DslViewHolder) {
-
+        lifecycleRegistry.currentState
     }
 
+    /**[android.content.DialogInterface.OnDismissListener]*/
     @CallSuper
     open fun onDialogDestroy(dialog: Dialog, dialogViewHolder: DslViewHolder) {
-        lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         _lifecycleObserver?.let { observer ->
             if (dialogContext is LifecycleOwner) {
                 (dialogContext as LifecycleOwner).lifecycle.removeObserver(observer)

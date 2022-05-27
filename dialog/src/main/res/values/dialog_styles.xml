@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="LibDialogStyle" parent="ThemeOverlay.AppCompat.Dialog">
+    <style name="LibDialogBaseTheme" parent="ThemeOverlay.AppCompat.Dialog">
         <item name="android:windowNoTitle">true</item>
 
         <!--会影响dialog上的布局...奇怪-->
@@ -15,6 +15,10 @@
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowIsFloating">true</item>
+    </style>
+
+    <style name="LibDialogStyle" parent="LibDialogBaseTheme">
+        <!--占位-->
     </style>
 
     <style name="LibFullscreenDialogStyle" parent="LibDialogStyle">
@@ -43,60 +47,60 @@
     <!--缩放动画-->
     <style name="LibDialogAnimation" parent="Animation.AppCompat.Dialog">
         <item name="android:windowEnterAnimation">@anim/lib_dialog_enter_animation</item>
-<!--        <item name="android:windowShowAnimation">@anim/lib_dialog_enter_animation</item>-->
+        <!--        <item name="android:windowShowAnimation">@anim/lib_dialog_enter_animation</item>-->
         <item name="android:windowExitAnimation">@anim/lib_dialog_exit_animation</item>
-<!--        <item name="android:windowHideAnimation">@anim/lib_dialog_exit_animation</item>-->
+        <!--        <item name="android:windowHideAnimation">@anim/lib_dialog_exit_animation</item>-->
     </style>
 
     <!--IOS对话框动画-->
     <style name="LibIosDialogAnimation" parent="Animation.AppCompat.Dialog">
         <item name="android:windowEnterAnimation">@anim/lib_ios_dialog_enter_animation</item>
-<!--        <item name="android:windowShowAnimation">@anim/lib_ios_dialog_enter_animation</item>-->
+        <!--        <item name="android:windowShowAnimation">@anim/lib_ios_dialog_enter_animation</item>-->
         <item name="android:windowExitAnimation">@anim/lib_ios_dialog_exit_animation</item>
-<!--        <item name="android:windowHideAnimation">@anim/lib_ios_dialog_exit_animation</item>-->
+        <!--        <item name="android:windowHideAnimation">@anim/lib_ios_dialog_exit_animation</item>-->
     </style>
 
     <!--底部Translate动画-->
     <style name="LibDialogBottomTranslateAnimation" parent="Animation.AppCompat.Dialog">
         <item name="android:windowEnterAnimation">@anim/lib_dialog_bottom_enter_animation</item>
-<!--        <item name="android:windowShowAnimation">@anim/lib_dialog_bottom_enter_animation</item>-->
+        <!--        <item name="android:windowShowAnimation">@anim/lib_dialog_bottom_enter_animation</item>-->
         <item name="android:windowExitAnimation">@anim/lib_dialog_bottom_exit_animation</item>
-<!--        <item name="android:windowHideAnimation">@anim/lib_dialog_bottom_exit_animation</item>-->
+        <!--        <item name="android:windowHideAnimation">@anim/lib_dialog_bottom_exit_animation</item>-->
     </style>
 
     <style name="LibDialogInputAnimation" parent="LibDialogBottomTranslateAnimation">
         <item name="android:windowEnterAnimation">@anim/lib_dialog_input_enter_animation</item>
-<!--        <item name="android:windowShowAnimation">@anim/lib_dialog_input_enter_animation</item>-->
+        <!--        <item name="android:windowShowAnimation">@anim/lib_dialog_input_enter_animation</item>-->
         <item name="android:windowExitAnimation">@anim/lib_dialog_input_exit_animation</item>
-<!--        <item name="android:windowHideAnimation">@anim/lib_dialog_input_exit_animation</item>-->
+        <!--        <item name="android:windowHideAnimation">@anim/lib_dialog_input_exit_animation</item>-->
     </style>
 
     <!--顶部Translate动画-->
     <style name="LibPopupAnimation" parent="Animation.AppCompat.DropDownUp">
         <item name="android:windowEnterAnimation">@anim/lib_popup_enter_animation</item>
-<!--        <item name="android:windowShowAnimation">@anim/lib_popup_enter_animation</item>-->
+        <!--        <item name="android:windowShowAnimation">@anim/lib_popup_enter_animation</item>-->
         <item name="android:windowExitAnimation">@anim/lib_popup_exit_animation</item>
-<!--        <item name="android:windowHideAnimation">@anim/lib_popup_exit_animation</item>-->
+        <!--        <item name="android:windowHideAnimation">@anim/lib_popup_exit_animation</item>-->
     </style>
 
     <style name="LibFullPopupAnimation" parent="Animation.AppCompat.DropDownUp">
         <item name="android:windowExitAnimation">@anim/lib_full_popup_exit_animation</item>
-<!--        <item name="android:windowHideAnimation">@anim/lib_full_popup_exit_animation</item>-->
+        <!--        <item name="android:windowHideAnimation">@anim/lib_full_popup_exit_animation</item>-->
     </style>
 
     <style name="LibActionPopupAnimation" parent="Animation.AppCompat.DropDownUp">
         <item name="android:windowExitAnimation">@anim/lib_action_popup_exit_animation</item>
-<!--        <item name="android:windowHideAnimation">@anim/lib_action_popup_exit_animation</item>-->
+        <!--        <item name="android:windowHideAnimation">@anim/lib_action_popup_exit_animation</item>-->
         <item name="android:windowEnterAnimation">@anim/lib_action_popup_enter_animation</item>
-<!--        <item name="android:windowShowAnimation">@anim/lib_action_popup_enter_animation</item>-->
+        <!--        <item name="android:windowShowAnimation">@anim/lib_action_popup_enter_animation</item>-->
     </style>
 
     <!--底部Translate动画-->
-    <style name="LibDialogAlphaAnimation" >
+    <style name="LibDialogAlphaAnimation">
         <item name="android:windowEnterAnimation">@anim/lib_dialog_alpha_enter_animation</item>
-<!--        <item name="android:windowShowAnimation">@anim/lib_dialog_alpha_enter_animation</item>-->
+        <!--        <item name="android:windowShowAnimation">@anim/lib_dialog_alpha_enter_animation</item>-->
         <item name="android:windowExitAnimation">@anim/lib_dialog_alpha_exit_animation</item>
-<!--        <item name="android:windowHideAnimation">@anim/lib_dialog_alpha_exit_animation</item>-->
+        <!--        <item name="android:windowHideAnimation">@anim/lib_dialog_alpha_exit_animation</item>-->
     </style>
 
     <!--Popup样式-->

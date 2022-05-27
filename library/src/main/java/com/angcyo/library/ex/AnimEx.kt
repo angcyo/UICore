@@ -39,7 +39,8 @@ fun animationOf(context: Context = app(), @AnimRes id: Int): Animation? {
         }
         return AnimationUtils.loadAnimation(context, id)
     } catch (e: Exception) {
-        L.w(e)
+        //e.printStackTrace()
+        L.w(e.message)
         return null
     }
 }
@@ -52,7 +53,8 @@ fun animatorOf(context: Context = app(), @AnimatorRes id: Int): Animator? {
         }
         return AnimatorInflater.loadAnimator(context, id)
     } catch (e: Exception) {
-        L.w(e)
+        //e.printStackTrace()
+        L.w(e.message)
         return null
     }
 }
