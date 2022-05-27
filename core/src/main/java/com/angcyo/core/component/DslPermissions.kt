@@ -25,6 +25,10 @@ class DslPermissions {
         this.permissions.addAll(permissions)
     }
 
+    fun addPermissions(permissions: List<String>) {
+        this.permissions.addAll(permissions)
+    }
+
     fun doIt() {
         if (fragment == null && fragmentActivity == null) {
             L.w("fragment or fragmentActivity is null.")
@@ -69,8 +73,45 @@ class DslPermissions {
     }
 }
 
-/**[Manifest.permission.WRITE_EXTERNAL_STORAGE]*/
-fun dslPermissions(
+//region ---dslPermissions---
+
+/**
+ * [fragment]
+ * [fragmentActivity]
+ * */
+fun dslPermissions(action: DslPermissions.() -> Unit = {}) {
+    val dslPermissions = DslPermissions()
+    dslPermissions.action()
+    dslPermissions.doIt()
+}
+
+fun Fragment.dslPermissions(action: DslPermissions.() -> Unit = {}) {
+    val dslPermissions = DslPermissions()
+    dslPermissions.fragment = this
+    dslPermissions.action()
+    dslPermissions.doIt()
+}
+
+//endregion
+
+//region ---permission---
+
+fun Fragment.dslPermission(
+    permission: String,
+    onResult: (allGranted: Boolean, foreverDenied: Boolean) -> Unit
+) {
+    val dslPermissions = DslPermissions()
+    dslPermissions.fragment = this
+    if (permission.isNotBlank()) {
+        dslPermissions.addPermissions(permission)
+    }
+    dslPermissions.onPermissionsResult = onResult
+    dslPermissions.doIt()
+}
+
+/**
+ * [permission] 权限,比如:[Manifest.permission.WRITE_EXTERNAL_STORAGE]*/
+fun dslPermission(
     fragmentActivity: FragmentActivity?,
     permission: String,
     onResult: (allGranted: Boolean, foreverDenied: Boolean) -> Unit
@@ -84,28 +125,30 @@ fun dslPermissions(
     dslPermissions.doIt()
 }
 
-fun dslPermissions(action: DslPermissions.() -> Unit = {}) {
-    val dslPermissions = DslPermissions()
-    dslPermissions.action()
-    dslPermissions.doIt()
-}
+//endregion
+
+//region ---permissionList---
 
 fun Fragment.dslPermissions(
-    permission: String,
+    permissionList: List<String>,
     onResult: (allGranted: Boolean, foreverDenied: Boolean) -> Unit
 ) {
     val dslPermissions = DslPermissions()
     dslPermissions.fragment = this
-    if (!permission.isBlank()) {
-        dslPermissions.addPermissions(permission)
-    }
+    dslPermissions.addPermissions(permissionList)
     dslPermissions.onPermissionsResult = onResult
     dslPermissions.doIt()
 }
 
-fun Fragment.dslPermissions(action: DslPermissions.() -> Unit = {}) {
+fun FragmentActivity.dslPermissions(
+    permissionList: List<String>,
+    onResult: (allGranted: Boolean, foreverDenied: Boolean) -> Unit
+) {
     val dslPermissions = DslPermissions()
-    dslPermissions.fragment = this
-    dslPermissions.action()
+    dslPermissions.fragmentActivity = this
+    dslPermissions.addPermissions(permissionList)
+    dslPermissions.onPermissionsResult = onResult
     dslPermissions.doIt()
 }
+
+//endregion

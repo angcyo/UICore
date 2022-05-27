@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.activity.showDebugInfoView
 import com.angcyo.base.*
-import com.angcyo.core.component.dslPermissions
+import com.angcyo.core.component.dslPermission
 import com.angcyo.dialog.hideLoading
 import com.angcyo.dialog.loading
 import com.angcyo.library.L
@@ -76,7 +76,7 @@ class PickerActivity : BaseAppCompatActivity() {
         if (havePermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             onPermissionGranted()
         } else {
-            dslPermissions(
+            dslPermission(
                 this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) { allGranted, foreverDenied ->
