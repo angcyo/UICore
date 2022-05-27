@@ -316,8 +316,12 @@ open class DslViewHolder(
         return this
     }
 
+    fun selected(selected: Boolean = true) {
+        selected(itemView, selected)
+    }
+
     /**选中当前的view, 以及其所有的子view*/
-    private fun selected(view: View?, selected: Boolean) {
+    fun selected(view: View?, selected: Boolean = true) {
         if (view == null) {
             return
         }

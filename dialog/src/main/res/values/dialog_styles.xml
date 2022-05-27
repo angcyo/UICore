@@ -44,8 +44,13 @@
         <item name="android:windowHideAnimation">@null</item>
     </style>
 
+    <style name="LibBaseDialogAnimation" parent="Animation.AppCompat.Dialog">
+        <item name="android:windowShowAnimation">@null</item>
+        <item name="android:windowExitAnimation">@null</item>
+    </style>
+
     <!--缩放动画-->
-    <style name="LibDialogAnimation" parent="Animation.AppCompat.Dialog">
+    <style name="LibDialogAnimation" parent="LibBaseDialogAnimation">
         <item name="android:windowEnterAnimation">@anim/lib_dialog_enter_animation</item>
         <!--        <item name="android:windowShowAnimation">@anim/lib_dialog_enter_animation</item>-->
         <item name="android:windowExitAnimation">@anim/lib_dialog_exit_animation</item>
@@ -53,7 +58,7 @@
     </style>
 
     <!--IOS对话框动画-->
-    <style name="LibIosDialogAnimation" parent="Animation.AppCompat.Dialog">
+    <style name="LibIosDialogAnimation" parent="LibBaseDialogAnimation">
         <item name="android:windowEnterAnimation">@anim/lib_ios_dialog_enter_animation</item>
         <!--        <item name="android:windowShowAnimation">@anim/lib_ios_dialog_enter_animation</item>-->
         <item name="android:windowExitAnimation">@anim/lib_ios_dialog_exit_animation</item>
@@ -61,7 +66,7 @@
     </style>
 
     <!--底部Translate动画-->
-    <style name="LibDialogBottomTranslateAnimation" parent="Animation.AppCompat.Dialog">
+    <style name="LibDialogBottomTranslateAnimation" parent="LibBaseDialogAnimation">
         <item name="android:windowEnterAnimation">@anim/lib_dialog_bottom_enter_animation</item>
         <!--        <item name="android:windowShowAnimation">@anim/lib_dialog_bottom_enter_animation</item>-->
         <item name="android:windowExitAnimation">@anim/lib_dialog_bottom_exit_animation</item>

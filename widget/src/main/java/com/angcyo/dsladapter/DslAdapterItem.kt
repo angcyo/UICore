@@ -1228,8 +1228,11 @@ open class DslAdapterItem : LifecycleOwner {
     /**是否选中, 需要 [ItemSelectorHelper.selectorModel] 的支持. */
     var itemIsSelected = false
         set(value) {
+            val old = field
             field = value
-            onSetItemSelected(value)
+            if (old != value) {
+                onSetItemSelected(value)
+            }
         }
 
     /**简单的互斥操作支持
