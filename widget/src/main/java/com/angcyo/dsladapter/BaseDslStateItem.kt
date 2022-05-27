@@ -1,9 +1,9 @@
 package com.angcyo.dsladapter
 
 import android.view.View
+import com.angcyo.library.ex.inflate
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
-import com.angcyo.library.ex.inflate
 
 /**
  *
@@ -27,6 +27,9 @@ abstract class BaseDslStateItem : DslAdapterItem() {
             field = value
             _onItemStateChange(old, value)
         }
+
+    /**错误状态时, 需要显示的异常信息. null 则使用默认*/
+    var itemErrorThrowable: Throwable? = null
 
     /**是否将激活状态item*/
     open var itemStateEnable: Boolean = true

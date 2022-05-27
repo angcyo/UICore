@@ -50,8 +50,8 @@ open class DslLoadMoreItem : BaseDslStateItem() {
         itemStateLayoutMap[LOAD_MORE_NORMAL] = R.layout.lib_loading_layout
         itemStateLayoutMap[LOAD_MORE_LOADING] = R.layout.lib_loading_layout
         itemStateLayoutMap[LOAD_MORE_NO_MORE] = R.layout.lib_no_more_layout
-        itemStateLayoutMap[LOAD_MORE_ERROR] = R.layout.lib_error_layout
-        itemStateLayoutMap[_LOAD_MORE_RETRY] = R.layout.lib_error_layout
+        itemStateLayoutMap[LOAD_MORE_ERROR] = R.layout.lib_load_more_error_layout
+        itemStateLayoutMap[_LOAD_MORE_RETRY] = R.layout.lib_load_more_error_layout
 
         itemWidth = ViewGroup.LayoutParams.MATCH_PARENT
         itemHeight = ViewGroup.LayoutParams.WRAP_CONTENT
@@ -78,6 +78,8 @@ open class DslLoadMoreItem : BaseDslStateItem() {
             if (itemState == LOAD_MORE_NORMAL || itemState == LOAD_MORE_LOADING) {
                 _notifyLoadMore(itemHolder)
             } else if (itemState == LOAD_MORE_ERROR) {
+                itemHolder.tv(R.id.lib_text_view)?.text = itemErrorThrowable?.message
+                    ?: itemHolder.context.getString(R.string.adapter_error)
                 itemHolder.clickItem {
                     if (itemState == LOAD_MORE_ERROR || itemState == _LOAD_MORE_RETRY) {
                         //失败的情况下, 点击触发重新加载

@@ -2,6 +2,7 @@ package com.angcyo.dsladapter.data
 
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.annotation.UpdateByDiff
 import com.angcyo.dsladapter.findItem
 import com.angcyo.library.ex.className
 import com.angcyo.library.ex.size
@@ -40,7 +41,6 @@ class SingleDataUpdate(val adapter: DslAdapter) {
             opList.add(Op(Op.ADD, null, width, addItemList = itemList))
         }
     }
-
 
     fun addWidth(predicate: (index: Int, item: DslAdapterItem) -> Boolean, item: DslAdapterItem) {
         adapter.adapterItems.forEachIndexed { index, dslAdapterItem ->
@@ -240,6 +240,7 @@ class SingleDataUpdate(val adapter: DslAdapter) {
     }
 }
 
+@UpdateByDiff
 fun DslAdapter.updateAdapter(update: SingleDataUpdate.() -> Unit) {
     SingleDataUpdate(this).apply {
         update()
@@ -248,6 +249,7 @@ fun DslAdapter.updateAdapter(update: SingleDataUpdate.() -> Unit) {
 }
 
 /**通过[itemClass]更新item*/
+@UpdateByDiff
 fun <Item : DslAdapterItem> DslAdapter.updateItem(
     itemClass: Class<Item>,
     initItem: Item.() -> Unit = { }

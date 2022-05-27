@@ -63,7 +63,10 @@ open class DslAdapterStatusItem : BaseDslStateItem() {
 
     override fun _onBindStateLayout(itemHolder: DslViewHolder, state: Int) {
         super._onBindStateLayout(itemHolder, state)
+        L.w("bind state : $state")
         if (itemState == ADAPTER_STATUS_ERROR) {
+            itemHolder.tv(R.id.lib_text_view)?.text = itemErrorThrowable?.message
+                ?: itemHolder.context.getString(R.string.adapter_error)
             //出现错误后, 触击刷新
             itemHolder.clickItem {
                 if (itemState == ADAPTER_STATUS_ERROR) {

@@ -1,6 +1,8 @@
 package com.angcyo.dsladapter.data
 
 import com.angcyo.dsladapter.*
+import com.angcyo.dsladapter.annotation.UpdateByDiff
+import com.angcyo.dsladapter.annotation.UpdateFlag
 import com.angcyo.library.model.Page
 import kotlin.math.max
 
@@ -13,6 +15,7 @@ import kotlin.math.max
  */
 
 /**用于[Adapter]中单一数据类型的列表*/
+@UpdateByDiff
 inline fun <reified Item : DslAdapterItem> DslAdapter.loadSingleData(
     dataList: List<Any>?,
     page: Int = Page.FIRST_PAGE_INDEX,
@@ -95,6 +98,7 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.loadSingleData(
 /**
  * 与[loadSingleData]的不同在于Dsl的参数不一样
  * */
+@UpdateByDiff
 inline fun <reified Item : DslAdapterItem> DslAdapter.loadSingleData2(
     dataList: List<Any>?,
     page: Int = Page.FIRST_PAGE_INDEX,
@@ -115,6 +119,7 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.loadSingleData2(
 }
 
 /**智能设置加载更多的状态和激活状态*/
+@UpdateFlag
 fun DslAdapter.updateLoadMore(
     updatePage: Int /*当前数据页*/,
     updateSize: Int /*数据页数据更新量*/,

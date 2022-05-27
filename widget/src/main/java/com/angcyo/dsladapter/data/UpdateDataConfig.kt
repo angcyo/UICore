@@ -1,12 +1,13 @@
 package com.angcyo.dsladapter.data
 
 import com.angcyo.dsladapter.*
+import com.angcyo.dsladapter.annotation.UpdateByDiff
+import com.angcyo.dsladapter.annotation.UpdateFlag
 import com.angcyo.library.ex.className
 import com.angcyo.library.ex.isListEmpty
 import com.angcyo.library.ex.size
 import com.angcyo.library.model.Page
 import com.angcyo.library.model.singlePage
-import com.angcyo.widget.R
 import kotlin.math.max
 import kotlin.math.min
 
@@ -107,6 +108,7 @@ class UpdateDataConfig {
 }
 
 /**轻量差异更新*/
+@UpdateFlag
 fun UpdateDataConfig.updateData(originList: List<DslAdapterItem>): List<DslAdapterItem> {
 
     //最后的结果集
@@ -172,6 +174,7 @@ fun UpdateDataConfig.updateData(originList: List<DslAdapterItem>): List<DslAdapt
 }
 
 /**支持相同类型之间的轻量差异更新[headerItems]*/
+@UpdateByDiff
 fun DslAdapter.updateHeaderData(action: UpdateDataConfig.() -> Unit) {
     val config = UpdateDataConfig()
     config.updatePage = Page.FIRST_PAGE_INDEX
@@ -186,6 +189,7 @@ fun DslAdapter.updateHeaderData(action: UpdateDataConfig.() -> Unit) {
 }
 
 /**[footerItems]*/
+@UpdateByDiff
 fun DslAdapter.updateFooterData(action: UpdateDataConfig.() -> Unit) {
     val config = UpdateDataConfig()
     config.updatePage = Page.FIRST_PAGE_INDEX
@@ -200,6 +204,7 @@ fun DslAdapter.updateFooterData(action: UpdateDataConfig.() -> Unit) {
 }
 
 /**更新指定页码的数据, 支持轻量差异更新.[dataItems]*/
+@UpdateByDiff
 fun DslAdapter.updateData(action: UpdateDataConfig.() -> Unit) {
     val config = UpdateDataConfig()
     config.action()
@@ -213,6 +218,7 @@ fun DslAdapter.updateData(action: UpdateDataConfig.() -> Unit) {
 }
 
 /**简单的判断是否需要替换/更新[oldItem]*/
+@UpdateFlag
 fun <Item : DslAdapterItem> updateOrCreateItemByClass(
     itemClass: Class<Item>,
     oldItem: DslAdapterItem?,
@@ -229,6 +235,7 @@ fun <Item : DslAdapterItem> updateOrCreateItemByClass(
 }
 
 /**更新单页数据*/
+@UpdateByDiff
 inline fun <reified Item : DslAdapterItem> DslAdapter.updateSingleData(
     dataList: List<Any>?,
     requestPage: Int = Page.FIRST_PAGE_INDEX,
@@ -249,6 +256,7 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.updateSingleData(
     }
 }
 
+@UpdateByDiff
 inline fun <reified Item : DslAdapterItem> DslAdapter.updateSingleDataIndex(
     dataList: List<Any>?,
     requestPage: Int = Page.FIRST_PAGE_INDEX,
@@ -269,21 +277,19 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.updateSingleDataIndex(
     }
 }
 
+@UpdateByDiff
 fun DslAdapter.toAdapterError(error: Throwable?) {
     updateAdapterErrorState(error)
 }
 
 /**更新[DslAdapter]的异常状态*/
+@UpdateByDiff
 fun DslAdapter.updateAdapterErrorState(error: Throwable?) {
     if (error != null) {
         //加载失败
         when {
             adapterItems.isEmpty() -> {
-                dslAdapterStatusItem.onBindStateLayout = { itemHolder, state ->
-                    if (state == DslAdapterStatusItem.ADAPTER_STATUS_ERROR) {
-                        itemHolder.tv(R.id.lib_text_view)?.text = error.message
-                    }
-                }
+                dslAdapterStatusItem.itemErrorThrowable = error
                 toError()
             }
             isAdapterStatusLoading() -> toNone()
@@ -293,6 +299,7 @@ fun DslAdapter.updateAdapterErrorState(error: Throwable?) {
 }
 
 /**更新[DslAdapter]情感图状态*/
+@UpdateByDiff
 fun DslAdapter.updateAdapterState(list: List<*>?, error: Throwable?, page: Page = singlePage()) {
     updateAdapterErrorState(error)
     if (error == null) {
@@ -322,6 +329,7 @@ fun DslAdapter.updateAdapterState(list: List<*>?, error: Throwable?, page: Page 
  * [page] 当前Page参数 包含请求页码, 每页请求数据量
  * [initItem] 根据`Item`的类型, 为自定义的数据结构赋值
  * */
+@UpdateByDiff
 fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEnd(
     itemClass: Class<Item>,
     dataList: List<Bean>?,
@@ -334,6 +342,7 @@ fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEnd(
     }
 }
 
+@UpdateByDiff
 fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEndIndex(
     itemClass: Class<Item>,
     dataList: List<Bean>?,
@@ -364,6 +373,7 @@ fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEndIndex(
 }
 
 /**重置[DslAdapter], 重新渲染[DslAdapter.dataItems]数据*/
+@UpdateByDiff
 fun <T> DslAdapter.resetRender(
     data: T?,
     error: Throwable?,
