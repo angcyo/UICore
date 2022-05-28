@@ -346,6 +346,9 @@ fun Context?.runningTasks(maxNum: Int = Int.MAX_VALUE): List<ActivityManager.Run
 }
 
 /**根据包名[packageName],获取[PackageInfo]*/
+fun Context.isAppInstall(packageName: String) = getPackageInfo(packageName) != null
+
+/**根据包名[packageName],获取[PackageInfo]*/
 fun Context.getPackageInfo(packageName: String): PackageInfo? {
     return try {
         val pm = packageManager

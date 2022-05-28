@@ -36,8 +36,21 @@ class Flow {
         return this
     }
 
+    /**停止*/
+    fun stop(error: Throwable? = null) {
+        if (!_isEnd) {
+            _isEnd = true
+            lastError = error
+            if (error != null) {
+                onErrorAction(error)
+            }
+            onEndAction(lastError)
+        }
+    }
+
     /**开始执行*/
     fun start(onEnd: (Throwable?) -> Unit = {}): Flow {
+        _isEnd = false
         _startIndex = 0
         onEndAction = onEnd
         _start()
@@ -46,9 +59,12 @@ class Flow {
 
     private var _startIndex = 0
 
+    var _isEnd: Boolean = false
+
     private fun _start() {
         val action = actionList.getOrNull(_startIndex)
         if (action == null) {
+            _isEnd = true
             onEndAction(null)
         } else {
             _startAction(action)
@@ -56,6 +72,9 @@ class Flow {
     }
 
     private fun _next() {
+        if (_isEnd) {
+            return
+        }
         _startIndex++
         _start()
     }
@@ -87,6 +106,17 @@ typealias FlowChain = (error: Throwable?) -> Unit
 typealias FlowAction = Flow.(flowChain: FlowChain) -> Unit
 
 /**Dsl
+ * ```
+ * flow { chain ->
+ *   chain(null)
+ * }.flow { chain ->
+ *   chain(null)
+ * }.flow { chain ->
+ *   chain(null)
+ * }.start {
+ *  //some thing
+ * }.stop(null)
+ * ```
  * 需要调用 [com.angcyo.library.component.Flow.start]开始flow*/
 fun flow(action: FlowAction): Flow {
     val flow = Flow()
