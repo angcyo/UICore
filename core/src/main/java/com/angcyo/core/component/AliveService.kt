@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.IBinder
 import com.angcyo.library.component.*
 import com.angcyo.library.ex.getAppOpenIntentByPackageName
-import com.angcyo.library.ex.urlIntent
 import com.angcyo.library.getAppName
 import com.angcyo.library.toastQQ
 
@@ -53,6 +52,8 @@ class AliveService : Service() {
             clickActivity(getAppOpenIntentByPackageName(packageName))
             single(getAppName(), "App运行中,请勿强杀进程!!!")
         })
+
+        //FOREGROUND_SERVICE_TYPE_LOCATION
 
         if (!isNotificationsEnabled() || !notifyChannelName.isChannelEnable()) {
             toastQQ("请打开通知通道[$notifyChannelName]")
