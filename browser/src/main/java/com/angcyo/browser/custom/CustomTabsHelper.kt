@@ -58,6 +58,7 @@ object CustomTabsHelper {
         val pm = context.packageManager
         // Get default VIEW intent handler.
         val activityIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.example.com"))
+        //activityIntent.addCategory(Intent.CATEGORY_BROWSABLE)
         val defaultViewHandlerInfo = pm.resolveActivity(activityIntent, 0)
         var defaultViewHandlerPackageName: String? = null
         if (defaultViewHandlerInfo != null) {
