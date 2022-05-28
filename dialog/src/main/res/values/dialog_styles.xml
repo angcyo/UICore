@@ -45,6 +45,8 @@
     </style>
 
     <style name="LibBaseDialogAnimation" parent="Animation.AppCompat.Dialog">
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowIsFloating">true</item>
         <item name="android:windowShowAnimation">@null</item>
         <item name="android:windowExitAnimation">@null</item>
     </style>
