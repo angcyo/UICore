@@ -1,0 +1,28 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.angcyo.browser">
+
+    <application>
+        <activity
+            android:name=".custom.WebviewActivity"
+            android:enabled="true"
+            android:exported="true" />
+    </application>
+
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+
+    <queries>
+        <intent>
+            <action android:name="android.support.customtabs.action.CustomTabsService" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+        </intent>
+
+        <package android:name="com.microsoft.emmx" />
+        <package android:name="com.android.chrome" />
+    </queries>
+
+</manifest>

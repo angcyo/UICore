@@ -1,0 +1,12 @@
+apply from: allGradle.libBase
+//apply plugin: "kotlin-kapt"
+
+dependencies {
+    implementation project(allModule.library)
+    implementation project(allModule.fragment)
+    implementation project(allModule.tbs)
+
+    implementation "androidx.browser:browser:1.4.0"
+
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.3.0'
+}
