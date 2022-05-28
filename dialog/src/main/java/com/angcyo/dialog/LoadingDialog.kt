@@ -2,6 +2,7 @@ package com.angcyo.dialog
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
@@ -110,8 +111,25 @@ fun ActivityResultCaller.loading(
         val activity = when (this) {
             is Fragment -> activity
             is Activity -> this
+            is Context -> this
             else -> null
         } ?: return null
+        activity.loading2(text, layoutId, showCloseView, config, onCancel)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return null
+    }
+}
+
+fun Context.loading2(
+    text: CharSequence? = null,
+    @LayoutRes layoutId: Int = R.layout.lib_dialog_flow_loading_layout,
+    showCloseView: Boolean = true,
+    config: DslDialogConfig.() -> Unit = {},
+    onCancel: (dialog: Dialog) -> Unit = {}
+): Dialog? {
+    return try {
+        val activity = this
         DslDialogConfig(activity).run {
             this.onDismissListener = {
                 val dialog = it

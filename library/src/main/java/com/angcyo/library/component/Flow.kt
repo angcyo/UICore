@@ -1,5 +1,6 @@
 package com.angcyo.library.component
 
+import androidx.annotation.AnyThread
 import com.angcyo.library.L
 
 /**
@@ -14,6 +15,7 @@ import com.angcyo.library.L
  * @date 2021/11/09
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
+@AnyThread
 class Flow {
 
     val actionList = mutableListOf<FlowAction>()
@@ -49,6 +51,7 @@ class Flow {
     }
 
     /**开始执行*/
+    @AnyThread
     fun start(onEnd: (Throwable?) -> Unit = {}): Flow {
         _isEnd = false
         _startIndex = 0
@@ -71,6 +74,7 @@ class Flow {
         }
     }
 
+    @AnyThread
     private fun _next() {
         if (_isEnd) {
             return
@@ -79,6 +83,7 @@ class Flow {
         _start()
     }
 
+    @AnyThread
     private fun _startAction(action: FlowAction) {
         action.invoke(this) {
             //执行结束后的回调
@@ -118,6 +123,7 @@ typealias FlowAction = Flow.(flowChain: FlowChain) -> Unit
  * }.stop(null)
  * ```
  * 需要调用 [com.angcyo.library.component.Flow.start]开始flow*/
+@AnyThread
 fun flow(action: FlowAction): Flow {
     val flow = Flow()
     return flow.flow(action)

@@ -1,5 +1,6 @@
 package com.angcyo.library.ex
 
+import com.angcyo.library.L
 import java.util.*
 
 /**
@@ -9,13 +10,19 @@ import java.util.*
 
 /**
  * 将十六进制字符串[0123456789ABCDEF]转成字节数组[ByteArray]
+ * //0204 0-23 00-A 000401
  * 字符串需要是偶数
  * */
 fun String.toHexByteArray(): ByteArray {
     val s = replace(" ", "")
     val bs = ByteArray(s.length / 2)
-    for (i in 0 until s.length / 2) {
-        bs[i] = s.substring(i * 2, i * 2 + 2).toInt(16).toByte()
+    try {
+        for (i in 0 until s.length / 2) {
+            bs[i] = s.substring(i * 2, i * 2 + 2).toInt(16).toByte()
+        }
+    } catch (e: Exception) {
+        L.w("无法转换:$this")
+        throw e
     }
     return bs
 }
@@ -88,8 +95,20 @@ fun ByteArray.toHexString(hasSpace: Boolean = true) = joinToString("") {
  * [length] 需要输出多少个字符, 不足前面补充0*/
 fun Byte.toHexString(length: Int = 2, padChar: Char = '0') = toHexInt().toHexString(length, padChar)
 
+/**2个十六进制字符表示1个字节 8位*/
 fun Int.toHexString(length: Int = 2, padChar: Char = '0') =
     toString(16).padStart(length, padChar).uppercase(Locale.ROOT)
+
+/**[ByteArray]
+ * https://stackoverflow.com/questions/2183240/java-integer-to-byte-array*/
+fun Int.toByteArray(length: Int): ByteArray {
+    //ByteBuffer.allocate(capacity).putInt(this).array()
+    val result = ByteArray(length)
+    for (index in 0 until length) {
+        result[length - index - 1] = (this shr (index * 8) and 0xff).toByte()
+    }
+    return result
+}
 
 /**将字节转换成无符号整型*/
 fun Byte.toHexInt() = toInt() and 0xFF
