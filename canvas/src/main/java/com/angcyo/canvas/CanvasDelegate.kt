@@ -201,7 +201,9 @@ class CanvasDelegate(val view: View) : ICanvasView {
         } else {
             0f
         }
-        getCanvasViewBox().updateCoordinateSystemOriginPoint(l, t)
+        if (getCanvasViewBox().getCoordinateSystemY() == -1f && getCanvasViewBox().getCoordinateSystemY() == -1f) {
+            getCanvasViewBox().updateCoordinateSystemOriginPoint(l, t)
+        }
         getCanvasViewBox().updateContentBox(l, t, w.toFloat(), h.toFloat())
 
         //需要等待[canvasViewBox]测量后
@@ -296,6 +298,20 @@ class CanvasDelegate(val view: View) : ICanvasView {
     //</editor-fold desc="View相关">
 
     override fun getCanvasViewBox(): CanvasViewBox = viewBox
+
+    /**移动坐标原点到View中心*/
+    fun moveOriginToCenter() {
+        val centerX = getCanvasViewBox().getContentCenterX()
+        val centerY = getCanvasViewBox().getContentCenterY()
+        getCanvasViewBox().updateCoordinateSystemOriginPoint(centerX, centerY)
+    }
+
+    /**移动坐标原点到View左上角*/
+    fun moveOriginToLT() {
+        val left = getCanvasViewBox().getContentLeft()
+        val top = getCanvasViewBox().getContentTop()
+        getCanvasViewBox().updateCoordinateSystemOriginPoint(left, top)
+    }
 
     override fun addCanvasListener(listener: ICanvasListener) {
         canvasListenerList.add(listener)
@@ -712,14 +728,26 @@ class CanvasDelegate(val view: View) : ICanvasView {
         return controlHandler.selectedItemRender
     }
 
+    /**显示一个限制框, 并且移动画布到最佳可视位置*/
+    fun showAndLimitBounds(path: Path) {
+        val pathBounds = RectF()
+        path.computeBounds(pathBounds, true)
+        limitRenderer.updateLimit {
+            addPath(path)
+        }
+        showRectBounds(pathBounds)
+    }
+
     /**将画板移动到可以完全显示出[rect]
      * [rect] 坐标系中的矩形坐标
      * [scale] 是否要缩放, 以适应过大的矩形
+     * [lockScale] 锁定缩放的比例
      * [margin] 边缘额外显示的距离*/
     fun showRectBounds(
         rect: RectF,
         margin: Float = 40f * dp,
         scale: Boolean = true,
+        lockScale: Boolean = true,
         anim: Boolean = true
     ) {
         //中心需要偏移的距离量
@@ -746,12 +774,24 @@ class CanvasDelegate(val view: View) : ICanvasView {
                 val scaleX = (contentWidth - margin * 2) / rect.width()
                 val scaleY = (contentHeight - margin * 2) / rect.height()
 
-                matrix.postScale(
-                    scaleX,
-                    scaleY,
-                    scaleCenterX,
-                    scaleCenterY
-                )
+                if (lockScale) {
+                    val targetScale = min(scaleX, scaleY)
+
+                    matrix.postScale(
+                        targetScale,
+                        targetScale,
+                        scaleCenterX,
+                        scaleCenterY
+                    )
+                } else {
+                    matrix.postScale(
+                        scaleX,
+                        scaleY,
+                        scaleCenterX,
+                        scaleCenterY
+                    )
+                }
+
             }
         } else {
             //不处理自动放大的情况

@@ -31,18 +31,25 @@ class LimitRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView) {
     val limitPath: Path = Path()
 
     override fun render(canvas: Canvas) {
-        if (BuildConfig.DEBUG) {
-            limitPath.computeBounds(_tempRectF, true)
+        if (!limitPath.isEmpty) {
+            if (BuildConfig.DEBUG) {
+                limitPath.computeBounds(_tempRectF, true)
+            }
+            val scale = canvasViewBox.getScaleX()
+            paint.strokeWidth = limitStrokeWidth / scale //抵消坐标系的缩放
+            canvas.drawPath(limitPath, paint)
         }
-        val scale = canvasViewBox.getScaleX()
-        paint.strokeWidth = limitStrokeWidth / scale //抵消坐标系的缩放
-        canvas.drawPath(limitPath, paint)
     }
 
     /**更新限制框*/
     fun updateLimit(block: Path.() -> Unit) {
-        limitPath.reset()
+        limitPath.rewind()
         limitPath.block()
         refresh()
+    }
+
+    /**清除限制框*/
+    fun clear() {
+        limitPath.rewind()
     }
 }
