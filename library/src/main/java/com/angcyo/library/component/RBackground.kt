@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import android.util.SparseArray
+import java.lang.ref.WeakReference
 
 /**
  * 应用程序后台通知
@@ -27,6 +28,9 @@ object RBackground {
 
     private val observers = mutableListOf<OnBackgroundObserver>()
 
+    /**最后一个[Activity]*/
+    var lastActivity: WeakReference<Activity>? = null
+
     /**主线程回调*/
     val lifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
 
@@ -39,6 +43,7 @@ object RBackground {
         }
 
         override fun onActivityResumed(activity: Activity) {
+            lastActivity = WeakReference(activity)
             changeItem(activity.hashCode(), activity.javaClass.name, RESUMED)
         }
 
@@ -57,6 +62,9 @@ object RBackground {
         }
 
         override fun onActivityDestroyed(activity: Activity) {
+            if (lastActivity?.get() == activity) {
+                lastActivity = null
+            }
             removeItem(activity.hashCode(), activity.javaClass.name)
         }
 
@@ -88,6 +96,7 @@ object RBackground {
         }
     }
 
+    /**初始化组件*/
     fun init(application: Application, observer: OnBackgroundObserver? = null) {
         application.registerActivityLifecycleCallbacks(lifecycleCallbacks)
 
@@ -96,6 +105,7 @@ object RBackground {
         }
     }
 
+    /**判断程序是否在后台运行*/
     fun isBackground(): Boolean {
         var result = stack.size() != 0
 
@@ -112,6 +122,7 @@ object RBackground {
         return result
     }
 
+    /**观察程序进入后台*/
     fun registerObserver(observer: OnBackgroundObserver, notify: Boolean = false) {
         if (!observers.contains(observer)) {
             observers.add(observer)

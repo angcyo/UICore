@@ -34,6 +34,11 @@ import java.io.Serializable
  * @author angcyo
  * @date 2020/02/01
  */
+
+/**
+ * [dialogContext] android.view.WindowManager$BadTokenException: Unable to add window -- token null is not valid; is your activity running?
+ * android.view.ViewRootImpl#setView(android.view.View, android.view.WindowManager.LayoutParams, android.view.View, int)
+ * */
 open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
     LifecycleOwner, Serializable {
 
