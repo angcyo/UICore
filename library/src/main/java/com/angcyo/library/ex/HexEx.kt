@@ -96,17 +96,32 @@ fun ByteArray.toHexString(hasSpace: Boolean = true) = joinToString("") {
  * [length] 需要输出多少个字符, 不足前面补充0*/
 fun Byte.toHexString(length: Int = 2, padChar: Char = '0') = toHexInt().toHexString(length, padChar)
 
-/**2个十六进制字符表示1个字节 8位*/
+/**2个十六进制字符表示1个字节 8位
+ * [length] 十六进制字符串的长度, 除以2 就表示字节的大小*/
 fun Int.toHexString(length: Int = 2, padChar: Char = '0') =
     toString(16).padStart(length, padChar).uppercase(Locale.ROOT)
 
 /**[ByteArray]
- * https://stackoverflow.com/questions/2183240/java-integer-to-byte-array*/
+ * [length] 需要多少个字节, 1个字节8位. 不够前面补0
+ * [com.angcyo.library.ex.HexExKt.toByteInt]
+ * https://stackoverflow.com/questions/2183240/java-integer-to-byte-array
+ * */
 fun Int.toByteArray(length: Int): ByteArray {
     //ByteBuffer.allocate(capacity).putInt(this).array()
     val result = ByteArray(length)
     for (index in 0 until length) {
         result[length - index - 1] = (this shr (index * 8) and 0xff).toByte()
+    }
+    return result
+}
+
+/**将字节数组,按照对应的位转成Int类型
+ * [com.angcyo.library.ex.HexExKt.toByteArray]*/
+fun ByteArray.toByteInt(): Int {
+    var result = 0
+    for (index in 0 until size) {
+        val byte = get(index).toInt() and 0xff
+        result = result or (byte shl (size - index - 1) * 8)
     }
     return result
 }

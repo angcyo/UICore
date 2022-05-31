@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
@@ -18,6 +19,8 @@ import com.angcyo.library.utils.fastBlur
 import com.angcyo.library.utils.fileNameUUID
 import com.angcyo.library.utils.filePath
 import java.io.*
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  *
@@ -298,3 +301,27 @@ fun Context.getBitmapFromRes(id: Int) = BitmapFactory.decodeResource(resources, 
 
 /**从[AssetManager]中获取[Bitmap]对象*/
 fun Context.getBitmapFromAssets(name: String) = BitmapFactory.decodeStream(assets.open(name))
+
+/**色彩通道提取
+ * [type] 通道类型 [Color.RED] [Color.GREEN] [Color.BLUE]*/
+fun Bitmap.colorChannel(type: Int = Color.RED): ByteArray {
+    val width = width
+    val height = height
+    val result = ByteArray(width * height)
+
+    for (y in 0 until height) {
+        for (x in 0 until width) {
+            val color = getPixel(x, y)
+            var value = when (type) {
+                Color.RED -> Color.red(color)
+                Color.GREEN -> Color.green(color)
+                Color.BLUE -> Color.blue(color)
+                Color.TRANSPARENT -> Color.alpha(color)
+                else -> 255
+            }
+            value = max(0, min(value, 255)) //限制0~255
+            result[y * width + x] = value.toByte()
+        }
+    }
+    return result
+}
