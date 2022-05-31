@@ -1,6 +1,7 @@
 package com.angcyo.library.component
 
 import com.angcyo.library.ex.copyTo
+import com.angcyo.library.ex.toByteInt
 import com.angcyo.library.ex.toHexInt
 import java.nio.charset.Charset
 
@@ -28,6 +29,15 @@ class ByteArrayReader(val bytes: ByteArray) {
         return result
     }
 
+    /** 超范围时, 返回-1*/
+    fun readByte(): Byte {
+        val array = read(1)
+        if (array.isEmpty()) {
+            return -1
+        }
+        return array.first()
+    }
+
     /**
      * 读取多少个字节表示的int数据
      * 超范围时, 返回-1*/
@@ -39,6 +49,14 @@ class ByteArrayReader(val bytes: ByteArray) {
         return array.toHexInt()
     }
 
+    fun readByteInt(size: Int): Int {
+        val array = read(size)
+        if (array.isEmpty()) {
+            return -1
+        }
+        return array.toByteInt()
+    }
+
     /**读取多少个字节表示的string数据
      * 超范围时, 返回null*/
     fun readString(size: Int, charset: Charset = Charsets.UTF_8): String? {
@@ -48,9 +66,9 @@ class ByteArrayReader(val bytes: ByteArray) {
         }
         return String(array, charset)
     }
-
 }
 
+/**字节读取器,自动偏移*/
 fun ByteArray.reader(action: ByteArrayReader.() -> Unit): ByteArrayReader {
     return ByteArrayReader(this).apply {
         action()
