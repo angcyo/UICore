@@ -37,6 +37,7 @@ typealias WindowClickAction = (window: TargetWindow, view: View) -> Unit
 /**指定类型是以下类型:
  * [Window]
  * [PopupWindow]
+ * [Dialog]
  * */
 typealias TargetWindow = Any
 
