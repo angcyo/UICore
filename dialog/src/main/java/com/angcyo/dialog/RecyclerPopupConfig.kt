@@ -38,9 +38,9 @@ open class RecyclerPopupConfig : PopupConfig() {
         initRecycler(activity, popupViewHolder)
     }
 
-    open fun initRecycler(host: Any, popupViewHolder: DslViewHolder) {
+    open fun initRecycler(host: TargetWindow, popupViewHolder: DslViewHolder) {
         _recyclerConfig.adapterSelectorModel = popupSelectorModel
-        _recyclerConfig.initRecycler(popupViewHolder)
+        _recyclerConfig.initRecycler(host, popupViewHolder)
         _recyclerConfig.adapterItemClick = { dslItem, view ->
             if (onPopupResult(host, listOf(dslItem), listOf(dslItem.itemIndexPosition()))
             ) {

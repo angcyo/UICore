@@ -36,7 +36,7 @@ open class RecyclerConfig {
     lateinit var _adapter: DslAdapter
 
     /**初始化视图*/
-    open fun initRecycler(holder: DslViewHolder) {
+    open fun initRecycler(dialog: TargetWindow, holder: DslViewHolder) {
         holder.rv(R.id.lib_recycler_view)?.apply {
             //初始化DslAdapter
             _adapter = initDslAdapter() {
@@ -45,7 +45,16 @@ open class RecyclerConfig {
                         RemoveItemDecorationFilterAfterInterceptor()
                     )
                 }
+                adapterItemList.forEach {
+                    if (it.itemData == null) {
+                        //方便操作[Dialog]
+                        it.itemData = dialog
+                    }
+                }
                 resetItem(adapterItemList)
+                if (adapterItemList.isEmpty()) {
+                    toEmpty()
+                }
                 updateNow()
             }
             //设置选择模式

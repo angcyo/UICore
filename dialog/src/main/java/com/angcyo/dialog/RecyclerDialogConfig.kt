@@ -88,7 +88,7 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
         }
 
         _recyclerConfig.adapterSelectorModel = dialogSelectorModel
-        _recyclerConfig.initRecycler(dialogViewHolder)
+        _recyclerConfig.initRecycler(dialog, dialogViewHolder)
         _recyclerConfig.adapterItemClick = { dslItem, view ->
             if (dialogResult(_dialog!!, listOf(dslItem), listOf(dslItem.itemIndexPosition()))
             ) {
@@ -128,5 +128,11 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
         dialogBottomCancelItem = (dialogBottomCancelItem ?: defaultCancelItem()).run {
             action()
         }
+    }
+
+    /**[DslAdapterItem]
+     * [com.angcyo.dialog.RecyclerConfig.addItem]*/
+    fun addItem(item: DslAdapterItem) {
+        _recyclerConfig.addItem(item)
     }
 }
