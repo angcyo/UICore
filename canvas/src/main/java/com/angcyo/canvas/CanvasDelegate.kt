@@ -438,12 +438,15 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
     //<editor-fold desc="操作方法">
 
-    fun getBitmap(): Bitmap {
+    /**
+     * [itemOrigin] 是否使用最左上角的元素当做原点, 否则就是0,0位置为左上角原点
+     * */
+    fun getBitmap(itemOrigin: Boolean = false): Bitmap {
         //val contentWidth = getCanvasViewBox().getContentWidth()
         //val contentHeight = getCanvasViewBox().getContentHeight()
 
-        var left = 0f
-        var top = 0f
+        var left = if (itemOrigin) Float.MAX_VALUE else 0f
+        var top = if (itemOrigin) Float.MAX_VALUE else 0f
         var right = 0f
         var bottom = 0f
 

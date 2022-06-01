@@ -338,7 +338,7 @@ open class DslAdapterItem : LifecycleOwner {
             _itemAnimateDelay =
                 itemDslAdapter?.adapterItemAnimateDelayHandler?.computeAnimateDelay(this)
                     ?: _itemAnimateDelay
-            L.w("_itemAnimateDelay:$_itemAnimateDelay")
+            //L.w("_itemAnimateDelay:$_itemAnimateDelay")
             if (_itemAnimateDelay >= 0) {
                 val animation = animationOf(itemHolder.context, itemAnimateRes)
                 if (animation != null) {
