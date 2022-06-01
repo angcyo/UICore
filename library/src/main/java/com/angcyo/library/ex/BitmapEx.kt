@@ -304,7 +304,10 @@ fun Context.getBitmapFromAssets(name: String) = BitmapFactory.decodeStream(asset
 
 /**色彩通道提取
  * [type] 通道类型 [Color.RED] [Color.GREEN] [Color.BLUE]*/
-fun Bitmap.colorChannel(type: Int = Color.RED): ByteArray {
+fun Bitmap.colorChannel(
+    type: Int = Color.RED,
+    convert: (color: Int, channel: Int) -> Int = { _, channel -> channel }
+): ByteArray {
     val width = width
     val height = height
     val result = ByteArray(width * height)
@@ -319,6 +322,7 @@ fun Bitmap.colorChannel(type: Int = Color.RED): ByteArray {
                 Color.TRANSPARENT -> Color.alpha(color)
                 else -> 255
             }
+            value = convert(color, value)
             value = max(0, min(value, 255)) //限制0~255
             result[y * width + x] = value.toByte()
         }
