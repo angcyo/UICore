@@ -141,6 +141,18 @@ fun View.addTo(parent: ViewGroup?, action: (View) -> Unit = {}) {
     parent?.addView(this)
 }
 
+/**移除自身*/
+fun View.removeFromParent(): Boolean {
+    var result = false
+    parent?.let {
+        if (it is ViewGroup) {
+            it.removeView(this)
+            result = true
+        }
+    }
+    return result
+}
+
 fun View.drawRect(rect: Rect) {
     rect.set(paddingLeft, paddingTop, measuredWidth - paddingRight, measuredHeight - paddingBottom)
 }

@@ -2,6 +2,7 @@ package com.angcyo.widget
 
 import android.os.Build
 import android.util.SparseArray
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
@@ -190,6 +191,14 @@ open class DslViewHolder(
             compoundButton.isChecked = checked
         }
         return compoundButton
+    }
+
+    fun touch(@IdRes id: Int, block: (view: View, event: MotionEvent) -> Boolean) {
+        touch(v<View>(id), block)
+    }
+
+    fun touch(view: View?, block: (view: View, event: MotionEvent) -> Boolean) {
+        view?.setOnTouchListener(block)
     }
 
     //</editor-fold desc="事件处理">
