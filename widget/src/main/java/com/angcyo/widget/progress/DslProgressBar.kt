@@ -44,7 +44,8 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     /**最大进度*/
     var progressMaxValue: Int = 100
 
-    /**当前的进度*/
+    /**当前的进度
+     * [0~100]*/
     var progressValue: Int = 0
         set(value) {
             val old = field
@@ -61,11 +62,15 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             postInvalidate()
         }
 
+    /**第二进度*/
     var progressSecondValue: Int = 0
         set(value) {
             field = validProgress(value)
             postInvalidate()
         }
+
+    /**是否激活流光进度效果*/
+    var enableProgressFlowMode: Boolean = false
 
     /**圆角大小, 未强制指定[progressBgDrawable] [progressTrackDrawable]的情况下生效*/
     var progressRadius: Int = 5 * dpi
@@ -135,6 +140,9 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             }
             return field
         }
+
+    //流光进度
+    var _progressFlowValue: Int = 0
 
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.DslProgressBar)
@@ -243,30 +251,31 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             if (isInEditMode) 70 else progressSecondValue
         )
 
-        enableShowHideProgress =
-            typedArray.getBoolean(
-                R.styleable.DslProgressBar_progress_enable_show_hide_progress,
-                enableShowHideProgress
-            )
+        enableShowHideProgress = typedArray.getBoolean(
+            R.styleable.DslProgressBar_progress_enable_show_hide_progress,
+            enableShowHideProgress
+        )
 
         progressClipMode =
             typedArray.getBoolean(R.styleable.DslProgressBar_progress_clip_mode, progressClipMode)
+        enableProgressFlowMode = typedArray.getBoolean(
+            R.styleable.DslProgressBar_enable_progress_flow_mode,
+            enableProgressFlowMode
+        )
 
         //居中提示文本
-        showProgressCenterText =
-            typedArray.getBoolean(
-                R.styleable.DslProgressBar_progress_show_center_text,
-                showProgressCenterText
-            )
+        showProgressCenterText = typedArray.getBoolean(
+            R.styleable.DslProgressBar_progress_show_center_text,
+            showProgressCenterText
+        )
         progressCenterTextSize = typedArray.getDimensionPixelOffset(
             R.styleable.DslProgressBar_progress_center_text_size,
             progressCenterTextSize.toInt()
         ).toFloat()
-        progressCenterTextColor =
-            typedArray.getColor(
-                R.styleable.DslProgressBar_progress_center_text_color,
-                progressCenterTextColor
-            )
+        progressCenterTextColor = typedArray.getColor(
+            R.styleable.DslProgressBar_progress_center_text_color,
+            progressCenterTextColor
+        )
         progressCenterTextFormat =
             typedArray.getString(R.styleable.DslProgressBar_progress_center_text_format)
                 ?: progressCenterTextFormat
@@ -296,7 +305,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         super.onDraw(canvas)
         drawBg(canvas)
         drawSecondProgress(canvas)
-        drawTrack(canvas)
+        drawTrack(canvas) //进度
         drawProgressText(canvas)
         drawCenterProgressText(canvas)
     }
@@ -360,7 +369,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         val pBound = _progressBound
         progressTrackDrawable?.apply {
 
-            val progressRight = (pBound.left + pBound.width() * _progressFraction).toInt()
+            var progressRight = (pBound.left + pBound.width() * _progressFraction).toInt()
 
             val right = if (progressClipMode) {
                 pBound.right
@@ -387,6 +396,37 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
                 }
             } else {
                 draw(canvas)
+            }
+
+            //流光效果
+            if (enableProgressFlowMode && progressValue != progressMaxValue) {
+                val progressFlowRatio = _progressFlowValue / 100f
+                setBounds(
+                    pBound.left,
+                    pBound.top,
+                    (right * progressFlowRatio).toInt(),
+                    pBound.bottom
+                )
+                progressRight = (progressRight * progressFlowRatio).toInt()
+                if (progressClipMode) {
+                    canvas.withSave {
+                        clipRect(
+                            pBound.left,
+                            pBound.top,
+                            progressRight,
+                            pBound.bottom
+                        )
+                        draw(canvas)
+                    }
+                } else {
+                    draw(canvas)
+                }
+                if (_progressFlowValue >= 100) {
+                    _progressFlowValue = 0
+                } else {
+                    _progressFlowValue++
+                }
+                invalidate()
             }
         }
     }
