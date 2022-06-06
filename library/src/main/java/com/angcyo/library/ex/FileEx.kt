@@ -410,3 +410,21 @@ fun generateFileName(name: String?, directory: File): File? {
     }
     return file
 }
+
+/**
+ * 枚举文件
+ * [recursively] 是否递归子文件夹*/
+fun File.eachFile(recursively: Boolean = true, block: (File) -> Unit) {
+    val files = listFiles() ?: return
+    for (file in files) {
+        try {
+            if (file.isDirectory && recursively) {
+                file.eachFile(recursively, block)
+            } else {
+                block(file)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+}

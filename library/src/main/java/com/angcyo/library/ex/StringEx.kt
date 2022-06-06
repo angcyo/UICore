@@ -410,6 +410,15 @@ fun String?.isTextMimeType(): Boolean {
     return this?.startsWith("text", true) ?: false
 }
 
+/**是否是字体*/
+fun String?.isFontType(): Boolean {
+    if (mimeType()?.startsWith("font", true) == true) {
+        return true
+    }
+    val lc = this?.lowercase() ?: return false
+    return lc.endsWith(".ttf") || lc.endsWith(".otf") || lc.endsWith(".ttc")
+}
+
 fun CharSequence?.patternList(
     regex: String?,
     orNoFind: String? = null /*未找到时, 默认*/
