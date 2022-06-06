@@ -252,7 +252,8 @@ fun Int.toMillisecond() = this * 1000L
  * 将毫秒转成 x天x时x分x秒x毫秒.
  *
  *<pre>
- *  toElapsedTime( pattern = intArrayOf(-1, 1, 1), units = arrayOf("", "", ":", ":", ":") )
+ *  11:00:00
+ *  toElapsedTime(pattern = intArrayOf(-1, 1, 1), units = arrayOf("", "", ":", ":", ":") )
  *</pre>
  *
  * [-1] 强制不需要

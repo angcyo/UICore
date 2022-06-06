@@ -74,17 +74,18 @@ fun radians(x: Float, y: Float, pivotX: Float, pivotY: Float): Double {
  * @param digit 需要保留的小数位数
  * @param fadedUp 是否四舍五入
  * */
-fun Double.decimal(digit: Int = 2, fadedUp: Boolean = false): Float {
+fun Double.decimal(digit: Int = 2, fadedUp: Boolean = false): String {
     val f = 10f.pow(digit)
-    return if (fadedUp) {
+    val value = if (fadedUp) {
         (this * f).roundToInt()
     } else {
         (this * f).toInt()
     } / f
+    return String.format("%.${digit}f", value)
 }
 
 /**保留小数点后几位*/
-fun Float.decimal(digit: Int = 2, fadedUp: Boolean = false): Float {
+fun Float.decimal(digit: Int = 2, fadedUp: Boolean = false): String {
     return this.toDouble().decimal(digit, fadedUp)
 }
 

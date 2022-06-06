@@ -298,7 +298,7 @@ fun limitMaxWidthHeight(
 }
 
 /**保留小数点后几位*/
-fun Float.canvasDecimal(digit: Int = 2, fadedUp: Boolean = true): Float {
+fun Float.canvasDecimal(digit: Int = 2, fadedUp: Boolean = true): String {
     return this.toDouble().decimal(digit, fadedUp)
 }
 

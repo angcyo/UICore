@@ -43,7 +43,7 @@
         android:gravity="center"
         android:minWidth="100dp"
         android:minHeight="80dp"
-        android:text="暂无数据"
+        android:text="@string/adapter_no_data"
         android:textSize="@dimen/text_main_size"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"

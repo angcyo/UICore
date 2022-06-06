@@ -1,5 +1,6 @@
 package com.angcyo.library.ex
 
+import android.app.Activity
 import android.app.Application
 import android.content.pm.ApplicationInfo
 import android.graphics.Point
@@ -18,6 +19,7 @@ import java.io.BufferedWriter
 import java.io.FileWriter
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.lang.reflect.InvocationTargetException
 import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicReference
@@ -46,7 +48,8 @@ typealias ClickAction = (View) -> Unit
 /**别名*/
 typealias ResultThrowable = (error: Throwable?) -> Unit
 
-/**反射获取[Application]对象*/
+/**反射获取[Application]对象
+ * [android.app.ActivityThread#currentApplication]*/
 fun currentApplication(): Application? {
     return try {
         val activityThreadClass = Class.forName("android.app.ActivityThread")
@@ -55,6 +58,51 @@ fun currentApplication(): Application? {
     } catch (e: Exception) {
         null
     }
+}
+
+/**
+ * [android.app.ActivityThread#currentActivityThread]
+ * [android.app.ActivityThread#mActivities]
+ * [android.app.ActivityThread.ActivityClientRecord#paused]
+ * */
+fun currentActivity(): Activity? {
+    val activityThreadClass: Class<*>?
+    try {
+        activityThreadClass = Class.forName("android.app.ActivityThread")
+        val activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null)
+        val activitiesField = activityThreadClass.getDeclaredField("mActivities")
+        activitiesField.isAccessible = true
+        val activities = activitiesField[activityThread] as Map<*, *>
+        var lastActivity: Activity? = null
+        for (activityRecord in activities.values) {
+            if (activityRecord != null) {
+                val activityRecordClass: Class<*> = activityRecord.javaClass
+                val pausedField = activityRecordClass.getDeclaredField("paused")
+                pausedField.isAccessible = true
+
+                val activityField = activityRecordClass.getDeclaredField("activity")
+                activityField.isAccessible = true
+                lastActivity = activityField[activityRecord] as Activity
+
+                if (!pausedField.getBoolean(activityRecord)) {
+                    //paused == false
+                    return lastActivity
+                }
+            }
+        }
+        return lastActivity
+    } catch (e: ClassNotFoundException) {
+        e.printStackTrace()
+    } catch (e: NoSuchMethodException) {
+        e.printStackTrace()
+    } catch (e: IllegalAccessException) {
+        e.printStackTrace()
+    } catch (e: InvocationTargetException) {
+        e.printStackTrace()
+    } catch (e: NoSuchFieldException) {
+        e.printStackTrace()
+    }
+    return null
 }
 
 fun threadName() = Thread.currentThread().name

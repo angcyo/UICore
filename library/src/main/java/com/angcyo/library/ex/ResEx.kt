@@ -146,3 +146,7 @@ fun _colorDrawable(color: Int): Drawable {
 fun _string(@StringRes id: Int): String {
     return app().resources.getString(id)
 }
+
+fun _stringArray(@ArrayRes id: Int): Array<String> {
+    return app().resources.getStringArray(id)
+}

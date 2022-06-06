@@ -451,7 +451,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
 
     /**插入数据列表*/
     @UpdateFlag
-    fun insertItem(index: Int, item: DslAdapterItem, checkExist: Boolean = false) {
+    fun insertItem(index: Int, item: DslAdapterItem, checkExist: Boolean = true) {
         if (checkExist && dataItems.contains(item)) {
             return
         }
@@ -579,13 +579,13 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
 
     @UpdateFlag
     fun removeItemFrom(
-        list: MutableList<DslAdapterItem>,
+        fromList: MutableList<DslAdapterItem>,
         item: DslAdapterItem,
         updateOther: Boolean
     ) {
         val index = adapterItems.indexOf(item)
         if (index != -1) {
-            if (list.remove(item)) {
+            if (fromList.remove(item)) {
                 item.itemRemoveFlag = true
                 if (updateOther) {
                     for (i in (index + 1) until adapterItems.size) {

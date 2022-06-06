@@ -262,6 +262,9 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             R.styleable.DslProgressBar_enable_progress_flow_mode,
             enableProgressFlowMode
         )
+        if (enableProgressFlowMode && isInEditMode) {
+            _progressFlowValue = 50
+        }
 
         //居中提示文本
         showProgressCenterText = typedArray.getBoolean(
@@ -399,7 +402,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             }
 
             //流光效果
-            if (enableProgressFlowMode && progressValue != progressMaxValue) {
+            if (enableProgressFlowMode) {
                 val progressFlowRatio = _progressFlowValue / 100f
                 setBounds(
                     pBound.left,
