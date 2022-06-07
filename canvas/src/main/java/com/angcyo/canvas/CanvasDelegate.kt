@@ -748,7 +748,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
      * [margin] 边缘额外显示的距离*/
     fun showRectBounds(
         rect: RectF,
-        margin: Float = 2f * dp,
+        margin: Float = 4f * dp,
         scale: Boolean = true,
         lockScale: Boolean = true,
         anim: Boolean = true
