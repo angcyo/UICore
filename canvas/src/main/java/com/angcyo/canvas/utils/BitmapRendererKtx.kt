@@ -95,7 +95,7 @@ fun IRenderer.updateItemDrawable(
     return if (this is PictureItemRenderer) {
         val item = _rendererItem
         if (item is PictureBitmapItem) {
-            updateItemDrawable(drawable, holdData, strategy = strategy)
+            updateItemDrawable(drawable, holdData, getBounds(), strategy)
             item
         } else {
             null
