@@ -18,7 +18,7 @@ static def isWindows() {
 }
 
 static def getBuildTime() {
-    return new Date().format("yyyy-MM-dd HH:mm:ss.sss", TimeZone.getTimeZone("UTC"))
+    return new Date().format("yyyy-MM-dd HH:mm:ss.sss", TimeZone.getTimeZone("Asia/Shanghai"))
 }
 
 static def osName() {
@@ -30,15 +30,15 @@ static def userName() {
 }
 
 static def releaseTime() {
-    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("Asia/Shanghai"))
 }
 
 static def apkTime() {
-    return new Date().format("yyyy-MM-dd_HH-mm", TimeZone.getTimeZone("UTC"))
+    return new Date().format("yyyy-MM-dd_HH-mm", TimeZone.getTimeZone("Asia/Shanghai"))
 }
 
 static def formatTime(String format) {
-    return new Date().format(format, TimeZone.getTimeZone("UTC"))
+    return new Date().format(format, TimeZone.getTimeZone("Asia/Shanghai"))
 }
 
 static def error(Object msg) {
