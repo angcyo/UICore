@@ -8,5 +8,6 @@ dependencies {
 
     implementation "androidx.browser:browser:1.4.0"
 
+    //https://mvnrepository.com/artifact/com.google.androidbrowserhelper/androidbrowserhelper
     implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.3.0'
 }
