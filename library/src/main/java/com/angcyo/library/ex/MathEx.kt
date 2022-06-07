@@ -76,7 +76,9 @@ fun radians(x: Float, y: Float, pivotX: Float, pivotY: Float): Double {
  * */
 fun Double.decimal(digit: Int = 2, fadedUp: Boolean = false): String {
     val f = 10f.pow(digit)
-    val value = if (fadedUp) {
+    val value = if (isNaN()) {
+        0
+    } else if (fadedUp) {
         (this * f).roundToInt()
     } else {
         (this * f).toInt()
