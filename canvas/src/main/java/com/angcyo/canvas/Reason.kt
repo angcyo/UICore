@@ -15,5 +15,11 @@ data class Reason(
 
         /**代码操作*/
         const val REASON_CODE = 2
+
+        val user: Reason
+            get() = Reason(REASON_USER)
+
+        val code: Reason
+            get() = Reason(REASON_CODE)
     }
 }

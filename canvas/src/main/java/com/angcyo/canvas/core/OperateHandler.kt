@@ -3,7 +3,11 @@ package com.angcyo.canvas.core
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Reason
+import com.angcyo.canvas.Strategy
+import com.angcyo.canvas.core.renderer.ICanvasStep
+import com.angcyo.canvas.core.renderer.SelectGroupRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils._tempValues
 import com.angcyo.canvas.utils.mapPoint
@@ -187,4 +191,42 @@ class OperateHandler {
         return result
     }
 
+    /**批量偏移[bounds]*/
+    fun offsetItemList(
+        canvasDelegate: CanvasDelegate,
+        selectGroupRenderer: SelectGroupRenderer?,
+        offsetList: List<OffsetItemData>,
+        strategy: Strategy
+    ) {
+        val undoOffsetList = mutableListOf<OffsetItemData>()
+
+        offsetList.forEach { item ->
+            undoOffsetList.add(OffsetItemData(item.item, -item.dx, -item.dy))
+        }
+
+        val step = object : ICanvasStep {
+            override fun runUndo() {
+                undoOffsetList.forEach { item ->
+                    item.item.changeBounds(Reason(Reason.REASON_CODE, false)) {
+                        offset(item.dx, item.dy)
+                    }
+                }
+                selectGroupRenderer?.updateSelectBounds()
+            }
+
+            override fun runRedo() {
+                offsetList.forEach { item ->
+                    item.item.changeBounds(Reason(Reason.REASON_CODE, false)) {
+                        offset(item.dx, item.dy)
+                    }
+                }
+                selectGroupRenderer?.updateSelectBounds()
+            }
+        }
+
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasDelegate.getCanvasUndoManager().addUndoAction(step)
+        }
+        step.runRedo()
+    }
 }

@@ -189,6 +189,21 @@ fun Int.isGravityCenter(): Boolean {
     return verticalGravity == Gravity.CENTER_VERTICAL && horizontalGravity == Gravity.CENTER_HORIZONTAL
 }
 
+/**Gravity水平居中*/
+fun Int.isGravityCenterHorizontal(): Boolean {
+    val layoutDirection = 0
+    val absoluteGravity = Gravity.getAbsoluteGravity(this, layoutDirection)
+    val horizontalGravity = absoluteGravity and Gravity.HORIZONTAL_GRAVITY_MASK
+
+    return horizontalGravity == Gravity.CENTER_HORIZONTAL
+}
+
+/**Gravity垂直居中*/
+fun Int.isGravityCenterVertical(): Boolean {
+    val verticalGravity = this and Gravity.VERTICAL_GRAVITY_MASK
+    return verticalGravity == Gravity.CENTER_VERTICAL
+}
+
 /**Gravity左*/
 fun Int.isGravityLeft(): Boolean {
     val layoutDirection = 0

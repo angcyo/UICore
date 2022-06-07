@@ -1,15 +1,21 @@
 package com.angcyo.canvas.core.renderer
 
 import android.graphics.*
+import android.view.Gravity
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
 import com.angcyo.canvas.Reason
+import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.CanvasEntryPoint
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.IRenderer
+import com.angcyo.canvas.core.OffsetItemData
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.createPaint
+import com.angcyo.drawable.isGravityCenterHorizontal
+import com.angcyo.drawable.isGravityLeft
+import com.angcyo.drawable.isGravityRight
 import com.angcyo.library.ex.*
 import kotlin.math.max
 import kotlin.math.min
@@ -257,5 +263,70 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         } else {
             updateSelectBounds()
         }
+    }
+
+    /**更新选中子项的对齐方式
+     * [align] [Gravity.LEFT]*/
+    fun updateAlign(align: Int = Gravity.LEFT, strategy: Strategy = Strategy.normal) {
+        val list = selectItemList
+        if (list.size() <= 1) {
+            return
+        }
+
+        var anchorItemRenderer: BaseItemRenderer<*>? = null
+        if (align.isGravityLeft()) {
+            var minLeft = Float.MAX_VALUE
+            list.forEach {
+                val bounds = it.getRotateBounds()
+                if (bounds.left < minLeft) {
+                    anchorItemRenderer = it
+                    minLeft = bounds.left
+                }
+            }
+        } else if (align.isGravityRight()) {
+            var maxRight = Float.MIN_VALUE
+            list.forEach {
+                val bounds = it.getRotateBounds()
+                if (bounds.right > maxRight) {
+                    anchorItemRenderer = it
+                    maxRight = bounds.right
+                }
+            }
+        } else if (align.isGravityCenterHorizontal()) {
+            var maxWidth = Float.MIN_VALUE
+            list.forEach {
+                val bounds = it.getRotateBounds()
+                if (bounds.width() > maxWidth) {
+                    anchorItemRenderer = it
+                    maxWidth = bounds.width()
+                }
+            }
+        }
+
+        if (anchorItemRenderer == null) {
+            return
+        }
+
+        val offsetList = mutableListOf<OffsetItemData>()
+
+        val anchorBounds = anchorItemRenderer!!.getRotateBounds()
+        for (item in list) {
+            if (item != anchorItemRenderer) {
+                val itemBounds = item.getRotateBounds()
+                //开始调整
+                var dx = 0f
+                var dy = 0f
+
+                if (align.isGravityLeft()) {
+                    dx = anchorBounds.left - itemBounds.left
+                } else if (align.isGravityRight()) {
+                    dx = anchorBounds.right - itemBounds.right
+                } else if (align.isGravityCenterHorizontal()) {
+                    dx = anchorBounds.centerX() - itemBounds.centerX()
+                }
+                offsetList.add(OffsetItemData(item, dx, dy))
+            }
+        }
+        canvasDelegate.operateHandler.offsetItemList(canvasDelegate, this, offsetList, strategy)
     }
 }
