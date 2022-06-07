@@ -861,12 +861,31 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         addLastItem(this, config)
     }
 
+    /**
+     * ```
+     *  DslDemoItem()(0){}
+     * ```
+     * */
+    @UpdateFlag
+    operator fun <T : DslAdapterItem> T.invoke(index: Int, config: T.() -> Unit = {}) {
+        insertItem(index, this, config)
+    }
+
     @UpdateFlag
     operator fun <T : DslAdapterItem> T.invoke(
         list: MutableList<DslAdapterItem>,
         config: T.() -> Unit = {}
     ) {
         addLastItem(list, this, config)
+    }
+
+    @UpdateFlag
+    operator fun <T : DslAdapterItem> T.invoke(
+        index: Int,
+        list: MutableList<DslAdapterItem>,
+        config: T.() -> Unit = {}
+    ) {
+        insertItem(list, index, this, config)
     }
 
     /**
