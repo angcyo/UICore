@@ -13,7 +13,7 @@ import com.angcyo.library.ex.abs
  */
 class DoubleGestureDetector2(context: Context = app(), val action: (event: MotionEvent) -> Unit) {
 
-    /**两次按下, 时长不能超过此值*/
+    /**两次按下, 时长不能超过此值, 毫秒*/
     var doubleTapGap = 360f
 
     /**两次按下, 距离不能超过此值*/
@@ -37,6 +37,11 @@ class DoubleGestureDetector2(context: Context = app(), val action: (event: Motio
         val y = event.y
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
+                val time = System.currentTimeMillis()
+                _isFirstTouch = time - _touchTime > doubleTapGap ||
+                        (_touchX - x).abs() > doubleTapSlop ||
+                        (_touchY - y).abs() > doubleTapSlop
+
                 if (_isFirstTouch) {
                     _touchTime = System.currentTimeMillis()
                     _touchX = x
@@ -45,12 +50,15 @@ class DoubleGestureDetector2(context: Context = app(), val action: (event: Motio
             }
             MotionEvent.ACTION_UP -> {
                 val time = System.currentTimeMillis()
-                if (time - _touchTime > doubleTapGap || (_touchX - x).abs() > doubleTapSlop || (_touchY - y).abs() > doubleTapSlop) {
+                //L.w("${time - _touchTime} ${_touchX - x} ${_touchY - y} ${_isFirstTouch}")
+                if (time - _touchTime > doubleTapGap ||
+                    (_touchX - x).abs() > doubleTapSlop ||
+                    (_touchY - y).abs() > doubleTapSlop
+                ) {
                     _isFirstTouch = true
-                } else if (_isFirstTouch) {
-                    _isFirstTouch = false
-                } else {
+                } else if (!_isFirstTouch) {
                     //双击判断
+                    //L.w("双击...")
                     isDoubleTouch = true
                     action(event)
                     _isFirstTouch = true
