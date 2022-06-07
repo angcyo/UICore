@@ -52,7 +52,7 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
     var showSoftInput = true
 
     /**延迟多久才显示软键盘*/
-    var showSoftInputDelay = 160L
+    var showSoftInputDelay = 240L
 
     /**
      * 是否允许输入为空

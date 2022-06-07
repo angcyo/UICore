@@ -1,6 +1,7 @@
 package com.angcyo.canvas.items.renderer
 
 import android.graphics.*
+import android.graphics.drawable.Drawable
 import android.widget.LinearLayout
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.Reason
@@ -393,6 +394,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
     /**添加一个图片用来渲染*/
     fun addBitmapRender(bitmap: Bitmap): PictureBitmapItem {
         _rendererItem = PictureBitmapItem().apply {
+            this.originBitmap = bitmap
             this.bitmap = bitmap
             updatePaint()
         }
@@ -404,6 +406,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
      * [bounds] 需要更新的Bounds, 如果有*/
     fun updateItemBitmap(
         bitmap: Bitmap,
+        holdData: Map<String, Any?>? = null,
         bounds: RectF? = null,
         strategy: Strategy = Strategy.normal
     ) {
@@ -418,9 +421,11 @@ class PictureItemRenderer(canvasView: ICanvasView) :
         }
 
         val oldBounds = RectF(getBounds())
+        val oldData = item?.holdData
 
         if (bounds != null) {
             getRendererItem()?.apply {
+                this.holdData = holdData
                 if (this is PictureBitmapItem) {
                     this.bitmap = bitmap
                     updatePaint()
@@ -432,6 +437,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
             }
         } else {
             wrapItemUpdate {
+                this.holdData = holdData
                 if (this is PictureBitmapItem) {
                     this.bitmap = bitmap
                     updatePaint()
@@ -445,11 +451,66 @@ class PictureItemRenderer(canvasView: ICanvasView) :
                 val newBounds = RectF(getBounds())
 
                 override fun runUndo() {
-                    updateItemBitmap(oldValue, oldBounds, Strategy.undo)
+                    updateItemBitmap(oldValue, oldData, oldBounds, Strategy.undo)
                 }
 
                 override fun runRedo() {
-                    updateItemBitmap(bitmap, newBounds, Strategy.redo)
+                    updateItemBitmap(bitmap, holdData, newBounds, Strategy.redo)
+                }
+            })
+        }
+    }
+
+    /**直接更新[drawable]*/
+    fun updateItemDrawable(
+        drawable: Drawable?,
+        holdData: Map<String, Any?>? = null,
+        bounds: RectF? = null,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val item = getRendererItem()
+        val oldValue = item?.drawable
+
+        if (oldValue == drawable) {
+            return
+        }
+
+        val oldBounds = RectF(getBounds())
+        val oldData = item?.holdData
+
+        if (bounds != null) {
+            getRendererItem()?.apply {
+                this.holdData = holdData
+                if (this is PictureBitmapItem) {
+                    this.bitmap = null
+                }
+                updateDrawable(drawable)
+
+                changeBounds {
+                    set(bounds)
+                }
+            }
+        } else {
+            wrapItemUpdate {
+                this.holdData = holdData
+                if (this is PictureBitmapItem) {
+                    this.bitmap = null
+                }
+                updateDrawable(drawable)
+            }
+        }
+
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL && oldValue != null) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+
+                val newBounds = RectF(getBounds())
+
+                override fun runUndo() {
+                    updateItemDrawable(oldValue, oldData, oldBounds, Strategy.undo)
+                }
+
+                override fun runRedo() {
+                    updateItemDrawable(drawable, holdData, newBounds, Strategy.redo)
                 }
             })
         }

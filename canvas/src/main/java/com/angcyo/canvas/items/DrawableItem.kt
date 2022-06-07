@@ -15,4 +15,11 @@ open class DrawableItem : BaseItem() {
         itemName = "Drawable"
     }
 
+    /**更新[drawable]*/
+    fun updateDrawable(drawable: Drawable?) {
+        this.drawable = drawable
+        this.itemWidth = drawable?.minimumWidth?.toFloat() ?: 0f
+        this.itemHeight = drawable?.minimumHeight?.toFloat() ?: 0f
+    }
+
 }

@@ -33,6 +33,9 @@ abstract class BaseItem : ICanvasItem {
     /**字体样式*/
     var textStyle: Int = PictureTextItem.TEXT_STYLE_NONE
 
+    /**额外存储的数据, 支持回退栈管理*/
+    var holdData: Map<String, Any?>? = null
+
     /**更新画笔*/
     open fun updatePaint(paint: TextPaint = this.paint) {
         this.paint = paint

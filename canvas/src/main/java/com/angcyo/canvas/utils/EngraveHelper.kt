@@ -16,6 +16,9 @@ import kotlin.math.min
  */
 object EngraveHelper {
 
+    /**GCode数据*/
+    const val KEY_GCODE = "key_gcode"
+
     /**将路径描边转换为G1代码
      * [path] 需要转换的路径
      * [bounds] 路径需要平移的left, top

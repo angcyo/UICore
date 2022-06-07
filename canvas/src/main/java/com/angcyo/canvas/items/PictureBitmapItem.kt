@@ -11,7 +11,10 @@ import com.angcyo.library.ex.withPicture
  */
 class PictureBitmapItem : PictureItem() {
 
-    /**绘制的图片*/
+    /**原始的图片, 未修改前的数据*/
+    var originBitmap: Bitmap? = null
+
+    /**绘制的图片, 可能是修改后的数据*/
     var bitmap: Bitmap? = null
 
     val bitmapBounds = emptyRectF()

@@ -1,6 +1,7 @@
 package com.angcyo.canvas.utils
 
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.IRenderer
@@ -9,6 +10,7 @@ import com.angcyo.canvas.items.BitmapItem
 import com.angcyo.canvas.items.PictureBitmapItem
 import com.angcyo.canvas.items.renderer.BitmapItemRenderer
 import com.angcyo.canvas.items.renderer.PictureItemRenderer
+import com.angcyo.library.ex.toBitmap
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -44,13 +46,17 @@ fun CanvasView.addPictureBitmapRenderer(bitmap: Bitmap): PictureBitmapItem {
 //</editor-fold desc="Bitmap渲染">
 
 /**获取渲染的[Bitmap]对象, 如果有*/
-fun IRenderer.getRenderBitmap(): Bitmap? {
+fun IRenderer.getRenderBitmap(origin: Boolean = true): Bitmap? {
     return if (this is BitmapItemRenderer) {
         _rendererItem?.bitmap
     } else if (this is PictureItemRenderer) {
         val item = _rendererItem
         if (item is PictureBitmapItem) {
-            item.bitmap
+            if (origin) {
+                item.originBitmap
+            } else {
+                item.bitmap ?: item.drawable?.toBitmap()
+            }
         } else {
             null
         }
@@ -62,7 +68,8 @@ fun IRenderer.getRenderBitmap(): Bitmap? {
 /**更新渲染的[Bitmap]对象, 如果可以*/
 fun IRenderer.updateRenderBitmap(
     bitmap: Bitmap,
-    strategy: Strategy = Strategy.normal
+    strategy: Strategy = Strategy.normal,
+    holdData: Map<String, Any?>? = null
 ): BaseItem? {
     return if (this is BitmapItemRenderer) {
         updateBitmap(bitmap, strategy = strategy)
@@ -70,7 +77,25 @@ fun IRenderer.updateRenderBitmap(
     } else if (this is PictureItemRenderer) {
         val item = _rendererItem
         if (item is PictureBitmapItem) {
-            updateItemBitmap(bitmap, strategy = strategy)
+            updateItemBitmap(bitmap, holdData, strategy = strategy)
+            item
+        } else {
+            null
+        }
+    } else {
+        null
+    }
+}
+
+fun IRenderer.updateItemDrawable(
+    drawable: Drawable?,
+    strategy: Strategy = Strategy.normal,
+    holdData: Map<String, Any?>? = null
+): BaseItem? {
+    return if (this is PictureItemRenderer) {
+        val item = _rendererItem
+        if (item is PictureBitmapItem) {
+            updateItemDrawable(drawable, holdData, strategy = strategy)
             item
         } else {
             null

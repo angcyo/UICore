@@ -539,6 +539,26 @@ fun <T : DslAdapterItem> DslAdapter.findSameClassItem(
     return result
 }
 
+/**更新[itemIsSelected]属性*/
+@UpdateByNotify
+fun DslAdapter.selectItem(
+    selected: Boolean = true,
+    update: Boolean = true,
+    useFilterList: Boolean = true,
+    predicate: (DslAdapterItem) -> Boolean
+) {
+    for (item in getDataList(useFilterList)) {
+        if (predicate(item)) {
+            if (item.itemIsSelected != selected) {
+                item.itemIsSelected = selected
+                if (update) {
+                    item.updateAdapterItem(useFilterList = useFilterList)
+                }
+            }
+        }
+    }
+}
+
 //</editor-fold desc="操作扩展">
 
 //<editor-fold desc="Interceptor">
