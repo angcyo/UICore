@@ -1011,6 +1011,8 @@ class CanvasDelegate(val view: View) : ICanvasView {
         } else {
             dispatchItemSortChanged(newRendererList)
         }
+        //刷新
+        refresh()
     }
 
     //</editor-fold desc="操作方法">
