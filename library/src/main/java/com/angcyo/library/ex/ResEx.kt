@@ -2,9 +2,13 @@ package com.angcyo.library.ex
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.os.Build
+import android.os.LocaleList
 import android.view.View
 import android.view.Window
 import androidx.annotation.*
@@ -12,6 +16,7 @@ import androidx.core.content.ContextCompat
 import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.component.defaultDensityAdapter
+import java.util.*
 
 /**
  *
@@ -149,4 +154,31 @@ fun _string(@StringRes id: Int): String {
 
 fun _stringArray(@ArrayRes id: Int): Array<String> {
     return app().resources.getStringArray(id)
+}
+
+/**获取指定语种的字符串资源*/
+fun _string(@StringRes id: Int, locale: Locale?): String {
+    return localResources(app(), locale).getString(id)
+}
+
+fun _stringArray(@ArrayRes id: Int, locale: Locale?): Array<String> {
+    return localResources(app(), locale).getStringArray(id)
+}
+
+/**获取某个语种下的 Resources对象*/
+fun localResources(context: Context, locale: Locale?): Resources {
+    val config = Configuration()
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val localeList = LocaleList(locale)
+            config.setLocales(localeList)
+        } else {
+            config.setLocale(locale)
+        }
+    } else {
+        config.locale = locale
+    }
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        context.createConfigurationContext(config).resources
+    } else Resources(context.assets, context.resources.displayMetrics, config)
 }
