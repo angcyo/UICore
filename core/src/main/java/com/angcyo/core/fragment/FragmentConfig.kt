@@ -21,32 +21,39 @@ import com.angcyo.library.ex.getDimen
  */
 data class FragmentConfig(
 
-    /**拦截RootView的事件, 防止事件穿透到底下的Fragment*/
+    /**拦截RootView的事件, 防止事件穿透到底下的Fragment
+     * [com.angcyo.core.fragment.BaseTitleFragment.onInitFragment]*/
     var interceptRootTouchEvent: Boolean = true,
 
-    /**标题栏文本大小*/
+    /**标题栏文本大小
+     * [com.angcyo.core.fragment.BaseTitleFragment.onInitFragment]*/
     var titleTextSize: Float = getDimen(R.dimen.text_main_size).toFloat(),
 
     /**[Typeface.NORMAL]
      * [Typeface.BOLD]
      * [Typeface.ITALIC]
      * [Typeface.BOLD_ITALIC]
+     * [com.angcyo.core.fragment.BaseTitleFragment.onInitFragment]
      * */
     var titleTextType: Int = Typeface.NORMAL,
 
     /**标题栏文本颜色*/
     var titleTextColor: Int = Color.WHITE,
 
-    /**标题栏左右item的图标颜色*/
+    /**标题栏左右item的图标颜色
+     * [com.angcyo.core.fragment.BaseTitleFragment.onInitFragment]*/
     var titleItemIconColor: Int = Color.WHITE,
 
-    /**标题栏左右item的文本颜色*/
+    /**标题栏左右item的文本颜色
+     * [com.angcyo.core.fragment.BaseTitleFragment.onInitFragment]*/
     var titleItemTextColor: Int = Color.WHITE,
 
-    /**Fragment背景*/
+    /**Fragment背景
+     * [com.angcyo.core.fragment.BaseTitleFragment.onInitFragment]*/
     var fragmentBackgroundDrawable: Drawable? = ColorDrawable(getColor(R.color.bg_primary_color)),
 
-    /**标题栏背景*/
+    /**标题栏背景
+     * [com.angcyo.core.fragment.BaseTitleFragment.onInitFragment]*/
     var titleBarBackgroundDrawable: Drawable? = GradientDrawable(
         GradientDrawable.Orientation.LEFT_RIGHT,
         intArrayOf(getColor(R.color.colorPrimary), getColor(R.color.colorPrimaryDark))

@@ -35,9 +35,14 @@ abstract class BaseFragment : AbsLifecycleFragment() {
 
     //<editor-fold desc="Fragment样式配置">
 
+    /**样式拦截
+     * [com.angcyo.core.fragment.BaseTitleFragment#onCreate]
+     * [com.angcyo.core.fragment.BaseTitleFragment.onCreateView]*/
     var fragmentUI: FragmentUI? = null
         get() = field ?: BaseUI.fragmentUI
 
+    /**样式配置
+     * [com.angcyo.core.fragment.BaseTitleFragment.onCreate]*/
     var fragmentConfig: FragmentConfig = FragmentConfig()
 
     //</editor-fold desc="Fragment样式配置">
