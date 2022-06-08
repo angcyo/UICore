@@ -323,9 +323,12 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
      * [DslAdapterStatusItem.ADAPTER_STATUS_ERROR]
      * */
     @UpdateFlag
-    fun setAdapterStatus(status: Int) {
+    fun setAdapterStatus(status: Int, error: Throwable? = null) {
         if (dslAdapterStatusItem.itemState == status) {
             return
+        }
+        if (status == DslAdapterStatusItem.ADAPTER_STATUS_ERROR) {
+            dslAdapterStatusItem.itemErrorThrowable = error
         }
         dslAdapterStatusItem.itemState = status
         dslAdapterStatusItem.itemUpdateFlag = true
