@@ -53,7 +53,7 @@ open class LogInterceptor : Interceptor {
     var logRequestBody = true
     var logResponseBody = true
 
-    var enable: Boolean = isDebug()
+    var enable: Boolean = L.debug
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val originRequest = chain.request()

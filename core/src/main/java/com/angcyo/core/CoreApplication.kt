@@ -42,7 +42,7 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
         /**L.log写入文件, 并且输出到控制台*/
         val DEFAULT_FILE_PRINT: (tag: String, level: Int, msg: String) -> Unit =
             { tag, level, msg ->
-                if (isDebug()) {
+                if (L.debug) {
                     L.DEFAULT_LOG_PRINT.invoke(tag, level, msg)
                 }
                 DEFAULT_FILE_PRINT_PATH?.let { path ->

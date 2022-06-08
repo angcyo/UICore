@@ -65,6 +65,33 @@ fun JsonObject.getInt(key: String?, default: Int = -1): Int {
     return default
 }
 
+fun JsonObject.getBoolean(key: String?, default: Boolean = false): Boolean {
+    if (key.isNullOrEmpty()) {
+        return default
+    }
+    val element = get(key)
+    if (element is JsonPrimitive) {
+        if (element.isBoolean) {
+            return element.asBoolean
+        }
+    }
+    return default
+}
+
+/**[key]对应的数据类型是否是Boolean类型*/
+fun JsonObject.isBoolean(key: String?): Boolean {
+    if (key.isNullOrEmpty()) {
+        return false
+    }
+    val element = get(key)
+    if (element is JsonPrimitive) {
+        if (element.isBoolean) {
+            return true
+        }
+    }
+    return false
+}
+
 fun JsonObject.getString(key: String?, default: String? = null): String? {
     if (key.isNullOrEmpty()) {
         return default

@@ -448,7 +448,9 @@ fun Response<JsonElement>?.isSucceed(
     if (codeKey.isNullOrEmpty()) {
         result = isSuccessful
     } else if (isSuccessful && bodyData is JsonObject) {
-        if (bodyData.getInt(codeKey).isSuccess()) {
+        if (bodyData.isBoolean(codeKey)) {
+            result = bodyData.getBoolean(codeKey)
+        } else if (bodyData.getInt(codeKey).isSuccess()) {
             result = true
         } else {
             errorJson = bodyData
