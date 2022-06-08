@@ -8,6 +8,7 @@ import android.os.Looper
 import androidx.annotation.LayoutRes
 import com.angcyo.dsladapter.annotation.UpdateByDiff
 import com.angcyo.dsladapter.annotation.UpdateByNotify
+import com.angcyo.dsladapter.annotation.UpdateFlag
 import com.angcyo.dsladapter.filter.IFilterInterceptor
 import com.angcyo.library.ex.*
 import com.angcyo.library.isMain
@@ -398,10 +399,20 @@ fun DslAdapter.toLoading() {
     updateAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_LOADING)
 }
 
+@UpdateFlag
+fun DslAdapter.loadingStatus() {
+    setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_LOADING)
+}
+
 /**显示情感图[空数据]*/
 @UpdateByDiff
 fun DslAdapter.toEmpty() {
     updateAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_EMPTY)
+}
+
+@UpdateFlag
+fun DslAdapter.emptyStatus() {
+    setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_EMPTY)
 }
 
 /**显示情感图[错误]*/
@@ -411,10 +422,20 @@ fun DslAdapter.toError(error: Throwable? = null) {
     updateAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_ERROR)
 }
 
+@UpdateFlag
+fun DslAdapter.errorStatus(error: Throwable? = null) {
+    setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_ERROR, error)
+}
+
 /**显示情感图[正常]*/
 @UpdateByDiff
 fun DslAdapter.toNone() {
     updateAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_NONE)
+}
+
+@UpdateFlag
+fun DslAdapter.noneStatus() {
+    setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_NONE)
 }
 
 /**自动判断Adapter的当前状态*/

@@ -1,6 +1,7 @@
 package com.angcyo.item.style
 
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.annotation.ItemInitEntryPoint
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
 import com.angcyo.library.ex._dimen
@@ -21,6 +22,7 @@ interface ITextItem : IAutoInitItem {
     var textItemConfig: TextItemConfig
 
     /**初始化*/
+    @ItemInitEntryPoint
     fun initTextItem(
         itemHolder: DslViewHolder,
         itemPosition: Int,

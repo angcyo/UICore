@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="@dimen/lib_padding_left"
+    android:paddingVertical="@dimen/lib_hdpi">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_label_view"
+        style="@style/LibTitleTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/lib_xhdpi"
+        app:layout_constraintBottom_toTopOf="@id/lib_des_view"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/lib_switch_view"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_des_view"
+        style="@style/LibDesTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lib_sdpi"
+        android:layout_marginRight="@dimen/lib_xhdpi"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/lib_switch_view"
+        app:layout_constraintTop_toBottomOf="@id/lib_label_view"
+        tools:text="很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本" />
+
+    <com.angcyo.github.SwitchButton
+        android:id="@+id/lib_switch_view"
+        android:layout_width="48dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center_vertical|right"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:sb_checked_color="@color/colorPrimary"
+        tools:sb_checked="true" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

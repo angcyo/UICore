@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.widget.ImageView
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.annotation.ItemInitEntryPoint
 import com.angcyo.dsladapter.isUpdateMedia
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.glide.DslGlide
@@ -32,6 +33,7 @@ interface IImageItem : IAutoInitItem {
     var imageItemConfig: ImageItemConfig
 
     /**初始化*/
+    @ItemInitEntryPoint
     fun initImageItem(
         itemHolder: DslViewHolder,
         itemPosition: Int,

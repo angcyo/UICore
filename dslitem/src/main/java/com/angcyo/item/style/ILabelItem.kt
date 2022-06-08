@@ -1,6 +1,7 @@
 package com.angcyo.item.style
 
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.annotation.ItemInitEntryPoint
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
 import com.angcyo.widget.DslViewHolder
@@ -18,10 +19,13 @@ interface ILabelItem : IAutoInitItem {
     var labelItemConfig: LabelItemConfig
 
     /**初始化*/
-    fun initLabelItem(itemHolder: DslViewHolder,
-                      itemPosition: Int,
-                      adapterItem: DslAdapterItem,
-                      payloads: List<Any>) {
+    @ItemInitEntryPoint
+    fun initLabelItem(
+        itemHolder: DslViewHolder,
+        itemPosition: Int,
+        adapterItem: DslAdapterItem,
+        payloads: List<Any>
+    ) {
         itemHolder.tv(labelItemConfig.itemLabelViewId)?.apply {
             labelItemConfig.itemLabelTextStyle.updateStyle(this)
         }
@@ -33,6 +37,12 @@ interface ILabelItem : IAutoInitItem {
 }
 
 var ILabelItem.itemLabelText: CharSequence?
+    get() = labelItemConfig.itemLabelText
+    set(value) {
+        labelItemConfig.itemLabelText = value
+    }
+
+var ILabelItem.itemLabel: CharSequence?
     get() = labelItemConfig.itemLabelText
     set(value) {
         labelItemConfig.itemLabelText = value

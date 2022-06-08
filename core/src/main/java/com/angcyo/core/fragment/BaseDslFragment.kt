@@ -5,12 +5,12 @@ import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.behavior.refresh.IRefreshContentBehavior
 import com.angcyo.core.R
-import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.dsladapter.*
 import com.angcyo.dsladapter.data.SingleDataUpdate
 import com.angcyo.dsladapter.data.loadDataEndIndex
 import com.angcyo.dsladapter.data.resetRender
 import com.angcyo.dsladapter.data.updateAdapter
+import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.library.L
 import com.angcyo.library.model.Page
 import com.angcyo.widget.recycler.noItemChangeAnim
@@ -91,7 +91,7 @@ open class BaseDslFragment : BaseTitleFragment() {
                 _adapter.dataItems.clear()
             }
             _adapter.config()
-            _adapter.toNone()
+            _adapter.noneStatus()
         }
     }
 

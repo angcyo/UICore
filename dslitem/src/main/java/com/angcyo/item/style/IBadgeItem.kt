@@ -1,6 +1,7 @@
 package com.angcyo.item.style
 
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.annotation.ItemInitEntryPoint
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
 import com.angcyo.widget.DslViewHolder
@@ -18,6 +19,7 @@ interface IBadgeItem : IAutoInitItem {
     var badgeItemConfig: BadgeItemConfig
 
     /**初始化*/
+    @ItemInitEntryPoint
     fun initBadgeItem(itemHolder: DslViewHolder,
                       itemPosition: Int,
                       adapterItem: DslAdapterItem,

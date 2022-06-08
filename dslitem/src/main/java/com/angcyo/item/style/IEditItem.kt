@@ -1,6 +1,7 @@
 package com.angcyo.item.style
 
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.annotation.ItemInitEntryPoint
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.DslBaseEditItem
 import com.angcyo.item.R
@@ -28,6 +29,7 @@ interface IEditItem : IAutoInitItem {
     }
 
     /**初始化*/
+    @ItemInitEntryPoint
     fun initEditItem(
         itemHolder: DslViewHolder,
         itemPosition: Int,

@@ -4,18 +4,18 @@ import com.angcyo.item.style.ISwitchItem
 import com.angcyo.item.style.SwitchItemConfig
 
 /**
- * [com.angcyo.github.SwitchButton] 开关item
- * Email:angcyo@126.com
- * @author angcyo
- * @date 2019/08/09
- * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
+ * 开关属性
+ *
+ * @author <a href="mailto:angcyo@126.com">angcyo</a>
+ * @since 2022/06/08
  */
-open class DslSwitchInfoItem : DslBaseInfoItem(), ISwitchItem {
+open class DslPropertySwitchItem : DslBasePropertyItem(), ISwitchItem {
 
     override var switchItemConfig: SwitchItemConfig = SwitchItemConfig()
 
     init {
-        itemExtendLayoutId = R.layout.dsl_extent_switch_item
+        itemLayoutId = R.layout.dsl_property_switch_item
+
         switchItemConfig.itemSwitchChangedAction = {
             onItemSwitchChanged(it)
         }
@@ -25,5 +25,4 @@ open class DslSwitchInfoItem : DslBaseInfoItem(), ISwitchItem {
     open fun onItemSwitchChanged(checked: Boolean) {
 
     }
-
 }

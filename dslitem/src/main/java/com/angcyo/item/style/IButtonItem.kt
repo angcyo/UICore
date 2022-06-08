@@ -2,6 +2,7 @@ package com.angcyo.item.style
 
 import android.view.Gravity
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.annotation.ItemInitEntryPoint
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
 import com.angcyo.widget.DslButton
@@ -19,6 +20,7 @@ interface IButtonItem : IAutoInitItem {
 
     var buttonItemConfig: ButtonItemConfig
 
+    @ItemInitEntryPoint
     fun initButtonItem(itemHolder: DslViewHolder,
                        itemPosition: Int,
                        adapterItem: DslAdapterItem,

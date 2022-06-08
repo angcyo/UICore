@@ -2,6 +2,7 @@ package com.angcyo.item.style
 
 import android.view.View
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.annotation.ItemInitEntryPoint
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
 import com.angcyo.library.ex.ResultThrowable
@@ -20,6 +21,7 @@ interface ILoadItem : IAutoInitItem {
     /**配置类*/
     var loadItemConfig: LoadItemConfig
 
+    @ItemInitEntryPoint
     fun initLoadingItem(
         itemHolder: DslViewHolder,
         itemPosition: Int,

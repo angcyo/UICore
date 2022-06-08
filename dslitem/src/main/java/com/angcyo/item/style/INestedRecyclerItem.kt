@@ -4,6 +4,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.annotation.ItemInitEntryPoint
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
 import com.angcyo.library.app
@@ -23,6 +24,7 @@ interface INestedRecyclerItem : IAutoInitItem {
     var nestedRecyclerItemConfig: NestedRecyclerItemConfig
 
     /**初始化[INestedRecyclerItem]*/
+    @ItemInitEntryPoint
     fun initNestedRecyclerItem(
         itemHolder: DslViewHolder,
         itemPosition: Int,

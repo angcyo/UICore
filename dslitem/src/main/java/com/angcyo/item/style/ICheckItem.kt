@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.CompoundButton
 import android.widget.ImageView
 import com.angcyo.dsladapter.*
+import com.angcyo.dsladapter.annotation.ItemInitEntryPoint
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
 import com.angcyo.widget.DslViewHolder
@@ -20,6 +21,7 @@ interface ICheckItem : IAutoInitItem {
     /**配置项*/
     var checkItemConfig: CheckItemConfig
 
+    @ItemInitEntryPoint
     fun initCheckItem(
         itemHolder: DslViewHolder,
         itemPosition: Int,
