@@ -448,15 +448,24 @@ fun Response<JsonElement>?.isSucceed(
     if (codeKey.isNullOrEmpty()) {
         result = isSuccessful
     } else if (isSuccessful && bodyData is JsonObject) {
-        if (bodyData.isBoolean(codeKey)) {
-            result = bodyData.getBoolean(codeKey)
-        } else if (bodyData.getInt(codeKey).isSuccess()) {
+        if (bodyData.isCodeSuccess(codeKey)) {
             result = true
         } else {
             errorJson = bodyData
         }
     }
     onResult(result, errorJson)
+    return result
+}
+
+/**返回值是否成功*/
+fun JsonObject.isCodeSuccess(key: String?): Boolean {
+    var result = false
+    if (isBoolean(key)) {
+        result = getBoolean(key)
+    } else if (getInt(key).isSuccess()) {
+        result = true
+    }
     return result
 }
 

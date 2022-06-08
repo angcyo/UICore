@@ -1,7 +1,10 @@
 package com.angcyo.http.rx
 
 import com.angcyo.http.DslHttp
-import com.angcyo.http.base.*
+import com.angcyo.http.base.fromJson
+import com.angcyo.http.base.getString
+import com.angcyo.http.base.readString
+import com.angcyo.http.isCodeSuccess
 import com.angcyo.library.toast
 import com.google.gson.JsonObject
 import io.reactivex.Observable
@@ -42,8 +45,8 @@ class ToastObserver<T> : BaseObserver<T>() {
                 if (data.isSuccessful && bodyData is JsonObject) {
 
                     if (bodyData.has(codeKey)) {
-                        if (bodyData.getInt(codeKey).isSuccess()) {
-
+                        if (bodyData.isCodeSuccess(codeKey)) {
+                            //逻辑返回成功
                         } else {
                             errorMsg = bodyData.getString(msgKey) ?: defaultErrorMsg
                         }
