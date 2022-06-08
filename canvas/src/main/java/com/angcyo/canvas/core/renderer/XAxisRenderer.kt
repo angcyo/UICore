@@ -121,6 +121,11 @@ class XAxisRenderer(val axis: XAxis, canvasView: ICanvasView) :
         bottom: Float,
         scale: Float
     ) {
+        if (!axis.drawGridLine) {
+            //不绘制所有线
+            return
+        }
+
         //绘制网格
         val axisLineType = axis.getAxisLineType(canvasViewBox, index, scale)
 
@@ -130,6 +135,7 @@ class XAxisRenderer(val axis: XAxis, canvasView: ICanvasView) :
             } else if (axisLineType.have(BaseAxis.LINE_TYPE_SECONDARY)) {
                 canvas.drawLine(left, top, left, bottom, gridPaint)
             } else if (axis.drawGridLine && axisLineType.have(BaseAxis.LINE_TYPE_NORMAL)) {
+                //普通网格线
                 canvas.drawLine(left, top, left, bottom, gridPaint)
             }
         }
