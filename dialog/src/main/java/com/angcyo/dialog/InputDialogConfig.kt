@@ -6,6 +6,7 @@ import android.text.InputFilter
 import android.text.InputType
 import android.text.InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE
 import android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE
+import android.text.method.DigitsKeyListener
 import android.view.Gravity
 import android.view.View
 import android.widget.EditText
@@ -78,6 +79,12 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
 
     /**输入框过滤器*/
     var inputFilterList = mutableListOf<InputFilter>()
+
+    /**输入限制, 此属性和[inputType]互斥
+     * [R.string.lib_number_digits]
+     * [R.string.lib_password_digits]
+     * [R.string.lib_en_digits]*/
+    var digits: String? = null
 
     init {
         dialogLayoutId = R.layout.lib_dialog_input_layout
@@ -153,6 +160,12 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
 
         editView?.inputType = inputType
         editView?.hint = hintInputString
+
+        //digits 放在[inputType]后面
+        digits?.let {
+            editView?.keyListener = DigitsKeyListener.getInstance(it)
+        }
+
         editView?.setInputText(defaultInputString)
     }
 }
