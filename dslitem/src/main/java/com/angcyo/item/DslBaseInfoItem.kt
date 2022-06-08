@@ -10,9 +10,9 @@ import com.angcyo.item.style.ITextInfoItem
 import com.angcyo.item.style.TextInfoItemConfig
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.color
+import com.angcyo.library.ex.inflate
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.library.ex.inflate
 import com.angcyo.widget.base.setRBgDrawable
 
 /**
@@ -56,7 +56,14 @@ open class DslBaseInfoItem : DslAdapterItem(), ITextInfoItem {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
         itemHolder.itemView.setRBgDrawable(itemRBackgroundDrawable)
+    }
 
+    override fun _initItemConfig(
+        itemHolder: DslViewHolder,
+        itemPosition: Int,
+        adapterItem: DslAdapterItem,
+        payloads: List<Any>
+    ) {
         //扩展布局
         if (itemExtendLayoutId != undefined_res) {
             var inflateLayoutId = undefined_res //已经inflate的布局id
@@ -76,5 +83,6 @@ open class DslBaseInfoItem : DslAdapterItem(), ITextInfoItem {
         } else {
             itemHolder.group(R.id.wrap_layout)?.removeAllViews()
         }
+        super._initItemConfig(itemHolder, itemPosition, adapterItem, payloads)
     }
 }
