@@ -329,12 +329,12 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         return result.apply { set(centerPoint) }
     }
 
-    /**获取坐标系启动的x坐标*/
+    /**获取坐标系原点的x坐标*/
     fun getCoordinateSystemX(): Float {
         return coordinateSystemOriginPoint.x
     }
 
-    /**获取坐标系启动的y坐标*/
+    /**获取坐标系原点的y坐标*/
     fun getCoordinateSystemY(): Float {
         return coordinateSystemOriginPoint.y
     }

@@ -753,26 +753,33 @@ class CanvasDelegate(val view: View) : ICanvasView {
         lockScale: Boolean = true,
         anim: Boolean = true
     ) {
-        //中心需要偏移的距离量
-        val translateX =
-            getCanvasViewBox().getContentCenterX() - rect.centerX() - getCanvasViewBox().getCoordinateSystemX()
-        val translateY =
-            getCanvasViewBox().getContentCenterY() - rect.centerY() - getCanvasViewBox().getCoordinateSystemY()
+        val canvasViewBox = getCanvasViewBox()
+
+        //先将坐标系移动到view的中心
+        val coordinateTranslateX =
+            canvasViewBox.getContentCenterX() - canvasViewBox.getCoordinateSystemX()
+        val coordinateTranslateY =
+            canvasViewBox.getContentCenterY() - canvasViewBox.getCoordinateSystemY()
+
+        //再计算目标中心需要偏移的距离量
+        val translateX = coordinateTranslateX - rect.centerX()
+        val translateY = coordinateTranslateY - rect.centerY()
 
         val matrix = Matrix()
+        //平移
         matrix.setTranslate(translateX, translateY)
 
         val width = rect.width() + margin * 2
         val height = rect.height() + margin * 2
 
-        val contentWidth = getCanvasViewBox().getContentWidth()
-        val contentHeight = getCanvasViewBox().getContentHeight()
+        val contentWidth = canvasViewBox.getContentWidth()
+        val contentHeight = canvasViewBox.getContentHeight()
 
         if (width > contentWidth || height > contentHeight) {
             if (scale) {
                 //自动缩放
-                val scaleCenterX = getCanvasViewBox().getContentCenterX()
-                val scaleCenterY = getCanvasViewBox().getContentCenterY()
+                val scaleCenterX = canvasViewBox.getContentCenterX()
+                val scaleCenterY = canvasViewBox.getContentCenterY()
 
                 val scaleX = (contentWidth - margin * 2) / rect.width()
                 val scaleY = (contentHeight - margin * 2) / rect.height()
@@ -797,11 +804,11 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
             }
         } else {
-            //不处理自动放大的情况
+            //不处理自动放大的情况, 只处理平移
         }
 
         //更新
-        getCanvasViewBox().updateTo(matrix, anim)
+        canvasViewBox.updateTo(matrix, anim)
     }
 
     /**改变宽高/平移

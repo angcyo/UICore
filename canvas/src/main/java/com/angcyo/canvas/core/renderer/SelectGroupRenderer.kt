@@ -132,7 +132,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         matrix: Matrix,
         oldValue: Matrix
     ) {
-        super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
+        //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
         updateSelectBounds()
     }
 
