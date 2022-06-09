@@ -47,6 +47,8 @@ import kotlin.math.sqrt
 
 object ActivityDebugInfo {
 
+    var tag = "lib_debug_info_view"
+
     /**小圆点的大小dp单位*/
     var DEFAULT_NORMAL_SIZE = 20
 
@@ -66,7 +68,7 @@ object ActivityDebugInfo {
 
         fun show(activity: Activity) {
             _delay(240L) {
-                activity.showDebugInfoView(true, true, gravity)
+                activity.showDebugInfoView(true, true, gravity, tag)
             }
         }
     }
@@ -77,13 +79,13 @@ object ActivityDebugInfo {
  * */
 fun Activity.showDebugInfoView(
     show: Boolean = true,
-    debug: Boolean = isDebug(),
-    gravity: Int = Gravity.BOTTOM
+    debug: Boolean = isAppDebug(),
+    gravity: Int = Gravity.BOTTOM,
+    tag: String = "debug_info_view"
 ) {
     val decorView = window.decorView
     val contentView = window.findViewById<View>(Window.ID_ANDROID_CONTENT)
 
-    val tag = "debug_info_view"
     val debugTextView = decorView.findViewWithTag<TextView>(tag)
 
     if (debug && show) {
@@ -281,7 +283,7 @@ fun Activity.showDebugInfoView(
         }
 
         textView.onDoubleTap {
-            showDebugInfoView(false, debug, gravity)
+            showDebugInfoView(false, debug, gravity, tag)
             false
         }
 
@@ -293,7 +295,7 @@ fun Activity.showDebugInfoView(
                     val callback = object : FragmentManager.FragmentLifecycleCallbacks() {
                         override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
                             super.onFragmentResumed(fm, f)
-                            showDebugInfoView(show, debug, gravity)
+                            showDebugInfoView(show, debug, gravity, tag)
                         }
                     }
                     supportFragmentManager.registerFragmentLifecycleCallbacks(callback, true)

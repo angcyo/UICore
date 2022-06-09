@@ -68,7 +68,7 @@ class PickerActivity : BaseAppCompatActivity() {
     }
 
     override fun onShowDebugInfoView(show: Boolean) {
-        showDebugInfoView(show, isDebug(), Gravity.RIGHT or Gravity.BOTTOM)
+        showDebugInfoView(show, isAppDebug(), Gravity.RIGHT or Gravity.BOTTOM)
     }
 
     fun checkPermission() {
