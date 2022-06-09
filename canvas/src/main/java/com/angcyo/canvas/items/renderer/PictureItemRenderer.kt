@@ -47,7 +47,25 @@ class PictureItemRenderer(canvasView: ICanvasView) :
                     val matrix = Matrix()
                     val scaleX = getBounds().width() / oldBounds.width()
                     val scaleY = getBounds().height() / oldBounds.height()
-                    matrix.postScale(scaleX, scaleY, it.shapeBounds.left, it.shapeBounds.top)
+                    if (this is LinePath) {
+                        if (orientation == LinearLayout.VERTICAL) {
+                            matrix.postScale(
+                                1f,
+                                scaleY,
+                                it.shapeBounds.left,
+                                it.shapeBounds.top
+                            )
+                        } else {
+                            matrix.postScale(
+                                scaleX,
+                                1f,
+                                it.shapeBounds.left,
+                                it.shapeBounds.top
+                            )
+                        }
+                    } else {
+                        matrix.postScale(scaleX, scaleY, it.shapeBounds.left, it.shapeBounds.top)
+                    }
                     transform(matrix)
                     it.updatePictureDrawable(true)
                 }
