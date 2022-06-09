@@ -294,7 +294,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     }
 
     open fun onDoubleTitleLayout(): Boolean {
-        if (_recycler.adapter?.itemCount ?: 0 >= Page.PAGE_SIZE * 2) {
+        if ((_recycler.adapter?.itemCount ?: 0) >= Page.PAGE_SIZE * 2) {
             _recycler.scrollToPosition(0)
         } else {
             _recycler.smoothScrollToPosition(0)

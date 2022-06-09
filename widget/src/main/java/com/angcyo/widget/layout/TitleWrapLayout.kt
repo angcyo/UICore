@@ -1,6 +1,7 @@
 package com.angcyo.widget.layout
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.Canvas
 import android.os.Build
 import android.util.AttributeSet
@@ -9,6 +10,7 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.GravityCompat
 import com.angcyo.library.ex.getStatusBarHeight
+import com.angcyo.widget.R
 import com.angcyo.widget.base.exactly
 import com.angcyo.widget.base.getSize
 
@@ -24,7 +26,18 @@ open class TitleWrapLayout(context: Context, attributeSet: AttributeSet? = null)
 
     private val DEFAULT_CHILD_GRAVITY = Gravity.TOP or Gravity.START
 
+    /**强制加入状态栏的高度*/
     var forceFitStatusBar = false
+
+    init {
+        val typedArray: TypedArray =
+            context.obtainStyledAttributes(attributeSet, R.styleable.TitleWrapLayout)
+        forceFitStatusBar = typedArray.getBoolean(
+            R.styleable.TitleWrapLayout_r_force_fit_status_bar,
+            forceFitStatusBar
+        )
+        typedArray.recycle()
+    }
 
     override fun generateDefaultLayoutParams(): LayoutParams {
         return initLayoutParams(super.generateDefaultLayoutParams())
@@ -124,16 +137,22 @@ open class TitleWrapLayout(context: Context, attributeSet: AttributeSet? = null)
     }
 
     val _location = intArrayOf(0, 0)
+
+    /**当在进行属性动画时, [getLocationOnScreen] 获取到的数据不准确.
+     * 此时可以使用[forceFitStatusBar]属性强制设置*/
     open fun getExcludeTopHeight(): Int {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getLocationOnScreen(_location)
             if (forceFitStatusBar) {
                 return getStatusBarHeight()
-            } else if (_location[1] <= 0) {
-                return getStatusBarHeight()
+            } else {
+                getLocationOnScreen(_location)
+                if (_location[1] <= 0) {
+                    //布局在状态栏
+                    return getStatusBarHeight()
+                }
             }
         }
-
+        //不考虑状态栏高度
         return 0
     }
 }
