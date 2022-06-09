@@ -5,7 +5,6 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Point
 import android.graphics.Rect
@@ -22,6 +21,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.angcyo.activity.ActivityDebugInfo.DEFAULT_NORMAL_SIZE
+import com.angcyo.drawable.isGravityTop
 import com.angcyo.fragment.R
 import com.angcyo.http.base.toJson
 import com.angcyo.library.L
@@ -113,6 +113,8 @@ fun Activity.showDebugInfoView(
         val layoutParams: FrameLayout.LayoutParams =
             textView.layoutParams as FrameLayout.LayoutParams
 
+        val statusBarHeight = getStatusBarHeight()
+
         //显示正常模式, 小圆点
         fun showNormal(textView: TextView, enable: Boolean = true) {
             textView.layoutParams = textView.layoutParams.apply {
@@ -188,8 +190,6 @@ fun Activity.showDebugInfoView(
                 NetUtils.localIPAddress?.toString()?.apply {
                     appendln(this)
                 }
-
-                val statusBarHeight = getStatusBarHeight()
                 val navBarHeight = max(
                     decorView.measuredWidth - contentView.measuredWidth,
                     decorView.measuredHeight - contentView.measuredHeight
@@ -246,9 +246,7 @@ fun Activity.showDebugInfoView(
         }
 
         layoutParams.gravity = gravity
-        if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
-            && decorView.bottom > contentView.bottom
-        ) { //显示了导航栏
+        if (decorView.bottom > contentView.bottom) { //显示了导航栏
             val resources = resources
             val resourceId =
                 resources.getIdentifier("navigation_bar_height", "dimen", "android")
@@ -257,6 +255,9 @@ fun Activity.showDebugInfoView(
                 navBarHeight = resources.getDimensionPixelSize(resourceId)
             }
             layoutParams.bottomMargin = navBarHeight
+        }
+        if (layoutParams.gravity.isGravityTop()) {
+            layoutParams.topMargin = statusBarHeight
         }
         textView.layoutParams = layoutParams
 
