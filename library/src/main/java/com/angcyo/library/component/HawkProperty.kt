@@ -28,3 +28,18 @@ class HawkProperty<T>(
         property.name.hawkPut(value)
     }
 }
+
+class HawkPropertyValue<T, Value>(
+    /*默认值*/
+    val def: Value
+) : ReadWriteProperty<T, Value> {
+
+    override fun getValue(thisRef: T, property: KProperty<*>): Value {
+        return property.name.hawkGet<Value>(def) ?: def
+    }
+
+    override fun setValue(thisRef: T, property: KProperty<*>, value: Value) {
+        property.name.hawkPut(value)
+    }
+
+}

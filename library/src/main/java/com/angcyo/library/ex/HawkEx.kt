@@ -88,6 +88,12 @@ fun String?.hawkPut(value: CharSequence?): Boolean {
     } ?: false
 }
 
+fun <T> String?.hawkPut(value: T?): Boolean {
+    return this?.run {
+        Hawk.put(this, value)
+    } ?: false
+}
+
 /**数字累加计算,保存并返回*/
 fun String?.hawkAccumulate(value: Long = 1, def: Long = 0): Long {
     val origin = hawkGet(null)?.toLongOrNull() ?: def
@@ -107,6 +113,22 @@ fun String?.hawkGet(def: String? = null): String? {
     var result: String? = null
     this?.let {
         result = Hawk.get<String>(it, def)
+    }
+    return result
+}
+
+fun <T> String?.hawkGet(def: T? = null): T? {
+    var result: T? = def
+    this?.let {
+        result = Hawk.get<T>(it, def)
+    }
+    return result
+}
+
+fun String?.hawkGetBoolean(def: Boolean = false): Boolean {
+    var result: Boolean = def
+    this?.let {
+        result = Hawk.get(it, def)
     }
     return result
 }
