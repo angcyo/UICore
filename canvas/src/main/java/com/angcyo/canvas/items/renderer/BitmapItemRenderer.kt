@@ -61,10 +61,10 @@ class BitmapItemRenderer(canvasView: ICanvasView) :
     }
 
     /**更新需要绘制的图片, 并保持原先的缩放比例
-     * [bounds] 需要更新的Bounds, 如果有*/
+     * [keepBounds] 需要更新的Bounds, 如果有*/
     fun updateBitmap(
         bitmap: Bitmap,
-        bounds: RectF? = null,
+        keepBounds: RectF? = null,
         strategy: Strategy = Strategy.normal
     ): BitmapItem {
         val oldValue = _rendererItem?.bitmap
@@ -82,9 +82,9 @@ class BitmapItemRenderer(canvasView: ICanvasView) :
             _rendererItem?.bitmap = bitmap
         }
 
-        if (bounds != null) {
+        if (keepBounds != null) {
             changeBounds {
-                set(bounds)
+                set(keepBounds)
             }
         } else {
             val newWidth = _rendererItem?.bitmap?.width ?: 0

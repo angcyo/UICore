@@ -465,7 +465,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
     fun updateItemDrawable(
         drawable: Drawable?,
         holdData: Map<String, Any?>? = null,
-        bounds: RectF? = null,
+        keepBounds: RectF? = null,
         strategy: Strategy = Strategy.normal
     ) {
         val item = getRendererItem()
@@ -478,7 +478,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
         val oldBounds = RectF(getBounds())
         val oldData = item?.holdData
 
-        if (bounds != null) {
+        if (keepBounds != null) {
             getRendererItem()?.apply {
                 this.holdData = holdData
                 if (this is PictureBitmapItem) {
@@ -487,7 +487,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
                 updateDrawable(drawable)
 
                 changeBounds {
-                    set(bounds)
+                    set(keepBounds)
                 }
             }
         } else {

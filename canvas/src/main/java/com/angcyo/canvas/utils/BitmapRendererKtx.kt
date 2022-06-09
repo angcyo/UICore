@@ -1,6 +1,7 @@
 package com.angcyo.canvas.utils
 
 import android.graphics.Bitmap
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.Strategy
@@ -69,7 +70,8 @@ fun IRenderer.getRenderBitmap(origin: Boolean = true): Bitmap? {
 fun IRenderer.updateRenderBitmap(
     bitmap: Bitmap,
     strategy: Strategy = Strategy.normal,
-    holdData: Map<String, Any?>? = null
+    keepBounds: RectF? = null,
+    holdData: Map<String, Any?>? = null,
 ): BaseItem? {
     return if (this is BitmapItemRenderer) {
         updateBitmap(bitmap, strategy = strategy)
@@ -77,7 +79,7 @@ fun IRenderer.updateRenderBitmap(
     } else if (this is PictureItemRenderer) {
         val item = _rendererItem
         if (item is PictureBitmapItem) {
-            updateItemBitmap(bitmap, holdData, strategy = strategy)
+            updateItemBitmap(bitmap, holdData, keepBounds, strategy)
             item
         } else {
             null
@@ -90,12 +92,13 @@ fun IRenderer.updateRenderBitmap(
 fun IRenderer.updateItemDrawable(
     drawable: Drawable?,
     strategy: Strategy = Strategy.normal,
-    holdData: Map<String, Any?>? = null
+    keepBounds: RectF? = null,
+    holdData: Map<String, Any?>? = null,
 ): BaseItem? {
     return if (this is PictureItemRenderer) {
         val item = _rendererItem
         if (item is PictureBitmapItem) {
-            updateItemDrawable(drawable, holdData, getBounds(), strategy)
+            updateItemDrawable(drawable, holdData, keepBounds, strategy)
             item
         } else {
             null
