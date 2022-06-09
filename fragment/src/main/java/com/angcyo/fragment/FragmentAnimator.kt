@@ -32,7 +32,8 @@ object FragmentAnimator {
     var DEFAULT_REMOVE_EXIT_ANIMATOR = R.anim.lib_translate_x_remove_exit
     //R.anim.lib_translate_x_remove_exit //R.anim.lib_x_remove_exit_holder
 
-    /**显示/隐藏 全平移动画*/
+    /**显示/隐藏 全平移动画
+     * [translationX]*/
     fun allTranslateAnim() {
         DEFAULT_SHOW_ENTER_ANIMATOR = R.anim.lib_translate_x_show_enter
         DEFAULT_SHOW_EXIT_ANIMATOR = R.anim.lib_translate_x_show_exit
@@ -41,7 +42,8 @@ object FragmentAnimator {
         DEFAULT_REMOVE_EXIT_ANIMATOR = R.anim.lib_translate_x_remove_exit
     }
 
-    /**显示/隐藏 只有顶层平移动画, 顶层单独使用属性动画, 可以提高部分动画性能 */
+    /**显示/隐藏 只有顶层平移动画, 顶层单独使用属性动画, 可以提高部分动画性能
+     * [translationX]*/
     fun onlyTopAnim() {
         DEFAULT_SHOW_ENTER_ANIMATOR = R.anim.lib_x_show_enter_holder
         DEFAULT_SHOW_EXIT_ANIMATOR = 0
@@ -50,7 +52,8 @@ object FragmentAnimator {
         DEFAULT_REMOVE_EXIT_ANIMATOR = R.anim.lib_x_remove_exit_holder
     }
 
-    /**从80%开始动画, 提高动画的流畅度 */
+    /**从80%开始动画, 提高动画的流畅度
+     * [alpha] [translationX]*/
     fun onlyTopAnim2() {
         DEFAULT_SHOW_ENTER_ANIMATOR = R.anim.lib_x_show_enter_holder2
         DEFAULT_SHOW_EXIT_ANIMATOR = R.anim.lib_x_show_exit_holder2
@@ -59,6 +62,17 @@ object FragmentAnimator {
         DEFAULT_REMOVE_EXIT_ANIMATOR = R.anim.lib_x_remove_exit_holder2
     }
 
+    /**顶部缩放透明属性动画
+     * [scale] [alpha]*/
+    fun onlyTopScale() {
+        DEFAULT_SHOW_ENTER_ANIMATOR = R.anim.lib_scale_show_enter_holder
+        DEFAULT_SHOW_EXIT_ANIMATOR = R.anim.lib_scale_show_exit_holder
+
+        DEFAULT_REMOVE_ENTER_ANIMATOR = R.anim.lib_scale_remove_enter_holder
+        DEFAULT_REMOVE_EXIT_ANIMATOR = R.anim.lib_scale_remove_exit_holder
+    }
+
+    /**加载动画对象*/
     var loadAnimator: (context: Context, anim: Int) -> Animator? = { context, anim ->
         val sw = _screenWidth.toFloat()
         val duration = _integer(R.integer.lib_animation_duration).toLong()
@@ -134,6 +148,85 @@ object FragmentAnimator {
                 set.playTogether(animator, alpha)
                 set
             }
+
+            //scale
+            R.anim.lib_scale_show_enter_holder -> {
+                val set = AnimatorSet()
+                set.duration = duration
+                set.interpolator = AccelerateInterpolator()
+
+                val scaleX = ObjectAnimator()
+                scaleX.setPropertyName("scaleX")
+                scaleX.setFloatValues(0.8f, 1f)
+                val scaleY = ObjectAnimator()
+                scaleY.setPropertyName("scaleY")
+                scaleY.setFloatValues(0.8f, 1f)
+
+                val alpha = ObjectAnimator()
+                alpha.setPropertyName("alpha")
+                alpha.setFloatValues(0.8f, 1f)
+
+                set.playTogether(scaleX, scaleY, alpha)
+                set
+            }
+            R.anim.lib_scale_show_exit_holder -> {
+                val set = AnimatorSet()
+                set.duration = duration
+                set.interpolator = AccelerateInterpolator()
+
+                val scaleX = ObjectAnimator()
+                scaleX.setPropertyName("scaleX")
+                scaleX.setFloatValues(1f, 1.2f)
+                val scaleY = ObjectAnimator()
+                scaleY.setPropertyName("scaleY")
+                scaleY.setFloatValues(1f, 1.2f)
+
+                val alpha = ObjectAnimator()
+                alpha.setPropertyName("alpha")
+                alpha.setFloatValues(1f, 0.8f)
+
+                set.playTogether(scaleX, scaleY, alpha)
+                set
+            }
+            R.anim.lib_scale_remove_exit_holder -> {
+                val set = AnimatorSet()
+                set.duration = duration
+                set.interpolator = AccelerateInterpolator()
+
+                val scaleX = ObjectAnimator()
+                scaleX.setPropertyName("scaleX")
+                scaleX.setFloatValues(1f, 0.8f)
+                val scaleY = ObjectAnimator()
+                scaleY.setPropertyName("scaleY")
+                scaleY.setFloatValues(1f, 0.8f)
+
+                val alpha = ObjectAnimator()
+                alpha.setPropertyName("alpha")
+                alpha.setFloatValues(1f, 0f)
+
+                set.playTogether(scaleX, scaleY, alpha)
+                set
+            }
+            R.anim.lib_scale_remove_enter_holder -> {
+                val set = AnimatorSet()
+                set.duration = duration
+                set.interpolator = AccelerateInterpolator()
+
+                val scaleX = ObjectAnimator()
+                scaleX.setPropertyName("scaleX")
+                scaleX.setFloatValues(1.2f, 1f)
+                val scaleY = ObjectAnimator()
+                scaleY.setPropertyName("scaleY")
+                scaleY.setFloatValues(1.2f, 1f)
+
+                val alpha = ObjectAnimator()
+                alpha.setPropertyName("alpha")
+                alpha.setFloatValues(0.8f, 1f)
+
+                set.playTogether(scaleX, scaleY, alpha)
+                set
+            }
+
             else -> animatorOf(context, anim)
         }
     }
