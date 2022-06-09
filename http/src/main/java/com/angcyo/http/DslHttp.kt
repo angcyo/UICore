@@ -569,7 +569,10 @@ suspend fun String.put2Body(
 //<editor-fold desc="JsonElement to Bean">
 
 /**[JsonElement]转换成数据bean
- * [parseError] 失败时, 读取errorBody, 并且json解析失败抛出异常*/
+ * [parseError] 失败时, 读取errorBody, 并且json解析失败抛出异常
+ * data?.toBean<Map<String, Any>>(mapType(String::class.java, Any::class.java))
+ * data?.toBean<HttpBean<Any>>(beanType(Any::class.java))?.data
+ * */
 fun <T> Response<JsonElement>.toBean(
     type: Type,
     parseError: Boolean = false,
