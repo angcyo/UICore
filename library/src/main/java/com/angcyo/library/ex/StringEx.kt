@@ -449,6 +449,11 @@ fun CharSequence?.patternList(
     return result
 }
 
+/**
+ * 正则表达式之获取中文
+ * https://www.w3cschool.cn/regexp/nck51pqj.html*/
+fun String?.getChineseList() = this?.patternList("[\u4e00-\u9fa5]+")
+
 fun CharSequence?.pattern(regex: String?, allowEmpty: Boolean = true): Boolean {
     return pattern(regex?.toPattern(), allowEmpty)
 }
