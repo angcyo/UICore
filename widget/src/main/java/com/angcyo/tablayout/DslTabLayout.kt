@@ -354,10 +354,6 @@ open class DslTabLayout(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        if (dslSelector.dslSelectIndex < 0) {
-            //还没有选中
-            setCurrentItem(tabDefaultIndex)
-        }
     }
 
     override fun onDetachedFromWindow() {
