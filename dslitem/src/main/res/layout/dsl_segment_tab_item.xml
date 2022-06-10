@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="@dimen/lib_hdpi">
+
+    <com.angcyo.tablayout.DslTabLayout
+        android:id="@+id/lib_tab_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="@dimen/lib_padding_left"
+        android:minHeight="40dp"
+        app:tab_border_radius_size="45dp"
+        app:tab_border_solid_color="@color/lib_white"
+        app:tab_border_stroke_color="@color/colorAccent"
+        app:tab_deselect_color="@color/colorAccent"
+        app:tab_draw_border="true"
+        app:tab_indicator_style="STYLE_NONE"
+        app:tab_item_is_equ_width="true"
+        app:tab_select_color="@color/lib_white"
+        tools:tab_default_index="1">
+
+        <!--预览-->
+        <!--<TextView
+            style="@style/LibBodyTextStyle"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="首页" />
+
+        <TextView
+            style="@style/LibBodyTextStyle"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="消息" />
+
+        <TextView
+            style="@style/LibBodyTextStyle"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="联系人" />-->
+
+    </com.angcyo.tablayout.DslTabLayout>
+
+</FrameLayout>

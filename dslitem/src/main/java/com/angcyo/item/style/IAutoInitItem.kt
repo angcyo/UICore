@@ -1,6 +1,7 @@
 package com.angcyo.item.style
 
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.annotation.ItemInitEntryPoint
 import com.angcyo.dsladapter.item.IDslItem
 import com.angcyo.widget.DslViewHolder
 
@@ -14,7 +15,8 @@ import com.angcyo.widget.DslViewHolder
  */
 interface IAutoInitItem : IDslItem {
 
-    /**自动初始化入口*/
+    /**自动初始化入口, 统一入口*/
+    @ItemInitEntryPoint
     override fun initItemConfig(
         itemHolder: DslViewHolder,
         itemPosition: Int,
@@ -22,6 +24,8 @@ interface IAutoInitItem : IDslItem {
         payloads: List<Any>
     ) {
         super.initItemConfig(itemHolder, itemPosition, adapterItem, payloads)
+
+        //分发具体的初始化方法
 
         if (this is IImageItem) {
             initImageItem(itemHolder, itemPosition, adapterItem, payloads)
@@ -61,6 +65,9 @@ interface IAutoInitItem : IDslItem {
         }
         if (this is ISwitchItem) {
             initSwitchItem(itemHolder, itemPosition, adapterItem, payloads)
+        }
+        if (this is ITabLayoutItem) {
+            initTabLayoutItem(itemHolder, itemPosition, adapterItem, payloads)
         }
     }
 }
