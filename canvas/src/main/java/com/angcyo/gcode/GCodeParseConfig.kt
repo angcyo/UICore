@@ -1,7 +1,5 @@
 package com.angcyo.gcode
 
-import android.graphics.Paint
-
 /**
  * GCode解析配置数据类
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -11,5 +9,4 @@ data class GCodeParseConfig(
     val text: String, //需要解析的GCode文本
     val mmRatio: Float, //G21 毫米指令对应的缩放比例
     val inRatio: Float, //G20 英寸指令对应的缩放比例
-    val paint: Paint //绘制时用到的画笔
 )

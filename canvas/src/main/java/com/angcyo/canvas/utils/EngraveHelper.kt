@@ -4,7 +4,13 @@ import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.RectF
 import com.angcyo.canvas.core.MmValueUnit
+import com.angcyo.canvas.items.getHoldData
+import com.angcyo.canvas.items.renderer.BaseItemRenderer
+import com.angcyo.gcode.GCodeAdjust
 import com.angcyo.library.ex.eachPath
+import com.angcyo.library.ex.file
+import com.angcyo.library.utils.fileName
+import com.angcyo.library.utils.filePath
 import java.io.File
 import kotlin.math.absoluteValue
 import kotlin.math.min
@@ -21,11 +27,14 @@ object EngraveHelper {
 
     /**将路径描边转换为G1代码
      * [path] 需要转换的路径
-     * [bounds] 路径需要平移的left, top
+     * [rotateBounds] 路径需要平移的left, top
      * [rotate] 路径需要旋转的角度
      * [outputFile] GCode输出路径
      * */
-    fun pathStrokeToGCode(path: Path, bounds: RectF, rotate: Float, outputFile: File): File {
+    fun pathStrokeToGCode(
+        path: Path, rotateBounds: RectF, rotate: Float,
+        outputFile: File = filePath("GCode", fileName(suffix = ".gcode")).file()
+    ): File {
         val gap = 10 //如果2点之间的间隙大于此值, 则使用G0指令
         var lastX = Float.MIN_VALUE
         var lastY = Float.MIN_VALUE
@@ -36,14 +45,14 @@ object EngraveHelper {
         val targetPath = Path(path)
 
         val matrix = Matrix()
-        matrix.postRotate(rotate, bounds.centerX(), bounds.centerY())
+        matrix.postRotate(rotate, rotateBounds.centerX(), rotateBounds.centerY())
 
         //旋转的支持
         matrix.mapRect(pathBounds, pathBounds)
         targetPath.transform(matrix)
 
-        val offsetLeft = bounds.left - min(0f, pathBounds.left)
-        val offsetTop = bounds.top - min(0f, pathBounds.top)
+        val offsetLeft = rotateBounds.left - min(0f, pathBounds.left)
+        val offsetTop = rotateBounds.top - min(0f, pathBounds.top)
 
         //像素单位转成mm单位
         val mmValueUnit = MmValueUnit()
@@ -97,4 +106,22 @@ object EngraveHelper {
 
         return outputFile
     }
+
+    /**GCode数据坐标调整, 先缩放旋转,再偏移
+     * [gCode]
+     * [bounds] 未旋转时的bounds
+     * */
+    fun gCodeAdjust(
+        gCode: String, bounds: RectF, rotate: Float,
+        outputFile: File = filePath("GCode", fileName(suffix = ".gcode")).file()
+    ): File {
+        val gCodeAdjust = GCodeAdjust()
+        gCodeAdjust.gCodeAdjust(gCode, bounds, rotate, outputFile)
+        return outputFile
+    }
+}
+
+/**获取渲染器对应的GCode数据, 如果有*/
+fun BaseItemRenderer<*>.getGCodeText(): String? {
+    return getRendererItem()?.getHoldData(EngraveHelper.KEY_GCODE)
 }

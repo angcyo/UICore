@@ -54,3 +54,33 @@ abstract class BaseItem : ICanvasItem {
 
     override var itemDrawable: Drawable? = null
 }
+
+/**获取额外存储的数据
+ * [com.angcyo.canvas.items.BaseItem.holdData]*/
+inline fun <reified T> BaseItem.getHoldData(key: String): T? {
+    val any = holdData?.get(key)
+    if (any is T) {
+        return any
+    }
+    return null
+}
+
+/**设置额外的数据存储*/
+fun <T> BaseItem.setHoldData(key: String, value: T?) {
+    if (holdData == null) {
+        holdData = hashMapOf()
+    }
+    var data = holdData
+    if (data is MutableMap<String, Any?>) {
+        //no
+    } else {
+        holdData = hashMapOf<String, Any?>().apply {
+            putAll(data!!)
+        }
+        data = holdData
+    }
+
+    if (data is MutableMap<String, Any?>) {
+        data.put(key, value)
+    }
+}

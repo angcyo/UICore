@@ -51,3 +51,20 @@ fun List<GCodeLineData>.lastValidIndex(): Int {
     }
     return -1
 }
+
+/**主轴是否打开*/
+fun GCodeLineData.isSpindleOn(def: Boolean): Boolean {
+    val firstCmd = cmdList.firstOrNull()
+    val firstCmdString = firstCmd?.cmd
+    if (firstCmdString?.startsWith("M") == true) {
+        var isSpindleOn = true //M05指令:主轴关闭, M03:主轴打卡
+        val number = firstCmd.number.toInt()
+        if (number == 5) {
+            isSpindleOn = false
+        } else if (number == 3) {
+            isSpindleOn = true
+        }
+        return isSpindleOn
+    }
+    return def
+}
