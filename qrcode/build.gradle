@@ -5,7 +5,7 @@ dependencies {
     compileOnly project(allModule.core)
 
     //https://github.com/angcyo/QrCodeZxingZbar
-    api 'com.github.angcyo:QrCodeZxingZbar:1.1.1'
+    api 'com.github.angcyo:QrCodeZxingZbar:1.1.2'
 
     //3.4.0 需要 minSdkVersion 24
     //https://github.com/zxing/zxing/issues/1170
