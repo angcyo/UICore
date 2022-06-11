@@ -87,6 +87,13 @@ open class DslViewHolder(
         click(id, View.OnClickListener { listener.invoke(it) })
     }
 
+    fun click(@IdRes vararg ids: Int, listener: (View) -> Unit) {
+        val clickListener = View.OnClickListener { listener.invoke(it) }
+        ids.forEach {
+            click(it, clickListener)
+        }
+    }
+
     fun selectorClick(
         @IdRes id: Int,
         listener: (selected: Boolean) -> Boolean = { false /*不拦截默认处理*/ }
@@ -113,7 +120,7 @@ open class DslViewHolder(
 
     /**节流点击一组事件*/
     fun throttleClick(
-        vararg ids: Int,
+        @IdRes vararg ids: Int,
         throttleInterval: Long = ThrottleClickListener.DEFAULT_THROTTLE_INTERVAL,
         action: (View) -> Unit
     ) {
