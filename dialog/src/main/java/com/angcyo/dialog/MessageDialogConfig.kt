@@ -20,6 +20,9 @@ open class MessageDialogConfig(context: Context? = null) : BaseDialogConfig(cont
         dialogLayoutId = R.layout.lib_dialog_message_layout
         dialogBgDrawable = ColorDrawable(Color.TRANSPARENT)
         dialogWidth = -1
+        //消息弹窗, 默认只显示[positiveButtonText]按钮
+        negativeButtonText = null
+        neutralButtonText = null
     }
 
     override fun initControlLayout(dialog: Dialog, dialogViewHolder: DslViewHolder) {
