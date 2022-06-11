@@ -1,0 +1,28 @@
+//./gradlew build --refresh-dependencies
+/*
+project.configurations.all {
+    // check for updates every build
+    resolutionStrategy {
+        cacheChangingModulesFor 0, 'seconds'
+    }
+}
+*/
+
+
+/**
+ * 2022-6-11 清除Gradle缓存
+ * */
+
+//https://docs.gradle.org/current/userguide/dynamic_versions.html
+
+allprojects {
+    configurations.all {
+        resolutionStrategy {
+            cacheChangingModulesFor 0, 'seconds'
+            cacheDynamicVersionsFor 0, 'seconds'
+        }
+    }
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    }
+}
