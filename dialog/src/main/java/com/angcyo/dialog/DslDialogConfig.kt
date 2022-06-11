@@ -20,6 +20,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import com.angcyo.base.dslAHelper
 import com.angcyo.dialog.activity.DialogActivity
+import com.angcyo.drawable.isGravityCenterVertical
 import com.angcyo.library.L
 import com.angcyo.library.UndefinedDrawable
 import com.angcyo.library.ex.*
@@ -157,11 +158,15 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
     var onDialogInitListener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit =
         { _, _ -> }
 
+    /**作用在Windows上*/
     @Transient
     var dialogBgDrawable: Drawable? = UndefinedDrawable()
     var dialogWidth: Int = undefined_res
     var dialogHeight: Int = undefined_res
     var dialogGravity: Int = undefined_res
+
+    /**作用在view上*/
+    var contentBgDrawable: Drawable? = UndefinedDrawable()
 
     //测试好像没效果.
     var statusBarColor: Int = undefined_res
@@ -437,6 +442,20 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
     }
 
     open fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
+        //背景替换
+        if (contentBgDrawable is UndefinedDrawable) {
+            if (dialogGravity.isGravityCenterVertical()) {
+                dialogViewHolder.itemView.setBackgroundResource(R.drawable.dialog_white_round_bg_shape)
+            }
+        }
+        //width/height 优化
+        val lp = dialogViewHolder.itemView.layoutParams
+        if (dialogWidth != undefined_res && dialogWidth != -2) {
+            lp.width = ViewGroup.LayoutParams.MATCH_PARENT
+        }
+        if (dialogHeight != undefined_res && dialogHeight != -2) {
+            lp.height = ViewGroup.LayoutParams.MATCH_PARENT
+        }
         //替换标题栏
         if (dialogTitleLayoutId > 0) {
             dialogViewHolder.group(R.id.title_layout)?.replace(dialogTitleLayoutId)

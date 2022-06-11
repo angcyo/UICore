@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.View
 import com.angcyo.base.enableLayoutFullScreen
 import com.angcyo.base.translucentStatusBar
+import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.dpi
 
 /**
@@ -28,6 +29,23 @@ fun DslDialogConfig.configBottomDialog(context: Context? = null): DslDialogConfi
         dialogHeight = -2
         dialogGravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
         animStyleResId = R.style.LibDialogBottomTranslateAnimation
+        setDialogBgColor(Color.TRANSPARENT)
+        dialogContext = context ?: dialogContext
+    }
+}
+
+/**快速配置一个显示在中心全屏的[DslDialogConfig]*/
+fun DslDialogConfig.configCenterDialog(
+    width: Int = _screenWidth * 3 / 5,
+    height: Int = -2,
+    context: Context? = null
+): DslDialogConfig {
+    return this.apply {
+        canceledOnTouchOutside = false
+        dialogWidth = width
+        dialogHeight = height
+        dialogGravity = Gravity.CENTER
+        animStyleResId = R.style.LibDialogAlphaAnimation
         setDialogBgColor(Color.TRANSPARENT)
         dialogContext = context ?: dialogContext
     }
