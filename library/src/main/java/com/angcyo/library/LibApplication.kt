@@ -11,7 +11,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import com.angcyo.library.component.OnBackgroundObserver
 import com.angcyo.library.component.RBackground
-import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.isShowDebug
 import java.io.BufferedReader
 import java.io.FileInputStream
 import java.io.IOException
@@ -52,9 +52,14 @@ open class LibApplication : Application(), LifecycleOwner {
         super.onCreate()
 
         //必须第一个初始化
-        Library.init(this, isDebug())
-        L.init(getAppString("app_name") ?: "Log", isDebug())
+        Library.init(this, isShowDebug())
+        L.init(getAppString("app_name") ?: "Log", isShowDebug())
 
+        //初始化
+        initLibApplication()
+    }
+
+    open fun initLibApplication() {
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
 
         if (isMainProgress()) {
@@ -66,10 +71,10 @@ open class LibApplication : Application(), LifecycleOwner {
     open fun onCreateMain() {
         RBackground.init(this, object : OnBackgroundObserver {
             override fun onActivityChanged(stack: SparseArray<String>, background: Boolean) {
+                L.i(stack)
                 if (background) {
                     L.i("程序已在后台运行.")
                 }
-                L.v(stack)
             }
         })
     }

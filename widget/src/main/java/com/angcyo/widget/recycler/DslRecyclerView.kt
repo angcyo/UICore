@@ -9,7 +9,6 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.angcyo.library.L
 import com.angcyo.widget.R
 import com.angcyo.widget.base.isTouchDown
 import com.angcyo.widget.base.isTouchFinish
@@ -231,22 +230,22 @@ open class DslRecyclerView : RecyclerView, ILayoutDelegate, ITouchHold, ITouchDe
 
     override fun focusSearch(direction: Int): View? {
         return super.focusSearch(direction)?.apply {
-            L.v(this)
+            //L.v(this)
         }
     }
 
     override fun dispatchUnhandledMove(focused: View?, direction: Int): Boolean {
-        L.v("$focused $direction")
+        //L.v("$focused $direction")
         return super.dispatchUnhandledMove(focused, direction)
     }
 
     override fun restoreDefaultFocus(): Boolean {
-        L.v("...")
+        //L.v("...")
         return super.restoreDefaultFocus()
     }
 
     override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
-        L.v(event)
+        //L.v(event)
         return try {
             super.dispatchKeyEvent(event)
         } catch (e: Exception) {
@@ -256,28 +255,28 @@ open class DslRecyclerView : RecyclerView, ILayoutDelegate, ITouchHold, ITouchDe
     }
 
     override fun dispatchKeyEventPreIme(event: KeyEvent?): Boolean {
-        L.v(event)
+        //L.v(event)
         return super.dispatchKeyEventPreIme(event)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        L.d("keyCode:$keyCode")
+        //L.d("keyCode:$keyCode")
         return super.onKeyDown(keyCode, event)
     }
 
     override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
-        L.d("keyCode:$keyCode")
+        //L.d("keyCode:$keyCode")
         return super.onKeyLongPress(keyCode, event)
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        L.d("keyCode:$keyCode")
+        //L.d("keyCode:$keyCode")
         return super.onKeyUp(keyCode, event)
     }
 
     override fun requestChildFocus(child: View?, focused: View?) {
         super.requestChildFocus(child, focused)
-        L.v("$child $focused")
+        //L.v("$child $focused")
     }
 
     override fun requestChildRectangleOnScreen(
@@ -285,12 +284,12 @@ open class DslRecyclerView : RecyclerView, ILayoutDelegate, ITouchHold, ITouchDe
         rect: Rect?,
         immediate: Boolean
     ): Boolean {
-        L.v()
+        //L.v()
         return super.requestChildRectangleOnScreen(child, rect, immediate)
     }
 
     override fun addFocusables(views: ArrayList<View>?, direction: Int, focusableMode: Int) {
-        L.v(views)
+        //L.v(views)
         super.addFocusables(views, direction, focusableMode)
 
 //        val old = _lastFocusViewRef?.get()
@@ -304,17 +303,17 @@ open class DslRecyclerView : RecyclerView, ILayoutDelegate, ITouchHold, ITouchDe
 
     override fun onFocusChanged(gainFocus: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect)
-        L.d("gainFocus:$gainFocus $direction $previouslyFocusedRect")
+        //L.d("gainFocus:$gainFocus $direction $previouslyFocusedRect")
     }
 
     override fun clearChildFocus(child: View?) {
         super.clearChildFocus(child)
-        L.d()
+        //L.d()
     }
 
     override fun clearFocus() {
         super.clearFocus()
-        L.d()
+        //L.d()
     }
 
     //</editor-fold desc="焦点相关处理, TV开发使用居多">

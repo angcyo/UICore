@@ -3,8 +3,8 @@ package com.angcyo.item
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.ITextItem
 import com.angcyo.item.style.TextItemConfig
-import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.isDebugType
+import com.angcyo.library.ex.isShowDebug
 import com.angcyo.library.getAppVersionName
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.span.span
@@ -27,7 +27,7 @@ class DslLastTextItem : DslAdapterItem(), ITextItem {
             append("当前版本:${getAppVersionName()}")
             if (isDebugType()) {
                 append("-dev")
-            } else if (isDebug()) {
+            } else if (isShowDebug()) {
                 append("-debug")
             }
         }

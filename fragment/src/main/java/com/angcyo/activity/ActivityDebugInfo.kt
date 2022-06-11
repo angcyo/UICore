@@ -367,7 +367,7 @@ fun FragmentManager.logAllFragment(
 fun Activity.activityInfo(): ActivityInfo? =
     getFieldValue(Activity::class.java, "mActivityInfo") as? ActivityInfo
 
-fun Activity.logActivityInfo(debug: Boolean = isDebug()) {
+fun Activity.logActivityInfo(debug: Boolean = isShowDebug()) {
     if (debug) {
         //系统Fragment操作日志输出
         //FragmentManager.enableDebugLogging(BuildConfig.DEBUG);

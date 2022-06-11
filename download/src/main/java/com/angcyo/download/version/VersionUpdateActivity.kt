@@ -11,7 +11,7 @@ import com.angcyo.getData
 import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.ex.installApk
-import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.isShowDebug
 import com.angcyo.library.ex.openUrl
 import com.angcyo.library.getAppVersionCode
 import com.angcyo.library.utils.Device
@@ -174,12 +174,12 @@ fun Context.versionUpdate(
         return false
     }
     if (updateBean.debug) {
-        if (!isDebug()) {
+        if (!isShowDebug()) {
             //非调试模式下, 跳过更新处理
             return false
         }
     }
-    if (isDebug()) {
+    if (isShowDebug()) {
         //debug包, 允许取消
         updateBean.versionForce = false
     }
@@ -213,7 +213,7 @@ fun Context.versionUpdate(
         if (update) {
             //匹配
             if (updateBean.versionType >= 0 ||
-                (updateBean.versionType < 0 && isDebug())
+                (updateBean.versionType < 0 && isShowDebug())
             ) {
                 //type匹配
                 dslAHelper {

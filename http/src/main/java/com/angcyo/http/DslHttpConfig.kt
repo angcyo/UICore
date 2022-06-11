@@ -78,7 +78,9 @@ class DslHttpConfig {
             * */
         }
 
-    //构造器配置
+    /**构造器配置
+     * [defaultOkHttpClientBuilder]
+     * */
     val onConfigOkHttpClient = mutableListOf<(OkHttpClient.Builder) -> Unit>()
 
     /**可以使用默认的[okHttpClient], 也可以返回自定义的client*/
@@ -122,6 +124,12 @@ class DslHttpConfig {
         retrofit = null
         okHttpClient = null
     }
+}
+
+/**移除所有满足条件的拦截器*/
+fun OkHttpClient.Builder.removeInterceptor(predicate: (Interceptor) -> Boolean) {
+    interceptors().removeAll(predicate)
+    networkInterceptors().removeAll(predicate)
 }
 
 /**添加拦截器*/

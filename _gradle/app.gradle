@@ -95,17 +95,20 @@ android {
             dimension "flavor"
             minSdkVersion Math.max(Integer.parseInt(_M_SDK), 21)
             buildConfigField "boolean", "SHOW_DEBUG", "true"
+            resValue "bool", "show_debug", "true"
         }
         //preview
         pre {
             dimension "flavor"
             minSdkVersion Integer.parseInt(_M_SDK)
             buildConfigField "boolean", "SHOW_DEBUG", "true"
+            resValue "bool", "show_debug", "true"
         }
         //apk
         apk {
             dimension "flavor"
             minSdkVersion Integer.parseInt(_M_SDK)
+            resValue "bool", "show_debug", "false"
         }
     }
     buildTypes {

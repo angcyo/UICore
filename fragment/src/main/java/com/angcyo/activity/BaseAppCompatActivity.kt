@@ -18,7 +18,7 @@ import com.angcyo.dslTargetIntentHandle
 import com.angcyo.fragment.R
 import com.angcyo.library.L
 import com.angcyo.library.Screen
-import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.isShowDebug
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.library.utils.resultString
 import com.angcyo.widget.DslViewHolder
@@ -93,7 +93,7 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         val oldConfig = resources.configuration
         super.onConfigurationChanged(newConfig)
         L.w("onConfigurationChanged↓\nold:$oldConfig\nnew:$newConfig")
-        if (isDebug()) {
+        if (isShowDebug()) {
             onShowDebugInfoView()
         }
         Screen.init(this)

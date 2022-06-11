@@ -11,6 +11,7 @@ import androidx.collection.SimpleArrayMap
 import com.angcyo.library.BuildConfig
 import com.angcyo.library.component.ThreadExecutor.onMain
 import com.angcyo.library.ex.LibEx.isDebugTypeVal
+import com.angcyo.library.getAppBoolean
 import com.angcyo.library.getAppString
 import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.RUtils
@@ -36,6 +37,7 @@ import kotlin.random.Random.Default.nextInt
  */
 
 object LibEx {
+    /**强制标识Debug*/
     var isDebugTypeVal = false
 }
 
@@ -117,6 +119,11 @@ fun isRelease(): Boolean = "release".equals(BuildConfig.BUILD_TYPE, true)
 fun isDebugType() = isDebugTypeVal || "debug".equals(BuildConfig.BUILD_TYPE, true)
 
 fun isMac() = getAppString("os_name")?.toLowerCase()?.contains("mac") == true
+
+/**
+ * resValue "bool", "show_debug", "true"
+ * */
+fun isShowDebug() = getAppBoolean("show_debug") == true
 
 fun isDebug() = BuildConfig.DEBUG
 

@@ -29,7 +29,7 @@ import kotlin.reflect.KClass
 class DslFHelper(
     val fm: FragmentManager,
     val context: Context? = null,
-    val debug: Boolean = isDebug()
+    val debug: Boolean = isShowDebug()
 ) {
 
     companion object {

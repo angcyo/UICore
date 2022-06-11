@@ -26,13 +26,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.base.*
 import com.angcyo.fragment.IFragment
 import com.angcyo.library.L
-import com.angcyo.library.L.d
 import com.angcyo.library.LTime
 import com.angcyo.library.ex.*
 import com.angcyo.tablayout.exactlyMeasure
 import com.angcyo.widget.R
 import com.angcyo.widget.base.findView
-import com.angcyo.library.ex.getChildOrNull
 import com.angcyo.widget.layout.touch.SwipeBackLayout
 import kotlin.toString
 
@@ -55,7 +53,7 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
          * 多指是否显示debug layout
          */
         var showDebugLayout = true
-        var showDebugInfo = isDebug()
+        var showDebugInfo = isShowDebug()
         var SHOW_DEBUG_TIME: Boolean = L.debug
 
         /**
@@ -453,7 +451,7 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
                             }
                             builder.append(view)
                         }
-                        d(builder.toString())
+                        L.i(builder.toString())
                     }
                 }
                 if (lastFragment is IFragment) {

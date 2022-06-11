@@ -8,6 +8,7 @@ import com.angcyo.acc2.parse.arg
 import com.angcyo.acc2.parse.toLog
 import com.angcyo.library.ex.getLongClickParent
 import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.isShowDebug
 import com.angcyo.library.ex.longClick
 
 /**
@@ -42,7 +43,7 @@ class LongClickAction : BaseAction() {
         nodeList?.forEach { node ->
             val result = targetNode(node, action)?.longClick() ?: false
             success = result || success
-            control.log("长按节点:$result ↓\n${node.toLog(isDebug())}")
+            control.log("长按节点:$result ↓\n${node.toLog(isShowDebug())}")
         }
     }
 }

@@ -54,7 +54,7 @@ class ScrollForwardAction : BaseAction() {
             if (result) {
                 addNode(targetNode ?: node)
             }
-            control.log("向前滚动:$result ↓\n${(targetNode ?: node).toLog(isDebug())}")
+            control.log("向前滚动:$result ↓\n${(targetNode ?: node).toLog(isShowDebug())}")
         }
     }
 

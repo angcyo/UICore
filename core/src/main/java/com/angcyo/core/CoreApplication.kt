@@ -13,6 +13,8 @@ import com.angcyo.core.component.interceptor.LogFileInterceptor
 import com.angcyo.core.component.model.LanguageModel
 import com.angcyo.http.DslHttp
 import com.angcyo.http.addInterceptorEx
+import com.angcyo.http.interceptor.LogInterceptor
+import com.angcyo.http.removeInterceptor
 import com.angcyo.http.rx.Rx
 import com.angcyo.http.rx.doBack
 import com.angcyo.library.L
@@ -36,6 +38,9 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
 
     companion object {
 
+        /**写入文件log的级别*/
+        var LOG_FILE_LEVEl = L.INFO
+
         /**默认L.log的文件路径*/
         var DEFAULT_FILE_PRINT_PATH: String? = ""
 
@@ -47,17 +52,19 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
                     L.DEFAULT_LOG_PRINT.invoke(tag, level, msg)
                 }
                 //文件输出
-                DEFAULT_FILE_PRINT_PATH?.let { path ->
-                    when (level) {
-                        L.VERBOSE -> null //"[VERBOSE]${msg}"
-                        L.DEBUG -> null //"[DEBUG]${msg}"
-                        L.INFO -> "[INFO]${msg}"
-                        L.WARN -> "[WARN]${msg}"
-                        L.ERROR -> "[ERROR]${msg}"
-                        else -> "[UNKNOWN]${msg}"
-                    }?.wrapLog()?.apply {
-                        doBack(true) {
-                            writeTo(path)
+                if (level >= LOG_FILE_LEVEl) {
+                    DEFAULT_FILE_PRINT_PATH?.let { path ->
+                        when (level) {
+                            L.VERBOSE -> "[VERBOSE]${msg}"
+                            L.DEBUG -> "[DEBUG]${msg}"
+                            L.INFO -> "[INFO]${msg}"
+                            L.WARN -> "[WARN]${msg}"
+                            L.ERROR -> "[ERROR]${msg}"
+                            else -> "[UNKNOWN]${msg}"
+                        }.wrapLog().apply {
+                            doBack(true) {
+                                writeTo(path)
+                            }
                         }
                     }
                 }
@@ -67,13 +74,22 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
     override fun onCreate() {
         super.onCreate()
 
-        //语言
-        vmApp<LanguageModel>().onCreate(this)
+        //初始化
+        initCoreApplication()
+    }
 
+    override fun initLibApplication() {
         //日志输出到文件
         DEFAULT_FILE_PRINT_PATH = Constant.LOG_FOLDER_NAME.logFilePath("l.log")
-        L.logPrint = DEFAULT_FILE_PRINT
+        L.logPrint = this::writeLogToFile
         L.init(getAppString("app_name") ?: "Log", true) //debug打开日志存储
+
+        super.initLibApplication()
+    }
+
+    open fun initCoreApplication() {
+        //语言
+        vmApp<LanguageModel>().onCreate(this)
 
         Rx.init()
 
@@ -89,7 +105,9 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
             }
 
             val logFileInterceptor = LogFileInterceptor()
+            logFileInterceptor.printLog = L.debug
             configHttpBuilder {
+                it.removeInterceptor { it is LogInterceptor }
                 //进度拦截器
                 it.addInterceptorEx(ProgressManager.getInstance().interceptor, 0)
                 it.addInterceptorEx(logFileInterceptor)
@@ -119,8 +137,8 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
 
     override fun onCreateMain() {
         super.onCreateMain()
-        L.d("MD5->", getAppSignatureMD5())
-        L.d("SHA1->", getAppSignatureSHA1())
+        L.i("MD5->", getAppSignatureMD5())
+        L.i("SHA1->", getAppSignatureSHA1())
     }
 
     override fun attachBaseContext(base: Context) {
@@ -131,6 +149,11 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
             //HiddenApiBypass.addHiddenApiExemptions("L")
             HiddenApiBypass.addHiddenApiExemptions("")
         }
+    }
+
+    /**写入log到文件*/
+    open fun writeLogToFile(tag: String, level: Int, msg: String) {
+        DEFAULT_FILE_PRINT(tag, level, msg)
     }
 
     /**服务器地址

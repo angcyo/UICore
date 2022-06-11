@@ -291,18 +291,20 @@ open class LogInterceptor : Interceptor {
         return TimeUnit.NANOSECONDS.toMillis(ms)
     }
 
-    open fun printRequestLog(builder: StringBuilder) {
-        L.d(builder.toString())
-    }
-
-    open fun printResponseLog(builder: StringBuilder) {
-        L.d(builder.toString())
-    }
-
     private fun bodyHasUnknownEncoding(headers: Headers): Boolean {
         val contentEncoding = headers["Content-Encoding"] ?: return false
         return !contentEncoding.equals("identity", ignoreCase = true) &&
                 !contentEncoding.equals("gzip", ignoreCase = true)
+    }
+
+    /**输出日志*/
+    open fun printRequestLog(builder: StringBuilder) {
+        L.i(builder.toString())
+    }
+
+    /**输出日志*/
+    open fun printResponseLog(builder: StringBuilder) {
+        L.i(builder.toString())
     }
 }
 

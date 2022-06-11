@@ -167,6 +167,11 @@ fun getAppString(name: String): String? {
     return if (id == 0) null else app().resources.getString(id)
 }
 
+fun getAppBoolean(name: String): Boolean? {
+    val id = getId(name, "bool")
+    return if (id == 0) null else app().resources.getBoolean(id)
+}
+
 fun Context.getAppString(name: String): String? {
     val id = getId(name, "string")
     return if (id == 0) null else resources.getString(id)

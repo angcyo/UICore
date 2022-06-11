@@ -8,9 +8,7 @@ import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.view.ViewCompat
-import com.angcyo.library.L
 import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.hash
 
 
 /**
@@ -180,7 +178,7 @@ abstract class AbsDslDrawable : Drawable() {
         super.onBoundsChange(bounds)
         if (attachView?.isInEditMode != true && _lastBounds != bounds) {
             _lastBounds = bounds
-            L.v("${hash()} bound change:$bounds")
+            //L.v("${hash()} bound change:$bounds")
         }
     }
 

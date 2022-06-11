@@ -8,7 +8,7 @@ import com.angcyo.dialog.dslitem.DslOpenWidthItem
 import com.angcyo.dsladapter.updateNow
 import com.angcyo.library.L
 import com.angcyo.library.component.appBean
-import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.isShowDebug
 import com.angcyo.library.ex.loadUrl
 import com.angcyo.library.ex.mimeType
 import com.angcyo.widget.DslViewHolder
@@ -46,7 +46,7 @@ class OpenWithDialogConfig(context: Context? = null) : BaseTouchBackDialogConfig
     override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         val mimeType = mimeType ?: openUri.loadUrl()?.mimeType()
 
-        if (isDebug()) {
+        if (isShowDebug()) {
             dialogTitle = "${dialogTitle}[${mimeType}]"
         }
 

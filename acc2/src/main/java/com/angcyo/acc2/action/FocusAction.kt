@@ -7,7 +7,7 @@ import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.acc2.parse.toLog
 import com.angcyo.library.ex.focus
 import com.angcyo.library.ex.getFocusableParent
-import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.isShowDebug
 
 /**
  *
@@ -33,7 +33,7 @@ class FocusAction : BaseAction() {
             if (result) {
                 addNode(node)
             }
-            control.log("设置焦点:$result ↓\n${node.toLog(isDebug())}")
+            control.log("设置焦点:$result ↓\n${node.toLog(isShowDebug())}")
         }
     }
 }

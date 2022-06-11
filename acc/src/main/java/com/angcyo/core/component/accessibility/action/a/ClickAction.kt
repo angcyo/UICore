@@ -1,7 +1,7 @@
 package com.angcyo.core.component.accessibility.action.a
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
-import com.angcyo.core.component.accessibility.*
+import com.angcyo.core.component.accessibility.BaseAccessibilityService
 import com.angcyo.core.component.accessibility.action.AutoParseAction
 import com.angcyo.core.component.accessibility.action.AutoParser
 import com.angcyo.core.component.accessibility.action.HandleResult
@@ -46,7 +46,7 @@ class ClickAction : BaseAction() {
         }
         val first = handleNodeList.firstOrNull()
         autoParseAction.handleActionLog("点击节点[${first?.text() ?: first?.bounds()}]:$value")
-        if (isDebug()) {
+        if (isShowDebug()) {
             autoParseAction.handleActionLog(first?.unwrap()?.logAllNode() ?: "no node.")
         }
         return value

@@ -26,7 +26,7 @@ object AccessibilityWindow {
     /**触发的保存窗口日志*/
     var onSaveWindowLog: ((log: String) -> Unit)? = null
 
-    var showCatchButton: Boolean = isDebug()
+    var showCatchButton: Boolean = isShowDebug()
         set(value) {
             val old = field
             field = value

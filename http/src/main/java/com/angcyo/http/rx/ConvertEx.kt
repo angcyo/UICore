@@ -6,7 +6,7 @@ import com.angcyo.http.base.readString
 import com.angcyo.http.base.toJsonObject
 import com.angcyo.http.exception.HttpDataException
 import com.angcyo.http.toBean
-import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.isShowDebug
 import com.google.gson.JsonElement
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -62,7 +62,7 @@ fun <T> Observable<Response<JsonElement>>.mapTo(
             it.toBean<T>(type, parseError, exception)
         } else {
             val originMessage = "${it.errorMessage()}[${it.code()}]"
-            val message = if (isDebug()) {
+            val message = if (isShowDebug()) {
                 "[${it.raw().request.url}]$originMessage"
             } else {
                 originMessage

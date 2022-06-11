@@ -83,7 +83,7 @@ class ClickAction : ClickTouchAction() {
                 if (result) {
                     addNode(node)
                 }
-                control.log("点击节点:$result ↓\n${node.toLog(isDebug())}")
+                control.log("点击节点:$result ↓\n${node.toLog(isShowDebug())}")
             }
         }
     }

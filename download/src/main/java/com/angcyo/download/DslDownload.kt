@@ -6,8 +6,8 @@ import com.angcyo.core.component.interceptor.LogFileInterceptor
 import com.angcyo.download.DslDownload._taskIdMap
 import com.angcyo.download.DslDownload.defaultDownloadFolder
 import com.angcyo.library.L
-import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.isDebugType
+import com.angcyo.library.ex.isShowDebug
 import com.angcyo.library.utils.FileUtils
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.OkDownload
@@ -46,7 +46,7 @@ object DslDownload {
     /**初始化*/
     fun init(
         content: Context? = null,
-        debug: Boolean = isDebug(),
+        debug: Boolean = isShowDebug(),
         configOkHttp: ((OkHttpClient.Builder) -> Unit)? = null
     ) {
         val ctx = content ?: OkDownloadProvider.context

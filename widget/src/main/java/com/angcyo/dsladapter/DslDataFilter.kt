@@ -298,7 +298,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
 
             resultList.addAll(_newList)
 
-            L.v("${dslAdapter.hash()}:${this.hash()} 数据列表->原:${oldList.size} 后:${newList.size} 终:${_newList.size}")
+            L.i("${dslAdapter.hash()}:${this.hash()} 数据列表->原:${oldList.size} 后:${newList.size} 终:${_newList.size}")
 
             //开始计算diff
             val diffResult = DiffUtil.calculateDiff(
@@ -415,7 +415,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
 
             //任务结束
             val nowTime = System.currentTimeMillis()
-            L.d("${dslAdapter.hash()}:${hash()} 界面更新结束, 总耗时${LTime.time(_taskStartTime, nowTime)}")
+            L.i("${dslAdapter.hash()}:${hash()} 界面更新结束, 总耗时${LTime.time(_taskStartTime, nowTime)}")
             _updateTaskLit.remove(this)
             taskCancel.set(true)
         }

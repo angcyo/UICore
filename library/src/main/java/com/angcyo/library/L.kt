@@ -1,7 +1,7 @@
 package com.angcyo.library
 
 import android.util.Log
-import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.isShowDebug
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -22,6 +22,7 @@ object L {
     const val INFO = 4
     const val WARN = 5
     const val ERROR = 6
+    const val FILE = 0xff//只写入文件, 不输出控制台
 
     val DEFAULT_LOG_PRINT: (tag: String, level: Int, msg: String) -> Unit =
         { tag, level, msg ->
@@ -34,7 +35,7 @@ object L {
             }
         }
 
-    var debug = isDebug()
+    var debug = isShowDebug()
 
     var tag: String = "L"
         get() {
@@ -65,7 +66,7 @@ object L {
     //当前日志输出级别
     var _level: Int = DEBUG
 
-    fun init(tag: String, debug: Boolean = isDebug()) {
+    fun init(tag: String, debug: Boolean = isShowDebug()) {
         this.tag = tag
         this.debug = debug
     }
@@ -92,6 +93,11 @@ object L {
 
     fun e(vararg msg: Any?) {
         _level = ERROR
+        _log(*msg)
+    }
+
+    fun f(vararg msg: Any?) {
+        _level = FILE
         _log(*msg)
     }
 
@@ -126,13 +132,15 @@ object L {
     }
 
     fun _log(vararg msg: Any?) {
-        if (!debug) {
+        if (!debug && _level < FILE) {
+            //非文件log
             return
         }
 
-        val _stackContextBuilder = StringBuilder()
+        //调用栈信息
+        val stackBuilder = StringBuilder()
         val stackTrace = getStackTrace(stackTraceFront, stackTraceDepth)
-        val stackContext = _stackContextBuilder.apply {
+        val stackContext = stackBuilder.apply {
             append("[")
             stackTrace.forEachIndexed { index, element ->
                 append("(")
@@ -157,8 +165,9 @@ object L {
             append("]")
         }
 
-        val _logBuilder = StringBuilder()
-        val logMsg = _logBuilder.apply {
+        //log内容
+        val logBuilder = StringBuilder()
+        val logMsg = logBuilder.apply {
             msg.forEach {
                 when (it) {
                     is CharSequence -> append(_wrapJson("$it"))

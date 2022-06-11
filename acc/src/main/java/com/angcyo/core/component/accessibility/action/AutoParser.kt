@@ -988,7 +988,7 @@ open class AutoParser {
                 _result
             }
             parseResult.nodeList.addAll(finishResult)
-            if (isDebug()) {
+            if (isShowDebug()) {
                 autoParseAction.handleActionLog(buildString {
                     append("命中(count=${finishResult.size}) first↓")
                     appendLine()

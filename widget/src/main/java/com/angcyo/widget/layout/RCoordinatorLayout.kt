@@ -82,9 +82,9 @@ open class RCoordinatorLayout(
 
     override fun requestLayout() {
         super.requestLayout()
-        if (!isInEditMode) {
+        /*if (!isInEditMode) {
             L.d("${hash()} requestLayout...")
-        }
+        }*/
     }
 
     override fun computeScroll() {

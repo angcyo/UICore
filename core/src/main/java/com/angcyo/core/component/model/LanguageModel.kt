@@ -15,7 +15,6 @@ import androidx.core.os.ConfigurationCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.angcyo.core.vmApp
-import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.viewmodel.vmData
 import java.util.*
@@ -246,7 +245,7 @@ class LanguageModel : ViewModel() {
         }
 
         override fun onActivityResumed(activity: Activity) {
-            L.i("onActivityResumed")
+            //L.i("onActivityResumed")
         }
 
         override fun onActivityPaused(activity: Activity) {
@@ -258,7 +257,7 @@ class LanguageModel : ViewModel() {
         }
 
         override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-            L.i("onActivitySaveInstanceState")
+            //L.i("onActivitySaveInstanceState")
         }
 
         override fun onActivityDestroyed(activity: Activity) {

@@ -8,7 +8,6 @@ import android.view.ViewConfiguration
 import android.widget.OverScroller
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
-import com.angcyo.library.L
 import com.angcyo.library.ex.*
 import com.angcyo.tablayout.clamp
 import com.angcyo.widget.R
@@ -269,7 +268,7 @@ abstract class BaseScrollBehavior<T : View>(
         behaviorScrollY = y
 
         if (childView?.isInEditMode == false) {
-            L.v("${simpleHash()} scrollTo: x:$x y:$y")
+            //L.v("${simpleHash()} scrollTo: x:$x y:$y")
         }
 
         behaviorScrollTo?.invoke(x, y, scrollType) // offset操作
