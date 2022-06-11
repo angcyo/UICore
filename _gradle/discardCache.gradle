@@ -11,6 +11,8 @@ project.configurations.all {
 
 /**
  * 2022-6-11 清除Gradle缓存
+ *
+ * apply from: 'https://gitee.com/angcyo/gradle/raw/master/discardCache.gradle'
  * */
 
 //https://docs.gradle.org/current/userguide/dynamic_versions.html
