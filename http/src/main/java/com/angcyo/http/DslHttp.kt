@@ -435,19 +435,16 @@ fun Response<JsonElement>?.isSucceed(
 ): Boolean {
     val bodyData = this?.body()
 
-    var result = false
+    var result = this?.isSuccessful == true
     if (this == null || bodyData == null) {
         //空数据
-        result = this?.isSuccessful == true
         onResult(result, null)
         return result
     }
 
     var errorJson: JsonObject? = null
 
-    if (codeKey.isNullOrEmpty()) {
-        result = isSuccessful
-    } else if (isSuccessful && bodyData is JsonObject) {
+    if (!codeKey.isNullOrEmpty() && isSuccessful && bodyData is JsonObject) {
         if (bodyData.isCodeSuccess(codeKey)) {
             result = true
         } else {
