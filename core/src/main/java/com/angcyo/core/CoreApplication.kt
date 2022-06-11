@@ -49,13 +49,13 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
                 //文件输出
                 DEFAULT_FILE_PRINT_PATH?.let { path ->
                     when (level) {
-                        L.VERBOSE -> "[VERBOSE]${msg}"
-                        L.DEBUG -> "[DEBUG]${msg}"
+                        L.VERBOSE -> null //"[VERBOSE]${msg}"
+                        L.DEBUG -> null //"[DEBUG]${msg}"
                         L.INFO -> "[INFO]${msg}"
                         L.WARN -> "[WARN]${msg}"
                         L.ERROR -> "[ERROR]${msg}"
                         else -> "[UNKNOWN]${msg}"
-                    }.wrapLog().apply {
+                    }?.wrapLog()?.apply {
                         doBack(true) {
                             writeTo(path)
                         }
