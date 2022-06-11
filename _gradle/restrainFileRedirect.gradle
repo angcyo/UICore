@@ -1,0 +1,20 @@
+/**
+ * 2022-6-11
+ * A problem was found with the configuration of task ':app:createPretestApkListingFileRedirect' (type 'ListingFileRedirectTask').
+ * - In plugin 'com.android.internal.version-check' type 'com.android.build.gradle.internal.tasks.ListingFileRedirectTask' property 'listingFile'
+ *   specifies file 'E:\AndroidProjects\shiyu\app\build\outputs\apk\pretest\output-metadata.json' which doesn't exist.
+ * */
+if (gradle.gradleVersion.charAt(0) >= '7') {
+    applicationVariants.all { variant ->
+        if (variant.buildType.name != "debug") {
+            /*tasks.whenTaskAdded { task ->
+                if (task.name.contains("ListingFileRedirect")) {
+                    task.enabled = false
+                }
+            }*/
+            tasks.findAll { it.name.contains("ListingFileRedirect") }.forEach { task ->
+                task.enabled = false
+            }
+        }
+    }
+}

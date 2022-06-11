@@ -40,7 +40,7 @@ android {
                 variant.packageApplicationProvider.get().outputDirectory = new File(apkFolder, variant.name)
             }
         }
-    } else if (gradle.gradleVersion.startsWith("6")) {
+    } else if (gradle.gradleVersion.charAt(0) >= '6') {
         /*Gradle4.0 以上的方法*/
         applicationVariants.all { variant ->
             def defPath = variant.packageApplicationProvider.get().outputDirectory.getAsFile().get().absolutePath
@@ -50,7 +50,7 @@ android {
                 variant.packageApplicationProvider.get().outputDirectory = new File(apkFolder, variant.name)
             }
         }
-    } else if (gradle.gradleVersion.startsWith("5")) {
+    } else if (gradle.gradleVersion.charAt(0) >= '5') {
         /*Gradle3.3 以上的方法*/
         applicationVariants.all { variant ->
             def defPath = variant.packageApplication.outputDirectory.getAsFile().get().absolutePath

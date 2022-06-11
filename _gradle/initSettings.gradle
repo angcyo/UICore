@@ -1,24 +1,25 @@
 //AGP 7.+
-if (gradle.gradleVersion.startsWith("7")) {
-}
-/*dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        //https://maven.aliyun.com/mvn/
-        //central仓和jcenter仓的聚合仓
-        maven { url 'https://maven.aliyun.com/repository/public' }
-        maven { url 'https://maven.aliyun.com/repository/google' }
-        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+if (gradle.gradleVersion.charAt(0) >= '7') {
+    dependencyResolutionManagement {
+        repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+        repositories {
+            //https://maven.aliyun.com/mvn/
+            //central仓和jcenter仓的聚合仓
+            maven { url 'https://maven.aliyun.com/repository/public' }
+            maven { url 'https://maven.aliyun.com/repository/google' }
+            maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
 
-        google()
-        //jcenter()
+            google()
+            //jcenter()
 
-        //https://mvnrepository.com/
-        //https://search.maven.org
-        mavenCentral()
+            //https://mvnrepository.com/
+            //https://search.maven.org
+            mavenCentral()
 
-        maven { url 'https://jitpack.io' }
+            maven { url 'https://jitpack.io' }
+            maven { url "https://gitcode.net/angcyo/maven/-/raw/master" }
+        }
     }
-}*/
+}
 
 apply from: 'includeAllModule.gradle'

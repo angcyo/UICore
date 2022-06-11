@@ -36,16 +36,20 @@ android {
     //rootProject.file("/.apk")
     def apkFolder = new File(project.rootDir.absolutePath + "/" + output)
     apkFolder.mkdirs()
-    println "\napk.gradle ${gradle.gradleVersion}→APK输出目录: ${apkFolder.absolutePath}"
 
-    if (gradle.gradleVersion.startsWith("6.5") ||
-            gradle.gradleVersion.startsWith("6.7") ||
-            gradle.gradleVersion.startsWith("7") ||
-            gradle.gradleVersion.charAt(0) >= '7') {
+    def gradleVersion = gradle.gradleVersion
+    println "\napk.gradle ${gradleVersion}→APK输出目录: ${apkFolder.absolutePath}"
+
+    def gv = gradleVersion.charAt(0)
+
+    if (gradleVersion.startsWith("6.5") ||
+            gradleVersion.startsWith("6.7") ||
+            gradleVersion.startsWith("7") ||
+            gv >= '7') {
         /*Gradle4.1 以上的方法*/
         applicationVariants.all { variant ->
             def defPath = variant.packageApplicationProvider.get().outputDirectory.getAsFile().get().absolutePath
-            println "\napk.gradle ${gradle.gradleVersion}→默认输出目录↓\n${variant.name}-> ${defPath}"
+            println "\napk.gradle ${gradleVersion}→默认输出目录↓\n${variant.name}-> ${defPath}"
 
             if (variant.buildType.name != "debug") {
                 variant.packageApplicationProvider.get().outputDirectory = new File(apkFolder, variant.name)
@@ -62,11 +66,11 @@ android {
                 )
             }
         }
-    } else if (gradle.gradleVersion.startsWith("6")) {
+    } else if (gradleVersion.startsWith("6")) {
         /*Gradle4.0 以上的方法*/
         applicationVariants.all { variant ->
             def defPath = variant.packageApplicationProvider.get().outputDirectory.getAsFile().get().absolutePath
-            println "\napk.gradle ${gradle.gradleVersion}→APK默认输出目录:${defPath}"
+            println "\napk.gradle ${gradleVersion}→APK默认输出目录:${defPath}"
 
             if (variant.buildType.name != "debug") {
                 variant.packageApplicationProvider.get().outputDirectory = new File(apkFolder, variant.name)
@@ -83,11 +87,11 @@ android {
                 )
             }
         }
-    } else if (gradle.gradleVersion.startsWith("5")) {
+    } else if (gradleVersion.startsWith("5")) {
         /*Gradle3.3 以上的方法*/
         applicationVariants.all { variant ->
             def defPath = variant.packageApplication.outputDirectory.getAsFile().get().absolutePath
-            println "\napk.gradle ${gradle.gradleVersion}→APK默认输出目录:${defPath}"
+            println "\napk.gradle ${gradleVersion}→APK默认输出目录:${defPath}"
 
             if (variant.buildType.name != "debug") {
                 variant.packageApplication.outputDirectory = new File(apkFolder, variant.name)
@@ -109,7 +113,7 @@ android {
         /*Gradle3.0 以上的方法*/
         applicationVariants.all { variant ->
             def defPath = variant.getPackageApplication().outputDirectory.getAsFile().get().absolutePath
-            println "\napk.gradle ${gradle.gradleVersion}→APK默认输出目录:${defPath}"
+            println "\napk.gradle ${gradleVersion}→APK默认输出目录:${defPath}"
 
             if (variant.buildType.name != "debug") {
                 //new File(project.rootDir.absolutePath + "/apk")

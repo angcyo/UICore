@@ -17,9 +17,9 @@ android {
     /*aar路径修改, 文件名修改*/
     libraryVariants.all { variant ->
         if (variant.buildType.name != "debug") {
-            if (gradle.gradleVersion.startsWith("6") || gradle.gradleVersion.charAt(0) >= '6') {
+            if (gradle.gradleVersion.charAt(0) >= '6') {
                 variant.getPackageLibraryProvider().get().destinationDir = aarFolder
-            } else if (gradle.gradleVersion.startsWith("5")) {
+            } else if (gradle.gradleVersion.charAt(0) >= '5') {
                 variant.packageLibrary.destinationDirectory.set(aarFolder)
             } else {
                 //no op

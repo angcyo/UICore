@@ -142,7 +142,7 @@ android {
         }
     }
 
-    if (gradle.gradleVersion.startsWith("6")) {
+    if (gradle.gradleVersion.charAt(0) >= '6') {
         //android.packageBuildConfig = false
         //https://stackoverflow.com/questions/63072764/android-packagebuildconfig-false-is-deprecated
         buildFeatures {
