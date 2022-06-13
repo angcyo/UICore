@@ -3,6 +3,8 @@ package com.angcyo.library.ex
 import android.graphics.*
 import android.os.Build
 import kotlin.math.atan2
+import kotlin.math.max
+import kotlin.math.min
 
 
 /**
@@ -165,4 +167,18 @@ fun Path.eachPath(step: Float = 1f, block: (index: Int, posArray: FloatArray) ->
             position = length
         }
     }
+}
+
+/**计算一组[Path]的bounds*/
+fun List<Path>.computeBounds(bounds: RectF = RectF(), exact: Boolean = true): RectF {
+    bounds.set(Float.MAX_VALUE, Float.MAX_VALUE, Float.MIN_VALUE, Float.MIN_VALUE)
+    val pathRect = RectF()
+    for (path in this) {
+        path.computeBounds(pathRect, exact)
+        bounds.left = min(bounds.left, pathRect.left)
+        bounds.top = min(bounds.top, pathRect.top)
+        bounds.right = max(bounds.right, pathRect.right)
+        bounds.bottom = max(bounds.bottom, pathRect.bottom)
+    }
+    return bounds
 }

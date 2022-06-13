@@ -58,7 +58,7 @@ class GCodeAdjust {
             rotate,
             gCodeBounds.left + bounds.width() / 2,
             gCodeBounds.top + bounds.height() / 2
-        )//
+        )//转换
 
         outputFile.writer().use { writer ->
             gCodeHandler.transformPoint = { gCodeLineData, pointF ->
@@ -106,9 +106,14 @@ class GCodeAdjust {
         gCodeHandler.overrideCommand = { line ->
             writer.appendLine(line.lineCode)
         }
+        //触发
         gCodeHandler.parseGCodeLineList(gCodeLineList)
     }
 
+    /**
+     * [xy] 像素
+     * [ij] 像素
+     * */
     private fun overrideGCommand(
         writer: OutputStreamWriter,
         firstCmd: GCodeCmd,

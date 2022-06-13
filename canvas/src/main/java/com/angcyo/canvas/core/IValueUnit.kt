@@ -1,6 +1,7 @@
 package com.angcyo.canvas.core
 
 import android.util.TypedValue
+import kotlin.math.nextDown
 
 /**
  * 像素点转换成 mm/inch 毫米/英寸
@@ -23,7 +24,11 @@ interface IValueUnit {
     /**将像素转换为单位数值*/
     fun convertPixelToValue(pixel: Float): Float {
         val unit = convertValueToPixel(1f)
-        return pixel / unit
+        val result = pixel / unit
+        if (result.isFinite()) {
+            return result
+        }
+        return result.nextDown()
     }
 
     /**将value转换成对应单位的文本*/
