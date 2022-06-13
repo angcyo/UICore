@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
 import com.angcyo.drawable.base.AbsDslDrawable
+import com.angcyo.library.Library
 import com.angcyo.library.ex.have
 
 /**
@@ -21,6 +22,10 @@ abstract class BaseDrawableView(context: Context, attributeSet: AttributeSet? = 
     val drawables = mutableListOf<AbsDslDrawable>()
 
     init {
+        if (isInEditMode) {
+            Library.application = context.applicationContext
+        }
+
         initDrawables(drawables)
         drawables.forEach {
             it.callback = this
@@ -36,7 +41,22 @@ abstract class BaseDrawableView(context: Context, attributeSet: AttributeSet? = 
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        val firstDrawable = firstDrawable<Drawable>()
+        if (firstDrawable == null) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        } else {
+            var widthSize = MeasureSpec.getSize(widthMeasureSpec)
+            val widthMode = MeasureSpec.getMode(widthMeasureSpec)
+            var heightSize = MeasureSpec.getSize(heightMeasureSpec)
+            val heightMode = MeasureSpec.getMode(heightMeasureSpec)
+            if (widthMode != MeasureSpec.EXACTLY) {
+                widthSize = firstDrawable.minimumWidth + paddingLeft + paddingRight
+            }
+            if (heightMode != MeasureSpec.EXACTLY) {
+                heightSize = firstDrawable.minimumHeight + paddingTop + paddingBottom
+            }
+            setMeasuredDimension(widthSize, heightSize)
+        }
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {

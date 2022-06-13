@@ -84,8 +84,8 @@ inline fun <reified VM : ViewModel> Fragment.vmCore(): VM {
 inline fun <reified VM : ViewModel> vmCore(): VM {
     return ViewModelProvider(
         coreApp(),
-        ViewModelProvider.AndroidViewModelFactory.getInstance(app())
-    ).get(VM::class.java)
+        ViewModelProvider.AndroidViewModelFactory.getInstance(app() as Application)
+    )[VM::class.java]
 }
 
 inline fun <reified VM : ViewModel> vmApp(): VM = vmCore()

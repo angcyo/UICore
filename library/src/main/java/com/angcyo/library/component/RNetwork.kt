@@ -1,7 +1,6 @@
 package com.angcyo.library.component
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -91,7 +90,7 @@ object RNetwork {
     /** xml 需要声明权限:
      * permissions: android.permission.CHANGE_NETWORK_STATE, android.permission.WRITE_SETTINGS.
      * */
-    fun init(application: Application = app()) {
+    fun init(application: Context = app()) {
         if (_isInit) {
             return
         }

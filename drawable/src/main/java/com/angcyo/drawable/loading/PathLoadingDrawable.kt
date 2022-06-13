@@ -1,9 +1,9 @@
 package com.angcyo.drawable.loading
 
 import android.graphics.*
-import androidx.annotation.experimental.UseExperimental
 import androidx.core.graphics.toRectF
 import com.angcyo.drawable.base.BaseSectionDrawable
+import com.angcyo.library.annotation.Implementation
 import com.angcyo.library.ex.dp
 
 /**
@@ -14,7 +14,7 @@ import com.angcyo.library.ex.dp
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 
-@UseExperimental
+@Implementation
 class PathLoadingDrawable : BaseSectionDrawable() {
 
     val path = Path()

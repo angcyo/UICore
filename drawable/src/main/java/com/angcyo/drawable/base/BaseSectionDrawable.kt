@@ -38,10 +38,54 @@ abstract class BaseSectionDrawable : AbsDslDrawable() {
             invalidateSelf()
         }
 
+    /**动画步长*/
+    var loadingStep: Int = 1
+
+    /**是否需要动画, 自动累加[progress]值*/
+    var loading: Boolean = false
+        set(value) {
+            field = value
+            invalidateSelf()
+        }
+
     /**
      * 所有sections加起来的总和
      */
     var sumSectionProgress = 1f
+
+    /**当前进度所在的section索引*/
+    val progressSectionIndex: Int
+        get() {
+            val totalProgress = progress * 1f / 100f
+            val maxSection = sections.size
+            var sum = 0f
+            for (i in 0 until maxSection) {
+                val section = sections[i]
+                sum += section
+                if (totalProgress <= sum) {
+                    return i
+                }
+            }
+            return -1
+        }
+
+    /**当前进度在自己的Section中的进度*/
+    val progressSectionProgress: Float
+        get() {
+            val totalProgress = progress * 1f / 100f
+            val maxSection = sections.size
+            var sum = 0f
+            for (i in 0 until maxSection) {
+                var sectionProgress = -1f
+                val section = sections[i]
+                if (totalProgress <= sum + section) { //绘制中
+                    sectionProgress = (totalProgress - sum) / section
+                    return sectionProgress
+                }
+                sum += section
+            }
+            return 0f
+        }
 
     override fun draw(canvas: Canvas) {
         if (sections.isNotEmpty()) {
@@ -84,6 +128,21 @@ abstract class BaseSectionDrawable : AbsDslDrawable() {
             }
             //绘制后
             onDrawAfter(canvas, maxSection, totalProgress)
+
+            if (loading) {
+                doLoading()
+            }
+        }
+    }
+
+    open fun doLoading() {
+        if (progress >= 100) {
+            progress = 0
+        } else {
+            progress += loadingStep
+            if (progress >= 100) {
+                progress = 100
+            }
         }
     }
 
@@ -120,7 +179,9 @@ abstract class BaseSectionDrawable : AbsDslDrawable() {
     }
 
     /**
-     * 重写此方法, 根据section绘制不同内容
+     * 重写此方法, 根据section绘制不同内容,
+     * 当[index]为2时, 那么[0,1]的[progress]一定是1f
+     * [progress] 当前的进度[sectionProgress]
      */
     open fun onDrawSection(
         canvas: Canvas,

@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import com.angcyo.library.ex.*
@@ -23,7 +24,7 @@ import com.orhanobut.hawk.Hawk
  */
 object Library {
 
-    var application: Application? = null
+    var application: Context? = null
     var debug: Boolean = isDebug()
 
     /**初始化库[Application]*/
@@ -35,7 +36,7 @@ object Library {
     }
 
     /**初始化[Hawk]*/
-    fun initHawk(context: Application) {
+    fun initHawk(context: Context) {
         /*sp持久化库*/
         try {
             if (!Hawk.isBuilt()) {
@@ -50,15 +51,15 @@ object Library {
     }
 }
 
-fun app(): Application = Library.application
-    ?: (LibInitProvider.contentProvider as? Application)?.apply {
+fun app(): Context = Library.application
+    ?: (LibInitProvider.contentProvider)?.apply {
         Library.initHawk(this)
     }
     ?: currentApplication()?.apply {
         Library.initHawk(this)
     }
     ?: PlaceholderApplication().apply {
-        L.e("application 为初始化")
+        Log.e("PlaceholderApplication", "application 未初始化")
     }
 
 fun appLifecycleOwner(): LifecycleOwner? =
