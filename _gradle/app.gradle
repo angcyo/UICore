@@ -99,6 +99,10 @@ android {
         }
         //preview
         pre {
+            //https://developer.android.com/studio/build/build-variants
+            //applicationIdSuffix ".pre"
+            //versionNameSuffix "-pre"
+            //applicationId "com.acc.xxx.pre"
             dimension "flavor"
             minSdkVersion Integer.parseInt(_M_SDK)
             buildConfigField "boolean", "SHOW_DEBUG", "true"
@@ -128,7 +132,9 @@ android {
             ext.alwaysUpdateBuildId = false
         }
         pretest {
+            //https://developer.android.com/studio/build/build-variants
             //applicationIdSuffix ".pretest"
+            //manifestPlaceholders = [hostName:"internal.example.com"]
             initWith debug
             minifyEnabled _minify_enabled
         }
