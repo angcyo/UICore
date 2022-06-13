@@ -43,10 +43,6 @@ fun configWxIntent(intent: Intent) {
     intent.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");//微信朋友
 }
 
-fun ByteArray.toBitmap(): Bitmap {
-    return BitmapFactory.decodeByteArray(this, 0, this.size)
-}
-
 fun ByteArray.toInputStream(): InputStream {
     return ByteArrayInputStream(this)
 }
@@ -264,6 +260,10 @@ fun Bitmap.rotate(degrees: Float = 0f): Bitmap = if (degrees > 0) {
     rotatedBitmap
 } else {
     this
+}
+
+fun ByteArray.toBitmap(): Bitmap {
+    return BitmapFactory.decodeByteArray(this, 0, this.size)
 }
 
 /**[rotate]纠正旋转角度*/
