@@ -504,6 +504,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             updateOriginDrawable()
             progressBgDrawable = originDrawable
         }
+        postInvalidate()
     }
 
     /**设置进度条渐变的颜色*/

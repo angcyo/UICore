@@ -78,8 +78,8 @@ open class DslGradientDrawable : AbsDslDrawable() {
     /**当前的配置, 是否能生成有效的[GradientDrawable]*/
     open fun isValidConfig(): Boolean {
         return gradientSolidColor != Color.TRANSPARENT ||
-            gradientStrokeColor != Color.TRANSPARENT ||
-            gradientColors != null
+                gradientStrokeColor != Color.TRANSPARENT ||
+                gradientColors != null
     }
 
     fun _fillRadii(array: FloatArray, radii: String?) {
@@ -116,6 +116,7 @@ open class DslGradientDrawable : AbsDslDrawable() {
         _fillRadii(array, radius.toFloat())
     }
 
+    /**颜色的十六进制值, 或者颜色的int值*/
     fun _fillColor(colors: String?): IntArray? {
         if (colors.isNullOrEmpty()) {
             return null
