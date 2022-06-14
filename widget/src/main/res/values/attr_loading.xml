@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="CircleScaleLoadingView">
+        <attr name="r_loading_circle_radius" />
+        <attr name="r_loading_circle_color" />
+        <attr name="r_loading_step" />
+    </declare-styleable>
+
+
+</resources>

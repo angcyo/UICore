@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="r_loading_circle_radius" format="dimension" />
+    <attr name="r_loading_circle_color" format="color" />
+    <attr name="r_loading_step" format="integer" />
+
+    <declare-styleable name="CircleScaleLoadingDrawable">
+        <attr name="r_loading_circle_radius" />
+        <attr name="r_loading_circle_color" />
+        <attr name="r_loading_step" />
+    </declare-styleable>
+</resources>

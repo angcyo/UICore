@@ -8,6 +8,7 @@ import android.view.View
 import com.angcyo.drawable.base.AbsDslDrawable
 import com.angcyo.library.Library
 import com.angcyo.library.ex.have
+import kotlin.math.max
 
 /**
  *
@@ -41,19 +42,25 @@ abstract class BaseDrawableView(context: Context, attributeSet: AttributeSet? = 
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val firstDrawable = firstDrawable<Drawable>()
-        if (firstDrawable == null) {
+        if (drawables.isEmpty()) {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         } else {
+            var width = 0
+            var height = 0
+            for (drawable in drawables) {
+                width = max(width, drawable.minimumWidth)
+                height = max(height, drawable.minimumHeight)
+            }
+
             var widthSize = MeasureSpec.getSize(widthMeasureSpec)
             val widthMode = MeasureSpec.getMode(widthMeasureSpec)
             var heightSize = MeasureSpec.getSize(heightMeasureSpec)
             val heightMode = MeasureSpec.getMode(heightMeasureSpec)
             if (widthMode != MeasureSpec.EXACTLY) {
-                widthSize = firstDrawable.minimumWidth + paddingLeft + paddingRight
+                widthSize = width + paddingLeft + paddingRight
             }
             if (heightMode != MeasureSpec.EXACTLY) {
-                heightSize = firstDrawable.minimumHeight + paddingTop + paddingBottom
+                heightSize = height + paddingTop + paddingBottom
             }
             setMeasuredDimension(widthSize, heightSize)
         }
