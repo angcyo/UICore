@@ -75,6 +75,9 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     /**圆角大小, 未强制指定[progressBgDrawable] [progressTrackDrawable]的情况下生效*/
     var progressRadius: Int = 5 * dpi
 
+    /**Wrap_Content时的最小高度*/
+    var progressMinHeight = 8 * dpi
+
     /**绘制进度Drawable时, 是否使用clip模式. 这样可以实现左右是圆角, 中间不是圆角的情况*/
     var progressClipMode = false
 
@@ -118,7 +121,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
     //</editor-fold desc="居中文本配置">
 
-    /**激活有进度和满进度时的动画*/
+    /**激活有进度和满进度时的进场/退场动画*/
     var enableShowHideProgress: Boolean = false
 
     val _progressTextDrawable: DslTextDrawable = DslTextDrawable()
@@ -289,7 +292,10 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         if (heightMeasureSpec.getMode() != MeasureSpec.EXACTLY) {
-            super.onMeasure(widthMeasureSpec, atMost(8 * dpi + paddingTop + paddingBottom))
+            super.onMeasure(
+                widthMeasureSpec,
+                atMost(progressMinHeight + paddingTop + paddingBottom)
+            )
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         }

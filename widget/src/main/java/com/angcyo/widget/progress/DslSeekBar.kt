@@ -365,6 +365,8 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
         onSeekBarConfig?.apply { onSeekChanged(progressValue, _progressFraction, true) }
     }
 
+    //</editor-fold desc="Touch事件">
+
     override fun setProgress(progress: Int, fromProgress: Int, animDuration: Long) {
         super.setProgress(progress, fromProgress, animDuration)
         onSeekBarConfig?.apply { onSeekChanged(validProgress(progress), _progressFraction, false) }
@@ -376,8 +378,6 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
         }
         onSeekBarConfig?.action()
     }
-
-    //</editor-fold desc="Touch事件">
 }
 
 open class SeekBarConfig {
