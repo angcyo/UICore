@@ -3,9 +3,10 @@ package com.angcyo.drawable.base
 import android.graphics.Canvas
 import android.view.animation.Interpolator
 import androidx.core.math.MathUtils.clamp
+import com.angcyo.library.annotation.OverridePoint
 
 /**
- *
+ * 分段绘制, 并且支持每段内的进度比例
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/01/02
@@ -161,6 +162,7 @@ abstract class BaseSectionDrawable : AbsDslDrawable() {
     /**
      * 当前进度在对应的section中, 只执行当前section的绘制
      */
+    @OverridePoint
     open fun onDrawProgressSection(
         canvas: Canvas,
         index: Int /*当前绘制的第几段, 0开始*/,
@@ -183,6 +185,7 @@ abstract class BaseSectionDrawable : AbsDslDrawable() {
      * 当[index]为2时, 那么[0,1]的[progress]一定是1f
      * [progress] 当前的进度[sectionProgress]
      */
+    @OverridePoint
     open fun onDrawSection(
         canvas: Canvas,
         maxSection: Int,  /*path 最多分成了几段, 至少1段*/

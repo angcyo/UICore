@@ -19,9 +19,6 @@ class PostLoadingView(context: Context, attributeSet: AttributeSet? = null) :
     override fun initDrawables(list: MutableList<AbsDslDrawable>) {
         list.add(PostLoadingDrawable().apply {
             loading = true
-            if (isInEditMode()) {
-                progress = 50
-            }
         })
     }
 

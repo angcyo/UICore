@@ -9,7 +9,6 @@ import com.angcyo.drawable.base.BaseSectionDrawable
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.alphaRatio
 import com.angcyo.library.ex.dpi
-import com.angcyo.library.ex.paint
 
 /**
  * 圆形放大并且伴随透明度的动画
@@ -27,13 +26,10 @@ class CircleScaleLoadingDrawable : BaseSectionDrawable() {
     /**圆的宽度*/
     var circleWidth: Int = 2 * dpi
 
-    var paint = paint().apply {
-        style = Paint.Style.STROKE
-    }
-
     init {
         sections = floatArrayOf(1f)
         loadingStep = 2
+        textPaint.style = Paint.Style.STROKE
     }
 
     override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
@@ -68,9 +64,9 @@ class CircleScaleLoadingDrawable : BaseSectionDrawable() {
         val cy = bounds.centerY()
 
         val color = circleColor.alphaRatio(1 - progress + 0.3f)
-        paint.color = color
-        paint.strokeWidth = circleWidth.toFloat()
-        canvas.drawCircle(cx.toFloat(), cy.toFloat(), radius, paint)
+        textPaint.color = color
+        textPaint.strokeWidth = circleWidth.toFloat()
+        canvas.drawCircle(cx.toFloat(), cy.toFloat(), radius, textPaint)
     }
 
     override fun onDrawProgressSection(

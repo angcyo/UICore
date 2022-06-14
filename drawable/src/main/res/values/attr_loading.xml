@@ -10,4 +10,19 @@
         <attr name="r_loading_circle_color" />
         <attr name="r_loading_step" />
     </declare-styleable>
+
+    <attr name="r_loading_item_width" format="dimension" />
+    <attr name="r_loading_item_height" format="dimension" />
+    <attr name="r_loading_item_round" format="dimension" />
+    <attr name="r_loading_item_gap" format="dimension" />
+    <attr name="r_loading_item_color" format="color" />
+
+    <declare-styleable name="PostLoadingDrawable">
+        <attr name="r_loading_item_width" />
+        <attr name="r_loading_item_height" />
+        <attr name="r_loading_item_round" />
+        <attr name="r_loading_item_color" />
+        <attr name="r_loading_item_gap" />
+        <attr name="r_loading_step" />
+    </declare-styleable>
 </resources>

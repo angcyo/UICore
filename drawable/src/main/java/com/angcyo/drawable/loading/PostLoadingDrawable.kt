@@ -1,11 +1,13 @@
 package com.angcyo.drawable.loading
 
+import android.content.Context
 import android.graphics.Canvas
-import android.graphics.RectF
-import com.angcyo.drawable.base.BaseSectionDrawable
-import com.angcyo.library.L
-import com.angcyo.library.R
-import com.angcyo.library.ex.*
+import android.util.AttributeSet
+import com.angcyo.drawable.R
+import com.angcyo.drawable.base.BaseItemDrawable
+import com.angcyo.library.ex._color
+import com.angcyo.library.ex.alphaRatio
+import com.angcyo.library.ex.dpi
 
 /**
  *
@@ -16,87 +18,91 @@ import com.angcyo.library.ex.*
  * @date 2022/06/13
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class PostLoadingDrawable : BaseSectionDrawable() {
+class PostLoadingDrawable : BaseItemDrawable() {
 
     /**每个竖条的宽度*/
     var itemWidth: Int = 4 * dpi
 
     /**最小的高度*/
-    var itemMinHeight = 14 * dpi
+    var itemHeight = 18 * dpi
 
     /**竖条之间的间隙*/
     var itemGap: Int = 2 * dpi
 
     /**圆角*/
-    var itemRound: Float = 2 * dp
+    var itemRound: Int = 2 * dpi
 
     /**颜色*/
     var itemColor = _color(R.color.bg_primary_color)
 
-    var paint = paint().apply {
-        //color
+    init {
+        val delay = 400L
+        items = mutableListOf(
+            DrawItem().apply {
+                progress = 50
+                startDelay = 0 * delay
+            },
+            DrawItem().apply {
+                progress = 50
+                startDelay = 1 * delay
+            },
+            DrawItem().apply {
+                progress = 50
+                startDelay = 2 * delay
+            },
+        )
     }
 
-    init {
-        sections = floatArrayOf(0.33f, 0.33f, 0.33f)
+    override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
+        super.initAttribute(context, attributeSet)
+        val typedArray =
+            context.obtainStyledAttributes(attributeSet, R.styleable.PostLoadingDrawable)
+        itemColor = typedArray.getColor(
+            R.styleable.PostLoadingDrawable_r_loading_item_color,
+            itemColor
+        )
+        itemWidth = typedArray.getDimensionPixelOffset(
+            R.styleable.PostLoadingDrawable_r_loading_item_width,
+            itemWidth
+        )
+        itemHeight = typedArray.getDimensionPixelOffset(
+            R.styleable.PostLoadingDrawable_r_loading_item_height,
+            itemHeight
+        )
+        itemRound = typedArray.getDimensionPixelOffset(
+            R.styleable.PostLoadingDrawable_r_loading_item_round,
+            itemRound
+        )
+        itemGap = typedArray.getDimensionPixelOffset(
+            R.styleable.PostLoadingDrawable_r_loading_item_gap,
+            itemGap
+        )
+        loadingStep =
+            typedArray.getInt(R.styleable.PostLoadingDrawable_r_loading_step, 3)
+        typedArray.recycle()
     }
 
     override fun getIntrinsicWidth(): Int {
-        return sections.size * itemWidth + itemGap * (sections.size - 1)
+        return items.size * itemWidth + itemGap * (items.size - 1)
     }
 
     override fun getIntrinsicHeight(): Int {
-        return itemMinHeight
+        return itemHeight
     }
 
-    val _tempRect = RectF()
-
-    /**绘制一个item*/
-    fun drawItem(canvas: Canvas, index: Int, progress: Float) {
-        if (!isInEditMode) {
-            L.w("index:$index progress:$progress")
-        }
-
+    override fun onDrawItem(canvas: Canvas, drawItem: DrawItem, index: Int) {
+        val progress = drawItem.progress / 100f
         val left = index * (itemWidth + itemGap)
         val centerY = bounds.height() / 2
         val height = bounds.height() * progress
         val color = itemColor.alphaRatio(progress)
-        paint.color = color
-        _tempRect.set(
+        textPaint.color = color
+        drawRectF.set(
             left.toFloat(),
             centerY - height / 2,
             (left + itemWidth).toFloat(),
             centerY + height / 2
         )
-        canvas.drawRoundRect(_tempRect, itemRound, itemRound, paint)
-    }
-
-    override fun onDrawProgressSection(
-        canvas: Canvas,
-        index: Int,
-        startProgress: Float,
-        endProgress: Float,
-        totalProgress: Float,
-        sectionProgress: Float
-    ) {
-        super.onDrawProgressSection(
-            canvas,
-            index,
-            startProgress,
-            endProgress,
-            totalProgress,
-            sectionProgress
-        )
-    }
-
-    override fun onDrawSection(
-        canvas: Canvas,
-        maxSection: Int,
-        index: Int,
-        totalProgress: Float,
-        progress: Float
-    ) {
-        super.onDrawSection(canvas, maxSection, index, totalProgress, progress)
-        drawItem(canvas, index, progress)
+        canvas.drawRoundRect(drawRectF, itemRound.toFloat(), itemRound.toFloat(), textPaint)
     }
 }

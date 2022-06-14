@@ -8,6 +8,7 @@ import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.view.ViewCompat
+import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.dp
 
 
@@ -94,6 +95,7 @@ abstract class AbsDslDrawable : Drawable() {
     //<editor-fold desc="基类方法">
 
     /**核心方法, 绘制*/
+    @CallPoint
     override fun draw(canvas: Canvas) {
 
     }
