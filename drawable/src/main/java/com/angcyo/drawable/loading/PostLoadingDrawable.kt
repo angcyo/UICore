@@ -8,6 +8,7 @@ import com.angcyo.drawable.base.BaseItemDrawable
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.alphaRatio
 import com.angcyo.library.ex.dpi
+import kotlin.math.max
 
 /**
  *
@@ -34,6 +35,9 @@ class PostLoadingDrawable : BaseItemDrawable() {
 
     /**颜色*/
     var itemColor = _color(R.color.bg_primary_color)
+
+    /**保持的最小进度*/
+    var itemMinProgress: Int = 30
 
     init {
         val delay = 400L
@@ -91,7 +95,7 @@ class PostLoadingDrawable : BaseItemDrawable() {
     }
 
     override fun onDrawItem(canvas: Canvas, drawItem: DrawItem, index: Int) {
-        val progress = drawItem.progress / 100f
+        val progress = max(itemMinProgress, drawItem.progress) / 100f
         val left = index * (itemWidth + itemGap)
         val centerY = bounds.height() / 2
         val height = bounds.height() * progress
