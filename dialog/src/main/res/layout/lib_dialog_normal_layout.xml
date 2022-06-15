@@ -21,24 +21,33 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="标题" />
 
-    <com.angcyo.widget.text.DslTextView
-        android:id="@+id/message_view"
-        style="@style/LibBodyTextStyle"
-        android:layout_width="wrap_content"
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/lib_xhdpi"
+        app:layout_constrainedHeight="true"
         app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@id/dialog_control_layout"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_view"
-        tools:text="对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容" />
+        app:layout_constraintTop_toBottomOf="@id/title_view">
+
+        <com.angcyo.widget.text.DslTextView
+            android:id="@+id/message_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容" />
+
+    </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
         android:id="@+id/dialog_control_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/lib_hdpi"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/message_view">
 
