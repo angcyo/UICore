@@ -2,7 +2,6 @@ package com.angcyo.canvas.items.renderer
 
 import android.graphics.Canvas
 import android.graphics.Matrix
-import android.graphics.RectF
 import androidx.core.graphics.withMatrix
 import com.angcyo.canvas.ScalePictureDrawable
 import com.angcyo.canvas.core.ICanvasView
@@ -37,21 +36,19 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasView: ICanvasView) :
 
     override fun onUpdateRendererItem(item: T?, oldItem: T?) {
         super.onUpdateRendererItem(item, oldItem)
-        if (item != oldItem) {
-            val bounds = getBounds()
-            if (bounds.isNoSize()) {
-                initBounds()
-            }
-        }
+        initBounds(item, oldItem)
     }
 
-    open fun initBounds() {
-        changeBounds {
-            adjustSize(
-                _rendererItem?.drawable?.minimumWidth?.toFloat() ?: 0f,
-                _rendererItem?.drawable?.minimumHeight?.toFloat() ?: 0f,
-                ADJUST_TYPE_LT
-            )
+    /**初始化默认的宽高*/
+    open fun initBounds(item: T?, oldItem: T?) {
+        if (item != oldItem) {
+            val width = _rendererItem?.drawable?.minimumWidth?.toFloat() ?: 0f
+            val height = _rendererItem?.drawable?.minimumHeight?.toFloat() ?: 0f
+            if (width > 0 && height > 0) {
+                changeBounds {
+                    adjustSize(width, height, ADJUST_TYPE_LT)
+                }
+            }
         }
     }
 

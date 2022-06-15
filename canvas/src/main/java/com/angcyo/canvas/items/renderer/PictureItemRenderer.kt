@@ -77,15 +77,22 @@ class PictureItemRenderer(canvasView: ICanvasView) :
     fun updatePictureDrawableBounds(oldWidth: Float = 0f, oldHeight: Float = 0f) {
         getRendererItem()?.let { item ->
             val bounds = getBounds()
+
+            val width = bounds.width()
+            val height = bounds.height()
+
             val newWith = item.itemWidth
             val newHeight = item.itemHeight
+
             if (bounds.isNoSize() || oldWidth == 0f || oldHeight == 0f) {
                 //首次更新bounds
-                updateBounds(newWith, newHeight)
+                if (width != newWith || height != newHeight) {
+                    updateBounds(newWith, newHeight)
+                }
             } else {
                 //再次更新bounds
-                val scaleWidth = bounds.width() / oldWidth
-                val scaleHeight = bounds.height() / oldHeight
+                val scaleWidth = width / oldWidth
+                val scaleHeight = height / oldHeight
                 if (scaleWidth == 1f && scaleHeight == 1f) {
                     //限制目标大小到原来的大小
                     limitMaxWidthHeight(newWith, newHeight, oldWidth, oldHeight).apply {
@@ -93,7 +100,13 @@ class PictureItemRenderer(canvasView: ICanvasView) :
                     }
                 } else {
                     //重新缩放当前的大小,达到和原来的缩放效果一致性
-                    updateBounds(newWith * scaleWidth, newHeight * scaleHeight)
+                    if ((width >= height && newWith >= newHeight) || (width < height && newWith < newHeight)) {
+                        //方向一致, 比如一致的宽图, 一致的长图
+                        updateBounds(newWith * scaleWidth, newHeight * scaleHeight)
+                    } else {
+                        //方向不一致
+                        updateBounds(newWith * scaleHeight, newHeight * scaleWidth)
+                    }
                 }
             }
             refresh()

@@ -10,6 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.angcyo.fragment.FragmentBridge
+import com.angcyo.library.ex.bitmapDegree
+import com.angcyo.library.ex.getPathFromUri
+import com.angcyo.library.ex.rotate
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -30,7 +33,11 @@ fun Context.getPhoto(fragmentManager: FragmentManager, onResult: (Bitmap?) -> Un
         if (uri == null) {
             onResult(null)
         } else {
-            onResult(MediaStore.Images.Media.getBitmap(contentResolver, uri))
+            val path = uri.getPathFromUri()
+            val degree = path?.bitmapDegree()
+            //val pathBitmap = path?.toBitmap()
+            val uriBitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+            onResult(uriBitmap.rotate(degree?.toFloat() ?: 0f))
         }
     }
 }

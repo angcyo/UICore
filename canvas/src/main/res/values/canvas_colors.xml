@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--画布主题色-->
-    <color name="canvas_primary">#01a978</color>
+    <color name="canvas_primary">#EAC632</color>
     <!--画布选择框颜色-->
     <color name="canvas_select">#719bcd</color>
     <!--画布item包裹布局颜色-->
