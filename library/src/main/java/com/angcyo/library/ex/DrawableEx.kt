@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.TransitionDrawable
 import android.os.Build
+import android.util.DisplayMetrics
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.core.graphics.drawable.DrawableCompat
@@ -134,6 +135,18 @@ fun Drawable.copyDrawable(): Drawable? {
     return result
 }
 
+/**转换成[BitmapDrawable]*/
+fun Drawable.toBitmapDrawable(
+    outWidth: Int = -1,
+    outHeight: Int = -1,
+    bgColor: Int = Color.TRANSPARENT
+): BitmapDrawable {
+    val drawable = BitmapDrawable()
+    drawable.setTargetDensity(DisplayMetrics.DENSITY_MEDIUM)
+    drawable.bitmap = toBitmap(outWidth, outHeight, bgColor)
+    return drawable
+}
+
 /**[androidx.core.graphics.drawable.DrawableKt.toBitmap]
  * [bgColor] 底色*/
 fun Drawable.toBitmap(
@@ -163,7 +176,7 @@ fun Drawable.toBitmap(
 
     val result = if (outWidth > 0 || outHeight > 0) {
         val width2 = if (outWidth > 0) outWidth else width
-        val height2 = if (outHeight > 0) outWidth else height
+        val height2 = if (outHeight > 0) outHeight else height
 
         // 创建操作图片用的Matrix对象
         val matrix = Matrix()
@@ -178,6 +191,8 @@ fun Drawable.toBitmap(
     } else {
         bitmap
     }
+
+    result.density = DisplayMetrics.DENSITY_MEDIUM
 
     return result
 }
