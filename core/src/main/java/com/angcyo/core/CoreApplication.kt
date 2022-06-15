@@ -19,6 +19,7 @@ import com.angcyo.http.rx.Rx
 import com.angcyo.http.rx.doBack
 import com.angcyo.library.L
 import com.angcyo.library.LibApplication
+import com.angcyo.library.annotation.CallComplianceAfter
 import com.angcyo.library.ex.*
 import com.angcyo.library.getAppString
 import com.angcyo.library.utils.Constant
@@ -130,6 +131,7 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
     }
 
     /**合规后的初始化*/
+    @CallComplianceAfter
     open fun onComplianceAfter() {
         DslCrashHandler.init(this)
         vmApp<StateModel>().updateState(ComplianceCheck.TYPE_COMPLIANCE_INIT_AFTER, true)
