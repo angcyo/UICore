@@ -27,22 +27,23 @@ interface ISwitchItem : IAutoInitItem {
         payloads: List<Any>
     ) {
         itemHolder.v<SwitchButton>(switchItemConfig.itemSwitchViewId)?.apply {
-
-            setOnCheckedChangeListener(object : SwitchButton.OnCheckedChangeListener {
-                override fun onCheckedChanged(view: SwitchButton, isChecked: Boolean) {
-                    val old = itemSwitchChecked
-                    itemSwitchChecked = isChecked
-                    if (old != itemSwitchChecked) {
-                        switchItemConfig.itemSwitchChangedAction(itemSwitchChecked)
-                    }
-                }
-            })
+            setOnCheckedChangeListener(null)
 
             //刷新界面的时候, 不执行动画
             val old = isEnableEffect
             isEnableEffect = false
             isChecked = itemSwitchChecked
             isEnableEffect = old
+
+            setOnCheckedChangeListener(object : SwitchButton.OnCheckedChangeListener {
+                override fun onCheckedChanged(view: SwitchButton, isChecked: Boolean) {
+                    val checked = itemSwitchChecked
+                    itemSwitchChecked = isChecked
+                    if (checked != itemSwitchChecked) {
+                        switchItemConfig.itemSwitchChangedAction(itemSwitchChecked)
+                    }
+                }
+            })
         }
     }
 

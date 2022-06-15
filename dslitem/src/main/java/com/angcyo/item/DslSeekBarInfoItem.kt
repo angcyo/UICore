@@ -48,10 +48,14 @@ open class DslSeekBarInfoItem : DslBaseInfoItem() {
             showProgressText = itemShowProgressText
             progressTextFormatAction = itemProgressTextFormatAction
 
-
             setProgress(itemSeekProgress, progressValue, -1)
             config {
-                onSeekChanged = itemSeekChanged
+                onSeekChanged = { value, fraction, fromUser ->
+                    if (fromUser) {
+                        itemChanging = true
+                    }
+                    itemSeekChanged(value, fraction, fromUser)
+                }
                 onSeekTouchEnd = itemSeekTouchEnd
             }
         }

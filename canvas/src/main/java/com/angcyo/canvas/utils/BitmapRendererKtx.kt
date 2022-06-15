@@ -8,7 +8,9 @@ import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.BitmapItem
+import com.angcyo.canvas.items.DrawableItem
 import com.angcyo.canvas.items.PictureBitmapItem
+import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.BitmapItemRenderer
 import com.angcyo.canvas.items.renderer.PictureItemRenderer
 import com.angcyo.library.ex.toBitmap
@@ -48,22 +50,50 @@ fun CanvasView.addPictureBitmapRenderer(bitmap: Bitmap): PictureBitmapItem {
 
 /**获取渲染的[Bitmap]对象, 如果有*/
 fun IRenderer.getRenderBitmap(origin: Boolean = true): Bitmap? {
-    return if (this is BitmapItemRenderer) {
-        _rendererItem?.bitmap
+    if (this is BitmapItemRenderer) {
+        return _rendererItem?.bitmap
     } else if (this is PictureItemRenderer) {
         val item = _rendererItem
         if (item is PictureBitmapItem) {
-            if (origin) {
+            return if (origin) {
                 item.originBitmap
             } else {
                 item.bitmap ?: item.drawable?.toBitmap()
             }
-        } else {
-            null
         }
-    } else {
-        null
     }
+    return null
+}
+
+fun IRenderer.onlySetRenderBitmap(bitmap: Bitmap?) {
+    if (this is BitmapItemRenderer) {
+        _rendererItem?.bitmap = bitmap
+    } else if (this is PictureItemRenderer) {
+        val item = _rendererItem
+        if (item is PictureBitmapItem) {
+            item.bitmap = bitmap
+        }
+    }
+}
+
+fun IRenderer.onlySetRenderDrawable(drawable: Drawable?) {
+    if (this is PictureItemRenderer) {
+        val item = _rendererItem
+        if (item is DrawableItem) {
+            item.drawable = drawable
+        }
+    }
+}
+
+/**获取渲染的Drawable*/
+fun IRenderer.getRenderDrawable(): Drawable? {
+    if (this is BaseItemRenderer<*>) {
+        val item = _rendererItem
+        if (item is DrawableItem) {
+            return item.drawable
+        }
+    }
+    return null
 }
 
 /**更新渲染的[Bitmap]对象, 如果可以*/
