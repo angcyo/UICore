@@ -4,7 +4,7 @@ import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.RectF
 import com.angcyo.canvas.utils.ShapesHelper
-import com.angcyo.canvas.utils.toDegrees
+import com.angcyo.library.ex.toDegrees
 import kotlin.math.atan
 import kotlin.math.cos
 import kotlin.math.sin

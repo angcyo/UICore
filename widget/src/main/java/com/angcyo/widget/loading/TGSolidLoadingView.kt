@@ -6,6 +6,7 @@ import com.angcyo.drawable.base.AbsDslDrawable
 import com.angcyo.drawable.loading.BaseTGLoadingDrawable
 import com.angcyo.drawable.loading.TGSolidLoadingDrawable
 import com.angcyo.library.ex.dp
+import com.angcyo.widget.R
 import com.angcyo.widget.base.BaseDrawableView
 
 /**
@@ -14,6 +15,10 @@ import com.angcyo.widget.base.BaseDrawableView
  */
 class TGSolidLoadingView(context: Context, attributeSet: AttributeSet? = null) :
     BaseDrawableView(context, attributeSet) {
+
+    init {
+        R.styleable.TGSolidLoadingView
+    }
 
     override fun initDrawables(list: MutableList<AbsDslDrawable>) {
         list.add(TGSolidLoadingDrawable().apply {

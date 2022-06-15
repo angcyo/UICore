@@ -11,11 +11,7 @@ import com.angcyo.canvas.core.renderer.SelectGroupRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils._tempValues
 import com.angcyo.canvas.utils.mapPoint
-import com.angcyo.canvas.utils.toRadians
-import com.angcyo.library.ex._tempRectF
-import com.angcyo.library.ex.isNoSize
-import com.angcyo.library.ex.rotate
-import com.angcyo.library.ex.scale
+import com.angcyo.library.ex.*
 import java.lang.Math.tan
 
 /**

@@ -19,7 +19,7 @@ import kotlin.math.max
  * @date 2022/06/13
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class PostLoadingDrawable : BaseItemDrawable() {
+open class PostLoadingDrawable : BaseItemDrawable() {
 
     /**每个竖条的宽度*/
     var itemWidth: Int = 4 * dpi
@@ -36,8 +36,11 @@ class PostLoadingDrawable : BaseItemDrawable() {
     /**颜色*/
     var itemColor = _color(R.color.bg_primary_color)
 
-    /**保持的最小进度*/
-    var itemMinProgress: Int = 30
+    /**保持的最小高度进度*/
+    var itemMinHeightProgress: Int = 30
+
+    /**保持最小颜色进度*/
+    var itemMinColorProgress: Int = 30
 
     init {
         val delay = 400L
@@ -87,7 +90,7 @@ class PostLoadingDrawable : BaseItemDrawable() {
     }
 
     override fun getIntrinsicWidth(): Int {
-        return items.size * itemWidth + itemGap * (items.size - 1)
+        return items.size * itemWidth + itemGap * (max(0, items.size - 1))
     }
 
     override fun getIntrinsicHeight(): Int {
@@ -95,11 +98,12 @@ class PostLoadingDrawable : BaseItemDrawable() {
     }
 
     override fun onDrawItem(canvas: Canvas, drawItem: DrawItem, index: Int) {
-        val progress = max(itemMinProgress, drawItem.progress) / 100f
+        val heightProgress = max(itemMinHeightProgress, drawItem.progress) / 100f
+        val colorProgress = max(itemMinColorProgress, drawItem.progress) / 100f
         val left = index * (itemWidth + itemGap)
         val centerY = bounds.height() / 2
-        val height = bounds.height() * progress
-        val color = itemColor.alphaRatio(progress)
+        val height = bounds.height() * heightProgress
+        val color = itemColor.alphaRatio(colorProgress)
         textPaint.color = color
         drawRectF.set(
             left.toFloat(),

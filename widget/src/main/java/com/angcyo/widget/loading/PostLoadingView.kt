@@ -4,10 +4,10 @@ import android.content.Context
 import android.util.AttributeSet
 import com.angcyo.drawable.base.AbsDslDrawable
 import com.angcyo.drawable.loading.PostLoadingDrawable
+import com.angcyo.widget.R
 import com.angcyo.widget.base.BaseDrawableView
 
 /**
- *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2022/06/13
@@ -15,6 +15,10 @@ import com.angcyo.widget.base.BaseDrawableView
  */
 class PostLoadingView(context: Context, attributeSet: AttributeSet? = null) :
     BaseDrawableView(context, attributeSet) {
+
+    init {
+        R.styleable.PostLoadingView
+    }
 
     override fun initDrawables(list: MutableList<AbsDslDrawable>) {
         list.add(PostLoadingDrawable().apply {

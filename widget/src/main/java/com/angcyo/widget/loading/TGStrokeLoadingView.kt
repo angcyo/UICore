@@ -6,6 +6,7 @@ import com.angcyo.drawable.base.AbsDslDrawable
 import com.angcyo.drawable.loading.BaseTGLoadingDrawable
 import com.angcyo.drawable.loading.TGStrokeLoadingDrawable
 import com.angcyo.library.ex.dp
+import com.angcyo.widget.R
 import com.angcyo.widget.base.BaseDrawableView
 
 /**
@@ -14,6 +15,10 @@ import com.angcyo.widget.base.BaseDrawableView
  */
 class TGStrokeLoadingView(context: Context, attributeSet: AttributeSet? = null) :
     BaseDrawableView(context, attributeSet) {
+
+    init {
+        R.styleable.TGStrokeLoadingView
+    }
 
     override fun initDrawables(list: MutableList<AbsDslDrawable>) {
         list.add(TGStrokeLoadingDrawable().apply {

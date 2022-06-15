@@ -16,4 +16,13 @@
         <attr name="r_loading_step" />
     </declare-styleable>
 
+    <declare-styleable name="AlLoadingView">
+        <attr name="r_loading_item_width" />
+        <attr name="r_loading_item_height" />
+        <attr name="r_loading_item_round" />
+        <attr name="r_loading_item_color" />
+        <attr name="r_loading_item_gap" />
+        <attr name="r_loading_step" />
+    </declare-styleable>
+
 </resources>

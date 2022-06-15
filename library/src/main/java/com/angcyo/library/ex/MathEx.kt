@@ -114,3 +114,9 @@ fun Float.floorReverse() = if (this > 0f) {
 } else {
     floor(this.toDouble()).toFloat()
 }
+
+/**角度转弧度*/
+fun Float.toRadians(): Float = Math.toRadians(this.toDouble()).toFloat()
+
+/**弧度转角度*/
+fun Float.toDegrees(): Float = Math.toDegrees(this.toDouble()).toFloat()
