@@ -87,14 +87,19 @@ object Gitee {
                     val msg = it.getString("msg", "kill down!")
                     val enable = it.getBoolean("enable", true)
                     val lastTime = it.getLong("lastTime", Long.MAX_VALUE)
+                    val killDelay = it.getLong("killDelay", 1_000)
                     if (enable && lastTime > nowTime()) {
                         //通过
                         block(null)
                     } else {
                         //不通过
-                        block(msg)
-                        doBack {
-                            sleep(1_000)
+                        if (killDelay > 0) {
+                            block(msg)
+                            doBack {
+                                sleep(1_000)
+                                killCurrentProcess()
+                            }
+                        } else {
                             killCurrentProcess()
                         }
                     }

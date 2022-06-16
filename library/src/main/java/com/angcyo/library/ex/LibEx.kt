@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.collection.SimpleArrayMap
 import com.angcyo.library.BuildConfig
+import com.angcyo.library.component.RBackground
 import com.angcyo.library.component.ThreadExecutor.onMain
 import com.angcyo.library.ex.LibEx.isDebugTypeVal
 import com.angcyo.library.getAppBoolean
@@ -75,7 +76,7 @@ fun currentActivity(): Activity? {
         val activitiesField = activityThreadClass.getDeclaredField("mActivities")
         activitiesField.isAccessible = true
         val activities = activitiesField[activityThread] as Map<*, *>
-        var lastActivity: Activity? = null
+        var lastActivity: Activity? = RBackground.lastActivity?.get()
         for (activityRecord in activities.values) {
             if (activityRecord != null) {
                 val activityRecordClass: Class<*> = activityRecord.javaClass

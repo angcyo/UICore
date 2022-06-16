@@ -31,10 +31,14 @@ object RBackground {
     /**最后一个[Activity]*/
     var lastActivity: WeakReference<Activity>? = null
 
+    /**当有[Activity]创建时, app之前是否是在后台*/
+    var isCreatedFromBackground: Boolean = false
+
     /**主线程回调*/
     val lifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
 
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+            isCreatedFromBackground = isBackground()
             pushItem(activity.hashCode(), activity.javaClass.name, CREATE)
         }
 
@@ -107,7 +111,7 @@ object RBackground {
 
     /**判断程序是否在后台运行*/
     fun isBackground(): Boolean {
-        var result = stack.size() != 0
+        var result = true
 
         for (i in 0 until stack.size()) {
             val value = stack.get(stack.keyAt(i))
