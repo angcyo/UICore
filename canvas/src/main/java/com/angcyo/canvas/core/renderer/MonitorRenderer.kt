@@ -11,14 +11,14 @@ import android.view.MotionEvent
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.BuildConfig
 import com.angcyo.canvas.CanvasDelegate
-import com.angcyo.canvas.core.ICanvasListener
-import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.core.convertPixelToValueUnit
+import com.angcyo.canvas.core.*
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.getMaxLineWidth
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.canvas.utils.mapRectF
+import com.angcyo.library.ex.decimal
 import com.angcyo.library.ex.emptyRectF
+import com.angcyo.library.ex.isShowDebug
 
 /**
  * 调试监视渲染
@@ -71,19 +71,25 @@ class MonitorRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView), ICanv
     val _tempPoint: PointF = PointF()
     val _tempRect: RectF = emptyRectF()
 
+    val mmValueUnit = MmValueUnit()
+    val inchValueUnit = InchValueUnit()
+
     override fun render(canvas: Canvas) {
         if (_isTouchDown) {
-            val text = if (BuildConfig.DEBUG) {
+            val text = buildString {
+                if (isShowDebug()) {
+                    append("1mm:${mmValueUnit.convertValueToPixel(1f).decimal(2)}px")
+                    appendLine(" 1in:${inchValueUnit.convertValueToPixel(1f).decimal(2)}px")
+                }
+                if (BuildConfig.DEBUG) {
+                    //绘制当前的缩放比例
+                    val valueUnit = canvasViewBox.valueUnit
+                    val _rect = canvasViewBox.contentRect
+                    //val rect = canvasViewBox.getContentMatrixBounds()
 
-                //绘制当前的缩放比例
-                val valueUnit = canvasViewBox.valueUnit
-                val _rect = canvasViewBox.contentRect
-                //val rect = canvasViewBox.getContentMatrixBounds()
+                    val rect = canvasViewBox.invertMatrix.mapRectF(_rect)
+                    val touchPoint = canvasViewBox.invertMatrix.mapPoint(_touchPoint, _tempPoint)
 
-                val rect = canvasViewBox.invertMatrix.mapRectF(_rect)
-                val touchPoint = canvasViewBox.invertMatrix.mapPoint(_touchPoint, _tempPoint)
-
-                val tpStr = buildString {
                     val xValue = valueUnit.convertPixelToValue(touchPoint.x - _rect.left)
                     val yValue = valueUnit.convertPixelToValue(touchPoint.y - _rect.top)
 
@@ -103,6 +109,7 @@ class MonitorRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView), ICanv
 
                     appendLine()
                     append("center:(${centerPoint.x}, ${centerPoint.y}):($centerXUnit, ${centerYUnit})")
+                    appendLine()
 
                     /*val _centerPoint = PointF(_rect.centerX(), _rect.centerY())
                     val centerPoint = PointF(rect.centerX(), rect.centerY())
@@ -110,17 +117,14 @@ class MonitorRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView), ICanv
                     append("center:(${_centerPoint.x}, ${_centerPoint.y})") //touch在视图上的真实坐标
                     append("->")
                     append("(${centerPoint.x}, ${centerPoint.y})") //映射后的坐标*/
-                }
 
-                val rectStr = buildString {
                     append("(${_rect.left}, ${_rect.top}, ${_rect.right}, ${_rect.bottom})")
                     append("↓\n")
                     append("(${rect.left}, ${rect.top}, ${rect.right}, ${rect.bottom})") //映射后
+                    appendLine()
                 }
 
-                "${tpStr}\n${rectStr}\n${(canvasViewBox.getScaleX() * 100).toInt()}%"
-            } else {
-                "${(canvasViewBox.getScaleX() * 100).toInt()}%"
+                append("${(canvasViewBox.getScaleX() * 100).toInt()}%")
             }
 
             //StaticLayout
