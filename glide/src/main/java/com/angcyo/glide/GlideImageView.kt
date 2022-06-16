@@ -67,7 +67,7 @@ open class GlideImageView : DslImageView {
 
         if (!isInEditMode) {
             drawable?.apply {
-                L.d("${this@GlideImageView.simpleHash()}:${this.simpleHash()} w:$minimumWidth:$measuredWidth h:$minimumHeight:$minimumHeight")
+                L.v("${this@GlideImageView.simpleHash()}:${this.simpleHash()} w:$minimumWidth:$measuredWidth h:$minimumHeight:$minimumHeight")
             }
         }
     }

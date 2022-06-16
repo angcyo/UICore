@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import com.angcyo.base.getAllResumedFragment
 import com.angcyo.base.setFragmentResult
 import com.angcyo.base.toVisibilityString
+import com.angcyo.library.L
 import com.angcyo.library.L.i
 import com.angcyo.library.ex.hash
 import com.angcyo.library.ex.hideSoftInput
@@ -118,7 +119,7 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
     @CallSuper
     open fun onFragmentShow(bundle: Bundle?) {
         isFragmentShow = true
-        i(buildString {
+        L.d(buildString {
             append(this@AbsLifecycleFragment.javaClass.simpleName)
             append("#").append(this@AbsLifecycleFragment.hash())
             append(" view:").append((if (view == null) "×" else "√"))
