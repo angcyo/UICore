@@ -19,6 +19,7 @@ import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.library.L
 import com.angcyo.library.component.DoubleGestureDetector2
 import com.angcyo.library.ex.*
+import kotlin.math.absoluteValue
 
 /**
  * 控制渲染的数据组件, 用来实现拖拽元素, 操作控制点等
@@ -49,6 +50,9 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
 
     /**相对于目标点的偏移距离*/
     var controlPointOffset = 2 * dp
+
+    /**手指移动多少距离后, 才算作移动了*/
+    var translateThreshold = 3
 
     //缓存
     val _controlPointOffsetRect = emptyRectF()
@@ -150,7 +154,7 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
                             val dx1 = p1x - p2x
                             val dy1 = p1y - p2y
 
-                            if (dx1 != 0f || dy1 != 0f) {
+                            if (dx1.absoluteValue > translateThreshold || dy1.absoluteValue > translateThreshold) {
                                 handle = true
                                 isTranslated = true
                                 canvasDelegate.smartAssistant.smartTranslateItemBy(

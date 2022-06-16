@@ -27,8 +27,11 @@ fun String.toHexByteArray(): ByteArray {
     return bs
 }
 
-/**删除所有空字符*/
+/**删除前尾所有空字符*/
 fun String.trimAllChar(char: Char = ' ') = trim(char)
+
+/**移除所有字符*/
+fun String.removeAll(char: String = " ") = replace(char, "", true)
 
 /**将十六进制字符串[0123456789ABCDEF]转换成字节
  * 字节范围[-128~127]*/

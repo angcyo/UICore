@@ -754,6 +754,12 @@ class CanvasDelegate(val view: View) : ICanvasView {
         anim: Boolean = true
     ) {
         val canvasViewBox = getCanvasViewBox()
+        if (!canvasViewBox.isCanvasInit()) {
+            view.post {
+                showRectBounds(rect, margin, scale, lockScale, anim)
+            }
+            return
+        }
 
         //先将坐标系移动到view的中心
         val coordinateTranslateX =

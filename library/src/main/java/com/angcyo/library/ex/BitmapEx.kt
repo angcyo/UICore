@@ -3,10 +3,7 @@ package com.angcyo.library.ex
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.graphics.Matrix
+import android.graphics.*
 import android.media.ExifInterface
 import android.net.Uri
 import android.provider.MediaStore
@@ -303,10 +300,10 @@ fun Context.getBitmapFromRes(id: Int) = BitmapFactory.decodeResource(resources, 
 fun Context.getBitmapFromAssets(name: String) = BitmapFactory.decodeStream(assets.open(name))
 
 /**色彩通道提取
- * [type] 通道类型 [Color.RED] [Color.GREEN] [Color.BLUE]*/
+ * [channelType] 通道类型 [Color.RED] [Color.GREEN] [Color.BLUE]*/
 fun Bitmap.colorChannel(
-    type: Int = Color.RED,
-    convert: (color: Int, channel: Int) -> Int = { _, channel -> channel }
+    channelType: Int = Color.RED,
+    convert: (color: Int, channelValue: Int) -> Int = { _, channelValue -> channelValue }
 ): ByteArray {
     val width = width
     val height = height
@@ -315,7 +312,7 @@ fun Bitmap.colorChannel(
     for (y in 0 until height) {
         for (x in 0 until width) {
             val color = getPixel(x, y)
-            var value = when (type) {
+            var value = when (channelType) {
                 Color.RED -> Color.red(color)
                 Color.GREEN -> Color.green(color)
                 Color.BLUE -> Color.blue(color)
@@ -328,4 +325,32 @@ fun Bitmap.colorChannel(
         }
     }
     return result
+}
+
+/**色彩通道转换[Bitmap]可视化对象*/
+fun ByteArray.toChannelBitmap(width: Int, height: Int, channelType: Int = Color.RED): Bitmap {
+    val channelBitmap =
+        Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(channelBitmap)
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        this.color = if (channelType == Color.TRANSPARENT) Color.BLACK else channelType
+        this.style = Paint.Style.FILL
+        strokeWidth = 1f
+        strokeJoin = Paint.Join.ROUND
+        strokeCap = Paint.Cap.ROUND
+    }
+    val bytes = this
+    for (y in 0 until height) {
+        for (x in 0 until width) {
+            val value: Int = bytes[y * width + x].toInt()
+            paint.color = Color.argb(
+                if (channelType == Color.TRANSPARENT) value else 0,
+                if (channelType == Color.RED) value else 0,
+                if (channelType == Color.GREEN) value else 0,
+                if (channelType == Color.BLUE) value else 0
+            )
+            canvas.drawCircle(x.toFloat(), y.toFloat(), 1f, paint)//绘制圆点
+        }
+    }
+    return channelBitmap
 }

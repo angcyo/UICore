@@ -497,10 +497,10 @@ object GCodeHelper {
                     //90: 绝对位置, 1: 相对位置
                     _isAbsolutePosition = number == 90
                 } else {
-                    L.w("忽略G指令:${line.lineCode}")
+                    L.v("忽略G指令:${line.lineCode}")
                 }
             } else {
-                L.w("跳过指令:${line.lineCode}")
+                L.v("跳过指令:${line.lineCode}")
             }
             return false
         }
