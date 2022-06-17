@@ -22,6 +22,9 @@ import kotlin.math.min
  */
 object EngraveHelper {
 
+    /**缓存文件的文件夹*/
+    const val CACHE_FILE_FOLDER = "engrave"
+
     /**GCode数据, 字符串的文本数据*/
     const val KEY_GCODE = "key_gcode"
 

@@ -4,10 +4,7 @@ import android.content.Context
 import com.angcyo.coroutine.CoroutineErrorHandler
 import com.angcyo.coroutine.launchGlobal
 import com.angcyo.library.app
-import com.angcyo.library.utils.Constant
-import com.angcyo.library.utils.FileUtils
-import com.angcyo.library.utils.fileName
-import com.angcyo.library.utils.logFileName
+import com.angcyo.library.utils.*
 import kotlinx.coroutines.Dispatchers
 import java.text.SimpleDateFormat
 import java.util.*
@@ -36,7 +33,7 @@ object DslFileHelper {
     fun write(
         folder: String /*文件夹名, 相对于应用目录下的/files/文件夹*/,
         name: String = logFileName() /*文件名, 默认当天日期*/,
-        data: String /*需要写入的数据*/,
+        data: FileTextData /*需要写入的数据*/,
         append: Boolean = true
     ): String? {
         if (async) {
@@ -104,4 +101,11 @@ fun String?.writeTo(
     name: String = logFileName()
 ) {
     DslFileHelper.write(folder, name, this ?: "null")
+}
+
+/**写入数据到文件
+ * [folder] 文件夹的名字, 会自动追加Scheme
+ * [name] 文件的名字*/
+fun FileTextData.writeTo(folder: String, name: String, append: Boolean = true) {
+    DslFileHelper.write(folder = folder, name = name, data = this, append = append)
 }

@@ -16,7 +16,6 @@ import com.angcyo.canvas.core.renderer.SelectGroupRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.mapPoint
-import com.angcyo.library.L
 import com.angcyo.library.component.DoubleGestureDetector2
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
@@ -129,7 +128,7 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
                 _movePoint.set(event.x, event.y)
 
                 if (touchPointerId == event.getPointerId(0)) {
-                    L.w("\ntouch:${_touchPoint}\nmove:${_movePoint}")
+                    //L.d("\ntouch:${_touchPoint}\nmove:${_movePoint}")
                     if (touchControlPoint == null) {
                         //没有在控制点上按压时, 才处理本体的移动
                         if (selectedItemRender != null) {

@@ -91,7 +91,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         }
         //宽高有变化后
         onChangeBoundsAfter(reason)
-        L.i(
+        L.d(
             buildString {
                 appendLine(this@BaseItemRenderer)
                 append(getRendererItem()?.simpleHash())

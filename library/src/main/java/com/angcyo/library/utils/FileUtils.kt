@@ -23,6 +23,14 @@ import java.util.*
  * @date 2019/12/30
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
+
+/**
+ * 写入文件的数据
+ * [String]
+ * [ByteArray]
+ * */
+typealias FileTextData = Any
+
 object FileUtils {
 
     /**允许写入单个文件的最大大小10mb, 之后会重写*/
@@ -36,7 +44,8 @@ object FileUtils {
         "$rootFolder${File.separator}$it"
     }
 
-    /* *//**[dataDir]:[/data/user/0/com.wayto.plugin.gb.security]
+    /* */
+    /**[dataDir]:[/data/user/0/com.wayto.plugin.gb.security]
      * *//*
     fun appRootFolder(context: Context = app()): File? {
         return context.externalMediaDirs?.firstOrNull()
@@ -97,7 +106,7 @@ object FileUtils {
         context: Context? = app(),
         folder: String,
         name: String,
-        data: String,
+        data: FileTextData,
         append: Boolean = true /*false 强制重新写入*/
     ): String? {
         // /storage/emulated/0/Android/data/com.angcyo.uicore.demo/files/$type
@@ -114,8 +123,9 @@ object FileUtils {
         return filePath
     }
 
-    /**[append]=true 根据文件大小智能判断是否要重写*/
-    fun writeExternal(file: File, data: String, append: Boolean = true): String? {
+    /**[append]=true 根据文件大小智能判断是否要重写
+     * @return 文件路径*/
+    fun writeExternal(file: File, data: FileTextData, append: Boolean = true): String? {
         var filePath: String? = null
 
         try {
@@ -124,8 +134,16 @@ object FileUtils {
                 filePath = absolutePath
 
                 when {
-                    length() >= fileMaxSize || !append -> writeText(data)
-                    else -> appendText(data)
+                    length() >= fileMaxSize || !append -> if (data is ByteArray) {
+                        writeBytes(data)
+                    } else {
+                        writeText(data.toString())
+                    }
+                    else -> if (data is ByteArray) {
+                        appendBytes(data)
+                    } else {
+                        appendText(data.toString())
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -177,7 +195,7 @@ fun folderPath(folderName: String): String {
 fun logFileName() = fileName("yyyy-MM-dd", ".log")
 
 /**[append]=true 根据文件大小智能判断是否要重写*/
-fun File.writeText(data: String?, append: Boolean) {
+fun File.writeText(data: FileTextData?, append: Boolean) {
     FileUtils.writeExternal(this, data ?: "null", append)
 }
 

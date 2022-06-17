@@ -382,7 +382,7 @@ object GCodeHelper {
                     var y = line.getGCodeY()
 
                     if (x == null || y == null) {
-                        L.w("未找到x,y->${line.lineCode}")
+                        //L.v("未找到x,y->${line.lineCode}")
                         return false
                     }
 
