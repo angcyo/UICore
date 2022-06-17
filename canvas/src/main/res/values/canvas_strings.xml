@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="canvas_width">宽度</string>
+    <string name="canvas_height">高度</string>
+    <string name="canvas_axis_x">X轴位置</string>
+    <string name="canvas_axis_y">Y轴位置</string>
+    <string name="canvas_rotate">旋转</string>
+
+    <!--libcanvas-->
+    <string name="canvas_image">图片</string>
+    <string name="canvas_text">文本</string>
+    <string name="canvas_shapes">形状</string>
+    <string name="canvas_material">素材</string>
+    <string name="canvas_doodle">涂鸦</string>
+    <string name="canvas_barcode">条形码</string>
+    <string name="canvas_qrcode">二维码</string>
+    <string name="canvas_edit">编辑</string>
+    <string name="canvas_layer">图层</string>
+    <string name="canvas_undo">撤销</string>
+    <string name="canvas_redo">重做</string>
+    <string name="canvas_setting">设置</string>
+    <string name="canvas_line">线条</string>
+    <string name="canvas_circle">圆形</string>
+    <string name="canvas_triangle">三角形</string>
+    <string name="canvas_square">正方形</string>
+    <string name="canvas_pentagon">五角形</string>
+    <string name="canvas_hexagon">六角形</string>
+    <string name="canvas_octagon">八角形</string>
+    <string name="canvas_rhombus">菱形</string>
+    <string name="canvas_pentagram">星星</string>
+    <string name="canvas_love">心形</string>
+    <string name="canvas_stroke">描边</string>
+    <string name="canvas_fill">填充</string>
+
+    <string name="canvas_solid">实心</string>
+    <string name="canvas_hollow">空心</string>
+    <string name="canvas_bold">粗体</string>
+    <string name="canvas_italic">斜体</string>
+    <string name="canvas_under_line">下划线</string>
+    <string name="canvas_delete_line">删除线</string>
+    <string name="canvas_font">字体</string>
+    <string name="canvas_standard">水平排列</string>
+    <string name="canvas_vertical">垂直排列</string>
+    <string name="canvas_align_left">左对齐</string>
+    <string name="canvas_align_center">居中对齐</string>
+    <string name="canvas_align_right">右对齐</string>
+    <string name="canvas_prints">版画</string>
+    <string name="canvas_gcode">GCode</string>
+    <string name="canvas_black_white">黑白画</string>
+    <string name="canvas_dithering">抖动</string>
+    <string name="canvas_grey">灰度</string>
+    <string name="canvas_seal">印章</string>
+
+    <string name="canvas_font_text">激光啄木鸟</string>
+    <string name="canvas_invert">反色</string>
+    <string name="canvas_threshold">阈值</string>
+    <string name="canvas_contrast">对比度</string>
+    <string name="canvas_brightness">亮度</string>
+    <string name="canvas_line_space">线距</string>
+    <string name="canvas_agnle">角度</string>
+    <string name="canvas_direction">方向</string>
+    <string name="canvas_inch_unit">英制</string>
+    <string name="canvas_grid">网格</string>
+    <string name="canvas_smart_assistant">智能指南</string>
+    <string name="canvas_preview">预览</string>
+    <string name="canvas_regulate">调整</string>
+    <string name="canvas_confirm">确定</string>
+    <string name="canvas_forward">前进</string>
+    <string name="canvas_backward">后退</string>
+    <string name="canvas_front">置为顶层</string>
+    <string name="canvas_back">置为底层</string>
+
+    <string name="canvas_import_font">导入</string>
+    <string name="canvas_invalid_font">无效的字体</string>
+    <string name="canvas_cannot_import">无法导入</string>
+
+</resources>
