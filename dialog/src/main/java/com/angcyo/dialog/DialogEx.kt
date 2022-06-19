@@ -222,6 +222,17 @@ fun Context.iosFullScreenDialog(config: IosFullScreenDialogConfig.() -> Unit): D
     }
 }
 
+/**
+ * 验证码/密码输入对话框
+ * */
+fun Context.verifyCodeInputDialog(config: VerifyCodeInputDialogConfig.() -> Unit): Dialog {
+    return VerifyCodeInputDialogConfig(this).run {
+        configCenterDialog(_screenWidth - 2 * 36 * dpi, -2)
+        config()
+        show()
+    }
+}
+
 //</editor-fold desc="高级对话框">
 
 //<editor-fold desc="popupWindow">

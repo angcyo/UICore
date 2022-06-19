@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_white_top_round_bg_shape"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/title_layout"
+        layout="@layout/lib_dialog_base_title_layout" />
+
+    <View
+        android:id="@+id/title_line_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/lib_line_px"
+        android:background="@color/dialog_line" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/message_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="400dp">
+
+        <com.angcyo.widget.text.DslTextView
+            android:id="@+id/message_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:padding="@dimen/lib_xhdpi"
+            tools:text="对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容" />
+
+    </androidx.core.widget.NestedScrollView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/lib_xhdpi">
+
+        <com.angcyo.widget.edit.PasswordInputEditText
+            android:id="@+id/password_input_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:r_password_count="4"
+            app:r_password_draw_size_scale="0.5"
+            app:r_password_size="40dp"
+            app:r_password_tip_type="TIP_TYPE_CIRCLE"
+            app:r_show_highlight="true"
+            tools:text="123" />
+
+    </FrameLayout>
+
+</LinearLayout>
