@@ -26,6 +26,10 @@ import com.angcyo.widget.pager.TextIndicator
  */
 open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(context) {
 
+    companion object {
+        const val DEFAULT_SOFT_INPUT_DELAY = 240L
+    }
+
     /**
      * 最大输入字符限制
      * */
@@ -53,7 +57,7 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
     var showSoftInput = true
 
     /**延迟多久才显示软键盘*/
-    var showSoftInputDelay = 240L
+    var showSoftInputDelay = DEFAULT_SOFT_INPUT_DELAY
 
     /**
      * 是否允许输入为空
@@ -90,7 +94,7 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
         dialogLayoutId = R.layout.lib_dialog_input_layout
         positiveButtonListener = { dialog, dialogViewHolder ->
             if (onInputResult.invoke(dialog, dialogViewHolder.ev(R.id.edit_text_view).string())) {
-
+                //被拦截
             } else {
                 dialog.hideSoftInput()
                 dialog.dismiss()
