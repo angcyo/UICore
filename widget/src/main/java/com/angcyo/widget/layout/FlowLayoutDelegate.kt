@@ -398,7 +398,7 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
                 ?: 0
 
         return when (absoluteGravity and Gravity.HORIZONTAL_GRAVITY_MASK) {
-            Gravity.CENTER_HORIZONTAL -> delegateView.measuredWidth / 2 - lineViewWidth / 2 + paddingLeft - paddingRight
+            Gravity.CENTER_HORIZONTAL -> (delegateView.measuredWidth - paddingLeft - paddingRight) / 2 - lineViewWidth / 2 + paddingLeft
             Gravity.RIGHT -> delegateView.measuredWidth - paddingRight - lineViewWidth
             else -> paddingLeft
         }

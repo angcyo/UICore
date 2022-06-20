@@ -28,6 +28,7 @@ import java.net.URLDecoder
 import java.net.URLEncoder
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import kotlin.math.min
 
 
 /**
@@ -647,6 +648,10 @@ fun String.subEnd(
     }
     return substring(indexOf + 1, length)
 }
+
+/**从指定的索引位置开始, 取指定数量的字符*/
+fun CharSequence.subCount(startIndex: Int, count: Int) =
+    subSequence(startIndex, min(startIndex + count, length))
 
 fun String.base64Encode(): String =
     Base64.encodeToString(toByteArray(Charsets.UTF_8), Base64.NO_WRAP)

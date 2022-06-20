@@ -133,10 +133,8 @@ fun ViewGroup.resetChild(
     //如果布局id不一样, 说明child不一样, 需要remove
     for (index in childCount - 1 downTo 0) {
         val tag = getChildAt(index).getTag(R.id.tag)
-        if (tag is Int) {
-            if (tag != layoutId) {
-                removeViewAt(index)
-            }
+        if (tag == null || (tag is Int && tag != layoutId)) {
+            removeViewAt(index)
         }
     }
 
