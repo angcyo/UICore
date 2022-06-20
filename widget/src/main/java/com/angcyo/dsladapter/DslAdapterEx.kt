@@ -76,6 +76,7 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.findItem(
     return find<Item>(tag, useFilterList, predicate)?.apply(dsl)
 }
 
+@UpdateByNotify
 fun DslAdapter.updateItem(
     payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART,
     useFilterList: Boolean = true,
@@ -87,10 +88,12 @@ fun DslAdapter.updateItem(
 }
 
 /**通过[itemTags]更新对应的[DslAdapterItem]*/
+@UpdateByNotify
 fun DslAdapter.updateItem(vararg itemTags: String): List<DslAdapterItem> {
     return updateItem(DslAdapterItem.PAYLOAD_UPDATE_PART, true, *itemTags)
 }
 
+@UpdateByNotify
 fun DslAdapter.updateItem(
     payload: Any?,
     useFilterList: Boolean,
@@ -210,6 +213,7 @@ fun DslAdapter.getItemListPairByItem(item: DslAdapterItem?): Pair<MutableList<Ds
 }
 
 /**通过[layoutId]快速添加一个[DslAdapterItem]*/
+@UpdateFlag
 fun DslAdapter.dslItem(
     @LayoutRes layoutId: Int,
     config: DslAdapterItem.() -> Unit = {}
@@ -222,6 +226,7 @@ fun DslAdapter.dslItem(
 }
 
 /**通过[layoutId]和直接绑定,快速添加一个[DslAdapterItem]*/
+@UpdateFlag
 fun DslAdapter.bindItem(@LayoutRes layoutId: Int, bindAction: ItemBindAction): DslAdapterItem {
     val item = DslAdapterItem()
     item.itemLayoutId = layoutId
@@ -230,6 +235,7 @@ fun DslAdapter.bindItem(@LayoutRes layoutId: Int, bindAction: ItemBindAction): D
     return item
 }
 
+@UpdateFlag
 fun <T : DslAdapterItem> DslAdapter.dslItem(
     dslItem: T,
     config: T.() -> Unit = {}
@@ -238,6 +244,7 @@ fun <T : DslAdapterItem> DslAdapter.dslItem(
     return dslItem
 }
 
+@UpdateFlag
 fun <T : DslAdapterItem> DslAdapter.dslCustomItem(
     dslItem: T,
     config: T.() -> Unit = {}
@@ -248,6 +255,7 @@ fun <T : DslAdapterItem> DslAdapter.dslCustomItem(
 }
 
 /**空的占位item*/
+@UpdateFlag
 fun DslAdapter.renderEmptyItem(
     height: Int = 120 * dpi,
     backgroundColor: Int = Color.TRANSPARENT,
@@ -257,6 +265,7 @@ fun DslAdapter.renderEmptyItem(
     renderEmptyItem(height, ColorDrawable(backgroundColor), list, action)
 }
 
+@UpdateFlag
 fun DslAdapter.renderEmptyItem(
     height: Int = 120 * dpi,
     background: Drawable?,
@@ -273,6 +282,7 @@ fun DslAdapter.renderEmptyItem(
     addLastItem(list, adapterItem)
 }
 
+@UpdateFlag
 fun DslAdapter.renderItem(count: Int = 1, init: DslAdapterItem.(index: Int) -> Unit) {
     for (i in 0 until count) {
         val adapterItem = DslAdapterItem()
@@ -282,6 +292,7 @@ fun DslAdapter.renderItem(count: Int = 1, init: DslAdapterItem.(index: Int) -> U
 }
 
 /**追加一个简单的[DslAdapterItem]*/
+@UpdateFlag
 fun DslAdapter.singleItem(
     @LayoutRes layoutId: Int,
     init: DslAdapterItem.() -> Unit = {},
@@ -294,6 +305,7 @@ fun DslAdapter.singleItem(
     addLastItem(adapterItem)
 }
 
+@UpdateFlag
 fun <T> DslAdapter.renderItem(data: T, init: DslAdapterItem.() -> Unit) {
     val adapterItem = DslAdapterItem()
     adapterItem.itemData = data

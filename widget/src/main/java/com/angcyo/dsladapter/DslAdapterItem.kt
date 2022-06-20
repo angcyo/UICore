@@ -1486,6 +1486,9 @@ open class DslAdapterItem : LifecycleOwner {
         if (lifecycleRegistry.currentState.isAtLeast(Lifecycle.State.CREATED)) {
             lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
         }
+        if (itemAnimateRes != 0) {
+            itemHolder.itemView.clearAnimation()
+        }
         itemHolder.clear()
     }
 

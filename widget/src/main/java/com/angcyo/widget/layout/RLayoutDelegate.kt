@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewGroup
 import com.angcyo.drawable.DrawLineDrawable
 import com.angcyo.library.ex.calcLayoutWidthHeight
 import com.angcyo.library.ex.save
@@ -17,6 +18,7 @@ import com.angcyo.tablayout.screenWidth
 import com.angcyo.widget.R
 import com.angcyo.widget.base.exactly
 import kotlin.math.absoluteValue
+import kotlin.math.min
 
 /**
  *
@@ -228,21 +230,31 @@ class RLayoutDelegate : ClipLayoutDelegate() {
 
             if (ratio > 0f) {
 
-                val vWidth = View.MeasureSpec.getSize(widthMeasureSpec)
-                val vHeight = View.MeasureSpec.getSize(heightMeasureSpec)
-                val rawRatio = vWidth * 1f / vHeight
+                val widthSize = View.MeasureSpec.getSize(widthMeasureSpec)
+                val heightSize = View.MeasureSpec.getSize(heightMeasureSpec)
+
+                val widthMode = View.MeasureSpec.getMode(widthMeasureSpec)
+                val heightMode = View.MeasureSpec.getMode(heightMeasureSpec)
+
+                val rawRatio = widthSize * 1f / heightSize
 
                 if ((rawRatio - ratio).absoluteValue > 0.00000001f) {
                     //比例需要调整
 
-                    if (View.MeasureSpec.getMode(heightMeasureSpec) == View.MeasureSpec.EXACTLY) {
+                    if (delegateView.layoutParams.width == ViewGroup.LayoutParams.MATCH_PARENT &&
+                        delegateView.layoutParams.height == ViewGroup.LayoutParams.MATCH_PARENT
+                    ) {
+                        val size = min(widthSize, heightSize)
+                        wSpec = exactly(size)
+                        hSpec = exactly(size)
+                    } else if (heightMode == View.MeasureSpec.EXACTLY) {
                         //以高度作为基数调整
-                        wSpec = exactly((vHeight * widthFactor).toInt())
-                        hSpec = exactly(vHeight)
-                    } else if (View.MeasureSpec.getMode(widthMeasureSpec) == View.MeasureSpec.EXACTLY) {
+                        wSpec = exactly((heightSize * widthFactor).toInt())
+                        hSpec = exactly(heightSize)
+                    } else if (widthMode == View.MeasureSpec.EXACTLY) {
                         //以宽度作为基数调整
-                        wSpec = exactly(vWidth)
-                        hSpec = exactly((vWidth * heightFactor).toInt())
+                        wSpec = exactly(widthSize)
+                        hSpec = exactly((widthSize * heightFactor).toInt())
                     }
                 }
             }

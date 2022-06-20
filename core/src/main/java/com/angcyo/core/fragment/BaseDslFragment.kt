@@ -86,12 +86,12 @@ open class BaseDslFragment : BaseTitleFragment() {
         finishRefresh()
         _adapter.render {
             if (clear) {
-                _adapter.clearAllItems()
+                clearAllItems()
             } else if (reset) {
-                _adapter.dataItems.clear()
+                dataItems.clear()
             }
-            _adapter.config()
-            _adapter.noneStatus()
+            config()
+            updateAdapterState(null)
         }
     }
 
