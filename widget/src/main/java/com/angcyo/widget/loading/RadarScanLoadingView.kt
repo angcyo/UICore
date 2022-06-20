@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import com.angcyo.drawable.base.AbsDslDrawable
 import com.angcyo.drawable.loading.RadarScanLoadingDrawable
+import com.angcyo.widget.R
 import com.angcyo.widget.base.BaseDrawableView
 
 /**
@@ -17,7 +18,7 @@ class RadarScanLoadingView(context: Context, attributeSet: AttributeSet? = null)
     BaseDrawableView(context, attributeSet) {
 
     init {
-        //R.styleable.PostLoadingView
+        R.styleable.RadarScanLoadingView
     }
 
     override fun initDrawables(list: MutableList<AbsDslDrawable>) {

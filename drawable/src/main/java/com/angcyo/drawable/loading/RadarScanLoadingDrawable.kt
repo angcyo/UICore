@@ -5,7 +5,9 @@ import android.graphics.*
 import android.util.AttributeSet
 import androidx.core.graphics.withRotation
 import androidx.core.graphics.withScale
+import com.angcyo.drawable.R
 import com.angcyo.drawable.base.AbsDslDrawable
+import com.angcyo.library.ex._color
 import com.angcyo.library.ex.alphaRatio
 import com.angcyo.library.ex.dpi
 import kotlin.math.max
@@ -33,13 +35,13 @@ class RadarScanLoadingDrawable : AbsDslDrawable() {
     var radarWidth: Int = 1 * dpi
 
     /**雷达的颜色*/
-    var radarColor: Int = Color.RED
+    var radarColor: Int = _color(R.color.colorAccent).alphaRatio(0.3f)
 
     /**雷达半径增长比例*/
     var radarRadiusIncrease: Float = 0.4f
 
     /**雷达扫描线, 渐变开始的颜色*/
-    var radarScanColor: Int = Color.RED
+    var radarScanColor: Int = _color(R.color.colorAccent).alphaRatio(0.3f)
         set(value) {
             field = value
             updateShader()
@@ -61,6 +63,29 @@ class RadarScanLoadingDrawable : AbsDslDrawable() {
 
     override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
         super.initAttribute(context, attributeSet)
+        val typedArray =
+            context.obtainStyledAttributes(attributeSet, R.styleable.RadarScanLoadingDrawable)
+        radarRadius = typedArray.getDimensionPixelOffset(
+            R.styleable.RadarScanLoadingDrawable_r_loading_radar_radius,
+            radarRadius
+        )
+        radarWidth = typedArray.getDimensionPixelOffset(
+            R.styleable.RadarScanLoadingDrawable_r_loading_radar_width,
+            radarWidth
+        )
+        radarColor = typedArray.getColor(
+            R.styleable.RadarScanLoadingDrawable_r_loading_radar_color,
+            radarColor
+        )
+        radarScanColor = typedArray.getColor(
+            R.styleable.RadarScanLoadingDrawable_r_loading_radar_scan_color,
+            radarScanColor
+        )
+        radarRadiusIncrease = typedArray.getFloat(
+            R.styleable.RadarScanLoadingDrawable_r_loading_radar_radius_increase,
+            radarRadiusIncrease
+        )
+        typedArray.recycle()
     }
 
     val cx: Float

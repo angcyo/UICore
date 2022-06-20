@@ -25,4 +25,13 @@
         <attr name="r_loading_step" />
     </declare-styleable>
 
+    <declare-styleable name="RadarScanLoadingView">
+        <attr name="r_loading_step" />
+        <attr name="r_loading_radar_radius" />
+        <attr name="r_loading_radar_radius_increase" />
+        <attr name="r_loading_radar_width" />
+        <attr name="r_loading_radar_color" />
+        <attr name="r_loading_radar_scan_color" />
+    </declare-styleable>
+
 </resources>
