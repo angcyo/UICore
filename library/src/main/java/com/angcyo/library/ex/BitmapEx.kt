@@ -342,9 +342,9 @@ fun ByteArray.toChannelBitmap(width: Int, height: Int, channelType: Int = Color.
     val bytes = this
     for (y in 0 until height) {
         for (x in 0 until width) {
-            val value: Int = bytes[y * width + x].toInt()
+            val value: Int = bytes[y * width + x].toHexInt()
             paint.color = Color.argb(
-                if (channelType == Color.TRANSPARENT) value else 0,
+                if (channelType == Color.TRANSPARENT) value else 255,
                 if (channelType == Color.RED) value else 0,
                 if (channelType == Color.GREEN) value else 0,
                 if (channelType == Color.BLUE) value else 0
