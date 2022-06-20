@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_item_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/lib_bg_selector"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/lib_item_height"
+    android:paddingTop="@dimen/lib_hdpi"
+    android:paddingBottom="@dimen/lib_hdpi"
+    tools:r_background="@color/transparent20">
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_text_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="@dimen/lib_drawable_padding"
+        android:paddingLeft="@dimen/lib_padding_left"
+        android:paddingRight="@dimen/lib_padding_right"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/wrap_layout"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:drawableLeft="@drawable/lib_image_tip"
+        tools:text="方向" />
+
+    <com.angcyo.widget.layout.DslCheckFlowLayout
+        android:id="@+id/lib_flow_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:paddingRight="@dimen/lib_padding_left"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:r_flow_item_horizontal_space="@dimen/lib_hdpi">
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/lib_ripple_shape"
+            android:button="@drawable/lib_check_selector"
+            android:paddingLeft="@dimen/lib_hdpi"
+            android:paddingTop="@dimen/lib_ldpi"
+            android:paddingRight="@dimen/lib_hdpi"
+            android:paddingBottom="@dimen/lib_ldpi"
+            android:tag="0"
+            android:text="0°"
+            tools:checked="true" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/lib_ripple_shape"
+            android:button="@drawable/lib_check_selector"
+            android:paddingLeft="@dimen/lib_hdpi"
+            android:paddingTop="@dimen/lib_ldpi"
+            android:paddingRight="@dimen/lib_hdpi"
+            android:paddingBottom="@dimen/lib_ldpi"
+            android:tag="0"
+            android:text="0°"
+            tools:checked="true" />
+
+    </com.angcyo.widget.layout.DslCheckFlowLayout>
+
+</com.angcyo.widget.layout.RConstraintLayout>

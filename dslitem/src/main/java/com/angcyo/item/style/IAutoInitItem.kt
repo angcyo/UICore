@@ -69,5 +69,8 @@ interface IAutoInitItem : IDslItem {
         if (this is ITabLayoutItem) {
             initTabLayoutItem(itemHolder, itemPosition, adapterItem, payloads)
         }
+        if (this is ICheckGroupItem) {
+            initCheckGroupItem(itemHolder, itemPosition, adapterItem, payloads)
+        }
     }
 }
