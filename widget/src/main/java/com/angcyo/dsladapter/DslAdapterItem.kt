@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.AnimRes
 import androidx.annotation.AnimatorRes
+import androidx.annotation.AnyThread
 import androidx.annotation.CallSuper
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Lifecycle
@@ -19,10 +20,13 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.*
 import com.angcyo.dsladapter.SwipeMenuHelper.Companion.SWIPE_MENU_TYPE_DEFAULT
 import com.angcyo.dsladapter.SwipeMenuHelper.Companion.SWIPE_MENU_TYPE_FLOWING
+import com.angcyo.dsladapter.annotation.UpdateByDiff
+import com.angcyo.dsladapter.annotation.UpdateFlag
 import com.angcyo.dsladapter.item.IDslItem
 import com.angcyo.library.L
 import com.angcyo.library.UndefinedDrawable
 import com.angcyo.library.ex.*
+import com.angcyo.library.isMain
 import com.angcyo.tablayout.clamp
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
@@ -89,8 +93,9 @@ open class DslAdapterItem : LifecycleOwner {
     //<editor-fold desc="update操作">
 
     /**[com.angcyo.dsladapter.DslAdapter.notifyItemChanged]*/
+    @AnyThread
     open fun updateAdapterItem(payload: Any? = PAYLOAD_UPDATE_PART, useFilterList: Boolean = true) {
-        if (itemDslAdapter?._recyclerView?.isComputingLayout == true) {
+        if (itemDslAdapter?._recyclerView?.isComputingLayout == true || !isMain()) {
             //L.w("跳过操作! [RecyclerView]正在计算布局, 请不要在RecyclerView正在布局时, 更新Item. ")
             itemDslAdapter?._recyclerView?.post {
                 updateAdapterItem(payload, useFilterList)
@@ -103,6 +108,7 @@ open class DslAdapterItem : LifecycleOwner {
     }
 
     /**移除[item]*/
+    @UpdateFlag
     open fun removeAdapterItem() {
         itemDslAdapter?.apply {
             removeItemFromAll(this@DslAdapterItem)
@@ -112,6 +118,7 @@ open class DslAdapterItem : LifecycleOwner {
     }
 
     /**负载更新, 通常用于更新媒体item*/
+    @UpdateByDiff
     open fun updateItemDependPayload(payload: Any? = mediaPayload()) {
         updateItemDepend(
             FilterParams(
@@ -129,6 +136,7 @@ open class DslAdapterItem : LifecycleOwner {
      * [isItemInUpdateList]
      * [itemUpdateFrom]
      * */
+    @UpdateByDiff
     open fun updateItemDepend(
         filterParams: FilterParams = FilterParams(
             fromDslAdapterItem = this,
