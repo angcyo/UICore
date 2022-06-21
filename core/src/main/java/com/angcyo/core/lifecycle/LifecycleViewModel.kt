@@ -26,6 +26,7 @@ open class LifecycleViewModel : ViewModel(), IViewModel, LifecycleOwner {
 
     init {
         setCurrentState(Lifecycle.State.CREATED)
+        setCurrentState(Lifecycle.State.STARTED)
     }
 
     fun setCurrentState(state: Lifecycle.State) {
