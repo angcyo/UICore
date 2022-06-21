@@ -6,8 +6,10 @@ package com.angcyo.canvas
  * @since 2022/05/10
  */
 data class Reason(
-    val reason: Int = REASON_USER,//更新数据的原因
-    val notify: Boolean = true //是否要发送通知
+    /**更新数据的原因*/
+    val reason: Int = REASON_USER,
+    /**是否要发送通知[dispatchItemBoundsChanged]*/
+    val notify: Boolean = true
 ) {
     companion object {
         /**用户主动操作*/

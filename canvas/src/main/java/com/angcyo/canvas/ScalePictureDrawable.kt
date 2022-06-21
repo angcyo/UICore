@@ -2,6 +2,8 @@ package com.angcyo.canvas
 
 import android.graphics.Canvas
 import android.graphics.Picture
+import android.graphics.Rect
+import android.graphics.RectF
 import android.graphics.drawable.PictureDrawable
 import android.os.Build
 
@@ -13,20 +15,25 @@ import android.os.Build
 open class ScalePictureDrawable(picture: Picture) : PictureDrawable(picture) {
 
     /**需要的缩放倍数*/
-    var scaleX = 1f
-    var scaleY = 1f
+    var scalePictureX = 1f
+    var scalePictureY = 1f
 
     /**缩放控制点*/
     var scalePointX = 0f
     var scalePointY = 0f
 
+    var scaleRenderRect = RectF()
+
     override fun draw(canvas: Canvas) {
-        save(canvas)
-        canvas.clipRect(bounds)
-        canvas.translate(bounds.left.toFloat(), bounds.top.toFloat())
-        canvas.scale(scaleX, scaleY, scalePointX, scalePointY)
-        canvas.drawPicture(picture)
-        canvas.restore()
+        if (scalePictureX != 0f && scalePictureY != 0f) {
+            save(canvas)
+            canvas.clipRect(bounds)
+            canvas.translate(bounds.left.toFloat(), bounds.top.toFloat())
+            canvas.scale(scalePictureX, scalePictureY, scalePointX, scalePointY)
+            canvas.drawPicture(picture)
+            canvas.restore()
+            //L.e("scalePictureX:$scalePictureX scalePictureY:$scalePictureY ${scaleRenderRect.width() / picture.width} ${scaleRenderRect.height() / picture.height} $bounds")
+        }
     }
 
     private fun save(canvas: Canvas) {
@@ -40,8 +47,13 @@ open class ScalePictureDrawable(picture: Picture) : PictureDrawable(picture) {
     override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
         val width = right - left
         val height = bottom - top
-        scaleX = width.toFloat() / picture.width.toFloat()
-        scaleY = height.toFloat() / picture.height.toFloat()
+        scalePictureX = width.toFloat() / picture.width.toFloat()
+        scalePictureY = height.toFloat() / picture.height.toFloat()
         super.setBounds(left, top, right, bottom)
+        scaleRenderRect.set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
+    }
+
+    override fun onBoundsChange(bounds: Rect) {
+        super.onBoundsChange(bounds)
     }
 }

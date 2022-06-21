@@ -20,7 +20,7 @@ import kotlin.math.min
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/05/25
  */
-object EngraveHelper {
+object DataHandleHelper {
 
     /**缓存文件的文件夹*/
     const val CACHE_FILE_FOLDER = "engrave"
@@ -151,10 +151,10 @@ object EngraveHelper {
 
 /**获取渲染器对应的GCode数据, 如果有*/
 fun BaseItemRenderer<*>.getGCodeText(): String? {
-    return getRendererItem()?.getHoldData(EngraveHelper.KEY_GCODE)
+    return getRendererItem()?.getHoldData(DataHandleHelper.KEY_GCODE)
 }
 
 /**获取渲染器对应的List<Path>数据, 如果有*/
 fun BaseItemRenderer<*>.getPathList(): List<Path>? {
-    return getRendererItem()?.getHoldData(EngraveHelper.KEY_SVG)
+    return getRendererItem()?.getHoldData(DataHandleHelper.KEY_SVG)
 }

@@ -161,6 +161,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
 
     /**更新选中的bounds大小, 需要包含所有选中的元素*/
     fun updateSelectBounds() {
+        rotate = 0f//重置旋转
         changeBounds(Reason(Reason.REASON_CODE, true)) {
             var l = Float.MAX_VALUE
             var t = Float.MAX_VALUE
