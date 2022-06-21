@@ -135,7 +135,7 @@ object CanvasDataHandleHelper {
     }
 
     /**GCode数据坐标调整, 先缩放旋转,再偏移
-     * [gCode]
+     * [gCode] 原始的GCode数据
      * [bounds] 未旋转时的bounds
      * [rotate] 旋转角度, 配合[bounds]实现平移
      * */
