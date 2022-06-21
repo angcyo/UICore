@@ -564,7 +564,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         _animtor?.cancel()
         _animtor = null
         val p = validProgress(progress)
-        if (animDuration >= 0 && fromProgress != p) {
+        if (animDuration > 0 && fromProgress != p) {
             _animtor = anim(fromProgress, p) {
                 onAnimatorConfig = {
                     it.duration = animDuration
