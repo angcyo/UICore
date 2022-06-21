@@ -159,21 +159,21 @@ fun RectF.adjustSizeWithRotate(
     //按照原始的旋转中点坐标, 旋转调整后的矩形
     val rotateRect = _tempRectF
     val matrix = _tempMatrix
-    _tempMatrix.reset()
-    matrix.postRotate(rotate, originCenterX, originCenterY)
+    matrix.reset()
+    matrix.postRotate(rotate, originCenterX, originCenterY) //旋转矩形
     matrix.mapRect(rotateRect, this)
 
-    //旋转后的矩形中点就是调整后的矩形需要偏移的x,y
-    val dx = if (right > left) {
-        rotateRect.centerX() - centerX()
-    } else {
-        centerX() - rotateRect.centerX()
+    if (width() < 0) {
+        rotateRect.set(rotateRect.right, rotateRect.top, rotateRect.left, rotateRect.bottom)
     }
-    val dy = if (bottom > top) {
-        rotateRect.centerY() - centerY()
-    } else {
-        centerY() - rotateRect.centerY()
+    if (height() < 0) {
+        rotateRect.set(rotateRect.left, rotateRect.bottom, rotateRect.right, rotateRect.top)
     }
+
+    //旋转后的矩形中点就是调整后的矩形需要偏移的dx,dy
+    val dx = rotateRect.centerX() - centerX()
+    val dy = rotateRect.centerY() - centerY()
+
     offset(dx, dy)
 }
 
