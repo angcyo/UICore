@@ -1,6 +1,7 @@
 package com.angcyo.viewmodel
 
 /**
+ * [ViewModel]基础方法
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/03/25
  */

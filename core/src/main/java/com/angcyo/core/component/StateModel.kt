@@ -1,6 +1,7 @@
 package com.angcyo.core.component
 
 import com.angcyo.core.lifecycle.LifecycleViewModel
+import com.angcyo.core.vmApp
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -14,6 +15,7 @@ import java.util.concurrent.CopyOnWriteArrayList
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 
+/**回调监听*/
 typealias StateAction = (data: StateData, throwable: Throwable?) -> Unit
 
 class StateModel : LifecycleViewModel() {
@@ -83,6 +85,7 @@ class StateModel : LifecycleViewModel() {
     }
 }
 
+/**状态被取消的异常*/
 class CancelStateException(message: String) : RuntimeException(message)
 
 /**想要监听的状态*/
@@ -103,3 +106,18 @@ data class StateData(
     /**状态的值*/
     var value: Any?
 )
+
+/**等待一个[state]状态改变*/
+fun waitState(state: String, value: Any? = null, forever: Boolean = false, action: StateAction) {
+    vmApp<StateModel>().waitState(state, value, forever, action)
+}
+
+/**一直等待一个[state]状态改变, 注意内存泄漏*/
+fun waitStateForever(state: String, value: Any? = null, action: StateAction) {
+    waitState(state, value, true, action)
+}
+
+/**更新一个状态*/
+fun updateState(state: String, value: Any?) {
+    vmApp<StateModel>().updateState(state, value)
+}
