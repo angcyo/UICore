@@ -62,6 +62,7 @@ class PictureTextItem : PictureItem() {
         itemName = "Text"
     }
 
+    /**获取每一行的文本*/
     fun lineTextList(text: String): List<String> = text.lines()
 
     /**计算文本的宽度*/

@@ -327,7 +327,7 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
             //找到了 震动反馈
             canvasView.longFeedback()
 
-            L.w("智能提示: width:${width} $newWidth height:${height} $newHeight")
+            L.w("智能提示: width:${width}->$newWidth height:${height}->$newHeight")
         }
 
         resetSmartLine()

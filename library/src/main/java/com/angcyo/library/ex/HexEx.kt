@@ -139,7 +139,12 @@ fun ByteArray.toHexInt() = toHexString(false).toHexInt()
 fun String.toHexInt() = if (this.isEmpty()) {
     -1
 } else {
-    toInt(16)
+    try {
+        //最大值 FFFFFFFF 会崩溃
+        toInt(16)
+    } catch (e: Exception) {
+        -1
+    }
 }
 
 /**将十六进制字符串转换成字节数字
