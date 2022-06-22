@@ -36,15 +36,15 @@ object DslFileHelper {
         data: FileTextData /*需要写入的数据*/,
         append: Boolean = true
     ): String? {
-        if (async) {
+        return if (async) {
             launchGlobal(Dispatchers.IO + CoroutineErrorHandler()) {
                 FileUtils.writeExternal(appContext, folder, name, data, append)
             }
+            //返回文件路径
+            FileUtils.appRootExternalFolderFile(appContext, folder, name)?.absolutePath
         } else {
             FileUtils.writeExternal(appContext, folder, name, data, append)
         }
-        //返回文件路径
-        return FileUtils.appRootExternalFolderFile(appContext, folder, name)?.absolutePath
     }
 
     fun log(name: String = logFileName(), data: String, append: Boolean = true) =
@@ -95,17 +95,13 @@ object DslFileHelper {
 
 fun CharSequence.wrapData() = DslFileHelper._wrapData2(this)
 
-/**将数据写入到指定文件*/
-fun String?.writeTo(
-    folder: String = Constant.LOG_FOLDER_NAME,
-    name: String = logFileName()
-) {
-    DslFileHelper.write(folder, name, this ?: "null")
-}
-
 /**写入数据到文件
  * [folder] 文件夹的名字, 会自动追加Scheme
  * [name] 文件的名字*/
-fun FileTextData.writeTo(folder: String, name: String, append: Boolean = true) {
-    DslFileHelper.write(folder = folder, name = name, data = this, append = append)
+fun FileTextData?.writeTo(
+    folder: String = Constant.LOG_FOLDER_NAME,
+    name: String = logFileName(),
+    append: Boolean = true
+) {
+    DslFileHelper.write(folder = folder, name = name, data = this ?: "null", append = append)
 }

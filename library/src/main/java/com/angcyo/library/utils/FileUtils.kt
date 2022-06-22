@@ -1,6 +1,7 @@
 package com.angcyo.library.utils
 
 import android.content.Context
+import android.graphics.Bitmap
 import com.angcyo.library.L
 import com.angcyo.library.PlaceholderApplication
 import com.angcyo.library.app
@@ -25,9 +26,10 @@ import java.util.*
  */
 
 /**
- * 写入文件的数据
+ * 写入文件的数据, 支持以下数据类型
  * [String]
  * [ByteArray]
+ * [Bitmap]
  * */
 typealias FileTextData = Any
 
@@ -93,12 +95,8 @@ object FileUtils {
         if (context == null || context is PlaceholderApplication) {
             return null
         }
-        val externalFilesDir = appRootExternalFolder(context, folder)
-        var file: File? = null
-        externalFilesDir?.also {
-            file = File(it, name)
-        }
-        return file
+        val externalFilesDir = appRootExternalFolder(context, folder) ?: return null
+        return File(externalFilesDir, name)
     }
 
     /** Android Q 写入扩展的程序目录下的文件数据 */
@@ -133,16 +131,23 @@ object FileUtils {
             file.apply {
                 filePath = absolutePath
 
-                when {
-                    length() >= fileMaxSize || !append -> if (data is ByteArray) {
-                        writeBytes(data)
-                    } else {
-                        writeText(data.toString())
+                if (data is Bitmap) {
+                    //保存图片
+                    outputStream().use {
+                        data.compress(Bitmap.CompressFormat.PNG, 100, it)
                     }
-                    else -> if (data is ByteArray) {
-                        appendBytes(data)
-                    } else {
-                        appendText(data.toString())
+                } else {
+                    when {
+                        length() >= fileMaxSize || !append -> if (data is ByteArray) {
+                            writeBytes(data)
+                        } else {
+                            writeText(data.toString())
+                        }
+                        else -> if (data is ByteArray) {
+                            appendBytes(data)
+                        } else {
+                            appendText(data.toString())
+                        }
                     }
                 }
             }

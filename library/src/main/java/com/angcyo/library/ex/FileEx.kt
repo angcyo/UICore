@@ -7,10 +7,7 @@ import android.text.TextUtils
 import android.text.format.Formatter
 import com.angcyo.library.app
 import com.angcyo.library.toastQQ
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
+import java.io.*
 import java.nio.channels.FileChannel
 import java.security.DigestInputStream
 import java.security.MessageDigest
@@ -365,6 +362,18 @@ fun String.readTextLastLines(
     null
 }
 
+/**返回文件的行数*/
+fun File?.lines(): Int {
+    if (this == null) {
+        return -1
+    }
+    val lineReader = LineNumberReader(FileReader(this))
+    return lineReader.use {
+        it.skip(Long.MAX_VALUE)
+        lineReader.lineNumber + 1
+    }
+}
+
 fun String.writeText(text: String, append: Boolean = true) = file().writeText(text, append)
 
 /**向文件中写入[text]
@@ -426,5 +435,21 @@ fun File.eachFile(recursively: Boolean = true, block: (File) -> Unit) {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+}
+
+fun File.deleteSafe() {
+    try {
+        delete()
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+fun File.deleteRecursivelySafe() {
+    try {
+        deleteRecursively()
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
 }
