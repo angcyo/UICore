@@ -153,10 +153,15 @@ fun Drawable.toBitmap(
     outWidth: Int = -1,
     outHeight: Int = -1,
     bgColor: Int = Color.TRANSPARENT
-): Bitmap {
+): Bitmap? {
     // 获取 drawable 长宽
     val width: Int = if (minimumWidth <= 0) outWidth else minimumWidth
     val height: Int = if (minimumHeight <= 0) outHeight else minimumHeight
+
+    if (width == 0 || height == 0) {
+        return null
+    }
+
     setBounds(0, 0, width, height)
 
     // 获取drawable的颜色格式
