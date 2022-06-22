@@ -87,6 +87,20 @@ fun DslAdapter.updateItem(
     }
 }
 
+@UpdateByDiff
+fun DslAdapter.removeItem(
+    useFilterList: Boolean = true,
+    predicate: (DslAdapterItem) -> Boolean
+) {
+    val removeList = mutableListOf<DslAdapterItem>()
+    getDataList(useFilterList).filterTo(removeList, predicate)
+    if (removeList.isNotEmpty()) {
+        render {
+            removeItemFromAll(removeList)
+        }
+    }
+}
+
 /**通过[itemTags]更新对应的[DslAdapterItem]*/
 @UpdateByNotify
 fun DslAdapter.updateItem(vararg itemTags: String): List<DslAdapterItem> {

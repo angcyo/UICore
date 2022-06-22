@@ -58,3 +58,6 @@ fun String.toHexString(): String? = toByteArray(Charsets.UTF_8).toHexString()
  * 00A8 -> 00:A8
  * */
 fun String.beautifyHex(fm: String = ":$0") = replace("(?<=[0-9A-F]{2})[0-9A-F]{2}".toRegex(), fm)
+
+/**获取字节数组的md5值*/
+fun ByteArray.md5() = encrypt()?.toHexString()
