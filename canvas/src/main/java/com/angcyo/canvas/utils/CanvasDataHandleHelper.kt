@@ -1,5 +1,6 @@
 package com.angcyo.canvas.utils
 
+import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.RectF
@@ -7,13 +8,12 @@ import com.angcyo.canvas.core.MmValueUnit
 import com.angcyo.canvas.items.getHoldData
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.gcode.GCodeAdjust
-import com.angcyo.library.ex.computeBounds
-import com.angcyo.library.ex.eachPath
-import com.angcyo.library.ex.file
+import com.angcyo.library.ex.*
 import com.angcyo.library.utils.fileName
 import com.angcyo.library.utils.filePath
 import java.io.File
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * 雕刻助手
@@ -31,6 +31,8 @@ object CanvasDataHandleHelper {
     /**SVG数据, List<Path>*/
     const val KEY_SVG = "key_svg"
 
+    fun _defaultGCodeOutputFile() = filePath("GCode", fileName(suffix = ".gcode")).file()
+
     /**将路径描边转换为G1代码
      * [path] 需要转换的路径, 缩放后的path, 但是没有旋转
      * [rotateBounds] 路径需要平移的left, top
@@ -39,7 +41,7 @@ object CanvasDataHandleHelper {
      * */
     fun pathStrokeToGCode(
         path: Path, rotateBounds: RectF, rotate: Float,
-        outputFile: File = filePath("GCode", fileName(suffix = ".gcode")).file()
+        outputFile: File = _defaultGCodeOutputFile()
     ): File {
         //形状的路径, 用来计算path内的左上角偏移量
         val pathBounds = RectF()
@@ -59,7 +61,7 @@ object CanvasDataHandleHelper {
         //像素单位转成mm单位
         val mmValueUnit = MmValueUnit()
 
-        val pathGCodeHandler = PathGCodeHandler()
+        val gCodeWriteHandler = GCodeWriteHandler()
 
         outputFile.writer().use { writer ->
             targetPath.eachPath { index, posArray ->
@@ -70,9 +72,10 @@ object CanvasDataHandleHelper {
                 val x = mmValueUnit.convertPixelToValue(xPixel)
                 val y = mmValueUnit.convertPixelToValue(yPixel)
 
-                pathGCodeHandler.writeLine(writer, index, x, y)
+                gCodeWriteHandler.writeLine(writer, index, x, y)
             }
-            pathGCodeHandler.writeFinish(writer)
+            gCodeWriteHandler.closeCnc(writer)
+            gCodeWriteHandler.writeFinish(writer)
         }
 
         return outputFile
@@ -85,7 +88,7 @@ object CanvasDataHandleHelper {
      * */
     fun pathStrokeToGCode(
         pathList: List<Path>, bounds: RectF, rotate: Float,
-        outputFile: File = filePath("GCode", fileName(suffix = ".gcode")).file()
+        outputFile: File = _defaultGCodeOutputFile()
     ): File {
         val newPathList = mutableListOf<Path>()
 
@@ -125,10 +128,11 @@ object CanvasDataHandleHelper {
         }
 
         //转换成GCode
-        val gCodeHandler = PathGCodeHandler()
+        val gCodeHandler = GCodeWriteHandler()
         gCodeHandler.autoFinish = false
         outputFile.writer().use { writer ->
             gCodeHandler.pathStrokeToGCode(newPathList, MmValueUnit(), writer)
+            gCodeHandler.closeCnc(writer)
             gCodeHandler.writeFinish(writer)
         }
         return outputFile
@@ -141,10 +145,115 @@ object CanvasDataHandleHelper {
      * */
     fun gCodeAdjust(
         gCode: String, bounds: RectF, rotate: Float,
-        outputFile: File = filePath("GCode", fileName(suffix = ".gcode")).file()
+        outputFile: File = _defaultGCodeOutputFile()
     ): File {
         val gCodeAdjust = GCodeAdjust()
         gCodeAdjust.gCodeAdjust(gCode, bounds, rotate, outputFile)
+        return outputFile
+    }
+
+    /**简单的将[Bitmap]转成GCode数据
+     * 横向扫描像素点,白色像素跳过,黑色就用G1打印
+     *
+     * [threshold] 当色值>=此值时, 忽略数据 255白色 [0~255]
+     * [lineSpace] 每一行之间的间隙, 毫米单位. //1K:0.1 2K:0.05 4K:0.025f
+     * */
+    fun bitmapToGCode(
+        bitmap: Bitmap,
+        lineSpace: Float = 0.1f,
+        threshold: Int = 255,
+        outputFile: File = _defaultGCodeOutputFile()
+    ): File {
+        val gCodeWriteHandler = GCodeWriteHandler()
+
+        val width = bitmap.width
+        val height = bitmap.height
+        val data = bitmap.engraveColorBytes()
+
+        //像素单位转成mm单位
+        val mmValueUnit = MmValueUnit()
+
+        //转成像素
+        val lineStep = mmValueUnit.convertValueToPixel(lineSpace).roundToInt()
+
+        var isRTL = false
+        var lastGCodeY: Int = -1
+
+        //写入
+        fun writeGCode(writer: Appendable, list: List<Int>, yPixel: Int) {
+            if (list.size() > 0) {
+
+                val first: Int = list.first()
+                val last: Int = list.last()
+
+                val x1 = mmValueUnit.convertPixelToValue(first.toFloat())
+                val x2 = mmValueUnit.convertPixelToValue(last.toFloat())
+
+                val y = mmValueUnit.convertPixelToValue(yPixel.toFloat())
+
+                writer.appendLine("G0 X$x1 Y$y")
+                gCodeWriteHandler.openCnc(writer)
+                writer.appendLine("G1 X$x2 Y$y")
+
+                lastGCodeY = yPixel
+            }
+        }
+
+        outputFile.writer().use { writer ->
+
+            val xList = mutableListOf<Int>() //相同像素的点的集合
+            //y坐标
+            var lastY: Int = 0
+
+            gCodeWriteHandler.writeFirst(writer, mmValueUnit)
+
+            var y = 0
+            while (y < height) {//行
+                lastY = y + 1
+                for (x in 0 until width) {//列
+                    //rtl
+                    val lineX = if (isRTL) {
+                        (width - 1 - x)
+                    } else {
+                        x
+                    }
+                    val index = y * width + lineX
+                    val value: Int = data[index].toHexInt()
+                    if (value >= threshold) {
+                        //白色忽略
+                        gCodeWriteHandler.closeCnc(writer)
+                        writeGCode(writer, xList, lastY)
+                        xList.clear()
+                    } else {
+                        xList.add(lineX + 1)
+                    }
+                }
+                writeGCode(writer, xList, lastY)
+
+                //rtl
+                if (lastGCodeY == lastY) {
+                    //这一行有GCode数据
+                    isRTL = !isRTL
+                }
+
+                //换行了
+                xList.clear()
+
+                //next
+                if (y == height - 1) {
+                    break
+                } else {
+                    //最后一行
+                    y += lineStep
+                    if (y >= height) {
+                        y = height - 1
+                    }
+                }
+            }
+
+            gCodeWriteHandler.closeCnc(writer)
+            gCodeWriteHandler.writeFinish(writer)
+        }
         return outputFile
     }
 }

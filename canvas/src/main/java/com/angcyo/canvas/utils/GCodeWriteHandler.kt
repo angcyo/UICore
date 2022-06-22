@@ -10,7 +10,7 @@ import kotlin.math.absoluteValue
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/06/13
  */
-class PathGCodeHandler {
+class GCodeWriteHandler {
 
     companion object {
         /**如果2点之间的间隙大于此值, 则使用G0指令*/
@@ -74,11 +74,21 @@ class PathGCodeHandler {
         }
     }
 
-    /**关闭CNC*/
+    /**关闭CNC
+     * M05指令:主轴关闭, M03:主轴打卡*/
     fun closeCnc(writer: Appendable) {
         if (!isCloseCnc) {
             writer.appendLine("M05 S0")
             isCloseCnc = true
+        }
+    }
+
+    /**打开CNC
+     * M05指令:主轴关闭, M03:主轴打卡*/
+    fun openCnc(writer: Appendable) {
+        if (isCloseCnc) {
+            writer.appendLine("M03 S0")
+            isCloseCnc = false
         }
     }
 
@@ -87,35 +97,31 @@ class PathGCodeHandler {
         writer.appendLine("G0 X0 Y0")
     }
 
+    /**开始的指令*/
+    fun writeFirst(writer: Appendable, unit: IValueUnit? = null) {
+        //[G20]英寸单位 [G21]毫米单位
+        if (unit is InchValueUnit) {
+            writer.appendLine("G20")
+        } else {
+            writer.appendLine("G21")
+        }
+        writer.appendLine("G90")
+        writer.appendLine("G1 F2000")
+        closeCnc(writer)
+    }
+
     /**写入G0 或者 G1 指令*/
     fun writeLine(writer: Appendable, index: Int, x: Float, y: Float, unit: IValueUnit? = null) {
         if (index == 0) {
-            //[G20]英寸单位 [G21]毫米单位
-            if (unit is InchValueUnit) {
-                writer.appendLine("G20")
-            } else {
-                writer.appendLine("G21")
-            }
-            writer.appendLine("G90")
-            writer.appendLine("G1 F2000")
-            if (!isCloseCnc) {
-                writer.appendLine("M05 S0")
-                isCloseCnc = true
-            }
+            writeFirst(writer, unit)
             writer.appendLine("G0 X${x} Y${y}")
         } else {
             if ((x - lastX).absoluteValue > gap || (y - lastY).absoluteValue > gap) {
                 //跨度比较大
-                if (!isCloseCnc) {
-                    writer.appendLine("M05 S0")
-                    isCloseCnc = true
-                }
+                closeCnc(writer)
                 writer.appendLine("G0 X${x} Y${y}")
             } else {
-                if (isCloseCnc) {
-                    writer.appendLine("M03 S255")
-                    isCloseCnc = false
-                }
+                openCnc(writer)
                 writer.appendLine("G1 X${x} Y${y}")
             }
         }

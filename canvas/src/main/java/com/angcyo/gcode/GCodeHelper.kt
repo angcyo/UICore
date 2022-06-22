@@ -499,6 +499,8 @@ object GCodeHelper {
                 } else {
                     L.v("忽略G指令:${line.lineCode}")
                 }
+            } else if (firstCmdString?.startsWith("M") == true) {
+                //no op
             } else {
                 L.v("跳过指令:${line.lineCode}")
             }

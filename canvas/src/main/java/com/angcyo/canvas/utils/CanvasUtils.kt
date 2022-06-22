@@ -6,10 +6,7 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import com.angcyo.canvas.items.PictureTextItem
-import com.angcyo.library.ex.decimal
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.emptyRectF
-import com.angcyo.library.ex.have
+import com.angcyo.library.ex.*
 import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min
@@ -296,5 +293,37 @@ fun Float.canvasDecimal(digit: Int = 2, fadedUp: Boolean = true): String {
     return this.toDouble().decimal(digit, fadedUp)
 }
 
+/**机器雕刻的色彩数据可视化*/
+fun ByteArray.toEngraveBitmap(width: Int, height: Int): Bitmap {
+    val channelBitmap =
+        Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(channelBitmap)
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        this.style = Paint.Style.FILL
+        strokeWidth = 1f
+        strokeJoin = Paint.Join.ROUND
+        strokeCap = Paint.Cap.ROUND
+    }
+    val bytes = this
+    for (y in 0 until height) {
+        for (x in 0 until width) {
+            val value: Int = bytes[y * width + x].toHexInt()
+            paint.color = Color.argb(255, value, value, value)
+            canvas.drawCircle(x.toFloat(), y.toFloat(), 1f, paint)//绘制圆点
+        }
+    }
+    return channelBitmap
+}
+
+/**从图片中, 获取雕刻需要用到的像素信息*/
+fun Bitmap.engraveColorBytes(): ByteArray {
+    return colorChannel { color, channelValue ->
+        if (color == Color.TRANSPARENT) {
+            255 //白色像素, 不雕刻
+        } else {
+            channelValue
+        }
+    }
+}
 
 //</editor-fold desc="Other">
