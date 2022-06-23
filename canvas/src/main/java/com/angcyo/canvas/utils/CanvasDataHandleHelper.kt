@@ -40,7 +40,9 @@ object CanvasDataHandleHelper {
      * [outputFile] GCode输出路径
      * */
     fun pathStrokeToGCode(
-        path: Path, rotateBounds: RectF, rotate: Float,
+        path: Path,
+        rotateBounds: RectF,
+        rotate: Float,
         outputFile: File = _defaultGCodeOutputFile()
     ): File {
         //形状的路径, 用来计算path内的左上角偏移量
@@ -87,7 +89,9 @@ object CanvasDataHandleHelper {
      * [rotate] 旋转角度, 配合[bounds]实现平移
      * */
     fun pathStrokeToGCode(
-        pathList: List<Path>, bounds: RectF, rotate: Float,
+        pathList: List<Path>,
+        bounds: RectF,
+        rotate: Float,
         outputFile: File = _defaultGCodeOutputFile()
     ): File {
         val newPathList = mutableListOf<Path>()
@@ -144,11 +148,30 @@ object CanvasDataHandleHelper {
      * [rotate] 旋转角度, 配合[bounds]实现平移
      * */
     fun gCodeAdjust(
-        gCode: String, bounds: RectF, rotate: Float,
+        gCode: String,
+        bounds: RectF,
+        rotate: Float,
         outputFile: File = _defaultGCodeOutputFile()
     ): File {
         val gCodeAdjust = GCodeAdjust()
         gCodeAdjust.gCodeAdjust(gCode, bounds, rotate, outputFile)
+        return outputFile
+    }
+
+    /**GCode数据坐标平移
+     * [gCode] 原始的GCode数据
+     * [rotateBounds] 旋转后的bounds, 用来确定Left,Top坐标
+     * [rotate] 旋转角度, 配合[bounds]实现平移
+     * */
+    fun gCodeTranslation(
+        gCode: String,
+        rotateBounds: RectF,
+        outputFile: File = _defaultGCodeOutputFile()
+    ): File {
+        val gCodeAdjust = GCodeAdjust()
+        outputFile.writer().use { writer ->
+            gCodeAdjust.gCodeTranslation(gCode, rotateBounds.left, rotateBounds.top, writer)
+        }
         return outputFile
     }
 
