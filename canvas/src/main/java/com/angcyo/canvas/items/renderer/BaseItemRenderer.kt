@@ -5,15 +5,14 @@ import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import android.widget.LinearLayout
 import androidx.core.graphics.withRotation
 import androidx.core.graphics.withTranslation
-import com.angcyo.canvas.CanvasDelegate
-import com.angcyo.canvas.CanvasView
-import com.angcyo.canvas.Reason
-import com.angcyo.canvas.ScalePictureDrawable
+import com.angcyo.canvas.*
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.renderer.BaseRenderer
 import com.angcyo.canvas.items.BaseItem
+import com.angcyo.canvas.items.PictureShapeItem
 import com.angcyo.canvas.utils._tempPoint
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.canvas.utils.mapRectF
@@ -202,7 +201,20 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     val rotatePath: Path = Path()
 
     override fun containsPoint(point: PointF): Boolean {
-        val rendererBounds = getRenderBounds()
+        var rendererBounds = getRenderBounds()
+
+        val item = getRendererItem()
+        if (item is PictureShapeItem && item.shapePath is LinePath) {
+            //如果是线段, 方法矩形区域
+            _tempRectF.set(rendererBounds)
+            if ((item.shapePath as LinePath).orientation == LinearLayout.VERTICAL) {
+                _tempRectF.inset(-10 * dp, 0f)
+            } else {
+                _tempRectF.inset(0f, -10 * dp)
+            }
+            rendererBounds = _tempRectF
+        }
+
         return getRotateMatrix(rendererBounds.centerX(), rendererBounds.centerY()).run {
             rotatePath.reset()
             rotatePath.addRect(rendererBounds, Path.Direction.CW)

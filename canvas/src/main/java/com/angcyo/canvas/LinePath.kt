@@ -31,14 +31,12 @@ class LinePath : Path() {
         bounds.bottom = length
         if (orientation == LinearLayout.VERTICAL) {
             lineTo(0f, length)
-            bounds.right = 0f
-
-            bounds.inset(-2f, 0f)
+            bounds.right = 1f
+            //bounds.inset(-2f, 0f)
         } else {
             lineTo(length, 0f)
-            bounds.bottom = 0f
-
-            bounds.inset(0f, -2f)
+            bounds.bottom = 1f
+            //bounds.inset(0f, -2f)
         }
     }
 
