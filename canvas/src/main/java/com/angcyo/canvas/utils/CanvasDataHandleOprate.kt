@@ -8,6 +8,7 @@ import com.angcyo.canvas.core.MmValueUnit
 import com.angcyo.canvas.items.getHoldData
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.gcode.GCodeAdjust
+import com.angcyo.gcode.GCodeWriteHandler
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.fileName
 import com.angcyo.library.utils.filePath
@@ -20,7 +21,7 @@ import kotlin.math.roundToInt
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/05/25
  */
-object CanvasDataHandleHelper {
+object CanvasDataHandleOprate {
 
     /**缓存文件的文件夹*/
     const val CACHE_FILE_FOLDER = "engrave"
@@ -75,9 +76,8 @@ object CanvasDataHandleHelper {
                 val x = mmValueUnit.convertPixelToValue(xPixel)
                 val y = mmValueUnit.convertPixelToValue(yPixel)
 
-                gCodeWriteHandler.writeLine(writer, index == 0, x, y)
+                gCodeWriteHandler.writeLine(writer, x, y)
             }
-            gCodeWriteHandler.closeCnc(writer)
             gCodeWriteHandler.writeFinish(writer)
         }
 
@@ -138,11 +138,8 @@ object CanvasDataHandleHelper {
 
         //转换成GCode
         val gCodeHandler = GCodeWriteHandler()
-        gCodeHandler.autoFinish = false
         outputFile.writer().use { writer ->
             gCodeHandler.pathStrokeToGCode(newPathList, MmValueUnit(), writer)
-            gCodeHandler.closeCnc(writer)
-            gCodeHandler.writeFinish(writer)
         }
         return outputFile
     }
@@ -204,32 +201,11 @@ object CanvasDataHandleHelper {
         //转成像素
         val lineStep = mmValueUnit.convertValueToPixel(lineSpace).roundToInt()
 
-        var isRTL = false
+        //反向读取数据, Z形方式
+        var isReverseDirection = false
         var lastGCodeY: Int = -1
 
-        //写入
-        fun writeGCode(writer: Appendable, list: List<Int>, yPixel: Int) {
-            if (list.size() > 0) {
-
-                val first: Int = list.first()
-                val last: Int = list.last()
-
-                val x1 = mmValueUnit.convertPixelToValue(first.toFloat())
-                val x2 = mmValueUnit.convertPixelToValue(last.toFloat())
-
-                val y = mmValueUnit.convertPixelToValue(yPixel.toFloat())
-
-                writer.appendLine("G0 X$x1 Y$y")
-                gCodeWriteHandler.openCnc(writer)
-                writer.appendLine("G1 X$x2 Y$y")
-
-                lastGCodeY = yPixel
-            }
-        }
-
         outputFile.writer().use { writer ->
-
-            val xList = mutableListOf<Int>() //相同像素的点的集合
             //y坐标
             var lastY: Int = 0
 
@@ -240,32 +216,28 @@ object CanvasDataHandleHelper {
                 lastY = y + 1
                 for (x in 0 until width) {//列
                     //rtl
-                    val lineX = if (isRTL) {
+                    val lineX = if (isReverseDirection) {
                         (width - 1 - x)
                     } else {
                         x
                     }
                     val index = y * width + lineX
                     val value: Int = data[index].toHexInt()
-                    if (value >= threshold) {
-                        //白色忽略
-                        gCodeWriteHandler.closeCnc(writer)
-                        writeGCode(writer, xList, lastY)
-                        xList.clear()
-                    } else {
-                        xList.add(lineX + 1)
+                    if (value < threshold) {
+                        //有效的像素
+                        val xValue = mmValueUnit.convertPixelToValue(lineX.toFloat())
+                        val yValue = mmValueUnit.convertPixelToValue(lastY.toFloat())
+                        gCodeWriteHandler.writeLine(writer, xValue, yValue)
+                        lastGCodeY = lastY //有数据的行
                     }
                 }
-                writeGCode(writer, xList, lastY)
+                gCodeWriteHandler._writeLastG1(writer)
 
                 //rtl
                 if (lastGCodeY == lastY) {
                     //这一行有GCode数据
-                    isRTL = !isRTL
+                    isReverseDirection = !isReverseDirection
                 }
-
-                //换行了
-                xList.clear()
 
                 //next
                 if (y == height - 1) {
@@ -278,8 +250,6 @@ object CanvasDataHandleHelper {
                     }
                 }
             }
-
-            gCodeWriteHandler.closeCnc(writer)
             gCodeWriteHandler.writeFinish(writer)
         }
         return outputFile
@@ -288,10 +258,10 @@ object CanvasDataHandleHelper {
 
 /**获取渲染器对应的GCode数据, 如果有*/
 fun BaseItemRenderer<*>.getGCodeText(): String? {
-    return getRendererItem()?.getHoldData(CanvasDataHandleHelper.KEY_GCODE)
+    return getRendererItem()?.getHoldData(CanvasDataHandleOprate.KEY_GCODE)
 }
 
 /**获取渲染器对应的List<Path>数据, 如果有*/
 fun BaseItemRenderer<*>.getPathList(): List<Path>? {
-    return getRendererItem()?.getHoldData(CanvasDataHandleHelper.KEY_SVG)
+    return getRendererItem()?.getHoldData(CanvasDataHandleOprate.KEY_SVG)
 }
