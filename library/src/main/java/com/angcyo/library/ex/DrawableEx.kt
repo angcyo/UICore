@@ -147,13 +147,26 @@ fun Drawable.toBitmapDrawable(
     return drawable
 }
 
+fun Drawable.getByBitmap(): Bitmap? {
+    if (this is BitmapDrawable) {
+        return bitmap
+    }
+    return toBitmap(-1, -1, Color.TRANSPARENT)
+}
+
 /**[androidx.core.graphics.drawable.DrawableKt.toBitmap]
+ * [outWidth] [outHeight] 缩放到的宽高, 大于0生效
  * [bgColor] 底色*/
 fun Drawable.toBitmap(
     outWidth: Int = -1,
     outHeight: Int = -1,
     bgColor: Int = Color.TRANSPARENT
 ): Bitmap? {
+
+    if (outWidth <= 0 && outHeight <= 0 && bgColor == Color.TRANSPARENT && this is BitmapDrawable) {
+        return bitmap
+    }
+
     // 获取 drawable 长宽
     val width: Int = if (minimumWidth <= 0) outWidth else minimumWidth
     val height: Int = if (minimumHeight <= 0) outHeight else minimumHeight

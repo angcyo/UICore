@@ -33,7 +33,7 @@ object CanvasDataHandleHelper {
 
     fun _defaultGCodeOutputFile() = filePath("GCode", fileName(suffix = ".gcode")).file()
 
-    /**将路径描边转换为G1代码
+    /**将路径描边转换为G1代码. 输出的GCode可以直接打印
      * [path] 需要转换的路径, 缩放后的path, 但是没有旋转
      * [rotateBounds] 路径需要平移的left, top
      * [rotate] 路径需要旋转的角度
@@ -50,12 +50,13 @@ object CanvasDataHandleHelper {
         path.computeBounds(pathBounds, true)
         val targetPath = Path(path)
 
-        val matrix = Matrix()
-        matrix.postRotate(rotate, rotateBounds.centerX(), rotateBounds.centerY())
-
         //旋转的支持
-        matrix.mapRect(pathBounds, pathBounds)
-        targetPath.transform(matrix)
+        if (rotate != 0f) {
+            val matrix = Matrix()
+            matrix.postRotate(rotate, rotateBounds.centerX(), rotateBounds.centerY())
+            matrix.mapRect(pathBounds, pathBounds)
+            targetPath.transform(matrix)
+        }
 
         val offsetLeft = rotateBounds.left - min(0f, pathBounds.left)
         val offsetTop = rotateBounds.top - min(0f, pathBounds.top)
@@ -74,7 +75,7 @@ object CanvasDataHandleHelper {
                 val x = mmValueUnit.convertPixelToValue(xPixel)
                 val y = mmValueUnit.convertPixelToValue(yPixel)
 
-                gCodeWriteHandler.writeLine(writer, index, x, y)
+                gCodeWriteHandler.writeLine(writer, index == 0, x, y)
             }
             gCodeWriteHandler.closeCnc(writer)
             gCodeWriteHandler.writeFinish(writer)
@@ -83,7 +84,7 @@ object CanvasDataHandleHelper {
         return outputFile
     }
 
-    /**将路径集合转换成GCode, 只有描边的数据
+    /**将路径集合转换成GCode, 只有描边的数据. 输出的GCode可以直接打印
      * [pathList] 未缩放旋转的原始路径数据
      * [bounds] 未旋转时的bounds, 用来实现缩放
      * [rotate] 旋转角度, 配合[bounds]实现平移
@@ -98,7 +99,9 @@ object CanvasDataHandleHelper {
 
         val matrix = Matrix()
         val rotateBounds = RectF()//旋转后的Bounds
-        matrix.setRotate(rotate, bounds.centerX(), bounds.centerY())
+        if (rotate != 0f) {
+            matrix.setRotate(rotate, bounds.centerX(), bounds.centerY())
+        }
         matrix.mapRectF(bounds, rotateBounds)
 
         //平移到左上角0,0, 然后缩放, 旋转
@@ -112,7 +115,9 @@ object CanvasDataHandleHelper {
         matrix.postScale(scaleX, scaleY, 0f, 0f)
 
         //旋转
-        matrix.postRotate(rotate, bounds.width() / 2, bounds.height() / 2)
+        if (rotate != 0f) {
+            matrix.postRotate(rotate, bounds.width() / 2, bounds.height() / 2)
+        }
 
         for (path in pathList) {
             val newPath = Path(path)

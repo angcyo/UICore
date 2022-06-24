@@ -354,3 +354,16 @@ fun ByteArray.toChannelBitmap(width: Int, height: Int, channelType: Int = Color.
     }
     return channelBitmap
 }
+
+/**[Canvas]*/
+fun bitmapCanvas(
+    width: Int,
+    height: Int,
+    config: Bitmap.Config = Bitmap.Config.ARGB_8888,
+    action: Canvas.() -> Unit
+): Bitmap {
+    val bitmap = Bitmap.createBitmap(width, height, config)
+    val canvas = Canvas(bitmap)
+    canvas.action()
+    return bitmap
+}

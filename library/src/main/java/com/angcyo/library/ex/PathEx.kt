@@ -2,6 +2,7 @@ package com.angcyo.library.ex
 
 import android.graphics.*
 import android.os.Build
+import androidx.core.graphics.withTranslation
 import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min
@@ -181,4 +182,40 @@ fun List<Path>.computeBounds(bounds: RectF = RectF(), exact: Boolean = true): Re
         bounds.bottom = max(bounds.bottom, pathRect.bottom)
     }
     return bounds
+}
+
+/**[Path]转[Bitmap]*/
+fun Path.toBitmap(
+    paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.BLACK
+        strokeWidth = 1f
+        style = Paint.Style.STROKE
+    }
+): Bitmap {
+    val pathRect = RectF()
+    computeBounds(pathRect, true)
+    return bitmapCanvas(pathRect.width().toInt(), pathRect.height().toInt()) {
+        withTranslation(pathRect.left, pathRect.top) {
+            drawPath(this@toBitmap, paint)
+        }
+    }
+}
+
+/**List<Path>转[Bitmap]*/
+fun List<Path>.toBitmap(
+    paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.BLACK
+        strokeWidth = 1f
+        style = Paint.Style.STROKE
+    }
+): Bitmap {
+    val pathRect = RectF()
+    computeBounds(pathRect, true)
+    return bitmapCanvas(pathRect.width().toInt(), pathRect.height().toInt()) {
+        withTranslation(pathRect.left, pathRect.top) {
+            forEach {
+                drawPath(it, paint)
+            }
+        }
+    }
 }

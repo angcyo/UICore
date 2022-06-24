@@ -6,6 +6,8 @@ import android.util.DisplayMetrics
 import android.util.TypedValue
 import androidx.annotation.WorkerThread
 import com.angcyo.canvas.core.CanvasEntryPoint
+import com.angcyo.canvas.core.InchValueUnit
+import com.angcyo.canvas.core.MmValueUnit
 import com.angcyo.canvas.core.component.CanvasTouchHandler
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.library.L
@@ -99,6 +101,19 @@ object GCodeHelper {
             gCodeLineDataList.add(gCodeLineData)
         }
         return gCodeLineDataList
+    }
+
+    /**获取GCode的Bounds[RectF]*/
+    fun parseGCodeBounds(gCode: String): RectF {
+        val gCodeHandler = GCodeHandler()
+        gCodeHandler.reset()
+        val mm = MmValueUnit()
+        val inch = InchValueUnit()
+        val mmValue = mm.convertValueToPixel(1f)
+        val inchValue = inch.convertValueToPixel(1f)
+        val config = GCodeParseConfig(gCode, mmValue, inchValue)
+        val gCodeLineList = parseGCodeLineList(config)
+        return gCodeHandler.parseGCodeBound(gCodeLineList)
     }
 
     /**
@@ -310,7 +325,7 @@ object GCodeHelper {
         }
 
         /**解析GCode的bounds*/
-        fun parseGCodeBound(gCodeLineDataList: List<GCodeLineData>) {
+        fun parseGCodeBound(gCodeLineDataList: List<GCodeLineData>): RectF {
             /*var minX = 0f
             var maxX = 0f
 
@@ -349,6 +364,8 @@ object GCodeHelper {
             gCodeBounds.top = min(gCodeBounds.top, pathBounds.top)
             gCodeBounds.right = max(gCodeBounds.right, pathBounds.right)
             gCodeBounds.bottom = max(gCodeBounds.bottom, pathBounds.bottom)*/
+
+            return gCodeBounds
         }
 
         /**解析所有GCode数据*/

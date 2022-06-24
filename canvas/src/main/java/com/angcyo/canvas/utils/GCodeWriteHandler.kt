@@ -1,9 +1,12 @@
 package com.angcyo.canvas.utils
 
 import android.graphics.Path
+import android.os.Debug
 import com.angcyo.canvas.core.IValueUnit
 import com.angcyo.canvas.core.InchValueUnit
+import com.angcyo.library.L
 import com.angcyo.library.ex.eachPath
+import com.angcyo.library.ex.toBitmap
 import kotlin.math.absoluteValue
 
 /**
@@ -14,7 +17,7 @@ class GCodeWriteHandler {
 
     companion object {
         /**如果2点之间的间隙大于此值, 则使用G0指令*/
-        const val PATH_GAP = 10
+        const val PATH_GAP = 10_000
     }
 
     val gap = PATH_GAP
@@ -31,6 +34,11 @@ class GCodeWriteHandler {
     /**是否自动归位, G0 X0 Y0 */
     var autoFinish: Boolean = true
 
+    fun reset() {
+        lastX = Float.MIN_VALUE
+        lastY = Float.MIN_VALUE
+    }
+
     /**[Path]路径描边数据, 转成GCode数据, 不包含GCode头尾数据*/
     fun pathStrokeToGCode(path: Path, unit: IValueUnit, writer: Appendable) {
         path.eachPath { index, posArray ->
@@ -41,7 +49,7 @@ class GCodeWriteHandler {
             val x = unit.convertPixelToValue(xPixel)
             val y = unit.convertPixelToValue(yPixel)
 
-            writeLine(writer, index, x, y)
+            writeLine(writer, index == 0, x, y)
         }
         if (autoClose) {
             closeCnc(writer)
@@ -51,10 +59,14 @@ class GCodeWriteHandler {
         }
     }
 
-    /**[pathList]
+    /**[pathList] 实际的路径数据
      * [pathStrokeToGCode]*/
     fun pathStrokeToGCode(pathList: List<Path>, unit: IValueUnit, writer: Appendable) {
         for (path in pathList) {
+            if (Debug.isDebuggerConnected()) {
+                val bitmap = path.toBitmap()
+                L.i()
+            }
             path.eachPath { index, posArray ->
                 val xPixel = posArray[0]
                 val yPixel = posArray[1]
@@ -63,8 +75,9 @@ class GCodeWriteHandler {
                 val x = unit.convertPixelToValue(xPixel)
                 val y = unit.convertPixelToValue(yPixel)
 
-                writeLine(writer, index, x, y)
+                writeLine(writer, index == 0, x, y)
             }
+            reset()
         }
         if (autoClose) {
             closeCnc(writer)
@@ -111,13 +124,19 @@ class GCodeWriteHandler {
     }
 
     /**写入G0 或者 G1 指令*/
-    fun writeLine(writer: Appendable, index: Int, x: Float, y: Float, unit: IValueUnit? = null) {
-        if (index == 0) {
+    fun writeLine(
+        writer: Appendable,
+        isFirst: Boolean,
+        x: Float,
+        y: Float,
+        unit: IValueUnit? = null
+    ) {
+        if (isFirst) {
             writeFirst(writer, unit)
             writer.appendLine("G0 X${x} Y${y}")
         } else {
             if ((x - lastX).absoluteValue > gap || (y - lastY).absoluteValue > gap) {
-                //跨度比较大
+                //跨度比较大时
                 closeCnc(writer)
                 writer.appendLine("G0 X${x} Y${y}")
             } else {

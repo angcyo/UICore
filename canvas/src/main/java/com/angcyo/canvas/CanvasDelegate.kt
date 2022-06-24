@@ -458,20 +458,25 @@ class CanvasDelegate(val view: View) : ICanvasView {
             bottom = max(bottom, bounds.bottom)
         }
 
-        return getBitmap(left, top, right - left, bottom - top)
+        return getBitmap(left, top, (right - left).toInt(), (bottom - top).toInt())
+    }
+
+    /**获取指定坐标对应的图片*/
+    fun getBitmap(rect: RectF): Bitmap {
+        return getBitmap(rect.left, rect.top, rect.width().toInt(), rect.height().toInt())
     }
 
     /**获取视图中指定坐标宽度的图片
      * [left] [top] 左上角的像素坐标
      * [width] [height] 需要获取的像素高度*/
-    fun getBitmap(left: Float, top: Float, width: Float, height: Float): Bitmap {
+    fun getBitmap(left: Float, top: Float, width: Int, height: Int): Bitmap {
         val oldBoxRect = emptyRectF()
         oldBoxRect.set(getCanvasViewBox().contentRect)
 
         //更新坐标系为0,0
-        getCanvasViewBox().updateContentBox(0f, 0f, width, height)
+        getCanvasViewBox().updateContentBox(0f, 0f, width.toFloat(), height.toFloat())
 
-        val bitmap = Bitmap.createBitmap(width.toInt(), height.toInt(), Bitmap.Config.ARGB_8888)
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
 
         val oldRenderRect = emptyRectF()

@@ -2,6 +2,7 @@ package com.angcyo.canvas.utils
 
 import android.graphics.Bitmap
 import android.graphics.RectF
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.Strategy
@@ -57,8 +58,12 @@ fun IRenderer.getRenderBitmap(origin: Boolean = true): Bitmap? {
         if (item is PictureBitmapItem) {
             return if (origin) {
                 item.originBitmap
+            } else if (item.bitmap != null) {
+                item.bitmap
+            } else if (item.drawable is BitmapDrawable) {
+                (item.drawable as BitmapDrawable).bitmap
             } else {
-                item.bitmap ?: item.drawable?.toBitmap()
+                item.drawable?.toBitmap()
             }
         }
     }

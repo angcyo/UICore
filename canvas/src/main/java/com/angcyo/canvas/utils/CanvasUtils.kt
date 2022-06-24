@@ -5,6 +5,7 @@ import android.os.Build
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
+import com.angcyo.canvas.core.MmValueUnit
 import com.angcyo.canvas.items.PictureTextItem
 import com.angcyo.library.ex.*
 import kotlin.math.atan2
@@ -325,5 +326,10 @@ fun Bitmap.engraveColorBytes(): ByteArray {
         }
     }
 }
+
+/**MmValueUnit*/
+fun Int.toMm() = toFloat().toMm()
+
+fun Float.toMm() = MmValueUnit().convertPixelToValue(this)
 
 //</editor-fold desc="Other">

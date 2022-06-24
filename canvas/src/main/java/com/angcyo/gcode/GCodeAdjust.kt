@@ -49,16 +49,20 @@ class GCodeAdjust {
         //先缩放和旋转
         val matrix = Matrix()
         val rotateBounds = RectF()//
-        matrix.setRotate(rotate, bounds.centerX(), bounds.centerY())
+        if (rotate != 0f) {
+            matrix.setRotate(rotate, bounds.centerX(), bounds.centerY())
+        }
         matrix.mapRectF(bounds, rotateBounds)
 
         matrix.reset()
         matrix.setScale(scaleX, scaleY, gCodeBounds.left, gCodeBounds.top)
-        matrix.postRotate(
-            rotate,
-            gCodeBounds.left + bounds.width() / 2,
-            gCodeBounds.top + bounds.height() / 2
-        )//转换
+        if (rotate != 0f) {
+            matrix.postRotate(
+                rotate,
+                gCodeBounds.left + bounds.width() / 2,
+                gCodeBounds.top + bounds.height() / 2
+            )//转换
+        }
 
         outputFile.writer().use { writer ->
             gCodeHandler.transformPoint = { gCodeLineData, pointF ->

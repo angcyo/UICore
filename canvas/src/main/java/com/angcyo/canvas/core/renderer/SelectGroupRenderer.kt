@@ -1,7 +1,9 @@
 package com.angcyo.canvas.core.renderer
 
 import android.graphics.*
+import android.graphics.drawable.Drawable
 import android.view.Gravity
+import androidx.core.graphics.drawable.toDrawable
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
 import com.angcyo.canvas.Reason
@@ -108,6 +110,12 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
             paint.color = paintColor
             canvas.drawRect(selectRect, paint)
         }
+    }
+
+    /**预览*/
+    override fun preview(): Drawable? {
+        val bounds = getRotateBounds()
+        return canvasDelegate.getBitmap(bounds).toDrawable(canvasDelegate.view.resources)
     }
 
     override fun isSupportControlPoint(type: Int): Boolean {
