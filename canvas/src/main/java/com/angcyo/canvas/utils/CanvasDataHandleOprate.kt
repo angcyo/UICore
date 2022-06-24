@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.RectF
+import android.view.Gravity
 import com.angcyo.canvas.core.MmValueUnit
 import com.angcyo.canvas.items.getHoldData
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
@@ -13,6 +14,7 @@ import com.angcyo.library.ex.*
 import com.angcyo.library.utils.fileName
 import com.angcyo.library.utils.filePath
 import java.io.File
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -179,12 +181,16 @@ object CanvasDataHandleOprate {
 
     /**简单的将[Bitmap]转成GCode数据
      * 横向扫描像素点,白色像素跳过,黑色就用G1打印
+     * [gravity] 线的扫描方向, 为null, 自动选择. 宽图使用[Gravity.LEFT], 长图使用[Gravity.TOP]
+     * [Gravity.LEFT]:垂直从左开始上下下上扫描 [Gravity.RIGHT]:
+     * [Gravity.TOP]:水平从上开始左右右左扫描 [Gravity.BOTTOM]:
      *
      * [threshold] 当色值>=此值时, 忽略数据 255白色 [0~255]
      * [lineSpace] 每一行之间的间隙, 毫米单位. //1K:0.1 2K:0.05 4K:0.025f
      * */
     fun bitmapToGCode(
         bitmap: Bitmap,
+        gravity: Int? = null,
         lineSpace: Float = 0.1f,
         threshold: Int = 255,
         outputFile: File = _defaultGCodeOutputFile()
@@ -195,6 +201,13 @@ object CanvasDataHandleOprate {
         val height = bitmap.height
         val data = bitmap.engraveColorBytes()
 
+        val scanGravity = gravity ?: if (width > height) {
+            //宽图
+            Gravity.LEFT
+        } else {
+            Gravity.TOP
+        }
+
         //像素单位转成mm单位
         val mmValueUnit = MmValueUnit()
 
@@ -203,50 +216,127 @@ object CanvasDataHandleOprate {
 
         //反向读取数据, Z形方式
         var isReverseDirection = false
-        var lastGCodeY: Int = -1
+        //最后的有效数据坐标
+        var lastGCodeLineRef: Int = -1
 
         outputFile.writer().use { writer ->
-            //y坐标
-            var lastY: Int = 0
+            //最后的坐标
+            var lastLineRef = 0
 
             gCodeWriteHandler.writeFirst(writer, mmValueUnit)
 
-            var y = 0
-            while (y < height) {//行
-                lastY = y + 1
-                for (x in 0 until width) {//列
-                    //rtl
-                    val lineX = if (isReverseDirection) {
-                        (width - 1 - x)
-                    } else {
-                        x
-                    }
-                    val index = y * width + lineX
-                    val value: Int = data[index].toHexInt()
-                    if (value < threshold) {
-                        //有效的像素
-                        val xValue = mmValueUnit.convertPixelToValue(lineX.toFloat())
-                        val yValue = mmValueUnit.convertPixelToValue(lastY.toFloat())
-                        gCodeWriteHandler.writeLine(writer, xValue, yValue)
-                        lastGCodeY = lastY //有数据的行
-                    }
-                }
-                gCodeWriteHandler._writeLastG1(writer)
+            if (scanGravity == Gravity.LEFT || scanGravity == Gravity.RIGHT) {
+                //垂直扫描
+                val xFrom: Int
+                val xTo: Int
+                val xStep: Int //跳跃的像素
 
-                //rtl
-                if (lastGCodeY == lastY) {
-                    //这一行有GCode数据
-                    isReverseDirection = !isReverseDirection
-                }
-
-                //next
-                if (y == height - 1) {
-                    break
+                if (scanGravity == Gravity.LEFT) {
+                    xFrom = 0
+                    xTo = width - 1
+                    xStep = lineStep
                 } else {
-                    //最后一行
-                    y += lineStep
-                    if (y >= height) {
-                        y = height - 1
+                    xFrom = width - 1
+                    xTo = 0
+                    xStep = -lineStep
+                }
+
+                var currentX = xFrom
+                while (true) {//列
+                    lastLineRef = currentX + 1
+                    for (y in 0 until height) {//行
+                        //rtl
+                        val lineY = if (isReverseDirection) {
+                            (height - 1 - y)
+                        } else {
+                            y
+                        }
+                        val index = max(0, (lineY - 1)) * width + currentX
+                        val value: Int = data[index].toHexInt()
+                        if (value < threshold) {
+                            //有效的像素
+                            val yValue = mmValueUnit.convertPixelToValue(lineY.toFloat())
+                            val xValue = mmValueUnit.convertPixelToValue(lastLineRef.toFloat())
+                            gCodeWriteHandler.writeLine(writer, xValue, yValue)
+                            lastGCodeLineRef = lastLineRef //有数据的列
+                        }
+                    }
+                    gCodeWriteHandler._writeLastG1(writer)
+
+                    //rtl
+                    if (lastGCodeLineRef == lastLineRef) {
+                        //这一行有GCode数据
+                        isReverseDirection = !isReverseDirection
+                    }
+
+                    //到底了
+                    if (currentX == xTo) {
+                        break
+                    } else {
+                        //最后一行校验, 忽略step的值
+                        currentX += xStep
+                        if (currentX + 1 >= width) {
+                            currentX = width - 1
+                        } else if (currentX + 1 <= 0) {
+                            currentX = 0
+                        }
+                    }
+                }
+            } else {
+                //水平扫描, 第几行. 从0开始
+                val yFrom: Int
+                val yTo: Int
+                val yStep: Int //跳跃的像素
+
+                if (scanGravity == Gravity.TOP) {
+                    yFrom = 0
+                    yTo = height - 1
+                    yStep = lineStep
+                } else {
+                    yFrom = height - 1
+                    yTo = 0
+                    yStep = -lineStep
+                }
+
+                var currentY = yFrom
+                while (true) {//行
+                    lastLineRef = currentY + 1
+                    for (x in 0 until width) {//列
+                        //rtl
+                        val lineX = if (isReverseDirection) {
+                            (width - 1 - x)
+                        } else {
+                            x
+                        }
+                        val index = currentY * width + lineX
+                        val value: Int = data[index].toHexInt()
+                        if (value < threshold) {
+                            //有效的像素
+                            val xValue = mmValueUnit.convertPixelToValue(lineX.toFloat())
+                            val yValue = mmValueUnit.convertPixelToValue(lastLineRef.toFloat())
+                            gCodeWriteHandler.writeLine(writer, xValue, yValue)
+                            lastGCodeLineRef = lastLineRef //有数据的行
+                        }
+                    }
+                    gCodeWriteHandler._writeLastG1(writer)
+
+                    //rtl
+                    if (lastGCodeLineRef == lastLineRef) {
+                        //这一行有GCode数据
+                        isReverseDirection = !isReverseDirection
+                    }
+
+                    //到底了
+                    if (currentY == yTo) {
+                        break
+                    } else {
+                        //最后一行校验, 忽略step的值
+                        currentY += yStep
+                        if (currentY + 1 >= height) {
+                            currentY = height - 1
+                        } else if (currentY + 1 <= 0) {
+                            currentY = 0
+                        }
                     }
                 }
             }
