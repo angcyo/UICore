@@ -2,6 +2,7 @@ package com.angcyo.canvas.core.component
 
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.utils.getScaleY
+import com.angcyo.library.ex.have
 import kotlin.math.max
 
 /**
@@ -12,32 +13,44 @@ import kotlin.math.max
  */
 class YAxis : BaseAxis() {
 
-    override fun getPlusPixelList(canvasViewBox: CanvasViewBox): List<Float> {
+    override fun getPlusPixelList(canvasViewBox: CanvasViewBox): List<AxisPoint> {
         plusList.clear()
-        var start = canvasViewBox.getCoordinateSystemY()
+        var pixel = canvasViewBox.getCoordinateSystemY()
         val factor = max(1f, canvasViewBox.invertMatrix.getScaleY())
         val end =
-            (start + canvasViewBox.getContentHeight() * factor - canvasViewBox.getTranslateY()) * factor
+            (pixel + canvasViewBox.getContentHeight() * factor - canvasViewBox.getTranslateY()) * factor
         val step = canvasViewBox.valueUnit.getGraduatedScaleGap()
 
-        while (start < end) {
-            plusList.add(start)
-            start += step
+        val scaleY = canvasViewBox.getScaleY()
+        var index = 0
+        while (pixel < end) {
+            val type = getAxisLineType(canvasViewBox, index, scaleY)
+            if (type.have(LINE_TYPE_DRAW_GRID)) {
+                plusList.add(AxisPoint(pixel, index, type))
+            }
+            pixel += step
+            index++
         }
         return plusList
     }
 
-    override fun getMinusPixelList(canvasViewBox: CanvasViewBox): List<Float> {
+    override fun getMinusPixelList(canvasViewBox: CanvasViewBox): List<AxisPoint> {
         minusList.clear()
-        var start = canvasViewBox.getCoordinateSystemY()
+        var pixel = canvasViewBox.getCoordinateSystemY()
         val factor = max(1f, canvasViewBox.invertMatrix.getScaleY())
         val end =
-            (start - canvasViewBox.getContentHeight() - canvasViewBox.getTranslateY()) * factor
+            (pixel - canvasViewBox.getContentHeight() - canvasViewBox.getTranslateY()) * factor
         val step = canvasViewBox.valueUnit.getGraduatedScaleGap()
 
-        while (start > end) {
-            minusList.add(start)
-            start -= step
+        val scaleY = canvasViewBox.getScaleY()
+        var index = 0
+        while (pixel > end) {
+            val type = getAxisLineType(canvasViewBox, index, scaleY)
+            if (type.have(LINE_TYPE_DRAW_GRID)) {
+                minusList.add(AxisPoint(pixel, index, type))
+            }
+            pixel -= step
+            index++
         }
         return minusList
     }

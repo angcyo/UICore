@@ -56,14 +56,14 @@ class YAxisRenderer(val axis: YAxis, canvasView: ICanvasView) :
         //绘制刻度
         canvas.withClip(0f, contentTop, right, contentBottom) {
             canvas.withTranslation(y = translateY) {
-                plusList.forEachIndexed { index, top ->
-                    val _top = top * scaleY
-                    drawLineAndLabel(canvas, index, _top, right, scaleY)
+                plusList.forEachIndexed { index, axisPoint ->
+                    val top = axisPoint.pixel * scaleY
+                    drawLineAndLabel(canvas, axisPoint.index, top, right, axisPoint.type)
                 }
 
-                minusList.forEachIndexed { index, top ->
-                    val _top = top * scaleY
-                    drawLineAndLabel(canvas, -index, _top, right, scaleY)
+                minusList.forEachIndexed { index, axisPoint ->
+                    val top = axisPoint.pixel * scaleY
+                    drawLineAndLabel(canvas, -axisPoint.index, top, right, axisPoint.type)
                 }
             }
         }
@@ -73,14 +73,14 @@ class YAxisRenderer(val axis: YAxis, canvasView: ICanvasView) :
             clipRect(canvasViewBox.contentRect)
             canvas.withTranslation(y = translateY) {
 
-                minusList.forEachIndexed { index, top ->
-                    val _top = top * scaleY
-                    drawGridLine(canvas, -index, contentLeft, _top, contentRight, scaleY)
+                minusList.forEachIndexed { index, axisPoint ->
+                    val top = axisPoint.pixel * scaleY
+                    drawGridLine(canvas, contentLeft, top, contentRight, axisPoint.type)
                 }
 
-                plusList.forEachIndexed { index, top ->
-                    val _top = top * scaleY
-                    drawGridLine(canvas, -index, contentLeft, _top, contentRight, scaleY)
+                plusList.forEachIndexed { index, axisPoint ->
+                    val top = axisPoint.pixel * scaleY
+                    drawGridLine(canvas, contentLeft, top, contentRight, axisPoint.type)
                 }
             }
         }
@@ -91,10 +91,9 @@ class YAxisRenderer(val axis: YAxis, canvasView: ICanvasView) :
         index: Int,
         top: Float,
         right: Float,
-        scale: Float
+        axisLineType: Int
     ) {
         val valueStr = canvasViewBox.valueUnit.getGraduatedLabel(index)
-        val axisLineType = axis.getAxisLineType(canvasViewBox, index, scale)
         when {
             axisLineType.have(BaseAxis.LINE_TYPE_PROTRUDE) -> {
                 val size = axis.lineProtrudeSize
@@ -123,11 +122,10 @@ class YAxisRenderer(val axis: YAxis, canvasView: ICanvasView) :
 
     fun drawGridLine(
         canvas: Canvas,
-        index: Int,
         left: Float,
         top: Float,
         right: Float,
-        scale: Float
+        axisLineType: Int
     ) {
         if (!axis.drawGridLine) {
             //不绘制所有线
@@ -135,8 +133,6 @@ class YAxisRenderer(val axis: YAxis, canvasView: ICanvasView) :
         }
 
         //绘制网格
-        val axisLineType = axis.getAxisLineType(canvasViewBox, index, scale)
-
         if (axisLineType.have(BaseAxis.LINE_TYPE_DRAW_GRID)) {
             if (axisLineType.have(BaseAxis.LINE_TYPE_PROTRUDE)) {
                 canvas.drawLine(left, top, right, top, gridProtrudePaint)

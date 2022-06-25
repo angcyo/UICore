@@ -108,18 +108,18 @@ abstract class BaseAxis : BaseComponent() {
         return result
     }
 
-    val plusList = mutableListOf<Float>()
-    val minusList = mutableListOf<Float>()
+    val plusList = mutableListOf<AxisPoint>()
+    val minusList = mutableListOf<AxisPoint>()
 
     /**获取正向坐标需要绘制刻度的像素点坐标位置, 未映射后的坐标*/
-    abstract fun getPlusPixelList(canvasViewBox: CanvasViewBox): List<Float>
+    abstract fun getPlusPixelList(canvasViewBox: CanvasViewBox): List<AxisPoint>
 
     /**获取负向坐标需要绘制刻度的像素点坐标位置, 未映射后的坐标*/
-    abstract fun getMinusPixelList(canvasViewBox: CanvasViewBox): List<Float>
+    abstract fun getMinusPixelList(canvasViewBox: CanvasViewBox): List<AxisPoint>
 }
 
 /**枚举*/
-fun BaseAxis.eachAxisPixelList(block: (index: Int, value: Float) -> Unit) {
+fun BaseAxis.eachAxisPixelList(block: (index: Int, value: AxisPoint) -> Unit) {
     plusList.forEachIndexed(block)
     minusList.forEachIndexed(block)
 }

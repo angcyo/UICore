@@ -2,6 +2,7 @@ package com.angcyo.canvas.core.component
 
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.utils.getScaleX
+import com.angcyo.library.ex.have
 import kotlin.math.max
 
 /**
@@ -12,32 +13,44 @@ import kotlin.math.max
  */
 class XAxis : BaseAxis() {
 
-    override fun getPlusPixelList(canvasViewBox: CanvasViewBox): List<Float> {
+    override fun getPlusPixelList(canvasViewBox: CanvasViewBox): List<AxisPoint> {
         plusList.clear()
-        var start = canvasViewBox.getCoordinateSystemX() //获取刻度开始的像素位置
+        var pixel = canvasViewBox.getCoordinateSystemX() //获取刻度开始的像素位置
         val factor = max(1f, canvasViewBox.invertMatrix.getScaleX()) //如果放大了, 需要扩大的因子
         val end =
-            (start + canvasViewBox.getContentWidth() * factor - canvasViewBox.getTranslateX()) * factor //获取刻度结束的像素位置
+            (pixel + canvasViewBox.getContentWidth() * factor - canvasViewBox.getTranslateX()) * factor //获取刻度结束的像素位置
         val step = canvasViewBox.valueUnit.getGraduatedScaleGap() //刻度的间隔
 
-        while (start < end) {
-            plusList.add(start)
-            start += step
+        val scaleX = canvasViewBox.getScaleX()
+        var index = 0
+        while (pixel < end) {
+            val type = getAxisLineType(canvasViewBox, index, scaleX)
+            if (type.have(LINE_TYPE_DRAW_GRID)) {
+                plusList.add(AxisPoint(pixel, index, type))
+            }
+            pixel += step
+            index++
         }
         return plusList
     }
 
-    override fun getMinusPixelList(canvasViewBox: CanvasViewBox): List<Float> {
+    override fun getMinusPixelList(canvasViewBox: CanvasViewBox): List<AxisPoint> {
         minusList.clear()
-        var start = canvasViewBox.getCoordinateSystemX()
+        var pixel = canvasViewBox.getCoordinateSystemX()
         val factor = max(1f, canvasViewBox.invertMatrix.getScaleX())
         val end =
-            (start - canvasViewBox.getContentWidth() - canvasViewBox.getTranslateX()) * factor
+            (pixel - canvasViewBox.getContentWidth() - canvasViewBox.getTranslateX()) * factor
         val step = canvasViewBox.valueUnit.getGraduatedScaleGap()
 
-        while (start > end) {
-            minusList.add(start)
-            start -= step
+        val scaleX = canvasViewBox.getScaleX()
+        var index = 0
+        while (pixel > end) {
+            val type = getAxisLineType(canvasViewBox, index, scaleX)
+            if (type.have(LINE_TYPE_DRAW_GRID)) {
+                minusList.add(AxisPoint(pixel, index, type))
+            }
+            pixel -= step
+            index++
         }
         return minusList
     }
