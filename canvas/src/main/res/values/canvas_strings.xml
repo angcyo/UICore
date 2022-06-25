@@ -42,8 +42,12 @@
     <string name="canvas_standard">水平排列</string>
     <string name="canvas_vertical">垂直排列</string>
     <string name="canvas_align_left">左对齐</string>
-    <string name="canvas_align_center">居中对齐</string>
+    <string name="canvas_align_horizontal">水平居中</string>
     <string name="canvas_align_right">右对齐</string>
+    <string name="canvas_align_center">居中</string>
+    <string name="canvas_align_top">顶对齐</string>
+    <string name="canvas_align_vertical">垂直居中</string>
+    <string name="canvas_align_bottom">底对齐</string>
     <string name="canvas_prints">版画</string>
     <string name="canvas_gcode">GCode</string>
     <string name="canvas_black_white">黑白画</string>

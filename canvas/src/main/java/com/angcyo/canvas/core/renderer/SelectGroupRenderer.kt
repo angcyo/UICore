@@ -12,13 +12,14 @@ import com.angcyo.canvas.core.CanvasEntryPoint
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.core.OffsetItemData
+import com.angcyo.canvas.core.component.ControlPoint
+import com.angcyo.canvas.core.component.control.RotateControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.createPaint
-import com.angcyo.drawable.isGravityCenterHorizontal
-import com.angcyo.drawable.isGravityLeft
-import com.angcyo.drawable.isGravityRight
+import com.angcyo.drawable.*
 import com.angcyo.library.ex.*
+import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
 
@@ -142,6 +143,13 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
     ) {
         //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
         updateSelectBounds()
+    }
+
+    override fun onControlFinish(controlPoint: ControlPoint) {
+        super.onControlFinish(controlPoint)
+        if (controlPoint is RotateControlPoint) {
+            updateSelectBounds()
+        }
     }
 
     override fun itemRotateChanged(oldRotate: Float) {
@@ -282,8 +290,63 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
             return
         }
 
+        //寻找定位锚点item
         var anchorItemRenderer: BaseItemRenderer<*>? = null
-        if (align.isGravityLeft()) {
+        if (align.isGravityCenter()) {
+            //找出距离中心点最近的Item
+            val centerX = getBounds().centerX()
+            val centerY = getBounds().centerY()
+
+            //2点之间的最小距离
+            var minR = Float.MAX_VALUE
+
+            list.forEach {
+                val bounds = it.getRotateBounds()
+                val r = c(centerX, centerY, bounds.centerX(), bounds.centerY()).absoluteValue
+                if (r < minR) {
+                    anchorItemRenderer = it
+                    minR = r.toFloat()
+                }
+            }
+        } else if (align.isGravityCenterHorizontal()) {
+            //水平居中, 找出最大的高度item
+            var maxHeight = Float.MIN_VALUE
+            list.forEach {
+                val bounds = it.getRotateBounds()
+                if (bounds.height() > maxHeight) {
+                    anchorItemRenderer = it
+                    maxHeight = bounds.height()
+                }
+            }
+        } else if (align.isGravityCenterVertical()) {
+            //垂直居中, 找出最大的宽度item
+            var maxWidth = Float.MIN_VALUE
+            list.forEach {
+                val bounds = it.getRotateBounds()
+                if (bounds.width() > maxWidth) {
+                    anchorItemRenderer = it
+                    maxWidth = bounds.width()
+                }
+            }
+        } else if (align.isGravityTop()) {
+            var minTop = Float.MAX_VALUE
+            list.forEach {
+                val bounds = it.getRotateBounds()
+                if (bounds.top < minTop) {
+                    anchorItemRenderer = it
+                    minTop = bounds.top
+                }
+            }
+        } else if (align.isGravityBottom()) {
+            var maxBottom = Float.MIN_VALUE
+            list.forEach {
+                val bounds = it.getRotateBounds()
+                if (bounds.bottom > maxBottom) {
+                    anchorItemRenderer = it
+                    maxBottom = bounds.bottom
+                }
+            }
+        } else if (align.isGravityLeft()) {
             var minLeft = Float.MAX_VALUE
             list.forEach {
                 val bounds = it.getRotateBounds()
@@ -299,15 +362,6 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
                 if (bounds.right > maxRight) {
                     anchorItemRenderer = it
                     maxRight = bounds.right
-                }
-            }
-        } else if (align.isGravityCenterHorizontal()) {
-            var maxWidth = Float.MIN_VALUE
-            list.forEach {
-                val bounds = it.getRotateBounds()
-                if (bounds.width() > maxWidth) {
-                    anchorItemRenderer = it
-                    maxWidth = bounds.width()
                 }
             }
         }
@@ -326,12 +380,21 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
                 var dx = 0f
                 var dy = 0f
 
-                if (align.isGravityLeft()) {
+                if (align.isGravityCenter()) {
+                    dx = anchorBounds.centerX() - itemBounds.centerX()
+                    dy = anchorBounds.centerY() - itemBounds.centerY()
+                } else if (align.isGravityCenterHorizontal()) {
+                    dy = anchorBounds.centerY() - itemBounds.centerY()
+                } else if (align.isGravityCenterVertical()) {
+                    dx = anchorBounds.centerX() - itemBounds.centerX()
+                } else if (align.isGravityTop()) {
+                    dy = anchorBounds.top - itemBounds.top
+                } else if (align.isGravityBottom()) {
+                    dy = anchorBounds.bottom - itemBounds.bottom
+                } else if (align.isGravityLeft()) {
                     dx = anchorBounds.left - itemBounds.left
                 } else if (align.isGravityRight()) {
                     dx = anchorBounds.right - itemBounds.right
-                } else if (align.isGravityCenterHorizontal()) {
-                    dx = anchorBounds.centerX() - itemBounds.centerX()
                 }
                 offsetList.add(OffsetItemData(item, dx, dy))
             }
