@@ -176,129 +176,6 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
     }
 
-    //<editor-fold desc="View相关">
-
-    val viewBounds: RectF = emptyRectF()
-
-    /**入口点*/
-    @CanvasEntryPoint
-    fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        viewBounds.set(0f, 0f, w.toFloat(), h.toFloat())
-
-        //前测量
-        eachAxisRender { axis ->
-            if (axis.enable) {
-                onCanvasSizeChanged(this@CanvasDelegate)
-            }
-        }
-
-        //canvasViewBox
-        val l = if (yAxisRender.axis.enable) {
-            yAxisRender.getRenderBounds().right
-        } else {
-            0f
-        }
-        val t = if (xAxisRender.axis.enable) {
-            xAxisRender.getRenderBounds().bottom
-        } else {
-            0f
-        }
-        if (getCanvasViewBox().getCoordinateSystemY() == -1f && getCanvasViewBox().getCoordinateSystemY() == -1f) {
-            getCanvasViewBox().updateCoordinateSystemOriginPoint(l, t)
-        }
-        getCanvasViewBox().updateContentBox(l, t, w.toFloat(), h.toFloat())
-
-        //需要等待[canvasViewBox]测量后
-        eachAllRenderer {
-            onCanvasSizeChanged(this@CanvasDelegate)
-        }
-
-        //任务
-        pendingTaskList.forEach {
-            it.run()
-        }
-        pendingTaskList.clear()
-    }
-
-    /**入口点*/
-    @CanvasEntryPoint
-    fun onDraw(canvas: Canvas) {
-        eachAxisRender { axis ->
-            if (axis.enable && isVisible()) {
-                render(canvas)
-            }
-        }
-
-        //前置,不处理matrix
-        rendererBeforeList.forEach {
-            if (it.isVisible()) {
-                it.render(canvas)
-            }
-        }
-
-        //内容, 绘制内容时, 自动使用[matrix]
-        canvas.withClip(getCanvasViewBox().contentRect) {
-            canvas.withMatrix(getCanvasViewBox().matrix) {
-                itemsRendererList.forEach {
-                    if (it.isVisible()) {
-                        //item的旋转, 在此处理
-                        val bounds = it.getRenderBounds()
-                        canvas.withRotation(
-                            it.rotate,
-                            bounds.centerX(),
-                            bounds.centerY()
-                        ) {
-                            it.render(canvas)
-                        }
-                    }
-                }
-            }
-        }
-
-        //后置,不处理matrix
-        if (controlRenderer.isVisible()) {
-            controlRenderer.render(canvas)
-        }
-
-        rendererAfterList.forEach {
-            if (it.isVisible()) {
-                it.render(canvas)
-            }
-        }
-
-        //限制框提示渲染
-        if (limitRenderer.isVisible()) {
-            canvas.withClip(getCanvasViewBox().contentRect) {
-                canvas.withMatrix(getCanvasViewBox().matrix) {
-                    canvas.withTranslation(
-                        getCanvasViewBox().getCoordinateSystemX(),
-                        getCanvasViewBox().getCoordinateSystemY()
-                    ) {
-                        limitRenderer.render(canvas)
-                    }
-                }
-            }
-        }
-    }
-
-    /**入口点*/
-    @CanvasEntryPoint
-    fun onTouchEvent(event: MotionEvent): Boolean {
-        return canvasTouchManager.onTouchEvent(event)
-    }
-
-    /**刷新界面*/
-    override fun refresh() {
-        view.postInvalidateOnAnimation()
-    }
-
-    /**长按事件反馈提示*/
-    fun longFeedback() {
-        view.longFeedback()
-    }
-
-    //</editor-fold desc="View相关">
-
     override fun getCanvasViewBox(): CanvasViewBox = viewBox
 
     /**移动坐标原点到View中心*/
@@ -438,6 +315,143 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
     //</editor-fold desc="关键方法">
 
+    //<editor-fold desc="View相关">
+
+    /**视图的[Bounds]*/
+    val viewBounds: RectF = emptyRectF()
+
+    /**坐标系可见的[Bounds]*/
+    val visualBounds: RectF = emptyRectF()
+
+    /**入口点*/
+    @CanvasEntryPoint
+    fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        viewBounds.set(0f, 0f, w.toFloat(), h.toFloat())
+
+        //前测量
+        eachAxisRender { axis ->
+            if (axis.enable) {
+                onCanvasSizeChanged(this@CanvasDelegate)
+            }
+        }
+
+        //canvasViewBox
+        val l = if (yAxisRender.axis.enable) {
+            yAxisRender.getRenderBounds().right
+        } else {
+            0f
+        }
+        val t = if (xAxisRender.axis.enable) {
+            xAxisRender.getRenderBounds().bottom
+        } else {
+            0f
+        }
+        if (getCanvasViewBox().getCoordinateSystemY() == -1f && getCanvasViewBox().getCoordinateSystemY() == -1f) {
+            getCanvasViewBox().updateCoordinateSystemOriginPoint(l, t)
+        }
+        getCanvasViewBox().updateContentBox(l, t, w.toFloat(), h.toFloat())
+
+        //需要等待[canvasViewBox]测量后
+        eachAllRenderer {
+            onCanvasSizeChanged(this@CanvasDelegate)
+        }
+
+        //任务
+        pendingTaskList.forEach {
+            it.run()
+        }
+        pendingTaskList.clear()
+    }
+
+    /**入口点*/
+    @CanvasEntryPoint
+    fun onDraw(canvas: Canvas) {
+        eachAxisRender { axis ->
+            if (axis.enable && isVisible()) {
+                render(canvas)
+            }
+        }
+
+        //前置,不处理matrix
+        rendererBeforeList.forEach {
+            if (it.isVisible()) {
+                it.render(canvas)
+            }
+        }
+
+        //内容, 绘制内容时, 自动使用[matrix]
+        val canvasViewBox = getCanvasViewBox()
+        //肉眼可见的矩形范围
+        val visualRect = canvasViewBox.getVisualRect(visualBounds)
+        canvas.withClip(canvasViewBox.contentRect) {
+            canvas.withMatrix(canvasViewBox.matrix) {
+                itemsRendererList.forEach { renderer ->
+                    if (renderer.isVisible()) {
+                        val renderRotateBounds = renderer.getRenderRotateBounds()
+
+                        if (renderRotateBounds.isOutOf(visualRect)) {
+                            //超过了肉眼可见范围, 不绘制
+                        } else {
+                            //item的旋转, 在此处理
+                            val bounds = renderer.getRenderBounds()
+                            canvas.withRotation(
+                                renderer.rotate,
+                                bounds.centerX(),
+                                bounds.centerY()
+                            ) {
+                                renderer.render(canvas)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //后置,不处理matrix
+        if (controlRenderer.isVisible()) {
+            controlRenderer.render(canvas)
+        }
+
+        //after
+        rendererAfterList.forEach {
+            if (it.isVisible()) {
+                it.render(canvas)
+            }
+        }
+
+        //限制框提示渲染
+        if (limitRenderer.isVisible()) {
+            canvas.withClip(canvasViewBox.contentRect) {
+                canvas.withMatrix(canvasViewBox.matrix) {
+                    canvas.withTranslation(
+                        canvasViewBox.getCoordinateSystemX(),
+                        canvasViewBox.getCoordinateSystemY()
+                    ) {
+                        limitRenderer.render(canvas)
+                    }
+                }
+            }
+        }
+    }
+
+    /**入口点*/
+    @CanvasEntryPoint
+    fun onTouchEvent(event: MotionEvent): Boolean {
+        return canvasTouchManager.onTouchEvent(event)
+    }
+
+    /**刷新界面*/
+    override fun refresh() {
+        view.postInvalidateOnAnimation()
+    }
+
+    /**长按事件反馈提示*/
+    fun longFeedback() {
+        view.longFeedback()
+    }
+
+    //</editor-fold desc="View相关">
+
     //<editor-fold desc="操作方法">
 
     /**
@@ -486,20 +500,20 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
         val oldRenderRect = emptyRectF()
         canvas.withTranslation(-left, -top) {
-            itemsRendererList.forEach {
-                if (it.isVisible()) {
+            itemsRendererList.forEach { renderer ->
+                if (renderer.isVisible()) {
                     //item的旋转, 在此处理
-                    val bounds = it.getBounds()
+                    val bounds = renderer.getBounds()
                     //替换渲染矩形坐标
-                    val renderBounds = it.getRenderBounds()
+                    val renderBounds = renderer.getRenderBounds()
                     oldRenderRect.set(renderBounds)
                     renderBounds.set(bounds)
                     canvas.withRotation(
-                        it.rotate,
+                        renderer.rotate,
                         bounds.centerX(),
                         bounds.centerY()
                     ) {
-                        it.render(canvas)
+                        renderer.render(canvas)
                     }
                     //恢复渲染矩形
                     renderBounds.set(oldRenderRect)

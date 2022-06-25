@@ -93,21 +93,25 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         canvasView.refresh()
     }
 
-    /**获取当前坐标系在可视窗口的矩形*/
-    fun getVisualCoordinateSystemRect(): RectF {
+    /**获取当前坐标系在可视窗口的矩形, 原始坐标保持不变.
+     * [contentRect] 缩放平移[matrix]之后的变成的[RectF]
+     * */
+    fun getVisualCoordinateSystemRect(result: RectF = _tempRectF): RectF {
         /*matrix.getValues(_tempValues)
         _tempValues[Matrix.MTRANS_X] -= _tempValues[Matrix.MTRANS_X]
         _tempValues[Matrix.MTRANS_Y] -= _tempValues[Matrix.MTRANS_Y]
         tempMatrix.setValues(_tempValues)
         tempMatrix.mapRect(_tempRectF, contentRect)*/
-        matrix.mapRect(_tempRectF, contentRect)
-        return _tempRectF
+        matrix.mapRect(result, contentRect)
+        return result
     }
 
-    /**获取当前能够看到的坐标系的范围矩形*/
-    fun getVisualRect(): RectF {
-        invertMatrix.mapRect(_tempRectF, contentRect)
-        return _tempRectF
+    /**获取当前能够看到的坐标系的范围矩形, 肉眼坐标保持不变.
+     * [contentRect] 保持原先的位置, [matrix]缩放平移之后,一个新的[RectF]
+     * */
+    fun getVisualRect(result: RectF = _tempRectF): RectF {
+        invertMatrix.mapRect(result, contentRect)
+        return result
     }
 
     /**在当前视图中心获取一个坐标系中指定宽高的矩形*/

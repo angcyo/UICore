@@ -33,7 +33,24 @@ fun RectF.isNoSize() = width() == 0f || height() == 0f
 
 fun Rect.isNoSize() = width() == 0 || height() == 0
 
-//<editor-fold desc="base">
+/**[this]矩形是否在[rect]矩形的外面*/
+fun RectF.isOutOf(rect: RectF): Boolean {
+    if (left < rect.left && right < rect.left) {
+        return true
+    }
+    if (top < rect.top && bottom < rect.top) {
+        return true
+    }
+    if (right > rect.right && left > rect.right) {
+        return true
+    }
+    if (bottom > rect.bottom && top > rect.bottom) {
+        return true
+    }
+    return false
+}
+
+//</editor-fold desc="base">
 
 //<editor-fold desc="rect size">
 
