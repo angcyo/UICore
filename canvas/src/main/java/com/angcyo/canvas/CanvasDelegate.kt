@@ -472,11 +472,13 @@ class CanvasDelegate(val view: View) : ICanvasView {
      * [width] [height] 需要获取的像素高度*/
     @UiThread
     fun getBitmap(left: Float, top: Float, width: Int, height: Int): Bitmap {
+        val canvasViewBox = getCanvasViewBox()
+
         val oldBoxRect = emptyRectF()
-        oldBoxRect.set(getCanvasViewBox().contentRect)
+        oldBoxRect.set(canvasViewBox.contentRect)
 
         //更新坐标系为0,0
-        getCanvasViewBox().updateContentBox(0f, 0f, width.toFloat(), height.toFloat())
+        canvasViewBox.contentRect.set(0f, 0f, width.toFloat(), height.toFloat())
 
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
@@ -505,7 +507,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
 
         //恢复
-        getCanvasViewBox().updateContentBox(oldBoxRect)
+        canvasViewBox.contentRect.set(oldBoxRect)
 
         return bitmap
     }
