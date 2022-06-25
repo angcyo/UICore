@@ -43,6 +43,10 @@ abstract class BaseDslStateItem : DslAdapterItem() {
     init {
         itemLayoutId = R.layout.lib_item_base_state
         itemSpanCount = FULL_ITEM
+
+        //不支持拖拽和侧滑
+        itemDragEnable = false
+        itemSwipeEnable = false
     }
 
     override fun onItemBind(
