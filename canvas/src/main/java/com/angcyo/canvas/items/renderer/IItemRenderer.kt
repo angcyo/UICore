@@ -17,6 +17,14 @@ import com.angcyo.library.ex.ADJUST_TYPE_LT
  */
 interface IItemRenderer<T : ICanvasItem> : IRenderer {
 
+    companion object {
+        /**直接旋转*/
+        const val ROTATE_FLAG_NORMAL = 1
+
+        /**手势move导致的旋转*/
+        const val ROTATE_FLAG_MOVE = 1
+    }
+
     //<editor-fold desc="bounds">
 
     /**渲染具体的项*/
@@ -94,11 +102,12 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     fun updateBounds(width: Float, height: Float, adjustType: Int = ADJUST_TYPE_LT)
 
     /**旋转元素, 旋转操作不能用matrix
-     * [degrees] 旋转的角度*/
-    fun rotateBy(degrees: Float)
+     * [degrees] 旋转的角度, 非弧度
+     * [rotateFlag] 旋转操作的标识 [ROTATE_FLAG_NORMAL] [ROTATE_FLAG_MOVE]*/
+    fun rotateBy(degrees: Float, rotateFlag: Int)
 
     /**当元素的旋转属性发生改变时触发*/
-    fun itemRotateChanged(oldRotate: Float) {}
+    fun itemRotateChanged(oldRotate: Float, rotateFlag: Int) {}
 
     //</editor-fold desc="控制方法">
 

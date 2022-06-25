@@ -13,6 +13,7 @@ import com.angcyo.canvas.core.component.*
 import com.angcyo.canvas.core.renderer.*
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
+import com.angcyo.canvas.items.renderer.IItemRenderer.Companion.ROTATE_FLAG_NORMAL
 import com.angcyo.canvas.utils._tempPoint
 import com.angcyo.canvas.utils._tempRectF
 import com.angcyo.canvas.utils.limitMaxWidthHeight
@@ -713,9 +714,9 @@ class CanvasDelegate(val view: View) : ICanvasView {
     }
 
     /**旋转[BaseItemRenderer]*/
-    fun rotateItemBy(itemRenderer: BaseItemRenderer<*>, degrees: Float) {
+    fun rotateItemBy(itemRenderer: BaseItemRenderer<*>, degrees: Float, rotateFlag: Int) {
         itemRenderer.apply {
-            rotateBy(degrees)
+            rotateBy(degrees, rotateFlag)
             refresh()
         }
     }
@@ -914,11 +915,11 @@ class CanvasDelegate(val view: View) : ICanvasView {
         } else {
             step = object : ICanvasStep {
                 override fun runUndo() {
-                    item.rotateBy(originRotate - newRotate)
+                    item.rotateBy(originRotate - newRotate, ROTATE_FLAG_NORMAL)
                 }
 
                 override fun runRedo() {
-                    item.rotateBy(newRotate - originRotate)
+                    item.rotateBy(newRotate - originRotate, ROTATE_FLAG_NORMAL)
                 }
             }
         }

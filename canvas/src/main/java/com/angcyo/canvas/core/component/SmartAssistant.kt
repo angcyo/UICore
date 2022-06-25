@@ -168,9 +168,13 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
 
     /**智能旋转算法
      * @return true 表示拦截此次手势操作*/
-    fun smartRotateBy(itemRenderer: BaseItemRenderer<*>, angle: Float): AssistantData? {
+    fun smartRotateBy(
+        itemRenderer: BaseItemRenderer<*>,
+        angle: Float,
+        rotateFlag: Int
+    ): AssistantData? {
         if (!enable) {
-            canvasView.rotateItemBy(itemRenderer, angle)
+            canvasView.rotateItemBy(itemRenderer, angle, rotateFlag)
             return null
         }
 
@@ -217,7 +221,7 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
         val result = newRotate - oldRotate
         resetSmartLine()
         if (result != 0f) {
-            canvasView.rotateItemBy(itemRenderer, result)
+            canvasView.rotateItemBy(itemRenderer, result, rotateFlag)
         }
         return lastRotateAssistant
     }

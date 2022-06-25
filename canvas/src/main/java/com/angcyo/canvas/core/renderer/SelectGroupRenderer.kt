@@ -152,8 +152,8 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         }
     }
 
-    override fun itemRotateChanged(oldRotate: Float) {
-        super.itemRotateChanged(oldRotate)
+    override fun itemRotateChanged(oldRotate: Float, rotateFlag: Int) {
+        super.itemRotateChanged(oldRotate, rotateFlag)
         val degrees = rotate - oldRotate
         canvasDelegate.operateHandler.rotateItemList(
             selectItemList,

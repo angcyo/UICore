@@ -9,6 +9,8 @@ import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.core.renderer.SelectGroupRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
+import com.angcyo.canvas.items.renderer.IItemRenderer.Companion.ROTATE_FLAG_MOVE
+import com.angcyo.canvas.items.renderer.IItemRenderer.Companion.ROTATE_FLAG_NORMAL
 import com.angcyo.library.L
 import com.angcyo.library.ex._drawable
 import kotlin.math.atan2
@@ -66,7 +68,11 @@ class RotateControlPoint : ControlPoint() {
                 )
                 if (angle != 0f) {
                     L.i("即将旋转:$angle °")
-                    val assistant = canvasDelegate.smartAssistant.smartRotateBy(itemRenderer, angle)
+                    val assistant = canvasDelegate.smartAssistant.smartRotateBy(
+                        itemRenderer,
+                        angle,
+                        ROTATE_FLAG_MOVE
+                    )
                     isRotated = true
                     _touchPoint.set(_movePoint)
                 }
@@ -97,7 +103,7 @@ class RotateControlPoint : ControlPoint() {
                                         item.updateSelectBounds()
                                     }
                                 } else {
-                                    item.rotateBy(originRotate - newRotate)
+                                    item.rotateBy(originRotate - newRotate, ROTATE_FLAG_NORMAL)
                                 }
                             }
 
@@ -113,7 +119,7 @@ class RotateControlPoint : ControlPoint() {
                                         item.updateSelectBounds()
                                     }
                                 } else {
-                                    item.rotateBy(newRotate - originRotate)
+                                    item.rotateBy(newRotate - originRotate, ROTATE_FLAG_NORMAL)
                                 }
                             }
                         })

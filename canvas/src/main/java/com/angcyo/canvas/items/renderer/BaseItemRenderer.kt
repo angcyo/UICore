@@ -331,7 +331,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     /**旋转元素, 旋转操作不能用matrix, 不能将操作数据更新到bounds
      * [degrees] 旋转的角度*/
-    override fun rotateBy(degrees: Float) {
+    override fun rotateBy(degrees: Float, rotateFlag: Int) {
         /*_tempMatrix.reset()
        getRendererBounds().apply {
            _tempMatrix.postRotate(degrees, centerX(), centerY())
@@ -342,7 +342,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
             rotate += degrees
             rotate %= 360
         }
-        itemRotateChanged(oldRotate)
+        itemRotateChanged(oldRotate, rotateFlag)
         L.i("旋转by->$degrees $rotate")
     }
 
