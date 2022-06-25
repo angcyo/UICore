@@ -1038,5 +1038,33 @@ class CanvasDelegate(val view: View) : ICanvasView {
         refresh()
     }
 
+    /**排序
+     * [toRendererList] 最后的顺序结果*/
+    fun arrangeSort(toRendererList: List<BaseItemRenderer<*>>, strategy: Strategy) {
+        val newList = toRendererList.toList()
+        val oldList = itemsRendererList
+        if (oldList.isChange(newList)) {
+            //数据改变过
+            val step: ICanvasStep = object : ICanvasStep {
+                override fun runUndo() {
+                    itemsRendererList.resetAll(oldList)
+                    dispatchItemSortChanged(oldList)
+                }
+
+                override fun runRedo() {
+                    itemsRendererList.resetAll(newList)
+                    dispatchItemSortChanged(newList)
+                }
+            }
+
+            step.runRedo()
+            if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+                getCanvasUndoManager().addUndoAction(step)
+            }
+            //刷新
+            refresh()
+        }
+    }
+
     //</editor-fold desc="操作方法">
 }
