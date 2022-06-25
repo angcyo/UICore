@@ -3,6 +3,7 @@ package com.angcyo.canvas.core
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
+import androidx.annotation.UiThread
 import com.angcyo.canvas.utils.*
 import com.angcyo.library.ex.emptyRectF
 import com.angcyo.library.ex.matrixAnimator
@@ -76,6 +77,7 @@ class CanvasViewBox(val canvasView: ICanvasView) {
     }
 
     /**刷新*/
+    @UiThread
     fun refresh(newMatrix: Matrix) {
         oldMatrix.set(matrix)
         canvasView.dispatchCanvasBoxMatrixChangeBefore(matrix, newMatrix)

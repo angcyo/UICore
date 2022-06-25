@@ -3,6 +3,7 @@ package com.angcyo.canvas
 import android.graphics.*
 import android.view.MotionEvent
 import android.view.View
+import androidx.annotation.UiThread
 import androidx.core.graphics.withClip
 import androidx.core.graphics.withMatrix
 import androidx.core.graphics.withRotation
@@ -469,6 +470,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
     /**获取视图中指定坐标宽度的图片
      * [left] [top] 左上角的像素坐标
      * [width] [height] 需要获取的像素高度*/
+    @UiThread
     fun getBitmap(left: Float, top: Float, width: Int, height: Int): Bitmap {
         val oldBoxRect = emptyRectF()
         oldBoxRect.set(getCanvasViewBox().contentRect)
