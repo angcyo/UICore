@@ -94,12 +94,12 @@ fun Int.alpha(alpha: Float): Int {
 }
 
 /**0xFFFF8000*/
-fun Int.toHexColorString(): String {
+fun Int.toHexColorString(prefix: String = "#"): String {
     val a = Color.alpha(this)
     val r = Color.red(this)
     val g = Color.green(this)
     val b = Color.blue(this)
-    return String.format(Locale.getDefault(), "0x%02X%02X%02X%02X", a, r, g, b)
+    return String.format(Locale.getDefault(), "${prefix}%02X%02X%02X%02X", a, r, g, b)
 }
 
 @ColorInt
