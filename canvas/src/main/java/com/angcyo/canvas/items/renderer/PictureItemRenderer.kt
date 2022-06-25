@@ -76,6 +76,8 @@ class PictureItemRenderer(canvasView: ICanvasView) :
     /**当渲染的[drawable]改变后, 调用此方法, 更新bounds*/
     fun updatePictureDrawableBounds(oldWidth: Float = 0f, oldHeight: Float = 0f) {
         getRendererItem()?.let { item ->
+            var isUpdate = false
+
             val bounds = getBounds()
 
             val width = bounds.width()
@@ -87,6 +89,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
             if (bounds.isNoSize() || oldWidth == 0f || oldHeight == 0f) {
                 //首次更新bounds
                 if (width != newWith || height != newHeight) {
+                    isUpdate = true
                     updateBounds(newWith, newHeight)
                 }
             } else {
@@ -96,20 +99,28 @@ class PictureItemRenderer(canvasView: ICanvasView) :
                 if (scaleWidth == 1f && scaleHeight == 1f) {
                     //限制目标大小到原来的大小
                     limitMaxWidthHeight(newWith, newHeight, oldWidth, oldHeight).apply {
+                        isUpdate = true
                         updateBounds(this[0], this[1])
                     }
                 } else {
                     //重新缩放当前的大小,达到和原来的缩放效果一致性
                     if ((width >= height && newWith >= newHeight) || (width < height && newWith < newHeight)) {
                         //方向一致, 比如一致的宽图, 一致的长图
+                        isUpdate = true
                         updateBounds(newWith * scaleWidth, newHeight * scaleHeight)
                     } else {
                         //方向不一致
+                        isUpdate = true
                         updateBounds(newWith * scaleHeight, newHeight * scaleWidth)
                     }
                 }
             }
-            refresh()
+
+            //未被更新
+            if (!isUpdate) {
+                canvasView.dispatchItemRenderUpdate(this)
+                refresh()
+            }
         }
     }
 

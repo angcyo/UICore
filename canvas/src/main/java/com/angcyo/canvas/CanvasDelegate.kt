@@ -262,6 +262,13 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
     }
 
+    override fun dispatchItemRenderUpdate(item: IRenderer) {
+        super.dispatchItemRenderUpdate(item)
+        canvasListenerList.forEach {
+            it.onItemRenderUpdate(item)
+        }
+    }
+
     override fun dispatchItemLockScaleRatioChanged(item: BaseItemRenderer<*>) {
         super.dispatchItemLockScaleRatioChanged(item)
         canvasListenerList.forEach {

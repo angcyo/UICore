@@ -33,8 +33,13 @@ interface ICanvasView : IComponent {
      * [CanvasUndoManager]*/
     fun dispatchCanvasUndoChanged() {}
 
-    /**分发渲染器可见性改变*/
+    /**分发渲染器可见性改变
+     * [com.angcyo.canvas.core.ICanvasListener.onItemVisibleChanged]*/
     fun dispatchItemVisibleChanged(item: IRenderer, visible: Boolean) {}
+
+    /**分发渲染更新
+     * [com.angcyo.canvas.core.ICanvasListener.onItemRenderUpdate]*/
+    fun dispatchItemRenderUpdate(item: IRenderer) {}
 
     /**[com.angcyo.canvas.core.component.control.LockControlPoint.onClickControlPoint]*/
     fun dispatchItemLockScaleRatioChanged(item: BaseItemRenderer<*>) {}

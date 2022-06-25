@@ -1,9 +1,6 @@
 package com.angcyo.canvas.items.renderer
 
-import android.graphics.Matrix
-import android.graphics.Path
-import android.graphics.PointF
-import android.graphics.RectF
+import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.widget.LinearLayout
 import androidx.core.graphics.withRotation
@@ -11,6 +8,7 @@ import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.*
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.renderer.BaseRenderer
+import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.PictureShapeItem
 import com.angcyo.canvas.utils._tempPoint
@@ -103,6 +101,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         if (reason.notify) {
             canvasView.dispatchItemBoundsChanged(this, reason, changeBeforeBounds)
         }
+        canvasView.dispatchItemRenderUpdate(this)
         //invalidate
         refresh()
     }
@@ -356,6 +355,32 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         changeBounds {
             adjustSizeWithRotate(width, height, rotate, adjustType)
         }
+    }
+
+    /**更新笔的颜色*/
+    open fun updatePaintColor(color: Int, strategy: Strategy = Strategy.normal) {
+        val rendererItem = getRendererItem() ?: return
+        val oldValue = rendererItem.paint.color
+        if (oldValue == color) {
+            return
+        }
+        rendererItem.paint.color = color
+        rendererItem.updatePaint()
+
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    updatePaintColor(oldValue, Strategy.undo)
+                }
+
+                override fun runRedo() {
+                    updatePaintColor(color, Strategy.redo)
+                }
+            })
+        }
+        canvasView.dispatchItemRenderUpdate(this)
+        //刷新
+        refresh()
     }
 
     //</editor-fold desc="控制方法">
