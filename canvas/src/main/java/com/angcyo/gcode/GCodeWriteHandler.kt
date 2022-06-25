@@ -17,13 +17,16 @@ import kotlin.math.absoluteValue
 class GCodeWriteHandler {
 
     companion object {
+
         /**如果2点之间的间隙大于此值, 则使用G0指令
-         * 0.5mm*/
-        const val PATH_GAP = 0.5f
+         * 0.5mm
+         * 1K:0.1 2K:0.05 4K:0.025f
+         * */
+        const val GCODE_SPACE_GAP = 0.5f
     }
 
     /**非像素值, 真实值*/
-    val gapValue: Float = PATH_GAP
+    val gapValue: Float = GCODE_SPACE_GAP
 
     val _xList = mutableListOf<Float>()
     val _yList = mutableListOf<Float>()
@@ -174,21 +177,24 @@ class GCodeWriteHandler {
             list.add(value)
         }
 
-        val xChangedType = valueChangedType(_xList, x)
-        val yChangedType = valueChangedType(_yList, y)
-
-        if (xChangedType == CHANGED || yChangedType == CHANGED ||
-            (xChangedType == SAME_GAP && yChangedType == SAME_GAP)//斜向
-        ) {
-            //此时G0
+        if (_xList.isEmpty() && _yList.isEmpty()) {
             closeCnc(writer)
-            val firstX = _xList.firstOrNull() ?: x
-            val firstY = _yList.firstOrNull() ?: y
-            writer.appendLine("G0 X${firstX} Y${firstY}")
+            writer.appendLine("G0 X${x} Y${y}")
+        } else {
+            val xChangedType = valueChangedType(_xList, x)
+            val yChangedType = valueChangedType(_yList, y)
 
-            //G1
-            if (_xList.size() > 1 && _yList.size() > 1) {
-                _writeLastG1(writer)
+            if (xChangedType == CHANGED || yChangedType == CHANGED ||
+                (xChangedType == SAME_GAP && yChangedType == SAME_GAP)//斜向
+            ) {
+                //G1
+                if (_xList.size() > 1 && _yList.size() > 1) {
+                    _writeLastG1(writer)
+                }
+
+                //此时G0
+                closeCnc(writer)
+                writer.appendLine("G0 X${x} Y${y}")
             }
         }
 
@@ -198,7 +204,7 @@ class GCodeWriteHandler {
 
     fun _writeLastG1(writer: Appendable) {
         if (_xList.isNotEmpty() && _yList.isNotEmpty()) {
-            //旧数据
+            //如果有旧数据
             openCnc(writer)
 
             val lastX = _xList.last()
