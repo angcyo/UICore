@@ -628,14 +628,14 @@ fun IntentConfig.transition(sharedElement: View?, sharedElementName: String? = n
 /**是否在主界面所在的task中*/
 fun Context?.baseActivityIsMainActivity(): Boolean = runningTasks(1).firstOrNull()?.run {
     val callingPackageName = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        //baseActivity?.className
-        topActivity?.className
-    } else {
+        baseActivity?.className
         //topActivity?.className
+    } else {
+        topActivity?.className
         //baseActivity?.className
         //baseIntent.component?.className
         //origActivity?.className
-        null
+        //null
     }
     DslAHelper.isMainActivity(callingPackageName)
 } ?: false
