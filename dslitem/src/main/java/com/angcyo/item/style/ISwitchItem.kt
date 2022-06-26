@@ -40,6 +40,9 @@ interface ISwitchItem : IAutoInitItem {
                     val checked = itemSwitchChecked
                     itemSwitchChecked = isChecked
                     if (checked != itemSwitchChecked) {
+                        if (this@ISwitchItem is DslAdapterItem) {
+                            itemChanging = true
+                        }
                         switchItemConfig.itemSwitchChangedAction(itemSwitchChecked)
                     }
                 }
