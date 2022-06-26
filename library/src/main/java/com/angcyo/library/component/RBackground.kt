@@ -1,10 +1,16 @@
 package com.angcyo.library.component
 
 import android.app.Activity
+import android.app.ActivityManager
+import android.app.ActivityManager.RunningAppProcessInfo
 import android.app.Application
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.util.SparseArray
+import com.angcyo.library.app
 import java.lang.ref.WeakReference
+
 
 /**
  * 应用程序后台通知
@@ -139,8 +145,63 @@ object RBackground {
     fun unregisterObserver(observer: OnBackgroundObserver) {
         observers.remove(observer)
     }
+
+    //region ---静态方法---
+
+    /**
+     * 将本应用置顶到最前端, 将应用前台显示
+     * 当本应用位于后台时，则将它切换到最前端
+     *
+     * @param context
+     */
+    fun moveAppToFront(context: Context = app()) {
+        if (!isRunningForeground(context)) {
+            //获取ActivityManager
+            val activityManager =
+                context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+
+            //获得当前运行的task(任务)
+            val taskInfoList = activityManager.getRunningTasks(100)
+            for (taskInfo in taskInfoList) {
+                //找到本应用的 task，并将它切换到前台
+                if (taskInfo.topActivity?.packageName == context.packageName) {
+                    val id = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        taskInfo.taskId
+                    } else {
+                        taskInfo.id
+                    }
+                    activityManager.moveTaskToFront(id, 0)
+                    break
+                }
+            }
+        }
+    }
+
+    /**
+     * 判断本应用是否已经位于最前端
+     *
+     * @param context
+     * @return 本应用已经位于最前端时，返回 true；否则返回 false
+     */
+    fun isRunningForeground(context: Context = app()): Boolean {
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val appProcessInfoList = activityManager.runningAppProcesses
+        //枚举进程
+        for (appProcessInfo in appProcessInfoList) {
+            if (appProcessInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                if (appProcessInfo.processName == context.applicationInfo.processName) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    //endregion ---静态方法---
+
 }
 
+/**观察*/
 interface OnBackgroundObserver {
     fun onActivityChanged(stack: SparseArray<String>, background: Boolean)
 }
