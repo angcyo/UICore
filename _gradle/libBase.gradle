@@ -97,5 +97,5 @@ dependencies {
 //apply from: allGradle.version
 apply from: allGradle.versionForce
 apply from: allGradle.base
-apply from: allGradle.jar
+//apply from: allGradle.jar
 apply from: allGradle.publish
