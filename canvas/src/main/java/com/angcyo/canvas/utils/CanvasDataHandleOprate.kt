@@ -186,16 +186,19 @@ object CanvasDataHandleOprate {
      * [Gravity.TOP]:水平从上开始左右右左扫描 [Gravity.BOTTOM]:
      *
      * [threshold] 当色值>=此值时, 忽略数据 255白色 [0~255]
-     * [lineSpace] 每一行之间的间隙, 毫米单位. //1K:0.1 2K:0.05 4K:0.025f
+     * [lineSpace] 每一行之间的间隙, 毫米单位. (像素采样分辨率, 间隔多少个像素扫描) //1K:0.1 2K:0.05 4K:0.025f
+     *             如果是文本信息, 建议使用 4K: [GCodeWriteHandler.GCODE_SPACE_4K]
      * */
     fun bitmapToGCode(
         bitmap: Bitmap,
         gravity: Int? = null,
         lineSpace: Float = 0.1f,
+        gapValue: Float = GCodeWriteHandler.GCODE_SPACE_GAP,
         threshold: Int = 255,
         outputFile: File = _defaultGCodeOutputFile()
     ): File {
         val gCodeWriteHandler = GCodeWriteHandler()
+        gCodeWriteHandler.gapValue = gapValue
 
         val width = bitmap.width
         val height = bitmap.height
@@ -211,8 +214,9 @@ object CanvasDataHandleOprate {
         //像素单位转成mm单位
         val mmValueUnit = MmValueUnit()
 
-        //转成像素
-        val lineStep = mmValueUnit.convertValueToPixel(lineSpace).roundToInt()
+        //转成像素值
+        var lineStep = mmValueUnit.convertValueToPixel(lineSpace).roundToInt()
+        lineStep = max(1, lineStep) //最小为1个像素差距
 
         //反向读取数据, Z形方式
         var isReverseDirection = false

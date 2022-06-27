@@ -22,11 +22,16 @@ class GCodeWriteHandler {
          * 0.5mm
          * 1K:0.1 2K:0.05 4K:0.025f
          * */
-        const val GCODE_SPACE_GAP = 0.5f
+        const val GCODE_SPACE_GAP = 0.15f
+
+        /**分辨率越高, 间隙越小, 越清晰*/
+        const val GCODE_SPACE_1K = 0.1f
+        const val GCODE_SPACE_2K = 0.05f
+        const val GCODE_SPACE_4K = 0.025f
     }
 
     /**非像素值, 真实值*/
-    val gapValue: Float = GCODE_SPACE_GAP
+    var gapValue: Float = GCODE_SPACE_GAP
 
     val _xList = mutableListOf<Float>()
     val _yList = mutableListOf<Float>()
