@@ -97,10 +97,18 @@ class PictureItemRenderer(canvasView: ICanvasView) :
                 val scaleWidth = width / oldWidth
                 val scaleHeight = height / oldHeight
                 if (scaleWidth == 1f && scaleHeight == 1f) {
-                    //限制目标大小到原来的大小
-                    limitMaxWidthHeight(newWith, newHeight, oldWidth, oldHeight).apply {
+                    if ((width >= height && newWith >= newHeight) || (width < height && newWith < newHeight)) {
+                        //方向一致, 比如一致的宽图, 一致的长图
+
+                        //限制目标大小到原来的大小
+                        limitMaxWidthHeight(newWith, newHeight, oldWidth, oldHeight).apply {
+                            isUpdate = true
+                            updateBounds(this[0], this[1])
+                        }
+                    } else {
+                        //方向不一致, 使用新的宽高
                         isUpdate = true
-                        updateBounds(this[0], this[1])
+                        updateBounds(newWith, newHeight)
                     }
                 } else {
                     //重新缩放当前的大小,达到和原来的缩放效果一致性
