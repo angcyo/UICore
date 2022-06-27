@@ -2,7 +2,6 @@ package com.angcyo.canvas.items.renderer
 
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.RectF
 import android.graphics.Typeface
 import android.text.TextPaint
 import com.angcyo.canvas.ScalePictureDrawable
