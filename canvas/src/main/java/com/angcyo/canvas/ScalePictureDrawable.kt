@@ -24,10 +24,20 @@ open class ScalePictureDrawable(picture: Picture) : PictureDrawable(picture) {
 
     var scaleRenderRect = RectF()
 
+    /**返回是否需要绘制*/
+    fun checkDrawThreshold(): Boolean {
+        return true
+        /*if (scalePictureX.absoluteValue >= 0.1f && scalePictureY.absoluteValue >= 0.1f) {
+            return true
+        }
+        return false*/
+    }
+
     override fun draw(canvas: Canvas) {
-        if (scalePictureX != 0f && scalePictureY != 0f) {
+        if (checkDrawThreshold()) {
             save(canvas)
-            canvas.clipRect(bounds)
+            //canvas.clipRect(bounds) //不需要clip.
+            //canvas.clipRect(scaleRenderRect)
             canvas.translate(bounds.left.toFloat(), bounds.top.toFloat())
             canvas.scale(scalePictureX, scalePictureY, scalePointX, scalePointY)
             canvas.drawPicture(picture)
