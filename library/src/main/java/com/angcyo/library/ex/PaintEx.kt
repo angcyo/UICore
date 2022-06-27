@@ -2,6 +2,8 @@ package com.angcyo.library.ex
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.Rect
 import android.text.TextPaint
 import com.angcyo.library.R
 
@@ -44,4 +46,30 @@ fun Canvas.drawTextByLT(text: CharSequence, x: Float, y: Float, paint: Paint) {
     val drawX = x
     val drawY = y + paint.textHeight() - paint.descent()
     drawText(text, 0, text.length, drawX, drawY, paint)
+}
+
+/**获取文本的边界, 包含所有文本的最小矩形*/
+fun Paint.textBounds(text: CharSequence?, result: Rect = Rect(0, 0, 0, 0)): Rect {
+    if (text == null) {
+        return result
+    }
+    getTextBounds(text, 0, text.length, result)
+    return result
+}
+
+/**获取文本描边的[Path]*/
+fun Paint.textPath(text: String?, result: Path = Path()): Path {
+    if (text == null) {
+        return result
+    }
+    val textBounds = textBounds(text)
+    getTextPath(
+        text,
+        0,
+        text.length,
+        textBounds.left.toFloat(),
+        textBounds.height().toFloat(),
+        result
+    )
+    return result
 }

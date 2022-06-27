@@ -172,6 +172,9 @@ fun Path.eachPath(step: Float = 1f, block: (index: Int, posArray: FloatArray) ->
 
 /**计算一组[Path]的bounds*/
 fun List<Path>.computeBounds(bounds: RectF = RectF(), exact: Boolean = true): RectF {
+    if (isEmpty()) {
+        return bounds
+    }
     bounds.set(Float.MAX_VALUE, Float.MAX_VALUE, Float.MIN_VALUE, Float.MIN_VALUE)
     val pathRect = RectF()
     for (path in this) {
