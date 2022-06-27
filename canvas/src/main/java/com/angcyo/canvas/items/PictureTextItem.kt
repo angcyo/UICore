@@ -5,7 +5,9 @@ import android.graphics.Rect
 import android.widget.LinearLayout
 import com.angcyo.canvas.ScalePictureDrawable
 import com.angcyo.library.ex.*
+import kotlin.math.absoluteValue
 import kotlin.math.max
+import kotlin.math.tan
 
 /**
  * 文本组件渲染数据
@@ -120,8 +122,8 @@ class PictureTextItem : PictureItem() {
 
     /**单行文本字符的宽度*/
     fun measureTextWidth(text: String): Float {
+        paint.textBounds(text, _textMeasureBounds)
         val textWidth = if (compactText) {
-            paint.textBounds(text, _textMeasureBounds)
             _textMeasureBounds.width().toFloat()
         } else {
             paint.textWidth(text)
@@ -132,10 +134,10 @@ class PictureTextItem : PictureItem() {
 
         //倾斜的宽度
         val skewWidth = if (paint.textSkewX != 0f) {
-            //tan(paint.textSkewX.absoluteValue) * measureTextHeight(text)
+            tan(paint.textSkewX.absoluteValue) * (_textMeasureBounds.height() / 3)
             //paint.getTextBounds(drawText ?: "", 0, drawText?.length ?: 0, tempRect)
             //(tempRect.width() - width).toInt()
-            0f
+            //0f
         } else {
             0f
         }
