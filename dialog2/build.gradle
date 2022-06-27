@@ -1,0 +1,27 @@
+apply from: allGradle.libBase
+
+dependencies {
+    implementation project(allModule.dslitem)
+    implementation project(allModule.library)
+
+    //https://github.com/Bigkoo/Android-PickerView
+    //https://jcenter.bintray.com/com/contrarywind/wheelview/
+    //api 'com.contrarywind:wheelview:4.1.0'
+    //https://jitpack.io/#WaytoInc/Android-PickerView
+    //https://github.com/WaytoInc/Android-PickerView
+    api 'com.github.WaytoInc.Android-PickerView:wheelview:4.1.0.6'
+    api 'com.github.WaytoInc.Android-PickerView:pickerview:4.1.0.6'
+    //api 'com.github.WaytoInc.Android-PickerView:wheelview:master-SNAPSHOT'
+    //api 'com.github.WaytoInc.Android-PickerView:pickerview:master-SNAPSHOT'
+
+    //https://github.com/huanghaibin-dev/CalendarView
+    //api 'com.haibin:calendarview:3.6.7'
+    //https://github.com/angcyo/CalendarView
+    api 'com.github.angcyo:CalendarView:3.7.1.42'
+
+    //https://github.com/LaserPeckerIst/ColorPickerView
+    api 'com.github.LaserPeckerIst:ColorPickerView:2.2.4.5'
+
+    //https://github.com/LaserPeckerIst/ColorPicker
+    api 'com.github.LaserPeckerIst:ColorPicker:1.1.0.2'
+}

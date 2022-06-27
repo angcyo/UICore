@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?><!--suppress ALL -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/calendar_bg_color"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/lib_min_item_height">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/pre_month_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/lib_xhdpi"
+            android:drawableLeft="@drawable/icon_prev"
+            android:drawablePadding="@dimen/lib_hdpi"
+            android:padding="@dimen/lib_hdpi"
+            android:text="上一个月"
+            android:textColor="@color/text_sub_color" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/next_month_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="@dimen/lib_xhdpi"
+            android:drawableRight="@drawable/icon_next"
+            android:drawablePadding="@dimen/lib_hdpi"
+            android:padding="@dimen/lib_hdpi"
+            android:text="下一个月"
+            android:textColor="@color/text_sub_color" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/current_month_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="@dimen/lib_hdpi"
+            android:text="2021-10-20"
+            android:textColor="@color/lib_white"
+            android:textSize="@dimen/text_sub_size" />
+
+    </FrameLayout>
+
+    <com.haibin.calendarview.CalendarLayout
+        android:id="@+id/calendar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:calendar_content_view_id="@+id/lib_recycler_view"
+        app:calendar_show_mode="both_month_week_view">
+
+        <!--https://github.com/huanghaibin-dev/CalendarView/blob/master/QUESTION_ZH.md-->
+        <com.haibin.calendarview.RCalendarView
+            android:id="@+id/calendar_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:current_day_lunar_text_color="@color/text_sub_color"
+            app:current_day_text_color="@color/lib_white"
+            app:current_month_lunar_text_color="@color/text_sub_color"
+            app:current_month_text_color="@color/lib_white"
+            app:max_year="2099"
+            app:min_year="2021"
+            app:month_view="com.haibin.calendarview.SingleMonthView"
+            app:month_view_auto_select_day="last_select_day"
+            app:month_view_show_mode="mode_only_current"
+            app:other_month_lunar_text_color="@color/text_sub_color"
+            app:other_month_text_color="#708293"
+            app:scheme_text="计"
+            app:scheme_theme_color="#FFAE00"
+            app:select_mode="single_mode"
+            app:selected_lunar_text_color="@color/lib_white"
+            app:selected_text_color="@color/lib_white"
+            app:selected_theme_color="#E41C1C"
+            app:week_background="@color/calendar_bg_color"
+            app:week_start_with="mon"
+            app:week_text_color="#708293"
+            app:week_view="com.haibin.calendarview.SingleWeekView"
+            app:year_view_background="@color/calendar_bg_color"
+            app:year_view_current_day_text_color="#E41C1C"
+            app:year_view_day_text_color="@color/text_sub_color"
+            app:year_view_month_text_color="@color/lib_white"
+            app:year_view_show="false"
+            tools:current_day_text_color="@color/colorAccent" />
+
+        <include layout="@layout/lib_recycler_layout" />
+
+    </com.haibin.calendarview.CalendarLayout>
+
+</LinearLayout>

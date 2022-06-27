@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_dialog_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_white_top_round_bg_shape"
+    android:orientation="vertical"
+    tools:layout_gravity="bottom">
+
+    <include
+        android:id="@+id/title_layout"
+        layout="@layout/lib_dialog_base_title_layout" />
+
+    <View
+        android:id="@+id/title_line_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/lib_line_px"
+        android:background="@color/lib_line" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dialog_control_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/lib_padding_left">
+
+        <com.jaredrummler.android.colorpicker.ColorPickerView
+            android:id="@+id/lib_color_picker_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:initialColor="@color/colorAccent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:preferenceName="lib_color_picker_view"
+            app:selector="@drawable/wheel" />
+
+        <com.skydoves.colorpickerview.AlphaTileView
+            android:id="@+id/lib_alpha_tile_view"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="@dimen/lib_xhdpi"
+            android:layout_marginRight="60dp"
+            android:background="@android:color/white"
+            android:orientation="horizontal"
+            app:borderColor="@android:color/darker_gray"
+            app:borderSize="1dp"
+            app:drawBorder="true"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lib_color_picker_view"
+            app:tileSize="20" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/lib_text_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/lib_xhdpi"
+            android:textColor="@color/colorAccent"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/lib_alpha_tile_view"
+            app:layout_constraintLeft_toRightOf="@id/lib_alpha_tile_view"
+            app:layout_constraintTop_toTopOf="@id/lib_alpha_tile_view" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

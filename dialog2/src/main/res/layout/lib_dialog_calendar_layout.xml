@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_white_top_round_bg_shape"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/title_layout"
+        layout="@layout/lib_dialog_base_title_layout" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/lib_line" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/current_calendar_tip"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="left|center_vertical"
+            android:gravity="center_vertical"
+            android:padding="@dimen/lib_xhdpi"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            tools:text="2019年7月" />
+
+        <TextView
+            android:id="@+id/selector_calendar_tip"
+            style="@style/LibSubTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right|center_vertical"
+            android:gravity="center_vertical"
+            android:lineSpacingExtra="4dp"
+            android:paddingRight="@dimen/lib_xhdpi"
+            tools:text="始:2019-07-05\n止:2019-07-05" />
+
+    </FrameLayout>
+
+    <com.haibin.calendarview.RCalendarView
+        android:id="@+id/calendar_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:calendar_height="65dp"
+        app:month_view="com.haibin.calendarview.RRangeMonthView"
+        app:month_view_show_mode="mode_all"
+        app:select_mode="single_mode"
+        app:selected_lunar_text_color="@color/lib_white"
+        app:selected_text_color="@color/lib_white"
+        app:selected_theme_color="@color/colorAccent"
+        app:year_view="com.haibin.calendarview.RYearView" />
+
+</LinearLayout>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.contrarywind.view.WheelView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lib_wheel_view"
+    style="@style/LibWheelStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="1" />
