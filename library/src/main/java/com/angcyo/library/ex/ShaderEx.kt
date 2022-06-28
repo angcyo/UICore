@@ -49,6 +49,23 @@ fun linearGradientShader(
     return LinearGradient(x0, y0, x1, y1, colors, positions, tile)
 }
 
+fun linearGradientShader(
+    rect: RectF,
+    colors: IntArray,
+    positions: FloatArray? = null,
+    tile: TileMode = TileMode.REPEAT
+): LinearGradient {
+    return linearGradientShader(
+        rect.left,
+        rect.top,
+        rect.right,
+        rect.bottom,
+        colors,
+        positions,
+        tile
+    )
+}
+
 /**径向渐变着色器
  * 从中心点向外扩散的渐变
  *

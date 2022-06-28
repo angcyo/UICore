@@ -2,14 +2,12 @@ package com.angcyo.dialog2
 
 import android.app.Dialog
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import android.view.ViewGroup
-import com.angcyo.dialog.BaseDialogConfig
+import com.angcyo.dialog.BaseColorPickerDialog
 import com.angcyo.dialog.configBottomDialog
-import com.angcyo.library.L
 import com.angcyo.library.ex.*
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.motionEvent
@@ -29,13 +27,7 @@ import com.skydoves.colorpickerview.sliders.BrightnessSlideBar
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/06/14
  */
-class ColorPickerDialogConfig : BaseDialogConfig() {
-
-    /**默认的颜色*/
-    var initialColor: Int = Color.WHITE
-
-    /**选中的颜色*/
-    var selectedColor: Int = Color.TRANSPARENT
+class ColorPickerDialogConfig : BaseColorPickerDialog() {
 
     /**[setHsvPaletteDrawable]
      * 最后也是走[setPaletteDrawable]
@@ -55,25 +47,8 @@ class ColorPickerDialogConfig : BaseDialogConfig() {
     /**是否激活颜色的亮度*/
     var enableBrightness = true
 
-    /**选中回调, 返回true拦截默认操作*/
-    var colorPickerAction: (dialog: Dialog, color: Int) -> Boolean =
-        { dialog, color ->
-            L.i("选中颜色->$color")
-            false
-        }
-
     init {
-        dialogTitle = _string(R.string.dialog_color_picker)
         dialogLayoutId = R.layout.lib_dialog_color_picker_layout
-
-        positiveButtonListener = { dialog, _ ->
-
-            if (colorPickerAction.invoke(dialog, selectedColor)) {
-                //被拦截
-            } else {
-                dialog.dismiss()
-            }
-        }
     }
 
     override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
@@ -83,8 +58,7 @@ class ColorPickerDialogConfig : BaseDialogConfig() {
         val alphaSlideBar = dialogViewHolder.v<AlphaSlideBar>(R.id.lib_alpha_slide_bar)
         val brightnessSlideBar =
             dialogViewHolder.v<BrightnessSlideBar>(R.id.lib_brightness_slide_bar)
-        val alphaTileView =
-            dialogViewHolder.v<AlphaTileView>(R.id.lib_alpha_tile_view)
+        val alphaTileView = dialogViewHolder.v<AlphaTileView>(R.id.lib_alpha_tile_view)
         val textView = dialogViewHolder.tv(R.id.lib_text_view)
 
         dialogViewHolder.visible(R.id.lib_alpha_slide_bar, enableAlpha)

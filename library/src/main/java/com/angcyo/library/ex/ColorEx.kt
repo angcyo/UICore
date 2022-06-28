@@ -70,7 +70,11 @@ fun randomColorIn(random: Random, minValue: Int, maxValue: Int): Int {
 
 private var argbEvaluator: ArgbEvaluator = ArgbEvaluator()
 
-/**根据比例, 获取评估后的颜色值[fraction][0-1]*/
+/**根据比例, 获取评估后的颜色值.
+ * [fraction] [0~1]比例进度
+ * [startValue] 颜色的开始值
+ * [endValue] 颜色的结束值
+ * */
 fun evaluateColor(fraction: Float, startValue: Int, endValue: Int): Int {
     return argbEvaluator.evaluate(fraction, startValue, endValue) as Int
 }

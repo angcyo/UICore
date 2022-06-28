@@ -19,8 +19,9 @@ dependencies {
     //https://github.com/angcyo/CalendarView
     api 'com.github.angcyo:CalendarView:3.7.1.42'
 
+    //add in dialog
     //https://github.com/LaserPeckerIst/ColorPickerView
-    api 'com.github.LaserPeckerIst:ColorPickerView:2.2.4.5'
+    //api 'com.github.LaserPeckerIst:ColorPickerView:2.2.4.5'
 
     //https://github.com/LaserPeckerIst/ColorPicker
     api 'com.github.LaserPeckerIst:ColorPicker:1.1.0.2'

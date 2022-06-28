@@ -4,4 +4,6 @@
     <string name="dialog_negative">取消</string>
     <string name="dialog_neutral">中立</string>
     <string name="dialog_input_hint">请输入...</string>
+
+    <string name="dialog_color_picker">请选择颜色...</string>
 </resources>

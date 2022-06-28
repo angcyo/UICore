@@ -22,6 +22,10 @@ fun MotionEvent.isTouchFinish(): Boolean {
     return actionMasked == MotionEvent.ACTION_UP || actionMasked == MotionEvent.ACTION_CANCEL
 }
 
+fun MotionEvent.isTouchMove(): Boolean {
+    return actionMasked == MotionEvent.ACTION_MOVE
+}
+
 /**是否在当前view中touch*/
 fun MotionEvent.isTouchIn(view: View?): Boolean {
     if (view == null) {

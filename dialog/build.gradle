@@ -2,9 +2,7 @@ apply from: allGradle.libBase
 
 dependencies {
     implementation project(allModule.widget)
-
-    //doOnPreDraw
-    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation project(allModule.library)
 
     //com.angcyo.dialog.LoadingDialogKt.hideLoading
     implementation project(allModule.transition)
@@ -15,4 +13,7 @@ dependencies {
     //lifecycle
     implementation project(allModule.viewmodel)
 
+    //AlphaTileView
+    //https://github.com/LaserPeckerIst/ColorPickerView
+    api 'com.github.LaserPeckerIst:ColorPickerView:2.2.4.5'
 }

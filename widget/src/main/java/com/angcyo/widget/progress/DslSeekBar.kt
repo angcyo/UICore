@@ -306,7 +306,7 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
         GestureDetectorCompat(context, object : GestureDetector.SimpleOnGestureListener() {
 
             override fun onDown(e: MotionEvent): Boolean {
-                _onTouchMoveTo(e.x, e.y)
+                _onTouchMoveTo(e.x, e.y, false)
                 return true
             }
 
@@ -322,7 +322,7 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
                 var handle = false
                 if (absX > absY && e2 != null) {
                     parent.requestDisallowInterceptTouchEvent(true)
-                    _onTouchMoveTo(e2.x, e2.y)
+                    _onTouchMoveTo(e2.x, e2.y, false)
                     handle = true
                 }
                 return handle
@@ -356,7 +356,7 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     /**手指移动*/
-    open fun _onTouchMoveTo(x: Float, y: Float) {
+    open fun _onTouchMoveTo(x: Float, y: Float, isFinish: Boolean) {
         val progress: Int =
             floor(((x - _progressBound.left) / _progressBound.width() * progressMaxValue).toDouble()).toInt()
 
