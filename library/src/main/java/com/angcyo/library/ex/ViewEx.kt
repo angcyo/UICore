@@ -2,7 +2,9 @@ package com.angcyo.library.ex
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -14,6 +16,7 @@ import android.widget.EditText
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
+import androidx.appcompat.widget.TooltipCompat
 import androidx.core.content.ContextCompat
 import androidx.core.math.MathUtils.clamp
 import androidx.core.view.GestureDetectorCompat
@@ -589,5 +592,33 @@ fun CompoundButton.isCheckedAndEnable() = isChecked && isEnabled
 /**API 17*/
 fun View.isLayoutRtl() =
     ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_RTL
+
+/**[androidx.appcompat.widget.TooltipPopup.getAppRootView]*/
+fun View.appRootView(): View {
+    val rootView: View = rootView
+    val lp = rootView.layoutParams
+    if (lp is WindowManager.LayoutParams && (lp.type == WindowManager.LayoutParams.TYPE_APPLICATION)) {
+        // This covers regular app windows and Dialog windows.
+        return rootView
+    }
+    // For non-application window types (such as popup windows) try to find the main app window
+    // through the context.
+    var context: Context? = context
+    while (context is ContextWrapper) {
+        context = if (context is Activity) {
+            return context.window.decorView
+        } else {
+            context.baseContext
+        }
+    }
+    // Main app window not found, fall back to the anchor's root view. There is no guarantee
+    // that the tooltip position will be computed correctly.
+    return rootView
+}
+
+/**设置控件的长按提示文本*/
+fun View.tooltipText(text: CharSequence?) {
+    TooltipCompat.setTooltipText(this, text)
+}
 
 //</editor-fold desc="其他">

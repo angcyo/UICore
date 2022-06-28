@@ -32,7 +32,7 @@ fun Context.getStatusBarHeight(): Int {
         val resources = resources
         var result = 0
         val resourceId: Int = resources.getIdentifier("status_bar_height", "dimen", "android")
-        if (resourceId > 0) {
+        if (resourceId != 0) {
             result = resources.getDimensionPixelSize(resourceId)
         }
         result
@@ -48,7 +48,7 @@ fun Context.getNavBarHeight(): Int {
     return defaultDensityAdapter {
         val resources = resources
         val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
-        if (resourceId > 0) {
+        if (resourceId != 0) {
             resources.getDimensionPixelSize(resourceId)
         } else 0
     }

@@ -251,7 +251,7 @@ fun Activity.showDebugInfoView(
             val resourceId =
                 resources.getIdentifier("navigation_bar_height", "dimen", "android")
             var navBarHeight = 0
-            if (resourceId > 0) {
+            if (resourceId != 0) {
                 navBarHeight = resources.getDimensionPixelSize(resourceId)
             }
             layoutParams.bottomMargin = navBarHeight
