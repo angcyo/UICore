@@ -9,8 +9,8 @@ dependencies {
     //api 'com.contrarywind:wheelview:4.1.0'
     //https://jitpack.io/#WaytoInc/Android-PickerView
     //https://github.com/WaytoInc/Android-PickerView
-    api 'com.github.WaytoInc.Android-PickerView:wheelview:4.1.0.6'
-    api 'com.github.WaytoInc.Android-PickerView:pickerview:4.1.0.6'
+    api 'com.github.WaytoInc.Android-PickerView:wheelview:4.1.0.7'
+    api 'com.github.WaytoInc.Android-PickerView:pickerview:4.1.0.7'
     //api 'com.github.WaytoInc.Android-PickerView:wheelview:master-SNAPSHOT'
     //api 'com.github.WaytoInc.Android-PickerView:pickerview:master-SNAPSHOT'
 

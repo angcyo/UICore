@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="wheel_text_size">@dimen/text_main_size</dimen>
+    <dimen name="pickerview_textsize">@dimen/text_main_size</dimen>
 </resources>
