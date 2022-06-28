@@ -5,8 +5,8 @@ import android.content.Context
 import android.graphics.Color
 import com.angcyo.dialog.BaseDialogConfig
 import com.angcyo.dialog.configBottomDialog
-import com.angcyo.dialog2.R
 import com.angcyo.library.L
+import com.angcyo.library.ex._string
 import com.angcyo.library.ex.copy
 import com.angcyo.widget.DslViewHolder
 import com.jaredrummler.android.colorpicker.ColorPickerView
@@ -43,7 +43,7 @@ class HsvColorPickerDialogConfig : BaseDialogConfig() {
         }
 
     init {
-        dialogTitle = "请选择颜色"
+        dialogTitle = _string(R.string.dialog_color_picker)
         dialogLayoutId = R.layout.lib_dialog_hsv_color_picker_layout
 
         positiveButtonListener = { dialog, _ ->
