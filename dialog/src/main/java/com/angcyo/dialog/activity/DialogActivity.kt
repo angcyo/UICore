@@ -6,10 +6,13 @@ import android.os.Bundle
 import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.dialog.DslDialogConfig
 import com.angcyo.library.L
+import com.angcyo.library.annotation.Implementation
 import com.angcyo.library.app
 import com.angcyo.widget.DslViewHolder
 
 /**
+ * 用来承载[DslDialogConfig], 未完全实现.
+ *
  * [com.angcyo.dialog.R.style.LibDialogActivity]
  *
  * [com.angcyo.download.version.VersionUpdateActivity]
@@ -18,6 +21,7 @@ import com.angcyo.widget.DslViewHolder
  * @date 2020/03/07
  */
 
+@Implementation
 open class DialogActivity : BaseAppCompatActivity() {
 
     companion object {

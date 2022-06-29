@@ -238,3 +238,10 @@ fun enableComponent(componentClass: Class<*>, enable: Boolean = true, content: C
     else PackageManager.COMPONENT_ENABLED_STATE_DISABLED
     packageManager.setComponentEnabledSetting(component, state, PackageManager.DONT_KILL_APP)
 }
+
+/**防止自定义[View]中, 使用[Library.application]崩溃的问题*/
+fun View.attachInEditMode() {
+    if (isInEditMode) {
+        Library.application = context.applicationContext
+    }
+}

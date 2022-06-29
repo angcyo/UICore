@@ -67,8 +67,8 @@ fun Paint.textPath(text: String?, result: Path = Path()): Path {
         text,
         0,
         text.length,
-        textBounds.left.toFloat(),
-        textBounds.height().toFloat(),
+        -textBounds.left.toFloat(),
+        -textBounds.top.toFloat(),
         result
     )
     return result

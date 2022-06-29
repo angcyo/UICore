@@ -38,6 +38,24 @@
         <item name="button_stroke_width">@dimen/lib_line</item>
     </style>
 
+    <!--边框具有选择状态的样式-->
+    <style name="LibButtonBorderSelectorStyle" parent="DefaultButtonStyle">
+        <item name="button_normal_gradient_colors">""</item>
+        <item name="button_normal_stroke_color">@color/colorPrimaryDark</item>
+        <item name="button_normal_stroke_width">@dimen/lib_line</item>
+        <item name="button_select_text_color">@color/lib_white</item>
+        <item name="android:textColor">@color/text_general_color</item>
+    </style>
+
+    <!--灰色边框样式-->
+    <style name="LibButtonBorderGraySelectorStyle" parent="DefaultButtonStyle">
+        <item name="button_normal_gradient_colors">""</item>
+        <item name="button_normal_stroke_color">#E0E0E0</item>
+        <item name="button_normal_stroke_width">@dimen/lib_line</item>
+        <item name="button_text_color">@color/text_place_color</item>
+        <item name="button_press_text_color">@color/lib_white</item>
+    </style>
+
     <!--灰色边框线按钮样式-->
     <style name="LibButtonStrokeStyle" parent="LibBodyTextStyle">
         <item name="android:gravity">center</item>
@@ -91,24 +109,6 @@
         <item name="android:paddingRight">@dimen/lib_xhdpi</item>
         <item name="android:paddingTop">@dimen/lib_hdpi</item>
         <item name="android:paddingBottom">@dimen/lib_hdpi</item>
-    </style>
-
-    <!--边框具有选择状态的样式-->
-    <style name="LibButtonBorderSelectorStyle" parent="DefaultButtonStyle">
-        <item name="button_normal_gradient_colors">""</item>
-        <item name="button_normal_stroke_color">@color/colorPrimaryDark</item>
-        <item name="button_normal_stroke_width">@dimen/lib_line</item>
-        <item name="button_select_text_color">@color/lib_white</item>
-        <item name="android:textColor">@color/text_general_color</item>
-    </style>
-
-    <!--灰色边框样式-->
-    <style name="LibButtonBorderGraySelectorStyle" parent="DefaultButtonStyle">
-        <item name="button_normal_gradient_colors">""</item>
-        <item name="button_normal_stroke_color">#E0E0E0</item>
-        <item name="button_normal_stroke_width">@dimen/lib_line</item>
-        <item name="button_text_color">@color/text_place_color</item>
-        <item name="button_press_text_color">@color/lib_white</item>
     </style>
 
 </resources>

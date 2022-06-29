@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
 import com.angcyo.drawable.base.AbsDslDrawable
-import com.angcyo.library.Library
+import com.angcyo.library.attachInEditMode
 import com.angcyo.library.ex.have
 import kotlin.math.max
 
@@ -23,9 +23,7 @@ abstract class BaseDrawableView(context: Context, attributeSet: AttributeSet? = 
     val drawables = mutableListOf<AbsDslDrawable>()
 
     init {
-        if (isInEditMode) {
-            Library.application = context.applicationContext
-        }
+        attachInEditMode()
 
         initDrawables(drawables)
         drawables.forEach {
