@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TextPathAnimateView">
+        <attr name="r_path_animate_text" format="string" />
+        <attr name="r_path_text_size" format="dimension" />
+    </declare-styleable>
+</resources>
