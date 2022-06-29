@@ -149,7 +149,10 @@ fun ByteArray.toByteInt(): Int {
 /**将字节转换成无符号整型*/
 fun Byte.toHexInt() = toInt() and 0xFF
 
-/**将字节数组[-86, -69]转换成对应的整型数字[43707]*/
+/**
+ * 将字节数组[-86, -69]转换成对应的整型数字[43707]
+ * FFFF -> 65535
+ * */
 fun ByteArray.toHexInt() = toHexString(false).toHexInt()
 
 /**将十六进制字符[0101]转换成整型数组*/
