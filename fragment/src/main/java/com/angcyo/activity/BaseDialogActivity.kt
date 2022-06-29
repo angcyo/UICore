@@ -68,6 +68,6 @@ abstract class BaseDialogActivity : BaseAppCompatActivity() {
 
     open fun onFinish() {
         //去掉动画
-        overridePendingTransition(0, 0)
+        //overridePendingTransition(0, 0)
     }
 }

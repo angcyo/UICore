@@ -76,7 +76,7 @@ fun currentActivity(): Activity? {
         val activitiesField = activityThreadClass.getDeclaredField("mActivities")
         activitiesField.isAccessible = true
         val activities = activitiesField[activityThread] as Map<*, *>
-        var lastActivity: Activity? = RBackground.lastActivity?.get()
+        var lastActivity: Activity? = RBackground.lastActivityRef?.get()
         for (activityRecord in activities.values) {
             if (activityRecord != null) {
                 val activityRecordClass: Class<*> = activityRecord.javaClass

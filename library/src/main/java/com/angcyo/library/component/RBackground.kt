@@ -36,7 +36,7 @@ object RBackground {
     private val observers = mutableListOf<OnBackgroundObserver>()
 
     /**最后一个[Activity]*/
-    var lastActivity: WeakReference<Activity>? = null
+    var lastActivityRef: WeakReference<Activity>? = null
 
     /**当有[Activity]创建时, app之前是否是在后台*/
     var isCreatedFromBackground: Boolean = false
@@ -62,7 +62,7 @@ object RBackground {
         }
 
         override fun onActivityResumed(activity: Activity) {
-            lastActivity = WeakReference(activity)
+            lastActivityRef = WeakReference(activity)
             changeItem(activity.hashCode(), activity.javaClass.name, RESUMED)
 
             observers.forEach {
@@ -93,8 +93,8 @@ object RBackground {
         }
 
         override fun onActivityDestroyed(activity: Activity) {
-            if (lastActivity?.get() == activity) {
-                lastActivity = null
+            if (lastActivityRef?.get() == activity) {
+                lastActivityRef = null
             }
             removeItem(activity.hashCode(), activity.javaClass.name)
 
