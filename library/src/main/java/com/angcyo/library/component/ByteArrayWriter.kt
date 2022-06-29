@@ -52,7 +52,10 @@ class ByteArrayWriter(
         write(string.toByteArray())
     }
 
-    fun write(bytes: ByteArray) {
+    fun write(bytes: ByteArray?) {
+        if (bytes == null || bytes.isEmpty()) {
+            return
+        }
         if (limitMaxSize >= 0 && outputStream.size() >= limitMaxSize) {
             return
         }

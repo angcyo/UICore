@@ -57,16 +57,33 @@ fun String.padHexString(length: Int, padEnd: Boolean = true): String {
  * */
 fun ByteArray.copyTo(
     target: ByteArray,
-    fromStartPos: Int,
+    fromStartPos: Int = 0,
     targetStartPos: Int = 0,
     count: Int = target.size
 ) {
     System.arraycopy(this, fromStartPos, target, targetStartPos, count)
 }
 
+/**剔除字节数据, 或者填满字节数组到指定的长度*/
+fun ByteArray.trimAndPad(length: Int): ByteArray {
+    return if (size == length) {
+        //刚好相等
+        this
+    } else if (size > length) {
+        //需要剔除
+        val result = ByteArray(length)
+        copyTo(result, count = length)
+        result
+    } else {
+        //需要垫满
+        padHexByteArray(length, true)
+    }
+}
+
+/**填满字节数组到指定的长度[length], 如果已经超过则忽略
+ * [padEnd] 从尾部填满, 否则从头部填满*/
 fun ByteArray.padHexByteArray(length: Int, padEnd: Boolean = true): ByteArray {
     val bytes = this
-
     if (bytes.size >= length) {
         return bytes
     } else {
