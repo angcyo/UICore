@@ -69,7 +69,7 @@ open class LibApplication : Application(), LifecycleOwner {
 
     /**主进程初始化*/
     open fun onCreateMain() {
-        RBackground.init(this, object : OnBackgroundObserver {
+        RBackground.init(this, object : OnBackgroundObserver() {
             override fun onActivityChanged(stack: SparseArray<String>, background: Boolean) {
                 L.i(stack)
                 if (background) {

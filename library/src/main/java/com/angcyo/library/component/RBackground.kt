@@ -27,6 +27,7 @@ object RBackground {
     const val RESUMED = "onActivityResumed"
     const val PAUSED = "onActivityPaused"
     const val STOPPED = "onActivityStopped"
+    const val DESTROYED = "onActivityDestroyed"
     const val SAVE = "onActivitySaveInstanceState"
 
     /** class_name|state */
@@ -46,21 +47,37 @@ object RBackground {
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
             isCreatedFromBackground = isBackground()
             pushItem(activity.hashCode(), activity.javaClass.name, CREATE)
+
+            observers.forEach {
+                it.onActivityLifecycleChanged(activity, CREATE)
+            }
         }
 
         override fun onActivityStarted(activity: Activity) {
             changeItem(activity.hashCode(), activity.javaClass.name, STARTED)
+
+            observers.forEach {
+                it.onActivityLifecycleChanged(activity, STARTED)
+            }
         }
 
         override fun onActivityResumed(activity: Activity) {
             lastActivity = WeakReference(activity)
             changeItem(activity.hashCode(), activity.javaClass.name, RESUMED)
+
+            observers.forEach {
+                it.onActivityLifecycleChanged(activity, RESUMED)
+            }
         }
 
         override fun onActivityPaused(activity: Activity) {
             if (activity.isFinishing) {
             } else {
                 changeItem(activity.hashCode(), activity.javaClass.name, PAUSED)
+            }
+
+            observers.forEach {
+                it.onActivityLifecycleChanged(activity, PAUSED)
             }
         }
 
@@ -69,6 +86,10 @@ object RBackground {
             } else {
                 changeItem(activity.hashCode(), activity.javaClass.name, STOPPED)
             }
+
+            observers.forEach {
+                it.onActivityLifecycleChanged(activity, STOPPED)
+            }
         }
 
         override fun onActivityDestroyed(activity: Activity) {
@@ -76,11 +97,19 @@ object RBackground {
                 lastActivity = null
             }
             removeItem(activity.hashCode(), activity.javaClass.name)
+
+            observers.forEach {
+                it.onActivityLifecycleChanged(activity, DESTROYED)
+            }
         }
 
         override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
             //2021-7-6 注释
             //changeItem(activity.hashCode(), activity.javaClass.name, SAVE)
+
+            observers.forEach {
+                it.onActivityLifecycleChanged(activity, SAVE)
+            }
         }
     }
 
@@ -133,15 +162,16 @@ object RBackground {
     }
 
     /**观察程序进入后台*/
-    fun registerObserver(observer: OnBackgroundObserver, notify: Boolean = false) {
+    fun registerObserver(observer: OnBackgroundObserver, notifyFirst: Boolean = false) {
         if (!observers.contains(observer)) {
             observers.add(observer)
         }
-        if (notify) {
+        if (notifyFirst) {
             observer.onActivityChanged(stack, isBackground())
         }
     }
 
+    /**移除监听*/
     fun unregisterObserver(observer: OnBackgroundObserver) {
         observers.remove(observer)
     }
@@ -201,7 +231,22 @@ object RBackground {
 
 }
 
-/**观察*/
-interface OnBackgroundObserver {
-    fun onActivityChanged(stack: SparseArray<String>, background: Boolean)
+/**观察者*/
+abstract class OnBackgroundObserver {
+
+    /**前后台改变*/
+    open fun onActivityChanged(stack: SparseArray<String>, background: Boolean) {
+    }
+
+    /**生命周期改变
+     * [com.angcyo.library.component.RBackground.CREATE]
+     * [com.angcyo.library.component.RBackground.STARTED]
+     * [com.angcyo.library.component.RBackground.RESUMED]
+     * [com.angcyo.library.component.RBackground.PAUSED]
+     * [com.angcyo.library.component.RBackground.STOPPED]
+     * [com.angcyo.library.component.RBackground.DESTROYED]
+     * [com.angcyo.library.component.RBackground.SAVE]
+     * */
+    open fun onActivityLifecycleChanged(activity: Activity, state: String) {
+    }
 }

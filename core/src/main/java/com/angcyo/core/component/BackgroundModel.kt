@@ -19,7 +19,7 @@ class BackgroundModel : LifecycleViewModel() {
     val backgroundData = vmDataNull(false)
 
     init {
-        RBackground.registerObserver(object : OnBackgroundObserver {
+        RBackground.registerObserver(object : OnBackgroundObserver() {
             override fun onActivityChanged(stack: SparseArray<String>, background: Boolean) {
                 backgroundData.postValue(background)
             }
