@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Rect
+import android.os.Build
 import android.text.TextPaint
 import com.angcyo.library.R
 
@@ -53,7 +54,11 @@ fun Paint.textBounds(text: CharSequence?, result: Rect = Rect(0, 0, 0, 0)): Rect
     if (text == null) {
         return result
     }
-    getTextBounds(text, 0, text.length, result)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        getTextBounds(text, 0, text.length, result)
+    } else {
+        getTextBounds(text.toString(), 0, text.length, result)
+    }
     return result
 }
 
