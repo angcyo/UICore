@@ -17,6 +17,7 @@ import java.util.*
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 object DslFileHelper {
+
     var appContext: Context? = null
         get() = field ?: app()
 
@@ -91,6 +92,11 @@ object DslFileHelper {
             appendln()
         }
     }
+}
+
+/**获取一个文件路径*/
+fun appFilePath(name: String, folder: String = ""): String? {
+    return FileUtils.appRootExternalFolderFile(DslFileHelper.appContext, folder, name)?.absolutePath
 }
 
 fun CharSequence.wrapData() = DslFileHelper._wrapData2(this)
