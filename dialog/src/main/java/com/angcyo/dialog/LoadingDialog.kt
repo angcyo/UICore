@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultCaller
+import androidx.annotation.AnyThread
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -35,6 +36,7 @@ object LoadingDialog {
 //<editor-fold desc="隐藏对话框">
 
 /**隐藏最后一个dialog*/
+@AnyThread
 fun hideLoading(
     transition: Boolean = false,
     delay: Long = 888,
@@ -80,6 +82,7 @@ fun hideLoading(
 }
 
 /**将对话框的文本改变, 然后延迟关闭*/
+@AnyThread
 fun hideLoading(text: CharSequence?) {
     if (text.isNullOrEmpty()) {
         hideLoading()
