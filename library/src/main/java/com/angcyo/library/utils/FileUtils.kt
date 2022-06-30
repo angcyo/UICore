@@ -69,7 +69,7 @@ object FileUtils {
         context.getExternalFilesDir("")*/
 
         //context.getExternalFilesDir(onGetFolderPath(folder))
-        return libFilePath(onGetFolderPath(folder), context).file()
+        return libFolderPath(onGetFolderPath(folder), context).file()
     }
 
     /**
@@ -197,4 +197,12 @@ fun String?.writeTo(filePath: String?, append: Boolean = true): String? {
 /**获取文件夹全路径*/
 fun String.logFilePath(name: String = logFileName()): String {
     return FileUtils.appRootExternalFolderFile(this, name).absolutePath
+}
+
+/**
+ * 带Scheme的文件夹路径
+ * [com.angcyo.library.LibraryKt.libFolderPath]
+ * */
+fun appFolderPath(): String {
+    return FileUtils.appRootExternalFolder().absolutePath
 }
