@@ -355,6 +355,42 @@ fun Bitmap.grayHandle(alphaBgColor: Int = Color.TRANSPARENT): Bitmap {
     return result
 }
 
+/**将图片转灰度, 并且返回一张没有透明像素的图片
+ * [alphaBgColor] 透明像素时的替换颜色*/
+fun Bitmap.grayHandleAlpha(alphaBgColor: Int = Color.TRANSPARENT): Array<Bitmap> {
+    val width = width
+    val height = height
+
+    val resultBitmap = Bitmap.createBitmap(width, height, config)
+    val alphaBitmap = Bitmap.createBitmap(width, height, config)
+
+    val result = arrayOf(resultBitmap, alphaBitmap)
+
+    for (y in 0 until height) {
+        for (x in 0 until width) {
+            val color = getPixel(x, y)
+
+            if (color == Color.TRANSPARENT) {
+                //透明颜色
+                resultBitmap.setPixel(x, y, alphaBgColor)
+                alphaBitmap.setPixel(x, y, Color.WHITE)//默认白色背景
+            } else {
+                val r = Color.red(color)
+                val g = Color.green(color)
+                val b = Color.blue(color)
+
+                var value = (r + g + b) / 3
+                value = max(0, min(value, 255)) //限制0~255
+
+                val rgb = Color.rgb(value, value, value)
+                resultBitmap.setPixel(x, y, rgb)
+                alphaBitmap.setPixel(x, y, rgb)
+            }
+        }
+    }
+    return result
+}
+
 /**将图片转黑白
  * [threshold] 阈值, [0~255] [黑色~白色] 大于这个值的都是白色
  * [invert] 反色, 是否要将黑白颜色颠倒
@@ -405,6 +441,66 @@ fun Bitmap.blackWhiteHandle(
                 }
 
                 result.setPixel(x, y, Color.rgb(value, value, value))
+            }
+        }
+    }
+    return result
+}
+
+/**额外返回一张没有透明背景的图片*/
+fun Bitmap.blackWhiteHandleAlpha(
+    threshold: Int = 120,
+    invert: Boolean = false,
+    alphaBgColor: Int = Color.TRANSPARENT
+): Array<Bitmap> {
+    val width = width
+    val height = height
+
+    val resultBitmap = Bitmap.createBitmap(width, height, config)
+    val alphaBitmap = Bitmap.createBitmap(width, height, config)
+
+    val result = arrayOf(resultBitmap, alphaBitmap)
+
+    for (y in 0 until height) {
+        for (x in 0 until width) {
+            var color = getPixel(x, y)
+
+            if (color == Color.TRANSPARENT) {
+                //透明颜色
+                color = alphaBgColor
+            }
+
+            if (color == Color.TRANSPARENT) {
+                //依旧是透明
+                resultBitmap.setPixel(x, y, color)
+                alphaBitmap.setPixel(x, y, Color.WHITE)//默认白色背景
+            } else {
+                val r = Color.red(color)
+                val g = Color.green(color)
+                val b = Color.blue(color)
+
+                var value = (r + g + b) / 3
+                value = max(0, min(value, 255)) //限制0~255
+
+                value = if (value >= threshold) {
+                    //白色
+                    if (invert) {
+                        0x00
+                    } else {
+                        0xff
+                    }
+                } else {
+                    //黑色
+                    if (invert) {
+                        0xff
+                    } else {
+                        0x00
+                    }
+                }
+
+                val rgb = Color.rgb(value, value, value)
+                resultBitmap.setPixel(x, y, rgb)
+                alphaBitmap.setPixel(x, y, rgb)
             }
         }
     }
