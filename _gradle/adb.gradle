@@ -26,7 +26,8 @@ task _pullAllSchemaFolder(type: Exec, group: 'angcyo', description: '获取所�
     def path = '../.pull'
     def file = file(path)
     workingDir(path)
-    standardOutput = new ByteArrayOutputStream()
+    def output = new ByteArrayOutputStream()
+    standardOutput = output
     ext.output = {
         return standardOutput.toString("UTF8")
     }
@@ -36,15 +37,47 @@ task _pullAllSchemaFolder(type: Exec, group: 'angcyo', description: '获取所�
         def appIdList = getApplicationIdList(rootProject)
         println "准备pull:$appIdList -> " + file.absolutePath
 
-        appIdList.forEach { appId ->
-            try {
-                exec {
-                    ignoreExitValue = true
-                    commandLine 'adb', 'pull', "/sdcard/android/data/${appId}/files/${schema}/", file.absolutePath
+        //获取设备列表
+        /*
+          List of devices attached
+          901KPPB2061936	device
+          9888d3484749523837	device
+          emulator-5570	offline
+        * */
+        def deviceOutput = new ByteArrayOutputStream()
+        exec {
+            ignoreExitValue = true
+            commandLine 'adb', 'devices'
+            standardOutput = deviceOutput
+        }
+        def devices = deviceOutput.toString("UTF8")
+        def devicesList = []
+        devices.lines().skip(1).forEach {
+            def ds = it.split("\t")
+            if (ds.length > 1 && ds[1] == "device") {
+                //在线的设备
+                devicesList += ds[0]
+            }
+        }
+
+        if (devicesList.isEmpty()) {
+            throw new IllegalStateException("adb devices 未找到设备!")
+        }
+        println "拉取的设备列表↓"
+        println devicesList
+
+        devicesList.forEach { device ->
+            appIdList.forEach { appId ->
+                try {
+                    exec {
+                        ignoreExitValue = true
+                        //files/${schema}/
+                        commandLine 'adb', '-s', "${device}", 'pull', "/sdcard/android/data/${appId}/", file.absolutePath
+                    }
+                } catch (Exception e) {
+                    System.err.println("异常:${e.message}")
+                    e.printStackTrace()
                 }
-            } catch (Exception e) {
-                System.err.println("异常:${e.message}")
-                e.printStackTrace()
             }
         }
 
