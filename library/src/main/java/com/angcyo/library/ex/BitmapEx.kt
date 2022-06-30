@@ -327,6 +327,30 @@ fun Bitmap.colorChannel(
     return result
 }
 
+/**将图片转灰度
+ * [convertAlpha] 透明转换, 返回新的透明值*/
+fun Bitmap.grayHandle(convertAlpha: (color: Int, alpha: Int) -> Int = { color, alpha -> alpha }): Bitmap {
+    val width = width
+    val height = height
+    val result = Bitmap.createBitmap(width, height, config)
+
+    for (y in 0 until height) {
+        for (x in 0 until width) {
+            val color = getPixel(x, y)
+
+            val a = convertAlpha(color, Color.alpha(color))//透明
+            val r = Color.red(color)
+            val g = Color.green(color)
+            val b = Color.blue(color)
+
+            var value = (r + g + b) / 3
+            value = max(0, min(value, 255)) //限制0~255
+            result.setPixel(x, y, Color.argb(a, value, value, value))
+        }
+    }
+    return result
+}
+
 /**色彩通道转换[Bitmap]可视化对象*/
 fun ByteArray.toChannelBitmap(width: Int, height: Int, channelType: Int = Color.RED): Bitmap {
     val channelBitmap =
