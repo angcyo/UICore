@@ -28,6 +28,11 @@ fun Fragment.getPhoto(onResult: (Bitmap?) -> Unit) {
     context?.getPhoto(parentFragmentManager, onResult)
 }
 
+/**
+ * [com.angcyo.component.getPhoto]
+ * [com.angcyo.picker.DslPicker.takePhoto]
+ * [com.angcyo.picker.DslPicker.takePhotoBitmap]
+ * */
 fun Context.getPhoto(fragmentManager: FragmentManager, onResult: (Bitmap?) -> Unit) {
     fragmentManager.getFile("image/*") { uri ->
         if (uri == null) {

@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -79,7 +80,10 @@ object DslPicker {
         return data.getParcelableArrayListExtra(KEY_SELECTOR_MEDIA_LIST)
     }
 
-    /**拍照*/
+    /**拍照
+     * [com.angcyo.component.getPhoto]
+     * [com.angcyo.picker.DslPicker.takePhoto]
+     * */
     fun takePhoto(activity: FragmentActivity?, action: (Uri?) -> Unit) {
         activity?.checkAndRequestPermission(arrayOf(Manifest.permission.CAMERA)) { grant ->
             if (grant) {
@@ -87,7 +91,8 @@ object DslPicker {
                 val uri = fileUri(activity, File(filePath))
                 takePhotoIntent(activity, uri)?.run {
                     FragmentBridge.install(activity.supportFragmentManager)
-                        .startActivityForResult(this,
+                        .startActivityForResult(
+                            this,
                             FragmentBridge.generateCode(),
                             null,
                             object : IFragmentBridge {
@@ -105,6 +110,31 @@ object DslPicker {
                                     } else {
                                         action(null)
                                     }
+                                }
+                            })
+                }
+            } else {
+                toastQQ("相机权限被禁用,请在权限设置中打开.")
+            }
+        }
+    }
+
+    /**从摄像头获取图片对象[Bitmap]*/
+    fun takePhotoBitmap(activity: FragmentActivity?, action: (Bitmap?) -> Unit) {
+        activity?.checkAndRequestPermission(arrayOf(Manifest.permission.CAMERA)) { grant ->
+            if (grant) {
+                takePhotoIntent(activity, null)?.run {
+                    FragmentBridge.install(activity.supportFragmentManager)
+                        .startActivityForResult(
+                            this,
+                            FragmentBridge.generateCode(),
+                            null,
+                            object : IFragmentBridge {
+                                override fun onActivityResult(resultCode: Int, data: Intent?) {
+                                    val bitmap: Bitmap? =
+                                        data.takeIf { resultCode == Activity.RESULT_OK }
+                                            ?.getParcelableExtra("data")
+                                    action(bitmap)
                                 }
                             })
                 }

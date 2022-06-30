@@ -226,9 +226,9 @@ fun String.bitmapSize(): IntArray {
 
 /**保存图片*/
 fun Bitmap.save(
-    path: String = filePath(PICTURE_FOLDER_NAME, fileNameUUID(".jpeg")),
-    format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
-    quality: Int = 90
+    path: String = filePath(PICTURE_FOLDER_NAME, fileNameUUID(".png")),
+    format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG, //JPEG才支持压缩
+    quality: Int = 90 //PNG时,此属性无效.
 ): File {
     return path.file().apply {
         outputStream().use {
