@@ -252,6 +252,8 @@ fun View.attachInEditMode() {
  *
  * [android.content.Context.getFilesDir] [/data/user/0/com.angcyo.uicore.demo/files/]
  * [android.content.Context.getExternalFilesDir] [/storage/emulated/0/Android/data/com.angcyo.uicore.demo/files/]
+ *
+ * [com.angcyo.core.component.file.DslFileHelperKt.appFilePath]
  * */
 fun libFilePath(folderName: String, context: Context = app()): String {
     val folderFile = context.getExternalFilesDir(folderName) ?: File(context.filesDir, folderName)
