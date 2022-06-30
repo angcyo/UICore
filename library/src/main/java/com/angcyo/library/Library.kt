@@ -14,6 +14,7 @@ import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import com.angcyo.library.ex.*
 import com.orhanobut.hawk.Hawk
+import java.io.File
 
 /**
  *
@@ -244,4 +245,18 @@ fun View.attachInEditMode() {
     if (isInEditMode) {
         Library.application = context.applicationContext
     }
+}
+
+/**获取存储文件的基础路径
+ * [folderName] 文件夹的名字
+ *
+ * [android.content.Context.getFilesDir] [/data/user/0/com.angcyo.uicore.demo/files/]
+ * [android.content.Context.getExternalFilesDir] [/storage/emulated/0/Android/data/com.angcyo.uicore.demo/files/]
+ * */
+fun libFilePath(folderName: String, context: Context = app()): String {
+    val folderFile = context.getExternalFilesDir(folderName) ?: File(context.filesDir, folderName)
+    if (!folderFile.exists()) {
+        folderFile.mkdirs()
+    }
+    return folderFile.absolutePath
 }

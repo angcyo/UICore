@@ -9,7 +9,6 @@ import android.view.accessibility.AccessibilityManager
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.file.wrapData
 import com.angcyo.library.R
-import com.angcyo.library.app
 import com.angcyo.library.component.appBean
 import com.angcyo.library.model.AppBean
 import com.angcyo.library.tip
@@ -36,11 +35,7 @@ object AccessibilityHelper {
 
     /**log文件全路径*/
     val logFilePath: String
-        get() = FileUtils.appRootExternalFolderFile(
-            app(),
-            logFolderName,
-            logFileName!!
-        )?.absolutePath!!
+        get() = FileUtils.appRootExternalFolderFile(logFolderName, logFileName!!).absolutePath
 
     /**写入日志*/
     fun log(data: String) {

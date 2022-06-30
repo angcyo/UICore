@@ -2,11 +2,8 @@ package com.angcyo.library.utils
 
 import android.content.Context
 import android.graphics.Bitmap
-import com.angcyo.library.L
-import com.angcyo.library.PlaceholderApplication
-import com.angcyo.library.app
+import com.angcyo.library.*
 import com.angcyo.library.ex.file
-import com.angcyo.library.getAppString
 import java.io.File
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -46,23 +43,16 @@ object FileUtils {
         "$rootFolder${File.separator}$it"
     }
 
-    /* */
     /**[dataDir]:[/data/user/0/com.wayto.plugin.gb.security]
      * *//*
     fun appRootFolder(context: Context = app()): File? {
         return context.externalMediaDirs?.firstOrNull()
     }*/
 
-    /**APP扩展根目录
-     * [/storage/emulated/0/Android/data/包名/files]*/
-    fun appRootExternalFolder(context: Context = app()): File? {
-        // /storage/emulated/0/Android/data/com.angcyo.uicore.demo/files
-        return context.getExternalFilesDir("")
-    }
 
     /**扩展目录下的指定文件夹
      * [/storage/emulated/0/Android/data/包名/files/${schema}/${folder}]*/
-    fun appRootExternalFolder(context: Context = app(), folder: String): File? {
+    fun appRootExternalFolder(folder: String = "", context: Context = app()): File {
         // /storage/emulated/0/Android/data/com.angcyo.uicore.demo/files/$folder
 
         /*
@@ -78,7 +68,8 @@ object FileUtils {
         ///storage/emulated/0/Android/data/com.angcyo.uicore.demo/files
         context.getExternalFilesDir("")*/
 
-        return context.getExternalFilesDir(onGetFolderPath(folder))
+        //context.getExternalFilesDir(onGetFolderPath(folder))
+        return libFilePath(onGetFolderPath(folder), context).file()
     }
 
     /**
@@ -87,21 +78,13 @@ object FileUtils {
      *
      * 返回对应的文件, 可以直接进行读写, 不需要权限请求
      * */
-    fun appRootExternalFolderFile(
-        context: Context? = app(),
-        folder: String,
-        name: String
-    ): File? {
-        if (context == null || context is PlaceholderApplication) {
-            return null
-        }
-        val externalFilesDir = appRootExternalFolder(context, folder) ?: return null
+    fun appRootExternalFolderFile(folder: String, name: String): File {
+        val externalFilesDir = appRootExternalFolder(folder)
         return File(externalFilesDir, name)
     }
 
     /** Android Q 写入扩展的程序目录下的文件数据 */
     fun writeExternal(
-        context: Context? = app(),
         folder: String,
         name: String,
         data: FileTextData,
@@ -111,7 +94,7 @@ object FileUtils {
         var filePath: String? = null
 
         try {
-            appRootExternalFolderFile(context, folder, name)?.apply {
+            appRootExternalFolderFile(folder, name).apply {
                 filePath = writeExternal(this, data, append)
             }
         } catch (e: Exception) {
@@ -159,13 +142,9 @@ object FileUtils {
     }
 
     /**从APP扩展目录下读取文件数据*/
-    fun readExternal(
-        context: Context = app(),
-        folder: String,
-        name: String
-    ): String? {
+    fun readExternal(folder: String, name: String): String? {
         try {
-            return appRootExternalFolderFile(context, folder, name)?.readText()
+            return appRootExternalFolderFile(folder, name).readText()
         } catch (e: Exception) {
             L.e("读取文件失败:$e")
         }
@@ -188,12 +167,12 @@ fun fileName(pattern: String = "yyyy-MM-dd_HH-mm-ss-SSS", suffix: String = ""): 
 
 /**获取一个文件路径*/
 fun filePath(folderName: String, fileName: String = fileNameUUID()): String {
-    return "${FileUtils.appRootExternalFolder(folder = folderName)?.absolutePath}${File.separator}${fileName}"
+    return "${FileUtils.appRootExternalFolder(folder = folderName).absolutePath}${File.separator}${fileName}"
 }
 
 /**获取一个文件夹路径*/
 fun folderPath(folderName: String): String {
-    return FileUtils.appRootExternalFolder(folder = folderName)?.absolutePath
+    return FileUtils.appRootExternalFolder(folder = folderName).absolutePath
         ?: app().cacheDir.absolutePath
 }
 
@@ -216,6 +195,6 @@ fun String?.writeTo(filePath: String?, append: Boolean = true): String? {
 }
 
 /**获取文件夹全路径*/
-fun String.logFilePath(name: String = logFileName()): String? {
-    return FileUtils.appRootExternalFolderFile(app(), this, name)?.absolutePath
+fun String.logFilePath(name: String = logFileName()): String {
+    return FileUtils.appRootExternalFolderFile(this, name).absolutePath
 }

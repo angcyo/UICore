@@ -39,12 +39,12 @@ object DslFileHelper {
     ): String? {
         return if (async) {
             launchGlobal(Dispatchers.IO + CoroutineErrorHandler()) {
-                FileUtils.writeExternal(appContext, folder, name, data, append)
+                FileUtils.writeExternal(folder, name, data, append)
             }
             //返回文件路径
-            FileUtils.appRootExternalFolderFile(appContext, folder, name)?.absolutePath
+            FileUtils.appRootExternalFolderFile(folder, name).absolutePath
         } else {
-            FileUtils.writeExternal(appContext, folder, name, data, append)
+            FileUtils.writeExternal(folder, name, data, append)
         }
     }
 
@@ -94,9 +94,11 @@ object DslFileHelper {
     }
 }
 
-/**获取一个文件路径*/
-fun appFilePath(name: String, folder: String = ""): String? {
-    return FileUtils.appRootExternalFolderFile(DslFileHelper.appContext, folder, name)?.absolutePath
+/**获取一个文件路径, 带Scheme的路径
+ * [com.angcyo.library.utils.FileUtils.getRootFolder]
+ * [com.angcyo.library.LibraryKt.libFilePath]*/
+fun appFilePath(name: String, folder: String = ""): String {
+    return FileUtils.appRootExternalFolderFile(folder, name).absolutePath
 }
 
 fun CharSequence.wrapData() = DslFileHelper._wrapData2(this)

@@ -5,7 +5,6 @@ import androidx.fragment.app.FragmentActivity
 import com.angcyo.base.dslFHelper
 import com.angcyo.core.CoreApplication.Companion.DEFAULT_FILE_PRINT_PATH
 import com.angcyo.core.component.DslCrashHandler
-import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.core.component.fileSelector
 import com.angcyo.library.app
 import com.angcyo.library.ex.*
@@ -45,11 +44,10 @@ object Debug {
             //分享http日志文件
             "cmd:share:http", "9.777777" -> {
                 val file = FileUtils.appRootExternalFolderFile(
-                    DslFileHelper.appContext,
                     Constant.HTTP_FOLDER_NAME,
                     logFileName()
                 )
-                file?.shareFile()
+                file.shareFile()
             }
             //分享L.log
             "cmd:share:l", "9.111111" -> {
