@@ -382,9 +382,8 @@ fun Bitmap.grayHandleAlpha(alphaBgColor: Int = Color.TRANSPARENT): Array<Bitmap>
                 var value = (r + g + b) / 3
                 value = max(0, min(value, 255)) //限制0~255
 
-                val rgb = Color.rgb(value, value, value)
-                resultBitmap.setPixel(x, y, rgb)
-                alphaBitmap.setPixel(x, y, rgb)
+                resultBitmap.setPixel(x, y, Color.rgb(value, value, value))
+                alphaBitmap.setPixel(x, y, Color.rgb(r, g, b))
             }
         }
     }
@@ -498,9 +497,8 @@ fun Bitmap.blackWhiteHandleAlpha(
                     }
                 }
 
-                val rgb = Color.rgb(value, value, value)
-                resultBitmap.setPixel(x, y, rgb)
-                alphaBitmap.setPixel(x, y, rgb)
+                resultBitmap.setPixel(x, y, Color.rgb(value, value, value))
+                alphaBitmap.setPixel(x, y, Color.rgb(r, g, b))
             }
         }
     }
