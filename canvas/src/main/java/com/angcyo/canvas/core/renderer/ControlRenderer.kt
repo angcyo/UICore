@@ -46,6 +46,9 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
     /**绘制按下的控制点*/
     val controlTouchPointPaint = createPaint(Color.DKGRAY, Paint.Style.FILL)
 
+    /**是否需要绘制控制点*/
+    var drawControlPoint: Boolean = true
+
     val isTouchHold: Boolean
         get() {
             val canvasView = canvasViewBox.canvasView
@@ -113,8 +116,10 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
                 }
             }
 
-            //绘制控制四个角
-            drawControlPoint(canvas, rotate)
+            if (drawControlPoint) {
+                //绘制控制四个角
+                drawControlPoint(canvas, rotate)
+            }
         }
     }
 

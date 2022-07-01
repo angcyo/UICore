@@ -25,7 +25,7 @@ import kotlin.math.absoluteValue
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/08
  */
-class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasTouch {
+class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICanvasTouch {
 
     /**当前选中的[IItemRenderer]*/
     var selectedItemRender: BaseItemRenderer<*>? = null
@@ -72,10 +72,10 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
 
     /**双击检测*/
     val doubleGestureDetector = DoubleGestureDetector2() {
-        val itemRenderer = canvasView.findItemRenderer(_touchPoint)
+        val itemRenderer = canvasDelegate.findItemRenderer(_touchPoint)
         if (itemRenderer != null) {
             isDoubleTouch = true
-            canvasView.dispatchDoubleTapItem(itemRenderer)
+            canvasDelegate.dispatchDoubleTapItem(itemRenderer)
         }
     }
 
@@ -156,6 +156,8 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
                             if (dx1.absoluteValue > translateThreshold || dy1.absoluteValue > translateThreshold) {
                                 handle = true
                                 isTranslated = true
+                                //移动的时候不绘制控制点
+                                canvasDelegate.controlRenderer.drawControlPoint = false
                                 canvasDelegate.smartAssistant.smartTranslateItemBy(
                                     selectedItemRender,
                                     dx1,
@@ -170,6 +172,8 @@ class ControlHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasT
                 }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                //移动的时候不绘制控制点
+                canvasDelegate.controlRenderer.drawControlPoint = true
                 //notify
                 if (holdControlPoint != null) {
                     //控制点操作结束回调

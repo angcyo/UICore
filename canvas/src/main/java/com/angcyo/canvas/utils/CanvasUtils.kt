@@ -5,6 +5,7 @@ import android.os.Build
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.MmValueUnit
 import com.angcyo.canvas.items.PictureTextItem
 import com.angcyo.library.ex.*
@@ -331,5 +332,14 @@ fun Bitmap.engraveColorBytes(): ByteArray {
 fun Int.toMm() = toFloat().toMm()
 
 fun Float.toMm() = MmValueUnit().convertPixelToValue(this)
+
+/**
+ * 进入雕刻模式, 此时只有画布能响应手势
+ * */
+fun CanvasDelegate.engraveMode(enable: Boolean = true) {
+    disableTouchFlag(CanvasDelegate.TOUCH_FLAG_MULTI_SELECT, enable)
+    controlHandler.enable = !enable
+    controlRenderer.drawControlPoint = !enable
+}
 
 //</editor-fold desc="Other">

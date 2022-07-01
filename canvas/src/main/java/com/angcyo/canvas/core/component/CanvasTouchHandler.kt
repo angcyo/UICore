@@ -17,7 +17,7 @@ import kotlin.math.sqrt
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/02
  */
-class CanvasTouchHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasTouch {
+class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICanvasTouch {
 
     companion object {
 
@@ -120,16 +120,18 @@ class CanvasTouchHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICan
 
     /**双击检测*/
     val doubleGestureDetector = DoubleGestureDetector2 { event ->
-        if (canvasView.controlHandler.selectedItemRender == null) {
-            isDoubleTouch = true
-            //双击
-            canvasView.getCanvasViewBox().scaleBy(
-                doubleScaleValue,
-                doubleScaleValue,
-                event.x,
-                event.y,
-                true
-            )
+        if (canvasDelegate.controlHandler.selectedItemRender == null) {
+            if (canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_SCALE)) {
+                isDoubleTouch = true
+                //双击
+                canvasDelegate.getCanvasViewBox().scaleBy(
+                    doubleScaleValue,
+                    doubleScaleValue,
+                    event.x,
+                    event.y,
+                    true
+                )
+            }
         }
     }
 
@@ -186,7 +188,7 @@ class CanvasTouchHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICan
     fun handleActionDown(event: MotionEvent) {
         _touchDistance = 0f
 
-        val selectedRenderer = canvasView.getSelectedRenderer()
+        val selectedRenderer = canvasDelegate.getSelectedRenderer()
         if (_touchPointList.size >= 2) {
             _touchDistance = spacing(_touchPointList[0], _touchPointList[1])
             midPoint(_touchPointList[0], _touchPointList[1], _touchMiddlePoint)
@@ -194,20 +196,24 @@ class CanvasTouchHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICan
 
             if (selectedRenderer != null) {
                 _tempPoint.set(event.getX(event.actionIndex), event.getY(event.actionIndex))
-                val nextSelectedRenderer = canvasView.findItemRenderer(_tempPoint)
+                val nextSelectedRenderer = canvasDelegate.findItemRenderer(_tempPoint)
                 if (nextSelectedRenderer != null) {
-                    canvasView.selectGroupRenderer.addSelectedRenderer(nextSelectedRenderer)
+                    canvasDelegate.selectGroupRenderer.addSelectedRenderer(nextSelectedRenderer)
                 }
             } else {
-                canvasView.selectGroupRenderer.endSelect()
+                if (canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_MULTI_SELECT)) {
+                    canvasDelegate.selectGroupRenderer.endSelect()
+                }
             }
         } else {
             if (selectedRenderer == null) {
                 //未选中渲染器
-                canvasView.selectGroupRenderer.startSelect(
-                    _touchPointList[0].x,
-                    _touchPointList[0].y
-                )
+                if (canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_MULTI_SELECT)) {
+                    canvasDelegate.selectGroupRenderer.startSelect(
+                        _touchPointList[0].x,
+                        _touchPointList[0].y
+                    )
+                }
             }
         }
     }
@@ -223,7 +229,7 @@ class CanvasTouchHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICan
         val dy1 = _movePointList[0].y - _touchPointList[0].y
 
         if (_movePointList.size >= 2) {
-            //双指 操作
+            //双指 操作, 平移和缩放
 
             //处理双指缩放
             /*if (_touchType == TOUCH_TYPE_NONE ||
@@ -231,11 +237,13 @@ class CanvasTouchHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICan
                 _touchDistance > canvasView.canvasViewBox.getContentWidth() / 3
             ) {*/
             val moveDistance = spacing(_movePointList[0], _movePointList[1])
-            if ((moveDistance - _touchDistance).abs() > minScalePointerDistance) {
+            if ((moveDistance - _touchDistance).abs() > minScalePointerDistance &&
+                view.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_SCALE) //激活了缩放手势
+            ) {
                 //开始缩放
                 _touchType = TOUCH_TYPE_SCALE
                 val scale = moveDistance / _touchDistance
-                canvasView.getCanvasViewBox().scaleBy(
+                canvasDelegate.getCanvasViewBox().scaleBy(
                     scale,
                     scale,
                     _touchMiddlePoint.x,
@@ -254,18 +262,26 @@ class CanvasTouchHandler(val canvasView: CanvasDelegate) : BaseComponent(), ICan
             val dx = min(dx1, dx2)
             val dy = min(dy1, dy2)
 
-            if (dx.abs() > dragTriggerDistance || dy.abs() > dragTriggerDistance) {
+            if ((dx.abs() > dragTriggerDistance || dy.abs() > dragTriggerDistance) &&
+                view.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_TRANSLATE) //激活了平移手势
+            ) {
                 //开始平移
                 _touchType = TOUCH_TYPE_TRANSLATE
                 if (isHorizontalIntent(_movePointList[0], _movePointList[1])) {
-                    canvasView.getCanvasViewBox().translateBy(dx, 0f)
+                    canvasDelegate.getCanvasViewBox().translateBy(dx, 0f)
                 } else {
-                    canvasView.getCanvasViewBox().translateBy(0f, dy)
+                    canvasDelegate.getCanvasViewBox().translateBy(0f, dy)
                 }
             }
             /*}*/
         } else {
-            canvasView.selectGroupRenderer.moveSelect(_movePointList[0].x, _movePointList[0].y)
+            if (view.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_MULTI_SELECT)) {
+                //移动多选框
+                canvasDelegate.selectGroupRenderer.moveSelect(
+                    _movePointList[0].x,
+                    _movePointList[0].y
+                )
+            }
         }
 
         /*val dx = event.x - touchPoint.x

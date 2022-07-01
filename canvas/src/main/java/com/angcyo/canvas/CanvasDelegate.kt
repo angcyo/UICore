@@ -42,6 +42,18 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
         /**置底*/
         const val ARRANGE_BACK: Int = 4
+
+        /**所有手势*/
+        const val TOUCH_FLAG_ALL = 0xFF
+
+        /**支持手势缩放画布, 包括双击放大*/
+        const val TOUCH_FLAG_SCALE = 0x01
+
+        /**支持手势移动画布*/
+        const val TOUCH_FLAG_TRANSLATE = 0x02
+
+        /**支持手势多选*/
+        const val TOUCH_FLAG_MULTI_SELECT = 0x04
     }
 
     //<editor-fold desc="成员变量">
@@ -69,6 +81,16 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
     /**智能提示组件*/
     var smartAssistant: SmartAssistant = SmartAssistant(this)
+
+    /**支持的手势类型
+     *
+     * [com.angcyo.canvas.CanvasDelegate.TOUCH_FLAG_ALL]
+     * [com.angcyo.canvas.CanvasDelegate.TOUCH_FLAG_SCALE]
+     * [com.angcyo.canvas.CanvasDelegate.TOUCH_FLAG_TRANSLATE]
+     * [com.angcyo.canvas.CanvasDelegate.TOUCH_FLAG_MULTI_SELECT]
+     *
+     */
+    var touchFlag: Int = TOUCH_FLAG_ALL
 
     /**手指是否按下*/
     val isTouchHold: Boolean
@@ -446,6 +468,14 @@ class CanvasDelegate(val view: View) : ICanvasView {
     fun onTouchEvent(event: MotionEvent): Boolean {
         return canvasTouchManager.onTouchEvent(event)
     }
+
+    /**禁用对应的手势类型*/
+    fun disableTouchFlag(flag: Int, disable: Boolean = true) {
+        touchFlag = if (disable) touchFlag.remove(flag) else touchFlag.add(flag)
+    }
+
+    /**判断是否激活了对应的手势标识*/
+    fun isEnableTouchFlag(flag: Int) = touchFlag.have(flag)
 
     /**刷新界面*/
     override fun refresh() {

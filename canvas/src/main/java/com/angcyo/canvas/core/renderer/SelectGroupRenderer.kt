@@ -202,6 +202,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         _isStart = true
     }
 
+    /**移动多选框*/
     fun moveSelect(x: Float, y: Float) {
         if (_isStart) {
             selectRect.set(

@@ -23,7 +23,10 @@ fun Int.have(value: Int): Boolean = if (this == 0 || value == 0) {
     ((this > 0 && value > 0) || (this < 0 && value < 0)) && this and value == value
 }
 
+/**and 逻辑与, x */
 fun Int.remove(value: Int): Int = this and value.inv()
+
+/**and 逻辑或, + */
 fun Int.add(value: Int): Int = this or value
 
 /**第4位的最高字节  0x8000 = 32,768, 未定义的资源. 0默认资源*/
@@ -41,9 +44,9 @@ val undefined_float = -1f
 /**未定义的颜色*/
 val undefined_color = -32_768
 
-fun Int?.or(default: Int) = if (this ?: 0 > 0) this else default
+fun Int?.or(default: Int) = if ((this ?: 0) > 0) this else default
 
-fun Long?.or(default: Long) = if (this ?: 0 > 0) this else default
+fun Long?.or(default: Long) = if ((this ?: 0) > 0) this else default
 
 fun Int?.orDef(default: Int) = this ?: default
 

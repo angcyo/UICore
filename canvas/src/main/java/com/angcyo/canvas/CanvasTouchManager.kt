@@ -5,6 +5,10 @@ import com.angcyo.canvas.core.CanvasEntryPoint
 import com.angcyo.canvas.core.ICanvasTouch
 
 /**
+ * [CanvasDelegate] 手势控制管理
+ * [com.angcyo.canvas.CanvasDelegate.controlHandler]
+ * [com.angcyo.canvas.CanvasDelegate.canvasTouchHandler]
+ *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/05/06
  */
@@ -21,13 +25,13 @@ class CanvasTouchManager(val canvasView: CanvasDelegate) {
     fun onTouchEvent(event: MotionEvent): Boolean {
         val touch = interceptCanvasTouch
 
-        //
+        //手指是否按下
         isTouchHold = when (event.actionMasked) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> true
             else -> false
         }
 
-        //
+        //是否取消了手势
         when (event.actionMasked) {
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 interceptCanvasTouch = null
@@ -53,7 +57,7 @@ class CanvasTouchManager(val canvasView: CanvasDelegate) {
             }
         }
 
-        //
+        //controlHandler 拦截
         if (canvasView.controlHandler.enable) {
             if (canvasView.controlHandler.onCanvasInterceptTouchEvent(canvasView, event)) {
                 interceptCanvasTouch = canvasView.controlHandler
@@ -63,7 +67,7 @@ class CanvasTouchManager(val canvasView: CanvasDelegate) {
             return it
         }
 
-        //
+        //canvasTouchHandler 拦截
         if (canvasView.canvasTouchHandler.enable) {
             if (canvasView.canvasTouchHandler.onCanvasInterceptTouchEvent(canvasView, event)) {
                 interceptCanvasTouch = canvasView.canvasTouchHandler
@@ -79,11 +83,13 @@ class CanvasTouchManager(val canvasView: CanvasDelegate) {
                 return true
             }
         }
+        //控制点,手势
         if (canvasView.controlHandler.enable) {
             if (canvasView.controlHandler.onCanvasTouchEvent(canvasView, event)) {
                 return true
             }
         }
+        //画布,手势
         if (canvasView.canvasTouchHandler.enable) {
             return canvasView.canvasTouchHandler.onCanvasTouchEvent(canvasView, event)
         }
