@@ -247,7 +247,7 @@ fun View.attachInEditMode() {
     }
 }
 
-/**获取存储文件的基础路径
+/**获取存储文件的基础路径, 可以在应用详情中, 通过清理存储清除.
  * [folderName] 文件夹的名字
  *
  * [android.content.Context.getFilesDir] [/data/user/0/com.angcyo.uicore.demo/files/]
@@ -258,6 +258,15 @@ fun View.attachInEditMode() {
  * */
 fun libFolderPath(folderName: String, context: Context = app()): String {
     val folderFile = context.getExternalFilesDir(folderName) ?: File(context.filesDir, folderName)
+    if (!folderFile.exists()) {
+        folderFile.mkdirs()
+    }
+    return folderFile.absolutePath
+}
+
+/**缓存目录, 可以在应用详情中, 通过清理缓存清除.*/
+fun libCacheFolderPath(folderName: String, context: Context = app()): String {
+    val folderFile = File(context.externalCacheDir ?: context.cacheDir, folderName)
     if (!folderFile.exists()) {
         folderFile.mkdirs()
     }
