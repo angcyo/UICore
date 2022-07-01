@@ -5,11 +5,15 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcherOwner
 import androidx.annotation.CallSuper
+import androidx.annotation.LayoutRes
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import com.angcyo.library.L
+import com.angcyo.library.annotation.CallPoint
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
 
@@ -20,9 +24,10 @@ import com.angcyo.widget.R
  * @date 2020/06/10
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-abstract class IView : LifecycleOwner {
+abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
 
-    /**布局id*/
+    /**需要填充的布局id*/
+    @LayoutRes
     var iViewLayoutId: Int = -1
 
     /**添加[IView]时的过渡动画*/
@@ -41,7 +46,9 @@ abstract class IView : LifecycleOwner {
 
     //----
 
-    val _ivh: DslViewHolder get() = iViewHolder!!
+    val _iVh: DslViewHolder get() = iViewHolder!!
+
+    val viewHolder: DslViewHolder? get() = iViewHolder
 
     val iContext: Context get() = _parentView?.context!!
 
@@ -52,6 +59,7 @@ abstract class IView : LifecycleOwner {
     /**
      * 将[IView]显示到[parent]中, 如果[parent]为空, 会将[IView]从原来的[parent]中移除
      * */
+    @CallPoint
     fun show(parent: ViewGroup?) {
         if (_parentView != parent) {
             removeInner(_parentView) {
@@ -65,11 +73,16 @@ abstract class IView : LifecycleOwner {
     /**
      * 将[IView]从到[_parentView]中移除
      * */
+    @CallPoint
     fun hide(end: (() -> Unit)? = null) {
         removeInner(_parentView) {
+            isEnabled = false//OnBackPressedCallback
             end?.invoke()
         }
     }
+
+    /**是否附加到界面*/
+    fun isAttach() = iViewHolder != null && iViewHolder?.itemView?.parent != null
 
     //</editor-fold desc="操作方法区">
 
@@ -114,7 +127,10 @@ abstract class IView : LifecycleOwner {
 
                 rootView.setTag(R.id.lib_tag_iview, this)
                 parent.addView(rootView)
+
                 onIViewCreate()
+                initBackPressedDispatcher()
+
                 iViewAddTransition(rootView) {
                     onIViewShow()
                 }
@@ -140,6 +156,22 @@ abstract class IView : LifecycleOwner {
             } else {
                 end()
             }
+        }
+    }
+
+    /**[OnBackPressedDispatcherOwner]*/
+    fun initBackPressedDispatcher() {
+        val activity = iActivity
+        if (activity is OnBackPressedDispatcherOwner) {
+            isEnabled = true//OnBackPressedCallback
+            activity.onBackPressedDispatcher.addCallback(this)
+        }
+    }
+
+    /**处理返回按键*/
+    override fun handleOnBackPressed() {
+        hide {
+            //no op
         }
     }
 

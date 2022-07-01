@@ -42,20 +42,38 @@ fun <T> LiveData<T>.observe(
 }
 
 /**快速观察[LiveData]一次*/
-fun <T> LiveData<T>.observeOnce(owner: LifecycleOwner, action: (data: T?) -> Unit): Observer<T?> {
+fun <T> LiveData<T>.observeOnce(
+    owner: LifecycleOwner? = null,
+    action: (data: T?) -> Unit
+): Observer<T?> {
     var result: Observer<T?>? = null
-    observe(owner, Observer<T?> {
-        if (it is List<*>) {
-            if (it.isNotEmpty()) {
+    if (owner == null) {
+        observeForever(Observer<T?> {
+            if (it is List<*>) {
+                if (it.isNotEmpty()) {
+                    removeObserver(result!!)
+                }
+            } else if (it != null) {
                 removeObserver(result!!)
             }
-        } else if (it != null) {
-            removeObserver(result!!)
-        }
-        action(it)
-    }.apply {
-        result = this
-    })
+            action(it)
+        }.apply {
+            result = this
+        })
+    } else {
+        observe(owner, Observer<T?> {
+            if (it is List<*>) {
+                if (it.isNotEmpty()) {
+                    removeObserver(result!!)
+                }
+            } else if (it != null) {
+                removeObserver(result!!)
+            }
+            action(it)
+        }.apply {
+            result = this
+        })
+    }
     return result!!
 }
 
