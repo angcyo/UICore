@@ -1,12 +1,7 @@
 package com.angcyo.canvas.core.renderer
 
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Path
-import com.angcyo.canvas.BuildConfig
+import android.graphics.*
 import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.utils._tempRectF
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.library.ex.dp
 
@@ -30,14 +25,16 @@ class LimitRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView) {
     /**限制框*/
     val limitPath: Path = Path()
 
+    val _limitPathBounds: RectF = RectF()
+
     override fun render(canvas: Canvas) {
         if (!limitPath.isEmpty) {
-            if (BuildConfig.DEBUG) {
-                limitPath.computeBounds(_tempRectF, true)
-            }
+            limitPath.computeBounds(_limitPathBounds, true)
             val scale = canvasViewBox.getScaleX()
             paint.strokeWidth = limitStrokeWidth / scale //抵消坐标系的缩放
             canvas.drawPath(limitPath, paint)
+        } else {
+            _limitPathBounds.setEmpty()
         }
     }
 
@@ -51,5 +48,6 @@ class LimitRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView) {
     /**清除限制框*/
     fun clear() {
         limitPath.rewind()
+        _limitPathBounds.setEmpty()
     }
 }

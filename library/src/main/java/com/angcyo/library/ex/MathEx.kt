@@ -83,7 +83,7 @@ fun Double.decimal(digit: Int = 2, fadedUp: Boolean = false): String {
     } else {
         (this * f).toInt()
     } / f
-    return String.format("%.${digit}f", value)
+    return String.format("%.${digit}f", value.toFloat())
 }
 
 /**保留小数点后几位*/

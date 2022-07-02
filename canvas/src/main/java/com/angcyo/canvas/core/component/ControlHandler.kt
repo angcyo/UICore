@@ -67,6 +67,9 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
     /**按下时, 记录bounds 用于恢复*/
     val touchItemBounds = emptyRectF()
 
+    //通过bounds的计算, 来实现平移距离的计算
+    val moveItemBounds = emptyRectF()
+
     //是否移动过
     var isTranslated = false
 
@@ -138,15 +141,15 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                             //canvasView.canvasViewBox.matrix.mapPoint(_touchPointList[0])
                             //val p2 = _tempMatrix.mapPoint(_touchPointList[0])//_touchPointList[0]
 
-                            val p1 =
-                                canvasDelegate.getCanvasViewBox()
-                                    .mapCoordinateSystemPoint(_movePoint)
+                            moveItemBounds
+
+                            val p1 = canvasDelegate.getCanvasViewBox()
+                                .mapCoordinateSystemPoint(_movePoint)
                             val p1x = p1.x
                             val p1y = p1.y
 
-                            val p2 =
-                                canvasDelegate.getCanvasViewBox()
-                                    .mapCoordinateSystemPoint(_touchPoint)
+                            val p2 = canvasDelegate.getCanvasViewBox()
+                                .mapCoordinateSystemPoint(_touchPoint)
                             val p2x = p2.x
                             val p2y = p2.y
 

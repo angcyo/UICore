@@ -250,6 +250,9 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
      * [distanceY] 纵向需要移动的像素距离*/
     override fun translateBy(distanceX: Float, distanceY: Float) {
         L.i("移动by->x:$distanceX y:$distanceY")
+        if (distanceX == 0f && distanceY == 0f) {
+            return
+        }
         changeBounds {
             offset(distanceX, distanceY)
         }
@@ -337,13 +340,17 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
            _tempMatrix.postRotate(degrees, centerX(), centerY())
            _tempMatrix.mapRect(this, this)
        }*/
+        L.i("旋转by->$degrees")
+        if (degrees == 0f) {
+            return
+        }
         val oldRotate = rotate
         changeBounds {
             rotate += degrees
             rotate %= 360
         }
         itemRotateChanged(oldRotate, rotateFlag)
-        L.i("旋转by->$degrees $rotate")
+        L.i("旋转by->$degrees -> $rotate")
     }
 
     /**临时存储一下更新Bounds的方式*/

@@ -1,5 +1,7 @@
 package com.angcyo.canvas.core.component
 
+import com.angcyo.library.ex.have
+
 /**
  * 坐标轴上的点信息
  * Email:angcyo@126.com
@@ -25,3 +27,10 @@ data class AxisPoint(
      * */
     var type: Int,
 )
+
+/**当前的点位是否有刻度*/
+fun AxisPoint.haveRule(): Boolean {
+    return type.have(BaseAxis.LINE_TYPE_NORMAL) ||
+            type.have(BaseAxis.LINE_TYPE_SECONDARY) ||
+            type.have(BaseAxis.LINE_TYPE_PROTRUDE)
+}
