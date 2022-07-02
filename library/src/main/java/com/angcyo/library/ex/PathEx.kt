@@ -170,6 +170,11 @@ fun Path.eachPath(step: Float = 1f, block: (index: Int, posArray: FloatArray) ->
     }
 }
 
+fun Path.computePathBounds(bounds: RectF = RectF(), exact: Boolean = true): RectF {
+    computeBounds(bounds, exact)
+    return bounds
+}
+
 /**计算一组[Path]的bounds*/
 fun List<Path>.computeBounds(bounds: RectF = RectF(), exact: Boolean = true): RectF {
     if (isEmpty()) {

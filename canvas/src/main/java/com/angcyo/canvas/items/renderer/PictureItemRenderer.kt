@@ -14,10 +14,7 @@ import com.angcyo.canvas.items.PictureItem
 import com.angcyo.canvas.items.PictureShapeItem
 import com.angcyo.canvas.items.PictureTextItem
 import com.angcyo.canvas.utils.limitMaxWidthHeight
-import com.angcyo.library.ex.add
-import com.angcyo.library.ex.isNoSize
-import com.angcyo.library.ex.isSizeChanged
-import com.angcyo.library.ex.remove
+import com.angcyo.library.ex.*
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -41,6 +38,28 @@ class PictureItemRenderer(canvasView: ICanvasView) :
 
     override fun changeBounds(reason: Reason, block: RectF.() -> Unit) {
         super.changeBounds(reason, block)
+    }
+
+    override fun onChangeBoundsAfter(reason: Reason) {
+        super.onChangeBoundsAfter(reason)
+        getRendererItem()?.let {
+            if (it is PictureShapeItem) {
+                val path = it.shapePath
+                if (path is LinePath) {
+                    val bounds = getBounds()
+                    if (path.orientation == LinearLayout.VERTICAL) {
+                        val size = path.lineBounds.width()
+                        //只能调整高度
+                        bounds.adjustSize(size, bounds.height(), ADJUST_TYPE_LT)
+                    } else {
+                        //只能调整宽度
+                        val size = path.lineBounds.height()
+                        //只能调整高度
+                        bounds.adjustSize(bounds.width(), size, ADJUST_TYPE_LT)
+                    }
+                }
+            }
+        }
     }
 
     override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {

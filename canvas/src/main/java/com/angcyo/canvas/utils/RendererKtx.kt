@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.widget.LinearLayout
 import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.ScalePictureDrawable
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.items.*
@@ -160,6 +161,17 @@ fun CanvasView.addPictureShapeRender(path: Path): PictureShapeItem {
         selectedItem(renderer)
         return result
     }
+}
+
+/**当前渲染的是否是[LinePath]*/
+fun BaseItemRenderer<*>.isLineShape(): Boolean {
+    val item = getRendererItem()
+    if (item is PictureShapeItem) {
+        if (item.shapePath is LinePath) {
+            return true
+        }
+    }
+    return false
 }
 
 //</editor-fold desc="PictureItemRenderer">

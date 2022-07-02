@@ -4,6 +4,7 @@ import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.Path
 import com.angcyo.canvas.LinePath
+import com.angcyo.canvas.LinePictureDrawable
 import com.angcyo.canvas.ScalePictureDrawable
 import com.angcyo.canvas.core.MmValueUnit
 import com.angcyo.library.ex.*
@@ -39,6 +40,7 @@ class PictureShapeItem : PictureItem() {
         itemName = "Shape"
     }
 
+    /**将[shapePath]转换成可以渲染的[Drawable]*/
     override fun updatePictureDrawable(resetSize: Boolean) {
         shapePath?.let { path ->
             val unit = MmValueUnit()
@@ -64,7 +66,7 @@ class PictureShapeItem : PictureItem() {
             val drawableWidth = shapeWidth.ceil().roundToInt()
             val drawableHeight = shapeHeight.ceil().roundToInt()
 
-            val drawable = ScalePictureDrawable(withPicture(drawableWidth, drawableHeight) {
+            val picture = withPicture(drawableWidth, drawableHeight) {
                 var dx = strokeWidth / 2
                 var dy = dx
                 if (!shapeBounds.isNoSize()) {
@@ -82,7 +84,14 @@ class PictureShapeItem : PictureItem() {
                     }
                 }
                 drawPath(path, paint)
-            })
+            }
+
+            //draw
+            val drawable = if (path is LinePath) {
+                LinePictureDrawable(picture)
+            } else {
+                ScalePictureDrawable(picture)
+            }
 
             this.drawable = drawable
             this.itemWidth = drawable.minimumWidth.toFloat()

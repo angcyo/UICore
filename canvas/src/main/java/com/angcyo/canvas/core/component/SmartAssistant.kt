@@ -9,6 +9,7 @@ import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
+import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.library.L
 import com.angcyo.library.ex.*
@@ -299,7 +300,7 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
             newHeight = height
         }
 
-        if (equalRatio) {
+        if (!itemRenderer.isLineShape() && equalRatio) {
             //等比调整
             val bounds = itemRenderer.getBounds()
             val rectWidth = bounds.width()

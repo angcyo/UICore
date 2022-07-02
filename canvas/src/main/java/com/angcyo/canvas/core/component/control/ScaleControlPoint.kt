@@ -3,17 +3,21 @@ package com.angcyo.canvas.core.component.control
 import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
+import android.widget.LinearLayout
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.component.CanvasTouchHandler
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.core.renderer.SelectGroupRenderer
+import com.angcyo.canvas.items.PictureShapeItem
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils._tempMatrix
 import com.angcyo.canvas.utils._tempValues
+import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.library.ex.*
 
@@ -189,12 +193,22 @@ class ScaleControlPoint : ControlPoint() {
                         var newWidth = this[0] - touchDiffWidth
                         var newHeight = this[1] - touchDiffHeight
 
-                        if (isLockScaleRatio) {
-                            //等比调整
-                            if (_touchRectWidth > _touchRectHeight) {
-                                newHeight = _touchRectHeight * newWidth / _touchRectWidth
+                        if (itemRenderer.isLineShape()) {
+                            val linePath =
+                                (itemRenderer.getRendererItem() as PictureShapeItem).shapePath as LinePath
+                            if (linePath.orientation == LinearLayout.VERTICAL) {
+                                newWidth = linePath.lineBounds.width()
                             } else {
-                                newWidth = _touchRectWidth * newHeight / _touchRectHeight
+                                newHeight = linePath.lineBounds.height()
+                            }
+                        } else {
+                            if (isLockScaleRatio) {
+                                //等比调整
+                                if (_touchRectWidth > _touchRectHeight) {
+                                    newHeight = _touchRectHeight * newWidth / _touchRectWidth
+                                } else {
+                                    newWidth = _touchRectWidth * newHeight / _touchRectHeight
+                                }
                             }
                         }
 

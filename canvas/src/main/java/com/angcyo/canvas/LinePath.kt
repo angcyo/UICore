@@ -15,29 +15,28 @@ class LinePath : Path() {
     /**线的方向, 水平垂直*/
     var orientation: Int = LinearLayout.VERTICAL
 
-    val bounds = emptyRectF()
+    val lineBounds = emptyRectF()
 
     override fun computeBounds(bounds: RectF, exact: Boolean) {
         //super.computeBounds(bounds, exact)
-        bounds.set(this.bounds)
+        bounds.set(lineBounds)
     }
 
     fun initPath(length: Float = ShapesHelper.defaultWidth) {
         reset()
         moveTo(0f, 0f)
-        bounds.left = 0f
-        bounds.top = 0f
-        bounds.right = length
-        bounds.bottom = length
+        lineBounds.left = 0f
+        lineBounds.top = 0f
+        lineBounds.right = length
+        lineBounds.bottom = length
         if (orientation == LinearLayout.VERTICAL) {
             lineTo(0f, length)
-            bounds.right = 1f
+            lineBounds.right = 1f
             //bounds.inset(-2f, 0f)
         } else {
             lineTo(length, 0f)
-            bounds.bottom = 1f
+            lineBounds.bottom = 1f
             //bounds.inset(0f, -2f)
         }
     }
-
 }

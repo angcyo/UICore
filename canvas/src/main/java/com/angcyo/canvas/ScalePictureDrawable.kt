@@ -24,6 +24,9 @@ open class ScalePictureDrawable(picture: Picture) : PictureDrawable(picture) {
 
     var scaleRenderRect = RectF()
 
+    /**是否激活Clip*/
+    var enableClip = false
+
     /**返回是否需要绘制*/
     fun checkDrawThreshold(): Boolean {
         return true
@@ -36,7 +39,9 @@ open class ScalePictureDrawable(picture: Picture) : PictureDrawable(picture) {
     override fun draw(canvas: Canvas) {
         if (checkDrawThreshold()) {
             save(canvas)
-            //canvas.clipRect(bounds) //不需要clip.
+            if (enableClip) {
+                canvas.clipRect(bounds)
+            }
             //canvas.clipRect(scaleRenderRect)
             canvas.translate(bounds.left.toFloat(), bounds.top.toFloat())
             canvas.scale(scalePictureX, scalePictureY, scalePointX, scalePointY)
@@ -46,7 +51,7 @@ open class ScalePictureDrawable(picture: Picture) : PictureDrawable(picture) {
         }
     }
 
-    private fun save(canvas: Canvas) {
+    protected fun save(canvas: Canvas) {
         if (alpha == 255 || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             canvas.save()
         } else {
