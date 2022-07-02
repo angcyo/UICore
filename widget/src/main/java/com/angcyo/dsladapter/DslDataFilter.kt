@@ -434,11 +434,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             val notifyChildFormItemList = mutableListOf<DslAdapterItem>()
 
             _params?.fromDslAdapterItem?.let { fromItem ->
-                dslAdapter.getValidFilterDataList().forEachIndexed { index, dslAdapterItem ->
-                    if (fromItem.isItemInUpdateList(dslAdapterItem, index)) {
-                        notifyChildFormItemList.add(dslAdapterItem)
-                    }
-                }
+                notifyChildFormItemList.addAll(dslAdapter.getUpdateDependItemListFrom(fromItem))
             }
 
             return notifyChildFormItemList

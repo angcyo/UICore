@@ -13,7 +13,7 @@ import com.angcyo.media.audio.record.RecordUI
 import com.angcyo.media.audio.widget.VoiceView
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt
-import com.angcyo.widget.base.frameParams
+import com.angcyo.widget.base.updateFrameParams
 import com.angcyo.widget.progress.DYProgressView
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.StatusUtil
@@ -133,7 +133,7 @@ open class DslPlayAudioItem : DslBaseAudioItem() {
         }
         itemHolder.view(R.id.content_wrap_layout)?.apply {
             minimumWidth = itemWidth
-            frameParams {
+            updateFrameParams {
                 width = itemWidth
                 gravity = itemAudioLayoutGravity
             }

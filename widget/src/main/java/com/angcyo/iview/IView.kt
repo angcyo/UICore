@@ -39,10 +39,16 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
     /**[IView]显示的次数*/
     var showCount = 0
 
+    /**是否可以被取消*/
+    var cancelable: Boolean = true
+
     //IView所在的容器
     var _parentView: ViewGroup? = null
 
     var iViewHolder: DslViewHolder? = null
+
+    /**回退栈调度者*/
+    var backPressedDispatcherOwner: OnBackPressedDispatcherOwner? = null
 
     //----
 
@@ -75,9 +81,11 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
      * */
     @CallPoint
     fun hide(end: (() -> Unit)? = null) {
-        removeInner(_parentView) {
-            isEnabled = false//OnBackPressedCallback
-            end?.invoke()
+        if (cancelable) {
+            removeInner(_parentView) {
+                isEnabled = false//OnBackPressedCallback
+                end?.invoke()
+            }
         }
     }
 
@@ -161,10 +169,16 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
 
     /**[OnBackPressedDispatcherOwner]*/
     fun initBackPressedDispatcher() {
-        val activity = iActivity
-        if (activity is OnBackPressedDispatcherOwner) {
-            isEnabled = true//OnBackPressedCallback
-            activity.onBackPressedDispatcher.addCallback(this)
+        isEnabled = true//OnBackPressedCallback
+
+        val owner = backPressedDispatcherOwner
+        if (owner != null) {
+            owner.onBackPressedDispatcher.addCallback(this)
+        } else {
+            val activity = iActivity
+            if (activity is OnBackPressedDispatcherOwner) {
+                activity.onBackPressedDispatcher.addCallback(this)
+            }
         }
     }
 

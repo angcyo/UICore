@@ -110,6 +110,6 @@ fun FileTextData?.writeTo(
     folder: String = Constant.LOG_FOLDER_NAME,
     name: String = logFileName(),
     append: Boolean = true
-) {
-    DslFileHelper.write(folder = folder, name = name, data = this ?: "null", append = append)
+): String? {
+    return DslFileHelper.write(folder = folder, name = name, data = this ?: "null", append = append)
 }

@@ -98,41 +98,42 @@ fun Context.viewOf(
     return view
 }
 
-
 //<editor-fold desc="layoutParams扩展">
 
 /**快速操作[LayoutParams]*/
-fun View.marginParams(config: ViewGroup.MarginLayoutParams.() -> Unit = {}): View {
+fun View.updateMarginParams(config: ViewGroup.MarginLayoutParams.() -> Unit = {}): View {
     (this.layoutParams as? ViewGroup.MarginLayoutParams)?.apply {
         config()
-        this@marginParams.layoutParams = layoutParams
+        this@updateMarginParams.layoutParams = layoutParams
     }
     return this
 }
 
-fun View.frameParams(config: FrameLayout.LayoutParams.() -> Unit = {}): View {
+fun View.updateFrameParams(config: FrameLayout.LayoutParams.() -> Unit = {}): View {
     (this.layoutParams as? FrameLayout.LayoutParams)?.apply {
         config()
-        this@frameParams.layoutParams = layoutParams
+        this@updateFrameParams.layoutParams = layoutParams
     }
     return this
 }
 
-fun View.coordinatorParams(config: CoordinatorLayout.LayoutParams.() -> Unit = {}): View {
+fun View.updateCoordinatorParams(config: CoordinatorLayout.LayoutParams.() -> Unit = {}): View {
     (this.layoutParams as? CoordinatorLayout.LayoutParams)?.apply {
         config()
-        this@coordinatorParams.layoutParams = layoutParams
+        this@updateCoordinatorParams.layoutParams = layoutParams
     }
     return this
 }
 
-fun View.constraintParams(config: ConstraintLayout.LayoutParams.() -> Unit = {}): View {
+fun View.updateConstraintParams(config: ConstraintLayout.LayoutParams.() -> Unit = {}): View {
     (this.layoutParams as? ConstraintLayout.LayoutParams)?.apply {
         config()
-        this@constraintParams.layoutParams = layoutParams
+        this@updateConstraintParams.layoutParams = layoutParams
     }
     return this
 }
+
+//---
 
 /**将[LayoutParams]强转成指定对象*/
 fun ViewGroup.LayoutParams.marginParams(config: ViewGroup.MarginLayoutParams.() -> Unit = {}): ViewGroup.MarginLayoutParams? {

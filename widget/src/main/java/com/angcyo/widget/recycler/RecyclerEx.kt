@@ -39,6 +39,19 @@ fun RecyclerView.haveItemDecoration(predicate: (ItemDecoration) -> Boolean): Boo
     return result
 }
 
+/**移除指定的[ItemDecoration]*/
+fun RecyclerView.removeItemDecoration(predicate: (ItemDecoration) -> Boolean): Boolean {
+    var result = false
+    for (i in itemDecorationCount - 1 downTo 0) {
+        val itemDecoration = getItemDecorationAt(i)
+        if (predicate(itemDecoration)) {
+            removeItemDecorationAt(i)
+            result = true
+        }
+    }
+    return result
+}
+
 /**[DslAdapter]必备的组件*/
 fun RecyclerView.initDsl() {
     var haveItemDecoration = false

@@ -7,6 +7,7 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.annotation.ItemInitEntryPoint
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
+import com.angcyo.library.annotation.DSL
 import com.angcyo.library.ex.find
 import com.angcyo.library.ex.string
 import com.angcyo.library.ex.toStr
@@ -118,6 +119,12 @@ interface ICheckGroupItem : IAutoInitItem {
                 itemChanging = true
             }
         }
+    }
+
+    /**Dsl*/
+    @DSL
+    fun configCheckGroupItem(block: CheckGroupItemConfig.() -> Unit) {
+        checkGroupItemConfig.block()
     }
 }
 

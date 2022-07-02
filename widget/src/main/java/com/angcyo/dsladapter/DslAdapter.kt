@@ -728,6 +728,17 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
 
     //</editor-fold desc="Item操作">
 
+    /** 获取[fromItem]更新时, 有多少子项需要更新 */
+    fun getUpdateDependItemListFrom(fromItem: DslAdapterItem): List<DslAdapterItem> {
+        val notifyChildFormItemList = mutableListOf<DslAdapterItem>()
+        getValidFilterDataList().forEachIndexed { index, dslAdapterItem ->
+            if (fromItem.isItemInUpdateList(dslAdapterItem, index)) {
+                notifyChildFormItemList.add(dslAdapterItem)
+            }
+        }
+        return notifyChildFormItemList
+    }
+
     /**获取有效过滤后的数据集合*/
     fun getValidFilterDataList(): List<DslAdapterItem> {
         return dslDataFilter?.filterDataList ?: adapterItems

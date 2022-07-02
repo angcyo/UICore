@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/lib_bg_selector"
-    android:gravity="center_vertical"
     android:minHeight="@dimen/lib_item_height"
     android:paddingTop="@dimen/lib_hdpi"
     android:paddingBottom="@dimen/lib_hdpi"

@@ -12,6 +12,7 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentActivity
 import com.angcyo.DslAHelper
 import com.angcyo.activity.BaseAppCompatActivity
+import com.angcyo.fragment.AbsLifecycleFragment
 import com.angcyo.fragment.FragmentBridge
 import com.angcyo.fragment.R
 import com.angcyo.layout.FragmentSwipeBackLayout
@@ -228,6 +229,15 @@ fun Context.dslAHelper(action: DslAHelper.() -> Unit) {
 
 /**返回true, 表示可以关闭界面*/
 fun ComponentActivity.checkBackPressedDispatcher(): Boolean {
+    if (onBackPressedDispatcher.hasEnabledCallbacks()) {
+        onBackPressedDispatcher.onBackPressed()
+        return false
+    }
+    return true
+}
+
+/**返回true, 表示可以关闭界面*/
+fun AbsLifecycleFragment.checkBackPressedDispatcher(): Boolean {
     if (onBackPressedDispatcher.hasEnabledCallbacks()) {
         onBackPressedDispatcher.onBackPressed()
         return false

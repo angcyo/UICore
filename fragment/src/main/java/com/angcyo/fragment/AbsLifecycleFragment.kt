@@ -6,11 +6,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.animation.Animation
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.OnBackPressedDispatcherOwner
 import androidx.annotation.CallSuper
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.angcyo.base.checkBackPressedDispatcher
 import com.angcyo.base.getAllResumedFragment
 import com.angcyo.base.setFragmentResult
 import com.angcyo.base.toVisibilityString
@@ -27,7 +30,7 @@ import com.angcyo.library.ex.hideSoftInput
  *
  * @author angcyo
  */
-abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
+abstract class AbsLifecycleFragment : AbsFragment(), IFragment, OnBackPressedDispatcherOwner {
 
     /**
      * 触发 [.onFragmentShow] 的次数
@@ -159,8 +162,12 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
      * 返回true, 表示可以关闭
      */
     override fun onBackPressed(): Boolean {
-        view?.hideSoftInput()
-        return (lastFragment as? AbsLifecycleFragment)?.onBackPressed() ?: true
+        return if (checkBackPressedDispatcher()) {
+            view?.hideSoftInput()
+            (lastFragment as? AbsLifecycleFragment)?.onBackPressed() ?: true
+        } else {
+            false
+        }
     }
 
     override fun canSwipeBack(): Boolean {
@@ -178,6 +185,12 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment {
     override fun getFragmentTag(): String {
         return tag ?: this.javaClass.name
     }
+
+    val backPressedDispatcher = OnBackPressedDispatcher {
+        L.i("无返回Callback需要被执行")
+    }
+
+    override fun getOnBackPressedDispatcher(): OnBackPressedDispatcher = backPressedDispatcher
 
     //</editor-fold>
 

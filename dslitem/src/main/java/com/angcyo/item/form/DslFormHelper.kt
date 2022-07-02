@@ -8,11 +8,9 @@ import com.angcyo.dsladapter.itemIndexPosition
 import com.angcyo.library.L
 import com.angcyo.library.ex.elseNull
 import com.angcyo.library.ex.size
+import com.angcyo.library.toastQQ
 import com.angcyo.tablayout.clamp
-import com.angcyo.widget.recycler.DslRecyclerView
-import com.angcyo.widget.recycler.ScrollHelper
-import com.angcyo.widget.recycler.haveItemDecoration
-import com.angcyo.widget.recycler.scrollHelper
+import com.angcyo.widget.recycler.*
 
 /**
  * 表单助手, 用于获取表单数据, 表单验证等相关操作
@@ -28,6 +26,7 @@ class DslFormHelper {
     /**表单错误提示分割线*/
     var formItemDecoration = DslFormItemDecoration()
 
+    /**安装组件*/
     fun install(recyclerView: RecyclerView?) {
         uninstall()
         _recyclerView = recyclerView
@@ -42,9 +41,12 @@ class DslFormHelper {
         }
     }
 
+    /**卸载组件*/
     fun uninstall() {
         _recyclerView?.apply {
-            removeItemDecoration(formItemDecoration)
+            removeItemDecoration {
+                it == formItemDecoration || it is DslFormItemDecoration
+            }
         }
     }
 
@@ -271,4 +273,33 @@ class DslFormHelper {
     }
 
     //</editor-fold desc="检查的同时获取数据">
+}
+
+/**检查所有Item, 判断是否有错误, 并提示错误
+ * [predicate] 返回当前item是否有错误
+ * @return 是否有错误*/
+fun DslAdapter.checkItemThrowable(
+    predicate: (DslAdapterItem) -> Boolean = {
+        it.itemThrowable != null
+    }
+): Boolean {
+    var reuslt = false
+    getValidFilterDataList().forEach { item ->
+        if (predicate(item)) {
+            reuslt = true
+            //中断
+            _recyclerView?.let {
+                DslFormHelper().apply {
+                    install(it)
+                    tipFormItemError(item)
+                }
+            }.elseNull {
+                item.itemThrowable?.message?.let {
+                    toastQQ(it)
+                }
+            }
+            return@forEach
+        }
+    }
+    return reuslt
 }

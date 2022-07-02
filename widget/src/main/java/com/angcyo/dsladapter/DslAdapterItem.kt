@@ -167,6 +167,7 @@ open class DslAdapterItem : LifecycleOwner {
     /**有依赖时, 才更新
      * [updateItemDepend]*/
     open fun updateItemOnHaveDepend(
+        updateSelf: Boolean = true,
         filterParams: FilterParams = FilterParams(
             fromDslAdapterItem = this,
             updateDependItemWithEmpty = false,
@@ -174,15 +175,13 @@ open class DslAdapterItem : LifecycleOwner {
         )
     ) {
         val notifyChildFormItemList = mutableListOf<DslAdapterItem>()
-        itemDslAdapter?.getValidFilterDataList()?.forEachIndexed { index, dslAdapterItem ->
-            if (isItemInUpdateList(dslAdapterItem, index)) {
-                return@forEachIndexed
-            }
+        itemDslAdapter?.getUpdateDependItemListFrom(this)?.let {
+            notifyChildFormItemList.addAll(it)
         }
 
         if (notifyChildFormItemList.isNotEmpty()) {
             updateItemDepend(filterParams)
-        } else {
+        } else if (updateSelf) {
             //否则更新自己
             updateAdapterItem(filterParams.payload)
         }
@@ -259,6 +258,9 @@ open class DslAdapterItem : LifecycleOwner {
 
     /**唯一标识此item的值*/
     var itemTag: String? = null
+
+    /**异常标识, 自定义数据*/
+    var itemThrowable: Throwable? = null
 
     /**item存储数据使用*/
     var itemTags: SparseArray<Any?>? = null
@@ -1168,7 +1170,8 @@ open class DslAdapterItem : LifecycleOwner {
 
     /**其次, 提供一个可以被子类覆盖的方法*/
     open fun onItemChangeListener(item: DslAdapterItem) {
-        updateItemDepend()
+        //有依赖的item需要更新时, 再刷新界面
+        updateItemOnHaveDepend()
     }
 
     /**[itemChangeListener]*/
@@ -1267,7 +1270,7 @@ open class DslAdapterItem : LifecycleOwner {
     /**监听item select改变事件*/
     var onItemSelectorChange: ItemSelectAction = {
         if (it.updateItemDepend) {
-            updateItemDepend()
+            updateItemOnHaveDepend()
         }
     }
 

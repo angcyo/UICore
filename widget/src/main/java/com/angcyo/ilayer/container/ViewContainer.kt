@@ -14,6 +14,7 @@ import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.className
 import com.angcyo.tablayout.clamp
 import com.angcyo.widget.base.frameParams
+import com.angcyo.widget.base.updateFrameParams
 import com.angcyo.library.ex.mH
 import com.angcyo.library.ex.mW
 
@@ -116,7 +117,7 @@ open class ViewContainer(val parent: ViewGroup) : BaseContainer(parent.context) 
 
         if (parent is FrameLayout) {
             position?.let {
-                rootView.frameParams {
+                rootView.updateFrameParams {
                     this.gravity = position.gravity
                     if (gravity.isGravityLeft()) {
                         leftMargin = (position.offsetX * parent.mW()).toInt()

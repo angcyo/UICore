@@ -5,7 +5,7 @@ import com.angcyo.dialog.R
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.library.ex.undefined_res
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.constraintParams
+import com.angcyo.widget.base.updateConstraintParams
 
 /**
  * 网格对话框中的item
@@ -37,7 +37,7 @@ class DslDialogGridItem : DslDialogTextItem() {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
         itemHolder.img(R.id.lib_image_view)?.run {
-            constraintParams {
+            updateConstraintParams {
                 matchConstraintPercentWidth = itemGridWidthPercent
             }
 

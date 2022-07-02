@@ -22,11 +22,8 @@ import com.angcyo.widget.edit.IEditDelegate
  */
 interface IEditItem : IAutoInitItem {
 
+    /**配置项*/
     var editItemConfig: EditItemConfig
-
-    fun onItemTextChange(text: CharSequence) {
-        editItemConfig.itemTextChange?.invoke(text)
-    }
 
     /**初始化*/
     @ItemInitEntryPoint
@@ -65,7 +62,7 @@ interface IEditItem : IAutoInitItem {
                 if (this@IEditItem is DslAdapterItem) {
                     itemChanging = true
                 }
-                onItemTextChange(it)
+                onItemEditTextChange(itemHolder, it)
             }
 
             restoreSelection(
@@ -75,12 +72,18 @@ interface IEditItem : IAutoInitItem {
         }
     }
 
+    fun configEditTextStyle(action: EditStyleConfig.() -> Unit) {
+        editItemConfig.itemEditTextStyle.action()
+    }
+
+    /**清除之前的监听*/
     fun clearEditListeners(itemHolder: DslViewHolder) {
         itemHolder.ev(editItemConfig.itemEditTextViewId)?.clearListeners()
     }
 
-    fun configEditTextStyle(action: EditStyleConfig.() -> Unit) {
-        editItemConfig.itemEditTextStyle.action()
+    /**编辑的文本改变后*/
+    fun onItemEditTextChange(itemHolder: DslViewHolder, text: CharSequence) {
+        editItemConfig.itemTextChange?.invoke(text)
     }
 }
 

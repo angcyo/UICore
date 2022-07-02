@@ -5,7 +5,7 @@ import com.angcyo.library.ex._dimen
 import com.angcyo.media.dslitem.DslPreviewAudioItem
 import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.marginParams
+import com.angcyo.widget.base.updateMarginParams
 
 /**
  *
@@ -22,7 +22,7 @@ class DslPickerPreviewAudioItem : DslPreviewAudioItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
-        itemHolder.view(R.id.bottom_wrap_layout)?.marginParams {
+        itemHolder.view(R.id.bottom_wrap_layout)?.updateMarginParams {
             bottomMargin = _dimen(R.dimen.picker_media_progress_margin_bottom)
         }
     }
