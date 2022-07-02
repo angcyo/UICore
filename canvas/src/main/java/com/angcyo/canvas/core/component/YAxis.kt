@@ -17,8 +17,7 @@ class YAxis : BaseAxis() {
         plusList.clear()
         var pixel = canvasViewBox.getCoordinateSystemY()
         val factor = max(1f, canvasViewBox.invertMatrix.getScaleY())
-        val end =
-            (pixel + (canvasViewBox.getContentHeight() - canvasViewBox.getTranslateY())) * factor
+        val end = (canvasViewBox.getContentHeight() - canvasViewBox.getTranslateY()) * factor
         val step = canvasViewBox.valueUnit.getGraduatedScaleGap()
 
         val scaleY = canvasViewBox.getScaleY()
@@ -38,8 +37,7 @@ class YAxis : BaseAxis() {
         minusList.clear()
         var pixel = canvasViewBox.getCoordinateSystemY()
         val factor = max(1f, canvasViewBox.invertMatrix.getScaleY())
-        val end =
-            (pixel - (canvasViewBox.getContentHeight() - canvasViewBox.getTranslateY())) * factor
+        val end = (0 - canvasViewBox.getTranslateY()) * factor
         val step = canvasViewBox.valueUnit.getGraduatedScaleGap()
 
         val scaleY = canvasViewBox.getScaleY()

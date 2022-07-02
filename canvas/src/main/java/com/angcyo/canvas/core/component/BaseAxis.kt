@@ -119,7 +119,7 @@ abstract class BaseAxis : BaseComponent() {
 }
 
 /**枚举*/
-fun BaseAxis.eachAxisPixelList(block: (index: Int, value: AxisPoint) -> Unit) {
+fun BaseAxis.eachAxisPixelList(block: (index: Int, axisPoint: AxisPoint) -> Unit) {
     plusList.forEachIndexed(block)
     minusList.forEachIndexed(block)
 }
