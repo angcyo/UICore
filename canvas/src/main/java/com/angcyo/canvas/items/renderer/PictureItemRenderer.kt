@@ -39,6 +39,10 @@ class PictureItemRenderer(canvasView: ICanvasView) :
         return super.isSupportControlPoint(type)
     }
 
+    override fun changeBounds(reason: Reason, block: RectF.() -> Unit) {
+        super.changeBounds(reason, block)
+    }
+
     override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
         super.itemBoundsChanged(reason, oldBounds)
         getRendererItem()?.let {
@@ -47,27 +51,35 @@ class PictureItemRenderer(canvasView: ICanvasView) :
                     val matrix = Matrix()
                     val scaleX = getBounds().width() / oldBounds.width()
                     val scaleY = getBounds().height() / oldBounds.height()
-                    if (this is LinePath) {
-                        if (orientation == LinearLayout.VERTICAL) {
+
+                    if (scaleX != 1f || scaleY != 1f) {
+                        if (this is LinePath) {
+                            if (orientation == LinearLayout.VERTICAL) {
+                                matrix.postScale(
+                                    1f,
+                                    scaleY,
+                                    it.shapeBounds.left,
+                                    it.shapeBounds.top
+                                )
+                            } else {
+                                matrix.postScale(
+                                    scaleX,
+                                    1f,
+                                    it.shapeBounds.left,
+                                    it.shapeBounds.top
+                                )
+                            }
+                        } else {
                             matrix.postScale(
-                                1f,
+                                scaleX,
                                 scaleY,
                                 it.shapeBounds.left,
                                 it.shapeBounds.top
                             )
-                        } else {
-                            matrix.postScale(
-                                scaleX,
-                                1f,
-                                it.shapeBounds.left,
-                                it.shapeBounds.top
-                            )
                         }
-                    } else {
-                        matrix.postScale(scaleX, scaleY, it.shapeBounds.left, it.shapeBounds.top)
+                        transform(matrix)
+                        it.updatePictureDrawable(true)
                     }
-                    transform(matrix)
-                    it.updatePictureDrawable(true)
                 }
             }
         }

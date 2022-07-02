@@ -61,6 +61,10 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         }
     }
 
+    override fun changeBounds(reason: Reason, block: RectF.() -> Unit) {
+        super.changeBounds(reason, block)
+    }
+
     override fun onItemBoundsChanged(item: IRenderer, reason: Reason, oldBounds: RectF) {
         if (selectItemList.contains(item)) {
             if (reason.reason == Reason.REASON_USER) {
@@ -177,6 +181,9 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
 
     /**更新选中的bounds大小, 需要包含所有选中的元素*/
     fun updateSelectBounds() {
+        if (selectItemList.isEmpty()) {
+            return
+        }
         rotate = 0f//重置旋转
         changeBounds(Reason(Reason.REASON_CODE, true)) {
             var l = Float.MAX_VALUE

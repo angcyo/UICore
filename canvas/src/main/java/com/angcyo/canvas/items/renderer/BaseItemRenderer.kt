@@ -127,6 +127,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         oldValue: Matrix
     ) {
         //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
+        changeBeforeBounds.set(getBounds())
         itemBoundsChanged(Reason(), changeBeforeBounds)
     }
 
