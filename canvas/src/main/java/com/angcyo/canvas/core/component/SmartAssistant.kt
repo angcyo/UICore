@@ -32,7 +32,7 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
     /**吸附阈值, 当距离推荐线的距离小于等于此值时, 自动吸附
      * 值大小, 不容易吸附. 就会导致频繁计算推荐点
      * */
-    var translateAdsorbThreshold: Float = 5f
+    var translateAdsorbThreshold: Float = 10f
 
     /**旋转吸附角度, 当和目标角度小于这个值时, 自动吸附到目标*/
     var rotateAdsorbThreshold: Float = 1f
@@ -156,18 +156,18 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
     //region ---smart---
 
     /**智能推荐算法平移
-     * @return true 表示拦截此次手势操作*/
+     * @return true 表示消耗了此次手势操作, x, y*/
     fun smartTranslateItemBy(
         itemRenderer: BaseItemRenderer<*>,
         distanceX: Float = 0f,
         distanceY: Float = 0f
-    ) {
-        if (!enable || (distanceX == 0f && distanceX == 0f)) {
+    ): BooleanArray {
+        if (!enable || (distanceX == 0f && distanceY == 0f)) {
             canvasView.translateItemBy(itemRenderer, distanceX, distanceY)
-            return
+            return booleanArrayOf(true, true)
         }
 
-        L.i("智能提示请求: dx:${distanceX} dy:${distanceY}")
+        L.i("智能平移请求: dx:${distanceX} dy:${distanceY}")
 
         val renderRotateBounds = itemRenderer.getRenderRotateBounds()
 
@@ -191,7 +191,7 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
             if (dx.absoluteValue <= translateAdsorbThreshold) {
                 //需要吸附
                 adsorbDx = 0f
-                L.i("智能提示吸附X:${it.smartValue.refValue}")
+                //L.i("智能提示吸附X:${it.smartValue.refValue}")
             }
 
             /*if (it.forward) {
@@ -214,7 +214,7 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
             if (dy.absoluteValue <= translateAdsorbThreshold) {
                 //需要吸附
                 adsorbDy = 0f
-                L.i("智能提示吸附Y:${it.smartValue.refValue}")
+                //L.i("智能提示吸附Y:${it.smartValue.refValue}")
             }
 
             /*if (it.forward) {
@@ -252,6 +252,7 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
 
             if (xRef != null) {
                 //找到的推荐点
+                L.i("找到推荐点:fromX:->${xRef.fromValue} ->${xRef.smartValue.refValue}")
                 lastXAssistant = xRef
                 feedback = true
                 xRef.drawRect = RectF(
@@ -280,6 +281,7 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
 
             if (yRef != null) {
                 //找到的推荐点
+                L.i("找到推荐点:fromY:->${yRef.fromValue} ->${yRef.smartValue.refValue}")
                 lastYAssistant = yRef
                 feedback = true
                 yRef.drawRect = RectF(
@@ -301,6 +303,7 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
         }
 
         canvasView.translateItemBy(itemRenderer, dx, dy)
+        return booleanArrayOf(dx != 0f, dy != 0f)
     }
 
     /**智能旋转算法

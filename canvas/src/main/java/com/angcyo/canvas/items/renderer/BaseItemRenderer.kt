@@ -249,7 +249,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
      * [distanceX] 横向需要移动的像素距离
      * [distanceY] 纵向需要移动的像素距离*/
     override fun translateBy(distanceX: Float, distanceY: Float) {
-        L.i("移动by->x:$distanceX y:$distanceY")
+        L.i("平移by->dx:$distanceX dy:$distanceY")
         if (distanceX == 0f && distanceY == 0f) {
             return
         }

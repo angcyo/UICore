@@ -58,6 +58,7 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
     //按下的坐标
     val _touchPoint = PointF()
+    val _moveStartPoint = PointF()
     val _movePoint = PointF()
     var touchPointerId: Int = -1
 
@@ -100,6 +101,7 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
                 touchPointerId = event.getPointerId(0)
                 _touchPoint.set(event.x, event.y)
+                _moveStartPoint.set(event.x, event.y)
                 val touchPoint = _touchPoint
 
                 if (selectedItemRender != null) {
@@ -141,15 +143,13 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                             //canvasView.canvasViewBox.matrix.mapPoint(_touchPointList[0])
                             //val p2 = _tempMatrix.mapPoint(_touchPointList[0])//_touchPointList[0]
 
-                            moveItemBounds
-
                             val p1 = canvasDelegate.getCanvasViewBox()
                                 .mapCoordinateSystemPoint(_movePoint)
                             val p1x = p1.x
                             val p1y = p1.y
 
                             val p2 = canvasDelegate.getCanvasViewBox()
-                                .mapCoordinateSystemPoint(_touchPoint)
+                                .mapCoordinateSystemPoint(_moveStartPoint)
                             val p2x = p2.x
                             val p2y = p2.y
 
@@ -165,8 +165,14 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                                     selectedItemRender,
                                     dx1,
                                     dy1
-                                )
-                                _touchPoint.set(_movePoint)
+                                ).apply {
+                                    if (this[0]) {
+                                        _moveStartPoint.x = _movePoint.x
+                                    }
+                                    if (this[1]) {
+                                        _moveStartPoint.y = _movePoint.y
+                                    }
+                                }
                             }
                         }
                     } else {
