@@ -3,7 +3,6 @@ package com.angcyo.canvas.core.component
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.utils.getScaleY
 import com.angcyo.library.ex.have
-import kotlin.math.max
 
 /**
  * Y轴组件
@@ -16,7 +15,7 @@ class YAxis : BaseAxis() {
     override fun getPlusPixelList(canvasViewBox: CanvasViewBox): List<AxisPoint> {
         plusList.clear()
         var pixel = canvasViewBox.getCoordinateSystemY()
-        val factor = max(1f, canvasViewBox.invertMatrix.getScaleY())
+        val factor = canvasViewBox.invertMatrix.getScaleY()
         val end = (canvasViewBox.getContentHeight() - canvasViewBox.getTranslateY()) * factor
         val step = canvasViewBox.valueUnit.getGraduatedScaleGap()
 
@@ -36,7 +35,7 @@ class YAxis : BaseAxis() {
     override fun getMinusPixelList(canvasViewBox: CanvasViewBox): List<AxisPoint> {
         minusList.clear()
         var pixel = canvasViewBox.getCoordinateSystemY()
-        val factor = max(1f, canvasViewBox.invertMatrix.getScaleY())
+        val factor = canvasViewBox.invertMatrix.getScaleY()
         val end = (0 - canvasViewBox.getTranslateY()) * factor
         val step = canvasViewBox.valueUnit.getGraduatedScaleGap()
 
