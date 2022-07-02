@@ -26,7 +26,7 @@ class InchValueUnit : IValueUnit {
         if (index % 10 == 0) {
             return "${(index / 10f).toInt()}"
         }
-        return "${(index / 10f).canvasDecimal(1)}"
+        return (index / 10f).canvasDecimal(1)
     }
 
     /**获取每个单位间隔刻度对应的像素大小

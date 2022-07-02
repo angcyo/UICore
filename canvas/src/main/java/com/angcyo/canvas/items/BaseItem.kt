@@ -5,12 +5,16 @@ import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import com.angcyo.canvas.utils.*
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.uuid
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/08
  */
 abstract class BaseItem : ICanvasItem {
+
+    /**唯一标识符*/
+    var uuid: String = uuid()
 
     /**标签, 自定义的属性, 用来区分数据*/
     var tag: String? = null
