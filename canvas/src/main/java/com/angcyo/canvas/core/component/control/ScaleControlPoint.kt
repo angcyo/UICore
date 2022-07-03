@@ -69,6 +69,7 @@ class ScaleControlPoint : ControlPoint() {
         }
 
     val _touchPoint = PointF()
+    val _moveStartPoint = PointF()
     val _movePoint = PointF()
 
     //按下时目标的宽高
@@ -103,6 +104,7 @@ class ScaleControlPoint : ControlPoint() {
                 isScaled = false
 
                 _touchPoint.set(event.x, event.y)
+                _moveStartPoint.set(event.x, event.y)
                 val bounds = itemRenderer.getBounds()
                 _touchRectWidth = bounds.width()
                 _touchRectHeight = bounds.height()
@@ -152,8 +154,8 @@ class ScaleControlPoint : ControlPoint() {
             MotionEvent.ACTION_MOVE -> {
                 _movePoint.set(event.x, event.y)
 
-                val dx = _movePoint.x - _touchPoint.x
-                val dy = _movePoint.y - _touchPoint.y
+                val dx = _movePoint.x - _moveStartPoint.x
+                val dy = _movePoint.y - _moveStartPoint.y
 
                 if (dx != 0f || dy != 0f) {
                     val x1: Float
@@ -221,9 +223,15 @@ class ScaleControlPoint : ControlPoint() {
                             dx,
                             dy,
                             if (isCenterScale) ADJUST_TYPE_CENTER else ADJUST_TYPE_LT
-                        )
+                        ).apply {
+                            if (this[0]) {
+                                _moveStartPoint.x = _movePoint.x
+                            }
+                            if (this[1]) {
+                                _moveStartPoint.y = _movePoint.y
+                            }
+                        }
                     }
-                    _touchPoint.set(_movePoint)
                 }
 
                 /*//直接修改宽高, 这样才会跟手, 但是不适用与矩形旋转后的计算

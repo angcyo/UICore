@@ -362,7 +362,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     /**调整矩形的宽高, 支持旋转后的矩形*/
     override fun updateBounds(width: Float, height: Float, adjustType: Int) {
-        L.i("调整宽高->w:$width h:${height} type:$adjustType")
+        L.i("调整宽高->w:${getBounds().width()}->$width h:${getBounds().height()}->${height} type:$adjustType")
         _adjustType = adjustType
         changeBounds {
             adjustSizeWithRotate(width, height, rotate, adjustType)
