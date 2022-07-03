@@ -10,6 +10,7 @@ import com.angcyo.library.app
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.FileUtils
+import com.angcyo.library.utils.appFolderPath
 import com.angcyo.library.utils.logFileName
 
 /**
@@ -68,9 +69,7 @@ object Debug {
                                 showFileMd5 = true
                                 showFileMenu = true
                                 showHideFile = true
-                                targetPath =
-                                    FileUtils.appRootExternalFolder(folder = "")?.absolutePath
-                                        ?: targetPath
+                                targetPath = appFolderPath()
                             }) {
                                 //no op
                             }
