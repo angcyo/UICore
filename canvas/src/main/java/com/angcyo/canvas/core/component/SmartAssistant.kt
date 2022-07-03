@@ -447,15 +447,22 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
             if (!itemRenderer.isLineShape() && equalRatio) {
                 //等比调整
-                val bounds = itemRenderer.getBounds()
-                val rectWidth = bounds.width()
-                val rectHeight = bounds.height()
-                if (rectWidth > rectHeight) {
-                    newHeight = rectHeight * newWidth / rectWidth
-                    lastHeightAssistant = null
+
+                //原先的缩放比
+                val originScale = originWidth / originHeight
+                val newScale = newWidth / newHeight
+
+                if ((newScale - originScale).absoluteValue <= 0.00001) {
+                    //已经是等比
                 } else {
-                    newWidth = rectWidth * newHeight / rectHeight
-                    lastWidthAssistant = null
+                    if ((newWidth - originWidth).absoluteValue > (newHeight - originHeight).absoluteValue) {
+                        //宽度变化比高度大
+                        newHeight = originHeight * newWidth / originWidth
+                        lastHeightAssistant = null
+                    } else {
+                        newWidth = originWidth * newHeight / originHeight
+                        lastWidthAssistant = null
+                    }
                 }
             }
 
@@ -491,7 +498,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         dx: Float,
         adsorbThreshold: Float = translateAdsorbThreshold
     ): SmartAssistantData? {
-        var result: SmartAssistantData? = null
+        var result: SmartAssistantData?
 
         if (dx > 0) {
             //向右平移, 优先查找right的推荐点
