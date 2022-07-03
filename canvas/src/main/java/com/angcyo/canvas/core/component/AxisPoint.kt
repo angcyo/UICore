@@ -34,3 +34,9 @@ fun AxisPoint.haveRule(): Boolean {
             type.have(BaseAxis.LINE_TYPE_SECONDARY) ||
             type.have(BaseAxis.LINE_TYPE_PROTRUDE)
 }
+
+/**是否是关键的刻度*/
+fun AxisPoint.isMasterRule(): Boolean {
+    return type.have(BaseAxis.LINE_TYPE_SECONDARY) ||
+            type.have(BaseAxis.LINE_TYPE_PROTRUDE)
+}

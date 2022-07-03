@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import androidx.core.graphics.withMatrix
+import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.SmartAssistant
@@ -27,8 +28,13 @@ class SmartAssistantRenderer(val smartAssistant: SmartAssistant, canvasView: ICa
         val scale = canvasViewBox.getScaleX()
         paint.strokeWidth = strokeWidth / scale //抵消坐标系的缩放
         canvas.withMatrix(canvasViewBox.matrix) {
-            eachAssistantRect {
-                canvas.drawLine(left, top, right, bottom, paint)
+            canvas.withTranslation(
+                canvasViewBox.getCoordinateSystemX(),
+                canvasViewBox.getCoordinateSystemY()
+            ) {
+                eachAssistantRect {
+                    canvas.drawLine(left, top, right, bottom, paint)
+                }
             }
         }
     }

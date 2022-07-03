@@ -10,13 +10,15 @@ import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.library.L
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * 智能提示助手
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/22
  */
-class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasListener {
+class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICanvasListener {
 
     //region ---field---
 
@@ -30,7 +32,9 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
     //---阈值
 
     /**吸附阈值, 当距离推荐线的距离小于等于此值时, 自动吸附
-     * 值大小, 不容易吸附. 就会导致频繁计算推荐点
+     * 值越小, 不容易吸附. 就会导致频繁计算推荐点.
+     *
+     * 当距离推荐值, 小于等于这个值, 就选取这个推荐值
      * */
     var translateAdsorbThreshold: Float = 10f
 
@@ -66,7 +70,7 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
 
     init {
         enable = true
-        canvasView.addCanvasListener(this)
+        canvasDelegate.addCanvasListener(this)
     }
 
     override fun onCanvasTouchEvent(canvasDelegate: CanvasDelegate, event: MotionEvent): Boolean {
@@ -96,8 +100,13 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
         xRefValueList.clear()
         if (enableXSmart) {
             canvasDelegate.xAxis.eachAxisPixelList { index, axisPoint ->
-                if (axisPoint.haveRule()) {
-                    xRefValueList.add(SmartAssistantValueData(axisPoint.pixel))
+                if (axisPoint.isMasterRule()) {
+                    xRefValueList.add(
+                        SmartAssistantValueData(
+                            axisPoint.pixel - canvasDelegate.getCanvasViewBox()
+                                .getCoordinateSystemX()
+                        )
+                    )
                 }
             }
             canvasDelegate.itemsRendererList.forEach {
@@ -119,8 +128,13 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
         yRefValueList.clear()
         if (enableYSmart) {
             canvasDelegate.yAxis.eachAxisPixelList { index, axisPoint ->
-                if (axisPoint.haveRule()) {
-                    yRefValueList.add(SmartAssistantValueData(axisPoint.pixel))
+                if (axisPoint.isMasterRule()) {
+                    yRefValueList.add(
+                        SmartAssistantValueData(
+                            axisPoint.pixel - canvasDelegate.getCanvasViewBox()
+                                .getCoordinateSystemY()
+                        )
+                    )
                 }
             }
             canvasDelegate.itemsRendererList.forEach {
@@ -163,21 +177,21 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
         distanceY: Float = 0f
     ): BooleanArray {
         if (!enable || (distanceX == 0f && distanceY == 0f)) {
-            canvasView.translateItemBy(itemRenderer, distanceX, distanceY)
+            canvasDelegate.translateItemBy(itemRenderer, distanceX, distanceY)
             return booleanArrayOf(true, true)
         }
 
         L.i("智能平移请求: dx:${distanceX} dy:${distanceY}")
 
-        val renderRotateBounds = itemRenderer.getRenderRotateBounds()
+        val rotateBounds = itemRenderer.getRotateBounds()
 
         var dx = distanceX
         var dy = distanceY
 
-        val left = renderRotateBounds.left
-        val top = renderRotateBounds.top
-        val right = renderRotateBounds.right
-        val bottom = renderRotateBounds.bottom
+        val left = rotateBounds.left
+        val top = rotateBounds.top
+        val right = rotateBounds.right
+        val bottom = rotateBounds.bottom
 
         //吸附判断
         var adsorbDx: Float? = null
@@ -191,22 +205,10 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
             if (dx.absoluteValue <= translateAdsorbThreshold) {
                 //需要吸附
                 adsorbDx = 0f
-                //L.i("智能提示吸附X:${it.smartValue.refValue}")
-            }
-
-            /*if (it.forward) {
-                val value = it.smartValue.refValue - (right + dx)
-                if (value.absoluteValue <= translateAdsorbThreshold) {
-                    //需要吸附
-                    adsorbDx = 0f
-                }
+                L.d("智能提示吸附X:${it.smartValue.refValue}")
             } else {
-                val value = it.smartValue.refValue - (left + dx)
-                if (value.absoluteValue <= translateAdsorbThreshold) {
-                    //需要吸附
-                    adsorbDx = 0f
-                }
-            }*/
+                lastXAssistant = null
+            }
         }
 
         //y吸附
@@ -214,40 +216,16 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
             if (dy.absoluteValue <= translateAdsorbThreshold) {
                 //需要吸附
                 adsorbDy = 0f
-                //L.i("智能提示吸附Y:${it.smartValue.refValue}")
-            }
-
-            /*if (it.forward) {
-                val value = it.smartValue.refValue - (bottom + dy)
-                if (value.absoluteValue <= translateAdsorbThreshold) {
-                    //需要吸附
-                    adsorbDy = 0f
-                }
+                L.d("智能提示吸附Y:${it.smartValue.refValue}")
             } else {
-                val value = it.smartValue.refValue - (top + dy)
-                if (value.absoluteValue <= translateAdsorbThreshold) {
-                    //需要吸附
-                    adsorbDy = 0f
-                }
-            }*/
+                lastYAssistant = null
+            }
         }
-
-        val viewRect = canvasView.getCanvasViewBox()
-            .mapCoordinateSystemRect(canvasView.viewBounds, _tempRect)
 
         if (adsorbDx == null) {
             //x未吸附
-            val xRef = if (dx > 0f) {
-                findSmartXValue(itemRenderer, right + dx, true)?.apply {
-                    dx = smartValue.refValue - right
-                }
-            } else if (dx < 0f) {
-                findSmartXValue(itemRenderer, left + dx, false)?.apply {
-                    dx = smartValue.refValue - left
-                }
-            } else {
-                //未移动
-                null
+            val xRef = findSmartXValue(itemRenderer, left, right, dx)?.apply {
+                dx = smartValue.refValue - fromValue
             }
 
             if (xRef != null) {
@@ -255,28 +233,13 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
                 L.i("找到推荐点:fromX:->${xRef.fromValue} ->${xRef.smartValue.refValue}")
                 lastXAssistant = xRef
                 feedback = true
-                xRef.drawRect = RectF(
-                    xRef.smartValue.refValue,
-                    viewRect.top,
-                    xRef.smartValue.refValue,
-                    viewRect.bottom
-                )
             }
         }
 
         if (adsorbDy == null) {
             //y未吸附
-            val yRef = if (dy > 0f) {
-                findSmartYValue(itemRenderer, bottom + dy, true)?.apply {
-                    dy = smartValue.refValue - bottom
-                }
-            } else if (dy < 0f) {
-                findSmartYValue(itemRenderer, top + dy, false)?.apply {
-                    dy = smartValue.refValue - top
-                }
-            } else {
-                //未移动
-                null
+            val yRef = findSmartYValue(itemRenderer, top, bottom, dy)?.apply {
+                dy = smartValue.refValue - fromValue
             }
 
             if (yRef != null) {
@@ -284,12 +247,6 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
                 L.i("找到推荐点:fromY:->${yRef.fromValue} ->${yRef.smartValue.refValue}")
                 lastYAssistant = yRef
                 feedback = true
-                yRef.drawRect = RectF(
-                    viewRect.left,
-                    yRef.smartValue.refValue,
-                    viewRect.right,
-                    yRef.smartValue.refValue
-                )
             }
         }
 
@@ -298,11 +255,11 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
 
         if (feedback) {
             //震动反馈
-            canvasView.longFeedback()
+            canvasDelegate.longFeedback()
             L.i("智能提示: dx:${distanceX} dy:${distanceY} -> ndx:${dx} ndy:${dy}")
         }
 
-        canvasView.translateItemBy(itemRenderer, dx, dy)
+        canvasDelegate.translateItemBy(itemRenderer, dx, dy)
         return booleanArrayOf(dx != 0f, dy != 0f)
     }
 
@@ -314,11 +271,11 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
         rotateFlag: Int
     ) {
         if (!enable) {
-            canvasView.rotateItemBy(itemRenderer, angle, rotateFlag)
+            canvasDelegate.rotateItemBy(itemRenderer, angle, rotateFlag)
             return
         }
 
-        canvasView.rotateItemBy(itemRenderer, angle, rotateFlag)
+        canvasDelegate.rotateItemBy(itemRenderer, angle, rotateFlag)
 
         /*val oldRotate = itemRenderer.rotate
         var newRotate = itemRenderer.rotate + angle
@@ -379,7 +336,7 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
         adjustType: Int = ADJUST_TYPE_LT
     ) {
         if (!enable) {
-            canvasView.changeItemBounds(
+            canvasDelegate.changeItemBounds(
                 itemRenderer,
                 width,
                 height,
@@ -388,7 +345,7 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
             return
         }
 
-        canvasView.changeItemBounds(
+        canvasDelegate.changeItemBounds(
             itemRenderer,
             width,
             height,
@@ -498,25 +455,112 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
     //region ---find---
 
     /**
-     * 查找[x]附近最优的推荐点, [forward]正向查找or负向查找
+     * 查找[left] [right] 附近最优的推荐点
+     * [dx] 想要偏移的量
      * */
     fun findSmartXValue(
         itemRenderer: IRenderer?,
-        x: Float,
-        forward: Boolean
+        left: Float,
+        right: Float,
+        dx: Float
+    ): SmartAssistantData? {
+        var result: SmartAssistantData? = null
+
+        if (dx > 0) {
+            //向右平移, 优先查找right的推荐点
+            result = _findSmartRefValue(
+                itemRenderer,
+                xRefValueList,
+                right,
+                dx,
+                translateAdsorbThreshold
+            )
+            if (result == null) {
+                //如果没有找到, 则考虑找left的推荐点
+                result = _findSmartRefValue(
+                    itemRenderer,
+                    xRefValueList,
+                    left,
+                    dx,
+                    translateAdsorbThreshold
+                )
+            }
+        } else {
+            //向左平移
+            result = _findSmartRefValue(
+                itemRenderer,
+                xRefValueList,
+                left,
+                dx,
+                translateAdsorbThreshold
+            )
+            if (result == null) {
+                //如果没有找到, 则考虑找left的推荐点
+                result = _findSmartRefValue(
+                    itemRenderer,
+                    xRefValueList,
+                    right,
+                    dx,
+                    translateAdsorbThreshold
+                )
+            }
+        }
+
+        result?.apply {
+            //x横向推荐点 提示框
+
+            val canvasViewBox = canvasDelegate.getCanvasViewBox()
+            val refRenderer = smartValue.refRenderer
+
+            val top = if (refRenderer == null || itemRenderer == null) {
+                canvasViewBox.mapCoordinateSystemPoint(0f, 0f).y
+            } else {
+                min(refRenderer.getRenderBounds().top, itemRenderer.getRenderBounds().top)
+            }
+
+            val bottom = if (refRenderer == null || itemRenderer == null) {
+                canvasViewBox.mapCoordinateSystemPoint(0f, canvasViewBox.getContentBottom()).y
+            } else {
+                max(refRenderer.getRenderBounds().bottom, itemRenderer.getRenderBounds().bottom)
+            }
+
+            drawRect = RectF(
+                smartValue.refValue,
+                top - canvasViewBox.getCoordinateSystemY(),
+                smartValue.refValue,
+                bottom - canvasViewBox.getCoordinateSystemY()
+            )
+        }
+
+        return result
+    }
+
+    /**查找推荐点
+     * [refValueList] 推荐点池子
+     * [originValue] 原始的点位值
+     * [dValue] 本次更新的差值
+     * [adsorbThreshold] 吸附的阈值, 值越大, 越容易吸附到推荐值
+     * */
+    fun _findSmartRefValue(
+        itemRenderer: IRenderer?,
+        refValueList: List<SmartAssistantValueData>,
+        originValue: Float,
+        dValue: Float,
+        adsorbThreshold: Float
     ): SmartAssistantData? {
         var smartValue: SmartAssistantValueData? = null
-
         //差值越小越好
-        var diffValue = Float.MAX_VALUE
-
-        xRefValueList.forEach {
+        var diffValue = adsorbThreshold
+        refValueList.forEach {
             if (it.refRenderer != null && it.refRenderer == itemRenderer) {
                 //自身
             } else {
-                val v = it.refValue - x
-                if ((forward && v >= 0) || (!forward && v <= 0)) {
-                    val vAbs = v.absoluteValue
+                if (it.refValue == originValue && dValue.absoluteValue <= diffValue) {
+                    //吸附值
+                    smartValue = it
+                    return@forEach
+                } else {
+                    val vAbs = (it.refValue - (originValue + dValue)).absoluteValue
                     if (vAbs <= diffValue) {
                         diffValue = vAbs
                         smartValue = it
@@ -526,43 +570,88 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
         }
 
         if (smartValue != null) {
-            return SmartAssistantData(x, smartValue!!, forward)
+            return SmartAssistantData(originValue, smartValue!!)
         }
         return null
     }
 
     /**
-     * 查找[y]附近最优的推荐点, [forward]正向查找or负向查找
+     * 查找[top] [bottom] 附近最优的推荐点
      * */
     fun findSmartYValue(
         itemRenderer: IRenderer?,
-        y: Float,
-        forward: Boolean
+        top: Float,
+        bottom: Float,
+        dy: Float,
     ): SmartAssistantData? {
-        var smartValue: SmartAssistantValueData? = null
+        var result: SmartAssistantData?
 
-        //差值越小越好
-        var diffValue = Float.MAX_VALUE
-
-        yRefValueList.forEach {
-            if (it.refRenderer != null && it.refRenderer == itemRenderer) {
-                //自身
-            } else {
-                val v = it.refValue - y
-                if ((forward && v >= 0) || (!forward && v <= 0)) {
-                    val vAbs = v.absoluteValue
-                    if (vAbs <= diffValue) {
-                        diffValue = vAbs
-                        smartValue = it
-                    }
-                }
+        if (dy > 0) {
+            //向下平移, 优先查找bottom的推荐点
+            result = _findSmartRefValue(
+                itemRenderer,
+                yRefValueList,
+                bottom,
+                dy,
+                translateAdsorbThreshold
+            )
+            if (result == null) {
+                //如果没有找到, 则考虑找top的推荐点
+                result = _findSmartRefValue(
+                    itemRenderer,
+                    yRefValueList,
+                    top,
+                    dy,
+                    translateAdsorbThreshold
+                )
+            }
+        } else {
+            //向上平移
+            result = _findSmartRefValue(
+                itemRenderer,
+                yRefValueList,
+                top,
+                dy,
+                translateAdsorbThreshold
+            )
+            if (result == null) {
+                result = _findSmartRefValue(
+                    itemRenderer,
+                    yRefValueList,
+                    bottom,
+                    dy,
+                    translateAdsorbThreshold
+                )
             }
         }
 
-        if (smartValue != null) {
-            return SmartAssistantData(y, smartValue!!, forward)
+        result?.apply {
+            //y纵向推荐点 提示框
+
+            val canvasViewBox = canvasDelegate.getCanvasViewBox()
+            val refRenderer = smartValue.refRenderer
+
+            val left = if (refRenderer == null || itemRenderer == null) {
+                canvasViewBox.mapCoordinateSystemPoint(0f, 0f).x
+            } else {
+                min(refRenderer.getRenderBounds().left, itemRenderer.getRenderBounds().left)
+            }
+
+            val right = if (refRenderer == null || itemRenderer == null) {
+                canvasViewBox.mapCoordinateSystemPoint(canvasViewBox.getContentRight(), 0f).x
+            } else {
+                max(refRenderer.getRenderBounds().right, itemRenderer.getRenderBounds().right)
+            }
+
+            drawRect = RectF(
+                left - canvasViewBox.getCoordinateSystemX(),
+                smartValue.refValue,
+                right - canvasViewBox.getCoordinateSystemX(),
+                smartValue.refValue
+            )
         }
-        return null
+
+        return result
     }
 
     /**
@@ -594,7 +683,7 @@ class SmartAssistant(val canvasView: CanvasDelegate) : BaseComponent(), ICanvasL
         }
 
         if (smartValue != null) {
-            return SmartAssistantData(rotate, smartValue!!, forward)
+            return SmartAssistantData(rotate, smartValue!!)
         }
         return null
     }
