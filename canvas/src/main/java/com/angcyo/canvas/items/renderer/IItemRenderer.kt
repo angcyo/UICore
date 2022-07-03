@@ -148,6 +148,17 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
 
     //<editor-fold desc="其他方法">
 
+    /**是否支持对应的智能提示
+     * [com.angcyo.canvas.core.component.SmartAssistant.SMART_TYPE_X]
+     * [com.angcyo.canvas.core.component.SmartAssistant.SMART_TYPE_Y]
+     * [com.angcyo.canvas.core.component.SmartAssistant.SMART_TYPE_W]
+     * [com.angcyo.canvas.core.component.SmartAssistant.SMART_TYPE_H]
+     * [com.angcyo.canvas.core.component.SmartAssistant.SMART_TYPE_R]
+     * */
+    fun isSupportSmartAssistant(type: Int): Boolean {
+        return true
+    }
+
     /**是否支持指定的控制点
      * [com.angcyo.canvas.core.component.ControlPoint.POINT_TYPE_DELETE]
      * [com.angcyo.canvas.core.component.ControlPoint.POINT_TYPE_ROTATE]

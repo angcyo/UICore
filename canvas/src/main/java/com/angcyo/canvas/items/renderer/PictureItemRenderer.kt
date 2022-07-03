@@ -8,6 +8,7 @@ import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.ControlPoint
+import com.angcyo.canvas.core.component.SmartAssistant
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.PictureBitmapItem
 import com.angcyo.canvas.items.PictureItem
@@ -23,6 +24,10 @@ import com.angcyo.library.ex.*
 class PictureItemRenderer(canvasView: ICanvasView) :
     DrawableItemRenderer<PictureItem>(canvasView) {
 
+    override fun changeBounds(reason: Reason, block: RectF.() -> Unit) {
+        super.changeBounds(reason, block)
+    }
+
     override fun isSupportControlPoint(type: Int): Boolean {
         if (type == ControlPoint.POINT_TYPE_LOCK) {
             val item = getRendererItem()
@@ -36,8 +41,21 @@ class PictureItemRenderer(canvasView: ICanvasView) :
         return super.isSupportControlPoint(type)
     }
 
-    override fun changeBounds(reason: Reason, block: RectF.() -> Unit) {
-        super.changeBounds(reason, block)
+    override fun isSupportSmartAssistant(type: Int): Boolean {
+        val item = getRendererItem()
+        if (item is PictureShapeItem) {
+            val shapePath = item.shapePath
+            if (shapePath is LinePath) {
+                if (shapePath.orientation == LinearLayout.VERTICAL) {
+                    //垂直的线, 不支持w调整
+                    return type != SmartAssistant.SMART_TYPE_W
+                } else {
+                    //水平的线, 不支持h调整
+                    return type != SmartAssistant.SMART_TYPE_H
+                }
+            }
+        }
+        return super.isSupportSmartAssistant(type)
     }
 
     override fun onChangeBoundsAfter(reason: Reason) {
@@ -341,17 +359,11 @@ class PictureItemRenderer(canvasView: ICanvasView) :
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
             canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
                 override fun runUndo() {
-                    updateTextStyle(
-                        oldValue ?: PictureTextItem.TEXT_STYLE_NONE,
-                        Strategy.undo
-                    )
+                    updateTextStyle(oldValue, Strategy.undo)
                 }
 
                 override fun runRedo() {
-                    updateTextStyle(
-                        newValue ?: PictureTextItem.TEXT_STYLE_NONE,
-                        Strategy.redo
-                    )
+                    updateTextStyle(newValue, Strategy.redo)
                 }
             })
         }
