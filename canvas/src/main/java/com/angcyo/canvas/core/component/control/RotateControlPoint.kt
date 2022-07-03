@@ -24,6 +24,7 @@ class RotateControlPoint : ControlPoint() {
     //按下的坐标
     val _touchPoint = PointF()
 
+    val _moveStartPoint = PointF()
     val _movePoint = PointF()
 
     //中点坐标
@@ -48,6 +49,7 @@ class RotateControlPoint : ControlPoint() {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 _touchPoint.set(event.x, event.y)
+                _moveStartPoint.set(event.x, event.y)
                 val bounds = itemRenderer.getVisualBounds()
                 _centerPoint.set(bounds.centerX(), bounds.centerY())
 
@@ -59,22 +61,24 @@ class RotateControlPoint : ControlPoint() {
                 calculateAngleBetweenLines(
                     _centerPoint.x,
                     _centerPoint.y,
-                    _touchPoint.x,
-                    _touchPoint.y,
+                    _moveStartPoint.x,
+                    _moveStartPoint.y,
                     _centerPoint.x,
                     _centerPoint.y,
                     _movePoint.x,
                     _movePoint.y,
                 )
                 if (angle != 0f) {
-                    L.i("即将旋转:$angle °")
-                    val assistant = canvasDelegate.smartAssistant.smartRotateBy(
+                    L.i("即将旋转:$angle°")
+                    val consume = canvasDelegate.smartAssistant.smartRotateBy(
                         itemRenderer,
                         angle,
                         ROTATE_FLAG_MOVE
                     )
-                    isRotated = true
-                    _touchPoint.set(_movePoint)
+                    if (consume) {
+                        isRotated = true
+                        _moveStartPoint.set(_movePoint)
+                    }
                 }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {

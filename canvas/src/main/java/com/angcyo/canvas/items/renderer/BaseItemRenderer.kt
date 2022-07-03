@@ -333,7 +333,11 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     }
 
     /**旋转元素, 旋转操作不能用matrix, 不能将操作数据更新到bounds
-     * [degrees] 旋转的角度*/
+     * [degrees] 需要旋转的角度
+     * [rotateFlag] 旋转标识
+     * [com.angcyo.canvas.items.renderer.IItemRenderer.ROTATE_FLAG_NORMAL]
+     * [com.angcyo.canvas.items.renderer.IItemRenderer.ROTATE_FLAG_MOVE]
+     * */
     override fun rotateBy(degrees: Float, rotateFlag: Int) {
         /*_tempMatrix.reset()
        getRendererBounds().apply {

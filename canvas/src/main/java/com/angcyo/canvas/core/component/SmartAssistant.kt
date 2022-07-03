@@ -5,8 +5,8 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.ICanvasListener
-import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
+import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.library.L
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
@@ -39,7 +39,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
     var translateAdsorbThreshold: Float = 10f
 
     /**旋转吸附角度, 当和目标角度小于这个值时, 自动吸附到目标*/
-    var rotateAdsorbThreshold: Float = 1f
+    var rotateAdsorbThreshold: Float = 5f
 
     /**改变bounds时, 吸附大距离大小*/
     var boundsAdsorbThreshold: Float = 5f
@@ -264,65 +264,63 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
     }
 
     /**智能旋转算法
-     * @return true 表示拦截此次手势操作*/
+     * @return true 表示消耗了此次手势操作*/
     fun smartRotateBy(
         itemRenderer: BaseItemRenderer<*>,
         angle: Float,
         rotateFlag: Int
-    ) {
+    ): Boolean {
         if (!enable) {
             canvasDelegate.rotateItemBy(itemRenderer, angle, rotateFlag)
-            return
+            return true
         }
 
-        canvasDelegate.rotateItemBy(itemRenderer, angle, rotateFlag)
+        val rotate = itemRenderer.rotate
+        L.i("智能旋转请求: from:$rotate dr:${angle}")
 
-        /*val oldRotate = itemRenderer.rotate
-        var newRotate = itemRenderer.rotate + angle
+        var result = angle
+
+        //吸附判断
+        var adsorbAngle: Float? = null
+
+        //震动反馈
         var feedback = false
 
-        val assistant = findOptimalAngle(itemRenderer, angle)
-        if (assistant.isChanged()) {
-            newRotate = assistant.resultValue!!
-
-            val viewRect = canvasView.getCanvasViewBox()
-                .mapCoordinateSystemRect(canvasView.viewBounds, _tempRect)
-            val renderBounds = itemRenderer.getRenderBounds()
-            var left = viewRect.left
-            var right = viewRect.right
-            var top = renderBounds.centerY()
-            var bottom = top
-
-            rotateMatrix.reset()
-            rotateMatrix.postRotate(newRotate, renderBounds.centerX(), renderBounds.centerY())
-
-            rotateMatrix.mapPoint(left, top).apply {
-                left = x
-                top = y
+        lastRotateAssistant?.let {
+            if (angle.absoluteValue <= rotateAdsorbThreshold) {
+                //需要吸附
+                adsorbAngle = 0f
+                L.d("智能提示吸附Rotate:${it.smartValue.refValue}")
+            } else {
+                lastRotateAssistant = null
             }
-
-            rotateMatrix.mapPoint(right, bottom).apply {
-                right = x
-                bottom = y
-            }
-            rotateAssistantRect = RectF(left, top, right, bottom)
-
-            feedback = feedback || assistant.isChanged(lastRotateAssistant)
-            lastRotateAssistant = assistant
         }
+
+        if (adsorbAngle == null) {
+            //未吸附, 查找推荐点
+
+            val rotateRef = findSmartRotateValue(itemRenderer, rotate, angle)?.apply {
+                result = smartValue.refValue - fromValue
+            }
+
+            if (rotateRef != null) {
+                //找到的推荐点
+                L.i("找到推荐点:fromRotate:->${rotate} ->${rotateRef.smartValue.refValue}")
+                lastRotateAssistant = rotateRef
+                feedback = true
+            }
+        }
+
+        result = adsorbAngle ?: result
 
         if (feedback) {
             //找到了 震动反馈
-            canvasView.longFeedback()
+            canvasDelegate.longFeedback()
+            L.w("智能提示: angle:${angle} -> $result")
+        }
 
-            L.w("智能提示: angle:${angle} from:${oldRotate} to:${newRotate}")
-        }
-        val result = newRotate - oldRotate
-        resetSmartLine()
-        if (result != 0f) {
-            canvasView.rotateItemBy(itemRenderer, result, rotateFlag)
-        }
-        return lastRotateAssistant*/
+        canvasDelegate.rotateItemBy(itemRenderer, result, rotateFlag)
+        return result != 0f
     }
 
     /**智能算法改变矩形的宽高*/
@@ -459,7 +457,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
      * [dx] 想要偏移的量
      * */
     fun findSmartXValue(
-        itemRenderer: IRenderer?,
+        itemRenderer: BaseItemRenderer<*>,
         left: Float,
         right: Float,
         dx: Float
@@ -542,7 +540,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
      * [adsorbThreshold] 吸附的阈值, 值越大, 越容易吸附到推荐值
      * */
     fun _findSmartRefValue(
-        itemRenderer: IRenderer?,
+        itemRenderer: BaseItemRenderer<*>,
         refValueList: List<SmartAssistantValueData>,
         originValue: Float,
         dValue: Float,
@@ -579,7 +577,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
      * 查找[top] [bottom] 附近最优的推荐点
      * */
     fun findSmartYValue(
-        itemRenderer: IRenderer?,
+        itemRenderer: BaseItemRenderer<*>,
         top: Float,
         bottom: Float,
         dy: Float,
@@ -658,37 +656,61 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
      * 查找[rotate]附近最优的推荐点, [forward]正向查找or负向查找
      * */
     fun findSmartRotateValue(
-        itemRenderer: IRenderer?,
+        itemRenderer: BaseItemRenderer<*>,
         rotate: Float,
-        forward: Boolean
+        angle: Float
     ): SmartAssistantData? {
-        var smartValue: SmartAssistantValueData? = null
+        val result: SmartAssistantData? = _findSmartRefValue(
+            itemRenderer,
+            rotateRefValueList,
+            if (rotate < 0) rotate + 360 else rotate,
+            angle,
+            rotateAdsorbThreshold
+        )
 
-        //差值越小越好
-        var diffValue = Float.MAX_VALUE
+        result?.apply {
+            //旋转推荐角度 提示框
 
-        rotateRefValueList.forEach {
-            if (it.refRenderer != null && it.refRenderer == itemRenderer) {
-                //自身
-            } else {
-                val v = it.refValue - rotate
-                if ((forward && v >= 0) || (!forward && v <= 0)) {
-                    val vAbs = v.absoluteValue
-                    if (vAbs <= diffValue) {
-                        diffValue = vAbs
-                        smartValue = it
-                    }
-                }
+            val canvasViewBox = canvasDelegate.getCanvasViewBox()
+            val refRenderer = smartValue.refRenderer
+
+            val viewRect = canvasViewBox
+                .mapCoordinateSystemRect(canvasDelegate.viewBounds, _tempRect)
+            val renderBounds = itemRenderer.getRenderBounds()
+            var left = viewRect.left
+            var right = viewRect.right
+            var top = renderBounds.centerY()
+            var bottom = top
+
+            rotateMatrix.reset()
+            rotateMatrix.postRotate(
+                smartValue.refValue,
+                renderBounds.centerX(),
+                renderBounds.centerY()
+            )
+
+            rotateMatrix.mapPoint(left, top).apply {
+                left = x
+                top = y
             }
+
+            rotateMatrix.mapPoint(right, bottom).apply {
+                right = x
+                bottom = y
+            }
+
+            drawRect = RectF(
+                left - canvasViewBox.getCoordinateSystemX(),
+                top - canvasViewBox.getCoordinateSystemY(),
+                right - canvasViewBox.getCoordinateSystemX(),
+                bottom - canvasViewBox.getCoordinateSystemY()
+            )
         }
 
-        if (smartValue != null) {
-            return SmartAssistantData(rotate, smartValue!!)
-        }
-        return null
+        return result
     }
-/*
 
+/*
     */
     /**查找最优的旋转角度
      * [angle] 当前需要旋转的角度
