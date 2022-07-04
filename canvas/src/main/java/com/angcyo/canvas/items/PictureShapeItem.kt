@@ -25,7 +25,7 @@ class PictureShapeItem : PictureItem() {
         const val SHAPE_DEFAULT_HEIGHT = 10f
     }
 
-    /**需要绘制的形状[Path]*/
+    /**需要绘制的形状[Path], 实时放大/缩小, 不旋转的数据*/
     var shapePath: Path? = null
 
     /**形状的真正的bounds, 通过[shapePath.computeBounds]算出来的*/

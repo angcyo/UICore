@@ -85,37 +85,27 @@ class PictureItemRenderer(canvasView: ICanvasView) :
         getRendererItem()?.let {
             if (it is PictureShapeItem && !oldBounds.isNoSize() && oldBounds.isSizeChanged(getBounds())) {
                 it.shapePath?.apply {
-                    val matrix = Matrix()
-                    val scaleX = getBounds().width() / oldBounds.width()
-                    val scaleY = getBounds().height() / oldBounds.height()
-
-                    if (scaleX != 1f || scaleY != 1f) {
-                        if (this is LinePath) {
-                            if (orientation == LinearLayout.VERTICAL) {
-                                matrix.postScale(
-                                    1f,
-                                    scaleY,
-                                    it.shapeBounds.left,
-                                    it.shapeBounds.top
-                                )
-                            } else {
-                                matrix.postScale(
-                                    scaleX,
-                                    1f,
-                                    it.shapeBounds.left,
-                                    it.shapeBounds.top
-                                )
-                            }
+                    if (this is LinePath) {
+                        if (orientation == LinearLayout.VERTICAL) {
+                            initPath(getBounds().height())
                         } else {
+                            initPath(getBounds().width())
+                        }
+                        it.updatePictureDrawable(true)
+                    } else {
+                        val scaleX = getBounds().width() / oldBounds.width()
+                        val scaleY = getBounds().height() / oldBounds.height()
+                        if (scaleX != 1f || scaleY != 1f) {
+                            val matrix = Matrix()
                             matrix.postScale(
                                 scaleX,
                                 scaleY,
                                 it.shapeBounds.left,
                                 it.shapeBounds.top
                             )
+                            transform(matrix)
+                            it.updatePictureDrawable(true)
                         }
-                        transform(matrix)
-                        it.updatePictureDrawable(true)
                     }
                 }
             }

@@ -22,6 +22,7 @@ class LinePath : Path() {
         bounds.set(lineBounds)
     }
 
+    /**初始化线的[Path]数据*/
     fun initPath(length: Float = ShapesHelper.defaultWidth) {
         reset()
         moveTo(0f, 0f)
