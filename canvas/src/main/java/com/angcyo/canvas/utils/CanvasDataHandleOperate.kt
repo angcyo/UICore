@@ -67,22 +67,18 @@ object CanvasDataHandleOperate {
         val offsetTop = rotateBounds.top - min(0f, pathBounds.top)
 
         //像素单位转成mm单位
+        val gCodeHandler = GCodeWriteHandler()
         val mmValueUnit = MmValueUnit()
-
-        val gCodeWriteHandler = GCodeWriteHandler()
-
         outputFile.writer().use { writer ->
-            targetPath.eachPath(pathStep) { index, posArray ->
-                //像素单位, 要转成G21毫米单位
-                val xPixel = posArray[0] + offsetLeft
-                val yPixel = posArray[1] + offsetTop
-
-                val x = mmValueUnit.convertPixelToValue(xPixel)
-                val y = mmValueUnit.convertPixelToValue(yPixel)
-
-                gCodeWriteHandler.writeLine(writer, x, y)
-            }
-            gCodeWriteHandler.writeFinish(writer)
+            gCodeHandler.gapValue = 0f
+            gCodeHandler.pathStrokeToGCode(
+                path,
+                mmValueUnit,
+                writer,
+                offsetLeft,
+                offsetTop,
+                pathStep
+            )
         }
 
         return outputFile
@@ -97,7 +93,10 @@ object CanvasDataHandleOperate {
         pathList: List<Path>,
         bounds: RectF,
         rotate: Float,
-        outputFile: File = _defaultGCodeOutputFile()
+        outputFile: File = _defaultGCodeOutputFile(),
+        offsetLeft: Float = 0f, //偏移的像素
+        offsetTop: Float = 0f,
+        pathStep: Float = 1f
     ): File {
         val newPathList = mutableListOf<Path>()
 
@@ -142,8 +141,17 @@ object CanvasDataHandleOperate {
 
         //转换成GCode
         val gCodeHandler = GCodeWriteHandler()
+        val mmValueUnit = MmValueUnit()
         outputFile.writer().use { writer ->
-            gCodeHandler.pathStrokeToGCode(newPathList, MmValueUnit(), writer)
+            gCodeHandler.gapValue = 0f
+            gCodeHandler.pathStrokeToGCode(
+                newPathList,
+                mmValueUnit,
+                writer,
+                offsetLeft,
+                offsetTop,
+                pathStep
+            )
         }
         return outputFile
     }
