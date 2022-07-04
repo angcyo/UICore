@@ -90,6 +90,12 @@ fun RectF.scale(scaleX: Float, scaleY: Float, pivotX: Float, pivotY: Float): Rec
     return this
 }
 
+/**将矩形平移*/
+fun RectF.translate(dx: Float = 0f, dy: Float = 0f): RectF {
+    offset(dx, dy)
+    return this
+}
+
 /**缩放一个矩形
  * [degrees] 旋转的角度
  * [pivotX] [pivotY] 旋转的轴点

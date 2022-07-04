@@ -24,8 +24,8 @@ import com.angcyo.library.ex.*
 class PictureItemRenderer(canvasView: ICanvasView) :
     DrawableItemRenderer<PictureItem>(canvasView) {
 
-    override fun changeBounds(reason: Reason, block: RectF.() -> Unit) {
-        super.changeBounds(reason, block)
+    override fun changeBounds(reason: Reason, block: RectF.() -> Unit): Boolean {
+        return super.changeBounds(reason, block)
     }
 
     override fun isSupportControlPoint(type: Int): Boolean {
@@ -69,11 +69,15 @@ class PictureItemRenderer(canvasView: ICanvasView) :
                         val size = path.lineBounds.width()
                         //只能调整高度
                         bounds.adjustSize(size, bounds.height(), ADJUST_TYPE_LT)
+                        path.initPath(getBounds().height())
+                        it.updatePictureDrawable(true)
                     } else {
                         //只能调整宽度
                         val size = path.lineBounds.height()
                         //只能调整高度
                         bounds.adjustSize(bounds.width(), size, ADJUST_TYPE_LT)
+                        path.initPath(getBounds().width())
+                        it.updatePictureDrawable(true)
                     }
                 }
             }
@@ -86,12 +90,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
             if (it is PictureShapeItem && !oldBounds.isNoSize() && oldBounds.isSizeChanged(getBounds())) {
                 it.shapePath?.apply {
                     if (this is LinePath) {
-                        if (orientation == LinearLayout.VERTICAL) {
-                            initPath(getBounds().height())
-                        } else {
-                            initPath(getBounds().width())
-                        }
-                        it.updatePictureDrawable(true)
+                        //no
                     } else {
                         val scaleX = getBounds().width() / oldBounds.width()
                         val scaleY = getBounds().height() / oldBounds.height()

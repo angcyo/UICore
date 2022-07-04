@@ -174,4 +174,16 @@ fun BaseItemRenderer<*>.isLineShape(): Boolean {
     return false
 }
 
+/**线的方向*/
+fun BaseItemRenderer<*>.lineShapeOrientation(): Int? {
+    val item = getRendererItem()
+    if (item is PictureShapeItem) {
+        val shapePath = item.shapePath
+        if (shapePath is LinePath) {
+            return shapePath.orientation
+        }
+    }
+    return null
+}
+
 //</editor-fold desc="PictureItemRenderer">

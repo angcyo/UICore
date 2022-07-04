@@ -47,7 +47,9 @@ class PictureShapeItem : PictureItem() {
             val strokeWidth = paint.strokeWidth
             path.computeBounds(shapeBounds, true)
 
-            val shapeWidth = if (!resetSize && itemWidth > 0) {
+            val shapeWidth = if (path is LinePath) {
+                shapeBounds.width()
+            } else if (!resetSize && itemWidth > 0) {
                 itemWidth
             } else if (!shapeBounds.isNoSize()) {
                 shapeBounds.width() + strokeWidth
@@ -55,7 +57,9 @@ class PictureShapeItem : PictureItem() {
                 unit.convertValueToPixel(SHAPE_DEFAULT_WIDTH) + strokeWidth
             }
 
-            val shapeHeight = if (!resetSize && itemHeight > 0) {
+            val shapeHeight = if (path is LinePath) {
+                shapeBounds.height()
+            } else if (!resetSize && itemHeight > 0) {
                 itemHeight
             } else if (!shapeBounds.isNoSize()) {
                 shapeBounds.height() + strokeWidth

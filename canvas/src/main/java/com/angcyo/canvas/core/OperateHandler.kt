@@ -10,6 +10,7 @@ import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.core.renderer.SelectGroupRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils._tempValues
+import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.library.ex.*
 import java.lang.Math.tan
@@ -23,6 +24,54 @@ import java.lang.Math.tan
  */
 class OperateHandler {
 
+    companion object {
+
+        //region ---can---
+
+        /**是否可以改变Bounds到
+         * @return true 表示允许改变*/
+        fun canChangeBounds(itemRenderer: BaseItemRenderer<*>, toRect: RectF): Boolean {
+            return canChangeBounds(itemRenderer, toRect.width(), toRect.height())
+        }
+
+        fun canChangeBounds(
+            itemRenderer: BaseItemRenderer<*>,
+            toWidth: Float,
+            toHeight: Float
+        ): Boolean {
+
+            if (itemRenderer is SelectGroupRenderer) {
+                /*//群组选择, 不允许反向
+                if (toWidth <= 0f || toHeight <= 0f) {
+                    //不允许反向调整
+                    return false
+                }*/
+                var haveLineShape = false
+                itemRenderer.selectItemList.forEach {
+                    if (it.isLineShape()) {
+                        haveLineShape = true
+                        return@forEach
+                    }
+                }
+                if (haveLineShape) {
+                    //群组内, 有线段时, 不允许反向
+                    if (toWidth <= 0f || toHeight <= 0f) {
+                        //不允许反向调整
+                        return false
+                    }
+                }
+            }
+
+            if (toWidth != 0f && toHeight != 0f) {
+                return true
+            }
+            return false
+        }
+
+        //endregion ---can---
+
+    }
+
     /**批量旋转[BaseItemRenderer]*/
     fun rotateItemList(
         list: Iterable<BaseItemRenderer<*>>,
@@ -30,7 +79,7 @@ class OperateHandler {
         pivotX: Float,
         pivotY: Float
     ) {
-        val changeReason = Reason(Reason.REASON_CODE)
+        val changeReason = Reason(Reason.REASON_CODE, flag = Reason.REASON_FLAG_ROTATE)
         list.forEach { item ->
             _tempRectF.set(item.getBounds())
             _tempRectF.rotate(degrees, pivotX, pivotY)
@@ -47,8 +96,12 @@ class OperateHandler {
         oldBounds: RectF,
         newBounds: RectF
     ) {
+        if (newBounds.width() == 0f || newBounds.height() == 0f) {
+            //no op
+            return
+        }
         if (!oldBounds.isNoSize() && oldBounds.width() != 0f && oldBounds.height() != 0f) {
-            val changeReason = Reason(Reason.REASON_CODE)
+            val changeReason = Reason(Reason.REASON_CODE, flag = Reason.REASON_FLAG_BOUNDS)
 
             //平移
             val offsetLeft: Float = newBounds.left - oldBounds.left
@@ -65,14 +118,18 @@ class OperateHandler {
             val offsetWidth = newBounds.width() - oldBounds.width()
             val offsetHeight = newBounds.height() - oldBounds.height()
             if (offsetWidth.isFinite() && offsetHeight.isFinite() && (offsetWidth != 0f || offsetHeight != 0f)) {
+                val scaleX = newBounds.width() / oldBounds.width()
+                val scaleY = newBounds.height() / oldBounds.height()
+
+                val tempBounds = RectF()
                 list.forEach { item ->
-                    item.changeBounds(changeReason) {
-                        scale(
-                            newBounds.width() / oldBounds.width(),
-                            newBounds.height() / oldBounds.height(),
-                            newBounds.left,
-                            newBounds.top
-                        )
+                    tempBounds.set(item.getBounds())
+                    tempBounds.scale(scaleX, scaleY, newBounds.left, newBounds.top)
+                    //L.i("缩放矩形:sx:$scaleX sy:$scaleY ->$this")
+                    if (canChangeBounds(item, tempBounds)) {
+                        item.changeBounds(changeReason) {
+                            set(tempBounds)
+                        }
                     }
                 }
             }
@@ -203,7 +260,13 @@ class OperateHandler {
         val step = object : ICanvasStep {
             override fun runUndo() {
                 undoOffsetList.forEach { item ->
-                    item.item.changeBounds(Reason(Reason.REASON_CODE, false)) {
+                    item.item.changeBounds(
+                        Reason(
+                            Reason.REASON_CODE,
+                            false,
+                            Reason.REASON_FLAG_TRANSLATE
+                        )
+                    ) {
                         offset(item.dx, item.dy)
                     }
                 }
@@ -212,7 +275,13 @@ class OperateHandler {
 
             override fun runRedo() {
                 offsetList.forEach { item ->
-                    item.item.changeBounds(Reason(Reason.REASON_CODE, false)) {
+                    item.item.changeBounds(
+                        Reason(
+                            Reason.REASON_CODE,
+                            false,
+                            Reason.REASON_FLAG_TRANSLATE
+                        )
+                    ) {
                         offset(item.dx, item.dy)
                     }
                 }

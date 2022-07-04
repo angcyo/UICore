@@ -61,8 +61,8 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         }
     }
 
-    override fun changeBounds(reason: Reason, block: RectF.() -> Unit) {
-        super.changeBounds(reason, block)
+    override fun changeBounds(reason: Reason, block: RectF.() -> Unit): Boolean {
+        return super.changeBounds(reason, block)
     }
 
     override fun onItemBoundsChanged(item: IRenderer, reason: Reason, oldBounds: RectF) {
@@ -186,17 +186,25 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         }
         rotate = 0f//重置旋转
         changeBounds(Reason(Reason.REASON_CODE, true)) {
-            var l = Float.MAX_VALUE
-            var t = Float.MAX_VALUE
-            var r = Float.MIN_VALUE
-            var b = Float.MIN_VALUE
-            selectItemList.forEach {
-                val rotateBounds = it.getRotateBounds().adjustFlipRect(_tempRectF)
-                l = min(l, rotateBounds.left)
-                t = min(t, rotateBounds.top)
+            var l = 0f
+            var t = 0f
+            var r = 0f
+            var b = 0f
+            selectItemList.forEachIndexed { index, renderer ->
+                val rotateBounds = renderer.getRotateBounds().adjustFlipRect(_tempRectF)
+                if (index == 0) {
+                    l = rotateBounds.left
+                    t = rotateBounds.top
 
-                r = max(r, rotateBounds.right)
-                b = max(b, rotateBounds.bottom)
+                    r = rotateBounds.right
+                    b = rotateBounds.bottom
+                } else {
+                    l = min(l, rotateBounds.left)
+                    t = min(t, rotateBounds.top)
+
+                    r = max(r, rotateBounds.right)
+                    b = max(b, rotateBounds.bottom)
+                }
             }
             set(l, t, r, b)
         }
