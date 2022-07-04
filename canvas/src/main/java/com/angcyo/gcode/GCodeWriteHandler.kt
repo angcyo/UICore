@@ -49,16 +49,20 @@ class GCodeWriteHandler {
 
     //region ---Path---
 
-    /**[Path]路径描边数据, 转成GCode数据, 不包含GCode头尾数据*/
+    /**[Path]路径描边数据, 转成GCode数据, 不包含GCode头尾数据
+     * [offsetLeft] [offsetTop] 偏移量
+     * [pathStep] 路径枚举步长
+     * */
     fun pathStrokeToGCode(
         path: Path,
         unit: IValueUnit,
         writer: Appendable,
         offsetLeft: Float = 0f, //偏移的像素
-        offsetTop: Float = 0f
+        offsetTop: Float = 0f,
+        pathStep: Float = 1f
     ) {
         writeFirst(writer, unit)
-        path.eachPath { index, posArray ->
+        path.eachPath(pathStep) { index, posArray ->
             val xPixel = posArray[0] + offsetLeft
             val yPixel = posArray[1] + offsetTop
 
@@ -74,13 +78,18 @@ class GCodeWriteHandler {
     }
 
     /**[pathList] 实际的路径数据
-     * [pathStrokeToGCode]*/
+     * [pathStrokeToGCode]
+     *
+     * [offsetLeft] [offsetTop] 偏移量
+     * [pathStep] 路径枚举步长
+     * */
     fun pathStrokeToGCode(
         pathList: List<Path>,
         unit: IValueUnit,
         writer: Appendable,
         offsetLeft: Float = 0f, //偏移的像素
-        offsetTop: Float = 0f
+        offsetTop: Float = 0f,
+        pathStep: Float = 1f
     ) {
         writeFirst(writer, unit)
         for (path in pathList) {
@@ -88,7 +97,7 @@ class GCodeWriteHandler {
                 val bitmap = path.toBitmap()
                 L.i()
             }
-            path.eachPath { index, posArray ->
+            path.eachPath(pathStep) { index, posArray ->
                 val xPixel = posArray[0] + offsetLeft
                 val yPixel = posArray[1] + offsetTop
 

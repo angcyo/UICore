@@ -41,11 +41,13 @@ object CanvasDataHandleOperate {
      * [rotateBounds] 路径需要平移的left, top
      * [rotate] 路径需要旋转的角度
      * [outputFile] GCode输出路径
+     * [pathStep] 路径枚举步长
      * */
     fun pathStrokeToGCode(
         path: Path,
         rotateBounds: RectF,
         rotate: Float,
+        pathStep: Float = 1f,
         outputFile: File = _defaultGCodeOutputFile()
     ): File {
         //形状的路径, 用来计算path内的左上角偏移量
@@ -70,7 +72,7 @@ object CanvasDataHandleOperate {
         val gCodeWriteHandler = GCodeWriteHandler()
 
         outputFile.writer().use { writer ->
-            targetPath.eachPath { index, posArray ->
+            targetPath.eachPath(pathStep) { index, posArray ->
                 //像素单位, 要转成G21毫米单位
                 val xPixel = posArray[0] + offsetLeft
                 val yPixel = posArray[1] + offsetTop
@@ -192,7 +194,7 @@ object CanvasDataHandleOperate {
     fun bitmapToGCode(
         bitmap: Bitmap,
         gravity: Int? = null,
-        lineSpace: Float = 0.1f,
+        lineSpace: Float = GCodeWriteHandler.GCODE_SPACE_1K,
         gapValue: Float = GCodeWriteHandler.GCODE_SPACE_GAP,
         threshold: Int = 255,
         outputFile: File = _defaultGCodeOutputFile()
