@@ -779,6 +779,9 @@ class CanvasDelegate(val view: View) : ICanvasView {
         height: Float,
         adjustType: Int = ADJUST_TYPE_LT
     ) {
+        if (width == 0f || height == 0f) {
+            return
+        }
         itemRenderer.apply {
             updateBounds(width, height, adjustType)
             refresh()
