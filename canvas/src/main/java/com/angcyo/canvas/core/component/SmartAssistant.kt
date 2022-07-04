@@ -393,21 +393,14 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         var feedback = false
 
         //去掉宽度智能
-        val notSmartWidth = equalRatio &&
-                dx.absoluteValue < dy.absoluteValue &&
-                dy.absoluteValue > boundsAdsorbThreshold
+        val notSmartWidth = equalRatio && dy.absoluteValue > dx.absoluteValue
 
         //去掉高度智能
-        val notSmartHeight = equalRatio &&
-                dy.absoluteValue < dx.absoluteValue &&
-                dx.absoluteValue > boundsAdsorbThreshold
+        val notSmartHeight = equalRatio && dx.absoluteValue > dy.absoluteValue
 
         //w吸附
         lastWidthAssistant?.let {
-            if (notSmartWidth) {
-                //等比模式下, 宽度的变化小于高度的变化, 则不吸附
-                lastWidthAssistant = null
-            } else if (dw.absoluteValue <= boundsAdsorbThreshold || dx.absoluteValue <= boundsAdsorbThreshold) {
+            if (dx.absoluteValue <= boundsAdsorbThreshold) {
                 //需要吸附
                 adsorbWidth = it.smartValue.refValue
                 L.d("智能提示吸附W:${adsorbWidth}")
@@ -418,10 +411,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
         //h吸附
         lastHeightAssistant?.let {
-            if (notSmartHeight) {
-                //等比模式下, 高度的变化小于宽度的变化, 则不吸附
-                lastHeightAssistant = null
-            } else if (dh.absoluteValue <= boundsAdsorbThreshold || dy.absoluteValue <= boundsAdsorbThreshold) {
+            if (dy.absoluteValue <= boundsAdsorbThreshold) {
                 //需要吸附
                 adsorbHeight = it.smartValue.refValue
                 L.d("智能提示吸附H:${adsorbHeight}")
