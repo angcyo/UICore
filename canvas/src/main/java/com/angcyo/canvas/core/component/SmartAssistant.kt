@@ -641,10 +641,16 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
             val viewRect = canvasViewBox
                 .mapCoordinateSystemRect(canvasDelegate.viewBounds, _tempRect)
             val renderBounds = itemRenderer.getRenderBounds()
-            var left = viewRect.left
-            var right = viewRect.right
+            var left = viewRect.left - renderBounds.centerX()
+            var right = viewRect.right + canvasViewBox.getContentRight() - renderBounds.centerX()
             var top = renderBounds.centerY()
             var bottom = top
+
+            if (refRenderer != null) {
+                val refBounds = refRenderer.getRenderBounds()
+                left = renderBounds.centerX() - refBounds.width() / 2
+                right = renderBounds.centerX() + refBounds.width() / 2
+            }
 
             rotateMatrix.reset()
             rotateMatrix.postRotate(
