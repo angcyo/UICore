@@ -63,7 +63,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
     var rotateAdsorbThreshold: Float = 5f
 
     /**改变bounds时, 吸附大距离大小*/
-    var boundsAdsorbThreshold: Float = 5f
+    var boundsAdsorbThreshold: Float = 10f
 
     //---temp
 
@@ -372,6 +372,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
             return booleanArrayOf(true, true)
         }
 
+        val rotate = itemRenderer.rotate
         val rotateBounds = itemRenderer.getRotateBounds()
         val originWidth = rotateBounds.width()
         val originHeight = rotateBounds.height()
@@ -391,8 +392,15 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         //震动反馈
         var feedback = false
 
-        val notSmartWidth = equalRatio && dx.absoluteValue < dy.absoluteValue
-        val notSmartHeight = equalRatio && dy.absoluteValue < dx.absoluteValue
+        //去掉宽度智能
+        val notSmartWidth = equalRatio &&
+                dx.absoluteValue < dy.absoluteValue &&
+                dy.absoluteValue > boundsAdsorbThreshold
+
+        //去掉高度智能
+        val notSmartHeight = equalRatio &&
+                dy.absoluteValue < dx.absoluteValue &&
+                dx.absoluteValue > boundsAdsorbThreshold
 
         //w吸附
         lastWidthAssistant?.let {
