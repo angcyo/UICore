@@ -63,7 +63,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
     var rotateAdsorbThreshold: Float = 5f
 
     /**改变bounds时, 吸附大距离大小*/
-    var boundsAdsorbThreshold: Float = 10f
+    var boundsAdsorbThreshold: Float = 5f
 
     //---temp
 
