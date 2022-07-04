@@ -391,12 +391,18 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         //震动反馈
         var feedback = false
 
+        val notSmartWidth = equalRatio && dx.absoluteValue < dy.absoluteValue
+        val notSmartHeight = equalRatio && dy.absoluteValue < dx.absoluteValue
+
         //w吸附
         lastWidthAssistant?.let {
-            if (dw.absoluteValue <= boundsAdsorbThreshold || dx.absoluteValue <= boundsAdsorbThreshold) {
+            if (notSmartWidth) {
+                //等比模式下, 宽度的变化小于高度的变化, 则不吸附
+                lastWidthAssistant = null
+            } else if (dw.absoluteValue <= boundsAdsorbThreshold || dx.absoluteValue <= boundsAdsorbThreshold) {
                 //需要吸附
-                adsorbWidth = originWidth
-                L.d("智能提示吸附W:${it.smartValue.refValue}")
+                adsorbWidth = it.smartValue.refValue
+                L.d("智能提示吸附W:${adsorbWidth}")
             } else {
                 lastWidthAssistant = null
             }
@@ -404,16 +410,21 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
         //h吸附
         lastHeightAssistant?.let {
-            if (dh.absoluteValue <= boundsAdsorbThreshold || dy.absoluteValue <= boundsAdsorbThreshold) {
+            if (notSmartHeight) {
+                //等比模式下, 高度的变化小于宽度的变化, 则不吸附
+                lastHeightAssistant = null
+            } else if (dh.absoluteValue <= boundsAdsorbThreshold || dy.absoluteValue <= boundsAdsorbThreshold) {
                 //需要吸附
-                adsorbHeight = originHeight
-                L.d("智能提示吸附H:${it.smartValue.refValue}")
+                adsorbHeight = it.smartValue.refValue
+                L.d("智能提示吸附H:${adsorbHeight}")
             } else {
                 lastHeightAssistant = null
             }
         }
 
-        if (adsorbWidth == null && itemRenderer.isSupportControlPoint(SMART_TYPE_W)) {
+        if (notSmartWidth) {
+            //no op
+        } else if (adsorbWidth == null && itemRenderer.isSupportControlPoint(SMART_TYPE_W)) {
             //x未吸附
             val wRef = findSmartWidthValue(itemRenderer, width, dx)?.apply {
                 newWidth = smartValue.refValue
@@ -427,7 +438,9 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
             }
         }
 
-        if (adsorbHeight == null && itemRenderer.isSupportControlPoint(SMART_TYPE_H)) {
+        if (notSmartHeight) {
+            //no op
+        } else if (adsorbHeight == null && itemRenderer.isSupportControlPoint(SMART_TYPE_H)) {
             //y未吸附
             val hRef = findSmartHeightValue(itemRenderer, height, dy)?.apply {
                 newHeight = smartValue.refValue
@@ -446,7 +459,9 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
         if (newWidth != originWidth || newHeight != originHeight) {
 
-            if (!itemRenderer.isLineShape() && equalRatio) {
+            if (itemRenderer.isLineShape()) {
+                //线段不处理
+            } else if (equalRatio) {
                 //等比调整
 
                 //原先的缩放比
