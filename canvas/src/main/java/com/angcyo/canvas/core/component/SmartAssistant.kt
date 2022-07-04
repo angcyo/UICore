@@ -393,10 +393,12 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         var feedback = false
 
         //去掉宽度智能
-        val notSmartWidth = equalRatio && dy.absoluteValue > dx.absoluteValue
+        val notSmartWidth =
+            !itemRenderer.isLineShape() && equalRatio && dy.absoluteValue > dx.absoluteValue
 
         //去掉高度智能
-        val notSmartHeight = equalRatio && dx.absoluteValue > dy.absoluteValue
+        val notSmartHeight =
+            !itemRenderer.isLineShape() && equalRatio && dx.absoluteValue > dy.absoluteValue
 
         //w吸附
         lastWidthAssistant?.let {
