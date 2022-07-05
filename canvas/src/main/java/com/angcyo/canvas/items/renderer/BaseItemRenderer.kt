@@ -130,6 +130,10 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
      * [changeBounds]*/
     open fun onChangeBoundsAfter(reason: Reason) {
         //getBounds().limitMinWidthHeight(100f, 100f, ADJUST_TYPE_LT)
+        if (reason.flag == Reason.REASON_FLAG_BOUNDS || reason.flag == Reason.REASON_FLAG_ROTATE) {
+            //旋转或者改变宽高后, 需要重新索引
+            getRendererItem()?.engraveIndex = null
+        }
     }
 
     override fun onUpdateRendererItem(item: T?, oldItem: T?) {
@@ -369,7 +373,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
             return
         }
         val oldRotate = rotate
-        changeBounds(Reason(Reason.REASON_USER, true, Reason.REASON_FLAG_BOUNDS)) {
+        changeBounds(Reason(Reason.REASON_USER, true, Reason.REASON_FLAG_ROTATE)) {
             rotate += degrees
             rotate %= 360
         }

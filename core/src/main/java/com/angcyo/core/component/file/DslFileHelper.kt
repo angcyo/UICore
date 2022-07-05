@@ -111,5 +111,8 @@ fun FileTextData?.writeTo(
     name: String = logFileName(),
     append: Boolean = true
 ): String? {
-    return DslFileHelper.write(folder = folder, name = name, data = this ?: "null", append = append)
+    if (this == null) {
+        return FileUtils.appRootExternalFolderFile(folder, name).absolutePath
+    }
+    return DslFileHelper.write(folder, name, this, append)
 }

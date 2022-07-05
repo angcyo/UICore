@@ -476,11 +476,11 @@ class DslGlide {
     //</editor-fold desc="辅助扩展">
 }
 
-fun dslGlide(imageView: ImageView, uri: Uri?, action: DslGlide.() -> Unit = {}) {
+fun dslGlide(imageView: ImageView?, uri: Uri?, action: DslGlide.() -> Unit = {}) {
     DslGlide().apply {
         targetView = imageView
         if (placeholderDrawable == null) {
-            imageView.drawable?.also {
+            imageView?.drawable?.also {
                 placeholderDrawable = it
             }
         }

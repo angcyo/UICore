@@ -10,7 +10,6 @@ import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.core.renderer.SelectGroupRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils._tempValues
-import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.library.ex.*
 import java.lang.Math.tan
@@ -41,12 +40,12 @@ class OperateHandler {
         ): Boolean {
 
             if (itemRenderer is SelectGroupRenderer) {
-                /*//群组选择, 不允许反向
+                //群组选择, 不允许反向
                 if (toWidth <= 0f || toHeight <= 0f) {
                     //不允许反向调整
                     return false
-                }*/
-                var haveLineShape = false
+                }
+                /*var haveLineShape = false
                 itemRenderer.selectItemList.forEach {
                     if (it.isLineShape()) {
                         haveLineShape = true
@@ -59,7 +58,7 @@ class OperateHandler {
                         //不允许反向调整
                         return false
                     }
-                }
+                }*/
             }
 
             if (toWidth != 0f && toHeight != 0f) {

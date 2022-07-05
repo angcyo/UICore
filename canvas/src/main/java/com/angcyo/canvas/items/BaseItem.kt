@@ -16,6 +16,9 @@ abstract class BaseItem : ICanvasItem {
     /**唯一标识符*/
     var uuid: String = uuid()
 
+    /**雕刻数据的索引, 改变位置后, 不用更新索引. 调整宽高旋转分辨率后需要更新索引*/
+    var engraveIndex: Int? = null
+
     /**标签, 自定义的属性, 用来区分数据*/
     var tag: String? = null
 

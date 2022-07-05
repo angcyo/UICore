@@ -34,6 +34,16 @@ object CanvasDataHandleOperate {
     /**SVG数据, List<Path>*/
     const val KEY_SVG = "key_svg"
 
+    /**数据处理的算法模式
+     * [com.angcyo.engrave.canvas.CanvasBitmapHandler.BITMAP_MODE_PRINT]
+     * [com.angcyo.engrave.canvas.CanvasBitmapHandler.BITMAP_MODE_GCODE]
+     * [com.angcyo.engrave.canvas.CanvasBitmapHandler.BITMAP_MODE_BLACK_WHITE]
+     * [com.angcyo.engrave.canvas.CanvasBitmapHandler.BITMAP_MODE_DITHERING]
+     * [com.angcyo.engrave.canvas.CanvasBitmapHandler.BITMAP_MODE_GREY]
+     * [com.angcyo.engrave.canvas.CanvasBitmapHandler.BITMAP_MODE_SEAL]
+     * */
+    const val KEY_DATA_MODE = "key_data_mode"
+
     fun _defaultGCodeOutputFile() = filePath("GCode", fileName(suffix = ".gcode")).file()
 
     /**将路径描边转换为G1代码. 输出的GCode可以直接打印

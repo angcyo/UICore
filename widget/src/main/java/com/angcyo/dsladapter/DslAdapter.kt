@@ -58,25 +58,6 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
 
     /**数据过滤规则*/
     var dslDataFilter: DslDataFilter? = null
-        set(value) {
-            if (field == value) {
-                return
-            }
-            //remove
-            field?.apply {
-                removeDispatchUpdatesListener(this@DslAdapter)
-                beforeFilterInterceptorList.remove(adapterStatusIFilterInterceptor)
-                afterFilterInterceptorList.remove(loadMoreIFilterInterceptor)
-            }
-            field = value
-            //add
-            field?.apply {
-                addDispatchUpdatesListener(this@DslAdapter)
-                beforeFilterInterceptorList.add(0, adapterStatusIFilterInterceptor)
-                afterFilterInterceptorList.add(loadMoreIFilterInterceptor)
-            }
-            updateItemDepend()
-        }
 
     /**单/多选助手*/
     val itemSelectorHelper = ItemSelectorHelper(this)
@@ -110,8 +91,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     val _itemLayoutHold = hashMapOf<Int, Int>()
 
     init {
-        dslDataFilter = DslDataFilter(this)
-
+        updateDataFilter(DslDataFilter(this))
         dataItems?.let {
             this.dataItems.clear()
             this.dataItems.addAll(dataItems)
@@ -280,6 +260,26 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
 
     fun removeItemUpdateDepend(action: ItemUpdateDependAction) {
         itemUpdateDependObserver.remove(action)
+    }
+
+    /**更新数据过滤器[DslDataFilter]*/
+    fun updateDataFilter(dataFilter: DslDataFilter?) {
+        if (dslDataFilter == dataFilter) {
+            return
+        }
+        //remove
+        dslDataFilter?.apply {
+            removeDispatchUpdatesListener(this@DslAdapter)
+            beforeFilterInterceptorList.remove(adapterStatusIFilterInterceptor)
+            afterFilterInterceptorList.remove(loadMoreIFilterInterceptor)
+        }
+        dslDataFilter = dataFilter
+        //add
+        dslDataFilter?.apply {
+            addDispatchUpdatesListener(this@DslAdapter)
+            beforeFilterInterceptorList.add(0, adapterStatusIFilterInterceptor)
+            afterFilterInterceptorList.add(loadMoreIFilterInterceptor)
+        }
     }
 
     //</editor-fold>

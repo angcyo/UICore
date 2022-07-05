@@ -37,7 +37,10 @@ interface IValueUnit {
 
 /**[convertPixelToValue]
  * [formattedValueUnit]*/
-fun IValueUnit.convertPixelToValueUnit(pixel: Float): String {
+fun IValueUnit.convertPixelToValueUnit(pixel: Float?): String {
+    if (pixel == null) {
+        return formattedValueUnit(0f)
+    }
     val value = convertPixelToValue(pixel)
     return formattedValueUnit(value)
 }
