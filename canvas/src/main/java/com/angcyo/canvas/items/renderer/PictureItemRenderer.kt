@@ -494,7 +494,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
     ) {
         val item = getRendererItem()
         val oldValue = if (item is PictureBitmapItem) {
-            item.bitmap
+            item.bitmap ?: item.drawable
         } else {
             null
         }
@@ -533,7 +533,11 @@ class PictureItemRenderer(canvasView: ICanvasView) :
                 val newBounds = RectF(getBounds())
 
                 override fun runUndo() {
-                    updateItemBitmap(oldValue, oldData, oldBounds, Strategy.undo)
+                    if (oldValue is Bitmap) {
+                        updateItemBitmap(oldValue, oldData, oldBounds, Strategy.undo)
+                    } else if (oldValue is Drawable) {
+                        updateItemDrawable(oldValue, oldData, oldBounds, Strategy.undo)
+                    }
                 }
 
                 override fun runRedo() {
