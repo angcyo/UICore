@@ -41,7 +41,7 @@ class OperateHandler {
 
             if (itemRenderer is SelectGroupRenderer) {
                 //群组选择, 不允许反向
-                if (toWidth <= 0f || toHeight <= 0f) {
+                if (toWidth <= 1f || toHeight <= 1f) {
                     //不允许反向调整
                     return false
                 }
@@ -61,7 +61,8 @@ class OperateHandler {
                 }*/
             }
 
-            if (toWidth != 0f && toHeight != 0f) {
+            if (toWidth.abs() >= 1f && toHeight.abs() >= 1f) {
+                //至少要1个像素才能修改
                 return true
             }
             return false

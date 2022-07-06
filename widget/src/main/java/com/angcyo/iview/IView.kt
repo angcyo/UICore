@@ -9,11 +9,14 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcherOwner
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
+import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.ex.Anim
+import com.angcyo.library.ex.mH
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
 
@@ -31,10 +34,21 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
     var iViewLayoutId: Int = -1
 
     /**添加[IView]时的过渡动画*/
-    var iViewAddTransition: (rootView: View, end: () -> Unit) -> Unit = { _, end -> end() }
+    var iViewAddTransition: (rootView: View, end: () -> Unit) -> Unit = { rootView, end ->
+        rootView.doOnPreDraw {
+            it.translationY = it.mH().toFloat()
+            it.animate().translationY(0f).setDuration(Anim.ANIM_DURATION).start()
+        }
+        rootView.requestLayout()
+        end()
+    }
 
     /**移除[IView]时的过渡动画*/
-    var iViewRemoveTransition: (rootView: View, end: () -> Unit) -> Unit = { _, end -> end() }
+    var iViewRemoveTransition: (rootView: View, end: () -> Unit) -> Unit = { rootView, end ->
+        rootView.animate().translationY(rootView.mH().toFloat()).withEndAction {
+            end()
+        }.setDuration(Anim.ANIM_DURATION).start()
+    }
 
     /**[IView]显示的次数*/
     var showCount = 0
@@ -82,6 +96,9 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
     @CallPoint
     fun hide(end: (() -> Unit)? = null) {
         if (cancelable) {
+            if (iViewHolder == null) {
+                return
+            }
             removeInner(_parentView) {
                 isEnabled = false//OnBackPressedCallback
                 end?.invoke()
@@ -153,6 +170,8 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
             val rootView = iViewHolder?.itemView
 
             if (rootView != null) {
+                iViewHolder?.clear()
+                iViewHolder = null
                 iViewRemoveTransition(rootView) {
                     //remove
                     rootView.setTag(R.id.lib_tag_iview, null)

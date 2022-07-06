@@ -267,8 +267,11 @@ fun ByteArray.toBitmap(): Bitmap {
 fun File.toBitmap(rotate: Boolean = true) = absolutePath.toBitmap(rotate)
 
 /**将文件路径转换成[Bitmap]对象*/
-fun String.toBitmap(rotate: Boolean = true): Bitmap {
+fun String.toBitmap(rotate: Boolean = true): Bitmap? {
     val file = File(this)
+    if (!file.exists()) {
+        return null
+    }
     return BitmapFactory.decodeFile(this).run {
         if (rotate) {
             rotate(file.exifOrientation().toFloat())

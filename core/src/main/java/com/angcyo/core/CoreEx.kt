@@ -8,16 +8,21 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.angcyo.base.show
 import com.angcyo.core.activity.BaseCoreAppCompatActivity
+import com.angcyo.fragment.AbsLifecycleFragment
+import com.angcyo.iview.IView
 import com.angcyo.library.app
 import com.angcyo.library.component.toAppDetail
 import com.angcyo.library.ex.baseConfig
 import com.angcyo.library.ex.find
 import com.angcyo.library.ex.isRelease
+import com.angcyo.library.ex.visible
 import com.angcyo.library.utils.RUtils
 import com.angcyo.widget.DslButton
 import com.angcyo.widget.DslGroupHelper
@@ -44,6 +49,21 @@ fun Fragment.checkCrash() {
             act.showCrashDialog()
         }
     }
+}
+
+/**
+ * [com.angcyo.base.FragmentExKt.show]
+ * */
+fun IView.showIn(fragment: AbsLifecycleFragment, group: ViewGroup? = null) {
+    var parentView: ViewGroup? = group
+    if (parentView == null) {
+        parentView = fragment._vh.group(R.id.lib_content_overlay_wrap_layout)
+        parentView.visible()
+    }
+    if (parentView == null) {
+        parentView = fragment._vh.itemView as ViewGroup
+    }
+    show(fragment, parentView)
 }
 
 //<editor-fold desc="Application级别的单例模式">

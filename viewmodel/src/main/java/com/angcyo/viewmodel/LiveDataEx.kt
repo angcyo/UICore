@@ -82,6 +82,8 @@ fun <T> vmData(data: T) = MutableErrorLiveData(data)
 
 fun <T> vmDataNull(data: T? = null) = MutableErrorLiveData(data)
 
+fun <T> vmHoldDataNull(data: T? = null) = MutableHoldLiveData(data)
+
 fun <T> MutableLiveData<T>.notify() {
     value = value
 }

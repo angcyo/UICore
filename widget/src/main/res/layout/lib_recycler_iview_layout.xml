@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_iview_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:clickable="true"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent">
+
+    <!--阴影-->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@drawable/lib_bottom_tran_solid_gradient" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/lib_white_top_round_bg_big_shape">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/lib_close_view"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="@dimen/lib_xhdpi"
+            android:background="@drawable/lib_iview_circle_shape"
+            android:padding="6dp"
+            android:visibility="visible"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/lib_iview_close"
+            app:tint="@color/lib_white"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/lib_title_view"
+            style="@style/LibTitleTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/lib_xhdpi"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="angcyo" />
+
+        <com.angcyo.widget.recycler.DslRecyclerView
+            android:id="@+id/lib_recycler_view"
+            style="@style/LibRecyclerViewStyleBase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lib_title_view"
+            app:r_layout_manager="v" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

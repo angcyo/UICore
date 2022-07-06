@@ -97,7 +97,7 @@ class CameraXRecordVideoFragment : BaseFragment() {
                         dslCameraViewHelper.takePicture { file, exception ->
                             hideLoading()
                             if (exception == null && isResumed) {
-                                onTakePhoto(file.toBitmap())
+                                onTakePhoto(file.toBitmap()!!)
                             }
                         }
                     }

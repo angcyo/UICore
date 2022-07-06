@@ -2,6 +2,7 @@ package com.angcyo.base
 
 import android.app.Activity
 import android.view.View
+import android.view.ViewGroup
 import androidx.activity.result.ActivityResultCaller
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -13,7 +14,9 @@ import com.angcyo.DslAHelper
 import com.angcyo.DslFHelper
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.fragment.AbsFragment
+import com.angcyo.fragment.AbsLifecycleFragment
 import com.angcyo.fragment.IFragment
+import com.angcyo.iview.IView
 import com.angcyo.library.L
 import com.angcyo.library.R
 import com.angcyo.library.app
@@ -208,4 +211,12 @@ fun <T : DslAdapterItem> T.init(
 /**更新数据*/
 fun <T : DslAdapterItem> T.update(holder: DslViewHolder, payloads: List<Any> = emptyList()) {
     itemBind.invoke(holder, RecyclerView.NO_POSITION, this, payloads)
+}
+
+/**
+ * [backPressedDispatcherOwner]
+ * */
+fun IView.show(fragment: AbsLifecycleFragment, group: ViewGroup? = null) {
+    backPressedDispatcherOwner = fragment
+    show(group ?: fragment._vh.itemView as ViewGroup)
 }
