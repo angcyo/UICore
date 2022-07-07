@@ -66,12 +66,12 @@ class BoundsOperateHandler {
                 return false
             }
 
-            if (toWidth.abs() > 4_000f) {
+            if (toWidth.abs() > 40_000f) {
                 //限制宽度最大值
                 return false
             }
 
-            if (toHeight.abs() < 40_000f) {
+            if (toHeight.abs() > 40_000f) {
                 //限制高度最大值
                 return false
             }
