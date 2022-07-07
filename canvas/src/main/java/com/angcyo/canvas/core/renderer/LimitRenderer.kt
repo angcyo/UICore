@@ -25,6 +25,9 @@ class LimitRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView) {
     /**限制框*/
     val limitPath: Path = Path()
 
+    /**用来[InitialPointHandler]恢复显示范围*/
+    var limitBounds: RectF? = null
+
     val _limitPathBounds: RectF = RectF()
 
     override fun render(canvas: Canvas) {
@@ -49,5 +52,6 @@ class LimitRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView) {
     fun clear() {
         limitPath.rewind()
         _limitPathBounds.setEmpty()
+        refresh()
     }
 }

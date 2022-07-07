@@ -32,15 +32,20 @@ class InitialPointHandler : BaseComponent() {
                 if (isTouchDownInInitial) {
                     if (initialPointRect.contains(event.x, event.y)) {
                         var def = true
-                        val path = view.limitRenderer.limitPath
-                        if (path.isEmpty) {
-                            //def
+                        if (view.limitRenderer.limitBounds != null) {
+                            _tempRect.set(view.limitRenderer.limitBounds!!)
+                            def = false
                         } else {
-                            path.computeBounds(_tempRect, true)
-                            if (_tempRect.isNoSize()) {
+                            val path = view.limitRenderer.limitPath
+                            if (path.isEmpty) {
                                 //def
                             } else {
-                                def = false
+                                path.computeBounds(_tempRect, true)
+                                if (_tempRect.isNoSize()) {
+                                    //def
+                                } else {
+                                    def = false
+                                }
                             }
                         }
                         if (!def) {
