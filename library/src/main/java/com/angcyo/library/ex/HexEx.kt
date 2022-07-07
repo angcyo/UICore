@@ -151,7 +151,9 @@ fun ByteArray.toByteInt(): Int {
     return result
 }
 
-/**将字节转换成无符号整型*/
+/**将字节转换成无符号整型
+ * -1 -> 255
+ * */
 fun Byte.toHexInt() = toInt() and 0xFF
 
 /**
