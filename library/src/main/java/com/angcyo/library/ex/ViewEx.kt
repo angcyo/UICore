@@ -619,9 +619,11 @@ fun View.appRootView(): View {
     return rootView
 }
 
-/**设置控件的长按提示文本*/
+/**设置控件的长按提示文本
+ * 可以通过[android.view.View.performLongClick]主动触发显示提示弹窗*/
 fun View.tooltipText(text: CharSequence?) {
     TooltipCompat.setTooltipText(this, text)
+    //performLongClick()
 }
 
 //</editor-fold desc="其他">

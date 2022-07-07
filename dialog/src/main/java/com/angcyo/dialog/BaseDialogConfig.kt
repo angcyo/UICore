@@ -2,11 +2,13 @@ package com.angcyo.dialog
 
 import android.app.Dialog
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.view.View
 import com.angcyo.library.L
 import com.angcyo.library.ex._string
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt
+import com.angcyo.widget.base.setLeftIco
 
 /**
  * 对话框基础控制
@@ -19,6 +21,9 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
 
     /**隐藏标题栏下面的线*/
     var hideDialogTitleLine: Boolean = false
+
+    /**消息体 左边的图标*/
+    var dialogMessageLeftIco: Drawable? = null
 
     init {
         positiveButtonText = _string(R.string.dialog_positive)
@@ -50,6 +55,9 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
         dialogViewHolder.tv(R.id.message_view)?.apply {
             visibility = if (dialogMessage == null) View.GONE else View.VISIBLE
             text = dialogMessage
+
+            //ico
+            dialogMessageLeftIco?.let { setLeftIco(it) }
         }
 
         //标题栏控制

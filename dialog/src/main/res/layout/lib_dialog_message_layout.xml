@@ -35,7 +35,9 @@
             style="@style/LibBodyTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/lib_hdpi"
             android:padding="@dimen/lib_xhdpi"
+            tools:drawableLeft="@drawable/ic_triangle"
             tools:text="对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容对话框内容" />
 
     </androidx.core.widget.NestedScrollView>
