@@ -100,7 +100,7 @@ fun RectF.translate(dx: Float = 0f, dy: Float = 0f): RectF {
  * [degrees] 旋转的角度
  * [pivotX] [pivotY] 旋转的轴点
  * */
-fun RectF.rotate(degrees: Float, pivotX: Float, pivotY: Float): RectF {
+fun RectF.rotate(degrees: Float, pivotX: Float = centerX(), pivotY: Float = centerY()): RectF {
     val matrix = Matrix()
     matrix.setRotate(degrees, pivotX, pivotY)
     matrix.mapRect(this)

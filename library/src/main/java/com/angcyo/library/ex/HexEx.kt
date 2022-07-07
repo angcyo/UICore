@@ -65,7 +65,7 @@ fun ByteArray.copyTo(
 }
 
 /**剔除字节数据, 或者填满字节数组到指定的长度*/
-fun ByteArray.trimAndPad(length: Int): ByteArray {
+fun ByteArray.trimAndPad(length: Int, pad: Boolean = true): ByteArray {
     return if (size == length) {
         //刚好相等
         this
@@ -75,8 +75,13 @@ fun ByteArray.trimAndPad(length: Int): ByteArray {
         copyTo(result, count = length)
         result
     } else {
-        //需要垫满
-        padHexByteArray(length, true)
+        if (pad) {
+            //需要垫满
+            padHexByteArray(length, true)
+        } else {
+            //不需要垫满, 直接返回
+            this
+        }
     }
 }
 
