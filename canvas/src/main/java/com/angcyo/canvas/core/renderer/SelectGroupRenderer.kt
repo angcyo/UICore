@@ -159,7 +159,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
     override fun itemRotateChanged(oldRotate: Float, rotateFlag: Int) {
         super.itemRotateChanged(oldRotate, rotateFlag)
         val degrees = rotate - oldRotate
-        canvasDelegate.operateHandler.rotateItemList(
+        canvasDelegate.boundsOperateHandler.rotateItemList(
             selectItemList,
             degrees,
             getBounds().centerX(),
@@ -171,7 +171,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         super.itemBoundsChanged(reason, oldBounds)
 
         if (reason.reason == Reason.REASON_USER) {
-            canvasDelegate.operateHandler.changeBoundsItemList(
+            canvasDelegate.boundsOperateHandler.changeBoundsItemList(
                 selectItemList,
                 oldBounds,
                 getBounds()
@@ -415,6 +415,6 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
                 offsetList.add(OffsetItemData(item, dx, dy))
             }
         }
-        canvasDelegate.operateHandler.offsetItemList(canvasDelegate, this, offsetList, strategy)
+        canvasDelegate.boundsOperateHandler.offsetItemList(canvasDelegate, this, offsetList, strategy)
     }
 }

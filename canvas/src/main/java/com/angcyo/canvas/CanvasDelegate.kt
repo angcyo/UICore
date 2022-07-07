@@ -127,7 +127,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
     var canvasTouchManager = CanvasTouchManager(this)
 
     /**[BaseItemRenderer]操作处理*/
-    var operateHandler = OperateHandler()
+    var boundsOperateHandler = BoundsOperateHandler()
 
     //</editor-fold desc="内部成员">
 
@@ -896,14 +896,14 @@ class CanvasDelegate(val view: View) : ICanvasView {
             itemList.addAll(item.selectItemList)
             step = object : ICanvasStep {
                 override fun runUndo() {
-                    operateHandler.changeBoundsItemList(itemList, newBounds, originBounds)
+                    boundsOperateHandler.changeBoundsItemList(itemList, newBounds, originBounds)
                     if (getSelectedRenderer() == item) {
                         item.updateSelectBounds()
                     }
                 }
 
                 override fun runRedo() {
-                    operateHandler.changeBoundsItemList(itemList, originBounds, newBounds)
+                    boundsOperateHandler.changeBoundsItemList(itemList, originBounds, newBounds)
                     if (getSelectedRenderer() == item) {
                         item.updateSelectBounds()
                     }
@@ -945,7 +945,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
             step = object : ICanvasStep {
                 override fun runUndo() {
-                    operateHandler.rotateItemList(
+                    boundsOperateHandler.rotateItemList(
                         itemList, originRotate - newRotate,
                         bounds.centerX(),
                         bounds.centerY()
@@ -956,7 +956,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
                 }
 
                 override fun runRedo() {
-                    operateHandler.rotateItemList(
+                    boundsOperateHandler.rotateItemList(
                         itemList, newRotate - originRotate,
                         bounds.centerX(),
                         bounds.centerY()

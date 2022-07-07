@@ -21,7 +21,7 @@ import java.lang.Math.tan
  * @date 2022/05/15
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class OperateHandler {
+class BoundsOperateHandler {
 
     companion object {
 
@@ -61,11 +61,22 @@ class OperateHandler {
                 }*/
             }
 
-            if (toWidth.abs() >= 1f && toHeight.abs() >= 1f) {
-                //至少要1个像素才能修改
-                return true
+            if (toWidth.abs() < 1f || toHeight.abs() < 1f) {
+                //不允许设置小于1像素
+                return false
             }
-            return false
+
+            if (toWidth.abs() > 4_000f) {
+                //限制宽度最大值
+                return false
+            }
+
+            if (toHeight.abs() < 40_000f) {
+                //限制高度最大值
+                return false
+            }
+
+            return true
         }
 
         //endregion ---can---
@@ -149,7 +160,7 @@ class OperateHandler {
     /**计算当边界Bounds改变后, 真实的Bounds应该怎么变化
      * 支持旋转后的Bounds
      * [bounds] 真实的Bounds, 也是返回值
-     * [com.angcyo.canvas.core.OperateHandler.calcBoundsWidthHeightWithFrame]*/
+     * [com.angcyo.canvas.core.BoundsOperateHandler.calcBoundsWidthHeightWithFrame]*/
     @Deprecated("此算法有问题")
     fun calcBoundsWithFrame(frameFrom: RectF, frameTo: RectF, bounds: RectF) {
         //平移

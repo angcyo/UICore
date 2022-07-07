@@ -97,7 +97,7 @@ class RotateControlPoint : ControlPoint() {
 
                             override fun runUndo() {
                                 if (item is SelectGroupRenderer) {
-                                    canvasDelegate.operateHandler.rotateItemList(
+                                    canvasDelegate.boundsOperateHandler.rotateItemList(
                                         itemList,
                                         originRotate - newRotate,
                                         bounds.centerX(),
@@ -113,7 +113,7 @@ class RotateControlPoint : ControlPoint() {
 
                             override fun runRedo() {
                                 if (item is SelectGroupRenderer) {
-                                    canvasDelegate.operateHandler.rotateItemList(
+                                    canvasDelegate.boundsOperateHandler.rotateItemList(
                                         itemList,
                                         newRotate - originRotate,
                                         bounds.centerX(),

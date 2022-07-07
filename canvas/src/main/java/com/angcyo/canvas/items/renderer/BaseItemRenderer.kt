@@ -7,7 +7,7 @@ import androidx.core.graphics.withRotation
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.*
 import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.core.OperateHandler
+import com.angcyo.canvas.core.BoundsOperateHandler
 import com.angcyo.canvas.core.renderer.BaseRenderer
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.BaseItem
@@ -123,7 +123,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     /**是否可以改变bound*/
     open fun canChangeBounds(toBounds: RectF): Boolean {
-        return OperateHandler.canChangeBounds(this, toBounds)
+        return BoundsOperateHandler.canChangeBounds(this, toBounds)
     }
 
     /**Bounds改变后, 触发. 可以再次限制Bounds的大小

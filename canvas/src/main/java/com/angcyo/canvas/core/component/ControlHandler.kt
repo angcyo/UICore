@@ -206,7 +206,7 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
                             override fun runUndo() {
                                 if (item is SelectGroupRenderer) {
-                                    canvasDelegate.operateHandler.changeBoundsItemList(
+                                    canvasDelegate.boundsOperateHandler.changeBoundsItemList(
                                         itemList,
                                         newBounds,
                                         originBounds
@@ -223,7 +223,7 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
                             override fun runRedo() {
                                 if (item is SelectGroupRenderer) {
-                                    canvasDelegate.operateHandler.changeBoundsItemList(
+                                    canvasDelegate.boundsOperateHandler.changeBoundsItemList(
                                         itemList,
                                         originBounds,
                                         newBounds
