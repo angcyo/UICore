@@ -200,6 +200,8 @@ fun Int.toVisibilityString(): String {
     }
 }
 
+//region ---find---
+
 /**查找[RootView]对应的[Fragment]*/
 fun FragmentManager.findFragmentByView(view: View): Fragment? {
     return fragments.find { it.view == view }
@@ -211,6 +213,14 @@ fun <T : Fragment> FragmentManager.find(cls: Class<T>): T? {
 
 fun <T : Fragment> FragmentManager.find(cls: KClass<T>): T? {
     return fragments.find { it.javaClass == cls.java } as? T
+}
+
+fun <T : Fragment> DslFHelper.find(cls: Class<T>): T? {
+    return fm.find(cls)
+}
+
+fun <T : Fragment> DslFHelper.find(cls: KClass<T>): T? {
+    return fm.find(cls)
 }
 
 /**
@@ -233,3 +243,5 @@ fun FragmentManager.findBeforeFragment(anchor: Fragment? = null): Fragment? {
     }
     return fragment
 }
+
+//endregion ---find---

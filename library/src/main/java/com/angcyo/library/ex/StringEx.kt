@@ -414,6 +414,14 @@ fun String.noExtName(): String {
     return this
 }
 
+/**\/后的名字*/
+fun String.lastName(): String {
+    if (this.isEmpty()) {
+        return this
+    }
+    return substring(lastIndexOf("/") + 1, length)
+}
+
 /**获取url或者文件扩展名 对应的mimeType
  * https://www.iana.org/assignments/media-types/media-types.xhtml
  * */
