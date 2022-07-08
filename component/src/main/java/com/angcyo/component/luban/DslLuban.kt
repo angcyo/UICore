@@ -1,4 +1,4 @@
-package com.angcyo.luban
+package com.angcyo.component.luban
 
 import android.content.Context
 import android.text.TextUtils
@@ -6,13 +6,15 @@ import com.angcyo.coroutine.launchGlobal
 import com.angcyo.library.L
 import com.angcyo.library.LTime
 import com.angcyo.library.app
+import com.angcyo.library.ex.bitmapSize
 import com.angcyo.library.ex.fileSize
+import com.angcyo.library.model.LoaderMedia
+import com.angcyo.library.model.isImage
+import com.angcyo.library.model.toLoaderMedia
 import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.Media
 import com.angcyo.library.utils.fileNameUUID
 import com.angcyo.library.utils.folderPath
-import com.angcyo.library.model.LoaderMedia
-import com.angcyo.library.model.isImage
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import top.zibin.luban.Luban
@@ -30,44 +32,68 @@ class DslLuban {
     /**压缩存在文件的文件夹名称*/
     var targetFolderName = "luban"
 
-    var targetMediaList = listOf<LoaderMedia>()
+    /**需要压缩的媒体*/
+    var targetMediaList = mutableListOf<LoaderMedia>()
 
     /**忽略大小小于这个数值的文件[k]*/
     var leastCompressSize = 200
 
-    /**是否要保留透明像素*/
+    /**是否要保留透明像素, 否则透明像素会变成黑色*/
     var enableAlpha = false
 
+    /**是否异步调用执行*/
+    var async: Boolean = true
+
     /**回调*/
+    //@WorkerThread
     var onCompressStart: () -> Unit = {}
+
+    //@WorkerThread
     var onCompressEnd: () -> Unit = {}
+
+    //@WorkerThread
     var onCompressProgress: (progress: Int) -> Unit = {}
 
     var _job: Job? = null
-    fun doIt(context: Context): Job {
+    fun doIt(context: Context): Job? {
         cancel()
-        _job = launchGlobal {
-            LTime.tick()
-            onCompressStart()
-            onCompressProgress(0)
-            targetMediaList.forEachIndexed { index, loaderMedia ->
-                if (loaderMedia.isImage()) {
-                    async {
-                        _doIt(context, loaderMedia)
-                    }.await()
-                }
-                onCompressProgress((index * 1f / max(1, targetMediaList.size) * 100).toInt())
+        if (async) {
+            //异步
+            _job = launchGlobal {
+                async {
+                    _compress(context)
+                }.await()
             }
-            onCompressEnd()
-            L.i("压缩耗时:${LTime.time()}")
+        } else {
+            //同步
+            _compress(context)
         }
-        return _job!!
+        return _job
+    }
+
+    /**添加一个需要压缩的图片路径*/
+    fun addPath(path: String) {
+        targetMediaList.add(path.toLoaderMedia())
     }
 
     /**取消*/
     fun cancel() {
         _job?.cancel(CancellationException("用户取消!"))
         _job = null
+    }
+
+    private fun _compress(context: Context) {
+        LTime.tick()
+        onCompressStart()
+        onCompressProgress(0)
+        targetMediaList.forEachIndexed { index, loaderMedia ->
+            if (loaderMedia.isImage()) {
+                _doIt(context, loaderMedia)
+            }
+            onCompressProgress((index * 1f / max(1, targetMediaList.size) * 100).toInt())
+        }
+        onCompressEnd()
+        L.i("压缩耗时:${LTime.time()}")
     }
 
     private fun _doIt(context: Context, media: LoaderMedia) {
@@ -101,23 +127,40 @@ class DslLuban {
                     .load(listOf(path))
                     .get().apply {
                         firstOrNull()?.let {
+                            val size = it.bitmapSize()
+                            val w = size[0]
+                            val h = size[1]
                             val targetFile = Media.copyFrom(
                                 it,
-                                folderPath(Constant.LUBAN_FOLDER_NAME), media.width, media.height
+                                folderPath(Constant.LUBAN_FOLDER_NAME), w, h
                             )
                             media.compressPath = targetFile.absolutePath
                             media.fileSize = media.compressPath.fileSize()
                         }
                     }
             } catch (e: Exception) {
-                L.w(e)
+                e.printStackTrace()
             }
         }
     }
 }
 
-fun dslLuban(context: Context = app(), actions: DslLuban.() -> Unit) {
-    DslLuban().apply {
+/**直接压缩图片
+ * [keepMinSize] 图片已经小于这个大小时, 不压缩*/
+fun String.luban(keepMinSize: Int = 200): String {
+    val path = this
+    val result = dslLuban {
+        async = false
+        leastCompressSize = keepMinSize
+        addPath(path)
+    }.targetMediaList.firstOrNull()?.compressPath ?: path
+    return result
+}
+
+/**压缩图片, 会改变图片的尺寸*/
+fun dslLuban(context: Context = app(), actions: DslLuban.() -> Unit): DslLuban {
+    return DslLuban().apply {
+        //addPath()
         actions()
         doIt(context)
     }

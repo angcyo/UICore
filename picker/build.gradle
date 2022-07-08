@@ -20,14 +20,12 @@ dependencies {
     api project(allModule.image)
     api project(allModule.camera)
     api project(allModule.glide)
+    api project(allModule.component)
 
     //https://mvnrepository.com/artifact/androidx.loader/loader
     api "androidx.loader:loader:1.1.0"
 
     //api "androidx.exifinterface:exifinterface:1.1.0"
-
-    //https://github.com/Curzibn/Luban
-    implementation 'top.zibin:Luban:1.1.8'
 
     //https://github.com/Yalantis/uCrop
     implementation 'com.github.yalantis:ucrop:2.2.4'

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.activity.showDebugInfoView
 import com.angcyo.base.*
+import com.angcyo.component.luban.dslLuban
 import com.angcyo.core.component.dslPermission
 import com.angcyo.dialog.hideLoading
 import com.angcyo.dialog.loading
@@ -16,7 +17,6 @@ import com.angcyo.library.L
 import com.angcyo.library.ex.*
 import com.angcyo.library.toast
 import com.angcyo.loader.LoaderConfig
-import com.angcyo.luban.dslLuban
 import com.angcyo.picker.R
 import com.angcyo.viewmodel.VMProperty
 
@@ -165,7 +165,7 @@ class PickerActivity : BaseAppCompatActivity() {
                                 append(index + 1)
                                 append("->")
                                 append(loaderMedia.mimeType)
-                                append(" 本地:${loaderMedia.localPath}(${loaderMedia.localPath.fileSizeString()})")
+                                append(" 本地:${loaderMedia.localPath}(${loaderMedia.width}x${loaderMedia.height})(${loaderMedia.localPath.fileSizeString()})")
                                 append(" 本地Uri:${loaderMedia.localUri}")
                                 appendln()
                                 append("先剪裁:${loaderMedia.cropPath}(${loaderMedia.cropPath.fileSizeString()})")
@@ -179,10 +179,7 @@ class PickerActivity : BaseAppCompatActivity() {
 
                     resultCode = Activity.RESULT_OK
                     resultData = Intent().run {
-                        putParcelableArrayListExtra(
-                            KEY_SELECTOR_MEDIA_LIST,
-                            ArrayList(this@apply)
-                        )
+                        putParcelableArrayListExtra(KEY_SELECTOR_MEDIA_LIST, ArrayList(this@apply))
                     }
                 }
             }

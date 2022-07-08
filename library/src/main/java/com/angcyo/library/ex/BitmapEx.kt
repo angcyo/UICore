@@ -181,7 +181,7 @@ fun InputStream.bitmapSize(): IntArray {
             result[1] = options.outHeight
         }
     } catch (e: Exception) {
-        L.w(e)
+        e.printStackTrace()
     }
     return result
 }
@@ -220,8 +220,14 @@ fun ExifInterface.bitmapDegree(): Int {
     return degree
 }
 
+/**获取图片宽高*/
 fun String.bitmapSize(): IntArray {
-    return file().inputStream().bitmapSize()
+    return file().bitmapSize()
+}
+
+/**获取图片宽高*/
+fun File.bitmapSize(): IntArray {
+    return inputStream().bitmapSize()
 }
 
 /**保存图片*/

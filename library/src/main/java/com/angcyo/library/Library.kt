@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import com.angcyo.library.ex.*
+import com.angcyo.library.utils.fileNameUUID
 import com.orhanobut.hawk.Hawk
 import java.io.File
 
@@ -271,4 +272,14 @@ fun libCacheFolderPath(folderName: String, context: Context = app()): String {
         folderFile.mkdirs()
     }
     return folderFile.absolutePath
+}
+
+/**获取一个存储文件*/
+fun libFile(name: String = fileNameUUID(), folderName: String = ""): File {
+    return File(libFolderPath(folderName), name)
+}
+
+/**获取一个缓存文件*/
+fun libCacheFile(name: String = fileNameUUID(), folderName: String = ""): File {
+    return File(libCacheFolderPath(folderName), name)
 }

@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Parcelable
 import com.angcyo.library.ex.*
 import kotlinx.parcelize.Parcelize
+import java.io.File
 
 /**
  * Loader 加载出来的媒体数据
@@ -159,4 +160,11 @@ fun List<LoaderMedia>.toUrlList(): List<String> {
     return result
 }
 
-fun String.toLoaderMedia(): LoaderMedia = LoaderMedia(url = this)
+/**转换*/
+fun String.toLoaderMedia(): LoaderMedia {
+    return if (startsWith(File.separator)) {
+        LoaderMedia(url = this, localPath = this)
+    } else {
+        LoaderMedia(url = this)
+    }
+}
