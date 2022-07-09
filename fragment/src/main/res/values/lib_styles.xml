@@ -27,7 +27,7 @@
 
     <style name="BaseWhiteAppTheme" parent="BaseAppTheme">
         <!-- Customize your theme here. -->
-        <item name="android:windowBackground">@color/lib_white</item>
+        <item name="android:windowBackground">@drawable/lib_splash_bg</item>
     </style>
 
     <style name="BasePrimaryAppTheme" parent="BaseWhiteAppTheme">
