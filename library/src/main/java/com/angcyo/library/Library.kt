@@ -51,6 +51,16 @@ object Library {
                 .build()
         }
     }
+
+    //region ---常量---
+
+    /**点击次数*/
+    var CLICK_COUNT = 0
+
+    /**强制标识Debug*/
+    var isDebugTypeVal = false
+
+    //endregion ---常量---
 }
 
 fun app(): Context = Library.application

@@ -226,7 +226,11 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
                     queryCategory = listOf(Intent.CATEGORY_LAUNCHER)
                     queryPackageName = activity.packageName
 
-                    if (doQuery(activity).any { it.activityInfo.name == activity.className() }) {
+                    val launcherList = doQuery(activity)
+                    if (launcherList.isEmpty() && DslAHelper.mainActivityClass == null) {
+                        //如果没有启动页, 并且没有配置主页, 则不显示back按钮
+                        showBackItem = false
+                    } else if (launcherList.any { it.activityInfo.name == activity.className() }) {
                         //当前的[Activity]在xml中声明了主页标识
                         showBackItem = false
                     }
@@ -247,7 +251,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
             _vh.visible(wrapId)
             _vh.group(wrapId)?.replace(layoutId)
         } else {
-            _vh.gone(wrapId, _vh.group(wrapId)?.childCount ?: 0 <= 0)
+            _vh.gone(wrapId, (_vh.group(wrapId)?.childCount ?: 0) <= 0)
         }
     }
 

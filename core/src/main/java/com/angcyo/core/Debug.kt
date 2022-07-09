@@ -6,6 +6,7 @@ import com.angcyo.base.dslFHelper
 import com.angcyo.core.CoreApplication.Companion.DEFAULT_FILE_PRINT_PATH
 import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.core.component.fileSelector
+import com.angcyo.library.Library
 import com.angcyo.library.app
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.Constant
@@ -36,7 +37,7 @@ object Debug {
         when (text?.toString()?.lowercase()) {
             //开启调试模式
             "cmd:debug", "9.999999" -> {
-                LibEx.isDebugTypeVal = true
+                Library.isDebugTypeVal = true
                 onChangedToDebug.forEach {
                     it()
                 }
