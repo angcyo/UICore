@@ -315,7 +315,13 @@ fun Context.readResource(resId: Int, charset: Charset = Charsets.UTF_8): String?
 /**从[assets]中获取指定目录下的所有文件路径, 已拼接路径*/
 fun Context.listAssets(path: String = ""): List<String>? {
     val list = filterAssets(path) { true }
-    return list?.mapTo(mutableListOf()) { "$path/$it" }
+    return list?.mapTo(mutableListOf()) {
+        if (it.isNotEmpty()) {
+            "$path/$it"
+        } else {
+            "$it"
+        }
+    }
 }
 
 /**过滤[assets]中指定[path]路径下的所有文件名, 不包含路径*/
