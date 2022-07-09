@@ -64,6 +64,9 @@ class PictureTextItem : PictureItem() {
         itemName = "Text"
         compactText = true
         wordSpacing = 1 * dp //字间距
+
+        //默认文本大小
+        paint.textSize = 40 * dp
     }
 
     /**获取每一行的文本*/
