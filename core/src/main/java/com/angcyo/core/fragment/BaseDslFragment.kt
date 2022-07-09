@@ -81,21 +81,17 @@ open class BaseDslFragment : BaseTitleFragment() {
     open fun renderDslAdapter(
         clear: Boolean = false,
         reset: Boolean = enableAdapterRefresh,
+        updateState: Boolean = true,
         action: DslAdapter.() -> Unit
     ) {
         finishRefresh()
-        _adapter.render {
+        _adapter.render(updateState) {
             if (clear) {
                 clearAllItems()
             } else if (reset) {
                 dataItems.clear()
             }
             action()
-            if (adapterItems.isEmpty()) {
-                emptyStatus()
-            } else {
-                noneStatus()
-            }
         }
     }
 
@@ -116,8 +112,8 @@ open class BaseDslFragment : BaseTitleFragment() {
             if (_adapter.dslAdapterStatusItem.itemState == DslAdapterStatusItem.ADAPTER_STATUS_NONE ||
                 _adapter.dataItems.isEmpty()
             ) {
-                _adapter.render {
-                    toLoading()
+                _adapter.render(false) {
+                    loadingStatus()
                 }
             }
         }
