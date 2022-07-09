@@ -8,7 +8,10 @@ import android.text.TextPaint
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.MmValueUnit
 import com.angcyo.canvas.items.PictureTextItem
+import com.angcyo.library.app
 import com.angcyo.library.ex.*
+import com.angcyo.svg.Svg
+import com.pixplicity.sharp.SharpDrawable
 import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min
@@ -343,3 +346,21 @@ fun CanvasDelegate.engraveMode(enable: Boolean = true) {
 }
 
 //</editor-fold desc="Other">
+
+//<editor-fold desc="Svg">
+
+fun loadAssetsSvg(assetsName: String): SharpDrawable {
+    val svg = app().readAssets(assetsName)
+    return Svg.loadSvgDrawable(svg!!)
+}
+
+fun loadAssetsSvgPath(
+    assetsName: String,
+    color: Int = Color.BLACK,
+    drawStyle: Paint.Style = Paint.Style.STROKE
+): SharpDrawable {
+    val svg = app().readAssets(assetsName)
+    return Svg.loadSvgPathDrawable(svg!!, color, drawStyle)
+}
+
+//</editor-fold desc="Svg">
