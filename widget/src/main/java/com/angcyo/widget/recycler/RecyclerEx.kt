@@ -79,17 +79,12 @@ fun RecyclerView.initDsl() {
 fun RecyclerView.renderDslAdapter(
     append: Boolean = false, //当已经是adapter时, 是否追加item. 需要先关闭 new
     new: Boolean = true, //始终创建新的adapter, 为true时, 则append无效
+    updateState: Boolean = true,
     action: DslAdapter.() -> Unit = {}
 ) {
     initDslAdapter(append, new) {
-        render {
+        render(updateState) {
             action()
-
-            if (adapterItems.isEmpty()) {
-                emptyStatus()
-            } else {
-                noneStatus()
-            }
         }
     }
 }

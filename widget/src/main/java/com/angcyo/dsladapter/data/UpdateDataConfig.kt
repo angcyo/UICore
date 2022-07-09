@@ -181,7 +181,7 @@ fun DslAdapter.updateHeaderData(action: UpdateDataConfig.() -> Unit) {
     config.pageSize = Int.MAX_VALUE
     config.action()
 
-    changeHeaderItems(config.filterParams) {
+    changeHeaderItems(true, config.filterParams) {
         val result = config.updateData(it)
         it.clear()
         it.addAll(result)
@@ -196,7 +196,7 @@ fun DslAdapter.updateFooterData(action: UpdateDataConfig.() -> Unit) {
     config.pageSize = Int.MAX_VALUE
     config.action()
 
-    changeFooterItems(config.filterParams) {
+    changeFooterItems(true, config.filterParams) {
         val result = config.updateData(it)
         it.clear()
         it.addAll(result)
@@ -209,7 +209,7 @@ fun DslAdapter.updateData(action: UpdateDataConfig.() -> Unit) {
     val config = UpdateDataConfig()
     config.action()
 
-    changeDataItems(config.filterParams) {
+    changeDataItems(false, config.filterParams) {
         val result = config.updateData(it)
         it.clear()
         it.addAll(result)
