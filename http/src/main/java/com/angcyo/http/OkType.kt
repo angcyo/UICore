@@ -9,7 +9,10 @@ import com.angcyo.http.rx.runRx
 import com.angcyo.library.app
 import com.angcyo.library.ex.isHttpScheme
 import com.angcyo.library.ex.use
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Request
+import okhttp3.Response
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
@@ -29,12 +32,6 @@ object OkType {
     /**缓存*/
     private val imageTypeCache: MutableMap<String, ImageType> = ConcurrentHashMap()
 
-    val client: OkHttpClient
-        get() {
-            DslHttp.init()
-            return DslHttp.dslHttpConfig.okHttpClient!!
-        }
-
     val mainHandle = Handler(Looper.getMainLooper())
 
     private fun getCall(url: String, listener: OnImageTypeListener?): Call? {
@@ -42,7 +39,7 @@ object OkType {
         try {
             val mRequest =
                 Request.Builder().url(url).build() //如果url不是 网址, 会报错
-            call = client.newCall(mRequest)
+            call = DslHttp.client.newCall(mRequest)
         } catch (e: Exception) {
             e.printStackTrace()
             if (listener != null) {

@@ -164,10 +164,20 @@ interface ApiKt {
 //<editor-fold desc="基础">
 
 object DslHttp {
+
+    /**---*/
     var DEFAULT_CODE_KEY = "code"
     var DEFAULT_MSG_KEY = "msg"
 
+    /**配置信息*/
     val dslHttpConfig = DslHttpConfig()
+
+    /**获取客户端实例*/
+    val client: OkHttpClient
+        get() {
+            init()
+            return dslHttpConfig.okHttpClient!!
+        }
 
     /**自定义配置, 否则使用库中默认配置*/
     fun config(action: DslHttpConfig.() -> Unit) {
@@ -175,6 +185,7 @@ object DslHttp {
         dslHttpConfig.action()
     }
 
+    /**初始化和缓存客户端*/
     fun init() {
         val baseUrl = dslHttpConfig.onGetBaseUrl()
 

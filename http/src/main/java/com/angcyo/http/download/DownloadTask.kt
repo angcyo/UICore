@@ -1,0 +1,105 @@
+package com.angcyo.http.download
+
+import com.angcyo.http.DslHttp
+import okhttp3.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+
+/**
+ * 下载任务
+ * @author <a href="mailto:angcyo@126.com">angcyo</a>
+ * @since 2022/07/09
+ */
+class DownloadTask(
+    /**需要下载的地址*/
+    val url: String,
+    /**下载保存的文件路径, 全路径*/
+    val savePath: String,
+    /**下载监听*/
+    val listener: DownloadListener
+) {
+
+    //---
+
+    /**下载内容的长度, 自动赋值*/
+    var contentLength: Long = -1
+
+    /**下载进度*/
+    var progress: Int = -1
+
+    /**下载是否完成, 正常/异常都属于完成*/
+    var isFinish: Boolean = false
+
+    /**请求客户端*/
+    var okHttpClient: OkHttpClient = DslHttp.client
+
+    /**用于取消*/
+    var call: Call? = null
+
+    /**开始下载*/
+    fun download() {
+        progress = -1
+        contentLength = -1
+        isFinish = false
+        val request: Request = Request.Builder().url(url).build()
+        call = okHttpClient.newCall(request)
+        call?.enqueue(object : Callback {
+
+            override fun onFailure(call: Call, e: IOException) {
+                // 下载失败
+                isFinish = true
+                listener.onDownloadFailed(this@DownloadTask, e)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                var `is`: InputStream? = null
+                val buf = ByteArray(2048)
+                var len = 0
+                var fos: FileOutputStream? = null
+                try {
+                    `is` = response.body?.byteStream()
+                    contentLength = response.body?.contentLength() ?: -1
+                    val file = File(savePath)
+                    fos = FileOutputStream(file)
+                    var sum: Long = 0
+                    while (`is`?.read(buf)?.also { len = it } != -1 && !call.isCanceled()) {
+                        fos.write(buf, 0, len)
+                        sum += len.toLong()
+                        val progress = if (contentLength < 0) {
+                            -1
+                        } else {
+                            (sum * 1.0f / contentLength * 100).toInt()
+                        }
+                        // 下载中
+                        this@DownloadTask.progress = progress
+                        listener.onDownloading(this@DownloadTask, progress)
+                    }
+                    fos.flush()
+                    // 下载完成
+                    isFinish = true
+                    listener.onDownloadSuccess(this@DownloadTask)
+                } catch (e: Exception) {
+                    isFinish = true
+                    listener.onDownloadFailed(this@DownloadTask, e)
+                } finally {
+                    try {
+                        `is`?.close()
+                    } catch (e: IOException) {
+                    }
+                    try {
+                        fos?.close()
+                    } catch (e: IOException) {
+                    }
+                }
+            }
+        })
+    }
+
+    /**取消下载*/
+    fun cancel() {
+        isFinish = true
+        call?.cancel()
+    }
+}

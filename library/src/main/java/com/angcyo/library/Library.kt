@@ -276,7 +276,7 @@ fun libFolderPath(folderName: String, context: Context = app()): String {
 }
 
 /**缓存目录, 可以在应用详情中, 通过清理缓存清除.*/
-fun libCacheFolderPath(folderName: String, context: Context = app()): String {
+fun libCacheFolderPath(folderName: String = "", context: Context = app()): String {
     val folderFile = File(context.externalCacheDir ?: context.cacheDir, folderName)
     if (!folderFile.exists()) {
         folderFile.mkdirs()

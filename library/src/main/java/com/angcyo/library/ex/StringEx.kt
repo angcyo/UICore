@@ -850,7 +850,7 @@ fun CharSequence.lowerFirst(): CharSequence {
     return this
 }
 
-/**从url中获取文件名
+/**从url中获取文件名, 如果没有指定[attachment]则从url后面截取字符当做文件名
  * attachment;filename="百度手机助手(360手机助手).apk"
  * attachment;filename="baidusearch_AndroidPhone_1021446w.apk"
  * */
