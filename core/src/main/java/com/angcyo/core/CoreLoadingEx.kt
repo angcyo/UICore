@@ -45,7 +45,7 @@ fun <T> LifecycleOwner.loadingAsyncTg(block: () -> T?, action: (T?) -> Unit) {
 fun ActivityResultCaller.tgStrokeLoading(
     cancel: Boolean = false,
     showErrorToast: Boolean = false,
-    action: (cancel: AtomicBoolean, loadEnd: (data: Any?, error: Throwable?) -> Unit) -> Unit
+    action: (isCancel: AtomicBoolean, loadEnd: (data: Any?, error: Throwable?) -> Unit) -> Unit
 ): Dialog? {
     return try {
         val activity = when (this) {
@@ -66,7 +66,7 @@ fun ActivityResultCaller.tgStrokeLoading(
 fun Context.tgStrokeLoading2(
     cancel: Boolean = false,
     showErrorToast: Boolean = false,
-    action: (cancel: AtomicBoolean, loadEnd: (data: Any?, error: Throwable?) -> Unit) -> Unit
+    action: (isCancel: AtomicBoolean, loadEnd: (data: Any?, error: Throwable?) -> Unit) -> Unit
 ): Dialog? {
     val isCancel = AtomicBoolean(false)
     val dialog = loading2(layoutId = R.layout.lib_tg_stroke_loading_layout, config = {
