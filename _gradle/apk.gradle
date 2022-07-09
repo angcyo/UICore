@@ -17,7 +17,7 @@ def apkFormatName = project.hasProperty("apkName") ? project.ext.apkName : "#an-
 def _app_name = project.hasProperty("APP_NAME") ? project.ext.APP_NAME : ((project.name != "app") ? project.name : rootProject.name)
 def apk_time = apkTime()
 
-def keyAlias = project.hasProperty("signConfig") ? signConfig.key_alias : 'unknown'
+def keyAlias = project.hasProperty("signConfig") ? signConfig.key_alias : ''
 
 android {
 
@@ -61,7 +61,7 @@ android {
                         apk_time,
                         variant.flavorName,
                         variant.buildType.name,
-                        variant.signingConfig?.name ?: 'unknown',
+                        variant.signingConfig?.name ?: '',
                         keyAlias
                 )
             }
@@ -82,7 +82,7 @@ android {
                         apk_time,
                         variant.flavorName,
                         variant.buildType.name,
-                        variant.signingConfig?.name ?: 'unknown',
+                        variant.signingConfig?.name ?: '',
                         keyAlias
                 )
             }
@@ -104,7 +104,7 @@ android {
                         apk_time,
                         variant.flavorName,
                         variant.buildType.name,
-                        variant.signingConfig?.name ?: 'unknown',
+                        variant.signingConfig?.name ?: '',
                         keyAlias
                 )
             }
@@ -127,7 +127,7 @@ android {
                         apk_time,
                         variant.flavorName,
                         variant.buildType.name,
-                        variant.signingConfig?.name ?: 'unknown',
+                        variant.signingConfig?.name ?: '',
                         keyAlias
                 )
             }
