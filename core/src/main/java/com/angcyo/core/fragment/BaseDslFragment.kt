@@ -81,7 +81,7 @@ open class BaseDslFragment : BaseTitleFragment() {
     open fun renderDslAdapter(
         clear: Boolean = false,
         reset: Boolean = enableAdapterRefresh,
-        config: DslAdapter.() -> Unit
+        action: DslAdapter.() -> Unit
     ) {
         finishRefresh()
         _adapter.render {
@@ -90,8 +90,12 @@ open class BaseDslFragment : BaseTitleFragment() {
             } else if (reset) {
                 dataItems.clear()
             }
-            config()
-            updateAdapterState(null)
+            action()
+            if (adapterItems.isEmpty()) {
+                emptyStatus()
+            } else {
+                noneStatus()
+            }
         }
     }
 

@@ -84,6 +84,12 @@ fun RecyclerView.renderDslAdapter(
     initDslAdapter(append, new) {
         render {
             action()
+
+            if (adapterItems.isEmpty()) {
+                emptyStatus()
+            } else {
+                noneStatus()
+            }
         }
     }
 }

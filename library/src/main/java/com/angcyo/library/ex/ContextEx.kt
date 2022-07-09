@@ -312,8 +312,16 @@ fun Context.readResource(resId: Int, charset: Charset = Charsets.UTF_8): String?
     }
 }
 
-/**过滤[assets]中指定[path]路径下的所有文件*/
-fun Context.filterAssets(path: String = "", predicate: (String) -> Boolean): List<String>? {
+/**从[assets]中获取指定目录下的所有文件路径*/
+fun Context.listAssets(path: String = ""): List<String>? {
+    return filterAssets(path) { true }
+}
+
+/**过滤[assets]中指定[path]路径下的所有文件路径*/
+fun Context.filterAssets(
+    path: String = "",
+    predicate: (String) -> Boolean = { true }
+): List<String>? {
     return try {
         assets.list(path)?.filter(predicate)
     } catch (e: Exception) {
