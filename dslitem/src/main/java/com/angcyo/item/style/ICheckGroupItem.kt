@@ -128,24 +128,32 @@ interface ICheckGroupItem : IAutoInitItem {
     }
 }
 
+/**需要选择的项*/
 var ICheckGroupItem.itemCheckItems: List<Any>
     get() = checkGroupItemConfig.itemCheckItems
     set(value) {
         checkGroupItemConfig.itemCheckItems = value
     }
 
+/**选中的项*/
 var ICheckGroupItem.itemCheckedItems: MutableList<Any>
     get() = checkGroupItemConfig.itemCheckedItems
     set(value) {
         checkGroupItemConfig.itemCheckedItems = value
     }
 
+/**只读属性, 选中的索引值*/
+val ICheckGroupItem._itemCheckedIndexList: List<Int>
+    get() = checkGroupItemConfig._itemCheckedIndexList
+
+/**布局id*/
 var ICheckGroupItem.itemCheckLayoutId: Int
     get() = checkGroupItemConfig.itemCheckLayoutId
     set(value) {
         checkGroupItemConfig.itemCheckLayoutId = value
     }
 
+/**回调*/
 var ICheckGroupItem.itemCheckChangedAction: (fromIndex: Int, selectIndexList: List<Int>, reselect: Boolean, fromUser: Boolean) -> Unit
     get() = checkGroupItemConfig.itemCheckChangedAction
     set(value) {
