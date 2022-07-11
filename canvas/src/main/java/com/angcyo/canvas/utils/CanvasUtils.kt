@@ -360,11 +360,19 @@ fun loadAssetsSvg(assetsName: String): SharpDrawable {
  * [com.pixplicity.sharp.SharpDrawable.pathList]*/
 fun loadAssetsSvgPath(
     assetsName: String,
-    color: Int = Color.BLACK, //黑色边
+    color: Int, // Color.BLACK 黑色边
     drawStyle: Paint.Style = Paint.Style.STROKE //描边
 ): SharpDrawable {
     val svg = app().readAssets(assetsName)
     return Svg.loadSvgPathDrawable(svg!!, color, drawStyle)
+}
+
+fun loadAssetsSvgPath(
+    assetsName: String,
+    paint: Paint = createPaint(Color.BLACK, Paint.Style.STROKE)
+): SharpDrawable {
+    val svg = app().readAssets(assetsName)
+    return Svg.loadSvgPathDrawable(svg!!, paint.color, paint.style, paint)
 }
 
 //</editor-fold desc="Svg">

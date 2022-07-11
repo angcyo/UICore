@@ -1,6 +1,7 @@
 package com.angcyo.dsladapter
 
 import android.graphics.Rect
+import com.angcyo.library.ex._color
 import com.angcyo.library.ex._dimen
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
@@ -269,3 +270,45 @@ fun DslAdapterItem.initItemGapOffset(gapSize: Int = 10 * dpi, outRect: Rect? = n
 }
 
 //</editor-fold desc="分组与边距, 分组与分组之间的偏移">
+
+//<editor-fold desc="网格分割线样式">
+
+/**网格分割线样式*/
+fun DslAdapterItem.initItemGapStyle(
+    gapSize: Int = _dimen(R.dimen.lib_line),
+    decorationColor: Int = _color(R.color.bg_sub_color),
+    outRect: Rect? = null
+) {
+    itemLeftInsert = 0
+    itemTopInsert = 0
+    itemRightInsert = gapSize
+    itemBottomInsert = gapSize
+    itemDecorationColor = decorationColor
+    if (onSetItemOffset == null) {
+        onSetItemOffset = {
+            initItemGapStyle(gapSize, decorationColor, it)
+        }
+    } else {
+        outRect?.set(itemLeftInsert, itemTopInsert, itemRightInsert, itemBottomInsert)
+        itemGroupParams.apply {
+            if (isOnlyOne()) {
+                outRect?.right = 0
+                outRect?.bottom = 0
+                itemRightInsert = 0
+                itemBottomInsert = 0
+            } else {
+                //待测试
+                if (isEdgeRight()) {
+                    outRect?.right = 0
+                    itemRightInsert = 0
+                }
+                if (isEdgeBottom()) {
+                    outRect?.bottom = 0
+                    itemBottomInsert = 0
+                }
+            }
+        }
+    }
+}
+
+//</editor-fold desc="网格分割线样式">
