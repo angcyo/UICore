@@ -79,6 +79,10 @@ class GCodeWriteHandler {
     ) {
         writeFirst(writer, unit)
         path.eachPath(pathStep) { index, posArray ->
+            if (index == 0) {
+                //path 可能有多段
+                _writeLastG1(writer)
+            }
             val xPixel = posArray[0] + offsetLeft
             val yPixel = posArray[1] + offsetTop
 
@@ -111,9 +115,13 @@ class GCodeWriteHandler {
         for (path in pathList) {
             if (Debug.isDebuggerConnected()) {
                 val bitmap = path.toBitmap()
-                L.i()
+                L.i(bitmap.byteCount)
             }
             path.eachPath(pathStep) { index, posArray ->
+                if (index == 0) {
+                    //path 可能有多段
+                    _writeLastG1(writer)
+                }
                 val xPixel = posArray[0] + offsetLeft
                 val yPixel = posArray[1] + offsetTop
 

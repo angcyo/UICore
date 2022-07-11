@@ -154,19 +154,33 @@ fun Path.eachPath(step: Float = 1f, block: (index: Int, posArray: FloatArray) ->
     val pathMeasure = PathMeasure(this, false)
     val floatArray = floatArrayOf(0f, 0f)
     var position = 0f
-    val length = pathMeasure.length
-
+    var length = pathMeasure.length
     var index = 0
-    while (position <= length) {
-        pathMeasure.getPosTan(position, floatArray, null)
-        block(index++, floatArray)
-        if (position == length) {
-            break
+
+    //func
+    fun _each() {
+        while (position <= length) {
+            pathMeasure.getPosTan(position, floatArray, null)
+            block(index++, floatArray)
+            if (position == length) {
+                break
+            }
+            position += step
+            if (position > length) {
+                position = length
+            }
         }
-        position += step
-        if (position > length) {
-            position = length
-        }
+    }
+
+    //first
+    _each()
+
+    //下一个轮廓, 如果有
+    while (pathMeasure.nextContour()) {
+        index = 0
+        position = 0f
+        length = pathMeasure.length
+        _each()
     }
 }
 

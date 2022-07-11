@@ -72,7 +72,7 @@ class GCodeAdjust {
                 overrideGCommand(writer, firstCmd, xy, ij)
             }
             gCodeHandler.overrideCommand = { line ->
-                writer.appendLine(line.lineCode)
+                writer.appendLine(line.cmdString)
             }
             gCodeHandler.parseGCodeLineList(gCodeLineList)
         }
@@ -108,7 +108,7 @@ class GCodeAdjust {
             overrideGCommand(writer, firstCmd, xy, ij)
         }
         gCodeHandler.overrideCommand = { line ->
-            writer.appendLine(line.lineCode)
+            writer.appendLine(line.cmdString)
         }
         //触发
         gCodeHandler.parseGCodeLineList(gCodeLineList)

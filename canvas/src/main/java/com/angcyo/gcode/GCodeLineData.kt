@@ -8,9 +8,11 @@ package com.angcyo.gcode
  * @since 2022/04/12
  */
 data class GCodeLineData(
-    /**整行的数据*/
+    /**整行的数据=[cmdString]+[comment]*/
     val lineCode: String,
-    /**一行中的所有指令*/
+    /**只包含命令字符*/
+    val cmdString: String,
+    /**[cmdString]分解的所有指令, 一行中的所有指令*/
     val cmdList: List<GCodeCmd>,
     /**这一行的注释*/
     val comment: String? = null

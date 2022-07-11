@@ -6,10 +6,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.widget.LinearLayout
-import com.angcyo.canvas.CanvasView
-import com.angcyo.canvas.LinePath
-import com.angcyo.canvas.ScalePictureDrawable
-import com.angcyo.canvas.Strategy
+import com.angcyo.canvas.*
 import com.angcyo.canvas.items.*
 import com.angcyo.canvas.items.renderer.*
 import com.angcyo.library.app
@@ -97,15 +94,17 @@ fun CanvasView.addShapeRenderer(path: Path, paint: TextPaint? = null): ShapeItem
 
 //<editor-fold desc="DrawableItemRenderer">
 
-/**添加一个[Drawable]渲染器*/
-fun CanvasView.addDrawableRenderer(drawable: Drawable): DrawableItem {
-    canvasDelegate.apply {
-        val renderer = DrawableItemRenderer<DrawableItem>(this)
-        renderer._rendererItem = DrawableItem().apply { this.drawable = drawable }
-        addCentreItemRenderer(renderer, Strategy.normal)
-        selectedItem(renderer)
-        return renderer._rendererItem!!
-    }
+/**添加一个[Drawable]渲染器
+ * [DrawableItemRenderer]*/
+fun CanvasView.addDrawableRenderer(drawable: Drawable): DrawableItem =
+    canvasDelegate.addDrawableRenderer(drawable)
+
+fun CanvasDelegate.addDrawableRenderer(drawable: Drawable): DrawableItem {
+    val renderer = DrawableItemRenderer<DrawableItem>(this)
+    renderer._rendererItem = DrawableItem().apply { this.drawable = drawable }
+    addCentreItemRenderer(renderer, Strategy.normal)
+    selectedItem(renderer)
+    return renderer._rendererItem!!
 }
 
 /**添加一个[Bitmap]渲染器*/

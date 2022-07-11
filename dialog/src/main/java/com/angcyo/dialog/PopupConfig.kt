@@ -168,6 +168,8 @@ open class PopupConfig {
         }
     }
 
+    //<editor-fold desc="PopupWindow">
+
     /**显示[PopupWindow]*/
     open fun showWithPopupWindow(context: Context): PopupWindow {
         val window = if (popupStyleAttr != undefined_res) {
@@ -250,6 +252,15 @@ open class PopupConfig {
         return window
     }
 
+    /**[showWithPopupWindow]*/
+    open fun initPopupWindow(popupWindow: PopupWindow, popupViewHolder: DslViewHolder) {
+
+    }
+
+    //</editor-fold desc="PopupWindow">
+
+    //<editor-fold desc="Core">
+
     open fun isAnchorInTopArea(anchor: View): Boolean {
         val rect = anchor.getViewRect()
         return rect.centerY() < _screenHeight / 4
@@ -260,6 +271,19 @@ open class PopupConfig {
     open fun isAnchorInRightArea(anchor: View): Boolean {
         val rect = anchor.getViewRect()
         return rect.left >= _screenWidth / 2 || rect.centerX() > _screenWidth / 2
+    }
+
+    open fun createContentView(context: Context): View? {
+        if (layoutId != -1) {
+            contentView = LayoutInflater.from(context)
+                .inflate(layoutId, FrameLayout(context), false)
+        }
+        if (showWithActivity) {
+            val rootLayout = FrameLayout(context)
+            rootLayout.addView(contentView)
+            contentView = rootLayout
+        }
+        return contentView
     }
 
     /**[autoOffset]后, 根布局所在的坐标矩形*/
@@ -417,30 +441,9 @@ open class PopupConfig {
         rootViewRect.left = right - width
     }
 
-    /**[showWithPopupWindow]*/
-    open fun initPopupWindow(popupWindow: PopupWindow, popupViewHolder: DslViewHolder) {
+    //</editor-fold desc="Core">
 
-    }
-
-    /**[showWidthActivity]*/
-    open fun initPopupActivity(activity: Activity, popupViewHolder: DslViewHolder) {
-
-    }
-
-    open fun createContentView(context: Context): View? {
-        if (layoutId != -1) {
-            contentView = LayoutInflater.from(context)
-                .inflate(layoutId, FrameLayout(context), false)
-        }
-        if (showWithActivity) {
-            val rootLayout = FrameLayout(context)
-            rootLayout.addView(contentView)
-            contentView = rootLayout
-        }
-        return contentView
-    }
-
-    var _onBackPressedCallback: OnBackPressedCallback? = null
+    //<editor-fold desc="PopupActivity">
 
     /**使用[Activity]当做载体*/
     open fun showWidthActivity(activity: Activity): Window {
@@ -526,6 +529,13 @@ open class PopupConfig {
         return window
     }
 
+    /**[showWidthActivity]*/
+    open fun initPopupActivity(activity: Activity, popupViewHolder: DslViewHolder) {
+
+    }
+
+    var _onBackPressedCallback: OnBackPressedCallback? = null
+
     /**
      * 透明颜色变暗透明度, [PopupWindow]不支持此属性
      * */
@@ -587,8 +597,16 @@ open class PopupConfig {
         }
     }
 
-    /**移除[Activity]模式的界面*/
+    //</editor-fold desc="PopupActivity">
+
+    /**移除[Activity]模式的界面
+     * 需要[OnBackPressedDispatcherOwner]支持*/
     fun hide() {
         _onBackPressedCallback?.handleOnBackPressed()
+        _container?.let {
+            if (it is PopupWindow) {
+                it.dismiss()
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.RectF
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.IRenderer
@@ -25,26 +26,28 @@ import com.angcyo.library.ex.toBitmap
 
 /**添加一个[Bitmap]渲染器
  * [BitmapItemRenderer]*/
-fun CanvasView.addBitmapRenderer(bitmap: Bitmap): BitmapItem {
-    canvasDelegate.apply {
-        val renderer = BitmapItemRenderer(this)
-        val result = renderer.updateBitmap(bitmap)
-        addCentreItemRenderer(renderer, Strategy.normal)
-        selectedItem(renderer)
-        return result
-    }
+fun CanvasView.addBitmapRenderer(bitmap: Bitmap): BitmapItem =
+    canvasDelegate.addBitmapRenderer(bitmap)
+
+fun CanvasDelegate.addBitmapRenderer(bitmap: Bitmap): BitmapItem {
+    val renderer = BitmapItemRenderer(this)
+    val result = renderer.updateBitmap(bitmap)
+    addCentreItemRenderer(renderer, Strategy.normal)
+    selectedItem(renderer)
+    return result
 }
 
 /**添加一个[Bitmap]渲染器
  * [PictureItemRenderer]*/
-fun CanvasView.addPictureBitmapRenderer(bitmap: Bitmap): PictureBitmapItem {
-    canvasDelegate.apply {
-        val renderer = PictureItemRenderer(this)
-        val result = renderer.addBitmapRender(bitmap)
-        addCentreItemRenderer(renderer, Strategy.normal)
-        selectedItem(renderer)
-        return result
-    }
+fun CanvasView.addPictureBitmapRenderer(bitmap: Bitmap): PictureBitmapItem =
+    canvasDelegate.addPictureBitmapRenderer(bitmap)
+
+fun CanvasDelegate.addPictureBitmapRenderer(bitmap: Bitmap): PictureBitmapItem {
+    val renderer = PictureItemRenderer(this)
+    val result = renderer.addBitmapRender(bitmap)
+    addCentreItemRenderer(renderer, Strategy.normal)
+    selectedItem(renderer)
+    return result
 }
 
 //</editor-fold desc="Bitmap渲染">

@@ -134,6 +134,14 @@ object GCodeHelper {
         val picture = gCodeHandler.parsePicture(gCodeLineDataList, paint)
         return GCodeDrawable(picture).apply {
             gCodeBound.set(gCodeHandler.gCodeBounds)
+            gCodeData = buildString {
+                gCodeLineDataList.forEachIndexed { index, gCodeLineData ->
+                    if (index != 0) {
+                        appendLine()
+                    }
+                    append(gCodeLineData.lineCode)
+                }
+            }
         }
     }
 
@@ -197,7 +205,7 @@ object GCodeHelper {
         _lastRatio = ratio
 
         //result
-        val resultData = GCodeLineData(cmdString, cmdList, comment)
+        val resultData = GCodeLineData(line, cmdString, cmdList, comment)
         if (amendGCodeCmd) {
             //修正指令
             val firstCmd = cmdList.firstOrNull()
@@ -438,7 +446,7 @@ object GCodeHelper {
                                 var j = line.getGCodePixel("J") //圆心距离当前位置的y偏移量
 
                                 if (i == null || j == null) {
-                                    L.w("未找到i,j->${line.lineCode}")
+                                    L.w("未找到i,j->${line.cmdString}")
                                     return false
                                 }
 
@@ -514,12 +522,12 @@ object GCodeHelper {
                     //90: 绝对位置, 1: 相对位置
                     _isAbsolutePosition = number == 90
                 } else {
-                    L.v("忽略G指令:${line.lineCode}")
+                    L.v("忽略G指令:${line.cmdString}")
                 }
             } else if (firstCmdString?.startsWith("M") == true) {
                 //no op
             } else {
-                L.v("跳过指令:${line.lineCode}")
+                L.v("跳过指令:${line.cmdString}")
             }
             return false
         }

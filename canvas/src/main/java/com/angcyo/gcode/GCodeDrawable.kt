@@ -11,7 +11,12 @@ import com.angcyo.library.ex.emptyRectF
  */
 class GCodeDrawable(picture: Picture) : ScalePictureDrawable(picture) {
 
+    /**gCode的bounds
+     * [com.angcyo.gcode.GCodeHelper.GCodeHandler.getGCodeBounds]*/
     val gCodeBound: RectF = emptyRectF()
+
+    /**GCode数据*/
+    var gCodeData: String? = null
 
     init {
         gCodeBound.set(0f, 0f, minimumWidth.toFloat(), minimumHeight.toFloat())
