@@ -26,7 +26,7 @@ fun DslAdapterItem.initGridOffset(
     }
 }
 
-/**需要在[onSetItemOffset]中调用此方法
+/**需要在[onSetItemOffset]中调用此方法, 只有偏移量
  *
  * 四边和组之间都有偏移
  * */
@@ -106,7 +106,7 @@ fun DslAdapterItem.initGridInset(
     }
 }
 
-/**RecyclerView内边距插入, item之间不处理
+/**RecyclerView内边距插入, item之间不处理, 只有偏移量
  * 四边有偏移, 组之间无*/
 fun DslAdapterItem.initGridInset(outRect: Rect, left: Int, top: Int, right: Int, bottom: Int) {
     if (onSetItemOffset == null) {
@@ -163,7 +163,7 @@ fun DslAdapterItem.initLinearOffset(
     }
 }
 
-/**RecyclerView内边距插入, item之间也处理
+/**RecyclerView内边距插入, item之间也处理, 只有偏移量
  * 四边有偏移, 组之间和组内item都有偏移*/
 fun DslAdapterItem.initLinearOffset(outRect: Rect, left: Int, top: Int, right: Int, bottom: Int) {
     if (onSetItemOffset == null) {
@@ -185,7 +185,7 @@ fun DslAdapterItem.initLinearOffset(outRect: Rect, left: Int, top: Int, right: I
 
 //<editor-fold desc="分组与边距, 分组与分组之间的偏移">
 
-/**自动设置*/
+/**自动设置, 只有偏移量*/
 fun DslAdapterItem.initGroupOffset(
     left: Int = _dimen(R.dimen.lib_padding_left),
     top: Int = _dimen(R.dimen.lib_padding_left),
@@ -197,7 +197,7 @@ fun DslAdapterItem.initGroupOffset(
     }
 }
 
-/**RecyclerView内边距插入, item之间不处理
+/**RecyclerView内边距插入, item之间不处理, 只有偏移量
  * 四边有偏移, 组之间有偏移, 组内无偏移*/
 fun DslAdapterItem.initGroupOffset(outRect: Rect, left: Int, top: Int, right: Int, bottom: Int) {
     if (onSetItemOffset == null) {
@@ -238,7 +238,9 @@ fun DslAdapterItem.initGroupOffset(outRect: Rect, left: Int, top: Int, right: In
     }
 }
 
-/**设置横向/纵向item之间的间隙
+/**设置横向/纵向item之间的间隙, 只有偏移量
+ * 支持[androidx.recyclerview.widget.LinearLayoutManager]
+ * 支持[androidx.recyclerview.widget.GridLayoutManager]
  * [gapSize] 间隙大小*/
 fun DslAdapterItem.initItemGapOffset(gapSize: Int = 10 * dpi, outRect: Rect? = null) {
     if (onSetItemOffset == null) {

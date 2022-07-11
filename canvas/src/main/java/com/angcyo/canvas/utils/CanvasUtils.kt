@@ -349,15 +349,19 @@ fun CanvasDelegate.engraveMode(enable: Boolean = true) {
 
 //<editor-fold desc="Svg">
 
+/**加载[assets]中的Svg[SharpDrawable]*/
 fun loadAssetsSvg(assetsName: String): SharpDrawable {
     val svg = app().readAssets(assetsName)
     return Svg.loadSvgDrawable(svg!!)
 }
 
+/**只读取[SVG]中的[Path]数据
+ * [com.angcyo.svg.CustomPath]
+ * [com.pixplicity.sharp.SharpDrawable.pathList]*/
 fun loadAssetsSvgPath(
     assetsName: String,
-    color: Int = Color.BLACK,
-    drawStyle: Paint.Style = Paint.Style.STROKE
+    color: Int = Color.BLACK, //黑色边
+    drawStyle: Paint.Style = Paint.Style.STROKE //描边
 ): SharpDrawable {
     val svg = app().readAssets(assetsName)
     return Svg.loadSvgPathDrawable(svg!!, color, drawStyle)
