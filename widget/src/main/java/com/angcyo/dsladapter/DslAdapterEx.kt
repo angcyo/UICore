@@ -76,6 +76,7 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.findItem(
     return find<Item>(tag, useFilterList, predicate)?.apply(dsl)
 }
 
+/**更新第一个满足条件的item*/
 @UpdateByNotify
 fun DslAdapter.updateItem(
     payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART,
@@ -85,6 +86,23 @@ fun DslAdapter.updateItem(
     return findItem(useFilterList, predicate)?.apply {
         updateAdapterItem(payload, useFilterList)
     }
+}
+
+/**更新所有满足条件的item*/
+@UpdateByNotify
+fun DslAdapter.updateAllItemBy(
+    payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART,
+    useFilterList: Boolean = true,
+    predicate: (DslAdapterItem) -> Boolean
+): List<DslAdapterItem> {
+    val result = mutableListOf<DslAdapterItem>()
+    getDataList(useFilterList).forEach {
+        if (predicate(it)) {
+            result.add(it)
+            it.updateAdapterItem(payload, useFilterList)
+        }
+    }
+    return result
 }
 
 @UpdateByDiff
