@@ -49,7 +49,7 @@ object MultiFingeredHelper {
                     //L.w("ACTION_MOVE ${ev.pointerCount}")
                     obtainPointList(ev, _movePointList, gesturePointerCount)
                     if (_movePointList.size >= _touchPointList.size &&
-                        _touchPointList.size >= gesturePointerCount
+                        _touchPointList.size == gesturePointerCount
                     ) {
                         checkGestureDetector()
                     }
