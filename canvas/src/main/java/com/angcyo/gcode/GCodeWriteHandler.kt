@@ -189,22 +189,12 @@ class GCodeWriteHandler {
     fun writeLine(writer: Appendable, x: Float, y: Float) {
 
         //相同方向的值, 是否改变了, 不一致. 此时可能需要G0操作
-        fun valueChangedType(list: List<Float>, value: Float): Int {
+        fun valueChangedType(list: List<Float>, newValue: Float): Int {
             if (list.isEmpty()) {
                 return VALUE_CHANGED
             }
             val lastValue = list.last()
-            if (lastValue == value) {
-                return VALUE_SAME
-            }
-            if (isCloseGap) {
-                return VALUE_SAME_GAP
-            }
-            if ((lastValue - value).absoluteValue <= gapValue) {
-                return VALUE_SAME_GAP
-            }
-            //需要G0
-            return VALUE_CHANGED
+            return _valueChangedType(lastValue, newValue)
         }
 
         //add value, 并且只留2个值
@@ -222,10 +212,31 @@ class GCodeWriteHandler {
             val xChangedType = valueChangedType(_xList, x)
             val yChangedType = valueChangedType(_yList, y)
 
-            if (xChangedType == VALUE_CHANGED || yChangedType == VALUE_CHANGED ||
-                (xChangedType == VALUE_SAME_GAP && yChangedType == VALUE_SAME_GAP)//斜向
-            ) {
-                //G1
+            //G1
+            var writeLastG1 = false
+
+            if (xChangedType == VALUE_CHANGED || yChangedType == VALUE_CHANGED) {
+                //很大的跨度点
+                writeLastG1 = true
+            }
+
+            if (xChangedType == VALUE_SAME && yChangedType == VALUE_SAME_GAP) {
+                //可能是竖线, 判断之前是否是横线, 如果是则G1
+                if (_yList.size() >= 2 && _yList.first() == _yList.last()) {
+                    writeLastG1 = true
+                }
+            } else if (yChangedType == VALUE_SAME && xChangedType == VALUE_SAME_GAP) {
+                //可能是横线, 判断之前是否是竖线, 如果是则G1
+                if (_xList.size() >= 2 && _xList.first() == _xList.last()) {
+                    writeLastG1 = true
+                }
+            } else if (xChangedType == VALUE_SAME_GAP && yChangedType == VALUE_SAME_GAP) {
+                //斜向
+                writeLastG1 = true
+            }
+
+            if (writeLastG1) {
+                //G1, 上一次的点需要先被G1连接
                 if (_xList.size() > 1 && _yList.size() > 1) {
                     _writeLastG1(writer)
                 }
@@ -254,6 +265,21 @@ class GCodeWriteHandler {
             writer.appendLine("G1 X${lastX} Y${lastY}")
             reset()
         }
+    }
+
+    /**相同方向的值, 是否改变了, 不一致. 此时可能需要G0操作*/
+    fun _valueChangedType(oldValue: Float, newValue: Float): Int {
+        if (oldValue == newValue) {
+            return VALUE_SAME
+        }
+        if (isCloseGap) {
+            return VALUE_SAME_GAP
+        }
+        if ((oldValue - newValue).absoluteValue <= gapValue) {
+            return VALUE_SAME_GAP
+        }
+        //需要G0
+        return VALUE_CHANGED
     }
 
     //endregion
