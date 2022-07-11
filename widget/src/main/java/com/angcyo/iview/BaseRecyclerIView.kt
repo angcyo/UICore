@@ -54,11 +54,12 @@ abstract class BaseRecyclerIView : IView() {
     open fun renderDslAdapter(
         append: Boolean = false, //当已经是adapter时, 是否追加item. 需要先关闭 new
         new: Boolean = false, //始终创建新的adapter, 为true时, 则append无效
+        updateState: Boolean = true,
         action: DslAdapter.() -> Unit = {}
     ) {
         viewHolder?.rv(R.id.lib_recycler_view)?.apply {
             noItemChangeAnim()
-            renderDslAdapter(append, new, action)
+            this.renderDslAdapter(append, new, updateState, action)
         }
     }
 
