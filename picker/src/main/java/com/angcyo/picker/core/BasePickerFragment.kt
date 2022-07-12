@@ -53,7 +53,7 @@ abstract class BasePickerFragment : BaseDslFragment() {
 
         //样式调整
         _adapter.dslAdapterStatusItem = DslPickerStatusItem()
-        _adapter.render {
+        _adapter.render(false) {
             setAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_LOADING)
         }
 
