@@ -130,6 +130,10 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
             else -> false
         }*/
         //return super.isSupportControlPoint(type)
+        if (type == ControlPoint.POINT_TYPE_LOCK) {
+            //不支持任意比例缩放
+            return false
+        }
         return true
     }
 
@@ -415,6 +419,11 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
                 offsetList.add(OffsetItemData(item, dx, dy))
             }
         }
-        canvasDelegate.boundsOperateHandler.offsetItemList(canvasDelegate, this, offsetList, strategy)
+        canvasDelegate.boundsOperateHandler.offsetItemList(
+            canvasDelegate,
+            this,
+            offsetList,
+            strategy
+        )
     }
 }
