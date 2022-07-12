@@ -6,8 +6,8 @@ import android.widget.LinearLayout
 import androidx.core.graphics.withRotation
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.*
-import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.BoundsOperateHandler
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.renderer.BaseRenderer
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.BaseItem
@@ -94,6 +94,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
         //check
         if (!canChangeBounds(getBounds())) {
+            L.w("不允许修改Bounds->${getBounds()}")
             bounds.set(_oldBounds)
             return false
         }
