@@ -4,6 +4,7 @@ import android.graphics.Path
 import android.os.Debug
 import com.angcyo.canvas.core.IValueUnit
 import com.angcyo.canvas.core.InchValueUnit
+import com.angcyo.canvas.core.component.CanvasTouchHandler
 import com.angcyo.library.L
 import com.angcyo.library.ex.eachPath
 import com.angcyo.library.ex.size
@@ -232,7 +233,11 @@ class GCodeWriteHandler {
                 }
             } else if (xChangedType == VALUE_SAME_GAP && yChangedType == VALUE_SAME_GAP) {
                 //斜向
-                writeLastG1 = true
+                if (_isSameAngle(x, y)) {
+                    //角度相同
+                } else {
+                    writeLastG1 = true
+                }
             }
 
             if (writeLastG1) {
@@ -264,6 +269,27 @@ class GCodeWriteHandler {
 
             writer.appendLine("G1 X${lastX} Y${lastY}")
             reset()
+        }
+    }
+
+    /**判断G1的线的角度是否相同, 相同角度也视为是相同的线*/
+    fun _isSameAngle(newX: Float, newY: Float): Boolean {
+        if (_xList.size() > 1 && _yList.size() > 1) {
+            val a1 = CanvasTouchHandler.angle(
+                _xList.first(),
+                _yList.first(),
+                _xList.last(),
+                _yList.last()
+            )
+            val a2 = CanvasTouchHandler.angle(
+                _xList.last(),
+                _yList.last(),
+                newX,
+                newY
+            )
+            return (a2 - a1).absoluteValue < 0.01
+        } else {
+            return false
         }
     }
 
