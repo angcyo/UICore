@@ -3,20 +3,26 @@ package com.angcyo.library.ex
 import android.animation.*
 import android.annotation.TargetApi
 import android.content.Context
+import android.graphics.Camera
 import android.graphics.Matrix
+import android.graphics.Rect
 import android.os.Build
+import android.util.Property
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.animation.*
 import androidx.annotation.AnimRes
 import androidx.annotation.AnimatorRes
+import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import com.angcyo.library.L
+import com.angcyo.library.R
 import com.angcyo.library.app
 import com.angcyo.library.component.MatrixEvaluator
 import com.angcyo.library.component.RAnimationListener
 import com.angcyo.library.component.RAnimatorListener
 import com.angcyo.library.ex.Anim.ANIM_DURATION
+import java.lang.ref.WeakReference
 
 /**
  *
@@ -89,10 +95,19 @@ fun _animator(animator: ValueAnimator, config: AnimatorConfig.() -> Unit = {}): 
 }
 
 class AnimatorConfig {
-    var onAnimatorConfig: (animator: ValueAnimator) -> Unit = {}
 
+    /**动画时长*/
+    var duration = ANIM_DURATION
+
+    /**配置动画, 比如时长, 差值器等*/
+    var onAnimatorConfig: (animator: ValueAnimator) -> Unit = {
+        it.duration = duration
+    }
+
+    /**动画值改变的监听*/
     var onAnimatorUpdateValue: (value: Any, fraction: Float) -> Unit = { _, _ -> }
 
+    /**动画结束的监听*/
     var onAnimatorEnd: (animator: ValueAnimator) -> Unit = {}
 }
 
@@ -411,5 +426,155 @@ fun matrixAnimator(startMatrix: Matrix, endMatrix: Matrix, block: (Matrix) -> Un
             block(it.animatedValue as Matrix)
         }
         start()
+    }
+}
+
+/**clip动画, 从左到右展开显示
+ * [com.angcyo.library.ex.AnimEx.clipBoundsAnimator]
+ * */
+fun View.clipBoundsAnimatorFromLeft(
+    start: Rect = Rect(0, 0, 0, mH()),
+    end: Rect = Rect(0, 0, mW(), mH()),
+    duration: Long = ANIM_DURATION,
+    interpolator: Interpolator = LinearInterpolator()
+): ObjectAnimator = clipBoundsAnimator(start, end, duration, interpolator)
+
+/**clip动画, 从右到左隐藏
+ * [com.angcyo.library.ex.AnimEx.clipBoundsAnimator]
+ * */
+fun View.clipBoundsAnimatorFromRightHide(
+    start: Rect = Rect(0, 0, mW(), mH()),
+    end: Rect = Rect(0, 0, 0, mH()),
+    duration: Long = ANIM_DURATION,
+    interpolator: Interpolator = LinearInterpolator()
+): ObjectAnimator = clipBoundsAnimator(start, end, duration, interpolator)
+
+/**clip动画
+ * [androidx.transition.ChangeClipBounds]
+ * */
+fun View.clipBoundsAnimator(
+    start: Rect = Rect(mW() / 2, mH() / 2, mW() / 2, mH() / 2),
+    end: Rect = Rect(0, 0, mW(), mH()),
+    duration: Long = ANIM_DURATION,
+    interpolator: Interpolator = LinearInterpolator()
+): ObjectAnimator {
+    ViewCompat.setClipBounds(this, start)
+    val evaluator = RectEvaluator(Rect())
+    val animator: ObjectAnimator = ObjectAnimator.ofObject<View, Rect>(
+        this, object : Property<View?, Rect>(Rect::class.java, "clipBounds") {
+            override fun get(view: View?): Rect? {
+                return ViewCompat.getClipBounds(view!!)
+            }
+
+            override fun set(view: View?, clipBounds: Rect?) {
+                ViewCompat.setClipBounds(view!!, clipBounds)
+            }
+        },
+        evaluator, start, end
+    )
+    animator.addListener(object : AnimatorListenerAdapter() {
+        override fun onAnimationEnd(animation: Animator) {
+            ViewCompat.setClipBounds(this@clipBoundsAnimator, null)
+            if (end.width() <= 0 || end.height() <= 0) {
+                visibility = View.GONE
+            }
+        }
+    })
+    animator.duration = duration
+    animator.interpolator = interpolator
+    animator.start()
+    setAnimator(animator)
+    return animator
+}
+
+fun View.setAnimator(animator: Animator) {
+    setTag(R.id.lib_tag_animator, WeakReference(animator))
+}
+
+/**取消动画[Animator]*/
+fun View.cancelAnimator() {
+    val tag = getTag(R.id.lib_tag_animator)
+    var animator: Animator? = null
+    if (tag is WeakReference<*>) {
+        val any = tag.get()
+        if (any is Animator) {
+            animator = any
+        }
+    } else if (tag is Animator) {
+        animator = tag
+    }
+    animator?.cancel()
+}
+
+/**[Camera]*/
+fun rotateCameraAnimator(
+    from: Float = 0f,
+    to: Float = 180f,
+    config: AnimatorConfig.() -> Unit = {},
+    action: Camera.(value: Float) -> Unit
+): ValueAnimator {
+    val animatorConfig = AnimatorConfig()
+    animatorConfig.config()
+    return anim(from, to) {
+        onAnimatorConfig = {
+            it.repeatCount = ValueAnimator.INFINITE
+            it.repeatMode = ValueAnimator.REVERSE
+
+            animatorConfig.onAnimatorConfig(it)
+        }
+
+        onAnimatorUpdateValue = { value, fraction ->
+            animatorConfig.onAnimatorUpdateValue(value, fraction)
+            val camera = Camera()
+            action(camera, value as Float)
+        }
+
+        onAnimatorEnd = {
+            animatorConfig.onAnimatorEnd(it)
+        }
+    }
+}
+
+/**
+ * x轴旋转角度的动画
+ * [from] 从多少角度
+ * [to] 到多少角度
+ * */
+fun View.rotateXAnimator(
+    from: Float = 0f,
+    to: Float = 180f,
+    config: AnimatorConfig.() -> Unit = {
+        duration = 1_000
+    }
+): ValueAnimator {
+    return rotateCameraAnimator(from, to, config) { value ->
+        rotateX(value)
+        val matrix = Matrix()
+        getMatrix(matrix)
+        val centerX = mW() / 2f
+        val centerY = mH() / 2f
+        matrix.preTranslate(-centerX, -centerY)
+        matrix.postTranslate(centerX, centerY)
+        animationMatrix = matrix
+    }
+}
+
+/**Y轴旋转动画*/
+fun View.rotateYAnimator(
+    from: Float = 0f,
+    to: Float = 180f,
+    config: AnimatorConfig.() -> Unit = {
+        duration = 1_000
+    }
+): ValueAnimator {
+    return rotateCameraAnimator(from, to, config) { value ->
+        rotateY(value)
+        val matrix = Matrix()
+        getMatrix(matrix)
+        val centerX = mW() / 2f
+        val centerY = mH() / 2f
+        matrix.preTranslate(-centerX, -centerY)
+        matrix.postTranslate(centerX, centerY)
+        animationMatrix = matrix
     }
 }

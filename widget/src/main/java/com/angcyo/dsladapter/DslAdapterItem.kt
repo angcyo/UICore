@@ -360,6 +360,7 @@ open class DslAdapterItem : LifecycleOwner {
                     if (animator != null) {
                         animator.setTarget(itemHolder.itemView)
                         animator.startDelay = _itemAnimateDelay
+                        itemHolder.itemView.setAnimator(animator)
                         animator.start()
                         _itemAnimateDelay = -2 //动画已执行标识
                     }
