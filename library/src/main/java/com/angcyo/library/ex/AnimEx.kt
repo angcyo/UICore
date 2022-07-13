@@ -197,9 +197,15 @@ fun View.rotateAnimation(
 fun View.reveal(action: RevealConfig.() -> Unit = {}) {
     this.doOnPreDraw {
         val config = RevealConfig()
-        config.centerX = this.measuredWidth / 2
-        config.centerY = this.measuredHeight / 2
-        config.endRadius = c(config.centerX.toDouble(), config.centerY.toDouble()).toFloat()
+        if (config.centerX == 0) {
+            config.centerX = this.measuredWidth / 2
+        }
+        if (config.centerY == 0) {
+            config.centerY = this.measuredHeight / 2
+        }
+        if (config.endRadius == 0f) {
+            config.endRadius = c(config.centerX.toDouble(), config.centerY.toDouble()).toFloat()
+        }
 
         //第一次获取基础数据
         config.action()
@@ -211,7 +217,7 @@ fun View.reveal(action: RevealConfig.() -> Unit = {}) {
             config.startRadius,
             config.endRadius
         ).apply {
-            duration = 240
+            duration = config.duration
 
             config.animator = this
             //第二次获取动画数据
@@ -224,13 +230,17 @@ fun View.reveal(action: RevealConfig.() -> Unit = {}) {
 data class RevealConfig(
     var animator: Animator? = null,
 
-    //默认是视图的中心
+    //如果为0, 则默认是视图的中心
     var centerX: Int = 0,
     var centerY: Int = 0,
 
+    //动画开始的半径
     var startRadius: Float = 0f,
-    //默认是视图的对角半径
-    var endRadius: Float = 0f
+    //如果为0, 默认是视图的对角半径
+    var endRadius: Float = 0f,
+
+    //动画时长
+    var duration: Long = ANIM_DURATION
 )
 
 /**颜色渐变动画*/
