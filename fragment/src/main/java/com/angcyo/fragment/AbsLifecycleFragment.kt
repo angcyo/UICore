@@ -196,14 +196,27 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment, OnBackPressedDis
 
     //<editor-fold desc="高级扩展">
 
-    /**快速观察[LiveData]*/
+    /**快速观察[LiveData]
+     * [autoClear] 收到有效数据后, 是否自动清除数据
+     * [allowBackward] 是否允许数据倒灌, 接收到旧数据
+     * */
     fun <T> LiveData<T>.observe(
         autoClear: Boolean = false,
+        allowBackward: Boolean = true,
         action: (data: T?) -> Unit
     ): Observer<T> {
         val result: Observer<T>
+        var isFirst = value != null
         observe(this@AbsLifecycleFragment, Observer<T> {
-            action(it)
+            if (allowBackward) {
+                action(it)
+            } else {
+                //不允许数据倒灌
+                if (!isFirst) {
+                    action(it)
+                }
+                isFirst = false
+            }
             if (it != null && autoClear && this is MutableLiveData) {
                 postValue(null)
             }
@@ -214,8 +227,12 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment, OnBackPressedDis
     }
 
     /**快速观察[LiveData]一次, 确保不收到null数据*/
-    fun <T> LiveData<T>.observeOnce(action: (data: T?) -> Unit): Observer<T> {
+    fun <T> LiveData<T>.observeOnce(
+        allowBackward: Boolean = true,
+        action: (data: T?) -> Unit
+    ): Observer<T> {
         var result: Observer<T>? = null
+        var isFirst = value != null
         observe(this@AbsLifecycleFragment, Observer<T> {
             if (it is List<*>) {
                 if (it.isNotEmpty()) {
@@ -224,7 +241,15 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment, OnBackPressedDis
             } else if (it != null) {
                 removeObserver(result!!)
             }
-            action(it)
+            if (allowBackward) {
+                action(it)
+            } else {
+                //不允许数据倒灌
+                if (!isFirst) {
+                    action(it)
+                }
+                isFirst = false
+            }
         }.apply {
             result = this
         })
@@ -235,11 +260,21 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment, OnBackPressedDis
 
     fun <T> LiveData<T>.observeForever(
         autoClear: Boolean = false,
+        allowBackward: Boolean = true,
         action: (data: T?) -> Unit
     ): Observer<T> {
         val result: Observer<T>
+        var isFirst = value != null
         observeForever(Observer<T> {
-            action(it)
+            if (allowBackward) {
+                action(it)
+            } else {
+                //不允许数据倒灌
+                if (!isFirst) {
+                    action(it)
+                }
+                isFirst = false
+            }
             if (it != null && autoClear && this is MutableLiveData) {
                 postValue(null)
             }

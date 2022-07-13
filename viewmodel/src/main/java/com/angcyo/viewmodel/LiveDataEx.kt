@@ -13,9 +13,23 @@ import androidx.lifecycle.Observer
  */
 
 /**快速观察[LiveData]*/
-fun <T> LiveData<T>.observeForever(action: (data: T?) -> Unit): Observer<T> {
+fun <T> LiveData<T>.observeForever(
+    allowBackward: Boolean = true,
+    action: (data: T?) -> Unit
+): Observer<T> {
     val result: Observer<T>
-    observeForever(Observer<T> { action(it) }.apply {
+    var isFirst = value != null
+    observeForever(Observer<T> {
+        if (allowBackward) {
+            action(it)
+        } else {
+            //不允许数据倒灌
+            if (!isFirst) {
+                action(it)
+            }
+            isFirst = false
+        }
+    }.apply {
         result = this
     })
     return result
@@ -27,11 +41,21 @@ fun <T> LiveData<T>.observeForever(action: (data: T?) -> Unit): Observer<T> {
 fun <T> LiveData<T>.observe(
     owner: LifecycleOwner,
     autoClear: Boolean = false,
+    allowBackward: Boolean = true,
     action: (data: T?) -> Unit
 ): Observer<T?> {
     val result: Observer<T?>
+    var isFirst = value != null
     observe(owner, Observer<T?> {
-        action(it)
+        if (allowBackward) {
+            action(it)
+        } else {
+            //不允许数据倒灌
+            if (!isFirst) {
+                action(it)
+            }
+            isFirst = false
+        }
         if (it != null && autoClear && this is MutableLiveData) {
             postValue(null)
         }
@@ -44,9 +68,11 @@ fun <T> LiveData<T>.observe(
 /**快速观察[LiveData]一次*/
 fun <T> LiveData<T>.observeOnce(
     owner: LifecycleOwner? = null,
+    allowBackward: Boolean = true,
     action: (data: T?) -> Unit
 ): Observer<T?> {
     var result: Observer<T?>? = null
+    var isFirst = value != null
     if (owner == null) {
         observeForever(Observer<T?> {
             if (it is List<*>) {
@@ -56,7 +82,15 @@ fun <T> LiveData<T>.observeOnce(
             } else if (it != null) {
                 removeObserver(result!!)
             }
-            action(it)
+            if (allowBackward) {
+                action(it)
+            } else {
+                //不允许数据倒灌
+                if (!isFirst) {
+                    action(it)
+                }
+                isFirst = false
+            }
         }.apply {
             result = this
         })
@@ -69,7 +103,15 @@ fun <T> LiveData<T>.observeOnce(
             } else if (it != null) {
                 removeObserver(result!!)
             }
-            action(it)
+            if (allowBackward) {
+                action(it)
+            } else {
+                //不允许数据倒灌
+                if (!isFirst) {
+                    action(it)
+                }
+                isFirst = false
+            }
         }.apply {
             result = this
         })
