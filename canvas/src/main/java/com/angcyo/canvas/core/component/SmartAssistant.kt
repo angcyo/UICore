@@ -373,7 +373,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         }
 
         val rotate = itemRenderer.rotate
-        val rotateBounds = itemRenderer.getRotateBounds()
+        val rotateBounds = itemRenderer.getBounds()
         val originWidth = rotateBounds.width()
         val originHeight = rotateBounds.height()
 
@@ -381,9 +381,6 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
         var newWidth = width
         var newHeight = height
-
-        val dw = width.absoluteValue - originWidth.absoluteValue
-        val dh = height.absoluteValue - originHeight.absoluteValue
 
         //吸附判断
         var adsorbWidth: Float? = null
@@ -393,12 +390,14 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         var feedback = false
 
         //去掉宽度智能
-        val notSmartWidth =
-            !itemRenderer.isLineShape() && equalRatio && dy.absoluteValue > dx.absoluteValue
+        //!itemRenderer.isLineShape() && equalRatio && dy.absoluteValue > dx.absoluteValue
+
+        val notSmartWidth = false
 
         //去掉高度智能
-        val notSmartHeight =
-            !itemRenderer.isLineShape() && equalRatio && dx.absoluteValue > dy.absoluteValue
+        //!itemRenderer.isLineShape() && equalRatio && dx.absoluteValue > dy.absoluteValue
+
+        val notSmartHeight = false
 
         //w吸附
         lastWidthAssistant?.let {
