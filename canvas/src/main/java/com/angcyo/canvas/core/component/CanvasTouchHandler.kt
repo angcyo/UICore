@@ -268,9 +268,9 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
                 //开始平移
                 _touchType = TOUCH_TYPE_TRANSLATE
                 if (isHorizontalIntent(_movePointList[0], _movePointList[1])) {
-                    canvasDelegate.getCanvasViewBox().translateBy(dx, 0f)
+                    canvasDelegate.getCanvasViewBox().translateBy(dx, 0f, false)
                 } else {
-                    canvasDelegate.getCanvasViewBox().translateBy(0f, dy)
+                    canvasDelegate.getCanvasViewBox().translateBy(0f, dy, false)
                 }
             }
             /*}*/

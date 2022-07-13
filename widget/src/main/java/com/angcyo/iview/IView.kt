@@ -64,6 +64,9 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
     /**回退栈调度者*/
     var backPressedDispatcherOwner: OnBackPressedDispatcherOwner? = null
 
+    /**事件通知*/
+    var onIViewEvent: ((iView: IView, event: Lifecycle.Event) -> Unit)? = null
+
     //----
 
     val _iVh: DslViewHolder get() = iViewHolder!!
@@ -113,18 +116,26 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
 
     //<editor-fold desc="生命周期方法">
 
+    @CallSuper
     open fun onIViewCreate() {
+        if (lifecycleRegistry.currentState == Lifecycle.State.DESTROYED) {
+            lifecycleRegistry = LifecycleRegistry(this)
+        }
+        onIViewEvent?.invoke(this, Lifecycle.Event.ON_CREATE)
+        onIViewEvent?.invoke(this, Lifecycle.Event.ON_START)
         lifecycleRegistry.currentState = Lifecycle.State.STARTED
     }
 
     @CallSuper
     open fun onIViewShow() {
         showCount++
+        onIViewEvent?.invoke(this, Lifecycle.Event.ON_RESUME)
         lifecycleRegistry.currentState = Lifecycle.State.RESUMED
     }
 
-    @Deprecated("此方法触发时机待定")
+    @CallSuper
     open fun onIViewHide() {
+        onIViewEvent?.invoke(this, Lifecycle.Event.ON_STOP)
         lifecycleRegistry.currentState = Lifecycle.State.STARTED
     }
 
@@ -134,6 +145,7 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
         iViewHolder?.clear()
         iViewHolder = null
         _parentView = null
+        onIViewEvent?.invoke(this, Lifecycle.Event.ON_DESTROY)
         lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
     }
 
@@ -212,7 +224,7 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
 
     //<editor-fold desc="Lifecycle支持">
 
-    val lifecycleRegistry = LifecycleRegistry(this)
+    var lifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
 
     override fun getLifecycle(): Lifecycle {
         return lifecycleRegistry

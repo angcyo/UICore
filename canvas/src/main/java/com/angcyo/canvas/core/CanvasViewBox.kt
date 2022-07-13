@@ -106,11 +106,34 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         return result
     }
 
+    /**计算[item]在当前视图中的坐标, 相对于[view]左上角的矩形坐标
+     * [bounds] 可以直接绘制的坐标*/
+    fun calcItemVisualBounds(bounds: RectF, result: RectF): RectF {
+        //重点
+
+        //映射之后, 坐标相对于视图左上角的坐标
+        matrix.mapRectF(bounds, result)
+
+        //将相对于与视图左上角的坐标转换成可以直接绘制的坐标, 最终会和bounds一直
+        /*val test = emptyRectF()
+        invertMatrix.mapRectF(result, test)*/
+
+        return result
+    }
+
     /**获取当前能够看到的坐标系的范围矩形, 肉眼坐标保持不变.
      * [contentRect] 保持原先的位置, [matrix]缩放平移之后,一个新的[RectF]
      * */
     fun getVisualRect(result: RectF = _tempRectF): RectF {
         invertMatrix.mapRect(result, contentRect)
+        return result
+    }
+
+    /**将可视化矩形, 映射成坐标系矩形
+     * 可视化的坐标, 映射成坐标系中的坐标.
+     * 比如: 当前手势按下在View的[100,100]处,此时返回在坐标系中的[x,y]处*/
+    fun mapCoordinateSystemRect(rect: RectF, result: RectF = _tempRect): RectF {
+        invertMatrix.mapRect(result, rect)
         return result
     }
 
@@ -164,35 +187,12 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         return invertMatrix.mapPoint(_tempPoint, result)
     }
 
-    /**将可视化矩形, 映射成坐标系矩形
-     * 可视化的坐标, 映射成坐标系中的坐标.
-     * 比如: 当前手势按下在View的[100,100]处,此时返回在坐标系中的[x,y]处*/
-    fun mapCoordinateSystemRect(rect: RectF, result: RectF = _tempRect): RectF {
-        invertMatrix.mapRect(result, rect)
-        return result
-    }
-
     /**[bounds] 相对于坐标系原点的坐标
      * [result] 返回相对于视图原点的坐标*/
     fun calcItemRenderBounds(bounds: RectF, result: RectF): RectF {
         _tempRect.set(bounds)
         _tempRect.offset(getCoordinateSystemX(), getCoordinateSystemY())
         result.set(_tempRect)
-        return result
-    }
-
-    /**计算[item]在当前视图中的坐标, 相对于[view]左上角的矩形坐标
-     * [bounds] 可以直接绘制的坐标*/
-    fun calcItemVisualBounds(bounds: RectF, result: RectF): RectF {
-        //重点
-
-        //映射之后, 坐标相对于视图左上角的坐标
-        matrix.mapRectF(bounds, result)
-
-        //将相对于与视图左上角的坐标转换成可以直接绘制的坐标, 最终会和bounds一直
-        /*val test = emptyRectF()
-        invertMatrix.mapRectF(result, test)*/
-
         return result
     }
 
@@ -373,12 +373,21 @@ class CanvasViewBox(val canvasView: ICanvasView) {
     }
 
     /**平移视图
-     * 正向移动后, 绘制的内容在正向指定的位置绘制*/
-    fun translateBy(distanceX: Float, distanceY: Float) {
+     * 正向移动后, 绘制的内容在正向指定的位置绘制
+     * */
+    fun translateBy(distanceX: Float, distanceY: Float, anim: Boolean = true) {
         val newMatrix = Matrix()
         newMatrix.set(matrix)
         newMatrix.postTranslate(distanceX, distanceY)
-        refresh(newMatrix)
+        updateTo(newMatrix, anim)
+    }
+
+    /**直接平移到*/
+    fun translateTo(x: Float? = null, y: Float? = null, anim: Boolean = true) {
+        val newMatrix = Matrix()
+        newMatrix.setTranslate(x ?: getTranslateX(), y ?: getTranslateY())
+        newMatrix.postScale(getScaleX(), getScaleY(), getContentCenterX(), getContentCenterY())
+        updateTo(newMatrix, anim)
     }
 
     /**缩放视图*/
