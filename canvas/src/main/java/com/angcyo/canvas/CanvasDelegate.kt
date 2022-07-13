@@ -809,13 +809,18 @@ class CanvasDelegate(val view: View) : ICanvasView {
      * [rect] 坐标系中的矩形坐标
      * [scale] 是否要缩放, 以适应过大的矩形
      * [lockScale] 锁定缩放的比例
-     * [margin] 边缘额外显示的距离*/
+     * [margin] 边缘额外显示的距离
+     * [offsetX] 额外偏移的x
+     * [offsetY] 额外偏移的y
+     * */
     fun showRectBounds(
         rect: RectF,
         margin: Float = 4f * dp,
         scale: Boolean = true,
         lockScale: Boolean = true,
-        anim: Boolean = true
+        anim: Boolean = true,
+        offsetX: Float = 0f,
+        offsetY: Float = 0f
     ) {
         val canvasViewBox = getCanvasViewBox()
         if (!canvasViewBox.isCanvasInit()) {
@@ -832,8 +837,8 @@ class CanvasDelegate(val view: View) : ICanvasView {
             canvasViewBox.getContentCenterY() - canvasViewBox.getCoordinateSystemY()
 
         //再计算目标中心需要偏移的距离量
-        val translateX = coordinateTranslateX - rect.centerX()
-        val translateY = coordinateTranslateY - rect.centerY()
+        val translateX = coordinateTranslateX - rect.centerX() - offsetX
+        val translateY = coordinateTranslateY - rect.centerY() - offsetY
 
         val matrix = Matrix()
         //平移
