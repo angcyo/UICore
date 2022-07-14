@@ -6,10 +6,7 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.util.AttributeSet
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
@@ -238,6 +235,17 @@ abstract class AbsFragment : Fragment() {
     /**初始化布局, 此时的[View]还没有[attach]
      * [onCreateView]*/
     open fun initBaseView(savedInstanceState: Bundle?) {
+
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="touch">
+
+    /**
+     * [com.angcyo.layout.FragmentSwipeBackLayout.dispatchTouchEvent]
+     * */
+    open fun onDispatchTouchEvent(event: MotionEvent) {
 
     }
 

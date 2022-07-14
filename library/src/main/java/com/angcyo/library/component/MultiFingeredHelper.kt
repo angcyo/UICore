@@ -84,7 +84,7 @@ object MultiFingeredHelper {
     class PinchGestureDetector : BaseMultiFingeredGestureDetector() {
 
         /**当宽高变化超过这个值时, 视为捏合*/
-        var pinchThreshold: Float = 50f * dp
+        var pinchThreshold: Float = 150f * dp
 
         var onPinchAction: () -> Unit = {}
 
@@ -104,7 +104,7 @@ object MultiFingeredHelper {
     class ExpandGestureDetector : BaseMultiFingeredGestureDetector() {
 
         /**当宽高变化超过这个值时, 视为散开*/
-        var expandThreshold: Float = 50f * dp
+        var expandThreshold: Float = 150f * dp
 
         var onExpandAction: () -> Unit = {}
 

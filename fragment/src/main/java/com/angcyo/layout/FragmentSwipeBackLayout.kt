@@ -24,6 +24,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.base.*
+import com.angcyo.fragment.AbsFragment
 import com.angcyo.fragment.IFragment
 import com.angcyo.library.L
 import com.angcyo.library.LTime
@@ -413,6 +414,14 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
         }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+
+        //手势转发
+        fragmentManager?.getAllValidityFragment()?.lastOrNull()?.let {
+            if (it is AbsFragment) {
+                it.onDispatchTouchEvent(ev)
+            }
+        }
+
         if (interceptTouchEvent) {
             return true
         }
