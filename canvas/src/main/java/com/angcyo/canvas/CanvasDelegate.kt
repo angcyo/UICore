@@ -469,7 +469,12 @@ class CanvasDelegate(val view: View) : ICanvasView {
         return canvasTouchManager.onTouchEvent(event)
     }
 
-    /**禁用对应的手势类型*/
+    /**禁用对应的手势类型
+     * [com.angcyo.canvas.CanvasDelegate.TOUCH_FLAG_ALL]
+     * [com.angcyo.canvas.CanvasDelegate.TOUCH_FLAG_SCALE]
+     * [com.angcyo.canvas.CanvasDelegate.TOUCH_FLAG_TRANSLATE]
+     * [com.angcyo.canvas.CanvasDelegate.TOUCH_FLAG_MULTI_SELECT]
+     * */
     fun disableTouchFlag(flag: Int, disable: Boolean = true) {
         touchFlag = if (disable) touchFlag.remove(flag) else touchFlag.add(flag)
     }
