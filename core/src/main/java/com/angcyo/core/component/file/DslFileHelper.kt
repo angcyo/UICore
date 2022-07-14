@@ -4,6 +4,7 @@ import android.content.Context
 import com.angcyo.coroutine.CoroutineErrorHandler
 import com.angcyo.coroutine.launchGlobal
 import com.angcyo.library.app
+import com.angcyo.library.ex.wrapLog
 import com.angcyo.library.utils.*
 import kotlinx.coroutines.Dispatchers
 import java.text.SimpleDateFormat
@@ -115,4 +116,16 @@ fun FileTextData?.writeTo(
         return FileUtils.appRootExternalFolderFile(folder, name).absolutePath
     }
     return DslFileHelper.write(folder, name, this, append)
+}
+
+/**将日志写入到指定的日志文件[log.log]*/
+fun String.writeToLog(name: String = "log.log"): String {
+    wrapLog().writeTo(Constant.LOG_FOLDER_NAME, name)
+    return this
+}
+
+/**将日志写入到[error.log]*/
+fun String.writeErrorLog(): String {
+    writeToLog("error.log")
+    return this
 }
