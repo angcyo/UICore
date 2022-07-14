@@ -16,7 +16,7 @@ import com.angcyo.widget._rv
 import com.angcyo.widget.recycler.initDslAdapter
 
 /**
- *
+ * 打开方式对话框
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2021/06/28

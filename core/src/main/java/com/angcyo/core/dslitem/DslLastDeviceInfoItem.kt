@@ -1,10 +1,11 @@
-package com.angcyo.item
+package com.angcyo.core.dslitem
 
 import android.app.ActivityManager
 import android.content.Context
 import android.os.StatFs
 import androidx.fragment.app.Fragment
 import com.angcyo.base.dslFHelper
+import com.angcyo.core.R
 import com.angcyo.core.component.fileSelector
 import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.dsladapter.DslAdapterItem

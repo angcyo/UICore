@@ -97,11 +97,11 @@ fun _animator(animator: ValueAnimator, config: AnimatorConfig.() -> Unit = {}): 
 class AnimatorConfig {
 
     /**动画时长*/
-    var duration = ANIM_DURATION
+    var animatorDuration = ANIM_DURATION
 
     /**配置动画, 比如时长, 差值器等*/
     var onAnimatorConfig: (animator: ValueAnimator) -> Unit = {
-        it.duration = duration
+        it.duration = animatorDuration
     }
 
     /**动画值改变的监听*/
@@ -544,7 +544,7 @@ fun View.rotateXAnimator(
     from: Float = 0f,
     to: Float = 180f,
     config: AnimatorConfig.() -> Unit = {
-        duration = 1_000
+        animatorDuration = 1_000
     }
 ): ValueAnimator {
     return rotateCameraAnimator(from, to, config) { value ->
@@ -564,7 +564,7 @@ fun View.rotateYAnimator(
     from: Float = 0f,
     to: Float = 180f,
     config: AnimatorConfig.() -> Unit = {
-        duration = 1_000
+        animatorDuration = 1_000
     }
 ): ValueAnimator {
     return rotateCameraAnimator(from, to, config) { value ->

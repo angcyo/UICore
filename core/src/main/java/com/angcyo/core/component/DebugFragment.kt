@@ -3,13 +3,20 @@ package com.angcyo.core.component
 import android.os.Bundle
 import android.widget.TextView
 import com.angcyo.base.dslFHelper
+import com.angcyo.core.CoreApplication
 import com.angcyo.core.R
+import com.angcyo.core.component.file.appFilePath
+import com.angcyo.core.dslitem.DslLastDeviceInfoItem
 import com.angcyo.core.fragment.BaseDslFragment
 import com.angcyo.dsladapter.bindItem
 import com.angcyo.library.ex.find
+import com.angcyo.library.ex.hawkGet
 import com.angcyo.library.ex.isFileExist
 import com.angcyo.library.libFolderPath
 import com.angcyo.library.toast
+import com.angcyo.library.utils.Constant
+import com.angcyo.library.utils.FileUtils
+import com.angcyo.library.utils.logFileName
 import com.angcyo.widget.base.clickIt
 import com.angcyo.widget.base.resetChild
 
@@ -36,6 +43,12 @@ class DebugFragment : BaseDslFragment() {
                     }
                 }
             }))
+
+            //add(DebugAction("l.log", appFilePath("l.log", Constant.LOG_FOLDER_NAME)))
+            add(DebugAction("l.log", CoreApplication.DEFAULT_FILE_PRINT_PATH))
+            add(DebugAction("crash.log", DslCrashHandler.KEY_CRASH_FILE.hawkGet()))
+            add(DebugAction("http.log", appFilePath(logFileName(), Constant.HTTP_FOLDER_NAME)))
+            add(DebugAction("error.log", appFilePath("error.log", Constant.LOG_FOLDER_NAME)))
         }
     }
 
@@ -57,9 +70,9 @@ class DebugFragment : BaseDslFragment() {
                             text = item.name
                             clickIt {
                                 if (item.action == null) {
-                                    if (item.log.isFileExist()) {
+                                    if (item.logPath.isFileExist()) {
                                         //日志文件存在, 直接显示日志内容
-
+                                        fContext().fileViewDialog(item.logPath)
                                     } else {
                                         toast("not support!")
                                     }
@@ -69,6 +82,20 @@ class DebugFragment : BaseDslFragment() {
                             }
                         }
                     }
+            }
+
+            DslLastDeviceInfoItem()() {
+                itemClick = {
+                    dslFHelper {
+                        fileSelector({
+                            showFileMd5 = true
+                            showFileMenu = true
+                            showHideFile = true
+                            targetPath =
+                                FileUtils.appRootExternalFolder().absolutePath ?: storageDirectory
+                        })
+                    }
+                }
             }
         }
     }
@@ -80,7 +107,7 @@ data class DebugAction(
     val name: String,
     /**日志的路径, 如果设置了则会直接显示对应的日志内容
      * 设置了[action]会覆盖默认的点击行为*/
-    val log: String? = null,
+    val logPath: String? = null,
     /**按钮的点击回调*/
     val action: ((DebugFragment) -> Unit)? = null
 )

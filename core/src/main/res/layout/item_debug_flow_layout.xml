@@ -9,7 +9,7 @@
         android:id="@+id/lib_flow_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:r_flow_item_horizontal_space="@dimen/lib_xhdpi"
-        app:r_flow_item_vertical_space="@dimen/lib_xhdpi" />
+        app:r_flow_item_horizontal_space="@dimen/lib_hdpi"
+        app:r_flow_item_vertical_space="@dimen/lib_ldpi" />
 
 </FrameLayout>

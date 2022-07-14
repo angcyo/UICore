@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/dialog_white_top_round_bg_shape"
+    app:r_max_height="0.75sh"
+    tools:layout_gravity="bottom"
+    tools:layout_height="500dp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_des_view"
+        style="@style/LibDesTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/lib_xhdpi"
+        app:layout_constraintBottom_toBottomOf="@id/lib_title_view"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@id/lib_title_view"
+        tools:text="120kb" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_title_view"
+        style="@style/LibTitleTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLength="20"
+        android:maxLines="1"
+        android:padding="@dimen/lib_xhdpi"
+        android:singleLine="true"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="标题" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/open_view"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/lib_bg2_selector"
+        android:padding="@dimen/lib_xhdpi"
+        app:layout_constraintBottom_toBottomOf="@id/lib_title_view"
+        app:layout_constraintRight_toLeftOf="@id/share_view"
+        app:layout_constraintTop_toTopOf="@id/lib_title_view"
+        app:srcCompat="@drawable/ic_file_open" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/share_view"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/lib_bg2_selector"
+        android:padding="@dimen/lib_xhdpi"
+        app:layout_constraintBottom_toBottomOf="@id/lib_title_view"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/lib_title_view"
+        app:srcCompat="@drawable/ic_file_share" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbars="vertical"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lib_title_view">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/lib_text_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/lib_xhdpi"
+            android:textIsSelectable="true" />
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!--<WebView
+        android:id="@+id/web_view"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbars="vertical"
+        android:background="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lib_title_view" />-->
+
+    <FrameLayout
+        android:id="@+id/loading_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lib_title_view">
+
+        <include layout="@layout/lib_loading_layout" />
+    </FrameLayout>
+
+</com.angcyo.widget.layout.RConstraintLayout>

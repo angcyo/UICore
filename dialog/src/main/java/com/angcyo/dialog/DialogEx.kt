@@ -118,6 +118,7 @@ fun Context.messageDialog(config: MessageDialogConfig.() -> Unit): Dialog {
     }
 }
 
+/**打开方式*/
 fun Context.openWidthDialog(config: OpenWithDialogConfig.() -> Unit): Dialog {
     return OpenWithDialogConfig(this).run {
         configBottomDialog()
