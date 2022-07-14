@@ -6,6 +6,7 @@ import com.angcyo.library.ex.emptyRectF
 import com.angcyo.library.ex.withPicture
 
 /**
+ * 用来渲染[bitmap]
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/05/06
  */
@@ -17,6 +18,7 @@ class PictureBitmapItem : PictureItem() {
     /**绘制的图片, 可能是修改后的数据*/
     var bitmap: Bitmap? = null
 
+    //记录图片的真实bounds
     val bitmapBounds = emptyRectF()
 
     init {

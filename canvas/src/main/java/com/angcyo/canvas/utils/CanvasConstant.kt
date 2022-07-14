@@ -18,7 +18,7 @@ object CanvasConstant {
     /**图片模式, 版画*/
     const val BITMAP_MODE_PRINT = 1
 
-    /**GCode*/
+    /**图片数据转成了GCode数据*/
     const val BITMAP_MODE_GCODE = 2
 
     /**黑白*/

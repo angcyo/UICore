@@ -14,8 +14,10 @@ import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.core.OffsetItemData
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.control.RotateControlPoint
+import com.angcyo.canvas.items.PictureBitmapItem
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
+import com.angcyo.canvas.items.renderer.PictureItemRenderer
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.drawable.*
 import com.angcyo.library.ex.*
@@ -65,6 +67,10 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         return super.changeBounds(reason, block)
     }
 
+    override fun onChangeBoundsAfter(reason: Reason) {
+        super.onChangeBoundsAfter(reason)
+    }
+
     override fun onItemBoundsChanged(item: IRenderer, reason: Reason, oldBounds: RectF) {
         if (selectItemList.contains(item)) {
             if (reason.reason == Reason.REASON_USER) {
@@ -86,7 +92,27 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         oldItemRenderer: IItemRenderer<*>?
     ) {
         super.onSelectedItem(itemRenderer, oldItemRenderer)
-        if (itemRenderer != this) {
+        if (itemRenderer == this) {
+            //选中的是自己
+            var haveBitmapItem = false
+            for (item in selectItemList) {
+                if (item is PictureItemRenderer) {
+                    haveBitmapItem = item.getRendererItem() is PictureBitmapItem
+                    if (haveBitmapItem) {
+                        break
+                    }
+                }
+            }
+            if (haveBitmapItem) {
+                _rendererItem = SelectGroupBitmapItem().apply {
+                    itemName = "Group Bitmap"
+                }
+            } else {
+                _rendererItem = SelectGroupGCodeItem().apply {
+                    itemName = "Group GCode"
+                }
+            }
+        } else {
             reset()
         }
     }
@@ -98,11 +124,13 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         }
     }
 
+    /**重置*/
     fun reset() {
         selectItemList.clear()
         selectRect.setEmpty()
         //重置滚动
         rotate = 0f
+        _rendererItem = null
     }
 
     override fun render(canvas: Canvas) {

@@ -232,7 +232,7 @@ fun uuid(): String = UUID.randomUUID().toString()
 
 /**判断列表是否为空, 包括内部的数据也是非空*/
 fun Collection<Any?>?.isListEmpty(): Boolean {
-    if (this?.size ?: -1 > 0) {
+    if ((this?.size ?: -1) > 0) {
         return false
     }
     return this?.run {
@@ -243,7 +243,7 @@ fun Collection<Any?>?.isListEmpty(): Boolean {
 fun Collection<*>?.size() = this?.size ?: 0
 
 /**判断2个列表中的数据是否改变过*/
-fun <T> List<T>?.isChange(other: List<T>?): Boolean {
+fun <T> Collection<T>?.isChange(other: List<T>?): Boolean {
     if (this.size() != other.size()) {
         return true
     }
@@ -253,6 +253,20 @@ fun <T> List<T>?.isChange(other: List<T>?): Boolean {
         }
     }
     return false
+}
+
+/**判断列表中的数据是否都满足此条件*/
+fun <T> Iterable<T>.isAllMatch(predicate: (T) -> Boolean): Boolean {
+    var isAllMatch = true
+    forEach {
+        if (predicate(it)) {
+            isAllMatch = true
+        } else {
+            isAllMatch = false
+            return isAllMatch
+        }
+    }
+    return isAllMatch
 }
 
 fun Stack<*>.popSafe() = if (isEmpty()) null else pop()
