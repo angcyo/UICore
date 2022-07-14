@@ -118,7 +118,7 @@ fun DslGroupHelper.appendButtonItem(
     attachToRoot: Boolean = true,
     action: DslButton.() -> Unit
 ): View? {
-    return inflate(R.layout.lib_button_layout, attachToRoot) {
+    return inflate(R.layout.core_button_layout, attachToRoot) {
         find<DslButton>(R.id.lib_button)?.apply {
             this.action()
         }

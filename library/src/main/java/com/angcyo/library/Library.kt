@@ -267,7 +267,7 @@ fun View.attachInEditMode() {
  * [com.angcyo.core.component.file.DslFileHelperKt.appFilePath]
  * [com.angcyo.library.utils.FileUtilsKt.appFolderPath]
  * */
-fun libFolderPath(folderName: String, context: Context = app()): String {
+fun libFolderPath(folderName: String = "", context: Context = app()): String {
     val folderFile = context.getExternalFilesDir(folderName) ?: File(context.filesDir, folderName)
     if (!folderFile.exists()) {
         folderFile.mkdirs()
