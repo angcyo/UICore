@@ -7,6 +7,7 @@ import com.angcyo.canvas.core.InchValueUnit
 import com.angcyo.canvas.core.MmValueUnit
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.canvas.utils.mapRectF
+import com.angcyo.library.ex.decimal
 import java.io.File
 import java.io.OutputStreamWriter
 import kotlin.math.min
@@ -153,7 +154,10 @@ class GCodeAdjust {
                 j = mm.convertPixelToValue(j)
             }
 
-            writer.appendLine("${firstCmd.code} X$x Y$y I$i J$j")
+            //保留4位小数点
+            writer.append("${firstCmd.code} ")
+            writer.append("X${x.decimal(4)} Y${y.decimal(4)} ")
+            writer.appendLine("I${i.decimal(4)} J${j.decimal(4)}")
         }
     }
 
