@@ -21,6 +21,7 @@
         app:tab_indicator_style="STYLE_NONE"
         app:tab_item_is_equ_width="true"
         app:tab_select_color="@color/lib_white"
+        tools:layout_height="@dimen/lib_item_min_height"
         tools:tab_default_index="1">
 
         <!--预览-->
