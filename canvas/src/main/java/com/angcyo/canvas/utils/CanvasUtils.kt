@@ -350,9 +350,14 @@ fun CanvasDelegate.engraveMode(enable: Boolean = true) {
 //<editor-fold desc="Svg">
 
 /**加载[assets]中的Svg[SharpDrawable]*/
-fun loadAssetsSvg(assetsName: String): SharpDrawable {
+fun loadAssetsSvg(assetsName: String): SharpDrawable? {
     val svg = app().readAssets(assetsName)
-    return Svg.loadSvgDrawable(svg!!)
+    return try {
+        Svg.loadSvgDrawable(svg!!)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 }
 
 /**只读取[SVG]中的[Path]数据
@@ -362,17 +367,40 @@ fun loadAssetsSvgPath(
     assetsName: String,
     color: Int, // Color.BLACK 黑色边
     drawStyle: Paint.Style = Paint.Style.STROKE //描边
-): SharpDrawable {
+): SharpDrawable? {
     val svg = app().readAssets(assetsName)
-    return Svg.loadSvgPathDrawable(svg!!, color, drawStyle)
+    return try {
+        Svg.loadSvgPathDrawable(svg!!, color, drawStyle)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 }
 
 fun loadAssetsSvgPath(
     assetsName: String,
     paint: Paint = createPaint(Color.BLACK, Paint.Style.STROKE)
-): SharpDrawable {
+): SharpDrawable? {
     val svg = app().readAssets(assetsName)
-    return Svg.loadSvgPathDrawable(svg!!, paint.color, paint.style, paint)
+    return try {
+        Svg.loadSvgPathDrawable(svg!!, paint.color, paint.style, paint)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
+/**从[svg]字符串中加载SVG [SharpDrawable]*/
+fun loadTextSvgPath(
+    svg: String,
+    paint: Paint = createPaint(Color.BLACK, Paint.Style.STROKE)
+): SharpDrawable? {
+    return try {
+        Svg.loadSvgPathDrawable(svg, paint.color, paint.style, paint)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 }
 
 //</editor-fold desc="Svg">

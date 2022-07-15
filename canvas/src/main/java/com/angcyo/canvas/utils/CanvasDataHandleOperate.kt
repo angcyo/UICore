@@ -52,6 +52,9 @@ object CanvasDataHandleOperate {
      * [rotate] 路径需要旋转的角度
      * [outputFile] GCode输出路径
      * [pathStep] 路径枚举步长
+     *
+     * 仅支持[Path]的旋转
+     * [com.angcyo.canvas.utils.CanvasDataHandleOperate.pathStrokeToGCode]
      * */
     fun pathStrokeToGCode(
         path: Path,
@@ -98,6 +101,9 @@ object CanvasDataHandleOperate {
      * [pathList] 未缩放旋转的原始路径数据
      * [bounds] 未旋转时的bounds, 用来实现缩放
      * [rotate] 旋转角度, 配合[bounds]实现平移
+     *
+     * 支持[Path]的旋转和平移
+     * [com.angcyo.canvas.utils.CanvasDataHandleOperate.pathStrokeToGCode]
      * */
     fun pathStrokeToGCode(
         pathList: List<Path>,

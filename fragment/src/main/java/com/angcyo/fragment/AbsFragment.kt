@@ -252,7 +252,7 @@ abstract class AbsFragment : Fragment() {
     /**
      * [com.angcyo.activity.BaseAppCompatActivity.onHandleIntent]
      * */
-    open fun onHandleActivityIntent(intent: Intent, fromNew: Boolean) {
+    open fun onHandleActivityIntent(intent: Intent, fromNewIntent: Boolean) {
 
     }
 

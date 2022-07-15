@@ -92,8 +92,8 @@ open class FragmentWrapActivity : BaseAppCompatActivity() {
         super.onNewIntent(intent)
     }
 
-    override fun onHandleIntent(intent: Intent, fromNew: Boolean) {
-        super.onHandleIntent(intent, fromNew)
+    override fun onHandleIntent(intent: Intent, fromNewIntent: Boolean) {
+        super.onHandleIntent(intent, fromNewIntent)
         val targetIntent: Intent? =
             intent.getParcelableExtra(KEY_TARGET_FRAGMENT)
         //intent.removeExtra(KEY_TARGET_FRAGMENT)
@@ -121,7 +121,7 @@ open class FragmentWrapActivity : BaseAppCompatActivity() {
         }
     }
 
-    override fun handleTargetIntent(intent: Intent) {
-        //super.handleTargetIntent(intent)
+    override fun handleTargetIntent(intent: Intent, fromNewIntent: Boolean) {
+        //super.handleTargetIntent(intent, fromNewIntent)
     }
 }

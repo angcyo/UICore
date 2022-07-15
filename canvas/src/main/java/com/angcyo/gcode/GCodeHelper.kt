@@ -121,7 +121,7 @@ object GCodeHelper {
      * [inRatio] 英寸单位时, 需要放大的比例
      * */
     @WorkerThread
-    fun parseGCode(config: GCodeParseConfig, paint: Paint): GCodeDrawable {
+    fun parseGCode(config: GCodeParseConfig, paint: Paint): GCodeDrawable? {
         return createGCodeDrawable(parseGCodeLineList(config), paint)
     }
 
@@ -129,9 +129,9 @@ object GCodeHelper {
     fun createGCodeDrawable(
         gCodeLineDataList: List<GCodeLineData>,
         paint: Paint
-    ): GCodeDrawable {
+    ): GCodeDrawable? {
         val gCodeHandler = GCodeHandler()
-        val picture = gCodeHandler.parsePicture(gCodeLineDataList, paint)
+        val picture = gCodeHandler.parsePicture(gCodeLineDataList, paint) ?: return null
         return GCodeDrawable(picture).apply {
             gCodeBound.set(gCodeHandler.gCodeBounds)
             gCodeData = buildString {
@@ -317,8 +317,12 @@ object GCodeHelper {
         fun parsePicture(
             gCodeLineDataList: List<GCodeLineData>,
             paint: Paint = createPaint(Color.BLUE)
-        ): Picture {
-            parseGCodeBound(gCodeLineDataList)
+        ): Picture? {
+            parseGCodeBound(gCodeLineDataList)//bound
+            if (gCodeBounds.width() <= 0 || gCodeBounds.height() <= 0) {
+                //无大小
+                return null
+            }
             val picture = Picture().apply {
                 val canvas = beginRecording(
                     gCodeBounds.width().ceil().toInt(),

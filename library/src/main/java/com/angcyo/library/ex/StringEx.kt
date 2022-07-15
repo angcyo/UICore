@@ -369,7 +369,7 @@ fun String.queryParameter(key: String): String? {
     return uri.getQueryParameter(key)
 }
 
-/**返回文件扩展名
+/**返回文件扩展名, 小写后缀名. 不包含`.`
  * [MimeTypeMap.getFileExtensionFromUrl]*/
 fun String.ext(): String {  //=MimeTypeMap.getFileExtensionFromUrl(this.encode())
     // 修复 android.webkit.MimeTypeMap 的 getFileExtensionFromUrl 方法不支持中文的问题

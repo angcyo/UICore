@@ -30,10 +30,18 @@ class MutableOnceLiveData<T>(value: T? = null) : MutableErrorLiveData<T>(value) 
 
     override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
         super.observe(owner, observer)
+        if (value != null) {
+            //清空数据
+            postValue(null)
+        }
     }
 
     override fun observeForever(observer: Observer<in T>) {
         super.observeForever(observer)
+        if (value != null) {
+            //清空数据
+            postValue(null)
+        }
     }
 
 }

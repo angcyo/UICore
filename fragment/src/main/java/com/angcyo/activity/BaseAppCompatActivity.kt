@@ -19,6 +19,8 @@ import com.angcyo.fragment.AbsFragment
 import com.angcyo.fragment.R
 import com.angcyo.library.L
 import com.angcyo.library.Screen
+import com.angcyo.library.component._delay
+import com.angcyo.library.ex.Anim
 import com.angcyo.library.ex.isShowDebug
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.library.utils.resultString
@@ -115,15 +117,15 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
     }
 
     /**
-     * @param fromNew [onNewIntent]
+     * @param fromNewIntent [onNewIntent]
      * */
-    open fun onHandleIntent(intent: Intent, fromNew: Boolean = false) {
-        handleTargetIntent(intent)
+    open fun onHandleIntent(intent: Intent, fromNewIntent: Boolean = false) {
+        handleTargetIntent(intent, fromNewIntent)
 
         //Intent转发
         supportFragmentManager.getAllValidityFragment().lastOrNull()?.let {
             if (it is AbsFragment) {
-                it.onHandleActivityIntent(intent, fromNew)
+                it.onHandleActivityIntent(intent, fromNewIntent)
             }
         }
 
@@ -135,7 +137,7 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
 //            val runningTasks = am.getRunningTasks(Int.MAX_VALUE)
 
             L.i(
-                "${this.simpleHash()} new:$fromNew $intent pid:${Process.myPid()} uid:${Process.myUid()} call:${
+                "${this.simpleHash()} new:$fromNewIntent $intent pid:${Process.myPid()} uid:${Process.myUid()} call:${
                     packageManager.getNameForUid(
                         Binder.getCallingUid()
                     )
@@ -144,9 +146,17 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         }
     }
 
-    /**检查是否有目标[Intent]需要启动*/
-    open fun handleTargetIntent(intent: Intent) {
-        dslTargetIntentHandle(intent)
+    /**检查是否有目标[Intent]需要启动
+     * [com.angcyo.activity.BaseAppCompatActivity.onHandleIntent]
+     * */
+    open fun handleTargetIntent(intent: Intent, fromNewIntent: Boolean = false) {
+        if (fromNewIntent) {
+            dslTargetIntentHandle(intent)
+        } else {
+            _delay(Anim.ANIM_DURATION) {
+                dslTargetIntentHandle(intent)
+            }
+        }
     }
 
     //</editor-fold desc="基础方法处理">

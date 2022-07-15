@@ -179,7 +179,10 @@ class DslAHelper(val context: Context) {
         return intent
     }
 
-    /**在指定的容器中, 启动一个[Fragment]*/
+    /**在指定的容器中, 启动一个[Fragment]
+     * [wrapActivity] 需要是[com.angcyo.activity.BaseAppCompatActivity]子类,
+     * 或者使用[com.angcyo.DslTargetIntent]解析
+     * */
     fun startFragment(
         wrapActivity: Class<out Activity>,
         fragment: Class<out Fragment>,
@@ -262,7 +265,7 @@ class DslAHelper(val context: Context) {
                     }
                 }
 
-                var noResult = true
+                var notResult = true
                 if (context is Activity) {
                     //ForResult
                     if (it.onActivityResult != null && context is FragmentActivity) {
@@ -279,7 +282,7 @@ class DslAHelper(val context: Context) {
                                 it.onActivityResult!!
                             )
                         }
-                        noResult = false
+                        notResult = false
                     } else if (it.requestCode != -1) {
                         //default result
                         ActivityCompat.startActivityForResult(
@@ -288,11 +291,11 @@ class DslAHelper(val context: Context) {
                             it.requestCode,
                             transitionOptions
                         )
-                        noResult = false
+                        notResult = false
                     }
                 }
 
-                if (noResult) {
+                if (notResult) {
                     //取消ForResult
                     ActivityCompat.startActivity(
                         context,
@@ -608,7 +611,14 @@ fun IntentConfig.putData(data: Any?, key: String = BUNDLE_KEY_JSON) {
 
 /**传递原始的[Intent]*/
 fun IntentConfig.putOriginIntent(originIntent: Intent?) {
-    intent.putExtra(DslTargetIntent.KEY_ORIGIN_INTENT, originIntent)
+    if (originIntent == null) {
+        return
+    }
+    if (intent == originIntent) {
+        intent.putExtra(DslTargetIntent.KEY_ORIGIN_INTENT, Intent(originIntent))
+    } else {
+        intent.putExtra(DslTargetIntent.KEY_ORIGIN_INTENT, originIntent)
+    }
 }
 
 /**设置共享元素[View], 和对应的[Key]*/

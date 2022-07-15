@@ -118,7 +118,7 @@ fun Intent.setTargetIntent(intent: Intent?) {
 
 /**原始的[Intent]*/
 fun Intent.setOriginIntent() {
-    putExtra(KEY_ORIGIN_INTENT, this)
+    putExtra(KEY_ORIGIN_INTENT, Intent(this))
 }
 
 /**获取原始的[Intent]*/
@@ -131,6 +131,9 @@ fun Intent.startIntent(targetIntent: Intent): Intent {
     setOriginIntent()
     return this
 }
+
+/**是否有目标[KEY_TARGET_FRAGMENT]*/
+fun Intent.haveTargetFragment() = hasExtra(KEY_TARGET_FRAGMENT)
 
 /**通过一个[Activity]启动一个[Fragment]*/
 fun Intent.startFragment(cls: Class<out Fragment>, singleTask: Boolean = false): Intent {

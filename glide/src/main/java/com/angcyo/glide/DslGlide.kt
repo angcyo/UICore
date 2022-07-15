@@ -15,6 +15,7 @@ import com.angcyo.library.app
 import com.angcyo.library.ex.isFilePath
 import com.angcyo.library.ex.isHttpScheme
 import com.angcyo.library.ex.loadUrl
+import com.angcyo.library.utils.ImageTypeUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.RequestManager
@@ -123,7 +124,7 @@ class DslGlide {
     val transformations = mutableListOf<Transformation<Bitmap>>()
 
     /**开启[checkGifType]时, 才有效*/
-    var onTypeCallback: (OkType.ImageType) -> Unit = {}
+    var onTypeCallback: (ImageTypeUtil.ImageType) -> Unit = {}
 
     /**自定请求选项*/
     var onConfigRequest: (builder: RequestBuilder<*>, model: Class<*>) -> Unit = { _, _ -> }
@@ -158,7 +159,7 @@ class DslGlide {
                 }
                 _checkType(uri) {
                     onTypeCallback(it)
-                    _load(uri, it == OkType.ImageType.GIF)
+                    _load(uri, it == ImageTypeUtil.ImageType.GIF)
                 }
             } else {
                 _load(uri)
@@ -232,13 +233,13 @@ class DslGlide {
     }
 
     //检查图片类型
-    fun _checkType(uri: Uri?, action: (imageType: OkType.ImageType) -> Unit) {
+    fun _checkType(uri: Uri?, action: (imageType: ImageTypeUtil.ImageType) -> Unit) {
         clear()
         if (uri == null) {
-            action(OkType.ImageType.UNKNOWN)
+            action(ImageTypeUtil.ImageType.UNKNOWN)
         } else {
             OkType.type(uri, object : OkType.OnImageTypeListener {
-                override fun onImageType(imageUrl: String, imageType: OkType.ImageType) {
+                override fun onImageType(imageUrl: String, imageType: ImageTypeUtil.ImageType) {
                     L.d("type: $imageUrl ->$imageType")
                     action(imageType)
                 }

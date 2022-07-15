@@ -5,6 +5,7 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.database.Cursor
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -16,8 +17,10 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.libCacheFile
 import com.angcyo.library.model.MediaBean
 import java.io.*
+import java.nio.charset.Charset
 import java.util.*
 
 /**
@@ -59,8 +62,35 @@ fun fileUri(context: Context, file: File, permission: Boolean = true): Uri {
     //scheme:content
 }
 
-fun Uri.inputStream(context: Context): InputStream? {
+fun Uri.inputStream(context: Context = app()): InputStream? {
     return context.contentResolver.openInputStream(this)
+}
+
+/**转存数据流
+ * @return 文件路径*/
+fun Uri.saveTo(filePath: String = libCacheFile().absolutePath, context: Context = app()): String {
+    inputStream(context)?.use {
+        it.copyTo(FileOutputStream(File(filePath)))
+    }
+    return filePath
+}
+
+/**从[Uri]中读取字节数组数据
+ * [ByteArray]*/
+fun Uri.readBytes(context: Context = app()): ByteArray? {
+    return inputStream(context)?.use {
+        it.readBytes()
+    }
+}
+
+/**从[Uri]中读取字符串*/
+fun Uri.readString(context: Context = app(), charset: Charset = Charsets.UTF_8): String? {
+    return readBytes(context)?.run { String(this, charset) }
+}
+
+/**从[Uri]中读取字符串*/
+fun Uri.readBitmap(context: Context = app()): Bitmap? {
+    return readBytes(context)?.run { toBitmap() }
 }
 
 fun <R> Uri.use(context: Context, block: (InputStream) -> R): R? {
