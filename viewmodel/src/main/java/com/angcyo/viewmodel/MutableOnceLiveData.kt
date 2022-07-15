@@ -18,7 +18,10 @@ class MutableOnceLiveData<T>(value: T? = null) : MutableErrorLiveData<T>(value) 
         super.setValue(value)
         if (value != null) {
             lastValue = value
-            postValue(null)
+            if (hasObservers()) {
+                //如果有观察者, 则清空数据
+                postValue(null)
+            }
         }
     }
 
