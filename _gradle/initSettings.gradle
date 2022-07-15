@@ -1,14 +1,17 @@
 //AGP 7.+
 if (gradle.gradleVersion.charAt(0) >= '7') {
+
+    pluginManagement {
+        repositories {
+            gradlePluginPortal()
+            google()
+            mavenCentral()
+        }
+    }
+
     dependencyResolutionManagement {
         repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
         repositories {
-            //https://maven.aliyun.com/mvn/
-            //central仓和jcenter仓的聚合仓
-            maven { url 'https://maven.aliyun.com/repository/public' }
-            maven { url 'https://maven.aliyun.com/repository/google' }
-            maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-
             google()
             //jcenter()
 
@@ -16,8 +19,20 @@ if (gradle.gradleVersion.charAt(0) >= '7') {
             //https://search.maven.org
             mavenCentral()
 
+            //https://maven.aliyun.com/mvn/
+            //central仓和jcenter仓的聚合仓
+            maven { url 'https://maven.aliyun.com/repository/public' }
+            maven { url 'https://maven.aliyun.com/repository/google' }
+            maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+
             maven { url 'https://jitpack.io' }
             maven { url "https://gitcode.net/angcyo/maven/-/raw/master" }
+
+            //maven { url "https://raw.github.com/bmob/bmob-android-sdk/master" }
+            //maven { url "https://gitee.com/angcyo/bmob-android-sdk/raw/master" }
+            //maven { url 'https://dl.bintray.com/chaozhouzhang/maven' }
+
+            maven { url 'https://dl.bintray.com/umsdk/release' }
         }
     }
 }
