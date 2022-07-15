@@ -111,7 +111,8 @@ object CompatScreenUtil {
         design: Int,
         unit: Unit?,
         isClose: Boolean
-    ) { if (isClose) {
+    ) {
+        if (isClose) {
             applyDisplayMetrics(
                 resources,
                 DP(0, 0, true),
@@ -122,6 +123,7 @@ object CompatScreenUtil {
         when (unit) {
             Unit.DP -> applyDisplayMetrics(resources, DP(origin, design, false))
             Unit.PT -> applyDisplayMetrics(resources, PT(origin, design, false))
+            else -> Unit
         }
     }
 
