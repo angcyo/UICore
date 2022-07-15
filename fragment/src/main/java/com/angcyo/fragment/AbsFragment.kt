@@ -240,12 +240,19 @@ abstract class AbsFragment : Fragment() {
 
     //</editor-fold>
 
-    //<editor-fold desc="touch">
+    //<editor-fold desc="Dispatch">
 
     /**
      * [com.angcyo.layout.FragmentSwipeBackLayout.dispatchTouchEvent]
      * */
     open fun onDispatchTouchEvent(event: MotionEvent) {
+
+    }
+
+    /**
+     * [com.angcyo.activity.BaseAppCompatActivity.onHandleIntent]
+     * */
+    open fun onHandleActivityIntent(intent: Intent, fromNew: Boolean) {
 
     }
 

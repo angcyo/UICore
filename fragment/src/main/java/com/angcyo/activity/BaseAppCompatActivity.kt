@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer
 import com.angcyo.DslAHelper
 import com.angcyo.base.*
 import com.angcyo.dslTargetIntentHandle
+import com.angcyo.fragment.AbsFragment
 import com.angcyo.fragment.R
 import com.angcyo.library.L
 import com.angcyo.library.Screen
@@ -118,6 +119,14 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
      * */
     open fun onHandleIntent(intent: Intent, fromNew: Boolean = false) {
         handleTargetIntent(intent)
+
+        //Intent转发
+        supportFragmentManager.getAllValidityFragment().lastOrNull()?.let {
+            if (it is AbsFragment) {
+                it.onHandleActivityIntent(intent, fromNew)
+            }
+        }
+
         if (L.debug) {
 //            val am: ActivityManager =
 //                getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
