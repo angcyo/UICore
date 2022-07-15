@@ -1,5 +1,8 @@
 package com.angcyo.viewmodel
 
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+
 /**
  * 用来做数据通知, 不做数据存储
  * 数据被设置之后, 立马就会被清空
@@ -23,6 +26,14 @@ class MutableOnceLiveData<T>(value: T? = null) : MutableErrorLiveData<T>(value) 
                 postValue(null)
             }
         }
+    }
+
+    override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
+        super.observe(owner, observer)
+    }
+
+    override fun observeForever(observer: Observer<in T>) {
+        super.observeForever(observer)
     }
 
 }
