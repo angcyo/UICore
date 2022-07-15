@@ -156,8 +156,10 @@ class GCodeAdjust {
 
             //保留4位小数点
             writer.append("${firstCmd.code} ")
-            writer.append("X${x.decimal(4)} Y${y.decimal(4)} ")
-            writer.appendLine("I${i.decimal(4)} J${j.decimal(4)}")
+            //writer.append("X${x.decimal(4)} Y${y.decimal(4)} ")
+            //writer.appendLine("I${i.decimal(4)} J${j.decimal(4)}")
+            writer.append("X${x} Y${y} ")
+            writer.appendLine("I${i} J${j}")
         }
     }
 
