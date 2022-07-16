@@ -13,7 +13,9 @@ import com.angcyo.http.toBean
  * @since 2022/07/09
  */
 
-/**gitee版本更新检查*/
+/**gitee版本更新检查
+ * 在[com.angcyo.http.gitee.Gitee.getBASE]目录下存放一个[version.json]即可获取更新信息
+ * */
 fun Context.giteeVersionUpdate(versionJson: String = "version.json") {
     val json = versionJson
     Gitee.get(json) { data, error ->
