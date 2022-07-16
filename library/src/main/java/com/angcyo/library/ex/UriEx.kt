@@ -454,6 +454,18 @@ fun Uri.getRealFilePath(content: Context = app()): String? {
     return data
 }
 
+/**删除所有[Uri]
+ * 返回结果表示, 是否全部删除成功*/
+fun List<Uri>.deleteAllUri(context: Context = app()): Boolean {
+    var result = true
+    forEach {
+        if (!it.delete(context)) {
+            result = false
+        }
+    }
+    return result
+}
+
 /**删除指定的uri
  * 如果uri不存在, 则会删除失败
  * [java.lang.SecurityException: com.angcyo.acc.helper has no access to content://media/external/images/media/160819]

@@ -129,11 +129,13 @@ fun LoaderMedia.loadPath(): String? {
     return localUri?.loadUrl() ?: url //网络路径
 }
 
-/**所有的数据类型是否一致*/
-fun List<LoaderMedia>.isSameType(): Boolean {
-    var mimeType: String? = null
+/**所有的数据类型是否一致
+ * [targetType] 指定类型
+ * */
+fun List<LoaderMedia>.isSameType(targetType: String? = null): Boolean {
+    var mimeType: String? = targetType?.subStart("/")
     for (item in this) {
-        val type = item.mimeType()
+        val type = item.mimeType().subStart("/")
         if (mimeType == null) {
             mimeType = type
         } else {

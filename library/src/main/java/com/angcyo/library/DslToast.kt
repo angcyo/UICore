@@ -403,7 +403,7 @@ fun toast(action: ToastConfig.() -> Unit) {
 fun toast(
     text: CharSequence?,
     context: Context = app(),
-    @DrawableRes icon: Int = undefined_res,
+    @DrawableRes icon: Int = R.drawable.lib_ic_info,
     @LayoutRes layoutId: Int = R.layout.lib_toast_layout,
     action: ToastConfig.() -> Unit = {}
 ) {
@@ -451,7 +451,7 @@ fun tip2(
 fun toastQQ(
     text: CharSequence?,
     context: Context = app(),
-    @DrawableRes icon: Int = undefined_res,
+    @DrawableRes icon: Int = R.drawable.lib_ic_info,
     @LayoutRes layoutId: Int = R.layout.lib_toast_qq_layout,
     action: ToastConfig.() -> Unit = {}
 ) {

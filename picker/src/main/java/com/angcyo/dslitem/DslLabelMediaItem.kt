@@ -42,6 +42,10 @@ open class DslLabelMediaItem : DslBaseLabelItem(), IFragmentItem {
     /**添加媒体, 加号逻辑*/
     var addMediaItem: DslAddMediaItem? = DslAddMediaItem().apply {
         margin(1 * dpi)
+
+        //视频时长, 秒
+        itemMinRecordTime
+        itemMaxRecordTime
     }
 
     /**媒体Loader配置*/

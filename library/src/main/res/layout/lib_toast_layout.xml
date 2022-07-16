@@ -32,7 +32,7 @@
                 android:layout_marginRight="@dimen/lib_xhdpi"
                 android:scaleType="fitXY"
                 android:visibility="gone"
-                tools:src="@drawable/lib_ic_waring"
+                tools:src="@drawable/lib_ic_info"
                 tools:visibility="visible" />
 
             <TextView

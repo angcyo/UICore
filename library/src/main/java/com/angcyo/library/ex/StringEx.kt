@@ -693,7 +693,7 @@ fun CharSequence.count(char: Char) = count { it == char }
 fun String.subStart(partition: String, ignoreCase: Boolean = true): String? {
     val indexOf = indexOf(partition, 0, ignoreCase)
     if (indexOf == -1) {
-        return null
+        return this
     }
     return substring(0, indexOf)
 }

@@ -1,5 +1,6 @@
 package com.angcyo.acc2.control
 
+import androidx.annotation.WorkerThread
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.bean.ActionBean
 import com.angcyo.acc2.bean.HandleBean
@@ -15,6 +16,7 @@ import com.angcyo.acc2.parse.HandleResult
  * @date 2021/01/30
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
+@WorkerThread
 interface ControlListener {
 
     /**控制器状态改变通知*/
