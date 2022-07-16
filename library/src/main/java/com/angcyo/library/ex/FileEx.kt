@@ -453,3 +453,7 @@ fun File.deleteRecursivelySafe() {
         e.printStackTrace()
     }
 }
+
+
+/**[com.angcyo.library.ex.ContextExKt.saveToDCIM]*/
+fun File.saveToDCIM(context: Context = app()) = context.saveToDCIM(this)

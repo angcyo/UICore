@@ -2,10 +2,10 @@ package com.angcyo.dslitem
 
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.dsladapter.*
 import com.angcyo.dsladapter.data.updateSingleData
 import com.angcyo.dsladapter.filter.AddMediaFilterAfterInterceptor
+import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.item.DslBaseLabelItem
 import com.angcyo.item.DslImageItem
 import com.angcyo.library.L
@@ -14,6 +14,7 @@ import com.angcyo.library.ex.elseNull
 import com.angcyo.library.model.LoaderMedia
 import com.angcyo.library.model.loadUri
 import com.angcyo.library.model.mimeType
+import com.angcyo.library.model.toUrlList
 import com.angcyo.loader.LoaderConfig
 import com.angcyo.pager.dslPager
 import com.angcyo.picker.R
@@ -109,6 +110,7 @@ open class DslLabelMediaItem : DslBaseLabelItem(), IFragmentItem {
 
                     addMediaFilterAfterInterceptor.addMediaDslAdapterItem =
                         if (itemShowAddMediaItem && itemEnable) {
+                            //如果需要显示添加媒体的item
                             addMediaItem?.apply {
                                 itemFragment = this@DslLabelMediaItem.itemFragment
 
@@ -148,9 +150,11 @@ open class DslLabelMediaItem : DslBaseLabelItem(), IFragmentItem {
                                 }
                             }
                         } else {
+                            //不需要添加媒体item
                             null
                         }
 
+                    //使用过滤的方式追加item
                     if (!contains(addMediaFilterAfterInterceptor)) {
                         add(0, addMediaFilterAfterInterceptor)
                     }
@@ -220,4 +224,7 @@ open class DslLabelMediaItem : DslBaseLabelItem(), IFragmentItem {
             adapter.notifyDataChanged()
         }
     }
+
+    /**获取媒体路径列表*/
+    open fun getMediaPathList(): List<String> = itemMediaList.toUrlList()
 }

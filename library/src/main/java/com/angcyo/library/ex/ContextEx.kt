@@ -118,7 +118,13 @@ fun Context.havePermission(permissionList: List<String>): Boolean {
     }
 }
 
-/**保存到相册[DCIM]*/
+/**将文件[file]保存到相册[DCIM]
+ * 可以通过[Uri.getPath]获取到保存后的路径
+ *
+ * uri      [content://media/external/images/media/160811]
+ * uri.path [/external/images/media/160811]
+ *
+ * */
 fun Context.saveToDCIM(file: File): Pair<Boolean, Uri?> {
     val filename: String = file.name
     return try {

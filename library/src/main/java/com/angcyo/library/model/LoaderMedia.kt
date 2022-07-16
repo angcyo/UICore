@@ -93,6 +93,8 @@ data class LoaderMedia(
     }
 }
 
+//region ---扩展---
+
 //媒体类型
 fun LoaderMedia.mimeType(): String {
     return mimeType ?: (loadPath()?.mimeType() ?: "image/*")
@@ -126,6 +128,31 @@ fun LoaderMedia.loadPath(): String? {
     }
     return localUri?.loadUrl() ?: url //网络路径
 }
+
+/**所有的数据类型是否一致*/
+fun List<LoaderMedia>.isSameType(): Boolean {
+    var mimeType: String? = null
+    for (item in this) {
+        val type = item.mimeType()
+        if (mimeType == null) {
+            mimeType = type
+        } else {
+            if (mimeType != type) {
+                return false
+            }
+        }
+    }
+    return true
+}
+
+/**是否含有视频数据*/
+fun List<LoaderMedia>.haveVideo(): Boolean {
+    return find { it.isVideo() } != null
+}
+
+//endregion ---扩展---
+
+//region ---to 转换---
 
 /**加载的[Uri]*/
 fun LoaderMedia.loadUri(): Uri? {
@@ -168,3 +195,5 @@ fun String.toLoaderMedia(): LoaderMedia {
         LoaderMedia(url = this)
     }
 }
+
+//endregion ---to 转换---
