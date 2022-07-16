@@ -468,3 +468,23 @@ fun Uri.delete(context: Context = app()): Boolean {
     L.d("删除:${this} ${int}个.")
     return int > 0
 }
+
+/**返回指定的uri是否有数据*/
+fun Uri.exists(context: Context = app()): Boolean {
+    val count = try {
+        val cursor = context.contentResolver.query(
+            this,
+            arrayOf(MediaStore.MediaColumns.DATA),
+            null,
+            null,
+            null
+        )
+        val count = cursor?.count
+        cursor?.close()
+        count ?: 0
+    } catch (e: Exception) {
+        e.printStackTrace()
+        0
+    }
+    return count > 0
+}
