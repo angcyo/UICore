@@ -39,7 +39,7 @@ class DslLuban {
     var leastCompressSize = 200
 
     /**是否要保留透明像素, 否则透明像素会变成黑色*/
-    var enableAlpha = false
+    var enableAlpha = true
 
     /**是否异步调用执行*/
     var async: Boolean = true
@@ -147,12 +147,13 @@ class DslLuban {
 
 /**直接压缩图片
  * [keepMinSize] 图片已经小于这个大小时, 不压缩*/
-fun String.luban(keepMinSize: Int = 200): String {
+fun String.luban(keepMinSize: Int = 200, actions: DslLuban.() -> Unit): String {
     val path = this
     val result = dslLuban {
         async = false
         leastCompressSize = keepMinSize
         addPath(path)
+        actions()
     }.targetMediaList.firstOrNull()?.compressPath ?: path
     return result
 }
