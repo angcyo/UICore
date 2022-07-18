@@ -120,7 +120,9 @@ fun String?.fileSizeString(): String {
     return fileSize().fileSizeString()
 }
 
-/**b*/
+/**[this] b 字节数量
+ * 返回 [xxKB] [xxMB] [xxGB] [xxTB] [xxPB]
+ * */
 fun Long.fileSizeString(unit: SizeUnit = SizeUnit.Auto): String {
     val size = this
     var _unit = unit
