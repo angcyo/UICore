@@ -90,7 +90,7 @@ interface IEditItem : IAutoInitItem {
 
     /**编辑的文本改变后*/
     fun onItemEditTextChange(itemHolder: DslViewHolder, text: CharSequence) {
-        editItemConfig.itemTextChange?.invoke(text)
+        editItemConfig.itemTextChangeAction?.invoke(text)
     }
 }
 
@@ -143,10 +143,10 @@ var IEditItem.itemEditDigits: String?
         editItemConfig.itemEditTextStyle.editDigits = value
     }
 
-var IEditItem.itemTextChange: TextChangeAction?
-    get() = editItemConfig.itemTextChange
+var IEditItem.itemTextChangeAction: TextChangeAction?
+    get() = editItemConfig.itemTextChangeAction
     set(value) {
-        editItemConfig.itemTextChange = value
+        editItemConfig.itemTextChangeAction = value
     }
 
 class EditItemConfig : IDslItemConfig {
@@ -174,7 +174,7 @@ class EditItemConfig : IDslItemConfig {
     var itemEditTextStyle: EditStyleConfig = EditStyleConfig()
 
     /**文本改变*/
-    var itemTextChange: TextChangeAction? = null
+    var itemTextChangeAction: TextChangeAction? = null
 
     /**文本改变去频限制, 负数表示不开启, 如果短时间内关闭界面了, 可能会获取不到最新的输入框数据*/
     var itemTextChangeShakeDelay: Long = DslBaseEditItem.DEFAULT_INPUT_SHAKE_DELAY
