@@ -1,5 +1,7 @@
 package com.angcyo.item.style
 
+import android.text.InputFilter
+import android.text.InputType
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.annotation.ItemInitEntryPoint
 import com.angcyo.dsladapter.item.IDslItemConfig
@@ -36,6 +38,7 @@ interface IEditItem : IAutoInitItem {
         itemHolder.ev(editItemConfig.itemEditTextViewId)?.apply {
             clearListeners()
 
+            //[EditStyleConfig]样式初始化
             editItemConfig.itemEditTextStyle.updateStyle(this)
 
             if (this is IEditDelegate) {
@@ -99,10 +102,41 @@ var IEditItem.itemEditHint: CharSequence?
         editItemConfig.itemEditTextStyle.hint = value
     }
 
+/**
+ * 输入类型
+ * [InputType.TYPE_CLASS_TEXT]
+ * [InputType.TYPE_CLASS_NUMBER]
+ *
+ * [InputType.TYPE_TEXT_FLAG_MULTI_LINE]
+ *
+ * [InputType.TYPE_NUMBER_FLAG_DECIMAL]
+ * [InputType.TYPE_NUMBER_FLAG_SIGNED]
+ * */
+var IEditItem.itemEditInputType: Int
+    get() = editItemConfig.itemEditTextStyle.editInputType
+    set(value) {
+        editItemConfig.itemEditTextStyle.editInputType = value
+    }
+
+
 var IEditItem.itemMaxInputLength: Int
     get() = editItemConfig.itemEditTextStyle.editMaxInputLength
     set(value) {
         editItemConfig.itemEditTextStyle.editMaxInputLength = value
+    }
+
+/**输入过滤*/
+var IEditItem.itemInputFilterList: MutableList<InputFilter>
+    get() = editItemConfig.itemEditTextStyle.editInputFilterList
+    set(value) {
+        editItemConfig.itemEditTextStyle.editInputFilterList = value
+    }
+
+/**输入过滤*/
+var IEditItem.itemEditDigits: String?
+    get() = editItemConfig.itemEditTextStyle.editDigits
+    set(value) {
+        editItemConfig.itemEditTextStyle.editDigits = value
     }
 
 class EditItemConfig : IDslItemConfig {

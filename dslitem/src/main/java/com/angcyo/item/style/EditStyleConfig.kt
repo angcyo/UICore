@@ -2,10 +2,12 @@ package com.angcyo.item.style
 
 import android.text.InputFilter
 import android.text.InputType
+import android.text.method.DigitsKeyListener
 import android.view.Gravity
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import com.angcyo.dialog.R
 import com.angcyo.item.DslBaseEditItem
 import com.angcyo.library.ex.add
 import com.angcyo.library.ex.remove
@@ -32,6 +34,12 @@ class EditStyleConfig : TextStyleConfig() {
 
     /**输入过滤器*/
     var editInputFilterList = mutableListOf<InputFilter>()
+
+    /**输入限制, 此属性和[editInputFilterList]互斥
+     * [R.string.lib_number_digits]
+     * [R.string.lib_password_digits]
+     * [R.string.lib_en_digits]*/
+    var editDigits: String? = null
 
     /**输入框不可编辑*/
     var noEditModel: Boolean = false
@@ -80,6 +88,11 @@ class EditStyleConfig : TextStyleConfig() {
                     removeFilter {
                         this is InputFilter.LengthFilter || this is CharLengthFilter
                     }
+                }
+
+                //digits 放在[inputType]后面
+                editDigits?.let {
+                    keyListener = DigitsKeyListener.getInstance(it)
                 }
 
                 if (this is EditText) {

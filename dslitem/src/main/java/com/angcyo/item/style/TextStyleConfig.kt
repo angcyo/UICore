@@ -79,6 +79,8 @@ open class TextStyleConfig : ViewStyleConfig() {
                 val parent = view.parent
                 if (parent is BufferTextInputLayout) {
                     parent.hint = this@TextStyleConfig.hint
+                } else if (parent.parent is BufferTextInputLayout) {
+                    (parent.parent as BufferTextInputLayout).hint = this@TextStyleConfig.hint
                 } else {
                     hint = this@TextStyleConfig.hint
                 }
