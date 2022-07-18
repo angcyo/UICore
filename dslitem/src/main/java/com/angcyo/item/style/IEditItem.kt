@@ -22,6 +22,10 @@ import com.angcyo.widget.edit.IEditDelegate
  * @date 2021/06/28
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
+
+/**文本改变通知回调*/
+typealias TextChangeAction = (CharSequence) -> Unit
+
 interface IEditItem : IAutoInitItem {
 
     /**配置项*/
@@ -139,6 +143,12 @@ var IEditItem.itemEditDigits: String?
         editItemConfig.itemEditTextStyle.editDigits = value
     }
 
+var IEditItem.itemTextChange: TextChangeAction?
+    get() = editItemConfig.itemTextChange
+    set(value) {
+        editItemConfig.itemTextChange = value
+    }
+
 class EditItemConfig : IDslItemConfig {
 
     /**[R.id.lib_edit_view]*/
@@ -164,7 +174,7 @@ class EditItemConfig : IDslItemConfig {
     var itemEditTextStyle: EditStyleConfig = EditStyleConfig()
 
     /**文本改变*/
-    var itemTextChange: ((CharSequence) -> Unit)? = null
+    var itemTextChange: TextChangeAction? = null
 
     /**文本改变去频限制, 负数表示不开启, 如果短时间内关闭界面了, 可能会获取不到最新的输入框数据*/
     var itemTextChangeShakeDelay: Long = DslBaseEditItem.DEFAULT_INPUT_SHAKE_DELAY
