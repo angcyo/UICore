@@ -70,10 +70,17 @@ def findApkFile(String folderPath = null) {
         if (it.isFile()) {
             def name = it.getName()
             if (name.endsWith(".apk")) {
-                if (uploadFileList.contains("${name}/${it.lastModified()}") && files.length > 1) {
+                def line = "${name}/${it.lastModified()}"
+                def isUpload = false
+
+                uploadFileList.each {
+                    isUpload = isUpload || it == line
+                }
+
+                if (isUpload && files.length > 1) {
                     System.out.println '已上传,跳过文件:' + name
                 } else {
-                    isUploadFile.append("${name}/${it.lastModified()}\n")
+                    isUploadFile.append("${line}\n")
                     if (result == null) {
                         result = it.absolutePath
                     } else {
