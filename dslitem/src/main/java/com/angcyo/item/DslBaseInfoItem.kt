@@ -67,7 +67,7 @@ open class DslBaseInfoItem : DslAdapterItem(), ITextInfoItem {
         //扩展布局
         if (itemExtendLayoutId != undefined_res) {
             var inflateLayoutId = undefined_res //已经inflate的布局id
-            itemHolder.group(R.id.wrap_layout)?.apply {
+            itemHolder.group(R.id.lib_wrap_layout)?.apply {
                 if (childCount > 0) {
                     inflateLayoutId = (getChildAt(0).getTag(R.id.tag) as? Int) ?: undefined_res
                 }
@@ -81,7 +81,7 @@ open class DslBaseInfoItem : DslAdapterItem(), ITextInfoItem {
                 }
             }
         } else {
-            itemHolder.group(R.id.wrap_layout)?.removeAllViews()
+            itemHolder.group(R.id.lib_wrap_layout)?.removeAllViews()
         }
         super._initItemConfig(itemHolder, itemPosition, adapterItem, payloads)
     }

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_item_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/lib_card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/lib_xhdpi"
+        android:layout_marginVertical="@dimen/lib_ldpi"
+        android:layout_marginBottom="@dimen/lib_xhdpi"
+        app:cardCornerRadius="@dimen/lib_radius_common">
+
+        <com.angcyo.widget.layout.RConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/lib_item_height"
+            android:paddingTop="@dimen/lib_hdpi"
+            android:paddingBottom="@dimen/lib_hdpi"
+            tools:r_background="@color/transparent20">
+
+            <com.angcyo.widget.text.DslTextView
+                android:id="@+id/lib_text_view"
+                style="@style/LibBodyTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="@dimen/lib_drawable_padding"
+                android:paddingLeft="@dimen/lib_padding_left"
+                android:paddingRight="@dimen/lib_padding_right"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/lib_wrap_layout"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:drawableLeft="@drawable/lib_image_tip"
+                tools:text="关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们" />
+
+            <FrameLayout
+                android:id="@+id/lib_wrap_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintLeft_toRightOf="@id/lib_text_view"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_min="50dp"
+                tools:background="@drawable/lib_qq_toast_bg_shape"
+                tools:layout_height="20dp">
+
+                <com.angcyo.github.SwitchButton
+                    android:id="@+id/lib_switch_view"
+                    android:layout_width="48dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical|right"
+                    app:sb_checked_color="@color/colorPrimary"
+                    tools:sb_checked="true" />
+            </FrameLayout>
+
+        </com.angcyo.widget.layout.RConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</FrameLayout>
