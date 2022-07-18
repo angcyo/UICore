@@ -26,7 +26,7 @@
             <com.angcyo.widget.text.DslTextView
                 android:id="@+id/lib_text_view"
                 style="@style/LibBodyTextStyle"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:drawablePadding="@dimen/lib_drawable_padding"
                 android:paddingLeft="@dimen/lib_padding_left"
@@ -41,14 +41,14 @@
 
             <FrameLayout
                 android:id="@+id/lib_wrap_layout"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                app:layout_constrainedWidth="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_weight="1"
                 app:layout_constraintLeft_toRightOf="@id/lib_text_view"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_min="50dp"
                 tools:background="@drawable/lib_qq_toast_bg_shape"
                 tools:layout_height="20dp">
 
@@ -57,6 +57,7 @@
                     android:layout_width="48dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center_vertical|right"
+                    android:layout_marginRight="@dimen/lib_padding_right"
                     app:sb_checked_color="@color/colorPrimary"
                     tools:sb_checked="true" />
             </FrameLayout>
