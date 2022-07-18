@@ -147,7 +147,7 @@ class DslLuban {
 
 /**直接压缩图片
  * [keepMinSize] 图片已经小于这个大小时, 不压缩*/
-fun String.luban(keepMinSize: Int = 200, actions: DslLuban.() -> Unit): String {
+fun String.luban(keepMinSize: Int = 200, actions: DslLuban.() -> Unit = {}): String {
     val path = this
     val result = dslLuban {
         async = false
