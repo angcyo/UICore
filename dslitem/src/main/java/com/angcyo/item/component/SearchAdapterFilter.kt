@@ -27,11 +27,11 @@ import com.angcyo.widget.base.onTextChange
  */
 
 /**是否需要true, 表示item不被过滤*/
-typealias FilterItem = (DslAdapterItem) -> Boolean
+typealias FilterItemAction = (DslAdapterItem) -> Boolean
 
 class SearchAdapterFilter {
 
-    var filterItem: FilterItem? = null
+    var filterItemAction: FilterItemAction? = null
 
     var _adapter: DslAdapter? = null
 
@@ -47,21 +47,21 @@ class SearchAdapterFilter {
                             item.itemText = item.itemText?.highlight(filterText)
                             true
                         }
-                        else -> filterItem?.invoke(item) ?: false
+                        else -> filterItemAction?.invoke(item) ?: false
                     }
                 } else {
-                    filterItem?.invoke(item) ?: true
+                    filterItemAction?.invoke(item) ?: true
                 }
             }
         }
     }
 
     /**初始化*/
-    fun init(editText: EditText?, adapter: DslAdapter?, onFilterItem: FilterItem? = null) {
+    fun init(editText: EditText?, adapter: DslAdapter?, onFilterItemAction: FilterItemAction? = null) {
         _adapter?.dslDataFilter?.filterInterceptorList?.remove(filterInterceptor)
 
         _adapter = adapter
-        filterItem = onFilterItem
+        filterItemAction = onFilterItemAction
 
         //监听
         editText?.apply {
@@ -98,10 +98,10 @@ class SearchAdapterFilter {
 fun searchAdapterFilter(
     editText: EditText?,
     adapter: DslAdapter?,
-    onFilterItem: FilterItem? = null
+    onFilterItemAction: FilterItemAction? = null
 ): SearchAdapterFilter {
     val filter = SearchAdapterFilter()
-    filter.init(editText, adapter, onFilterItem)
+    filter.init(editText, adapter, onFilterItemAction)
     return filter
 }
 
@@ -112,13 +112,13 @@ fun BaseTitleFragment.goneSearchLayout(gone: Boolean = true) {
 /**全部一次性初始化*/
 fun BaseTitleFragment.initSearchAdapterFilter(
     searchLabel: CharSequence? = "请输入关键字",
-    onFilterItem: FilterItem? = null
+    onFilterItemAction: FilterItemAction? = null
 ) {
     _vh.tv(R.id.lib_search_label_view)?.text = searchLabel
     _vh.ev(R.id.lib_search_edit_view)?.apply {
         doOnTextChanged { text, start, before, count ->
             _vh.visible(R.id.lib_search_wrap_layout, text.isNullOrEmpty())
         }
-        searchAdapterFilter(this, _recycler.adapter as? DslAdapter, onFilterItem)
+        searchAdapterFilter(this, _recycler.adapter as? DslAdapter, onFilterItemAction)
     }
 }
