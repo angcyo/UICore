@@ -34,13 +34,13 @@
                 app:layout_constrainedWidth="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@id/lib_wrap_layout"
+                app:layout_constraintRight_toLeftOf="@id/lib_right_wrap_layout"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:drawableLeft="@drawable/lib_image_tip"
                 tools:text="关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们" />
 
             <FrameLayout
-                android:id="@+id/lib_wrap_layout"
+                android:id="@+id/lib_right_wrap_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constrainedWidth="true"
