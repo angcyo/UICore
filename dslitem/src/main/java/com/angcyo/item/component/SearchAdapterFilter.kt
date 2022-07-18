@@ -11,7 +11,9 @@ import com.angcyo.dsladapter.filter.FilterChain
 import com.angcyo.dsladapter.filter.IFilterInterceptor
 import com.angcyo.dsladapter.toNone
 import com.angcyo.item.R
+import com.angcyo.item.style.IDesItem
 import com.angcyo.item.style.ITextItem
+import com.angcyo.item.style.itemDes
 import com.angcyo.item.style.itemText
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.highlight
@@ -31,33 +33,57 @@ typealias FilterItemAction = (DslAdapterItem) -> Boolean
 
 class SearchAdapterFilter {
 
+    /**额外的过滤条件判断回调*/
     var filterItemAction: FilterItemAction? = null
 
     var _adapter: DslAdapter? = null
 
     val filterInterceptor: IFilterInterceptor = object : BaseFilterInterceptor() {
         override fun intercept(chain: FilterChain): List<DslAdapterItem> {
+            if (filterText.isEmpty()) {
+                //无需要过滤的文本
+                return chain.requestList
+            }
             return chain.requestList.filter { item ->
-                if (item is ITextItem) {
-                    item.itemUpdateFlag = true
-                    item.itemText?.removeSpan(ForegroundColorSpan::class.java)
-                    when {
-                        filterText.isEmpty() -> true
-                        item.itemText?.have(filterText) == true -> {
-                            item.itemText = item.itemText?.highlight(filterText)
-                            true
+                when (item) {
+                    is ITextItem -> {
+                        //ITextItem
+                        item.itemUpdateFlag = true
+                        item.itemText?.removeSpan(ForegroundColorSpan::class.java)
+                        when {
+                            item.itemText?.have(filterText) == true -> {
+                                item.itemText = item.itemText?.highlight(filterText)
+                                true
+                            }
+                            else -> filterItemAction?.invoke(item) ?: false
                         }
-                        else -> filterItemAction?.invoke(item) ?: false
                     }
-                } else {
-                    filterItemAction?.invoke(item) ?: true
+                    is IDesItem -> {
+                        //IDesItem
+                        item.itemUpdateFlag = true
+                        item.itemDes?.removeSpan(ForegroundColorSpan::class.java)
+                        when {
+                            item.itemDes?.have(filterText) == true -> {
+                                item.itemDes = item.itemDes?.highlight(filterText)
+                                true
+                            }
+                            else -> filterItemAction?.invoke(item) ?: false
+                        }
+                    }
+                    else -> {
+                        filterItemAction?.invoke(item) ?: true
+                    }
                 }
             }
         }
     }
 
     /**初始化*/
-    fun init(editText: EditText?, adapter: DslAdapter?, onFilterItemAction: FilterItemAction? = null) {
+    fun init(
+        editText: EditText?,
+        adapter: DslAdapter?,
+        onFilterItemAction: FilterItemAction? = null
+    ) {
         _adapter?.dslDataFilter?.filterInterceptorList?.remove(filterInterceptor)
 
         _adapter = adapter
