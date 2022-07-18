@@ -28,12 +28,14 @@ import com.angcyo.widget.base.onTextChange
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 
-/**是否需要true, 表示item不被过滤*/
+/**是否需要过滤, true表示item不被过滤*/
 typealias FilterItemAction = (DslAdapterItem) -> Boolean
 
 class SearchAdapterFilter {
 
-    /**额外的过滤条件判断回调*/
+    /**额外的过滤条件判断回调
+     * 返回true, 表示需要显示当前的Item
+     * */
     var filterItemAction: FilterItemAction? = null
 
     var _adapter: DslAdapter? = null
@@ -78,16 +80,19 @@ class SearchAdapterFilter {
         }
     }
 
-    /**初始化*/
+    /**初始化
+     * [editText] 输入框, 会自动监听文本框的改变
+     * [filterItemAction]额外的过滤回调, true表示需要显示对应的item
+     * */
     fun init(
         editText: EditText?,
         adapter: DslAdapter?,
-        onFilterItemAction: FilterItemAction? = null
+        filterItemAction: FilterItemAction? = null
     ) {
         _adapter?.dslDataFilter?.filterInterceptorList?.remove(filterInterceptor)
 
         _adapter = adapter
-        filterItemAction = onFilterItemAction
+        this.filterItemAction = filterItemAction
 
         //监听
         editText?.apply {
@@ -115,6 +120,7 @@ class SearchAdapterFilter {
             if (adapterItems.isNotEmpty()) {
                 toNone()
             }
+            //触发流程
             updateItemDepend()
         }
     }
