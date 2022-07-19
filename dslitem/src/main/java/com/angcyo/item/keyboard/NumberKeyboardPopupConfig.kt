@@ -24,6 +24,9 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
 
     companion object {
 
+        /**输入延迟*/
+        const val DEFAULT_INPUT_DELAY = 400L
+
         /**键盘输入解析*/
         fun keyboardInputValueParse(
             newValueBuild: StringBuilder,
@@ -90,7 +93,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
     var incrementStep: Float = 1f
 
     /**绑定限流*/
-    var bindPendingDelay = 300L
+    var bindPendingDelay = DEFAULT_INPUT_DELAY
 
     //意图
     var _pendingRunnable: Runnable? = null

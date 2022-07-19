@@ -97,6 +97,7 @@ class ProgressRenderer(val canvasDelegate: CanvasDelegate) : BaseRenderer(canvas
         borderPath.rewind()
         borderPath.addRect(visualRotateBounds, Path.Direction.CW)
 
+        paint.shader = null
         paint.style = Paint.Style.STROKE
         paint.color = progressTextColor
         paint.pathEffect = DashPathEffect(intervals, phase)
@@ -129,6 +130,7 @@ class ProgressRenderer(val canvasDelegate: CanvasDelegate) : BaseRenderer(canvas
             drawRect.top, drawRect.bottom,
             intArrayOf(Color.TRANSPARENT, progressColor.alphaRatio(0.5f))
         )
+        paint.pathEffect = null
 
         //clip
         clipPath.rewind()
