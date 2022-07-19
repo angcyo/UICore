@@ -25,7 +25,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
     companion object {
 
         /**输入延迟*/
-        const val DEFAULT_INPUT_DELAY = 400L
+        var DEFAULT_INPUT_DELAY = 400L
 
         /**键盘输入解析*/
         fun keyboardInputValueParse(
