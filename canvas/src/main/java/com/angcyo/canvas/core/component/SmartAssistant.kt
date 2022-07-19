@@ -16,6 +16,7 @@ import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * 智能提示助手
@@ -391,13 +392,21 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
         //去掉宽度智能
         //!itemRenderer.isLineShape() && equalRatio && dy.absoluteValue > dx.absoluteValue
-
-        val notSmartWidth = false
+        var notSmartWidth = false
 
         //去掉高度智能
         //!itemRenderer.isLineShape() && equalRatio && dx.absoluteValue > dy.absoluteValue
+        var notSmartHeight = false
 
-        val notSmartHeight = false
+        if ((rotate % 90).roundToInt() != 0) {
+            if (originWidth > originHeight) {
+                //宽图, 只使用宽度智能
+                notSmartHeight = true
+            } else {
+                //长图, 只使用高度智能
+                notSmartWidth = true
+            }
+        }
 
         //w吸附
         lastWidthAssistant?.let {
