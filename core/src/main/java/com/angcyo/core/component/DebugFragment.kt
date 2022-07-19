@@ -9,9 +9,7 @@ import com.angcyo.core.component.file.appFilePath
 import com.angcyo.core.dslitem.DslLastDeviceInfoItem
 import com.angcyo.core.fragment.BaseDslFragment
 import com.angcyo.dsladapter.bindItem
-import com.angcyo.library.ex.find
-import com.angcyo.library.ex.hawkGet
-import com.angcyo.library.ex.isFileExist
+import com.angcyo.library.ex.*
 import com.angcyo.library.libFolderPath
 import com.angcyo.library.toast
 import com.angcyo.library.utils.Constant
@@ -70,9 +68,23 @@ class DebugFragment : BaseDslFragment() {
                             text = item.name
                             clickIt {
                                 if (item.action == null) {
-                                    if (item.logPath.isFileExist()) {
+                                    val logPath = item.logPath
+                                    val file = logPath?.file()
+                                    if (file.isFile()) {
                                         //日志文件存在, 直接显示日志内容
-                                        fContext().fileViewDialog(item.logPath)
+                                        fContext().fileViewDialog(logPath)
+                                    } else if (file.isFolder()) {
+                                        //文件目录浏览
+                                        dslFHelper {
+                                            fileSelector({
+                                                targetPath = logPath!!
+                                                showFileMd5 = true
+                                                showFileMenu = true
+                                                showHideFile = true
+                                            }) {
+                                                //no op
+                                            }
+                                        }
                                     } else {
                                         toast("not support!")
                                     }

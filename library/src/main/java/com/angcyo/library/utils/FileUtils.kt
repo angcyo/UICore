@@ -211,6 +211,6 @@ fun String.logFilePath(name: String = logFileName()): String {
  * 带Scheme的文件夹路径
  * [com.angcyo.library.LibraryKt.libFolderPath]
  * */
-fun appFolderPath(): String {
-    return FileUtils.appRootExternalFolder().absolutePath
+fun appFolderPath(folder: String = "", context: Context = app()): String {
+    return FileUtils.appRootExternalFolder(folder, context).absolutePath
 }
