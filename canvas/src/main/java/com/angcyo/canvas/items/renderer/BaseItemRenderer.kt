@@ -78,10 +78,13 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     override fun getRendererItem(): T? = _rendererItem
 
+    /**[com.angcyo.canvas.items.renderer.BaseItemRenderer.itemBoundsChanged]*/
     override fun getRotateBounds(): RectF = _rotateBounds
 
+    /**[com.angcyo.canvas.items.renderer.BaseItemRenderer.itemBoundsChanged]*/
     override fun getRenderRotateBounds(): RectF = _rotateRenderBounds
 
+    /**[com.angcyo.canvas.items.renderer.BaseItemRenderer.itemBoundsChanged]*/
     override fun getVisualRotateBounds(): RectF = _visualRotateBounds
 
     override fun changeBounds(reason: Reason, block: RectF.() -> Unit): Boolean {

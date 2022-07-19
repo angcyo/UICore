@@ -7,7 +7,6 @@ import com.angcyo.canvas.core.InchValueUnit
 import com.angcyo.canvas.core.MmValueUnit
 import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.canvas.utils.mapRectF
-import com.angcyo.library.ex.decimal
 import java.io.File
 import java.io.OutputStreamWriter
 import kotlin.math.min
@@ -113,6 +112,9 @@ class GCodeAdjust {
         }
         //触发
         gCodeHandler.parseGCodeLineList(gCodeLineList)
+
+        //平移完之后, 写入G0 0 0
+        GCodeWriteHandler().writeFinish(writer)
     }
 
     /**

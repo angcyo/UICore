@@ -31,15 +31,18 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     fun getRendererItem(): T?
 
     /**旋转后的坐标
-     * [getBounds]*/
+     * [getBounds]
+     * [com.angcyo.canvas.items.renderer.BaseItemRenderer.itemBoundsChanged]*/
     fun getRotateBounds(): RectF
 
     /**旋转后的坐标
-     * [getRenderBounds]*/
+     * [getRenderBounds]
+     * [com.angcyo.canvas.items.renderer.BaseItemRenderer.itemBoundsChanged]*/
     fun getRenderRotateBounds(): RectF
 
     /**旋转后的坐标
-     * [getVisualBounds]*/
+     * [getVisualBounds]
+     * [com.angcyo.canvas.items.renderer.BaseItemRenderer.itemBoundsChanged]*/
     fun getVisualRotateBounds(): RectF
 
     /**当[rendererItem]需要更新时触发, 用来更新渲染器*/

@@ -49,6 +49,28 @@ fun linearGradientShader(
     return LinearGradient(x0, y0, x1, y1, colors, positions, tile)
 }
 
+/**横向线性渐变*/
+fun linearHorizontalGradientShader(
+    xFrom: Float,
+    xTo: Float,
+    colors: IntArray,
+    positions: FloatArray? = null,
+    tile: TileMode = TileMode.REPEAT
+): LinearGradient {
+    return LinearGradient(xFrom, 0f, xTo, 0f, colors, positions, tile)
+}
+
+/**竖向线性渐变*/
+fun linearVerticalGradientShader(
+    yFrom: Float,
+    yTo: Float,
+    colors: IntArray,
+    positions: FloatArray? = null,
+    tile: TileMode = TileMode.REPEAT
+): LinearGradient {
+    return LinearGradient(0f, yFrom, 0f, yTo, colors, positions, tile)
+}
+
 fun linearGradientShader(
     rect: RectF,
     colors: IntArray,

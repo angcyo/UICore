@@ -256,6 +256,8 @@ val Int.isTextItalic: Boolean
 /**将[value]限制在[min] [max]之间*/
 fun clamp(value: Float, min: Float, max: Float): Float = min(max(value, min), max)
 
+fun clamp(value: Int, min: Int, max: Int): Int = min(max(value, min), max)
+
 fun Layout.getMaxLineWidth(): Float {
     var width = 0f
     for (line in 0 until lineCount) {
@@ -343,6 +345,7 @@ fun CanvasDelegate.engraveMode(enable: Boolean = true) {
     disableTouchFlag(CanvasDelegate.TOUCH_FLAG_MULTI_SELECT, enable)
     controlHandler.enable = !enable
     controlRenderer.drawControlPoint = !enable
+    refresh()
 }
 
 //</editor-fold desc="Other">

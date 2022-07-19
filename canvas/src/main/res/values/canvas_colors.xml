@@ -26,4 +26,8 @@
 
     <dimen name="canvas_edit_text_size">12dp</dimen>
 
+    <!--雕刻进度颜色-->
+    <color name="canvas_progress_color">@color/canvas_primary</color>
+    <color name="canvas_progress_text_color">@color/error</color>
+
 </resources>

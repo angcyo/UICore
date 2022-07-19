@@ -67,10 +67,12 @@ class CanvasDelegate(val view: View) : ICanvasView {
     /**事件回调*/
     val canvasListenerList = mutableSetOf<ICanvasListener>()
 
-    /**内容绘制之前, 额外的渲染器*/
+    /**内容绘制之前, 额外的渲染器.
+     * 不处理[Matrix]*/
     val rendererBeforeList = mutableSetOf<BaseRenderer>()
 
-    /**内容绘制之后, 额外的渲染器*/
+    /**内容绘制之后, 额外的渲染器
+     * 不处理[Matrix]*/
     val rendererAfterList = mutableSetOf<BaseRenderer>()
 
     /**将操作移动到[onSizeChanged]后触发*/
@@ -153,6 +155,9 @@ class CanvasDelegate(val view: View) : ICanvasView {
     /**限制提示框渲染*/
     var limitRenderer: LimitRenderer = LimitRenderer(this)
 
+    /**预览边框, 雕刻进度渲染*/
+    var progressRenderer = ProgressRenderer(this)
+
     /**多选提示框
      * [rendererAfterList]*/
     var selectGroupRenderer: SelectGroupRenderer = SelectGroupRenderer(this)
@@ -166,6 +171,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         if (BuildConfig.DEBUG) {
             rendererAfterList.add(CenterRenderer(this))
         }
+        rendererAfterList.add(progressRenderer)
         rendererAfterList.add(smartAssistantRenderer)
         rendererAfterList.add(selectGroupRenderer)
     }
@@ -567,6 +573,23 @@ class CanvasDelegate(val view: View) : ICanvasView {
         canvasViewBox.contentRect.set(oldBoxRect)
 
         return bitmap
+    }
+
+    /**通过[uuid], 获取对应的[BaseItemRenderer]*/
+    fun getRendererItem(uuid: String?): BaseItemRenderer<*>? {
+        if (uuid.isNullOrEmpty()) {
+            return null
+        }
+        val selectedRenderer = getSelectedRenderer()
+        if (selectedRenderer?.getRendererItem()?.uuid == uuid) {
+            return selectedRenderer
+        }
+        for (item in itemsRendererList) {
+            if (item.getRendererItem()?.uuid == uuid) {
+                return item
+            }
+        }
+        return null
     }
 
     /**默认在当前视图中心添加一个绘制元素*/
