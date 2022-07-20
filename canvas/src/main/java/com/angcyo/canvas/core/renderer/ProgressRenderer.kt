@@ -160,7 +160,7 @@ class ProgressRenderer(val canvasDelegate: CanvasDelegate) : BaseRenderer(canvas
     fun drawProgressText(canvas: Canvas, rect: RectF) {
         paint.shader = null
         paint.color = progressTextColor
-        paint.style = Paint.Style.STROKE
+        paint.style = Paint.Style.FILL_AND_STROKE
 
         val cx = rect.centerX()
         val cy = rect.centerY()
