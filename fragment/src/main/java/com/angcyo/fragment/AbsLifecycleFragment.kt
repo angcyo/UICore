@@ -226,29 +226,34 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment, OnBackPressedDis
         return result
     }
 
-    /**快速观察[LiveData]一次, 确保不收到null数据*/
+    /**快速观察[LiveData]一次, 确保不收到null数据
+     * [action] 返回值表示是否处理了数据, 如果没有处理, 则不会remove
+     * */
     fun <T> LiveData<T>.observeOnce(
         allowBackward: Boolean = true,
-        action: (data: T?) -> Unit
+        action: (data: T?) -> Boolean
     ): Observer<T> {
         var result: Observer<T>? = null
         var isFirst = value != null
+        var isNotify = false
         observe(this@AbsLifecycleFragment, Observer<T> {
-            if (it is List<*>) {
-                if (it.isNotEmpty()) {
-                    removeObserver(result!!)
-                }
-            } else if (it != null) {
-                removeObserver(result!!)
-            }
             if (allowBackward) {
-                action(it)
+                isNotify = action(it)
             } else {
                 //不允许数据倒灌
                 if (!isFirst) {
-                    action(it)
+                    isNotify = action(it)
                 }
                 isFirst = false
+            }
+            if (isNotify) {
+                if (it is List<*>) {
+                    if (it.isNotEmpty()) {
+                        removeObserver(result!!)
+                    }
+                } else if (it != null) {
+                    removeObserver(result!!)
+                }
             }
         }.apply {
             result = this
