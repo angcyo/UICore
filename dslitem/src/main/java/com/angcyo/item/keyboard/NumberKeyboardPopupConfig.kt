@@ -25,36 +25,42 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
     companion object {
 
         /**输入延迟*/
-        var DEFAULT_INPUT_DELAY = 400L
+        var DEFAULT_INPUT_DELAY = 300L
 
         /**键盘输入解析*/
         fun keyboardInputValueParse(
             newValueBuild: StringBuilder,
             firstValue: String?,
+            shakeInput: Boolean,
             op: String,
             step: Float
         ): String {
+            val oldValue: String? = if (shakeInput) {
+                firstValue
+            } else {
+                newValueBuild.toString()
+            }
             when (op) {
                 "-0" -> {
                     //退格操作
                     if (newValueBuild.isNotEmpty()) {
                         newValueBuild.deleteCharAt(newValueBuild.lastIndex)
-                    } else if (firstValue.isNullOrEmpty()) {
+                    } else if (oldValue.isNullOrEmpty()) {
                         //no
                     } else {
-                        newValueBuild.append(firstValue.substring(0, firstValue.lastIndex))
+                        newValueBuild.append(oldValue.substring(0, oldValue.lastIndex))
                     }
                 }
                 "-1" -> {
                     //自减
                     newValueBuild.clear()
-                    newValueBuild.append(firstValue?.toFloatOrNull()?.run { "${this - step}" }
+                    newValueBuild.append(oldValue?.toFloatOrNull()?.run { "${this - step}" }
                         ?: "${-step}")
                 }
                 "+1" -> {
                     //自增
                     newValueBuild.clear()
-                    newValueBuild.append(firstValue?.toFloatOrNull()?.run { "${this + step}" }
+                    newValueBuild.append(oldValue?.toFloatOrNull()?.run { "${this + step}" }
                         ?: "$step")
                 }
                 "." -> {
@@ -95,6 +101,11 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
     /**绑定限流*/
     var bindPendingDelay = DEFAULT_INPUT_DELAY
 
+    /**是否激活抖动输入, 关闭之后, 那就相当于普通键盘
+     * [bindPendingDelay] 限流依旧有效
+     * */
+    var enableShakeInput: Boolean = false
+
     //意图
     var _pendingRunnable: Runnable? = null
 
@@ -117,6 +128,11 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
         list.add(createNumberImageItem(window))
         list.add(createNumberIncrementItem(window))
         viewHolder.group(R.id.lib_flow_layout)?.appendDslItem(list)
+
+        if (!enableShakeInput) {
+            newValueBuilder.clear()
+            newValueBuilder.append(keyboardBindTextView?.text?.toString() ?: "")
+        }
     }
 
     /**数字键和.号*/
@@ -159,24 +175,29 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
             }
         }
 
-    /**自动绑定*/
+    /**自动绑定
+     * [onClickNumberAction]*/
     fun onInputValue(value: String): Boolean {
-        keyboardBindTextView?.text = keyboardInputValueParse(
+        _pendingRunnable?.let { mainHandle.removeCallbacks(it) }
+        val result = keyboardInputValueParse(
             newValueBuilder,
             keyboardBindTextView?.text?.toString(),
+            enableShakeInput,
             value,
             incrementStep
         ).apply {
-            _pendingRunnable?.let { mainHandle.removeCallbacks(it) }
             toFloatOrNull()?.let { toValue ->
                 _pendingRunnable = Runnable {
                     onNumberResultAction(toValue)
-                    //清空输入
-                    newValueBuilder.clear()
+                    if (enableShakeInput) {
+                        //清空输入
+                        newValueBuilder.clear()
+                    }
                 }
                 mainHandle.postDelayed(_pendingRunnable!!, bindPendingDelay)
             }
         }
+        keyboardBindTextView?.text = result
         return false
     }
 }
