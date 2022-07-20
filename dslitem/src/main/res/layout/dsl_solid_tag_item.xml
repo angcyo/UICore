@@ -16,7 +16,7 @@
             android:id="@+id/lib_label_view"
             style="@style/LibBodyTextStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@drawable/lib_solid_tag_left_selector"
             android:paddingHorizontal="@dimen/lib_hdpi"
             android:paddingVertical="@dimen/lib_sdpi"
@@ -26,12 +26,12 @@
             android:id="@+id/lib_des_view"
             style="@style/LibBodyTextStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@drawable/lib_solid_tag_right_selector"
             android:paddingHorizontal="@dimen/lib_hdpi"
             android:paddingVertical="@dimen/lib_sdpi"
             android:textColor="@color/colorAccent"
-            tools:text="angcyo" />
+            tools:text="angcyo\nangcyo" />
 
     </LinearLayout>
 

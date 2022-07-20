@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import androidx.core.view.GravityCompat
 import com.angcyo.library.ex.size
 import com.angcyo.widget.R
+import com.angcyo.widget.base.atMost
 import com.angcyo.widget.base.exactly
 import kotlin.math.max
 
@@ -177,15 +178,15 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
                         lp.height
                     )
                     child.measure(childWidthMeasureSpec, childHeightMeasureSpec)
-                } else {
+                } else if (maxCountOnLine > 0) {
+                    //需要平分宽度
+                    val consumeWidth = childConsumeWidth()
+                    val lineChildWidth = (measureWidthSize - consumeWidth) / maxCountOnLine
                     measureChild(
-                        child,
-                        View.MeasureSpec.makeMeasureSpec(
-                            measureWidthSize,
-                            View.MeasureSpec.AT_MOST
-                        ),
-                        heightMeasureSpec
+                        child, exactly(lineChildWidth), heightMeasureSpec
                     )
+                } else {
+                    measureChild(child, atMost(measureWidthSize), heightMeasureSpec)
                 }
             } else {
                 if (params.weight > 0) {
@@ -279,6 +280,11 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
         return intArrayOf(max(w, minimumWidth), max(h, minimumHeight))
     }
 
+    /**横向, 总共消耗的宽度*/
+    private fun childConsumeWidth(): Int {
+        return paddingLeft + paddingRight + itemHorizontalSpace * max(maxCountOnLine - 1, 0)
+    }
+
     /**
      * 等宽并且maxCountLine>0 的时候, 计算 每个child的需要的宽度, margin 属性, 将使用每一行的第一个child
      */
@@ -286,8 +292,7 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
         if (lineViews.isEmpty()) {
             return viewWidth
         }
-        var consumeWidth =
-            paddingLeft + paddingRight + itemHorizontalSpace * max(maxCountOnLine - 1, 0)
+        var consumeWidth = childConsumeWidth()
         val firstChild = lineViews[0]
         val lineViewParams = firstChild.layoutParams as LinearLayout.LayoutParams
         for (i in 0 until maxCountOnLine) {
