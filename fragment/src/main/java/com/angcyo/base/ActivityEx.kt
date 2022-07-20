@@ -95,7 +95,9 @@ fun View.fullscreen(enable: Boolean = true) {
     }
 }
 
-/** 是否是白色状态栏. 如果是, 那么系统的状态栏字体会是灰色 */
+/** 是否是白色状态栏. 如果是, 那么系统的状态栏字体会是灰色
+ * 请在[super.onCreate]调用之后触发
+ * */
 fun Activity.lightStatusBar(light: Boolean = true) {
     window.lightStatusBar(light)
 }
