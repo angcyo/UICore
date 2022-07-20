@@ -7,6 +7,7 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 
 /**
+ * 单独回调[onTouchEvent]事件
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/06/01
  */
