@@ -37,8 +37,15 @@ class ProgressRenderer(val canvasDelegate: CanvasDelegate) : BaseRenderer(canvas
     /**进度文本颜色, 不带透明*/
     var progressTextColor: Int = _color(R.color.canvas_progress_text_color)
 
-    /**用来绘制在目标的渲染器*/
-    var targetRenderer: BaseItemRenderer<*>? = null
+    /**用来绘制进度目标的渲染器*/
+    var progressRenderer: BaseItemRenderer<*>? = null
+        set(value) {
+            field = value
+            canvasDelegate.refresh()
+        }
+
+    /**用来绘制边框目标的渲染器*/
+    var borderRenderer: BaseItemRenderer<*>? = null
         set(value) {
             field = value
             canvasDelegate.refresh()
@@ -48,7 +55,7 @@ class ProgressRenderer(val canvasDelegate: CanvasDelegate) : BaseRenderer(canvas
     var drawProgressMode = true
 
     /**绘制边框*/
-    var drawBorderMode = false
+    var drawBorderMode = true
 
     /**蚂蚁线间隔*/
     var intervals = floatArrayOf(10 * dp, 20 * dp)
@@ -80,10 +87,12 @@ class ProgressRenderer(val canvasDelegate: CanvasDelegate) : BaseRenderer(canvas
             targetRenderer = canvasDelegate.getSelectedRenderer()
         }*/
 
-        targetRenderer?.let {
+        progressRenderer?.let {
             if (drawProgressMode && progress >= 0) {
                 _drawProgressMode(canvas, it)
             }
+        }
+        borderRenderer?.let {
             if (drawBorderMode) {
                 _drawBorderMode(canvas, it)
             }
