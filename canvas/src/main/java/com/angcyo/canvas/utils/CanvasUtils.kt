@@ -373,7 +373,7 @@ fun loadAssetsSvgPath(
 ): SharpDrawable? {
     val svg = app().readAssets(assetsName)
     return try {
-        Svg.loadSvgPathDrawable(svg!!, color, drawStyle)
+        Svg.loadSvgPathDrawable(svg!!, color, drawStyle, null, 0, 0)
     } catch (e: Exception) {
         e.printStackTrace()
         null
@@ -382,11 +382,13 @@ fun loadAssetsSvgPath(
 
 fun loadAssetsSvgPath(
     assetsName: String,
-    paint: Paint = createPaint(Color.BLACK, Paint.Style.STROKE)
+    paint: Paint = createPaint(Color.BLACK, Paint.Style.STROKE),
+    viewWidth: Int = 0,
+    viewHeight: Int = 0,
 ): SharpDrawable? {
     val svg = app().readAssets(assetsName)
     return try {
-        Svg.loadSvgPathDrawable(svg!!, paint.color, paint.style, paint)
+        Svg.loadSvgPathDrawable(svg!!, paint.color, paint.style, paint, viewWidth, viewHeight)
     } catch (e: Exception) {
         e.printStackTrace()
         null
@@ -399,7 +401,7 @@ fun loadTextSvgPath(
     paint: Paint = createPaint(Color.BLACK, Paint.Style.STROKE)
 ): SharpDrawable? {
     return try {
-        Svg.loadSvgPathDrawable(svg, paint.color, paint.style, paint)
+        Svg.loadSvgPathDrawable(svg, paint.color, paint.style, paint, 0, 0)
     } catch (e: Exception) {
         e.printStackTrace()
         null
