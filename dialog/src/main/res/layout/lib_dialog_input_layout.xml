@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -39,5 +40,30 @@
         android:visibility="invisible"
         tools:text="100/100"
         tools:visibility="visible" />
+
+    <!--输入历史-->
+    <com.angcyo.widget.layout.DslFlowLayout
+        android:id="@+id/lib_flow_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:paddingVertical="@dimen/lib_hdpi"
+        android:paddingLeft="@dimen/lib_hdpi"
+        android:visibility="gone"
+        app:r_flow_item_horizontal_space="@dimen/lib_hdpi"
+        app:r_flow_item_vertical_space="@dimen/lib_hdpi"
+        tools:visibility="visible">
+
+        <!--<include layout="@layout/lib_input_history_layout" />
+
+        <include layout="@layout/lib_input_history_layout" />
+
+        <include layout="@layout/lib_input_history_layout" />
+
+        <include layout="@layout/lib_input_history_layout" />
+
+        <include layout="@layout/lib_input_history_layout" />-->
+
+    </com.angcyo.widget.layout.DslFlowLayout>
 
 </LinearLayout>

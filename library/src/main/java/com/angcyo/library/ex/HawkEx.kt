@@ -11,7 +11,7 @@ import com.orhanobut.hawk.Hawk
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
-const val HAWK_SPLIT_CHAR = ","
+const val HAWK_SPLIT_CHAR = "|"
 
 /**
  * this 对应的 key值,
@@ -36,25 +36,14 @@ fun String?.hawkGetList(def: String? = "", maxCount: Int = Int.MAX_VALUE): List<
  * @param sort 默认排序, 最后追加的在首位显示
  *
  * */
-fun String?.hawkPutList(
-    value: String?,
-    sort: Boolean = true,
-    allowEmpty: Boolean = false
-): Boolean {
+fun String?.hawkPutList(value: CharSequence?, sort: Boolean = true): Boolean {
     if (value.isNullOrEmpty()) {
-        if (!allowEmpty) {
-            return false
-        }
+        return false
     }
     val char = HAWK_SPLIT_CHAR
     return this?.run {
-
         val oldString = Hawk.get(this, "")
         val oldList = oldString.splitList(char)
-
-        if (value.isNullOrBlank() && allowEmpty) {
-            return Hawk.put(this, "")
-        }
 
         if (!sort) {
             if (oldList.contains(value)) {
@@ -65,19 +54,27 @@ fun String?.hawkPutList(
 
         oldList.remove(value)
         /*最新的在前面*/
-        oldList.add(0, value!!)
-        Hawk.put(this, "${oldList.connect(char)}")
+        oldList.add(0, value.toString())
+        Hawk.put(this, oldList.connect(char))
     } ?: false
 }
 
+/**直接追加整个[value]*/
 fun String?.hawkPutList(
-    value: List<String>?,
+    value: List<CharSequence>?,
     sort: Boolean = true,
-    allowEmpty: Boolean = false
+    allowEmpty: Boolean = true
 ): Boolean {
     var result = false
-    value?.forEach {
-        result = this?.hawkPutList(it, sort, allowEmpty) == true || result
+    if (value.isNullOrEmpty() && allowEmpty) {
+        this?.let {
+            Hawk.put(it, "")
+            result = true
+        }
+    } else {
+        value?.forEach {
+            result = this?.hawkPutList(it, sort) == true || result
+        }
     }
     return result
 }

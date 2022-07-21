@@ -26,6 +26,7 @@ import com.angcyo.library.utils.PATTERN_MOBILE_SIMPLE
 import com.angcyo.library.utils.PATTERN_URL
 import java.net.URLDecoder
 import java.net.URLEncoder
+import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import kotlin.math.min
@@ -255,11 +256,12 @@ fun CharSequence?.splitList(
     val result = mutableListOf<String>()
 
     if (this.isNullOrEmpty()) {
-    } else if (this.toString().toLowerCase() == "null") {
-    } else if (separator.isNullOrEmpty()) {
+    } else if (this.toString().lowercase(Locale.getDefault()) == "null") {
+    } else if (separator.isEmpty()) {
     } else {
-        for (s in this.split(separator.toRegex(), Int.MAX_VALUE)) {
-            if (s.isNullOrEmpty() && !allowEmpty) {
+        //for (s in this.split(separator.toRegex(), Int.MAX_VALUE)) {
+        for (s in this.split(delimiters = *arrayOf(separator), false, Int.MAX_VALUE)) {
+            if (s.isEmpty() && !allowEmpty) {
                 continue
             }
             if (result.contains(s) && checkExist) {

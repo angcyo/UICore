@@ -15,8 +15,13 @@ import kotlin.reflect.KProperty
  */
 
 /**自动同步保存至[Hawk]
- * [HawkProperty]*/
+ * [HawkProperty]
+ *
+ * var inputHistoryHawkKey: List<String> by HawkListProperty<Any>()
+ *
+ * */
 class HawkListProperty<T>(
+    /*默认的字符串*/
     val def: String? = null,
     /*是否重新排序*/
     val sort: Boolean = true,
@@ -31,7 +36,7 @@ class HawkListProperty<T>(
 
     override fun setValue(thisRef: T, property: KProperty<*>, value: List<String>) {
         val key = property.name
-        if (value.isNullOrEmpty() && allowEmpty) {
+        if (value.isEmpty() && allowEmpty) {
             Hawk.put(key, "")
         } else if (value.isNotEmpty()) {
             key.hawkPutList(value, sort, allowEmpty)

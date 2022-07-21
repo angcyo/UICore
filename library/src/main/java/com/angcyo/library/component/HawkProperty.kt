@@ -29,6 +29,9 @@ class HawkProperty<T>(
     }
 }
 
+/**
+ * var Z_MODEL: Int by HawkPropertyValue<Any, Int>(-1)
+ * */
 class HawkPropertyValue<T, Value>(
     /*默认值*/
     val def: Value
@@ -41,5 +44,4 @@ class HawkPropertyValue<T, Value>(
     override fun setValue(thisRef: T, property: KProperty<*>, value: Value) {
         property.name.hawkPut(value)
     }
-
 }

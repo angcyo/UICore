@@ -11,10 +11,13 @@ import android.view.Gravity
 import android.view.View
 import android.widget.EditText
 import com.angcyo.library.ex._string
+import com.angcyo.library.ex.hawkGetList
+import com.angcyo.library.ex.hawkPutList
 import com.angcyo.library.ex.setWidthHeight
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.*
 import com.angcyo.widget.edit.CharLengthFilter
+import com.angcyo.widget.flow
 import com.angcyo.widget.pager.TextIndicator
 
 /**
@@ -90,12 +93,32 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
      * [R.string.lib_en_digits]*/
     var digits: String? = null
 
+    /**输入历史*/
+    var inputHistoryList: List<CharSequence>? = null
+
+    /**最大显示的输入历史数量*/
+    var inputHistoryMaxLimit: Int = 10
+
+    /**hawk key, 自动读取到[inputHistoryList]和保存*/
+    var inputHistoryHawkKey: String? = null
+        set(value) {
+            field = value
+            value?.hawkGetList(maxCount = inputHistoryMaxLimit)?.let {
+                inputHistoryList = it
+            }
+        }
+
     init {
         dialogLayoutId = R.layout.lib_dialog_input_layout
         positiveButtonListener = { dialog, dialogViewHolder ->
-            if (onInputResult.invoke(dialog, dialogViewHolder.ev(R.id.edit_text_view).string())) {
+            val result = dialogViewHolder.ev(R.id.edit_text_view).string()
+            if (onInputResult.invoke(dialog, result)) {
                 //被拦截
             } else {
+                inputHistoryHawkKey?.let {
+                    //保存历史
+                    it.hawkPutList(result)
+                }
                 dialog.hideSoftInput()
                 dialog.dismiss()
             }
@@ -118,6 +141,32 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
 
         if (showSoftInput) {
             dialogViewHolder.postDelay(showSoftInputDelay) { editView?.showSoftInput() }
+        }
+
+        //history
+        dialogViewHolder.visible(R.id.lib_flow_layout, !inputHistoryList.isNullOrEmpty())
+        dialogViewHolder.flow(R.id.lib_flow_layout)?.apply {
+            resetChild(
+                inputHistoryList,
+                R.layout.lib_input_history_layout
+            ) { itemView, item, itemIndex ->
+                itemView.dslViewHolder().apply {
+                    tv(R.id.lib_text_view)?.text = item
+
+                    //删除
+                    click(R.id.lib_delete_view) {
+                        inputHistoryList?.filterTo(mutableListOf()) { it != item }?.let {
+                            inputHistoryHawkKey?.hawkPutList(it)
+                        }
+                        removeView(itemView)
+                    }
+
+                    //上屏
+                    clickItem {
+                        editView?.appendInputText(item)
+                    }
+                }
+            }
         }
     }
 

@@ -195,6 +195,15 @@ fun TextView.setInputText(text: CharSequence? = null, selection: Boolean = true)
     }
 }
 
+/**追加输入的文本*/
+fun TextView.appendInputText(text: CharSequence? = null, selection: Boolean = true) {
+    append(text)
+    if (selection && this is EditText) {
+        val index = selectionStart + (text?.length ?: 0)
+        setSelection(min(index, getText().length))
+    }
+}
+
 /**恢复选中范围*/
 fun EditText.restoreSelection(start: Int, stop: Int) {
     val length = text.length
