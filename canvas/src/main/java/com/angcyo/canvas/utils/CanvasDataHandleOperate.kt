@@ -25,8 +25,11 @@ import kotlin.math.roundToInt
  */
 object CanvasDataHandleOperate {
 
-    /**缓存文件的文件夹*/
-    const val CACHE_FILE_FOLDER = "engrave"
+    /**雕刻缓存文件的文件夹*/
+    const val ENGRAVE_CACHE_FILE_FOLDER = "engrave"
+
+    /**GCode缓存目录*/
+    const val GCODE_CACHE_FILE_FOLDER = "gcode"
 
     /**GCode数据, 字符串的文本数据*/
     const val KEY_GCODE = "key_gcode"

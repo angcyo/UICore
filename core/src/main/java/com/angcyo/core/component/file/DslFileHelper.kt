@@ -5,6 +5,7 @@ import com.angcyo.coroutine.CoroutineErrorHandler
 import com.angcyo.coroutine.launchGlobal
 import com.angcyo.library.app
 import com.angcyo.library.ex.wrapLog
+import com.angcyo.library.libCacheFile
 import com.angcyo.library.utils.*
 import kotlinx.coroutines.Dispatchers
 import java.text.SimpleDateFormat
@@ -116,6 +117,19 @@ fun FileTextData?.writeTo(
         return FileUtils.appRootExternalFolderFile(folder, name).absolutePath
     }
     return DslFileHelper.write(folder, name, this, append)
+}
+
+/**写入到缓存目录*/
+fun FileTextData?.writeToCache(
+    folder: String = Constant.LOG_FOLDER_NAME,
+    name: String = logFileName(),
+    append: Boolean = true
+): String? {
+    val libCacheFile = libCacheFile(name, folder)
+    if (this == null) {
+        return libCacheFile.absolutePath
+    }
+    return FileUtils.writeExternal(libCacheFile, this, append)
 }
 
 /**将日志写入到指定的日志文件[log.log]*/

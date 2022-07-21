@@ -45,7 +45,8 @@ class ActionPopupConfig : AnchorPopupConfig() {
         super.initLayout(window, viewHolder)
     }
 
-    /**添加[PopupAction]*/
+    /**添加[PopupAction]
+     * [autoDismiss] 点击后, 是否自动销毁[TargetWindow]*/
     fun addAction(text: CharSequence?, autoDismiss: Boolean = true, action: WindowClickAction?) {
         actionList.add(PopupAction(text, autoDismiss, action))
     }
