@@ -123,6 +123,8 @@ class PictureTextItem : PictureItem() {
     //temp
     val _textMeasureBounds = Rect()
 
+    var _skewWidth: Float = 0f
+
     /**单行文本字符的宽度*/
     fun measureTextWidth(text: String): Float {
         paint.textBounds(text, _textMeasureBounds)
@@ -136,7 +138,7 @@ class PictureTextItem : PictureItem() {
         val paintWidth = paint.strokeWidth
 
         //倾斜的宽度
-        val skewWidth = if (paint.textSkewX != 0f) {
+        _skewWidth = if (paint.textSkewX != 0f) {
             tan(paint.textSkewX.absoluteValue) * (_textMeasureBounds.height() / 3)
             //paint.getTextBounds(drawText ?: "", 0, drawText?.length ?: 0, tempRect)
             //(tempRect.width() - width).toInt()
@@ -145,7 +147,7 @@ class PictureTextItem : PictureItem() {
             0f
         }
 
-        return textWidth + skewWidth + paintWidth
+        return textWidth + _skewWidth + paintWidth
     }
 
     /**单个文本字符的高度*/
@@ -193,8 +195,18 @@ class PictureTextItem : PictureItem() {
                         val lineTextHeight = calcTextHeight(lineText)
                         val descent = measureTextDescent(lineText)
 
+                        val offsetX = if (compactText) {
+                            when (paint.textAlign) {
+                                Paint.Align.RIGHT -> -_skewWidth.toInt()
+                                Paint.Align.CENTER -> -_textMeasureBounds.left / 2 - _skewWidth.toInt() / 2
+                                else -> -_textMeasureBounds.left
+                            }
+                        } else {
+                            0
+                        }
+
                         y += lineTextHeight
-                        drawText(lineText, x, y - descent, paint)
+                        drawText(lineText, x + offsetX, y - descent, paint)
                         y += lineSpacing
                     }
                 } else {
@@ -202,8 +214,8 @@ class PictureTextItem : PictureItem() {
                         val textWidth = calcTextWidth(lineText)
 
                         var offsetX = when (paint.textAlign) {
-                            Paint.Align.RIGHT -> textWidth
-                            Paint.Align.CENTER -> textWidth / 2
+                            Paint.Align.RIGHT -> textWidth - _skewWidth.toInt()
+                            Paint.Align.CENTER -> textWidth / 2 - _skewWidth.toInt() / 2
                             else -> 0f
                         }
 
@@ -215,8 +227,8 @@ class PictureTextItem : PictureItem() {
 
                             if (compactText) {
                                 offsetX = when (paint.textAlign) {
-                                    Paint.Align.RIGHT -> textWidth /*+ textBounds.left.toFloat()*/
-                                    Paint.Align.CENTER -> textWidth / 2
+                                    Paint.Align.RIGHT -> textWidth - _skewWidth.toInt() /*+ textBounds.left.toFloat()*/
+                                    Paint.Align.CENTER -> textWidth / 2 - _skewWidth.toInt() / 2
                                     else -> -textBounds.left.toFloat()
                                 }
                             }
