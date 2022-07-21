@@ -55,7 +55,7 @@ class StateLayoutManager {
         } else {
             viewList.forEach {
                 updateStateLayout(it, info)
-                if (info.updataAnim) {
+                if (info.updateAnim) {
                     it.clipBoundsAnimatorFromLeft()
                 }
             }
@@ -73,9 +73,9 @@ class StateLayoutManager {
     fun removeState(info: StateLayoutInfo) {
         val viewList = findViewByState(info)
         viewList.forEach { rootView ->
+            rootView.tag = null //清除状态
             val imageView = rootView.find<ImageView>(R.id.lib_state_image_view)
             imageView?.cancelAnimator()
-
             rootView.cancelAnimator()
 
             //动画结束后, 移除view
@@ -108,7 +108,7 @@ data class StateLayoutInfo(
     /**激活添加时的clip动画*/
     var clipAnim: Boolean = true,
     /**激活更新时的clip动画*/
-    var updataAnim: Boolean = false,
+    var updateAnim: Boolean = false,
     /**图标旋转动画*/
     var rotateAnim: Boolean = true,
     /**uuid*/
