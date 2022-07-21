@@ -436,8 +436,9 @@ fun View.clipBoundsAnimatorFromLeft(
     start: Rect = Rect(0, 0, 0, mH()),
     end: Rect = Rect(0, 0, mW(), mH()),
     duration: Long = ANIM_DURATION,
-    interpolator: Interpolator = LinearInterpolator()
-): ObjectAnimator = clipBoundsAnimator(start, end, duration, interpolator)
+    interpolator: Interpolator = LinearInterpolator(),
+    onEndAction: () -> Unit = {}
+): ObjectAnimator = clipBoundsAnimator(start, end, duration, interpolator, onEndAction)
 
 /**clip动画, 从右到左隐藏
  * [com.angcyo.library.ex.AnimEx.clipBoundsAnimator]
@@ -446,8 +447,9 @@ fun View.clipBoundsAnimatorFromRightHide(
     start: Rect = Rect(0, 0, mW(), mH()),
     end: Rect = Rect(0, 0, 0, mH()),
     duration: Long = ANIM_DURATION,
-    interpolator: Interpolator = LinearInterpolator()
-): ObjectAnimator = clipBoundsAnimator(start, end, duration, interpolator)
+    interpolator: Interpolator = LinearInterpolator(),
+    onEndAction: () -> Unit = {}
+): ObjectAnimator = clipBoundsAnimator(start, end, duration, interpolator, onEndAction)
 
 /**clip动画
  * [androidx.transition.ChangeClipBounds]
@@ -456,7 +458,8 @@ fun View.clipBoundsAnimator(
     start: Rect = Rect(mW() / 2, mH() / 2, mW() / 2, mH() / 2),
     end: Rect = Rect(0, 0, mW(), mH()),
     duration: Long = ANIM_DURATION,
-    interpolator: Interpolator = LinearInterpolator()
+    interpolator: Interpolator = LinearInterpolator(),
+    onEndAction: () -> Unit = {}
 ): ObjectAnimator {
     ViewCompat.setClipBounds(this, start)
     val evaluator = RectEvaluator(Rect())
@@ -478,6 +481,7 @@ fun View.clipBoundsAnimator(
             if (end.width() <= 0 || end.height() <= 0) {
                 visibility = View.GONE
             }
+            onEndAction()
         }
     })
     animator.duration = duration

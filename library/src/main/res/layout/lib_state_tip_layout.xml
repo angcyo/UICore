@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_state_wrap_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/lib_hdpi"
+    android:background="@drawable/lib_white_round_max_bg_shape"
+    android:elevation="@dimen/lib_elevation"
+    android:gravity="center"
+    android:padding="@dimen/lib_sdpi"
+    android:visibility="visible"
+    tools:layout_gravity="center">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/lib_state_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/lib_state_tip_ico" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_state_text_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/lib_hdpi"
+        tools:text="预览中...\n预览中...预览中...预览中...预览中...预览中...预览中...预览中...预览中..." />
+
+</LinearLayout>

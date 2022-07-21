@@ -266,6 +266,13 @@ fun ViewGroup.adjustOrder(vararg id: Int) {
     adjustOrder(*array)
 }
 
+/**移除所有[View]*/
+fun ViewGroup.removeAllView(list: List<View>) {
+    list.forEach {
+        removeView(it)
+    }
+}
+
 //</editor-fold desc="child操作">
 
 /**选中的[View]*/

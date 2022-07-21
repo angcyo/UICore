@@ -80,5 +80,6 @@
     <string name="canvas_delete_font">删除字体</string>
 
     <string name="canvas_photo">相册</string>
+    <string name="preview_out_of_range">预览超出范围</string>
 
 </resources>
