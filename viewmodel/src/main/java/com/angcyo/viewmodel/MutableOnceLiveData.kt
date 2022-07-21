@@ -13,7 +13,7 @@ import androidx.lifecycle.Observer
  */
 class MutableOnceLiveData<T>(value: T? = null) : MutableErrorLiveData<T>(value) {
 
-    /**存储最后一次的值*/
+    /**存储最后一次不为空的值*/
     var lastValue: T? = null
 
     /**立马清空数据*/
@@ -21,7 +21,7 @@ class MutableOnceLiveData<T>(value: T? = null) : MutableErrorLiveData<T>(value) 
         super.setValue(value)
         if (value != null) {
             lastValue = value
-            if (hasObservers()) {
+            if (hasActiveObservers()) {
                 //如果有观察者, 则清空数据
                 postValue(null)
             }
