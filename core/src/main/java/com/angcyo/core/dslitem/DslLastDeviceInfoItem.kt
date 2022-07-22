@@ -7,9 +7,10 @@ import androidx.fragment.app.Fragment
 import com.angcyo.base.dslFHelper
 import com.angcyo.core.R
 import com.angcyo.core.component.fileSelector
-import com.angcyo.dsladapter.item.IFragmentItem
+import com.angcyo.core.component.model.LanguageModel
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.isItemLastInAdapter
+import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.library.app
 import com.angcyo.library.component.work.Trackers
 import com.angcyo.library.ex.*
@@ -42,12 +43,18 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
                 .writeTo(Constant.LOG_FOLDER_NAME.logFilePath("device.log"), false)
         }
 
-        fun deviceInfo(context: Context, config: DslSpan.() -> Unit = {}) = span {
+        fun deviceInfo(context: Context = app(), config: DslSpan.() -> Unit = {}) = span {
             val api = getAppString("base_api")
             if (!api.isNullOrEmpty()) {
                 appendln(api)
             }
             append(getWifiIP()).append(SPLIT).append(getMobileIP())
+
+            //gmt
+            appendln()
+            append(LanguageModel.getTimeZoneDes())
+            append("/")
+            append(LanguageModel.getCurrentLanguage())
 
             val vpn = Device.vpnInfo()
             val proxy = Device.proxyInfo()
@@ -55,7 +62,6 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
                 vpn?.run {
                     append(SPLIT)
                     append(this)
-
                 }
                 proxy?.run {
                     append(SPLIT)

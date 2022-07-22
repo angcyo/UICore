@@ -226,6 +226,42 @@ class LanguageModel : ViewModel() {
             val local = readLocal(app()) ?: return false
             return !isSameLocal(local, newLocal)
         }
+
+        /**
+         * 获取当前时区 GMT+08:00
+         * @return
+         */
+        val currentTimeZone: String
+            get() {
+                val tz = TimeZone.getDefault()
+                return tz.getDisplayName(false, TimeZone.SHORT)
+            }
+
+        /**
+         * https://developer.android.com/guide/topics/resources/multilingual-support?hl=zh-cn
+         * */
+        fun getTimeZoneDes(): String = buildString {
+            val tz = TimeZone.getDefault()
+            append(tz.getDisplayName(false, TimeZone.LONG)) //中国标准时间
+            append(" ")
+            append(tz.id) //Asia/Shanghai
+            append(" ")
+            append(tz.getDisplayName(false, TimeZone.SHORT)) //GMT+08:00
+            append(" ")
+            append(tz.rawOffset) //28800000 8小时对应的毫秒数
+        }
+
+        /**
+         * 获取当前系统语言格式 zh_CN
+         * @param context
+         * @return
+         */
+        fun getCurrentLanguage(context: Context = app()): String {
+            val locale = context.resources.configuration.locale
+            val language = locale.language
+            val country = locale.country
+            return language + "_" + country
+        }
     }
 
     /**设置的语言

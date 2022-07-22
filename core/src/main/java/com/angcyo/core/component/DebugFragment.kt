@@ -48,6 +48,10 @@ class DebugFragment : BaseDslFragment() {
             add(DebugAction("http.log", appFilePath(logFileName(), Constant.HTTP_FOLDER_NAME)))
             add(DebugAction("error.log", appFilePath("error.log", Constant.LOG_FOLDER_NAME)))
         }
+
+        fun addDebugAction(action: DebugAction.() -> Unit) {
+            DEBUG_ACTION_LIST.add(DebugAction().apply(action))
+        }
     }
 
     init {
@@ -89,7 +93,7 @@ class DebugFragment : BaseDslFragment() {
                                         toast("not support!")
                                     }
                                 } else {
-                                    item.action.invoke(this@DebugFragment)
+                                    item.action?.invoke(this@DebugFragment)
                                 }
                             }
                         }
@@ -116,10 +120,10 @@ class DebugFragment : BaseDslFragment() {
 /**调试入口点*/
 data class DebugAction(
     /**按钮的名字*/
-    val name: String,
+    var name: String = "",
     /**日志的路径, 如果设置了则会直接显示对应的日志内容
      * 设置了[action]会覆盖默认的点击行为*/
-    val logPath: String? = null,
+    var logPath: String? = null,
     /**按钮的点击回调*/
-    val action: ((DebugFragment) -> Unit)? = null
+    var action: ((DebugFragment) -> Unit)? = null
 )
