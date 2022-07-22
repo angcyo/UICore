@@ -76,6 +76,7 @@
 
     <string name="canvas_import_font">导入</string>
     <string name="canvas_invalid_font">无效的字体</string>
+    <string name="canvas_font_exist">字体已存在</string>
     <string name="canvas_cannot_import">无法导入</string>
     <string name="canvas_delete_font">删除字体</string>
 

@@ -445,6 +445,19 @@ fun RecyclerView.scrollToEnd(smooth: Boolean = false) {
     }
 }
 
+/**滚动到顶部*/
+fun RecyclerView.scrollToFirst(smooth: Boolean = false) {
+    val count = adapter?.itemCount ?: 0
+    if (count > 0) {
+        val position = 0
+        if (smooth) {
+            smoothScrollToPosition(position)
+        } else {
+            scrollToPosition(position)
+        }
+    }
+}
+
 /**保存当前的滚动位置*/
 fun RecyclerView.saveScrollPosition(): ScrollPositionConfig {
     val result = ScrollPositionConfig()

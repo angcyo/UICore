@@ -25,9 +25,11 @@
     <color name="canvas_dark_white">#f9f9f9</color>
 
     <dimen name="canvas_edit_text_size">12dp</dimen>
+    <dimen name="canvas_check_box_size">18dp</dimen>
 
     <!--雕刻进度颜色-->
     <color name="canvas_progress_color">@color/canvas_primary</color>
     <color name="canvas_progress_text_color">@color/error</color>
+
 
 </resources>

@@ -18,7 +18,9 @@ import androidx.core.content.FileProvider
 import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.libCacheFile
+import com.angcyo.library.libCacheFolderPath
 import com.angcyo.library.model.MediaBean
+import com.angcyo.library.utils.fileNameUUID
 import java.io.*
 import java.nio.charset.Charset
 import java.util.*
@@ -73,6 +75,22 @@ fun Uri.saveTo(filePath: String = libCacheFile().absolutePath, context: Context 
         it.copyTo(FileOutputStream(File(filePath)))
     }
     return filePath
+}
+
+/**默认按照原文件名存储
+ * @return 文件路径*/
+fun Uri.saveToFolder(
+    folderPath: String = libCacheFolderPath(),
+    fileName: String? = null,
+    context: Context = app()
+): String {
+    val name = if (fileName == null) {
+        val path = getPathFromUri()
+        path?.lastName() ?: fileNameUUID()
+    } else {
+        fileName
+    }
+    return saveTo(File(folderPath, name).absolutePath, context)
 }
 
 /**从[Uri]中读取字节数组数据

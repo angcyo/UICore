@@ -198,6 +198,16 @@ class RLayoutDelegate : ClipLayoutDelegate() {
                 //设置[r_layout_height]
                 heightSpec = exactlyMeasure(height)
             }
+        } else {
+            val widthMode = View.MeasureSpec.getMode(widthMeasureSpec)
+            val heightMode = View.MeasureSpec.getMode(heightMeasureSpec)
+            val lp = delegateView.layoutParams
+            if (widthMode == View.MeasureSpec.AT_MOST && lp.width == ViewGroup.LayoutParams.MATCH_PARENT) {
+                widthSpec = exactlyMeasure(View.MeasureSpec.getSize(widthMeasureSpec))
+            }
+            if (heightMode == View.MeasureSpec.AT_MOST && lp.height == ViewGroup.LayoutParams.MATCH_PARENT) {
+                heightSpec = exactlyMeasure(View.MeasureSpec.getSize(heightMeasureSpec))
+            }
         }
         return intArrayOf(widthSpec, heightSpec)
     }
