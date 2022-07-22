@@ -1,0 +1,27 @@
+/**
+ * 2022-4-27
+ * 下载 aar 文件
+ * */
+
+//https://stackoverflow.com/questions/23446233/compile-jar-from-url-in-gradle
+def urlFile(String url, String name) {
+    def urlName = name
+    if (name == null || name.isEmpty()) {
+        urlName = url.substring(url.lastIndexOf("/") + 1)
+    }
+    def file = new File("$buildDir/download/${urlName}")
+    file.parentFile.mkdirs()
+    if (!file.exists()) {
+        new URL(url).withInputStream { downloadStream ->
+            file.withOutputStream { fileOut ->
+                fileOut << downloadStream
+            }
+        }
+    }
+    files(file.absolutePath)
+}
+
+//导出
+ext {
+    urlFile = this.&urlFile
+}
