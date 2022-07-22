@@ -396,12 +396,17 @@ object Device {
     fun buildString(builder: Appendable): Appendable {
         builder.apply {
             append(getAppVersionName()).append(":").append(getAppVersionCode())
-            append(" ")
-            append(getAppString("user_name"))
-            append(" ")
-            appendln(getAppString("os_name"))
-
-            appendln(getAppString("build_time"))
+            getAppString("user_name")?.let {
+                append(" $it")
+            }
+            getAppString("os_name")?.let {
+                append(it)
+                appendLine()
+            }
+            getAppString("build_time")?.let {
+                append(it)
+                appendLine()
+            }
         }
         return builder
     }
