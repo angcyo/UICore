@@ -10,6 +10,7 @@ import com.angcyo.canvas.core.MmValueUnit
 import com.angcyo.canvas.items.PictureTextItem
 import com.angcyo.library.app
 import com.angcyo.library.ex.*
+import com.angcyo.svg.StylePath
 import com.angcyo.svg.Svg
 import com.pixplicity.sharp.SharpDrawable
 import kotlin.math.atan2
@@ -348,6 +349,13 @@ fun CanvasDelegate.engraveMode(enable: Boolean = true) {
     refresh()
 }
 
+/**[android.graphics.Paint.Style]*/
+fun Path.pathStyle() = if (this is StylePath) {
+    style
+} else {
+    Paint.Style.STROKE
+}
+
 //</editor-fold desc="Other">
 
 //<editor-fold desc="Svg">
@@ -364,16 +372,18 @@ fun loadAssetsSvg(assetsName: String): SharpDrawable? {
 }
 
 /**只读取[SVG]中的[Path]数据
- * [com.angcyo.svg.CustomPath]
+ * [com.angcyo.svg.StylePath]
  * [com.pixplicity.sharp.SharpDrawable.pathList]*/
 fun loadAssetsSvgPath(
     assetsName: String,
-    color: Int, // Color.BLACK 黑色边
-    drawStyle: Paint.Style = Paint.Style.STROKE //描边
+    color: Int = Color.BLACK, // Color.BLACK 黑色边
+    drawStyle: Paint.Style? = null, //Paint.Style.STROKE //描边
+    viewWidth: Int = 0,
+    viewHeight: Int = 0,
 ): SharpDrawable? {
     val svg = app().readAssets(assetsName)
     return try {
-        Svg.loadSvgPathDrawable(svg!!, color, drawStyle, null, 0, 0)
+        Svg.loadSvgPathDrawable(svg!!, color, drawStyle, null, viewWidth, viewHeight)
     } catch (e: Exception) {
         e.printStackTrace()
         null
@@ -382,7 +392,7 @@ fun loadAssetsSvgPath(
 
 fun loadAssetsSvgPath(
     assetsName: String,
-    paint: Paint = createPaint(Color.BLACK, Paint.Style.STROKE),
+    paint: Paint, //createPaint(Color.BLACK, Paint.Style.STROKE),
     viewWidth: Int = 0,
     viewHeight: Int = 0,
 ): SharpDrawable? {
@@ -398,10 +408,27 @@ fun loadAssetsSvgPath(
 /**从[svg]字符串中加载SVG [SharpDrawable]*/
 fun loadTextSvgPath(
     svg: String,
-    paint: Paint = createPaint(Color.BLACK, Paint.Style.STROKE)
+    color: Int = Color.BLACK,
+    viewWidth: Int = 0,
+    viewHeight: Int = 0,
 ): SharpDrawable? {
     return try {
-        Svg.loadSvgPathDrawable(svg, paint.color, paint.style, paint, 0, 0)
+        Svg.loadSvgPathDrawable(svg, color, null, null, viewWidth, viewHeight)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
+/**从[svg]字符串中加载SVG [SharpDrawable]*/
+fun loadTextSvgPath(
+    svg: String,
+    paint: Paint,// = createPaint(Color.BLACK, Paint.Style.STROKE)
+    viewWidth: Int = 0,
+    viewHeight: Int = 0,
+): SharpDrawable? {
+    return try {
+        Svg.loadSvgPathDrawable(svg, paint.color, paint.style, paint, viewWidth, viewHeight)
     } catch (e: Exception) {
         e.printStackTrace()
         null

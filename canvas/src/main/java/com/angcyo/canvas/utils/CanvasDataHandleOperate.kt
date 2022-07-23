@@ -1,9 +1,6 @@
 package com.angcyo.canvas.utils
 
-import android.graphics.Bitmap
-import android.graphics.Matrix
-import android.graphics.Path
-import android.graphics.RectF
+import android.graphics.*
 import android.view.Gravity
 import com.angcyo.canvas.core.MmValueUnit
 import com.angcyo.canvas.items.getHoldData
@@ -13,6 +10,7 @@ import com.angcyo.gcode.GCodeWriteHandler
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.fileName
 import com.angcyo.library.utils.filePath
+import com.angcyo.svg.StylePath
 import java.io.File
 import kotlin.math.max
 import kotlin.math.min
@@ -49,7 +47,7 @@ object CanvasDataHandleOperate {
 
     fun _defaultGCodeOutputFile() = filePath("GCode", fileName(suffix = ".gcode")).file()
 
-    /**将路径描边转换为G1代码. 输出的GCode可以直接打印
+    /**将路径 填充/描边 转换为G1代码. 输出的GCode可以直接打印
      * [path] 需要转换的路径, 缩放后的path, 但是没有旋转
      * [rotateBounds] 路径需要平移的left, top
      * [rotate] 路径需要旋转的角度
@@ -57,9 +55,9 @@ object CanvasDataHandleOperate {
      * [pathStep] 路径枚举步长
      *
      * 仅支持[Path]的旋转
-     * [com.angcyo.canvas.utils.CanvasDataHandleOperate.pathStrokeToGCode]
+     * [com.angcyo.canvas.utils.CanvasDataHandleOperate.pathToGCode]
      * */
-    fun pathStrokeToGCode(
+    fun pathToGCode(
         path: Path,
         rotateBounds: RectF,
         rotate: Float,
@@ -87,28 +85,56 @@ object CanvasDataHandleOperate {
         val mmValueUnit = MmValueUnit()
         outputFile.writer().use { writer ->
             gCodeHandler.gapValue = 0f
-            gCodeHandler.pathStrokeToGCode(
-                path,
-                mmValueUnit,
-                writer,
-                offsetLeft,
-                offsetTop,
-                pathStep
-            )
+
+            //first
+            gCodeHandler.writeFirst(writer, mmValueUnit)
+
+            val style = path.pathStyle()
+
+            //先填充
+            if (style == Paint.Style.FILL || style == Paint.Style.FILL_AND_STROKE) {
+                gCodeHandler.pathFillToGCode(
+                    targetPath,
+                    mmValueUnit,
+                    writer,
+                    false,
+                    false,
+                    offsetLeft,
+                    offsetTop,
+                    pathStep
+                )
+            }
+
+            //后描边
+            if (style == Paint.Style.STROKE || style == Paint.Style.FILL_AND_STROKE) {
+                gCodeHandler.pathStrokeToGCode(
+                    targetPath,
+                    mmValueUnit,
+                    writer,
+                    false,
+                    false,
+                    offsetLeft,
+                    offsetTop,
+                    pathStep
+                )
+            }
+
+            //finish
+            gCodeHandler.writeFinish(writer)
         }
 
         return outputFile
     }
 
-    /**将路径集合转换成GCode, 只有描边的数据. 输出的GCode可以直接打印
+    /**将路径集合转换成GCode. 输出的GCode可以直接打印
      * [pathList] 未缩放旋转的原始路径数据
      * [bounds] 未旋转时的bounds, 用来实现缩放
      * [rotate] 旋转角度, 配合[bounds]实现平移
      *
      * 支持[Path]的旋转和平移
-     * [com.angcyo.canvas.utils.CanvasDataHandleOperate.pathStrokeToGCode]
+     * [com.angcyo.canvas.utils.CanvasDataHandleOperate.pathToGCode]
      * */
-    fun pathStrokeToGCode(
+    fun pathToGCode(
         pathList: List<Path>,
         bounds: RectF,
         rotate: Float,
@@ -142,7 +168,9 @@ object CanvasDataHandleOperate {
         }
 
         for (path in pathList) {
-            val newPath = Path(path)
+            val newPath = StylePath()
+            newPath.set(path)
+            newPath.style = path.pathStyle()
             newPath.transform(matrix)
             newPathList.add(newPath)
         }
@@ -163,10 +191,12 @@ object CanvasDataHandleOperate {
         val mmValueUnit = MmValueUnit()
         outputFile.writer().use { writer ->
             gCodeHandler.gapValue = 0f
-            gCodeHandler.pathStrokeToGCode(
+            gCodeHandler.pathToGCode(
                 newPathList,
                 mmValueUnit,
                 writer,
+                true,
+                true,
                 offsetLeft,
                 offsetTop,
                 pathStep

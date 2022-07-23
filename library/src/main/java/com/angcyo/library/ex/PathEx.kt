@@ -149,10 +149,14 @@ fun Path.intersect(path: Path): Boolean {
 }
 
 /**枚举路径上所有的点
- * [step] 步长*/
-fun Path.eachPath(step: Float = 1f, block: (index: Int, posArray: FloatArray) -> Unit) {
+ * [step] 枚举的步长
+ * */
+fun Path.eachPath(
+    step: Float = 1f,
+    block: (index: Int, posArray: FloatArray) -> Unit
+) {
     val pathMeasure = PathMeasure(this, false)
-    val floatArray = floatArrayOf(0f, 0f)
+    val posArray = floatArrayOf(0f, 0f)
     var position = 0f
     var length = pathMeasure.length
     var index = 0
@@ -160,8 +164,10 @@ fun Path.eachPath(step: Float = 1f, block: (index: Int, posArray: FloatArray) ->
     //func
     fun _each() {
         while (position <= length) {
-            pathMeasure.getPosTan(position, floatArray, null)
-            block(index++, floatArray)
+            pathMeasure.getPosTan(position, posArray, null)
+
+            block(index++, posArray)
+
             if (position == length) {
                 break
             }

@@ -1,10 +1,13 @@
 package com.angcyo.gcode
 
+import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.RectF
 import android.os.Debug
 import com.angcyo.canvas.core.IValueUnit
 import com.angcyo.canvas.core.InchValueUnit
 import com.angcyo.canvas.core.component.CanvasTouchHandler
+import com.angcyo.canvas.utils.pathStyle
 import com.angcyo.library.L
 import com.angcyo.library.ex.eachPath
 import com.angcyo.library.ex.size
@@ -66,19 +69,25 @@ class GCodeWriteHandler {
 
     //region ---Path---
 
-    /**[Path]路径描边数据, 转成GCode数据, 不包含GCode头尾数据
+    /**[Path]路径描边数据(已经旋转后), 转成GCode数据, 不包含GCode头尾数据
      * [offsetLeft] [offsetTop] 偏移量
      * [pathStep] 路径枚举步长
+     * [isFirst] 是否是头数据
+     * [isFinish] 是否是尾数据
      * */
     fun pathStrokeToGCode(
         path: Path,
         unit: IValueUnit,
         writer: Appendable,
+        isFirst: Boolean,
+        isFinish: Boolean,
         offsetLeft: Float = 0f, //偏移的像素
         offsetTop: Float = 0f,
         pathStep: Float = 1f
     ) {
-        writeFirst(writer, unit)
+        if (isFirst) {
+            writeFirst(writer, unit)
+        }
         path.eachPath(pathStep) { index, posArray ->
             if (index == 0) {
                 //path 可能有多段
@@ -93,52 +102,149 @@ class GCodeWriteHandler {
 
             writeLine(writer, x, y)
         }
-        if (autoFinish) {
+        if (isFinish && autoFinish) {
+            writeFinish(writer)
+        }
+    }
+
+    /**
+     * [Path] 填充路径转GCode
+     * [pathToGCode]
+     * [isFirst] 是否是头数据
+     * [isFinish] 是否是尾数据
+     * */
+    fun pathFillToGCode(
+        path: Path,
+        unit: IValueUnit,
+        writer: Appendable,
+        isFirst: Boolean,
+        isFinish: Boolean,
+        offsetLeft: Float = 0f, //偏移的像素
+        offsetTop: Float = 0f,
+        pathStep: Float = 1f
+    ) {
+        //能够完全包含path的矩形
+        val pathBounds = RectF()
+        path.computeBounds(pathBounds, true)
+
+        if (isFirst) {
+            writeFirst(writer, unit)
+        }
+
+        //矩形由上往下扫描, 取与path的交集
+        val lineHeight = pathStep
+        var y = pathBounds.top + lineHeight
+        val endY = pathBounds.bottom
+        val linePath = Path()
+        val resultPath = Path()
+        while (y <= endY) {
+            //逐行扫描
+            linePath.rewind()
+            resultPath.rewind()
+
+            //一行
+            linePath.addRect(
+                pathBounds.left,
+                y - lineHeight,
+                pathBounds.right,
+                y,
+                Path.Direction.CW
+            )
+
+            if (resultPath.op(linePath, path, Path.Op.INTERSECT)) {
+                //操作成功
+                if (!resultPath.isEmpty) {
+                    //有交集数据, 写入GCode数据
+                    pathStrokeToGCode(
+                        resultPath,
+                        unit,
+                        writer,
+                        false,
+                        false,
+                        offsetLeft,
+                        offsetTop,
+                        lineHeight,
+                    )
+                }
+            }
+
+            if (y == endY) {
+                break
+            }
+            y += pathStep + lineHeight
+            if (y > endY) {
+                y = endY
+            }
+        }
+        if (isFinish && autoFinish) {
             writeFinish(writer)
         }
     }
 
     /**[pathList] 实际的路径数据
-     * [pathStrokeToGCode]
+     * [pathStrokeToGCode] [pathFillToGCode]
      *
      * [offsetLeft] [offsetTop] 偏移量
      * [pathStep] 路径枚举步长
+     *
+     * [isFirst] 是否是头数据
+     * [isFinish] 是否是尾数据
      * */
-    fun pathStrokeToGCode(
+    fun pathToGCode(
         pathList: List<Path>,
         unit: IValueUnit,
         writer: Appendable,
+        isFirst: Boolean,
+        isFinish: Boolean,
         offsetLeft: Float = 0f, //偏移的像素
         offsetTop: Float = 0f,
         pathStep: Float = 1f
     ) {
-        writeFirst(writer, unit)
+        if (isFirst) {
+            writeFirst(writer, unit)
+        }
         for (path in pathList) {
             if (Debug.isDebuggerConnected()) {
                 val bitmap = path.toBitmap()
                 L.i(bitmap.byteCount)
             }
-            path.eachPath(pathStep) { index, posArray ->
-                if (index == 0) {
-                    //path 可能有多段
-                    _writeLastG1(writer)
-                }
-                val xPixel = posArray[0] + offsetLeft
-                val yPixel = posArray[1] + offsetTop
 
-                //像素转成mm/inch
-                val x = unit.convertPixelToValue(xPixel)
-                val y = unit.convertPixelToValue(yPixel)
+            val style = path.pathStyle()
 
-                writeLine(writer, x, y)
+            //先填充
+            if (style == Paint.Style.FILL || style == Paint.Style.FILL_AND_STROKE) {
+                pathFillToGCode(
+                    path,
+                    unit,
+                    writer,
+                    false,
+                    false,
+                    offsetLeft,
+                    offsetTop,
+                    pathStep
+                )
             }
+
+            //后描边
+            if (style == Paint.Style.STROKE || style == Paint.Style.FILL_AND_STROKE) {
+                pathStrokeToGCode(
+                    path,
+                    unit,
+                    writer,
+                    false,
+                    false,
+                    offsetLeft,
+                    offsetTop,
+                    pathStep
+                )
+            }
+
             _writeLastG1(writer)
         }
-        if (autoFinish) {
+        if (isFinish && autoFinish) {
             writeFinish(writer)
         }
     }
-
     //endregion
 
     //region ---core---
