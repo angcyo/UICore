@@ -37,7 +37,7 @@ class PictureShapeItem : PictureItem() {
     init {
         paint.strokeWidth = 1f //* dp
         paint.style = Paint.Style.FILL_AND_STROKE
-        itemName = "Shape"
+        itemLayerName = "Shape"
     }
 
     /**将[shapePath]转换成可以渲染的[Drawable]*/

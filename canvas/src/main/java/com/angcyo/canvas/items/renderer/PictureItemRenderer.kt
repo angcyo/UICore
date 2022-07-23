@@ -183,10 +183,7 @@ class PictureItemRenderer(canvasView: ICanvasView) :
     }
 
     /**更新笔的样式*/
-    fun updatePaintStyle(
-        style: Paint.Style,
-        strategy: Strategy = Strategy.normal
-    ) {
+    override fun updatePaintStyle(style: Paint.Style, strategy: Strategy) {
         val oldValue = getRendererItem()?.paint?.style
         if (oldValue == style) {
             return

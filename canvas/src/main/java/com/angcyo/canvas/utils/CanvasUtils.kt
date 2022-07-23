@@ -351,7 +351,7 @@ fun CanvasDelegate.engraveMode(enable: Boolean = true) {
 
 /**[android.graphics.Paint.Style]*/
 fun Path.pathStyle() = if (this is StylePath) {
-    style
+    this.pathStyle
 } else {
     Paint.Style.STROKE
 }

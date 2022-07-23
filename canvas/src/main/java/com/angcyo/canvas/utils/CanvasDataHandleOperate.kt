@@ -131,7 +131,7 @@ object CanvasDataHandleOperate {
      * [bounds] 未旋转时的bounds, 用来实现缩放
      * [rotate] 旋转角度, 配合[bounds]实现平移
      *
-     * 支持[Path]的旋转和平移
+     * 支持[Path]的旋转和平移 [com.angcyo.svg.StylePath]支持样式自动选择
      * [com.angcyo.canvas.utils.CanvasDataHandleOperate.pathToGCode]
      * */
     fun pathToGCode(

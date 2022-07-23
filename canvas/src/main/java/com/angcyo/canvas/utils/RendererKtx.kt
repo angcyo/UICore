@@ -95,13 +95,22 @@ fun CanvasView.addShapeRenderer(path: Path, paint: TextPaint? = null): ShapeItem
 //<editor-fold desc="DrawableItemRenderer">
 
 /**添加一个[Drawable]渲染器
- * [DrawableItemRenderer]*/
-fun CanvasView.addDrawableRenderer(drawable: Drawable): DrawableItem =
-    canvasDelegate.addDrawableRenderer(drawable)
-
-fun CanvasDelegate.addDrawableRenderer(drawable: Drawable): DrawableItem {
+ * [DrawableItemRenderer]
+ * [com.pixplicity.sharp.SharpDrawable]
+ * [com.angcyo.gcode.GCodeDrawable]
+ * */
+fun CanvasDelegate.addDrawableRenderer(
+    drawable: Drawable,
+    style: Paint.Style? = null
+): DrawableItem {
     val renderer = DrawableItemRenderer<DrawableItem>(this)
-    renderer._rendererItem = DrawableItem().apply { this.drawable = drawable }
+    renderer._rendererItem = DrawableItem().apply {
+        this.drawable = drawable
+        style?.let {
+            //画笔的样式, SharpDrawable支持
+            paint.style = it
+        }
+    }
     addCentreItemRenderer(renderer, Strategy.normal)
     selectedItem(renderer)
     return renderer._rendererItem!!
@@ -109,7 +118,7 @@ fun CanvasDelegate.addDrawableRenderer(drawable: Drawable): DrawableItem {
 
 /**添加一个[Bitmap]渲染器*/
 fun CanvasView.addDrawableRenderer(bitmap: Bitmap, res: Resources = app().resources): DrawableItem {
-    return addDrawableRenderer(BitmapDrawable(res, bitmap))
+    return canvasDelegate.addDrawableRenderer(BitmapDrawable(res, bitmap))
 }
 
 /**添加一个文本[Drawable]渲染器 */

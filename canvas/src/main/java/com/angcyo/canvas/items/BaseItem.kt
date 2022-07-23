@@ -58,10 +58,10 @@ abstract class BaseItem : ICanvasItem {
     }
 
     /**图层预览的名称*/
-    override var itemName: CharSequence? = null
+    override var itemLayerName: CharSequence? = null
 
     /**图层预览的图形*/
-    override var itemDrawable: Drawable? = null
+    override var itemLayerDrawable: Drawable? = null
 }
 
 /**获取额外存储的数据

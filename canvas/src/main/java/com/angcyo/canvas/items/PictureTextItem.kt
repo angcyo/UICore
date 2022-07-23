@@ -61,7 +61,7 @@ class PictureTextItem : PictureItem() {
     var heightIncrease: Float = 0f
 
     init {
-        itemName = "Text"
+        itemLayerName = "Text"
         compactText = true
         wordSpacing = 1 * dp //字间距
 

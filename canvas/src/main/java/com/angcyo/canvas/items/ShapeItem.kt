@@ -15,6 +15,6 @@ class ShapeItem : DrawableItem() {
 
     init {
         paint.style = Paint.Style.FILL
-        itemName = "Shape"
+        itemLayerName = "Shape"
     }
 }

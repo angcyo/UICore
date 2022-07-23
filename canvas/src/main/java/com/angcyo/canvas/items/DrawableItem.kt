@@ -12,7 +12,7 @@ open class DrawableItem : BaseItem() {
     var drawable: Drawable? = null
 
     init {
-        itemName = "Drawable"
+        itemLayerName = "Drawable"
     }
 
     /**更新[drawable]*/

@@ -105,11 +105,11 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
             }
             if (haveBitmapItem) {
                 _rendererItem = SelectGroupBitmapItem().apply {
-                    itemName = "Group Bitmap"
+                    itemLayerName = "Group Bitmap"
                 }
             } else {
                 _rendererItem = SelectGroupGCodeItem().apply {
-                    itemName = "Group GCode"
+                    itemLayerName = "Group GCode"
                 }
             }
         } else {

@@ -13,7 +13,7 @@ class BitmapItem : BaseItem() {
     var bitmap: Bitmap? = null
 
     init {
-        itemName = "Bitmap"
+        itemLayerName = "Bitmap"
     }
 
 }

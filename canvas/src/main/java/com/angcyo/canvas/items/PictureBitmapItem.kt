@@ -22,7 +22,7 @@ class PictureBitmapItem : PictureItem() {
     val bitmapBounds = emptyRectF()
 
     init {
-        itemName = "Bitmap"
+        itemLayerName = "Bitmap"
     }
 
     override fun updatePictureDrawable(resetSize: Boolean) {
