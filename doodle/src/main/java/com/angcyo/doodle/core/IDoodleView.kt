@@ -22,4 +22,11 @@ interface IDoodleView {
 
     //</editor-fold desc="core">
 
+    //<editor-fold desc="operate">
+
+    /**刷新界面*/
+    fun refresh()
+
+    //</editor-fold desc="operate">
+
 }
