@@ -1,8 +1,9 @@
 package com.angcyo.doodle.element
 
 import android.graphics.Canvas
-import android.graphics.Color
+import com.angcyo.doodle.R
 import com.angcyo.doodle.layer.BaseLayer
+import com.angcyo.library.ex._color
 
 /**
  * 背景绘制元素
@@ -11,13 +12,13 @@ import com.angcyo.doodle.layer.BaseLayer
  * @date 2022/07/25
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class BackgroundElement(baseLayer: BaseLayer) : BaseElement(baseLayer) {
+class BackgroundElement : BaseElement() {
 
     /**背景颜色*/
-    var backgroundColor: Int = Color.TRANSPARENT
+    var backgroundColor: Int = _color(R.color.transparent20) //Color.TRANSPARENT
 
-    override fun onDraw(canvas: Canvas) {
+    override fun onDraw(layer: BaseLayer, canvas: Canvas) {
         paint.color = backgroundColor
-        canvas.drawRect(baseLayer.doodleDelegate.viewBox.contentRect, paint)
+        canvas.drawRect(layer.doodleDelegate.viewBox.contentRect, paint)
     }
 }

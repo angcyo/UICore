@@ -1,7 +1,6 @@
 package com.angcyo.doodle.layer
 
 import com.angcyo.doodle.DoodleDelegate
-import com.angcyo.doodle.element.BackgroundElement
 
 /**
  * 背景层, 用来绘制指定颜色的背景或者透明背景
@@ -10,12 +9,4 @@ import com.angcyo.doodle.element.BackgroundElement
  * @date 2022/07/25
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class BackgroundLayer(doodleDelegate: DoodleDelegate) : BaseLayer(doodleDelegate) {
-
-    val backgroundElement = BackgroundElement(this)
-
-    init {
-        elementList.add(backgroundElement)
-    }
-
-}
+class BackgroundLayer(doodleDelegate: DoodleDelegate) : BaseLayer(doodleDelegate)

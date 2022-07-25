@@ -3,7 +3,6 @@ package com.angcyo.doodle.element
 import android.graphics.Color
 import android.graphics.Paint
 import android.text.TextPaint
-import com.angcyo.doodle.layer.BaseLayer
 import com.angcyo.library.ex.dp
 
 /**
@@ -13,7 +12,7 @@ import com.angcyo.library.ex.dp
  * @date 2022/07/25
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-abstract class BaseElement(val baseLayer: BaseLayer) : IElement {
+abstract class BaseElement : IElement {
 
     /**画笔*/
     val paint: Paint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {

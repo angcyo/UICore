@@ -1,39 +1,42 @@
-package com.angcyo.canvas.core
+package com.angcyo.doodle.core
 
-import com.angcyo.canvas.core.renderer.ICanvasStep
+import com.angcyo.doodle.DoodleDelegate
 import java.util.*
 
 /**
  * 撤销重做管理
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
- * @since 2022/04/09
+ * @since 2022-07-25
  */
-class CanvasUndoManager(val canvasView: ICanvasView) {
+class DoodleUndoManager(val doodleDelegate: DoodleDelegate) {
 
-    val undoStack = Stack<ICanvasStep>()
-    val redoStack = Stack<ICanvasStep>()
+    /**可以撤销的栈*/
+    val undoStack = Stack<IDoodleStep>()
 
-    /**添加一个撤销操作*/
-    fun addUndoAction(step: ICanvasStep) {
+    /**可以重做的栈*/
+    val redoStack = Stack<IDoodleStep>()
+
+    /**添加一个可以被撤销操作*/
+    fun addUndoAction(step: IDoodleStep) {
         clearRedo()
         _addUndoAction(step)
     }
 
-    fun _addUndoAction(step: ICanvasStep) {
+    fun _addUndoAction(step: IDoodleStep) {
         undoStack.add(step)
-        canvasView.dispatchCanvasUndoChanged()
+        doodleDelegate.dispatchDoodleUndoChanged()
     }
 
-    /**添加一个恢复操作*/
-    fun addRedoAction(step: ICanvasStep) {
+    /**添加一个可以被恢复操作*/
+    fun addRedoAction(step: IDoodleStep) {
         redoStack.add(step)
-        canvasView.dispatchCanvasUndoChanged()
+        doodleDelegate.dispatchDoodleUndoChanged()
     }
 
     /**清空恢复栈, 在添加新的撤销栈时, 需要清空恢复栈*/
     fun clearRedo() {
         redoStack.clear()
-        canvasView.dispatchCanvasUndoChanged()
+        doodleDelegate.dispatchDoodleUndoChanged()
     }
 
     /**执行撤销*/
@@ -61,19 +64,26 @@ class CanvasUndoManager(val canvasView: ICanvasView) {
     fun canRedo(): Boolean = redoStack.isNotEmpty()
 
     /**添加一个可以被撤销和重做的操作, 并且立即执行重做*/
-    fun addAndRedo(undo: () -> Unit, redo: () -> Unit): ICanvasStep {
-        val step = object : ICanvasStep {
+    fun addAndRedo(
+        strategy: Strategy,
+        undo: (strategy: Strategy) -> Unit,
+        redo: (strategy: Strategy) -> Unit
+    ): IDoodleStep? {
+        val step = object : IDoodleStep {
             override fun runUndo() {
-                undo()
+                undo(Strategy.Undo())
             }
 
             override fun runRedo() {
-                redo()
+                redo(Strategy.Redo())
             }
         }
         step.runRedo()
-        addUndoAction(step)
-        return step
+        if (strategy is Strategy.Normal) {
+            addUndoAction(step)
+            return step
+        }
+        return null
     }
 
 }

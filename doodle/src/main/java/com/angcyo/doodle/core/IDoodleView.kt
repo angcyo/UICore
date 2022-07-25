@@ -2,6 +2,7 @@ package com.angcyo.doodle.core
 
 import android.graphics.Canvas
 import android.view.MotionEvent
+import com.angcyo.doodle.layer.BaseLayer
 
 /**
  *
@@ -21,6 +22,20 @@ interface IDoodleView {
     fun onDraw(canvas: Canvas)
 
     //</editor-fold desc="core">
+
+    //<editor-fold desc="layer">
+
+    /**派发操作的图层改变通知*/
+    fun dispatchOperateLayerChanged(from: BaseLayer?, to: BaseLayer?)
+
+    /**派发操作的笔刷改变通知*/
+    fun dispatchTouchRecognizeChanged(from: ITouchRecognize?, to: ITouchRecognize?)
+
+    /**分发回退/恢复栈发生改变
+     * [DoodleUndoManager]*/
+    fun dispatchDoodleUndoChanged()
+
+    //</editor-fold desc="layer">
 
     //<editor-fold desc="operate">
 

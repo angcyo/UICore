@@ -6,7 +6,10 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.angcyo.doodle.brush.PenBrush
+import com.angcyo.doodle.element.BackgroundElement
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
+import com.angcyo.library.ex.isDebugType
 
 /**
  * 涂鸦绘制板
@@ -38,6 +41,16 @@ class DoodleView(context: Context, attributeSet: AttributeSet? = null) :
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         doodleDelegate.onDraw(canvas)
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        if (isDebugType()) {
+            //钢笔笔刷测试
+            doodleDelegate.addElement(BackgroundElement())
+            doodleDelegate.doodleTouchManager.updateTouchRecognize(PenBrush())
+        }
     }
 
 }

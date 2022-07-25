@@ -1,6 +1,7 @@
 package com.angcyo.doodle.layer
 
 import android.graphics.Canvas
+import com.angcyo.doodle.core.IDoodleItem
 import com.angcyo.doodle.element.IElement
 
 /**
@@ -13,7 +14,7 @@ import com.angcyo.doodle.element.IElement
  * @date 2022/07/25
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-interface ILayer {
+interface ILayer : IDoodleItem {
 
     fun onDraw(canvas: Canvas)
 

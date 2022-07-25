@@ -2,6 +2,7 @@ package com.angcyo.doodle.core
 
 import android.graphics.Canvas
 import com.angcyo.doodle.DoodleDelegate
+import com.angcyo.doodle.layer.BaseLayer
 import com.angcyo.library.annotation.CallPoint
 
 /**
@@ -17,9 +18,66 @@ class DoodleLayerManager(val doodleDelegate: DoodleDelegate) {
     /**透明底层*/
     val alphaElement = AlphaElement()
 
+    /**当前选中需要操作的层*/
+    var operateLayer: BaseLayer? = null
+
+    /**层的列表*/
+    val layerList = mutableListOf<BaseLayer>()
+
     @CallPoint
     fun onDraw(canvas: Canvas) {
         alphaElement.onDraw(canvas)
+
+        for (layer in layerList) {
+            layer.onDraw(canvas)
+        }
     }
+
+    //region ---图层操作---
+
+    /**更新当前操作的图层*/
+    fun updateOperateLayer(layer: BaseLayer?) {
+        val old = operateLayer
+        operateLayer = layer
+        if (old != operateLayer) {
+            doodleDelegate.dispatchOperateLayerChanged(old, operateLayer)
+        }
+    }
+
+    /**添加一个图层*/
+    fun addLayer(layer: BaseLayer, strategy: Strategy) {
+        val isEmpty = layerList.isEmpty()
+
+        doodleDelegate.undoManager.addAndRedo(strategy, {
+            removeLayer(layer, it)
+        }) {
+            layerList.add(layer)
+            doodleDelegate.refresh()
+        }
+
+        if (isEmpty) {
+            //默认的第一个是操作图层
+            updateOperateLayer(layer)
+        }
+    }
+
+    /**移除一个图层*/
+    fun removeLayer(layer: BaseLayer, strategy: Strategy) {
+        val index = layerList.indexOf(layer)
+        doodleDelegate.undoManager.addAndRedo(strategy, {
+            layerList.add(index, layer)
+            doodleDelegate.refresh()
+        }) {
+            layerList.remove(layer)
+            doodleDelegate.refresh()
+        }
+
+        if (operateLayer == layer) {
+            //选择最后一个图层
+            updateOperateLayer(layerList.lastOrNull())
+        }
+    }
+
+    //endregion ---图层操作---
 
 }

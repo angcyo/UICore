@@ -2,7 +2,7 @@ package com.angcyo.doodle.core
 
 import android.graphics.*
 import android.text.TextPaint
-import com.angcyo.doodle.element.IElement
+import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.dpi
 
 /**
@@ -12,7 +12,7 @@ import com.angcyo.library.ex.dpi
  * @date 2022/07/25
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class AlphaElement : IElement {
+class AlphaElement : IDoodleItem {
 
     /**画笔*/
     val paint: Paint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -33,7 +33,8 @@ class AlphaElement : IElement {
     var cacheBitmap: Bitmap? = null
     val _tempRect = Rect()
 
-    override fun onDraw(canvas: Canvas) {
+    @CallPoint
+    fun onDraw(canvas: Canvas) {
         if (cacheBitmap == null) {
             initAlphaBitmap()
         }
