@@ -360,7 +360,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
     /**入口点*/
     @CanvasEntryPoint
-    fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         viewBounds.set(0f, 0f, w.toFloat(), h.toFloat())
 
         //前测量
@@ -400,7 +400,13 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
     /**入口点*/
     @CanvasEntryPoint
-    fun onDraw(canvas: Canvas) {
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        return canvasTouchManager.onTouchEvent(event)
+    }
+
+    /**入口点*/
+    @CanvasEntryPoint
+    override fun onDraw(canvas: Canvas) {
         eachAxisRender { axis ->
             if (axis.enable && isVisible()) {
                 render(canvas)
@@ -467,12 +473,6 @@ class CanvasDelegate(val view: View) : ICanvasView {
                 }
             }
         }
-    }
-
-    /**入口点*/
-    @CanvasEntryPoint
-    fun onTouchEvent(event: MotionEvent): Boolean {
-        return canvasTouchManager.onTouchEvent(event)
     }
 
     /**禁用对应的手势类型

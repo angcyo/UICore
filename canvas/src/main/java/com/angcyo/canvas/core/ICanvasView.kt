@@ -1,8 +1,10 @@
 package com.angcyo.canvas.core
 
+import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
+import android.view.MotionEvent
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 
@@ -11,6 +13,16 @@ import com.angcyo.canvas.items.renderer.BaseItemRenderer
  * @since 2022/04/01
  */
 interface ICanvasView : IComponent {
+
+    //<editor-fold desc="core">
+
+    fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int)
+
+    fun onTouchEvent(event: MotionEvent): Boolean
+
+    fun onDraw(canvas: Canvas)
+
+    //</editor-fold desc="core">
 
     //<editor-fold desc="dispatch">
 

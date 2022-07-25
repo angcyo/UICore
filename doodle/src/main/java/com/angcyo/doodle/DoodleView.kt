@@ -1,4 +1,4 @@
-package com.angcyo.canvas
+package com.angcyo.doodle
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -9,18 +9,20 @@ import android.view.View
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 
 /**
- * 创作绘制板
- * @author <a href="mailto:angcyo@126.com">angcyo</a>
- * @since 2022/03/29
+ * 涂鸦绘制板
+ * Email:angcyo@126.com
+ * @author angcyo
+ * @date 2022/07/25
+ * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
+class DoodleView(context: Context, attributeSet: AttributeSet? = null) :
     View(context, attributeSet) {
 
-    val canvasDelegate: CanvasDelegate = CanvasDelegate(this)
+    val doodleDelegate: DoodleDelegate = DoodleDelegate(this)
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        canvasDelegate.onSizeChanged(w, h, oldw, oldh)
+        doodleDelegate.onSizeChanged(w, h, oldw, oldh)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -30,12 +32,12 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         } else if (event.actionMasked == MotionEvent.ACTION_UP || event.actionMasked == MotionEvent.ACTION_CANCEL) {
             disableParentInterceptTouchEvent(false)
         }
-        return canvasDelegate.onTouchEvent(event)
+        return doodleDelegate.onTouchEvent(event)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvasDelegate.onDraw(canvas)
+        doodleDelegate.onDraw(canvas)
     }
 
 }
