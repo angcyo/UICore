@@ -3,6 +3,7 @@ package com.angcyo.doodle.element
 import android.graphics.Canvas
 import com.angcyo.doodle.core.IDoodleItem
 import com.angcyo.doodle.layer.BaseLayer
+import com.angcyo.library.annotation.CallPoint
 
 /**
  * 绘制的最小单位
@@ -13,6 +14,8 @@ import com.angcyo.doodle.layer.BaseLayer
  */
 interface IElement : IDoodleItem {
 
+    /**核心的元素绘制方法*/
+    @CallPoint
     fun onDraw(layer: BaseLayer, canvas: Canvas)
 
     //region ---layer---

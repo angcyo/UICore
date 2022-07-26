@@ -45,23 +45,21 @@ fun dotRadians(radius: Float, radians: Float, pivotX: Float, pivotY: Float): Poi
     return PointF(x, y)
 }
 
-/**角的度数。[0-360]*/
-fun degrees(x: Float, y: Float, pivotX: Float, pivotY: Float): Int {
-    return Math.toDegrees(radians(x, y, pivotX, pivotY)).toInt()
+/**计算2点的角度
+ * 角的度数。[0-360]*/
+fun degrees(x: Float, y: Float, pivotX: Float, pivotY: Float): Double {
+    return Math.toDegrees(radians(x, y, pivotX, pivotY))
 }
 
-/**
+/**计算2点的弧度
  * 以弧度表示的角度的测量。[0-2PI]
  *
  * 计算点 (x,y) 相对于原点 (pivotX,pivotY) 的弧度
  * */
 fun radians(x: Float, y: Float, pivotX: Float, pivotY: Float): Double {
-
     val deltaX = x - pivotX
     val deltaY = y - pivotY
-
     val radians = atan2(deltaY.toDouble(), deltaX.toDouble())
-
     return if (radians < 0) {
         2 * Math.PI + radians
     } else {

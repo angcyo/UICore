@@ -1,36 +1,27 @@
-package com.angcyo.doodle.brush.element
+package com.angcyo.doodle.element
 
-import android.graphics.Path
+import android.graphics.Canvas
+import android.graphics.Paint
 import com.angcyo.doodle.core.DoodleTouchManager
+import com.angcyo.doodle.data.BrushElementData
 import com.angcyo.doodle.data.TouchPoint
-import com.angcyo.doodle.element.BaseElement
+import com.angcyo.doodle.layer.BaseLayer
 import com.angcyo.library.ex.bezier
 
 /**
- * 笔刷绘制元素, 数据收集和处理
+ * 钢笔绘制元素
  * Email:angcyo@126.com
  * @author angcyo
- * @date 2022/07/26
+ * @date 2022/07/25
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-abstract class BaseBrushElement : BaseElement() {
-
-    /**路径*/
-    var brushPath: Path? = null
+class PenElement(brushElementData: BrushElementData) : BaseBrushElement(brushElementData) {
 
     /**激活曲线*/
     var enableBezier: Boolean = true
 
-    /**根据指定的数据, 创建一个绘制元素*/
-    open fun onCreateElement(
-        manager: DoodleTouchManager,
-        pointList: List<TouchPoint>
-    ) {
-        brushPath = Path()
-    }
-
     /**更新绘制元素*/
-    open fun onUpdateElement(
+    override fun onUpdateElement(
         manager: DoodleTouchManager,
         pointList: List<TouchPoint>,
         point: TouchPoint
@@ -51,9 +42,12 @@ abstract class BaseBrushElement : BaseElement() {
         }
     }
 
-    /**完成绘制元素数据*/
-    open fun onFinishElement(manager: DoodleTouchManager, pointList: List<TouchPoint>) {
-
+    override fun onDraw(layer: BaseLayer, canvas: Canvas) {
+        brushPath?.let {
+            paint.color = brushElementData.paintColor
+            paint.strokeWidth = brushElementData.paintWidth
+            paint.style = Paint.Style.STROKE
+            canvas.drawPath(it, paint)
+        }
     }
-
 }

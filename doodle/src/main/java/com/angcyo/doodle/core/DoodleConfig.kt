@@ -18,8 +18,8 @@ class DoodleConfig {
     /**笔的颜色*/
     var paintColor: Int = Color.BLACK
 
-    /**笔的宽度, 理论上会等于[android.graphics.Paint.setStrokeWidth]*/
-    var paintWidth: Float = 10f
+    /**笔的宽度, 理论上会等于[android.graphics.Paint.setStrokeWidth], px*/
+    var paintWidth: Float = 20f
 
     /**更新数据到[BaseElementData]*/
     fun updateToElementData(data: BaseElementData) {

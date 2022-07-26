@@ -27,6 +27,8 @@ data class TouchPoint(
     var speed: Float = 0f,
     /**较上一个点的距离, 像素*/
     var distance: Float = 0f,
+    /**较上一个点的角度*/
+    var angle: Float = 0f,
     //压力, 需要硬件支持
     var pressure: Float = 0f,
     //设备类型, 手写笔/鼠标/手写板等

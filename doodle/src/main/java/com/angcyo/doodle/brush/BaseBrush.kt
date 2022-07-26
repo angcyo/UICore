@@ -1,13 +1,14 @@
 package com.angcyo.doodle.brush
 
 import android.view.MotionEvent
-import com.angcyo.doodle.brush.element.BaseBrushElement
+import com.angcyo.doodle.element.BaseBrushElement
 import com.angcyo.doodle.core.DoodleTouchManager
 import com.angcyo.doodle.core.ITouchRecognize
 import com.angcyo.doodle.core.Strategy
 import com.angcyo.doodle.data.TouchPoint
 import com.angcyo.doodle.data.toTouchPoint
 import com.angcyo.library.ex.c
+import com.angcyo.library.ex.degrees
 import kotlin.math.absoluteValue
 
 /**
@@ -18,6 +19,43 @@ import kotlin.math.absoluteValue
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
 abstract class BaseBrush : ITouchRecognize {
+
+    companion object {
+
+        /**计算最后一个点的速度*/
+        fun computeLastPointSpeed(pointList: List<TouchPoint>) {
+            if (pointList.size > 1) {
+                val prevPoint: TouchPoint = pointList[pointList.lastIndex - 1]
+                val lastPoint: TouchPoint = pointList[pointList.lastIndex]
+                computePointSpeed(lastPoint, prevPoint)
+            }
+        }
+
+        /**计算点[point]的速度, 相对于[from]*/
+        fun computePointSpeed(point: TouchPoint, from: TouchPoint) {
+            val s = c(from.eventX, from.eventY, point.eventX, point.eventY)
+            val t = (point.timestamp - from.timestamp).absoluteValue
+            point.distance = s.toFloat()
+            point.speed = (s / t).toFloat()
+            point.angle = degrees(point.eventX, point.eventY, from.eventX, from.eventY).toFloat()
+        }
+
+        /**计算每个点的速度*/
+        fun computePointSpeed(pointList: List<TouchPoint>) {
+            var lastPoint: TouchPoint? = null
+            for (point in pointList) {
+                if (point.isFirst) {
+                    point.speed = 0f
+                    lastPoint = point
+                    continue
+                }
+                lastPoint?.let {
+                    computePointSpeed(point, it)
+                }
+                lastPoint = point
+            }
+        }
+    }
 
     /**点位信息*/
     var collectPointList: MutableList<TouchPoint>? = null
@@ -108,26 +146,5 @@ abstract class BaseBrush : ITouchRecognize {
      * [pointList] 不为空的数据集合*/
     open fun onFinishBrushElement(manager: DoodleTouchManager, pointList: List<TouchPoint>) {
 
-    }
-
-    //---
-
-    /**计算每个点的速度*/
-    fun computePointSpeed(pointList: List<TouchPoint>) {
-        var lastPoint: TouchPoint? = null
-        for (point in pointList) {
-            if (point.isFirst) {
-                point.speed = 0f
-                lastPoint = point
-                continue
-            }
-            lastPoint?.let {
-                val s = c(it.eventX, it.eventY, point.eventX, point.eventY)
-                val t = (point.timestamp - it.timestamp).absoluteValue
-                point.distance = s.toFloat()
-                point.speed = (s / t).toFloat()
-            }
-            lastPoint = point
-        }
     }
 }
