@@ -15,4 +15,18 @@ interface IElement : IDoodleItem {
 
     fun onDraw(layer: BaseLayer, canvas: Canvas)
 
+    //region ---layer---
+
+    /**被添加到[layer]*/
+    fun onAddToLayer(layer: BaseLayer) {
+
+    }
+
+    /**被[layer]移除*/
+    fun onRemoveFromLayer(layer: BaseLayer) {
+
+    }
+
+    //endregion ---layer---
+
 }

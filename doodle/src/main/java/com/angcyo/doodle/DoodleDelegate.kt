@@ -21,6 +21,9 @@ class DoodleDelegate(val view: View) : IDoodleView {
 
     //region ---成员---
 
+    /**配置类*/
+    val doodleConfig = DoodleConfig()
+
     /**事件回调*/
     val doodleListenerList = mutableSetOf<IDoodleListener>()
 

@@ -23,6 +23,10 @@ data class TouchPoint(
     //手势的点位信息
     var eventX: Float = 0f,
     var eventY: Float = 0f,
+    /**较上一个点的移动速度*/
+    var speed: Float = 0f,
+    /**较上一个点的距离, 像素*/
+    var distance: Float = 0f,
     //压力, 需要硬件支持
     var pressure: Float = 0f,
     //设备类型, 手写笔/鼠标/手写板等
@@ -31,6 +35,8 @@ data class TouchPoint(
 
 /**转换*/
 fun MotionEvent.toTouchPoint() = TouchPoint().apply {
+    isFirst = false
+    isLast = false
     eventX = x
     eventY = y
     timestamp = eventTime

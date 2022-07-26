@@ -1,9 +1,8 @@
 package com.angcyo.doodle.element
 
 import android.graphics.Canvas
-import com.angcyo.doodle.R
+import android.graphics.Color
 import com.angcyo.doodle.layer.BaseLayer
-import com.angcyo.library.ex._color
 
 /**
  * 背景绘制元素
@@ -15,7 +14,7 @@ import com.angcyo.library.ex._color
 class BackgroundElement : BaseElement() {
 
     /**背景颜色*/
-    var backgroundColor: Int = _color(R.color.transparent20) //Color.TRANSPARENT
+    var backgroundColor: Int = Color.WHITE //_color(R.color.transparent20) //Color.TRANSPARENT
 
     override fun onDraw(layer: BaseLayer, canvas: Canvas) {
         paint.color = backgroundColor

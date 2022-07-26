@@ -1,12 +1,14 @@
 package com.angcyo.doodle.brush
 
 import android.view.MotionEvent
+import com.angcyo.doodle.brush.element.BaseBrushElement
 import com.angcyo.doodle.core.DoodleTouchManager
 import com.angcyo.doodle.core.ITouchRecognize
 import com.angcyo.doodle.core.Strategy
 import com.angcyo.doodle.data.TouchPoint
 import com.angcyo.doodle.data.toTouchPoint
-import com.angcyo.doodle.element.BaseElement
+import com.angcyo.library.ex.c
+import kotlin.math.absoluteValue
 
 /**
  * 基础笔刷, 用来收集点位数据
@@ -21,7 +23,7 @@ abstract class BaseBrush : ITouchRecognize {
     var collectPointList: MutableList<TouchPoint>? = null
 
     /**创建的绘制[collectPointList]元素*/
-    var brushElement: BaseElement? = null
+    var brushElement: BaseBrushElement? = null
 
     override fun onTouchRecognize(manager: DoodleTouchManager, event: MotionEvent): Boolean {
         return onCollectPoint(manager, event)
@@ -35,48 +37,97 @@ abstract class BaseBrush : ITouchRecognize {
             MotionEvent.ACTION_DOWN -> {
                 handle = true
                 collectPointList = mutableListOf()
-                collectPointList?.add(event.toTouchPoint().apply {
-                    isFirst = true
-                })
-                brushElement = onCreateBrushElement()?.apply {
-                    manager.doodleDelegate.addElement(this, Strategy.Preview())
+                collectPointList?.apply {
+                    val touchPoint = event.toTouchPoint().apply {
+                        isFirst = true
+                    }
+                    add(touchPoint)
+                    //create
+                    brushElement = onCreateBrushElement(manager, this)?.apply {
+                        manager.doodleDelegate.addElement(this, Strategy.Preview())
+                    }
+                    brushElement?.onCreateElement(manager, this)
+                    //update
+                    onUpdateBrushElement(manager, this, touchPoint)
+                    brushElement?.onUpdateElement(manager, this, touchPoint)
                 }
             }
             MotionEvent.ACTION_MOVE -> {
                 handle = true
-                collectPointList?.add(event.toTouchPoint().apply {
-                    isFirst = true
-                })
-                manager.doodleDelegate.refresh()
+                collectPointList?.apply {
+                    val touchPoint = event.toTouchPoint()
+                    add(touchPoint)
+                    //update
+                    onUpdateBrushElement(manager, this, touchPoint)
+                    brushElement?.onUpdateElement(manager, this, touchPoint)
+                    manager.doodleDelegate.refresh()
+                }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 handle = true
                 collectPointList?.apply {
-                    add(event.toTouchPoint().apply {
+                    val touchPoint = event.toTouchPoint().apply {
                         isLast = true
-                    })
-
+                    }
+                    add(touchPoint)
+                    //update
+                    onUpdateBrushElement(manager, this, touchPoint)
+                    brushElement?.onUpdateElement(manager, this, touchPoint)
                     //finish
                     if (isNotEmpty()) {
-                        onCollectFinish(manager, this)
+                        onFinishBrushElement(manager, this)
+                        brushElement?.onFinishElement(manager, this)
                     }
+                    brushElement?.let {
+                        manager.doodleDelegate.addElement(it, Strategy.Normal())
+                    }
+                    brushElement = null
                 }
-                brushElement?.let {
-                    manager.doodleDelegate.addElement(it, Strategy.Normal())
-                }
-                brushElement = null
             }
         }
 
         return handle
     }
 
-    /**点位收集完成
-     * [pointList] 不为空的数据集合*/
-    open fun onCollectFinish(manager: DoodleTouchManager, pointList: List<TouchPoint>) {
+    /**开始绘制时, 创建画刷绘制元素*/
+    open fun onCreateBrushElement(
+        manager: DoodleTouchManager,
+        pointList: List<TouchPoint>
+    ): BaseBrushElement? = null
+
+    /**实时更新画笔元素*/
+    open fun onUpdateBrushElement(
+        manager: DoodleTouchManager,
+        pointList: List<TouchPoint>,
+        point: TouchPoint
+    ) {
 
     }
 
-    /**开始绘制时, 创建画刷绘制元素*/
-    open fun onCreateBrushElement(): BaseElement? = null
+    /**点位收集完成
+     * [pointList] 不为空的数据集合*/
+    open fun onFinishBrushElement(manager: DoodleTouchManager, pointList: List<TouchPoint>) {
+
+    }
+
+    //---
+
+    /**计算每个点的速度*/
+    fun computePointSpeed(pointList: List<TouchPoint>) {
+        var lastPoint: TouchPoint? = null
+        for (point in pointList) {
+            if (point.isFirst) {
+                point.speed = 0f
+                lastPoint = point
+                continue
+            }
+            lastPoint?.let {
+                val s = c(it.eventX, it.eventY, point.eventX, point.eventY)
+                val t = (point.timestamp - it.timestamp).absoluteValue
+                point.distance = s.toFloat()
+                point.speed = (s / t).toFloat()
+            }
+            lastPoint = point
+        }
+    }
 }

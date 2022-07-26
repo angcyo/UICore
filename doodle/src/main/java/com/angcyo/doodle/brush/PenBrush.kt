@@ -1,10 +1,13 @@
 package com.angcyo.doodle.brush
 
+import com.angcyo.doodle.brush.element.BaseBrushElement
 import com.angcyo.doodle.brush.element.PenElement
-import com.angcyo.doodle.element.BaseElement
+import com.angcyo.doodle.core.DoodleTouchManager
+import com.angcyo.doodle.data.BrushElementData
+import com.angcyo.doodle.data.TouchPoint
 
 /**
- * 钢笔画刷
+ * 钢笔画刷, 手势收集
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2022/07/25
@@ -12,9 +15,12 @@ import com.angcyo.doodle.element.BaseElement
  */
 class PenBrush : BaseBrush() {
 
-    override fun onCreateBrushElement(): BaseElement? {
-        return collectPointList?.run {
-            PenElement(this)
-        }
+    override fun onCreateBrushElement(
+        manager: DoodleTouchManager,
+        pointList: List<TouchPoint>
+    ): BaseBrushElement {
+        return PenElement(BrushElementData(pointList).apply {
+            manager.doodleDelegate.doodleConfig.updateToElementData(this)
+        })
     }
 }

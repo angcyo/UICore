@@ -23,5 +23,4 @@ abstract class BaseElement : IElement {
         strokeJoin = Paint.Join.ROUND
         strokeCap = Paint.Cap.ROUND
     }
-
 }

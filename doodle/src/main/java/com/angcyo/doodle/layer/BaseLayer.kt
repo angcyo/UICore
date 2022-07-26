@@ -32,6 +32,7 @@ abstract class BaseLayer(val doodleDelegate: DoodleDelegate) : ILayer {
         }) {
             if (!elementList.contains(element)) {
                 elementList.add(element)
+                element.onAddToLayer(this)
                 doodleDelegate.refresh()
             }
         }
@@ -45,6 +46,7 @@ abstract class BaseLayer(val doodleDelegate: DoodleDelegate) : ILayer {
             doodleDelegate.refresh()
         }) {
             elementList.remove(element)
+            element.onRemoveFromLayer(this)
             doodleDelegate.refresh()
         }
     }

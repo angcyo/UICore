@@ -247,3 +247,32 @@ fun List<Path>.toBitmap(
         }
     }
 }
+
+/**
+ * 添加一个二阶贝塞尔曲线
+ * [c1x] [c1y] 控制点
+ * [endX] [endY] 结束点
+ * */
+fun Path.bezier(c1x: Float, c1y: Float, endX: Float, endY: Float): Path {
+    quadTo(c1x, c1y, endX, endY)
+    return this
+}
+
+fun Path.bezier(cPoint: PointF, endPoint: PointF): Path {
+    return bezier(cPoint.x, cPoint.y, endPoint.x, endPoint.y)
+}
+
+/**
+ * 添加一个三阶贝塞尔曲线
+ * [c1x] [c1y] 控制点1
+ * [c2x] [c2y] 控制点2
+ * [endX] [endY] 结束点
+ * */
+fun Path.bezier(c1x: Float, c1y: Float, c2x: Float, c2y: Float, endX: Float, endY: Float): Path {
+    cubicTo(c1x, c1y, c2x, c2y, endX, endY)
+    return this
+}
+
+fun Path.bezier(c1Point: PointF, c2Point: PointF, endPoint: PointF): Path {
+    return bezier(c1Point.x, c1Point.y, c2Point.x, c2Point.y, endPoint.x, endPoint.y)
+}
