@@ -79,6 +79,43 @@ fun evaluateColor(fraction: Float, startValue: Int, endValue: Int): Int {
     return argbEvaluator.evaluate(fraction, startValue, endValue) as Int
 }
 
+/**从一个渐变颜色中获取颜色*/
+fun evaluateColor(fraction: Float, colors: IntArray, positions: FloatArray? = null): Int {
+    if (fraction <= 0) {
+        return colors.first()
+    } else if (fraction >= 1f) {
+        return colors.last()
+    }
+
+    val array = if (positions == null) {
+        val list = mutableListOf<Float>()
+        val avg = 1f / (colors.size - 1)
+        colors.forEachIndexed { index, i ->
+            list.add(index * avg)
+        }
+        list.toFloatArray()
+    } else {
+        positions
+    }
+
+    var startColor: Int = Color.TRANSPARENT
+    var endColor: Int = Color.TRANSPARENT
+    var f = 0f
+
+    for ((index, fl) in array.withIndex()) {
+        val nextFl = array.getOrNull(index + 1) ?: return colors[index]
+
+        if (nextFl > fraction && fraction > fl) {
+            startColor = colors[index]
+            endColor = colors[index + 1]
+            f = (fraction - fl) / (nextFl - fl)
+            break
+        }
+    }
+
+    return ArgbEvaluator().evaluate(f, startColor, endColor) as Int
+}
+
 /**
  * 设置一个颜色的透明值, 并返回这个颜色值.
  *
