@@ -320,6 +320,7 @@ class RuleSliderView(context: Context, attributeSet: AttributeSet? = null) :
             parent.requestDisallowInterceptTouchEvent(false)
             onSliderConfig?.apply { onSeekTouchEnd(sliderProgress, sliderProgress / 100f) }
         }
+        invalidate()
         return true
     }
 
