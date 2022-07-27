@@ -89,12 +89,6 @@ class RuleSliderView(context: Context, attributeSet: AttributeSet? = null) :
         //textSize
         rulePaint.textSize = 14 * dp
         thumbPaint.textSize = 14 * dp
-
-        ruleList.add(RuleInfo(Color.YELLOW, "YELLOW", 0))
-        ruleList.add(RuleInfo(Color.RED, "RED", 30))
-        ruleList.add(RuleInfo(Color.BLUE, "BLUE", 50))
-        ruleList.add(RuleInfo(Color.GREEN, "GREEN", 80))
-        ruleList.add(RuleInfo(Color.MAGENTA, "MAGENTA", 100))
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -171,21 +165,23 @@ class RuleSliderView(context: Context, attributeSet: AttributeSet? = null) :
         }
 
         //刻度
-        ruleList.forEach { info ->
-            rulePaint.color = info.color
-            val x = calcCenterX(info.progress)
-            //rect
-            _ruleRect.set(
-                x - info.width / 2,
-                sliderRect.top - info.height,
-                x + info.width / 2,
-                sliderRect.top
-            )
-            canvas.drawRect(_ruleRect, rulePaint)
-            //text
-            rulePaint.color = info.textColor
-            info.text?.let {
-                drawText(canvas, it, info.progress, rulePaint)
+        if (isTouchDown) {
+            ruleList.forEach { info ->
+                rulePaint.color = info.color
+                val x = calcCenterX(info.progress)
+                //rect
+                _ruleRect.set(
+                    x - info.width / 2,
+                    sliderRect.top - info.height,
+                    x + info.width / 2,
+                    sliderRect.top
+                )
+                canvas.drawRect(_ruleRect, rulePaint)
+                //text
+                rulePaint.color = info.textColor
+                info.text?.let {
+                    drawText(canvas, it, info.progress, rulePaint)
+                }
             }
         }
 
@@ -308,6 +304,9 @@ class RuleSliderView(context: Context, attributeSet: AttributeSet? = null) :
     /**回调监听*/
     var onSliderConfig: SliderConfig? = null
 
+    /**是否按下*/
+    var isTouchDown = false
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
         super.onTouchEvent(event)
 
@@ -315,7 +314,9 @@ class RuleSliderView(context: Context, attributeSet: AttributeSet? = null) :
 
         val action = event.actionMasked
         if (action == MotionEvent.ACTION_DOWN) {
+            isTouchDown = true
         } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+            isTouchDown = false
             parent.requestDisallowInterceptTouchEvent(false)
             onSliderConfig?.apply { onSeekTouchEnd(sliderProgress, sliderProgress / 100f) }
         }
