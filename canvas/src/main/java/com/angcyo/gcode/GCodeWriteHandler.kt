@@ -271,7 +271,7 @@ class GCodeWriteHandler {
     fun writeFinish(writer: Appendable) {
         _writeLastG1(writer)
         closeCnc(writer)
-        writer.appendLine("G0 X0 Y0")
+        writer.append("G0 X0 Y0")
     }
 
     /**开始的指令*/
