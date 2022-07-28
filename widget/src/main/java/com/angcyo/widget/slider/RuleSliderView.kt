@@ -268,11 +268,14 @@ class RuleSliderView(context: Context, attributeSet: AttributeSet? = null) :
         )
     }
 
+    var _lastVelocityX = 0f
+
     //手势检测
     val _gestureDetector: GestureDetectorCompat by lazy {
         GestureDetectorCompat(context, object : GestureDetector.SimpleOnGestureListener() {
 
             override fun onDown(e: MotionEvent): Boolean {
+                _lastVelocityX = 0f
                 _onTouchMoveTo(e.x, e.y, false)
                 return true
             }
@@ -301,7 +304,8 @@ class RuleSliderView(context: Context, attributeSet: AttributeSet? = null) :
                 velocityX: Float,
                 velocityY: Float
             ): Boolean {
-                var ruleInfo: RuleInfo? = null
+                _lastVelocityX = velocityX
+                /*var ruleInfo: RuleInfo? = null
                 if (velocityX > 0) {
                     //向右快速滑动
                     for (info in ruleList) {
@@ -333,7 +337,7 @@ class RuleSliderView(context: Context, attributeSet: AttributeSet? = null) :
                     updateProgress(sliderProgress + increase, true)
                 } else {
                     updateProgress(ruleInfo.progress, true)
-                }
+                }*/
                 return true
             }
         })
@@ -356,6 +360,31 @@ class RuleSliderView(context: Context, attributeSet: AttributeSet? = null) :
         } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
             isTouchDown = false
             parent.requestDisallowInterceptTouchEvent(false)
+
+            if (_lastVelocityX != 0f) {
+                if (_lastVelocityX > 0) {
+                    //向右快速滑动
+                    for (info in ruleList) {
+                        if (info.progress > sliderProgress &&
+                            adsorbProgress(sliderProgress, info.progress)
+                        ) {
+                            updateProgress(info.progress, true)
+                            break
+                        }
+                    }
+                } else {
+                    //向左快速滑动
+                    for (info in ruleList) {
+                        if (info.progress < sliderProgress &&
+                            adsorbProgress(sliderProgress, info.progress)
+                        ) {
+                            updateProgress(info.progress, true)
+                            break
+                        }
+                    }
+                }
+            }
+
             onSliderConfig?.apply { onSeekTouchEnd(sliderProgress, sliderProgress / 100f) }
         }
         invalidate()
