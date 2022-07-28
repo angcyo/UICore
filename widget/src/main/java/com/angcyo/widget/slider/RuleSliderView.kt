@@ -1,5 +1,6 @@
 package com.angcyo.widget.slider
 
+import android.animation.Animator
 import android.content.Context
 import android.graphics.*
 import android.text.TextPaint
@@ -7,10 +8,12 @@ import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.annotation.Px
 import androidx.core.graphics.withClip
 import androidx.core.math.MathUtils
 import androidx.core.view.GestureDetectorCompat
+import com.angcyo.library.ex.anim
 import com.angcyo.library.ex.evaluateColor
 import com.angcyo.library.ex.textHeight
 import com.angcyo.tablayout.textWidth
@@ -25,6 +28,16 @@ import kotlin.math.abs
  */
 class RuleSliderView(context: Context, attributeSet: AttributeSet? = null) :
     View(context, attributeSet) {
+
+    companion object {
+        const val RULE_MIN = 50
+        const val RULE_MAX = 300
+
+        /**[value]在[RULE_MIN]与[RULE_MAX]之间*/
+        fun calcProgress(value: Int): Int {
+            return ((value - RULE_MIN) * 1f / (RULE_MAX - RULE_MIN) * 100).toInt()
+        }
+    }
 
     /**滑轨的高度*/
     @Px
@@ -45,7 +58,8 @@ class RuleSliderView(context: Context, attributeSet: AttributeSet? = null) :
     var sliderProgress: Int = 50
 
     /**格式化进度*/
-    var formatProgressText: (progress: Int) -> String = { "$it" }
+    var formatProgressText: (progress: Int) -> String =
+        { "${RULE_MIN + (it / 100f * (RULE_MAX - RULE_MIN)).toInt()}" }
 
     /**刻度列表*/
     var ruleList = mutableListOf<RuleInfo>()
@@ -279,11 +293,12 @@ class RuleSliderView(context: Context, attributeSet: AttributeSet? = null) :
                 velocityX: Float,
                 velocityY: Float
             ): Boolean {
+                var ruleInfo: RuleInfo? = null
                 if (velocityX > 0) {
                     //向右快速滑动
                     for (info in ruleList) {
                         if (info.progress > sliderProgress) {
-                            updateProgress(info.progress)
+                            ruleInfo = info
                             break
                         }
                     }
@@ -291,10 +306,21 @@ class RuleSliderView(context: Context, attributeSet: AttributeSet? = null) :
                     //向左快速滑动
                     for (info in ruleList.reversed()) {
                         if (info.progress < sliderProgress) {
-                            updateProgress(info.progress)
+                            ruleInfo = info
                             break
                         }
                     }
+                }
+                if (ruleInfo == null) {
+                    //未找到推荐数据
+                    val increase = if (velocityX > 0) {
+                        100 * 0.2
+                    } else {
+                        -100 * 0.2
+                    }.toInt()
+                    updateProgress(sliderProgress + increase, true)
+                } else {
+                    updateProgress(ruleInfo.progress, true)
                 }
                 return true
             }
@@ -327,13 +353,32 @@ class RuleSliderView(context: Context, attributeSet: AttributeSet? = null) :
     /**手指移动*/
     fun _onTouchMoveTo(x: Float, y: Float, isFinish: Boolean) {
         val progress: Int = (((x - sliderRect.left) / sliderRect.width()) * 100).toInt()
-        updateProgress(progress)
+        updateProgress(progress, false)
     }
 
-    fun updateProgress(progress: Int) {
-        sliderProgress = validProgress(progress)
+    fun updateProgress(progress: Int, anim: Boolean) {
+        val oldProgress = sliderProgress
+        val newProgress = validProgress(progress)
+        sliderProgress = newProgress
         onSliderConfig?.apply { onSeekChanged(sliderProgress, sliderProgress / 100f, true) }
         invalidate()
+
+        _animtor?.cancel()
+        _animtor = null
+        if (anim) {
+            sliderProgress = oldProgress
+            invalidate()
+            _animtor = anim(oldProgress, newProgress) {
+                onAnimatorConfig = {
+                    it.duration = 300
+                    it.interpolator = AccelerateDecelerateInterpolator()
+                }
+                onAnimatorUpdateValue = { value, _ ->
+                    sliderProgress = value as Int
+                    postInvalidateOnAnimation()
+                }
+            }
+        }
     }
 
     /**限制设置的非法进度值*/
@@ -349,6 +394,8 @@ class RuleSliderView(context: Context, attributeSet: AttributeSet? = null) :
         }
         onSliderConfig?.action()
     }
+
+    var _animtor: Animator? = null
 
     /**刻度信息*/
     data class RuleInfo(
