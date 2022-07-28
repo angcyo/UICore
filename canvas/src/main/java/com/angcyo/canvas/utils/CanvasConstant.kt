@@ -46,6 +46,10 @@ object CanvasConstant {
     /**英寸单位*/
     const val CANVAS_VALUE_UNIT_INCH = 3
 
+    //endregion ---Canvas---
+
+    //region ---Canvas设置项---
+
     /**单温状态, 持久化*/
     var CANVAS_VALUE_UNIT: Int by HawkPropertyValue<Any, Int>(2)
 
@@ -60,5 +64,5 @@ object CanvasConstant {
             else -> MmValueUnit()
         }
 
-    //endregion ---Canvas---
+    //endregion ---Canvas设置项---
 }
