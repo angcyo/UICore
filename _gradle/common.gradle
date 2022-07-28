@@ -69,7 +69,7 @@ def findApkFile(String folderPath = null) {
     files?.each {
         if (it.isFile()) {
             def name = it.getName()
-            if (name.endsWith(".apk")) {
+            if (name.endsWith(".apk") || name.endsWith(".ipa")) {
                 def line = "${name}/${it.lastModified()}"
                 def isUpload = false
 
