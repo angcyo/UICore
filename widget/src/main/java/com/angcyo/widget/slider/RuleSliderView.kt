@@ -18,6 +18,7 @@ import com.angcyo.library.ex.evaluateColor
 import com.angcyo.library.ex.textHeight
 import com.angcyo.tablayout.textWidth
 import kotlin.math.abs
+import kotlin.math.absoluteValue
 
 /**
  * 带刻度的滑块
@@ -32,10 +33,17 @@ class RuleSliderView(context: Context, attributeSet: AttributeSet? = null) :
     companion object {
         const val RULE_MIN = 50
         const val RULE_MAX = 300
+        const val RULE_ADSORB = 20
 
         /**[value]在[RULE_MIN]与[RULE_MAX]之间*/
         fun calcProgress(value: Int): Int {
             return ((value - RULE_MIN) * 1f / (RULE_MAX - RULE_MIN) * 100).toInt()
+        }
+
+        /**判断[progress]是否要吸附到[targetProgress]*/
+        fun adsorbProgress(progress: Int, targetProgress: Int): Boolean {
+            val diff = (targetProgress - progress).absoluteValue / 100f * (RULE_MAX - RULE_MIN)
+            return diff <= RULE_ADSORB
         }
     }
 
@@ -297,15 +305,19 @@ class RuleSliderView(context: Context, attributeSet: AttributeSet? = null) :
                 if (velocityX > 0) {
                     //向右快速滑动
                     for (info in ruleList) {
-                        if (info.progress > sliderProgress) {
+                        if (info.progress > sliderProgress &&
+                            adsorbProgress(sliderProgress, info.progress)
+                        ) {
                             ruleInfo = info
                             break
                         }
                     }
                 } else {
                     //向左快速滑动
-                    for (info in ruleList.reversed()) {
-                        if (info.progress < sliderProgress) {
+                    for (info in ruleList) {
+                        if (info.progress < sliderProgress &&
+                            adsorbProgress(sliderProgress, info.progress)
+                        ) {
                             ruleInfo = info
                             break
                         }
