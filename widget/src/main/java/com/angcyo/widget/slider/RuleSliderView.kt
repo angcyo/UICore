@@ -17,7 +17,6 @@ import com.angcyo.library.ex.anim
 import com.angcyo.library.ex.evaluateColor
 import com.angcyo.library.ex.textHeight
 import com.angcyo.tablayout.textWidth
-import kotlin.math.abs
 import kotlin.math.absoluteValue
 
 /**
@@ -286,11 +285,8 @@ class RuleSliderView(context: Context, attributeSet: AttributeSet? = null) :
                 distanceX: Float,
                 distanceY: Float
             ): Boolean {
-                val absX = abs(distanceX)
-                val absY = abs(distanceY)
-
                 var handle = false
-                if (absX > absY && e2 != null) {
+                if (e2 != null) {
                     parent.requestDisallowInterceptTouchEvent(true)
                     _onTouchMoveTo(e2.x, e2.y, false)
                     handle = true
