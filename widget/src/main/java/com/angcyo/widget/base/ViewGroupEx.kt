@@ -341,6 +341,23 @@ fun ViewGroup.addDslItem(
     return dslViewHolder
 }
 
+/**将[DslAdapterItem]绑定到[itemView]上*/
+fun DslAdapterItem.bindInRootView(
+    itemView: View?,
+    index: Int = -1,
+    payloads: List<Any> = emptyList()
+): DslViewHolder? {
+    if (itemView == null) {
+        return null
+    }
+    val dslViewHolder = DslViewHolder(itemView)
+    itemView.tag = dslViewHolder
+    itemView.setDslViewHolder(dslViewHolder)
+    itemView.setDslAdapterItem(this)
+    itemBind(dslViewHolder, index, this, payloads)
+    return dslViewHolder
+}
+
 fun ViewGroup.resetDslItem(item: DslAdapterItem) {
     resetDslItem(listOf(item))
 }

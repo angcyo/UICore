@@ -550,6 +550,11 @@ open class DslViewHolder(
         return view(resId)?.isEnabled == true
     }
 
+    /**是否是在[RecyclerView]中*/
+    fun isInRecyclerView(): Boolean {
+        return itemView.parent is RecyclerView
+    }
+
     //</editor-fold desc="属性控制">
 
 }

@@ -9,6 +9,7 @@ import com.angcyo.core.component.file.appFilePath
 import com.angcyo.core.dslitem.DslLastDeviceInfoItem
 import com.angcyo.core.fragment.BaseDslFragment
 import com.angcyo.dsladapter.bindItem
+import com.angcyo.library.Library
 import com.angcyo.library.ex.*
 import com.angcyo.library.libFolderPath
 import com.angcyo.library.toast
@@ -29,6 +30,10 @@ class DebugFragment : BaseDslFragment() {
 
         /**调试入口*/
         val DEBUG_ACTION_LIST = mutableListOf<DebugAction>().apply {
+            add(DebugAction("debug ${if (Library.isDebugTypeVal) "√" else "×"}", action = {
+                Library.isDebugTypeVal = !Library.isDebugTypeVal
+            }))
+
             add(DebugAction("浏览目录", action = {
                 it.dslFHelper {
                     fileSelector({
