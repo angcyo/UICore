@@ -12,9 +12,6 @@ import com.angcyo.canvas.core.renderer.BaseRenderer
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.PictureShapeItem
-import com.angcyo.canvas.utils._tempPoint
-import com.angcyo.canvas.utils.mapPoint
-import com.angcyo.canvas.utils.mapRectF
 import com.angcyo.library.L
 import com.angcyo.library.ex.*
 

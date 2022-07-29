@@ -35,11 +35,11 @@ interface ICanvasListener : ICanvasTouch {
     fun onClearSelectItem(itemRenderer: IItemRenderer<*>) {}
 
     /**[IItemRenderer]改变[Bounds]之后的回调*/
-    fun onItemBoundsChanged(item: IRenderer, reason: Reason, oldBounds: RectF) {}
+    fun onItemBoundsChanged(itemRenderer: IRenderer, reason: Reason, oldBounds: RectF) {}
 
     /**当[item]渲染需要更新时, 触发.
      * 比如大小改变, 颜色改变, 样式改变等*/
-    fun onItemRenderUpdate(item: IRenderer) {}
+    fun onItemRenderUpdate(itemRenderer: IRenderer) {}
 
     /**可见性改变回调*/
     fun onItemVisibleChanged(itemRenderer: IRenderer, visible: Boolean) {}

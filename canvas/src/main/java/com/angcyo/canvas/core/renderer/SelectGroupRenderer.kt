@@ -71,8 +71,8 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         super.onChangeBoundsAfter(reason)
     }
 
-    override fun onItemBoundsChanged(item: IRenderer, reason: Reason, oldBounds: RectF) {
-        if (selectItemList.contains(item)) {
+    override fun onItemBoundsChanged(itemRenderer: IRenderer, reason: Reason, oldBounds: RectF) {
+        if (selectItemList.contains(itemRenderer)) {
             if (reason.reason == Reason.REASON_USER) {
                 updateSelectBounds()
             }

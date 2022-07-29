@@ -53,9 +53,24 @@ class ProgressRenderer(val canvasDelegate: CanvasDelegate) : BaseRenderer(canvas
 
     /**绘制进度*/
     var drawProgressMode = true
+        set(value) {
+            field = value
+            canvasDelegate.refresh()
+        }
 
     /**绘制边框*/
     var drawBorderMode = true
+        set(value) {
+            field = value
+            canvasDelegate.refresh()
+        }
+
+    /**是否绘制旋转之后的边框*/
+    var drawRotateBorder = false
+        set(value) {
+            field = value
+            canvasDelegate.refresh()
+        }
 
     /**蚂蚁线间隔*/
     var intervals = floatArrayOf(10 * dp, 20 * dp)
@@ -101,10 +116,14 @@ class ProgressRenderer(val canvasDelegate: CanvasDelegate) : BaseRenderer(canvas
 
     /**绘制边框*/
     fun _drawBorderMode(canvas: Canvas, renderer: BaseItemRenderer<*>) {
-        val visualRotateBounds = renderer.getVisualRotateBounds().adjustFlipRect(tempRotateRect)
-
-        borderPath.rewind()
-        borderPath.addRect(visualRotateBounds, Path.Direction.CW)
+        if (drawRotateBorder) {
+            val bounds = renderer.getVisualBounds()
+            bounds.rotateToPath(renderer.rotate, result = borderPath)
+        } else {
+            val visualRotateBounds = renderer.getVisualRotateBounds().adjustFlipRect(tempRotateRect)
+            borderPath.rewind()
+            borderPath.addRect(visualRotateBounds, Path.Direction.CW)
+        }
 
         paint.shader = null
         paint.style = Paint.Style.STROKE

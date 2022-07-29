@@ -1,7 +1,7 @@
 package com.angcyo.canvas.core.component
 
 import com.angcyo.canvas.core.CanvasViewBox
-import com.angcyo.canvas.utils.getScaleY
+import com.angcyo.library.ex.getScaleY
 import com.angcyo.library.ex.have
 
 /**

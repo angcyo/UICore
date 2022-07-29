@@ -9,8 +9,6 @@ import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.core.renderer.SelectGroupRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
-import com.angcyo.canvas.utils._tempValues
-import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.library.ex.*
 import java.lang.Math.tan
 

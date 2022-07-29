@@ -14,11 +14,7 @@ import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.*
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.getMaxLineWidth
-import com.angcyo.canvas.utils.mapPoint
-import com.angcyo.canvas.utils.mapRectF
-import com.angcyo.library.ex.decimal
-import com.angcyo.library.ex.emptyRectF
-import com.angcyo.library.ex.isShowDebug
+import com.angcyo.library.ex.*
 
 /**
  * 调试监视渲染

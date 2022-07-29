@@ -71,9 +71,9 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
         updateControlPointLocation()
     }
 
-    override fun onItemBoundsChanged(item: IRenderer, reason: Reason, oldBounds: RectF) {
-        super.onItemBoundsChanged(item, reason, oldBounds)
-        if (item == controlHandler.selectedItemRender) {
+    override fun onItemBoundsChanged(itemRenderer: IRenderer, reason: Reason, oldBounds: RectF) {
+        super.onItemBoundsChanged(itemRenderer, reason, oldBounds)
+        if (itemRenderer == controlHandler.selectedItemRender) {
             updateControlPointLocation()
         }
     }

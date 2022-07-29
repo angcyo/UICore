@@ -5,8 +5,8 @@ import android.graphics.PointF
 import android.graphics.RectF
 import com.angcyo.canvas.core.InchValueUnit
 import com.angcyo.canvas.core.MmValueUnit
-import com.angcyo.canvas.utils.mapPoint
-import com.angcyo.canvas.utils.mapRectF
+import com.angcyo.library.ex.mapPoint
+import com.angcyo.library.ex.mapRectF
 import java.io.File
 import java.io.OutputStreamWriter
 import kotlin.math.min

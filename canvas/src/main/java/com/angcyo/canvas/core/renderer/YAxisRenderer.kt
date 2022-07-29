@@ -8,8 +8,8 @@ import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.BaseAxis
 import com.angcyo.canvas.core.component.YAxis
-import com.angcyo.canvas.utils.getScaleY
-import com.angcyo.canvas.utils.getTranslateY
+import com.angcyo.library.ex.getScaleY
+import com.angcyo.library.ex.getTranslateY
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.textHeight
 

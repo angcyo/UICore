@@ -1,6 +1,7 @@
 package com.angcyo.library.ex
 
 import android.graphics.Matrix
+import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.RectF
 import kotlin.math.max
@@ -13,6 +14,7 @@ import kotlin.math.min
 
 //<editor-fold desc="base">
 
+val _tempRect = Rect()
 val _tempRectF = RectF()
 val _tempMatrix = Matrix()
 
@@ -109,6 +111,22 @@ fun RectF.rotate(
     val matrix = Matrix()
     matrix.setRotate(degrees, pivotX, pivotY)
     matrix.mapRect(result, this)
+    return result
+}
+
+/**将矩形信息, 旋转到[Path]*/
+fun RectF.rotateToPath(
+    degrees: Float,
+    pivotX: Float = centerX(),
+    pivotY: Float = centerY(),
+    result: Path = Path()
+): Path {
+    val matrix = _tempMatrix
+    matrix.reset()
+    matrix.setRotate(degrees, pivotX, pivotY)
+    result.rewind()
+    result.addRect(this, Path.Direction.CW)
+    result.transform(matrix)
     return result
 }
 

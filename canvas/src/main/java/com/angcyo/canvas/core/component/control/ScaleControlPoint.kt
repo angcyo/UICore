@@ -15,10 +15,7 @@ import com.angcyo.canvas.core.renderer.SelectGroupRenderer
 import com.angcyo.canvas.items.PictureShapeItem
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
-import com.angcyo.canvas.utils._tempMatrix
-import com.angcyo.canvas.utils._tempValues
 import com.angcyo.canvas.utils.isLineShape
-import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.library.ex.*
 
 /**

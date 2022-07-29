@@ -124,7 +124,9 @@ fun Path.intersect(rect: RectF): Boolean {
     return this.intersect(_tempPath)
 }
 
-/**判断矩形是否在[Path]内, path是否包含矩形*/
+/**判断矩形是否在[Path]内, path是否包含矩形
+ * 判断[this]是否完全包含[path]
+ * */
 fun Path.contains(path: Path): Boolean {
     val result = _resultPath
     result.reset()

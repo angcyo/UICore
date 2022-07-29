@@ -14,8 +14,6 @@ import com.angcyo.canvas.core.renderer.*
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer.Companion.ROTATE_FLAG_NORMAL
-import com.angcyo.canvas.utils._tempPoint
-import com.angcyo.canvas.utils._tempRectF
 import com.angcyo.canvas.utils.limitMaxWidthHeight
 import com.angcyo.library.ex.*
 import kotlin.math.max
@@ -269,10 +267,14 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
     }
 
-    override fun dispatchItemBoundsChanged(item: IRenderer, reason: Reason, oldBounds: RectF) {
-        super.dispatchItemBoundsChanged(item, reason, oldBounds)
+    override fun dispatchItemBoundsChanged(
+        itemRenderer: IRenderer,
+        reason: Reason,
+        oldBounds: RectF
+    ) {
+        super.dispatchItemBoundsChanged(itemRenderer, reason, oldBounds)
         canvasListenerList.forEach {
-            it.onItemBoundsChanged(item, reason, oldBounds)
+            it.onItemBoundsChanged(itemRenderer, reason, oldBounds)
         }
     }
 

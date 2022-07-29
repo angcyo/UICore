@@ -10,7 +10,6 @@ import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils.isLineShape
-import com.angcyo.canvas.utils.mapPoint
 import com.angcyo.library.L
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
