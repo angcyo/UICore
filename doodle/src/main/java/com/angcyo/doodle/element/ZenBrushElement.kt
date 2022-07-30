@@ -114,7 +114,7 @@ class ZenBrushElement(brushElementData: BrushElementData) : BaseBrushElement(bru
         brushPath?.let {
             paint.color = brushElementData.paintColor
             paint.strokeWidth = 1f//brushElementData.paintWidth
-            paint.style = Paint.Style.FILL
+            paint.style = Paint.Style.FILL_AND_STROKE
             canvas.drawPath(it, paint)
         }
     }

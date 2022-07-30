@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
+import com.angcyo.doodle.brush.BaseBrush
 import com.angcyo.doodle.core.DoodleTouchManager
 import com.angcyo.doodle.data.BrushElementData
 import com.angcyo.doodle.data.TouchPoint
@@ -21,15 +22,28 @@ import com.angcyo.library.ex.textWidth
  */
 class DebugBrushElement(brushElementData: BrushElementData) : BaseBrushElement(brushElementData) {
 
+    val debugPointList = mutableListOf<DebugPoint>()
+
+    override fun onCreateElement(manager: DoodleTouchManager, pointList: List<TouchPoint>) {
+        super.onCreateElement(manager, pointList)
+        debugPointList.clear()
+    }
+
     override fun onUpdateElement(
         manager: DoodleTouchManager,
         pointList: List<TouchPoint>,
         point: TouchPoint
     ) {
         super.onUpdateElement(manager, pointList, point)
+        BaseBrush.computeLastPointSpeed(pointList)
         brushPath?.apply {
             addCircle(point.eventX, point.eventY, brushElementData.paintWidth, Path.Direction.CW)
         }
+        debugPointList.add(DebugPoint(point).apply {
+            text = "${point.angle}/${point.speed}"
+            textDrawX = point.eventX - paint.textWidth(text) / 2
+            textDrawY = point.eventY - paint.textHeight()
+        })
     }
 
     override fun onDraw(layer: BaseLayer, canvas: Canvas) {
@@ -45,14 +59,17 @@ class DebugBrushElement(brushElementData: BrushElementData) : BaseBrushElement(b
 
         //调试信息
         paint.style = Paint.Style.FILL
-        brushElementData.pointList.forEach { point ->
-            val text = "${point.angle}/${point.speed}"
-            val cx = point.eventX - paint.textWidth(text) / 2
-            val cy = point.eventY - paint.textHeight()
-            canvas.drawText(text, cx, cy, paint)
-
+        debugPointList.forEach { point ->
+            canvas.drawText(point.text, point.textDrawX, point.textDrawY, paint)
             //
-            L.i(text)
+            L.i(point.text)
         }
     }
+
+    data class DebugPoint(
+        val point: TouchPoint,
+        var text: String = "",
+        var textDrawX: Float = 0f,
+        var textDrawY: Float = 0f
+    )
 }
