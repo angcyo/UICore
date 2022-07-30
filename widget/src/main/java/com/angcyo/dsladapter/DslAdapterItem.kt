@@ -27,7 +27,6 @@ import com.angcyo.library.L
 import com.angcyo.library.UndefinedDrawable
 import com.angcyo.library.ex.*
 import com.angcyo.library.isMain
-import com.angcyo.tablayout.clamp
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
 import com.angcyo.widget.base.*

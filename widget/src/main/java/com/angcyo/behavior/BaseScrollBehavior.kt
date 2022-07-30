@@ -9,7 +9,6 @@ import android.widget.OverScroller
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import com.angcyo.library.ex.*
-import com.angcyo.tablayout.clamp
 import com.angcyo.widget.R
 import com.angcyo.widget.base.isTouchDown
 import kotlin.math.absoluteValue

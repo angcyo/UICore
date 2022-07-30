@@ -8,12 +8,11 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.customview.widget.ViewDragHelper
+import com.angcyo.library.ex.clamp
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.getStatusBarHeight
 import com.angcyo.widget.R
 import com.angcyo.widget.layout.RSoftInputLayout
-import kotlin.math.max
-import kotlin.math.min
 
 /**
  * 支持滑动退出的父布局
@@ -21,15 +20,6 @@ import kotlin.math.min
  */
 abstract class SwipeBackLayout(context: Context, attributeSet: AttributeSet? = null) :
     TouchLayout(context, attributeSet) {
-
-    companion object {
-        /**
-         * 限制 value 在 min 和 max 之间
-         */
-        fun clamp(value: Int, min: Int, max: Int): Int {
-            return max(min, min(max, value))
-        }
-    }
 
     var viewDragState = ViewDragHelper.STATE_IDLE
     var dragHelper: ViewDragHelper? = null

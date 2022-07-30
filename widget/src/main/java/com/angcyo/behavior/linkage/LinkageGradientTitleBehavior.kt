@@ -11,11 +11,7 @@ import android.widget.TextView
 import com.angcyo.behavior.BaseDependsBehavior
 import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.behavior.ITitleBarBehavior
-import com.angcyo.library.ex.color
-import com.angcyo.library.ex.each
-import com.angcyo.library.ex.loadColor
-import com.angcyo.library.ex.mH
-import com.angcyo.tablayout.clamp
+import com.angcyo.library.ex.*
 import com.angcyo.tablayout.evaluateColor
 import com.angcyo.widget.R
 import com.angcyo.widget.text.DslSpanTextView

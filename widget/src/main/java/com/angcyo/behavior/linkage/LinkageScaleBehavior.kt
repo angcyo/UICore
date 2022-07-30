@@ -6,8 +6,8 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.library.ex.calcSize
+import com.angcyo.library.ex.clamp
 import com.angcyo.library.ex.mH
-import com.angcyo.tablayout.clamp
 import com.angcyo.widget.R
 import kotlin.math.abs
 import kotlin.math.max

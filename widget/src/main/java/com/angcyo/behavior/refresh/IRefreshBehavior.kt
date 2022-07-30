@@ -3,7 +3,7 @@ package com.angcyo.behavior.refresh
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.BaseScrollBehavior
-import com.angcyo.tablayout.clamp
+import com.angcyo.library.ex.*
 import com.angcyo.library.ex.offsetTopTo
 
 /**

@@ -8,14 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.dsladapter.data.UpdateDataConfig
 import com.angcyo.dsladapter.data.updateData
 import com.angcyo.library.L
-import com.angcyo.library.ex._color
-import com.angcyo.library.ex._dimen
-import com.angcyo.library.ex.dpi
-import com.angcyo.library.ex.replace
+import com.angcyo.library.ex.*
 import com.angcyo.library.model.Page
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
-import com.angcyo.widget.layout.touch.SwipeBackLayout.Companion.clamp
 
 /**
  *

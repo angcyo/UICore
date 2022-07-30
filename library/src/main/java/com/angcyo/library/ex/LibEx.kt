@@ -26,6 +26,7 @@ import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.concurrent.thread
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random.Default.nextInt
 
@@ -481,3 +482,8 @@ fun <K, V> SimpleArrayMap<K, V>.each(action: (key: K, value: V?) -> Unit) {
         action(k, v)
     }
 }
+
+/**将[value]限制在[min] [max]之间*/
+fun clamp(value: Float, min: Float, max: Float): Float = min(max(value, min), max)
+
+fun clamp(value: Int, min: Int, max: Int): Int = min(max(value, min), max)

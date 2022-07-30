@@ -10,7 +10,7 @@ import com.angcyo.library.L
 import com.angcyo.library.ex.className
 import com.angcyo.library.ex.hawkGet
 import com.angcyo.library.ex.hawkPut
-import com.angcyo.tablayout.clamp
+import com.angcyo.library.ex.*
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.dslViewHolder
 import com.angcyo.library.ex.mH

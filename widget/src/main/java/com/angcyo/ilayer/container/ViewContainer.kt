@@ -12,7 +12,7 @@ import com.angcyo.library.L
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.className
-import com.angcyo.tablayout.clamp
+import com.angcyo.library.ex.*
 import com.angcyo.widget.base.frameParams
 import com.angcyo.widget.base.updateFrameParams
 import com.angcyo.library.ex.mH

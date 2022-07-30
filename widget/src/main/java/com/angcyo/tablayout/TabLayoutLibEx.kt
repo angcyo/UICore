@@ -48,24 +48,6 @@ fun exactlyMeasure(size: Float): Int = exactlyMeasure(size.toInt())
 fun atmostMeasure(size: Int): Int =
     View.MeasureSpec.makeMeasureSpec(size, View.MeasureSpec.AT_MOST)
 
-fun clamp(value: Float, min: Float, max: Float): Float {
-    if (value < min) {
-        return min
-    } else if (value > max) {
-        return max
-    }
-    return value
-}
-
-fun clamp(value: Int, min: Int, max: Int): Int {
-    if (value < min) {
-        return min
-    } else if (value > max) {
-        return max
-    }
-    return value
-}
-
 fun Any.logi() {
     Log.i("DslTabLayout", "$this")
 }

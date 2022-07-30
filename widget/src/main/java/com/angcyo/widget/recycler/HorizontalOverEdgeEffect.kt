@@ -6,7 +6,7 @@ import androidx.core.view.doOnLayout
 import com.angcyo.behavior.refresh.RefreshEffectConfig
 import com.angcyo.library.L
 import com.angcyo.library.ex.abs
-import com.angcyo.tablayout.clamp
+import com.angcyo.library.ex.*
 import com.angcyo.library.ex.mW
 import com.angcyo.library.ex.offsetLeftTo
 

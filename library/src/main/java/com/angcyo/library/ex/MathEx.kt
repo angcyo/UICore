@@ -33,18 +33,34 @@ fun c(a: Double, b: Double): Double {
     return hypot(a, b)
 }
 
-/**根据半径[radius],原点[pivotX,pivotY]坐标, 计算出角度[degrees]对应的圆上坐标点*/
-fun dotDegrees(radius: Float, degrees: Float, pivotX: Float, pivotY: Float): PointF {
+/**根据半径[radius],原点[pivotX,pivotY]坐标, 计算出角度[degrees]对应的圆上坐标点
+ * [dotRadians]*/
+fun dotDegrees(
+    radius: Float,
+    degrees: Float,
+    pivotX: Float,
+    pivotY: Float,
+    result: PointF = _tempPoint
+): PointF {
     val x = pivotX + radius * cos(degrees * Math.PI / 180)
     val y = pivotY + radius * sin(degrees * Math.PI / 180)
-    return PointF(x.toFloat(), y.toFloat())
+    result.set(x.toFloat(), y.toFloat())
+    return result
 }
 
-/**弧度[radians]*/
-fun dotRadians(radius: Float, radians: Float, pivotX: Float, pivotY: Float): PointF {
+/**弧度[radians]
+ * [dotDegrees]*/
+fun dotRadians(
+    radius: Float,
+    radians: Float,
+    pivotX: Float,
+    pivotY: Float,
+    result: PointF = _tempPoint
+): PointF {
     val x = pivotX + radius * cos(radians)
     val y = pivotY + radius * sin(radians)
-    return PointF(x, y)
+    result.set(x, y)
+    return result
 }
 
 /**计算2点的角度

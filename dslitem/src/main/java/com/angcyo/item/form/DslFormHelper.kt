@@ -9,7 +9,7 @@ import com.angcyo.library.L
 import com.angcyo.library.ex.elseNull
 import com.angcyo.library.ex.size
 import com.angcyo.library.toastQQ
-import com.angcyo.tablayout.clamp
+import com.angcyo.library.ex.*
 import com.angcyo.widget.recycler.*
 
 /**

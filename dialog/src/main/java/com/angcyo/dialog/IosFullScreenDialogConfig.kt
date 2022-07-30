@@ -13,7 +13,7 @@ import com.angcyo.dialog.dslitem.DslDialogTextItem
 import com.angcyo.dsladapter.filter.batchLoad
 import com.angcyo.library._screenHeight
 import com.angcyo.library.ex.*
-import com.angcyo.tablayout.clamp
+import com.angcyo.library.ex.*
 import com.angcyo.widget.ActivityScreenshotImageView
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.behavior

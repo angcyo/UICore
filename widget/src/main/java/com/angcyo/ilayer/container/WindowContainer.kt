@@ -17,7 +17,7 @@ import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.mH
 import com.angcyo.library.ex.mW
 import com.angcyo.library.ex.remove
-import com.angcyo.tablayout.clamp
+import com.angcyo.library.ex.*
 import com.angcyo.widget.base.mHOrMeasure
 import com.angcyo.widget.base.mWOrMeasure
 import com.angcyo.widget.base.screenRect

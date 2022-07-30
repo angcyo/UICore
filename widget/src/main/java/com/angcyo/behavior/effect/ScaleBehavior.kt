@@ -7,8 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.BaseGestureBehavior
+import com.angcyo.library.ex.clamp
 import com.angcyo.library.ex.mH
-import com.angcyo.tablayout.clamp
 import com.angcyo.widget.layout.isEnableCoordinator
 import kotlin.math.abs
 
