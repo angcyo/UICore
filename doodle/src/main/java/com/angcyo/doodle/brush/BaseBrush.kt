@@ -125,6 +125,10 @@ abstract class BaseBrush : ITouchRecognize {
             }
         }
 
+        if (handle) {
+            manager.doodleDelegate.refresh()
+        }
+
         return handle
     }
 

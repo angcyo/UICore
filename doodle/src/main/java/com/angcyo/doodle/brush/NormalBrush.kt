@@ -4,7 +4,7 @@ import com.angcyo.doodle.core.DoodleTouchManager
 import com.angcyo.doodle.data.BrushElementData
 import com.angcyo.doodle.data.TouchPoint
 import com.angcyo.doodle.element.BaseBrushElement
-import com.angcyo.doodle.element.PenElement
+import com.angcyo.doodle.element.PenBrushElement
 
 /**
  * 普通的笔刷
@@ -19,7 +19,7 @@ class NormalBrush : BaseBrush() {
         manager: DoodleTouchManager,
         pointList: List<TouchPoint>
     ): BaseBrushElement {
-        return PenElement(BrushElementData(pointList)).apply {
+        return PenBrushElement(BrushElementData(pointList)).apply {
             //去掉贝塞尔曲线效果
             enableBezier = false
         }

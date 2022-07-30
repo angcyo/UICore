@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import com.angcyo.doodle.DoodleDelegate
 import com.angcyo.doodle.core.Strategy
 import com.angcyo.doodle.element.BaseElement
+import com.angcyo.library.ex.resetAll
 
 /**
  * 基础层
@@ -24,6 +25,30 @@ abstract class BaseLayer(val doodleDelegate: DoodleDelegate) : ILayer {
     }
 
     //region ---元素操作---
+
+    /**清除图层上的所有元素*/
+    fun clearAllElement(strategy: Strategy = Strategy.Normal()) {
+        val oldList = elementList.toList()
+        doodleDelegate.undoManager.addAndRedo(strategy, {
+            elementList.resetAll(oldList)
+            doodleDelegate.refresh()
+        }) {
+            elementList.clear()
+            doodleDelegate.refresh()
+        }
+    }
+
+    /**重置图层上的所有元素*/
+    fun resetAllElement(newList: List<BaseElement>, strategy: Strategy = Strategy.Normal()) {
+        val oldList = elementList.toList()
+        doodleDelegate.undoManager.addAndRedo(strategy, {
+            elementList.resetAll(oldList)
+            doodleDelegate.refresh()
+        }) {
+            elementList.resetAll(newList)
+            doodleDelegate.refresh()
+        }
+    }
 
     /**添加一个元素*/
     fun addElement(element: BaseElement, strategy: Strategy) {

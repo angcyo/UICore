@@ -15,7 +15,7 @@ import com.angcyo.library.ex.bezier
  * @date 2022/07/25
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class PenElement(brushElementData: BrushElementData) : BaseBrushElement(brushElementData) {
+class PenBrushElement(brushElementData: BrushElementData) : BaseBrushElement(brushElementData) {
 
     /**激活曲线*/
     var enableBezier: Boolean = true
