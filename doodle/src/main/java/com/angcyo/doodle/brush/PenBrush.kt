@@ -1,10 +1,10 @@
 package com.angcyo.doodle.brush
 
-import com.angcyo.doodle.element.BaseBrushElement
-import com.angcyo.doodle.element.PenElement
 import com.angcyo.doodle.core.DoodleTouchManager
 import com.angcyo.doodle.data.BrushElementData
 import com.angcyo.doodle.data.TouchPoint
+import com.angcyo.doodle.element.BaseBrushElement
+import com.angcyo.doodle.element.PenElement
 
 /**
  * 钢笔画刷, 手势收集
@@ -19,8 +19,6 @@ class PenBrush : BaseBrush() {
         manager: DoodleTouchManager,
         pointList: List<TouchPoint>
     ): BaseBrushElement {
-        return PenElement(BrushElementData(pointList).apply {
-            manager.doodleDelegate.doodleConfig.updateToElementData(this)
-        })
+        return PenElement(BrushElementData(pointList))
     }
 }

@@ -4,22 +4,24 @@ import com.angcyo.doodle.core.DoodleTouchManager
 import com.angcyo.doodle.data.BrushElementData
 import com.angcyo.doodle.data.TouchPoint
 import com.angcyo.doodle.element.BaseBrushElement
-import com.angcyo.doodle.element.ZenElement
+import com.angcyo.doodle.element.PenElement
 
 /**
- * 毛笔笔刷手势数据收集
+ * 普通的笔刷
  * Email:angcyo@126.com
  * @author angcyo
- * @date 2022/07/26
+ * @date 2022/07/30
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class ZenBrush : BaseBrush() {
+class NormalBrush : BaseBrush() {
 
     override fun onCreateBrushElement(
         manager: DoodleTouchManager,
         pointList: List<TouchPoint>
     ): BaseBrushElement {
-        return ZenElement(BrushElementData(pointList))
+        return PenElement(BrushElementData(pointList)).apply {
+            //去掉贝塞尔曲线效果
+            enableBezier = false
+        }
     }
-
 }

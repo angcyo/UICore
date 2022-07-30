@@ -1,12 +1,12 @@
 package com.angcyo.doodle.brush
 
 import android.view.MotionEvent
-import com.angcyo.doodle.element.BaseBrushElement
 import com.angcyo.doodle.core.DoodleTouchManager
 import com.angcyo.doodle.core.ITouchRecognize
 import com.angcyo.doodle.core.Strategy
 import com.angcyo.doodle.data.TouchPoint
 import com.angcyo.doodle.data.toTouchPoint
+import com.angcyo.doodle.element.BaseBrushElement
 import com.angcyo.library.ex.c
 import com.angcyo.library.ex.degrees
 import kotlin.math.absoluteValue
@@ -82,6 +82,7 @@ abstract class BaseBrush : ITouchRecognize {
                     add(touchPoint)
                     //create
                     brushElement = onCreateBrushElement(manager, this)?.apply {
+                        manager.doodleDelegate.doodleConfig.updateToElementData(brushElementData)
                         manager.doodleDelegate.addElement(this, Strategy.Preview())
                     }
                     brushElement?.onCreateElement(manager, this)
