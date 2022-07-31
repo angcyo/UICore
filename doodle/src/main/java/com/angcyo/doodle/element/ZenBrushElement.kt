@@ -40,11 +40,22 @@ class ZenBrushElement(brushElementData: BrushElementData) : BaseBrushElement(bru
             brushPath?.addCircle(
                 point.eventX,
                 point.eventY,
-                brushElementData.paintWidth,
+                selectPaintWidth(point.speed),
                 Path.Direction.CW
             )
         } else {
             val zenBefore = zenPointList.before(zenPoint)!!
+            if (point.isLast) {
+                //最后一个点
+                brushPath?.addCircle(
+                    point.eventX,
+                    point.eventY,
+                    zenBefore.paintWidth,
+                    Path.Direction.CW
+                )
+                return
+            }
+
             val before = pointList.before(point)!! //前一个点
 
             val upAngle = 360f - (90 - point.angle)
@@ -54,8 +65,6 @@ class ZenBrushElement(brushElementData: BrushElementData) : BaseBrushElement(bru
             fillZenPoint(zenPoint, point.speed, upAngle, downAngle, point.eventX, point.eventY)
 
             if (pointList.size() == 2) {
-                brushPath?.rewind()
-
                 //计算前一个点, 根据速度的不一样, 圆上2个点的坐标
                 fillZenPoint(
                     zenBefore,
@@ -65,11 +74,6 @@ class ZenBrushElement(brushElementData: BrushElementData) : BaseBrushElement(bru
                     before.eventX,
                     before.eventY
                 )
-
-                brushPath?.apply {
-                    moveTo(zenBefore.downPointX, zenBefore.downPointY)
-                    lineTo(zenBefore.upPointX, zenBefore.upPointY)
-                }
             }
 
             val centerZenPoint = ZenPoint(point)
@@ -82,30 +86,25 @@ class ZenBrushElement(brushElementData: BrushElementData) : BaseBrushElement(bru
                 (before.eventY + point.eventY) / 2
             )
 
-            if (point.isLast) {
-                brushPath?.apply {
-                    moveTo(zenBefore.downPointX, zenBefore.downPointY)
-                    lineTo(zenBefore.upPointX, zenBefore.upPointY)
-                    close()
-                }
-            } else {
-                brushPath?.apply {
-                    moveTo(zenBefore.upPointX, zenBefore.upPointY)
-                    bezier(
-                        centerZenPoint.upPointX,
-                        centerZenPoint.upPointY,
-                        zenPoint.upPointX,
-                        zenPoint.upPointY
-                    )
+            brushPath?.apply {
+                moveTo(zenBefore.downPointX, zenBefore.downPointY)
+                lineTo(zenBefore.upPointX, zenBefore.upPointY)
 
-                    moveTo(zenBefore.downPointX, zenBefore.downPointY)
-                    bezier(
-                        centerZenPoint.downPointX,
-                        centerZenPoint.downPointY,
-                        zenPoint.downPointX,
-                        zenPoint.downPointY
-                    )
-                }
+                bezier(
+                    centerZenPoint.upPointX,
+                    centerZenPoint.upPointY,
+                    zenPoint.upPointX,
+                    zenPoint.upPointY
+                )
+
+                lineTo(zenPoint.downPointX, zenPoint.downPointY)
+
+                bezier(
+                    centerZenPoint.downPointX,
+                    centerZenPoint.downPointY,
+                    zenBefore.downPointX,
+                    zenBefore.downPointY
+                )
             }
         }
     }
@@ -114,7 +113,7 @@ class ZenBrushElement(brushElementData: BrushElementData) : BaseBrushElement(bru
         brushPath?.let {
             paint.color = brushElementData.paintColor
             paint.strokeWidth = 1f//brushElementData.paintWidth
-            paint.style = Paint.Style.FILL_AND_STROKE
+            paint.style = Paint.Style.FILL
             canvas.drawPath(it, paint)
         }
     }
