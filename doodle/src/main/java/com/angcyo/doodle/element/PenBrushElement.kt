@@ -32,9 +32,10 @@ class PenBrushElement(brushElementData: BrushElementData) : BaseBrushElement(bru
             } else {
                 if (enableBezier) {
                     val prevPoint = pointList[pointList.lastIndex - 1]
-                    val c1x = (prevPoint.eventX + point.eventX) / 2
-                    val c1y = (prevPoint.eventY + point.eventY) / 2
-                    bezier(c1x, c1y, point.eventX, point.eventY)
+                    val midX = (prevPoint.eventX + point.eventX) / 2
+                    val midY = (prevPoint.eventY + point.eventY) / 2
+                    //bezier(c1x, c1y, point.eventX, point.eventY)
+                    bezier(prevPoint.eventX, prevPoint.eventY, midX, midY)
                 } else {
                     lineTo(point.eventX, point.eventY)
                 }
