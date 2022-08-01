@@ -1,5 +1,7 @@
 package com.angcyo.doodle.data
 
+import android.graphics.RectF
+
 /**
  * 毛笔元素需要绘制的点
  * Email:angcyo@126.com
@@ -21,4 +23,10 @@ data class ZenPoint(
     /**下行点的坐标, 中心点[point]半径[paintWidth]的圆上的点*/
     var downPointX: Float = 0f,
     var downPointY: Float = 0f,
+
+    //---Oval---
+
+    /**使用椭圆绘制的, 椭圆范围*/
+    val ovalRect: RectF = RectF()
+
 )

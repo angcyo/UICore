@@ -12,7 +12,7 @@ import com.angcyo.doodle.layer.BaseLayer
 import com.angcyo.library.ex.*
 
 /**
- * 毛笔绘制元素
+ * 毛笔绘制元素, 使用贝塞尔曲线绘制
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2022/07/26
