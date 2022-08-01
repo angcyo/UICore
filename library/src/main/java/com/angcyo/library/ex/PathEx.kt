@@ -251,7 +251,7 @@ fun List<Path>.toBitmap(
 }
 
 /**
- * 添加一个二阶贝塞尔曲线
+ * 添加一个二阶贝塞尔曲线, 1个控制点
  * [c1x] [c1y] 控制点
  * [endX] [endY] 结束点
  * */
@@ -265,7 +265,7 @@ fun Path.bezier(cPoint: PointF, endPoint: PointF): Path {
 }
 
 /**
- * 添加一个三阶贝塞尔曲线
+ * 添加一个三阶贝塞尔曲线, 2个控制点
  * [c1x] [c1y] 控制点1
  * [c2x] [c2y] 控制点2
  * [endX] [endY] 结束点
