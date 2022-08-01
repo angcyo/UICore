@@ -5,8 +5,8 @@ import android.view.MotionEvent
 import android.view.View
 import com.angcyo.doodle.core.*
 import com.angcyo.doodle.element.BaseElement
-import com.angcyo.doodle.layer.BackgroundLayer
 import com.angcyo.doodle.layer.BaseLayer
+import com.angcyo.doodle.layer.NormalLayer
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.longFeedback
 
@@ -26,6 +26,9 @@ class DoodleDelegate(val view: View) : IDoodleView {
 
     /**事件回调*/
     val doodleListenerList = mutableSetOf<IDoodleListener>()
+
+    /**透明底层*/
+    val alphaElement = AlphaElement()
 
     //endregion ---成员---
 
@@ -68,6 +71,9 @@ class DoodleDelegate(val view: View) : IDoodleView {
 
     @CallPoint
     override fun onDraw(canvas: Canvas) {
+        //透明背景显示
+        alphaElement.onDraw(canvas)
+
         doodleLayerManager.onDraw(canvas)
     }
 
@@ -119,7 +125,7 @@ class DoodleDelegate(val view: View) : IDoodleView {
     fun addElement(element: BaseElement, strategy: Strategy = Strategy.Normal()) {
         if (doodleLayerManager.layerList.isEmpty()) {
             //添加一个默认的背景层
-            doodleLayerManager.addLayer(BackgroundLayer(this), Strategy.Redo())
+            doodleLayerManager.addLayer(NormalLayer(this), Strategy.Redo())
         }
         operateLayer?.addElement(element, strategy)
     }

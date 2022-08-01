@@ -2,6 +2,7 @@ package com.angcyo.doodle.core
 
 import android.graphics.Canvas
 import com.angcyo.doodle.DoodleDelegate
+import com.angcyo.doodle.layer.BackgroundLayer
 import com.angcyo.doodle.layer.BaseLayer
 import com.angcyo.library.annotation.CallPoint
 
@@ -15,8 +16,8 @@ import com.angcyo.library.annotation.CallPoint
  */
 class DoodleLayerManager(val doodleDelegate: DoodleDelegate) {
 
-    /**透明底层*/
-    val alphaElement = AlphaElement()
+    /**背景层*/
+    var backgroundLayer: BaseLayer? = BackgroundLayer(doodleDelegate)
 
     /**当前选中需要操作的层*/
     var operateLayer: BaseLayer? = null
@@ -26,8 +27,10 @@ class DoodleLayerManager(val doodleDelegate: DoodleDelegate) {
 
     @CallPoint
     fun onDraw(canvas: Canvas) {
-        alphaElement.onDraw(canvas)
+        //背景层
+        backgroundLayer?.onDraw(canvas)
 
+        //其他层
         for (layer in layerList) {
             layer.onDraw(canvas)
         }

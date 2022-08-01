@@ -2,6 +2,7 @@ package com.angcyo.doodle.element
 
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
 import com.angcyo.doodle.layer.BaseLayer
 
 /**
@@ -18,6 +19,7 @@ class BackgroundElement : BaseElement() {
 
     override fun onDraw(layer: BaseLayer, canvas: Canvas) {
         paint.color = backgroundColor
+        paint.style = Paint.Style.FILL
         canvas.drawRect(layer.doodleDelegate.viewBox.contentRect, paint)
     }
 }
