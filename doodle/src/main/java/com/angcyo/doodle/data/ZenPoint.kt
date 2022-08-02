@@ -27,6 +27,11 @@ data class ZenPoint(
     //---Oval---
 
     /**使用椭圆绘制的, 椭圆范围*/
-    val ovalRect: RectF = RectF()
+    val ovalRect: RectF = RectF(),
+
+    //---Center---
+
+    /**这个点与上一个点的中点*/
+    var centerZenPoint: ZenPoint? = null
 
 )

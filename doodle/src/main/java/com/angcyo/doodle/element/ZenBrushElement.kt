@@ -32,30 +32,20 @@ class ZenBrushElement(brushElementData: BrushElementData) : BaseBrushElement(bru
         pointList: List<TouchPoint>,
         point: TouchPoint
     ) {
+        val path = brushPath ?: return
         BaseBrush.computeLastPointSpeed(pointList)
         val zenPoint = ZenPoint(point)
         zenPointList.add(zenPoint)
 
         if (point.isFirst) {
-            brushPath?.addCircle(
+            /*path.addCircle(
                 point.eventX,
                 point.eventY,
                 selectPaintWidth(point.speed),
                 Path.Direction.CW
-            )
+            )*/
         } else {
             val zenBefore = zenPointList.before(zenPoint)!!
-            if (point.isLast) {
-                //最后一个点
-                brushPath?.addCircle(
-                    point.eventX,
-                    point.eventY,
-                    zenBefore.paintWidth,
-                    Path.Direction.CW
-                )
-                return
-            }
-
             val before = pointList.before(point)!! //前一个点
 
             val upAngle = 360f - (90 - point.angle)
@@ -63,6 +53,22 @@ class ZenBrushElement(brushElementData: BrushElementData) : BaseBrushElement(bru
 
             //计算当前点, 根据速度的不一样, 圆上2个点的坐标
             fillZenPoint(zenPoint, point.speed, upAngle, downAngle, point.eventX, point.eventY)
+
+            val centerPoint = TouchPoint()
+            centerPoint.angle = point.angle
+            centerPoint.speed = (before.speed + point.speed) / 2
+            centerPoint.eventX = (before.eventX + point.eventX) / 2
+            centerPoint.eventY = (before.eventY + point.eventY) / 2
+            val centerZenPoint = ZenPoint(centerPoint)
+            zenPoint.centerZenPoint = centerZenPoint
+            fillZenPoint(
+                centerZenPoint,
+                centerPoint.speed,
+                upAngle,
+                downAngle,
+                centerPoint.eventX,
+                centerPoint.eventY
+            )
 
             if (pointList.size() == 2) {
                 //计算前一个点, 根据速度的不一样, 圆上2个点的坐标
@@ -74,36 +80,40 @@ class ZenBrushElement(brushElementData: BrushElementData) : BaseBrushElement(bru
                     before.eventX,
                     before.eventY
                 )
+
+                path.addCircle(
+                    centerPoint.eventX,
+                    centerPoint.eventY,
+                    selectPaintWidth(centerPoint.speed),
+                    Path.Direction.CW
+                )
             }
 
-            val centerZenPoint = ZenPoint(point)
-            fillZenPoint(
-                centerZenPoint,
-                (before.speed + point.speed) / 2,
-                upAngle,
-                downAngle,
-                (before.eventX + point.eventX) / 2,
-                (before.eventY + point.eventY) / 2
-            )
+            zenBefore.centerZenPoint?.let { beforeCenterZenPoint ->
+                path.moveTo(beforeCenterZenPoint.downPointX, beforeCenterZenPoint.downPointY)
+                path.lineTo(beforeCenterZenPoint.upPointX, beforeCenterZenPoint.upPointY)
+                /*var x = (beforeCenterZenPoint.downPointX + beforeCenterZenPoint.upPointX) / 2
+                var y = (beforeCenterZenPoint.downPointY + beforeCenterZenPoint.upPointY) / 2
+                path.bezier(x, y, beforeCenterZenPoint.upPointX, beforeCenterZenPoint.upPointY)*/
 
-            brushPath?.apply {
-                moveTo(zenBefore.downPointX, zenBefore.downPointY)
-                lineTo(zenBefore.upPointX, zenBefore.upPointY)
-
-                bezier(
+                path.bezier(
+                    zenBefore.upPointX,
+                    zenBefore.upPointY,
                     centerZenPoint.upPointX,
                     centerZenPoint.upPointY,
-                    zenPoint.upPointX,
-                    zenPoint.upPointY
                 )
 
-                lineTo(zenPoint.downPointX, zenPoint.downPointY)
+                /*x = (centerZenPoint.downPointX + centerZenPoint.upPointX) / 2
+                y = (centerZenPoint.downPointY + centerZenPoint.upPointY) / 2
+                path.bezier(x, y, centerZenPoint.downPointX, centerZenPoint.downPointY)*/
 
-                bezier(
-                    centerZenPoint.downPointX,
-                    centerZenPoint.downPointY,
+                path.lineTo(centerZenPoint.downPointX, centerZenPoint.downPointY)
+
+                path.bezier(
                     zenBefore.downPointX,
-                    zenBefore.downPointY
+                    zenBefore.downPointY,
+                    beforeCenterZenPoint.downPointX,
+                    beforeCenterZenPoint.downPointY,
                 )
             }
         }
