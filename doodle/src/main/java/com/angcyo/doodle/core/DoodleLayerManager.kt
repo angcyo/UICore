@@ -1,6 +1,7 @@
 package com.angcyo.doodle.core
 
 import android.graphics.Canvas
+import androidx.core.graphics.withSave
 import com.angcyo.doodle.DoodleDelegate
 import com.angcyo.doodle.layer.BackgroundLayer
 import com.angcyo.doodle.layer.BaseLayer
@@ -32,7 +33,9 @@ class DoodleLayerManager(val doodleDelegate: DoodleDelegate) {
 
         //其他层
         for (layer in layerList) {
-            layer.onDraw(canvas)
+            canvas.withSave {
+                layer.onDraw(canvas)
+            }
         }
     }
 

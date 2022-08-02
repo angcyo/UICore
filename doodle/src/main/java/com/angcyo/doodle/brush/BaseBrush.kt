@@ -8,6 +8,7 @@ import com.angcyo.doodle.data.TouchPoint
 import com.angcyo.doodle.data.toTouchPoint
 import com.angcyo.doodle.element.BaseBrushElement
 import com.angcyo.library.ex.c
+import com.angcyo.library.ex.clamp
 import com.angcyo.library.ex.degrees
 import kotlin.math.absoluteValue
 
@@ -82,6 +83,8 @@ abstract class BaseBrush : ITouchRecognize {
                     add(touchPoint)
                     //create
                     brushElement = onCreateBrushElement(manager, this)?.apply {
+                        brushElementData.brushPointList =
+                            brushElementData.brushPointList ?: collectPointList
                         manager.doodleDelegate.doodleConfig.updateToElementData(brushElementData)
                         manager.doodleDelegate.addElement(this, Strategy.Preview())
                     }
@@ -152,4 +155,24 @@ abstract class BaseBrush : ITouchRecognize {
     open fun onFinishBrushElement(manager: DoodleTouchManager, pointList: List<TouchPoint>) {
 
     }
+
+    //region ---operate---
+
+    /**根据滑动速度, 返回应该绘制的宽度.
+     * 速度越快, 宽度越细
+     * */
+    open fun selectPaintWidth(speed: Float): Float {
+        val minSpeed = 0f
+        val maxSpeed = 10f
+        val currentSpeed = clamp(speed, minSpeed, maxSpeed)
+
+        val speedRatio = (currentSpeed - minSpeed) / (maxSpeed - minSpeed)
+
+        val minWidth = 4
+        val maxWidth = brushElement?.brushElementData?.paintWidth ?: 20f
+
+        return minWidth + (1 - speedRatio) * (maxWidth - minWidth)
+    }
+
+    //endregion ---operate---
 }

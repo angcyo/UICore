@@ -1,11 +1,5 @@
 package com.angcyo.doodle.brush
 
-import com.angcyo.doodle.core.DoodleTouchManager
-import com.angcyo.doodle.data.BrushElementData
-import com.angcyo.doodle.data.TouchPoint
-import com.angcyo.doodle.element.BaseBrushElement
-import com.angcyo.doodle.element.PenBrushElement
-
 /**
  * 普通的笔刷
  * Email:angcyo@126.com
@@ -13,15 +7,10 @@ import com.angcyo.doodle.element.PenBrushElement
  * @date 2022/07/30
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class NormalBrush : BaseBrush() {
+class NormalBrush : PenBrush() {
 
-    override fun onCreateBrushElement(
-        manager: DoodleTouchManager,
-        pointList: List<TouchPoint>
-    ): BaseBrushElement {
-        return PenBrushElement(BrushElementData(pointList)).apply {
-            //去掉贝塞尔曲线效果
-            enableBezier = false
-        }
+    init {
+        //去掉贝塞尔曲线效果
+        enableBezier = false
     }
 }
