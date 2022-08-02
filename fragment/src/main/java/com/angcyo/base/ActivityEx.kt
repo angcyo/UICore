@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Build
 import android.view.View
 import android.view.Window
+import android.view.WindowInsetsController
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.core.app.ActivityCompat
@@ -103,8 +104,18 @@ fun Activity.lightStatusBar(light: Boolean = true) {
 }
 
 fun Window.lightStatusBar(light: Boolean = true) {
-    //android 6
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        //android 11
+        if (light) {
+            insetsController?.setSystemBarsAppearance(
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            )
+        } else {
+            insetsController?.setSystemBarsAppearance(0, 0)
+        }
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        //android 6
         val decorView = decorView
         val systemUiVisibility = decorView.systemUiVisibility
         if (light) {

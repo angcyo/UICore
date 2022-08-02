@@ -35,7 +35,7 @@ object ComplianceCheck {
             agree()
             true
         } else {
-            //未合规
+            //未合规, 则触发[complianceAction]回调
             complianceAction()
             false
         }
