@@ -44,6 +44,10 @@ object RNetwork {
         if (!mObservers.contains(observer)) {
             mObservers.add(observer)
         }
+        //自动初始化
+        if (!_isInit) {
+            init()
+        }
     }
 
     /**

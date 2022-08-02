@@ -13,10 +13,7 @@ import com.angcyo.library.ex.*
 import com.angcyo.svg.StylePath
 import com.angcyo.svg.Svg
 import com.pixplicity.sharp.SharpDrawable
-import kotlin.math.atan2
 import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.roundToLong
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
