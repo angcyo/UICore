@@ -155,10 +155,10 @@ fun Path.intersect(path: Path): Boolean {
  * */
 fun Path.eachPath(
     step: Float = 1f,
-    block: (index: Int, posArray: FloatArray) -> Unit
+    posArray: FloatArray = _tempPoints,
+    block: (index: Int, ratio: Float, posArray: FloatArray) -> Unit
 ) {
     val pathMeasure = PathMeasure(this, false)
-    val posArray = floatArrayOf(0f, 0f)
     var position = 0f
     var length = pathMeasure.length
     var index = 0
@@ -167,8 +167,8 @@ fun Path.eachPath(
     fun _each() {
         while (position <= length) {
             pathMeasure.getPosTan(position, posArray, null)
-
-            block(index++, posArray)
+            val ratio = position / length
+            block(index++, ratio, posArray)
 
             if (position == length) {
                 break

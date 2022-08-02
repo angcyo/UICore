@@ -11,7 +11,6 @@ import com.angcyo.doodle.data.TouchPoint
 import com.angcyo.doodle.data.ZenPoint
 import com.angcyo.doodle.layer.BaseLayer
 import com.angcyo.library.ex.before
-import com.angcyo.library.ex.clamp
 
 /**
  * 毛笔绘制元素, 使用椭圆绘制
