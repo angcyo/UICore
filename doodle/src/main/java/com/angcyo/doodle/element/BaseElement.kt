@@ -20,6 +20,7 @@ abstract class BaseElement : IElement {
         this.style = Paint.Style.FILL
         textSize = 12 * dp
         strokeWidth = 1f
+        isDither = true
         strokeJoin = Paint.Join.ROUND
         strokeCap = Paint.Cap.ROUND
     }

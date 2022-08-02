@@ -128,22 +128,6 @@ class ZenBrushElement(brushElementData: BrushElementData) : BaseBrushElement(bru
         }
     }
 
-    /**根据滑动速度, 返回应该绘制的宽度.
-     * 速度越快, 宽度越细
-     * */
-    fun selectPaintWidth(speed: Float): Float {
-        val minSpeed = 0f
-        val maxSpeed = 10f
-        val currentSpeed = clamp(speed, minSpeed, maxSpeed)
-
-        val speedRatio = (currentSpeed - minSpeed) / (maxSpeed - minSpeed)
-
-        val minWidth = 4
-        val maxWidth = brushElementData.paintWidth
-
-        return minWidth + (1 - speedRatio) * (maxWidth - minWidth)
-    }
-
     /**在指定原点, 根据速度的不一样, 圆上2个点的坐标*/
     fun fillZenPoint(
         zenPoint: ZenPoint,

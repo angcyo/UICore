@@ -1,17 +1,12 @@
 package com.angcyo.doodle.element
 
 import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
 import android.graphics.Path
 import com.angcyo.doodle.core.DoodleTouchManager
 import com.angcyo.doodle.data.BrushElementData
 import com.angcyo.doodle.data.TouchPoint
 import com.angcyo.doodle.layer.BaseLayer
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.isDebugType
-import com.angcyo.library.ex.textHeight
-import com.angcyo.library.ex.textWidth
+import com.angcyo.library.ex.clamp
 
 /**
  * 笔刷绘制元素, 数据收集和处理
@@ -21,6 +16,8 @@ import com.angcyo.library.ex.textWidth
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
 abstract class BaseBrushElement(val brushElementData: BrushElementData) : BaseElement() {
+
+    //region ---core---
 
     /**路径*/
     var brushPath: Path? = null
@@ -50,4 +47,26 @@ abstract class BaseBrushElement(val brushElementData: BrushElementData) : BaseEl
     override fun onDraw(layer: BaseLayer, canvas: Canvas) {
 
     }
+
+    //endregion ---core---
+
+    //region ---operate---
+
+    /**根据滑动速度, 返回应该绘制的宽度.
+     * 速度越快, 宽度越细
+     * */
+    open fun selectPaintWidth(speed: Float): Float {
+        val minSpeed = 0f
+        val maxSpeed = 10f
+        val currentSpeed = clamp(speed, minSpeed, maxSpeed)
+
+        val speedRatio = (currentSpeed - minSpeed) / (maxSpeed - minSpeed)
+
+        val minWidth = 4
+        val maxWidth = brushElementData.paintWidth
+
+        return minWidth + (1 - speedRatio) * (maxWidth - minWidth)
+    }
+
+    //endregion ---operate---
 }
