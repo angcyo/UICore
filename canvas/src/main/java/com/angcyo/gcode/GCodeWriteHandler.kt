@@ -88,7 +88,7 @@ class GCodeWriteHandler {
         if (isFirst) {
             writeFirst(writer, unit)
         }
-        path.eachPath(pathStep) { index, posArray ->
+        path.eachPath(pathStep) { index, ratio, posArray ->
             if (index == 0) {
                 //path 可能有多段
                 _writeLastG1(writer)
