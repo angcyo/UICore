@@ -1,0 +1,14 @@
+/**
+ *  A problem was found with the configuration of task ':manage:createApkReleaseApkListingFileRedirect' (type 'ListingFileRedirectTask').
+ * - In plugin 'com.android.internal.version-check' type 'com.android.build.gradle.internal.tasks.ListingFileRedirectTask'
+ * property 'listingFile' specifies file 'E:\AndroidProjects\BackManage\manage\build\outputs\apk\apk\release\output-metadata.json' which doesn't exist.
+ *
+ * @author <a href="mailto:angcyo@126.com">angcyo</a>
+ * @since 2022/08/02
+ */
+
+tasks.whenTaskAdded { task ->
+    if (task.name.contains("ListingFileRedirect")) {
+        task.enabled = false
+    }
+}
