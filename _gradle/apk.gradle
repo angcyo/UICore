@@ -48,7 +48,8 @@ android {
             gv >= '7') {
         /*Gradle4.1 以上的方法*/
         applicationVariants.all { variant ->
-            def defPath = variant.packageApplicationProvider.get().outputDirectory.getAsFile().get().absolutePath
+            def defFolder = variant.packageApplicationProvider.get().outputDirectory.getAsFile().get()
+            def defPath = defFolder.absolutePath
             println "\napk.gradle ${gradleVersion}→默认输出目录↓\n${variant.name}-> ${defPath}"
 
             if (variant.buildType.name != "debug") {
@@ -193,5 +194,5 @@ gradle.buildFinished { buildResult -> /*BuildResult*/
             }
         }
     }
-    println "构建完毕->${buildResult.action}"
+    println "[apk.gradle]构建完毕->${buildResult.action}"
 }

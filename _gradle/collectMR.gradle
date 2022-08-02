@@ -107,7 +107,7 @@ afterEvaluate {
                 outputPathFile.deleteDir()
             }
 
-            println "收集文件结束."
+            println "[collectMR.gradle]收集文件结束."
         }
     }
 }

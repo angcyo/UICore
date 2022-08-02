@@ -123,7 +123,7 @@ def copyFile(String from, String toPath) {
             return
         }
         File dest = new File(toPath)
-        println '复制文件:' + source.getAbsolutePath() + " -> " + dest.getAbsolutePath()
+        println '[common.gradle]复制文件:' + source.getAbsolutePath() + " -> " + dest.getAbsolutePath()
 
         input = new FileInputStream(source)
         output = new FileOutputStream(dest)
