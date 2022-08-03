@@ -1,10 +1,8 @@
 package com.angcyo.library.ex
 
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.Rect
+import android.graphics.*
 import android.os.Build
+import android.os.Build.VERSION_CODES
 import android.text.TextPaint
 import com.angcyo.library.R
 
@@ -77,4 +75,29 @@ fun Paint.textPath(text: String?, result: Path = Path()): Path {
         result
     )
     return result
+}
+
+/**
+ * Convenience for [Canvas.saveLayer] but instead of taking a entire Paint
+ * object it takes only the `alpha` parameter.
+ * [alpha] [0~255]
+ */
+fun Canvas.saveLayerAlpha(alpha: Int = 0, bounds: RectF? = null): Int {
+    return if (Build.VERSION.SDK_INT > VERSION_CODES.LOLLIPOP) {
+        saveLayerAlpha(bounds, alpha)
+    } else {
+        saveLayerAlpha(bounds, alpha, Canvas.ALL_SAVE_FLAG)
+    }
+}
+
+/**
+ * Convenience for [.saveLayerAlpha] that takes the four float
+ * coordinates of the bounds rectangle.
+ */
+fun Canvas.saveLayerAlpha(alpha: Int, left: Float, top: Float, right: Float, bottom: Float): Int {
+    return if (Build.VERSION.SDK_INT > VERSION_CODES.LOLLIPOP) {
+        saveLayerAlpha(left, top, right, bottom, alpha)
+    } else {
+        saveLayerAlpha(left, top, right, bottom, alpha, Canvas.ALL_SAVE_FLAG)
+    }
 }

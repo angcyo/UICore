@@ -16,7 +16,7 @@ class EraserBrushElement(brushElementData: BrushElementData) : BaseBrushElement(
     init {
         paint.color = Color.WHITE
         paint.style = Paint.Style.STROKE
-        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_IN)
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
     }
 
     override fun onDraw(layer: BaseLayer, canvas: Canvas) {

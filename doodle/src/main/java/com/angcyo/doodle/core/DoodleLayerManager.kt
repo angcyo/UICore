@@ -1,11 +1,11 @@
 package com.angcyo.doodle.core
 
 import android.graphics.Canvas
-import androidx.core.graphics.withSave
 import com.angcyo.doodle.DoodleDelegate
 import com.angcyo.doodle.layer.BackgroundLayer
 import com.angcyo.doodle.layer.BaseLayer
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.ex.saveLayerAlpha
 
 /**
  *
@@ -33,9 +33,9 @@ class DoodleLayerManager(val doodleDelegate: DoodleDelegate) {
 
         //其他层
         for (layer in layerList) {
-            canvas.withSave {
-                layer.onDraw(canvas)
-            }
+            val saveCount = canvas.saveLayerAlpha(255)
+            layer.onDraw(canvas)
+            canvas.restoreToCount(saveCount)
         }
     }
 
@@ -81,6 +81,29 @@ class DoodleLayerManager(val doodleDelegate: DoodleDelegate) {
         if (operateLayer == layer) {
             //选择最后一个图层
             updateOperateLayer(layerList.lastOrNull())
+        }
+    }
+
+    /**隐藏背景层*/
+    fun hideBackgroundLayer(hide: Boolean = true, strategy: Strategy) {
+        if (!hide) {
+            if (backgroundLayer != null) {
+                //已经有背景
+                return
+            }
+        }
+
+        val old = backgroundLayer
+        doodleDelegate.undoManager.addAndRedo(strategy, {
+            backgroundLayer = old
+            doodleDelegate.refresh()
+        }) {
+            backgroundLayer = if (hide) {
+                null
+            } else {
+                old ?: BackgroundLayer(doodleDelegate)
+            }
+            doodleDelegate.refresh()
         }
     }
 
