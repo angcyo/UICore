@@ -85,6 +85,13 @@ fun String?.hawkPut(value: CharSequence?): Boolean {
     } ?: false
 }
 
+/**
+ *  var cacheLoginBean: LoginBean?
+ *    get() = KEY_LOGIN_BEAN.hawkGet<LoginBean>()
+ *    set(value) {
+ *      KEY_LOGIN_BEAN.hawkPut(value)
+ *   }
+ * */
 fun <T> String?.hawkPut(value: T?): Boolean {
     return this?.run {
         Hawk.put(this, value)
@@ -114,6 +121,9 @@ fun String?.hawkGet(def: String? = null): String? {
     return result
 }
 
+/**
+ * KEY_LOGIN_BEAN.hawkGet<LoginBean>()
+ * */
 fun <T> String?.hawkGet(def: T? = null): T? {
     var result: T? = def
     this?.let {
