@@ -122,7 +122,7 @@ fun isMac() = getAppString("os_name")?.toLowerCase()?.contains("mac") == true
  * */
 fun isShowDebug() = getAppBoolean("show_debug") == true
 
-fun isDebug() = BuildConfig.DEBUG || isAppDebug()
+fun isDebug() = BuildConfig.DEBUG || isAppDebug() || isDebugType()
 
 /**[ApplicationInfo.FLAG_DEBUGGABLE]*/
 fun isAppDebug() = RUtils.isAppDebug()
