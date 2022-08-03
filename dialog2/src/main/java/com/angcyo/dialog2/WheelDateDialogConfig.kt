@@ -5,7 +5,6 @@ import android.content.Context
 import android.view.Gravity
 import com.angcyo.dialog.BaseDialogConfig
 import com.angcyo.dialog.configBottomDialog
-import com.angcyo.dialog2.R
 import com.angcyo.library.L
 import com.angcyo.library.ex._dimen
 import com.angcyo.widget.DslViewHolder
@@ -26,6 +25,8 @@ open class WheelDateDialogConfig : BaseDialogConfig() {
     //time picker 年月日 时分秒
     var dateType = booleanArrayOf(true, true, true, false, false, false)//显示类型，默认显示： 年月日
     var dateTextGravity = Gravity.CENTER
+
+    /**DP 单位*/
     var dateTextSize = _dimen(R.dimen.wheel_text_size)
 
     var isLunarCalendar = false//是否显示农历
