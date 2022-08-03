@@ -5,7 +5,6 @@ import android.net.Uri
 import android.view.View
 import com.angcyo.core.CoreApplication
 import com.angcyo.core.R
-import com.angcyo.dialog.DslDialogConfig
 import com.angcyo.dialog.dslDialog
 import com.angcyo.http.DslHttp
 import com.angcyo.http.base.fromJson
@@ -65,12 +64,15 @@ object HttpConfigDialog {
         }
 
     /**显示网络配置地址配置对话框*/
-    fun showHttpConfig(context: Context, end: () -> Unit = {}) {
+    fun showHttpConfig(
+        context: Context,
+        end: (url: String?, cancel: Boolean) -> Unit = { _, _ -> }
+    ) {
         show(context, appBaseUrl, appCustomUrls) { url, cancel ->
             if (!cancel) {
                 customBaseUrl = url
             }
-            end()
+            end(url, cancel)
         }
     }
 
@@ -87,7 +89,9 @@ object HttpConfigDialog {
         dslDialog(context) {
             canceledOnTouchOutside = false
             dialogThemeResId = 0
-            dialogType = DslDialogConfig.DIALOG_TYPE_ALERT_DIALOG
+            dialogWidth = -1
+            dialogHeight = -2
+
             dialogLayoutId = R.layout.lib_http_config_layout
             onCancelListener = {
                 save(null, true)
@@ -105,8 +109,8 @@ object HttpConfigDialog {
                     init(isChecked, RetrofitServiceMapping.defaultMap)
                 }
 
+                /**映射列表*/
                 dialogViewHolder.click(R.id.get_list, View.OnClickListener { v ->
-
                     com.angcyo.http.get {
                         url = MAPPING_URL
                         isSuccessful = {
@@ -126,6 +130,7 @@ object HttpConfigDialog {
                     })
                 })
 
+                //下拉选择
                 val spinner: RSpinner? = dialogViewHolder.v(R.id.url_spinner)
                 val urls = mutableListOf<String>()
                 urls.add("选择服务器Url")
@@ -152,6 +157,11 @@ object HttpConfigDialog {
             }
         }
     }
+}
+
+/**显示网络配置地址配置对话框*/
+fun Context.httpConfigDialog(end: (url: String?, cancel: Boolean) -> Unit = { _, _ -> }) {
+    HttpConfigDialog.showHttpConfig(this, end)
 }
 
 /**
