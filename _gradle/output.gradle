@@ -122,5 +122,5 @@ gradle.buildFinished { buildResult -> /*BuildResult*/
             }
         }
     }
-    println "构建完毕->${buildResult.action}"
+    println "[output.gradle] 构建完毕->${buildResult.action}"
 }

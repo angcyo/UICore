@@ -42,7 +42,7 @@ afterEvaluate {
             //gradle 3.6.0 之前 路径是 /apk/release
             //gradle 3.6.0 之后 路径是 /apkRelease/
 
-            println "${it.name} 任务结束, 开始收集文件."
+            println "[${it.name}] 任务结束, 开始收集文件."
 
             //找到打包任务Task
             def buildFlavors = pick(it.name /*"assemblePrePretest"*/, '(?<=assemble).*')
@@ -107,7 +107,7 @@ afterEvaluate {
                 outputPathFile.deleteDir()
             }
 
-            println "[collectMR.gradle]收集文件结束."
+            println "[collectMR.gradle] 收集文件结束."
         }
     }
 }
