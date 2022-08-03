@@ -194,5 +194,5 @@ gradle.buildFinished { buildResult -> /*BuildResult*/
             }
         }
     }
-    println "[apk.gradle]构建完毕->${buildResult.action}"
+    println "[apk.gradle] 构建完毕->${buildResult.action}"
 }
