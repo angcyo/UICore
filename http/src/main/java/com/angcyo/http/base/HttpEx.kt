@@ -118,17 +118,11 @@ fun MediaType?.isHtmlType() = this?.toString().isHtmlType()
 fun JsonBuilder.addPage(page: Page?) {
     if (page != null) {
         if (page.requestPageSize < 0) {
-            add("size", Int.MAX_VALUE)
-            add("current", 1)
-
-            add("requestPageSize", Int.MAX_VALUE)
-            add("requestPageIndex", 1)
+            add(page.keySize, Int.MAX_VALUE)
+            add(page.keyCurrent, 1)
         } else {
-            add("size", page.requestPageSize)
-            add("current", page.requestPageIndex)
-
-            add("requestPageSize", page.requestPageSize)
-            add("requestPageIndex", page.requestPageIndex)
+            add(page.keySize, page.requestPageSize)
+            add(page.keyCurrent, page.requestPageIndex)
         }
     }
 }

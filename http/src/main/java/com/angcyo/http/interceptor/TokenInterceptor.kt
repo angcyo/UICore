@@ -1,5 +1,8 @@
 package com.angcyo.http.interceptor
 
+import com.angcyo.http.DslHttp
+import com.angcyo.http.base.getInt
+import com.angcyo.http.base.json
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -8,6 +11,24 @@ import java.nio.charset.Charset
 import java.util.concurrent.CountDownLatch
 
 /**
+ * Token 拦截器
+ *
+ * ```
+ * DslHttp.config {
+ *   val tokenInterceptor = TokenInterceptor(WTTokenListener())
+ *   val authInterceptor = AuthInterceptor {
+ *     if (it.code == 401) {
+ *       toast("您已下线!")
+ *       vmApp<LoginModel>().isTokenInvalidData.postValue(true)
+ *     }
+ *   }
+ *   configHttpBuilder {
+ *     it.addInterceptorEx(tokenInterceptor, 0)
+ *     it.addInterceptorEx(authInterceptor)
+ *   }
+ * }
+ * ```
+ *
  * Email:angcyo@126.com
  *
  * @author angcyo
@@ -145,6 +166,7 @@ class TokenInterceptor : Interceptor {
         return result
     }
 
+    /**Token回调*/
     interface OnTokenListener {
         /** 是否要忽略这个请求 */
         fun ignoreRequest(originRequest: Request): Boolean
@@ -169,22 +191,44 @@ class TokenInterceptor : Interceptor {
         fun tryGetToken(latch: CountDownLatch)
     }
 
+    /**Token回调简单适配*/
     open class TokenListenerAdapter : OnTokenListener {
+
         override fun ignoreRequest(originRequest: Request): Boolean {
             return false
         }
 
+        /**
+         *
+         *  return originRequest.newBuilder()
+         *  .apply {
+         *    if (loginModel.isLoginIn()) {
+         *    val token = loginModel.loginEntity.value?.access_token
+         *    if (!token.isNullOrBlank()) {
+         *        addHeader("Authorization", "Bearer $token")
+         *      }
+         *    }
+         *  }
+         *  .addHeader("Content-Type", "application/json")
+         *  .build()
+         * */
         override fun initToken(originRequest: Request): Request {
             return originRequest
         }
 
+        /**返回Token是否无效, 无效Token会触发
+         * [com.angcyo.http.interceptor.TokenInterceptor.TokenListenerAdapter.tryGetToken]*/
         override fun isTokenInvalid(
             response: Response,
             bodyString: String
         ): Boolean {
-            return false
+            val tokenInvalid = response.code == 401 ||
+                    (bodyString.startsWith("{") && bodyString.json()
+                        ?.getInt(DslHttp.DEFAULT_CODE_KEY) == 401)
+            return tokenInvalid
         }
 
+        /**重新获取Token*/
         override fun tryGetToken(latch: CountDownLatch) {
             latch.countDown()
         }

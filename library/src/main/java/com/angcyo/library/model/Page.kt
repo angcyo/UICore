@@ -13,11 +13,17 @@ import androidx.annotation.Keep
 @Keep
 class Page {
     companion object {
+
         /**默认一页请求的数量*/
         var PAGE_SIZE: Int = 20
 
         /**默认第一页的索引*/
         var FIRST_PAGE_INDEX: Int = 1
+
+        /**请求的Key*/
+        var KEY_CURRENT = "current"
+
+        var KEY_SIZE = "size"
     }
 
     /**默认的第一页*/
@@ -73,6 +79,11 @@ class Page {
 
     /**需要升序排序字段(从小->大), 多个用;分割*/
     var asc: String? = null
+
+    /**请求相关的2个key*/
+    var keyCurrent: String = KEY_CURRENT
+
+    var keySize: String = KEY_SIZE
 }
 
 /**单页请求, 无加载更多*/
