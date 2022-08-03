@@ -20,7 +20,7 @@ import retrofit2.Response
  */
 class ToastObserver<T> : BaseObserver<T>() {
 
-    var defaultErrorMsg = "接口异常!"
+    var defaultErrorMsg = DslHttp.DEFAULT_ERROR_MSG
 
     //解析请求返回的json数据, 判断code是否是成功的状态, 否则走异常流程.
     var codeKey: String = DslHttp.DEFAULT_CODE_KEY

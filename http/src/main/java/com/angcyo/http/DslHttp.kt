@@ -165,11 +165,15 @@ interface ApiKt {
 
 object DslHttp {
 
-    /**---*/
+    /**逻辑错误code-key*/
     var DEFAULT_CODE_KEY = "code"
+
+    /**提示消息msg-key*/
     var DEFAULT_MSG_KEY = "msg"
 
-    /**配置信息*/
+    /**默认的错误提示*/
+    var DEFAULT_ERROR_MSG = "接口异常!"
+
     val dslHttpConfig = DslHttpConfig()
 
     /**获取客户端实例*/
@@ -350,7 +354,7 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
                         L.e(requestConfig.url)
                         if (body.has(requestConfig.codeKey)) {
                             throw HttpDataException(
-                                body.getString(requestConfig.msgKey) ?: "数据异常",
+                                body.getString(requestConfig.msgKey) ?: DslHttp.DEFAULT_ERROR_MSG,
                                 body.getInt(requestConfig.codeKey, -200)
                             )
                         } else {
@@ -447,16 +451,19 @@ fun Response<JsonElement>?.isSucceed(
 ): Boolean {
     val bodyData = this?.body()
 
-    var result = this?.isSuccessful == true
+    var result = false
     if (this == null || bodyData == null) {
         //空数据
+        result = this?.isSuccessful == true
         onResult(result, null)
         return result
     }
 
     var errorJson: JsonObject? = null
 
-    if (!codeKey.isNullOrEmpty() && isSuccessful && bodyData is JsonObject) {
+    if (codeKey.isNullOrEmpty()) {
+        result = isSuccessful
+    } else if (isSuccessful && bodyData is JsonObject) {
         if (bodyData.isCodeSuccess(codeKey)) {
             result = true
         } else {
