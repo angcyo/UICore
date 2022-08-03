@@ -1,6 +1,7 @@
 package com.angcyo.core.component
 
 import android.content.Context
+import android.net.Uri
 import android.view.View
 import com.angcyo.core.CoreApplication
 import com.angcyo.core.R
@@ -9,11 +10,14 @@ import com.angcyo.dialog.dslDialog
 import com.angcyo.http.DslHttp
 import com.angcyo.http.base.fromJson
 import com.angcyo.http.base.toJson
+import com.angcyo.http.connectUrl
+import com.angcyo.http.form.FormAttachManager.Companion.KEY_FILE_ID
 import com.angcyo.http.isSucceed
 import com.angcyo.http.rx.BaseObserver
 import com.angcyo.http.rx.observer
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.ex.queryParameter
 import com.angcyo.library.toast
 import com.angcyo.widget.RSpinner
 import com.angcyo.widget.base.setInputText
@@ -148,5 +152,41 @@ object HttpConfigDialog {
             }
         }
     }
+}
 
+/**
+ * 支持拼接[fileId] 和 [schema]
+ * [com.angcyo.http.DslHttpKt.toApi]*/
+fun String?.toApiUrl(fileId: String?, schema: String? = null): String {
+    if (this.isNullOrEmpty()) {
+        return ""
+    }
+    val baseUrl = DslHttp.dslHttpConfig.onGetBaseUrl()
+    val base = if (schema.isNullOrEmpty()) {
+        baseUrl
+    } else {
+        "${baseUrl}/$schema"
+    }
+    var result: String = connectUrl(base, this)
+
+    if (!fileId.isNullOrEmpty()) {
+        val uri = Uri.parse(this)
+        val param = "${KEY_FILE_ID}=${fileId}"
+
+        result = if (uri.query?.isEmpty() != false) {
+            //url 没有 查询参数
+            "${result}?${param}"
+        } else {
+            val oldFileId = result.queryParameter(KEY_FILE_ID)
+            if (oldFileId?.isEmpty() != false) {
+                //没有fileId参数
+                "${result}&${param}"
+            } else {
+                //有fileId参数
+                result.replace("${KEY_FILE_ID}=${oldFileId}", param)
+            }
+        }
+    }
+
+    return result
 }

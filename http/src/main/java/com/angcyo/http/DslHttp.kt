@@ -273,6 +273,7 @@ fun <T> dslHttp(service: Class<T>): T? {
     }
 }
 
+/**将请求路径转换成api接口地址*/
 fun String?.toApi(host: String? = DslHttp.dslHttpConfig.onGetBaseUrl()): String {
     return connectUrl(host, this)
 }

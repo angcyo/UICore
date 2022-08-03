@@ -13,14 +13,14 @@ abstract class FormAttachManager {
 
     companion object {
         /**多附件,请使用此符号分割, 用来拼接项*/
-        const val ATTACH_SPLIT = "|"
+        var ATTACH_SPLIT = "|"
 
         /**这种字符开始的key, 需要对路径进行解析*/
-        const val ATTACH_PATH_PARSE = "$"
+        var ATTACH_PATH_PARSE = "$"
 
         /**拼接在Url后面的id参数key值*/
-        const val KEY_FILE_ID = "fileId"
+        var KEY_FILE_ID = "fileId"
 
-        const val HTTP_PREFIX = "http"
+        var HTTP_PREFIX = "http"
     }
 }
