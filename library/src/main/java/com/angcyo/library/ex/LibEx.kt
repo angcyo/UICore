@@ -122,6 +122,7 @@ fun isMac() = getAppString("os_name")?.toLowerCase()?.contains("mac") == true
  * */
 fun isShowDebug() = getAppBoolean("show_debug") == true
 
+/**库打包成aar之后, [BuildConfig.DEBUG] 是 release*/
 fun isDebug() = BuildConfig.DEBUG || isAppDebug() || isDebugType()
 
 /**[ApplicationInfo.FLAG_DEBUGGABLE]*/

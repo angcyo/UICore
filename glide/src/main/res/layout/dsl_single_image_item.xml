@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_item_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.angcyo.glide.GlideImageView
+        android:id="@+id/lib_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintDimensionRatio="1:1"
+        app:r_draw_border="false"
+        app:r_image_radius="@dimen/lib_radius_normal"
+        app:srcCompat="@color/lib_image_placeholder_white_color"
+        tools:r_draw_border="true" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

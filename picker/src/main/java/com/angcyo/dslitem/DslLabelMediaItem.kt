@@ -2,10 +2,13 @@ package com.angcyo.dslitem
 
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import com.angcyo.dsladapter.*
+import com.angcyo.dsladapter.DslAdapter
+import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.data.updateSingleData
 import com.angcyo.dsladapter.filter.AddMediaFilterAfterInterceptor
 import com.angcyo.dsladapter.item.IFragmentItem
+import com.angcyo.dsladapter.itemIndexPosition
+import com.angcyo.dsladapter.margin
 import com.angcyo.item.DslBaseLabelItem
 import com.angcyo.item.DslImageItem
 import com.angcyo.library.L
@@ -219,11 +222,11 @@ open class DslLabelMediaItem : DslBaseLabelItem(), IFragmentItem {
             }
         }
 
-        if (itemParentRef?.get() == null) {
+        /*if (itemParentRef?.get() == null) {
             adapter.updateNow()
         } else {
             adapter.notifyDataChanged()
-        }
+        }*/
     }
 
     /**获取媒体路径列表*/

@@ -17,6 +17,9 @@ open class DslGridMediaItem : DslAdapterItem(), IGridMediaItem {
 
     init {
         itemLayoutId = R.layout.dsl_nested_recycler_item
+
+        itemWidth = -1
+        itemHeight = -2
     }
 
     override fun onItemViewRecycled(itemHolder: DslViewHolder, itemPosition: Int) {

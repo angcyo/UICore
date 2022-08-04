@@ -4,5 +4,5 @@
 
     <!--底部tab栏的高度-->
     <dimen name="lib_tab_height">50dp</dimen>
-    <dimen name="lib_tab_icon_size">30dp</dimen>
+    <dimen name="lib_tab_icon_size">22dp</dimen>
 </resources>

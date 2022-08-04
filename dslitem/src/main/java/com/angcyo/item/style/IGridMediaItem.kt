@@ -97,11 +97,11 @@ interface IGridMediaItem : IAutoInitItem {
             onInitGridMediaItem(adapter, this, media)
         }
 
-        if (this is DslAdapterItem && itemParentRef?.get() == null) {
+        /*if (this is DslAdapterItem && itemParentRef?.get() == null) {
             adapter.updateNow()
         } else {
             adapter.notifyDataChanged()
-        }
+        }*/
     }
 
     /**初始化用于展示的[DslImageItem]*/
@@ -109,6 +109,7 @@ interface IGridMediaItem : IAutoInitItem {
         val parentItem = this
         if (item is DslImageItem) {
             item.apply {
+                itemLayoutId = R.layout.dsl_single_image_item
                 margin(2 * dpi)
 
                 itemData = media
