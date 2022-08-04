@@ -8,6 +8,7 @@ import com.angcyo.base.dslFHelper
 import com.angcyo.dsladapter.*
 import com.angcyo.dsladapter.data.loadSingleData
 import com.angcyo.getData
+import com.angcyo.image.dslitem.DslSubSamplingImageItem
 import com.angcyo.library.ex.*
 import com.angcyo.library.model.*
 import com.angcyo.pager.dslitem.DslPagerPhotoViewItem
@@ -78,6 +79,10 @@ class PickerPreviewFragment : BasePickerFragment() {
         previewMediaList.addAll(mediaList ?: emptyList())
     }
 
+    /**
+     * [com.angcyo.picker.core.PickerPreviewFragment.onViewCreated]
+     * [com.angcyo.pager.PagerTransitionFragment.onCreatePagerAdapter]
+     * */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -98,6 +103,15 @@ class PickerPreviewFragment : BasePickerFragment() {
                         itemAudioTitle = it.displayName
                         itemAudioDuration = it.duration
                         itemAudioUri = it.loadUri()
+                    })
+                    it.isLargerBitmap -> items.add(DslSubSamplingImageItem().apply {
+                        itemData = it
+                        itemLoadUri = it.loadUri()
+
+                        //点击图片关闭界面
+                        itemClick = {
+                            _fullscreen()
+                        }
                     })
                     else -> items.add(DslPagerPhotoViewItem().apply {
                         itemData = it

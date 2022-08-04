@@ -18,8 +18,22 @@ class RSamplingScaleImageView : SubsamplingScaleImageView {
     constructor(context: Context) : super(context)
     constructor(context: Context, attr: AttributeSet?) : super(context, attr)
 
+    init {
+        //setOnImageEventListener()
+
+        //setOnStateChangedListener()
+    }
+
     override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
         return super.dispatchTouchEvent(event)
+    }
+
+    override fun setOnImageEventListener(onImageEventListener: OnImageEventListener?) {
+        super.setOnImageEventListener(onImageEventListener)
+    }
+
+    override fun setOnStateChangedListener(onStateChangedListener: OnStateChangedListener?) {
+        super.setOnStateChangedListener(onStateChangedListener)
     }
 }
 

@@ -1,6 +1,7 @@
 package com.angcyo.download.dslitem
 
 import com.angcyo.download.dslDownload
+import com.angcyo.download.isCompleted
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.widget.DslViewHolder
 import com.liulishuo.okdownload.DownloadTask
@@ -41,6 +42,9 @@ abstract class DslBaseDownloadItem : DslAdapterItem() {
     //是否被Detached过, 用于下载成功后判断是否需要继续之前的操作
     var _isItemViewDetached = false
 
+    //下载完成后的文件路径
+    var _itemTaskFilePath: String? = null
+
     override fun onItemViewDetachedToWindow(itemHolder: DslViewHolder, itemPosition: Int) {
         super.onItemViewDetachedToWindow(itemHolder, itemPosition)
         _isItemViewDetached = true
@@ -62,7 +66,8 @@ abstract class DslBaseDownloadItem : DslAdapterItem() {
             onTaskFinish = { downloadTask, cause, exception ->
                 itemDownloadFinish(itemHolder, downloadTask, cause, exception)
                 if (cause == EndCause.COMPLETED && !_isItemViewDetached) {
-                    callback(downloadTask.file!!.absolutePath)
+                    _itemTaskFilePath = downloadTask.file!!.absolutePath
+                    callback(_itemTaskFilePath!!)
                 }
             }
             onTaskProgress = { downloadTask, progress, speed ->
@@ -90,6 +95,11 @@ abstract class DslBaseDownloadItem : DslAdapterItem() {
     //</editor-fold desc="任务回调">
 
     //<editor-fold desc="获取任务信息">
+
+    /**是否下载完成*/
+    open fun isDownloadFinish(): Boolean {
+        return _downTask?.isCompleted() == true
+    }
 
     //</editor-fold desc="获取任务信息">
 }

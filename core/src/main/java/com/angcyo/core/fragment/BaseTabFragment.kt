@@ -13,6 +13,7 @@ import com.angcyo.library.ex.append
 import com.angcyo.library.ex.find
 import com.angcyo.library.ex.getChildOrNull
 import com.angcyo.library.ex.setWidthHeight
+import com.angcyo.tablayout.DslTabLayout
 import com.angcyo.widget.tab
 import com.angcyo.widget.text.BadgeTextView
 
@@ -53,6 +54,7 @@ abstract class BaseTabFragment : BaseFragment() {
         initTabLayout()
     }
 
+    /**[DslTabLayout]*/
     open fun initTabLayout() {
         _vh.visible(R.id.lib_tab_line_view, showTabLine)
         _vh.tab(R.id.lib_tab_layout)?.configTabLayoutConfig {
@@ -90,13 +92,16 @@ abstract class BaseTabFragment : BaseFragment() {
         action: View.() -> Unit = {}
     ) {
         _fragmentList.add(fragment)
-        _vh.tab(R.id.lib_tab_layout)?.appendTabItem(text, imageResId, tabItemLayoutId) {
-            find<ImageView>(R.id.lib_tab_image_view)?.apply {
-                tabIconSize?.let {
-                    setWidthHeight(it)
+        _vh.tab(R.id.lib_tab_layout)?.apply {
+            appendTabItem(text, imageResId, tabItemLayoutId) {
+                find<ImageView>(R.id.lib_tab_image_view)?.apply {
+                    tabIconSize?.let {
+                        setWidthHeight(it)
+                    }
                 }
+                action()
             }
-            action()
+            updateTabLayout()
         }
     }
 

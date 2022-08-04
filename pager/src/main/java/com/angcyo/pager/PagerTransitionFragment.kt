@@ -10,6 +10,7 @@ import androidx.viewpager.widget.ViewPager
 import com.angcyo.base.interceptTouchEvent
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.set
+import com.angcyo.image.dslitem.DslSubSamplingImageItem
 import com.angcyo.library.model.isAudio
 import com.angcyo.library.model.isVideo
 import com.angcyo.library.model.loadUri
@@ -192,6 +193,10 @@ open class PagerTransitionFragment : ViewTransitionFragment() {
         }
     }
 
+    /**
+     * [com.angcyo.picker.core.PickerPreviewFragment.onViewCreated]
+     * [com.angcyo.pager.PagerTransitionFragment.onCreatePagerAdapter]
+     * */
     open fun onCreatePagerAdapter(): PagerAdapter? {
         val adapter = pagerTransitionCallback.onCreatePagerAdapter?.invoke()
 
@@ -212,6 +217,18 @@ open class PagerTransitionFragment : ViewTransitionFragment() {
                     itemAudioTitle = it.displayName
                     itemAudioDuration = it.duration
                     itemAudioUri = it.loadUri()
+                })
+                it.isLargerBitmap -> items.add(DslSubSamplingImageItem().apply {
+                    itemData = it
+                    itemLoadUri = it.loadUri()
+
+                    //占位图提供
+                    drawableProvider = pagerTransitionCallback
+
+                    //点击图片关闭界面
+                    itemClick = {
+                        backTransition()
+                    }
                 })
                 else -> items.add(DslPagerPhotoViewItem().apply {
                     itemData = it

@@ -7,6 +7,7 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.dsladapter.itemIndexPosition
 import com.angcyo.item.DslImageItem
+import com.angcyo.item.style.GridMediaItemConfig
 import com.angcyo.item.style.IGridMediaItem
 import com.angcyo.library.L
 import com.angcyo.library.ex.dpi
@@ -80,7 +81,7 @@ interface INineMediaItem : IGridMediaItem, IFragmentItem {
 
         if (gridMediaItemConfig.itemGridMediaList.size() == 1) {
             //单图, 使用实际宽高
-            onParseMediaSize(media)
+            onParseNineMediaSize(media)
 
             item.itemWidth = -2
             item.itemHeight = -2
@@ -127,7 +128,26 @@ interface INineMediaItem : IGridMediaItem, IFragmentItem {
      * 格式1: https://xxx.png?w=346&h=362&
      * 格式2: https://xxx.png?s=346x362&
      * */
-    fun onParseMediaSize(media: LoaderMedia) {
+    fun onParseNineMediaSize(media: LoaderMedia) {
+        (gridMediaItemConfig as? NineMediaItemConfig)?.apply {
+            //解析大小
+            itemParseMediaSizeAction.invoke(media)
+            //限制大小
+            itemMediaSizeLimitAction.invoke(media)
+        }
+    }
+}
+
+class NineMediaItemConfig : GridMediaItemConfig() {
+
+    /**显示单图时的最大宽度, 如果超过了, 定比缩放*/
+    var itemMediaMaxWidth: Int = 300 * dpi
+
+    /**显示单图时的最大高度, 如果超过了, 定比缩放*/
+    var itemMediaMaxHeight: Int = 400 * dpi
+
+    /**解析媒体的宽高action*/
+    var itemParseMediaSizeAction: (media: LoaderMedia) -> Unit = { media ->
         val uri = media.loadUri()
         uri?.apply {
             try {
@@ -156,4 +176,22 @@ interface INineMediaItem : IGridMediaItem, IFragmentItem {
             }
         }
     }
+
+    /**宽高限制action*/
+    var itemMediaSizeLimitAction: (media: LoaderMedia) -> Unit = { media ->
+        media.isLargerBitmap = media.isLargerBitmap || (media.width > 3000 || media.height > 3000)
+        if (itemMediaMaxWidth > 0 && media.width > itemMediaMaxWidth) {
+            //宽度超限
+            val old = media.width
+            media.width = itemMediaMaxWidth
+            media.height = media.height * itemMediaMaxWidth / old
+        }
+        if (itemMediaMaxHeight > 0 && media.height > itemMediaMaxHeight) {
+            //高度超限
+            val old = media.height
+            media.height = itemMediaMaxHeight
+            media.width = media.width * itemMediaMaxHeight / old
+        }
+    }
+
 }

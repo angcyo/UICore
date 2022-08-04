@@ -68,7 +68,11 @@ data class LoaderMedia(
     //纬度
     var latitude: Double = 0.0,
     //经度
-    var longitude: Double = 0.0
+    var longitude: Double = 0.0,
+
+    /**是否是大图, 长图
+     * 如果是, 则使用[com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView]加载*/
+    var isLargerBitmap: Boolean = false
 
 ) : Parcelable {
 
