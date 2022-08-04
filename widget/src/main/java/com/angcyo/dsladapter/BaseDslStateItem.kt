@@ -20,7 +20,10 @@ abstract class BaseDslStateItem : DslAdapterItem() {
      * */
     val itemStateLayoutMap = hashMapOf<Int, Int>()
 
-    /**当前的布局状态*/
+    /**当前的布局状态
+     * [com.angcyo.dsladapter.DslAdapterStatusItem.ADAPTER_STATUS_LOADING]
+     * [com.angcyo.dsladapter.DslLoadMoreItem.LOAD_MORE_LOADING]
+     * */
     var itemState = -1
         set(value) {
             val old = field

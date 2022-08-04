@@ -427,7 +427,13 @@ fun mediaPayload(): List<Int> =
 
 //<editor-fold desc="AdapterStatus">
 
-fun DslAdapter.adapterStatus() = dslAdapterStatusItem.itemState
+/**当前情感图的状态*/
+fun DslAdapter.adapterStatus() =
+    if (dslAdapterStatusItem.itemEnable && dslAdapterStatusItem.itemStateEnable) {
+        dslAdapterStatusItem.itemState
+    } else {
+        null
+    }
 
 fun DslAdapter.isAdapterStatusLoading() =
     dslAdapterStatusItem.itemState == DslAdapterStatusItem.ADAPTER_STATUS_LOADING

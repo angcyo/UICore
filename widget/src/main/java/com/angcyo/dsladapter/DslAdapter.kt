@@ -780,11 +780,20 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         filterParams: FilterParams = defaultFilterParams!!,
         action: DslAdapter.() -> Unit
     ) {
+        //之前的状态
+        val oldState = adapterStatus()
         action()
         _updateAdapterItems()
         if (updateState) {
+            val nowState = adapterStatus()
             if (adapterItems.isEmpty()) {
-                emptyStatus()
+                if ((oldState == null || oldState == -1) &&
+                    (nowState == DslAdapterStatusItem.ADAPTER_STATUS_LOADING || nowState == DslAdapterStatusItem.ADAPTER_STATUS_ERROR)
+                ) {
+                    //未被初始化, 并且新状态新 加载中/错误... 则保持此状态
+                } else {
+                    emptyStatus()
+                }
             } else {
                 noneStatus()
             }
