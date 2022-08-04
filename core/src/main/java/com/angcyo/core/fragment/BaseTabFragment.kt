@@ -80,7 +80,9 @@ abstract class BaseTabFragment : BaseFragment() {
 
     var _fragmentList: MutableList<Class<out Fragment>> = mutableListOf()
 
-    /**添加tab item*/
+    /**添加tab item
+     * 请在[initTabLayout]之后调用
+     * */
     open fun addTabItem(
         fragment: Class<out Fragment>,
         text: CharSequence,
