@@ -11,6 +11,8 @@ import com.angcyo.item.DslImageItem
 import com.angcyo.item.R
 import com.angcyo.library.app
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.gone
+import com.angcyo.library.ex.visible
 import com.angcyo.library.model.LoaderMedia
 import com.angcyo.library.model.loadUri
 import com.angcyo.library.model.mimeType
@@ -38,7 +40,12 @@ interface IGridMediaItem : IAutoInitItem {
         payloads: List<Any>
     ) {
         itemHolder.rv(gridMediaItemConfig.itemGridMediaRecyclerViewId)?.apply {
-            onBindGridMediaRecyclerView(this, itemHolder, itemPosition, adapterItem, payloads)
+            if (gridMediaItemConfig.itemGridMediaList.isEmpty() && gridMediaItemConfig.itemGoneOnMediaEmpty) {
+                gone()
+            } else {
+                visible()
+                onBindGridMediaRecyclerView(this, itemHolder, itemPosition, adapterItem, payloads)
+            }
         }
     }
 
@@ -159,5 +166,8 @@ open class GridMediaItemConfig : IDslItemConfig {
 
     /**媒体数据*/
     var itemGridMediaList: MutableList<LoaderMedia> = mutableListOf()
+
+    /**[itemGridMediaList]数据为空时, 是否隐藏[RecyclerView]*/
+    var itemGoneOnMediaEmpty: Boolean = true
 
 }
