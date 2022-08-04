@@ -787,7 +787,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         if (updateState) {
             val nowState = adapterStatus()
             if (adapterItems.isEmpty()) {
-                if ((oldState == null || oldState == -1) &&
+                if ((oldState == null || oldState <= 0) &&
                     (nowState == DslAdapterStatusItem.ADAPTER_STATUS_LOADING || nowState == DslAdapterStatusItem.ADAPTER_STATUS_ERROR)
                 ) {
                     //未被初始化, 并且新状态新 加载中/错误... 则保持此状态
