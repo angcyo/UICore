@@ -16,7 +16,7 @@
             android:layout_height="match_parent"
             android:background="@drawable/dialog_white_top_round_bg_shape"
             android:orientation="vertical"
-            android:paddingTop="@dimen/lib_xhdpi">
+            android:paddingTop="@dimen/lib_ldpi">
 
             <LinearLayout
                 android:layout_width="match_parent"
