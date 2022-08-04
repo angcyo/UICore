@@ -160,7 +160,7 @@ open class GridMediaItemConfig : IDslItemConfig {
     /**布局管理,
      * 请注意使用属性:[recycleChildrenOnDetach]*/
     var itemGridMediaLayoutManager: RecyclerView.LayoutManager =
-        GridLayoutManagerWrap(app(), 4).apply {
+        GridLayoutManagerWrap(app(), 3).apply {
             recycleChildrenOnDetach = true
         }
 
