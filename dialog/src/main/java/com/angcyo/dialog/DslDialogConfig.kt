@@ -150,6 +150,10 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
 
     /**对话框标题*/
     var dialogTitle: CharSequence? = null
+        set(value) {
+            field = value
+            _dialogViewHolder?.tv(R.id.title_view)?.text = value
+        }
 
     /**对话框内容*/
     var dialogMessage: CharSequence? = null
