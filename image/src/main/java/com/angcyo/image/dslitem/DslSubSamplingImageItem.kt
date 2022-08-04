@@ -19,7 +19,7 @@ import com.liulishuo.okdownload.core.cause.EndCause
 import java.io.File
 
 /**
- *
+ * 支持大图加载
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/03/07

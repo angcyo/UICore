@@ -121,7 +121,6 @@ open class PagerTransitionFragment : ViewTransitionFragment() {
 
         _vh.v<MatrixLayout>(R.id.lib_matrix_layout)?.onMatrixTouchListener = onMatrixTouchListener
 
-
         _vh._vp(R.id.lib_view_pager)?.apply {
             val pagerAdapter = onCreatePagerAdapter()
             adapter = pagerAdapter

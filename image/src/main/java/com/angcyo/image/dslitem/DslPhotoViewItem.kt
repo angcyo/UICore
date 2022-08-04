@@ -12,7 +12,7 @@ import com.github.chrisbanes.photoview.OnViewTapListener
 import com.github.chrisbanes.photoview.PhotoView
 
 /**
- *
+ * 支持图片手势操作
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/01/22

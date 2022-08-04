@@ -11,10 +11,7 @@ import com.angcyo.item.DslImageItem
 import com.angcyo.library.L
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.elseNull
-import com.angcyo.library.model.LoaderMedia
-import com.angcyo.library.model.loadUri
-import com.angcyo.library.model.mimeType
-import com.angcyo.library.model.toUrlList
+import com.angcyo.library.model.*
 import com.angcyo.loader.LoaderConfig
 import com.angcyo.pager.dslPager
 import com.angcyo.picker.R
@@ -231,4 +228,11 @@ open class DslLabelMediaItem : DslBaseLabelItem(), IFragmentItem {
 
     /**获取媒体路径列表*/
     open fun getMediaPathList(): List<String> = itemMediaList.toUrlList()
+
+    /**
+     * [url] 支持http/file路径
+     * */
+    open fun addMediaUrl(url: String) {
+        itemMediaList.add(url.toLoaderMedia())
+    }
 }
