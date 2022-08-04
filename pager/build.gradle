@@ -1,0 +1,22 @@
+apply from: allGradle.libBase
+
+//https://github.com/Kotlin/kotlinx.serialization
+apply plugin: 'kotlin-parcelize'
+
+android {
+    defaultConfig {
+        //21以上不需要此属性,对应的xml属性可以直接使用src而不是srcCompat
+        //vectorDrawables.useSupportLibrary = true
+    }
+}
+
+dependencies {
+    api project(allModule.core)
+    api project(allModule.dslitem)
+    api project(allModule.transition)
+    api project(allModule.download)
+    api project(allModule.media)
+    api project(allModule.image)
+    api project(allModule.glide)
+    api project(allModule.component)
+}

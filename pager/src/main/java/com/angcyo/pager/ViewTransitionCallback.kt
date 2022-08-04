@@ -6,10 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.transition.*
 import com.angcyo.library.L
-import com.angcyo.picker.R
+import com.angcyo.library.ex.setWidthHeight
 import com.angcyo.transition.ColorTransition
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.library.ex.setWidthHeight
 
 /**
  *

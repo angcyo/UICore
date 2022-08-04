@@ -16,7 +16,6 @@ import com.angcyo.library.model.loadUri
 import com.angcyo.media.dslitem.DslPreviewAudioItem
 import com.angcyo.media.dslitem.DslTextureVideoItem
 import com.angcyo.pager.dslitem.DslPagerPhotoViewItem
-import com.angcyo.picker.R
 import com.angcyo.tablayout.evaluateColor
 import com.angcyo.widget._vp
 import com.angcyo.widget.layout.MatrixLayout

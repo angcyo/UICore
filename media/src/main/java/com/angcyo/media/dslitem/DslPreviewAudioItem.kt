@@ -15,6 +15,7 @@ import com.liulishuo.okdownload.core.cause.EndCause
  * @date 2020/02/22
  */
 open class DslPreviewAudioItem : DslBaseAudioItem() {
+
     init {
         itemLayoutId = R.layout.dsl_preview_audio_item
     }

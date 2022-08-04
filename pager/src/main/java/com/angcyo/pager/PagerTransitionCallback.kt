@@ -15,7 +15,6 @@ import com.angcyo.image.dslitem.IDrawableProvider
 import com.angcyo.library.ex.copyDrawable
 import com.angcyo.library.model.LoaderMedia
 import com.angcyo.library.model.loadUri
-import com.angcyo.picker.R
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.recycler.get
 

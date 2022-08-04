@@ -11,16 +11,9 @@ android {
 }
 
 dependencies {
-    api project(allModule.core)
     api project(allModule.viewmodel)
-    api project(allModule.dslitem)
-    api project(allModule.transition)
-    api project(allModule.download)
-    api project(allModule.media)
-    api project(allModule.image)
     api project(allModule.camera)
-    api project(allModule.glide)
-    api project(allModule.component)
+    api project(allModule.pager)
 
     //https://mvnrepository.com/artifact/androidx.loader/loader
     api "androidx.loader:loader:1.1.0"

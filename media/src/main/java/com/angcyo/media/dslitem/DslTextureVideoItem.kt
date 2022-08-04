@@ -28,6 +28,7 @@ import com.liulishuo.okdownload.core.cause.EndCause
 open class DslTextureVideoItem : DslBaseDownloadItem() {
 
     companion object {
+
         const val KEY_DISABLE_DOWNLOAD = "disable_download"
 
         /**禁用视频的先下载后播放, 而使用直播播放*/
