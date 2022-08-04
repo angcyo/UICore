@@ -1,11 +1,11 @@
 package com.angcyo.item.style
 
 import androidx.recyclerview.widget.RecyclerView
-import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.annotation.ItemInitEntryPoint
 import com.angcyo.dsladapter.item.IDslItemConfig
+import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.item.R
 import com.angcyo.library.app
 import com.angcyo.widget.DslViewHolder
@@ -37,13 +37,14 @@ interface INestedRecyclerItem : IAutoInitItem {
     }
 
     /**回收*/
-    fun onRecyclerViewRecycled(itemHolder: DslViewHolder, itemPosition: Int) {
+    fun onNestedRecyclerViewRecycled(itemHolder: DslViewHolder, itemPosition: Int) {
         itemHolder.rv(nestedRecyclerItemConfig.itemNestedRecyclerViewId)?.apply {
             layoutManager = null
             adapter = null
         }
     }
 
+    /**绑定[RecyclerView]*/
     fun onBindNestedRecyclerView(
         recyclerView: RecyclerView,
         itemHolder: DslViewHolder,
@@ -72,7 +73,9 @@ interface INestedRecyclerItem : IAutoInitItem {
 
             //渲染数据
             if (adapter is DslAdapter) {
-                onRenderNestedAdapter(adapter as DslAdapter)
+                val dslAdapter = adapter as DslAdapter
+                dslAdapter._recyclerView = this
+                onRenderNestedAdapter(dslAdapter)
             }
 
             //恢复滚动位置

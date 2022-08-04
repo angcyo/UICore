@@ -20,7 +20,6 @@ import kotlin.math.max
 
 open class DslImageItem : DslAdapterItem(), IImageItem {
 
-
     /**媒体类型, 为空会在[itemLoadUri]解析*/
     open var itemMimeType: String? = null
 

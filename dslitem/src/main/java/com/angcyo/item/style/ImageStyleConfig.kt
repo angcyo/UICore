@@ -4,7 +4,7 @@ import android.view.View
 import android.widget.ImageView
 
 /**
- *
+ * 图片控件样式
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2021/09/23

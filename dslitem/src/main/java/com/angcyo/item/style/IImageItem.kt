@@ -169,12 +169,9 @@ class ImageItemConfig : IDslItemConfig {
     /**绘制[itemLoadImageText]时的背景颜色*/
     var itemLoadImageTextBgColor: Int = getColor(R.color.colorPrimaryDark)
 
+    /**图片控件样式调整*/
     var imageStyleConfig = ImageStyleConfig().apply {
         imageScaleType = ImageView.ScaleType.CENTER_CROP
-    }
-
-    var imageResStyleConfig = ImageStyleConfig().apply {
-        imageScaleType = ImageView.ScaleType.FIT_CENTER
     }
 
     /**配置[DslGlide]*/

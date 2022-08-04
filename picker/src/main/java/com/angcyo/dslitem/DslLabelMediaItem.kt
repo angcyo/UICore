@@ -229,9 +229,7 @@ open class DslLabelMediaItem : DslBaseLabelItem(), IFragmentItem {
     /**获取媒体路径列表*/
     open fun getMediaPathList(): List<String> = itemMediaList.toUrlList()
 
-    /**
-     * [url] 支持http/file路径
-     * */
+    /** [url] 支持http/file路径 */
     open fun addMediaUrl(url: String) {
         itemMediaList.add(url.toLoaderMedia())
     }

@@ -1,6 +1,7 @@
 package com.angcyo.dsladapter.item
 
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.annotation.ItemConfig
 import com.angcyo.dsladapter.isFullWidthItem
 import com.angcyo.widget.DslViewHolder
 
@@ -29,8 +30,7 @@ interface IDslItem {
     }
 }
 
-/**
- * 基类, [IDslItem]的配置类
- */
+/** 基类, [IDslItem]的配置类 */
+@ItemConfig
 interface IDslItemConfig {
 }

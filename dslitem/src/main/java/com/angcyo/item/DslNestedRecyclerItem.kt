@@ -37,6 +37,6 @@ open class DslNestedRecyclerItem : DslAdapterItem(), INestedRecyclerItem, IFragm
 
     override fun onItemViewRecycled(itemHolder: DslViewHolder, itemPosition: Int) {
         super.onItemViewRecycled(itemHolder, itemPosition)
-        onRecyclerViewRecycled(itemHolder, itemPosition)
+        onNestedRecyclerViewRecycled(itemHolder, itemPosition)
     }
 }

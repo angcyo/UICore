@@ -72,5 +72,8 @@ interface IAutoInitItem : IDslItem {
         if (this is ICheckGroupItem) {
             initCheckGroupItem(itemHolder, itemPosition, adapterItem, payloads)
         }
+        if (this is IGridMediaItem) {
+            initMediaItem(itemHolder, itemPosition, adapterItem, payloads)
+        }
     }
 }

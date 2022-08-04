@@ -43,8 +43,8 @@ data class LoaderMedia(
     //数据库字段↓
 
     //angcyo
-    var width: Int = -1,
-    var height: Int = -1,
+    var width: Int = 0,
+    var height: Int = 0,
 
     /** 1558921509 秒 */
     var modifyTime: Long = -1,
