@@ -16,6 +16,9 @@ import com.angcyo.http.rx.BaseObserver
 import com.angcyo.http.rx.observer
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.ex.hawkGet
+import com.angcyo.library.ex.hawkPut
+import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.queryParameter
 import com.angcyo.library.toast
 import com.angcyo.widget.RSpinner
@@ -36,8 +39,22 @@ object HttpConfigDialog {
 
     var MAPPING_URL = "https://www.angcyo.com/api/php/android/c/url_mapping"
 
+    /**持久化*/
+    const val KEY_CUSTOM_BASE_URL = "key_custom_base_url"
+
     /**自定义后的url*/
     var customBaseUrl: String? = null
+        get() {
+            return if (isDebug()) {
+                field ?: KEY_CUSTOM_BASE_URL.hawkGet(null)
+            } else {
+                field
+            }
+        }
+        set(value) {
+            KEY_CUSTOM_BASE_URL.hawkPut(value)
+            field = value
+        }
 
     /**app正式使用的服务器地址*/
     val appBaseUrl: String
