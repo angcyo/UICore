@@ -20,8 +20,7 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.*
 import com.angcyo.dsladapter.SwipeMenuHelper.Companion.SWIPE_MENU_TYPE_DEFAULT
 import com.angcyo.dsladapter.SwipeMenuHelper.Companion.SWIPE_MENU_TYPE_FLOWING
-import com.angcyo.dsladapter.annotation.UpdateByDiff
-import com.angcyo.dsladapter.annotation.UpdateFlag
+import com.angcyo.dsladapter.annotation.*
 import com.angcyo.dsladapter.item.IDslItem
 import com.angcyo.library.L
 import com.angcyo.library.UndefinedDrawable
@@ -93,6 +92,7 @@ open class DslAdapterItem : LifecycleOwner {
 
     /**[com.angcyo.dsladapter.DslAdapter.notifyItemChanged]*/
     @AnyThread
+    @UpdateByNotify
     open fun updateAdapterItem(payload: Any? = PAYLOAD_UPDATE_PART, useFilterList: Boolean = true) {
         if (itemDslAdapter?._recyclerView?.isComputingLayout == true || !isMain()) {
             //L.w("跳过操作! [RecyclerView]正在计算布局, 请不要在RecyclerView正在布局时, 更新Item. ")
@@ -165,6 +165,8 @@ open class DslAdapterItem : LifecycleOwner {
 
     /**有依赖时, 才更新
      * [updateItemDepend]*/
+    @UpdateByDiff
+    @UpdateByNotify
     open fun updateItemOnHaveDepend(
         updateSelf: Boolean = true,
         filterParams: FilterParams = FilterParams(
@@ -248,6 +250,7 @@ open class DslAdapterItem : LifecycleOwner {
         }
 
     /**[itemEnable]*/
+    @UpdateByLocal
     open fun onSetItemEnable(enable: Boolean) {
         itemViewHolder()?.let {
             it.enable(it.itemView, enable, true)
@@ -268,6 +271,7 @@ open class DslAdapterItem : LifecycleOwner {
      * 界面绑定入口
      * [DslAdapter.onBindViewHolder(com.angcyo.widget.DslViewHolder, int, java.util.List<? extends java.lang.Object>)]
      * */
+    @ItemInitEntryPoint
     var itemBind: ItemBindAction = { itemHolder, itemPosition, adapterItem, payloads ->
         onItemBind(itemHolder, itemPosition, adapterItem, payloads)
         itemBindOverride(itemHolder, itemPosition, adapterItem, payloads)
@@ -541,12 +545,14 @@ open class DslAdapterItem : LifecycleOwner {
     /**
      * 当前分组是否[展开]
      * */
+    @UpdateByDiff
     var itemGroupExtend: Boolean by UpdateDependProperty(
         true,
         listOf(PAYLOAD_UPDATE_PART, PAYLOAD_UPDATE_EXTEND)
     )
 
     /**是否需要隐藏item*/
+    @UpdateByDiff
     var itemHidden: Boolean by UpdateDependProperty(
         false,
         listOf(PAYLOAD_UPDATE_PART, PAYLOAD_UPDATE_HIDDEN)
@@ -1071,7 +1077,9 @@ open class DslAdapterItem : LifecycleOwner {
             val newItemClassName = newItem.className()
             //相同类名, 且布局类型相同的2个item, 不进行insert/remove操作
             result = if (thisItemClassname == newItemClassName) {
-                if (itemViewType ?: itemLayoutId == newItem.itemViewType ?: newItem.itemLayoutId) {
+                if ((itemViewType ?: itemLayoutId) ==
+                    (newItem.itemViewType ?: newItem.itemLayoutId)
+                ) {
                     //布局一样
                     if (itemData == null && newItem.itemData == null) {
                         //未设置itemData时, 默认认为item是一样的
@@ -1169,6 +1177,8 @@ open class DslAdapterItem : LifecycleOwner {
     }
 
     /**其次, 提供一个可以被子类覆盖的方法*/
+    @UpdateByDiff
+    @UpdateByNotify
     open fun onItemChangeListener(item: DslAdapterItem) {
         //有依赖的item需要更新时, 再刷新界面
         updateItemOnHaveDepend()
@@ -1251,6 +1261,7 @@ open class DslAdapterItem : LifecycleOwner {
     var itemSingleSelectMutex: Boolean = false
 
     /**选中状态改变回调*/
+    @UpdateByNotify
     open fun onSetItemSelected(select: Boolean) {
         if (select && itemSingleSelectMutex) {
             itemDslAdapter?.eachItem { index, dslAdapterItem ->
@@ -1508,6 +1519,7 @@ open class DslAdapterItem : LifecycleOwner {
 }
 
 /**属性改变时, 通过diff更新列表*/
+@UpdateByDiff
 class UpdateDependProperty<T>(
     var value: T,
     val payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART
@@ -1527,6 +1539,7 @@ class UpdateDependProperty<T>(
 }
 
 /**属性改变时, 通过[notifyItemChangedPayload]更新列表*/
+@UpdateByNotify
 class UpdateAdapterProperty<T>(
     var value: T,
     val payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART

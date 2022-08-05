@@ -5,6 +5,6 @@ package com.angcyo.dsladapter.annotation
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/06/08
  */
-@Target(AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.SOURCE)
 annotation class ItemInitEntryPoint
