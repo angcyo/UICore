@@ -336,7 +336,7 @@ operator fun RecyclerView.get(index: Int, isLayoutIndex: Boolean = false): DslVi
             index
         } else {
             //反向取child
-            adapter?.itemCount ?: 0 + index
+            (adapter?.itemCount ?: 0) + index
         }
 
         result = findViewHolderForAdapterPosition(adapterIndex) as? DslViewHolder
