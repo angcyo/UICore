@@ -46,7 +46,13 @@ abstract class BaseValueProgressDrawable : BaseDrawable() {
 
     /**当前进度比例*/
     val progressRatio: Float
-        get() = min(1f, max(0f, currentProgressValue * 1f / (maxProgressValue - minProgressValue)))
+        get() = min(
+            1f,
+            max(
+                0f,
+                (currentProgressValue - minProgressValue) * 1f / (maxProgressValue - minProgressValue)
+            )
+        )
 
     var _progressShader: Shader? = null
     var _backgroundShader: Shader? = null
