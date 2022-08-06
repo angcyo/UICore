@@ -101,8 +101,13 @@ interface IImageItem : IAutoInitItem {
     }
 }
 
+/**[Uri]*/
 var IImageItem.itemLoadUri: Uri?
-    get() = imageItemConfig.itemLoadUri
+    get() = imageItemConfig.itemLoadUri ?: if (itemLoadImage is String) {
+        (itemLoadImage as String).toUri()
+    } else {
+        null
+    }
     set(value) {
         imageItemConfig.itemLoadUri = value
     }
