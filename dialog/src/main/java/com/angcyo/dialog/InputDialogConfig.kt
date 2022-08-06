@@ -212,7 +212,8 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
         }
 
         editView?.inputType = inputType
-        editView?.hint = hintInputString
+        //editView?.hint = hintInputString
+        editView?.setBufferHint(hintInputString)
 
         //digits 放在[inputType]后面
         digits?.let {

@@ -8,7 +8,8 @@ import com.angcyo.library.ex.append
 import com.angcyo.library.ex.eachChild
 import com.angcyo.library.ex.find
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.*
+import com.angcyo.widget.base.showSoftInput
+import com.angcyo.widget.base.string
 import com.angcyo.widget.pager.TextIndicator
 
 /**
@@ -23,7 +24,7 @@ open class InputMultiDialogConfig(context: Context? = null) : BaseDialogConfig(c
     /**
      * 最大输入字符限制
      * */
-    var maxInputLength = mutableListOf(0, 0)
+    var maxInputLength = mutableListOf(-1, -1)
 
     /**
      * 强制指定输入框的高度
@@ -60,6 +61,9 @@ open class InputMultiDialogConfig(context: Context? = null) : BaseDialogConfig(c
     /**文本输入类型*/
     var inputType = mutableListOf(InputType.TYPE_CLASS_TEXT, InputType.TYPE_CLASS_TEXT)
 
+    /**需要填充的布局id*/
+    var inputItemLayoutId: Int = R.layout.lib_dialog_input_multi_item
+
     init {
         dialogLayoutId = R.layout.lib_dialog_input_multi_layout
         positiveButtonListener = { dialog, dialogViewHolder ->
@@ -69,7 +73,7 @@ open class InputMultiDialogConfig(context: Context? = null) : BaseDialogConfig(c
             }
 
             if (onInputResult.invoke(dialog, result)) {
-
+                //被拦截
             } else {
                 dialog.hideSoftInput()
                 dialog.dismiss()
@@ -81,10 +85,25 @@ open class InputMultiDialogConfig(context: Context? = null) : BaseDialogConfig(c
     override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         super.initDialogView(dialog, dialogViewHolder)
 
+        //
+        appendInputLayout(dialog, dialogViewHolder)
+
+        //
+        if (showSoftInput) {
+            dialogViewHolder.post { dialogViewHolder.ev(R.id.edit_text_view)?.showSoftInput() }
+        }
+    }
+
+    override fun onDialogDestroy(dialog: Dialog, dialogViewHolder: DslViewHolder) {
+        super.onDialogDestroy(dialog, dialogViewHolder)
+    }
+
+    /**填充输入控件*/
+    open fun appendInputLayout(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         val inputDialogConfig = InputDialogConfig(dialogContext)
         dialogViewHolder.group(R.id.input_wrapper_layout)?.apply {
             defaultInputString.forEachIndexed { index, _ ->
-                append(R.layout.lib_dialog_input_multi_item) {
+                append(inputItemLayoutId) {
                     val editView = find<EditText>(R.id.edit_text_view)
                     val indicatorView = find<TextIndicator>(R.id.single_text_indicator_view)
 
@@ -100,13 +119,5 @@ open class InputMultiDialogConfig(context: Context? = null) : BaseDialogConfig(c
                 }
             }
         }
-
-        if (showSoftInput) {
-            dialogViewHolder.post { dialogViewHolder.ev(R.id.edit_text_view)?.showSoftInput() }
-        }
-    }
-
-    override fun onDialogDestroy(dialog: Dialog, dialogViewHolder: DslViewHolder) {
-        super.onDialogDestroy(dialog, dialogViewHolder)
     }
 }

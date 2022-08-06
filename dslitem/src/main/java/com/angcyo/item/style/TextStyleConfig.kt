@@ -12,7 +12,6 @@ import com.angcyo.library.ex.undefined_float
 import com.angcyo.library.ex.undefined_size
 import com.angcyo.library.ex.visible
 import com.angcyo.widget.base.*
-import org.buffer.android.buffertextinputlayout.BufferTextInputLayout
 
 /**
  * 文本样式配置
@@ -76,14 +75,7 @@ open class TextStyleConfig : ViewStyleConfig() {
                 }
 
                 //兼容
-                val parent = view.parent
-                if (parent is BufferTextInputLayout) {
-                    parent.hint = this@TextStyleConfig.hint
-                } else if (parent?.parent is BufferTextInputLayout) {
-                    (parent.parent as BufferTextInputLayout).hint = this@TextStyleConfig.hint
-                } else {
-                    hint = this@TextStyleConfig.hint
-                }
+                view.setBufferHint(this@TextStyleConfig.hint)
 
                 gravity = textGravity
 

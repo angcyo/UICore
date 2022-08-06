@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingVertical="@dimen/lib_hdpi">
+
+    <org.buffer.android.buffertextinputlayout.BufferTextInputLayout
+        android:id="@+id/lib_buffer_input_layout"
+        style="@style/LibTextInputLayoutStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.angcyo.widget.edit.DslEditText
+            android:id="@+id/edit_text_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/lib_xhdpi"
+            android:background="@color/lib_white"
+            android:imeOptions="actionNext"
+            android:minHeight="@dimen/lib_item_min_height"
+            android:paddingVertical="@dimen/lib_xhdpi"
+            app:r_focus_drawable="@drawable/lib_bottom_focus_shape"
+            app:r_no_focus_drawable="@drawable/lib_bottom_no_focus_shape" />
+
+    </org.buffer.android.buffertextinputlayout.BufferTextInputLayout>
+
+    <com.angcyo.widget.pager.TextIndicator
+        android:id="@+id/single_text_indicator_view"
+        style="@style/LibPlaceTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="@dimen/lib_ldpi"
+        android:layout_marginRight="@dimen/lib_hdpi"
+        android:visibility="gone"
+        tools:text="100/100"
+        tools:visibility="visible" />
+
+</LinearLayout>

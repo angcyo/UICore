@@ -16,6 +16,7 @@ import com.angcyo.library.ex.loadDrawable
 import com.angcyo.library.ex.remove
 import com.angcyo.library.utils.getMember
 import com.angcyo.widget.span.span
+import org.buffer.android.buffertextinputlayout.BufferTextInputLayout
 import java.util.*
 
 /**
@@ -241,3 +242,16 @@ var TextView._textColor: Int
     set(value) {
         setTextColor(value)
     }
+
+/**[BufferTextInputLayout]*/
+fun TextView.setBufferHint(hint: CharSequence?) {
+    //兼容
+    val parent = parent
+    if (parent is BufferTextInputLayout) {
+        parent.hint = hint
+    } else if (parent?.parent is BufferTextInputLayout) {
+        (parent.parent as BufferTextInputLayout).hint = hint
+    } else {
+        this.hint = hint
+    }
+}
