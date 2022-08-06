@@ -13,7 +13,7 @@ import com.angcyo.library.annotation.OverridePoint
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
-abstract class BaseSectionDrawable : AbsDslDrawable() {
+abstract class BaseSectionDrawable : AbsDslDrawable(), ILoadingDrawable {
     /**
      * 需要分成几段绘制.
      * 如 {0.2f 0.3f 0.3f 0.1f 0.1f} 总和要为1
@@ -45,8 +45,11 @@ abstract class BaseSectionDrawable : AbsDslDrawable() {
     /**是否需要动画, 自动累加[progress]值*/
     var loading: Boolean = false
         set(value) {
+            val old = field
             field = value
-            invalidateSelf()
+            if (old != field) {
+                invalidateSelf()
+            }
         }
 
     /**
@@ -201,4 +204,16 @@ abstract class BaseSectionDrawable : AbsDslDrawable() {
         totalProgress: Float
     ) {
     }
+
+    //---ILoadingDrawable---
+
+    override fun startLoading() {
+        loading = true
+    }
+
+    override fun stopLoading() {
+        loading = false
+    }
+
+    override fun isLoading(): Boolean = loading
 }

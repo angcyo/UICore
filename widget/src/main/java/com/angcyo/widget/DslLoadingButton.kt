@@ -98,6 +98,10 @@ class DslLoadingButton : DslButton {
         }
     }
 
+    override fun verifyDrawable(who: Drawable): Boolean {
+        return who == loadingDrawable || super.verifyDrawable(who)
+    }
+
     /*override fun setOnClickListener(l: OnClickListener?) {
         super.setOnClickListener(WrapClickListener(l))
     }

@@ -3,6 +3,7 @@ package com.angcyo.widget
 import android.content.Context
 import android.content.res.ColorStateList
 import android.content.res.TypedArray
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
@@ -12,8 +13,13 @@ import android.os.Build
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.ViewCompat
+import com.angcyo.component.PostInvalidateProperty
 import com.angcyo.drawable.base.DslGradientDrawable
+import com.angcyo.drawable.base.ILoadingDrawable
+import com.angcyo.drawable.loading.ArcLoadingDrawable
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.mH
+import com.angcyo.library.ex.mW
 import com.angcyo.library.ex.toColorInt
 import com.angcyo.tablayout.DslTabIndicator.Companion.NO_COLOR
 import java.util.*
@@ -169,6 +175,12 @@ open class DslButton : AppCompatTextView {
 
     /**接管背景样式设置*/
     var enableBackgroundStyle = false
+
+    /**是否显示加载中的[Drawable]*/
+    var showButtonLoading: Boolean by PostInvalidateProperty(false)
+
+    /**动画*/
+    var buttonLoadingDrawable: Drawable? by PostInvalidateProperty(ArcLoadingDrawable())
 
     constructor(context: Context) : super(context) {
         initAttribute(context)
@@ -890,6 +902,27 @@ open class DslButton : AppCompatTextView {
                 }
 
             ViewCompat.setBackground(this, backgroundDrawable)
+        }
+    }
+
+    override fun verifyDrawable(who: Drawable): Boolean {
+        return who == buttonLoadingDrawable || super.verifyDrawable(who)
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        buttonLoadingDrawable?.let {
+            if (showButtonLoading) {
+                it.setBounds(paddingLeft, paddingTop, mW() - paddingRight, mH() - paddingBottom)
+                it.draw(canvas)
+                if (it is ILoadingDrawable && !it.isLoading()) {
+                    it.startLoading()
+                }
+            } else {
+                if (it is ILoadingDrawable && it.isLoading()) {
+                    it.stopLoading()
+                }
+            }
         }
     }
 }

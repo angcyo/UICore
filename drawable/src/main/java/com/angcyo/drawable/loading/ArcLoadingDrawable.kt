@@ -1,10 +1,12 @@
 package com.angcyo.drawable.loading
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
+import com.angcyo.drawable.R
 import com.angcyo.drawable.base.BaseSectionDrawable
+import com.angcyo.library.ex._color
 import com.angcyo.library.ex.dp
+import kotlin.math.min
 
 /**
  *
@@ -33,7 +35,8 @@ class ArcLoadingDrawable : BaseSectionDrawable() {
     //动画控制的角度
     var animAngle = 0f
 
-    var arcColor: Int = Color.RED
+    /**进度的颜色*/
+    var arcColor: Int = _color(R.color.colorAccent)
 
     init {
         sections = floatArrayOf(0.2f, 0.3f, 0.3f, 0.2f)
@@ -52,7 +55,13 @@ class ArcLoadingDrawable : BaseSectionDrawable() {
         startProgress: Float, endProgress: Float,
         totalProgress: Float, sectionProgress: Float
     ) {
-        drawRectF.set(bounds)
+        val minSize = min(bounds.width(), bounds.height())
+        drawRectF.set(
+            (bounds.centerX() - minSize / 2).toFloat(),
+            (bounds.centerY() - minSize / 2).toFloat(),
+            (bounds.centerX() + minSize / 2).toFloat(),
+            (bounds.centerY() + minSize / 2).toFloat(),
+        )
         drawRectF.inset((strokeWidth / 2), (strokeWidth / 2))
 
         //两个点, 分散效果
