@@ -6,6 +6,7 @@ import android.os.StatFs
 import androidx.fragment.app.Fragment
 import com.angcyo.base.dslFHelper
 import com.angcyo.core.R
+import com.angcyo.core.component.HttpConfigDialog
 import com.angcyo.core.component.fileSelector
 import com.angcyo.core.component.model.LanguageModel
 import com.angcyo.dsladapter.DslAdapterItem
@@ -14,7 +15,6 @@ import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.library.app
 import com.angcyo.library.component.work.Trackers
 import com.angcyo.library.ex.*
-import com.angcyo.library.getAppString
 import com.angcyo.library.toast
 import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.Device
@@ -44,8 +44,8 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
         }
 
         fun deviceInfo(context: Context = app(), config: DslSpan.() -> Unit = {}) = span {
-            val api = getAppString("base_api")
-            if (!api.isNullOrEmpty()) {
+            val api = HttpConfigDialog.appBaseUrl //getAppString("base_api")
+            if (api.isNotEmpty()) {
                 appendln(api)
             }
             append(getWifiIP()).append(SPLIT).append(getMobileIP())
