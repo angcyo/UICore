@@ -132,7 +132,9 @@ interface IGridMediaItem : IAutoInitItem {
     }
 }
 
-/** [url] 支持http/file路径 */
+/** [url] 支持http/file路径
+ * 请注意先清空[itemGridMediaList]数据
+ * */
 fun IGridMediaItem.addGridMedia(url: String) {
     gridMediaItemConfig.itemGridMediaList.add(url.toLoaderMedia())
 }
