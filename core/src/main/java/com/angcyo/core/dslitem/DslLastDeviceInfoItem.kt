@@ -15,6 +15,7 @@ import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.library.app
 import com.angcyo.library.component.work.Trackers
 import com.angcyo.library.ex.*
+import com.angcyo.library.libFolderPath
 import com.angcyo.library.toast
 import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.Device
@@ -168,6 +169,7 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
                         showFileMd5 = true
                         showFileMenu = true
                         showHideFile = true
+                        targetPath = libFolderPath()
                     }) {
                         //no op
                     }
