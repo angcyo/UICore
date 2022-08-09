@@ -10,13 +10,13 @@ import com.angcyo.item.DslImageItem
 import com.angcyo.item.style.GridMediaItemConfig
 import com.angcyo.item.style.IGridMediaItem
 import com.angcyo.library.L
-import com.angcyo.library.ex.dpi
-import com.angcyo.library.ex.elseNull
-import com.angcyo.library.ex.size
+import com.angcyo.library.ex.*
 import com.angcyo.library.model.LoaderMedia
 import com.angcyo.library.model.loadUri
 import com.angcyo.pager.dslPager
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.recycler.clearItemDecoration
+import com.angcyo.widget.recycler.initDsl
 
 /**
  * 九宫格图片显示item
@@ -49,60 +49,85 @@ interface INineMediaItem : IGridMediaItem, IFragmentItem {
         adapterItem: DslAdapterItem,
         payloads: List<Any>
     ) {
-        super.onBindGridMediaRecyclerView(
-            recyclerView,
-            itemHolder,
-            itemPosition,
-            adapterItem,
-            payloads
-        )
-        if (gridMediaItemConfig.itemGridMediaList.size() == 1) {
-            //单图, 使用线性布局
-            if (recyclerView.layoutManager != oneMediaLayoutManager) {
-                recyclerView.layoutManager = oneMediaLayoutManager
+        //列表
+        recyclerView.apply {
+            //优先清空[OnScrollListener]
+            clearOnScrollListeners()
+            clearItemDecoration()
+            initDsl()
+
+            if (gridMediaItemConfig.itemGridMediaList.size() == 1) {
+                //单图, 使用线性布局
+                if (recyclerView.layoutManager != oneMediaLayoutManager) {
+                    recyclerView.layoutManager = oneMediaLayoutManager
+                }
+                recyclerView.setWidthHeight(-2, -2)
+            } else {
+                if (recyclerView.layoutManager != gridMediaItemConfig.itemGridMediaLayoutManager) {
+                    recyclerView.layoutManager = gridMediaItemConfig.itemGridMediaLayoutManager
+                }
+                recyclerView.setWidthHeight(-1, -2)
             }
-        } else {
-            if (recyclerView.layoutManager != gridMediaItemConfig.itemGridMediaLayoutManager) {
-                recyclerView.layoutManager = gridMediaItemConfig.itemGridMediaLayoutManager
+
+            //关键地方, 如果每次都赋值[adapter], 系统会重置所有缓存.
+            if (adapter != gridMediaItemConfig.itemGridMediaAdapter) {
+                adapter = gridMediaItemConfig.itemGridMediaAdapter
+            }
+
+            //渲染数据
+            if (adapter is DslAdapter) {
+                val dslAdapter = adapter as DslAdapter
+                dslAdapter._recyclerView = this
+                onRenderGridMediaAdapter(recyclerView, dslAdapter)
             }
         }
     }
 
-    override fun onRenderGridMediaAdapter(adapter: DslAdapter) {
-        super.onRenderGridMediaAdapter(adapter)
+    override fun onRenderGridMediaAdapter(recyclerView: RecyclerView, adapter: DslAdapter) {
+        super.onRenderGridMediaAdapter(recyclerView, adapter)
     }
 
     override fun onInitGridMediaItem(
+        recyclerView: RecyclerView,
         adapter: DslAdapter,
         item: DslAdapterItem,
         media: LoaderMedia
     ) {
-        super.onInitGridMediaItem(adapter, item, media)
+        super.onInitGridMediaItem(recyclerView, adapter, item, media)
 
         if (gridMediaItemConfig.itemGridMediaList.size() == 1) {
             //单图, 使用实际宽高
             onParseNineMediaSize(media)
 
+            //图片item
             item.itemWidth = -2
             item.itemHeight = -2
 
             if (item is DslImageItem) {
                 item.imageItemConfig.imageStyleConfig.apply {
-                    viewMinWidth = 10 * dpi
-                    viewMinHeight = 10 * dpi
+                    viewMinWidth = (gridMediaItemConfig as? NineMediaItemConfig)?.itemMediaMinWidth
+                        ?: (10 * dpi)
+                    viewMinHeight =
+                        (gridMediaItemConfig as? NineMediaItemConfig)?.itemMediaMinHeight
+                            ?: (10 * dpi)
                     viewWidth = media.width
                     viewHeight = media.height
+                    viewDimensionRatio = null
                     imageScaleType = ImageView.ScaleType.FIT_CENTER
                 }
             }
         } else {
+            //网格布局, 图片item
             item.itemWidth = -1
             item.itemHeight = -2
 
             if (item is DslImageItem) {
                 item.imageItemConfig.imageStyleConfig.apply {
+                    viewMinWidth = undefined_size
+                    viewMinHeight = undefined_size
                     viewWidth = -1
                     viewHeight = 0
+                    viewDimensionRatio = "1:1"
                     imageScaleType = ImageView.ScaleType.CENTER_CROP
                 }
             }
@@ -143,8 +168,12 @@ class NineMediaItemConfig : GridMediaItemConfig() {
     /**显示单图时的最大宽度, 如果超过了, 定比缩放*/
     var itemMediaMaxWidth: Int = 300 * dpi
 
-    /**显示单图时的最大高度, 如果超过了, 定比缩放*/
     var itemMediaMaxHeight: Int = 400 * dpi
+
+    /**当未指定宽高时, 最小的宽高*/
+    var itemMediaMinWidth: Int = 100 * dpi
+
+    var itemMediaMinHeight: Int = 100 * dpi
 
     /**解析媒体的宽高action*/
     var itemParseMediaSizeAction: (media: LoaderMedia) -> Unit = { media ->

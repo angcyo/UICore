@@ -446,7 +446,7 @@ class DslGlide {
                 dataSource: DataSource?,
                 isFirstResource: Boolean
             ): Boolean {
-                L.w("$model 加载成功(${LTime.time()}) $dataSource $resource")
+                L.d("$model 加载成功(${LTime.time()}) $dataSource $resource")
                 _loadSucceed(_loadUri.loadUrl())
                 //targetView?.invalidate()
                 return this@DslGlide.onLoadSucceed(string, resource)
@@ -499,6 +499,7 @@ fun View.clear() {
         Glide.with(this).clear(this)
         tag = null
     } catch (e: Exception) {
+        e.printStackTrace()
         L.e(e)
     }
     (getTag(R.id.tag_ok_type) as? Call)?.cancel()

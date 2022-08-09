@@ -151,6 +151,11 @@ fun Any.simpleHash(): String {
     return "${this.simpleClassName()}(${this.hash()})"
 }
 
+/**[com.angcyo.widget.DslButton(677fb48)]*/
+fun Any.classHash(): String {
+    return "${this.className()}(${this.hash()})"
+}
+
 /**[DslButton]*/
 fun Any.simpleClassName(): String {
     if (this is Class<*>) {

@@ -7,10 +7,10 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.angcyo.library.UndefinedDrawable
-import com.angcyo.library.ex.undefined_int
-import com.angcyo.library.ex.undefined_size
 import com.angcyo.library.ex.setBgDrawable
 import com.angcyo.library.ex.setWidthHeight
+import com.angcyo.library.ex.undefined_int
+import com.angcyo.library.ex.undefined_size
 
 /**
  * View基础样式配置
@@ -22,10 +22,11 @@ import com.angcyo.library.ex.setWidthHeight
 
 open class ViewStyleConfig {
 
-    /**宽高*/
+    /**限制最小宽高*/
     var viewWidth: Int = undefined_size
     var viewMinWidth: Int = undefined_size
 
+    /**指定宽高*/
     var viewHeight: Int = undefined_size
     var viewMinHeight: Int = undefined_size
 

@@ -1,5 +1,6 @@
 package com.angcyo.http.rx
 
+import com.angcyo.http.DslHttp
 import com.angcyo.http.base.getString
 import com.angcyo.http.base.isJson
 import com.angcyo.http.base.readString
@@ -33,13 +34,18 @@ fun Response<*>.errorMessage(def: String = "接口异常"): String {
     if (!errorString.isNullOrEmpty()) {
         if (errorString.isJson()) {
             errorString.toJsonObject()?.let {
-                val e1 = it.getString("error")
-                if (!e1.isNullOrEmpty()) {
-                    errorString = e1
+                val msg = it.getString(DslHttp.DEFAULT_MSG_KEY) //key1
+                if (!msg.isNullOrEmpty()) {
+                    errorString = msg
                 } else {
-                    val e2 = it.getString("msg")
-                    if (!e2.isNullOrEmpty()) {
-                        errorString = e2
+                    val e1 = it.getString("error")//key2
+                    if (!e1.isNullOrEmpty()) {
+                        errorString = e1
+                    } else {
+                        val e2 = it.getString("msg")//key3
+                        if (!e2.isNullOrEmpty()) {
+                            errorString = e2
+                        }
                     }
                 }
             }

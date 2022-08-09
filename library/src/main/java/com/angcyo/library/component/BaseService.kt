@@ -7,6 +7,9 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Binder
 import android.os.IBinder
+import com.angcyo.library.L
+import com.angcyo.library.ex.classHash
+import com.angcyo.library.ex.simpleHash
 
 /**
  * 基类Service
@@ -38,11 +41,17 @@ abstract class BaseService : Service() {
         }
     }
 
+    override fun onCreate() {
+        super.onCreate()
+        L.d(this.classHash())
+    }
+
     /** 调用startService()启动服务时回调.
      * [startId] 会随着[调用startService]调用次数的增加而增加
      * [flags] 则是系统传递过来的[START_STICKY]
      * */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        L.d("${this.simpleHash()} $flags $startId $intent")
         intent?.apply {
             handleIntent(this)
         }

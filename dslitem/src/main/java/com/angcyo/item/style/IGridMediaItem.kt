@@ -85,16 +85,16 @@ interface IGridMediaItem : IAutoInitItem {
             if (adapter is DslAdapter) {
                 val dslAdapter = adapter as DslAdapter
                 dslAdapter._recyclerView = this
-                onRenderGridMediaAdapter(dslAdapter)
+                onRenderGridMediaAdapter(recyclerView, dslAdapter)
             }
         }
     }
 
     /**渲染[DslAdapter]*/
-    fun onRenderGridMediaAdapter(adapter: DslAdapter) {
+    fun onRenderGridMediaAdapter(recyclerView: RecyclerView, adapter: DslAdapter) {
         adapter.updateSingleData<DslImageItem>(gridMediaItemConfig.itemGridMediaList) { data ->
             val media = data as LoaderMedia
-            onInitGridMediaItem(adapter, this, media)
+            onInitGridMediaItem(recyclerView, adapter, this, media)
         }
 
         /*if (this is DslAdapterItem && itemParentRef?.get() == null) {
@@ -105,7 +105,12 @@ interface IGridMediaItem : IAutoInitItem {
     }
 
     /**初始化用于展示的[DslImageItem]*/
-    fun onInitGridMediaItem(adapter: DslAdapter, item: DslAdapterItem, media: LoaderMedia) {
+    fun onInitGridMediaItem(
+        recyclerView: RecyclerView,
+        adapter: DslAdapter,
+        item: DslAdapterItem,
+        media: LoaderMedia
+    ) {
         val parentItem = this
         if (item is DslImageItem) {
             item.apply {
