@@ -12,7 +12,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import java.io.File
-import java.util.*
 
 /**
  * 文件loader
@@ -50,17 +49,15 @@ class DslFileLoader {
                         val list = file.listFiles()?.asList() ?: emptyList()
                         val resultList = mutableListOf<FileItem>()
 
-                        list.sortedWith(Comparator<File> { file1, file2 ->
+                        list.sortedWith { file1, file2 ->
                             when {
                                 (file1.isDirectory && file2.isDirectory) || (file1.isFile && file2.isFile) -> file1.name.toLowerCase()
-                                    .compareTo(
-                                        file2.name.toLowerCase()
-                                    )
+                                    .compareTo(file2.name.toLowerCase())
                                 file2.isDirectory -> 1
                                 file1.isDirectory -> -1
                                 else -> file1.name.toLowerCase().compareTo(file2.name.toLowerCase())
                             }
-                        }).apply {
+                        }.apply {
                             val fileList: List<File> = if (loadHideFile) {
                                 this
                             } else {

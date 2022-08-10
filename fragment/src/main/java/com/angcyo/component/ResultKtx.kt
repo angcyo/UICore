@@ -47,8 +47,19 @@ fun Context.getPhoto(fragmentManager: FragmentManager, onResult: (Bitmap?) -> Un
     }
 }
 
+/**获取一个文件 */
+fun FragmentActivity.getFile(type: String, onResult: (Uri?) -> Unit) {
+    supportFragmentManager.getFile(type, onResult)
+}
+
+/**获取一个文件*/
+fun Fragment.getFile(type: String, onResult: (Uri?) -> Unit) {
+    parentFragmentManager.getFile(type, onResult)
+}
+
 /**获取一个文件
  * [type] "font/`*`
+ * [com.angcyo.core.component.FileSelectorFragment.fileSelector]
  * */
 fun FragmentManager.getFile(type: String, onResult: (Uri?) -> Unit) {
 

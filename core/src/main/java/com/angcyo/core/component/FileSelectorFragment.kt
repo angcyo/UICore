@@ -6,6 +6,7 @@ import android.os.Environment
 import android.view.Gravity
 import android.view.View
 import android.widget.HorizontalScrollView
+import androidx.fragment.app.Fragment
 import com.angcyo.DslFHelper
 import com.angcyo.base.dslFHelper
 import com.angcyo.core.R
@@ -21,11 +22,12 @@ import com.angcyo.dialog.itemsDialog
 import com.angcyo.dsladapter.*
 import com.angcyo.dsladapter.data.loadSingleData2
 import com.angcyo.fragment.requestPermissions
+import com.angcyo.library.annotation.DSL
 import com.angcyo.library.ex.*
 import com.angcyo.library.toastWX
 import com.angcyo.library.utils.FileUtils
+import com.angcyo.library.utils.appFolderPath
 import com.angcyo.widget._rv
-import com.angcyo.library.ex.Anim
 import com.angcyo.widget.layout.touch.TouchBackLayout
 import com.angcyo.widget.progress.HSProgressView
 import com.angcyo.widget.recycler.initDslAdapter
@@ -397,7 +399,23 @@ open class FileSelectorConfig {
     var onFileSelector: ((FileItem?) -> Unit)? = null
 }
 
-/**文件选择*/
+/**DSL
+ * [com.angcyo.component.ResultKtx.getFile]
+ * */
+@DSL
+fun Fragment.fileSelector(
+    config: FileSelectorConfig.() -> Unit = {},
+    onResult: (FileItem?) -> Unit = {}
+) {
+    dslFHelper {
+        fileSelector(config, onResult)
+    }
+}
+
+/**文件选择
+ * [com.angcyo.component.ResultKtx.getFile]
+ * */
+@DSL
 fun DslFHelper.fileSelector(
     config: FileSelectorConfig.() -> Unit = {},
     onResult: (FileItem?) -> Unit = {}
@@ -405,6 +423,7 @@ fun DslFHelper.fileSelector(
     noAnim()
     show(FileSelectorFragment().apply {
         fileSelectorConfig {
+            targetPath = appFolderPath()
             config()
             onFileSelector = onResult
         }
