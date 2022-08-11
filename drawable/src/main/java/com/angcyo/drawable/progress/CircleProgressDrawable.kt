@@ -33,11 +33,16 @@ class CircleProgressDrawable : BaseValueProgressDrawable() {
     /**更新进度的宽度*/
     fun updateProgressWidth(width: Float) {
         progressWidth = width
+        updateStartOffsetAngle(width / 2)
+    }
+
+    /**更新开始时偏移的角度*/
+    fun updateStartOffsetAngle(angle: Float) {
         //默认初始化成宽度的一半
-        startOffsetAngle = progressWidth / 2
+        startOffsetAngle = angle / 2
         startDegrees += -startOffsetAngle
         //补偿
-        coverAngle = progressWidth
+        coverAngle = startOffsetAngle * 2
     }
 
     override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
