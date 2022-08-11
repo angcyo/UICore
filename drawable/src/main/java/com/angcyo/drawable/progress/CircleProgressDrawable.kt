@@ -27,6 +27,12 @@ class CircleProgressDrawable : BaseValueProgressDrawable() {
             intArrayOf(Color.parseColor("#B0B8CB"), Color.parseColor("#B0B8CB"))
         currentProgressValue = 50
 
+        updateProgressWidth(progressWidth)
+    }
+
+    /**更新进度的宽度*/
+    fun updateProgressWidth(width: Float) {
+        progressWidth = width
         //默认初始化成宽度的一半
         startOffsetAngle = progressWidth / 2
         startDegrees += -startOffsetAngle
