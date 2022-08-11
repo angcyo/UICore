@@ -97,6 +97,7 @@ fun String?.fileNameByPath(): String? {
     return substring(index + 1)
 }
 
+/**文件路径获取文件大小*/
 fun String?.fileSize(def: Long = 0L): Long {
     if (TextUtils.isEmpty(this)) {
         return def
@@ -116,6 +117,7 @@ fun formatFileSize(context: Context, size: Long): String {
     } else Formatter.formatFileSize(context, size)
 }
 
+/**文件路径获取文件大小*/
 fun String?.fileSizeString(): String {
     return fileSize().fileSizeString()
 }

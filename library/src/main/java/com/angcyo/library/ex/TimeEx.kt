@@ -340,6 +340,15 @@ fun Long?.toMinuteTime(
     units = units
 )
 
+/**分:秒'毫秒 的时间格式, 分秒时间格式输出*/
+fun Long?.toMsTime(
+    pattern: IntArray = intArrayOf(0, 1, 1),
+    units: Array<String> = arrayOf("", "'", ":", ":", ":")
+) = this?.toElapsedTime(
+    pattern = pattern,
+    units = units
+)
+
 /**计算2个时间之间相差多少毫秒
  * [2020-6-6 02:20] [2020-7-7 02:20]
  * */
