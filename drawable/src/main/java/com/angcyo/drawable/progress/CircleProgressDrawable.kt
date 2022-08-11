@@ -17,12 +17,21 @@ class CircleProgressDrawable : BaseValueProgressDrawable() {
     /**进度偏移绘制的角度*/
     var startOffsetAngle: Float = 0f
 
+    /**有多少度会出现重叠*/
+    var coverAngle: Float = 0f
+
     init {
         progressGradientColors =
             intArrayOf(Color.parseColor("#79B2FF"), Color.parseColor("#437AFF"))
         backgroundGradientColors =
             intArrayOf(Color.parseColor("#B0B8CB"), Color.parseColor("#B0B8CB"))
         currentProgressValue = 50
+
+        //默认初始化成宽度的一半
+        startOffsetAngle = progressWidth / 2
+        startDegrees += -startOffsetAngle
+        //补偿
+        coverAngle = progressWidth
     }
 
     override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
@@ -68,20 +77,41 @@ class CircleProgressDrawable : BaseValueProgressDrawable() {
             //进度绘制
             textPaint.style = Paint.Style.STROKE
             textPaint.strokeWidth = progressWidth
-            textPaint.shader = _progressShader
             _tempRect.set(rect)
             val inset = (progressWidth / 2).toInt()
             _tempRect.inset(inset, inset)
+            val sweepAngle = (360f - coverAngle) * progressRatio
+            val rotation = coverAngle * progressRatio
+
+            //旋转背景补偿
+            textPaint.shader = null
+            textPaint.color = progressGradientColors[0]
             canvas.drawArc(
                 _tempRect.left.toFloat(),
                 _tempRect.top.toFloat(),
                 _tempRect.right.toFloat(),
                 _tempRect.bottom.toFloat(),
                 startOffsetAngle,
-                360f * progressRatio,
+                sweepAngle,
                 false,
                 textPaint
             )
+
+            //正向旋转
+            textPaint.shader = _progressShader
+            canvas.withRotation(rotation, cx, cy) {
+                canvas.drawArc(
+                    _tempRect.left.toFloat(),
+                    _tempRect.top.toFloat(),
+                    _tempRect.right.toFloat(),
+                    _tempRect.bottom.toFloat(),
+                    startOffsetAngle,
+                    sweepAngle,
+                    false,
+                    textPaint
+                )
+            }
+
         }
     }
 }

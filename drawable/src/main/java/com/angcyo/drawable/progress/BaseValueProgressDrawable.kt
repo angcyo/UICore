@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Shader
 import androidx.annotation.Px
 import androidx.core.math.MathUtils
+import com.angcyo.drawable.InvalidateDrawableProperty
 import com.angcyo.drawable.base.BaseDrawable
 import com.angcyo.library.ex.anim
 import kotlin.math.max
@@ -24,7 +25,7 @@ abstract class BaseValueProgressDrawable : BaseDrawable() {
     var maxProgressValue: Int = 100
 
     /**当前的进度值*/
-    var currentProgressValue: Int = 0
+    var currentProgressValue: Int by InvalidateDrawableProperty(0)
 
     /**进度的宽度*/
     @Px
@@ -44,7 +45,7 @@ abstract class BaseValueProgressDrawable : BaseDrawable() {
 
     //region ---临时变量---
 
-    /**当前进度比例*/
+    /**当前进度比例, [0~1]*/
     val progressRatio: Float
         get() = min(
             1f,
