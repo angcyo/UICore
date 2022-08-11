@@ -17,6 +17,7 @@ import com.angcyo.library.ex.before
  * @date 2022-8-1
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
+@Deprecated("效果差, 连接处会有明显的角度, 不够曲")
 class ZenOvalBrush : BaseBrush() {
 
     val zenPointList = mutableListOf<ZenPoint>()

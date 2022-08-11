@@ -8,7 +8,7 @@ import com.angcyo.doodle.element.PenBrushElement
 import com.angcyo.library.ex.bezier
 
 /**
- * 钢笔画刷, 手势收集
+ * 钢笔画刷, 手势收集. 贝塞尔曲线
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2022/07/25

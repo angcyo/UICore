@@ -19,6 +19,8 @@ import com.angcyo.library.ex.size
  * @date 2022/07/26
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
+
+@Deprecated("效果差, 首尾会有割裂")
 class ZenBrush : BaseBrush() {
 
     val zenPointList = mutableListOf<ZenPoint>()

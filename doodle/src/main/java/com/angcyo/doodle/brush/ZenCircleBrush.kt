@@ -2,36 +2,32 @@ package com.angcyo.doodle.brush
 
 import android.graphics.Path
 import com.angcyo.doodle.core.DoodleTouchManager
-import com.angcyo.doodle.data.BrushPath
-import com.angcyo.doodle.data.PathBrushElementData
+import com.angcyo.doodle.data.BrushElementData
 import com.angcyo.doodle.data.TouchPoint
 import com.angcyo.doodle.element.BaseBrushElement
-import com.angcyo.doodle.element.ZenPathBrushElement
+import com.angcyo.doodle.element.ZenCircleBrushElement
 import com.angcyo.library.ex.before
 import com.angcyo.library.ex.bezier
-import com.angcyo.library.ex.eachSegment
+import com.angcyo.library.ex.eachPath
 import com.angcyo.library.ex.size
 
-/**
- * [ZenCircleBrush]
+/** 在曲线路径上, 绘制无数个半径不等的圆, 达到笔锋效果
  *
- * 通过在[Path]上, 无限取宽度不一样的小[Path]实现笔锋
+ * 通过无限多的[addCircle]实现的笔锋效果, 性能可能差一点
  *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
- * @since 2022/08/11
+ * @since 2022/08/02
  */
-
-@Deprecated("效果可以, 但是性能较差")
-class ZenPathBrush : BaseBrush() {
+class ZenCircleBrush : BaseBrush() {
 
     /**路径采样率, 值越小画出来的线越细腻*/
-    var pathSampleStep = 10f
+    var pathSampleStep = 5f
 
     override fun onCreateBrushElement(
         manager: DoodleTouchManager,
         pointList: List<TouchPoint>
     ): BaseBrushElement {
-        return ZenPathBrushElement(PathBrushElementData())
+        return ZenCircleBrushElement(BrushElementData())
     }
 
     var _lastMidX = 0f
@@ -69,12 +65,11 @@ class ZenPathBrush : BaseBrush() {
                 selectPaintWidth(point.speed)
             }
 
-            _tempPath.eachSegment(pathSampleStep) { index, ratio, path ->
-                val width = startWidth + (endWidth - startWidth) * ratio
-                (brushElement as? ZenPathBrushElement)?.elementData?.listPath?.add(BrushPath().apply {
-                    set(path)
-                    strokeWidth = width
-                })
+            brushElement?.brushElementData?.brushPath?.apply {
+                _tempPath.eachPath(pathSampleStep) { index, ratio, posArray ->
+                    val width = startWidth + (endWidth - startWidth) * ratio
+                    addCircle(posArray[0], posArray[1], width, Path.Direction.CW)
+                }
             }
 
             //

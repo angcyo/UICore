@@ -1,7 +1,7 @@
 package com.angcyo.doodle.brush
 
 /**
- * 普通的笔刷
+ * 普通的笔刷, 无贝塞尔曲线
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2022/07/30

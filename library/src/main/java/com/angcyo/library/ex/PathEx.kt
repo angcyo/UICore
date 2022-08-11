@@ -192,6 +192,56 @@ fun Path.eachPath(
     }
 }
 
+/**枚举路径上指定长度的一段一段路径
+ * [len] 多长为一段
+ * */
+fun Path.eachSegment(len: Float, block: (index: Int, ratio: Float, path: Path) -> Unit) {
+    val pathMeasure = PathMeasure(this, false)
+    var startPosition = 0f
+    var endPosition = len
+    var length = pathMeasure.length
+    var index = 0
+
+    //func
+    fun _each() {
+        if (endPosition >= length) {
+            //直接结束
+            val path = Path()
+            pathMeasure.getSegment(startPosition, length, path, true)
+            block(index, 1f, path)
+        } else {
+            while (endPosition <= length) {
+                val path = Path()
+                pathMeasure.getSegment(startPosition, endPosition, path, true)
+                val ratio = endPosition / length
+                block(index++, ratio, path)
+
+                if (endPosition == length) {
+                    break
+                }
+                startPosition = endPosition
+                endPosition += len
+                if (endPosition > length) {
+                    endPosition = length
+                }
+            }
+        }
+    }
+
+    //first
+    _each()
+
+    //下一个轮廓, 如果有
+    while (pathMeasure.nextContour()) {
+        index = 0
+        startPosition = 0f
+        endPosition = len
+        length = pathMeasure.length
+        _each()
+    }
+
+}
+
 fun Path.computePathBounds(bounds: RectF = RectF(), exact: Boolean = true): RectF {
     computeBounds(bounds, exact)
     return bounds
