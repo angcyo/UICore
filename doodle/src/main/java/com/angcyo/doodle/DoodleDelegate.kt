@@ -3,6 +3,8 @@ package com.angcyo.doodle
 import android.graphics.Canvas
 import android.view.MotionEvent
 import android.view.View
+import com.angcyo.doodle.brush.EraserBrush
+import com.angcyo.doodle.component.DoodleMagnifier
 import com.angcyo.doodle.core.*
 import com.angcyo.doodle.element.BaseElement
 import com.angcyo.doodle.layer.BaseLayer
@@ -29,6 +31,9 @@ class DoodleDelegate(val view: View) : IDoodleView {
 
     /**透明底层*/
     val alphaElement = AlphaElement()
+
+    /**放大镜*/
+    var doodleMagnifier: DoodleMagnifier? = DoodleMagnifier(view)
 
     //endregion ---成员---
 
@@ -66,7 +71,34 @@ class DoodleDelegate(val view: View) : IDoodleView {
 
     @CallPoint
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return doodleTouchManager.onTouchEvent(event)
+        val result = doodleTouchManager.onTouchEvent(event)
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                doodleMagnifier?.apply {
+                    isEnable = doodleTouchManager.touchRecognize is EraserBrush
+                    if (isEnable) {
+                        update(event)
+                    }
+                }
+            }
+            MotionEvent.ACTION_MOVE -> {
+                doodleMagnifier?.apply {
+                    if (isEnable) {
+                        update(event)
+                    }
+                }
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                doodleMagnifier?.apply {
+                    if (isEnable) {
+                        update(event)
+                        isEnable = false
+                        refresh()
+                    }
+                }
+            }
+        }
+        return result
     }
 
     @CallPoint
@@ -74,7 +106,17 @@ class DoodleDelegate(val view: View) : IDoodleView {
         //透明背景显示
         alphaElement.onDraw(canvas)
 
+        //图层
         doodleLayerManager.onDraw(canvas)
+
+        //放大镜
+        if (canvas !is DoodleMagnifier.MagnifierCanvas) {
+            doodleMagnifier?.apply {
+                if (isEnable) {
+                    onDraw(canvas)
+                }
+            }
+        }
     }
 
     //endregion ---入口---

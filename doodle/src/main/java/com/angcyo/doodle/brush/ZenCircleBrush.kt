@@ -20,8 +20,12 @@ import com.angcyo.library.ex.size
  */
 class ZenCircleBrush : BaseBrush() {
 
-    /**路径采样率, 值越小画出来的线越细腻*/
-    var pathSampleStep = 5f
+    /**路径采样率, 值越小画出来的线越细腻
+     * 高端手机5f效果就很好
+     * 中端手机3f
+     * 低端手机1f
+     * */
+    var pathSampleStep = 3f
 
     override fun onCreateBrushElement(
         manager: DoodleTouchManager,
@@ -68,7 +72,7 @@ class ZenCircleBrush : BaseBrush() {
             brushElement?.brushElementData?.brushPath?.apply {
                 _tempPath.eachPath(pathSampleStep) { index, ratio, posArray ->
                     val width = startWidth + (endWidth - startWidth) * ratio
-                    addCircle(posArray[0], posArray[1], width, Path.Direction.CW)
+                    addCircle(posArray[0], posArray[1], width / 2, Path.Direction.CW)
                 }
             }
 
