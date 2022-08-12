@@ -20,7 +20,7 @@ class MosaicBrushElement(brushElementData: BrushElementData) : PenBrushElement(b
 
     override fun onCreateElement(manager: DoodleTouchManager, pointList: List<TouchPoint>) {
         super.onCreateElement(manager, pointList)
-        val bitmap = manager.doodleDelegate.getPreviewBitmap()
+        val bitmap = manager.doodleDelegate.getLayerPreviewBitmap()
 
         val matrix = Matrix()
         matrix.setScale(1f / mosaicLevel, 1f / mosaicLevel)

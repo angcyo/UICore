@@ -198,5 +198,23 @@ class DoodleDelegate(val view: View) : IDoodleView {
         return bitmap
     }
 
+    /**获取指定图层预览的图片*/
+    fun getLayerPreviewBitmap(layer: BaseLayer = doodleLayerManager.operateLayer!!): Bitmap {
+        val bitmap = Bitmap.createBitmap(
+            viewBox.contentRect.width(),
+            viewBox.contentRect.height(),
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = PreviewCanvas(bitmap)
+        canvas.withTranslation(
+            viewBox.contentRect.left.toFloat(),
+            viewBox.contentRect.top.toFloat()
+        ) {
+            //doodleLayerManager.backgroundLayer?.onDraw(this)
+            doodleLayerManager.onDrawLayer(this, layer)
+        }
+        return bitmap
+    }
+
     //endregion ---operate---
 }

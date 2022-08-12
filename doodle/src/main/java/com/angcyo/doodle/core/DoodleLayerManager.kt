@@ -33,10 +33,15 @@ class DoodleLayerManager(val doodleDelegate: DoodleDelegate) {
 
         //其他层
         for (layer in layerList) {
-            val saveCount = canvas.saveLayerAlpha(255)
-            layer.onDraw(canvas)
-            canvas.restoreToCount(saveCount)
+            onDrawLayer(canvas, layer)
         }
+    }
+
+    /**绘制指定图层*/
+    fun onDrawLayer(canvas: Canvas, layer: BaseLayer) {
+        val saveCount = canvas.saveLayerAlpha(255)
+        layer.onDraw(canvas)
+        canvas.restoreToCount(saveCount)
     }
 
     //region ---图层操作---
