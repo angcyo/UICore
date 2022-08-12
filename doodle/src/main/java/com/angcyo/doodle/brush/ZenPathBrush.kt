@@ -71,7 +71,7 @@ class ZenPathBrush : BaseBrush() {
 
             _tempPath.eachSegment(pathSampleStep) { index, ratio, path ->
                 val width = startWidth + (endWidth - startWidth) * ratio
-                (brushElement as? ZenPathBrushElement)?.elementData?.listPath?.add(BrushPath().apply {
+                (brushElement as? ZenPathBrushElement)?.pathBrushElementData?.listPath?.add(BrushPath().apply {
                     set(path)
                     strokeWidth = width
                 })

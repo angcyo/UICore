@@ -2,6 +2,7 @@ package com.angcyo.doodle
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.withTranslation
@@ -14,7 +15,10 @@ import com.angcyo.doodle.element.BaseElement
 import com.angcyo.doodle.layer.BaseLayer
 import com.angcyo.doodle.layer.NormalLayer
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.longFeedback
+import com.angcyo.library.ex.scale
+import kotlin.math.max
 import kotlin.math.min
 
 /**
@@ -214,6 +218,39 @@ class DoodleDelegate(val view: View) : IDoodleView {
             doodleLayerManager.onDrawLayer(this, layer)
         }
         return bitmap
+    }
+
+    /**获取一个用来居中显示元素的矩形*/
+    fun getCenterRect(width: Int, height: Int, margin: Int = 40 * dpi): RectF {
+        val rect = RectF()
+
+        val contentRect = viewBox.contentRect
+        val centerX = contentRect.centerX().toFloat()
+        val centerY = contentRect.centerY().toFloat()
+        rect.set(
+            centerX - width / 2,
+            centerY - height / 2,
+            centerX + width / 2,
+            centerY + height / 2
+        )
+
+        val maxWidth = contentRect.width() - 2 * margin
+        val maxHeight = contentRect.height() - 2 * margin
+
+        var scaleWidth = 1f
+        var scaleHeight = 1f
+
+        if (width > maxWidth) {
+            scaleWidth = maxWidth * 1f / width
+        }
+
+        if (height > maxHeight) {
+            scaleHeight = maxHeight * 1f / height
+        }
+
+        val scale = max(scaleWidth, scaleHeight)
+        rect.scale(scale, scale, centerX, centerY)
+        return rect
     }
 
     //endregion ---operate---

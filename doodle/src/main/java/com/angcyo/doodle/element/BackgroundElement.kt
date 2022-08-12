@@ -3,6 +3,7 @@ package com.angcyo.doodle.element
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import com.angcyo.doodle.data.BaseElementData
 import com.angcyo.doodle.layer.BaseLayer
 
 /**
@@ -12,7 +13,7 @@ import com.angcyo.doodle.layer.BaseLayer
  * @date 2022/07/25
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class BackgroundElement : BaseElement() {
+class BackgroundElement : BaseElement(BaseElementData()) {
 
     /**背景颜色*/
     var backgroundColor: Int = Color.WHITE //_color(R.color.transparent20) //Color.TRANSPARENT

@@ -5,7 +5,6 @@ import com.angcyo.doodle.core.DoodleTouchManager
 import com.angcyo.doodle.data.BrushElementData
 import com.angcyo.doodle.data.TouchPoint
 import com.angcyo.doodle.layer.BaseLayer
-import com.angcyo.library.ex.clamp
 
 /**
  * 笔刷绘制元素, 数据收集和处理
@@ -14,7 +13,8 @@ import com.angcyo.library.ex.clamp
  * @date 2022/07/26
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-abstract class BaseBrushElement(val brushElementData: BrushElementData) : BaseElement() {
+abstract class BaseBrushElement(val brushElementData: BrushElementData) :
+    BaseElement(brushElementData) {
 
     //region ---core---
 

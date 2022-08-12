@@ -13,7 +13,7 @@ import android.graphics.Paint
  * @date 2022/07/26
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-abstract class BaseElementData : IElementData {
+open class BaseElementData : IElementData {
 
     /**笔的颜色*/
     var paintColor: Int = Color.TRANSPARENT
