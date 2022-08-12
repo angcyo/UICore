@@ -123,8 +123,4 @@ class DoodleMagnifier(val targetView: View) : IDoodleItem {
             }
         }
     }
-
-    /**标识类*/
-    class MagnifierCanvas(bitmap: Bitmap) : Canvas(bitmap)
-
 }

@@ -12,7 +12,8 @@ import com.angcyo.doodle.layer.BaseLayer
  * @date 2022/07/25
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class PenBrushElement(brushElementData: BrushElementData) : BaseBrushElement(brushElementData) {
+open class PenBrushElement(brushElementData: BrushElementData) :
+    BaseBrushElement(brushElementData) {
 
     init {
         paint.style = Paint.Style.STROKE

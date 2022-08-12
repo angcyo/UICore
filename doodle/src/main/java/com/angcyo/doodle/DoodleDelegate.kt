@@ -1,10 +1,14 @@
 package com.angcyo.doodle
 
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.graphics.withTranslation
 import com.angcyo.doodle.brush.EraserBrush
 import com.angcyo.doodle.component.DoodleMagnifier
+import com.angcyo.doodle.component.MagnifierCanvas
+import com.angcyo.doodle.component.PreviewCanvas
 import com.angcyo.doodle.core.*
 import com.angcyo.doodle.element.BaseElement
 import com.angcyo.doodle.layer.BaseLayer
@@ -106,13 +110,16 @@ class DoodleDelegate(val view: View) : IDoodleView {
     @CallPoint
     override fun onDraw(canvas: Canvas) {
         //透明背景显示
-        alphaElement.onDraw(canvas)
+        if (canvas !is PreviewCanvas) {
+            //预览时, 不绘制透明背景提示
+            alphaElement.onDraw(canvas)
+        }
 
         //图层
         doodleLayerManager.onDraw(canvas)
 
         //放大镜
-        if (canvas !is DoodleMagnifier.MagnifierCanvas) {
+        if (canvas !is MagnifierCanvas && canvas !is PreviewCanvas) {
             doodleMagnifier?.apply {
                 if (isEnable) {
                     onDraw(canvas)
@@ -172,6 +179,23 @@ class DoodleDelegate(val view: View) : IDoodleView {
             doodleLayerManager.addLayer(NormalLayer(this), Strategy.Redo())
         }
         operateLayer?.addElement(element, strategy)
+    }
+
+    /**获取预览的图片*/
+    fun getPreviewBitmap(): Bitmap {
+        val bitmap = Bitmap.createBitmap(
+            viewBox.contentRect.width(),
+            viewBox.contentRect.height(),
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = PreviewCanvas(bitmap)
+        canvas.withTranslation(
+            viewBox.contentRect.left.toFloat(),
+            viewBox.contentRect.top.toFloat()
+        ) {
+            onDraw(canvas)
+        }
+        return bitmap
     }
 
     //endregion ---operate---
