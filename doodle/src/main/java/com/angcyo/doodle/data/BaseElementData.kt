@@ -1,5 +1,6 @@
 package com.angcyo.doodle.data
 
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Paint
 
@@ -27,5 +28,8 @@ open class BaseElementData : IElementData {
         paint.strokeWidth = paintWidth
         paint.color = paintColor
     }
+
+    /**定义图片画刷的图片*/
+    var brushBitmap: Bitmap? = null
 
 }

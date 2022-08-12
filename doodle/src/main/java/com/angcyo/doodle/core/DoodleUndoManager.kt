@@ -63,7 +63,11 @@ class DoodleUndoManager(val doodleDelegate: DoodleDelegate) {
     /**是否有重做操作可以执行*/
     fun canRedo(): Boolean = redoStack.isNotEmpty()
 
-    /**添加一个可以被撤销和重做的操作, 并且立即执行重做*/
+    /**添加一个可以被撤销和重做的操作, 并且立即执行重做
+     *
+     * [undo] 撤销的操作
+     * [redo] 当前需要指定的操作
+     * */
     fun addAndRedo(
         strategy: Strategy,
         undo: (strategy: Strategy) -> Unit,

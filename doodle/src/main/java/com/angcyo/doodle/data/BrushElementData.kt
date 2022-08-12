@@ -11,7 +11,7 @@ import android.graphics.Path
  */
 open class BrushElementData : BaseElementData() {
 
-    /**所有原始点位集合*/
+    /**收集的所有原始点位集合*/
     var brushPointList: List<TouchPoint>? = null
 
     /**算法处理之后的路径*/

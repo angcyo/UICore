@@ -1,5 +1,6 @@
 package com.angcyo.doodle.core
 
+import com.angcyo.doodle.element.BaseElement
 import com.angcyo.doodle.layer.BaseLayer
 
 /**
@@ -11,7 +12,7 @@ import com.angcyo.doodle.layer.BaseLayer
  */
 interface IDoodleListener {
 
-    //region ---Layer---
+    //region ---Layer/Element---
 
     /**操作图层改变回调*/
     fun onOperateLayerChanged(from: BaseLayer?, to: BaseLayer?) {}
@@ -23,6 +24,15 @@ interface IDoodleListener {
      * [DoodleUndoManager]*/
     fun onDoodleUndoChanged(undoManager: DoodleUndoManager) {}
 
-    //endregion ---Layer---
+    /**当有元素创建时, 回调*/
+    fun onCreateElement(element: BaseElement, brush: ITouchRecognize?) {}
+
+    /**派发元素[elementList]追加到[layer]图层中*/
+    fun onElementAttach(elementList: List<BaseElement>, layer: BaseLayer) {}
+
+    /**派发元素[elementList]从[layer]图层中移除*/
+    fun onElementDetach(elementList: List<BaseElement>, layer: BaseLayer) {}
+
+    //endregion ---Layer/Element---
 
 }

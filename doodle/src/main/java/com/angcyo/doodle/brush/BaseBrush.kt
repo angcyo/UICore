@@ -57,6 +57,34 @@ abstract class BaseBrush : ITouchRecognize {
                 lastPoint = point
             }
         }
+
+        /**根据滑动速度, 返回应该绘制的宽度.
+         * 速度越快, 宽度越细
+         * */
+        fun selectPaintWidth(speed: Float, paintWidth: Float): Float {
+            val width = paintWidth
+            val m = max(1f, width / 20).toInt()
+
+            val minSpeed = 1f
+            val maxSpeed = width / m
+
+            val currentSpeed = clamp(speed, minSpeed, maxSpeed)
+
+            //速度的比例
+            val speedRatio = (currentSpeed - minSpeed) / (maxSpeed - minSpeed)
+
+            val minWidth = 1f
+            val maxWidth = width
+
+            val minRatio = 0.3f//兜底比例
+            return minWidth + max(minRatio, (1 - speedRatio)) * (maxWidth - minWidth)
+        }
+
+        /**根据当前的宽度, 算出透明度 */
+        fun selectPaintAlpha(width: Float, paintWidth: Float): Int {
+            val alpha = (255 * width / paintWidth / 2).toInt()
+            return clamp(alpha, 10, 255)
+        }
     }
 
     /**点位信息*/
@@ -87,6 +115,9 @@ abstract class BaseBrush : ITouchRecognize {
                         brushElementData.brushPointList =
                             brushElementData.brushPointList ?: collectPointList
                         manager.doodleDelegate.doodleConfig.updateToElementData(brushElementData)
+                        //
+                        manager.doodleDelegate.dispatchCreateElement(this, this@BaseBrush)
+                        //
                         manager.doodleDelegate.addElement(this, Strategy.Preview())
                     }
                     brushElement?.onCreateElement(manager, this)
@@ -164,21 +195,7 @@ abstract class BaseBrush : ITouchRecognize {
      * */
     open fun selectPaintWidth(speed: Float): Float {
         val width = brushElement?.brushElementData?.paintWidth ?: 20f
-        val m = max(1f, width / 20).toInt()
-
-        val minSpeed = 1f
-        val maxSpeed = width / m
-
-        val currentSpeed = clamp(speed, minSpeed, maxSpeed)
-
-        //速度的比例
-        val speedRatio = (currentSpeed - minSpeed) / (maxSpeed - minSpeed)
-
-        val minWidth = 1f
-        val maxWidth = width
-
-        val minRatio = 0.3f//兜底比例
-        return minWidth + max(minRatio, (1 - speedRatio)) * (maxWidth - minWidth)
+        return Companion.selectPaintWidth(speed, width)
     }
 
     //endregion ---operate---

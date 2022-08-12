@@ -32,9 +32,13 @@ abstract class BaseLayer(val doodleDelegate: DoodleDelegate) : ILayer {
         doodleDelegate.undoManager.addAndRedo(strategy, {
             elementList.resetAll(oldList)
             doodleDelegate.refresh()
+            //notify
+            doodleDelegate.dispatchElementAttach(oldList, this)
         }) {
             elementList.clear()
             doodleDelegate.refresh()
+            //notify
+            doodleDelegate.dispatchElementDetach(oldList, this)
         }
     }
 
@@ -59,6 +63,9 @@ abstract class BaseLayer(val doodleDelegate: DoodleDelegate) : ILayer {
                 elementList.add(element)
                 element.onAddToLayer(this)
                 doodleDelegate.refresh()
+
+                //notify
+                doodleDelegate.dispatchElementAttach(listOf(element), this)
             }
         }
     }
@@ -69,10 +76,14 @@ abstract class BaseLayer(val doodleDelegate: DoodleDelegate) : ILayer {
         doodleDelegate.undoManager.addAndRedo(strategy, {
             elementList.add(index, element)
             doodleDelegate.refresh()
+            //notify
+            doodleDelegate.dispatchElementAttach(listOf(element), this)
         }) {
             elementList.remove(element)
             element.onRemoveFromLayer(this)
             doodleDelegate.refresh()
+            //notify
+            doodleDelegate.dispatchElementDetach(listOf(element), this)
         }
     }
 

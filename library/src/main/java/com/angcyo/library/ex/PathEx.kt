@@ -24,13 +24,13 @@ import kotlin.math.min
 
 /**获取[Path]指定进度[progress]时的点坐标
  * [progress] [0~1] */
-fun Path.getProgressPosition(progress: Float): FloatArray {
+fun Path.getProgressPosition(
+    progress: Float,
+    result: FloatArray = floatArrayOf(0f, 0f)
+): FloatArray {
     val pathMeasure = PathMeasure(this, false)
-
-    val floatArray = floatArrayOf(0f, 0f)
-    pathMeasure.getPosTan(progress * pathMeasure.length, floatArray, null)
-
-    return floatArray
+    pathMeasure.getPosTan(progress * pathMeasure.length, result, null)
+    return result
 }
 
 /**获取[Path]指定进度[progress]时的点角度
@@ -148,6 +148,11 @@ fun Path.intersect(path: Path): Boolean {
         return false
     }
     return !result.isEmpty
+}
+
+/**路径的长度*/
+fun Path.length(): Float {
+    return PathMeasure(this, false).length
 }
 
 /**枚举路径上所有的点

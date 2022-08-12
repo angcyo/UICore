@@ -1,5 +1,6 @@
 package com.angcyo.doodle.core
 
+import android.graphics.Bitmap
 import android.graphics.Color
 import com.angcyo.doodle.data.BaseElementData
 
@@ -25,6 +26,10 @@ class DoodleConfig {
     fun updateToElementData(data: BaseElementData) {
         data.paintWidth = paintWidth
         data.paintColor = paintColor
+        data.brushBitmap = brushBitmap
     }
+
+    /**定义图片画刷的图片*/
+    var brushBitmap: Bitmap? = null
 
 }

@@ -154,6 +154,24 @@ class DoodleDelegate(val view: View) : IDoodleView {
         }
     }
 
+    override fun dispatchCreateElement(element: BaseElement, brush: ITouchRecognize?) {
+        doodleListenerList.forEach {
+            it.onCreateElement(element, brush)
+        }
+    }
+
+    override fun dispatchElementAttach(elementList: List<BaseElement>, layer: BaseLayer) {
+        doodleListenerList.forEach {
+            it.onElementAttach(elementList, layer)
+        }
+    }
+
+    override fun dispatchElementDetach(elementList: List<BaseElement>, layer: BaseLayer) {
+        doodleListenerList.forEach {
+            it.onElementDetach(elementList, layer)
+        }
+    }
+
     //endregion ---Core---
 
     //region ---操作方法---
