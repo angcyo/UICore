@@ -5,11 +5,11 @@ import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Reason
-import com.angcyo.canvas.ScalePictureDrawable
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.IRenderer
+import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.ex.emptyRectF
 import com.angcyo.library.ex.withPicture
 

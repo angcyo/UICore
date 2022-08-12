@@ -4,7 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.text.TextPaint
-import com.angcyo.canvas.ScalePictureDrawable
+import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.items.PictureTextItem
 import com.angcyo.library.ex.*

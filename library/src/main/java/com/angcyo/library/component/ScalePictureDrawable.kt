@@ -1,4 +1,4 @@
-package com.angcyo.canvas
+package com.angcyo.library.component
 
 import android.graphics.Canvas
 import android.graphics.Picture

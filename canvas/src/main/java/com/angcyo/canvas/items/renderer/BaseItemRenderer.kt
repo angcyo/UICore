@@ -13,6 +13,7 @@ import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.PictureShapeItem
 import com.angcyo.library.L
+import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.ex.*
 
 /**

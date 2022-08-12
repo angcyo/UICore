@@ -3,7 +3,7 @@ package com.angcyo.canvas.items
 import android.graphics.Paint
 import android.graphics.Rect
 import android.widget.LinearLayout
-import com.angcyo.canvas.ScalePictureDrawable
+import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
 import kotlin.math.max

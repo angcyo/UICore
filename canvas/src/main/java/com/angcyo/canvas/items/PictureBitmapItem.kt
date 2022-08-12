@@ -1,7 +1,7 @@
 package com.angcyo.canvas.items
 
 import android.graphics.Bitmap
-import com.angcyo.canvas.ScalePictureDrawable
+import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.ex.emptyRectF
 import com.angcyo.library.ex.withPicture
 

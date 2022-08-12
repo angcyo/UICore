@@ -3,7 +3,7 @@ package com.angcyo.canvas.items.renderer
 import android.graphics.Path
 import android.graphics.RectF
 import android.text.TextPaint
-import com.angcyo.canvas.ScalePictureDrawable
+import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.items.ShapeItem
 import com.angcyo.library.ex.ceil

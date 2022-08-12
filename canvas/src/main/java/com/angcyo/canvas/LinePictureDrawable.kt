@@ -2,6 +2,7 @@ package com.angcyo.canvas
 
 import android.graphics.Canvas
 import android.graphics.Picture
+import com.angcyo.library.component.ScalePictureDrawable
 
 /**
  * 用来绘制线段的Drawable

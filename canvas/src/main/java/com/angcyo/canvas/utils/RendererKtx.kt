@@ -6,10 +6,14 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.widget.LinearLayout
-import com.angcyo.canvas.*
+import com.angcyo.canvas.CanvasDelegate
+import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.LinePath
+import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.items.*
 import com.angcyo.canvas.items.renderer.*
 import com.angcyo.library.app
+import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.ex.*
 
 /**

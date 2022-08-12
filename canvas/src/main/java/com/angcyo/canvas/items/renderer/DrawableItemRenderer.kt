@@ -4,7 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
 import androidx.core.graphics.withMatrix
-import com.angcyo.canvas.ScalePictureDrawable
+import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.renderer.ICanvasStep
