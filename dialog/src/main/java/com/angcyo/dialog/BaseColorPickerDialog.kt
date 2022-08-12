@@ -20,7 +20,7 @@ abstract class BaseColorPickerDialog : BaseDialogConfig() {
     var selectedColor: Int = Color.TRANSPARENT
 
     /**选中回调, 返回true拦截默认操作*/
-    var colorPickerAction: (dialog: Dialog, color: Int) -> Boolean =
+    var colorPickerResultAction: (dialog: Dialog, color: Int) -> Boolean =
         { dialog, color ->
             L.i("选中颜色->$color")
             false
@@ -30,7 +30,7 @@ abstract class BaseColorPickerDialog : BaseDialogConfig() {
         dialogTitle = _string(R.string.dialog_color_picker)
 
         positiveButtonListener = { dialog, _ ->
-            if (colorPickerAction.invoke(dialog, selectedColor)) {
+            if (colorPickerResultAction.invoke(dialog, selectedColor)) {
                 //被拦截
             } else {
                 dialog.dismiss()

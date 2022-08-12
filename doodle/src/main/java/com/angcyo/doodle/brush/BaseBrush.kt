@@ -11,6 +11,7 @@ import com.angcyo.library.ex.c
 import com.angcyo.library.ex.clamp
 import com.angcyo.library.ex.degrees
 import kotlin.math.absoluteValue
+import kotlin.math.max
 
 /**
  * 基础笔刷, 用来收集点位数据
@@ -162,16 +163,22 @@ abstract class BaseBrush : ITouchRecognize {
      * 速度越快, 宽度越细
      * */
     open fun selectPaintWidth(speed: Float): Float {
-        val minSpeed = 0f
-        val maxSpeed = 10f
+        val width = brushElement?.brushElementData?.paintWidth ?: 20f
+        val m = max(1f, width / 20).toInt()
+
+        val minSpeed = 1f
+        val maxSpeed = width / m
+
         val currentSpeed = clamp(speed, minSpeed, maxSpeed)
 
+        //速度的比例
         val speedRatio = (currentSpeed - minSpeed) / (maxSpeed - minSpeed)
 
-        val minWidth = 4
-        val maxWidth = brushElement?.brushElementData?.paintWidth ?: 20f
+        val minWidth = 1f
+        val maxWidth = width
 
-        return minWidth + (1 - speedRatio) * (maxWidth - minWidth)
+        val minRatio = 0.3f//兜底比例
+        return minWidth + max(minRatio, (1 - speedRatio)) * (maxWidth - minWidth)
     }
 
     //endregion ---operate---

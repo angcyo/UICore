@@ -9,6 +9,8 @@ import androidx.core.graphics.withTranslation
 import com.angcyo.doodle.core.IDoodleItem
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.dp
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * 放大镜
@@ -28,8 +30,11 @@ class DoodleMagnifier(val targetView: View) : IDoodleItem {
     /**放大镜的半径*/
     var radius: Float = 50 * dp
 
-    /**边距*/
-    var margining: Float = 10 * dp
+    /**水平边距*/
+    var marginingHorizontal: Float = 10 * dp
+
+    /**水平偏移*/
+    var marginingVertical: Float = 50 * dp
 
     /**绘制的路径*/
     val magnifierPath: Path = Path()
@@ -89,18 +94,15 @@ class DoodleMagnifier(val targetView: View) : IDoodleItem {
         }
         magnifierBitmap?.let {
             //核心放大效果
-            var translationX = margining
-            var translationY = margining
-
             val size = radius * 2
-            val offset = margining * 2
+            val translationX =
+                max(
+                    marginingHorizontal,
+                    min(_touchX - radius, targetView.measuredWidth - size - marginingHorizontal)
+                )
+            var translationY = marginingVertical
 
-            if (_touchX + offset + size < targetView.measuredWidth) {
-                //右边够距离
-                translationX = _touchX + offset
-            } else {
-                translationX = _touchX - offset - size
-            }
+            val offset = marginingVertical
 
             if (_touchY - offset - size > 0) {
                 //顶部够距离

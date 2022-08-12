@@ -9,7 +9,7 @@ import com.angcyo.library.ex.computeBounds
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/06/27
  */
-class PathDrawable : AbsDslDrawable() {
+class PathListDrawable : AbsDslDrawable() {
 
     /**需要更新的属性*/
     var pathList = mutableListOf<Path>()

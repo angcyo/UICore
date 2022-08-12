@@ -41,6 +41,9 @@ abstract class AbsDslDrawable : Drawable() {
             isFilterBitmap = true
             style = Paint.Style.FILL
             textSize = 12 * dp
+            color = Color.BLACK
+            strokeJoin = Paint.Join.ROUND
+            strokeCap = Paint.Cap.ROUND
         }
     }
 

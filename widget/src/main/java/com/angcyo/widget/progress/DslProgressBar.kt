@@ -175,7 +175,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             if (progressBgDrawable is ColorDrawable) {
                 val startColor = (progressBgDrawable as ColorDrawable).color
                 colors = "$startColor,$colors"
-            } else if (colors?.split(",")?.size ?: 0 <= 1) {
+            } else if ((colors?.split(",")?.size ?: 0) <= 1) {
                 colors = "$colors,$colors"
             }
 
@@ -196,7 +196,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             if (progressSecondDrawable is ColorDrawable) {
                 val startColor = (progressSecondDrawable as ColorDrawable).color
                 colors = "$startColor,$colors"
-            } else if (colors?.split(",")?.size ?: 0 <= 1) {
+            } else if ((colors?.split(",")?.size ?: 0) <= 1) {
                 colors = "$colors,$colors"
             }
 
@@ -215,7 +215,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             if (progressTrackDrawable is ColorDrawable) {
                 val startColor = (progressTrackDrawable as ColorDrawable).color
                 colors = "$startColor,$colors"
-            } else if (colors?.split(",")?.size ?: 0 <= 1) {
+            } else if ((colors?.split(",")?.size ?: 0) <= 1) {
                 colors = "$colors,$colors"
             }
 
@@ -554,7 +554,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
      * 设置进度
      * @param progress [0-100]]
      * @param fromProgress 动画开始的进度, 默认是当前进度
-     * @param animDuration 动画时长, 小于0, 不开启动画
+     * @param animDuration 动画时长, 小于等于0, 不开启动画
      * */
     open fun setProgress(
         progress: Int,
