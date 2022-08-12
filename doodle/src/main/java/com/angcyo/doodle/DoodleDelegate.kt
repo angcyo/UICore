@@ -11,6 +11,7 @@ import com.angcyo.doodle.layer.BaseLayer
 import com.angcyo.doodle.layer.NormalLayer
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.longFeedback
+import kotlin.math.min
 
 /**
  *
@@ -77,6 +78,7 @@ class DoodleDelegate(val view: View) : IDoodleView {
                 doodleMagnifier?.apply {
                     isEnable = doodleTouchManager.touchRecognize is EraserBrush
                     if (isEnable) {
+                        magnifierScale = min(4f, 200 / doodleConfig.paintWidth) //最大4倍
                         update(event)
                     }
                 }
