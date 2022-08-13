@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.util.AttributeSet
+import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
 
 /**
@@ -31,6 +32,13 @@ class CropImageView(context: Context, attrs: AttributeSet? = null) :
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        cropImageMatrix.setTranslate(300f, 300f)
+        imageMatrix = cropImageMatrix
+
+        return super.onTouchEvent(event)
     }
 
     override fun setImageBitmap(bm: Bitmap?) {
