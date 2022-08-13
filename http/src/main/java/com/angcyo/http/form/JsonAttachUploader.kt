@@ -22,7 +22,9 @@ class JsonAttachUploader {
     /**上传完成之后, 请将文件路径和文件id的映射关系保存在此*/
     var fileIdMap = hashMapOf<String, Long>()
 
-    /**上传文件的回调, 子线程回调*/
+    /**上传文件的回调, 子线程回调.
+     * 需要手动赋值
+     * */
     var onUploadFile: (filePath: String) -> Unit = { filePath ->
         //uploader.uploadNext(null)
         //uploader.stopUpload()
@@ -165,11 +167,11 @@ class JsonAttachUploader {
 /**从url中解析出文件id
  * [first] 文件id
  * [second] this字符串*/
-fun String.parseFileId(fileIdKey: String = FormAttachManager.KEY_FILE_ID): Pair<Long?, String> {
+fun String.parseFileId(fileIdKey: String = FormAttachManager.KEY_FILE_ID): Pair<String?, String> {
     val path = this
     return if (path.isHttpScheme()) {
-        val fileId: Long = path.queryParameter(fileIdKey)?.toLongOrNull() ?: -1
-        if (fileId == -1L) {
+        val fileId: String? = path.queryParameter(fileIdKey)
+        if (fileId.isNullOrEmpty()) {
             null to path
         } else {
             fileId to path
@@ -179,8 +181,8 @@ fun String.parseFileId(fileIdKey: String = FormAttachManager.KEY_FILE_ID): Pair<
     }
 }
 
-/**开始上传附件
- * 需要主动设置[onUploadFile]方法*/
+/**从Json中, 获取需要上传的附件地址, 并开始上传.
+ * 需要主动设置[com.angcyo.http.form.JsonAttachUploader.onUploadFile]方法*/
 fun String.uploadAttach(config: JsonAttachUploader.() -> Unit): JsonAttachUploader {
     val uploader = JsonAttachUploader()
     uploader.apply(config)
