@@ -1,13 +1,11 @@
 package com.angcyo.library.ex
 
 import android.content.Context
-import android.graphics.RectF
 import android.text.TextUtils
+import android.view.MotionEvent
 import android.view.View
 import com.angcyo.library.*
 import kotlin.math.absoluteValue
-import kotlin.math.max
-import kotlin.math.min
 
 /**
  *
@@ -142,6 +140,18 @@ fun Context.calcSize(
         }
     }
     return result
+}
+
+/**自动处理
+ * [disableParentInterceptTouchEvent]*/
+fun View?.interceptParentTouchEvent(event: MotionEvent) {
+    if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+        disableParentInterceptTouchEvent()
+    } else if (event.actionMasked == MotionEvent.ACTION_UP ||
+        event.actionMasked == MotionEvent.ACTION_CANCEL
+    ) {
+        disableParentInterceptTouchEvent(false)
+    }
 }
 
 /**禁止[Parent]拦截[TouchEvent]*/

@@ -185,6 +185,15 @@ fun Matrix.getScaleY(): Float {
     return _tempValues[Matrix.MSCALE_Y]
 }
 
+/**缩放值*/
+fun Matrix.getScale(): Float {
+    getValues(_tempValues)
+    return sqrt(
+        _tempValues[Matrix.MSCALE_X].toDouble().pow(2.0) +
+                _tempValues[Matrix.MSKEW_Y].toDouble().pow(2.0)
+    ).toFloat()
+}
+
 /**获取旋转的角度, 非弧度
  * https://stackoverflow.com/questions/12256854/get-the-rotate-value-from-matrix-in-android
  * [0~180°]
