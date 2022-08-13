@@ -1,8 +1,9 @@
 package com.angcyo.doodle.element
 
-import android.graphics.Canvas
-import android.graphics.Paint
+import android.graphics.*
+import com.angcyo.doodle.core.DoodleTouchManager
 import com.angcyo.doodle.data.BrushElementData
+import com.angcyo.doodle.data.TouchPoint
 import com.angcyo.doodle.layer.BaseLayer
 
 /**
@@ -17,6 +18,22 @@ open class PenBrushElement(brushElementData: BrushElementData) :
 
     init {
         paint.style = Paint.Style.STROKE
+    }
+
+    override fun onCreateElement(manager: DoodleTouchManager, pointList: List<TouchPoint>) {
+        super.onCreateElement(manager, pointList)
+
+        /*brushElementData.brushBitmap?.let {
+            paint.shader = BitmapShader(it, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT).apply {
+                setLocalMatrix(Matrix().apply {
+                    postScale(
+                        brushElementData.paintWidth / it.width,
+                        brushElementData.paintWidth / it.height,
+                        it.width / 2f, it.height / 2f
+                    )
+                })
+            }
+        }*/
     }
 
     override fun onDraw(layer: BaseLayer, canvas: Canvas) {
