@@ -418,9 +418,14 @@ fun View.scaleAnimator(
 }
 
 /**Matrix动画*/
-fun matrixAnimator(startMatrix: Matrix, endMatrix: Matrix, block: (Matrix) -> Unit): ValueAnimator {
+fun matrixAnimator(
+    startMatrix: Matrix,
+    endMatrix: Matrix,
+    duration: Long = ANIM_DURATION,
+    block: (Matrix) -> Unit
+): ValueAnimator {
     return ObjectAnimator.ofObject(MatrixEvaluator(), startMatrix, endMatrix).apply {
-        duration = ANIM_DURATION
+        this.duration = duration
         interpolator = DecelerateInterpolator()
         addUpdateListener {
             block(it.animatedValue as Matrix)

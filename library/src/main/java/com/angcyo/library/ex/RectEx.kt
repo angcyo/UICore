@@ -71,21 +71,11 @@ const val ADJUST_TYPE_RB = 0x22
 /**按照矩形左下调整*/
 const val ADJUST_TYPE_LB = 0x12
 
-/**
- * 简单的缩放一个矩形
- * */
-fun RectF.scale(scaleX: Float, scaleY: Float): RectF {
-    val matrix = Matrix()
-    matrix.setScale(scaleX, scaleY)
-    matrix.mapRect(this)
-    return this
-}
-
 /**缩放一个矩形
  * [scaleX] [scaleY] 宽高缩放的比例
  * [pivotX] [pivotY] 缩放的轴点
  * */
-fun RectF.scale(scaleX: Float, scaleY: Float, pivotX: Float, pivotY: Float): RectF {
+fun RectF.scale(scaleX: Float, scaleY: Float, pivotX: Float = left, pivotY: Float = top): RectF {
     val matrix = Matrix()
     matrix.setScale(scaleX, scaleY, pivotX, pivotY)
     matrix.mapRect(this)
