@@ -6,7 +6,7 @@ import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasEntryPoint
 import com.angcyo.canvas.core.ICanvasTouch
-import com.angcyo.library.component.DoubleGestureDetector2
+import com.angcyo.library.gesture.DoubleGestureDetector2
 import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.dp
 import kotlin.math.atan2

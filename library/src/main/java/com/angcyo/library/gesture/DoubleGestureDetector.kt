@@ -1,4 +1,4 @@
-package com.angcyo.library.component
+package com.angcyo.library.gesture
 
 import android.content.Context
 import android.view.GestureDetector

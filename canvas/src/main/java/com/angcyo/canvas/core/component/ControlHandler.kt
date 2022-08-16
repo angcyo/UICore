@@ -15,7 +15,7 @@ import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.core.renderer.SelectGroupRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
-import com.angcyo.library.component.DoubleGestureDetector2
+import com.angcyo.library.gesture.DoubleGestureDetector2
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
 

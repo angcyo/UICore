@@ -4,8 +4,7 @@ import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.RectF
-import kotlin.math.max
-import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -305,6 +304,69 @@ public inline fun <T> RectF.withSave(
     }
 }
 
+/**返回矩形4个角的点坐标*/
+fun RectF.toCornersValues(
+    result: FloatArray = floatArrayOf(
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f
+    )
+): FloatArray {
+    result[0] = left
+    result[1] = top
+
+    result[2] = right
+    result[3] = top
+
+    result[4] = right
+    result[5] = bottom
+
+    result[6] = left
+    result[7] = bottom
+
+    return result
+}
+
+/**获取[this]矩形旋转后的最小矩形
+ * [rotate] 矩形旋转的角度
+ *
+ * [com.yalantis.ucrop.util.RectUtils.trapToRect]
+ * */
+fun RectF.trapToRect(
+    rotate: Float,
+    result: RectF = RectF(
+        Float.POSITIVE_INFINITY,
+        Float.POSITIVE_INFINITY,
+        Float.NEGATIVE_INFINITY,
+        Float.NEGATIVE_INFINITY
+    )
+): RectF {
+    val matrix = _tempMatrix
+    val values = toCornersValues()
+    matrix.setRotate(rotate)
+    matrix.mapPoints(values)
+
+    var i = 1
+    while (i < values.size) {
+        val x = (values[i - 1] * 10).roundToInt() / 10f
+        val y = (values[i] * 10).roundToInt() / 10f
+        result.left = if (x < result.left) x else result.left
+        result.top = if (y < result.top) y else result.top
+        result.right = if (x > result.right) x else result.right
+        result.bottom = if (y > result.bottom) y else result.bottom
+        i += 2
+    }
+
+    result.sort()
+
+    return result
+}
+
 //</editor-fold desc="rect size">
 
 //<editor-fold desc="rect flip">
@@ -331,13 +393,16 @@ val RectF.flipBottom: Float
 
 /**翻转后的矩形坐标修正*/
 fun RectF.adjustFlipRect(result: RectF): RectF {
-    val l = min(left, right)
+    /*val l = min(left, right)
     val t = min(top, bottom)
 
     val r = max(left, right)
     val b = max(top, bottom)
 
-    result.set(l, t, r, b)
+    result.set(l, t, r, b)*/
+
+    result.set(this)
+    result.sort()
     return result
 }
 

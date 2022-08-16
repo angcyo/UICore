@@ -32,6 +32,9 @@ data class RectPointF(
 /**[Rect]*/
 fun Rect.toFourPoint(rotate: Float = 0f): RectPointF = toRectF().toFourPoint(rotate)
 
+/**转换成矩形的4个点坐标*/
+fun RectF.toRectPoint(rotate: Float = 0f): RectPointF = toFourPoint(rotate)
+
 /**
  * 将矩形转换成4个点的坐标
  * [rotate] 矩形需要旋转的角度
@@ -67,6 +70,34 @@ fun RectPointF.toPath(result: Path = _tempPath): Path {
     result.rewind()
     result.addRect(originRectF, Path.Direction.CW)
     result.transform(_tempMatrix)
+
+    return result
+}
+
+/**返回矩形4个角的点坐标*/
+fun RectPointF.toCornersValues(
+    result: FloatArray = floatArrayOf(
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f
+    )
+): FloatArray {
+    result[0] = leftTop.x
+    result[1] = leftTop.y
+
+    result[2] = rightTop.x
+    result[3] = rightTop.y
+
+    result[4] = rightBottom.x
+    result[5] = rightBottom.y
+
+    result[6] = leftBottom.x
+    result[7] = leftBottom.y
 
     return result
 }
