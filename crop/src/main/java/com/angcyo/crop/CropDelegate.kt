@@ -10,8 +10,8 @@ import androidx.core.graphics.withMatrix
 import androidx.core.graphics.withTranslation
 import androidx.core.view.GestureDetectorCompat
 import com.angcyo.library.annotation.CallPoint
-import com.angcyo.library.gesture.RotationGestureDetector
 import com.angcyo.library.ex.*
+import com.angcyo.library.gesture.RotationGestureDetector
 import kotlin.math.max
 
 /**
@@ -24,7 +24,20 @@ import kotlin.math.max
 class CropDelegate(val view: View) {
 
     /**覆盖层*/
-    val overlay: CropOverlay = CropOverlay(this)
+    val overlay: CropOverlay = CropOverlay(this).apply {
+        onClipRectChangedAction = { scaleX, scaleY, pivotX, pivotY ->
+            if (scaleX == 1f || scaleY == 1f) {
+                val dx =
+                    rectScaleGestureHandler.targetRect.centerX() - rectScaleGestureHandler.changedRect.centerX()
+                val dy =
+                    rectScaleGestureHandler.targetRect.centerY() - rectScaleGestureHandler.changedRect.centerY()
+                postTranslate(dx, dy, true)
+            } else {
+                //反向放大图片
+                postScale(1f / scaleX, 1f / scaleY, pivotX, pivotY, true)
+            }
+        }
+    }
 
     /**水平边距*/
     var marginingHorizontal: Int = 50 * dpi
@@ -86,7 +99,7 @@ class CropDelegate(val view: View) {
     val scaleDetector: ScaleGestureDetector = ScaleGestureDetector(view.context,
         object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
             override fun onScale(detector: ScaleGestureDetector): Boolean {
-                postScale(detector.scaleFactor, midPntX, midPntY, false)
+                postScale(detector.scaleFactor, detector.scaleFactor, midPntX, midPntY, false)
                 return true
             }
         })
@@ -110,7 +123,7 @@ class CropDelegate(val view: View) {
                     GestureCropImageView.DOUBLE_TAP_ZOOM_DURATION.toLong()
                 )*/
                 val scale = 1.5f//currentScale * 1.2f
-                postScale(scale, e.x, e.y, true)
+                postScale(scale, scale, e.x, e.y, true)
                 return super.onDoubleTap(e)
             }
 
@@ -120,7 +133,7 @@ class CropDelegate(val view: View) {
                 distanceX: Float,
                 distanceY: Float
             ): Boolean {
-                postTranslate(-distanceX, -distanceY)
+                postTranslate(-distanceX, -distanceY, false)
                 return true
             }
         })
@@ -324,25 +337,34 @@ class CropDelegate(val view: View) {
     }
 
     /**平移*/
-    fun postTranslate(deltaX: Float, deltaY: Float) {
+    fun postTranslate(deltaX: Float, deltaY: Float, anim: Boolean) {
         if (deltaX != 0f || deltaY != 0f) {
-            _matrix.postTranslate(deltaX, deltaY)
-            refresh()
-        }
-    }
-
-    /**缩放*/
-    fun postScale(deltaScale: Float, px: Float, py: Float, anim: Boolean) {
-        if (deltaScale != 0f) {
             if (anim) {
                 val endMatrix = Matrix(_matrix)
-                endMatrix.postScale(deltaScale, deltaScale, px, py)
+                endMatrix.postTranslate(deltaX, deltaY)
                 matrixAnimator(_matrix, endMatrix) {
                     _matrix.set(it)
                     refresh()
                 }
             } else {
-                _matrix.postScale(deltaScale, deltaScale, px, py)
+                _matrix.postTranslate(deltaX, deltaY)
+                refresh()
+            }
+        }
+    }
+
+    /**缩放*/
+    fun postScale(sx: Float, sy: Float, px: Float, py: Float, anim: Boolean) {
+        if (sx != 0f || sy != 0f) {
+            if (anim) {
+                val endMatrix = Matrix(_matrix)
+                endMatrix.postScale(sx, sy, px, py)
+                matrixAnimator(_matrix, endMatrix) {
+                    _matrix.set(it)
+                    refresh()
+                }
+            } else {
+                _matrix.postScale(sx, sy, px, py)
                 refresh()
             }
         }

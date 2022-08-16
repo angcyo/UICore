@@ -32,6 +32,9 @@ class RectScaleGestureHandler {
 
     //region ---可读取/配置属性---
 
+    /**目标矩形*/
+    var targetRect = RectF()
+
     /**改变之后的矩形*/
     val changedRect = RectF()
 
@@ -58,8 +61,8 @@ class RectScaleGestureHandler {
 
     //region ---内部---
 
-    //目标矩形
-    var _targetRect: RectF? = null
+    //是否初始化了
+    var _isInitialize = false
 
     //矩形旋转的角度
     var _rotate: Float = 0f
@@ -100,7 +103,8 @@ class RectScaleGestureHandler {
     @CallPoint
     fun initialize(rect: RectF, rotate: Float, rectPosition: Int, keepRatio: Boolean) {
         if (rectPosition in RECT_LEFT..RECT_LB) {
-            _targetRect = RectF(rect)
+            _isInitialize = true
+            targetRect.set(rect)
             changedRect.set(rect)
             _rotate = rotate
             _rectPosition = rectPosition
@@ -108,7 +112,7 @@ class RectScaleGestureHandler {
             isFlipHorizontal = false
             isFlipVertical = false
         } else {
-            _targetRect = null
+            _isInitialize = false
         }
     }
 
@@ -118,7 +122,9 @@ class RectScaleGestureHandler {
      * */
     @CallPoint
     fun onTouchEvent(actionMasked: Int, x: Float, y: Float): Boolean {
-        _targetRect ?: return false
+        if (!_isInitialize) {
+            return false
+        }
         when (actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 _touchMoveX = x
@@ -134,13 +140,13 @@ class RectScaleGestureHandler {
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 //操作结束
-                _targetRect = null
+                _isInitialize = false
 
                 //end
                 onRectScaleChangeAction(changedRect, true)
             }
         }
-        return _targetRect != null
+        return _isInitialize
     }
 
     //endregion ---core---
@@ -149,7 +155,10 @@ class RectScaleGestureHandler {
 
     /**手势按下时, 记录对角坐标*/
     fun _onTouchDown(x: Float, y: Float): Boolean {
-        val rect = _targetRect ?: return false
+        if (!_isInitialize) {
+            return false
+        }
+        val rect = targetRect
 
         _invertRotatePoint(x, y, rect.centerX(), rect.centerY())
         _touchDownX = _tempValues[0]
@@ -213,7 +222,10 @@ class RectScaleGestureHandler {
     }
 
     fun _onTouchMove(x: Float, y: Float): Boolean {
-        val rect = _targetRect ?: return false
+        if (!_isInitialize) {
+            return false
+        }
+        val rect = targetRect
 
         if ((x - _touchMoveX).absoluteValue >= _scaledTouchSlop ||
             (y - _touchMoveY).absoluteValue >= _scaledTouchSlop

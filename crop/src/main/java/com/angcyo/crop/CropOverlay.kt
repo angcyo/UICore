@@ -92,9 +92,35 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         cropDelegate.refresh()
     }
 
+    /**剪切框改变后的回调
+     * [scaleX] [scaleY] 缩放的比例
+     * [pivotX] [pivotY] 改变的锚点*/
+    var onClipRectChangedAction: (scaleX: Float, scaleY: Float, pivotX: Float, pivotY: Float) -> Unit =
+        { _, _, _, _ ->
+
+        }
+
     /**矩形缩放处理*/
     val rectScaleGestureHandler = RectScaleGestureHandler().apply {
-
+        onRectScaleChangeAction = { rect, end ->
+            clipRect.set(
+                rect.left.toInt(),
+                rect.top.toInt(),
+                rect.right.toInt(),
+                rect.bottom.toInt()
+            )
+            updateClipPath()
+            if (end) {
+                onClipRectChangedAction(
+                    rect.width() / targetRect.width(),
+                    rect.height() / targetRect.height(),
+                    rectAnchorX,
+                    rectAnchorY
+                )
+            } else {
+                cropDelegate.refresh()
+            }
+        }
     }
 
     //region ---core---
@@ -170,16 +196,16 @@ class CropOverlay(val cropDelegate: CropDelegate) {
     fun findTouchRectPosition(x: Int, y: Int): Int {
 
         //先判断是否在4个角上
-        if (_ltPath.contains(x, y)) {
+        if (getLTPath(cornerWidth * 2).contains(x, y)) {
             return RectScaleGestureHandler.RECT_LT
         }
-        if (_rtPath.contains(x, y)) {
+        if (getRTPath(cornerWidth * 2).contains(x, y)) {
             return RectScaleGestureHandler.RECT_RT
         }
-        if (_rbPath.contains(x, y)) {
+        if (getRBPath(cornerWidth * 2).contains(x, y)) {
             return RectScaleGestureHandler.RECT_RB
         }
-        if (_lbPath.contains(x, y)) {
+        if (getLBPath(cornerWidth * 2).contains(x, y)) {
             return RectScaleGestureHandler.RECT_LB
         }
 
