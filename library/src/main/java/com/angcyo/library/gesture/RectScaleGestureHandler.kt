@@ -30,6 +30,11 @@ class RectScaleGestureHandler {
         const val RECT_LB = 8
     }
 
+    //region ---可读取/配置属性---
+
+    /**改变之后的矩形*/
+    val changedRect = RectF()
+
     /**当矩形缩放改变时的回调
      * [rect] 实时改变的矩形
      * [end] 手势是否结束*/
@@ -37,11 +42,24 @@ class RectScaleGestureHandler {
         L.i(rect)
     }
 
+    /**手势按下时, 原始矩形参考点的坐标. (未旋转)
+     * 矩形上的锚点坐标
+     * */
+    var rectAnchorX = 0f
+    var rectAnchorY = 0f
+
+    /**改变后的矩形是否水平翻转了*/
+    var isFlipHorizontal = false
+
+    /**改变后的矩形是否垂直翻转了*/
+    var isFlipVertical = false
+
+    //endregion ---可读取/配置属性---
+
+    //region ---内部---
+
     //目标矩形
     var _targetRect: RectF? = null
-
-    /**改变之后的矩形*/
-    val changedRect = RectF()
 
     //矩形旋转的角度
     var _rotate: Float = 0f
@@ -52,12 +70,31 @@ class RectScaleGestureHandler {
     //保持比例
     var _keepRatio: Boolean = true
 
+    //灵敏度
     var _scaledTouchSlop: Int = 0
+
+    //[_scaledTouchSlop]
+    var _touchMoveX = 0f
+    var _touchMoveY = 0f
+
+    /**手势按下时的坐标, (反向旋转后的点)*/
+    var _touchDownX: Float = 0f
+    var _touchDownY: Float = 0f
+
+    //临时存储2个值
+    val _tempValues = floatArrayOf(0f, 0f)
+
+    val _matrix = Matrix()
+    val _tempRect = RectF()
+
+    //endregion ---内部---
 
     init {
         //_scaledTouchSlop = ViewConfiguration.get(app()).scaledTouchSlop //28
         _scaledTouchSlop = 1
     }
+
+    //region ---core---
 
     /**在[MotionEvent.ACTION_DOWN]时, 初始化操作数据*/
     @CallPoint
@@ -68,6 +105,8 @@ class RectScaleGestureHandler {
             _rotate = rotate
             _rectPosition = rectPosition
             _keepRatio = keepRatio
+            isFlipHorizontal = false
+            isFlipVertical = false
         } else {
             _targetRect = null
         }
@@ -104,19 +143,9 @@ class RectScaleGestureHandler {
         return _targetRect != null
     }
 
-    var _touchMoveX = 0f
-    var _touchMoveY = 0f
+    //endregion ---core---
 
-    /**手势按下时的坐标, (反向旋转后的点)*/
-    var _touchDownX: Float = 0f
-    var _touchDownY: Float = 0f
-
-    /**手势按下时, 矩形参考点的坐标. (未旋转)*/
-    var _rectDownX: Float = 0f
-    var _rectDownY: Float = 0f
-
-    //临时存储2个值
-    val _tempValues = floatArrayOf(0f, 0f)
+    //region ---method---
 
     /**手势按下时, 记录对角坐标*/
     fun _onTouchDown(x: Float, y: Float): Boolean {
@@ -130,51 +159,51 @@ class RectScaleGestureHandler {
             //4个角
             RECT_LT -> {
                 //按在矩形的左上角, 则参考点在右下角
-                _rectDownX = rect.right
-                _rectDownY = rect.bottom
+                rectAnchorX = rect.right
+                rectAnchorY = rect.bottom
                 true
             }
             RECT_RT -> {
                 //按在矩形的右上角, 则参考点在左下角
-                _rectDownX = rect.left
-                _rectDownY = rect.bottom
+                rectAnchorX = rect.left
+                rectAnchorY = rect.bottom
                 true
             }
             RECT_RB -> {
                 //按在矩形的右下角, 则参考点在左上角
-                _rectDownX = rect.left
-                _rectDownY = rect.top
+                rectAnchorX = rect.left
+                rectAnchorY = rect.top
                 true
             }
             RECT_LB -> {
                 //按在矩形的左下角, 则参考点在右上角
-                _rectDownX = rect.right
-                _rectDownY = rect.top
+                rectAnchorX = rect.right
+                rectAnchorY = rect.top
                 true
             }
             //4个边
             RECT_LEFT -> {
                 //左边, 参考点在右边
-                _rectDownX = rect.right
-                _rectDownY = rect.centerY()
+                rectAnchorX = rect.right
+                rectAnchorY = rect.centerY()
                 true
             }
             RECT_TOP -> {
                 //上边, 参考点在下边
-                _rectDownX = rect.centerX()
-                _rectDownY = rect.bottom
+                rectAnchorX = rect.centerX()
+                rectAnchorY = rect.bottom
                 true
             }
             RECT_RIGHT -> {
                 //右边, 参考点在左边
-                _rectDownX = rect.left
-                _rectDownY = rect.centerY()
+                rectAnchorX = rect.left
+                rectAnchorY = rect.centerY()
                 true
             }
             RECT_BOTTOM -> {
                 //下边, 参考点在上边
-                _rectDownX = rect.centerX()
-                _rectDownY = rect.top
+                rectAnchorX = rect.centerX()
+                rectAnchorY = rect.top
                 true
             }
             else -> false
@@ -182,9 +211,6 @@ class RectScaleGestureHandler {
 
         return result
     }
-
-    val _matrix = Matrix()
-    val _tempRect = RectF()
 
     fun _onTouchMove(x: Float, y: Float): Boolean {
         val rect = _targetRect ?: return false
@@ -245,7 +271,7 @@ class RectScaleGestureHandler {
 
         //缩放, 在原始的矩形数据上进行缩放
         _matrix.reset()
-        _matrix.setScale(scaleX, scaleY, _rectDownX, _rectDownY)
+        _matrix.setScale(scaleX, scaleY, rectAnchorX, rectAnchorY)
         changedRect.set(rect)
         _matrix.mapRect(changedRect)
         L.i("scaleX:$scaleX scaleY:$scaleY $changedRect")
@@ -257,13 +283,30 @@ class RectScaleGestureHandler {
         _matrix.mapRect(_tempRect)
 
         //缩放且旋转后的矩形, 和仅缩放后的矩形, 进行中点偏移, 就能实现最终效果
-        val centerDx = _tempRect.centerX() - changedRect.centerX()
-        val centerDy = _tempRect.centerY() - changedRect.centerY()
+        val changedCenterX = changedRect.centerX()
+        val changedCenterY = changedRect.centerY()
+        val centerDx = _tempRect.centerX() - changedCenterX
+        val centerDy = _tempRect.centerY() - changedCenterY
 
         //后平移
         _matrix.reset()
         _matrix.setTranslate(centerDx, centerDy)
         _matrix.mapRect(changedRect)
+
+        //判断矩形是否翻转了
+        val cx = changedCenterX
+        val cy = changedCenterY
+        isFlipHorizontal = cx < rect.left
+        isFlipVertical = cy < rect.top
+        if (_rectPosition == RECT_LEFT || _rectPosition == RECT_LT || _rectPosition == RECT_LB) {
+            //touch在左边
+            isFlipHorizontal = cx > rect.right
+        }
+        if (_rectPosition == RECT_TOP || _rectPosition == RECT_LT || _rectPosition == RECT_RT) {
+            //touch在上边
+            isFlipVertical = cy > rect.bottom
+        }
+
         return true
     }
 
@@ -287,4 +330,6 @@ class RectScaleGestureHandler {
         _tempValues[1] = y
         _matrix.mapPoints(_tempValues)
     }
+
+    //endregion ---method---
 }
