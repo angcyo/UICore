@@ -3,10 +3,12 @@ package com.angcyo.crop
 import android.graphics.*
 import android.view.MotionEvent
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.ex.contains
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.saveLayerAlpha
 import com.angcyo.library.ex.toRectF
-import kotlin.math.min
+import com.angcyo.library.gesture.RectScaleGestureHandler
+import kotlin.math.absoluteValue
 
 /**
  * 覆盖层
@@ -21,7 +23,7 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         /**剪切框类型, 圆角矩形*/
         const val TYPE_ROUND = 1
 
-        /**剪切框类型, 圆*/
+        /**剪切框类型, 椭圆*/
         const val TYPE_CIRCLE = 2
     }
 
@@ -66,10 +68,17 @@ class CropOverlay(val cropDelegate: CropDelegate) {
             cropDelegate.showInRect(clipRect, true)
         }
 
+    /**线框笔*/
     val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
     }
 
+    /**4个角的笔*/
+    val cornersPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+    }
+
+    /**clip镂空笔*/
     val clipPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
@@ -83,21 +92,37 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         cropDelegate.refresh()
     }
 
+    /**矩形缩放处理*/
+    val rectScaleGestureHandler = RectScaleGestureHandler().apply {
+
+    }
+
     //region ---core---
 
     @CallPoint
     fun onTouchEvent(event: MotionEvent): Boolean {
+        var handle = false
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 _isTouchDown = true
                 cropDelegate.view.removeCallbacks(_delayRefreshRunnable)
                 cropDelegate.refresh()
+
+                //
+                rectScaleGestureHandler.initialize(
+                    RectF(clipRect),
+                    0f,
+                    findTouchRectPosition(event.x.toInt(), event.y.toInt()),
+                    clipRatio != null
+                )
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 cropDelegate.view.postDelayed(_delayRefreshRunnable, 1_000)
             }
         }
-        return true
+        //
+        handle = rectScaleGestureHandler.onTouchEvent(event.actionMasked, event.x, event.y)
+        return handle
     }
 
     @CallPoint
@@ -111,7 +136,6 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         }
 
         //灰色透明边框
-        paint.style = Paint.Style.STROKE
         paint.color = rectBorderColor
         paint.strokeWidth = rectBorderWidth
         canvas.drawRect(clipRect, paint)
@@ -133,13 +157,51 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         }
 
         //4个角
-        paint.style = Paint.Style.FILL
-        canvas.drawPath(getLTPath(), paint)
-        canvas.drawPath(getRTPath(), paint)
-        canvas.drawPath(getRBPath(), paint)
-        canvas.drawPath(getLBPath(), paint)
+        cornersPaint.color = cornerColor
+        canvas.drawPath(getLTPath(), cornersPaint)
+        canvas.drawPath(getRTPath(), cornersPaint)
+        canvas.drawPath(getRBPath(), cornersPaint)
+        canvas.drawPath(getLBPath(), cornersPaint)
 
         canvas.restoreToCount(saveCount)
+    }
+
+    /**查找坐标落在矩形的什么位置上*/
+    fun findTouchRectPosition(x: Int, y: Int): Int {
+
+        //先判断是否在4个角上
+        if (_ltPath.contains(x, y)) {
+            return RectScaleGestureHandler.RECT_LT
+        }
+        if (_rtPath.contains(x, y)) {
+            return RectScaleGestureHandler.RECT_RT
+        }
+        if (_rbPath.contains(x, y)) {
+            return RectScaleGestureHandler.RECT_RB
+        }
+        if (_lbPath.contains(x, y)) {
+            return RectScaleGestureHandler.RECT_LB
+        }
+
+        //再判断是否在4个边上
+        if (x >= clipRect.left && x <= clipRect.right) {
+            if ((y - clipRect.top).absoluteValue <= cornerWidth) {
+                return RectScaleGestureHandler.RECT_TOP
+            }
+            if ((y - clipRect.bottom).absoluteValue <= cornerWidth) {
+                return RectScaleGestureHandler.RECT_BOTTOM
+            }
+        }
+        if (y >= clipRect.top && x <= clipRect.bottom) {
+            if ((x - clipRect.left).absoluteValue <= cornerWidth) {
+                return RectScaleGestureHandler.RECT_LEFT
+            }
+            if ((x - clipRect.right).absoluteValue <= cornerWidth) {
+                return RectScaleGestureHandler.RECT_RIGHT
+            }
+        }
+
+        return 0
     }
 
     val _ltPath = Path()
@@ -288,15 +350,14 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         clipPath.rewind()
         when (clipType) {
             TYPE_CIRCLE -> {
-                val radius = min(clipRect.width() / 2f, clipRect.height() / 2f)
-                clipPath.addCircle(
-                    clipRect.centerX().toFloat(),
-                    clipRect.centerY().toFloat(),
-                    radius,
+                //椭圆
+                clipPath.addOval(
+                    clipRect.toRectF(),
                     Path.Direction.CW
                 )
             }
             else -> {
+                //圆角矩形
                 clipPath.addRoundRect(
                     clipRect.toRectF(),
                     roundRadius,
@@ -306,5 +367,4 @@ class CropOverlay(val cropDelegate: CropDelegate) {
             }
         }
     }
-
 }

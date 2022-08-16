@@ -15,13 +15,13 @@ import com.angcyo.library.ex.toRectF
  * @since 2022/07/29
  */
 data class RectPointF(
-    /**左上*/
+    /**旋转后的左上*/
     val leftTop: PointF = PointF(),
-    /**左下*/
+    /**旋转后的左下*/
     val leftBottom: PointF = PointF(),
-    /**右上*/
+    /**旋转后的右上*/
     val rightTop: PointF = PointF(),
-    /**右下*/
+    /**旋转后的右下*/
     val rightBottom: PointF = PointF(),
     /**原始的矩形*/
     val originRectF: RectF = RectF(),

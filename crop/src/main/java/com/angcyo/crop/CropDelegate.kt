@@ -10,7 +10,7 @@ import androidx.core.graphics.withMatrix
 import androidx.core.graphics.withTranslation
 import androidx.core.view.GestureDetectorCompat
 import com.angcyo.library.annotation.CallPoint
-import com.angcyo.library.component.RotationGestureDetector
+import com.angcyo.library.gesture.RotationGestureDetector
 import com.angcyo.library.ex.*
 import kotlin.math.max
 
@@ -136,22 +136,23 @@ class CropDelegate(val view: View) {
     fun onTouchEvent(event: MotionEvent): Boolean {
         view.interceptParentTouchEvent(event)
 
-        if (event.pointerCount > 1) {
-            midPntX = (event.getX(0) + event.getX(1)) / 2
-            midPntY = (event.getY(0) + event.getY(1)) / 2
+        if (overlay.onTouchEvent(event)) {
+            //被[overlay]处理
+        } else {
+            if (event.pointerCount > 1) {
+                midPntX = (event.getX(0) + event.getX(1)) / 2
+                midPntY = (event.getY(0) + event.getY(1)) / 2
+            }
+
+            gestureDetector.onTouchEvent(event)
+            scaleDetector.onTouchEvent(event)
+            rotateDetector.onTouchEvent(event)
+
+            val action = event.actionMasked
+            if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+                imageWrapCropBounds(false, true)
+            }
         }
-
-        gestureDetector.onTouchEvent(event)
-        scaleDetector.onTouchEvent(event)
-        rotateDetector.onTouchEvent(event)
-
-        overlay.onTouchEvent(event)
-
-        val action = event.actionMasked
-        if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
-            imageWrapCropBounds(false, true)
-        }
-
         return true
     }
 
