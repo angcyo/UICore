@@ -2,13 +2,12 @@ package com.angcyo.crop
 
 import android.graphics.*
 import android.view.MotionEvent
+import androidx.core.graphics.toRect
 import com.angcyo.library.annotation.CallPoint
-import com.angcyo.library.ex.contains
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.saveLayerAlpha
-import com.angcyo.library.ex.toRectF
+import com.angcyo.library.ex.*
 import com.angcyo.library.gesture.RectScaleGestureHandler
 import kotlin.math.absoluteValue
+import kotlin.math.min
 
 /**
  * 覆盖层
@@ -45,10 +44,13 @@ class CropOverlay(val cropDelegate: CropDelegate) {
     /**剪切的矩形*/
     var clipRect: Rect = Rect()
 
-    /**剪切的路径*/
-    val clipPath: Path = Path()
+    /**剪切的路径, 根据[clipRect]自动计算*/
+    val _clipPath: Path = Path()
 
-    /**圆角矩形的圆角半径*/
+    /**圆角矩形的圆角半径
+     * [clipType]
+     * [TYPE_ROUND] 类型的圆角半径
+     * */
     var roundRadius: Float = 0f
 
     /**剪切框类型*/
@@ -96,12 +98,23 @@ class CropOverlay(val cropDelegate: CropDelegate) {
      * [scaleX] [scaleY] 缩放的比例
      * [pivotX] [pivotY] 改变的锚点*/
     var onClipRectChangedAction: (scaleX: Float, scaleY: Float, pivotX: Float, pivotY: Float) -> Unit =
-        { _, _, _, _ ->
-
+        { _, _, pivotX, pivotY ->
+            onClipRectChanged(clipRect, pivotX, pivotY)
         }
 
     /**矩形缩放处理*/
     val rectScaleGestureHandler = RectScaleGestureHandler().apply {
+        val minSize = 2 * cornerHeight
+
+        //限制裁剪框
+        onLimitWidthAction = { newWidth, dx, dy ->
+            clamp(newWidth, minSize, cropDelegate._bestRect.width().toFloat())
+        }
+        onLimitHeightAction = { newHeight, dx, dy ->
+            clamp(newHeight, minSize, cropDelegate._bestRect.height().toFloat())
+        }
+
+        //剪切框改变后的回调
         onRectScaleChangeAction = { rect, end ->
             clipRect.set(
                 rect.left.toInt(),
@@ -110,6 +123,10 @@ class CropOverlay(val cropDelegate: CropDelegate) {
                 rect.bottom.toInt()
             )
             updateClipPath()
+            _tempRect.set(clipRect)
+            if (_tempRect.isOverflowOf(cropDelegate.bitmapRectMap)) {
+                cropDelegate.imageWrapCropBounds(false, false)
+            }
             if (end) {
                 onClipRectChangedAction(
                     rect.width() / targetRect.width(),
@@ -135,12 +152,9 @@ class CropOverlay(val cropDelegate: CropDelegate) {
                 cropDelegate.refresh()
 
                 //
-                rectScaleGestureHandler.initialize(
-                    RectF(clipRect),
-                    0f,
-                    findTouchRectPosition(event.x.toInt(), event.y.toInt()),
-                    clipRatio != null
-                )
+                rectScaleGestureHandler.keepScaleRatio = clipRatio != null
+                val rectPosition = findTouchRectPosition(event.x.toInt(), event.y.toInt())
+                rectScaleGestureHandler.initialize(clipRect.toRectF(), 0f, rectPosition)
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 cropDelegate.view.postDelayed(_delayRefreshRunnable, 1_000)
@@ -158,7 +172,7 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         //镂空
         if (!_isTouchDown) {
             canvas.drawColor(overlayColor)
-            canvas.drawPath(clipPath, clipPaint)
+            canvas.drawPath(_clipPath, clipPaint)
         }
 
         //灰色透明边框
@@ -194,39 +208,42 @@ class CropOverlay(val cropDelegate: CropDelegate) {
 
     /**查找坐标落在矩形的什么位置上*/
     fun findTouchRectPosition(x: Int, y: Int): Int {
+        val factor = 5
+        val refWidth = cornerWidth * factor
 
         //先判断是否在4个角上
-        if (getLTPath(cornerWidth * 2).contains(x, y)) {
-            return RectScaleGestureHandler.RECT_LT
-        }
-        if (getRTPath(cornerWidth * 2).contains(x, y)) {
-            return RectScaleGestureHandler.RECT_RT
-        }
-        if (getRBPath(cornerWidth * 2).contains(x, y)) {
-            return RectScaleGestureHandler.RECT_RB
-        }
-        if (getLBPath(cornerWidth * 2).contains(x, y)) {
-            return RectScaleGestureHandler.RECT_LB
-        }
-
-        //再判断是否在4个边上
-        if (x >= clipRect.left && x <= clipRect.right) {
-            if ((y - clipRect.top).absoluteValue <= cornerWidth) {
-                return RectScaleGestureHandler.RECT_TOP
+        if ((x - clipRect.left).absoluteValue <= refWidth) {
+            if ((y - clipRect.top).absoluteValue <= refWidth) {
+                return RectScaleGestureHandler.RECT_LT
             }
-            if ((y - clipRect.bottom).absoluteValue <= cornerWidth) {
-                return RectScaleGestureHandler.RECT_BOTTOM
+            if ((y - clipRect.bottom).absoluteValue <= refWidth) {
+                return RectScaleGestureHandler.RECT_LB
             }
-        }
-        if (y >= clipRect.top && x <= clipRect.bottom) {
-            if ((x - clipRect.left).absoluteValue <= cornerWidth) {
+            if (y >= clipRect.top && x <= clipRect.bottom) {
                 return RectScaleGestureHandler.RECT_LEFT
             }
-            if ((x - clipRect.right).absoluteValue <= cornerWidth) {
+        }
+        if ((x - clipRect.right).absoluteValue <= refWidth) {
+            if ((y - clipRect.top).absoluteValue <= refWidth) {
+                return RectScaleGestureHandler.RECT_RT
+            }
+            if ((y - clipRect.bottom).absoluteValue <= refWidth) {
+                return RectScaleGestureHandler.RECT_RB
+            }
+            if (y >= clipRect.top && x <= clipRect.bottom) {
                 return RectScaleGestureHandler.RECT_RIGHT
             }
         }
 
+        //再判断是否在4个边上
+        if (x >= clipRect.left && x <= clipRect.right) {
+            if ((y - clipRect.top).absoluteValue <= refWidth) {
+                return RectScaleGestureHandler.RECT_TOP
+            }
+            if ((y - clipRect.bottom).absoluteValue <= refWidth) {
+                return RectScaleGestureHandler.RECT_BOTTOM
+            }
+        }
         return 0
     }
 
@@ -322,14 +339,20 @@ class CropOverlay(val cropDelegate: CropDelegate) {
 
     //endregion ---core---
 
+    /**使用图片比例*/
+    fun setBitmapRatio() {
+        clipRatio = cropDelegate._bestRect.width() * 1f / cropDelegate._bestRect.height()
+    }
+
     /**更新提示框*/
     fun updateWithBitmap(bitmap: Bitmap) {
-        /*clipRect.set(
-            -bitmap.width / 2, -bitmap.height / 2,
-            bitmap.width / 2, bitmap.height / 2
-        )*/
-        updateClipRect()
-        updateClipPath()
+        if (clipRatio == null) {
+            //默认使用图片比例
+            setBitmapRatio()
+        } else {
+            updateClipRect()
+            updateClipPath()
+        }
     }
 
     fun updateClipRect() {
@@ -373,18 +396,18 @@ class CropOverlay(val cropDelegate: CropDelegate) {
 
     /**更新剪切矩形*/
     fun updateClipPath() {
-        clipPath.rewind()
+        _clipPath.rewind()
         when (clipType) {
             TYPE_CIRCLE -> {
                 //椭圆
-                clipPath.addOval(
+                _clipPath.addOval(
                     clipRect.toRectF(),
                     Path.Direction.CW
                 )
             }
             else -> {
                 //圆角矩形
-                clipPath.addRoundRect(
+                _clipPath.addRoundRect(
                     clipRect.toRectF(),
                     roundRadius,
                     roundRadius,
@@ -393,4 +416,80 @@ class CropOverlay(val cropDelegate: CropDelegate) {
             }
         }
     }
+
+    fun updateClipRect(matrix: Matrix) {
+        val _matrix = Matrix()
+        val rect = clipRect.toRectF()
+        matrixAnimator(_matrix, matrix, cropDelegate.animatorDuration) {
+            it.mapRect(_tempRectF, rect)
+            clipRect.set(_tempRectF)
+            updateClipPath()
+        }
+    }
+
+    /**将剪切框改变到指定的矩形, 并缩放图片*/
+    fun updateClipRect(
+        endRect: Rect,
+        pivotX: Float,
+        pivotY: Float,
+        endPivotX: Float,
+        endPivotY: Float
+    ) {
+        val matrix = Matrix(cropDelegate._matrix)
+        val startRect = Rect(clipRect)
+
+        //锚点偏移的距离
+        val dx = endPivotX - pivotX
+        val dy = endPivotY - pivotY
+
+        rectAnimatorFraction(startRect, endRect, cropDelegate.animatorDuration) { rect, fraction ->
+            clipRect.set(rect)
+            updateClipPath()
+
+            val bitmapMatrix = Matrix(matrix)
+
+            val rectScaleX = rect.width() * 1f / startRect.width()
+            val rectScaleY = rect.height() * 1f / startRect.height()
+            val scale = min(rectScaleX, rectScaleY)
+            bitmapMatrix.postScale(scale, scale, pivotX, pivotY)
+
+            bitmapMatrix.postTranslate(dx * fraction, dy * fraction)
+            cropDelegate.updateMatrix(bitmapMatrix, false)
+        }
+    }
+
+    /**剪切框改变后*/
+    fun onClipRectChanged(rect: Rect, pivotX: Float, pivotY: Float) {
+        val bestRect = cropDelegate._bestRect
+        val rectMatrix = Matrix()
+        //缩放剪切框到最佳位置
+        val rectScaleX = bestRect.width() * 1f / rect.width()
+        val rectScaleY = bestRect.height() * 1f / rect.height()
+        val rectScale = min(rectScaleX, rectScaleY)
+
+        rectMatrix.setScale(rectScale, rectScale, pivotX, pivotY)
+        val endRect = rect.toRectF()
+        rectMatrix.mapRect(endRect)
+
+        //中点需要偏移的距离
+        val dx = bestRect.centerX() - endRect.centerX()
+        val dy = bestRect.centerY() - endRect.centerY()
+
+        //rect
+        rectMatrix.reset()
+        rectMatrix.setTranslate(dx, dy)
+        rectMatrix.mapRect(endRect)
+
+        //锚点移动距离计算
+        val point = RectScaleGestureHandler.getRectPositionPoint(
+            endRect,
+            rectScaleGestureHandler._rectPosition
+        )
+        val endPivotX = point?.x ?: pivotX
+        val endPivotY = point?.y ?: pivotY
+
+        //开始更新
+        updateClipRect(endRect.toRect(), pivotX, pivotY, endPivotX, endPivotY)
+    }
+
 }

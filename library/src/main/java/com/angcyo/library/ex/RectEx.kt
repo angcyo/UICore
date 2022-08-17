@@ -4,6 +4,8 @@ import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.RectF
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
@@ -20,6 +22,10 @@ val _tempMatrix = Matrix()
 fun emptyRectF() = RectF(0f, 0f, 0f, 0f)
 
 fun Rect.toRectF() = RectF(this)
+
+fun Rect.set(rect: RectF) {
+    set(rect.left.toInt(), rect.top.toInt(), rect.right.toInt(), rect.bottom.toInt())
+}
 
 fun RectF.isChanged(other: RectF): Boolean {
     return left != other.left || top != other.top || right != other.right || bottom != other.bottom
@@ -49,6 +55,42 @@ fun RectF.isOutOf(rect: RectF): Boolean {
         return true
     }
     return false
+}
+
+/**[this]矩形是否超出了[rect]范围*/
+fun RectF.isOverflowOf(rect: RectF): Boolean {
+    if (left < rect.left || right > rect.right) {
+        return true
+    }
+    if (top < rect.top || bottom > rect.bottom) {
+        return true
+    }
+    return false
+}
+
+fun RectF.isOverflowOf(rect: Rect): Boolean {
+    if (left < rect.left || right > rect.right) {
+        return true
+    }
+    if (top < rect.top || bottom > rect.bottom) {
+        return true
+    }
+    return false
+}
+
+/**将[this]矩形, 限制在[rect]内*/
+fun RectF.limitInRect(rect: RectF) {
+    left = max(rect.left, left)
+    top = max(rect.top, top)
+    right = min(rect.right, right)
+    bottom = min(rect.bottom, bottom)
+}
+
+fun RectF.limitInRect(rect: Rect) {
+    left = max(rect.left.toFloat(), left)
+    top = max(rect.top.toFloat(), top)
+    right = min(rect.right.toFloat(), right)
+    bottom = min(rect.bottom.toFloat(), bottom)
 }
 
 //</editor-fold desc="base">

@@ -24,26 +24,16 @@ import kotlin.math.max
 class CropDelegate(val view: View) {
 
     /**覆盖层*/
-    val overlay: CropOverlay = CropOverlay(this).apply {
-        onClipRectChangedAction = { scaleX, scaleY, pivotX, pivotY ->
-            if (scaleX == 1f || scaleY == 1f) {
-                val dx =
-                    rectScaleGestureHandler.targetRect.centerX() - rectScaleGestureHandler.changedRect.centerX()
-                val dy =
-                    rectScaleGestureHandler.targetRect.centerY() - rectScaleGestureHandler.changedRect.centerY()
-                postTranslate(dx, dy, true)
-            } else {
-                //反向放大图片
-                postScale(1f / scaleX, 1f / scaleY, pivotX, pivotY, true)
-            }
-        }
-    }
+    val overlay: CropOverlay = CropOverlay(this)
 
     /**水平边距*/
     var marginingHorizontal: Int = 50 * dpi
 
     /**水平偏移*/
     var marginingVertical: Int = 50 * dpi
+
+    /**动画时长*/
+    var animatorDuration = 600L
 
     /**要裁剪的图片*/
     var _bitmap: Bitmap? = null
@@ -78,14 +68,12 @@ class CropDelegate(val view: View) {
     /**图片当前显示的矩形*/
     val bitmapRectMap: RectF = RectF()
         get() {
-            val rect = RectF()
-            rect.set(0f, 0f, _bitmapWidth.toFloat(), _bitmapHeight.toFloat())
-            _matrix.mapRect(field, rect)
+            _matrix.mapRect(field, bitmapRect)
             return field
         }
 
     /**图片原始尺寸*/
-    val bitmapRectF: RectF = RectF()
+    val bitmapRect: RectF = RectF()
         get() {
             field.set(0f, 0f, _bitmapWidth.toFloat(), _bitmapHeight.toFloat())
             return field
@@ -326,7 +314,7 @@ class CropDelegate(val view: View) {
     /**更新[matrix]*/
     fun updateMatrix(matrix: Matrix, anim: Boolean) {
         if (anim) {
-            matrixAnimator(_matrix, matrix, 600) {
+            matrixAnimator(_matrix, matrix, animatorDuration) {
                 _matrix.set(it)
                 refresh()
             }
@@ -378,11 +366,25 @@ class CropDelegate(val view: View) {
         val canvas = CropCanvas(bitmap)
 
         canvas.withTranslation(-clipRect.left.toFloat(), -clipRect.top.toFloat()) {
-            withClip(overlay.clipPath) {
+            withClip(overlay._clipPath) {
                 onDraw(this)
             }
         }
         return bitmap
+    }
+
+    /**连带更新*/
+    fun onClipRectUpdateTo(rect: Rect, pivotX: Float, pivotY: Float) {
+        val bestRect = _bestRect
+        val rectScaleX = bestRect.width() * 1f / rect.width()
+        val rectScaleY = bestRect.height() * 1f / rect.height()
+        val bitmapMatrix = Matrix(_matrix)
+        bitmapMatrix.postScale(rectScaleX, rectScaleY, pivotX, pivotY)
+        //中点需要偏移的距离
+        //val dx = bestRect.centerX() - rect.centerX()
+        //val dy = bestRect.centerY() - rect.centerY()
+        //bitmapMatrix.postTranslate(dx.toFloat(), dy.toFloat())
+        updateMatrix(bitmapMatrix, false)
     }
 
     //endregion ---operate---

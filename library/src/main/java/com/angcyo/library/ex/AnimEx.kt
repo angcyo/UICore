@@ -417,18 +417,71 @@ fun View.scaleAnimator(
         .start()
 }
 
-/**Matrix动画*/
+/**[Matrix]改变动画*/
 fun matrixAnimator(
     startMatrix: Matrix,
     endMatrix: Matrix,
     duration: Long = ANIM_DURATION,
+    interpolator: Interpolator? = DecelerateInterpolator(),
     block: (Matrix) -> Unit
 ): ValueAnimator {
     return ObjectAnimator.ofObject(MatrixEvaluator(), startMatrix, endMatrix).apply {
         this.duration = duration
-        interpolator = DecelerateInterpolator()
+        this.interpolator = interpolator
         addUpdateListener {
             block(it.animatedValue as Matrix)
+        }
+        start()
+    }
+}
+
+fun matrixAnimatorFraction(
+    startMatrix: Matrix,
+    endMatrix: Matrix,
+    duration: Long = ANIM_DURATION,
+    interpolator: Interpolator? = DecelerateInterpolator(),
+    block: (matrix: Matrix, fraction: Float) -> Unit
+): ValueAnimator {
+    return ObjectAnimator.ofObject(MatrixEvaluator(), startMatrix, endMatrix).apply {
+        this.duration = duration
+        this.interpolator = interpolator
+        addUpdateListener {
+            block(it.animatedValue as Matrix, it.animatedFraction)
+        }
+        start()
+    }
+}
+
+/**[Rect]动画*/
+fun rectAnimator(
+    startRect: Rect,
+    endRect: Rect,
+    duration: Long = ANIM_DURATION,
+    interpolator: Interpolator? = DecelerateInterpolator(),
+    block: (Rect) -> Unit
+): ValueAnimator {
+    return ObjectAnimator.ofObject(RectEvaluator(), startRect, endRect).apply {
+        this.duration = duration
+        this.interpolator = interpolator
+        addUpdateListener {
+            block(it.animatedValue as Rect)
+        }
+        start()
+    }
+}
+
+fun rectAnimatorFraction(
+    startRect: Rect,
+    endRect: Rect,
+    duration: Long = ANIM_DURATION,
+    interpolator: Interpolator? = DecelerateInterpolator(),
+    block: (rect: Rect, fraction: Float) -> Unit
+): ValueAnimator {
+    return ObjectAnimator.ofObject(RectEvaluator(), startRect, endRect).apply {
+        this.duration = duration
+        this.interpolator = interpolator
+        addUpdateListener {
+            block(it.animatedValue as Rect, it.animatedFraction)
         }
         start()
     }
