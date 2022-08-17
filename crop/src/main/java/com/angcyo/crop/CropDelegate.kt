@@ -1,13 +1,12 @@
 package com.angcyo.crop
 
+import android.animation.ValueAnimator
 import android.graphics.*
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
-import androidx.core.graphics.withClip
-import androidx.core.graphics.withMatrix
-import androidx.core.graphics.withTranslation
+import androidx.core.graphics.*
 import androidx.core.view.GestureDetectorCompat
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.*
@@ -35,11 +34,21 @@ class CropDelegate(val view: View) {
     /**动画时长*/
     var animatorDuration = 600L
 
+    /**是否水平翻转图片*/
+    var flipHorizontal = false
+
+    /**是否垂直翻转图片*/
+    var flipVertical = false
+
+    /**图片旋转角度
+     * [updateRotate]*/
+    var rotate: Float = 0f
+
     /**要裁剪的图片*/
     var _bitmap: Bitmap? = null
 
-    /**矩阵*/
-    val _matrix: Matrix = Matrix()
+    /**图片显示矩阵*/
+    val _bitmapMatrix: Matrix = Matrix()
 
     //region ---property---
 
@@ -57,7 +66,7 @@ class CropDelegate(val view: View) {
 
     /**当前缩放的比例*/
     val currentScale: Float
-        get() = _matrix.getScale()
+        get() = _bitmapMatrix.getScale()
 
     val maxWidth: Int
         get() = viewWidth - marginingHorizontal * 2
@@ -65,19 +74,23 @@ class CropDelegate(val view: View) {
     val maxHeight: Int
         get() = viewHeight - marginingVertical * 2
 
-    /**图片当前显示的矩形*/
-    val bitmapRectMap: RectF = RectF()
+    /**映射后的图片矩形坐标, 旋转缩放平移后*/
+    val bitmapRectMap = RectF()
         get() {
-            _matrix.mapRect(field, bitmapRect)
+            _bitmapMatrix.mapRect(field, _bitmapOriginRect.rectF)
             return field
         }
 
-    /**图片原始尺寸*/
-    val bitmapRect: RectF = RectF()
+    /**图片仅旋转后的矩形, 相对于view左上角的矩形坐标*/
+    val bitmapRotateRect = RectF()
         get() {
-            field.set(0f, 0f, _bitmapWidth.toFloat(), _bitmapHeight.toFloat())
+            field.set(_bitmapOriginRect)
+            _rotate(field)
             return field
         }
+
+    /**图片原始的矩形, 相对于View左上角的坐标*/
+    val _bitmapOriginRect = Rect()
 
     //endregion ---property---
 
@@ -136,6 +149,11 @@ class CropDelegate(val view: View) {
     @CallPoint
     fun onTouchEvent(event: MotionEvent): Boolean {
         view.interceptParentTouchEvent(event)
+        val action = event.actionMasked
+
+        if (action == MotionEvent.ACTION_DOWN) {
+            cancelAnimator()
+        }
 
         if (overlay.onTouchEvent(event)) {
             //被[overlay]处理
@@ -149,7 +167,6 @@ class CropDelegate(val view: View) {
             scaleDetector.onTouchEvent(event)
             rotateDetector.onTouchEvent(event)
 
-            val action = event.actionMasked
             if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
                 imageWrapCropBounds(false, true)
             }
@@ -161,8 +178,15 @@ class CropDelegate(val view: View) {
     fun onDraw(canvas: Canvas) {
         //移动到中心开始绘制
         _bitmap?.let {
-            canvas.withMatrix(_matrix) {
-                canvas.drawBitmap(it, 0f, 0f, null)
+            canvas.withMatrix(_bitmapMatrix) {
+                canvas.withScale(
+                    if (flipHorizontal) -1f else 1f,
+                    if (flipVertical) -1f else 1f,
+                    it.width / 2f,
+                    it.height / 2f
+                ) {
+                    canvas.drawBitmap(it, 0f, 0f, null)
+                }
             }
         }
         if (canvas !is CropCanvas) {
@@ -174,7 +198,7 @@ class CropDelegate(val view: View) {
      * [center] 是否将[bitmap]移动至剪切框的矩形中心
      * [anim] 是否需要动画*/
     fun imageWrapCropBounds(center: Boolean = false, anim: Boolean = true) {
-        val matrix = Matrix(_matrix)
+        val matrix = Matrix(_bitmapMatrix)
 
         val bitmapRect = bitmapRectMap
         val clipRect = overlay.clipRect
@@ -224,44 +248,81 @@ class CropDelegate(val view: View) {
         }
     }
 
-    /**将[bitmap]显示在指定矩形之内*/
-    fun showInRect(rect: Rect, anim: Boolean = true) {
-        val targetMatrix = Matrix()
+    /**旋转矩形[rect]*/
+    fun _rotate(rect: RectF) {
+        _tempMatrix.reset()
+        _tempMatrix.setRotate(rotate, rect.centerX(), rect.centerY())
+        _tempMatrix.mapRect(rect)
+    }
 
-        val bitmapRect = RectF(0f, 0f, _bitmapWidth.toFloat(), _bitmapHeight.toFloat())
-        val targetRect = rect
+    /**计算[from]能够完全显示的最佳矩形
+     * [from] 未旋转之前的矩形*/
+    fun calcBestRect(from: RectF): RectF {
+        val fromRotateRect = RectF(from)
+        _rotate(fromRotateRect)
 
-        var dx = 0f
-        var dy = 0f
+        val result = RectF()
 
-        //缩放
-        val scaleX = targetRect.width() / bitmapRect.width()
-        val scaleY = targetRect.height() / bitmapRect.height()
-        val scale = max(scaleX, scaleY)
-        bitmapRect.scale(scale, scale, bitmapRect.left, bitmapRect.top)
-        targetMatrix.postScale(scale, scale, bitmapRect.left, bitmapRect.top)
+        val width = fromRotateRect.width()
+        val height = fromRotateRect.height()
 
-        //平移
-        dx = targetRect.centerX() - bitmapRect.centerX()
-        dy = targetRect.centerY() - bitmapRect.centerY()
+        val matrix = Matrix()
+        val maxWidth = maxWidth
+        val maxHeight = maxHeight
+        val scaleWidth = maxWidth * 1f / width
+        val scaleHeight = maxHeight * 1f / height
+        val minScale = minOf(scaleWidth, scaleHeight)
 
-        targetMatrix.postTranslate(dx, dy)
+        matrix.setTranslate(
+            centerX - fromRotateRect.centerX(),
+            centerY - fromRotateRect.centerY()
+        )
+        matrix.postScale(minScale, minScale, centerX.toFloat(), centerY.toFloat())
 
-        //更新
-        updateMatrix(targetMatrix, anim)
+        val targetWidth = width * minScale
+        val targetHeight = height * minScale
+
+        //中心点, 最佳矩形, 能够撑满容纳图片的矩形
+        result.set(
+            centerX - targetWidth / 2,
+            centerY - targetHeight / 2,
+            centerX + targetWidth / 2,
+            centerY + targetHeight / 2
+        )
+
+        return result
     }
 
     //endregion ---core---
 
     //region ---operate---
 
+    /**移动图片显示到[rect]中, 完全贴合[rect]*/
+    fun moveBitmapToRect(targetRect: RectF, anim: Boolean) {
+        val targetMatrix = Matrix()
+        val bitmapRotateRect = bitmapRotateRect
+
+        targetMatrix.setRotate(rotate, bitmapRotateRect.centerX(), bitmapRotateRect.centerY())
+
+        val scaleX = targetRect.width() / bitmapRotateRect.width()
+        val scaleY = targetRect.height() / bitmapRotateRect.height()
+        val scale = max(scaleX, scaleY)
+        bitmapRotateRect.scale(scale, scale, bitmapRotateRect.left, bitmapRotateRect.top)
+        targetMatrix.postScale(scale, scale, bitmapRotateRect.left, bitmapRotateRect.top)
+
+        //平移
+        val dx = targetRect.centerX() - bitmapRotateRect.centerX()
+        val dy = targetRect.centerY() - bitmapRotateRect.centerY()
+
+        targetMatrix.postTranslate(dx, dy)
+
+        updateMatrix(targetMatrix, anim)
+    }
+
     fun refresh() {
         //
         view.invalidate()
     }
-
-    var _bitmapWidth: Int = -1
-    var _bitmapHeight: Int = -1
 
     /**图片显示的最佳矩形*/
     val _bestRect = Rect()
@@ -275,51 +336,48 @@ class CropDelegate(val view: View) {
             return
         }
         _bitmap = bitmap
-        _bitmapWidth = bitmap.width
-        _bitmapHeight = bitmap.height
+        _bitmapOriginRect.set(0, 0, bitmap.width, bitmap.height)
 
-        //
-        reset(false)
+        updateRotate(rotate, false)
+    }
 
-        //
-        overlay.updateWithBitmap(bitmap)
+    /**更新旋转角度*/
+    fun updateRotate(rotate: Float, anim: Boolean = true) {
+        this.rotate = rotate % 360
+
+        val bestRect = calcBestRect(_bitmapOriginRect.rectF)
+        _bestRect.set(bestRect)
+
+        moveBitmapToRect(bestRect, anim)
+
+        overlay.reset()
     }
 
     /**重置到默认状态*/
     fun reset(anim: Boolean = true) {
-        val matrix = Matrix()
-        val maxWidth = maxWidth
-        val maxHeight = maxHeight
-        val scaleWidth = maxWidth * 1f / _bitmapWidth
-        val scaleHeight = maxHeight * 1f / _bitmapHeight
-        val minScale = minOf(scaleWidth, scaleHeight)
+        flipHorizontal = false
+        flipVertical = false
+        rotate = 0f
+        updateRotate(rotate, anim)
+    }
 
-        matrix.setTranslate(centerX - _bitmapWidth / 2f, centerY - _bitmapHeight / 2f)
-        matrix.postScale(minScale, minScale, centerX.toFloat(), centerY.toFloat())
+    var _animator: ValueAnimator? = null
 
-        val targetWidth: Int = (_bitmapWidth * minScale).toInt()
-        val targetHeight: Int = (_bitmapHeight * minScale).toInt()
-
-        //中心点, 最佳矩形, 能够撑满容纳图片的矩形
-        _bestRect.set(
-            centerX - targetWidth / 2,
-            centerY - targetHeight / 2,
-            centerX + targetWidth / 2,
-            centerY + targetHeight / 2
-        )
-
-        updateMatrix(matrix, anim)
+    fun cancelAnimator() {
+        _animator?.cancel()
+        _animator = null
     }
 
     /**更新[matrix]*/
     fun updateMatrix(matrix: Matrix, anim: Boolean) {
+        cancelAnimator()
         if (anim) {
-            matrixAnimator(_matrix, matrix, animatorDuration) {
-                _matrix.set(it)
+            _animator = matrixAnimator(_bitmapMatrix, matrix, animatorDuration) {
+                _bitmapMatrix.set(it)
                 refresh()
             }
         } else {
-            _matrix.set(matrix)
+            _bitmapMatrix.set(matrix)
             refresh()
         }
     }
@@ -328,14 +386,14 @@ class CropDelegate(val view: View) {
     fun postTranslate(deltaX: Float, deltaY: Float, anim: Boolean) {
         if (deltaX != 0f || deltaY != 0f) {
             if (anim) {
-                val endMatrix = Matrix(_matrix)
+                val endMatrix = Matrix(_bitmapMatrix)
                 endMatrix.postTranslate(deltaX, deltaY)
-                matrixAnimator(_matrix, endMatrix) {
-                    _matrix.set(it)
+                matrixAnimator(_bitmapMatrix, endMatrix) {
+                    _bitmapMatrix.set(it)
                     refresh()
                 }
             } else {
-                _matrix.postTranslate(deltaX, deltaY)
+                _bitmapMatrix.postTranslate(deltaX, deltaY)
                 refresh()
             }
         }
@@ -345,14 +403,14 @@ class CropDelegate(val view: View) {
     fun postScale(sx: Float, sy: Float, px: Float, py: Float, anim: Boolean) {
         if (sx != 0f || sy != 0f) {
             if (anim) {
-                val endMatrix = Matrix(_matrix)
+                val endMatrix = Matrix(_bitmapMatrix)
                 endMatrix.postScale(sx, sy, px, py)
-                matrixAnimator(_matrix, endMatrix) {
-                    _matrix.set(it)
+                matrixAnimator(_bitmapMatrix, endMatrix) {
+                    _bitmapMatrix.set(it)
                     refresh()
                 }
             } else {
-                _matrix.postScale(sx, sy, px, py)
+                _bitmapMatrix.postScale(sx, sy, px, py)
                 refresh()
             }
         }
@@ -371,20 +429,6 @@ class CropDelegate(val view: View) {
             }
         }
         return bitmap
-    }
-
-    /**连带更新*/
-    fun onClipRectUpdateTo(rect: Rect, pivotX: Float, pivotY: Float) {
-        val bestRect = _bestRect
-        val rectScaleX = bestRect.width() * 1f / rect.width()
-        val rectScaleY = bestRect.height() * 1f / rect.height()
-        val bitmapMatrix = Matrix(_matrix)
-        bitmapMatrix.postScale(rectScaleX, rectScaleY, pivotX, pivotY)
-        //中点需要偏移的距离
-        //val dx = bestRect.centerX() - rect.centerX()
-        //val dy = bestRect.centerY() - rect.centerY()
-        //bitmapMatrix.postTranslate(dx.toFloat(), dy.toFloat())
-        updateMatrix(bitmapMatrix, false)
     }
 
     //endregion ---operate---

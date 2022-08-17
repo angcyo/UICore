@@ -53,22 +53,33 @@ class CropOverlay(val cropDelegate: CropDelegate) {
      * */
     var roundRadius: Float = 0f
 
-    /**剪切框类型*/
+    /**剪切框类型
+     * [updateClipType]*/
     var clipType: Int = TYPE_ROUND
         set(value) {
             field = value
-            updateClipPath()
-            cropDelegate.refresh()
+            onClipTypeChangedAction(value)
         }
 
-    /**剪切框的比例, null 表示原始比例*/
+    /**裁剪类型改变回调*/
+    var onClipTypeChangedAction: (Int) -> Unit = {
+
+    }
+
+    /**剪切框的比例
+     * [null] 表示原始比例
+     * [setBitmapRatio] 图片比例
+     * [updateClipRatio] 自定义比例*/
     var clipRatio: Float? = null
         set(value) {
             field = value
-            updateClipRect()
-            updateClipPath()
-            cropDelegate.showInRect(clipRect, true)
+            onClipRatioChangedAction(value)
         }
+
+    /**裁剪比例改变回调*/
+    var onClipRatioChangedAction: (Float?) -> Unit = {
+
+    }
 
     /**线框笔*/
     val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -335,34 +346,43 @@ class CropOverlay(val cropDelegate: CropDelegate) {
 
         return result
     }
-
-
+    
     //endregion ---core---
+
+    /**更新提示框*/
+    fun reset() {
+        //默认使用图片比例
+        setBitmapRatio()
+    }
+
+    /**更新裁剪类型*/
+    fun updateClipType(type: Int) {
+        clipType = type
+        updateClipPath()
+        cropDelegate.refresh()
+    }
 
     /**使用图片比例*/
     fun setBitmapRatio() {
-        clipRatio = cropDelegate._bestRect.width() * 1f / cropDelegate._bestRect.height()
+        updateClipRatio(cropDelegate._bestRect.width() * 1f / cropDelegate._bestRect.height())
     }
 
-    /**更新提示框*/
-    fun updateWithBitmap(bitmap: Bitmap) {
-        if (clipRatio == null) {
-            //默认使用图片比例
-            setBitmapRatio()
-        } else {
-            updateClipRect()
-            updateClipPath()
-        }
+    /**更新裁剪比例*/
+    fun updateClipRatio(ratio: Float?) {
+        clipRatio = ratio
+        updateClipRect()
+        cropDelegate.moveBitmapToRect(clipRect.rectF, true)
     }
 
     fun updateClipRect() {
         val ratio = clipRatio
+        val targetRect = cropDelegate._bestRect
         if (ratio == null) {
             //原始比例
-            clipRect.set(cropDelegate._bestRect)
+            clipRect.set(targetRect)
         } else {
-            var width = cropDelegate._bestRect.width()
-            var height = cropDelegate._bestRect.height()
+            var width = targetRect.width()
+            var height = targetRect.height()
 
             val s1 = width * 1f / height
             val s2 = ratio
@@ -382,8 +402,8 @@ class CropOverlay(val cropDelegate: CropDelegate) {
             width = (width * minScale).toInt()
             height = (height * minScale).toInt()
 
-            val centerX = cropDelegate._bestRect.centerX()
-            val centerY = cropDelegate._bestRect.centerY()
+            val centerX = targetRect.centerX()
+            val centerY = targetRect.centerY()
 
             clipRect.set(
                 centerX - width / 2,
@@ -392,6 +412,7 @@ class CropOverlay(val cropDelegate: CropDelegate) {
                 centerY + height / 2
             )
         }
+        updateClipPath()
     }
 
     /**更新剪切矩形*/
@@ -435,7 +456,7 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         endPivotX: Float,
         endPivotY: Float
     ) {
-        val matrix = Matrix(cropDelegate._matrix)
+        val matrix = Matrix(cropDelegate._bitmapMatrix)
         val startRect = Rect(clipRect)
 
         //锚点偏移的距离
