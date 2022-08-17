@@ -856,12 +856,12 @@ class FindParse(val accParse: AccParse) : BaseParse() {
                 accParse.accControl.log(buildString {
                     appendLine(node.toLog())
                     append("match:")
-                    append("text:${matchText?.toDC()} ")
-                    append("class:${matchClass?.toDC()} ")
-                    append("id:${matchId?.toDC()} ")
-                    append("state:${matchState?.toDC()} ")
-                    append("rect:${matchRect?.toDC()} ")
-                    append("child:${matchChild?.toDC()} ")
+                    append("text:${matchText.toDC()} ")
+                    append("class:${matchClass.toDC()} ")
+                    append("id:${matchId.toDC()} ")
+                    append("state:${matchState.toDC()} ")
+                    append("rect:${matchRect.toDC()} ")
+                    append("child:${matchChild.toDC()} ")
                 }, 2)
             }
         }

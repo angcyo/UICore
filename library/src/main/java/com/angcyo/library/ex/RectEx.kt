@@ -21,6 +21,9 @@ val _tempMatrix = Matrix()
 
 fun emptyRectF() = RectF(0f, 0f, 0f, 0f)
 
+val Rect.rectF: RectF
+    get() = toRectF()
+
 fun Rect.toRectF() = RectF(this)
 
 fun Rect.set(rect: RectF) {

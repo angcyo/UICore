@@ -208,6 +208,18 @@ open class DslViewHolder(
         view?.setOnTouchListener(block)
     }
 
+    /**初始化, 点击之后再次初始化*/
+    fun clickAndInit(@IdRes id: Int, init: (View) -> Unit, click: (View) -> Unit) {
+        val view = v<View>(id)
+        view?.apply {
+            init(this)
+            setOnClickListener {
+                click(it)
+                init(it)
+            }
+        }
+    }
+
     //</editor-fold desc="事件处理">
 
     //<editor-fold desc="post回调">
