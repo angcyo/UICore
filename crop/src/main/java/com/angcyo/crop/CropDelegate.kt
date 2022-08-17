@@ -209,10 +209,6 @@ class CropDelegate(val view: View) {
             bitmapRect.bottom < clipRect.bottom
         ) {
             //需要调整
-
-            var dx = 0f
-            var dy = 0f
-
             val scaleX = clipRect.width() / bitmapRect.width()
             val scaleY = clipRect.height() / bitmapRect.height()
             val scale = max(scaleX, scaleY)
@@ -223,6 +219,8 @@ class CropDelegate(val view: View) {
             }
 
             //平移
+            var dx = 0f
+            var dy = 0f
             if (center) {
                 dx = clipRect.centerX() - bitmapRect.centerX()
                 dy = clipRect.centerY() - bitmapRect.centerY()
