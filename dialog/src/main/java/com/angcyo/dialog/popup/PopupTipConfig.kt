@@ -54,14 +54,22 @@ open class PopupTipConfig : PopupConfig() {
 
     override fun initLayout(window: TargetWindow, viewHolder: DslViewHolder) {
         super.initLayout(window, viewHolder)
-        xoff = (touchX - rootViewRect.width() / 2).toInt()
-        checkLimit()
+        touchOffset()
     }
 
     override fun updatePopup(updateLayout: Boolean) {
-        xoff = (touchX - rootViewRect.width() / 2).toInt()
-        checkLimit()
+        touchOffset()
         super.updatePopup(updateLayout)
+    }
+
+    /**自动偏移到手势的位置[touchX]*/
+    fun touchOffset() {
+        if (autoOffsetCenterInScreen || autoOffsetCenterInAnchor) {
+            //no op
+        } else {
+            xoff = (touchX - rootViewRect.width() / 2).toInt()
+            checkLimit()
+        }
     }
 
     /**检查边界限制*/
