@@ -53,7 +53,7 @@ class BubbleDrawable : AbsDslDrawable() {
         bubblePath.moveTo(startX, startY)
 
         //二阶曲线到左边的圆弧起点
-        degrees = 90 + (leftStartAngle - rightEndAngle) / 2
+        degrees = (leftStartAngle + 90) / 2
         val c1 = dotDegrees(
             bubbleRadius * radio,
             degrees,
@@ -67,7 +67,7 @@ class BubbleDrawable : AbsDslDrawable() {
         bubblePath.arcTo(bubbleRect, leftStartAngle, 360 - (leftStartAngle - rightEndAngle))
 
         //二阶曲线到终点
-        degrees = (90 + -rightEndAngle) / 2
+        degrees = (90 + rightEndAngle) / 2
         val c2 = dotDegrees(
             bubbleRadius * radio,
             degrees,
@@ -92,10 +92,10 @@ class BubbleDrawable : AbsDslDrawable() {
 
         textPaint.color = Color.YELLOW
         canvas.drawLine(
-            bubbleRect.centerX(),
-            0f,
-            bubbleRect.centerX(),
-            bubbleRect.bottom,
+            drawRectF.centerX(),
+            drawRectF.top,
+            drawRectF.centerX(),
+            drawRectF.bottom,
             textPaint
         )
     }
