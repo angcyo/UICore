@@ -299,5 +299,26 @@ fun Matrix.mapYValueList(yList: List<Float>): List<Float> {
     return result
 }
 
+/**旋转一个点*/
+fun PointF.rotate(rotate: Float, pivotX: Float, pivotY: Float, result: PointF = this): PointF {
+    _tempMatrix.reset()
+    _tempMatrix.setRotate(rotate, pivotX, pivotY)
+    _tempMatrix.mapPoint(this, result)
+    return result
+}
+
+/**反向旋转一个点坐标*/
+fun PointF.invertRotate(
+    rotate: Float,
+    pivotX: Float,
+    pivotY: Float,
+    result: PointF = this
+): PointF {
+    _tempMatrix.reset()
+    _tempMatrix.setRotate(rotate, pivotX, pivotY)
+    _tempMatrix.invert(_tempMatrix)
+    _tempMatrix.mapPoint(this, result)
+    return result
+}
 
 //</editor-fold desc="matrix">

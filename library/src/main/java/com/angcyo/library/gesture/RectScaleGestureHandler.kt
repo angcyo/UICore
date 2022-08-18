@@ -7,8 +7,7 @@ import android.view.MotionEvent
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex._tempPoint
-import com.angcyo.library.ex._tempRectF
-import com.angcyo.library.ex.rotate
+import com.angcyo.library.ex.invertRotate
 import kotlin.math.absoluteValue
 import kotlin.math.max
 
@@ -34,6 +33,8 @@ class RectScaleGestureHandler {
         const val RECT_LB = 8
 
         /**查找当前点, 按在矩形的那个位置上
+         * [rect] 未旋转的矩形
+         * [x] [y] 旋转后的坐标
          * [threshold] 阈值/误差*/
         fun findRectPosition(
             rect: RectF,
@@ -42,38 +43,43 @@ class RectScaleGestureHandler {
             y: Float,
             threshold: Float
         ): Int {
-            val rotateRect = rect.rotate(rotate, result = _tempRectF)
+            val point = _tempPoint
+            point.set(x, y)
+            point.invertRotate(rotate, rect.centerX(), rect.centerY())
+
+            val px = point.x
+            val py = point.y
 
             //先判断是否在4个角上
-            if ((x - rotateRect.left).absoluteValue <= threshold) {
-                if ((y - rotateRect.top).absoluteValue <= threshold) {
+            if ((px - rect.left).absoluteValue <= threshold) {
+                if ((py - rect.top).absoluteValue <= threshold) {
                     return RECT_LT
                 }
-                if ((y - rotateRect.bottom).absoluteValue <= threshold) {
+                if ((py - rect.bottom).absoluteValue <= threshold) {
                     return RECT_LB
                 }
-                if (y >= rotateRect.top && x <= rotateRect.bottom) {
+                if (py >= rect.top && px <= rect.bottom) {
                     return RECT_LEFT
                 }
             }
-            if ((x - rotateRect.right).absoluteValue <= threshold) {
-                if ((y - rotateRect.top).absoluteValue <= threshold) {
+            if ((px - rect.right).absoluteValue <= threshold) {
+                if ((py - rect.top).absoluteValue <= threshold) {
                     return RECT_RT
                 }
-                if ((y - rotateRect.bottom).absoluteValue <= threshold) {
+                if ((py - rect.bottom).absoluteValue <= threshold) {
                     return RECT_RB
                 }
-                if (y >= rotateRect.top && x <= rotateRect.bottom) {
+                if (py >= rect.top && px <= rect.bottom) {
                     return RECT_RIGHT
                 }
             }
 
             //再判断是否在4个边上
-            if (x >= rotateRect.left && x <= rotateRect.right) {
-                if ((y - rotateRect.top).absoluteValue <= threshold) {
+            if (px >= rect.left && px <= rect.right) {
+                if ((py - rect.top).absoluteValue <= threshold) {
                     return RECT_TOP
                 }
-                if ((y - rotateRect.bottom).absoluteValue <= threshold) {
+                if ((py - rect.bottom).absoluteValue <= threshold) {
                     return RECT_BOTTOM
                 }
             }

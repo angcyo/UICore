@@ -133,7 +133,7 @@ fun RectF.translate(dx: Float = 0f, dy: Float = 0f): RectF {
     return this
 }
 
-/**缩放一个矩形
+/**旋转一个矩形
  * [degrees] 旋转的角度
  * [pivotX] [pivotY] 旋转的轴点
  * */
