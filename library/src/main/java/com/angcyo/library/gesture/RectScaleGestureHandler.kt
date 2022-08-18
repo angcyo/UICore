@@ -7,6 +7,8 @@ import android.view.MotionEvent
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex._tempPoint
+import com.angcyo.library.ex._tempRectF
+import com.angcyo.library.ex.rotate
 import kotlin.math.absoluteValue
 import kotlin.math.max
 
@@ -30,6 +32,53 @@ class RectScaleGestureHandler {
         const val RECT_RT = 6
         const val RECT_RB = 7
         const val RECT_LB = 8
+
+        /**查找当前点, 按在矩形的那个位置上
+         * [threshold] 阈值/误差*/
+        fun findRectPosition(
+            rect: RectF,
+            rotate: Float,
+            x: Float,
+            y: Float,
+            threshold: Float
+        ): Int {
+            val rotateRect = rect.rotate(rotate, result = _tempRectF)
+
+            //先判断是否在4个角上
+            if ((x - rotateRect.left).absoluteValue <= threshold) {
+                if ((y - rotateRect.top).absoluteValue <= threshold) {
+                    return RECT_LT
+                }
+                if ((y - rotateRect.bottom).absoluteValue <= threshold) {
+                    return RECT_LB
+                }
+                if (y >= rotateRect.top && x <= rotateRect.bottom) {
+                    return RECT_LEFT
+                }
+            }
+            if ((x - rotateRect.right).absoluteValue <= threshold) {
+                if ((y - rotateRect.top).absoluteValue <= threshold) {
+                    return RECT_RT
+                }
+                if ((y - rotateRect.bottom).absoluteValue <= threshold) {
+                    return RECT_RB
+                }
+                if (y >= rotateRect.top && x <= rotateRect.bottom) {
+                    return RECT_RIGHT
+                }
+            }
+
+            //再判断是否在4个边上
+            if (x >= rotateRect.left && x <= rotateRect.right) {
+                if ((y - rotateRect.top).absoluteValue <= threshold) {
+                    return RECT_TOP
+                }
+                if ((y - rotateRect.bottom).absoluteValue <= threshold) {
+                    return RECT_BOTTOM
+                }
+            }
+            return 0
+        }
 
         /**根据点击位置, 获取参考点*/
         fun getRectPositionPoint(
@@ -157,6 +206,11 @@ class RectScaleGestureHandler {
             newHeight
         }
 
+    /**是否需要转换[point]*/
+    var onTransformPoint: (point: PointF) -> Unit = {
+
+    }
+
     //endregion ---可读取/配置属性---
 
     //region ---内部---
@@ -187,6 +241,7 @@ class RectScaleGestureHandler {
     val _matrix = Matrix()
     val _tempRect = RectF()
     val _pendingRect = RectF()
+    val _point = PointF()
 
     //endregion ---内部---
 
@@ -218,12 +273,21 @@ class RectScaleGestureHandler {
      * [actionMasked] [android.view.MotionEvent.getActionMasked]
      * */
     @CallPoint
-    fun onTouchEvent(actionMasked: Int, x: Float, y: Float): Boolean {
+    fun onTouchEvent(event: MotionEvent): Boolean {
         val handle = _isInitialize
         if (!handle) {
             return false
         }
-        when (actionMasked) {
+
+        //
+        _point.x = event.x
+        _point.y = event.y
+        onTransformPoint(_point)
+        val x = _point.x
+        val y = _point.y
+
+        //
+        when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 _touchMoveX = x
                 _touchMoveY = y

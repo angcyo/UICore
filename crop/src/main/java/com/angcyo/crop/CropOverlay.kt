@@ -6,7 +6,6 @@ import androidx.core.graphics.toRect
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.*
 import com.angcyo.library.gesture.RectScaleGestureHandler
-import kotlin.math.absoluteValue
 import kotlin.math.min
 
 /**
@@ -30,7 +29,7 @@ class CropOverlay(val cropDelegate: CropDelegate) {
     var overlayColor: Int = Color.parseColor("#80000000")
 
     /**矩形边框颜色*/
-    var rectBorderColor: Int = Color.parseColor("#16000000")
+    var rectBorderColor: Int = Color.parseColor("#10000000")
 
     var rectBorderWidth: Float = 8 * dp
 
@@ -164,7 +163,7 @@ class CropOverlay(val cropDelegate: CropDelegate) {
 
                 //
                 rectScaleGestureHandler.keepScaleRatio = clipRatio != null
-                val rectPosition = findTouchRectPosition(event.x.toInt(), event.y.toInt())
+                val rectPosition = findTouchRectPosition(event.x, event.y)
                 rectScaleGestureHandler.initialize(clipRect.toRectF(), 0f, rectPosition)
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -172,7 +171,7 @@ class CropOverlay(val cropDelegate: CropDelegate) {
             }
         }
         //
-        handle = rectScaleGestureHandler.onTouchEvent(event.actionMasked, event.x, event.y)
+        handle = rectScaleGestureHandler.onTouchEvent(event)
         return handle
     }
 
@@ -218,44 +217,11 @@ class CropOverlay(val cropDelegate: CropDelegate) {
     }
 
     /**查找坐标落在矩形的什么位置上*/
-    fun findTouchRectPosition(x: Int, y: Int): Int {
+    fun findTouchRectPosition(x: Float, y: Float): Int {
         val factor = 5
         val refWidth = cornerWidth * factor
-
-        //先判断是否在4个角上
-        if ((x - clipRect.left).absoluteValue <= refWidth) {
-            if ((y - clipRect.top).absoluteValue <= refWidth) {
-                return RectScaleGestureHandler.RECT_LT
-            }
-            if ((y - clipRect.bottom).absoluteValue <= refWidth) {
-                return RectScaleGestureHandler.RECT_LB
-            }
-            if (y >= clipRect.top && x <= clipRect.bottom) {
-                return RectScaleGestureHandler.RECT_LEFT
-            }
-        }
-        if ((x - clipRect.right).absoluteValue <= refWidth) {
-            if ((y - clipRect.top).absoluteValue <= refWidth) {
-                return RectScaleGestureHandler.RECT_RT
-            }
-            if ((y - clipRect.bottom).absoluteValue <= refWidth) {
-                return RectScaleGestureHandler.RECT_RB
-            }
-            if (y >= clipRect.top && x <= clipRect.bottom) {
-                return RectScaleGestureHandler.RECT_RIGHT
-            }
-        }
-
-        //再判断是否在4个边上
-        if (x >= clipRect.left && x <= clipRect.right) {
-            if ((y - clipRect.top).absoluteValue <= refWidth) {
-                return RectScaleGestureHandler.RECT_TOP
-            }
-            if ((y - clipRect.bottom).absoluteValue <= refWidth) {
-                return RectScaleGestureHandler.RECT_BOTTOM
-            }
-        }
-        return 0
+        _tempRectF.set(clipRect)
+        return RectScaleGestureHandler.findRectPosition(_tempRectF, 0f, x, y, refWidth)
     }
 
     val _ltPath = Path()
@@ -346,7 +312,7 @@ class CropOverlay(val cropDelegate: CropDelegate) {
 
         return result
     }
-    
+
     //endregion ---core---
 
     /**更新提示框*/

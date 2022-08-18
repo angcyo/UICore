@@ -120,7 +120,8 @@ const val ADJUST_TYPE_LB = 0x12
  * [pivotX] [pivotY] 缩放的轴点
  * */
 fun RectF.scale(scaleX: Float, scaleY: Float, pivotX: Float = left, pivotY: Float = top): RectF {
-    val matrix = Matrix()
+    val matrix = _tempMatrix
+    matrix.reset()
     matrix.setScale(scaleX, scaleY, pivotX, pivotY)
     matrix.mapRect(this)
     return this
@@ -142,7 +143,8 @@ fun RectF.rotate(
     pivotY: Float = centerY(),
     result: RectF = this
 ): RectF {
-    val matrix = Matrix()
+    val matrix = _tempMatrix
+    matrix.reset()
     matrix.setRotate(degrees, pivotX, pivotY)
     matrix.mapRect(result, this)
     return result
