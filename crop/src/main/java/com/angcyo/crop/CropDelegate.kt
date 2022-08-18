@@ -26,10 +26,10 @@ class CropDelegate(val view: View) {
     val overlay: CropOverlay = CropOverlay(this)
 
     /**水平边距*/
-    var marginingHorizontal: Int = 50 * dpi
+    var marginingHorizontal: Int = 30 * dpi
 
     /**水平偏移*/
-    var marginingVertical: Int = 50 * dpi
+    var marginingVertical: Int = 30 * dpi
 
     /**动画时长*/
     var animatorDuration = 600L
@@ -100,7 +100,17 @@ class CropDelegate(val view: View) {
     val scaleDetector: ScaleGestureDetector = ScaleGestureDetector(view.context,
         object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
             override fun onScale(detector: ScaleGestureDetector): Boolean {
-                postScale(detector.scaleFactor, detector.scaleFactor, midPntX, midPntY, false)
+                if (overlay.enableClipMoveMode) {
+                    overlay.postScale(
+                        detector.scaleFactor,
+                        detector.scaleFactor,
+                        midPntX,
+                        midPntY,
+                        false
+                    )
+                } else {
+                    postScale(detector.scaleFactor, detector.scaleFactor, midPntX, midPntY, false)
+                }
                 return true
             }
         })
@@ -117,14 +127,12 @@ class CropDelegate(val view: View) {
     val gestureDetector: GestureDetectorCompat =
         GestureDetectorCompat(view.context, object : GestureDetector.SimpleOnGestureListener() {
             override fun onDoubleTap(e: MotionEvent): Boolean {
-                /*zoomImageToPosition(
-                    getDoubleTapTargetScale(),
-                    e.x,
-                    e.y,
-                    GestureCropImageView.DOUBLE_TAP_ZOOM_DURATION.toLong()
-                )*/
                 val scale = 1.5f//currentScale * 1.2f
-                postScale(scale, scale, e.x, e.y, true)
+                if (overlay.enableClipMoveMode) {
+                    overlay.postScale(scale, scale, e.x, e.y, true)
+                } else {
+                    postScale(scale, scale, e.x, e.y, true)
+                }
                 return super.onDoubleTap(e)
             }
 
@@ -134,7 +142,11 @@ class CropDelegate(val view: View) {
                 distanceX: Float,
                 distanceY: Float
             ): Boolean {
-                postTranslate(-distanceX, -distanceY, false)
+                if (overlay.enableClipMoveMode) {
+                    overlay.postTranslate(-distanceX, -distanceY, false)
+                } else {
+                    postTranslate(-distanceX, -distanceY, false)
+                }
                 return true
             }
         })
@@ -151,24 +163,40 @@ class CropDelegate(val view: View) {
         view.interceptParentTouchEvent(event)
         val action = event.actionMasked
 
+        //down
         if (action == MotionEvent.ACTION_DOWN) {
             cancelAnimator()
         }
 
-        if (overlay.onTouchEvent(event)) {
-            //被[overlay]处理
-        } else {
-            if (event.pointerCount > 1) {
-                midPntX = (event.getX(0) + event.getX(1)) / 2
-                midPntY = (event.getY(0) + event.getY(1)) / 2
+        //中点计算
+        if (event.pointerCount > 1) {
+            midPntX = (event.getX(0) + event.getX(1)) / 2
+            midPntY = (event.getY(0) + event.getY(1)) / 2
+        }
+
+        if (overlay.enableClipMoveMode) {
+            //移动剪切框的模式
+            if (overlay.onTouchEvent(event)) {
+                if (overlay._isTouchInClipRect) {
+                    gestureDetector.onTouchEvent(event)
+                    scaleDetector.onTouchEvent(event)
+                    rotateDetector.onTouchEvent(event)
+                }
             }
+        } else {
+            //剪切框自动缩放模式
+            if (overlay.onTouchEvent(event)) {
+                //被[overlay]处理
+            } else {
+                gestureDetector.onTouchEvent(event)
+                scaleDetector.onTouchEvent(event)
+                rotateDetector.onTouchEvent(event)
 
-            gestureDetector.onTouchEvent(event)
-            scaleDetector.onTouchEvent(event)
-            rotateDetector.onTouchEvent(event)
-
-            if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
-                imageWrapCropBounds(false, true)
+                if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+                    if (!overlay.enableClipMoveMode) {
+                        imageWrapCropBounds(false, true)
+                    }
+                }
             }
         }
         return true
@@ -195,9 +223,9 @@ class CropDelegate(val view: View) {
     }
 
     /**调整图片到剪切矩形内
-     * [center] 是否将[bitmap]移动至剪切框的矩形中心
+     * [moveToCenter] 是否将[bitmap]移动至剪切框的矩形中心
      * [anim] 是否需要动画*/
-    fun imageWrapCropBounds(center: Boolean = false, anim: Boolean = true) {
+    fun imageWrapCropBounds(moveToCenter: Boolean = false, anim: Boolean = true) {
         val matrix = Matrix(_bitmapMatrix)
 
         val bitmapRect = bitmapRectMap
@@ -221,7 +249,7 @@ class CropDelegate(val view: View) {
             //平移
             var dx = 0f
             var dy = 0f
-            if (center) {
+            if (moveToCenter) {
                 dx = clipRect.centerX() - bitmapRect.centerX()
                 dy = clipRect.centerY() - bitmapRect.centerY()
             } else {

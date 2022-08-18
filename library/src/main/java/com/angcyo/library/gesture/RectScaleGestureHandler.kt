@@ -8,8 +8,10 @@ import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex._tempPoint
 import com.angcyo.library.ex.invertRotate
+import com.angcyo.library.ex.mapRectF
 import kotlin.math.absoluteValue
 import kotlin.math.max
+import kotlin.math.min
 
 /**
  * 矩形缩放手势处理, 支持旋转参数
@@ -150,6 +152,106 @@ class RectScaleGestureHandler {
             }
             return null
         }
+
+        /**限制[targetRect]在[limitRect]内进行缩放
+         * [limitRect] 较大的矩形, 用来限制范围
+         * [targetRect] 需要缩放的矩形
+         * [scaleX] [scaleY] 缩放的倍数
+         * [pivotX] [pivotY] 缩放的参考点
+         * [keepRadio] 是否保持缩放比
+         * [moveToCenter] 是否将[targetRect]移动到[limitRect]中心
+         * */
+        fun limitRectScaleInRect(
+            limitRect: RectF,
+            targetRect: RectF,
+            scaleX: Float,
+            scaleY: Float,
+            pivotX: Float,
+            pivotY: Float,
+            keepRadio: Boolean = true,
+            moveToCenter: Boolean = false
+        ): Matrix {
+            val maxScaleX = limitRect.width() / targetRect.width()
+            val maxScaleY = limitRect.height() / targetRect.height()
+
+            //计算缩放
+            val sx: Float
+            val sy: Float
+            if (keepRadio) {
+                val maxScale = min(maxScaleX, maxScaleY)
+                sx = min(maxScale, max(scaleX, scaleY))
+                sy = sx
+            } else {
+                sx = min(maxScaleX, scaleX)
+                sy = min(maxScaleY, scaleY)
+            }
+
+            val matrix = Matrix()
+            matrix.setScale(sx, sy, pivotX, pivotY)
+
+            //缩放后的矩形
+            val endRect = matrix.mapRectF(targetRect)
+
+            //计算偏移
+            var dx = 0f
+            var dy = 0f
+            if (moveToCenter) {
+                dx = limitRect.centerX() - endRect.centerX()
+                dy = limitRect.centerY() - endRect.centerY()
+            } else {
+                if (endRect.left < limitRect.left) {
+                    dx = limitRect.left - endRect.left
+                }
+                if (endRect.top < limitRect.top) {
+                    dy = limitRect.top - endRect.top
+                }
+                if (endRect.right > limitRect.right) {
+                    dx = limitRect.right - endRect.right
+                }
+                if (endRect.bottom > limitRect.bottom) {
+                    dy = limitRect.bottom - endRect.bottom
+                }
+            }
+            matrix.postTranslate(dx, dy)
+
+            //
+            return matrix
+        }
+
+        /**限制[targetRect]只能在[limitRect]内进行移动
+         * */
+        fun limitRectTranslateInRect(
+            limitRect: RectF,
+            targetRect: RectF,
+            dx: Float,
+            dy: Float,
+        ): Matrix {
+            val matrix = Matrix()
+            val newLeft = targetRect.left + dx
+            val newRight = targetRect.right + dx
+            val newTop = targetRect.top + dy
+            val newBottom = targetRect.bottom + dy
+
+            var translateX = dx
+            var translateY = dy
+
+            //x
+            if (newLeft < limitRect.left) {
+                translateX = limitRect.left - targetRect.left
+            } else if (newRight > limitRect.right) {
+                translateX = limitRect.right - targetRect.right
+            }
+
+            //y
+            if (newTop < limitRect.top) {
+                translateY = limitRect.top - targetRect.top
+            } else if (newBottom > limitRect.bottom) {
+                translateY = limitRect.bottom - targetRect.bottom
+            }
+
+            matrix.setTranslate(translateX, translateY)
+            return matrix
+        }
     }
 
     //region ---可读取/配置属性---
@@ -196,7 +298,9 @@ class RectScaleGestureHandler {
 
     /**是否要限制当前改变到的矩形[rect]
      * 返回[true]表示限制
-     * 返回[false]表示不限制, 允许改变*/
+     * 返回[false]表示不限制, 允许改变
+     * 可以通过返回[false],然后直接修改[rect]数据的方式, 不拦截修改并且修改数据
+     * */
     var onRectScaleLimitAction: (rect: RectF) -> Boolean = {
         false
     }
@@ -216,6 +320,22 @@ class RectScaleGestureHandler {
     var onTransformPoint: (point: PointF) -> Unit = {
 
     }
+
+    /**当前改变的x比例*/
+    val currentScaleX: Float
+        get() = changedRect.width() / targetRect.width()
+
+    /**当前改变的y比例*/
+    val currentScaleY: Float
+        get() = changedRect.height() / targetRect.height()
+
+    /**移动时x拖拽比例*/
+    val moveScaleX: Float
+        get() = _pendingRect.width() / changedRect.width()
+
+    /**移动时y拖拽比例*/
+    val moveScaleY: Float
+        get() = _pendingRect.height() / changedRect.height()
 
     //endregion ---可读取/配置属性---
 

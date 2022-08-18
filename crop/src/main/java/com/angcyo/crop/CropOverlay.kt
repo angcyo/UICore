@@ -104,12 +104,21 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         cropDelegate.refresh()
     }
 
+    /**是否激活剪切框自由拖动模式
+     * 未激活时,剪切框改变后会自动缩放至撑满屏幕
+     * */
+    var enableClipMoveMode: Boolean = false
+
     /**剪切框改变后的回调
      * [scaleX] [scaleY] 缩放的比例
      * [pivotX] [pivotY] 改变的锚点*/
     var onClipRectChangedAction: (scaleX: Float, scaleY: Float, pivotX: Float, pivotY: Float) -> Unit =
         { _, _, pivotX, pivotY ->
-            onClipRectChanged(clipRect, pivotX, pivotY)
+            if (enableClipMoveMode) {
+            } else {
+                //自动缩放剪切框
+                onClipRectChanged(clipRect, pivotX, pivotY)
+            }
         }
 
     /**矩形缩放处理*/
@@ -124,6 +133,18 @@ class CropOverlay(val cropDelegate: CropDelegate) {
             clamp(newHeight, minSize, cropDelegate._bestRect.height().toFloat())
         }
 
+        //限制大小
+        onRectScaleLimitAction = { rect ->
+            var result = false
+            if (enableClipMoveMode) {
+                val bitmapRectMap = cropDelegate.bitmapRectMap
+                if (rect.isOverflowOf(bitmapRectMap)) {
+                    result = true
+                }
+            }
+            result
+        }
+
         //剪切框改变后的回调
         onRectScaleChangeAction = { rect, end ->
             clipRect.set(
@@ -135,7 +156,9 @@ class CropOverlay(val cropDelegate: CropDelegate) {
             updateClipPath()
             _tempRect.set(clipRect)
             if (_tempRect.isOverflowOf(cropDelegate.bitmapRectMap)) {
-                cropDelegate.imageWrapCropBounds(false, false)
+                if (!enableClipMoveMode) {
+                    cropDelegate.imageWrapCropBounds(false, false)
+                }
             }
             if (end) {
                 onClipRectChangedAction(
@@ -150,14 +173,19 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         }
     }
 
+    /**手势触发在剪切框内*/
+    var _isTouchInClipRect = false
+
     //region ---core---
 
     @CallPoint
     fun onTouchEvent(event: MotionEvent): Boolean {
-        var handle = false
-        when (event.actionMasked) {
+        var handle = _isTouchInClipRect
+        val action = event.actionMasked
+        when (action) {
             MotionEvent.ACTION_DOWN -> {
                 _isTouchDown = true
+                _isTouchInClipRect = false
                 cropDelegate.view.removeCallbacks(_delayRefreshRunnable)
                 cropDelegate.refresh()
 
@@ -165,13 +193,26 @@ class CropOverlay(val cropDelegate: CropDelegate) {
                 rectScaleGestureHandler.keepScaleRatio = clipRatio != null
                 val rectPosition = findTouchRectPosition(event.x, event.y)
                 rectScaleGestureHandler.initialize(clipRect.toRectF(), 0f, rectPosition)
+
+                if (enableClipMoveMode && rectPosition <= 0) {
+                    //未命中八爪
+                    if (clipRect.contains(event.x.toInt(), event.y.toInt())) {
+                        //拖动矩形
+                        handle = true
+                        _isTouchInClipRect = true
+                    }
+                }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 cropDelegate.view.postDelayed(_delayRefreshRunnable, 1_000)
             }
         }
         //
-        handle = rectScaleGestureHandler.onTouchEvent(event)
+        if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+            _isTouchInClipRect = false
+        }
+        //
+        handle = handle || rectScaleGestureHandler.onTouchEvent(event)
         return handle
     }
 
@@ -340,6 +381,12 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         cropDelegate.moveBitmapToRect(clipRect.rectF, true)
     }
 
+    fun updateClipRect(rect: RectF) {
+        clipRect.set(rect)
+        updateClipPath()
+        cropDelegate.refresh()
+    }
+
     fun updateClipRect() {
         val ratio = clipRatio
         val targetRect = cropDelegate._bestRect
@@ -404,13 +451,17 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         }
     }
 
-    fun updateClipRect(matrix: Matrix) {
-        val _matrix = Matrix()
+    fun updateClipRect(endMatrix: Matrix, anim: Boolean) {
+        val startMatrix = Matrix()
         val rect = clipRect.toRectF()
-        matrixAnimator(_matrix, matrix, cropDelegate.animatorDuration) {
-            it.mapRect(_tempRectF, rect)
-            clipRect.set(_tempRectF)
-            updateClipPath()
+        if (anim) {
+            matrixAnimator(startMatrix, endMatrix, cropDelegate.animatorDuration) {
+                it.mapRect(_tempRectF, rect)
+                updateClipRect(_tempRectF)
+            }
+        } else {
+            endMatrix.mapRect(rect)
+            updateClipRect(rect)
         }
     }
 
@@ -477,6 +528,40 @@ class CropOverlay(val cropDelegate: CropDelegate) {
 
         //开始更新
         updateClipRect(endRect.toRect(), pivotX, pivotY, endPivotX, endPivotY)
+    }
+
+    /**缩放剪切矩形框*/
+    fun postScale(sx: Float, sy: Float, px: Float, py: Float, anim: Boolean) {
+        if (sx != 0f || sy != 0f) {
+            val bitmapRectMap = cropDelegate.bitmapRectMap
+            val rectF = clipRect.rectF
+            val matrix = RectScaleGestureHandler.limitRectScaleInRect(
+                bitmapRectMap,
+                rectF,
+                sx,
+                sy,
+                px,
+                py,
+                rectScaleGestureHandler.keepScaleRatio,
+                false
+            )
+            updateClipRect(matrix, anim)
+        }
+    }
+
+    /**平移剪切矩形框*/
+    fun postTranslate(deltaX: Float, deltaY: Float, anim: Boolean) {
+        if (deltaX != 0f || deltaY != 0f) {
+            val bitmapRectMap = cropDelegate.bitmapRectMap
+            val rectF = clipRect.rectF
+            val matrix = RectScaleGestureHandler.limitRectTranslateInRect(
+                bitmapRectMap,
+                rectF,
+                deltaX,
+                deltaY
+            )
+            updateClipRect(matrix, anim)
+        }
     }
 
 }
