@@ -34,6 +34,9 @@ fun c(a: Double, b: Double): Double {
 }
 
 /**根据半径[radius],原点[pivotX,pivotY]坐标, 计算出角度[degrees]对应的圆上坐标点
+ * 圆上任意一点的坐标
+ * [degrees] 角度
+ * [pivotX] [pivotY] 圆心坐标
  * [dotRadians]*/
 fun dotDegrees(
     radius: Float,
