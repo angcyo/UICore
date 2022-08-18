@@ -1,6 +1,7 @@
 package com.angcyo.dialog
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Rect
@@ -41,6 +42,15 @@ typealias WindowClickAction = (window: TargetWindow, view: View) -> Unit
  * */
 typealias TargetWindow = Any
 
+fun TargetWindow.dismiss() {
+    if (this is PopupWindow) {
+        dismiss()
+    } else if (this is Dialog) {
+        dismiss()
+    } else if (this is Window) {
+    }
+}
+
 open class PopupConfig {
     /**
      * 标准需要显示的属性, 使用[showAsDropDown]显示
@@ -61,8 +71,16 @@ open class PopupConfig {
      * */
     var parent: View? = null
 
+    /**设置给[PopupWindow]的属性*/
     var xoff: Int = 0
     var yoff: Int = 0
+
+    /**额外的偏移量
+     * 为了兼容 [updatePopup]*/
+    var offsetX: Int = 0
+
+    /**会根据锚点在屏幕的上下区域, 自动取反*/
+    var offsetY: Int = 0
 
     /**左右最小边界距离*/
     var minHorizontalOffset = 20 * dpi //最小边距
@@ -91,7 +109,8 @@ open class PopupConfig {
     /**自动设置offset, 到达锚点横向居中的状态*/
     var autoOffsetCenterInAnchor: Boolean = true
 
-    /** 标准属性 */
+    /** 标准属性
+     * [com.angcyo.dialog.PopupConfig.createContentView]*/
     var contentView: View? = null
 
     /** 指定布局id */
@@ -230,6 +249,7 @@ open class PopupConfig {
             //创建布局和初始化
             val view = createContentView(context)
             val popupViewHolder = DslViewHolder(view!!)
+            view.setDslViewHolder(popupViewHolder)
             initPopupWindow(window, popupViewHolder)
             initLayout(window, popupViewHolder)
 
@@ -239,12 +259,18 @@ open class PopupConfig {
         }
 
         if (parent != null) {
-            window.showAtLocation(parent, gravity, xoff, yoff)
+            window.showAtLocation(parent, gravity, xoff + offsetX, yoff + offsetY)
         } else if (anchor != null) {
             //当空间不够时, 系统会自动偏移到最佳位置, 此时xoff也会额外追加偏移计算中
             // Gravity.LEFT / Gravity.RIGHT 有效
             // Gravity.CENTER 属性无效, 还是已左上角为计算锚点
-            PopupWindowCompat.showAsDropDown(window, anchor!!, xoff, yoff, gravity)
+            PopupWindowCompat.showAsDropDown(
+                window,
+                anchor!!,
+                xoff + offsetX,
+                yoff + offsetY,
+                gravity
+            )
         } else {
             L.w("至少需要配置一项[parent]or[anchor]")
         }
@@ -255,6 +281,20 @@ open class PopupConfig {
     /**[showWithPopupWindow]*/
     open fun initPopupWindow(popupWindow: PopupWindow, popupViewHolder: DslViewHolder) {
 
+    }
+
+    /** 更新[PopupWindow]的坐标
+     * 通过[xoff] [yoff] 更新位置*/
+    open fun updatePopup(updateLayout: Boolean = true) {
+        val window = _container
+        if (window != null) {
+            if (window is PopupWindow) {
+                window.update(anchor ?: parent, xoff + offsetX, yoff + offsetY, width, height)
+            }
+            contentView?.tagDslViewHolder()?.let {
+                onInitLayout(window, it)
+            }
+        }
     }
 
     //</editor-fold desc="PopupWindow">
@@ -288,6 +328,9 @@ open class PopupConfig {
 
     /**[autoOffset]后, 根布局所在的坐标矩形*/
     val rootViewRect = Rect()
+
+    /**[anchor]在屏幕中的坐标*/
+    val anchorViewRect = Rect()
 
     /**都会触发, 初始化View
      * [window] 有可能是[PopupWindow] 也有可能是*/
@@ -333,12 +376,13 @@ open class PopupConfig {
                 window.height = rootViewHeight
             }
 
-            val anchorViewRect = anchorView.getViewRect()
+            val anchorViewRect = anchorView.getViewRect(anchorViewRect)
             if (isAnchorInTopArea(anchorView)) {
                 //目标在屏幕的上半区
             } else {
                 //目标在屏幕的下半区
                 yoff = -(anchorViewRect.height() + rootViewHeight) - yoff
+                offsetY = -offsetY
             }
             rootViewRect.top = anchorViewRect.bottom + yoff
             rootViewRect.bottom = rootViewRect.top + rootViewHeight

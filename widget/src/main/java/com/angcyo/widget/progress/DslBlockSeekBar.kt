@@ -55,7 +55,15 @@ open class DslBlockSeekBar(context: Context, attributeSet: AttributeSet? = null)
     override fun onTouchEvent(event: MotionEvent): Boolean {
         super.onTouchEvent(event)
         _gestureDetector.onTouchEvent(event)
+        _touchListener?.onTouch(this, event)
         return true
+    }
+
+    /**手势事件*/
+    var _touchListener: OnTouchListener? = null
+    override fun setOnTouchListener(l: OnTouchListener?) {
+        //super.setOnTouchListener(l) //不能调用super的否则[onTouchEvent]可能不会触发
+        _touchListener = l
     }
 
     /**手指移动*/

@@ -1,8 +1,13 @@
 package com.angcyo.drawable
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Path
+import android.graphics.PointF
+import android.graphics.RectF
 import com.angcyo.drawable.base.AbsDslDrawable
+import com.angcyo.library.ex._color
 import com.angcyo.library.ex.dotDegrees
+import com.angcyo.library.ex.linearGradientShader
 import kotlin.math.min
 
 /**
@@ -24,10 +29,8 @@ class BubbleDrawable : AbsDslDrawable() {
     /**气泡右边圆起结束角度*/
     var rightEndAngle = 30f
 
-    init {
-        textPaint.style
-        textPaint.color = Color.RED
-    }
+    /**渐变色*/
+    var bubbleColors = intArrayOf(_color(R.color.colorPrimary), _color(R.color.colorPrimaryDark))
 
     /**初始化气泡路径*/
     fun initBubblePath() {
@@ -82,22 +85,11 @@ class BubbleDrawable : AbsDslDrawable() {
     override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
         super.setBounds(left, top, right, bottom)
         initBubblePath()
+        textPaint.shader = linearGradientShader(bubbleRect, bubbleColors)
     }
 
     override fun draw(canvas: Canvas) {
-        canvas.drawColor(Color.DKGRAY)
-
-        textPaint.color = Color.RED
         canvas.drawPath(bubblePath, textPaint)
-
-        textPaint.color = Color.YELLOW
-        canvas.drawLine(
-            drawRectF.centerX(),
-            drawRectF.top,
-            drawRectF.centerX(),
-            drawRectF.bottom,
-            textPaint
-        )
     }
 
 }
