@@ -38,6 +38,9 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
     /**是否激活光晕效果*/
     var enableHalo: Boolean = true
 
+    /**是否激活光晕效果下的进度矩形插入*/
+    var enableHaloInset: Boolean = true
+
     /**按下状态时, 光晕效果, [seekThumbDrawable] 后面额外绘制的[Drawable] 用于提示 [TouchDown] 状态, bounds 需要自带宽高属性*/
     var seekThumbTouchHaloDrawable: Drawable? = null
 
@@ -87,7 +90,7 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
             if (showThumbText) {
                 offset(0, _thumbTextDrawable.textHeight.toInt() / 2 + seekThumbTextOffsetY)
             }
-            if (enableHalo) {
+            if (enableHalo && enableHaloInset) {
                 inset(haloThumbSize / 2, 0)
             }
         }
@@ -158,6 +161,8 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
             typedArray.getBoolean(R.styleable.DslSeekBar_seek_show_thumb_text, showThumbText)
         enableHalo =
             typedArray.getBoolean(R.styleable.DslSeekBar_seek_enable_halo, enableHalo)
+        enableHaloInset =
+            typedArray.getBoolean(R.styleable.DslSeekBar_seek_enable_halo_inset, enableHaloInset)
 
         val thumbSolidColor = typedArray.getColor(
             R.styleable.DslSeekBar_seek_thumb_solid_color,
