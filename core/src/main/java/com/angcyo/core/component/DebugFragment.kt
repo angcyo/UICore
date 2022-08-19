@@ -54,6 +54,15 @@ class DebugFragment : BaseDslFragment() {
             add(DebugAction("error.log", appFilePath("error.log", Constant.LOG_FOLDER_NAME)))
         }
 
+        /**
+         * DebugFragment.addDebugAction {
+         *     name = "FileServer"
+         *     action = {
+         *       coreApp().bindFileServer()
+         *       //(RBackground.lastActivityRef?.get() as? LifecycleOwner ?: it)
+         *   }
+         * }
+         * */
         fun addDebugAction(action: DebugAction.() -> Unit) {
             DEBUG_ACTION_LIST.add(DebugAction().apply(action))
         }

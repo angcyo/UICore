@@ -13,7 +13,10 @@ import org.json.JSONObject
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
+typealias LogPrint = (tag: String, level: Int, msg: String) -> Unit
+
 object L {
+
     val LINE_SEPARATOR = System.getProperty("line.separator")
     val ARRAY_SEPARATOR = ","
 
@@ -24,16 +27,15 @@ object L {
     const val ERROR = 6
     const val FILE = 0xff//只写入文件, 不输出控制台
 
-    val DEFAULT_LOG_PRINT: (tag: String, level: Int, msg: String) -> Unit =
-        { tag, level, msg ->
-            when (level) {
-                VERBOSE -> Log.v(tag, msg)
-                DEBUG -> Log.d(tag, msg)
-                INFO -> Log.i(tag, msg)
-                WARN -> Log.w(tag, msg)
-                ERROR -> Log.e(tag, msg)
-            }
+    val DEFAULT_LOG_PRINT: LogPrint = { tag, level, msg ->
+        when (level) {
+            VERBOSE -> Log.v(tag, msg)
+            DEBUG -> Log.d(tag, msg)
+            INFO -> Log.i(tag, msg)
+            WARN -> Log.w(tag, msg)
+            ERROR -> Log.e(tag, msg)
         }
+    }
 
     var debug = isShowDebug()
 
@@ -57,8 +59,11 @@ object L {
     /**Json缩进偏移量*/
     var indentJsonDepth: Int = 2
 
+    /**日志输出列表*/
+    val logPrintList = mutableListOf<LogPrint>()
+
     /**打印回调*/
-    var logPrint: (tag: String, level: Int, msg: String) -> Unit = DEFAULT_LOG_PRINT
+    var logPrint: LogPrint = DEFAULT_LOG_PRINT
 
     //临时tag
     var _tempTag: String? = null
@@ -132,6 +137,9 @@ object L {
     }
 
     fun _log(vararg msg: Any?) {
+        if (!_needParseLog()) {
+            return
+        }
         if (!debug && _level < FILE) {
             //非文件log
             return
@@ -237,7 +245,15 @@ object L {
         }
 
         try {
-            logPrint(tag, _level, "$stackContext $logMsg")
+            //list
+            logPrintList.forEach {
+                it(tag, _level, "$stackContext $logMsg")
+            }
+
+            if (debug || _level == FILE) {
+                //debug模式下, 获取时File日志
+                logPrint(tag, _level, "$stackContext $logMsg")
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -263,6 +279,18 @@ object L {
 
         }
         return msg
+    }
+
+    /**是否需要解析日志*/
+    fun _needParseLog(): Boolean {
+        if (logPrintList.isNotEmpty()) {
+            return true
+        }
+        if (!debug && _level < FILE) {
+            //非文件log
+            return false
+        }
+        return true
     }
 }
 

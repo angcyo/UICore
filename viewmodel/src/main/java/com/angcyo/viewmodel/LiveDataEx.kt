@@ -1,5 +1,6 @@
 package com.angcyo.viewmodel
 
+import android.os.Looper
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -133,8 +134,22 @@ fun <T> vmDataNull(data: T? = null) = MutableErrorLiveData(data)
 
 fun <T> vmHoldDataNull(data: T? = null) = MutableHoldLiveData(data)
 
+/**[MutableLiveData]在主线程更新值*/
+fun <T> MutableLiveData<T>.updateValue(value: T?) {
+    if (Looper.getMainLooper() == Looper.myLooper()) {
+        this.value = value
+    } else {
+        postValue(value)
+    }
+}
+
+/**[MutableLiveData]在主线程通知更新值*/
 fun <T> MutableLiveData<T>.notify() {
-    value = value
+    if (Looper.getMainLooper() == Looper.myLooper()) {
+        this.value = value
+    } else {
+        notifyPost()
+    }
 }
 
 fun <T> MutableLiveData<T>.notifyPost() {
