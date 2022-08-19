@@ -1263,12 +1263,17 @@ open class DslAdapterItem : LifecycleOwner {
      * [onSetItemSelected]*/
     var itemSingleSelectMutex: Boolean = false
 
+    /**[otherItem]是否需要互斥*/
+    var itemIsSelectMutexAction: (otherItem: DslAdapterItem) -> Boolean = {
+        it.className() == this.className()
+    }
+
     /**选中状态改变回调*/
     @UpdateByNotify
     open fun onSetItemSelected(select: Boolean) {
         if (select && itemSingleSelectMutex) {
             itemDslAdapter?.eachItem { index, dslAdapterItem ->
-                if (dslAdapterItem.className() == this.className() && dslAdapterItem != this) {
+                if (dslAdapterItem != this && itemIsSelectMutexAction(dslAdapterItem)) {
                     //互斥操作
                     dslAdapterItem.itemIsSelected = false
                     dslAdapterItem.updateAdapterItem()
