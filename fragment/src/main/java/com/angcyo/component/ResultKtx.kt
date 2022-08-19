@@ -62,7 +62,7 @@ fun Fragment.getFile(type: String, onResult: (Uri?) -> Unit) {
  * [com.angcyo.core.component.FileSelectorFragment.fileSelector]
  * */
 fun FragmentManager.getFile(type: String, onResult: (Uri?) -> Unit) {
-
+    //val action = if (type.isImageMimeType()) Intent.ACTION_PICK else Intent.ACTION_GET_CONTENT
     val intent = Intent(Intent.ACTION_GET_CONTENT)
     intent.addCategory(Intent.CATEGORY_OPENABLE)
     intent.type = type
