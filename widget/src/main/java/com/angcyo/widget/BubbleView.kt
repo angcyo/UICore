@@ -15,8 +15,13 @@ import com.angcyo.widget.base.BaseDrawableView
  */
 class BubbleView(context: Context, attributeSet: AttributeSet? = null) :
     BaseDrawableView(context, attributeSet) {
+
     override fun initDrawables(list: MutableList<AbsDslDrawable>) {
         list.add(BubbleDrawable())
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
     fun bubbleDrawable(dsl: BubbleDrawable.() -> Unit) {

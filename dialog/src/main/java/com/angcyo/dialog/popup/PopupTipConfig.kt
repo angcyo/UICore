@@ -1,6 +1,7 @@
 package com.angcyo.dialog.popup
 
 import android.content.Context
+import android.graphics.Rect
 import android.view.Gravity
 import android.view.View
 import android.widget.PopupWindow
@@ -26,6 +27,9 @@ open class PopupTipConfig : PopupConfig() {
 
     /**限制[PopupWindow]的x中心在锚点矩形内*/
     var limitTouchInAnchor: Boolean = true
+
+    /**需要限制[touchX]再次横向范围内, 默认是[anchorViewRect]*/
+    var limitTouchRect: Rect? = null
 
     init {
         animationStyle = R.style.LibActionPopupAnimation
@@ -75,8 +79,10 @@ open class PopupTipConfig : PopupConfig() {
     /**检查边界限制*/
     fun checkLimit() {
         if (limitTouchInAnchor) {
-            val minOffset = -rootViewRect.width() / 2
-            val maxOffset = anchorViewRect.width() - rootViewRect.width() / 2
+            val rect = limitTouchRect ?: anchorViewRect
+            val rootViewWidth = rootViewRect.width() //Popup内容view的宽度
+            val minOffset = rect.left - rootViewWidth / 2
+            val maxOffset = rect.right - rootViewWidth / 2
             xoff = clamp(xoff, minOffset, maxOffset)
         }
         //L.i(xoff)

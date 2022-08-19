@@ -7,6 +7,7 @@ import android.graphics.RectF
 import com.angcyo.drawable.base.AbsDslDrawable
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.dotDegrees
+import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.linearGradientShader
 import kotlin.math.min
 
@@ -29,6 +30,9 @@ class BubbleDrawable : AbsDslDrawable() {
     /**气泡右边圆起结束角度*/
     var rightEndAngle = 30f
 
+    /**气泡的宽度, 高度是宽度的 2/3*/
+    var bubbleMinWidth = 40 * dpi
+
     /**渐变色*/
     var bubbleColors = intArrayOf(_color(R.color.colorPrimary), _color(R.color.colorPrimaryDark))
 
@@ -37,7 +41,7 @@ class BubbleDrawable : AbsDslDrawable() {
         val width = drawRect.width()
         val height = drawRect.height()
         val size = min(width, height)
-        val bubbleRadius = size / 3f
+        val bubbleRadius = size / 2f
         val radio = 1.2f
         bubbleRect.set(
             drawRectF.centerX() - bubbleRadius,
@@ -80,6 +84,16 @@ class BubbleDrawable : AbsDslDrawable() {
         )
         bubblePath.quadTo(c2.x, c2.y, startX, startY)
         bubblePath.close()
+    }
+
+    override fun getMinimumWidth(): Int {
+        val minWidth = bubbleMinWidth
+        return if (intrinsicWidth > minWidth) intrinsicWidth else minWidth
+    }
+
+    override fun getMinimumHeight(): Int {
+        val minHeight: Int = (minimumWidth / 2f * 3).toInt()
+        return if (intrinsicHeight > minHeight) intrinsicHeight else minHeight
     }
 
     override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {

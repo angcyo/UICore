@@ -198,7 +198,7 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
             var colors =
                 typedArray.getString(R.styleable.DslSeekBar_seek_thumb_touch_halo_gradient_colors)
 
-            if (colors?.split(",")?.size ?: 0 <= 1) {
+            if ((colors?.split(",")?.size ?: 0) <= 1) {
                 colors = "$colors,$colors"
             }
 
@@ -351,8 +351,15 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
         }
 
         _gestureDetector.onTouchEvent(event)
-
+        _touchListener?.onTouch(this, event)
         return true
+    }
+
+    /**手势事件*/
+    var _touchListener: OnTouchListener? = null
+    override fun setOnTouchListener(l: OnTouchListener?) {
+        //super.setOnTouchListener(l) //不能调用super的否则[onTouchEvent]可能不会触发
+        _touchListener = l
     }
 
     /**手指移动*/
