@@ -14,7 +14,7 @@ import com.angcyo.widget.DslViewHolder
  */
 class DoodleDialogConfig(context: Context? = null) : DslDialogConfig(context) {
 
-    val doodleUI = DoodleUI()
+    val doodleLayoutHelper = DoodleLayoutHelper()
 
     init {
         dialogLayoutId = R.layout.lib_doodle_dialog_layout
@@ -24,7 +24,7 @@ class DoodleDialogConfig(context: Context? = null) : DslDialogConfig(context) {
         super.initDialogView(dialog, dialogViewHolder)
 
         //
-        doodleUI.initUI(dialogViewHolder)
+        doodleLayoutHelper.initUI(dialogViewHolder)
     }
 
 }

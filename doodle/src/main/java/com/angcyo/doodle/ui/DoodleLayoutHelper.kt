@@ -14,7 +14,7 @@ import com.angcyo.widget.recycler.renderDslAdapter
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/08/19
  */
-class DoodleUI {
+class DoodleLayoutHelper {
 
     /**初始化入口*/
     @CallPoint
