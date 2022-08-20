@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -14,6 +15,7 @@ import android.view.Window
 import androidx.annotation.*
 import androidx.core.content.ContextCompat
 import com.angcyo.library.L
+import com.angcyo.library.PlaceholderApplication
 import com.angcyo.library.app
 import com.angcyo.library.component.defaultDensityAdapter
 import java.util.*
@@ -107,6 +109,9 @@ fun Context.loadDrawable(id: Int): Drawable? {
 
 @ColorInt
 fun getColor(@ColorRes id: Int, context: Context = app()): Int {
+    if (context is PlaceholderApplication) {
+        return Color.YELLOW
+    }
     return ContextCompat.getColor(context, id)
 }
 

@@ -4,7 +4,7 @@ import com.angcyo.doodle.element.BaseElement
 import com.angcyo.doodle.layer.BaseLayer
 
 /**
- * 事件
+ * 事件回调
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2022/07/25
@@ -13,6 +13,12 @@ import com.angcyo.doodle.layer.BaseLayer
 interface IDoodleListener {
 
     //region ---Layer/Element---
+
+    /**有涂层添加*/
+    fun onLayerAdd(layer: BaseLayer) {}
+
+    /**有涂层移除*/
+    fun onLayerRemove(layer: BaseLayer) {}
 
     /**操作图层改变回调*/
     fun onOperateLayerChanged(from: BaseLayer?, to: BaseLayer?) {}

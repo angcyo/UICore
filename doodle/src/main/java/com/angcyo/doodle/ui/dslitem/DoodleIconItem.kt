@@ -1,8 +1,12 @@
 package com.angcyo.doodle.ui.dslitem
 
+import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import com.angcyo.doodle.R
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.library.ex._color
+import com.angcyo.library.ex._drawable
+import com.angcyo.library.ex.color
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -19,6 +23,10 @@ open class DoodleIconItem : DslAdapterItem() {
     /**文本*/
     var itemText: CharSequence? = null
 
+    /**被禁用时的图标颜色*/
+    @ColorInt
+    var itemIcoDisableColor: Int = _color(R.color.doodle_item_disable)
+
     init {
         itemLayoutId = R.layout.item_doodle_icon_layout
     }
@@ -31,9 +39,18 @@ open class DoodleIconItem : DslAdapterItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
-        //itemHolder.img(R.id.lib_image_view)?.setImageDrawable(drawable)
-        itemHolder.img(R.id.lib_image_view)?.setImageResource(itemIco)
+        //
+        val imageView = itemHolder.img(R.id.lib_image_view)
+        if (itemEnable) {
+            imageView?.setImageResource(itemIco)
+        } else {
+            val drawable = _drawable(itemIco)?.run {
+                color(itemIcoDisableColor)
+            }
+            imageView?.setImageDrawable(drawable)
+        }
 
+        //
         itemHolder.gone(R.id.lib_text_view, itemText == null)
         itemHolder.tv(R.id.lib_text_view)?.text = itemText
     }

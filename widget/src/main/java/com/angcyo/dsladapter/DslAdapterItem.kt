@@ -307,6 +307,7 @@ open class DslAdapterItem : LifecycleOwner {
         adapterItem: DslAdapterItem,
         payloads: List<Any>
     ) {
+        _initItemEnable(itemHolder)
         _initItemBackground(itemHolder)
         _initItemSize(itemHolder)
         _initItemPadding(itemHolder)
@@ -408,6 +409,11 @@ open class DslAdapterItem : LifecycleOwner {
     //</editor-fold desc="标准属性">
 
     //<editor-fold desc="内部初始化">
+
+    //初始化激活状态
+    open fun _initItemEnable(itemHolder: DslViewHolder) {
+        itemHolder.enable(itemHolder.itemView, itemEnable, true)
+    }
 
     //初始化背景
     open fun _initItemBackground(itemHolder: DslViewHolder) {

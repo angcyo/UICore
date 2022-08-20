@@ -23,7 +23,7 @@
         style="@style/LibBodyTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/doodle_color"
+        android:textColor="@color/doodle_item_text_selector"
         tools:text="!!橡皮擦!!" />
 
 </LinearLayout>

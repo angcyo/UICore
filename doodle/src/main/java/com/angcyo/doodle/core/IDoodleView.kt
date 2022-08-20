@@ -29,6 +29,12 @@ interface IDoodleView {
     /**派发操作的图层改变通知*/
     fun dispatchOperateLayerChanged(from: BaseLayer?, to: BaseLayer?)
 
+    /**派发图层添加*/
+    fun dispatchLayerAdd(layer: BaseLayer)
+
+    /**派发图层移除*/
+    fun dispatchLayerRemove(layer: BaseLayer)
+
     /**派发操作的笔刷改变通知*/
     fun dispatchTouchRecognizeChanged(from: ITouchRecognize?, to: ITouchRecognize?)
 

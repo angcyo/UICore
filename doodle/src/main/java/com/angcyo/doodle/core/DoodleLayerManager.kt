@@ -44,6 +44,12 @@ class DoodleLayerManager(val doodleDelegate: DoodleDelegate) {
         canvas.restoreToCount(saveCount)
     }
 
+    /**所有图层中, 是否有元素*/
+    fun haveElement(): Boolean {
+        val count = layerList.sumOf { it.elementList.size }
+        return count > 0
+    }
+
     //region ---图层操作---
 
     /**更新当前操作的图层*/
@@ -64,6 +70,7 @@ class DoodleLayerManager(val doodleDelegate: DoodleDelegate) {
         }) {
             layerList.add(layer)
             doodleDelegate.refresh()
+            doodleDelegate.dispatchLayerAdd(layer)
         }
 
         if (isEmpty) {
@@ -81,6 +88,7 @@ class DoodleLayerManager(val doodleDelegate: DoodleDelegate) {
         }) {
             layerList.remove(layer)
             doodleDelegate.refresh()
+            doodleDelegate.dispatchLayerRemove(layer)
         }
 
         if (operateLayer == layer) {

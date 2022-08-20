@@ -2,9 +2,14 @@ package com.angcyo.doodle.ui
 
 import android.app.Dialog
 import android.content.Context
+import android.graphics.Bitmap
 import com.angcyo.dialog.DslDialogConfig
 import com.angcyo.dialog.configBottomDialog
 import com.angcyo.doodle.R
+import com.angcyo.doodle.core.IDoodleListener
+import com.angcyo.doodle.element.BaseElement
+import com.angcyo.doodle.layer.BaseLayer
+import com.angcyo.library.ex.trimEdgeColor
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -16,6 +21,9 @@ class DoodleDialogConfig(context: Context? = null) : DslDialogConfig(context) {
 
     val doodleLayoutHelper = DoodleLayoutHelper()
 
+    /**返回的回调*/
+    var onDoodleResultAction: (Bitmap) -> Unit = {}
+
     init {
         dialogLayoutId = R.layout.lib_doodle_dialog_layout
     }
@@ -24,7 +32,45 @@ class DoodleDialogConfig(context: Context? = null) : DslDialogConfig(context) {
         super.initDialogView(dialog, dialogViewHolder)
 
         //
-        doodleLayoutHelper.initUI(dialogViewHolder)
+        doodleLayoutHelper.initLayout(dialogViewHolder)
+        doodleLayoutHelper.doodleView?.doodleDelegate?.doodleListenerList?.add(object :
+            IDoodleListener {
+
+            override fun onLayerAdd(layer: BaseLayer) {
+                updateConfirmButton(dialogViewHolder)
+            }
+
+            override fun onLayerRemove(layer: BaseLayer) {
+                updateConfirmButton(dialogViewHolder)
+            }
+
+            override fun onElementAttach(elementList: List<BaseElement>, layer: BaseLayer) {
+                updateConfirmButton(dialogViewHolder)
+            }
+
+            override fun onElementDetach(elementList: List<BaseElement>, layer: BaseLayer) {
+                updateConfirmButton(dialogViewHolder)
+            }
+        })
+
+        //确定
+        dialogViewHolder.click(R.id.confirm_button) {
+            doodleLayoutHelper.doodleView?.doodleDelegate?.apply {
+                doodleLayerManager.backgroundLayer = null//不要背景
+                val bitmap = getPreviewBitmap().trimEdgeColor()
+                onDoodleResultAction(bitmap)
+
+                //
+                dialog.dismiss()
+            }
+        }
+    }
+
+    fun updateConfirmButton(dialogViewHolder: DslViewHolder) {
+        dialogViewHolder.enable(
+            R.id.confirm_button,
+            doodleLayoutHelper.doodleView?.doodleDelegate?.doodleLayerManager?.haveElement() == true
+        )
     }
 
 }

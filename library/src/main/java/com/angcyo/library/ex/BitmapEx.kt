@@ -549,7 +549,7 @@ fun ByteArray.toChannelBitmap(width: Int, height: Int, channelType: Int = Color.
  * @param color 需要移除的边界颜色值
  * @return 清除边界后的Bitmap
  */
-fun Bitmap.trimEdgeColor(color: Int = Color.TRANSPARENT, margin: Int = 0): Bitmap? {
+fun Bitmap.trimEdgeColor(color: Int = Color.TRANSPARENT, margin: Int = 0): Bitmap {
     var blank = margin
 
     val height = height

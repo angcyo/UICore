@@ -136,6 +136,18 @@ class DoodleDelegate(val view: View) : IDoodleView {
 
     //region ---Core---
 
+    override fun dispatchLayerAdd(layer: BaseLayer) {
+        doodleListenerList.forEach {
+            it.onLayerAdd(layer)
+        }
+    }
+
+    override fun dispatchLayerRemove(layer: BaseLayer) {
+        doodleListenerList.forEach {
+            it.onLayerRemove(layer)
+        }
+    }
+
     override fun dispatchOperateLayerChanged(from: BaseLayer?, to: BaseLayer?) {
         doodleListenerList.forEach {
             it.onOperateLayerChanged(from, to)

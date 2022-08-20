@@ -35,12 +35,15 @@
             android:text="@string/doodle_title" />
 
         <com.angcyo.widget.DslButton
+            android:id="@+id/confirm_button"
             style="@style/DefaultButtonMinStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical"
             android:layout_marginRight="@dimen/lib_hdpi"
-            android:text="@string/dialog_positive" />
+            android:enabled="false"
+            android:text="@string/dialog_positive"
+            tools:ignore="TouchTargetSizeCheck" />
 
     </LinearLayout>
 
@@ -63,25 +66,55 @@
         app:r_layout_manager="h"
         tools:layout_height="54dp" />
 
-    <LinearLayout
+    <com.angcyo.component.WeightWrapLinearLayout
         android:id="@+id/property_wrap_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/lib_xhdpi"
         android:layout_marginBottom="@dimen/lib_xhdpi"
         android:background="@drawable/doodle_property_shape"
-        android:elevation="12dp"
+        android:elevation="2dp"
+        android:gravity="center_vertical"
         app:layout_constraintBottom_toTopOf="@id/doodle_item_view"
         app:layout_constraintRight_toRightOf="parent">
+
+        <!--seekbar-->
+        <LinearLayout
+            android:id="@+id/size_wrap_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="visible">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                style="@style/LibBodyTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/lib_hdpi"
+                android:text="大小" />
+
+            <com.angcyo.widget.progress.DslSeekBar
+                android:id="@+id/size_seek_bar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:progress_bg_gradient_colors="#D9D9D9" />
+
+        </LinearLayout>
 
         <!--动态添加-->
         <LinearLayout
             android:id="@+id/undo_wrap_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" />
+            android:orientation="horizontal"
+            tools:background="@color/transparent20"
+            tools:layout_height="60dp"
+            tools:layout_width="80dp" />
 
-    </LinearLayout>
+    </com.angcyo.component.WeightWrapLinearLayout>
 
     <!--标题阴影-->
     <View
