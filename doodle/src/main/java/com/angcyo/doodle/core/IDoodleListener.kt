@@ -14,14 +14,14 @@ interface IDoodleListener {
 
     //region ---Layer/Element---
 
+    /**操作图层改变回调*/
+    fun onOperateLayerChanged(from: BaseLayer?, to: BaseLayer?) {}
+
     /**有涂层添加*/
     fun onLayerAdd(layer: BaseLayer) {}
 
     /**有涂层移除*/
     fun onLayerRemove(layer: BaseLayer) {}
-
-    /**操作图层改变回调*/
-    fun onOperateLayerChanged(from: BaseLayer?, to: BaseLayer?) {}
 
     /**笔刷改变回调*/
     fun onTouchRecognizeChanged(from: ITouchRecognize?, to: ITouchRecognize?) {}

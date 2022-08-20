@@ -64,6 +64,11 @@ class DoodleDialogConfig(context: Context? = null) : DslDialogConfig(context) {
                 dialog.dismiss()
             }
         }
+
+        //back
+        dialogViewHolder.click(R.id.lib_title_back_view) {
+            dialog.dismiss()
+        }
     }
 
     fun updateConfirmButton(dialogViewHolder: DslViewHolder) {
