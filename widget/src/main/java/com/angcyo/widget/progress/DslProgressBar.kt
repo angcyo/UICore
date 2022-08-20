@@ -577,4 +577,12 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             this.progressValue = p
         }
     }
+
+    fun getProgress(value: Float, minValue: Float, maxValue: Float): Int {
+        return ((value - minValue) / (maxValue - minValue) * 100).toInt()
+    }
+
+    fun getValue(progress: Int, minValue: Float, maxValue: Float): Int {
+        return (minValue + (maxValue - minValue) * progress / 100).toInt()
+    }
 }

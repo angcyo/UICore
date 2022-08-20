@@ -101,7 +101,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:progress_bg_gradient_colors="#D9D9D9" />
+                app:progress_bg_gradient_colors="#D9D9D9"
+                app:progress_height="3dp" />
 
         </LinearLayout>
 
