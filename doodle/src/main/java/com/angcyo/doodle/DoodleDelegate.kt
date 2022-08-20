@@ -138,8 +138,7 @@ class DoodleDelegate(val view: View) : IDoodleView {
 
     override fun dispatchLayerAdd(layer: BaseLayer) {
         doodleListenerList.forEach {
-            //it.onDoodleLayerAdd(layer)
-            it.onLayerRemove(layer)
+            it.onLayerAdd(layer)
         }
     }
 
