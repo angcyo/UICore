@@ -30,7 +30,7 @@ class DebugFragment : BaseDslFragment() {
 
         /**调试入口*/
         val DEBUG_ACTION_LIST = mutableListOf<DebugAction>().apply {
-            add(DebugAction("debug ${if (Library.isDebugTypeVal) "√" else "×"}", action = {
+            add(DebugAction("debug ${if (isDebug()) "√" else "×"}", action = {
                 Library.isDebugTypeVal = !Library.isDebugTypeVal
             }))
 
