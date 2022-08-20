@@ -542,6 +542,101 @@ fun ByteArray.toChannelBitmap(width: Int, height: Int, channelType: Int = Color.
     return channelBitmap
 }
 
+/**
+ * 逐行扫描 清除边界空白
+ *
+ * @param margin 边距留多少个像素
+ * @param color 需要移除的边界颜色值
+ * @return 清除边界后的Bitmap
+ */
+fun Bitmap.trimEdgeColor(color: Int = Color.TRANSPARENT, margin: Int = 0): Bitmap? {
+    var blank = margin
+
+    val height = height
+    val width = width
+    var widthPixels = IntArray(width)
+    var isStop: Boolean
+
+    var top = 0
+    var left = 0
+    var right = 0
+    var bottom = 0
+
+    //top
+    for (y in 0 until height) {
+        getPixels(widthPixels, 0, width, 0, y, width, 1)
+        isStop = false
+        for (pix in widthPixels) {
+            if (pix != color) {
+                top = y
+                isStop = true
+                break
+            }
+        }
+        if (isStop) {
+            break
+        }
+    }
+
+    //bottom
+    for (y in height - 1 downTo 0) {
+        getPixels(widthPixels, 0, width, 0, y, width, 1)
+        isStop = false
+        for (pix in widthPixels) {
+            if (pix != color) {
+                bottom = y
+                isStop = true
+                break
+            }
+        }
+        if (isStop) {
+            break
+        }
+    }
+
+    //left
+    widthPixels = IntArray(height)
+    for (x in 0 until width) {
+        getPixels(widthPixels, 0, 1, x, 0, 1, height)
+        isStop = false
+        for (pix in widthPixels) {
+            if (pix != color) {
+                left = x
+                isStop = true
+                break
+            }
+        }
+        if (isStop) {
+            break
+        }
+    }
+    //right
+    for (x in width - 1 downTo 1) {
+        getPixels(widthPixels, 0, 1, x, 0, 1, height)
+        isStop = false
+        for (pix in widthPixels) {
+            if (pix != color) {
+                right = x
+                isStop = true
+                break
+            }
+        }
+        if (isStop) {
+            break
+        }
+    }
+    if (blank < 0) {
+        blank = 0
+    }
+    //
+    left = if (left - blank > 0) left - blank else 0
+    top = if (top - blank > 0) top - blank else 0
+    right = if (right + blank > width - 1) width - 1 else right + blank
+    bottom = if (bottom + blank > height - 1) height - 1 else bottom + blank
+    //
+    return Bitmap.createBitmap(this, left, top, right - left, bottom - top)
+}
+
 /**[Canvas]*/
 fun bitmapCanvas(
     width: Int,
