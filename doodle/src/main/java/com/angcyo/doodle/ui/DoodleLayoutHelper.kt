@@ -99,10 +99,12 @@ class DoodleLayoutHelper {
                     val doodleConfig = doodleView?.doodleDelegate?.doodleConfig
                     viewHolder.context.singleColorPickerDialog {
                         initialColor = doodleConfig?.paintColor ?: Color.BLACK
-                        colorPickerResultAction = { dialog, color ->
-                            doodleConfig?.paintColor = color
+                        onDismissListener = {
                             itemIsSelected = false
                             updateAdapterItem()
+                        }
+                        colorPickerResultAction = { dialog, color ->
+                            doodleConfig?.paintColor = color
                             false
                         }
                     }
