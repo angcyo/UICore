@@ -51,21 +51,6 @@ class DoodleLayoutHelper {
         //items
         viewHolder.rv(R.id.doodle_item_view)?.renderDslAdapter {
             DoodleFunItem()() {
-                itemIco = R.drawable.doodle_brush
-                itemText = "毛笔"
-                itemClick = {
-                    if (!itemIsSelected) {
-                        itemIsSelected = true
-                        updateAdapterItem()
-                        viewHolder.visible(R.id.size_wrap_layout)
-                        updateBrush(ZenCircleBrush())
-                    }
-                }
-                //默认使用毛笔
-                itemIsSelected = true
-                updateBrush(ZenCircleBrush())
-            }
-            DoodleFunItem()() {
                 itemIco = R.drawable.doodle_pencil
                 itemText = "钢笔"
                 itemClick = {
@@ -74,6 +59,21 @@ class DoodleLayoutHelper {
                         updateAdapterItem()
                         viewHolder.visible(R.id.size_wrap_layout)
                         updateBrush(PenBrush())
+                    }
+                }
+                //默认使用钢笔
+                itemIsSelected = true
+                updateBrush(PenBrush())
+            }
+            DoodleFunItem()() {
+                itemIco = R.drawable.doodle_brush
+                itemText = "毛笔"
+                itemClick = {
+                    if (!itemIsSelected) {
+                        itemIsSelected = true
+                        updateAdapterItem()
+                        viewHolder.visible(R.id.size_wrap_layout)
+                        updateBrush(ZenCircleBrush())
                     }
                 }
             }

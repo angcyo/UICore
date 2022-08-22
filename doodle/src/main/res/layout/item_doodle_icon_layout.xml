@@ -4,7 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/lib_dpi"
-    android:background="@drawable/doodle_item_selector"
+    android:background="@drawable/lib_theme_horizontal_gradient_selector"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/lib_ldpi"
@@ -23,7 +23,7 @@
         style="@style/LibBodyTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/doodle_item_text_selector"
+        android:textColor="@color/lib_theme_text_selector"
         tools:text="!!橡皮擦!!" />
 
 </LinearLayout>
