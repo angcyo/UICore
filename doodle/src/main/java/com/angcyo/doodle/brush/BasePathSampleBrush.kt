@@ -8,6 +8,7 @@ import com.angcyo.library.ex.before
 import com.angcyo.library.ex.bezier
 import com.angcyo.library.ex.eachPath
 import com.angcyo.library.ex.size
+import kotlin.math.min
 
 /**
  * 二阶贝塞尔曲线路径采样数据收集器
@@ -60,7 +61,8 @@ abstract class BasePathSampleBrush : BaseBrush() {
 
             //开始采样
             //L.i(_tempPath.length())
-            _tempPath.eachPath(pathSampleStep) { index, ratio, posArray ->
+            val step = min(pathSampleStep, manager.doodleDelegate.doodleConfig.paintWidth)
+            _tempPath.eachPath(step) { index, ratio, posArray ->
                 val width = startWidth + (endWidth - startWidth) * ratio
                 val pathSampleInfo = PathSampleInfo(posArray[0], posArray[1], width)
                 onPathSample(pathSampleInfo)
