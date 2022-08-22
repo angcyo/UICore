@@ -7,14 +7,14 @@
     android:background="@drawable/doodle_item_selector"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingHorizontal="@dimen/lib_hdpi"
+    android:paddingHorizontal="@dimen/lib_ldpi"
     android:paddingBottom="@dimen/lib_sdpi">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/lib_image_view"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:padding="@dimen/lib_ldpi"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:padding="@dimen/lib_sdpi"
         android:scaleType="fitCenter"
         tools:src="@drawable/doodle_eraser" />
 
