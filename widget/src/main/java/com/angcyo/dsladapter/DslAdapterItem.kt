@@ -469,8 +469,10 @@ open class DslAdapterItem : LifecycleOwner {
     //初始化事件
     open fun _initItemListener(itemHolder: DslViewHolder) {
         val clickListener = _clickListener
-        if (itemClick == null || clickListener == null || !itemEnable) {
-            itemHolder.itemView.isClickable = false
+        if (itemClick == null || clickListener == null) {
+            if (!itemEnable) {
+                itemHolder.itemView.setOnClickListener(null)
+            }
         } else {
             if (clickListener is ThrottleClickListener) {
                 clickListener.throttleInterval = itemClickThrottleInterval
