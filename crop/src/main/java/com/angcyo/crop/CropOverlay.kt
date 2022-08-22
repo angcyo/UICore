@@ -25,6 +25,9 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         const val TYPE_CIRCLE = 2
     }
 
+    /**是否激活蒙层绘制, 如果激活, 则会在无手势触发时绘制阴影*/
+    var enableOverlay: Boolean = true
+
     /**蒙层的颜色*/
     var overlayColor: Int = Color.parseColor("#80000000")
 
@@ -66,8 +69,8 @@ class CropOverlay(val cropDelegate: CropDelegate) {
     }
 
     /**剪切框的比例
-     * [null] 表示原始比例
-     * [setBitmapRatio] 图片比例
+     * [null] 表示自由比例
+     * [setBitmapRatio] 图片比例/原始比例
      * [updateClipRatio] 自定义比例*/
     var clipRatio: Float? = null
         set(value) {
@@ -218,15 +221,27 @@ class CropOverlay(val cropDelegate: CropDelegate) {
 
     @CallPoint
     fun onDraw(canvas: Canvas) {
-        val saveCount = canvas.saveLayerAlpha(255)
+        if (clipRect.isEmpty) {
+            return
+        }
 
         //镂空
-        if (!_isTouchDown) {
+        if (enableOverlay && (!_isTouchDown || enableClipMoveMode)) {
+            val saveCount = canvas.saveLayerAlpha(255)
+            /*if (enableClipMoveMode) {
+                paint.style = Paint.Style.FILL
+                paint.color = overlayColor
+                canvas.drawRect(cropDelegate._bestRect, paint)
+            } else {
+                canvas.drawColor(overlayColor)
+            }*/
             canvas.drawColor(overlayColor)
             canvas.drawPath(_clipPath, clipPaint)
+            canvas.restoreToCount(saveCount)
         }
 
         //灰色透明边框
+        paint.style = Paint.Style.STROKE
         paint.color = rectBorderColor
         paint.strokeWidth = rectBorderWidth
         canvas.drawRect(clipRect, paint)
@@ -253,8 +268,6 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         canvas.drawPath(getRTPath(), cornersPaint)
         canvas.drawPath(getRBPath(), cornersPaint)
         canvas.drawPath(getLBPath(), cornersPaint)
-
-        canvas.restoreToCount(saveCount)
     }
 
     /**查找坐标落在矩形的什么位置上*/
@@ -362,7 +375,10 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         setBitmapRatio()
     }
 
-    /**更新裁剪类型*/
+    /**更新裁剪类型
+     * [com.angcyo.crop.CropOverlay.TYPE_ROUND]
+     * [com.angcyo.crop.CropOverlay.TYPE_CIRCLE]
+     * */
     fun updateClipType(type: Int) {
         clipType = type
         updateClipPath()
@@ -374,8 +390,12 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         updateClipRatio(cropDelegate._bestRect.width() * 1f / cropDelegate._bestRect.height())
     }
 
-    /**更新裁剪比例*/
-    fun updateClipRatio(ratio: Float?) {
+    /**更新裁剪比例
+     * [null] 表示自由比例
+     * [setBitmapRatio] 图片比例/原始比例
+     * [updateClipRatio] 自定义比例
+     * */
+    fun updateClipRatio(ratio: Float? = null) {
         clipRatio = ratio
         updateClipRect()
         cropDelegate.moveBitmapToRect(clipRect.rectF, true)

@@ -354,7 +354,8 @@ class CropDelegate(val view: View) {
     val _bestRect = Rect()
 
     /**更新图片数据*/
-    fun updateBitmap(bitmap: Bitmap) {
+    @CallPoint
+    fun updateBitmap(bitmap: Bitmap, useBitmapRadio: Boolean = true) {
         if (!view.isLaidOut) {
             view.post {
                 updateBitmap(bitmap)
@@ -363,12 +364,11 @@ class CropDelegate(val view: View) {
         }
         _bitmap = bitmap
         _bitmapOriginRect.set(0, 0, bitmap.width, bitmap.height)
-
-        updateRotate(rotate, false)
+        updateRotate(rotate, useBitmapRadio, false)
     }
 
-    /**更新旋转角度*/
-    fun updateRotate(rotate: Float, anim: Boolean = true) {
+    /**更新旋转角度 */
+    fun updateRotate(rotate: Float, useBitmapRadio: Boolean = false, anim: Boolean = true) {
         this.rotate = rotate % 360
 
         val bestRect = calcBestRect(_bitmapOriginRect.rectF)
@@ -376,7 +376,12 @@ class CropDelegate(val view: View) {
 
         moveBitmapToRect(bestRect, anim)
 
-        overlay.reset()
+        if (useBitmapRadio) {
+            overlay.clipRatio = _bestRect.width() * 1f / _bestRect.height()//图片比例
+        }
+
+        //更新
+        overlay.updateClipRatio(overlay.clipRatio)
     }
 
     /**重置到默认状态*/
@@ -443,8 +448,11 @@ class CropDelegate(val view: View) {
     }
 
     /**剪裁*/
-    fun crop(): Bitmap {
+    fun crop(): Bitmap? {
         val clipRect = overlay.clipRect
+        if (clipRect.isEmpty || _bitmap == null) {
+            return null
+        }
         val bitmap =
             Bitmap.createBitmap(clipRect.width(), clipRect.height(), Bitmap.Config.ARGB_8888)
         val canvas = CropCanvas(bitmap)
