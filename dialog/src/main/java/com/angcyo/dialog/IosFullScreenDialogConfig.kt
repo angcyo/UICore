@@ -13,7 +13,6 @@ import com.angcyo.dialog.dslitem.DslDialogTextItem
 import com.angcyo.dsladapter.filter.batchLoad
 import com.angcyo.library._screenHeight
 import com.angcyo.library.ex.*
-import com.angcyo.library.ex.*
 import com.angcyo.widget.ActivityScreenshotImageView
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.behavior
@@ -42,7 +41,7 @@ class IosFullScreenDialogConfig : BaseDialogConfig() {
         //dialogGravity = Gravity.TOP
 
         //取消变暗
-        amount = 0f
+        dimAmount = 0f
 
         //全屏的三金刚属性
         dialogWidth = -1

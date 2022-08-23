@@ -149,7 +149,7 @@ fun Context.loading2(
             //去掉默认的dialog背景
             dialogBgDrawable = ColorDrawable(Color.TRANSPARENT)
             //去掉变暗
-            amount = 0f
+            dimAmount = 0f
             //动画样式
             animStyleResId = R.style.LibDialogAlphaAnimation
             //初始化布局
@@ -192,7 +192,7 @@ fun ActivityResultCaller.loadingBottom(
         config = {
             dialogGravity = Gravity.BOTTOM
             animStyleResId = R.style.LibDialogBottomTranslateAnimation
-            amount = 0.2f
+            dimAmount = 0.2f
             dialogWidth = -1
         },
         onCancel = onCancel
@@ -288,7 +288,7 @@ fun ActivityResultCaller.dslLoading(
             if (bottom) {
                 dialogGravity = Gravity.BOTTOM
                 animStyleResId = R.style.LibDialogBottomTranslateAnimation
-                amount = 0.2f
+                dimAmount = 0.2f
                 dialogWidth = -1
             }
             config.loadingConfig(this)

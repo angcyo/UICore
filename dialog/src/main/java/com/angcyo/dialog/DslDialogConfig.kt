@@ -182,13 +182,19 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
     /** 自动计算宽高 */
     var autoWidthHeight = false
 
-    /**
+    /** 0.2f
      * 对话框变暗指数, [0,1]
      * 0表示, 不变暗
      * 1表示, 全暗
      * undefined_res, 默认
      */
-    var amount: Float = undefined_float
+    var dimAmount: Float = undefined_float
+
+    /** 64
+     * 高斯模糊背景
+     * [Build.VERSION_CODES.S]
+     * */
+    var blurBehindRadius: Int = undefined_size
 
     /** window动画资源
      * 0 取消动画*/
@@ -392,8 +398,16 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
         if (dialogBgDrawable !is UndefinedDrawable) {
             window.setBackgroundDrawable(dialogBgDrawable)
         }
-        if (amount != undefined_float) {
-            window.setDimAmount(amount)
+        //变暗
+        if (dimAmount != undefined_float) {
+            window.addFlags(FLAG_DIM_BEHIND)
+            window.setDimAmount(dimAmount)
+        }
+        //模糊
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && blurBehindRadius != undefined_size) {
+            window.addFlags(FLAG_BLUR_BEHIND)
+            window.attributes.blurBehindRadius = blurBehindRadius
+            window.addFlags(FLAG_DIM_BEHIND)
         }
         if (animStyleResId != undefined_res) {
             window.setWindowAnimations(animStyleResId)

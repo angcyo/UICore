@@ -37,7 +37,7 @@ open class LoadingDialogConfig : BaseDialogConfig() {
         dialogBgDrawable = ColorDrawable(Color.TRANSPARENT)
 
         //去掉变暗
-        amount = 0f
+        dimAmount = 0f
 
         //动画样式
         animStyleResId = R.style.LibDialogAlphaAnimation
