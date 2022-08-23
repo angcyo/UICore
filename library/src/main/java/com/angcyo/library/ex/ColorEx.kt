@@ -140,7 +140,7 @@ fun Int.toHexColorString(prefix: String = "#"): String {
     val r = Color.red(this)
     val g = Color.green(this)
     val b = Color.blue(this)
-    return String.format(Locale.getDefault(), "${prefix}%02X%02X%02X%02X", a, r, g, b)
+    return String.format(Locale.US, "${prefix}%02X%02X%02X%02X", a, r, g, b)
 }
 
 @ColorInt

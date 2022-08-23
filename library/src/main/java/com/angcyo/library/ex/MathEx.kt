@@ -3,6 +3,7 @@ package com.angcyo.library.ex
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
+import java.util.*
 import kotlin.math.*
 
 /**
@@ -102,7 +103,7 @@ fun Double.decimal(digit: Int = 2, fadedUp: Boolean = false): String {
     } else {
         (this * f).toInt()
     } / f
-    return String.format("%.${digit}f", value.toFloat())
+    return String.format(Locale.US, "%.${digit}f", value.toFloat())
 }
 
 /**保留小数点后几位*/

@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.provider.Settings
 import com.angcyo.library.L
 import com.angcyo.library.app
+import java.util.*
 
 /**
  *
@@ -168,7 +169,7 @@ object RNfc {
         val ret = StringBuilder()
         if (bytes != null) {
             for (b in bytes) {
-                ret.append(String.format("%02X", b.toInt() and 0xFF))
+                ret.append(String.format(Locale.US, "%02X", b.toInt() and 0xFF))
             }
         }
         return ret.toString()

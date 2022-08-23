@@ -40,7 +40,7 @@ object LTime {
         //val h = m / 24
 
         return "${s}s${ms}ms"
-        //return "${String.format("%.3f", s + ms)}s"
+        //return "${String.format(Locale.US, "%.3f", s + ms)}s"
     }
 
     //-------------------------------
