@@ -147,7 +147,7 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
         super.attachBaseContext(LanguageModel.attachBaseContext(base))
         //Reflection.unseal(base)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P /*&& Build.VERSION.SDK_INT < Build.VERSION_CODES.S*/) {
             //HiddenApiBypass.addHiddenApiExemptions("L")
             HiddenApiBypass.addHiddenApiExemptions("")
         }

@@ -3,6 +3,7 @@ package com.angcyo.core.component.file
 import android.content.Context
 import com.angcyo.coroutine.CoroutineErrorHandler
 import com.angcyo.coroutine.launchGlobal
+import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.ex.wrapLog
 import com.angcyo.library.libCacheFile
@@ -133,13 +134,16 @@ fun FileTextData?.writeToCache(
 }
 
 /**将日志写入到指定的日志文件[log.log]*/
-fun String.writeToLog(name: String = "log.log"): String {
+fun String.writeToLog(name: String = "log.log", log: Boolean = true): String {
     wrapLog().writeTo(Constant.LOG_FOLDER_NAME, name)
+    if (log) {
+        L.e(this)
+    }
     return this
 }
 
 /**将日志写入到[error.log]*/
-fun String.writeErrorLog(): String {
-    writeToLog("error.log")
+fun String.writeErrorLog(log: Boolean = true): String {
+    writeToLog("error.log", log)
     return this
 }

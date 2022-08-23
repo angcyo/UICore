@@ -56,6 +56,8 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
             append(LanguageModel.getTimeZoneDes())
             append("/")
             append(LanguageModel.getCurrentLanguage())
+            append("/")
+            append(LanguageModel.getCurrentLanguageTag())
 
             val vpn = Device.vpnInfo()
             val proxy = Device.proxyInfo()

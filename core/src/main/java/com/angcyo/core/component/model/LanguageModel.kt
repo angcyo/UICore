@@ -262,6 +262,16 @@ class LanguageModel : ViewModel() {
             val country = locale.country
             return language + "_" + country
         }
+
+        /**zh-Hans-CN*/
+        fun getCurrentLanguageTag(context: Context = app()): String {
+            val locale = context.resources.configuration.locale
+            return locale.toLanguageTag()
+        }
+
+        fun createLanguageForTag(languageTag: String): Locale {
+            return Locale.forLanguageTag(languageTag)
+        }
     }
 
     /**设置的语言
