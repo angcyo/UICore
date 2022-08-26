@@ -21,8 +21,8 @@ open class DrawableItem : BaseItem() {
     /**更新[drawable]*/
     open fun updateDrawable(drawable: Drawable?) {
         this.drawable = drawable
-        this.itemWidth = drawable?.minimumWidth?.toFloat() ?: 0f
-        this.itemHeight = drawable?.minimumHeight?.toFloat() ?: 0f
+        this.itemWidth = drawable?.intrinsicWidth?.toFloat() ?: 0f
+        this.itemHeight = drawable?.intrinsicHeight?.toFloat() ?: 0f
     }
 
     override fun updateItem(paint: Paint) {

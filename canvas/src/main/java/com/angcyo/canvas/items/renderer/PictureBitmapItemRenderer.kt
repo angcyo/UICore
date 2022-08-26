@@ -20,8 +20,8 @@ class PictureBitmapItemRenderer(canvasView: ICanvasView) :
     fun setRenderBitmap(bitmap: Bitmap): PictureBitmapItem {
         val item = PictureBitmapItem()
         item.originBitmap = bitmap
-        item.bitmap = bitmap
         item.previewBitmap = bitmap
+        item.bitmap = bitmap
         _rendererItem = item
 
         onRendererItemUpdate()
@@ -32,7 +32,7 @@ class PictureBitmapItemRenderer(canvasView: ICanvasView) :
      * [bounds] 需要更新的Bounds, 如果有*/
     fun updateItemBitmap(
         bitmap: Bitmap,
-        holdData: Map<String, Any?>? = null,
+        holdData: Map<String, Any?>? = getRendererItem()?.holdData,
         bounds: RectF? = null,
         strategy: Strategy = Strategy.normal
     ) {
@@ -44,14 +44,11 @@ class PictureBitmapItemRenderer(canvasView: ICanvasView) :
 
         val oldBounds = RectF(getBounds())
         val oldData = item.holdData
+        val oldPreviewBitmap = item.previewBitmap
 
-        if (bounds != null) {
-            item.holdData = holdData
-            item.bitmap = bitmap
-        } else {
-            item.holdData = holdData
-            item.bitmap = bitmap
-        }
+        item.holdData = holdData
+        item.bitmap = bitmap
+        item.previewBitmap = oldPreviewBitmap
 
         onRendererItemUpdate()//
 

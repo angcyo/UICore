@@ -34,13 +34,16 @@ class PictureBitmapItem : PictureItem() {
 
     /**更新Drawable*/
     override fun updateItem(paint: Paint) {
-        (previewBitmap ?: bitmap)?.let { bitmap ->
-            val itemWidth = bitmap.width
-            val itemHeight = bitmap.height
+        val b = /*previewBitmap ?: */bitmap
+        if (b == null) {
+            super.updateItem(paint)
+        } else {
+            val itemWidth = b.width
+            val itemHeight = b.height
 
             bitmapBounds.set(0f, 0f, itemWidth.toFloat(), itemHeight.toFloat())
             val drawable = ScalePictureDrawable(withPicture(itemWidth, itemHeight) {
-                drawBitmap(bitmap, null, bitmapBounds, null)
+                drawBitmap(b, null, bitmapBounds, null)
             })
 
             this.drawable = drawable
