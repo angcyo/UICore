@@ -167,8 +167,8 @@ class CropOverlay(val cropDelegate: CropDelegate) {
                 onClipRectChangedAction(
                     rect.width() / targetRect.width(),
                     rect.height() / targetRect.height(),
-                    rectAnchorX,
-                    rectAnchorY
+                    rectAnchorRotateX,
+                    rectAnchorRotateY
                 )
             } else {
                 cropDelegate.refresh()

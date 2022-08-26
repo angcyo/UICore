@@ -18,7 +18,12 @@ typealias LogPrint = (tag: String, level: Int, msg: String) -> Unit
 object L {
 
     val LINE_SEPARATOR = System.getProperty("line.separator")
+
+    /**数据结构item分割*/
     val ARRAY_SEPARATOR = ","
+
+    /**多log消息输出分割*/
+    val LOG_SEPARATOR = " "
 
     const val VERBOSE = 2
     const val DEBUG = 3
@@ -176,14 +181,14 @@ object L {
         //log内容
         val logBuilder = StringBuilder()
         val logMsg = logBuilder.apply {
-            msg.forEach {
-                when (it) {
-                    is CharSequence -> append(_wrapJson("$it"))
+            msg.forEachIndexed { msgIndex, msgAny ->
+                when (msgAny) {
+                    is CharSequence -> append(_wrapJson("$msgAny"))
                     is Iterable<*> -> {
                         append("[")
-                        it.forEachIndexed { index, any ->
+                        msgAny.forEachIndexed { index, any ->
                             append(any.toString())
-                            if (index != it.count() - 1) {
+                            if (index != msgAny.count() - 1) {
                                 append(ARRAY_SEPARATOR)
                             }
                         }
@@ -191,9 +196,9 @@ object L {
                     }
                     is Array<*> -> {
                         append("[")
-                        it.forEachIndexed { index, any ->
+                        msgAny.forEachIndexed { index, any ->
                             append(any.toString())
-                            if (index != it.count() - 1) {
+                            if (index != msgAny.count() - 1) {
                                 append(ARRAY_SEPARATOR)
                             }
                         }
@@ -201,9 +206,9 @@ object L {
                     }
                     is IntArray -> {
                         append("[")
-                        it.forEachIndexed { index, any ->
+                        msgAny.forEachIndexed { index, any ->
                             append(any.toString())
-                            if (index != it.count() - 1) {
+                            if (index != msgAny.count() - 1) {
                                 append(ARRAY_SEPARATOR)
                             }
                         }
@@ -211,9 +216,9 @@ object L {
                     }
                     is LongArray -> {
                         append("[")
-                        it.forEachIndexed { index, any ->
+                        msgAny.forEachIndexed { index, any ->
                             append(any.toString())
-                            if (index != it.count() - 1) {
+                            if (index != msgAny.count() - 1) {
                                 append(ARRAY_SEPARATOR)
                             }
                         }
@@ -221,9 +226,9 @@ object L {
                     }
                     is FloatArray -> {
                         append("[")
-                        it.forEachIndexed { index, any ->
+                        msgAny.forEachIndexed { index, any ->
                             append(any.toString())
-                            if (index != it.count() - 1) {
+                            if (index != msgAny.count() - 1) {
                                 append(ARRAY_SEPARATOR)
                             }
                         }
@@ -231,15 +236,18 @@ object L {
                     }
                     is DoubleArray -> {
                         append("[")
-                        it.forEachIndexed { index, any ->
+                        msgAny.forEachIndexed { index, any ->
                             append(any.toString())
-                            if (index != it.count() - 1) {
+                            if (index != msgAny.count() - 1) {
                                 append(ARRAY_SEPARATOR)
                             }
                         }
                         append("]")
                     }
-                    else -> append(it.toString())
+                    else -> append(msgAny.toString())
+                }
+                if (msgIndex != msg.count() - 1) {
+                    append(LOG_SEPARATOR)
                 }
             }
         }
