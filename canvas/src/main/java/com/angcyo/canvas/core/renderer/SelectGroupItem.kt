@@ -1,6 +1,7 @@
 package com.angcyo.canvas.core.renderer
 
 import com.angcyo.canvas.items.BaseItem
+import com.angcyo.canvas.utils.CanvasConstant
 
 /**
  * [com.angcyo.canvas.core.renderer.SelectGroupRenderer]
@@ -8,5 +9,11 @@ import com.angcyo.canvas.items.BaseItem
  * @since 2022/05/09
  */
 open class SelectGroupItem : BaseItem() {
+
+    init {
+        itemLayerName = "Group"
+        dataType = CanvasConstant.DATA_TYPE_GROUP
+        dataMode = 0
+    }
 
 }

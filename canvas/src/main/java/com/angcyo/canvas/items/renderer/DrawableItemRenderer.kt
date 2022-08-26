@@ -3,18 +3,23 @@ package com.angcyo.canvas.items.renderer
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.drawable.Drawable
 import androidx.core.graphics.withMatrix
-import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.renderer.ICanvasStep
-import com.angcyo.canvas.items.*
-import com.angcyo.canvas.utils.CanvasDataHandleOperate
-import com.angcyo.library.ex.*
-import com.angcyo.svg.Svg
-import com.pixplicity.sharp.SharpDrawable
+import com.angcyo.canvas.items.DrawableItem
+import com.angcyo.canvas.items.PictureBitmapItem
+import com.angcyo.canvas.items.PictureShapeItem
+import com.angcyo.canvas.items.PictureTextItem
+import com.angcyo.library.component.ScalePictureDrawable
+import com.angcyo.library.ex.adjustFlipRect
+import com.angcyo.library.ex.emptyRectF
+import com.angcyo.library.ex.isFlipHorizontal
+import com.angcyo.library.ex.isFlipVertical
 
 /**
+ * 用来绘制[android.graphics.drawable.Drawable]
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/11
  */
@@ -32,7 +37,6 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasView: ICanvasView) :
 
     override fun getName(): CharSequence? {
         return _name ?: when (_rendererItem) {
-            is ShapeItem -> "Shape"
             is PictureTextItem -> "Text"
             is PictureBitmapItem -> "Bitmap"
             is PictureShapeItem -> "Shape"
@@ -42,20 +46,6 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasView: ICanvasView) :
 
     override fun onUpdateRendererItem(item: T?, oldItem: T?) {
         super.onUpdateRendererItem(item, oldItem)
-        initBounds(item, oldItem)
-    }
-
-    /**初始化默认的宽高*/
-    open fun initBounds(item: T?, oldItem: T?) {
-        if (item != oldItem) {
-            val width = _rendererItem?.drawable?.minimumWidth?.toFloat() ?: 0f
-            val height = _rendererItem?.drawable?.minimumHeight?.toFloat() ?: 0f
-            if (width > 0 && height > 0) {
-                changeBounds {
-                    adjustSize(width, height, ADJUST_TYPE_LT)
-                }
-            }
-        }
     }
 
     override fun render(canvas: Canvas) {
@@ -97,41 +87,34 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasView: ICanvasView) :
 
     //</editor-fold desc="初始化">
 
-    /**更新笔的样式, 目前只对[com.pixplicity.sharp.SharpDrawable]有效*/
+    /**更新笔的样式
+     * 针对[com.pixplicity.sharp.SharpDrawable]特殊处理*/
     open fun updatePaintStyle(style: Paint.Style, strategy: Strategy = Strategy.normal) {
-        val rendererItem = getRendererItem()
-        val oldValue = rendererItem?.paint?.style
+        val oldValue = paint.style
         if (oldValue == style) {
             return
         }
-
-        val drawable = rendererItem?.drawable
-        if (drawable is SharpDrawable) {
-            if (drawable.pathList.isNotEmpty()) {
-                rendererItem.paint.style = style
-
-                val sharpDrawable =
-                    Svg.loadPathList(drawable.pathList, drawable.pathBounds, style, null, 0, 0)
-                rendererItem.drawable = sharpDrawable
-                rendererItem.setHoldData(CanvasDataHandleOperate.KEY_SVG, sharpDrawable.pathList)
-
-                refresh()
-                if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
-                    canvasViewBox.canvasView.getCanvasUndoManager()
-                        .addUndoAction(object : ICanvasStep {
-                            override fun runUndo() {
-                                updatePaintStyle(
-                                    oldValue ?: Paint.Style.STROKE,
-                                    Strategy.undo
-                                )
-                            }
-
-                            override fun runRedo() {
-                                updatePaintStyle(style, Strategy.redo)
-                            }
-                        })
+        paint.style = style
+        onRendererItemUpdate()
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    updatePaintStyle(oldValue, Strategy.undo)
                 }
-            }
+
+                override fun runRedo() {
+                    updatePaintStyle(style, Strategy.redo)
+                }
+            })
         }
+    }
+
+    /**设置渲染的[drawable]*/
+    open fun setRenderDrawable(drawable: Drawable): T {
+        val item = DrawableItem()
+        item.drawable = drawable
+        _rendererItem = item as T
+        onRendererItemUpdate()
+        return item
     }
 }

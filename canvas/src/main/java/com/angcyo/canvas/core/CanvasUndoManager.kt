@@ -1,5 +1,6 @@
 package com.angcyo.canvas.core
 
+import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import java.util.*
 
@@ -61,19 +62,26 @@ class CanvasUndoManager(val canvasView: ICanvasView) {
     fun canRedo(): Boolean = redoStack.isNotEmpty()
 
     /**添加一个可以被撤销和重做的操作, 并且立即执行重做*/
-    fun addAndRedo(undo: () -> Unit, redo: () -> Unit): ICanvasStep {
+    fun addAndRedo(
+        strategy: Strategy,
+        undo: (strategy: Strategy) -> Unit,
+        redo: (strategy: Strategy) -> Unit
+    ): ICanvasStep? {
         val step = object : ICanvasStep {
             override fun runUndo() {
-                undo()
+                undo(Strategy.undo)
             }
 
             override fun runRedo() {
-                redo()
+                redo(Strategy.redo)
             }
         }
         step.runRedo()
-        addUndoAction(step)
-        return step
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            addUndoAction(step)
+            return step
+        }
+        return null
     }
 
 }

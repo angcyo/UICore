@@ -1,7 +1,7 @@
 package com.angcyo.canvas.items
 
 import android.graphics.Bitmap
-import com.angcyo.canvas.items.BaseItem
+import com.angcyo.canvas.utils.CanvasConstant
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -14,6 +14,7 @@ class BitmapItem : BaseItem() {
 
     init {
         itemLayerName = "Bitmap"
+        dataType = CanvasConstant.DATA_TYPE_BITMAP
     }
 
 }

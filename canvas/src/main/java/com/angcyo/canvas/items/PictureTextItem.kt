@@ -2,7 +2,10 @@ package com.angcyo.canvas.items
 
 import android.graphics.Paint
 import android.graphics.Rect
+import android.graphics.Typeface
 import android.widget.LinearLayout
+import com.angcyo.canvas.TypefaceInfo
+import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
@@ -11,12 +14,32 @@ import kotlin.math.tan
 
 /**
  * 文本组件渲染数据
+ *
+ * [com.angcyo.canvas.laser.pecker.CanvasFontPopupConfig]
+ *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/21
  */
 class PictureTextItem : PictureItem() {
 
     companion object {
+
+        /**默认的字体列表*/
+        val DEFAULT_TYPEFACE_LIST = mutableListOf<TypefaceInfo>().apply {
+            //系统默认字体
+            //typefaceItem("normal", Typeface.DEFAULT)
+            //typefaceItem("sans", Typeface.SANS_SERIF)
+            add(TypefaceInfo("serif", Typeface.SERIF))
+            add(TypefaceInfo("Default-Normal", Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)))
+            add(TypefaceInfo("Default-Bold", Typeface.create(Typeface.DEFAULT, Typeface.BOLD)))
+            add(TypefaceInfo("Default-Italic", Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)))
+            add(
+                TypefaceInfo(
+                    "Default-Bold-Italic",
+                    Typeface.create(Typeface.DEFAULT, Typeface.BOLD_ITALIC)
+                )
+            )
+        }
 
         /**字体样式, 无*/
         const val TEXT_STYLE_NONE = 0x00
@@ -60,33 +83,38 @@ class PictureTextItem : PictureItem() {
     /**高度增益的大小*/
     var heightIncrease: Float = 0f
 
+    /**字体样式*/
+    var textStyle: Int = TEXT_STYLE_NONE
+
+    /**默认字体*/
+    var textTypeface: Typeface? = DEFAULT_TYPEFACE_LIST[1].typeface
+
     init {
         itemLayerName = "Text"
         compactText = true
         wordSpacing = 1 * dp //字间距
-
-        //默认文本大小
-        paint.textSize = 40 * dp
+        dataType = CanvasConstant.DATA_TYPE_TEXT
+        dataMode = CanvasConstant.DATA_MODE_GREY
     }
 
     /**获取每一行的文本*/
     fun lineTextList(text: String): List<String> = text.lines()
 
     /**计算多行文本的宽度*/
-    fun calcTextWidth(text: String): Float {
+    fun calcTextWidth(paint: Paint, text: String): Float {
         var result = 0f
         val lineTextList = lineTextList(text)
         if (orientation == LinearLayout.HORIZONTAL) {
             //横向排列
             lineTextList.forEach {
-                result = max(result, measureTextWidth(it))
+                result = max(result, measureTextWidth(paint, it))
             }
         } else {
             //纵向排列
             lineTextList.forEach { lineText ->
                 var lineMax = 0f
                 lineText.forEach {
-                    lineMax = max(measureTextWidth("$it"), lineMax)
+                    lineMax = max(measureTextWidth(paint, "$it"), lineMax)
                 }
                 result += lineMax
             }
@@ -96,13 +124,13 @@ class PictureTextItem : PictureItem() {
     }
 
     /**计算多行文本的高度*/
-    fun calcTextHeight(text: String): Float {
+    fun calcTextHeight(paint: Paint, text: String): Float {
         var result = 0f
         val lineTextList = lineTextList(text)
         if (orientation == LinearLayout.HORIZONTAL) {
             //横向排列
             lineTextList.forEach { lineText ->
-                result += measureTextHeight(lineText)
+                result += measureTextHeight(paint, lineText)
             }
             result += lineSpacing * (lineTextList.size - 1)
         } else {
@@ -111,7 +139,7 @@ class PictureTextItem : PictureItem() {
                 var lineHeight = 0f
                 lineText.forEach {
                     //一个字一个字的高度
-                    lineHeight += measureTextHeight("$it")
+                    lineHeight += measureTextHeight(paint, "$it")
                 }
                 lineHeight += wordSpacing * (lineText.length - 1)
                 result = max(result, lineHeight)
@@ -126,7 +154,7 @@ class PictureTextItem : PictureItem() {
     var _skewWidth: Float = 0f
 
     /**单行文本字符的宽度*/
-    fun measureTextWidth(text: String): Float {
+    fun measureTextWidth(paint: Paint, text: String): Float {
         paint.textBounds(text, _textMeasureBounds)
         val textWidth = if (compactText) {
             _textMeasureBounds.width().toFloat()
@@ -151,7 +179,7 @@ class PictureTextItem : PictureItem() {
     }
 
     /**单个文本字符的高度*/
-    fun measureTextHeight(text: String): Float {
+    fun measureTextHeight(paint: Paint, text: String): Float {
         return if (compactText) {
             paint.textBounds(text, _textMeasureBounds)
             _textMeasureBounds.height().toFloat()
@@ -161,7 +189,7 @@ class PictureTextItem : PictureItem() {
     }
 
     /**下沉的距离*/
-    fun measureTextDescent(text: String): Float {
+    fun measureTextDescent(paint: Paint, text: String): Float {
         return if (compactText) {
             paint.textBounds(text).bottom.toFloat()
         } else {
@@ -169,16 +197,16 @@ class PictureTextItem : PictureItem() {
         }
     }
 
-    override fun updatePictureDrawable(resetSize: Boolean) {
+    /**重绘文本[Drawable]
+     * [com.angcyo.canvas.items.DrawableItem.drawable]
+     * */
+    override fun updateItem(paint: Paint) {
         text?.let { drawText ->
             //createStaticLayout(drawText, paint)
-            val width = calcTextWidth(drawText) + widthIncrease
-            val height = calcTextHeight(drawText) + heightIncrease
+            val width = calcTextWidth(paint, drawText) + widthIncrease
+            val height = calcTextHeight(paint, drawText) + heightIncrease
 
-            val itemWidth = width
-            val itemHeight = height
-
-            val drawable = ScalePictureDrawable(withPicture(itemWidth.toInt(), itemHeight.toInt()) {
+            val drawable = ScalePictureDrawable(withPicture(width.toInt(), height.toInt()) {
                 val lineTextList = lineTextList(drawText)
 
                 var x = 0f
@@ -186,14 +214,14 @@ class PictureTextItem : PictureItem() {
 
                 if (orientation == LinearLayout.HORIZONTAL) {
                     x = when (paint.textAlign) {
-                        Paint.Align.RIGHT -> itemWidth
-                        Paint.Align.CENTER -> itemWidth / 2
+                        Paint.Align.RIGHT -> width
+                        Paint.Align.CENTER -> width / 2
                         else -> 0f
                     }
 
                     lineTextList.forEach { lineText ->
-                        val lineTextHeight = calcTextHeight(lineText)
-                        val descent = measureTextDescent(lineText)
+                        val lineTextHeight = calcTextHeight(paint, lineText)
+                        val descent = measureTextDescent(paint, lineText)
 
                         val offsetX = if (compactText) {
                             when (paint.textAlign) {
@@ -211,7 +239,7 @@ class PictureTextItem : PictureItem() {
                     }
                 } else {
                     lineTextList.forEach { lineText ->
-                        val textWidth = calcTextWidth(lineText)
+                        val textWidth = calcTextWidth(paint, lineText)
 
                         var offsetX = when (paint.textAlign) {
                             Paint.Align.RIGHT -> textWidth - _skewWidth.toInt()
@@ -221,8 +249,8 @@ class PictureTextItem : PictureItem() {
 
                         lineText.forEach { char ->
                             val text = "$char"
-                            y += measureTextHeight(text)
-                            val descent = measureTextDescent(text)
+                            y += measureTextHeight(paint, text)
+                            val descent = measureTextDescent(paint, text)
                             val textBounds = paint.textBounds(text)
 
                             if (compactText) {
@@ -243,8 +271,8 @@ class PictureTextItem : PictureItem() {
             })
 
             this.drawable = drawable
-            this.itemWidth = itemWidth
-            this.itemHeight = itemHeight
+            this.itemWidth = width
+            this.itemHeight = height
         }
     }
 }

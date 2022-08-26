@@ -29,13 +29,6 @@ class BitmapItemRenderer(canvasView: ICanvasView) :
 
     override fun onUpdateRendererItem(item: BitmapItem?, oldItem: BitmapItem?) {
         super.onUpdateRendererItem(item, oldItem)
-        changeBounds {
-            adjustSize(
-                item?.bitmap?.width?.toFloat() ?: 0f,
-                item?.bitmap?.height?.toFloat() ?: 0f,
-                ADJUST_TYPE_LT
-            )
-        }
     }
 
     override fun render(canvas: Canvas) {

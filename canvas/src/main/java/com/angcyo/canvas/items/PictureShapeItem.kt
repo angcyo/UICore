@@ -6,6 +6,7 @@ import android.graphics.Path
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.LinePictureDrawable
 import com.angcyo.canvas.core.MmValueUnit
+import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.ex.*
 import kotlin.math.roundToInt
@@ -35,13 +36,13 @@ class PictureShapeItem : PictureItem() {
     val lineStrokeEffect = DashPathEffect(floatArrayOf(4 * density, 5 * density), 0f)
 
     init {
-        paint.strokeWidth = 1f //* dp
-        paint.style = Paint.Style.FILL_AND_STROKE
         itemLayerName = "Shape"
+        dataType = CanvasConstant.DATA_TYPE_PATH
+        dataMode = CanvasConstant.DATA_MODE_GCODE
     }
 
     /**将[shapePath]转换成可以渲染的[Drawable]*/
-    override fun updatePictureDrawable(resetSize: Boolean) {
+    override fun updateItem(paint: Paint) {
         shapePath?.let { path ->
             val unit = MmValueUnit()
             val strokeWidth = paint.strokeWidth
@@ -49,7 +50,7 @@ class PictureShapeItem : PictureItem() {
 
             val shapeWidth = if (path is LinePath) {
                 shapeBounds.width()
-            } else if (!resetSize && itemWidth > 0) {
+            } else if (itemWidth > 0) {
                 itemWidth
             } else if (!shapeBounds.isNoSize()) {
                 shapeBounds.width() + strokeWidth
@@ -59,7 +60,7 @@ class PictureShapeItem : PictureItem() {
 
             val shapeHeight = if (path is LinePath) {
                 shapeBounds.height()
-            } else if (!resetSize && itemHeight > 0) {
+            } else if (itemHeight > 0) {
                 itemHeight
             } else if (!shapeBounds.isNoSize()) {
                 shapeBounds.height() + strokeWidth

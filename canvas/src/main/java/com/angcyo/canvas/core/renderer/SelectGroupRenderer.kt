@@ -14,11 +14,8 @@ import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.core.OffsetItemData
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.control.RotateControlPoint
-import com.angcyo.canvas.items.PictureBitmapItem
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
-import com.angcyo.canvas.items.renderer.PictureItemRenderer
-import com.angcyo.canvas.utils.createPaint
 import com.angcyo.drawable.*
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
@@ -36,11 +33,6 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
     /**保存选中渲染项*/
     val selectItemList = mutableSetOf<BaseItemRenderer<*>>()
 
-    /**画笔*/
-    val paint = createPaint().apply {
-        strokeWidth = 1 * dp
-    }
-
     /**选择框的颜色*/
     var paintColor: Int = _color(R.color.canvas_select)
 
@@ -53,6 +45,9 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
     var _isStart = false
 
     init {
+        paint.strokeWidth = 1 * dp
+        paint.style = Paint.Style.STROKE
+
         canvasDelegate.addCanvasListener(this)
     }
 
@@ -94,24 +89,6 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         super.onSelectedItem(itemRenderer, oldItemRenderer)
         if (itemRenderer == this) {
             //选中的是自己
-            var haveBitmapItem = false
-            for (item in selectItemList) {
-                if (item is PictureItemRenderer) {
-                    haveBitmapItem = item.getRendererItem() is PictureBitmapItem
-                    if (haveBitmapItem) {
-                        break
-                    }
-                }
-            }
-            if (haveBitmapItem) {
-                _rendererItem = SelectGroupBitmapItem().apply {
-                    itemLayerName = "Group Bitmap"
-                }
-            } else {
-                _rendererItem = SelectGroupGCodeItem().apply {
-                    itemLayerName = "Group GCode"
-                }
-            }
         } else {
             reset()
         }

@@ -1,10 +1,8 @@
 package com.angcyo.canvas.items
 
-import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.drawable.Drawable
-import android.text.TextPaint
-import com.angcyo.canvas.utils.*
-import com.angcyo.library.ex.dp
+import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.ex.uuid
 
 /**
@@ -19,11 +17,28 @@ abstract class BaseItem : ICanvasItem {
     /**雕刻数据的索引, 改变位置后, 不用更新索引. 调整宽高旋转分辨率后需要更新索引*/
     var engraveIndex: Int? = null
 
-    /**标签, 自定义的属性, 用来区分数据*/
-    var tag: String? = null
+    /**数据类型
+     * [CanvasConstant.DATA_TYPE_BITMAP]
+     * [CanvasConstant.DATA_TYPE_TEXT]
+     * [CanvasConstant.DATA_TYPE_SVG]
+     * [CanvasConstant.DATA_TYPE_GCODE]
+     * */
+    var dataType: Int = 0
+
+    /**数据处理的模式
+     * [CanvasConstant.DATA_MODE_GCODE]
+     * [CanvasConstant.DATA_MODE_DITHERING]
+     * [CanvasConstant.DATA_MODE_BLACK_WHITE]
+     * */
+    var dataMode: Int = 0
 
     /**用来存放自定义的数据*/
     var data: Any? = null
+
+    /**额外存储的数据, 支持回退栈管理*/
+    var holdData: Map<String, Any?>? = null
+
+    //
 
     /**自身实际的宽*/
     var itemWidth: Float = 0f
@@ -31,37 +46,20 @@ abstract class BaseItem : ICanvasItem {
     /**自身实际的高*/
     var itemHeight: Float = 0f
 
-    /**绘制的画笔属性*/
-    var paint = createTextPaint(Color.BLACK).apply {
-        //init
-        textSize = 12 * dp
-    }
-
-    /**字体样式*/
-    var textStyle: Int = PictureTextItem.TEXT_STYLE_NONE
-
-    /**额外存储的数据, 支持回退栈管理*/
-    var holdData: Map<String, Any?>? = null
-
-    /**更新画笔*/
-    open fun updatePaint(paint: TextPaint = this.paint) {
-        this.paint = paint
-        paint.let {
-            it.isStrikeThruText = textStyle.isDeleteLine
-            it.isUnderlineText = textStyle.isUnderLine
-            it.isFakeBoldText = textStyle.isTextBold
-            it.textSkewX = if (textStyle.isTextItalic) PictureTextItem.ITALIC_SKEW else 0f
-            //it.typeface = paintTypeface
-            //it.textAlign = paintAlign
-            //it.style = paintStyle
-        }
-    }
+    //
 
     /**图层预览的名称*/
     override var itemLayerName: CharSequence? = null
 
     /**图层预览的图形*/
     override var itemLayerDrawable: Drawable? = null
+
+    //
+
+    /**更新[BaseItem]用来重新绘制内容*/
+    open fun updateItem(paint: Paint) {
+
+    }
 }
 
 /**获取额外存储的数据

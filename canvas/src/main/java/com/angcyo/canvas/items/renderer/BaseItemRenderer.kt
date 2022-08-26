@@ -12,6 +12,8 @@ import com.angcyo.canvas.core.renderer.BaseRenderer
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.PictureShapeItem
+import com.angcyo.canvas.utils.createTextPaint
+import com.angcyo.canvas.utils.limitMaxWidthHeight
 import com.angcyo.library.L
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.ex.*
@@ -66,6 +68,16 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     val _oldBounds = emptyRectF()
 
     //</editor-fold desc="属性">
+
+    //<editor-fold desc="绘制相关属性">
+
+    /**绘制的画笔属性*/
+    var paint = createTextPaint(Color.BLACK).apply {
+        //init
+        textSize = 40 * dp //默认字体大小
+    }
+
+    //</editor-fold desc="绘制相关属性">
 
     //<editor-fold desc="计算属性">
 
@@ -395,15 +407,104 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         }
     }
 
+    //</editor-fold desc="控制方法">
+
+    //<editor-fold desc="绘制相关方法">
+
+    /**当渲染的[drawable]改变后, 调用此方法, 更新bounds*/
+    fun updateDrawableBounds(
+        oldWidth: Float = getRendererItem()?.itemWidth ?: 0f,
+        oldHeight: Float = getRendererItem()?.itemHeight ?: 0f
+    ) {
+        getRendererItem()?.let { item ->
+            var isUpdate = false
+
+            val bounds = getBounds()
+
+            val width = bounds.width()
+            val height = bounds.height()
+
+            val newWith = item.itemWidth
+            val newHeight = item.itemHeight
+
+            if (bounds.isNoSize() || oldWidth == 0f || oldHeight == 0f) {
+                //首次更新bounds
+                if (width != newWith || height != newHeight) {
+                    isUpdate = true
+                    updateBounds(newWith, newHeight)
+                }
+            } else {
+                //再次更新bounds
+                val scaleWidth = width / oldWidth
+                val scaleHeight = height / oldHeight
+                if (scaleWidth == 1f && scaleHeight == 1f) {
+                    if ((width >= height && newWith >= newHeight) || (width < height && newWith < newHeight)) {
+                        //方向一致, 比如一致的宽图, 一致的长图
+
+                        //限制目标大小到原来的大小
+                        limitMaxWidthHeight(newWith, newHeight, oldWidth, oldHeight).apply {
+                            isUpdate = true
+                            updateBounds(this[0], this[1])
+                        }
+                    } else {
+                        //方向不一致, 使用新的宽高
+                        isUpdate = true
+                        updateBounds(newWith, newHeight)
+                    }
+                } else {
+                    //重新缩放当前的大小,达到和原来的缩放效果一致性
+                    if ((width >= height && newWith >= newHeight) || (width < height && newWith < newHeight)) {
+                        //方向一致, 比如一致的宽图, 一致的长图
+                        isUpdate = true
+                        updateBounds(newWith * scaleWidth, newHeight * scaleHeight)
+                    } else {
+                        //方向不一致
+                        isUpdate = true
+                        updateBounds(newWith * scaleHeight, newHeight * scaleWidth)
+                    }
+                }
+            }
+
+            //未被更新
+            if (!isUpdate) {
+                canvasView.dispatchItemRenderUpdate(this)
+                refresh()
+            }
+        }
+    }
+
+    /**更新画笔绘制文本时的对齐方式*/
+    open fun updatePaintAlign(align: Paint.Align, strategy: Strategy = Strategy.normal) {
+        val oldValue = paint.textAlign
+        if (oldValue == align) {
+            return
+        }
+        paint.textAlign = align
+        onRendererItemUpdate()
+
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    updatePaintAlign(oldValue ?: Paint.Align.LEFT, Strategy.undo)
+                }
+
+                override fun runRedo() {
+                    updatePaintAlign(align, Strategy.redo)
+                }
+            })
+        }
+    }
+
     /**更新笔的颜色*/
     open fun updatePaintColor(color: Int, strategy: Strategy = Strategy.normal) {
-        val rendererItem = getRendererItem() ?: return
-        val oldValue = rendererItem.paint.color
+        val oldValue = paint.color
         if (oldValue == color) {
             return
         }
-        rendererItem.paint.color = color
-        rendererItem.updatePaint()
+        paint.color = color
+
+        //更新需要绘制的元素
+        onRendererItemUpdate()
 
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
             canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
@@ -416,11 +517,23 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
                 }
             })
         }
-        canvasView.dispatchItemRenderUpdate(this)
-        //刷新
-        refresh()
     }
 
-    //</editor-fold desc="控制方法">
+    /**重写此方法, 更新需要渲染的元素.
+     * 比如: 画笔颜色改变, 需要重绘文本; 图片更新; Drawable更新等
+     * */
+    open fun onRendererItemUpdate() {
+        getRendererItem()?.let { item ->
+            val oldWidth = getRendererItem()?.itemWidth ?: 0f
+            val oldHeight = getRendererItem()?.itemHeight ?: 0f
+            item.updateItem(paint)
+            updateDrawableBounds(oldWidth, oldHeight)
+        }
 
+        //刷新
+        refresh()
+        canvasView.dispatchItemRenderUpdate(this)
+    }
+
+    //</editor-fold desc="绘制相关方法">
 }

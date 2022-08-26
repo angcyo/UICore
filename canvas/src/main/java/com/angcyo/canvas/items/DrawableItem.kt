@@ -1,6 +1,8 @@
 package com.angcyo.canvas.items
 
+import android.graphics.Paint
 import android.graphics.drawable.Drawable
+import com.angcyo.canvas.utils.CanvasConstant
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -13,13 +15,18 @@ open class DrawableItem : BaseItem() {
 
     init {
         itemLayerName = "Drawable"
+        dataType = CanvasConstant.DATA_TYPE_BITMAP
     }
 
     /**更新[drawable]*/
-    fun updateDrawable(drawable: Drawable?) {
+    open fun updateDrawable(drawable: Drawable?) {
         this.drawable = drawable
         this.itemWidth = drawable?.minimumWidth?.toFloat() ?: 0f
         this.itemHeight = drawable?.minimumHeight?.toFloat() ?: 0f
+    }
+
+    override fun updateItem(paint: Paint) {
+        updateDrawable(drawable)
     }
 
 }

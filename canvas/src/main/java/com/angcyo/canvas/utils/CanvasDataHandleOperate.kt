@@ -36,12 +36,12 @@ object CanvasDataHandleOperate {
     const val KEY_SVG = "key_svg"
 
     /**数据处理的算法模式
-     * [com.angcyo.canvas.utils.CanvasConstant.BITMAP_MODE_PRINT]
-     * [com.angcyo.canvas.utils.CanvasConstant.BITMAP_MODE_GCODE]
-     * [com.angcyo.canvas.utils.CanvasConstant.BITMAP_MODE_BLACK_WHITE]
-     * [com.angcyo.canvas.utils.CanvasConstant.BITMAP_MODE_DITHERING]
-     * [com.angcyo.canvas.utils.CanvasConstant.BITMAP_MODE_GREY]
-     * [com.angcyo.canvas.utils.CanvasConstant.BITMAP_MODE_SEAL]
+     * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_PRINT]
+     * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_GCODE]
+     * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_BLACK_WHITE]
+     * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_DITHERING]
+     * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_GREY]
+     * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_SEAL]
      * */
     const val KEY_DATA_MODE = "key_data_mode"
 

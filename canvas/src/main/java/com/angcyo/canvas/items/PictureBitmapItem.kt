@@ -1,6 +1,8 @@
 package com.angcyo.canvas.items
 
 import android.graphics.Bitmap
+import android.graphics.Paint
+import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.ex.emptyRectF
 import com.angcyo.library.ex.withPicture
@@ -18,21 +20,27 @@ class PictureBitmapItem : PictureItem() {
     /**绘制的图片, 可能是修改后的数据*/
     var bitmap: Bitmap? = null
 
+    /**预览的图片*/
+    var previewBitmap: Bitmap? = null
+
     //记录图片的真实bounds
     val bitmapBounds = emptyRectF()
 
     init {
         itemLayerName = "Bitmap"
+        dataType = CanvasConstant.DATA_TYPE_BITMAP
+        dataMode = CanvasConstant.DATA_MODE_GREY
     }
 
-    override fun updatePictureDrawable(resetSize: Boolean) {
-        bitmap?.let { bitmap ->
+    /**更新Drawable*/
+    override fun updateItem(paint: Paint) {
+        (previewBitmap ?: bitmap)?.let { bitmap ->
             val itemWidth = bitmap.width
             val itemHeight = bitmap.height
 
             bitmapBounds.set(0f, 0f, itemWidth.toFloat(), itemHeight.toFloat())
             val drawable = ScalePictureDrawable(withPicture(itemWidth, itemHeight) {
-                drawBitmap(bitmap, null, bitmapBounds, paint)
+                drawBitmap(bitmap, null, bitmapBounds, null)
             })
 
             this.drawable = drawable

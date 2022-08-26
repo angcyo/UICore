@@ -13,27 +13,55 @@ import com.angcyo.library.component.HawkPropertyValue
  */
 object CanvasConstant {
 
-    //region ---图片处理模式---
+    //region ---数据类型---
 
-    /**图片模式, 版画*/
-    const val BITMAP_MODE_PRINT = 1
+    /**数据类型, 图片数据*/
+    const val DATA_TYPE_BITMAP = 1
 
-    /**图片数据转成了GCode数据*/
-    const val BITMAP_MODE_GCODE = 2
+    /**数据类型, 二维码*/
+    const val DATA_TYPE_QRCODE = 2
 
-    /**黑白*/
-    const val BITMAP_MODE_BLACK_WHITE = 3
+    /**数据类型, 条形维码*/
+    const val DATA_TYPE_BARCODE = 3
 
-    /**抖动*/
-    const val BITMAP_MODE_DITHERING = 4
+    /**数据类型, 文本*/
+    const val DATA_TYPE_TEXT = 4
 
-    /**灰度*/
-    const val BITMAP_MODE_GREY = 5
+    /**数据类型, SVG数据*/
+    const val DATA_TYPE_SVG = 5
 
-    /**印章*/
-    const val BITMAP_MODE_SEAL = 6
+    /**数据类型, GCODE数据*/
+    const val DATA_TYPE_GCODE = 6
 
-    //endregion ---图片处理模式---
+    /**数据类型, Path数据*/
+    const val DATA_TYPE_PATH = 7
+
+    /**数据类型, 一组数据*/
+    const val DATA_TYPE_GROUP = 10
+
+    //endregion ---数据类型---
+
+    //region ---数据处理模式---
+
+    /**数据模式, 版画*/
+    const val DATA_MODE_PRINT = 1
+
+    /**数数据模式, 黑白*/
+    const val DATA_MODE_BLACK_WHITE = 2
+
+    /**数据模式, 抖动*/
+    const val DATA_MODE_DITHERING = 3
+
+    /**数据模式, 灰度*/
+    const val DATA_MODE_GREY = 4
+
+    /**数据模式, 印章*/
+    const val DATA_MODE_SEAL = 5
+
+    /**数据模式, GCode*/
+    const val DATA_MODE_GCODE = 10
+
+    //endregion ---数据处理模式---
 
     //region ---Canvas---
 
